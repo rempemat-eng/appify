@@ -1,0 +1,139 @@
+name: EDITOR_DEPENDENTS exact eight-method receiving
+
+# SOURCE PREPARATION ONLY. The lead must review an exact commit and allocate it
+# before creating/updating this distinct execution ref. No PR/manual/schedule trigger.
+'on':
+  push:
+    branches: [codex/editor-dependents-validation-run]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mygame-editor-dependents-validation
+  cancel-in-progress: false
+
+jobs:
+  focused:
+    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/editor-dependents-validation-run' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+      TZ: UTC
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      EDITOR_DEPENDENTS_GAME_SHA: 3c925bc42a34ed8c3cc86b2dddd77e08e38cbe41
+    steps:
+      - name: Open failure evidence before any checkout or setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/editor-dependents"
+          test ! -e "$root"
+          mkdir -m 700 "$root"
+          mkdir -m 700 "$root/evidence"
+          printf 'EDITOR_DEPENDENTS_EVIDENCE=%s/evidence\n' "$root" >> "$GITHUB_ENV"
+          python3 -I -B - <<'PY'
+          import json, os, platform
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'editor-dependents/evidence/bootstrap.json'
+          p.write_text(json.dumps(dict(workflow_sha=os.environ['GITHUB_SHA'],
+              tested_game_sha=os.environ['EDITOR_DEPENDENTS_GAME_SHA'], run_id=os.environ['GITHUB_RUN_ID'],
+              attempt=os.environ['GITHUB_RUN_ATTEMPT'], python=platform.python_version(),
+              phases='NOT RUN; setup has not completed'), indent=2) + '\n')
+          PY
+
+      - name: Check out the immutable workflow/controller candidate only
+        id: runner
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # main885b convention
+        with:
+          ref: ${{ github.sha }}
+          path: runner
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/editor-dependents-validation.yml
+            /scripts/review/editor_dependents_validation.py
+
+      - name: Check out pinned full game and actual stdlib validator inputs
+        id: source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 3c925bc42a34ed8c3cc86b2dddd77e08e38cbe41
+          path: source
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /game/
+            /scripts/art/kit/__init__.py
+            /scripts/art/kit/relations.py
+            /scripts/art/size_guide.json
+            /scripts/review/__init__.py
+            /scripts/review/ground_rules.py
+            /scripts/review/kit_scene.py
+
+      - name: Select the existing Python version without Node dependencies
+        id: python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # main885b convention
+        with:
+          python-version: '3.12'
+
+      - name: Select exact hosted Python for the real editor validator
+        id: python_path
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
+
+      - name: Private path canary, one import, syntax, then fail-fast editor methods
+        id: focused
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python -I -B runner/scripts/review/editor_dependents_validation.py \
+            --candidate "$GITHUB_WORKSPACE/runner" \
+            --source "$GITHUB_WORKSPACE/source" \
+            --root "$RUNNER_TEMP/editor-dependents" \
+            --event-sha "$GITHUB_SHA" > "$EDITOR_DEPENDENTS_EVIDENCE/controller.log" 2>&1
+          code=$?
+          printf '%s\n' "$code" > "$EDITOR_DEPENDENTS_EVIDENCE/controller.exit"
+          cat "$EDITOR_DEPENDENTS_EVIDENCE/controller.log"
+          exit "$code"
+
+      - name: Retain actual setup and controller disposition on every exit
+        if: always()
+        env:
+          RUNNER_OUTCOME: ${{ steps.runner.outcome }}
+          SOURCE_OUTCOME: ${{ steps.source.outcome }}
+          PYTHON_OUTCOME: ${{ steps.python.outcome }}
+          PYTHON_PATH_OUTCOME: ${{ steps.python_path.outcome }}
+          FOCUSED_OUTCOME: ${{ steps.focused.outcome }}
+        shell: bash
+        run: |
+          python3 -I -B - <<'PY'
+          import json, os
+          from pathlib import Path
+          evidence = Path(os.environ['RUNNER_TEMP']) / 'editor-dependents/evidence'
+          evidence.mkdir(parents=True, exist_ok=True)
+          value = dict(workflow_sha=os.environ['GITHUB_SHA'], tested_game_sha=os.environ['EDITOR_DEPENDENTS_GAME_SHA'],
+              outcomes={k: os.environ.get(k, 'NOT RUN') for k in
+                        ('RUNNER_OUTCOME', 'SOURCE_OUTCOME', 'PYTHON_OUTCOME', 'PYTHON_PATH_OUTCOME', 'FOCUSED_OUTCOME')},
+              controller_result_present=(evidence / 'result.json').is_file(),
+              qualification='No GUI/save/reopen/export/bake/runtime/full-suite/Ready acceptance. Missing result is failure, never PASS.')
+          (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as handle:
+              handle.write('## EDITOR_DEPENDENTS focused reproduction\n\n```json\n' + json.dumps(value, indent=2) + '\n```\n')
+          PY
+
+      - name: Upload source, raw failures, actual waits and reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # main885b convention
+        with:
+          name: mygame-editor-dependents-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/editor-dependents/evidence/
+          if-no-files-found: error
+          retention-days: 7
