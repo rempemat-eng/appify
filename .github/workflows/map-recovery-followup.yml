@@ -428,12 +428,15 @@ jobs:
               errors.append(dict(file='partial-file-inventory', error=repr(error)))
           passed = (not errors and receipt.get('verified') is True and input_unchanged and archives_unchanged and type(owned) is int and owned <= 128*1024**2
               and os.environ['SOURCE_GUARD_OUTCOME'] == 'success' and all(result.get('passed') is True for result in results.values()))
+          status = evidence / 'status.txt'
+          status.write_text(('FAILED-STATE DIAGNOSTIC READY' if passed else 'FOLLOWUP FAILED/PARTIAL; no preview acceptance')+'; original world FAILED; no correction/art approval\n')
+          files['status.txt'] = dict(bytes=status.stat().st_size, sha256=hashlib.sha256(status.read_bytes()).hexdigest())
+          assert files['status.txt'] == dict(bytes=status.stat().st_size, sha256=hashlib.sha256(status.read_bytes()).hexdigest()), 'final status changed before manifest'
           value = dict(event_source_sha=os.environ['EXPECTED_SOURCE_SHA'], captured_source_sha='87ea22a4be342e3b8009b1c9b922c2fb7db56711',
               passed=passed, results=results, original_input_unchanged=input_unchanged, original_archives_unchanged=archives_unchanged, original_input_receipt=receipt,
               owned_bytes=owned, errors=errors, files=files, label='FAILED-STATE DIAGNOSTIC', world_success=False, art_approval=False,
               qualification='Unchanged actual-input replay, then original captured AFTER preview only after all comparisons. Original producer failure retained. No new tests, correction, full world, literal-colour/art validation or map approval. Existing per-phase controller limits unchanged; whole evidence counted before/after phases. Independent actual-byte retrieval and full Actions logs still required.')
           (evidence / 'artifact-manifest.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
-          (evidence / 'status.txt').write_text(('FAILED-STATE DIAGNOSTIC READY' if passed else 'FOLLOWUP FAILED/PARTIAL; no preview acceptance')+'; original world FAILED; no correction/art approval\n')
           with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
               output.write(value['label']+'\n\nReplay and preview accepted: '+str(passed)+'\n\nOriginal world: FAILED\n\nNo corrected town or art approval. Upload and independently retrieve the actual artifact before the next step.\n')
           raise SystemExit(0 if passed else 1)
