@@ -44,7 +44,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 2
+          fetch-depth: 3
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |

@@ -30,6 +30,8 @@ SEAL_DEADLINE = None  # Only active during final bounded receipt sealing.
 SOURCE_SHA = "5dd3825353078b8b8e231f081714144891d98feb"
 SOURCE_TREE = "120c336609b393591a662beddf45a84149e73810"
 SOURCE_PARENT = "724662fa4edb4f37673856c6e78fe5f60a7fc9c1"
+RECEIVER_PARENT = "1d47eec95256fccb41fcd7fa987d788bac254494"
+CORRECTION_PATHS = {"scripts/review/grain_scale_receiving.py", ".github/workflows/grain-scale-receiving.yml"}
 OWNED_PATHS = {"scripts/review/grain_scale_receiving.py", "scripts/review/fixtures/grain_scale_yard.json",
                ".github/workflows/grain-scale-receiving.yml"}
 FIXTURE = "scripts/review/fixtures/grain_scale_yard.json"
@@ -344,12 +346,19 @@ class Controller:
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [SOURCE_SHA]:
-            raise RuntimeError("Receiving candidate must be a genuine sole403child")
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [RECEIVER_PARENT]:
+            raise RuntimeError("Receiving correction must retain the exact sole receiver parent")
+        parent_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if [x[7:] for x in parent_headers.splitlines() if x.startswith("parent ")] != [SOURCE_SHA]:
+            raise RuntimeError("Original receiver must retain genuine403 parent")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [x[7:] for x in source_headers.splitlines() if x.startswith("parent ")] != [SOURCE_PARENT]:
             raise RuntimeError("Frozen403 must retain genuine377 parent")
         src, runner = tree(self.source), tree(self.candidate)
+        previous = tree(self.candidate, RECEIVER_PARENT)
+        correction_delta = {p for p in previous.keys() | runner.keys() if previous.get(p) != runner.get(p)}
+        if correction_delta != CORRECTION_PATHS:
+            raise RuntimeError("Only the two existing receiving correction paths may change")
         delta = {p for p in src.keys() | runner.keys() if src.get(p) != runner.get(p)}
         if delta != OWNED_PATHS or any(p in src for p in OWNED_PATHS):
             raise RuntimeError("Exactly three NEW receiving files only")
@@ -363,7 +372,8 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers, "source_headers": source_headers, "delta": sorted(delta),
+            "headers": headers, "parent_headers": parent_headers, "receiver_parent": RECEIVER_PARENT,
+            "correction_delta": sorted(correction_delta), "source_headers": source_headers, "delta": sorted(delta),
             "receiving": self.candidate_before})
         for name in OWNED_PATHS:
             shutil.copyfile(self.candidate / name, self.evidence / Path(name).name)
@@ -444,7 +454,7 @@ class Controller:
         command = [sys.executable,"-B",str(self.candidate / "scripts/review/grain_scale_receiving.py"),
                    "--mode","versions","--root",str(self.root)]
         self.require_phase("versions",self.phase("versions",command,20,256*1024**2))
-        versions = json.loads((self.evidence / "versions.json").read_text())
+        versions = json.loads((self.evidence / "scientific-versions.json").read_text())
         for n,v in DEPENDENCIES.items():
             row = versions["packages"][n]
             if row["version"] != v or not Path(row["file"]).resolve(strict=True).is_relative_to(target):
@@ -717,7 +727,7 @@ def child(mode, root):
         import PIL, numpy, scipy
         value = {"python":sys.version,"packages":{n:{"version":m.__version__,"file":m.__file__}
                  for n,m in zip(("Pillow","numpy","scipy"),(PIL,numpy,scipy))}}
-        write_json(evidence / "versions.json",value)
+        write_json(evidence / "scientific-versions.json",value)
         return 0
     # No subject imports occur before outer preflight and private exact dependency stage.
     from PIL import Image, ImageDraw, ImageFont
