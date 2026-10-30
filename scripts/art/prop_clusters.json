@@ -794,7 +794,18 @@
      ],
      "tap": true,
      "turn": {
-      "fixed": true
+      "e": {
+       "kind": "stall",
+       "props": [
+        "market_stall_side"
+       ]
+      },
+      "w": {
+       "kind": "stall",
+       "props": [
+        "market_stall_side"
+       ]
+      }
      }
     },
     {
@@ -2134,6 +2145,205 @@
     5
    ],
    "why": "the yard of a forge (prop-logic 3: hearth, anvil and quench within 2 cells): the coal heap on the far side, the anvil in front of the forge door, the quench trough beside it, the ore cart parked off the way, a bench for whoever waits, the smith's apron on the trough (the personal object); the forge's glow"
+  },
+  "forge_yard_lip": {
+   "against": "the forge building or the lip's face to the north",
+   "biomes": [
+    "ash",
+    "castle",
+    "town",
+    "coal-hills",
+    "canyon"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      3,
+      1,
+      4,
+      2
+     ],
+     "why": "in front of the anvil"
+    },
+    {
+     "rect": [
+      11,
+      1,
+      4,
+      2
+     ],
+     "why": "the bench's front"
+    }
+   ],
+   "dressing": "ash",
+   "lights": [
+    {
+     "at": [
+      5,
+      0
+     ],
+     "kind": "forge_glow",
+     "live": true,
+     "r": 48
+    }
+   ],
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      3,
+      1
+     ],
+     "job": "fuel for the hearth",
+     "kind": "pile",
+     "place": "ground",
+     "props": [
+      "coal_heap"
+     ],
+     "reason": [
+      "by:dwelling:64"
+     ],
+     "role": "coal",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      4,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "where the smith works",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "anvil"
+     ],
+     "role": "anvil",
+     "shadow": "cast",
+     "stand": [
+      [
+       4,
+       1
+      ],
+      [
+       5,
+       1
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "at": [
+      7,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      3,
+      1
+     ],
+     "job": "cools the iron",
+     "kind": "trough",
+     "place": "ground",
+     "props": [
+      "quench_trough",
+      "trough"
+     ],
+     "role": "quench",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      10,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the smith's apron",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "smith_apron"
+     ],
+     "role": "apron",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      11,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "for whoever waits",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "bench",
+      "stone_bench"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       12,
+       1
+      ],
+      [
+       13,
+       1
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    }
+   ],
+   "owner": "the smith",
+   "size": [
+    15,
+    3
+   ],
+   "why": "a forge yard on a narrow shelf (asked by lane D, d-to-b-clusters-3: the Ember forge's terrace is shallow under its lip): one row against the lip, the coal heap at the far end, the anvil in front of the forge door, the quench trough beside it, the smith's apron on its end (the personal object), a bench for whoever waits; the forge's glow"
   },
   "frontier_street_corner": {
    "biomes": [
