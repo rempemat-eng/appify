@@ -1,0 +1,387 @@
+name: Map recovery remaining contracts
+
+# Source preparation on PR381 never runs this. Only a separate, reviewed lead GO
+# may create the execution ref at this immutable event commit.
+on:
+  push:
+    branches: [codex/map-recovery-contracts-run]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: map-recovery-contract17
+  cancel-in-progress: false
+
+jobs:
+  remaining-contract17:
+    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/map-recovery-contracts-run'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TZ: UTC
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      EXPECTED_SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - name: Reserve evidence outside source
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'MAP_EVIDENCE=%s/map-contract17-evidence\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          mkdir "$RUNNER_TEMP/map-contract17-evidence"
+          printf '%s\n' 'Contracts17 NOT RUN; setup incomplete' > "$RUNNER_TEMP/map-contract17-evidence/status.txt"
+
+      - name: Check out exact execution-event source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up supported Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Preserve exact source and check required font paths before project imports
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/map-source-guard.py" <<'PY'
+          import hashlib, json, os, subprocess, sys
+          from pathlib import Path
+          E = Path(os.environ['MAP_EVIDENCE'])
+          ROOT = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          def git(*args):
+              return subprocess.check_output(['git', *args], cwd=ROOT, timeout=30)
+          def sha(data):
+              return hashlib.sha256(data).hexdigest()
+          def guard():
+              head = git('rev-parse', 'HEAD').decode().strip()
+              assert head == os.environ['EXPECTED_SOURCE_SHA'], 'event/head mismatch'
+              rows = []
+              for raw in git('ls-files', '--stage', '-z').split(b'\0'):
+                  if not raw:
+                      continue
+                  info, name = raw.split(b'\t', 1)
+                  mode, blob, stage = info.decode().split()
+                  path = ROOT / os.fsdecode(name)
+                  data = os.fsencode(os.readlink(path)) if path.is_symlink() else path.read_bytes()
+                  actual = hashlib.sha1(('blob ' + str(len(data)) + '\0').encode() + data).hexdigest()
+                  assert stage == '0' and actual == blob, str(path)
+                  rows.append([os.fsdecode(name), mode, blob, sha(data)])
+              status = git('status', '--porcelain=v1', '--untracked-files=all').decode()
+              assert not status, status
+              return dict(head=head, tree=git('rev-parse', 'HEAD^{tree}').decode().strip(), tracked=rows, status=status,
+                          qualification='Fresh hosted event source only; no historical native-index equivalence.')
+          if __name__ == '__main__':
+              value = guard()
+              (E / ('source-' + sys.argv[1] + '.json')).write_text(json.dumps(value, sort_keys=True) + '\n')
+              if sys.argv[1] == 'after':
+                  assert value == json.loads((E / 'source-before.json').read_text()), 'source changed'
+              else:
+                  expected = {'scripts/review/map_failure_capture.py': '824805b0526c5e2f94cdbec58a854dc5d3c7fb059e9578f9b018fb6662a506e3',
+                              'scripts/review/test_map_failure_capture.py': '2861bbddb2e789d807a7a1d6a39a9974d100e2a4f5c23bf8798ad445a8fdb28d'}
+                  for name, digest in expected.items():
+                      assert sha((ROOT / name).read_bytes()) == digest, name
+                  paths = list(expected) + ['.github/workflows/map-recovery-contracts.yml',
+                      'docs/vision/research/blockout/geo5.py', 'docs/vision/research/blockout/towns55.py', 'scripts/review/town_plan.py']
+                  for name in paths:
+                      target = E / 'source' / name
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      target.write_bytes((ROOT / name).read_bytes())
+                  fonts = []
+                  for suffix in ('', '-Bold'):
+                      path = Path('/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed' + suffix + '.ttf')
+                      fonts.append(dict(path=str(path), exists=path.is_file(), sha256=sha(path.read_bytes()) if path.is_file() else None))
+                  (E / 'font-paths.json').write_text(json.dumps(fonts, indent=2) + '\n')
+                  assert all(x['exists'] for x in fonts), 'Exact geo5 font path missing; no fallback/install/copy'
+          PY
+          python -I -B "$RUNNER_TEMP/map-source-guard.py" before
+
+      - name: Install exact repository pins and verified compatible scikit-image wheel
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Main885b repository pins remain unchanged. scikit-image0.26.0 metadata:
+          # https://github.com/scikit-image/scikit-image/blob/ee0a7a3ebd9ac8c2602f40e55bc015a3c8a81ae8/pyproject.toml
+          # Python>=3.11, numpy>=1.24, scipy>=1.11.4, pillow>=10.1.
+          # Official cp312 Linux x86_64 wheel identity: https://pypi.org/project/scikit-image/0.26.0/
+          python -m pip install --disable-pip-version-check --no-cache-dir --only-binary=:all: --force-reinstall \
+            --timeout 20 --retries 1 --report "$MAP_EVIDENCE/install-report.json" \
+            'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1' 'scikit-image==0.26.0' \
+            > "$MAP_EVIDENCE/install.log" 2>&1
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from urllib.parse import unquote, urlparse
+          report = json.loads((Path(os.environ['MAP_EVIDENCE']) / 'install-report.json').read_text())
+          item = next(x for x in report['install'] if x['metadata']['name'].lower().replace('_', '-') == 'scikit-image')
+          info = item['download_info']
+          assert unquote(Path(urlparse(info['url']).path).name) == 'scikit_image-0.26.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl'
+          assert info['archive_info']['hashes']['sha256'] == '7df650e79031634ac90b11e64a9eedaf5a5e06fcd09bcd03a34be01745744466'
+          PY
+
+      - name: Run only the unchanged remaining 17 contracts once
+        id: contracts
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/map-contract-worker.py" <<'PY'
+          import hashlib, importlib.metadata, json, os, runpy, shutil, sys, tempfile, traceback, unittest
+          from unittest.mock import patch
+          from pathlib import Path
+          E = Path(os.environ['MAP_EVIDENCE'])
+          ROOT = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          def save(name, value):
+              (E / name).write_text(json.dumps(value, sort_keys=True, indent=2) + '\n')
+          versions = {name: importlib.metadata.version(name) for name in ('Pillow', 'numpy', 'scipy', 'scikit-image')}
+          save('versions.json', dict(python=sys.version, executable=sys.executable, packages=versions, sys_path=sys.path))
+          assert versions == {'Pillow': '12.3.0', 'numpy': '2.5.3', 'scipy': '1.18.1', 'scikit-image': '0.26.0'}
+          from PIL import ImageFont
+          for suffix in ('', '-Bold'):
+              ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed' + suffix + '.ttf', 13)
+          # Exact font canary precedes any project import; use actual source/registries.
+          sys.path[:0] = [str(ROOT / 'docs/vision/research/blockout'), str(ROOT / 'scripts/review')]
+          import geo5, towns55, town_plan
+          assert towns55._review() is town_plan and towns55.CELL == geo5.CELL == town_plan.CELL == 8
+          assert towns55.Town.hand.__module__ == 'towns55' and towns55._feedback_rows.__module__ == 'towns55'
+          save('import-canary.json', dict(modules={m.__name__: dict(path=m.__file__, sha256=hashlib.sha256(Path(m.__file__).read_bytes()).hexdigest()) for m in (geo5, towns55, town_plan)},
+               building_forms=sorted(towns55.BLD), street_widths=towns55.CLASS_W, actual_registry=True, synthetic_world_fixture=True))
+          module = runpy.run_path(str(ROOT / 'scripts/review/test_map_failure_capture.py'), run_name='hosted_R6_remaining_contracts_only')
+          case = module['Contracts']
+          expected = unittest.defaultTestLoader.getTestCaseNames(case)
+          assert len(expected) == 17
+          events, methods = [], []
+          retained, retention_errors = [], []
+          original_cleanup = tempfile.TemporaryDirectory.cleanup
+          def preserve_fixture_then_cleanup(directory):
+              # Preserve each tiny synthetic input BEFORE the unchanged cleanup;
+              # unittest receives the assertion/error only after context exit.
+              source = Path(directory.name)
+              try:
+                  assert source.is_relative_to(Path(os.environ['TMPDIR']))
+                  if source.exists():
+                      target = E / 'test-inputs' / str(len(retained))
+                      shutil.copytree(source, target)
+                      retained.append(str(target.relative_to(E)))
+              except Exception as error:
+                  retention_errors.append(repr(error))
+                  try:
+                      save('input-retention-errors.json', retention_errors)
+                  except OSError:
+                      pass
+              finally:
+                  original_cleanup(directory)
+          coverage_errors = []
+          class Result(unittest.TextTestResult):
+              def event(self, value):
+                  events.append(value)
+                  try:
+                      save('coverage-partial.json', dict(expected=expected, methods=methods, events=events))
+                  except OSError as error:
+                      coverage_errors.append(repr(error))
+              def startTest(self, test):
+                  methods.append(test._testMethodName)
+                  self.event(dict(kind='start', id=test.id()))
+                  super().startTest(test)
+              def stopTest(self, test):
+                  self.event(dict(kind='stop', id=test.id()))
+                  super().stopTest(test)
+              def addSubTest(self, test, subtest, err):
+                  self.event(dict(kind='subtest', id=test.id(), description=str(subtest), passed=err is None))
+                  super().addSubTest(test, subtest, err)
+              def addError(self, test, err):
+                  self.event(dict(kind='error', id=test.id(), traceback=''.join(traceback.format_exception(*err))))
+                  super().addError(test, err)
+              def addFailure(self, test, err):
+                  self.event(dict(kind='failure', id=test.id(), traceback=''.join(traceback.format_exception(*err))))
+                  super().addFailure(test, err)
+          (E / 'status.txt').write_text('Contracts17 RUNNING; no world\n')
+          with patch.object(tempfile.TemporaryDirectory, 'cleanup', preserve_fixture_then_cleanup):
+              result = unittest.TextTestRunner(verbosity=2, resultclass=Result).run(unittest.defaultTestLoader.loadTestsFromTestCase(case))
+          passed = result.wasSuccessful() and result.testsRun == 17 and sorted(methods) == expected and not result.skipped and not retention_errors and not coverage_errors
+          save('contracts-result.json', dict(ran=result.testsRun, methods=methods, expected=expected, passed=passed,
+               errors=len(result.errors), failures=len(result.failures), skipped=len(result.skipped),
+               retained_synthetic_input_directories=retained, input_retention_errors=retention_errors,
+               coverage_errors=coverage_errors,
+               completed_four_not_repeated=True, world_data_stage_capture_replay_preview=False))
+          (E / 'status.txt').write_text('Contracts17 '+('PASSED' if passed else 'FAILED')+'; no world\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+          cat > "$RUNNER_TEMP/map-contract-outer.py" <<'PY'
+          import json, os, resource, selectors, signal, subprocess, sys, time
+          from pathlib import Path
+          E = Path(os.environ['MAP_EVIDENCE'])
+          START = time.monotonic()
+          MIB = 1024**2
+          owned = lambda: sum(p.stat().st_blocks * 512 for p in E.rglob('*') if p.is_file())
+          private = E / 'private'
+          for name in ('tmp', 'blockout', 'config', 'data', 'cache', 'runtime'):
+              (private / name).mkdir(parents=True)
+          env = dict(os.environ, TMPDIR=str(private / 'tmp'), TMP=str(private / 'tmp'), TEMP=str(private / 'tmp'),
+              BLOCKOUT_OUT=str(private / 'blockout'), REPO_ROOT=os.environ['GITHUB_WORKSPACE'],
+              XDG_CONFIG_HOME=str(private / 'config'), XDG_DATA_HOME=str(private / 'data'),
+              XDG_CACHE_HOME=str(private / 'cache'), XDG_RUNTIME_DIR=str(private / 'runtime'), MYGAME_MAP_REVISION='v56')
+          for name in ('PYTHONPATH', 'PYTHONHOME', 'OLD_CACHE', 'DEV_PRE', 'DEV_PKL', 'QUICK', 'RENDER_ONLY', 'MAP55_OUT'):
+              env.pop(name, None)
+          command = [sys.executable, '-I', '-B', str(Path(os.environ['RUNNER_TEMP']) / 'map-contract-worker.py')]
+          (E / 'command.json').write_text(json.dumps(dict(command=command, cwd=os.environ['GITHUB_WORKSPACE'],
+              environment={k: v for k, v in env.items() if k.startswith(('TMP', 'TEMP', 'BLOCKOUT', 'XDG_', 'MYGAME_', 'OPENBLAS_', 'OMP_', 'MKL_', 'NUMEXPR_'))},
+              active_seconds=60, collection_seconds=10, one_cpu=True, address_space_bytes=int(1.5 * 1024**3), owned_bytes=128*MIB), indent=2) + '\n')
+          def limits():
+              os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
+              resource.setrlimit(resource.RLIMIT_AS, (int(1.5 * 1024**3),) * 2)
+              resource.setrlimit(resource.RLIMIT_CPU, (60, 60))
+          child = None
+          raw = ru = terminal = None
+          reason = None
+          lost = False
+          size = 0
+          selector = selectors.DefaultSelector()
+          try:
+              assert signal.getsignal(signal.SIGCHLD) == signal.SIG_DFL
+              child = subprocess.Popen(command, cwd=os.environ['GITHUB_WORKSPACE'], env=env, stdin=subprocess.DEVNULL,
+                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT, start_new_session=True, preexec_fn=limits)
+              selector.register(child.stdout, selectors.EVENT_READ)
+              with (E / 'contracts.log').open('xb') as log:
+                  while True:
+                      for key, _ in selector.select(.05):
+                          data = os.read(key.fd, 65536)
+                          if not data:
+                              selector.unregister(key.fileobj)
+                              continue
+                          room = 8*MIB-size
+                          log.write(data[:room]); log.flush(); size += min(room, len(data))
+                          if len(data) > room:
+                              reason = 'log_bound'
+                      try:
+                          terminal = os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                      except ChildProcessError:
+                          lost, reason = True, 'nonreaping_identity_lost'
+                          break
+                      if terminal is not None:
+                          break
+                      if time.monotonic()-START > 60 or owned() > 128*MIB:
+                          reason = 'wall_or_owned_bound'
+                      if reason:
+                          break
+          except BaseException as error:
+              reason = reason or repr(error)
+          finally:
+              if child is not None and not lost:
+                  try:
+                      os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                  except OSError:
+                      lost, reason = True, 'cleanup_identity_lost'
+                  if not lost:
+                      try:
+                          os.killpg(child.pid, signal.SIGKILL)
+                      except ProcessLookupError:
+                          pass
+                      deadline = time.monotonic()+5
+                      while True:
+                          try:
+                              pid, status, usage = os.wait4(child.pid, os.WNOHANG)
+                          except ChildProcessError:
+                              lost, reason = True, 'wait4_identity_lost'
+                              break
+                          if pid:
+                              raw, ru = status, usage
+                              child.returncode = os.waitstatus_to_exitcode(status)
+                              break
+                          if time.monotonic() > deadline:
+                              reason = 'collection_bound'
+                              break
+                          time.sleep(.02)
+              if child is not None and child.stdout:
+                  deadline = time.monotonic()+1
+                  with (E / 'contracts.log').open('ab') as log:
+                      while selector.get_map() and time.monotonic() < deadline:
+                          for key, _ in selector.select(.05):
+                              data = os.read(key.fd, 65536)
+                              if not data:
+                                  selector.unregister(key.fileobj)
+                                  continue
+                              room = 8*MIB-size
+                              log.write(data[:room]); log.flush(); size += min(room, len(data))
+                              if len(data) > room:
+                                  reason = reason or 'log_bound'
+                  child.stdout.close()
+              selector.close()
+          absent = True
+          if child is not None:
+              try:
+                  os.killpg(child.pid, 0)
+                  absent = False
+              except ProcessLookupError:
+                  pass
+          peak = ru.ru_maxrss*1024 if ru else None
+          passed = raw == 0 and reason is None and not lost and absent and peak is not None and 0 < peak <= int(1.5*1024**3) and owned() <= 128*MIB
+          value = dict(passed=passed, raw_wait_status=raw, exit=os.waitstatus_to_exitcode(raw) if raw is not None else None,
+              child_reaped=raw is not None, identity_lost=lost, owned_group_absent=absent, stop_reason=reason,
+              peak_child_rss_bytes=peak, cpu_seconds=ru.ru_utime+ru.ru_stime if ru else None,
+              seconds=time.monotonic()-START, owned_bytes=owned(), world_run=False)
+          (E / 'outer-result.json').write_text(json.dumps(value, indent=2)+'\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+          cp "$RUNNER_TEMP/map-contract-worker.py" "$RUNNER_TEMP/map-contract-outer.py" "$MAP_EVIDENCE/"
+          python -I -B "$RUNNER_TEMP/map-contract-outer.py"
+
+      - name: Guard source after every allocated contract outcome
+        id: source_after
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f "$RUNNER_TEMP/map-source-guard.py" ]; then
+            python -I -B "$RUNNER_TEMP/map-source-guard.py" after
+            cp "$RUNNER_TEMP/map-source-guard.py" "$MAP_EVIDENCE/"
+          else
+            printf '%s\n' 'Source guard NOT RUN: setup did not reach guard creation' > "$MAP_EVIDENCE/source-unavailable.txt"
+            exit 1
+          fi
+
+      - name: Retain actual outcome and bounded evidence manifest
+        if: always()
+        env:
+          CONTRACT_STEP: ${{ steps.contracts.outcome }}
+          SOURCE_STEP: ${{ steps.source_after.outcome }}
+        shell: bash
+        run: |
+          python -I -B - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          E = Path(os.environ['MAP_EVIDENCE'])
+          files = {str(p.relative_to(E)): dict(bytes=p.stat().st_size, sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in E.rglob('*') if p.is_file()}
+          results = {}
+          for name in ('outer-result.json', 'contracts-result.json'):
+              try:
+                  results[name] = json.loads((E / name).read_text())
+              except Exception as error:
+                  results[name] = dict(passed=False, error=repr(error))
+          passed = os.environ['CONTRACT_STEP'] == os.environ['SOURCE_STEP'] == 'success' and all(v.get('passed') is True for v in results.values())
+          value = dict(event_source_sha=os.environ['EXPECTED_SOURCE_SHA'], step_outcome=os.environ['CONTRACT_STEP'],
+              source_guard_outcome=os.environ['SOURCE_STEP'], passed=passed, results=results, files=files,
+              qualification='Only remaining Contracts17; prior GREEN4 not repeated. No world, map/art approval, actual lifetime experiment, Ready or merge. A retained artifact still needs independent byte retrieval.')
+          (E / 'artifact-manifest.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
+              output.write('Remaining map Contracts17: '+value['step_outcome']+'\n\nSource: '+value['event_source_sha']+'\n\n'+value['qualification']+'\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+
+      - name: Upload source, first failure, partial inputs, resources and logs on every exit
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mygame-map-contract17-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/map-contract17-evidence/
+          if-no-files-found: error
+          retention-days: 7
