@@ -23,6 +23,30 @@ static func index() -> Dictionary:
 func data() -> Dictionary:
 	return index().get(piece_id, {})
 
+func _enter_tree() -> void:
+	set_notify_local_transform(true)
+	_notify_ground()
+
+func _exit_tree() -> void:
+	_notify_ground(true)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_LOCAL_TRANSFORM_CHANGED:
+		_notify_ground()
+
+## Native edits bypass the dock's operations; notify the same ground on membership
+## and local-position changes, using the index's existing painted-piece authority.
+func _notify_ground(exiting: bool = false) -> void:
+	if not is_inside_tree() or not bool(data().get("painted", false)):
+		return
+	var props := get_parent()
+	var zone := props.get_parent() if props != null else null
+	if zone == null or zone.get_node_or_null("Props") != props:
+		return
+	var ground := zone.get_node_or_null("Ground")
+	if ground != null and ground.is_inside_tree() and ground.is_node_ready() and ground.has_method("_rebuild"):
+		ground.call("_rebuild", self if exiting else null)
+
 func _ready() -> void:
 	add_to_group("kit_piece")
 	_apply_variant()
