@@ -32,17 +32,25 @@ import zipfile
 # Receiver history stays on the original candidate; only source/ is executed.
 CANDIDATE_BASE_SHA = "3c925bc42a34ed8c3cc86b2dddd77e08e38cbe41"
 CANDIDATE_BASE_TREE = "490e0985c46b90ad7cbe5bb4f9cbe14e762e67c6"
-PRIOR_CANDIDATE_SHA = "d3da0885114da2cfab92747ad767191244e99199"
-PRIOR_CANDIDATE_TREE = "3b5a416d5201f88477515c1bc1ecdcebd54dcb23"
-GAME_SHA = "12ea03fd3e0c9921b2d35b061f77ccb551586f9c"
-GAME_TREE = "9ce15ff835c7aafea2a0915bd182935bf04d4cfe"
+INITIAL_CANDIDATE_SHA = "d3da0885114da2cfab92747ad767191244e99199"
+INITIAL_CANDIDATE_TREE = "3b5a416d5201f88477515c1bc1ecdcebd54dcb23"
+PRIOR_CANDIDATE_SHA = "2dd35f32931afbd17ddbb64a15794c5b254a4c0c"
+PRIOR_CANDIDATE_TREE = "d03dd1a47566d071a27be703bcd2ae0833ddcbdf"
+PRIOR_GAME_SHA = "12ea03fd3e0c9921b2d35b061f77ccb551586f9c"
+PRIOR_GAME_TREE = "9ce15ff835c7aafea2a0915bd182935bf04d4cfe"
+GAME_SHA = "492758da21ba4ef148aa0754f7fcfbbb59c642e5"
+GAME_TREE = "431e7b54a7ff4273df6685cee7d83865131df355"
 GROUND_PATH = "game/world/terrain/terrain_ground.gd"
 CANDIDATE_GROUND_BLOB = "eae36ad6268bb5dbba40f36b2b12041c4979038a"
-GROUND_BLOB = "3e1f1c30a942cac648864ea7210ac436ec03c34f"
+PRIOR_GROUND_BLOB = "3e1f1c30a942cac648864ea7210ac436ec03c34f"
+GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
+KIT_PIECE_PATH = "game/world/terrain/kit_piece.gd"
+CANDIDATE_KIT_PIECE_BLOB = "ab7ce936f13865b75c826d84d4b360e8d8848017"
+KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
 TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 GAME_COUNT = 6687
-GAME_BYTES = 87861809
+GAME_BYTES = 87863563
 # Exact existing files only. scripts/ and scripts/art/ are namespace packages.
 # check_zone reads size_guide.json even with a supplied library/material map.
 PYTHON_INPUTS = {
@@ -313,8 +321,10 @@ class Controller:
                 raise RuntimeError("Namespace package unexpectedly replaced by an initializer")
         if game_rows[TEST_PATH]["blob"] != TEST_BLOB or game_rows["game/game.gd"]["blob"] != PRODUCTION_BLOB:
             raise RuntimeError("Frozen test/production pin differs")
-        if game_rows[GROUND_PATH]["blob"] != GROUND_BLOB or game_rows[GROUND_PATH]["bytes"] != 14449:
+        if game_rows[GROUND_PATH]["blob"] != GROUND_BLOB or game_rows[GROUND_PATH]["bytes"] != 15302:
             raise RuntimeError("Corrected executed TerrainGround pin differs")
+        if game_rows[KIT_PIECE_PATH]["blob"] != KIT_PIECE_BLOB or game_rows[KIT_PIECE_PATH]["bytes"] != 3148:
+            raise RuntimeError("Corrected executed KitPiece pin differs")
         test_text = (self.source / TEST_PATH).read_text()
         if tuple(re.findall(r"^func (test_\w+)\(", test_text, re.M)) != METHODS:
             raise RuntimeError("Eight authored methods differ")
@@ -355,15 +365,16 @@ class Controller:
             self.evidence / "bootstrap.json", self.evidence / "controller.log"
         }:
             raise RuntimeError("Duty runtime/evidence is not fresh")
-        # Candidate depth=3 retains original3c925 -> prior d3da -> this child.
-        # The corrected game is a separate genuine child of original3c925.
+        # Candidate depth=4 retains original3c925 -> d3da -> prior2dd -> this child.
+        # Source depth=2 retains corrected4927 -> tier12ea, separately from receiver history.
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
         if parents != [PRIOR_CANDIDATE_SHA]:
-            raise RuntimeError("Candidate must be a genuine sole child of frozen #402 d3da")
+            raise RuntimeError("Candidate must be a genuine sole child of frozen #402 2dd")
         history_headers = {}
         for sha, expected_tree, expected_parent in (
-            (PRIOR_CANDIDATE_SHA, PRIOR_CANDIDATE_TREE, CANDIDATE_BASE_SHA),
+            (PRIOR_CANDIDATE_SHA, PRIOR_CANDIDATE_TREE, INITIAL_CANDIDATE_SHA),
+            (INITIAL_CANDIDATE_SHA, INITIAL_CANDIDATE_TREE, CANDIDATE_BASE_SHA),
             (CANDIDATE_BASE_SHA, CANDIDATE_BASE_TREE, "45ed3cad029c106977e6c0c833913dcb1c614fbd"),
         ):
             if git(self.candidate, "rev-parse", sha + "^{tree}").decode().strip() != expected_tree:
@@ -375,11 +386,27 @@ class Controller:
             history_headers[sha] = value
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
+                if line.startswith("parent ")] != [PRIOR_GAME_SHA]:
+            raise RuntimeError("Corrected game must be a genuine sole child of tier-corrected #396")
+        if git(self.source, "rev-parse", PRIOR_GAME_SHA + "^{tree}").decode().strip() != PRIOR_GAME_TREE:
+            raise RuntimeError("Immutable prior tested game tree differs")
+        prior_game_headers = git(self.source, "cat-file", "commit", PRIOR_GAME_SHA).decode().split("\n\n", 1)[0]
+        if [line.removeprefix("parent ") for line in prior_game_headers.splitlines()
                 if line.startswith("parent ")] != [CANDIDATE_BASE_SHA]:
-            raise RuntimeError("Corrected game must be a genuine sole child of original #396")
+            raise RuntimeError("Prior tested game must retain original #396 parent")
         source_tree, candidate_tree = tree(self.source), tree(self.candidate)
         base_tree = tree(self.candidate, CANDIDATE_BASE_SHA)
         prior_tree = tree(self.candidate, PRIOR_CANDIDATE_SHA)
+        initial_tree = tree(self.candidate, INITIAL_CANDIDATE_SHA)
+        prior_game_tree = tree(self.source, PRIOR_GAME_SHA)
+        initial_delta = {name for name in base_tree.keys() | initial_tree.keys()
+                         if base_tree.get(name) != initial_tree.get(name)}
+        previous_receiving_delta = {name for name in initial_tree.keys() | prior_tree.keys()
+                                    if initial_tree.get(name) != prior_tree.get(name)}
+        previous_game_delta = {name for name in base_tree.keys() | prior_game_tree.keys()
+                               if base_tree.get(name) != prior_game_tree.get(name)}
+        correction_delta = {name for name in prior_game_tree.keys() | source_tree.keys()
+                            if prior_game_tree.get(name) != source_tree.get(name)}
         base_delta = {name for name in base_tree.keys() | candidate_tree.keys()
                       if base_tree.get(name) != candidate_tree.get(name)}
         prior_delta = {name for name in base_tree.keys() | prior_tree.keys()
@@ -391,13 +418,20 @@ class Controller:
         delta = {name for name in source_tree.keys() | candidate_tree.keys()
                  if source_tree.get(name) != candidate_tree.get(name)}
         if (base_delta != OWNED_PATHS or prior_delta != OWNED_PATHS
-                or receiving_delta != OWNED_PATHS or game_delta != {GROUND_PATH}
-                or delta != OWNED_PATHS | {GROUND_PATH}
+                or initial_delta != OWNED_PATHS or previous_receiving_delta != OWNED_PATHS
+                or previous_game_delta != {GROUND_PATH}
+                or correction_delta != {GROUND_PATH, KIT_PIECE_PATH}
+                or receiving_delta != OWNED_PATHS or game_delta != {GROUND_PATH, KIT_PIECE_PATH}
+                or delta != OWNED_PATHS | {GROUND_PATH, KIT_PIECE_PATH}
                 or any(name in base_tree or name in source_tree for name in OWNED_PATHS)
                 or any(prior_tree.get(name, (None,))[0] != "100644" for name in OWNED_PATHS)
                 or base_tree.get(GROUND_PATH) != ("100644", CANDIDATE_GROUND_BLOB)
                 or candidate_tree.get(GROUND_PATH) != ("100644", CANDIDATE_GROUND_BLOB)
-                or source_tree.get(GROUND_PATH) != ("100644", GROUND_BLOB)):
+                or source_tree.get(GROUND_PATH) != ("100644", GROUND_BLOB)
+                or prior_game_tree.get(GROUND_PATH) != ("100644", PRIOR_GROUND_BLOB)
+                or any(t.get(KIT_PIECE_PATH) != ("100644", CANDIDATE_KIT_PIECE_BLOB)
+                       for t in (base_tree, candidate_tree, prior_game_tree))
+                or source_tree.get(KIT_PIECE_PATH) != ("100644", KIT_PIECE_BLOB)):
             raise RuntimeError(f"Candidate cumulative scope differs: {sorted(delta)}")
         candidate_rows = {}
         for name in sorted(OWNED_PATHS):
@@ -415,7 +449,12 @@ class Controller:
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "history_headers": history_headers,
                    "candidate_base_sha": CANDIDATE_BASE_SHA, "candidate_base_tree": CANDIDATE_BASE_TREE,
+                   "initial_candidate_sha": INITIAL_CANDIDATE_SHA, "initial_candidate_tree": INITIAL_CANDIDATE_TREE,
                    "prior_candidate_sha": PRIOR_CANDIDATE_SHA, "prior_candidate_tree": PRIOR_CANDIDATE_TREE,
+                   "prior_game_sha": PRIOR_GAME_SHA, "prior_game_tree": PRIOR_GAME_TREE,
+                   "prior_game_headers": prior_game_headers,
+                   "initial_delta": sorted(initial_delta), "previous_receiving_delta": sorted(previous_receiving_delta),
+                   "previous_game_delta": sorted(previous_game_delta), "correction_delta": sorted(correction_delta),
                    "tested_game_sha": GAME_SHA, "tested_game_tree": GAME_TREE,
                    "tested_game_headers": source_headers, "base_delta": sorted(base_delta),
                    "receiving_delta": sorted(receiving_delta), "game_delta": sorted(game_delta),
