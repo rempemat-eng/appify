@@ -1251,5 +1251,2089 @@
       },
       "adoption_hold": "Resolve the single existing mill identity against legacy/native plans and deduplicate BEFORE adoption; do not create a second mill, convert the smithy, reuse historical web coordinates as continent geometry or infer home/work semantics. Native fit and applicable art/map review remain required."
     }
-  ]
+  ],
+  "measured_market_fit": {
+    "status": "PARTIAL_MEASURED_A_B_C_CANDIDATE_NOT_ADOPTED_NOT_NATIVE_ACCEPTANCE",
+    "go": 6533855827,
+    "claim": 6533865862,
+    "ack": 6533866313,
+    "parent_proposal": "039e9870ac4d75e87d601b430b4517f97d24313f",
+    "capture_head": "87ea22a4be342e3b8009b1c9b922c2fb7db56711",
+    "capture_sha256": "ba68fc26d029ed85e53b4ad69feb426cf9a88ec5ea61a10d180d822be0cc5b7a",
+    "before_npz_sha256": "95574230bb4474fa3a931ba6167fa521d609107ae79fff3f7e7022e327d7d527",
+    "terrain_packet": "https://chatgpt.com/library?file_id=libfile_b4175229aa6c81918f60e4e3faa89d6f&account_id=personal",
+    "coordinate_contract": "rect=[x,y,w,h] in worldpx, half-open; all footprint/area bounds multiples8. Existing half-cell doors x6148 remain exact. Native odd-width path centrelines can use half-cell coordinates; rectangles retain8px bounds.",
+    "accounting": "14 measured A/B/C records =7 retained anchors +7 new candidates. Original40 ledger/sourceforms/footprints/bays/7anchors unchanged; candidate total41. D/E/F/G and separate mill geometry remainNULL.",
+    "architectural_intent": "Two south-facing shops and a passage close the market-west approach; rear servicing and garden plots make a back. Two quiet north homes use side gardens and garden-walk spur. East trade/shop fronts and a conditional south-east market return enclose the centre without filling the green/crater.",
+    "plots": [
+      {
+        "id": "crossroads-b001",
+        "block": "C",
+        "plot": "C01",
+        "source_form": "cottage",
+        "source_footprint_px": [
+          80,
+          40
+        ],
+        "rect_world_px": [
+          6256,
+          3272,
+          80,
+          40
+        ],
+        "door_world_px": [
+          6296,
+          3312
+        ],
+        "status": "RETAINED_ANCHOR",
+        "door_access": "Retain hut door and saved garden_walk; existing macro north centreline cuts footprint and must be reconciled, not stamped over.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6256,
+              3272,
+              80,
+              40
+            ],
+            "cells": 50,
+            "ground": {
+              "meadow": 43,
+              "path": 7
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.00020455694800716726,
+            "nonbuildable_cells": 7
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6248,
+              3264,
+              96,
+              56
+            ],
+            "cells": 84,
+            "ground": {
+              "meadow": 74,
+              "path": 10
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.00021999273787618736,
+            "nonbuildable_cells": 10
+          },
+          "regional_centreline_intersections": [
+            {
+              "route": "Valley lane north",
+              "clipped_segment_world_px": [
+                [
+                  6317.416518017303,
+                  3312.0
+                ],
+                [
+                  6316.948369107132,
+                  3308.1468121069643
+                ]
+              ]
+            },
+            {
+              "route": "Valley lane north",
+              "clipped_segment_world_px": [
+                [
+                  6316.948369107132,
+                  3308.1468121069643
+                ],
+                [
+                  6313.096947291861,
+                  3289.307275446214
+                ]
+              ]
+            },
+            {
+              "route": "Valley lane north",
+              "clipped_segment_world_px": [
+                [
+                  6313.096947291861,
+                  3289.307275446214
+                ],
+                [
+                  6308.849875104036,
+                  3272.0
+                ]
+              ]
+            }
+          ],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b002",
+        "block": "A",
+        "plot": "A01",
+        "source_form": "public",
+        "source_footprint_px": [
+          96,
+          40
+        ],
+        "rect_world_px": [
+          6176,
+          3408,
+          96,
+          40
+        ],
+        "door_world_px": [
+          6224,
+          3448
+        ],
+        "status": "RETAINED_ANCHOR",
+        "door_access": "Door on native market north edge; rear service apron to proposed A lane. No new interior delivery door authored.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6176,
+              3408,
+              96,
+              40
+            ],
+            "cells": 60,
+            "ground": {
+              "building": 29,
+              "meadow": 31
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0004327290735202025,
+            "nonbuildable_cells": 0
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6168,
+              3400,
+              112,
+              56
+            ],
+            "cells": 98,
+            "ground": {
+              "building": 42,
+              "meadow": 55,
+              "path": 1
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0004555953991241945,
+            "nonbuildable_cells": 1
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b003",
+        "block": "C",
+        "plot": "C02",
+        "source_form": "house",
+        "source_footprint_px": [
+          96,
+          40
+        ],
+        "rect_world_px": [
+          6320,
+          3408,
+          96,
+          40
+        ],
+        "door_world_px": [
+          6392,
+          3448
+        ],
+        "status": "RETAINED_ANCHOR",
+        "door_access": "Door on native market north edge; retained cottages back onto a garden strip below quiet walk.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6320,
+              3408,
+              96,
+              40
+            ],
+            "cells": 60,
+            "ground": {
+              "meadow": 57,
+              "path": 3
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.00018807678959271382,
+            "nonbuildable_cells": 3
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6312,
+              3400,
+              112,
+              56
+            ],
+            "cells": 98,
+            "ground": {
+              "building": 3,
+              "meadow": 79,
+              "path": 16
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.00021083032165037312,
+            "nonbuildable_cells": 16
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b004",
+        "block": "A",
+        "plot": "A02",
+        "source_form": "shop",
+        "source_footprint_px": [
+          72,
+          48
+        ],
+        "rect_world_px": [
+          6088,
+          3488,
+          72,
+          48
+        ],
+        "door_world_px": [
+          6148,
+          3536
+        ],
+        "status": "RETAINED_ANCHOR",
+        "door_access": "Door on saved halt_road north edge; preserve half-cell x6148 exactly.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6088,
+              3488,
+              72,
+              48
+            ],
+            "cells": 54,
+            "ground": {
+              "building": 30,
+              "meadow": 24
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0010443482354221209,
+            "nonbuildable_cells": 0
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6080,
+              3480,
+              88,
+              64
+            ],
+            "cells": 88,
+            "ground": {
+              "building": 30,
+              "meadow": 57,
+              "path": 1
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0010590011205440324,
+            "nonbuildable_cells": 1
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b005",
+        "block": "A",
+        "plot": "A03",
+        "source_form": "shop",
+        "source_footprint_px": [
+          72,
+          48
+        ],
+        "rect_world_px": [
+          6088,
+          3576,
+          72,
+          48
+        ],
+        "door_world_px": [
+          6148,
+          3624
+        ],
+        "status": "RETAINED_ANCHOR",
+        "door_access": "Door uses proposed16px seam/link to market; preserve half-cell x6148. Existing macro west route cuts the footprint.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6088,
+              3576,
+              72,
+              48
+            ],
+            "cells": 54,
+            "ground": {
+              "meadow": 26,
+              "path": 28
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0008083999024926907,
+            "nonbuildable_cells": 28
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6080,
+              3568,
+              88,
+              64
+            ],
+            "cells": 88,
+            "ground": {
+              "meadow": 48,
+              "path": 40
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0008872872271463947,
+            "nonbuildable_cells": 40
+          },
+          "regional_centreline_intersections": [
+            {
+              "route": "Valley lane west",
+              "clipped_segment_world_px": [
+                [
+                  6159.65423229549,
+                  3576.0
+                ],
+                [
+                  6154.148855244717,
+                  3585.04977984592
+                ]
+              ]
+            },
+            {
+              "route": "Valley lane west",
+              "clipped_segment_world_px": [
+                [
+                  6154.148855244717,
+                  3585.04977984592
+                ],
+                [
+                  6141.297582461149,
+                  3604.7516774726987
+                ]
+              ]
+            },
+            {
+              "route": "Valley lane west",
+              "clipped_segment_world_px": [
+                [
+                  6141.297582461149,
+                  3604.7516774726987
+                ],
+                [
+                  6127.7779155022945,
+                  3623.4630481393588
+                ]
+              ]
+            },
+            {
+              "route": "Valley lane west",
+              "clipped_segment_world_px": [
+                [
+                  6127.7779155022945,
+                  3623.4630481393588
+                ],
+                [
+                  6127.329594073658,
+                  3624.0
+                ]
+              ]
+            }
+          ],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b006",
+        "block": "B",
+        "plot": "B01",
+        "source_form": "workshop",
+        "source_footprint_px": [
+          88,
+          56
+        ],
+        "rect_world_px": [
+          6432,
+          3472,
+          88,
+          56
+        ],
+        "door_world_px": [
+          6464,
+          3528
+        ],
+        "status": "RETAINED_ANCHOR",
+        "door_access": "Retain south door,16px link to saved harbour_road and separate east working court.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6432,
+              3472,
+              88,
+              56
+            ],
+            "cells": 77,
+            "ground": {
+              "meadow": 66,
+              "path": 11
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0004623629261394389,
+            "nonbuildable_cells": 11
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6424,
+              3464,
+              104,
+              72
+            ],
+            "cells": 117,
+            "ground": {
+              "meadow": 90,
+              "path": 27
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.001559621379801323,
+            "nonbuildable_cells": 27
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b007",
+        "block": "B",
+        "plot": "B02",
+        "source_form": "cottage",
+        "source_footprint_px": [
+          72,
+          48
+        ],
+        "rect_world_px": [
+          6432,
+          3616,
+          72,
+          48
+        ],
+        "door_world_px": [
+          6448,
+          3664
+        ],
+        "status": "RETAINED_ANCHOR_WITH_EXISTING_MACRO_CONFLICT",
+        "door_access": "Retain Fern door/footprint; existing macro crater protection/rim conflict prevents legality claim.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6432,
+              3616,
+              72,
+              48
+            ],
+            "cells": 54,
+            "ground": {
+              "building": 12,
+              "meadow": 34,
+              "path": 3,
+              "scorch": 1,
+              "shardglass": 4
+            },
+            "masks": {
+              "barrier": 9,
+              "hardbar": 0,
+              "keepout": 43,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 5
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0019598473565885593,
+            "nonbuildable_cells": 8
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6424,
+              3608,
+              88,
+              64
+            ],
+            "cells": 88,
+            "ground": {
+              "building": 18,
+              "meadow": 50,
+              "path": 9,
+              "scorch": 2,
+              "shardglass": 9
+            },
+            "masks": {
+              "barrier": 19,
+              "hardbar": 0,
+              "keepout": 62,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 11
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.002037922228533615,
+            "nonbuildable_cells": 20
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b010",
+        "block": "C",
+        "plot": "C03",
+        "source_form": "cottage",
+        "source_footprint_px": [
+          48,
+          72
+        ],
+        "rect_world_px": [
+          6184,
+          3232,
+          48,
+          72
+        ],
+        "door_world_px": [
+          6208,
+          3304
+        ],
+        "status": "MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN",
+        "door_access": "South door via16px link to existing garden_walk; west side garden, no private plot crossed.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6184,
+              3232,
+              48,
+              72
+            ],
+            "cells": 54,
+            "ground": {
+              "field": 5,
+              "hedge": 4,
+              "meadow": 45
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.00029504026566991775,
+            "nonbuildable_cells": 0
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6176,
+              3224,
+              64,
+              88
+            ],
+            "cells": 88,
+            "ground": {
+              "field": 11,
+              "hedge": 5,
+              "meadow": 72
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0003027207400769861,
+            "nonbuildable_cells": 0
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b011",
+        "block": "C",
+        "plot": "C04",
+        "source_form": "house",
+        "source_footprint_px": [
+          56,
+          88
+        ],
+        "rect_world_px": [
+          6352,
+          3240,
+          56,
+          88
+        ],
+        "door_world_px": [
+          6384,
+          3328
+        ],
+        "status": "MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN",
+        "door_access": "South door directly on proposed quiet16px spur joining existing garden_walk; east side garden.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6352,
+              3240,
+              56,
+              88
+            ],
+            "cells": 77,
+            "ground": {
+              "building": 30,
+              "meadow": 47
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0002629761507796213,
+            "nonbuildable_cells": 0
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6344,
+              3232,
+              72,
+              104
+            ],
+            "cells": 117,
+            "ground": {
+              "building": 30,
+              "meadow": 87
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0003042395084943092,
+            "nonbuildable_cells": 0
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b013",
+        "block": "B",
+        "plot": "B03",
+        "source_form": "shop",
+        "source_footprint_px": [
+          48,
+          88
+        ],
+        "rect_world_px": [
+          6552,
+          3472,
+          48,
+          88
+        ],
+        "door_world_px": [
+          6576,
+          3560
+        ],
+        "status": "CONDITIONAL_LITERAL_PATH_CONFLICT",
+        "door_access": "South door on native harbour_road north edge; conditional because one literal path cell remains beneath footprint.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6552,
+              3472,
+              48,
+              88
+            ],
+            "cells": 66,
+            "ground": {
+              "building": 6,
+              "meadow": 59,
+              "path": 1
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              4
+            ],
+            "max_slope": 0.0026924122193700654,
+            "nonbuildable_cells": 1
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6544,
+              3464,
+              64,
+              104
+            ],
+            "cells": 104,
+            "ground": {
+              "building": 12,
+              "meadow": 84,
+              "path": 8
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              4
+            ],
+            "max_slope": 0.0027800973453254094,
+            "nonbuildable_cells": 8
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier spread1 would require explicitly authored coherent terrace work; no levelling applied."
+        ]
+      },
+      {
+        "id": "crossroads-b022",
+        "block": "B",
+        "plot": "B04",
+        "source_form": "house",
+        "source_footprint_px": [
+          88,
+          48
+        ],
+        "rect_world_px": [
+          6320,
+          3640,
+          88,
+          48
+        ],
+        "door_world_px": [
+          6368,
+          3640
+        ],
+        "status": "CONDITIONAL_BARRIER_KEEPOUT_CONFLICT",
+        "door_access": "North door via16px link to market south-east return; conditional3barrier/2keepout cells, not accepted.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6320,
+              3640,
+              88,
+              48
+            ],
+            "cells": 66,
+            "ground": {
+              "meadow": 66
+            },
+            "masks": {
+              "barrier": 3,
+              "hardbar": 0,
+              "keepout": 2,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0006883759671177346,
+            "nonbuildable_cells": 0
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6312,
+              3632,
+              104,
+              64
+            ],
+            "cells": 104,
+            "ground": {
+              "meadow": 98,
+              "path": 2,
+              "scorch": 2,
+              "shardglass": 2
+            },
+            "masks": {
+              "barrier": 10,
+              "hardbar": 0,
+              "keepout": 11,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 4
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.0007278045532895835,
+            "nonbuildable_cells": 6
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b033",
+        "block": "B",
+        "plot": "B05",
+        "source_form": "house",
+        "source_footprint_px": [
+          96,
+          56
+        ],
+        "rect_world_px": [
+          6528,
+          3336,
+          96,
+          56
+        ],
+        "door_world_px": [
+          6576,
+          3392
+        ],
+        "status": "MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN",
+        "door_access": "South door via16px stem to the eastward arrival; exact outer road width/join remains unverified.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6528,
+              3336,
+              96,
+              56
+            ],
+            "cells": 84,
+            "ground": {
+              "garden": 7,
+              "meadow": 77
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              4,
+              5
+            ],
+            "max_slope": 0.003480780280080449,
+            "nonbuildable_cells": 0
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6520,
+              3328,
+              112,
+              72
+            ],
+            "cells": 126,
+            "ground": {
+              "garden": 17,
+              "hedge": 1,
+              "meadow": 108
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              5
+            ],
+            "max_slope": 0.0036061404219207838,
+            "nonbuildable_cells": 0
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier spread1 would require explicitly authored coherent terrace work; no levelling applied."
+        ]
+      },
+      {
+        "id": "crossroads-b035",
+        "block": "A",
+        "plot": "A04",
+        "source_form": "shop",
+        "source_footprint_px": [
+          64,
+          56
+        ],
+        "rect_world_px": [
+          6096,
+          3408,
+          64,
+          56
+        ],
+        "door_world_px": [
+          6128,
+          3464
+        ],
+        "status": "MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN",
+        "door_access": "South door onto24px west market lane, contiguous with native square; rear passage serves courts.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6096,
+              3408,
+              64,
+              56
+            ],
+            "cells": 56,
+            "ground": {
+              "meadow": 56
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              3
+            ],
+            "max_slope": 0.000512440788950389,
+            "nonbuildable_cells": 0
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6088,
+              3400,
+              80,
+              72
+            ],
+            "cells": 90,
+            "ground": {
+              "meadow": 90
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              4
+            ],
+            "max_slope": 0.0006592050935877548,
+            "nonbuildable_cells": 0
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier is uniform; native tier agreement remains separate."
+        ]
+      },
+      {
+        "id": "crossroads-b037",
+        "block": "A",
+        "plot": "A05",
+        "source_form": "shop",
+        "source_footprint_px": [
+          48,
+          64
+        ],
+        "rect_world_px": [
+          6032,
+          3400,
+          48,
+          64
+        ],
+        "door_world_px": [
+          6056,
+          3464
+        ],
+        "status": "MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN",
+        "door_access": "Same south frontage as035; a16px passage between the shops reaches rear service lane.",
+        "evidence": {
+          "footprint": {
+            "rect_world_px": [
+              6032,
+              3400,
+              48,
+              64
+            ],
+            "cells": 48,
+            "ground": {
+              "meadow": 48
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              4
+            ],
+            "max_slope": 0.0005170427112395926,
+            "nonbuildable_cells": 0
+          },
+          "one_cell_halo": {
+            "rect_world_px": [
+              6024,
+              3392,
+              64,
+              80
+            ],
+            "cells": 80,
+            "ground": {
+              "meadow": 80
+            },
+            "masks": {
+              "barrier": 0,
+              "hardbar": 0,
+              "keepout": 0,
+              "street": 0,
+              "taken": 0,
+              "crater_mask": 0
+            },
+            "tiers": [
+              3,
+              4
+            ],
+            "max_slope": 0.000679407939194464,
+            "nonbuildable_cells": 0
+          },
+          "regional_centreline_intersections": [],
+          "other_proposed_or_fixed_footprint_intersections": []
+        },
+        "unresolved": [
+          "Native floor/stair/collision/door traversal and final checker NOT RUN.",
+          "Literal inherited building paint is not an occupied-building identity; reconcile legacy paint before adoption.",
+          "Macro tier spread1 would require explicitly authored coherent terrace work; no levelling applied."
+        ]
+      }
+    ],
+    "shared_area_measurements": {
+      "market_west_public_lane": {
+        "rect_world_px": [
+          6016,
+          3464,
+          160,
+          24
+        ],
+        "cells": 60,
+        "ground": {
+          "meadow": 60
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          4
+        ],
+        "max_slope": 0.0009951234772971314,
+        "nonbuildable_cells": 0
+      },
+      "market_west_narrow_public_seam": {
+        "rect_world_px": [
+          6160,
+          3488,
+          16,
+          136
+        ],
+        "cells": 34,
+        "ground": {
+          "meadow": 19,
+          "path": 15
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0009743441267107504,
+        "nonbuildable_cells": 15
+      },
+      "A_rear_service_lane": {
+        "rect_world_px": [
+          6016,
+          3376,
+          256,
+          24
+        ],
+        "cells": 96,
+        "ground": {
+          "building": 15,
+          "meadow": 81
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          4
+        ],
+        "max_slope": 0.00040765926818838014,
+        "nonbuildable_cells": 0
+      },
+      "A_garden_band": {
+        "rect_world_px": [
+          6032,
+          3344,
+          128,
+          32
+        ],
+        "cells": 64,
+        "ground": {
+          "meadow": 64
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          4
+        ],
+        "max_slope": 0.00041986316758732534,
+        "nonbuildable_cells": 0
+      },
+      "C_quiet_walk_spur": {
+        "rect_world_px": [
+          6296,
+          3328,
+          104,
+          16
+        ],
+        "cells": 26,
+        "ground": {
+          "meadow": 20,
+          "path": 6
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.00016499383873059956,
+        "nonbuildable_cells": 6
+      },
+      "B_harbour_front_apron": {
+        "rect_world_px": [
+          6520,
+          3552,
+          32,
+          8
+        ],
+        "cells": 4,
+        "ground": {
+          "building": 3,
+          "meadow": 1
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0021502902516890633,
+        "nonbuildable_cells": 0
+      },
+      "B_east_court": {
+        "rect_world_px": [
+          6520,
+          3448,
+          32,
+          104
+        ],
+        "cells": 52,
+        "ground": {
+          "building": 3,
+          "meadow": 35,
+          "path": 14
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          4
+        ],
+        "max_slope": 0.0022567156341014743,
+        "nonbuildable_cells": 14
+      },
+      "A_west_passage": {
+        "rect_world_px": [
+          6080,
+          3392,
+          16,
+          96
+        ],
+        "cells": 24,
+        "ground": {
+          "meadow": 24
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          4
+        ],
+        "max_slope": 0.000994580720676976,
+        "nonbuildable_cells": 0
+      },
+      "A_library_rear_garden": {
+        "rect_world_px": [
+          6176,
+          3344,
+          96,
+          32
+        ],
+        "cells": 48,
+        "ground": {
+          "meadow": 48
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0003426034669745395,
+        "nonbuildable_cells": 0
+      },
+      "A_library_rear_apron": {
+        "rect_world_px": [
+          6176,
+          3400,
+          96,
+          8
+        ],
+        "cells": 12,
+        "ground": {
+          "building": 5,
+          "meadow": 7
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.00037282737429248795,
+        "nonbuildable_cells": 0
+      },
+      "A_bakery_west_garden": {
+        "rect_world_px": [
+          6000,
+          3488,
+          80,
+          48
+        ],
+        "cells": 60,
+        "ground": {
+          "meadow": 60
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0010858697265774396,
+        "nonbuildable_cells": 0
+      },
+      "A_herbalist_west_garden": {
+        "rect_world_px": [
+          6000,
+          3576,
+          80,
+          48
+        ],
+        "cells": 60,
+        "ground": {
+          "meadow": 60
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0008579494256164017,
+        "nonbuildable_cells": 0
+      },
+      "A_herbalist_public_link": {
+        "rect_world_px": [
+          6144,
+          3624,
+          32,
+          16
+        ],
+        "cells": 8,
+        "ground": {
+          "meadow": 8
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0006227907205203032,
+        "nonbuildable_cells": 0
+      },
+      "C_north_cottages_rear_garden": {
+        "rect_world_px": [
+          6320,
+          3344,
+          96,
+          64
+        ],
+        "cells": 96,
+        "ground": {
+          "meadow": 90,
+          "path": 6
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.00017524100931098658,
+        "nonbuildable_cells": 6
+      },
+      "C010_west_side_garden": {
+        "rect_world_px": [
+          6152,
+          3240,
+          32,
+          64
+        ],
+        "cells": 32,
+        "ground": {
+          "field": 4,
+          "meadow": 28
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.00032672703667286745,
+        "nonbuildable_cells": 0
+      },
+      "C010_rear_court": {
+        "rect_world_px": [
+          6184,
+          3224,
+          48,
+          8
+        ],
+        "cells": 6,
+        "ground": {
+          "field": 3,
+          "hedge": 1,
+          "meadow": 2
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.00026334010876555275,
+        "nonbuildable_cells": 0
+      },
+      "C010_door_link": {
+        "rect_world_px": [
+          6200,
+          3304,
+          16,
+          24
+        ],
+        "cells": 6,
+        "ground": {
+          "meadow": 6
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0002804233036346968,
+        "nonbuildable_cells": 0
+      },
+      "C011_east_side_garden": {
+        "rect_world_px": [
+          6408,
+          3240,
+          40,
+          88
+        ],
+        "cells": 55,
+        "ground": {
+          "garden": 4,
+          "meadow": 51
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.00037633973276794545,
+        "nonbuildable_cells": 0
+      },
+      "C011_rear_court": {
+        "rect_world_px": [
+          6352,
+          3224,
+          56,
+          16
+        ],
+        "cells": 14,
+        "ground": {
+          "meadow": 14
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.00028728813297668627,
+        "nonbuildable_cells": 0
+      },
+      "B013_rear_court": {
+        "rect_world_px": [
+          6552,
+          3456,
+          48,
+          16
+        ],
+        "cells": 12,
+        "ground": {
+          "meadow": 1,
+          "path": 11
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          4,
+          4
+        ],
+        "max_slope": 0.0026919525051682307,
+        "nonbuildable_cells": 11
+      },
+      "B022_tapered_rear_garden": {
+        "rect_world_px": [
+          6320,
+          3688,
+          64,
+          32
+        ],
+        "cells": 32,
+        "ground": {
+          "meadow": 26,
+          "path": 6
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0005909304435015873,
+        "nonbuildable_cells": 6
+      },
+      "B033_rear_garden": {
+        "rect_world_px": [
+          6528,
+          3296,
+          96,
+          40
+        ],
+        "cells": 60,
+        "ground": {
+          "field": 1,
+          "garden": 3,
+          "hedge": 1,
+          "meadow": 55
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          4,
+          5
+        ],
+        "max_slope": 0.003671611035901346,
+        "nonbuildable_cells": 0
+      },
+      "B033_door_link": {
+        "rect_world_px": [
+          6568,
+          3392,
+          16,
+          48
+        ],
+        "cells": 12,
+        "ground": {
+          "meadow": 12
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          4,
+          4
+        ],
+        "max_slope": 0.0028078313390803877,
+        "nonbuildable_cells": 0
+      },
+      "B006_smithy_door_link": {
+        "rect_world_px": [
+          6456,
+          3528,
+          16,
+          32
+        ],
+        "cells": 8,
+        "ground": {
+          "meadow": 7,
+          "path": 1
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0005663408247701612,
+        "nonbuildable_cells": 1
+      },
+      "B022_market_door_link": {
+        "rect_world_px": [
+          6360,
+          3624,
+          16,
+          16
+        ],
+        "cells": 4,
+        "ground": {
+          "meadow": 4
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.0006970757259656319,
+        "nonbuildable_cells": 0
+      },
+      "C_market_axis_completion": {
+        "rect_world_px": [
+          6280,
+          3400,
+          32,
+          48
+        ],
+        "cells": 24,
+        "ground": {
+          "meadow": 7,
+          "path": 17
+        },
+        "masks": {
+          "barrier": 0,
+          "hardbar": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "crater_mask": 0
+        },
+        "tiers": [
+          3,
+          3
+        ],
+        "max_slope": 0.00031838717425466875,
+        "nonbuildable_cells": 17
+      }
+    },
+    "actual_conflicts": [
+      {
+        "id": "Ferns-native-macro",
+        "status": "EXISTING_NOT_FIXED",
+        "footprint": [
+          6432,
+          3616,
+          72,
+          48
+        ],
+        "keepout_cells": 43,
+        "barrier_cells": 9,
+        "crater_mask_cells": 5,
+        "ground": "meadow34/path3/building12/shardglass4/scorch1; native craterrect[6448,3688,72,48] starts24px below cottage bottom3664",
+        "source": "geo53.py44-47,130-174 centre6484,3712/bowlr36; geo55.py847-848 keepoutdisc90",
+        "unapplied_reconciliation": "Reconcile broader procedural rim/scorch/protection coherently with unchanged native cottage/door/park and crater centre/bowl/story. No punched keepout hole or terrain/mask edit is authorised by this proposal."
+      },
+      {
+        "id": "Macro-north-through-hut",
+        "status": "EXISTING_NOT_FIXED",
+        "affected": "crossroads-b001",
+        "evidence": "saved Valley lane north centreline intersects retained footprint; native garden_walk/step axis is different",
+        "unapplied_reconciliation": "Align the local macro north approach to the native garden approach/stair around the hut, preserving outer route joins. Exact corridor/water/grade and width proof still required."
+      },
+      {
+        "id": "Macro-west-through-herbalist",
+        "status": "EXISTING_NOT_FIXED",
+        "affected": "crossroads-b005",
+        "evidence": "saved Valley lane west centreline intersects retained footprint",
+        "unapplied_reconciliation": "Join macro west approach to native halt_road and preserve closed halt/refusal state; no detour through green, private plots or new river crossing assumed."
+      },
+      {
+        "id": "013-path",
+        "status": "CANDIDATE_CONDITIONAL",
+        "rect": [
+          6552,
+          3472,
+          48,
+          88
+        ],
+        "evidence": "one literal path cell and six inherited building-paint cells, despite zero street/barrier/keepout masks",
+        "unapplied_reconciliation": "Shop moved8px south to native harbour street edge, reducing6pathcells to1. Remaining path provenance/width and rear public serviceway must be reconciled before footprint acceptance."
+      },
+      {
+        "id": "022-return",
+        "status": "CANDIDATE_CONDITIONAL",
+        "rect": [
+          6320,
+          3640,
+          88,
+          48
+        ],
+        "evidence": "new south-east market return avoids former Lull-side7pathcells but intersects3barrier/2keepout cells; halo10barrier/11keepout",
+        "unapplied_reconciliation": "Show as dashed conditional alternative, not accepted house. Resolve actual scorch/protection contour with park/story intact, or revise this one frontage deliberately in the next geometry pass."
+      }
+    ],
+    "design_revision_history": [
+      "r1 C011[6352,3208,56,88] hit6north-disc keepout cells; moved32south to front quiet spur, final footprint+halo0protectedmasks.",
+      "r1 A garden band y3336 included13woodland-edge keepout cells; north boundary trimmed8px to3344, protected ground untouched.",
+      "B013 moved8south to direct harbour frontage; one path cell remains explicit conflict.",
+      "B022 moved off Lull-side path to south-east market return; new conflict explicitly retained, no search/packing rescue."
+    ],
+    "not_proved": [
+      "No native placement/export/checker, door/walk/collision, current art/Y12 or gameplay camera acceptance.",
+      "No exact gate line/rail footprint/closed return-loop proof; D/E/F/G and mill not fitted.",
+      "Existing cap40/geoexpected40 unchanged; later legitimate41adoption must reconcile accounting deliberately."
+    ],
+    "bounded_probe": {
+      "wall_seconds": 0.066,
+      "peak_rss_bytes": 18169856
+    },
+    "input_guards": {
+      "capture.json": "ba68fc26d029ed85e53b4ad69feb426cf9a88ec5ea61a10d180d822be0cc5b7a",
+      "before.npz": "95574230bb4474fa3a931ba6167fa521d609107ae79fff3f7e7022e327d7d527",
+      "source/game/data/plans/crossroads.json": "cee996a1d28ce4e3523eca541522aae3e05c61c59252496b7aa9eeb334487dec"
+    },
+    "input_guards_after": "ALL3exact"
+  }
 }

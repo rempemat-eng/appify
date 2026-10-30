@@ -1,6 +1,6 @@
 # Crossroads block-and-plot proposal
 
-**Conceptual / unscaled / not placed / not approved.** One proposed town structure for Matt to review, following [the layout study](https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal). This is the seventeenth- to early nineteenth-century market/mill town, not Hearthold's medieval castle borough. It retains the current house style, soft grid, game rules and building-size requirements.
+**Partial measured A/B/C candidate / D–G unscaled / not placed / not approved.** One proposed town structure for Matt to review, following [the layout study](https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal). This is the seventeenth- to early nineteenth-century market/mill town, not Hearthold's medieval castle borough. It retains the current house style, soft grid, game rules and building-size requirements.
 
 The preferred plan is a **compact market widening with connected mixed fronts, deep plots and service backs**, then a lower mill/grain quarter and two distinct goods approaches. New groups complete streets and corners around the existing gameplay core. They do not extend the rejected pattern of isolated rectangles across broad grass.
 
@@ -10,7 +10,7 @@ The companion [JSON](crossroads-block-plan.json) is a human-review proposal side
 
 ## Retained facts and limits
 
-This proposal starts from PR381 source `3818de444d24c95c50daedd6e547a78bd0436551`, after the workflow-only handoff. The preceding Granary extension remains **only a placement diagnostic**. Its requirement to preserve the failed layout's first nineteen positions belongs to that engineering experiment; it does not make those nineteen positions an approved masterplan. Here, records 1–7 remain measured gameplay anchors; records 8–40 receive future block/plot assignments, with no new coordinates.
+This proposal starts from PR381 source `3818de444d24c95c50daedd6e547a78bd0436551`, after the workflow-only handoff. The preceding Granary extension remains **only a placement diagnostic**. Its requirement to preserve the failed layout's first nineteen positions belongs to that engineering experiment; it does not make those nineteen positions an approved masterplan. Here, records 1–7 remain measured gameplay anchors; records 8–40 retain their block/plot assignments. The measured A/B/C sidecar section below now supplies candidate coordinates for seven of them; other D–G and mill geometry stays null.
 
 The durable R6 actual capture is from `87ea22a4be342e3b8009b1c9b922c2fb7db56711`; `capture.json` SHA256 is `ba68fc26d029ed85e53b4ad69feb426cf9a88ec5ea61a10d180d822be0cc5b7a`. Unchanged replay later reproduced all 15 comparisons, 49 arrays and 168 support records. That verifies the failed input, not this proposal. Its producer stopped with 19 records and IDs20–23 queued; later24–40 were not attempted.
 
@@ -143,6 +143,37 @@ This is the unchanged source ledger of forty records, not forty placed or inhabi
 | `crossroads-mill-candidate` | 1 / F11 in Mill End; candidate town total41 | Sleepwater working face → mill → grain handling → Mill Street goods approach | Proposed representation only. Logical ID, legacy identity mapping, geometry, coordinates, footprint, plot dimensions, foot, door and location are `null`; orientation unassigned and terrain/water reach UNKNOWN. |
 
 All forty retained records, their source forms/footprints/bays, seven measured gameplay anchors and old smithy remain unchanged. F11 is a plot label in an unscaled proposal, not a measured polygon or an extra adopted mill.
+
+
+## Measured market-quarter candidate — partial fit
+
+This first flat plan measures **A/B/C only** against the real saved BEFORE crop, retaining all seven native anchor rectangles and doors. Fourteen records are shown: seven anchors and seven candidate buildings. D/E/F/G and the separate mill remain unplaced. The original forty-record ledger and candidate total41 are unchanged. The sidecar's `measured_market_fit` section is proposal evidence, not a runtime schema or adoption packet.
+
+The west approach gains two south-facing shops, a24px public lane into the square, and a16px passage between them to a rear service lane. Garden backs follow the protected woodland edge. North homes face the existing garden walk and a quiet16px spur, with side gardens; they do not turn the garden into a loading yard. An east shop faces the native harbour road, and a house turns the northern arrival. A dashed alternative house closes the south-east market return. The native market, green, crater and garden stair stay recognisable and open.
+
+| Candidate | World rectangle x,y,w,h | Door | Actual footprint evidence / disposition |
+|---|---|---|---|
+| `crossroads-b010` / C03 | `[6184, 3232, 48, 72]` | `[6208, 3304]` | barrier0, keepout0, literalpath0; tiers[3, 3]; MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN |
+| `crossroads-b011` / C04 | `[6352, 3240, 56, 88]` | `[6384, 3328]` | barrier0, keepout0, literalpath0; tiers[3, 3]; MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN |
+| `crossroads-b013` / B03 | `[6552, 3472, 48, 88]` | `[6576, 3560]` | barrier0, keepout0, literalpath1; tiers[3, 4]; CONDITIONAL_LITERAL_PATH_CONFLICT |
+| `crossroads-b022` / B04 | `[6320, 3640, 88, 48]` | `[6368, 3640]` | barrier3, keepout2, literalpath0; tiers[3, 3]; CONDITIONAL_BARRIER_KEEPOUT_CONFLICT |
+| `crossroads-b033` / B05 | `[6528, 3336, 96, 56]` | `[6576, 3392]` | barrier0, keepout0, literalpath0; tiers[4, 5]; MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN |
+| `crossroads-b035` / A04 | `[6096, 3408, 64, 56]` | `[6128, 3464]` | barrier0, keepout0, literalpath0; tiers[3, 3]; MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN |
+| `crossroads-b037` / A05 | `[6032, 3400, 48, 64]` | `[6056, 3464]` | barrier0, keepout0, literalpath0; tiers[3, 4]; MEASURED_DRY_CANDIDATE_NATIVE_FIT_UNPROVEN |
+
+All fourteen footprint rectangles are pairwise disjoint, and original ordered dimensions are retained. Rectangles/area boundaries use8px world cells; inherited bakery/herbalist doors at x6148 are kept exactly. Cell masks and one-cell halos are recorded separately for every record. Five new footprints have no literal path, barrier, keepout, street or taken conflict. That is a useful measured offer, **not native acceptance**: inherited overview building paint still needs identity reconciliation, two candidates require coherent terracing, native floor/collider/door checks are unrun, and nominal route width/door contacts need later checking.
+
+**The two east/return candidates remain conditional.** Shop013 was deliberately moved8px south to front the native harbour street edge, reducing six literal-path cells to one; the remaining cell is not ignored because `street` happens to be false. House022 was moved from the narrow Lull-side strip to a south-east market return. Its new footprint contains3barrier/2keepout cells, so it is drawn dashed rather than accepted. No density packing, footprint shrinking, terrain filling or manual-placement bypass was used to turn these into passes.
+
+**Existing native/macro conflicts also remain visible.** Ferns cottage007 intersects43 of54 macro keepout cells,9barrier cells and5crater-mask cells, including four shardglass and one scorch cell. Its native rectangle ends3664; the native crater rectangle starts3688,24px lower. The explicit macro crater centre is6484,3712, bowl radius36 (`geo53.py44–47,130–174`), with a broader90px protection disc (`geo55.py847–848`). Separately, saved macro north/west centrelines cut the fixed hut/herbalist footprints despite the native garden/halt routes. Fixed anchors are not moved to conceal those mismatches.
+
+The **unapplied reconciliation proposal** is to fit the procedural crater rim/scorch/protection coherently around the unchanged native cottage, crater bowl/centre/story and park approach, and align local macro arrivals with the existing native garden/stair and halt-road axes while preserving outer route joins and the closed halt. This requires actual ground, masks, tiers, route widths, doors and access to agree. It is not permission to punch holes in keepouts or erase paths. No such change has been applied; the flat plan overlays candidates on the original terrain, with conflicts highlighted.
+
+The north house's first candidate hit six protected north-disc cells; shifting it32px south makes it face the quiet spur and leaves its final footprint/halo clear. The initial west garden band touched13protected woodland-edge cells, so its boundary stops8px farther south. These deliberate design revisions and earlier measurements are retained in the evidence packet; protected cells were not cleared.
+
+The next scope is one coherent terrain/route reconciliation and native authoring test for this market quarter, followed by the two conditional frontages. It must preserve all seven anchors, names and story states and cannot use `Town.free`'s manual grade/barrier bypass as acceptance. Cap40/expected40 in the frozen producer remain unchanged; later adoption of the legitimate41-building candidate must reconcile them explicitly. No D–G/mill fit, whole-world generation, native placement/export/checker, camera/art/Y12/Ready/merge or Matt approval is claimed.
+
+GO6533855827 / ASSIGN6533865862 / ACK6533866313. Actual cropped stdlib probes remained below64MiB/30seconds/4MiB, with unchanged source input hashes. The accompanying actual-cell flat SVG is the reviewable geometry offer; it is not finished game art.
 
 ## Review and next scope
 
