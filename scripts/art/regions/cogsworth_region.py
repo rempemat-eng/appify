@@ -162,9 +162,15 @@ POCKET_TRODS = [
     ('Foothill Road', 'a resident fishing', [(7576, 2736), (7576, 2960), (7680, 2960)], (7696, 2960)),
     ('Foothill Road', 'a story detail: a buried bell', [(7512, 2720), (7320, 2720), (7320, 2752)], (7216, 2752)),
 ]
-# Side paths round an obstacle, inside the box (lane G's leave the box here)
-SIDE_TRODS = [
-    ('Towpath', 'a fallen tree: the way round, south to lane G', [(8496, 3168), (8448, 3168), (8448, 3296)]),
+# Side paths round an obstacle inside the box. The Towpath's fallen tree (8384, 3465) lies in
+# Claude I's lull-delta box, not lane G's land (g-to-h-towpath-side, 25 Oct), so its way round is
+# I's to draw where it leaves the Towpath; none crosses this box's edge.
+SIDE_TRODS = []
+# Trods into the camps that no route touches (region_plan #262: an arena is touched by a path, so
+# the player walks into it): (route it leaves, why, points, dead end)
+CAMP_TRODS = [
+    ('High Fells', "east along the bench from the north gate to the spoil heap's loop", [(7824, 1944), (8064, 1944)], 'story'),
+    ('Towpath', 'east off the Towpath into the tipple yard above the Narrows', [(8456, 2840), (8560, 2840)], 'view'),
 ]
 # The pocket inside the town box, laid by the town's plan
 POCKETS_IN_TOWN = [('Towpath', 'a view down the Cog from the riverside quay', (8016, 2856))]
@@ -605,6 +611,8 @@ def export_plan(L=None) -> dict:
         pockets.append({'holds': holds, 'at': [cx, cy], 'trod': tid})
     for i, (name, why, pts) in enumerate(SIDE_TRODS):
         trods.append({'id': f'{rid[name]}_side_{i}', 'why': why, 'width': 24, 'points': [list(p) for p in pts]})
+    for i, (name, why, pts, end) in enumerate(CAMP_TRODS):
+        trods.append({'id': f'{rid[name]}_camp_{i}', 'why': why, 'width': 24, 'points': [list(p) for p in pts], 'dead_end': end})
     for name, holds, (cx, cy) in POCKETS_IN_TOWN:
         town_pockets.append({'holds': holds, 'at': [cx, cy], 'route': name,
                              'note': "inside the town box: laid by the town's plan on the riverside quay"})
@@ -664,7 +672,7 @@ def export_plan(L=None) -> dict:
     out['screen'] = {'size': list(SCREEN), 'why': '960 x 540 art at density 3 (docs/godot.md)'}
     out['screens'] = [{'id': i, 'rect': [x, y, *SCREEN], 'what': w} for i, x, y, w in SCREENS]
     out['camps'] = [{'id': i, 'arena': [x0, y0, x1 - x0, y1 - y0], 'tier': int(L['tier'][((y0 + y1) // 2 - Y0) // CELL, ((x0 + x1) // 2 - X0) // CELL]) - BASE,
-                     'roles': roles, 'cover': [{'what': w, 'rect': [a, b, c - a, d - b]} for w, (a, b, c, d) in cov], 'why': why}
+                     'roles': roles, 'enemies': _enemies(x0, y0, x1, y1, roles, cov), 'cover': [{'what': w, 'rect': [a, b, c - a, d - b]} for w, (a, b, c, d) in cov], 'why': why}
                     for i, x0, y0, x1, y1, roles, cov, why in CAMPS]
     out['dungeon'] = dict(DUNGEON, at=list(DUNGEON['at']), door=[DUNGEON['door'][0], DUNGEON['door'][1],
                                                                DUNGEON['door'][2] - DUNGEON['door'][0], DUNGEON['door'][3] - DUNGEON['door'][1]])
@@ -704,7 +712,23 @@ def _pocket_trods():
         out.setdefault(name, []).append((list(pts) + [clearing], _route_tier_at(name, *pts[0])))
     for name, why, pts in SIDE_TRODS:
         out.setdefault(name, []).append((list(pts), _route_tier_at(name, *pts[0])))
+    for name, why, pts, _end in CAMP_TRODS:
+        out.setdefault(name, []).append((list(pts), _route_tier_at(name, *pts[0])))
     return out
+
+
+def _enemies(x0, y0, x1, y1, roles, cover):
+    """Where each creature waits: spread across the arena's middle on a 16 px lattice, off its
+    cover, the first the furthest from the arena's south edge (the way in)."""
+    spots = [(x, y) for y in range(y0 + 24, y1 - 15, 16) for x in range(x0 + 24, x1 - 15, 16)
+             if not any(a - 8 <= x <= c + 8 and b - 8 <= y <= d + 8 for _w, (a, b, c, d) in cover)]
+    out = []
+    for _r in roles:
+        best = max(spots, key=lambda p: min([abs(p[0] - q[0]) + abs(p[1] - q[1]) for q in out] or [10 ** 6]) * 4
+                   + (y1 - p[1]))
+        out.append(best)
+        spots.remove(best)
+    return [list(p) for p in out]
 
 
 def preview(L=None, scale=0.5):
