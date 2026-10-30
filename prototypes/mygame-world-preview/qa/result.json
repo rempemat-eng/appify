@@ -1,0 +1,26 @@
+{
+  "characters": 14,
+  "clipsChecked": 239,
+  "errors": [],
+  "movement": {
+    "before": {
+      "x": 378,
+      "y": 1602
+    },
+    "after": {
+      "x": 397.9960000000001,
+      "y": 1602
+    }
+  },
+  "missingDirectionVisible": true,
+  "fhd": {
+    "logical": [
+      960,
+      540
+    ],
+    "display": [
+      1920,
+      1080
+    ]
+  }
+}
