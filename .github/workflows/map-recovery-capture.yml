@@ -64,7 +64,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # Reuse the exact literal source guard already exercised by Contracts17;
+          # Reuse the reviewed source/font guard with current helper/test pins;
           # no alternate supervisor, dependency source, font or project shim.
           python -I -B - <<'PY'
           import ast, os
@@ -223,7 +223,7 @@ jobs:
               controller_exit = None
               errors.append(dict(file='controller.exit', error=repr(error)))
           owned = sum(p.stat().st_blocks * 512 for p in evidence.rglob('*') if p.is_file())
-          expected_failure = core.get('comparison_target', {}).get('original_error') is True
+          expected_failure = all(core.get('comparison_target', {}).get(key) is True for key in ('trial125', 'records19', 'queue20_23', 'original_error'))
           world_failed = core.get('world_state') == 'FAILED' and core.get('producer_outcome', {}).get('kind') == 'EXCEPTION'
           complete = (not errors and controller_exit == 1
               and result.get('world_success') is False and result.get('capture_complete') is True and core.get('complete') is True
@@ -232,8 +232,9 @@ jobs:
               and canary.get('ran') == 17 and canary.get('passed') is True
               and receipt.get('retrieved_bytes_verified') is True and owned <= 128*1024**2)
           value = dict(kind='NEW_R6_REPLACEMENT', event_source_sha=os.environ['EXPECTED_SOURCE_SHA'],
-              diagnostic_complete=complete, expected_original_failure=expected_failure,
-              expected_world_failure_observed=world_failed and result.get('raw_exit') == 1 and expected_failure,
+              diagnostic_complete=complete, expected_baseline=expected_failure,
+              expected_original_failure=core.get('comparison_target', {}).get('original_error') is True,
+              expected_world_failure_observed=world_failed and result.get('raw_exit') == 1 and core.get('comparison_target', {}).get('original_error') is True,
               world_success=False, actual_world_state=core.get('world_state', 'UNKNOWN'),
               producer_outcome=core.get('producer_outcome'), comparison_target=core.get('comparison_target'),
               actual_controller_exit=controller_exit, actual_result=result, portable_byte_receipt=receipt, errors=errors,
@@ -248,8 +249,8 @@ jobs:
           (evidence / 'artifact-manifest.json').write_text(json.dumps(dict(files=files, event_source_sha=os.environ['EXPECTED_SOURCE_SHA'],
               complete_handoff=False, independent_byte_retrieval_required=True), sort_keys=True, indent=2)+'\n')
           with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
-              output.write(state+'\n\nWorld success: false\n\nExpected original failure: '+str(expected_failure)+'\n\n'+value['next']+'\n')
-          raise SystemExit(0 if complete and value['expected_world_failure_observed'] else 1)
+              output.write(state+'\n\nWorld success: false\n\nExpected baseline: '+str(expected_failure)+'\n\n'+value['next']+'\n')
+          raise SystemExit(0 if complete and expected_failure and value['expected_world_failure_observed'] else 1)
           PY
 
       - name: Upload portable actual inputs and all early/partial evidence, including hidden source

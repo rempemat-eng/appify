@@ -15,7 +15,7 @@ and results. A local ZIP is NOT a completed handoff: upload it and have another
 workspace/reviewer retrieve and verify its actual bytes before proceeding.
 """
 from collections import OrderedDict
-from contextlib import ExitStack
+from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from unittest.mock import patch
 import argparse
@@ -31,9 +31,12 @@ import resource
 import runpy
 import secrets
 import selectors
+import shutil
 import signal
+import stat
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import traceback
@@ -108,6 +111,38 @@ def json_read(path):
     return json.loads(path.read_text())
 
 
+def owned_blocks(folder, recursive=True):
+    """Sample only mutable owned output; a vanished entry is no longer allocated.
+
+    One lstat per entry avoids is_file/stat races and refuses symlinks rather
+    than following them. Missing roots, permissions and other I/O still fail.
+    This is never used to verify canonical source or portable input identities.
+    """
+    root = Path(folder)
+    if stat.S_ISLNK(root.lstat().st_mode):
+        raise CaptureError('owned output root symlink refused')
+    pending, total = [root], 0
+    while pending:
+        directory = pending.pop()
+        try:
+            for path in directory.iterdir():
+                try:
+                    metadata = path.lstat()
+                except FileNotFoundError:
+                    continue  # Actual mutable entry vanished after enumeration.
+                if stat.S_ISLNK(metadata.st_mode):
+                    raise CaptureError('owned output symlink refused: ' + str(path))
+                if stat.S_ISREG(metadata.st_mode):
+                    total += metadata.st_blocks * 512
+                elif recursive and stat.S_ISDIR(metadata.st_mode):
+                    pending.append(path)
+        except FileNotFoundError:
+            if directory == root:
+                raise
+            # A previously observed owned child directory was removed.
+    return total
+
+
 def write_json(path, value):
     """Atomic partial/final metadata, bounded BEFORE committing the new state."""
     path = Path(path)
@@ -122,7 +157,7 @@ def write_json(path, value):
             handle.write(data)
             handle.flush()
             os.fsync(handle.fileno())
-        if sum(p.stat().st_blocks * 512 for p in path.parent.rglob('*') if p.is_file()) > MAX_PACKET:
+        if owned_blocks(path.parent) > MAX_PACKET:
             raise CaptureError('packet allocation bound exceeded before metadata commit')
         temp.replace(path)
     finally:
@@ -221,7 +256,7 @@ def snapshot(T, box, path, required_only=False):
         N.savez_compressed(handle, **arrays)
         handle.flush()
         os.fsync(handle.fileno())
-    if sum(p.stat().st_blocks * 512 for p in Path(path).parent.iterdir() if p.is_file()) > MAX_PACKET:
+    if owned_blocks(Path(path).parent, recursive=False) > MAX_PACKET:
         temp.unlink()
         raise CaptureError('packet bound exceeded before NPZ commit')
     temp.replace(path)
@@ -884,6 +919,54 @@ def preview(folder, allocation):
         'file': path.name, 'sha256': sha(path), 'label': 'DIAGNOSTIC', 'art_approval': False, 'world_success': False})
 
 
+@contextmanager
+def preflight_inputs(folder):
+    """Retain mandatory receiving fixtures before their original cleanup.
+
+    Same copy/digest/owned-finalizer protocol as the reviewed hosted receiver;
+    errors remain separate from the original unittest result and block producer.
+    """
+    folder = Path(folder)
+    temporary = Path(os.environ['TMPDIR'])
+    state = {'retained_inputs': [], 'input_retention_errors': []}
+    original_cleanup = tempfile.TemporaryDirectory.cleanup
+
+    def preserve_fixture_then_cleanup(directory):
+        source = Path(directory.name)
+        target = folder / 'preflight-inputs' / str(len(state['retained_inputs']) + len(state['input_retention_errors']))
+        owned, copied = source.is_relative_to(temporary), False
+        try:
+            if not owned:
+                raise CaptureError('prerequisite input outside private TMP')
+            if source.exists():
+                if owned_blocks(folder) + owned_blocks(source) > MAX_PACKET:
+                    raise CaptureError('prerequisite input retention allocation bound')
+                shutil.copytree(source, target)
+                digest = lambda root: {str(p.relative_to(root)): sha(p) for p in root.rglob('*') if p.is_file()}
+                if digest(source) != digest(target) or owned_blocks(folder) > MAX_PACKET:
+                    raise CaptureError('prerequisite input copy identity/allocation mismatch')
+                state['retained_inputs'].append(str(target.relative_to(folder)))
+            copied = True
+        except Exception as error:
+            detached, detach_error = False, None
+            if owned:
+                try:
+                    directory._finalizer.detach()
+                    detached = True
+                except Exception as finalizer_error:
+                    detach_error = repr(finalizer_error)
+            state['input_retention_errors'].append(dict(original=str(source), partial_copy=str(target),
+                original_retained=owned and detached and source.exists(), finalizer_detached=detached,
+                error=repr(error), detach_error=detach_error))
+            best_effort_json(folder / 'preflight-input-retention.json', state)
+        finally:
+            if copied:
+                original_cleanup(directory)
+
+    with patch.object(tempfile.TemporaryDirectory, 'cleanup', preserve_fixture_then_cleanup):
+        yield state
+
+
 def worker(folder, allocation):
     current = source_guard(allocation.get('production_overrides'))
     if current['head'] != allocation['head'] or current['source_sha256'] != allocation['source_sha256']:
@@ -903,10 +986,13 @@ def worker(folder, allocation):
         return
     suite_module = runpy.run_path(str(Path(__file__).with_name('test_map_failure_capture.py')), run_name='new_R6_contract_definitions')
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(suite_module['Contracts'])
-    tested = unittest.TextTestRunner(verbosity=2).run(suite)
+    with preflight_inputs(folder) as inputs:
+        tested = unittest.TextTestRunner(verbosity=2).run(suite)
+    passed = tested.wasSuccessful() and not inputs['input_retention_errors']
     write_json(folder / 'cheap-preflight.json', {'source': 'NEW R6 contracts, not repeated historical24+12+3',
-        'ran': tested.testsRun, 'passed': tested.wasSuccessful(), 'real_T_inventory': 'NOT_YET_AVAILABLE'})
-    if not tested.wasSuccessful():
+        'ran': tested.testsRun, 'passed': passed, 'actual_unittest_success': tested.wasSuccessful(),
+        'real_T_inventory': 'NOT_YET_AVAILABLE', **inputs})
+    if not passed:
         raise CaptureError('cheap R6 prerequisites failed; no data_stage')
     sys.path.insert(0, str(BLOCKOUT))
     import geo5 as g
@@ -1019,7 +1105,7 @@ def run_capture(allocation_path, out):
                 except Exception:
                     if time.monotonic() - start > 10:
                         reason = 'resource_telemetry_missing_stale_or_invalid'
-                if sum(p.stat().st_blocks * 512 for p in out.rglob('*') if p.is_file()) > MAX_OWNED // 2:
+                if owned_blocks(out) > MAX_OWNED // 2:
                     reason = 'owned_bound_before_portable'
                 peak_anon = max(peak_anon, shared_anon())
                 if peak_anon > int(4.2 * 1024**3):
