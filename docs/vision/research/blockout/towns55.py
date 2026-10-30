@@ -2137,7 +2137,7 @@ def _feedback_crossroads(T, X):
     t.street([(6256, 3808), (6256, 4384)], 'main', name='Mill Street')
     t.street([(5968, 3808), (5968, 4320)], 'side', name='Halt Road')
     t.street([(5808, 3936), (6256, 3936)], 'side', name='the halt link')
-    t.street([(6120, 3936), (6768, 3936)], 'side', name='Granary Row')
+    t.street([(6120, 3936), (7008, 3936)], 'side', name='Granary Row')
     t.street([(6120, 4160), (6768, 4160)], 'lane', name='Weir Lane')
     t.street([(6528, 3832), (6528, 4384)], 'side', name='Orchard Lane')
     t.street([(5984, 3440), (5984, 3808)], 'lane', name='West Lane')
@@ -2150,7 +2150,8 @@ def _feedback_crossroads(T, X):
     _feedback_rows(t, inventory[7:23], [('y', 6256, 3832, 4384, -1, 'Mill Street west'),
                                       ('y', 6256, 3832, 4384, 1, 'Mill Street east'),
                                       ('y', 6528, 3832, 4384, 1, 'Orchard Lane east'),
-                                      ('y', 6528, 3832, 4384, -1, 'Orchard Lane west')])
+                                      ('y', 6528, 3832, 4384, -1, 'Orchard Lane west'),
+                                      ('x', 3936, 6608, 7008, 1, 'Granary Row south')])
     _feedback_rows(t, inventory[23:29], [('y', 5968, 3832, 4288, -1, 'Halt Road west'),
                                        ('y', 5968, 3832, 4288, 1, 'Halt Road east')])
     _feedback_rows(t, inventory[29:37], [('x', 3416, 6608, 7232, -1, 'Market Lane north'),

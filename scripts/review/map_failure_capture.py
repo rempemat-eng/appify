@@ -65,6 +65,7 @@ MAX_LOG = 16 * 1024**2
 MAX_TRIALS = 5000
 PRODUCTION_BLOBS = {'docs/vision/research/blockout/geo5.py': 'cfd2ab2a2d9d214448f4bd6441c9e547426c7de0', 'docs/vision/research/blockout/geo52.py': '784421e4b51386d23cd846932fbb63f8e6657a37', 'docs/vision/research/blockout/geo53.py': 'a0ddf6ae347a6be69c525cde97e656122bf6dcfb', 'docs/vision/research/blockout/geo54.py': 'e4913ae98346b8c3590ba41a87ab7f7f831a430e', 'docs/vision/research/blockout/geo55.py': '4e198d81f178b6530c714dd39d6f9078d2b11354', 'docs/vision/research/blockout/map53.py': '810d8f863da7902c148c734e04be9abb8f9f55ef', 'docs/vision/research/blockout/map54.py': 'aaa2eeb19dbe158acc8767d556fbacace92a0b6b', 'docs/vision/research/blockout/map55.py': '280fbe8d61a0fec40e2a3d876d92d41d8af33404', 'docs/vision/research/blockout/town_plans.py': 'f643cdd362d7d81e81f3d9d5eb462d78271d4ebb', 'docs/vision/research/blockout/towns55.py': 'dfd90fd6e9c9aa2ec3e32612935a2b399275683a', 'game/data/plans/crossroads.json': '0ec43431f13f5086a5a96e997b60c7eccb7cab30', 'scripts/review/town_plan.py': 'f330fa94673a9d2cea5de49e971f5b6eefe7be08'}
 N = None
+CORRECTION_TOWNS_BLOB = 'f23c793baf4a3b937a223c2a9fd2ac2786442f94'
 
 
 class CaptureError(RuntimeError):
@@ -930,6 +931,195 @@ def replay(folder, allocation):
         raise CaptureError('actual unchanged consumer did not reproduce; preserve diagnostic and stop')
 
 
+
+def _correction_inventory_valid(buildings, inventory):
+    by_id = {b['layout_id']: b for b in buildings}
+    return all(f'crossroads-b{i:03d}' in by_id
+        and sorted((by_id[f'crossroads-b{i:03d}']['w'], by_id[f'crossroads-b{i:03d}']['h'])) == sorted((w, h))
+        and by_id[f'crossroads-b{i:03d}'].get('form', by_id[f'crossroads-b{i:03d}']['use']) == form
+        and by_id[f'crossroads-b{i:03d}'].get('bays', []) == bays for i, form, w, h, bays in inventory)
+
+
+def correction(folder, allocation):
+    """One measured candidate on actual BEFORE; original replay() stays unchanged."""
+    source = Path(allocation['input']).resolve()
+    meta = json_read(source / 'capture.json')
+    original_source = json_read(source / 'source-before.json')
+    current = source_guard(allocation.get('production_overrides'))
+    town_path = 'docs/vision/research/blockout/towns55.py'
+    changed = {name for name in current['source_sha256'] if current['source_sha256'][name] != original_source['source_sha256'].get(name)}
+    if (allocation.get('production_overrides') != {town_path: CORRECTION_TOWNS_BLOB}
+            or changed != {town_path, 'scripts/review/map_failure_capture.py', 'scripts/review/test_map_failure_capture.py'}
+            or set(current['source_sha256']) != set(original_source['source_sha256'])
+            or original_source != json_read(source / 'source-after.json')
+            or allocation.get('original_source_sha256') != original_source['source_sha256']
+            or allocation.get('physical_tables') != 'SOURCE_DERIVED_geo55_warp_tables_ONCE_before_dimension_rebind'):
+        raise CaptureError('explicit original/candidate source and physical-table provenance required')
+    if meta.get('complete') is not True or meta.get('schema') != SCHEMA or meta['before']['box_px'] != list(CROSS) or meta['cell_px'] != 8:
+        raise MissingInput('complete exact actual BEFORE packet required')
+    actual = load_snapshot(source, meta['before'])
+    H, W = meta['global_shape']
+    if [H, W] != meta['town_dimensions']:
+        raise MissingInput('actual dimensions differ')
+    # Fresh import MUST precede dimension rebinding: geo55 freezes OLD_W/H at
+    # import. This initializes source-defined tables, never captured-state parity.
+    sys.path.insert(0, str(BLOCKOUT))
+    import geo55 as producer
+    import town_plans as plans
+    tw, g = producer.towns55, producer.g
+    if (producer.OLD_W, producer.OLD_H) != (11264, 6912) or producer.REVISION != 'v56':
+        raise MissingInput('fresh original-dimension source namespace required')
+    producer.warp_tables()
+    producer.set_dims(W * 8, H * 8)
+    g.COL = copy.deepcopy(meta['palette'])
+    x0, y0, x1, y1 = CROSS
+    sl = (slice(y0 // 8, y1 // 8), slice(x0 // 8, x1 // 8))
+    T, sentinels = {}, {}
+    for pair, value in actual.items():
+        container, key = pair
+        sentinel = ('UNKNOWN' if value.dtype.kind in 'OUS' else float('nan') if value.dtype.kind == 'f'
+                    else N.iinfo(value.dtype).min if value.dtype.kind in 'iu' else key in MASK_FIELDS)
+        full = N.full((H, W), sentinel, dtype=value.dtype); full[sl] = value
+        (T if container == 'T' else T.setdefault(container, {}))[key] = full
+        sentinels[pair] = sentinel
+    T['route_px'] = copy.deepcopy(meta['before_routes']); T['river_px'] = copy.deepcopy(meta['before_rivers'])
+    T.update(copy.deepcopy(meta['before_metadata']))
+    observer = Recorder(tw, folder, replay=True)
+    failure, P, physical_failures, notes, counted = None, None, [], [], None
+    checker_executed = False
+    checks = {}
+    try:
+        try:
+            with observer:
+                tw._feedback_crossroads(T, producer)
+        except ReturnedBoundary:
+            if observer.core.get('producer_outcome', {}).get('kind') != 'RETURN':
+                raise
+        town = observer.town
+        if town is None:
+            raise MissingInput('actual candidate Town missing')
+        ids = {f'crossroads-b{i:03d}' for i in range(1, 41)}
+        by_id = {b['layout_id']: b for b in town.buildings}
+        checks['all40_original_ids_and_cap'] = len(town.buildings) == len(by_id) == town.count() == town.cap == 40 and set(by_id) == ids
+        def geometry(b):
+            return {key: b.get(key) for key in ('x', 'y', 'w', 'h', 'use', 'form', 'counted', 'bays')}
+        checks['original19_unchanged'] = all(b['layout_id'] in by_id and geometry(by_id[b['layout_id']]) == geometry(b) for b in meta['buildings'])
+        checks['inventory_dimensions_preserved'] = _correction_inventory_valid(town.buildings, tw.FEEDBACK_BUILDINGS['crossroads'])
+        def descriptors(value):
+            return {(row['container'], row['source_key']): (row['dtype'], row['shape'], row['sha256']) for row in value['arrays']}
+        checks['exact_saved_before'] = descriptors(observer.core['before']) == descriptors(meta['before'])
+        if not all(value is True for value in checks.values()):
+            raise CaptureError('candidate did not preserve the required40 inventory/before state')
+        fb = plans._box([town])
+        c0, r0 = max(0, (fb[0] - plans.PAD) // 8), max(0, (fb[1] - plans.PAD) // 8)
+        c1, r1 = min(W, (fb[2] + plans.PAD) // 8 + 1), min(H, (fb[3] + plans.PAD) // 8 + 1)
+        if not (x0 // 8 <= c0 < c1 <= x1 // 8 and y0 // 8 <= r0 < r1 <= y1 // 8):
+            raise MissingInput('native padded physical window leaves actual captured ground')
+        if N.any(T['K'][r0:r1, c0:c1] == 'UNKNOWN'):
+            raise MissingInput('UNKNOWN cannot become ordinary land in terrain_rows')
+        for name, pts in T['route_px'].items():
+            if any(c0 * 8 <= x < c1 * 8 and r0 * 8 <= y < r1 * 8 for x, y in pts) and name not in g.ROUTES:
+                raise MissingInput('local actual route lacks authoritative source kind: ' + name)
+        context = {'kind': allocation['physical_tables'], 'actual_captured_global_table_parity': False,
+            'source': current, 'window_px': [c0 * 8, r0 * 8, c1 * 8, r1 * 8],
+            'route_kinds': {name: value[1] for name, value in g.ROUTES.items()}, 'stations': plain(g.STATIONS),
+            'circle': plain(producer.V.CIRCLE), 'craters': plain(producer.V.CRATERS), 'waystones': plain(producer.V.WAYSTONES)}
+        write_json(folder / 'correction-context.json', context)
+        original_geometry = {name: geometry(b) for name, b in by_id.items()}
+        P = plans.plan_one(T, 'Crossroads', [town], producer, tw._review())
+        # This is the existing complete checker, called explicitly even though
+        # this Town is not an authored packet. No fabricated doors or theme.
+        blockout = {'routes': {name: {'polyline': pts} for name, pts in T['route_px'].items()}, 'stations': g.STATIONS}
+        checker_executed = True
+        physical_failures, notes, counted = tw._review().check_plan(P, blockout)
+        checks['existing_physical_checker_passed'] = not physical_failures and counted == P['buildings_counted'] == 40
+        exported = {b['id']: b for b in P['buildings']}
+        checks['export_preserves40_without_lifting_or_refill'] = (len(P['buildings']) == len(exported) == 40 and set(exported) == ids
+            and not P['lifted'] and len(town.buildings) == 40
+            and {b['layout_id']: geometry(b) for b in town.buildings} == original_geometry)
+        literal_failures = []
+        for b in P['buildings']:
+            c, r, w, h = b['footprint_cells']
+            if not (x0 // 8 <= c and y0 // 8 <= r and c + w <= x1 // 8 and r + h <= y1 // 8):
+                literal_failures.append(b['id'] + ': footprint leaves actual input'); continue
+            before = actual[('T', 'K')][r-y0//8:r-y0//8+h, c-x0//8:c-x0//8+w]
+            if N.isin(before, plans.WATER_K + plans.BARRIER_K).any() or N.isin(T['K'][r:r+h, c:c+w], plans.WATER_K + plans.BARRIER_K).any():
+                literal_failures.append(b['id'] + ': initial/final literal water or barrier')
+        checks['literal_initial_and_final_ground'] = not literal_failures
+        yards = [q for q in town.outskirts if q['name'] == 'the halt yard' and q['kind'] == 'yard']
+        yard_box = [5840, 4304, 6080, 4368]
+        checks['named_working_yard_preserved'] = (len(yards) == 1 and yards[0]['box'] == yard_box
+            and [730, 538, 30, 8] in T['authored_protected_cells']
+            and all(b['x'] + b['w'] <= yard_box[0] or b['x'] >= yard_box[2] or b['y'] + b['h'] <= yard_box[1] or b['y'] >= yard_box[3] for b in town.buildings))
+        write_json(folder / 'correction-plan.json', P)
+        physical_failures = list(physical_failures) + literal_failures
+    except Exception as error:
+        failure = {'type': type(error).__name__, 'message': str(error)}
+    outside = N.ones((H, W), bool); outside[sl] = False
+    outside_changes = {}
+    for pair, sentinel in sentinels.items():
+        container, key = pair; full = T[key] if container == 'T' else T[container][key]
+        same = N.isnan(full[outside]) if isinstance(sentinel, float) and math.isnan(sentinel) else full[outside] == sentinel
+        outside_changes[container + '/' + key] = int((~same).sum())
+    checks['zero_outside_changes_including_exporter'] = not any(outside_changes.values())
+    checks['all_consumer_support_captured'] = bool(observer.supports) and all(q['captured'] for q in observer.supports)
+    checks['candidate_capture_complete'] = observer.core.get('complete') is True and not observer.errors
+    required = {'all40_original_ids_and_cap', 'original19_unchanged', 'inventory_dimensions_preserved', 'exact_saved_before',
+        'existing_physical_checker_passed', 'export_preserves40_without_lifting_or_refill', 'literal_initial_and_final_ground',
+        'named_working_yard_preserved', 'zero_outside_changes_including_exporter', 'all_consumer_support_captured', 'candidate_capture_complete'}
+    report = {'schema': SCHEMA, 'kind': 'MEASURED_CROSSROADS_CANDIDATE', 'accepted': False, 'checks': checks,
+        'failure': failure, 'physical_checker_executed': checker_executed, 'physical_failures': physical_failures, 'physical_notes': notes,
+        'counted': counted, 'input_capture_sha256': sha(source / 'capture.json'), 'original_source': original_source,
+        'candidate_source': current, 'source_derived_tables': allocation['physical_tables'], 'after': None,
+        'outside_changed_cells': outside_changes, 'producer_outcome': observer.core.get('producer_outcome'),
+        'world_success': False, 'art_approval': False, 'original_replay_oracle_unchanged': True}
+    write_json(folder / 'correction-result.json', report)
+    try:
+        report['after'] = snapshot(T, CROSS, folder / 'correction-after.npz')
+    except Exception as error:
+        report['snapshot_error'] = {'type': type(error).__name__, 'message': str(error)}
+    report['accepted'] = (set(checks) == required and all(value is True for value in checks.values())
+        and failure is None and report['after'] is not None)
+    write_json(folder / 'correction-result.json', report)
+    if not report['accepted']:
+        raise CaptureError('measured candidate failed; preserve first failure and stop')
+
+
+def corrected_preview(folder, allocation):
+    """Render only an accepted physical candidate; original preview() stays unchanged."""
+    candidate = Path(allocation['candidate']).resolve()
+    original = Path(allocation['input']).resolve()
+    result = json_read(candidate / 'correction-result.json')
+    if (result.get('accepted') is not True or result.get('physical_checker_executed') is not True
+            or result.get('world_success') is not False or result.get('physical_failures')
+            or result['input_capture_sha256'] != sha(original / 'capture.json')
+            or result['candidate_source'] != source_guard(allocation.get('production_overrides'))):
+        raise MissingInput('accepted exact-source measured candidate required before corrected preview')
+    for name in ('correction-result.json', 'correction-plan.json', 'correction-context.json', 'correction-after.npz'):
+        target = folder / 'reference-candidate' / name
+        target.parent.mkdir(exist_ok=True)
+        target.write_bytes((candidate / name).read_bytes())
+    arrays = load_snapshot(candidate, result['after'])
+    meta = json_read(original / 'capture.json')
+    P = json_read(candidate / 'correction-plan.json')
+    from PIL import Image, ImageDraw
+    ground = arrays[('T', 'K')]; height, width = ground.shape
+    image = diagnostic_image(ground, meta['palette']).resize((width * 4, height * 4), Image.Resampling.NEAREST)
+    framed = Image.new('RGB', (image.width, image.height + 56), '#fff3dd'); framed.paste(image, (0, 56))
+    draw = ImageDraw.Draw(framed)
+    draw.text((8, 6), 'MyGame Crossroads MEASURED CANDIDATE - not art approval', fill='#201820')
+    draw.text((8, 24), '40 records; native physical checks passed; world still incomplete', fill='#201820')
+    x0, y0, _, _ = result['after']['box_px']
+    for b in P['buildings']:
+        x, y, w, h = b['rect_px']; x, y = (x-x0)/2, 56+(y-y0)/2
+        draw.rectangle((x, y, x+w/2, y+h/2), outline='#ff3333', width=1)
+        draw.text((x+1, y+1), b['id'].rsplit('-b', 1)[-1], fill='#111111')
+    path = folder / 'crossroads-corrected-candidate.png'; framed.save(path)
+    write_json(folder / 'preview-result.json', {'file': path.name, 'sha256': sha(path), 'label': 'CORRECTED CANDIDATE DIAGNOSTIC',
+        'input_sha256': sha(original / 'capture.json'), 'candidate_result_sha256': sha(candidate / 'correction-result.json'),
+        'world_success': False, 'art_approval': False})
+
+
 def diagnostic_image(ground, palette):
     from PIL import Image, ImageColor
     rgb = {key: ImageColor.getrgb(value) if isinstance(value, str) else tuple(value[:3]) for key, value in palette.items()}
@@ -1034,6 +1224,12 @@ def worker(folder, allocation):
     if allocation['phase'] == 'preview':
         preview(folder, allocation)
         return
+    if allocation['phase'] == 'correction':
+        correction(folder, allocation)
+        return
+    if allocation['phase'] == 'corrected-preview':
+        corrected_preview(folder, allocation)
+        return
     suite_module = runpy.run_path(str(Path(__file__).with_name('test_map_failure_capture.py')), run_name='new_R6_contract_definitions')
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(suite_module['Contracts'])
     with preflight_inputs(folder) as inputs:
@@ -1060,7 +1256,7 @@ def worker(folder, allocation):
 def run_capture(allocation_path, out):
     allocation = json_read(allocation_path)
     phase = allocation.get('phase')
-    if phase not in ('capture', 'replay', 'preview'):
+    if phase not in ('capture', 'replay', 'preview', 'correction', 'corrected-preview'):
         raise CaptureError('unknown allocated phase')
     if phase == 'capture' and allocation.get('production_overrides'):
         raise CaptureError('initial R6 replacement capture must use unchanged frozen production')
@@ -1239,9 +1435,10 @@ def run_capture(allocation_path, out):
         reason = reason or 'source_guard_failed'
     # Malformed/missing worker metadata must not prevent packaging partial evidence.
     try:
-        if phase == 'preview':
+        if phase in ('preview', 'corrected-preview'):
             view = json_read(out / 'preview-result.json')
-            complete = sha(out / view['file']) == view['sha256'] and view['label'] == 'DIAGNOSTIC'
+            label = 'DIAGNOSTIC' if phase == 'preview' else 'CORRECTED CANDIDATE DIAGNOSTIC'
+            complete = sha(out / view['file']) == view['sha256'] and view['label'] == label
         else:
             capture = json_read(out / 'capture.json')
             complete = capture.get('complete') is True and not capture.get('errors')
@@ -1254,6 +1451,10 @@ def run_capture(allocation_path, out):
                 complete = False
             if phase == 'replay':
                 complete = complete and json_read(out / 'replay-result.json').get('all_equal') is True
+            if phase == 'correction':
+                candidate = json_read(out / 'correction-result.json')
+                complete = complete and candidate.get('accepted') is True and candidate.get('physical_checker_executed') is True
+                validate_archive(out / candidate['after']['file'], candidate['after'])
     except Exception as error:
         complete = False
         best_effort_json(out / 'collection-error.json', {'type': type(error).__name__, 'message': str(error)})
