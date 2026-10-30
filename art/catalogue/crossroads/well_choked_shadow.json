@@ -1,7 +1,7 @@
 {
  "id": "crossroads/well_choked_shadow",
  "file": "game/zones/crossroads/art/well_choked_shadow.png",
- "sha256": "15775c2ad1b7a02f9cc53b794895fc847e7bf1265835b3d0118f43d613785a76",
+ "sha256": "bbf0beadced51a27408a117c32b3ed4f623858f4d296e5c1754fa7526b11360a",
  "kind": "well_choked_shadow",
  "biome": "valley",
  "H": 74.0,

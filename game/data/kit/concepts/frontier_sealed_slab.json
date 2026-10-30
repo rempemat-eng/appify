@@ -1,0 +1,106 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_sealed_slab",
+  "name": "Undercroft’s sinking seal slab",
+  "kind": "structure",
+  "biomes": [
+    "undercroft"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "closed",
+      "note": "Continuous slab fills the doorway and blocks the source passage."
+    },
+    {
+      "id": "open",
+      "note": "Top flush with floor; the full original opening is clear."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      2,
+      6
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "sealed_slab",
+    "ground": {
+      "allow": [
+        "stone",
+        "paving"
+      ],
+      "deny": [
+        "water"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "puzzle_seal"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "mechanism_approach",
+        "note": " Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "stages": [
+      "closed",
+      "open"
+    ],
+    "composition": "axis",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null,
+    "saves": [
+      "undercroft_seal_open"
+    ]
+  },
+  "story": {
+    "owner": null,
+    "quests": [
+      "under_the_stones"
+    ],
+    "lore": "Keep the first dungeon’s specific sealed passage as an authored set piece, with shared wall material."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "wide_door",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P0",
+      "Purpose: Keep the first dungeon’s specific sealed passage as an authored set piece, with shared wall material.",
+      "Visual brief: One heavy slab fitted into a visible vertical socket; when lowered, its top seats flush with the passage floor. The stone edges, socket and floor channel align in all stages.",
+      "Widths and size: Source rect16×48 world px and face40 world px (48×144 art-px plan, 120-art-px face); preserve the authored geometry, with no shrink-to-class adjustment.",
+      "Source: game/data/plans/undercroft.json; docs/vision/vertical-slice.md beat 6",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "The existing saved puzzle flag governs both rendering and collision. A lowered texture with a raised collider or vice versa must fail validation.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting.",
+      "Scale proxy: wide_door constrains the clear doorway opening only, not the complete frame, tube, slab or jamb image. No measured size_px or pass is claimed; retain authored source geometry and review any aperture outside that range explicitly.",
+      "Confirmed current reference: game/data/plans/undercroft.json puzzle.lever.flag is undercroft_seal_open; this is the existing save flag, not a new identifier."
+    ]
+  }
+}

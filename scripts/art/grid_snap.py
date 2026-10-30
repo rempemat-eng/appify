@@ -127,6 +127,13 @@ def off_grid(name, p) -> list[str]:
             for r in p.get('art', {}).get(key, []):
                 if snap_rect(r) != r:
                     bad.append(f'{key} {r}')
+        # raised ground (the soft grid, 26 Oct): a plateau's plan is whole cells
+        for lg in p.get('art', {}).get('ledges', []):
+            for r in lg['top']:
+                if any(v % CELL for v in r):
+                    bad.append(f'ledge top {r}')
+            if lg.get('face', 12) % 2:
+                bad.append(f'ledge face {lg.get("face")}')
     else:
         for oid, kind, x, y, w, h in p['objects']:
             if (x + w / 2.0) % HALF or (y + h) % CELL:

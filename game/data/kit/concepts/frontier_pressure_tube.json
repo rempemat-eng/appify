@@ -1,0 +1,103 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_pressure_tube",
+  "name": "Pressure-tube span and landing",
+  "kind": "structure",
+  "biomes": [
+    "lumen",
+    "halcyon"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "level",
+      "note": "Same-tier connection."
+    },
+    {
+      "id": "descent",
+      "note": "Authored tier descent with head/foot landings."
+    },
+    {
+      "id": "turn",
+      "note": "A full fitted corner section, not overlapping transparent spans."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      8,
+      4
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "corridor",
+    "ground": {
+      "allow": [
+        "rock",
+        "paving",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "turf"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "pressure_connector"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "door_apron",
+        "note": " Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "axis"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Share sealed corridor sections joining a habitat, dome or docking collar."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P3",
+      "Purpose: Share sealed corridor sections joining a habitat, dome or docking collar.",
+      "Visual brief: A glazed ribbed tube with visible supports at each end, a dark floor plane and reflected light along its upper surface. Sloped descent uses a proper landing, never a rotated flat tube.",
+      "Widths and size: Internal walk band at least 3 cells (72 art px); total tube 4 cells (96 art px) across; span length authored by endpoints.",
+      "Source: docs/vision/world-plan.md §§8.6,8.7,9; docs/vision/coherence-plan.md M1",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Both ends must terminate in pressure-compatible collars; a transparent tube never creates an unsupported shortcut across a cliff.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

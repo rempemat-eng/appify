@@ -1,0 +1,147 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_fern_rubble",
+ "name": "Fern rubble",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "fern_rubble",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/fern_rubble.png",
+   "foot": [
+    54,
+    82
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   108,
+   86
+  ],
+  "size_cells": [
+   5,
+   4
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "rect": [
+    -15.0,
+    -14.0,
+    30,
+    14
+   ],
+   "shape": "rect"
+  },
+  "foot": [
+   54,
+   82
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "stages": [
+   "broken"
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_restored": [
+     "fern_cottage"
+    ]
+   }
+  }
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "fern_rubble",
+    "part": "body",
+    "condition": {
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "fern_rubble_shadow",
+    "part": "shadow",
+    "condition": {
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow fern_rubble_shadow from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

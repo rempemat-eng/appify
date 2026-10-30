@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/terrain/kit_piece.gd" id="1"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_d.png" id="2"]
+
+[node name="CrossroadsDebrisD" type="Node2D"]
+script = ExtResource("1")
+piece_id = "crossroads_debris_d"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+centered = false
+offset = Vector2(-42, -41)

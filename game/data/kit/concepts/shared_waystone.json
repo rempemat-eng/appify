@@ -1,0 +1,118 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_waystone",
+  "name": "Circle-carved waystone",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "valley",
+    "woodland",
+    "frostline",
+    "brackens",
+    "sunstone",
+    "tidebloom",
+    "cogsworth",
+    "lull",
+    "neon",
+    "halcyon",
+    "lumen"
+  ],
+  "variants": [
+    {
+      "id": "unlit",
+      "note": "Readable carved recess without emissive fill."
+    },
+    {
+      "id": "lit",
+      "note": "Same silhouette and anchor, existing story-state light in the recess."
+    }
+  ],
+  "geometry": {
+    "z_sort": "foot",
+    "size_cells": [
+      2,
+      1
+    ]
+  },
+  "placement": {
+    "role": "waystone",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth",
+        "stone",
+        "paving",
+        "rock"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "near",
+        "what": "route_edge",
+        "cells": 2
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "use",
+      "triggers": []
+    },
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": "Kin of the woodland circle. Existing travel/loadout service may bind at its approved sites; W0 adds no travel route or save event."
+  },
+  "audit": {
+    "size_class": "standing_stone",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P0",
+      "Purpose: Give existing waystone sites a recognisable common ancestry without cloning whole landmarks.",
+      "Visual brief: A chipped standing stone with the circle carving and recessed violet-gold glass; rough local base varies by geology; carvings do not become neon advertising.",
+      "Size: Standing stone: 59–126 art px high and 33–81 wide; one solid foot, a clear approach.",
+      "Source: world-and-cast.md on progression-2, The unifying device; crossroads_waystone seed",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Reuse crossroads_waystone only after its gate; geological socket may vary, inscription identity stays constant.",
+      "Do not bind speculative region-shard or travel events from prose; service and exact flags remain owned by existing gameplay."
+    ]
+  }
+}

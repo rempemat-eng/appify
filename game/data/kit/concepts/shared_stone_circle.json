@@ -1,0 +1,101 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_stone_circle",
+  "name": "Woodland stone circle assembly",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "woodland"
+  ],
+  "variants": [
+    {
+      "id": "dormant",
+      "note": "Thorns and inert carvings belong to authored quest state."
+    },
+    {
+      "id": "awake",
+      "note": "Same stone anchors and route access; lit stones follow existing story state."
+    }
+  ],
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "story_landmark",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth",
+        "worn"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "near",
+        "what": "circle_hatch",
+        "note": "Keep the existing hatch, camp and interaction approaches reachable."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "centre",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "look",
+      "triggers": []
+    },
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [
+      "woodland_stones",
+      "under_the_stones"
+    ],
+    "owner": "Cairn",
+    "lore": "The single original circle; the waystones repeat its carving, not its complete silhouette."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P0",
+      "Purpose: Keep the central ritual landmark a unique spatial composition using reviewed stone parts.",
+      "Visual brief: Fourteen individually authored stones in one broken ring, unequal ages and leaning profiles; a readable hollow centre, the hatch and ancient lintel compose around Cairn.",
+      "Size: Use standing-stone class per stone; whole ring footprint is the existing woodland plan, not fourteen enlarged props on a tiny decal.",
+      "Source: world-and-cast.md decided device; game/zones/woodland; vertical-slice.md",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Custom count: one whole-world assembly, even though individual weathered stones share a kit family.",
+      "Story-state composition is proposed art data; do not add sixteen or fourteen quest events without the story owner."
+    ]
+  }
+}

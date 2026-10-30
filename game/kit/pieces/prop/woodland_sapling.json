@@ -1,0 +1,116 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_sapling",
+ "name": "Sapling",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "sapling",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/sapling.png",
+   "foot": [
+    37.0,
+    90.0
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   75,
+   90
+  ],
+  "size_cells": [
+   4,
+   4
+  ],
+  "z_sort": "foot",
+  "collision": null,
+  "foot": [
+   37.0,
+   90.0
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    8.75,
+    2.0
+   ],
+   "dir": [
+    1.0,
+    -1.0
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {},
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "sources": [
+   {
+    "zone": "woodland",
+    "object": "wood-1",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-14",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-21",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-32",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-43",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-46",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

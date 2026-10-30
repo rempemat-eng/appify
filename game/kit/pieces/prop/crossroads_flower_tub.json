@@ -1,0 +1,188 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_flower_tub",
+ "name": "Flower tub",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "flower_tub_10",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/flower_tub_10.png",
+   "foot": [
+    27,
+    53
+   ]
+  },
+  {
+   "id": "flower_tub_26",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/flower_tub_26.png",
+   "foot": [
+    27,
+    53
+   ]
+  },
+  {
+   "id": "flower_tub_27",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/flower_tub_27.png",
+   "foot": [
+    27,
+    53
+   ]
+  },
+  {
+   "id": "flower_tub_38",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/flower_tub_38.png",
+   "foot": [
+    27,
+    53
+   ]
+  },
+  {
+   "id": "flower_tub_59",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/flower_tub_59.png",
+   "foot": [
+    27,
+    53
+   ]
+  },
+  {
+   "id": "flower_tub_60",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/flower_tub_60.png",
+   "foot": [
+    27,
+    53
+   ]
+  },
+  {
+   "id": "flower_tub_9",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/flower_tub_9.png",
+   "foot": [
+    27,
+    53
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   54,
+   57
+  ],
+  "size_cells": [
+   3,
+   3
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "rect": [
+    -6.0,
+    -6.0,
+    12,
+    6
+   ],
+   "shape": "rect"
+  },
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "flower_tub_10",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "flower_tub_26",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "flower_tub_27",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "flower_tub_38",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "flower_tub_59",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "flower_tub_60",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "flower_tub_9",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

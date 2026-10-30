@@ -1,0 +1,92 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_standing_stone",
+ "name": "Standing stone",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "standing_stone",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/standing_stone.png",
+   "foot": [
+    30.0,
+    114.0
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   61,
+   114
+  ],
+  "size_cells": [
+   3,
+   5
+  ],
+  "z_sort": "foot",
+  "collision": null,
+  "foot": [
+   30.0,
+   114.0
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "role": "marker",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    9.15,
+    4.0
+   ],
+   "dir": [
+    3.0,
+    -1.0
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {},
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "sources": [
+   {
+    "zone": "woodland",
+    "object": "stone-6",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

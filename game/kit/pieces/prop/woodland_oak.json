@@ -1,0 +1,180 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_oak",
+ "name": "Oak",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "oak",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/oak.png",
+   "foot": [
+    106.0,
+    243.0
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   212,
+   243
+  ],
+  "size_cells": [
+   9,
+   11
+  ],
+  "z_sort": "foot",
+  "collision": null,
+  "foot": [
+   106.0,
+   243.0
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "role": "tree",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    28.27,
+    10.6
+   ],
+   "dir": [
+    8.48,
+    -2.0
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {},
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "sources": [
+   {
+    "zone": "woodland",
+    "object": "tree-1",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-2",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-3",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-4",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-6",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-10",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-13",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-16",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-19",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-24",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-26",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-4",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-41",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-44",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-45",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

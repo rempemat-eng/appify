@@ -1,0 +1,82 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "worn",
+  "name": "Worn ground",
+  "kind": "terrain",
+  "biomes": [
+    "valley",
+    "woodland",
+    "village"
+  ],
+  "version": 1,
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "eastward-edges.md 5.1 and \"What the soft grid governs\"; art-style.md density 3",
+    "note": "trodden earth that is not a route (a stone ring's track, a yard): the path's fill, so where it meets a path the join does not show; props may stand on it"
+  },
+  "terrain": {
+    "material_id": 6,
+    "priority": 21,
+    "fill": {
+      "module": "scripts.art.kit.fills",
+      "fn": "dirt",
+      "args": {
+        "seed": 43,
+        "fam": "path",
+        "cell": 14.0,
+        "joints": 1.1,
+        "lit": 0.8,
+        "stones": 0.45,
+        "blades": 0.6,
+        "soft_joints": true
+      }
+    },
+    "walkable": true,
+    "surface": "earth",
+    "route": false,
+    "water": null,
+    "swatch": [
+      96,
+      96
+    ],
+    "paint": {
+      "module": "scripts.art.native.softground",
+      "fn": "dirt",
+      "args": {
+        "seed": 451,
+        "fam": "path",
+        "cell": 11,
+        "stones": 0.6,
+        "shape": {
+          "seed": 451,
+          "r_out": 0.6,
+          "r_in": 0.4,
+          "smooth": 6
+        }
+      }
+    }
+  },
+  "placement": {
+    "snap": "cell"
+  },
+  "gameplay": {
+    "blocks_move": false,
+    "blocks_shots": false,
+    "nav_cost": 0.8
+  },
+  "audit": {
+    "painter": {
+      "module": "scripts.art.native.softground",
+      "fn": "dirt",
+      "args": {
+        "seed": 43,
+        "fam": "path",
+        "cell": 12
+      }
+    },
+    "size_class": "ground",
+    "eastward_ref": "Eastward 12, 13 (dirt paths); refs local only"
+  }
+}

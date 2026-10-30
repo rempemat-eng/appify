@@ -42,6 +42,8 @@ Crop `01-adult` (`eastward_study.py crops`): The adult, native and 4x.
 
 **1.5 Diagonals are 45 degree chamfers of single steps; curves are pixel circles.** The farm ledge's east end in 13 turns down to the south in a chamfer 11 px long made of 1 x 1 steps with a 2 px dark edge (04-diagonal). The cliff in 12 has no long diagonals: its plan steps in rectangles. Rounded corners are pixel circles: the sand plateau's outer corner in 39 steps 2, 1, 1, 1 (radius 5); its inner (concave) corner is a 2 to 3 px chamfer. Ours: chamfers in single steps, outer radius 2 to 3, inner chamfer 1 to 2; long diagonals only as a staircase of whole cells (world-rules 2.3).
 
+**1.5a The soft grid, as Matt drew the line (26 Oct 15:36).** With an Eastward forest screenshot (raised grass plateaus with earth ledges, a dirt path, wooden steps): "this is what i mean with soft grid. edges and paths are a bit block like but they are not sharp like minecraft. think about how this could be implemented and do it". What it governs, what it does not, and the measured rules are in "What the soft grid governs" (after section 8). The module is `scripts/art/native/softgrid.py`, the swatch sheet `scripts/art/softgrid_swatches.py`; no zone uses it until Matt approves the swatches.
+
 **1.6 Outlines follow the grid: straight runs, rounded corners, turns at cell lines** (Matt, 21 Oct 11:44, on the first pilot cliff: "i like the rocks on the cliff face here. but remember the grid shape like in eastward"). Every rim, foot, ledge end, side and pool surround is drawn on the 8 px cell (16 art px at 2x). A run goes straight along x or y and wobbles at most 1 px (the lip's wobble, 1.4 and 3.1, not the plan's). It changes direction only at a cell line, so a curve or a diagonal in the plan becomes a staircase of whole cells. A side face is vertical. Corners are rounded pixel circles, about 2 to 3 world px in radius (4 to 6 art px at 2x). This replaces the "organic rim" rule the cliff core used on the morning of 21 Oct (lobes, no straight run over 48 to 64 px), which Matt overruled. Inside the outline the texture has no grid (1.3): the rounded rocks, the lawn's patches and the snow's drifts keep their own shapes. The cliff core snaps every tier to the grid by cell majority (`World._snap`), re-rounds the corners at each density, and `--check` requires at least 70 % of every render's rim columns to lie on a cell line (`rim_steps`, `RIM_ON_GRID`).
 
 Crop `03-ledge` (`eastward_study.py crops`): Rim of the farm ledge.
@@ -174,3 +176,63 @@ E is Eastward's native px at an adult of 54; ours is at an adult of 25 (k = 0.46
 - **Sea of Stars, CrossCode and Chained Echoes are no longer references for edges or the soft grid.** Older notes that compare an edge, a face, a corner or a cliff with them are history. The detail bar's numbers (`detail_bar.py`) are not edge rules and stay as they are; its stream baselines include three Sea of Stars reaches, which Claude A may want to replace with Eastward canals.
 - **Already in line:** the 8 px cell (1.1), rounded corners and staircase diagonals (world-rules 2.3), the 12 and 16 low step and the 32 tier (world-rules 3.2), dither only for fades.
 - **To change in the generators:** faces with vertical bands or columns (2.4); grass lips with hanging teeth (3.1); a lit line at a foot (3.2); outlines between ground types on one level (4.1); hard straight path edges (5.1); stairs that do not reach the upper floor or the path (6.1).
+
+## What the soft grid governs (26 Oct)
+
+Matt, 26 Oct 17:46: "make sure to really refine the soft grid before you implement it everywhere. which parts stay as before and which parts needs to adhere to the softgrid (remember that wells for example should still be round ...). most props should probably stay as before (detailled of course) but the ground and the placement of the props changes. consider what natural terrain looks like under these constraints". 17:48: "eastward is really the example the soft grid should follow, of course adapted to my pixel density etc."
+
+**Conversion.** At the same character height (Eastward's adult 54 native px, ours 74 art px at density 3) k = 74 / 54 = 1.37, so Eastward's 17 px tile is 23.3 of our art px: **our cell, 8 world px = 24 art px, is Eastward's tile** (1.1). Every number below is given as Eastward native px (E), in tiles, and ours in cells or art px. Measured on the local references (`eastward_study.py native`, scale 3 or 3.3), on `refs-matt/eastward-forest-ledges.png` ("Strange Forest", 1.8 screen px a native px, from John's height of 97 screen px) and on Matt's 26 Oct screenshot. Corner radii come from `edges.corners` run on colour masks of the frames; the rest are column and row traces or visual measures on 4x crops with the 17 px grid laid over them.
+
+### Governed: plans of whole cells, rounded corners, lumpy edges
+
+- **Boundaries between ground materials** (grass, dirt, sand, paving, snow). In 39 the sand plateau is a union of rectangles with corners of radius 2.4 E (0.14 tile); the grass patch on it is irregular and not on the grid (texture, below).
+- **Paths, roads and plazas, at constant width.**
+  - In 13 the dirt paths are 3 tiles wide all along (rows across the horizontal path: 48 to 54 E with the grass breaking in). Their T-junction and turns round off at 6.4 E (0.38 tile). Their edges stray 1.6 to 1.8 px (sd) in 1 px steps, with grass tufts over them (5.1).
+  - Ours: a main path or road 3 cells; a lane or side path 2 cells. That is a proposal: the local refs have no 2-tile path. Turns round off at 0.4 cell outer and 0.25 inner (`R_TURN_OUT`, `R_TURN_IN`). A route runs in long straight runs: a slant becomes a few runs of about five cells, never a one-cell staircase.
+- **Raised ground: plateaus, ledges, cliffs, steps cut into them.**
+  - The low earth ledge is E 23 to 30 px, ours 12 world (2.1, 13). Strange Forest's ledges are taller (68 E, 4 tiles) with outer corners of about 11 E (0.65 tile), a knobbly face of rounded clods and a lumpy lip. Ours: low ledges round at 0.65 cell outer, 0.4 inner.
+  - Rock cliffs are at least 70 E, ours 32 world (2.3, 12). Their plan is stacked rectangles with tight corners (12); ours round them at 0.25 cell.
+  - Steps follow Strange Forest and Matt's 26 Oct screenshot: four log treads on a 14 E pitch, set into the face with earth cheeks either side. The farm stair in 13 is four steps on a 12 E pitch (6.1). Ours: a flight 3 cells wide, four treads.
+- **Water plans: ponds, pools, lake shores, coast, river courses.**
+  - In 37 the pond is a large rounded shape lined with stones. Ours: a union of cells rounded at 1.4 cells outer, 0.8 inner. Banks follow 5.3.
+  - In 15 the swamp's channels and shelves are unions of rectangles of several sizes (1 to 6 tiles) with corners of 2.4 E (0.14 tile).
+  - **The local refs have no river bend.** The closest analogues are those channels (15) and the canal's straight edge (13). Proposal: a river's plan in cells, 3 to 4 cells wide (changing in whole cells), bends rounded at 1 cell outer and 0.6 inner, banks lumpy as a ledge's lip.
+- **Garden beds and fields.** In 12 and 13 a bed is a frame with a raised soil rim and rounded plots one tile each, corners tight. Ours: the frame in cells, rounded at 0.15 cell, one mound per cell.
+- **Footprints of built things** (buildings, walls, fences, docks, bridges, platforms). They are whole tiles with up to 2 E of slack (1.2). Paving meets the street with a kerb of 34 E slabs (16, 5.2). Ours: whole cells, with built corners at 0.15 cell (Eastward 0.14).
+
+### Placement on the grid
+
+Every prop's foot anchor lies on a cell: x on the cell's centre or its half (4 world px), y on the cell line (8). Eastward's lamps, posts and benches stand on tile lines (13, 12). Rows and clusters align: beds, fence posts, stalls. Small clutter is placed freely: pebbles, flowers, tufts, leaves and debris (13's stones and flowers lie anywhere). `grid_snap --check` and `logic.off_grid` hold the anchors.
+
+### Not governed: they keep their own organic shapes
+
+- **Props' own shapes.** Wells stay round, as do barrels, carts, lamps, benches, rocks and boulders, stumps and logs (Matt, 17:46: "wells for example should still be round").
+- **Trees and bushes.** Trunks stand on cells and crowns are organic (02, 22: huge trunks, crowns and undergrowth free).
+- **Plants, characters and creatures.**
+- **Texture inside fills:** cobbles, mottle, clods and the lawn's blotches. Blotches are low contrast, one hue family, soft and irregular (37's lawn, 5.5).
+- **Shadows:** they follow their casters.
+- **Light pools** (02's sun flecks), **water surfaces and ripples**, and **effects**.
+
+### Natural terrain under the constraints
+
+- **Landforms are unions of rectangles at several sizes.** Use 1, 2 and 3 or more cells, never a uniform staircase or repeated identical blocks. Seen in the cliff in 12, the shelves in 15 and the sand plateau in 39.
+- **Notches and spurs are whole cells** (15, 39).
+- **Long straight runs are broken.**
+  - Lumps 8 to 20 art px long and 1 to 3 px deep (Strange Forest's lips; the path edges in 13, sd 1.6 to 1.8).
+  - Overhangs of turf, and breakers on 10 to 20 % of the edge: roots, tufts, rocks straddling the rim, plants spilling over (12, 13, Strange Forest).
+- **Corner radius follows the material.**
+  - Earth ledges and ponds are round: 0.65 cell (Strange Forest) to 1.4 cells (37).
+  - Paths turn at 0.4 cell (13).
+  - Built edges, sand and swamp shelves are tight: 0.14 tile in 39 and 15, ours 0.15.
+- **Rivers:** see the proposal above.
+- **Lakes and ponds** are rounded unions (37).
+- **Forest floors:** trunks on cells, free undergrowth (02, 22).
+- **Transitions between ground types** are soft-edged and low contrast. There is no outline between grass and dirt (5.1). Patches inside a surface are its own sibling hues, frayed, never a geometric disc (37, 13).
+
+### The painters (26 Oct, second pass)
+
+The plans come from `softgrid.py`; what fills them and what happens where they meet is painted by `scripts/art/native/softground.py`, at Eastward's level of detail rather than as flat fills: the lawn (a calm field, damp patches of long dark tufts and dry warm ones fading through a checker, clumped tufts with dark roots and lit tips, flowers in groups), packed earth (rounded clods 10 to 15 px with soft joints, ruts, pebble clusters, dry blades, crumbs), a sunken edge (turf lobes over the dirt, a shadow under the north lip, the south lip lit, tufts leaning out, stones straddling), raised ground (a lit band and an overhanging grass lip with hanging tufts, the under-lip shade, a face of rounded clods or of boulders under a layer of flat stones with moss caps, roots or vines, a dark foot with pebbles and fallen rocks, weeds, a cast shadow on the lower ground), log steps, water (an earth bank under the north lip, a light waterline, a depth band under the bank and a deeper middle, lit shallows, ripples, stones, rushes and lilies off the shore), sand with ripple drifts and a wet band and swash at the sea, a raised bed frame with a plot and a crop per cell, flags with a kerb and its low face, and the forest floor (canopy shade with dapples, litter, roots, bare earth at the trunks). `scripts/art/softgrid_swatches.py` shows each, and every swatch passes `review:asset` (as ground) and `review:scene` with no findings. Ripples on water shores stay off the bank outline (the soft-grid gate counts plant blades over the waterline as teeth), so rushes stand in the shallows.
+
+**Second round (Matt, 26 Oct 19:35 and 19:42).** Raised ground shows its side walls wherever it ends west or east (a narrow band seen almost edge-on, lit when it faces west, in shade when it faces east, the darkest broken line on its outer edge; the lip turns down the side; at an inner corner the wall stands over the lower part's face), and every tier has one level (`logic.tiers`). The east and west banks of a north-south channel are narrow earth walls the same way (shaded on the west shore, lit on the east), the north bank keeps its earth face and the south bank only the grass lip; shores carry turf tongues over the water, reed clumps, stones and rushes in the shallows. A footbridge spans bank to bank on two abutments with posts and rails on both sides, its thickness and its shade on the water. Structures with props are composed round them (`logic.composition`). The lawn is calm: an even field of two sibling hues with a low mottle, sparse lit blades and loose clumps of larger tufts. Props keep the kit's own house style; trees are only seated (a scalloped, shaded crown base, its shade on the trunk, a flared foot, roots and a contact shadow).
+
+`detail.corner_radius` follows these numbers. A sharp corner is under 0.12 cell, below Eastward's tightest ground corners at 0.14 tile. A pure square corner measures under 0.08.
