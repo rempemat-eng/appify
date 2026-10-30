@@ -13,7 +13,7 @@ with the Tarim Basin's oasis rivers along the mountain foot).
 
 In the repository this file is the library geo52.py builds on: run geo52.py (see README.md). Run on its own,
 python3 -I geo5.py writes the v5 images and stats next to this file; do not commit them."""
-import heapq, json, math, os
+import heapq, json, math, os, zlib
 import numpy as np
 from scipy import ndimage as ndi
 from skimage.graph import MCP_Geometric
@@ -33,6 +33,11 @@ NOISE_CACHE = {}
 
 
 # ------------------------------------------------------------------------------------------ helpers
+def stable_name_seed(name, modulus):
+    """Prospective map seeds: the existing geo55 UTF-8 CRC32 convention."""
+    return zlib.crc32(name.encode('utf-8')) % modulus
+
+
 def noise(scale_px, seed, octaves=4):
     key = (scale_px, seed, octaves)
     if key in NOISE_CACHE:
@@ -601,7 +606,7 @@ def routes(T):
     K = T['K']; crossings = []; T['route_px'] = {}; T['huts'] = []
     used = np.zeros((H, W), bool)
     for name, (pts, kind, feats) in ROUTES.items():
-        sm = meander(pts, 0 if kind == 'bridge' or len(pts) < 3 else 18, abs(hash(name)) % 1000, 140)
+        sm = meander(pts, 0 if kind == 'bridge' or len(pts) < 3 else 18, stable_name_seed(name, 1000), 140)
         for f in feats:
             if f.startswith('switchbacks'):
                 a0, a1 = map(float, f.split(':')[1].split('-')); sm = switchback(sm, a0, a1)
@@ -675,7 +680,7 @@ def settle(T):
     for name, (cx, cy, rad, kind) in SETTLE.items():
         if kind in ('cirque', 'city'):
             continue
-        dn = np.hypot(PX - cx, PY - cy) / rad + 0.35 * noise(rad * 1.3, abs(hash(name)) % 997)
+        dn = np.hypot(PX - cx, PY - cy) / rad + 0.35 * noise(rad * 1.3, stable_name_seed(name, 997))
         core = dn < 1
         K[core & np.isin(K, ['broadleaf', 'conifer'])] = 'garden'   # cleared for houses and gardens
         used |= core & np.isin(K, list(WALK))

@@ -128,11 +128,11 @@ def C(x, y):
 class Town:
     """One settlement: its streets, squares, buildings, yards and working outskirts."""
 
-    def __init__(self, T, name, centre, size, target, purpose, setting, neighbourhoods=(), gathering=(), seed=0):
+    def __init__(self, T, name, centre, size, target, purpose, setting, neighbourhoods=(), gathering=(), seed=None):
         self.T = T; self.name = name; self.centre = centre; self.size = size; self.target = target
         self.purpose = purpose; self.setting = setting; self.neighbourhoods = list(neighbourhoods); self.gathering = list(gathering)
         self.buildings = []; self.streets = []; self.spaces = []; self.outskirts = []
-        self.rng = np.random.default_rng(seed or abs(hash(name)) % 2 ** 31)
+        self.rng = np.random.default_rng(g.stable_name_seed(name, 2 ** 31) if seed is None else seed)
         self.level = 1; self.slope_max = 0.016
         self.cap = target[1] if isinstance(target, (tuple, list)) else target
 
@@ -429,6 +429,7 @@ class Town:
             if ok.any():
                 rr, cc = np.nonzero(ok)
                 self.buildings[-1]['plot'] = [int(xa + cc.min()), int(ya + rr.min()), int(cc.max() - cc.min() + 1), int(rr.max() - rr.min() + 1), kind]
+                T.setdefault('authored_protected_cells', []).append(self.buildings[-1]['plot'][:4])
         return True
 
     def place(self, cx, cy, use, w=None, d=None, r=96, plot=None, counted=True, within=None):
@@ -463,6 +464,97 @@ class Town:
         if not ok:
             self.T.setdefault('hand_fail', []).append((self.name, form, x, y, w, d))
         return ok
+
+    def adopt(self, packet):
+        """Append source-authored proposals using the existing placement forms.
+
+        Metadata travels explicitly to town_plans; no generated JSON is read.
+        Authored terrain, access and identity failures stop regeneration.
+        """
+        import copy
+        import town_plans
+        town_plans.validate_authored_packet(packet, town_plans.slug(self.name))
+        if hasattr(self, 'authored_plan'):
+            raise ValueError(f'{self.name}: duplicate authored packet')
+        protected = np.zeros(self.T['K'].shape, dtype=bool)
+        uses = list(self.T.get('authored_protected_cells', []))
+        uses += [b['plot'][:4] for b in self.buildings if b.get('plot')]
+        uses += [[o['box'][0] // CELL, o['box'][1] // CELL,
+                  (o['box'][2] - o['box'][0]) // CELL, (o['box'][3] - o['box'][1]) // CELL]
+                 for o in self.outskirts]
+        for c, r, w, h in uses:
+            protected[max(0, r):r + h, max(0, c):c + w] = True
+        reserved = np.zeros(self.T['K'].shape, dtype=bool)
+        wc, wr, ww, wh = packet['terrain_box_cells']
+        for rec in packet['buildings']:
+            c, r, w, h = rec['footprint_cells']
+            if r + h > H or c + w > W:
+                raise ValueError(f"{rec['id']}: authored footprint leaves the real terrain")
+            if not (wc <= c and wr <= r and c + w <= wc + ww and r + h <= wr + wh):
+                raise ValueError(f"{rec['id']}: authored footprint leaves its terrain window")
+            sl = (slice(r, r + h), slice(c, c + w))
+            if not np.isin(self.T['K'][sl], list(BUILDABLE)).all() or any(
+                    self.T[key][sl].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[sl].any() or protected[sl].any():
+                raise ValueError(f"{rec['id']}: authored footprint overlaps blocked ground or another use")
+            tiers = self.T['tiers_pre'][sl]
+            if tiers.max() != tiers.min():
+                raise ValueError(f"{rec['id']}: authored footprint needs an unapproved terrain-tier change")
+            reserved[sl] = True
+            if 'plot_cells' in rec:
+                pc, pr, pw, ph = rec['plot_cells']
+                ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+                if not (wc <= pc and wr <= pr and pc + pw <= wc + ww and pr + ph <= wr + wh):
+                    raise ValueError(f"{rec['id']}: authored plot leaves its terrain window")
+                if pr + ph > H or pc + pw > W or not np.isin(self.T['K'][ps], list(BUILDABLE - ROUTE)).all() or any(
+                        self.T[key][ps].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[ps].any() or protected[ps].any():
+                    raise ValueError(f"{rec['id']}: authored plot is clipped or overlaps another use")
+                reserved[ps] = True
+        # The existing JSON convention excludes landmarks and groups joined fronts.
+        # put() predates that convention and caps raw records instead; retain its
+        # geometry checks while checking authored capacity by the actual convention.
+        def contribution(raw):
+            if not raw['counted'] or raw.get('form') in town_plans.LANDMARK_FORMS or raw['use'] in town_plans.LANDMARK_TYPES:
+                return 0
+            n = len(raw.get('bays', [])) or 1
+            return (n + 4) // 5 if n >= 3 else 1
+        if sum(contribution(b) for b in self.buildings) + sum(b['counts_as'] for b in packet['buildings']) > self.cap:
+            raise ValueError(f'{self.name}: authored buildings exceed the existing count guide')
+        self.authored_plan = copy.deepcopy(packet)
+        for rec in packet['buildings']:
+            x, y, w, h = rec['rect_px']
+            a, b = C(x, y); c, d = a + h // CELL, b + w // CELL
+            tiers = self.T['tiers_pre'][a:c, b:d]
+            if tiers.size != w * h // (CELL * CELL) or tiers.max() != tiers.min():
+                raise ValueError(f"{rec['id']}: authored footprint needs an unapproved terrain-tier change")
+            if self.T['barrier'][a:c, b:d].any():
+                raise ValueError(f"{rec['id']}: authored footprint intersects a barrier")
+            behind = None
+            if 'plot_cells' in rec:
+                pc, pr, pw, ph = rec['plot_cells']
+                if pc + pw == x // CELL and pr == y // CELL and ph == h // CELL:
+                    behind = (-1, 0, pw * CELL, rec['plot'])
+                elif pc == (x + w) // CELL and pr == y // CELL and ph == h // CELL:
+                    behind = (1, 0, pw * CELL, rec['plot'])
+                elif pr + ph == y // CELL and pc == x // CELL and pw == w // CELL:
+                    behind = (0, -1, ph * CELL, rec['plot'])
+                elif pr == (y + h) // CELL and pc == x // CELL and pw == w // CELL:
+                    behind = (0, 1, ph * CELL, rec['plot'])
+                else:
+                    raise ValueError(f"{rec['id']}: plot is not an existing rectangular rear-plot form")
+            cap = self.cap
+            self.cap = max(cap, self.count() + int(rec['counted']))
+            try:
+                placed = self.hand(x, y, w, h, rec['form'], plot=behind, counted=rec['counted'])
+            finally:
+                self.cap = cap
+            if not placed:
+                raise ValueError(f"{rec['id']}: authored placement failed")
+            raw = self.buildings[-1]
+            if 'plot_cells' in rec and raw.get('plot') != rec['plot_cells'] + [rec['plot']]:
+                raise ValueError(f"{rec['id']}: authored plot was clipped")
+            raw['authored_id'] = rec['id']
+            raw['door'] = list(rec['door_cells'])
+            raw['faces'] = rec['faces']
 
     def row(self, pts, uses, gap=(8, 24), setback=None, sides=(1, -1), plot=(40, 'garden'), counted=True, limit=None, jitter=8, start=20, reach=88):
         """Buildings along a street, on its sides, each fronting it (axis-aligned, as the game's buildings are)."""
@@ -588,6 +680,7 @@ class Town:
             y += rh
         if n:
             self.outskirts.append({'kind': kinds[0], 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'plots': n, 'why': why})
+            self.T.setdefault('authored_protected_cells', []).append([int(x0 // CELL), int(y0 // CELL), int((x1 - x0) // CELL), int((y1 - y0) // CELL)])
         return n
 
     def yard(self, x0, y0, x1, y1, kind='yard', name=None, why=None):
@@ -597,6 +690,7 @@ class Town:
         ok = np.isin(sub, list(BUILDABLE)) & ~T['taken'][a:c, b:e] & ~T['street'][a:c, b:e] & ~T['barrier'][a:c, b:e] & ~T['keepout'][a:c, b:e]
         sub[ok & ~np.isin(sub, list(ROUTE))] = kind; T['used'][a:c, b:e] |= ok
         self.outskirts.append({'kind': kind, 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'why': why})
+        self.T.setdefault('authored_protected_cells', []).append([int(x0 // CELL), int(y0 // CELL), int((x1 - x0) // CELL), int((y1 - y0) // CELL)])
 
     # -------------------------------------------------------------------------------------- the record
     def count(self):
@@ -724,8 +818,34 @@ def crossroads_plan(root):
              (ox + b['door'][0], oy + b['door'][1]) if b.get('door') else None) for b in p['buildings']], (ox, oy, ox + p['box'][2], oy + p['box'][3])
 
 
-def lay_all(T, X):
+def _authored_inputs(authored, allowed):
+    """Check deliberate caller input; defaults never consult proposed authoring data."""
+    if authored is None:
+        return {}
+    if not isinstance(authored, dict) or set(authored) - allowed:
+        raise ValueError('unknown authored town key for this producer entrypoint')
+    if not authored:
+        return authored
+    import town_plans
+    for pid, packet in authored.items():
+        town_plans.validate_authored_packet(packet, pid)
+    return authored
+
+
+def _adopt_requested(town, authored, pid):
+    """Dispatch only a selected packet; Town.adopt verifies its actual target and ground."""
+    if not authored:
+        return
+    import town_plans
+    if town_plans.slug(town.name) != pid:
+        raise ValueError('authored dispatch target town mismatch')
+    if pid in authored:
+        town.adopt(authored[pid])
+
+
+def lay_all(T, X, *, authored=None):
     """Every settlement's footprint, in the order of Matt's allocation, then the smaller places. X: the geo55 module."""
+    authored = _authored_inputs(authored, {'cinderwick', 'hearthold'})
     towns = {}
     rng = np.random.default_rng(55)
 
@@ -932,7 +1052,7 @@ def lay_all(T, X):
     t.fill(26, 260, ('terrace', 'workshop', 'townhouse', 'house'), box=(7900, 2250, 8560, 2900))
     towns['Cogsworth'] = t
 
-    towns['Hearthold'] = hearthold(T, X)
+    towns['Hearthold'] = hearthold(T, X, authored={k: v for k, v in authored.items() if k == 'hearthold'})
 
     # ---------------------------------------------------------------- Cinderwick (medium): the black-sand cove
     clear_paint(T, 2250, 5700, 2750, 5960)
@@ -962,6 +1082,7 @@ def lay_all(T, X):
     t.row(route_part(T, 'Ash Coast', (2480, 5760, 2760, 5900)), ['cottage', 'house'], limit=3, start=10)
     t.fill(17, 380, ('cottage', 'boathouse', 'townhouse', 'workshop'), box=(1990, 5725, 2880, 6040), reach=260, plot=None)
     T['keepout'] &= ~north
+    _adopt_requested(t, authored, 'cinderwick')
     towns['Cinderwick'] = t
 
     # ---------------------------------------------------------------- Lagoon Landing (medium): the isles' town on its lagoon
@@ -1006,10 +1127,11 @@ HEARTHOLD_GATE = (2296, 2328)                                      # the main ga
 HEARTHOLD_POSTERN = (5224, 5240)                                   # the postern in the west wall (y): walled up, opens later
 
 
-def hearthold(T, X):
+def hearthold(T, X, *, authored=None):
     """Hearthold, authored by hand: the walled town on the rock between the lava flows, its gate, Gate Street down to the gate
     market, Smiths' Row against the cooled lava, and the home streets as terraces stepping down the slope (Matt's brief; Claude
     A's review of 28 Oct). Every coordinate is in world px on the soft grid."""
+    authored = _authored_inputs(authored, {'hearthold'})
     K = T['K']
     clear_paint(T, 1900, 5000, 2700, 5760, kinds=('building', 'yard', 'garden', 'plaza', 'lane', 'retain', 'stall', 'hut'))
     old = np.isin(K, ['castlewall', 'keep']) & (PX > 1850) & (PX < 2500) & (PY > 4950) & (PY < 5500)
@@ -1093,6 +1215,7 @@ def hearthold(T, X):
     # the edges: the vines on the cooled ash east of the wall, the lower fields between the town and Cinderwick
     t.fields(2480, 5120, 2620, 5400, ('orchard',), name='the vines', why="vines on the cooled ash of the rock's warm east side", size=(64, 112), hedge=False)
     t.fields(2140, 5744, 2600, 5800, ('field', 'field2'), name='the lower fields', why='barley and beans between the town and the cove', size=(80, 144))
+    _adopt_requested(t, authored, 'hearthold')
     return t
 
 
@@ -1562,9 +1685,10 @@ def charcoal_hollow(T, X):
     return {'Charcoal Hollow': t}
 
 
-def launch_cape(T, X):
+def launch_cape(T, X, *, authored=None):
     """Launch Cape's facility: the pad at the headland's tip with its service apron, the assembly hall, workshops and stores
     near the cape's middle, a heath buffer round the pad, the road down the cape."""
+    authored = _authored_inputs(authored, {'launch-cape'})
     K = T['K']
     t = Town(T, 'Launch Cape', X.PAD, 'facility', (4, 8),
              "the Company's launch site: rockets go up over open sea, away from people (W8); the assembly hall, the workshops and the "
@@ -1582,6 +1706,7 @@ def launch_cape(T, X):
     t.spaces.append({'kind': 'pad', 'name': 'the pad', 'x': X.PAD[0], 'y': X.PAD[1], 'rx': 72, 'ry': 60})
     t.cluster(12060, 6090, 170, ['hangar', 'workshop', 'warehouse', 'workshop', 'public', 'warehouse'], 6, plot=(16, 'yard'))
     t.yard(11960, 5960, 12250, 6000, name='the works yard', why='carts and the transporter road to the pad')
+    _adopt_requested(t, authored, 'launch-cape')
     return {'Launch Cape': t}
 
 
@@ -1625,3 +1750,722 @@ def smaller(T, X):
         t.fill(n, 160, ('cottage', 'house', 'workshop'), reach=160 if size in ('town', 'facility') else 48, box=(box[0] - 60, box[1] - 60, box[2] + 60, box[3] + 60), plot=pl)
         out[nm] = t
     return out
+
+
+# Exact, UNAPPROVED Y15 inputs. These source pins identify the separately reviewed proposals;
+# regeneration never reads its generated JSON as authoring input. Matt must approve placement.
+# ------------------------------------------------------------------------------------------ v56: coherent authored street blocks
+# Inventory is pinned to303@4984438d; source forms/bays retain40/72 counted units.
+# Positions below are new. No generated JSON is read by this production path.
+FEEDBACK_BUILDINGS = {'crossroads': [(1, 'cottage', 80, 40, []),
+                (2, 'public', 96, 40, []),
+                (3, 'house', 96, 40, []),
+                (4, 'shop', 72, 48, []),
+                (5, 'shop', 72, 48, []),
+                (6, 'workshop', 88, 56, []),
+                (7, 'cottage', 72, 48, []),
+                (8,
+                 'row_house',
+                 80,
+                 24,
+                 [{'w_cells': 6, 'storeys': 2, 'roof': 'tile'}, {'w_cells': 4, 'storeys': 2, 'roof': 'thatch'}]),
+                (9,
+                 'row_house',
+                 112,
+                 48,
+                 [{'w_cells': 8, 'storeys': 1, 'roof': 'thatch'}, {'w_cells': 6, 'storeys': 1, 'roof': 'tile'}]),
+                (10, 'cottage', 48, 72, []),
+                (11, 'house', 56, 88, []),
+                (12, 'cottage', 48, 64, []),
+                (13, 'shop', 48, 88, []),
+                (14, 'cottage', 40, 72, []),
+                (15, 'house', 64, 96, []),
+                (16, 'cottage', 48, 56, []),
+                (17, 'house', 56, 88, []),
+                (18, 'cottage', 40, 64, []),
+                (19, 'cottage', 64, 40, []),
+                (20, 'cottage', 64, 48, []),
+                (21, 'cottage', 64, 40, []),
+                (22, 'house', 88, 48, []),
+                (23, 'cottage', 72, 40, []),
+                (24, 'cottage', 40, 72, []),
+                (25, 'house', 56, 96, []),
+                (26, 'cottage', 40, 56, []),
+                (27, 'cottage', 40, 64, []),
+                (28, 'house', 56, 96, []),
+                (29, 'cottage', 48, 72, []),
+                (30, 'inn', 72, 128, []),
+                (31, 'inn', 128, 72, []),
+                (32, 'house', 48, 88, []),
+                (33, 'house', 96, 56, []),
+                (34, 'cottage', 72, 48, []),
+                (35, 'shop', 64, 56, []),
+                (36, 'cottage', 80, 48, []),
+                (37, 'shop', 48, 64, []),
+                (38, 'cottage', 56, 48, []),
+                (39, 'cottage', 64, 48, []),
+                (40, 'cottage', 56, 40, [])],
+ 'neon-harbour': [(1,
+                   'row_house',
+                   88,
+                   40,
+                   [{'w_cells': 3, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 5, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 3, 'storeys': 3, 'roof': 'flat'}]),
+                  (2,
+                   'row_house',
+                   112,
+                   32,
+                   [{'w_cells': 6, 'storeys': 3, 'roof': 'tile'}, {'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (3,
+                   'row_house',
+                   88,
+                   32,
+                   [{'w_cells': 6, 'storeys': 3, 'roof': 'tin'}, {'w_cells': 5, 'storeys': 2, 'roof': 'tin'}]),
+                  (4,
+                   'row_house',
+                   104,
+                   32,
+                   [{'w_cells': 4, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 5, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 4, 'storeys': 3, 'roof': 'tile'}]),
+                  (5,
+                   'row_house',
+                   80,
+                   40,
+                   [{'w_cells': 6, 'storeys': 2, 'roof': 'flat'}, {'w_cells': 4, 'storeys': 2, 'roof': 'flat'}]),
+                  (6, 'row_house', 24, 32, [{'w_cells': 3, 'storeys': 1, 'roof': 'tin'}]),
+                  (7,
+                   'row_house',
+                   88,
+                   40,
+                   [{'w_cells': 5, 'storeys': 1, 'roof': 'flat'}, {'w_cells': 6, 'storeys': 1, 'roof': 'flat'}]),
+                  (8, 'row_house', 32, 24, [{'w_cells': 4, 'storeys': 3, 'roof': 'flat'}]),
+                  (9, 'row_house', 40, 40, [{'w_cells': 5, 'storeys': 3, 'roof': 'tile'}]),
+                  (10,
+                   'row_house',
+                   104,
+                   40,
+                   [{'w_cells': 5, 'storeys': 1, 'roof': 'tile'}, {'w_cells': 8, 'storeys': 2, 'roof': 'tin'}]),
+                  (11, 'row_house', 40, 40, [{'w_cells': 5, 'storeys': 1, 'roof': 'tile'}]),
+                  (12,
+                   'row_house',
+                   104,
+                   40,
+                   [{'w_cells': 7, 'storeys': 1, 'roof': 'flat'}, {'w_cells': 6, 'storeys': 3, 'roof': 'flat'}]),
+                  (13,
+                   'row_house',
+                   104,
+                   32,
+                   [{'w_cells': 4, 'storeys': 2, 'roof': 'tile'},
+                    {'w_cells': 6, 'storeys': 1, 'roof': 'tin'},
+                    {'w_cells': 3, 'storeys': 1, 'roof': 'tin'}]),
+                  (14, 'row_house', 48, 32, [{'w_cells': 6, 'storeys': 1, 'roof': 'tin'}]),
+                  (15,
+                   'row_house',
+                   80,
+                   48,
+                   [{'w_cells': 5, 'storeys': 1, 'roof': 'tile'}, {'w_cells': 7, 'storeys': 3, 'roof': 'tile'}]),
+                  (16, 'row_house', 48, 40, [{'w_cells': 6, 'storeys': 1, 'roof': 'flat'}]),
+                  (17, 'row_house', 72, 40, [{'w_cells': 9, 'storeys': 2, 'roof': 'tile'}]),
+                  (18, 'row_house', 32, 40, [{'w_cells': 4, 'storeys': 2, 'roof': 'tile'}]),
+                  (19,
+                   'row_house',
+                   80,
+                   32,
+                   [{'w_cells': 6, 'storeys': 2, 'roof': 'flat'}, {'w_cells': 4, 'storeys': 2, 'roof': 'flat'}]),
+                  (20, 'row_house', 24, 24, [{'w_cells': 3, 'storeys': 2, 'roof': 'tile'}]),
+                  (21, 'row_house', 32, 24, [{'w_cells': 4, 'storeys': 2, 'roof': 'tile'}]),
+                  (22, 'row_house', 48, 40, [{'w_cells': 6, 'storeys': 3, 'roof': 'tin'}]),
+                  (23, 'row_house', 48, 32, [{'w_cells': 6, 'storeys': 2, 'roof': 'flat'}]),
+                  (24, 'row_house', 56, 32, [{'w_cells': 7, 'storeys': 1, 'roof': 'flat'}]),
+                  (25, 'row_house', 64, 32, [{'w_cells': 8, 'storeys': 2, 'roof': 'flat'}]),
+                  (26, 'row_house', 32, 32, [{'w_cells': 4, 'storeys': 1, 'roof': 'tile'}]),
+                  (27,
+                   'row_tenement',
+                   112,
+                   40,
+                   [{'w_cells': 8, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 1, 'roof': 'flat'}]),
+                  (28,
+                   'row_tenement',
+                   120,
+                   40,
+                   [{'w_cells': 8, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 3, 'roof': 'flat'},
+                    {'w_cells': 4, 'storeys': 2, 'roof': 'flat'}]),
+                  (29,
+                   'row_tenement',
+                   112,
+                   32,
+                   [{'w_cells': 4, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 7, 'storeys': 1, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 2, 'roof': 'flat'}]),
+                  (30,
+                   'row_tenement',
+                   120,
+                   40,
+                   [{'w_cells': 4, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 5, 'storeys': 3, 'roof': 'flat'},
+                    {'w_cells': 6, 'storeys': 3, 'roof': 'flat'}]),
+                  (31,
+                   'row_tenement',
+                   112,
+                   32,
+                   [{'w_cells': 6, 'storeys': 3, 'roof': 'flat'}, {'w_cells': 8, 'storeys': 3, 'roof': 'flat'}]),
+                  (32, 'row_tenement', 40, 32, [{'w_cells': 5, 'storeys': 1, 'roof': 'flat'}]),
+                  (33,
+                   'row_tenement',
+                   112,
+                   32,
+                   [{'w_cells': 6, 'storeys': 1, 'roof': 'flat'}, {'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (34,
+                   'row_tenement',
+                   112,
+                   40,
+                   [{'w_cells': 5, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 3, 'storeys': 3, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 1, 'roof': 'tin'}]),
+                  (35,
+                   'row_tenement',
+                   96,
+                   32,
+                   [{'w_cells': 3, 'storeys': 1, 'roof': 'tin'},
+                    {'w_cells': 4, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 5, 'storeys': 2, 'roof': 'flat'}]),
+                  (36,
+                   'row_tenement',
+                   112,
+                   40,
+                   [{'w_cells': 8, 'storeys': 3, 'roof': 'flat'}, {'w_cells': 6, 'storeys': 1, 'roof': 'flat'}]),
+                  (37, 'terrace', 32, 152, []),
+                  (38, 'aptrow', 40, 104, []),
+                  (39, 'terrace', 40, 120, []),
+                  (40, 'terrace', 40, 144, []),
+                  (41, 'terrace', 104, 32, []),
+                  (42, 'terrace', 104, 40, []),
+                  (43, 'terrace', 128, 32, []),
+                  (44, 'terrace', 104, 40, []),
+                  (45, 'aptrow', 104, 40, []),
+                  (46, 'longwarehouse', 224, 80, []),
+                  (47, 'longwarehouse', 224, 64, []),
+                  (48, 'longwarehouse', 184, 72, []),
+                  (49, 'workshop', 120, 64, []),
+                  (50, 'warehouse', 120, 88, []),
+                  (51, 'longwarehouse', 192, 80, []),
+                  (52, 'workshop', 104, 64, []),
+                  (53, 'warehouse', 128, 72, []),
+                  (54, 'slab', 168, 88, []),
+                  (55, 'bigtower', 104, 112, []),
+                  (56, 'slab', 168, 104, []),
+                  (57, 'slab', 160, 112, []),
+                  (58, 'slab', 96, 152, []),
+                  (59, 'slab', 120, 184, []),
+                  (60, 'slab', 112, 144, []),
+                  (61, 'slab', 168, 88, []),
+                  (62, 'bigtower', 104, 104, []),
+                  (63, 'slab', 176, 104, []),
+                  (64, 'skyport', 208, 96, []),
+                  (65, 'row_house', 64, 40, [{'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (66, 'row_house', 64, 24, [{'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (67,
+                   'row_house',
+                   80,
+                   32,
+                   [{'w_cells': 4, 'storeys': 1, 'roof': 'tile'}, {'w_cells': 6, 'storeys': 3, 'roof': 'tin'}]),
+                  (68, 'row_house', 64, 40, [{'w_cells': 8, 'storeys': 3, 'roof': 'tile'}]),
+                  (69, 'row_house', 56, 32, [{'w_cells': 7, 'storeys': 3, 'roof': 'tile'}]),
+                  (70, 'row_house', 24, 24, [{'w_cells': 3, 'storeys': 2, 'roof': 'tin'}]),
+                  (71, 'row_house', 32, 40, [{'w_cells': 4, 'storeys': 2, 'roof': 'tile'}]),
+                  (72, 'row_house', 40, 40, [{'w_cells': 5, 'storeys': 2, 'roof': 'flat'}]),
+                  (73,
+                   'row_house',
+                   64,
+                   40,
+                   [{'w_cells': 5, 'storeys': 2, 'roof': 'tin'}, {'w_cells': 3, 'storeys': 1, 'roof': 'flat'}]),
+                  (74, 'row_house', 56, 40, [{'w_cells': 7, 'storeys': 2, 'roof': 'tile'}]),
+                  (75,
+                   'row_house',
+                   96,
+                   32,
+                   [{'w_cells': 7, 'storeys': 2, 'roof': 'tile'}, {'w_cells': 5, 'storeys': 3, 'roof': 'tin'}]),
+                  (76, 'row_house', 24, 32, [{'w_cells': 3, 'storeys': 1, 'roof': 'tile'}]),
+                  (77, 'row_house', 64, 32, [{'w_cells': 8, 'storeys': 2, 'roof': 'tile'}]),
+                  (78, 'row_house', 64, 32, [{'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (79,
+                   'row_house',
+                   96,
+                   32,
+                   [{'w_cells': 5, 'storeys': 1, 'roof': 'tin'},
+                    {'w_cells': 3, 'storeys': 1, 'roof': 'tile'},
+                    {'w_cells': 4, 'storeys': 3, 'roof': 'flat'}]),
+                  (80,
+                   'row_house',
+                   88,
+                   40,
+                   [{'w_cells': 3, 'storeys': 1, 'roof': 'tile'},
+                    {'w_cells': 3, 'storeys': 2, 'roof': 'tin'},
+                    {'w_cells': 5, 'storeys': 3, 'roof': 'flat'}]),
+                  (81, 'row_house', 32, 32, [{'w_cells': 4, 'storeys': 1, 'roof': 'tile'}])]}
+
+
+def _feedback_rows(town, records, rows, *, props=('sign', 'potted plants', 'water butt')):
+    """Lay the pinned buildings along deliberately authored street edges.
+
+    A row is (axis, fixed coordinate, start, end, side, street name). Gaps are
+    actual side streets/water/door clearances, never random radial infill.
+    Failed placement remains a failure; no footprint is painted over water.
+    """
+    import copy
+    queue = list(records)
+    placed = []
+    for row_index, (axis, fixed, lo, hi, side, name) in enumerate(rows):
+        if not queue:
+            break
+        pts = [(lo, fixed), (hi, fixed)] if axis == 'x' else [(fixed, lo), (fixed, hi)]
+        covering = []
+        for old in town.streets:
+            for a, b in zip(old['pts'], old['pts'][1:]):
+                if ((axis == 'x' and a[1] == b[1] == fixed and min(a[0], b[0]) < hi and max(a[0], b[0]) > lo) or
+                        (axis == 'y' and a[0] == b[0] == fixed and min(a[1], b[1]) < hi and max(a[1], b[1]) > lo)):
+                    covering.append(old)
+        if covering:
+            street = max(covering, key=lambda q: q['width_px'])
+        else:
+            town.street(pts, 'lane', name=name)
+            street = town.streets[-1]
+        street['frontage'] = 'continuous' if town.name.startswith('Neon Harbour') and 'docks' not in town.name and 'Company' not in town.name else 'detached'
+        if street['frontage'] == 'continuous':
+            street['max_gap_cells'] = 1
+            street['frontage_reason'] = 'street-facing blocks with shared courts; alleys and water remain open'
+            street['frontage_props'] = []
+        edge = int(fixed + side * street['width_px'] / 2)
+        pos = int(lo)
+        row_start = len(placed)
+        row_target = math.ceil(len(queue) / (len(rows) - row_index))
+        while queue and pos < hi and len(placed) - row_start < row_target:
+            ident, form, ow, od, bays = queue[0]
+            along, depth = (ow, od) if bays else (max(ow, od), min(ow, od))
+            if pos + along > hi:
+                break
+            x, y, w, h = ((pos, edge if side > 0 else edge - depth, along, depth) if axis == 'x' else
+                          (edge if side > 0 else edge - depth, pos, depth, along))
+            if town.hand(x, y, w, h, form, plot=None):
+                b = town.buildings[-1]
+                b['layout_id'] = ('neon-harbour' if town.name.startswith('Neon Harbour') else 'crossroads') + f'-b{ident:03d}'
+                if bays:
+                    b['bays'] = copy.deepcopy(bays)
+                    b['frontage'] = name
+                if street['frontage'] == 'continuous':
+                    for i, kind in enumerate(props[:2]):
+                        at = [pos + min(along - 4, 8 + 16 * i), edge + side * 4] if axis == 'x' else [edge + side * 4, pos + min(along - 4, 8 + 16 * i)]
+                        street['frontage_props'].append({'kind': kind, 'at_px': at})
+                queue.pop(0); placed.append(b['layout_id'])
+                # A side alley every fourth building, detached yards otherwise.
+                pos += along + (8 if street['frontage'] == 'continuous' else 24)
+                if len(placed) % 4 == 0:
+                    mid = pos + 8
+                    alley = ([(mid, edge - side * 4), (mid, edge + side * (depth + 16))] if axis == 'x' else
+                             [(edge - side * 4, mid), (edge + side * (depth + 16), mid)])
+                    town.street(alley, 'close', name=None)
+                    town.streets[-1]['alley'] = True
+                    pos += 16
+            else:
+                # Search only along this street edge, preserving the intended block.
+                pos += CELL
+        # Metadata does not claim a continuous street where no fronts were placed.
+        if not street.get('frontage_props') and street['frontage'] == 'continuous':
+            street['frontage'] = 'detached'; street.pop('max_gap_cells', None)
+    if queue:
+        raise ValueError(f'{town.name}: authored street blocks cannot place {[r[0] for r in queue]}')
+    return placed
+
+
+def _feedback_snapshot(T, boxes):
+    windows = [(slice(y0 // CELL, y1 // CELL), slice(x0 // CELL, x1 // CELL)) for x0, y0, x1, y1 in boxes]
+    arrays = {k: [v[sl].copy() for sl in windows] for k, v in T.items()
+              if isinstance(v, np.ndarray) and v.shape == T['K'].shape}
+    routes = {nm: list(T['route_px'][nm]) for nm in ('Quay Street', 'Old Bridges', 'Cape Road', 'Lull Road', 'Delta Road', 'Valley lane south')}
+    return windows, arrays, routes
+
+
+def _feedback_restore(T, saved, boxes):
+    windows, arrays, routes = saved
+    for key, pieces in arrays.items():
+        for sl, value in zip(windows, pieces):
+            T[key][sl] = value
+    T['route_px'].update(routes)
+    for key in ('levelled', 'authored_protected_cells'):
+        if key in T:
+            # Retain records outside the two re-authored regions.
+            scale = CELL if key == 'authored_protected_cells' else 1
+            T[key] = [q for q in T[key] if not any(x0 <= q[0] * scale < x1 and y0 <= q[1] * scale < y1
+                                                   for x0, y0, x1, y1 in boxes)]
+    T['hand_fail'] = [q for q in T.get('hand_fail', []) if not (q[0] == 'Crossroads' or q[0].startswith('Neon Harbour'))]
+
+
+def _feedback_crossroads(T, X):
+    plan, _ = crossroads_plan(X.ROOT)
+    t = Town(T, 'Crossroads', (6296, 3536), 'large', (30, 45),
+             'the valley market, mill and halt: a compact civic core, mixed street fronts, courts and garden edges',
+             'the dry terrace west of the Sleepwater bend, with the mill reach below the existing square',
+             neighbourhoods=[('the square (built)', 'existing square, well, bakery, library and trades', 6296, 3536),
+                             ('Mill End', 'millers, cottages and granary courts on the lower river terrace', 6400, 4056),
+                             ('Halt Road', 'homes with rear gardens beside the goods road', 5968, 4024),
+                             ('Eastgate', 'inns, shops and homes at the eastern road', 6960, 3416),
+                             ('West Lane', "foresters' cottages at the woodland edge", 5944, 3600)],
+             gathering=[('the square', 6296, 3536), ('the mill green', 6400, 3880), ('the halt yard', 5968, 4304)], seed=101)
+    t.cap = 40
+    t.fixed(plan)
+    for i, b in enumerate(t.buildings, 1):
+        b['layout_id'] = f'crossroads-b{i:03d}'
+    import json, os
+    zone = json.load(open(os.path.join(X.ROOT, 'game/data/plans/crossroads.json')))
+    zx, zy = zone['origin_on_canvas']
+    for r in zone['routes']:
+        t.street([(zx + a, zy + b) for a, b in r['points']], 'side' if r['kind'] == 'road' else 'lane',
+                 name=r['id'].replace('_', ' '), route='the Crossroads zone plan')
+    for q in zone['places']:
+        if q['kind'] in ('square', 'green'):
+            x, y, w, h = q['rect']
+            t.square(zx + x + w / 2, zy + y + h / 2, w / 2, h / 2,
+                     kind='plaza' if q['kind'] == 'square' else 'garden', name=f"the {q['id']} (the zone as built)")
+    # Main routes join the existing zone at its boundary; the river goes round it.
+    set_route(T, 'Valley lane south', (6100, 3780, 6500, 4416), [(6256, 3808), (6256, 4384)], 24, 'path')
+    t.street([(6256, 3808), (6256, 4384)], 'main', name='Mill Street')
+    t.street([(5968, 3808), (5968, 4320)], 'side', name='Halt Road')
+    t.street([(5808, 3936), (6256, 3936)], 'side', name='the halt link')
+    t.street([(6120, 3936), (7008, 3936)], 'side', name='Granary Row')
+    t.street([(6120, 4160), (6768, 4160)], 'lane', name='Weir Lane')
+    t.street([(6528, 3832), (6528, 4384)], 'side', name='Orchard Lane')
+    t.street([(5984, 3440), (5984, 3808)], 'lane', name='West Lane')
+    t.street([(6608, 3416), (7232, 3416)], 'side', name='Market Lane')
+    t.to_route(6992, 3416, 'Foothill Road', 'side', name='the east road')
+    # Join the halt to Granary Row instead of bisecting a second short block;
+    # the mill/orchard fronts reach the same lower junction with enough room
+    # for the retained long row houses between the real crossing streets.
+    inventory = FEEDBACK_BUILDINGS['crossroads']
+    _feedback_rows(t, inventory[7:23], [('y', 6256, 3832, 4384, -1, 'Mill Street west'),
+                                      ('y', 6256, 3832, 4384, 1, 'Mill Street east'),
+                                      ('y', 6528, 3832, 4384, 1, 'Orchard Lane east'),
+                                      ('y', 6528, 3832, 4384, -1, 'Orchard Lane west'),
+                                      ('x', 3936, 6608, 7008, 1, 'Granary Row south')])
+    _feedback_rows(t, inventory[23:29], [('y', 5968, 3832, 4288, -1, 'Halt Road west'),
+                                       ('y', 5968, 3832, 4288, 1, 'Halt Road east')])
+    _feedback_rows(t, inventory[29:37], [('x', 3416, 6608, 7232, -1, 'Market Lane north'),
+                                       ('x', 3416, 6608, 7232, 1, 'Market Lane south')])
+    _feedback_rows(t, inventory[37:], [('y', 5984, 3440, 3808, -1, 'West Lane gardens')])
+    t.square(6400, 3864, 48, 32, kind='garden', name='the mill green')
+    t.yard(5840, 4304, 6080, 4368, name='the halt yard', why='loading carts, animal tethering and the water tank beside the halt approach')
+    t.fields(5736, 3896, 5840, 4336, ('field', 'orchard'), name='the halt gardens', why='rear gardens taper to working fields')
+    t.fields(6624, 3992, 6880, 4352, ('field', 'orchard'), name='the mill farms', why='grain and orchard plots beyond the last homes')
+    return t
+
+
+def _feedback_neon(T, X):
+    """Five connected districts; existing81-record inventory still counts72."""
+    out = {}
+    old = FEEDBACK_BUILDINGS['neon-harbour']
+    props = ('sign', 'awning', 'potted plants', 'pipes', 'AC unit')
+    specs = [
+        ('the old waterfront', (10912, 4464), 201, old[:26],
+         [('x', 4288, 10576, 10912, -1, 'Falls Row'), ('x', 4288, 10576, 10912, 1, 'Falls Row'),
+          ('x', 4432, 10576, 10912, -1, 'Old Quay Lane'), ('x', 4432, 10576, 10912, 1, 'Old Quay Lane'),
+          ('x', 4560, 10576, 10912, -1, 'Quayside Row'), ('x', 4560, 10576, 10912, 1, 'Quayside Row'),
+          ('x', 4288, 11024, 11264, -1, 'Bridgefoot Row'), ('x', 4432, 11024, 11264, -1, 'Bridgefoot Lane'),
+          ('x', 4560, 11024, 11264, -1, 'Old Bridges frontage')]),
+        ('the Lanes and the East Shore', (11632, 4752), 203, old[26:45],
+         [('x', 4352, 11296, 11696, -1, 'Laundry Lane'), ('x', 4496, 11296, 11696, -1, 'Courtyard Lane'),
+          ('x', 4640, 11296, 11696, -1, 'Arcade Lane'), ('x', 4352, 11296, 11696, 1, 'School Court frontage'),
+          ('x', 5040, 11808, 12256, -1, 'East Shore Terrace'), ('x', 5184, 11808, 12256, -1, 'Lido Lane'),
+          ('x', 5328, 11808, 12256, -1, 'Sea Garden Lane'), ('x', 5472, 11808, 12256, -1, 'Shore End')]),
+        ('the docks', (11408, 5136), 202, old[45:53],
+         [('x', 4848, 11072, 11616, -1, 'North Cargo Quay'), ('x', 5040, 11168, 11616, -1, 'Warehouse Quay'),
+          ('x', 5232, 11200, 11616, -1, 'Repair Quay'), ('x', 5456, 11264, 11616, -1, 'South Cargo Quay'),
+          ('x', 5632, 11328, 11616, -1, 'Slipway Lane')]),
+        ('the Company district', (12000, 4608), 204, old[53:63],
+         [('x', 4384, 11744, 12384, -1, 'Terminus North'), ('x', 4528, 11744, 12384, -1, 'Neon Row'),
+          ('x', 4736, 11744, 12384, -1, 'Works Avenue'), ('x', 4912, 11744, 12384, -1, 'Company South')]),
+        ('the Heights and the Skyport', (10080, 5232), 205, old[63:],
+         [('x', 4848, 9824, 10400, -1, 'Skyport Approach'), ('x', 5040, 9824, 10400, -1, 'Upper Terrace'),
+          ('x', 5184, 9824, 10400, -1, 'Middle Terrace'), ('x', 5328, 9824, 10400, -1, 'Lower Terrace'),
+          ('x', 5472, 9872, 10368, -1, 'Belvedere Terrace'), ('x', 5616, 9920, 10336, -1, 'Headland Gardens')]),
+    ]
+    # A connected spine and service loop precede buildings, with readable district entrances.
+    for label, centre, seed, records, rows in specs:
+        t = Town(T, 'Neon Harbour: ' + label, centre, 'city district', (12, 26),
+                 'street-facing homes and trades with shared courts and useful working edges',
+                 "terraced dry ground fitted round the ria, the Glint, the east shore and the city's approaches", seed=seed,
+                 neighbourhoods=([('the Lanes', 'mixed homes, corner shops and shared courts', 11488, 4544),
+                                  ('the East Shore', 'sea-facing terraces and garden squares', 12032, 5272)] if label == 'the Lanes and the East Shore' else []),
+                 gathering=[('Bridgefoot' if label == 'the old waterfront' else ('Terminus Square' if label == 'the Company district' else 'the district court'), centre[0], centre[1])])
+        t.cap = len(records)
+        # Cross streets join each parallel frontage and continue into the neighbouring district.
+        if label == 'the Heights and the Skyport':
+            for x in (9800, 10408):
+                t.street([(x, 4816), (x, 5664)], 'lane', kind='stair', name='the terrace steps')
+            t.street([(9800, 5664), (10208, 5664), (10408, 5520)], 'lane', name='the headland walk')
+            t.square(10112, 5720, 96, 40, kind='garden', name='the belvedere gardens')
+        elif label == 'the old waterfront':
+            for x in (10552, 10936, 11272):
+                t.street([(x, 4256), (x, 4656)], 'side', name='the waterfront cross lane')
+            t.street([(10552, 4656), (11272, 4656)], 'side', name='the old quays')
+        elif label == 'the Lanes and the East Shore':
+            for x, top, bottom in ((11272, 4256, 4816), (11720, 4256, 5520), (12280, 4960, 5520)):
+                t.street([(x, top), (x, bottom)], 'side', name='the neighbourhood link')
+            t.street([(11720, 5520), (12280, 5520)], 'side', name='the sea-front link')
+            t.square(12016, 5568, 112, 40, kind='garden', name='the sea-front gardens')
+        elif label == 'the docks':
+            t.street([(11648, 4704), (11648, 5664)], 'main', name='Quay Street service spine')
+            for y in (4848, 5040, 5232, 5456, 5632):
+                t.street([(11120, y), (11720, y)], 'side', name='the cargo cross lane')
+            t.yard(11248, 5504, 11584, 5600, name='the repair and cargo yard', why='turning room, net repairs and cargo handling beside the slip')
+        else:
+            for x in (11720, 12000, 12408):
+                t.street([(x, 4256), (x, 5040)], 'side', kind='boulevard', name='the Company cross avenue')
+            t.street([(11272, 4552), (12408, 4552)], 'main', kind='boulevard', name='the connected city spine')
+            t.square(11664, 4552, 48, 40, name='Terminus Square')
+        if label == 'the Lanes and the East Shore':
+            _feedback_rows(t, records[:10], rows[:4], props=props)
+            _feedback_rows(t, records[10:], rows[4:], props=props)
+        else:
+            _feedback_rows(t, records, rows, props=props)
+        out[t.name] = t
+    # The river/dock coast is a working edge, with purposeful open land rather than blank city paint.
+    docks = out['Neon Harbour: the docks']
+    docks.yard(11280, 5664, 11648, 5744, name='the southern working quay', why="boat storage and the slip approach at the city's water edge")
+    return out
+
+
+def lay_feedback(T, X):
+    """Reuse the unchanged factories for other settlements, then author the two feedback sites.
+
+    The old default path and default-OFF packet interface remain untouched.
+    Only target-region arrays are restored before new source placement, so no
+    invisible legacy building/yard/street survives beneath the new layout.
+    """
+    boxes = [(5680, 3120, 7248, 4384), (9600, 3904, 12544, 5888)]
+    saved = _feedback_snapshot(T, boxes)
+    towns = lay_all(T, X)
+    # Keep the existing Company's fenced shard yard, a story landmark rather
+    # than abandoned city paint. Its footprint remains excluded from new fronts.
+    company_fence = (T['K'] == 'fence').copy()
+    _feedback_restore(T, saved, boxes)
+    T['K'][company_fence] = 'fence'
+    for nm in list(towns):
+        if nm == 'Crossroads' or nm.startswith('Neon Harbour') or nm in ('Canalside', 'Glintside', 'Halcyon Row'):
+            del towns[nm]
+    revised = {'Crossroads': _feedback_crossroads(T, X)}
+    revised.update(_feedback_neon(T, X))
+    # These approach settlements retain their own scale; they form the inhabited fringe.
+    for nm, centre, seed, target, route, box in (
+            ('Canalside', (10000, 4430), 206, (6, 12), 'Lull Road', (9700, 4300, 10500, 4520)),
+            ('Glintside', (11120, 4150), 207, (3, 6), 'Old Bridges', (10512, 4200, 11320, 4544)),
+            ('Halcyon Row', (12020, 5590), 208, (8, 14), 'Cape Road', (11700, 5300, 12300, 5800))):
+        t = Town(T, nm, centre, 'outskirts' if nm != 'Glintside' else 'hamlet', target,
+                 'homes and small trades on the city approach, with gardens beyond the last frontage',
+                 'dry ground between the route, its working gardens and the shore', seed=seed)
+        line = route_part(T, route, box)
+        if len(line) < 2:
+            raise ValueError(f'{nm}: city approach has no joined regional route')
+        t.street(line, 'side', name=nm + ' road', route=route)
+        t.level, t.slope_max = 2, 0.03
+        t.row(line, ['house', 'cottage', 'shop', 'house'], limit={'Canalside': 10, 'Glintside': 5, 'Halcyon Row': 8}[nm],
+              plot=(32, 'garden'), gap=(8, 16), reach=32)
+        if nm == 'Canalside':
+            t.fields(9728, 4512, 10400, 4680, ('field', 'orchard'), name='the market gardens', why='gardens and allotments between the canal and the city edge')
+        revised[nm] = t
+    revised.update(towns)
+    T['feedback_layout'] = {'id': 'v56', 'source_inventory': '303@4984438d', 'counted': {'crossroads': 40, 'neon-harbour': 72}}
+    return revised
+
+
+PROPOSED_ADOPTIONS = {'cinderwick': {'status': 'proposal',
+                'source': {'commit': '4669140421d7d8c69482fc90b78fea0a50d1d4bc',
+                           'blob': '9cacbd0833c090c5365d3a9afea84a15ac9c5977',
+                           'path': 'docs/vision/research/blockout/towns/cinderwick.json'},
+                'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                             'blob': 'b1a6b82b71ba055bf6dc351f81a58766775bf1c4',
+                             'path': 'docs/vision/research/blockout/towns/cinderwick.json'},
+                'terrain_box_cells': [232, 701, 144, 70],
+                'buildings': [{'id': 'cinderwick-b014',
+                               'type': 'cottage',
+                               'form': 'cottage',
+                               'footprint_cells': [301, 719, 8, 6],
+                               'rect_px': [2408, 5752, 64, 48],
+                               'faces': 'cinderwick-s02',
+                               'door_cells': [305, 725],
+                               'purpose': 'a detached fishing cottage',
+                               'occupants': "a fisher's household",
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': True,
+                               'counts_as': 1,
+                               'plot_cells': [301, 717, 8, 2],
+                               'plot': 'yard'},
+                              {'id': 'cinderwick-b015',
+                               'type': 'cottage',
+                               'form': 'cottage',
+                               'footprint_cells': [306, 727, 7, 5],
+                               'rect_px': [2448, 5816, 56, 40],
+                               'faces': 'cinderwick-s02',
+                               'door_cells': [305, 729],
+                               'purpose': 'a detached fishing cottage',
+                               'occupants': "a fisher's household",
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': True,
+                               'counts_as': 1,
+                               'plot_cells': [306, 725, 7, 2],
+                               'plot': 'yard'},
+                              {'id': 'cinderwick-b016',
+                               'type': 'barn',
+                               'form': 'shed',
+                               'footprint_cells': [300, 736, 4, 3],
+                               'rect_px': [2400, 5888, 32, 24],
+                               'faces': 'cinderwick-s01',
+                               'door_cells': [302, 735],
+                               'purpose': 'a net shed by the boatyard',
+                               'occupants': 'work storage only; resident roles deferred to X3',
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': False,
+                               'counts_as': 0},
+                              {'id': 'cinderwick-b017',
+                               'type': 'barn',
+                               'form': 'shed',
+                               'footprint_cells': [306, 736, 4, 3],
+                               'rect_px': [2448, 5888, 32, 24],
+                               'faces': 'cinderwick-s01',
+                               'door_cells': [308, 735],
+                               'purpose': 'a net shed by the boatyard',
+                               'occupants': 'work storage only; resident roles deferred to X3',
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': False,
+                               'counts_as': 0}],
+                'districts': [],
+                'district_descriptions': {'cinderwick-d-the-quay': {'declared': 'the existing stone quay with '
+                                                                                'detached fishing cottages, net '
+                                                                                'sheds and a working boatyard',
+                                                                    'function': 'docks and transport with homes'}},
+                'open_uses': [{'id': 'cinderwick-o01',
+                               'name': 'the boatyard work apron',
+                               'kind': 'yard',
+                               'cells': [294, 736, 6, 5]},
+                              {'id': 'cinderwick-o02',
+                               'name': 'the boatyard net-shed frontage',
+                               'kind': 'yard',
+                               'cells': [300, 736, 11, 3]}],
+                'site_authored': 'existing generated layout with Y15 Cinderwick-only authored additions (issue149 '
+                                 'comment6471345306)'},
+ 'hearthold': {'status': 'proposal',
+               'source': {'commit': '59f3722d1b39050cc81709fa5933d4c9c093ee98',
+                          'blob': '51fad9db44e2a9be22d2bbb5b007249ae9ecebce',
+                          'path': 'docs/vision/research/blockout/towns/hearthold.json'},
+               'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                            'blob': 'f19a9108cf07a3b8140ba136c04149a8c0ddd31d',
+                            'path': 'docs/vision/research/blockout/towns/hearthold.json'},
+               'terrain_box_cells': [234, 622, 129, 119],
+               'buildings': [{'id': 'hearthold-b033',
+                              'type': 'house',
+                              'form': 'house',
+                              'footprint_cells': [253, 706, 10, 6],
+                              'rect_px': [2024, 5648, 80, 48],
+                              'faces': 'hearthold-s09',
+                              'door_cells': [263, 708],
+                              'purpose': 'a detached lower-town house',
+                              'occupants': 'household; individual residents and routines not yet authored',
+                              'district': 'hearthold-d-ash-lane',
+                              'counted': True,
+                              'plot_cells': [251, 706, 2, 6],
+                              'plot': 'yard',
+                              'counts_as': 1},
+                             {'id': 'hearthold-b034',
+                              'type': 'cottage',
+                              'form': 'cottage',
+                              'footprint_cells': [254, 698, 9, 6],
+                              'rect_px': [2032, 5584, 72, 48],
+                              'faces': 'hearthold-s09',
+                              'door_cells': [263, 700],
+                              'purpose': 'a detached lower-town cottage',
+                              'occupants': 'household; individual residents and routines not yet authored',
+                              'district': 'hearthold-d-ash-lane',
+                              'counted': True,
+                              'plot_cells': [252, 698, 2, 6],
+                              'plot': 'yard',
+                              'counts_as': 1},
+                             {'id': 'hearthold-b035',
+                              'type': 'workshop',
+                              'form': 'workshop',
+                              'footprint_cells': [343, 690, 11, 7],
+                              'rect_px': [2744, 5520, 88, 56],
+                              'faces': 'hearthold-s06',
+                              'door_cells': [345, 689],
+                              'purpose': 'a craft workshop; specific trade not yet authored',
+                              'occupants': 'craft workers; individual workers and routines not yet authored',
+                              'district': 'hearthold-d-smiths-row',
+                              'counted': True,
+                              'plot_cells': [343, 697, 11, 2],
+                              'plot': 'yard',
+                              'counts_as': 1}],
+               'districts': [],
+               'district_descriptions': {},
+               'open_uses': []},
+ 'launch-cape': {'status': 'proposal',
+                 'source': {'commit': '9276174000e47858e92a25803e606fb9dea1fc87',
+                            'blob': '9aab428f54a898b2c19049857bc092fe39d6e009',
+                            'path': 'docs/vision/research/blockout/towns/launch-cape.json'},
+                 'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                              'blob': '06faf55d311d78016966c977bedcc7598348b817',
+                              'path': 'docs/vision/research/blockout/towns/launch-cape.json'},
+                 'terrain_box_cells': [1467, 726, 79, 104],
+                 'buildings': [{'id': 'launch-cape-b007',
+                                'type': 'cottage',
+                                'form': 'cottage',
+                                'footprint_cells': [1494, 727, 8, 6],
+                                'rect_px': [11952, 5816, 64, 48],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1502, 729],
+                                'purpose': 'a detached staff cottage',
+                                'occupants': 'staff; individual residents and routines not yet authored',
+                                'district': 'launch-cape-d-staff-homes',
+                                'counted': True,
+                                'plot_cells': [1492, 727, 2, 6],
+                                'plot': 'garden',
+                                'counts_as': 1},
+                               {'id': 'launch-cape-b008',
+                                'type': 'cottage',
+                                'form': 'cottage',
+                                'footprint_cells': [1510, 729, 8, 6],
+                                'rect_px': [12080, 5832, 64, 48],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1509, 731],
+                                'purpose': 'a detached staff cottage',
+                                'occupants': 'staff; individual residents and routines not yet authored',
+                                'district': 'launch-cape-d-staff-homes',
+                                'counted': True,
+                                'plot_cells': [1518, 729, 2, 6],
+                                'plot': 'garden',
+                                'counts_as': 1},
+                               {'id': 'launch-cape-b009',
+                                'type': 'workshop',
+                                'form': 'workshop',
+                                'footprint_cells': [1509, 737, 13, 7],
+                                'rect_px': [12072, 5896, 104, 56],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1508, 739],
+                                'purpose': 'a staff settlement workshop',
+                                'occupants': 'staff; individual workers and routines not yet authored',
+                                'district': 'launch-cape-d-the-works',
+                                'counted': True,
+                                'plot_cells': [1522, 737, 2, 7],
+                                'plot': 'yard',
+                                'counts_as': 1}],
+                 'districts': [{'id': 'launch-cape-d-staff-homes',
+                                'name': 'the staff homes',
+                                'centre_px': [12048, 5848],
+                                'declared': 'two detached staff cottages with gardens at the northern entrance, '
+                                            'away from the pad',
+                                'town': 'Launch Cape',
+                                'function': 'homes'}],
+                 'district_descriptions': {'launch-cape-d-the-works': {'function': 'docks and transport'}},
+                 'open_uses': []}}

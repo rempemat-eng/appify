@@ -211,18 +211,26 @@ def check_plan(P, blockout):
     counted = 0
     zone = sum(1 for b in P['buildings'] if b.get('from_zone_plan'))
     if zone:
-        notes.append(f'{zone} buildings from the built zone\'s own plan (checked there)')
+        notes.append(f'{zone} buildings from the built zone\'s own plan (street/door/form checks delegated)')
+    building_masks = []
     for b in P['buildings']:
         c, r, cw, ch = b['footprint_cells']
+        counted += b.get('counts_as', 1 if b['counted'] else 0)
+        # Literal terrain and mutual occupancy apply to every footprint, including
+        # inherited ones. Never let NumPy clipping hide a missing part of it.
         if any(int(v) != v for v in (c, r, cw, ch)):
             fails.append(f"cells: building {b['id']} not on whole cells")
-        m = rect_mask(c, r, cw, ch)
-        if b.get('from_zone_plan'):                # the zone as built: its plan and rules (rules.route_clear) are the authority
-            occ |= m; counted += b.get('counts_as', 1 if b['counted'] else 0)
+            building_masks.append(np.zeros((h, w), bool))
             continue
-        if (m & net).any():
-            hit = [sid for sid, bm in bands.items() if (bm & m).any()]
-            fails.append(f"off_streets: building {b['id']} ({b['type']}) stands on {', '.join(hit[:3])}")
+        c, r, cw, ch = map(int, (c, r, cw, ch))
+        if cw <= 0 or ch <= 0:
+            fails.append(f"cells: building {b['id']} has a non-positive footprint")
+            building_masks.append(np.zeros((h, w), bool))
+            continue
+        if c < c0 or r < r0 or c + cw > c0 + w or r + ch > r0 + h:
+            fails.append(f"cells: building {b['id']} footprint is outside terrain bounds")
+        m = rect_mask(c, r, cw, ch)
+        building_masks.append(m)
         tt = ter[m]
         if np.isin(tt, list(WATER)).any():
             fails.append(f"off_water: building {b['id']} stands on water")
@@ -231,7 +239,11 @@ def check_plan(P, blockout):
         if (occ & m).any():
             fails.append(f"cells: building {b['id']} overlaps another building")
         occ |= m
-        counted += b.get('counts_as', 1 if b['counted'] else 0)
+        if b.get('from_zone_plan'):  # retain zone-owned street/door authority; form checks below also stay delegated
+            continue
+        if (m & net).any():
+            hit = [sid for sid, bm in bands.items() if (bm & m).any()]
+            fails.append(f"off_streets: building {b['id']} ({b['type']}) stands on {', '.join(hit[:3])}")
         # reach: the door within 3 cells of the faced street's band (a close's end: 1)
         dc, dr = b['door_cells']
         fm = bands.get(b['faces'])
@@ -332,8 +344,8 @@ def check_plan(P, blockout):
         fails.append('layout: no loop (no street block)')
     # no empty blocks: each block between the streets at least half plots or a named open use
     cov = np.zeros((h, w), bool)
-    for b in P['buildings']:
-        cov |= rect_mask(*b['footprint_cells'])
+    for b, m in zip(P['buildings'], building_masks):
+        cov |= m
         if b.get('plot_cells'):
             cov |= rect_mask(*b['plot_cells'])
     for q in P['squares'] + P.get('open_uses', []):

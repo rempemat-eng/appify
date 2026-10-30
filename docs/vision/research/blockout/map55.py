@@ -997,7 +997,7 @@ def panels55(lay, S, M, R, ink, s, k, Wc, Hc, F, act1=True, title='The continent
     d.rectangle([bx - 2 * s, lb[1] + 56 * s, bx + 10 * s, lb[1] + 58.4 * s], fill=R['berry'][4], outline=ink)
     d.text((bx + 12 * s, lb[1] + 57 * s), 'closed pass', font=F['small'], fill=ink, anchor='lm')
     rb = panel_boxes(Wc, Hc, s)[1]
-    d.text((rb[2] - 10 * s, rb[1] + 12 * s), f'v55 canvas {g.WPX} x {g.HPX} world px (v54: 11264 x 6912)', font=F['small'], fill=R['timber'][2], anchor='rt')
+    d.text((rb[2] - 10 * s, rb[1] + 12 * s), f"{getattr(M, 'REVISION', 'v55')} canvas {g.WPX} x {g.HPX} world px (v54: 11264 x 6912)", font=F['small'], fill=R['timber'][2], anchor='rt')
 
 
 # ------------------------------------------------------------------------------------------ compose
@@ -1298,7 +1298,7 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
     d.line([(Wb, 0), (Wb, Hc_)], fill=ink, width=2)
     x0 = Wb + 14 * s_; y = 14 * s_
     Placer.draw_text(_D_, (x0, y + 10 * s_), P['name'], F['title'], ink, paper, 'lm', 0); y += 30 * s_
-    Placer.draw_text(_D_, (x0, y + 6 * s_), 'town plan, v55 (towns/%s.json)' % P['id'], F['small'], R['timber'][2], paper, 'lm', 0); y += 22 * s_
+    Placer.draw_text(_D_, (x0, y + 6 * s_), f"town plan, {getattr(M, 'REVISION', 'v55')} ({getattr(M, 'PLAN_DIRECTORY', 'towns')}/{P['id']}.json)", F['small'], R['timber'][2], paper, 'lm', 0); y += 22 * s_
     nblk = P.get('_blocks')
     lines_ = [f"{P['buildings_counted']} buildings (range {P['target'][0]} to {P['target'][1]})",
               f"{sum(1 for q in P['streets'] if q['class'] not in ('arrival', 'close'))} streets, {sum(1 for q in P['streets'] if q['class'] == 'close')} closes, {len(P['squares'])} squares",
@@ -1460,6 +1460,8 @@ def neon_accents(d, S, P, s, k, lines=()):
 
 
 def render_all(S, M):
+    revision = getattr(M, 'REVISION', 'v55')
+    prefix = 'map' + revision[1:]
     R, ink = load_palette(M.ROOT)
     cg, names_, cid, cols = class_grid(S, R, M)
     rgb = ground_tints(M54.cell_colours(S, R, cg, cid, cols), S); sea_rgb = sea_tints(M54.sea_colours(S, R), S)
@@ -1476,40 +1478,40 @@ def render_all(S, M):
     base = M54.base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, full_box, 2.5)          # 2.5 px a cell: whole strips, no seams
     base = base.resize((int(round(g.WPX * k)), int(round(g.HPX * k))), Image.LANCZOS)
     stamps55(base, S, R, cg, cid, k, 0, 0, M, ink)
-    res2, missed, parts2 = compose(S, M, R, ink, s2, base, k, ox, oy, Wc, Hc, paths, lines, 'continent', 'The continent: overview (v55)')
+    res2, missed, parts2 = compose(S, M, R, ink, s2, base, k, ox, oy, Wc, Hc, paths, lines, 'continent', f'The continent: overview ({revision})')
     missed_all['3840'] = missed
     s1 = 1; Wc1, Hc1 = BASE_W, BASE_H
     k1, ox1, oy1 = frame_fit(Wc1, Hc1, s1)
     base1 = base.resize((int(round(g.WPX * k1)), int(round(g.HPX * k1))), Image.LANCZOS)
-    res1, missed, parts1 = compose(S, M, R, ink, s1, base1, k1, ox1, oy1, Wc1, Hc1, paths, lines, 'continent', 'The continent: overview (v55)')
+    res1, missed, parts1 = compose(S, M, R, ink, s1, base1, k1, ox1, oy1, Wc1, Hc1, paths, lines, 'continent', f'The continent: overview ({revision})')
     missed_all['1920'] = missed
     for o in outs:
-        res1.convert('RGB').save(os.path.join(o, 'map55-1920.png'))
-        res2.convert('RGB').save(os.path.join(o, 'map55-3840.png'))
+        res1.convert('RGB').save(os.path.join(o, f'{prefix}-1920.png'))
+        res2.convert('RGB').save(os.path.join(o, f'{prefix}-3840.png'))
     small = res1.convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
-    small.save(os.path.join(M.DATA, 'continent-1x-v55.png'), optimize=True)
+    small.save(os.path.join(M.DATA, f'continent-1x-{revision}.png'), optimize=True)
     v54 = Image.open(os.path.join(M.DATA, 'continent-1x-v54.png')).convert('RGB')
     cmp_ = Image.new('RGB', (1920 * 2 + 24, 1080 + 40), (30, 26, 34)); dc = ImageDraw.Draw(cmp_)
     cmp_.paste(v54, (0, 40)); cmp_.paste(res1.convert('RGB'), (1920 + 24, 40))
     Fc = fonts(M.ROOT, 1)
     dc.text((10, 20), 'v54 (11264 x 6912 world px)', font=Fc['title'], fill=(240, 230, 210), anchor='lm')
-    dc.text((1920 + 34, 20), 'v55 (12544 x 7168: towns at their footprints, the east coast and Launch Cape, Highgarth and the closed pass)', font=Fc['title'],
+    dc.text((1920 + 34, 20), f'{revision} (12544 x 7168: towns, the east coast, Launch Cape and the closed pass)', font=Fc['title'],
             fill=(240, 230, 210), anchor='lm')
     for o in outs:
-        cmp_.save(os.path.join(o, 'map55-v54-vs-v55.png'))
+        cmp_.save(os.path.join(o, f'{prefix}-v54-vs-{revision}.png'))
     # the reference: the whole continent at 3x with every name
     s3 = 3; Wc3, Hc3 = BASE_W * s3, BASE_H * s3
     k3, ox3, oy3 = frame_fit(Wc3, Hc3, s3)
     base3 = M54.base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, full_box, 3.75)
     base3 = base3.resize((int(round(g.WPX * k3)), int(round(g.HPX * k3))), Image.LANCZOS)
     stamps55(base3, S, R, cg, cid, k3, 0, 0, M, ink)
-    res3, missed, _ = compose(S, M, R, ink, s3 * 0.8, base3, k3, ox3, oy3, Wc3, Hc3, paths, lines, 'full', 'The continent: reference (v55), every name')
+    res3, missed, _ = compose(S, M, R, ink, s3 * 0.8, base3, k3, ox3, oy3, Wc3, Hc3, paths, lines, 'full', f'The continent: reference ({revision}), every name')
     missed_all['reference'] = missed
     for o in outs:
-        res3.convert('RGB').save(os.path.join(o, 'map55-reference.png'))
+        res3.convert('RGB').save(os.path.join(o, f'{prefix}-reference.png'))
     del base3, res3
     # the insets: the home valley and Neon Harbour, every name
-    for tag, bx, ppc, title in (('home-valley', M.INSET, 4.0, 'The home valley (v55 inset)'), ('neon-harbour', M.NEON_INSET, 4.0, 'Neon Harbour and Launch Cape (v55 inset)')):
+    for tag, bx, ppc, title in (('home-valley', M.INSET, 4.0, f'The home valley ({revision} inset)'), ('neon-harbour', M.NEON_INSET, 4.0, f'Neon Harbour and Launch Cape ({revision} inset)')):
         x0, y0, x1, y1 = bx
         cbox = (x0 // CELL, y0 // CELL, x1 // CELL, y1 // CELL)
         kb = ppc / CELL; s_ = 1.3
@@ -1538,15 +1540,15 @@ def render_all(S, M):
         dd.text((bxx + 100 * cpx + 40 * s_, byy + 3 * s_), "Bramble's walk", font=F['small'], fill=ink, anchor='lm')
         missed_all['inset-' + tag] = missed
         for o in outs:
-            out.convert('RGB').save(os.path.join(o, f'map55-inset-{tag}.png'))
-        out.convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(M.DATA, f'inset-{tag}-v55.png'), optimize=True)
+            out.convert('RGB').save(os.path.join(o, f'{prefix}-inset-{tag}.png'))
+        out.convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(M.DATA, f'inset-{tag}-{revision}.png'), optimize=True)
     for pid, ppc in TOWN_INSETS:
         P = (S.get('plans') or {}).get(pid)
         if not P:
             continue
         out = town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc)
         for o in outs:
-            out.convert('RGB').save(os.path.join(o, f'map55-town-{pid}.png'))
-        out.convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(M.DATA, f'town-{pid}-v55.png'), optimize=True)
+            out.convert('RGB').save(os.path.join(o, f'{prefix}-town-{pid}.png'))
+        out.convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(M.DATA, f'town-{pid}-{revision}.png'), optimize=True)
     print('labels not placed (tiers 1 and 2):', json.dumps(missed_all))
     return missed_all

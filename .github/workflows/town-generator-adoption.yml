@@ -1,0 +1,60 @@
+name: Town generator adoption semantics
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'docs/vision/research/blockout/town_plans.py'
+      - 'docs/vision/research/blockout/towns55.py'
+      - 'docs/vision/research/blockout/geo5.py'
+      - 'docs/vision/research/blockout/towns/**'
+      - 'scripts/review/town_plan.py'
+      - 'scripts/review/test_town_generator_adoption.py'
+      - 'scripts/review/test_highgarth_export.py'
+      - 'docs/codex/town-generator-adoption.md'
+      - '.github/workflows/town-generator-adoption.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  adoption:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Fetch exact source oracle commits
+        run: |
+          set -euo pipefail
+          for commit in \
+            4984438d09b5fe1333d3e6ea6e6ee82be2bdc908 \
+            96215d5b1d6f395e4aa4fbdac207ff6a4ef384d3 \
+            4669140421d7d8c69482fc90b78fea0a50d1d4bc \
+            59f3722d1b39050cc81709fa5933d4c9c093ee98 \
+            9276174000e47858e92a25803e606fb9dea1fc87
+          do
+            git fetch --no-tags --depth=1 origin "$commit"
+            git cat-file -e "$commit^{commit}"
+            git show -s --format='%H %T' "$commit"
+          done
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install source-compatible blockout test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-dejavu-core fonts-dejavu-extra
+          python -m pip install 'numpy==2.5.3' 'scipy==1.18.1' 'Pillow==12.3.0' 'scikit-image==0.26.0' 'jsonschema==4.26.0'
+      - name: Check source pins, adoption guards and unchanged Highgarth exports
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          OPENBLAS_NUM_THREADS: '1'
+          OMP_NUM_THREADS: '1'
+        run: |
+          echo 'Source/fixture coverage only; no stock raw-world, historical terrain, placement or art acceptance.'
+          python -m pip show numpy scipy Pillow scikit-image jsonschema
+          python -m unittest scripts.review.test_town_generator_adoption scripts.review.test_highgarth_export -v
