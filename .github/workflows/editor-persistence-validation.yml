@@ -1,4 +1,4 @@
-name: EDITOR_COMBINED exact sixteen-control receiving
+name: EDITOR_RECEIVING opt-in displayed smoke
 
 # SOURCE PREPARATION ONLY. The lead must review an exact commit and allocate it
 # before creating/updating this distinct execution ref. No PR/manual/schedule trigger.
@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
+      # Explicit opt-in for this source candidate; controller default retains frozen H5 mode.
+      EDITOR_PERSISTENCE_MODE: DISPLAYED_SMOKE
       CI: 'true'
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
@@ -39,7 +41,7 @@ jobs:
           from pathlib import Path
           p = Path(os.environ['RUNNER_TEMP']) / 'editor-persistence/evidence/bootstrap.json'
           p.write_text(json.dumps(dict(workflow_sha=os.environ['GITHUB_SHA'],
-              tested_game_sha=os.environ['EDITOR_PERSISTENCE_GAME_SHA'], run_id=os.environ['GITHUB_RUN_ID'],
+              tested_game_sha=os.environ['EDITOR_PERSISTENCE_GAME_SHA'], mode=os.environ['EDITOR_PERSISTENCE_MODE'], run_id=os.environ['GITHUB_RUN_ID'],
               attempt=os.environ['GITHUB_RUN_ATTEMPT'], python=platform.python_version(),
               phases='NOT RUN; setup has not completed'), indent=2) + '\n')
           PY
@@ -50,7 +52,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 7 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->this combined child
+          fetch-depth: 8 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->this displayed child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -130,13 +132,14 @@ jobs:
           set -euo pipefail
           printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
 
-      - name: Preflight pins, private scientific stage, paths, one import, sixteen controls
+      - name: Preflight display capability, private engine and one existing displayed smoke
         id: focused
         shell: bash
         run: |
           set -euo pipefail
           set +e
           python -I -B runner/scripts/review/editor_persistence_validation.py \
+            --mode "$EDITOR_PERSISTENCE_MODE" \
             --candidate "$GITHUB_WORKSPACE/runner" \
             --source "$GITHUB_WORKSPACE/source" \
             --root "$RUNNER_TEMP/editor-persistence" \
@@ -195,7 +198,8 @@ jobs:
               outcomes={k: os.environ.get(k, 'NOT RUN') for k in
                         ('RUNNER_OUTCOME', 'SOURCE_OUTCOME', 'PYTHON_OUTCOME', 'PYTHON_PATH_OUTCOME', 'FOCUSED_OUTCOME')},
               controller_result_present=(evidence / 'result.json').is_file(),
-              qualification='No displayed GUI/whole-editor/full-suite/Ready acceptance. Sixteen combined controls only; all inputs remain candidates. Missing result is failure, never PASS.')
+              mode=os.environ['EDITOR_PERSISTENCE_MODE'],
+              qualification='Existing DISPLAYED_SMOKE only; undo/restoration and bake refusals, no H5 rerun or successful save/bake/walk/manual acceptance. Missing result is failure, never PASS.')
           (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as handle:
               handle.write('## EDITOR_PERSISTENCE focused reproduction\n\n```json\n' + json.dumps(value, indent=2) + '\n```\n')

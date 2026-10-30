@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Bounded EDITOR-PERSISTENCE receiver; SOURCE ONLY until exact lead allocation.
+"""Bounded editor receiver; SOURCE ONLY until exact lead allocation.
 
 Adapted from reviewed #402 c2cd7baa (controller blob f40ef659), originally #401.
-Reuse #402 c2cd7baa private-engine/actual-wait collection. Combined #407 source,
+Reuse #402 c2cd7baa private-engine/actual-wait collection. H5 on combined #407 uses
 six Python and ten frozen GdUnit methods; no displayed GUI, complete editor,
 nonempty-piece/cell-coordinate, full-suite or acceptance inference.
+Opt-in DISPLAYED_SMOKE uses the existing plugin only, with undo/restoration
+and bake refusals; it does not establish successful save/bake/walk acceptance.
 No imports, engine or tests are authorised by publishing this candidate.
 """
 from __future__ import annotations
@@ -32,6 +34,9 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
+DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
+MODES = ("H5_COMBINED", "DISPLAYED_SMOKE")
 GAME_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
@@ -299,6 +304,210 @@ def direct_children() -> dict[int, dict]:
 
 PYTHON_OBSERVER = "import json, os, sys, traceback, unittest\nfrom pathlib import Path\n\nselectors = json.loads(sys.argv[1])\noutput = Path(sys.argv[2])\nbase = Path(os.environ['PERSISTENCE_OUT'])\nstate = {'expected': selectors, 'observed': [], 'methods': {n: {'state': 'NOTRUN'} for n in selectors}}\nclass Result(unittest.TextTestResult):\n    def startTest(self, test):\n        self.current = test.id().removeprefix('scripts.art.kit.test_bake_publication.')\n        self.before = set(base.iterdir())\n        state['observed'].append(self.current)\n        state['methods'][self.current] = {'state': 'STARTED', 'id': test.id()}\n        output.write_text(json.dumps(state, indent=2) + '\\n')\n        super().startTest(test)\n    def addSuccess(self, test):\n        state['methods'][self.current]['state'] = 'PASS'\n        super().addSuccess(test)\n    def addFailure(self, test, err):\n        state['methods'][self.current].update(state='FAIL', exception_type=err[0].__name__,\n            message=str(err[1]), traceback=''.join(traceback.format_exception(*err)))\n        super().addFailure(test, err)\n    def addError(self, test, err):\n        state['methods'][self.current].update(state='ERROR', exception_type=err[0].__name__,\n            message=str(err[1]), traceback=''.join(traceback.format_exception(*err)))\n        super().addError(test, err)\n    def addSkip(self, test, reason):\n        state['methods'][self.current].update(state='SKIP', reason=reason)\n        super().addSkip(test, reason)\n    def addSubTest(self, test, subtest, err):\n        if err is not None:\n            state['methods'][self.current].update(state='ERROR', message='unexpected subtest',\n                traceback=''.join(traceback.format_exception(*err)))\n        super().addSubTest(test, subtest, err)\n    def stopTest(self, test):\n        state['methods'][self.current]['evidence_roots'] = [str(p) for p in sorted(set(base.iterdir()) - self.before)]\n        output.write_text(json.dumps(state, indent=2) + '\\n')\n        super().stopTest(test)\ntry:\n    suite = unittest.defaultTestLoader.loadTestsFromNames(\n        ['scripts.art.kit.test_bake_publication.' + n for n in selectors])\n    result = unittest.TextTestRunner(verbosity=2, failfast=True, resultclass=Result).run(suite)\n    state['success'] = result.wasSuccessful()\n    state['testsRun'] = result.testsRun\nexcept BaseException:\n    state['harness_error'] = traceback.format_exc()\n    raise\nfinally:\n    output.write_text(json.dumps(state, indent=2) + '\\n')\nsys.exit(0 if state.get('success') else 1)\n"
 
+def displayed_lifetime(args: argparse.Namespace) -> int:
+    """Receiving-only child: one authenticated server/editor group, no game harness."""
+    root, game = args.root.resolve(strict=True), args.source.resolve(strict=True) / "game"
+    output = root / "test-output/displayed-smoke"
+    receipt_path = output / "lifetime.json"
+    authority_dir = root / "runtime/display-authority"
+    authority = authority_dir / "Xauthority"
+    denied_authority = authority_dir / "no-authority"
+    receipt = {"state": "INCOMPLETE", "pid": os.getpid(), "pgid": os.getpgrp(),
+               "processes": {}, "wait4": [], "cleanup_errors": []}
+    children, handles = {}, []
+    failure = None
+
+    def save() -> None:
+        write_json(receipt_path, receipt)
+
+    def launch(name: str, command: list[str], env: dict, **kwargs) -> subprocess.Popen:
+        if hasattr(kwargs.get("stdout"), "fileno"):
+            def tool_log_limit():
+                resource.setrlimit(resource.RLIMIT_FSIZE, (LOG_LIMIT, LOG_LIMIT))
+            kwargs["preexec_fn"] = tool_log_limit
+        process = subprocess.Popen(command, cwd=game, env=env, **kwargs)
+        children[name] = process
+        identity = proc_group(os.getpgrp()).get(process.pid)
+        if identity is None:
+            raise RuntimeError("Displayed child did not remain in its monitored group")
+        receipt["processes"][name] = {"pid": process.pid, **identity}
+        save()
+        return process
+
+    def collect(name: str, seconds: float) -> int:
+        process = children[name]
+        deadline = time.monotonic() + seconds
+        while True:
+            pid, status, usage = os.wait4(process.pid, os.WNOHANG)
+            if pid:
+                process.returncode = os.waitstatus_to_exitcode(status)
+                receipt["wait4"].append({"name": name, "pid": pid, "status": status,
+                    "exit": process.returncode, "user_s": usage.ru_utime,
+                    "system_s": usage.ru_stime, "maxrss_kib": usage.ru_maxrss})
+                save()
+                return process.returncode
+            if time.monotonic() >= deadline:
+                raise TimeoutError("Displayed child collection deadline: " + name)
+            time.sleep(0.02)
+
+    def raw_log(name: str):
+        handle = (output / name).open("xb")
+        handles.append(handle)
+        return handle
+
+    try:
+        if (args.mode != "DISPLAYED_SMOKE" or os.getpgrp() != os.getpid()
+                or os.environ.get("GITHUB_REF") != "refs/heads/codex/editor-persistence-validation-run"):
+            raise RuntimeError("Displayed child requires its allocated private phase group")
+        capabilities = json.loads((root / "evidence/display-capabilities.json").read_text())
+        tools = capabilities["tools"]
+        base_env = dict(os.environ)
+        for key in ("DISPLAY", "XAUTHORITY", "WAYLAND_DISPLAY"):
+            base_env.pop(key, None)
+        authority_dir.mkdir(mode=0o700)
+        for p in (authority, denied_authority):
+            fd = os.open(p, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            os.close(fd)
+        display = next((number for number in range(200, 300)
+                        if not os.path.lexists(f"/tmp/.X{number}-lock")
+                        and not os.path.lexists(f"/tmp/.X11-unix/X{number}")), None)
+        if display is None:
+            raise RuntimeError("No unused bounded display number; no fallback")
+        receipt.update(display=display, authority={"path": str(authority), "mode": "0600",
+                       "protocol": "MIT-MAGIC-COOKIE-1", "cookie_recorded": False})
+        save()
+        auth = launch("xauth", [tools["xauth"]["path"], "-q", "-f", str(authority)], base_env,
+                      stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        cookie = os.urandom(16).hex()
+        auth.stdin.write(f"add :{display} MIT-MAGIC-COOKIE-1 {cookie}\n".encode())
+        auth.stdin.close()
+        del cookie
+        if collect("xauth", 5) != 0:
+            raise RuntimeError("Private Xauthority creation failed; diagnostics suppressed")
+        info = authority.lstat()
+        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_uid != os.getuid()
+                or stat.S_IMODE(info.st_mode) != 0o600 or not 1 <= info.st_size <= 4096):
+            raise RuntimeError("Private authority metadata invalid")
+        receipt["authority"].update(bytes=info.st_size, uid=info.st_uid)
+        server = launch("Xvfb", [tools["Xvfb"]["path"], f":{display}", "-screen", "0", "1920x1080x24",
+                         "-nolisten", "tcp", "-noreset", "+extension", "GLX", "-auth", str(authority)],
+                        base_env, stdin=subprocess.DEVNULL, stdout=raw_log("xvfb.log"), stderr=subprocess.STDOUT)
+        socket = Path(f"/tmp/.X11-unix/X{display}")
+        lock = Path(f"/tmp/.X{display}-lock")
+        deadline = time.monotonic() + 8
+        while not socket.exists() or not lock.exists():
+            if os.waitid(os.P_PID, server.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None:
+                raise RuntimeError("Authenticated Xvfb exited before readiness")
+            if time.monotonic() >= deadline:
+                raise TimeoutError("Authenticated Xvfb socket readiness deadline")
+            time.sleep(0.02)
+        if int(lock.read_text().strip()) != server.pid or not stat.S_ISSOCK(socket.lstat().st_mode):
+            raise RuntimeError("Display lock/socket not owned by actual server")
+        receipt["display_files"] = {str(p): {"inode": p.lstat().st_ino, "uid": p.lstat().st_uid}
+                                    for p in (socket, lock)}
+        gui_env = {**base_env, "DISPLAY": f":{display}", "XAUTHORITY": str(authority)}
+        # A real denied connection distinguishes cookie authentication from -ac.
+        launch("unauthorized-glx", [tools["glxinfo"]["path"], "-B"],
+               {**gui_env, "XAUTHORITY": str(denied_authority)}, stdin=subprocess.DEVNULL,
+               stdout=raw_log("unauthorized-glx.log"), stderr=subprocess.STDOUT)
+        if collect("unauthorized-glx", 5) != 1:
+            raise RuntimeError("Unauthenticated X11 probe did not return its ordinary refusal")
+        handles[-1].flush()
+        denied = (output / "unauthorized-glx.log").read_text(errors="replace")
+        if (not re.search(r"Authorization required|No protocol specified|Invalid MIT-MAGIC-COOKIE-1", denied, re.I)
+                or not re.search(r"unable to open display", denied, re.I)):
+            raise RuntimeError("Actual X11 authentication refusal was not observed")
+        receipt["auth_refusal_observed"] = True
+        launch("authenticated-glx", [tools["glxinfo"]["path"], "-B"], gui_env,
+               stdin=subprocess.DEVNULL, stdout=raw_log("authenticated-glx.log"), stderr=subprocess.STDOUT)
+        if collect("authenticated-glx", 5) != 0:
+            raise RuntimeError("Authenticated OpenGL unavailable")
+        for handle in handles:
+            handle.flush()
+        glx = (output / "authenticated-glx.log").read_text(errors="replace")
+        if "OpenGL renderer string:" not in glx or "OpenGL version string:" not in glx:
+            raise RuntimeError("Actual authenticated GLX backend missing")
+        png, report = output / "editor.png", output / "displayed-smoke.json"
+        receipt["editor_started_ns"] = time.time_ns()
+        command = [str(root / "engine" / ENGINE_NAME), "--editor", "--display-driver", "x11",
+                   "--rendering-method", "gl_compatibility", "--rendering-driver", "opengl3",
+                   "--audio-driver", "Dummy", "--resolution", "1920x1080", "--path", str(game),
+                   "res://zones/kitlab/kitlab.tscn", "--", "--we-show=Ground",
+                   "--we-smoke-report=" + str(report), "--we-capture=" + str(png)]
+        receipt["editor_command"] = command
+        receipt["private_environment"] = {key: gui_env[key] for key in
+            ("DISPLAY", "XAUTHORITY", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_RUNTIME_DIR", "TMPDIR")}
+        save()
+        editor = launch("editor", command, gui_env, stdin=subprocess.DEVNULL)
+        deadline = time.monotonic() + 45
+        while os.waitid(os.P_PID, editor.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None:
+            if os.waitid(os.P_PID, server.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None:
+                raise RuntimeError("Xvfb ended before editor/capture completion")
+            if time.monotonic() >= deadline:
+                raise TimeoutError("Displayed editor deadline")
+            time.sleep(0.02)
+        if collect("editor", 1) != 0:
+            raise RuntimeError("Displayed editor returned nonzero")
+        if os.waitid(os.P_PID, server.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None:
+            raise RuntimeError("Xvfb not alive through editor exit/capture")
+        receipt["server_alive_through_editor_exit"] = True
+        for p in (png, report):
+            info = p.lstat()
+            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+                    or info.st_mtime_ns < receipt["editor_started_ns"] or not 0 < info.st_size <= 64 * 1024**2):
+                raise RuntimeError("Missing/nonphysical/stale displayed output")
+        # The verified private Pillow stage checks the original rendered bytes.
+        sys.path.insert(0, str(root / "dependencies"))
+        from PIL import Image
+        with Image.open(png) as image:
+            if image.format != "PNG" or image.size != (1920, 1080):
+                raise RuntimeError("Displayed capture is not original1920x1080 PNG")
+            image.verify()
+        with Image.open(png) as image:
+            image.load()
+            if not any(lo != hi for lo, hi in image.convert("RGB").getextrema()):
+                raise RuntimeError("Displayed viewport capture is empty/flat")
+        receipt["capture"] = {"bytes": png.stat().st_size, "sha256": digest(png),
+                              "size": [1920, 1080], "pillow_verify": True}
+        receipt["report"] = {"bytes": report.stat().st_size, "sha256": digest(report)}
+    except BaseException as error:
+        failure = {"type": type(error).__name__, "message": str(error)}
+    finally:
+        # All children are direct, unreaped identities until collect(); never
+        # signal a reaped numeric PID. Outer phase still owns last group cleanup.
+        for name in reversed(list(children)):
+            process = children[name]
+            if process.returncode is not None:
+                continue
+            try:
+                if os.waitid(os.P_PID, process.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None:
+                    os.kill(process.pid, signal.SIGTERM)
+                code = collect(name, 2)
+                if name == "Xvfb" and code != 0:
+                    raise RuntimeError("Xvfb did not terminate cleanly")
+            except BaseException as error:
+                receipt["cleanup_errors"].append(name + ": " + repr(error))
+        for handle in handles:
+            handle.close()
+        try:
+            for p in (authority, denied_authority):
+                if p.exists() or p.is_symlink():
+                    info = p.lstat()
+                    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_uid != os.getuid():
+                        raise RuntimeError("Authority cleanup refused nonphysical/unowned file")
+                    p.unlink()
+            receipt["authority_removed"] = not authority.exists() and not denied_authority.exists()
+            receipt["display_files_absent"] = all(not os.path.lexists(p) for p in receipt.get("display_files", {}))
+            if direct_children() or not receipt["display_files_absent"] or (authority_dir.exists() and list(authority_dir.iterdir())):
+                raise RuntimeError("Displayed children/display locks/private authority state remain")
+        except BaseException as error:
+            receipt["cleanup_errors"].append(repr(error))
+        receipt["failure"] = failure
+        receipt["state"] = "COLLECTED" if failure is None and not receipt["cleanup_errors"] else "FAILED"
+        save()
+    return 0 if receipt["state"] == "COLLECTED" else 1
+
+
 class Controller:
     def __init__(self, args: argparse.Namespace):
         self.candidate = args.candidate.resolve(strict=True)
@@ -307,6 +516,8 @@ class Controller:
         self.game = self.source / "game"
         self.evidence = self.root / "evidence"
         self.event_sha = args.event_sha
+        self.mode = args.mode
+        self.active_limit = 60 if self.mode == "DISPLAYED_SMOKE" else 240
         self.phases = {name: {"state": "NOT RUN"} for name in ("dependencies", "versions", "canary", "import", "check-only", "python-canaries", "focused", "python-faults")}
         self.guards = {}
         self.engine = self.root / "engine" / ENGINE_NAME
@@ -318,6 +529,12 @@ class Controller:
                        "qualification": "Sixteen unexecuted combined controls until this exact allocated invocation. No displayed GUI/full-suite/Ready/whole-editor acceptance."}
         self.output["methods"] = {m: "NOTRUN" for m in
                                   PY_CANARIES + METHODS + PY_FAULTS}
+        self.output["mode"] = self.mode
+        if self.mode == "DISPLAYED_SMOKE":
+            self.phases["displayed-smoke"] = {"state": "NOT RUN"}
+            self.output["qualification"] = "Displayed existing editor smoke only: undo/restoration and bake refusals. No H5 rerun, successful save/bake/walk or manual acceptance."
+            self.output["prior_h5"] = {"receiver": DISPLAY_RECEIVER_PARENT, "source": GAME_SHA,
+                                       "result_and_release": 6535314296, "controls": "16 PASS frozen; not repeated"}
         self.dependencies_initial = None
         self.generated_uids_initial = None
         self.transaction_started = None
@@ -331,8 +548,8 @@ class Controller:
             # Setup/import are separate phases. Their failed terminal retention
             # gets at most30s, never a fresh successful sixteen-control transaction.
             return 30 - (time.monotonic() - self.terminal_started)
-        return min(240 - (time.monotonic() - self.transaction_started - self.collection_used),
-                   270 - (time.monotonic() - self.transaction_started))
+        return min(self.active_limit - (time.monotonic() - self.transaction_started - self.collection_used),
+                   self.active_limit + 30 - (time.monotonic() - self.transaction_started))
 
     def budget_expired(self, _signum: int = 0, _frame: object = None) -> None:
         self.budget_failure = "Whole transaction active/collection or failed-setup terminal budget exhausted"
@@ -351,7 +568,7 @@ class Controller:
         now = time.monotonic()
         wall = None if self.transaction_started is None else now - self.transaction_started
         return {"wall_s": wall, "active_s": None if wall is None else wall - self.collection_used,
-                "collection_s": self.collection_used, "active_limit_s": 240,
+                "collection_s": self.collection_used, "active_limit_s": self.active_limit,
                 "collection_limit_s": 30, "failure": self.budget_failure,
                 "terminal_s": None if self.terminal_started is None else now - self.terminal_started,
                 "qualification": "Controller transaction only; checkout/setup/import and network artifact upload have the separate15min job outer. Blocking OS calls may delay observation; measured overrun fails closed."}
@@ -524,8 +741,13 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [RECEIVER_PARENT]:
-            raise RuntimeError("Combined receiver must be a genuine sole child of frozen4057c14")
+        if parents != [DISPLAY_RECEIVER_PARENT]:
+            raise RuntimeError("Displayed receiver must be a genuine sole child of frozen40579a4")
+        display_parent_headers = git(self.candidate, "cat-file", "commit", DISPLAY_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in display_parent_headers.splitlines() if line.startswith("parent ")]
+                != [RECEIVER_PARENT] or git(self.candidate, "rev-parse", DISPLAY_RECEIVER_PARENT + "^{tree}").decode().strip()
+                != DISPLAY_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H5 receiver ancestry/tree changed")
         prior_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in prior_headers.splitlines() if line.startswith("parent ")]
                 != [PRIOR_RECEIVER] or git(self.candidate, "rev-parse", RECEIVER_PARENT + "^{tree}").decode().strip()
@@ -605,7 +827,8 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
-                   "receiver_parent": RECEIVER_PARENT, "receiver_parent_headers": prior_headers,
+                   "receiver_parent": DISPLAY_RECEIVER_PARENT, "receiver_parent_headers": display_parent_headers,
+                   "h5_receiver_parent": RECEIVER_PARENT, "h5_receiver_parent_headers": prior_headers,
                    "prior_receiver": PRIOR_RECEIVER, "prior_receiver_headers": middle_headers,
                    "earlier_receiver": EARLIER_RECEIVER, "earlier_receiver_headers": earlier_headers,
                    "older_receiver": OLDER_RECEIVER, "older_receiver_headers": older_headers,
@@ -635,6 +858,9 @@ class Controller:
                          "PERSISTENCE_GAME": str(self.game), "GODOT": str(self.engine),
                          "PYTHONPATH": os.pathsep.join((str(self.root / "dependencies"), str(self.source))),
                          "OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"})
+        if self.mode == "DISPLAYED_SMOKE":
+            for key in ("DISPLAY", "XAUTHORITY", "WAYLAND_DISPLAY"):
+                self.env.pop(key, None)
         (self.root / "test-output").mkdir(mode=0o700)
         # Preserve inherited proxies/CA bindings; never dump ambient credentials.
         for p in roots.values():
@@ -646,9 +872,11 @@ class Controller:
         write_json(self.evidence / "host.json", {"python": sys.version, "platform": platform.platform(),
                    "affinity": sorted(os.sched_getaffinity(0)),
                    "validator_python": self.env["PYTHON"],
-                   "closure_qualification": "48 pinned Python/config inputs + full game; lawn-only pieces=[] probe. No master-raster load, original paint execution or new generation is granted.",
+                   "closure_qualification": ("48 pinned Python/config inputs + full game; existing kitlab five-piece smoke only, no successful bake/painter/new generation."
+                       if self.mode == "DISPLAYED_SMOKE" else "48 pinned Python/config inputs + full game; lawn-only pieces=[] probe. No master-raster load, original paint execution or new generation is granted."),
                    "scientific_stage": "Fresh private target; exact versions, all package byte hashes before/after. Counted inside reviewed768MiB duty, not hidden staging; full import/test/packaging fit UNMEASURED.",
-                   "fit": "Full import/test/packaging fit at768MiB UNMEASURED; no automatic budget increase",
+                   "fit": ("DISPLAYED_SMOKE fit at768MiB UNMEASURED; prior frozen79a H5 measured in result6535314296; no automatic increase"
+                       if self.mode == "DISPLAYED_SMOKE" else "Full import/test/packaging fit at768MiB UNMEASURED; no automatic budget increase"),
                    "owned_profile_provenance": {
                        "source_only_go": 6532961903, "h1_result": 6532930623,
                        "independent_receipt": 6532962554,
@@ -662,6 +890,8 @@ class Controller:
                        "address_space_per_process": 4 * 1024**3,
                        "test_output_bytes": 64 * 1024**2, "import_active_s": 180,
                        "whole_sixteen_active_s": 240, "whole_sixteen_collection_s": 30,
+                       "selected_mode": self.mode, "selected_active_s": self.active_limit,
+                       "displayed_smoke_active_s": 60, "displayed_smoke_collection_s": 30,
                        "setup_dependency_active_s": 120, "job_outer_minutes": 15,
                        "reserve_bytes": FREE_RESERVE, "log_phase_bytes": LOG_LIMIT},
                    "rss_qualification": "Linux /proc aggregate group RSS sampled in the monitor loop (50ms select interval; IO can extend it). Actual maximum monitor gap is recorded; observed overshoot fails."})
@@ -708,6 +938,110 @@ class Controller:
                 raise RuntimeError("Scientific stage substituted version or ambient dependency")
         self.dependencies_initial = self.dependency_snapshot()
         write_json(self.evidence / "dependencies-before.json", self.dependencies_initial)
+
+    def display_capabilities(self, receipt_name: str = "display-capabilities.json") -> dict:
+        tools, missing = {}, []
+        for name in ("Xvfb", "xauth", "glxinfo"):
+            found = shutil.which(name)
+            if found is None:
+                missing.append(name)
+                continue
+            path = Path(found).resolve(strict=True)
+            if not path.is_file() or not os.access(path, os.X_OK):
+                missing.append(name)
+                continue
+            tools[name] = {"path": str(path), "bytes": path.stat().st_size, "sha256": digest(path)}
+        # Loader lookup only: no unmonitored ldconfig/compiler/package process.
+        libraries = {}
+        for name in ("libGL.so.1", "libGLX.so.0"):
+            try:
+                libraries[name] = ctypes.CDLL(name)._name
+            except OSError:
+                libraries[name] = None
+        missing += [name for name, value in libraries.items() if not value]
+        value = {"tools": tools, "libraries": libraries, "missing": missing,
+                 "qualification": "Host inventory only; actual authenticated GLX and editor rendering still required. No package installation/fallback."}
+        write_json(self.evidence / receipt_name, value)
+        if missing:
+            raise RuntimeError("Missing hosted display capability: " + ", ".join(missing))
+        return value
+
+    def displayed_smoke(self) -> None:
+        output = self.root / "test-output/displayed-smoke"
+        output.mkdir(mode=0o700)
+        if self.display_capabilities("display-capabilities-after-import.json") != self.display_capabilities_initial:
+            raise RuntimeError("Host display capabilities changed before GUI phase")
+        result = self.phase("displayed-smoke", [sys.executable, "-I", "-B", str(Path(__file__).resolve()),
+            "--mode", "DISPLAYED_SMOKE", "--display-child", "--candidate", str(self.candidate),
+            "--source", str(self.source), "--root", str(self.root), "--event-sha", self.event_sha], 60)
+        text = self.require_clean("displayed-smoke", result)
+        lifetime = json.loads((output / "lifetime.json").read_text())
+        report_path, png = output / "displayed-smoke.json", output / "editor.png"
+        report = json.loads(report_path.read_text())
+        lines = re.findall(r"^WORLD_EDITOR_SMOKE (.+)$", text, re.M)
+        if len(lines) != 1 or json.loads(lines[0]) != report:
+            raise RuntimeError("Displayed file JSON is not the one actual logged smoke result")
+        if (report.get("ok") is not True or report.get("failures") != []
+                or report.get("pieces") != 5 or report.get("captures") != [str(png)]
+                or report.get("gestures") != {"cases": 6, "tools": ["brush", "rectangle", "route", "variant"],
+                                               "cancellations": ["escape", "lost_button"]}
+                or any(type(report.get(key)) is not int or report[key] <= 0
+                       for key in ("palette_materials", "palette_pieces"))):
+            raise RuntimeError("Existing displayed smoke did not meet its exact report contract")
+        expected = {"xauth", "Xvfb", "unauthorized-glx", "authenticated-glx", "editor"}
+        waits = lifetime.get("wait4", [])
+        exits = {row["name"]: row["exit"] for row in waits}
+        processes = lifetime.get("processes", {})
+        if (lifetime.get("state") != "COLLECTED" or lifetime.get("failure") is not None
+                or lifetime.get("cleanup_errors") != [] or set(exits) != expected or len(waits) != len(expected)
+                or set(processes) != expected or lifetime.get("pid") != result["pid"]
+                or lifetime.get("pgid") != result["pgid"] or not lifetime.get("auth_refusal_observed")
+                or not lifetime.get("server_alive_through_editor_exit")
+                or any(exits[name] != 0 for name in expected - {"unauthorized-glx"})
+                or exits["unauthorized-glx"] != 1 or not lifetime.get("authority_removed")
+                or not lifetime.get("display_files_absent")
+                or any(row["pgid"] != result["pgid"] or row["ppid"] != result["pid"]
+                       for row in processes.values())):
+            raise RuntimeError("Displayed authentication/server/editor actual collection incomplete")
+        for key, path in (("capture", png), ("report", report_path)):
+            row = lifetime.get(key, {})
+            if row.get("sha256") != digest(path) or row.get("bytes") != path.stat().st_size:
+                raise RuntimeError("Displayed output changed after lifetime receipt")
+        if lifetime["capture"].get("size") != [1920, 1080] or lifetime["capture"].get("pillow_verify") is not True:
+            raise RuntimeError("Original1920x1080 capture verification missing")
+        backend = [line for line in text.splitlines()
+                   if "OpenGL API" in line and "Compatibility" in line and "Using Device:" in line]
+        if len(backend) != 1:
+            raise RuntimeError("Actual editor OpenGL compatibility backend not observed")
+        for name in ("xvfb.log", "unauthorized-glx.log", "authenticated-glx.log"):
+            if (output / name).stat().st_size > LOG_LIMIT:
+                raise RuntimeError("Display tool raw-log limit exceeded")
+        self.output["displayed_smoke"] = {"state": "PASS_PENDING_TERMINAL_GUARDS", "report": report,
+            "capture": lifetime["capture"], "render_backend": backend, "lifetime": lifetime,
+            "source_pins": {name: self.initial["game"][name] for name in
+                ("game/addons/world_editor/plugin.gd", "game/addons/world_editor/smoke.gd", "game/zones/kitlab/kitlab.tscn")},
+            "qualification": "Real displayed existing smoke; scene restored without SAVE, bake refusals only. No successful author/save/reopen/export/bake/reimport/walk/collision or manual acceptance."}
+        self.output["state"] = "DISPLAYED_SMOKE_PENDING_TERMINAL_GUARDS"
+
+    def retire_display_authority(self) -> None:
+        # Never copy/hash cookie bytes into evidence. Also runs if the lifetime
+        # was killed, after phase() has attempted actual group collection.
+        directory = self.root / "runtime/display-authority"
+        removed = []
+        for name in ("Xauthority", "no-authority"):
+            path = directory / name
+            if not os.path.lexists(path):
+                continue
+            info = path.lstat()
+            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_uid != os.getuid()
+                    or stat.S_IMODE(info.st_mode) != 0o600 or info.st_size > 4096):
+                raise RuntimeError("Private display authority retirement refused unsafe metadata")
+            path.unlink()
+            removed.append(name)
+        if directory.exists() and list(directory.iterdir()):
+            raise RuntimeError("Private display authority has unexpected residual files")
+        write_json(self.evidence / "display-authority-retired.json", {"removed_names": removed,
+                   "empty": True, "cookie_recorded": False})
 
     def python_stage(self, name: str, selected: tuple[str, ...]) -> None:
         observer = self.root / "python_observer.py"
@@ -870,9 +1204,9 @@ class Controller:
 
     def phase(self, name: str, command: list[str], seconds: int) -> dict:
         if self.transaction_started is not None:
-            remaining = 240 - (time.monotonic() - self.transaction_started - self.collection_used)
+            remaining = self.active_limit - (time.monotonic() - self.transaction_started - self.collection_used)
             if remaining <= 0 or self.collection_used >= 30:
-                raise RuntimeError("Whole-sixteen active/collection aggregate budget exhausted")
+                raise RuntimeError("Selected-mode active/collection aggregate budget exhausted")
             seconds = min(seconds, remaining)
         result = {"state": "STARTING", "command": command, "timeout_seconds": seconds,
                   "started_at": time.time(), "wait4": [], "limits": [], "peak_sampled_group_rss": 0}
@@ -1047,7 +1381,7 @@ class Controller:
             if self.transaction_started is not None:
                 self.collection_used += time.monotonic() - collection_start
                 if self.collection_used > 30:
-                    reason = reason or "Whole-sixteen collection exceeded30s"
+                    reason = reason or "Selected-mode collection exceeded30s"
                 result["aggregate_active_s"] = time.monotonic() - self.transaction_started - self.collection_used
                 result["aggregate_collection_s"] = self.collection_used
             result.update(state="FAILED" if reason else "COLLECTED", controller_error=reason,
@@ -1205,6 +1539,8 @@ class Controller:
         failure = None
         try:
             self.setup()
+            if self.mode == "DISPLAYED_SMOKE":
+                self.display_capabilities_initial = self.display_capabilities()
             self.install_dependencies()
             self.get_engine()
             self.canary()
@@ -1216,22 +1552,25 @@ class Controller:
             self.arm_budget()
             write_json(self.evidence / "result.json", {"state": "TRANSACTION_INCOMPLETE_FAILURE",
                        "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
-                       "qualification": "Provisional failure until all sixteen controls, terminal guards and packaging finish within budget."})
-            self.require_clean("check-only", self.phase("check-only", [
-                str(self.engine), "--headless", "--audio-driver", "Dummy",
-                "--path", str(self.game), "--check-only", "--script",
-                "res://" + TEST_PATH.removeprefix("game/")], 20))
-            self.python_stage("python-canaries", PY_CANARIES)
-            self.reconcile(self.phase("focused", [str(self.engine), "--headless", "--audio-driver", "Dummy",
-                "--path", str(self.game), "-s", "res://addons/gdUnit4/bin/GdUnitCmdTool.gd",
-                "--ignoreHeadlessMode", "-a", "res://" + TEST_PATH.removeprefix("game/"),
-                "-a", "res://" + DEPENDENT_TEST_PATH.removeprefix("game/"), "-rd", REPORT_DIR], 90))
-            if self.output["state"] != "TEN_GDUNIT_PASS":
-                raise RuntimeError("GdUnit stage did not pass; fault methods remain NOTRUN")
-            self.python_stage("python-faults", PY_FAULTS)
-            if any(state != "PASS" for state in self.output["methods"].values()):
-                raise RuntimeError("Not all sixteen combined controls passed")
-            self.output["state"] = "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS"
+                       "mode": self.mode, "qualification": "Provisional failure until the selected mode, terminal guards and packaging finish within budget."})
+            if self.mode == "DISPLAYED_SMOKE":
+                self.displayed_smoke()
+            else:
+                self.require_clean("check-only", self.phase("check-only", [
+                    str(self.engine), "--headless", "--audio-driver", "Dummy",
+                    "--path", str(self.game), "--check-only", "--script",
+                    "res://" + TEST_PATH.removeprefix("game/")], 20))
+                self.python_stage("python-canaries", PY_CANARIES)
+                self.reconcile(self.phase("focused", [str(self.engine), "--headless", "--audio-driver", "Dummy",
+                    "--path", str(self.game), "-s", "res://addons/gdUnit4/bin/GdUnitCmdTool.gd",
+                    "--ignoreHeadlessMode", "-a", "res://" + TEST_PATH.removeprefix("game/"),
+                    "-a", "res://" + DEPENDENT_TEST_PATH.removeprefix("game/"), "-rd", REPORT_DIR], 90))
+                if self.output["state"] != "TEN_GDUNIT_PASS":
+                    raise RuntimeError("GdUnit stage did not pass; fault methods remain NOTRUN")
+                self.python_stage("python-faults", PY_FAULTS)
+                if any(state != "PASS" for state in self.output["methods"].values()):
+                    raise RuntimeError("Not all sixteen combined controls passed")
+                self.output["state"] = "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS"
         except BaseException as error:
             failure = {"type": type(error).__name__, "message": str(error), "traceback": traceback.format_exc()}
             if self.output["state"] not in ("PERSISTENCE_ASSERTION_RED_REQUIRES_LEAD_REVIEW",
@@ -1250,6 +1589,21 @@ class Controller:
             # Independent final retention attempts; one failing guard must not suppress other evidence.
             final_errors = []
             archives = {}
+            if self.mode == "DISPLAYED_SMOKE":
+                try:
+                    # Exact two secret-file retirement is cleanup, even after
+                    # expiry; elapsed time still counts and cannot produce PASS.
+                    self.retire_display_authority()
+                except BaseException as error:
+                    final_errors.append("display-authority: " + repr(error))
+                try:
+                    self.arm_budget()
+                    if (getattr(self, "display_capabilities_initial", None) is not None
+                            and self.display_capabilities("display-capabilities-after.json") != self.display_capabilities_initial):
+                        raise RuntimeError("Host display tools/libraries changed")
+                    self.guards["display_host_authority"] = "PASS"
+                except BaseException as error:
+                    final_errors.append("display-host-authority: " + repr(error))
             if self.candidate_initial is not None:
                 try:
                     self.arm_budget()
@@ -1387,6 +1741,9 @@ class Controller:
                 self.output["state"] = "FINAL_GUARD_OR_COLLECTION_FAILURE"
             elif self.output["state"] == "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS":
                 self.output["state"] = "SIXTEEN_COMBINED_PASS"
+            elif self.output["state"] == "DISPLAYED_SMOKE_PENDING_TERMINAL_GUARDS":
+                self.output["state"] = "DISPLAYED_SMOKE"
+                self.output["displayed_smoke"]["state"] = "PASS"
             # Charge the small final result write too. Overrun replaces even a
             # just-written PASS with failure before any successful return.
             try:
@@ -1400,9 +1757,9 @@ class Controller:
                            "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
                            "budget": self.budget_receipt(), "failure": repr(error),
                            "qualification": "Emergency failure receipt only; original private outputs remain available independently of incomplete archives. Expiry is not proof of runtime release."})
-        # Only actual sixteen-control green with all final guards can succeed.
+        # Only actual success in the selected mode plus all final guards succeeds.
         # A RED, partial fail-fast, setup or collection failure remains nonzero.
-        return 0 if self.output["state"] == "SIXTEEN_COMBINED_PASS" else 1
+        return 0 if self.output["state"] in ("SIXTEEN_COMBINED_PASS", "DISPLAYED_SMOKE") else 1
 
 
 def main() -> int:
@@ -1411,7 +1768,11 @@ def main() -> int:
     parser.add_argument("--source", required=True, type=Path)
     parser.add_argument("--root", required=True, type=Path)
     parser.add_argument("--event-sha", required=True)
+    parser.add_argument("--mode", choices=MODES, default="H5_COMBINED")
+    parser.add_argument("--display-child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.display_child:
+        return displayed_lifetime(args)
     def interrupted(signum: int, _frame: object) -> None:
         raise InterruptedError(f"Controller received signal {signum}; retain/collect owned children")
     signal.signal(signal.SIGTERM, interrupted)
