@@ -1,0 +1,899 @@
+{
+  "format": "mygame.first-slice-prop-intake/1",
+  "task": "SLICE-KIT/r1",
+  "scope": "test_fixture_only",
+  "candidate_only": true,
+  "registered": false,
+  "base": {
+    "commit": "baab31aeba5817e146fe6931263c2b5a0eb518dd",
+    "tree": "b2cc638bb47276ab62c6166cfdd0a819e0382009",
+    "editor_commit": "45ed3cad029c106977e6c0c833913dcb1c614fbd",
+    "reuse_commit": "d6c9beeb8d473bef519c936f06fea37b444eb29d"
+  },
+  "source_pins": [
+    {
+      "path": "game/kit/pieces/prop/crossroads_bench.json",
+      "git_blob": "504f923baf48d61f0e561f65e46b9c7737eb7794"
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_kit_lantern.json",
+      "git_blob": "584af5392ad4c9f1210b10c5c289c85790bdb840"
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_well.json",
+      "git_blob": "1f654302980f475e22db5c8935b2719f532d0d36"
+    },
+    {
+      "path": "game/kit/schema/piece.schema.json",
+      "git_blob": "fd61e5d29ca017e3f3796a013c86fc0afe58dc16"
+    },
+    {
+      "path": "scripts/art/kit/schema.py",
+      "git_blob": "056c1f9a30d49e203badd97624458130c79c81b2"
+    },
+    {
+      "path": "scripts/art/kit/relations.py",
+      "git_blob": "dd6b718b24f9f681cd5450ecbb0216e6a1ae8420"
+    },
+    {
+      "path": "scripts/review/kit_scene.py",
+      "git_blob": "6c71732fb52cbe86e8fa723c4d09a0af4d553371"
+    },
+    {
+      "path": "scripts/review/ground_rules.py",
+      "git_blob": "0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68"
+    },
+    {
+      "path": "game/kit/terrain/manifest.json",
+      "git_blob": "eaa4e0381bb1fba2ebf62657f7e42a7d1e6d21da"
+    },
+    {
+      "path": "game/zones/crossroads/kit.json",
+      "git_blob": "16330cf48fed673b28c001eec56601dd4caeb09c"
+    },
+    {
+      "path": "scripts/art/size_guide.json",
+      "git_blob": "f30ecb3249d771e5dc6cdf6546d50400b118cf57"
+    },
+    {
+      "path": "game/assets/characters/moss/manifest.json",
+      "git_blob": "0840eda370a71247ce76a4f90f48bb4c59058704"
+    },
+    {
+      "path": "scripts/art/kit/compose.py",
+      "git_blob": "4435017b23a5d50ed0a5e8801abc536b84854416"
+    },
+    {
+      "path": "game/kit/props/index.json",
+      "git_blob": "a3739a19bacf2886717f1b65de695df901bc8499"
+    }
+  ],
+  "contracts": {
+    "crossroads_bench": {
+      "approval": "candidate",
+      "variants": [
+        {
+          "id": "bench_28",
+          "png": "res://zones/crossroads/art/bench_28.png",
+          "foot": [
+            45,
+            59
+          ]
+        },
+        {
+          "id": "bench_58",
+          "png": "res://zones/crossroads/art/bench_58.png",
+          "foot": [
+            45,
+            59
+          ]
+        }
+      ],
+      "foot_art": [
+        45,
+        59
+      ],
+      "footprint_cells": [
+        [
+          -2,
+          -1
+        ],
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ]
+      ],
+      "collision": {
+        "rect": [
+          -12,
+          -6,
+          24,
+          6
+        ],
+        "shape": "rect"
+      },
+      "snap": "cell",
+      "requires": [
+        {
+          "rel": "adjacent",
+          "what": "route_edge",
+          "cells": 2,
+          "facing": true
+        }
+      ],
+      "forbids": [
+        {
+          "rel": "on",
+          "what": "route"
+        },
+        {
+          "rel": "on",
+          "what": "water"
+        }
+      ],
+      "stages": [],
+      "clearance_cells": null,
+      "story": {
+        "owner": null
+      },
+      "cast_shadow": {
+        "shape": "baked"
+      },
+      "contact_ao": true,
+      "source_objects": [
+        {
+          "zone": "crossroads",
+          "object": "bench_28",
+          "part": "body",
+          "condition": null
+        },
+        {
+          "zone": "crossroads",
+          "object": "bench_58",
+          "part": "body",
+          "condition": null
+        }
+      ]
+    },
+    "crossroads_kit_lantern": {
+      "approval": "candidate",
+      "variants": [
+        {
+          "id": "kit_lantern_24",
+          "png": "res://zones/crossroads/art/kit_lantern_24.png",
+          "foot": [
+            12,
+            118
+          ]
+        },
+        {
+          "id": "kit_lantern_25",
+          "png": "res://zones/crossroads/art/kit_lantern_25.png",
+          "foot": [
+            12,
+            118
+          ]
+        }
+      ],
+      "foot_art": [
+        12,
+        118
+      ],
+      "footprint_cells": [
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "collision": {
+        "rect": [
+          -2,
+          -2,
+          4,
+          3
+        ],
+        "shape": "rect"
+      },
+      "snap": "cell",
+      "requires": [
+        {
+          "rel": "at_edge",
+          "what": "route",
+          "cells": 1
+        }
+      ],
+      "forbids": [
+        {
+          "rel": "on",
+          "what": "route"
+        }
+      ],
+      "stages": [],
+      "clearance_cells": null,
+      "story": {
+        "owner": null
+      },
+      "cast_shadow": {
+        "shape": "baked"
+      },
+      "contact_ao": true,
+      "source_objects": [
+        {
+          "zone": "crossroads",
+          "object": "kit_lantern_24",
+          "part": "body",
+          "condition": null
+        },
+        {
+          "zone": "crossroads",
+          "object": "kit_lantern_25",
+          "part": "body",
+          "condition": null
+        }
+      ]
+    },
+    "crossroads_well": {
+      "approval": "candidate",
+      "variants": [
+        {
+          "id": "well",
+          "png": "res://zones/crossroads/art/well.png",
+          "foot": [
+            57,
+            170
+          ]
+        }
+      ],
+      "foot_art": [
+        57,
+        170
+      ],
+      "footprint_cells": [
+        [
+          -2,
+          -2
+        ],
+        [
+          -1,
+          -2
+        ],
+        [
+          0,
+          -2
+        ],
+        [
+          1,
+          -2
+        ],
+        [
+          -2,
+          -1
+        ],
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ]
+      ],
+      "collision": {
+        "rect": [
+          -10,
+          -16,
+          20,
+          16
+        ],
+        "shape": "rect"
+      },
+      "snap": "cell",
+      "requires": [],
+      "forbids": [
+        {
+          "rel": "on",
+          "what": "route"
+        }
+      ],
+      "stages": [
+        "restored"
+      ],
+      "clearance_cells": null,
+      "story": {
+        "owner": null,
+        "gating": {
+          "if": {
+            "flags": [
+              "shard_home:woodland"
+            ]
+          }
+        }
+      },
+      "cast_shadow": {
+        "shape": "baked"
+      },
+      "contact_ao": true,
+      "source_objects": [
+        {
+          "zone": "crossroads",
+          "object": "well",
+          "part": "body",
+          "condition": {
+            "flags": [
+              "shard_home:woodland"
+            ]
+          }
+        },
+        {
+          "zone": "crossroads",
+          "object": "well_shadow",
+          "part": "shadow",
+          "condition": {
+            "flags": [
+              "shard_home:woodland"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "receiving_plan": {
+    "zone": "first_slice_prop_intake_test_only",
+    "note": "SYNTHETIC CANDIDATE RECEIVER — NOT Crossroads terrain, placement or shipping acceptance.",
+    "coordinate_space": "cells",
+    "lab": true,
+    "ship": false,
+    "stage": "restored",
+    "legend": {
+      ".": "lawn",
+      "#": "path",
+      "~": "water"
+    },
+    "rows": [
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "........................",
+      "########################",
+      "########################",
+      "........................",
+      "........................",
+      "........................",
+      "....................~~~~",
+      "....................~~~~",
+      "....................~~~~",
+      "....................~~~~"
+    ],
+    "anchors": [
+      {
+        "id": "character_scale_reference",
+        "kind": "reference_only",
+        "at": [
+          3,
+          13
+        ]
+      }
+    ],
+    "spawns": {
+      "scale_reference": [
+        3,
+        13
+      ]
+    },
+    "pieces": [
+      {
+        "id": "bench-integer",
+        "piece": "crossroads_bench",
+        "at": [
+          6,
+          6
+        ],
+        "variant": "bench_28",
+        "facing": "s",
+        "stage": "restored"
+      },
+      {
+        "id": "bench-half-x",
+        "piece": "crossroads_bench",
+        "at": [
+          11.5,
+          6
+        ],
+        "variant": "bench_58",
+        "facing": "s",
+        "stage": "restored"
+      },
+      {
+        "id": "lantern-integer",
+        "piece": "crossroads_kit_lantern",
+        "at": [
+          16,
+          6
+        ],
+        "variant": "kit_lantern_24",
+        "facing": "s",
+        "stage": "restored"
+      },
+      {
+        "id": "lantern-half-x",
+        "piece": "crossroads_kit_lantern",
+        "at": [
+          20.5,
+          6
+        ],
+        "variant": "kit_lantern_25",
+        "facing": "s",
+        "stage": "restored"
+      },
+      {
+        "id": "well-restored",
+        "piece": "crossroads_well",
+        "at": [
+          12,
+          13
+        ],
+        "variant": "well",
+        "facing": "s",
+        "stage": "restored",
+        "if": {
+          "flags": [
+            "shard_home:woodland"
+          ]
+        }
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "bench-two-cell-boundary",
+      "subject": "bench-integer",
+      "edit": {},
+      "expect": {
+        "placement_checks": [],
+        "zone_fault_checks": []
+      }
+    },
+    {
+      "id": "bench-half-x-is-native",
+      "subject": "bench-half-x",
+      "edit": {},
+      "expect": {
+        "placement_checks": [],
+        "zone_fault_checks": []
+      }
+    },
+    {
+      "id": "bench-one-cell-too-far",
+      "subject": "bench-integer",
+      "edit": {
+        "at": [
+          6,
+          5
+        ]
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.seating"
+        ],
+        "zone_fault_checks": [
+          "rules.seating"
+        ]
+      }
+    },
+    {
+      "id": "bench-facing-away",
+      "subject": "bench-integer",
+      "edit": {
+        "facing": "n"
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.seating"
+        ],
+        "zone_fault_checks": [
+          "rules.seating"
+        ]
+      }
+    },
+    {
+      "id": "bench-on-route",
+      "subject": "bench-integer",
+      "edit": {
+        "at": [
+          6,
+          8
+        ]
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.seating"
+        ],
+        "zone_fault_checks": [
+          "rules.seating",
+          "rules.route_clear"
+        ]
+      }
+    },
+    {
+      "id": "bench-water-at-valid-route-distance",
+      "subject": "bench-integer",
+      "edit": {},
+      "expect": {
+        "placement_checks": [
+          "rules.forbids"
+        ],
+        "zone_fault_checks": [
+          "rules.forbids"
+        ]
+      },
+      "paint": [
+        {
+          "rect": [
+            4,
+            4,
+            2,
+            2
+          ],
+          "glyph": "~"
+        }
+      ]
+    },
+    {
+      "id": "lantern-one-cell-edge-boundary",
+      "subject": "lantern-integer",
+      "edit": {},
+      "expect": {
+        "placement_checks": [],
+        "zone_fault_checks": []
+      }
+    },
+    {
+      "id": "lantern-half-x-is-native",
+      "subject": "lantern-half-x",
+      "edit": {},
+      "expect": {
+        "placement_checks": [],
+        "zone_fault_checks": []
+      }
+    },
+    {
+      "id": "lantern-one-cell-beyond-edge",
+      "subject": "lantern-integer",
+      "edit": {
+        "at": [
+          16,
+          5
+        ]
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.requires"
+        ],
+        "zone_fault_checks": [
+          "rules.requires"
+        ]
+      }
+    },
+    {
+      "id": "lantern-on-route",
+      "subject": "lantern-integer",
+      "edit": {
+        "at": [
+          16,
+          8
+        ]
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.requires",
+          "rules.forbids"
+        ],
+        "zone_fault_checks": [
+          "rules.requires",
+          "rules.forbids",
+          "rules.route_clear"
+        ]
+      }
+    },
+    {
+      "id": "well-restored",
+      "subject": "well-restored",
+      "edit": {},
+      "expect": {
+        "placement_checks": [],
+        "zone_fault_checks": []
+      }
+    },
+    {
+      "id": "well-wrong-stage",
+      "subject": "well-restored",
+      "edit": {
+        "stage": "broken"
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.stage"
+        ],
+        "zone_fault_checks": [
+          "rules.stage"
+        ]
+      }
+    },
+    {
+      "id": "well-on-route",
+      "subject": "well-restored",
+      "edit": {
+        "at": [
+          12,
+          9
+        ]
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.forbids"
+        ],
+        "zone_fault_checks": [
+          "rules.forbids",
+          "rules.route_clear"
+        ]
+      }
+    },
+    {
+      "id": "well-outside-complete-footprint",
+      "subject": "well-restored",
+      "edit": {
+        "at": [
+          1,
+          13
+        ]
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.bounds"
+        ],
+        "zone_fault_checks": [
+          "rules.bounds"
+        ]
+      }
+    },
+    {
+      "id": "well-half-y-placement-refusal",
+      "subject": "well-restored",
+      "edit": {
+        "at": [
+          12,
+          13.5
+        ]
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.off_grid"
+        ],
+        "zone_fault_checks": [],
+        "zone_advice_checks": [
+          "rules.off_grid"
+        ]
+      }
+    },
+    {
+      "id": "well-quarter-x-placement-refusal",
+      "subject": "well-restored",
+      "edit": {
+        "at": [
+          12.25,
+          13
+        ]
+      },
+      "expect": {
+        "placement_checks": [
+          "rules.off_grid"
+        ],
+        "zone_fault_checks": [],
+        "zone_advice_checks": [
+          "rules.off_grid"
+        ]
+      }
+    },
+    {
+      "id": "bench-solid-overlap-full-zone-only",
+      "subject": "bench-integer",
+      "edit": {
+        "at": [
+          11.5,
+          6
+        ]
+      },
+      "expect": {
+        "placement_checks": [],
+        "zone_fault_checks": [
+          "rules.overlap"
+        ]
+      }
+    }
+  ],
+  "limits": {
+    "clearance": "All three real placement records omit numeric clearance. No numeric clearance refusal or visual clearance acceptance is invented; full-zone solid overlap is tested separately.",
+    "quests": "The well keeps stage=restored and its source if.flags=[shard_home:woodland]. Physical APIs evaluate stage/ground, NOT quest flags; no new unlock rule.",
+    "approval": "All pieces and receiving materials remain candidates. Lab advice differs from ship faults and placement refusals; no promotion.",
+    "snap": "Native cell snap admits half-X and full-Y. Lab full-zone off-grid advice is NOT placement permission.",
+    "roundtrip": "Only JSON encode/decode and real kit_scene.normalize are covered by these Python guards. Godot scene/seeding/bake/editor/runtime roundtrip is NOT covered; completed #388 crate/trough controls are not replayed.",
+    "terrain": "Synthetic material rows only; never real Crossroads terrain/layout acceptance.",
+    "shadow": "Existing baked-shadow metadata is preserved, not a proven live/composed shadow. Well source companion offset/condition is reference context only.",
+    "scale": "Existing art and collision units are retained. Source manifest bounds are not decoded PNG measurements or an approved size class."
+  },
+  "shadow_reference": {
+    "source": "game/zones/crossroads/kit.json",
+    "body": "well",
+    "companion": "well_shadow",
+    "body_foot_art": [
+      864,
+      960
+    ],
+    "companion_foot_art": [
+      838,
+      956
+    ],
+    "relative_foot_art": [
+      -26,
+      -4
+    ],
+    "companion_offset_art": [
+      0,
+      0
+    ],
+    "condition": {
+      "flags": [
+        "shard_home:woodland"
+      ]
+    },
+    "assembled": false
+  },
+  "preview_plan": {
+    "status": "NOT_RUN_REQUIRES_BOUNDED_GO",
+    "label": "SYNTHETIC CANDIDATE RECEIVING LAB — NOT PRODUCTION CROSSROADS / NOT APPROVED",
+    "world_cell_px": 8,
+    "art_density": 3,
+    "texels_per_cell": 24,
+    "native_ground_art_size": [
+      576,
+      384
+    ],
+    "presentation": "One labelled native panel plus one whole-panel nearest-neighbour 2x panel; never rescale individual props.",
+    "character": {
+      "manifest": "game/assets/characters/moss/manifest.json",
+      "sheet": "game/assets/characters/moss/sheets/idle_S.png",
+      "clip": "idle",
+      "facing": "S",
+      "frame": 3,
+      "region": [
+        480,
+        0,
+        160,
+        144
+      ],
+      "foot_pivot": [
+        80,
+        136
+      ],
+      "packed_bounds": [
+        62,
+        63,
+        100,
+        137
+      ],
+      "source_bounds_height_art": 74,
+      "png_height_measured": false,
+      "at_cells": [
+        3,
+        13
+      ]
+    },
+    "inputs": "Use only receiving_plan, actual existing Kit/compose.render, the five pinned prop variant PNGs, source well-shadow reference and native Moss frame. No illegal case enters a catalogue/scene.",
+    "shadow_panels": "Show actual existing composite result and a separately labelled source-well-shadow reference. Do not inject a shadow into the live index or call reference compositing engine behavior.",
+    "outputs": [
+      "receiving.png",
+      "receiving-2x.png",
+      "preview-manifest.json",
+      "preview.log"
+    ],
+    "holds": [
+      "STOP: compiled index is source-stale for these existing pieces; explicit owner refresh/disposition is required before preview. No private fake index or silent rebuild.",
+      "No renderer executed now; later controller/source must be reviewed before allocation.",
+      "No official matched Eastward craft/shadow/material/size judgement or Matt approval.",
+      "Full current Y12/verify/art/Godot/runtime remain separate."
+    ]
+  },
+  "execution_plan": {
+    "reservation": "NONE",
+    "canary": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "scripts.review.test_first_slice_prop_intake.FirstSlicePropIntake.test_source_pins_and_frozen_scope",
+      "scripts.review.test_first_slice_prop_intake.FirstSlicePropIntake.test_compiled_receiver_matches_real_metadata",
+      "-v"
+    ],
+    "focused": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "scripts.review.test_first_slice_prop_intake",
+      "-v"
+    ],
+    "focused_limits": {
+      "cpus": 1,
+      "rss_mib": 512,
+      "address_space_mib": 1024,
+      "active_seconds": 120,
+      "collection_seconds": 20,
+      "log_mib": 4,
+      "all_outputs_mib": 16
+    },
+    "preview_limits": {
+      "cpus": 1,
+      "rss_mib": 1024,
+      "address_space_mib": 2048,
+      "active_seconds": 120,
+      "collection_seconds": 20,
+      "log_mib": 4,
+      "all_outputs_mib": 32
+    },
+    "prerequisites": [
+      "Exact child/source pins and metadata from frozen388; clean private candidate with no original/shared writes.",
+      "Focused Python canary/check require explicit bounded GO; imports and test bodies have NOT RUN.",
+      "Preview separately requires reviewed controller, existing Pillow/numpy/kit cache and pinned PNG bytes; no install/build/bake fallback.",
+      "Persist exact source, argv, versions, allocation, complete logs/exits and unchanged-source guards on first failure; upload and second-reader retrieval before handoff."
+    ],
+    "failure_policy": "Stop on first prerequisite/canary failure, preserve its real result and partial bundle; never rerun completed388 controls or expand authority automatically."
+  },
+  "receiving_index": {
+    "path": "game/kit/props/index.json",
+    "status": "SOURCE_MISMATCH_NOT_RUNTIME_TESTED",
+    "missing_or_stale": {
+      "crossroads_bench": [
+        "footprint"
+      ],
+      "crossroads_kit_lantern": [
+        "footprint",
+        "size_cells"
+      ],
+      "crossroads_well": [
+        "footprint",
+        "size_cells",
+        "story"
+      ]
+    },
+    "required_disposition": "Lead-owned exact index-file reservation and reviewed receiving refresh; do not patch index, pieces, scenes or painters in this two-file task.",
+    "stages": "Physical stage checks consume the real piece JSON. Index stages are not invented as a supported export field.",
+    "freshness_guard": "test_compiled_receiver_matches_real_metadata is authored to fail closed while these real fields differ; it is NOT RUN."
+  }
+}
