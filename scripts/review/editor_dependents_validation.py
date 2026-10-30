@@ -29,12 +29,20 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "3c925bc42a34ed8c3cc86b2dddd77e08e38cbe41"
-GAME_TREE = "490e0985c46b90ad7cbe5bb4f9cbe14e762e67c6"
+# Receiver history stays on the original candidate; only source/ is executed.
+CANDIDATE_BASE_SHA = "3c925bc42a34ed8c3cc86b2dddd77e08e38cbe41"
+CANDIDATE_BASE_TREE = "490e0985c46b90ad7cbe5bb4f9cbe14e762e67c6"
+PRIOR_CANDIDATE_SHA = "d3da0885114da2cfab92747ad767191244e99199"
+PRIOR_CANDIDATE_TREE = "3b5a416d5201f88477515c1bc1ecdcebd54dcb23"
+GAME_SHA = "12ea03fd3e0c9921b2d35b061f77ccb551586f9c"
+GAME_TREE = "9ce15ff835c7aafea2a0915bd182935bf04d4cfe"
+GROUND_PATH = "game/world/terrain/terrain_ground.gd"
+CANDIDATE_GROUND_BLOB = "eae36ad6268bb5dbba40f36b2b12041c4979038a"
+GROUND_BLOB = "3e1f1c30a942cac648864ea7210ac436ec03c34f"
 TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 GAME_COUNT = 6687
-GAME_BYTES = 87861797
+GAME_BYTES = 87861809
 # Exact existing files only. scripts/ and scripts/art/ are namespace packages.
 # check_zone reads size_guide.json even with a supplied library/material map.
 PYTHON_INPUTS = {
@@ -165,9 +173,9 @@ def git(repo: Path, *args: str) -> bytes:
     return result.stdout
 
 
-def tree(repo: Path) -> dict[str, tuple[str, str]]:
+def tree(repo: Path, ref: str = "HEAD") -> dict[str, tuple[str, str]]:
     entries = {}
-    for raw in git(repo, "ls-tree", "-r", "-z", "HEAD").split(b"\0"):
+    for raw in git(repo, "ls-tree", "-r", "-z", ref).split(b"\0"):
         if not raw:
             continue
         header, name = raw.split(b"\t", 1)
@@ -305,6 +313,8 @@ class Controller:
                 raise RuntimeError("Namespace package unexpectedly replaced by an initializer")
         if game_rows[TEST_PATH]["blob"] != TEST_BLOB or game_rows["game/game.gd"]["blob"] != PRODUCTION_BLOB:
             raise RuntimeError("Frozen test/production pin differs")
+        if game_rows[GROUND_PATH]["blob"] != GROUND_BLOB or game_rows[GROUND_PATH]["bytes"] != 14449:
+            raise RuntimeError("Corrected executed TerrainGround pin differs")
         test_text = (self.source / TEST_PATH).read_text()
         if tuple(re.findall(r"^func (test_\w+)\(", test_text, re.M)) != METHODS:
             raise RuntimeError("Eight authored methods differ")
@@ -345,15 +355,49 @@ class Controller:
             self.evidence / "bootstrap.json", self.evidence / "controller.log"
         }:
             raise RuntimeError("Duty runtime/evidence is not fresh")
-        # Raw commit headers retain genuine parents even in depth=1 checkout.
+        # Candidate depth=3 retains original3c925 -> prior d3da -> this child.
+        # The corrected game is a separate genuine child of original3c925.
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [GAME_SHA]:
-            raise RuntimeError("Candidate must be a genuine sole child of the pinned #396 source")
+        if parents != [PRIOR_CANDIDATE_SHA]:
+            raise RuntimeError("Candidate must be a genuine sole child of frozen #402 d3da")
+        history_headers = {}
+        for sha, expected_tree, expected_parent in (
+            (PRIOR_CANDIDATE_SHA, PRIOR_CANDIDATE_TREE, CANDIDATE_BASE_SHA),
+            (CANDIDATE_BASE_SHA, CANDIDATE_BASE_TREE, "45ed3cad029c106977e6c0c833913dcb1c614fbd"),
+        ):
+            if git(self.candidate, "rev-parse", sha + "^{tree}").decode().strip() != expected_tree:
+                raise RuntimeError("Immutable candidate history tree differs")
+            value = git(self.candidate, "cat-file", "commit", sha).decode().split("\n\n", 1)[0]
+            if [line.removeprefix("parent ") for line in value.splitlines()
+                    if line.startswith("parent ")] != [expected_parent]:
+                raise RuntimeError("Immutable candidate history parent differs")
+            history_headers[sha] = value
+        source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
+        if [line.removeprefix("parent ") for line in source_headers.splitlines()
+                if line.startswith("parent ")] != [CANDIDATE_BASE_SHA]:
+            raise RuntimeError("Corrected game must be a genuine sole child of original #396")
         source_tree, candidate_tree = tree(self.source), tree(self.candidate)
+        base_tree = tree(self.candidate, CANDIDATE_BASE_SHA)
+        prior_tree = tree(self.candidate, PRIOR_CANDIDATE_SHA)
+        base_delta = {name for name in base_tree.keys() | candidate_tree.keys()
+                      if base_tree.get(name) != candidate_tree.get(name)}
+        prior_delta = {name for name in base_tree.keys() | prior_tree.keys()
+                       if base_tree.get(name) != prior_tree.get(name)}
+        receiving_delta = {name for name in prior_tree.keys() | candidate_tree.keys()
+                           if prior_tree.get(name) != candidate_tree.get(name)}
+        game_delta = {name for name in base_tree.keys() | source_tree.keys()
+                      if base_tree.get(name) != source_tree.get(name)}
         delta = {name for name in source_tree.keys() | candidate_tree.keys()
                  if source_tree.get(name) != candidate_tree.get(name)}
-        if delta != OWNED_PATHS or any(name in source_tree for name in OWNED_PATHS):
+        if (base_delta != OWNED_PATHS or prior_delta != OWNED_PATHS
+                or receiving_delta != OWNED_PATHS or game_delta != {GROUND_PATH}
+                or delta != OWNED_PATHS | {GROUND_PATH}
+                or any(name in base_tree or name in source_tree for name in OWNED_PATHS)
+                or any(prior_tree.get(name, (None,))[0] != "100644" for name in OWNED_PATHS)
+                or base_tree.get(GROUND_PATH) != ("100644", CANDIDATE_GROUND_BLOB)
+                or candidate_tree.get(GROUND_PATH) != ("100644", CANDIDATE_GROUND_BLOB)
+                or source_tree.get(GROUND_PATH) != ("100644", GROUND_BLOB)):
             raise RuntimeError(f"Candidate cumulative scope differs: {sorted(delta)}")
         candidate_rows = {}
         for name in sorted(OWNED_PATHS):
@@ -369,8 +413,13 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.initial)
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-                   "commit_headers": git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0],
-                   "delta": sorted(delta), "tested_source_parent": "separate immutable checkout, not workflow HEAD"})
+                   "commit_headers": headers, "history_headers": history_headers,
+                   "candidate_base_sha": CANDIDATE_BASE_SHA, "candidate_base_tree": CANDIDATE_BASE_TREE,
+                   "prior_candidate_sha": PRIOR_CANDIDATE_SHA, "prior_candidate_tree": PRIOR_CANDIDATE_TREE,
+                   "tested_game_sha": GAME_SHA, "tested_game_tree": GAME_TREE,
+                   "tested_game_headers": source_headers, "base_delta": sorted(base_delta),
+                   "receiving_delta": sorted(receiving_delta), "game_delta": sorted(game_delta),
+                   "delta": sorted(delta), "tested_source_parent": "separate corrected checkout; workflow retains original game"})
         # Retain full actual game AND actual Python inputs before engine setup.
         # The snapshot describes these bytes, never an invented successful import.
         with tarfile.open(self.evidence / "source-inputs.tar.gz", "x:gz") as archive:
