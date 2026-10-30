@@ -34,6 +34,8 @@ import zipfile
 GAME_SHA = "6903f8d5d729f5eb9d4beef20d33869465308c66"
 GAME_TREE = "e4dfae3eb183426e3a44fd004436eb1ed18b53d7"
 GAME_PARENT = "45ed3cad029c106977e6c0c833913dcb1c614fbd"
+RECEIVER_PARENT = "5de271d77f26dbbc5641bac0ef6635aef021c34b"
+RECEIVER_PARENT_TREE = "62b470d5934699bed72660f5a011e66b3f3da854"
 TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 GAME_COUNT = 6688
@@ -176,7 +178,10 @@ def blob(path: Path) -> str:
 
 
 def write_json(path: Path, value: object) -> None:
-    path.write_text(json.dumps(value, sort_keys=True, indent=2) + "\n")
+    # Atomic replacement keeps the provisional failure intact if sealing expires.
+    temporary = path.with_name(path.name + ".partial")
+    temporary.write_text(json.dumps(value, sort_keys=True, indent=2) + "\n")
+    temporary.replace(path)
 
 
 def diagnostic_text(path: Path) -> str:
@@ -280,7 +285,39 @@ class Controller:
         self.dependencies_initial = None
         self.transaction_started = None
         self.collection_used = 0.0
+        self.budget_failure = None
+        self.terminal_started = None
         self.owned_roots = (self.root, self.source, self.candidate)
+
+    def budget_remaining(self) -> float:
+        if self.transaction_started is None:
+            # Setup/import are separate phases. Their failed terminal retention
+            # gets at most30s, never a fresh successful eight-method transaction.
+            return 30 - (time.monotonic() - self.terminal_started)
+        return min(240 - (time.monotonic() - self.transaction_started - self.collection_used),
+                   270 - (time.monotonic() - self.transaction_started))
+
+    def budget_expired(self, _signum: int = 0, _frame: object = None) -> None:
+        self.budget_failure = "Whole transaction active/collection or failed-setup terminal budget exhausted"
+        raise TimeoutError(self.budget_failure)
+
+    def arm_budget(self) -> None:
+        remaining = self.budget_remaining()
+        if self.budget_failure or remaining <= 0 or self.collection_used > 30:
+            self.budget_expired()
+        # Covers between-phase audits, finite copy/hash chunks and terminal work.
+        # The phase finally disarms this before identity-safe kill/wait/absence;
+        # expiry itself never establishes collection or release.
+        signal.setitimer(signal.ITIMER_REAL, remaining)
+
+    def budget_receipt(self) -> dict:
+        now = time.monotonic()
+        wall = None if self.transaction_started is None else now - self.transaction_started
+        return {"wall_s": wall, "active_s": None if wall is None else wall - self.collection_used,
+                "collection_s": self.collection_used, "active_limit_s": 240,
+                "collection_limit_s": 30, "failure": self.budget_failure,
+                "terminal_s": None if self.terminal_started is None else now - self.terminal_started,
+                "qualification": "Controller transaction only; checkout/setup/import and network artifact upload have the separate15min job outer. Blocking OS calls may delay observation; measured overrun fails closed."}
 
     def capacity(self) -> dict:
         used = 0
@@ -410,8 +447,13 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [GAME_SHA]:
-            raise RuntimeError("Receiver must be a genuine sole child of frozen #398 6903")
+        if parents != [RECEIVER_PARENT]:
+            raise RuntimeError("Corrected receiver must be a genuine sole child of frozen4055de")
+        prior_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in prior_headers.splitlines() if line.startswith("parent ")]
+                != [GAME_SHA] or git(self.candidate, "rev-parse", RECEIVER_PARENT + "^{tree}").decode().strip()
+                != RECEIVER_PARENT_TREE):
+            raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
                 if line.startswith("parent ")] != [GAME_PARENT]:
@@ -438,6 +480,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                   "receiver_parent": RECEIVER_PARENT, "receiver_parent_headers": prior_headers,
                    "tested_game_tree": GAME_TREE, "tested_game_headers": source_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
         # Retain full actual game AND actual Python inputs before engine setup.
@@ -707,6 +750,11 @@ class Controller:
                 resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
                 resource.setrlimit(resource.RLIMIT_AS, (4 * 1024**3, 4 * 1024**3))
                 resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024**2, 64 * 1024**2))
+            # Do not inject an asynchronous exception into Popen's ownership
+            # handoff (child may exist before the handle is returned). The
+            # existing phase monitor and actual collection deadlines take over;
+            # all elapsed time is still charged and checked after collection.
+            signal.setitimer(signal.ITIMER_REAL, 0)
             process = subprocess.Popen(command, cwd=self.game, env=self.env, start_new_session=True,
                                        stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=child_limits)
             result["pid"] = result["pgid"] = process.pid
@@ -760,6 +808,9 @@ class Controller:
         except BaseException as error:
             reason = f"controller/prerequisite failure: {type(error).__name__}: {error}"
         finally:
+            # Never asynchronously interrupt the existing identity-safe actual
+            # collection. Its original bounded wait deadlines remain authoritative.
+            signal.setitimer(signal.ITIMER_REAL, 0)
             collection_start = time.monotonic()
             collection_deadline = collection_start + (min(10, max(0, 30 - self.collection_used))
                 if self.transaction_started is not None else 10)
@@ -863,6 +914,8 @@ class Controller:
             if log_path.exists():
                 result.update(log_sha256=digest(log_path), log_bytes=log_path.stat().st_size)
             write_json(self.evidence / (name + ".json"), result)
+            if self.transaction_started is not None:
+                self.arm_budget()
         return result
 
     def require_clean(self, name: str, result: dict) -> str:
@@ -998,6 +1051,10 @@ class Controller:
             self.require_clean("import", self.phase("import", [str(self.engine), "--headless", "--audio-driver", "Dummy",
                                                              "--path", str(self.game), "--import"], 180))
             self.transaction_started = time.monotonic()
+            self.arm_budget()
+            write_json(self.evidence / "result.json", {"state": "TRANSACTION_INCOMPLETE_FAILURE",
+                       "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
+                       "qualification": "Provisional failure until all eight methods, terminal guards and packaging finish within budget."})
             self.require_clean("check-only", self.phase("check-only", [
                 str(self.engine), "--headless", "--audio-driver", "Dummy",
                 "--path", str(self.game), "--check-only", "--script",
@@ -1011,17 +1068,28 @@ class Controller:
             self.python_stage("python-faults", PY_FAULTS)
             if any(state != "PASS" for state in self.output["methods"].values()):
                 raise RuntimeError("Not all eight persistence controls passed")
-            self.output["state"] = "EIGHT_PERSISTENCE_PASS"
+            self.output["state"] = "EIGHT_PERSISTENCE_PENDING_TERMINAL_GUARDS"
         except BaseException as error:
             failure = {"type": type(error).__name__, "message": str(error), "traceback": traceback.format_exc()}
             if self.output["state"] not in ("PERSISTENCE_ASSERTION_RED_REQUIRES_LEAD_REVIEW",
                                            "PERSISTENCE_GDUNIT_ASSERTION_FAIL_REQUIRES_LEAD_REVIEW"):
                 self.output["state"] = "PREREQUISITE_OR_NON_TARGET_FAILURE"
         finally:
+            self.terminal_started = time.monotonic()
+            # A durable fail-closed receipt precedes EVERY terminal copy/hash/tar.
+            # Disarm only for this fixed-size emergency receipt; its time remains
+            # charged to the transaction and is checked before any PASS promotion.
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            write_json(self.evidence / "result.json", {"state": "TERMINAL_INCOMPLETE_FAILURE",
+                       "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
+                       "prior_state": self.output["state"], "budget": self.budget_receipt(),
+                       "qualification": "No terminal success yet; originals retained by always-upload paths even if archives are cut short."})
             # Independent final retention attempts; one failing guard must not suppress other evidence.
             final_errors = []
+            archives = {}
             if self.candidate_initial is not None:
                 try:
+                    self.arm_budget()
                     actual = {name: {"blob": blob(self.candidate / name), "sha256": digest(self.candidate / name)}
                               for name in sorted(OWNED_PATHS)}
                     write_json(self.evidence / "candidate-after.json", actual)
@@ -1032,6 +1100,7 @@ class Controller:
                     final_errors.append(repr(error))
             if self.initial is not None:
                 try:
+                    self.arm_budget()
                     after = self.snapshot()
                     write_json(self.evidence / "source-after.json", after)
                     if after != self.initial:
@@ -1040,6 +1109,7 @@ class Controller:
                 except BaseException as error:
                     final_errors.append(repr(error))
             try:
+                self.arm_budget()
                 if self.engine.exists():
                     after_engine = {"bytes": self.engine.stat().st_size, "sha256": digest(self.engine)}
                     write_json(self.evidence / "engine-after.json", after_engine)
@@ -1049,6 +1119,7 @@ class Controller:
             except BaseException as error:
                 final_errors.append(repr(error))
             try:
+                self.arm_budget()
                 if self.dependencies_initial is not None:
                     after_dependencies = self.dependency_snapshot()
                     write_json(self.evidence / "dependencies-after.json", after_dependencies)
@@ -1062,35 +1133,96 @@ class Controller:
             for label, source in {"test-output": self.root / "test-output",
                                   "private-data": self.root / "data"}.items():
                 try:
+                    self.arm_budget()
                     if source.exists():
+                        archives[label] = "INCOMPLETE"
                         with tarfile.open(self.evidence / (label + ".tar.gz"), "x:gz") as archive:
-                            archive.add(source, arcname=label)
+                            # Finite, physical regular files only; tarfile copies
+                            # in bounded chunks under the same active timer.
+                            total = count = 0
+                            for base, dirs, files in os.walk(source, followlinks=False):
+                                for item in dirs + files:
+                                    if (Path(base) / item).is_symlink():
+                                        raise RuntimeError("Output archive symlink refused")
+                                for name in files:
+                                    path = Path(base) / name
+                                    info = path.lstat()
+                                    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+                                        raise RuntimeError("Output archive nonphysical file refused")
+                                    count += 1
+                                    total += info.st_size
+                                    if count > 20000 or total > OWNED_LIMIT:
+                                        raise RuntimeError("Terminal archive entry/byte bound")
+                                    archive.add(path, arcname=str(Path(label) / path.relative_to(source)), recursive=False)
+                        archives[label] = "COMPLETE"
                 except BaseException as error:
                     final_errors.append(label + ": " + repr(error))
             try:
+                self.arm_budget()
                 reports = self.game / REPORT_DIR
                 if reports.exists():
                     shutil.copytree(reports, self.evidence / "gdunit-reports")
             except BaseException as error:
                 final_errors.append("gdunit-reports: " + repr(error))
             try:
+                self.arm_budget()
                 uid = self.source / (TEST_PATH + ".uid")
                 if uid.exists():
                     shutil.copyfile(uid, self.evidence / uid.name)
             except BaseException as error:
                 final_errors.append("generated-uid: " + repr(error))
             try:
+                self.arm_budget()
                 self.output["final_capacity"] = self.capacity()
             except BaseException as error:
                 final_errors.append("capacity: " + repr(error))
+            try:
+                self.arm_budget()
+                manifest, total = {}, 0
+                for p in self.evidence.rglob("*"):
+                    if p.name in ("result.json", "result.json.partial", "evidence-manifest.json", "evidence-manifest.json.partial"):
+                        continue  # Final result is a separately sealed receipt.
+                    if p.is_file() and not p.is_symlink():
+                        size = p.stat().st_size
+                        total += size
+                        if len(manifest) >= 20000 or total > OWNED_LIMIT:
+                            raise RuntimeError("Terminal evidence manifest entry/byte bound")
+                        manifest[str(p.relative_to(self.evidence))] = {"bytes": size, "sha256": digest(p)}
+                write_json(self.evidence / "evidence-manifest.json", manifest)
+                self.arm_budget()  # Includes time spent writing/hash/closing archives.
+            except BaseException as error:
+                final_errors.append("terminal-manifest: " + repr(error))
+            finally:
+                signal.setitimer(signal.ITIMER_REAL, 0)
+            # Only fixed-size failure/clock metadata remains outside interruptible
+            # work. Never scan/copy/hash after expiration. Originals are uploaded
+            # from the exact private roots; INCOMPLETE archives are not substitutes.
+            if self.budget_remaining() <= 0 or self.collection_used > 30:
+                self.budget_failure = self.budget_failure or "Terminal aggregate budget exhausted"
+            if self.budget_failure:
+                final_errors.append(self.budget_failure)
             self.output.update(failure=failure, final_errors=final_errors, finished_at=time.time(),
+                               archives=archives, budget=self.budget_receipt(),
                                gui_workflow_pass=False, production_correction_authorised=False)
+            # Seal supporting metadata while the durable result is still failure.
+            write_json(self.evidence / "terminal-budget.json", self.budget_receipt())
             if final_errors:
                 self.output["state"] = "FINAL_GUARD_OR_COLLECTION_FAILURE"
-            write_json(self.evidence / "result.json", self.output)
-            manifest = {str(p.relative_to(self.evidence)): {"bytes": p.stat().st_size, "sha256": digest(p)}
-                        for p in sorted(self.evidence.rglob("*")) if p.is_file() and not p.is_symlink()}
-            write_json(self.evidence / "evidence-manifest.json", manifest)
+            elif self.output["state"] == "EIGHT_PERSISTENCE_PENDING_TERMINAL_GUARDS":
+                self.output["state"] = "EIGHT_PERSISTENCE_PASS"
+            # Charge the small final result write too. Overrun replaces even a
+            # just-written PASS with failure before any successful return.
+            try:
+                write_json(self.evidence / "result.json", self.output)
+                if self.budget_remaining() <= 0 or self.collection_used > 30:
+                    self.budget_failure = self.budget_failure or "Final receipt exceeded aggregate budget"
+                    raise TimeoutError(self.budget_failure)
+            except BaseException as error:
+                self.output["state"] = "FINAL_GUARD_OR_COLLECTION_FAILURE"
+                write_json(self.evidence / "result.json", {"state": self.output["state"],
+                           "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
+                           "budget": self.budget_receipt(), "failure": repr(error),
+                           "qualification": "Emergency failure receipt only; original private outputs remain available independently of incomplete archives. Expiry is not proof of runtime release."})
         # Only actual eight-method green with all final guards can succeed.
         # A RED, partial fail-fast, setup or collection failure remains nonzero.
         return 0 if self.output["state"] == "EIGHT_PERSISTENCE_PASS" else 1
@@ -1107,8 +1239,11 @@ def main() -> int:
         raise InterruptedError(f"Controller received signal {signum}; retain/collect owned children")
     signal.signal(signal.SIGTERM, interrupted)
     signal.signal(signal.SIGHUP, interrupted)
-    return Controller(args).run()
+    controller = Controller(args)
+    signal.signal(signal.SIGALRM, controller.budget_expired)
+    return controller.run()
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

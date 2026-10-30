@@ -50,7 +50,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 2 # exact398 -> this genuine receiver child
+          fetch-depth: 3 # exact398 -> original4055de -> this genuine corrective child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -202,10 +202,19 @@ jobs:
           PY
 
       - name: Upload source, raw failures, actual waits and reports
+        # Controller240s+30s covers its terminal guards/packaging, not network
+        # upload. Setup/import/upload retain the separate15min hosted outer.
+        # Originals remain retrievable if a deadline cuts an archive short.
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # main885b convention
         with:
           name: mygame-editor-persistence-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/editor-persistence/evidence/
+          path: |
+            ${{ runner.temp }}/editor-persistence/evidence/
+            ${{ runner.temp }}/editor-persistence/test-output/
+            ${{ runner.temp }}/editor-persistence/data/
+            ${{ github.workspace }}/source/game/reports-editor-persistence/
+            ${{ github.workspace }}/source/game/test/test_kit_zone_persistence.gd.uid
           if-no-files-found: error
           retention-days: 7
+
