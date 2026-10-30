@@ -280,6 +280,8 @@ jobs:
               original = Path(receipt['original_input'])
               inventory = {str(path.relative_to(original)): {'bytes': path.stat().st_size, 'sha256': control['sha'](path)} for path in original.rglob('*') if path.is_file()}
               checks['original_input_unchanged'] = inventory == receipt['original_input_inventory']
+              checks['original_archives_unchanged'] = all((evidence / receipt[key]['path']).stat().st_size == receipt[key]['bytes']
+                  and control['sha'](evidence / receipt[key]['path']) == receipt[key]['sha256'] for key in ('raw_archive', 'portable'))
               core = control['json_read'](original / 'capture.json')
               input_sha = control['sha'](original / 'capture.json')
               out = evidence / phase
@@ -403,24 +405,31 @@ jobs:
           for phase in ('replay', 'preview'):
               results[phase] = read(evidence / (phase+'-gate.json'))
           receipt = read(evidence / 'input-receipt.json')
-          input_unchanged, owned = False, None
+          input_unchanged, archives_unchanged, owned = False, False, None
           try:
               control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_final_collection_definitions_only')
               actual = Path(receipt['original_input'])
               inventory = {str(path.relative_to(actual)): {'bytes': path.stat().st_size, 'sha256': control['sha'](path)} for path in actual.rglob('*') if path.is_file()}
               input_unchanged = inventory == receipt['original_input_inventory']
+              archives_unchanged = all((evidence / receipt[key]['path']).stat().st_size == receipt[key]['bytes']
+                  and control['sha'](evidence / receipt[key]['path']) == receipt[key]['sha256'] for key in ('raw_archive', 'portable'))
               owned = control['owned_blocks'](evidence)
+          except Exception as error:
+              errors.append(dict(file='final-guards', error=repr(error)))
+          # Preserve the inventory of early/partial evidence even when setup
+          # never reached a valid input receipt or either phase allocation.
+          try:
               for path in evidence.rglob('*'):
                   metadata = path.lstat()
                   assert not stat.S_ISLNK(metadata.st_mode), 'evidence symlink refused'
                   if stat.S_ISREG(metadata.st_mode):
-                      files[str(path.relative_to(evidence))] = dict(bytes=metadata.st_size, sha256=control['sha'](path))
+                      files[str(path.relative_to(evidence))] = dict(bytes=metadata.st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest())
           except Exception as error:
-              errors.append(dict(file='final-guards', error=repr(error)))
-          passed = (not errors and receipt.get('verified') is True and input_unchanged and type(owned) is int and owned <= 128*1024**2
+              errors.append(dict(file='partial-file-inventory', error=repr(error)))
+          passed = (not errors and receipt.get('verified') is True and input_unchanged and archives_unchanged and type(owned) is int and owned <= 128*1024**2
               and os.environ['SOURCE_GUARD_OUTCOME'] == 'success' and all(result.get('passed') is True for result in results.values()))
           value = dict(event_source_sha=os.environ['EXPECTED_SOURCE_SHA'], captured_source_sha='87ea22a4be342e3b8009b1c9b922c2fb7db56711',
-              passed=passed, results=results, original_input_unchanged=input_unchanged, original_input_receipt=receipt,
+              passed=passed, results=results, original_input_unchanged=input_unchanged, original_archives_unchanged=archives_unchanged, original_input_receipt=receipt,
               owned_bytes=owned, errors=errors, files=files, label='FAILED-STATE DIAGNOSTIC', world_success=False, art_approval=False,
               qualification='Unchanged actual-input replay, then original captured AFTER preview only after all comparisons. Original producer failure retained. No new tests, correction, full world, literal-colour/art validation or map approval. Existing per-phase controller limits unchanged; whole evidence counted before/after phases. Independent actual-byte retrieval and full Actions logs still required.')
           (evidence / 'artifact-manifest.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
