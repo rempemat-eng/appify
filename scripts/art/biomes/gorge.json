@@ -1,0 +1,163 @@
+{
+  "id": "gorge",
+  "status": "brief",
+  "lane": "claude-h",
+  "regions": ["cogsworth"],
+  "kit": null,
+  "about": "The Narrows: the Lull cut through the coal hills in a deep, wet gorge, 44 px of white water at the bottom, the viaduct over its narrowest point, ferns and moss on dripping walls, alder on the rims (regions/cogsworth-coal-hills-narrows.md 2 and 4). A brief as data (rules-system.md 4), in the shape of Claude F's moor and highland (#199). The walls are mostly seen, not walked: the routes keep to the rims and cross on the viaduct; the towpath ledge and the Narrows lift down to the river stay proposals in the brief. Every family is a house ramp (art/house-palette.json). 'kit' is pinned when kit v1 (woodland@1) exists.",
+  "palette_intent": "Cool, wet and green-black, the one deep shadow on the map that is still inviting: dark slate walls (slate_cool) streaked darker where water runs, every ledge and crack bright with fern and moss (leaf, leaf_cool), the river white and pale blue-green at the bottom. Light comes in from above: the upper beds and the lips are lit and warm, the depths cool towards dusk violet but never black. The viaduct's brick (Cogsworth's clay) is the one warm made thing across it.",
+  "families": {
+    "wall": ["slate", "slate_cool", "slate_warm"],
+    "wet_streak": ["slate_cool", "soot_cool", "water_cool"],
+    "moss": ["leaf", "leaf_cool", "grass_cool"],
+    "fern": ["leaf", "leaf_warm", "grass"],
+    "rim_turf": ["grass_cool", "grass", "leaf_warm"],
+    "alder": ["leaf_cool", "leaf", "timber_cool"],
+    "white_water": ["snow_cool", "sky", "water", "water_cool"],
+    "pool": ["water_cool", "lagoon_cool", "water"],
+    "boulder": ["slate", "stone_cool"],
+    "spray": ["sky", "snow_cool"],
+    "made": ["clay", "clay_cool", "iron", "iron_cool", "stone"]
+  },
+  "ground": {
+    "base": "the rims: rim turf (grass_cool) with moss in the damp cells nearest the lip; the gorge floor, where it shows between water and wall, is wet slate boulders and gravel (stone_cool)",
+    "drifts": [
+      {
+        "name": "moss",
+        "share": 0.3,
+        "noise_scale": 14,
+        "recipe": "cushions 2 to 4 texels across, leaf lit top-left, leaf_cool beneath, densest within two cells of a lip that takes spray"
+      },
+      {
+        "name": "fern",
+        "share": 0.18,
+        "noise_scale": 20,
+        "recipe": "hart's-tongue and polypody stamps on the rims and every ledge: leaf and leaf_warm fronds, three-texel arcs drooping south over the lip"
+      },
+      {
+        "name": "rim_turf",
+        "share": 0.42,
+        "noise_scale": 30,
+        "recipe": "short cool turf in broad patches; ling from the coal hills on the driest rims only"
+      }
+    ],
+    "calm": "despeckle after every pass; wet streaks are vertical runs of one family two to four texels wide, never dither; no lone pixels (SB-05)"
+  },
+  "plants": [
+    {
+      "id": "hart's_tongue",
+      "kind": "fern on walls and ledges",
+      "where": "every ledge and the wall's cracks, thickest near spray"
+    },
+    { "id": "polypody", "kind": "fern on rims", "where": "the lips and on the alders' trunks" },
+    {
+      "id": "moss",
+      "kind": "cushion",
+      "where": "lips that take spray, wet streaks' tops, boulders at the water"
+    },
+    {
+      "id": "liverwort",
+      "kind": "flat on rock",
+      "where": "the lowest wall beds just above the water, in leaf_cool sheets"
+    },
+    {
+      "id": "alder",
+      "kind": "tree, blocks walking",
+      "where": "singly and in twos on the rims, leaning over the gorge; never in a row"
+    },
+    {
+      "id": "rowan",
+      "kind": "tree",
+      "where": "rooted in the wall on a ledge, one or two in the Narrows, berry clusters on the lit side"
+    },
+    {
+      "id": "ivy",
+      "kind": "climber",
+      "where": "the viaduct's piers and the lower walls near it (cliff core ivy piece, in this biome's families)"
+    }
+  ],
+  "clusters": [
+    {
+      "id": "fern_ledge",
+      "of": ["hart's_tongue", "hart's_tongue", "moss", "liverwort"],
+      "where": "along a ledge band in the wall, broken every 40 to 80 texels by bare rock"
+    },
+    {
+      "id": "rim_alder",
+      "of": ["alder", "polypody", "moss", "boulder"],
+      "where": "on a rim cell beside the route, the tree leaning out over the drop, never on the path"
+    },
+    {
+      "id": "plunge_pool",
+      "of": ["fall", "pool", "boulder", "boulder", "spray"],
+      "where": "where a burn from the coal hills falls into the gorge"
+    },
+    {
+      "id": "viaduct_foot",
+      "of": ["pier", "ivy", "boulder", "pool"],
+      "where": "the viaduct's three piers (cogsworth_region.SET_PIECES), each pier on rock out of the white water's main line"
+    },
+    {
+      "id": "wall_rowan",
+      "of": ["rowan", "fern_ledge"],
+      "where": "one ledge in the Narrows, the rowan's crown above the lip line, a view landmark from the High Fells"
+    }
+  ],
+  "tiers": {
+    "face_heights": [32, 40],
+    "notes": "the walls are stacked faces from the rims (G's tiers 9 and 10) down to the Lull (tier 4), drawn as one wall: 40 px slate faces split by fern ledges a cell deep, so each face still reads as a tier and the ledge breaks the height (verticality.md: a screen shows at most two full tiers; the rest is the drop seen from the rim). The ledges are not walkable unless the towpath ledge proposal is taken up. Rims step in and out by whole cells; the gorge narrows to the viaduct's 44 px of water."
+  },
+  "edges": {
+    "from_woodland": "The face is wet slate in steep beds tilted a few degrees (not the woodland's earth bank, not the coal hills' level shale): tall slabs with vertical cleavage cracks, the upper beds lit and warmer (slate_warm), the lower cool, dark vertical wet streaks below every ledge and spring. Each ledge is a cell-deep shelf with ferns hanging over its edge. The lip is moss and polypody overhanging by one to three texels where spray reaches, plain rim turf where it does not. The foot is the river: boulders and liverwort, no dry band.",
+    "stair": "none on the gorge walls; at the viaduct ends the routes keep to the rims (stairs there are the coal hills' pit steps)",
+    "bank": "white water against boulders: no bank band, foam in clustered runs (snow_cool, sky) round each boulder's upstream side, a darker green-blue tongue (lagoon_cool) where the water deepens below a fall",
+    "volume": "the far (south) wall faces the camera lit from above, the near (north) wall is seen only as its lip; cast shadow from the rim falls a cell down the far wall's top"
+  },
+  "water": {
+    "kinds": ["white water", "fall", "plunge pool"],
+    "notes": "the Lull runs fast and white through the Narrows (44 px at the viaduct), widening to pools below falls; burns from the coal hills fall in from the sides. Flow lines run along the course; foam clusters, never speckle; spray is finite and stops off-screen (AGENTS.md motion rules)."
+  },
+  "ambience": {
+    "animals": [
+      "a dipper on the boulders",
+      "a grey wagtail",
+      "crows from the coal hills above the rims"
+    ],
+    "sounds_for_m": [
+      "the river's roar, louder on the viaduct",
+      "drips from the ledges",
+      "a train on the viaduct"
+    ],
+    "light": "the sun reaches the bottom only at midday; mornings and evenings the gorge floor is in cool shade, the rims lit"
+  },
+  "pieces": {
+    "from_cliff_core": ["ledge", "ivy", "boulders", "path"],
+    "owned": ["fern_ledge", "rim_alder", "plunge_pool", "viaduct_foot", "wall_rowan", "slate_wall"],
+    "proposed": ["slate_wall", "fern_ledge", "towpath_ledge", "narrows_lift"]
+  },
+  "transitions": [
+    {
+      "to": "coal_hills",
+      "where": "both rims, the length of the Narrows",
+      "how": "the coal hills' shale becomes the gorge's upper beds; heath turf to moss-hung rim turf where spray reaches"
+    },
+    {
+      "to": "old_forest",
+      "where": "east beyond the Narrows (Claude G's edge)",
+      "how": "leaf litter: bramble and fallen trees from the edge's fade carry over the east rim; alder and rowan give way to oak"
+    },
+    {
+      "to": "river_delta",
+      "where": "the Lull leaving south towards Claude I's chunk",
+      "how": "the gorge opens: walls lower to banks, white water to the river kit's riffles, boulders to gravel bars"
+    }
+  ],
+  "sources": [
+    "docs/vision/regions/cogsworth-coal-hills-narrows.md",
+    "docs/vision/verticality.md",
+    "docs/vision/house-style.md",
+    "docs/vision/rules-system.md",
+    "scripts/art/regions/cogsworth_region.py",
+    "#199 (Claude F's biome brief format)"
+  ]
+}
