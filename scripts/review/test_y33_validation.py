@@ -208,6 +208,169 @@ class ReceivingRegressions(unittest.TestCase):
         self.assertEqual(receiver.orphan_diagnostics(line), [line])
 
 
+
+# H2 observed asset-side atomic sidecar. Exact canonical tracked-name facts from
+# source-before.json at3829e13/treeaa59; transient is absent from all6108 rows.
+# Outer ZIP SHA2560cd2020759aa281063e535c54c79ad723609658faf826b59040a65ef854669a8
+# Original ZIP SHA2562c3cc3e20f79821a6c195f950d3ae380b7c056453eec190e6ded9dac88cdaac3
+H2_ASSET = "game/assets/characters/morel/sheets/stair_down_S.png"
+H2_TEMP = H2_ASSET + ".import-RtRgeu"
+H2_TRACKED = {
+    H2_ASSET: {
+        "blob": "326df3527134ec822a39b8430036902464345c07", "bytes": 5898, "mode": "100644",
+        "sha256": "ad650d9ebc119e11f0fc81fa036cb1b93b57b4d050365e010b12d2ab75c5a00a",
+    },
+    H2_ASSET + ".import": {
+        "blob": "39fb3efba4fa74aaba8b5fdece742af5015cd78a", "bytes": 971, "mode": "100644",
+        "sha256": "19838f4be130704f6cd4613e7514831c3e9d54ee2db3fb27ef28fdfcf1e42aa2",
+    },
+}
+
+
+class ImportSidecarRegressions(unittest.TestCase):
+    # Reuse only fixture helpers; do not inherit/repeat the previous12 methods.
+    setUp = ReceivingRegressions.setUp
+    real_file = ReceivingRegressions.real_file
+    disappear_at_lstat = ReceivingRegressions.disappear_at_lstat
+
+    def sidecar_fixture(self):
+        # Deliberately small physical metering fixtures, NOT a recreated game or
+        # a successful snapshot(). The map carries actual pinned name/blob facts;
+        # these synthetic canonical contents are guarded before/after capacity().
+        self.controller.initial = {
+            "head": receiver.GAME_SHA, "tree": receiver.GAME_TREE,
+            "game": {key: dict(row) for key, row in H2_TRACKED.items()},
+        }
+        asset = self.real_file(self.controller.source / H2_ASSET)
+        canonical = self.real_file(self.controller.source / (H2_ASSET + ".import"))
+        temporary = self.controller.source / H2_TEMP
+        return asset, canonical, temporary
+
+    def test_actual_asset_sidecar_disappearance_preserves_canonical_files(self) -> None:
+        asset, canonical, temporary = self.sidecar_fixture()
+        before = (receiver.blob(asset), receiver.blob(canonical))
+        self.assertIn(H2_ASSET, self.controller.initial["game"])
+        self.assertIn(H2_ASSET + ".import", self.controller.initial["game"])
+        self.assertNotIn(H2_TEMP, self.controller.initial["game"])
+        self.real_file(temporary)
+        patch, removed = self.disappear_at_lstat(temporary)
+        with patch:
+            result = self.controller.capacity()
+        self.assertEqual(removed, [temporary])
+        self.assertFalse(temporary.exists())
+        self.assertEqual((receiver.blob(asset), receiver.blob(canonical)), before)
+        self.assertGreaterEqual(
+            result["owned_allocated_bytes"],
+            (asset.stat().st_blocks + canonical.stat().st_blocks) * 512,
+        )
+
+    def test_tracked_canonical_and_tracked_temporary_lookalike_still_refuse(self) -> None:
+        for key in (H2_ASSET, H2_ASSET + ".import", H2_TEMP):
+            with self.subTest(key=key):
+                asset, canonical, temporary = self.sidecar_fixture()
+                if key == H2_TEMP:
+                    self.real_file(temporary)
+                    # A tracked lookalike must NEVER gain a mutable exemption.
+                    self.controller.initial["game"][key] = dict(H2_TRACKED[H2_ASSET + ".import"])
+                victim = self.controller.source / key
+                patch, removed = self.disappear_at_lstat(victim)
+                with patch, self.assertRaises(FileNotFoundError):
+                    self.controller.capacity()
+                self.assertEqual(removed, [victim])
+
+    def test_missing_or_wrong_source_identity_still_refuses(self) -> None:
+        for case in ("absent", "empty", "wrong-head", "wrong-tree",
+                     "missing-map", "missing-asset", "missing-canonical"):
+            with self.subTest(case=case):
+                asset, canonical, temporary = self.sidecar_fixture()
+                initial = self.controller.initial
+                if case == "absent":
+                    self.controller.initial = None
+                elif case == "empty":
+                    self.controller.initial = {}
+                elif case == "wrong-head":
+                    initial["head"] = "0" * 40
+                elif case == "wrong-tree":
+                    initial["tree"] = "0" * 40
+                elif case == "missing-map":
+                    del initial["game"]
+                elif case == "missing-asset":
+                    del initial["game"][H2_ASSET]
+                else:
+                    del initial["game"][H2_ASSET + ".import"]
+                self.real_file(temporary)
+                patch, removed = self.disappear_at_lstat(temporary)
+                with patch, self.assertRaises(FileNotFoundError):
+                    self.controller.capacity()
+                self.assertEqual(removed, [temporary])
+                self.assertTrue(asset.is_file() and canonical.is_file())
+
+    def test_unrecognised_or_outside_import_temporary_paths_still_refuse(self) -> None:
+        for case in ("plain-asset", "unknown-asset", "short-suffix", "nonalnum-suffix",
+                     "candidate", "outside-game"):
+            with self.subTest(case=case):
+                asset, canonical, temporary = self.sidecar_fixture()
+                paths = {
+                    "plain-asset": asset.with_name("untracked.png"),
+                    "unknown-asset": asset.with_name("untracked.png.import-RtRgeu"),
+                    "short-suffix": canonical.with_name(canonical.name + "-short"),
+                    "nonalnum-suffix": canonical.with_name(canonical.name + "-RtRg_u"),
+                    "candidate": self.controller.candidate / H2_TEMP,
+                    "outside-game": self.controller.source / "outside.png.import-RtRgeu",
+                }
+                victim = self.real_file(paths[case])
+                patch, removed = self.disappear_at_lstat(victim)
+                with patch, self.assertRaises(FileNotFoundError):
+                    self.controller.capacity()
+                self.assertEqual(removed, [victim])
+
+    def test_recognised_sidecar_permission_and_io_errors_still_propagate(self) -> None:
+        asset, canonical, temporary = self.sidecar_fixture()
+        self.real_file(temporary)
+        original = Path.lstat
+        for error in (
+            PermissionError(errno.EACCES, "sidecar permission refusal", str(temporary)),
+            OSError(errno.EIO, "sidecar IO refusal", str(temporary)),
+        ):
+            with self.subTest(error=error):
+                def lstat(path, *args, **kwargs):
+                    if path == temporary:
+                        raise error
+                    return original(path, *args, **kwargs)
+                with mock.patch.object(Path, "lstat", new=lstat):
+                    with self.assertRaises(type(error)) as caught:
+                        self.controller.capacity()
+                self.assertIs(caught.exception, error)
+                self.assertTrue(temporary.is_file())
+
+    def test_recognised_sidecar_real_symlink_is_still_refused(self) -> None:
+        asset, canonical, temporary = self.sidecar_fixture()
+        temporary.symlink_to(asset)
+        with self.assertRaisesRegex(RuntimeError, "symlink"):
+            self.controller.capacity()
+        self.assertTrue(temporary.is_symlink())
+
+    def test_disappearance_does_not_hide_real_allocated_budget_overage(self) -> None:
+        asset, canonical, temporary = self.sidecar_fixture()
+        self.assertGreater(asset.stat().st_blocks + canonical.stat().st_blocks, 0)
+        self.real_file(temporary)
+        patch, removed = self.disappear_at_lstat(temporary)
+        with patch, mock.patch.object(receiver, "OWNED_LIMIT", 0):
+            with self.assertRaisesRegex(RuntimeError, "owned disk/reserve limit"):
+                self.controller.capacity()
+        self.assertEqual(removed, [temporary])
+
+    def test_disappearance_does_not_hide_free_reserve_shortfall(self) -> None:
+        asset, canonical, temporary = self.sidecar_fixture()
+        self.real_file(temporary)
+        patch, removed = self.disappear_at_lstat(temporary)
+        with patch, mock.patch.object(receiver.shutil, "disk_usage",
+                                     return_value=shutil._ntuple_diskusage(1, 1, 0)):
+            with self.assertRaisesRegex(RuntimeError, "owned disk/reserve limit"):
+                self.controller.capacity()
+        self.assertEqual(removed, [temporary])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
 
