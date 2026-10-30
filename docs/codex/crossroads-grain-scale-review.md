@@ -1,5 +1,89 @@
 # Crossroads grain-weighing station — source review
 
+## Current goods bindings — Y36-GRAIN-GOODS/r1, 30 October
+
+Owner `rivet`; [source-only GO6534897411](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6534897411), [ASSIGN6534981831](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6534981831), [separate ACK6534982071](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6534982071). **Drawn equivalents exist: reuse `crossroads_handcart` and `crossroads_sacks`.** This continuation owns only this existing document, as a genuine child of #403 `5dd3825353078b8b8e231f081714144891d98feb` / tree `120c336609b393591a662beddf45a84149e73810`. No goods painter, new duplicate piece, image, index, fixture, ground, scene, zone or metadata change is needed or authorised. Source reservation ends at HANDOFF or 23:35 UTC; no execution reservation.
+
+The grain station has since been drawn outside Git. [Actual H2 result6533592547](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6533592547) and [independent receipt6533637354](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6533637354) retain one two-state draw and one successful native/2× synthetic diagnostic on **source5dd / receiver4063e7**. [The native image](https://chatgpt.com/library?file_id=libfile_a6ecf48f6df481918611ac880b02ab6a&account_id=personal) and [2× image](https://chatgpt.com/library?file_id=libfile_31d4b24e53a08191bc4ad49749e769f3&account_id=personal) are the review baseline. No completed draw/composition is repeated here. The old NOT GENERATED/NOT RUN wording in the historical record below describes its original source-only batch, not the later H2 result. The original source definitions, #406 receiver and external H2 outputs remain unchanged.
+
+### Exact existing inputs for the next working-yard candidate
+
+Every path and blob in the next two tables is pinned to **5dd3825353078b8b8e231f081714144891d98feb**, remains available in this document-only child, and is a candidate, not an approved asset. PNGs were read from that actual Git commit, their headers/hashes checked, and the two unmodified pictures visually inspected before choosing reuse.
+
+| Candidate ID / exact variant | Metadata path | Git blob / bytes |
+| --- | --- | --- |
+| `crossroads_handcart` / `handcart` | `game/kit/pieces/prop/crossroads_handcart.json` | `d50ff1b2469e67333ecc47b4dd58a794a3a7c21d` / 1684 |
+| `crossroads_sacks` / `sacks_12` | `game/kit/pieces/prop/crossroads_sacks.json` | `ad8a77b6d5b63e9863cde3d2ba7980fc2d2c30e8` / 1625 |
+
+| Exact `res://` PNG binding | Repository path | Git blob / bytes / SHA256 |
+| --- | --- | --- |
+| `res://zones/crossroads/art/handcart.png` | `game/zones/crossroads/art/handcart.png` | `c1016d875a02681ecfc24f624b98dc74e3caa35d` / 2189 / `c79efcf10302f57de118c8da5db0c924951bdaa3d9506cd3591a6d405f32c94a` |
+| `res://zones/crossroads/art/sacks_12.png` | `game/zones/crossroads/art/sacks_12.png` | `26f9bc05d662407557e6c152cf7fbc8c65b41871` / 1122 / `bd2e5e135d64ac9a0bc08eebd88cef494fbfd9ae97e50b89819212fbd0b56699` |
+
+| Existing handcart, unchanged native picture | Existing storage group, unchanged native picture |
+| --- | --- |
+| ![Existing candidate handcart](../../game/zones/crossroads/art/handcart.png) | ![Existing candidate sack cluster](../../game/zones/crossroads/art/sacks_12.png) |
+
+The cart visibly supplies a plank bed/rails, ground-resting shafts, an iron-tyred spoked wheel/hub and an existing sack/crate load. It is already the ordinary goods-cart equivalent; no new `crossroads_grain_handcart` is commissioned. The storage picture supplies three tied cloth volumes, seams/folds and local shading; no new `crossroads_grain_sacks` or inventory item is commissioned. These pictures can illustrate loading/storage beside the scale without establishing a grain stock, job, shop, owner or routine. Hidden axle/load support and fine material craft still need the applicable review; an object being recognisable is not detail acceptance.
+
+### Preserve the actual metadata and geometry
+
+Both definitions are version2, `approval.state=candidate`, `by=null`, `at=null`, `function={}`, `biomes=["village"]`, `story.owner=null`, `blocks_move=true` and `blocks_shots=true`. They have no declared role, numerical clearance, required/forbidden relations or size class; `audit.eastward_ref=null`. None of those gaps is filled by this document. Do not change the grain station's different shot-blocking choice to match them.
+
+| Contract | Handcart | Sack group |
+| --- | --- | --- |
+| PNG canvas / exact variant foot, art texels | [114,84] / [57,80] | [60,66] / [30,62] |
+| Metadata canvas `size_cells` | [5,4] | [3,3] |
+| Continuous `collision.rect`, **world px** | [-11,-8,22,8] | [-7,-8,14,8] |
+| Existing `props.entry` collision conversion, **art texels**, static arithmetic | [-33,-24,66,24] | [-21,-24,42,24] |
+| Declared footprint cells relative to foot | [-2,-1], [-1,-1], [0,-1], [1,-1] | [-1,-1], [0,-1] |
+| Snap / z-sort | `cell` / `foot` | `cell` / `foot` |
+| Shadow metadata | `cast_shadow.shape=baked`, `contact_ao=true` | `cast_shadow.shape=baked`, `contact_ao=true` |
+
+Use metadata-derived entries via the existing `props.entry` API, blob `8fd407ff82f2964c862d5b810c67b5e004bba2a6`. It yields **no added live shadow** for `shape=baked`; the old image/shadow provenance is not a newly measured shadow in this yard. Do not synthesize ellipse radii or a contact-AO pass. The mixed live-grain/baked-source/Moss-lighting issue in [visual feedback6533683754](https://github.com/rempemat-eng/appify/pull/403#issuecomment-6533683754) remains open.
+
+Existing `cell` snap admits half-cell X and full-cell Y. For the next proposed diagnostic select **whole-cell X/Y anchors** for these two bindings, while leaving the source snap unchanged. Static rectangle arithmetic exposes a receiving caveat: sacks at half-X phase +4 world px span columns -1,0,+1, whereas their current declared footprint covers only -1,0. This is not an executed validator failure or a fix. If half-X sacks are needed, first request the exact `game/kit/pieces/prop/crossroads_sacks.json` reservation and a separate receiving proof; do not silently change it or weaken the checker. The handcart's four declared columns cover its continuous rectangle at both X phases. No new clearance value or physics rule is invented.
+
+For a reviewable **future synthetic fixture proposal only**, the two bindings can be named as below. These entries are not written into #406's frozen fixture and have not been validated, composed or approved:
+
+| Instance ID | Piece / variant | Proposed foot, art texels | Relationship to unchanged H2 context |
+| --- | --- | --- | --- |
+| `yard_handcart` | `crossroads_handcart` / `handcart` | [696,312] | On the north side of the loading approach; visible shafts/wheel/load retained |
+| `yard_grain_storage` | `crossroads_sacks` / `sacks_12` | [432,384] | West of the scale, in a compact goods group rather than dispersed across the public band |
+
+Those anchors are whole24-texel cells. Their declared ground cells fall on the existing worn-yard rows; that is static fixture lookup, not a physical/overlap/clearance pass. Keep existing scale foot [552,384], south comparison-worker foot [552,432], east loading approach rows13–17 and public route rows19–21 as the baseline relationships to review. Actual worker/loading movement, occlusion, complete collider coverage and route access must be checked by the separately allocated receiving owner. No new minimum distance follows from the proposed spacing. The smithy stays a smithy; neither its identity nor these goods creates a mill.
+
+### Source provenance, existing reuse inventory and retained craft findings
+
+`game/zones/crossroads/kit.json`, blob `16330cf48fed673b28c001eec56601dd4caeb09c` (24853B, density3), explicitly binds source objects `handcart`/kind `cart` and `sacks_12`/kind `sacks` to the above PNGs and negative offsets [-57,-80] / [-30,-62]. Their **old source-zone positions** [708,792] / [804,192] are provenance, not new receiving coordinates. `cond=null` for both; no quest gate is invented.
+
+The existing generator source `scripts/art/native/village.py`, blob `78f5e5c48602242d26a52f2e0ce9dbd37610d999`, supplies `p_cart` through `PROPS['cart']`, and `p_sacks_hd` through `PROPS_HD['sacks']` at density3. Its drawing code describes rails/nails/shafts/wheel/load and cloth volume/weave/folds/tied necks. `scripts/art/native/town.py` blob `fedd255dcffc57aa42c7668de6c80ef1e7a17f58` is the existing town consumer; `seed_props.py` blob `649e84b12690e763615e3b0ffcb46b6a0de815f7` records the source intake. These are source references, not a fresh generation or reproduction claim; no seed or regenerated bytes are invented. No generator or palette changes.
+
+The read existing [Y40 readiness inventory](https://github.com/rempemat-eng/appify/blob/fe00d9b147e051ea372f96a917175c907db6db6c/docs/codex/prop-readiness-inventory.md), blob `e50b7680ae255e8bff2c3ea70d4f3a3776b7c1cd`, already lists these exact two candidate IDs/PNG bindings, missing role/clearance and no current approved pieces. Its legacy ledger has zero exact-path joins to the current132 candidate PNG paths; a legacy KEEP name does not approve this reuse. [Y45 regional reuse](https://github.com/rempemat-eng/appify/blob/d6c9beeb8d473bef519c936f06fea37b444eb29d/docs/codex/regional-prop-reuse.md), blob `3193822623654c75f4223a903c2e0ffa400e9e09`, likewise distinguishes drawn equivalents from receiving approval. No trough/crate control or inventory is rebuilt here.
+
+The exact existing catalogue records match the inspected PNG hashes and retain contrary detail evidence:
+
+| Record at5dd | Git blob | Stored findings, **not rerun** |
+| --- | --- | --- |
+| `art/catalogue/crossroads/handcart.json` | `fbb7fc539bd99171ff7ae400ca5f9838b96985f6` | 25Oct: detail ratio0.671, `detail_bar.passed=false`; agent verdict pending |
+| `art/catalogue/crossroads/sacks_12.json` | `1903d4dd18aa63991ecc93a9b31f46ed736f2233` | 26Oct: ratio0.509, `detail_bar.passed=false`, outline finding40%; historical agent pass on #296 is a separate recorded judgement |
+
+Their catalogue `status=pass` does not erase `detail_bar.passed=false`, grant kit approval, establish current Eastward matched-height acceptance or justify shipping. No new tone/shape/palette count is claimed. `size-guide.md` blob `71886a3597f9fa434b73cddc698578bed01ee7ae` gives handcart and sack size guidance; the existing group canvas is not a single sack's height or its ground footprint. Use unchanged Moss74 at native density3 for the later visual comparison, with the existing official market-table selection as functional-clustering context. Matched native period/adult/object/detail counts and Y12 remain outstanding. Any source-art correction requires a separately named exact-file reservation; do not become a second painter under this document scope.
+
+### Minimal later receiving delta, held for lead allocation
+
+The exact four runtime bindings above are absent from #4063e7's immutable84-file / 2553526B `INPUTS` closure. Adding only those four under a separately reviewed receiving revision would add **6620B**, yielding **88 files / 2560146B**, before any additional receiving changes. This is input-size arithmetic, not measured duty usage or a new complete-closure/fit pass. The catalogue/inventory/generator citations above explain provenance; they are not extra runtime imports. Keep each file's100644 mode and actual input bytes. Preserve fixture, baseline source/receiver history, private natural root and source/input guards; shared `props/index.json` stays unchanged. No full painter rerun is needed to obtain these already committed goods PNGs.
+
+Next owner is the lead: review this exact one-document child, then explicitly reserve the minimal **existing #406 receiver reuse** needed for these metadata-derived entries, four input pins/sparse paths and a candidate fixture change. Preserve the actual H2 image/results as baseline; do not retarget its old execution or rebuild the controller/framework. Separately state whether/how retained H2 grain outputs may be consumed in the new invocation, with exact bytes/provenance and guards; this document does not grant artifact transfer or another grain draw. Any future composition needs a NEW bounded GO and reviewed resources/closure. This step allocates neither code edits nor a runtime command.
+
+Ground noise is **not solved** here. Calmer ground, shadow consistency, worker-facing-equipment pose/context and the official same-height detail/Y12/Matt decisions remain separately scoped work. Goods only supply related functional clustering, while public walking and loading access must stay clear. No new game rules, inventory economy, characters, production placement, approval promotion, Ready or merge.
+
+**This continuation's actual checks:** stdlib JSON/text/header/hash/metadata/source-path inspection and viewing the two existing native PNGs; source-only diff/whitespace/genuine-history/full-other-leaf/immutable readback proof is recorded with the HANDOFF. No painter/project imports, project validators/tests, draw/render/engine/install/dependency/job/executionref/full gates. Historical successful H2 is retained evidence, not a fresh run on the documentation child.
+
+## Historical prototype source-only record — original5dd text below
+
+The following record is preserved as the 16:30 source-only prototype checkpoint. Later H2 and the current reuse binding above supersede its then-current output/next-action wording; original scope, failures and evidence are not relabelled.
+
 Owner `rivet`; task `Y36/grain-scale-prototype-r1`; source-only GO [6527386774](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527386774), ASSIGN [6527621051](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527621051), separate ACK [6527621460](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527621460). Manual source reservation ends at HANDOFF or 2026-10-30 17:15 UTC. No execution reservation.
 
 This is one new MyGame candidate, with ready and loaded **visual** states. The three source files do not supply generated PNGs, editor registration, a receiving scene, measured art quality or approval. `function` is empty; variants create no payment, stock, quest, unlock, interaction or economy. Candidate status is required by the dispatch; the explicit NOT GENERATED notes prevent it being mistaken for finished art.
