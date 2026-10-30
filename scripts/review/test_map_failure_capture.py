@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import Mock, patch
 import copy
 import ast
+import fcntl
 import hashlib
 import json
 import os
@@ -15,12 +16,18 @@ import runpy
 import sys
 import struct
 import tempfile
+import threading
 import time
 import unittest
 import zipfile
 
 SOURCE = Path(__file__).with_name('map_failure_capture.py')
 M = runpy.run_path(str(SOURCE), run_name='new_R6_contract_source_never_main')
+
+
+def receiving_probe_boundary():
+    coordination = json.loads(os.environ['MYGAME_OWNED_SAMPLING_COORDINATION'])
+    return M['sampling_boundary'](coordination['path'], coordination['identity'], exclusive=True)
 
 
 class Contracts(unittest.TestCase):
@@ -333,6 +340,9 @@ class ReviewRegressions(unittest.TestCase):
 
 class OwnedSampling(unittest.TestCase):
     """Real owned filesystem regressions; no world, numeric import or child."""
+    def probe_boundary(self):
+        return receiving_probe_boundary()
+
     def test_owned_usage_temp_disappears_at_real_metadata_boundary(self):
         with tempfile.TemporaryDirectory(prefix='R6-owned-disappearance-') as name:
             folder = Path(name); marker = folder / 'capture.json'; transient = folder / 'usage.json.tmp'
@@ -365,12 +375,13 @@ class OwnedSampling(unittest.TestCase):
             M['write_json'](marker, {'complete': False, 'stage': 'before'})
             previous = marker.read_bytes()
             blocked.mkdir(); (blocked / 'actual.bin').write_bytes(b'owned unreadable input\n')
-            blocked.chmod(0)
-            try:
-                with self.assertRaises(PermissionError):
-                    M['write_json'](marker, {'complete': False, 'stage': 'must refuse'})
-            finally:
-                blocked.chmod(0o700)
+            with self.probe_boundary():
+                blocked.chmod(0)
+                try:
+                    with self.assertRaises(PermissionError):
+                        M['write_json'](marker, {'complete': False, 'stage': 'must refuse'})
+                finally:
+                    blocked.chmod(0o700)
             self.assertEqual(marker.read_bytes(), previous)
             self.assertFalse(marker.with_name('capture.json.tmp').exists())
 
@@ -389,14 +400,151 @@ class OwnedSampling(unittest.TestCase):
                         M['write_json'](marker, {'complete': True})
                 self.assertEqual(marker.read_bytes(), previous)
             with self.subTest(refusal='owned dangling symlink'):
-                link = folder / 'link'; link.symlink_to(folder / 'missing-owned-target')
+                link = folder / 'link'
+                with self.probe_boundary():
+                    link.symlink_to(folder / 'missing-owned-target')
+                    try:
+                        with self.assertRaises(M['CaptureError']):
+                            M['write_json'](marker, {'complete': True})
+                        self.assertEqual(marker.read_bytes(), previous)
+                    finally:
+                        link.unlink()  # Refusal and restoration precede the shared monitor's next sample.
+            self.assertFalse(marker.with_name('capture.json.tmp').exists())
+
+
+class SamplingCoordination(unittest.TestCase):
+    """Actual file locks/threads, strict real probes; no producer or child process."""
+    def lock(self, folder):
+        path = folder / 'probe-sampling.lock'
+        with path.open('xb') as handle:
+            handle.write(b'R6-PROBE\n')
+        metadata = path.lstat()
+        return path, [metadata.st_dev, metadata.st_ino]
+
+    def test_shared_sample_waits_for_restored_real_symlink_probe(self):
+        with tempfile.TemporaryDirectory(prefix='R6-coordinated-probe-') as name:
+            folder = Path(name); lock, identity = self.lock(folder)
+            (folder / 'actual.bin').write_bytes(b'owned bytes must still count\n')
+            expected = M['owned_blocks'](folder)
+            entered = threading.Event(); result = []; errors = []
+            original_flock = fcntl.flock
+            def observed_flock(fd, operation):
+                if operation == fcntl.LOCK_SH | fcntl.LOCK_NB:
+                    entered.set()
+                return original_flock(fd, operation)
+            def monitor():
+                try:
+                    result.append(M['coordinated_owned_blocks'](folder, lock, identity))
+                except BaseException as error:
+                    errors.append(error)
+            thread = threading.Thread(target=monitor)
+            link = folder / 'deliberate-invalid-probe'
+            with patch.object(fcntl, 'flock', observed_flock):
+                try:
+                    # The local lock is the actual regression domain. The
+                    # receiving lock only shields this deliberate bad fixture
+                    # from the independently running all-evidence monitor.
+                    with receiving_probe_boundary(), M['sampling_boundary'](lock, identity, exclusive=True):
+                        link.symlink_to(folder / 'absent-target')
+                        try:
+                            with self.assertRaises(M['CaptureError']):
+                                M['owned_blocks'](folder)
+                            thread.start()
+                            self.assertTrue(entered.wait(.1), 'real monitor never attempted shared flock')
+                            self.assertEqual(result, [], 'an invalid interval was accepted as a clean sample')
+                        finally:
+                            link.unlink()
+                finally:
+                    if thread.ident is not None:
+                        thread.join(1)
+            self.assertFalse(thread.is_alive())
+            self.assertEqual(errors, [])
+            self.assertEqual(result, [expected])
+            self.assertEqual(M['coordinated_owned_blocks'](folder, lock, identity), expected)
+
+    def test_uncoordinated_real_permission_and_symlink_still_refuse(self):
+        self.assertNotEqual(os.geteuid(), 0, 'permission control requires an unprivileged receiver')
+        with tempfile.TemporaryDirectory(prefix='R6-uncoordinated-invalid-') as name:
+            folder = Path(name); lock, identity = self.lock(folder)
+            blocked = folder / 'unreadable'; blocked.mkdir()
+            (blocked / 'actual.bin').write_bytes(b'real uncoordinated bad state\n')
+            with receiving_probe_boundary():
+                blocked.chmod(0)
+                try:
+                    with self.assertRaises(PermissionError):
+                        M['coordinated_owned_blocks'](folder, lock, identity)
+                finally:
+                    blocked.chmod(0o700)
+            link = folder / 'dangling'
+            with receiving_probe_boundary():
+                link.symlink_to(folder / 'missing')
                 try:
                     with self.assertRaises(M['CaptureError']):
-                        M['write_json'](marker, {'complete': True})
-                    self.assertEqual(marker.read_bytes(), previous)
+                        M['coordinated_owned_blocks'](folder, lock, identity)
                 finally:
-                    link.unlink()  # The refusal is asserted before ordinary fixture retention/cleanup.
-            self.assertFalse(marker.with_name('capture.json.tmp').exists())
+                    link.unlink()
+            self.assertEqual(M['coordinated_owned_blocks'](folder, lock, identity), M['owned_blocks'](folder))
+
+    def test_missing_replaced_and_contended_lock_fail_closed(self):
+        with tempfile.TemporaryDirectory(prefix='R6-lock-refusal-') as name:
+            folder = Path(name); lock, identity = self.lock(folder)
+            with self.assertRaises((M['CaptureError'], FileNotFoundError)):
+                M['coordinated_owned_blocks'](folder, folder / 'missing-lock', identity)
+            with self.assertRaises(M['CaptureError']):
+                M['coordinated_owned_blocks'](folder, lock, [identity[0], identity[1] + 1])
+            alias = folder / 'alias'
+            with receiving_probe_boundary():
+                alias.symlink_to(lock)
+                try:
+                    with self.assertRaises((M['CaptureError'], OSError)):
+                        M['coordinated_owned_blocks'](folder, alias, identity)
+                finally:
+                    alias.unlink()
+            ready = threading.Event(); release = threading.Event(); held_errors = []
+            def holder():
+                try:
+                    with M['sampling_boundary'](lock, identity, exclusive=True):
+                        ready.set()
+                        if not release.wait(1):
+                            raise AssertionError('test did not release actual holder')
+                except BaseException as error:
+                    held_errors.append(error)
+            thread = threading.Thread(target=holder); thread.start()
+            try:
+                self.assertTrue(ready.wait(1))
+                started = time.monotonic()
+                with self.assertRaisesRegex(M['CaptureError'], 'deadline'):
+                    M['coordinated_owned_blocks'](folder, lock, identity)
+                self.assertLess(time.monotonic() - started, 1)
+            finally:
+                release.set(); thread.join(1)
+            self.assertFalse(thread.is_alive())
+            self.assertTrue(all(isinstance(error, M['CaptureError']) for error in held_errors))
+            lock.rename(folder / 'retained-old-lock'); lock.write_bytes(b'replacement inode\n')
+            with self.assertRaises(M['CaptureError']):
+                M['coordinated_owned_blocks'](folder, lock, identity)
+
+    def test_terminal_sample_error_remains_explicit_failure_data(self):
+        path = M['REPO'] / '.github/workflows/map-recovery-contracts.yml'
+        lines = path.read_text().splitlines()
+        start = lines.index('          import json, os, resource, runpy, selectors, signal, subprocess, sys, time')
+        end = lines.index('          PY', start)
+        tree = ast.parse('\n'.join(line[10:] for line in lines[start:end]))
+        function = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'final_owned_sample')
+        with tempfile.TemporaryDirectory(prefix='R6-terminal-sample-') as name:
+            folder = Path(name); lock, identity = self.lock(folder)
+            namespace = {'owned': lambda: M['coordinated_owned_blocks'](folder, lock, identity)}
+            exec(compile(ast.fix_missing_locations(ast.Module(body=[function], type_ignores=[])), str(path), 'exec'), namespace)
+            link = folder / 'unrestored'
+            with receiving_probe_boundary():
+                link.symlink_to(folder / 'missing')
+                try:
+                    allocated, error = namespace['final_owned_sample']()
+                    self.assertIsNone(allocated)
+                    self.assertIn('symlink', error)
+                finally:
+                    link.unlink()
+            self.assertEqual(namespace['final_owned_sample'](), (M['owned_blocks'](folder), None))
 
 
 class PreflightInputs(unittest.TestCase):
