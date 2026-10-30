@@ -35,6 +35,10 @@ Reuse each existing continuation and automation; preserve it after idle/completi
 
 Update the SAME health/checkpoint record with actual UTC start/finish, state, assignment and observed remote branch/head/base/tree, blocker and next executable action. Preserve progress timestamps/evidence except on real source/result/assignment/handoff/dependency changes. Save useful remote checkpoints at safe boundaries. Post changed BLOCKED once; safely park/release before another first claim while preserving the old branch/review duties. IDLE once per episode, no unchanged hourly reminders. Retry a transient read/check once, retain errors and report unresolved tool failures; suppress only successful unchanged/no-action checks.
 
+### Recovery and validation
+
+Follow [the incident-based recovery procedure](recovery-and-validation.md): preserve portable first-failure inputs/results, verify another reader can retrieve bytes, and reproduce the actual receiving input before correction. One reviewed bounded allocation covers setup through targeted RED/fix/GREEN, labelled crop and final publication/collection. Missing workspaces permit explicitly labelled recovery, without false old-index equality. Manual reservations end on completion/pause/handoff with any live collector transferred; worker claims, serial runtime ownership, quality gates and Matt's approval remain. Record the owner, next command and next visible artifact on the same board.
+
 ## Historical record: 20 October 2026
 
 The remainder preserves the original four-chat assignment, interface questions and evidence snapshot. Its imperative wording describes the instructions at that date. It is **not an active assignment list, a new file grant or a current dependency-status report**. In particular, C29–C31 were later cancelled, and later task-specific grants and decisions must be read on #149. Apply the current routine above, not these obsolete start conditions.
