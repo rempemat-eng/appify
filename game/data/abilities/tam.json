@@ -1,0 +1,128 @@
+{
+  "id": "tam",
+  "name": "Tam",
+  "catalogue_prose": {
+    "role": "Frostline ice monk · disciplined close control",
+    "primary": "Frost palms — palm and elbow strikes build frost.",
+    "secondary": "Ice ridge — send a narrow ridge along the ground.",
+    "block": "Ice guard — cross the forearms behind a frost plate.",
+    "special": "Glacier Form — ice coats the limbs; movement glides, repeated strikes briefly bind then shatter frost."
+  },
+  "planar_speed": 63,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.32,
+        "release_seconds": 0.1216,
+        "cooldown_seconds": 0.32
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": []
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.32,
+        "release_seconds": 0.1216,
+        "cooldown_seconds": 0.32
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "primary": {
+      "kind": "frontal_arc",
+      "reach": 29,
+      "minimum_direction_dot": 0.4,
+      "damage": 18,
+      "knockback": 4
+    },
+    "secondary": {
+      "kind": "forward_segment",
+      "reach": 100,
+      "half_width": 8,
+      "damage": 24,
+      "pierces": true
+    }
+  },
+  "executed_rules": {
+    "each_eligible_hit": {
+      "frost_added": 1,
+      "frost_cap": 3,
+      "slow_seconds": 1.2,
+      "frost_cleared_after_no_hit_seconds": 3
+    },
+    "powered_shatter_at_three_frost": {
+      "reset_frost_to": 0,
+      "extra_damage": 23,
+      "root_seconds": 0.85,
+      "tank_root_seconds": 0.3,
+      "no_recursive_frost_from_shatter": true
+    },
+    "secondary_ridge": {
+      "slow_seconds": 2,
+      "powered_root_seconds": 0.6,
+      "powered_tank_root_seconds": 0.22
+    },
+    "secondary_ice_field": {
+      "forward_placement": 52,
+      "radius": 19,
+      "lifetime_seconds": 2,
+      "damage": 0,
+      "refresh_slow_seconds": 0.7,
+      "initial_tick_seconds": 0.2,
+      "tick_interval_seconds": 0.6
+    },
+    "powered_movement_multiplier": 1.28,
+    "source_functions": [
+      "v",
+      "q",
+      "B",
+      "L",
+      "_"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}

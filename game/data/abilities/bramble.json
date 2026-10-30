@@ -1,0 +1,127 @@
+{
+  "id": "bramble",
+  "name": "Bramble",
+  "catalogue_prose": {
+    "role": "Grassland ranger · precise arrows and a billhook",
+    "primary": "Quickdraw — loose a fast aimed arrow.",
+    "secondary": "Billhook — sweep nearby enemies away.",
+    "block": "Briar buckler — hold the folding forearm shield toward danger.",
+    "special": "Briarshot — branches brace the bow; arrows pierce and briefly root their last target."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.42,
+        "release_seconds": 0.1596,
+        "cooldown_seconds": 0.42
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "arrow",
+        "speed": 205,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.92,
+        "damage": 22,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      }
+    ]
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.42,
+        "release_seconds": 0.1596,
+        "cooldown_seconds": 0.42
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "arrow",
+        "speed": 205,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.92,
+        "damage": 24,
+        "pierce_budget": 3,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "primary": null,
+    "secondary": {
+      "kind": "frontal_arc",
+      "reach": 36,
+      "minimum_direction_dot": -0.1,
+      "damage": 26,
+      "knockback": 25
+    }
+  },
+  "executed_rules": {
+    "powered_primary": {
+      "projectile_damage": 24,
+      "pierce_budget": 3,
+      "maximum_distinct_targets": 4,
+      "root_last_living_target_only": true,
+      "root_seconds": 0.8,
+      "tank_root_seconds": 0.3,
+      "clear_previous_arrow_hit_roots": true,
+      "powered_flag_captured_on_launch": true
+    },
+    "source_functions": [
+      "E",
+      "T"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}

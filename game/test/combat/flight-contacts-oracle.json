@@ -1,0 +1,1133 @@
+{
+  "contacts": [
+    {
+      "initial": {
+        "kind": "arrow",
+        "owner": "player",
+        "source": "bramble",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 2,
+        "remaining": 0.92,
+        "damage": 22,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": false,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.5414634146341464,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 22,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "arrow",
+        "owner": "player",
+        "source": "bramble",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 2,
+        "remaining": 0.92,
+        "damage": 24,
+        "pierce": 3,
+        "blast_radius": 0,
+        "powered": true,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.5414634146341464,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": true,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 24,
+          "pierce": 3,
+          "hit_ids": []
+        },
+        {
+          "target_id": 2,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 24,
+          "pierce": 2,
+          "hit_ids": [
+            1
+          ]
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 1,
+      "hit_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "initial": {
+        "kind": "flask",
+        "owner": "player",
+        "source": "morel",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 4,
+        "remaining": 0.8222222222222222,
+        "damage": 14,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": false,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.8222222222222222,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "damage": 14,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        130,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "flask",
+        "owner": "player",
+        "source": "morel",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 4,
+        "remaining": 0.8222222222222222,
+        "damage": 14,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": true,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.8222222222222222,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "damage": 14,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        130,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "water",
+        "owner": "player",
+        "source": "mirra",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 4,
+        "remaining": 1.05,
+        "damage": 21,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": false,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.6529411764705882,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 28,
+          "pierce": 1,
+          "hit_ids": []
+        },
+        {
+          "target_id": 2,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 28,
+          "pierce": 0,
+          "hit_ids": [
+            1
+          ]
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "initial": {
+        "kind": "water",
+        "owner": "player",
+        "source": "mirra",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 4,
+        "remaining": 1.05,
+        "damage": 21,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": true,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.6529411764705882,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 28,
+          "pierce": 1,
+          "hit_ids": []
+        },
+        {
+          "target_id": 2,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 28,
+          "pierce": 0,
+          "hit_ids": [
+            1
+          ]
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "initial": {
+        "kind": "rocket",
+        "owner": "player",
+        "source": "clack",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 4,
+        "remaining": 1.45,
+        "damage": 40,
+        "pierce": 0,
+        "blast_radius": 23,
+        "powered": false,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.888,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "damage": 40,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        130,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "rocket",
+        "owner": "player",
+        "source": "clack",
+        "position": [
+          94.96357459710795,
+          97.1910930572179
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 4,
+        "remaining": 1.45,
+        "damage": 20,
+        "pierce": 0,
+        "blast_radius": 19,
+        "powered": true,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.7655172413793103,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "damage": 20,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        130,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "pulse",
+        "owner": "player",
+        "source": "rook",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 3,
+        "remaining": 1,
+        "damage": 16,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": false,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.5045454545454545,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 16,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "pulse",
+        "owner": "player",
+        "source": "rook",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 3,
+        "remaining": 1,
+        "damage": 16,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": true,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.5045454545454545,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 16,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "harpoon",
+        "owner": "player",
+        "source": "brine",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 3,
+        "remaining": 0.95,
+        "damage": 29,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": false,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.6342857142857142,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 29,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "harpoon",
+        "owner": "player",
+        "source": "brine",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 3,
+        "remaining": 0.95,
+        "damage": 39,
+        "pierce": 1,
+        "blast_radius": 0,
+        "powered": true,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.5414634146341464,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 39,
+          "pierce": 1,
+          "hit_ids": []
+        },
+        {
+          "target_id": 2,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 39,
+          "pierce": 0,
+          "hit_ids": [
+            1
+          ]
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "initial": {
+        "kind": "bullet",
+        "owner": "player",
+        "source": "pendle",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 2,
+        "remaining": 0.8,
+        "damage": 24,
+        "pierce": 0,
+        "blast_radius": 0,
+        "powered": false,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.38275862068965516,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": false,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 24,
+          "pierce": 0,
+          "hit_ids": []
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 0,
+      "hit_ids": [
+        1
+      ]
+    },
+    {
+      "initial": {
+        "kind": "rifle",
+        "owner": "player",
+        "source": "pendle",
+        "position": [
+          95,
+          98
+        ],
+        "velocity": [
+          6000,
+          0
+        ],
+        "radius": 2,
+        "remaining": 1,
+        "damage": 49,
+        "pierce": 4,
+        "blast_radius": 0,
+        "powered": true,
+        "launch_height": 0,
+        "age": 0,
+        "flight_duration": 0.346875,
+        "hit_ids": []
+      },
+      "targets": [
+        {
+          "id": 1,
+          "position": [
+            130,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        },
+        {
+          "id": 2,
+          "position": [
+            155,
+            98
+          ],
+          "hp": 500,
+          "radius": 1
+        }
+      ],
+      "seals": [
+        {
+          "position": [
+            110,
+            98
+          ],
+          "radius": 1,
+          "remaining": 1
+        }
+      ],
+      "alive": true,
+      "impacts": [
+        {
+          "target_id": 1,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 49,
+          "pierce": 4,
+          "hit_ids": []
+        },
+        {
+          "target_id": 2,
+          "position": [
+            195,
+            98
+          ],
+          "damage": 49,
+          "pierce": 3,
+          "hit_ids": [
+            1
+          ]
+        }
+      ],
+      "position": [
+        195,
+        98
+      ],
+      "pierce": 2,
+      "hit_ids": [
+        1,
+        2
+      ]
+    }
+  ]
+}

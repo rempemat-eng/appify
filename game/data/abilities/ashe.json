@@ -1,0 +1,160 @@
+{
+  "id": "ashe",
+  "name": "Ashe",
+  "catalogue_prose": {
+    "role": "Sunstone ember knight · sword and cinder armour",
+    "primary": "Ember blade — sweep the sword in a close arc.",
+    "secondary": "Ember thrust — a committed, longer thrust.",
+    "block": "Armoured guard — brace the sword and shoulder plate.",
+    "special": "Cinderhelm — put on the closed helmet; sword blows cast flame crescents and the form ends in an aimed fire finisher."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 0.48
+      },
+      "secondary": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.24700000000000003,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": []
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 0.48
+      },
+      "secondary": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.24700000000000003,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "flame-crescent",
+        "speed": 145,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 7,
+        "lifetime_seconds": 0.65,
+        "damage": 15,
+        "pierce_budget": 2,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "primary": {
+      "kind": "frontal_arc",
+      "reach": 32,
+      "minimum_direction_dot": 0.32,
+      "damage": 24,
+      "knockback": 6
+    },
+    "secondary": {
+      "kind": "forward_segment",
+      "reach": 65,
+      "half_width": 9,
+      "damage": 32,
+      "pierces": true
+    },
+    "powered_secondary": {
+      "kind": "forward_segment",
+      "reach": 65,
+      "half_width": 9,
+      "damage": 38,
+      "pierces": true
+    },
+    "expiry_finisher": {
+      "kind": "forward_segment",
+      "reach": 98,
+      "half_width": 13,
+      "damage": 34,
+      "pierces": true
+    }
+  },
+  "executed_rules": {
+    "powered_primary_addition": {
+      "kind": "flame-crescent",
+      "speed": 145,
+      "damage": 15,
+      "radius": 7,
+      "lifetime_seconds": 0.65,
+      "pierce_budget": 2
+    },
+    "powered_secondary_flame": {
+      "forward_placement": 42,
+      "radius": 15,
+      "lifetime_seconds": 2,
+      "damage_per_tick": 8,
+      "initial_tick_seconds": 0.2,
+      "tick_interval_seconds": 0.6
+    },
+    "natural_expiry_finisher": {
+      "hit": {
+        "kind": "forward_segment",
+        "reach": 98,
+        "half_width": 13,
+        "damage": 34,
+        "pierces": true
+      },
+      "uses_current_aim_direction_at_expiry": true,
+      "requires_alive": true,
+      "suppressed_on_interruption_or_defeat": true,
+      "flame": {
+        "forward_placement": 52,
+        "radius": 16,
+        "lifetime_seconds": 1,
+        "damage_per_tick": 7
+      }
+    },
+    "source_functions": [
+      "E",
+      "q",
+      "X",
+      "_"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}

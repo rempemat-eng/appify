@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "authority": "https://github.com/rempemat-eng/appify/issues/149#issuecomment-6402597915",
+  "canonical_to_actor": 3.0,
+  "canonical_adult_height": 25,
+  "adult_manifest_height": 74,
+  "cairn_reach_hitbox_policy": "canonical_to_actor * manifest.body_height_target / adult_manifest_height",
+  "screen_anchor_policy": "already source texels relative to foot_pivot; never multiply",
+  "unchanged_quantities": [
+    "seconds",
+    "damage",
+    "ammo",
+    "radians",
+    "dimensionless multipliers"
+  ],
+  "canonical_source": {
+    "commit": "1820a07c5ae8b745e239aa2aaa25e0c5ef483d42",
+    "path": "docs/codex/mygame-combat-handoff/canonical/abilities-v1.json",
+    "sha256": "ab9028dc55991b55478c0edf90a7347ba19b8ae3a6386ee50b2888889ee9fb4d"
+  },
+  "note": "Canonical source is split losslessly. Its unresolved-unit note is historical; this decision overrides it. No runtime effects or Player attachment yet."
+}

@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "status": "recovered_numeric_contract_for_owner_review",
+  "source": {
+    "repository": "rempemat-eng/appify",
+    "commit": "1cd2a03d3dedb86061c5e32f53836cc284cbf6ab",
+    "reference_path": "prototypes/mygame-world-preview/reference/",
+    "zipSha256": "0b0374b323d4525317b32deb57560a85c947e37fa1801a0835249f76cc05cd1c",
+    "bundle": "entry-6fdd0ef25567acc156c4a1e86a9a36fe.js",
+    "bundleSha256": "94f8b4e105ea17d635f2fe7ae6a23d33b4f2fe1cc764761d64a4423b8d1ef82c",
+    "catalogueModule": 3501,
+    "catalogueSha256": "8b2dc37132bc29f9e9f184b42abc209933a2ba98f35ef46e9c1061838492ad6f",
+    "engineModule": 3500,
+    "engineSha256": "21aa782577f3d2fc51389efdd80c4c61a1a7ddd48d128e01eb318daa75d6bc10",
+    "libraryFileId": "libfile_a8686f8b8cfc8191b71d7f2712de1cd8",
+    "recovery_kind": "compiled original catalogue and pure engine; original TypeScript not recovered"
+  },
+  "units": {
+    "distance": "original canonical planar units",
+    "time": "seconds",
+    "angle": "radians",
+    "original_arena": {
+      "width": 320,
+      "height": 180,
+      "minX": 12,
+      "maxX": 308,
+      "minY": 23,
+      "maxY": 168
+    },
+    "rendering_density_changes_balance": false,
+    "port_scale_decision": "unresolved: agree original-unit to foundation-world conversion; density3 does not by itself authorise multiplying reach/speed/radius",
+    "screen_anchors": "separate source texels relative to each facing foot pivot"
+  },
+  "simulation": {
+    "fixed_step_seconds": 0.016666666666666666,
+    "maximum_step_input_seconds": 0.1,
+    "epsilon": 1e-08,
+    "inactive_input_freezes_simulation": true,
+    "input": {
+      "primary": "held; repeats when canAct and cooldown expired",
+      "secondary": "rising-edge; queue 0.7 seconds",
+      "special": "rising-edge; queue 0.7 seconds; priority over secondary",
+      "block": "held; clears queued actions"
+    },
+    "queue": {
+      "slots": 1,
+      "lifetime_seconds": 0.7,
+      "latest_eligible_rising_edge_overwrites_slot": true,
+      "simultaneous_eligible_rising_edges_prefer": "special",
+      "slot_consumed_when_commit_is_attempted": true
+    },
+    "commit_priority": [
+      "block",
+      "queued_slot",
+      "held_primary"
+    ],
+    "special_cooldown_starts_on_commitment": true,
+    "damage_is_not_emitted_by_drawing_preview": true
+  },
+  "shared_hit_rules": {
+    "damage_values_are_raw_before_vulnerability": true,
+    "arc_target_test": "distance<=reach+target_radius and (relative_x*aim_x+relative_y*aim_y)/max(1,distance)>=minimum_direction_dot",
+    "segment_target_test": "projection between -target_radius and reach+target_radius, and point-to-segment distance<=half_width+target_radius",
+    "vulnerable_damage_multiplier": 1.35,
+    "heavy_knockback_multiplier": 0.25,
+    "heavy_kinds": [
+      "tank",
+      "dummy"
+    ]
+  },
+  "common_field_insertion": {
+    "default_replacement_threshold": 10,
+    "removes_exactly_one_oldest_same_kind_before_append_if_count_at_least_threshold": true,
+    "threshold_is_not_a_truncate_all_hard_cap": true
+  },
+  "guard": {
+    "maximum": 100,
+    "idleRecoveryPerSecond": 22,
+    "heldDrainPerSecond": 2,
+    "damageCost": 1.5,
+    "frontalDotThreshold": 0.25,
+    "recoveryDelayAfterGuardedHit": 0.8,
+    "breakDuration": 1.15,
+    "breakHitDuration": 0.4,
+    "ordinaryHitDuration": 0.25,
+    "defeatDuration": 0.8,
+    "blockRaiseDuration": 0.18,
+    "recovery_condition": "not blocking and guardRecovery<=epsilon and guardBroken<=epsilon; action need not be idle",
+    "idleRecoveryPerSecond_is_a_legacy_extraction_label_not_an_idle_gate": true
+  },
+  "movement_multipliers": {
+    "block": 0.42,
+    "hit": 0.2,
+    "special": 0.4,
+    "attack": 0.64,
+    "nixSecondary": 1,
+    "poweredTam": 1.28
+  },
+  "common_projectile_metadata": {
+    "planar_seed_forward": 9,
+    "flight_duration_formula": "clamp((current_aim_distance-9)/speed,0.05,lifetime_seconds)",
+    "launch_height_captured_from_player_vault_height": true,
+    "simulation_travel_is_planar": true,
+    "turret_pulses_use_own_turret_origin_and_launch_height_zero": true
+  },
+  "common_form_rules": {
+    "active_if_remaining_greater_than_epsilon": true,
+    "start_at_special_release": true,
+    "ordinary_duration_seconds": 8,
+    "nix_duration_seconds": 7,
+    "rook_duration_seconds": 10,
+    "cooldown_seconds": 25,
+    "expiry_does_not_clear_existing_projectiles_or_fields": true,
+    "exceptions": [
+      "Rook turrets and designation removed on form end",
+      "Ashe natural live expiry emits aimed finisher; interruption suppresses it",
+      "Defeat clears all projectiles/fields/turrets and vault",
+      "Non-practice wave victory clears projectiles/fields/turrets/vault and sets formRemaining0 directly, bypassing Ashe finisher"
+    ],
+    "engine_performs_no_general_powered_exit_action_lock": true
+  },
+  "unresolved_for_foundation_owner": [
+    "Original planar-unit to new foundation-world conversion; preserve time/damage/ammo independently of art density.",
+    "New74px per-facing muzzle/contact/held-prop/nozzle anchors and release-frame indices; old generated art is reference only.",
+    "Production wall/terrain/deck collision rules and collision groups. The original arena engine has no authored wall/stair map contract.",
+    "Confirm intentional differences before porting v4 studio extensions such as autonomous Mote orbiters or a counter restricted to current powered mode."
+  ]
+}

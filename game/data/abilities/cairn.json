@@ -1,0 +1,118 @@
+{
+  "id": "cairn",
+  "name": "Cairn",
+  "catalogue_prose": {
+    "role": "Grassland stone golem · committed strength",
+    "primary": "Stone fist — a heavy close-range punch.",
+    "secondary": "Boulder — throw a stone that stops at its first impact.",
+    "block": "Crossed arms — brace stone forearms.",
+    "special": "Old Growth — roots brace the arms; punches launch a ground shockwave and boulders slam on impact."
+  },
+  "planar_speed": 43,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.68,
+        "release_seconds": 0.3264,
+        "cooldown_seconds": 0.68
+      },
+      "secondary": {
+        "duration_seconds": 0.72,
+        "release_seconds": 0.34559999999999996,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": []
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.68,
+        "release_seconds": 0.3264,
+        "cooldown_seconds": 0.68
+      },
+      "secondary": {
+        "duration_seconds": 0.72,
+        "release_seconds": 0.34559999999999996,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "primary": {
+      "kind": "frontal_arc",
+      "reach": 32,
+      "minimum_direction_dot": 0.35,
+      "damage": 35,
+      "knockback": 12
+    },
+    "powered_extra_primary": {
+      "kind": "forward_segment",
+      "reach": 83,
+      "half_width": 11,
+      "damage": 15,
+      "pierces": true
+    }
+  },
+  "executed_rules": {
+    "boulder": {
+      "speed": 115,
+      "radius": 7,
+      "lifetime_seconds": 1.3,
+      "damage": 34,
+      "powered_damage": 40,
+      "pierce_budget": 0,
+      "powered_blast_radius": 30,
+      "powered_blast_knockback": 13
+    },
+    "powered_primary": {
+      "normal_fist_plus_forward_shockwave": true,
+      "shockwave": {
+        "kind": "forward_segment",
+        "reach": 83,
+        "half_width": 11,
+        "damage": 15,
+        "pierces": true
+      }
+    },
+    "source_functions": [
+      "E",
+      "q",
+      "T"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}
