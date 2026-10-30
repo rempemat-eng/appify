@@ -612,14 +612,51 @@ func _export(path: String, out: String) -> int:
 	var root := scene.instantiate() as Node2D
 	var fallback := "res://kit/zones/%s.json" % root.get("zone_id")
 	var plan := plan_from_scene(root, _read(fallback) if not root.has_meta(PLAN_META) and FileAccess.file_exists(fallback) else {})
+	var problem := plan_error(plan)
+	if not problem.is_empty():
+		printerr("kit_zone: invalid plan ", path, ": ", problem)
+		root.free()
+		return 1
 	if out == "":
 		out = fallback
-	var file := FileAccess.open(out, FileAccess.WRITE)
+	# Keep the previous document intact until a complete candidate is closed and checked.
+	var directory := DirAccess.open(out.get_base_dir() if out.get_base_dir() != "" else ".")
+	if directory == null:
+		root.free()
+		return 1
+	var staged := out + ".tmp"
+	var document := canonical(plan)
+	var file := FileAccess.open(staged, FileAccess.WRITE)
 	if file == null:
 		root.free()
 		return 1
-	file.store_string(canonical(plan))
+	file.store_string(document)
+	file.flush()
+	var err := file.get_error()
 	file.close()
+	if err != OK:
+		printerr("kit_zone: failed staged write ", staged, ": ", error_string(err))
+		root.free()
+		return 1
+	# Reopen after close to catch incomplete output, including delayed write failures.
+	# Failed stages remain beside the destination for inspection/recovery.
+	var candidate := FileAccess.open(staged, FileAccess.READ)
+	if candidate == null:
+		root.free()
+		return 1
+	var encoded := document.to_utf8_buffer()
+	var complete := candidate.get_length() == encoded.size() and candidate.get_buffer(encoded.size()) == encoded
+	err = candidate.get_error()
+	candidate.close()
+	if not complete or err not in [OK, ERR_FILE_EOF]:
+		printerr("kit_zone: incomplete staged export ", staged)
+		root.free()
+		return 1
+	err = directory.rename(staged.get_file(), out.get_file())
+	if err != OK:
+		printerr("kit_zone: failed export promotion ", out, ": ", error_string(err))
+		root.free()
+		return 1
 	root.free()
 	print("kit_zone: wrote ", out)
 	return 0
