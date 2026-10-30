@@ -419,8 +419,27 @@ def write(zone: str) -> str:
     img, _ = bake(plan, lib)
     p = out_path(zone)
     os.makedirs(os.path.dirname(p), exist_ok=True)
-    img.convert('RGB').save(p, optimize=True)
-    json.dump({'zone': zone, 'hash': input_hash(plan, lib)}, open(p[:-4] + '.json', 'w'), indent=1)
+    meta = p[:-4] + '.json'
+    # A failed in-place write must never retain an earlier success marker.
+    try:
+        os.unlink(meta)
+    except FileNotFoundError:
+        pass
+    try:
+        img.convert('RGB').save(p, optimize=True)
+        with Image.open(p) as output:
+            if output.format != 'PNG':
+                raise ValueError('Baked ground is not a PNG')
+            output.verify()
+        with open(meta, 'w') as marker:
+            json.dump({'zone': zone, 'hash': input_hash(plan, lib)}, marker, indent=1)
+    except BaseException:
+        # A failed marker write/close is incomplete publication too.
+        try:
+            os.unlink(meta)
+        except FileNotFoundError:
+            pass
+        raise
     return p
 
 
@@ -432,8 +451,19 @@ def check() -> int:
         plan = json.load(open(os.path.join(ZONES, f)))
         if not plan.get('bake'):
             continue
-        meta = out_path(zone)[:-4] + '.json'
-        if not os.path.exists(meta) or json.load(open(meta)).get('hash') != input_hash(plan, lib):
+        p = out_path(zone)
+        meta = p[:-4] + '.json'
+        try:
+            with open(meta) as marker:
+                if json.load(marker).get('hash') != input_hash(plan, lib):
+                    bad.append(zone)
+                    continue
+            with Image.open(p) as output:
+                if output.format != 'PNG':
+                    bad.append(zone)
+                    continue
+                output.verify()
+        except (OSError, ValueError, SyntaxError):
             bad.append(zone)
     if bad:
         print('bake: stale baked ground for %s (run python3 -m scripts.art.kit.bake %s)' % (', '.join(bad), ' '.join(bad)))
