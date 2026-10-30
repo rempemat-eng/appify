@@ -17,6 +17,7 @@ extends Node2D
 	set(v):
 		baked = v
 		_baked_live = v != null
+		_painted_pieces = _painted_piece_inputs()
 		_rebuild()
 ## Surface variants per cell (scripts/art/kit/surface.py: a letter per cell, '.' for the bake's own
 ## choice by weight and context), painted with the dock's variant brush.
@@ -36,12 +37,14 @@ var _ground := PackedInt32Array()   ## the derived ground: painted materials plu
 var _tiers := PackedInt32Array()    ## the painted tiers
 var _shadow_img: Image
 var _shadow_tex: ImageTexture
-var _baked_live := false   ## the baked ground matches the cells (nothing painted since)
+var _baked_live := false   ## the baked ground matches the cells and painted pieces
+var _painted_pieces: Array = []
 
 func showing_baked() -> bool:
 	return baked != null and _baked_live
 
 func _ready() -> void:
+	_painted_pieces = _painted_piece_inputs()
 	kit = TerrainKit.shared()
 	var cells := get_cells_layer()
 	if cells != null:
@@ -109,6 +112,7 @@ func paint_tier(c: Vector2i, tier: int) -> void:
 		t.erase_cell(c)
 	else:
 		t.set_cell(c, 0, Vector2i(tier, 0))
+	_rebuild()
 
 func _derive() -> void:
 	var n := grid_size.x * grid_size.y
@@ -187,9 +191,13 @@ func paint_cell(c: Vector2i, piece_id: String) -> void:
 func size_px() -> Vector2i:
 	return grid_size * (kit.cell if kit != null else 24)
 
-func _rebuild() -> void:
+func _rebuild(exiting_piece: Node = null) -> void:
 	if not is_inside_tree() or kit == null:
 		return
+	var painted := _painted_piece_inputs(exiting_piece)
+	if painted != _painted_pieces:
+		_baked_live = false
+		_painted_pieces = painted
 	if _picture != null and _cells_img != null and _ground.size() > 0:
 		# a change to the cells after the bake: the live tiles show until the zone is baked again
 		var before := _ground.duplicate()
@@ -238,6 +246,18 @@ func _rebuild() -> void:
 		dressing.queue_redraw()
 	for p in pieces():
 		(p as KitPiece).set_ground_baked(showing_baked())
+
+## W2 exports the direct Props children's local positions; only painted pieces belong
+## to this bake dependency. Exclude a departing child before remove_child completes.
+func _painted_piece_inputs(exiting_piece: Node = null) -> Array:
+	var out := []
+	var zone := get_parent()
+	var props := zone.get_node_or_null("Props") if zone != null else null
+	if props != null:
+		for child in props.get_children():
+			if child is KitPiece and child != exiting_piece and bool(child.data().get("painted", false)):
+				out.append([child.piece_id, child.variant, child.position])
+	return out
 
 ## The pieces standing on this ground: every KitPiece under the zone (the ground's parent).
 func pieces() -> Array:
