@@ -352,6 +352,129 @@ jobs:
           raise SystemExit(0 if passed else 1)
           PY
 
+      - name: Receive only the new captured-inventory stdlib contract
+        id: inventory_unit
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$MAP_EVIDENCE/inventory-unit-worker.py" <<'PY'
+          import json, os, runpy, unittest
+          from pathlib import Path
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          source = Path(os.environ['GITHUB_WORKSPACE']) / 'scripts/review/test_map_failure_capture.py'
+          namespace = runpy.run_path(str(source), run_name='R6_inventory_contract_definitions_only')
+          method = 'test_captured_fixed_seven_use_existing_use_authority_without_form'
+          events = []
+          class Result(unittest.TextTestResult):
+              def startTest(self, test):
+                  events.append(dict(kind='start', method=test._testMethodName)); super().startTest(test)
+              def stopTest(self, test):
+                  events.append(dict(kind='stop', method=test._testMethodName)); super().stopTest(test)
+          suite = unittest.TestSuite([namespace['CorrectionInventory'](method)])
+          result = unittest.TextTestRunner(verbosity=2, resultclass=Result).run(suite)
+          passed = (result.wasSuccessful() and result.testsRun == 1 and not result.skipped
+              and events == [dict(kind='start', method=method), dict(kind='stop', method=method)])
+          value = dict(passed=passed, ran=result.testsRun, method=method, events=events,
+              failures=len(result.failures), errors=len(result.errors), skipped=len(result.skipped),
+              stdlib_only=True, old31_run=False, numeric_run=False, producer_run=False)
+          (evidence / 'inventory-unit-case.json').write_text(json.dumps(value, indent=2)+'\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+          cat > "$MAP_EVIDENCE/inventory-unit-outer.py" <<'PY'
+          import hashlib, json, os, resource, selectors, signal, subprocess, sys, time
+          from pathlib import Path
+          E = Path(os.environ['MAP_EVIDENCE']); root = Path(os.environ['GITHUB_WORKSPACE'])
+          started = time.monotonic(); MIB = 1024**2
+          receipt = json.loads((E / 'input-receipt.json').read_text())
+          paths = ('scripts/review/map_failure_capture.py', 'scripts/review/test_map_failure_capture.py', 'docs/vision/research/blockout/towns55.py')
+          def hashes():
+              return {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in paths}
+          before = hashes()
+          assert before == {name: receipt['recipe_source']['source_sha256'][name] for name in paths}
+          command = [sys.executable, '-I', '-B', str(E / 'inventory-unit-worker.py')]
+          (E / 'inventory-unit-command.json').write_text(json.dumps(dict(command=command, cwd=str(root),
+              interpreter=sys.version, executable=sys.executable, active_seconds=15, total_seconds=20,
+              cpu_seconds=10, address_space_bytes=256*MIB, log_bytes=MIB, one_cpu=True,
+              source_before=before, phase='NEW_INVENTORY_UNIT_ONLY'), indent=2)+'\n')
+          def limits():
+              os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
+              resource.setrlimit(resource.RLIMIT_AS, (256*MIB, 256*MIB))
+              resource.setrlimit(resource.RLIMIT_CPU, (10, 10))
+          child = None; raw = usage = None; lost = False; reason = None; size = 0
+          selector = selectors.DefaultSelector()
+          log = (E / 'inventory-unit.log').open('xb')
+          def drain(timeout):
+              global size, reason
+              for key, _ in selector.select(timeout):
+                  data = os.read(key.fd, 65536)
+                  if not data:
+                      selector.unregister(key.fileobj); continue
+                  room = MIB-size; log.write(data[:room]); log.flush(); size += min(room, len(data))
+                  if len(data) > room: reason = reason or 'log_bound'
+          try:
+              assert signal.getsignal(signal.SIGCHLD) == signal.SIG_DFL
+              child = subprocess.Popen(command, cwd=root, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                  stderr=subprocess.STDOUT, start_new_session=True, preexec_fn=limits)
+              selector.register(child.stdout, selectors.EVENT_READ)
+              while True:
+                  drain(.02)
+                  try:
+                      terminal = os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                  except ChildProcessError:
+                      lost = True; reason = 'nonreaping_identity_lost'; break
+                  if terminal is not None: break
+                  if time.monotonic()-started >= 15: reason = reason or 'wall_bound'
+                  if reason: break
+          except BaseException as error:
+              reason = reason or repr(error)
+          finally:
+              if child is not None and not lost:
+                  try:
+                      os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                  except OSError:
+                      lost = True; reason = reason or 'cleanup_identity_lost'
+                  if not lost:
+                      try: os.killpg(child.pid, signal.SIGKILL)
+                      except ProcessLookupError: pass
+                      deadline = min(started+19, time.monotonic()+3)
+                      while True:
+                          try: pid, status, ru = os.wait4(child.pid, os.WNOHANG)
+                          except ChildProcessError:
+                              lost = True; reason = reason or 'wait4_identity_lost'; break
+                          if pid:
+                              raw, usage = status, ru; child.returncode = os.waitstatus_to_exitcode(status); break
+                          if time.monotonic() >= deadline:
+                              reason = reason or 'reap_bound'; break
+                          time.sleep(.01)
+              if child is not None and child.stdout:
+                  deadline = min(started+19.5, time.monotonic()+.5)
+                  while selector.get_map() and time.monotonic() < deadline: drain(.01)
+                  child.stdout.close()
+              selector.close(); log.close()
+          absent = False
+          if child is not None:
+              try: os.killpg(child.pid, 0)
+              except ProcessLookupError: absent = True
+              except OSError as error: reason = reason or repr(error)
+          after = {}; case = {}; errors = []
+          try: after = hashes()
+          except Exception as error: errors.append(repr(error))
+          try: case = json.loads((E / 'inventory-unit-case.json').read_text())
+          except Exception as error: errors.append(repr(error))
+          seconds = time.monotonic()-started; peak = usage.ru_maxrss*1024 if usage else None
+          passed = (raw == 0 and reason is None and not lost and absent and not errors and before == after
+              and case.get('passed') is True and case.get('ran') == 1 and seconds <= 20
+              and type(peak) is int and 0 < peak <= 256*MIB)
+          value = dict(passed=passed, raw_wait_status=raw, exit=os.waitstatus_to_exitcode(raw) if raw is not None else None,
+              child_reaped=raw is not None, identity_lost=lost, owned_group_absent=absent, stop_reason=reason,
+              peak_child_rss_bytes=peak, cpu_seconds=usage.ru_utime+usage.ru_stime if usage else None, seconds=seconds,
+              source_before=before, source_after=after, case=case, errors=errors, old31_run=False, producer_run=False)
+          (E / 'inventory-unit-result.json').write_text(json.dumps(value, indent=2)+'\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+          python -I -B "$MAP_EVIDENCE/inventory-unit-outer.py"
+
       - name: Run the measured candidate once on the exact original BEFORE
         id: correction
         timeout-minutes: 4
@@ -423,6 +546,7 @@ jobs:
               except Exception as error:
                   errors.append(dict(file=str(path.relative_to(evidence)), error=repr(error)))
                   return {}
+          results['inventory_unit'] = read(evidence / 'inventory-unit-result.json')
           for phase in ('correction', 'corrected-preview'):
               results[phase] = read(evidence / (phase+'-gate.json'))
           receipt = read(evidence / 'input-receipt.json')
