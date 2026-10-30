@@ -1,0 +1,20 @@
+{
+  "result": "PASS",
+  "source_archive_sha256": "0b0374b323d4525317b32deb57560a85c947e37fa1801a0835249f76cc05cd1c",
+  "source_bundle_sha256": "94f8b4e105ea17d635f2fe7ae6a23d33b4f2fe1cc764761d64a4423b8d1ef82c",
+  "studio_source_commit": "4d7efc7085786c897fc0c50f7151a0ae7e62f0c2",
+  "studio_git_blobs_verified": 21,
+  "studio_character_manifests": 14,
+  "reference_module_identity": "PASS",
+  "deterministic_data_rebuild": "PASS",
+  "focused_checks": 967,
+  "characters": 14,
+  "studio_clips": 239,
+  "timing_mismatches": 56,
+  "test_scope": "source extraction and original pure simulation probes",
+  "new_godot_runtime_tested": false,
+  "new_pixel_art_tested": false,
+  "full_npm_verification_run": false,
+  "hosted_ci_pass_claimed": false,
+  "physical_device_measurements_claimed": false
+}

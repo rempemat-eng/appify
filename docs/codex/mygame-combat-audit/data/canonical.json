@@ -1,0 +1,6150 @@
+{
+  "schema_version": 1,
+  "authority": "Archived desktop combat simulation; numeric timings are independent of PR241 studio drawing cadence. This is extraction for the later agreed Godot port, not a production integration.",
+  "provenance": {
+    "zipSha256": "0b0374b323d4525317b32deb57560a85c947e37fa1801a0835249f76cc05cd1c",
+    "bundle": "entry-6fdd0ef25567acc156c4a1e86a9a36fe.js",
+    "bundleSha256": "94f8b4e105ea17d635f2fe7ae6a23d33b4f2fe1cc764761d64a4423b8d1ef82c",
+    "catalogueModule": 3501,
+    "catalogueSha256": "8b2dc37132bc29f9e9f184b42abc209933a2ba98f35ef46e9c1061838492ad6f",
+    "engineModule": 3500,
+    "engineSha256": "21aa782577f3d2fc51389efdd80c4c61a1a7ddd48d128e01eb318daa75d6bc10",
+    "libraryFileId": "libfile_a8686f8b8cfc8191b71d7f2712de1cd8"
+  },
+  "units": {
+    "time": "seconds",
+    "distance": "original 320x180 simulation coordinates",
+    "angles": "radians",
+    "art_anchor_origin": null,
+    "target_grid": "960x540 logical pixels",
+    "conversion": "pending integration-owner decision; no factor-three distance conversion or factor-74/96 body conversion applied"
+  },
+  "annotation_sha256": "189de5808e88aadf1376ec0673cd9ca123742b31add21c5201bfbb4c2e96e8f2",
+  "annotation_method": "Global and per-character rule annotations transcribed from the pinned source; action clocks and release/contact probes executed from the original pure module.",
+  "global_source_derived_rules": {
+    "fixed_step_seconds": 0.016666666666666666,
+    "max_input_step_seconds": 0.1,
+    "epsilon": 1e-8,
+    "arena": {
+      "width": 320,
+      "height": 180,
+      "min_x": 12,
+      "max_x": 308,
+      "min_y": 23,
+      "max_y": 168
+    },
+    "player": {
+      "radius": 7,
+      "hp": 160
+    },
+    "input": {
+      "primary": "held, repeats when free and cooldown expires",
+      "secondary": "rising edge, queued for 0.7s",
+      "special": "rising edge, priority over secondary, queued for 0.7s",
+      "block": "held, clears queued actions"
+    },
+    "secondary_cooldowns_seconds": {
+      "default": 1.6,
+      "brine": 0.7,
+      "mirra": 1.05,
+      "mote": 3.1,
+      "nix": 6,
+      "rook": 4
+    },
+    "special_cooldown_seconds": 25,
+    "form_durations_seconds": {
+      "default": 8,
+      "nix": 7,
+      "rook": 10
+    },
+    "form_lifecycle": "Begins at special release (0.28s), timer decreases each fixed step. Expiry ends form; death interrupts it; victory/reset clears transient objects. There is no manual E exit in this engine. Ashe's finisher occurs on natural expiry only.",
+    "planar_speeds": {
+      "default": 57,
+      "cairn": 43,
+      "clack": 49,
+      "velvet": 63,
+      "tam": 63
+    },
+    "speed_multipliers": {
+      "block": 0.42,
+      "hit": 0.2,
+      "special": 0.4,
+      "primary_or_secondary": 0.64,
+      "nix_secondary": 1,
+      "powered_tam": 1.28
+    },
+    "guard": {
+      "maximum": 100,
+      "idle_recovery_per_second": 22,
+      "held_drain_per_second": 2,
+      "guard_cost_per_damage": 1.5,
+      "frontal_dot_threshold": 0.25,
+      "recovery_delay_after_hit_seconds": 0.8,
+      "break_seconds": 1.15,
+      "break_hit_clip_seconds": 0.4,
+      "ordinary_hit_seconds": 0.25,
+      "defeat_seconds": 0.8,
+      "raise_seconds": 0.18
+    },
+    "projectile_origin": {
+      "forward_offset": 9,
+      "origin": "player simulation position plus committed action direction times forward offset",
+      "launch_height": "current vaultHeight",
+      "art_hand_or_muzzle_anchor": null
+    },
+    "aim": {
+      "continuous": true,
+      "cardinal_facing": "abs(x)>abs(y) chooses E/W, otherwise S/N",
+      "attack_direction": "committed at action start; ordinary movement can continue at action multiplier",
+      "new_art_per_facing_anchors": null,
+      "new_art_aim_poses": null
+    },
+    "damage": {
+      "vulnerability_multiplier": 1.35,
+      "tank_or_dummy_knockback_multiplier": 0.25
+    },
+    "field_limits": {
+      "reagent": 4,
+      "base_seal": 3,
+      "powered_seal": 5,
+      "echo": 4,
+      "hologram": 1,
+      "default": 10
+    },
+    "field_ticks": {
+      "first_tick_seconds": 0.2,
+      "ordinary_interval_seconds": 0.6,
+      "gravity_interval_seconds": 0.45
+    },
+    "melee_geometry": {
+      "arc": "enemy centre within reach+enemy radius, forward normalized dot >= threshold",
+      "line": "projection from -enemy radius to reach+enemy radius and segment distance <= halfwidth+enemy radius",
+      "line_pierce_false": "only nearest intersecting living enemy",
+      "line_pierce_true": "all intersecting living enemies"
+    }
+  },
+  "characters": {
+    "bramble": {
+      "identity": {
+        "id": "bramble",
+        "name": "Bramble",
+        "role": "Grassland ranger · precise arrows and a billhook",
+        "color": "#91bd69",
+        "primary": "Quickdraw — loose a fast aimed arrow.",
+        "secondary": "Billhook — sweep nearby enemies away.",
+        "block": "Briar buckler — hold the folding forearm shield toward danger.",
+        "special": "Briarshot — branches brace the bow; arrows pierce and briefly root their last target."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "arrow",
+          "speed": 205,
+          "damage": 22,
+          "radius": 2,
+          "lifetime_seconds": 0.92,
+          "pierce": 0
+        },
+        "secondary": {
+          "kind": "arc",
+          "reach": 36,
+          "dot_threshold": -0.1,
+          "damage": 26,
+          "knockback": 25
+        },
+        "powered": {
+          "arrow_damage": 24,
+          "arrow_pierce": 3,
+          "last_hit_root_seconds": 0.8,
+          "tank_root_seconds": 0.3,
+          "root_ownership": "clears this arrow's previous targets' root, then roots its current living hit"
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.42,
+              "release_seconds": 0.1596,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "arrow",
+                "owner": "player",
+                "vx": 205,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.92,
+                "damage": 22,
+                "color": "#91bd69",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "bramble",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6097560975609756,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 22.68,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#91bd69",
+                "offset_x": 20.879999999999995,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "arrow",
+                "owner": "player",
+                "vx": 205,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.92,
+                "damage": 22,
+                "color": "#91bd69",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "bramble",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6097560975609756,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 26,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.9,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#91bd69",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 22.68,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#91bd69",
+                "offset_x": 20.879999999999995,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.42,
+              "release_seconds": 0.1596,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "arrow",
+                "owner": "player",
+                "vx": 205,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.92,
+                "damage": 24,
+                "color": "#91bd69",
+                "pierce": 3,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "bramble",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6097560975609756,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 22.68,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#91bd69",
+                "offset_x": 20.879999999999995,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "arrow",
+                "owner": "player",
+                "vx": 205,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.92,
+                "damage": 24,
+                "color": "#91bd69",
+                "pierce": 3,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "bramble",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6097560975609756,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 26,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.9,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#91bd69",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 22.68,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#91bd69",
+                "offset_x": 20.879999999999995,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "morel": {
+      "identity": {
+        "id": "morel",
+        "name": "Morel",
+        "role": "Grassland alchemist · prepare and react",
+        "color": "#d9b570",
+        "primary": "Reagent flask — throw a flask that leaves a short-lived reagent patch.",
+        "secondary": "Catalyst — send a spark through prepared patches, or burst at close range.",
+        "block": "Mineral ward — hold an alchemical shield.",
+        "special": "Catalyst mask — apparatus opens; flasks ignite nearby patches in a finite chain reaction."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "flask",
+          "speed": 135,
+          "damage": 14,
+          "radius": 4,
+          "aim_distance_min": 28,
+          "aim_distance_max": 135,
+          "flight_seconds_formula": "(clamp(distance_to_live_aim,28,135)-9)/135",
+          "impact_radius": 16,
+          "reagent_radius": 18,
+          "reagent_seconds": 5,
+          "reagent_tick_damage": 3
+        },
+        "secondary": {
+          "kind": "catalyst",
+          "patch_selection_radius": 155,
+          "reaction_radius_addition": 8,
+          "reaction_damage": 32,
+          "reaction_knockback": 5,
+          "fallback": {
+            "kind": "arc",
+            "reach": 34,
+            "dot_threshold": 0,
+            "damage": 20,
+            "knockback": 13
+          }
+        },
+        "powered": {
+          "reaction_damage": 39,
+          "chain_link_distance": 46,
+          "new_flask_ignition_distance": 40,
+          "new_flask_ignition_requires_at_least_patches": 2
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.62,
+              "release_seconds": 0.2356,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "flask",
+                "owner": "player",
+                "vx": 135,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 0.9259259259259259,
+                "damage": 14,
+                "color": "#d9b570",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "morel",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.9259259259259259,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 21.42,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#d9b570",
+                "offset_x": 19.72,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "catalyst",
+                "radius": 24,
+                "remaining": 0.25,
+                "duration": 0.25,
+                "color": "#d9b570",
+                "offset_x": 18,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "flask",
+                "owner": "player",
+                "vx": 135,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 0.9259259259259259,
+                "damage": 14,
+                "color": "#d9b570",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "morel",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.9259259259259259,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 20,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#d9b570",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 21.42,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#d9b570",
+                "offset_x": 19.72,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "catalyst",
+                "radius": 24,
+                "remaining": 0.25,
+                "duration": 0.25,
+                "color": "#d9b570",
+                "offset_x": 18,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.62,
+              "release_seconds": 0.2356,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "flask",
+                "owner": "player",
+                "vx": 135,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 0.9259259259259259,
+                "damage": 14,
+                "color": "#d9b570",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "morel",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.9259259259259259,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 21.42,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#d9b570",
+                "offset_x": 19.72,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "catalyst",
+                "radius": 24,
+                "remaining": 0.25,
+                "duration": 0.25,
+                "color": "#d9b570",
+                "offset_x": 18,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "flask",
+                "owner": "player",
+                "vx": 135,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 0.9259259259259259,
+                "damage": 14,
+                "color": "#d9b570",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "morel",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.9259259259259259,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 20,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#d9b570",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 21.42,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#d9b570",
+                "offset_x": 19.72,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "catalyst",
+                "radius": 24,
+                "remaining": 0.25,
+                "duration": 0.25,
+                "color": "#d9b570",
+                "offset_x": 18,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "velvet": {
+      "identity": {
+        "id": "velvet",
+        "name": "Velvet",
+        "role": "Coastal duellist · sabre and black lantern",
+        "color": "#b1a8db",
+        "primary": "Sabre — cut in a quick frontal arc.",
+        "secondary": "Lantern flare — dazzle nearby enemies and expose them to a follow-up.",
+        "block": "Sabre parry — hold the blade across incoming blows.",
+        "special": "Black Lantern — movement leaves finite pale echoes; a successful guard primes a long counter-thrust."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "arc",
+          "reach": 29,
+          "dot_threshold": 0.42,
+          "damage": 21,
+          "knockback": 5
+        },
+        "secondary": {
+          "kind": "lantern",
+          "reach": 55,
+          "dot_threshold": -0.05,
+          "damage": 9,
+          "stun_seconds": 0.65,
+          "tank_stun_seconds": 0.25,
+          "vulnerable_seconds": 2.2
+        },
+        "powered": {
+          "guard_counter_window_seconds": 2,
+          "counter_reach": 49,
+          "counter_damage": 35,
+          "counter_knockback": 13,
+          "moving_echo_interval_seconds": 0.4,
+          "echo_radius": 11,
+          "echo_seconds": 1.15,
+          "echo_offset_behind_aim": 8,
+          "echo_enemy_attraction_distance": 200,
+          "echo_breaks_on_enemy_attack": true
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.34,
+              "release_seconds": 0.1292,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 18.27,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#b1a8db",
+                "offset_x": 16.819999999999993,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "lantern",
+                "radius": 32,
+                "remaining": 0.4,
+                "duration": 0.4,
+                "color": "#b1a8db",
+                "offset_x": 23,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 21,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.15,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#b1a8db",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 18.27,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#b1a8db",
+                "offset_x": 16.819999999999993,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 12.149999999999977,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 6.8225,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#b1a8db",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "lantern",
+                "radius": 32,
+                "remaining": 0.4,
+                "duration": 0.4,
+                "color": "#b1a8db",
+                "offset_x": 23,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.34,
+              "release_seconds": 0.1292,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 18.27,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#b1a8db",
+                "offset_x": 16.819999999999993,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "lantern",
+                "radius": 32,
+                "remaining": 0.4,
+                "duration": 0.4,
+                "color": "#b1a8db",
+                "offset_x": 23,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 21,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.15,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#b1a8db",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 18.27,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#b1a8db",
+                "offset_x": 16.819999999999993,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 12.149999999999977,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 6.8225,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#b1a8db",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "lantern",
+                "radius": 32,
+                "remaining": 0.4,
+                "duration": 0.4,
+                "color": "#b1a8db",
+                "offset_x": 23,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "cairn": {
+      "identity": {
+        "id": "cairn",
+        "name": "Cairn",
+        "role": "Grassland stone golem · committed strength",
+        "color": "#a4ad81",
+        "primary": "Stone fist — a heavy close-range punch.",
+        "secondary": "Boulder — throw a stone that stops at its first impact.",
+        "block": "Crossed arms — brace stone forearms.",
+        "special": "Old Growth — roots brace the arms; punches launch a ground shockwave and boulders slam on impact."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "arc",
+          "reach": 32,
+          "dot_threshold": 0.35,
+          "damage": 35,
+          "knockback": 12
+        },
+        "secondary": {
+          "kind": "boulder",
+          "speed": 115,
+          "damage": 34,
+          "radius": 7,
+          "lifetime_seconds": 1.3,
+          "pierce": 0
+        },
+        "powered": {
+          "primary_extra": {
+            "kind": "line_shockwave",
+            "reach": 83,
+            "halfwidth": 11,
+            "damage": 15,
+            "pierce": true
+          },
+          "boulder_damage": 40,
+          "boulder_blast_radius": 30,
+          "boulder_blast_knockback": 13
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.68,
+              "release_seconds": 0.3264,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.72,
+              "release_seconds": 0.34559999999999996,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#a4ad81",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "boulder",
+                "owner": "player",
+                "vx": 115,
+                "vy": 0,
+                "radius": 7,
+                "remaining": 1.3,
+                "damage": 34,
+                "color": "#a4ad81",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "cairn",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 1.0869565217391304,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 35,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 10.25,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#a4ad81",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#a4ad81",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "boulder",
+                "owner": "player",
+                "vx": 115,
+                "vy": 0,
+                "radius": 7,
+                "remaining": 1.3,
+                "damage": 34,
+                "color": "#a4ad81",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "cairn",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 1.0869565217391304,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.68,
+              "release_seconds": 0.3264,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.72,
+              "release_seconds": 0.34559999999999996,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#a4ad81",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "shockwave",
+                "radius": 11,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#a4ad81",
+                "offset_x": 83,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "boulder",
+                "owner": "player",
+                "vx": 115,
+                "vy": 0,
+                "radius": 7,
+                "remaining": 1.3,
+                "damage": 40,
+                "color": "#a4ad81",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 30,
+                "source": "cairn",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 1.0869565217391304,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 50,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 10.25,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#a4ad81",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#a4ad81",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "impact",
+                "radius": 7.25,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#a4ad81",
+                "offset_x": 23,
+                "offset_y": 0
+              },
+              {
+                "kind": "shockwave",
+                "radius": 11,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#a4ad81",
+                "offset_x": 83,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "boulder",
+                "owner": "player",
+                "vx": 115,
+                "vy": 0,
+                "radius": 7,
+                "remaining": 1.3,
+                "damage": 40,
+                "color": "#a4ad81",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 30,
+                "source": "cairn",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 1.0869565217391304,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "iona": {
+      "identity": {
+        "id": "iona",
+        "name": "Iona",
+        "role": "Grassland storm-lancer · reach and commitment",
+        "color": "#c4ce88",
+        "primary": "Spearpoint — thrust along a narrow lane.",
+        "secondary": "Wind lunge — commit to a forward surge and spear strike.",
+        "block": "Gust guard — brace the spear in a frontal wind screen.",
+        "special": "Storm Mantle — spear impacts arc to one nearby foe; lunges leave a gust wake."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "line_spear",
+          "reach": 48,
+          "halfwidth": 7,
+          "damage": 23,
+          "pierce": true
+        },
+        "secondary": {
+          "kind": "lunge",
+          "planar_advance": 34,
+          "advance_limit": "nearest living enemy clearance and arena boundary",
+          "hit_origin": "after advance",
+          "reach": 49,
+          "halfwidth": 9,
+          "damage": 29,
+          "knockback": 10,
+          "pierce": true
+        },
+        "powered": {
+          "chain_radius_exclusive": 55,
+          "chain_targets": 1,
+          "chain_damage": 12,
+          "chain_can_recurse": false,
+          "lunge_gust_radius": 25,
+          "lunge_gust_seconds": 1.5,
+          "lunge_gust_tick_damage": 8
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.24700000000000003,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "spear",
+                "radius": 7,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#c4ce88",
+                "offset_x": 48,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              34,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "lunge",
+                "radius": 9,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#c4ce88",
+                "offset_x": 83,
+                "offset_y": 0,
+                "from_offset_x": 34,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "lunge",
+                "radius": 9,
+                "remaining": 0.3,
+                "duration": 0.3,
+                "color": "#c4ce88",
+                "offset_x": 34,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 23,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.45,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#c4ce88",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "spear",
+                "radius": 7,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#c4ce88",
+                "offset_x": 48,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 29,
+            "player_displacement_at_release": [
+              3,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 9.35,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#c4ce88",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "lunge",
+                "radius": 9,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#c4ce88",
+                "offset_x": 52,
+                "offset_y": 0,
+                "from_offset_x": 3,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "lunge",
+                "radius": 9,
+                "remaining": 0.3,
+                "duration": 0.3,
+                "color": "#c4ce88",
+                "offset_x": 3,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.24700000000000003,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "spear",
+                "radius": 7,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#c4ce88",
+                "offset_x": 48,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              34,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "gust",
+                "radius": 25,
+                "remaining": 1.5,
+                "damage": 8,
+                "tickIn": 0.2,
+                "color": "#c4ce88",
+                "source": "iona",
+                "offset_x": 17,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "lunge",
+                "radius": 9,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#c4ce88",
+                "offset_x": 83,
+                "offset_y": 0,
+                "from_offset_x": 34,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "lunge",
+                "radius": 9,
+                "remaining": 0.3,
+                "duration": 0.3,
+                "color": "#c4ce88",
+                "offset_x": 34,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 23,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.45,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#c4ce88",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "spear",
+                "radius": 7,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#c4ce88",
+                "offset_x": 48,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 29,
+            "player_displacement_at_release": [
+              3,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "gust",
+                "radius": 25,
+                "remaining": 1.5,
+                "damage": 8,
+                "tickIn": 0.2,
+                "color": "#c4ce88",
+                "source": "iona",
+                "offset_x": 1.5,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 9.35,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#c4ce88",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "lunge",
+                "radius": 9,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#c4ce88",
+                "offset_x": 52,
+                "offset_y": 0,
+                "from_offset_x": 3,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "lunge",
+                "radius": 9,
+                "remaining": 0.3,
+                "duration": 0.3,
+                "color": "#c4ce88",
+                "offset_x": 3,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "tam": {
+      "identity": {
+        "id": "tam",
+        "name": "Tam",
+        "role": "Frostline ice monk · disciplined close control",
+        "color": "#91d5de",
+        "primary": "Frost palms — palm and elbow strikes build frost.",
+        "secondary": "Ice ridge — send a narrow ridge along the ground.",
+        "block": "Ice guard — cross the forearms behind a frost plate.",
+        "special": "Glacier Form — ice coats the limbs; movement glides, repeated strikes briefly bind then shatter frost."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "arc",
+          "reach": 29,
+          "dot_threshold": 0.4,
+          "damage": 18,
+          "knockback": 4,
+          "frost_per_hit": 1,
+          "maximum_frost": 3,
+          "frost_clears_after_no_hit_seconds": 3,
+          "hit_slow_seconds": 1.2
+        },
+        "secondary": {
+          "kind": "line_ice_ridge",
+          "reach": 100,
+          "halfwidth": 8,
+          "damage": 24,
+          "pierce": true,
+          "slow_seconds": 2,
+          "ice_patch_forward_offset": 52,
+          "ice_patch_radius": 19,
+          "ice_patch_seconds": 2
+        },
+        "powered": {
+          "movement_multiplier": 1.28,
+          "frost_shatter_at": 3,
+          "shatter_damage": 23,
+          "shatter_root_seconds": 0.85,
+          "tank_shatter_root_seconds": 0.3,
+          "ridge_root_seconds": 0.6,
+          "tank_ridge_root_seconds": 0.22
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.32,
+              "release_seconds": 0.1216,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 18.27,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#91d5de",
+                "offset_x": 16.819999999999993,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "ice",
+                "radius": 19,
+                "remaining": 2,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#91d5de",
+                "source": "tam",
+                "offset_x": 52,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "ice-ridge",
+                "radius": 8,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#91d5de",
+                "offset_x": 100,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 18,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 7.699999999999999,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#91d5de",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 18.27,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#91d5de",
+                "offset_x": 16.819999999999993,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 24,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "ice",
+                "radius": 19,
+                "remaining": 2,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#91d5de",
+                "source": "tam",
+                "offset_x": 52,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.6,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#91d5de",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "ice-ridge",
+                "radius": 8,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#91d5de",
+                "offset_x": 100,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.32,
+              "release_seconds": 0.1216,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 18.27,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#91d5de",
+                "offset_x": 16.819999999999993,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "ice",
+                "radius": 19,
+                "remaining": 2,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#91d5de",
+                "source": "tam",
+                "offset_x": 52,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "ice-ridge",
+                "radius": 8,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#91d5de",
+                "offset_x": 100,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 18,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 7.699999999999999,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#91d5de",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 18.27,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#91d5de",
+                "offset_x": 16.819999999999993,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 24,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "ice",
+                "radius": 19,
+                "remaining": 2,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#91d5de",
+                "source": "tam",
+                "offset_x": 52,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.6,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#91d5de",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "ice-ridge",
+                "radius": 8,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#91d5de",
+                "offset_x": 100,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "brine": {
+      "identity": {
+        "id": "brine",
+        "name": "Brine",
+        "role": "Coastal diver · harpoon gun and integral winch",
+        "color": "#8dc6c0",
+        "primary": "Harpoon gun — fire one tethered harpoon, then reload the integral reel.",
+        "secondary": "Reel — pull a light target or winch toward an anchored heavy target; untethered, sweep the gun butt.",
+        "block": "Dive brace — lower the gun and hold the reinforced forearm guard.",
+        "special": "Abyssal Drive — the winch overdrives; heavy piercing shots and stronger controlled reeling."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "harpoon",
+          "speed": 175,
+          "damage": 29,
+          "radius": 3,
+          "lifetime_seconds": 0.95,
+          "pierce": 0,
+          "ammo": 1,
+          "reload_seconds": 0.95,
+          "living_hit_tether_seconds": 3,
+          "new_shot_clears_previous_harpoon_and_tether": true
+        },
+        "secondary": {
+          "kind": "reel",
+          "maximum_tether_target_distance": 185,
+          "maximum_travel": 42,
+          "clearance": "player radius + target radius +3",
+          "light_target": "pull target toward player",
+          "tank_or_dummy": "move player toward anchored target",
+          "damage": 15,
+          "base_reel_consumes_tether": true,
+          "fallback": {
+            "kind": "arc_gun_butt",
+            "reach": 32,
+            "dot_threshold": 0.2,
+            "damage": 21,
+            "knockback": 16
+          }
+        },
+        "powered": {
+          "harpoon_speed": 205,
+          "harpoon_damage": 39,
+          "harpoon_pierce": 1,
+          "reload_seconds": 0.52,
+          "living_hit_tether_seconds": 4,
+          "reel_maximum_travel": 61,
+          "reel_damage": 23,
+          "retained_tether_seconds": 2,
+          "activation_refills_ammo_and_clears_reload": true
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.64,
+              "release_seconds": 0.2432,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "harpoon",
+                "owner": "player",
+                "vx": 175,
+                "vy": 0,
+                "radius": 3,
+                "remaining": 0.95,
+                "damage": 29,
+                "color": "#8dc6c0",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "brine",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.7142857142857143,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0.95,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#8dc6c0",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 1,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "harpoon",
+                "owner": "player",
+                "vx": 175,
+                "vy": 0,
+                "radius": 3,
+                "remaining": 0.95,
+                "damage": 29,
+                "color": "#8dc6c0",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "brine",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.7142857142857143,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0.95,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 21,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.15,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#8dc6c0",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#8dc6c0",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 1,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.64,
+              "release_seconds": 0.2432,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "harpoon",
+                "owner": "player",
+                "vx": 205,
+                "vy": 0,
+                "radius": 3,
+                "remaining": 0.95,
+                "damage": 39,
+                "color": "#8dc6c0",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "brine",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6097560975609756,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0.52,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#8dc6c0",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 1,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "harpoon",
+                "owner": "player",
+                "vx": 205,
+                "vy": 0,
+                "radius": 3,
+                "remaining": 0.95,
+                "damage": 39,
+                "color": "#8dc6c0",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "brine",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6097560975609756,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0.52,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 21,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.15,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#8dc6c0",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#8dc6c0",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 1,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "pendle": {
+      "identity": {
+        "id": "pendle",
+        "name": "Pendle",
+        "role": "Sunstone robot gunslinger · deliberate marksmanship",
+        "color": "#d5ad77",
+        "primary": "Revolver — one accurate shot; six rounds before a full reload.",
+        "secondary": "Fan fire — fan up to three remaining revolver rounds in a narrow spread, then reload. During Longshot, strike nearby enemies with the rifle stock instead.",
+        "block": "Steel plate — fold out the forearm plate.",
+        "special": "Longshot — holster the revolver and draw a western marksman rifle; slow, penetrating shots replace the primary."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "bullet",
+          "speed": 290,
+          "damage": 24,
+          "radius": 2,
+          "lifetime_seconds": 0.8,
+          "ammo": 6,
+          "empty_reload_seconds": 1.35
+        },
+        "secondary": {
+          "kind": "fan_bullet",
+          "maximum_rounds": 3,
+          "spread_step_radians": 0.11,
+          "speed": 270,
+          "damage": 18,
+          "radius": 2,
+          "lifetime_seconds": 0.75,
+          "reload_seconds": 1.4
+        },
+        "powered": {
+          "primary": {
+            "kind": "rifle",
+            "speed": 320,
+            "damage": 49,
+            "radius": 2,
+            "lifetime_seconds": 1,
+            "pierce": 4,
+            "consumes_revolver_ammo": false
+          },
+          "secondary": {
+            "kind": "line_rifle_butt",
+            "reach": 44,
+            "halfwidth": 0.5,
+            "damage": 22,
+            "pierce": false
+          },
+          "note": "The 0.5 halfwidth is the actual engine argument, not a corrected or retuned value."
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.43,
+              "release_seconds": 0.1634,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "bullet",
+                "owner": "player",
+                "vx": 290,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.8,
+                "damage": 24,
+                "color": "#d5ad77",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.43103448275862066,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 5,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "fan-bullet",
+                "owner": "player",
+                "vx": 268.36814644830815,
+                "vy": -29.640141226037198,
+                "radius": 2,
+                "remaining": 0.75,
+                "damage": 18,
+                "color": "#d5ad77",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.46296296296296297,
+                "offset_x": 8.94560488161028,
+                "offset_y": -0.9880047075345715
+              },
+              {
+                "kind": "fan-bullet",
+                "owner": "player",
+                "vx": 270,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.75,
+                "damage": 18,
+                "color": "#d5ad77",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.46296296296296297,
+                "offset_x": 9,
+                "offset_y": 0
+              },
+              {
+                "kind": "fan-bullet",
+                "owner": "player",
+                "vx": 268.36814644830815,
+                "vy": 29.640141226037198,
+                "radius": 2,
+                "remaining": 0.75,
+                "damage": 18,
+                "color": "#d5ad77",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.46296296296296297,
+                "offset_x": 8.94560488161028,
+                "offset_y": 0.9880047075345715
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 3,
+              "reload": 1.4,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "bullet",
+                "owner": "player",
+                "vx": 290,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.8,
+                "damage": 24,
+                "color": "#d5ad77",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.43103448275862066,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 5,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "fan-bullet",
+                "owner": "player",
+                "vx": 268.36814644830815,
+                "vy": -29.640141226037198,
+                "radius": 2,
+                "remaining": 0.75,
+                "damage": 18,
+                "color": "#d5ad77",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.46296296296296297,
+                "offset_x": 8.94560488161028,
+                "offset_y": -0.9880047075345715
+              },
+              {
+                "kind": "fan-bullet",
+                "owner": "player",
+                "vx": 270,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.75,
+                "damage": 18,
+                "color": "#d5ad77",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.46296296296296297,
+                "offset_x": 9,
+                "offset_y": 0
+              },
+              {
+                "kind": "fan-bullet",
+                "owner": "player",
+                "vx": 268.36814644830815,
+                "vy": 29.640141226037198,
+                "radius": 2,
+                "remaining": 0.75,
+                "damage": 18,
+                "color": "#d5ad77",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.46296296296296297,
+                "offset_x": 8.94560488161028,
+                "offset_y": 0.9880047075345715
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 3,
+              "reload": 1.4,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.9,
+              "release_seconds": 0.342,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "rifle",
+                "owner": "player",
+                "vx": 320,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 1,
+                "damage": 49,
+                "color": "#d5ad77",
+                "pierce": 4,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.390625,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 6,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "rifle-butt",
+                "radius": 0.5,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#d5ad77",
+                "offset_x": 44,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 6,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "rifle",
+                "owner": "player",
+                "vx": 320,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 1,
+                "damage": 49,
+                "color": "#d5ad77",
+                "pierce": 4,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "pendle",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.390625,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 6,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 22,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.3,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#d5ad77",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "rifle-butt",
+                "radius": 0.5,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#d5ad77",
+                "offset_x": 44,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 6,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "mirra": {
+      "identity": {
+        "id": "mirra",
+        "name": "Mirra",
+        "role": "Oasis water diviner · shaped currents",
+        "color": "#76ccd6",
+        "primary": "Water bolt — an aimed current; firing through a spring seal widens it.",
+        "secondary": "Spring seal — place a finite pool at the aimed point, within reach.",
+        "block": "Water curtain — hold a frontal flowing shield.",
+        "special": "Oasis Unbound — seals connect in damaging currents; new seals redirect the network."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "water",
+          "speed": 170,
+          "damage": 21,
+          "radius": 4,
+          "lifetime_seconds": 1.05,
+          "hit_slow_seconds": 1.2,
+          "cross_seal": {
+            "damage": 28,
+            "radius": 6,
+            "pierce": 1,
+            "ordering": "seal intersection must precede first enemy intersection on the same segment"
+          }
+        },
+        "secondary": {
+          "kind": "seal",
+          "maximum_aim_distance": 112,
+          "radius": 18,
+          "duration_seconds": 6,
+          "placement_hit_damage": 10,
+          "placement_slow_seconds": 1.5
+        },
+        "powered": {
+          "seal_seconds": 8,
+          "seal_limit": 5,
+          "activation_seal_forward_offset": 30,
+          "activation_seal_radius": 16,
+          "current_interval_seconds": 0.35,
+          "network_order": "player then seals in insertion order",
+          "current_hit_halfwidth": 6,
+          "current_damage": 10,
+          "current_slow_seconds": 0.5,
+          "hit_once_per_network_tick": true
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.43,
+              "release_seconds": 0.1634,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "water",
+                "owner": "player",
+                "vx": 170,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 1.05,
+                "damage": 21,
+                "color": "#76ccd6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mirra",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.7352941176470589,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "seal",
+                "radius": 18,
+                "remaining": 6,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#76ccd6",
+                "source": "mirra",
+                "offset_x": 112,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "seal",
+                "radius": 18,
+                "remaining": 0.4,
+                "duration": 0.4,
+                "color": "#76ccd6",
+                "offset_x": 112,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "water",
+                "owner": "player",
+                "vx": 170,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 1.05,
+                "damage": 21,
+                "color": "#76ccd6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mirra",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.7352941176470589,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "seal",
+                "radius": 18,
+                "remaining": 6,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#76ccd6",
+                "source": "mirra",
+                "offset_x": 112,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "seal",
+                "radius": 18,
+                "remaining": 0.4,
+                "duration": 0.4,
+                "color": "#76ccd6",
+                "offset_x": 112,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.43,
+              "release_seconds": 0.1634,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "water",
+                "owner": "player",
+                "vx": 170,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 1.05,
+                "damage": 21,
+                "color": "#76ccd6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mirra",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.7352941176470589,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [
+              {
+                "kind": "seal",
+                "radius": 16,
+                "remaining": 8,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#76ccd6",
+                "source": "mirra",
+                "offset_x": 30,
+                "offset_y": 0
+              }
+            ],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "seal",
+                "radius": 16,
+                "remaining": 8,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#76ccd6",
+                "source": "mirra",
+                "offset_x": 30,
+                "offset_y": 0
+              },
+              {
+                "kind": "seal",
+                "radius": 18,
+                "remaining": 8,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#76ccd6",
+                "source": "mirra",
+                "offset_x": 112,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "seal",
+                "radius": 18,
+                "remaining": 0.4,
+                "duration": 0.4,
+                "color": "#76ccd6",
+                "offset_x": 112,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "water",
+                "owner": "player",
+                "vx": 170,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 1.05,
+                "damage": 21,
+                "color": "#76ccd6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mirra",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.7352941176470589,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [
+              {
+                "kind": "seal",
+                "radius": 16,
+                "remaining": 8,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#76ccd6",
+                "source": "mirra",
+                "offset_x": 30,
+                "offset_y": 0
+              }
+            ],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "seal",
+                "radius": 16,
+                "remaining": 8,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#76ccd6",
+                "source": "mirra",
+                "offset_x": 30,
+                "offset_y": 0
+              },
+              {
+                "kind": "seal",
+                "radius": 18,
+                "remaining": 8,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#76ccd6",
+                "source": "mirra",
+                "offset_x": 112,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "seal",
+                "radius": 18,
+                "remaining": 0.4,
+                "duration": 0.4,
+                "color": "#76ccd6",
+                "offset_x": 112,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "ashe": {
+      "identity": {
+        "id": "ashe",
+        "name": "Ashe",
+        "role": "Sunstone ember knight · sword and cinder armour",
+        "color": "#ed9866",
+        "primary": "Ember blade — sweep the sword in a close arc.",
+        "secondary": "Ember thrust — a committed, longer thrust.",
+        "block": "Armoured guard — brace the sword and shoulder plate.",
+        "special": "Cinderhelm — put on the closed helmet; sword blows cast flame crescents and the form ends in an aimed fire finisher."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "arc",
+          "reach": 32,
+          "dot_threshold": 0.32,
+          "damage": 24,
+          "knockback": 6
+        },
+        "secondary": {
+          "kind": "line_thrust",
+          "reach": 65,
+          "halfwidth": 9,
+          "damage": 32,
+          "pierce": true
+        },
+        "powered": {
+          "primary_extra": {
+            "kind": "flame_crescent",
+            "speed": 145,
+            "damage": 15,
+            "radius": 7,
+            "lifetime_seconds": 0.65,
+            "pierce": 2
+          },
+          "secondary_damage": 38,
+          "thrust_flame": {
+            "forward_offset": 42,
+            "radius": 15,
+            "duration_seconds": 2,
+            "tick_damage": 8
+          },
+          "natural_expiry_finisher": {
+            "kind": "aimed_line",
+            "reach": 98,
+            "halfwidth": 13,
+            "damage": 34,
+            "pierce": true,
+            "flame_forward_offset": 52,
+            "flame_radius": 16,
+            "flame_seconds": 1,
+            "flame_tick_damage": 7
+          },
+          "finisher_on_death_or_interruption": false
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.24700000000000003,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#ed9866",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "ember-thrust",
+                "radius": 9,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#ed9866",
+                "offset_x": 65,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 24,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.6,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#ed9866",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#ed9866",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 32,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 9.8,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#ed9866",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "ember-thrust",
+                "radius": 9,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#ed9866",
+                "offset_x": 65,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.24700000000000003,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "flame-crescent",
+                "owner": "player",
+                "vx": 145,
+                "vy": 0,
+                "radius": 7,
+                "remaining": 0.65,
+                "damage": 15,
+                "color": "#ed9866",
+                "pierce": 2,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "ashe",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.65,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#ed9866",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "flame",
+                "radius": 15,
+                "remaining": 2,
+                "damage": 8,
+                "tickIn": 0.2,
+                "color": "#ed9866",
+                "source": "ashe",
+                "offset_x": 42,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "ember-thrust",
+                "radius": 9,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#ed9866",
+                "offset_x": 65,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 24,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "flame-crescent",
+                "owner": "player",
+                "vx": 145,
+                "vy": 0,
+                "radius": 7,
+                "remaining": 0.65,
+                "damage": 15,
+                "color": "#ed9866",
+                "pierce": 2,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "ashe",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.65,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.6,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#ed9866",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 20.16,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#ed9866",
+                "offset_x": 18.560000000000002,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 38,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "flame",
+                "radius": 15,
+                "remaining": 2,
+                "damage": 8,
+                "tickIn": 0.2,
+                "color": "#ed9866",
+                "source": "ashe",
+                "offset_x": 42,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 10.7,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#ed9866",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "ember-thrust",
+                "radius": 9,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#ed9866",
+                "offset_x": 65,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "clack": {
+      "identity": {
+        "id": "clack",
+        "name": "Clack",
+        "role": "Coastal launcher gunner · carried rockets",
+        "color": "#d7b888",
+        "primary": "Shoulder rocket — fire a visible rocket with a bounded blast radius; reload between shots.",
+        "secondary": "Concussive vent — release a short-range space-clearing blast from the launcher’s separate pressure chamber, including while its rocket loader reloads.",
+        "block": "Blast guard — unfold the launcher shield.",
+        "special": "Siegebreaker — the loader and shoulder brace unfold; three-rocket salvos replace single shots while the gunner remains mobile."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "rocket",
+          "speed": 125,
+          "damage": 40,
+          "radius": 4,
+          "lifetime_seconds": 1.45,
+          "blast_radius": 23,
+          "ammo": 1,
+          "reload_seconds": 1.15
+        },
+        "secondary": {
+          "kind": "arc_pressure_vent",
+          "reach": 43,
+          "dot_threshold": 0.05,
+          "damage": 25,
+          "knockback": 37,
+          "allowed_while_rocket_reload": true
+        },
+        "powered": {
+          "salvo_angles_radians": [
+            -0.09,
+            0,
+            0.09
+          ],
+          "rocket_speed": 145,
+          "rocket_damage": 20,
+          "rocket_blast_radius": 19,
+          "reload_seconds": 0.7,
+          "activation_refills_ammo_and_clears_reload": true,
+          "stationary_turret": false
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.8,
+              "release_seconds": 0.384,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.72,
+              "release_seconds": 0.34559999999999996,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "rocket",
+                "owner": "player",
+                "vx": 125,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 1.45,
+                "damage": 40,
+                "color": "#d7b888",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 23,
+                "source": "clack",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 1,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 1.15,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 27.09,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#d7b888",
+                "offset_x": 24.939999999999998,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "concussion",
+                "radius": 28,
+                "remaining": 0.35,
+                "duration": 0.35,
+                "color": "#d7b888",
+                "offset_x": 22,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 1,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "rocket",
+                "owner": "player",
+                "vx": 125,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 1.45,
+                "damage": 40,
+                "color": "#d7b888",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 23,
+                "source": "clack",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 1,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 1.15,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 25,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.75,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#d7b888",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 27.09,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#d7b888",
+                "offset_x": 24.939999999999998,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "concussion",
+                "radius": 28,
+                "remaining": 0.35,
+                "duration": 0.35,
+                "color": "#d7b888",
+                "offset_x": 22,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 1,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.7,
+              "release_seconds": 0.33599999999999997,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.72,
+              "release_seconds": 0.34559999999999996,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "rocket",
+                "owner": "player",
+                "vx": 144.41314628673916,
+                "vy": -13.0323896337116,
+                "radius": 4,
+                "remaining": 1.45,
+                "damage": 20,
+                "color": "#d7b888",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 19,
+                "source": "clack",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.8620689655172413,
+                "offset_x": 8.96357459710795,
+                "offset_y": -0.8089069427821016
+              },
+              {
+                "kind": "rocket",
+                "owner": "player",
+                "vx": 145,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 1.45,
+                "damage": 20,
+                "color": "#d7b888",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 19,
+                "source": "clack",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.8620689655172413,
+                "offset_x": 9,
+                "offset_y": 0
+              },
+              {
+                "kind": "rocket",
+                "owner": "player",
+                "vx": 144.41314628673916,
+                "vy": 13.0323896337116,
+                "radius": 4,
+                "remaining": 1.45,
+                "damage": 20,
+                "color": "#d7b888",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 19,
+                "source": "clack",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.8620689655172413,
+                "offset_x": 8.96357459710795,
+                "offset_y": 0.8089069427821016
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0.7,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "arc",
+                "radius": 27.09,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#d7b888",
+                "offset_x": 24.939999999999998,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "concussion",
+                "radius": 28,
+                "remaining": 0.35,
+                "duration": 0.35,
+                "color": "#d7b888",
+                "offset_x": 22,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 1,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "rocket",
+                "owner": "player",
+                "vx": 144.41314628673916,
+                "vy": -13.0323896337116,
+                "radius": 4,
+                "remaining": 1.45,
+                "damage": 20,
+                "color": "#d7b888",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 19,
+                "source": "clack",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.8620689655172413,
+                "offset_x": 8.96357459710795,
+                "offset_y": -0.8089069427821016
+              },
+              {
+                "kind": "rocket",
+                "owner": "player",
+                "vx": 145,
+                "vy": 0,
+                "radius": 4,
+                "remaining": 1.45,
+                "damage": 20,
+                "color": "#d7b888",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 19,
+                "source": "clack",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.8620689655172413,
+                "offset_x": 9,
+                "offset_y": 0
+              },
+              {
+                "kind": "rocket",
+                "owner": "player",
+                "vx": 144.41314628673916,
+                "vy": 13.0323896337116,
+                "radius": 4,
+                "remaining": 1.45,
+                "damage": 20,
+                "color": "#d7b888",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 19,
+                "source": "clack",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.8620689655172413,
+                "offset_x": 8.96357459710795,
+                "offset_y": 0.8089069427821016
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0.7,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 25,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 8.75,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#d7b888",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "arc",
+                "radius": 27.09,
+                "remaining": 0.22,
+                "duration": 0.22,
+                "color": "#d7b888",
+                "offset_x": 24.939999999999998,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              },
+              {
+                "kind": "concussion",
+                "radius": 28,
+                "remaining": 0.35,
+                "duration": 0.35,
+                "color": "#d7b888",
+                "offset_x": 22,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 1,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "nix": {
+      "identity": {
+        "id": "nix",
+        "name": "Nix",
+        "role": "Neon Harbour cyborg · laser arm, heat and misdirection",
+        "color": "#69d3d0",
+        "primary": "Laser arm — emit a narrow, aimable pulse; sustained use builds heat and the arm cools passively.",
+        "secondary": "Afterimage — leave one stationary hologram at the activation origin while moving freely; it attracts enemy attacks and breaks at the first hit or after three seconds.",
+        "block": "Arm shield — hold a compact energy guard.",
+        "special": "Limit Release — arm casing opens; narrow beams pierce multiple targets until the finite form ends."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "line_laser",
+          "reach": 155,
+          "halfwidth": 3,
+          "damage": 12,
+          "pierce": false,
+          "heat_increment": 19,
+          "cannot_start_primary_heat_at_least": 92,
+          "heat_maximum": 100
+        },
+        "secondary": {
+          "kind": "stationary_hologram",
+          "origin": "actionOrigin captured at secondary commitment",
+          "radius": 7,
+          "duration_seconds": 3,
+          "limit": 1,
+          "attracts_enemy_within": 200,
+          "breaks_on_first_attack": true,
+          "free_movement": true
+        },
+        "powered": {
+          "laser_reach": 175,
+          "laser_halfwidth": 4.5,
+          "laser_damage": 15,
+          "laser_pierce": true,
+          "heat_increment": 12,
+          "activation_heat_cap": 45
+        },
+        "heat_cooling_per_second": {
+          "while_primary_action": 4,
+          "otherwise_powered": 7,
+          "otherwise_base": 15
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.21,
+              "release_seconds": 0.0798,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.05,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "laser",
+                "radius": 3,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#69d3d0",
+                "offset_x": 155,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 19,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "hologram",
+                "radius": 7,
+                "remaining": 3,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#69d3d0",
+                "source": "nix",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "afterimage",
+                "radius": 11,
+                "remaining": 0.35,
+                "duration": 0.35,
+                "color": "#69d3d0",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 12,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 6.8,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#69d3d0",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "laser",
+                "radius": 3,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#69d3d0",
+                "offset_x": 155,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 19,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "hologram",
+                "radius": 7,
+                "remaining": 3,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#69d3d0",
+                "source": "nix",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "afterimage",
+                "radius": 11,
+                "remaining": 0.35,
+                "duration": 0.35,
+                "color": "#69d3d0",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.21,
+              "release_seconds": 0.0798,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.05,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 15,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 7.25,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#69d3d0",
+                "offset_x": 171,
+                "offset_y": 10
+              },
+              {
+                "kind": "laser",
+                "radius": 4.5,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#69d3d0",
+                "offset_x": 175,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 12,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "hologram",
+                "radius": 7,
+                "remaining": 3,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#69d3d0",
+                "source": "nix",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "afterimage",
+                "radius": 11,
+                "remaining": 0.35,
+                "duration": 0.35,
+                "color": "#69d3d0",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 15,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "impact",
+                "radius": 7.25,
+                "remaining": 0.18,
+                "duration": 0.18,
+                "color": "#69d3d0",
+                "offset_x": 20,
+                "offset_y": 0
+              },
+              {
+                "kind": "laser",
+                "radius": 4.5,
+                "remaining": 0.24,
+                "duration": 0.24,
+                "color": "#69d3d0",
+                "offset_x": 175,
+                "offset_y": 0,
+                "from_offset_x": 0,
+                "from_offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 12,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "hologram",
+                "radius": 7,
+                "remaining": 3,
+                "damage": 0,
+                "tickIn": 0.2,
+                "color": "#69d3d0",
+                "source": "nix",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "effects": [
+              {
+                "kind": "afterimage",
+                "radius": 11,
+                "remaining": 0.35,
+                "duration": 0.35,
+                "color": "#69d3d0",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    },
+    "rook": {
+      "identity": {
+        "id": "rook",
+        "name": "Rook",
+        "role": "Orbital salvager · pulse carbine, thruster vault and paired space turrets",
+        "color": "#f0be79",
+        "primary": "Pulse carbine — discrete aimed amber bolts, with no disc or tether.",
+        "secondary": "Thruster Vault — make a short directional jetpack vault, keeping aim and carbine available; airborne height avoids ground melee, while projectiles and explosions still hit.",
+        "block": "Energy guard — hold a rectangular amber shield.",
+        "special": "Orbital Rig — deploy exactly two finite space turrets; carbine hits designate their target, and both require the operator nearby."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "pulse",
+          "speed": 220,
+          "damage": 16,
+          "radius": 3,
+          "lifetime_seconds": 1,
+          "living_hit_designation_seconds": 1.2
+        },
+        "secondary": {
+          "kind": "directional_vault",
+          "duration_seconds": 0.55,
+          "height": 18,
+          "height_formula": "18*sin(pi*(1-remaining/duration))",
+          "airborne_above": 2,
+          "forward_speed": 72,
+          "direction": "movement vector at commitment if length>0.1, otherwise committed aim",
+          "aim_and_primary_remain_available": true,
+          "avoids_damage_kinds": [
+            "melee",
+            "field"
+          ],
+          "still_hit_by": [
+            "projectile",
+            "explosion"
+          ]
+        },
+        "powered": {
+          "turret_count": 2,
+          "turret_duration_seconds": 10,
+          "initial_offset_x": [
+            -15,
+            15
+          ],
+          "initial_offset_y": -14,
+          "follow_offset_x": [
+            -16,
+            16
+          ],
+          "follow_offset_y": -14,
+          "follow_lerp_per_tick": 0.11666666666666667,
+          "initial_cooldown_seconds": 0.18,
+          "fire_interval_seconds": 0.44,
+          "designation_max_operator_distance_exclusive": 190,
+          "firing_max_operator_distance_exclusive": 55,
+          "projectile_speed": 205,
+          "projectile_damage": 7,
+          "projectile_radius": 2,
+          "projectile_lifetime_seconds": 1,
+          "expiry_clears_designation_and_turrets": true
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.3,
+              "release_seconds": 0.11399999999999999,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.55,
+              "release_seconds": 0.05,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "pulse",
+                "owner": "player",
+                "vx": 220,
+                "vy": 0,
+                "radius": 3,
+                "remaining": 1,
+                "damage": 16,
+                "color": "#f0be79",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "rook",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5681818181818182,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "vault-lift",
+                "radius": 12,
+                "remaining": 0.3,
+                "duration": 0.3,
+                "color": "#f0be79",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0.55
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "pulse",
+                "owner": "player",
+                "vx": 220,
+                "vy": 0,
+                "radius": 3,
+                "remaining": 1,
+                "damage": 16,
+                "color": "#f0be79",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "rook",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5681818181818182,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "vault-lift",
+                "radius": 12,
+                "remaining": 0.3,
+                "duration": 0.3,
+                "color": "#f0be79",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0.55
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.3,
+              "release_seconds": 0.11399999999999999,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.55,
+              "release_seconds": 0.05,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "pulse",
+                "owner": "player",
+                "vx": 220,
+                "vy": 0,
+                "radius": 3,
+                "remaining": 1,
+                "damage": 16,
+                "color": "#f0be79",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "rook",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5681818181818182,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "vault-lift",
+                "radius": 12,
+                "remaining": 0.3,
+                "duration": 0.3,
+                "color": "#f0be79",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0.55
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "pulse",
+                "owner": "player",
+                "vx": 220,
+                "vy": 0,
+                "radius": 3,
+                "remaining": 1,
+                "damage": 16,
+                "color": "#f0be79",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "rook",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5681818181818182,
+                "offset_x": 9,
+                "offset_y": 0
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "vault-lift",
+                "radius": 12,
+                "remaining": 0.3,
+                "duration": 0.3,
+                "color": "#f0be79",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0.55
+            }
+          }
+        }
+      }
+    },
+    "mote": {
+      "identity": {
+        "id": "mote",
+        "name": "Mote",
+        "role": "Genderless observatory keeper · glass and gravity",
+        "color": "#b8b4e6",
+        "primary": "Glass volley — three precise converging shards.",
+        "secondary": "Gravity anchor — briefly draw nearby foes into a marked point.",
+        "block": "Glass crescent — hold overlapping panes toward the threat.",
+        "special": "Aphelion — the core opens; orbiting glass releases directed shard storms with each volley."
+      },
+      "source_derived_rules": {
+        "primary": {
+          "kind": "glass",
+          "angles_radians": [
+            -0.11,
+            0,
+            0.11
+          ],
+          "speed": 180,
+          "damage": 9,
+          "radius": 2,
+          "lifetime_seconds": 0.95,
+          "pierce": 0
+        },
+        "secondary": {
+          "kind": "gravity",
+          "maximum_aim_distance": 100,
+          "radius": 32,
+          "duration_seconds": 1.8,
+          "tick_damage": 4,
+          "pull_speed": 32,
+          "tank_or_dummy_pull_speed": 13,
+          "slow_refresh_seconds": 0.2
+        },
+        "powered": {
+          "glass_speed": 210,
+          "glass_damage": 12,
+          "glass_pierce": 1,
+          "extra_shards": {
+            "kind": "orbit_shard",
+            "angles_radians": [
+              -0.22,
+              0.22
+            ],
+            "speed": 190,
+            "damage": 10,
+            "radius": 2,
+            "lifetime_seconds": 0.9,
+            "pierce": 1
+          },
+          "gravity_radius": 39,
+          "gravity_seconds": 2.3
+        }
+      },
+      "modes": {
+        "base": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 178.91209763220542,
+                "vy": -19.760094150691465,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 9,
+                "color": "#b8b4e6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6944444444444444,
+                "offset_x": 8.94560488161028,
+                "offset_y": -0.9880047075345715
+              },
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 180,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 9,
+                "color": "#b8b4e6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6944444444444444,
+                "offset_x": 9,
+                "offset_y": 0
+              },
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 178.91209763220542,
+                "vy": 19.760094150691465,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 9,
+                "color": "#b8b4e6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6944444444444444,
+                "offset_x": 8.94560488161028,
+                "offset_y": 0.9880047075345715
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "gravity",
+                "radius": 32,
+                "remaining": 1.8,
+                "damage": 4,
+                "tickIn": 0.2,
+                "color": "#b8b4e6",
+                "source": "mote",
+                "offset_x": 100,
+                "offset_y": 0
+              }
+            ],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 178.91209763220542,
+                "vy": -19.760094150691465,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 9,
+                "color": "#b8b4e6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6944444444444444,
+                "offset_x": 8.94560488161028,
+                "offset_y": -0.9880047075345715
+              },
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 180,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 9,
+                "color": "#b8b4e6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6944444444444444,
+                "offset_x": 9,
+                "offset_y": 0
+              },
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 178.91209763220542,
+                "vy": 19.760094150691465,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 9,
+                "color": "#b8b4e6",
+                "pierce": 0,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": false,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6944444444444444,
+                "offset_x": 8.94560488161028,
+                "offset_y": 0.9880047075345715
+              }
+            ],
+            "fields": [],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "gravity",
+                "radius": 32,
+                "remaining": 1.8,
+                "damage": 4,
+                "tickIn": 0.2,
+                "color": "#b8b4e6",
+                "source": "mote",
+                "offset_x": 100,
+                "offset_y": 0
+              }
+            ],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        },
+        "powered": {
+          "actions": {
+            "primary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "secondary": {
+              "duration_seconds": 0.48,
+              "release_seconds": 0.1824,
+              "release_frame0": null
+            },
+            "special": {
+              "duration_seconds": 0.65,
+              "release_seconds": 0.28,
+              "release_frame0": null
+            }
+          },
+          "primary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 208.73078057090632,
+                "vy": -23.05344317580671,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 12,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5952380952380952,
+                "offset_x": 8.94560488161028,
+                "offset_y": -0.9880047075345715
+              },
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 210,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 12,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5952380952380952,
+                "offset_x": 9,
+                "offset_y": 0
+              },
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 208.73078057090632,
+                "vy": 23.05344317580671,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 12,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5952380952380952,
+                "offset_x": 8.94560488161028,
+                "offset_y": 0.9880047075345715
+              },
+              {
+                "kind": "orbit-shard",
+                "owner": "player",
+                "vx": 185.42051537281506,
+                "vy": -41.46362838536517,
+                "radius": 2,
+                "remaining": 0.9,
+                "damage": 10,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6578947368421053,
+                "offset_x": 8.783077043975453,
+                "offset_y": -1.9640666077278297
+              },
+              {
+                "kind": "orbit-shard",
+                "owner": "player",
+                "vx": 185.42051537281506,
+                "vy": 41.46362838536517,
+                "radius": 2,
+                "remaining": 0.9,
+                "damage": 10,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6578947368421053,
+                "offset_x": 8.783077043975453,
+                "offset_y": 1.9640666077278297
+              }
+            ],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "orbit",
+                "radius": 18,
+                "remaining": 0.32,
+                "duration": 0.32,
+                "color": "#b8b4e6",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_release_probe": {
+            "scenario": "default practice enemies; no travel step after release",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "gravity",
+                "radius": 39,
+                "remaining": 2.3,
+                "damage": 4,
+                "tickIn": 0.2,
+                "color": "#b8b4e6",
+                "source": "mote",
+                "offset_x": 100,
+                "offset_y": 0
+              }
+            ],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "primary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 208.73078057090632,
+                "vy": -23.05344317580671,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 12,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5952380952380952,
+                "offset_x": 8.94560488161028,
+                "offset_y": -0.9880047075345715
+              },
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 210,
+                "vy": 0,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 12,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5952380952380952,
+                "offset_x": 9,
+                "offset_y": 0
+              },
+              {
+                "kind": "glass",
+                "owner": "player",
+                "vx": 208.73078057090632,
+                "vy": 23.05344317580671,
+                "radius": 2,
+                "remaining": 0.95,
+                "damage": 12,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.5952380952380952,
+                "offset_x": 8.94560488161028,
+                "offset_y": 0.9880047075345715
+              },
+              {
+                "kind": "orbit-shard",
+                "owner": "player",
+                "vx": 185.42051537281506,
+                "vy": -41.46362838536517,
+                "radius": 2,
+                "remaining": 0.9,
+                "damage": 10,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6578947368421053,
+                "offset_x": 8.783077043975453,
+                "offset_y": -1.9640666077278297
+              },
+              {
+                "kind": "orbit-shard",
+                "owner": "player",
+                "vx": 185.42051537281506,
+                "vy": 41.46362838536517,
+                "radius": 2,
+                "remaining": 0.9,
+                "damage": 10,
+                "color": "#b8b4e6",
+                "pierce": 1,
+                "hitIds": [],
+                "blastRadius": 0,
+                "source": "mote",
+                "powered": true,
+                "launchHeight": 0,
+                "age": 0,
+                "flightDuration": 0.6578947368421053,
+                "offset_x": 8.783077043975453,
+                "offset_y": 1.9640666077278297
+              }
+            ],
+            "fields": [],
+            "effects": [
+              {
+                "kind": "orbit",
+                "radius": 18,
+                "remaining": 0.32,
+                "duration": 0.32,
+                "color": "#b8b4e6",
+                "offset_x": 0,
+                "offset_y": 0
+              }
+            ],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          },
+          "secondary_contact_probe": {
+            "scenario": "one stationary dummy 20 simulation units ahead; others distant",
+            "damage_dealt_at_release": 0,
+            "player_displacement_at_release": [
+              0,
+              0
+            ],
+            "projectiles": [],
+            "fields": [
+              {
+                "kind": "gravity",
+                "radius": 39,
+                "remaining": 2.3,
+                "damage": 4,
+                "tickIn": 0.2,
+                "color": "#b8b4e6",
+                "source": "mote",
+                "offset_x": 100,
+                "offset_y": 0
+              }
+            ],
+            "effects": [],
+            "player_state": {
+              "ammo": 0,
+              "reload": 0,
+              "heat": 0,
+              "tether_remaining": 0,
+              "vault_remaining": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}
