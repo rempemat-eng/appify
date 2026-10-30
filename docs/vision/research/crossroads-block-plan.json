@@ -1,9 +1,9 @@
 {
   "document": "Crossroads block-and-plot proposal sidecar; NOT a runtime schema or adoption packet",
-  "status": "CONCEPTUAL_UNSCALED_NOT_PLACED_NOT_APPROVED",
+  "status": "PARTIAL_MEASURED_A_B_C_REMAINDER_UNSCALED_NOT_PLACED_NOT_APPROVED",
   "date": "2026-10-30",
   "source_parent": "3818de444d24c95c50daedd6e547a78bd0436551",
-  "source_approval": "GO6527523659; Matt6526956297; study6527386266; lead amendment6533453453; repair ASSIGN6533485058/ACK6533489951",
+  "source_approval": "GO6527523659; Matt6526956297; study6527386266; lead amendment6533453453; repair ASSIGN6533485058/ACK6533489951; measured proposal GO6533855827/ASSIGN6533865862/ACK6533866313",
   "study": "https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal",
   "era": "17th to early 19th century market/mill town; existing house style and soft-grid rules retained",
   "count": 40,
@@ -1264,6 +1264,7 @@
     "terrain_packet": "https://chatgpt.com/library?file_id=libfile_b4175229aa6c81918f60e4e3faa89d6f&account_id=personal",
     "coordinate_contract": "rect=[x,y,w,h] in worldpx, half-open; all footprint/area bounds multiples8. Existing half-cell doors x6148 remain exact. Native odd-width path centrelines can use half-cell coordinates; rectangles retain8px bounds.",
     "accounting": "14 measured A/B/C records =7 retained anchors +7 new candidates. Original40 ledger/sourceforms/footprints/bays/7anchors unchanged; candidate total41. D/E/F/G and separate mill geometry remainNULL.",
+    "geometry_authority": "This measured_market_fit.plots candidate overlay is separate from the unchanged original40 unscaled accounting ledger in records. It does not backfill or adopt runtime coordinates.",
     "architectural_intent": "Two south-facing shops and a passage close the market-west approach; rear servicing and garden plots make a back. Two quiet north homes use side gardens and garden-walk spur. East trade/shop fronts and a conditional south-east market return enclose the centre without filling the green/crater.",
     "plots": [
       {

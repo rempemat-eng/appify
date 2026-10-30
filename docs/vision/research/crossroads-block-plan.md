@@ -183,7 +183,7 @@ After lead/Matt reviews this structure, a separately scoped terrain-fitting step
 
 Then use the existing native placement/export/checker on the newly scoped plan, accounting for all forty original IDs, the single deduplicated mill candidate, original inherited doors, terrain, fronts/rears, service yards and routes. That physical result would still not approve the composition or art. One representative street and working-court vignette at the actual character/play-camera scale should establish construction, material, contact-shadow and circulation quality before kit expansion or whole-town claims.
 
-No producer/helper/checker/terrain/workflow/generated image was changed for this document. No packing, test, scientific import, controller, engine, render, world generation, job, Ready, merge or art approval occurred. PR381's original failure, unchanged replay and diagnostic PNG remain preserved; the existing Granary candidate is not offered as a finished Crossroads.
+No producer/helper/checker/terrain/workflow or generated game-art image was changed. This step created only the two proposal documents and an outside-Git flat SVG/PNG presentation using the existing Sharp renderer. No packing, project test, scientific import, controller, engine, game-art rendering, world generation, job, Ready, merge or art approval occurred. PR381's original failure, unchanged replay and diagnostic PNG remain preserved; the existing Granary candidate is not offered as a finished Crossroads.
 
 ### Evidence references
 
