@@ -115,14 +115,22 @@ def write_json(path, value):
     if len(data) > MAX_JSON:
         raise CaptureError('JSON bound exceeded')
     temp = path.with_name(path.name + '.tmp')
-    with temp.open('xb') as handle:
-        handle.write(data)
-        handle.flush()
-        os.fsync(handle.fileno())
-    if sum(p.stat().st_blocks * 512 for p in path.parent.rglob('*') if p.is_file()) > MAX_PACKET:
-        temp.unlink()
-        raise CaptureError('packet allocation bound exceeded before metadata commit')
-    temp.replace(path)
+    created = False
+    try:
+        with temp.open('xb') as handle:
+            created = True
+            handle.write(data)
+            handle.flush()
+            os.fsync(handle.fileno())
+        if sum(p.stat().st_blocks * 512 for p in path.parent.rglob('*') if p.is_file()) > MAX_PACKET:
+            raise CaptureError('packet allocation bound exceeded before metadata commit')
+        temp.replace(path)
+    finally:
+        if created:
+            try:
+                temp.unlink(missing_ok=True)
+            except OSError:
+                pass  # Never replace the original write/commit error during cleanup.
 
 
 def best_effort_json(path, value):
@@ -217,16 +225,54 @@ def snapshot(T, box, path, required_only=False):
         temp.unlink()
         raise CaptureError('packet bound exceeded before NPZ commit')
     temp.replace(path)
-    return {'file': Path(path).name, 'bytes': Path(path).stat().st_size, 'sha256': sha(path),
+    return {'kind': 'initial_neon' if required_only else 'consumer',
+            'file': Path(path).name, 'bytes': Path(path).stat().st_size, 'sha256': sha(path),
             'box_px': list(box), 'global_shape': [H, W], 'raw_bytes': total, 'arrays': records}
 
 
 def validate_archive(path, meta):
     """Stdlib primitive-only header/data validation BEFORE any np.load call."""
-    if Path(path).is_symlink() or sha(path) != meta['sha256']:
+    kind = meta.get('kind')
+    if kind not in ('consumer', 'initial_neon'):
+        raise CaptureError('unknown snapshot context')
+    box, global_shape = meta.get('box_px'), meta.get('global_shape')
+    if (not isinstance(box, (list, tuple)) or len(box) != 4
+            or any(type(v) is not int or v % 8 for v in box)
+            or not isinstance(global_shape, (list, tuple)) or len(global_shape) != 2
+            or any(type(v) is not int or v <= 0 for v in global_shape)):
+        raise CaptureError('invalid crop/global shape metadata')
+    x0, y0, x1, y1 = box
+    H, W = global_shape
+    crop_shape = [(y1 - y0) // 8, (x1 - x0) // 8]
+    if (not (0 <= x0 < x1 <= W * 8 and 0 <= y0 < y1 <= H * 8)
+            or math.prod(crop_shape) > (100000 if kind == 'initial_neon' else 50000)):
+        raise CaptureError('crop leaves actual global bounds/context limit')
+    records = meta.get('arrays')
+    if not isinstance(records, list) or not records:
+        raise CaptureError('missing snapshot array descriptors')
+    identities = set()
+    for record in records:
+        container, key = record.get('container'), record.get('source_key')
+        if container not in ('T', 'barriers', 'river_masks') or type(key) is not str or not key:
+            raise CaptureError('invalid semantic array identity')
+        identity = (container, key)
+        if identity in identities:
+            raise CaptureError('duplicate semantic array identity')
+        identities.add(identity)
+        if record.get('shape') != crop_shape:
+            raise CaptureError('array shape differs from crop/global context')
+        if (record.get('source_dtype') == 'object'
+                and (container != 'T' or key not in OBJECT_FIELDS
+                     or not isinstance(record.get('dtype'), str) or record['dtype'][1:2] != 'U')):
+            raise CaptureError('invalid object-string semantic descriptor')
+    required = {('T', key) for key in REQUIRED}
+    if not required.issubset(identities) or (kind == 'initial_neon' and identities != required):
+        raise CaptureError('required snapshot context inventory mismatch')
+    if (Path(path).is_symlink() or Path(path).stat().st_size != meta['bytes']
+            or sha(path) != meta['sha256']):
         raise CaptureError('snapshot file identity mismatch')
-    expected = {r['archive_key'] + '.npy': r for r in meta['arrays']}
-    if len(expected) != len(meta['arrays']):
+    expected = {r['archive_key'] + '.npy': r for r in records}
+    if len(expected) != len(records):
         raise CaptureError('duplicate primitive archive key')
     total = 0
     with zipfile.ZipFile(path) as archive:
@@ -894,30 +940,6 @@ def run_capture(allocation_path, out):
     if disk.f_bavail * disk.f_frsize < 256 * 1024**2:
         raise CaptureError('less than256MiB free before replacement phase')
     out.mkdir(mode=0o700)
-    write_json(out / 'allocation.json', allocation)
-    write_json(out / 'source-before.json', before)
-    write_json(out / 'capture.json', {'schema': SCHEMA, 'stage': 'INCOMPLETE_BEFORE_WORKER', 'complete': False,
-        'replacement_evidence': True, 'world_state': 'NOT_COMPLETED'})
-    for path in source_files():
-        dest = out / 'source' / path.relative_to(REPO)
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_bytes(path.read_bytes())
-    if phase != 'capture':
-        retain_input_reference(out, allocation['input'])
-    private = out / 'private'
-    for name in ('tmp', 'config', 'data', 'cache', 'runtime', 'blockout'):
-        (private / name).mkdir(parents=True, mode=0o700)
-    env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', GIT_OPTIONAL_LOCKS='0',
-        MYGAME_MAP_REVISION='v56', OPENBLAS_NUM_THREADS='1', OMP_NUM_THREADS='1', MKL_NUM_THREADS='1', NUMEXPR_NUM_THREADS='1',
-        BLOCKOUT_OUT=str(private / 'blockout'), TMPDIR=str(private / 'tmp'), TMP=str(private / 'tmp'), TEMP=str(private / 'tmp'),
-        XDG_CONFIG_HOME=str(private / 'config'), XDG_DATA_HOME=str(private / 'data'), XDG_CACHE_HOME=str(private / 'cache'),
-        XDG_RUNTIME_DIR=str(private / 'runtime'), REPO_ROOT=str(REPO))
-    nonce = secrets.token_hex(16)
-    env['MYGAME_R6_WORKER_NONCE'] = nonce
-    for key in ('DISPLAY', 'XAUTHORITY', 'OLD_CACHE', 'DEV_PRE', 'DEV_PKL', 'QUICK', 'RENDER_ONLY', 'MAP55_OUT'):
-        env.pop(key, None)
-    command = [sys.executable, '-I', '-B', str(Path(__file__)), '_worker', '--out', str(out)]
-    write_json(out / 'command.json', {'command': command, 'cwd': str(REPO), 'replacement': True})
     def limits():
         os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
         bound = 6 * 1024**3 if phase == 'capture' else int(1.5 * 1024**3)
@@ -930,17 +952,48 @@ def run_capture(allocation_path, out):
     start = time.monotonic()
     last_usage = None
     peak_anon = 0
-    previous_term = signal.getsignal(signal.SIGTERM)
+    previous_term = None
+    selector = None
+    identity_lost = False
+    terminal = None
+    group_signalled_before_reap = False
     def interrupted(signum, frame):
         raise KeyboardInterrupt('controller interrupted by signal ' + str(signum))
-    signal.signal(signal.SIGTERM, interrupted)
     try:
+        write_json(out / 'allocation.json', allocation)
+        write_json(out / 'source-before.json', before)
+        write_json(out / 'capture.json', {'schema': SCHEMA, 'stage': 'INCOMPLETE_BEFORE_WORKER', 'complete': False,
+            'replacement_evidence': True, 'world_state': 'NOT_COMPLETED'})
+        for path in source_files():
+            dest = out / 'source' / path.relative_to(REPO)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(path.read_bytes())
+        if phase != 'capture':
+            retain_input_reference(out, allocation['input'])
+        private = out / 'private'
+        for name in ('tmp', 'config', 'data', 'cache', 'runtime', 'blockout'):
+            (private / name).mkdir(parents=True, mode=0o700)
+        env = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', GIT_OPTIONAL_LOCKS='0',
+            MYGAME_MAP_REVISION='v56', OPENBLAS_NUM_THREADS='1', OMP_NUM_THREADS='1', MKL_NUM_THREADS='1', NUMEXPR_NUM_THREADS='1',
+            BLOCKOUT_OUT=str(private / 'blockout'), TMPDIR=str(private / 'tmp'), TMP=str(private / 'tmp'), TEMP=str(private / 'tmp'),
+            XDG_CONFIG_HOME=str(private / 'config'), XDG_DATA_HOME=str(private / 'data'), XDG_CACHE_HOME=str(private / 'cache'),
+            XDG_RUNTIME_DIR=str(private / 'runtime'), REPO_ROOT=str(REPO))
+        nonce = secrets.token_hex(16)
+        env['MYGAME_R6_WORKER_NONCE'] = nonce
+        for key in ('DISPLAY', 'XAUTHORITY', 'OLD_CACHE', 'DEV_PRE', 'DEV_PKL', 'QUICK', 'RENDER_ONLY', 'MAP55_OUT'):
+            env.pop(key, None)
+        command = [sys.executable, '-I', '-B', str(Path(__file__)), '_worker', '--out', str(out)]
+        write_json(out / 'command.json', {'command': command, 'cwd': str(REPO), 'replacement': True})
+        if signal.getsignal(signal.SIGCHLD) != signal.SIG_DFL:
+            raise CaptureError('default SIGCHLD policy required for owned-child identity')
+        previous_term = signal.getsignal(signal.SIGTERM)
+        signal.signal(signal.SIGTERM, interrupted)
         child = subprocess.Popen(command, cwd=REPO, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                  start_new_session=True, preexec_fn=limits)
         selector = selectors.DefaultSelector()
         selector.register(child.stdout, selectors.EVENT_READ)
         with (out / 'worker.log').open('xb') as log:
-            while raw is None or selector.get_map():
+            while True:
                 for key, _ in selector.select(.1):
                     data = os.read(key.fd, 65536)
                     if not data:
@@ -950,10 +1003,13 @@ def run_capture(allocation_path, out):
                     log.write(data[:room]); log.flush(); size += min(len(data), room)
                     if len(data) > room:
                         reason = 'log_bound'
-                pid, status, observed = os.wait4(child.pid, os.WNOHANG) if raw is None else (0, 0, None)
-                if pid:
-                    raw, usage = os.waitstatus_to_exitcode(status), observed
-                    child.returncode = raw
+                try:
+                    terminal = os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                except ChildProcessError:
+                    identity_lost, reason = True, 'nonreaping_child_identity_lost'
+                    break
+                if terminal is not None:
+                    break  # Keep the exited leader unreaped until the last owned-group signal.
                 if time.monotonic() - start > (900 if phase == 'capture' else 180):
                     reason = 'wall_bound'
                 try:
@@ -973,7 +1029,6 @@ def run_capture(allocation_path, out):
                     reason = 'emergency_free_floor'
                 if reason:
                     break
-        selector.close()
     except BaseException as error:
         reason = reason or 'controller_error'
         try:
@@ -981,27 +1036,60 @@ def run_capture(allocation_path, out):
         except Exception:
             pass  # Keep existing partial files and continue owned-child cleanup/bundling.
     finally:
-        if child is not None and raw is None:
-            for sig in (signal.SIGTERM, signal.SIGKILL):
+        if child is not None and not identity_lost:
+            try:
+                # Reconfirm the unreaped child before signalling its owned session.
+                os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+            except OSError:
+                identity_lost, reason = True, 'cleanup_child_identity_lost'
+            if not identity_lost:
+                # The leader remains an unreaped identity anchor, even if it exited first.
                 try:
-                    os.killpg(child.pid, sig)
+                    os.killpg(child.pid, signal.SIGKILL)
+                    group_signalled_before_reap = True
                 except ProcessLookupError:
                     pass
-                for _ in range(50):
-                    pid, status, observed = os.wait4(child.pid, os.WNOHANG)
+                except OSError:
+                    reason = reason or 'owned_group_signal_failed'
+                deadline = time.monotonic() + 5
+                while True:
+                    try:
+                        pid, status, observed = os.wait4(child.pid, os.WNOHANG)
+                    except ChildProcessError:
+                        identity_lost, reason = True, 'destructive_wait_child_identity_lost'
+                        break
                     if pid:
                         raw, usage = os.waitstatus_to_exitcode(status), observed
                         child.returncode = raw
                         break
+                    if time.monotonic() >= deadline:
+                        reason = reason or 'owned_child_collection_bound'
+                        break
                     time.sleep(.05)
-                if raw is not None:
-                    break
-            if raw is None:
-                _, status, usage = os.wait4(child.pid, 0)
-                raw = os.waitstatus_to_exitcode(status)
-        if child is not None and child.stdout:
-            child.stdout.close()
-        signal.signal(signal.SIGTERM, previous_term)
+        try:
+            if selector is not None:
+                # Drain only currently observable pipe bytes after disposition; no new child.
+                deadline = time.monotonic() + 1
+                with (out / 'worker.log').open('ab') as log:
+                    while selector.get_map() and time.monotonic() < deadline:
+                        for key, _ in selector.select(.05):
+                            data = os.read(key.fd, 65536)
+                            if not data:
+                                selector.unregister(key.fileobj)
+                                continue
+                            room = MAX_LOG - size
+                            log.write(data[:room]); log.flush(); size += min(len(data), room)
+                            if len(data) > room:
+                                reason = reason or 'log_bound'
+        except Exception:
+            reason = reason or 'terminal_log_collection_failed'
+        finally:
+            if selector is not None:
+                selector.close()
+            if child is not None and child.stdout:
+                child.stdout.close()
+            if previous_term is not None:
+                signal.signal(signal.SIGTERM, previous_term)
     try:
         if child is not None:
             last_usage = usage_record(out, child.pid, nonce, start, terminal=True)
@@ -1046,6 +1134,7 @@ def run_capture(allocation_path, out):
     result = {'schema': SCHEMA, 'replacement': True, 'phase': phase, 'raw_exit': raw, 'stop_reason': reason,
         'world_success': False, 'capture_complete': complete, 'source_unchanged': before == after,
         'child_reaped': raw is not None, 'owned_group_absent': group_absent, 'peak_child_rss_bytes': peak,
+        'child_identity_lost': identity_lost, 'group_signalled_before_reap': group_signalled_before_reap,
         'cpu_user': usage.ru_utime if usage else None, 'cpu_system': usage.ru_stime if usage else None,
         'seconds': round(time.monotonic() - start, 3), 'finished_at': now(), 'handoff_complete': False,
         'final_self_usage': last_usage, 'peak_shared_anon_bytes': peak_anon}
@@ -1054,7 +1143,7 @@ def run_capture(allocation_path, out):
     finally:
         portable = bundle(out)  # FIRST failure is a portable artifact too.
     print(json.dumps({'result': result, 'portable': portable}, sort_keys=True), flush=True)
-    return 0 if phase != 'capture' and raw == 0 and complete and reason is None and before == after else 1
+    return 0 if phase != 'capture' and raw == 0 and complete and reason is None and before == after and group_absent else 1
 
 
 def main():
