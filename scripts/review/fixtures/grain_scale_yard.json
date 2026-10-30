@@ -1,6 +1,6 @@
 {
-  "qualification": "grain-scale candidate / synthetic CANDIDATE receiving context / NOT Crossroads layout acceptance / Matt review required",
-  "proposal": "Unapproved synthetic smithy frontage and working yard; smithy remains smithy, not mill. Coordinates are proposed receiving positions, not measured Crossroads terrain.",
+  "qualification": "working-yard candidate / reused H2 grain + existing goods / NOT Crossroads layout acceptance / Matt review required",
+  "proposal": "Unapproved synthetic smithy frontage and goods cluster; smithy remains smithy, not mill. Coordinates are diagnostic receiving proposals only. Existing H2 grain PNGs are reused, never redrawn.",
   "plan": {
     "zone": "grain_scale_diagnostic",
     "lab": true,
@@ -80,6 +80,26 @@
           384
         ],
         "facing": "s"
+      },
+      {
+        "id": "yard_handcart",
+        "piece": "crossroads_handcart",
+        "variant": "handcart",
+        "at": [
+          696,
+          312
+        ],
+        "facing": "s"
+      },
+      {
+        "id": "yard_grain_storage",
+        "piece": "crossroads_sacks",
+        "variant": "sacks_12",
+        "at": [
+          432,
+          384
+        ],
+        "facing": "s"
       }
     ]
   },
@@ -140,6 +160,117 @@
     "All ground and pieces remain candidates; this is not KEEP, library approval, shipping, Crossroads terrain or layout acceptance.",
     "Unmodified build imports native terrain sheet painters (face/snow/grass/path sheets) in memory before Kit loads39PNG resources. Future exact GO must include these known initialisers within composition120s/512MiB; no module execution now.",
     "Actual new grain cast shadow is produced by compose.shadows from props.entry. Smithy baked-shadow metadata yields no added live shadow. contact_ao is not a separate pass in this renderer.",
-    "Official Eastward reference remains selection only; native period, matching adult height, detail counts and Y12/art/Matt approval are not established by this diagnostic."
-  ]
+    "Official Eastward reference remains selection only; native period, matching adult height, detail counts and Y12/art/Matt approval are not established by this diagnostic.",
+    "Goods are exact existing candidate PNGs with empty function and unchanged metadata, not new inventory/economy/jobs or approved shipping content.",
+    "Ground rows/materials/tiers and native painters remain unchanged: competing mottled yard texture is NOT solved by this receiving revision.",
+    "Actual collider keep-clear bands are only this synthetic fixture contract; real movement/loading, mixed baked/live/no-Moss-contact lighting, worker pose and currentY12/Matt acceptance remain unproved.",
+    "No painter invocation is allowed: absence/expiry/hash/unsafe ZIP/capacity failure of exact H2 artifact13012081883 refuses composition without fallback."
+  ],
+  "diagnostic_access_bands": [
+    {
+      "id": "public_route",
+      "rect_art": [
+        0,
+        456,
+        960,
+        72
+      ],
+      "note": "Existing three public path rows19-21; this is a diagnostic collider keep-clear band, not a new gameplay clearance."
+    },
+    {
+      "id": "worker_south",
+      "rect_art": [
+        528,
+        408,
+        48,
+        48
+      ],
+      "note": "Existing comparison worker foot552,432 and connection toward southern route; not an animated routine or tested character movement."
+    },
+    {
+      "id": "loading_east",
+      "rect_art": [
+        624,
+        312,
+        336,
+        120
+      ],
+      "note": "Existing worn-yard approach rows13-17 east of grain station; cart is north of its boundary, no positive collider intersection."
+    }
+  ],
+  "goods_source_contracts": {
+    "source_sha": "5dd3825353078b8b8e231f081714144891d98feb",
+    "binding_review": "403eee6036dd1d96a6c63c6a25a6ca33a0ccf56d77e / review5719574126",
+    "cart": {
+      "piece": "crossroads_handcart",
+      "variant": "handcart",
+      "foot_art": [
+        57,
+        80
+      ],
+      "size_px": [
+        114,
+        84
+      ],
+      "collision_world": [
+        -11,
+        -8,
+        22,
+        8
+      ],
+      "footprint": [
+        [
+          -2,
+          -1
+        ],
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ]
+      ],
+      "status": "candidate",
+      "function": {}
+    },
+    "storage": {
+      "piece": "crossroads_sacks",
+      "variant": "sacks_12",
+      "foot_art": [
+        30,
+        62
+      ],
+      "size_px": [
+        60,
+        66
+      ],
+      "collision_world": [
+        -7,
+        -8,
+        14,
+        8
+      ],
+      "footprint": [
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ]
+      ],
+      "status": "candidate",
+      "function": {}
+    },
+    "phase_qualification": "Whole-cell X/Y selected; existing cell snap still admits half-X. Sacks at half-X+4worldpx occupy an omitted right cell; no metadata correction/physics waiver here.",
+    "shadow_qualification": "Both existing goods have cast_shadow.shape=baked; props.entry gives no added live ellipse. No guessed contact shadow or AO pass.",
+    "detail_qualification": "Existing catalogue detail_bar.passed=false: handcart ratio0.671, sacks0.509 and outline finding. Candidate reuse and extra objects do not establish detail acceptance."
+  }
 }

@@ -7,6 +7,7 @@ name: Grain-scale one-shot candidate receiving
     branches: [codex/grain-scale-receiving-run]
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: mygame-grain-scale-receiving
   cancel-in-progress: false
@@ -44,7 +45,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 3
+          fetch-depth: 4
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -67,6 +68,8 @@ jobs:
             /game/assets/characters/moss/manifest.json
             /game/assets/characters/moss/sheets/idle_S.png
             /game/kit/pieces/prop/crossroads_grain_scale.json
+            /game/kit/pieces/prop/crossroads_handcart.json
+            /game/kit/pieces/prop/crossroads_sacks.json
             /game/kit/pieces/structure/crossroads_smithy.json
             /game/kit/pieces/terrain/lawn.json
             /game/kit/pieces/terrain/path.json
@@ -113,6 +116,8 @@ jobs:
             /game/kit/terrain/over_water_over_earth_face.png
             /game/kit/terrain/over_worn_over_path.png
             /game/zones/crossroads/art/smithy.png
+            /game/zones/crossroads/art/handcart.png
+            /game/zones/crossroads/art/sacks_12.png
             /scripts/art/biomes/woodland.json
             /scripts/art/house_palette.py
             /scripts/art/kit/__init__.py
@@ -151,8 +156,10 @@ jobs:
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12'
-      - name: One bounded draw and one candidate composition after actual preflight
+      - name: Reuse exact H2 grain bytes and compose one candidate working yard
         id: receiving
+        env:
+          GRAIN_ARTIFACT_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail

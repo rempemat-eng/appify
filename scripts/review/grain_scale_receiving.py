@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""One-shot grain-scale receiving preparation; NO execution before lead GO.
+"""One-shot working-yard receiving preparation; NO execution before lead GO.
 
-Unmodified403 painter, props.entry, render_zone.render and Pixel API. This file
+Exact retained H2 PNGs, unmodified props.entry and render_zone.render. This file
 is a task adapter, not a compositor or production adopter. Reviewed402c2cd
 WNOWAIT/wait4/group collection mechanism is reused with explicit task limits.
 All scientific imports and subject work occur ONLY in separately bounded children.
@@ -12,7 +12,7 @@ import ctypes
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import platform
 import re
 import resource
@@ -20,18 +20,25 @@ import selectors
 import shutil
 import signal
 import stat
+import struct
 import subprocess
 import sys
 import tarfile
 import time
 import traceback
+import urllib.error
+import urllib.parse
+import urllib.request
+import zipfile
 
 SEAL_DEADLINE = None  # Only active during final bounded receipt sealing.
 SOURCE_SHA = "5dd3825353078b8b8e231f081714144891d98feb"
 SOURCE_TREE = "120c336609b393591a662beddf45a84149e73810"
 SOURCE_PARENT = "724662fa4edb4f37673856c6e78fe5f60a7fc9c1"
-RECEIVER_PARENT = "1d47eec95256fccb41fcd7fa987d788bac254494"
-CORRECTION_PATHS = {"scripts/review/grain_scale_receiving.py", ".github/workflows/grain-scale-receiving.yml"}
+RECEIVER_PARENT = "3e7e6ff65dc71448d36da0932659f8b8123f043c"
+ORIGINAL_RECEIVER = "1d47eec95256fccb41fcd7fa987d788bac254494"
+CORRECTION_PATHS = {"scripts/review/grain_scale_receiving.py", "scripts/review/fixtures/grain_scale_yard.json",
+                    ".github/workflows/grain-scale-receiving.yml"}
 OWNED_PATHS = {"scripts/review/grain_scale_receiving.py", "scripts/review/fixtures/grain_scale_yard.json",
                ".github/workflows/grain-scale-receiving.yml"}
 FIXTURE = "scripts/review/fixtures/grain_scale_yard.json"
@@ -136,9 +143,24 @@ INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a0
  'scripts/art/size_guide.json': ('f30ecb3249d771e5dc6cdf6546d50400b118cf57', 45069, '100644'),
  'scripts/review/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
  'scripts/review/ground_rules.py': ('0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68', 18956, '100644'),
- 'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305, '100644')}
+ 'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305, '100644'),
+ 'game/kit/pieces/prop/crossroads_handcart.json': ('d50ff1b2469e67333ecc47b4dd58a794a3a7c21d', 1684, '100644'),
+ 'game/kit/pieces/prop/crossroads_sacks.json': ('ad8a77b6d5b63e9863cde3d2ba7980fc2d2c30e8', 1625, '100644'),
+ 'game/zones/crossroads/art/handcart.png': ('c1016d875a02681ecfc24f624b98dc74e3caa35d', 2189, '100644'),
+ 'game/zones/crossroads/art/sacks_12.png': ('26f9bc05d662407557e6c152cf7fbc8c65b41871', 1122, '100644')}
 DEPENDENCIES = {"Pillow":"12.3.0", "numpy":"2.5.3", "scipy":"1.18.1"}
 FILENAMES = ("crossroads_grain_scale_ready.png", "crossroads_grain_scale_loaded.png")
+H2_ARTIFACT_ID = 13012081883
+H2_RUN_ID = 41128868097
+H2_RECEIVER_SHA = "3e7e6ff65dc71448d36da0932659f8b8123f043c"
+H2_SOURCE_SHA = "5dd3825353078b8b8e231f081714144891d98feb"
+H2_ZIP_BYTES = 3776131
+H2_ZIP_SHA256 = "609f3772d3a63eda72df6f7e174134530268f6c3fcb11857433779fe96b8ae9b"
+H2_PNGS = {
+    FILENAMES[0]: (2837, "beea15bd36e20c9a4887dd721bfbf6febd313658aa278f206e5062eb4b0f3d1c"),
+    FILENAMES[1]: (3199, "967c74e5bc753357abf3d8cfecc7d6593291632af1ae36659fbde8bae1ba0199"),
+}
+GOODS = ("game/kit/pieces/prop/crossroads_handcart.json", "game/kit/pieces/prop/crossroads_sacks.json")
 GRAIN = "game/kit/pieces/prop/crossroads_grain_scale.json"
 SMITHY = "game/kit/pieces/structure/crossroads_smithy.json"
 OWNED_LIMIT = 1024 * 1024**2  # full duty, separately includes all source/work/deps/evidence
@@ -168,6 +190,144 @@ def blob(path: Path) -> str:
 
 def write_json(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, sort_keys=True, indent=2) + "\n")
+
+def reuse_h2(root: Path, work: Path, evidence: Path) -> int:
+    """Task-specific bounded urllib/ZIP intake, adapted from the existing receiver.
+
+    Only authenticated GitHub metadata/redirect uses the token; the signed blob
+    request has no Authorization header. Never print tokens, signed URLs or raw
+    network exception strings. Originals/partial bytes stay in this job's duty.
+    """
+    token = os.environ.pop("GRAIN_ARTIFACT_TOKEN", "")
+    if not token:
+        raise RuntimeError("Read-Actions token required for exact H2 artifact; no repaint fallback")
+    if work != root / "work" or evidence != root / "evidence":
+        raise RuntimeError("H2 intake requires the existing private duty paths")
+    archive = evidence / "h2-original.zip"
+    art = work / "game/kit/props/art"
+    if archive.exists() or art.exists():
+        raise RuntimeError("Fresh H2 intake destinations required; retain earlier evidence")
+    started, received = time.monotonic(), 0
+    receipt = {"artifact_id": H2_ARTIFACT_ID, "run_id": H2_RUN_ID,
+               "receiver_sha": H2_RECEIVER_SHA, "source_sha": H2_SOURCE_SHA,
+               "expected_bytes": H2_ZIP_BYTES, "expected_sha256": H2_ZIP_SHA256}
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+    opener = urllib.request.build_opener(NoRedirect)
+    api = f"https://api.github.com/repos/rempemat-eng/appify/actions/artifacts/{H2_ARTIFACT_ID}"
+    headers = {"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    try:
+        try:
+            with opener.open(urllib.request.Request(api, headers=headers), timeout=10) as response:
+                raw = response.read(65537)
+            if len(raw) > 65536:
+                raise RuntimeError("H2 artifact metadata exceeds64KiB")
+            (evidence / "h2-artifact-metadata.json").write_bytes(raw)
+            meta = json.loads(raw)
+            if not isinstance(meta, dict):
+                raise RuntimeError("H2 artifact metadata must be an object")
+            if (meta.get("id") != H2_ARTIFACT_ID or meta.get("expired") is not False
+                    or meta.get("size_in_bytes") != H2_ZIP_BYTES
+                    or meta.get("digest") != "sha256:" + H2_ZIP_SHA256
+                    or meta.get("name") != f"mygame-grain-scale-{H2_RECEIVER_SHA}-{H2_RUN_ID}-1"
+                    or meta.get("workflow_run", {}).get("id") != H2_RUN_ID
+                    or meta.get("workflow_run", {}).get("head_sha") != H2_RECEIVER_SHA):
+                raise RuntimeError("H2 artifact identity/run/receiver/size/expiry mismatch")
+            # Deliberately do not forward the API token through the cross-host redirect.
+            try:
+                response = opener.open(urllib.request.Request(api + "/zip", headers=headers), timeout=10)
+            except urllib.error.HTTPError as error:
+                if error.code != 302:
+                    raise RuntimeError("H2 archive endpoint did not provide its expected redirect") from None
+                location = error.headers.get("Location", "")
+                error.close()
+                url = urllib.parse.urlsplit(location)
+                host = url.hostname or ""
+                if (url.scheme != "https" or url.username or url.password or url.fragment
+                        or url.port not in (None, 443)
+                        or not (host.endswith(".blob.core.windows.net") or host.endswith(".actions.githubusercontent.com"))):
+                    raise RuntimeError("H2 archive redirect destination refused")
+                response = opener.open(urllib.request.Request(location), timeout=10)
+            else:
+                response.close()
+                raise RuntimeError("Unexpected H2 archive response; no alternate acquisition")
+            with response, archive.open("xb") as output:
+                for chunk in iter(lambda: response.read(65536), b""):
+                    if received + len(chunk) > H2_ZIP_BYTES or time.monotonic() - started > 30:
+                        raise RuntimeError("H2 archive exact-byte/30s acquisition bound exceeded")
+                    output.write(chunk)
+                    received += len(chunk)
+            # The enclosing unchanged phase monitor enforces duty/RSS/log/deadline.
+        except (urllib.error.URLError, OSError, ValueError) as error:
+            raise RuntimeError("H2 artifact acquisition failed: " + type(error).__name__) from None
+        if received != H2_ZIP_BYTES or digest(archive) != H2_ZIP_SHA256:
+            raise RuntimeError("Original H2 archive bytes/hash differ; no repaint fallback")
+        art.mkdir(parents=True, mode=0o700)
+        selected = {"work/game/kit/props/art/" + n: n for n in FILENAMES}
+        files, expanded = {}, 0
+        with zipfile.ZipFile(archive) as packed:
+            members = packed.infolist()
+            if not 1 <= len(members) <= 128 or len({x.filename for x in members}) != len(members):
+                raise RuntimeError("H2 ZIP duplicate/member-count refusal")
+            for member in members:
+                path = PurePosixPath(member.filename)
+                mode = member.external_attr >> 16
+                if (not member.filename or "\\" in member.filename or path.is_absolute()
+                        or member.orig_filename != member.filename
+                        or any(p in ("", ".", "..") for p in member.filename.rstrip("/").split("/"))
+                        or str(path) != member.filename.rstrip("/") or member.flag_bits & 1
+                        or stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR)):
+                    raise RuntimeError("Unsafe H2 ZIP path/type/encryption")
+                if ((stat.S_IFMT(mode) == stat.S_IFDIR and not member.is_dir())
+                        or (stat.S_IFMT(mode) == stat.S_IFREG and member.is_dir())):
+                    raise RuntimeError("H2 ZIP file/directory type mismatch")
+                expanded += member.file_size
+                if expanded > 16 * 1024**2 or member.file_size < 0:
+                    raise RuntimeError("H2 ZIP expanded-size bound exceeded")
+                if member.is_dir():
+                    if member.filename in selected or member.file_size:
+                        raise RuntimeError("H2 PNG member is not a physical file")
+                    continue
+                name = selected.get(member.filename)
+                if name and member.file_size != H2_PNGS[name][0]:
+                    raise RuntimeError("H2 PNG member declared size differs")
+                h, count, data = hashlib.sha256(), 0, bytearray()
+                with packed.open(member) as source:
+                    for chunk in iter(lambda: source.read(65536), b""):
+                        count += len(chunk)
+                        if count > member.file_size or time.monotonic() - started > 30:
+                            raise RuntimeError("H2 ZIP byte/deadline bound exceeded")
+                        h.update(chunk)
+                        if name: data.extend(chunk)
+                if count != member.file_size:
+                    raise RuntimeError("H2 ZIP truncated member")
+                if name:
+                    if (count, h.hexdigest()) != H2_PNGS[name]:
+                        raise RuntimeError("H2 original PNG hash differs")
+                    if (data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR"
+                            or struct.unpack(">II", data[16:24]) != (168, 144)):
+                        raise RuntimeError("H2 PNG header differs")
+                    with (art / name).open("xb") as dest: dest.write(data)
+                    files[name] = {"bytes": count, "sha256": h.hexdigest(),
+                                   "size_px": [168,144], "foot_art": [84,132]}
+        if set(files) != set(FILENAMES) or set(art.iterdir()) != {art / n for n in FILENAMES}:
+            raise RuntimeError("Both exact H2 PNG members required, no substitution")
+        write_json(evidence / "reuse-result.json", {"state":"PASS", "draw_invocations":0,
+            "files":files, "provenance":receipt, "all_zip_members_crc_read":len(members),
+            "qualification":"Exact old H2 bytes reused; no new draw/reproduction/detail approval"})
+        return 0
+    finally:
+        primary_error = sys.exc_info()[0]
+        try:
+            receipt.update(received_bytes=received, elapsed_s=time.monotonic()-started,
+                           retained_bytes=archive.stat().st_size if archive.exists() else 0,
+                           retained_sha256=digest(archive) if archive.exists() else None)
+            write_json(evidence / "h2-acquisition.json", receipt)
+        except BaseException as error:
+            if primary_error is None: raise
+            print("H2 acquisition receipt incomplete: " + type(error).__name__, file=sys.stderr)
 
 def diagnostic_text(path: Path) -> str:
     # Raw bytes stay untouched in the artifact. Strip terminal escapes for scanning only.
@@ -249,7 +409,8 @@ class Controller:
         self.work = self.root / "work"
         self.evidence = self.root / "evidence"
         self.event_sha = args.event_sha
-        self.phases = {n: {"state": "NOTRUN"} for n in ("dependencies", "versions", "paint", "composition")}
+        self.artifact_token = os.environ.pop("GRAIN_ARTIFACT_TOKEN", "")
+        self.phases = {n: {"state": "NOTRUN"} for n in ("dependencies", "versions", "reuse", "composition")}
         self.output = {"state": "SETUP_FAILED", "workflow_sha": self.event_sha,
                        "source_sha": SOURCE_SHA, "source_tree": SOURCE_TREE, "phases": self.phases,
                        "qualification": "Synthetic CANDIDATE only; no terrain/layout/library/art/Matt acceptance."}
@@ -257,6 +418,7 @@ class Controller:
         self.candidate_before = None
         self.deps_before = None
         self.fixture_before = None
+        self.reuse_before = None
         self.owned_roots = (self.root, self.source, self.candidate)
 
     def capacity(self):
@@ -349,7 +511,10 @@ class Controller:
         if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [RECEIVER_PARENT]:
             raise RuntimeError("Receiving correction must retain the exact sole receiver parent")
         parent_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
-        if [x[7:] for x in parent_headers.splitlines() if x.startswith("parent ")] != [SOURCE_SHA]:
+        if [x[7:] for x in parent_headers.splitlines() if x.startswith("parent ")] != [ORIGINAL_RECEIVER]:
+            raise RuntimeError("H2 receiver must retain genuine1d47 parent")
+        original_headers = git(self.candidate, "cat-file", "commit", ORIGINAL_RECEIVER).decode().split("\n\n", 1)[0]
+        if [x[7:] for x in original_headers.splitlines() if x.startswith("parent ")] != [SOURCE_SHA]:
             raise RuntimeError("Original receiver must retain genuine403 parent")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [x[7:] for x in source_headers.splitlines() if x.startswith("parent ")] != [SOURCE_PARENT]:
@@ -358,7 +523,7 @@ class Controller:
         previous = tree(self.candidate, RECEIVER_PARENT)
         correction_delta = {p for p in previous.keys() | runner.keys() if previous.get(p) != runner.get(p)}
         if correction_delta != CORRECTION_PATHS:
-            raise RuntimeError("Only the two existing receiving correction paths may change")
+            raise RuntimeError("Only the three existing working-yard receiving paths may change")
         delta = {p for p in src.keys() | runner.keys() if src.get(p) != runner.get(p)}
         if delta != OWNED_PATHS or any(p in src for p in OWNED_PATHS):
             raise RuntimeError("Exactly three NEW receiving files only")
@@ -372,7 +537,8 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers, "parent_headers": parent_headers, "receiver_parent": RECEIVER_PARENT,
+            "headers": headers, "parent_headers": parent_headers, "original_headers": original_headers,
+            "receiver_parent": RECEIVER_PARENT,
             "correction_delta": sorted(correction_delta), "source_headers": source_headers, "delta": sorted(delta),
             "receiving": self.candidate_before})
         for name in OWNED_PATHS:
@@ -414,7 +580,7 @@ class Controller:
             "source_files":len(INPUTS), "source_bytes":sum(v[1] for v in INPUTS.values()),
             "limits":{"duty_bytes":OWNED_LIMIT,"dependency_stage_bytes":DEPENDENCY_LIMIT,
                 "evidence_bytes":EVIDENCE_LIMIT,"reserve_bytes":FREE_RESERVE,
-                "paint_s":30,"paint_sampled_group_rss":256*1024**2,"paint_output":8*1024**2,
+                "reuse_s":30,"reuse_sampled_group_rss":256*1024**2,"reused_png_output":8*1024**2,
                 "composition_s":120,"composition_sampled_group_rss":512*1024**2,
                 "presentation_output":16*1024**2,"phase_log":LOG_LIMIT,
                 "collection_per_phase_s":12,"per_process_AS":2*1024**3,"job_outer_minutes":15},
@@ -470,12 +636,18 @@ class Controller:
             self.setup()
             self.install_dependencies()
             controller = self.candidate / "scripts/review/grain_scale_receiving.py"
-            for name, seconds, rss in (("paint",30,256*1024**2),("composition",120,512*1024**2)):
+            for name, seconds, rss in (("reuse",30,256*1024**2),("composition",120,512*1024**2)):
                 command = [sys.executable,"-B",str(controller),"--mode",name,"--root",str(self.root)]
-                self.require_phase(name,self.phase(name,command,seconds,rss))
+                if name == "reuse": self.env["GRAIN_ARTIFACT_TOKEN"] = self.artifact_token
+                try:
+                    self.require_phase(name,self.phase(name,command,seconds,rss))
+                finally:
+                    self.env.pop("GRAIN_ARTIFACT_TOKEN", None)
+                    self.artifact_token = ""
                 result = json.loads((self.evidence / (name+"-result.json")).read_text())
                 if result.get("state") != "PASS":
                     raise RuntimeError(f"{name} output/canary incomplete")
+                if name == "reuse": self.reuse_before = result
             self.output["state"] = "DIAGNOSTIC_EXECUTION_COMPLETE_PENDING_FINAL_GUARDS"
         except BaseException as error:
             failure = {"type":type(error).__name__,"message":str(error),"traceback":traceback.format_exc()}
@@ -496,6 +668,15 @@ class Controller:
                 ("source", lambda: {"inputs":self.inputs_snapshot(self.source),"index_sha256":digest(self.index)} == self.before),
                 ("work-inputs", lambda: self.inputs_snapshot(self.work) == self.before["inputs"]),
                 ("work-fixture", lambda: digest(self.work / FIXTURE) == self.fixture_before),
+                ("h2-reuse", lambda: digest(self.evidence / "h2-original.zip") == H2_ZIP_SHA256
+                    and (self.evidence / "h2-original.zip").stat().st_size == H2_ZIP_BYTES
+                    and set((self.work / "game/kit/props/art").iterdir()) == {
+                        self.work / "game/kit/props/art" / n for n in FILENAMES}
+                    and all(stat.S_ISREG((self.work / "game/kit/props/art" / n).lstat().st_mode)
+                        and (self.work / "game/kit/props/art" / n).lstat().st_nlink == 1
+                        and (self.work / "game/kit/props/art" / n).stat().st_size == H2_PNGS[n][0]
+                        and digest(self.work / "game/kit/props/art" / n) == H2_PNGS[n][1]
+                        for n in FILENAMES)),
                 ("dependencies", lambda: self.dependency_snapshot() == self.deps_before)):
                 try:
                     seal_check()
@@ -504,6 +685,9 @@ class Controller:
                         continue
                     if label == "work-fixture" and self.fixture_before is None:
                         self.output[label+"_guard"] = "NOTRUN; setup not complete"
+                        continue
+                    if label == "h2-reuse" and self.reuse_before is None:
+                        self.output[label+"_guard"] = "NOTRUN; reuse not complete"
                         continue
                     if not action(): raise RuntimeError(label+" bytes/index changed")
                     seal_check()
@@ -534,11 +718,11 @@ class Controller:
             if failure or final_errors:
                 self.output["state"] = "RECEIVING_FAILED_OR_FINAL_GUARD_INCOMPLETE"
             elif self.output["state"] == "DIAGNOSTIC_EXECUTION_COMPLETE_PENDING_FINAL_GUARDS":
-                self.output["state"] = "SYNTHETIC_DIAGNOSTIC_COMPLETE_NOT_ART_APPROVAL"
+                self.output["state"] = "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL"
             self.output.update(final_errors=final_errors,seal_elapsed_s=time.monotonic()-seal_started,
                                finished_at=time.time(),art_approved=False,layout_approved=False)
             write_json(self.evidence / "result.json",self.output)
-        return 0 if self.output["state"] == "SYNTHETIC_DIAGNOSTIC_COMPLETE_NOT_ART_APPROVAL" else 1
+        return 0 if self.output["state"] == "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL" else 1
 
     def phase(self, name: str, command: list[str], seconds: int, rss_limit: int) -> dict:
         result = {"state": "STARTING", "command": command, "timeout_seconds": seconds,
@@ -729,14 +913,17 @@ def child(mode, root):
                  for n,m in zip(("Pillow","numpy","scipy"),(PIL,numpy,scipy))}}
         write_json(evidence / "scientific-versions.json",value)
         return 0
+    if mode == "reuse":
+        return reuse_h2(root, work, evidence)
     # No subject imports occur before outer preflight and private exact dependency stage.
     from PIL import Image, ImageDraw, ImageFont
     from scripts.art.kit import schema
-    from scripts.art.native.palette import rgb
     config = json.loads((work / FIXTURE).read_text())
     grain = json.loads((work / GRAIN).read_text())
     smithy = json.loads((work / SMITHY).read_text())
-    for piece in (grain,smithy):
+    goods = [json.loads((work / path).read_text()) for path in GOODS]
+    pieces = [grain,smithy,*goods]
+    for piece in pieces:
         errors = schema.errors(piece,schema.load_schema())
         if errors or piece["approval"]["state"] != "candidate":
             raise RuntimeError("Source schema/status mismatch: "+str(errors))
@@ -747,67 +934,54 @@ def child(mode, root):
             ("loaded","res://kit/props/art/"+FILENAMES[1],[84,132])]:
         raise RuntimeError("Two authored states changed")
     art = work / "game/kit/props/art"
-    if mode == "paint":
-        from scripts.art.kit import crossroads_grain_scale as painter
-        if art.exists():
-            raise RuntimeError("Subject destination must be absent before one allocated draw")
-        # EXACTLY ONE call draws the two committed states; no reproduction/retry.
-        authored = painter.write(art)
-        if set(art.iterdir()) != {art / n for n in FILENAMES}:
-            raise RuntimeError("Painter output scope differs")
-        allowed = {tuple(rgb(f,t)) for f in ("timber","timber_cool","iron","clay") for t in range(6)}
-        manifest = {}
-        for name in FILENAMES:
-            path = art / name
-            actual = {"sha256":digest(path),"bytes":path.stat().st_size}
-            with Image.open(path) as img:
-                img.load()
-                if img.mode != "RGBA" or img.size != (168,144):
-                    raise RuntimeError("Subject PNG dimensions/mode differ")
-                bbox = img.getbbox()
-                if bbox is None or bbox[0] < 0 or bbox[1] < 0 or bbox[2] >168 or bbox[3] >144:
-                    raise RuntimeError("Empty/invalid subject alpha bounds")
-                colours = {p[:3] for p in img.getdata() if p[3]}
-                if not colours <= allowed:
-                    raise RuntimeError("Subject palette canary failed")
-                actual.update(size_px=list(img.size),foot_art=[84,132],alpha_bbox=list(bbox),
-                              palette_colours=len(colours))
-            if actual["sha256"] != authored[name]["sha256"]:
-                raise RuntimeError("Painter-reported and actual bytes disagree")
-            manifest[name] = actual
-        if manifest[FILENAMES[0]]["sha256"] == manifest[FILENAMES[1]]["sha256"]:
-            raise RuntimeError("Ready/loaded state images are identical")
-        write_json(evidence / "paint-result.json",{"state":"PASS","draw_invocations":1,
-            "files":manifest,"qualification":"Anchor/palette/output canary only; no art/detail approval"})
-        return 0
     if mode != "composition":
         raise RuntimeError("Unknown receiving phase")
-    paint = json.loads((evidence / "paint-result.json").read_text())
-    if paint.get("state") != "PASS" or paint.get("draw_invocations") != 1:
-        raise RuntimeError("Missing original same-invocation paint canary")
+    reused = json.loads((evidence / "reuse-result.json").read_text())
+    if (reused.get("state") != "PASS" or reused.get("draw_invocations") != 0
+            or reused.get("provenance", {}).get("artifact_id") != H2_ARTIFACT_ID):
+        raise RuntimeError("Missing exact H2 reuse receipt; no painter fallback")
     for name in FILENAMES:
-        if digest(art / name) != paint["files"][name]["sha256"]:
-            raise RuntimeError("Actual newly drawn subject bytes changed BEFORE composition")
+        if (digest(art / name) != H2_PNGS[name][1]
+                or reused["files"][name]["sha256"] != H2_PNGS[name][1]
+                or (art / name).stat().st_size != H2_PNGS[name][0]):
+            raise RuntimeError("Exact reused H2 PNG changed BEFORE composition")
     plan = config["plan"]
     if (plan["zone"] != "grain_scale_diagnostic" or not plan["lab"] or plan["ship"] or plan["bake"]
             or plan.get("coordinate_space") != "texels" or len(plan["rows"]) !=22
             or any(len(row)!=40 or set(row)-set(plan["legend"]) for row in plan["rows"])):
         raise RuntimeError("Synthetic fixture/coordinate/glyph contract differs")
     expected = [("existing_smithy","crossroads_smithy","smithy",[240,360]),
-                ("grain_candidate","crossroads_grain_scale","loaded",[552,384])]
+                ("grain_candidate","crossroads_grain_scale","loaded",[552,384]),
+                ("yard_handcart","crossroads_handcart","handcart",[696,312]),
+                ("yard_grain_storage","crossroads_sacks","sacks_12",[432,384])]
     if [(p["id"],p["piece"],p["variant"],p["at"]) for p in plan["pieces"]] != expected:
         raise RuntimeError("Named fixture instances/positions differ; no silent variant fallback")
     from scripts.art.kit import props
-    compiled = {p["id"]:props.entry(p) for p in (grain,smithy)}
+    compiled = {p["id"]:props.entry(p) for p in pieces}
     if (compiled[grain["id"]]["shadow"] != {"size":[48,9],"dir":[6,3]}
             or compiled[grain["id"]]["collision"] != [-48,-24,96,24]
             or compiled[smithy["id"]]["shadow"] is not None):
         raise RuntimeError("Actual compiler shadow/collision contract differs")
-    for p in (grain,smithy):
+    for p in pieces:
         if any(compiled[p["id"]][k] != p.get(k,{}) for k in ("function","story")):
             raise RuntimeError("Compiler lost authored function/story metadata")
         if compiled[p["id"]]["footprint"] != p["geometry"]["footprint"]:
             raise RuntimeError("Compiler footprint differs from source")
+    for piece in goods:
+        if (piece.get("function") != {} or piece["rendering"]["cast_shadow"] != {"shape":"baked"}
+                or compiled[piece["id"]]["shadow"] is not None):
+            raise RuntimeError("Goods function/shadow/status must not be promoted")
+    for entry in plan["pieces"]:
+        if entry["id"].startswith("yard_") and any(v % 24 for v in entry["at"]):
+            raise RuntimeError("Whole-cell goods feet required; preserve sack half-X caveat")
+        rect = compiled[entry["piece"]]["collision"]
+        if rect:
+            x,y,w,h = rect
+            x,y = x+entry["at"][0], y+entry["at"][1]
+            for band in config["diagnostic_access_bands"]:
+                bx,by,bw,bh = band["rect_art"]
+                if max(x,bx) < min(x+w,bx+bw) and max(y,by) < min(y+h,by+bh):
+                    raise RuntimeError("Candidate collider obstructs authored diagnostic access band: "+band["id"])
     idx = work / "game/kit/props/index.json"
     zone = work / "game/kit/zones/grain_scale_diagnostic.json"
     if idx.exists() or zone.exists():
@@ -816,7 +990,7 @@ def child(mode, root):
     write_json(idx,compiled);write_json(zone,plan)
     # No shared ROOT/index monkeypatch, full props.build, bake or world generator.
     from scripts.review import kit_scene
-    library = {p["id"]:p for p in (grain,smithy)}
+    library = {p["id"]:p for p in pieces}
     # Use the complete ACTUAL metadata registry: surface:rock is a declared
     # grain alternative, even though this fixture places only lawn/worn/path.
     # Omitting scree would fabricate an unknown-ground refusal in the adapter.
@@ -861,6 +1035,7 @@ def child(mode, root):
     outputs = {p.name:{"bytes":p.stat().st_size,"sha256":digest(p)} for p in out.iterdir() if p.is_file()}
     write_json(evidence / "composition-result.json",{"state":"PASS","composition_invocations":1,
         "outputs":outputs,"fixture":config,"private_index":compiled,"physical_findings":findings,
+        "grain_reuse":reused,"new_painter_invocations":0,
         "Moss":{"actual_alpha_bbox":[62,63,100,137],"packed_height":74,"target":72,
                 "crop":[480,0,160,144],"foot_art":[80,136],"placed_foot":[552,432]},
         "shadow_qualification":"Actual compose.shadows for grain [48,9]/[6,3]; smithy raster/baked metadata preserved; no additional character/contact-AO pass invented.",
@@ -870,7 +1045,7 @@ def child(mode, root):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode",choices=("outer","versions","paint","composition"),default="outer")
+    parser.add_argument("--mode",choices=("outer","versions","reuse","composition"),default="outer")
     parser.add_argument("--source",type=Path)
     parser.add_argument("--candidate",type=Path)
     parser.add_argument("--root",required=True,type=Path)
