@@ -1,4 +1,7 @@
 import { makeWalkGrid, type Point } from './garden-path';
+import { ART_DENSITY } from './art-density-setting';
+import type { ArtDensity } from './art-density';
+import { BUDGETS } from './budgets';
 import {
   tileRows,
   worldAreas,
@@ -403,7 +406,13 @@ export const TILE_MOUNT_MARGIN = 24;
  * at 1920 x 1080, 20 and 32.77 MiB at 2560 x 1440): all of its view's tiles mount, and
  * nothing past them.
  */
-export const TILE_BUDGET = { tiles: 12, bytes: 25 * 1024 * 1024 } as const;
+export function tileBudget(density: ArtDensity = ART_DENSITY) {
+  const { tiles, tileBytes } = BUDGETS[density];
+  return { tiles, bytes: tileBytes };
+}
+
+/** Density-1 compatibility for existing source-budget consumers. Runtime uses tileBudget(). */
+export const TILE_BUDGET = tileBudget(1);
 
 /** The camera is drawn at a whole CSS px, so what shows may sit up to half a CSS px (half
  *  an art px at the tested sizes) off the view the tiles are chosen for: a tile this close
@@ -451,7 +460,7 @@ export function tilesToMount(
   view: RegionBox,
   mounted: readonly string[] = [],
   margin = TILE_MOUNT_MARGIN,
-  budget: { tiles: number; bytes: number } = TILE_BUDGET,
+  budget: { tiles: number; bytes: number } = tileBudget(),
 ): string[] {
   const was = new Set(mounted);
   const near = new Set(tileKeysNear(region, view, margin * 2 + VIEW_SLACK));
