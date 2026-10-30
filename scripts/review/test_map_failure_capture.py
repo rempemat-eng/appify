@@ -467,9 +467,17 @@ class CaptureWorkflowContract(unittest.TestCase):
         code = compile(expression, str(path) + ':expected-baseline', 'eval')
         keys = ('trial125', 'records19', 'queue20_23', 'original_error')
         def evaluate(flags):
-            return eval(code, {'__builtins__': {'all': all}, 'core': {'comparison_target': flags}}, {})
+            env = {'__builtins__': {'all': all}, 'core': {'comparison_target': flags}}
+            return eval(code, env, env)
+        generator = compile("all(core.get('comparison_target', {}).get(key) is True for key in ('trial125', 'records19', 'queue20_23', 'original_error'))", str(path) + ':namespace-probe', 'eval')
+        env = {'__builtins__': {'all': all}, 'core': {'comparison_target': dict.fromkeys(keys, True)}}
+        self.assertTrue(eval(generator, env, env))  # Execute a real generator in this restricted namespace.
         self.assertTrue(evaluate(dict.fromkeys(keys, True)))
+        self.assertFalse(evaluate({}))
         for key in keys:
+            with self.subTest(missing_flag=key):
+                flags = dict.fromkeys(keys, True); del flags[key]
+                self.assertFalse(evaluate(flags))
             for value in (False, 1, None):
                 with self.subTest(flag=key, value=value):
                     flags = dict.fromkeys(keys, True); flags[key] = value
