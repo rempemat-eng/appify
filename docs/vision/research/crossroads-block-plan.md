@@ -6,6 +6,8 @@ The preferred plan is a **compact market widening with connected mixed fronts, d
 
 The companion [JSON](crossroads-block-plan.json) is a human-review proposal sidecar. It is not a runtime schema, adopted town plan, new validator or instruction to the producer.
 
+[Lead amendment6533453453](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6533453453) repairs an inventory omission: retain the original forty records and add one separately labelled candidate representation of the already-authored mill programme in block F. The candidate total is **41**, within Matt's large-town range of 30–45. The previous exact-forty hold was lead accounting, not a new decision for Matt. No mill identity, geometry or terrain placement is adopted here.
+
 ## Retained facts and limits
 
 This proposal starts from PR381 source `3818de444d24c95c50daedd6e547a78bd0436551`, after the workflow-only handoff. The preceding Granary extension remains **only a placement diagnostic**. Its requirement to preserve the failed layout's first nineteen positions belongs to that engineering experiment; it does not make those nineteen positions an approved masterplan. Here, records 1–7 remain measured gameplay anchors; records 8–40 receive future block/plot assignments, with no new coordinates.
@@ -44,14 +46,14 @@ Every plot has a street front, a service/household back, and an edge. Short fron
 | **C — Garden and north terrace** | 001,003,010,011 (4) | Retain your hut and north terrace; two additional records give the approach an inhabited edge. Garden backs stay quieter than the goods streets. Do not surround the garden with service paving. |
 | **D — West Lane** | 008,009,024,025,026,027 (6) | Two row-house records make short grouped fronts, then cottage/house plots turn and taper toward the woodland. A connected rear lane reaches courts and long gardens. No blind backland house with no public entrance. |
 | **E — Eastgate** | 030,031,032,034,036 (5) | Both existing inn forms remain: record031 fronts the principal coach/service court, record030 has a separate smaller inn court, and connected house/cottage fronts. Their entrances belong to the east approach, not to the rail yard. |
-| **F — Mill End** | 012,014,015,016,017,018,019,020,021,023 (10) | Short house/cottage groups enclose Mill Street's junctions. Side passages reach plot courts and grain handling; garden/farm backs soften the outer edge. The river and productive court determine where these groups can fit, not a long default row. |
+| **F — Mill End** | 012,014,015,016,017,018,019,020,021,023 (10 retained), plus separate candidate F11 (1) | Short house/cottage groups enclose Mill Street's junctions. Side passages reach plot courts and grain handling; candidate F11 represents the existing mill programme, with identity and geometry unresolved. Garden/farm backs soften the outer edge. The river and productive court determine fit, not a long default row. |
 | **G — Halt Road fringe** | 028,029,038,039,040 (5) | A small inhabited approach with long garden/work plots leads toward the halt-related working area. Rail loading is a separate destination, with fields beyond; it is not automatically an inn stable yard. |
 
 **Front → court/work area → garden** is a relationship, not three equal bands. Deeper plots can differ in length and combine narrow passages, paved working edges, trees, vegetable ground and household space. The outer boundary should follow real plot backs and productive land; avoid an abrupt rectangle of painted town ground.
 
 ### Conceptual relationship diagram — UNSCALED
 
-Arrows show proposed connections, not measured direction, building polygons, travel rules or approved crossings. Letter groups refer to the block table and the forty-record ledger.
+Arrows show proposed connections, not measured direction, building polygons, travel rules or approved crossings. Letter groups refer to the block table, unchanged forty-record ledger and separate candidate mill addition.
 
 ```mermaid
 flowchart TB
@@ -66,16 +68,22 @@ flowchart TB
     R -->|"town-side return; gate stays closed"| H
     B --> S["Smith working back / domestic courts"]
     E --> C["Coach court / east service entrance"]
-    F --> G["Grain court / mill building unresolved"]
+    F --> G["Grain court / candidate mill F11"]
     G --- W["Sleepwater bank / working face UNKNOWN"]
     H --- Y["Separate halt loading / rail fit UNKNOWN"]
 ```
 
 ## Mill, courts, viewpoints and useful open space
 
-A mill town needs a visible **water → mill/work face → grain handling → cart approach** relationship. Reserve that relationship below the market, using the real Sleepwater rather than a decorative pond. The handling court should be reached from Mill Street; a public bank passage/view can expose the water and work without crossing the loading face. Bank grade, hydraulic reach and the actual mill building remain unresolved.
+A mill town needs a visible **water → mill/work face → grain handling → cart approach** relationship. Reserve that relationship below the market, using the real Sleepwater rather than a decorative pond. The handling court should be reached from Mill Street; a public bank passage/view can expose the water and work without crossing the loading face. Bank grade, hydraulic reach, candidate building identity and its exact placement remain unresolved.
 
-**Programme gap requiring a decision:** none of the retained forty records has form `mill`. Record006 is the old smithy, not a spare mill. This draft does not convert it, relabel a cottage as an observed mill, add a forty-first building or invent an occupant/job. Lead/Matt must resolve how the actual mill building is represented before terrain fitting. The preferred street/court arrangement reserves a place in the town's functional structure; it does not pretend this programme gap is solved. The inventory also contains no dedicated stable/granary form; open service/storage courts can be proposed, but an additional counted stable/granary building must not appear silently.
+**Inventory omission repaired at proposal level:** none of the retained forty records has form `mill`, but original Crossroads already authored one mill. At source3818de, `towns55.py:855–866` describes the large 30–45 market/mill town; line895 authors one mill cluster. Lines2249–2260 then show `lay_feedback` removing legacy Crossroads and substituting the replacement inventory, which omitted that programme. Its legacy cluster seed is an authored intention, not a measured building location.
+
+The separate **F11 candidate mill** restores that existing programme without changing any of the original forty records. Record006 remains the old smithy. The sidecar keeps `count=40` for the unchanged retained ledger, `candidate_count=41` for the proposed total, and exactly one entry in `proposed_additions`; this entry has a proposal identifier, not an adopted logical building ID. There is no new occupant, job or gameplay rule.
+
+**Identity and fit still unresolved:** the candidate mill's logical ID, legacy identity mapping, footprint, geometry, foot, door, location and plot dimensions are `null`; bank/working-face/head-and-tail reach and native fit are UNKNOWN. Main's historical web Riverside already has a `mill` object, `water_mill` sprite and `mill` stand (`scripts/art/valley_zones.py:1239–1466`), but those local coordinates do not establish placement on this continent. Resolve and deduplicate the single existing mill identity against legacy/native plans before adoption; do not create a second mill or silently convert the smithy. This revision repairs the proposed programme inventory; it does not prove a physical mill location.
+
+The inventory also contains no dedicated stable/granary form; open service/storage courts can be proposed, but additional counted stable/granary buildings must not appear silently.
 
 At Eastgate, the coach court is behind an inn frontage, with an entrance from the approach, working edges, room for the existing catalogue's equipment where later accepted, and a quiet public route past it. At the halt, a loading yard explains goods movement and a productive town edge. These two spaces have different reasons to exist. Their native fit is unproved.
 
@@ -83,7 +91,7 @@ Keep these spaces deliberately open: the well's circulation and market stopping 
 
 ## Forty-record ledger
 
-This is proposal accounting, not forty placed or inhabited buildings. Forty remains inside Matt's large-town target of 30–45. All existing logical IDs occur once. Footprints below are retained source dimensions, **not plot dimensions or new placement coordinates**. Row-house bay data remains exact in the sidecar; its bays do not increase the forty-record count. Occupants, home/work semantics and routines are not authored here.
+This is the unchanged source ledger of forty records, not forty placed or inhabited buildings. The separate mill candidate below makes the proposed total41, inside Matt's large-town target of 30–45. All forty existing logical IDs occur once; no candidate is inserted into or substituted for this ledger. Footprints below are retained source dimensions, **not plot dimensions or new placement coordinates**. Row-house bay data remains exact in the sidecar; its bays do not increase the forty-record count. Occupants, home/work semantics and routines are not authored here.
 
 | Existing ID | Existing identity/form; source footprint | Proposed plot | Assignment |
 |---|---|---|---|
@@ -128,18 +136,27 @@ This is proposal accounting, not forty placed or inhabited buildings. Forty rema
 | `crossroads-b039` | cottage; 64 × 48 px | G04 | Turn the halt-side group toward garden plots |
 | `crossroads-b040` | cottage; 56 × 40 px | G05 | End the halt-side frontage at the productive fringe |
 
+## Separate proposed addition: the existing mill programme
+
+| Proposal | Count / block | Relationship | Identity and geometry |
+|---|---|---|---|
+| `crossroads-mill-candidate` | 1 / F11 in Mill End; candidate town total41 | Sleepwater working face → mill → grain handling → Mill Street goods approach | Proposed representation only. Logical ID, legacy identity mapping, geometry, coordinates, footprint, plot dimensions, foot, door and location are `null`; orientation unassigned and terrain/water reach UNKNOWN. |
+
+All forty retained records, their source forms/footprints/bays, seven measured gameplay anchors and old smithy remain unchanged. F11 is a plot label in an unscaled proposal, not a measured polygon or an extra adopted mill.
+
 ## Review and next scope
 
-The concrete choice is the seven-block arrangement above: a connected market core, west rear-service plots, Eastgate coach courts, a lower water/work quarter and a productive halt fringe, retaining the seven gameplay anchors. The principal unresolved programme decision is the mill's actual building representation. Exact plots/crossings/rail fit are later measured work, not requests for physics exceptions.
+The concrete choice is the seven-block arrangement above: a connected market core, west rear-service plots, Eastgate coach courts, a lower water/work quarter and a productive halt fringe, retaining the seven gameplay anchors. The omitted mill programme now has one explicit candidate representation, authorised as routine inventory repair by lead6533453453. Its identity mapping and physical fit remain unresolved. Exact plots/crossings/rail fit are later measured work, not requests for physics exceptions. Matt's applicable review of the town composition and explicit PR approval before any art/map merge remain required.
 
 After lead/Matt reviews this structure, a separately scoped terrain-fitting step can draw actual frontage/plot boundaries against saved masks and the full route context, adjusting suitable land only where explicitly authorised. It must keep the river's meaningful upstream/downstream joins, valid crossings, existing gameplay zone and named destinations. If the required support leaves the current captured bounds, report the missing area rather than make UNKNOWN ground buildable.
 
-Then use the existing native placement/export/checker on the newly scoped plan, accounting for all forty IDs, original inherited doors, terrain, fronts/rears, service yards and routes. That physical result would still not approve the composition or art. One representative street and working-court vignette at the actual character/play-camera scale should establish construction, material, contact-shadow and circulation quality before kit expansion or whole-town claims.
+Then use the existing native placement/export/checker on the newly scoped plan, accounting for all forty original IDs, the single deduplicated mill candidate, original inherited doors, terrain, fronts/rears, service yards and routes. That physical result would still not approve the composition or art. One representative street and working-court vignette at the actual character/play-camera scale should establish construction, material, contact-shadow and circulation quality before kit expansion or whole-town claims.
 
 No producer/helper/checker/terrain/workflow/generated image was changed for this document. No packing, test, scientific import, controller, engine, render, world generation, job, Ready, merge or art approval occurred. PR381's original failure, unchanged replay and diagnostic PNG remain preserved; the existing Granary candidate is not offered as a finished Crossroads.
 
 ### Evidence references
 
+- [Mill inventory amendment6533453453](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6533453453), [repair claim6533485058](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6533485058) and [separate ACK6533489951](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6533489951).
 - [Matt layout direction6526956297](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6526956297), [study handoff6527386266](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527386266), [two-file scope6527523659](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527523659).
 - [Workflow-only source handoff6527830649](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527830649); exact producer inventory blob `f23c793baf4a3b937a223c2a9fd2ac2786442f94` at parent3818de.
 - [Actual unchanged replay/failed-state result6525128251](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6525128251). Input `before.npz` SHA256 `95574230bb4474fa3a931ba6167fa521d609107ae79fff3f7e7022e327d7d527`; zone JSON SHA256 `cee996a1d28ce4e3523eca541522aae3e05c61c59252496b7aa9eeb334487dec`. These hashes identify evidence; they do not certify this proposed geometry.

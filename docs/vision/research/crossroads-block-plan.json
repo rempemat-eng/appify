@@ -3,11 +3,11 @@
   "status": "CONCEPTUAL_UNSCALED_NOT_PLACED_NOT_APPROVED",
   "date": "2026-10-30",
   "source_parent": "3818de444d24c95c50daedd6e547a78bd0436551",
-  "source_approval": "GO6527523659; Matt6526956297; study6527386266",
+  "source_approval": "GO6527523659; Matt6526956297; study6527386266; lead amendment6533453453; repair ASSIGN6533485058/ACK6533489951",
   "study": "https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal",
   "era": "17th to early 19th century market/mill town; existing house style and soft-grid rules retained",
   "count": 40,
-  "accounting": "40 existing logical records exactly once; row-house bays do not add records; no new building IDs, forms, dimensions, occupants or home/job semantics",
+  "accounting": "count=40 is the retained source ledger, unchanged. candidate_count=41 is those40 plus ONE separately labelled proposed mill representation of the existing programme. Row-house bays do not add records. The mill has no adopted logical ID, dimensions, location, occupants or home/job semantics.",
   "source_inventory": {
     "path": "docs/vision/research/blockout/towns55.py FEEDBACK_BUILDINGS/crossroads",
     "blob": "f23c793baf4a3b937a223c2a9fd2ac2786442f94",
@@ -199,7 +199,7 @@
       "Dry/grade/barrier feasibility of every proposed plot and rear lane",
       "Exact bridge cells, approaches, load/access geometry and bank extents",
       "Actual captured station/rail globals and world-space halt footprint",
-      "Mill building representation, water-working face and head/tail reach",
+      "Candidate mill identity mapping, geometry, water-working face and head/tail reach",
       "Final native PAD120/export support window after a new design",
       "Final plot boundaries, dimensions and frontage/door attachment"
     ]
@@ -298,7 +298,10 @@
       "front": "Short connected groups along Mill Street and its lower junction",
       "rear": "Side passages to plot courts and a shared grain-handling approach",
       "edge": "Sleepwater bank and productive gardens/farms, with working court kept distinct",
-      "role": "Existing house/cottage forms surround a mill/grain relationship; no mill building is silently invented or substituted. Exact mill representation is an open programme decision."
+      "role": "Existing house/cottage forms surround the existing mill/grain programme. One separately listed proposed mill representation restores the omitted programme; original ten records and smithy are unchanged. Candidate building identity and native fit remain unresolved.",
+      "proposed_addition_refs": [
+        "crossroads-mill-candidate"
+      ]
     },
     {
       "id": "G",
@@ -1208,10 +1211,45 @@
   ],
   "unresolved_programme": [
     {
-      "issue": "MILL_RECORD_ABSENT",
-      "fact": "Canonical40 has no mill form; b006 is the old smithy and must not be silently converted",
-      "proposal": "Reserve the mill/grain relationship and handling court only; lead/Matt must decide how an actual mill building is represented before placement. No41st record or form conversion in this document"
+      "issue": "MILL_IDENTITY_AND_FIT_UNRESOLVED",
+      "fact": "Retained40 has no mill form; original Crossroads already authored one mill. b006 is the old smithy and remains unchanged",
+      "proposal": "Separate proposed_additions restores ONE mill candidate in F; candidate_count41 is within Matt30-45. This closes the proposal inventory omission only; logical identity mapping, geometry, water relation and terrain fit remain NULL/UNKNOWN until deduplicated measured adoption."
     }
   ],
-  "implementation_hold": "No packing, river fill, footprint shrinking, physics/checker change, producer/export/runtime/render execution. Lead/Matt review this concrete structure before separately scoped terrain fitting and native-scale vignette."
+  "implementation_hold": "No packing, river fill, footprint shrinking, physics/checker change, producer/export/runtime/render execution. Lead/Matt review this concrete structure before separately scoped terrain fitting and native-scale vignette.",
+  "candidate_count": 41,
+  "proposed_additions": [
+    {
+      "proposal_id": "crossroads-mill-candidate",
+      "status": "PROPOSED_REPRESENTATION_NOT_ADOPTED_NOT_PLACED",
+      "logical_id": null,
+      "programme": "The existing Crossroads mill, omitted from the replacement feedback inventory",
+      "proposed_form": "mill",
+      "proposed_block": "F",
+      "proposed_plot": "F11",
+      "proposed_spatial_function": "Connect Sleepwater working face, mill, grain-handling court and Mill Street goods access",
+      "proposed_geometry": null,
+      "proposed_coordinates": null,
+      "proposed_footprint_px": null,
+      "proposed_plot_dimensions": null,
+      "proposed_foot": null,
+      "proposed_door": null,
+      "proposed_location": null,
+      "legacy_identity_mapping": null,
+      "terrain_fit": "UNKNOWN",
+      "water_working_face_and_reach": "UNKNOWN",
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "provenance": {
+        "head": "3818de444d24c95c50daedd6e547a78bd0436551",
+        "path": "docs/vision/research/blockout/towns55.py",
+        "town_programme_lines": "855-866: large30-45 market/mill town; local cap40 is implementation accounting",
+        "mill_line": "895: legacy Crossroads explicitly authors one mill cluster; its seed is not a measured placement",
+        "replacement_lines": "2249-2260: lay_feedback restores target terrain, removes legacy Crossroads and substitutes the feedback inventory",
+        "historical_web_context": "main scripts/art/valley_zones.py:1239-1466 has mill object / water_mill sprite / mill stand; its local coordinates are not continent placement authority",
+        "scope": "Lead6533453453 restores existing programme within Matt30-45, not a second mill or a new mechanic"
+      },
+      "adoption_hold": "Resolve the single existing mill identity against legacy/native plans and deduplicate BEFORE adoption; do not create a second mill, convert the smithy, reuse historical web coordinates as continent geometry or infer home/work semantics. Native fit and applicable art/map review remain required."
+    }
+  ]
 }
