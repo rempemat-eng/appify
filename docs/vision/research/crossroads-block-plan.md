@@ -1,6 +1,6 @@
 # Crossroads block-and-plot proposal
 
-**Proposed copied-crop A/B/C reconciliation / D–G unfitted / not adopted / not approved.** One proposed town structure for Matt to review, following [the layout study](https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal). This is the seventeenth- to early nineteenth-century market/mill town, not Hearthold's medieval castle borough. It retains the current house style, soft grid, game rules and building-size requirements.
+**Proposed A/B/C reconciliation plus partial measured Mill End / D, E and G unfitted / not adopted / not approved.** One proposed town structure for Matt to review, following [the layout study](https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal). This is the seventeenth- to early nineteenth-century market/mill town, not Hearthold's medieval castle borough. It retains the current house style, soft grid, game rules and building-size requirements.
 
 The preferred plan is a **compact market widening with connected mixed fronts, deep plots and service backs**, then a lower mill/grain quarter and two distinct goods approaches. New groups complete streets and corners around the existing gameplay core. They do not extend the rejected pattern of isolated rectangles across broad grass.
 
@@ -220,3 +220,41 @@ No production producer/helper/checker/terrain/workflow or generated game-art ima
 - [Matt layout direction6526956297](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6526956297), [study handoff6527386266](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527386266), [two-file scope6527523659](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527523659).
 - [Workflow-only source handoff6527830649](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527830649); exact producer inventory blob `f23c793baf4a3b937a223c2a9fd2ac2786442f94` at parent3818de.
 - [Actual unchanged replay/failed-state result6525128251](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6525128251). Input `before.npz` SHA256 `95574230bb4474fa3a931ba6167fa521d609107ae79fff3f7e7022e327d7d527`; zone JSON SHA256 `cee996a1d28ce4e3523eca541522aae3e05c61c59252496b7aa9eeb334487dec`. These hashes identify evidence; they do not certify this proposed geometry.
+
+
+## Mill End: ten measured homes and a conditional mill offer
+
+This extension fits one district, **F**, against the retained r3 private copy. The completed A/B/C offer remains unchanged. The new geometry is in `mill_end_fit`; the original forty-record ledger and separate mill entry are still factual source records, with their unresolved adoption fields untouched. These are proposed structures and plots on a copied macro crop, not houses placed in the native game.
+
+The real drainage determines the choice. The initial upper cottage site cut three river cells, and the first mill halo reached water and its physical guard. The dry west-bank alternative still contained 25 literal path cells on the existing south-road approach, so it was not promoted as a working mill. The current proposal uses the **east bank below the confluence**: the mill faces west toward Sleepwater, its goods entrance faces east into a distinct grain court, and a short Grain Close separates this working group from the domestic street. No new crossing is assumed. Mill Street reaches the existing Lull-road endpoint on the same bank; the completed south road, original route polylines and all captured water/bridge cells remain unchanged.
+
+At the upper approach, two cottages and two opposing houses/cottages form a short street rather than a field of detached markers. The street then bends toward the mill and continues as a domestic lane, with varied but aligned fronts, side access, rear gardens and retained woodland at the outer edge. The grain court has a separate handling face and an approach from the street; the real river remains visible behind the mill. Existing fields and woodland are cleared only in the declared plots, gardens and circulation support. All heights, tiers, slopes, barriers, crater and protection masks retain the r3 values: there is no broad dry-floor replacement or individual keepout hole in this offer.
+
+| Plot / original record | Proposed rectangle `[x,y,w,h]`, world px | Required door face | Measured disposition |
+|---|---|---|---|
+| F01 / 012 | `[6656, 3856, 48, 64]` | south | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F02 / 014 | `[6728, 3848, 40, 72]` | south | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F03 / 015 | `[6560, 3968, 64, 96]` | north | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F04 / 016 | `[6656, 3968, 48, 56]` | north | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F05 / 017 | `[6520, 4080, 56, 88]` | west | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F06 / 018 | `[6424, 4000, 40, 64]` | east | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F07 / 019 | `[6520, 4208, 64, 40]` | west | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F08 / 020 | `[6392, 4240, 64, 48]` | east | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F09 / 021 | `[6520, 4280, 64, 40]` | west | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F10 / 023 | `[6344, 4048, 72, 40]` | south | Footprint and one-cell halo clear in copied macro data; native floor/art fit unverified. |
+| F11 / separate mill candidate | `[6344, 4128, 96, 64]` | east | Conditional: 2 approach-street cells inside footprint; 16–24 px bank gap is not hydraulic proof. |
+
+The ten homes have **zero water, nonbuildable, barrier, keepout, street or other-occupancy cells in their footprints**. Their one-cell halos have zero water/barrier/keepout/other occupancy, while frontage streets intentionally enter some halos. Captured footprint tier spread is at most one, matching the unchanged macro placement rule; maximum slope is **0.004832** against the unchanged 0.016 threshold. Upper plots retain hillside grades (F01 tiers 5–6, F02 tiers 6–7); this is not proof of a native level floor, stair, collider or accessible threshold. No height or slope was edited to make a numerical pass.
+
+**F11 is still conditional.** Its proposed 96×64 footprint falls within the existing mill form's 80–104×56–72 range, and its revised footprint/halo are dry and barrier/keepout-clear. However, the rounded cap of the separately proposed goods-approach band paints **two street cells inside the east face**. Only 94 of 96 footprint cells were stamped in the copied proposal; those two cells remain visible as a conflict. The next bounded correction should end that spur outside the face and measure it again, without altering the footprint, river or physical masks. The candidate is not signed off from dry geometry alone.
+
+Eight literal river-bank sections give a **16–24px gap** from water to the proposed west working face. That is measured proximity, not a proven wheel, head race, tail race, hydraulic fall or usable native river edge. A drawing/asset agent must demonstrate the required mill working-face and facade variant, with identity deduplication against the already-authored single mill, before adoption. The mill's original logical ID, legacy identity mapping and geometry fields remain null; candidate geometry is separate. Existing assets are not assumed to face arbitrary directions for any new home or mill.
+
+The new Mill Street band contains **three existing keepout cells at its outer join**. Those cells stay protected; no route-width pass follows. The limited four-neighbour proposed-street graph still connects all eleven door-adjacent sets to the mill court and Square, but this does not establish native collision, cart clearance, full-width legality or a portal connection. The previously retained 22 North / 7 Lull keepout cells and bridge-bank guards also remain unchanged. A later scope must resolve actual approach/portal authority rather than treating graph reach as permission to erase protections.
+
+The copied extension changes **1,442 distinct cells in five channels**: ground appearance, streets, route occupancy, building occupancy and used flags. All 49 typed channels outside the new support `[6288,3744,6824,4368)` match the r3 baseline; all49 outside the union with the prior A/B/C support match the original captured BEFORE. Every captured literal water and bridge cell retains all 49 values. The fourteen A/B/C footprint/halo sets, their rects/doors, park, green, square, stair, well and all36 existing route polylines remain exact. All six original input hashes and the r3 archive hash are unchanged.
+
+Three bounded attempts are retained: the rejected river/halo sites; an early `KeyError` caused by using the wrong existing JSON record key; and the complete copied proposal. The third exited 0 in 2.152 seconds with peak 66,768,896 bytes. The code error was corrected once within the stated three-attempt budget; there was no fourth probe. This is a partial result, with the mill endpoint, water-work reach and outer protection limit still visible. No producer, native plan, gameplay, actual terrain, art asset or whole-world build was changed.
+
+GO6535477628 / ASSIGN6535521160 / ACK6535521524. The new source is a genuine descendant of 4e16a9ca. D/E/G remain unfitted; the old producer cap 40 / check 40 and all unadopted 41-building accounting remain unchanged. Final map/art merge approval still belongs to Matt on the PR.
+
