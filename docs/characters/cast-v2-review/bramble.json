@@ -1,0 +1,395 @@
+{
+  "id": "bramble",
+  "contract": 2,
+  "walk_speed": 78.1,
+  "v1_walk_speed": 78.1,
+  "clips": [
+    {
+      "clip": "idle",
+      "drawings": 12,
+      "duration": 1.6,
+      "ticks": [9, 7, 7, 9, 9, 9, 8, 8, 7, 8, 4, 11],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "walk",
+      "drawings": 12,
+      "duration": 0.486,
+      "ticks": [2, 2, 3, 2, 3, 2, 3, 2, 2, 3, 2, 3],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "primary",
+      "drawings": 18,
+      "duration": 0.6499,
+      "ticks": [3, 1, 2, 2, 1, 2, 1, 1, 2, 1, 3, 3, 3, 2, 2, 3, 2, 4],
+      "sub_tick": [],
+      "release_frame": 11,
+      "release_time": 0.3333,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 18,
+      "duration_change_ms": 0.0,
+      "release_change_ms": 0.0
+    },
+    {
+      "clip": "secondary",
+      "drawings": 16,
+      "duration": 0.6499,
+      "ticks": [3, 1, 2, 3, 4, 5, 1, 3, 3, 2, 1, 2, 1, 2, 2, 3],
+      "sub_tick": [],
+      "release_frame": 7,
+      "release_time": 0.3333,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 16,
+      "duration_change_ms": 0.0,
+      "release_change_ms": 0.0
+    },
+    {
+      "clip": "special",
+      "drawings": 9,
+      "duration": 0.8166,
+      "ticks": [6, 4, 5, 7, 5, 4, 6, 6, 5],
+      "sub_tick": [],
+      "release_frame": 4,
+      "release_time": 0.3833,
+      "release_offset_ms": 0.0,
+      "release_ticks": 5,
+      "v1_drawings": 9,
+      "duration_change_ms": 0.0,
+      "release_change_ms": 0.0
+    },
+    {
+      "clip": "guard",
+      "drawings": 8,
+      "duration": 0.7002,
+      "ticks": [4, 4, 3, 3, 7, 7, 7, 7],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "hit",
+      "drawings": 10,
+      "duration": 0.9332,
+      "ticks": [1, 3, 3, 5, 6, 6, 6, 8, 8, 9],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "defeat",
+      "drawings": 8,
+      "duration": 1.2666,
+      "ticks": [4, 6, 6, 8, 9, 10, 14, 18],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "jump",
+      "drawings": 8,
+      "duration": 0.7,
+      "ticks": [4, 3, 5, 7, 6, 5, 4, 8],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "stair_up",
+      "drawings": 8,
+      "duration": 0.7165,
+      "ticks": [6, 6, 6, 4, 5, 5, 5, 5],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "stair_down",
+      "drawings": 8,
+      "duration": 0.7165,
+      "ticks": [6, 6, 6, 4, 5, 5, 5, 5],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "dodge",
+      "drawings": 10,
+      "duration": 0.4999,
+      "ticks": [3, 1, 2, 2, 2, 3, 3, 3, 4, 6],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_idle",
+      "drawings": 12,
+      "duration": 1.6,
+      "ticks": [9, 7, 7, 9, 9, 9, 8, 8, 7, 8, 4, 11],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_walk",
+      "drawings": 12,
+      "duration": 0.486,
+      "ticks": [2, 2, 3, 2, 3, 2, 3, 2, 2, 3, 2, 3],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_primary",
+      "drawings": 14,
+      "duration": 0.6499,
+      "ticks": [4, 3, 4, 2, 2, 1, 3, 3, 3, 2, 2, 3, 2, 4],
+      "sub_tick": [],
+      "release_frame": 7,
+      "release_time": 0.3333,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 14,
+      "duration_change_ms": 0.0,
+      "release_change_ms": 0.0
+    },
+    {
+      "clip": "powered_guard",
+      "drawings": 8,
+      "duration": 0.7002,
+      "ticks": [4, 4, 3, 3, 7, 7, 7, 7],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_exit",
+      "drawings": 8,
+      "duration": 0.8667,
+      "ticks": [7, 6, 6, 6, 5, 6, 7, 9],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_hit",
+      "drawings": 10,
+      "duration": 0.9332,
+      "ticks": [1, 3, 3, 5, 6, 6, 6, 8, 8, 9],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_dodge",
+      "drawings": 10,
+      "duration": 0.4999,
+      "ticks": [3, 1, 2, 2, 2, 3, 3, 3, 4, 6],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_jump",
+      "drawings": 8,
+      "duration": 0.7,
+      "ticks": [4, 3, 5, 7, 6, 5, 4, 8],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_stair_up",
+      "drawings": 8,
+      "duration": 0.7165,
+      "ticks": [6, 6, 6, 4, 5, 5, 5, 5],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_stair_down",
+      "drawings": 8,
+      "duration": 0.7165,
+      "ticks": [6, 6, 6, 4, 5, 5, 5, 5],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_secondary",
+      "drawings": 16,
+      "duration": 0.6499,
+      "ticks": [3, 1, 2, 3, 4, 5, 1, 3, 3, 2, 1, 2, 1, 2, 2, 3],
+      "sub_tick": [],
+      "release_frame": 7,
+      "release_time": 0.3333,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 16,
+      "duration_change_ms": 0.0,
+      "release_change_ms": 0.0
+    },
+    {
+      "clip": "fidget_string",
+      "drawings": 13,
+      "duration": 1.4335,
+      "ticks": [10, 7, 7, 7, 5, 4, 4, 4, 5, 8, 7, 8, 10],
+      "sub_tick": [],
+      "v1_drawings": 13,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "fidget_beard",
+      "drawings": 12,
+      "duration": 1.3,
+      "ticks": [9, 7, 6, 5, 4, 5, 5, 5, 7, 7, 7, 11],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "fidget_quiver",
+      "drawings": 10,
+      "duration": 1.2334,
+      "ticks": [9, 7, 7, 8, 10, 6, 5, 5, 7, 10],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": 0.0
+    }
+  ],
+  "walk_skate": {
+    "S": {
+      "planted_px_s": 27.2,
+      "body_px_s": 78.1,
+      "slide_px_s": 50.9,
+      "ok": false
+    },
+    "N": {
+      "planted_px_s": 27.2,
+      "body_px_s": 78.1,
+      "slide_px_s": 50.9,
+      "ok": false
+    },
+    "E": {
+      "planted_px_s": 79.0,
+      "body_px_s": 78.1,
+      "slide_px_s": -0.9,
+      "ok": true
+    },
+    "W": {
+      "planted_px_s": 79.0,
+      "body_px_s": 78.1,
+      "slide_px_s": -0.9,
+      "ok": true
+    }
+  },
+  "fidgets": {
+    "fidget_string": {
+      "seamless": true,
+      "facings_off_idle0": []
+    },
+    "fidget_beard": {
+      "seamless": true,
+      "facings_off_idle0": []
+    },
+    "fidget_quiver": {
+      "seamless": true,
+      "facings_off_idle0": []
+    }
+  },
+  "canonical": [
+    {
+      "clip": "primary",
+      "drawings": 18,
+      "release_frame": 11,
+      "art_release": 0.3333,
+      "art_duration": 0.6499,
+      "canonical_release": 0.1596,
+      "canonical_duration": 0.42,
+      "prep_factor": 0.4788,
+      "recovery_factor": 0.8225,
+      "verdict": "REDRAW",
+      "problems": ["11 preparation drawings for 10 ticks: drop 1"]
+    },
+    {
+      "clip": "secondary",
+      "drawings": 16,
+      "release_frame": 7,
+      "art_release": 0.3333,
+      "art_duration": 0.6499,
+      "canonical_release": 0.1824,
+      "canonical_duration": 0.48,
+      "prep_factor": 0.5473,
+      "recovery_factor": 0.94,
+      "verdict": "ACCEPT",
+      "problems": [],
+      "ticks": [2, 1, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+      "durations": [
+        0.0333, 0.0167, 0.0167, 0.0333, 0.0333, 0.0333, 0.0167, 0.0333, 0.0333, 0.0333, 0.0333,
+        0.0333, 0.0333, 0.0333, 0.0333, 0.0333
+      ],
+      "release_ticks_shown": 2
+    },
+    {
+      "clip": "special",
+      "drawings": 9,
+      "release_frame": 4,
+      "art_release": 0.3833,
+      "art_duration": 0.8166,
+      "canonical_release": 0.28,
+      "canonical_duration": 0.65,
+      "prep_factor": 0.7305,
+      "recovery_factor": 0.8539,
+      "verdict": "ACCEPT",
+      "problems": [],
+      "ticks": [4, 4, 4, 5, 4, 4, 5, 5, 4],
+      "durations": [0.0667, 0.0667, 0.0667, 0.0833, 0.0667, 0.0667, 0.0833, 0.0833, 0.0667],
+      "release_ticks_shown": 4
+    },
+    {
+      "clip": "powered_primary",
+      "drawings": 14,
+      "release_frame": 7,
+      "art_release": 0.3333,
+      "art_duration": 0.6499,
+      "canonical_release": 0.1596,
+      "canonical_duration": 0.42,
+      "prep_factor": 0.4788,
+      "recovery_factor": 0.8225,
+      "verdict": "ACCEPT",
+      "problems": [],
+      "ticks": [2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3],
+      "durations": [
+        0.0333, 0.0333, 0.0333, 0.0167, 0.0167, 0.0167, 0.0167, 0.0333, 0.0333, 0.0333, 0.0333,
+        0.0333, 0.0333, 0.05
+      ],
+      "release_ticks_shown": 2
+    },
+    {
+      "clip": "powered_secondary",
+      "drawings": 16,
+      "release_frame": 7,
+      "art_release": 0.3333,
+      "art_duration": 0.6499,
+      "canonical_release": 0.1824,
+      "canonical_duration": 0.48,
+      "prep_factor": 0.5473,
+      "recovery_factor": 0.94,
+      "verdict": "ACCEPT",
+      "problems": [],
+      "ticks": [2, 1, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+      "durations": [
+        0.0333, 0.0167, 0.0167, 0.0333, 0.0333, 0.0333, 0.0167, 0.0333, 0.0333, 0.0333, 0.0333,
+        0.0333, 0.0333, 0.0333, 0.0333, 0.0333
+      ],
+      "release_ticks_shown": 2
+    }
+  ]
+}
