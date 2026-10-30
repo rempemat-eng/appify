@@ -2,7 +2,7 @@
 """Bounded EDITOR-PERSISTENCE receiver; SOURCE ONLY until exact lead allocation.
 
 Adapted from reviewed #402 c2cd7baa (controller blob f40ef659), originally #401.
-Reuse #402 c2cd7baa private-engine/actual-wait collection. Immutable #398 game,
+Reuse #402 c2cd7baa private-engine/actual-wait collection. Corrected #398 source,
 six Python and two GdUnit persistence methods; no displayed GUI, complete editor,
 nonempty-piece/cell-coordinate, full-suite or acceptance inference.
 No imports, engine or tests are authorised by publishing this candidate.
@@ -31,18 +31,23 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "6903f8d5d729f5eb9d4beef20d33869465308c66"
-GAME_TREE = "e4dfae3eb183426e3a44fd004436eb1ed18b53d7"
-GAME_PARENT = "45ed3cad029c106977e6c0c833913dcb1c614fbd"
-RECEIVER_PARENT = "63273684792073573c571148c4bbc07c4486267b"
-RECEIVER_PARENT_TREE = "0305ff7b941f8f92c211da625511ff2abe42a021"
+GAME_SHA = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
+GAME_TREE = "b0aa3feb0c48afd8d819ca902cebaae6da19adcf"
+GAME_PARENT = "6903f8d5d729f5eb9d4beef20d33869465308c66"
+ORIGINAL_GAME_SHA = "6903f8d5d729f5eb9d4beef20d33869465308c66"
+ORIGINAL_GAME_TREE = "e4dfae3eb183426e3a44fd004436eb1ed18b53d7"
+ORIGINAL_GAME_PARENT = "45ed3cad029c106977e6c0c833913dcb1c614fbd"
+RECEIVER_PARENT = "597ce2e0fd68a872a7b4b31535033ddde702746a"
+RECEIVER_PARENT_TREE = "5ff44f05022c66089167f40150075c265851eb30"
+PRIOR_RECEIVER = "63273684792073573c571148c4bbc07c4486267b"
+PRIOR_RECEIVER_TREE = "0305ff7b941f8f92c211da625511ff2abe42a021"
 ORIGINAL_RECEIVER = "5de271d77f26dbbc5641bac0ef6635aef021c34b"
 ORIGINAL_RECEIVER_TREE = "62b470d5934699bed72660f5a011e66b3f3da854"
 TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 GAME_COUNT = 6688
 GAME_BYTES = 87857335
-# Static import/data closure of unchanged bake, validator and exact tiny fixture.
+# Static import/data closure of corrected bake, unchanged validator and tiny fixture.
 # Full game supplies library/schema/terrain/index/fixtures. No master raster is
 # reached by this pieces=[] lawn-only probe. scripts/art are namespace packages.
 PYTHON_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165),
@@ -51,7 +56,7 @@ PYTHON_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cb
  'scripts/art/biomes/woodland.json': ('6da96e5aa39b945288b2a71e826e7e6b535a7559', 8822),
  'scripts/art/house_palette.py': ('8a816d1799abd1fc22931a2c93fbe620a14a200e', 17753),
  'scripts/art/kit/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0),
- 'scripts/art/kit/bake.py': ('f881fbd63808b8e5c4f77cae6b53780550e9c7e6', 24361),
+ 'scripts/art/kit/bake.py': ('449f47013ecae318343fc915c5b65d12b9021432', 25290),
  'scripts/art/kit/build.py': ('054206b5ea00d227ae0a33075a0b0b2e0355d4b5', 18911),
  'scripts/art/kit/compose.py': ('4435017b23a5d50ed0a5e8801abc536b84854416', 12458),
  'scripts/art/kit/dressing.py': ('e4b4db15f45a0f1e202012a7c8d506e6f4970c5f', 8356),
@@ -94,7 +99,7 @@ PYTHON_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cb
  'scripts/review/ground_rules.py': ('0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68', 18956),
  'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305)}
 PYTHON_COUNT = 48
-PYTHON_BYTES = 1228320
+PYTHON_BYTES = 1229249
 TEST_PATH = "game/test/test_kit_zone_persistence.gd"
 REPORT_DIR = "reports-editor-persistence"
 DEPENDENCIES = {"Pillow": "12.3.0", "numpy": "2.5.3", "scipy": "1.18.1"}
@@ -450,28 +455,45 @@ class Controller:
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
         if parents != [RECEIVER_PARENT]:
-            raise RuntimeError("Profile-corrected receiver must be a genuine sole child of frozen405632")
+            raise RuntimeError("Rebound receiver must be a genuine sole child of frozen405597")
         prior_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in prior_headers.splitlines() if line.startswith("parent ")]
-                != [ORIGINAL_RECEIVER] or git(self.candidate, "rev-parse", RECEIVER_PARENT + "^{tree}").decode().strip()
+                != [PRIOR_RECEIVER] or git(self.candidate, "rev-parse", RECEIVER_PARENT + "^{tree}").decode().strip()
                 != RECEIVER_PARENT_TREE):
+            raise RuntimeError("Profile405 receiver ancestry/tree changed")
+        middle_headers = git(self.candidate, "cat-file", "commit", PRIOR_RECEIVER).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in middle_headers.splitlines() if line.startswith("parent ")]
+                != [ORIGINAL_RECEIVER] or git(self.candidate, "rev-parse", PRIOR_RECEIVER + "^{tree}").decode().strip()
+                != PRIOR_RECEIVER_TREE):
             raise RuntimeError("Corrected405 receiver ancestry/tree changed")
         original_headers = git(self.candidate, "cat-file", "commit", ORIGINAL_RECEIVER).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in original_headers.splitlines() if line.startswith("parent ")]
-                != [GAME_SHA] or git(self.candidate, "rev-parse", ORIGINAL_RECEIVER + "^{tree}").decode().strip()
+                != [ORIGINAL_GAME_SHA] or git(self.candidate, "rev-parse", ORIGINAL_RECEIVER + "^{tree}").decode().strip()
                 != ORIGINAL_RECEIVER_TREE):
             raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
                 if line.startswith("parent ")] != [GAME_PARENT]:
-            raise RuntimeError("Frozen398 must retain genuine375 sole parent")
+            raise RuntimeError("Corrected398 must retain genuine6903 sole parent")
+        baseline_headers = git(self.source, "cat-file", "commit", ORIGINAL_GAME_SHA).decode().split("\n\n", 1)[0]
+        if [line.removeprefix("parent ") for line in baseline_headers.splitlines()
+                if line.startswith("parent ")] != [ORIGINAL_GAME_PARENT]:
+            raise RuntimeError("Original398 must retain genuine375 sole parent")
+        for repo in (self.source, self.candidate):
+            if git(repo, "rev-parse", ORIGINAL_GAME_SHA + "^{tree}").decode().strip() != ORIGINAL_GAME_TREE:
+                raise RuntimeError("Original game baseline tree differs")
         source_tree, candidate_tree = tree(self.source), tree(self.candidate)
-        if git(self.candidate, "rev-parse", GAME_SHA + "^{tree}").decode().strip() != GAME_TREE:
-            raise RuntimeError("Receiver parent tree differs from tested source")
-        delta = {name for name in source_tree.keys() | candidate_tree.keys()
-                 if source_tree.get(name) != candidate_tree.get(name)}
-        if delta != OWNED_PATHS or any(name in source_tree for name in OWNED_PATHS):
+        baseline_tree = tree(self.source, ORIGINAL_GAME_SHA)
+        # The corrected production child is deliberately NOT a receiver ancestor.
+        delta = {name for name in baseline_tree.keys() | candidate_tree.keys()
+                 if baseline_tree.get(name) != candidate_tree.get(name)}
+        if delta != OWNED_PATHS or any(name in baseline_tree for name in OWNED_PATHS):
             raise RuntimeError(f"Two NEW receiving paths only: {sorted(delta)}")
+        production_delta = {name for name in baseline_tree.keys() | source_tree.keys()
+                            if baseline_tree.get(name) != source_tree.get(name)}
+        if (production_delta != {"scripts/art/kit/bake.py"}
+                or source_tree.get("scripts/art/kit/bake.py") != ("100644", PYTHON_INPUTS["scripts/art/kit/bake.py"][0])):
+            raise RuntimeError(f"Corrected398 must change only pinned bake.py: {sorted(production_delta)}")
         candidate_rows = {}
         for name in sorted(OWNED_PATHS):
             p = self.candidate / name
@@ -488,7 +510,10 @@ class Controller:
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
                    "receiver_parent": RECEIVER_PARENT, "receiver_parent_headers": prior_headers,
+                   "prior_receiver": PRIOR_RECEIVER, "prior_receiver_headers": middle_headers,
                    "original_receiver": ORIGINAL_RECEIVER, "original_receiver_headers": original_headers,
+                   "original_game_sha": ORIGINAL_GAME_SHA, "original_game_tree": ORIGINAL_GAME_TREE,
+                   "original_game_headers": baseline_headers, "production_delta": sorted(production_delta),
                    "tested_game_tree": GAME_TREE, "tested_game_headers": source_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
         # Retain full actual game AND actual Python inputs before engine setup.
