@@ -109,6 +109,7 @@ func paint_tier(c: Vector2i, tier: int) -> void:
 		t.erase_cell(c)
 	else:
 		t.set_cell(c, 0, Vector2i(tier, 0))
+	_rebuild()
 
 func _derive() -> void:
 	var n := grid_size.x * grid_size.y
