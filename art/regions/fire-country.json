@@ -3345,12 +3345,9 @@
       "width": 40,
       "owner_note": "lane G's line, widths and tiers (lib/world-routes.ts, #175 @ef8824f (claude-g/routes)); lane D paints it inside the box",
       "points": [
-        [5600, 4312],
-        [5600, 4376],
-        [5600, 4408],
-        [5600, 4416],
+        [5600, 4336],
+        [5568, 4336],
         [5568, 4416],
-        [5536, 4416],
         [5528, 4416],
         [5528, 4480],
         [5440, 4480],
@@ -3876,6 +3873,23 @@
           "kind": "ferry",
           "name": "the Rift ferry"
         }
+      ],
+      "falls": [
+        {
+          "at": [4392, 4608],
+          "drop": 1,
+          "what": "a cascade"
+        },
+        {
+          "at": [4240, 5504],
+          "drop": 1,
+          "what": "a cascade"
+        },
+        {
+          "at": [4240, 5552],
+          "drop": 1,
+          "what": "a cascade"
+        }
       ]
     },
     {
@@ -3903,19 +3917,41 @@
       ],
       "why": "from the piedmont west of the Rift",
       "source": "the piedmont west of the Rift",
-      "outlet": "rift"
+      "outlet": "rift",
+      "falls": [
+        {
+          "at": [3776, 4088],
+          "drop": 1,
+          "what": "falls off the massif where it enters the box"
+        },
+        {
+          "at": [3856, 4072],
+          "drop": 3,
+          "what": "falls"
+        },
+        {
+          "at": [3952, 4080],
+          "drop": 1,
+          "what": "a cascade"
+        },
+        {
+          "at": [4016, 4104],
+          "drop": 1,
+          "what": "falls off the massif where it enters the box"
+        }
+      ]
     },
     {
       "id": "hot_pools",
       "kind": "pools",
       "closed": true,
       "points": [
-        [2160, 5488],
-        [2208, 5488],
-        [2208, 5512],
-        [2160, 5512]
+        [2152, 5480],
+        [2216, 5480],
+        [2216, 5520],
+        [2152, 5520]
       ],
-      "why": "the west pool",
+      "why": "the west pool, 64 x 40: the hot one, under the steam",
       "source": "the warm flank (the sea seeping in)",
       "outlet": "hot_pools_lower"
     },
@@ -3924,176 +3960,14 @@
       "kind": "pools",
       "closed": true,
       "points": [
-        [2232, 5496],
-        [2272, 5496],
-        [2272, 5512],
+        [2232, 5480],
+        [2280, 5480],
+        [2280, 5512],
         [2232, 5512]
       ],
-      "why": "the east pool",
+      "why": "the east pool, 48 x 32, a step down past a basalt lip (2216 to 2232) where the hot water spills over",
       "source": "hot_pools",
       "outlet": "the sea through the black sand"
-    },
-    {
-      "id": "sea",
-      "kind": "sea",
-      "points": [
-        [0, 5824],
-        [64, 5824],
-        [136, 5824],
-        [136, 5816],
-        [200, 5816],
-        [264, 5816],
-        [336, 5816],
-        [336, 5808],
-        [400, 5808],
-        [464, 5808],
-        [536, 5808],
-        [536, 5800],
-        [600, 5800],
-        [664, 5800],
-        [736, 5800],
-        [800, 5800],
-        [800, 5808],
-        [864, 5808],
-        [936, 5808],
-        [1000, 5808],
-        [1064, 5808],
-        [1064, 5816],
-        [1136, 5816],
-        [1200, 5816],
-        [1264, 5816],
-        [1320, 5816],
-        [1384, 5816],
-        [1384, 5808],
-        [1448, 5808],
-        [1504, 5808],
-        [1568, 5808],
-        [1632, 5808],
-        [1632, 5800],
-        [1688, 5800],
-        [1752, 5800],
-        [1808, 5800],
-        [1808, 5816],
-        [1872, 5816],
-        [1872, 5840],
-        [1928, 5840],
-        [1928, 5856],
-        [1992, 5856],
-        [2064, 5856],
-        [2128, 5856],
-        [2128, 5848],
-        [2192, 5848],
-        [2256, 5848],
-        [2256, 5840],
-        [2320, 5840],
-        [2320, 5824],
-        [2376, 5824],
-        [2376, 5808],
-        [2440, 5808],
-        [2440, 5800],
-        [2520, 5800],
-        [2520, 5768],
-        [2600, 5768],
-        [2600, 5736],
-        [2680, 5736],
-        [2680, 5728],
-        [2760, 5728],
-        [2760, 5712],
-        [2816, 5712],
-        [2816, 5720],
-        [2872, 5720],
-        [2872, 5736],
-        [2928, 5736],
-        [2928, 5744],
-        [2984, 5744],
-        [2984, 5760],
-        [3040, 5760],
-        [3040, 5784],
-        [3096, 5784],
-        [3096, 5800],
-        [3160, 5800],
-        [3160, 5816],
-        [3224, 5816],
-        [3224, 5840],
-        [3288, 5840],
-        [3288, 5856],
-        [3344, 5856],
-        [3344, 5840],
-        [3408, 5840],
-        [3408, 5824],
-        [3464, 5824],
-        [3464, 5808],
-        [3520, 5808],
-        [3520, 5792],
-        [3584, 5792],
-        [3584, 5768],
-        [3640, 5768],
-        [3640, 5744],
-        [3704, 5744],
-        [3704, 5720],
-        [3776, 5720],
-        [3776, 5680],
-        [3848, 5680],
-        [3848, 5648],
-        [3920, 5648],
-        [3920, 5608],
-        [3984, 5608],
-        [3984, 5568],
-        [4056, 5568],
-        [4056, 5520],
-        [4120, 5520],
-        [4120, 5480],
-        [4192, 5480],
-        [4192, 5520],
-        [4256, 5520],
-        [4256, 5560],
-        [4328, 5560],
-        [4328, 5504],
-        [4400, 5504],
-        [4400, 5440],
-        [4464, 5440],
-        [4464, 5416],
-        [4520, 5416],
-        [4520, 5392],
-        [4576, 5392],
-        [4576, 5360],
-        [4640, 5360],
-        [4640, 5336],
-        [4704, 5336],
-        [4704, 5320],
-        [4760, 5320],
-        [4760, 5296],
-        [4816, 5296],
-        [4816, 5280],
-        [4880, 5280],
-        [4880, 5264],
-        [4944, 5264],
-        [4944, 5248],
-        [5000, 5248],
-        [5000, 5240],
-        [5056, 5240],
-        [5056, 5232],
-        [5120, 5232],
-        [5120, 5216],
-        [5184, 5216],
-        [5184, 5200],
-        [5248, 5200],
-        [5248, 5184],
-        [5312, 5184],
-        [5312, 5176],
-        [5376, 5176],
-        [5376, 5160],
-        [5432, 5160],
-        [5432, 5152],
-        [5488, 5152],
-        [5488, 5136],
-        [5544, 5136],
-        [5544, 5120],
-        [5600, 5120],
-        [5600, 5112]
-      ],
-      "why": "the shore line; lane G draws the open sea past it (g-to-all-edges 4)",
-      "declared_closed": true
     }
   ],
   "lava": [
@@ -4329,14 +4203,36 @@
       "id": "mine_cart",
       "kind": "mine cart",
       "points": [
-        [2896, 4000],
+        [3400, 4000],
         [3400, 4096],
         [2896, 4096],
         [2896, 4416]
       ],
       "opens": "after W6",
       "why": "the Lode down past the salt lake to the tunnel portal on the north flank",
-      "crossings": []
+      "crossings": [],
+      "inclines": [
+        {
+          "at": [3400, 4064],
+          "kind": "embankment",
+          "why": "carried over a dip on a bank"
+        },
+        {
+          "at": [3320, 4096],
+          "kind": "cutting",
+          "why": "cut through a low rise rather than over it"
+        },
+        {
+          "at": [3232, 4096],
+          "kind": "cutting",
+          "why": "cut through a low rise rather than over it"
+        },
+        {
+          "at": [3104, 4096],
+          "kind": "rope incline",
+          "why": "a self-acting rope incline down the 3-tier step (full tubs down pull empties up)"
+        }
+      ]
     }
   ],
   "rings": [
@@ -4625,7 +4521,7 @@
     {
       "t": "S",
       "what": "cold fire ring",
-      "at": [5568, 4360],
+      "at": [5584, 4440],
       "place": "Ash Coast",
       "moved_from": [5569, 4360]
     },
@@ -5229,13 +5125,6 @@
       "moved_from": [2216, 5408]
     },
     {
-      "t": "I",
-      "what": "bench",
-      "at": [2148, 5488],
-      "place": "Cinder Springs",
-      "moved_from": [2096, 5416]
-    },
-    {
       "t": "S",
       "what": "old boot",
       "at": [2224, 5488],
@@ -5248,13 +5137,6 @@
       "at": [2288, 5488],
       "place": "Cinder Springs",
       "moved_from": [2320, 5432]
-    },
-    {
-      "t": "I",
-      "what": "door",
-      "at": [2148, 5500],
-      "place": "Cinder Springs",
-      "moved_from": [2144, 5464]
     },
     {
       "t": "I",
@@ -5994,16 +5876,6 @@
       "light": "lanterns"
     },
     {
-      "recipe": "springs_bath",
-      "at": [2200, 5624],
-      "orient": "s",
-      "mirror": true,
-      "seed": 1014,
-      "members": ["stone pool rim", "towels on a rail", "bench", "steam"],
-      "why": "Cinder Springs",
-      "light": "steam"
-    },
-    {
       "recipe": "black_sand_shore",
       "at": [2960, 5680],
       "orient": "s",
@@ -6039,6 +5911,16 @@
       "seed": 1018,
       "members": ["lone tree", "sheep", "stile", "flowers"],
       "why": "the Ash Coast's green shelf"
+    },
+    {
+      "recipe": "springs_bath",
+      "at": [2200, 5624],
+      "orient": "s",
+      "mirror": true,
+      "seed": 1014,
+      "members": ["stone pool rim", "towels on a rail", "bench", "steam"],
+      "why": "Cinder Springs",
+      "light": "steam"
     }
   ],
   "edges": [
@@ -6291,5 +6173,431 @@
       "Set pieces of the ash biome wait for its edge set in the cliff core (marked proposed).",
       "Cluster places are lane D's notes until Claude B's recipes land (#203): then each is replaced by prop_clusters.py --place output (b-to-d-clusters)."
     ]
-  }
+  },
+  "coast": {
+    "land": [
+      [0, 4000],
+      [5600, 4000],
+      [5600, 5112],
+      [5600, 5120],
+      [5544, 5120],
+      [5544, 5136],
+      [5488, 5136],
+      [5488, 5152],
+      [5432, 5152],
+      [5432, 5160],
+      [5376, 5160],
+      [5376, 5176],
+      [5312, 5176],
+      [5312, 5184],
+      [5248, 5184],
+      [5248, 5200],
+      [5184, 5200],
+      [5184, 5216],
+      [5120, 5216],
+      [5120, 5232],
+      [5056, 5232],
+      [5056, 5240],
+      [5000, 5240],
+      [5000, 5248],
+      [4944, 5248],
+      [4944, 5264],
+      [4880, 5264],
+      [4880, 5280],
+      [4816, 5280],
+      [4816, 5296],
+      [4760, 5296],
+      [4760, 5320],
+      [4704, 5320],
+      [4704, 5336],
+      [4640, 5336],
+      [4640, 5360],
+      [4576, 5360],
+      [4576, 5392],
+      [4520, 5392],
+      [4520, 5416],
+      [4464, 5416],
+      [4464, 5440],
+      [4400, 5440],
+      [4400, 5504],
+      [4328, 5504],
+      [4328, 5560],
+      [4256, 5560],
+      [4256, 5520],
+      [4192, 5520],
+      [4192, 5480],
+      [4120, 5480],
+      [4120, 5520],
+      [4056, 5520],
+      [4056, 5568],
+      [3984, 5568],
+      [3984, 5608],
+      [3920, 5608],
+      [3920, 5648],
+      [3848, 5648],
+      [3848, 5680],
+      [3776, 5680],
+      [3776, 5720],
+      [3704, 5720],
+      [3704, 5744],
+      [3640, 5744],
+      [3640, 5768],
+      [3584, 5768],
+      [3584, 5792],
+      [3520, 5792],
+      [3520, 5808],
+      [3464, 5808],
+      [3464, 5824],
+      [3408, 5824],
+      [3408, 5840],
+      [3344, 5840],
+      [3344, 5856],
+      [3288, 5856],
+      [3288, 5840],
+      [3224, 5840],
+      [3224, 5816],
+      [3160, 5816],
+      [3160, 5800],
+      [3096, 5800],
+      [3096, 5784],
+      [3040, 5784],
+      [3040, 5760],
+      [2984, 5760],
+      [2984, 5744],
+      [2928, 5744],
+      [2928, 5736],
+      [2872, 5736],
+      [2872, 5720],
+      [2816, 5720],
+      [2816, 5712],
+      [2760, 5712],
+      [2760, 5728],
+      [2680, 5728],
+      [2680, 5736],
+      [2600, 5736],
+      [2600, 5768],
+      [2520, 5768],
+      [2520, 5800],
+      [2440, 5800],
+      [2440, 5808],
+      [2376, 5808],
+      [2376, 5824],
+      [2320, 5824],
+      [2320, 5840],
+      [2256, 5840],
+      [2256, 5848],
+      [2192, 5848],
+      [2128, 5848],
+      [2128, 5856],
+      [2064, 5856],
+      [1992, 5856],
+      [1928, 5856],
+      [1928, 5840],
+      [1872, 5840],
+      [1872, 5816],
+      [1808, 5816],
+      [1808, 5800],
+      [1752, 5800],
+      [1688, 5800],
+      [1632, 5800],
+      [1632, 5808],
+      [1568, 5808],
+      [1504, 5808],
+      [1448, 5808],
+      [1384, 5808],
+      [1384, 5816],
+      [1320, 5816],
+      [1264, 5816],
+      [1200, 5816],
+      [1136, 5816],
+      [1064, 5816],
+      [1064, 5808],
+      [1000, 5808],
+      [936, 5808],
+      [864, 5808],
+      [800, 5808],
+      [800, 5800],
+      [736, 5800],
+      [664, 5800],
+      [600, 5800],
+      [536, 5800],
+      [536, 5808],
+      [464, 5808],
+      [400, 5808],
+      [336, 5808],
+      [336, 5816],
+      [264, 5816],
+      [200, 5816],
+      [136, 5816],
+      [136, 5824],
+      [64, 5824],
+      [0, 5824]
+    ],
+    "_about": "the land of the fire country; the sea lies south of the shore line (was the water 'sea' line; lane G draws the open sea past it, g-to-all-edges 4)"
+  },
+  "fights": {
+    "_about": "Fights for the Godot era, in the shape of Claude I's and Claude F's plans (to-all-assignments-1025). Act 3: flame lances and forge mortars (game-design v2 5.2); burn and area.",
+    "act": 3,
+    "story": "the fire country (game-design v2 8.2): the Company presses the Ember forge for weapons, and the dragon of Hearthold is shardstruck on the caldera rim; the castle's alarm bell rings at every flight",
+    "weapons": {
+      "melee": "knightly swords, forge hammers",
+      "ranged": "flame lances, forge mortars (lobbed)",
+      "idea": "burn and area: ash and lava edges"
+    },
+    "camps": [
+      {
+        "id": "forge_overseers",
+        "kind": "Company overseers pressing the Ember forge",
+        "roles": ["shooter", "shooter", "tank"],
+        "arena": [2408, 4840, 128, 80],
+        "at": [2440, 4864],
+        "enemies": [
+          [2440, 4864],
+          [2472, 4896],
+          [2504, 4864]
+        ],
+        "cover": [
+          [2432, 4904],
+          [2512, 4904]
+        ],
+        "why": "the Company's overseers at the foot of the forge stair, holding the way up to the forge while the smiths are made to cast weapons; the coal heap and the quench trough for cover"
+      },
+      {
+        "id": "flank_salamanders",
+        "kind": "shardstruck salamanders",
+        "roles": ["swarmer", "swarmer", "swarmer", "swarmer"],
+        "arena": [1936, 4584, 128, 80],
+        "at": [1960, 4608],
+        "enemies": [
+          [1960, 4608],
+          [1984, 4640],
+          [2008, 4608],
+          [2040, 4640]
+        ],
+        "cover": [],
+        "why": "salamanders swarming off the warm flank onto the Canyon Road"
+      },
+      {
+        "id": "dead_forest_beetles",
+        "kind": "cinder beetles",
+        "roles": ["tank", "grunt", "grunt"],
+        "arena": [3216, 5312, 160, 96],
+        "at": [3256, 5344],
+        "enemies": [
+          [3256, 5344],
+          [3296, 5376],
+          [3336, 5344]
+        ],
+        "cover": [[3352, 5384]],
+        "why": "beetles with shells like crust in the dead forest, the charred snags for cover"
+      },
+      {
+        "id": "ash_coast_rams",
+        "kind": "shardstruck rams",
+        "roles": ["lunger", "lunger", "grunt"],
+        "arena": [5040, 4656, 192, 96],
+        "at": [5088, 4688],
+        "enemies": [
+          [5088, 4688],
+          [5136, 4720],
+          [5184, 4688]
+        ],
+        "cover": [[5352, 4664]],
+        "why": "rams gone wild that scattered the shepherd's flock between the hut and the fold; the fold's walls for cover"
+      },
+      {
+        "id": "cinderwick_pressgang",
+        "kind": "a Company press-gang",
+        "roles": ["shooter", "grunt", "caster"],
+        "arena": [2680, 5552, 160, 96],
+        "at": [2720, 5584],
+        "enemies": [
+          [2720, 5584],
+          [2760, 5616],
+          [2800, 5584]
+        ],
+        "cover": [[2720, 5664]],
+        "why": "a press-gang at Cinderwick taking charcoal burners for the forge; its sergeant calls up a guard automaton (caster); the boats drawn up for cover"
+      }
+    ],
+    "patrols": [
+      {
+        "id": "ash_coast_troopers",
+        "roles": ["shooter", "shooter"],
+        "kind": "Company troopers",
+        "path": [
+          [4512, 5184],
+          [4896, 4968]
+        ],
+        "why": "on the Ash Coast between the Rift ferry and the drove well, watching the road to the valley"
+      }
+    ],
+    "cover": [
+      {
+        "kind": "high",
+        "what": "the coal heap",
+        "at": [2432, 4904]
+      },
+      {
+        "kind": "low",
+        "what": "the quench trough",
+        "at": [2512, 4904]
+      },
+      {
+        "kind": "high",
+        "what": "charred snags",
+        "at": [3352, 5384]
+      },
+      {
+        "kind": "low",
+        "what": "the sheepfold's wall",
+        "at": [5352, 4664]
+      },
+      {
+        "kind": "low",
+        "what": "boats drawn up on the sand",
+        "at": [2720, 5664]
+      }
+    ],
+    "boss_arena": {
+      "id": "caldera_rim",
+      "boss": "hearthold_dragon",
+      "arena": [2392, 4808, 192, 112],
+      "why": "the dragon lands on the forge shelf at the caldera rim, the one flat up here (the same yard the overseers held earlier, cleared by then); the basalt ring's stones are the lit boundary (game-design v2 4.5)"
+    },
+    "waystones": [
+      {
+        "id": "hearthold_waystone",
+        "at": [2416, 5032],
+        "why": "inside Hearthold's gate"
+      },
+      {
+        "id": "cinderwick_waystone",
+        "at": [2832, 5560],
+        "why": "on Cinderwick's lane above the cove"
+      },
+      {
+        "id": "ash_coast_waystone",
+        "at": [4896, 4712],
+        "why": "by the shepherd's hut, where the Ash Coast comes down from the valley"
+      }
+    ],
+    "shard": {
+      "with_boss": "hearthold_dragon",
+      "why": "the shard is lodged in the dragon's crest; a splinter of it woke the lava tubes' warden"
+    },
+    "dungeon": {
+      "id": "ember_tubes",
+      "name": "the Ember Tubes",
+      "entrance": [2272, 5136],
+      "by": "the lava tube mouth under Hearthold's rock, the castle's old sally port",
+      "rooms": [
+        {
+          "id": "glazed_gallery",
+          "what": "a tube with a glassy lining, the floor ropy basalt",
+          "camp": ["grunt", "swarmer", "swarmer", "swarmer", "swarmer"]
+        },
+        {
+          "id": "skylight",
+          "what": "a roof collapse open to the sky, a lava channel below a basalt bridge",
+          "camp": ["shooter", "lunger"]
+        },
+        {
+          "id": "warden_hall",
+          "what": "the hall where the tubes meet under the caldera",
+          "camp": ["tank", "caster"]
+        }
+      ],
+      "keeper": "the Tube Warden, a basalt salamander grown huge round a splinter of the dragon's shard; freed, it slips into the lava",
+      "plan": "a zone plan of its own, like game/data/plans/undercroft.json, after this PR",
+      "opens": "comes up through the caldera floor beside the rim: the way to the dragon's arena once the warden is freed"
+    },
+    "raiders_camp": {
+      "none": true,
+      "why": "raids come only to Crossroads (game-design v2, 7.6)"
+    },
+    "boss": {
+      "id": "hearthold_dragon",
+      "name": "the dragon of Hearthold",
+      "arena": "caldera_rim",
+      "why": "game-design v2 8.2: freed, it stays as Hearthold's keeper"
+    }
+  },
+  "quest_spots": [
+    {
+      "id": "smith",
+      "at": [2376, 4824],
+      "quest": "the Ember forge's smith, made to cast weapons for the Company (forge_overseers)"
+    },
+    {
+      "id": "steward",
+      "at": [2512, 5280],
+      "quest": "the castle's steward, who rings the alarm bell at every flight and asks you up to the rim (the dragon); moves to Crossroads after"
+    },
+    {
+      "id": "ashe",
+      "at": [2432, 5040],
+      "quest": "Ashe, Hearthold's ember knight: holds the gate, joins you through the Ember Tubes (folk quest after)"
+    },
+    {
+      "id": "ferryman",
+      "at": [4144, 5208],
+      "quest": "the ferryman at the Rift mouth, whose rope the troopers cut (ash_coast_troopers)"
+    },
+    {
+      "id": "shepherd",
+      "at": [4896, 4688],
+      "quest": "the shepherd of the Ash Coast, whose flock the rams scattered (ash_coast_rams)"
+    },
+    {
+      "id": "hermit",
+      "at": [2480, 5432],
+      "quest": "the hermit at the springs, who knows the lava tubes from before the castle"
+    }
+  ],
+  "windows": [
+    {
+      "id": "hearthold",
+      "rect": [2320, 4976, 320, 180],
+      "focal": [2480, 5080],
+      "clearing": [2416, 5032],
+      "why": "the castle on its rock between the flows, the gate and the keep street"
+    },
+    {
+      "id": "ember_forge",
+      "rect": [2296, 4752, 320, 180],
+      "focal": [2456, 4848],
+      "clearing": [2440, 4904],
+      "why": "the forge under the caldera lip, its chimney and the cart bay"
+    },
+    {
+      "id": "cinder_springs",
+      "rect": [2064, 5312, 320, 180],
+      "focal": [2224, 5416],
+      "clearing": [2248, 5320],
+      "why": "the terraced hot pools, the bathhouse, the steam"
+    },
+    {
+      "id": "cinderwick",
+      "rect": [2608, 5504, 320, 180],
+      "focal": [2768, 5608],
+      "clearing": [2832, 5560],
+      "why": "the black-sand cove, the charcoal sheds, the boats drawn up"
+    },
+    {
+      "id": "rift_ferry",
+      "rect": [4016, 5136, 320, 180],
+      "focal": [4176, 5240],
+      "clearing": [4112, 5200],
+      "why": "the Rift's mouth, the ferry and its rope, the terns on the bar"
+    },
+    {
+      "id": "ash_coast_fold",
+      "rect": [4960, 4576, 320, 180],
+      "focal": [5120, 4680],
+      "clearing": [5104, 4696],
+      "why": "the shepherd's hut, the fold and the drove well on the Ash Coast"
+    }
+  ],
+  "buildings": []
 }
