@@ -23,7 +23,7 @@ jobs:
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
       GIT_OPTIONAL_LOCKS: '0'
-      EDITOR_PERSISTENCE_GAME_SHA: b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008
+      EDITOR_PERSISTENCE_GAME_SHA: 52caf926c92337a7a6b0c36dfe73184ec4712e8c
     steps:
       - name: Open failure evidence before any checkout or setup
         shell: bash
@@ -50,7 +50,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 5 # original3986903 -> 5de -> 632 -> 597 -> this rebound child
+          fetch-depth: 6 # original3986903 ->5de ->632 ->597 ->6c76 ->this rebound child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -61,9 +61,9 @@ jobs:
         id: source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008
+          ref: 52caf926c92337a7a6b0c36dfe73184ec4712e8c
           path: source
-          fetch-depth: 3 # corrected398b9 -> original3986903 ->375; separate from receiver history
+          fetch-depth: 4 # corrected39852 ->b9 ->original3986903 ->375; separate from receiver history
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |

@@ -31,22 +31,26 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
-GAME_TREE = "b0aa3feb0c48afd8d819ca902cebaae6da19adcf"
-GAME_PARENT = "6903f8d5d729f5eb9d4beef20d33869465308c66"
+GAME_SHA = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
+GAME_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
+GAME_PARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
+GAME_PARENT_TREE = "b0aa3feb0c48afd8d819ca902cebaae6da19adcf"
 ORIGINAL_GAME_SHA = "6903f8d5d729f5eb9d4beef20d33869465308c66"
 ORIGINAL_GAME_TREE = "e4dfae3eb183426e3a44fd004436eb1ed18b53d7"
 ORIGINAL_GAME_PARENT = "45ed3cad029c106977e6c0c833913dcb1c614fbd"
-RECEIVER_PARENT = "597ce2e0fd68a872a7b4b31535033ddde702746a"
-RECEIVER_PARENT_TREE = "5ff44f05022c66089167f40150075c265851eb30"
-PRIOR_RECEIVER = "63273684792073573c571148c4bbc07c4486267b"
-PRIOR_RECEIVER_TREE = "0305ff7b941f8f92c211da625511ff2abe42a021"
+RECEIVER_PARENT = "6c76f5290b18fe2367624ca6fb41177a0dbe42b5"
+RECEIVER_PARENT_TREE = "0064acc7b4f1a47da156bb1492c1a07837536afc"
+PRIOR_RECEIVER = "597ce2e0fd68a872a7b4b31535033ddde702746a"
+PRIOR_RECEIVER_TREE = "5ff44f05022c66089167f40150075c265851eb30"
+EARLIER_RECEIVER = "63273684792073573c571148c4bbc07c4486267b"
+EARLIER_RECEIVER_TREE = "0305ff7b941f8f92c211da625511ff2abe42a021"
 ORIGINAL_RECEIVER = "5de271d77f26dbbc5641bac0ef6635aef021c34b"
 ORIGINAL_RECEIVER_TREE = "62b470d5934699bed72660f5a011e66b3f3da854"
 TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
+EXPORT_BLOB = "f34b6960393dbbcb8724140810509cae090c46c7"
 GAME_COUNT = 6688
-GAME_BYTES = 87857335
+GAME_BYTES = 87858698
 # Static import/data closure of corrected bake, unchanged validator and tiny fixture.
 # Full game supplies library/schema/terrain/index/fixtures. No master raster is
 # reached by this pieces=[] lawn-only probe. scripts/art are namespace packages.
@@ -455,16 +459,21 @@ class Controller:
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
         if parents != [RECEIVER_PARENT]:
-            raise RuntimeError("Rebound receiver must be a genuine sole child of frozen405597")
+            raise RuntimeError("Rebound receiver must be a genuine sole child of frozen4056c76")
         prior_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in prior_headers.splitlines() if line.startswith("parent ")]
                 != [PRIOR_RECEIVER] or git(self.candidate, "rev-parse", RECEIVER_PARENT + "^{tree}").decode().strip()
                 != RECEIVER_PARENT_TREE):
-            raise RuntimeError("Profile405 receiver ancestry/tree changed")
+            raise RuntimeError("Rebound405 receiver ancestry/tree changed")
         middle_headers = git(self.candidate, "cat-file", "commit", PRIOR_RECEIVER).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in middle_headers.splitlines() if line.startswith("parent ")]
-                != [ORIGINAL_RECEIVER] or git(self.candidate, "rev-parse", PRIOR_RECEIVER + "^{tree}").decode().strip()
+                != [EARLIER_RECEIVER] or git(self.candidate, "rev-parse", PRIOR_RECEIVER + "^{tree}").decode().strip()
                 != PRIOR_RECEIVER_TREE):
+            raise RuntimeError("Profile405 receiver ancestry/tree changed")
+        earlier_headers = git(self.candidate, "cat-file", "commit", EARLIER_RECEIVER).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in earlier_headers.splitlines() if line.startswith("parent ")]
+                != [ORIGINAL_RECEIVER] or git(self.candidate, "rev-parse", EARLIER_RECEIVER + "^{tree}").decode().strip()
+                != EARLIER_RECEIVER_TREE):
             raise RuntimeError("Corrected405 receiver ancestry/tree changed")
         original_headers = git(self.candidate, "cat-file", "commit", ORIGINAL_RECEIVER).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in original_headers.splitlines() if line.startswith("parent ")]
@@ -474,7 +483,12 @@ class Controller:
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
                 if line.startswith("parent ")] != [GAME_PARENT]:
-            raise RuntimeError("Corrected398 must retain genuine6903 sole parent")
+            raise RuntimeError("Corrected398 export must retain genuineb9 sole parent")
+        source_parent_headers = git(self.source, "cat-file", "commit", GAME_PARENT).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in source_parent_headers.splitlines() if line.startswith("parent ")]
+                != [ORIGINAL_GAME_SHA] or git(self.source, "rev-parse", GAME_PARENT + "^{tree}").decode().strip()
+                != GAME_PARENT_TREE):
+            raise RuntimeError("Corrected398 bake parent ancestry/tree changed")
         baseline_headers = git(self.source, "cat-file", "commit", ORIGINAL_GAME_SHA).decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in baseline_headers.splitlines()
                 if line.startswith("parent ")] != [ORIGINAL_GAME_PARENT]:
@@ -491,9 +505,10 @@ class Controller:
             raise RuntimeError(f"Two NEW receiving paths only: {sorted(delta)}")
         production_delta = {name for name in baseline_tree.keys() | source_tree.keys()
                             if baseline_tree.get(name) != source_tree.get(name)}
-        if (production_delta != {"scripts/art/kit/bake.py"}
-                or source_tree.get("scripts/art/kit/bake.py") != ("100644", PYTHON_INPUTS["scripts/art/kit/bake.py"][0])):
-            raise RuntimeError(f"Corrected398 must change only pinned bake.py: {sorted(production_delta)}")
+        if (production_delta != {"scripts/art/kit/bake.py", "game/tools/kit_zone.gd"}
+                or source_tree.get("scripts/art/kit/bake.py") != ("100644", PYTHON_INPUTS["scripts/art/kit/bake.py"][0])
+                or source_tree.get("game/tools/kit_zone.gd") != ("100644", EXPORT_BLOB)):
+            raise RuntimeError(f"Corrected398 must change only pinned bake/export files: {sorted(production_delta)}")
         candidate_rows = {}
         for name in sorted(OWNED_PATHS):
             p = self.candidate / name
@@ -511,10 +526,12 @@ class Controller:
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
                    "receiver_parent": RECEIVER_PARENT, "receiver_parent_headers": prior_headers,
                    "prior_receiver": PRIOR_RECEIVER, "prior_receiver_headers": middle_headers,
+                   "earlier_receiver": EARLIER_RECEIVER, "earlier_receiver_headers": earlier_headers,
                    "original_receiver": ORIGINAL_RECEIVER, "original_receiver_headers": original_headers,
                    "original_game_sha": ORIGINAL_GAME_SHA, "original_game_tree": ORIGINAL_GAME_TREE,
                    "original_game_headers": baseline_headers, "production_delta": sorted(production_delta),
                    "tested_game_tree": GAME_TREE, "tested_game_headers": source_headers,
+                   "tested_game_parent": GAME_PARENT, "tested_game_parent_headers": source_parent_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
         # Retain full actual game AND actual Python inputs before engine setup.
         # The snapshot describes these bytes, never an invented successful import.
