@@ -1,0 +1,213 @@
+name: Y47 exact focused validation
+
+# Preparation branch and Draft PR publish source only. Lead alone creates or
+# updates this distinct execution ref AFTER source review and explicit GO.
+on:
+  push:
+    branches: [codex/y47-focused-validation-run]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: y47-focused-validation
+  cancel-in-progress: false
+
+jobs:
+  focused:
+    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/y47-focused-validation-run' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      TZ: UTC
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+    steps:
+      - name: Initialise permanent partial evidence before setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -m 700 "$RUNNER_TEMP/y47"
+          mkdir "$RUNNER_TEMP/y47/evidence"
+          printf 'workflow_commit=%s\ntested_source=cab60780e977db491b7d4fc1d58bfc2870761697\nstate=SETUP; all22broker+6adapter=NOTRUN\n' "$GITHUB_SHA" > "$RUNNER_TEMP/y47/evidence/bootstrap.txt"
+
+      - name: Check out immutable runner commit separately from tested source
+        id: runner
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          path: runner
+          fetch-depth: 0
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/y47-focused-validation.yml
+            /scripts/review/y47_validation_outer.py
+            /scripts/review/y47_validation_observer.py
+
+      - name: Check out exactly the frozen 21 tested input blobs
+        id: subject
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: cab60780e977db491b7d4fc1d58bfc2870761697
+          path: subject
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/review/__init__.py
+            /scripts/review/owned_launch.py
+            /scripts/review/owned_broker.py
+            /scripts/review/test_owned_launch.py
+            /scripts/review/test_pr_sheet.py
+            /scripts/review/pr_sheet.py
+            /scripts/review/kit_representation.py
+            /scripts/review/run.py
+            /scripts/review/core.py
+            /scripts/review/screen.py
+            /scripts/review/scene.py
+            /scripts/review/bands.py
+            /scripts/review/detail.py
+            /scripts/review/construct.py
+            /scripts/review/objects.py
+            /scripts/review/scale.py
+            /scripts/review/water.py
+            /scripts/review/edges.py
+            /scripts/review/sizes.json
+            /scripts/review/eastward_bands.json
+            /scripts/art/size_guide.json
+
+      - name: Check out pinned main dependency requirements only
+        id: authority
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: 885b45ea4d6fd8cd2246d90903b8cebbba2705b4
+          path: authority
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: /.github/workflows/verify.yml
+
+      - name: Retain receiving input bytes before Python dependency setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a subject/scripts "$RUNNER_TEMP/y47/received-source"
+          cp runner/scripts/review/y47_validation_outer.py "$RUNNER_TEMP/y47/received-outer.py"
+          cp runner/scripts/review/y47_validation_observer.py "$RUNNER_TEMP/y47/received-observer.py"
+          cp runner/.github/workflows/y47-focused-validation.yml "$RUNNER_TEMP/y47/received-workflow.yml"
+          cp authority/.github/workflows/verify.yml "$RUNNER_TEMP/y47/received-main885b-verify.yml"
+          python3 - <<'PY'
+          import ast
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP']) / 'y47'
+          tree = ast.parse((root / 'received-outer.py').read_bytes())
+          constants = {}
+          for node in tree.body:
+              if isinstance(node, ast.Assign):
+                  for name in node.targets:
+                      if isinstance(name, ast.Name) and name.id in ['MANIFEST', 'METHODS']:
+                          constants[name.id] = ast.literal_eval(node.value)
+          (root / 'received-source-provenance.json').write_text(json.dumps(constants['MANIFEST'], indent=2) + '\n')
+          (root / 'received-method-inventory.json').write_text(json.dumps(constants['METHODS'], indent=2) + '\n')
+          (root / 'evidence' / 'setup-plan.json').write_text(json.dumps(dict(
+              workflow_commit=os.environ['GITHUB_SHA'],
+              tested_source='cab60780e977db491b7d4fc1d58bfc2870761697',
+              authority='885b45ea4d6fd8cd2246d90903b8cebbba2705b4',
+              install_command=['python', '-m', 'pip', 'install', '--disable-pip-version-check', 'Pillow==12.3.0', 'numpy==2.5.3', 'scipy==1.18.1'],
+              focused_command=['python', '-I', '-B', 'runner/scripts/review/y47_validation_outer.py'],
+              controls={name + '.' + method: 'NOTRUN' for name, methods in constants['METHODS'].items() for method in methods},
+              input_sha256={str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
+                            for p in root.rglob('*') if p.is_file() and not p.is_symlink()}), indent=2) + '\n')
+          PY
+
+      - name: Set up CPython 3.12
+        id: python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Install only the unchanged pinned Python prerequisites
+        id: dependencies
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -uo pipefail
+          python -m pip install --disable-pip-version-check 'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1' > "$RUNNER_TEMP/y47/evidence/pip-install.log" 2>&1
+          code=$?
+          printf '%s\n' "$code" > "$RUNNER_TEMP/y47/evidence/pip-install.exit"
+          cat "$RUNNER_TEMP/y47/evidence/pip-install.log"
+          exit "$code"
+
+      - name: Canary then unchanged 22 broker and 6 adapter controls once
+        id: focused
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          set -uo pipefail
+          python -I -B runner/scripts/review/y47_validation_outer.py > "$RUNNER_TEMP/y47/evidence/outer.log" 2>&1
+          code=$?
+          printf '%s\n' "$code" > "$RUNNER_TEMP/y47/evidence/outer.exit"
+          cat "$RUNNER_TEMP/y47/evidence/outer.log"
+          exit "$code"
+
+      - name: Retain setup outcomes and explicit unstarted coverage after any failure
+        if: always()
+        env:
+          RUNNER_OUTCOME: ${{ steps.runner.outcome }}
+          SUBJECT_OUTCOME: ${{ steps.subject.outcome }}
+          AUTHORITY_OUTCOME: ${{ steps.authority.outcome }}
+          PYTHON_OUTCOME: ${{ steps.python.outcome }}
+          DEPENDENCIES_OUTCOME: ${{ steps.dependencies.outcome }}
+          FOCUSED_OUTCOME: ${{ steps.focused.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/y47/evidence"
+          python3 - <<'PY'
+          import ast
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          root = Path(os.environ['RUNNER_TEMP']) / 'y47'
+          evidence = root / 'evidence'
+          result = evidence / 'result.json'
+          if not result.exists():
+              controls = {}
+              runner = Path('runner/scripts/review/y47_validation_outer.py')
+              if runner.is_file():
+                  for node in ast.parse(runner.read_bytes()).body:
+                      if isinstance(node, ast.Assign) and any(isinstance(n, ast.Name) and n.id == 'METHODS' for n in node.targets):
+                          for name, methods in ast.literal_eval(node.value).items():
+                              controls.update({name + '.' + method: 'NOTRUN' for method in methods})
+              result.write_text(json.dumps(dict(status='SETUP_FAILED', controls=controls,
+                  control_bodies='ALL22broker+6adapter NOTRUN; focused outer did not produce a result',
+                  tested_source='cab60780e977db491b7d4fc1d58bfc2870761697'), indent=2) + '\n')
+          outcomes = {key: os.environ[key] for key in ['RUNNER_OUTCOME', 'SUBJECT_OUTCOME', 'AUTHORITY_OUTCOME', 'PYTHON_OUTCOME', 'DEPENDENCIES_OUTCOME', 'FOCUSED_OUTCOME']}
+          (evidence / 'setup-outcomes.json').write_text(json.dumps(dict(outcomes=outcomes,
+              workflow_commit=os.environ['GITHUB_SHA'], run_id=os.environ['GITHUB_RUN_ID'],
+              attempt=os.environ['GITHUB_RUN_ATTEMPT'], collection_python=sys.version,
+              coverage='Canary and exact22+6 only; no full gates, old95suite, engine, Node, Y12 or acceptance'), indent=2) + '\n')
+          files = []
+          for path in sorted(root.rglob('*')):
+              if path.is_file() and not path.is_symlink():
+                  files.append(dict(path=str(path.relative_to(root)), bytes=path.stat().st_size,
+                                    sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+          (root / 'bundle-manifest.json').write_text(json.dumps(files, indent=2) + '\n')
+          PY
+
+      - name: Upload complete portable inputs and partial or final evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mygame-y47-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/y47/
+          if-no-files-found: error
+          retention-days: 7
