@@ -637,6 +637,32 @@ class CaptureWorkflowContract(unittest.TestCase):
                     self.assertFalse(evaluate(flags))
 
 
+class CorrectionInventory(unittest.TestCase):
+    def test_captured_fixed_seven_use_existing_use_authority_without_form(self):
+        # Actual R6 capture.json ba68fc26d029ed85e53b4ad69feb426cf9a88ec5ea61a10d180d822be0cc5b7a.
+        # These are captured records, not a substitute terrain/placement fixture.
+        records = [
+            dict(counted=True, h=40, layout_id='crossroads-b001', plan=True, use='cottage', w=80, x=6256, y=3272, zone_door=[6296, 3312]),
+            dict(counted=True, h=40, layout_id='crossroads-b002', plan=True, use='public', w=96, x=6176, y=3408, zone_door=[6224, 3448]),
+            dict(counted=True, h=40, layout_id='crossroads-b003', plan=True, use='house', w=96, x=6320, y=3408, zone_door=[6392, 3448]),
+            dict(counted=True, h=48, layout_id='crossroads-b004', plan=True, use='shop', w=72, x=6088, y=3488, zone_door=[6148, 3536]),
+            dict(counted=True, h=48, layout_id='crossroads-b005', plan=True, use='shop', w=72, x=6088, y=3576, zone_door=[6148, 3624]),
+            dict(counted=True, h=56, layout_id='crossroads-b006', plan=True, use='workshop', w=88, x=6432, y=3472, zone_door=[6464, 3528]),
+            dict(counted=True, h=48, layout_id='crossroads-b007', plan=True, use='cottage', w=72, x=6432, y=3616, zone_door=[6448, 3664])]
+        tree = ast.parse((M['BLOCKOUT'] / 'towns55.py').read_text())
+        node = next(n for n in tree.body if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'FEEDBACK_BUILDINGS' for t in n.targets))
+        inventory = ast.literal_eval(node.value)['crossroads'][:7]
+        original = copy.deepcopy(records)
+        self.assertTrue(all('form' not in row and row['plan'] is True for row in records))
+        self.assertTrue(M['_correction_inventory_valid'](records, inventory))
+        self.assertEqual(records, original)
+        for field, value in (('use', 'wrong form'), ('w', 8)):
+            with self.subTest(derived_negative=field):
+                changed = copy.deepcopy(records); changed[0][field] = value
+                self.assertFalse(M['_correction_inventory_valid'](changed, inventory))
+        self.assertFalse(M['_correction_inventory_valid'](records[:-1], inventory))
+
+
 class LifetimeSourceContract(unittest.TestCase):
     def test_unreaped_anchor_signal_reap_and_acceptance_source_contract(self):
         # SOURCE-ONLY scenario: leader exits while an owned descendant still
