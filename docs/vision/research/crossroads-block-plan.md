@@ -1,6 +1,6 @@
 # Crossroads block-and-plot proposal
 
-**Partial measured A/B/C candidate / D–G unscaled / not placed / not approved.** One proposed town structure for Matt to review, following [the layout study](https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal). This is the seventeenth- to early nineteenth-century market/mill town, not Hearthold's medieval castle borough. It retains the current house style, soft grid, game rules and building-size requirements.
+**Proposed copied-crop A/B/C reconciliation / D–G unfitted / not adopted / not approved.** One proposed town structure for Matt to review, following [the layout study](https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal). This is the seventeenth- to early nineteenth-century market/mill town, not Hearthold's medieval castle borough. It retains the current house style, soft grid, game rules and building-size requirements.
 
 The preferred plan is a **compact market widening with connected mixed fronts, deep plots and service backs**, then a lower mill/grain quarter and two distinct goods approaches. New groups complete streets and corners around the existing gameplay core. They do not extend the rejected pattern of isolated rectangles across broad grass.
 
@@ -175,6 +175,35 @@ The next scope is one coherent terrain/route reconciliation and native authoring
 
 GO6533855827 / ASSIGN6533865862 / ACK6533866313. Actual cropped stdlib probes remained below64MiB/30seconds/4MiB, with unchanged source input hashes. The accompanying actual-cell flat SVG is the reviewable geometry offer; it is not finished game art.
 
+
+## Current reconciliation offer — actual BEFORE versus proposed copied crop
+
+The previous partial frame above is retained as evidence. The current candidate is the sidecar's `market_reconciliation` section: **one coherent A/B/C ground, road, park and frontage proposal**, evaluated only on a private copy of the actual208×224crop. The actual BEFORE archive is unchanged. This is a geometry offer for review, not native placement, finished art or a corrected whole world.
+
+The two formerly conditional B plots now belong to a connected street structure. Shop013 keeps its south door directly on the north edge of harbour road. House022 moves to `[6520,3592,88,48]` across that road, making an opposing domestic frontage and a16px side close beside Ferns. Its north-facing facade is a required future asset variant, **not demonstrated existing art**. House011 moves8px east to `[6360,3240,56,88]`; the24px north approach can then pass east of the fixed hut on dry ground. The woodland garden walk bends below the hut instead of using the creek-cut western slot. Source IDs, ordered dimensions and all seven fixed rectangles/doors remain unchanged.
+
+Five named local road legs use deliberate routes to exact old in-crop join points, retaining every subsequent original point. West traffic follows the existing halt-road axis along the green's western edge, joining the old road before its existing creek crossing. East/Lull arrivals share harbour road and a bank street before branching to the old crossings. The south leg follows the market perimeter. All avoid the native conditional well rectangle `[6254,3552,20,16]`; no well state or reward rule changes. The fixed garden stair remains on the native axis. D/E/F/G and the mill are not fitted by these local joins.
+
+The park is reshaped **as a whole feature**. Crater centre6484,3712, nominal horizontal bowl radius36 and homeward story/bearing remain. The vertical bowl projection deliberately changes from source0.86×36=30.96 to the native-authored24px half-height. The proposed side rim has radii56×24, and the homeward scorch is shortened from129.6 to32px within that park. A declared park polygon replaces the old90px protection disc; the original woodland/north/east/circle protections remain. This is an explicit terrain projection change, not a claim that old contours/pixels are unchanged and not a house-shaped keepout hole. The **unchanged one-cell barrier dilation is recomputed from the complete proposed physical hazards**. The16px Ferns front path then clears that guard while retaining its original door and crater centre/story.
+
+Two declared16px terraced aprons join the new B house foundations to surrounding grades. The first copied proposal left two slopes above0.016; those measurements remain in the packet. The revision changes the planned ground/aprons rather than weakening the threshold. Original native tier/stair source bytes are untouched; these are macro terrace proposals, not a proven native floor conversion.
+
+| Measured copied-crop result | Actual result and limit |
+|---|---|
+| Fourteen footprints | All0water/nonbuildable/barrier/keepout/street/other occupancy; each uniform macro tier; maximum slope0.013223 against unchanged0.016. |
+| Their one-cell halos | All0water/barrier/keepout/other occupancy. Frontage streets and some mixed-tier aprons remain intentionally present; halos are not claimed street-free or uniform. |
+| Door links | All14 adjacent door links reach the native square in a limited four-neighbour explicit-street diagnostic, with the well conservatively reserved. Native navigation/collision/interaction checks remain unrun. |
+| Changed road prefixes | All five0newwater/barrier/keepout/building intersections. No creek was filled and no new bridge invented. |
+| Retained road tails | Exact old points retained.22North keepout cells,7Lull keepout cells and existing bridge-abutment guard cells remain unresolved; no whole-route pass follows. |
+| Actual inputs and outside patch | All6 input hashes unchanged. All49 typed channel bytes outside `[5920,3184,6800,3840)` match their original hashes. All river masks, land and closed-state fields remain exact. |
+| Proposed copy |4,589 distinct cells differ inside the declared support; affected-cell CSV and per-channel before/after/outside hashes are retained. The proposal changes ground, crater, barriers, keepouts, terraces, streets and occupancy coherently. |
+
+The earlier negative offers are preserved: six protected cells under the first northern house; protected woodland garden-edge cells; the two copied-foundation slope residuals; and the later two-creek-cell north approach. The final north route uses the opposite side of the hut instead of adding a bridge or erasing drainage. No coordinate search, density packing, footprint shrink, manual-placement bypass or production generator change was used.
+
+Review the actual-before/proposed-copy comparison for the street enclosure, back courts, gardens, arrival sequence and park edge. The next executable scope is explicit producer/native-plan adoption of the reviewed geometry, followed by the existing validators and editor use. It still needs original route-tail/portal/bridge authority, native floor and collider checks, facade variants and art review. The frozen producer's40count remains unchanged until deliberate adoption of the legitimate41-building town candidate. No Matt permission is needed for this authorised proposal iteration; final art/map merge approval remains Matt's on the PR.
+
+GO6534840357 / ASSIGN6534876710 / ACK6534877050. The final copied probe exited0 in1.937seconds/peak53,985,280bytes under oneCPU/256MiB/60seconds/output8MiB. It never imported project code, invoked an engine/packer/painter, changed the original capture or wrote production terrain.
+
 ## Review and next scope
 
 The concrete choice is the seven-block arrangement above: a connected market core, west rear-service plots, Eastgate coach courts, a lower water/work quarter and a productive halt fringe, retaining the seven gameplay anchors. The omitted mill programme now has one explicit candidate representation, authorised as routine inventory repair by lead6533453453. Its identity mapping and physical fit remain unresolved. Exact plots/crossings/rail fit are later measured work, not requests for physics exceptions. Matt's applicable review of the town composition and explicit PR approval before any art/map merge remain required.
@@ -183,7 +212,7 @@ After lead/Matt reviews this structure, a separately scoped terrain-fitting step
 
 Then use the existing native placement/export/checker on the newly scoped plan, accounting for all forty original IDs, the single deduplicated mill candidate, original inherited doors, terrain, fronts/rears, service yards and routes. That physical result would still not approve the composition or art. One representative street and working-court vignette at the actual character/play-camera scale should establish construction, material, contact-shadow and circulation quality before kit expansion or whole-town claims.
 
-No producer/helper/checker/terrain/workflow or generated game-art image was changed. This step created only the two proposal documents and an outside-Git flat SVG/PNG presentation using the existing Sharp renderer. No packing, project test, scientific import, controller, engine, game-art rendering, world generation, job, Ready, merge or art approval occurred. PR381's original failure, unchanged replay and diagnostic PNG remain preserved; the existing Granary candidate is not offered as a finished Crossroads.
+No production producer/helper/checker/terrain/workflow or generated game-art image was changed. This step created the two proposal documents, outside-Git copied-crop comparison evidence, and a flat SVG/PNG presentation using the existing Sharp renderer. No packing, project test, scientific import, controller, engine, game-art rendering, world generation, job, Ready, merge or art approval occurred. PR381's original failure, unchanged replay and diagnostic PNG remain preserved; the existing Granary candidate is not offered as a finished Crossroads.
 
 ### Evidence references
 

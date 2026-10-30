@@ -1,9 +1,9 @@
 {
   "document": "Crossroads block-and-plot proposal sidecar; NOT a runtime schema or adoption packet",
-  "status": "PARTIAL_MEASURED_A_B_C_REMAINDER_UNSCALED_NOT_PLACED_NOT_APPROVED",
+  "status": "PROPOSED_COPIED_CROP_A_B_C_RECONCILIATION_NATIVE_UNVERIFIED_REMAINDER_UNFITTED",
   "date": "2026-10-30",
   "source_parent": "3818de444d24c95c50daedd6e547a78bd0436551",
-  "source_approval": "GO6527523659; Matt6526956297; study6527386266; lead amendment6533453453; repair ASSIGN6533485058/ACK6533489951; measured proposal GO6533855827/ASSIGN6533865862/ACK6533866313",
+  "source_approval": "GO6527523659; Matt6526956297; study6527386266; lead amendment6533453453; repair ASSIGN6533485058/ACK6533489951; measured proposal GO6533855827/ASSIGN6533865862/ACK6533866313; reconciliationGO6534840357/ASSIGN6534876710/ACK6534877050",
   "study": "https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal",
   "era": "17th to early 19th century market/mill town; existing house style and soft-grid rules retained",
   "count": 40,
@@ -1216,7 +1216,7 @@
       "proposal": "Separate proposed_additions restores ONE mill candidate in F; candidate_count41 is within Matt30-45. This closes the proposal inventory omission only; logical identity mapping, geometry, water relation and terrain fit remain NULL/UNKNOWN until deduplicated measured adoption."
     }
   ],
-  "implementation_hold": "No packing, river fill, footprint shrinking, physics/checker change, producer/export/runtime/render execution. Lead/Matt review this concrete structure before separately scoped terrain fitting and native-scale vignette.",
+  "implementation_hold": "No production terrain/producer/native adoption, packing, world/export/engine or native-checker execution. Current reconciliation permits only private copied-crop measurement and flat presentation under GO6534840357; any native adoption needs its separately scoped checks and applicable art/map approval.",
   "candidate_count": 41,
   "proposed_additions": [
     {
@@ -3336,5 +3336,2052 @@
       "source/game/data/plans/crossroads.json": "cee996a1d28ce4e3523eca541522aae3e05c61c59252496b7aa9eeb334487dec"
     },
     "input_guards_after": "ALL3exact"
+  },
+  "current_geometry_authority": "market_reconciliation supersedes measured_market_fit candidate geometry only; earlier actual-before measurements and original40 ledger remain unchanged historical evidence",
+  "market_reconciliation": {
+    "status": "COHERENT_PROPOSED_COPY_MEASURED_NOT_NATIVE_OR_WHOLE_MAP_ACCEPTANCE",
+    "go": 6534840357,
+    "assign": 6534876710,
+    "ack": 6534877050,
+    "base_proposal": "ada63a5644a29bf1aca1d85775af7ac6de0dbdf1",
+    "capture_head": "87ea22a4be342e3b8009b1c9b922c2fb7db56711",
+    "input_guards": {
+      "capture.json": "ba68fc26d029ed85e53b4ad69feb426cf9a88ec5ea61a10d180d822be0cc5b7a",
+      "before.npz": "95574230bb4474fa3a931ba6167fa521d609107ae79fff3f7e7022e327d7d527",
+      "source/game/data/plans/crossroads.json": "cee996a1d28ce4e3523eca541522aae3e05c61c59252496b7aa9eeb334487dec",
+      "source/docs/vision/research/blockout/towns55.py": "a96f6fdb1f37e954dbeaeee0fc4152a70fcfe437b7aea8d498963abbe505a604",
+      "source/docs/vision/research/blockout/geo53.py": "06f4ddc146c1f60a593149d9760716e38b54bd536631119972b970ef04de5946",
+      "source/docs/vision/research/blockout/geo55.py": "0a3bb6563cb18da942ee537a4efd77c60652534d2874d77996bf85ff6c82a74a"
+    },
+    "input_guards_after": "ALL6exact",
+    "crop_box_world_px": [
+      5632,
+      2944,
+      7424,
+      4608
+    ],
+    "support_box_world_px": [
+      5920,
+      3184,
+      6800,
+      3840
+    ],
+    "support_cells": 9020,
+    "distinct_affected_cells": 4589,
+    "declared_patch": {
+      "town_floor_rectangle": [
+        5976,
+        3224,
+        6632,
+        3808
+      ],
+      "feature_replacement_box": [
+        6352,
+        3576,
+        6576,
+        3792
+      ],
+      "park_protection_polygon": [
+        [
+          6416,
+          3680
+        ],
+        [
+          6552,
+          3680
+        ],
+        [
+          6560,
+          3744
+        ],
+        [
+          6520,
+          3776
+        ],
+        [
+          6416,
+          3760
+        ]
+      ],
+      "bowl_centre": [
+        6484,
+        3712
+      ],
+      "horizontal_radius_before_and_proposed": 36,
+      "vertical_radius_before": 30.96,
+      "vertical_radius_proposed": 24,
+      "rim_outer_radii_proposed": [
+        56,
+        24
+      ],
+      "scorch_before_length": 129.6,
+      "scorch_proposed_length": 32,
+      "scorch_tip_proposed": [
+        6461.830886861464,
+        3688.9233793060857
+      ],
+      "scorch_bearing": "same unitvector toward circle5800,3000; shorter native-park-contained tongue",
+      "keepout_rebuild": "same exact woodland/north/east/circle protection + coherent new park polygon + crater_mask; old90disc replaced as wholefeature, no house-shaped holes",
+      "barrier_rebuild": "unchanged source4-neighbour one-cell dilation over complete declared physical blocked-kind union/named barriers",
+      "terraces": "newcandidate macro targets A/C3,B4; inheritedsevenmacrotiers unchanged; h=(tier+.5)/30 and4-neighbour gradients updated only changed-height support",
+      "native_tiers_and_stair": "source JSON bytes unchanged; macro targets do not claim native floor/collider equivalence"
+    },
+    "source_keepout_reconstruction_mismatches": 0,
+    "route_joins": {
+      "Valley lane north": {
+        "old_index": 10,
+        "exact_old_join_point": [
+          6303.159268378056,
+          3252.1681131104365
+        ],
+        "unchanged_tail_points": 17,
+        "tail_exact": true
+      },
+      "Valley lane west": {
+        "old_index": 23,
+        "exact_old_join_point": [
+          5950.225800611576,
+          3790.9784156224882
+        ],
+        "unchanged_tail_points": 19,
+        "tail_exact": true
+      },
+      "Valley lane east": {
+        "old_index": 17,
+        "exact_old_join_point": [
+          6637.474055846975,
+          3431.8924580443936
+        ],
+        "unchanged_tail_points": 8,
+        "tail_exact": true
+      },
+      "Valley lane to the Lull Road": {
+        "old_index": 21,
+        "exact_old_join_point": [
+          6632.265995084012,
+          3716.0009907400704
+        ],
+        "unchanged_tail_points": 8,
+        "tail_exact": true
+      },
+      "Valley lane south": {
+        "old_index": 17,
+        "exact_old_join_point": [
+          6305.974839588718,
+          3810.623301831652
+        ],
+        "unchanged_tail_points": 69,
+        "tail_exact": true
+      }
+    },
+    "route_facts": {
+      "Valley lane north": {
+        "width_world_px": 24,
+        "support_cells": 121,
+        "water_without_existing_bridge_cells": 0,
+        "kept_existing_bridge_cells": 0,
+        "proposed_barrier_cells": 0,
+        "proposed_keepout_cells": 22,
+        "proposed_building_occupancy_cells": 0,
+        "changed_prefix_only": {
+          "cells": 98,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0
+        }
+      },
+      "Valley lane west": {
+        "width_world_px": 32,
+        "support_cells": 367,
+        "water_without_existing_bridge_cells": 0,
+        "kept_existing_bridge_cells": 5,
+        "proposed_barrier_cells": 1,
+        "proposed_keepout_cells": 0,
+        "proposed_building_occupancy_cells": 0,
+        "changed_prefix_only": {
+          "cells": 349,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0
+        }
+      },
+      "Valley lane east": {
+        "width_world_px": 32,
+        "support_cells": 372,
+        "water_without_existing_bridge_cells": 0,
+        "kept_existing_bridge_cells": 13,
+        "proposed_barrier_cells": 2,
+        "proposed_keepout_cells": 0,
+        "proposed_building_occupancy_cells": 0,
+        "changed_prefix_only": {
+          "cells": 308,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0
+        }
+      },
+      "Valley lane south": {
+        "width_world_px": 24,
+        "support_cells": 169,
+        "water_without_existing_bridge_cells": 0,
+        "kept_existing_bridge_cells": 0,
+        "proposed_barrier_cells": 0,
+        "proposed_keepout_cells": 0,
+        "proposed_building_occupancy_cells": 0,
+        "changed_prefix_only": {
+          "cells": 161,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0
+        }
+      },
+      "Valley lane to the Lull Road": {
+        "width_world_px": 32,
+        "support_cells": 373,
+        "water_without_existing_bridge_cells": 0,
+        "kept_existing_bridge_cells": 14,
+        "proposed_barrier_cells": 2,
+        "proposed_keepout_cells": 7,
+        "proposed_building_occupancy_cells": 0,
+        "changed_prefix_only": {
+          "cells": 303,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0
+        }
+      }
+    },
+    "well": {
+      "native_rect_world_px": [
+        6254,
+        3552,
+        20,
+        16
+      ],
+      "conditional_flags_unchanged": true,
+      "roads_use_market_perimeter_to_avoid_well": true,
+      "macro_road_band_intersections": {
+        "Valley lane north": 0,
+        "Valley lane west": 0,
+        "Valley lane east": 0,
+        "Valley lane south": 0,
+        "Valley lane to the Lull Road": 0
+      }
+    },
+    "channel_changes": {
+      "T/FRAME": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/K": {
+        "changed_cells": 4137,
+        "before_payload_sha256": "c710235b52c307e9147208e21b73889912733af52c2a5de8763df0e93fb68c4d",
+        "proposed_payload_sha256": "4f2e446aa10e1abd38b09992bfba7320433986e0bdbc2ec5062b820d14014e51",
+        "outside_support_bytes_sha256": "ab10d7e456143e0f0677ba654d5b87e0e683058911c249dcf873dcd670fe4676",
+        "outside_exact": true
+      },
+      "T/K0": {
+        "changed_cells": 0,
+        "before_payload_sha256": "89e24fde08be1b6354d3c3a994893dfb80885eab36728e7643a488da6467178e",
+        "proposed_payload_sha256": "89e24fde08be1b6354d3c3a994893dfb80885eab36728e7643a488da6467178e",
+        "outside_support_bytes_sha256": "9c1849d9e9cb4ba7f2386d941753686eb8e6e509c3c5f70394dec881d1aabc71",
+        "outside_exact": true
+      },
+      "T/barrier": {
+        "changed_cells": 102,
+        "before_payload_sha256": "2fc67560c56e62d924da0b7e95e6b015076bc0e3ef1df5abbe05191b12816800",
+        "proposed_payload_sha256": "2b17c513baca6755642abf34d6dbd47dcf214961da212e31047399ba957e97b0",
+        "outside_support_bytes_sha256": "39eb4d7aa704e987ea40237845011128b1a02a3f7ca8632bbb920204a7f53327",
+        "outside_exact": true
+      },
+      "T/border_assigned": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/border_s1": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/border_s2": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/closed_mask": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/coast_y": {
+        "changed_cells": 0,
+        "before_payload_sha256": "2ef9d605e205f5681ce9a9a41aa61681dd6493128c6fdb5ee8e0de210ed5adc3",
+        "proposed_payload_sha256": "2ef9d605e205f5681ce9a9a41aa61681dd6493128c6fdb5ee8e0de210ed5adc3",
+        "outside_support_bytes_sha256": "d67c1518c706c98ab40d14d25ea77d9f82387361b47a3aa037439e40f358a542",
+        "outside_exact": true
+      },
+      "T/crater_mask": {
+        "changed_cells": 82,
+        "before_payload_sha256": "ca69c63de3d4e9cd182f024b4901386a32ac761f2d932aa3ddbe5ecd099ee40a",
+        "proposed_payload_sha256": "8422eb67b8866b6ef2278e6778017a31b924b64019caee35e70dec86b4f0775d",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/dv": {
+        "changed_cells": 0,
+        "before_payload_sha256": "c98b4e48f4b1b42584ef0e43eb67b3d11198158d32b0e83cbc197b7de9739b44",
+        "proposed_payload_sha256": "c98b4e48f4b1b42584ef0e43eb67b3d11198158d32b0e83cbc197b7de9739b44",
+        "outside_support_bytes_sha256": "2531637bd77e60b48cd3978d823c745043cb9e9190515d9ab3f6144825bb1fa6",
+        "outside_exact": true
+      },
+      "T/fade_clumps": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/fire": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/ground0": {
+        "changed_cells": 0,
+        "before_payload_sha256": "13257bc95ca3bdf5227f8cdec4ad81a06cee4f17679fc92691adee0b85cbb993",
+        "proposed_payload_sha256": "13257bc95ca3bdf5227f8cdec4ad81a06cee4f17679fc92691adee0b85cbb993",
+        "outside_support_bytes_sha256": "0c476fd8a8a614607847b7b608a9124046f6538c399d49a1090f5899e2cf4482",
+        "outside_exact": true
+      },
+      "T/h": {
+        "changed_cells": 627,
+        "before_payload_sha256": "17c0cb8bac2c4ee101a3d7f77a2aef3d198d508f0d64f6d06a488a5b6181be0d",
+        "proposed_payload_sha256": "352741d3b6fa0d04677e3d31efc98d3d35581770a60b533613a9ca615ef16e9a",
+        "outside_support_bytes_sha256": "0ef2f8bc8dda4164f371e4a4b1d242c60e25918b28140e1b3be367fbda0d611a",
+        "outside_exact": true
+      },
+      "T/hardbar": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/highgarth_floor": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/isles": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/keepout": {
+        "changed_cells": 222,
+        "before_payload_sha256": "45ea64902e8c90bb1befb126cee2f1d934d7a7488b8105a9dcba046c26534a53",
+        "proposed_payload_sha256": "3f346efbdc56b208da6d49741846e959c0dcbbf63cdd2197b25a9495d76215a6",
+        "outside_support_bytes_sha256": "69abcbbb042d1a5403ba360df3d66bccbee40c6e43825e8fdc83ebf90dd04f6e",
+        "outside_exact": true
+      },
+      "T/land": {
+        "changed_cells": 0,
+        "before_payload_sha256": "6c5edb5b81d58b70d2cbfac6f047b69e3cbbd1755b68eb9b2cc5a5b6a6e31cac",
+        "proposed_payload_sha256": "6c5edb5b81d58b70d2cbfac6f047b69e3cbbd1755b68eb9b2cc5a5b6a6e31cac",
+        "outside_support_bytes_sha256": "0a45d675fcbdf2810f6613a72c3a5b3b48af4473029333cc8444abba15ba8515",
+        "outside_exact": true
+      },
+      "T/paddy_water": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/rim": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/rim_unwalk": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/sea": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "T/slope": {
+        "changed_cells": 889,
+        "before_payload_sha256": "daee8492ff055719f2839026f39684701170a37d87501ac4ec1e031ebce130b6",
+        "proposed_payload_sha256": "a1464aa5541b0f16d605e74c43c41b89209d1c5ab38beefbb6fe9aedafd5a503",
+        "outside_support_bytes_sha256": "301ee76c174987321985d57895321d0a630035bdc1a0b9a8c911f989bab77bbf",
+        "outside_exact": true
+      },
+      "T/street": {
+        "changed_cells": 1961,
+        "before_payload_sha256": "257987fed072e6ae06c995c4808a1bd6f5801cb870cf515d331c626a1971d9d4",
+        "proposed_payload_sha256": "e09bf8b32eb58947fcc55e02a9bf4b7958e39eedcf9e5e8efd766b3e9c6c05a5",
+        "outside_support_bytes_sha256": "e1499237cd4c90ea197678205a180d11f71be658317fd92c5e2163ed9ad9a721",
+        "outside_exact": true
+      },
+      "T/taken": {
+        "changed_cells": 860,
+        "before_payload_sha256": "257f55561dfe807ae1232133d8ac574617bc54b3e2055a9ac6456adbbebbacc1",
+        "proposed_payload_sha256": "d976d191630a8865f39a1d5a3632a7721bee057b5e87cd14e90d78a7c4e41443",
+        "outside_support_bytes_sha256": "debc7cefa66c8cfc59e422dfa63635086ca37c0aaaad62c27ddff70ca8baf78b",
+        "outside_exact": true
+      },
+      "T/tiers_pre": {
+        "changed_cells": 110,
+        "before_payload_sha256": "3cc65ab1a612a43ab33dbd98d50e417eec1f5977838203b7766ae4e4b17ce6eb",
+        "proposed_payload_sha256": "32ce1706eb884781ecac99e7aea6946d40a814bf86d357ec30f82bf5a6d2d515",
+        "outside_support_bytes_sha256": "61bf48c29a6f95b8be6f9755a07043393648aed2adf958f45d06f6700e71a76a",
+        "outside_exact": true
+      },
+      "T/used": {
+        "changed_cells": 21,
+        "before_payload_sha256": "889fbd00390d512c33467d6e7e92b0d076c7807a9c1c723d1da983c451ade6ee",
+        "proposed_payload_sha256": "e1c6cbd8da9f6d779cd8ad3dcf4332b7fb0c55f13089ccb89e0ee273c781983c",
+        "outside_support_bytes_sha256": "540f8902b36dc880d54f934be91466bbb9e19a957373a365152f1c38d4258290",
+        "outside_exact": true
+      },
+      "T/used_routes": {
+        "changed_cells": 1257,
+        "before_payload_sha256": "e06bb1fb460f60c0c7f991ba537038336e0dfe37df15c5c5835d5c0d7a62c908",
+        "proposed_payload_sha256": "bb5a28237b690fe11704df3f63bf5f30d8767e442291a4a1af5c019b1e486e41",
+        "outside_support_bytes_sha256": "d6205dc07841c31bde5c01d9fcfe73ec4f73e423d9b82dfe0f03c9056e6860d0",
+        "outside_exact": true
+      },
+      "T/wet": {
+        "changed_cells": 0,
+        "before_payload_sha256": "06fac51b595aaebcb1a336c6c8b90fd3cecb51c5614190e80dac0b676c601d81",
+        "proposed_payload_sha256": "06fac51b595aaebcb1a336c6c8b90fd3cecb51c5614190e80dac0b676c601d81",
+        "outside_support_bytes_sha256": "ec98777ce4fcbea1ca290ec1e0e2cdf0260dc943f110471064f97e7363b0b310",
+        "outside_exact": true
+      },
+      "barriers/fire": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "barriers/rim": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "barriers/sea": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "barriers/the Cog": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "barriers/the Lull": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "barriers/the Rift": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "barriers/wall": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Amber": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Brackens beck": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Cog": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Glint": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Heather burn": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Lull": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Rift": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Sedgeburn": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Sleepwater": {
+        "changed_cells": 0,
+        "before_payload_sha256": "b12e711bf1a4c57f52f9b482c8de84cf8bff6e73c0664afef8cca3f74c421500",
+        "proposed_payload_sha256": "b12e711bf1a4c57f52f9b482c8de84cf8bff6e73c0664afef8cca3f74c421500",
+        "outside_support_bytes_sha256": "d69f160906522d30a7856d0a4e63f0c24bd50bec6a11a79863163ed02c334170",
+        "outside_exact": true
+      },
+      "river_masks/the Sorrel": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      },
+      "river_masks/the Willow Run": {
+        "changed_cells": 0,
+        "before_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outside_support_bytes_sha256": "89adf1b93084ecf524973b9ab1e33188a83850afd7caf61edda9def5a741d67e",
+        "outside_exact": true
+      }
+    },
+    "unchanged_river_masks_and_land_and_closed_state": true,
+    "limits": {
+      "oneCPU": true,
+      "AS_bytes": 268435456,
+      "CPU_seconds": 60,
+      "wall_alarm_seconds": 60,
+      "output_bytes": 8388608
+    },
+    "execution": {
+      "actual_exit": 0,
+      "wall_seconds": 1.937,
+      "peak_rss_bytes": 53985280
+    },
+    "unknowns": [
+      "Copied crop only, no engine/native placement/export/checker or art orientation authorability demonstrated.",
+      "Any measured route water/guard/occupancy residual remains a conflict, not an automatic new bridge or waived rule.",
+      "Outside-road tails/river masks retained exact, but uncaptured outer terrain/native gate/rail conditions are not tested.",
+      "Woodland/native portal seam overlap remains protected; it cannot be silently cleared to make a macro walking proof.",
+      "D/E/F/G and the mill remain unfitted; source cap40/expected40 unchanged."
+    ],
+    "terrace_aprons": [
+      {
+        "id": "B022_house_and_sidecourt_terrace",
+        "rect": [
+          6504,
+          3576,
+          120,
+          80
+        ],
+        "foot": [
+          6520,
+          3592,
+          88,
+          48
+        ],
+        "tier": 4
+      },
+      {
+        "id": "B033_house_and_garden_terrace",
+        "rect": [
+          6512,
+          3320,
+          128,
+          88
+        ],
+        "foot": [
+          6528,
+          3336,
+          96,
+          56
+        ],
+        "tier": 4
+      }
+    ],
+    "evidence_files": {
+      "reconcile.py": {
+        "bytes": 20945,
+        "sha256": "0fa97132958148723018924216b162bf4aeadbdbe86d3a0b8baf009cdf76c14b"
+      },
+      "reconciliation.json": {
+        "bytes": 246099,
+        "sha256": "eee06f4030668b18d5363588c795125d63bcff1dbe1a96de2a24de5e7eb16d01"
+      },
+      "affected-cells.csv": {
+        "bytes": 315689,
+        "sha256": "41cc51bac4692fb1d28969a61e439bea77dba38f60d1bc2ab99a33d8781e0ccd"
+      },
+      "proposed-copy.npz": {
+        "bytes": 1440659,
+        "sha256": "894aab0f6caa6f05db3f4de8ad5c04483bd171858fd51d48e117eacd6a446d53"
+      }
+    },
+    "candidate_plots": [
+      {
+        "id": "crossroads-b001",
+        "block": "C",
+        "plot": "C01",
+        "source_form": "cottage",
+        "source_footprint_px": [
+          80,
+          40
+        ],
+        "rect_world_px": [
+          6256,
+          3272,
+          80,
+          40
+        ],
+        "door_world_px": [
+          6296,
+          3312
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "inherited door unchanged",
+        "proposed_copy_footprint": {
+          "cells": 50,
+          "ground_before": {
+            "meadow": 43,
+            "path": 7
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 50
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.00020455694800716726
+        },
+        "proposed_copy_halo": {
+          "cells": 84,
+          "ground_before": {
+            "meadow": 74,
+            "path": 10
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 74,
+            "lane": 10
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 10,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.00021999273787618736
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b002",
+        "block": "A",
+        "plot": "A01",
+        "source_form": "public",
+        "source_footprint_px": [
+          96,
+          40
+        ],
+        "rect_world_px": [
+          6176,
+          3408,
+          96,
+          40
+        ],
+        "door_world_px": [
+          6224,
+          3448
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "inherited door unchanged",
+        "proposed_copy_footprint": {
+          "cells": 60,
+          "ground_before": {
+            "meadow": 31,
+            "building": 29
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 60
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0004327290735202025
+        },
+        "proposed_copy_halo": {
+          "cells": 98,
+          "ground_before": {
+            "meadow": 55,
+            "building": 42,
+            "path": 1
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 73,
+            "lane": 12,
+            "plaza": 13
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 25,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0004555953991241945
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b003",
+        "block": "C",
+        "plot": "C02",
+        "source_form": "house",
+        "source_footprint_px": [
+          96,
+          40
+        ],
+        "rect_world_px": [
+          6320,
+          3408,
+          96,
+          40
+        ],
+        "door_world_px": [
+          6392,
+          3448
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "inherited door unchanged",
+        "proposed_copy_footprint": {
+          "cells": 60,
+          "ground_before": {
+            "meadow": 57,
+            "path": 3
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 60
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.00018807678959271382
+        },
+        "proposed_copy_halo": {
+          "cells": 98,
+          "ground_before": {
+            "path": 16,
+            "meadow": 79,
+            "building": 3
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 72,
+            "garden": 12,
+            "plaza": 13,
+            "lane": 1
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 14,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.00021083032165037312
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b004",
+        "block": "A",
+        "plot": "A02",
+        "source_form": "shop",
+        "source_footprint_px": [
+          72,
+          48
+        ],
+        "rect_world_px": [
+          6088,
+          3488,
+          72,
+          48
+        ],
+        "door_world_px": [
+          6148,
+          3536
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "inherited door unchanged",
+        "proposed_copy_footprint": {
+          "cells": 54,
+          "ground_before": {
+            "meadow": 24,
+            "building": 30
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 54
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0010443482354221209
+        },
+        "proposed_copy_halo": {
+          "cells": 88,
+          "ground_before": {
+            "meadow": 57,
+            "building": 30,
+            "path": 1
+          },
+          "ground_proposed_before_foot_stamp": {
+            "lane": 28,
+            "meadow": 60
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 28,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0010590011205440324
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 3,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b005",
+        "block": "A",
+        "plot": "A03",
+        "source_form": "shop",
+        "source_footprint_px": [
+          72,
+          48
+        ],
+        "rect_world_px": [
+          6088,
+          3576,
+          72,
+          48
+        ],
+        "door_world_px": [
+          6148,
+          3624
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "inherited door unchanged",
+        "proposed_copy_footprint": {
+          "cells": 54,
+          "ground_before": {
+            "meadow": 26,
+            "path": 28
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 54
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0008083999024926907
+        },
+        "proposed_copy_halo": {
+          "cells": 88,
+          "ground_before": {
+            "meadow": 48,
+            "path": 40
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 78,
+            "lane": 10
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 10,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0008872872271463947
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b006",
+        "block": "B",
+        "plot": "B01",
+        "source_form": "workshop",
+        "source_footprint_px": [
+          88,
+          56
+        ],
+        "rect_world_px": [
+          6432,
+          3472,
+          88,
+          56
+        ],
+        "door_world_px": [
+          6464,
+          3528
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "inherited door unchanged",
+        "proposed_copy_footprint": {
+          "cells": 77,
+          "ground_before": {
+            "path": 11,
+            "meadow": 66
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 77
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0004623629261394389
+        },
+        "proposed_copy_halo": {
+          "cells": 117,
+          "ground_before": {
+            "path": 27,
+            "meadow": 90
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 106,
+            "lane": 11
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 11,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.001559621379801323
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b007",
+        "block": "B",
+        "plot": "B02",
+        "source_form": "cottage",
+        "source_footprint_px": [
+          72,
+          48
+        ],
+        "rect_world_px": [
+          6432,
+          3616,
+          72,
+          48
+        ],
+        "door_world_px": [
+          6448,
+          3664
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "inherited door unchanged",
+        "proposed_copy_footprint": {
+          "cells": 54,
+          "ground_before": {
+            "meadow": 34,
+            "path": 3,
+            "shardglass": 4,
+            "scorch": 1,
+            "building": 12
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 54
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.004796736983377314
+        },
+        "proposed_copy_halo": {
+          "cells": 88,
+          "ground_before": {
+            "meadow": 50,
+            "path": 9,
+            "scorch": 2,
+            "shardglass": 9,
+            "building": 18
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 72,
+            "lane": 16
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 16,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            4
+          ],
+          "max_slope": 0.010222107833367902
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b010",
+        "block": "C",
+        "plot": "C03",
+        "source_form": "cottage",
+        "source_footprint_px": [
+          48,
+          72
+        ],
+        "rect_world_px": [
+          6184,
+          3232,
+          48,
+          72
+        ],
+        "door_world_px": [
+          6208,
+          3304
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "UNVERIFIED for candidate asset; geometric door offer only",
+        "proposed_copy_footprint": {
+          "cells": 54,
+          "ground_before": {
+            "field": 5,
+            "hedge": 4,
+            "meadow": 45
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 54
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.007769587364933175
+        },
+        "proposed_copy_halo": {
+          "cells": 88,
+          "ground_before": {
+            "field": 11,
+            "hedge": 5,
+            "meadow": 72
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 72,
+            "lane": 8,
+            "garden": 8
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 8,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.007769587364933175
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b011",
+        "block": "C",
+        "plot": "C04",
+        "source_form": "house",
+        "source_footprint_px": [
+          56,
+          88
+        ],
+        "rect_world_px": [
+          6360,
+          3240,
+          56,
+          88
+        ],
+        "door_world_px": [
+          6392,
+          3328
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "UNVERIFIED for candidate asset; geometric door offer only",
+        "proposed_copy_footprint": {
+          "cells": 77,
+          "ground_before": {
+            "meadow": 52,
+            "building": 25
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 77
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.006631870016237775
+        },
+        "proposed_copy_halo": {
+          "cells": 117,
+          "ground_before": {
+            "meadow": 85,
+            "garden": 2,
+            "building": 30
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 82,
+            "lane": 24,
+            "garden": 11
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 24,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.006631870016237775
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b013",
+        "block": "B",
+        "plot": "B03",
+        "source_form": "shop",
+        "source_footprint_px": [
+          48,
+          88
+        ],
+        "rect_world_px": [
+          6552,
+          3472,
+          48,
+          88
+        ],
+        "door_world_px": [
+          6576,
+          3560
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "UNVERIFIED for candidate asset; geometric door offer only",
+        "proposed_copy_footprint": {
+          "cells": 66,
+          "ground_before": {
+            "path": 1,
+            "meadow": 59,
+            "building": 6
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 66
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0120453793154592
+        },
+        "proposed_copy_halo": {
+          "cells": 104,
+          "ground_before": {
+            "path": 8,
+            "meadow": 84,
+            "building": 12
+          },
+          "ground_proposed_before_foot_stamp": {
+            "lane": 26,
+            "meadow": 78
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 26,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            4
+          ],
+          "max_slope": 0.0120453793154592
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b022",
+        "block": "B",
+        "plot": "B04",
+        "source_form": "house",
+        "source_footprint_px": [
+          88,
+          48
+        ],
+        "rect_world_px": [
+          6520,
+          3592,
+          88,
+          48
+        ],
+        "door_world_px": [
+          6568,
+          3592
+        ],
+        "required_facing": "north",
+        "art_orientation_authorability": "UNVERIFIED for candidate asset; geometric door offer only",
+        "proposed_copy_footprint": {
+          "cells": 66,
+          "ground_before": {
+            "meadow": 45,
+            "path": 21
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 66
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.004042086136333103
+        },
+        "proposed_copy_halo": {
+          "cells": 104,
+          "ground_before": {
+            "meadow": 69,
+            "path": 35
+          },
+          "ground_proposed_before_foot_stamp": {
+            "lane": 20,
+            "meadow": 76,
+            "garden": 8
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 20,
+          "other_occupancy": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.009501727114550914
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b033",
+        "block": "B",
+        "plot": "B05",
+        "source_form": "house",
+        "source_footprint_px": [
+          96,
+          56
+        ],
+        "rect_world_px": [
+          6528,
+          3336,
+          96,
+          56
+        ],
+        "door_world_px": [
+          6576,
+          3392
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "UNVERIFIED for candidate asset; geometric door offer only",
+        "proposed_copy_footprint": {
+          "cells": 84,
+          "ground_before": {
+            "meadow": 77,
+            "garden": 7
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 84
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.004186296810114962
+        },
+        "proposed_copy_halo": {
+          "cells": 126,
+          "ground_before": {
+            "meadow": 108,
+            "garden": 17,
+            "hedge": 1
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 112,
+            "garden": 12,
+            "lane": 2
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 2,
+          "other_occupancy": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.010694197999352915
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b035",
+        "block": "A",
+        "plot": "A04",
+        "source_form": "shop",
+        "source_footprint_px": [
+          64,
+          56
+        ],
+        "rect_world_px": [
+          6096,
+          3408,
+          64,
+          56
+        ],
+        "door_world_px": [
+          6128,
+          3464
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "UNVERIFIED for candidate asset; geometric door offer only",
+        "proposed_copy_footprint": {
+          "cells": 56,
+          "ground_before": {
+            "meadow": 56
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 56
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.01171417739205996
+        },
+        "proposed_copy_halo": {
+          "cells": 90,
+          "ground_before": {
+            "meadow": 90
+          },
+          "ground_proposed_before_foot_stamp": {
+            "lane": 18,
+            "meadow": 72
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 18,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            4
+          ],
+          "max_slope": 0.01171417739205996
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      },
+      {
+        "id": "crossroads-b037",
+        "block": "A",
+        "plot": "A05",
+        "source_form": "shop",
+        "source_footprint_px": [
+          48,
+          64
+        ],
+        "rect_world_px": [
+          6032,
+          3400,
+          48,
+          64
+        ],
+        "door_world_px": [
+          6056,
+          3464
+        ],
+        "required_facing": "south",
+        "art_orientation_authorability": "UNVERIFIED for candidate asset; geometric door offer only",
+        "proposed_copy_footprint": {
+          "cells": 48,
+          "ground_before": {
+            "meadow": 48
+          },
+          "ground_proposed_before_foot_stamp": {
+            "meadow": 48
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.01322239202343001
+        },
+        "proposed_copy_halo": {
+          "cells": 80,
+          "ground_before": {
+            "meadow": 80
+          },
+          "ground_proposed_before_foot_stamp": {
+            "lane": 24,
+            "meadow": 56
+          },
+          "water_cells": 0,
+          "nonbuildable_before_stamp": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 24,
+          "other_occupancy": 0,
+          "tiers": [
+            3,
+            4
+          ],
+          "max_slope": 0.01322239202343001
+        },
+        "authored_walk_network_diagnostic": {
+          "door_adjacent_candidate_cells": 2,
+          "connected_to_native_square": true,
+          "meaning": "4-neighbour explicitproposedstreet graph only, conservativewellreserved; notnativecollision/navigation/interaction acceptance"
+        }
+      }
+    ],
+    "candidate_areas": {
+      "market_west_public_lane": [
+        6016,
+        3464,
+        160,
+        24
+      ],
+      "market_west_narrow_public_seam": [
+        6160,
+        3488,
+        16,
+        136
+      ],
+      "A_rear_service_lane": [
+        6016,
+        3376,
+        256,
+        24
+      ],
+      "A_garden_band": [
+        6032,
+        3344,
+        128,
+        32
+      ],
+      "C_quiet_walk_spur": [
+        6296,
+        3328,
+        104,
+        16
+      ],
+      "B_harbour_front_apron": [
+        6520,
+        3552,
+        32,
+        8
+      ],
+      "B_east_court": [
+        6520,
+        3448,
+        32,
+        104
+      ],
+      "A_west_passage": [
+        6080,
+        3392,
+        16,
+        96
+      ],
+      "A_library_rear_garden": [
+        6176,
+        3352,
+        96,
+        24
+      ],
+      "A_library_rear_apron": [
+        6176,
+        3400,
+        96,
+        8
+      ],
+      "A_bakery_west_garden": [
+        6000,
+        3488,
+        80,
+        48
+      ],
+      "A_herbalist_west_garden": [
+        6024,
+        3576,
+        56,
+        48
+      ],
+      "A_herbalist_public_link": [
+        6144,
+        3624,
+        32,
+        16
+      ],
+      "C_north_cottages_rear_garden": [
+        6320,
+        3344,
+        96,
+        64
+      ],
+      "C010_west_side_garden": [
+        6152,
+        3240,
+        32,
+        64
+      ],
+      "C010_rear_court": [
+        6184,
+        3224,
+        48,
+        8
+      ],
+      "C010_door_link": [
+        6200,
+        3304,
+        16,
+        24
+      ],
+      "C011_east_side_garden": [
+        6416,
+        3240,
+        40,
+        88
+      ],
+      "C011_rear_court": [
+        6360,
+        3224,
+        56,
+        16
+      ],
+      "B013_rear_court": [
+        6552,
+        3456,
+        48,
+        16
+      ],
+      "B022_tapered_rear_garden": [
+        6544,
+        3640,
+        64,
+        32
+      ],
+      "B033_rear_garden": [
+        6528,
+        3296,
+        96,
+        40
+      ],
+      "B033_door_link": [
+        6568,
+        3392,
+        16,
+        56
+      ],
+      "B006_smithy_door_link": [
+        6456,
+        3528,
+        16,
+        32
+      ],
+      "B022_market_door_link": [
+        6560,
+        3584,
+        16,
+        8
+      ],
+      "C_market_axis_completion": [
+        6280,
+        3400,
+        32,
+        48
+      ],
+      "B007_front_walk": [
+        6440,
+        3664,
+        80,
+        16
+      ],
+      "B007_side_close": [
+        6504,
+        3592,
+        16,
+        88
+      ],
+      "C001_door_link": [
+        6288,
+        3312,
+        16,
+        24
+      ],
+      "north_market_close": [
+        6416,
+        3448,
+        216,
+        16
+      ],
+      "native_square": [
+        6176,
+        3448,
+        240,
+        176
+      ],
+      "native_green": [
+        6016,
+        3656,
+        168,
+        136
+      ]
+    },
+    "candidate_local_routes": {
+      "Valley lane north": {
+        "points_through_exact_old_join": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6296,
+            3448
+          ],
+          [
+            6296,
+            3336
+          ],
+          [
+            6348,
+            3336
+          ],
+          [
+            6348,
+            3252.1681131104365
+          ],
+          [
+            6303.159268378056,
+            3252.1681131104365
+          ]
+        ],
+        "unchanged_tail_source": "capture.json/before_routes/Valley lane north",
+        "unchanged_tail_start_index": 10,
+        "unchanged_tail_exact": true
+      },
+      "Valley lane west": {
+        "points_through_exact_old_join": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6300,
+            3480
+          ],
+          [
+            6200,
+            3480
+          ],
+          [
+            6200,
+            3552
+          ],
+          [
+            6000,
+            3552
+          ],
+          [
+            6000,
+            3790.9784156224882
+          ],
+          [
+            5950.225800611576,
+            3790.9784156224882
+          ]
+        ],
+        "unchanged_tail_source": "capture.json/before_routes/Valley lane west",
+        "unchanged_tail_start_index": 23,
+        "unchanged_tail_exact": true
+      },
+      "Valley lane east": {
+        "points_through_exact_old_join": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6300,
+            3480
+          ],
+          [
+            6392,
+            3480
+          ],
+          [
+            6392,
+            3576
+          ],
+          [
+            6632,
+            3576
+          ],
+          [
+            6632,
+            3431.8924580443936
+          ],
+          [
+            6637.474055846975,
+            3431.8924580443936
+          ]
+        ],
+        "unchanged_tail_source": "capture.json/before_routes/Valley lane east",
+        "unchanged_tail_start_index": 17,
+        "unchanged_tail_exact": true
+      },
+      "Valley lane to the Lull Road": {
+        "points_through_exact_old_join": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6300,
+            3480
+          ],
+          [
+            6392,
+            3480
+          ],
+          [
+            6392,
+            3576
+          ],
+          [
+            6632,
+            3576
+          ],
+          [
+            6632,
+            3716.0009907400704
+          ],
+          [
+            6632.265995084012,
+            3716.0009907400704
+          ]
+        ],
+        "unchanged_tail_source": "capture.json/before_routes/Valley lane to the Lull Road",
+        "unchanged_tail_start_index": 21,
+        "unchanged_tail_exact": true
+      },
+      "Valley lane south": {
+        "points_through_exact_old_join": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6300,
+            3480
+          ],
+          [
+            6200,
+            3480
+          ],
+          [
+            6200,
+            3608
+          ],
+          [
+            6232,
+            3640
+          ],
+          [
+            6232,
+            3784
+          ],
+          [
+            6305.974839588718,
+            3810.623301831652
+          ]
+        ],
+        "unchanged_tail_source": "capture.json/before_routes/Valley lane south",
+        "unchanged_tail_start_index": 17,
+        "unchanged_tail_exact": true
+      }
+    },
+    "history": [
+      {
+        "file": "reconciliation-r1.json",
+        "actual_exit": 0,
+        "limitations": "Initial copied foundations left B022maxslope0.016168/B0330.016745 above unchanged0.016; not passed."
+      },
+      {
+        "file": "reconciliation-r2.json",
+        "actual_exit": 0,
+        "limitations": "Declared terrace aprons resolved grades; proposed west-of-hut north prefix still crossed2creekcells, not passed."
+      },
+      {
+        "file": "reconciliation.json",
+        "actual_exit": 0,
+        "revision": "C0118east permits full24px dry east-of-hut approach; woodland walk bends belowhut; no creek fill or new bridge."
+      }
+    ],
+    "native_approval_qualifications": [
+      "All14 footprints in privatecopy are dry/maskclear, street0, uniformmacrotiers, maxslope≤0.013223; no testthreshold changed.",
+      "Halos have0water/barrier/keepout/otheroccupancy, but intentionally contain frontage streets and mixedtieraprons. They are not street0/uniformtier.",
+      "All14 dooradjacent links connect on explicit4-neighbour street diagnostic only, with conditionalwell reserved conservatively; not native pathfinding/collision.",
+      "Five CHANGED prefixes have0newwater/barrier/keepout/building cuts. Preserved tails still have22Northkeepout/7Lullkeepout and original bridge-abutment guard cells; no fullroutePASS.",
+      "Native source7rects/doors/gardenstair/green/well/cratercentre unchanged. Bowl horizontalradius36 preserved; vertical30.96→24 is EXPLICIT proposed projection change, not unchanged old pixels.",
+      "B022 north-facing facade is required by this geometric plan; existing asset authorability unverified. No art or live placement promoted.",
+      "Original40records/millentry remain deepunchanged, candidate total41. D/E/F/G/mill geometryNULL; frozen producer cap40/check40 not changed."
+    ]
   }
 }
