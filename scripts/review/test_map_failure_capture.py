@@ -5,10 +5,14 @@ The real-T inventory remains unavailable until the producer reaches that stage.
 """
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
+import copy
+import ast
+import hashlib
 import json
 import runpy
 import sys
+import struct
 import tempfile
 import time
 import unittest
@@ -175,16 +179,33 @@ class Contracts(unittest.TestCase):
             raise original
         tw = SimpleNamespace(_feedback_crossroads=fail, _feedback_rows=lambda *a: None,
             Town=Town, BUILDABLE={'meadow'}, H=8, W=8, CELL=8,
+            g=SimpleNamespace(COL={'meadow': '#008000'}),
             band_mask=lambda *a: np.zeros((8, 8), bool), _lm=lambda *a: np.zeros((8, 8), bool))
         with tempfile.TemporaryDirectory(prefix='SYNTHETIC-R6-identity-') as name:
             recorder = M['Recorder'](tw, Path(name))
-            with self.assertRaises(ValueError) as caught:
-                with recorder:
-                    tw._feedback_crossroads(self.terrain(), None)
+            original_snapshot = M['snapshot']
+            calls = []
+            def snapshot_then_fail_after(*args, **kwargs):
+                calls.append(Path(args[2]).name)
+                if len(calls) == 3:
+                    raise M['CaptureError']('SYNTHETIC optional-after snapshot refusal')
+                return original_snapshot(*args, **kwargs)
+            with patch.dict(M['Recorder'].begin.__globals__, CROSS=(0, 0, 64, 64), NEON=(0, 0, 64, 64), snapshot=snapshot_then_fail_after):
+                with self.assertRaises(ValueError) as caught:
+                    with recorder:
+                        tw._feedback_crossroads(self.terrain(), None)
             self.assertIs(caught.exception, original)
             self.assertIs(tw._feedback_crossroads, fail)
-            self.assertTrue(recorder.errors)
+            self.assertEqual(calls, ['before.npz', 'initial-neon.npz', 'after.npz'])
+            self.assertEqual(recorder.errors, [{'type': 'CaptureError', 'message': 'SYNTHETIC optional-after snapshot refusal'}])
             self.assertFalse(recorder.core['complete'])
+            core = json.loads((Path(name) / 'capture.json').read_text())
+            self.assertEqual(core['stage'], 'FAILURE_CORE_PARTIAL')
+            self.assertEqual(core['producer_outcome']['message'], str(original))
+            self.assertIn('before', core)
+            self.assertIn('initial_neon', core)
+            self.assertEqual(core['trials']['sha256'], M['sha'](Path(name) / 'trials.json'))
+            self.assertTrue((Path(name) / 'trials.json').is_file())
 
     def test_original_frontage_caller_and_hand_free_observation_execute_cheaply(self):
         # A bounded SYNTHETIC fixture through the receiving source functions,
@@ -227,6 +248,117 @@ class Contracts(unittest.TestCase):
                 self.assertEqual(Town().hand(1, 2, 3, 4), 'literal legacy return')
             self.assertEqual(observer.events, [])
             self.assertEqual(observer.errors, [])
+
+
+class ReviewRegressions(unittest.TestCase):
+    """Three new STDlib-only RED cases; no numeric imports or producer process."""
+    def test_atomic_temp_fault_preserves_marker_and_allows_later_write(self):
+        with tempfile.TemporaryDirectory(prefix='SYNTHETIC-R6-temp-retry-') as name:
+            path = Path(name) / 'capture.json'
+            M['write_json'](path, {'complete': False, 'stage': 'durable partial'})
+            previous = path.read_bytes()
+            with patch.object(M['write_json'].__globals__['os'], 'fsync', side_effect=OSError('SYNTHETIC fsync failure')):
+                with self.assertRaises(OSError):
+                    M['write_json'](path, {'complete': True})
+            self.assertEqual(path.read_bytes(), previous)
+            self.assertFalse(path.with_name('capture.json.tmp').exists())
+            M['write_json'](path, {'complete': False, 'stage': 'later core'})
+            self.assertEqual(json.loads(path.read_text())['stage'], 'later core')
+
+    def valid_primitive_archive(self, folder):
+        """SYNTHETIC canonical tinyNPZ, constructed without importing NumPy."""
+        records = []
+        path = folder / 'before.npz'
+        pairs = [('T', k) for k in M['REQUIRED']] + [('barriers', 'sea'), ('river_masks', 'the Sleepwater')]
+        with zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_DEFLATED) as output:
+            for i, (container, key) in enumerate(pairs):
+                if key in ('K', 'K0'):
+                    dtype = '<U6'; raw = 'meadow'.encode('utf-32-le') * 4; source_dtype = 'object'
+                elif key in ('h', 'slope'):
+                    dtype = '<f8'; raw = struct.pack('<dddd', 0, 0, 0, 0); source_dtype = 'float64'
+                elif key == 'tiers_pre':
+                    dtype = '<i8'; raw = bytes(32); source_dtype = 'int64'
+                else:
+                    dtype = '|b1'; raw = bytes(4); source_dtype = 'bool'
+                header = repr({'descr': dtype, 'fortran_order': False, 'shape': (2, 2)}).encode('latin1')
+                header += b' ' * ((64 - (10 + len(header) + 1) % 64) % 64) + b'\n'
+                value = b'\x93NUMPY\x01\x00' + struct.pack('<H', len(header)) + header + raw
+                key_name = f'a{i:03d}'
+                output.writestr(key_name + '.npy', value)
+                records.append({'archive_key': key_name, 'container': container, 'source_key': key,
+                    'shape': [2, 2], 'dtype': dtype, 'source_dtype': source_dtype,
+                    'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()})
+        return path, {'kind': 'consumer', 'file': path.name, 'bytes': path.stat().st_size,
+            'sha256': M['sha'](path), 'box_px': [0, 0, 16, 16], 'global_shape': [2, 2],
+            'raw_bytes': sum(r['bytes'] for r in records), 'arrays': records}
+
+    def test_archive_semantic_inventory_and_crop_context_refuse_before_load(self):
+        with tempfile.TemporaryDirectory(prefix='SYNTHETIC-R6-semantic-') as name:
+            folder = Path(name); path, valid = self.valid_primitive_archive(folder)
+            self.assertTrue(M['validate_archive'](path, valid))
+            changes = []
+            duplicate = copy.deepcopy(valid); duplicate['arrays'][1]['source_key'] = 'K'; changes.append(('duplicate', duplicate))
+            missing = copy.deepcopy(valid); missing['arrays'][1]['source_key'] = 'renamed'; changes.append(('required', missing))
+            crop = copy.deepcopy(valid); crop['box_px'] = [0, 0, 24, 16]; changes.append(('crop', crop))
+            global_shape = copy.deepcopy(valid); global_shape['global_shape'] = [1, 2]; changes.append(('global', global_shape))
+            for label, metadata in changes:
+                with self.subTest(label=label):
+                    with self.assertRaises(M['CaptureError']):
+                        M['validate_archive'](path, metadata)
+            load = Mock(side_effect=AssertionError('N.load must not be reached for duplicate semantic keys'))
+            with patch.dict(M['load_snapshot'].__globals__, N=SimpleNamespace(load=load)):
+                with self.assertRaises(M['CaptureError']):
+                    M['load_snapshot'](folder, duplicate)
+            load.assert_not_called()
+
+    def test_postmkdir_setup_failure_still_creates_verified_partial_without_child(self):
+        with tempfile.TemporaryDirectory(prefix='SYNTHETIC-R6-setup-') as name:
+            root = Path(name); out = root / 'phase'; allocation = root / 'allocation.json'
+            guard = {'head': 'SYNTHETIC', 'source_sha256': {}}
+            allocation.write_text(json.dumps({'go_id': 'SYNTHETIC', 'phase': 'capture', 'out': str(out.resolve()),
+                'head': guard['head'], 'source_sha256': guard['source_sha256']}))
+            globals_ = M['run_capture'].__globals__
+            with patch.dict(globals_, source_guard=Mock(return_value=guard), source_files=Mock(side_effect=OSError('SYNTHETIC setup source-copy failure'))):
+                with patch.object(globals_['subprocess'], 'Popen') as start:
+                    try:
+                        M['run_capture'](allocation, out)
+                    except OSError:
+                        pass  # The original setup error may escape, but partial evidence must survive.
+                    start.assert_not_called()
+            artifact = out.with_name(out.name + '.zip')
+            self.assertTrue(artifact.is_file())
+            self.assertTrue(M['verify_bundle'](artifact, M['sha'](artifact))['retrieved_bytes_verified'])
+            self.assertFalse(json.loads((out / 'capture.json').read_text())['complete'])
+
+class LifetimeSourceContract(unittest.TestCase):
+    def test_unreaped_anchor_signal_reap_and_acceptance_source_contract(self):
+        # SOURCE-ONLY scenario: leader exits while an owned descendant still
+        # holds the pipe. Require WNOWAIT anchoring, last group signal BEFORE
+        # destructive wait4, then group absence for success. This does not
+        # start a child or prove a real leak/cleanup on this operating system.
+        tree = ast.parse(SOURCE.read_text())
+        function = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'run_capture')
+        calls = [n for n in ast.walk(function) if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+            and isinstance(n.func.value, ast.Name) and n.func.value.id == 'os']
+        observes = [n for n in calls if n.func.attr == 'waitid']
+        destructive = [n for n in calls if n.func.attr == 'wait4']
+        signals = [n for n in calls if n.func.attr == 'killpg' and len(n.args) > 1
+            and not (isinstance(n.args[1], ast.Constant) and n.args[1].value == 0)]
+        with self.subTest(contract='nonreaping-leader-anchor'):
+            self.assertTrue(observes)
+            self.assertTrue(any(isinstance(n, ast.Attribute) and n.attr == 'WNOWAIT' for call in observes for n in ast.walk(call)))
+        with self.subTest(contract='last-owned-group-signal-before-destructive-reap'):
+            self.assertTrue(destructive and signals)
+            self.assertGreater(min(n.lineno for n in destructive), max(n.lineno for n in signals))
+        self.assertIsInstance(function.body[-1], ast.Return)
+        expression = ast.fix_missing_locations(ast.Expression(function.body[-1].value))
+        code = compile(expression, str(SOURCE) + ':terminal-predicate', 'eval')
+        facts = {'phase': 'preview', 'raw': 0, 'complete': True, 'reason': None,
+                 'before': {'source': 'SYNTHETIC'}, 'after': {'source': 'SYNTHETIC'}, 'group_absent': True}
+        with self.subTest(contract='group-absence-required-for-acceptance'):
+            self.assertEqual(eval(code, {'__builtins__': {}}, facts), 0)
+            facts['group_absent'] = False
+            self.assertNotEqual(eval(code, {'__builtins__': {}}, facts), 0)
 
 
 if __name__ == '__main__':
