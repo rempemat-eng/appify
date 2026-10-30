@@ -35,7 +35,7 @@ jobs:
           test "$GITHUB_RUN_ATTEMPT" = '1' # Refuse reruns before install/project imports.
           printf 'MAP_EVIDENCE=%s/map-contract17-evidence\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           mkdir "$RUNNER_TEMP/map-contract17-evidence"
-          printf '%s\n' 'Corrected27 NOT RUN; setup incomplete' > "$RUNNER_TEMP/map-contract17-evidence/status.txt"
+          printf '%s\n' 'Corrected31 NOT RUN; setup incomplete' > "$RUNNER_TEMP/map-contract17-evidence/status.txt"
 
       - name: Check out exact execution-event source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -86,8 +86,8 @@ jobs:
               if sys.argv[1] == 'after':
                   assert value == json.loads((E / 'source-before.json').read_text()), 'source changed'
               else:
-                  expected = {'scripts/review/map_failure_capture.py': 'e73ad8d2afd87cf43a4370cc0d68cf7b6a48da7d1fc289e5163e1dd1bc7459e0',
-                              'scripts/review/test_map_failure_capture.py': '954b7d94c28fcf3487625ea6bf14343775282fbae677602132efb1de40aae1db'}
+                  expected = {'scripts/review/map_failure_capture.py': '187a7719cdb587bece44a80ad9046891652ac1a0147e53d1269e418015a7718b',
+                              'scripts/review/test_map_failure_capture.py': '901ab6916784053872b03b1a9c2eebd28bb09ebbaa94d92cfea8a0d563f7cbc3'}
                   for name, digest in expected.items():
                       assert sha((ROOT / name).read_bytes()) == digest, name
                   paths = list(expected) + ['.github/workflows/map-recovery-contracts.yml', '.github/workflows/map-recovery-capture.yml',
@@ -131,7 +131,7 @@ jobs:
           assert info['archive_info']['hashes']['sha256'] == '7df650e79031634ac90b11e64a9eedaf5a5e06fcd09bcd03a34be01745744466'
           PY
 
-      - name: Run the exact corrected 27 contracts once
+      - name: Run the exact corrected 31 contracts once
         id: contracts
         timeout-minutes: 2
         shell: bash
@@ -159,9 +159,9 @@ jobs:
           save('import-canary.json', dict(modules={m.__name__: dict(path=m.__file__, sha256=hashlib.sha256(Path(m.__file__).read_bytes()).hexdigest()) for m in (geo5, towns55, town_plan)},
                building_forms=sorted(towns55.BLD), street_widths=towns55.CLASS_W, actual_registry=True, synthetic_world_fixture=True))
           module = runpy.run_path(str(ROOT / 'scripts/review/test_map_failure_capture.py'), run_name='hosted_R6_corrected_contracts')
-          classes = [module[name] for name in ('Contracts', 'ReviewRegressions', 'OwnedSampling', 'PreflightInputs', 'CaptureWorkflowContract', 'LifetimeSourceContract')]
+          classes = [module[name] for name in ('Contracts', 'ReviewRegressions', 'OwnedSampling', 'SamplingCoordination', 'PreflightInputs', 'CaptureWorkflowContract', 'LifetimeSourceContract')]
           expected = sorted(name for case in classes for name in unittest.defaultTestLoader.getTestCaseNames(case))
-          assert len(expected) == len(set(expected)) == 27
+          assert len(expected) == len(set(expected)) == 31
           events, methods = [], []
           retained, retention_errors = [], []
           original_cleanup = tempfile.TemporaryDirectory.cleanup
@@ -224,17 +224,17 @@ jobs:
               def addFailure(self, test, err):
                   self.event(dict(kind='failure', id=test.id(), traceback=''.join(traceback.format_exception(*err))))
                   super().addFailure(test, err)
-          (E / 'status.txt').write_text('Corrected27 RUNNING; no world\n')
+          (E / 'status.txt').write_text('Corrected31 RUNNING; no world\n')
           with patch.object(tempfile.TemporaryDirectory, 'cleanup', preserve_fixture_then_cleanup):
               suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromTestCase(case) for case in classes)
               result = unittest.TextTestRunner(verbosity=2, resultclass=Result).run(suite)
-          passed = result.wasSuccessful() and result.testsRun == 27 and sorted(methods) == expected and not result.skipped and not retention_errors and not coverage_errors
+          passed = result.wasSuccessful() and result.testsRun == 31 and sorted(methods) == expected and not result.skipped and not retention_errors and not coverage_errors
           save('contracts-result.json', dict(ran=result.testsRun, methods=methods, expected=expected, passed=passed,
                errors=len(result.errors), failures=len(result.failures), skipped=len(result.skipped),
                retained_synthetic_input_directories=retained, input_retention_errors=retention_errors,
                coverage_errors=coverage_errors,
-               changed_helper_justifies_fresh_prior21_plus_new6=True, world_data_stage_capture_replay_preview=False))
-          (E / 'status.txt').write_text('Corrected27 '+('PASSED' if passed else 'FAILED')+'; no world\n')
+               changed_helper_justifies_fresh_prior27_plus_coordination4=True, world_data_stage_capture_replay_preview=False))
+          (E / 'status.txt').write_text('Corrected31 '+('PASSED' if passed else 'FAILED')+'; no world\n')
           raise SystemExit(0 if passed else 1)
           PY
           cat > "$RUNNER_TEMP/map-contract-outer.py" <<'PY'
@@ -244,14 +244,27 @@ jobs:
           START = time.monotonic()
           MIB = 1024**2
           definitions = runpy.run_path(str(Path(os.environ['GITHUB_WORKSPACE']) / 'scripts/review/map_failure_capture.py'), run_name='capacity_definitions_only')
-          owned = lambda: definitions['owned_blocks'](E)
+          probe_lock = E / 'probe-sampling.lock'
+          with probe_lock.open('xb') as handle:
+              handle.write(b'R6-PROBE\n')
+          metadata = probe_lock.lstat()
+          coordination = dict(path=str(probe_lock), identity=[metadata.st_dev, metadata.st_ino])
+          owned = lambda: definitions['coordinated_owned_blocks'](E, probe_lock, coordination['identity'])
+          def final_owned_sample():
+              try:
+                  return owned(), None
+              except Exception as error:
+                  # A genuine bad final state still fails, while its result and
+                  # retained inputs survive instead of losing outer-result.
+                  return None, repr(error)
           private = E / 'private'
           for name in ('tmp', 'blockout', 'config', 'data', 'cache', 'runtime'):
               (private / name).mkdir(parents=True)
           env = dict(os.environ, TMPDIR=str(private / 'tmp'), TMP=str(private / 'tmp'), TEMP=str(private / 'tmp'),
               BLOCKOUT_OUT=str(private / 'blockout'), REPO_ROOT=os.environ['GITHUB_WORKSPACE'],
               XDG_CONFIG_HOME=str(private / 'config'), XDG_DATA_HOME=str(private / 'data'),
-              XDG_CACHE_HOME=str(private / 'cache'), XDG_RUNTIME_DIR=str(private / 'runtime'), MYGAME_MAP_REVISION='v56')
+              XDG_CACHE_HOME=str(private / 'cache'), XDG_RUNTIME_DIR=str(private / 'runtime'), MYGAME_MAP_REVISION='v56',
+              MYGAME_OWNED_SAMPLING_COORDINATION=json.dumps(coordination))
           for name in ('PYTHONPATH', 'PYTHONHOME', 'OLD_CACHE', 'DEV_PRE', 'DEV_PKL', 'QUICK', 'RENDER_ONLY', 'MAP55_OUT'):
               env.pop(name, None)
           command = [sys.executable, '-I', '-B', str(Path(os.environ['RUNNER_TEMP']) / 'map-contract-worker.py')]
@@ -347,11 +360,14 @@ jobs:
               except ProcessLookupError:
                   pass
           peak = ru.ru_maxrss*1024 if ru else None
-          passed = raw == 0 and reason is None and not lost and absent and peak is not None and 0 < peak <= int(1.5*1024**3) and owned() <= 128*MIB
+          allocated, sampling_error = final_owned_sample()
+          if sampling_error:
+              reason = reason or 'final_owned_sampling_failed'
+          passed = raw == 0 and reason is None and not lost and absent and peak is not None and 0 < peak <= int(1.5*1024**3) and allocated is not None and allocated <= 128*MIB
           value = dict(passed=passed, raw_wait_status=raw, exit=os.waitstatus_to_exitcode(raw) if raw is not None else None,
               child_reaped=raw is not None, identity_lost=lost, owned_group_absent=absent, stop_reason=reason,
               peak_child_rss_bytes=peak, cpu_seconds=ru.ru_utime+ru.ru_stime if ru else None,
-              seconds=time.monotonic()-START, owned_bytes=owned(),
+              seconds=time.monotonic()-START, owned_bytes=allocated, owned_sampling_error=sampling_error,
               owned_scope='Evidence plus private runtime only; excludes checkout and installed site-packages.', world_run=False)
           (E / 'outer-result.json').write_text(json.dumps(value, indent=2)+'\n')
           raise SystemExit(0 if passed else 1)
@@ -394,10 +410,10 @@ jobs:
           passed = os.environ['CONTRACT_STEP'] == os.environ['SOURCE_STEP'] == 'success' and all(v.get('passed') is True for v in results.values())
           value = dict(event_source_sha=os.environ['EXPECTED_SOURCE_SHA'], step_outcome=os.environ['CONTRACT_STEP'],
               source_guard_outcome=os.environ['SOURCE_STEP'], passed=passed, results=results, files=files,
-              qualification='Fresh corrected27: changed helper justifies prior21 plus new6; old4/17 receipts remain at old hashes. Intentional inner unittest failures are negative fixtures; only structured OUTER results determine this run. 128MiB covers evidence/private runtime, not checkout/site-packages. Only direct worker/group supervised; selected methods spawn no children. Group0 is observational and may falseFAIL, not wider lifecycle proof. No world, map/art approval, actual lifetime experiment, Ready or merge. A retained artifact still needs full Actions logs and independent byte retrieval.')
+              qualification='Fresh corrected31: changed helper justifies prior27 plus four coordination controls; old4/17 receipts remain at old hashes. Intentional inner unittest failures are negative fixtures; only structured OUTER results determine this run. 128MiB covers evidence/private runtime, not checkout/site-packages. Only direct worker/group supervised; selected methods spawn no children. Group0 is observational and may falseFAIL, not wider lifecycle proof. No world, map/art approval, actual lifetime experiment, Ready or merge. A retained artifact still needs full Actions logs and independent byte retrieval.')
           (E / 'artifact-manifest.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
           with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
-              output.write('Corrected map27 contracts: '+value['step_outcome']+'\n\nSource: '+value['event_source_sha']+'\n\n'+value['qualification']+'\n')
+              output.write('Corrected map31 contracts: '+value['step_outcome']+'\n\nSource: '+value['event_source_sha']+'\n\n'+value['qualification']+'\n')
           raise SystemExit(0 if passed else 1)
           PY
 

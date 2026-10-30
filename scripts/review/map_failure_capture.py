@@ -22,6 +22,7 @@ import argparse
 import ast
 import copy
 import datetime
+import fcntl
 import hashlib
 import json
 import math
@@ -141,6 +142,55 @@ def owned_blocks(folder, recursive=True):
                 raise
             # A previously observed owned child directory was removed.
     return total
+
+
+@contextmanager
+def sampling_boundary(path, identity, exclusive=False):
+    """Bound only deliberate receiving probes against the outer strict scan.
+
+    Each participant opens the precreated inode independently. The raw sampler
+    stays unlocked and strict, including while a probe asserts its refusal.
+    A busy/missing/replaced lock is a failure, never a clean skipped sample.
+    """
+    path = Path(path)
+    if (not path.is_absolute() or type(identity) not in (list, tuple) or len(identity) != 2
+            or any(type(value) is not int or value < 0 for value in identity)):
+        raise CaptureError('invalid owned sampling coordination')
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    def same_inode():
+        current, opened = path.lstat(), os.fstat(descriptor)
+        if (not stat.S_ISREG(current.st_mode) or not stat.S_ISREG(opened.st_mode)
+                or [current.st_dev, current.st_ino] != list(identity)
+                or [opened.st_dev, opened.st_ino] != list(identity)):
+            raise CaptureError('owned sampling coordination inode changed')
+    try:
+        same_inode()
+        deadline = time.monotonic() + .25
+        operation = (fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH) | fcntl.LOCK_NB
+        while True:
+            try:
+                fcntl.flock(descriptor, operation)
+                break
+            except BlockingIOError:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise CaptureError('owned sampling coordination deadline exceeded')
+                time.sleep(min(.005, remaining))
+        same_inode()
+        acquired = time.monotonic()
+        yield
+        same_inode()
+        if exclusive and time.monotonic() - acquired > .25:
+            raise CaptureError('owned sampling probe held beyond deadline')
+    finally:
+        os.close(descriptor)  # Closing this independent description releases its flock.
+
+
+def coordinated_owned_blocks(folder, path, identity):
+    if Path(path).parent != Path(folder):
+        raise CaptureError('owned sampling lock must stay inside the sampled root')
+    with sampling_boundary(path, identity):
+        return owned_blocks(folder)
 
 
 def write_json(path, value):
