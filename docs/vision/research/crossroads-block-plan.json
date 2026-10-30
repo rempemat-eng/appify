@@ -1,0 +1,1217 @@
+{
+  "document": "Crossroads block-and-plot proposal sidecar; NOT a runtime schema or adoption packet",
+  "status": "CONCEPTUAL_UNSCALED_NOT_PLACED_NOT_APPROVED",
+  "date": "2026-10-30",
+  "source_parent": "3818de444d24c95c50daedd6e547a78bd0436551",
+  "source_approval": "GO6527523659; Matt6526956297; study6527386266",
+  "study": "https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal",
+  "era": "17th to early 19th century market/mill town; existing house style and soft-grid rules retained",
+  "count": 40,
+  "accounting": "40 existing logical records exactly once; row-house bays do not add records; no new building IDs, forms, dimensions, occupants or home/job semantics",
+  "source_inventory": {
+    "path": "docs/vision/research/blockout/towns55.py FEEDBACK_BUILDINGS/crossroads",
+    "blob": "f23c793baf4a3b937a223c2a9fd2ac2786442f94",
+    "sha256": "0e9b10f97da0029794c5f51e0e9eedf4e53f07ee7272cdb4adf59cf8981ad27a",
+    "captured_head": "87ea22a4be342e3b8009b1c9b922c2fb7db56711",
+    "zone_sha256": "cee996a1d28ce4e3523eca541522aae3e05c61c59252496b7aa9eeb334487dec"
+  },
+  "actual_facts": {
+    "cell_px": 8,
+    "global_shape_cells": [
+      896,
+      1568
+    ],
+    "global_dimensions_px": [
+      12544,
+      7168
+    ],
+    "captured_box_px": [
+      5632,
+      2944,
+      7424,
+      4608
+    ],
+    "before_sha256": "95574230bb4474fa3a931ba6167fa521d609107ae79fff3f7e7022e327d7d527",
+    "capture_json_sha256": "ba68fc26d029ed85e53b4ad69feb426cf9a88ec5ea61a10d180d822be0cc5b7a",
+    "fixed_zone_box_px": [
+      5976,
+      3248,
+      6616,
+      3808
+    ],
+    "fixed_square_rect_px": [
+      6176,
+      3448,
+      240,
+      176
+    ],
+    "fixed_green_rect_px": [
+      6016,
+      3656,
+      168,
+      136
+    ],
+    "fixed_crater_rect_px": [
+      6448,
+      3688,
+      72,
+      48
+    ],
+    "measured_state": {
+      "producer": "FAILED",
+      "record_ids": [
+        "crossroads-b001",
+        "crossroads-b002",
+        "crossroads-b003",
+        "crossroads-b004",
+        "crossroads-b005",
+        "crossroads-b006",
+        "crossroads-b007",
+        "crossroads-b008",
+        "crossroads-b009",
+        "crossroads-b010",
+        "crossroads-b011",
+        "crossroads-b012",
+        "crossroads-b013",
+        "crossroads-b014",
+        "crossroads-b015",
+        "crossroads-b016",
+        "crossroads-b017",
+        "crossroads-b018",
+        "crossroads-b019"
+      ],
+      "queued_ids": [
+        20,
+        21,
+        22,
+        23
+      ],
+      "trial_count": 125,
+      "outskirts": []
+    },
+    "river": {
+      "name": "the Sleepwater",
+      "authority": "actual before_rivers polyline; these points are not bank/clearance extents",
+      "selected_points": [
+        [
+          6680.0,
+          3520.0
+        ],
+        [
+          6680.0,
+          3616.0
+        ],
+        [
+          6471.0,
+          3904.0
+        ],
+        [
+          6296.878691744749,
+          4094.4885150024716
+        ]
+      ],
+      "full_polyline_reference": "original actual/capture.json before_rivers/the Sleepwater"
+    },
+    "routes": [
+      {
+        "name": "Valley lane north",
+        "first": [
+          6300.0,
+          3450.0
+        ],
+        "last": [
+          6280.0,
+          2960.0
+        ],
+        "polyline_reference": "original actual/capture.json before_routes/Valley lane north"
+      },
+      {
+        "name": "Valley lane west",
+        "first": [
+          6300.0,
+          3450.0
+        ],
+        "last": [
+          5800.0,
+          4124.975609756098
+        ],
+        "polyline_reference": "original actual/capture.json before_routes/Valley lane west"
+      },
+      {
+        "name": "Valley lane east",
+        "first": [
+          6300.0,
+          3450.0
+        ],
+        "last": [
+          6760.0,
+          3400.0
+        ],
+        "polyline_reference": "original actual/capture.json before_routes/Valley lane east"
+      },
+      {
+        "name": "Valley lane south",
+        "first": [
+          6300.0,
+          3450.0
+        ],
+        "last": [
+          6660.0,
+          5058.624390243903
+        ],
+        "polyline_reference": "original actual/capture.json before_routes/Valley lane south"
+      },
+      {
+        "name": "Valley lane to the Lull Road",
+        "first": [
+          6300.0,
+          3450.0
+        ],
+        "last": [
+          6760.0,
+          3760.0
+        ],
+        "polyline_reference": "original actual/capture.json before_routes/Valley lane to the Lull Road"
+      },
+      {
+        "name": "Foothill Road",
+        "first": [
+          6760.0,
+          3400.0
+        ],
+        "last": [
+          7990.0,
+          2480.0
+        ],
+        "polyline_reference": "original actual/capture.json before_routes/Foothill Road"
+      }
+    ],
+    "authored_but_unreached": {
+      "halt_yard_box_px": [
+        5840,
+        4304,
+        6080,
+        4368
+      ],
+      "authority": "towns55._feedback_crossroads after failing first row group; NOT observed painted yard"
+    },
+    "unknown": [
+      "Dry/grade/barrier feasibility of every proposed plot and rear lane",
+      "Exact bridge cells, approaches, load/access geometry and bank extents",
+      "Actual captured station/rail globals and world-space halt footprint",
+      "Mill building representation, water-working face and head/tail reach",
+      "Final native PAD120/export support window after a new design",
+      "Final plot boundaries, dimensions and frontage/door attachment"
+    ]
+  },
+  "blocks": [
+    {
+      "id": "A",
+      "name": "Market west: civic and trade",
+      "ids": [
+        2,
+        4,
+        5,
+        35,
+        37
+      ],
+      "front": "Existing square and west market approach",
+      "rear": "Shared service court reached from the halt-side back lane",
+      "edge": "Plot gardens behind the court, not grass between every frontage",
+      "role": "Library, bakery and herbalist stay recognisable; two existing shop records close the approach and market corner."
+    },
+    {
+      "id": "B",
+      "name": "Market east: trades and the green",
+      "ids": [
+        6,
+        7,
+        13,
+        22,
+        33
+      ],
+      "front": "Existing east side of the square and harbour-road approach",
+      "rear": "Smithy working side and separate domestic/service plots",
+      "edge": "Existing green/training space and crater remain open; riverbank fit unresolved",
+      "role": "Keep the old smithy and Fern cottage identities; a shop and two house records make a short connected approach frontage."
+    },
+    {
+      "id": "C",
+      "name": "Garden approach and north terrace",
+      "ids": [
+        1,
+        3,
+        10,
+        11
+      ],
+      "front": "Existing garden walk and the north side of the market approach",
+      "rear": "Quiet plot backs and garden access",
+      "edge": "Cultivated garden edge toward the existing northern approach",
+      "role": "Your hut and north terrace cottages remain anchors; two added records define the arrival without enclosing the quiet garden in a busy goods court."
+    },
+    {
+      "id": "D",
+      "name": "West Lane: mixed fronts and deep plots",
+      "ids": [
+        8,
+        9,
+        24,
+        25,
+        26,
+        27
+      ],
+      "front": "Short runs on West Lane connected to the market-west approach",
+      "rear": "A continuous back/service lane with individual courts and long garden plots",
+      "edge": "Gardens and managed woodland edge",
+      "role": "The two row-house records provide grouped frontage; cottages and a house turn the corner and taper the grain toward the edge."
+    },
+    {
+      "id": "E",
+      "name": "Eastgate: inns and coach court",
+      "ids": [
+        30,
+        31,
+        32,
+        34,
+        36
+      ],
+      "front": "Connected eastern arrival and inn fronts",
+      "rear": "One legible coach/service court behind the principal inn; a smaller separate inn court",
+      "edge": "Route approaches and cultivated edge, not an isolated paved slab",
+      "role": "Retain both inn records. The larger-facing inn fronts the coach court; other existing house/cottage records connect Eastgate to the town."
+    },
+    {
+      "id": "F",
+      "name": "Mill End: street, grain court and lower plots",
+      "ids": [
+        12,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        23
+      ],
+      "front": "Short connected groups along Mill Street and its lower junction",
+      "rear": "Side passages to plot courts and a shared grain-handling approach",
+      "edge": "Sleepwater bank and productive gardens/farms, with working court kept distinct",
+      "role": "Existing house/cottage forms surround a mill/grain relationship; no mill building is silently invented or substituted. Exact mill representation is an open programme decision."
+    },
+    {
+      "id": "G",
+      "name": "Halt Road: inhabited productive fringe",
+      "ids": [
+        28,
+        29,
+        38,
+        39,
+        40
+      ],
+      "front": "Halt approach with visible connections back to the market",
+      "rear": "Long gardens and small work plots served from the goods side",
+      "edge": "Halt-related working space and farms beyond",
+      "role": "A small connected housing group explains the approach. Rail loading remains a separate yard, never relabelled as an inn coach court."
+    }
+  ],
+  "records": [
+    {
+      "id": "crossroads-b001",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        80,
+        40
+      ],
+      "source_bays": [],
+      "proposed_block": "C",
+      "proposed_plot": "C01",
+      "proposed_front": "Existing garden walk and the north side of the market approach",
+      "proposed_rear": "Quiet plot backs and garden access",
+      "proposed_spatial_function": "Your hut; identity retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": {
+        "name": "Your hut",
+        "x": 6256,
+        "y": 3272,
+        "w": 80,
+        "h": 40,
+        "zone_door": [
+          6296,
+          3312
+        ],
+        "authority": "actual capture + unchanged game/data/plans/crossroads.json"
+      }
+    },
+    {
+      "id": "crossroads-b002",
+      "source_form": "public",
+      "source_footprint_px": [
+        96,
+        40
+      ],
+      "source_bays": [],
+      "proposed_block": "A",
+      "proposed_plot": "A01",
+      "proposed_front": "Existing square and west market approach",
+      "proposed_rear": "Shared service court reached from the halt-side back lane",
+      "proposed_spatial_function": "Library (roof torn); identity retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": {
+        "name": "Library (roof torn)",
+        "x": 6176,
+        "y": 3408,
+        "w": 96,
+        "h": 40,
+        "zone_door": [
+          6224,
+          3448
+        ],
+        "authority": "actual capture + unchanged game/data/plans/crossroads.json"
+      }
+    },
+    {
+      "id": "crossroads-b003",
+      "source_form": "house",
+      "source_footprint_px": [
+        96,
+        40
+      ],
+      "source_bays": [],
+      "proposed_block": "C",
+      "proposed_plot": "C02",
+      "proposed_front": "Existing garden walk and the north side of the market approach",
+      "proposed_rear": "Quiet plot backs and garden access",
+      "proposed_spatial_function": "North terrace cottages; identity retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": {
+        "name": "North terrace cottages",
+        "x": 6320,
+        "y": 3408,
+        "w": 96,
+        "h": 40,
+        "zone_door": [
+          6392,
+          3448
+        ],
+        "authority": "actual capture + unchanged game/data/plans/crossroads.json"
+      }
+    },
+    {
+      "id": "crossroads-b004",
+      "source_form": "shop",
+      "source_footprint_px": [
+        72,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "A",
+      "proposed_plot": "A02",
+      "proposed_front": "Existing square and west market approach",
+      "proposed_rear": "Shared service court reached from the halt-side back lane",
+      "proposed_spatial_function": "Bakery (cold); identity retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": {
+        "name": "Bakery (cold)",
+        "x": 6088,
+        "y": 3488,
+        "w": 72,
+        "h": 48,
+        "zone_door": [
+          6148,
+          3536
+        ],
+        "authority": "actual capture + unchanged game/data/plans/crossroads.json"
+      }
+    },
+    {
+      "id": "crossroads-b005",
+      "source_form": "shop",
+      "source_footprint_px": [
+        72,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "A",
+      "proposed_plot": "A03",
+      "proposed_front": "Existing square and west market approach",
+      "proposed_rear": "Shared service court reached from the halt-side back lane",
+      "proposed_spatial_function": "Herbalist's (apothecary, stage 1); identity retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": {
+        "name": "Herbalist's (apothecary, stage 1)",
+        "x": 6088,
+        "y": 3576,
+        "w": 72,
+        "h": 48,
+        "zone_door": [
+          6148,
+          3624
+        ],
+        "authority": "actual capture + unchanged game/data/plans/crossroads.json"
+      }
+    },
+    {
+      "id": "crossroads-b006",
+      "source_form": "workshop",
+      "source_footprint_px": [
+        88,
+        56
+      ],
+      "source_bays": [],
+      "proposed_block": "B",
+      "proposed_plot": "B01",
+      "proposed_front": "Existing east side of the square and harbour-road approach",
+      "proposed_rear": "Smithy working side and separate domestic/service plots",
+      "proposed_spatial_function": "The old smithy; identity retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": {
+        "name": "The old smithy",
+        "x": 6432,
+        "y": 3472,
+        "w": 88,
+        "h": 56,
+        "zone_door": [
+          6464,
+          3528
+        ],
+        "authority": "actual capture + unchanged game/data/plans/crossroads.json"
+      }
+    },
+    {
+      "id": "crossroads-b007",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        72,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "B",
+      "proposed_plot": "B02",
+      "proposed_front": "Existing east side of the square and harbour-road approach",
+      "proposed_rear": "Smithy working side and separate domestic/service plots",
+      "proposed_spatial_function": "The Ferns' cottage; identity retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": {
+        "name": "The Ferns' cottage",
+        "x": 6432,
+        "y": 3616,
+        "w": 72,
+        "h": 48,
+        "zone_door": [
+          6448,
+          3664
+        ],
+        "authority": "actual capture + unchanged game/data/plans/crossroads.json"
+      }
+    },
+    {
+      "id": "crossroads-b008",
+      "source_form": "row_house",
+      "source_footprint_px": [
+        80,
+        24
+      ],
+      "source_bays": [
+        {
+          "w_cells": 6,
+          "storeys": 2,
+          "roof": "tile"
+        },
+        {
+          "w_cells": 4,
+          "storeys": 2,
+          "roof": "thatch"
+        }
+      ],
+      "proposed_block": "D",
+      "proposed_plot": "D01",
+      "proposed_front": "Short runs on West Lane connected to the market-west approach",
+      "proposed_rear": "A continuous back/service lane with individual courts and long garden plots",
+      "proposed_spatial_function": "Grouped market-west approach frontage; both original bays retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b009",
+      "source_form": "row_house",
+      "source_footprint_px": [
+        112,
+        48
+      ],
+      "source_bays": [
+        {
+          "w_cells": 8,
+          "storeys": 1,
+          "roof": "thatch"
+        },
+        {
+          "w_cells": 6,
+          "storeys": 1,
+          "roof": "tile"
+        }
+      ],
+      "proposed_block": "D",
+      "proposed_plot": "D02",
+      "proposed_front": "Short runs on West Lane connected to the market-west approach",
+      "proposed_rear": "A continuous back/service lane with individual courts and long garden plots",
+      "proposed_spatial_function": "Turn West Lane court with a second grouped frontage; both bays retained",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b010",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        48,
+        72
+      ],
+      "source_bays": [],
+      "proposed_block": "C",
+      "proposed_plot": "C03",
+      "proposed_front": "Existing garden walk and the north side of the market approach",
+      "proposed_rear": "Quiet plot backs and garden access",
+      "proposed_spatial_function": "Frame the garden-to-market arrival without occupying the quiet garden",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b011",
+      "source_form": "house",
+      "source_footprint_px": [
+        56,
+        88
+      ],
+      "source_bays": [],
+      "proposed_block": "C",
+      "proposed_plot": "C04",
+      "proposed_front": "Existing garden walk and the north side of the market approach",
+      "proposed_rear": "Quiet plot backs and garden access",
+      "proposed_spatial_function": "Turn the north terrace approach toward the square",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b012",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        48,
+        64
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F01",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Define the upper Mill End junction frontage",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b013",
+      "source_form": "shop",
+      "source_footprint_px": [
+        48,
+        88
+      ],
+      "source_bays": [],
+      "proposed_block": "B",
+      "proposed_plot": "B03",
+      "proposed_front": "Existing east side of the square and harbour-road approach",
+      "proposed_rear": "Smithy working side and separate domestic/service plots",
+      "proposed_spatial_function": "Connect the market to the trades-side passage with a shop front",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b014",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        40,
+        72
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F02",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Continue a short Mill Street frontage group",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b015",
+      "source_form": "house",
+      "source_footprint_px": [
+        64,
+        96
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F03",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Turn the Mill End street-to-court corner",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b016",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        48,
+        56
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F04",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Face the street beside the grain-court approach",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b017",
+      "source_form": "house",
+      "source_footprint_px": [
+        56,
+        88
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F05",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Define the lower Mill Street junction",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b018",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        40,
+        64
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F06",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Connect a small court frontage to garden backs",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b019",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        64,
+        40
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F07",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Enclose the public-facing side of a lower plot court",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b020",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        64,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F08",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Turn the passage into the lower plot group",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b021",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        64,
+        40
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F09",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "Front a garden-edge lane within Mill End",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b022",
+      "source_form": "house",
+      "source_footprint_px": [
+        88,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "B",
+      "proposed_plot": "B04",
+      "proposed_front": "Existing east side of the square and harbour-road approach",
+      "proposed_rear": "Smithy working side and separate domestic/service plots",
+      "proposed_spatial_function": "Give the harbour approach a connected house front",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b023",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        72,
+        40
+      ],
+      "source_bays": [],
+      "proposed_block": "F",
+      "proposed_plot": "F10",
+      "proposed_front": "Short connected groups along Mill Street and its lower junction",
+      "proposed_rear": "Side passages to plot courts and a shared grain-handling approach",
+      "proposed_spatial_function": "End a short Mill End frontage at productive plots",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b024",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        40,
+        72
+      ],
+      "source_bays": [],
+      "proposed_block": "D",
+      "proposed_plot": "D03",
+      "proposed_front": "Short runs on West Lane connected to the market-west approach",
+      "proposed_rear": "A continuous back/service lane with individual courts and long garden plots",
+      "proposed_spatial_function": "Front a West Lane court with a deep garden behind",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b025",
+      "source_form": "house",
+      "source_footprint_px": [
+        56,
+        96
+      ],
+      "source_bays": [],
+      "proposed_block": "D",
+      "proposed_plot": "D04",
+      "proposed_front": "Short runs on West Lane connected to the market-west approach",
+      "proposed_rear": "A continuous back/service lane with individual courts and long garden plots",
+      "proposed_spatial_function": "Turn the west market/service-lane entrance corner",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b026",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        40,
+        56
+      ],
+      "source_bays": [],
+      "proposed_block": "D",
+      "proposed_plot": "D05",
+      "proposed_front": "Short runs on West Lane connected to the market-west approach",
+      "proposed_rear": "A continuous back/service lane with individual courts and long garden plots",
+      "proposed_spatial_function": "Continue the West Lane plot frontage toward woodland",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b027",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        40,
+        64
+      ],
+      "source_bays": [],
+      "proposed_block": "D",
+      "proposed_plot": "D06",
+      "proposed_front": "Short runs on West Lane connected to the market-west approach",
+      "proposed_rear": "A continuous back/service lane with individual courts and long garden plots",
+      "proposed_spatial_function": "End the grouped West Lane frontage before garden plots",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b028",
+      "source_form": "house",
+      "source_footprint_px": [
+        56,
+        96
+      ],
+      "source_bays": [],
+      "proposed_block": "G",
+      "proposed_plot": "G01",
+      "proposed_front": "Halt approach with visible connections back to the market",
+      "proposed_rear": "Long gardens and small work plots served from the goods side",
+      "proposed_spatial_function": "Mark the halt approach corner facing the market link",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b029",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        48,
+        72
+      ],
+      "source_bays": [],
+      "proposed_block": "G",
+      "proposed_plot": "G02",
+      "proposed_front": "Halt approach with visible connections back to the market",
+      "proposed_rear": "Long gardens and small work plots served from the goods side",
+      "proposed_spatial_function": "Front a deep garden plot on Halt Road",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b030",
+      "source_form": "inn",
+      "source_footprint_px": [
+        72,
+        128
+      ],
+      "source_bays": [],
+      "proposed_block": "E",
+      "proposed_plot": "E01",
+      "proposed_front": "Connected eastern arrival and inn fronts",
+      "proposed_rear": "One legible coach/service court behind the principal inn; a smaller separate inn court",
+      "proposed_spatial_function": "Secondary inn frontage with its own smaller service court",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b031",
+      "source_form": "inn",
+      "source_footprint_px": [
+        128,
+        72
+      ],
+      "source_bays": [],
+      "proposed_block": "E",
+      "proposed_plot": "E02",
+      "proposed_front": "Connected eastern arrival and inn fronts",
+      "proposed_rear": "One legible coach/service court behind the principal inn; a smaller separate inn court",
+      "proposed_spatial_function": "Principal coach-inn wide frontage with the main coach/service court behind",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b032",
+      "source_form": "house",
+      "source_footprint_px": [
+        48,
+        88
+      ],
+      "source_bays": [],
+      "proposed_block": "E",
+      "proposed_plot": "E03",
+      "proposed_front": "Connected eastern arrival and inn fronts",
+      "proposed_rear": "One legible coach/service court behind the principal inn; a smaller separate inn court",
+      "proposed_spatial_function": "Connect the inn frontages with a house-form plot",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b033",
+      "source_form": "house",
+      "source_footprint_px": [
+        96,
+        56
+      ],
+      "source_bays": [],
+      "proposed_block": "B",
+      "proposed_plot": "B05",
+      "proposed_front": "Existing east side of the square and harbour-road approach",
+      "proposed_rear": "Smithy working side and separate domestic/service plots",
+      "proposed_spatial_function": "Turn the market-east corner with a house-form frontage",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b034",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        72,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "E",
+      "proposed_plot": "E04",
+      "proposed_front": "Connected eastern arrival and inn fronts",
+      "proposed_rear": "One legible coach/service court behind the principal inn; a smaller separate inn court",
+      "proposed_spatial_function": "Turn the Eastgate court approach with a cottage-form plot",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b035",
+      "source_form": "shop",
+      "source_footprint_px": [
+        64,
+        56
+      ],
+      "source_bays": [],
+      "proposed_block": "A",
+      "proposed_plot": "A04",
+      "proposed_front": "Existing square and west market approach",
+      "proposed_rear": "Shared service court reached from the halt-side back lane",
+      "proposed_spatial_function": "Close the west approach corner with an existing shop form",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b036",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        80,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "E",
+      "proposed_plot": "E05",
+      "proposed_front": "Connected eastern arrival and inn fronts",
+      "proposed_rear": "One legible coach/service court behind the principal inn; a smaller separate inn court",
+      "proposed_spatial_function": "Extend an inhabited Eastgate approach with a garden-backed plot",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b037",
+      "source_form": "shop",
+      "source_footprint_px": [
+        48,
+        64
+      ],
+      "source_bays": [],
+      "proposed_block": "A",
+      "proposed_plot": "A05",
+      "proposed_front": "Existing square and west market approach",
+      "proposed_rear": "Shared service court reached from the halt-side back lane",
+      "proposed_spatial_function": "Define the market-widening edge with the second added shop form",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b038",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        56,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "G",
+      "proposed_plot": "G03",
+      "proposed_front": "Halt approach with visible connections back to the market",
+      "proposed_rear": "Long gardens and small work plots served from the goods side",
+      "proposed_spatial_function": "Join the short Halt Road frontage group",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b039",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        64,
+        48
+      ],
+      "source_bays": [],
+      "proposed_block": "G",
+      "proposed_plot": "G04",
+      "proposed_front": "Halt approach with visible connections back to the market",
+      "proposed_rear": "Long gardens and small work plots served from the goods side",
+      "proposed_spatial_function": "Turn the halt-side group toward garden plots",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    },
+    {
+      "id": "crossroads-b040",
+      "source_form": "cottage",
+      "source_footprint_px": [
+        56,
+        40
+      ],
+      "source_bays": [],
+      "proposed_block": "G",
+      "proposed_plot": "G05",
+      "proposed_front": "Halt approach with visible connections back to the market",
+      "proposed_rear": "Long gardens and small work plots served from the goods side",
+      "proposed_spatial_function": "End the halt-side frontage at the productive fringe",
+      "proposed_coordinates": null,
+      "proposed_plot_dimensions": null,
+      "orientation": "UNASSIGNED; native terrain fitting later",
+      "occupants_homes_jobs": "NOT AUTHORED HERE; no resident/home/work semantics inferred",
+      "retained_anchor": null
+    }
+  ],
+  "circulation": {
+    "primary": "Garden/north approach → market widening → Mill Street/southern valley/coast continuation, with retained west halt and east harbour/Foothill/Lull approaches joining the core",
+    "secondary": [
+      "Market-west passages → West Lane rear service lane → gardens/halt approach",
+      "Eastgate inn-front passage → coach court → eastern approach",
+      "Mill Street passage → grain court → bank viewpoint, only where native ground/access permits"
+    ],
+    "goods": [
+      "Halt loading → halt-side back lane → market service courts",
+      "Eastern approach → inn coach court without taking the public well as the loading apron",
+      "Market/farm goods → grain court without occupying the riverbank path"
+    ],
+    "gate": "Existing closed halt/slice and wider story gates retained; paths do not author an opening condition",
+    "intended_return_loop": [
+      "Market widening",
+      "Market-west passage",
+      "West Lane rear/service lane",
+      "Halt approach",
+      "Market widening"
+    ],
+    "loop_feasibility": "PROPOSED ONLY; return stays on the town side of the existing closed halt/slice gate. Exact gate line and whole native ground/access fit are UNKNOWN; no opening, invented crossing or private-plot shortcut."
+  },
+  "open_space": [
+    "Existing well/square circulation and civic stopping space",
+    "Existing green/training ring and shard-crater park",
+    "Quiet garden approach at your hut",
+    "Distinct inn coach court, rail loading yard and mill/grain court",
+    "Productive plot gardens/farms and suitable riverbank/view space"
+  ],
+  "unresolved_programme": [
+    {
+      "issue": "MILL_RECORD_ABSENT",
+      "fact": "Canonical40 has no mill form; b006 is the old smithy and must not be silently converted",
+      "proposal": "Reserve the mill/grain relationship and handling court only; lead/Matt must decide how an actual mill building is represented before placement. No41st record or form conversion in this document"
+    }
+  ],
+  "implementation_hold": "No packing, river fill, footprint shrinking, physics/checker change, producer/export/runtime/render execution. Lead/Matt review this concrete structure before separately scoped terrain fitting and native-scale vignette."
+}

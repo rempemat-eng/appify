@@ -1,0 +1,145 @@
+# Crossroads block-and-plot proposal
+
+**Conceptual / unscaled / not placed / not approved.** One proposed town structure for Matt to review, following [the layout study](https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal). This is the seventeenth- to early nineteenth-century market/mill town, not Hearthold's medieval castle borough. It retains the current house style, soft grid, game rules and building-size requirements.
+
+The preferred plan is a **compact market widening with connected mixed fronts, deep plots and service backs**, then a lower mill/grain quarter and two distinct goods approaches. New groups complete streets and corners around the existing gameplay core. They do not extend the rejected pattern of isolated rectangles across broad grass.
+
+The companion [JSON](crossroads-block-plan.json) is a human-review proposal sidecar. It is not a runtime schema, adopted town plan, new validator or instruction to the producer.
+
+## Retained facts and limits
+
+This proposal starts from PR381 source `3818de444d24c95c50daedd6e547a78bd0436551`, after the workflow-only handoff. The preceding Granary extension remains **only a placement diagnostic**. Its requirement to preserve the failed layout's first nineteen positions belongs to that engineering experiment; it does not make those nineteen positions an approved masterplan. Here, records 1–7 remain measured gameplay anchors; records 8–40 receive future block/plot assignments, with no new coordinates.
+
+The durable R6 actual capture is from `87ea22a4be342e3b8009b1c9b922c2fb7db56711`; `capture.json` SHA256 is `ba68fc26d029ed85e53b4ad69feb426cf9a88ec5ea61a10d180d822be0cc5b7a`. Unchanged replay later reproduced all 15 comparisons, 49 arrays and 168 support records. That verifies the failed input, not this proposal. Its producer stopped with 19 records and IDs20–23 queued; later24–40 were not attempted.
+
+| Fact established by saved JSON/source | Constraint on this proposal |
+|---|---|
+| Actual cell is 8 world px; global shape is 896 × 1568 cells. Captured consumer box is `[5632,2944,7424,4608]` px. | These bounds describe evidence coverage, not a permitted town footprint or guaranteed dry land. No new plot is declared feasible. |
+| Existing gameplay zone spans `[5976,3248,6616,3808]` px. Its square is `[6176,3448,240,176]`, green `[6016,3656,168,136]`, crater `[6448,3688,72,48]` as `[x,y,w,h]`. | Keep destinations, entrances, training green and shard-crater programme. Do not use them as spare packing land or change story state. |
+| The seven zone buildings have actual inherited positions and `zone_door` authority. | Preserve these anchors/doors. Their missing `form` property is real schema; use the existing registry/export authority, never fabricate it. |
+| Actual Sleepwater polyline bends north/east of the core: selected centre points include `(6680,3520)`, `(6680,3616)`, `(6471,3904)` and `(6296.879,4094.489)`. | The lower river crosses the diagnostic's intended Mill End. A centreline is not a bank width, bridge proof or dry-plot mask. No bank/river is filled here. |
+| Named actual routes include Valley lanes north/west/east/south/to the Lull Road and Foothill Road. Fixed zone routes include `garden_walk`, `halt_road`, `harbour_road`, `green_lane`. | Retain garden, halt, coast/valley and eastward arrivals and their identities. Exact bridge-cell joins and any new service alignment remain UNKNOWN until terrain fitting. |
+| The source authors a halt yard at `[5840,4304,6080,4368]`, but execution failed before `t.yard`; captured `outskirts` is empty. | This is an unreached authored intention, not an observed usable yard. The actual station/rail global footprint was not captured. Do not assert a measured platform position. |
+
+Native water/barrier/grade/overlap, door/access/frontage, route and exporter checks remain in force. Plot extents, depths, widths, banks, levels, crossings and the final native export window remain **UNKNOWN**. The diagram and study cannot supply them.
+
+## One street structure
+
+**Primary public route:** the retained garden/north arrival leads to the market widening; the southward Mill Street/valley route then continues toward the coast. The west halt approach and east harbour/Foothill/Lull approaches meet this centre. Keep their route destinations and existing closed-slice/story gates. The diagram does not open the halt or create a new traversal mechanic.
+
+Make the existing square read as a widening along that connected route, with its well and civic/trade fronts visible. Avoid a new giant empty rectangle. The market's west side retains library, bakery and herbalist; its east side retains smithy, Fern cottage and green connections. New shop/house corners close gaps and turn the approach streets, with purposeful passages rather than a detached building in every grass patch.
+
+**Secondary public links:** a market-west passage reaches West Lane and its garden edge; an Eastgate passage reveals the inn court; a Mill Street passage reaches the grain court and a suitable bank view. The explicit first loop is market widening → market-west passage → West Lane rear/service lane → halt approach → market widening. It returns to the town-side public approach, before the existing closed halt/slice gate, rather than ending in a private plot or passing through a closed gate. The exact gate line is not captured here and must be checked before fitting that return. Other passages may remain short destinations. Connect them to named streets where feasible. Their alignments must later avoid private plot backs, the training space, yard work faces and unsupported river crossings. No assumed new bridge is part of this proposal.
+
+**Goods movement:** keep the halt loading approach, inn coach entrance and mill/grain delivery court distinct. A back/service lane on the halt side serves market rear courts; the eastern approach serves the inns; the lower street serves grain handling. Cart access should be visually understandable without making the well or every domestic court a loading apron. This is a spatial brief, not vehicle simulation or a new numerical clearance rule.
+
+## Blocks and plot depth
+
+Every plot has a street front, a service/household back, and an edge. Short frontage groups should enclose public space while still admitting real side passages. Grouped fronts do not automatically mean shared collision or permission to enable Neon's continuous-frontage checker settings for Crossroads.
+
+| Block | Existing logical records | Front / back / edge |
+|---|---|---|
+| **A — Market west** | 002,004,005,035,037 (5) | Library/bakery/herbalist plus two shops form short civic/trade fronts on the widening and west approach. A rear court and halt-side back lane handle stores/deliveries; gardens follow behind. |
+| **B — Market east** | 006,007,013,022,033 (5) | Smithy, Fern cottage, a shop and two houses define the harbour approach and green connection. The smithy has a working rear distinct from domestic courts; the green/crater stays open. |
+| **C — Garden and north terrace** | 001,003,010,011 (4) | Retain your hut and north terrace; two additional records give the approach an inhabited edge. Garden backs stay quieter than the goods streets. Do not surround the garden with service paving. |
+| **D — West Lane** | 008,009,024,025,026,027 (6) | Two row-house records make short grouped fronts, then cottage/house plots turn and taper toward the woodland. A connected rear lane reaches courts and long gardens. No blind backland house with no public entrance. |
+| **E — Eastgate** | 030,031,032,034,036 (5) | Both existing inn forms remain: record031 fronts the principal coach/service court, record030 has a separate smaller inn court, and connected house/cottage fronts. Their entrances belong to the east approach, not to the rail yard. |
+| **F — Mill End** | 012,014,015,016,017,018,019,020,021,023 (10) | Short house/cottage groups enclose Mill Street's junctions. Side passages reach plot courts and grain handling; garden/farm backs soften the outer edge. The river and productive court determine where these groups can fit, not a long default row. |
+| **G — Halt Road fringe** | 028,029,038,039,040 (5) | A small inhabited approach with long garden/work plots leads toward the halt-related working area. Rail loading is a separate destination, with fields beyond; it is not automatically an inn stable yard. |
+
+**Front → court/work area → garden** is a relationship, not three equal bands. Deeper plots can differ in length and combine narrow passages, paved working edges, trees, vegetable ground and household space. The outer boundary should follow real plot backs and productive land; avoid an abrupt rectangle of painted town ground.
+
+### Conceptual relationship diagram — UNSCALED
+
+Arrows show proposed connections, not measured direction, building polygons, travel rules or approved crossings. Letter groups refer to the block table and the forty-record ledger.
+
+```mermaid
+flowchart TB
+    N["C: retained garden / north approach"] --> M["Market widening + well"]
+    H["G: halt approach / closed state retained"] --> M
+    M --> E["E: Eastgate inn fronts"]
+    M --> F["F: Mill Street and lower junction"]
+    M --- A["A + D: short west fronts"]
+    M --- B["B: trades / green-side fronts"]
+    A --> R["Rear service lane + plot courts"]
+    R --> V["Deep gardens / woodland fringe"]
+    R -->|"town-side return; gate stays closed"| H
+    B --> S["Smith working back / domestic courts"]
+    E --> C["Coach court / east service entrance"]
+    F --> G["Grain court / mill building unresolved"]
+    G --- W["Sleepwater bank / working face UNKNOWN"]
+    H --- Y["Separate halt loading / rail fit UNKNOWN"]
+```
+
+## Mill, courts, viewpoints and useful open space
+
+A mill town needs a visible **water → mill/work face → grain handling → cart approach** relationship. Reserve that relationship below the market, using the real Sleepwater rather than a decorative pond. The handling court should be reached from Mill Street; a public bank passage/view can expose the water and work without crossing the loading face. Bank grade, hydraulic reach and the actual mill building remain unresolved.
+
+**Programme gap requiring a decision:** none of the retained forty records has form `mill`. Record006 is the old smithy, not a spare mill. This draft does not convert it, relabel a cottage as an observed mill, add a forty-first building or invent an occupant/job. Lead/Matt must resolve how the actual mill building is represented before terrain fitting. The preferred street/court arrangement reserves a place in the town's functional structure; it does not pretend this programme gap is solved. The inventory also contains no dedicated stable/granary form; open service/storage courts can be proposed, but an additional counted stable/granary building must not appear silently.
+
+At Eastgate, the coach court is behind an inn frontage, with an entrance from the approach, working edges, room for the existing catalogue's equipment where later accepted, and a quiet public route past it. At the halt, a loading yard explains goods movement and a productive town edge. These two spaces have different reasons to exist. Their native fit is unproved.
+
+Keep these spaces deliberately open: the well's circulation and market stopping space; training green and crater park; quiet garden approach; each separately legible work court; useful riverbank/viewing ground; gardens and fields at plot ends. Avoid treating every open patch as another house slot. View sequences should reveal the well/library from the northern approach, the market corner from the halt side, the inn court from Eastgate, and water/work from Mill Street; exact sightlines at the playing camera remain to be tested.
+
+## Forty-record ledger
+
+This is proposal accounting, not forty placed or inhabited buildings. Forty remains inside Matt's large-town target of 30–45. All existing logical IDs occur once. Footprints below are retained source dimensions, **not plot dimensions or new placement coordinates**. Row-house bay data remains exact in the sidecar; its bays do not increase the forty-record count. Occupants, home/work semantics and routines are not authored here.
+
+| Existing ID | Existing identity/form; source footprint | Proposed plot | Assignment |
+|---|---|---|---|
+| `crossroads-b001` | Your hut; 80 × 40 px | C01 | Your hut; identity retained |
+| `crossroads-b002` | Library (roof torn); 96 × 40 px | A01 | Library (roof torn); identity retained |
+| `crossroads-b003` | North terrace cottages; 96 × 40 px | C02 | North terrace cottages; identity retained |
+| `crossroads-b004` | Bakery (cold); 72 × 48 px | A02 | Bakery (cold); identity retained |
+| `crossroads-b005` | Herbalist's (apothecary, stage 1); 72 × 48 px | A03 | Herbalist's (apothecary, stage 1); identity retained |
+| `crossroads-b006` | The old smithy; 88 × 56 px | B01 | The old smithy; identity retained |
+| `crossroads-b007` | The Ferns' cottage; 72 × 48 px | B02 | The Ferns' cottage; identity retained |
+| `crossroads-b008` | row_house; 80 × 24 px | D01 | Grouped market-west approach frontage; both original bays retained |
+| `crossroads-b009` | row_house; 112 × 48 px | D02 | Turn West Lane court with a second grouped frontage; both bays retained |
+| `crossroads-b010` | cottage; 48 × 72 px | C03 | Frame the garden-to-market arrival without occupying the quiet garden |
+| `crossroads-b011` | house; 56 × 88 px | C04 | Turn the north terrace approach toward the square |
+| `crossroads-b012` | cottage; 48 × 64 px | F01 | Define the upper Mill End junction frontage |
+| `crossroads-b013` | shop; 48 × 88 px | B03 | Connect the market to the trades-side passage with a shop front |
+| `crossroads-b014` | cottage; 40 × 72 px | F02 | Continue a short Mill Street frontage group |
+| `crossroads-b015` | house; 64 × 96 px | F03 | Turn the Mill End street-to-court corner |
+| `crossroads-b016` | cottage; 48 × 56 px | F04 | Face the street beside the grain-court approach |
+| `crossroads-b017` | house; 56 × 88 px | F05 | Define the lower Mill Street junction |
+| `crossroads-b018` | cottage; 40 × 64 px | F06 | Connect a small court frontage to garden backs |
+| `crossroads-b019` | cottage; 64 × 40 px | F07 | Enclose the public-facing side of a lower plot court |
+| `crossroads-b020` | cottage; 64 × 48 px | F08 | Turn the passage into the lower plot group |
+| `crossroads-b021` | cottage; 64 × 40 px | F09 | Front a garden-edge lane within Mill End |
+| `crossroads-b022` | house; 88 × 48 px | B04 | Give the harbour approach a connected house front |
+| `crossroads-b023` | cottage; 72 × 40 px | F10 | End a short Mill End frontage at productive plots |
+| `crossroads-b024` | cottage; 40 × 72 px | D03 | Front a West Lane court with a deep garden behind |
+| `crossroads-b025` | house; 56 × 96 px | D04 | Turn the west market/service-lane entrance corner |
+| `crossroads-b026` | cottage; 40 × 56 px | D05 | Continue the West Lane plot frontage toward woodland |
+| `crossroads-b027` | cottage; 40 × 64 px | D06 | End the grouped West Lane frontage before garden plots |
+| `crossroads-b028` | house; 56 × 96 px | G01 | Mark the halt approach corner facing the market link |
+| `crossroads-b029` | cottage; 48 × 72 px | G02 | Front a deep garden plot on Halt Road |
+| `crossroads-b030` | inn; 72 × 128 px | E01 | Secondary inn frontage with its own smaller service court |
+| `crossroads-b031` | inn; 128 × 72 px | E02 | Principal coach-inn wide frontage with the main coach/service court behind |
+| `crossroads-b032` | house; 48 × 88 px | E03 | Connect the inn frontages with a house-form plot |
+| `crossroads-b033` | house; 96 × 56 px | B05 | Turn the market-east corner with a house-form frontage |
+| `crossroads-b034` | cottage; 72 × 48 px | E04 | Turn the Eastgate court approach with a cottage-form plot |
+| `crossroads-b035` | shop; 64 × 56 px | A04 | Close the west approach corner with an existing shop form |
+| `crossroads-b036` | cottage; 80 × 48 px | E05 | Extend an inhabited Eastgate approach with a garden-backed plot |
+| `crossroads-b037` | shop; 48 × 64 px | A05 | Define the market-widening edge with the second added shop form |
+| `crossroads-b038` | cottage; 56 × 48 px | G03 | Join the short Halt Road frontage group |
+| `crossroads-b039` | cottage; 64 × 48 px | G04 | Turn the halt-side group toward garden plots |
+| `crossroads-b040` | cottage; 56 × 40 px | G05 | End the halt-side frontage at the productive fringe |
+
+## Review and next scope
+
+The concrete choice is the seven-block arrangement above: a connected market core, west rear-service plots, Eastgate coach courts, a lower water/work quarter and a productive halt fringe, retaining the seven gameplay anchors. The principal unresolved programme decision is the mill's actual building representation. Exact plots/crossings/rail fit are later measured work, not requests for physics exceptions.
+
+After lead/Matt reviews this structure, a separately scoped terrain-fitting step can draw actual frontage/plot boundaries against saved masks and the full route context, adjusting suitable land only where explicitly authorised. It must keep the river's meaningful upstream/downstream joins, valid crossings, existing gameplay zone and named destinations. If the required support leaves the current captured bounds, report the missing area rather than make UNKNOWN ground buildable.
+
+Then use the existing native placement/export/checker on the newly scoped plan, accounting for all forty IDs, original inherited doors, terrain, fronts/rears, service yards and routes. That physical result would still not approve the composition or art. One representative street and working-court vignette at the actual character/play-camera scale should establish construction, material, contact-shadow and circulation quality before kit expansion or whole-town claims.
+
+No producer/helper/checker/terrain/workflow/generated image was changed for this document. No packing, test, scientific import, controller, engine, render, world generation, job, Ready, merge or art approval occurred. PR381's original failure, unchanged replay and diagnostic PNG remain preserved; the existing Granary candidate is not offered as a finished Crossroads.
+
+### Evidence references
+
+- [Matt layout direction6526956297](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6526956297), [study handoff6527386266](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527386266), [two-file scope6527523659](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527523659).
+- [Workflow-only source handoff6527830649](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6527830649); exact producer inventory blob `f23c793baf4a3b937a223c2a9fd2ac2786442f94` at parent3818de.
+- [Actual unchanged replay/failed-state result6525128251](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6525128251). Input `before.npz` SHA256 `95574230bb4474fa3a931ba6167fa521d609107ae79fff3f7e7022e327d7d527`; zone JSON SHA256 `cee996a1d28ce4e3523eca541522aae3e05c61c59252496b7aa9eeb334487dec`. These hashes identify evidence; they do not certify this proposed geometry.
