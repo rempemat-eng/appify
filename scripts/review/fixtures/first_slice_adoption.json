@@ -1,0 +1,4491 @@
+{
+  "schema": "mygame.first_slice_adoption.proposal.v1",
+  "task": "SLICE-DATA/r1",
+  "owner": "prism",
+  "purpose": "Receiving proposal interface only. Keep the three historical town packets separate from playable-slice Crossroads references; no cross-system identity mapping is supplied. Historical records and candidate packets are not live placement, approved towns or a navigation result.",
+  "ancestry": {
+    "parent": "ae2d5f658bb64bb7c321045011887e1ae3bfb28c",
+    "reconciliation_blob": "973a344214f8e00d7246a6c68546c49e618bbb1d",
+    "receiving_snapshot": "44f6b7adaacb9900c40a13dd340dca990e580c5d"
+  },
+  "adoption": {
+    "enabled": false,
+    "selected": [],
+    "approved": false,
+    "foundation_included": false,
+    "live_placement": false
+  },
+  "sources": {
+    "cinderwick-baseline": {
+      "commit": "4984438d09b5fe1333d3e6ea6e6ee82be2bdc908",
+      "path": "docs/vision/research/blockout/towns/cinderwick.json",
+      "blob": "b1a6b82b71ba055bf6dc351f81a58766775bf1c4"
+    },
+    "cinderwick-proposal": {
+      "commit": "4669140421d7d8c69482fc90b78fea0a50d1d4bc",
+      "path": "docs/vision/research/blockout/towns/cinderwick.json",
+      "blob": "9cacbd0833c090c5365d3a9afea84a15ac9c5977"
+    },
+    "hearthold-baseline": {
+      "commit": "4984438d09b5fe1333d3e6ea6e6ee82be2bdc908",
+      "path": "docs/vision/research/blockout/towns/hearthold.json",
+      "blob": "f19a9108cf07a3b8140ba136c04149a8c0ddd31d"
+    },
+    "hearthold-proposal": {
+      "commit": "59f3722d1b39050cc81709fa5933d4c9c093ee98",
+      "path": "docs/vision/research/blockout/towns/hearthold.json",
+      "blob": "51fad9db44e2a9be22d2bbb5b007249ae9ecebce"
+    },
+    "launch-cape-baseline": {
+      "commit": "4984438d09b5fe1333d3e6ea6e6ee82be2bdc908",
+      "path": "docs/vision/research/blockout/towns/launch-cape.json",
+      "blob": "06faf55d311d78016966c977bedcc7598348b817"
+    },
+    "launch-cape-proposal": {
+      "commit": "9276174000e47858e92a25803e606fb9dea1fc87",
+      "path": "docs/vision/research/blockout/towns/launch-cape.json",
+      "blob": "9aab428f54a898b2c19049857bc092fe39d6e009"
+    },
+    "report": {
+      "commit": "ae2d5f658bb64bb7c321045011887e1ae3bfb28c",
+      "path": "docs/codex/first-town-v56-adoption.md",
+      "blob": "973a344214f8e00d7246a6c68546c49e618bbb1d"
+    },
+    "current-packets": {
+      "commit": "44f6b7adaacb9900c40a13dd340dca990e580c5d",
+      "path": "docs/vision/research/blockout/towns55.py",
+      "blob": "dfd90fd6e9c9aa2ec3e32612935a2b399275683a"
+    },
+    "current-producer": {
+      "commit": "44f6b7adaacb9900c40a13dd340dca990e580c5d",
+      "path": "docs/vision/research/blockout/geo55.py",
+      "blob": "4e198d81f178b6530c714dd39d6f9078d2b11354"
+    },
+    "exporter": {
+      "commit": "44f6b7adaacb9900c40a13dd340dca990e580c5d",
+      "path": "docs/vision/research/blockout/town_plans.py",
+      "blob": "f643cdd362d7d81e81f3d9d5eb462d78271d4ebb"
+    },
+    "slice-plan": {
+      "commit": "885b45ea4d6fd8cd2246d90903b8cebbba2705b4",
+      "path": "game/data/plans/crossroads.json",
+      "blob": "0ec43431f13f5086a5a96e997b60c7eccb7cab30"
+    },
+    "slice-spec": {
+      "commit": "885b45ea4d6fd8cd2246d90903b8cebbba2705b4",
+      "path": "docs/vision/vertical-slice.md",
+      "blob": "5325c3a91de6865991feba5c2d02ebf60de65aa5"
+    },
+    "slice-region": {
+      "commit": "885b45ea4d6fd8cd2246d90903b8cebbba2705b4",
+      "path": "docs/vision/regions/home-valley-frostline-brackens.md",
+      "blob": "3e9bc35eec3511dc9fad9f470283e26cfaf0fb73"
+    },
+    "woodland": {
+      "commit": "885b45ea4d6fd8cd2246d90903b8cebbba2705b4",
+      "path": "game/zones/woodland/woodland.tscn",
+      "blob": "3640095ff54112750622c077dbd03f978b4a6c36"
+    },
+    "valley": {
+      "commit": "885b45ea4d6fd8cd2246d90903b8cebbba2705b4",
+      "path": "art/regions/valley.json",
+      "blob": "8c1d357860e392a143ba11cb7b455ab7a14049e7"
+    }
+  },
+  "consumer": {
+    "owner": "map-revision",
+    "interface": "PROPOSED_ADOPTIONS + Town.adopt; retain existing lay_all/hearthold/launch_cape authored=None interfaces",
+    "selection": {},
+    "v56_forwarding": "lay_feedback has no authored parameter; a separately authorised producer change must explicitly forward selection.",
+    "evidence": "Full record/metadata/identity equality to pinned source only. No raw terrain, route reachability, fresh seed equivalence or approval is established.",
+    "required_inputs": "Offline UTF-8 raw Git blob bytes named by source.blob in FIRST_SLICE_INPUTS; every pin is mandatory. No automatic download or generator import."
+  },
+  "towns": [
+    {
+      "id": "cinderwick",
+      "coordinate_frame": "continent cells; rect_px uses 8 world pixels per cell; historical/proposal positions only",
+      "baseline_source": "cinderwick-baseline",
+      "proposal_source": "cinderwick-proposal",
+      "packet_key": "cinderwick",
+      "existing": [
+        {
+          "id": "cinderwick-b001",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            285,
+            737,
+            8,
+            6
+          ],
+          "rect_px": [
+            2280,
+            5896,
+            64,
+            48
+          ],
+          "faces": "cinderwick-s01",
+          "door_cells": [
+            289,
+            736
+          ],
+          "purpose": "a cottage",
+          "occupants": "a fisher's household",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b002",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            273,
+            728,
+            9,
+            5
+          ],
+          "rect_px": [
+            2184,
+            5824,
+            72,
+            40
+          ],
+          "faces": "cinderwick-a1",
+          "door_cells": [
+            281,
+            727
+          ],
+          "purpose": "a cottage",
+          "occupants": "a glassblower's household",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "plot_cells": [
+            273,
+            733,
+            9,
+            5
+          ],
+          "plot": "garden",
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b003",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            335,
+            733,
+            9,
+            6
+          ],
+          "rect_px": [
+            2680,
+            5864,
+            72,
+            48
+          ],
+          "faces": "cinderwick-a2",
+          "door_cells": [
+            341,
+            732
+          ],
+          "purpose": "a cottage",
+          "occupants": "a kiln worker's household",
+          "district": "cinderwick-d-kiln-lane",
+          "counted": true,
+          "plot_cells": [
+            335,
+            739,
+            9,
+            3
+          ],
+          "plot": "garden",
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b004",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            277,
+            735,
+            7,
+            5
+          ],
+          "rect_px": [
+            2216,
+            5880,
+            56,
+            40
+          ],
+          "faces": "cinderwick-s01",
+          "door_cells": [
+            284,
+            735
+          ],
+          "purpose": "a cottage",
+          "occupants": "a boatman's household",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b005",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            270,
+            738,
+            6,
+            6
+          ],
+          "rect_px": [
+            2160,
+            5904,
+            48,
+            48
+          ],
+          "faces": "cinderwick-c03",
+          "door_cells": [
+            270,
+            737
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a fisher's household",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b006",
+          "type": "workshop",
+          "form": "workshop",
+          "footprint_cells": [
+            263,
+            745,
+            12,
+            7
+          ],
+          "rect_px": [
+            2104,
+            5960,
+            96,
+            56
+          ],
+          "faces": "cinderwick-c04",
+          "door_cells": [
+            262,
+            745
+          ],
+          "purpose": "the glassworks",
+          "occupants": "the master and apprentices",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b007",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            262,
+            728,
+            8,
+            6
+          ],
+          "rect_px": [
+            2096,
+            5824,
+            64,
+            48
+          ],
+          "faces": "cinderwick-c01",
+          "door_cells": [
+            262,
+            727
+          ],
+          "purpose": "a cottage",
+          "occupants": "a glassblower's household",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b008",
+          "type": "boathouse",
+          "form": "boathouse",
+          "footprint_cells": [
+            347,
+            735,
+            13,
+            7
+          ],
+          "rect_px": [
+            2776,
+            5880,
+            104,
+            56
+          ],
+          "faces": "cinderwick-a2",
+          "door_cells": [
+            353,
+            734
+          ],
+          "purpose": "a boathouse",
+          "occupants": "a boat owner",
+          "district": "cinderwick-d-kiln-lane",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b009",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            350,
+            716,
+            6,
+            7
+          ],
+          "rect_px": [
+            2800,
+            5728,
+            48,
+            56
+          ],
+          "faces": "cinderwick-c02",
+          "door_cells": [
+            354,
+            723
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a kiln worker's household",
+          "district": "cinderwick-d-kiln-lane",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b010",
+          "type": "workshop",
+          "form": "workshop",
+          "footprint_cells": [
+            255,
+            737,
+            14,
+            7
+          ],
+          "rect_px": [
+            2040,
+            5896,
+            112,
+            56
+          ],
+          "faces": "cinderwick-c03",
+          "door_cells": [
+            269,
+            737
+          ],
+          "purpose": "the cooperage",
+          "occupants": "the master and apprentices",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b011",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            251,
+            729,
+            8,
+            5
+          ],
+          "rect_px": [
+            2008,
+            5832,
+            64,
+            40
+          ],
+          "faces": "cinderwick-c01",
+          "door_cells": [
+            259,
+            729
+          ],
+          "purpose": "a cottage",
+          "occupants": "a boatman's household",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b012",
+          "type": "boathouse",
+          "form": "boathouse",
+          "footprint_cells": [
+            253,
+            748,
+            9,
+            7
+          ],
+          "rect_px": [
+            2024,
+            5984,
+            72,
+            56
+          ],
+          "faces": "cinderwick-c04",
+          "door_cells": [
+            257,
+            747
+          ],
+          "purpose": "a boathouse",
+          "occupants": "a boat owner",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "cinderwick-b013",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            247,
+            737,
+            7,
+            6
+          ],
+          "rect_px": [
+            1976,
+            5896,
+            56,
+            48
+          ],
+          "faces": "cinderwick-c04",
+          "door_cells": [
+            246,
+            740
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a fisher's household",
+          "district": "cinderwick-d-the-strand",
+          "counted": true,
+          "counts_as": 1
+        }
+      ],
+      "adoptable": [
+        {
+          "id": "cinderwick-b014",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            301,
+            719,
+            8,
+            6
+          ],
+          "rect_px": [
+            2408,
+            5752,
+            64,
+            48
+          ],
+          "faces": "cinderwick-s02",
+          "door_cells": [
+            305,
+            725
+          ],
+          "purpose": "a detached fishing cottage",
+          "occupants": "a fisher's household",
+          "district": "cinderwick-d-the-quay",
+          "counted": true,
+          "counts_as": 1,
+          "plot_cells": [
+            301,
+            717,
+            8,
+            2
+          ],
+          "plot": "yard"
+        },
+        {
+          "id": "cinderwick-b015",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            306,
+            727,
+            7,
+            5
+          ],
+          "rect_px": [
+            2448,
+            5816,
+            56,
+            40
+          ],
+          "faces": "cinderwick-s02",
+          "door_cells": [
+            305,
+            729
+          ],
+          "purpose": "a detached fishing cottage",
+          "occupants": "a fisher's household",
+          "district": "cinderwick-d-the-quay",
+          "counted": true,
+          "counts_as": 1,
+          "plot_cells": [
+            306,
+            725,
+            7,
+            2
+          ],
+          "plot": "yard"
+        },
+        {
+          "id": "cinderwick-b016",
+          "type": "barn",
+          "form": "shed",
+          "footprint_cells": [
+            300,
+            736,
+            4,
+            3
+          ],
+          "rect_px": [
+            2400,
+            5888,
+            32,
+            24
+          ],
+          "faces": "cinderwick-s01",
+          "door_cells": [
+            302,
+            735
+          ],
+          "purpose": "a net shed by the boatyard",
+          "occupants": "work storage only; resident roles deferred to X3",
+          "district": "cinderwick-d-the-quay",
+          "counted": false,
+          "counts_as": 0
+        },
+        {
+          "id": "cinderwick-b017",
+          "type": "barn",
+          "form": "shed",
+          "footprint_cells": [
+            306,
+            736,
+            4,
+            3
+          ],
+          "rect_px": [
+            2448,
+            5888,
+            32,
+            24
+          ],
+          "faces": "cinderwick-s01",
+          "door_cells": [
+            308,
+            735
+          ],
+          "purpose": "a net shed by the boatyard",
+          "occupants": "work storage only; resident roles deferred to X3",
+          "district": "cinderwick-d-the-quay",
+          "counted": false,
+          "counts_as": 0
+        }
+      ],
+      "proposal_metadata": {
+        "buildings_counted": 15,
+        "site": {
+          "reason": "the fire country's harbour: fishing boats and the coaster that calls for Hearthold's goods; charcoal kilns and a black-sand glassworks; the quay is the region's way to the sea",
+          "terrain": "a black-sand cove between the flows, the young flow steaming to the east; the Ash Coast path and the Ember Way meet here",
+          "fit": "on the cove's slope above the black sand: the Strand on the beach, Kiln Lane above it, terraced",
+          "dry": false,
+          "fortified": false,
+          "authored": "existing generated layout with Y15 Cinderwick-only authored additions (issue149 comment6471345306)",
+          "tiers": [
+            -1,
+            6
+          ],
+          "levelled_footprints": 0
+        },
+        "districts": [
+          {
+            "name": "the Strand",
+            "centre_px": [
+              2450,
+              5885
+            ],
+            "declared": "fishers' houses and net lofts along the beach",
+            "town": "Cinderwick",
+            "id": "cinderwick-d-the-strand",
+            "buildings": [
+              "cinderwick-b001",
+              "cinderwick-b002",
+              "cinderwick-b004",
+              "cinderwick-b005",
+              "cinderwick-b006",
+              "cinderwick-b007",
+              "cinderwick-b010",
+              "cinderwick-b011",
+              "cinderwick-b012",
+              "cinderwick-b013"
+            ],
+            "mix": {
+              "cottage": 5,
+              "townhouse": 2,
+              "workshop": 2,
+              "boathouse": 1
+            },
+            "function": "homes"
+          },
+          {
+            "name": "Kiln Lane",
+            "centre_px": [
+              2520,
+              5795
+            ],
+            "declared": "the kilns, the glassworks and the coopers",
+            "town": "Cinderwick",
+            "id": "cinderwick-d-kiln-lane",
+            "buildings": [
+              "cinderwick-b003",
+              "cinderwick-b008",
+              "cinderwick-b009"
+            ],
+            "mix": {
+              "cottage": 1,
+              "boathouse": 1,
+              "townhouse": 1
+            },
+            "function": "docks and transport with homes"
+          },
+          {
+            "name": "the Quay",
+            "centre_px": [
+              2470,
+              5920
+            ],
+            "declared": "the existing stone quay with detached fishing cottages, net sheds and a working boatyard",
+            "town": "Cinderwick",
+            "id": "cinderwick-d-the-quay",
+            "buildings": [
+              "cinderwick-b014",
+              "cinderwick-b015",
+              "cinderwick-b016",
+              "cinderwick-b017"
+            ],
+            "mix": {
+              "cottage": 2,
+              "barn": 0
+            },
+            "function": "docks and transport with homes"
+          },
+          {
+            "id": "cinderwick-d-the-kilns",
+            "name": "the kilns",
+            "function": "docks and works yards",
+            "declared": "charcoal from the dead forest; black-sand glass",
+            "box_px": [
+              2620,
+              5760,
+              2720,
+              5840
+            ],
+            "buildings": [],
+            "town": "Cinderwick"
+          }
+        ],
+        "size_table_px": {
+          "boathouse": [
+            [
+              72,
+              104
+            ],
+            [
+              56,
+              64
+            ]
+          ],
+          "cottage": [
+            [
+              56,
+              80
+            ],
+            [
+              40,
+              48
+            ]
+          ],
+          "townhouse": [
+            [
+              40,
+              56
+            ],
+            [
+              48,
+              56
+            ]
+          ],
+          "workshop": [
+            [
+              88,
+              120
+            ],
+            [
+              56,
+              72
+            ]
+          ],
+          "shed": [
+            [
+              32,
+              48
+            ],
+            [
+              24,
+              40
+            ]
+          ]
+        },
+        "fronts": 17,
+        "open_uses": [
+          {
+            "id": "cinderwick-o01",
+            "name": "the boatyard work apron",
+            "kind": "yard",
+            "cells": [
+              294,
+              736,
+              6,
+              5
+            ]
+          },
+          {
+            "id": "cinderwick-o02",
+            "name": "the boatyard net-shed frontage",
+            "kind": "yard",
+            "cells": [
+              300,
+              736,
+              11,
+              3
+            ]
+          }
+        ]
+      },
+      "existing_access": {
+        "streets": [
+          {
+            "id": "cinderwick-s01",
+            "name": "the Strand",
+            "class": "side",
+            "width_cells": 4,
+            "vertices_px": [
+              [
+                2288,
+                5872
+              ],
+              [
+                2608,
+                5872
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "cinderwick-a2",
+              "cinderwick-s02",
+              "cinderwick-s04"
+            ]
+          },
+          {
+            "id": "cinderwick-s02",
+            "name": "Quay Lane",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2436,
+                5812
+              ],
+              [
+                2436,
+                5860
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "cinderwick-a1",
+              "cinderwick-s01"
+            ]
+          },
+          {
+            "id": "cinderwick-s03",
+            "name": "Back Lane",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2268,
+                5796
+              ],
+              [
+                2300,
+                5796
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "cinderwick-a1"
+            ]
+          },
+          {
+            "id": "cinderwick-s04",
+            "name": "Kiln Steps",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2628,
+                5812
+              ],
+              [
+                2628,
+                5876
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "cinderwick-a2",
+              "cinderwick-s01"
+            ]
+          },
+          {
+            "id": "cinderwick-a1",
+            "name": "Ember Way",
+            "class": "arrival",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                1867.3,
+                5660.1
+              ],
+              [
+                1894.9,
+                5697.6
+              ],
+              [
+                1929.4,
+                5727.1
+              ],
+              [
+                1969.3,
+                5750
+              ],
+              [
+                2015.4,
+                5767.7
+              ],
+              [
+                2064.7,
+                5775.4
+              ],
+              [
+                2153.1,
+                5778.2
+              ],
+              [
+                2196.4,
+                5783.3
+              ],
+              [
+                2322.6,
+                5823.4
+              ],
+              [
+                2368.9,
+                5831.5
+              ],
+              [
+                2410,
+                5834.8
+              ]
+            ],
+            "follows_route": "Ember Way",
+            "connects": [
+              "cinderwick-c01",
+              "cinderwick-c03",
+              "cinderwick-c04",
+              "cinderwick-s02",
+              "cinderwick-s03"
+            ]
+          },
+          {
+            "id": "cinderwick-a2",
+            "name": "Ash Coast",
+            "class": "arrival",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2994,
+                5778.7
+              ],
+              [
+                2916.1,
+                5824.7
+              ],
+              [
+                2854.2,
+                5846.3
+              ],
+              [
+                2811.1,
+                5850.8
+              ],
+              [
+                2766.3,
+                5847.7
+              ],
+              [
+                2649.3,
+                5822.2
+              ],
+              [
+                2625.9,
+                5821.1
+              ],
+              [
+                2544.1,
+                5855.5
+              ],
+              [
+                2501.2,
+                5868.5
+              ]
+            ],
+            "follows_route": "Ash Coast",
+            "connects": [
+              "cinderwick-c02",
+              "cinderwick-s01",
+              "cinderwick-s04"
+            ]
+          },
+          {
+            "id": "cinderwick-c01",
+            "name": null,
+            "class": "close",
+            "width_cells": 2,
+            "vertices_px": [
+              [
+                2096,
+                5816
+              ],
+              [
+                2096,
+                5792
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "cinderwick-a1"
+            ]
+          },
+          {
+            "id": "cinderwick-c02",
+            "name": null,
+            "class": "close",
+            "width_cells": 2,
+            "vertices_px": [
+              [
+                2840,
+                5792
+              ],
+              [
+                2840,
+                5832
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "cinderwick-a2"
+            ]
+          },
+          {
+            "id": "cinderwick-c03",
+            "name": null,
+            "class": "close",
+            "width_cells": 2,
+            "vertices_px": [
+              [
+                2168,
+                5896
+              ],
+              [
+                2168,
+                5792
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "cinderwick-a1"
+            ]
+          },
+          {
+            "id": "cinderwick-c04",
+            "name": null,
+            "class": "close",
+            "width_cells": 2,
+            "vertices_px": [
+              [
+                2096,
+                5960
+              ],
+              [
+                1968,
+                5960
+              ],
+              [
+                1968,
+                5760
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "cinderwick-a1"
+            ]
+          }
+        ],
+        "squares": [],
+        "arrivals": [
+          {
+            "id": "cinderwick-arr1",
+            "kind": "path",
+            "route": "Ember Way",
+            "street": "cinderwick-a1",
+            "entries_px": [
+              [
+                1867,
+                5660
+              ]
+            ],
+            "route_kind": "path"
+          },
+          {
+            "id": "cinderwick-arr2",
+            "kind": "path",
+            "route": "Ash Coast",
+            "street": "cinderwick-a2",
+            "entries_px": [
+              [
+                2994,
+                5779
+              ]
+            ],
+            "route_kind": "path"
+          }
+        ]
+      },
+      "unapproved": {
+        "ids": [
+          "cinderwick-b014",
+          "cinderwick-b015",
+          "cinderwick-b016",
+          "cinderwick-b017"
+        ],
+        "status": "proposal",
+        "live_placement": false,
+        "holds": [
+          "real-ground",
+          "fresh-baseline-identity",
+          "actual-approach",
+          "source-feedback",
+          "fullgates",
+          "Y12",
+          "Matt-on-PR",
+          "foundation-inclusion"
+        ]
+      },
+      "missing": {
+        "homes": {
+          "status": "missing",
+          "detail": "No exact individual-to-home assignments are supplied."
+        },
+        "jobs": {
+          "status": "missing",
+          "detail": "No exact individual-to-workplace/job assignments are supplied."
+        },
+        "residents": {
+          "status": "missing",
+          "source_literal": [],
+          "detail": "Empty authored list is incomplete, not evidence that no residents exist."
+        },
+        "routines": {
+          "status": "missing",
+          "source_literal": [],
+          "detail": "Empty authored list is incomplete, not an authored routine."
+        },
+        "animals": {
+          "status": "missing",
+          "detail": "No exact animal population/routine data is supplied."
+        }
+      },
+      "producer_packet": {
+        "status": "proposal",
+        "source": {
+          "commit": "4669140421d7d8c69482fc90b78fea0a50d1d4bc",
+          "blob": "9cacbd0833c090c5365d3a9afea84a15ac9c5977",
+          "path": "docs/vision/research/blockout/towns/cinderwick.json"
+        },
+        "baseline": {
+          "commit": "4984438d09b5fe1333d3e6ea6e6ee82be2bdc908",
+          "blob": "b1a6b82b71ba055bf6dc351f81a58766775bf1c4",
+          "path": "docs/vision/research/blockout/towns/cinderwick.json"
+        },
+        "terrain_box_cells": [
+          232,
+          701,
+          144,
+          70
+        ],
+        "buildings": [
+          {
+            "id": "cinderwick-b014",
+            "type": "cottage",
+            "form": "cottage",
+            "footprint_cells": [
+              301,
+              719,
+              8,
+              6
+            ],
+            "rect_px": [
+              2408,
+              5752,
+              64,
+              48
+            ],
+            "faces": "cinderwick-s02",
+            "door_cells": [
+              305,
+              725
+            ],
+            "purpose": "a detached fishing cottage",
+            "occupants": "a fisher's household",
+            "district": "cinderwick-d-the-quay",
+            "counted": true,
+            "counts_as": 1,
+            "plot_cells": [
+              301,
+              717,
+              8,
+              2
+            ],
+            "plot": "yard"
+          },
+          {
+            "id": "cinderwick-b015",
+            "type": "cottage",
+            "form": "cottage",
+            "footprint_cells": [
+              306,
+              727,
+              7,
+              5
+            ],
+            "rect_px": [
+              2448,
+              5816,
+              56,
+              40
+            ],
+            "faces": "cinderwick-s02",
+            "door_cells": [
+              305,
+              729
+            ],
+            "purpose": "a detached fishing cottage",
+            "occupants": "a fisher's household",
+            "district": "cinderwick-d-the-quay",
+            "counted": true,
+            "counts_as": 1,
+            "plot_cells": [
+              306,
+              725,
+              7,
+              2
+            ],
+            "plot": "yard"
+          },
+          {
+            "id": "cinderwick-b016",
+            "type": "barn",
+            "form": "shed",
+            "footprint_cells": [
+              300,
+              736,
+              4,
+              3
+            ],
+            "rect_px": [
+              2400,
+              5888,
+              32,
+              24
+            ],
+            "faces": "cinderwick-s01",
+            "door_cells": [
+              302,
+              735
+            ],
+            "purpose": "a net shed by the boatyard",
+            "occupants": "work storage only; resident roles deferred to X3",
+            "district": "cinderwick-d-the-quay",
+            "counted": false,
+            "counts_as": 0
+          },
+          {
+            "id": "cinderwick-b017",
+            "type": "barn",
+            "form": "shed",
+            "footprint_cells": [
+              306,
+              736,
+              4,
+              3
+            ],
+            "rect_px": [
+              2448,
+              5888,
+              32,
+              24
+            ],
+            "faces": "cinderwick-s01",
+            "door_cells": [
+              308,
+              735
+            ],
+            "purpose": "a net shed by the boatyard",
+            "occupants": "work storage only; resident roles deferred to X3",
+            "district": "cinderwick-d-the-quay",
+            "counted": false,
+            "counts_as": 0
+          }
+        ],
+        "districts": [],
+        "district_descriptions": {
+          "cinderwick-d-the-quay": {
+            "declared": "the existing stone quay with detached fishing cottages, net sheds and a working boatyard",
+            "function": "docks and transport with homes"
+          }
+        },
+        "open_uses": [
+          {
+            "id": "cinderwick-o01",
+            "name": "the boatyard work apron",
+            "kind": "yard",
+            "cells": [
+              294,
+              736,
+              6,
+              5
+            ]
+          },
+          {
+            "id": "cinderwick-o02",
+            "name": "the boatyard net-shed frontage",
+            "kind": "yard",
+            "cells": [
+              300,
+              736,
+              11,
+              3
+            ]
+          }
+        ],
+        "site_authored": "existing generated layout with Y15 Cinderwick-only authored additions (issue149 comment6471345306)"
+      }
+    },
+    {
+      "id": "hearthold",
+      "coordinate_frame": "continent cells; rect_px uses 8 world pixels per cell; historical/proposal positions only",
+      "baseline_source": "hearthold-baseline",
+      "proposal_source": "hearthold-proposal",
+      "packet_key": "hearthold",
+      "existing": [
+        {
+          "id": "hearthold-b001",
+          "type": "keep",
+          "form": "keep",
+          "footprint_cells": [
+            281,
+            637,
+            16,
+            10
+          ],
+          "rect_px": [
+            2248,
+            5096,
+            128,
+            80
+          ],
+          "faces": "hearthold-q01",
+          "door_cells": [
+            293,
+            647
+          ],
+          "purpose": "the keep",
+          "occupants": "the lord, the household and the guard",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "landmark": true,
+          "counts_as": 0
+        },
+        {
+          "id": "hearthold-b002",
+          "type": "hall",
+          "form": "hall",
+          "footprint_cells": [
+            274,
+            649,
+            13,
+            7
+          ],
+          "rect_px": [
+            2192,
+            5192,
+            104,
+            56
+          ],
+          "faces": "hearthold-s01",
+          "door_cells": [
+            287,
+            652
+          ],
+          "purpose": "the knights' hall",
+          "occupants": "its order or guild",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "landmark": true,
+          "counts_as": 0
+        },
+        {
+          "id": "hearthold-b003",
+          "type": "chapel",
+          "form": "chapel",
+          "footprint_cells": [
+            274,
+            663,
+            8,
+            7
+          ],
+          "rect_px": [
+            2192,
+            5304,
+            64,
+            56
+          ],
+          "faces": "hearthold-s02",
+          "door_cells": [
+            278,
+            662
+          ],
+          "purpose": "the chapel",
+          "occupants": "the priest, living beside it",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "landmark": true,
+          "counts_as": 0
+        },
+        {
+          "id": "hearthold-b004",
+          "type": "public",
+          "form": "barracks",
+          "footprint_cells": [
+            292,
+            663,
+            13,
+            6
+          ],
+          "rect_px": [
+            2336,
+            5304,
+            104,
+            48
+          ],
+          "faces": "hearthold-s03",
+          "door_cells": [
+            298,
+            662
+          ],
+          "purpose": "the guildhall",
+          "occupants": "staff by day",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "landmark": true,
+          "counts_as": 0
+        },
+        {
+          "id": "hearthold-b005",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            274,
+            637,
+            6,
+            5
+          ],
+          "rect_px": [
+            2192,
+            5096,
+            48,
+            40
+          ],
+          "faces": "hearthold-c01",
+          "door_cells": [
+            279,
+            636
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a knight's household",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b006",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            299,
+            637,
+            6,
+            5
+          ],
+          "rect_px": [
+            2392,
+            5096,
+            48,
+            40
+          ],
+          "faces": "hearthold-c01",
+          "door_cells": [
+            298,
+            639
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a armourer's household",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b007",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            274,
+            643,
+            6,
+            5
+          ],
+          "rect_px": [
+            2192,
+            5144,
+            48,
+            40
+          ],
+          "faces": "hearthold-c02",
+          "door_cells": [
+            280,
+            647
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a smith's household",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b008",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            299,
+            643,
+            6,
+            5
+          ],
+          "rect_px": [
+            2392,
+            5144,
+            48,
+            40
+          ],
+          "faces": "hearthold-q01",
+          "door_cells": [
+            302,
+            648
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a potter's household",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b009",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            282,
+            663,
+            5,
+            6
+          ],
+          "rect_px": [
+            2256,
+            5304,
+            40,
+            48
+          ],
+          "faces": "hearthold-s01",
+          "door_cells": [
+            287,
+            666
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a vintner's household",
+          "district": "hearthold-d-the-castle",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b010",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            282,
+            670,
+            5,
+            6
+          ],
+          "rect_px": [
+            2256,
+            5360,
+            40,
+            48
+          ],
+          "faces": "hearthold-s16",
+          "door_cells": [
+            287,
+            673
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a guard's household",
+          "district": "hearthold-d-gate-street",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b011",
+          "type": "inn",
+          "form": "inn",
+          "footprint_cells": [
+            267,
+            689,
+            14,
+            8
+          ],
+          "rect_px": [
+            2136,
+            5512,
+            112,
+            64
+          ],
+          "faces": "hearthold-s09",
+          "door_cells": [
+            266,
+            693
+          ],
+          "purpose": "the Gate inn",
+          "occupants": "the innkeeper, staff and guests",
+          "district": "hearthold-d-gate-street",
+          "counted": true,
+          "counts_as": 1,
+          "company_foothold": "no office: the knights refused the Company; its buyer waits at the inn"
+        },
+        {
+          "id": "hearthold-b012",
+          "type": "shop",
+          "form": "shop",
+          "footprint_cells": [
+            252,
+            679,
+            8,
+            6
+          ],
+          "rect_px": [
+            2016,
+            5432,
+            64,
+            48
+          ],
+          "faces": "hearthold-s05",
+          "door_cells": [
+            256,
+            685
+          ],
+          "purpose": "the armourer's counter",
+          "occupants": "the shopkeeper, living above",
+          "district": "hearthold-d-gate-street",
+          "counted": true,
+          "plot_cells": [
+            257,
+            676,
+            3,
+            1
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b013",
+          "type": "shop",
+          "form": "shop",
+          "footprint_cells": [
+            261,
+            679,
+            8,
+            6
+          ],
+          "rect_px": [
+            2088,
+            5432,
+            64,
+            48
+          ],
+          "faces": "hearthold-s05",
+          "door_cells": [
+            265,
+            685
+          ],
+          "purpose": "the vintner",
+          "occupants": "the shopkeeper, living above",
+          "district": "hearthold-d-gate-street",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b014",
+          "type": "shop",
+          "form": "shop",
+          "footprint_cells": [
+            274,
+            679,
+            8,
+            6
+          ],
+          "rect_px": [
+            2192,
+            5432,
+            64,
+            48
+          ],
+          "faces": "hearthold-s05",
+          "door_cells": [
+            278,
+            685
+          ],
+          "purpose": "the potter's shop",
+          "occupants": "the shopkeeper, living above",
+          "district": "hearthold-d-gate-street",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b015",
+          "type": "shop",
+          "form": "shop",
+          "footprint_cells": [
+            296,
+            680,
+            9,
+            6
+          ],
+          "rect_px": [
+            2368,
+            5440,
+            72,
+            48
+          ],
+          "faces": "hearthold-s06",
+          "door_cells": [
+            300,
+            686
+          ],
+          "purpose": "the cloth hall shop",
+          "occupants": "the shopkeeper, living above",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b016",
+          "type": "workshop",
+          "form": "forge",
+          "footprint_cells": [
+            311,
+            680,
+            13,
+            6
+          ],
+          "rect_px": [
+            2488,
+            5440,
+            104,
+            48
+          ],
+          "faces": "hearthold-s06",
+          "door_cells": [
+            317,
+            686
+          ],
+          "purpose": "the armourer",
+          "occupants": "the master and apprentices",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b017",
+          "type": "workshop",
+          "form": "forge",
+          "footprint_cells": [
+            329,
+            680,
+            13,
+            6
+          ],
+          "rect_px": [
+            2632,
+            5440,
+            104,
+            48
+          ],
+          "faces": "hearthold-s06",
+          "door_cells": [
+            335,
+            686
+          ],
+          "purpose": "the smithy",
+          "occupants": "the master and apprentices",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b018",
+          "type": "workshop",
+          "form": "forge",
+          "footprint_cells": [
+            297,
+            690,
+            13,
+            7
+          ],
+          "rect_px": [
+            2376,
+            5520,
+            104,
+            56
+          ],
+          "faces": "hearthold-s06",
+          "door_cells": [
+            303,
+            689
+          ],
+          "purpose": "the pottery",
+          "occupants": "the master and apprentices",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "plot_cells": [
+            297,
+            697,
+            13,
+            1
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b019",
+          "type": "workshop",
+          "form": "forge",
+          "footprint_cells": [
+            311,
+            690,
+            13,
+            7
+          ],
+          "rect_px": [
+            2488,
+            5520,
+            104,
+            56
+          ],
+          "faces": "hearthold-s06",
+          "door_cells": [
+            317,
+            689
+          ],
+          "purpose": "the wine press",
+          "occupants": "the master and apprentices",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "plot_cells": [
+            311,
+            697,
+            13,
+            1
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b020",
+          "type": "workshop",
+          "form": "forge",
+          "footprint_cells": [
+            329,
+            690,
+            13,
+            7
+          ],
+          "rect_px": [
+            2632,
+            5520,
+            104,
+            56
+          ],
+          "faces": "hearthold-s06",
+          "door_cells": [
+            335,
+            689
+          ],
+          "purpose": "the glass blower",
+          "occupants": "the master and apprentices",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "plot_cells": [
+            329,
+            697,
+            13,
+            1
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b021",
+          "type": "house",
+          "form": "house",
+          "footprint_cells": [
+            268,
+            702,
+            13,
+            6
+          ],
+          "rect_px": [
+            2144,
+            5616,
+            104,
+            48
+          ],
+          "faces": "hearthold-s16",
+          "door_cells": [
+            276,
+            708
+          ],
+          "purpose": "a family house",
+          "occupants": "a farmer's household",
+          "district": "hearthold-d-ash-lane",
+          "counted": true,
+          "plot_cells": [
+            268,
+            708,
+            13,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b022",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            292,
+            702,
+            8,
+            6
+          ],
+          "rect_px": [
+            2336,
+            5616,
+            64,
+            48
+          ],
+          "faces": "hearthold-s04",
+          "door_cells": [
+            291,
+            705
+          ],
+          "purpose": "a cottage",
+          "occupants": "a knight's household",
+          "district": "hearthold-d-ash-lane",
+          "counted": true,
+          "plot_cells": [
+            292,
+            708,
+            8,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b023",
+          "type": "house",
+          "form": "house",
+          "footprint_cells": [
+            302,
+            702,
+            11,
+            7
+          ],
+          "rect_px": [
+            2416,
+            5616,
+            88,
+            56
+          ],
+          "faces": "hearthold-s07",
+          "door_cells": [
+            307,
+            701
+          ],
+          "purpose": "a family house",
+          "occupants": "a armourer's household",
+          "district": "hearthold-d-ash-lane",
+          "counted": true,
+          "plot_cells": [
+            302,
+            709,
+            11,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b024",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            279,
+            717,
+            9,
+            5
+          ],
+          "rect_px": [
+            2232,
+            5736,
+            72,
+            40
+          ],
+          "faces": "hearthold-s04",
+          "door_cells": [
+            286,
+            716
+          ],
+          "purpose": "a cottage",
+          "occupants": "a smith's household",
+          "district": "hearthold-d-ash-lane",
+          "counted": true,
+          "plot_cells": [
+            281,
+            722,
+            7,
+            1
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b025",
+          "type": "house",
+          "form": "house",
+          "footprint_cells": [
+            289,
+            717,
+            12,
+            6
+          ],
+          "rect_px": [
+            2312,
+            5736,
+            96,
+            48
+          ],
+          "faces": "hearthold-s04",
+          "door_cells": [
+            291,
+            716
+          ],
+          "purpose": "a family house",
+          "occupants": "a potter's household",
+          "district": "hearthold-d-ash-lane",
+          "counted": true,
+          "plot_cells": [
+            289,
+            723,
+            12,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b026",
+          "type": "workshop",
+          "form": "workshop",
+          "footprint_cells": [
+            303,
+            717,
+            13,
+            8
+          ],
+          "rect_px": [
+            2424,
+            5736,
+            104,
+            64
+          ],
+          "faces": "hearthold-s08",
+          "door_cells": [
+            309,
+            716
+          ],
+          "purpose": "the armourer",
+          "occupants": "the master and apprentices",
+          "district": "hearthold-d-ash-lane",
+          "counted": true,
+          "plot_cells": [
+            303,
+            725,
+            13,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b027",
+          "type": "house",
+          "form": "house",
+          "footprint_cells": [
+            323,
+            717,
+            11,
+            7
+          ],
+          "rect_px": [
+            2584,
+            5736,
+            88,
+            56
+          ],
+          "faces": "hearthold-s08",
+          "door_cells": [
+            328,
+            716
+          ],
+          "purpose": "a family house",
+          "occupants": "a vintner's household",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "plot_cells": [
+            323,
+            724,
+            11,
+            1
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b028",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            337,
+            717,
+            10,
+            6
+          ],
+          "rect_px": [
+            2696,
+            5736,
+            80,
+            48
+          ],
+          "faces": "hearthold-s08",
+          "door_cells": [
+            342,
+            716
+          ],
+          "purpose": "a cottage",
+          "occupants": "a guard's household",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "plot_cells": [
+            337,
+            723,
+            10,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b029",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            314,
+            706,
+            9,
+            6
+          ],
+          "rect_px": [
+            2512,
+            5648,
+            72,
+            48
+          ],
+          "faces": "hearthold-s08",
+          "door_cells": [
+            318,
+            712
+          ],
+          "purpose": "a cottage",
+          "occupants": "a farmer's household",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "plot_cells": [
+            314,
+            704,
+            9,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b030",
+          "type": "house",
+          "form": "house",
+          "footprint_cells": [
+            328,
+            705,
+            12,
+            7
+          ],
+          "rect_px": [
+            2624,
+            5640,
+            96,
+            56
+          ],
+          "faces": "hearthold-s08",
+          "door_cells": [
+            334,
+            712
+          ],
+          "purpose": "a family house",
+          "occupants": "a knight's household",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "plot_cells": [
+            328,
+            703,
+            12,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b031",
+          "type": "townhouse",
+          "form": "townhouse",
+          "footprint_cells": [
+            281,
+            690,
+            5,
+            6
+          ],
+          "rect_px": [
+            2248,
+            5520,
+            40,
+            48
+          ],
+          "faces": "hearthold-s04",
+          "door_cells": [
+            286,
+            693
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a armourer's household",
+          "district": "hearthold-d-gate-street",
+          "counted": true,
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b032",
+          "type": "townhouse",
+          "form": "terrace",
+          "footprint_cells": [
+            329,
+            700,
+            15,
+            5
+          ],
+          "rect_px": [
+            2632,
+            5600,
+            120,
+            40
+          ],
+          "faces": "hearthold-s10",
+          "door_cells": [
+            328,
+            702
+          ],
+          "purpose": "a terraced townhouse",
+          "occupants": "a smith's household",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "counts_as": 1
+        }
+      ],
+      "adoptable": [
+        {
+          "id": "hearthold-b033",
+          "type": "house",
+          "form": "house",
+          "footprint_cells": [
+            253,
+            706,
+            10,
+            6
+          ],
+          "rect_px": [
+            2024,
+            5648,
+            80,
+            48
+          ],
+          "faces": "hearthold-s09",
+          "door_cells": [
+            263,
+            708
+          ],
+          "purpose": "a detached lower-town house",
+          "occupants": "household; individual residents and routines not yet authored",
+          "district": "hearthold-d-ash-lane",
+          "counted": true,
+          "plot_cells": [
+            251,
+            706,
+            2,
+            6
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b034",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            254,
+            698,
+            9,
+            6
+          ],
+          "rect_px": [
+            2032,
+            5584,
+            72,
+            48
+          ],
+          "faces": "hearthold-s09",
+          "door_cells": [
+            263,
+            700
+          ],
+          "purpose": "a detached lower-town cottage",
+          "occupants": "household; individual residents and routines not yet authored",
+          "district": "hearthold-d-ash-lane",
+          "counted": true,
+          "plot_cells": [
+            252,
+            698,
+            2,
+            6
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "hearthold-b035",
+          "type": "workshop",
+          "form": "workshop",
+          "footprint_cells": [
+            343,
+            690,
+            11,
+            7
+          ],
+          "rect_px": [
+            2744,
+            5520,
+            88,
+            56
+          ],
+          "faces": "hearthold-s06",
+          "door_cells": [
+            345,
+            689
+          ],
+          "purpose": "a craft workshop; specific trade not yet authored",
+          "occupants": "craft workers; individual workers and routines not yet authored",
+          "district": "hearthold-d-smiths-row",
+          "counted": true,
+          "plot_cells": [
+            343,
+            697,
+            11,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        }
+      ],
+      "proposal_metadata": {
+        "buildings_counted": 31,
+        "footprint_px": [
+          1996,
+          5096,
+          2832,
+          5800
+        ],
+        "districts": [
+          {
+            "name": "the Castle",
+            "centre_px": [
+              2312,
+              5250
+            ],
+            "declared": "inside the wall: the keep, the hall, the barracks and drill yard, the chapel, the knights' houses",
+            "town": "Hearthold",
+            "id": "hearthold-d-the-castle",
+            "buildings": [
+              "hearthold-b001",
+              "hearthold-b002",
+              "hearthold-b003",
+              "hearthold-b004",
+              "hearthold-b005",
+              "hearthold-b006",
+              "hearthold-b007",
+              "hearthold-b008",
+              "hearthold-b009"
+            ],
+            "mix": {
+              "keep": 1,
+              "hall": 1,
+              "chapel": 1,
+              "public": 1,
+              "townhouse": 5
+            },
+            "function": "market and civic with homes"
+          },
+          {
+            "name": "Smiths' Row",
+            "centre_px": [
+              2480,
+              5500
+            ],
+            "declared": "forges and armourers against the cooled lava, east of the gate market",
+            "town": "Hearthold",
+            "id": "hearthold-d-smiths-row",
+            "buildings": [
+              "hearthold-b015",
+              "hearthold-b016",
+              "hearthold-b017",
+              "hearthold-b018",
+              "hearthold-b019",
+              "hearthold-b020",
+              "hearthold-b027",
+              "hearthold-b028",
+              "hearthold-b029",
+              "hearthold-b030",
+              "hearthold-b032",
+              "hearthold-b035"
+            ],
+            "mix": {
+              "shop": 1,
+              "workshop": 6,
+              "house": 2,
+              "cottage": 2,
+              "townhouse": 1
+            },
+            "function": "crafts and work with homes"
+          },
+          {
+            "name": "Gate Street",
+            "centre_px": [
+              2200,
+              5470
+            ],
+            "declared": "the gate market, the inn and the shops below the gate",
+            "town": "Hearthold",
+            "id": "hearthold-d-gate-street",
+            "buildings": [
+              "hearthold-b010",
+              "hearthold-b011",
+              "hearthold-b012",
+              "hearthold-b013",
+              "hearthold-b014",
+              "hearthold-b031"
+            ],
+            "mix": {
+              "townhouse": 2,
+              "inn": 1,
+              "shop": 3
+            },
+            "function": "market and civic with homes"
+          },
+          {
+            "name": "Ash Lane",
+            "centre_px": [
+              2340,
+              5660
+            ],
+            "declared": "potters', vintners' and smiths' terraces stepping down the slope",
+            "town": "Hearthold",
+            "id": "hearthold-d-ash-lane",
+            "buildings": [
+              "hearthold-b021",
+              "hearthold-b022",
+              "hearthold-b023",
+              "hearthold-b024",
+              "hearthold-b025",
+              "hearthold-b026",
+              "hearthold-b033",
+              "hearthold-b034"
+            ],
+            "mix": {
+              "house": 4,
+              "cottage": 3,
+              "workshop": 1
+            },
+            "function": "homes"
+          },
+          {
+            "id": "hearthold-d-the-drill-yard",
+            "name": "the drill yard",
+            "function": "docks and works yards",
+            "declared": "the knights' and the guard's training ground, beside the barracks",
+            "box_px": [
+              2336,
+              5352,
+              2440,
+              5408
+            ],
+            "buildings": [],
+            "town": "Hearthold"
+          },
+          {
+            "id": "hearthold-d-the-castle-yard",
+            "name": "the castle yard",
+            "function": "docks and works yards",
+            "declared": "basalt setts inside the wall",
+            "box_px": [
+              2192,
+              5080,
+              2448,
+              5408
+            ],
+            "buildings": [],
+            "town": "Hearthold"
+          },
+          {
+            "id": "hearthold-d-the-vines",
+            "name": "the vines",
+            "function": "edge: farms and gardens",
+            "declared": "vines on the cooled ash of the rock's warm east side",
+            "box_px": [
+              2480,
+              5120,
+              2620,
+              5400
+            ],
+            "buildings": [],
+            "town": "Hearthold"
+          }
+        ],
+        "fronts": 35,
+        "game_layout": {
+          "arrival": "Ember Way",
+          "first_view": "up Gate Street from the gate market: the wall on its rock with the gate between two towers, the keep above it, smoke from Smiths' Row to the right",
+          "landmarks": [
+            {
+              "name": "the keep on the rock",
+              "xy": [
+                2312,
+                5136
+              ]
+            },
+            {
+              "name": "the gate and its towers",
+              "xy": [
+                2312,
+                5416
+              ]
+            },
+            {
+              "name": "the smiths' chimneys",
+              "xy": [
+                2540,
+                5470
+              ]
+            },
+            {
+              "name": "the gate market",
+              "xy": [
+                2312,
+                5492
+              ]
+            }
+          ],
+          "shortcuts_later": [
+            {
+              "what": "the west postern from the castle yard to the Forge Stair",
+              "xy": [
+                2184,
+                5232
+              ],
+              "opens": "after the knights accept you"
+            },
+            {
+              "what": "the vine stair from Smiths' Row up to the vines",
+              "xy": [
+                2560,
+                5420
+              ],
+              "opens": "when the vintner opens her terrace"
+            }
+          ],
+          "quiet_corners": [
+            {
+              "what": "the chapel close inside the wall, beside the drill yard",
+              "xy": [
+                2224,
+                5330
+              ]
+            },
+            {
+              "what": "the vines on the cooled ash, above the forges",
+              "xy": [
+                2550,
+                5260
+              ]
+            }
+          ],
+          "first_screen_cells": [
+            [
+              215,
+              699,
+              40,
+              22.5
+            ]
+          ],
+          "screens": [
+            2.6,
+            3.9
+          ]
+        }
+      },
+      "existing_access": {
+        "streets": [
+          {
+            "id": "hearthold-s01",
+            "name": "Castle Street",
+            "class": "side",
+            "width_cells": 4,
+            "vertices_px": [
+              [
+                2312,
+                5328
+              ],
+              [
+                2312,
+                5232
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-c02",
+              "hearthold-s02",
+              "hearthold-s16",
+              "hearthold-s17"
+            ]
+          },
+          {
+            "id": "hearthold-s02",
+            "name": "Chapel Row (1)",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2212,
+                5284
+              ],
+              [
+                2316,
+                5284
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-s01",
+              "hearthold-s17"
+            ]
+          },
+          {
+            "id": "hearthold-s03",
+            "name": "Chapel Row (2)",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2388,
+                5284
+              ],
+              [
+                2420,
+                5284
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-s17"
+            ]
+          },
+          {
+            "id": "hearthold-s04",
+            "name": "Gate Street",
+            "class": "main",
+            "width_cells": 6,
+            "vertices_px": [
+              [
+                2312,
+                5472
+              ],
+              [
+                2312,
+                5712
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-q02",
+              "hearthold-s07",
+              "hearthold-s08",
+              "hearthold-s16"
+            ]
+          },
+          {
+            "id": "hearthold-s05",
+            "name": "Market Street",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2260,
+                5492
+              ],
+              [
+                1996,
+                5492
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-q02",
+              "hearthold-s09"
+            ]
+          },
+          {
+            "id": "hearthold-s06",
+            "name": "Smiths' Row",
+            "class": "side",
+            "width_cells": 4,
+            "vertices_px": [
+              [
+                2368,
+                5504
+              ],
+              [
+                2760,
+                5504
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-q02",
+              "hearthold-s10"
+            ]
+          },
+          {
+            "id": "hearthold-s07",
+            "name": "Ash Lane",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2124,
+                5596
+              ],
+              [
+                2604,
+                5596
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-s04",
+              "hearthold-s09",
+              "hearthold-s10"
+            ]
+          },
+          {
+            "id": "hearthold-s08",
+            "name": "Potters' Lane",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2124,
+                5716
+              ],
+              [
+                2756,
+                5716
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-s04",
+              "hearthold-s09",
+              "hearthold-s10",
+              "hearthold-s16"
+            ]
+          },
+          {
+            "id": "hearthold-s09",
+            "name": "Well Lane",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2124,
+                5492
+              ],
+              [
+                2124,
+                5716
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-s05",
+              "hearthold-s07",
+              "hearthold-s08"
+            ]
+          },
+          {
+            "id": "hearthold-s10",
+            "name": "Vine Lane",
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2604,
+                5508
+              ],
+              [
+                2604,
+                5716
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-s06",
+              "hearthold-s07",
+              "hearthold-s08"
+            ]
+          },
+          {
+            "id": "hearthold-a1",
+            "name": "Forge Stair",
+            "class": "arrival",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2147.8,
+                5182.4
+              ],
+              [
+                2142.1,
+                5024.9
+              ]
+            ],
+            "follows_route": "Forge Stair",
+            "connects": []
+          },
+          {
+            "id": "hearthold-a2",
+            "name": "Ember Way",
+            "class": "arrival",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                1880.3,
+                5679.8
+              ],
+              [
+                1911.4,
+                5713.7
+              ],
+              [
+                1929.4,
+                5727.1
+              ],
+              [
+                1969.3,
+                5750
+              ],
+              [
+                2015.4,
+                5767.7
+              ],
+              [
+                2064.7,
+                5775.4
+              ],
+              [
+                2153.1,
+                5778.2
+              ],
+              [
+                2196.4,
+                5783.3
+              ],
+              [
+                2322.6,
+                5823.4
+              ],
+              [
+                2368.9,
+                5831.5
+              ],
+              [
+                2410,
+                5834.8
+              ]
+            ],
+            "follows_route": "Ember Way",
+            "connects": [
+              "hearthold-s16"
+            ]
+          },
+          {
+            "id": "hearthold-a3",
+            "name": "Ash Coast",
+            "class": "arrival",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2895.6,
+                5833.5
+              ],
+              [
+                2854.2,
+                5846.3
+              ],
+              [
+                2788.9,
+                5850.1
+              ],
+              [
+                2743.5,
+                5843.9
+              ],
+              [
+                2649.3,
+                5822.2
+              ],
+              [
+                2625.9,
+                5821.1
+              ],
+              [
+                2544.1,
+                5855.5
+              ],
+              [
+                2501.2,
+                5868.5
+              ]
+            ],
+            "follows_route": "Ash Coast",
+            "connects": []
+          },
+          {
+            "id": "hearthold-s16",
+            "name": null,
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2308,
+                5332
+              ],
+              [
+                2308,
+                5676
+              ],
+              [
+                2220,
+                5676
+              ],
+              [
+                2220,
+                5772
+              ]
+            ],
+            "frontage": "detached",
+            "link": true,
+            "connects": [
+              "hearthold-a2",
+              "hearthold-s01",
+              "hearthold-s04",
+              "hearthold-s08"
+            ]
+          },
+          {
+            "id": "hearthold-s17",
+            "name": null,
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2380,
+                5276
+              ],
+              [
+                2332,
+                5276
+              ]
+            ],
+            "frontage": "detached",
+            "link": true,
+            "connects": [
+              "hearthold-s01",
+              "hearthold-s03",
+              "hearthold-s18"
+            ]
+          },
+          {
+            "id": "hearthold-s18",
+            "name": null,
+            "class": "lane",
+            "width_cells": 3,
+            "vertices_px": [
+              [
+                2372,
+                5252
+              ],
+              [
+                2372,
+                5260
+              ]
+            ],
+            "frontage": "detached",
+            "link": true,
+            "connects": [
+              "hearthold-q01",
+              "hearthold-s03",
+              "hearthold-s17"
+            ]
+          },
+          {
+            "id": "hearthold-c01",
+            "name": null,
+            "class": "close",
+            "width_cells": 2,
+            "vertices_px": [
+              [
+                2240,
+                5088
+              ],
+              [
+                2384,
+                5088
+              ],
+              [
+                2384,
+                5192
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-q01"
+            ]
+          },
+          {
+            "id": "hearthold-c02",
+            "name": null,
+            "class": "close",
+            "width_cells": 2,
+            "vertices_px": [
+              [
+                2248,
+                5184
+              ],
+              [
+                2304,
+                5184
+              ],
+              [
+                2304,
+                5216
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "hearthold-s01"
+            ]
+          }
+        ],
+        "squares": [
+          {
+            "id": "hearthold-q01",
+            "name": "the inner square",
+            "type": "square",
+            "cells": [
+              292,
+              649,
+              13,
+              8
+            ]
+          },
+          {
+            "id": "hearthold-q02",
+            "name": "the gate market",
+            "type": "square",
+            "cells": [
+              282,
+              683,
+              14,
+              7
+            ]
+          }
+        ],
+        "arrivals": [
+          {
+            "id": "hearthold-arr1",
+            "kind": "path",
+            "route": "Forge Stair",
+            "street": "hearthold-a1",
+            "entries_px": [],
+            "route_kind": "path"
+          },
+          {
+            "id": "hearthold-arr2",
+            "kind": "path",
+            "route": "Ember Way",
+            "street": "hearthold-a2",
+            "entries_px": [
+              [
+                1880,
+                5680
+              ]
+            ],
+            "route_kind": "path"
+          },
+          {
+            "id": "hearthold-arr3",
+            "kind": "path",
+            "route": "Ash Coast",
+            "street": "hearthold-a3",
+            "entries_px": [
+              [
+                2896,
+                5833
+              ]
+            ],
+            "route_kind": "path"
+          }
+        ]
+      },
+      "unapproved": {
+        "ids": [
+          "hearthold-b033",
+          "hearthold-b034",
+          "hearthold-b035"
+        ],
+        "status": "proposal",
+        "live_placement": false,
+        "holds": [
+          "real-ground",
+          "fresh-baseline-identity",
+          "actual-approach",
+          "source-feedback",
+          "fullgates",
+          "Y12",
+          "Matt-on-PR",
+          "foundation-inclusion"
+        ]
+      },
+      "missing": {
+        "homes": {
+          "status": "missing",
+          "detail": "No exact individual-to-home assignments are supplied."
+        },
+        "jobs": {
+          "status": "missing",
+          "detail": "No exact individual-to-workplace/job assignments are supplied."
+        },
+        "residents": {
+          "status": "missing",
+          "source_literal": [],
+          "detail": "Empty authored list is incomplete, not evidence that no residents exist."
+        },
+        "routines": {
+          "status": "missing",
+          "source_literal": [],
+          "detail": "Empty authored list is incomplete, not an authored routine."
+        },
+        "animals": {
+          "status": "missing",
+          "detail": "No exact animal population/routine data is supplied."
+        }
+      },
+      "producer_packet": {
+        "status": "proposal",
+        "source": {
+          "commit": "59f3722d1b39050cc81709fa5933d4c9c093ee98",
+          "blob": "51fad9db44e2a9be22d2bbb5b007249ae9ecebce",
+          "path": "docs/vision/research/blockout/towns/hearthold.json"
+        },
+        "baseline": {
+          "commit": "4984438d09b5fe1333d3e6ea6e6ee82be2bdc908",
+          "blob": "f19a9108cf07a3b8140ba136c04149a8c0ddd31d",
+          "path": "docs/vision/research/blockout/towns/hearthold.json"
+        },
+        "terrain_box_cells": [
+          234,
+          622,
+          129,
+          119
+        ],
+        "buildings": [
+          {
+            "id": "hearthold-b033",
+            "type": "house",
+            "form": "house",
+            "footprint_cells": [
+              253,
+              706,
+              10,
+              6
+            ],
+            "rect_px": [
+              2024,
+              5648,
+              80,
+              48
+            ],
+            "faces": "hearthold-s09",
+            "door_cells": [
+              263,
+              708
+            ],
+            "purpose": "a detached lower-town house",
+            "occupants": "household; individual residents and routines not yet authored",
+            "district": "hearthold-d-ash-lane",
+            "counted": true,
+            "plot_cells": [
+              251,
+              706,
+              2,
+              6
+            ],
+            "plot": "yard",
+            "counts_as": 1
+          },
+          {
+            "id": "hearthold-b034",
+            "type": "cottage",
+            "form": "cottage",
+            "footprint_cells": [
+              254,
+              698,
+              9,
+              6
+            ],
+            "rect_px": [
+              2032,
+              5584,
+              72,
+              48
+            ],
+            "faces": "hearthold-s09",
+            "door_cells": [
+              263,
+              700
+            ],
+            "purpose": "a detached lower-town cottage",
+            "occupants": "household; individual residents and routines not yet authored",
+            "district": "hearthold-d-ash-lane",
+            "counted": true,
+            "plot_cells": [
+              252,
+              698,
+              2,
+              6
+            ],
+            "plot": "yard",
+            "counts_as": 1
+          },
+          {
+            "id": "hearthold-b035",
+            "type": "workshop",
+            "form": "workshop",
+            "footprint_cells": [
+              343,
+              690,
+              11,
+              7
+            ],
+            "rect_px": [
+              2744,
+              5520,
+              88,
+              56
+            ],
+            "faces": "hearthold-s06",
+            "door_cells": [
+              345,
+              689
+            ],
+            "purpose": "a craft workshop; specific trade not yet authored",
+            "occupants": "craft workers; individual workers and routines not yet authored",
+            "district": "hearthold-d-smiths-row",
+            "counted": true,
+            "plot_cells": [
+              343,
+              697,
+              11,
+              2
+            ],
+            "plot": "yard",
+            "counts_as": 1
+          }
+        ],
+        "districts": [],
+        "district_descriptions": {},
+        "open_uses": []
+      }
+    },
+    {
+      "id": "launch-cape",
+      "coordinate_frame": "continent cells; rect_px uses 8 world pixels per cell; historical/proposal positions only",
+      "baseline_source": "launch-cape-baseline",
+      "proposal_source": "launch-cape-proposal",
+      "packet_key": "launch-cape",
+      "existing": [
+        {
+          "id": "launch-cape-b001",
+          "type": "hangar",
+          "form": "hangar",
+          "footprint_cells": [
+            1509,
+            770,
+            21,
+            11
+          ],
+          "rect_px": [
+            12072,
+            6160,
+            168,
+            88
+          ],
+          "faces": "launch-cape-a1",
+          "door_cells": [
+            1508,
+            780
+          ],
+          "purpose": "a hangar",
+          "occupants": "ground crew",
+          "district": "launch-cape-d-the-works",
+          "counted": true,
+          "plot_cells": [
+            1509,
+            781,
+            20,
+            2
+          ],
+          "plot": "yard",
+          "landmark": true,
+          "counts_as": 0
+        },
+        {
+          "id": "launch-cape-b002",
+          "type": "workshop",
+          "form": "workshop",
+          "footprint_cells": [
+            1512,
+            761,
+            15,
+            8
+          ],
+          "rect_px": [
+            12096,
+            6088,
+            120,
+            64
+          ],
+          "faces": "launch-cape-c01",
+          "door_cells": [
+            1511,
+            761
+          ],
+          "purpose": "the workshop",
+          "occupants": "the master and apprentices",
+          "district": "launch-cape-d-the-works",
+          "counted": true,
+          "plot_cells": [
+            1512,
+            769,
+            15,
+            1
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "launch-cape-b003",
+          "type": "warehouse",
+          "form": "warehouse",
+          "footprint_cells": [
+            1483,
+            760,
+            16,
+            10
+          ],
+          "rect_px": [
+            11864,
+            6080,
+            128,
+            80
+          ],
+          "faces": "launch-cape-a1",
+          "door_cells": [
+            1499,
+            765
+          ],
+          "purpose": "a warehouse",
+          "occupants": "porters by day, a night watch",
+          "district": "launch-cape-d-the-works",
+          "counted": true,
+          "plot_cells": [
+            1483,
+            770,
+            16,
+            2
+          ],
+          "plot": "yard",
+          "landmark": true,
+          "counts_as": 0
+        },
+        {
+          "id": "launch-cape-b004",
+          "type": "workshop",
+          "form": "workshop",
+          "footprint_cells": [
+            1513,
+            745,
+            13,
+            8
+          ],
+          "rect_px": [
+            12104,
+            5960,
+            104,
+            64
+          ],
+          "faces": "launch-cape-c02",
+          "door_cells": [
+            1512,
+            745
+          ],
+          "purpose": "the workshop",
+          "occupants": "the master and apprentices",
+          "district": "launch-cape-d-the-works",
+          "counted": true,
+          "plot_cells": [
+            1513,
+            753,
+            13,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "launch-cape-b005",
+          "type": "public",
+          "form": "public",
+          "footprint_cells": [
+            1489,
+            741,
+            12,
+            8
+          ],
+          "rect_px": [
+            11912,
+            5928,
+            96,
+            64
+          ],
+          "faces": "launch-cape-a1",
+          "door_cells": [
+            1501,
+            745
+          ],
+          "purpose": "the hall",
+          "occupants": "staff by day",
+          "district": "launch-cape-d-the-works",
+          "counted": true,
+          "plot_cells": [
+            1489,
+            749,
+            12,
+            2
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        },
+        {
+          "id": "launch-cape-b006",
+          "type": "warehouse",
+          "form": "warehouse",
+          "footprint_cells": [
+            1482,
+            750,
+            19,
+            9
+          ],
+          "rect_px": [
+            11856,
+            6000,
+            152,
+            72
+          ],
+          "faces": "launch-cape-a1",
+          "door_cells": [
+            1501,
+            754
+          ],
+          "purpose": "a warehouse",
+          "occupants": "porters by day, a night watch",
+          "district": "launch-cape-d-the-works",
+          "counted": true,
+          "plot_cells": [
+            1482,
+            759,
+            19,
+            2
+          ],
+          "plot": "yard",
+          "landmark": true,
+          "counts_as": 0
+        }
+      ],
+      "adoptable": [
+        {
+          "id": "launch-cape-b007",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            1494,
+            727,
+            8,
+            6
+          ],
+          "rect_px": [
+            11952,
+            5816,
+            64,
+            48
+          ],
+          "faces": "launch-cape-a1",
+          "door_cells": [
+            1502,
+            729
+          ],
+          "purpose": "a detached staff cottage",
+          "occupants": "staff; individual residents and routines not yet authored",
+          "district": "launch-cape-d-staff-homes",
+          "counted": true,
+          "plot_cells": [
+            1492,
+            727,
+            2,
+            6
+          ],
+          "plot": "garden",
+          "counts_as": 1
+        },
+        {
+          "id": "launch-cape-b008",
+          "type": "cottage",
+          "form": "cottage",
+          "footprint_cells": [
+            1510,
+            729,
+            8,
+            6
+          ],
+          "rect_px": [
+            12080,
+            5832,
+            64,
+            48
+          ],
+          "faces": "launch-cape-a1",
+          "door_cells": [
+            1509,
+            731
+          ],
+          "purpose": "a detached staff cottage",
+          "occupants": "staff; individual residents and routines not yet authored",
+          "district": "launch-cape-d-staff-homes",
+          "counted": true,
+          "plot_cells": [
+            1518,
+            729,
+            2,
+            6
+          ],
+          "plot": "garden",
+          "counts_as": 1
+        },
+        {
+          "id": "launch-cape-b009",
+          "type": "workshop",
+          "form": "workshop",
+          "footprint_cells": [
+            1509,
+            737,
+            13,
+            7
+          ],
+          "rect_px": [
+            12072,
+            5896,
+            104,
+            56
+          ],
+          "faces": "launch-cape-a1",
+          "door_cells": [
+            1508,
+            739
+          ],
+          "purpose": "a staff settlement workshop",
+          "occupants": "staff; individual workers and routines not yet authored",
+          "district": "launch-cape-d-the-works",
+          "counted": true,
+          "plot_cells": [
+            1522,
+            737,
+            2,
+            7
+          ],
+          "plot": "yard",
+          "counts_as": 1
+        }
+      ],
+      "proposal_metadata": {
+        "buildings_counted": 6,
+        "footprint_px": [
+          11856,
+          5816,
+          12240,
+          6515
+        ],
+        "districts": [
+          {
+            "name": "the pad",
+            "centre_px": [
+              12085,
+              6455
+            ],
+            "declared": "the launch pad, its tower and the service apron",
+            "town": "Launch Cape",
+            "id": "launch-cape-d-the-pad",
+            "buildings": [],
+            "mix": {},
+            "function": "homes"
+          },
+          {
+            "name": "the works",
+            "centre_px": [
+              12060,
+              6080
+            ],
+            "declared": "the assembly hall, workshops, stores and the control bunker",
+            "town": "Launch Cape",
+            "id": "launch-cape-d-the-works",
+            "buildings": [
+              "launch-cape-b001",
+              "launch-cape-b002",
+              "launch-cape-b003",
+              "launch-cape-b004",
+              "launch-cape-b005",
+              "launch-cape-b006",
+              "launch-cape-b009"
+            ],
+            "mix": {
+              "hangar": 1,
+              "workshop": 3,
+              "warehouse": 2,
+              "public": 1
+            },
+            "function": "docks and transport"
+          },
+          {
+            "id": "launch-cape-d-the-works-yard",
+            "name": "the works yard",
+            "function": "docks and works yards",
+            "declared": "carts and the transporter road to the pad",
+            "box_px": [
+              11960,
+              5960,
+              12250,
+              6000
+            ],
+            "buildings": [],
+            "town": "Launch Cape"
+          },
+          {
+            "id": "launch-cape-d-staff-homes",
+            "name": "the staff homes",
+            "centre_px": [
+              12048,
+              5848
+            ],
+            "declared": "two detached staff cottages with gardens at the northern entrance, away from the pad",
+            "town": "Launch Cape",
+            "buildings": [
+              "launch-cape-b007",
+              "launch-cape-b008"
+            ],
+            "mix": {
+              "cottage": 2
+            },
+            "function": "homes"
+          }
+        ],
+        "size_table_px": {
+          "hangar": [
+            [
+              128,
+              176
+            ],
+            [
+              80,
+              96
+            ]
+          ],
+          "public": [
+            [
+              88,
+              136
+            ],
+            [
+              56,
+              72
+            ]
+          ],
+          "warehouse": [
+            [
+              112,
+              160
+            ],
+            [
+              64,
+              88
+            ]
+          ],
+          "workshop": [
+            [
+              88,
+              120
+            ],
+            [
+              56,
+              72
+            ]
+          ],
+          "cottage": [
+            [
+              56,
+              80
+            ],
+            [
+              40,
+              48
+            ]
+          ]
+        },
+        "fronts": 9,
+        "game_layout": {
+          "arrival": "the Pad Road",
+          "first_view": "Launch Cape from the the Pad Road: a hangar, Launch Cape's largest building ahead",
+          "landmarks": [
+            {
+              "name": "a hangar, Launch Cape's largest building",
+              "xy": [
+                12156,
+                6204
+              ]
+            },
+            {
+              "name": "the hall at the edge, seen first from the the Pad Road",
+              "xy": [
+                11960,
+                5960
+              ]
+            }
+          ],
+          "shortcuts_later": [],
+          "quiet_corners": [],
+          "first_screen_cells": [
+            [
+              1486,
+              715,
+              40,
+              22.5
+            ]
+          ],
+          "screens": [
+            1.2,
+            3.9
+          ]
+        }
+      },
+      "existing_access": {
+        "streets": [
+          {
+            "id": "launch-cape-a1",
+            "name": "the Pad Road",
+            "class": "arrival",
+            "width_cells": 4,
+            "vertices_px": [
+              [
+                12052.3,
+                5813.4
+              ],
+              [
+                12040.7,
+                5852.9
+              ],
+              [
+                12035,
+                5893.9
+              ],
+              [
+                12033.3,
+                5993.7
+              ],
+              [
+                12023.9,
+                6173.2
+              ],
+              [
+                12027.2,
+                6211.4
+              ],
+              [
+                12060.4,
+                6323.2
+              ],
+              [
+                12070,
+                6380
+              ]
+            ],
+            "follows_route": "the Pad Road",
+            "connects": [
+              "launch-cape-c01",
+              "launch-cape-c02"
+            ]
+          },
+          {
+            "id": "launch-cape-c01",
+            "name": null,
+            "class": "close",
+            "width_cells": 2,
+            "vertices_px": [
+              [
+                12088,
+                6088
+              ],
+              [
+                12048,
+                6088
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "launch-cape-a1"
+            ]
+          },
+          {
+            "id": "launch-cape-c02",
+            "name": null,
+            "class": "close",
+            "width_cells": 2,
+            "vertices_px": [
+              [
+                12096,
+                5960
+              ],
+              [
+                12048,
+                5960
+              ]
+            ],
+            "frontage": "detached",
+            "connects": [
+              "launch-cape-a1"
+            ]
+          }
+        ],
+        "squares": [],
+        "arrivals": [
+          {
+            "id": "launch-cape-arr1",
+            "kind": "road",
+            "route": "the Pad Road",
+            "street": "launch-cape-a1",
+            "entries_px": [
+              [
+                12052,
+                5813
+              ]
+            ],
+            "route_kind": "road"
+          }
+        ]
+      },
+      "unapproved": {
+        "ids": [
+          "launch-cape-b007",
+          "launch-cape-b008",
+          "launch-cape-b009"
+        ],
+        "status": "proposal",
+        "live_placement": false,
+        "holds": [
+          "real-ground",
+          "fresh-baseline-identity",
+          "actual-approach",
+          "source-feedback",
+          "fullgates",
+          "Y12",
+          "Matt-on-PR",
+          "foundation-inclusion"
+        ]
+      },
+      "missing": {
+        "homes": {
+          "status": "missing",
+          "detail": "No exact individual-to-home assignments are supplied."
+        },
+        "jobs": {
+          "status": "missing",
+          "detail": "No exact individual-to-workplace/job assignments are supplied."
+        },
+        "residents": {
+          "status": "missing",
+          "source_literal": [],
+          "detail": "Empty authored list is incomplete, not evidence that no residents exist."
+        },
+        "routines": {
+          "status": "missing",
+          "source_literal": [],
+          "detail": "Empty authored list is incomplete, not an authored routine."
+        },
+        "animals": {
+          "status": "missing",
+          "detail": "No exact animal population/routine data is supplied."
+        }
+      },
+      "producer_packet": {
+        "status": "proposal",
+        "source": {
+          "commit": "9276174000e47858e92a25803e606fb9dea1fc87",
+          "blob": "9aab428f54a898b2c19049857bc092fe39d6e009",
+          "path": "docs/vision/research/blockout/towns/launch-cape.json"
+        },
+        "baseline": {
+          "commit": "4984438d09b5fe1333d3e6ea6e6ee82be2bdc908",
+          "blob": "06faf55d311d78016966c977bedcc7598348b817",
+          "path": "docs/vision/research/blockout/towns/launch-cape.json"
+        },
+        "terrain_box_cells": [
+          1467,
+          726,
+          79,
+          104
+        ],
+        "buildings": [
+          {
+            "id": "launch-cape-b007",
+            "type": "cottage",
+            "form": "cottage",
+            "footprint_cells": [
+              1494,
+              727,
+              8,
+              6
+            ],
+            "rect_px": [
+              11952,
+              5816,
+              64,
+              48
+            ],
+            "faces": "launch-cape-a1",
+            "door_cells": [
+              1502,
+              729
+            ],
+            "purpose": "a detached staff cottage",
+            "occupants": "staff; individual residents and routines not yet authored",
+            "district": "launch-cape-d-staff-homes",
+            "counted": true,
+            "plot_cells": [
+              1492,
+              727,
+              2,
+              6
+            ],
+            "plot": "garden",
+            "counts_as": 1
+          },
+          {
+            "id": "launch-cape-b008",
+            "type": "cottage",
+            "form": "cottage",
+            "footprint_cells": [
+              1510,
+              729,
+              8,
+              6
+            ],
+            "rect_px": [
+              12080,
+              5832,
+              64,
+              48
+            ],
+            "faces": "launch-cape-a1",
+            "door_cells": [
+              1509,
+              731
+            ],
+            "purpose": "a detached staff cottage",
+            "occupants": "staff; individual residents and routines not yet authored",
+            "district": "launch-cape-d-staff-homes",
+            "counted": true,
+            "plot_cells": [
+              1518,
+              729,
+              2,
+              6
+            ],
+            "plot": "garden",
+            "counts_as": 1
+          },
+          {
+            "id": "launch-cape-b009",
+            "type": "workshop",
+            "form": "workshop",
+            "footprint_cells": [
+              1509,
+              737,
+              13,
+              7
+            ],
+            "rect_px": [
+              12072,
+              5896,
+              104,
+              56
+            ],
+            "faces": "launch-cape-a1",
+            "door_cells": [
+              1508,
+              739
+            ],
+            "purpose": "a staff settlement workshop",
+            "occupants": "staff; individual workers and routines not yet authored",
+            "district": "launch-cape-d-the-works",
+            "counted": true,
+            "plot_cells": [
+              1522,
+              737,
+              2,
+              7
+            ],
+            "plot": "yard",
+            "counts_as": 1
+          }
+        ],
+        "districts": [
+          {
+            "id": "launch-cape-d-staff-homes",
+            "name": "the staff homes",
+            "centre_px": [
+              12048,
+              5848
+            ],
+            "declared": "two detached staff cottages with gardens at the northern entrance, away from the pad",
+            "town": "Launch Cape",
+            "function": "homes"
+          }
+        ],
+        "district_descriptions": {
+          "launch-cape-d-the-works": {
+            "function": "docks and transport"
+          }
+        },
+        "open_uses": []
+      }
+    }
+  ],
+  "slice": {
+    "status": "source_references_only",
+    "sequence_labels": [
+      "home valley",
+      "garden",
+      "Crossroads",
+      "woodland",
+      "stone circle"
+    ],
+    "json_references": [
+      {
+        "source": "slice-plan",
+        "pointer": "/id",
+        "value": "crossroads"
+      },
+      {
+        "source": "slice-plan",
+        "pointer": "/origin_on_canvas",
+        "value": [
+          5976,
+          3248
+        ]
+      },
+      {
+        "source": "slice-plan",
+        "pointer": "/box",
+        "value": [
+          0,
+          0,
+          640,
+          560
+        ]
+      },
+      {
+        "source": "slice-plan",
+        "pointer": "/buildings",
+        "value": [
+          {
+            "id": "hut",
+            "name": "Your hut",
+            "rect": [
+              280,
+              24,
+              80,
+              40
+            ],
+            "door": [
+              320,
+              64
+            ],
+            "colour": "#9b7b55",
+            "stage": 0
+          },
+          {
+            "id": "library",
+            "name": "Library (roof torn)",
+            "rect": [
+              200,
+              160,
+              96,
+              40
+            ],
+            "door": [
+              248,
+              200
+            ],
+            "colour": "#7d6f88",
+            "stage": 1
+          },
+          {
+            "id": "north_cottages",
+            "name": "North terrace cottages",
+            "rect": [
+              344,
+              160,
+              96,
+              40
+            ],
+            "door": [
+              416,
+              200
+            ],
+            "colour": "#8a7560",
+            "stage": 1
+          },
+          {
+            "id": "bakery",
+            "name": "Bakery (cold)",
+            "rect": [
+              112,
+              240,
+              72,
+              48
+            ],
+            "door": [
+              172,
+              288
+            ],
+            "colour": "#a07850",
+            "stage": 1
+          },
+          {
+            "id": "herbalist",
+            "name": "Herbalist's (apothecary, stage 1)",
+            "rect": [
+              112,
+              328,
+              72,
+              48
+            ],
+            "door": [
+              172,
+              376
+            ],
+            "colour": "#6f8a6a",
+            "stage": 1
+          },
+          {
+            "id": "smithy",
+            "name": "The old smithy",
+            "rect": [
+              456,
+              224,
+              88,
+              56
+            ],
+            "door": [
+              488,
+              280
+            ],
+            "colour": "#6a5a50",
+            "stage": 0,
+            "restore": "forge"
+          },
+          {
+            "id": "fern_cottage",
+            "name": "The Ferns' cottage",
+            "rect": [
+              456,
+              368,
+              72,
+              48
+            ],
+            "door": [
+              472,
+              416
+            ],
+            "colour": "#8a7560",
+            "stage": 1,
+            "restore": "fern_cottage"
+          }
+        ]
+      },
+      {
+        "source": "slice-plan",
+        "pointer": "/routes/3",
+        "value": {
+          "id": "garden_walk",
+          "kind": "path",
+          "width": 24,
+          "points": [
+            [
+              0,
+              72
+            ],
+            [
+              320,
+              72
+            ],
+            [
+              320,
+              152
+            ]
+          ]
+        }
+      },
+      {
+        "source": "slice-plan",
+        "pointer": "/stairs/0",
+        "value": {
+          "id": "gate_stair",
+          "at": [
+            320,
+            146
+          ],
+          "from_tier": 5,
+          "to_tier": 4,
+          "width": 40,
+          "kind": "stone",
+          "why": "the garden's gate stair on the square's axis (valley.json's gate_stair)"
+        }
+      },
+      {
+        "source": "slice-plan",
+        "pointer": "/spawns/1",
+        "value": {
+          "id": "woodland",
+          "at": [
+            30,
+            70
+          ],
+          "why": "arriving from the woodland along the garden walk"
+        }
+      },
+      {
+        "source": "slice-plan",
+        "pointer": "/spawns/2",
+        "value": {
+          "id": "hut",
+          "at": [
+            320,
+            84
+          ]
+        }
+      },
+      {
+        "source": "slice-plan",
+        "pointer": "/doors/0",
+        "value": {
+          "id": "to_woodland",
+          "rect": [
+            0,
+            46,
+            8,
+            48
+          ],
+          "to": "woodland",
+          "spawn": "crossroads"
+        }
+      },
+      {
+        "source": "valley",
+        "pointer": "/id",
+        "value": "valley"
+      },
+      {
+        "source": "valley",
+        "pointer": "/box",
+        "value": [
+          5600,
+          2304,
+          1664,
+          3520
+        ]
+      },
+      {
+        "source": "valley",
+        "pointer": "/zones/0",
+        "value": {
+          "id": "garden",
+          "rect": [
+            6136,
+            2800,
+            320,
+            576
+          ],
+          "canvas": [
+            320,
+            1728,
+            320,
+            576
+          ],
+          "tier": 5,
+          "becomes": "kept: the home hub, its size, geometry and harness unchanged (8.2)"
+        }
+      },
+      {
+        "source": "valley",
+        "pointer": "/zones/1",
+        "value": {
+          "id": "woodland",
+          "rect": [
+            5640,
+            2432,
+            496,
+            912
+          ],
+          "canvas": [
+            0,
+            1728,
+            320,
+            576
+          ],
+          "tier": 5,
+          "owner": "claude-a",
+          "becomes": "kept, redrawn by Claude A as the golden screen: the spring pool under the fall, the stone circle in a glade, the forester's yard"
+        }
+      },
+      {
+        "source": "valley",
+        "pointer": "/zones/3",
+        "value": {
+          "id": "town",
+          "rect": [
+            5976,
+            3376,
+            640,
+            560
+          ],
+          "canvas": [
+            320,
+            2304,
+            320,
+            576
+          ],
+          "tier": 4,
+          "becomes": "replaced: Crossroads, a village at true scale with its square on the garden's axis"
+        }
+      },
+      {
+        "source": "valley",
+        "pointer": "/stairs/2",
+        "value": {
+          "id": "gate_stair",
+          "on": "garden_walk",
+          "at": [
+            6296,
+            3408
+          ],
+          "from_tier": 5,
+          "to_tier": 4,
+          "width": 48,
+          "kind": "stone",
+          "why": "the garden's gate stair on the square's axis"
+        }
+      }
+    ],
+    "text_references": [
+      {
+        "source": "woodland",
+        "selector": "StoneSign",
+        "verbatim": "[node name=\"StoneSign\" type=\"Area2D\" parent=\"Actors\"]\nposition = Vector2(372, 1104)\nscript = ExtResource(\"3\")\nspeaker_id = \"stone_sign\"\nverb = \"Read\"\nmarker_height = 44.0"
+      },
+      {
+        "source": "woodland",
+        "selector": "Hatch",
+        "verbatim": "[node name=\"Hatch\" type=\"Polygon2D\" parent=\"Actors\"]\nz_index = -1\ncolor = Color(0.25, 0.2, 0.15, 1)\npolygon = PackedVector2Array(315, 1018, 345, 1018, 345, 1042, 315, 1042)"
+      },
+      {
+        "source": "woodland",
+        "selector": "start",
+        "verbatim": "[node name=\"start\" type=\"Marker2D\" parent=\"Spawns\"]\nposition = Vector2(405, 750)"
+      },
+      {
+        "source": "woodland",
+        "selector": "crossroads",
+        "verbatim": "[node name=\"crossroads\" type=\"Marker2D\" parent=\"Spawns\"]\nposition = Vector2(880, 1340)"
+      },
+      {
+        "source": "woodland",
+        "selector": "ToCrossroads",
+        "verbatim": "[node name=\"ToCrossroads\" type=\"Area2D\" parent=\"Doors\"]\nposition = Vector2(951, 1356)\nscript = ExtResource(\"7\")\ntarget_zone = \"crossroads\"\ntarget_spawn = \"woodland\""
+      },
+      {
+        "source": "slice-spec",
+        "selector": "entry",
+        "verbatim": "The entry is the garden walk on the terrace (the woodland's east door)"
+      },
+      {
+        "source": "slice-region",
+        "selector": "home valley",
+        "verbatim": "the garden 320 x 576 unchanged"
+      }
+    ],
+    "missing": {
+      "home_valley_to_garden_runtime_binding": "No exact runtime zone/spawn mapping is supplied by the regional zone declarations.",
+      "regional_town_to_crossroads_origin": "valley zones[town].rect begins y3376; slice-plan.origin_on_canvas is y3248. No equivalence or corrective transform is authorised.",
+      "stone_circle_footprint": "The pinned scene exposes StoneSign and Hatch, not an explicit stone-circle footprint or macro-to-runtime identity mapping.",
+      "live_approaches": "No actual terrain/passability/street/barrier/keepout or runtime traversal evidence for this proposed slice.",
+      "life_bindings": "Exact homes/jobs/resident identities/routines/animals are not supplied as a complete slice contract; names, work flags and narrative roles do not fill these fields."
+    }
+  },
+  "missing": {
+    "fresh_baseline_identity": "CRC32 prospective generation has not established equivalence to 303's ordinal IDs/records; reject changed/lost/duplicate IDs instead of renumbering.",
+    "real_ground": "Actual K/taken/street/barrier/keepout/tiers_pre and full footprints/plots/reservations/support bounds must come from map owner.",
+    "actual_access": "Exterior-ring doors, unique declared street, <=3.01 Euclidean cells and unobstructed real approach must be checked by existing producer/exporter; literal/proximity evidence is insufficient.",
+    "cinderwick_frontage": "Preserve both boatyard open-use rectangles and shed footprints; their union is not wholly clear work space.",
+    "hearthold_workshop": "Eastern workshop slope/retaining/access relationship needs real-ground review.",
+    "cape_clearance": "Actual pad/apron boundary and nearest-house population/metric/approved threshold are unresolved.",
+    "approval_and_foundation": "Applicable source feedback/fullgates/Y12/Matt approvals and real foundation inclusion remain open. This proposal cannot enable adoption."
+  }
+}
