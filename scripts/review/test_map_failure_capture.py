@@ -519,7 +519,9 @@ class SamplingCoordination(unittest.TestCase):
             finally:
                 release.set(); thread.join(1)
             self.assertFalse(thread.is_alive())
-            self.assertTrue(all(isinstance(error, M['CaptureError']) for error in held_errors))
+            self.assertEqual(len(held_errors), 1, 'the actual overlong exclusive interval must also refuse')
+            self.assertIsInstance(held_errors[0], M['CaptureError'])
+            self.assertIn('held beyond deadline', str(held_errors[0]))
             lock.rename(folder / 'retained-old-lock'); lock.write_bytes(b'replacement inode\n')
             with self.assertRaises(M['CaptureError']):
                 M['coordinated_owned_blocks'](folder, lock, identity)
