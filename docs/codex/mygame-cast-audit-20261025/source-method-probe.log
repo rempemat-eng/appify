@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SOURCE-METHOD PROBES: extracted current methods; fake boundary objects; not full Player/GdUnit/game validation
+{"accepted":true,"character":"iona","hp":0,"probe":"defeat_switch","state":"idle"}
+{"accepted":true,"iframes_remaining":0.26,"probe":"roll_switch","roll_remaining":0.42,"state":"idle"}
+{"accepted":true,"probe":"swing_switch","state":"idle","swing_remaining":0.18}
+{"actual_entries":[],"display_frame":0,"expected_entries":[1,2,3,0],"probe":"one_loop"}
+{"actual_entries":[1],"display_frame":1,"expected_entries":[1,2,3,0,1,2,3,0,1],"probe":"multiple_loops"}
+{"display_frame":3,"emitted":[{"clock":0.4,"display_frame":3,"release_frame":2}],"finished":true,"probe":"nonloop_coarse_release"}
+{"actual_release_count":0,"emitted":[],"expected_release_count":1,"probe":"zero_entry_forward_robustness"}
