@@ -1,0 +1,261 @@
+name: Map recovery first actual capture
+
+# Publication on PR381 does not execute this. Only the lead's separate public
+# runtime GO may create this exact execution ref after source/receipt review.
+on:
+  push:
+    branches: [codex/map-recovery-capture-run]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: map-recovery-first-capture
+  cancel-in-progress: false
+
+jobs:
+  first-actual-capture:
+    if: github.run_attempt == 1 && github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/map-recovery-capture-run'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      TZ: UTC
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      MYGAME_MAP_REVISION: v56
+      EXPECTED_SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - name: Reserve fresh private evidence and refuse reruns
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_RUN_ATTEMPT" = '1'
+          test "$GITHUB_REPOSITORY" = 'rempemat-eng/appify'
+          test "$GITHUB_REF" = 'refs/heads/codex/map-recovery-capture-run'
+          capture_evidence="$RUNNER_TEMP/map-capture-evidence"
+          mkdir -m 700 "$capture_evidence"
+          date +%s > "$capture_evidence/job-start.epoch"
+          printf 'MAP_EVIDENCE=%s\n' "$capture_evidence" >> "$GITHUB_ENV"
+          for name in tmp blockout config data cache runtime; do mkdir -p -m 700 "$capture_evidence/bootstrap/$name"; done
+          for name in TMPDIR TMP TEMP; do printf '%s=%s/bootstrap/tmp\n' "$name" "$capture_evidence" >> "$GITHUB_ENV"; done
+          printf 'BLOCKOUT_OUT=%s/bootstrap/blockout\n' "$capture_evidence" >> "$GITHUB_ENV"
+          printf 'XDG_CONFIG_HOME=%s/bootstrap/config\nXDG_DATA_HOME=%s/bootstrap/data\nXDG_CACHE_HOME=%s/bootstrap/cache\nXDG_RUNTIME_DIR=%s/bootstrap/runtime\n' \
+            "$capture_evidence" "$capture_evidence" "$capture_evidence" "$capture_evidence" >> "$GITHUB_ENV"
+          printf '%s\n' 'NEW_R6_REPLACEMENT; producer NOT RUN; world NOT COMPLETED' > "$capture_evidence/status.txt"
+
+      - name: Check out exact execution-event source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up verified Python environment
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Reuse the verified native-source and exact-font canary
+        id: source_before
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Reuse the exact literal source guard already exercised by Contracts17;
+          # no alternate supervisor, dependency source, font or project shim.
+          python -I -B - <<'PY'
+          import ast, os
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          lines = (root / '.github/workflows/map-recovery-contracts.yml').read_text().splitlines()
+          matches = [i for i, line in enumerate(lines) if line == '          cat > "$RUNNER_TEMP/map-source-guard.py" <<\'PY\'']
+          assert len(matches) == 1
+          start = matches[0] + 1
+          end = lines.index('          PY', start)
+          assert all(not line or line.startswith('          ') for line in lines[start:end])
+          source = '\n'.join(line[10:] for line in lines[start:end]) + '\n'
+          ast.parse(source)
+          (Path(os.environ['RUNNER_TEMP']) / 'map-source-guard.py').write_text(source)
+          (evidence / 'map-source-guard.py').write_text(source)
+          target = evidence / 'source/.github/workflows/map-recovery-capture.yml'
+          target.parent.mkdir(parents=True)
+          target.write_bytes((root / '.github/workflows/map-recovery-capture.yml').read_bytes())
+          PY
+          python -I -B "$RUNNER_TEMP/map-source-guard.py" before > "$MAP_EVIDENCE/source-before-canary.log" 2>&1
+          python -I -B - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          fonts = json.loads((evidence / 'font-paths.json').read_text())
+          for item in fonts:
+              path = Path(item['path'])
+              data = path.read_bytes()
+              assert hashlib.sha256(data).hexdigest() == item['sha256']
+              target = evidence / 'font-bytes' / path.name
+              target.parent.mkdir(exist_ok=True)
+              target.write_bytes(data)
+          PY
+
+      - name: Prepare the exact previously verified numeric wheel pins
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Main885b pins and immutable scikit-image release/wheel identity are
+          # unchanged from the actual Contracts17 hosted pass on f214.
+          python -m pip install --disable-pip-version-check --no-cache-dir --only-binary=:all: --force-reinstall \
+            --timeout 20 --retries 1 --report "$MAP_EVIDENCE/install-report.json" \
+            'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1' 'scikit-image==0.26.0' \
+            > "$MAP_EVIDENCE/install.log" 2>&1
+
+      - name: Bind the fresh allocation and command before any producer
+        id: allocation
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_RUN_ATTEMPT" = '1'
+          python -I -B - <<'PY' > "$MAP_EVIDENCE/allocation-canary.log" 2>&1
+          import importlib.metadata, json, os, runpy, sys, time
+          from pathlib import Path
+          from urllib.parse import unquote, urlparse
+          root = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          evidence = Path(os.environ['MAP_EVIDENCE']).resolve()
+          assert time.time() - float((evidence / 'job-start.epoch').read_text()) <= 180, 'setup exceeded capture/upload reserve; no producer'
+          report = json.loads((evidence / 'install-report.json').read_text())
+          item = next(x for x in report['install'] if x['metadata']['name'].lower().replace('_', '-') == 'scikit-image')
+          info = item['download_info']
+          assert unquote(Path(urlparse(info['url']).path).name) == 'scikit_image-0.26.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl'
+          assert info['archive_info']['hashes']['sha256'] == '7df650e79031634ac90b11e64a9eedaf5a5e06fcd09bcd03a34be01745744466'
+          packages = {name: importlib.metadata.version(name) for name in ('Pillow', 'numpy', 'scipy', 'scikit-image')}
+          assert packages == {'Pillow': '12.3.0', 'numpy': '2.5.3', 'scipy': '1.18.1', 'scikit-image': '0.26.0'}
+          from PIL import ImageFont
+          for suffix in ('', '-Bold'):
+              ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed' + suffix + '.ttf', 13)
+          # Import only the frozen controller's stdlib definitions, not project
+          # terrain/producer/numeric functions. Its worker owns the mandatory17.
+          source = root / 'scripts/review/map_failure_capture.py'
+          control = runpy.run_path(str(source), run_name='R6_allocation_definitions_only')
+          guard = control['source_guard']()
+          assert guard['head'] == os.environ['EXPECTED_SOURCE_SHA'] and guard['status'] == ''
+          out = evidence / 'actual'
+          assert not out.exists() and not out.with_suffix('.zip').exists()
+          assert sum(p.stat().st_blocks * 512 for p in evidence.rglob('*') if p.is_file()) <= 16*1024**2, 'early evidence bound'
+          allocation = dict(schema=control['SCHEMA'], phase='capture', kind='NEW_R6_REPLACEMENT',
+              go_id='Y35-R6-CAPTURE-H1:'+guard['head']+':'+os.environ['GITHUB_RUN_ID']+':attempt1',
+              authorization_kind='lead-only exact execution-ref creation AFTER separate source review and public runtime GO; this go_id is event identity, not approval-comment number',
+              head=guard['head'], source_sha256=guard['source_sha256'], out=str(out), python_paths=[],
+              versions={'Pillow': packages['Pillow'], 'numpy': packages['numpy'], 'scipy': packages['scipy'], 'scikit-image': packages['scikit-image']},
+              mandatory_receiving_canary='Unchanged worker Contracts17 repeat ONLY for this new fresh full-producer environment; not new coverage. Prior4 and historical24+12+3 never repeated.',
+              bounds=control['plan']()['capture_bounds'])
+          with (evidence / 'allocation.json').open('x') as handle:
+              json.dump(allocation, handle, sort_keys=True, indent=2)
+              handle.write('\n')
+          command = [sys.executable, '-I', '-B', str(source), 'capture', '--allocation', str(evidence / 'allocation.json'), '--out', str(out)]
+          (evidence / 'orchestration-command.json').write_text(json.dumps(dict(command=command, cwd=str(root),
+              python=sys.version, packages=packages, environment={key: os.environ[key] for key in
+              ('TMPDIR', 'TMP', 'TEMP', 'BLOCKOUT_OUT', 'MYGAME_MAP_REVISION', 'OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'MKL_NUM_THREADS', 'NUMEXPR_NUM_THREADS')},
+              world_success=False, production_overrides='NONE', historical_equality=False), indent=2)+'\n')
+          PY
+
+      - name: Run the unchanged first-failure capture controller exactly once
+        id: capture
+        timeout-minutes: 16
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s\n' 'NEW_R6_REPLACEMENT; capture RUNNING; world NOT COMPLETED' > "$MAP_EVIDENCE/status.txt"
+          set +e
+          python -I -B scripts/review/map_failure_capture.py capture \
+            --allocation "$MAP_EVIDENCE/allocation.json" --out "$MAP_EVIDENCE/actual" \
+            > "$MAP_EVIDENCE/controller.log" 2>&1
+          controller_exit=$?
+          set -e
+          printf '%s\n' "$controller_exit" > "$MAP_EVIDENCE/controller.exit"
+          # Existing phase=capture deliberately returns1 even for a complete
+          # diagnostic: preserve that actual exit; classify evidence separately.
+
+      - name: Preserve the final native-event source guard on every outcome
+        id: source_after
+        if: always()
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$RUNNER_TEMP/map-source-guard.py"
+          python -I -B "$RUNNER_TEMP/map-source-guard.py" after > "$MAP_EVIDENCE/source-after-canary.log" 2>&1
+
+      - name: Classify actual producer failure and portable diagnostic completeness separately
+        if: always()
+        timeout-minutes: 1
+        env:
+          SOURCE_GUARD_OUTCOME: ${{ steps.source_after.outcome }}
+        shell: bash
+        run: |
+          python -I -B - <<'PY'
+          import hashlib, json, os, runpy
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          actual = evidence / 'actual'
+          errors = []
+          def read(name):
+              try:
+                  return json.loads((actual / name).read_text())
+              except Exception as error:
+                  errors.append(dict(file=name, error=repr(error)))
+                  return {}
+          result, core, canary = read('result.json'), read('capture.json'), read('cheap-preflight.json')
+          receipt = {}
+          try:
+              control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_collection_definitions_only')
+              archive = evidence / 'actual.zip'
+              receipt = control['verify_bundle'](archive, control['sha'](archive))
+          except Exception as error:
+              errors.append(dict(file='actual.zip', error=repr(error)))
+          try:
+              controller_exit = int((evidence / 'controller.exit').read_text())
+          except Exception as error:
+              controller_exit = None
+              errors.append(dict(file='controller.exit', error=repr(error)))
+          owned = sum(p.stat().st_blocks * 512 for p in evidence.rglob('*') if p.is_file())
+          expected_failure = core.get('comparison_target', {}).get('original_error') is True
+          world_failed = core.get('world_state') == 'FAILED' and core.get('producer_outcome', {}).get('kind') == 'EXCEPTION'
+          complete = (not errors and controller_exit == result.get('raw_exit') == 1 and world_failed
+              and result.get('world_success') is False and result.get('capture_complete') is True and core.get('complete') is True
+              and result.get('stop_reason') is None and result.get('child_reaped') is True and result.get('owned_group_absent') is True
+              and result.get('source_unchanged') is True and os.environ['SOURCE_GUARD_OUTCOME'] == 'success'
+              and canary.get('ran') == 17 and canary.get('passed') is True
+              and receipt.get('retrieved_bytes_verified') is True and owned <= 128*1024**2)
+          value = dict(kind='NEW_R6_REPLACEMENT', event_source_sha=os.environ['EXPECTED_SOURCE_SHA'],
+              diagnostic_complete=complete, expected_original_failure=expected_failure, world_success=False,
+              producer_outcome=core.get('producer_outcome'), comparison_target=core.get('comparison_target'),
+              actual_controller_exit=controller_exit, actual_result=result, portable_byte_receipt=receipt, errors=errors,
+              receiving_canary=canary, receiving_canary_reason='Mandatory17 in new full-producer environment; not additional test coverage. Prior4/historical suites not repeated.',
+              owned_bytes=owned, owned_scope='Evidence/private runtime plus portable ZIP; excludes checkout/site-packages.',
+              next='STOP. Upload raw artifact + full Actions logs; independent actual-byte retrieval before handoff/replay/correction.',
+              qualification='Expected world FAIL is preserved. A complete diagnostic is never a world/art/Matt approval. No replay/render/export/geometry correction in this run.')
+          (evidence / 'diagnostic-outcome.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
+          state = 'DIAGNOSTIC COMPLETE' if complete else 'DIAGNOSTIC PARTIAL/FAILED'
+          (evidence / 'status.txt').write_text(state+'; world FAILED/NOT COMPLETED; no approval\n')
+          files = {str(p.relative_to(evidence)): dict(bytes=p.stat().st_size, sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in evidence.rglob('*') if p.is_file()}
+          (evidence / 'artifact-manifest.json').write_text(json.dumps(dict(files=files, event_source_sha=os.environ['EXPECTED_SOURCE_SHA'],
+              complete_handoff=False, independent_byte_retrieval_required=True), sort_keys=True, indent=2)+'\n')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
+              output.write(state+'\n\nWorld success: false\n\nExpected original failure: '+str(expected_failure)+'\n\n'+value['next']+'\n')
+          raise SystemExit(0 if complete and expected_failure else 1)
+          PY
+
+      - name: Upload portable actual inputs and all early/partial evidence, including hidden source
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mygame-map-capture-H1-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/map-capture-evidence/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7

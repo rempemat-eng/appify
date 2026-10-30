@@ -405,5 +405,6 @@ jobs:
         with:
           name: mygame-map-contract17-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/map-contract17-evidence/
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 7
