@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   focused:
-    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/y33-focused-validation-run'
+    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/y33-focused-validation-run' && github.run_attempt == 1
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:

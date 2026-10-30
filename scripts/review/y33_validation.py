@@ -248,6 +248,8 @@ class Controller:
         return {"head": GAME_SHA, "tree": GAME_TREE, "game": game_rows, "index_sha256": digest(index)}
 
     def setup(self) -> None:
+        if os.environ.get("GITHUB_RUN_ATTEMPT") != "1":
+            raise RuntimeError("Only the first allocated workflow attempt may run")
         if sys.platform != "linux" or platform.machine() not in ("x86_64", "AMD64") or sys.version_info[:2] != (3, 12):
             raise RuntimeError("Requires existing Linux x86_64 / CPython3.12 hosting")
         if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
