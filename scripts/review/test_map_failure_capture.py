@@ -378,11 +378,13 @@ class OwnedSampling(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='R6-owned-budget-') as name:
             folder = Path(name); marker = folder / 'capture.json'
             M['write_json'](marker, {'complete': False})
-            previous = marker.read_bytes()
-            actual = folder / 'allocated.bin'; actual.write_bytes(b'x' * 8192)
-            self.assertGreater(actual.stat().st_blocks * 512, 1024)
             with self.subTest(refusal='real allocated budget'):
-                with patch.dict(M['write_json'].__globals__, MAX_PACKET=1024):
+                budget = 64 * 1024
+                with patch.dict(M['write_json'].__globals__, MAX_PACKET=budget):
+                    M['write_json'](marker, {'complete': False, 'stage': 'same budget baseline fits'})
+                    previous = marker.read_bytes()
+                    actual = folder / 'allocated.bin'; actual.write_bytes(b'x' * (128 * 1024))
+                    self.assertGreater(actual.stat().st_blocks * 512, budget)
                     with self.assertRaises(M['CaptureError']):
                         M['write_json'](marker, {'complete': True})
                 self.assertEqual(marker.read_bytes(), previous)
@@ -392,6 +394,83 @@ class OwnedSampling(unittest.TestCase):
                     M['write_json'](marker, {'complete': True})
                 self.assertEqual(marker.read_bytes(), previous)
             self.assertFalse(marker.with_name('capture.json.tmp').exists())
+
+
+class PreflightInputs(unittest.TestCase):
+    """SYNTHETIC negative receiver, real failing unittest/owned file cleanup."""
+    def fail_real_receiving_fixture(self, folder, observation):
+        temporary = folder / 'private/tmp'
+        temporary.mkdir(parents=True)
+        class ActualFailure(unittest.TestCase):
+            def test_owned_input_fails(self):
+                with tempfile.TemporaryDirectory(dir=temporary, prefix='actual-failed-fixture-') as name:
+                    observation['original'] = Path(name)
+                    (Path(name) / 'actual-fixture.bin').write_bytes(b'actual failing fixture bytes\n')
+                    self.fail('SYNTHETIC original prerequisite assertion')
+        guard = {'head': 'SYNTHETIC', 'source_sha256': {}}
+        # Substitute only outer source/numeric/discovery prerequisites. The
+        # unittest failure, TemporaryDirectory lifecycle and bytes stay real;
+        # no success verdict is replaced and failure must stop before producer.
+        with patch.dict(M['worker'].__globals__, source_guard=Mock(return_value=guard),
+                numeric=Mock(return_value={}), runpy=SimpleNamespace(run_path=lambda *a, **k: {'Contracts': ActualFailure})):
+            with patch.dict(os.environ, TMPDIR=str(temporary), TMP=str(temporary), TEMP=str(temporary)):
+                with self.assertRaisesRegex(M['CaptureError'], 'cheap R6 prerequisites failed'):
+                    M['worker'](folder, dict(head=guard['head'], source_sha256={}, versions={}, phase='capture'))
+
+    def test_failing_receiving_fixture_survives_original_cleanup(self):
+        with tempfile.TemporaryDirectory(prefix='R6-negative-receiver-') as name:
+            folder = Path(name); observed = {}
+            self.fail_real_receiving_fixture(folder, observed)
+            kept = list(folder.rglob('actual-fixture.bin'))
+            self.assertTrue(kept)
+            self.assertTrue(all(p.read_bytes() == b'actual failing fixture bytes\n' for p in kept))
+            self.assertFalse(observed['original'].exists())
+            result = json.loads((folder / 'cheap-preflight.json').read_text())
+            self.assertFalse(result['passed'])
+            self.assertEqual(result['ran'], 1)
+
+    def test_receiving_copy_failure_retains_original_partial_and_error(self):
+        with tempfile.TemporaryDirectory(prefix='R6-negative-copy-') as name:
+            folder = Path(name); observed = {}
+            def partial_copy_then_fail(source, target):
+                target.mkdir(parents=True)
+                (target / 'partial.bin').write_bytes(b'real partial copy\n')
+                observed['partial'] = target
+                raise OSError('SYNTHETIC injected copy failure after partial bytes')
+            copy = Mock(side_effect=partial_copy_then_fail)
+            with patch.dict(M['worker'].__globals__, shutil=SimpleNamespace(copytree=copy)):
+                self.fail_real_receiving_fixture(folder, observed)
+            self.assertTrue((observed['original'] / 'actual-fixture.bin').is_file())
+            self.assertEqual((observed['original'] / 'actual-fixture.bin').read_bytes(), b'actual failing fixture bytes\n')
+            copy.assert_called_once()
+            self.assertEqual((observed['partial'] / 'partial.bin').read_bytes(), b'real partial copy\n')
+            result = json.loads((folder / 'cheap-preflight.json').read_text())
+            self.assertFalse(result['passed'])
+            self.assertTrue(result.get('input_retention_errors'))
+
+
+class CaptureWorkflowContract(unittest.TestCase):
+    def test_expected_baseline_requires_all_four_literal_true_flags(self):
+        # SOURCE-only acceptance predicate from the actual workflow, not an
+        # invented successful world result or a captured-world equality claim.
+        path = M['REPO'] / '.github/workflows/map-recovery-capture.yml'
+        lines = path.read_text().splitlines()
+        start = lines.index('          import hashlib, json, os, runpy')
+        end = lines.index('          PY', start)
+        tree = ast.parse('\n'.join(line[10:] for line in lines[start:end]))
+        assignment = next(n for n in tree.body if isinstance(n, ast.Assign)
+            and any(isinstance(t, ast.Name) and t.id == 'expected_failure' for t in n.targets))
+        expression = ast.fix_missing_locations(ast.Expression(assignment.value))
+        code = compile(expression, str(path) + ':expected-baseline', 'eval')
+        keys = ('trial125', 'records19', 'queue20_23', 'original_error')
+        def evaluate(flags):
+            return eval(code, {'__builtins__': {'all': all}}, {'core': {'comparison_target': flags}})
+        self.assertTrue(evaluate(dict.fromkeys(keys, True)))
+        for key in keys:
+            for value in (False, 1, None):
+                with self.subTest(flag=key, value=value):
+                    flags = dict.fromkeys(keys, True); flags[key] = value
+                    self.assertFalse(evaluate(flags))
 
 
 class LifetimeSourceContract(unittest.TestCase):
