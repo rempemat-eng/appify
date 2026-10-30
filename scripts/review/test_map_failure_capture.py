@@ -429,9 +429,12 @@ class SamplingCoordination(unittest.TestCase):
             entered = threading.Event(); result = []; errors = []
             original_flock = fcntl.flock
             def observed_flock(fd, operation):
-                if operation == fcntl.LOCK_SH | fcntl.LOCK_NB:
-                    entered.set()
-                return original_flock(fd, operation)
+                try:
+                    return original_flock(fd, operation)
+                except BlockingIOError:
+                    if operation == fcntl.LOCK_SH | fcntl.LOCK_NB:
+                        entered.set()  # Real kernel refusal, before restoration/unlock.
+                    raise
             def monitor():
                 try:
                     result.append(M['coordinated_owned_blocks'](folder, lock, identity))
@@ -450,7 +453,7 @@ class SamplingCoordination(unittest.TestCase):
                             with self.assertRaises(M['CaptureError']):
                                 M['owned_blocks'](folder)
                             thread.start()
-                            self.assertTrue(entered.wait(.1), 'real monitor never attempted shared flock')
+                            self.assertTrue(entered.wait(.1), 'real shared flock was never refused during the probe')
                             self.assertEqual(result, [], 'an invalid interval was accepted as a clean sample')
                         finally:
                             link.unlink()
