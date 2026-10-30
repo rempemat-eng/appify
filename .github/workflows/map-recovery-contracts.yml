@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   remaining-contract17:
-    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/map-recovery-contracts-run'
+    if: github.run_attempt == 1 && github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/map-recovery-contracts-run'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
@@ -32,6 +32,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          test "$GITHUB_RUN_ATTEMPT" = '1' # Refuse reruns before install/project imports.
           printf 'MAP_EVIDENCE=%s/map-contract17-evidence\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
           mkdir "$RUNNER_TEMP/map-contract17-evidence"
           printf '%s\n' 'Contracts17 NOT RUN; setup incomplete' > "$RUNNER_TEMP/map-contract17-evidence/status.txt"
@@ -90,7 +91,8 @@ jobs:
                   for name, digest in expected.items():
                       assert sha((ROOT / name).read_bytes()) == digest, name
                   paths = list(expected) + ['.github/workflows/map-recovery-contracts.yml',
-                      'docs/vision/research/blockout/geo5.py', 'docs/vision/research/blockout/towns55.py', 'scripts/review/town_plan.py']
+                      'docs/vision/research/blockout/geo5.py', 'docs/vision/research/blockout/towns55.py',
+                      'scripts/review/town_plan.py', 'game/data/plans/crossroads.json']
                   for name in paths:
                       target = E / 'source' / name
                       target.parent.mkdir(parents=True, exist_ok=True)
@@ -102,7 +104,8 @@ jobs:
                   (E / 'font-paths.json').write_text(json.dumps(fonts, indent=2) + '\n')
                   assert all(x['exists'] for x in fonts), 'Exact geo5 font path missing; no fallback/install/copy'
           PY
-          python -I -B "$RUNNER_TEMP/map-source-guard.py" before
+          cp "$RUNNER_TEMP/map-source-guard.py" "$MAP_EVIDENCE/"
+          python -I -B "$RUNNER_TEMP/map-source-guard.py" before > "$MAP_EVIDENCE/source-before-canary.log" 2>&1
 
       - name: Install exact repository pins and verified compatible scikit-image wheel
         timeout-minutes: 3
@@ -166,20 +169,37 @@ jobs:
               # Preserve each tiny synthetic input BEFORE the unchanged cleanup;
               # unittest receives the assertion/error only after context exit.
               source = Path(directory.name)
+              target = E / 'test-inputs' / str(len(retained) + len(retention_errors))
+              copied = False
+              owned = source.is_relative_to(Path(os.environ['TMPDIR']))
               try:
-                  assert source.is_relative_to(Path(os.environ['TMPDIR']))
+                  assert owned
                   if source.exists():
-                      target = E / 'test-inputs' / str(len(retained))
                       shutil.copytree(source, target)
+                      digest = lambda root: {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in root.rglob('*') if p.is_file()}
+                      assert digest(source) == digest(target), 'fixture copy byte mismatch'
                       retained.append(str(target.relative_to(E)))
+                  copied = True
               except Exception as error:
-                  retention_errors.append(repr(error))
+                  # This context's cleanup must not destroy the only owned input.
+                  # The original stays under evidence/private/tmp for upload.
+                  detached, detach_error = False, None
+                  if owned:
+                      try:
+                          directory._finalizer.detach()
+                          detached = True
+                      except Exception as finalizer_error:
+                          detach_error = repr(finalizer_error)
+                  retention_errors.append(dict(original=str(source), partial_copy=str(target),
+                      original_retained=owned and detached and source.exists(), finalizer_detached=detached,
+                      detach_error=detach_error, error=repr(error)))
                   try:
                       save('input-retention-errors.json', retention_errors)
                   except OSError:
                       pass
               finally:
-                  original_cleanup(directory)
+                  if copied:
+                      original_cleanup(directory)
           coverage_errors = []
           class Result(unittest.TextTestResult):
               def event(self, value):
@@ -235,7 +255,8 @@ jobs:
           command = [sys.executable, '-I', '-B', str(Path(os.environ['RUNNER_TEMP']) / 'map-contract-worker.py')]
           (E / 'command.json').write_text(json.dumps(dict(command=command, cwd=os.environ['GITHUB_WORKSPACE'],
               environment={k: v for k, v in env.items() if k.startswith(('TMP', 'TEMP', 'BLOCKOUT', 'XDG_', 'MYGAME_', 'OPENBLAS_', 'OMP_', 'MKL_', 'NUMEXPR_'))},
-              active_seconds=60, collection_seconds=10, one_cpu=True, address_space_bytes=int(1.5 * 1024**3), owned_bytes=128*MIB), indent=2) + '\n')
+              active_seconds=60, collection_seconds=10, one_cpu=True, address_space_bytes=int(1.5 * 1024**3), owned_bytes=128*MIB,
+              owned_scope='Evidence plus private runtime only; excludes checkout and installed site-packages.'), indent=2) + '\n')
           def limits():
               os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
               resource.setrlimit(resource.RLIMIT_AS, (int(1.5 * 1024**3),) * 2)
@@ -328,7 +349,8 @@ jobs:
           value = dict(passed=passed, raw_wait_status=raw, exit=os.waitstatus_to_exitcode(raw) if raw is not None else None,
               child_reaped=raw is not None, identity_lost=lost, owned_group_absent=absent, stop_reason=reason,
               peak_child_rss_bytes=peak, cpu_seconds=ru.ru_utime+ru.ru_stime if ru else None,
-              seconds=time.monotonic()-START, owned_bytes=owned(), world_run=False)
+              seconds=time.monotonic()-START, owned_bytes=owned(),
+              owned_scope='Evidence plus private runtime only; excludes checkout and installed site-packages.', world_run=False)
           (E / 'outer-result.json').write_text(json.dumps(value, indent=2)+'\n')
           raise SystemExit(0 if passed else 1)
           PY
@@ -342,7 +364,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -f "$RUNNER_TEMP/map-source-guard.py" ]; then
-            python -I -B "$RUNNER_TEMP/map-source-guard.py" after
+            python -I -B "$RUNNER_TEMP/map-source-guard.py" after > "$MAP_EVIDENCE/source-after-canary.log" 2>&1
             cp "$RUNNER_TEMP/map-source-guard.py" "$MAP_EVIDENCE/"
           else
             printf '%s\n' 'Source guard NOT RUN: setup did not reach guard creation' > "$MAP_EVIDENCE/source-unavailable.txt"
@@ -370,7 +392,7 @@ jobs:
           passed = os.environ['CONTRACT_STEP'] == os.environ['SOURCE_STEP'] == 'success' and all(v.get('passed') is True for v in results.values())
           value = dict(event_source_sha=os.environ['EXPECTED_SOURCE_SHA'], step_outcome=os.environ['CONTRACT_STEP'],
               source_guard_outcome=os.environ['SOURCE_STEP'], passed=passed, results=results, files=files,
-              qualification='Only remaining Contracts17; prior GREEN4 not repeated. No world, map/art approval, actual lifetime experiment, Ready or merge. A retained artifact still needs independent byte retrieval.')
+              qualification='Only remaining Contracts17; prior GREEN4 not repeated. 128MiB covers evidence/private runtime, not checkout/site-packages. Only direct worker/group supervised; selected methods spawn no children. Group0 is observational and may falseFAIL, not wider lifecycle proof. No world, map/art approval, actual lifetime experiment, Ready or merge. A retained artifact still needs full Actions logs and independent byte retrieval.')
           (E / 'artifact-manifest.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
           with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
               output.write('Remaining map Contracts17: '+value['step_outcome']+'\n\nSource: '+value['event_source_sha']+'\n\n'+value['qualification']+'\n')
