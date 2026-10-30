@@ -1,0 +1,211 @@
+name: EDITOR_PERSISTENCE exact eight-method receiving
+
+# SOURCE PREPARATION ONLY. The lead must review an exact commit and allocate it
+# before creating/updating this distinct execution ref. No PR/manual/schedule trigger.
+'on':
+  push:
+    branches: [codex/editor-persistence-validation-run]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mygame-editor-persistence-validation
+  cancel-in-progress: false
+
+jobs:
+  focused:
+    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/editor-persistence-validation-run' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CI: 'true'
+      TZ: UTC
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      EDITOR_PERSISTENCE_GAME_SHA: 6903f8d5d729f5eb9d4beef20d33869465308c66
+    steps:
+      - name: Open failure evidence before any checkout or setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/editor-persistence"
+          test ! -e "$root"
+          mkdir -m 700 "$root"
+          mkdir -m 700 "$root/evidence"
+          printf 'EDITOR_PERSISTENCE_EVIDENCE=%s/evidence\n' "$root" >> "$GITHUB_ENV"
+          python3 -I -B - <<'PY'
+          import json, os, platform
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'editor-persistence/evidence/bootstrap.json'
+          p.write_text(json.dumps(dict(workflow_sha=os.environ['GITHUB_SHA'],
+              tested_game_sha=os.environ['EDITOR_PERSISTENCE_GAME_SHA'], run_id=os.environ['GITHUB_RUN_ID'],
+              attempt=os.environ['GITHUB_RUN_ATTEMPT'], python=platform.python_version(),
+              phases='NOT RUN; setup has not completed'), indent=2) + '\n')
+          PY
+
+      - name: Check out the immutable workflow/controller candidate only
+        id: runner
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # main885b convention
+        with:
+          ref: ${{ github.sha }}
+          path: runner
+          fetch-depth: 2 # exact398 -> this genuine receiver child
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/editor-persistence-validation.yml
+            /scripts/review/editor_persistence_validation.py
+
+      - name: Check out pinned full game and complete Python bake/validator/data closure
+        id: source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 6903f8d5d729f5eb9d4beef20d33869465308c66
+          path: source
+          fetch-depth: 1 # immutable tested398; raw commit retains its exact375 parent
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /game/
+            /.github/workflows/verify.yml
+            /art/house-palette.json
+            /art/scenes/woodland.json
+            /scripts/art/biomes/woodland.json
+            /scripts/art/house_palette.py
+            /scripts/art/kit/__init__.py
+            /scripts/art/kit/bake.py
+            /scripts/art/kit/build.py
+            /scripts/art/kit/compose.py
+            /scripts/art/kit/dressing.py
+            /scripts/art/kit/edges.py
+            /scripts/art/kit/fills.py
+            /scripts/art/kit/relations.py
+            /scripts/art/kit/schema.py
+            /scripts/art/kit/structures.py
+            /scripts/art/kit/surface.py
+            /scripts/art/kit/test_bake_publication.py
+            /scripts/art/native/__init__.py
+            /scripts/art/native/accents.json
+            /scripts/art/native/animate.py
+            /scripts/art/native/chars.py
+            /scripts/art/native/compose.py
+            /scripts/art/native/ctx.py
+            /scripts/art/native/foliage.py
+            /scripts/art/native/ground.py
+            /scripts/art/native/palette.py
+            /scripts/art/native/props.py
+            /scripts/art/native/raster.py
+            /scripts/art/native/rig.py
+            /scripts/art/native/rocks.py
+            /scripts/art/native/screen.py
+            /scripts/art/native/softedge.py
+            /scripts/art/native/softgrid.py
+            /scripts/art/native/softground.py
+            /scripts/art/native/terrain/__init__.py
+            /scripts/art/native/terrain/decals.py
+            /scripts/art/native/terrain/noise.py
+            /scripts/art/native/terrain/scene.py
+            /scripts/art/native/terrain/sheets.py
+            /scripts/art/native/terrain/tiles.py
+            /scripts/art/native/village.py
+            /scripts/art/native/water.py
+            /scripts/art/pixel.py
+            /scripts/art/size_guide.json
+            /scripts/art/water_flow.py
+            /scripts/review/__init__.py
+            /scripts/review/ground_rules.py
+            /scripts/review/kit_scene.py
+
+      - name: Select the existing Python version without Node dependencies
+        id: python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # main885b convention
+        with:
+          python-version: '3.12'
+
+      - name: Select exact hosted Python; controller validates before private dependency staging
+        id: python_path
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
+
+      - name: Preflight pins, private scientific stage, paths, one import, canaries, eight methods
+        id: focused
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python -I -B runner/scripts/review/editor_persistence_validation.py \
+            --candidate "$GITHUB_WORKSPACE/runner" \
+            --source "$GITHUB_WORKSPACE/source" \
+            --root "$RUNNER_TEMP/editor-persistence" \
+            --event-sha "$GITHUB_SHA" > "$EDITOR_PERSISTENCE_EVIDENCE/controller.log" 2>&1
+          code=$?
+          printf '%s\n' "$code" > "$EDITOR_PERSISTENCE_EVIDENCE/controller.exit"
+          cat "$EDITOR_PERSISTENCE_EVIDENCE/controller.log"
+          exit "$code"
+
+      - name: Retain actual setup and controller disposition on every exit
+        if: always()
+        env:
+          RUNNER_OUTCOME: ${{ steps.runner.outcome }}
+          SOURCE_OUTCOME: ${{ steps.source.outcome }}
+          PYTHON_OUTCOME: ${{ steps.python.outcome }}
+          PYTHON_PATH_OUTCOME: ${{ steps.python_path.outcome }}
+          FOCUSED_OUTCOME: ${{ steps.focused.outcome }}
+        shell: bash
+        run: |
+          python3 -I -B - <<'PY'
+          import hashlib, json, os, stat, tarfile
+          from pathlib import Path
+          evidence = Path(os.environ['RUNNER_TEMP']) / 'editor-persistence/evidence'
+          evidence.mkdir(parents=True, exist_ok=True)
+          # When setup fails before Controller.setup, retain actual checked-out
+          # bytes independently of the Python/engine stage. Not a source PASS.
+          if not (evidence / 'source-inputs.tar.gz').exists():
+              records, total = {}, 0
+              workspace = Path(os.environ['GITHUB_WORKSPACE'])
+              with tarfile.open(evidence / 'partial-checkouts.tar.gz', 'x:gz') as archive:
+                  for label in ('runner', 'source'):
+                      base = workspace / label
+                      if not base.exists():
+                          continue
+                      for path in sorted(base.rglob('*')):
+                          relative = path.relative_to(base)
+                          if '.git' in relative.parts or '.godot' in relative.parts:
+                              continue
+                          info = path.lstat()
+                          if stat.S_ISDIR(info.st_mode):
+                              continue
+                          if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+                              raise RuntimeError('Partial receiving input not physical regular file')
+                          total += info.st_size
+                          if total > 128 * 1024**2:
+                              raise RuntimeError('Partial input128MiB bound')
+                          data = path.read_bytes()
+                          name = label + '/' + relative.as_posix()
+                          records[name] = dict(bytes=len(data), sha256=hashlib.sha256(data).hexdigest(),
+                              blob=hashlib.sha1(('blob %s\0' % len(data)).encode()+data).hexdigest())
+                          archive.add(path, arcname=name, recursive=False)
+              (evidence / 'partial-checkouts.json').write_text(json.dumps(dict(
+                  qualification='Actual partial input bytes only; no source/runtime pass',
+                  files=records), indent=2)+'\n')
+          value = dict(workflow_sha=os.environ['GITHUB_SHA'], tested_game_sha=os.environ['EDITOR_PERSISTENCE_GAME_SHA'],
+              outcomes={k: os.environ.get(k, 'NOT RUN') for k in
+                        ('RUNNER_OUTCOME', 'SOURCE_OUTCOME', 'PYTHON_OUTCOME', 'PYTHON_PATH_OUTCOME', 'FOCUSED_OUTCOME')},
+              controller_result_present=(evidence / 'result.json').is_file(),
+              qualification='No displayed GUI/whole-editor/full-suite/Ready acceptance. Eight methods only; all inputs remain candidates. Missing result is failure, never PASS.')
+          (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as handle:
+              handle.write('## EDITOR_PERSISTENCE focused reproduction\n\n```json\n' + json.dumps(value, indent=2) + '\n```\n')
+          PY
+
+      - name: Upload source, raw failures, actual waits and reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # main885b convention
+        with:
+          name: mygame-editor-persistence-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/editor-persistence/evidence/
+          if-no-files-found: error
+          retention-days: 7
