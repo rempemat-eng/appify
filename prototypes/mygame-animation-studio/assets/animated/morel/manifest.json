@@ -1,0 +1,4117 @@
+{
+  "id": "morel",
+  "name": "Morel",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        157,
+        314,
+        470,
+        627,
+        784,
+        940,
+        1097,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        162,
+        319,
+        477,
+        634,
+        791,
+        946,
+        1103,
+        1254
+      ],
+      "baselines": {
+        "0": 152.0,
+        "3": 624.25,
+        "4": 781.0,
+        "5": 934.0,
+        "6": 1084.0,
+        "7": 1223.0
+      },
+      "body_height": 134.0,
+      "body_min_area": 2125,
+      "path": "art-source/animated/morel-64.png",
+      "base_scale": 0.7164179104477612
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        146,
+        332,
+        507,
+        661,
+        818,
+        969,
+        1121,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        170,
+        327,
+        485,
+        644,
+        808,
+        965,
+        1114,
+        1254
+      ],
+      "baselines": {
+        "0": 162.0,
+        "1": 318.0,
+        "4": 804.5,
+        "5": 957.0,
+        "6": 1109.25,
+        "7": 1236.0
+      },
+      "body_height": 139.0,
+      "body_min_area": 2488,
+      "path": "art-source/animated/v3/morel-extension64.png",
+      "base_scale": 0.6906474820143885
+    },
+    {
+      "width": 1402,
+      "height": 1122,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        184,
+        358,
+        534,
+        709,
+        884,
+        1061,
+        1236,
+        1402
+      ],
+      "row_cuts": [
+        0,
+        243,
+        461,
+        681,
+        898,
+        1122
+      ],
+      "baselines": {
+        "0": 226.0,
+        "1": 447.0,
+        "3": 884.0
+      },
+      "body_height": 184.0,
+      "body_min_area": 4295,
+      "path": "art-source/animated/v3/morel-powered40.png",
+      "base_scale": 0.5217391304347826
+    },
+    {
+      "width": 2172,
+      "height": 724,
+      "columns": 8,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        292,
+        568,
+        835,
+        1091,
+        1357,
+        1631,
+        1904,
+        2172
+      ],
+      "row_cuts": [
+        0,
+        386,
+        724
+      ],
+      "baselines": {
+        "0": 356.0,
+        "1": 685.0
+      },
+      "body_height": 269.0,
+      "body_min_area": 8179,
+      "path": "art-source/animated/v3/morel-primary16.png",
+      "base_scale": 0.35687732342007433
+    },
+    {
+      "width": 1983,
+      "height": 793,
+      "columns": 8,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        261,
+        505,
+        742,
+        987,
+        1241,
+        1501,
+        1730,
+        1983
+      ],
+      "row_cuts": [
+        0,
+        406,
+        793
+      ],
+      "baselines": {
+        "0": 385.0,
+        "1": 728.0
+      },
+      "body_height": 292.5,
+      "body_min_area": 10892,
+      "path": "art-source/animated/v3/morel-powered-primary-exit16.png",
+      "base_scale": 0.3282051282051282
+    },
+    {
+      "width": 1402,
+      "height": 1122,
+      "columns": 1,
+      "rows": 1,
+      "column_cuts": [
+        0,
+        1402
+      ],
+      "row_cuts": [
+        0,
+        1122
+      ],
+      "baselines": {
+        "0": 1045.0
+      },
+      "body_height": 915.0,
+      "body_min_area": 114392,
+      "path": "art-source/animated/v3/morel-powered-primary-single.png",
+      "base_scale": 0.10491803278688525
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/ranger-other-anchors.json",
+      "sha256": "d2326173c6aba926ba6a2d6274b1e2e65fc594b70f0b8f18327a275526800c91"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/idle-00.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 0,
+          "source_bounds": [
+            41,
+            17,
+            112,
+            152
+          ],
+          "source_origin": [
+            78.5,
+            152.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            69,
+            75,
+            120,
+            172
+          ],
+          "sha256": "4a961fea05c8d4d7830a0f2e90b831373ad099cd989e52a70711cd1ee123da74"
+        },
+        {
+          "path": "res://assets/animated/morel/idle-01.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 1,
+          "source_bounds": [
+            199,
+            17,
+            269,
+            152
+          ],
+          "source_origin": [
+            235.5,
+            152.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            70,
+            75,
+            120,
+            172
+          ],
+          "sha256": "654dbe8bae1f95a658603c678efc99b2e06dab1512f1023bc315b5c373963f56"
+        },
+        {
+          "path": "res://assets/animated/morel/idle-02.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 2,
+          "source_bounds": [
+            355,
+            17,
+            426,
+            152
+          ],
+          "source_origin": [
+            392.0,
+            152.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            69,
+            75,
+            120,
+            172
+          ],
+          "sha256": "a7899aab97c006b7f28e457b4aedf3434d36d2c28cec6ae0a32710fdbcb0beb1"
+        },
+        {
+          "path": "res://assets/animated/morel/idle-03.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 3,
+          "source_bounds": [
+            513,
+            17,
+            584,
+            152
+          ],
+          "source_origin": [
+            548.5,
+            152.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            71,
+            75,
+            122,
+            172
+          ],
+          "sha256": "56f530d9774b8388af2319c47b438ea320453781986d5eb2c134188726ad68fa"
+        },
+        {
+          "path": "res://assets/animated/morel/idle-04.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 4,
+          "source_bounds": [
+            669,
+            17,
+            740,
+            152
+          ],
+          "source_origin": [
+            705.5,
+            152.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            70,
+            75,
+            121,
+            172
+          ],
+          "sha256": "8c6480f1b77372d3601a46d0c9b091ab41bb10e743ef249f694f6d4e3904ded2"
+        },
+        {
+          "path": "res://assets/animated/morel/idle-05.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 5,
+          "source_bounds": [
+            826,
+            17,
+            896,
+            153
+          ],
+          "source_origin": [
+            862.0,
+            152.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            70,
+            75,
+            120,
+            172
+          ],
+          "sha256": "95c4ef402d8fe46c31a312d6d598982d8d0ec22e0cfd7ffdb458d87e3aae3383"
+        },
+        {
+          "path": "res://assets/animated/morel/idle-06.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 6,
+          "source_bounds": [
+            982,
+            17,
+            1051,
+            152
+          ],
+          "source_origin": [
+            1018.5,
+            152.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            70,
+            75,
+            119,
+            172
+          ],
+          "sha256": "5ea012f1555d7f946b44e2cb20ac952c54f95f25d53dfc5d3925ae207c3975ea"
+        },
+        {
+          "path": "res://assets/animated/morel/idle-07.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1138,
+            17,
+            1208,
+            152
+          ],
+          "source_origin": [
+            1175.5,
+            152.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            69,
+            75,
+            119,
+            172
+          ],
+          "sha256": "7891d3ab652ea0aa8781f87d08d6a65b835dcb49ddbd5738591a6927cf9bf69e"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/walk-00.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            49,
+            23,
+            134,
+            161
+          ],
+          "source_origin": [
+            73.0,
+            162.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            79,
+            76,
+            138,
+            171
+          ],
+          "sha256": "a1e47cc940b835e192d1c62d277b920526a48fb10a63e77a491e15898294f865"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-01.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            217,
+            23,
+            307,
+            162
+          ],
+          "source_origin": [
+            239.0,
+            162.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            81,
+            76,
+            143,
+            172
+          ],
+          "sha256": "43823855fb1742499dc62e88a324c6e20b950dc1052279059eee2599cd7ccd44"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-02.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            371,
+            23,
+            467,
+            162
+          ],
+          "source_origin": [
+            419.5,
+            162.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            63,
+            76,
+            129,
+            172
+          ],
+          "sha256": "05023fabb2a819204945d29f477f065054773c9fa4e04f277a0153fe50f55976"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-03.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            530,
+            23,
+            617,
+            161
+          ],
+          "source_origin": [
+            584.0,
+            162.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            59,
+            76,
+            119,
+            171
+          ],
+          "sha256": "b2cd5edfee7c6e76101ae6909bae61aa011feed745849efc6ffc6f9288d7d14a"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-04.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            681,
+            23,
+            783,
+            161
+          ],
+          "source_origin": [
+            739.5,
+            162.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            56,
+            76,
+            126,
+            171
+          ],
+          "sha256": "c094af6f52bc19835f960e5f8f7453517af48724b94517a327ea9976f72af9ff"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-05.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            839,
+            23,
+            941,
+            162
+          ],
+          "source_origin": [
+            893.5,
+            162.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            58,
+            76,
+            128,
+            172
+          ],
+          "sha256": "967f6009cec405b7b9d9bfcc4271fcc09d02cf651e7798efbfa1c6dd7d918515"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-06.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            998,
+            24,
+            1093,
+            162
+          ],
+          "source_origin": [
+            1045.0,
+            162.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            64,
+            77,
+            130,
+            172
+          ],
+          "sha256": "4177ccc7aa42948b0a4fea147d27e2a6b178d8ac699b2cbfb4ef9db62622ca60"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-07.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1158,
+            23,
+            1237,
+            162
+          ],
+          "source_origin": [
+            1187.5,
+            162.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            76,
+            76,
+            131,
+            172
+          ],
+          "sha256": "6732d55526409e6377d23db9856277a19a46a6018ebb5437ba52983ba1046650"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-08.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            43,
+            178,
+            130,
+            317
+          ],
+          "source_origin": [
+            73.0,
+            318.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            75,
+            75,
+            135,
+            171
+          ],
+          "sha256": "fd7ee9b4338fc506323991f547e6de3d1fa93a3215b53bdea83534416d24c716"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-09.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            199,
+            177,
+            287,
+            318
+          ],
+          "source_origin": [
+            239.0,
+            318.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            68,
+            75,
+            129,
+            172
+          ],
+          "sha256": "1730337b251b4649f706bb24e585160451cc5c8edbc4b4e4398629ac7ff7b7c6"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-10.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            353,
+            178,
+            446,
+            317
+          ],
+          "source_origin": [
+            419.5,
+            318.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            50,
+            75,
+            114,
+            171
+          ],
+          "sha256": "e7da6eb457dbde1b07a1cddb7abb31ad27271b79c14f9f23c3102c84667fdf97"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-11.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            513,
+            178,
+            609,
+            318
+          ],
+          "source_origin": [
+            584.0,
+            318.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            47,
+            75,
+            113,
+            172
+          ],
+          "sha256": "5819df4ade78451e30f4b72306c77cb4c0b878d5f9d675a0e560f1dfed3c7869"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-12.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            668,
+            178,
+            770,
+            316
+          ],
+          "source_origin": [
+            739.5,
+            318.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            47,
+            75,
+            117,
+            170
+          ],
+          "sha256": "7555d10911e195985a49e73c13531f895c7d851eb2d01c73b159e8a1048f6b9c"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-13.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            831,
+            178,
+            936,
+            317
+          ],
+          "source_origin": [
+            893.5,
+            318.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            53,
+            75,
+            126,
+            171
+          ],
+          "sha256": "280f423a0e4d08c41bf2b5c3d39af611a0076b4e4550d390c7e5b9bb632735c9"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-14.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            990,
+            178,
+            1094,
+            318
+          ],
+          "source_origin": [
+            1045.0,
+            318.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            58,
+            75,
+            130,
+            172
+          ],
+          "sha256": "53436106e2dac33fc4ca5864b0d345cf74c591b37b368cca81dbdbf9aa8c6041"
+        },
+        {
+          "path": "res://assets/animated/morel/walk-15.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1158,
+            178,
+            1238,
+            318
+          ],
+          "source_origin": [
+            1187.5,
+            318.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            76,
+            75,
+            131,
+            172
+          ],
+          "sha256": "42967143eb56d306da3abf5ef3930ecc1b955c965cfd708dbf6d8dbd3fc9c611"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/primary-00.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 0,
+          "source_bounds": [
+            72,
+            87,
+            209,
+            356
+          ],
+          "source_origin": [
+            146.0,
+            356.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            70,
+            76,
+            119,
+            172
+          ],
+          "sha256": "f154aa7e5a8c9ee852889815c7e2cc9b9dbcef52f0cb4c10fe8a57632467e978"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-01.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 1,
+          "source_bounds": [
+            337,
+            87,
+            498,
+            356
+          ],
+          "source_origin": [
+            430.0,
+            356.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            63,
+            76,
+            120,
+            172
+          ],
+          "sha256": "6c64ff5f6a0f0f0e5c5755fad52bc19a61150cf74051da50983319addafdcea8"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-02.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 2,
+          "source_bounds": [
+            607,
+            87,
+            782,
+            356
+          ],
+          "source_origin": [
+            701.5,
+            356.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            62,
+            76,
+            124,
+            172
+          ],
+          "sha256": "56c299684c2197ec596df1b45dcdde2f648b720da2f8a9f55f928651ed4aeeb9"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-03.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 7,
+          "source_bounds": [
+            1965,
+            87,
+            2133,
+            356
+          ],
+          "source_origin": [
+            2038.0,
+            356.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            70,
+            76,
+            130,
+            172
+          ],
+          "sha256": "1bc1dad43b11a9dc8e628a0c23406873dbbc2196d2aab8018d38ff0bcc33b15b"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-04.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 6,
+          "source_bounds": [
+            1694,
+            62,
+            1837,
+            356
+          ],
+          "source_origin": [
+            1767.5,
+            356.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            70,
+            67,
+            121,
+            172
+          ],
+          "sha256": "c0e88159fb6469f15d611cc451250f8f049a6bac034de70a2dd47ab955621d54"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-05.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 3,
+          "source_bounds": [
+            878,
+            62,
+            1038,
+            356
+          ],
+          "source_origin": [
+            963.0,
+            356.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            66,
+            67,
+            123,
+            172
+          ],
+          "sha256": "d83f046dc8dcb67c75139f9c5d78033d847bdccb8a44c13a888a62ef52b23c0e"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-06.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 5,
+          "source_bounds": [
+            1423,
+            74,
+            1566,
+            356
+          ],
+          "source_origin": [
+            1494.0,
+            356.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            71,
+            71,
+            122,
+            172
+          ],
+          "sha256": "2dc91c93f6c44298142b49b0ab603db73c21f9d5e98ef28162accfc8edc49c2a"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-07.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 4,
+          "source_bounds": [
+            1129,
+            87,
+            1296,
+            356
+          ],
+          "source_origin": [
+            1224.0,
+            356.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            62,
+            76,
+            122,
+            172
+          ],
+          "sha256": "e7d50a6705adec986404a6200708726365d33e7272c1d559a69da8a23efb8116"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-08.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 8,
+          "source_bounds": [
+            67,
+            409,
+            267,
+            685
+          ],
+          "source_origin": [
+            146.0,
+            685.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            68,
+            74,
+            139,
+            172
+          ],
+          "sha256": "6e350de93e4ab1a6a7b89b484167c93a86d642f5c0b9b79cd6d93a679bc95666"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-09.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 9,
+          "source_bounds": [
+            337,
+            417,
+            547,
+            685
+          ],
+          "source_origin": [
+            430.0,
+            685.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            63,
+            76,
+            138,
+            172
+          ],
+          "sha256": "0fc79e88bc0c89f059e47651f1f529f40ec2b6e3a12156a054f228f8d3fe2850"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-10.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 10,
+          "source_bounds": [
+            611,
+            417,
+            826,
+            685
+          ],
+          "source_origin": [
+            701.5,
+            685.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            64,
+            76,
+            141,
+            172
+          ],
+          "sha256": "92ee47690917c2696f5a3be5f25dc4a98e6039b8b0de1d30527d29cc29d156b3"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-11.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 11,
+          "source_bounds": [
+            878,
+            417,
+            1059,
+            685
+          ],
+          "source_origin": [
+            963.0,
+            685.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            66,
+            76,
+            131,
+            172
+          ],
+          "sha256": "c34202170dde3748e5779c73c703d51cf0f9f515d5336c34f488997ff2b8b6de"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-12.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 12,
+          "source_bounds": [
+            1153,
+            417,
+            1295,
+            685
+          ],
+          "source_origin": [
+            1224.0,
+            685.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            71,
+            76,
+            122,
+            172
+          ],
+          "sha256": "93f5d8bdf289f2ab425525d2f57ea8def441af25955b819d0f7d757e46bd11b7"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-13.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 13,
+          "source_bounds": [
+            1423,
+            417,
+            1574,
+            685
+          ],
+          "source_origin": [
+            1494.0,
+            685.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            71,
+            76,
+            125,
+            172
+          ],
+          "sha256": "24c8dd87268b1f3e11d229cbe1f9178784ccd101d316187cc9053f06722d1a8b"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-14.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 14,
+          "source_bounds": [
+            1694,
+            417,
+            1837,
+            685
+          ],
+          "source_origin": [
+            1767.5,
+            685.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            70,
+            76,
+            121,
+            172
+          ],
+          "sha256": "8b5d5e91bfa04a7e1d53cdcf0734caf18127246067a2bd63cb1a384f64386efc"
+        },
+        {
+          "path": "res://assets/animated/morel/primary-15.png",
+          "source": "art-source/animated/v3/morel-primary16.png",
+          "slot": 15,
+          "source_bounds": [
+            1965,
+            417,
+            2108,
+            685
+          ],
+          "source_origin": [
+            2038.0,
+            685.0
+          ],
+          "scale": 0.35687732342007433,
+          "packed_bounds": [
+            70,
+            76,
+            121,
+            172
+          ],
+          "sha256": "00c3fba8c3b7f93db609ebd7aef1dc7347713a86b328e74a6bd5347d3e5fbeec"
+        }
+      ],
+      "release_anchor": [
+        34,
+        -87
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/secondary-00.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 24,
+          "source_bounds": [
+            32,
+            486,
+            121,
+            623
+          ],
+          "source_origin": [
+            78.5,
+            624.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            63,
+            73,
+            127,
+            171
+          ],
+          "sha256": "b5b4d514d7082b86424e412d1be16bffa0a7974ee716ce71ca00cdbdc52a4ab5"
+        },
+        {
+          "path": "res://assets/animated/morel/secondary-01.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 25,
+          "source_bounds": [
+            201,
+            487,
+            279,
+            625
+          ],
+          "source_origin": [
+            235.5,
+            624.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            71,
+            74,
+            127,
+            173
+          ],
+          "sha256": "d916351a26ba8b7b18042de12e0fe8a84b8cecdb2686184d4b362be43dd839bb"
+        },
+        {
+          "path": "res://assets/animated/morel/secondary-02.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 26,
+          "source_bounds": [
+            348,
+            488,
+            451,
+            626
+          ],
+          "source_origin": [
+            392.0,
+            624.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            74,
+            138,
+            173
+          ],
+          "sha256": "de39a68294ce5169b27d4ddc0a08eda752c2c6a638dda7e218bcfb9baaf66be9"
+        },
+        {
+          "path": "res://assets/animated/morel/secondary-03.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 27,
+          "source_bounds": [
+            487,
+            490,
+            610,
+            624
+          ],
+          "source_origin": [
+            548.5,
+            624.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            52,
+            76,
+            140,
+            172
+          ],
+          "sha256": "04d5d328f50fc940873306415a4208668d3dfdb9db42ce040610ba17f35849ed"
+        },
+        {
+          "path": "res://assets/animated/morel/secondary-04.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 28,
+          "source_bounds": [
+            635,
+            489,
+            778,
+            624
+          ],
+          "source_origin": [
+            705.5,
+            624.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            45,
+            75,
+            147,
+            172
+          ],
+          "sha256": "161d45a208a6ee827c437d1a7c80f3a4e8b63d4791d67bcde4a4be65b7004932"
+        },
+        {
+          "path": "res://assets/animated/morel/secondary-05.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 29,
+          "source_bounds": [
+            792,
+            491,
+            936,
+            624
+          ],
+          "source_origin": [
+            862.0,
+            624.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            46,
+            77,
+            149,
+            172
+          ],
+          "sha256": "4500c83974875af9c21cebf5d6ad764b4e03c557f8a8fe3efc751d9cec1a7078"
+        },
+        {
+          "path": "res://assets/animated/morel/secondary-06.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 30,
+          "source_bounds": [
+            979,
+            487,
+            1056,
+            624
+          ],
+          "source_origin": [
+            1018.5,
+            624.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            74,
+            123,
+            172
+          ],
+          "sha256": "f6675922dd986780a63e3514c58eda971d5a2e2ab4be3792083941f0f815e033"
+        },
+        {
+          "path": "res://assets/animated/morel/secondary-07.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1134,
+            487,
+            1206,
+            624
+          ],
+          "source_origin": [
+            1175.5,
+            624.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            74,
+            118,
+            172
+          ],
+          "sha256": "c87104a90f8eec90d1df82e57bebc8e6194481dc4099b724cb75041b1b8616dd"
+        }
+      ],
+      "release_anchor": [
+        48,
+        -64
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/special-00.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 32,
+          "source_bounds": [
+            38,
+            645,
+            117,
+            781
+          ],
+          "source_origin": [
+            78.5,
+            781.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            67,
+            75,
+            124,
+            172
+          ],
+          "sha256": "0744eb0d836fc14482975fedf766c6c41164e56aff43bb0cb5753c454c1af8a5"
+        },
+        {
+          "path": "res://assets/animated/morel/special-01.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 33,
+          "source_bounds": [
+            197,
+            645,
+            282,
+            781
+          ],
+          "source_origin": [
+            235.5,
+            781.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            75,
+            129,
+            172
+          ],
+          "sha256": "53c27c71504b276cca0b4a38566f40e47e7b16398ef125e5796aff14055e08bf"
+        },
+        {
+          "path": "res://assets/animated/morel/special-02.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 34,
+          "source_bounds": [
+            348,
+            642,
+            431,
+            781
+          ],
+          "source_origin": [
+            392.0,
+            781.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            72,
+            123,
+            172
+          ],
+          "sha256": "2cca673da9558dd180289a0b030924ec1b16a1b14519d281838a3ff8c5188b50"
+        },
+        {
+          "path": "res://assets/animated/morel/special-03.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 35,
+          "source_bounds": [
+            513,
+            644,
+            589,
+            781
+          ],
+          "source_origin": [
+            548.5,
+            781.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            71,
+            74,
+            125,
+            172
+          ],
+          "sha256": "26f20d723454e5e50afe02d7a11e27d2636ee987e8bda2044e0e644e1029f378"
+        },
+        {
+          "path": "res://assets/animated/morel/special-04.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 36,
+          "source_bounds": [
+            668,
+            644,
+            746,
+            781
+          ],
+          "source_origin": [
+            705.5,
+            781.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            69,
+            74,
+            125,
+            172
+          ],
+          "sha256": "19b939cecf1114442a4300495c159c4b6717cc58aeceef0d0411ba9b8dfb9ef5"
+        },
+        {
+          "path": "res://assets/animated/morel/special-05.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 37,
+          "source_bounds": [
+            818,
+            642,
+            901,
+            781
+          ],
+          "source_origin": [
+            862.0,
+            781.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            72,
+            123,
+            172
+          ],
+          "sha256": "2f578dee935728199f6a43d3a8d1edf27b87ec5bfcb6d301c03a845e7664cee5"
+        },
+        {
+          "path": "res://assets/animated/morel/special-06.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 38,
+          "source_bounds": [
+            982,
+            643,
+            1057,
+            781
+          ],
+          "source_origin": [
+            1018.5,
+            781.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            70,
+            73,
+            124,
+            172
+          ],
+          "sha256": "7c2c0a9164deeae67c769b406897eb5148acd958cd55a38f2b62bbc70222dd83"
+        },
+        {
+          "path": "res://assets/animated/morel/special-07.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1137,
+            643,
+            1210,
+            781
+          ],
+          "source_origin": [
+            1175.5,
+            781.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            73,
+            120,
+            172
+          ],
+          "sha256": "24850cdb8f85aa981bd4723502c076e7af016a9c316c185b12e979f321c9a77d"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/guard-00.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 40,
+          "source_bounds": [
+            15,
+            808,
+            131,
+            934
+          ],
+          "source_origin": [
+            78.5,
+            934.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            51,
+            82,
+            134,
+            172
+          ],
+          "sha256": "40442a3bbf4e01ad948e23bda9c7ade21885311b9608bae3f3a84469822da50c"
+        },
+        {
+          "path": "res://assets/animated/morel/guard-01.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 41,
+          "source_bounds": [
+            178,
+            812,
+            298,
+            934
+          ],
+          "source_origin": [
+            235.5,
+            934.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            55,
+            85,
+            141,
+            172
+          ],
+          "sha256": "ac7832cc2970b1aa7857a880e17a637161db56cdb6045686d8ecf66e6fadede9"
+        },
+        {
+          "path": "res://assets/animated/morel/guard-02.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 42,
+          "source_bounds": [
+            330,
+            806,
+            453,
+            934
+          ],
+          "source_origin": [
+            392.0,
+            934.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            52,
+            80,
+            140,
+            172
+          ],
+          "sha256": "bb4103a651c7dee159db57316ef6e4203e4fc17b76245bf85cd7fe0068510490"
+        },
+        {
+          "path": "res://assets/animated/morel/guard-03.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 43,
+          "source_bounds": [
+            484,
+            806,
+            608,
+            934
+          ],
+          "source_origin": [
+            548.5,
+            934.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            50,
+            80,
+            139,
+            172
+          ],
+          "sha256": "6304f7e3d2b854cfe9fb4c8277de2ad34c6e0ac1246402b6e66f8e40e606f34a"
+        },
+        {
+          "path": "res://assets/animated/morel/guard-04.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 44,
+          "source_bounds": [
+            651,
+            803,
+            762,
+            934
+          ],
+          "source_origin": [
+            705.5,
+            934.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            57,
+            78,
+            137,
+            172
+          ],
+          "sha256": "6343fe86a0f990f9e18d22943db2668df4ae0bf259f1ff6434e189fb47c88fda"
+        },
+        {
+          "path": "res://assets/animated/morel/guard-05.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 45,
+          "source_bounds": [
+            812,
+            801,
+            914,
+            934
+          ],
+          "source_origin": [
+            862.0,
+            934.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            77,
+            133,
+            172
+          ],
+          "sha256": "92e9720099a29e673f229b7b4240d8f691477a69400cee62c9106ab294339920"
+        },
+        {
+          "path": "res://assets/animated/morel/guard-06.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 46,
+          "source_bounds": [
+            970,
+            801,
+            1070,
+            934
+          ],
+          "source_origin": [
+            1018.5,
+            934.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            61,
+            77,
+            133,
+            172
+          ],
+          "sha256": "e66856598bcf41512ae7bd6ef25bb77928d388c3c2e241c6dac5e53866537596"
+        },
+        {
+          "path": "res://assets/animated/morel/guard-07.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1125,
+            803,
+            1227,
+            932
+          ],
+          "source_origin": [
+            1175.5,
+            934.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            78,
+            133,
+            170
+          ],
+          "sha256": "020cd33fa77d879eb3cb5439a690d00e4bab0a4fb4ef67d1eac821e7a57716ac"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/hit-00.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 48,
+          "source_bounds": [
+            32,
+            951,
+            131,
+            1083
+          ],
+          "source_origin": [
+            78.5,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            63,
+            77,
+            134,
+            172
+          ],
+          "sha256": "e430c70388657c076b441b36044a213ae891d6b54cd05dde76dee35de6c9f36d"
+        },
+        {
+          "path": "res://assets/animated/morel/hit-01.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 49,
+          "source_bounds": [
+            199,
+            963,
+            291,
+            1083
+          ],
+          "source_origin": [
+            235.5,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            70,
+            85,
+            136,
+            171
+          ],
+          "sha256": "56928b482630be3082df1196b3510e3d3ae3c5423ae94bcd388d19cc65f20a37"
+        },
+        {
+          "path": "res://assets/animated/morel/hit-02.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 50,
+          "source_bounds": [
+            353,
+            957,
+            434,
+            1083
+          ],
+          "source_origin": [
+            392.0,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            81,
+            126,
+            171
+          ],
+          "sha256": "a2e2dc9752293e9bfef44acae1448a729d8b0326e46177f92dc81e40052faf19"
+        },
+        {
+          "path": "res://assets/animated/morel/hit-03.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 51,
+          "source_bounds": [
+            506,
+            969,
+            589,
+            1078
+          ],
+          "source_origin": [
+            548.5,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            90,
+            125,
+            168
+          ],
+          "sha256": "d2f01a60b9df7063122abe1b051cdf2f2b4f21362c673cf8136f5261ea519090"
+        },
+        {
+          "path": "res://assets/animated/morel/hit-04.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 52,
+          "source_bounds": [
+            653,
+            977,
+            734,
+            1078
+          ],
+          "source_origin": [
+            705.5,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            58,
+            95,
+            116,
+            167
+          ],
+          "sha256": "c1730a98dc59b6ed6093fbe5604df2ab55b73c8b559db036df70d268f471a36b"
+        },
+        {
+          "path": "res://assets/animated/morel/hit-05.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 53,
+          "source_bounds": [
+            807,
+            982,
+            902,
+            1084
+          ],
+          "source_origin": [
+            862.0,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            57,
+            99,
+            125,
+            172
+          ],
+          "sha256": "f1801aee62d11382f142ca87da553ea2df094c8b25b6a9ed7fe50c4dd3cea7d4"
+        },
+        {
+          "path": "res://assets/animated/morel/hit-06.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 54,
+          "source_bounds": [
+            976,
+            959,
+            1059,
+            1084
+          ],
+          "source_origin": [
+            1018.5,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            82,
+            125,
+            172
+          ],
+          "sha256": "e3803f95d3c5a71aed21121e843101feee63ec1861caf35caf11fc4ac4ff7402"
+        },
+        {
+          "path": "res://assets/animated/morel/hit-07.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1136,
+            954,
+            1211,
+            1084
+          ],
+          "source_origin": [
+            1175.5,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            79,
+            122,
+            172
+          ],
+          "sha256": "0ea0f76c506b6156b179b678234d9cb6be6f15e5ff0b1ea314c749e1e38b4409"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/defeat-00.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 56,
+          "source_bounds": [
+            28,
+            1108,
+            119,
+            1223
+          ],
+          "source_origin": [
+            78.5,
+            1223.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            90,
+            125,
+            172
+          ],
+          "sha256": "e509aa712fe4d31dd18504ae3545bc163841e39d79837ad5d691d76763b1cd15"
+        },
+        {
+          "path": "res://assets/animated/morel/defeat-01.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 57,
+          "source_bounds": [
+            170,
+            1121,
+            281,
+            1219
+          ],
+          "source_origin": [
+            235.5,
+            1223.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            49,
+            99,
+            129,
+            169
+          ],
+          "sha256": "81f61961b476b95702bfbc32be1cd8ff54e84b960da54608d46189bb39eb02bb"
+        },
+        {
+          "path": "res://assets/animated/morel/defeat-02.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 58,
+          "source_bounds": [
+            334,
+            1129,
+            447,
+            1215
+          ],
+          "source_origin": [
+            392.0,
+            1223.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            54,
+            105,
+            135,
+            167
+          ],
+          "sha256": "d0a395d54252b47f4977eef2feab773dc2b878caf3257b1a452e0f06ec17bb54"
+        },
+        {
+          "path": "res://assets/animated/morel/defeat-03.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 59,
+          "source_bounds": [
+            484,
+            1148,
+            610,
+            1220
+          ],
+          "source_origin": [
+            548.5,
+            1223.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            50,
+            118,
+            140,
+            170
+          ],
+          "sha256": "026907cea85eec2caed0ad0ccf166e2d286603584682435a4e5ec911a3646a4a"
+        },
+        {
+          "path": "res://assets/animated/morel/defeat-04.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 60,
+          "source_bounds": [
+            637,
+            1151,
+            767,
+            1217
+          ],
+          "source_origin": [
+            705.5,
+            1223.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            47,
+            120,
+            140,
+            167
+          ],
+          "sha256": "f3e8eb5e72dc3f744a78342915b2be0b3e63bf5ccc1475272aa99f1c34c5c0c3"
+        },
+        {
+          "path": "res://assets/animated/morel/defeat-05.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 61,
+          "source_bounds": [
+            793,
+            1160,
+            934,
+            1223
+          ],
+          "source_origin": [
+            862.0,
+            1223.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            47,
+            127,
+            148,
+            172
+          ],
+          "sha256": "ab43a564028c35ffdd00e61f5424c27c2d7a0d4d1c1ff9c3b832dc4a28ccbf01"
+        },
+        {
+          "path": "res://assets/animated/morel/defeat-06.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 62,
+          "source_bounds": [
+            951,
+            1163,
+            1097,
+            1223
+          ],
+          "source_origin": [
+            1018.5,
+            1223.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            48,
+            129,
+            153,
+            172
+          ],
+          "sha256": "36a884eb04a218fa249d05ddd80c95e6973ccf39300658a36ad54cdb04a99ead"
+        },
+        {
+          "path": "res://assets/animated/morel/defeat-07.png",
+          "source": "art-source/animated/morel-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1106,
+            1176,
+            1241,
+            1227
+          ],
+          "source_origin": [
+            1175.5,
+            1223.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            46,
+            138,
+            143,
+            175
+          ],
+          "sha256": "c2f987df8966454ea09bd3e0c26b7f03f6e8cdadbb7df23cc2985071fd310b24"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/jump-00.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            41,
+            686,
+            140,
+            803
+          ],
+          "source_origin": [
+            73.0,
+            803.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            74,
+            91,
+            142,
+            172
+          ],
+          "sha256": "e267c92fedff9ebf4cba56f3f5e18c8ae2a509ed718c8f52dd6ececa0ad2c737",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/jump-01.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            194,
+            689,
+            299,
+            803
+          ],
+          "source_origin": [
+            239.0,
+            803.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            65,
+            93,
+            138,
+            172
+          ],
+          "sha256": "7d8f760344a1e7e9554d5b7a54b6d6729aa521f336a10e565d432d457b77a75a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/jump-02.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            343,
+            660,
+            463,
+            806
+          ],
+          "source_origin": [
+            419.5,
+            806.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            43,
+            71,
+            126,
+            172
+          ],
+          "sha256": "8f4862e5ad7aff55f7a4feed2f1a1513a862bb039b6c8c1482d29f88cd00d1d5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/jump-03.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            508,
+            647,
+            613,
+            777
+          ],
+          "source_origin": [
+            584.0,
+            777.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            44,
+            82,
+            117,
+            172
+          ],
+          "sha256": "7584c5f9eb99e29e5204f406e81f6c135feccd108c25c0693c1f55799fc7ec51",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/jump-04.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            662,
+            645,
+            769,
+            774
+          ],
+          "source_origin": [
+            739.5,
+            774.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            42,
+            83,
+            116,
+            172
+          ],
+          "sha256": "05d046d8d0dbcfc0e1db5193fd084438ae75e6e58af44883ff2c46429892b917",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/jump-05.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            826,
+            662,
+            926,
+            806
+          ],
+          "source_origin": [
+            893.5,
+            806.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            49,
+            73,
+            118,
+            172
+          ],
+          "sha256": "7dfb22e71b6511495f862b0536a3584d4e717c8aa1f999c97405d55cccb28134",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/jump-06.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            984,
+            685,
+            1108,
+            804
+          ],
+          "source_origin": [
+            1045.0,
+            804.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            54,
+            90,
+            140,
+            172
+          ],
+          "sha256": "3836ef6962ccb34489aacdb561fe4d4b6b114848e911f0640260fac69d7d3b99",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/jump-07.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1154,
+            663,
+            1237,
+            803
+          ],
+          "source_origin": [
+            1187.5,
+            803.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            73,
+            75,
+            130,
+            172
+          ],
+          "sha256": "436e79d4304ed4c1ee7c8505dabfcf29e60837120f8ca1643107a727393517f6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/stair_up-00.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            38,
+            821,
+            144,
+            957
+          ],
+          "source_origin": [
+            73.0,
+            957.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            72,
+            78,
+            145,
+            172
+          ],
+          "sha256": "d11cd4dbe19441a7606c9d03f43f59882abfb2419ccc77bc8f0ac99a7578b789",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_up-01.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            206,
+            821,
+            305,
+            957
+          ],
+          "source_origin": [
+            239.0,
+            957.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            73,
+            78,
+            141,
+            172
+          ],
+          "sha256": "29ab081dfb292ef318ca5fefb203f3edfa45cadf23dee5329683305a0dc8f484",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_up-02.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            363,
+            819,
+            467,
+            957
+          ],
+          "source_origin": [
+            419.5,
+            957.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            57,
+            77,
+            129,
+            172
+          ],
+          "sha256": "b9f44787a22a974a03713f46c32976c09ac1958b5d1cbc276a0544c96eb45c4e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_up-03.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            520,
+            810,
+            621,
+            956
+          ],
+          "source_origin": [
+            584.0,
+            956.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            52,
+            71,
+            122,
+            172
+          ],
+          "sha256": "cd1e72b1372d71f10f215e4e142a1a83984e6042025238f4dc0ed96d8cd2d0ce",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_up-04.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            676,
+            809,
+            775,
+            956
+          ],
+          "source_origin": [
+            739.5,
+            956.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            52,
+            70,
+            120,
+            172
+          ],
+          "sha256": "50f47c57b044ccd0c0c9d4c0aec063db9c2b4a93c4f5ca238fea37d7fcd082e6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_up-05.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            838,
+            819,
+            939,
+            957
+          ],
+          "source_origin": [
+            893.5,
+            957.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            58,
+            77,
+            128,
+            172
+          ],
+          "sha256": "4d1507923a1f2db5360af5330d3698b913a468ad41497773044ac2e317c7394e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_up-06.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            997,
+            820,
+            1095,
+            957
+          ],
+          "source_origin": [
+            1045.0,
+            957.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            63,
+            77,
+            131,
+            172
+          ],
+          "sha256": "d64d504dd270951a1f1b4244a3d193f48fc8d2d9971fd2525fd59dbaa3b3e267",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_up-07.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1150,
+            821,
+            1234,
+            957
+          ],
+          "source_origin": [
+            1187.5,
+            957.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            70,
+            78,
+            128,
+            172
+          ],
+          "sha256": "2cc154084006f1a698ac36232bfaf0576c0a569c45f7013b3eaa0c0865f0ab63",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/stair_down-00.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            44,
+            972,
+            144,
+            1108
+          ],
+          "source_origin": [
+            73.0,
+            1108.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            76,
+            78,
+            145,
+            172
+          ],
+          "sha256": "13b7c500d4163d20bc5480bb82233818af4f027d47a5368391fbee4bf8db89db",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_down-01.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            208,
+            973,
+            306,
+            1110
+          ],
+          "source_origin": [
+            239.0,
+            1110.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            75,
+            77,
+            143,
+            172
+          ],
+          "sha256": "32ff067dc1c3729e01e5472f78d2bd907c20b11fc7e7440d43399ccd098daca7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_down-02.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            371,
+            973,
+            468,
+            1108
+          ],
+          "source_origin": [
+            419.5,
+            1108.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            63,
+            79,
+            130,
+            172
+          ],
+          "sha256": "d6605a602a981d0ce964fe7d403588b4e3c2ef4add46034dd480330e530ee1ae",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_down-03.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            522,
+            980,
+            622,
+            1108
+          ],
+          "source_origin": [
+            584.0,
+            1108.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            53,
+            84,
+            122,
+            172
+          ],
+          "sha256": "eabdd671dd51166a9b09482e1f64de85c095b165d16ccd531716f37154ec9146",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_down-04.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            673,
+            992,
+            784,
+            1108
+          ],
+          "source_origin": [
+            739.5,
+            1108.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            50,
+            92,
+            127,
+            172
+          ],
+          "sha256": "f06bc229db95380d1648267e5b69883a38ec2cbdf5ba37fbf8f1f267857f72f1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_down-05.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            831,
+            993,
+            946,
+            1109
+          ],
+          "source_origin": [
+            893.5,
+            1109.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            53,
+            92,
+            132,
+            172
+          ],
+          "sha256": "100c6c92b8e5dfd95eb396f2ac35d7afde6cbd815fe37b50e7b56102253a32ce",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_down-06.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            994,
+            980,
+            1097,
+            1110
+          ],
+          "source_origin": [
+            1045.0,
+            1110.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            61,
+            82,
+            132,
+            172
+          ],
+          "sha256": "c781f4f209c35edc57cb4ba08eac9081818888889b220ae1a42d4d5cf358f0b7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/stair_down-07.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1155,
+            972,
+            1238,
+            1109
+          ],
+          "source_origin": [
+            1187.5,
+            1109.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            74,
+            77,
+            131,
+            172
+          ],
+          "sha256": "3e1d5cf434615116b2ef545d23883d74a45b20cb822e357ba3bb7f33417528a8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/dodge-00.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            24,
+            1127,
+            132,
+            1236
+          ],
+          "source_origin": [
+            73.0,
+            1236.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            62,
+            97,
+            137,
+            172
+          ],
+          "sha256": "cd40a834082eff0deae4384862ea74f7b66deff5bf266e695483e6c99635584a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/dodge-01.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            165,
+            1132,
+            329,
+            1236
+          ],
+          "source_origin": [
+            239.0,
+            1236.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            45,
+            100,
+            158,
+            172
+          ],
+          "sha256": "bb9ae4a5bff5d51ab704db965d60f28fc720aec58861ce4f96cdf9e001ce5a7d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/dodge-02.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            333,
+            1150,
+            508,
+            1236
+          ],
+          "source_origin": [
+            419.5,
+            1236.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            36,
+            113,
+            157,
+            172
+          ],
+          "sha256": "ed34ee1de939607ad320c8525660981341dfe3f60ca4a7f75f828cd84d6dbcbb",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/dodge-03.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            516,
+            1141,
+            662,
+            1235
+          ],
+          "source_origin": [
+            584.0,
+            1235.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            49,
+            107,
+            150,
+            172
+          ],
+          "sha256": "50a17206cf95f0e8afc1809146306926863368cd00c4c07040fb27898ecf87a4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/dodge-04.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            670,
+            1147,
+            818,
+            1236
+          ],
+          "source_origin": [
+            739.5,
+            1236.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            48,
+            111,
+            150,
+            172
+          ],
+          "sha256": "d9dbf9a1d10b93a285c13ab8dc45ee2161a90c325a3d2be3e5eddad547add81c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/dodge-05.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            824,
+            1145,
+            957,
+            1239
+          ],
+          "source_origin": [
+            893.5,
+            1239.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            48,
+            107,
+            140,
+            172
+          ],
+          "sha256": "fbf37625568cb82a4e30220f315c3a35a0314536ed7f9ab147114be67f4d2cdf",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/dodge-06.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            985,
+            1133,
+            1105,
+            1236
+          ],
+          "source_origin": [
+            1045.0,
+            1236.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            55,
+            101,
+            138,
+            172
+          ],
+          "sha256": "a7dae68b0cf8bc1114125bb50351a8b7bbea904f47e0820237c2dba05b29f8a9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/morel/dodge-07.png",
+          "source": "art-source/animated/v3/morel-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1148,
+            1122,
+            1237,
+            1236
+          ],
+          "source_origin": [
+            1187.5,
+            1236.0
+          ],
+          "scale": 0.6906474820143885,
+          "packed_bounds": [
+            69,
+            93,
+            130,
+            172
+          ],
+          "sha256": "22986fd9eeef45c47066e9f6efc549e24460a4c3386a7dfeb8ec9147c8ca80cb",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/powered_idle-00.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            50,
+            40,
+            151,
+            226
+          ],
+          "source_origin": [
+            92.0,
+            226.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            74,
+            75,
+            127,
+            172
+          ],
+          "sha256": "1114eb18790c1c63112b304d7f577dc9ee92025cc446e608313f736d05478683"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_idle-01.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            220,
+            41,
+            320,
+            226
+          ],
+          "source_origin": [
+            271.0,
+            226.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            69,
+            75,
+            121,
+            172
+          ],
+          "sha256": "098f9c0f656d503f098113430e36a411d815f975e626178691f66a65cbc6504a"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_idle-02.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            394,
+            40,
+            499,
+            226
+          ],
+          "source_origin": [
+            446.0,
+            226.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            69,
+            75,
+            124,
+            172
+          ],
+          "sha256": "c6117260458a86df1683069732a410711b44f45a98ce1ce58d7c179708711532"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_idle-03.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            572,
+            43,
+            675,
+            226
+          ],
+          "source_origin": [
+            621.5,
+            226.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            70,
+            77,
+            124,
+            172
+          ],
+          "sha256": "08c433a04025ac2d72f5f3fbcc2d0c44c35c82fe000fdefdd78099db887d728c"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_idle-04.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            744,
+            41,
+            846,
+            226
+          ],
+          "source_origin": [
+            796.5,
+            226.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            69,
+            75,
+            122,
+            172
+          ],
+          "sha256": "54a95a1d962ab6bdc9bb7bce6a048239d1eb40531c9a759254d07c478672c80a"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_idle-05.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            922,
+            41,
+            1022,
+            226
+          ],
+          "source_origin": [
+            972.5,
+            226.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            70,
+            75,
+            122,
+            172
+          ],
+          "sha256": "dbc76491bd0dd8b54c4ba5c7be0088b92905810afca75e9bf919873dd87c71cf"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_idle-06.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1100,
+            41,
+            1201,
+            226
+          ],
+          "source_origin": [
+            1148.5,
+            226.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            71,
+            75,
+            124,
+            172
+          ],
+          "sha256": "ad7d8bc3e66cc5020e5598d31d3e388a5f2c4112634f835ae7c0c2e721cdafe1"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_idle-07.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1272,
+            41,
+            1374,
+            226
+          ],
+          "source_origin": [
+            1319.0,
+            226.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            71,
+            75,
+            124,
+            172
+          ],
+          "sha256": "cf4caec98e877aa3e587edcd81d00465de8465d8e52d8ae9211aee801323fef6"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/powered_walk-00.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            38,
+            256,
+            154,
+            447
+          ],
+          "source_origin": [
+            92.0,
+            447.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            68,
+            72,
+            129,
+            172
+          ],
+          "sha256": "b96b71855088f1bc5253fdf949076c16b5ccc230f997fc88eee2fe5b5bbce257"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_walk-01.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            212,
+            256,
+            324,
+            447
+          ],
+          "source_origin": [
+            271.0,
+            447.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            65,
+            72,
+            123,
+            172
+          ],
+          "sha256": "59c5329ed8bc0fbdec8799818a2a50cbcab5b4db4e5dc397d55ee83a108a8fd5"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_walk-02.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            386,
+            259,
+            506,
+            447
+          ],
+          "source_origin": [
+            446.0,
+            447.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            65,
+            74,
+            128,
+            172
+          ],
+          "sha256": "3c42f7c7fb4a48d8ac5b1ec0a3ca32ea3ccc9650175b9ab1d9978d9903230df4"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_walk-03.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            566,
+            258,
+            679,
+            447
+          ],
+          "source_origin": [
+            621.5,
+            447.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            67,
+            73,
+            126,
+            172
+          ],
+          "sha256": "d5ae29c110606c6d2297efb1aa9ba4cc78cac5dc8d729dfc646e29d0cc6bf56e"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_walk-04.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            738,
+            259,
+            855,
+            447
+          ],
+          "source_origin": [
+            796.5,
+            447.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            65,
+            74,
+            126,
+            172
+          ],
+          "sha256": "6b06f17c0b848a50b556c67c8d8e5e4745c69251665e7d8f9a03a73f425b28a8"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_walk-05.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            906,
+            258,
+            1036,
+            447
+          ],
+          "source_origin": [
+            972.5,
+            447.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            61,
+            73,
+            129,
+            172
+          ],
+          "sha256": "459ef4a13aa8c18b56436593085aecd1ebfca87372b8425639f35038c904ddc2"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_walk-06.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1088,
+            259,
+            1207,
+            447
+          ],
+          "source_origin": [
+            1148.5,
+            447.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            64,
+            74,
+            126,
+            172
+          ],
+          "sha256": "329fdde915c819dcdb3f3dc0b34c199300f8e53f0f2e419c707498c01c10eab0"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_walk-07.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1268,
+            254,
+            1375,
+            446
+          ],
+          "source_origin": [
+            1319.0,
+            447.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            69,
+            71,
+            125,
+            171
+          ],
+          "sha256": "e385de8c727054554d1f6e681df0a5021860903d76b2def1a25f006ea33e4b86"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/powered_primary-00.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 0,
+          "source_bounds": [
+            56,
+            90,
+            222,
+            385
+          ],
+          "source_origin": [
+            130.5,
+            385.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            72,
+            75,
+            126,
+            172
+          ],
+          "sha256": "68cdd9301cb2dd55684eb2d8cf9b20ced0cfdb12b0c4a32a906b44b644e0712f"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_primary-01.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 1,
+          "source_bounds": [
+            290,
+            90,
+            462,
+            385
+          ],
+          "source_origin": [
+            383.0,
+            385.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            65,
+            75,
+            121,
+            172
+          ],
+          "sha256": "0f7461e4712114a88bf503d7d144ec9b705307340f45e6286de6d954ede2d28a"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_primary-02.png",
+          "source": "art-source/animated/v3/morel-powered-primary-single.png",
+          "slot": 0,
+          "source_bounds": [
+            325,
+            123,
+            1046,
+            1045
+          ],
+          "source_origin": [
+            701.0,
+            1045.0
+          ],
+          "scale": 0.10491803278688525,
+          "packed_bounds": [
+            57,
+            75,
+            133,
+            172
+          ],
+          "sha256": "fae3e37d9de678ae6c4b542ecaae7c84ecad566f27e134855dbda5d7710dbed3"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_primary-03.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 3,
+          "source_bounds": [
+            767,
+            87,
+            943,
+            385
+          ],
+          "source_origin": [
+            864.5,
+            385.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            64,
+            74,
+            122,
+            172
+          ],
+          "sha256": "d859a7c5659692508e488eec9188f9dc11c037ebbd63a4bd45472e01b437f585"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_primary-04.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 4,
+          "source_bounds": [
+            1012,
+            88,
+            1235,
+            385
+          ],
+          "source_origin": [
+            1114.0,
+            385.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            63,
+            75,
+            136,
+            172
+          ],
+          "sha256": "1b2faebe9a6f5bb3cd2e7dd062909f8b3bf332e37583fcdc33453c3cb8b70811"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_primary-05.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 5,
+          "source_bounds": [
+            1252,
+            96,
+            1501,
+            385
+          ],
+          "source_origin": [
+            1371.0,
+            385.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            57,
+            77,
+            139,
+            172
+          ],
+          "sha256": "2145f3a43280a624904c6acd038045451d93df23b7580d28b6f075adb8269fd2"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_primary-06.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 6,
+          "source_bounds": [
+            1519,
+            93,
+            1696,
+            385
+          ],
+          "source_origin": [
+            1615.5,
+            385.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            64,
+            76,
+            122,
+            172
+          ],
+          "sha256": "d2e0378fdfe3076ccff4d07b38fe51773689409f9b921c8a0054343ae47debc9"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_primary-07.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 7,
+          "source_bounds": [
+            1766,
+            92,
+            1935,
+            385
+          ],
+          "source_origin": [
+            1856.5,
+            385.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            66,
+            76,
+            121,
+            172
+          ],
+          "sha256": "0ee931fd6377f839f581a9fa3e7985ca9320d9ea19f3d6a779a033b9ac899afc"
+        }
+      ],
+      "release_anchor": [
+        33,
+        -86
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/powered_guard-00.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            38,
+            695,
+            168,
+            884
+          ],
+          "source_origin": [
+            92.0,
+            884.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            68,
+            73,
+            136,
+            172
+          ],
+          "sha256": "82c2cad5b7f06742426033d31bdf80250756faeec2d25b641f542925cba9708e"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_guard-01.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            216,
+            695,
+            336,
+            884
+          ],
+          "source_origin": [
+            271.0,
+            884.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            67,
+            73,
+            130,
+            172
+          ],
+          "sha256": "9532a81d730a0f6965cbda3117d899683b25cf66d687b752c5538778bed7324e"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_guard-02.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            370,
+            710,
+            514,
+            884
+          ],
+          "source_origin": [
+            446.0,
+            884.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            56,
+            81,
+            131,
+            172
+          ],
+          "sha256": "63794623d196706d8b6a4836ffd437a14f2087d57529ce79f673cab789f2eaef"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_guard-03.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            553,
+            695,
+            695,
+            884
+          ],
+          "source_origin": [
+            621.5,
+            884.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            60,
+            73,
+            134,
+            172
+          ],
+          "sha256": "72b30d87e6049c0e9401418a7436f876d7c03eb614683b91493e44ffd1fecfe8"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_guard-04.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            732,
+            703,
+            859,
+            884
+          ],
+          "source_origin": [
+            796.5,
+            884.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            62,
+            78,
+            128,
+            172
+          ],
+          "sha256": "d5ebbf510ae322d5a23d11f7b9ec42025e954c99a7d90ffbb9628211ab33b4dc"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_guard-05.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            914,
+            695,
+            1035,
+            884
+          ],
+          "source_origin": [
+            972.5,
+            884.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            65,
+            73,
+            128,
+            172
+          ],
+          "sha256": "3e9b36d79e95c3d14f399aa65b6af56de999e7972608c905a3c721c96314050c"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_guard-06.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1100,
+            695,
+            1210,
+            884
+          ],
+          "source_origin": [
+            1148.5,
+            884.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            71,
+            73,
+            128,
+            172
+          ],
+          "sha256": "97196cbddd3ce39dbf7a32878e46823db33858744b96465383f65665dcc9a7e7"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_guard-07.png",
+          "source": "art-source/animated/v3/morel-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1274,
+            695,
+            1377,
+            884
+          ],
+          "source_origin": [
+            1319.0,
+            884.0
+          ],
+          "scale": 0.5217391304347826,
+          "packed_bounds": [
+            73,
+            73,
+            127,
+            172
+          ],
+          "sha256": "c7870606b7b30c6ee405ca2a62d33cc18ed6219b91a19a909b3e092d75bb2e82"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/morel/powered_exit-00.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 8,
+          "source_bounds": [
+            48,
+            423,
+            224,
+            728
+          ],
+          "source_origin": [
+            130.5,
+            728.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            69,
+            72,
+            127,
+            172
+          ],
+          "sha256": "92b2aa5c25183417c205867ae4ab6b4c0b42af66bb1ecd0ac7c0568fe8c3e186"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_exit-01.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 9,
+          "source_bounds": [
+            300,
+            423,
+            490,
+            728
+          ],
+          "source_origin": [
+            383.0,
+            728.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            69,
+            72,
+            131,
+            172
+          ],
+          "sha256": "c6e9a6fbdff8b8fa9422fba640fdc6d7920dcad5f7c4cc51b494a1a84fd5ca39"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_exit-02.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 10,
+          "source_bounds": [
+            537,
+            424,
+            725,
+            728
+          ],
+          "source_origin": [
+            623.5,
+            728.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            68,
+            72,
+            130,
+            172
+          ],
+          "sha256": "21a6949fecd69a3d716cdd3c58e41f45558e524e8db5073ae3f2e6c6ae5a935b"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_exit-03.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 11,
+          "source_bounds": [
+            773,
+            423,
+            949,
+            728
+          ],
+          "source_origin": [
+            864.5,
+            728.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            66,
+            72,
+            124,
+            172
+          ],
+          "sha256": "abcfdc9ef6a14323d0bff2c2704bb77ad8d3c49df0d5b2195829e228495c8791"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_exit-04.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 12,
+          "source_bounds": [
+            1018,
+            423,
+            1197,
+            728
+          ],
+          "source_origin": [
+            1114.0,
+            728.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            64,
+            72,
+            123,
+            172
+          ],
+          "sha256": "000f0d7f4e08f0ca17d47974204365448b6075b659c6c0be04c81949a1ea1250"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_exit-05.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 13,
+          "source_bounds": [
+            1268,
+            423,
+            1447,
+            728
+          ],
+          "source_origin": [
+            1371.0,
+            728.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            62,
+            72,
+            121,
+            172
+          ],
+          "sha256": "0f9af3904b44a3ea4827d23ea87df03535aafff6bd5116a620be167c28ff02e3"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_exit-06.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 14,
+          "source_bounds": [
+            1517,
+            424,
+            1698,
+            728
+          ],
+          "source_origin": [
+            1615.5,
+            728.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            64,
+            72,
+            123,
+            172
+          ],
+          "sha256": "ba1a77249a8ee653e6bf589d976fbbfaa2d76eeca3d42db9ee5d26b011f4a718"
+        },
+        {
+          "path": "res://assets/animated/morel/powered_exit-07.png",
+          "source": "art-source/animated/v3/morel-powered-primary-exit16.png",
+          "slot": 15,
+          "source_bounds": [
+            1766,
+            423,
+            1940,
+            728
+          ],
+          "source_origin": [
+            1856.5,
+            728.0
+          ],
+          "scale": 0.3282051282051282,
+          "packed_bounds": [
+            66,
+            72,
+            123,
+            172
+          ],
+          "sha256": "fd52cad58dcc81fa188ce3ea498253f9d90740e917e11f1099bad493b2269d6f"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

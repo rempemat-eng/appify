@@ -1,0 +1,567 @@
+{
+  "png_source_paths": 70,
+  "source_bytes": 117519574,
+  "unique_git_blobs": 69,
+  "files": [
+    {
+      "path": "art-source/animated/ashe-64.png",
+      "size": 2323009,
+      "sha256": "c233d98eab318dce954a5209199a2094ac1f3df2841e131625c2ba59d6de7a1d",
+      "git_blob_sha": "e7c58da2d36ea68cbd35eb3a6fef796d65606f2b",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/ashe-repair24.png",
+      "size": 2262397,
+      "sha256": "684fb5bf29dd0505eab0325a385baa45aea393bbe3aa50b743fe3ccc380a8da0",
+      "git_blob_sha": "04c9fddab28fc8229169bd05752e2212e4b84fb5",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/bramble-64.png",
+      "size": 2186267,
+      "sha256": "5ef8372ab193597a476f42f65c0e16d031a09a40f3f2d591e733a8239b3af4ed",
+      "git_blob_sha": "aaa41ecb5b0dfba5067c002710e1b9da33f76521",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/brine-64.png",
+      "size": 2199547,
+      "sha256": "e05f18e6759db9461be7bb62fd508692678d16548be3dea6abb9790373b4c92d",
+      "git_blob_sha": "c906b5a13f7c3f13e79844d07d9bb3bf7bf47ad4",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/cairn-64.png",
+      "size": 2771193,
+      "sha256": "44196719cfd6384de131240f19cac1c1e8eb23ce417a22093b811e3ca36ffe64",
+      "git_blob_sha": "6c2fb1b009a7a400509840742f6d18385d9551cb",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/cairn-extra16.png",
+      "size": 2016302,
+      "sha256": "2d84ee0bc5a5bea8067e67c20a9a324a70c8c186152d1f00756dec872688b2c0",
+      "git_blob_sha": "b2493b8562ba7eec9af3fe54ad3f2ccb3508e080",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/clack-64.png",
+      "size": 2229949,
+      "sha256": "a99830403b17b7041f66fb5c2625071ef3cea7f0699361bb1f4ff424764006b4",
+      "git_blob_sha": "422dd2080590ed50b7fbc9a94fb8fbfc37d3b739",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/clack-defeat8.png",
+      "size": 788445,
+      "sha256": "74ebe8e6f114f913917f0a8064c5447daca785cacde3192f201a3242b4eb1394",
+      "git_blob_sha": "4a360ca3e6297abb529e6794759da709a3288c9a",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/iona-64.png",
+      "size": 4024838,
+      "sha256": "90c99a9066699cc8b23949c861d5ed93ecd5b2f10ce3576a9ba46417a3872300",
+      "git_blob_sha": "e4d877be4ee2fa5d59a10f52cc08b4c3677219c1",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/mirra-64.png",
+      "size": 2356228,
+      "sha256": "ee73380d9480a246908fdccc88eed386b2218201c32f1f9dec81760b1c72e86e",
+      "git_blob_sha": "f099b97508aa5650298a95ab3be7e0198947952e",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/mirra-repair24.png",
+      "size": 2245997,
+      "sha256": "3015a9524591b94b86107ec5bc668da4fdd69fa0ecf37f284d5566e9283dce59",
+      "git_blob_sha": "d76bd113d38c8a85353ce74d72b4ddce20b94767",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/morel-64.png",
+      "size": 1958552,
+      "sha256": "3760c60463dfaac53c2c1321ba7a65ca75e6d96a81c798c4bef72b9ea9a1a503",
+      "git_blob_sha": "f40dc4cbac11891d45af78fcde4dc1b450e3dd52",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/mote-64.png",
+      "size": 2077112,
+      "sha256": "520707c3492437068ac621690a23695ffac9aaf6dac30298bac8828a9be216cf",
+      "git_blob_sha": "cfd2388c6a534fe1aaeded6547447fe3615a2510",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/mote-special8.png",
+      "size": 1355280,
+      "sha256": "82ef24622cdb383b484958721ea8f72f5c876e30f6e84f4a8fc75a03908624e5",
+      "git_blob_sha": "7ff9fc9c8bf7df3b4e7ad66c49c33ca5919809df",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/nix-64.png",
+      "size": 1841822,
+      "sha256": "ff3b110aabc9dfcaf50f815469f2cfe1553019910d98f032a36901786b8f0b5a",
+      "git_blob_sha": "4df9c7bb2c5795a5f1006b2fa5f6b40f73148730",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/nix-repair24.png",
+      "size": 1366872,
+      "sha256": "9facb1cdc09fcfc6249c9c76f621831fcc1d6ff4410b136d51265e68f3e1357a",
+      "git_blob_sha": "1996a850609f8324486427e059e833756f56e3a0",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/pendle-64.png",
+      "size": 1924348,
+      "sha256": "b9921554c55326426020fa0f4c5938316a9ab35033073f9b0da40022fabf0cec",
+      "git_blob_sha": "b400fce4fd9393b4aad2c7de0895a8e36388f24d",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/rook-64.png",
+      "size": 1921127,
+      "sha256": "4a43faa5ab6bf1721f887580e2ada0f4852f2e11af6913c25452bc3077ffbd6c",
+      "git_blob_sha": "ae03cc45275de60a979072ba96f03a9163c9cbd7",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/rook-special8.png",
+      "size": 961644,
+      "sha256": "43f8330a0e7433a0e12ff3c8c1159661ea004924d675dae50c3a78bfea98f8b8",
+      "git_blob_sha": "740e19c5e43c8421a38d3532f4791159540c7244",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/tam-64.png",
+      "size": 2515142,
+      "sha256": "f3696b5eb70575317070f5f5e0b710c60135a861a935154cdd86eefa4c38c68d",
+      "git_blob_sha": "18c2889f47442e5b835ba0a5b078649b69bd2426",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/ashe-extension64.png",
+      "size": 1558997,
+      "sha256": "d1b72681440f676df09e62635fe77f63ec31dab8825b725cc5cd3150875f4ade",
+      "git_blob_sha": "36e3a3f543eed3998a538ba2c21a48eb1234a5cf",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/ashe-powered40.png",
+      "size": 1610920,
+      "sha256": "cebc4196e45c4502db1d4c5795e68a1f132c51bb8bca7c4dfa22ea8e466fd499",
+      "git_blob_sha": "64a300577e82925c559a1930ce9dcae3875bc737",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/ashe-repair24.png",
+      "size": 2005116,
+      "sha256": "8d3e3d4d677ef4ccf04f2ee173d4b852b9572d6db24a0580c79c91cdb46e1fa6",
+      "git_blob_sha": "7281d8af31530d9e47a9c4a6557c08d42bc9521a",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/bramble-extension64.png",
+      "size": 2400093,
+      "sha256": "bf4fe751866d468fa659c903bf5743df0fe777808821af6aaffa2983c7efc3ab",
+      "git_blob_sha": "ca75739e9f084d212fd5ca2d4ee26f126ff78a31",
+      "uploaded": true,
+      "reused": true
+    },
+    {
+      "path": "art-source/animated/v3/bramble-powered40.png",
+      "size": 2305720,
+      "sha256": "ce6cfe55960c801ab601eda51c540f4a4ccde5dbe2f7b85c888896a2a8cfe66d",
+      "git_blob_sha": "f2d0a987da9d2a8819f836c253de5d72c29edf1e",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/brine-extension64.png",
+      "size": 2106371,
+      "sha256": "13f20828911b6eef794c7f4d37d874e158ec66470a770b900b2a5a0349ecbcd5",
+      "git_blob_sha": "e8d8bfcfe893d5ec270ce57c6aae4f2dac44bbd0",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/brine-powered40.png",
+      "size": 2509284,
+      "sha256": "119a57eb5135380d32e5041740658106748c0985dac7b933bd3b9032aee2acc7",
+      "git_blob_sha": "1da0dc94e8ce9d9b590b298c851d635030aa912f",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/brine-secondary8.png",
+      "size": 1868494,
+      "sha256": "1597ec2bf9b75feaf6499f311cb8b7ca406c4f16b8f03556545bf963081c7647",
+      "git_blob_sha": "8e0517bb452a7b263d7c7684ba1957a837e15d4b",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/cairn-extension32.png",
+      "size": 2390587,
+      "sha256": "11f338aeca7e6389dac8187c1f46b3f2b920ce7b15f6b64bca3ff2fbb6a37913",
+      "git_blob_sha": "d8ce6ababb3758545dddd6a7cc7611e5f3e53489",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/cairn-powered40.png",
+      "size": 2842192,
+      "sha256": "2673d927875438717c24b56e04f6617d30e3078581d84fae9df61fd0b5487505",
+      "git_blob_sha": "9c051926de16058adc645f95b96e0f801e772fff",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/clack-extension64.png",
+      "size": 1424360,
+      "sha256": "748dc9e609a67bc8a6557eff963533e01d8b9c6fd8340f017c3b91df5019018f",
+      "git_blob_sha": "bc070dd65687f4c7c9120589b393e22e0178903c",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/clack-powered40.png",
+      "size": 1656931,
+      "sha256": "1b92370bd7ded2bbe71c67a56a14bdcebcdce71e6f8aee258953f610f5e2a8fd",
+      "git_blob_sha": "605a28b35964a60432a7c9e351c149f0ab06c4b2",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/iona-extension64.png",
+      "size": 1919648,
+      "sha256": "a4a6ff98e53bb8d09b7607438a4f6c9210c300fbb6efb97ef09bfc381bc003de",
+      "git_blob_sha": "7083c86857d600ae3e9951bbe009c9111f3f7ae8",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/iona-powered-primary8.png",
+      "size": 709719,
+      "sha256": "b32063544ecb1ff98198879614a1c94991366d9ff27206542fbc1be59fa432e4",
+      "git_blob_sha": "bb0e75db0f18a0c957cceb3beae3053365595c32",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/iona-powered40.png",
+      "size": 2506896,
+      "sha256": "6f77b25c4573e79bb5439e75f9d2ede4eb58351295c905d5251457d5950ed7f7",
+      "git_blob_sha": "bad7d07df93659ab0aa79f13671aea2bdbbcb5a3",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/iona-primary16.png",
+      "size": 805280,
+      "sha256": "6c9e357f92a1a7c541a7f14652daacd712c4d8fac8f3147d9c91d3a1d6aefb71",
+      "git_blob_sha": "7dbe57a4ca7c0cfa13b276472ec6db76d8355bb3",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/mirra-extension64.png",
+      "size": 2199942,
+      "sha256": "e8180c2a98890ef25e48a60ac1c0241025f52ead2b7f8fea9563c2f9fa33e2e9",
+      "git_blob_sha": "d0b6b150e9f1b8a3b919f30299f4dd10afc0c4ef",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/mirra-powered40.png",
+      "size": 2504242,
+      "sha256": "baae84c81ed79cf62d47d4487b9e2d49abe34547a2d134da52e3fb062ad41cab",
+      "git_blob_sha": "68371d38455add3c1c33b59bf6f0007ca67bcc59",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/morel-extension64.png",
+      "size": 1984301,
+      "sha256": "4398c5bfa1ce7cb30fadd85e4004ca3e5dc57bacf475e043e42ece6134cac8aa",
+      "git_blob_sha": "61ad1df8a330ed7d3f7ec8db5f1cd0a858ddb4c1",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/morel-powered-primary-exit16.png",
+      "size": 1404203,
+      "sha256": "3b7cd5969cd2f54af7d20bd30dd86614fb5f5d7b47f37fa3f40ce5b6d48c7c8a",
+      "git_blob_sha": "4814fa18eee1e84ae30b054c364f7b63695152b4",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/morel-powered-primary-single.png",
+      "size": 606030,
+      "sha256": "087ff1c61861def4cc809f92c9e82e3b61423c772340f28bd9a6f06edd448a4b",
+      "git_blob_sha": "3668f5dc766cd7f51cb811fed885cc6ab10616e7",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/morel-powered40.png",
+      "size": 1816673,
+      "sha256": "a5a4000c44c0618e1c38b2cce533bfbd6957435d9e07a3caf4fd30ad9798d250",
+      "git_blob_sha": "a8e769af5e8a3f38180fbf075f63db44470b7875",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/morel-primary16.png",
+      "size": 1069474,
+      "sha256": "8b3670eb8ba662f95cc5c60564b9dc3c2a5c628a7163b140f97afca00627e2e5",
+      "git_blob_sha": "4a98b317590b14ccfec7bdc0981a940351e1634b",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/mote-extension64.png",
+      "size": 1382089,
+      "sha256": "1eb8ff7491b035816bf754b6048a935bc3b0eb8c1c2cb19937bb09f5f137fac2",
+      "git_blob_sha": "3407beae385addbd06987aebb521c97513426922",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/mote-powered40.png",
+      "size": 1528367,
+      "sha256": "a3ba72bf3e58b6d24aa830ef6d52396ef311410bc69b8eb9ae898b75263b641e",
+      "git_blob_sha": "0c4f52f9e67912ae634eecd795a00ea40bfbc7e1",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/nix-cycles32.png",
+      "size": 1029005,
+      "sha256": "f2837745082881e6a9a60e01bc1267f07f3fb90bd0c1c20d4671cc79b61c12bf",
+      "git_blob_sha": "c76ffc3f42ed8c1c82ffb79a59322f5b4b522e1e",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/nix-extension48.png",
+      "size": 1491714,
+      "sha256": "9ac27bbb03b25899c25dc766f1dd2853f86507ac59cb03428772b9d699e70824",
+      "git_blob_sha": "570388f3874e6051ca7f765931adeea9a3f8863d",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/nix-powered40.png",
+      "size": 1803597,
+      "sha256": "82df8d0b153186f5df70fa155dab4a4f66c88c5b9da3c9fcc6c0188c57b194ce",
+      "git_blob_sha": "7d59a206454b919372ede32393b479c5d77f4b11",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/nix-primary03-fix.png",
+      "size": 308036,
+      "sha256": "115060007d61ac06d5518fdd8237cce56842c5106593297bcb4fc3f1c8ff1795",
+      "git_blob_sha": "58b801581448374b8a6511f0c587ac6a3213da95",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/pendle-extension64.png",
+      "size": 2090028,
+      "sha256": "3606ba4319dfca62aba92460c4a9077ada22e50b0aca5fdc6216598adc680f5c",
+      "git_blob_sha": "fb74ae21f1b30583dac8979f9a488abe8c4ad31c",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/pendle-powered40.png",
+      "size": 2449477,
+      "sha256": "073e4cb062df3d548ea7f580d1d1abc13e446bea77b96145680eeb9bf34faba3",
+      "git_blob_sha": "55d7fab5daa1c527f48707d52b4ad02f3e2b2552",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/pendle-reload8.png",
+      "size": 1269625,
+      "sha256": "10d9cf5d72bbc45cba3eacec804d2195a3b46b6cf17381a654f5f3511c05ef81",
+      "git_blob_sha": "2d9d2d7901fc730257ba3e95ee9844ba99d86c70",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/rook-extension64.png",
+      "size": 1623355,
+      "sha256": "2692d2e4c2af84a45b354cd7c067b8fa8e06167570ed69d1d84799382616476b",
+      "git_blob_sha": "d4b0da19ae93a31d8bb905c58ed83d62f8947863",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/rook-powered_guard8.png",
+      "size": 942420,
+      "sha256": "5aaa741bbf2eb856a79e67ccd8be5ec87f8f3fc514edf4c7b1ea71e90fad6961",
+      "git_blob_sha": "147a404f95f589c0bcee5ae5aeb837487a1182c6",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/rook-powered40.png",
+      "size": 1524230,
+      "sha256": "f75bac94f68582e6e792bf8afb47caf928389eb790d2cc07ae056f6d3c72f81e",
+      "git_blob_sha": "f94180295d7279a43a5c3331b8627bb4318ab4c5",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/rook-primary16.png",
+      "size": 988990,
+      "sha256": "13eddd2cdb5c9110af60e1a10b2c1ee9b327eac238e00249acf1a313a62a3299",
+      "git_blob_sha": "2ecd3dea1a028f9183f2ce2926d9a69872bb8b58",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/tam-extension64.png",
+      "size": 2369201,
+      "sha256": "e88085e6bc184bc854a3cccc5b9ab4868481184ef3b8bc5beb80de4791813d31",
+      "git_blob_sha": "ab714a3a0df3f2f85d6713f34012fe827709d233",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/tam-powered40.png",
+      "size": 2749708,
+      "sha256": "f514860ddfb66f613cede90a4b460e0657777420f74d6b3e894c6684f973c38d",
+      "git_blob_sha": "f88fa3c7fc44b26795897da93d4f68ad7e25192f",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/velvet-extension64.png",
+      "size": 2338424,
+      "sha256": "00cec980e54d573a61f4258c6d5298c3d482cd183dfecce5f70c3a1a89056334",
+      "git_blob_sha": "81a8e7d2d197c440db31947da26548afddb858e8",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/velvet-powered-primary-exit16.png",
+      "size": 1522934,
+      "sha256": "ab0d06ef39bd3c65d4dd37bf292f02abe80ffae40da9ab819c91b53c1bfcfea5",
+      "git_blob_sha": "c6e37a57a121331655ecf4e50616d80c6bde9734",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/velvet-powered-primary-single-v2.png",
+      "size": 664810,
+      "sha256": "91539cf58bb65c546ad74f63e7df508ea73cc899292bf3da03e3432b225377c3",
+      "git_blob_sha": "e45ecb6e6899b35eaa04260d4f20588274b183e0",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/velvet-powered40.png",
+      "size": 1962085,
+      "sha256": "851cc640bb4a12a00c04b8793c94a5da0ce8107065af9f722b21658929be3107",
+      "git_blob_sha": "56706a6fccdc8c43a9619bf1076832120ab38138",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/v3/velvet-primary16.png",
+      "size": 1448512,
+      "sha256": "0d5f4f80cd28a9ee675dcd0720a7b0d16390dcddb9e1c7170c57fb7c90c45962",
+      "git_blob_sha": "d9dd8d7c027883550df0da63ddc743444317ffe8",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "art-source/animated/velvet-64.png",
+      "size": 2172122,
+      "sha256": "a74ab9ad0a41716b66d4bdae69487ae52a95e985f033f3411914ff1f821a91b3",
+      "git_blob_sha": "b6275ddab6598e7b2fce4a5267c108e9df1ed8dd",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "assets/cairn/boulder-0.png",
+      "size": 2457,
+      "sha256": "0c39024b80d41d0fca965be4c88b19791ecc0125279662d26476989c7091fadb",
+      "git_blob_sha": "695fff3ba97994bb2cd8f2f10e44699941e1ac14",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "assets/cairn/boulder-1.png",
+      "size": 2501,
+      "sha256": "676e140101cdc0fd61b2723e4202da1aaf5a26b9e86ef6bb9e803fba080be6fb",
+      "git_blob_sha": "84bbd8e320c0e8a25ec04a514aa223eaabc6b9af",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "assets/cairn/boulder-2.png",
+      "size": 2452,
+      "sha256": "90749e8e7270eb8985633832e198890575e09b9cbe98ea762595768e4251729b",
+      "git_blob_sha": "d6907c15273a4ece86f3efd60e6a81dab549349a",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "assets/cairn/boulder-3.png",
+      "size": 2542,
+      "sha256": "2ea769ff116fd728897b6913acc037c28958aa15e2da0c7d802cbfe970a34bf7",
+      "git_blob_sha": "516f553030e83b6fe298b88cadc293b4f28509b2",
+      "uploaded": true,
+      "reused": false
+    },
+    {
+      "path": "assets/cairn/boulder.png",
+      "size": 2457,
+      "sha256": "0c39024b80d41d0fca965be4c88b19791ecc0125279662d26476989c7091fadb",
+      "git_blob_sha": "695fff3ba97994bb2cd8f2f10e44699941e1ac14",
+      "uploaded": true,
+      "reused": true
+    },
+    {
+      "path": "art-source/animated/velvet-special04-fix.png",
+      "size": 316892,
+      "sha256": "15cbf04f51da83e4cd619aa45ccec4ebbf961d66a7233f8e2d1bdc03306c71ce",
+      "git_blob_sha": "fd7bcbae3d9d03c716e26e311f1294e381dbae7e",
+      "uploaded": true,
+      "reused": false
+    }
+  ]
+}

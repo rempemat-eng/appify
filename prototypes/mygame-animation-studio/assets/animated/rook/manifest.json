@@ -1,0 +1,4136 @@
+{
+  "id": "rook",
+  "name": "Rook",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        170,
+        327,
+        481,
+        620,
+        783,
+        940,
+        1096,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        167,
+        322,
+        478,
+        662,
+        823,
+        977,
+        1124,
+        1254
+      ],
+      "baselines": {
+        "0": 159.0,
+        "3": 648.0,
+        "5": 966.0,
+        "6": 1116.25,
+        "7": 1244.0
+      },
+      "body_height": 134.0,
+      "body_min_area": 2418,
+      "path": "art-source/animated/rook-64.png",
+      "base_scale": 0.7164179104477612
+    },
+    {
+      "width": 1774,
+      "height": 887,
+      "columns": 4,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        451,
+        894,
+        1339,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        471,
+        887
+      ],
+      "baselines": {
+        "0": 437.0,
+        "1": 845.0
+      },
+      "body_height": 335.0,
+      "body_min_area": 16186,
+      "path": "art-source/animated/rook-special8.png",
+      "base_scale": 0.2865671641791045
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        179,
+        321,
+        479,
+        636,
+        793,
+        951,
+        1110,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        196,
+        349,
+        501,
+        662,
+        820,
+        972,
+        1122,
+        1254
+      ],
+      "baselines": {
+        "0": 179.0,
+        "1": 338.0,
+        "4": 814.0,
+        "5": 953.25,
+        "6": 1103.25,
+        "7": 1241.0
+      },
+      "body_height": 123.0,
+      "body_min_area": 1958,
+      "path": "art-source/animated/v3/rook-extension64.png",
+      "base_scale": 0.7804878048780488
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        163,
+        320,
+        477,
+        634,
+        790,
+        946,
+        1103,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        324,
+        568,
+        812,
+        1040,
+        1254
+      ],
+      "baselines": {
+        "0": 285.0,
+        "1": 526.0,
+        "2": 766.25,
+        "4": 1225.0
+      },
+      "body_height": 163.0,
+      "body_min_area": 3758,
+      "path": "art-source/animated/v3/rook-powered40.png",
+      "base_scale": 0.588957055214724
+    },
+    {
+      "width": 2172,
+      "height": 724,
+      "columns": 8,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        274,
+        538,
+        810,
+        1084,
+        1358,
+        1631,
+        1902,
+        2172
+      ],
+      "row_cuts": [
+        0,
+        418,
+        724
+      ],
+      "baselines": {
+        "0": 364.0,
+        "1": 682.0
+      },
+      "body_height": 207.0,
+      "body_min_area": 6491,
+      "path": "art-source/animated/v3/rook-primary16.png",
+      "base_scale": 0.463768115942029
+    },
+    {
+      "width": 1774,
+      "height": 887,
+      "columns": 4,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        458,
+        896,
+        1338,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        474,
+        887
+      ],
+      "baselines": {
+        "0": 426.0,
+        "1": 836.0
+      },
+      "body_height": 308.5,
+      "body_min_area": 16763,
+      "path": "art-source/animated/v3/rook-powered_guard8.png",
+      "base_scale": 0.31118314424635335
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/rook-thrusters.json",
+      "sha256": "20338e86a397abfcc3d16fc97513136ad955059da8623e35949974531343c0d0"
+    },
+    {
+      "path": "art-source/animated/v3/tech-anchors.json",
+      "sha256": "f683926becea8faa182506366a618ca5a0b3a3ba280349f3cdbfdc70468948e6"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/idle-00.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 0,
+          "source_bounds": [
+            39,
+            23,
+            144,
+            158
+          ],
+          "source_origin": [
+            85.0,
+            159.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            63,
+            75,
+            138,
+            172
+          ],
+          "sha256": "2c8d818bb3004dc9db1dc34b3fc7ef8a3ae5653ac5cbffee415141958e6b88ff"
+        },
+        {
+          "path": "res://assets/animated/rook/idle-01.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 1,
+          "source_bounds": [
+            198,
+            26,
+            302,
+            159
+          ],
+          "source_origin": [
+            248.5,
+            159.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            77,
+            135,
+            172
+          ],
+          "sha256": "05165c2565dec9fc3552afeb315729bc0e1836a050f77318f62d8542e54efc34"
+        },
+        {
+          "path": "res://assets/animated/rook/idle-02.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 2,
+          "source_bounds": [
+            361,
+            21,
+            464,
+            159
+          ],
+          "source_origin": [
+            404.0,
+            159.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            65,
+            73,
+            139,
+            172
+          ],
+          "sha256": "c56ef46417cca907be3f223f6eb7b36af3073d998e66d58d34a96a3be4cf93bc"
+        },
+        {
+          "path": "res://assets/animated/rook/idle-03.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 3,
+          "source_bounds": [
+            509,
+            23,
+            613,
+            158
+          ],
+          "source_origin": [
+            550.5,
+            159.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            75,
+            141,
+            172
+          ],
+          "sha256": "42ccac9974be77799b61e05cecf5c7f236212c7b33472477cb98de65dc540b63"
+        },
+        {
+          "path": "res://assets/animated/rook/idle-04.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 4,
+          "source_bounds": [
+            663,
+            23,
+            766,
+            158
+          ],
+          "source_origin": [
+            701.5,
+            159.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            75,
+            142,
+            172
+          ],
+          "sha256": "ab18736a33a3943914a07b49f7d420f851a72e3088819f07155a2d984843598c"
+        },
+        {
+          "path": "res://assets/animated/rook/idle-05.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 5,
+          "source_bounds": [
+            823,
+            26,
+            930,
+            159
+          ],
+          "source_origin": [
+            861.5,
+            159.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            77,
+            145,
+            172
+          ],
+          "sha256": "92f6c63d25d8fbe9f907bfbf9927d7e73da5977430fa852cb412d1306ec08427"
+        },
+        {
+          "path": "res://assets/animated/rook/idle-06.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 6,
+          "source_bounds": [
+            978,
+            24,
+            1083,
+            159
+          ],
+          "source_origin": [
+            1018.0,
+            159.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            67,
+            75,
+            142,
+            172
+          ],
+          "sha256": "153b3ad865470594bf1f62763039618e317f8cf257339b049d5116825900a267"
+        },
+        {
+          "path": "res://assets/animated/rook/idle-07.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1133,
+            22,
+            1235,
+            159
+          ],
+          "source_origin": [
+            1175.0,
+            159.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            74,
+            139,
+            172
+          ],
+          "sha256": "cd66b6a5a796a160af1222f3a03d7a63efea7b889a1ea355885815d096f5a052"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/walk-00.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            36,
+            54,
+            132,
+            177
+          ],
+          "source_origin": [
+            89.5,
+            179.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            54,
+            74,
+            129,
+            170
+          ],
+          "sha256": "00b404bf8a7bfa2a92a465736f83ddda7df57540f216a27b83ab844c25424fa9"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-01.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            195,
+            56,
+            289,
+            178
+          ],
+          "source_origin": [
+            250.0,
+            179.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            53,
+            76,
+            126,
+            171
+          ],
+          "sha256": "77ffc72c13e9fab50ee365b81144bcf68bdd6f5234ce4555b876d17ecc43d8de"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-02.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            355,
+            51,
+            450,
+            179
+          ],
+          "source_origin": [
+            400.0,
+            179.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            61,
+            72,
+            135,
+            172
+          ],
+          "sha256": "7cc7357b7dcdcee7a5496b3d71ad30024a5e3ceec619c972b6513be0dee15b5f"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-03.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            514,
+            51,
+            609,
+            178
+          ],
+          "source_origin": [
+            557.5,
+            179.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            62,
+            72,
+            136,
+            171
+          ],
+          "sha256": "ceeffe82dcf34d23f654291e949e3fa021edff119543f4fe2b25e111263f37ab"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-04.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            671,
+            55,
+            766,
+            179
+          ],
+          "source_origin": [
+            714.5,
+            179.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            62,
+            75,
+            136,
+            172
+          ],
+          "sha256": "094cd1a5940927782dda2a0f1a33d1762f33460b7d046a03f9a7e02a5b5830f9"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-05.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            831,
+            53,
+            925,
+            180
+          ],
+          "source_origin": [
+            872.0,
+            179.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            64,
+            74,
+            137,
+            173
+          ],
+          "sha256": "9d80ec1c5e975048b84e3ea43fb4d57f4dd227b08865bbaffee26e6f922a7695"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-06.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            983,
+            52,
+            1085,
+            179
+          ],
+          "source_origin": [
+            1030.5,
+            179.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            59,
+            73,
+            139,
+            172
+          ],
+          "sha256": "93ca82b42294b3ebbb661662e8ecedbd86793cf0544f0e44d8f8920b878421b3"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-07.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1148,
+            54,
+            1241,
+            178
+          ],
+          "source_origin": [
+            1182.0,
+            179.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            69,
+            74,
+            142,
+            171
+          ],
+          "sha256": "f96587201d6a2f27a46885f16ff35277252622268ba2075f8bc0d9b8257083f9"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-08.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            37,
+            213,
+            133,
+            337
+          ],
+          "source_origin": [
+            89.5,
+            338.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            55,
+            74,
+            130,
+            171
+          ],
+          "sha256": "4654c4cd80cdfa1c2c67f43fc5451bf414b75313d248dc2483333bec8ec89763"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-09.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            195,
+            214,
+            291,
+            337
+          ],
+          "source_origin": [
+            250.0,
+            338.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            53,
+            75,
+            128,
+            171
+          ],
+          "sha256": "4363e5d439d0a7b6a1ac607c3d51a74545467416eb9ed70a28d091838407b152"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-10.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            353,
+            214,
+            449,
+            338
+          ],
+          "source_origin": [
+            400.0,
+            338.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            59,
+            75,
+            134,
+            172
+          ],
+          "sha256": "5f84e7db2621770c8240c687f6146983270bd060f58abe6474d0f2d881f2d4cf"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-11.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            506,
+            212,
+            606,
+            338
+          ],
+          "source_origin": [
+            557.5,
+            338.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            56,
+            74,
+            134,
+            172
+          ],
+          "sha256": "a20506b6cc324604f39eb3b4fb53c51f60cb1a5755e4b18fb65ccc7c1fe4ae15"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-12.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            668,
+            214,
+            765,
+            339
+          ],
+          "source_origin": [
+            714.5,
+            338.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            60,
+            75,
+            136,
+            173
+          ],
+          "sha256": "6c34443b86ffc3590b1a3f8abee596c30c0171950582fed6f99dea76930a528e"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-13.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            826,
+            212,
+            924,
+            337
+          ],
+          "source_origin": [
+            872.0,
+            338.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            60,
+            74,
+            136,
+            172
+          ],
+          "sha256": "fb034c643c75cf3b2a8563bb8003b0bbd3def1b57546925c9d3133a1a7c8f90e"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-14.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            988,
+            213,
+            1087,
+            338
+          ],
+          "source_origin": [
+            1030.5,
+            338.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            63,
+            75,
+            140,
+            172
+          ],
+          "sha256": "139f5ef5c82076d83727c910e2bd59d0b598ba473f2e201f3682d3bb60b581ad"
+        },
+        {
+          "path": "res://assets/animated/rook/walk-15.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1147,
+            213,
+            1240,
+            338
+          ],
+          "source_origin": [
+            1182.0,
+            338.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            69,
+            74,
+            142,
+            172
+          ],
+          "sha256": "eb036d2788690bf38e61d3561058faefc181cb7bf20e313904ea212b7eb7ee26"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/primary-00.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 0,
+          "source_bounds": [
+            62,
+            154,
+            223,
+            364
+          ],
+          "source_origin": [
+            137.0,
+            364.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            61,
+            75,
+            136,
+            172
+          ],
+          "sha256": "cf459c723a7757a3a4b31b35d51bb2288cb74151bf72d4fb9d0c65442117feb4"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-01.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 1,
+          "source_bounds": [
+            316,
+            155,
+            484,
+            364
+          ],
+          "source_origin": [
+            406.0,
+            364.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            75,
+            132,
+            172
+          ],
+          "sha256": "f65a73db19cccb76d1719f1226c845b74ccd84c59ad4aa7cb62feff63546bd6b"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-02.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 2,
+          "source_bounds": [
+            583,
+            155,
+            755,
+            364
+          ],
+          "source_origin": [
+            674.0,
+            364.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            75,
+            134,
+            172
+          ],
+          "sha256": "ec198a769f46457f4355cf2d5b7b223ad00f8cd98234c475df9cd2b271599554"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-03.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 3,
+          "source_bounds": [
+            859,
+            155,
+            1033,
+            364
+          ],
+          "source_origin": [
+            947.0,
+            364.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            55,
+            75,
+            136,
+            172
+          ],
+          "sha256": "d2502ce480f26cbbc9d8ffb345ded5d53bd2265084a5e19414d62eb7131fb540"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-04.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 4,
+          "source_bounds": [
+            1130,
+            156,
+            1313,
+            364
+          ],
+          "source_origin": [
+            1221.0,
+            364.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            76,
+            139,
+            172
+          ],
+          "sha256": "e5336b58350aa288a9859b3eb23afe04202c5057563c587438c613eefacce484"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-05.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 5,
+          "source_bounds": [
+            1406,
+            155,
+            1586,
+            364
+          ],
+          "source_origin": [
+            1494.5,
+            364.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            55,
+            75,
+            138,
+            172
+          ],
+          "sha256": "393a0831de243019cbdfe0393eead9928e64880c2f675f650eb40ade626f0c73"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-06.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 6,
+          "source_bounds": [
+            1678,
+            155,
+            1864,
+            364
+          ],
+          "source_origin": [
+            1766.5,
+            364.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            55,
+            75,
+            141,
+            172
+          ],
+          "sha256": "efc9f6e4cca4bd3f27e18bb5f9ffa9204e4e9c6f69fccb74cfd21734e6502c37"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-07.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 7,
+          "source_bounds": [
+            1947,
+            156,
+            2134,
+            364
+          ],
+          "source_origin": [
+            2037.0,
+            364.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            76,
+            141,
+            172
+          ],
+          "sha256": "66ebb8e6321af18179038883a03ff284481222a6948010380712c0ae3d7649be"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-08.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 8,
+          "source_bounds": [
+            54,
+            471,
+            241,
+            682
+          ],
+          "source_origin": [
+            137.0,
+            682.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            58,
+            74,
+            145,
+            172
+          ],
+          "sha256": "bd766281e01fed5e734f51597764bbbc1137e9263dd4bc14a5ebbe90c8f1e257"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-09.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 9,
+          "source_bounds": [
+            316,
+            471,
+            499,
+            682
+          ],
+          "source_origin": [
+            406.0,
+            682.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            74,
+            139,
+            172
+          ],
+          "sha256": "ace5f1b02fd5e291c70eab6cab3660bc9d44c1423d5df324bb8ea362bb1174f7"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-10.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 10,
+          "source_bounds": [
+            585,
+            470,
+            767,
+            681
+          ],
+          "source_origin": [
+            674.0,
+            682.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            55,
+            74,
+            139,
+            172
+          ],
+          "sha256": "f3476d38bad0a68146b17881e8548aaf230157944be57b120dfeba38bf6d0b74"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-11.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 11,
+          "source_bounds": [
+            856,
+            471,
+            1040,
+            682
+          ],
+          "source_origin": [
+            947.0,
+            682.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            74,
+            139,
+            172
+          ],
+          "sha256": "077e70a375c58abd632ea48e77f4d01acb2c295cadf3ccb755c7895085b9580a"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-12.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 12,
+          "source_bounds": [
+            1130,
+            471,
+            1315,
+            682
+          ],
+          "source_origin": [
+            1221.0,
+            682.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            74,
+            140,
+            172
+          ],
+          "sha256": "e241f733ba3055137bc9b1a96c3e49b8d544b0b1e6947a88bab70e126f5275b1"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-13.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 13,
+          "source_bounds": [
+            1403,
+            471,
+            1584,
+            682
+          ],
+          "source_origin": [
+            1494.5,
+            682.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            74,
+            138,
+            172
+          ],
+          "sha256": "444f397a773ebfcb569b731fc245a9ca0ae1f5080058c822c517f94182dc2ac6"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-14.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 14,
+          "source_bounds": [
+            1674,
+            471,
+            1856,
+            682
+          ],
+          "source_origin": [
+            1766.5,
+            682.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            53,
+            74,
+            137,
+            172
+          ],
+          "sha256": "c470e11eb33cf32d0b7c6855f26d7a590ada668c3cc9caff6268c83f5f260f65"
+        },
+        {
+          "path": "res://assets/animated/rook/primary-15.png",
+          "source": "art-source/animated/v3/rook-primary16.png",
+          "slot": 15,
+          "source_bounds": [
+            1946,
+            471,
+            2116,
+            682
+          ],
+          "source_origin": [
+            2037.0,
+            682.0
+          ],
+          "scale": 0.463768115942029,
+          "packed_bounds": [
+            54,
+            74,
+            133,
+            172
+          ],
+          "sha256": "b76dcc92ab3cdbdf68a18af177fa6fde7ce2fa2e974d17c02e0c219d90982443"
+        }
+      ],
+      "release_anchor": [
+        48,
+        -64
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 3,
+      "release_time": 0.22000000000000003,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/secondary-00.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 24,
+          "source_bounds": [
+            41,
+            525,
+            145,
+            648
+          ],
+          "source_origin": [
+            85.0,
+            648.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            84,
+            139,
+            172
+          ],
+          "sha256": "2641f469ca5e1227059ef9fed86db63901a61286f2d7c01754dd3b113483ca29",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/secondary-01.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 25,
+          "source_bounds": [
+            199,
+            534,
+            310,
+            648
+          ],
+          "source_origin": [
+            248.5,
+            648.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            61,
+            90,
+            141,
+            172
+          ],
+          "sha256": "63f6df90fd0a0a6a30e741eed6595621b5a8ea20da7c31a88a18cc44863d4d3c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/secondary-02.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 26,
+          "source_bounds": [
+            354,
+            519,
+            466,
+            648
+          ],
+          "source_origin": [
+            404.0,
+            648.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            80,
+            140,
+            172
+          ],
+          "sha256": "f1df37432e598ef9390b2a9cc4a5ec7fdd7d7a19607502ee3ba34ce0c55ea20a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/secondary-03.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 27,
+          "source_bounds": [
+            506,
+            486,
+            616,
+            630
+          ],
+          "source_origin": [
+            550.5,
+            630.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            69,
+            142,
+            172
+          ],
+          "sha256": "b0eee89e9401101c58b0bf3214c3a2f8c277dbd560093b8b5f4335dc074a7fe0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/secondary-04.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 28,
+          "source_bounds": [
+            661,
+            479,
+            748,
+            601
+          ],
+          "source_origin": [
+            701.5,
+            601.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            67,
+            85,
+            129,
+            172
+          ],
+          "sha256": "04a8976aeca41d69e36417e04239fc86fda55734dded3e8c232edf92ba761b4e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/secondary-05.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 29,
+          "source_bounds": [
+            817,
+            517,
+            929,
+            646
+          ],
+          "source_origin": [
+            861.5,
+            646.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            80,
+            144,
+            172
+          ],
+          "sha256": "86997a3f4f088912f843118889a84a96595768cee71e7b1674ac3b5f984c119d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/secondary-06.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 30,
+          "source_bounds": [
+            974,
+            544,
+            1092,
+            648
+          ],
+          "source_origin": [
+            1018.0,
+            648.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            97,
+            149,
+            172
+          ],
+          "sha256": "2413b92bc975a4a8bb1490894d2b11328374cb42c9090efc4c0540cee58a0bdf",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/secondary-07.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1130,
+            512,
+            1234,
+            648
+          ],
+          "source_origin": [
+            1175.0,
+            648.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            75,
+            139,
+            172
+          ],
+          "sha256": "5d3bbd70934e6d94306dd4b0350adb05c52aa5a7156ad8af0c1d965bab158cf3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ],
+      "thruster_anchors": [
+        [
+          -26,
+          -59
+        ]
+      ],
+      "release_anchor": [
+        45,
+        -70
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/special-00.png",
+          "source": "art-source/animated/rook-special8.png",
+          "slot": 0,
+          "source_bounds": [
+            107,
+            97,
+            364,
+            437
+          ],
+          "source_origin": [
+            225.5,
+            437.0
+          ],
+          "scale": 0.2865671641791045,
+          "packed_bounds": [
+            62,
+            75,
+            136,
+            172
+          ],
+          "sha256": "a8910ea68240cfad10de8433988b90acbe0e3a96a99b1889db6d2d14c12aa5a7"
+        },
+        {
+          "path": "res://assets/animated/rook/special-01.png",
+          "source": "art-source/animated/rook-special8.png",
+          "slot": 1,
+          "source_bounds": [
+            553,
+            98,
+            806,
+            437
+          ],
+          "source_origin": [
+            672.5,
+            437.0
+          ],
+          "scale": 0.2865671641791045,
+          "packed_bounds": [
+            62,
+            75,
+            135,
+            172
+          ],
+          "sha256": "4da959819db91d82886fcad54a904fa747cfa3bd365d582fe0f5a7325f25cc01"
+        },
+        {
+          "path": "res://assets/animated/rook/special-02.png",
+          "source": "art-source/animated/rook-special8.png",
+          "slot": 2,
+          "source_bounds": [
+            978,
+            101,
+            1242,
+            437
+          ],
+          "source_origin": [
+            1116.5,
+            437.0
+          ],
+          "scale": 0.2865671641791045,
+          "packed_bounds": [
+            56,
+            76,
+            132,
+            172
+          ],
+          "sha256": "077de55ea50f3ab45c5173268be2ca74a4f6e2e7bf080d62bdcfbea2bb69c53b"
+        },
+        {
+          "path": "res://assets/animated/rook/special-03.png",
+          "source": "art-source/animated/rook-special8.png",
+          "slot": 3,
+          "source_bounds": [
+            1434,
+            95,
+            1668,
+            437
+          ],
+          "source_origin": [
+            1556.5,
+            437.0
+          ],
+          "scale": 0.2865671641791045,
+          "packed_bounds": [
+            61,
+            74,
+            128,
+            172
+          ],
+          "sha256": "91c7ac1cbb727261c6549f5e2000d3f2231da2e09c233bf575e0b9570548183f"
+        },
+        {
+          "path": "res://assets/animated/rook/special-04.png",
+          "source": "art-source/animated/rook-special8.png",
+          "slot": 4,
+          "source_bounds": [
+            105,
+            505,
+            341,
+            845
+          ],
+          "source_origin": [
+            225.5,
+            845.0
+          ],
+          "scale": 0.2865671641791045,
+          "packed_bounds": [
+            61,
+            75,
+            129,
+            172
+          ],
+          "sha256": "7987f4675051d64c291195a733f2d8a0c606db6e13b49cb68aa49e8e273f0e59"
+        },
+        {
+          "path": "res://assets/animated/rook/special-05.png",
+          "source": "art-source/animated/rook-special8.png",
+          "slot": 5,
+          "source_bounds": [
+            548,
+            503,
+            784,
+            845
+          ],
+          "source_origin": [
+            672.5,
+            845.0
+          ],
+          "scale": 0.2865671641791045,
+          "packed_bounds": [
+            60,
+            74,
+            128,
+            172
+          ],
+          "sha256": "53bbd1775bc539373db16a036f9834a7b1abc1bbff965201d7576ad3e80acfea"
+        },
+        {
+          "path": "res://assets/animated/rook/special-06.png",
+          "source": "art-source/animated/rook-special8.png",
+          "slot": 6,
+          "source_bounds": [
+            992,
+            503,
+            1252,
+            845
+          ],
+          "source_origin": [
+            1116.5,
+            845.0
+          ],
+          "scale": 0.2865671641791045,
+          "packed_bounds": [
+            60,
+            74,
+            135,
+            172
+          ],
+          "sha256": "1961a89875b83fb90e8dea90b131a890e2bb92c25243a80eb02cefb96aa570f3"
+        },
+        {
+          "path": "res://assets/animated/rook/special-07.png",
+          "source": "art-source/animated/rook-special8.png",
+          "slot": 7,
+          "source_bounds": [
+            1436,
+            504,
+            1710,
+            845
+          ],
+          "source_origin": [
+            1556.5,
+            845.0
+          ],
+          "scale": 0.2865671641791045,
+          "packed_bounds": [
+            61,
+            74,
+            140,
+            172
+          ],
+          "sha256": "4950964e5e8a80293b7276da52b014d69d504483f79b502d28b1e7f2ef3bde02"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/guard-00.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 40,
+          "source_bounds": [
+            40,
+            836,
+            139,
+            966
+          ],
+          "source_origin": [
+            85.0,
+            966.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            79,
+            135,
+            172
+          ],
+          "sha256": "5cf48285d0eafa137ae1c168d53ab33e640a515bea011755e02f78fb05ae3a85"
+        },
+        {
+          "path": "res://assets/animated/rook/guard-01.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 41,
+          "source_bounds": [
+            184,
+            833,
+            303,
+            966
+          ],
+          "source_origin": [
+            248.5,
+            966.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            50,
+            77,
+            135,
+            172
+          ],
+          "sha256": "f3a375a6ff2382c0e5c10549427c98a320c6462270fe501c9a78d95fb187c410"
+        },
+        {
+          "path": "res://assets/animated/rook/guard-02.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 42,
+          "source_bounds": [
+            348,
+            834,
+            457,
+            965
+          ],
+          "source_origin": [
+            404.0,
+            966.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            56,
+            77,
+            134,
+            171
+          ],
+          "sha256": "322605e0553884cd2a5afdc60784fde63146bf6a193e24a365644c27daa1d791"
+        },
+        {
+          "path": "res://assets/animated/rook/guard-03.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 43,
+          "source_bounds": [
+            500,
+            836,
+            611,
+            965
+          ],
+          "source_origin": [
+            550.5,
+            966.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            79,
+            140,
+            171
+          ],
+          "sha256": "ae2b5ed645578241a8fda098c6704b0404987ebce33c0c78d3617952fa9b74b3"
+        },
+        {
+          "path": "res://assets/animated/rook/guard-04.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 44,
+          "source_bounds": [
+            659,
+            830,
+            755,
+            966
+          ],
+          "source_origin": [
+            701.5,
+            966.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            75,
+            135,
+            172
+          ],
+          "sha256": "c5941a5e66401d3c6299c7aceb44db33260b81eb1741773e02dd122f238c5038"
+        },
+        {
+          "path": "res://assets/animated/rook/guard-05.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 45,
+          "source_bounds": [
+            818,
+            835,
+            916,
+            966
+          ],
+          "source_origin": [
+            861.5,
+            966.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            65,
+            78,
+            135,
+            172
+          ],
+          "sha256": "5eb4ab42f7b7fd20293478daa9464e63cdfb56f8d3160ed50024efb31f771216"
+        },
+        {
+          "path": "res://assets/animated/rook/guard-06.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 46,
+          "source_bounds": [
+            973,
+            835,
+            1080,
+            966
+          ],
+          "source_origin": [
+            1018.0,
+            966.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            78,
+            141,
+            172
+          ],
+          "sha256": "ad0c9d88c6d9ff9452d21404bb26d10e30c26acd404e27e4808fc392e3421833"
+        },
+        {
+          "path": "res://assets/animated/rook/guard-07.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1124,
+            833,
+            1224,
+            966
+          ],
+          "source_origin": [
+            1175.0,
+            966.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            59,
+            77,
+            131,
+            172
+          ],
+          "sha256": "12beceeb32aa0422f56d558011095804a90dc6ec3cac8fff8ae1dd032913b041"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/hit-00.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 48,
+          "source_bounds": [
+            42,
+            991,
+            137,
+            1115
+          ],
+          "source_origin": [
+            85.0,
+            1116.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            65,
+            82,
+            133,
+            171
+          ],
+          "sha256": "099881b3f7b4eb761dff2b57bf56daa37053cf1a6fe520222438c804aa822d90"
+        },
+        {
+          "path": "res://assets/animated/rook/hit-01.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 49,
+          "source_bounds": [
+            196,
+            992,
+            304,
+            1115
+          ],
+          "source_origin": [
+            248.5,
+            1116.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            58,
+            83,
+            135,
+            171
+          ],
+          "sha256": "56680d586a0f80038e041fe26e318a9bbbdd1690a598e37f7481de338e04860e"
+        },
+        {
+          "path": "res://assets/animated/rook/hit-02.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 50,
+          "source_bounds": [
+            353,
+            1000,
+            457,
+            1113
+          ],
+          "source_origin": [
+            404.0,
+            1116.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            59,
+            89,
+            134,
+            170
+          ],
+          "sha256": "f387b2925bee310ad74bacedbeeba38f2953de2b5f885f71d5a68d41e6a3e7d0"
+        },
+        {
+          "path": "res://assets/animated/rook/hit-03.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 51,
+          "source_bounds": [
+            509,
+            1017,
+            611,
+            1117
+          ],
+          "source_origin": [
+            550.5,
+            1116.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            101,
+            139,
+            173
+          ],
+          "sha256": "c94e0ed0ae114e232742d303a27c806610ca8c326134d1251f301de9d5b5f9b4"
+        },
+        {
+          "path": "res://assets/animated/rook/hit-04.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 52,
+          "source_bounds": [
+            662,
+            1014,
+            767,
+            1115
+          ],
+          "source_origin": [
+            701.5,
+            1116.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            99,
+            143,
+            171
+          ],
+          "sha256": "6fd725231c7eb6514f59adf169720b4ca5c00a0942b3f484b8be9d3b41b7a16b"
+        },
+        {
+          "path": "res://assets/animated/rook/hit-05.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 53,
+          "source_bounds": [
+            813,
+            1001,
+            919,
+            1116
+          ],
+          "source_origin": [
+            861.5,
+            1116.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            61,
+            89,
+            137,
+            171
+          ],
+          "sha256": "12e93eab1560f30836bdf388c46a55bec5bee55b8dc36210b3bd7d53cef3477e"
+        },
+        {
+          "path": "res://assets/animated/rook/hit-06.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 54,
+          "source_bounds": [
+            973,
+            990,
+            1081,
+            1116
+          ],
+          "source_origin": [
+            1018.0,
+            1116.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            82,
+            141,
+            172
+          ],
+          "sha256": "fc40f3b71b117bbbef08d48153a6fb09f0eeb24acc9f1941323d8665bd84fdd7"
+        },
+        {
+          "path": "res://assets/animated/rook/hit-07.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1130,
+            986,
+            1235,
+            1117
+          ],
+          "source_origin": [
+            1175.0,
+            1116.25
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            79,
+            139,
+            173
+          ],
+          "sha256": "e1d178510e540b6e4fe04a5c8c520693e817b6d262d5bc315084f78f27df3473"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/defeat-00.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 56,
+          "source_bounds": [
+            35,
+            1125,
+            132,
+            1244
+          ],
+          "source_origin": [
+            85.0,
+            1244.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            87,
+            129,
+            172
+          ],
+          "sha256": "2879cda7d01daee005be54031af4f6da9530dbbcdb7372bf5cc52daa2d8a5264"
+        },
+        {
+          "path": "res://assets/animated/rook/defeat-01.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 57,
+          "source_bounds": [
+            182,
+            1144,
+            281,
+            1244
+          ],
+          "source_origin": [
+            248.5,
+            1244.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            48,
+            100,
+            119,
+            172
+          ],
+          "sha256": "5d30a402f8053bd27c4b11260d3379462573b50755f3b4241479149e012289dd"
+        },
+        {
+          "path": "res://assets/animated/rook/defeat-02.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 58,
+          "source_bounds": [
+            339,
+            1150,
+            433,
+            1244
+          ],
+          "source_origin": [
+            404.0,
+            1244.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            49,
+            105,
+            116,
+            172
+          ],
+          "sha256": "f8c191da294b34195e59e9f555efbc4f1ea3138be0a74c85a50d7fd1cd1d8f8b"
+        },
+        {
+          "path": "res://assets/animated/rook/defeat-03.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 59,
+          "source_bounds": [
+            484,
+            1167,
+            597,
+            1245
+          ],
+          "source_origin": [
+            550.5,
+            1244.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            48,
+            117,
+            129,
+            173
+          ],
+          "sha256": "f3147c14178d0dd8b229d1aa516f57cef359a00c6bccb6c218f5a3cd05daa9d1"
+        },
+        {
+          "path": "res://assets/animated/rook/defeat-04.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 60,
+          "source_bounds": [
+            619,
+            1173,
+            761,
+            1243
+          ],
+          "source_origin": [
+            701.5,
+            1244.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            37,
+            121,
+            139,
+            171
+          ],
+          "sha256": "2e1460d543d72d8d872b63459fb6e02a2a013aeab56645aaa67f18db06f65cac"
+        },
+        {
+          "path": "res://assets/animated/rook/defeat-05.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 61,
+          "source_bounds": [
+            784,
+            1182,
+            921,
+            1243
+          ],
+          "source_origin": [
+            861.5,
+            1244.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            40,
+            128,
+            138,
+            172
+          ],
+          "sha256": "155849ddb7a86c212d6f51241e7e678a0be43570c240590afbde9bc5357cb1f8"
+        },
+        {
+          "path": "res://assets/animated/rook/defeat-06.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 62,
+          "source_bounds": [
+            941,
+            1186,
+            1077,
+            1243
+          ],
+          "source_origin": [
+            1018.0,
+            1244.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            41,
+            130,
+            138,
+            171
+          ],
+          "sha256": "f4c7fe6c02b01957e25c9c0fdf59e4264c3c68e47622326f9ff0839fa06523e0"
+        },
+        {
+          "path": "res://assets/animated/rook/defeat-07.png",
+          "source": "art-source/animated/rook-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1097,
+            1191,
+            1235,
+            1243
+          ],
+          "source_origin": [
+            1175.0,
+            1244.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            40,
+            134,
+            139,
+            171
+          ],
+          "sha256": "cfb55dba78358772482749e8810f6818ccae2c11508013269a577ae747ff04e6"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/jump-00.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            37,
+            707,
+            131,
+            814
+          ],
+          "source_origin": [
+            89.5,
+            814.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            55,
+            88,
+            128,
+            172
+          ],
+          "sha256": "9c0d846f77b61d974956b482d54572f88d40f03c8dac6e4f030c225198a47308",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/jump-01.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            193,
+            677,
+            291,
+            814
+          ],
+          "source_origin": [
+            250.0,
+            814.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            53,
+            65,
+            128,
+            172
+          ],
+          "sha256": "0b70f2aaddb5a4fe522017ec14f0a35cfac94a8138ea1ea2b7a3ce14977b3f07",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/jump-02.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            351,
+            673,
+            452,
+            802
+          ],
+          "source_origin": [
+            400.0,
+            802.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            58,
+            71,
+            137,
+            172
+          ],
+          "sha256": "8840c93a3e9e7202e939cf788b8a0541a2d3f61c708e4a7b818852c830dffb36",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/jump-03.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            510,
+            665,
+            611,
+            794
+          ],
+          "source_origin": [
+            557.5,
+            794.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            59,
+            72,
+            138,
+            172
+          ],
+          "sha256": "7514e464cf919c511e991a5d56461dce7774d4cc4770c22d81452ba645d8fcf1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/jump-04.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            666,
+            668,
+            764,
+            777
+          ],
+          "source_origin": [
+            714.5,
+            777.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            58,
+            87,
+            134,
+            172
+          ],
+          "sha256": "c786042b2b32fc85c71097d6ce9f4cee8c22254a206d5806e9caea73157cfb69",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/jump-05.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            821,
+            680,
+            921,
+            807
+          ],
+          "source_origin": [
+            872.0,
+            807.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            56,
+            73,
+            134,
+            172
+          ],
+          "sha256": "c3bd8d829d64d2542a35857cf3face3790029577fbce469a219ba145e0168042",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/jump-06.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            981,
+            695,
+            1079,
+            814
+          ],
+          "source_origin": [
+            1030.5,
+            814.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            57,
+            79,
+            133,
+            172
+          ],
+          "sha256": "082ac12238e0fea19504db3e82b468f1eabc4dc76f1028531edcaa75bc2f8772",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/jump-07.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1141,
+            700,
+            1238,
+            813
+          ],
+          "source_origin": [
+            1182.0,
+            813.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            64,
+            84,
+            140,
+            172
+          ],
+          "sha256": "8e23e2ff48b840cf5bea721dd77866925a3444eaa75359b8dc589ef527ef4c72",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/stair_up-00.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            35,
+            840,
+            132,
+            953
+          ],
+          "source_origin": [
+            89.5,
+            953.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            53,
+            84,
+            129,
+            172
+          ],
+          "sha256": "949ba28ddd459d26c30a8a65230a8e8b9bdde2a8843faab27927bf5680615774",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_up-01.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            192,
+            839,
+            288,
+            953
+          ],
+          "source_origin": [
+            250.0,
+            953.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            51,
+            83,
+            126,
+            172
+          ],
+          "sha256": "1931931341495df64ad0385ed96384c86037d69d1fdf68c346839f1ce8db7c8a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_up-02.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            350,
+            833,
+            445,
+            953
+          ],
+          "source_origin": [
+            400.0,
+            953.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            57,
+            78,
+            131,
+            172
+          ],
+          "sha256": "3b80283a2b2c9fd4ae3bf36bbbb87a93c73ba4f785bbc5122b09750dce7ec587",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_up-03.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            510,
+            839,
+            608,
+            953
+          ],
+          "source_origin": [
+            557.5,
+            953.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            59,
+            83,
+            135,
+            172
+          ],
+          "sha256": "117566c706a0e35c2629fdea3cdf85d51757d0c37e9df2283bc660bae793aa5e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_up-04.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            666,
+            836,
+            763,
+            953
+          ],
+          "source_origin": [
+            714.5,
+            953.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            58,
+            81,
+            134,
+            172
+          ],
+          "sha256": "872325b3f9c9a27b1c2982fc6ffb4df3e0e90137db19d801bb9ea57adec36a37",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_up-05.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            823,
+            837,
+            919,
+            953
+          ],
+          "source_origin": [
+            872.0,
+            953.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            58,
+            81,
+            133,
+            172
+          ],
+          "sha256": "5eec3a66a13cd9da75f913e17249c363c7aaa9667817b59655fd84b8cadb8532",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_up-06.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            983,
+            840,
+            1080,
+            955
+          ],
+          "source_origin": [
+            1030.5,
+            955.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            59,
+            82,
+            135,
+            172
+          ],
+          "sha256": "c84ed5675a00f748b94b9c7c073ac8aba7d347eb5f2fb0e7e3b1579d963a93ea",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_up-07.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1143,
+            844,
+            1238,
+            954
+          ],
+          "source_origin": [
+            1182.0,
+            954.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            66,
+            86,
+            140,
+            172
+          ],
+          "sha256": "21bbf2092ee178e3e6d19f8697dbc9c47e225ca82fc1e43be0639ead06cfb3e8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/stair_down-00.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            38,
+            985,
+            133,
+            1097
+          ],
+          "source_origin": [
+            89.5,
+            1097.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            56,
+            85,
+            130,
+            172
+          ],
+          "sha256": "02dd20490b8aebcda5c8a7900dccffa8a004e098a66085f4d6748b3d078b8c02",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_down-01.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            193,
+            995,
+            289,
+            1102
+          ],
+          "source_origin": [
+            250.0,
+            1102.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            52,
+            88,
+            127,
+            172
+          ],
+          "sha256": "ff2955570d2bc45ea6439ccce2b40487b4f620a018b58dbaa43ca5ea26d01fc2",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_down-02.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            344,
+            994,
+            441,
+            1104
+          ],
+          "source_origin": [
+            400.0,
+            1104.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            52,
+            86,
+            128,
+            172
+          ],
+          "sha256": "f3fb167918c2c6d60701f865d88405886d1dc494ce38bde41b9a5fccec2afb60",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_down-03.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            497,
+            1001,
+            590,
+            1104
+          ],
+          "source_origin": [
+            557.5,
+            1104.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            49,
+            92,
+            122,
+            172
+          ],
+          "sha256": "2b2ef53923506b2d090bc6c3d42bc5e3d3fd7cf6f260f7f581c24103621af9f7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_down-04.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            654,
+            1002,
+            756,
+            1103
+          ],
+          "source_origin": [
+            714.5,
+            1103.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            49,
+            93,
+            129,
+            172
+          ],
+          "sha256": "a628a6057463ea72a3cde5f0f990dfe9f0c8d1648abfea92f3e7601b4b1b890c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_down-05.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            821,
+            992,
+            921,
+            1102
+          ],
+          "source_origin": [
+            872.0,
+            1102.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            56,
+            86,
+            134,
+            172
+          ],
+          "sha256": "744565e4fa731210b0e40aafb419a0ef64fcd4c1605f58bbdc153885a2ce6e17",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_down-06.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            982,
+            987,
+            1079,
+            1102
+          ],
+          "source_origin": [
+            1030.5,
+            1102.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            58,
+            82,
+            134,
+            172
+          ],
+          "sha256": "e2469a0822f62d2c0abf7a47bd1e811789111478232d3ab0ca41a340f0e32809",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/stair_down-07.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1141,
+            984,
+            1238,
+            1099
+          ],
+          "source_origin": [
+            1182.0,
+            1099.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            64,
+            82,
+            140,
+            172
+          ],
+          "sha256": "415379f005392fb0f004d41e9eb57a458b6fc1d8b58d00edd312debfd16c5cbd",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/dodge-00.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            38,
+            1137,
+            124,
+            1241
+          ],
+          "source_origin": [
+            89.5,
+            1241.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            56,
+            91,
+            123,
+            172
+          ],
+          "sha256": "53b455899ed2ed0911517b7940daad17d7e6d437d0aa4b23174ad084c7c0a366",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/dodge-01.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            181,
+            1150,
+            276,
+            1241
+          ],
+          "source_origin": [
+            250.0,
+            1241.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            42,
+            101,
+            116,
+            172
+          ],
+          "sha256": "d3bd919904321a4d616b138613851f1ae21cb8a1190c9c068e39bd1824ab4732",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/dodge-02.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            339,
+            1150,
+            435,
+            1242
+          ],
+          "source_origin": [
+            400.0,
+            1242.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            48,
+            100,
+            123,
+            172
+          ],
+          "sha256": "21cd589d50c6aca958b63039393772b05eb3725af33f16863d3e8d36a3118aa3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/dodge-03.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            487,
+            1152,
+            600,
+            1241
+          ],
+          "source_origin": [
+            557.5,
+            1241.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            41,
+            103,
+            129,
+            172
+          ],
+          "sha256": "9658d07c64644360f9e31f691a7ff274a625ed0034d7e9aa2cbc8762f80b421a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/dodge-04.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            642,
+            1158,
+            767,
+            1241
+          ],
+          "source_origin": [
+            714.5,
+            1241.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            39,
+            107,
+            137,
+            172
+          ],
+          "sha256": "753226089b17089f9a0839acd6f8ea20d6b0c9d8d543ff0cec1ea672ed9ef48c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/dodge-05.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            813,
+            1153,
+            929,
+            1240
+          ],
+          "source_origin": [
+            872.0,
+            1240.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            50,
+            104,
+            141,
+            172
+          ],
+          "sha256": "5662b5f63f7e72101cbc7b66982644e7d4769f3392cde0a108e5fab9fc6ea575",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/dodge-06.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            972,
+            1150,
+            1082,
+            1241
+          ],
+          "source_origin": [
+            1030.5,
+            1241.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            50,
+            101,
+            136,
+            172
+          ],
+          "sha256": "7f3753e5fac4f97254256e16dabba08e1888c6fc05a98ae39386c35c78f115c9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/rook/dodge-07.png",
+          "source": "art-source/animated/v3/rook-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1140,
+            1144,
+            1236,
+            1241
+          ],
+          "source_origin": [
+            1182.0,
+            1241.0
+          ],
+          "scale": 0.7804878048780488,
+          "packed_bounds": [
+            63,
+            96,
+            138,
+            172
+          ],
+          "sha256": "a22680863841a37f96a922705b4484333fbbd3ba7c34e85d94951011e04fca3c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/powered_idle-00.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            19,
+            121,
+            153,
+            285
+          ],
+          "source_origin": [
+            81.5,
+            285.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            59,
+            75,
+            138,
+            172
+          ],
+          "sha256": "7f602fe4391a98a5dfa1220bd0d593765617de2d291c139ea46c13e3cbf7a2a4"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_idle-01.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            178,
+            121,
+            309,
+            285
+          ],
+          "source_origin": [
+            241.5,
+            285.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            59,
+            75,
+            136,
+            172
+          ],
+          "sha256": "cf43fc48cdd723923d3c25f47c1c4be03437daec9364926036fe478295c8b7c9"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_idle-02.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            334,
+            121,
+            465,
+            285
+          ],
+          "source_origin": [
+            398.5,
+            285.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            75,
+            135,
+            172
+          ],
+          "sha256": "b798efa6d7f4a092a5e8d417bdc0e985af03d33bc3378e0334a8805f03ec7f9f"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_idle-03.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            490,
+            121,
+            620,
+            285
+          ],
+          "source_origin": [
+            555.5,
+            285.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            57,
+            75,
+            134,
+            172
+          ],
+          "sha256": "add51876d185cf4420b31332f2359bd3e1144b71f5ba664b7743d7aac2fe8236"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_idle-04.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            646,
+            121,
+            777,
+            285
+          ],
+          "source_origin": [
+            712.0,
+            285.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            57,
+            75,
+            134,
+            172
+          ],
+          "sha256": "a03c07646a950b67e097b03a62bc41b1897680aea7a90526f933a52bd9f29d50"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_idle-05.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            804,
+            121,
+            934,
+            285
+          ],
+          "source_origin": [
+            868.0,
+            285.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            75,
+            135,
+            172
+          ],
+          "sha256": "ab22c26281a1b4cddc8ebda60913415fff1b07d8f3f8eb6fc653fef5ac951fee"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_idle-06.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            962,
+            121,
+            1091,
+            285
+          ],
+          "source_origin": [
+            1024.5,
+            285.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            59,
+            75,
+            135,
+            172
+          ],
+          "sha256": "ecd49afa4b686f5dcf509c91ba283d949429d4453193e95e44589e1d965867f2"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_idle-07.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1119,
+            121,
+            1247,
+            285
+          ],
+          "source_origin": [
+            1178.5,
+            285.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            61,
+            75,
+            136,
+            172
+          ],
+          "sha256": "82f4413cf19050ac486bb3002f77da9244b397a8310edcdffbe5b7a210239951"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/powered_walk-00.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            19,
+            367,
+            149,
+            525
+          ],
+          "source_origin": [
+            81.5,
+            526.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            59,
+            78,
+            136,
+            171
+          ],
+          "sha256": "ab7e2b54f90c2ed3716f307400905d193c53d72eed6c83675715fd7ea9ee257c"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_walk-01.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            177,
+            367,
+            305,
+            526
+          ],
+          "source_origin": [
+            241.5,
+            526.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            78,
+            133,
+            172
+          ],
+          "sha256": "8d2dea6712660372b44ec323ef11a312e90fa92c0b72c776a2dfe76b2469618c"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_walk-02.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            333,
+            367,
+            461,
+            525
+          ],
+          "source_origin": [
+            398.5,
+            526.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            57,
+            78,
+            132,
+            171
+          ],
+          "sha256": "6fc906309001ca51722075e9b9f3dabb31a203096be12117b7f441c71e4531d0"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_walk-03.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            487,
+            367,
+            619,
+            526
+          ],
+          "source_origin": [
+            555.5,
+            526.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            56,
+            78,
+            134,
+            172
+          ],
+          "sha256": "adbfea46bcabfec3884a01246be0782af38ae256e05b91e18f30db1eab50ba4d"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_walk-04.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            648,
+            367,
+            775,
+            526
+          ],
+          "source_origin": [
+            712.0,
+            526.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            78,
+            133,
+            172
+          ],
+          "sha256": "ebdd7967d0de139909aa78d48dbb94166f5907f8c84a8f3e152a16b93bb2d9cd"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_walk-05.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            804,
+            367,
+            932,
+            525
+          ],
+          "source_origin": [
+            868.0,
+            526.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            78,
+            133,
+            171
+          ],
+          "sha256": "8008899c4bf83d93acd4318207e1f030a67be20cf2f713d12b75ccc1ef0381e6"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_walk-06.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            958,
+            367,
+            1088,
+            525
+          ],
+          "source_origin": [
+            1024.5,
+            526.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            57,
+            78,
+            134,
+            171
+          ],
+          "sha256": "c03c46b63e29c1595ca744276e657da246bfd059e51cd9486185818bee5807b3"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_walk-07.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1119,
+            367,
+            1244,
+            525
+          ],
+          "source_origin": [
+            1178.5,
+            526.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            61,
+            78,
+            135,
+            171
+          ],
+          "sha256": "323e8671279e2627cfba8461f099bb490009889d41159e4b3a95bba4c5c5391c"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/powered_primary-00.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            15,
+            612,
+            147,
+            766
+          ],
+          "source_origin": [
+            81.5,
+            766.25
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            57,
+            81,
+            135,
+            172
+          ],
+          "sha256": "522bcba617d19191fdb543f08a4d6097ea1fee7b4ec665efe918b29f61c74396"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_primary-01.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            169,
+            612,
+            305,
+            766
+          ],
+          "source_origin": [
+            241.5,
+            766.25
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            53,
+            81,
+            133,
+            172
+          ],
+          "sha256": "d1ae7cf22bf7d75c07d31cc2091135672072ffa7337921f0148ec1e32ea23065"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_primary-02.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            328,
+            612,
+            477,
+            767
+          ],
+          "source_origin": [
+            398.5,
+            766.25
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            54,
+            81,
+            142,
+            172
+          ],
+          "sha256": "367aa9cf93410511a3c398a8ec49af10659f2ba1d145d72c7d078fd12a96c97d"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_primary-03.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            486,
+            612,
+            634,
+            767
+          ],
+          "source_origin": [
+            555.5,
+            766.25
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            55,
+            81,
+            142,
+            172
+          ],
+          "sha256": "a64567d56f4317ae9e4d172ce6d2e6905ec417acad1c81f1ba02064726afb2f1"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_primary-04.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            638,
+            615,
+            788,
+            766
+          ],
+          "source_origin": [
+            712.0,
+            766.25
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            52,
+            83,
+            140,
+            172
+          ],
+          "sha256": "346fff4cb5b76ccc89975006586f84ded6a801f958b4b3d86715ea66bbd1075b"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_primary-05.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            792,
+            615,
+            941,
+            766
+          ],
+          "source_origin": [
+            868.0,
+            766.25
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            51,
+            83,
+            139,
+            172
+          ],
+          "sha256": "60df8ef16b47d7b41454495e22adc6d01bcd58444676ac4c8629034b0e9259b2"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_primary-06.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            951,
+            615,
+            1092,
+            766
+          ],
+          "source_origin": [
+            1024.5,
+            766.25
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            53,
+            83,
+            136,
+            172
+          ],
+          "sha256": "545a89c6d48ddea413e4e31607d863eaf35f1dbe385bcf01a392fa370adabe39"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_primary-07.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1111,
+            615,
+            1247,
+            766
+          ],
+          "source_origin": [
+            1178.5,
+            766.25
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            56,
+            83,
+            136,
+            172
+          ],
+          "sha256": "8bd7c049ce7e734a543c1c0ba4aa628a60682cf7d4cfe3e077d3603ac835a58c"
+        }
+      ],
+      "release_anchor": [
+        45,
+        -62
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/powered_guard-00.png",
+          "source": "art-source/animated/v3/rook-powered_guard8.png",
+          "slot": 0,
+          "source_bounds": [
+            90,
+            86,
+            374,
+            422
+          ],
+          "source_origin": [
+            229.0,
+            426.0
+          ],
+          "scale": 0.31118314424635335,
+          "packed_bounds": [
+            53,
+            66,
+            141,
+            171
+          ],
+          "sha256": "0aece7158019111718f49acc7be2481f7f1a5e7604cd9f8126708d6d205a904b"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_guard-01.png",
+          "source": "art-source/animated/v3/rook-powered_guard8.png",
+          "slot": 1,
+          "source_bounds": [
+            534,
+            98,
+            821,
+            425
+          ],
+          "source_origin": [
+            677.0,
+            426.0
+          ],
+          "scale": 0.31118314424635335,
+          "packed_bounds": [
+            52,
+            70,
+            141,
+            172
+          ],
+          "sha256": "6a8ebf9f72c2109b971270a4cf883411c34ae1da34568524d32bbace556c49da"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_guard-02.png",
+          "source": "art-source/animated/v3/rook-powered_guard8.png",
+          "slot": 2,
+          "source_bounds": [
+            963,
+            131,
+            1260,
+            426
+          ],
+          "source_origin": [
+            1117.0,
+            426.0
+          ],
+          "scale": 0.31118314424635335,
+          "packed_bounds": [
+            48,
+            80,
+            140,
+            172
+          ],
+          "sha256": "070f9e64fdfc3871f116c11a3bbae7e97f014bb67a0a664ae99222b19d398413"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_guard-03.png",
+          "source": "art-source/animated/v3/rook-powered_guard8.png",
+          "slot": 3,
+          "source_bounds": [
+            1410,
+            174,
+            1713,
+            426
+          ],
+          "source_origin": [
+            1556.0,
+            426.0
+          ],
+          "scale": 0.31118314424635335,
+          "packed_bounds": [
+            51,
+            94,
+            145,
+            172
+          ],
+          "sha256": "376400e1972e4f251e5c499f1d1782033c51a22b8a9636c967353bbf945a0b83"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_guard-04.png",
+          "source": "art-source/animated/v3/rook-powered_guard8.png",
+          "slot": 4,
+          "source_bounds": [
+            95,
+            546,
+            388,
+            836
+          ],
+          "source_origin": [
+            229.0,
+            836.0
+          ],
+          "scale": 0.31118314424635335,
+          "packed_bounds": [
+            54,
+            82,
+            145,
+            172
+          ],
+          "sha256": "a61a86610ec91fee64c0483581fed1be90f88e8ccad53425c95b9b9341790e61"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_guard-05.png",
+          "source": "art-source/animated/v3/rook-powered_guard8.png",
+          "slot": 5,
+          "source_bounds": [
+            532,
+            536,
+            830,
+            836
+          ],
+          "source_origin": [
+            677.0,
+            836.0
+          ],
+          "scale": 0.31118314424635335,
+          "packed_bounds": [
+            51,
+            79,
+            144,
+            172
+          ],
+          "sha256": "49f569b1faf41a21982ed7bcbd3691c97b3708879edd07fe86f737cf917864bb"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_guard-06.png",
+          "source": "art-source/animated/v3/rook-powered_guard8.png",
+          "slot": 6,
+          "source_bounds": [
+            969,
+            507,
+            1260,
+            834
+          ],
+          "source_origin": [
+            1117.0,
+            836.0
+          ],
+          "scale": 0.31118314424635335,
+          "packed_bounds": [
+            50,
+            70,
+            141,
+            172
+          ],
+          "sha256": "3250e6665acbe08a276e4df80c7fc2626dc877204359977fd17e6ff540b78b90"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_guard-07.png",
+          "source": "art-source/animated/v3/rook-powered_guard8.png",
+          "slot": 7,
+          "source_bounds": [
+            1422,
+            498,
+            1710,
+            832
+          ],
+          "source_origin": [
+            1556.0,
+            836.0
+          ],
+          "scale": 0.31118314424635335,
+          "packed_bounds": [
+            54,
+            67,
+            144,
+            171
+          ],
+          "sha256": "fdc0b79d6f2389c908057ec42d860d82615f4cc8ac1ba97bff96f70744df62a3"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/rook/powered_exit-00.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            19,
+            1064,
+            151,
+            1225
+          ],
+          "source_origin": [
+            81.5,
+            1225.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            59,
+            77,
+            137,
+            172
+          ],
+          "sha256": "82f1908a93e8ec4eade53b0a2b5c182bfa04c905381d3ce31385511808d0eb10"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_exit-01.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            178,
+            1062,
+            307,
+            1225
+          ],
+          "source_origin": [
+            241.5,
+            1225.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            59,
+            76,
+            135,
+            172
+          ],
+          "sha256": "70a8a9354426f4430afc71977ae617c5f663c7b566351efb39eb218d1d32c000"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_exit-02.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            334,
+            1042,
+            458,
+            1225
+          ],
+          "source_origin": [
+            398.5,
+            1225.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            64,
+            131,
+            172
+          ],
+          "sha256": "d22b50385568553a0958c9b6e204b5281b97b8af6715cc37f4903b8ea8e7ff46"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_exit-03.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            488,
+            1066,
+            606,
+            1225
+          ],
+          "source_origin": [
+            555.5,
+            1225.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            56,
+            78,
+            125,
+            172
+          ],
+          "sha256": "b636ab99add717f2ed38eb96c5ab579015da73269412931145fabff5f749bfed"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_exit-04.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            647,
+            1066,
+            775,
+            1225
+          ],
+          "source_origin": [
+            712.0,
+            1225.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            78,
+            133,
+            172
+          ],
+          "sha256": "a16fff23416a807d91ef14880b2f20b1dc3be27fb16b32ec02e72fd958fecaff"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_exit-05.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            804,
+            1065,
+            932,
+            1225
+          ],
+          "source_origin": [
+            868.0,
+            1225.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            78,
+            133,
+            172
+          ],
+          "sha256": "1f7de1748baf7fc342e7598a8141f705a5b4d13ac3a9ea1b56ee88c3ad8760ad"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_exit-06.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            960,
+            1066,
+            1089,
+            1225
+          ],
+          "source_origin": [
+            1024.5,
+            1225.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            58,
+            78,
+            134,
+            172
+          ],
+          "sha256": "98d6e04c623128a46fe85bad2ba833755696b064c25e88ff03b4c6b34ea6d072"
+        },
+        {
+          "path": "res://assets/animated/rook/powered_exit-07.png",
+          "source": "art-source/animated/v3/rook-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1119,
+            1066,
+            1244,
+            1225
+          ],
+          "source_origin": [
+            1178.5,
+            1225.0
+          ],
+          "scale": 0.588957055214724,
+          "packed_bounds": [
+            61,
+            78,
+            135,
+            172
+          ],
+          "sha256": "14c6c9aeac2c4af33762ee51c257ae90d641b5da6f70d8e94e4bc900035c248c"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

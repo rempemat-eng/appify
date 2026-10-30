@@ -1,0 +1,12 @@
+.godot/
+web/
+captures/
+__pycache__/
+*.pyc
+*.tmp
+*.avi
+*.mp4
+animation-sheets/*.png
+animation-sheets/*.gif
+assets/animated/*/*.png
+*.import

@@ -1,0 +1,38 @@
+{
+  "engine": "Godot 4.5.1 stable",
+  "native_checks_passed": 1681,
+  "native_checks_failed": 0,
+  "skipped": [],
+  "authored_frames": 2135,
+  "character_clip_combinations": 239,
+  "showcase_simulation_seconds": 61.467,
+  "browser_validation_included": false,
+  "sha256": {
+    "scripts/roster_actor.gd": "a21758618952be57b3442af69c41208dfeaebe6e2ca3da203c1cdbbf0216561b",
+    "scripts/animation_yard.gd": "cafe41e2f5d57639e9d72c253c3a9b55a91a07154021ad28441a611912f58d82",
+    "tests/roster_animation_test.gd": "de0d5ed9a920f07e2271b6401648e9465514ec783a711cc8065f72f654f5f25c",
+    "validation/roster-import-v3.log": "2b913a442454941761b07a2156a664231d81042c4645a27631a885a09d9e5462",
+    "validation/roster-native-v3.log": "fb0d2aa6c182ae971242f34b0fc6bb07ba510fc70b6d5be554146014e797cb93"
+  },
+  "final_renderer_notes": [
+    "Dark status backplate above character headroom",
+    "Rook visible jet canted down/back to clear carried helmet"
+  ],
+  "web_pck_sha256": "5678a71d372b47ea46527696e4d4238d3d56045e705db67ee4d65c93e7ab130a",
+  "runtime_asset_manifests_sha256": {
+    "assets/animated/ashe/manifest.json": "581edcf1f8e8f5864931e7fe7b9e4197995ccfbf7665ed085e25a2299417a55b",
+    "assets/animated/bramble/manifest.json": "09a8aa068eed1d7630b62da9a6d622d2bc0f0ebddf8de4a3397260da7f388a02",
+    "assets/animated/brine/manifest.json": "1ea5315e4c31f8254d9e5d4c20caa29e957d19f2794354a59b9afddbcbbd2f62",
+    "assets/animated/cairn/manifest.json": "659089a64d7b42c47569adf85489a6a3cad9f9fe5aaf476703ec795423d8e1ba",
+    "assets/animated/clack/manifest.json": "a6cfb4d246e120241021b29092783c318c7e4e57a6364054edbffc0849c8f1b8",
+    "assets/animated/iona/manifest.json": "334bc081b01d295f8879ca578dfbb1d2e01e8b2c7163bc49070622a7a4ebdf9d",
+    "assets/animated/mirra/manifest.json": "5818878c567c5d27e9c6d502525d77f495146e57e1aa8d446c404c9afa282c0c",
+    "assets/animated/morel/manifest.json": "597cf6a00b068b4468b514829f87f18d5233467b9782abe1531d0aef0bc6c3f7",
+    "assets/animated/mote/manifest.json": "5a9bf693c05a779b152c40252699a00edc83c8542bf61ada0e6880787566aa07",
+    "assets/animated/nix/manifest.json": "f97e90351f9f31d97ff727a226b4253729bc57e27a12cf9f68f37bf26708620b",
+    "assets/animated/pendle/manifest.json": "fbd6b67cfa197fc783882134bfbe8a9043234687e8ec1ec03a3aaa1530fa4f28",
+    "assets/animated/rook/manifest.json": "496c24c5d55c1b7a881dc07fa4ef12e1d7c5766dd19fd66c6a24ed05dbda7957",
+    "assets/animated/tam/manifest.json": "46457b1c3c51c007720a2063fa7e29e78a37724bce23ad1c9e69776f030f3110",
+    "assets/animated/velvet/manifest.json": "0e1f24fa82df470e2278cc85d5462c060c08c1550b897de132345cf3c77507a8"
+  }
+}
