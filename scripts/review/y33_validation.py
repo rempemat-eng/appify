@@ -28,12 +28,13 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "9e13eb5c39d59632d60e5e8d2628e08f32f6d8f7"
-GAME_TREE = "aa59a333046ae83721e0dfe30734b6ad6982077e"
+GAME_SHA = "4d8a38a928446917c72b52bf770b428b5fca89fe"
+GAME_TREE = "095b862d1d7075f821596510f6ca0a78e20a498a"
 TEST_BLOB = "62daf43151230ee1b2edfe1662dd1f743a9f612d"
-PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
+PRODUCTION_BLOB = "ce7e109adc2853ff08cc5e98fd81a8ce46c41bce"
+WORKFLOW_PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 GAME_COUNT = 6108
-GAME_BYTES = 82460821
+GAME_BYTES = 82460818
 ENGINE_SHA256 = "8d106cbe6144c2dc7e881d61d2429c1a8a76e6b22ef48bd5e48dcf934953f71e"
 ENGINE_BYTES = 146414384
 ARCHIVE_SHA512 = "9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65"
@@ -56,6 +57,7 @@ METHODS = (
 )
 ERROR_PATTERN = re.compile(r"SCRIPT ERROR:|^ERROR:|Parse Error|Failed loading resource|Cannot open file", re.M)
 CONVERSION_PATTERN = re.compile(r"(?:Invalid call|Invalid type|No constructor|Nonexistent).*String|String.*(?:constructor|bool)", re.I)
+GREEN_WARNING_PATTERN = re.compile(r"(?:WARNING:|ERROR:).*\b(?:RIDs?|ObjectDB|resources?)\b", re.I)
 
 # Tiny separate editor project: measure actual APIs/settings file, not merely env.
 PROBE = '''@tool
@@ -310,7 +312,12 @@ class Controller:
         source_tree, candidate_tree = tree(self.source), tree(self.candidate)
         delta = {name for name in source_tree.keys() | candidate_tree.keys()
                  if source_tree.get(name) != candidate_tree.get(name)}
-        if delta != OWNED_PATHS or any(name in source_tree for name in OWNED_PATHS):
+        # Workflow history retains the old production blob; ONLY the separately
+        # pinned physical game checkout contains the authorised one-line fix.
+        if (delta != OWNED_PATHS | {"game/game.gd"}
+                or candidate_tree.get("game/game.gd") != ("100644", WORKFLOW_PRODUCTION_BLOB)
+                or source_tree.get("game/game.gd") != ("100644", PRODUCTION_BLOB)
+                or any(name in source_tree for name in OWNED_PATHS)):
             raise RuntimeError(f"Candidate cumulative scope differs: {sorted(delta)}")
         candidate_rows = {}
         for name in sorted(OWNED_PATHS):
@@ -566,7 +573,8 @@ class Controller:
     def require_clean(self, name: str, result: dict) -> str:
         path = self.evidence / (name + ".log")
         text = diagnostic_text(path) if path.exists() else ""
-        if result.get("exit") != 0 or result["state"] != "COLLECTED" or ERROR_PATTERN.search(text) or orphan_diagnostics(text):
+        if (result.get("exit") != 0 or result["state"] != "COLLECTED" or ERROR_PATTERN.search(text)
+                or orphan_diagnostics(text) or GREEN_WARNING_PATTERN.search(text)):
             raise RuntimeError(f"{name} prerequisite failed; preserve raw errors even exit0: {result.get('controller_error')}")
         return text
 
@@ -603,7 +611,7 @@ class Controller:
         self.guards["actual_engine_containment"] = {"state": "PASS", "settings_sha256": digest(settings)}
 
     def reconcile(self, result: dict) -> None:
-        reports = self.game / "reports-y33-red"
+        reports = self.game / "reports-y33-red"  # Historical artifact directory, not the verdict.
         files = sorted(reports.rglob("results.xml")) if reports.exists() else []
         cases = []
         totals = []
@@ -617,47 +625,40 @@ class Controller:
                 raise RuntimeError("JUnit report does not identify the sole requested suite")
             for element in (root, suites[0]):
                 values = {key: int(element.get(key, "0")) for key in ("tests", "failures", "errors", "skipped", "flaky")}
-                if values["tests"] != 7 or values["errors"] or values["skipped"] or values["flaky"]:
-                    raise RuntimeError("JUnit totals/errors/skips/flaky are not clean target evidence")
                 totals.append(values)
             cases.extend(root.iter("testcase"))
         names = [x.get("name", "") for x in cases]
         inventory = {"expected": list(METHODS), "observed": names, "totals": totals,
                      "xml_files": [str(x.relative_to(self.game)) for x in files]}
         write_json(self.evidence / "seven-inventory.json", inventory)
-        if len(names) != 7 or sorted(names) != sorted(METHODS):
-            raise RuntimeError("Unexpected/zero/duplicate method discovery; not target RED")
-        failed, skipped, errored = [], [], []
+        if len(names) != 7 or len(set(names)) != 7 or sorted(names) != sorted(METHODS):
+            raise RuntimeError("Unexpected/zero/duplicate method discovery; not same-seven GREEN")
+        failed, skipped, errored, flaky = [], [], [], []
         for case in cases:
             if case.find("failure") is not None:
                 failed.append(case.get("name"))
-                if any(x.get("type") != "FAILURE" for x in case.findall("failure")):
-                    raise RuntimeError("JUnit orphan/termination/interruption is not target RED")
             if case.find("skipped") is not None:
                 skipped.append(case.get("name"))
             if case.find("error") is not None:
                 errored.append(case.get("name"))
+            if any(x.tag in ("flaky", "flakyFailure", "flakyError", "rerunFailure", "rerunError") for x in case):
+                flaky.append(case.get("name"))
         text = diagnostic_text(self.evidence / "seven.log")
         conversion = bool(CONVERSION_PATTERN.search(text) and "_camp" in text and "game.gd" in text)
         orphans = orphan_diagnostics(text)
         error_headers = [line for line in text.splitlines() if ERROR_PATTERN.search(line)]
-        findings = {"failures": failed, "skipped": skipped, "errors": errored,
+        resource_warnings = [line for line in text.splitlines() if GREEN_WARNING_PATTERN.search(line)]
+        findings = {"failures": failed, "skipped": skipped, "errors": errored, "flaky": flaky,
                     "real_conversion_signature_observed": conversion, "orphan_diagnostics": orphans,
-                    "error_headers": error_headers}
+                    "error_headers": error_headers, "resource_warnings": resource_warnings}
         write_json(self.evidence / "seven-findings.json", findings)
-        if any(x["failures"] != len(failed) for x in totals):
-            raise RuntimeError("JUnit aggregate and actual failed-method inventory disagree")
-        if result["state"] != "COLLECTED" or result.get("exit") is None or skipped or errored or orphans:
-            raise RuntimeError("Controller/setup/orphan/skip errors are not target RED")
-        bare = "test_bare_camp_reaches_existing_north_default"
-        # Pinned GdUnitTestSessionRunner.RETURN_ERROR is 100, not a signal/crash.
-        if result["exit"] == 100 and failed == [bare] and conversion and error_headers and all(CONVERSION_PATTERN.search(x) for x in error_headers):
-            # Retain every raw diagnostic; classification is not a passing test or fix authority.
-            self.output["state"] = "TARGET_RED_REQUIRES_LEAD_REVIEW"
-        elif not failed and result["exit"] == 0 and not ERROR_PATTERN.search(text):
-            self.output["state"] = "NO_REPRODUCTION_STOP"
-        else:
-            raise RuntimeError("Failures do not isolate the actual bare consumer; not target RED")
+        if any(x["tests"] != 7 or any(x[key] for key in ("failures", "errors", "skipped", "flaky")) for x in totals):
+            raise RuntimeError("JUnit totals must be exactly seven with zero failures/errors/skips/flaky")
+        if (result["state"] != "COLLECTED" or result.get("exit") != 0
+                or result.get("controller_error") or failed or skipped or errored or flaky
+                or orphans or error_headers or resource_warnings or conversion):
+            raise RuntimeError("Same-seven GREEN requires clean actual exit/wait, every case and raw diagnostics")
+        self.output["state"] = "SEVEN_GREEN_PENDING_FINAL_GUARDS"
 
     def run(self) -> int:
         failure = None
@@ -713,16 +714,27 @@ class Controller:
                 self.output["final_capacity"] = self.capacity()
             except BaseException as error:
                 final_errors.append(repr(error))
+            green = False
+            if failure is None and self.output["state"] == "SEVEN_GREEN_PENDING_FINAL_GUARDS":
+                green = (not final_errors
+                         and all(self.guards.get(key) == "PASS" for key in ("candidate", "frozen_game", "engine"))
+                         and self.guards.get("actual_engine_containment", {}).get("state") == "PASS"
+                         and all(self.phases[name].get("state") == "COLLECTED"
+                                 and self.phases[name].get("exit") == 0 for name in ("canary", "import", "seven")))
+                if green:
+                    self.output["state"] = "SEVEN_GREEN"
+                elif not final_errors:
+                    final_errors.append("Strict final phase/source/engine/privacy proof missing")
             self.output.update(failure=failure, final_errors=final_errors, finished_at=time.time(),
-                               runtime_is_pass=False, production_correction_authorised=False)
+                               runtime_is_pass=green, production_correction_authorised=False)
             if final_errors:
                 self.output["state"] = "FINAL_GUARD_OR_COLLECTION_FAILURE"
             write_json(self.evidence / "result.json", self.output)
             manifest = {str(p.relative_to(self.evidence)): {"bytes": p.stat().st_size, "sha256": digest(p)}
                         for p in sorted(self.evidence.rglob("*")) if p.is_file() and not p.is_symlink()}
             write_json(self.evidence / "evidence-manifest.json", manifest)
-        # A RED or non-reproduction is deliberately a non-success hosted job; nothing is approved.
-        return 1
+        # Only this exact same-seven result with final guards can succeed; no wider approval.
+        return 0 if self.output.get("runtime_is_pass") else 1
 
 
 def main() -> int:

@@ -1,4 +1,4 @@
-name: Y33 exact seven-control reproduction
+name: Y33 exact seven-control GREEN validation
 
 # SOURCE PREPARATION ONLY. The lead must review an exact commit and allocate it
 # before creating/updating this distinct execution ref. No PR/manual/schedule trigger.
@@ -23,7 +23,7 @@ jobs:
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
       GIT_OPTIONAL_LOCKS: '0'
-      Y33_GAME_SHA: 9e13eb5c39d59632d60e5e8d2628e08f32f6d8f7
+      Y33_GAME_SHA: 4d8a38a928446917c72b52bf770b428b5fca89fe
     steps:
       - name: Open failure evidence before any checkout or setup
         shell: bash
@@ -62,7 +62,7 @@ jobs:
         id: source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: 9e13eb5c39d59632d60e5e8d2628e08f32f6d8f7
+          ref: 4d8a38a928446917c72b52bf770b428b5fca89fe
           path: source
           fetch-depth: 1
           persist-credentials: false
@@ -74,7 +74,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Canary, one import, then the exact seven controls
+      - name: Canary, one import, then strict same-seven GREEN
         id: focused
         shell: bash
         run: |
@@ -111,7 +111,7 @@ jobs:
               qualification='No production correction/whole-suite/Ready/acceptance. Missing result is failure, never PASS.')
           (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as handle:
-              handle.write('## Y33 focused reproduction\n\n```json\n' + json.dumps(value, indent=2) + '\n```\n')
+              handle.write('## Y33 focused GREEN validation\n\n```json\n' + json.dumps(value, indent=2) + '\n```\n')
           PY
 
       - name: Upload source, raw failures, actual waits and reports
