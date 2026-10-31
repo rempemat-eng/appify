@@ -53,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 24 # exact-empty-cache ->refusal-evidence ->f7c6 ->f133 ->a1f ->d7 ->deba ->3b99 ->87dab ->bcbf ->f833 ->3b51 ->f666 ->efc ->a657 ->444 ->cbf ->79a4 ->7c14 ->6c76 ->597 ->632 ->5de ->6903
+          fetch-depth: 25 # tracked-refusal ->exact-empty-cache ->refusal-evidence ->f7c6 ->f133 ->a1f ->d7 ->deba ->3b99 ->87dab ->bcbf ->f833 ->3b51 ->f666 ->efc ->a657 ->444 ->cbf ->79a4 ->7c14 ->6c76 ->597 ->632 ->5de ->6903
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |

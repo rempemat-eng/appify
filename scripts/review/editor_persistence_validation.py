@@ -102,6 +102,8 @@ MESA_PACKAGE = {
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
 MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+TRACKED_REFUSAL_PARENT = "1e6241354aeaab205d9fd965cc4236b7b7fd8754"
+TRACKED_REFUSAL_PARENT_TREE = "944e07c4836bd837d10739606b2d94dabf96c10c"
 EMPTY_CACHE_RECEIVER_PARENT = "f511a86c5a56cf92612fe71d510b73695d2adf05"
 EMPTY_CACHE_RECEIVER_PARENT_TREE = "6c1c4c4b9dc1e375ddbd64729f11a06b89fecc9d"
 REFUSAL_RECEIVER_PARENT = "f7c6c899912ad60b20726f8f71ac0f81fa812b35"
@@ -1227,7 +1229,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [EMPTY_CACHE_RECEIVER_PARENT]
+                != [TRACKED_REFUSAL_PARENT]
+                or git(candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", TRACKED_REFUSAL_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", EMPTY_CACHE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
@@ -1888,8 +1892,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [EMPTY_CACHE_RECEIVER_PARENT]:
-            raise RuntimeError("Empty-cache correction must be a genuine sole child of frozen405f511")
+        if parents != [TRACKED_REFUSAL_PARENT]:
+            raise RuntimeError("Tracked-refusal correction must be a genuine sole child of frozen4051e624")
+        tracked_headers = git(self.candidate, "cat-file", "commit", TRACKED_REFUSAL_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in tracked_headers.splitlines() if x.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE):
+            raise RuntimeError("Frozen H19 receiver ancestry/tree changed")
         empty_cache_headers = git(self.candidate, "cat-file", "commit", EMPTY_CACHE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in empty_cache_headers.splitlines() if x.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE):
@@ -2069,6 +2077,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "tracked_refusal_parent": TRACKED_REFUSAL_PARENT, "tracked_refusal_headers": tracked_headers,
                     "empty_cache_receiver_parent": EMPTY_CACHE_RECEIVER_PARENT, "empty_cache_receiver_parent_headers": empty_cache_headers,
                     "refusal_receiver_parent": REFUSAL_RECEIVER_PARENT, "refusal_receiver_parent_headers": refusal_headers,
                     "intent_receiver_parent": INTENT_RECEIVER_PARENT, "intent_receiver_parent_headers": intent_receiver_headers,
@@ -2386,6 +2395,68 @@ class Controller:
             ("MYGAME_EDITOR_LIFECYCLE_ROOT", "MYGAME_EDITOR_LIFECYCLE_PROJECT", "MYGAME_EDITOR_LIFECYCLE_SOURCE",
              "MYGAME_EDITOR_LIFECYCLE_SHA", "MYGAME_EDITOR_LIFECYCLE_CASE")})
 
+    def lifecycle_refusal(self, relative, label, info, details) -> None:
+        if getattr(self, "_lifecycle_refusal_recorded", False):
+            return
+        self._lifecycle_refusal_recorded = True
+        try:
+            record = {"path": relative[:4096], "label": label[:128], "observed_ns": time.time_ns(),
+                "lstat": {"mode": info.st_mode, "permissions": stat.S_IMODE(info.st_mode),
+                    "regular": stat.S_ISREG(info.st_mode), "size": info.st_size,
+                    "nlink": info.st_nlink, "uid": info.st_uid, "dev": info.st_dev,
+                    "ino": info.st_ino, "mtime_ns": info.st_mtime_ns, "ctime_ns": info.st_ctime_ns},
+                **details, "content_status": "NOT_READ", "bytes_read": 0, "errors": []}
+            self.output["lifecycle"]["refusal_evidence"] = record
+            descriptors = []
+            try:
+                if details.get("shared_identity") or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_mode & 0o111:
+                    raise RuntimeError("Refused content is not a safe nonexecutable single-link file")
+                directory = os.open(self.lifecycle_project, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+                descriptors.append(directory)
+                parts = Path(relative).parts
+                if not parts or any(part in (".", "..") for part in parts):
+                    raise RuntimeError("Refused content path is not owned")
+                for part in parts[:-1]:
+                    directory = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory)
+                    descriptors.append(directory)
+                fd = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
+                descriptors.append(fd)
+                identity = lambda value: (value.st_dev, value.st_ino, value.st_mode, value.st_size,
+                    value.st_nlink, value.st_uid, value.st_mtime_ns, value.st_ctime_ns)
+                if identity(os.fstat(fd)) != identity(info):
+                    raise RuntimeError("Refused content identity changed before read")
+                data = os.read(fd, 65536)
+                record["bytes_read"] = len(data)
+                if identity(os.fstat(fd)) != identity(info):
+                    raise RuntimeError("Refused content identity changed during read")
+                with (self.evidence / "lifecycle-refusal.bin").open("xb", buffering=0) as retained:
+                    written = retained.write(data)
+                record["retained"] = {"file": "lifecycle-refusal.bin", "bytes": written,
+                    "sha256": hashlib.sha256(data[:written]).hexdigest(),
+                    "complete": written == info.st_size, "truncated": written < info.st_size}
+                if written != len(data):
+                    raise OSError("Short refusal evidence write")
+                if written == info.st_size:
+                    record["retained"]["full_sha256"] = record["retained"]["sha256"]
+                record["content_status"] = "RETAINED" if written == info.st_size else "PARTIAL"
+            except Exception as error:
+                record["content_status"] = "FAILED"
+                record["errors"] = (record["errors"] + [type(error).__name__ + ": " + str(error)[:512]])[:4]
+            finally:
+                for descriptor in reversed(descriptors):
+                    try:
+                        os.close(descriptor)
+                    except Exception as error:
+                        record["errors"] = (record["errors"] + [type(error).__name__ + ": " + str(error)[:512]])[:4]
+            try:
+                if len(json.dumps(record)) > 16384:
+                    raise RuntimeError("Refusal metadata exceeds16KiB")
+                write_json(self.evidence / "lifecycle-refusal.json", record)
+            except Exception as error:
+                record["metadata_error"] = type(error).__name__ + ": " + str(error)[:512]
+        except Exception as error:
+            self.output["lifecycle"]["refusal_retention_error"] = type(error).__name__ + ": " + str(error)[:512]
+
     def lifecycle_guard(self, label: str) -> dict:
         """Guard every original byte; only named new probe outputs and private importer cache vary."""
         observed, generated, entries = set(), {}, 0
@@ -2411,9 +2482,15 @@ class Controller:
                 row = self.lifecycle_baseline.get(relative)
                 if row is not None:
                     original = (self.source / relative).lstat()
-                    if ((original.st_dev, original.st_ino) == (info.st_dev, info.st_ino)
-                            or blob(path) != row["blob"] or digest(path) != row["sha256"]
+                    actual_blob = actual_sha256 = None
+                    shared = (original.st_dev, original.st_ino) == (info.st_dev, info.st_ino)
+                    if (shared or (actual_blob := blob(path)) != row["blob"]
+                            or (actual_sha256 := digest(path)) != row["sha256"]
                             or bool(info.st_mode & 0o111) != (row["mode"] == "100755")):
+                        self.lifecycle_refusal(relative, label, info, {"expected": row,
+                            "actual_blob": actual_blob, "actual_sha256": actual_sha256,
+                            "shared_identity": shared, "reason": "Disposable tracked input changed",
+                            "bracket": "Actual hashes are short-circuit comparison facts; null means not observed"})
                         raise RuntimeError("Disposable tracked input changed: " + relative)
                     observed.add(relative)
                 else:
@@ -2422,66 +2499,10 @@ class Controller:
                         limit = 64 * 1024**2
                     size_ok = limit is not None and (0 if relative == "game/.godot/editor/script_editor_cache.cfg" else 1) <= info.st_size <= limit
                     if limit is None or not size_ok or info.st_mode & 0o111:
-                        if not getattr(self, "_lifecycle_refusal_recorded", False):
-                            self._lifecycle_refusal_recorded = True
-                            record = {"path": relative[:4096], "label": label[:128], "observed_ns": time.time_ns(),
-                                "lstat": {"mode": info.st_mode, "permissions": stat.S_IMODE(info.st_mode),
-                                    "regular": stat.S_ISREG(info.st_mode), "size": info.st_size,
-                                    "nlink": info.st_nlink, "uid": info.st_uid, "dev": info.st_dev,
-                                    "ino": info.st_ino, "mtime_ns": info.st_mtime_ns, "ctime_ns": info.st_ctime_ns},
-                                "limit": limit, "failed": [reason for reason, failed in (
-                                    ("unlisted", limit is None), ("size", limit is not None and not size_ok),
-                                    ("executable", bool(info.st_mode & 0o111))) if failed],
-                                "bracket": "lstat at refusal only; prior cache stat/content not retained",
-                                "content_status": "NOT_READ", "bytes_read": 0, "errors": []}
-                            self.output["lifecycle"]["refusal_evidence"] = record
-                            descriptors = []
-                            try:
-                                if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_mode & 0o111:
-                                    raise RuntimeError("Refused content is not a safe nonexecutable single-link file")
-                                directory = os.open(self.lifecycle_project, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
-                                descriptors.append(directory)
-                                parts = Path(relative).parts
-                                if not parts or any(part in (".", "..") for part in parts):
-                                    raise RuntimeError("Refused content path is not owned")
-                                for part in parts[:-1]:
-                                    directory = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory)
-                                    descriptors.append(directory)
-                                fd = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
-                                descriptors.append(fd)
-                                identity = lambda value: (value.st_dev, value.st_ino, value.st_mode, value.st_size,
-                                    value.st_nlink, value.st_uid, value.st_mtime_ns, value.st_ctime_ns)
-                                if identity(os.fstat(fd)) != identity(info):
-                                    raise RuntimeError("Refused content identity changed before read")
-                                data = os.read(fd, 65536)
-                                record["bytes_read"] = len(data)
-                                if identity(os.fstat(fd)) != identity(info):
-                                    raise RuntimeError("Refused content identity changed during read")
-                                with (self.evidence / "lifecycle-refusal.bin").open("xb", buffering=0) as retained:
-                                    written = retained.write(data)
-                                record["retained"] = {"file": "lifecycle-refusal.bin", "bytes": written,
-                                    "sha256": hashlib.sha256(data[:written]).hexdigest(),
-                                    "complete": written == info.st_size, "truncated": written < info.st_size}
-                                if written != len(data):
-                                    raise OSError("Short refusal evidence write")
-                                if written == info.st_size:
-                                    record["retained"]["full_sha256"] = record["retained"]["sha256"]
-                                record["content_status"] = "RETAINED" if written == info.st_size else "PARTIAL"
-                            except Exception as error:
-                                record["content_status"] = "FAILED"
-                                record["errors"] = (record["errors"] + [type(error).__name__ + ": " + str(error)[:512]])[:4]
-                            finally:
-                                for descriptor in reversed(descriptors):
-                                    try:
-                                        os.close(descriptor)
-                                    except Exception as error:
-                                        record["errors"] = (record["errors"] + [type(error).__name__ + ": " + str(error)[:512]])[:4]
-                            try:
-                                if len(json.dumps(record)) > 16384:
-                                    raise RuntimeError("Refusal metadata exceeds16KiB")
-                                write_json(self.evidence / "lifecycle-refusal.json", record)
-                            except Exception as error:
-                                record["metadata_error"] = type(error).__name__ + ": " + str(error)[:512]
+                        self.lifecycle_refusal(relative, label, info, {"limit": limit,
+                            "failed": [reason for reason, failed in (("unlisted", limit is None),
+                                ("size", limit is not None and not size_ok), ("executable", bool(info.st_mode & 0o111))) if failed],
+                            "bracket": "lstat at refusal only; prior cache stat/content not retained"})
                         raise RuntimeError("Unexpected/oversized disposable output: " + relative)
                     if not relative.startswith("game/.godot/"):
                         generated[relative] = {"bytes": info.st_size, "sha256": digest(path)}
@@ -3191,7 +3212,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
+                    or git(self.candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", TRACKED_REFUSAL_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", EMPTY_CACHE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
