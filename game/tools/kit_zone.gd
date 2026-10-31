@@ -823,13 +823,21 @@ func _lifecycle_runtime(args: Dictionary) -> Dictionary:
 			scene.queue_free()
 			await process_frame
 			return lifecycle_finish(context, result)
-		var player := player_scene.instantiate() as Player
-		if player == null:
-			failures.append("Existing Player could not be instantiated.")
+		# Builtin typing keeps the CLI script load independent of autoload-dependent Player.
+		var player := player_scene.instantiate() as CharacterBody2D
+		if player == null or player.get_script() != load("res://actors/player.gd"):
+			failures.append("Existing Player could not be instantiated with its exact script.")
+			if player != null: player.free()
 			scene.queue_free()
 			await process_frame
 			return lifecycle_finish(context, result)
-		player.input_enabled = false
+		player.set("input_enabled", false)
+		if player.get("input_enabled") != false:
+			failures.append("Existing Player input was not disabled before tree insertion.")
+			player.free()
+			scene.queue_free()
+			await process_frame
+			return lifecycle_finish(context, result)
 		player.position = Vector2(108, 156)
 		scene.add_child(player)
 		await physics_frame
@@ -843,7 +851,7 @@ func _lifecycle_runtime(args: Dictionary) -> Dictionary:
 		player.position = Vector2(24, 156)
 		var clear := player.move_and_collide(Vector2(0, -72))
 		result["clear_probe"] = {"collision": clear != null, "position": [player.position.x, player.position.y]}
-		result["player_layers"] = {"layer": player.collision_layer, "mask": player.collision_mask, "input_enabled": player.input_enabled}
+		result["player_layers"] = {"layer": player.collision_layer, "mask": player.collision_mask, "input_enabled": player.get("input_enabled")}
 		if clear != null or not player.position.is_equal_approx(Vector2(24, 84)): failures.append("Existing Player could not traverse the saved clear lane.")
 		result["walk_rows"] = walk.rows
 		result["baked_binding"] = ground.baked.resource_path
