@@ -3,8 +3,8 @@
   "status": "SOURCE_ONLY_UNRUN_NOT_PRODUCTION_ADOPTION",
   "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
   "source_native_tree": "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2",
-  "source_layout_commit": "738352161bbfd06dafe3b0e163c96b03374b849b",
-  "source_layout_json_blob": "916d2bd6c8634e7478d785aeeddd3e876893882a",
+  "source_layout_commit": "a81b6ed1137018a80c0408ad0254dd03e09e0ee6",
+  "source_layout_json_blob": "63b10a6b2d9ed8ffc35ef3af20d78f319930b3ae",
   "GO": 6541871017,
   "ASSIGN": 6541875628,
   "ACK": 6541875795,
@@ -697,27 +697,27 @@
       "variant_id": "south",
       "world_floor": [
         5864,
-        4152,
+        4184,
         64,
         48
       ],
       "local_floor": [
         40,
-        184,
+        216,
         64,
         48
       ],
       "world_threshold": [
         5896,
-        4200
+        4232
       ],
       "local_door": [
         72,
-        232
+        264
       ],
       "foot_art": [
         216,
-        696
+        792
       ],
       "collision_world": [
         -32,
@@ -983,28 +983,28 @@
       "native_piece_id": "crossroads_halt_b040",
       "variant_id": "south",
       "world_floor": [
-        6000,
-        4200,
+        6056,
+        4192,
         64,
         40
       ],
       "local_floor": [
-        176,
         232,
+        224,
         64,
         40
       ],
       "world_threshold": [
-        6032,
-        4240
+        6088,
+        4232
       ],
       "local_door": [
-        208,
-        272
+        264,
+        264
       ],
       "foot_art": [
-        624,
-        816
+        792,
+        792
       ],
       "collision_world": [
         -32,
@@ -1325,21 +1325,21 @@
       "world_points": [
         [
           5968,
-          4216
+          4248
         ],
         [
           5896,
-          4216
+          4248
         ]
       ],
       "local_points": [
         [
           144,
-          248
+          280
         ],
         [
           72,
-          248
+          280
         ]
       ],
       "width": 24,
@@ -1351,21 +1351,21 @@
       "world_points": [
         [
           5968,
-          4256
+          4248
         ],
         [
-          6032,
-          4256
+          6088,
+          4248
         ]
       ],
       "local_points": [
         [
           144,
-          288
+          280
         ],
         [
-          208,
-          288
+          264,
+          280
         ]
       ],
       "width": 24,
@@ -1429,21 +1429,21 @@
       "world_points": [
         [
           5896,
-          4208
+          4240
         ],
         [
           5896,
-          4216
+          4248
         ]
       ],
       "local_points": [
         [
           72,
-          240
+          272
         ],
         [
           72,
-          248
+          280
         ]
       ],
       "width": 16,
@@ -1454,22 +1454,22 @@
       "source_name": "G05 south threshold",
       "world_points": [
         [
-          6032,
-          4248
+          6088,
+          4240
         ],
         [
-          6032,
-          4256
+          6088,
+          4248
         ]
       ],
       "local_points": [
         [
-          208,
-          280
+          264,
+          272
         ],
         [
-          208,
-          288
+          264,
+          280
         ]
       ],
       "width": 16,
@@ -2175,7 +2175,7 @@
     "Native town.build uses4HD cottage calls and4legacy-only silhouettes for its existing lawn/shadow logic, not just4constructor invocations.",
     "Door opening source dimensions and opaque bbox must be checked on generated native images; no transparent-padding credit.",
     "Source-only preparation performs no import, drawing, engine or runtime tests.",
-    "Predicted G02/G05 full216x312 sprite rectangles overlap48artpx vertically. G05 roof ridge is at artY564 while G02 court centre isY600: the lower roof may obscure that court. Floor-only clearance is NOT visible-access acceptance; inspect actual rendered pixels before any layout or gameplay approval."
+    "Historical185/Q2 composition only: the earlier48artpx full-canvas overlap was a risk indicator. Actual Q2 retained all4032 pixels of every declared door ROI; doors were NOT hidden. Its G02/G03 apron/court foreground coverage does not describe this revised pose. Floor clearance and translated-alpha predictions are not new rendered visible-access, physics or terrain acceptance."
   ],
   "import_closure_correction": {
     "GO": 6542130973,
@@ -2271,5 +2271,118 @@
       "remaining_external_dependencies": "Pinned NumPy/SciPy/Pillow and CPython stdlib only. Static import coverage is not runtime/visual/resource acceptance."
     },
     "failure_receipt": "Preserve traceback.format_exc() for actual inner native and source-guard failures. Original Q1 had only native error type/message plus outer receiving traceback; its missing inner frames are not reconstructed."
+  },
+  "source_layout_overlay_key": "native_visible_approaches_r3",
+  "context_revision": {
+    "GO": 6542495217,
+    "ASSIGN": 6542500004,
+    "ACK": 6542500172,
+    "source_parent": "18588dc63116497908b414e5317c5712e4f7006d",
+    "layout_source": {
+      "commit": "a81b6ed1137018a80c0408ad0254dd03e09e0ee6",
+      "tree": "13e71b148f2cbf00f01e3e0fe9e211356b0192cb",
+      "json_blob": "63b10a6b2d9ed8ffc35ef3af20d78f319930b3ae",
+      "overlay_key": "native_visible_approaches_r3"
+    },
+    "scope": "Consume exactly the two floor/threshold overrides and four local route offers from native_visible_approaches_r3. All four body looks/forms/seeds/IDs,112 baseline files, physical gates,120s/512MiB profile and960x1008 viewport remain unchanged.",
+    "historical_source_layout": {
+      "commit": "738352161bbfd06dafe3b0e163c96b03374b849b",
+      "tree": "ac8626aec9d035bda53cad614855d38246b456c0",
+      "json_blob": "916d2bd6c8634e7478d785aeeddd3e876893882a"
+    },
+    "historical_Q2": {
+      "run": 41193179535,
+      "job": 124513954596,
+      "artifact": 13040050581,
+      "native_source": "18588dc63116497908b414e5317c5712e4f7006d",
+      "receiver": "45f93407de9ebee6265bf5674f1e15c01a92a7a8",
+      "scene_sha256": "392071bff2444516dd023a8eaab17db2cfb4b717db1a1e4a5862a910db30cf08",
+      "door_proof": "All4032 pixels of each42x96 declared door ROI matched its isolated body in the OLD composition. This historical actual proof is not a new rendered-context pass."
+    },
+    "analytical_prediction": {
+      "status": "TRANSLATED_EXISTING_NATIVE_ALPHA_ONLY_NOT_A_NEW_RENDER",
+      "source_sprite_canvas": [
+        216,
+        312
+      ],
+      "source_sprite_anchor": [
+        108,
+        308
+      ],
+      "source_native_origin_world_px": [
+        5824,
+        3968
+      ],
+      "retained_diagnostic_local_box": [
+        0,
+        0,
+        320,
+        336
+      ],
+      "retained_diagnostic_image_px": [
+        960,
+        1008
+      ],
+      "art_translation_by_plot": {
+        "G04": [
+          0,
+          96
+        ],
+        "G05": [
+          168,
+          -24
+        ]
+      },
+      "apron_covered_pixels_by_plot": {
+        "G02": [
+          0,
+          4608
+        ],
+        "G03": [
+          0,
+          4608
+        ],
+        "G04": [
+          0,
+          4608
+        ],
+        "G05": [
+          0,
+          4608
+        ]
+      },
+      "court_covered_pixels_by_plot": {
+        "G02": [
+          0,
+          17884
+        ],
+        "G03": [
+          0,
+          19612
+        ],
+        "G04": [
+          0,
+          19612
+        ],
+        "G05": [
+          0,
+          29980
+        ]
+      },
+      "qualification": "Existing frozen actual alpha shapes were translated numerically, not repainted/composed. Zero projected coverage removes the measured foreign-sprite projection on these declared bands only. It is not new visible context, route/terrain/grade/collision/nav/door operation or quality acceptance."
+    },
+    "productive_area": {
+      "proposed_world_rect": [
+        6128,
+        4080,
+        64,
+        208
+      ],
+      "diagnostic_world_east": 6144,
+      "productive_world_east": 6192,
+      "status": "UNAPPLIED_UNMEASURED and not drawn here. The productive area extends48worldpx beyond the retained crop; this diagnostic cannot show or approve its whole extent."
+    },
+    "terrain_and_adoption": "Underlying continent terrain/grade/banks/routes and playable adoption remain UNMEASURED. No world terrain, closed halt, global routes, story anchors, households, catalogue or renderer changes.",
+    "artifact_identity": "plan._inputs binds the frozen112 baseline snapshot plus actual fixture and entrypoint SHA256. Context edits change artifact identity without changing body forms. No new render is claimed."
   }
 }

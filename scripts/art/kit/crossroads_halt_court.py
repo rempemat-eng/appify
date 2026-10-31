@@ -19,10 +19,10 @@ import traceback
 ROOT = Path(__file__).resolve().parents[3]
 FIXTURE = ROOT / "scripts/review/fixtures/crossroads_halt_court.json"
 SOURCE = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
-LAYOUT = "738352161bbfd06dafe3b0e163c96b03374b849b"
+LAYOUT = "a81b6ed1137018a80c0408ad0254dd03e09e0ee6"
 IDS = ("crossroads-b029", "crossroads-b038", "crossroads-b039", "crossroads-b040")
 FLOORS = ([6000, 4080, 64, 72], [5864, 4048, 64, 48],
-          [5864, 4152, 64, 48], [6000, 4200, 64, 40])
+          [5864, 4184, 64, 48], [6056, 4192, 64, 40])
 
 
 def write_json(path: Path, value) -> None:
@@ -62,6 +62,7 @@ def inputs_snapshot(fixture: dict) -> dict:
 
 def plan_from_fixture(fixture: dict) -> dict:
     if (fixture["source_native_commit"] != SOURCE or fixture["source_layout_commit"] != LAYOUT
+            or fixture["source_layout_overlay_key"] != "native_visible_approaches_r3"
             or fixture["world_box"] != [5824, 3968, 320, 336]
             or fixture["native_box"] != [0, 0, 320, 336] or fixture["density"] != 3):
         raise ValueError("Frozen source/layout/coordinate contract differs")
@@ -157,7 +158,10 @@ def draw(output: Path) -> int:
         from scripts.art.native import ctx, load_biome, load_plan
         ctx.configure(3.0, load_biome("meadow"), load_plan("pilot"))
         from scripts.art.native import town
-        plan["_inputs"] = digest(json.dumps(before, sort_keys=True).encode())
+        plan["_inputs"] = digest(json.dumps({
+            "source_inputs":before, "fixture_sha256":digest(fixture_bytes),
+            "entrypoint_sha256":digest(entrypoint_bytes),
+        }, sort_keys=True).encode())
         write_json(output / "plan.json", plan)
         art = output / "game/zones/crossroads_halt_court/art"
         previews = output / "presentation"
