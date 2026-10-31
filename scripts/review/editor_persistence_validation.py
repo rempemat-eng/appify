@@ -34,6 +34,8 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+AUTH_RECEIVER_PARENT = "444e767d021efe08d37fd12e07ac4de46a831296"
+AUTH_RECEIVER_PARENT_TREE = "35dc21c7e2635685f3eea94de53368217aaf2fac"
 TOOL_RECEIVER_PARENT = "cbf823804359fb879b0fbd2054ab1ed7b472093c"
 TOOL_RECEIVER_PARENT_TREE = "3239a7eaf5c98e425b7a242ccc49545152537c91"
 MESA_PACKAGE = {
@@ -619,18 +621,50 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
         receipt["display_files"] = {str(p): {"inode": p.lstat().st_ino, "uid": p.lstat().st_uid}
                                     for p in (socket, lock)}
         gui_env = {**base_env, "DISPLAY": f":{display}", "XAUTHORITY": str(authority)}
-        # A real denied connection distinguishes cookie authentication from -ac.
+        # H7 reproduced this exact pinned Mesa build's ordinary255/raw65280
+        # denial. Upstream source was unavailable; this is observed binary evidence.
+        denied_info = denied_authority.lstat()
+        if (not stat.S_ISREG(denied_info.st_mode) or denied_info.st_nlink != 1
+                or denied_info.st_uid != os.getuid() or stat.S_IMODE(denied_info.st_mode) != 0o600
+                or denied_info.st_size != 0):
+            raise RuntimeError("Unauthenticated probe requires a physical empty private credential file")
+        if os.waitid(os.P_PID, server.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None:
+            raise RuntimeError("Authenticated Xvfb exited before refusal probe")
         launch("unauthorized-glx", [tools["glxinfo"]["path"], "-B"],
                {**gui_env, "XAUTHORITY": str(denied_authority)}, stdin=subprocess.DEVNULL,
                stdout=raw_log("unauthorized-glx.log"), stderr=subprocess.STDOUT)
-        if collect("unauthorized-glx", 5) != 1:
-            raise RuntimeError("Unauthenticated X11 probe did not return its ordinary refusal")
+        denied_exit = collect("unauthorized-glx", 5)
+        denied_wait = receipt["wait4"][-1]
+        if (denied_wait["name"] != "unauthorized-glx"
+                or denied_wait["pid"] != children["unauthorized-glx"].pid
+                or not os.WIFEXITED(denied_wait["status"])
+                or os.WEXITSTATUS(denied_wait["status"]) != 255
+                or denied_exit != 255 or denied_wait["status"] != 65280):
+            raise RuntimeError("Pinned Mesa unauthenticated probe did not return ordinary255/raw65280")
         handles[-1].flush()
         denied = (output / "unauthorized-glx.log").read_text(errors="replace")
-        if (not re.search(r"Authorization required|No protocol specified|Invalid MIT-MAGIC-COOKIE-1", denied, re.I)
-                or not re.search(r"unable to open display", denied, re.I)):
-            raise RuntimeError("Actual X11 authentication refusal was not observed")
+        if ("Authorization required, but no authorization protocol specified" not in denied
+                or f"Error: unable to open display :{display}" not in denied):
+            raise RuntimeError("Both pinned Mesa X11 authentication refusal diagnostics were not observed")
+        if os.waitid(os.P_PID, server.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None:
+            raise RuntimeError("Authenticated Xvfb exited during refusal probe")
+        for p in (socket, lock):
+            info = p.lstat()
+            before = receipt["display_files"][str(p)]
+            if (info.st_ino != before["inode"] or info.st_uid != before["uid"]
+                    or info.st_uid != os.getuid()):
+                raise RuntimeError("Owned display lock/socket identity changed during refusal probe")
+        if (not stat.S_ISSOCK(socket.lstat().st_mode) or not stat.S_ISREG(lock.lstat().st_mode)
+                or int(lock.read_text().strip()) != server.pid
+                or any(getattr(denied_authority.lstat(), field) != getattr(denied_info, field)
+                       for field in ("st_dev", "st_ino", "st_mode", "st_nlink", "st_uid",
+                                     "st_size", "st_mtime_ns", "st_ctime_ns"))):
+            raise RuntimeError("Live owned display or empty credential changed during refusal probe")
         receipt["auth_refusal_observed"] = True
+        receipt["auth_refusal_evidence"] = {"exit": denied_exit, "raw_wait_status": denied_wait["status"],
+            "both_diagnostics": True, "server_alive": True, "owned_display_identity": True,
+            "credential_empty": True, "basis": "actual pinned Mesa H7; not full authenticated smoke acceptance"}
+        save()
         launch("authenticated-glx", [tools["glxinfo"]["path"], "-B"], gui_env,
                stdin=subprocess.DEVNULL, stdout=raw_log("authenticated-glx.log"), stderr=subprocess.STDOUT)
         if collect("authenticated-glx", 5) != 0:
@@ -955,8 +989,13 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [TOOL_RECEIVER_PARENT]:
-            raise RuntimeError("Tool receiver must be a genuine sole child of frozen405cbf")
+        if parents != [AUTH_RECEIVER_PARENT]:
+            raise RuntimeError("Auth-refusal receiver must be a genuine sole child of frozen405444")
+        auth_parent_headers = git(self.candidate, "cat-file", "commit", AUTH_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in auth_parent_headers.splitlines() if line.startswith("parent ")]
+                != [TOOL_RECEIVER_PARENT] or git(self.candidate, "rev-parse", AUTH_RECEIVER_PARENT + "^{tree}").decode().strip()
+                != AUTH_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H7 tool receiver ancestry/tree changed")
         tool_parent_headers = git(self.candidate, "cat-file", "commit", TOOL_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in tool_parent_headers.splitlines() if line.startswith("parent ")]
                 != [DISPLAY_RECEIVER_PARENT] or git(self.candidate, "rev-parse", TOOL_RECEIVER_PARENT + "^{tree}").decode().strip()
@@ -1046,7 +1085,8 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
-                   "receiver_parent": TOOL_RECEIVER_PARENT, "receiver_parent_headers": tool_parent_headers,
+                   "receiver_parent": AUTH_RECEIVER_PARENT, "receiver_parent_headers": auth_parent_headers,
+                   "tool_receiver_parent": TOOL_RECEIVER_PARENT, "tool_receiver_parent_headers": tool_parent_headers,
                    "display_receiver_parent": DISPLAY_RECEIVER_PARENT, "display_receiver_parent_headers": display_parent_headers,
                    "h5_receiver_parent": RECEIVER_PARENT, "h5_receiver_parent_headers": prior_headers,
                    "prior_receiver": PRIOR_RECEIVER, "prior_receiver_headers": middle_headers,

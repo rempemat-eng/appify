@@ -52,7 +52,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 9 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->this tool child
+          fetch-depth: 10 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->this auth child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
