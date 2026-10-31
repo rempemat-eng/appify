@@ -36,6 +36,8 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+PYTHON_BINDING_RECEIVER_PARENT = "3b51a474e846ccc899204b727a23a92b4af17a1b"
+PYTHON_BINDING_RECEIVER_PARENT_TREE = "3958021eb43ecd13ff840f5599d27434614db64e"
 DISPLAY_ICD_RECEIVER_PARENT = "f666dd124ad294e7f720d05b146386f264d6ab8b"
 DISPLAY_ICD_RECEIVER_PARENT_TREE = "37ec9b49607170070282dcce49e3cfd4bee61365"
 DRIVER_RECEIVER_PARENT = "efc54375851c23cefd525b311558c663454133b9"
@@ -546,7 +548,110 @@ def mesa_tool_stage(args: argparse.Namespace) -> int:
     return 0 if receipt["state"] == "VERIFIED" else 1
 
 
-def private_driver_snapshot(root: Path, expected_provenance: str, selector: str | None = None) -> dict:
+def qualified_python_binding(environment: dict | None = None) -> dict | None:
+    """Observe the one setup-python prefix/lib binding; never rewrite it.
+
+    The pinned action prepends this directory for its shared CPython build.
+    This is an installed-byte qualification, not package authentication. Only
+    direct entries participate in the linker's SONAME search; do not recurse
+    into the standard library or permit unrelated shared-library shadowing.
+    """
+    env = os.environ if environment is None else environment
+    if "LD_LIBRARY_PATH" not in env:
+        return None  # Existing system-Python standalone path remains absent.
+    raw = env["LD_LIBRARY_PATH"]
+    if (not isinstance(raw, str) or not raw or len(raw.encode()) > 4096
+            or ":" in raw or any(ord(value) < 32 for value in raw)):
+        raise RuntimeError("Python linker binding requires exactly one nonempty path; no inherited tail")
+    if sys.implementation.name != "cpython" or sys.version_info[:2] != (3, 12):
+        raise RuntimeError("Python linker binding requires the selected CPython3.12")
+    prefix = Path(sys.base_prefix).resolve(strict=True)
+    libdir = prefix / "lib"
+    executable = Path(sys.executable)
+    location = env.get("pythonLocation", "")
+    if (not prefix.is_absolute() or Path(sys.prefix).resolve(strict=True) != prefix
+            or not location or Path(location).resolve(strict=True) != prefix
+            or not executable.is_absolute() or executable.resolve(strict=True).parent != prefix / "bin"
+            or raw != str(libdir) or libdir.resolve(strict=True) != libdir):
+        raise RuntimeError("Python linker path does not match actual executable/base/prefix/pythonLocation")
+    stable_keys = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns", "st_mode", "st_uid", "st_gid")
+
+    def identity(info) -> dict:
+        return {key: getattr(info, key) for key in stable_keys}
+
+    def safe(info) -> bool:
+        return info.st_uid in (0, os.getuid()) and (stat.S_ISLNK(info.st_mode) or not info.st_mode & 0o6022)
+
+    directory = libdir.lstat()
+    if not stat.S_ISDIR(directory.st_mode) or not safe(directory):
+        raise RuntimeError("Python linker directory must be physical and not group/world writable")
+    files = {}
+
+    def elf(path: Path, maximum: int) -> dict:
+        canonical = path.resolve(strict=True)
+        if not canonical.is_relative_to(prefix):
+            raise RuntimeError("Python linker input escapes the selected prefix")
+        before = canonical.lstat()
+        if (not stat.S_ISREG(before.st_mode) or not safe(before)
+                or not 20 <= before.st_size <= maximum):
+            raise RuntimeError("Python interpreter/library is not a bounded safe physical file")
+        if str(canonical) not in files:
+            if sum(row["bytes"] for row in files.values()) + before.st_size > 128 * 1024**2:
+                raise RuntimeError("Python interpreter/library128MiB unique-input bound")
+            with canonical.open("rb") as handle:
+                header = handle.read(20)
+            if header[:6] != b"\x7fELF\x02\x01" or header[18:20] != b"\x3e\x00":
+                raise RuntimeError("Python interpreter/library must be ELF64 little-endian x86-64")
+            files[str(canonical)] = {"path": str(canonical), "bytes": before.st_size,
+                "sha256": digest(canonical), "identity": identity(before)}
+        elif files[str(canonical)]["identity"] != identity(before):
+            raise RuntimeError("Python shared input changed between alias observations")
+        if identity(before) != identity(canonical.lstat()):
+            raise RuntimeError("Python interpreter/library changed during observation")
+        return files[str(canonical)]
+
+    interpreter_link = executable.lstat()
+    interpreter = elf(executable, 32 * 1024**2)
+    entries = []
+    expected = {"libpython3.12.so.1.0", "libpython3.12.so", "libpython3.so"}
+    for path in libdir.iterdir():
+        if len(entries) >= 64 or len(path.name.encode()) > 256:
+            raise RuntimeError("Python linker direct-directory64-entry/name256-byte bound")
+        before = path.lstat()
+        row = {"name": path.name, "identity": identity(before)}
+        if not safe(before):
+            raise RuntimeError("Unsafe direct Python linker-directory entry")
+        if ".so" in path.name:
+            if path.name not in expected or not (stat.S_ISREG(before.st_mode) or stat.S_ISLNK(before.st_mode)):
+                raise RuntimeError("Unrelated direct shared library could shadow native system bindings")
+            canonical = path.resolve(strict=True)
+            if canonical.parent != libdir:
+                raise RuntimeError("CPython shared-library alias escapes the selected direct lib directory")
+            if path.is_symlink():
+                row["symlink_target"] = os.readlink(path)
+            row["library"] = elf(path, 96 * 1024**2)
+        elif not (stat.S_ISDIR(before.st_mode) or stat.S_ISREG(before.st_mode)):
+            raise RuntimeError("Unsupported direct Python linker-directory entry")
+        if identity(before) != identity(path.lstat()):
+            raise RuntimeError("Python linker direct entry changed during observation")
+        entries.append(row)
+    names = {row["name"] for row in entries}
+    if not {"libpython3.12.so", "libpython3.12.so.1.0"}.issubset(names):
+        raise RuntimeError("Selected shared CPython3.12 library/SONAME aliases missing")
+    if identity(directory) != identity(libdir.lstat()) or identity(interpreter_link) != identity(executable.lstat()):
+        raise RuntimeError("Python linker directory/interpreter alias changed during observation")
+    if any(row["identity"] != identity(Path(name).lstat()) for name, row in files.items()):
+        raise RuntimeError("Python interpreter/library identity changed before qualification completed")
+    return {"LD_LIBRARY_PATH": raw, "pythonLocation": location, "sys_executable": sys.executable,
+        "sys_prefix": sys.prefix, "sys_base_prefix": sys.base_prefix, "version": list(sys.version_info[:3]),
+        "interpreter_alias": identity(interpreter_link), "interpreter": interpreter,
+        "directory": {"path": str(libdir), "identity": identity(directory)},
+        "direct_entries": sorted(entries, key=lambda row: row["name"]),
+        "qualification": "Exact one action-derived Python lib binding retained unchanged for every child; bounded installed identities only, no archive authentication or arbitrary LD allowlist."}
+
+
+def private_driver_snapshot(root: Path, expected_provenance: str, selector: str | None = None,
+                            environment: dict | None = None) -> dict:
     """Shared read-only guard before query and through actual displayed exit."""
     if not isinstance(expected_provenance, str) or not re.fullmatch(r"[0-9a-f]{64}", expected_provenance):
         raise RuntimeError("Exact private driver provenance identity required")
@@ -559,6 +664,12 @@ def private_driver_snapshot(root: Path, expected_provenance: str, selector: str 
     receipt = json.loads(source.read_text())
     if receipt.get("state") != "VERIFIED":
         raise RuntimeError("Private driver preparation not verified")
+    env = os.environ if environment is None else environment
+    if any(env.get(key) for key in DRIVER_SELECTOR_KEYS if key not in ("LD_LIBRARY_PATH", "VK_DRIVER_FILES")):
+        raise RuntimeError("Prohibited native linker/Vulkan override appeared after qualification")
+    python_binding = qualified_python_binding(env)
+    if "python_hosting_binding" not in receipt or python_binding != receipt["python_hosting_binding"]:
+        raise RuntimeError("Actual Python linker binding/interpreter/direct-library identities changed")
     if selector is not None and selector != receipt["private_manifest"]["path"]:
         raise RuntimeError("Actual private child ICD selector differs from verified manifest")
     if set(receipt["selected"]) != {"libvulkan_lvp.so", "lvp-original.json", "vulkaninfo"}:
@@ -581,7 +692,8 @@ def private_driver_snapshot(root: Path, expected_provenance: str, selector: str 
             raise RuntimeError("Private driver input changed while guarding")
     return {"provenance_sha256": expected_provenance, "manifest_path": receipt["private_manifest"]["path"],
             "manifest_sha256": receipt["private_manifest"]["sha256"], "selected_files": len(receipt["selected"]),
-            "host_elf_bindings": len(receipt["host_inputs"]), "original_packages_retained": len(receipt["packages"])}
+            "host_elf_bindings": len(receipt["host_inputs"]), "original_packages_retained": len(receipt["packages"]),
+            "python_hosting_binding": python_binding}
 
 
 def displayed_lifetime(args: argparse.Namespace) -> int:
@@ -754,6 +866,7 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
         receipt["editor_command"] = command
         receipt["private_environment"] = {key: gui_env[key] for key in
             ("DISPLAY", "XAUTHORITY", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_RUNTIME_DIR", "TMPDIR", "VK_DRIVER_FILES", "EDITOR_PRIVATE_VULKAN_PROVENANCE_SHA256")}
+        receipt["private_environment"]["LD_LIBRARY_PATH"] = gui_env.get("LD_LIBRARY_PATH")
         save()
         editor = launch("editor", command, gui_env, stdin=subprocess.DEVNULL)
         deadline = time.monotonic() + 45
@@ -768,7 +881,7 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
         if os.waitid(os.P_PID, server.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None:
             raise RuntimeError("Xvfb not alive through editor exit/capture")
         receipt["server_alive_through_editor_exit"] = True
-        receipt["private_driver_after_editor_exit"] = private_driver_snapshot(root, provenance_sha, gui_env.get("VK_DRIVER_FILES"))
+        receipt["private_driver_after_editor_exit"] = private_driver_snapshot(root, provenance_sha, gui_env.get("VK_DRIVER_FILES"), gui_env)
         if receipt["private_driver_after_editor_exit"] != receipt["private_driver_before"]:
             raise RuntimeError("Displayed private ICD binding changed through actual editor exit")
         for p in (png, report):
@@ -902,7 +1015,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [DISPLAY_ICD_RECEIVER_PARENT]
+                != [PYTHON_BINDING_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_BINDING_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", DISPLAY_ICD_RECEIVER_PARENT + "^{tree}").decode().strip() != DISPLAY_ICD_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
@@ -910,7 +1025,7 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
                 != [INVENTORY_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
                 != INVENTORY_RECEIVER_PARENT_TREE):
-            raise RuntimeError("Inventory candidate is not the exact genuine sole-f666 child")
+            raise RuntimeError("Inventory candidate is not the exact genuine sole-3b51 child")
         changed = set(git(candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines())
         if changed != OWNED_PATHS:
             raise RuntimeError("Inventory candidate must change exactly the two existing receiver paths")
@@ -1092,8 +1207,11 @@ def vulkan_driver_stage(args: argparse.Namespace) -> int:
         if (args.mode not in ("DRIVER_CAPABILITY", "DISPLAYED_SMOKE") or os.getpgrp() != os.getpid()
                 or os.environ.get("GITHUB_REF") != "refs/heads/codex/editor-persistence-validation-run"):
             raise RuntimeError("Driver preparation requires its exact allocated monitored phase")
-        # Native lookup overrides are never inherited or silently scrubbed.
-        if any(os.environ.get(key) for key in DRIVER_SELECTOR_KEYS):
+        # The selected action-derived CPython lib directory is observed and
+        # retained for all descendants. Every other lookup override still fails.
+        receipt["python_hosting_binding"] = qualified_python_binding()
+        write_json(output / "provenance.json", receipt)
+        if any(os.environ.get(key) for key in DRIVER_SELECTOR_KEYS if key != "LD_LIBRARY_PATH"):
             raise RuntimeError("Ambient Vulkan/linker selector present; no guessed override")
         # Current standard layer facts are recorded before acquisition. Unknown
         # compiled loader roots remain a disclosed limit; no layer is disabled.
@@ -1523,6 +1641,7 @@ class Controller:
             raise RuntimeError("Workflow/controller checkout differs from event")
         if Path(os.environ.get("PYTHON", "")).resolve(strict=True) != Path(sys.executable).resolve(strict=True):
             raise RuntimeError("Hosted PYTHON must explicitly select this CPython executable")
+        self.python_hosting_binding = qualified_python_binding()
         if (any((self.game / name).exists() for name in (".godot", REPORT_DIR))
                 or any((self.source / name).exists() or (self.source / name).is_symlink()
                        for name in GENERATED_UID_PATHS)):
@@ -1534,8 +1653,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [DISPLAY_ICD_RECEIVER_PARENT]:
-            raise RuntimeError("Displayed private-ICD receiver must be a genuine sole child of frozen405f666")
+        if parents != [PYTHON_BINDING_RECEIVER_PARENT]:
+            raise RuntimeError("Python-binding receiver must be a genuine sole child of frozen4053b51")
+        python_binding_headers = git(self.candidate, "cat-file", "commit", PYTHON_BINDING_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line[7:] for line in python_binding_headers.splitlines() if line.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen displayed private-ICD ancestry/tree changed")
         displayed_icd_headers = git(self.candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line[7:] for line in displayed_icd_headers.splitlines() if line.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", DISPLAY_ICD_RECEIVER_PARENT + "^{tree}").decode().strip() != DISPLAY_ICD_RECEIVER_PARENT_TREE):
@@ -1644,6 +1767,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "python_binding_receiver_parent": PYTHON_BINDING_RECEIVER_PARENT, "python_binding_receiver_parent_headers": python_binding_headers,
                     "receiver_parent": INVENTORY_RECEIVER_PARENT, "receiver_parent_headers": inventory_parent_headers,
                     "auth_receiver_parent": AUTH_RECEIVER_PARENT, "auth_receiver_parent_headers": auth_parent_headers,
                    "tool_receiver_parent": TOOL_RECEIVER_PARENT, "tool_receiver_parent_headers": tool_parent_headers,
@@ -1692,6 +1816,7 @@ class Controller:
         write_json(self.evidence / "host.json", {"python": sys.version, "platform": platform.platform(),
                    "affinity": sorted(os.sched_getaffinity(0)),
                    "validator_python": self.env["PYTHON"],
+                   "python_hosting_binding": self.python_hosting_binding,
                    "closure_qualification": ("48 pinned Python/config inputs + full game; existing kitlab five-piece smoke only, no successful bake/painter/new generation."
                        if self.mode == "DISPLAYED_SMOKE" else "48 pinned Python/config inputs + full game; lawn-only pieces=[] probe. No master-raster load, original paint execution or new generation is granted."),
                    "scientific_stage": "Fresh private target; exact versions, all package byte hashes before/after. Counted inside reviewed768MiB duty, not hidden staging; full import/test/packaging fit UNMEASURED.",
@@ -2420,7 +2545,7 @@ class Controller:
         selector = self.env.get("VK_DRIVER_FILES")
         if require_binding and not selector:
             raise RuntimeError("Verified private child ICD binding is missing")
-        return private_driver_snapshot(self.root, self.private_driver_provenance_sha256, selector)
+        return private_driver_snapshot(self.root, self.private_driver_provenance_sha256, selector, self.env)
 
     def prepare_private_driver(self) -> None:
         """Reuse the tested private stage/query before displayed engine/import."""
@@ -2437,6 +2562,9 @@ class Controller:
         receipt = json.loads(provenance.read_text())
         if receipt.get("state") != "VERIFIED":
             raise RuntimeError("Private driver/tool preparation incomplete")
+        if (hasattr(self, "python_hosting_binding")
+                and receipt.get("python_hosting_binding") != self.python_hosting_binding):
+            raise RuntimeError("Private driver stage changed the initially qualified Python hosting binding")
         self.private_driver_provenance_sha256 = digest(provenance)
         self.private_driver_receipt = receipt
         self.private_driver_inputs(require_binding=False)
@@ -2482,12 +2610,14 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_BINDING_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", DISPLAY_ICD_RECEIVER_PARENT + "^{tree}").decode().strip() != DISPLAY_ICD_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
                     or set(git(self.candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines()) != OWNED_PATHS):
-                raise RuntimeError("Driver mode requires the genuine sole-f666 two-file candidate")
+                raise RuntimeError("Driver mode requires the genuine sole-3b51 two-file candidate")
             if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
                 raise RuntimeError("Actual identity-safe process collection unavailable")
             os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
