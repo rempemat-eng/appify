@@ -3167,13 +3167,20 @@ def p_sacks_hd(w, h, seed, hd=False):
             sx = int(scx - rx * rng.uniform(0.15, 0.45))
             fill(a, sx, sy, sx + 2, sy + 1, code('sand', 2), where=m)
             fill(a, sx, sy + 1, sx + 1, sy + 2, code('sand', 3), where=m)
-        neck = (np.abs(X - scx) < q(1.3)) & (Y >= scy - ry - q(1.6)) & (Y < scy - ry + 1)
+        # Gather the loose cloth into the tie; a rounded fan replaces the square column.
+        neck_y, neck_h, neck_w = scy - ry, max(1, q(1.6)), max(1, q(1.2))
+        gather = np.clip((neck_y - Y) / neck_h, 0, 1)
+        neck_r = max(1, q(0.4)) + (neck_w - max(1, q(0.4))) * gather
+        crown = neck_y - neck_h + neck_h * 0.2 * ((X - scx) / neck_w) ** 2
+        neck = (np.abs(X - scx) <= neck_r) & (Y >= crown) & (Y < neck_y + 1)
         paint(a, neck, ('sand_cool', 'sand', 'sand_warm'), 2.8 - 1.2 * (X > scx))
-        _step(a, neck & (np.abs(X - scx + 1) < 0.6), -1)
-        tie = (np.abs(X - scx) < q(1.4)) & (np.abs(Y - (scy - ry)) < 1)
+        _step(a, neck & (np.abs(X - scx + gather) < 0.6), -1)
+        # A compact rope wrap follows the gathered waist; it is not a rigid mouth cap.
+        tie = ellipse_mask(a.shape, scx, neck_y + 0.5, max(1, q(0.9)), max(1, q(0.35)))
         a[tie] = code('timber', 1)
-        a[tie & (Y < scy - ry)] = code('timber_warm', 3)
-        blob(a, ellipse_mask(a.shape, scx + 1, scy - ry, 1.5, 1), 'timber_warm', 2)
+        a[tie & (Y < neck_y + 0.5)] = code('timber_warm', 3)
+        blob(a, ellipse_mask(a.shape, scx + q(0.5), neck_y + 0.5,
+                             max(1, q(0.45)), max(1, q(0.35))), 'timber_warm', 2)
         bar(a, scx, scy - ry + 1, scx - 2, scy - ry + 4, 0.8, 'timber', 2, where=m)
     return finish(p)
 
