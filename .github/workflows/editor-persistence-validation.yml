@@ -19,9 +19,9 @@ jobs:
     runs-on: ubuntu-24.04 # exact Noble ABI for the pinned private Mesa diagnostic
     timeout-minutes: 15
     env:
-      # Hosted metadata: pinned setup-python only; no game checkout, engine or science.
+      # Provider-bound displayed candidate; runtime requires a separate lead allocation.
       # Controller default and normal DISPLAYED_SMOKE/H5 checks remain separate.
-      EDITOR_PERSISTENCE_MODE: VULKAN_INVENTORY
+      EDITOR_PERSISTENCE_MODE: DISPLAYED_SMOKE
       CI: 'true'
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
@@ -53,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 15 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->hosting facts child
+          fetch-depth: 16 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->bcbf ->provider child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -131,12 +131,20 @@ jobs:
       - name: Select exact hosted Python; controller validates before private dependency staging
         id: python_path
         shell: bash
+        env:
+          SETUP_PYTHON_PATH: ${{ steps.python.outputs.python-path }}
+          SETUP_PYTHON_VERSION: ${{ steps.python.outputs.python-version }}
         run: |
           set -euo pipefail
           if [ "$EDITOR_PERSISTENCE_MODE" = DRIVER_CAPABILITY ]; then
             printf 'PYTHON=%s\n' "$(command -v python3)" >> "$GITHUB_ENV"
           else
-            printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
+            test -n "$SETUP_PYTHON_PATH"
+            test -n "$SETUP_PYTHON_VERSION"
+            printf 'PYTHON=%s\n' "$SETUP_PYTHON_PATH" >> "$GITHUB_ENV"
+            printf 'EDITOR_PYTHON_PROVIDER=%s\n' 'actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1' >> "$GITHUB_ENV"
+            printf 'EDITOR_PYTHON_PATH=%s\n' "$SETUP_PYTHON_PATH" >> "$GITHUB_ENV"
+            printf 'EDITOR_PYTHON_VERSION=%s\n' "$SETUP_PYTHON_VERSION" >> "$GITHUB_ENV"
           fi
 
       - name: Run the explicitly selected receiver mode

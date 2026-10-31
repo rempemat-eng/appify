@@ -36,6 +36,9 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+PYTHON_PROVIDER_ACTION = "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1"
+PYTHON_PROVIDER_RECEIVER_PARENT = "bcbf912f601163497fcd3ada21ce20d7e184be91"
+PYTHON_PROVIDER_RECEIVER_PARENT_TREE = "5e2de3fb7a066be500ac9bd63b89071bf8c495d9"
 PYTHON_FACTS_RECEIVER_PARENT = "f833bc16a2907c5ac1fa2032867a9dc37f432f1d"
 PYTHON_FACTS_RECEIVER_PARENT_TREE = "7228308a5a7c6e7e84f6ff723a319dec589c0280"
 PYTHON_BINDING_RECEIVER_PARENT = "3b51a474e846ccc899204b727a23a92b4af17a1b"
@@ -553,8 +556,11 @@ def mesa_tool_stage(args: argparse.Namespace) -> int:
 def qualified_python_binding(environment: dict | None = None) -> dict | None:
     """Observe the one setup-python prefix/lib binding; never rewrite it.
 
-    The pinned action prepends this directory for its shared CPython build.
-    This is an installed-byte qualification, not package authentication. Only
+    The selected pinned action already supplies the running interpreter and
+    prepends this directory for its shared build. Its hosted inputs can be
+    writable; actual modes/content/identities are recorded and guarded. Only
+    this coherent action-output Python profile uses that provider expectation.
+    This is installed-provider-byte qualification, not archive authentication. Only
     direct entries participate in the linker's SONAME search; do not recurse
     into the standard library or permit unrelated shared-library shadowing.
     """
@@ -576,17 +582,31 @@ def qualified_python_binding(environment: dict | None = None) -> dict | None:
             or not executable.is_absolute() or executable.resolve(strict=True).parent != prefix / "bin"
             or raw != str(libdir) or libdir.resolve(strict=True) != libdir):
         raise RuntimeError("Python linker path does not match actual executable/base/prefix/pythonLocation")
+    action_path = env.get("EDITOR_PYTHON_PATH", "")
+    action_version = env.get("EDITOR_PYTHON_VERSION", "")
+    if (env.get("EDITOR_PYTHON_PROVIDER") != PYTHON_PROVIDER_ACTION
+            or not isinstance(action_path, str) or not 0 < len(action_path.encode()) <= 4096
+            or any(ord(value) < 32 for value in action_path)
+            or action_version != ".".join(str(value) for value in sys.version_info[:3])):
+        raise RuntimeError("Python binding requires the exact pinned action's actual path/version outputs")
+    provider_path = Path(action_path)
+    if (not provider_path.is_absolute() or provider_path.parent != prefix / "bin"
+            or provider_path.resolve(strict=True) != executable.resolve(strict=True)
+            or Path(env.get("PYTHON", "")).resolve(strict=True) != executable.resolve(strict=True)):
+        raise RuntimeError("Actual interpreter/PYTHON differs from selected action output")
     stable_keys = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns", "st_mode", "st_uid", "st_gid")
 
     def identity(info) -> dict:
         return {key: getattr(info, key) for key in stable_keys}
 
     def safe(info) -> bool:
-        return info.st_uid in (0, os.getuid()) and (stat.S_ISLNK(info.st_mode) or not info.st_mode & 0o6022)
+        # Provider-writable Python inputs are already selected by the pinned
+        # action. Record their exact modes; unrelated/native rules stay strict.
+        return info.st_uid in (0, os.getuid()) and not info.st_mode & 0o6000
 
     directory = libdir.lstat()
     if not stat.S_ISDIR(directory.st_mode) or not safe(directory):
-        raise RuntimeError("Python linker directory must be physical and not group/world writable")
+        raise RuntimeError("Python provider directory must be physical, permitted-owner and no-set-ID")
     files = {}
 
     def elf(path: Path, maximum: int) -> dict:
@@ -612,7 +632,11 @@ def qualified_python_binding(environment: dict | None = None) -> dict | None:
             raise RuntimeError("Python interpreter/library changed during observation")
         return files[str(canonical)]
 
+    provider_alias = provider_path.lstat()
     interpreter_link = executable.lstat()
+    if any(not safe(info) or not (stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode))
+           for info in (provider_alias, interpreter_link)):
+        raise RuntimeError("Selected Python action/interpreter alias has invalid type/owner/set-ID")
     interpreter = elf(executable, 32 * 1024**2)
     entries = []
     expected = {"libpython3.12.so.1.0", "libpython3.12.so", "libpython3.so"}
@@ -640,16 +664,20 @@ def qualified_python_binding(environment: dict | None = None) -> dict | None:
     names = {row["name"] for row in entries}
     if not {"libpython3.12.so", "libpython3.12.so.1.0"}.issubset(names):
         raise RuntimeError("Selected shared CPython3.12 library/SONAME aliases missing")
-    if identity(directory) != identity(libdir.lstat()) or identity(interpreter_link) != identity(executable.lstat()):
+    if (identity(directory) != identity(libdir.lstat()) or identity(interpreter_link) != identity(executable.lstat())
+            or identity(provider_alias) != identity(provider_path.lstat())):
         raise RuntimeError("Python linker directory/interpreter alias changed during observation")
     if any(row["identity"] != identity(Path(name).lstat()) for name, row in files.items()):
         raise RuntimeError("Python interpreter/library identity changed before qualification completed")
-    return {"LD_LIBRARY_PATH": raw, "pythonLocation": location, "sys_executable": sys.executable,
+    return {"provider": {"action": PYTHON_PROVIDER_ACTION, "python_path_output": action_path,
+                "python_version_output": action_version, "path_alias_identity": identity(provider_alias),
+                "permission_basis": "Explicit selected hosted-Python provider profile; writable bits recorded, permitted UID/physical types/no-set-ID and unchanged bytes/identities required."},
+        "LD_LIBRARY_PATH": raw, "pythonLocation": location, "sys_executable": sys.executable,
         "sys_prefix": sys.prefix, "sys_base_prefix": sys.base_prefix, "version": list(sys.version_info[:3]),
         "interpreter_alias": identity(interpreter_link), "interpreter": interpreter,
         "directory": {"path": str(libdir), "identity": identity(directory)},
         "direct_entries": sorted(entries, key=lambda row: row["name"]),
-        "qualification": "Exact one action-derived Python lib binding retained unchanged for every child; bounded installed identities only, no archive authentication or arbitrary LD allowlist."}
+        "qualification": "Exact action-output-selected Python path/version and single lib binding retained for every child; provider-writable modes observed and guarded, no archive authentication or arbitrary LD allowlist."}
 
 
 def python_runtime_facts(result: dict, persist) -> None:
@@ -696,7 +724,7 @@ def python_runtime_facts(result: dict, persist) -> None:
             "predicates": {"physical_directory": stat.S_ISDIR(info.st_mode), "physical_regular": stat.S_ISREG(info.st_mode),
                 "permitted_uid": info.st_uid in (0, os.getuid()), "mode_06022_clear": not bool(info.st_mode & 0o6022),
                 "group_world_write_clear": not bool(info.st_mode & 0o022), "setid_clear": not bool(info.st_mode & 0o6000),
-                "qualifier_safe_owner_and_mode": info.st_uid in (0, os.getuid()) and (stat.S_ISLNK(info.st_mode) or not info.st_mode & 0o6022)}}
+                "prior_nonwritable_owner_and_mode": info.st_uid in (0, os.getuid()) and (stat.S_ISLNK(info.st_mode) or not info.st_mode & 0o6022)}}
 
     def observe(path: Path, row: dict) -> Path | None:
         row["path"] = str(path)
@@ -782,7 +810,7 @@ def python_runtime_facts(result: dict, persist) -> None:
             facts["direct_entries_complete"] = False
             facts["gaps"].append({"path": str(libdir), "operation": "nonphysical_directory_not_traversed"})
     facts["state"] = "OBSERVED_WITH_GAPS" if facts["gaps"] else "OBSERVED_METADATA_ONLY"
-    facts["qualification"] = "Individual predicates are recorded, not approved. Strict qualified_python_binding is unchanged and NOT invoked; no library content load/native query or policy relaxation."
+    facts["qualification"] = "Individual facts are recorded, not approved. prior_nonwritable_owner_and_mode is the historical pre-provider policy comparison; the current provider qualifier is NOT invoked by this stat-only observer."
     persist()
 
 
@@ -1003,6 +1031,8 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
         receipt["private_environment"] = {key: gui_env[key] for key in
             ("DISPLAY", "XAUTHORITY", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_RUNTIME_DIR", "TMPDIR", "VK_DRIVER_FILES", "EDITOR_PRIVATE_VULKAN_PROVENANCE_SHA256")}
         receipt["private_environment"]["LD_LIBRARY_PATH"] = gui_env.get("LD_LIBRARY_PATH")
+        for key in ("EDITOR_PYTHON_PROVIDER", "EDITOR_PYTHON_PATH", "EDITOR_PYTHON_VERSION"):
+            receipt["private_environment"][key] = gui_env.get(key)
         save()
         editor = launch("editor", command, gui_env, stdin=subprocess.DEVNULL)
         deadline = time.monotonic() + 45
@@ -1154,7 +1184,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [PYTHON_FACTS_RECEIVER_PARENT]
+                != [PYTHON_PROVIDER_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", PYTHON_PROVIDER_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_PROVIDER_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_FACTS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
@@ -1166,7 +1198,7 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
                 != [INVENTORY_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
                 != INVENTORY_RECEIVER_PARENT_TREE):
-            raise RuntimeError("Inventory candidate is not the exact genuine sole-f833 child")
+            raise RuntimeError("Inventory candidate is not the exact genuine sole-bcbf child")
         changed = set(git(candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines())
         if changed != OWNED_PATHS:
             raise RuntimeError("Inventory candidate must change exactly the two existing receiver paths")
@@ -1794,8 +1826,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [PYTHON_FACTS_RECEIVER_PARENT]:
-            raise RuntimeError("Hosting-facts receiver must be a genuine sole child of frozen405f833")
+        if parents != [PYTHON_PROVIDER_RECEIVER_PARENT]:
+            raise RuntimeError("Provider-binding receiver must be a genuine sole child of frozen405bcbf")
+        python_provider_headers = git(self.candidate, "cat-file", "commit", PYTHON_PROVIDER_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line[7:] for line in python_provider_headers.splitlines() if line.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", PYTHON_PROVIDER_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen hosted-facts ancestry/tree changed")
         python_facts_headers = git(self.candidate, "cat-file", "commit", PYTHON_FACTS_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line[7:] for line in python_facts_headers.splitlines() if line.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE):
@@ -1912,6 +1948,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "python_provider_receiver_parent": PYTHON_PROVIDER_RECEIVER_PARENT, "python_provider_receiver_parent_headers": python_provider_headers,
                     "python_facts_receiver_parent": PYTHON_FACTS_RECEIVER_PARENT, "python_facts_receiver_parent_headers": python_facts_headers,
                     "python_binding_receiver_parent": PYTHON_BINDING_RECEIVER_PARENT, "python_binding_receiver_parent_headers": python_binding_headers,
                     "receiver_parent": INVENTORY_RECEIVER_PARENT, "receiver_parent_headers": inventory_parent_headers,
@@ -2756,7 +2793,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [PYTHON_PROVIDER_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", PYTHON_PROVIDER_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_PROVIDER_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_FACTS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
@@ -2765,7 +2804,7 @@ class Controller:
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
                     or set(git(self.candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines()) != OWNED_PATHS):
-                raise RuntimeError("Driver mode requires the genuine sole-f833 two-file candidate")
+                raise RuntimeError("Driver mode requires the genuine sole-bcbf two-file candidate")
             if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
                 raise RuntimeError("Actual identity-safe process collection unavailable")
             os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
