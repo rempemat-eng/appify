@@ -21,7 +21,7 @@ jobs:
     env:
       # Inventory-only candidate: no game checkout, setup-python acquisition, engine or science.
       # Controller default and normal DISPLAYED_SMOKE/H5 checks remain separate.
-      EDITOR_PERSISTENCE_MODE: DRIVER_CAPABILITY
+      EDITOR_PERSISTENCE_MODE: DISPLAYED_SMOKE
       CI: 'true'
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
@@ -53,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 12 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->driver child
+          fetch-depth: 13 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->display child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -226,7 +226,7 @@ jobs:
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY' else
                   'One private official-tool enumeration only; no game/science/engine/import/GUI/H5 or X11-presentation acceptance.'
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'DRIVER_CAPABILITY' else
-                  'Existing DISPLAYED_SMOKE only; undo/restoration and bake refusals, no H5 rerun or successful save/bake/walk/manual acceptance. Missing result is failure, never PASS.'))
+                  'Existing DISPLAYED_SMOKE with qualified private ICD prerequisite; undo/restoration and bake refusals, no H5 rerun or successful save/bake/walk/manual acceptance. Missing result is failure, never PASS.'))
           (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
           if inventory:
               count = used = outputs = 0
