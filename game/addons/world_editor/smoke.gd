@@ -280,6 +280,84 @@ static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) 
 	facts["elapsed_ms"] = Time.get_ticks_msec() - started
 	return facts
 
+## Receiving diagnostics only: scene/library loading already happened before this hook.
+static func _materials_evidence_start(ground: TerrainGround) -> Dictionary:
+	var report := {"path": "res://kit/terrain/materials.tres", "read_cap_bytes": 16384, "snapshot_limit": 4, "resource_limit": 8, "counter_limit": 65535,
+		"qualification": "Entry is AFTER existing scene/library loading; changed notifications are not engine edited flags. File observations are bounded, not atomic.", "snapshots": [], "errors": []}
+	var state := {"report": report, "resources": [], "handlers": [], "counts": {}}
+	if ground.kit == null or not ground.kit.tileset is TileSet:
+		report.errors.append("UNOBSERVED: existing shared TileSet unavailable.")
+		return state
+	var tiles: TileSet = ground.kit.tileset
+	state.resources.append(tiles)
+	var source_count := tiles.get_source_count()
+	report["atlas_sources_at_entry"] = source_count
+	for index in mini(source_count, 7):
+		var source := tiles.get_source(tiles.get_source_id(index))
+		if source is TileSetAtlasSource:
+			state.resources.append(source)
+		elif report.errors.size() < 8:
+			report.errors.append("UNOBSERVED: non-atlas TileSet source at bounded index%d." % index)
+	if source_count > 7: report.errors.append("UNOBSERVED: atlas sources beyond7 are outside the diagnostic resource cap.")
+	var seen := {}
+	var resources: Array = state.resources
+	state.resources = []
+	for resource: Resource in resources:
+		var identity := resource.get_instance_id()
+		if seen.has(identity): continue
+		seen[identity] = true
+		state.resources.append(resource)
+		state.counts[identity] = 0
+		var counts: Dictionary = state.counts
+		var on_changed := func() -> void:
+			counts[identity] = mini(int(counts[identity]) + 1, 65535)
+		var error := resource.changed.connect(on_changed)
+		if error == OK:
+			state.handlers.append({"resource": resource, "callback": on_changed})
+		else:
+			state.counts[identity] = null
+			if report.errors.size() < 8: report.errors.append("UNOBSERVED: changed connection failed for instance%d with error%d." % [identity, error])
+	return state
+
+static func _materials_evidence_sample(state: Dictionary, label: String) -> void:
+	var report: Dictionary = state.report
+	if report.snapshots.size() >= 4: return
+	var observation := {"label": label, "ticks_usec": Time.get_ticks_usec(), "resources": [], "byte_size": null, "bytes_read": 0, "sha256": null, "content_status": "UNOBSERVED"}
+	for resource: Resource in state.resources:
+		var identity := resource.get_instance_id()
+		var count: Variant = state.counts.get(identity)
+		observation.resources.append({"instance_id": identity, "class": String(resource.get_class()).left(96), "path": resource.resource_path.left(256), "path_length": resource.resource_path.length(), "path_truncated": resource.resource_path.length() > 256,
+			"changed_notifications": count, "counter_saturated": count != null and int(count) >= 65535})
+	var file := FileAccess.open("res://kit/terrain/materials.tres", FileAccess.READ)
+	if file == null:
+		if report.errors.size() < 8: report.errors.append("UNOBSERVED:%s materials open error%d." % [label, FileAccess.get_open_error()])
+	else:
+		var size := file.get_length()
+		observation.byte_size = size
+		if size > 16384:
+			if report.errors.size() < 8: report.errors.append("UNOBSERVED:%s materials exceeds16KiB read cap." % label)
+		else:
+			var bytes := file.get_buffer(size)
+			observation.bytes_read = bytes.size()
+			var hash := HashingContext.new()
+			if bytes.size() != size or file.get_length() != size or hash.start(HashingContext.HASH_SHA256) != OK:
+				if report.errors.size() < 8: report.errors.append("UNOBSERVED:%s incomplete/size-changing read or SHA initialization failure." % label)
+			elif hash.update(bytes) != OK:
+				if report.errors.size() < 8: report.errors.append("UNOBSERVED:%s SHA update failed." % label)
+			else:
+				observation.sha256 = hash.finish().hex_encode()
+				observation.content_status = "OBSERVED_COMPLETE_BOUNDED_READ"
+		file.close()
+	report.snapshots.append(observation)
+
+static func _materials_evidence_stop(state: Dictionary) -> void:
+	for handler: Dictionary in state.handlers:
+		var resource: Resource = handler.resource
+		var callback: Callable = handler.callback
+		if resource.changed.is_connected(callback): resource.changed.disconnect(callback)
+	state.handlers.clear()
+	state.resources.clear()
+
 static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> Dictionary:
 	var zone_plan := preload("res://tools/kit_zone.gd")
 	var phase := ""
@@ -326,20 +404,28 @@ static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> 
 	if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
 	var expected_path: String = context.evidence.path_join("expected-plan.json")
 	if phase == "author":
+		var material_evidence := _materials_evidence_start(ground)
+		result["materials_evidence"] = material_evidence.report
+		_materials_evidence_sample(material_evidence, "entry_after_existing_load")
 		var before: Dictionary = operations.call("export_plan")
 		if not bool(before.get("ok", false)) or zone_plan.canonical(before.get("plan", {})) != zone_plan.canonical(zone_plan.lifecycle_probe_plan()):
 			failures.append("Bootstrap scene differs from the unchanged persistence fixture's explicit lab clone.")
 		for path in [expected_path, zone_plan.LIFECYCLE_PLAN, zone_plan.LIFECYCLE_PNG, zone_plan.LIFECYCLE_SIDECAR, zone_plan.LIFECYCLE_WALK]:
 			if FileAccess.file_exists(path): failures.append("Fresh author output already exists: " + path)
-		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+		if not failures.is_empty():
+			_materials_evidence_stop(material_evidence)
+			return zone_plan.lifecycle_finish(context, result)
 		var cells: Array[Vector2i] = []
 		for y in range(5, 7):
 			for x in range(1, 8): cells.append(Vector2i(x, y))
 		var paint: Dictionary = plugin.call("paint_cells", cells, "path")
 		var placement: Dictionary = plugin.call("place_piece", "woodland_forest_bench", Vector2(108, 120), {"id": "lifecycle_bench", "facing": "s", "variant": "forest_bench"})
+		_materials_evidence_sample(material_evidence, "after_author_gestures")
 		if not bool(paint.get("ok", false)) or not bool(placement.get("ok", false)):
 			failures.append("Actual plugin painting/placement refused: %s / %s" % [paint, placement])
-		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+		if not failures.is_empty():
+			_materials_evidence_stop(material_evidence)
+			return zone_plan.lifecycle_finish(context, result)
 		var piece := placement.get("node") as KitPiece
 		var owned_walk := ground.get_node_or_null("KitWalk") as KitWalk
 		if piece == null or piece.owner != scene or owned_walk == null or owned_walk.owner != scene or ground.pieces().size() != 1:
@@ -348,7 +434,9 @@ static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> 
 		if not bool(validation.get("ok", false)): failures.append("Actual full validator refused authored lab: " + str(validation))
 		var snapshot: Dictionary = operations.call("export_plan")
 		if not bool(snapshot.get("ok", false)): failures.append("Authored plan could not be exported.")
-		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+		if not failures.is_empty():
+			_materials_evidence_stop(material_evidence)
+			return zone_plan.lifecycle_finish(context, result)
 		# Independent author intent, not a golden snapshot of whatever export returned.
 		if not bool(paint.get("changed", false)) or piece.get("piece_id") != "woodland_forest_bench" or piece.name != &"lifecycle_bench" or piece.position != Vector2(108, 120) or piece.get("variant") != "forest_bench" or piece.get_meta(&"facing", "") != "s":
 			failures.append("Actual authored piece or changed paint stroke differs from requested intent.")
@@ -412,8 +500,14 @@ static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> 
 		if zone_plan.canonical(untouched_before) != zone_plan.canonical(untouched_after):
 			failures.append("Authoring changed other seed fields, spawns, doors or extension metadata.")
 		result["author_intent"] = {"path_cells": path_cells, "piece_count": authored_pieces.size(), "foot": [108, 120], "facing": "s", "variant": "forest_bench"}
-		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
-		if EditorInterface.save_scene() != OK or not zone_plan.lifecycle_write(expected_path, snapshot.plan):
+		if not failures.is_empty():
+			_materials_evidence_stop(material_evidence)
+			return zone_plan.lifecycle_finish(context, result)
+		_materials_evidence_sample(material_evidence, "before_existing_save")
+		var material_save_error := EditorInterface.save_scene()
+		_materials_evidence_sample(material_evidence, "after_existing_save")
+		_materials_evidence_stop(material_evidence)
+		if material_save_error != OK or not zone_plan.lifecycle_write(expected_path, snapshot.plan):
 			failures.append("Actual named scene save or expected-plan publication failed.")
 		else:
 			result["expected_plan_sha256"] = FileAccess.get_sha256(expected_path)
