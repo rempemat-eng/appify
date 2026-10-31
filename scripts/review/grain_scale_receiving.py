@@ -221,13 +221,17 @@ CONTEXT_PRIVATE_FILES = (
 # Separate, reviewed four-cottage subject. No old source or art pin is repointed.
 HALT_RECEIVER_PARENT = "f8d5269047449ddf7ea9077b90f04e1237797516"
 HALT_RECEIVER_PARENT_TREE = "d30685162bc07b2fc2130431d2a3b55360e33fb5"
-HALT_SOURCE_SHA = "09990895018c0a2e72aca5550ebd4d8b55e904de"
-HALT_SOURCE_TREE = "c6cfd4979a5dbd38db0d87231ef36ffd7ec7ff50"
-HALT_SOURCE_PARENT = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
-HALT_SOURCE_PARENT_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
+HALT_SOURCE_SHA = '18588dc63116497908b414e5317c5712e4f7006d'
+HALT_SOURCE_TREE = '417a148ad9ea116cfb206fefc6b4ad193b6557e3'
+HALT_SOURCE_PARENT = "09990895018c0a2e72aca5550ebd4d8b55e904de"
+HALT_SOURCE_PARENT_TREE = "c6cfd4979a5dbd38db0d87231ef36ffd7ec7ff50"
 HALT_ENTRY = "scripts/art/kit/crossroads_halt_court.py"
 HALT_FIXTURE = "scripts/review/fixtures/crossroads_halt_court.json"
 HALT_SOURCE_NEW = {HALT_ENTRY, HALT_FIXTURE}
+HALT_SOURCE_BASE = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+HALT_SOURCE_BASE_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
+HALT_CLOSURE_RECEIVER_PARENT = "3386ecff5e160bb7ac3749a110025350186abd16"
+HALT_CLOSURE_RECEIVER_PARENT_TREE = "1ba2c8406866197245cffd5abea528e2e5843838"
 HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165, '100644'),
  'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444, '100644'),
  'art/scenes/pilot.json': ('442c2bdf3f33c34a7df6453b0a6110fc4a31169c', 37797, '100644'),
@@ -308,7 +312,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/kit/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
  'scripts/art/kit/build.py': ('054206b5ea00d227ae0a33075a0b0b2e0355d4b5', 18911, '100644'),
  'scripts/art/kit/compose.py': ('4435017b23a5d50ed0a5e8801abc536b84854416', 12458, '100644'),
- 'scripts/art/kit/crossroads_halt_court.py': ('bd913d287ffe2c82fc82a6c860dfb205a4681a46', 14247, '100644'),
+ 'scripts/art/kit/crossroads_halt_court.py': ('c262a157245d9c08952768d13fba711b147f3509', 14399, '100644'),
  'scripts/art/kit/dressing.py': ('e4b4db15f45a0f1e202012a7c8d506e6f4970c5f', 8356, '100644'),
  'scripts/art/kit/edges.py': ('28fdf16622c7a0bed0f8d427e2ed6938fc7bcd69', 23944, '100644'),
  'scripts/art/kit/fills.py': ('3cbde218f4ea757a7327887060a60dfd65138df4', 18297, '100644'),
@@ -357,10 +361,12 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/native/village.py': ('78f5e5c48602242d26a52f2e0ce9dbd37610d999', 178366, '100644'),
  'scripts/art/native/water.py': ('8a18feda4c9d6f8580471a61157529ad8293c637', 22027, '100644'),
  'scripts/art/native/zone.py': ('f6635712e08e92fbaeb1979d22f7f50d9d6f9dca', 3221, '100644'),
+ 'scripts/art/pixel.py': ('bc0112b14f9eba4f5b8cf6ff18309603826f8c81', 7894, '100644'),
  'scripts/art/size_guide.json': ('f30ecb3249d771e5dc6cdf6546d50400b118cf57', 45069, '100644'),
+ 'scripts/art/water_flow.py': ('4e1ebf799cae783c35642f6c1b9e34463ed300e0', 8888, '100644'),
  'scripts/review/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
- 'scripts/review/fixtures/crossroads_halt_court.json': ('e7449a2c1535f95153f35fa13152c54c809886c9',
-                                                        42881,
+ 'scripts/review/fixtures/crossroads_halt_court.json': ('a98c725435ce00726b0a567318e8fc7bbcee0d56',
+                                                        47274,
                                                         '100644'),
  'scripts/review/ground_rules.py': ('0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68', 18956, '100644'),
  'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305, '100644')}
@@ -891,8 +897,12 @@ class Controller:
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_RECEIVER_PARENT]:
-            raise RuntimeError("Halt extension must retain the exact solef8d receiver parent")
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_CLOSURE_RECEIVER_PARENT]:
+            raise RuntimeError("Closure extension must retain the exact sole3386 receiver parent")
+        closure_headers = git(self.candidate, "cat-file", "commit", HALT_CLOSURE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in closure_headers.splitlines() if x.startswith("parent ")] != [HALT_RECEIVER_PARENT]
+                or git(self.candidate,"rev-parse",HALT_CLOSURE_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_CLOSURE_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Original Q1 receiver ancestry/tree differs")
         halt_headers = git(self.candidate, "cat-file", "commit", HALT_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in halt_headers.splitlines() if x.startswith("parent ")] != [CONTEXT_RECEIVER_PARENT]
                 or git(self.candidate,"rev-parse",HALT_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_RECEIVER_PARENT_TREE):
@@ -933,13 +943,23 @@ class Controller:
             court_headers = git(self.source, "cat-file", "commit", HALT_SOURCE_SHA).decode().split("\n\n", 1)[0]
             if ([x[7:] for x in court_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_PARENT]
                     or git(self.source,"rev-parse",HALT_SOURCE_PARENT+"^{tree}").decode().strip() != HALT_SOURCE_PARENT_TREE):
-                raise RuntimeError("Separate halt subject099->407feb ancestry/tree differs")
-            base, offered = tree(self.source, HALT_SOURCE_PARENT), tree(self.source, HALT_SOURCE_SHA)
+                raise RuntimeError("Corrected halt subject must retain actual099 parent/tree")
+            halt_original_headers = git(self.source,"cat-file","commit",HALT_SOURCE_PARENT).decode().split("\n\n",1)[0]
+            if ([x[7:] for x in halt_original_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_BASE]
+                    or git(self.source,"rev-parse",HALT_SOURCE_BASE+"^{tree}").decode().strip() != HALT_SOURCE_BASE_TREE):
+                raise RuntimeError("Original halt099->407feb ancestry/tree differs")
+            base, offered = tree(self.source, HALT_SOURCE_BASE), tree(self.source, HALT_SOURCE_SHA)
+            parent = tree(self.source, HALT_SOURCE_PARENT)
+            correction = {p for p in parent.keys() | offered.keys() if parent.get(p) != offered.get(p)}
+            if correction != HALT_SOURCE_NEW:
+                raise RuntimeError("Corrected subject changes only existing native entry/fixture")
             changed = {p for p in base.keys() | offered.keys() if base.get(p) != offered.get(p)}
             if changed != HALT_SOURCE_NEW or any(p in base or offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in changed):
                 raise RuntimeError("Halt subject must add only the two reviewed new files")
-            self.output["halt_subject_history"] = {"headers":court_headers,"baseline_sha":HALT_SOURCE_PARENT,
-                "baseline_tree":HALT_SOURCE_PARENT_TREE,"changed":sorted(changed),"not_receiver_ancestor":True}
+            self.output["halt_subject_history"] = {"headers":court_headers,"parent_sha":HALT_SOURCE_PARENT,
+                "parent_tree":HALT_SOURCE_PARENT_TREE,"original_headers":halt_original_headers,
+                "baseline_sha":HALT_SOURCE_BASE,"baseline_tree":HALT_SOURCE_BASE_TREE,
+                "changed":sorted(changed),"correction_changed":sorted(correction),"not_receiver_ancestor":True}
         active_tree = tree(self.candidate, ACTIVE_RECEIVER_PARENT)
         context_tree = tree(self.candidate, CONTEXT_RECEIVER_PARENT)
         mode_delta = {p for p in active_tree.keys() | context_tree.keys() if active_tree.get(p) != context_tree.get(p)}
@@ -965,7 +985,8 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers, "halt_headers":halt_headers,"halt_parent":HALT_RECEIVER_PARENT,
+            "headers": headers,"closure_headers":closure_headers,"closure_parent":HALT_CLOSURE_RECEIVER_PARENT,
+            "halt_headers":halt_headers,"halt_parent":HALT_RECEIVER_PARENT,
             "context_headers":context_headers,"context_parent":CONTEXT_RECEIVER_PARENT,
             "context_delta":sorted(context_delta),"active_headers": active_headers, "mode_delta":sorted(mode_delta), "parent_headers": parent_headers, "original_headers": original_headers,
             "receiver_parent": RECEIVER_PARENT,
@@ -1683,7 +1704,7 @@ def draw_halt_court(root: Path, work: Path, evidence: Path) -> int:
     code = subject.draw(output)  # Exactly one call; original source owns all drawing.
     result = json.loads((output / "native-result.json").read_text())
     if (code != 0 or result.get("state") != "NATIVE_CANDIDATE_COMPLETE_NOT_APPROVED"
-            or result.get("source_guard") != "PASS" or result.get("input_files") != 110
+            or result.get("source_guard") != "PASS" or result.get("input_files") != 112
             or result.get("native_town_invocations_started") != 1
             or result.get("completed_native_body_outputs") != 4):
         raise RuntimeError("Native halt output incomplete or refused; original partials retained")

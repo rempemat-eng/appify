@@ -38,7 +38,7 @@ jobs:
           p=Path(os.environ['RUNNER_TEMP'])/'grain-scale/evidence/bootstrap.json'
           p.write_text(json.dumps(dict(workflow_sha=os.environ['GITHUB_SHA'],
               receiving_mode=os.environ['GRAIN_RECEIVING_MODE'],
-              source_sha=('09990895018c0a2e72aca5550ebd4d8b55e904de' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'd948ac57134ab092e91c8ab9ccc5d62593f064dd' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else '5dd3825353078b8b8e231f081714144891d98feb'),
+              source_sha=('18588dc63116497908b414e5317c5712e4f7006d' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'd948ac57134ab092e91c8ab9ccc5d62593f064dd' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else '5dd3825353078b8b8e231f081714144891d98feb'),
               run_id=os.environ['GITHUB_RUN_ID'],attempt=os.environ['GITHUB_RUN_ATTEMPT'],
               state='NOTRUN; exact setup and lead allocation still required'),indent=2)+'\n')
           PY
@@ -48,7 +48,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 7 # new ->f8d ->52f ->c302 ->3e7 ->1d47 ->5dd
+          fetch-depth: 8 # new ->3386 ->f8d ->52f ->c302 ->3e7 ->1d47 ->5dd
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -182,9 +182,9 @@ jobs:
         id: source_halt
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: 09990895018c0a2e72aca5550ebd4d8b55e904de
+          ref: 18588dc63116497908b414e5317c5712e4f7006d
           path: source
-          fetch-depth: 2
+          fetch-depth: 3
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -295,7 +295,9 @@ jobs:
             /scripts/art/native/village.py
             /scripts/art/native/water.py
             /scripts/art/native/zone.py
+            /scripts/art/pixel.py
             /scripts/art/size_guide.json
+            /scripts/art/water_flow.py
             /scripts/review/__init__.py
             /scripts/review/fixtures/crossroads_halt_court.json
             /scripts/review/ground_rules.py
@@ -376,7 +378,7 @@ jobs:
           (evidence/'partial-checkouts.json').write_text(json.dumps(dict(files=records,missing=missing,
               errors=errors,qualification='Actual complete or labelled partial bytes only; never source/runtime/art acceptance'),indent=2)+'\n')
           value=dict(workflow_sha=os.environ['GITHUB_SHA'],receiving_mode=os.environ['GRAIN_RECEIVING_MODE'],
-              source_sha=('09990895018c0a2e72aca5550ebd4d8b55e904de' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'd948ac57134ab092e91c8ab9ccc5d62593f064dd' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else '5dd3825353078b8b8e231f081714144891d98feb'),
+              source_sha=('18588dc63116497908b414e5317c5712e4f7006d' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'd948ac57134ab092e91c8ab9ccc5d62593f064dd' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else '5dd3825353078b8b8e231f081714144891d98feb'),
               outcomes={k:os.environ.get(k,'NOTRUN') for k in ('RUNNER_OUTCOME','SOURCE_OUTCOME','SOURCE_GOODS_OUTCOME','SOURCE_HALT_OUTCOME','PYTHON_OUTCOME','RECEIVING_OUTCOME')},
               result_present=(evidence/'result.json').is_file(),
               qualification=('One native four-cottage diagnostic;4HD+4legacy counts planned not instrumented; terrain, roof/court occlusion, detail/Y12/Matt remain open.' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'Two native candidate goods only; no H3/grain/composition and no detail/Y12/Matt approval.' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else 'One existing native candidate composition; context mode reuses exact H2 and H4 without drawing. Native terrain initialisers stay within composition phase. Ground/shadow/reference/Y12/Matt gaps remain.'))
