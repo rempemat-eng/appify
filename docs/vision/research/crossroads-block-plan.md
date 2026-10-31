@@ -468,3 +468,29 @@ Source-only rectangle/full-width capsule checks find all41 floors disjoint and a
 The appended JSON field native_visible_approaches_r3 overrides only these two records, four local route offers and one area for the next SOURCE PROPOSAL. All historical738/Q2 data stays bound to its old geometry. All moved ground remains UNMEASURED; prior E/G terrain results do not transfer. The four diagnostic native pieces remain candidates, and the remaining classes/terrace/mill/zone/binding/E05 and approval gaps persist. No new households/jobs/rules, size exception, renderer/cutaway direction,409/406 edit or live adoption follows. Producer cap40/check40, medium14–22/large30–45 and41-record accounting are unchanged.
 
 Next: root and independent source review, then a separate exact native context recomposition and ordinary real-terrain validation. KEEP/catalogue/Y12/detail/full gates/whole-world21-town/Matt approval and Ready/merge remain outstanding.
+
+
+## Doorstep contact r4: use the renderer's rectangular cells
+
+Matt asks for the path to reach the house. Q3 kept the doors and courts clear, but did not prove earth-to-threshold contact. The earlier radius-cap reasoning was wrong for this native route path.
+
+GO6546904382 / ASSIGN6546924380 / separate ACK6546928147. This source-only overlay changes the **nominal width of just the four G02-G05 threshold spurs from16 to24 worldpx**, keeping their points and every floor/door in place. It changes no painter, terrain, other route, reserve, count or earlier JSON section.
+
+Exact source409a25 town._ground converts nominal width with n=max(1,round((width-8)/8)); softgrid.cells_route lays rectangular cell slices. Width16 becomes one8px cell, with floor snapping and no cap north of the first row. Each old spur starts at doorY+8, so its entire two-cell strip is already inside its court and leaves the doorstep row unpainted. All four door centres lie on cell lines, while that odd-width strip sits to their right.
+
+Width24 becomes **two cells**, snapped to cell lines with one cell either side. Keeping the existing start at doorY+8 now makes the slice start at doorY and span doorX-8 to doorX+8: a centred16px unsmoothed core. Each spur adds the two missing threshold-row cells and shares four cells with its existing court. These are exact half-open rectangular slices, not a24px circular corridor.
+
+| Spur | Existing points, worldpx | Proposed nominal width | Derived unsmoothed core [x,y,w,h] |
+| --- | --- | ---: | --- |
+| G02 | [[6032, 4160], [6032, 4168]] |24| [6024, 4152, 16, 24] |
+| G03 | [[5896, 4104], [5896, 4112]] |24| [5888, 4096, 16, 24] |
+| G04 | [[5896, 4240], [5896, 4248]] |24| [5888, 4232, 16, 24] |
+| G05 | [[6088, 4240], [6088, 4248]] |24| [6080, 4232, 16, 24] |
+
+The four derived strips touch their own floor only at its southern boundary and have zero positive-area overlap with all41 proposed floors. The other five diagnostic routes and all70 other town routes remain exact. Original40 plus the separate mill/candidate41 accounting, producer cap/check40, seven anchors, source history and all oldr2/r3 results remain unchanged.
+
+A nominal24 route treated as a radius12 capsule would extend4worldpx into its own floor, unlike the native two-cell rectangle. This overlay does not pass or redefine that physical-route check. Later adapters and terrain validation must reconcile the nominal native width and actual physical core explicitly; they must not suppress a capsule conflict or credit an unchanged physics pass.
+
+This is **source arithmetic, not a new rendered contact or terrain pass**. The renderer unions cells before unchanged soft-grid rounding, seeded1.5-3artpx displacement, cleanup and ground painting. Those steps can alter edge pixels, so a later exact combined native image must demonstrate continuous earth at all four thresholds with the courts still visible. No native module, array, mask, renderer, terrain fit, collision test or engine was executed for this overlay.
+
+The appended native_visible_approaches_r4 field overrides only these four nominal widths after r3. The later native fixture must consume it explicitly, together with reviewed painter corrections and an honest updated receiving closure. Actual continent water/bank/grade validation and playable zone extent, physical door operation, detail/Y12/full gates and Matt's PR approval remain open.

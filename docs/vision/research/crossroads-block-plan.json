@@ -23317,5 +23317,315 @@
       "Source geometry, translated masks and Q2 candidate drawings do not confer KEEP/catalogue/Y12/detail/current full gates/whole-world21-town/Matt approval, Ready, merge or playable adoption."
     ],
     "next_step": "Root and independent source review; only then a separately allocated exact native context recomposition and ordinary real-terrain/route validation. Do not reuse historical terrain passes or treat this analytical prediction as a rendered result."
+  },
+  "native_visible_approaches_r4": {
+    "schema": "mygame.crossroads-doorstep-geometry/1",
+    "status": "SOURCE_ONLY_UNRENDERED_NATIVE_CELL_DERIVATION_NOT_TERRAIN_OR_VISUAL_ACCEPTANCE",
+    "GO": 6546904382,
+    "ASSIGN": 6546924380,
+    "ACK": 6546928147,
+    "base_source": {
+      "commit": "a81b6ed1137018a80c0408ad0254dd03e09e0ee6",
+      "tree": "13e71b148f2cbf00f01e3e0fe9e211356b0192cb",
+      "json_blob": "63b10a6b2d9ed8ffc35ef3af20d78f319930b3ae"
+    },
+    "authority": "Override ONLY the four named doorstep spur nominal widths below after native_visible_approaches_r3. Their points are deliberately unchanged. All floors/doors, other5 diagnostic routes, other70 town routes, areas/reserves/counts/anchors and historicalr2/r3 values inherit unchanged. Earlier capsule reasoning is not the native rectangular-cell contract.",
+    "source_native": {
+      "commit": "a25dada748cf398f4c1c32eb5fc0e19308dd7b3b",
+      "tree": "3ed1a0df87b34e3abd03324356cc59bffdeef249",
+      "files": [
+        {
+          "path": "scripts/art/native/softgrid.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "365cdd330b3a1628a1e7eca1114648262a506dab",
+          "size": 27518,
+          "url": "https://api.github.com/repos/rempemat-eng/appify/git/blobs/365cdd330b3a1628a1e7eca1114648262a506dab"
+        },
+        {
+          "path": "scripts/art/native/town.py",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "fedd255dcffc57aa42c7668de6c80ef1e7a17f58",
+          "size": 51678,
+          "url": "https://api.github.com/repos/rempemat-eng/appify/git/blobs/fedd255dcffc57aa42c7668de6c80ef1e7a17f58"
+        }
+      ]
+    },
+    "coordinate_contract": {
+      "cell_world_px": 8,
+      "density": 3,
+      "cell_art_px": 24,
+      "diagnostic_origin_world_px": [
+        5824,
+        3968
+      ],
+      "town_width_expression": "n=max(1,int(round((route.width-8)/8.0)))",
+      "odd_n": "snap=floor(v/8); lo=(n-1)//2; hi=(n-1)//2+1",
+      "even_n": "snap=round(v/8); lo=hi=n//2",
+      "vertical_slice": "rows[min(y0,y1)-lo:max(y0,y1)+hi], cols[x-lo:x+hi]; half-open rectangular slices, not radius caps",
+      "soft_outline": "All route cells union before shape->texels->soften(round_corners, seeded lumps, clean). Existing R_TURN_OUT=.4cell/R_TURN_IN=.25cell and AMP1.5-3artpx unchanged."
+    },
+    "derivation": "All4door centres and spur points are on8worldpx grid lines. Width16 becomes n1 and paints core[doorX,doorY+8,8,16], wholly inside its existing court. Width24 becomes evenn2 and paints core[doorX-8,doorY,16,24], centred on the unchanged door. It adds exactly the2missing doorstep-row cells, sharing4cells with the court. No endpoint moves, guessed caps or path through solid-floor interior.",
+    "local_route_overrides": [
+      {
+        "name": "G02 south threshold",
+        "record_id": "crossroads-b029",
+        "plot": "G02",
+        "existing_threshold_world_px": [
+          6032,
+          4152
+        ],
+        "inherited_points_world_px": [
+          [
+            6032,
+            4160
+          ],
+          [
+            6032,
+            4168
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            6032,
+            4160
+          ],
+          [
+            6032,
+            4168
+          ]
+        ],
+        "inherited_width_world_px": 16,
+        "width_world_px": 24,
+        "kind": "path",
+        "inherited_native_n_cells": 1,
+        "native_n_cells": 2,
+        "inherited_native_core_local_cells": [
+          26,
+          24,
+          1,
+          2
+        ],
+        "native_core_local_cells": [
+          25,
+          23,
+          2,
+          3
+        ],
+        "inherited_native_core_world_rect": [
+          6032,
+          4160,
+          8,
+          16
+        ],
+        "native_core_world_rect": [
+          6024,
+          4152,
+          16,
+          24
+        ],
+        "new_threshold_row_cells_added": 2,
+        "new_spur_cells_shared_with_court": 4
+      },
+      {
+        "name": "G03 south threshold",
+        "record_id": "crossroads-b038",
+        "plot": "G03",
+        "existing_threshold_world_px": [
+          5896,
+          4096
+        ],
+        "inherited_points_world_px": [
+          [
+            5896,
+            4104
+          ],
+          [
+            5896,
+            4112
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            5896,
+            4104
+          ],
+          [
+            5896,
+            4112
+          ]
+        ],
+        "inherited_width_world_px": 16,
+        "width_world_px": 24,
+        "kind": "path",
+        "inherited_native_n_cells": 1,
+        "native_n_cells": 2,
+        "inherited_native_core_local_cells": [
+          9,
+          17,
+          1,
+          2
+        ],
+        "native_core_local_cells": [
+          8,
+          16,
+          2,
+          3
+        ],
+        "inherited_native_core_world_rect": [
+          5896,
+          4104,
+          8,
+          16
+        ],
+        "native_core_world_rect": [
+          5888,
+          4096,
+          16,
+          24
+        ],
+        "new_threshold_row_cells_added": 2,
+        "new_spur_cells_shared_with_court": 4
+      },
+      {
+        "name": "G04 south threshold",
+        "record_id": "crossroads-b039",
+        "plot": "G04",
+        "existing_threshold_world_px": [
+          5896,
+          4232
+        ],
+        "inherited_points_world_px": [
+          [
+            5896,
+            4240
+          ],
+          [
+            5896,
+            4248
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            5896,
+            4240
+          ],
+          [
+            5896,
+            4248
+          ]
+        ],
+        "inherited_width_world_px": 16,
+        "width_world_px": 24,
+        "kind": "path",
+        "inherited_native_n_cells": 1,
+        "native_n_cells": 2,
+        "inherited_native_core_local_cells": [
+          9,
+          34,
+          1,
+          2
+        ],
+        "native_core_local_cells": [
+          8,
+          33,
+          2,
+          3
+        ],
+        "inherited_native_core_world_rect": [
+          5896,
+          4240,
+          8,
+          16
+        ],
+        "native_core_world_rect": [
+          5888,
+          4232,
+          16,
+          24
+        ],
+        "new_threshold_row_cells_added": 2,
+        "new_spur_cells_shared_with_court": 4
+      },
+      {
+        "name": "G05 south threshold",
+        "record_id": "crossroads-b040",
+        "plot": "G05",
+        "existing_threshold_world_px": [
+          6088,
+          4232
+        ],
+        "inherited_points_world_px": [
+          [
+            6088,
+            4240
+          ],
+          [
+            6088,
+            4248
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            6088,
+            4240
+          ],
+          [
+            6088,
+            4248
+          ]
+        ],
+        "inherited_width_world_px": 16,
+        "width_world_px": 24,
+        "kind": "path",
+        "inherited_native_n_cells": 1,
+        "native_n_cells": 2,
+        "inherited_native_core_local_cells": [
+          33,
+          34,
+          1,
+          2
+        ],
+        "native_core_local_cells": [
+          32,
+          33,
+          2,
+          3
+        ],
+        "inherited_native_core_world_rect": [
+          6088,
+          4240,
+          8,
+          16
+        ],
+        "native_core_world_rect": [
+          6080,
+          4232,
+          16,
+          24
+        ],
+        "new_threshold_row_cells_added": 2,
+        "new_spur_cells_shared_with_court": 4
+      }
+    ],
+    "static_checks": {
+      "four_floor_rectangles_and_thresholds_unchanged": true,
+      "four_points_unchanged_only_four_nominal_widths_16_to_24": true,
+      "four_native_raw_strips_centred_on_door_x_and_start_at_door_y": true,
+      "four_raw_strips_zero_positive_area_overlap_with_all41_floors": true,
+      "each_spur_adds2threshold_cells_and_shares4court_cells": true,
+      "other5_diagnostic_and_other70_town_routes_unchanged": true,
+      "seven_anchors_41programme_40producer_cap_and_check_and_reserves_unchanged": true,
+      "all_prior_JSON_values_and_MD_prefix_unchanged": true,
+      "qualification": "Scalar source arithmetic only. Native modules/mask code/arrays/drawing/terrain/collision were NOT executed. Nominal width is not a circular corridor or painted-width promise."
+    },
+    "remaining_limits": [
+      "Unsmoothed strip reaches the threshold; seeded rounding/lumps/turf/contact may change final earth pixels. Actual revised combined native scene must show all4earth-to-door contacts without grass gaps and retain clear courts before visual acceptance.",
+      "A nominal24 radius12 capsule would extend4worldpx into its own floor, unlike this native n2 rectangular core. This is NOT a pass/redefinition of ordinary physical-route predicates; later adapter/checker must explicitly reconcile nominal native width and actual physical core, never suppress the conflict.",
+      "No continent water/bank/grade/route, native collision/door-operation, productive-plot extent or playable-zone adoption acceptance.",
+      "Later409adapter must explicitly consume this exactr4 overlay together with reviewed shared painter corrections and refresh genuine receiving pins. OldQ3pixel and oldterrain passes do not transfer.",
+      "No painter/renderer/terrain/Player/rule/household/job/count change. Fullgates/detail/Y12/Matt approval remain open."
+    ]
   }
 }
