@@ -36,6 +36,27 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+DRIVER_RECEIVER_PARENT = "efc54375851c23cefd525b311558c663454133b9"
+DRIVER_RECEIVER_PARENT_TREE = "2719b6b02b9faaf5a63ce96841ec0f4a464d39d2"
+DRIVER_PACKAGES = (
+    {"package": "mesa-vulkan-drivers", "version": "25.2.8-0ubuntu0.24.04.4", "architecture": "amd64",
+     "url": "https://archive.ubuntu.com/ubuntu/pool/main/m/mesa/mesa-vulkan-drivers_25.2.8-0ubuntu0.24.04.4_amd64.deb",
+     "metadata": "https://packages.ubuntu.com/noble-updates/amd64/mesa-vulkan-drivers/download",
+     "bytes": 17496794, "sha256": "a4ec58cb952b4e2a8b7c7a9b4ea80fa3d2914e347ad13b11dfb67518b409fb57",
+     "expanded_limit": 128 * 1024**2,
+     "members": {"usr/lib/x86_64-linux-gnu/libvulkan_lvp.so": ("libvulkan_lvp.so", 64 * 1024**2, 0o644),
+                 "usr/share/vulkan/icd.d/lvp_icd.json": ("lvp-original.json", 16384, 0o644)}},
+    {"package": "vulkan-tools", "version": "1.3.275.0+dfsg1-1", "architecture": "amd64",
+     "url": "https://archive.ubuntu.com/ubuntu/pool/universe/v/vulkan-tools/vulkan-tools_1.3.275.0+dfsg1-1_amd64.deb",
+     "metadata": "https://packages.ubuntu.com/noble/amd64/vulkan-tools/download",
+     "bytes": 298102, "sha256": "994e429b5a4550b46c5bd9a938af1f60c4aa4890e08f661603b9518a8df824d1",
+     "expanded_limit": 4 * 1024**2,
+     "members": {"usr/bin/vulkaninfo": ("vulkaninfo", 2 * 1024**2, 0o755)}},
+)
+DRIVER_SELECTOR_KEYS = ("VK_DRIVER_FILES", "VK_ICD_FILENAMES", "VK_ADD_DRIVER_FILES", "VK_LOADER_DRIVERS_SELECT",
+    "VK_LOADER_DRIVERS_DISABLE", "VK_LAYER_PATH", "VK_ADD_LAYER_PATH", "VK_INSTANCE_LAYERS",
+    "VK_LOADER_LAYERS_ENABLE", "VK_LOADER_LAYERS_DISABLE", "VK_LOADER_LAYERS_ALLOW",
+    "VK_LOADER_DISABLE_INST_EXT_FILTER", "LD_LIBRARY_PATH", "LD_PRELOAD", "LD_AUDIT")
 INVENTORY_RECEIVER_PARENT = "a6573383083eb39f2967ccd554e7ed85fcde279f"
 INVENTORY_RECEIVER_PARENT_TREE = "7ab98e2e903af5dd572c188cb96b5360a202b572"
 AUTH_RECEIVER_PARENT = "444e767d021efe08d37fd12e07ac4de46a831296"
@@ -53,7 +74,7 @@ MESA_PACKAGE = {
 }
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
-MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "VULKAN_INVENTORY")
+MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
 GAME_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
@@ -833,10 +854,13 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
+                != [DRIVER_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", DRIVER_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")]
                 != [INVENTORY_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
                 != INVENTORY_RECEIVER_PARENT_TREE):
-            raise RuntimeError("Inventory candidate is not the exact genuine sole-a657 child")
+            raise RuntimeError("Inventory candidate is not the exact genuine sole-efc child")
         changed = set(git(candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines())
         if changed != OWNED_PATHS:
             raise RuntimeError("Inventory candidate must change exactly the two existing receiver paths")
@@ -947,10 +971,274 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         save()
 
 
+def vulkan_driver_stage(args: argparse.Namespace) -> int:
+    """Fixed official software ICD/tool intake, never a package installation.
+
+    This phase uses the existing dpkg-deb streaming/actual-wait pattern. Missing
+    host LLVM20 or any selected ELF dependency is a precise refusal, not a new
+    recursive installer. No Vulkan API is invoked by this preparation phase.
+    """
+    root = args.root.resolve(strict=True)
+    output = root / "evidence/driver-capability"
+    output.mkdir(mode=0o700)
+    receipt = {"state": "INCOMPLETE", "host": mesa_host(), "wait4": [],
+               "packages": DRIVER_PACKAGES, "host_inputs": {}, "selected": {},
+               "query": "NOT RUN; separate official-tool monitored phase required"}
+    children = []
+    write_json(output / "provenance.json", receipt)
+
+    def observe(path: Path, maximum: int = 192 * 1024**2) -> dict:
+        canonical = path.resolve(strict=True)
+        info = canonical.stat()
+        if (not canonical.is_relative_to(Path("/usr/lib/x86_64-linux-gnu"))
+                or not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o6022
+                or not 20 <= info.st_size <= maximum):
+            raise RuntimeError("Driver dependency is not bounded canonical root-owned system ELF")
+        with canonical.open("rb") as handle:
+            header = handle.read(20)
+        if header[:6] != b"\x7fELF\x02\x01" or header[18:20] != b"\x3e\x00":
+            raise RuntimeError("Driver dependency is not ELF64 little-endian x86-64")
+        value = {"canonical": str(canonical), "bytes": info.st_size,
+                 "sha256": digest(canonical), "mode": stat.S_IMODE(info.st_mode), "uid": info.st_uid}
+        after = canonical.stat()
+        if any(getattr(info, key) != getattr(after, key) for key in
+               ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns", "st_mode", "st_uid", "st_gid")):
+            raise RuntimeError("Driver system input changed during inspection")
+        old = receipt["host_inputs"].get(str(canonical))
+        if old is not None and old != value:
+            raise RuntimeError("Driver dependency changed between observations")
+        receipt["host_inputs"][str(canonical)] = value
+        if sum(v["bytes"] for v in receipt["host_inputs"].values()) > 384 * 1024**2:
+            raise RuntimeError("Driver dependency observation384MiB unique-input bound")
+        return value
+
+    def collect(process: subprocess.Popen, seconds: float = 20) -> int:
+        deadline = time.monotonic() + seconds
+        while True:
+            pid, status, usage = os.wait4(process.pid, os.WNOHANG)
+            if pid:
+                break
+            if time.monotonic() >= deadline:
+                raise TimeoutError("Driver bootstrap child actual wait4 deadline")
+            time.sleep(0.02)
+        process.returncode = os.waitstatus_to_exitcode(status)
+        receipt["wait4"].append({"pid": pid, "status": status, "exit": process.returncode,
+            "user_s": usage.ru_utime, "system_s": usage.ru_stime, "maxrss_kib": usage.ru_maxrss})
+        return process.returncode
+
+    def start(command: list[str], stdout):
+        def limits():
+            resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024, 64 * 1024))
+        process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=stdout,
+                                   stderr=None, preexec_fn=limits)
+        children.append(process)
+        receipt.setdefault("children", []).append({"pid": process.pid, "pgid": os.getpgid(process.pid)})
+        write_json(output / "provenance.json", receipt)
+        if os.getpgid(process.pid) != os.getpgrp():
+            raise RuntimeError("Driver bootstrap child escaped its monitored group")
+        return process
+
+    try:
+        if (args.mode != "DRIVER_CAPABILITY" or os.getpgrp() != os.getpid()
+                or os.environ.get("GITHUB_REF") != "refs/heads/codex/editor-persistence-validation-run"):
+            raise RuntimeError("Driver preparation requires its exact allocated monitored phase")
+        # Native lookup overrides are never inherited or silently scrubbed.
+        if any(os.environ.get(key) for key in DRIVER_SELECTOR_KEYS):
+            raise RuntimeError("Ambient Vulkan/linker selector present; no guessed override")
+        # Current standard layer facts are recorded before acquisition. Unknown
+        # compiled loader roots remain a disclosed limit; no layer is disabled.
+        for key, defaults in (("XDG_CONFIG_DIRS", ("/etc/xdg",)), ("XDG_DATA_DIRS", ("/usr/local/share", "/usr/share"))):
+            values = tuple(Path(value) for value in (os.environ.get(key) or ":".join(defaults)).split(":"))
+            if values != tuple(Path(value) for value in defaults):
+                raise RuntimeError("Nonstandard layer discovery roots require separate qualification")
+        receipt["standard_implicit_layer_directories"] = []
+        for base in ("/etc", "/etc/xdg", "/usr/local/etc", "/usr/local/share", "/usr/share"):
+            directory = Path(base) / "vulkan/implicit_layer.d"
+            row = {"path": str(directory), "exists": directory.exists() or directory.is_symlink()}
+            receipt["standard_implicit_layer_directories"].append(row)
+            if row["exists"]:
+                info = directory.lstat()
+                if not stat.S_ISDIR(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o6022:
+                    raise RuntimeError("Implicit layer directory is not physical/root-owned/nonwritable")
+                names = []
+                for item in directory.iterdir():
+                    names.append(item.name)
+                    if len(names) > 64:
+                        raise RuntimeError("Implicit layer directory64-entry bound")
+                row["json_names"] = sorted(name for name in names if name.endswith(".json"))
+                if row["json_names"]:
+                    raise RuntimeError("Installed implicit-layer execution closure requires separate qualification")
+        receipt["layer_qualification"] = "Standard directories observed empty/absent and private XDG homes used; installed loader compiled roots are not independently authenticated. No layer disable or universal closure claim."
+        status = Path("/var/lib/dpkg/status")
+        if status.stat().st_size > 32 * 1024**2:
+            raise RuntimeError("Driver host package metadata32MiB bound")
+        records = [mesa_fields(p) for p in status.read_text().split("\n\n") if p.startswith("Package: ")]
+        packages = {}
+        for name in ("libvulkan1", "libllvm20", "libc6", "libstdc++6", "libgcc-s1"):
+            found = [p for p in records if p.get("Package") == name and p.get("Architecture") == "amd64"
+                     and p.get("Status") == "install ok installed"]
+            if len(found) != 1:
+                raise RuntimeError("Required installed host package missing/ambiguous: " + name)
+            packages[name] = {k: found[0].get(k) for k in ("Package", "Version", "Architecture", "Status")}
+        receipt["host_packages_before_acquisition"] = packages
+        receipt["host_package_status_sha256"] = digest(status)
+        # These actual ELF facts precede acquisition. Full selected dependency
+        # closure is inspected below, not inferred from package declarations.
+        for name in ("libvulkan.so.1", "libLLVM.so.20.1", "libc.so.6", "libstdc++.so.6", "libgcc_s.so.1"):
+            observe(Path("/usr/lib/x86_64-linux-gnu") / name)
+        bootstrap = {}
+        for name in ("dpkg-deb", "readelf", "ldd"):
+            path = Path("/usr/bin") / name
+            canonical = path.resolve(strict=True)
+            info = canonical.stat()
+            if (not canonical.is_relative_to(Path("/usr/bin")) or not stat.S_ISREG(info.st_mode)
+                    or info.st_uid != 0 or info.st_mode & 0o6022 or not os.access(canonical, os.X_OK)
+                    or not 0 < info.st_size <= 8 * 1024**2):
+                raise RuntimeError("Driver bootstrap executable unavailable/unqualified: " + name)
+            bootstrap[name] = {"path": str(canonical), "bytes": info.st_size, "sha256": digest(canonical)}
+        receipt["bootstrap"] = bootstrap
+        write_json(output / "provenance.json", receipt)
+        # This fixed extractor is adapted from mesa_tool_stage: literal official
+        # URLs only, exact package hashes, no redirects/mirrors/retries/scripts.
+        for package in DRIVER_PACKAGES:
+            path = output / Path(package["url"]).name
+            received = 0
+            class NoPackageRedirect(urllib.request.HTTPRedirectHandler):
+                def redirect_request(self, *_args, **_kwargs):
+                    raise RuntimeError("Pinned driver package redirect refused")
+            opener = urllib.request.build_opener(NoPackageRedirect())
+            try:
+                with opener.open(package["url"], timeout=10) as response, path.open("xb") as dst:
+                    if response.geturl() != package["url"]:
+                        raise RuntimeError("Driver vendor URL redirected; no fallback")
+                    for chunk in iter(lambda: response.read(65536), b""):
+                        received += len(chunk)
+                        if received > package["bytes"]:
+                            raise RuntimeError("Pinned driver package compressed byte bound")
+                        dst.write(chunk)
+            finally:
+                receipt.setdefault("acquisition", []).append({"package": package["package"], "received": received,
+                    "retained_bytes": path.stat().st_size if path.exists() else 0,
+                    "sha256": digest(path) if path.exists() else None})
+                write_json(output / "provenance.json", receipt)
+            if received != package["bytes"] or digest(path) != package["sha256"]:
+                raise RuntimeError("Pinned official driver/tool package size/SHA256 differs")
+            control = output / (package["package"] + "-control.txt")
+            with control.open("xb") as dst:
+                process = start([bootstrap["dpkg-deb"]["path"], "--field", str(path)], dst)
+                if collect(process) != 0:
+                    raise RuntimeError("Pinned driver package control refused")
+            fields = mesa_fields(control.read_text())
+            if (control.stat().st_size > 16384 or any(fields.get(k.title()) != package[k]
+                    for k in ("package", "version", "architecture"))
+                    or not 0 < int(fields.get("Installed-Size", "0")) <= package["expanded_limit"] // 1024):
+                raise RuntimeError("Driver/tool control identity or expanded bound differs")
+            receipt.setdefault("controls", {})[package["package"]] = fields
+            process = start([bootstrap["dpkg-deb"]["path"], "--fsys-tarfile", str(path)], subprocess.PIPE)
+            seen, expanded, selected = set(), 0, set()
+            with tarfile.open(fileobj=process.stdout, mode="r|") as archive:
+                for member in archive:
+                    name = member.name.removeprefix("./")
+                    if (name in seen or len(seen) >= 256 or name.startswith("/") or ".." in Path(name).parts
+                            or not (member.isfile() or member.isdir() or member.issym() or member.islnk())):
+                        raise RuntimeError("Driver archive path/type/count bound")
+                    seen.add(name)
+                    expanded += member.size
+                    if expanded > package["expanded_limit"]:
+                        raise RuntimeError("Driver/tool expanded payload byte bound")
+                    if name in package["members"]:
+                        destination, maximum, mode = package["members"][name]
+                        if not member.isfile() or member.mode != mode or not 0 < member.size <= maximum:
+                            raise RuntimeError("Exact selected driver/tool member type/mode/size differs")
+                        target = output / destination
+                        with archive.extractfile(member) as src, target.open("xb") as dst:
+                            shutil.copyfileobj(src, dst, 65536)
+                        target.chmod(mode)
+                        selected.add(name)
+                        receipt["selected"][destination] = {"path": str(target), "bytes": target.stat().st_size,
+                            "sha256": digest(target), "mode": mode, "package_sha256": package["sha256"], "member": name}
+                    # Unselected links/files are never extracted, registered or run.
+            process.stdout.close()
+            if collect(process) != 0 or selected != set(package["members"]):
+                raise RuntimeError("Driver/tool extraction or exact selected member set failed")
+        original = output / "lvp-original.json"
+        if original.stat().st_size > 16384:
+            raise RuntimeError("LVP manifest16KiB bound")
+        document = json.loads(original.read_text())
+        if (document.get("file_format_version") not in ("1.0.0", "1.0.1")
+                or set(document) != {"file_format_version", "ICD"}
+                or not isinstance(document["ICD"], dict)
+                or Path(document["ICD"].get("library_path", "")).name != "libvulkan_lvp.so"):
+            raise RuntimeError("Official LVP manifest identity differs")
+        document["ICD"]["library_path"] = str(output / "libvulkan_lvp.so")
+        private = output / "lvp-private.json"
+        write_json(private, document)
+        receipt["private_manifest"] = {"path": str(private), "sha256": digest(private),
+            "change": "Only ICD.library_path binds the exact private LVP library; original manifest retained."}
+        for name in ("libvulkan_lvp.so", "vulkaninfo"):
+            target = output / name
+            with target.open("rb") as handle:
+                header = handle.read(20)
+            if header[:6] != b"\x7fELF\x02\x01" or header[18:20] != b"\x3e\x00":
+                raise RuntimeError("Selected driver/tool is not ELF64 x86-64")
+            dynamic = output / (name + "-dynamic.txt")
+            with dynamic.open("xb") as dst:
+                process = start([bootstrap["readelf"]["path"], "--dynamic", str(target)], dst)
+                if collect(process) != 0:
+                    raise RuntimeError("Selected driver/tool static ELF dependency read refused")
+            required = re.findall(r"\(NEEDED\).*\[([^\]]+)\]", dynamic.read_text())
+            if not required or len(required) > 32 or any(not re.fullmatch(r"[A-Za-z0-9_.+-]+", x) for x in required):
+                raise RuntimeError("Selected ELF DT_NEEDED names/count differ")
+            dependencies = output / (name + "-ldd.txt")
+            with dependencies.open("xb") as dst:
+                process = start([bootstrap["ldd"]["path"], str(target)], dst)
+                if collect(process) != 0:
+                    raise RuntimeError("Selected trusted ELF runtime ABI resolution refused")
+            text = dependencies.read_text()
+            if len(text) > 65536 or "not found" in text.lower():
+                raise RuntimeError("Selected LVP/tool dependency missing; no automatic dependency installation")
+            bindings = {}
+            for line in text.splitlines():
+                match = re.fullmatch(r"\s*(\S+) => (/\S+) \(0x[0-9a-f]+\)\s*", line)
+                if match:
+                    bindings[match[1]] = observe(Path(match[2]))
+                elif re.fullmatch(r"\s*/\S+ \(0x[0-9a-f]+\)\s*", line):
+                    observe(Path(line.split()[0]))
+                elif not re.fullmatch(r"\s*linux-vdso\.so\.1 \(0x[0-9a-f]+\)\s*", line):
+                    raise RuntimeError("Unqualified dynamic dependency binding line")
+            if any(item not in bindings for item in required):
+                raise RuntimeError("Direct selected ELF dependency lacks an actual qualified binding")
+            receipt.setdefault("elf_dependencies", {})[name] = {"needed": required, "bindings": bindings}
+        for row in bootstrap.values():
+            path = Path(row["path"])
+            if path.stat().st_size != row["bytes"] or digest(path) != row["sha256"]:
+                raise RuntimeError("Driver bootstrap executable changed")
+        for row in receipt["host_inputs"].values():
+            path = Path(row["canonical"])
+            if path.stat().st_size != row["bytes"] or digest(path) != row["sha256"]:
+                raise RuntimeError("Driver host ELF changed before query")
+        receipt.update(state="VERIFIED", qualification="Pinned private software ICD/tool plus observed system ELF bindings. No native query, X11 presentation or editor acceptance yet.")
+    except BaseException as error:
+        receipt.update(state="FAILED", failure={"type": type(error).__name__, "message": str(error)})
+    finally:
+        for process in children:
+            if process.returncode is not None:
+                continue
+            try:
+                if os.waitid(os.P_PID, process.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None:
+                    os.kill(process.pid, signal.SIGTERM)
+                collect(process, 2)
+            except BaseException as error:
+                receipt["state"] = "FAILED"
+                receipt.setdefault("cleanup_errors", []).append(repr(error))
+        write_json(output / "provenance.json", receipt)
+    return 0 if receipt["state"] == "VERIFIED" else 1
+
+
 class Controller:
     def __init__(self, args: argparse.Namespace):
         self.candidate = args.candidate.resolve(strict=True)
-        self.source = args.source.resolve(strict=args.mode != "VULKAN_INVENTORY")
+        self.source = args.source.resolve(strict=args.mode not in ("VULKAN_INVENTORY", "DRIVER_CAPABILITY"))
         self.root = args.root.resolve(strict=True)
         self.game = self.source / "game"
         self.evidence = self.root / "evidence"
@@ -981,12 +1269,18 @@ class Controller:
         self.collection_used = 0.0
         self.budget_failure = None
         self.terminal_started = None
-        self.owned_roots = (self.root, self.source, self.candidate)
+        self.owned_roots = (self.root, self.candidate) if self.mode == "DRIVER_CAPABILITY" else (self.root, self.source, self.candidate)
         if self.mode == "VULKAN_INVENTORY":
             self.active_limit = 15
             self.owned_roots = (self.root, self.candidate)
             self.phases["vulkan-inventory"] = {"state": "NOT RUN"}
             self.output["qualification"] = "Metadata-only Vulkan inventory. Engine, project, scientific dependencies, native query, GUI and all H5 controls NOT RUN; no driver acceptance."
+
+        if self.mode == "DRIVER_CAPABILITY":
+            self.active_limit = 150
+            self.phases["driver-stage"] = {"state": "NOT RUN"}
+            self.phases["driver-query"] = {"state": "NOT RUN"}
+            self.output["qualification"] = "Private official software ICD capability only. No project/science/engine/import/GUI/H5 or X11 presentation acceptance."
 
     def budget_remaining(self) -> float:
         if self.transaction_started is None:
@@ -1188,8 +1482,13 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [INVENTORY_RECEIVER_PARENT]:
-            raise RuntimeError("Inventory receiver must be a genuine sole child of frozen405a657")
+        if parents != [DRIVER_RECEIVER_PARENT]:
+            raise RuntimeError("Driver receiver must be a genuine sole child of frozen405efc")
+        driver_parent_headers = git(self.candidate, "cat-file", "commit", DRIVER_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in driver_parent_headers.splitlines() if line.startswith("parent ")]
+                != [INVENTORY_RECEIVER_PARENT] or git(self.candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip()
+                != DRIVER_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen metadata receiver ancestry/tree changed")
         inventory_parent_headers = git(self.candidate, "cat-file", "commit", INVENTORY_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in inventory_parent_headers.splitlines() if line.startswith("parent ")]
                 != [AUTH_RECEIVER_PARENT] or git(self.candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
@@ -1754,7 +2053,7 @@ class Controller:
             # existing phase monitor and actual collection deadlines take over;
             # all elapsed time is still charged and checked after collection.
             signal.setitimer(signal.ITIMER_REAL, 0)
-            process = subprocess.Popen(command, cwd=self.candidate if self.mode == "VULKAN_INVENTORY" else self.game, env=self.env, start_new_session=True,
+            process = subprocess.Popen(command, cwd=self.candidate if self.mode in ("VULKAN_INVENTORY", "DRIVER_CAPABILITY") else self.game, env=self.env, start_new_session=True,
                                        stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=child_limits)
             result["pid"] = result["pgid"] = process.pid
             leader = proc_group(process.pid).get(process.pid)
@@ -2059,6 +2358,135 @@ class Controller:
             findings["classification"] = self.output["state"]
             write_json(self.evidence / "focused-inventory.json", findings)
 
+    def driver_capability_only(self) -> int:
+        """One private official-tool capability check, before any costly import."""
+        self.transaction_started = time.monotonic()
+        errors, receipt = [], None
+        try:
+            self.arm_budget()
+            if (self.mode != "DRIVER_CAPABILITY" or sys.platform != "linux" or sys.version_info[:2] != (3, 12)
+                    or os.environ.get("GITHUB_RUN_ATTEMPT") != "1"
+                    or os.environ.get("GITHUB_REF") != "refs/heads/codex/editor-persistence-validation-run"
+                    or self.event_sha != os.environ.get("GITHUB_SHA")
+                    or not re.fullmatch(r"[0-9a-f]{40}", self.event_sha)):
+                raise RuntimeError("Driver mode requires exact allocated Linux/Python3.12 event/ref/attempt1")
+            workspace = Path(os.environ["GITHUB_WORKSPACE"]).resolve(strict=True)
+            if (self.candidate != workspace / "runner" or self.source != workspace / "source"
+                    or self.source.exists() or self.source.is_symlink()
+                    or self.root != Path(os.environ["RUNNER_TEMP"]).resolve(strict=True) / "editor-persistence"
+                    or set(self.root.iterdir()) != {self.evidence}
+                    or set(self.evidence.iterdir()) != {self.evidence / "bootstrap.json", self.evidence / "controller.log"}):
+                raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
+            headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
+            if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
+                    or set(git(self.candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines()) != OWNED_PATHS):
+                raise RuntimeError("Driver mode requires the genuine sole-efc two-file candidate")
+            if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
+                raise RuntimeError("Actual identity-safe process collection unavailable")
+            os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
+            roots = {"XDG_CONFIG_HOME": self.root / "config", "XDG_DATA_HOME": self.root / "data",
+                     "XDG_CACHE_HOME": self.root / "cache", "XDG_RUNTIME_DIR": self.root / "runtime", "TMPDIR": self.root / "tmp"}
+            self.env = {**os.environ, **{k: str(v) for k, v in roots.items()},
+                        "GIT_OPTIONAL_LOCKS": "0", "GIT_NO_LAZY_FETCH": "1", "PYTHONDONTWRITEBYTECODE": "1", "PYTHONNOUSERSITE": "1"}
+            for key in ("DISPLAY", "WAYLAND_DISPLAY", "XAUTHORITY"):
+                self.env.pop(key, None)
+            for path in roots.values():
+                path.mkdir(mode=0o700)
+            libc = ctypes.CDLL(None, use_errno=True)
+            if libc.prctl(36, 1, 0, 0, 0) != 0:
+                raise OSError(ctypes.get_errno(), "Cannot establish existing actual orphan collection")
+            self.candidate_initial = {}
+            for name in sorted(OWNED_PATHS):
+                path = self.candidate / name
+                info = path.lstat()
+                expected = git(self.candidate, "rev-parse", "HEAD:" + name).decode().strip()
+                if (path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+                        or not 0 < info.st_size <= 256 * 1024 or stat.S_IMODE(info.st_mode) != 0o644
+                        or blob(path) != expected):
+                    raise RuntimeError("Driver mode receiving bytes/modes differ from immutable source")
+                self.candidate_initial[name] = {"blob": expected, "sha256": digest(path)}
+                shutil.copyfile(path, self.evidence / path.name)
+            write_json(self.evidence / "candidate.json", self.candidate_initial)
+            write_json(self.evidence / "host.json", {"mode": self.mode,
+                "limits": {"active_s": self.active_limit, "stage_s": 90, "query_s": 30,
+                           "group_rss_bytes": RSS_LIMIT, "owned_bytes": OWNED_LIMIT,
+                           "per_process_AS": 4 * 1024**3, "log_bytes": LOG_LIMIT,
+                           "reserve_bytes": FREE_RESERVE, "cpu": 1},
+                "qualification": "Proposed capability-mode fit unmeasured; no game, science, engine, import or GUI."})
+            stage = self.phase("driver-stage", [sys.executable, "-I", "-B", str(Path(__file__).resolve()),
+                "--mode", self.mode, "--driver-stage-child", "--candidate", str(self.candidate),
+                "--source", str(self.source), "--root", str(self.root), "--event-sha", self.event_sha], 90)
+            if stage.get("exit") != 0 or stage.get("state") != "COLLECTED":
+                raise RuntimeError("Private driver stage failed; original partial evidence retained")
+            provenance = self.evidence / "driver-capability/provenance.json"
+            if provenance.is_symlink() or not 0 < provenance.stat().st_size <= 256 * 1024:
+                raise RuntimeError("Driver provenance256KiB/physical-file bound")
+            receipt = json.loads(provenance.read_text())
+            if receipt.get("state") != "VERIFIED":
+                raise RuntimeError("Private driver/tool preparation incomplete")
+            def unchanged_inputs():
+                for value in list(receipt["selected"].values()) + list(receipt["host_inputs"].values()):
+                    path = Path(value.get("path", value.get("canonical", "")))
+                    if path.stat().st_size != value["bytes"] or digest(path) != value["sha256"]:
+                        raise RuntimeError("Prepared driver/tool/system input changed")
+                manifest = receipt["private_manifest"]
+                if digest(Path(manifest["path"])) != manifest["sha256"]:
+                    raise RuntimeError("Private LVP manifest changed")
+            unchanged_inputs()
+            # A documented child-only private ICD selection, never an extension
+            # override, implicit-layer disable or global process environment edit.
+            self.env["VK_DRIVER_FILES"] = receipt["private_manifest"]["path"]
+            query = self.phase("driver-query", [receipt["selected"]["vulkaninfo"]["path"], "--summary"], 30)
+            if query.get("exit") != 0 or query.get("state") != "COLLECTED":
+                raise RuntimeError("Official Vulkan capability query did not exit/collect normally")
+            raw = self.evidence / "driver-query.log"
+            text = raw.read_text(errors="replace")
+            if (re.search(r"(?m)^\s*VK_KHR_surface\s*:", text) is None
+                    or re.search(r"(?m)^\s*deviceType\s*=\s*PHYSICAL_DEVICE_TYPE_CPU\s*$", text) is None
+                    or re.search(r"(?m)^\s*driverName\s*=\s*llvmpipe\s*$", text) is None
+                    or re.search(r"(?im)^\s*ERROR\b|VK_ERROR_|failed to", text)):
+                raise RuntimeError("Required actual surface extension/software-device identity absent or raw query error present")
+            unchanged_inputs()
+            self.output["driver_capability"] = {"query": "official vulkaninfo --summary", "native_query_invocations": 1,
+                "exit": query["exit"], "required_instance_extension": "VK_KHR_surface", "device_type": "CPU", "driver_name": "llvmpipe",
+                "raw_log": {"bytes": raw.stat().st_size, "sha256": digest(raw)},
+                "provenance": {"bytes": provenance.stat().st_size, "sha256": digest(provenance)},
+                "qualification": "Instance/device enumeration only. DISPLAY/Wayland absent; expected skipping-surface message remains raw. No X11 presentation, editor pass or VSync proof."}
+        except BaseException as error:
+            errors.append({"type": type(error).__name__, "message": str(error)})
+        finally:
+            self.env.pop("VK_DRIVER_FILES", None) if hasattr(self, "env") else None
+            self.terminal_started = time.monotonic()
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            try:
+                self.arm_budget()
+                if self.candidate_initial is not None:
+                    after = {name: {"blob": blob(self.candidate / name), "sha256": digest(self.candidate / name)} for name in sorted(OWNED_PATHS)}
+                    write_json(self.evidence / "candidate-after.json", after)
+                    if after != self.candidate_initial:
+                        raise RuntimeError("Driver mode receiver inputs changed")
+                    self.guards["candidate"] = "PASS"
+                self.output["final_capacity"] = self.capacity()
+            except BaseException as error:
+                errors.append({"type": type(error).__name__, "message": str(error)})
+            finally:
+                signal.setitimer(signal.ITIMER_REAL, 0)
+            self.output.update(state="PRIVATE_DRIVER_ENUMERATION_ONLY" if not errors and self.output.get("driver_capability") else "DRIVER_CAPABILITY_INCOMPLETE_FAILURE",
+                errors=errors, budget=self.budget_receipt(), gui_workflow_pass=False, production_correction_authorised=False)
+            write_json(self.evidence / "result.json", self.output)
+            try:
+                self.output["final_capacity"] = self.capacity()
+                if self.budget_remaining() <= 0 or self.collection_used > 30:
+                    raise RuntimeError("Driver mode aggregate/final receipt budget exhausted")
+            except BaseException as error:
+                self.output["state"] = "DRIVER_CAPABILITY_INCOMPLETE_FAILURE"
+                self.output["errors"].append({"type": type(error).__name__, "message": str(error)})
+                write_json(self.evidence / "result.json", self.output)
+        return 0 if self.output["state"] == "PRIVATE_DRIVER_ENUMERATION_ONLY" else 1
+
+
     def inventory_only(self) -> int:
         """Use the existing monitored phase/actual collection, without full setup."""
         self.transaction_started = time.monotonic()
@@ -2157,6 +2585,8 @@ class Controller:
         return 0 if self.output["state"] == "VULKAN_METADATA_ONLY" else 1
 
     def run(self) -> int:
+        if self.mode == "DRIVER_CAPABILITY":
+            return self.driver_capability_only()
         if self.mode == "VULKAN_INVENTORY":
             return self.inventory_only()
         failure = None
@@ -2396,8 +2826,15 @@ def main() -> int:
     parser.add_argument("--mode", choices=MODES, default="H5_COMBINED")
     parser.add_argument("--display-child", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--mesa-tool-child", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--driver-stage-child", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--vulkan-inventory-child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.driver_stage_child:
+        if args.mode != "DRIVER_CAPABILITY" or args.display_child or args.mesa_tool_child or args.vulkan_inventory_child:
+            parser.error("Driver child requires exclusive explicit DRIVER_CAPABILITY mode")
+        return vulkan_driver_stage(args)
+    if args.mode == "DRIVER_CAPABILITY" and (args.display_child or args.mesa_tool_child or args.vulkan_inventory_child):
+        parser.error("Driver capability mode cannot enter other child paths")
     if args.mode == "VULKAN_INVENTORY" and (args.display_child or args.mesa_tool_child):
         parser.error("Inventory mode cannot enter display/Mesa-tool child paths")
     if args.vulkan_inventory_child:

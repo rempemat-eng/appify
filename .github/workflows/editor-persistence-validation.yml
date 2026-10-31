@@ -21,7 +21,7 @@ jobs:
     env:
       # Inventory-only candidate: no game checkout, setup-python acquisition, engine or science.
       # Controller default and normal DISPLAYED_SMOKE/H5 checks remain separate.
-      EDITOR_PERSISTENCE_MODE: VULKAN_INVENTORY
+      EDITOR_PERSISTENCE_MODE: DRIVER_CAPABILITY
       CI: 'true'
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
@@ -53,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 11 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->inventory child
+          fetch-depth: 12 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->driver child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -62,7 +62,7 @@ jobs:
 
       - name: Check out pinned full game and complete Python bake/validator/data closure
         id: source
-        if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY'
+        if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY' && env.EDITOR_PERSISTENCE_MODE != 'DRIVER_CAPABILITY'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: feb37c31d6de71e20df096df4df4d32ed1fa93ed
@@ -123,7 +123,7 @@ jobs:
 
       - name: Select the existing Python version without Node dependencies
         id: python
-        if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY'
+        if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY' && env.EDITOR_PERSISTENCE_MODE != 'DRIVER_CAPABILITY'
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # main885b convention
         with:
           python-version: '3.12'
@@ -133,7 +133,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ "$EDITOR_PERSISTENCE_MODE" = VULKAN_INVENTORY ]; then
+          if [ "$EDITOR_PERSISTENCE_MODE" = VULKAN_INVENTORY ] || [ "$EDITOR_PERSISTENCE_MODE" = DRIVER_CAPABILITY ]; then
             printf 'PYTHON=%s\n' "$(command -v python3)" >> "$GITHUB_ENV"
           else
             printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
@@ -174,7 +174,8 @@ jobs:
           # When setup fails before Controller.setup, retain actual checked-out
           # bytes independently of the Python/engine stage. Not a source PASS.
           inventory = os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY'
-          if inventory:
+          receiver_only = os.environ['EDITOR_PERSISTENCE_MODE'] in ('VULKAN_INVENTORY', 'DRIVER_CAPABILITY')
+          if receiver_only:
               # Retain only the two actual receiver files on early failure.
               # No full-game fallback/archive is allowed in the64MiB inventory.
               base = Path(os.environ['GITHUB_WORKSPACE']) / 'runner'
@@ -223,6 +224,8 @@ jobs:
               mode=os.environ['EDITOR_PERSISTENCE_MODE'],
               qualification=('Metadata-only inventory; native extension query, game checkout, dependencies, engine/import, GUI and all H5 methods NOT RUN. Missing result is failure; no driver acceptance.'
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY' else
+                  'One private official-tool enumeration only; no game/science/engine/import/GUI/H5 or X11-presentation acceptance.'
+                  if os.environ['EDITOR_PERSISTENCE_MODE'] == 'DRIVER_CAPABILITY' else
                   'Existing DISPLAYED_SMOKE only; undo/restoration and bake refusals, no H5 rerun or successful save/bake/walk/manual acceptance. Missing result is failure, never PASS.'))
           (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
           if inventory:
