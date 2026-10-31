@@ -186,3 +186,241 @@ static func _motion(plugin: EditorPlugin, ground: TerrainGround, cell: Vector2i,
 	event.position = ground.get_global_transform_with_canvas() * ((Vector2(cell) + Vector2.ONE * 0.5) * ground.kit.cell)
 	event.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
 	plugin.call("_forward_canvas_gui_input", event)
+
+
+static func requested_editor_scene() -> String:
+	var paths: Array[String] = []
+	for arg in OS.get_cmdline_args():
+		if arg.ends_with(".tscn") and not arg.begins_with("--"):
+			paths.append(ProjectSettings.localize_path(arg))
+	return paths[0] if paths.size() == 1 else ""
+
+static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) -> Dictionary:
+	# Plugins load before the first filesystem scan; the CLI scene opens after that scan.
+	# The same15s readiness follows that milestone, inside a total45s helper ceiling.
+	var started := Time.get_ticks_msec()
+	var requested := requested_editor_scene()
+	var startup := {"observed_ms": -1, "sources_exist": false}
+	var on_sources_changed := func(sources_exist: bool) -> void:
+		if int(startup.observed_ms) < 0:
+			startup.observed_ms = Time.get_ticks_msec()
+			startup.sources_exist = sources_exist
+	var signal_source: EditorFileSystem = null
+	var readiness_started := -1
+	var phase := "startup_scan"
+	var milestone := "pending"
+	var transitions: Array[Dictionary] = []
+	var previous_state: Array = []
+	var dropped_transitions := 0
+	var facts := {"ok": false, "expected_scene": expected_scene, "requested_scene": requested,
+		"limit_ms": 15000, "total_limit_ms": 45000}
+	while true:
+		if not is_instance_valid(plugin) or not plugin.is_inside_tree():
+			facts["failure"] = "Editor plugin left the tree before scene readiness."
+			break
+		var filesystem := EditorInterface.get_resource_filesystem()
+		if signal_source == null and filesystem != null:
+			signal_source = filesystem
+			signal_source.sources_changed.connect(on_sources_changed)
+		var root := EditorInterface.get_edited_scene_root()
+		var target: Node = root.get_node_or_null("Ground") if root != null else null
+		var script: Script = target.get_script() as Script if target != null else null
+		var now := Time.get_ticks_msec()
+		var scanning := filesystem.is_scanning() if filesystem != null else true
+		var importing := filesystem.is_importing() if filesystem != null else true
+		var exact_root := root != null and root.scene_file_path == expected_scene
+		var ready := exact_root and target is TerrainGround and filesystem != null and not scanning and not importing
+		if readiness_started < 0:
+			if int(startup.observed_ms) >= 0:
+				readiness_started = int(startup.observed_ms)
+				milestone = "sources_changed"
+			elif ready:
+				readiness_started = now
+				milestone = "already_ready"
+			if readiness_started >= 0:
+				phase = "scene_readiness"
+		facts = {"ok": false, "expected_scene": expected_scene, "requested_scene": requested,
+			"root_present": root != null, "root_scene_path": String(root.scene_file_path) if root != null else "",
+			"ground_present": target != null, "ground_class": target.get_class() if target != null else "",
+			"ground_script": script.resource_path if script != null else "", "ground_is_terrain": target is TerrainGround,
+			"filesystem_present": filesystem != null, "scanning": scanning, "importing": importing,
+			"elapsed_ms": now - started, "limit_ms": 15000, "total_limit_ms": 45000, "phase": phase,
+			"readiness_elapsed_ms": now - readiness_started if readiness_started >= 0 else 0,
+			"startup_milestone": milestone, "sources_changed_ms": int(startup.observed_ms) - started if int(startup.observed_ms) >= 0 else -1,
+			"sources_exist": bool(startup.sources_exist)}
+		var state: Array = [phase, root != null, exact_root, target is TerrainGround, filesystem != null, scanning, importing]
+		if state != previous_state:
+			if transitions.size() < 32:
+				transitions.append({"elapsed_ms": now - started, "phase": phase, "root_present": root != null,
+					"exact_root": exact_root, "ground_is_terrain": target is TerrainGround,
+					"filesystem_present": filesystem != null, "scanning": scanning, "importing": importing})
+				print("WORLD_EDITOR_STARTUP ", JSON.stringify(transitions.back()))
+			else:
+				dropped_transitions += 1
+			previous_state = state
+		if expected_scene.is_empty() or requested != expected_scene:
+			facts["failure"] = "Requested scene is missing, ambiguous or differs from the acceptance scene."
+			break
+		if now - started >= 45000:
+			facts["failure"] = "Actual %s exceeded the total45s helper deadline." % phase
+			break
+		if readiness_started >= 0 and now - readiness_started >= 15000:
+			facts["failure"] = "Actual scene readiness did not complete within15s after startup milestone."
+			break
+		if readiness_started >= 0 and ready:
+			facts["ok"] = true
+			break
+		await plugin.get_tree().process_frame
+	if is_instance_valid(signal_source) and signal_source.sources_changed.is_connected(on_sources_changed):
+		signal_source.sources_changed.disconnect(on_sources_changed)
+	facts["transitions"] = transitions
+	facts["transition_limit"] = 32
+	facts["dropped_transitions"] = dropped_transitions
+	facts["phase"] = phase
+	facts["elapsed_ms"] = Time.get_ticks_msec() - started
+	return facts
+
+static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> Dictionary:
+	var zone_plan := preload("res://tools/kit_zone.gd")
+	var phase := ""
+	var count := 0
+	var mixed := false
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--we-lifecycle="):
+			phase = arg.substr(15)
+			count += 1
+		mixed = mixed or arg.begins_with("--we-smoke-report=") or arg.begins_with("--we-capture=")
+	var context: Dictionary = zone_plan.lifecycle_context(phase)
+	var result := {"ok": false, "failures": [], "started_unix": Time.get_unix_time_from_system()}
+	var failures: Array = result.failures
+	if not bool(context.get("ok", false)):
+		failures.append(context.get("message", "Invalid lifecycle context."))
+		return zone_plan.lifecycle_finish(context, result)
+	if count != 1 or phase not in ["author", "reopen"] or mixed or not Engine.is_editor_hint():
+		failures.append("One editor lifecycle phase is required without legacy smoke/capture flags.")
+		return zone_plan.lifecycle_finish(context, result)
+	if await_startup:
+		var readiness: Dictionary = await wait_for_editor_scene(plugin, zone_plan.LIFECYCLE_SCENE)
+		result["startup_readiness"] = readiness
+		if not bool(readiness.get("ok", false)):
+			failures.append("Editor startup scene readiness failed.")
+			return zone_plan.lifecycle_finish(context, result)
+	var scene := EditorInterface.get_edited_scene_root()
+	var ground: TerrainGround = scene.get_node_or_null("Ground") as TerrainGround if scene != null else null
+	if scene == null or scene.scene_file_path != zone_plan.LIFECYCLE_SCENE or ground == null or not ground.lab or ground.grid_size != Vector2i(8, 8):
+		failures.append("Open the fresh named 8x8 private candidate lab scene.")
+		return zone_plan.lifecycle_finish(context, result)
+	plugin.call("_show_for_screenshot")
+	plugin.call("_edit", ground)
+	var operations: Object = plugin.get("operations")
+	var metadata := {}
+	var metadata_paths := {"lawn": "res://kit/pieces/terrain/lawn.json", "path": "res://kit/pieces/terrain/path.json", "woodland_forest_bench": "res://kit/pieces/prop/woodland_forest_bench.json"}
+	for id in metadata_paths:
+		var definition: Dictionary = operations.call("definition", id)
+		var raw: Dictionary = zone_plan.lifecycle_read(metadata_paths[id])
+		if raw.is_empty() or zone_plan.canonical(definition) != zone_plan.canonical(raw) or raw.get("approval", {}).get("state") not in ["candidate", "gated", "approved"]:
+			failures.append("Original lab-legal piece metadata was missing or substituted: " + id)
+		metadata[id] = {"approval": raw.get("approval", {}).get("state"), "sha256": FileAccess.get_sha256(metadata_paths[id]),
+			"raw_collision": raw.get("geometry", {}).get("collision"), "compiled_collision": KitPiece.index().get(id, {}).get("collision")}
+	result["piece_metadata"] = metadata
+	if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+	var expected_path: String = context.evidence.path_join("expected-plan.json")
+	if phase == "author":
+		var before: Dictionary = operations.call("export_plan")
+		if not bool(before.get("ok", false)) or zone_plan.canonical(before.get("plan", {})) != zone_plan.canonical(zone_plan.lifecycle_probe_plan()):
+			failures.append("Bootstrap scene differs from the unchanged persistence fixture's explicit lab clone.")
+		for path in [expected_path, zone_plan.LIFECYCLE_PLAN, zone_plan.LIFECYCLE_PNG, zone_plan.LIFECYCLE_SIDECAR, zone_plan.LIFECYCLE_WALK]:
+			if FileAccess.file_exists(path): failures.append("Fresh author output already exists: " + path)
+		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+		var cells: Array[Vector2i] = []
+		for y in range(5, 7):
+			for x in range(1, 8): cells.append(Vector2i(x, y))
+		var paint: Dictionary = plugin.call("paint_cells", cells, "path")
+		var placement: Dictionary = plugin.call("place_piece", "woodland_forest_bench", Vector2(108, 120), {"id": "lifecycle_bench", "facing": "s", "variant": "forest_bench"})
+		if not bool(paint.get("ok", false)) or not bool(placement.get("ok", false)):
+			failures.append("Actual plugin painting/placement refused: %s / %s" % [paint, placement])
+		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+		var piece := placement.get("node") as KitPiece
+		var owned_walk := ground.get_node_or_null("KitWalk") as KitWalk
+		if piece == null or piece.owner != scene or owned_walk == null or owned_walk.owner != scene or ground.pieces().size() != 1:
+			failures.append("Authoring did not install owned piece/walk nodes.")
+		var validation: Dictionary = plugin.call("validate_zone")
+		if not bool(validation.get("ok", false)): failures.append("Actual full validator refused authored lab: " + str(validation))
+		var snapshot: Dictionary = operations.call("export_plan")
+		if not bool(snapshot.get("ok", false)): failures.append("Authored plan could not be exported.")
+		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+		# Independent author intent, not a golden snapshot of whatever export returned.
+		if not bool(paint.get("changed", false)) or piece.get("piece_id") != "woodland_forest_bench" or piece.name != &"lifecycle_bench" or piece.position != Vector2(108, 120) or piece.get("variant") != "forest_bench" or piece.get_meta(&"facing", "") != "s":
+			failures.append("Actual authored piece or changed paint stroke differs from requested intent.")
+		var authored_pieces: Array = snapshot.plan.get("pieces", [])
+		if authored_pieces.size() != 1:
+			failures.append("Export must contain exactly the one requested piece.")
+		else:
+			var entry: Dictionary = authored_pieces[0]
+			if entry.get("id") != "lifecycle_bench" or entry.get("piece") != "woodland_forest_bench" or entry.get("at") != [108, 120] or entry.get("variant") != "forest_bench" or entry.get("facing") != "s":
+				failures.append("Exported piece identity/options differ from author intent.")
+		var path_cells := 0
+		for y in range(8):
+			for x in range(8):
+				var wanted := "path" if x >= 1 and x <= 7 and y >= 5 and y <= 6 else "lawn"
+				if wanted == "path": path_cells += 1
+				var symbol: String = snapshot.plan.rows[y][x]
+				if ground.material_at(Vector2i(x, y)) != ground.kit.material_id(wanted) or snapshot.plan.legend.get(symbol) != wanted:
+					failures.append("Actual/exported material differs at cell(%d,%d)." % [x, y])
+		var untouched_before: Dictionary = before.plan.duplicate(true)
+		var untouched_after: Dictionary = snapshot.plan.duplicate(true)
+		for key in ["rows", "legend", "pieces"]:
+			untouched_before.erase(key)
+			untouched_after.erase(key)
+		if zone_plan.canonical(untouched_before) != zone_plan.canonical(untouched_after):
+			failures.append("Authoring changed other seed fields, spawns, doors or extension metadata.")
+		result["author_intent"] = {"path_cells": path_cells, "piece_count": authored_pieces.size(), "foot": [108, 120], "facing": "s", "variant": "forest_bench"}
+		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+		if EditorInterface.save_scene() != OK or not zone_plan.lifecycle_write(expected_path, snapshot.plan):
+			failures.append("Actual named scene save or expected-plan publication failed.")
+		else:
+			result["expected_plan_sha256"] = FileAccess.get_sha256(expected_path)
+			result["scene_sha256"] = FileAccess.get_sha256(zone_plan.LIFECYCLE_SCENE)
+			result["authoring_plan"] = snapshot.plan
+	else:
+		var author: Dictionary = zone_plan.lifecycle_prior(context, "author")
+		var expected: Dictionary = zone_plan.lifecycle_read(expected_path)
+		var snapshot: Dictionary = operations.call("export_plan")
+		if author.is_empty() or expected.is_empty() or FileAccess.get_sha256(expected_path) != author.get("expected_plan_sha256") or FileAccess.get_sha256(zone_plan.LIFECYCLE_SCENE) != author.get("scene_sha256"):
+			failures.append("Fresh reopen needs the successful distinct-process author receipt and exact saved files.")
+		if not bool(snapshot.get("ok", false)) or zone_plan.canonical(snapshot.get("plan", {})) != zone_plan.canonical(expected) or metadata != author.get("piece_metadata"):
+			failures.append("Fresh editor reopen changed authoring data or piece metadata.")
+		for path in [zone_plan.LIFECYCLE_PLAN, zone_plan.LIFECYCLE_PNG, zone_plan.LIFECYCLE_SIDECAR, zone_plan.LIFECYCLE_WALK]:
+			if FileAccess.file_exists(path): failures.append("Fresh reopen bake output already exists: " + path)
+		if not failures.is_empty(): return zone_plan.lifecycle_finish(context, result)
+		result["author_pid"] = author.pid
+		result["author_report_sha256"] = FileAccess.get_sha256(String(context.evidence).path_join("author.json"))
+		result["expected_plan_sha256"] = author.expected_plan_sha256
+		var baked: Dictionary = plugin.call("bake_zone")
+		result["bake_result"] = baked
+		if not bool(baked.get("ok", false)): failures.append("Real positive bake/export/reimport failed: " + str(baked))
+		var exported: Dictionary = zone_plan.lifecycle_read(zone_plan.LIFECYCLE_PLAN)
+		var marker: Dictionary = zone_plan.lifecycle_read(zone_plan.LIFECYCLE_SIDECAR)
+		var walk := ground.get_node_or_null("KitWalk") as KitWalk
+		if zone_plan.canonical(exported) != zone_plan.canonical(expected) or marker.get("zone") != zone_plan.LIFECYCLE_ZONE or String(marker.get("hash", "")).length() != 16:
+			failures.append("Real export or bake sidecar does not identify the authored probe.")
+		if ground.baked == null or ground.baked.resource_path != zone_plan.LIFECYCLE_PNG or not ground.showing_baked() or ground.baked.get_size() != Vector2(192, 192):
+			failures.append("Positive bake did not bind its actual192x192 texture.")
+		if walk == null or walk.rows.is_empty() or walk.walk_text() != FileAccess.get_file_as_string(zone_plan.LIFECYCLE_WALK):
+			failures.append("Positive bake did not export the actual active walk mask.")
+		for key in ["scene", "png", "sidecar", "walk", "export"]:
+			var paths := {"scene": zone_plan.LIFECYCLE_SCENE, "png": zone_plan.LIFECYCLE_PNG, "sidecar": zone_plan.LIFECYCLE_SIDECAR, "walk": zone_plan.LIFECYCLE_WALK, "export": zone_plan.LIFECYCLE_PLAN}
+			if not FileAccess.file_exists(paths[key]): failures.append("Actual bake output absent: " + key)
+			result[key + "_sha256"] = FileAccess.get_sha256(paths[key])
+		# Deliberately NO extra save after bake. Fresh runtime must reveal any
+		# missing baked binding caused by the production save-before-assignment order.
+	if failures.is_empty():
+		await plugin.get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		var image := EditorInterface.get_base_control().get_viewport().get_texture().get_image()
+		var capture: String = context.evidence.path_join(phase + ".png")
+		if image == null or image.is_empty() or FileAccess.file_exists(capture) or image.save_png(capture) != OK:
+			failures.append("Actual editor lifecycle capture failed.")
+		else:
+			result["capture"] = {"path": capture, "size": [image.get_width(), image.get_height()], "sha256": FileAccess.get_sha256(capture)}
+	return zone_plan.lifecycle_finish(context, result)
