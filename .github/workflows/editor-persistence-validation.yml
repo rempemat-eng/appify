@@ -26,7 +26,7 @@ jobs:
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
       GIT_OPTIONAL_LOCKS: '0'
-      EDITOR_PERSISTENCE_GAME_SHA: 81d4487708bd3e13d810281e9c483621555708a5
+      EDITOR_PERSISTENCE_GAME_SHA: c413e9b00a806920b5447127660943d4ce048aea
     steps:
       - name: Open failure evidence before any checkout or setup
         shell: bash
@@ -53,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 18 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->bcbf ->87dab ->3b99 ->return child
+          fetch-depth: 19 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->bcbf ->87dab ->3b99 ->deba ->startup child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -65,9 +65,9 @@ jobs:
         if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY' && env.EDITOR_PERSISTENCE_MODE != 'DRIVER_CAPABILITY'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: 81d4487708bd3e13d810281e9c483621555708a5
+          ref: c413e9b00a806920b5447127660943d4ce048aea
           path: source
-          fetch-depth: 8 # return41081d ->b985 ->0ac ->407feb ->52 ->b9 ->original6903 ->375; separate from receiver history
+          fetch-depth: 9 # startup410c413 ->81d ->b985 ->0ac ->407feb ->52 ->b9 ->original6903 ->375; separate from receiver history
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
