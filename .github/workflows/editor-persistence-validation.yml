@@ -1,4 +1,4 @@
-name: EDITOR_RECEIVING opt-in displayed smoke
+name: EDITOR_RECEIVING opt-in Vulkan metadata inventory
 
 # SOURCE PREPARATION ONLY. The lead must review an exact commit and allocate it
 # before creating/updating this distinct execution ref. No PR/manual/schedule trigger.
@@ -19,8 +19,9 @@ jobs:
     runs-on: ubuntu-24.04 # exact Noble ABI for the pinned private Mesa diagnostic
     timeout-minutes: 15
     env:
-      # Explicit opt-in for this source candidate; controller default retains frozen H5 mode.
-      EDITOR_PERSISTENCE_MODE: DISPLAYED_SMOKE
+      # Inventory-only candidate: no game checkout, setup-python acquisition, engine or science.
+      # Controller default and normal DISPLAYED_SMOKE/H5 checks remain separate.
+      EDITOR_PERSISTENCE_MODE: VULKAN_INVENTORY
       CI: 'true'
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
@@ -52,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 10 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->this auth child
+          fetch-depth: 11 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->inventory child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -61,6 +62,7 @@ jobs:
 
       - name: Check out pinned full game and complete Python bake/validator/data closure
         id: source
+        if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: feb37c31d6de71e20df096df4df4d32ed1fa93ed
@@ -121,6 +123,7 @@ jobs:
 
       - name: Select the existing Python version without Node dependencies
         id: python
+        if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY'
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # main885b convention
         with:
           python-version: '3.12'
@@ -130,15 +133,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
+          if [ "$EDITOR_PERSISTENCE_MODE" = VULKAN_INVENTORY ]; then
+            printf 'PYTHON=%s\n' "$(command -v python3)" >> "$GITHUB_ENV"
+          else
+            printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
+          fi
 
-      - name: Preflight display capability, private engine and one existing displayed smoke
+      - name: Run the explicitly selected receiver mode
         id: focused
         shell: bash
         run: |
           set -euo pipefail
           set +e
-          python -I -B runner/scripts/review/editor_persistence_validation.py \
+          "$PYTHON" -I -B runner/scripts/review/editor_persistence_validation.py \
             --mode "$EDITOR_PERSISTENCE_MODE" \
             --candidate "$GITHUB_WORKSPACE/runner" \
             --source "$GITHUB_WORKSPACE/source" \
@@ -160,13 +167,28 @@ jobs:
         shell: bash
         run: |
           python3 -I -B - <<'PY'
-          import hashlib, json, os, stat, tarfile
+          import hashlib, json, os, shutil, stat, tarfile
           from pathlib import Path
           evidence = Path(os.environ['RUNNER_TEMP']) / 'editor-persistence/evidence'
           evidence.mkdir(parents=True, exist_ok=True)
           # When setup fails before Controller.setup, retain actual checked-out
           # bytes independently of the Python/engine stage. Not a source PASS.
-          if not (evidence / 'source-inputs.tar.gz').exists():
+          inventory = os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY'
+          if inventory:
+              # Retain only the two actual receiver files on early failure.
+              # No full-game fallback/archive is allowed in the64MiB inventory.
+              base = Path(os.environ['GITHUB_WORKSPACE']) / 'runner'
+              for name in ('scripts/review/editor_persistence_validation.py', '.github/workflows/editor-persistence-validation.yml'):
+                  source = base / name
+                  if not source.exists():
+                      continue
+                  info = source.lstat()
+                  if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > 256 * 1024:
+                      raise RuntimeError('Inventory fallback source is not bounded physical source')
+                  target = evidence / source.name
+                  if not target.exists():
+                      shutil.copyfile(source, target)
+          elif not (evidence / 'source-inputs.tar.gz').exists():
               records, total = {}, 0
               workspace = Path(os.environ['GITHUB_WORKSPACE'])
               with tarfile.open(evidence / 'partial-checkouts.tar.gz', 'x:gz') as archive:
@@ -199,8 +221,28 @@ jobs:
                         ('RUNNER_OUTCOME', 'SOURCE_OUTCOME', 'PYTHON_OUTCOME', 'PYTHON_PATH_OUTCOME', 'FOCUSED_OUTCOME')},
               controller_result_present=(evidence / 'result.json').is_file(),
               mode=os.environ['EDITOR_PERSISTENCE_MODE'],
-              qualification='Existing DISPLAYED_SMOKE only; undo/restoration and bake refusals, no H5 rerun or successful save/bake/walk/manual acceptance. Missing result is failure, never PASS.')
+              qualification=('Metadata-only inventory; native extension query, game checkout, dependencies, engine/import, GUI and all H5 methods NOT RUN. Missing result is failure; no driver acceptance.'
+                  if os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY' else
+                  'Existing DISPLAYED_SMOKE only; undo/restoration and bake refusals, no H5 rerun or successful save/bake/walk/manual acceptance. Missing result is failure, never PASS.'))
           (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
+          if inventory:
+              count = used = outputs = 0
+              roots = (evidence.parent, Path(os.environ['GITHUB_WORKSPACE']) / 'runner')
+              for root in roots:
+                  if not root.exists():
+                      continue
+                  for base, dirs, files in os.walk(root, followlinks=False):
+                      for name in dirs + files:
+                          path = Path(base) / name
+                          info = path.lstat()
+                          count += 1
+                          if count > 20000 or stat.S_ISLNK(info.st_mode):
+                              raise RuntimeError('Inventory final entry/type bound')
+                          used += info.st_blocks * 512
+                          if stat.S_ISREG(info.st_mode) and path.is_relative_to(evidence.parent):
+                              outputs += info.st_size
+              if used > 64 * 1024**2 or outputs > 1024**2:
+                  raise RuntimeError('Inventory final64MiB owned/1MiB logs+outputs bound')
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as handle:
               handle.write('## EDITOR_PERSISTENCE focused reproduction\n\n```json\n' + json.dumps(value, indent=2) + '\n```\n')
           PY
@@ -222,4 +264,5 @@ jobs:
             ${{ github.workspace }}/source/game/test/test_world_editor_dependent_edits.gd.uid
           if-no-files-found: error
           retention-days: 7
+
 

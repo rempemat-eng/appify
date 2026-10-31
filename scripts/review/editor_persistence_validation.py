@@ -8,6 +8,8 @@ nonempty-piece/cell-coordinate, full-suite or acceptance inference.
 Opt-in DISPLAYED_SMOKE uses the existing plugin only, with undo/restoration
 and bake refusals; it does not establish successful save/bake/walk acceptance.
 No imports, engine or tests are authorised by publishing this candidate.
+VULKAN_INVENTORY is a separate metadata-only opt-in: no engine, project,
+scientific stage or native query. Loader discovery gaps remain explicit.
 """
 from __future__ import annotations
 
@@ -34,6 +36,8 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+INVENTORY_RECEIVER_PARENT = "a6573383083eb39f2967ccd554e7ed85fcde279f"
+INVENTORY_RECEIVER_PARENT_TREE = "7ab98e2e903af5dd572c188cb96b5360a202b572"
 AUTH_RECEIVER_PARENT = "444e767d021efe08d37fd12e07ac4de46a831296"
 AUTH_RECEIVER_PARENT_TREE = "35dc21c7e2635685f3eea94de53368217aaf2fac"
 TOOL_RECEIVER_PARENT = "cbf823804359fb879b0fbd2054ab1ed7b472093c"
@@ -49,7 +53,7 @@ MESA_PACKAGE = {
 }
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
-MODES = ("H5_COMBINED", "DISPLAYED_SMOKE")
+MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "VULKAN_INVENTORY")
 GAME_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
@@ -755,10 +759,198 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
     return 0 if receipt["state"] == "COLLECTED" else 1
 
 
+def vulkan_inventory(args: argparse.Namespace) -> int:
+    """Bounded installed metadata only; never load a library or choose a driver.
+
+    Exact Vulkan ABI: Godot4.7.2 ed1daf0b vendored vulkan_core.h header335,
+    VkExtensionProperties char[256]+uint32 and VkResult int32, SUCCESS0/INCOMPLETE5.
+    NULL-layer enumeration can execute implicit layers (Loader1.3.275's
+    pre-instance interface); their closure and this installed build's compiled
+    discovery roots are not authenticated here. Keep that query NOT RUN.
+    """
+    output = args.root / "evidence/vulkan-inventory-observation.json"
+    result = {"state": "INCOMPLETE", "selectors": {}, "loader": [],
+              "directories": [], "manifests": [], "libraries": [], "gaps": [],
+              "extension_query": {"state": "NOT RUN", "returncode": None,
+                  "extensions": None, "required": ["VK_KHR_surface"],
+                  "platform_candidates": ["VK_KHR_xlib_surface", "VK_KHR_xcb_surface", "VK_KHR_wayland_surface"],
+                  "reason": "Installed-loader compiled discovery roots and implicit-layer execution closure are unqualified; metadata-only inventory, no native call."},
+              "qualification": "Observed host metadata only; no Vulkan/driver/GUI/game acceptance or VSync capability follows."}
+    def save() -> None:
+        if len(json.dumps(result, sort_keys=True, indent=2).encode()) > 256 * 1024:
+            raise RuntimeError("Inventory observation256KiB bound; prior receipt retained")
+        write_json(output, result)
+    save()
+    hashed = 0
+    cache = {}
+    manifest_bytes = {}
+    def observe(path: Path, maximum: int) -> dict:
+        nonlocal hashed
+        row = {"path": str(path), "exists": path.exists() or path.is_symlink()}
+        if not row["exists"]:
+            return row
+        resolved = path.resolve(strict=True)
+        allowed = (Path("/usr/lib/x86_64-linux-gnu"), Path("/usr/share/vulkan"),
+                   Path("/usr/local/share/vulkan"), Path("/usr/local/etc/vulkan"),
+                   Path("/etc/vulkan"), Path("/etc/xdg/vulkan"))
+        if not any(resolved.is_relative_to(base) for base in allowed):
+            return {**row, "gap": "Outside bounded canonical system metadata/library roots; not read"}
+        info = resolved.stat()
+        row.update(canonical=str(resolved), bytes=info.st_size, mode=oct(stat.S_IMODE(info.st_mode)),
+                   uid=info.st_uid, gid=info.st_gid, links=info.st_nlink)
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o6022
+                or not 0 < info.st_size <= maximum):
+            return {**row, "gap": "Not a bounded root-owned non-writable regular system file; not read"}
+        if str(resolved) not in cache:
+            checksum, size, header, chunks = hashlib.sha256(), 0, b"", []
+            with resolved.open("rb") as handle:
+                for chunk in iter(lambda: handle.read(65536), b""):
+                    size += len(chunk)
+                    hashed += len(chunk)
+                    if size > maximum or hashed > 128 * 1024**2:
+                        raise RuntimeError("Inventory file/aggregate input128MiB bound")
+                    if not header:
+                        header = chunk[:20]
+                    checksum.update(chunk)
+                    if maximum == 16 * 1024:
+                        chunks.append(chunk)
+            after = resolved.stat()
+            if (size != info.st_size or any(getattr(after, key) != getattr(info, key) for key in
+                    ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns", "st_mode", "st_uid", "st_gid"))):
+                raise RuntimeError("Installed inventory input changed while hashing")
+            cache[str(resolved)] = checksum.hexdigest()
+            if maximum == 16 * 1024:
+                manifest_bytes[str(resolved)] = b"".join(chunks)
+            if header.startswith(b"\x7fELF"):
+                row["elf"] = {"class": header[4], "byte_order": header[5],
+                              "machine": int.from_bytes(header[18:20], "little")}
+        row["sha256"] = cache[str(resolved)]
+        row["trust"] = "Observed root-owned installed host bytes; not independently authenticated package bytes"
+        return row
+    try:
+        result["host"] = mesa_host()
+        candidate = args.candidate.resolve(strict=True)
+        headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
+        if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
+                or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
+                != [INVENTORY_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
+                != INVENTORY_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Inventory candidate is not the exact genuine sole-a657 child")
+        changed = set(git(candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines())
+        if changed != OWNED_PATHS:
+            raise RuntimeError("Inventory candidate must change exactly the two existing receiver paths")
+        expected = {}
+        for raw in git(candidate, "ls-tree", "-z", "HEAD", "--", *sorted(OWNED_PATHS)).split(b"\0"):
+            if raw:
+                header, name = raw.split(b"\t", 1)
+                mode, kind, sha = header.decode().split()
+                expected[os.fsdecode(name)] = (mode, kind, sha)
+        if (set(expected) != OWNED_PATHS or any(expected[name] != ("100644", "blob", blob(candidate / name))
+                or stat.S_IMODE((candidate / name).stat().st_mode) != 0o644 for name in OWNED_PATHS)):
+            raise RuntimeError("Inventory working source bytes/modes differ from immutable event tree")
+        result["candidate"] = {"headers": headers, "delta": sorted(changed), "immutable_paths": expected}
+        # Selector values are data only. Never dump the environment or modify a selector.
+        keys = ("VK_DRIVER_FILES", "VK_ICD_FILENAMES", "VK_ADD_DRIVER_FILES",
+                "VK_LOADER_DRIVERS_SELECT", "VK_LOADER_DRIVERS_DISABLE", "VK_LAYER_PATH",
+                "VK_ADD_LAYER_PATH", "VK_INSTANCE_LAYERS", "VK_LOADER_LAYERS_ENABLE",
+                "VK_LOADER_LAYERS_DISABLE", "VK_LOADER_LAYERS_ALLOW", "VK_LOADER_DISABLE_INST_EXT_FILTER")
+        for key in keys:
+            value = os.environ.get(key)
+            if value is not None and (len(value.encode()) > 4096 or any(ord(c) < 32 for c in value)):
+                raise RuntimeError("Inventory selector length/control-character bound")
+            result["selectors"][key] = value
+        result["dynamic_linker_overrides_present"] = {key: bool(os.environ.get(key)) for key in
+                                                     ("LD_LIBRARY_PATH", "LD_PRELOAD", "LD_AUDIT")}
+        for path in (Path("/usr/lib/x86_64-linux-gnu/libvulkan.so.1"), Path("/lib/x86_64-linux-gnu/libvulkan.so.1")):
+            result["loader"].append(observe(path, 16 * 1024**2))
+        home = Path(os.environ["HOME"])
+        roots = [os.environ.get("XDG_CONFIG_HOME") or str(home / ".config")]
+        for key, default in (("XDG_CONFIG_DIRS", "/etc/xdg"), ("XDG_DATA_DIRS", "/usr/local/share:/usr/share")):
+            values = (os.environ.get(key) or default).split(":")
+            if len(values) > 4:
+                raise RuntimeError("Inventory XDG root-count bound")
+            roots += [value for value in values if value]
+        roots += ["/usr/local/etc", "/etc", os.environ.get("XDG_DATA_HOME") or str(home / ".local/share")]
+        roots = list(dict.fromkeys(roots))
+        if len(roots) > 12 or any(not Path(x).is_absolute() or len(x.encode()) > 4096 for x in roots):
+            raise RuntimeError("Inventory requires bounded absolute XDG/HOME roots")
+        manifests = 0
+        for root in roots:
+            for suffix in ("icd.d", "implicit_layer.d", "explicit_layer.d"):
+                directory = Path(root) / "vulkan" / suffix
+                row = {"path": str(directory), "exists": directory.exists() or directory.is_symlink(), "json_files": 0}
+                result["directories"].append(row)
+                if not row["exists"]:
+                    continue
+                if directory.is_symlink() or not directory.is_dir():
+                    row["gap"] = "Nonphysical directory; not traversed"
+                    continue
+                entries = []
+                for entry in directory.iterdir():
+                    entries.append(entry)
+                    if len(entries) > 64:
+                        raise RuntimeError("Inventory directory-entry64 bound")
+                for path in sorted(entries):
+                    if path.suffix != ".json":
+                        continue
+                    manifests += 1
+                    row["json_files"] += 1
+                    if manifests > 64:
+                        raise RuntimeError("Inventory manifest64 bound")
+                    record = observe(path, 16 * 1024)
+                    record["kind"] = suffix
+                    result["manifests"].append(record)
+                    if "sha256" not in record:
+                        continue
+                    document = json.loads(manifest_bytes[record["canonical"]])
+                    if not isinstance(document, dict):
+                        raise RuntimeError("Inventory manifest must be a JSON object")
+                    record["file_format_version"] = document.get("file_format_version")
+                    nodes = [document["ICD"]] if suffix == "icd.d" and "ICD" in document else []
+                    if suffix != "icd.d":
+                        nodes = document.get("layers", [document["layer"]] if "layer" in document else [])
+                    if not isinstance(nodes, list) or len(nodes) > 8 or any(not isinstance(x, dict) for x in nodes):
+                        raise RuntimeError("Inventory manifest-node8/type bound")
+                    record["bindings"] = []
+                    for node in nodes:
+                        binding = {key: node[key] for key in ("name", "api_version", "library_path", "component_layers", "override_paths") if key in node}
+                        if len(json.dumps(binding).encode()) > 8192:
+                            raise RuntimeError("Inventory manifest binding8KiB bound")
+                        record["bindings"].append(binding)
+                        library = node.get("library_path")
+                        if library is None:
+                            binding["gap"] = "No direct native library binding; layer/component closure not resolved"
+                        elif not isinstance(library, str) or not library or len(library.encode()) > 4096:
+                            raise RuntimeError("Inventory library-path bound/type")
+                        elif "/" not in library:
+                            binding["gap"] = "Bare SONAME uses dynamic-linker search; no binding guessed"
+                        else:
+                            target = Path(library)
+                            if not target.is_absolute():
+                                target = path.parent / target
+                            result["libraries"].append(observe(target, 64 * 1024**2))
+                if suffix == "implicit_layer.d" and row["json_files"]:
+                    row["gap"] = "Pre-instance query may execute implicit/recursive layers; not loaded"
+                save()
+        result["gaps"] = ["Standard candidate roots only; installed loader compile-time roots and active driver/layer resolution are unproved.",
+                          "Instance extensions/returncode NOT RUN, not absent; no Vulkan/ICD/layer native library was invoked.",
+                          "No X11/GLX swap-control query; VSync warning remains separate."]
+        result["hashed_input_bytes"] = hashed
+        result["state"] = "METADATA_ONLY"
+        return 0
+    except BaseException as error:
+        result["state"] = "INCOMPLETE"
+        result["failure"] = {"type": type(error).__name__, "message": str(error)}
+        return 1
+    finally:
+        save()
+
+
 class Controller:
     def __init__(self, args: argparse.Namespace):
         self.candidate = args.candidate.resolve(strict=True)
-        self.source = args.source.resolve(strict=True)
+        self.source = args.source.resolve(strict=args.mode != "VULKAN_INVENTORY")
         self.root = args.root.resolve(strict=True)
         self.game = self.source / "game"
         self.evidence = self.root / "evidence"
@@ -790,6 +982,11 @@ class Controller:
         self.budget_failure = None
         self.terminal_started = None
         self.owned_roots = (self.root, self.source, self.candidate)
+        if self.mode == "VULKAN_INVENTORY":
+            self.active_limit = 15
+            self.owned_roots = (self.root, self.candidate)
+            self.phases["vulkan-inventory"] = {"state": "NOT RUN"}
+            self.output["qualification"] = "Metadata-only Vulkan inventory. Engine, project, scientific dependencies, native query, GUI and all H5 controls NOT RUN; no driver acceptance."
 
     def budget_remaining(self) -> float:
         if self.transaction_started is None:
@@ -868,7 +1065,9 @@ class Controller:
                 raise RuntimeError("Combined test-output64MiB limit")
         free = min(shutil.disk_usage(p).free for p in self.owned_roots)
         value = {"owned_allocated_bytes": used, "free_bytes": free}
-        if used > OWNED_LIMIT or free < FREE_RESERVE:
+        if self.mode == "VULKAN_INVENTORY" and sum(p.stat().st_size for p in self.root.rglob("*") if p.is_file()) > 1024**2:
+            raise RuntimeError("Inventory logs+outputs1MiB limit")
+        if used > (64 * 1024**2 if self.mode == "VULKAN_INVENTORY" else OWNED_LIMIT) or free < FREE_RESERVE:
             raise RuntimeError(f"owned disk/reserve limit: {value}")
         return value
 
@@ -989,8 +1188,13 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [AUTH_RECEIVER_PARENT]:
-            raise RuntimeError("Auth-refusal receiver must be a genuine sole child of frozen405444")
+        if parents != [INVENTORY_RECEIVER_PARENT]:
+            raise RuntimeError("Inventory receiver must be a genuine sole child of frozen405a657")
+        inventory_parent_headers = git(self.candidate, "cat-file", "commit", INVENTORY_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in inventory_parent_headers.splitlines() if line.startswith("parent ")]
+                != [AUTH_RECEIVER_PARENT] or git(self.candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
+                != INVENTORY_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H8 auth-refusal receiver ancestry/tree changed")
         auth_parent_headers = git(self.candidate, "cat-file", "commit", AUTH_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in auth_parent_headers.splitlines() if line.startswith("parent ")]
                 != [TOOL_RECEIVER_PARENT] or git(self.candidate, "rev-parse", AUTH_RECEIVER_PARENT + "^{tree}").decode().strip()
@@ -1085,7 +1289,8 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
-                   "receiver_parent": AUTH_RECEIVER_PARENT, "receiver_parent_headers": auth_parent_headers,
+                    "receiver_parent": INVENTORY_RECEIVER_PARENT, "receiver_parent_headers": inventory_parent_headers,
+                    "auth_receiver_parent": AUTH_RECEIVER_PARENT, "auth_receiver_parent_headers": auth_parent_headers,
                    "tool_receiver_parent": TOOL_RECEIVER_PARENT, "tool_receiver_parent_headers": tool_parent_headers,
                    "display_receiver_parent": DISPLAY_RECEIVER_PARENT, "display_receiver_parent_headers": display_parent_headers,
                    "h5_receiver_parent": RECEIVER_PARENT, "h5_receiver_parent_headers": prior_headers,
@@ -1540,14 +1745,16 @@ class Controller:
             self.capacity()
             def child_limits():
                 resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
-                resource.setrlimit(resource.RLIMIT_AS, (4 * 1024**3, 4 * 1024**3))
-                resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024**2, 64 * 1024**2))
+                address_limit = 256 * 1024**2 if self.mode == "VULKAN_INVENTORY" else 4 * 1024**3
+                file_limit = 1024**2 if self.mode == "VULKAN_INVENTORY" else 64 * 1024**2
+                resource.setrlimit(resource.RLIMIT_AS, (address_limit, address_limit))
+                resource.setrlimit(resource.RLIMIT_FSIZE, (file_limit, file_limit))
             # Do not inject an asynchronous exception into Popen's ownership
             # handoff (child may exist before the handle is returned). The
             # existing phase monitor and actual collection deadlines take over;
             # all elapsed time is still charged and checked after collection.
             signal.setitimer(signal.ITIMER_REAL, 0)
-            process = subprocess.Popen(command, cwd=self.game, env=self.env, start_new_session=True,
+            process = subprocess.Popen(command, cwd=self.candidate if self.mode == "VULKAN_INVENTORY" else self.game, env=self.env, start_new_session=True,
                                        stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=child_limits)
             result["pid"] = result["pgid"] = process.pid
             leader = proc_group(process.pid).get(process.pid)
@@ -1568,7 +1775,7 @@ class Controller:
                     members = proc_group(process.pid)
                     rss = sum(int(x["rss"]) for x in members.values())
                     result["peak_sampled_group_rss"] = max(result["peak_sampled_group_rss"], rss)
-                    if rss > RSS_LIMIT:
+                    if rss > (256 * 1024**2 if self.mode == "VULKAN_INVENTORY" else RSS_LIMIT):
                         reason = "group RSS limit"; break
                     if now - started > seconds:
                         reason = "phase timeout"; break
@@ -1585,7 +1792,7 @@ class Controller:
                             eof = True
                             selector.unregister(key.fileobj)
                         else:
-                            remaining = LOG_LIMIT - total
+                            remaining = (1024**2 if self.mode == "VULKAN_INVENTORY" else LOG_LIMIT) - total
                             log.write(data[:remaining]); total += min(remaining, len(data))
                             if len(data) > remaining:
                                 reason = "raw log limit; retained prefix is incomplete"
@@ -1852,7 +2059,106 @@ class Controller:
             findings["classification"] = self.output["state"]
             write_json(self.evidence / "focused-inventory.json", findings)
 
+    def inventory_only(self) -> int:
+        """Use the existing monitored phase/actual collection, without full setup."""
+        self.transaction_started = time.monotonic()
+        errors = []
+        observation = None
+        try:
+            self.arm_budget()
+            if (self.mode != "VULKAN_INVENTORY" or sys.platform != "linux" or sys.version_info[:2] != (3, 12)
+                    or os.environ.get("GITHUB_RUN_ATTEMPT") != "1"
+                    or os.environ.get("GITHUB_REF") != "refs/heads/codex/editor-persistence-validation-run"
+                    or self.event_sha != os.environ.get("GITHUB_SHA")
+                    or not re.fullmatch(r"[0-9a-f]{40}", self.event_sha)):
+                raise RuntimeError("Inventory requires its exact allocated Linux/CPython3.12 event/ref/attempt1")
+            workspace = Path(os.environ["GITHUB_WORKSPACE"]).resolve(strict=True)
+            if (self.candidate != workspace / "runner" or self.source != workspace / "source"
+                    or self.source.exists() or self.source.is_symlink()
+                    or self.root != Path(os.environ["RUNNER_TEMP"]).resolve(strict=True) / "editor-persistence"
+                    or set(self.root.iterdir()) != {self.evidence}
+                    or set(self.evidence.iterdir()) != {self.evidence / "bootstrap.json", self.evidence / "controller.log"}):
+                raise RuntimeError("Inventory requires fresh receiver-only checkout/evidence; no production checkout")
+            if (not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal")
+                    or Path(os.environ.get("PYTHON", "")).resolve(strict=True) != Path(sys.executable).resolve(strict=True)):
+                raise RuntimeError("Inventory requires existing explicit Python and identity-safe collection")
+            os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
+            roots = {"XDG_CONFIG_HOME": self.root / "config", "XDG_DATA_HOME": self.root / "data",
+                     "XDG_CACHE_HOME": self.root / "cache", "XDG_RUNTIME_DIR": self.root / "runtime", "TMPDIR": self.root / "tmp"}
+            self.env = {**os.environ, **{k: str(v) for k, v in roots.items()},
+                        "GIT_OPTIONAL_LOCKS": "0", "GIT_NO_LAZY_FETCH": "1", "PYTHONDONTWRITEBYTECODE": "1", "PYTHONNOUSERSITE": "1"}
+            for path in roots.values():
+                path.mkdir(mode=0o700)
+            libc = ctypes.CDLL(None, use_errno=True)
+            if libc.prctl(36, 1, 0, 0, 0) != 0:
+                raise OSError(ctypes.get_errno(), "Cannot establish existing actual orphan collection")
+            self.candidate_initial = {}
+            for name in sorted(OWNED_PATHS):
+                path = self.candidate / name
+                info = path.lstat()
+                if path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_size > 256 * 1024:
+                    raise RuntimeError("Inventory receiving source must be bounded physical files")
+                self.candidate_initial[name] = {"blob": blob(path), "sha256": digest(path)}
+                shutil.copyfile(path, self.evidence / path.name)
+            write_json(self.evidence / "candidate.json", self.candidate_initial)
+            write_json(self.evidence / "host.json", {"mode": self.mode,
+                "limits": {"active_s": 15, "group_rss_bytes": 256 * 1024**2,
+                           "owned_bytes": 64 * 1024**2, "logs_and_outputs_bytes": 1024**2, "cpu": 1},
+                "qualification": "Proposed bounds; actual inventory/fit remains unmeasured until allocated. No science, engine, project or native query."})
+            self.capacity()
+            phase = self.phase("vulkan-inventory", [sys.executable, "-I", "-B", str(Path(__file__).resolve()),
+                "--mode", "VULKAN_INVENTORY", "--vulkan-inventory-child", "--candidate", str(self.candidate),
+                "--source", str(self.source), "--root", str(self.root), "--event-sha", self.event_sha], 15)
+            if phase.get("exit") != 0 or phase.get("state") != "COLLECTED":
+                raise RuntimeError("Inventory phase incomplete; retain raw logs/actual collection")
+            path = self.evidence / "vulkan-inventory-observation.json"
+            if path.is_symlink() or not 0 < path.stat().st_size <= 256 * 1024:
+                raise RuntimeError("Inventory observation must be bounded physical JSON")
+            observation = json.loads(path.read_text())
+            if (observation.get("state") != "METADATA_ONLY"
+                    or observation.get("extension_query", {}).get("state") != "NOT RUN"
+                    or observation["extension_query"].get("returncode") is not None):
+                raise RuntimeError("Inventory cannot claim an unexecuted native query")
+        except BaseException as error:
+            errors.append({"type": type(error).__name__, "message": str(error)})
+        finally:
+            self.terminal_started = time.monotonic()
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            try:
+                self.arm_budget()
+                if self.candidate_initial is not None:
+                    after = {name: {"blob": blob(self.candidate / name), "sha256": digest(self.candidate / name)} for name in sorted(OWNED_PATHS)}
+                    write_json(self.evidence / "candidate-after.json", after)
+                    if after != self.candidate_initial:
+                        raise RuntimeError("Inventory receiver inputs changed")
+                    self.guards["candidate"] = "PASS"
+                self.output["final_capacity"] = self.capacity()
+                self.arm_budget()
+            except BaseException as error:
+                errors.append({"type": type(error).__name__, "message": str(error)})
+            finally:
+                signal.setitimer(signal.ITIMER_REAL, 0)
+            observation_path = self.evidence / "vulkan-inventory-observation.json"
+            self.output.update(state="VULKAN_METADATA_ONLY" if not errors and observation else "INVENTORY_INCOMPLETE_FAILURE",
+                errors=errors, observation=({"file": observation_path.name, "state": observation["state"],
+                    "bytes": observation_path.stat().st_size, "sha256": digest(observation_path)} if observation else None), budget=self.budget_receipt(),
+                gui_workflow_pass=False, production_correction_authorised=False)
+            write_json(self.evidence / "result.json", self.output)
+            try:
+                self.output["final_capacity"] = self.capacity()
+            except BaseException as error:
+                self.output["state"] = "INVENTORY_INCOMPLETE_FAILURE"
+                self.output["errors"].append({"type": type(error).__name__, "message": str(error)})
+                write_json(self.evidence / "result.json", self.output)
+            if self.budget_remaining() <= 0 or self.collection_used > 30:
+                self.output["state"] = "INVENTORY_INCOMPLETE_FAILURE"
+                self.output["errors"].append({"type": "TimeoutError", "message": "Inventory aggregate/final receipt budget exhausted"})
+                write_json(self.evidence / "result.json", self.output)
+        return 0 if self.output["state"] == "VULKAN_METADATA_ONLY" else 1
+
     def run(self) -> int:
+        if self.mode == "VULKAN_INVENTORY":
+            return self.inventory_only()
         failure = None
         try:
             self.setup()
@@ -2090,7 +2396,14 @@ def main() -> int:
     parser.add_argument("--mode", choices=MODES, default="H5_COMBINED")
     parser.add_argument("--display-child", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--mesa-tool-child", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--vulkan-inventory-child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.mode == "VULKAN_INVENTORY" and (args.display_child or args.mesa_tool_child):
+        parser.error("Inventory mode cannot enter display/Mesa-tool child paths")
+    if args.vulkan_inventory_child:
+        if args.mode != "VULKAN_INVENTORY" or args.display_child or args.mesa_tool_child:
+            parser.error("Inventory child requires exclusive explicit VULKAN_INVENTORY mode")
+        return vulkan_inventory(args)
     if args.mesa_tool_child:
         return mesa_tool_stage(args)
     if args.display_child:
@@ -2106,4 +2419,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
