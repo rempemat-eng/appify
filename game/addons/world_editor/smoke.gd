@@ -226,6 +226,8 @@ static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) 
 			facts["failure"] = "Editor plugin left the tree before scene readiness."
 			return facts
 		await plugin.get_tree().process_frame
+	facts["failure"] = "Scene readiness loop ended without a result."
+	return facts
 
 static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> Dictionary:
 	var zone_plan := preload("res://tools/kit_zone.gd")
