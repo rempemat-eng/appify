@@ -26,7 +26,7 @@ jobs:
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
       GIT_OPTIONAL_LOCKS: '0'
-      EDITOR_PERSISTENCE_GAME_SHA: feb37c31d6de71e20df096df4df4d32ed1fa93ed
+      EDITOR_PERSISTENCE_GAME_SHA: b985319c66184511387cd5141377161a1650f739
     steps:
       - name: Open failure evidence before any checkout or setup
         shell: bash
@@ -53,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 16 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->bcbf ->provider child
+          fetch-depth: 17 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->bcbf ->87dab ->readiness child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -65,9 +65,9 @@ jobs:
         if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY' && env.EDITOR_PERSISTENCE_MODE != 'DRIVER_CAPABILITY'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: feb37c31d6de71e20df096df4df4d32ed1fa93ed
+          ref: b985319c66184511387cd5141377161a1650f739
           path: source
-          fetch-depth: 5 # combined407feb ->52 ->b9 ->original6903 ->375; separate from receiver history
+          fetch-depth: 7 # readiness410b985 ->0ac ->407feb ->52 ->b9 ->original6903 ->375; separate from receiver history
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -275,5 +275,6 @@ jobs:
             ${{ github.workspace }}/source/game/test/test_world_editor_dependent_edits.gd.uid
           if-no-files-found: error
           retention-days: 7
+
 
 

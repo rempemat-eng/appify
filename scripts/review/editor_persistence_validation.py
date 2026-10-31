@@ -35,7 +35,13 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+GAME_SHA = "b985319c66184511387cd5141377161a1650f739"
+READINESS_GAME_PARENT = "0ac156123f600726beaed175fa9cfdd94aab2532"
+READINESS_GAME_PARENT_TREE = "3bf305d1b9253561508b1f37a00e7ee57a65d766"
+PRIOR_DISPLAYED_GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+PRIOR_DISPLAYED_GAME_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
+READINESS_RECEIVER_PARENT = "87dabba29c3ca4ee6ce7c167612f149ebc1ceadc"
+READINESS_RECEIVER_PARENT_TREE = "850146429ef5b3e7382c40d0390f4b01bd4aee44"
 PYTHON_PROVIDER_ACTION = "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1"
 PYTHON_PROVIDER_RECEIVER_PARENT = "bcbf912f601163497fcd3ada21ce20d7e184be91"
 PYTHON_PROVIDER_RECEIVER_PARENT_TREE = "5e2de3fb7a066be500ac9bd63b89071bf8c495d9"
@@ -84,7 +90,7 @@ MESA_PACKAGE = {
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
 MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
-GAME_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
+GAME_TREE = "d36c77c4cd01c2a151e1f14ed8d983f0405fa38d"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
 GAME_GRANDPARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
@@ -104,12 +110,14 @@ ORIGINAL_RECEIVER = "5de271d77f26dbbc5641bac0ef6635aef021c34b"
 ORIGINAL_RECEIVER_TREE = "62b470d5934699bed72660f5a011e66b3f3da854"
 TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
-EXPORT_BLOB = "f34b6960393dbbcb8724140810509cae090c46c7"
+EXPORT_BLOB = "2f150e228ab1151366dc7f4f51fb270ae24fac6d"
+PLUGIN_BLOB = "8a9dadd400ce9ef345becef8fc13f2f7179c3449"
+SMOKE_BLOB = "8355c902824de0dd716e524aff518e1b0c1b750b"
 DEPENDENT_TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
 GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
 GAME_COUNT = 6689
-GAME_BYTES = 87869357
+GAME_BYTES = 87895256
 # Static import/data closure of corrected bake, unchanged validator and tiny fixture.
 # Full game supplies library/schema/terrain/index/fixtures. No master raster is
 # reached by this pieces=[] lawn-only probe. scripts/art are namespace packages.
@@ -1184,7 +1192,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [PYTHON_PROVIDER_RECEIVER_PARENT]
+                != [READINESS_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", READINESS_RECEIVER_PARENT + "^{tree}").decode().strip() != READINESS_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", READINESS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [PYTHON_PROVIDER_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", PYTHON_PROVIDER_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_PROVIDER_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
@@ -1198,7 +1208,7 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
                 != [INVENTORY_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
                 != INVENTORY_RECEIVER_PARENT_TREE):
-            raise RuntimeError("Inventory candidate is not the exact genuine sole-bcbf child")
+            raise RuntimeError("Inventory candidate is not the exact genuine sole87dab child")
         changed = set(git(candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines())
         if changed != OWNED_PATHS:
             raise RuntimeError("Inventory candidate must change exactly the two existing receiver paths")
@@ -1602,7 +1612,7 @@ class Controller:
             self.phases["display-tool"] = {"state": "NOT RUN"}
             self.phases["displayed-smoke"] = {"state": "NOT RUN"}
             self.output["qualification"] = "Displayed existing editor smoke only: undo/restoration and bake refusals. No H5 rerun, successful save/bake/walk or manual acceptance."
-            self.output["prior_h5"] = {"receiver": DISPLAY_RECEIVER_PARENT, "source": GAME_SHA,
+            self.output["prior_h5"] = {"receiver": DISPLAY_RECEIVER_PARENT, "source": PRIOR_DISPLAYED_GAME_SHA,
                                        "result_and_release": 6535314296, "controls": "16 PASS frozen; not repeated"}
         self.private_driver_receipt = None
         self.private_driver_provenance_sha256 = None
@@ -1826,8 +1836,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [PYTHON_PROVIDER_RECEIVER_PARENT]:
-            raise RuntimeError("Provider-binding receiver must be a genuine sole child of frozen405bcbf")
+        if parents != [READINESS_RECEIVER_PARENT]:
+            raise RuntimeError("Readiness receiver must be a genuine sole child of frozen40587dab")
+        readiness_receiver_headers = git(self.candidate, "cat-file", "commit", READINESS_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line[7:] for line in readiness_receiver_headers.splitlines() if line.startswith("parent ")] != [PYTHON_PROVIDER_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", READINESS_RECEIVER_PARENT + "^{tree}").decode().strip() != READINESS_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen provider-binding receiver ancestry/tree changed")
         python_provider_headers = git(self.candidate, "cat-file", "commit", PYTHON_PROVIDER_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line[7:] for line in python_provider_headers.splitlines() if line.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", PYTHON_PROVIDER_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE):
@@ -1896,8 +1910,16 @@ class Controller:
             raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
-                if line.startswith("parent ")] != [GAME_PARENT]:
-            raise RuntimeError("Combined407 must retain genuine52 sole parent")
+                if line.startswith("parent ")] != [READINESS_GAME_PARENT]:
+            raise RuntimeError("Readiness410 must retain genuine0ac sole parent")
+        source_readiness_parent_headers = git(self.source, "cat-file", "commit", READINESS_GAME_PARENT).decode().split("\n\n", 1)[0]
+        if ([line[7:] for line in source_readiness_parent_headers.splitlines() if line.startswith("parent ")] != [PRIOR_DISPLAYED_GAME_SHA]
+                or git(self.source, "rev-parse", READINESS_GAME_PARENT + "^{tree}").decode().strip() != READINESS_GAME_PARENT_TREE):
+            raise RuntimeError("Frozen lifecycle410 ancestry/tree changed")
+        source_prior_displayed_headers = git(self.source, "cat-file", "commit", PRIOR_DISPLAYED_GAME_SHA).decode().split("\n\n", 1)[0]
+        if ([line[7:] for line in source_prior_displayed_headers.splitlines() if line.startswith("parent ")] != [GAME_PARENT]
+                or git(self.source, "rev-parse", PRIOR_DISPLAYED_GAME_SHA + "^{tree}").decode().strip() != PRIOR_DISPLAYED_GAME_TREE):
+            raise RuntimeError("Frozen combined407 ancestry/tree changed")
         source_parent_headers = git(self.source, "cat-file", "commit", GAME_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in source_parent_headers.splitlines() if line.startswith("parent ")]
                 != [GAME_GRANDPARENT] or git(self.source, "rev-parse", GAME_PARENT + "^{tree}").decode().strip()
@@ -1925,13 +1947,16 @@ class Controller:
         production_delta = {name for name in baseline_tree.keys() | source_tree.keys()
                             if baseline_tree.get(name) != source_tree.get(name)}
         if (production_delta != {"scripts/art/kit/bake.py", "game/tools/kit_zone.gd", DEPENDENT_TEST_PATH,
-                                  "game/world/terrain/kit_piece.gd", "game/world/terrain/terrain_ground.gd"}
+                                  "game/world/terrain/kit_piece.gd", "game/world/terrain/terrain_ground.gd",
+                                  "game/addons/world_editor/plugin.gd", "game/addons/world_editor/smoke.gd"}
                 or source_tree.get("scripts/art/kit/bake.py") != ("100644", PYTHON_INPUTS["scripts/art/kit/bake.py"][0])
                 or source_tree.get("game/tools/kit_zone.gd") != ("100644", EXPORT_BLOB)
+                or source_tree.get("game/addons/world_editor/plugin.gd") != ("100644", PLUGIN_BLOB)
+                or source_tree.get("game/addons/world_editor/smoke.gd") != ("100644", SMOKE_BLOB)
                 or source_tree.get(DEPENDENT_TEST_PATH) != ("100644", DEPENDENT_TEST_BLOB)
                 or source_tree.get("game/world/terrain/kit_piece.gd") != ("100644", KIT_PIECE_BLOB)
                 or source_tree.get("game/world/terrain/terrain_ground.gd") != ("100644", GROUND_BLOB)):
-            raise RuntimeError(f"Combined407 must change only five pinned production paths: {sorted(production_delta)}")
+            raise RuntimeError(f"Readiness410 must change only seven pinned production paths: {sorted(production_delta)}")
         candidate_rows = {}
         for name in sorted(OWNED_PATHS):
             p = self.candidate / name
@@ -1948,6 +1973,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "readiness_receiver_parent": READINESS_RECEIVER_PARENT, "readiness_receiver_parent_headers": readiness_receiver_headers,
                     "python_provider_receiver_parent": PYTHON_PROVIDER_RECEIVER_PARENT, "python_provider_receiver_parent_headers": python_provider_headers,
                     "python_facts_receiver_parent": PYTHON_FACTS_RECEIVER_PARENT, "python_facts_receiver_parent_headers": python_facts_headers,
                     "python_binding_receiver_parent": PYTHON_BINDING_RECEIVER_PARENT, "python_binding_receiver_parent_headers": python_binding_headers,
@@ -1963,8 +1989,12 @@ class Controller:
                    "original_game_sha": ORIGINAL_GAME_SHA, "original_game_tree": ORIGINAL_GAME_TREE,
                    "original_game_headers": baseline_headers, "production_delta": sorted(production_delta),
                    "tested_game_tree": GAME_TREE, "tested_game_headers": source_headers,
-                   "tested_game_parent": GAME_PARENT, "tested_game_parent_headers": source_parent_headers,
-                   "tested_game_grandparent": GAME_GRANDPARENT, "tested_game_grandparent_headers": source_grandparent_headers,
+                   "readiness_game_parent": READINESS_GAME_PARENT, "readiness_game_parent_headers": source_readiness_parent_headers,
+                   "prior_displayed_game_sha": PRIOR_DISPLAYED_GAME_SHA, "prior_displayed_game_headers": source_prior_displayed_headers,
+                   "tested_game_parent": READINESS_GAME_PARENT, "tested_game_parent_headers": source_readiness_parent_headers,
+                   "tested_game_grandparent": PRIOR_DISPLAYED_GAME_SHA, "tested_game_grandparent_headers": source_prior_displayed_headers,
+                   "historical407_parent": GAME_PARENT, "historical407_parent_headers": source_parent_headers,
+                   "historical407_grandparent": GAME_GRANDPARENT, "historical407_grandparent_headers": source_grandparent_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
         # Retain full actual game AND actual Python inputs before engine setup.
         # The snapshot describes these bytes, never an invented successful import.
@@ -2793,7 +2823,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [PYTHON_PROVIDER_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [READINESS_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", READINESS_RECEIVER_PARENT + "^{tree}").decode().strip() != READINESS_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", READINESS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [PYTHON_PROVIDER_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", PYTHON_PROVIDER_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_PROVIDER_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
@@ -2804,7 +2836,7 @@ class Controller:
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
                     or set(git(self.candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines()) != OWNED_PATHS):
-                raise RuntimeError("Driver mode requires the genuine sole-bcbf two-file candidate")
+                raise RuntimeError("Driver mode requires the genuine sole87dab two-file candidate")
             if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
                 raise RuntimeError("Actual identity-safe process collection unavailable")
             os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
@@ -3254,5 +3286,6 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 
