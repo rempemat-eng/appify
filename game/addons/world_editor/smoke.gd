@@ -196,37 +196,88 @@ static func requested_editor_scene() -> String:
 	return paths[0] if paths.size() == 1 else ""
 
 static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) -> Dictionary:
-	# Poll actual readiness once per editor frame; elapsed time never implies success.
-	# The unchanged receiving lifetime/phase deadlines also bound this opt-in wait.
+	# Plugins load before the first filesystem scan; the CLI scene opens after that scan.
+	# The same15s readiness follows that milestone, inside a total45s helper ceiling.
 	var started := Time.get_ticks_msec()
 	var requested := requested_editor_scene()
-	var facts := {}
+	var startup := {"observed_ms": -1, "sources_exist": false}
+	var on_sources_changed := func(sources_exist: bool) -> void:
+		if int(startup.observed_ms) < 0:
+			startup.observed_ms = Time.get_ticks_msec()
+			startup.sources_exist = sources_exist
+	var signal_source: EditorFileSystem = null
+	var readiness_started := -1
+	var phase := "startup_scan"
+	var milestone := "pending"
+	var transitions: Array[Dictionary] = []
+	var previous_state: Array = []
+	var dropped_transitions := 0
+	var facts := {"ok": false, "expected_scene": expected_scene, "requested_scene": requested,
+		"limit_ms": 15000, "total_limit_ms": 45000}
 	while true:
+		if not is_instance_valid(plugin) or not plugin.is_inside_tree():
+			facts["failure"] = "Editor plugin left the tree before scene readiness."
+			break
+		var filesystem := EditorInterface.get_resource_filesystem()
+		if signal_source == null and filesystem != null:
+			signal_source = filesystem
+			signal_source.sources_changed.connect(on_sources_changed)
 		var root := EditorInterface.get_edited_scene_root()
 		var target: Node = root.get_node_or_null("Ground") if root != null else null
-		var filesystem := EditorInterface.get_resource_filesystem()
 		var script: Script = target.get_script() as Script if target != null else null
+		var now := Time.get_ticks_msec()
+		var scanning := filesystem.is_scanning() if filesystem != null else true
+		var importing := filesystem.is_importing() if filesystem != null else true
+		var exact_root := root != null and root.scene_file_path == expected_scene
+		var ready := exact_root and target is TerrainGround and filesystem != null and not scanning and not importing
+		if readiness_started < 0:
+			if int(startup.observed_ms) >= 0:
+				readiness_started = int(startup.observed_ms)
+				milestone = "sources_changed"
+			elif ready:
+				readiness_started = now
+				milestone = "already_ready"
+			if readiness_started >= 0:
+				phase = "scene_readiness"
 		facts = {"ok": false, "expected_scene": expected_scene, "requested_scene": requested,
 			"root_present": root != null, "root_scene_path": String(root.scene_file_path) if root != null else "",
 			"ground_present": target != null, "ground_class": target.get_class() if target != null else "",
 			"ground_script": script.resource_path if script != null else "", "ground_is_terrain": target is TerrainGround,
-			"filesystem_present": filesystem != null, "scanning": filesystem.is_scanning() if filesystem != null else true,
-			"importing": filesystem.is_importing() if filesystem != null else true,
-			"elapsed_ms": Time.get_ticks_msec() - started, "limit_ms": 15000}
+			"filesystem_present": filesystem != null, "scanning": scanning, "importing": importing,
+			"elapsed_ms": now - started, "limit_ms": 15000, "total_limit_ms": 45000, "phase": phase,
+			"readiness_elapsed_ms": now - readiness_started if readiness_started >= 0 else 0,
+			"startup_milestone": milestone, "sources_changed_ms": int(startup.observed_ms) - started if int(startup.observed_ms) >= 0 else -1,
+			"sources_exist": bool(startup.sources_exist)}
+		var state: Array = [phase, root != null, exact_root, target is TerrainGround, filesystem != null, scanning, importing]
+		if state != previous_state:
+			if transitions.size() < 32:
+				transitions.append({"elapsed_ms": now - started, "phase": phase, "root_present": root != null,
+					"exact_root": exact_root, "ground_is_terrain": target is TerrainGround,
+					"filesystem_present": filesystem != null, "scanning": scanning, "importing": importing})
+				print("WORLD_EDITOR_STARTUP ", JSON.stringify(transitions.back()))
+			else:
+				dropped_transitions += 1
+			previous_state = state
 		if expected_scene.is_empty() or requested != expected_scene:
 			facts["failure"] = "Requested scene is missing, ambiguous or differs from the acceptance scene."
-			return facts
-		if facts.elapsed_ms >= 15000:
-			facts["failure"] = "Actual scene readiness did not complete within15s."
-			return facts
-		if root != null and root.scene_file_path == expected_scene and target is TerrainGround and filesystem != null and not facts.scanning and not facts.importing:
+			break
+		if now - started >= 45000:
+			facts["failure"] = "Actual %s exceeded the total45s helper deadline." % phase
+			break
+		if readiness_started >= 0 and now - readiness_started >= 15000:
+			facts["failure"] = "Actual scene readiness did not complete within15s after startup milestone."
+			break
+		if readiness_started >= 0 and ready:
 			facts["ok"] = true
-			return facts
-		if not is_instance_valid(plugin) or not plugin.is_inside_tree():
-			facts["failure"] = "Editor plugin left the tree before scene readiness."
-			return facts
+			break
 		await plugin.get_tree().process_frame
-	facts["failure"] = "Scene readiness loop ended without a result."
+	if is_instance_valid(signal_source) and signal_source.sources_changed.is_connected(on_sources_changed):
+		signal_source.sources_changed.disconnect(on_sources_changed)
+	facts["transitions"] = transitions
+	facts["transition_limit"] = 32
+	facts["dropped_transitions"] = dropped_transitions
+	facts["phase"] = phase
+	facts["elapsed_ms"] = Time.get_ticks_msec() - started
 	return facts
 
 static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> Dictionary:
