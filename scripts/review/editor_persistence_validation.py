@@ -34,6 +34,17 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+TOOL_RECEIVER_PARENT = "cbf823804359fb879b0fbd2054ab1ed7b472093c"
+TOOL_RECEIVER_PARENT_TREE = "3239a7eaf5c98e425b7a242ccc49545152537c91"
+MESA_PACKAGE = {
+    "package": "mesa-utils-bin", "version": "9.0.0-2", "architecture": "amd64",
+    "url": "https://archive.ubuntu.com/ubuntu/pool/universe/m/mesa-demos/mesa-utils-bin_9.0.0-2_amd64.deb",
+    "metadata": "https://packages.ubuntu.com/en/noble/amd64/mesa-utils-bin/download",
+    "filelist": "https://packages.ubuntu.com/noble/amd64/mesa-utils-bin/filelist",
+    "bytes": 164440, "sha256": "d64539eb18416708948d7857506946a024637e4c6147d91a28a42868e038cb00",
+    "member": "usr/bin/glxinfo.x86_64-linux-gnu", "member_limit": 256 * 1024,
+    "expanded_limit": 2 * 1024**2, "entry_limit": 64,
+}
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
 MODES = ("H5_COMBINED", "DISPLAYED_SMOKE")
@@ -304,6 +315,208 @@ def direct_children() -> dict[int, dict]:
 
 PYTHON_OBSERVER = "import json, os, sys, traceback, unittest\nfrom pathlib import Path\n\nselectors = json.loads(sys.argv[1])\noutput = Path(sys.argv[2])\nbase = Path(os.environ['PERSISTENCE_OUT'])\nstate = {'expected': selectors, 'observed': [], 'methods': {n: {'state': 'NOTRUN'} for n in selectors}}\nclass Result(unittest.TextTestResult):\n    def startTest(self, test):\n        self.current = test.id().removeprefix('scripts.art.kit.test_bake_publication.')\n        self.before = set(base.iterdir())\n        state['observed'].append(self.current)\n        state['methods'][self.current] = {'state': 'STARTED', 'id': test.id()}\n        output.write_text(json.dumps(state, indent=2) + '\\n')\n        super().startTest(test)\n    def addSuccess(self, test):\n        state['methods'][self.current]['state'] = 'PASS'\n        super().addSuccess(test)\n    def addFailure(self, test, err):\n        state['methods'][self.current].update(state='FAIL', exception_type=err[0].__name__,\n            message=str(err[1]), traceback=''.join(traceback.format_exception(*err)))\n        super().addFailure(test, err)\n    def addError(self, test, err):\n        state['methods'][self.current].update(state='ERROR', exception_type=err[0].__name__,\n            message=str(err[1]), traceback=''.join(traceback.format_exception(*err)))\n        super().addError(test, err)\n    def addSkip(self, test, reason):\n        state['methods'][self.current].update(state='SKIP', reason=reason)\n        super().addSkip(test, reason)\n    def addSubTest(self, test, subtest, err):\n        if err is not None:\n            state['methods'][self.current].update(state='ERROR', message='unexpected subtest',\n                traceback=''.join(traceback.format_exception(*err)))\n        super().addSubTest(test, subtest, err)\n    def stopTest(self, test):\n        state['methods'][self.current]['evidence_roots'] = [str(p) for p in sorted(set(base.iterdir()) - self.before)]\n        output.write_text(json.dumps(state, indent=2) + '\\n')\n        super().stopTest(test)\ntry:\n    suite = unittest.defaultTestLoader.loadTestsFromNames(\n        ['scripts.art.kit.test_bake_publication.' + n for n in selectors])\n    result = unittest.TextTestRunner(verbosity=2, failfast=True, resultclass=Result).run(suite)\n    state['success'] = result.wasSuccessful()\n    state['testsRun'] = result.testsRun\nexcept BaseException:\n    state['harness_error'] = traceback.format_exc()\n    raise\nfinally:\n    output.write_text(json.dumps(state, indent=2) + '\\n')\nsys.exit(0 if state.get('success') else 1)\n"
 
+def mesa_host() -> dict:
+    release = platform.freedesktop_os_release()
+    libc = os.confstr("CS_GNU_LIBC_VERSION")
+    if (release.get("ID") != "ubuntu" or release.get("VERSION_ID") != "24.04"
+            or release.get("VERSION_CODENAME") != "noble" or platform.machine() != "x86_64"
+            or not re.fullmatch(r"glibc 2\.(3[89]|[4-9][0-9])", libc or "")):
+        raise RuntimeError("Pinned Mesa tool requires actual Ubuntu Noble amd64/glibc>=2.38")
+    return {"id": release["ID"], "version": release["VERSION_ID"],
+            "codename": release["VERSION_CODENAME"], "machine": platform.machine(), "libc": libc}
+
+
+def mesa_fields(text: str) -> dict:
+    fields = {}
+    for line in text.splitlines():
+        if line.startswith(" "):
+            fields[key] += " " + line.strip()
+        elif ": " in line:
+            key, value = line.split(": ", 1)
+            fields[key] = value
+    return fields
+
+
+def mesa_binary(path: Path) -> dict:
+    info = path.lstat()
+    if (not stat.S_ISREG(info.st_mode) or info.st_mode & 0o6022 or not os.access(path, os.X_OK)
+            or not 64 <= info.st_size <= MESA_PACKAGE["member_limit"]):
+        raise RuntimeError("Mesa glxinfo is not a bounded physical executable")
+    with path.open("rb") as file:
+        header = file.read(20)
+    if header[:6] != b"\x7fELF\x02\x01" or header[18:20] != b"\x3e\x00":
+        raise RuntimeError("Mesa glxinfo is not Linux ELF64 little-endian x86-64")
+    return {"path": str(path), "bytes": info.st_size, "sha256": digest(path), "mode": stat.S_IMODE(info.st_mode)}
+
+
+def installed_mesa() -> dict | None:
+    path = Path("/usr/bin") / Path(MESA_PACKAGE["member"]).name
+    found = shutil.which("glxinfo")
+    if found and Path(found).resolve(strict=True) != path:
+        raise RuntimeError("PATH glxinfo shadows the canonical Ubuntu package executable")
+    if not os.path.lexists(path):
+        return None
+    status = Path("/var/lib/dpkg/status")
+    if status.stat().st_size > 32 * 1024**2:
+        raise RuntimeError("Host dpkg status metadata bound")
+    records = [mesa_fields(p) for p in status.read_text().split("\n\n") if p.startswith("Package: mesa-utils-bin\n")]
+    if len(records) != 1:
+        raise RuntimeError("Canonical Mesa executable lacks unique installed package identity")
+    record = records[0]
+    if (any(record.get(key.title()) != MESA_PACKAGE[key] for key in ("package", "version", "architecture"))
+            or record.get("Status") != "install ok installed" or path.lstat().st_uid != 0):
+        raise RuntimeError("Installed Mesa package version/architecture/status/owner differs")
+    matches = [Path("/var/lib/dpkg/info") / (name + ".md5sums")
+               for name in ("mesa-utils-bin", "mesa-utils-bin:amd64")]
+    matches = [p for p in matches if p.is_file()]
+    if len(matches) != 1 or matches[0].stat().st_size > 64 * 1024:
+        raise RuntimeError("Installed Mesa integrity metadata absent/ambiguous/oversized")
+    rows = [line.split() for line in matches[0].read_text().splitlines()]
+    expected = [row[0] for row in rows if len(row) == 2 and row[1] == MESA_PACKAGE["member"]]
+    if len(expected) != 1 or digest(path, "md5") != expected[0]:
+        raise RuntimeError("Canonical Mesa executable differs from host package integrity record")
+    return {**mesa_binary(path), "origin": "installed Ubuntu dpkg package", "package": record,
+            "integrity_record_sha256": digest(matches[0]), "integrity": "host dpkg MD5 matched; SHA256 observed, not an archive-member comparison"}
+
+
+def mesa_tool_stage(args: argparse.Namespace) -> int:
+    root = args.root.resolve(strict=True)
+    output = root / "evidence/display-tool"
+    output.mkdir(mode=0o700)
+    plan = json.loads((root / "evidence/display-tool-plan.json").read_text())
+    receipt = {"state": "INCOMPLETE", "host": mesa_host(), "wait4": [], "package": MESA_PACKAGE}
+    children = []
+    write_json(output / "provenance.json", receipt)
+
+    def collect(process: subprocess.Popen, seconds: float = 20) -> int:
+        deadline = time.monotonic() + seconds
+        while True:
+            pid, status, usage = os.wait4(process.pid, os.WNOHANG)
+            if pid:
+                break
+            if time.monotonic() >= deadline:
+                raise TimeoutError("Mesa child actual wait4 deadline")
+            time.sleep(0.02)
+        process.returncode = os.waitstatus_to_exitcode(status)
+        receipt["wait4"].append({"pid": pid, "status": status, "exit": process.returncode,
+            "user_s": usage.ru_utime, "system_s": usage.ru_stime, "maxrss_kib": usage.ru_maxrss})
+        return process.returncode
+
+    def start(command: list[str], stdout):
+        def limits():
+            resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024, 64 * 1024))
+        process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=stdout,
+                                   stderr=None, preexec_fn=limits)
+        children.append(process)
+        receipt.setdefault("children", []).append({"pid": process.pid, "pgid": os.getpgid(process.pid)})
+        write_json(output / "provenance.json", receipt)
+        if os.getpgid(process.pid) != os.getpgrp():
+            raise RuntimeError("Mesa bootstrap child escaped its monitored group")
+        return process
+
+    try:
+        if args.mode != "DISPLAYED_SMOKE" or os.getpgrp() != os.getpid():
+            raise RuntimeError("Mesa stage requires the allocated monitored phase group")
+        if os.environ.get("GITHUB_REF") != "refs/heads/codex/editor-persistence-validation-run":
+            raise RuntimeError("Mesa stage is not on the allocated execution ref")
+        for row in plan["bootstrap"].values():
+            path = Path(row["path"])
+            if path.stat().st_size != row["bytes"] or digest(path) != row["sha256"]:
+                raise RuntimeError("Mesa bootstrap executable changed before use")
+        receipt["bootstrap"] = plan["bootstrap"]
+        binary = installed_mesa()
+        if binary != plan["installed"]:
+            raise RuntimeError("Installed Mesa identity changed after preflight")
+        if binary is None:
+            package = output / "mesa-utils-bin_9.0.0-2_amd64.deb"
+            received = 0
+            try:
+                # Same bounded urllib/chunk/hash pattern as existing get_engine;
+                # one literal vendor URL only, no mirrors/retry/install/scripts.
+                class NoPackageRedirect(urllib.request.HTTPRedirectHandler):
+                    def redirect_request(self, *_args, **_kwargs):
+                        raise RuntimeError("Pinned Mesa vendor redirect refused")
+                opener = urllib.request.build_opener(NoPackageRedirect())
+                with opener.open(MESA_PACKAGE["url"], timeout=10) as response, package.open("xb") as dst:
+                    if response.geturl() != MESA_PACKAGE["url"]:
+                        raise RuntimeError("Mesa vendor URL redirected; no fallback")
+                    for chunk in iter(lambda: response.read(65536), b""):
+                        received += len(chunk)
+                        if received > MESA_PACKAGE["bytes"]:
+                            raise RuntimeError("Pinned Mesa compressed byte bound")
+                        dst.write(chunk)
+            finally:
+                receipt["download"] = {"received": received, "retained_bytes": package.stat().st_size if package.exists() else 0,
+                    "sha256": digest(package) if package.exists() else None}
+            if received != MESA_PACKAGE["bytes"] or digest(package) != MESA_PACKAGE["sha256"]:
+                raise RuntimeError("Pinned official Mesa package size/SHA256 mismatch")
+            control = output / "control.txt"
+            with control.open("xb") as dst:
+                process = start([plan["bootstrap"]["dpkg-deb"]["path"], "--field", str(package)], dst)
+                if collect(process) != 0:
+                    raise RuntimeError("dpkg-deb refused pinned package control")
+            if control.stat().st_size > 16384:
+                raise RuntimeError("Mesa control metadata bound")
+            fields = mesa_fields(control.read_text())
+            if (any(fields.get(key.title()) != MESA_PACKAGE[key] for key in ("package", "version", "architecture"))
+                    or not 0 < int(fields.get("Installed-Size", "0")) <= 2048):
+                raise RuntimeError("Mesa package control identity/expanded bound differs")
+            receipt["control"] = fields
+            path = output / Path(MESA_PACKAGE["member"]).name
+            process = start([plan["bootstrap"]["dpkg-deb"]["path"], "--fsys-tarfile", str(package)], subprocess.PIPE)
+            seen, expanded, found = set(), 0, 0
+            with tarfile.open(fileobj=process.stdout, mode="r|") as archive:
+                for member in archive:
+                    name = member.name.removeprefix("./")
+                    if (name in seen or len(seen) >= MESA_PACKAGE["entry_limit"] or name.startswith("/")
+                            or ".." in Path(name).parts or not (member.isfile() or member.isdir())):
+                        raise RuntimeError("Mesa payload path/type/count bound")
+                    seen.add(name)
+                    expanded += member.size
+                    if expanded > MESA_PACKAGE["expanded_limit"]:
+                        raise RuntimeError("Mesa expanded payload byte bound")
+                    if name == MESA_PACKAGE["member"]:
+                        if not member.isfile() or member.mode != 0o755 or not 64 <= member.size <= MESA_PACKAGE["member_limit"]:
+                            raise RuntimeError("Exact Mesa glxinfo member identity/size/mode differs")
+                        found += 1
+                        with archive.extractfile(member) as src, path.open("xb") as dst:
+                            shutil.copyfileobj(src, dst, 65536)
+            process.stdout.close()
+            if collect(process) != 0 or found != 1:
+                raise RuntimeError("Mesa payload extraction/unique member failed")
+            path.chmod(0o755)
+            binary = {**mesa_binary(path), "origin": "private pinned Ubuntu package", "package_sha256": digest(package)}
+            receipt.update(payload_entries=len(seen), expanded_bytes=expanded)
+        path = Path(binary["path"])
+        dependencies = output / "ldd.txt"
+        with dependencies.open("xb") as dst:
+            process = start([plan["bootstrap"]["ldd"]["path"], str(path)], dst)
+            if collect(process) != 0:
+                raise RuntimeError("Mesa runtime dependency/ABI inspection failed")
+        text = dependencies.read_text()
+        if len(text) > 16384 or "not found" in text.lower() or "libc.so.6" not in text or "=>" not in text:
+            raise RuntimeError("Mesa required library/ABI unavailable; no automatic package installation")
+        receipt.update(binary=binary, state="VERIFIED")
+    except BaseException as error:
+        receipt.update(state="FAILED", failure={"type": type(error).__name__, "message": str(error)})
+    finally:
+        for process in children:
+            if process.returncode is not None:
+                continue
+            try:
+                # Direct unreaped child identity prevents numeric PID reuse.
+                if os.waitid(os.P_PID, process.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None:
+                    os.kill(process.pid, signal.SIGTERM)
+                collect(process, 2)
+            except BaseException as error:
+                receipt["state"] = "FAILED"
+                receipt.setdefault("cleanup_errors", []).append(repr(error))
+        # The existing outer phase remains authoritative for final group kill,
+        # adoption/wait4 and absence, including a killed/incomplete bootstrap.
+        write_json(output / "provenance.json", receipt)
+    return 0 if receipt["state"] == "VERIFIED" else 1
+
+
 def displayed_lifetime(args: argparse.Namespace) -> int:
     """Receiving-only child: one authenticated server/editor group, no game harness."""
     root, game = args.root.resolve(strict=True), args.source.resolve(strict=True) / "game"
@@ -531,6 +744,7 @@ class Controller:
                                   PY_CANARIES + METHODS + PY_FAULTS}
         self.output["mode"] = self.mode
         if self.mode == "DISPLAYED_SMOKE":
+            self.phases["display-tool"] = {"state": "NOT RUN"}
             self.phases["displayed-smoke"] = {"state": "NOT RUN"}
             self.output["qualification"] = "Displayed existing editor smoke only: undo/restoration and bake refusals. No H5 rerun, successful save/bake/walk or manual acceptance."
             self.output["prior_h5"] = {"receiver": DISPLAY_RECEIVER_PARENT, "source": GAME_SHA,
@@ -741,8 +955,13 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [DISPLAY_RECEIVER_PARENT]:
-            raise RuntimeError("Displayed receiver must be a genuine sole child of frozen40579a4")
+        if parents != [TOOL_RECEIVER_PARENT]:
+            raise RuntimeError("Tool receiver must be a genuine sole child of frozen405cbf")
+        tool_parent_headers = git(self.candidate, "cat-file", "commit", TOOL_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in tool_parent_headers.splitlines() if line.startswith("parent ")]
+                != [DISPLAY_RECEIVER_PARENT] or git(self.candidate, "rev-parse", TOOL_RECEIVER_PARENT + "^{tree}").decode().strip()
+                != TOOL_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H6 receiver ancestry/tree changed")
         display_parent_headers = git(self.candidate, "cat-file", "commit", DISPLAY_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in display_parent_headers.splitlines() if line.startswith("parent ")]
                 != [RECEIVER_PARENT] or git(self.candidate, "rev-parse", DISPLAY_RECEIVER_PARENT + "^{tree}").decode().strip()
@@ -827,7 +1046,8 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
-                   "receiver_parent": DISPLAY_RECEIVER_PARENT, "receiver_parent_headers": display_parent_headers,
+                   "receiver_parent": TOOL_RECEIVER_PARENT, "receiver_parent_headers": tool_parent_headers,
+                   "display_receiver_parent": DISPLAY_RECEIVER_PARENT, "display_receiver_parent_headers": display_parent_headers,
                    "h5_receiver_parent": RECEIVER_PARENT, "h5_receiver_parent_headers": prior_headers,
                    "prior_receiver": PRIOR_RECEIVER, "prior_receiver_headers": middle_headers,
                    "earlier_receiver": EARLIER_RECEIVER, "earlier_receiver_headers": earlier_headers,
@@ -939,9 +1159,55 @@ class Controller:
         self.dependencies_initial = self.dependency_snapshot()
         write_json(self.evidence / "dependencies-before.json", self.dependencies_initial)
 
-    def display_capabilities(self, receipt_name: str = "display-capabilities.json") -> dict:
+    def prepare_display_tool(self) -> None:
+        host = mesa_host()
+        installed = installed_mesa()
+        # Refuse every other missing display prerequisite before any acquisition.
+        self.display_capabilities("display-capabilities-before-tool.json", missing_glx_ok=True)
+        bootstrap = {}
+        for name in (("ldd", "dpkg-deb") if installed is None else ("ldd",)):
+            found = shutil.which(name)
+            if not found:
+                raise RuntimeError("Missing actual Mesa bootstrap capability: " + name)
+            path = Path(found).resolve(strict=True)
+            bootstrap[name] = {"path": str(path), "bytes": path.stat().st_size, "sha256": digest(path)}
+        plan = {"host": host, "installed": installed, "bootstrap": bootstrap, "package": MESA_PACKAGE,
+                "bounds": {"phase_active_s": 30, "shared_dependency_active_s": 120,
+                           "compressed_bytes": 164440, "expanded_bytes": 2 * 1024**2,
+                           "selected_member_bytes": 256 * 1024, "entries": 64},
+                "qualification": "Installed canonical package first; only absence allows this one fixed private package. Payload/metadata proposed<=2MiB plus existing4MiB phase log, all inside768MiB duty; fit UNMEASURED."}
+        write_json(self.evidence / "display-tool-plan.json", plan)
+        result = self.phase("display-tool", [sys.executable, "-I", "-B", str(Path(__file__).resolve()),
+            "--mode", "DISPLAYED_SMOKE", "--mesa-tool-child", "--candidate", str(self.candidate),
+            "--source", str(self.source), "--root", str(self.root), "--event-sha", self.event_sha], 30)
+        self.require_clean("display-tool", result)
+        receipt = json.loads((self.evidence / "display-tool/provenance.json").read_text())
+        if (receipt.get("state") != "VERIFIED" or len(receipt.get("wait4", [])) != (3 if installed is None else 1)
+                or any(row["exit"] != 0 for row in receipt.get("wait4", []))):
+            raise RuntimeError("Mesa tool stage not actually verified/collected")
+        self.glxinfo_identity = receipt["binary"]
+        self.display_tool_plan = plan
+        write_json(self.evidence / "display-tool-before.json", self.glxinfo_identity)
+
+    def display_capabilities(self, receipt_name: str = "display-capabilities.json", missing_glx_ok: bool = False) -> dict:
         tools, missing = {}, []
         for name in ("Xvfb", "xauth", "glxinfo"):
+            if name == "glxinfo":
+                identity = getattr(self, "glxinfo_identity", None)
+                if identity is None or identity["origin"] == "installed Ubuntu dpkg package":
+                    actual = installed_mesa()
+                else:
+                    actual = {**mesa_binary(Path(identity["path"])), "origin": identity["origin"],
+                              "package_sha256": digest(self.evidence / "display-tool/mesa-utils-bin_9.0.0-2_amd64.deb")}
+                    if actual["package_sha256"] != MESA_PACKAGE["sha256"]:
+                        raise RuntimeError("Retained Mesa package changed")
+                if identity is not None and actual != identity:
+                    raise RuntimeError("Selected Mesa tool/package identity changed")
+                if actual is None:
+                    missing.append(name)
+                else:
+                    tools[name] = actual
+                continue
             found = shutil.which(name)
             if found is None:
                 missing.append(name)
@@ -959,10 +1225,16 @@ class Controller:
             except OSError:
                 libraries[name] = None
         missing += [name for name, value in libraries.items() if not value]
-        value = {"tools": tools, "libraries": libraries, "missing": missing,
-                 "qualification": "Host inventory only; actual authenticated GLX and editor rendering still required. No package installation/fallback."}
+        bootstrap = {}
+        for name, row in getattr(self, "display_tool_plan", {}).get("bootstrap", {}).items():
+            path = Path(row["path"])
+            bootstrap[name] = {"path": str(path), "bytes": path.stat().st_size, "sha256": digest(path)}
+            if bootstrap[name] != row:
+                raise RuntimeError("Mesa bootstrap executable changed after staging")
+        value = {"tools": tools, "bootstrap": bootstrap, "libraries": libraries, "missing": missing, "host": mesa_host(),
+                 "qualification": "Canonical installed package identity or exact private pinned Mesa member; real authenticated GLX/editor still required. No system install/unpinned fallback."}
         write_json(self.evidence / receipt_name, value)
-        if missing:
+        if [name for name in missing if not (missing_glx_ok and name == "glxinfo")]:
             raise RuntimeError("Missing hosted display capability: " + ", ".join(missing))
         return value
 
@@ -1203,6 +1475,11 @@ class Controller:
         self.capacity()
 
     def phase(self, name: str, command: list[str], seconds: int) -> dict:
+        if name in ("display-tool", "dependencies", "versions") and hasattr(self, "dependency_deadline"):
+            remaining = self.dependency_deadline - time.monotonic()
+            if remaining <= 0:
+                raise RuntimeError("Shared tool/scientific dependency120s budget exhausted")
+            seconds = min(seconds, remaining)
         if self.transaction_started is not None:
             remaining = self.active_limit - (time.monotonic() - self.transaction_started - self.collection_used)
             if remaining <= 0 or self.collection_used >= 30:
@@ -1540,6 +1817,8 @@ class Controller:
         try:
             self.setup()
             if self.mode == "DISPLAYED_SMOKE":
+                self.dependency_deadline = time.monotonic() + 120
+                self.prepare_display_tool()
                 self.display_capabilities_initial = self.display_capabilities()
             self.install_dependencies()
             self.get_engine()
@@ -1770,7 +2049,10 @@ def main() -> int:
     parser.add_argument("--event-sha", required=True)
     parser.add_argument("--mode", choices=MODES, default="H5_COMBINED")
     parser.add_argument("--display-child", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--mesa-tool-child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.mesa_tool_child:
+        return mesa_tool_stage(args)
     if args.display_child:
         return displayed_lifetime(args)
     def interrupted(signum: int, _frame: object) -> None:

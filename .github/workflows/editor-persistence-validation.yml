@@ -16,7 +16,7 @@ concurrency:
 jobs:
   focused:
     if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/editor-persistence-validation-run' && github.run_attempt == 1
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # exact Noble ABI for the pinned private Mesa diagnostic
     timeout-minutes: 15
     env:
       # Explicit opt-in for this source candidate; controller default retains frozen H5 mode.
@@ -52,7 +52,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 8 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->this displayed child
+          fetch-depth: 9 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->this tool child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
