@@ -14,6 +14,7 @@ from pathlib import Path
 import platform
 import stat
 import sys
+import traceback
 
 ROOT = Path(__file__).resolve().parents[3]
 FIXTURE = ROOT / "scripts/review/fixtures/crossroads_halt_court.json"
@@ -38,8 +39,8 @@ def inputs_snapshot(fixture: dict) -> dict:
     """Hash the declared conservative closure; no imports or inferred substitutions."""
     result = {}
     entries = fixture["source_input_closure"]["files"]
-    if len(entries) != 110 or len({e["path"] for e in entries}) != 110:
-        raise ValueError("Exact110-file source closure required")
+    if len(entries) != 112 or len({e["path"] for e in entries}) != 112:
+        raise ValueError("Exact112-file source closure required")
     for entry in entries:
         path = ROOT / entry["path"]
         if not path.resolve(strict=True).is_relative_to(ROOT):
@@ -203,7 +204,8 @@ def draw(output: Path) -> int:
                       input_files=len(before), source_inputs=before)
     except BaseException as error:
         failure = error
-        result.update(state="FAILED_OR_INCOMPLETE", error_type=type(error).__name__, error=str(error))
+        result.update(state="FAILED_OR_INCOMPLETE", error_type=type(error).__name__, error=str(error),
+                      error_traceback=traceback.format_exc())
     finally:
         try:
             if (inputs_snapshot(fixture) != before or FIXTURE.read_bytes() != fixture_bytes
@@ -211,7 +213,8 @@ def draw(output: Path) -> int:
                 raise RuntimeError("Source/fixture bytes changed during native drawing")
             result["source_guard"] = "PASS"
         except BaseException as error:
-            result.update(state="FAILED_OR_INCOMPLETE", source_guard="FAIL", source_error=str(error))
+            result.update(state="FAILED_OR_INCOMPLETE", source_guard="FAIL", source_error=str(error),
+                          source_error_traceback=traceback.format_exc())
             if failure is None:
                 failure = error
         files = {}

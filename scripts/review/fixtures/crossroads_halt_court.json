@@ -1478,7 +1478,7 @@
     }
   ],
   "source_input_closure": {
-    "qualification": "Conservative407 source/ground closure, including extra uncalled native definitions; not a dynamic import trace. H3 filenames reused only where407 contains them; grain-specific403 inputs excluded. All110 raw files checked by size/mode/Gitblob before and after actual future rendering.",
+    "qualification": "Conservative407 source/ground closure, including extra uncalled native definitions; not a dynamic import trace. Full-AST transitive audit includes function-local imports and verified scripts/art sibling-module search. All112 raw files checked by size/mode/Gitblob before and after actual future rendering. Q1 missing-input failure retained, not path-repaired or relabelled.",
     "files": [
       {
         "path": ".github/workflows/verify.yml",
@@ -2117,9 +2117,21 @@
         "mode": "100644"
       },
       {
+        "path": "scripts/art/pixel.py",
+        "blob": "bc0112b14f9eba4f5b8cf6ff18309603826f8c81",
+        "bytes": 7894,
+        "mode": "100644"
+      },
+      {
         "path": "scripts/art/size_guide.json",
         "blob": "f30ecb3249d771e5dc6cdf6546d50400b118cf57",
         "bytes": 45069,
+        "mode": "100644"
+      },
+      {
+        "path": "scripts/art/water_flow.py",
+        "blob": "4e1ebf799cae783c35642f6c1b9e34463ed300e0",
+        "bytes": 8888,
         "mode": "100644"
       },
       {
@@ -2164,5 +2176,100 @@
     "Door opening source dimensions and opaque bbox must be checked on generated native images; no transparent-padding credit.",
     "Source-only preparation performs no import, drawing, engine or runtime tests.",
     "Predicted G02/G05 full216x312 sprite rectangles overlap48artpx vertically. G05 roof ridge is at artY564 while G02 court centre isY600: the lower roof may obscure that court. Floor-only clearance is NOT visible-access acceptance; inspect actual rendered pixels before any layout or gameplay approval."
-  ]
+  ],
+  "import_closure_correction": {
+    "GO": 6542130973,
+    "ASSIGN": 6542134404,
+    "ACK": 6542134539,
+    "source_parent": "09990895018c0a2e72aca5550ebd4d8b55e904de",
+    "failed_run": 41191592833,
+    "failed_job": 124509319885,
+    "failed_source_status": "Q1 FAILED; noPNG; original evidence retained, no retrospective acceptance.",
+    "verified_cause": "Existing native.animate correctly inserts scripts/art, but water_flow.py was absent from the staged closure. Native.screen function-local pixel imports were also missing and are included before another attempt.",
+    "old_baseline_files": 110,
+    "new_baseline_files": 112,
+    "new_baseline_bytes": 3233172,
+    "added407_source_files": [
+      {
+        "path": "scripts/art/pixel.py",
+        "blob": "bc0112b14f9eba4f5b8cf6ff18309603826f8c81",
+        "bytes": 7894,
+        "mode": "100644"
+      },
+      {
+        "path": "scripts/art/water_flow.py",
+        "blob": "4e1ebf799cae783c35642f6c1b9e34463ed300e0",
+        "bytes": 8888,
+        "mode": "100644"
+      }
+    ],
+    "audit": {
+      "method": "Conservative full-AST transitive local imports, including function-local/dead-branch imports; no subject execution. Bare art modules resolved only against verified scripts/art insertion sites.",
+      "root": "scripts/art/kit/crossroads_halt_court.py",
+      "reachable_local_module_count": 30,
+      "local_import_edges": 206,
+      "reachable_local_modules": [
+        "scripts/art/house_palette.py",
+        "scripts/art/kit/crossroads_halt_court.py",
+        "scripts/art/native/__init__.py",
+        "scripts/art/native/animate.py",
+        "scripts/art/native/chars.py",
+        "scripts/art/native/compose.py",
+        "scripts/art/native/ctx.py",
+        "scripts/art/native/foliage.py",
+        "scripts/art/native/ground.py",
+        "scripts/art/native/houses.py",
+        "scripts/art/native/palette.py",
+        "scripts/art/native/props.py",
+        "scripts/art/native/raster.py",
+        "scripts/art/native/rig.py",
+        "scripts/art/native/rocks.py",
+        "scripts/art/native/screen.py",
+        "scripts/art/native/softedge.py",
+        "scripts/art/native/softgrid.py",
+        "scripts/art/native/softground.py",
+        "scripts/art/native/terrain/__init__.py",
+        "scripts/art/native/terrain/decals.py",
+        "scripts/art/native/terrain/noise.py",
+        "scripts/art/native/terrain/scene.py",
+        "scripts/art/native/terrain/sheets.py",
+        "scripts/art/native/terrain/tiles.py",
+        "scripts/art/native/town.py",
+        "scripts/art/native/village.py",
+        "scripts/art/native/water.py",
+        "scripts/art/pixel.py",
+        "scripts/art/water_flow.py"
+      ],
+      "unresolved_nonstdlib_imports": 0,
+      "dynamic_import_or_eval_hooks_observed": 0,
+      "relevant_sibling_edges": [
+        {
+          "from": "scripts/art/native/screen.py",
+          "line": 77,
+          "to": "scripts/art/pixel.py",
+          "import": "from pixel import noise2"
+        },
+        {
+          "from": "scripts/art/native/screen.py",
+          "line": 146,
+          "to": "scripts/art/pixel.py",
+          "import": "from pixel import noise2, smooth_noise"
+        },
+        {
+          "from": "scripts/art/native/animate.py",
+          "line": 31,
+          "to": "scripts/art/water_flow.py",
+          "import": "import water_flow"
+        },
+        {
+          "from": "scripts/art/native/water.py",
+          "line": 49,
+          "to": "scripts/art/water_flow.py",
+          "import": "import water_flow"
+        }
+      ],
+      "remaining_external_dependencies": "Pinned NumPy/SciPy/Pillow and CPython stdlib only. Static import coverage is not runtime/visual/resource acceptance."
+    },
+    "failure_receipt": "Preserve traceback.format_exc() for actual inner native and source-guard failures. Original Q1 had only native error type/message plus outer receiving traceback; its missing inner frames are not reconstructed."
+  }
 }
