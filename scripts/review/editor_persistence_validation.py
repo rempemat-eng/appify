@@ -35,7 +35,9 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "0abdab039c5e50166a5a7dfbe740d13f820bee51"
+GAME_SHA = "c7a9114ce1c830cc8889e6e8eb480990522b7c3b"
+INTENT_GAME_PARENT = "0abdab039c5e50166a5a7dfbe740d13f820bee51"
+INTENT_GAME_PARENT_TREE = "63ca040b9f8d034988fc7a21bcfbf94c8a6f5bfb"
 BOOTSTRAP_GAME_PARENT = "c413e9b00a806920b5447127660943d4ce048aea"
 BOOTSTRAP_GAME_PARENT_TREE = "6802cf45e887fa3ede4d673f0a39b87d8b710d00"
 STARTUP_GAME_PARENT = "81d4487708bd3e13d810281e9c483621555708a5"
@@ -100,11 +102,13 @@ MESA_PACKAGE = {
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
 MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+INTENT_RECEIVER_PARENT = "f133b4be7427b51fb099206a93877996f2dddac8"
+INTENT_RECEIVER_PARENT_TREE = "f396e07a9b20caf51c04985c087dc0ddea38bbc0"
 REBIND_RECEIVER_PARENT = "a1f3a7f2305f881b48d1824a1bcd16423a363d91"
 REBIND_RECEIVER_PARENT_TREE = "28e97f27d2b50085f78919720d2dc844efe32aaf"
 LIFECYCLE_RECEIVER_PARENT = "d7dacb292ff1b184b68077e7d1ba4471b9cbf20c"
 LIFECYCLE_RECEIVER_PARENT_TREE = "c111635880129121888b726c86dfcd6ed9535644"
-GAME_TREE = "63ca040b9f8d034988fc7a21bcfbf94c8a6f5bfb"
+GAME_TREE = "a438b4b1b611892d121423d6453ff057076c70b6"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
 GAME_GRANDPARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
@@ -126,12 +130,12 @@ TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 EXPORT_BLOB = "61d81ffbdbdf89ebcf0e2e68204eddb87c3b4772"
 PLUGIN_BLOB = "8a9dadd400ce9ef345becef8fc13f2f7179c3449"
-SMOKE_BLOB = "105d673360ea7b9b5b171fc3f79eaaa801642ac0"
+SMOKE_BLOB = "9757a55d1de483d1e2649c77fbff7d90d4d63ca0"
 DEPENDENT_TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
 GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
 GAME_COUNT = 6689
-GAME_BYTES = 87898305
+GAME_BYTES = 87900444
 # Static import/data closure of corrected bake, unchanged validator and tiny fixture.
 # Full game supplies library/schema/terrain/index/fixtures. No master raster is
 # reached by this pieces=[] lawn-only probe. scripts/art are namespace packages.
@@ -1219,7 +1223,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [REBIND_RECEIVER_PARENT]
+                != [INTENT_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", INTENT_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", REBIND_RECEIVER_PARENT + "^{tree}").decode().strip() != REBIND_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", REBIND_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [LIFECYCLE_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", LIFECYCLE_RECEIVER_PARENT + "^{tree}").decode().strip() != LIFECYCLE_RECEIVER_PARENT_TREE
@@ -1243,7 +1249,7 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
                 != [INVENTORY_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
                 != INVENTORY_RECEIVER_PARENT_TREE):
-            raise RuntimeError("Inventory candidate is not the exact genuine solea1f3 child")
+            raise RuntimeError("Inventory candidate is not the exact genuine solef133 child")
         changed = set(git(candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines())
         if changed != OWNED_PATHS:
             raise RuntimeError("Inventory candidate must change exactly the two existing receiver paths")
@@ -1874,8 +1880,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [REBIND_RECEIVER_PARENT]:
-            raise RuntimeError("Lifecycle rebind must be a genuine sole child of frozen405a1f3")
+        if parents != [INTENT_RECEIVER_PARENT]:
+            raise RuntimeError("Lifecycle intent rebind must be a genuine sole child of frozen405f133")
+        intent_receiver_headers = git(self.candidate, "cat-file", "commit", INTENT_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in intent_receiver_headers.splitlines() if x.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H16 receiver ancestry/tree changed")
         rebind_headers = git(self.candidate, "cat-file", "commit", REBIND_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in rebind_headers.splitlines() if x.startswith("parent ")] != [LIFECYCLE_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", REBIND_RECEIVER_PARENT + "^{tree}").decode().strip() != REBIND_RECEIVER_PARENT_TREE):
@@ -1964,8 +1974,12 @@ class Controller:
             raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
-                if line.startswith("parent ")] != [BOOTSTRAP_GAME_PARENT]:
-            raise RuntimeError("Bootstrap410 must retain genuinec413 sole parent")
+                if line.startswith("parent ")] != [INTENT_GAME_PARENT]:
+            raise RuntimeError("Intent410 must retain genuine0ab sole parent")
+        source_intent_parent_headers = git(self.source, "cat-file", "commit", INTENT_GAME_PARENT).decode().split("\n\n", 1)[0]
+        if ([line[7:] for line in source_intent_parent_headers.splitlines() if line.startswith("parent ")] != [BOOTSTRAP_GAME_PARENT]
+                or git(self.source, "rev-parse", INTENT_GAME_PARENT + "^{tree}").decode().strip() != INTENT_GAME_PARENT_TREE):
+            raise RuntimeError("Frozen bootstrap410 ancestry/tree changed")
         source_bootstrap_parent_headers = git(self.source, "cat-file", "commit", BOOTSTRAP_GAME_PARENT).decode().split("\n\n", 1)[0]
         if ([line[7:] for line in source_bootstrap_parent_headers.splitlines() if line.startswith("parent ")] != [STARTUP_GAME_PARENT]
                 or git(self.source, "rev-parse", BOOTSTRAP_GAME_PARENT + "^{tree}").decode().strip() != BOOTSTRAP_GAME_PARENT_TREE):
@@ -2039,6 +2053,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "intent_receiver_parent": INTENT_RECEIVER_PARENT, "intent_receiver_parent_headers": intent_receiver_headers,
                     "rebind_receiver_parent": REBIND_RECEIVER_PARENT, "rebind_receiver_parent_headers": rebind_headers,
                     "startup_receiver_parent": STARTUP_RECEIVER_PARENT, "startup_receiver_parent_headers": startup_receiver_headers,
                     "return_receiver_parent": RETURN_RECEIVER_PARENT, "return_receiver_parent_headers": return_receiver_headers,
@@ -2063,8 +2078,9 @@ class Controller:
                    "startup_game_parent": STARTUP_GAME_PARENT, "startup_game_parent_headers": source_startup_parent_headers,
                    "return_game_parent": RETURN_GAME_PARENT, "return_game_parent_headers": source_return_parent_headers,
                    "bootstrap_game_parent": BOOTSTRAP_GAME_PARENT, "bootstrap_game_parent_headers": source_bootstrap_parent_headers,
-                   "tested_game_parent": BOOTSTRAP_GAME_PARENT, "tested_game_parent_headers": source_bootstrap_parent_headers,
-                   "tested_game_grandparent": STARTUP_GAME_PARENT, "tested_game_grandparent_headers": source_startup_parent_headers,
+                   "intent_game_parent": INTENT_GAME_PARENT, "intent_game_parent_headers": source_intent_parent_headers,
+                   "tested_game_parent": INTENT_GAME_PARENT, "tested_game_parent_headers": source_intent_parent_headers,
+                   "tested_game_grandparent": BOOTSTRAP_GAME_PARENT, "tested_game_grandparent_headers": source_bootstrap_parent_headers,
                    "historical407_parent": GAME_PARENT, "historical407_parent_headers": source_parent_headers,
                    "historical407_grandparent": GAME_GRANDPARENT, "historical407_grandparent_headers": source_grandparent_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
@@ -2419,6 +2435,7 @@ class Controller:
         return report
 
     def positive_lifecycle(self) -> None:
+        self.output["lifecycle"]["qualification"] = "Phase statuses describe wrapper attempts; actual Godot oracle execution requires its original report and actual PID."
         project_game = self.lifecycle_project / "game"
         self.lifecycle_guard("imported")
         plan = json.loads((project_game / "test/fixtures/editor_persistence.json").read_text())
@@ -2441,10 +2458,14 @@ class Controller:
             if self.display_capabilities("display-capabilities-" + selected + ".json") != self.display_capabilities_initial:
                 raise RuntimeError("Lifecycle display capabilities changed")
             self.private_driver_inputs()
+            self.output["lifecycle"]["phases"][selected] = "ATTEMPTED"
+            write_json(self.evidence / "lifecycle-progress.json", self.output["lifecycle"])
             result = self.phase(phase, [sys.executable, "-I", "-B", str(Path(__file__).resolve()),
                 "--mode", "DISPLAYED_SMOKE", "--display-child", "--lifecycle-phase", selected,
                 "--candidate", str(self.candidate), "--source", str(self.lifecycle_project),
                 "--root", str(self.root), "--event-sha", self.event_sha], 60)
+            self.output["lifecycle"]["phases"][selected] = "FAILED"
+            write_json(self.evidence / "lifecycle-progress.json", self.output["lifecycle"])
             self.private_driver_inputs()
             text = self.require_clean(phase, result)
             lifetime = json.loads((output / "lifetime.json").read_text())
@@ -2477,8 +2498,12 @@ class Controller:
             reports[selected] = report
             self.output["lifecycle"]["phases"][selected] = "PASS"
             write_json(self.evidence / "lifecycle-progress.json", self.output["lifecycle"])
+        self.output["lifecycle"]["phases"]["runtime"] = "ATTEMPTED"
+        write_json(self.evidence / "lifecycle-progress.json", self.output["lifecycle"])
         result = self.phase("lifecycle-runtime", [str(self.engine), "--headless", "--audio-driver", "Dummy",
             "--path", str(project_game), "-s", "res://tools/kit_zone.gd", "--", "--editor-lifecycle-runtime=1"], 30)
+        self.output["lifecycle"]["phases"]["runtime"] = "FAILED"
+        write_json(self.evidence / "lifecycle-progress.json", self.output["lifecycle"])
         text = self.require_clean("lifecycle-runtime", result)
         if result["pid"] in pids:
             raise RuntimeError("Lifecycle runtime is not a distinct fresh process")
@@ -2496,6 +2521,7 @@ class Controller:
         self.output["lifecycle"].update(phases={p: "PASS" for p in ("author", "reopen", "runtime")},
             reports=reports, actual_pids=pids + [result["pid"]], case_id=self.lifecycle_case,
             qualification="Exact private candidate functional phases only; no art/biome/fullcanonical/Matt acceptance")
+        write_json(self.evidence / "lifecycle-progress.json", self.output["lifecycle"])
         self.output["state"] = "POSITIVE_LIFECYCLE_PENDING_TERMINAL_GUARDS"
 
     def retire_display_authority(self) -> None:
@@ -3086,7 +3112,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", INTENT_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", REBIND_RECEIVER_PARENT + "^{tree}").decode().strip() != REBIND_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", REBIND_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [LIFECYCLE_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", LIFECYCLE_RECEIVER_PARENT + "^{tree}").decode().strip() != LIFECYCLE_RECEIVER_PARENT_TREE
@@ -3107,7 +3135,7 @@ class Controller:
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
                     or set(git(self.candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines()) != OWNED_PATHS):
-                raise RuntimeError("Driver mode requires the genuine solea1f3 two-file candidate")
+                raise RuntimeError("Driver mode requires the genuine solef133 two-file candidate")
             if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
                 raise RuntimeError("Actual identity-safe process collection unavailable")
             os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
