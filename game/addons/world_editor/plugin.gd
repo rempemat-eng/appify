@@ -37,6 +37,11 @@ func _enter_tree() -> void:
 	dock.plugin = self
 	dock.name = "World"
 	add_control_to_dock(DOCK_SLOT_RIGHT_UL, dock)
+	# Separate opt-in lifecycle: never schedule the old smoke alongside it.
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--we-lifecycle="):
+			get_tree().create_timer(4.0).timeout.connect(_run_editor_lifecycle)
+			return
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--we-show="):
 			get_tree().create_timer(3.0).timeout.connect(_show_for_screenshot)
@@ -379,4 +384,9 @@ func _run_editor_smoke() -> void:
 				file.store_string(JSON.stringify(result, "  "))
 				file.close()
 	print("WORLD_EDITOR_SMOKE ", JSON.stringify(result))
+	get_tree().quit(0 if bool(result.get("ok", false)) else 1)
+
+func _run_editor_lifecycle() -> void:
+	var result: Dictionary = await Smoke.run_lifecycle(self)
+	print("WORLD_EDITOR_LIFECYCLE ", JSON.stringify(result))
 	get_tree().quit(0 if bool(result.get("ok", false)) else 1)

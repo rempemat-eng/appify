@@ -21,6 +21,11 @@ func _run() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--") and "=" in a:
 			args[a.substr(2, a.find("=") - 2)] = a.substr(a.find("=") + 1)
+	if args.has("editor-lifecycle-runtime"):
+		var report: Dictionary = await _lifecycle_runtime(args)
+		print("WORLD_EDITOR_LIFECYCLE_RUNTIME ", JSON.stringify(report))
+		quit(0 if bool(report.get("ok", false)) else 1)
+		return
 	var code := 1
 	if args.has("plan"):
 		code = _build(args.plan, args.get("out", ""))
@@ -660,3 +665,189 @@ func _export(path: String, out: String) -> int:
 	root.free()
 	print("kit_zone: wrote ", out)
 	return 0
+
+
+# Optional private acceptance contract. These checks do not prove physical path
+# isolation: the enclosing receiver must verify the disposable project, original
+# source, private user roots, exact inputs and owned output paths before launch.
+# Bootstrap with existing --plan/--out CLI using lifecycle_probe_plan()'s data;
+# it creates the NEW named scene below in the disposable project only.
+const LIFECYCLE_ZONE := "editor_lifecycle_probe"
+const LIFECYCLE_SCENE := "res://zones/editor_lifecycle_probe/editor_lifecycle_probe.tscn"
+const LIFECYCLE_PLAN := "res://kit/zones/editor_lifecycle_probe.json"
+const LIFECYCLE_PNG := "res://zones/editor_lifecycle_probe/ground_baked.png"
+const LIFECYCLE_SIDECAR := "res://zones/editor_lifecycle_probe/ground_baked.json"
+const LIFECYCLE_WALK := "res://zones/editor_lifecycle_probe/walk.txt"
+
+static func lifecycle_context(phase: String) -> Dictionary:
+	var duty := OS.get_environment("MYGAME_EDITOR_LIFECYCLE_ROOT").simplify_path().trim_suffix("/")
+	var declared := OS.get_environment("MYGAME_EDITOR_LIFECYCLE_PROJECT").simplify_path().trim_suffix("/")
+	var original := OS.get_environment("MYGAME_EDITOR_LIFECYCLE_SOURCE").simplify_path().trim_suffix("/")
+	var source_sha := OS.get_environment("MYGAME_EDITOR_LIFECYCLE_SHA")
+	var case_id := OS.get_environment("MYGAME_EDITOR_LIFECYCLE_CASE")
+	var project := ProjectSettings.globalize_path("res://").simplify_path().trim_suffix("/")
+	var userdata := ProjectSettings.globalize_path("user://").simplify_path().trim_suffix("/")
+	var sha_pattern := RegEx.new()
+	sha_pattern.compile("^[0-9a-f]{40}$")
+	var case_pattern := RegEx.new()
+	case_pattern.compile("^[0-9a-f]{32}$")
+	if phase not in ["author", "reopen", "runtime"] or OS.get_environment("MYGAME_EDITOR_LIFECYCLE") != "1":
+		return {"ok": false, "message": "Explicit private lifecycle context is required."}
+	if not duty.is_absolute_path() or duty in ["", "/"] or not original.is_absolute_path() or original in ["", "/"] or sha_pattern.search(source_sha) == null or case_pattern.search(case_id) == null:
+		return {"ok": false, "message": "Owned duty, original source and exact source SHA are required."}
+	if project != declared or not project.begins_with(duty + "/") or not userdata.begins_with(duty + "/") or duty == original or duty.begins_with(original + "/") or project == original or project.begins_with(original + "/"):
+		return {"ok": false, "message": "Lifecycle must run in the declared disposable project/private user roots outside original source."}
+	var evidence := duty.path_join("evidence/editor_lifecycle")
+	var report := evidence.path_join(phase + ".json")
+	if FileAccess.file_exists(report) or DirAccess.make_dir_recursive_absolute(evidence) != OK:
+		return {"ok": false, "message": "Fresh writable lifecycle evidence is required; old receipts are never overwritten."}
+	return {"ok": true, "phase": phase, "duty": duty, "project": project, "userdata": userdata,
+		"source_sha": source_sha, "case_id": case_id, "evidence": evidence, "report": report,
+		"owned_outputs": [evidence, ProjectSettings.globalize_path(LIFECYCLE_SCENE),
+			ProjectSettings.globalize_path(LIFECYCLE_PLAN), ProjectSettings.globalize_path(LIFECYCLE_PNG),
+			ProjectSettings.globalize_path(LIFECYCLE_SIDECAR), ProjectSettings.globalize_path(LIFECYCLE_WALK)],
+		"generated_private_only": [project.path_join(".godot"), ProjectSettings.globalize_path(LIFECYCLE_PNG + ".import")]}
+
+static func lifecycle_probe_plan() -> Dictionary:
+	var plan := _read("res://test/fixtures/editor_persistence.json").duplicate(true)
+	if plan.is_empty(): return {}
+	plan["zone"] = LIFECYCLE_ZONE
+	plan["lab"] = true
+	plan["bake"] = true
+	plan["coordinate_space"] = "texels"
+	return plan
+
+static func lifecycle_read(path: String) -> Dictionary:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null: return {}
+	if file.get_length() > 262144:
+		file.close()
+		return {}
+	var parser := JSON.new()
+	var code := parser.parse(file.get_as_text())
+	file.close()
+	return parser.data if code == OK and parser.data is Dictionary else {}
+
+static func lifecycle_write(path: String, value: Dictionary) -> bool:
+	var text := canonical(value)
+	if FileAccess.file_exists(path) or text.to_utf8_buffer().size() > 262144: return false
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null: return false
+	file.store_string(text)
+	file.flush()
+	var code := file.get_error()
+	file.close()
+	return code == OK
+
+static func lifecycle_finish(context: Dictionary, result: Dictionary) -> Dictionary:
+	var failures: Array = result.get("failures", [])
+	result["ok"] = failures.is_empty()
+	result["pid"] = OS.get_process_id()
+	result["finished_unix"] = Time.get_unix_time_from_system()
+	result["scope"] = "Private candidate-lab functional evidence; no approved kit, actual biome, art or gameplay acceptance."
+	if not bool(context.get("ok", false)):
+		result["ok"] = false
+		return result
+	result["phase"] = context.phase
+	result["source_sha"] = context.source_sha
+	result["context"] = context
+	if not lifecycle_write(context.report, result):
+		failures.append("Lifecycle report could not be written to its fresh owned path.")
+		result["ok"] = false
+	return result
+
+static func lifecycle_prior(context: Dictionary, phase: String) -> Dictionary:
+	var prior := lifecycle_read(String(context.evidence).path_join(phase + ".json"))
+	if not bool(prior.get("ok", false)) or prior.get("phase") != phase or prior.get("source_sha") != context.source_sha or int(prior.get("pid", 0)) in [0, OS.get_process_id()]:
+		return {}
+	var previous_context: Dictionary = prior.get("context", {})
+	for key in ["duty", "project", "source_sha", "case_id"]:
+		if previous_context.get(key) != context.get(key): return {}
+	return prior
+
+func _lifecycle_runtime(args: Dictionary) -> Dictionary:
+	var context := lifecycle_context("runtime")
+	var result := {"ok": false, "failures": [], "started_unix": Time.get_unix_time_from_system()}
+	var failures: Array = result.failures
+	if not bool(context.get("ok", false)):
+		failures.append(context.get("message", "Invalid lifecycle context."))
+		return lifecycle_finish(context, result)
+	if args.size() != 1 or args.get("editor-lifecycle-runtime") != "1" or Engine.is_editor_hint():
+		failures.append("Runtime verification requires its sole explicit flag and a fresh non-editor process.")
+		return lifecycle_finish(context, result)
+	var author := lifecycle_prior(context, "author")
+	var reopened := lifecycle_prior(context, "reopen")
+	var expected_path := String(context.evidence).path_join("expected-plan.json")
+	var expected := lifecycle_read(expected_path)
+	if author.is_empty() or reopened.is_empty() or expected.is_empty() or int(author.pid) == int(reopened.pid) or reopened.get("author_pid") != author.pid or FileAccess.get_sha256(expected_path) != author.get("expected_plan_sha256"):
+		failures.append("Successful distinct-process author/reopen receipts and exact expected plan are required.")
+		return lifecycle_finish(context, result)
+	if reopened.get("author_report_sha256") != FileAccess.get_sha256(String(context.evidence).path_join("author.json")) or reopened.get("expected_plan_sha256") != author.get("expected_plan_sha256"):
+		failures.append("Prior receipt/expected-plan hash chain changed.")
+		return lifecycle_finish(context, result)
+	for key in ["scene", "png", "sidecar", "walk", "export"]:
+		var paths := {"scene": LIFECYCLE_SCENE, "png": LIFECYCLE_PNG, "sidecar": LIFECYCLE_SIDECAR, "walk": LIFECYCLE_WALK, "export": LIFECYCLE_PLAN}
+		if not FileAccess.file_exists(paths[key]) or FileAccess.get_sha256(paths[key]) != reopened.get(key + "_sha256"):
+			failures.append("Reopened bake artifact changed or is absent: " + key)
+	if not failures.is_empty(): return lifecycle_finish(context, result)
+	var packed := ResourceLoader.load(LIFECYCLE_SCENE, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	if packed == null:
+		failures.append("Saved named scene could not be loaded from disk.")
+		return lifecycle_finish(context, result)
+	var scene := packed.instantiate() as Node2D
+	if scene == null:
+		failures.append("The saved probe did not instantiate as Node2D.")
+		return lifecycle_finish(context, result)
+	var ground := scene.get_node_or_null("Ground") as TerrainGround
+	# Inspect SERIALIZED binding before tree-ready callbacks or any rebuild/repair.
+	if ground == null or ground.baked == null or ground.baked.resource_path != LIFECYCLE_PNG:
+		failures.append("Fresh saved scene has no matching baked texture binding; bake was not persisted.")
+		scene.free()
+		return lifecycle_finish(context, result)
+	if not ground.lab or canonical(plan_from_scene(scene)) != canonical(expected):
+		failures.append("Fresh runtime scene changed lab/authoring data.")
+		scene.free()
+		return lifecycle_finish(context, result)
+	root.add_child(scene)
+	await process_frame
+	await physics_frame
+	await physics_frame
+	await process_frame
+	var walk := ground.get_node_or_null("KitWalk") as KitWalk
+	if walk == null or walk.rows.is_empty() or walk.walk_text() != FileAccess.get_file_as_string(LIFECYCLE_WALK) or not ground.showing_baked():
+		failures.append("Persisted walk node/rows or baked presentation did not restore without repair.")
+	else:
+		var player_scene := load("res://actors/player.tscn") as PackedScene
+		if player_scene == null:
+			failures.append("Existing Player scene is unavailable.")
+			scene.queue_free()
+			await process_frame
+			return lifecycle_finish(context, result)
+		var player := player_scene.instantiate() as Player
+		if player == null:
+			failures.append("Existing Player could not be instantiated.")
+			scene.queue_free()
+			await process_frame
+			return lifecycle_finish(context, result)
+		player.input_enabled = false
+		player.position = Vector2(108, 156)
+		scene.add_child(player)
+		await physics_frame
+		await physics_frame
+		var blocked := player.move_and_collide(Vector2(0, -72))
+		var blocked_collider: Node = null
+		if blocked != null: blocked_collider = blocked.get_collider() as Node
+		result["blocked_probe"] = {"collision": blocked != null, "position": [player.position.x, player.position.y],
+			"collider": String(blocked_collider.get_path()) if blocked_collider != null else ""}
+		if blocked == null or player.position.y <= 84: failures.append("Existing Player crossed the saved bench collision.")
+		player.position = Vector2(24, 156)
+		var clear := player.move_and_collide(Vector2(0, -72))
+		result["clear_probe"] = {"collision": clear != null, "position": [player.position.x, player.position.y]}
+		result["player_layers"] = {"layer": player.collision_layer, "mask": player.collision_mask, "input_enabled": player.input_enabled}
+		if clear != null or not player.position.is_equal_approx(Vector2(24, 84)): failures.append("Existing Player could not traverse the saved clear lane.")
+		result["walk_rows"] = walk.rows
+		result["baked_binding"] = ground.baked.resource_path
+		result["collision_authority"] = "Existing compiled KitPiece index and packed Solid; raw bench collision metadata remains unclassified."
+	scene.queue_free()
+	await process_frame
+	return lifecycle_finish(context, result)
