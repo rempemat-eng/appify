@@ -1,5 +1,70 @@
 # Crossroads grain-weighing station — source review
 
+## Current detail follow-up — Y36-GRAIN-GOODS-DETAIL/r2
+
+Owner `rivet`; [source-art-only GO6536088965](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6536088965), [ASSIGN6536174210](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6536174210), [separate ACK6536174451](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6536174451). SAME #403, genuine child of `eee6036dd1d96a6c63c6a25a6ca33a0ccf56d77e` / tree `c71eb0721229fd4dc39497ebb12323b763665844`. This batch owns **only the bodies/docstrings of `p_cart` and `p_sacks_hd` in existing `scripts/art/native/village.py`, and this detail-follow-up section**. All text below this section remains the previous batch's historical record, not current permission. No new painter, catalogue entry or mechanics.
+
+### Actual failure and retained baseline
+
+[H3 result/release6536097367](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6536097367) and [fresh independent receipt6536084235](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6536084235) describe actual SUCCESS run41146473403 on receiver #406 `c302b3380f99091e30ef6e7dc2b18f6118a268f3` with old source4035dd. ZERO grain repaint, ONE native composition; runtime and collector released. This source batch **does not repeat H3 or retarget its evidence**. The actual [1920×1080 working-yard image](https://chatgpt.com/library?file_id=libfile_c970bc67ad7c8191b11b6e716260faa0&account_id=personal) was viewed, along with the exact two old Git PNGs below. The cart's shafts/axle/support connections read weakly; the storage bags read bright, soft and speckled. Published catalogue detail ratios remain **0.671 / 0.509, both false**. No new score or physical output exists for this revision.
+
+| Existing unmodified PNG | Bytes / SHA256, verified against actual eee Git blob | Unchanged canvas / foot, art texels |
+| --- | --- | --- |
+| `game/zones/crossroads/art/handcart.png` | 2189 / `c79efcf10302f57de118c8da5db0c924951bdaa3d9506cd3591a6d405f32c94a` | [114,84] / [57,80] |
+| `game/zones/crossroads/art/sacks_12.png` | 1122 / `bd2e5e135d64ac9a0bc08eebd88cef494fbfd9ae97e50b89819212fbd0b56699` | [60,66] / [30,62] |
+
+The source repair leaves those committed pictures, their metadata, catalogue findings, approval=candidate and function={} unchanged. New source and old PNGs are deliberately **not reproduction-consistent yet**; no old full-gate pass covers the new source. Ground noise, widely spaced context, mixed live/baked lighting, absent Moss contact, and Moss facing the camera away from the station remain separate unresolved work.
+
+### Two forms, existing native API
+
+The actual source plan `game/data/plans/crossroads.json` has handcart in `art.dressing[57]`, kind=cart, size=[22,8], id=handcart; sacks at index12, kind=sacks, size=[14,8], default id=sacks_12. Neither entry sets a seed. The real `town.py` dressing caller uses `seed=dr.get('seed',100+k)`, then `V.prop(kind,w,h,seed=seed,hd=PROP_HD)`, with PROP_HD=(D>=2.5). Thus the exact seeds are **157 and112**, not a new choice. ASSIGN's preliminary cart173 was corrected before authoring/generation; no invocation used173.
+
+At D3, `prop` selects cart through unchanged PROPS['cart']=p_cart (there is no cart PROPS_HD override), and sacks through unchanged PROPS_HD['sacks']=p_sacks_hd with hd=True. Only p_cart's D>=2.5 branch changes drawing; its original lower-density statements remain AST-exact. Shared `sack()`, PROPS/PROPS_HD, all other functions/signatures/imports/top-level constants, palette and density dispatch remain byte-exact outside the two owned bodies. No new per-region painter or helper framework.
+
+| Form / demonstrated weakness | Authored pixel construction, **not yet drawn or measured** |
+| --- | --- |
+| Cart: detached-looking shafts, little visible underside/axle connection | Existing shaft tips continue into the underframe. Cross rail and diagonal brace support the bed; an iron axle/bearing connects to the existing near wheel. Back rail, exposed floor, front planks, east end and dark underside are distinct planes; corner stiles continue to the cross rail. Local iron straps/fasteners and short worn handhold edges explain construction. |
+| Cart: flat rim/hub and thin spokes | Existing wheel centre/radius and six-spoke design remain; wood felloe joints, iron tyre planes, hub collar/end and upper-left highlights separate metal from wood. No solid wheel disk or added load to inflate density. Existing sack/crate load stays at its original coordinates; only that local sack's tone/fold treatment changes, not shared sack(). |
+| Sacks: pale round caps and blanket diagonal weave | Existing three bag centres/radii and stack relation remain. Shoulders taper within the original radii; the lower body stays weighted. Cloth body/core/underside steps are capped at tone4, with three gathers converging on each tied mouth, a seam with paired stitches, and two short local weave clusters. Broad panels remain quiet. |
+| Sacks: weak contact and ties | Each new overlap shades only previously occupied cloth down/east of the bag, never empty ground. Gathered neck, rope band/knot and short hanging end are separate clusters. No global sack-helper edit, noise field, new colours or new cast-shadow system. |
+
+Existing `_pic` calls are retained: cart(w,h,up=18,side=7), sacks(w,h,up=12,side=2), pad3. Static D3 arithmetic gives cart W=3×(22+14)+6=114, H=3×(8+18)+6=84; sacks W=3×(14+4)+6=60, H=3×(8+12)+6=66. Feet remain W//2,H−4. No padding, scale, position, collision, snap, seed, source kind or path change. Visible alpha/edge/contact/detail and reproduction effects still need actual outputs and review; canvas arithmetic alone proves none of those.
+
+### Reference choice and precise comparison gap
+
+The existing official [Eastward Steam store](https://store.steampowered.com/app/977880/Eastward/) market screenshot `ss_ddd76431b1df70e234494c92370e2391680c98ef.1920x1080.jpg` was re-viewed outside Git; SHA256 `bf709bd60afbb1551010ff80f499b5c5fa72b79c7e77a93cf65eda83f51442c5`, 594858B. Its exact previously selected raw [575,690,740,820] foreground table/support area shows connected top/edge/support planes and clustered containers against a calmer passage. The nearby cloth canopies show broad lit/body/fold shade separation. These are **structure/material context, not a matched cart or three-sack crop**; no pixels are copied. The existing size-guide cites its measured shot04 stall-cart and adult-based proportions, but that historical numbered source has not been reconciled to this raw screenshot or independently remeasured here.
+
+**Precise gap:** no traceable native-period + adult-height + same-kind cart/sack matched crop has been established in this source-only batch; no normalised side-by-side or 16×16 tone/shape/dressing counts ran. Written upper-left light, material ramps, coherent clusters and size guidance guide the repair. Neither palette count, extra seams nor muted sacks demonstrate the detail threshold. `audit.eastward_ref` remains null; Y12 and Matt's PR-specific review remain required. The future comparison must first establish actual reference identity, native period/adult and object class, then report real counts or explicitly keep the gap open.
+
+### Exact later two-output invocation, NOT RUN / not a runtime GO
+
+After root+peer review and a **separate bounded allocation**, use the existing native API in one fresh private Python process from the exact reviewed private source root, with a fresh absolute output subdirectory and approved private dependency environment. This is a direct invocation of existing methods, not a committed new painter. It imports no town/terrain/world generator and draws only the two named outputs; the enclosing allocated receiver must enforce source/input/dependency/budget/collection guards and retain actual results/partial failures. No ambient dependency substitution or production output overwrite.
+
+```bash
+"$PRIVATE_PYTHON" -B - "$PRIVATE_TWO_ASSET_OUT" <<'PY'
+from pathlib import Path
+import sys
+from scripts.art.native import ctx
+ctx.configure(3.0)
+from scripts.art.native import village as V
+out = Path(sys.argv[1])
+assert out.is_absolute()
+out.mkdir(exist_ok=False)
+for name, kind, w, h, seed, size, foot in (
+    ('handcart.png', 'cart', 22, 8, 157, (114, 84), (57, 80)),
+    ('sacks_12.png', 'sacks', 14, 8, 112, (60, 66), (30, 62)),
+):
+    pic = V.prop(kind, w, h, seed=seed, hd=True)
+    assert (pic.W, pic.H) == size and (pic.ax, pic.ay) == foot
+    pic.rgba().save(out / name, optimize=True)
+assert sorted(p.name for p in out.iterdir()) == ['handcart.png', 'sacks_12.png']
+PY
+```
+
+The source GO does not allocate that command, imports, dependency install, any draw, comparison or composition. Later root+peer review must reserve any minimal existing receiver change needed to consume this new native blob/source with the two new PNG hashes while preserving exact H2 grain reuse; #406c302 stays frozen now. Existing H3 inputs/pins and results cannot silently attest to the repaired goods. Two output dimensions/feet, actual alpha/outline/planes/joints/cloth and old/new comparison require real measurements before one later working-yard composition; zero grain repaint. Exact reference/receiving resources and limits need their own GO. No new receiver/framework or runtime ref is created here.
+
+**This batch's checks:** standard-library AST/source/JSON/PNG-header/hash inspection only; exact outside-body bytes/signatures/92 other top-level definitions and lower-density cart AST retained, caller/seed/D3 canvas arithmetic, original-document suffix preservation, whitespace and genuine-history/full-other-leaf/immutable-byte proof. No subject import, test, draw, install, runtime download, engine, composition, job, execution ref, kit_golden, verify, art reproduction, kit/Godot/full gates, Ready or merge. Source lease ends at HANDOFF or 60min from ACK; execution reservation NONE. Eventual canonical `python3 -m scripts.art.kit_golden` and final exact-source gates remain held; a source clear is not visual/Matt approval.
+
 ## Current goods bindings — Y36-GRAIN-GOODS/r1, 30 October
 
 Owner `rivet`; [source-only GO6534897411](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6534897411), [ASSIGN6534981831](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6534981831), [separate ACK6534982071](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6534982071). **Drawn equivalents exist: reuse `crossroads_handcart` and `crossroads_sacks`.** This continuation owns only this existing document, as a genuine child of #403 `5dd3825353078b8b8e231f081714144891d98feb` / tree `120c336609b393591a662beddf45a84149e73810`. No goods painter, new duplicate piece, image, index, fixture, ground, scene, zone or metadata change is needed or authorised. Source reservation ends at HANDOFF or 23:35 UTC; no execution reservation.
