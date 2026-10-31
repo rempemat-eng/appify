@@ -1,0 +1,403 @@
+name: Grain-scale one-shot candidate receiving
+
+# SOURCE ONLY preparation: this prep branch/PR does NOT trigger this workflow.
+# The lead must review an immutable candidate and separately allocate the run ref.
+'on':
+  push:
+    branches: [codex/grain-scale-receiving-run]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: mygame-grain-scale-receiving
+  cancel-in-progress: false
+jobs:
+  receiving:
+    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/grain-scale-receiving-run' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      # Explicit opt-in; controller default remains the frozen WORKING_YARD path.
+      GRAIN_RECEIVING_MODE: HALT_COURT
+      TZ: UTC
+    steps:
+      - name: Open permanent partial evidence before setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/grain-scale"
+          test ! -e "$root"
+          mkdir -m 700 "$root"
+          mkdir -m 700 "$root/evidence"
+          printf 'GRAIN_EVIDENCE=%s/evidence\n' "$root" >> "$GITHUB_ENV"
+          python3 -I -B - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'grain-scale/evidence/bootstrap.json'
+          p.write_text(json.dumps(dict(workflow_sha=os.environ['GITHUB_SHA'],
+              receiving_mode=os.environ['GRAIN_RECEIVING_MODE'],
+              source_sha=('a25dada748cf398f4c1c32eb5fc0e19308dd7b3b' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'd948ac57134ab092e91c8ab9ccc5d62593f064dd' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else '5dd3825353078b8b8e231f081714144891d98feb'),
+              run_id=os.environ['GITHUB_RUN_ID'],attempt=os.environ['GITHUB_RUN_ATTEMPT'],
+              state='NOTRUN; exact setup and lead allocation still required'),indent=2)+'\n')
+          PY
+      - name: Immutable receiving candidate
+        id: runner
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: runner
+          fetch-depth: 9 # new ->45f ->3386 ->f8d ->52f ->c302 ->3e7 ->1d47 ->5dd
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/review/grain_scale_receiving.py
+            /scripts/review/fixtures/grain_scale_yard.json
+            /.github/workflows/grain-scale-receiving.yml
+      - name: Exact403 input closure; no full raster checkout
+        if: env.GRAIN_RECEIVING_MODE != 'TWO_GOODS' && env.GRAIN_RECEIVING_MODE != 'HALT_COURT'
+        id: source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 5dd3825353078b8b8e231f081714144891d98feb
+          path: source
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/verify.yml
+            /art/house-palette.json
+            /art/scenes/woodland.json
+            /game/assets/characters/moss/manifest.json
+            /game/assets/characters/moss/sheets/idle_S.png
+            /game/kit/pieces/prop/crossroads_grain_scale.json
+            /game/kit/pieces/prop/crossroads_handcart.json
+            /game/kit/pieces/prop/crossroads_sacks.json
+            /game/kit/pieces/structure/crossroads_smithy.json
+            /game/kit/pieces/terrain/lawn.json
+            /game/kit/pieces/terrain/path.json
+            /game/kit/pieces/terrain/worn.json
+            /game/kit/schema/piece.schema.json
+            /game/kit/terrain/decal_bankstone_0.png
+            /game/kit/terrain/decal_bankstone_1.png
+            /game/kit/terrain/decal_bankstone_2.png
+            /game/kit/terrain/decal_blades_0.png
+            /game/kit/terrain/decal_blades_1.png
+            /game/kit/terrain/decal_blades_2.png
+            /game/kit/terrain/decal_pebble_0.png
+            /game/kit/terrain/decal_pebble_1.png
+            /game/kit/terrain/decal_pebble_2.png
+            /game/kit/terrain/decal_pebble_3.png
+            /game/kit/terrain/decal_rushes_0.png
+            /game/kit/terrain/decal_rushes_1.png
+            /game/kit/terrain/decal_rushes_2.png
+            /game/kit/terrain/decal_tuft_0.png
+            /game/kit/terrain/decal_tuft_1.png
+            /game/kit/terrain/decal_tuft_2.png
+            /game/kit/terrain/decal_tuft_3.png
+            /game/kit/terrain/decal_tuft_4.png
+            /game/kit/terrain/decal_tuft_5.png
+            /game/kit/terrain/fill_cobble_road.png
+            /game/kit/terrain/fill_earth_face.png
+            /game/kit/terrain/fill_lawn.png
+            /game/kit/terrain/fill_path.png
+            /game/kit/terrain/fill_scree.png
+            /game/kit/terrain/fill_water.png
+            /game/kit/terrain/fill_worn.png
+            /game/kit/terrain/manifest.json
+            /game/kit/terrain/noise.png
+            /game/kit/terrain/over_earth_face_over_any.png
+            /game/kit/terrain/over_lawn_over_earth_face.png
+            /game/kit/terrain/over_lawn_over_lower_tier.png
+            /game/kit/terrain/over_lawn_over_path.png
+            /game/kit/terrain/over_lawn_over_scree.png
+            /game/kit/terrain/over_lawn_over_water.png
+            /game/kit/terrain/over_lawn_over_worn.png
+            /game/kit/terrain/over_path_over_earth_face.png
+            /game/kit/terrain/over_path_over_lower_tier.png
+            /game/kit/terrain/over_path_over_water.png
+            /game/kit/terrain/over_water_over_earth_face.png
+            /game/kit/terrain/over_worn_over_path.png
+            /game/zones/crossroads/art/smithy.png
+            /game/zones/crossroads/art/handcart.png
+            /game/zones/crossroads/art/sacks_12.png
+            /scripts/art/biomes/woodland.json
+            /scripts/art/house_palette.py
+            /scripts/art/kit/__init__.py
+            /scripts/art/kit/build.py
+            /scripts/art/kit/compose.py
+            /scripts/art/kit/crossroads_grain_scale.py
+            /scripts/art/kit/dressing.py
+            /scripts/art/kit/edges.py
+            /scripts/art/kit/fills.py
+            /scripts/art/kit/props.py
+            /scripts/art/kit/relations.py
+            /scripts/art/kit/render_zone.py
+            /scripts/art/kit/schema.py
+            /scripts/art/kit/settlement_props.py
+            /scripts/art/kit/surface.py
+            /scripts/art/native/__init__.py
+            /scripts/art/native/accents.json
+            /scripts/art/native/ctx.py
+            /scripts/art/native/palette.py
+            /scripts/art/native/softgrid.py
+            /scripts/art/native/softground.py
+            /scripts/art/native/terrain/__init__.py
+            /scripts/art/native/terrain/decals.py
+            /scripts/art/native/terrain/noise.py
+            /scripts/art/native/terrain/scene.py
+            /scripts/art/native/terrain/sheets.py
+            /scripts/art/native/terrain/tiles.py
+            /scripts/art/native/village.py
+            /scripts/art/size_guide.json
+            /scripts/review/__init__.py
+            /scripts/review/ground_rules.py
+            /scripts/review/kit_scene.py
+
+      - name: Exact reviewed two-goods native import closure and frozen old PNGs
+        if: env.GRAIN_RECEIVING_MODE == 'TWO_GOODS'
+        id: source_goods
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: d948ac57134ab092e91c8ab9ccc5d62593f064dd
+          path: source
+          fetch-depth: 3
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/verify.yml
+            /art/house-palette.json
+            /game/zones/crossroads/art/handcart.png
+            /game/zones/crossroads/art/sacks_12.png
+            /scripts/art/house_palette.py
+            /scripts/art/native/__init__.py
+            /scripts/art/native/accents.json
+            /scripts/art/native/ctx.py
+            /scripts/art/native/palette.py
+            /scripts/art/native/village.py
+
+      - name: Exact reviewed four-cottage source closure
+        if: env.GRAIN_RECEIVING_MODE == 'HALT_COURT'
+        id: source_halt
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: a25dada748cf398f4c1c32eb5fc0e19308dd7b3b
+          path: source
+          fetch-depth: 4
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/verify.yml
+            /art/house-palette.json
+            /art/scenes/pilot.json
+            /art/scenes/woodland.json
+            /game/assets/characters/moss/manifest.json
+            /game/assets/characters/moss/sheets/idle_S.png
+            /game/kit/pieces/prop/crossroads_handcart.json
+            /game/kit/pieces/prop/crossroads_sacks.json
+            /game/kit/pieces/structure/crossroads_smithy.json
+            /game/kit/pieces/terrain/lawn.json
+            /game/kit/pieces/terrain/path.json
+            /game/kit/pieces/terrain/worn.json
+            /game/kit/schema/piece.schema.json
+            /game/kit/terrain/decal_bankstone_0.png
+            /game/kit/terrain/decal_bankstone_1.png
+            /game/kit/terrain/decal_bankstone_2.png
+            /game/kit/terrain/decal_blades_0.png
+            /game/kit/terrain/decal_blades_1.png
+            /game/kit/terrain/decal_blades_2.png
+            /game/kit/terrain/decal_pebble_0.png
+            /game/kit/terrain/decal_pebble_1.png
+            /game/kit/terrain/decal_pebble_2.png
+            /game/kit/terrain/decal_pebble_3.png
+            /game/kit/terrain/decal_rushes_0.png
+            /game/kit/terrain/decal_rushes_1.png
+            /game/kit/terrain/decal_rushes_2.png
+            /game/kit/terrain/decal_tuft_0.png
+            /game/kit/terrain/decal_tuft_1.png
+            /game/kit/terrain/decal_tuft_2.png
+            /game/kit/terrain/decal_tuft_3.png
+            /game/kit/terrain/decal_tuft_4.png
+            /game/kit/terrain/decal_tuft_5.png
+            /game/kit/terrain/fill_cobble_road.png
+            /game/kit/terrain/fill_earth_face.png
+            /game/kit/terrain/fill_lawn.png
+            /game/kit/terrain/fill_path.png
+            /game/kit/terrain/fill_scree.png
+            /game/kit/terrain/fill_water.png
+            /game/kit/terrain/fill_worn.png
+            /game/kit/terrain/manifest.json
+            /game/kit/terrain/noise.png
+            /game/kit/terrain/over_earth_face_over_any.png
+            /game/kit/terrain/over_lawn_over_earth_face.png
+            /game/kit/terrain/over_lawn_over_lower_tier.png
+            /game/kit/terrain/over_lawn_over_path.png
+            /game/kit/terrain/over_lawn_over_scree.png
+            /game/kit/terrain/over_lawn_over_water.png
+            /game/kit/terrain/over_lawn_over_worn.png
+            /game/kit/terrain/over_path_over_earth_face.png
+            /game/kit/terrain/over_path_over_lower_tier.png
+            /game/kit/terrain/over_path_over_water.png
+            /game/kit/terrain/over_water_over_earth_face.png
+            /game/kit/terrain/over_worn_over_path.png
+            /game/zones/crossroads/art/handcart.png
+            /game/zones/crossroads/art/sacks_12.png
+            /game/zones/crossroads/art/smithy.png
+            /scripts/art/biomes/meadow.json
+            /scripts/art/biomes/woodland.json
+            /scripts/art/house_palette.py
+            /scripts/art/kit/__init__.py
+            /scripts/art/kit/build.py
+            /scripts/art/kit/compose.py
+            /scripts/art/kit/crossroads_halt_court.py
+            /scripts/art/kit/dressing.py
+            /scripts/art/kit/edges.py
+            /scripts/art/kit/fills.py
+            /scripts/art/kit/props.py
+            /scripts/art/kit/relations.py
+            /scripts/art/kit/render_zone.py
+            /scripts/art/kit/schema.py
+            /scripts/art/kit/surface.py
+            /scripts/art/native/__init__.py
+            /scripts/art/native/accents.json
+            /scripts/art/native/animate.py
+            /scripts/art/native/build.py
+            /scripts/art/native/chars.py
+            /scripts/art/native/check.py
+            /scripts/art/native/compose.py
+            /scripts/art/native/ctx.py
+            /scripts/art/native/export.py
+            /scripts/art/native/foliage.py
+            /scripts/art/native/ground.py
+            /scripts/art/native/houses.py
+            /scripts/art/native/masters/zones_props_bush.png
+            /scripts/art/native/masters/zones_props_oak.png
+            /scripts/art/native/measure.py
+            /scripts/art/native/palette.py
+            /scripts/art/native/props.py
+            /scripts/art/native/raster.py
+            /scripts/art/native/rig.py
+            /scripts/art/native/rocks.py
+            /scripts/art/native/screen.py
+            /scripts/art/native/softedge.py
+            /scripts/art/native/softgrid.py
+            /scripts/art/native/softground.py
+            /scripts/art/native/terrain/__init__.py
+            /scripts/art/native/terrain/decals.py
+            /scripts/art/native/terrain/noise.py
+            /scripts/art/native/terrain/scene.py
+            /scripts/art/native/terrain/sheets.py
+            /scripts/art/native/terrain/tiles.py
+            /scripts/art/native/thornback.py
+            /scripts/art/native/town.py
+            /scripts/art/native/undercroft.py
+            /scripts/art/native/village.py
+            /scripts/art/native/water.py
+            /scripts/art/native/zone.py
+            /scripts/art/pixel.py
+            /scripts/art/size_guide.json
+            /scripts/art/water_flow.py
+            /scripts/review/__init__.py
+            /scripts/review/fixtures/crossroads_halt_court.json
+            /scripts/review/ground_rules.py
+            /scripts/review/kit_scene.py
+
+      - name: Select pinned CPython; scientific staging is guarded inside Controller.setup
+        id: python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Run explicitly selected one-shot receiving mode
+        id: receiving
+        env:
+          GRAIN_ARTIFACT_TOKEN: ${{ env.GRAIN_RECEIVING_MODE != 'TWO_GOODS' && env.GRAIN_RECEIVING_MODE != 'HALT_COURT' && github.token || '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python -I -B runner/scripts/review/grain_scale_receiving.py \
+            --receiving-mode "$GRAIN_RECEIVING_MODE" \
+            --source "$GITHUB_WORKSPACE/source" --candidate "$GITHUB_WORKSPACE/runner" \
+            --root "$RUNNER_TEMP/grain-scale" --event-sha "$GITHUB_SHA" \
+            > "$GRAIN_EVIDENCE/controller.log" 2>&1
+          code=$?
+          printf '%s\n' "$code" > "$GRAIN_EVIDENCE/controller.exit"
+          cat "$GRAIN_EVIDENCE/controller.log"
+          exit "$code"
+      - name: Retain actual partial input bytes and enclosing disposition on every exit
+        if: always()
+        env:
+          RUNNER_OUTCOME: ${{ steps.runner.outcome }}
+          SOURCE_OUTCOME: ${{ steps.source.outcome }}
+          SOURCE_GOODS_OUTCOME: ${{ steps.source_goods.outcome }}
+          SOURCE_HALT_OUTCOME: ${{ steps.source_halt.outcome }}
+          PYTHON_OUTCOME: ${{ steps.python.outcome }}
+          RECEIVING_OUTCOME: ${{ steps.receiving.outcome }}
+        shell: bash
+        run: |
+          python3 -I -B - <<'PY'
+          import ast,hashlib,json,os,stat,tarfile,time
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'grain-scale'
+          evidence=root/'evidence'
+          evidence.mkdir(parents=True,exist_ok=True)
+          ws=Path(os.environ['GITHUB_WORKSPACE'])
+          controller=ws/'runner/scripts/review/grain_scale_receiving.py'
+          records,missing,errors={},[],[]
+          # Original exact source/candidate bytes survive even failed staging,
+          # interrupted archives or unavailable scientific/renderer prerequisites.
+          if controller.is_file():
+              module=ast.parse(controller.read_text())
+              wanted='HALT_INPUTS' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'TWO_GOODS_INPUTS' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else 'INPUTS'
+              node=next(n for n in module.body if isinstance(n,ast.Assign) and
+                  any(isinstance(t,ast.Name) and t.id==wanted for t in n.targets))
+              inputs=ast.literal_eval(node.value)
+              candidates=('scripts/review/grain_scale_receiving.py','scripts/review/fixtures/grain_scale_yard.json','.github/workflows/grain-scale-receiving.yml')
+              total=0
+              started=time.monotonic()
+              try:
+                  with tarfile.open(evidence/'partial-checkouts.tar.gz','x:gz') as archive:
+                      for label,names in (('source',inputs),('runner',candidates)):
+                          for name in names:
+                              p=ws/label/name
+                              if not p.exists(): missing.append(label+'/'+name);continue
+                              st=p.lstat()
+                              if not stat.S_ISREG(st.st_mode) or st.st_nlink!=1:
+                                  raise RuntimeError('Nonphysical partial input')
+                              total+=st.st_size
+                              if total>8*1024**2 or time.monotonic()-started>30:
+                                  raise RuntimeError('Partial input8MiB/30s bound exceeded')
+                              data=p.read_bytes()
+                              records[label+'/'+name]=dict(bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+                              archive.add(p,arcname=label+'/'+name,recursive=False)
+              except BaseException as error:
+                  errors.append(repr(error))
+          else:
+              errors.append('Receiving controller unavailable; no input manifest inferred')
+          (evidence/'partial-checkouts.json').write_text(json.dumps(dict(files=records,missing=missing,
+              errors=errors,qualification='Actual complete or labelled partial bytes only; never source/runtime/art acceptance'),indent=2)+'\n')
+          value=dict(workflow_sha=os.environ['GITHUB_SHA'],receiving_mode=os.environ['GRAIN_RECEIVING_MODE'],
+              source_sha=('a25dada748cf398f4c1c32eb5fc0e19308dd7b3b' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'd948ac57134ab092e91c8ab9ccc5d62593f064dd' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else '5dd3825353078b8b8e231f081714144891d98feb'),
+              outcomes={k:os.environ.get(k,'NOTRUN') for k in ('RUNNER_OUTCOME','SOURCE_OUTCOME','SOURCE_GOODS_OUTCOME','SOURCE_HALT_OUTCOME','PYTHON_OUTCOME','RECEIVING_OUTCOME')},
+              result_present=(evidence/'result.json').is_file(),
+              qualification=('One native four-cottage diagnostic;4HD+4legacy counts planned not instrumented; terrain, roof/court occlusion, detail/Y12/Matt remain open.' if os.environ['GRAIN_RECEIVING_MODE']=='HALT_COURT' else 'Two native candidate goods only; no H3/grain/composition and no detail/Y12/Matt approval.' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else 'One existing native candidate composition; context mode reuses exact H2 and H4 without drawing. Native terrain initialisers stay within composition phase. Ground/shadow/reference/Y12/Matt gaps remain.'))
+          (evidence/'workflow-disposition.json').write_text(json.dumps(value,indent=2)+'\n')
+          PY
+      - name: Always upload evidence and original failed-method outputs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: mygame-grain-scale-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/grain-scale/evidence/
+            ${{ runner.temp }}/grain-scale/presentation/
+            ${{ runner.temp }}/grain-scale/halt-court/
+            ${{ runner.temp }}/grain-scale/work/game/kit/props/art/
+            ${{ runner.temp }}/grain-scale/work/game/kit/props/index.json
+            ${{ runner.temp }}/grain-scale/work/game/kit/props/context_art/
+            ${{ runner.temp }}/grain-scale/work/game/kit/receiving-context/
+            ${{ runner.temp }}/grain-scale/work/game/kit/zones/grain_scale_context_diagnostic.json
+            ${{ runner.temp }}/grain-scale/work/game/kit/zones/grain_scale_diagnostic.json
+          if-no-files-found: error
+          retention-days: 7
