@@ -170,6 +170,29 @@ EVIDENCE_LIMIT = 64 * 1024**2
 LOG_LIMIT = 4 * 1024**2
 ERROR_PATTERN = re.compile(r"Traceback \(most recent call last\):|^ERROR:|SCRIPT ERROR:|MemoryError|ModuleNotFoundError", re.M)
 
+# Opt-in subject is separate from the frozen H3 source/receiver ancestry above.
+ACTIVE_RECEIVER_PARENT = "c302b3380f99091e30ef6e7dc2b18f6118a268f3"
+ART_SOURCE_SHA = "d948ac57134ab092e91c8ab9ccc5d62593f064dd"
+ART_SOURCE_TREE = "d52322bc21b10ba9d4a6cab4bb1d45f6d79ebf87"
+ART_SOURCE_PARENT = "eee6036dd1d96a6c63c6a25a6ca33a0ccf56d77e"
+ART_SOURCE_CHANGES = {
+    "scripts/art/native/village.py": ("100644", "f4c5b8393beb8332403a0760bbedc635f4b35adb"),
+    "docs/codex/crossroads-grain-scale-review.md": ("100644", "578406e211fe54d9961afce5bc63d63f750029e9"),
+}
+MODE_PATHS = {"scripts/review/grain_scale_receiving.py", ".github/workflows/grain-scale-receiving.yml"}
+TWO_GOODS_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165, '100644'),
+ 'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444, '100644'),
+ 'game/zones/crossroads/art/handcart.png': ('c1016d875a02681ecfc24f624b98dc74e3caa35d', 2189, '100644'),
+ 'game/zones/crossroads/art/sacks_12.png': ('26f9bc05d662407557e6c152cf7fbc8c65b41871', 1122, '100644'),
+ 'scripts/art/house_palette.py': ('8a816d1799abd1fc22931a2c93fbe620a14a200e', 17753, '100644'),
+ 'scripts/art/native/__init__.py': ('424a4a68c50941eb2550d4bcbdd8dff8fd5c37b9', 2747, '100644'),
+ 'scripts/art/native/accents.json': ('d612eb0e6c3eb7eedf8cf878186c26bc1aaa9486', 921, '100644'),
+ 'scripts/art/native/ctx.py': ('c79cfda10603fcc7092a4b879dc552c01d88f6c1', 1506, '100644'),
+ 'scripts/art/native/palette.py': ('7685bc30fa29bf2c6fe87cfdc4e2ecae2f908b28', 6189, '100644'),
+ 'scripts/art/native/village.py': ('f4c5b8393beb8332403a0760bbedc635f4b35adb', 185603, '100644')}
+TWO_GOODS_FILES = ("handcart.png", "sacks_12.png")
+TWO_GOODS_PRESENTATION = set(TWO_GOODS_FILES) | {"two-goods-before-after-2x.png"}
+
 def digest(path: Path, kind: str = "sha256") -> str:
     h = hashlib.new(kind)
     with path.open("rb") as handle:
@@ -409,10 +432,16 @@ class Controller:
         self.work = self.root / "work"
         self.evidence = self.root / "evidence"
         self.event_sha = args.event_sha
+        self.receiving_mode = args.receiving_mode
+        self.two_goods = self.receiving_mode == "TWO_GOODS"
+        self.inputs = TWO_GOODS_INPUTS if self.two_goods else INPUTS
+        self.subject_sha = ART_SOURCE_SHA if self.two_goods else SOURCE_SHA
+        self.subject_tree = ART_SOURCE_TREE if self.two_goods else SOURCE_TREE
+        self.goods_before = None
         self.artifact_token = os.environ.pop("GRAIN_ARTIFACT_TOKEN", "")
-        self.phases = {n: {"state": "NOTRUN"} for n in ("dependencies", "versions", "reuse", "composition")}
+        self.phases = {n: {"state": "NOTRUN"} for n in (("dependencies", "versions", "two_goods") if self.two_goods else ("dependencies", "versions", "reuse", "composition"))}
         self.output = {"state": "SETUP_FAILED", "workflow_sha": self.event_sha,
-                       "source_sha": SOURCE_SHA, "source_tree": SOURCE_TREE, "phases": self.phases,
+                       "source_sha": self.subject_sha, "source_tree": self.subject_tree, "receiving_mode": self.receiving_mode, "phases": self.phases,
                        "qualification": "Synthetic CANDIDATE only; no terrain/layout/library/art/Matt acceptance."}
         self.before = None
         self.candidate_before = None
@@ -443,7 +472,7 @@ class Controller:
         free = min(shutil.disk_usage(p).free for p in self.owned_roots)
         limits = [(self.root / "dependencies", DEPENDENCY_LIMIT), (self.evidence, EVIDENCE_LIMIT),
                   (self.work / "game/kit/props/art", 8 * 1024**2),
-                  (self.root / "presentation", 16 * 1024**2)]
+                  (self.root / "presentation", (8 if self.two_goods else 16) * 1024**2)]
         for folder, limit in limits:
             if folder.exists():
                 actual = 0
@@ -461,7 +490,7 @@ class Controller:
 
     def inputs_snapshot(self, root):
         rows = {}
-        for name, (sha, size, mode) in INPUTS.items():
+        for name, (sha, size, mode) in self.inputs.items():
             p = root / name
             st = p.lstat()
             if (not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or st.st_size != size
@@ -501,25 +530,46 @@ class Controller:
                 self.evidence / "bootstrap.json", self.evidence / "controller.log"}:
             raise RuntimeError("Evidence/duty root nonempty; do not overwrite")
         os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
-        if git(self.source, "rev-parse", "HEAD").decode().strip() != SOURCE_SHA:
+        if git(self.source, "rev-parse", "HEAD").decode().strip() != self.subject_sha:
             raise RuntimeError("403 source head differs")
-        if git(self.source, "rev-parse", "HEAD^{tree}").decode().strip() != SOURCE_TREE:
+        if git(self.source, "rev-parse", "HEAD^{tree}").decode().strip() != self.subject_tree:
             raise RuntimeError("403 source tree differs")
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [RECEIVER_PARENT]:
-            raise RuntimeError("Receiving correction must retain the exact sole receiver parent")
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [ACTIVE_RECEIVER_PARENT]:
+            raise RuntimeError("Mode extension must retain the exact sole c302 receiver parent")
+        active_headers = git(self.candidate, "cat-file", "commit", ACTIVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if [x[7:] for x in active_headers.splitlines() if x.startswith("parent ")] != [RECEIVER_PARENT]:
+            raise RuntimeError("Frozen H3 receiver must retain genuine3e7 parent")
         parent_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if [x[7:] for x in parent_headers.splitlines() if x.startswith("parent ")] != [ORIGINAL_RECEIVER]:
             raise RuntimeError("H2 receiver must retain genuine1d47 parent")
         original_headers = git(self.candidate, "cat-file", "commit", ORIGINAL_RECEIVER).decode().split("\n\n", 1)[0]
         if [x[7:] for x in original_headers.splitlines() if x.startswith("parent ")] != [SOURCE_SHA]:
             raise RuntimeError("Original receiver must retain genuine403 parent")
-        source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
+        source_headers = git(self.source, "cat-file", "commit", SOURCE_SHA).decode().split("\n\n", 1)[0]
         if [x[7:] for x in source_headers.splitlines() if x.startswith("parent ")] != [SOURCE_PARENT]:
             raise RuntimeError("Frozen403 must retain genuine377 parent")
-        src, runner = tree(self.source), tree(self.candidate)
+        src, runner = tree(self.source, SOURCE_SHA), tree(self.candidate)
+        if git(self.source, "rev-parse", SOURCE_SHA + "^{tree}").decode().strip() != SOURCE_TREE:
+            raise RuntimeError("Original5dd source baseline differs")
+        if self.two_goods:
+            art_headers = git(self.source, "cat-file", "commit", ART_SOURCE_SHA).decode().split("\n\n", 1)[0]
+            art_parent_headers = git(self.source, "cat-file", "commit", ART_SOURCE_PARENT).decode().split("\n\n", 1)[0]
+            if ([x[7:] for x in art_headers.splitlines() if x.startswith("parent ")] != [ART_SOURCE_PARENT]
+                    or [x[7:] for x in art_parent_headers.splitlines() if x.startswith("parent ")] != [SOURCE_SHA]):
+                raise RuntimeError("Separate subject d948->eee->5dd ancestry differs")
+            art_tree = tree(self.source)
+            changed = {p for p in src.keys() | art_tree.keys() if src.get(p) != art_tree.get(p)}
+            if changed != set(ART_SOURCE_CHANGES) or any(art_tree[p] != v for p,v in ART_SOURCE_CHANGES.items()):
+                raise RuntimeError("Only reviewed native source and review MD may differ from5dd")
+            self.output["art_subject_history"] = {"headers":art_headers,"parent_headers":art_parent_headers,
+                "baseline_sha":SOURCE_SHA,"changed":sorted(changed),"not_receiver_ancestor":True}
+        active_tree = tree(self.candidate, ACTIVE_RECEIVER_PARENT)
+        mode_delta = {p for p in active_tree.keys() | runner.keys() if active_tree.get(p) != runner.get(p)}
+        if mode_delta != MODE_PATHS:
+            raise RuntimeError("Only two existing mode-extension receiver files may change")
         previous = tree(self.candidate, RECEIVER_PARENT)
         correction_delta = {p for p in previous.keys() | runner.keys() if previous.get(p) != runner.get(p)}
         if correction_delta != CORRECTION_PATHS:
@@ -537,7 +587,7 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers, "parent_headers": parent_headers, "original_headers": original_headers,
+            "headers": headers, "active_headers": active_headers, "mode_delta":sorted(mode_delta), "parent_headers": parent_headers, "original_headers": original_headers,
             "receiver_parent": RECEIVER_PARENT,
             "correction_delta": sorted(correction_delta), "source_headers": source_headers, "delta": sorted(delta),
             "receiving": self.candidate_before})
@@ -546,7 +596,7 @@ class Controller:
         self.work.mkdir(mode=0o700)
         deadline = time.monotonic() + 30
         with tarfile.open(self.evidence / "immutable-inputs.tar.gz", "x:gz") as archive:
-            for name in INPUTS:
+            for name in self.inputs:
                 if time.monotonic() > deadline:
                     raise RuntimeError("Physical source staging30s exhausted; partial archive retained")
                 p = self.work / name
@@ -557,13 +607,14 @@ class Controller:
                 self.capacity()
         if self.inputs_snapshot(self.work) != self.before["inputs"]:
             raise RuntimeError("Physical work copies differ")
-        # Copy fixture only into the isolated work tree, outside registered zones.
-        f = self.work / FIXTURE
-        f.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(self.candidate / FIXTURE, f)
-        if blob(f) != self.candidate_before[FIXTURE]["blob"]:
-            raise RuntimeError("Private fixture copy differs from immutable receiving source")
-        self.fixture_before = digest(f)
+        if not self.two_goods:
+            # Copy fixture only into the isolated work tree, outside registered zones.
+            f = self.work / FIXTURE
+            f.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(self.candidate / FIXTURE, f)
+            if blob(f) != self.candidate_before[FIXTURE]["blob"]:
+                raise RuntimeError("Private fixture copy differs from immutable receiving source")
+            self.fixture_before = digest(f)
         (self.root / "presentation").mkdir(mode=0o700)
         roots = {k: self.root / k for k in ("XDG_CONFIG_HOME", "XDG_CACHE_HOME", "XDG_DATA_HOME", "TMPDIR")}
         for p in roots.values(): p.mkdir(mode=0o700)
@@ -572,20 +623,23 @@ class Controller:
                     "PYTHONPATH":os.pathsep.join((str(self.root / "dependencies"), str(self.work))),
                     "OPENBLAS_NUM_THREADS":"1", "OMP_NUM_THREADS":"1", "MKL_NUM_THREADS":"1",
                     "GRAIN_RECEIVING_CHILD":self.event_sha, "GRAIN_DUTY_ROOT":str(self.root)}
-        self.env["GRAIN_FIXTURE_BLOB"] = self.candidate_before[FIXTURE]["blob"]
+        self.env["GRAIN_RECEIVING_MODE"] = self.receiving_mode
+        if not self.two_goods:
+            self.env["GRAIN_FIXTURE_BLOB"] = self.candidate_before[FIXTURE]["blob"]
         libc = ctypes.CDLL(None, use_errno=True)
         if libc.prctl(36, 1, 0, 0, 0) != 0:
             raise OSError(ctypes.get_errno(), "No actual orphan collection")
         write_json(self.evidence / "plan.json", {"fit":"UNMEASURED; no automatic increase", "one_cpu":True,
-            "source_files":len(INPUTS), "source_bytes":sum(v[1] for v in INPUTS.values()),
+            "receiving_mode":self.receiving_mode,"source_files":len(self.inputs), "source_bytes":sum(v[1] for v in self.inputs.values()),
             "limits":{"duty_bytes":OWNED_LIMIT,"dependency_stage_bytes":DEPENDENCY_LIMIT,
                 "evidence_bytes":EVIDENCE_LIMIT,"reserve_bytes":FREE_RESERVE,
                 "reuse_s":30,"reuse_sampled_group_rss":256*1024**2,"reused_png_output":8*1024**2,
                 "composition_s":120,"composition_sampled_group_rss":512*1024**2,
-                "presentation_output":16*1024**2,"phase_log":LOG_LIMIT,
+                "two_goods_s":30,"two_goods_sampled_group_rss":256*1024**2,
+                "presentation_output":(8 if self.two_goods else 16)*1024**2,"phase_log":LOG_LIMIT,
                 "collection_per_phase_s":12,"per_process_AS":2*1024**3,"job_outer_minutes":15},
-            "import_initialisers":"Unmodified build/terrain imports paint native face/snow/grass/path sheets in memory. Included in future composition120s/512MiB; exact future GO must explicitly accept this dependency work. No code executed during source preparation.",
-            "terrain_inputs":"Complete unmodified manifest and all39 PNG read paths; not a selected-fill approximation.",
+            "import_initialisers":("TWO_GOODS imports only native village/ctx/palette/house_palette; no town/terrain initialisers." if self.two_goods else "Unmodified build/terrain imports paint native face/snow/grass/path sheets in memory. Included in future composition120s/512MiB; exact future GO must explicitly accept this dependency work. No code executed during source preparation."),
+            "terrain_inputs":("NONE: only two frozen old PNGs for inspection." if self.two_goods else "Complete unmodified manifest and all39 PNG read paths; not a selected-fill approximation."),
             "rss_qualification":"Sampled /proc aggregate group RSS,50ms select loop; actual maximum monitor gap recorded. Any observed excess fails.",
             "acceptance":"Synthetic receiving diagnostic only; no Crossroads layout/physics/art/EW detail/Matt approval."})
         self.capacity()
@@ -636,7 +690,7 @@ class Controller:
             self.setup()
             self.install_dependencies()
             controller = self.candidate / "scripts/review/grain_scale_receiving.py"
-            for name, seconds, rss in (("reuse",30,256*1024**2),("composition",120,512*1024**2)):
+            for name, seconds, rss in ((("two_goods",30,256*1024**2),) if self.two_goods else (("reuse",30,256*1024**2),("composition",120,512*1024**2))):
                 command = [sys.executable,"-B",str(controller),"--mode",name,"--root",str(self.root)]
                 if name == "reuse": self.env["GRAIN_ARTIFACT_TOKEN"] = self.artifact_token
                 try:
@@ -648,6 +702,7 @@ class Controller:
                 if result.get("state") != "PASS":
                     raise RuntimeError(f"{name} output/canary incomplete")
                 if name == "reuse": self.reuse_before = result
+                if name == "two_goods": self.goods_before = result
             self.output["state"] = "DIAGNOSTIC_EXECUTION_COMPLETE_PENDING_FINAL_GUARDS"
         except BaseException as error:
             failure = {"type":type(error).__name__,"message":str(error),"traceback":traceback.format_exc()}
@@ -677,7 +732,9 @@ class Controller:
                         and (self.work / "game/kit/props/art" / n).stat().st_size == H2_PNGS[n][0]
                         and digest(self.work / "game/kit/props/art" / n) == H2_PNGS[n][1]
                         for n in FILENAMES)),
-                ("dependencies", lambda: self.dependency_snapshot() == self.deps_before)):
+                ("dependencies", lambda: self.dependency_snapshot() == self.deps_before),
+                *(((("two-goods", lambda: self.goods_snapshot() == self.goods_before["presentation"]),)
+                    if self.two_goods else ()))):
                 try:
                     seal_check()
                     if (label == "candidate" and self.candidate_before is None) or (label in ("source","work-inputs") and self.before is None) or (label == "dependencies" and self.deps_before is None):
@@ -685,6 +742,9 @@ class Controller:
                         continue
                     if label == "work-fixture" and self.fixture_before is None:
                         self.output[label+"_guard"] = "NOTRUN; setup not complete"
+                        continue
+                    if label == "two-goods" and self.goods_before is None:
+                        self.output[label+"_guard"] = "NOTRUN; draw not complete"
                         continue
                     if label == "h2-reuse" and self.reuse_before is None:
                         self.output[label+"_guard"] = "NOTRUN; reuse not complete"
@@ -718,11 +778,25 @@ class Controller:
             if failure or final_errors:
                 self.output["state"] = "RECEIVING_FAILED_OR_FINAL_GUARD_INCOMPLETE"
             elif self.output["state"] == "DIAGNOSTIC_EXECUTION_COMPLETE_PENDING_FINAL_GUARDS":
-                self.output["state"] = "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL"
+                self.output["state"] = "TWO_GOODS_ARTIFACTS_COMPLETE_NOT_ART_APPROVAL" if self.two_goods else "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL"
             self.output.update(final_errors=final_errors,seal_elapsed_s=time.monotonic()-seal_started,
                                finished_at=time.time(),art_approved=False,layout_approved=False)
             write_json(self.evidence / "result.json",self.output)
-        return 0 if self.output["state"] == "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL" else 1
+        return 0 if self.output["state"] in ("TWO_GOODS_ARTIFACTS_COMPLETE_NOT_ART_APPROVAL", "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL") else 1
+
+    def goods_snapshot(self):
+        out = self.root / "presentation"
+        if set(p.name for p in out.iterdir()) != TWO_GOODS_PRESENTATION:
+            raise RuntimeError("Exactly two subjects and one labelled inspection strip required")
+        rows = {}
+        for p in sorted(out.iterdir()):
+            st = p.lstat()
+            if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+                raise RuntimeError("Nonphysical two-goods presentation")
+            rows[p.name] = {"bytes":st.st_size,"sha256":digest(p)}
+        if sum(v["bytes"] for v in rows.values()) > 8*1024**2:
+            raise RuntimeError("Two-goods8MiB output bound exceeded")
+        return rows
 
     def phase(self, name: str, command: list[str], seconds: int, rss_limit: int) -> dict:
         result = {"state": "STARTING", "command": command, "timeout_seconds": seconds,
@@ -892,6 +966,92 @@ class Controller:
         return result
 
 
+def draw_two_goods(root: Path, work: Path, evidence: Path) -> int:
+    """One native API pass over the two reviewed forms; no town/terrain/compositor."""
+    out = root / "presentation"
+    if set(out.iterdir()) or "scripts.art.native.village" in sys.modules:
+        raise RuntimeError("Fresh output directory and unimported density context required")
+    from scripts.art.native import ctx
+    ctx.configure(3.0)
+    from scripts.art.native import village as V
+    from PIL import Image, ImageDraw, ImageFont
+    for module_name in ("scripts.art.native", "scripts.art.native.ctx", "scripts.art.native.village",
+                        "scripts.art.native.palette", "house_palette"):
+        module = sys.modules[module_name]
+        if not Path(module.__file__).resolve(strict=True).is_relative_to(work):
+            raise RuntimeError("Native module substituted: " + module_name)
+    deps = root / "dependencies"
+    versions = {}
+    for name, module_name in (("Pillow", "PIL"), ("numpy", "numpy"), ("scipy", "scipy")):
+        module = sys.modules[module_name]
+        versions[name] = {"version":module.__version__, "file":module.__file__}
+        if module.__version__ != DEPENDENCIES[name] or not Path(module.__file__).resolve(strict=True).is_relative_to(deps):
+            raise RuntimeError("Actual drawing dependency/version substituted")
+    subjects = {}
+    images = []
+    for name, kind, w, h, seed, size, foot in (
+            ("handcart.png", "cart", 22, 8, 157, (114,84), (57,80)),
+            ("sacks_12.png", "sacks", 14, 8, 112, (60,66), (30,62))):
+        pic = V.prop(kind,w,h,seed=seed,hd=True)
+        if (pic.W,pic.H) != size or (pic.ax,pic.ay) != foot:
+            raise RuntimeError("Native canvas/foot contract differs: " + name)
+        image = pic.rgba()
+        if image.mode != "RGBA" or image.size != size:
+            raise RuntimeError("Native RGBA contract differs")
+        image.save(out / name, optimize=True)
+        with Image.open(out / name) as check:
+            check.verify()
+        with Image.open(out / name) as check:
+            check.load()
+            if check.mode != "RGBA" or check.size != size or check.tobytes() != image.tobytes():
+                raise RuntimeError("Saved PNG differs from native drawing")
+        alpha = image.getchannel("A")
+        bounds = alpha.getbbox()
+        if not bounds:
+            raise RuntimeError("Empty native subject")
+        colours = image.getcolors(maxcolors=size[0]*size[1])
+        subjects[name] = {"kind":kind,"seed":seed,"canvas":list(size),"foot":list(foot),
+            "mode":"RGBA","alpha_bbox":list(bounds),"alpha_pixels":sum(alpha.histogram()[1:]),
+            "nontransparent_colours":len({rgba for _count,rgba in colours if rgba[3]}),
+            "bytes":(out/name).stat().st_size,"sha256":digest(out/name)}
+        images.append(image)
+    # One inspection artifact only: four unmodified old/new subjects at integer2x.
+    strip = Image.new("RGBA",(800,256),(24,25,30,255))
+    draw = ImageDraw.Draw(strip)
+    font = ImageFont.load_default(size=10)
+    captions = ["CANDIDATE / native pixels at integer2x / source " + ART_SOURCE_SHA,
+                "Python " + platform.python_version() + " / Pillow " + versions["Pillow"]["version"]
+                + " / NumPy " + versions["numpy"]["version"] + " / SciPy " + versions["scipy"]["version"],
+                "OLD / NEW only. No EW detail score, Y12, production or Matt approval."]
+    for caption,y in zip(captions,(2,16,240)):
+        box = draw.textbbox((0,0),caption,font=font)
+        if box[2]-box[0] > 784:
+            raise RuntimeError("Candidate caption exceeds inspection width")
+        draw.text((8,y),caption,font=font,fill=(235,233,226,255))
+    for i,(name,x) in enumerate(zip(TWO_GOODS_FILES,(8,500))):
+        with Image.open(work / "game/zones/crossroads/art" / name) as old:
+            old.load()
+            if old.size != images[i].size:
+                raise RuntimeError("Frozen old native dimensions differ")
+            old = old.convert("RGBA")
+            strip.alpha_composite(old.resize((old.width*2,old.height*2),Image.Resampling.NEAREST),(x,60))
+        nx = x + (252 if i == 0 else 140)
+        image = images[i]
+        strip.alpha_composite(image.resize((image.width*2,image.height*2),Image.Resampling.NEAREST),(nx,60))
+        draw.text((x,38),"OLD "+name,font=font,fill=(235,233,226,255))
+        draw.text((nx,38),"NEW "+name,font=font,fill=(235,233,226,255))
+    strip.save(out / "two-goods-before-after-2x.png")
+    presentation = {p.name:{"bytes":p.stat().st_size,"sha256":digest(p)} for p in out.iterdir()}
+    if set(presentation) != TWO_GOODS_PRESENTATION or sum(v["bytes"] for v in presentation.values()) > 8*1024**2:
+        raise RuntimeError("Two subject PNGs plus one inspection strip/8MiB required")
+    write_json(evidence / "two_goods-result.json",{"state":"PASS","source_sha":ART_SOURCE_SHA,
+        "source_tree":ART_SOURCE_TREE,"draw_invocations":1,"native_prop_calls":2,
+        "grain_draw_invocations":0,"composition_invocations":0,"subjects":subjects,
+        "presentation":presentation,"actual_scientific_versions":versions,"python":sys.version,
+        "qualification":"Two candidate native artifacts only. VIEW still required; colour/alpha counts are not detail scores. Same-kind/native-period/adult EW comparison/Y12/Matt approval remain open."})
+    return 0
+
+
 def child(mode, root):
     root = root.resolve(strict=True)
     if (str(root) != os.environ.get("GRAIN_DUTY_ROOT")
@@ -901,9 +1061,13 @@ def child(mode, root):
         raise RuntimeError("Child requires exact owned outer preflight/ref/attempt")
     work = root / "work"
     evidence = root / "evidence"
-    if blob(work / FIXTURE) != os.environ.get("GRAIN_FIXTURE_BLOB"):
+    receiving_mode = os.environ.get("GRAIN_RECEIVING_MODE", "WORKING_YARD")
+    if receiving_mode not in ("WORKING_YARD", "TWO_GOODS"):
+        raise RuntimeError("Unknown receiving mode")
+    two_goods = receiving_mode == "TWO_GOODS"
+    if not two_goods and blob(work / FIXTURE) != os.environ.get("GRAIN_FIXTURE_BLOB"):
         raise RuntimeError("Child fixture bytes differ BEFORE any receiving use")
-    for name, (sha, size, _mode) in INPUTS.items():
+    for name, (sha, size, _mode) in (TWO_GOODS_INPUTS if two_goods else INPUTS).items():
         p = work / name
         if not p.is_file() or p.is_symlink() or p.stat().st_nlink != 1 or p.stat().st_size != size or blob(p) != sha:
             raise RuntimeError("Child source bytes differ: "+name)
@@ -913,6 +1077,12 @@ def child(mode, root):
                  for n,m in zip(("Pillow","numpy","scipy"),(PIL,numpy,scipy))}}
         write_json(evidence / "scientific-versions.json",value)
         return 0
+    if two_goods:
+        if mode != "two_goods":
+            raise RuntimeError("TWO_GOODS never enters H3 reuse/composition")
+        return draw_two_goods(root, work, evidence)
+    if mode == "two_goods":
+        raise RuntimeError("Two-goods child requires explicit outer mode")
     if mode == "reuse":
         return reuse_h2(root, work, evidence)
     # No subject imports occur before outer preflight and private exact dependency stage.
@@ -1045,7 +1215,8 @@ def child(mode, root):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode",choices=("outer","versions","reuse","composition"),default="outer")
+    parser.add_argument("--mode",choices=("outer","versions","reuse","composition","two_goods"),default="outer")
+    parser.add_argument("--receiving-mode",choices=("WORKING_YARD","TWO_GOODS"),default="WORKING_YARD")
     parser.add_argument("--source",type=Path)
     parser.add_argument("--candidate",type=Path)
     parser.add_argument("--root",required=True,type=Path)
