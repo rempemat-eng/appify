@@ -314,3 +314,42 @@ The first bounded attempt stopped at the old public-lane byte guard because rout
 
 GO6536330070 / ASSIGN6536511906 / ACK6536512087. The source is a genuine child of b39fb6b8 and changes only the two existing proposal documents. Final art/map merge approval still belongs to Matt on the PR.
 
+
+
+## Eastgate and Halt Road: the complete 41-record candidate, with one grade conflict
+
+The new `eastgate_halt_EG_fit` section completes the **geometry offer for 40 original records plus one separate restored mill**, without adopting any of them into the native game. All 31 earlier A/B/C/D/F footprints, halos, gardens, courts and source sections remain unchanged. Nine of the ten new E/G footprints are macro-clear. **E05 / crossroads-b036 remains unoccupied**: its captured tiers 9–11 span two steps, exceeding the unchanged permitted spread of one. Its slope 0.006221 is below 0.016 and its literal ground/physical guards are clear; that does not waive the tier conflict. Overall accounting is 40 macro-clear footprints and one conditional plot, not 41 accepted/native placements.
+
+Eastgate now places two inns on the south side of Market Lane, opposite three smaller frontage offers. The principal wide-front inn has a distinct 128×104 rear coach court, reached by a 32px side drive. The secondary portrait-plan inn has a separate 40×56 rear service court on the dry side of the protected feature, reached from the shared rear service lane rather than through the inn. The inns are 8px apart; that gap is not called a 16px passage. Both inn north facades and service/work faces are required but unverified. Coach turning, grades, gates and native floors remain unproved even though the courts are dry/guard-clear and retain captured tiers 9–10.
+
+The first eastern offer put the portrait inn on 96 literal path cells, spread the principal inn across tiers 9–11 and met unrelated occupancy in its far-eastern service loops. Those negatives remain. The final offer moves onto the already measured lower plateau and avoids the real Fern Lane and occupied far-eastern ground. Three north-side dwellings face south toward the public street. Ordinary `BUILDABLE` includes unprotected `trail`; the final uses that unchanged source rule while still rejecting `path`, registered streets, occupancy, guards and excessive tier/slope spread. No named regional centreline crosses the revised E footprints by independent source check; this is not proof of every unnamed/native path permission.
+
+Halt Road is an inhabited productive fringe, not an invented station. Its five homes face a short32px approach connected to an exact retained western regional point. Smaller rear work plots and longer garden backs taper around the existing roads and drainage. All five G records and the entire declared G support retain the first successful offer's 49 typed values exactly; they were not repainted during the final E measurement. The intended loading yard `[5840,4304,240,64]` was never reached in the failed original capture. It is reserved as an intention, not drawn as an existing rail/platform, inn court or open arrival. No measured rail/platform polygon exists, so rail clearance and station/portal authority remain UNKNOWN.
+
+| Plot / record | Candidate `[x,y,w,h]`, world px | Required face | Actual copied disposition |
+|---|---|---|---|
+| E01 / 030 | `[6896, 3432, 72, 128]` | north | Macro footprint and halo clear; native/asset acceptance unverified. |
+| E02 / 031 | `[6976, 3456, 128, 72]` | north | Macro footprint and halo clear; native/asset acceptance unverified. |
+| E03 / 032 | `[6992, 3312, 48, 88]` | south | Macro footprint and halo clear; native/asset acceptance unverified. |
+| E04 / 034 | `[7056, 3352, 72, 48]` | south | Macro footprint and halo clear; native/asset acceptance unverified. |
+| E05 / 036 | `[6896, 3352, 80, 48]` | south | UNSTAMPED: tiers 9–11/spread2; no grade waiver. |
+| G01 / 028 | `[5992, 3944, 56, 96]` | west | Macro footprint and halo clear; native/asset acceptance unverified. |
+| G02 / 029 | `[5992, 4064, 48, 72]` | west | Macro footprint and halo clear; native/asset acceptance unverified. |
+| G03 / 038 | `[5888, 4048, 56, 48]` | east | Macro footprint and halo clear; native/asset acceptance unverified. |
+| G04 / 039 | `[5880, 4120, 64, 48]` | east | Macro footprint and halo clear; native/asset acceptance unverified. |
+| G05 / 040 | `[5992, 4160, 56, 40]` | west | Macro footprint and halo clear; native/asset acceptance unverified. |
+
+All 18 E/G public/service/threshold bands have zero water, barrier, keepout or building cuts. All ten offered thresholds connect locally; the five E threshold offers reach Square in the painted-street graph, while G's five are outside that painted component. This is coverage evidence, not native-disconnection proof or a substitute for the real retained roads and their bridge/gate authority. Earlier F/outer-road, mill identity/hydraulic and facade limitations remain unchanged.
+
+A **bounded UNAPPLIED terrace-study option** surrounds E05 at `[6888,3344,96,64]`. It would investigate one continuous plot/frontage terrace, protecting neighbouring plots, physical masks and water, then remeasure the ordinary tier/slope/door/native rules. Target native level and earthwork quantities are UNKNOWN. No height, tier, slope or physical/protection mask was changed in this offer, and no terrain result or new rule is claimed.
+
+The final copy changes 2,117 distinct cells inside the declared E/G supports. Per-channel counts/outside-support proofs are in the sidecar and actual report. All 49 typed values outside E/G match frozen D489e; outside the accumulated support union they match original captured BEFORE. All 31 earlier plot/halo sets, prior A/B/C/D/F areas, native story/closed-halt reserves, planned loading area, water/bridge cells and six original input hashes remain exact. All 36 original route polylines remain unchanged. Original 40 records, bays/forms/dimensions, single mill/count 41 and all original null identity/geometry fields remain deep unchanged; no residents, jobs or extra homes are inferred.
+
+**Execution and artifact history:** invocation 1 measured the first conflicts and exited 0. Its completed-size accounting implies a 1,442,295-byte NPZ, but the retained original later contained only 1,088,864 bytes, 29 complete local ZIP members and no central directory: 353,431 bytes are absent. The cause is UNKNOWN. Invocation 2 failed before measurement when opening that incomplete archive. Independent byte reconstruction from frozen D489e plus the recorded CSV matched all 49 payload/outside hashes. Recovery-only GO6537123683 then authorised a NEW RECOVERED container; its typed data is exact, while original ZIP byte identity is not claimed. Both the incomplete original and the recovered container are retained.
+
+After root inspection, GO6537155067 expressly authorised one final E-only measurement of the prepared revision. Its atomic closed output was collected at exit0 in 3.288 seconds, peak 75,112,448 bytes, with 10,954 log bytes and no truncation. After actual collection, all 49 CRC/shape/dtype/raw/NPY/outside hashes and per-file closed size/SHA matched. Original inputs and successful G data remain exact. There was no further fit or redesign after the residual E05 conflict. A timing/yield explanation for the earlier archive loss is unproved and is not presented as a cause.
+
+This is one labelled complete-town candidate on a private captured crop, **not a corrected production continent overview, 21-town report, native/editor compatibility, art approval or playable integration**. Static source/accounting/null/history/AST/XML/whitespace checks are separate from required full-project, art, native and visual gates. Producer cap 40 / check 40 is unchanged until separately scoped adoption of the 41-record programme. Matt's explicit art/map OK on the PR remains required before merge.
+
+GO6536825931 / ASSIGN6536841341 / ACK6536841532; recovery-only6537123683 / ACK6537136426; final E6537155067 / ACK6537164795. Source is a genuine sole child of 60c08da3; only the two existing proposal documents change.
+
