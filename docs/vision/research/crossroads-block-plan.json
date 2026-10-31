@@ -1,6 +1,6 @@
 {
   "document": "Crossroads block-and-plot proposal sidecar; NOT a runtime schema or adoption packet",
-  "status": "COMPLETE_41_RECORD_PROPOSAL_40_MACRO_FOOTPRINTS_CLEAR_E05_GRADE_CONDITIONAL_NATIVE_UNVERIFIED",
+  "status": "UNMEASURED_NATIVE_DRIVEN_LAYOUT_CONTRACT_NOT_FITTED_NOT_NATIVE_ACCEPTED",
   "date": "2026-10-30",
   "source_parent": "3818de444d24c95c50daedd6e547a78bd0436551",
   "source_approval": "GO6527523659; Matt6526956297; study6527386266; lead amendment6533453453; repair ASSIGN6533485058/ACK6533489951; measured proposal GO6533855827/ASSIGN6533865862/ACK6533866313; reconciliationGO6534840357/ASSIGN6534876710/ACK6534877050; MillEndGO6535477628/ASSIGN6535521160/ACK6535521524; MillEndCorrectionGO6535910901/ASSIGN6535926108/ACK6535926395; WestLaneDGO6536330070/ASSIGN6536511906/ACK6536512087; EGGO6536825931/ASSIGN6536841341/ACK6536841532; recovery6537123683/ACK6537136426; finalE6537155067/ACK6537164795",
@@ -3337,7 +3337,7 @@
     },
     "input_guards_after": "ALL3exact"
   },
-  "current_geometry_authority": "market_reconciliation supersedes measured_market_fit candidate geometry only; earlier actual-before measurements and original40 ledger remain unchanged historical evidence; mill_end_fit adds separate F candidate geometry, keeping all prior A/B/C data unchanged and explicitly retaining mill/outer-join conflicts; mill_end_correction supersedes only latest two local F route bands / two mill occupancy cells, preserving all older evidence and candidate geometry; west_lane_D_fit adds only six D record candidates and local service/garden geometry, preserving all prior sections and25plots; eastgate_halt_EG_fit adds final10offers/complete41index with E05conditional, allprior31 unchanged",
+  "current_geometry_authority": "native_layout_r2 is the latest UNMEASURED source contract. All earlier positive copy measurements remain exact historical evidence for their older rectangles only; none is transferred to this revision.",
   "market_reconciliation": {
     "status": "COHERENT_PROPOSED_COPY_MEASURED_NOT_NATIVE_OR_WHOLE_MAP_ACCEPTANCE",
     "go": 6534840357,
@@ -17306,5 +17306,5550 @@
         }
       ]
     }
+  },
+  "native_layout_r2": {
+    "status": "UNMEASURED_NATIVE_DRIVEN_LAYOUT_CONTRACT_NOT_FITTED_NOT_NATIVE_ACCEPTED",
+    "GO": 6537559340,
+    "ASSIGN": 6537575560,
+    "ACK": 6537577661,
+    "base_source": {
+      "head": "a96c87fe8015c2d49e52ab141e02507bba3f2888",
+      "tree": "b3f97ade2e3bbfad506f7750c3a7c33b311391ea"
+    },
+    "audit": {
+      "comment": 6537486605,
+      "sha256": "da80c66d9a30021409a5cdd3ec9b4e81ba0f45dad77d069d12a63fc8250b9396",
+      "native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+      "source_facts": "19 previous nonSouth,11 cottage width cases;14 genericclasses unresolved;34 newrecords unbound. These are source requirements, not accepted assets."
+    },
+    "historical_authority": {
+      "prior_status": "COMPLETE_41_RECORD_PROPOSAL_40_MACRO_FOOTPRINTS_CLEAR_E05_GRADE_CONDITIONAL_NATIVE_UNVERIFIED",
+      "prior_geometry_authority": "market_reconciliation supersedes measured_market_fit candidate geometry only; earlier actual-before measurements and original40 ledger remain unchanged historical evidence; mill_end_fit adds separate F candidate geometry, keeping all prior A/B/C data unchanged and explicitly retaining mill/outer-join conflicts; mill_end_correction supersedes only latest two local F route bands / two mill occupancy cells, preserving all older evidence and candidate geometry; west_lane_D_fit adds only six D record candidates and local service/garden geometry, preserving all prior sections and25plots; eastgate_halt_EG_fit adds final10offers/complete41index with E05conditional, allprior31 unchanged",
+      "prior_diagnostic_sections": "All prior sections remain byte-equivalent JSON values. Their positive measurements apply only to their exact prior copied geometry, not these changed offers."
+    },
+    "units": "worldpx;8px groundcells. Solid floor, visible projection, sprite canvas and opaque bbox are distinct.",
+    "design": "Preserve market anchors; mixed WestLane terrace frontage and a southern court; quiet garden north; South-entry MillEnd courts branching from one street with one mill/west water face; two South-front inns with side access and distinct yards; inhabited HaltRoad courts taper to productive plots. No packing/search is used.",
+    "records": [
+      {
+        "id": "crossroads-b001",
+        "plot": "C01",
+        "block": "C",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          80,
+          40
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6256,
+          3272,
+          80,
+          40
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6296,
+            3312
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6256,
+          3272,
+          80,
+          40
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6296,
+            3312
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": true,
+        "native_binding": {
+          "status": "EXACT_EXISTING_NATIVE_ID_AND_LOOK_CANDIDATE_NOT_APPROVED",
+          "native_id": "hut",
+          "native_plan": "game/data/plans/crossroads.json",
+          "look": {
+            "kind": "hut",
+            "wall": "boards",
+            "roof": "thatch",
+            "hip": 10,
+            "paint": "leaf",
+            "door": 40,
+            "windows": [
+              16,
+              64
+            ],
+            "box": true,
+            "wall_h": 34,
+            "roof_h": 24
+          },
+          "bbox_class": "hut",
+          "constructor": "scripts/art/native/town.py::build -> village.building(hd=True) -> houses.building(spec,seed)",
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "complete_approved_piece": false,
+          "actual407_floor_world_px": [
+            6256,
+            3272,
+            80,
+            40
+          ],
+          "actual407_logical_door_world_px": [
+            6296,
+            3312
+          ],
+          "captured_vs407_floor_delta_world_px": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drawn_south_thresholds_on_captured_floor_world_px": [
+            [
+              6296,
+              3312
+            ]
+          ],
+          "open_binding_gaps": []
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "status": "Retain existing market/garden public links and logical interaction route exactly; existing logical/drawn offsets remain disclosed.",
+          "new_route": false
+        }
+      },
+      {
+        "id": "crossroads-b002",
+        "plot": "A01",
+        "block": "A",
+        "source_form": "public",
+        "original_source_footprint_world_px": [
+          96,
+          40
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6176,
+          3408,
+          96,
+          40
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6224,
+            3448
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6176,
+          3408,
+          96,
+          40
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6224,
+            3448
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": true,
+        "native_binding": {
+          "status": "EXACT_EXISTING_NATIVE_ID_AND_LOOK_CANDIDATE_NOT_APPROVED",
+          "native_id": "library",
+          "native_plan": "game/data/plans/crossroads.json",
+          "look": {
+            "kind": "library",
+            "wall": "ashlar",
+            "roof": "slate",
+            "hip": 14,
+            "paint": "berry",
+            "door": 48,
+            "windows": [
+              18,
+              78
+            ],
+            "arch": true,
+            "shutters": false,
+            "sign": [
+              60,
+              "book"
+            ],
+            "damage": [
+              [
+                "hole",
+                28,
+                26,
+                20
+              ],
+              [
+                "tarp",
+                50,
+                78,
+                "leaf_cool"
+              ],
+              "slates"
+            ],
+            "win_w": 14,
+            "win_h": 15,
+            "win_top": 34
+          },
+          "bbox_class": "civic",
+          "constructor": "scripts/art/native/town.py::build -> village.building(hd=True) -> houses.building(spec,seed)",
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "complete_approved_piece": false,
+          "actual407_floor_world_px": [
+            6176,
+            3408,
+            96,
+            40
+          ],
+          "actual407_logical_door_world_px": [
+            6224,
+            3448
+          ],
+          "captured_vs407_floor_delta_world_px": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drawn_south_thresholds_on_captured_floor_world_px": [
+            [
+              6224,
+              3448
+            ]
+          ],
+          "open_binding_gaps": []
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "status": "Retain existing market/garden public links and logical interaction route exactly; existing logical/drawn offsets remain disclosed.",
+          "new_route": false
+        }
+      },
+      {
+        "id": "crossroads-b003",
+        "plot": "C02",
+        "block": "C",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          96,
+          40
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6320,
+          3408,
+          96,
+          40
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6392,
+            3448
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6320,
+          3408,
+          96,
+          40
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6392,
+            3448
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": true,
+        "native_binding": {
+          "status": "EXACT_EXISTING_NATIVE_ID_AND_LOOK_CANDIDATE_NOT_APPROVED",
+          "native_id": "north_cottages",
+          "native_plan": "game/data/plans/crossroads.json",
+          "look": {
+            "kind": "terrace",
+            "wall": "frame",
+            "roof": "slate",
+            "posts": [
+              24,
+              48,
+              72
+            ],
+            "units": [
+              [
+                0,
+                48,
+                "sky"
+              ],
+              [
+                48,
+                96,
+                "dusk"
+              ]
+            ],
+            "doors": [
+              [
+                12,
+                "sky"
+              ],
+              [
+                72,
+                "dusk"
+              ]
+            ],
+            "windows": [
+              34,
+              58
+            ],
+            "chimney": [
+              48
+            ],
+            "box": true,
+            "damage": [
+              [
+                "tarp",
+                4,
+                40,
+                "sand"
+              ],
+              [
+                "boards",
+                34,
+                31,
+                15,
+                15
+              ],
+              [
+                "slates",
+                5
+              ]
+            ],
+            "shutters": false
+          },
+          "bbox_class": "terrace",
+          "constructor": "scripts/art/native/town.py::build -> village.building(hd=True) -> houses.building(spec,seed)",
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "complete_approved_piece": false,
+          "actual407_floor_world_px": [
+            6320,
+            3408,
+            96,
+            40
+          ],
+          "actual407_logical_door_world_px": [
+            6392,
+            3448
+          ],
+          "captured_vs407_floor_delta_world_px": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drawn_south_thresholds_on_captured_floor_world_px": [
+            [
+              6332,
+              3448
+            ],
+            [
+              6392,
+              3448
+            ]
+          ],
+          "open_binding_gaps": [
+            "EXISTING_RENDERED_EXTRA_SOUTH_DOOR_NOT_IN_SIDECAR_THRESHOLDS"
+          ]
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "status": "Retain existing market/garden public links and logical interaction route exactly; existing logical/drawn offsets remain disclosed.",
+          "new_route": false
+        }
+      },
+      {
+        "id": "crossroads-b004",
+        "plot": "A02",
+        "block": "A",
+        "source_form": "shop",
+        "original_source_footprint_world_px": [
+          72,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6088,
+          3488,
+          72,
+          48
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6148,
+            3536
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6088,
+          3488,
+          72,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6148,
+            3536
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": true,
+        "native_binding": {
+          "status": "EXACT_EXISTING_NATIVE_ID_AND_LOOK_CANDIDATE_NOT_APPROVED",
+          "native_id": "bakery",
+          "native_plan": "game/data/plans/crossroads.json",
+          "look": {
+            "kind": "cottage",
+            "wall": "stone",
+            "roof": "slate",
+            "paint": "berry",
+            "door": 60,
+            "windows": [
+              14,
+              36
+            ],
+            "chimney": [
+              12
+            ],
+            "chimney_w": 12,
+            "sign": [
+              44,
+              "bread"
+            ],
+            "damage": [
+              [
+                "scaffold",
+                4,
+                28,
+                8
+              ],
+              [
+                "hole",
+                48,
+                16,
+                16
+              ],
+              [
+                "slates",
+                4
+              ]
+            ],
+            "wall_h": 44,
+            "shutters": false,
+            "lawn_as": {
+              "wall_h": 40
+            }
+          },
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/town.py::build -> village.building(hd=True) -> houses.building(spec,seed)",
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "complete_approved_piece": false,
+          "actual407_floor_world_px": [
+            6088,
+            3488,
+            72,
+            48
+          ],
+          "actual407_logical_door_world_px": [
+            6148,
+            3536
+          ],
+          "captured_vs407_floor_delta_world_px": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drawn_south_thresholds_on_captured_floor_world_px": [
+            [
+              6148,
+              3536
+            ]
+          ],
+          "open_binding_gaps": []
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "status": "Retain existing market/garden public links and logical interaction route exactly; existing logical/drawn offsets remain disclosed.",
+          "new_route": false
+        }
+      },
+      {
+        "id": "crossroads-b005",
+        "plot": "A03",
+        "block": "A",
+        "source_form": "shop",
+        "original_source_footprint_world_px": [
+          72,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6088,
+          3576,
+          72,
+          48
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6148,
+            3624
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6088,
+          3576,
+          72,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6148,
+            3624
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": true,
+        "native_binding": {
+          "status": "EXACT_EXISTING_NATIVE_ID_AND_LOOK_CANDIDATE_NOT_APPROVED",
+          "native_id": "herbalist",
+          "native_plan": "game/data/plans/crossroads.json",
+          "look": {
+            "kind": "cottage",
+            "wall": "frame",
+            "roof": "thatch",
+            "hip": 8,
+            "paint": "dusk",
+            "door": 60,
+            "windows": [
+              18,
+              40
+            ],
+            "posts": [
+              29,
+              50
+            ],
+            "sign": [
+              2,
+              "leaf"
+            ],
+            "box": true,
+            "damage": [
+              [
+                "hole",
+                30,
+                18,
+                14
+              ],
+              [
+                "boards",
+                40,
+                31,
+                15,
+                15
+              ],
+              [
+                "crack",
+                6
+              ]
+            ],
+            "wall_h": 40,
+            "roof_h": 31,
+            "shutters": false
+          },
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/town.py::build -> village.building(hd=True) -> houses.building(spec,seed)",
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "complete_approved_piece": false,
+          "actual407_floor_world_px": [
+            6088,
+            3584,
+            72,
+            48
+          ],
+          "actual407_logical_door_world_px": [
+            6148,
+            3632
+          ],
+          "captured_vs407_floor_delta_world_px": [
+            0,
+            8,
+            0,
+            0
+          ],
+          "drawn_south_thresholds_on_captured_floor_world_px": [
+            [
+              6148,
+              3624
+            ]
+          ],
+          "open_binding_gaps": [
+            "Native407 plan moved herbalist +8px south relative to captured anchor; adoption must reconcile without silently moving/save-remapping this preserved anchor."
+          ]
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "status": "Retain existing market/garden public links and logical interaction route exactly; existing logical/drawn offsets remain disclosed.",
+          "new_route": false
+        }
+      },
+      {
+        "id": "crossroads-b006",
+        "plot": "B01",
+        "block": "B",
+        "source_form": "workshop",
+        "original_source_footprint_world_px": [
+          88,
+          56
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6432,
+          3472,
+          88,
+          56
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6464,
+            3528
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6432,
+          3472,
+          88,
+          56
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6464,
+            3528
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": true,
+        "native_binding": {
+          "status": "EXACT_EXISTING_NATIVE_ID_AND_LOOK_CANDIDATE_NOT_APPROVED",
+          "native_id": "smithy",
+          "native_plan": "game/data/plans/crossroads.json",
+          "look": {
+            "kind": "forge",
+            "wall": "stone",
+            "roof": "slate",
+            "door": 30,
+            "mouth_w": 30,
+            "mouth_h": 27,
+            "windows": [
+              70
+            ],
+            "shutters": false,
+            "chimney": [
+              32
+            ],
+            "chimney_w": 14,
+            "chimney_h": 20,
+            "wall_h": 42,
+            "sign": [
+              47,
+              "hammer"
+            ],
+            "damage": [
+              [
+                "hole",
+                54,
+                22,
+                24
+              ],
+              [
+                "boards",
+                30,
+                28,
+                32,
+                26
+              ],
+              [
+                "scaffold",
+                60,
+                80,
+                10
+              ],
+              [
+                "slates",
+                5
+              ]
+            ],
+            "lawn_as": {
+              "chimney": [
+                70
+              ]
+            }
+          },
+          "bbox_class": "civic",
+          "constructor": "scripts/art/native/town.py::build -> village.building(hd=True) -> houses.building(spec,seed)",
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "complete_approved_piece": false,
+          "actual407_floor_world_px": [
+            6432,
+            3472,
+            88,
+            56
+          ],
+          "actual407_logical_door_world_px": [
+            6464,
+            3528
+          ],
+          "captured_vs407_floor_delta_world_px": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drawn_south_thresholds_on_captured_floor_world_px": [
+            [
+              6462,
+              3528
+            ]
+          ],
+          "open_binding_gaps": [
+            "EXISTING_LOGICAL_TO_DRAWN_DOOR_CENTRE_OFFSET_REVIEW; not proof of blockage"
+          ]
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "status": "Retain existing market/garden public links and logical interaction route exactly; existing logical/drawn offsets remain disclosed.",
+          "new_route": false
+        }
+      },
+      {
+        "id": "crossroads-b007",
+        "plot": "B02",
+        "block": "B",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          72,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6432,
+          3616,
+          72,
+          48
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6448,
+            3664
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6432,
+          3616,
+          72,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6448,
+            3664
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": true,
+        "native_binding": {
+          "status": "EXACT_EXISTING_NATIVE_ID_AND_LOOK_CANDIDATE_NOT_APPROVED",
+          "native_id": "fern_cottage",
+          "native_plan": "game/data/plans/crossroads.json",
+          "look": {
+            "kind": "cottage",
+            "wall": "frame",
+            "roof": "slate",
+            "paint": "brass",
+            "door": 14,
+            "windows": [
+              46
+            ],
+            "posts": [
+              28,
+              62
+            ],
+            "chimney": [
+              56
+            ],
+            "box": true,
+            "damage": [
+              [
+                "boards",
+                14,
+                32,
+                16,
+                32
+              ],
+              [
+                "tarp",
+                28,
+                50,
+                "sand"
+              ],
+              [
+                "boards",
+                46,
+                31,
+                15,
+                15
+              ]
+            ],
+            "roof_h": 28
+          },
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/town.py::build -> village.building(hd=True) -> houses.building(spec,seed)",
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "complete_approved_piece": false,
+          "actual407_floor_world_px": [
+            6432,
+            3616,
+            72,
+            48
+          ],
+          "actual407_logical_door_world_px": [
+            6448,
+            3664
+          ],
+          "captured_vs407_floor_delta_world_px": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "drawn_south_thresholds_on_captured_floor_world_px": [
+            [
+              6446,
+              3664
+            ]
+          ],
+          "open_binding_gaps": [
+            "EXISTING_LOGICAL_TO_DRAWN_DOOR_CENTRE_OFFSET_REVIEW; not proof of blockage"
+          ]
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "status": "Retain existing market/garden public links and logical interaction route exactly; existing logical/drawn offsets remain disclosed.",
+          "new_route": false
+        }
+      },
+      {
+        "id": "crossroads-b008",
+        "plot": "D01",
+        "block": "D",
+        "source_form": "row_house",
+        "original_source_footprint_world_px": [
+          80,
+          24
+        ],
+        "source_bays": [
+          {
+            "w_cells": 6,
+            "storeys": 2,
+            "roof": "tile"
+          },
+          {
+            "w_cells": 4,
+            "storeys": 2,
+            "roof": "thatch"
+          }
+        ],
+        "previous_diagnostic_rect_world_px": [
+          5736,
+          3440,
+          80,
+          24
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            5760,
+            3464
+          ],
+          [
+            5800,
+            3464
+          ]
+        ],
+        "proposed_floor_world_px": [
+          5736,
+          3416,
+          80,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            5760,
+            3464
+          ],
+          [
+            5800,
+            3464
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": false,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "WHOLE_TERRACE_CLASS_KNOWN_MIXED_BAY_ASSEMBLY_UNBOUND",
+          "native_id": null,
+          "bbox_class": "terrace",
+          "constructor": "village.building(hd=True) -> houses.building; existing single-shell route only",
+          "candidate_spec": {
+            "w": 80,
+            "depth": 48,
+            "kind": "terrace",
+            "units": [
+              [
+                0,
+                48,
+                "UNKNOWN"
+              ],
+              [
+                48,
+                80,
+                "UNKNOWN"
+              ]
+            ],
+            "doors": [
+              [
+                24,
+                "UNKNOWN"
+              ],
+              [
+                64,
+                "UNKNOWN"
+              ]
+            ]
+          },
+          "source_bays_preserved": [
+            {
+              "w_cells": 6,
+              "storeys": 2,
+              "roof": "tile"
+            },
+            {
+              "w_cells": 4,
+              "storeys": 2,
+              "roof": "thatch"
+            }
+          ],
+          "open_binding_gaps": [
+            "houses.building has one global roof; units split paint/windows only. Mixed tile/thatch roofs need exact existing-compatible component assembly.",
+            "D01 has two-storey source bays; one default window row is not an implemented second storey.",
+            "houses.building has no per-bay storeys or upper-window-row contract; increasing whole wall height is not a two-storey acceptance and conflicts with current single-storey scale semantics.",
+            "No assembly ID, seed, complete looks, collider, piece, opaque measurement or approval is bound."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                5760,
+                3472
+              ],
+              [
+                5760,
+                3476
+              ]
+            ],
+            [
+              [
+                5800,
+                3472
+              ],
+              [
+                5800,
+                3476
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b009",
+        "plot": "D02",
+        "block": "D",
+        "source_form": "row_house",
+        "original_source_footprint_world_px": [
+          112,
+          48
+        ],
+        "source_bays": [
+          {
+            "w_cells": 8,
+            "storeys": 1,
+            "roof": "thatch"
+          },
+          {
+            "w_cells": 6,
+            "storeys": 1,
+            "roof": "tile"
+          }
+        ],
+        "previous_diagnostic_rect_world_px": [
+          5832,
+          3416,
+          112,
+          48
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            5864,
+            3464
+          ],
+          [
+            5920,
+            3464
+          ]
+        ],
+        "proposed_floor_world_px": [
+          5832,
+          3416,
+          112,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            5864,
+            3464
+          ],
+          [
+            5920,
+            3464
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "WHOLE_TERRACE_CLASS_KNOWN_MIXED_BAY_ASSEMBLY_UNBOUND",
+          "native_id": null,
+          "bbox_class": "terrace",
+          "constructor": "village.building(hd=True) -> houses.building; existing single-shell route only",
+          "candidate_spec": {
+            "w": 112,
+            "depth": 48,
+            "kind": "terrace",
+            "units": [
+              [
+                0,
+                64,
+                "UNKNOWN"
+              ],
+              [
+                64,
+                112,
+                "UNKNOWN"
+              ]
+            ],
+            "doors": [
+              [
+                32,
+                "UNKNOWN"
+              ],
+              [
+                88,
+                "UNKNOWN"
+              ]
+            ]
+          },
+          "source_bays_preserved": [
+            {
+              "w_cells": 8,
+              "storeys": 1,
+              "roof": "thatch"
+            },
+            {
+              "w_cells": 6,
+              "storeys": 1,
+              "roof": "tile"
+            }
+          ],
+          "open_binding_gaps": [
+            "houses.building has one global roof; units split paint/windows only. Mixed tile/thatch roofs need exact existing-compatible component assembly.",
+            "D01 has two-storey source bays; one default window row is not an implemented second storey.",
+            "houses.building has no per-bay storeys or upper-window-row contract; increasing whole wall height is not a two-storey acceptance and conflicts with current single-storey scale semantics.",
+            "No assembly ID, seed, complete looks, collider, piece, opaque measurement or approval is bound."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                5864,
+                3472
+              ],
+              [
+                5864,
+                3476
+              ]
+            ],
+            [
+              [
+                5920,
+                3472
+              ],
+              [
+                5920,
+                3476
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b010",
+        "plot": "C03",
+        "block": "C",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          48,
+          72
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6184,
+          3232,
+          48,
+          72
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6208,
+            3304
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6176,
+          3232,
+          64,
+          72
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6208,
+            3304
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": false,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 72,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6208,
+                3312
+              ],
+              [
+                6208,
+                3328
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b011",
+        "plot": "C04",
+        "block": "C",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          56,
+          88
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6360,
+          3240,
+          56,
+          88
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6392,
+            3328
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6360,
+          3240,
+          72,
+          88
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6396,
+            3328
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 72,
+            "depth": 88,
+            "kind": "house",
+            "door": 36.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic house use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6396,
+                3336
+              ],
+              [
+                6396,
+                3336
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b012",
+        "plot": "F01",
+        "block": "F",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          48,
+          64
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6656,
+          3856,
+          48,
+          64
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6680,
+            3920
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6616,
+          3856,
+          64,
+          64
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6648,
+            3920
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 64,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6648,
+                3928
+              ],
+              [
+                6648,
+                3944
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b013",
+        "plot": "B03",
+        "block": "B",
+        "source_form": "shop",
+        "original_source_footprint_world_px": [
+          48,
+          88
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6552,
+          3472,
+          48,
+          88
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6576,
+            3560
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6552,
+          3472,
+          64,
+          88
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6584,
+            3560
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 88,
+            "kind": "shop",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic shop use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6584,
+                3568
+              ],
+              [
+                6584,
+                3576
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b014",
+        "plot": "F02",
+        "block": "F",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          40,
+          72
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6728,
+          3848,
+          40,
+          72
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6752,
+            3920
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6696,
+          3848,
+          64,
+          72
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6728,
+            3920
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 72,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6728,
+                3928
+              ],
+              [
+                6728,
+                3944
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b015",
+        "plot": "F03",
+        "block": "F",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          64,
+          96
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6560,
+          3968,
+          64,
+          96
+        ],
+        "previous_offered_facing": "north",
+        "previous_offered_thresholds_world_px": [
+          [
+            6592,
+            3968
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6560,
+          3968,
+          72,
+          96
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6596,
+            4064
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 72,
+            "depth": 96,
+            "kind": "house",
+            "door": 36.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic house use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6596,
+                4072
+              ],
+              [
+                6596,
+                4080
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b016",
+        "plot": "F04",
+        "block": "F",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          48,
+          56
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6656,
+          3968,
+          48,
+          56
+        ],
+        "previous_offered_facing": "north",
+        "previous_offered_thresholds_world_px": [
+          [
+            6680,
+            3968
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6656,
+          3968,
+          64,
+          56
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6688,
+            4024
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 56,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6688,
+                4032
+              ],
+              [
+                6688,
+                4080
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b017",
+        "plot": "F05",
+        "block": "F",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          56,
+          88
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6520,
+          4080,
+          56,
+          88
+        ],
+        "previous_offered_facing": "west",
+        "previous_offered_thresholds_world_px": [
+          [
+            6520,
+            4128
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6520,
+          4112,
+          72,
+          88
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6556,
+            4200
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 72,
+            "depth": 88,
+            "kind": "house",
+            "door": 36.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic house use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6556,
+                4208
+              ],
+              [
+                6556,
+                4224
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b018",
+        "plot": "F06",
+        "block": "F",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          40,
+          64
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6424,
+          4000,
+          40,
+          64
+        ],
+        "previous_offered_facing": "east",
+        "previous_offered_thresholds_world_px": [
+          [
+            6464,
+            4032
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6392,
+          3976,
+          64,
+          64
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6424,
+            4040
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 64,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6424,
+                4048
+              ],
+              [
+                6424,
+                4104
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b019",
+        "plot": "F07",
+        "block": "F",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          64,
+          40
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6520,
+          4208,
+          64,
+          40
+        ],
+        "previous_offered_facing": "west",
+        "previous_offered_thresholds_world_px": [
+          [
+            6520,
+            4232
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6520,
+          4256,
+          64,
+          40
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6552,
+            4296
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 40,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6552,
+                4304
+              ],
+              [
+                6552,
+                4312
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b020",
+        "plot": "F08",
+        "block": "F",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          64,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6392,
+          4240,
+          64,
+          48
+        ],
+        "previous_offered_facing": "east",
+        "previous_offered_thresholds_world_px": [
+          [
+            6456,
+            4264
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6392,
+          4280,
+          64,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6424,
+            4328
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 48,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6424,
+                4336
+              ],
+              [
+                6424,
+                4344
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b021",
+        "plot": "F09",
+        "block": "F",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          64,
+          40
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6520,
+          4280,
+          64,
+          40
+        ],
+        "previous_offered_facing": "west",
+        "previous_offered_thresholds_world_px": [
+          [
+            6520,
+            4304
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6520,
+          4352,
+          64,
+          40
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6552,
+            4392
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 40,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6552,
+                4400
+              ],
+              [
+                6552,
+                4408
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b022",
+        "plot": "B04",
+        "block": "B",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          88,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6520,
+          3592,
+          88,
+          48
+        ],
+        "previous_offered_facing": "north",
+        "previous_offered_thresholds_world_px": [
+          [
+            6568,
+            3592
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6520,
+          3592,
+          88,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6564,
+            3640
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 88,
+            "depth": 48,
+            "kind": "house",
+            "door": 44.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic house use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6564,
+                3648
+              ],
+              [
+                6564,
+                3656
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b023",
+        "plot": "F10",
+        "block": "F",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          72,
+          40
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6344,
+          4048,
+          72,
+          40
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6384,
+            4088
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6344,
+          4048,
+          72,
+          40
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6380,
+            4088
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 72,
+            "depth": 40,
+            "kind": "cottage",
+            "door": 36.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 234,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6380,
+                4096
+              ],
+              [
+                6380,
+                4104
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b024",
+        "plot": "D03",
+        "block": "D",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          40,
+          72
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5792,
+          3512,
+          40,
+          72
+        ],
+        "previous_offered_facing": "north",
+        "previous_offered_thresholds_world_px": [
+          [
+            5812,
+            3512
+          ]
+        ],
+        "proposed_floor_world_px": [
+          5704,
+          3512,
+          64,
+          72
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            5736,
+            3584
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 72,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                5736,
+                3592
+              ],
+              [
+                5736,
+                3600
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b025",
+        "plot": "D04",
+        "block": "D",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          56,
+          96
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5960,
+          3368,
+          56,
+          96
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            5988,
+            3464
+          ]
+        ],
+        "proposed_floor_world_px": [
+          5952,
+          3368,
+          64,
+          96
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            5984,
+            3464
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 96,
+            "kind": "house",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic house use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                5984,
+                3472
+              ],
+              [
+                5984,
+                3476
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b026",
+        "plot": "D05",
+        "block": "D",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          40,
+          56
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5848,
+          3512,
+          40,
+          56
+        ],
+        "previous_offered_facing": "north",
+        "previous_offered_thresholds_world_px": [
+          [
+            5868,
+            3512
+          ]
+        ],
+        "proposed_floor_world_px": [
+          5792,
+          3512,
+          64,
+          56
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            5824,
+            3568
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 56,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                5824,
+                3576
+              ],
+              [
+                5824,
+                3600
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b027",
+        "plot": "D06",
+        "block": "D",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          40,
+          64
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5904,
+          3512,
+          40,
+          64
+        ],
+        "previous_offered_facing": "north",
+        "previous_offered_thresholds_world_px": [
+          [
+            5924,
+            3512
+          ]
+        ],
+        "proposed_floor_world_px": [
+          5864,
+          3512,
+          64,
+          64
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            5896,
+            3576
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 64,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                5896,
+                3584
+              ],
+              [
+                5896,
+                3600
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b028",
+        "plot": "G01",
+        "block": "G",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          56,
+          96
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5992,
+          3944,
+          56,
+          96
+        ],
+        "previous_offered_facing": "west",
+        "previous_offered_thresholds_world_px": [
+          [
+            5992,
+            3992
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6000,
+          3944,
+          72,
+          96
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6036,
+            4040
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 72,
+            "depth": 96,
+            "kind": "house",
+            "door": 36.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic house use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6036,
+                4048
+              ],
+              [
+                6036,
+                4056
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b029",
+        "plot": "G02",
+        "block": "G",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          48,
+          72
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5992,
+          4064,
+          48,
+          72
+        ],
+        "previous_offered_facing": "west",
+        "previous_offered_thresholds_world_px": [
+          [
+            5992,
+            4100
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6000,
+          4080,
+          64,
+          72
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6032,
+            4152
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 72,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6032,
+                4160
+              ],
+              [
+                6032,
+                4168
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b030",
+        "plot": "E01",
+        "block": "E",
+        "source_form": "inn",
+        "original_source_footprint_world_px": [
+          72,
+          128
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6896,
+          3432,
+          72,
+          128
+        ],
+        "previous_offered_facing": "north",
+        "previous_offered_thresholds_world_px": [
+          [
+            6932,
+            3432
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6888,
+          3448,
+          112,
+          96
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6944,
+            3544
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 112,
+            "depth": 96,
+            "kind": "inn",
+            "door": 56.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic inn use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate.",
+            "Distinct inn frontage/height guide applies. Proposed112/128px front is physical floor width, not proof of drawn height/storeys or a generic cottage gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6944,
+                3552
+              ],
+              [
+                6944,
+                3584
+              ],
+              [
+                6952,
+                3584
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b031",
+        "plot": "E02",
+        "block": "E",
+        "source_form": "inn",
+        "original_source_footprint_world_px": [
+          128,
+          72
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6976,
+          3456,
+          128,
+          72
+        ],
+        "previous_offered_facing": "north",
+        "previous_offered_thresholds_world_px": [
+          [
+            7040,
+            3456
+          ]
+        ],
+        "proposed_floor_world_px": [
+          7040,
+          3448,
+          128,
+          72
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            7104,
+            3520
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 128,
+            "depth": 72,
+            "kind": "inn",
+            "door": 64.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic inn use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate.",
+            "Distinct inn frontage/height guide applies. Proposed112/128px front is physical floor width, not proof of drawn height/storeys or a generic cottage gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                7104,
+                3528
+              ],
+              [
+                7104,
+                3584
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b032",
+        "plot": "E03",
+        "block": "E",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          48,
+          88
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6992,
+          3312,
+          48,
+          88
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            7016,
+            3400
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6992,
+          3312,
+          72,
+          88
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            7028,
+            3400
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 72,
+            "depth": 88,
+            "kind": "house",
+            "door": 36.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic house use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                7028,
+                3408
+              ],
+              [
+                7028,
+                3416
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b033",
+        "plot": "B05",
+        "block": "B",
+        "source_form": "house",
+        "original_source_footprint_world_px": [
+          96,
+          56
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6528,
+          3336,
+          96,
+          56
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6576,
+            3392
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6528,
+          3336,
+          96,
+          56
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6576,
+            3392
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 96,
+            "depth": 56,
+            "kind": "house",
+            "door": 48.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic house use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6576,
+                3400
+              ],
+              [
+                6576,
+                3448
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b034",
+        "plot": "E04",
+        "block": "E",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          72,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          7056,
+          3352,
+          72,
+          48
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            7092,
+            3400
+          ]
+        ],
+        "proposed_floor_world_px": [
+          7080,
+          3352,
+          72,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            7116,
+            3400
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 72,
+            "depth": 48,
+            "kind": "cottage",
+            "door": 36.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 234,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                7116,
+                3408
+              ],
+              [
+                7116,
+                3416
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b035",
+        "plot": "A04",
+        "block": "A",
+        "source_form": "shop",
+        "original_source_footprint_world_px": [
+          64,
+          56
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6096,
+          3408,
+          64,
+          56
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6128,
+            3464
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6096,
+          3408,
+          64,
+          56
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6128,
+            3464
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 56,
+            "kind": "shop",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic shop use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6128,
+                3472
+              ],
+              [
+                6128,
+                3476
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b036",
+        "plot": "E05",
+        "block": "E",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          80,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6896,
+          3352,
+          80,
+          48
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6936,
+            3400
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6896,
+          3352,
+          80,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6936,
+            3400
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": false,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 80,
+            "depth": 48,
+            "kind": "cottage",
+            "door": 40.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 258,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": "E05 remains UNSTAMPED; old tiers9-11/spread2 conflict unresolved. Any terrace target level is UNKNOWN.",
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6936,
+                3408
+              ],
+              [
+                6936,
+                3416
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b037",
+        "plot": "A05",
+        "block": "A",
+        "source_form": "shop",
+        "original_source_footprint_world_px": [
+          48,
+          64
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6032,
+          3400,
+          48,
+          64
+        ],
+        "previous_offered_facing": "south",
+        "previous_offered_thresholds_world_px": [
+          [
+            6056,
+            3464
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6024,
+          3400,
+          64,
+          64
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6056,
+            3464
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": false,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 64,
+            "kind": "shop",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured.",
+            "Generic shop use has no exact sizes.json class; do not substitute cottage/civic or silently skip its scale gate."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6056,
+                3472
+              ],
+              [
+                6056,
+                3476
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b038",
+        "plot": "G03",
+        "block": "G",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          56,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5888,
+          4048,
+          56,
+          48
+        ],
+        "previous_offered_facing": "east",
+        "previous_offered_thresholds_world_px": [
+          [
+            5944,
+            4072
+          ]
+        ],
+        "proposed_floor_world_px": [
+          5864,
+          4048,
+          64,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            5896,
+            4096
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 48,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                5896,
+                4104
+              ],
+              [
+                5896,
+                4112
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b039",
+        "plot": "G04",
+        "block": "G",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          64,
+          48
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5880,
+          4120,
+          64,
+          48
+        ],
+        "previous_offered_facing": "east",
+        "previous_offered_thresholds_world_px": [
+          [
+            5944,
+            4144
+          ]
+        ],
+        "proposed_floor_world_px": [
+          5864,
+          4152,
+          64,
+          48
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            5896,
+            4200
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 48,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                5896,
+                4208
+              ],
+              [
+                5896,
+                4216
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-b040",
+        "plot": "G05",
+        "block": "G",
+        "source_form": "cottage",
+        "original_source_footprint_world_px": [
+          56,
+          40
+        ],
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          5992,
+          4160,
+          56,
+          40
+        ],
+        "previous_offered_facing": "west",
+        "previous_offered_thresholds_world_px": [
+          [
+            5992,
+            4180
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6000,
+          4200,
+          64,
+          40
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6032,
+            4240
+          ]
+        ],
+        "floor_changed": true,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "SOURCE_SUPPORTED_SOUTH_SHELL_PARAMETERS_COMPLETE_LOOK_AND_PIECE_UNBOUND",
+          "native_id": null,
+          "bbox_class": "cottage",
+          "constructor": "scripts/art/native/village.py::building(spec,seed,hd=True) -> scripts/art/native/houses.py::building(spec,seed)",
+          "candidate_spec": {
+            "w": 64,
+            "depth": 40,
+            "kind": "cottage",
+            "door": 32.0,
+            "door_w": 16,
+            "door_h": 26,
+            "overhang": 3
+          },
+          "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+          "source_native_houses_blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "open_binding_gaps": [
+            "Full legitimate look/material/window/storey/seed/collider/metadata/approved piece binding remains absent.",
+            "Opaque bbox, door opening and visual overlap have not been rendered or measured."
+          ],
+          "complete_approved_piece": false,
+          "source_based_structural_roof_span_art_px": 210,
+          "opaque_bbox_art_px": null
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6032,
+                4248
+              ],
+              [
+                6032,
+                4256
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      },
+      {
+        "id": "crossroads-mill-candidate",
+        "plot": "F11",
+        "block": "F",
+        "source_form": "mill",
+        "original_source_footprint_world_px": null,
+        "source_bays": [],
+        "previous_diagnostic_rect_world_px": [
+          6344,
+          4128,
+          96,
+          64
+        ],
+        "previous_offered_facing": "east",
+        "previous_offered_thresholds_world_px": [
+          [
+            6440,
+            4160
+          ]
+        ],
+        "proposed_floor_world_px": [
+          6344,
+          4128,
+          96,
+          64
+        ],
+        "proposed_public_facing": "south",
+        "proposed_threshold_offers_world_px": [
+          [
+            6392,
+            4192
+          ]
+        ],
+        "floor_changed": false,
+        "threshold_offer_changed": true,
+        "retained_anchor": false,
+        "native_binding": {
+          "status": "EXISTING_MILL_PROGRAMME_SINGLE_REPRESENTATION_IDENTITY_ASSEMBLY_UNBOUND",
+          "native_id": null,
+          "bbox_class": null,
+          "constructor": null,
+          "candidate_spec": null,
+          "public_south_entry_supported_by_current_house_projection": false,
+          "separate_west_water_working_face_retained": true,
+          "open_binding_gaps": [
+            "Current native town path supplies no watermill assembly or bound historical mill ID.",
+            "Historical web mill is not current continent/native geometry; do not create a second mill or manufacture a save alias.",
+            "South public threshold is design intent only until a legitimate custom mill assembly is bound. West hydraulic face, wheel/race and bank contact remain unproved.",
+            "Legacy east undershot wheel and concept-only overshot mill differ; hydraulic type and orientation must be reconciled, not silently substituted."
+          ],
+          "complete_approved_piece": false
+        },
+        "physical_fit": "UNMEASURED_SOURCE_PROPOSAL",
+        "native_accepted": false,
+        "conditional": null,
+        "threshold_approach": {
+          "polylines_world_px": [
+            [
+              [
+                6392,
+                4200
+              ],
+              [
+                6392,
+                4224
+              ]
+            ]
+          ],
+          "width_world_px": 16,
+          "status": "UNMEASURED public approach offer; no ordinary nonSouth facade required; mill custom South facade remains unbound"
+        }
+      }
+    ],
+    "candidate_local_routes": [
+      {
+        "name": "Valley lane north retained concept prefix",
+        "points_world_px": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6296,
+            3448
+          ],
+          [
+            6296,
+            3336
+          ],
+          [
+            6348,
+            3336
+          ],
+          [
+            6348,
+            3252.1681131104365
+          ],
+          [
+            6303.159268378056,
+            3252.1681131104365
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Preserve exact story-anchor approach and old captured join; full retained tail remains historical authority, not remeasured here.",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Valley lane west proposed protected-halt detour",
+        "points_world_px": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6300,
+            3480
+          ],
+          [
+            6200,
+            3480
+          ],
+          [
+            6200,
+            3552
+          ],
+          [
+            6008,
+            3552
+          ],
+          [
+            6008,
+            3476
+          ],
+          [
+            5944,
+            3476
+          ],
+          [
+            5944,
+            3790.9784156224882
+          ],
+          [
+            5950.225800611576,
+            3790.9784156224882
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Replace historical x6000 descent that cuts future-workshop/closed-halt guard. Route via WestLane and west of protected features; exact old regional join retained. UNMEASURED, no guard cleared.",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Valley lane east retained concept prefix",
+        "points_world_px": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6300,
+            3480
+          ],
+          [
+            6392,
+            3480
+          ],
+          [
+            6392,
+            3576
+          ],
+          [
+            6632,
+            3576
+          ],
+          [
+            6632,
+            3431.8924580443936
+          ],
+          [
+            6637.474055846975,
+            3431.8924580443936
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Preserve exact story-anchor approach and old captured join; full retained tail remains historical authority, not remeasured here.",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Valley lane to the Lull Road retained concept prefix",
+        "points_world_px": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6300,
+            3480
+          ],
+          [
+            6392,
+            3480
+          ],
+          [
+            6392,
+            3576
+          ],
+          [
+            6632,
+            3576
+          ],
+          [
+            6632,
+            3716.0009907400704
+          ],
+          [
+            6632.265995084012,
+            3716.0009907400704
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Preserve exact story-anchor approach and old captured join; full retained tail remains historical authority, not remeasured here.",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Valley lane south retained concept prefix",
+        "points_world_px": [
+          [
+            6300.0,
+            3450.0
+          ],
+          [
+            6300,
+            3480
+          ],
+          [
+            6200,
+            3480
+          ],
+          [
+            6200,
+            3608
+          ],
+          [
+            6232,
+            3640
+          ],
+          [
+            6232,
+            3784
+          ],
+          [
+            6305.974839588718,
+            3810.623301831652
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Preserve exact story-anchor approach and old captured join; full retained tail remains historical authority, not remeasured here.",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Quiet garden front walk",
+        "points_world_px": [
+          [
+            6208,
+            3328
+          ],
+          [
+            6296,
+            3328
+          ],
+          [
+            6296,
+            3336
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Connect C03 south apron to existing north approach without moving garden stairs",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Existing quiet walk surface centre",
+        "points_world_px": [
+          [
+            6296,
+            3336
+          ],
+          [
+            6400,
+            3336
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit historical C_quiet_walk_spur centreline, connecting C04 and hut approaches",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Existing north market close centre",
+        "points_world_px": [
+          [
+            6416,
+            3456
+          ],
+          [
+            6632,
+            3456
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit historical north_market_close centreline, connecting B05 to nativeSquare edge",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Existing A public seam centre",
+        "points_world_px": [
+          [
+            6168,
+            3488
+          ],
+          [
+            6168,
+            3632
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit retained market-west narrow public seam plus herbalist lower link",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Preserved hut logical approach",
+        "points_world_px": [
+          [
+            6296,
+            3320
+          ],
+          [
+            6296,
+            3336
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit prior anchor approach offer; logical/drawn offsets and native terrain remain qualified",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Preserved library logical approach",
+        "points_world_px": [
+          [
+            6224,
+            3456
+          ],
+          [
+            6224,
+            3464
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit prior anchor approach offer; logical/drawn offsets and native terrain remain qualified",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Preserved north_cottages logical approach",
+        "points_world_px": [
+          [
+            6392,
+            3456
+          ],
+          [
+            6392,
+            3464
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit prior anchor approach offer; logical/drawn offsets and native terrain remain qualified",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Preserved bakery logical approach",
+        "points_world_px": [
+          [
+            6148,
+            3544
+          ],
+          [
+            6168,
+            3544
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit prior anchor approach offer; logical/drawn offsets and native terrain remain qualified",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Preserved herbalist logical approach",
+        "points_world_px": [
+          [
+            6148,
+            3632
+          ],
+          [
+            6168,
+            3632
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit prior anchor approach offer; logical/drawn offsets and native terrain remain qualified",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Preserved smithy logical approach",
+        "points_world_px": [
+          [
+            6464,
+            3536
+          ],
+          [
+            6464,
+            3568
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit prior anchor approach offer; logical/drawn offsets and native terrain remain qualified",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Preserved fern_cottage logical approach",
+        "points_world_px": [
+          [
+            6448,
+            3672
+          ],
+          [
+            6512,
+            3672
+          ],
+          [
+            6512,
+            3576
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Explicit prior anchor approach offer; logical/drawn offsets and native terrain remain qualified",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "West Lane",
+        "points_world_px": [
+          [
+            5688,
+            3476
+          ],
+          [
+            6176,
+            3476
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Mixed terrace frontage and market approach",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "West court loop",
+        "points_world_px": [
+          [
+            5688,
+            3476
+          ],
+          [
+            5688,
+            3600
+          ],
+          [
+            5960,
+            3600
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "South-entry public court for D03/05/06; no north doors",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "West rear service",
+        "points_world_px": [
+          [
+            5688,
+            3600
+          ],
+          [
+            5688,
+            3352
+          ],
+          [
+            6024,
+            3352
+          ],
+          [
+            6024,
+            3388
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "Back servicing for the northern terrace group; no halt opening",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "B south court",
+        "points_world_px": [
+          [
+            6564,
+            3656
+          ],
+          [
+            6624,
+            3656
+          ],
+          [
+            6632,
+            3656
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "B04 south front reconnects to Lull approach east of crater park; grades/guard boundary unmeasured",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Mill Street",
+        "points_world_px": [
+          [
+            6824.0027316369915,
+            3778.2971906108255
+          ],
+          [
+            6784,
+            3808
+          ],
+          [
+            6784,
+            3944
+          ],
+          [
+            6528,
+            3944
+          ],
+          [
+            6488,
+            4000
+          ],
+          [
+            6488,
+            4408
+          ]
+        ],
+        "width_world_px": 32,
+        "role": "Retain exact real Lull Road join and bank-side spine; extension beyond old4328 is proposed, not accepted native coverage",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Upper mill front court",
+        "points_world_px": [
+          [
+            6488,
+            4080
+          ],
+          [
+            6744,
+            4080
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "F03/F04 south doors and upper productive plots",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Grain Close",
+        "points_world_px": [
+          [
+            6488,
+            4104
+          ],
+          [
+            6336,
+            4104
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "F10 and bank work access, no new water crossing",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Grain court",
+        "points_world_px": [
+          [
+            6344,
+            4224
+          ],
+          [
+            6608,
+            4224
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Single mill south public loading court connected to Mill Street; west water-working face stays separate",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Lower mill court1",
+        "points_world_px": [
+          [
+            6488,
+            4312
+          ],
+          [
+            6600,
+            4312
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "F07 south frontage",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Lower mill court2",
+        "points_world_px": [
+          [
+            6384,
+            4344
+          ],
+          [
+            6488,
+            4344
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "F08 south frontage",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Lower mill court3",
+        "points_world_px": [
+          [
+            6488,
+            4408
+          ],
+          [
+            6600,
+            4408
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "F09 south frontage; no promise of physical grade",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "East Market Lane",
+        "points_world_px": [
+          [
+            6760,
+            3400
+          ],
+          [
+            6760,
+            3416
+          ],
+          [
+            7216,
+            3416
+          ]
+        ],
+        "width_world_px": 32,
+        "role": "Retain real east approach/junction; proposed east extension",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Coach drive",
+        "points_world_px": [
+          [
+            7200,
+            3416
+          ],
+          [
+            7200,
+            3656
+          ],
+          [
+            6944,
+            3656
+          ]
+        ],
+        "width_world_px": 32,
+        "role": "Separates through arrival from inn loading and public fronts",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Inn side access",
+        "points_world_px": [
+          [
+            7024,
+            3416
+          ],
+          [
+            7024,
+            3584
+          ],
+          [
+            6952,
+            3584
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Real40px gap between inn floors provides a side court, not an8px passage",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Principal coach court link",
+        "points_world_px": [
+          [
+            7200,
+            3584
+          ],
+          [
+            7104,
+            3584
+          ]
+        ],
+        "width_world_px": 32,
+        "role": "Distinct principal coach court; turning/gates unproved",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Secondary service court link",
+        "points_world_px": [
+          [
+            6952,
+            3584
+          ],
+          [
+            6952,
+            3656
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "Separate smaller inn yard",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "Halt inhabited approach",
+        "points_world_px": [
+          [
+            5881.132517676755,
+            3941.868095469753
+          ],
+          [
+            5968,
+            3941.868095469753
+          ],
+          [
+            5968,
+            4272
+          ]
+        ],
+        "width_world_px": 32,
+        "role": "Retain real regional road join; no station/rail/platform extent or open portal inferred",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G01 south court",
+        "points_world_px": [
+          [
+            5968,
+            4056
+          ],
+          [
+            6036,
+            4056
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "South-front access off inhabited Halt Road",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G02 south court",
+        "points_world_px": [
+          [
+            5968,
+            4168
+          ],
+          [
+            6032,
+            4168
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "South-front access off inhabited Halt Road",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G03 south court",
+        "points_world_px": [
+          [
+            5968,
+            4112
+          ],
+          [
+            5896,
+            4112
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "South-front access off inhabited Halt Road",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G04 south court",
+        "points_world_px": [
+          [
+            5968,
+            4216
+          ],
+          [
+            5896,
+            4216
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "South-front access off inhabited Halt Road",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G05 south court",
+        "points_world_px": [
+          [
+            5968,
+            4256
+          ],
+          [
+            6032,
+            4256
+          ]
+        ],
+        "width_world_px": 24,
+        "role": "South-front access off inhabited Halt Road",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "D01 south threshold bay1",
+        "points_world_px": [
+          [
+            5760,
+            3472
+          ],
+          [
+            5760,
+            3476
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "D01 south threshold bay2",
+        "points_world_px": [
+          [
+            5800,
+            3472
+          ],
+          [
+            5800,
+            3476
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "D02 south threshold bay1",
+        "points_world_px": [
+          [
+            5864,
+            3472
+          ],
+          [
+            5864,
+            3476
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "D02 south threshold bay2",
+        "points_world_px": [
+          [
+            5920,
+            3472
+          ],
+          [
+            5920,
+            3476
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "C03 south threshold",
+        "points_world_px": [
+          [
+            6208,
+            3312
+          ],
+          [
+            6208,
+            3328
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "C04 south threshold",
+        "points_world_px": [
+          [
+            6396,
+            3336
+          ],
+          [
+            6396,
+            3336
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F01 south threshold",
+        "points_world_px": [
+          [
+            6648,
+            3928
+          ],
+          [
+            6648,
+            3944
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "B03 south threshold",
+        "points_world_px": [
+          [
+            6584,
+            3568
+          ],
+          [
+            6584,
+            3576
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F02 south threshold",
+        "points_world_px": [
+          [
+            6728,
+            3928
+          ],
+          [
+            6728,
+            3944
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F03 south threshold",
+        "points_world_px": [
+          [
+            6596,
+            4072
+          ],
+          [
+            6596,
+            4080
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F04 south threshold",
+        "points_world_px": [
+          [
+            6688,
+            4032
+          ],
+          [
+            6688,
+            4080
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F05 south threshold",
+        "points_world_px": [
+          [
+            6556,
+            4208
+          ],
+          [
+            6556,
+            4224
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F06 south threshold",
+        "points_world_px": [
+          [
+            6424,
+            4048
+          ],
+          [
+            6424,
+            4104
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F07 south threshold",
+        "points_world_px": [
+          [
+            6552,
+            4304
+          ],
+          [
+            6552,
+            4312
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F08 south threshold",
+        "points_world_px": [
+          [
+            6424,
+            4336
+          ],
+          [
+            6424,
+            4344
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F09 south threshold",
+        "points_world_px": [
+          [
+            6552,
+            4400
+          ],
+          [
+            6552,
+            4408
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "B04 south threshold",
+        "points_world_px": [
+          [
+            6564,
+            3648
+          ],
+          [
+            6564,
+            3656
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F10 south threshold",
+        "points_world_px": [
+          [
+            6380,
+            4096
+          ],
+          [
+            6380,
+            4104
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "D03 south threshold",
+        "points_world_px": [
+          [
+            5736,
+            3592
+          ],
+          [
+            5736,
+            3600
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "D04 south threshold",
+        "points_world_px": [
+          [
+            5984,
+            3472
+          ],
+          [
+            5984,
+            3476
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "D05 south threshold",
+        "points_world_px": [
+          [
+            5824,
+            3576
+          ],
+          [
+            5824,
+            3600
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "D06 south threshold",
+        "points_world_px": [
+          [
+            5896,
+            3584
+          ],
+          [
+            5896,
+            3600
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G01 south threshold",
+        "points_world_px": [
+          [
+            6036,
+            4048
+          ],
+          [
+            6036,
+            4056
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G02 south threshold",
+        "points_world_px": [
+          [
+            6032,
+            4160
+          ],
+          [
+            6032,
+            4168
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "E01 south threshold",
+        "points_world_px": [
+          [
+            6944,
+            3552
+          ],
+          [
+            6944,
+            3584
+          ],
+          [
+            6952,
+            3584
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "E02 south threshold",
+        "points_world_px": [
+          [
+            7104,
+            3528
+          ],
+          [
+            7104,
+            3584
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "E03 south threshold",
+        "points_world_px": [
+          [
+            7028,
+            3408
+          ],
+          [
+            7028,
+            3416
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "B05 south threshold",
+        "points_world_px": [
+          [
+            6576,
+            3400
+          ],
+          [
+            6576,
+            3448
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "E04 south threshold",
+        "points_world_px": [
+          [
+            7116,
+            3408
+          ],
+          [
+            7116,
+            3416
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "A04 south threshold",
+        "points_world_px": [
+          [
+            6128,
+            3472
+          ],
+          [
+            6128,
+            3476
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "E05 south threshold",
+        "points_world_px": [
+          [
+            6936,
+            3408
+          ],
+          [
+            6936,
+            3416
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "A05 south threshold",
+        "points_world_px": [
+          [
+            6056,
+            3472
+          ],
+          [
+            6056,
+            3476
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G03 south threshold",
+        "points_world_px": [
+          [
+            5896,
+            4104
+          ],
+          [
+            5896,
+            4112
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G04 south threshold",
+        "points_world_px": [
+          [
+            5896,
+            4208
+          ],
+          [
+            5896,
+            4216
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "G05 south threshold",
+        "points_world_px": [
+          [
+            6032,
+            4248
+          ],
+          [
+            6032,
+            4256
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      },
+      {
+        "name": "F11 south threshold",
+        "points_world_px": [
+          [
+            6392,
+            4200
+          ],
+          [
+            6392,
+            4224
+          ]
+        ],
+        "width_world_px": 16,
+        "role": "16px band starts8px south of offered threshold so rounded cap touches floor edge; projection supported for ordinary shells only",
+        "fit": "UNMEASURED; not a route/collision/hazard acceptance"
+      }
+    ],
+    "candidate_areas": [
+      {
+        "name": "Native square",
+        "rect_world_px": [
+          6176,
+          3448,
+          240,
+          176
+        ],
+        "role": "PRESERVED story/public square; well is separately reserved"
+      },
+      {
+        "name": "Native green",
+        "rect_world_px": [
+          6016,
+          3656,
+          168,
+          136
+        ],
+        "role": "PRESERVED open story/training green"
+      },
+      {
+        "name": "Principal coach court",
+        "rect_world_px": [
+          7040,
+          3536,
+          128,
+          104
+        ],
+        "role": "PROPOSED south-front principal inn court; vehicle turning unknown"
+      },
+      {
+        "name": "Secondary inn service court",
+        "rect_world_px": [
+          6888,
+          3552,
+          112,
+          64
+        ],
+        "role": "PROPOSED distinct smaller yard"
+      },
+      {
+        "name": "West productive allotments",
+        "rect_world_px": [
+          5704,
+          3632,
+          240,
+          56
+        ],
+        "role": "PROPOSED cultivated edge beyond front court; not mislabeled as rear door access"
+      },
+      {
+        "name": "West terrace rear plots",
+        "rect_world_px": [
+          5736,
+          3360,
+          208,
+          48
+        ],
+        "role": "PROPOSED productive backs for northern row; subdivide around assembly envelope"
+      },
+      {
+        "name": "Mill productive edge",
+        "rect_world_px": [
+          6624,
+          4120,
+          96,
+          288
+        ],
+        "role": "PROPOSED productive gardens/allotments east of lower plots; no extra homes/jobs"
+      },
+      {
+        "name": "Halt eastern productive backs",
+        "rect_world_px": [
+          6088,
+          4080,
+          64,
+          208
+        ],
+        "role": "PROPOSED tapering productive plots off the rear service side; no rail loading claim"
+      },
+      {
+        "name": "E05 terrace study only",
+        "rect_world_px": [
+          6888,
+          3344,
+          96,
+          64
+        ],
+        "role": "CONDITIONAL UNAPPLIED; native target level UNKNOWN; E05 remains unoccupied"
+      }
+    ],
+    "protected_features": {
+      "seven_captured_native_anchors": [
+        {
+          "id": "crossroads-b001",
+          "rect_world_px": [
+            6256,
+            3272,
+            80,
+            40
+          ],
+          "logical_thresholds_world_px": [
+            [
+              6296,
+              3312
+            ]
+          ]
+        },
+        {
+          "id": "crossroads-b002",
+          "rect_world_px": [
+            6176,
+            3408,
+            96,
+            40
+          ],
+          "logical_thresholds_world_px": [
+            [
+              6224,
+              3448
+            ]
+          ]
+        },
+        {
+          "id": "crossroads-b003",
+          "rect_world_px": [
+            6320,
+            3408,
+            96,
+            40
+          ],
+          "logical_thresholds_world_px": [
+            [
+              6392,
+              3448
+            ]
+          ]
+        },
+        {
+          "id": "crossroads-b004",
+          "rect_world_px": [
+            6088,
+            3488,
+            72,
+            48
+          ],
+          "logical_thresholds_world_px": [
+            [
+              6148,
+              3536
+            ]
+          ]
+        },
+        {
+          "id": "crossroads-b005",
+          "rect_world_px": [
+            6088,
+            3576,
+            72,
+            48
+          ],
+          "logical_thresholds_world_px": [
+            [
+              6148,
+              3624
+            ]
+          ]
+        },
+        {
+          "id": "crossroads-b006",
+          "rect_world_px": [
+            6432,
+            3472,
+            88,
+            56
+          ],
+          "logical_thresholds_world_px": [
+            [
+              6464,
+              3528
+            ]
+          ]
+        },
+        {
+          "id": "crossroads-b007",
+          "rect_world_px": [
+            6432,
+            3616,
+            72,
+            48
+          ],
+          "logical_thresholds_world_px": [
+            [
+              6448,
+              3664
+            ]
+          ]
+        }
+      ],
+      "garden_stairs": "Existing captured/native route and stair geometry retained; no new width/level or shortcut is granted.",
+      "native_green_world_rect": [
+        6016,
+        3656,
+        168,
+        136
+      ],
+      "well_reserved_world_rect": [
+        6254,
+        3552,
+        20,
+        16
+      ],
+      "closed_halt_world_rect": [
+        5976,
+        3528,
+        8,
+        40
+      ],
+      "closed_halt_conservative_guard_world_rect": [
+        5968,
+        3520,
+        24,
+        56
+      ],
+      "future_workshop_world_rect": [
+        6000,
+        3568,
+        64,
+        64
+      ],
+      "crater": {
+        "centre_world_px": [
+          6484,
+          3712
+        ],
+        "nominal_horizontal_bowl_radius": 36,
+        "history": "Actual macro90px keepout conflict and earlier unapplied/copy OptionBry24 remain prior diagnostic evidence. This source pass changes no crater pixels/masks.",
+        "r2_terrain_target": null
+      },
+      "water_bridges_river_land_masks": "ALL UNCHANGED; no crop loaded/mutated and no new bridge or water clearance claimed",
+      "source36_route_polylines": "ALL UNCHANGED as historical source; proposed local offers do not edit or approve them",
+      "save_identity_mapping": "ALL EXISTING IDs unchanged; separate mill native/historical identity remains NULL/UNKNOWN"
+    },
+    "terrain_operations": [
+      {
+        "area": "West Lane",
+        "proposal": "Extend western court/woodland clearing westward for64px real cottages and a24px court; preserve closed halt/guard and native green.",
+        "bounds_world_px": [
+          5672,
+          3344,
+          352,
+          352
+        ],
+        "native_target_level": null,
+        "status": "UNAPPLIED_UNMEASURED"
+      },
+      {
+        "area": "Mill End",
+        "proposal": "Revise upper/lower court ground and extend lower productive edge to4416 for wider South-entry plots. Preserve Sleepwater, existing bridges and separate hydraulic face; do not flatten riverbank to a dry rectangle.",
+        "bounds_world_px": [
+          6336,
+          3832,
+          472,
+          592
+        ],
+        "native_target_level": null,
+        "status": "UNAPPLIED_UNMEASURED"
+      },
+      {
+        "area": "Eastgate",
+        "proposal": "Broader EastMarket/coach approach and two South-front inn plots; existing E05 terrace remains conditional. Preserve source roads/protection; route and grade changes require explicit measured support.",
+        "bounds_world_px": [
+          6872,
+          3288,
+          352,
+          384
+        ],
+        "native_target_level": null,
+        "status": "UNAPPLIED_UNMEASURED"
+      },
+      {
+        "area": "Halt Road",
+        "proposal": "Reorient access to South courts and widen real homes within productive fringe; no rail/platform extent or closed-gate crossing is assumed.",
+        "bounds_world_px": [
+          5848,
+          3928,
+          304,
+          360
+        ],
+        "native_target_level": null,
+        "status": "UNAPPLIED_UNMEASURED"
+      }
+    ],
+    "changed_floor_ids": [
+      "crossroads-b008",
+      "crossroads-b010",
+      "crossroads-b011",
+      "crossroads-b012",
+      "crossroads-b013",
+      "crossroads-b014",
+      "crossroads-b015",
+      "crossroads-b016",
+      "crossroads-b017",
+      "crossroads-b018",
+      "crossroads-b019",
+      "crossroads-b020",
+      "crossroads-b021",
+      "crossroads-b024",
+      "crossroads-b025",
+      "crossroads-b026",
+      "crossroads-b027",
+      "crossroads-b028",
+      "crossroads-b029",
+      "crossroads-b030",
+      "crossroads-b031",
+      "crossroads-b032",
+      "crossroads-b034",
+      "crossroads-b037",
+      "crossroads-b038",
+      "crossroads-b039",
+      "crossroads-b040"
+    ],
+    "changed_threshold_offer_ids": [
+      "crossroads-b011",
+      "crossroads-b012",
+      "crossroads-b013",
+      "crossroads-b014",
+      "crossroads-b015",
+      "crossroads-b016",
+      "crossroads-b017",
+      "crossroads-b018",
+      "crossroads-b019",
+      "crossroads-b020",
+      "crossroads-b021",
+      "crossroads-b022",
+      "crossroads-b023",
+      "crossroads-b024",
+      "crossroads-b025",
+      "crossroads-b026",
+      "crossroads-b027",
+      "crossroads-b028",
+      "crossroads-b029",
+      "crossroads-b030",
+      "crossroads-b031",
+      "crossroads-b032",
+      "crossroads-b034",
+      "crossroads-b038",
+      "crossroads-b039",
+      "crossroads-b040",
+      "crossroads-mill-candidate"
+    ],
+    "counts": {
+      "records": 41,
+      "unchanged_original_records": 40,
+      "separate_mill_representation": 1,
+      "real_anchors_preserved": 7,
+      "new_record_piece_bindings_complete": 0,
+      "ordinary_south_entry_offers": 40,
+      "custom_mill_south_intent_unbound": 1,
+      "changed_floors": 27,
+      "changed_threshold_offers": 27,
+      "cottages_below64px_floor": 0
+    },
+    "native_extent": {
+      "current407_world_box": [
+        5976,
+        3248,
+        640,
+        560
+      ],
+      "earlier_candidate_floors_outside_or_crossing": 30,
+      "proposed_floor_union_world_box": [
+        5704,
+        3232,
+        1464,
+        1160
+      ],
+      "adoption": "NO silent repin, zone growth, migration or exporter/runtime change. Split/grow actual zone and explicit crosszone routes must be designed and measured separately.",
+      "proposed_floors_outside_or_crossing": 30
+    },
+    "remaining_limits": [
+      "Every revised floor/court/route/earthwork UNMEASURED; no previous macro pass transfers to new geometry.",
+      "All34 added native records still need exact approved piece bindings; generichouse/shop/inn/mill classes remain unresolved.",
+      "20 source-form cottage records include the hut;21 prior legitimate cottage bbox classifications include bakery/herbalist. All revised unbound cottage-form floors are at least64px; this is physical width arithmetic only, not opaque/detail/height approval.",
+      "Mixed-roof/storey terrace assemblies and mill are explicit unresolved constructor contracts; no north cutaway invented.",
+      "E05 remains conditional/unoccupied until a real sourced and measured terrace solution.",
+      "Native current zone omits30 prior candidates; revised bounds and door/route authority require actual adoption work.",
+      "No project imports, array mutation, fitting, drawing/art generation, tests, engine, jobs, execution refs or Ready/merge ran. Private schematic is a flat source diagram only."
+    ],
+    "next_step": "Independent source/arithmetic/identity review first; root then allocates ONE coherent measured correction only after native contracts are actionable and runtime queue releases."
   }
 }

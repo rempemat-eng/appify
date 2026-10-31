@@ -353,3 +353,78 @@ This is one labelled complete-town candidate on a private captured crop, **not a
 
 GO6536825931 / ASSIGN6536841341 / ACK6536841532; recovery-only6537123683 / ACK6537136426; final E6537155067 / ACK6537164795. Source is a genuine sole child of 60c08da3; only the two existing proposal documents change.
 
+
+
+## Native-driven whole-town revision r2 — UNMEASURED source contract
+
+GO6537559340 / ASSIGN6537575560 / ACK6537577661; genuine a96 descendant. This section supersedes the earlier rectangle/entrance **offers**, retaining every original record, the separate mill, every old diagnostic section and its raw outcomes as history. It does not transfer the earlier 40 macro-clear results to changed geometry. No fitting, crop mutation, painting, native import, test, engine or generation ran. The accompanying static SVG is a flat source schematic, without sampled terrain or accepted native art.
+
+The all41 native audit (6537486605, native407 feb37c31) identified19 non-south offers and11 narrow-cottage cases (22-record union),14 generic classes unresolved and34 new records unbound. Current ordinary houses show a south wall only. The corrected arrangement therefore uses40 ordinary south-entry offers plus a deliberately unbound south public entrance intent for the custom mill. The mill's west water-working face remains separate; no second mill, hydraulic acceptance or historical ID is invented.
+
+The seven captured anchors and logical doors remain exact, together with story approaches, garden stairs, the green, well, closed halt/guard, future workshop, crater centre/horizontal bowl radius and all original save identities. Actual407 herbalist floor/door are8px farther south than this frozen capture; that adoption difference is now explicit rather than silently moving the anchor. North terrace's extra rendered south door and smithy/Ferns2px logical-to-drawn offsets remain unresolved review items.
+
+West Lane now has a real northern terrace frontage and a southern public court. Three widened cottages enter from their south courts, connected around the western edge, leaving the closed halt untouched. Productive allotments beyond the court are labelled as allotments rather than imaginary back-door access. The narrow8px interval between D05/D06 is not a passage; both reach the southern public court. The old x6000 west-route descent conflicted with the reserved future workshop and closed-halt guard, so the proposed local west approach detours via West Lane and west of those features while retaining its exact old regional join. No guard is cleared. The row-house records remain whole assemblies: D01's floor depth changes24→48 while the original mixed roof/storey bay programme stays historical and intact. Native units only split paint/window ownership; they do not implement mixed roof materials or a second-storey assembly.
+
+Mill End uses one street, an upper court, grain court and stepped lower courts. Narrow cottages gain actual64px floors; detached house proposals also receive wider physical plots without being relabelled as cottage scale classes. The single mill's public approach moves to its south loading court. Its custom facade, exact native assembly, hydraulics and bank acceptance remain unknown. No new water crossing is proposed.
+
+Both inns now present visible south fronts to distinct courts. E01 receives a112px physical front and E02 retains128px; these are class-specific frontage offers, not drawn height/storey/opaque approval. A40px interval between inn floors provides a real side access court (24px proposed route), replacing reliance on an8px gap. The coach drive connects those courts to the existing east arrival. E05 stays conditional and unoccupied: captured tiers9–11 exceed the unchanged ordinary spread limit. Its terrace-study target native level remains UNKNOWN.
+
+The Halt Road group enters from south-facing courts off the inhabited approach and keeps productive plots toward the river fringe. The real regional join is retained as source intent, without claiming a rail/platform polygon, open halt, native Square connection or transport permission.
+
+The default cottage structural slate span is3×(floor width+6) at density3. A64px floor gives210artpx of structural roof and216px canvas, with no blank-padding credit. This is an unexecuted source calculation; opaque bbox, height, doors, detail, collision, occlusion and full art gates remain unproved. Generic house/shop/inn/mill uses still lack legitimate exact bbox classes. Candidate shell parameters are actionable inputs to existing village.building→houses.building, not approved bindings.
+
+### All41 original-versus-revised physical contracts
+
+Every rectangle is[x,y,w,depth] in worldpx; every row is UNMEASURED. The historical column preserves the source dimensions and the exact earlier candidate floor. All proposed public fronts are south. Mill entry support is still unbound; other ordinary shells support the projection but do not yet have approved pieces.
+
+| Plot | Historical floor / prior offer | Revised floor | South threshold offer | Native binding / open gap |
+| --- | --- | --- | --- | --- |
+| C01 | [80, 40] / [6256, 3272, 80, 40] | [6256, 3272, 80, 40] | [[6296, 3312]] | hut |
+| A01 | [96, 40] / [6176, 3408, 96, 40] | [6176, 3408, 96, 40] | [[6224, 3448]] | library |
+| C02 | [96, 40] / [6320, 3408, 96, 40] | [6320, 3408, 96, 40] | [[6392, 3448]] | north_cottages |
+| A02 | [72, 48] / [6088, 3488, 72, 48] | [6088, 3488, 72, 48] | [[6148, 3536]] | bakery |
+| A03 | [72, 48] / [6088, 3576, 72, 48] | [6088, 3576, 72, 48] | [[6148, 3624]] | herbalist |
+| B01 | [88, 56] / [6432, 3472, 88, 56] | [6432, 3472, 88, 56] | [[6464, 3528]] | smithy |
+| B02 | [72, 48] / [6432, 3616, 72, 48] | [6432, 3616, 72, 48] | [[6448, 3664]] | fern_cottage |
+| D01 | [80, 24] / [5736, 3440, 80, 24] | [5736, 3416, 80, 48] | [[5760, 3464], [5800, 3464]] | whole terrace; mixed assembly unknown |
+| D02 | [112, 48] / [5832, 3416, 112, 48] | [5832, 3416, 112, 48] | [[5864, 3464], [5920, 3464]] | whole terrace; mixed assembly unknown |
+| C03 | [48, 72] / [6184, 3232, 48, 72] | [6176, 3232, 64, 72] | [[6208, 3304]] | cottage shell; piece unknown |
+| C04 | [56, 88] / [6360, 3240, 56, 88] | [6360, 3240, 72, 88] | [[6396, 3328]] | house shell/class unknown |
+| F01 | [48, 64] / [6656, 3856, 48, 64] | [6616, 3856, 64, 64] | [[6648, 3920]] | cottage shell; piece unknown |
+| B03 | [48, 88] / [6552, 3472, 48, 88] | [6552, 3472, 64, 88] | [[6584, 3560]] | shop shell/class unknown |
+| F02 | [40, 72] / [6728, 3848, 40, 72] | [6696, 3848, 64, 72] | [[6728, 3920]] | cottage shell; piece unknown |
+| F03 | [64, 96] / [6560, 3968, 64, 96] | [6560, 3968, 72, 96] | [[6596, 4064]] | house shell/class unknown |
+| F04 | [48, 56] / [6656, 3968, 48, 56] | [6656, 3968, 64, 56] | [[6688, 4024]] | cottage shell; piece unknown |
+| F05 | [56, 88] / [6520, 4080, 56, 88] | [6520, 4112, 72, 88] | [[6556, 4200]] | house shell/class unknown |
+| F06 | [40, 64] / [6424, 4000, 40, 64] | [6392, 3976, 64, 64] | [[6424, 4040]] | cottage shell; piece unknown |
+| F07 | [64, 40] / [6520, 4208, 64, 40] | [6520, 4256, 64, 40] | [[6552, 4296]] | cottage shell; piece unknown |
+| F08 | [64, 48] / [6392, 4240, 64, 48] | [6392, 4280, 64, 48] | [[6424, 4328]] | cottage shell; piece unknown |
+| F09 | [64, 40] / [6520, 4280, 64, 40] | [6520, 4352, 64, 40] | [[6552, 4392]] | cottage shell; piece unknown |
+| B04 | [88, 48] / [6520, 3592, 88, 48] | [6520, 3592, 88, 48] | [[6564, 3640]] | house shell/class unknown |
+| F10 | [72, 40] / [6344, 4048, 72, 40] | [6344, 4048, 72, 40] | [[6380, 4088]] | cottage shell; piece unknown |
+| D03 | [40, 72] / [5792, 3512, 40, 72] | [5704, 3512, 64, 72] | [[5736, 3584]] | cottage shell; piece unknown |
+| D04 | [56, 96] / [5960, 3368, 56, 96] | [5952, 3368, 64, 96] | [[5984, 3464]] | house shell/class unknown |
+| D05 | [40, 56] / [5848, 3512, 40, 56] | [5792, 3512, 64, 56] | [[5824, 3568]] | cottage shell; piece unknown |
+| D06 | [40, 64] / [5904, 3512, 40, 64] | [5864, 3512, 64, 64] | [[5896, 3576]] | cottage shell; piece unknown |
+| G01 | [56, 96] / [5992, 3944, 56, 96] | [6000, 3944, 72, 96] | [[6036, 4040]] | house shell/class unknown |
+| G02 | [48, 72] / [5992, 4064, 48, 72] | [6000, 4080, 64, 72] | [[6032, 4152]] | cottage shell; piece unknown |
+| E01 | [72, 128] / [6896, 3432, 72, 128] | [6888, 3448, 112, 96] | [[6944, 3544]] | inn shell/class unknown |
+| E02 | [128, 72] / [6976, 3456, 128, 72] | [7040, 3448, 128, 72] | [[7104, 3520]] | inn shell/class unknown |
+| E03 | [48, 88] / [6992, 3312, 48, 88] | [6992, 3312, 72, 88] | [[7028, 3400]] | house shell/class unknown |
+| B05 | [96, 56] / [6528, 3336, 96, 56] | [6528, 3336, 96, 56] | [[6576, 3392]] | house shell/class unknown |
+| E04 | [72, 48] / [7056, 3352, 72, 48] | [7080, 3352, 72, 48] | [[7116, 3400]] | cottage shell; piece unknown |
+| A04 | [64, 56] / [6096, 3408, 64, 56] | [6096, 3408, 64, 56] | [[6128, 3464]] | shop shell/class unknown |
+| E05 | [80, 48] / [6896, 3352, 80, 48] | [6896, 3352, 80, 48] | [[6936, 3400]] | cottage shell; piece unknown |
+| A05 | [48, 64] / [6032, 3400, 48, 64] | [6024, 3400, 64, 64] | [[6056, 3464]] | shop shell/class unknown |
+| G03 | [56, 48] / [5888, 4048, 56, 48] | [5864, 4048, 64, 48] | [[5896, 4096]] | cottage shell; piece unknown |
+| G04 | [64, 48] / [5880, 4120, 64, 48] | [5864, 4152, 64, 48] | [[5896, 4200]] | cottage shell; piece unknown |
+| G05 | [56, 40] / [5992, 4160, 56, 40] | [6000, 4200, 64, 40] | [[6032, 4240]] | cottage shell; piece unknown |
+| F11 | None / [6344, 4128, 96, 64] | [6344, 4128, 96, 64] | [[6392, 4192]] | mill shell/class unknown |
+
+### Terrain and native adoption still required
+
+The JSON declares the exact proposed local route points, court/plot bounds, threshold approaches and protected features. Proposed western clearing, lower mill edge, eastern coach drive and Halt Road court changes are UNAPPLIED earthwork/route operations; their native target levels are NULL. This pass loaded no crop arrays and altered no ground, mask, guard, height, water or bridge byte. It does not punch keepout holes or waive ordinary acceptance.
+
+The current407 native box remains[5976,3248,640,560]. Thirty older candidate floors lay outside or crossed it; the revised floor union and revised outside count are recorded explicitly. Extending or splitting zones, preserving cross-zone routes and save identities, binding all34 new records, class-specific inn/terrace/mill contracts and measuring one coherent complete correction are later adoption work. Producer cap40/check40 remain unchanged. This is still a41-record programme, not a claim of41 complete homes/residents/jobs.
+
+Repository changes remain only these two existing proposal documents. All prior measurements apply to their precise historical inputs. Private source arithmetic and the labelled static schematic support review only; no successful native placement, actual asset/detail gate, whole-world21-town report, Ready status or Matt approval follows.
