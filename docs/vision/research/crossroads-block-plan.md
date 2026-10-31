@@ -428,3 +428,43 @@ The JSON declares the exact proposed local route points, court/plot bounds, thre
 The current407 native box remains[5976,3248,640,560]. Thirty older candidate floors lay outside or crossed it; the revised floor union and revised outside count are recorded explicitly. Extending or splitting zones, preserving cross-zone routes and save identities, binding all34 new records, class-specific inn/terrace/mill contracts and measuring one coherent complete correction are later adoption work. Producer cap40/check40 remain unchanged. This is still a41-record programme, not a claim of41 complete homes/residents/jobs.
 
 Repository changes remain only these two existing proposal documents. All prior measurements apply to their precise historical inputs. Private source arithmetic and the labelled static schematic support review only; no successful native placement, actual asset/detail gate, whole-world21-town report, Ready status or Matt approval follows.
+
+## Native visible-approach reconciliation (r3, source proposal)
+
+The actual Q2 native cottages show all four doors clearly. Their complete 42 x 96 door regions retain all 4,032 isolated-body pixels each. The problem is the walking space projected below two doors: the lower cottage's roof/chimney hides much of G02's apron and court, and G04's chimney partly hides G03's court. These are visual findings, not a claim that doors are hidden or that a physics check failed.
+
+Evidence is the [actual Q2 native scene](https://chatgpt.com/library?file_id=libfile_efbdb66f20508191803385ce2b7e94a1&account_id=personal), run41193179535/job124513954596 on native40918588 and receiver40645f934. The native PNG is397344B/SHA256392071bff2444516dd023a8eaab17db2cfb4b717db1a1e4a5862a910db30cf08. Its original coordinates, pixels and receipts remain unchanged. GO6542378669 / ASSIGN6542382538 / ACK6542382710 authorise only this bounded two-document proposal.
+
+The existing size guide keeps a 32 x 16 world-px door apron (four by two cells). Actual source-alpha masks, ordered as foreground sprites, cover the following nominal bands. Each counted scene pixel matches an opaque foreground sprite; transparent canvas and ground shadows are excluded. The percentages describe the observed projection and set no new acceptance threshold.
+
+| Plot | Other-house coverage of 32 x 16 apron | Coverage of declared 24px court band | Actual door region |
+|---|---:|---:|---|
+| G02 | 3585/4608 pixels, 77.8% | 9662/17884, 54.0% | all4032 pixels intact |
+| G03 | 101/4608, 2.2% | 4726/19612, 24.1% | all4032 pixels intact |
+| G04 | 0/4608 | 0/19612 | all4032 pixels intact |
+| G05 | 0/4608 | 0/17884 | all4032 pixels intact |
+
+G02's door-to-court centreline has38/49 native samples covered; its court-to-spine centreline has107/193. G03's door centreline is clear, while29/217 court-centre samples are covered by the foreground chimney. The sampled central32px Halt spine has no house coverage. Readability and playable walking/collision validation remain separate.
+
+### Bounded next placement offer
+
+Only G04 and G05 move. Their physical forms, dimensions, material looks, south doors, IDs and counts remain the same. All39 unlisted floors, including G02/G03, inherit r2 unchanged.
+
+| Plot | Historical738/Q2 floor | New proposed floor | New south threshold | Movement |
+|---|---|---|---|---|
+| G04 / crossroads-b039 | [5864,4152,64,48] | [5864,4184,64,48] | [5896,4232] | south32worldpx |
+| G05 / crossroads-b040 | [6000,4200,64,40] | [6056,4192,64,40] | [6088,4232] | east56, north8worldpx |
+
+The two24px court halves now meet the unchanged Halt spine at[5968,4248]: west to[5896,4248], east to[6088,4248]. Their16px threshold spurs are[5896,4240] to[5896,4248] and[6088,4240] to[6088,4248]. This is one aligned cross-lane instead of adjacent staggered turns. Every other70 local route offer and the original36 source global routes remain untouched; no station, rail opening, portal or new shortcut is inferred.
+
+G05 would intersect the old productive-back proposal. Move that proposed area from[6088,4080,64,208] to[6128,4080,64,208], leaving8worldpx beside G05's new east edge6120. The moved area avoids all41 floors, all74 local route bands and the other8 candidate areas, as well as the known protected green/well/workshop/closed-halt rectangles. Its east edge6192 exceeds the historical Halt study's6152: a later UNAPPLIED study offer must extend40px east, from[5848,3928,304,360] to[5848,3928,344,360]. The target terrain level remains NULL. No ground or playable-zone growth occurs here.
+
+### Analytical result and limits
+
+Translating the existing actual alpha masks numerically by G04[0,96] and G05[168,-24] art pixels predicts zero foreign-sprite coverage on all four prescribed aprons and all four declared court bands. This is **ANALYTICAL ONLY**: no new PNG, native composition, terrain fit or physics result exists. The same960 x1008 diagnostic can contain the revised four cottage sprites, but its world east edge6144 cannot show the whole productive area ending6192.
+
+Source-only rectangle/full-width capsule checks find all41 floors disjoint and all74 local route bands clear of floor interiors; threshold tangency is allowed. Moved floors and the productive area avoid the known protected bounds. The seven captured story anchors, green, well, workshop, closed halt, source global routes, water/bridges/river/masks/grades and save IDs remain unchanged. These checks do not establish actual terrain/grade/bank/hazard or full global-route clearance. The historical floor union remains[5704,3232,1464,1160].
+
+The appended JSON field native_visible_approaches_r3 overrides only these two records, four local route offers and one area for the next SOURCE PROPOSAL. All historical738/Q2 data stays bound to its old geometry. All moved ground remains UNMEASURED; prior E/G terrain results do not transfer. The four diagnostic native pieces remain candidates, and the remaining classes/terrace/mill/zone/binding/E05 and approval gaps persist. No new households/jobs/rules, size exception, renderer/cutaway direction,409/406 edit or live adoption follows. Producer cap40/check40, medium14–22/large30–45 and41-record accounting are unchanged.
+
+Next: root and independent source review, then a separate exact native context recomposition and ordinary real-terrain validation. KEEP/catalogue/Y12/detail/full gates/whole-world21-town/Matt approval and Ready/merge remain outstanding.

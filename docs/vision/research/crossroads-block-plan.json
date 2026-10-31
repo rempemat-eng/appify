@@ -22851,5 +22851,471 @@
       "No project imports, array mutation, fitting, drawing/art generation, tests, engine, jobs, execution refs or Ready/merge ran. Private schematic is a flat source diagram only."
     ],
     "next_step": "Independent source/arithmetic/identity review first; root then allocates ONE coherent measured correction only after native contracts are actionable and runtime queue releases."
+  },
+  "native_visible_approaches_r3": {
+    "schema": "mygame.crossroads-visible-approaches/1",
+    "status": "SOURCE_ONLY_PROPOSED_ANALYTICAL_RECONCILIATION_NO_NEW_RENDER_OR_TERRAIN_PASS",
+    "GO": 6542378669,
+    "ASSIGN": 6542382538,
+    "ACK": 6542382710,
+    "base_source": {
+      "commit": "738352161bbfd06dafe3b0e163c96b03374b849b",
+      "tree": "ac8626aec9d035bda53cad614855d38246b456c0",
+      "json_blob": "916d2bd6c8634e7478d785aeeddd3e876893882a"
+    },
+    "authority": "For the two records, four local route offers and one productive-area override listed here, this is the next SOURCE PROPOSAL. Every unlisted record/route/area inherits native_layout_r2 exactly. Historical738, native409/Q2 and earlier measurements stay tied to their original bytes; no old terrain pass transfers.",
+    "scope": {
+      "retained_record_id_count": 41,
+      "retained_original_records": 40,
+      "separate_mill_representation": 1,
+      "moved_record_ids": [
+        "crossroads-b039",
+        "crossroads-b040"
+      ],
+      "unchanged_floor_record_count": 39,
+      "retained_story_anchor_count": 7,
+      "changed_local_route_count": 4,
+      "unchanged_local_route_count": 70,
+      "retained_local_route_count": 74,
+      "changed_area_count": 1,
+      "retained_area_count": 9,
+      "new_households_jobs_or_rules": false,
+      "producer_cap": 40,
+      "producer_check": 40
+    },
+    "observed_Q2": {
+      "run": 41193179535,
+      "job": 124513954596,
+      "artifact": 13040050581,
+      "receiver": "45f93407de9ebee6265bf5674f1e15c01a92a7a8",
+      "native_source": "18588dc63116497908b414e5317c5712e4f7006d",
+      "native_scene": {
+        "bytes": 397344,
+        "sha256": "392071bff2444516dd023a8eaab17db2cfb4b717db1a1e4a5862a910db30cf08",
+        "size_px": [
+          960,
+          1008
+        ],
+        "library_file_id": "libfile_efbdb66f20508191803385ce2b7e94a1"
+      },
+      "bundle_library_file_id": "libfile_fd8b98cd164c8191bdcbf414d929960e",
+      "door_finding": "All four actual42x96 declared door ROIs retain all4032 isolated-body pixels. Doors are NOT obscured; the earlier48px full-envelope overlap was only a risk indicator.",
+      "method": "Read-only actual Pillow/stdlib alpha/scene comparison. Door apron32x16 worldpx follows existing size-guide4x2cells. Court bands use each declared24px-width segment with rounded caps and pixel-centre membership. Only alpha255 pixels from later/foreground source sprites count; each covered scene pixel matches that exact sprite RGB. Transparent canvas and ground shadows do not count. Percentages describe projection/readability, not physics or new acceptance thresholds.",
+      "measurements": [
+        {
+          "plot": "G02",
+          "native_piece": "crossroads_halt_b029",
+          "door_roi_pixels": 4032,
+          "door_roi_pixels_matching_isolated_body": 4032,
+          "apron_foreground_pixels": 3585,
+          "apron_pixels": 4608,
+          "apron_percent": 77.799,
+          "court_foreground_pixels": 9662,
+          "court_pixels": 17884,
+          "court_percent": 54.026,
+          "door_to_court_center_samples": 49,
+          "door_to_court_center_covered": 38,
+          "court_center_samples": 193,
+          "court_center_covered": 107,
+          "foreground_piece": "crossroads_halt_b040"
+        },
+        {
+          "plot": "G03",
+          "native_piece": "crossroads_halt_b038",
+          "door_roi_pixels": 4032,
+          "door_roi_pixels_matching_isolated_body": 4032,
+          "apron_foreground_pixels": 101,
+          "apron_pixels": 4608,
+          "apron_percent": 2.192,
+          "court_foreground_pixels": 4726,
+          "court_pixels": 19612,
+          "court_percent": 24.097,
+          "door_to_court_center_samples": 49,
+          "door_to_court_center_covered": 0,
+          "court_center_samples": 217,
+          "court_center_covered": 29,
+          "foreground_piece": "crossroads_halt_b039"
+        },
+        {
+          "plot": "G04",
+          "native_piece": "crossroads_halt_b039",
+          "door_roi_pixels": 4032,
+          "door_roi_pixels_matching_isolated_body": 4032,
+          "apron_foreground_pixels": 0,
+          "apron_pixels": 4608,
+          "apron_percent": 0,
+          "court_foreground_pixels": 0,
+          "court_pixels": 19612,
+          "court_percent": 0,
+          "door_to_court_center_samples": 49,
+          "door_to_court_center_covered": 0,
+          "court_center_samples": 217,
+          "court_center_covered": 0,
+          "foreground_piece": null
+        },
+        {
+          "plot": "G05",
+          "native_piece": "crossroads_halt_b040",
+          "door_roi_pixels": 4032,
+          "door_roi_pixels_matching_isolated_body": 4032,
+          "apron_foreground_pixels": 0,
+          "apron_pixels": 4608,
+          "apron_percent": 0,
+          "court_foreground_pixels": 0,
+          "court_pixels": 17884,
+          "court_percent": 0,
+          "door_to_court_center_samples": 49,
+          "door_to_court_center_covered": 0,
+          "court_center_samples": 193,
+          "court_center_covered": 0,
+          "foreground_piece": null
+        }
+      ],
+      "Halt_straight_spine_sample": {
+        "world_width": 32,
+        "art_strip_x_half_open": [
+          384,
+          480
+        ],
+        "art_rows_inclusive": [
+          0,
+          912
+        ],
+        "samples": 87648,
+        "opaque_house_coverage": 0,
+        "qualification": "Central visible straight-band sample, not a complete terrain/pathfinding/route-end or collision test."
+      },
+      "independent_visual_check": "Fresh scene inspection also found G02's branch visible off Halt Road then disappearing beneath G05's roof toward the threshold; G03's branch remains traceable but includes chimney coverage. No art/detail/Y12 clearance."
+    },
+    "record_overrides": [
+      {
+        "id": "crossroads-b039",
+        "plot": "G04",
+        "inherited_floor_world_px": [
+          5864,
+          4152,
+          64,
+          48
+        ],
+        "proposed_floor_world_px": [
+          5864,
+          4184,
+          64,
+          48
+        ],
+        "world_delta_px": [
+          0,
+          32
+        ],
+        "inherited_threshold_world_px": [
+          5896,
+          4200
+        ],
+        "proposed_threshold_world_px": [
+          5896,
+          4232
+        ],
+        "proposed_threshold_spur_world_px": [
+          [
+            5896,
+            4240
+          ],
+          [
+            5896,
+            4248
+          ]
+        ],
+        "native_candidate_piece": "crossroads_halt_b039",
+        "variant": "south",
+        "proposed_local_foot_art_px": [
+          216,
+          792
+        ]
+      },
+      {
+        "id": "crossroads-b040",
+        "plot": "G05",
+        "inherited_floor_world_px": [
+          6000,
+          4200,
+          64,
+          40
+        ],
+        "proposed_floor_world_px": [
+          6056,
+          4192,
+          64,
+          40
+        ],
+        "world_delta_px": [
+          56,
+          -8
+        ],
+        "inherited_threshold_world_px": [
+          6032,
+          4240
+        ],
+        "proposed_threshold_world_px": [
+          6088,
+          4232
+        ],
+        "proposed_threshold_spur_world_px": [
+          [
+            6088,
+            4240
+          ],
+          [
+            6088,
+            4248
+          ]
+        ],
+        "native_candidate_piece": "crossroads_halt_b040",
+        "variant": "south",
+        "proposed_local_foot_art_px": [
+          792,
+          792
+        ]
+      }
+    ],
+    "local_route_overrides": [
+      {
+        "name": "G04 south court",
+        "inherited_points_world_px": [
+          [
+            5968,
+            4216
+          ],
+          [
+            5896,
+            4216
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            5968,
+            4248
+          ],
+          [
+            5896,
+            4248
+          ]
+        ],
+        "width_world_px": 24,
+        "fit": "UNMEASURED; aligned local offers only, no physical route or terrain acceptance"
+      },
+      {
+        "name": "G05 south court",
+        "inherited_points_world_px": [
+          [
+            5968,
+            4256
+          ],
+          [
+            6032,
+            4256
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            5968,
+            4248
+          ],
+          [
+            6088,
+            4248
+          ]
+        ],
+        "width_world_px": 24,
+        "fit": "UNMEASURED; aligned local offers only, no physical route or terrain acceptance"
+      },
+      {
+        "name": "G04 south threshold",
+        "inherited_points_world_px": [
+          [
+            5896,
+            4208
+          ],
+          [
+            5896,
+            4216
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            5896,
+            4240
+          ],
+          [
+            5896,
+            4248
+          ]
+        ],
+        "width_world_px": 16,
+        "fit": "UNMEASURED; aligned local offers only, no physical route or terrain acceptance"
+      },
+      {
+        "name": "G05 south threshold",
+        "inherited_points_world_px": [
+          [
+            6032,
+            4248
+          ],
+          [
+            6032,
+            4256
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            6088,
+            4240
+          ],
+          [
+            6088,
+            4248
+          ]
+        ],
+        "width_world_px": 16,
+        "fit": "UNMEASURED; aligned local offers only, no physical route or terrain acceptance"
+      }
+    ],
+    "area_override": {
+      "name": "Halt eastern productive backs",
+      "inherited_rect_world_px": [
+        6088,
+        4080,
+        64,
+        208
+      ],
+      "proposed_rect_world_px": [
+        6128,
+        4080,
+        64,
+        208
+      ],
+      "role": "PROPOSED productive side/rear plots east of the revisedG05; no extra homes/jobs, rail loading or opening condition.",
+      "side_clearance_world_px": 8,
+      "fit": "UNAPPLIED_UNMEASURED; source rectangle avoids revised floors/routes but actual land/grade/banks are untested"
+    },
+    "analytical_prediction": {
+      "status": "TRANSLATED_EXISTING_NATIVE_ALPHA_ONLY_NOT_A_NEW_RENDER",
+      "source_sprite_canvas": [
+        216,
+        312
+      ],
+      "source_sprite_anchor": [
+        108,
+        308
+      ],
+      "source_native_origin_world_px": [
+        5824,
+        3968
+      ],
+      "retained_diagnostic_local_box": [
+        0,
+        0,
+        320,
+        336
+      ],
+      "retained_diagnostic_image_px": [
+        960,
+        1008
+      ],
+      "art_translation_by_plot": {
+        "G04": [
+          0,
+          96
+        ],
+        "G05": [
+          168,
+          -24
+        ]
+      },
+      "apron_covered_pixels_by_plot": {
+        "G02": [
+          0,
+          4608
+        ],
+        "G03": [
+          0,
+          4608
+        ],
+        "G04": [
+          0,
+          4608
+        ],
+        "G05": [
+          0,
+          4608
+        ]
+      },
+      "court_covered_pixels_by_plot": {
+        "G02": [
+          0,
+          17884
+        ],
+        "G03": [
+          0,
+          19612
+        ],
+        "G04": [
+          0,
+          19612
+        ],
+        "G05": [
+          0,
+          29980
+        ]
+      },
+      "qualification": "Existing frozen actual alpha shapes were translated numerically, not repainted/composed. Zero projected coverage removes the measured foreign-sprite projection on these declared bands only. It is not new visible context, route/terrain/grade/collision/nav/door operation or quality acceptance."
+    },
+    "static_checks": {
+      "method": "Source-only ordinary positive-area rectangles and full-width polyline capsules; touching thresholds do not count as floor interior cuts. No crop arrays, native imports or generation.",
+      "all41_floor_rectangles_pairwise_disjoint": true,
+      "all74_local_route_bands_avoid_all41_floor_interiors": true,
+      "moved_records_avoid_protected_green_well_workshop_closed_halt_and_guard": true,
+      "moved_records_avoid_all9_candidate_area_rectangles": true,
+      "productive_area_avoids_all41_floors_all74_local_bands_and_other8_candidate_areas": true,
+      "productive_area_avoids_known_protected_rectangles": true,
+      "seven_captured_anchor_rectangles_and_thresholds_preserved": true,
+      "original36_source_global_routes_preserved_without_edit": true,
+      "source_guard_water_bridge_river_land_masks_and_grades_unchanged": true,
+      "local_crosslane_join": "Both revised24px halves meet the retained32px Halt spine at[5968,4248]. The trunk and its original northern external join are unchanged.",
+      "native_floor_union_world_box_unchanged": [
+        5704,
+        3232,
+        1464,
+        1160
+      ],
+      "limits": "These checks inspect proposal geometry and known protected rectangles, not actual native/captured whole-world route bands or terrain. Full actual global route/bank/hazard clearance remains unmeasured."
+    },
+    "unapplied_study_extent_override": {
+      "area": "Halt Road",
+      "historical_r2_bounds_world_px": [
+        5848,
+        3928,
+        304,
+        360
+      ],
+      "proposed_bounds_world_px": [
+        5848,
+        3928,
+        344,
+        360
+      ],
+      "eastward_extension_world_px": 40,
+      "native_target_level": null,
+      "status": "UNAPPLIED_UNMEASURED_STUDY_SCOPE_ONLY",
+      "reason": "Moved productive area ends6192 instead of oldstudy6152. This changes an offer for later study, not terrain, crop extent or native playable zone."
+    },
+    "remaining_limits": [
+      "No new render, crop/terrain fit, array/mask/grade/water/bridge/river change, native409/receiver406 edit, package/import/runtime/engine/job/execution-ref action occurred in this proposal step.",
+      "Current four-cottage diagnostic worldbox ends6144 east; all revised cottage sprite envelopes still fit, but the productive plot extends to6192. The unchanged crop cannot display or approve the whole productive plot.",
+      "All moved floors, courts, aprons and productive ground remain UNMEASURED on actual terrain. E05 remains conditional/unoccupied, genericclasses/terrace/mill/zone/binding gaps and prior approval holds remain.",
+      "No hidden-door claim, roof/camera/cutaway invention or new art direction. Actual door visibility stays true; a new exact native context must inspect the proposed visible approaches.",
+      "All41 identities and40-plus-mill accounting, seven story anchors, original global routes/closed halt/save mappings and medium14–22/large30–45 rules are preserved. No extra residents/jobs/households/rules or approved size exceptions.",
+      "Source geometry, translated masks and Q2 candidate drawings do not confer KEEP/catalogue/Y12/detail/current full gates/whole-world21-town/Matt approval, Ready, merge or playable adoption."
+    ],
+    "next_step": "Root and independent source review; only then a separately allocated exact native context recomposition and ordinary real-terrain/route validation. Do not reuse historical terrain passes or treat this analytical prediction as a rendered result."
   }
 }
