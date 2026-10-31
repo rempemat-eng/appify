@@ -221,10 +221,12 @@ CONTEXT_PRIVATE_FILES = (
 # Separate, reviewed four-cottage subject. No old source or art pin is repointed.
 HALT_RECEIVER_PARENT = "f8d5269047449ddf7ea9077b90f04e1237797516"
 HALT_RECEIVER_PARENT_TREE = "d30685162bc07b2fc2130431d2a3b55360e33fb5"
-HALT_SOURCE_SHA = '18588dc63116497908b414e5317c5712e4f7006d'
-HALT_SOURCE_TREE = '417a148ad9ea116cfb206fefc6b4ad193b6557e3'
-HALT_SOURCE_PARENT = "09990895018c0a2e72aca5550ebd4d8b55e904de"
-HALT_SOURCE_PARENT_TREE = "c6cfd4979a5dbd38db0d87231ef36ffd7ec7ff50"
+HALT_SOURCE_SHA = 'a25dada748cf398f4c1c32eb5fc0e19308dd7b3b'
+HALT_SOURCE_TREE = '3ed1a0df87b34e3abd03324356cc59bffdeef249'
+HALT_SOURCE_PARENT = "18588dc63116497908b414e5317c5712e4f7006d"
+HALT_SOURCE_PARENT_TREE = "417a148ad9ea116cfb206fefc6b4ad193b6557e3"
+HALT_SOURCE_ORIGINAL = "09990895018c0a2e72aca5550ebd4d8b55e904de"
+HALT_SOURCE_ORIGINAL_TREE = "c6cfd4979a5dbd38db0d87231ef36ffd7ec7ff50"
 HALT_ENTRY = "scripts/art/kit/crossroads_halt_court.py"
 HALT_FIXTURE = "scripts/review/fixtures/crossroads_halt_court.json"
 HALT_SOURCE_NEW = {HALT_ENTRY, HALT_FIXTURE}
@@ -232,6 +234,8 @@ HALT_SOURCE_BASE = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
 HALT_SOURCE_BASE_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
 HALT_CLOSURE_RECEIVER_PARENT = "3386ecff5e160bb7ac3749a110025350186abd16"
 HALT_CLOSURE_RECEIVER_PARENT_TREE = "1ba2c8406866197245cffd5abea528e2e5843838"
+HALT_CONTEXT_RECEIVER_PARENT = "45f93407de9ebee6265bf5674f1e15c01a92a7a8"
+HALT_CONTEXT_RECEIVER_PARENT_TREE = "ff921da284e1322a059495dd777c59c68d531f4a"
 HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165, '100644'),
  'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444, '100644'),
  'art/scenes/pilot.json': ('442c2bdf3f33c34a7df6453b0a6110fc4a31169c', 37797, '100644'),
@@ -312,7 +316,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/kit/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
  'scripts/art/kit/build.py': ('054206b5ea00d227ae0a33075a0b0b2e0355d4b5', 18911, '100644'),
  'scripts/art/kit/compose.py': ('4435017b23a5d50ed0a5e8801abc536b84854416', 12458, '100644'),
- 'scripts/art/kit/crossroads_halt_court.py': ('c262a157245d9c08952768d13fba711b147f3509', 14399, '100644'),
+ 'scripts/art/kit/crossroads_halt_court.py': ('fc7a43392b1c66b9e9d38b74c70f3bb58f6bf411', 14624, '100644'),
  'scripts/art/kit/dressing.py': ('e4b4db15f45a0f1e202012a7c8d506e6f4970c5f', 8356, '100644'),
  'scripts/art/kit/edges.py': ('28fdf16622c7a0bed0f8d427e2ed6938fc7bcd69', 23944, '100644'),
  'scripts/art/kit/fills.py': ('3cbde218f4ea757a7327887060a60dfd65138df4', 18297, '100644'),
@@ -365,8 +369,8 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/size_guide.json': ('f30ecb3249d771e5dc6cdf6546d50400b118cf57', 45069, '100644'),
  'scripts/art/water_flow.py': ('4e1ebf799cae783c35642f6c1b9e34463ed300e0', 8888, '100644'),
  'scripts/review/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
- 'scripts/review/fixtures/crossroads_halt_court.json': ('a98c725435ce00726b0a567318e8fc7bbcee0d56',
-                                                        47274,
+ 'scripts/review/fixtures/crossroads_halt_court.json': ('b379419feec5ebad25c088c0b3df30a1e858aa91',
+                                                        51169,
                                                         '100644'),
  'scripts/review/ground_rules.py': ('0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68', 18956, '100644'),
  'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305, '100644')}
@@ -897,8 +901,12 @@ class Controller:
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_CLOSURE_RECEIVER_PARENT]:
-            raise RuntimeError("Closure extension must retain the exact sole3386 receiver parent")
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_CONTEXT_RECEIVER_PARENT]:
+            raise RuntimeError("Context rebind must retain the exact sole45f receiver parent")
+        halt_context_headers = git(self.candidate, "cat-file", "commit", HALT_CONTEXT_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in halt_context_headers.splitlines() if x.startswith("parent ")] != [HALT_CLOSURE_RECEIVER_PARENT]
+                or git(self.candidate,"rev-parse",HALT_CONTEXT_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_CONTEXT_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen Q2 receiver ancestry/tree differs")
         closure_headers = git(self.candidate, "cat-file", "commit", HALT_CLOSURE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in closure_headers.splitlines() if x.startswith("parent ")] != [HALT_RECEIVER_PARENT]
                 or git(self.candidate,"rev-parse",HALT_CLOSURE_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_CLOSURE_RECEIVER_PARENT_TREE):
@@ -943,8 +951,12 @@ class Controller:
             court_headers = git(self.source, "cat-file", "commit", HALT_SOURCE_SHA).decode().split("\n\n", 1)[0]
             if ([x[7:] for x in court_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_PARENT]
                     or git(self.source,"rev-parse",HALT_SOURCE_PARENT+"^{tree}").decode().strip() != HALT_SOURCE_PARENT_TREE):
-                raise RuntimeError("Corrected halt subject must retain actual099 parent/tree")
-            halt_original_headers = git(self.source,"cat-file","commit",HALT_SOURCE_PARENT).decode().split("\n\n",1)[0]
+                raise RuntimeError("Revised halt context must retain actual185 parent/tree")
+            court_parent_headers = git(self.source,"cat-file","commit",HALT_SOURCE_PARENT).decode().split("\n\n",1)[0]
+            if ([x[7:] for x in court_parent_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_ORIGINAL]
+                    or git(self.source,"rev-parse",HALT_SOURCE_ORIGINAL+"^{tree}").decode().strip() != HALT_SOURCE_ORIGINAL_TREE):
+                raise RuntimeError("Corrected halt185->099 ancestry/tree differs")
+            halt_original_headers = git(self.source,"cat-file","commit",HALT_SOURCE_ORIGINAL).decode().split("\n\n",1)[0]
             if ([x[7:] for x in halt_original_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_BASE]
                     or git(self.source,"rev-parse",HALT_SOURCE_BASE+"^{tree}").decode().strip() != HALT_SOURCE_BASE_TREE):
                 raise RuntimeError("Original halt099->407feb ancestry/tree differs")
@@ -957,7 +969,9 @@ class Controller:
             if changed != HALT_SOURCE_NEW or any(p in base or offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in changed):
                 raise RuntimeError("Halt subject must add only the two reviewed new files")
             self.output["halt_subject_history"] = {"headers":court_headers,"parent_sha":HALT_SOURCE_PARENT,
-                "parent_tree":HALT_SOURCE_PARENT_TREE,"original_headers":halt_original_headers,
+                "parent_tree":HALT_SOURCE_PARENT_TREE,"parent_headers":court_parent_headers,
+                "original_sha":HALT_SOURCE_ORIGINAL,"original_tree":HALT_SOURCE_ORIGINAL_TREE,
+                "original_headers":halt_original_headers,
                 "baseline_sha":HALT_SOURCE_BASE,"baseline_tree":HALT_SOURCE_BASE_TREE,
                 "changed":sorted(changed),"correction_changed":sorted(correction),"not_receiver_ancestor":True}
         active_tree = tree(self.candidate, ACTIVE_RECEIVER_PARENT)
@@ -985,7 +999,8 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers,"closure_headers":closure_headers,"closure_parent":HALT_CLOSURE_RECEIVER_PARENT,
+            "headers": headers,"halt_context_headers":halt_context_headers,"halt_context_parent":HALT_CONTEXT_RECEIVER_PARENT,
+            "closure_headers":closure_headers,"closure_parent":HALT_CLOSURE_RECEIVER_PARENT,
             "halt_headers":halt_headers,"halt_parent":HALT_RECEIVER_PARENT,
             "context_headers":context_headers,"context_parent":CONTEXT_RECEIVER_PARENT,
             "context_delta":sorted(context_delta),"active_headers": active_headers, "mode_delta":sorted(mode_delta), "parent_headers": parent_headers, "original_headers": original_headers,
