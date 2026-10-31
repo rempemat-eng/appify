@@ -40,13 +40,19 @@ func _enter_tree() -> void:
 	# Separate opt-in lifecycle: never schedule the old smoke alongside it.
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--we-lifecycle="):
-			get_tree().create_timer(4.0).timeout.connect(_run_editor_lifecycle)
+			_run_editor_lifecycle.call_deferred()
 			return
+	var show_requested := false
+	var smoke_requested := false
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--we-show="):
-			get_tree().create_timer(3.0).timeout.connect(_show_for_screenshot)
+			show_requested = true
 		if arg.begins_with("--we-smoke-report="):
-			get_tree().create_timer(4.0).timeout.connect(_run_editor_smoke)
+			smoke_requested = true
+	if smoke_requested:
+		_run_automatic_editor_smoke.call_deferred(show_requested)
+	elif show_requested:
+		_show_when_ready.call_deferred()
 
 func _exit_tree() -> void:
 	_cancel_stroke()
@@ -377,6 +383,27 @@ func _show_for_screenshot() -> void:
 
 func _run_editor_smoke() -> void:
 	var result: Dictionary = await Smoke.run(self)
+	_finish_editor_smoke(result)
+
+func _run_automatic_editor_smoke(show_requested: bool) -> void:
+	var readiness: Dictionary = await Smoke.wait_for_editor_scene(self, "res://zones/kitlab/kitlab.tscn")
+	var result: Dictionary
+	if bool(readiness.get("ok", false)):
+		if show_requested:
+			_show_for_screenshot()
+		result = await Smoke.run(self)
+	else:
+		result = {"ok": false, "failures": ["Editor startup scene readiness failed."]}
+	result["startup_readiness"] = readiness
+	_finish_editor_smoke(result)
+
+func _show_when_ready() -> void:
+	var readiness: Dictionary = await Smoke.wait_for_editor_scene(self, Smoke.requested_editor_scene())
+	print("WORLD_EDITOR_STARTUP ", JSON.stringify(readiness))
+	if bool(readiness.get("ok", false)):
+		_show_for_screenshot()
+
+func _finish_editor_smoke(result: Dictionary) -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--we-smoke-report="):
 			var file := FileAccess.open(arg.substr(18), FileAccess.WRITE)
@@ -387,6 +414,6 @@ func _run_editor_smoke() -> void:
 	get_tree().quit(0 if bool(result.get("ok", false)) else 1)
 
 func _run_editor_lifecycle() -> void:
-	var result: Dictionary = await Smoke.run_lifecycle(self)
+	var result: Dictionary = await Smoke.run_lifecycle(self, true)
 	print("WORLD_EDITOR_LIFECYCLE ", JSON.stringify(result))
 	get_tree().quit(0 if bool(result.get("ok", false)) else 1)

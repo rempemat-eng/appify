@@ -188,7 +188,46 @@ static func _motion(plugin: EditorPlugin, ground: TerrainGround, cell: Vector2i,
 	plugin.call("_forward_canvas_gui_input", event)
 
 
-static func run_lifecycle(plugin: EditorPlugin) -> Dictionary:
+static func requested_editor_scene() -> String:
+	var paths: Array[String] = []
+	for arg in OS.get_cmdline_args():
+		if arg.ends_with(".tscn") and not arg.begins_with("--"):
+			paths.append(ProjectSettings.localize_path(arg))
+	return paths[0] if paths.size() == 1 else ""
+
+static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) -> Dictionary:
+	# Poll actual readiness once per editor frame; elapsed time never implies success.
+	# The unchanged receiving lifetime/phase deadlines also bound this opt-in wait.
+	var started := Time.get_ticks_msec()
+	var requested := requested_editor_scene()
+	var facts := {}
+	while true:
+		var root := EditorInterface.get_edited_scene_root()
+		var target: Node = root.get_node_or_null("Ground") if root != null else null
+		var filesystem := EditorInterface.get_resource_filesystem()
+		var script: Script = target.get_script() as Script if target != null else null
+		facts = {"ok": false, "expected_scene": expected_scene, "requested_scene": requested,
+			"root_present": root != null, "root_scene_path": String(root.scene_file_path) if root != null else "",
+			"ground_present": target != null, "ground_class": target.get_class() if target != null else "",
+			"ground_script": script.resource_path if script != null else "", "ground_is_terrain": target is TerrainGround,
+			"filesystem_present": filesystem != null, "scanning": filesystem.is_scanning() if filesystem != null else true,
+			"importing": filesystem.is_importing() if filesystem != null else true,
+			"elapsed_ms": Time.get_ticks_msec() - started, "limit_ms": 15000}
+		if expected_scene.is_empty() or requested != expected_scene:
+			facts["failure"] = "Requested scene is missing, ambiguous or differs from the acceptance scene."
+			return facts
+		if facts.elapsed_ms >= 15000:
+			facts["failure"] = "Actual scene readiness did not complete within15s."
+			return facts
+		if root != null and root.scene_file_path == expected_scene and target is TerrainGround and filesystem != null and not facts.scanning and not facts.importing:
+			facts["ok"] = true
+			return facts
+		if not is_instance_valid(plugin) or not plugin.is_inside_tree():
+			facts["failure"] = "Editor plugin left the tree before scene readiness."
+			return facts
+		await plugin.get_tree().process_frame
+
+static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> Dictionary:
 	var zone_plan := preload("res://tools/kit_zone.gd")
 	var phase := ""
 	var count := 0
@@ -207,6 +246,12 @@ static func run_lifecycle(plugin: EditorPlugin) -> Dictionary:
 	if count != 1 or phase not in ["author", "reopen"] or mixed or not Engine.is_editor_hint():
 		failures.append("One editor lifecycle phase is required without legacy smoke/capture flags.")
 		return zone_plan.lifecycle_finish(context, result)
+	if await_startup:
+		var readiness: Dictionary = await wait_for_editor_scene(plugin, zone_plan.LIFECYCLE_SCENE)
+		result["startup_readiness"] = readiness
+		if not bool(readiness.get("ok", false)):
+			failures.append("Editor startup scene readiness failed.")
+			return zone_plan.lifecycle_finish(context, result)
 	var scene := EditorInterface.get_edited_scene_root()
 	var ground: TerrainGround = scene.get_node_or_null("Ground") as TerrainGround if scene != null else null
 	if scene == null or scene.scene_file_path != zone_plan.LIFECYCLE_SCENE or ground == null or not ground.lab or ground.grid_size != Vector2i(8, 8):
