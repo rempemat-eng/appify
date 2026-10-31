@@ -1,10 +1,10 @@
 {
   "document": "MyGame Crossroads Halt court native diagnostic",
   "status": "SOURCE_ONLY_UNRUN_NOT_PRODUCTION_ADOPTION",
-  "source_native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
-  "source_native_tree": "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2",
-  "source_layout_commit": "a81b6ed1137018a80c0408ad0254dd03e09e0ee6",
-  "source_layout_json_blob": "63b10a6b2d9ed8ffc35ef3af20d78f319930b3ae",
+  "source_native_commit": "45f2c80b657169ef4d7445bc9ff5ddd153960707",
+  "source_native_tree": "7e7561eac9b7a9f15e54ff62b169dd7cf500bad5",
+  "source_layout_commit": "7bf6b026a21e7996a367d6ae9b5862b3344bdd56",
+  "source_layout_json_blob": "2c2c5474f2154ba1430549823a908996261572c8",
   "GO": 6541871017,
   "ASSIGN": 6541875628,
   "ACK": 6541875795,
@@ -1394,7 +1394,7 @@
           200
         ]
       ],
-      "width": 16,
+      "width": 24,
       "kind": "path",
       "source_fit": "UNMEASURED; not a route/collision/hazard acceptance"
     },
@@ -1420,7 +1420,7 @@
           144
         ]
       ],
-      "width": 16,
+      "width": 24,
       "kind": "path",
       "source_fit": "UNMEASURED; not a route/collision/hazard acceptance"
     },
@@ -1446,7 +1446,7 @@
           280
         ]
       ],
-      "width": 16,
+      "width": 24,
       "kind": "path",
       "source_fit": "UNMEASURED; not a route/collision/hazard acceptance"
     },
@@ -1472,13 +1472,13 @@
           280
         ]
       ],
-      "width": 16,
+      "width": 24,
       "kind": "path",
       "source_fit": "UNMEASURED; not a route/collision/hazard acceptance"
     }
   ],
   "source_input_closure": {
-    "qualification": "Conservative407 source/ground closure, including extra uncalled native definitions; not a dynamic import trace. Full-AST transitive audit includes function-local imports and verified scripts/art sibling-module search. All112 raw files checked by size/mode/Gitblob before and after actual future rendering. Q1 missing-input failure retained, not path-repaired or relabelled.",
+    "qualification": "Exact112-file conservative native closure:110 unchanged historical407 inputs plus2 explicitly reviewed houses/softground overrides from the genuine two-parent integration. All112 paths, actual size/mode/Gitblob and before/after raw SHA guards remain. Historical transitive import audit and Q1 failure are retained; changed native bytes are not claimed as unchanged407.",
     "files": [
       {
         "path": ".github/workflows/verify.yml",
@@ -1968,8 +1968,8 @@
       },
       {
         "path": "scripts/art/native/houses.py",
-        "blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
-        "bytes": 92651,
+        "blob": "5c8d707d8cced8547940da604d60418a69f82108",
+        "bytes": 93085,
         "mode": "100644"
       },
       {
@@ -2040,8 +2040,8 @@
       },
       {
         "path": "scripts/art/native/softground.py",
-        "blob": "6ad07c557eefa864f1140332e382b2ef8f3101a1",
-        "bytes": 112143,
+        "blob": "159ac5f6271c56b58b3b88b1792212f46e026bb5",
+        "bytes": 112295,
         "mode": "100644"
       },
       {
@@ -2175,7 +2175,9 @@
     "Native town.build uses4HD cottage calls and4legacy-only silhouettes for its existing lawn/shadow logic, not just4constructor invocations.",
     "Door opening source dimensions and opaque bbox must be checked on generated native images; no transparent-padding credit.",
     "Source-only preparation performs no import, drawing, engine or runtime tests.",
-    "Historical185/Q2 composition only: the earlier48artpx full-canvas overlap was a risk indicator. Actual Q2 retained all4032 pixels of every declared door ROI; doors were NOT hidden. Its G02/G03 apron/court foreground coverage does not describe this revised pose. Floor clearance and translated-alpha predictions are not new rendered visible-access, physics or terrain acceptance."
+    "Historical185/Q2 composition only: the earlier48artpx full-canvas overlap was a risk indicator. Actual Q2 retained all4032 pixels of every declared door ROI; doors were NOT hidden. Its G02/G03 apron/court foreground coverage does not describe this revised pose. Floor clearance and translated-alpha predictions are not new rendered visible-access, physics or terrain acceptance.",
+    "r4 is unsmoothed source-cell geometry only. Nominal24 interpreted as radius12 capsule would intrude4worldpx into ownfloor, unlike native n2 rectangle. Ordinary physical-route/terrain contract remains OPEN; no conflict suppressed or validator changed.",
+    "Seeded soft-grid rounding/turf/contact and revised house/rut pixels remain UNRUN; historical Q3 visibility does not prove new earth-to-threshold contact, level junction or planter construction."
   ],
   "import_closure_correction": {
     "GO": 6542130973,
@@ -2272,7 +2274,7 @@
     },
     "failure_receipt": "Preserve traceback.format_exc() for actual inner native and source-guard failures. Original Q1 had only native error type/message plus outer receiving traceback; its missing inner frames are not reconstructed."
   },
-  "source_layout_overlay_key": "native_visible_approaches_r3",
+  "source_layout_overlay_key": "native_visible_approaches_r4",
   "context_revision": {
     "GO": 6542495217,
     "ASSIGN": 6542500004,
@@ -2384,5 +2386,329 @@
     },
     "terrain_and_adoption": "Underlying continent terrain/grade/banks/routes and playable adoption remain UNMEASURED. No world terrain, closed halt, global routes, story anchors, households, catalogue or renderer changes.",
     "artifact_identity": "plan._inputs binds the frozen112 baseline snapshot plus actual fixture and entrypoint SHA256. Context edits change artifact identity without changing body forms. No new render is claimed."
+  },
+  "source_native_baseline": {
+    "commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+    "tree": "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2",
+    "role": "Historical407 source baseline only; current closure has110 exact baseline files and2 explicit reviewed native overrides, not112 unchanged407 files.",
+    "original112_raw_bytes": 3233172
+  },
+  "source_layout_overlay_chain": [
+    "native_layout_r2",
+    "native_visible_approaches_r3",
+    "native_visible_approaches_r4"
+  ],
+  "feedback_context_revision": {
+    "GO": 6547165265,
+    "ASSIGN": 6547181042,
+    "ACK": 6547191034,
+    "integration": {
+      "commit": "45f2c80b657169ef4d7445bc9ff5ddd153960707",
+      "tree": "7e7561eac9b7a9f15e54ff62b169dd7cf500bad5",
+      "parents": [
+        "ef5e62f8c27bcec20793d319cef2b678e13bfbd6",
+        "a4ae55fda8643123c4e2d53bd5c46c25fd28a584"
+      ]
+    },
+    "source_branch_base": "ef5e62f8c27bcec20793d319cef2b678e13bfbd6",
+    "native_overrides": [
+      {
+        "path": "scripts/art/native/houses.py",
+        "reviewed_commit": "a4ae55fda8643123c4e2d53bd5c46c25fd28a584",
+        "historical407_pin": {
+          "path": "scripts/art/native/houses.py",
+          "blob": "3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e",
+          "bytes": 92651,
+          "mode": "100644"
+        },
+        "current_pin": {
+          "path": "scripts/art/native/houses.py",
+          "blob": "5c8d707d8cced8547940da604d60418a69f82108",
+          "bytes": 93085,
+          "mode": "100644"
+        }
+      },
+      {
+        "path": "scripts/art/native/softground.py",
+        "reviewed_commit": "ef5e62f8c27bcec20793d319cef2b678e13bfbd6",
+        "historical407_pin": {
+          "path": "scripts/art/native/softground.py",
+          "blob": "6ad07c557eefa864f1140332e382b2ef8f3101a1",
+          "bytes": 112143,
+          "mode": "100644"
+        },
+        "current_pin": {
+          "path": "scripts/art/native/softground.py",
+          "blob": "159ac5f6271c56b58b3b88b1792212f46e026bb5",
+          "bytes": 112295,
+          "mode": "100644"
+        }
+      }
+    ],
+    "layout_source": {
+      "commit": "7bf6b026a21e7996a367d6ae9b5862b3344bdd56",
+      "tree": "ac11b19efbb4fc225bf01f973fa342037051bad4",
+      "json_blob": "2c2c5474f2154ba1430549823a908996261572c8",
+      "overlay_key": "native_visible_approaches_r4"
+    },
+    "historical_context_source": {
+      "native_commit": "feb37c31d6de71e20df096df4df4d32ed1fa93ed",
+      "native_tree": "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2",
+      "layout_commit": "a81b6ed1137018a80c0408ad0254dd03e09e0ee6",
+      "layout_json_blob": "63b10a6b2d9ed8ffc35ef3af20d78f319930b3ae",
+      "overlay_key": "native_visible_approaches_r3",
+      "closure_qualification": "Conservative407 source/ground closure, including extra uncalled native definitions; not a dynamic import trace. Full-AST transitive audit includes function-local imports and verified scripts/art sibling-module search. All112 raw files checked by size/mode/Gitblob before and after actual future rendering. Q1 missing-input failure retained, not path-repaired or relabelled."
+    },
+    "current112_raw_bytes": 3233758,
+    "unchanged_historical407_file_count": 110,
+    "effective_routes": "Exactly four existing nominal spur widths16->24; all endpoints/local coordinates, other5 diagnostic routes/floors/doors/looks/forms/seeds/metadata/profile remain unchanged.",
+    "doorstep_contract": [
+      {
+        "name": "G02 south threshold",
+        "record_id": "crossroads-b029",
+        "plot": "G02",
+        "existing_threshold_world_px": [
+          6032,
+          4152
+        ],
+        "inherited_points_world_px": [
+          [
+            6032,
+            4160
+          ],
+          [
+            6032,
+            4168
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            6032,
+            4160
+          ],
+          [
+            6032,
+            4168
+          ]
+        ],
+        "inherited_width_world_px": 16,
+        "width_world_px": 24,
+        "kind": "path",
+        "inherited_native_n_cells": 1,
+        "native_n_cells": 2,
+        "inherited_native_core_local_cells": [
+          26,
+          24,
+          1,
+          2
+        ],
+        "native_core_local_cells": [
+          25,
+          23,
+          2,
+          3
+        ],
+        "inherited_native_core_world_rect": [
+          6032,
+          4160,
+          8,
+          16
+        ],
+        "native_core_world_rect": [
+          6024,
+          4152,
+          16,
+          24
+        ],
+        "new_threshold_row_cells_added": 2,
+        "new_spur_cells_shared_with_court": 4
+      },
+      {
+        "name": "G03 south threshold",
+        "record_id": "crossroads-b038",
+        "plot": "G03",
+        "existing_threshold_world_px": [
+          5896,
+          4096
+        ],
+        "inherited_points_world_px": [
+          [
+            5896,
+            4104
+          ],
+          [
+            5896,
+            4112
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            5896,
+            4104
+          ],
+          [
+            5896,
+            4112
+          ]
+        ],
+        "inherited_width_world_px": 16,
+        "width_world_px": 24,
+        "kind": "path",
+        "inherited_native_n_cells": 1,
+        "native_n_cells": 2,
+        "inherited_native_core_local_cells": [
+          9,
+          17,
+          1,
+          2
+        ],
+        "native_core_local_cells": [
+          8,
+          16,
+          2,
+          3
+        ],
+        "inherited_native_core_world_rect": [
+          5896,
+          4104,
+          8,
+          16
+        ],
+        "native_core_world_rect": [
+          5888,
+          4096,
+          16,
+          24
+        ],
+        "new_threshold_row_cells_added": 2,
+        "new_spur_cells_shared_with_court": 4
+      },
+      {
+        "name": "G04 south threshold",
+        "record_id": "crossroads-b039",
+        "plot": "G04",
+        "existing_threshold_world_px": [
+          5896,
+          4232
+        ],
+        "inherited_points_world_px": [
+          [
+            5896,
+            4240
+          ],
+          [
+            5896,
+            4248
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            5896,
+            4240
+          ],
+          [
+            5896,
+            4248
+          ]
+        ],
+        "inherited_width_world_px": 16,
+        "width_world_px": 24,
+        "kind": "path",
+        "inherited_native_n_cells": 1,
+        "native_n_cells": 2,
+        "inherited_native_core_local_cells": [
+          9,
+          34,
+          1,
+          2
+        ],
+        "native_core_local_cells": [
+          8,
+          33,
+          2,
+          3
+        ],
+        "inherited_native_core_world_rect": [
+          5896,
+          4240,
+          8,
+          16
+        ],
+        "native_core_world_rect": [
+          5888,
+          4232,
+          16,
+          24
+        ],
+        "new_threshold_row_cells_added": 2,
+        "new_spur_cells_shared_with_court": 4
+      },
+      {
+        "name": "G05 south threshold",
+        "record_id": "crossroads-b040",
+        "plot": "G05",
+        "existing_threshold_world_px": [
+          6088,
+          4232
+        ],
+        "inherited_points_world_px": [
+          [
+            6088,
+            4240
+          ],
+          [
+            6088,
+            4248
+          ]
+        ],
+        "proposed_points_world_px": [
+          [
+            6088,
+            4240
+          ],
+          [
+            6088,
+            4248
+          ]
+        ],
+        "inherited_width_world_px": 16,
+        "width_world_px": 24,
+        "kind": "path",
+        "inherited_native_n_cells": 1,
+        "native_n_cells": 2,
+        "inherited_native_core_local_cells": [
+          33,
+          34,
+          1,
+          2
+        ],
+        "native_core_local_cells": [
+          32,
+          33,
+          2,
+          3
+        ],
+        "inherited_native_core_world_rect": [
+          6088,
+          4240,
+          8,
+          16
+        ],
+        "native_core_world_rect": [
+          6080,
+          4232,
+          16,
+          24
+        ],
+        "new_threshold_row_cells_added": 2,
+        "new_spur_cells_shared_with_court": 4
+      }
+    ],
+    "rendering_limits": [
+      "r4 is unsmoothed source-cell geometry only. Nominal24 interpreted as radius12 capsule would intrude4worldpx into ownfloor, unlike native n2 rectangle. Ordinary physical-route/terrain contract remains OPEN; no conflict suppressed or validator changed.",
+      "Seeded soft-grid rounding/turf/contact and revised house/rut pixels remain UNRUN; historical Q3 visibility does not prove new earth-to-threshold contact, level junction or planter construction.",
+      "Historical context_revision/import_closure_correction and prior Q1/Q2/Q3 evidence remain historical, not new measured success.",
+      "These are review-candidate integrations only. Original411/412/409/main are not merged/updated and no art/Matt approval or production adoption follows."
+    ]
   }
 }

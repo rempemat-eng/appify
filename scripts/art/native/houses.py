@@ -968,27 +968,33 @@ def window(a, cx, yt, w, h, paint, rng, wall='stone', shutters=True, box=False, 
         by0 = y1 + q(1.8)
         bh = q(3.2)
         bx0, bx1 = x0 - q(1), x1 + q(1)
+        # Keep the planter clear of neighbouring door masonry. Generate the
+        # original span's grain and plants so later door/roof RNG stays stable.
+        box_l, box_r = x0 + q(1.4), x1 - q(1.4)
+        trim_l, trim_r = box_l - bx0, box_r - bx0
         # plants first (they rise over the box's back), the box over their stems
         k = 0
         x = bx0 + 2
         while x < bx1 - 3:
             r = rng.uniform(2.4, 3.6)
-            m = V.ellipse_mask(a.shape, x + r, by0 - r * 0.4, r, r * 0.85)
-            nz = ((X - x - r) / r * -0.6 + (Y - by0 + r * 0.4) / r * -0.8)
+            plant_x = box_l + (x - bx0) * (box_r - box_l) / (bx1 - bx0)
+            m = V.ellipse_mask(a.shape, plant_x + r, by0 - r * 0.4, r, r * 0.85)
+            nz = ((X - plant_x - r) / r * -0.6 + (Y - by0 + r * 0.4) / r * -0.8)
             tt = np.where(nz > 0.35, 4, np.where(nz > -0.2, 3, 2))
             a[m] = (FI['leaf'] * 8 + tt)[m]
             if k % 2 == 0:
                 f = ('berry', 'brass', 'dusk', 'sky')[int(rng.integers(0, 4))]
-                fill(a, int(x + r - 1), int(by0 - r * 1.1), int(x + r + 1), int(by0 - r * 1.1) + 2, code(f, 4))
-                fill(a, int(x + r + 1), int(by0 - r * 0.9), int(x + r + 2), int(by0 - r * 0.9) + 2, code(f, 3))
+                fill(a, int(plant_x + r - 1), int(by0 - r * 1.1), int(plant_x + r + 1), int(by0 - r * 1.1) + 2, code(f, 4))
+                fill(a, int(plant_x + r + 1), int(by0 - r * 0.9), int(plant_x + r + 2), int(by0 - r * 0.9) + 2, code(f, 3))
             x += int(r * 1.6)
             k += 1
         for kk in range(2):
             m = np.ones((bh // 2, bx1 - bx0), bool)
-            put(a, bx0, by0 + kk * (bh // 2), m, 'timber', pillow(m, 3 - kk, rng, flecks=2, lit_top=1, under=1))
-        for ex in (bx0, bx1 - q(1.2)):
+            tones = pillow(m, 3 - kk, rng, flecks=2, lit_top=1, under=1)
+            put(a, box_l, by0 + kk * (bh // 2), m[:, trim_l:trim_r], 'timber', tones[:, trim_l:trim_r])
+        for ex in (box_l, box_r - q(1.2)):
             V.beam(a, ex, by0 - 1, ex + q(1.2), by0 + bh + q(1.6), rng, 'timber_cool', 2, hd=True)
-        step(a, (X >= bx0 + 2) & (X < bx1 + 2) & (Y >= by0 + bh) & (Y < by0 + bh + q(1.0)), -1)
+        step(a, (X >= box_l + 2) & (X < box_r + 2) & (Y >= by0 + bh) & (Y < by0 + bh + q(1.0)), -1)
     return busy
 
 

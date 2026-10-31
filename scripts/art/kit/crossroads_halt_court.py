@@ -18,8 +18,11 @@ import traceback
 
 ROOT = Path(__file__).resolve().parents[3]
 FIXTURE = ROOT / "scripts/review/fixtures/crossroads_halt_court.json"
-SOURCE = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
-LAYOUT = "a81b6ed1137018a80c0408ad0254dd03e09e0ee6"
+SOURCE = "45f2c80b657169ef4d7445bc9ff5ddd153960707"
+SOURCE_TREE = "7e7561eac9b7a9f15e54ff62b169dd7cf500bad5"
+SOURCE_BASELINE = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+LAYOUT = "7bf6b026a21e7996a367d6ae9b5862b3344bdd56"
+LAYOUT_BLOB = "2c2c5474f2154ba1430549823a908996261572c8"
 IDS = ("crossroads-b029", "crossroads-b038", "crossroads-b039", "crossroads-b040")
 FLOORS = ([6000, 4080, 64, 72], [5864, 4048, 64, 48],
           [5864, 4184, 64, 48], [6056, 4192, 64, 40])
@@ -61,8 +64,10 @@ def inputs_snapshot(fixture: dict) -> dict:
 
 
 def plan_from_fixture(fixture: dict) -> dict:
-    if (fixture["source_native_commit"] != SOURCE or fixture["source_layout_commit"] != LAYOUT
-            or fixture["source_layout_overlay_key"] != "native_visible_approaches_r3"
+    if (fixture["source_native_commit"] != SOURCE or fixture["source_native_tree"] != SOURCE_TREE
+            or fixture["source_native_baseline"]["commit"] != SOURCE_BASELINE
+            or fixture["source_layout_commit"] != LAYOUT or fixture["source_layout_json_blob"] != LAYOUT_BLOB
+            or fixture["source_layout_overlay_key"] != "native_visible_approaches_r4"
             or fixture["world_box"] != [5824, 3968, 320, 336]
             or fixture["native_box"] != [0, 0, 320, 336] or fixture["density"] != 3):
         raise ValueError("Frozen source/layout/coordinate contract differs")
@@ -134,7 +139,8 @@ def draw(output: Path) -> int:
     plan = plan_from_fixture(fixture)
     before = inputs_snapshot(fixture)
     output.mkdir(parents=True, mode=0o700)
-    result = {"state":"INCOMPLETE", "native_source":SOURCE, "layout_source":LAYOUT,
+    result = {"state":"INCOMPLETE", "native_source":SOURCE, "native_source_tree":SOURCE_TREE,
+              "native_baseline":SOURCE_BASELINE, "layout_source":LAYOUT,
               "fixture_sha256":digest(fixture_bytes), "terrain":"UNMEASURED",
               "entrypoint_sha256":digest(entrypoint_bytes), "approved":False,
               "planned_constructor_calls":{"HD_cottages":4,"legacy_cottage_silhouettes":4},
