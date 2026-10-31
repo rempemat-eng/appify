@@ -19,9 +19,9 @@ jobs:
     runs-on: ubuntu-24.04 # exact Noble ABI for the pinned private Mesa diagnostic
     timeout-minutes: 15
     env:
-      # Inventory-only candidate: no game checkout, setup-python acquisition, engine or science.
+      # Hosted metadata: pinned setup-python only; no game checkout, engine or science.
       # Controller default and normal DISPLAYED_SMOKE/H5 checks remain separate.
-      EDITOR_PERSISTENCE_MODE: DISPLAYED_SMOKE
+      EDITOR_PERSISTENCE_MODE: VULKAN_INVENTORY
       CI: 'true'
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
@@ -53,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 14 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->Python binding child
+          fetch-depth: 15 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->hosting facts child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -121,9 +121,9 @@ jobs:
             /scripts/review/ground_rules.py
             /scripts/review/kit_scene.py
 
-      - name: Select the existing Python version without Node dependencies
+      - name: Select pinned Python for normal modes and deliberate hosted metadata inventory
         id: python
-        if: env.EDITOR_PERSISTENCE_MODE != 'VULKAN_INVENTORY' && env.EDITOR_PERSISTENCE_MODE != 'DRIVER_CAPABILITY'
+        if: env.EDITOR_PERSISTENCE_MODE != 'DRIVER_CAPABILITY'
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # main885b convention
         with:
           python-version: '3.12'
@@ -133,7 +133,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ "$EDITOR_PERSISTENCE_MODE" = VULKAN_INVENTORY ] || [ "$EDITOR_PERSISTENCE_MODE" = DRIVER_CAPABILITY ]; then
+          if [ "$EDITOR_PERSISTENCE_MODE" = DRIVER_CAPABILITY ]; then
             printf 'PYTHON=%s\n' "$(command -v python3)" >> "$GITHUB_ENV"
           else
             printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
@@ -222,7 +222,7 @@ jobs:
                         ('RUNNER_OUTCOME', 'SOURCE_OUTCOME', 'PYTHON_OUTCOME', 'PYTHON_PATH_OUTCOME', 'FOCUSED_OUTCOME')},
               controller_result_present=(evidence / 'result.json').is_file(),
               mode=os.environ['EDITOR_PERSISTENCE_MODE'],
-              qualification=('Metadata-only inventory; native extension query, game checkout, dependencies, engine/import, GUI and all H5 methods NOT RUN. Missing result is failure; no driver acceptance.'
+              qualification=('Metadata-only inventory in actual pinned setup-python hosting context, distinct from system-Python L1; individual predicates are not policy approval. Native query/game/dependencies/engine/import/GUI/H5 NOT RUN. Missing result is failure; no driver acceptance.'
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY' else
                   'One private official-tool enumeration only; no game/science/engine/import/GUI/H5 or X11-presentation acceptance.'
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'DRIVER_CAPABILITY' else

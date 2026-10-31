@@ -36,6 +36,8 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+PYTHON_FACTS_RECEIVER_PARENT = "f833bc16a2907c5ac1fa2032867a9dc37f432f1d"
+PYTHON_FACTS_RECEIVER_PARENT_TREE = "7228308a5a7c6e7e84f6ff723a319dec589c0280"
 PYTHON_BINDING_RECEIVER_PARENT = "3b51a474e846ccc899204b727a23a92b4af17a1b"
 PYTHON_BINDING_RECEIVER_PARENT_TREE = "3958021eb43ecd13ff840f5599d27434614db64e"
 DISPLAY_ICD_RECEIVER_PARENT = "f666dd124ad294e7f720d05b146386f264d6ab8b"
@@ -650,6 +652,140 @@ def qualified_python_binding(environment: dict | None = None) -> dict | None:
         "qualification": "Exact one action-derived Python lib binding retained unchanged for every child; bounded installed identities only, no archive authentication or arbitrary LD allowlist."}
 
 
+def python_runtime_facts(result: dict, persist) -> None:
+    """Bounded stat-only observation; never invoke or relax qualification.
+
+    Save each lstat before resolution so a rejected/missing/unreadable path
+    retains the facts already obtained. All predicates are observations only.
+    The enclosing existing inventory monitor owns time/RSS/output collection.
+    """
+    facts = {"state": "INCOMPLETE", "scope": "Actual pinned setup-python hosting metadata; NOT a qualified Python binding",
+             "uid": os.getuid(), "gid": os.getgid(), "paths": {}, "direct_entries": [], "gaps": []}
+    result["python_runtime_facts"] = facts
+    persist()
+
+    def text(value: str | None) -> dict:
+        if value is None:
+            return {"present": False, "value": None}
+        length = len(value.encode())
+        return {"present": True, "bytes": length, "value": value if length <= 4096 else None,
+                "within4096_bytes": length <= 4096, "control_characters": any(ord(c) < 32 for c in value)}
+
+    facts["hosting"] = {"version": text(sys.version), "implementation": text(sys.implementation.name),
+        "version_info": list(sys.version_info[:3]), "executable": text(sys.executable),
+        "prefix": text(sys.prefix), "base_prefix": text(sys.base_prefix),
+        "pythonLocation": text(os.environ.get("pythonLocation")), "LD_LIBRARY_PATH": text(os.environ.get("LD_LIBRARY_PATH"))}
+    ld = facts["hosting"]["LD_LIBRARY_PATH"]
+    value = ld.get("value")
+    facts["predicates"] = {"LD_absent_standalone": not ld["present"],
+        "LD_exactly_one_nonempty_no_colon_or_control": (bool(value) and ":" not in value and not ld["control_characters"]) if ld["present"] else None,
+        "CPython3_12": sys.implementation.name == "cpython" and sys.version_info[:2] == (3, 12)}
+    persist()
+
+    def failure(row: dict, operation: str, error: Exception) -> None:
+        row[operation + "_error"] = {"type": type(error).__name__, "message": str(error)[:512]}
+        facts["gaps"].append({"path": row["path"], "operation": operation, "type": type(error).__name__})
+        persist()
+
+    def metadata(info) -> dict:
+        kind = ("directory" if stat.S_ISDIR(info.st_mode) else "regular" if stat.S_ISREG(info.st_mode)
+                else "symlink" if stat.S_ISLNK(info.st_mode) else "other")
+        return {"type": kind, "raw_mode": info.st_mode, "mode": oct(stat.S_IMODE(info.st_mode)),
+            "uid": info.st_uid, "gid": info.st_gid, "dev": info.st_dev, "inode": info.st_ino,
+            "size": info.st_size, "links": info.st_nlink, "mtime_ns": info.st_mtime_ns, "ctime_ns": info.st_ctime_ns,
+            "predicates": {"physical_directory": stat.S_ISDIR(info.st_mode), "physical_regular": stat.S_ISREG(info.st_mode),
+                "permitted_uid": info.st_uid in (0, os.getuid()), "mode_06022_clear": not bool(info.st_mode & 0o6022),
+                "group_world_write_clear": not bool(info.st_mode & 0o022), "setid_clear": not bool(info.st_mode & 0o6000),
+                "qualifier_safe_owner_and_mode": info.st_uid in (0, os.getuid()) and (stat.S_ISLNK(info.st_mode) or not info.st_mode & 0o6022)}}
+
+    def observe(path: Path, row: dict) -> Path | None:
+        row["path"] = str(path)
+        try:
+            info = path.lstat()
+            row["lstat"] = metadata(info)
+            persist()  # Actual type/owner/mode survives even a later resolve failure.
+            if stat.S_ISLNK(info.st_mode):
+                target = os.readlink(path)
+                row["symlink_target"] = text(target)
+                persist()
+        except (TimeoutError, InterruptedError):
+            raise
+        except (OSError, RuntimeError, ValueError) as error:
+            failure(row, "lstat_or_readlink", error)
+        try:
+            canonical = path.resolve(strict=True)
+            row["canonical"] = str(canonical)
+            row["resolve_is_input"] = canonical == path
+            persist()
+            row["resolved_stat"] = metadata(canonical.stat())
+            persist()
+            return canonical
+        except (TimeoutError, InterruptedError):
+            raise
+        except (OSError, RuntimeError, ValueError) as error:
+            failure(row, "resolve_or_stat", error)
+            return None
+
+    prefix = None
+    for key, raw in (("base_prefix", sys.base_prefix), ("prefix", sys.prefix), ("interpreter", sys.executable),
+                     ("pythonLocation", os.environ.get("pythonLocation"))):
+        if raw is None or len(raw.encode()) > 4096:
+            facts["paths"][key] = {"input_unavailable_or_over_bound": True}
+            facts["gaps"].append({"field": key, "operation": "path_input"})
+            persist()
+            continue
+        row = facts["paths"][key] = {}
+        canonical = observe(Path(raw), row)
+        if key == "base_prefix":
+            prefix = canonical
+    if prefix is not None:
+        libdir = prefix / "lib"
+        directory = facts["paths"]["lib_directory"] = {}
+        observe(libdir, directory)
+        for name in ("libpython3.12.so.1.0", "libpython3.12.so", "libpython3.so"):
+            row = facts["paths"][name] = {}
+            canonical = observe(libdir / name, row)
+            row["resolved_inside_direct_lib_directory"] = canonical.parent == libdir if canonical else None
+            persist()
+        predicates = facts["predicates"]
+        predicates["prefix_matches_base"] = facts["paths"].get("prefix", {}).get("canonical") == str(prefix)
+        predicates["pythonLocation_matches_base"] = facts["paths"].get("pythonLocation", {}).get("canonical") == str(prefix)
+        interpreter = facts["paths"].get("interpreter", {}).get("canonical")
+        predicates["resolved_interpreter_in_prefix_bin"] = Path(interpreter).parent == prefix / "bin" if interpreter else None
+        predicates["LD_exact_canonical_prefix_lib"] = value == str(libdir) if ld["present"] else None
+        predicates["lib_directory_resolves_to_itself"] = directory.get("resolve_is_input")
+        persist()
+        if directory.get("lstat", {}).get("type") == "directory":
+            try:
+                with os.scandir(libdir) as entries:
+                    facts["direct_entries_complete"] = True
+                    for entry in entries:
+                        if len(facts["direct_entries"]) == 64:
+                            facts["direct_entries_complete"] = False
+                            facts["gaps"].append({"path": str(libdir), "operation": "direct_entries_over64"})
+                            break
+                        row = {"name": text(entry.name)}
+                        facts["direct_entries"].append(row)
+                        persist()
+                        if len(entry.name.encode()) > 256:
+                            row["name_over256_bytes"] = True
+                            facts["gaps"].append({"path": str(libdir), "operation": "direct_name_over256"})
+                            persist()
+                            continue
+                        observe(Path(entry.path), row)
+            except (TimeoutError, InterruptedError):
+                raise
+            except (OSError, RuntimeError, ValueError) as error:
+                failure(directory, "direct_entries", error)
+                facts["direct_entries_complete"] = False
+        else:
+            facts["direct_entries_complete"] = False
+            facts["gaps"].append({"path": str(libdir), "operation": "nonphysical_directory_not_traversed"})
+    facts["state"] = "OBSERVED_WITH_GAPS" if facts["gaps"] else "OBSERVED_METADATA_ONLY"
+    facts["qualification"] = "Individual predicates are recorded, not approved. Strict qualified_python_binding is unchanged and NOT invoked; no library content load/native query or policy relaxation."
+    persist()
+
+
 def private_driver_snapshot(root: Path, expected_provenance: str, selector: str | None = None,
                             environment: dict | None = None) -> dict:
     """Shared read-only guard before query and through actual displayed exit."""
@@ -1010,12 +1146,17 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         row["trust"] = "Observed root-owned installed host bytes; not independently authenticated package bytes"
         return row
     try:
+        # Record actual selected hosting facts before any rejecting policy.
+        # This never invokes/approves the strict Python-binding qualifier.
+        python_runtime_facts(result, save)
         result["host"] = mesa_host()
         candidate = args.candidate.resolve(strict=True)
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [PYTHON_BINDING_RECEIVER_PARENT]
+                != [PYTHON_FACTS_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_FACTS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_BINDING_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", DISPLAY_ICD_RECEIVER_PARENT + "^{tree}").decode().strip() != DISPLAY_ICD_RECEIVER_PARENT_TREE
@@ -1025,7 +1166,7 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
                 != [INVENTORY_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
                 != INVENTORY_RECEIVER_PARENT_TREE):
-            raise RuntimeError("Inventory candidate is not the exact genuine sole-3b51 child")
+            raise RuntimeError("Inventory candidate is not the exact genuine sole-f833 child")
         changed = set(git(candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines())
         if changed != OWNED_PATHS:
             raise RuntimeError("Inventory candidate must change exactly the two existing receiver paths")
@@ -1444,7 +1585,7 @@ class Controller:
             self.active_limit = 15
             self.owned_roots = (self.root, self.candidate)
             self.phases["vulkan-inventory"] = {"state": "NOT RUN"}
-            self.output["qualification"] = "Metadata-only Vulkan inventory. Engine, project, scientific dependencies, native query, GUI and all H5 controls NOT RUN; no driver acceptance."
+            self.output["qualification"] = "Metadata-only Vulkan and actual pinned setup-python hosting inventory; individual Python predicates recorded without qualification. Engine, project, science/native query/GUI/H5 NOT RUN; no driver or Python-policy acceptance."
 
         if self.mode == "DRIVER_CAPABILITY":
             self.active_limit = 150
@@ -1653,8 +1794,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [PYTHON_BINDING_RECEIVER_PARENT]:
-            raise RuntimeError("Python-binding receiver must be a genuine sole child of frozen4053b51")
+        if parents != [PYTHON_FACTS_RECEIVER_PARENT]:
+            raise RuntimeError("Hosting-facts receiver must be a genuine sole child of frozen405f833")
+        python_facts_headers = git(self.candidate, "cat-file", "commit", PYTHON_FACTS_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([line[7:] for line in python_facts_headers.splitlines() if line.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen Python-binding ancestry/tree changed")
         python_binding_headers = git(self.candidate, "cat-file", "commit", PYTHON_BINDING_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line[7:] for line in python_binding_headers.splitlines() if line.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE):
@@ -1767,6 +1912,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "python_facts_receiver_parent": PYTHON_FACTS_RECEIVER_PARENT, "python_facts_receiver_parent_headers": python_facts_headers,
                     "python_binding_receiver_parent": PYTHON_BINDING_RECEIVER_PARENT, "python_binding_receiver_parent_headers": python_binding_headers,
                     "receiver_parent": INVENTORY_RECEIVER_PARENT, "receiver_parent_headers": inventory_parent_headers,
                     "auth_receiver_parent": AUTH_RECEIVER_PARENT, "auth_receiver_parent_headers": auth_parent_headers,
@@ -2610,14 +2756,16 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_FACTS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_BINDING_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", DISPLAY_ICD_RECEIVER_PARENT + "^{tree}").decode().strip() != DISPLAY_ICD_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
                     or set(git(self.candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines()) != OWNED_PATHS):
-                raise RuntimeError("Driver mode requires the genuine sole-3b51 two-file candidate")
+                raise RuntimeError("Driver mode requires the genuine sole-f833 two-file candidate")
             if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
                 raise RuntimeError("Actual identity-safe process collection unavailable")
             os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
@@ -2731,7 +2879,7 @@ class Controller:
             write_json(self.evidence / "host.json", {"mode": self.mode,
                 "limits": {"active_s": 15, "group_rss_bytes": 256 * 1024**2,
                            "owned_bytes": 64 * 1024**2, "logs_and_outputs_bytes": 1024**2, "cpu": 1},
-                "qualification": "Proposed bounds; actual inventory/fit remains unmeasured until allocated. No science, engine, project or native query."})
+                "qualification": "Actual pinned setup-python context deliberately selected; this new hosted inventory is distinct from historical system-Python L1. Existing15s/256MiB/64MiB/1MiB bounds; actual fit unmeasured until allocated. No strict qualifier approval, science/engine/project/native query."})
             self.capacity()
             phase = self.phase("vulkan-inventory", [sys.executable, "-I", "-B", str(Path(__file__).resolve()),
                 "--mode", "VULKAN_INVENTORY", "--vulkan-inventory-child", "--candidate", str(self.candidate),
