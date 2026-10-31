@@ -357,7 +357,44 @@ static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> 
 			failures.append("Export must contain exactly the one requested piece.")
 		else:
 			var entry: Dictionary = authored_pieces[0]
-			if entry.get("id") != "lifecycle_bench" or entry.get("piece") != "woodland_forest_bench" or entry.get("at") != [108, 120] or entry.get("variant") != "forest_bench" or entry.get("facing") != "s":
+			# The exporter retains numeric coordinate types; Array equality is type-sensitive.
+			var authored_at: Variant = entry.get("at")
+			var exact_foot: bool = false
+			if authored_at is Array and authored_at.size() == 2:
+				exact_foot = typeof(authored_at[0]) in [TYPE_INT, TYPE_FLOAT] and typeof(authored_at[1]) in [TYPE_INT, TYPE_FLOAT] and authored_at[0] == 108 and authored_at[1] == 120
+			# Retain only these five fields, with bounded strings and at most two array elements.
+			var expected_fields: Dictionary = {"id": "lifecycle_bench", "piece": "woodland_forest_bench", "at": [108, 120], "variant": "forest_bench", "facing": "s"}
+			var field_observations: Dictionary = {}
+			for field in expected_fields:
+				var value: Variant = entry.get(field)
+				var observation: Dictionary = {"expected": expected_fields[field], "expected_type": type_string(typeof(expected_fields[field])), "actual_type": type_string(typeof(value))}
+				if field == "at": observation["expected_element_types"] = ["int", "int"]
+				match typeof(value):
+					TYPE_NIL, TYPE_BOOL, TYPE_INT, TYPE_FLOAT:
+						observation["actual"] = value
+					TYPE_STRING, TYPE_STRING_NAME:
+						observation["actual"] = String(value).left(128)
+						observation["actual_length"] = String(value).length()
+					TYPE_ARRAY:
+						var elements: Array = []
+						for index in mini(value.size(), 2):
+							var component: Variant = value[index]
+							var observed_component: Dictionary = {"type": type_string(typeof(component))}
+							match typeof(component):
+								TYPE_NIL, TYPE_BOOL, TYPE_INT, TYPE_FLOAT:
+									observed_component["value"] = component
+								TYPE_STRING, TYPE_STRING_NAME:
+									observed_component["value"] = String(component).left(128)
+									observed_component["length"] = String(component).length()
+								_:
+									observed_component["value_omitted"] = true
+							elements.append(observed_component)
+						observation["actual"] = {"length": value.size(), "elements": elements, "truncated": value.size() > 2}
+					_:
+						observation["actual_value_omitted"] = true
+				field_observations[field] = observation
+			result["piece_fields"] = field_observations
+			if entry.get("id") != "lifecycle_bench" or entry.get("piece") != "woodland_forest_bench" or not exact_foot or entry.get("variant") != "forest_bench" or entry.get("facing") != "s":
 				failures.append("Exported piece identity/options differ from author intent.")
 		var path_cells := 0
 		for y in range(8):
