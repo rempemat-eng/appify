@@ -281,3 +281,36 @@ The final correction changes **38 distinct cells** inside two declared support b
 
 Two bounded correction attempts were used, retaining the first actual-mask failure. The final probe exited 0 in 2.222 seconds / peak 74235904 bytes. There was no third correction attempt, project import, engine/world job, production edit or unchanged A/B/C regeneration. D/E/G remain unfitted. Source GO6535910901 / ASSIGN6535926108 / ACK6535926395; the new source is a genuine child of 08ebbab5. Native/game/art/full-gate acceptance and Matt's explicit art/map approval on the PR remain outstanding.
 
+
+
+## West Lane D: grouped fronts, service passages and garden backs
+
+The new `west_lane_D_fit` section adds **six original records**, preserving the frozen corrected copy 303ca038 and all 25 previously measured A/B/C/F plots. This is a proposed district on the captured macro crop, not an adopted native layout. The earlier evidence sections remain unchanged. No F-road connector or native/editor-plan repin is part of this step.
+
+West Lane continues the existing 24px market-west public lane as one short town street. Its northern fronts end at y3464; three opposing cottages begin at y3512. The resulting **48px frontage-to-frontage gap** contains the same 24px traffic lane and the offered thresholds. Two attached-front records keep their original two-bay divisions rather than becoming unrelated cottages. The tall corner house turns the market/service entrance, linking the new frontage to the existing A-quarter grain.
+
+Separate 16px service closes connect the rear plots and side passages. These are foot/service access offers, not vehicle-clearance proof. The northern back lane stays south of the protected woodland boundary y3344. Its eastern return uses the corridor x6016–6032, between the new corner house and the retained A buildings/garden; it joins the existing rear lane without repainting it. Southern gardens extend 64–80px behind the cottage backs, then meet a shared rear close. The corner house has a small rear court rather than a falsely oversized garden. All captured grades and physical/protection masks remain unchanged.
+
+| Source plot / record | Candidate rectangle `[x,y,w,h]`, world px | Threshold offer | Disposition |
+|---|---|---|---|
+| D01 / 008 | `[5736, 3440, 80, 24]` | south; `[[5760, 3464], [5800, 3464]]` | Footprint and halo macro-clear; exact asset/bay thresholds unverified. |
+| D02 / 009 | `[5832, 3416, 112, 48]` | south; `[[5864, 3464], [5920, 3464]]` | Footprint and halo macro-clear; exact asset/bay thresholds unverified. |
+| D03 / 024 | `[5792, 3512, 40, 72]` | north; `[[5812, 3512]]` | Footprint and halo macro-clear; north facade required / unverified. |
+| D04 / 025 | `[5960, 3368, 56, 96]` | south; `[[5988, 3464]]` | Footprint and halo macro-clear; exact asset/bay thresholds unverified. |
+| D05 / 026 | `[5848, 3512, 40, 56]` | north; `[[5868, 3512]]` | Footprint and halo macro-clear; north facade required / unverified. |
+| D06 / 027 | `[5904, 3512, 40, 64]` | north; `[[5924, 3512]]` | Footprint and halo macro-clear; north facade required / unverified. |
+
+The row-house records 008 and 009 retain their exact source forms, footprints and bay data: 6+4 cells and 8+6 cells, including storeys and roof choices. Two proposed bay thresholds per record yield **eight offered thresholds across six records**. They do not add logical building records, households, occupants, jobs or routines. The original forty-record ledger and separate mill entry remain unchanged, with candidate total 41 and all original unresolved geometry/identity fields still null.
+
+All six footprints have zero water, nonbuildable, barrier, keepout, street or other-occupancy cells and are completely stamped in the copied candidate. Every footprint retains its captured uniform macro tier 3 or 4; maximum slope is **0.001599**, against the unchanged 0.016 limit. Their one-cell halos are dry and guard/other-occupancy-clear; frontage streets and some mixed tiers intentionally remain in halos. All fifteen proposed public/service/passage/door bands have zero water/barrier/keepout/building intersections. All eight threshold links reach Square in the limited four-neighbour graph of painted streets, with the conditional well conservatively reserved.
+
+The closed halt gate `[5976,3528,8,40]`, its conservative one-cell planning reserve, future workshop lot `[6000,3568,64,64]` and green `[6016,3656,168,136]` retain all 49 values, with zero new structure/route intersections. The new public street returns to the town-side market lane above the closed portal; no halt arrival or station permission is inferred. All prior 25 plot footprints and halos, earlier A/B/C garden/service areas and native story features stay byte-exact. No watercourse is filled, bridge invented, native gate opened, grade flattened or threshold weakened.
+
+**Art/native limits:** current native art source supports south-facing doors. The three opposing cottage north facades are required but unverified future variants. Door/bay placement, occlusion, native floors, colliders, pathfinding, interactions, portals, character-scale art and the current editor plan still require actual authoring and acceptance. This frozen capture-based proof is not automatically current-native compatibility. Existing F local/outer-road limitations remain untouched: the earlier zero-Square diagnostic describes painted-street coverage, not proof that the native world is disconnected. Named roads, placement keepout and legacy coarse walking masks are not interchangeable permissions.
+
+The district changes **1,080 distinct cells in four channels** inside `[5704,3344,6056,3680)`. All 49 typed payloads outside this support match the frozen 303ca038 copy; outside the accumulated support union they match original captured BEFORE. Water and bridge cells retain all 49 values, as do river/land/closed, height, tier, slope, crater, barrier and keepout channels. All six original input hashes and the frozen base archive remain unchanged; all 36 existing source route polylines are preserved.
+
+The first bounded attempt stopped at the old public-lane byte guard because route bookkeeping would have changed an existing painted street. That code and error are retained. The second keeps existing streets entirely unchanged and moves the northern service return to x6024, avoiding the old A garden band. It exited 0 in 2.004 seconds with peak 67,391,488 bytes; there was no third probe, F rerun or world/engine/project import. Static source/accounting/null/history/AST/XML/whitespace checks are separate from native/full-project/art acceptance. E/G remain unfitted and need separate assignments. No production adoption, Ready, merge or Matt approval is claimed.
+
+GO6536330070 / ASSIGN6536511906 / ACK6536512087. The source is a genuine child of b39fb6b8 and changes only the two existing proposal documents. Final art/map merge approval still belongs to Matt on the PR.
+

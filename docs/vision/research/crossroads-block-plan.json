@@ -1,9 +1,9 @@
 {
   "document": "Crossroads block-and-plot proposal sidecar; NOT a runtime schema or adoption packet",
-  "status": "PROPOSED_ABC_AND_MILL_END_LOCAL_CORRECTION_NATIVE_AND_HYDRAULICS_UNVERIFIED_D_E_G_UNFITTED",
+  "status": "PROPOSED_ABC_D_F_CAPTURE_BASED_MACRO_PLANS_NATIVE_UNVERIFIED_E_G_UNFITTED",
   "date": "2026-10-30",
   "source_parent": "3818de444d24c95c50daedd6e547a78bd0436551",
-  "source_approval": "GO6527523659; Matt6526956297; study6527386266; lead amendment6533453453; repair ASSIGN6533485058/ACK6533489951; measured proposal GO6533855827/ASSIGN6533865862/ACK6533866313; reconciliationGO6534840357/ASSIGN6534876710/ACK6534877050; MillEndGO6535477628/ASSIGN6535521160/ACK6535521524; MillEndCorrectionGO6535910901/ASSIGN6535926108/ACK6535926395",
+  "source_approval": "GO6527523659; Matt6526956297; study6527386266; lead amendment6533453453; repair ASSIGN6533485058/ACK6533489951; measured proposal GO6533855827/ASSIGN6533865862/ACK6533866313; reconciliationGO6534840357/ASSIGN6534876710/ACK6534877050; MillEndGO6535477628/ASSIGN6535521160/ACK6535521524; MillEndCorrectionGO6535910901/ASSIGN6535926108/ACK6535926395; WestLaneDGO6536330070/ASSIGN6536511906/ACK6536512087",
   "study": "https://chatgpt.com/library?file_id=libfile_b30bed8af740819199558691c451d410&account_id=personal",
   "era": "17th to early 19th century market/mill town; existing house style and soft-grid rules retained",
   "count": 40,
@@ -3337,7 +3337,7 @@
     },
     "input_guards_after": "ALL3exact"
   },
-  "current_geometry_authority": "market_reconciliation supersedes measured_market_fit candidate geometry only; earlier actual-before measurements and original40 ledger remain unchanged historical evidence; mill_end_fit adds separate F candidate geometry, keeping all prior A/B/C data unchanged and explicitly retaining mill/outer-join conflicts; mill_end_correction supersedes only latest two local F route bands / two mill occupancy cells, preserving all older evidence and candidate geometry",
+  "current_geometry_authority": "market_reconciliation supersedes measured_market_fit candidate geometry only; earlier actual-before measurements and original40 ledger remain unchanged historical evidence; mill_end_fit adds separate F candidate geometry, keeping all prior A/B/C data unchanged and explicitly retaining mill/outer-join conflicts; mill_end_correction supersedes only latest two local F route bands / two mill occupancy cells, preserving all older evidence and candidate geometry; west_lane_D_fit adds only six D record candidates and local service/garden geometry, preserving all prior sections and25plots",
   "market_reconciliation": {
     "status": "COHERENT_PROPOSED_COPY_MEASURED_NOT_NATIVE_OR_WHOLE_MAP_ACCEPTANCE",
     "go": 6534840357,
@@ -10808,5 +10808,2217 @@
       "outer_join": "5 actual keepout cells despite nominal clearance from east110disc. Circle-only arithmetic was insufficient; actual crater/trail protection must be retained. See correction-r1.json and independent selected-cell review."
     },
     "historical_source_sections": "market_reconciliation, measured_market_fit and mill_end_fit remain deep unchanged. This section alone supplies latest two F route bands and corrected mill occupancy; all candidate building geometry is unchanged."
+  },
+  "west_lane_D_fit": {
+    "schema": "mygame.west-lane-D-fit/v1",
+    "attempt": 2,
+    "GO": 6536330070,
+    "ASSIGN": 6536511906,
+    "ACK": 6536512087,
+    "base_source": "b39fb6b80294da126f569783dcdca224cde2e1b3",
+    "base_copy_sha256": "303ca0381f08b7cf4bc302abd5e35900c9bf3ac92aef412e5a2687cea1cc98de",
+    "input_guards6": {
+      "capture.json": "ba68fc26d029ed85e53b4ad69feb426cf9a88ec5ea61a10d180d822be0cc5b7a",
+      "before.npz": "95574230bb4474fa3a931ba6167fa521d609107ae79fff3f7e7022e327d7d527",
+      "source/game/data/plans/crossroads.json": "cee996a1d28ce4e3523eca541522aae3e05c61c59252496b7aa9eeb334487dec",
+      "source/docs/vision/research/blockout/towns55.py": "a96f6fdb1f37e954dbeaeee0fc4152a70fcfe437b7aea8d498963abbe505a604",
+      "source/docs/vision/research/blockout/geo53.py": "06f4ddc146c1f60a593149d9760716e38b54bd536631119972b970ef04de5946",
+      "source/docs/vision/research/blockout/geo55.py": "0a3bb6563cb18da942ee537a4efd77c60652534d2874d77996bf85ff6c82a74a"
+    },
+    "crop_world_box": [
+      5632,
+      2944,
+      7424,
+      4608
+    ],
+    "Dsupport_box_world_px": [
+      5704,
+      3344,
+      6056,
+      3680
+    ],
+    "union_support_boxes": [
+      [
+        6288,
+        3744,
+        6824,
+        4368
+      ],
+      [
+        5920,
+        3184,
+        6800,
+        3840
+      ],
+      [
+        6712,
+        3736,
+        6848,
+        3824
+      ],
+      [
+        6424,
+        4136,
+        6464,
+        4184
+      ],
+      [
+        5704,
+        3344,
+        6056,
+        3680
+      ]
+    ],
+    "distinct_affected_cells": 1080,
+    "changes": {
+      "T/FRAME": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/K": {
+        "changed_cells": 1080,
+        "current_payload_sha256": "4600ab8995e9c70aec1b99c953a99ad1d4993751cbab136899a12eed5d9aba3c",
+        "proposed_payload_sha256": "941c2646c301e03306ab5b7c54826ba23035f1d05a276be318dd417e6770254e",
+        "outsideD_before_sha256": "095301479d25e7b1081154a110abe09b414298be91bdec939a3dfb4aba0a9578",
+        "outsideD_after_sha256": "095301479d25e7b1081154a110abe09b414298be91bdec939a3dfb4aba0a9578",
+        "outside_union_actual_sha256": "db55bc3cff5abb4e030a03b4bd4a6da3242941d13b6e5d3a045e86f02b507a49",
+        "outside_union_proposed_sha256": "db55bc3cff5abb4e030a03b4bd4a6da3242941d13b6e5d3a045e86f02b507a49"
+      },
+      "T/K0": {
+        "changed_cells": 0,
+        "current_payload_sha256": "89e24fde08be1b6354d3c3a994893dfb80885eab36728e7643a488da6467178e",
+        "proposed_payload_sha256": "89e24fde08be1b6354d3c3a994893dfb80885eab36728e7643a488da6467178e",
+        "outsideD_before_sha256": "3b01e51630c7e08231f0c388d641727af6b1c6d7d8a07c53bfc503dab64a1ae4",
+        "outsideD_after_sha256": "3b01e51630c7e08231f0c388d641727af6b1c6d7d8a07c53bfc503dab64a1ae4",
+        "outside_union_actual_sha256": "e5c28f35f7aca2cec9cf6ef37dc3f0d7ed11ca5e3118d14122040c2c758598c2",
+        "outside_union_proposed_sha256": "e5c28f35f7aca2cec9cf6ef37dc3f0d7ed11ca5e3118d14122040c2c758598c2"
+      },
+      "T/barrier": {
+        "changed_cells": 0,
+        "current_payload_sha256": "2b17c513baca6755642abf34d6dbd47dcf214961da212e31047399ba957e97b0",
+        "proposed_payload_sha256": "2b17c513baca6755642abf34d6dbd47dcf214961da212e31047399ba957e97b0",
+        "outsideD_before_sha256": "05d2fe7e6c1c504e35699f4831f814b2e87dcf358206a501fb7131c8df0ecb49",
+        "outsideD_after_sha256": "05d2fe7e6c1c504e35699f4831f814b2e87dcf358206a501fb7131c8df0ecb49",
+        "outside_union_actual_sha256": "fd13b15ef2474539bbb83becae4cd29eb5f4c05a28f52b31195613fd482bec4b",
+        "outside_union_proposed_sha256": "fd13b15ef2474539bbb83becae4cd29eb5f4c05a28f52b31195613fd482bec4b"
+      },
+      "T/border_assigned": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/border_s1": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/border_s2": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/closed_mask": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/coast_y": {
+        "changed_cells": 0,
+        "current_payload_sha256": "2ef9d605e205f5681ce9a9a41aa61681dd6493128c6fdb5ee8e0de210ed5adc3",
+        "proposed_payload_sha256": "2ef9d605e205f5681ce9a9a41aa61681dd6493128c6fdb5ee8e0de210ed5adc3",
+        "outsideD_before_sha256": "7f775ebcd55a5974e0dd60dc2a3e10ae2425c02fa3c6fbf679601b5fb7165ca5",
+        "outsideD_after_sha256": "7f775ebcd55a5974e0dd60dc2a3e10ae2425c02fa3c6fbf679601b5fb7165ca5",
+        "outside_union_actual_sha256": "2067a2e089be5a4cacb4092e0ce122516e68992cc65465d6ff39790b958df67b",
+        "outside_union_proposed_sha256": "2067a2e089be5a4cacb4092e0ce122516e68992cc65465d6ff39790b958df67b"
+      },
+      "T/crater_mask": {
+        "changed_cells": 0,
+        "current_payload_sha256": "8422eb67b8866b6ef2278e6778017a31b924b64019caee35e70dec86b4f0775d",
+        "proposed_payload_sha256": "8422eb67b8866b6ef2278e6778017a31b924b64019caee35e70dec86b4f0775d",
+        "outsideD_before_sha256": "28dcf02c7c3bdb87d327d7654e1ea63f6020dc0d7490440ba70c521ed768c03d",
+        "outsideD_after_sha256": "28dcf02c7c3bdb87d327d7654e1ea63f6020dc0d7490440ba70c521ed768c03d",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/dv": {
+        "changed_cells": 0,
+        "current_payload_sha256": "c98b4e48f4b1b42584ef0e43eb67b3d11198158d32b0e83cbc197b7de9739b44",
+        "proposed_payload_sha256": "c98b4e48f4b1b42584ef0e43eb67b3d11198158d32b0e83cbc197b7de9739b44",
+        "outsideD_before_sha256": "8a906ec85ffdbcc9ca9d4f3f1e9f35363d3638d82c567fb588d32d60d46e2b7b",
+        "outsideD_after_sha256": "8a906ec85ffdbcc9ca9d4f3f1e9f35363d3638d82c567fb588d32d60d46e2b7b",
+        "outside_union_actual_sha256": "85d43365a7011946d74086dadc27fe7d7c27e07c49c8f44a597cd4bc3fffa8d2",
+        "outside_union_proposed_sha256": "85d43365a7011946d74086dadc27fe7d7c27e07c49c8f44a597cd4bc3fffa8d2"
+      },
+      "T/fade_clumps": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/fire": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/ground0": {
+        "changed_cells": 0,
+        "current_payload_sha256": "13257bc95ca3bdf5227f8cdec4ad81a06cee4f17679fc92691adee0b85cbb993",
+        "proposed_payload_sha256": "13257bc95ca3bdf5227f8cdec4ad81a06cee4f17679fc92691adee0b85cbb993",
+        "outsideD_before_sha256": "487f87d33544d0894f05b7aef90a491d062227ee7b70cdb907babc72e439b37f",
+        "outsideD_after_sha256": "487f87d33544d0894f05b7aef90a491d062227ee7b70cdb907babc72e439b37f",
+        "outside_union_actual_sha256": "15b6c571cb732b6956e9929a3fabf802eea194f3bb9afc4388bc03a924d82a1b",
+        "outside_union_proposed_sha256": "15b6c571cb732b6956e9929a3fabf802eea194f3bb9afc4388bc03a924d82a1b"
+      },
+      "T/h": {
+        "changed_cells": 0,
+        "current_payload_sha256": "352741d3b6fa0d04677e3d31efc98d3d35581770a60b533613a9ca615ef16e9a",
+        "proposed_payload_sha256": "352741d3b6fa0d04677e3d31efc98d3d35581770a60b533613a9ca615ef16e9a",
+        "outsideD_before_sha256": "fdb453452d4ef5589ef7d911bad02fdab7ee59495710c295d6decc7f2d7edc2e",
+        "outsideD_after_sha256": "fdb453452d4ef5589ef7d911bad02fdab7ee59495710c295d6decc7f2d7edc2e",
+        "outside_union_actual_sha256": "56434f16f7fa31a8d04e677950bb2622adb40d18c52112f4566c55e2d3ddc3c7",
+        "outside_union_proposed_sha256": "56434f16f7fa31a8d04e677950bb2622adb40d18c52112f4566c55e2d3ddc3c7"
+      },
+      "T/hardbar": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/highgarth_floor": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/isles": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/keepout": {
+        "changed_cells": 0,
+        "current_payload_sha256": "3f346efbdc56b208da6d49741846e959c0dcbbf63cdd2197b25a9495d76215a6",
+        "proposed_payload_sha256": "3f346efbdc56b208da6d49741846e959c0dcbbf63cdd2197b25a9495d76215a6",
+        "outsideD_before_sha256": "944babea8b84ff86441d3091ab2fc4e9e6ca10fedcd3ba41fd6a69583b7dc68b",
+        "outsideD_after_sha256": "944babea8b84ff86441d3091ab2fc4e9e6ca10fedcd3ba41fd6a69583b7dc68b",
+        "outside_union_actual_sha256": "93d84db041969e82741e22b03a98ad85296215542865f2af5ee05683f9a43190",
+        "outside_union_proposed_sha256": "93d84db041969e82741e22b03a98ad85296215542865f2af5ee05683f9a43190"
+      },
+      "T/land": {
+        "changed_cells": 0,
+        "current_payload_sha256": "6c5edb5b81d58b70d2cbfac6f047b69e3cbbd1755b68eb9b2cc5a5b6a6e31cac",
+        "proposed_payload_sha256": "6c5edb5b81d58b70d2cbfac6f047b69e3cbbd1755b68eb9b2cc5a5b6a6e31cac",
+        "outsideD_before_sha256": "d5bcf2a1250fd56ca7d0d132a301e295b303df9b0eb28673de94670d8af68774",
+        "outsideD_after_sha256": "d5bcf2a1250fd56ca7d0d132a301e295b303df9b0eb28673de94670d8af68774",
+        "outside_union_actual_sha256": "4ab4408d9b6f6db9215cfed54a028146872070d88df9c291c91e77dcb1eee97c",
+        "outside_union_proposed_sha256": "4ab4408d9b6f6db9215cfed54a028146872070d88df9c291c91e77dcb1eee97c"
+      },
+      "T/paddy_water": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/rim": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/rim_unwalk": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/sea": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "T/slope": {
+        "changed_cells": 0,
+        "current_payload_sha256": "a1464aa5541b0f16d605e74c43c41b89209d1c5ab38beefbb6fe9aedafd5a503",
+        "proposed_payload_sha256": "a1464aa5541b0f16d605e74c43c41b89209d1c5ab38beefbb6fe9aedafd5a503",
+        "outsideD_before_sha256": "a4a9b6404e36432c1321a7038d5e8505f08e8f0c55e0e175ee46a00bf9b17d86",
+        "outsideD_after_sha256": "a4a9b6404e36432c1321a7038d5e8505f08e8f0c55e0e175ee46a00bf9b17d86",
+        "outside_union_actual_sha256": "87b53df4273d9a3e0b78276a7b5944bd8a48d03d006172e0ba7670bd7d6adda3",
+        "outside_union_proposed_sha256": "87b53df4273d9a3e0b78276a7b5944bd8a48d03d006172e0ba7670bd7d6adda3"
+      },
+      "T/street": {
+        "changed_cells": 473,
+        "current_payload_sha256": "25c8f1a47719992bc25e3d1c441bf86320e7334d619e9e6ca3a71e058b538888",
+        "proposed_payload_sha256": "a642733565f5a8785ace74a5bd7804741cc81cd367988f7980f8cebf293ece71",
+        "outsideD_before_sha256": "cd23c4afd2e48ec41bd6826a59ac6c6c6600d50fcf08ec477bfc45bd98c970a4",
+        "outsideD_after_sha256": "cd23c4afd2e48ec41bd6826a59ac6c6c6600d50fcf08ec477bfc45bd98c970a4",
+        "outside_union_actual_sha256": "5efd78a88277233204807c93f03132721acb446accaf745cdbe5e3c2363eeeb5",
+        "outside_union_proposed_sha256": "5efd78a88277233204807c93f03132721acb446accaf745cdbe5e3c2363eeeb5"
+      },
+      "T/taken": {
+        "changed_cells": 318,
+        "current_payload_sha256": "c5c92ba3c891bef66e1d3603b7191d966eefb45a37914640f6ba3de798337365",
+        "proposed_payload_sha256": "45a23549b29d4663f4c0c07fbdf4aa67760214b311c85e64517834a8359fbcea",
+        "outsideD_before_sha256": "522d11061f2fb86880d7e306a2f01a4d89c32613cb3626d7f9b18ee09d7c9b07",
+        "outsideD_after_sha256": "522d11061f2fb86880d7e306a2f01a4d89c32613cb3626d7f9b18ee09d7c9b07",
+        "outside_union_actual_sha256": "e76c3ef6da2d4ccef2c9d4b8c472a01768c57ef91a36ee738a699945ac3e35ee",
+        "outside_union_proposed_sha256": "e76c3ef6da2d4ccef2c9d4b8c472a01768c57ef91a36ee738a699945ac3e35ee"
+      },
+      "T/tiers_pre": {
+        "changed_cells": 0,
+        "current_payload_sha256": "32ce1706eb884781ecac99e7aea6946d40a814bf86d357ec30f82bf5a6d2d515",
+        "proposed_payload_sha256": "32ce1706eb884781ecac99e7aea6946d40a814bf86d357ec30f82bf5a6d2d515",
+        "outsideD_before_sha256": "91974bfa787bb21b19a6acea912c4559cd619441d0d4c8fdf5892ce55540068c",
+        "outsideD_after_sha256": "91974bfa787bb21b19a6acea912c4559cd619441d0d4c8fdf5892ce55540068c",
+        "outside_union_actual_sha256": "9a23f9e48d73e293d4b51b22a09387a41b35d653f1ce857d3e3368b389cced25",
+        "outside_union_proposed_sha256": "9a23f9e48d73e293d4b51b22a09387a41b35d653f1ce857d3e3368b389cced25"
+      },
+      "T/used": {
+        "changed_cells": 0,
+        "current_payload_sha256": "c00933b7f8e26c2318e8dba6d54cd452f20df98f9f9d68cd4ee4557be9969d56",
+        "proposed_payload_sha256": "c00933b7f8e26c2318e8dba6d54cd452f20df98f9f9d68cd4ee4557be9969d56",
+        "outsideD_before_sha256": "2fcca1d5e439979812965882ee6154845ea84b7c29c2da6bc3bef0b6f96f7091",
+        "outsideD_after_sha256": "2fcca1d5e439979812965882ee6154845ea84b7c29c2da6bc3bef0b6f96f7091",
+        "outside_union_actual_sha256": "62254bdafc1abb08fd060e60f09a5d482207b7fcb7b71bcc6c5e3086442d6bd6",
+        "outside_union_proposed_sha256": "62254bdafc1abb08fd060e60f09a5d482207b7fcb7b71bcc6c5e3086442d6bd6"
+      },
+      "T/used_routes": {
+        "changed_cells": 473,
+        "current_payload_sha256": "336d1517cea4b5fba385745375e1b92469004fff174d19619a438b499b90cc20",
+        "proposed_payload_sha256": "a5cbd43903aa873d28747f33319a626d9cebcf75465715a344dd422bb23b7ede",
+        "outsideD_before_sha256": "80ac0291deb940927ec0d816f83024b154d3649a00f374aae5c44eb448a07131",
+        "outsideD_after_sha256": "80ac0291deb940927ec0d816f83024b154d3649a00f374aae5c44eb448a07131",
+        "outside_union_actual_sha256": "2cd149afd02c11185b89c2707dd3f1ab89a4fea310ab8749e5939dbadfdc88a7",
+        "outside_union_proposed_sha256": "2cd149afd02c11185b89c2707dd3f1ab89a4fea310ab8749e5939dbadfdc88a7"
+      },
+      "T/wet": {
+        "changed_cells": 0,
+        "current_payload_sha256": "06fac51b595aaebcb1a336c6c8b90fd3cecb51c5614190e80dac0b676c601d81",
+        "proposed_payload_sha256": "06fac51b595aaebcb1a336c6c8b90fd3cecb51c5614190e80dac0b676c601d81",
+        "outsideD_before_sha256": "d29bba9bfda40cf3f556cf476aa3da9bb92c4303a549e0b2f922985e65e154d6",
+        "outsideD_after_sha256": "d29bba9bfda40cf3f556cf476aa3da9bb92c4303a549e0b2f922985e65e154d6",
+        "outside_union_actual_sha256": "ed126588c9603aa8b518cadb628fad506ba1a93392e90685caf9547195385de8",
+        "outside_union_proposed_sha256": "ed126588c9603aa8b518cadb628fad506ba1a93392e90685caf9547195385de8"
+      },
+      "barriers/fire": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "barriers/rim": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "barriers/sea": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "barriers/the Cog": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "barriers/the Lull": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "barriers/the Rift": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "barriers/wall": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Amber": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Brackens beck": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Cog": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Glint": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Heather burn": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Lull": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Rift": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Sedgeburn": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Sleepwater": {
+        "changed_cells": 0,
+        "current_payload_sha256": "b12e711bf1a4c57f52f9b482c8de84cf8bff6e73c0664afef8cca3f74c421500",
+        "proposed_payload_sha256": "b12e711bf1a4c57f52f9b482c8de84cf8bff6e73c0664afef8cca3f74c421500",
+        "outsideD_before_sha256": "132afcf2ac6cdb70d1aee49f0e729cfbbe3acbafad1cd20d3a273900d76e381c",
+        "outsideD_after_sha256": "132afcf2ac6cdb70d1aee49f0e729cfbbe3acbafad1cd20d3a273900d76e381c",
+        "outside_union_actual_sha256": "03f81d42412f920718ef8246cbd6bc7dc1be9ab090dace75f652a6d36755bcc1",
+        "outside_union_proposed_sha256": "03f81d42412f920718ef8246cbd6bc7dc1be9ab090dace75f652a6d36755bcc1"
+      },
+      "river_masks/the Sorrel": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      },
+      "river_masks/the Willow Run": {
+        "changed_cells": 0,
+        "current_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "proposed_payload_sha256": "862afd8e1d7d8c855520d0e3e02b21bbe2e614062e3dc3ed4e7b0f93803b8c85",
+        "outsideD_before_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outsideD_after_sha256": "a6f31474bcbf1e79d9613da049fde8cf8f167dc6d930cfd353b05dd85cb1ca06",
+        "outside_union_actual_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d",
+        "outside_union_proposed_sha256": "bb1c113d27036957e8ff4408c773f18a18ce338b41e848721267979e7fd5795d"
+      }
+    },
+    "plots": [
+      {
+        "id": "crossroads-b008",
+        "plot": "D01",
+        "form": "row_house",
+        "source_footprint_px": [
+          80,
+          24
+        ],
+        "source_bays": [
+          {
+            "w_cells": 6,
+            "storeys": 2,
+            "roof": "tile"
+          },
+          {
+            "w_cells": 4,
+            "storeys": 2,
+            "roof": "thatch"
+          }
+        ],
+        "rect_world_px": [
+          5736,
+          3440,
+          80,
+          24
+        ],
+        "door_world_px": [
+          5760,
+          3464
+        ],
+        "required_facing": "south",
+        "candidate_bay_doors_world_px": [
+          [
+            5760,
+            3464
+          ],
+          [
+            5800,
+            3464
+          ]
+        ],
+        "orientation_authorability": "South-facing geometric offer; exact future asset thresholds/bay variants still UNVERIFIED.",
+        "baseline_footprint": {
+          "cells": 30,
+          "ground": {
+            "meadow": 29,
+            "broadleaf": 1
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0015987850190412724
+        },
+        "baseline_halo": {
+          "cells": 60,
+          "ground": {
+            "meadow": 59,
+            "broadleaf": 1
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            3,
+            4
+          ],
+          "max_slope": 0.0016325645789791157
+        },
+        "footprint": {
+          "cells": 30,
+          "ground_before_new_stamp": {
+            "meadow": 29,
+            "broadleaf": 1
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 30,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0015987850190412724
+        },
+        "halo": {
+          "cells": 60,
+          "ground_before_new_stamp": {
+            "meadow": 43,
+            "lane": 16,
+            "broadleaf": 1
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 16,
+          "other_occupancy": 0,
+          "own_stamped_cells": 30,
+          "tiers": [
+            3,
+            4
+          ],
+          "max_slope": 0.0016325645789791157
+        },
+        "disposition": "MACRO_FOOT_AND_HALO_CLEAR_NATIVE_UNVERIFIED",
+        "door_links": [
+          {
+            "door_world_px": [
+              5760,
+              3464
+            ],
+            "adjacent_walk_cells": 2,
+            "reaches_square_in_limited_graph": true
+          },
+          {
+            "door_world_px": [
+              5800,
+              3464
+            ],
+            "adjacent_walk_cells": 2,
+            "reaches_square_in_limited_graph": true
+          }
+        ]
+      },
+      {
+        "id": "crossroads-b009",
+        "plot": "D02",
+        "form": "row_house",
+        "source_footprint_px": [
+          112,
+          48
+        ],
+        "source_bays": [
+          {
+            "w_cells": 8,
+            "storeys": 1,
+            "roof": "thatch"
+          },
+          {
+            "w_cells": 6,
+            "storeys": 1,
+            "roof": "tile"
+          }
+        ],
+        "rect_world_px": [
+          5832,
+          3416,
+          112,
+          48
+        ],
+        "door_world_px": [
+          5864,
+          3464
+        ],
+        "required_facing": "south",
+        "candidate_bay_doors_world_px": [
+          [
+            5864,
+            3464
+          ],
+          [
+            5920,
+            3464
+          ]
+        ],
+        "orientation_authorability": "South-facing geometric offer; exact future asset thresholds/bay variants still UNVERIFIED.",
+        "baseline_footprint": {
+          "cells": 84,
+          "ground": {
+            "meadow": 84
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0010471373518758822
+        },
+        "baseline_halo": {
+          "cells": 128,
+          "ground": {
+            "meadow": 128
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            3,
+            4
+          ],
+          "max_slope": 0.001179548543529123
+        },
+        "footprint": {
+          "cells": 84,
+          "ground_before_new_stamp": {
+            "meadow": 84
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 84,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0010471373518758822
+        },
+        "halo": {
+          "cells": 128,
+          "ground_before_new_stamp": {
+            "lane": 30,
+            "meadow": 98
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 30,
+          "other_occupancy": 0,
+          "own_stamped_cells": 84,
+          "tiers": [
+            3,
+            4
+          ],
+          "max_slope": 0.001179548543529123
+        },
+        "disposition": "MACRO_FOOT_AND_HALO_CLEAR_NATIVE_UNVERIFIED",
+        "door_links": [
+          {
+            "door_world_px": [
+              5864,
+              3464
+            ],
+            "adjacent_walk_cells": 2,
+            "reaches_square_in_limited_graph": true
+          },
+          {
+            "door_world_px": [
+              5920,
+              3464
+            ],
+            "adjacent_walk_cells": 2,
+            "reaches_square_in_limited_graph": true
+          }
+        ]
+      },
+      {
+        "id": "crossroads-b024",
+        "plot": "D03",
+        "form": "cottage",
+        "source_footprint_px": [
+          40,
+          72
+        ],
+        "source_bays": [],
+        "rect_world_px": [
+          5792,
+          3512,
+          40,
+          72
+        ],
+        "door_world_px": [
+          5812,
+          3512
+        ],
+        "required_facing": "north",
+        "candidate_bay_doors_world_px": [],
+        "orientation_authorability": "Required north facade remains UNVERIFIED; current native view supports south doors only.",
+        "baseline_footprint": {
+          "cells": 45,
+          "ground": {
+            "meadow": 45
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0015829525651271101
+        },
+        "baseline_halo": {
+          "cells": 77,
+          "ground": {
+            "meadow": 77
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0016892333609906025
+        },
+        "footprint": {
+          "cells": 45,
+          "ground_before_new_stamp": {
+            "meadow": 45
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 45,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0015829525651271101
+        },
+        "halo": {
+          "cells": 77,
+          "ground_before_new_stamp": {
+            "meadow": 65,
+            "lane": 12
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 12,
+          "other_occupancy": 0,
+          "own_stamped_cells": 45,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0016892333609906025
+        },
+        "disposition": "MACRO_FOOT_AND_HALO_CLEAR_NATIVE_UNVERIFIED",
+        "door_links": [
+          {
+            "door_world_px": [
+              5812,
+              3512
+            ],
+            "adjacent_walk_cells": 1,
+            "reaches_square_in_limited_graph": true
+          }
+        ]
+      },
+      {
+        "id": "crossroads-b025",
+        "plot": "D04",
+        "form": "house",
+        "source_footprint_px": [
+          56,
+          96
+        ],
+        "source_bays": [],
+        "rect_world_px": [
+          5960,
+          3368,
+          56,
+          96
+        ],
+        "door_world_px": [
+          5988,
+          3464
+        ],
+        "required_facing": "south",
+        "candidate_bay_doors_world_px": [],
+        "orientation_authorability": "South-facing geometric offer; exact future asset thresholds/bay variants still UNVERIFIED.",
+        "baseline_footprint": {
+          "cells": 84,
+          "ground": {
+            "meadow": 84
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0006721692819221241
+        },
+        "baseline_halo": {
+          "cells": 126,
+          "ground": {
+            "hedge": 3,
+            "meadow": 119,
+            "lane": 4
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 4,
+          "taken": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.00084944504687711
+        },
+        "footprint": {
+          "cells": 84,
+          "ground_before_new_stamp": {
+            "meadow": 84
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 84,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0006721692819221241
+        },
+        "halo": {
+          "cells": 126,
+          "ground_before_new_stamp": {
+            "lane": 27,
+            "yard": 7,
+            "meadow": 92
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 27,
+          "other_occupancy": 0,
+          "own_stamped_cells": 84,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.00084944504687711
+        },
+        "disposition": "MACRO_FOOT_AND_HALO_CLEAR_NATIVE_UNVERIFIED",
+        "door_links": [
+          {
+            "door_world_px": [
+              5988,
+              3464
+            ],
+            "adjacent_walk_cells": 1,
+            "reaches_square_in_limited_graph": true
+          }
+        ]
+      },
+      {
+        "id": "crossroads-b026",
+        "plot": "D05",
+        "form": "cottage",
+        "source_footprint_px": [
+          40,
+          56
+        ],
+        "source_bays": [],
+        "rect_world_px": [
+          5848,
+          3512,
+          40,
+          56
+        ],
+        "door_world_px": [
+          5868,
+          3512
+        ],
+        "required_facing": "north",
+        "candidate_bay_doors_world_px": [],
+        "orientation_authorability": "Required north facade remains UNVERIFIED; current native view supports south doors only.",
+        "baseline_footprint": {
+          "cells": 35,
+          "ground": {
+            "meadow": 35
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0012036716352785293
+        },
+        "baseline_halo": {
+          "cells": 63,
+          "ground": {
+            "meadow": 63
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.001277171785386411
+        },
+        "footprint": {
+          "cells": 35,
+          "ground_before_new_stamp": {
+            "meadow": 35
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 35,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0012036716352785293
+        },
+        "halo": {
+          "cells": 63,
+          "ground_before_new_stamp": {
+            "lane": 19,
+            "meadow": 44
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 19,
+          "other_occupancy": 0,
+          "own_stamped_cells": 35,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.001277171785386411
+        },
+        "disposition": "MACRO_FOOT_AND_HALO_CLEAR_NATIVE_UNVERIFIED",
+        "door_links": [
+          {
+            "door_world_px": [
+              5868,
+              3512
+            ],
+            "adjacent_walk_cells": 1,
+            "reaches_square_in_limited_graph": true
+          }
+        ]
+      },
+      {
+        "id": "crossroads-b027",
+        "plot": "D06",
+        "form": "cottage",
+        "source_footprint_px": [
+          40,
+          64
+        ],
+        "source_bays": [],
+        "rect_world_px": [
+          5904,
+          3512,
+          40,
+          64
+        ],
+        "door_world_px": [
+          5924,
+          3512
+        ],
+        "required_facing": "north",
+        "candidate_bay_doors_world_px": [],
+        "orientation_authorability": "Required north facade remains UNVERIFIED; current native view supports south doors only.",
+        "baseline_footprint": {
+          "cells": 40,
+          "ground": {
+            "meadow": 37,
+            "hedge": 2,
+            "fallow": 1
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0009300121692681866
+        },
+        "baseline_halo": {
+          "cells": 70,
+          "ground": {
+            "meadow": 59,
+            "hedge": 5,
+            "field2": 2,
+            "fallow": 4
+          },
+          "water": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "taken": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0010349978705857217
+        },
+        "footprint": {
+          "cells": 40,
+          "ground_before_new_stamp": {
+            "meadow": 37,
+            "hedge": 2,
+            "fallow": 1
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 40,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0009300121692681866
+        },
+        "halo": {
+          "cells": 70,
+          "ground_before_new_stamp": {
+            "lane": 11,
+            "meadow": 48,
+            "hedge": 5,
+            "field2": 2,
+            "fallow": 4
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 11,
+          "other_occupancy": 0,
+          "own_stamped_cells": 40,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0010349978705857217
+        },
+        "disposition": "MACRO_FOOT_AND_HALO_CLEAR_NATIVE_UNVERIFIED",
+        "door_links": [
+          {
+            "door_world_px": [
+              5924,
+              3512
+            ],
+            "adjacent_walk_cells": 1,
+            "reaches_square_in_limited_graph": true
+          }
+        ]
+      }
+    ],
+    "routes": {
+      "West Lane public frontage": {
+        "points": [
+          [
+            5720,
+            3476
+          ],
+          [
+            6016,
+            3476
+          ]
+        ],
+        "width": 24,
+        "role": "continue existing24pxmarket-west publiclane; nohaltarrival",
+        "facts": {
+          "cells": 117,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 117
+        }
+      },
+      "Northern rear service": {
+        "points": [
+          [
+            5720,
+            3352
+          ],
+          [
+            6024,
+            3352
+          ],
+          [
+            6024,
+            3388
+          ]
+        ],
+        "width": 16,
+        "role": "footservice close to existingA rear lane, not cartclearance proof",
+        "facts": {
+          "cells": 88,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 88
+        }
+      },
+      "Western and southern rear service": {
+        "points": [
+          [
+            5720,
+            3352
+          ],
+          [
+            5720,
+            3664
+          ],
+          [
+            5952,
+            3664
+          ]
+        ],
+        "width": 16,
+        "role": "rear servicing / gardenaccess, no external gatearrival",
+        "facts": {
+          "cells": 140,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 140
+        }
+      },
+      "North bay passage": {
+        "points": [
+          [
+            5824,
+            3352
+          ],
+          [
+            5824,
+            3476
+          ]
+        ],
+        "width": 16,
+        "facts": {
+          "cells": 34,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 34
+        }
+      },
+      "Corner side passage": {
+        "points": [
+          [
+            5952,
+            3352
+          ],
+          [
+            5952,
+            3476
+          ]
+        ],
+        "width": 16,
+        "facts": {
+          "cells": 34,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 34
+        }
+      },
+      "South garden passage west": {
+        "points": [
+          [
+            5840,
+            3476
+          ],
+          [
+            5840,
+            3664
+          ]
+        ],
+        "width": 16,
+        "facts": {
+          "cells": 50,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 50
+        }
+      },
+      "South garden passage east": {
+        "points": [
+          [
+            5896,
+            3476
+          ],
+          [
+            5896,
+            3664
+          ]
+        ],
+        "width": 16,
+        "facts": {
+          "cells": 50,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 50
+        }
+      },
+      "door D01 bay1": {
+        "points": [
+          [
+            5760,
+            3472
+          ],
+          [
+            5760,
+            3476
+          ]
+        ],
+        "width": 16,
+        "door_world_px": [
+          5760,
+          3464
+        ],
+        "facts": {
+          "cells": 4,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 4
+        }
+      },
+      "door D01 bay2": {
+        "points": [
+          [
+            5800,
+            3472
+          ],
+          [
+            5800,
+            3476
+          ]
+        ],
+        "width": 16,
+        "door_world_px": [
+          5800,
+          3464
+        ],
+        "facts": {
+          "cells": 4,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 4
+        }
+      },
+      "door D02 bay1": {
+        "points": [
+          [
+            5864,
+            3472
+          ],
+          [
+            5864,
+            3476
+          ]
+        ],
+        "width": 16,
+        "door_world_px": [
+          5864,
+          3464
+        ],
+        "facts": {
+          "cells": 4,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 4
+        }
+      },
+      "door D02 bay2": {
+        "points": [
+          [
+            5920,
+            3472
+          ],
+          [
+            5920,
+            3476
+          ]
+        ],
+        "width": 16,
+        "door_world_px": [
+          5920,
+          3464
+        ],
+        "facts": {
+          "cells": 4,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 4
+        }
+      },
+      "door D03 bay1": {
+        "points": [
+          [
+            5812,
+            3504
+          ],
+          [
+            5812,
+            3476
+          ]
+        ],
+        "width": 16,
+        "door_world_px": [
+          5812,
+          3512
+        ],
+        "facts": {
+          "cells": 5,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 5
+        }
+      },
+      "door D04 bay1": {
+        "points": [
+          [
+            5988,
+            3472
+          ],
+          [
+            5988,
+            3476
+          ]
+        ],
+        "width": 16,
+        "door_world_px": [
+          5988,
+          3464
+        ],
+        "facts": {
+          "cells": 2,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 2
+        }
+      },
+      "door D05 bay1": {
+        "points": [
+          [
+            5868,
+            3504
+          ],
+          [
+            5868,
+            3476
+          ]
+        ],
+        "width": 16,
+        "door_world_px": [
+          5868,
+          3512
+        ],
+        "facts": {
+          "cells": 5,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 5
+        }
+      },
+      "door D06 bay1": {
+        "points": [
+          [
+            5924,
+            3504
+          ],
+          [
+            5924,
+            3476
+          ]
+        ],
+        "width": 16,
+        "door_world_px": [
+          5924,
+          3512
+        ],
+        "facts": {
+          "cells": 5,
+          "water_without_existing_bridge": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "building_occupancy": 0,
+          "street_cells": 5
+        }
+      }
+    },
+    "areas": {
+      "D01_rear_garden": {
+        "rect": [
+          5736,
+          3368,
+          80,
+          64
+        ],
+        "kind": "garden",
+        "facts": {
+          "cells": 80,
+          "ground_before_new_stamp": {
+            "garden": 80
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0011479485101423812
+        }
+      },
+      "D02_rear_garden": {
+        "rect": [
+          5832,
+          3368,
+          112,
+          40
+        ],
+        "kind": "garden",
+        "facts": {
+          "cells": 70,
+          "ground_before_new_stamp": {
+            "garden": 70
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0005375674780751483
+        }
+      },
+      "D04_small_corner_rear_court": {
+        "rect": [
+          5960,
+          3360,
+          56,
+          8
+        ],
+        "kind": "yard",
+        "facts": {
+          "cells": 7,
+          "ground_before_new_stamp": {
+            "yard": 7
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 0,
+          "tiers": [
+            4,
+            4
+          ],
+          "max_slope": 0.0004031418425266609
+        }
+      },
+      "D03_deep_garden": {
+        "rect": [
+          5792,
+          3592,
+          40,
+          64
+        ],
+        "kind": "garden",
+        "facts": {
+          "cells": 40,
+          "ground_before_new_stamp": {
+            "garden": 40
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.00037869705980673936
+        }
+      },
+      "D05_deep_garden": {
+        "rect": [
+          5848,
+          3576,
+          40,
+          80
+        ],
+        "kind": "garden",
+        "facts": {
+          "cells": 50,
+          "ground_before_new_stamp": {
+            "garden": 50
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.00056639613982972
+        }
+      },
+      "D06_deep_garden": {
+        "rect": [
+          5904,
+          3584,
+          40,
+          72
+        ],
+        "kind": "garden",
+        "facts": {
+          "cells": 45,
+          "ground_before_new_stamp": {
+            "garden": 45
+          },
+          "water_cells": 0,
+          "nonbuildable_cells": 0,
+          "barrier": 0,
+          "keepout": 0,
+          "street": 0,
+          "other_occupancy": 0,
+          "own_stamped_cells": 0,
+          "tiers": [
+            3,
+            3
+          ],
+          "max_slope": 0.0004975484624444885
+        }
+      }
+    },
+    "native_reserves": {
+      "closed_halt_gate": {
+        "rect": [
+          5976,
+          3528,
+          8,
+          40
+        ],
+        "meaning": "closednativeportal, neveranopenarrival",
+        "new_building_intersections": 0,
+        "new_route_intersections": 0,
+        "all49_values_unchanged": true
+      },
+      "closed_halt_gate_onecell_guard": {
+        "rect": [
+          5968,
+          3520,
+          24,
+          56
+        ],
+        "new_building_intersections": 0,
+        "new_route_intersections": 0,
+        "all49_values_unchanged": true
+      },
+      "future_halt_workshop_lot": {
+        "rect": [
+          6000,
+          3568,
+          64,
+          64
+        ],
+        "new_building_intersections": 0,
+        "new_route_intersections": 0,
+        "all49_values_unchanged": true
+      },
+      "native_green": {
+        "rect": [
+          6016,
+          3656,
+          168,
+          136
+        ],
+        "new_building_intersections": 0,
+        "new_route_intersections": 0,
+        "all49_values_unchanged": true
+      }
+    },
+    "retained25": {
+      "crossroads-b012": {
+        "rect": [
+          6656,
+          3856,
+          48,
+          64
+        ],
+        "door": [
+          6680,
+          3920
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b014": {
+        "rect": [
+          6728,
+          3848,
+          40,
+          72
+        ],
+        "door": [
+          6752,
+          3920
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b015": {
+        "rect": [
+          6560,
+          3968,
+          64,
+          96
+        ],
+        "door": [
+          6592,
+          3968
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b016": {
+        "rect": [
+          6656,
+          3968,
+          48,
+          56
+        ],
+        "door": [
+          6680,
+          3968
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b017": {
+        "rect": [
+          6520,
+          4080,
+          56,
+          88
+        ],
+        "door": [
+          6520,
+          4128
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b018": {
+        "rect": [
+          6424,
+          4000,
+          40,
+          64
+        ],
+        "door": [
+          6464,
+          4032
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b019": {
+        "rect": [
+          6520,
+          4208,
+          64,
+          40
+        ],
+        "door": [
+          6520,
+          4232
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b020": {
+        "rect": [
+          6392,
+          4240,
+          64,
+          48
+        ],
+        "door": [
+          6456,
+          4264
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b021": {
+        "rect": [
+          6520,
+          4280,
+          64,
+          40
+        ],
+        "door": [
+          6520,
+          4304
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b023": {
+        "rect": [
+          6344,
+          4048,
+          72,
+          40
+        ],
+        "door": [
+          6384,
+          4088
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-mill-candidate": {
+        "rect": [
+          6344,
+          4128,
+          96,
+          64
+        ],
+        "door": [
+          6440,
+          4160
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b001": {
+        "rect": [
+          6256,
+          3272,
+          80,
+          40
+        ],
+        "door": [
+          6296,
+          3312
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b002": {
+        "rect": [
+          6176,
+          3408,
+          96,
+          40
+        ],
+        "door": [
+          6224,
+          3448
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b003": {
+        "rect": [
+          6320,
+          3408,
+          96,
+          40
+        ],
+        "door": [
+          6392,
+          3448
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b004": {
+        "rect": [
+          6088,
+          3488,
+          72,
+          48
+        ],
+        "door": [
+          6148,
+          3536
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b005": {
+        "rect": [
+          6088,
+          3576,
+          72,
+          48
+        ],
+        "door": [
+          6148,
+          3624
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b006": {
+        "rect": [
+          6432,
+          3472,
+          88,
+          56
+        ],
+        "door": [
+          6464,
+          3528
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b007": {
+        "rect": [
+          6432,
+          3616,
+          72,
+          48
+        ],
+        "door": [
+          6448,
+          3664
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b010": {
+        "rect": [
+          6184,
+          3232,
+          48,
+          72
+        ],
+        "door": [
+          6208,
+          3304
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b011": {
+        "rect": [
+          6360,
+          3240,
+          56,
+          88
+        ],
+        "door": [
+          6392,
+          3328
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b013": {
+        "rect": [
+          6552,
+          3472,
+          48,
+          88
+        ],
+        "door": [
+          6576,
+          3560
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b022": {
+        "rect": [
+          6520,
+          3592,
+          88,
+          48
+        ],
+        "door": [
+          6568,
+          3592
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b033": {
+        "rect": [
+          6528,
+          3336,
+          96,
+          56
+        ],
+        "door": [
+          6576,
+          3392
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b035": {
+        "rect": [
+          6096,
+          3408,
+          64,
+          56
+        ],
+        "door": [
+          6128,
+          3464
+        ],
+        "all49_foot_and_halo_exact": true
+      },
+      "crossroads-b037": {
+        "rect": [
+          6032,
+          3400,
+          48,
+          64
+        ],
+        "door": [
+          6056,
+          3464
+        ],
+        "all49_foot_and_halo_exact": true
+      }
+    },
+    "prior_areas_exact": {
+      "market_west_public_lane": true,
+      "market_west_narrow_public_seam": true,
+      "A_rear_service_lane": true,
+      "A_garden_band": true,
+      "C_quiet_walk_spur": true,
+      "B_harbour_front_apron": true,
+      "B_east_court": true,
+      "A_west_passage": true,
+      "A_library_rear_garden": true,
+      "A_library_rear_apron": true,
+      "A_bakery_west_garden": true,
+      "A_herbalist_west_garden": true,
+      "A_herbalist_public_link": true,
+      "C_north_cottages_rear_garden": true,
+      "C010_west_side_garden": true,
+      "C010_rear_court": true,
+      "C010_door_link": true,
+      "C011_east_side_garden": true,
+      "C011_rear_court": true,
+      "B013_rear_court": true,
+      "B022_tapered_rear_garden": true,
+      "B033_rear_garden": true,
+      "B033_door_link": true,
+      "B006_smithy_door_link": true,
+      "B022_market_door_link": true,
+      "C_market_axis_completion": true,
+      "B007_front_walk": true,
+      "B007_side_close": true,
+      "C001_door_link": true,
+      "north_market_close": true,
+      "native_square": true,
+      "native_green": true
+    },
+    "source_existing36route_polylines_unchanged": true,
+    "masks_grades_water_bridges_unchanged": true,
+    "execution": {
+      "actual_exit": 0,
+      "wall_seconds": 2.004,
+      "peak_rss_bytes": 67391488
+    },
+    "limits": {
+      "oneCPU": true,
+      "AS_bytes": 268435456,
+      "CPU_seconds": 60,
+      "wall_alarm_seconds": 60,
+      "output_bytes": 8388608
+    },
+    "unknowns": [
+      "Native art supports south-facing doors; north-facing cottage variants are required but unverified. Geometric bay doors do not create extra logical homes/occupants/jobs.",
+      "Limitedproposedstreetgraph only; nativefloors/colliders/export/player/portal/cart/art acceptance unproved.",
+      "Closedhalt gate/futureworkshoplot kept; newDlinks join town publiclane/rearservice only, not externalhalt arrival.",
+      "Prior F local11/Square0 result, realroad audit,22North/7Lulltails/bridgebank/millhydraulicidentity limits unchanged. E/Gunfitted."
+    ],
+    "status": "SIX_D_RECORDS_MACRO_CLEAR_NATIVE_AND_THREE_NORTH_FACADES_UNVERIFIED",
+    "evidence_files": {
+      "fit-D-r1.py": {
+        "bytes": 17103,
+        "sha256": "2f20dc5009d22695229b16bf2728513d339e8013d03d7feb6449db1b40448638"
+      },
+      "fit-D-r2.py": {
+        "bytes": 17108,
+        "sha256": "ebcb117836d586e371f232e08acbf8c5af39a1a42920821de8b7df95a56c6e7d"
+      },
+      "attempt-1-stderr.txt": {
+        "bytes": 414,
+        "sha256": "c0e538efb8284081030e3ff34a4ab7bbcb18bf42080c43f133ce2549398bb27a"
+      },
+      "attempt-1-exit.json": {
+        "bytes": 296,
+        "sha256": "51007984e647d321fb0ed305fae03323972ecc5cb674652844651f6c8679f596"
+      },
+      "attempt-2-stdout.json": {
+        "bytes": 9180,
+        "sha256": "6b8a06efcced0f4d89aa06a46e007ae112c9b1e01da39c491ebb8506904c83dd"
+      },
+      "attempt-2-stderr.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "attempt-2-exit.json": {
+        "bytes": 25,
+        "sha256": "ad48001083e1e502a335ce5a9512d1ab95c599126c7b68d04c5aa121e8c3533c"
+      },
+      "west-D-r2.json": {
+        "bytes": 66903,
+        "sha256": "0ce7d6ddfdfb55ebba8a80e204a5979bfa56688c62bd2ac063c8c2c6ef7d88df"
+      },
+      "proposed-D-r2.npz": {
+        "bytes": 1441707,
+        "sha256": "489e91141d657c1c231b1ea2f258b253c53e33c5f204cdcc00d595fdc8a85462"
+      },
+      "affected-D-r2.csv": {
+        "bytes": 63320,
+        "sha256": "629ffb5d22d53865d675fb50f7aca555077361898005c2103754aad115f509bb"
+      }
+    },
+    "attempt_history": [
+      {
+        "attempt": 1,
+        "actual_probe_exit": 1,
+        "result": "Retained market public-lane all49 guard caught used_routes bookkeeping change on an existing painted street. Code/trace retained; no false physicalPASS."
+      },
+      {
+        "attempt": 2,
+        "actual_probe_exit": 0,
+        "result": "Existing street cells kept byte-exact; north service turn x6024 avoids A garden band. All6plots/15bands/8thresholdlinks measured; no third attempt needed."
+      }
+    ],
+    "source_qualifications": [
+      "Original40record forms/dimensions/bays and single mill entry unchanged; D candidate rectangles/thresholds separate from original NULL geometry. Six records remain six; bay doors do not author extra homes/jobs/residents.",
+      "D03/D05/D06 require north-facing variants. Current native art source supports south-facing doors; exact new facades/thresholds/occlusion remain UNVERIFIED.",
+      "The existing closed halt portal, conservative one-cell reserve and future workshop lot remain unchanged and are not open arrivals. D joins existing town public/rear lanes only.",
+      "The earlier F zero-Square result was for explicitly painted T/street coverage, not native-disconnection proof. Named real road, legacy coarse WALK and placement keepout are different authorities; no F connector or native repin was made.",
+      "This is a frozen capture-based private proposal. Current native/editor authoring, floor/collider/portal/asset acceptance and future programme41 producer adoption remain separate scopes. E/G still unfitted."
+    ]
   }
 }
