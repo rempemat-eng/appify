@@ -1,0 +1,75 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "crossroads_grain_scale",
+  "name": "Grain-weighing station",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "docs/vision/art-style.md; eastward-edges.md; size-guide.md; ground-rules.md",
+    "note": "Y36/grain-scale-prototype-r1 source candidate under GO6527386774. PNGs NOT GENERATED; not gated, approved, registered or placed. Candidate is the required review status, not evidence of completed drawing."
+  },
+  "function": {},
+  "gameplay": {"blocks_move": true, "blocks_shots": false},
+  "biomes": ["village"],
+  "variants": [
+    {
+      "id": "ready",
+      "weight": 1.0,
+      "png": "res://kit/props/art/crossroads_grain_scale_ready.png",
+      "foot": [84, 132],
+      "note": "Proposed level beam, empty pans and loose measures on the table; ordinary visual state only. PNG NOT GENERATED."
+    },
+    {
+      "id": "loaded",
+      "weight": 1.0,
+      "png": "res://kit/props/art/crossroads_grain_scale_loaded.png",
+      "foot": [84, 132],
+      "note": "Proposed grain in the lowered pan and a raised counterweight; no stock, payment, quest or unlock state. PNG NOT GENERATED."
+    }
+  ],
+  "geometry": {
+    "size_px": [168, 144],
+    "size_cells": [7, 6],
+    "foot": [84, 132],
+    "footprint": [[-2, -1], [-1, -1], [0, -1], [1, -1], [2, -1]],
+    "z_sort": "foot",
+    "collision": {"shape": "rect", "rect": [-16, -8, 32, 8]}
+  },
+  "placement": {
+    "role": "workbench",
+    "ground": {"allow": ["surface:earth", "surface:rock"], "deny": ["water", "route"]},
+    "forbids": [{"rel": "on", "what": "water"}, {"rel": "on", "what": "route"}],
+    "orientations": ["s"],
+    "snap": "cell",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {"shape": "ellipse", "size": [16, 3], "dir": [2, 1]}
+  },
+  "story": {
+    "lore": "Ordinary market and mill-yard work equipment proposed for a service-court edge. Its illustrated grain and measures introduce no game service or economy."
+  },
+  "audit": {
+    "painter": {"module": "scripts.art.kit.crossroads_grain_scale", "fn": "grain_scale", "args": {}},
+    "size_class": null,
+    "eastward_ref": null,
+    "seeded_from": "Y36/grain-scale-prototype-r1 GO6527386774; study6527386266 / MyGame_Settlement_Layout_Study_2026-10-30.pdf; native Pixel/palette at PR377@724662fa4edb4f37673856c6e78fe5f60a7fc9c1. New design, not copied from a registered zone object.",
+    "reviews": [],
+    "todo": [
+      "Source-only: no painter import, PNG generation, validator, reproducibility, engine, composition or full-gate execution has occurred. Future PNG paths are intentionally absent.",
+      "Cell snap permits whole/half-cell X and whole-cell Y. Five-cell footprint conservatively covers the authored world-pixel rectangle at both X phases; actual collision and receiving checks remain unrun.",
+      "Four timber feet share one rectangular blocker; frame openings do not grant walk-under travel. Canvas is not the solid footprint.",
+      "Reserve the south worker approach and east loading approach in a representative service-court composition. No numeric clearance or new interaction/unlock requirement is invented here.",
+      "Official Eastward market-table screenshot selection and precise matching-height/crop/count gaps are recorded in docs/codex/crossroads-grain-scale-review.md; eastward_ref remains null until a reviewed matching comparison exists.",
+      "Moss idle S frame 3 manifest bounds imply 74 art-pixel height; actual decoded comparison, alpha bounds, construction, silhouette and material craft need the separately allocated two-state draw and play-camera vignette.",
+      "Shadow ellipse size/dir are proposed world-pixel values, separate from painted contact seams. Evaluate live context; no shadow or clearance acceptance is claimed.",
+      "No index, scene, zone, palette, schema, existing painter or player data is changed. No catalogue duplication or production placement is claimed.",
+      "Keep candidate status, existing PR377/375/302/400, Y12, full-gate and Matt-review holds. No Ready, merge or art approval from this source batch."
+    ]
+  }
+}
