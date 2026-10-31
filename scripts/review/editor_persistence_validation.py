@@ -102,6 +102,8 @@ MESA_PACKAGE = {
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
 MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+EMPTY_CACHE_RECEIVER_PARENT = "f511a86c5a56cf92612fe71d510b73695d2adf05"
+EMPTY_CACHE_RECEIVER_PARENT_TREE = "6c1c4c4b9dc1e375ddbd64729f11a06b89fecc9d"
 REFUSAL_RECEIVER_PARENT = "f7c6c899912ad60b20726f8f71ac0f81fa812b35"
 REFUSAL_RECEIVER_PARENT_TREE = "9704fce15ed82ab5c28be395a11a0033016603ed"
 INTENT_RECEIVER_PARENT = "f133b4be7427b51fb099206a93877996f2dddac8"
@@ -1225,7 +1227,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [REFUSAL_RECEIVER_PARENT]
+                != [EMPTY_CACHE_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", EMPTY_CACHE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", REFUSAL_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE
@@ -1884,8 +1888,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [REFUSAL_RECEIVER_PARENT]:
-            raise RuntimeError("Refusal evidence must be a genuine sole child of frozen405f7c6")
+        if parents != [EMPTY_CACHE_RECEIVER_PARENT]:
+            raise RuntimeError("Empty-cache correction must be a genuine sole child of frozen405f511")
+        empty_cache_headers = git(self.candidate, "cat-file", "commit", EMPTY_CACHE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in empty_cache_headers.splitlines() if x.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H18 receiver ancestry/tree changed")
         refusal_headers = git(self.candidate, "cat-file", "commit", REFUSAL_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in refusal_headers.splitlines() if x.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE):
@@ -2061,6 +2069,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "empty_cache_receiver_parent": EMPTY_CACHE_RECEIVER_PARENT, "empty_cache_receiver_parent_headers": empty_cache_headers,
                     "refusal_receiver_parent": REFUSAL_RECEIVER_PARENT, "refusal_receiver_parent_headers": refusal_headers,
                     "intent_receiver_parent": INTENT_RECEIVER_PARENT, "intent_receiver_parent_headers": intent_receiver_headers,
                     "rebind_receiver_parent": REBIND_RECEIVER_PARENT, "rebind_receiver_parent_headers": rebind_headers,
@@ -2411,7 +2420,8 @@ class Controller:
                     limit = self.lifecycle_allowed.get(relative)
                     if relative.startswith("game/.godot/"):
                         limit = 64 * 1024**2
-                    if limit is None or not 0 < info.st_size <= limit or info.st_mode & 0o111:
+                    size_ok = limit is not None and (0 if relative == "game/.godot/editor/script_editor_cache.cfg" else 1) <= info.st_size <= limit
+                    if limit is None or not size_ok or info.st_mode & 0o111:
                         if not getattr(self, "_lifecycle_refusal_recorded", False):
                             self._lifecycle_refusal_recorded = True
                             record = {"path": relative[:4096], "label": label[:128], "observed_ns": time.time_ns(),
@@ -2420,7 +2430,7 @@ class Controller:
                                     "nlink": info.st_nlink, "uid": info.st_uid, "dev": info.st_dev,
                                     "ino": info.st_ino, "mtime_ns": info.st_mtime_ns, "ctime_ns": info.st_ctime_ns},
                                 "limit": limit, "failed": [reason for reason, failed in (
-                                    ("unlisted", limit is None), ("size", limit is not None and not 0 < info.st_size <= limit),
+                                    ("unlisted", limit is None), ("size", limit is not None and not size_ok),
                                     ("executable", bool(info.st_mode & 0o111))) if failed],
                                 "bracket": "lstat at refusal only; prior cache stat/content not retained",
                                 "content_status": "NOT_READ", "bytes_read": 0, "errors": []}
@@ -3181,7 +3191,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", EMPTY_CACHE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", REFUSAL_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE
