@@ -179,6 +179,10 @@ ART_SOURCE_CHANGES = {
     "scripts/art/native/village.py": ("100644", "f4c5b8393beb8332403a0760bbedc635f4b35adb"),
     "docs/codex/crossroads-grain-scale-review.md": ("100644", "578406e211fe54d9961afce5bc63d63f750029e9"),
 }
+GOODS_FEEDBACK_SOURCE_SHA = "4895f126bcc092f91836d425a9ad09d8a491c07e"
+GOODS_FEEDBACK_SOURCE_TREE = "69f306c4638a5c4b89b983c6759923652bf6e191"
+GOODS_FEEDBACK_RECEIVER_PARENT = "b93866e52bd15236a928c8908fab4f38929ed812"
+GOODS_FEEDBACK_RECEIVER_PARENT_TREE = "10e92ee3df8ff562ee8ac0aa1f915e6a412b578b"
 MODE_PATHS = {"scripts/review/grain_scale_receiving.py", ".github/workflows/grain-scale-receiving.yml"}
 TWO_GOODS_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165, '100644'),
  'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444, '100644'),
@@ -189,7 +193,7 @@ TWO_GOODS_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf4
  'scripts/art/native/accents.json': ('d612eb0e6c3eb7eedf8cf878186c26bc1aaa9486', 921, '100644'),
  'scripts/art/native/ctx.py': ('c79cfda10603fcc7092a4b879dc552c01d88f6c1', 1506, '100644'),
  'scripts/art/native/palette.py': ('7685bc30fa29bf2c6fe87cfdc4e2ecae2f908b28', 6189, '100644'),
- 'scripts/art/native/village.py': ('f4c5b8393beb8332403a0760bbedc635f4b35adb', 185603, '100644')}
+ 'scripts/art/native/village.py': ('99fe27b0407e36a23adce31f9e0e49dd0bb9ee6a', 186127, '100644')}
 TWO_GOODS_FILES = ("handcart.png", "sacks_12.png")
 TWO_GOODS_PRESENTATION = set(TWO_GOODS_FILES) | {"two-goods-before-after-2x.png"}
 
@@ -794,8 +798,8 @@ class Controller:
         self.context_before = None
         self.h4_before = None
         self.inputs = HALT_INPUTS if self.halt_court else TWO_GOODS_INPUTS if self.two_goods else INPUTS
-        self.subject_sha = HALT_SOURCE_SHA if self.halt_court else ART_SOURCE_SHA if self.two_goods else SOURCE_SHA
-        self.subject_tree = HALT_SOURCE_TREE if self.halt_court else ART_SOURCE_TREE if self.two_goods else SOURCE_TREE
+        self.subject_sha = HALT_SOURCE_SHA if self.halt_court else GOODS_FEEDBACK_SOURCE_SHA if self.two_goods else SOURCE_SHA
+        self.subject_tree = HALT_SOURCE_TREE if self.halt_court else GOODS_FEEDBACK_SOURCE_TREE if self.two_goods else SOURCE_TREE
         self.goods_before = None
         self.artifact_token = os.environ.pop("GRAIN_ARTIFACT_TOKEN", "")
         self.phases = {n: {"state": "NOTRUN"} for n in (("dependencies", "versions", "halt_court") if self.halt_court else ("dependencies", "versions", "two_goods") if self.two_goods else ("dependencies", "versions", "reuse", "composition"))}
@@ -901,8 +905,12 @@ class Controller:
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_CONTEXT_RECEIVER_PARENT]:
-            raise RuntimeError("Context rebind must retain the exact sole45f receiver parent")
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [GOODS_FEEDBACK_RECEIVER_PARENT]:
+            raise RuntimeError("Goods feedback rebind must retain the exact soleb938 receiver parent")
+        goods_feedback_headers = git(self.candidate, "cat-file", "commit", GOODS_FEEDBACK_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in goods_feedback_headers.splitlines() if x.startswith("parent ")] != [HALT_CONTEXT_RECEIVER_PARENT]
+                or git(self.candidate,"rev-parse",GOODS_FEEDBACK_RECEIVER_PARENT+"^{tree}").decode().strip() != GOODS_FEEDBACK_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen Q3 receiver ancestry/tree differs")
         halt_context_headers = git(self.candidate, "cat-file", "commit", HALT_CONTEXT_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in halt_context_headers.splitlines() if x.startswith("parent ")] != [HALT_CLOSURE_RECEIVER_PARENT]
                 or git(self.candidate,"rev-parse",HALT_CONTEXT_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_CONTEXT_RECEIVER_PARENT_TREE):
@@ -939,14 +947,26 @@ class Controller:
             art_headers = git(self.source, "cat-file", "commit", ART_SOURCE_SHA).decode().split("\n\n", 1)[0]
             art_parent_headers = git(self.source, "cat-file", "commit", ART_SOURCE_PARENT).decode().split("\n\n", 1)[0]
             if ([x[7:] for x in art_headers.splitlines() if x.startswith("parent ")] != [ART_SOURCE_PARENT]
-                    or [x[7:] for x in art_parent_headers.splitlines() if x.startswith("parent ")] != [SOURCE_SHA]):
-                raise RuntimeError("Separate subject d948->eee->5dd ancestry differs")
-            art_tree = tree(self.source)
+                    or [x[7:] for x in art_parent_headers.splitlines() if x.startswith("parent ")] != [SOURCE_SHA]
+                    or git(self.source,"rev-parse",ART_SOURCE_SHA+"^{tree}").decode().strip() != ART_SOURCE_TREE):
+                raise RuntimeError("Separate subject d948->eee->5dd ancestry/tree differs")
+            art_tree = tree(self.source, ART_SOURCE_SHA)
             changed = {p for p in src.keys() | art_tree.keys() if src.get(p) != art_tree.get(p)}
             if changed != set(ART_SOURCE_CHANGES) or any(art_tree[p] != v for p,v in ART_SOURCE_CHANGES.items()):
                 raise RuntimeError("Only reviewed native source and review MD may differ from5dd")
+            feedback_headers = git(self.source, "cat-file", "commit", GOODS_FEEDBACK_SOURCE_SHA).decode().split("\n\n", 1)[0]
+            if [x[7:] for x in feedback_headers.splitlines() if x.startswith("parent ")] != [ART_SOURCE_SHA]:
+                raise RuntimeError("Sack feedback subject must retain actual4895->d948 ancestry")
+            feedback_tree = tree(self.source)
+            feedback_changed = {p for p in art_tree.keys() | feedback_tree.keys() if art_tree.get(p) != feedback_tree.get(p)}
+            if (feedback_changed != {"scripts/art/native/village.py"}
+                    or any(feedback_tree[p] != (TWO_GOODS_INPUTS[p][2],TWO_GOODS_INPUTS[p][0]) for p in feedback_changed)):
+                raise RuntimeError("Sack feedback changes only the reviewed native village source")
             self.output["art_subject_history"] = {"headers":art_headers,"parent_headers":art_parent_headers,
-                "baseline_sha":SOURCE_SHA,"changed":sorted(changed),"not_receiver_ancestor":True}
+                "baseline_sha":SOURCE_SHA,"changed":sorted(changed),"not_receiver_ancestor":True,
+                "feedback_headers":feedback_headers,"feedback_sha":GOODS_FEEDBACK_SOURCE_SHA,
+                "feedback_tree":GOODS_FEEDBACK_SOURCE_TREE,"feedback_parent":ART_SOURCE_SHA,
+                "feedback_changed":sorted(feedback_changed)}
         if self.halt_court:
             court_headers = git(self.source, "cat-file", "commit", HALT_SOURCE_SHA).decode().split("\n\n", 1)[0]
             if ([x[7:] for x in court_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_PARENT]
@@ -999,7 +1019,8 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers,"halt_context_headers":halt_context_headers,"halt_context_parent":HALT_CONTEXT_RECEIVER_PARENT,
+            "headers": headers,"goods_feedback_headers":goods_feedback_headers,"goods_feedback_parent":GOODS_FEEDBACK_RECEIVER_PARENT,
+            "halt_context_headers":halt_context_headers,"halt_context_parent":HALT_CONTEXT_RECEIVER_PARENT,
             "closure_headers":closure_headers,"closure_parent":HALT_CLOSURE_RECEIVER_PARENT,
             "halt_headers":halt_headers,"halt_parent":HALT_RECEIVER_PARENT,
             "context_headers":context_headers,"context_parent":CONTEXT_RECEIVER_PARENT,
@@ -1513,7 +1534,7 @@ def draw_two_goods(root: Path, work: Path, evidence: Path) -> int:
     strip = Image.new("RGBA",(800,256),(24,25,30,255))
     draw = ImageDraw.Draw(strip)
     font = ImageFont.load_default(size=10)
-    captions = ["CANDIDATE / native pixels at integer2x / source " + ART_SOURCE_SHA,
+    captions = ["CANDIDATE / native pixels at integer2x / source " + GOODS_FEEDBACK_SOURCE_SHA,
                 "Python " + platform.python_version() + " / Pillow " + versions["Pillow"]["version"]
                 + " / NumPy " + versions["numpy"]["version"] + " / SciPy " + versions["scipy"]["version"],
                 "OLD / NEW only. No EW detail score, Y12, production or Matt approval."]
@@ -1538,8 +1559,8 @@ def draw_two_goods(root: Path, work: Path, evidence: Path) -> int:
     presentation = {p.name:{"bytes":p.stat().st_size,"sha256":digest(p)} for p in out.iterdir()}
     if set(presentation) != TWO_GOODS_PRESENTATION or sum(v["bytes"] for v in presentation.values()) > 8*1024**2:
         raise RuntimeError("Two subject PNGs plus one inspection strip/8MiB required")
-    write_json(evidence / "two_goods-result.json",{"state":"PASS","source_sha":ART_SOURCE_SHA,
-        "source_tree":ART_SOURCE_TREE,"draw_invocations":1,"native_prop_calls":2,
+    write_json(evidence / "two_goods-result.json",{"state":"PASS","source_sha":GOODS_FEEDBACK_SOURCE_SHA,
+        "source_tree":GOODS_FEEDBACK_SOURCE_TREE,"draw_invocations":1,"native_prop_calls":2,
         "grain_draw_invocations":0,"composition_invocations":0,"subjects":subjects,
         "presentation":presentation,"actual_scientific_versions":versions,"python":sys.version,
         "qualification":"Two candidate native artifacts only. VIEW still required; colour/alpha counts are not detail scores. Same-kind/native-period/adult EW comparison/Y12/Matt approval remain open."})
