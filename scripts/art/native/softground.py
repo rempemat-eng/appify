@@ -337,7 +337,8 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
     t[hi] = 4
     # ruts: two soft worn bands, a tone down in the damp sibling, lit along their south lip
     if ruts:
-        dist = ndi.distance_transform_edt(m)
+        # Road rut/crown contours follow the road, not the wider road-and-path union.
+        dist = ndi.distance_transform_edt(m if rut_mask is None else (m & rut_mask))
         wob = (nz(H, W, 16.0, seed + 8) - 0.5) * 4.0
         rut = (np.abs(dist - ruts + wob) < 1.6) & (nz(H, W, 30.0, seed + 9) > 0.42) & m
         if rut_mask is not None:
@@ -367,7 +368,7 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
     cv[sel] = (famc * 8 + t)[sel]
     if ruts and crown and rut_mask is not None:
         # the crown between the wheel tracks: grass grows back in tufts and thin patches
-        dist = ndi.distance_transform_edt(m)
+        # Reuse the same road-only distance as the wheel tracks above.
         cr = m & rut_mask & (dist > ruts + 4)
         gp = cr & (nz(H, W, 6.0, seed + 31) > 0.7) & (nz(H, W, 2.5, seed + 32) > 0.4)
         cv[gp] = C('grass_warm', 2)
