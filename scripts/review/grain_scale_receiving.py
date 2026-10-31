@@ -225,8 +225,22 @@ CONTEXT_PRIVATE_FILES = (
 # Separate, reviewed four-cottage subject. No old source or art pin is repointed.
 HALT_RECEIVER_PARENT = "f8d5269047449ddf7ea9077b90f04e1237797516"
 HALT_RECEIVER_PARENT_TREE = "d30685162bc07b2fc2130431d2a3b55360e33fb5"
-HALT_SOURCE_SHA = 'a25dada748cf398f4c1c32eb5fc0e19308dd7b3b'
-HALT_SOURCE_TREE = '3ed1a0df87b34e3abd03324356cc59bffdeef249'
+HALT_SOURCE_SHA = "58c20c5dcafe59d30656fa85c638b0333396aab8"
+HALT_SOURCE_TREE = "e45f58df8c3a2ab9efc1ed991d632283f3d2c9ce"
+HALT_SOURCE_CONTEXT = "a25dada748cf398f4c1c32eb5fc0e19308dd7b3b"
+HALT_SOURCE_CONTEXT_TREE = "3ed1a0df87b34e3abd03324356cc59bffdeef249"
+HALT_NATIVE_INTEGRATION = "45f2c80b657169ef4d7445bc9ff5ddd153960707"
+HALT_NATIVE_INTEGRATION_TREE = "7e7561eac9b7a9f15e54ff62b169dd7cf500bad5"
+HALT_NATIVE_PARENTS = (
+    ("ef5e62f8c27bcec20793d319cef2b678e13bfbd6", "e0dd3b9ea638ecfdf46a62719abda48afc111cdb", "scripts/art/native/softground.py"),
+    ("a4ae55fda8643123c4e2d53bd5c46c25fd28a584", "54a6682d71be8b5a9b7ff9f0c6f635749fd38fca", "scripts/art/native/houses.py"),
+)
+HALT_NATIVE_CHANGES = {
+    "scripts/art/native/softground.py": ("100644", "159ac5f6271c56b58b3b88b1792212f46e026bb5"),
+    "scripts/art/native/houses.py": ("100644", "5c8d707d8cced8547940da604d60418a69f82108"),
+}
+HALT_FEEDBACK_RECEIVER_PARENT = "aaba80f74267e864f7b22347ed841a9da79e02d2"
+HALT_FEEDBACK_RECEIVER_PARENT_TREE = "5707655b3177c57189658db6ded0388d5a46d225"
 HALT_SOURCE_PARENT = "18588dc63116497908b414e5317c5712e4f7006d"
 HALT_SOURCE_PARENT_TREE = "417a148ad9ea116cfb206fefc6b4ad193b6557e3"
 HALT_SOURCE_ORIGINAL = "09990895018c0a2e72aca5550ebd4d8b55e904de"
@@ -234,6 +248,10 @@ HALT_SOURCE_ORIGINAL_TREE = "c6cfd4979a5dbd38db0d87231ef36ffd7ec7ff50"
 HALT_ENTRY = "scripts/art/kit/crossroads_halt_court.py"
 HALT_FIXTURE = "scripts/review/fixtures/crossroads_halt_court.json"
 HALT_SOURCE_NEW = {HALT_ENTRY, HALT_FIXTURE}
+HALT_CONTEXT_NEW_INPUTS = {
+    HALT_ENTRY: ("100644", "fc7a43392b1c66b9e9d38b74c70f3bb58f6bf411"),
+    HALT_FIXTURE: ("100644", "b379419feec5ebad25c088c0b3df30a1e858aa91"),
+}
 HALT_SOURCE_BASE = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
 HALT_SOURCE_BASE_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
 HALT_CLOSURE_RECEIVER_PARENT = "3386ecff5e160bb7ac3749a110025350186abd16"
@@ -320,7 +338,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/kit/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
  'scripts/art/kit/build.py': ('054206b5ea00d227ae0a33075a0b0b2e0355d4b5', 18911, '100644'),
  'scripts/art/kit/compose.py': ('4435017b23a5d50ed0a5e8801abc536b84854416', 12458, '100644'),
- 'scripts/art/kit/crossroads_halt_court.py': ('fc7a43392b1c66b9e9d38b74c70f3bb58f6bf411', 14624, '100644'),
+ 'scripts/art/kit/crossroads_halt_court.py': ('1a458aa7e18a638f265339d0166564e37e694f07', 15073, '100644'),
  'scripts/art/kit/dressing.py': ('e4b4db15f45a0f1e202012a7c8d506e6f4970c5f', 8356, '100644'),
  'scripts/art/kit/edges.py': ('28fdf16622c7a0bed0f8d427e2ed6938fc7bcd69', 23944, '100644'),
  'scripts/art/kit/fills.py': ('3cbde218f4ea757a7327887060a60dfd65138df4', 18297, '100644'),
@@ -340,7 +358,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/native/export.py': ('b8ee8e36817e67cef0c31bdd05489e118946ddd5', 3638, '100644'),
  'scripts/art/native/foliage.py': ('53a1b9800f139fa2afe42ace29b89a71843cda00', 40423, '100644'),
  'scripts/art/native/ground.py': ('c74a4b8ffed4f48c2f7e6cc6e0a0d200407069f9', 5072, '100644'),
- 'scripts/art/native/houses.py': ('3944842ad1fdeb0cdfd8911ac7e4fa0896d9a22e', 92651, '100644'),
+ 'scripts/art/native/houses.py': ('5c8d707d8cced8547940da604d60418a69f82108', 93085, '100644'),
  'scripts/art/native/masters/zones_props_bush.png': ('56620559c348b132d37753906993de15f6d8f918',
                                                      685,
                                                      '100644'),
@@ -356,7 +374,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/native/screen.py': ('a7e04486c835a87f281e3785bbabde1e72df178e', 73374, '100644'),
  'scripts/art/native/softedge.py': ('d57d6e1a875e3b9c5aa78d2768af5f8a46c20b1e', 5048, '100644'),
  'scripts/art/native/softgrid.py': ('365cdd330b3a1628a1e7eca1114648262a506dab', 27518, '100644'),
- 'scripts/art/native/softground.py': ('6ad07c557eefa864f1140332e382b2ef8f3101a1', 112143, '100644'),
+ 'scripts/art/native/softground.py': ('159ac5f6271c56b58b3b88b1792212f46e026bb5', 112295, '100644'),
  'scripts/art/native/terrain/__init__.py': ('955bbcf2a5172718655203a0cc8f6d08671b60ee', 2792, '100644'),
  'scripts/art/native/terrain/decals.py': ('fbbac154045fa4e1205561ad21554838c79874a4', 8622, '100644'),
  'scripts/art/native/terrain/noise.py': ('0d879d5d85126774b9df5b1b11fa81d88037cc10', 1660, '100644'),
@@ -373,8 +391,8 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/size_guide.json': ('f30ecb3249d771e5dc6cdf6546d50400b118cf57', 45069, '100644'),
  'scripts/art/water_flow.py': ('4e1ebf799cae783c35642f6c1b9e34463ed300e0', 8888, '100644'),
  'scripts/review/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
- 'scripts/review/fixtures/crossroads_halt_court.json': ('b379419feec5ebad25c088c0b3df30a1e858aa91',
-                                                        51169,
+ 'scripts/review/fixtures/crossroads_halt_court.json': ('fb9bd8c2c12b2b134811552ecb2c3ef68c4fb1ee',
+                                                        60727,
                                                         '100644'),
  'scripts/review/ground_rules.py': ('0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68', 18956, '100644'),
  'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305, '100644')}
@@ -905,7 +923,11 @@ class Controller:
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [GOODS_FEEDBACK_RECEIVER_PARENT]:
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_FEEDBACK_RECEIVER_PARENT]:
+            raise RuntimeError("Cottage feedback rebind must retain the exact sole aaba receiver parent")
+        feedback_receiver_headers = git(self.candidate, "cat-file", "commit", HALT_FEEDBACK_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in feedback_receiver_headers.splitlines() if x.startswith("parent ")] != [GOODS_FEEDBACK_RECEIVER_PARENT]
+                or git(self.candidate,"rev-parse",HALT_FEEDBACK_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_FEEDBACK_RECEIVER_PARENT_TREE):
             raise RuntimeError("Goods feedback rebind must retain the exact soleb938 receiver parent")
         goods_feedback_headers = git(self.candidate, "cat-file", "commit", GOODS_FEEDBACK_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in goods_feedback_headers.splitlines() if x.startswith("parent ")] != [HALT_CONTEXT_RECEIVER_PARENT]
@@ -968,8 +990,9 @@ class Controller:
                 "feedback_tree":GOODS_FEEDBACK_SOURCE_TREE,"feedback_parent":ART_SOURCE_SHA,
                 "feedback_changed":sorted(feedback_changed)}
         if self.halt_court:
-            court_headers = git(self.source, "cat-file", "commit", HALT_SOURCE_SHA).decode().split("\n\n", 1)[0]
+            court_headers = git(self.source, "cat-file", "commit", HALT_SOURCE_CONTEXT).decode().split("\n\n", 1)[0]
             if ([x[7:] for x in court_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_PARENT]
+                    or git(self.source,"rev-parse",HALT_SOURCE_CONTEXT+"^{tree}").decode().strip() != HALT_SOURCE_CONTEXT_TREE
                     or git(self.source,"rev-parse",HALT_SOURCE_PARENT+"^{tree}").decode().strip() != HALT_SOURCE_PARENT_TREE):
                 raise RuntimeError("Revised halt context must retain actual185 parent/tree")
             court_parent_headers = git(self.source,"cat-file","commit",HALT_SOURCE_PARENT).decode().split("\n\n",1)[0]
@@ -980,20 +1003,58 @@ class Controller:
             if ([x[7:] for x in halt_original_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_BASE]
                     or git(self.source,"rev-parse",HALT_SOURCE_BASE+"^{tree}").decode().strip() != HALT_SOURCE_BASE_TREE):
                 raise RuntimeError("Original halt099->407feb ancestry/tree differs")
-            base, offered = tree(self.source, HALT_SOURCE_BASE), tree(self.source, HALT_SOURCE_SHA)
+            base, offered = tree(self.source, HALT_SOURCE_BASE), tree(self.source, HALT_SOURCE_CONTEXT)
             parent = tree(self.source, HALT_SOURCE_PARENT)
             correction = {p for p in parent.keys() | offered.keys() if parent.get(p) != offered.get(p)}
             if correction != HALT_SOURCE_NEW:
                 raise RuntimeError("Corrected subject changes only existing native entry/fixture")
             changed = {p for p in base.keys() | offered.keys() if base.get(p) != offered.get(p)}
-            if changed != HALT_SOURCE_NEW or any(p in base or offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in changed):
+            if changed != HALT_SOURCE_NEW or any(p in base or offered[p] != HALT_CONTEXT_NEW_INPUTS[p] for p in changed):
                 raise RuntimeError("Halt subject must add only the two reviewed new files")
+            feedback_court_headers = git(self.source,"cat-file","commit",HALT_SOURCE_SHA).decode().split("\n\n",1)[0]
+            integration_headers = git(self.source,"cat-file","commit",HALT_NATIVE_INTEGRATION).decode().split("\n\n",1)[0]
+            if ([x[7:] for x in feedback_court_headers.splitlines() if x.startswith("parent ")] != [HALT_NATIVE_INTEGRATION]
+                    or [x[7:] for x in integration_headers.splitlines() if x.startswith("parent ")] != [p[0] for p in HALT_NATIVE_PARENTS]
+                    or git(self.source,"rev-parse",HALT_NATIVE_INTEGRATION+"^{tree}").decode().strip() != HALT_NATIVE_INTEGRATION_TREE):
+                raise RuntimeError("Feedback subject must retain actual 58c20->45f2 ordered two-parent integration")
+            native_parent_history = []
+            for native_sha, native_tree, native_path in HALT_NATIVE_PARENTS:
+                native_headers = git(self.source,"cat-file","commit",native_sha).decode().split("\n\n",1)[0]
+                if ([x[7:] for x in native_headers.splitlines() if x.startswith("parent ")] != [HALT_SOURCE_CONTEXT]
+                        or git(self.source,"rev-parse",native_sha+"^{tree}").decode().strip() != native_tree):
+                    raise RuntimeError("Reviewed native parent must retain actual sole a25 context parent/tree")
+                native_files = tree(self.source,native_sha)
+                native_delta = {p for p in offered.keys() | native_files.keys() if offered.get(p) != native_files.get(p)}
+                if native_delta != {native_path} or native_files[native_path] != HALT_NATIVE_CHANGES[native_path]:
+                    raise RuntimeError("Reviewed native parent changes only its exact single painter blob")
+                native_parent_history.append({"sha":native_sha,"tree":native_tree,"headers":native_headers,"changed":sorted(native_delta)})
+            integration = tree(self.source,HALT_NATIVE_INTEGRATION)
+            integration_delta = {p for p in offered.keys() | integration.keys() if offered.get(p) != integration.get(p)}
+            if (integration_delta != set(HALT_NATIVE_CHANGES)
+                    or any(integration[p] != pin for p,pin in HALT_NATIVE_CHANGES.items())):
+                raise RuntimeError("Native integration must be the exact reviewed two-file union")
+            feedback_offered = tree(self.source,HALT_SOURCE_SHA)
+            feedback_delta = {p for p in integration.keys() | feedback_offered.keys() if integration.get(p) != feedback_offered.get(p)}
+            if (feedback_delta != HALT_SOURCE_NEW
+                    or any(feedback_offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in feedback_delta)):
+                raise RuntimeError("Feedback child changes only the exact existing adapter and fixture")
+            feedback_base_delta = {p for p in base.keys() | feedback_offered.keys() if base.get(p) != feedback_offered.get(p)}
+            if (feedback_base_delta != HALT_SOURCE_NEW | set(HALT_NATIVE_CHANGES)
+                    or any(feedback_offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in feedback_base_delta)):
+                raise RuntimeError("Current subject differs from historical407 only by native two plus adapter two")
             self.output["halt_subject_history"] = {"headers":court_headers,"parent_sha":HALT_SOURCE_PARENT,
                 "parent_tree":HALT_SOURCE_PARENT_TREE,"parent_headers":court_parent_headers,
                 "original_sha":HALT_SOURCE_ORIGINAL,"original_tree":HALT_SOURCE_ORIGINAL_TREE,
                 "original_headers":halt_original_headers,
                 "baseline_sha":HALT_SOURCE_BASE,"baseline_tree":HALT_SOURCE_BASE_TREE,
-                "changed":sorted(changed),"correction_changed":sorted(correction),"not_receiver_ancestor":True}
+                "changed":sorted(changed),"correction_changed":sorted(correction),"not_receiver_ancestor":True,
+                "historical_context_sha":HALT_SOURCE_CONTEXT,"historical_context_tree":HALT_SOURCE_CONTEXT_TREE,
+                "source_sha":HALT_SOURCE_SHA,"source_tree":HALT_SOURCE_TREE,"feedback_headers":feedback_court_headers,
+                "native_integration_sha":HALT_NATIVE_INTEGRATION,"native_integration_tree":HALT_NATIVE_INTEGRATION_TREE,
+                "integration_headers":integration_headers,"native_parents":native_parent_history,
+                "integration_changed":sorted(integration_delta),"feedback_changed":sorted(feedback_delta),
+                "current_changed_from_historical407":sorted(feedback_base_delta),
+                "qualification":"Actual reviewed integration; historical407 remains baseline. Four nominal width24 rectangular cores do not clear capsule physics: radius12 intrudes4 world px into own floor. Terrain/collision/adoption remain open; no waiver."}
         active_tree = tree(self.candidate, ACTIVE_RECEIVER_PARENT)
         context_tree = tree(self.candidate, CONTEXT_RECEIVER_PARENT)
         mode_delta = {p for p in active_tree.keys() | context_tree.keys() if active_tree.get(p) != context_tree.get(p)}
@@ -1019,7 +1080,8 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers,"goods_feedback_headers":goods_feedback_headers,"goods_feedback_parent":GOODS_FEEDBACK_RECEIVER_PARENT,
+            "headers": headers,"feedback_receiver_headers":feedback_receiver_headers,"feedback_receiver_parent":HALT_FEEDBACK_RECEIVER_PARENT,
+            "goods_feedback_headers":goods_feedback_headers,"goods_feedback_parent":GOODS_FEEDBACK_RECEIVER_PARENT,
             "halt_context_headers":halt_context_headers,"halt_context_parent":HALT_CONTEXT_RECEIVER_PARENT,
             "closure_headers":closure_headers,"closure_parent":HALT_CLOSURE_RECEIVER_PARENT,
             "halt_headers":halt_headers,"halt_parent":HALT_RECEIVER_PARENT,
