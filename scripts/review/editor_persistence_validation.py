@@ -97,7 +97,9 @@ MESA_PACKAGE = {
 }
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
-MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+LIFECYCLE_RECEIVER_PARENT = "d7dacb292ff1b184b68077e7d1ba4471b9cbf20c"
+LIFECYCLE_RECEIVER_PARENT_TREE = "c111635880129121888b726c86dfcd6ed9535644"
 GAME_TREE = "6802cf45e887fa3ede4d673f0a39b87d8b710d00"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
@@ -879,7 +881,13 @@ def private_driver_snapshot(root: Path, expected_provenance: str, selector: str 
 def displayed_lifetime(args: argparse.Namespace) -> int:
     """Receiving-only child: one authenticated server/editor group, no game harness."""
     root, game = args.root.resolve(strict=True), args.source.resolve(strict=True) / "game"
-    output = root / "test-output/displayed-smoke"
+    lifecycle_phase = args.lifecycle_phase
+    if lifecycle_phase is not None and (lifecycle_phase not in ("author", "reopen")
+            or game != root / "lifecycle-project/game"
+            or os.environ.get("MYGAME_EDITOR_LIFECYCLE_PROJECT") != str(game)
+            or os.environ.get("MYGAME_EDITOR_LIFECYCLE_SHA") != GAME_SHA):
+        raise RuntimeError("Lifecycle displayed child requires exact private context")
+    output = root / "test-output" / ("lifecycle-" + lifecycle_phase if lifecycle_phase else "displayed-smoke")
     receipt_path = output / "lifetime.json"
     authority_dir = root / "runtime/display-authority"
     authority = authority_dir / "Xauthority"
@@ -941,6 +949,8 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
         base_env = dict(os.environ)
         for key in ("DISPLAY", "XAUTHORITY", "WAYLAND_DISPLAY"):
             base_env.pop(key, None)
+        if lifecycle_phase and authority_dir.is_dir() and not list(authority_dir.iterdir()):
+            authority_dir.rmdir()
         authority_dir.mkdir(mode=0o700)
         for p in (authority, denied_authority):
             fd = os.open(p, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -1043,6 +1053,11 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
                    "--audio-driver", "Dummy", "--resolution", "1920x1080", "--path", str(game),
                    "res://zones/kitlab/kitlab.tscn", "--", "--we-show=Ground",
                    "--we-smoke-report=" + str(report), "--we-capture=" + str(png)]
+        if lifecycle_phase:
+            png = root / "evidence/editor_lifecycle" / (lifecycle_phase + ".png")
+            report = root / "evidence/editor_lifecycle" / (lifecycle_phase + ".json")
+            command = command[:command.index("res://zones/kitlab/kitlab.tscn")] + [
+                "res://zones/editor_lifecycle_probe/editor_lifecycle_probe.tscn", "--", "--we-lifecycle=" + lifecycle_phase]
         receipt["editor_command"] = command
         receipt["private_environment"] = {key: gui_env[key] for key in
             ("DISPLAY", "XAUTHORITY", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_RUNTIME_DIR", "TMPDIR", "VK_DRIVER_FILES", "EDITOR_PRIVATE_VULKAN_PROVENANCE_SHA256")}
@@ -1200,7 +1215,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [STARTUP_RECEIVER_PARENT]
+                != [LIFECYCLE_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", LIFECYCLE_RECEIVER_PARENT + "^{tree}").decode().strip() != LIFECYCLE_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", LIFECYCLE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [STARTUP_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", STARTUP_RECEIVER_PARENT + "^{tree}").decode().strip() != STARTUP_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", STARTUP_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [RETURN_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", RETURN_RECEIVER_PARENT + "^{tree}").decode().strip() != RETURN_RECEIVER_PARENT_TREE
@@ -1399,7 +1416,7 @@ def vulkan_driver_stage(args: argparse.Namespace) -> int:
         return process
 
     try:
-        if (args.mode not in ("DRIVER_CAPABILITY", "DISPLAYED_SMOKE") or os.getpgrp() != os.getpid()
+        if (args.mode not in ("DRIVER_CAPABILITY", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE") or os.getpgrp() != os.getpid()
                 or os.environ.get("GITHUB_REF") != "refs/heads/codex/editor-persistence-validation-run"):
             raise RuntimeError("Driver preparation requires its exact allocated monitored phase")
         # The selected action-derived CPython lib directory is observed and
@@ -1620,12 +1637,15 @@ class Controller:
         self.output["methods"] = {m: "NOTRUN" for m in
                                   PY_CANARIES + METHODS + PY_FAULTS}
         self.output["mode"] = self.mode
-        if self.mode == "DISPLAYED_SMOKE":
+        if self.mode in ("DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE"):
             self.phases["display-tool"] = {"state": "NOT RUN"}
             self.phases["displayed-smoke"] = {"state": "NOT RUN"}
             self.output["qualification"] = "Displayed existing editor smoke only: undo/restoration and bake refusals. No H5 rerun, successful save/bake/walk or manual acceptance."
             self.output["prior_h5"] = {"receiver": DISPLAY_RECEIVER_PARENT, "source": PRIOR_DISPLAYED_GAME_SHA,
                                        "result_and_release": 6535314296, "controls": "16 PASS frozen; not repeated"}
+        if self.mode == "POSITIVE_LIFECYCLE":
+            self.output["qualification"] = "Opt-in private candidate author/save, fresh reopen/bake and fresh runtime physics only; no art/biome/fullcanonical acceptance. Fit UNMEASURED."
+            self.output["lifecycle"] = {"phases": {p: "NOTRUN" for p in ("author", "reopen", "runtime")}}
         self.private_driver_receipt = None
         self.private_driver_provenance_sha256 = None
         self.dependencies_initial = None
@@ -1848,8 +1868,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [STARTUP_RECEIVER_PARENT]:
+        if parents != [LIFECYCLE_RECEIVER_PARENT]:
             raise RuntimeError("Startup receiver must be a genuine sole child of frozen405deba")
+        lifecycle_headers = git(self.candidate, "cat-file", "commit", LIFECYCLE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in lifecycle_headers.splitlines() if x.startswith("parent ")] != [STARTUP_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", LIFECYCLE_RECEIVER_PARENT + "^{tree}").decode().strip() != LIFECYCLE_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen displayed receiver ancestry/tree changed")
         startup_receiver_headers = git(self.candidate, "cat-file", "commit", STARTUP_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line[7:] for line in startup_receiver_headers.splitlines() if line.startswith("parent ")] != [RETURN_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", STARTUP_RECEIVER_PARENT + "^{tree}").decode().strip() != STARTUP_RECEIVER_PARENT_TREE):
@@ -2047,7 +2071,7 @@ class Controller:
                          "PERSISTENCE_GAME": str(self.game), "GODOT": str(self.engine),
                          "PYTHONPATH": os.pathsep.join((str(self.root / "dependencies"), str(self.source))),
                          "OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"})
-        if self.mode == "DISPLAYED_SMOKE":
+        if self.mode in ("DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE"):
             for key in ("DISPLAY", "XAUTHORITY", "WAYLAND_DISPLAY"):
                 self.env.pop(key, None)
         (self.root / "test-output").mkdir(mode=0o700)
@@ -2062,7 +2086,8 @@ class Controller:
                    "affinity": sorted(os.sched_getaffinity(0)),
                    "validator_python": self.env["PYTHON"],
                    "python_hosting_binding": self.python_hosting_binding,
-                   "closure_qualification": ("48 pinned Python/config inputs + full game; existing kitlab five-piece smoke only, no successful bake/painter/new generation."
+                   "closure_qualification": ("Physical disposable fullgame+48closure; candidate author/save/reopen/bake/runtime only; originalcheckout immutable, no art acceptance."
+                       if self.mode == "POSITIVE_LIFECYCLE" else "48 pinned Python/config inputs + full game; existing kitlab five-piece smoke only, no successful bake/painter/new generation."
                        if self.mode == "DISPLAYED_SMOKE" else "48 pinned Python/config inputs + full game; lawn-only pieces=[] probe. No master-raster load, original paint execution or new generation is granted."),
                    "scientific_stage": "Fresh private target; exact versions, all package byte hashes before/after. Counted inside reviewed768MiB duty, not hidden staging; full import/test/packaging fit UNMEASURED.",
                    "fit": ("DISPLAYED_SMOKE fit at768MiB UNMEASURED; prior frozen79a H5 measured in result6535314296; no automatic increase"
@@ -2266,6 +2291,196 @@ class Controller:
                 ("game/addons/world_editor/plugin.gd", "game/addons/world_editor/smoke.gd", "game/zones/kitlab/kitlab.tscn")},
             "qualification": "Real displayed existing smoke; scene restored without SAVE, bake refusals only. No successful author/save/reopen/export/bake/reimport/walk/collision or manual acceptance."}
         self.output["state"] = "DISPLAYED_SMOKE_PENDING_TERMINAL_GUARDS"
+
+    def lifecycle_copy(self) -> None:
+        """Copy only verified immutable inputs; imports and writes use this physical duty copy."""
+        self.lifecycle_project = self.root / "lifecycle-project"
+        self.lifecycle_project.mkdir(mode=0o700)
+        self.lifecycle_baseline = self.initial["game"] | self.initial["python_closure"]
+        self.lifecycle_allowed = {
+            "game/zones/editor_lifecycle_probe/editor_lifecycle_probe.tscn": 1024 * 1024,
+            "game/zones/editor_lifecycle_probe/editor_lifecycle_probe.tscn.uid": 64,
+            "game/kit/zones/editor_lifecycle_probe.json": 262144,
+            "game/zones/editor_lifecycle_probe/ground_baked.png": 1024 * 1024,
+            "game/zones/editor_lifecycle_probe/ground_baked.png.import": 16384,
+            "game/zones/editor_lifecycle_probe/ground_baked.json": 262144,
+            "game/zones/editor_lifecycle_probe/walk.txt": 65536,
+            **{name: 64 for name in GENERATED_UID_PATHS},
+        }
+        if set(self.lifecycle_allowed) & set(self.lifecycle_baseline):
+            raise RuntimeError("Lifecycle output overlaps a tracked immutable input")
+        for number, (name, row) in enumerate(sorted(self.lifecycle_baseline.items())):
+            source, target = self.source / name, self.lifecycle_project / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with source.open("rb") as incoming, target.open("xb") as outgoing:
+                shutil.copyfileobj(incoming, outgoing, 1024 * 1024)
+            target.chmod(0o755 if row["mode"] == "100755" else 0o644)
+            before, after = source.lstat(), target.lstat()
+            if (not stat.S_ISREG(after.st_mode) or after.st_nlink != 1
+                    or (before.st_dev, before.st_ino) == (after.st_dev, after.st_ino)
+                    or blob(target) != row["blob"] or digest(target) != row["sha256"]
+                    or bool(after.st_mode & 0o111) != (row["mode"] == "100755")):
+                raise RuntimeError("Disposable source copy identity mismatch: " + name)
+            if number % 64 == 0:
+                self.capacity()
+                self.arm_budget()
+        self.lifecycle_guard("copied")
+        self.lifecycle_case = os.urandom(16).hex()
+        self.env.update({"MYGAME_EDITOR_LIFECYCLE": "1", "MYGAME_EDITOR_LIFECYCLE_ROOT": str(self.root),
+            "MYGAME_EDITOR_LIFECYCLE_PROJECT": str(self.lifecycle_project / "game"),
+            "MYGAME_EDITOR_LIFECYCLE_SOURCE": str(self.source), "MYGAME_EDITOR_LIFECYCLE_SHA": GAME_SHA,
+            "MYGAME_EDITOR_LIFECYCLE_CASE": self.lifecycle_case,
+            "PYTHONPATH": os.pathsep.join((str(self.root / "dependencies"), str(self.lifecycle_project))),
+            "PERSISTENCE_GAME": str(self.lifecycle_project / "game")})
+        write_json(self.evidence / "lifecycle-context.json", {key: self.env[key] for key in
+            ("MYGAME_EDITOR_LIFECYCLE_ROOT", "MYGAME_EDITOR_LIFECYCLE_PROJECT", "MYGAME_EDITOR_LIFECYCLE_SOURCE",
+             "MYGAME_EDITOR_LIFECYCLE_SHA", "MYGAME_EDITOR_LIFECYCLE_CASE")})
+
+    def lifecycle_guard(self, label: str) -> dict:
+        """Guard every original byte; only named new probe outputs and private importer cache vary."""
+        observed, generated, entries = set(), {}, 0
+        def scan_error(error: OSError) -> None:
+            raise error
+        allowed_dirs = {"game/.godot"}
+        for name in self.lifecycle_baseline.keys() | self.lifecycle_allowed.keys():
+            allowed_dirs.update(parent.as_posix() for parent in Path(name).parents if parent.as_posix() != ".")
+        for base, dirs, files in os.walk(self.lifecycle_project, followlinks=False, onerror=scan_error):
+            for name in dirs + files:
+                path = Path(base) / name
+                info = path.lstat()
+                entries += 1
+                if entries > 30000 or stat.S_ISLNK(info.st_mode):
+                    raise RuntimeError("Disposable project entry/symlink bound")
+                relative = path.relative_to(self.lifecycle_project).as_posix()
+                if stat.S_ISDIR(info.st_mode):
+                    if relative not in allowed_dirs and not relative.startswith("game/.godot/"):
+                        raise RuntimeError("Unexpected disposable directory: " + relative)
+                    continue
+                if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+                    raise RuntimeError("Disposable project contains nonphysical file: " + relative)
+                row = self.lifecycle_baseline.get(relative)
+                if row is not None:
+                    original = (self.source / relative).lstat()
+                    if ((original.st_dev, original.st_ino) == (info.st_dev, info.st_ino)
+                            or blob(path) != row["blob"] or digest(path) != row["sha256"]
+                            or bool(info.st_mode & 0o111) != (row["mode"] == "100755")):
+                        raise RuntimeError("Disposable tracked input changed: " + relative)
+                    observed.add(relative)
+                else:
+                    limit = self.lifecycle_allowed.get(relative)
+                    if relative.startswith("game/.godot/"):
+                        limit = 64 * 1024**2
+                    if limit is None or not 0 < info.st_size <= limit or info.st_mode & 0o111:
+                        raise RuntimeError("Unexpected/oversized disposable output: " + relative)
+                    if not relative.startswith("game/.godot/"):
+                        generated[relative] = {"bytes": info.st_size, "sha256": digest(path)}
+        if observed != set(self.lifecycle_baseline):
+            raise RuntimeError("Disposable tracked input missing")
+        result = {"baseline_files": len(observed), "generated": generated,
+                  "qualification": "Every baseline input exact; only explicit absent-at-copy probe names/two existing generated UIDs/private .godot cache admitted"}
+        write_json(self.evidence / ("lifecycle-files-" + label + ".json"), result)
+        self.capacity()
+        return result
+
+    def lifecycle_report(self, phase: str, text: str, pid: int) -> dict:
+        path = self.evidence / "editor_lifecycle" / (phase + ".json")
+        info = path.lstat()
+        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or not 0 < info.st_size <= 262144):
+            raise RuntimeError("Missing/bounded physical lifecycle receipt")
+        report = json.loads(path.read_text())
+        prefix = "WORLD_EDITOR_LIFECYCLE_RUNTIME" if phase == "runtime" else "WORLD_EDITOR_LIFECYCLE"
+        lines = re.findall(r"^" + prefix + r" (.+)$", text, re.M)
+        context = report.get("context", {})
+        expected = {"duty": str(self.root), "project": str(self.lifecycle_project / "game"),
+                    "source_sha": GAME_SHA, "case_id": self.lifecycle_case, "phase": phase,
+                    "evidence": str(self.evidence / "editor_lifecycle"), "report": str(path)}
+        if (len(lines) != 1 or json.loads(lines[0]) != report or report.get("ok") is not True
+                or report.get("failures") != [] or report.get("pid") != pid
+                or report.get("source_sha") != GAME_SHA or report.get("phase") != phase
+                or context.get("ok") is not True or any(context.get(k) != v for k, v in expected.items())
+                or not Path(context.get("userdata", "")).is_relative_to(self.root / "data")):
+            raise RuntimeError("Lifecycle original report/context/actual PID does not reconcile")
+        return report
+
+    def positive_lifecycle(self) -> None:
+        project_game = self.lifecycle_project / "game"
+        self.lifecycle_guard("imported")
+        plan = json.loads((project_game / "test/fixtures/editor_persistence.json").read_text())
+        plan.update(zone="editor_lifecycle_probe", lab=True, bake=True, coordinate_space="texels")
+        seed = self.evidence / "lifecycle-seed-plan.json"
+        write_json(seed, plan)
+        target = project_game / "zones/editor_lifecycle_probe/editor_lifecycle_probe.tscn"
+        if any((self.lifecycle_project / name).exists() for name in self.lifecycle_allowed
+               if name not in GENERATED_UID_PATHS):
+            raise RuntimeError("Lifecycle bootstrap output already exists")
+        self.require_clean("lifecycle-bootstrap", self.phase("lifecycle-bootstrap", [str(self.engine),
+            "--headless", "--audio-driver", "Dummy", "--path", str(project_game),
+            "-s", "res://tools/kit_zone.gd", "--", "--plan=" + str(seed), "--out=" + str(target)], 30))
+        self.lifecycle_guard("bootstrap")
+        reports, pids = {}, []
+        for selected in ("author", "reopen"):
+            phase = "lifecycle-" + selected
+            output = self.root / "test-output" / phase
+            output.mkdir(mode=0o700)
+            if self.display_capabilities("display-capabilities-" + selected + ".json") != self.display_capabilities_initial:
+                raise RuntimeError("Lifecycle display capabilities changed")
+            self.private_driver_inputs()
+            result = self.phase(phase, [sys.executable, "-I", "-B", str(Path(__file__).resolve()),
+                "--mode", "DISPLAYED_SMOKE", "--display-child", "--lifecycle-phase", selected,
+                "--candidate", str(self.candidate), "--source", str(self.lifecycle_project),
+                "--root", str(self.root), "--event-sha", self.event_sha], 60)
+            self.private_driver_inputs()
+            text = self.require_clean(phase, result)
+            lifetime = json.loads((output / "lifetime.json").read_text())
+            expected_names = {"xauth", "Xvfb", "unauthorized-glx", "authenticated-glx", "editor"}
+            waits, processes = lifetime.get("wait4", []), lifetime.get("processes", {})
+            exits = {row["name"]: row["exit"] for row in waits}
+            if (lifetime.get("state") != "COLLECTED" or lifetime.get("failure") is not None
+                    or lifetime.get("cleanup_errors") != [] or set(exits) != expected_names
+                    or set(processes) != expected_names or len(waits) != 5
+                    or lifetime.get("pid") != result["pid"] or lifetime.get("pgid") != result["pgid"]
+                    or not lifetime.get("auth_refusal_observed") or not lifetime.get("server_alive_through_editor_exit")
+                    or not lifetime.get("authority_removed") or not lifetime.get("display_files_absent")
+                    or exits.get("unauthorized-glx") != 255
+                    or any(exits.get(name) != 0 for name in expected_names - {"unauthorized-glx"})
+                    or any(row["pgid"] != result["pgid"] or row["ppid"] != result["pid"] for row in processes.values())):
+                raise RuntimeError("Lifecycle authenticated display/actual child collection incomplete")
+            pid = processes["editor"]["pid"]
+            if pid in pids:
+                raise RuntimeError("Lifecycle editor PID repeated")
+            pids.append(pid)
+            report = self.lifecycle_report(selected, text, pid)
+            for key, file in (("capture", self.evidence / "editor_lifecycle" / (selected + ".png")),
+                              ("report", self.evidence / "editor_lifecycle" / (selected + ".json"))):
+                row = lifetime.get(key, {})
+                if row.get("sha256") != digest(file) or row.get("bytes") != file.stat().st_size:
+                    raise RuntimeError("Lifecycle evidence changed after collection")
+            if lifetime.get("capture", {}).get("size") != [1920, 1080] or lifetime["capture"].get("pillow_verify") is not True:
+                raise RuntimeError("Lifecycle original rendered capture verification absent")
+            self.lifecycle_guard(selected)
+            reports[selected] = report
+            self.output["lifecycle"]["phases"][selected] = "PASS"
+            write_json(self.evidence / "lifecycle-progress.json", self.output["lifecycle"])
+        result = self.phase("lifecycle-runtime", [str(self.engine), "--headless", "--audio-driver", "Dummy",
+            "--path", str(project_game), "-s", "res://tools/kit_zone.gd", "--", "--editor-lifecycle-runtime=1"], 30)
+        text = self.require_clean("lifecycle-runtime", result)
+        if result["pid"] in pids:
+            raise RuntimeError("Lifecycle runtime is not a distinct fresh process")
+        reports["runtime"] = self.lifecycle_report("runtime", text, result["pid"])
+        if (reports["reopen"].get("author_pid") != reports["author"]["pid"]
+                or reports["reopen"].get("author_report_sha256") != digest(self.evidence / "editor_lifecycle/author.json")
+                or reports["reopen"].get("expected_plan_sha256") != reports["author"].get("expected_plan_sha256")
+                or reports["runtime"].get("blocked_probe", {}).get("collision") is not True
+                or reports["runtime"].get("clear_probe", {}).get("collision") is not False
+                or reports["runtime"].get("clear_probe", {}).get("position") != [24, 84]
+                or reports["runtime"].get("player_layers", {}).get("input_enabled") is not False
+                or reports["runtime"].get("baked_binding") != "res://zones/editor_lifecycle_probe/ground_baked.png"):
+            raise RuntimeError("Lifecycle prior hash chain or actual physics/baked oracle absent")
+        self.lifecycle_guard("runtime")
+        self.output["lifecycle"].update(phases={p: "PASS" for p in ("author", "reopen", "runtime")},
+            reports=reports, actual_pids=pids + [result["pid"]], case_id=self.lifecycle_case,
+            qualification="Exact private candidate functional phases only; no art/biome/fullcanonical/Matt acceptance")
+        self.output["state"] = "POSITIVE_LIFECYCLE_PENDING_TERMINAL_GUARDS"
 
     def retire_display_authority(self) -> None:
         # Never copy/hash cookie bytes into evidence. Also runs if the lifetime
@@ -2794,10 +3009,10 @@ class Controller:
 
     def prepare_private_driver(self) -> None:
         """Reuse the tested private stage/query before displayed engine/import."""
-        if self.mode not in ("DRIVER_CAPABILITY", "DISPLAYED_SMOKE") or self.private_driver_receipt is not None:
+        if self.mode not in ("DRIVER_CAPABILITY", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE") or self.private_driver_receipt is not None:
             raise RuntimeError("Private driver preparation requires one explicit supported mode")
         stage = self.phase("driver-stage", [sys.executable, "-I", "-B", str(Path(__file__).resolve()),
-            "--mode", self.mode, "--driver-stage-child", "--candidate", str(self.candidate),
+            "--mode", "DISPLAYED_SMOKE" if self.mode == "POSITIVE_LIFECYCLE" else self.mode, "--driver-stage-child", "--candidate", str(self.candidate),
             "--source", str(self.source), "--root", str(self.root), "--event-sha", self.event_sha], 90)
         if stage.get("exit") != 0 or stage.get("state") != "COLLECTED":
             raise RuntimeError("Private driver stage failed; original partial evidence retained")
@@ -2855,7 +3070,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [STARTUP_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [LIFECYCLE_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", LIFECYCLE_RECEIVER_PARENT + "^{tree}").decode().strip() != LIFECYCLE_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", LIFECYCLE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [STARTUP_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", STARTUP_RECEIVER_PARENT + "^{tree}").decode().strip() != STARTUP_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", STARTUP_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [RETURN_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", RETURN_RECEIVER_PARENT + "^{tree}").decode().strip() != RETURN_RECEIVER_PARENT_TREE
@@ -3046,7 +3263,7 @@ class Controller:
         failure = None
         try:
             self.setup()
-            if self.mode == "DISPLAYED_SMOKE":
+            if self.mode in ("DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE"):
                 self.dependency_deadline = time.monotonic() + 120
                 self.prepare_display_tool()
                 self.prepare_private_driver()
@@ -3054,16 +3271,29 @@ class Controller:
             self.install_dependencies()
             self.get_engine()
             self.canary()
+            if self.mode == "POSITIVE_LIFECYCLE":
+                self.transaction_started = time.monotonic()
+                self.arm_budget()
+                self.lifecycle_copy()
+                # Existing180s import remains a separate phase; copy elapsed is still charged.
+                signal.setitimer(signal.ITIMER_REAL, 0)
+                self.lifecycle_clock = self.transaction_started
+                self.transaction_started = None
+            self.lifecycle_import_started = time.monotonic()
+            import_game = self.lifecycle_project / "game" if self.mode == "POSITIVE_LIFECYCLE" else self.game
             self.require_clean("import", self.phase("import", [str(self.engine), "--headless", "--audio-driver", "Dummy",
-                                                             "--path", str(self.game), "--import"], 180))
+                                                             "--path", str(import_game), "--import"], 180))
             self.generated_uids_initial = self.generated_uids()
             write_json(self.evidence / "generated-uids-after-import.json", self.generated_uids_initial)
-            self.transaction_started = time.monotonic()
+            self.transaction_started = (self.lifecycle_clock + (time.monotonic() - self.lifecycle_import_started)
+                if self.mode == "POSITIVE_LIFECYCLE" else time.monotonic())
             self.arm_budget()
             write_json(self.evidence / "result.json", {"state": "TRANSACTION_INCOMPLETE_FAILURE",
                        "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
                        "mode": self.mode, "qualification": "Provisional failure until the selected mode, terminal guards and packaging finish within budget."})
-            if self.mode == "DISPLAYED_SMOKE":
+            if self.mode == "POSITIVE_LIFECYCLE":
+                self.positive_lifecycle()
+            elif self.mode == "DISPLAYED_SMOKE":
                 self.displayed_smoke()
             else:
                 self.require_clean("check-only", self.phase("check-only", [
@@ -3099,7 +3329,7 @@ class Controller:
             # Independent final retention attempts; one failing guard must not suppress other evidence.
             final_errors = []
             archives = {}
-            if self.mode == "DISPLAYED_SMOKE":
+            if self.mode in ("DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE"):
                 try:
                     # Exact two secret-file retirement is cleanup, even after
                     # expiry; elapsed time still counts and cannot produce PASS.
@@ -3114,6 +3344,13 @@ class Controller:
                     self.guards["display_host_authority"] = "PASS"
                 except BaseException as error:
                     final_errors.append("display-host-authority: " + repr(error))
+            if self.mode == "POSITIVE_LIFECYCLE" and hasattr(self, "lifecycle_baseline"):
+                try:
+                    self.arm_budget()
+                    self.lifecycle_guard("final")
+                    self.guards["lifecycle_disposable"] = "PASS"
+                except BaseException as error:
+                    final_errors.append("lifecycle-disposable: " + repr(error))
             if self.candidate_initial is not None:
                 try:
                     self.arm_budget()
@@ -3164,7 +3401,7 @@ class Controller:
                     self.guards["dependencies"] = "PASS"
             except BaseException as error:
                 final_errors.append("dependencies: " + repr(error))
-            if self.mode == "DISPLAYED_SMOKE" and self.private_driver_receipt is not None:
+            if self.mode in ("DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE") and self.private_driver_receipt is not None:
                 try:
                     self.arm_budget()
                     row = self.private_driver_inputs()
@@ -3262,6 +3499,8 @@ class Controller:
                 self.output["state"] = "FINAL_GUARD_OR_COLLECTION_FAILURE"
             elif self.output["state"] == "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS":
                 self.output["state"] = "SIXTEEN_COMBINED_PASS"
+            elif self.output["state"] == "POSITIVE_LIFECYCLE_PENDING_TERMINAL_GUARDS":
+                self.output["state"] = "POSITIVE_LIFECYCLE_PASS"
             elif self.output["state"] == "DISPLAYED_SMOKE_PENDING_TERMINAL_GUARDS":
                 self.output["state"] = "DISPLAYED_SMOKE"
                 self.output["displayed_smoke"]["state"] = "PASS"
@@ -3280,7 +3519,7 @@ class Controller:
                            "qualification": "Emergency failure receipt only; original private outputs remain available independently of incomplete archives. Expiry is not proof of runtime release."})
         # Only actual success in the selected mode plus all final guards succeeds.
         # A RED, partial fail-fast, setup or collection failure remains nonzero.
-        return 0 if self.output["state"] in ("SIXTEEN_COMBINED_PASS", "DISPLAYED_SMOKE") else 1
+        return 0 if self.output["state"] in ("SIXTEEN_COMBINED_PASS", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE_PASS") else 1
 
 
 def main() -> int:
@@ -3290,13 +3529,17 @@ def main() -> int:
     parser.add_argument("--root", required=True, type=Path)
     parser.add_argument("--event-sha", required=True)
     parser.add_argument("--mode", choices=MODES, default="H5_COMBINED")
+    parser.add_argument("--lifecycle-phase", choices=("author", "reopen"), help=argparse.SUPPRESS)
     parser.add_argument("--display-child", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--mesa-tool-child", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--driver-stage-child", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--vulkan-inventory-child", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.lifecycle_phase and (not args.display_child or args.mode != "DISPLAYED_SMOKE"
+            or args.driver_stage_child or args.mesa_tool_child or args.vulkan_inventory_child):
+        parser.error("Lifecycle selector requires only the existing displayed child")
     if args.driver_stage_child:
-        if args.mode not in ("DRIVER_CAPABILITY", "DISPLAYED_SMOKE") or args.display_child or args.mesa_tool_child or args.vulkan_inventory_child:
+        if args.mode not in ("DRIVER_CAPABILITY", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE") or args.display_child or args.mesa_tool_child or args.vulkan_inventory_child:
             parser.error("Driver child requires exclusive DRIVER_CAPABILITY or DISPLAYED_SMOKE mode")
         return vulkan_driver_stage(args)
     if args.mode == "DRIVER_CAPABILITY" and (args.display_child or args.mesa_tool_child or args.vulkan_inventory_child):

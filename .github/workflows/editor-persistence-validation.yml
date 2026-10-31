@@ -21,7 +21,7 @@ jobs:
     env:
       # Provider-bound displayed candidate; runtime requires a separate lead allocation.
       # Controller default and normal DISPLAYED_SMOKE/H5 checks remain separate.
-      EDITOR_PERSISTENCE_MODE: DISPLAYED_SMOKE
+      EDITOR_PERSISTENCE_MODE: POSITIVE_LIFECYCLE
       CI: 'true'
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
@@ -53,7 +53,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 19 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->bcbf ->87dab ->3b99 ->deba ->startup child
+          fetch-depth: 20 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->79a4 ->cbf ->444 ->a657 ->efc ->f666 ->3b51 ->f833 ->bcbf ->87dab ->3b99 ->deba ->startup child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -234,6 +234,8 @@ jobs:
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY' else
                   'One private official-tool enumeration only; no game/science/engine/import/GUI/H5 or X11-presentation acceptance.'
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'DRIVER_CAPABILITY' else
+                  'Private POSITIVE_LIFECYCLE author/save, fresh reopen/bake, fresh runtime physics; all phases NOTRUN unless actual result proves them. No H5 rerun/fullcanonical/art acceptance. Missing result is failure, never PASS.'
+                  if os.environ['EDITOR_PERSISTENCE_MODE'] == 'POSITIVE_LIFECYCLE' else
                   'Existing DISPLAYED_SMOKE with qualified private ICD prerequisite; undo/restoration and bake refusals, no H5 rerun or successful save/bake/walk/manual acceptance. Missing result is failure, never PASS.'))
           (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
           if inventory:
@@ -270,6 +272,8 @@ jobs:
             ${{ runner.temp }}/editor-persistence/evidence/
             ${{ runner.temp }}/editor-persistence/test-output/
             ${{ runner.temp }}/editor-persistence/data/
+            ${{ runner.temp }}/editor-persistence/lifecycle-project/game/zones/editor_lifecycle_probe/
+            ${{ runner.temp }}/editor-persistence/lifecycle-project/game/kit/zones/editor_lifecycle_probe.json
             ${{ github.workspace }}/source/game/reports-editor-persistence/
             ${{ github.workspace }}/source/game/test/test_kit_zone_persistence.gd.uid
             ${{ github.workspace }}/source/game/test/test_world_editor_dependent_edits.gd.uid
