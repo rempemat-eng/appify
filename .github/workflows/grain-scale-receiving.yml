@@ -20,7 +20,7 @@ jobs:
       PYTHONDONTWRITEBYTECODE: '1'
       GIT_OPTIONAL_LOCKS: '0'
       # Explicit opt-in; controller default remains the frozen WORKING_YARD path.
-      GRAIN_RECEIVING_MODE: TWO_GOODS
+      GRAIN_RECEIVING_MODE: WORKING_YARD_CONTEXT
       TZ: UTC
     steps:
       - name: Open permanent partial evidence before setup
@@ -48,7 +48,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 5
+          fetch-depth: 6 # new ->52f ->c302 ->3e7 ->1d47 ->5dd
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -56,7 +56,7 @@ jobs:
             /scripts/review/fixtures/grain_scale_yard.json
             /.github/workflows/grain-scale-receiving.yml
       - name: Exact403 input closure; no full raster checkout
-        if: env.GRAIN_RECEIVING_MODE == 'WORKING_YARD'
+        if: env.GRAIN_RECEIVING_MODE != 'TWO_GOODS'
         id: source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -185,7 +185,7 @@ jobs:
       - name: Run explicitly selected one-shot receiving mode
         id: receiving
         env:
-          GRAIN_ARTIFACT_TOKEN: ${{ env.GRAIN_RECEIVING_MODE == 'WORKING_YARD' && github.token || '' }}
+          GRAIN_ARTIFACT_TOKEN: ${{ env.GRAIN_RECEIVING_MODE != 'TWO_GOODS' && github.token || '' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -254,7 +254,7 @@ jobs:
               source_sha=('d948ac57134ab092e91c8ab9ccc5d62593f064dd' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else '5dd3825353078b8b8e231f081714144891d98feb'),
               outcomes={k:os.environ.get(k,'NOTRUN') for k in ('RUNNER_OUTCOME','SOURCE_OUTCOME','SOURCE_GOODS_OUTCOME','PYTHON_OUTCOME','RECEIVING_OUTCOME')},
               result_present=(evidence/'result.json').is_file(),
-              qualification=('Two native candidate goods only; no H3/grain/composition and no detail/Y12/Matt approval.' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else 'One synthetic CANDIDATE receiving only; native sheet import initialisers are within composition phase. No Crossroads layout/EW detail/Y12/Matt approval.'))
+              qualification=('Two native candidate goods only; no H3/grain/composition and no detail/Y12/Matt approval.' if os.environ['GRAIN_RECEIVING_MODE']=='TWO_GOODS' else 'One existing native candidate composition; context mode reuses exact H2 and H4 without drawing. Native terrain initialisers stay within composition phase. Ground/shadow/reference/Y12/Matt gaps remain.'))
           (evidence/'workflow-disposition.json').write_text(json.dumps(value,indent=2)+'\n')
           PY
       - name: Always upload evidence and original failed-method outputs
@@ -267,6 +267,9 @@ jobs:
             ${{ runner.temp }}/grain-scale/presentation/
             ${{ runner.temp }}/grain-scale/work/game/kit/props/art/
             ${{ runner.temp }}/grain-scale/work/game/kit/props/index.json
+            ${{ runner.temp }}/grain-scale/work/game/kit/props/context_art/
+            ${{ runner.temp }}/grain-scale/work/game/kit/receiving-context/
+            ${{ runner.temp }}/grain-scale/work/game/kit/zones/grain_scale_context_diagnostic.json
             ${{ runner.temp }}/grain-scale/work/game/kit/zones/grain_scale_diagnostic.json
           if-no-files-found: error
           retention-days: 7

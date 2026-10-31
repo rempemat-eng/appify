@@ -272,5 +272,286 @@
     "phase_qualification": "Whole-cell X/Y selected; existing cell snap still admits half-X. Sacks at half-X+4worldpx occupy an omitted right cell; no metadata correction/physics waiver here.",
     "shadow_qualification": "Both existing goods have cast_shadow.shape=baked; props.entry gives no added live ellipse. No guessed contact shadow or AO pass.",
     "detail_qualification": "Existing catalogue detail_bar.passed=false: handcart ratio0.671, sacks0.509 and outline finding. Candidate reuse and extra objects do not establish detail acceptance."
+  },
+  "context": {
+    "qualification": "working-yard context candidate / reused H2 + H4 / ground + shadow gaps remain / Matt review required",
+    "proposal": "Existing smithy frontage with clustered revised H4 goods and H2 scale; synthetic diagnostic only, no mill or production adoption.",
+    "plan": {
+      "zone": "grain_scale_context_diagnostic",
+      "lab": true,
+      "ship": false,
+      "bake": false,
+      "coordinate_space": "texels",
+      "legend": {
+        ".": "lawn",
+        "y": "worn",
+        "=": "path"
+      },
+      "rows": [
+        "........................................",
+        "........................................",
+        "........................................",
+        "........................................",
+        "........................................",
+        "........................................",
+        "........................................",
+        "........................................",
+        "....yyyyyyyyyyyy........................",
+        "....yyyyyyyyyyyy.....yyyy...............",
+        "....yyyyyyyyyyyy.....yyyy...............",
+        "....yyyyyyyyyyyy.....yyyy...............",
+        "....yyyyyyyyyyyy.....yyyy...............",
+        "....yyyyyyyyyyyyyyyyyyyyyyyyyyy.........",
+        "....yyyyyyyyyyyyyyyyyyyyyyyyyyy.........",
+        ".....yyyyyyyyyyyyyyyyyyyyyyyyyy.........",
+        ".....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+        ".....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+        ".....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+        "========================================",
+        "========================================",
+        "========================================"
+      ],
+      "tiers": [
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000",
+        "0000000000000000000000000000000000000000"
+      ],
+      "pieces": [
+        {
+          "id": "existing_smithy",
+          "piece": "crossroads_smithy",
+          "variant": "smithy",
+          "at": [
+            240,
+            360
+          ],
+          "facing": "s"
+        },
+        {
+          "id": "grain_candidate",
+          "piece": "crossroads_grain_scale",
+          "variant": "loaded",
+          "at": [
+            552,
+            384
+          ],
+          "facing": "s"
+        },
+        {
+          "id": "yard_handcart",
+          "piece": "crossroads_handcart_context",
+          "variant": "handcart",
+          "at": [
+            672,
+            360
+          ],
+          "facing": "s"
+        },
+        {
+          "id": "yard_grain_storage",
+          "piece": "crossroads_sacks_context",
+          "variant": "sacks_12",
+          "at": [
+            456,
+            384
+          ],
+          "facing": "s"
+        }
+      ]
+    },
+    "approaches": {
+      "public_route": "Same three bottom path rows continue west/east.",
+      "worker_north": {
+        "foot_art": [
+          552,
+          240
+        ],
+        "via": "Narrow existing-worn link north of apparatus; S pose faces work, no interaction/routine claim."
+      },
+      "loading_east": "Clear worn approach below cart to the east edge and southern public route."
+    },
+    "moss": {
+      "manifest": "game/assets/characters/moss/manifest.json",
+      "sheet": "game/assets/characters/moss/sheets/idle_S.png",
+      "clip": "idle",
+      "facing": "S",
+      "frame": 3,
+      "region": [
+        480,
+        0,
+        160,
+        144
+      ],
+      "pivot": [
+        80,
+        136
+      ],
+      "packed_bounds": [
+        62,
+        63,
+        100,
+        137
+      ],
+      "packed_height": 74,
+      "manifest_body_height_target": 72,
+      "foot_art": [
+        552,
+        240
+      ]
+    },
+    "presentation": {
+      "ground_size": [
+        960,
+        528
+      ],
+      "native_size": [
+        960,
+        540
+      ],
+      "whole_image_scale": 2,
+      "footer_height": 12,
+      "note": "One unchanged native renderer call plus exact source Moss frame on disjoint sprite rectangles; integer2x. No invented actor shadow or AO pass."
+    },
+    "source_gaps": [
+      "Private candidate composition only; not Crossroads placement, KEEP/catalogue/art/Matt approval.",
+      "Existing worn is already the quietest eligible earth surface. Fewer worn cells do not change its texture; no scene-level quietness/variant knob exists.",
+      "Original grain live ellipse and smithy/goods baked metadata remain unchanged. contact_ao is ignored by this compositor and Moss has no automatic shadow; no unified-lighting acceptance.",
+      "Worker is the exact source S idle frame placed north of apparatus with nonoverlapping image boxes, not a new facing, animation, routine or actual operation.",
+      "Exact H2 grain and H4 revised goods must be acquired and verified; absence/expiry/hash/unsafeZIP/capacity refuses without repaint fallback.",
+      "Existing native terrain sheet initialisers remain inside the separately bounded composition phase; no world/engine build.",
+      "Matched same-kind/native-period/adult reference, detail counts, currentY12/physical whole-world/editor/Matt approval remain open."
+    ],
+    "diagnostic_access_bands": [
+      {
+        "id": "public_route",
+        "rect_art": [
+          0,
+          456,
+          960,
+          72
+        ],
+        "note": "Same three path rows; diagnostic keep-clear only."
+      },
+      {
+        "id": "worker_north",
+        "rect_art": [
+          528,
+          216,
+          48,
+          96
+        ],
+        "note": "Existing S-facing Moss stands north; full sprite boxes remain disjoint."
+      },
+      {
+        "id": "loading_east",
+        "rect_art": [
+          600,
+          384,
+          360,
+          72
+        ],
+        "note": "Clear east/south approach below clustered cart, no tested vehicle mechanic."
+      }
+    ],
+    "goods_source_contracts": {
+      "source_sha": "d948ac57134ab092e91c8ab9ccc5d62593f064dd",
+      "binding_review": "H4 run41158797569/artifact13026420606; source-only context adapter",
+      "cart": {
+        "piece": "crossroads_handcart_context",
+        "variant": "handcart",
+        "foot_art": [
+          57,
+          80
+        ],
+        "size_px": [
+          114,
+          84
+        ],
+        "collision_world": [
+          -11,
+          -8,
+          22,
+          8
+        ],
+        "footprint": [
+          [
+            -2,
+            -1
+          ],
+          [
+            -1,
+            -1
+          ],
+          [
+            0,
+            -1
+          ],
+          [
+            1,
+            -1
+          ]
+        ],
+        "status": "candidate",
+        "function": {}
+      },
+      "storage": {
+        "piece": "crossroads_sacks_context",
+        "variant": "sacks_12",
+        "foot_art": [
+          30,
+          62
+        ],
+        "size_px": [
+          60,
+          66
+        ],
+        "collision_world": [
+          -7,
+          -8,
+          14,
+          8
+        ],
+        "footprint": [
+          [
+            -1,
+            -1
+          ],
+          [
+            0,
+            -1
+          ]
+        ],
+        "status": "candidate",
+        "function": {}
+      },
+      "phase_qualification": "Whole-cell X/Y selected; existing cell snap still admits half-X. Sacks at half-X+4worldpx occupy an omitted right cell; no metadata correction/physics waiver here.",
+      "shadow_qualification": "Both existing goods have cast_shadow.shape=baked; props.entry gives no added live ellipse. No guessed contact shadow or AO pass.",
+      "detail_qualification": "H4 revised images have been viewed, but no new detail ratio, matched reference/Y12/Matt approval. Old0.671/.509 apply only to old PNGs."
+    },
+    "ground_changes": {
+      "old_worn_cells": 372,
+      "context_worn_cells": 261,
+      "reduction_percent": 29.839,
+      "meaning": "Planned cell area only; not measured opaque exposure or a quieter source texture."
+    }
   }
 }

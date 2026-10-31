@@ -193,6 +193,31 @@ TWO_GOODS_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf4
 TWO_GOODS_FILES = ("handcart.png", "sacks_12.png")
 TWO_GOODS_PRESENTATION = set(TWO_GOODS_FILES) | {"two-goods-before-after-2x.png"}
 
+
+# Context composition reuses H2 and H4 bytes; it never draws these props.
+CONTEXT_RECEIVER_PARENT = "52f861df4042c892ad480ee7f6b746ae69ada153"
+CONTEXT_RECEIVER_PARENT_TREE = "4783f78d31bd9cfc78b1222031db8cb421a89833"
+H4_ARTIFACT_ID = 13026420606
+H4_RUN_ID = 41158797569
+H4_RECEIVER_SHA = CONTEXT_RECEIVER_PARENT
+H4_SOURCE_SHA = ART_SOURCE_SHA
+H4_ZIP_BYTES = 363564
+H4_ZIP_SHA256 = "832d49ad84be2a6afb867f4415e1c87b4453d61bbb8862f48589e3364320309a"
+H4_FILENAMES = ("handcart.png", "sacks_12.png")
+H4_PNGS = {
+    "handcart.png": (2714, "463323a21f3905a5fee47887509b90cd07b6dbdc436a4d256eb665b6f8ece08e"),
+    "sacks_12.png": (1085, "cac223bc4cedea7c4e227f16780fac2409c980fece654886da5dc824704d6fbe"),
+}
+H4_GEOMETRY = {"handcart.png": ([114,84],[57,80],157), "sacks_12.png": ([60,66],[30,62],112)}
+CONTEXT_PRIVATE_FILES = (
+    "work/game/kit/receiving-context/crossroads_handcart_context.json",
+    "work/game/kit/receiving-context/crossroads_sacks_context.json",
+    "work/game/kit/props/index.json",
+    "work/game/kit/zones/grain_scale_context_diagnostic.json",
+    "presentation/grain-scale-candidate-native.png",
+    "presentation/grain-scale-candidate-2x.png",
+)
+
 def digest(path: Path, kind: str = "sha256") -> str:
     h = hashlib.new(kind)
     with path.open("rb") as handle:
@@ -352,6 +377,177 @@ def reuse_h2(root: Path, work: Path, evidence: Path) -> int:
             if primary_error is None: raise
             print("H2 acquisition receipt incomplete: " + type(error).__name__, file=sys.stderr)
 
+def reuse_h4(root: Path, work: Path, evidence: Path) -> int:
+    """Task-specific bounded urllib/ZIP intake, adapted from the existing receiver.
+
+    Only authenticated GitHub metadata/redirect uses the token; the signed blob
+    request has no Authorization header. Never print tokens, signed URLs or raw
+    network exception strings. Originals/partial bytes stay in this job's duty.
+    """
+    token = os.environ.pop("GRAIN_ARTIFACT_TOKEN", "")
+    if not token:
+        raise RuntimeError("Read-Actions token required for exact H4 artifact; no repaint fallback")
+    if work != root / "work" or evidence != root / "evidence":
+        raise RuntimeError("H4 intake requires the existing private duty paths")
+    archive = evidence / "h4-original.zip"
+    art = work / "game/kit/props/context_art"
+    if archive.exists() or art.exists():
+        raise RuntimeError("Fresh H4 intake destinations required; retain earlier evidence")
+    started, received = time.monotonic(), 0
+    receipt = {"artifact_id": H4_ARTIFACT_ID, "run_id": H4_RUN_ID,
+               "receiver_sha": H4_RECEIVER_SHA, "source_sha": H4_SOURCE_SHA,
+               "expected_bytes": H4_ZIP_BYTES, "expected_sha256": H4_ZIP_SHA256}
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+    opener = urllib.request.build_opener(NoRedirect)
+    api = f"https://api.github.com/repos/rempemat-eng/appify/actions/artifacts/{H4_ARTIFACT_ID}"
+    headers = {"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json",
+               "X-GitHub-Api-Version": "2022-11-28"}
+    try:
+        try:
+            with opener.open(urllib.request.Request(api, headers=headers), timeout=10) as response:
+                raw = response.read(65537)
+            if len(raw) > 65536:
+                raise RuntimeError("H4 artifact metadata exceeds64KiB")
+            (evidence / "h4-artifact-metadata.json").write_bytes(raw)
+            meta = json.loads(raw)
+            if not isinstance(meta, dict):
+                raise RuntimeError("H4 artifact metadata must be an object")
+            if (meta.get("id") != H4_ARTIFACT_ID or meta.get("expired") is not False
+                    or meta.get("size_in_bytes") != H4_ZIP_BYTES
+                    or meta.get("digest") != "sha256:" + H4_ZIP_SHA256
+                    or meta.get("name") != f"mygame-grain-scale-{H4_RECEIVER_SHA}-{H4_RUN_ID}-1"
+                    or meta.get("workflow_run", {}).get("id") != H4_RUN_ID
+                    or meta.get("workflow_run", {}).get("head_sha") != H4_RECEIVER_SHA):
+                raise RuntimeError("H4 artifact identity/run/receiver/size/expiry mismatch")
+            # Deliberately do not forward the API token through the cross-host redirect.
+            try:
+                response = opener.open(urllib.request.Request(api + "/zip", headers=headers), timeout=10)
+            except urllib.error.HTTPError as error:
+                if error.code != 302:
+                    raise RuntimeError("H4 archive endpoint did not provide its expected redirect") from None
+                location = error.headers.get("Location", "")
+                error.close()
+                url = urllib.parse.urlsplit(location)
+                host = url.hostname or ""
+                if (url.scheme != "https" or url.username or url.password or url.fragment
+                        or url.port not in (None, 443)
+                        or not (host.endswith(".blob.core.windows.net") or host.endswith(".actions.githubusercontent.com"))):
+                    raise RuntimeError("H4 archive redirect destination refused")
+                response = opener.open(urllib.request.Request(location), timeout=10)
+            else:
+                response.close()
+                raise RuntimeError("Unexpected H4 archive response; no alternate acquisition")
+            with response, archive.open("xb") as output:
+                for chunk in iter(lambda: response.read(65536), b""):
+                    if received + len(chunk) > H4_ZIP_BYTES or time.monotonic() - started > 30:
+                        raise RuntimeError("H4 archive exact-byte/30s acquisition bound exceeded")
+                    output.write(chunk)
+                    received += len(chunk)
+            # The enclosing unchanged phase monitor enforces duty/RSS/log/deadline.
+        except (urllib.error.URLError, OSError, ValueError) as error:
+            raise RuntimeError("H4 artifact acquisition failed: " + type(error).__name__) from None
+        if received != H4_ZIP_BYTES or digest(archive) != H4_ZIP_SHA256:
+            raise RuntimeError("Original H4 archive bytes/hash differ; no repaint fallback")
+        art.mkdir(parents=True, mode=0o700)
+        selected = {"presentation/" + n: n for n in H4_FILENAMES}
+        files, expanded, payload, payload_record = {}, 0, None, None
+        with zipfile.ZipFile(archive) as packed:
+            members = packed.infolist()
+            if not 1 <= len(members) <= 128 or len({x.filename for x in members}) != len(members):
+                raise RuntimeError("H4 ZIP duplicate/member-count refusal")
+            for member in members:
+                path = PurePosixPath(member.filename)
+                mode = member.external_attr >> 16
+                if (not member.filename or "\\" in member.filename or path.is_absolute()
+                        or member.orig_filename != member.filename
+                        or any(p in ("", ".", "..") for p in member.filename.rstrip("/").split("/"))
+                        or str(path) != member.filename.rstrip("/") or member.flag_bits & 1
+                        or stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR)):
+                    raise RuntimeError("Unsafe H4 ZIP path/type/encryption")
+                if ((stat.S_IFMT(mode) == stat.S_IFDIR and not member.is_dir())
+                        or (stat.S_IFMT(mode) == stat.S_IFREG and member.is_dir())):
+                    raise RuntimeError("H4 ZIP file/directory type mismatch")
+                expanded += member.file_size
+                if expanded > 16 * 1024**2 or member.file_size < 0:
+                    raise RuntimeError("H4 ZIP expanded-size bound exceeded")
+                if member.is_dir():
+                    if member.filename in selected or member.file_size:
+                        raise RuntimeError("H4 PNG member is not a physical file")
+                    continue
+                name = selected.get(member.filename)
+                is_payload = member.filename == "evidence/two_goods-result.json"
+                if is_payload and member.file_size > 65536:
+                    raise RuntimeError("H4 source result exceeds64KiB")
+                if name and member.file_size != H4_PNGS[name][0]:
+                    raise RuntimeError("H4 PNG member declared size differs")
+                h, count, data = hashlib.sha256(), 0, bytearray()
+                with packed.open(member) as source:
+                    for chunk in iter(lambda: source.read(65536), b""):
+                        count += len(chunk)
+                        if count > member.file_size or time.monotonic() - started > 30:
+                            raise RuntimeError("H4 ZIP byte/deadline bound exceeded")
+                        h.update(chunk)
+                        if name or is_payload: data.extend(chunk)
+                if count != member.file_size:
+                    raise RuntimeError("H4 ZIP truncated member")
+                if is_payload:
+                    (evidence / "h4-two-goods-source-result.json").write_bytes(data)
+                    payload = json.loads(data)
+                    payload_record = {"bytes":count,"sha256":h.hexdigest()}
+                if name:
+                    if (count, h.hexdigest()) != H4_PNGS[name]:
+                        raise RuntimeError("H4 original PNG hash differs")
+                    if (data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR"
+                            or list(struct.unpack(">II", data[16:24])) != H4_GEOMETRY[name][0]):
+                        raise RuntimeError("H4 PNG header differs")
+                    with (art / name).open("xb") as dest: dest.write(data)
+                    files[name] = {"bytes": count, "sha256": h.hexdigest(),
+                                   "size_px": H4_GEOMETRY[name][0], "foot_art": H4_GEOMETRY[name][1]}
+        if set(files) != set(H4_FILENAMES) or set(art.iterdir()) != {art / n for n in H4_FILENAMES}:
+            raise RuntimeError("Both exact H4 PNG members required, no substitution")
+        if (not isinstance(payload, dict) or payload.get("state") != "PASS"
+                or payload.get("source_sha") != H4_SOURCE_SHA or payload.get("source_tree") != ART_SOURCE_TREE
+                or payload.get("draw_invocations") != 1 or payload.get("native_prop_calls") != 2
+                or payload.get("grain_draw_invocations") != 0 or payload.get("composition_invocations") != 0):
+            raise RuntimeError("H4 original drawing/source provenance mismatch")
+        for name in H4_FILENAMES:
+            item = payload["subjects"][name]
+            size, foot, seed = H4_GEOMETRY[name]
+            if (item["canvas"] != size or item["foot"] != foot or item["seed"] != seed
+                    or (item["bytes"],item["sha256"]) != H4_PNGS[name]):
+                raise RuntimeError("H4 original subject contracts differ")
+        receipt.update(compositor_source_sha=SOURCE_SHA, goods_source_sha=H4_SOURCE_SHA,
+                       distinction="Goods were drawn on d948; compositor/ground/character remain5dd")
+        write_json(evidence / "h4-reuse-result.json", {"state":"PASS", "draw_invocations":0,
+            "files":files,"source_payload":payload_record,"provenance":receipt, "all_zip_members_crc_read":len(members),
+            "qualification":"Exact revised H4 goods reused; no new draw/reproduction/detail approval"})
+        return 0
+    finally:
+        primary_error = sys.exc_info()[0]
+        try:
+            receipt.update(received_bytes=received, elapsed_s=time.monotonic()-started,
+                           retained_bytes=archive.stat().st_size if archive.exists() else 0,
+                           retained_sha256=digest(archive) if archive.exists() else None)
+            write_json(evidence / "h4-acquisition.json", receipt)
+        except BaseException as error:
+            if primary_error is None: raise
+            print("H4 acquisition receipt incomplete: " + type(error).__name__, file=sys.stderr)
+
+def reuse_context(root: Path, work: Path, evidence: Path) -> int:
+    """One bounded reuse phase: unchanged H2 helper, then one fixed H4 intake."""
+    token = os.environ.get("GRAIN_ARTIFACT_TOKEN", "")
+    try:
+        if reuse_h2(root, work, evidence) != 0:
+            raise RuntimeError("H2 reuse failed; no goods or repaint fallback")
+        os.environ["GRAIN_ARTIFACT_TOKEN"] = token
+        return reuse_h4(root, work, evidence)
+    finally:
+        os.environ.pop("GRAIN_ARTIFACT_TOKEN", None)
+        token = ""
+
+
 def diagnostic_text(path: Path) -> str:
     # Raw bytes stay untouched in the artifact. Strip terminal escapes for scanning only.
     return re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", path.read_text(errors="replace")).replace("\r", "")
@@ -434,6 +630,9 @@ class Controller:
         self.event_sha = args.event_sha
         self.receiving_mode = args.receiving_mode
         self.two_goods = self.receiving_mode == "TWO_GOODS"
+        self.context = self.receiving_mode == "WORKING_YARD_CONTEXT"
+        self.context_before = None
+        self.h4_before = None
         self.inputs = TWO_GOODS_INPUTS if self.two_goods else INPUTS
         self.subject_sha = ART_SOURCE_SHA if self.two_goods else SOURCE_SHA
         self.subject_tree = ART_SOURCE_TREE if self.two_goods else SOURCE_TREE
@@ -473,6 +672,9 @@ class Controller:
         limits = [(self.root / "dependencies", DEPENDENCY_LIMIT), (self.evidence, EVIDENCE_LIMIT),
                   (self.work / "game/kit/props/art", 8 * 1024**2),
                   (self.root / "presentation", (8 if self.two_goods else 16) * 1024**2)]
+        if self.context:
+            limits += [(self.work / "game/kit/props/context_art", 8 * 1024**2),
+                       (self.work / "game/kit/receiving-context", 64 * 1024)]
         for folder, limit in limits:
             if folder.exists():
                 actual = 0
@@ -537,8 +739,12 @@ class Controller:
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [ACTIVE_RECEIVER_PARENT]:
-            raise RuntimeError("Mode extension must retain the exact sole c302 receiver parent")
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [CONTEXT_RECEIVER_PARENT]:
+            raise RuntimeError("Context extension must retain the exact sole52f receiver parent")
+        context_headers = git(self.candidate, "cat-file", "commit", CONTEXT_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in context_headers.splitlines() if x.startswith("parent ")] != [ACTIVE_RECEIVER_PARENT]
+                or git(self.candidate,"rev-parse",CONTEXT_RECEIVER_PARENT+"^{tree}").decode().strip() != CONTEXT_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H4 receiver ancestry/tree differs")
         active_headers = git(self.candidate, "cat-file", "commit", ACTIVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if [x[7:] for x in active_headers.splitlines() if x.startswith("parent ")] != [RECEIVER_PARENT]:
             raise RuntimeError("Frozen H3 receiver must retain genuine3e7 parent")
@@ -567,9 +773,13 @@ class Controller:
             self.output["art_subject_history"] = {"headers":art_headers,"parent_headers":art_parent_headers,
                 "baseline_sha":SOURCE_SHA,"changed":sorted(changed),"not_receiver_ancestor":True}
         active_tree = tree(self.candidate, ACTIVE_RECEIVER_PARENT)
-        mode_delta = {p for p in active_tree.keys() | runner.keys() if active_tree.get(p) != runner.get(p)}
+        context_tree = tree(self.candidate, CONTEXT_RECEIVER_PARENT)
+        mode_delta = {p for p in active_tree.keys() | context_tree.keys() if active_tree.get(p) != context_tree.get(p)}
         if mode_delta != MODE_PATHS:
-            raise RuntimeError("Only two existing mode-extension receiver files may change")
+            raise RuntimeError("Frozen H4 changed only its two existing mode files")
+        context_delta = {p for p in context_tree.keys() | runner.keys() if context_tree.get(p) != runner.get(p)}
+        if context_delta != OWNED_PATHS:
+            raise RuntimeError("Only the three existing context receiver files may change")
         previous = tree(self.candidate, RECEIVER_PARENT)
         correction_delta = {p for p in previous.keys() | runner.keys() if previous.get(p) != runner.get(p)}
         if correction_delta != CORRECTION_PATHS:
@@ -587,7 +797,8 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers, "active_headers": active_headers, "mode_delta":sorted(mode_delta), "parent_headers": parent_headers, "original_headers": original_headers,
+            "headers": headers, "context_headers":context_headers,"context_parent":CONTEXT_RECEIVER_PARENT,
+            "context_delta":sorted(context_delta),"active_headers": active_headers, "mode_delta":sorted(mode_delta), "parent_headers": parent_headers, "original_headers": original_headers,
             "receiver_parent": RECEIVER_PARENT,
             "correction_delta": sorted(correction_delta), "source_headers": source_headers, "delta": sorted(delta),
             "receiving": self.candidate_before})
@@ -703,6 +914,10 @@ class Controller:
                     raise RuntimeError(f"{name} output/canary incomplete")
                 if name == "reuse": self.reuse_before = result
                 if name == "two_goods": self.goods_before = result
+                if self.context and name == "reuse":
+                    self.h4_before = json.loads((self.evidence / "h4-reuse-result.json").read_text())
+                if self.context and name == "composition":
+                    self.context_before = result["context_artifacts"]
             self.output["state"] = "DIAGNOSTIC_EXECUTION_COMPLETE_PENDING_FINAL_GUARDS"
         except BaseException as error:
             failure = {"type":type(error).__name__,"message":str(error),"traceback":traceback.format_exc()}
@@ -734,7 +949,10 @@ class Controller:
                         for n in FILENAMES)),
                 ("dependencies", lambda: self.dependency_snapshot() == self.deps_before),
                 *(((("two-goods", lambda: self.goods_snapshot() == self.goods_before["presentation"]),)
-                    if self.two_goods else ()))):
+                    if self.two_goods else ())),
+                *(((("h4-reuse", lambda: self.h4_snapshot() == {"files":self.h4_before["files"],"source_payload":self.h4_before["source_payload"]}),
+                    ("context-private",lambda: self.context_snapshot() == self.context_before))
+                    if self.context else ()))):
                 try:
                     seal_check()
                     if (label == "candidate" and self.candidate_before is None) or (label in ("source","work-inputs") and self.before is None) or (label == "dependencies" and self.deps_before is None):
@@ -745,6 +963,10 @@ class Controller:
                         continue
                     if label == "two-goods" and self.goods_before is None:
                         self.output[label+"_guard"] = "NOTRUN; draw not complete"
+                        continue
+                    if self.context and ((label == "h4-reuse" and self.h4_before is None)
+                            or (label == "context-private" and self.context_before is None)):
+                        self.output[label+"_guard"] = "NOTRUN; context reuse/composition incomplete"
                         continue
                     if label == "h2-reuse" and self.reuse_before is None:
                         self.output[label+"_guard"] = "NOTRUN; reuse not complete"
@@ -760,9 +982,13 @@ class Controller:
                 final_errors.append("capacity: "+repr(error))
             try:
                 manifest = {}
-                for folder in (self.evidence,self.root / "presentation",self.work / "game/kit/props/art"):
+                folders = [self.evidence,self.root / "presentation",self.work / "game/kit/props/art"]
+                if self.context:
+                    folders += [self.work / "game/kit/props/context_art", self.work / "game/kit/receiving-context",
+                                self.work / "game/kit/props/index.json", self.work / "game/kit/zones/grain_scale_context_diagnostic.json"]
+                for folder in folders:
                     if folder.exists():
-                        for p in sorted(folder.rglob("*")):
+                        for p in ([folder] if folder.is_file() else sorted(folder.rglob("*"))):
                             seal_check()
                             if p.is_file() and not p.is_symlink() and p.name not in ("evidence-manifest.json","result.json","controller.log","controller.exit","workflow-disposition.json"):
                                 manifest[str(p.relative_to(self.root))] = {"bytes":p.stat().st_size,"sha256":digest(p)}
@@ -778,11 +1004,43 @@ class Controller:
             if failure or final_errors:
                 self.output["state"] = "RECEIVING_FAILED_OR_FINAL_GUARD_INCOMPLETE"
             elif self.output["state"] == "DIAGNOSTIC_EXECUTION_COMPLETE_PENDING_FINAL_GUARDS":
-                self.output["state"] = "TWO_GOODS_ARTIFACTS_COMPLETE_NOT_ART_APPROVAL" if self.two_goods else "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL"
+                self.output["state"] = ("TWO_GOODS_ARTIFACTS_COMPLETE_NOT_ART_APPROVAL" if self.two_goods else
+                    "WORKING_YARD_CONTEXT_COMPLETE_NOT_ART_APPROVAL" if self.context else "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL")
             self.output.update(final_errors=final_errors,seal_elapsed_s=time.monotonic()-seal_started,
                                finished_at=time.time(),art_approved=False,layout_approved=False)
             write_json(self.evidence / "result.json",self.output)
-        return 0 if self.output["state"] in ("TWO_GOODS_ARTIFACTS_COMPLETE_NOT_ART_APPROVAL", "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL") else 1
+        return 0 if self.output["state"] in ("TWO_GOODS_ARTIFACTS_COMPLETE_NOT_ART_APPROVAL", "SYNTHETIC_WORKING_YARD_COMPLETE_NOT_ART_APPROVAL", "WORKING_YARD_CONTEXT_COMPLETE_NOT_ART_APPROVAL") else 1
+
+    def h4_snapshot(self):
+        archive = self.evidence / "h4-original.zip"
+        if archive.stat().st_size != H4_ZIP_BYTES or digest(archive) != H4_ZIP_SHA256:
+            raise RuntimeError("Retained original H4 archive changed")
+        art = self.work / "game/kit/props/context_art"
+        if set(p.name for p in art.iterdir()) != set(H4_FILENAMES):
+            raise RuntimeError("Exactly two private H4 goods required")
+        rows = {}
+        for name in H4_FILENAMES:
+            p = art / name
+            st = p.lstat()
+            if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or (st.st_size,digest(p)) != H4_PNGS[name]:
+                raise RuntimeError("Reused H4 native PNG changed")
+            rows[name] = {"bytes":st.st_size,"sha256":digest(p),
+                          "size_px":H4_GEOMETRY[name][0],"foot_art":H4_GEOMETRY[name][1]}
+        payload = self.evidence / "h4-two-goods-source-result.json"
+        st = payload.lstat()
+        if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+            raise RuntimeError("Nonphysical H4 source-result copy")
+        return {"files":rows,"source_payload":{"bytes":st.st_size,"sha256":digest(payload)}}
+
+    def context_snapshot(self):
+        rows = {}
+        for name in CONTEXT_PRIVATE_FILES:
+            p = self.root / name
+            st = p.lstat()
+            if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1:
+                raise RuntimeError("Nonphysical context-private output")
+            rows[name] = {"bytes":st.st_size,"sha256":digest(p)}
+        return rows
 
     def goods_snapshot(self):
         out = self.root / "presentation"
@@ -1052,6 +1310,169 @@ def draw_two_goods(root: Path, work: Path, evidence: Path) -> int:
     return 0
 
 
+def compose_context(root: Path, work: Path, evidence: Path) -> int:
+    from PIL import Image, ImageDraw, ImageFont
+    from scripts.art.kit import schema
+    config = json.loads((work / FIXTURE).read_text())
+    grain = json.loads((work / GRAIN).read_text())
+    smithy = json.loads((work / SMITHY).read_text())
+    goods = [json.loads((work / path).read_text()) for path in GOODS]
+    private_dir = work / "game/kit/receiving-context"
+    if private_dir.exists(): raise RuntimeError("Fresh private context metadata required")
+    private_dir.mkdir(mode=0o700)
+    for i,piece in enumerate(goods):
+        piece["id"] += "_context"
+        piece["approval"]["note"] += " Private diagnostic copy reuses exact H4/d948 PNG; not registered or approved."
+        name = H4_FILENAMES[i]
+        if (piece["geometry"]["size_px"] != H4_GEOMETRY[name][0]
+                or piece["geometry"]["foot"] != H4_GEOMETRY[name][1]
+                or piece["variants"][0]["foot"] != H4_GEOMETRY[name][1]):
+            raise RuntimeError("H4 goods geometry does not match original metadata")
+        piece["variants"][0]["png"] = "res://kit/props/context_art/" + name
+        path = work / "game/kit/receiving-context" / (piece["id"]+".json")
+        if path.exists(): raise RuntimeError("Private context metadata must be fresh")
+        write_json(path,piece)
+    pieces = [grain,smithy,*goods]
+    for piece in pieces:
+        errors = schema.errors(piece,schema.load_schema())
+        if errors or piece["approval"]["state"] != "candidate":
+            raise RuntimeError("Source schema/status mismatch: "+str(errors))
+    if grain["function"] != {} or grain["geometry"]["foot"] != [84,132] or grain["geometry"]["size_px"] != [168,144]:
+        raise RuntimeError("Grain candidate metadata/anchor changed")
+    if [(v["id"],v["png"],v["foot"]) for v in grain["variants"]] != [
+            ("ready","res://kit/props/art/"+FILENAMES[0],[84,132]),
+            ("loaded","res://kit/props/art/"+FILENAMES[1],[84,132])]:
+        raise RuntimeError("Two authored states changed")
+    art = work / "game/kit/props/art"
+    reused = json.loads((evidence / "reuse-result.json").read_text())
+    if (reused.get("state") != "PASS" or reused.get("draw_invocations") != 0
+            or reused.get("provenance", {}).get("artifact_id") != H2_ARTIFACT_ID):
+        raise RuntimeError("Missing exact H2 reuse receipt; no painter fallback")
+    for name in FILENAMES:
+        if (digest(art / name) != H2_PNGS[name][1]
+                or reused["files"][name]["sha256"] != H2_PNGS[name][1]
+                or (art / name).stat().st_size != H2_PNGS[name][0]):
+            raise RuntimeError("Exact reused H2 PNG changed BEFORE composition")
+    config = config["context"]
+    plan = config["plan"]
+    h4 = json.loads((evidence / "h4-reuse-result.json").read_text())
+    if h4.get("state") != "PASS" or h4.get("draw_invocations") != 0 or h4["provenance"]["source_sha"] != H4_SOURCE_SHA:
+        raise RuntimeError("Exact revised H4 goods required before context composition")
+    for name in H4_FILENAMES:
+        p = work / "game/kit/props/context_art" / name
+        if (p.stat().st_size,digest(p)) != H4_PNGS[name]:
+            raise RuntimeError("H4 goods changed before context composition")
+    if (plan["zone"] != "grain_scale_context_diagnostic" or not plan["lab"] or plan["ship"] or plan["bake"]
+            or plan.get("coordinate_space") != "texels" or len(plan["rows"]) !=22
+            or any(len(row)!=40 or set(row)-set(plan["legend"]) for row in plan["rows"])):
+        raise RuntimeError("Synthetic fixture/coordinate/glyph contract differs")
+    expected = [("existing_smithy","crossroads_smithy","smithy",[240,360]),
+                ("grain_candidate","crossroads_grain_scale","loaded",[552,384]),
+                ("yard_handcart","crossroads_handcart_context","handcart",[672,360]),
+                ("yard_grain_storage","crossroads_sacks_context","sacks_12",[456,384])]
+    if [(p["id"],p["piece"],p["variant"],p["at"]) for p in plan["pieces"]] != expected:
+        raise RuntimeError("Named fixture instances/positions differ; no silent variant fallback")
+    from scripts.art.kit import props
+    compiled = {p["id"]:props.entry(p) for p in pieces}
+    if (compiled[grain["id"]]["shadow"] != {"size":[48,9],"dir":[6,3]}
+            or compiled[grain["id"]]["collision"] != [-48,-24,96,24]
+            or compiled[smithy["id"]]["shadow"] is not None):
+        raise RuntimeError("Actual compiler shadow/collision contract differs")
+    for p in pieces:
+        if any(compiled[p["id"]][k] != p.get(k,{}) for k in ("function","story")):
+            raise RuntimeError("Compiler lost authored function/story metadata")
+        if compiled[p["id"]]["footprint"] != p["geometry"]["footprint"]:
+            raise RuntimeError("Compiler footprint differs from source")
+    for piece in goods:
+        if (piece.get("function") != {} or piece["rendering"]["cast_shadow"] != {"shape":"baked"}
+                or compiled[piece["id"]]["shadow"] is not None):
+            raise RuntimeError("Goods function/shadow/status must not be promoted")
+    for entry in plan["pieces"]:
+        if entry["id"].startswith("yard_") and any(v % 24 for v in entry["at"]):
+            raise RuntimeError("Whole-cell goods feet required; preserve sack half-X caveat")
+        rect = compiled[entry["piece"]]["collision"]
+        if rect:
+            x,y,w,h = rect
+            x,y = x+entry["at"][0], y+entry["at"][1]
+            for band in config["diagnostic_access_bands"]:
+                bx,by,bw,bh = band["rect_art"]
+                if max(x,bx) < min(x+w,bx+bw) and max(y,by) < min(y+h,by+bh):
+                    raise RuntimeError("Candidate collider obstructs authored diagnostic access band: "+band["id"])
+    idx = work / "game/kit/props/index.json"
+    zone = work / "game/kit/zones/grain_scale_context_diagnostic.json"
+    if idx.exists() or zone.exists():
+        raise RuntimeError("Private generated index/zone must not overwrite source")
+    idx.parent.mkdir(parents=True,exist_ok=True);zone.parent.mkdir(parents=True,exist_ok=True)
+    write_json(idx,compiled);write_json(zone,plan)
+    # No shared ROOT/index monkeypatch, full props.build, bake or world generator.
+    from scripts.review import kit_scene
+    library = {p["id"]:p for p in pieces}
+    # Use the complete ACTUAL metadata registry: surface:rock is a declared
+    # grain alternative, even though this fixture places only lawn/worn/path.
+    # Omitting scree would fabricate an unknown-ground refusal in the adapter.
+    materials = {m["id"]:m for m in json.loads((work / "game/kit/terrain/manifest.json").read_text())["materials"]}
+    findings = kit_scene.check_zone(plan,library=library,materials=materials)
+    write_json(evidence / "physical-findings.json",findings)
+    # Candidates stay visible and unapproved; physical faults refuse rendering.
+    if any(f.get("severity") == "fault" for f in findings):
+        raise RuntimeError("Actual private receiving physical canary refused; no repair/promotion")
+    # These UNMODIFIED imports initialise native terrain sheets in memory; known
+    # dependency work is counted within this ONE composition phase120s/512MiB.
+    from scripts.art.kit import render_zone
+    image = render_zone.render(plan["zone"],sprites=True)  # EXACTLY ONE composition
+    if image.size != (960,528):
+        raise RuntimeError("Reference renderer dimensions differ")
+    moss = config["moss"]
+    manifest = json.loads((work / moss["manifest"]).read_text())
+    frame = manifest["clips"]["idle"]["facings"]["S"]["frames"][3]
+    if (manifest["frame_size"] != [160,144] or manifest["foot_pivot"] != [80,136]
+            or manifest["body_height_target"] !=72 or frame["region"] != [480,0,160,144]
+            or frame["packed_bounds"] != [62,63,100,137]
+            or frame["sha256"] != "80442f02c5d46a4eec9703122db28f6f06c46d3cb24c199bcfdc89e7916c5a37"):
+        raise RuntimeError("Moss source frame identity changed")
+    with Image.open(work / moss["sheet"]) as sheet:
+        sheet.load()
+        sprite = sheet.convert("RGBA").crop((480,0,640,144))
+    if list(sprite.getbbox() or ()) != [62,63,100,137]:
+        raise RuntimeError("Actual Moss crop differs from pinned packed bounds")
+    # Existing S-facing pose stands north of the work. Entire source sprite
+    # rectangles are disjoint, so the existing overlay cannot reverse depth.
+    foot = moss["foot_art"]
+    if foot != [552,240] or foot[0] != expected[1][3][0] or foot[1] >= expected[1][3][1]:
+        raise RuntimeError("South-facing worker must stand north of apparatus")
+    worker_rect = [foot[0]-80,foot[1]-136,160,144]
+    for pc in plan["pieces"]:
+        entry = compiled[pc["piece"]]
+        variant = entry["variants"][pc["variant"]]
+        with Image.open(work / "game" / variant["png"][len("res://"):]) as placed:
+            rect = [pc["at"][0]-variant["foot"][0],pc["at"][1]-variant["foot"][1],*placed.size]
+        x,y,ww,hh=worker_rect;px,py,pw,ph=rect
+        if max(x,px)<min(x+ww,px+pw) and max(y,py)<min(y+hh,py+ph):
+            raise RuntimeError("Context overlay would bypass source sprite depth")
+    image.alpha_composite(sprite,(foot[0]-80,foot[1]-136))
+    native = Image.new("RGBA",(960,540),(20,22,23,255));native.alpha_composite(image,(0,0))
+    draw = ImageDraw.Draw(native)
+    font = ImageFont.load_default(size=10)
+    box = draw.textbbox((0,0),config["qualification"],font=font)
+    if box[2]-box[0] > 952 or box[3]-box[1] > 12:
+        raise RuntimeError("Candidate caption does not fit reserved footer; do not crop it")
+    draw.text((4-box[0],528+(12-(box[3]-box[1]))//2-box[1]),config["qualification"],font=font,fill=(230,230,225,255))
+    out = root / "presentation"
+    native.save(out / "grain-scale-candidate-native.png")
+    native.resize((1920,1080),Image.Resampling.NEAREST).save(out / "grain-scale-candidate-2x.png")
+    outputs = {p.name:{"bytes":p.stat().st_size,"sha256":digest(p)} for p in out.iterdir() if p.is_file()}
+    write_json(evidence / "composition-result.json",{"state":"PASS","composition_invocations":1,
+        "outputs":outputs,"fixture":config,"private_index":compiled,"physical_findings":findings,
+        "grain_reuse":reused,"goods_reuse":h4,"new_painter_invocations":0,
+        "Moss":{"actual_alpha_bbox":[62,63,100,137],"packed_height":74,"target":72,
+                "crop":[480,0,160,144],"foot_art":[80,136],"placed_foot":[552,240]},
+        "shadow_qualification":"Original grain live ellipse and smithy/goods baked metadata unchanged; contact_ao is ignored and Moss has no automatic shadow. This is NOT unified-shadow acceptance.",
+        "ground_qualification":"Existing worn is the quietest eligible earth material; fewer exposed worn cells, not a changed texture. Renderer has no scene-level texture quietness knob.",
+        "context_artifacts":{n:{"bytes":(root/n).stat().st_size,"sha256":digest(root/n)} for n in CONTEXT_PRIVATE_FILES},
+        "acceptance":"Synthetic candidate diagnostic execution only. EW sameheight/detail/Y12/physics wholeworld/layout/Matt acceptance remain open."})
+    return 0
+
+
 def child(mode, root):
     root = root.resolve(strict=True)
     if (str(root) != os.environ.get("GRAIN_DUTY_ROOT")
@@ -1062,7 +1483,7 @@ def child(mode, root):
     work = root / "work"
     evidence = root / "evidence"
     receiving_mode = os.environ.get("GRAIN_RECEIVING_MODE", "WORKING_YARD")
-    if receiving_mode not in ("WORKING_YARD", "TWO_GOODS"):
+    if receiving_mode not in ("WORKING_YARD", "TWO_GOODS", "WORKING_YARD_CONTEXT"):
         raise RuntimeError("Unknown receiving mode")
     two_goods = receiving_mode == "TWO_GOODS"
     if not two_goods and blob(work / FIXTURE) != os.environ.get("GRAIN_FIXTURE_BLOB"):
@@ -1077,6 +1498,10 @@ def child(mode, root):
                  for n,m in zip(("Pillow","numpy","scipy"),(PIL,numpy,scipy))}}
         write_json(evidence / "scientific-versions.json",value)
         return 0
+    if receiving_mode == "WORKING_YARD_CONTEXT":
+        if mode == "reuse": return reuse_context(root,work,evidence)
+        if mode == "composition": return compose_context(root,work,evidence)
+        raise RuntimeError("Unknown context receiving phase")
     if two_goods:
         if mode != "two_goods":
             raise RuntimeError("TWO_GOODS never enters H3 reuse/composition")
@@ -1216,7 +1641,7 @@ def child(mode, root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode",choices=("outer","versions","reuse","composition","two_goods"),default="outer")
-    parser.add_argument("--receiving-mode",choices=("WORKING_YARD","TWO_GOODS"),default="WORKING_YARD")
+    parser.add_argument("--receiving-mode",choices=("WORKING_YARD","TWO_GOODS","WORKING_YARD_CONTEXT"),default="WORKING_YARD")
     parser.add_argument("--source",type=Path)
     parser.add_argument("--candidate",type=Path)
     parser.add_argument("--root",required=True,type=Path)
