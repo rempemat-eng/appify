@@ -258,3 +258,26 @@ Three bounded attempts are retained: the rejected river/halo sites; an early `Ke
 
 GO6535477628 / ASSIGN6535521160 / ACK6535521524. The new source is a genuine descendant of 4e16a9ca. D/E/G remain unfitted; the old producer cap 40 / check 40 and all unadopted 41-building accounting remain unchanged. Final map/art merge approval still belongs to Matt on the PR.
 
+
+
+## Mill End correction: street bands checked against actual protections
+
+This is a narrow correction to the preceding partial offer. The historical partial data and figures remain unchanged; the latest local geometry is in `mill_end_correction`. All ten homes, the mill rectangle and door, the completed A/B/C fourteen rectangles/doors, original 40-record ledger and separate mill identity fields stay unchanged. Nothing is adopted into the production terrain or native game.
+
+The mill goods approach now ends at `[6456,4160]`, rather than on the east wall at `[6440,4160]`. Its24px round cap ends at x6444; the separate 16px worker/door link still reaches the threshold at x6440. The two former street intrusions at `[6432,4152]` and `[6432,4160]` can therefore be stamped as building cells without clearing a guard or changing any terrain grade. The complete proposed mill now has **96 of 96 occupied cells**, zero footprint street/water/nonbuildable/barrier/keepout/other occupancy, and a dry, guard-clear one-cell halo. Frontage street remains intentionally present in that halo; this is not a claim that every halo is street-free.
+
+The first branch attempt used an earlier real Lull-approach point and appeared clear from the 110px east-disc arithmetic. The actual copied mask still gave **five protected cells**: the mask includes crater/trail protection as well as discs. That failed route offer and its complete copied data are preserved. The second offer branches from an actual retained Lull Road point (index 3), east and south of the protected trail. It does not change the old approach endpoint or clear protected cells, and it invents no bridge. The final route coordinates and measured mask counts are below. Existing full source polylines and old tails remain unchanged.
+
+**Mill Street:** 32px band, points `[[6824.0027316369915, 3778.2971906108255], [6784, 3808], [6784, 3944], [6528, 3944], [6488, 4000], [6488, 4328]]`. Actual copied band: 0 water, 0 barrier, 0 keepout and 0 building cells.
+
+**Mill working court approach:** 24px band, points `[[6488, 4160], [6456, 4160]]`. Actual copied band: 0 water, 0 barrier, 0 keepout and 0 building cells.
+
+
+All eleven F footprints and halos have now been measured on the final private copy, preserving captured grades and the unchanged 0.016 slope limit. All eleven door-adjacent links reach the mill court in the limited four-neighbour proposed-street graph, but **zero reach Square** in that same graph of explicitly painted streets. The new branch meets a real retained Lull Road point beyond the protected trail; the intervening named road is not represented by this painted street component. No connector was added to force this result green. Existing literal road identity is source evidence, not proof of a complete native or full-width connection to Square. This does not demonstrate native pathfinding, a level floor, a facade variant, vehicle clearance or an approved portal. The full older 22 North / 7 Lull protected tail cells and bridge-bank guards remain a separate limitation; clearing the revised F branch does not clear the entire outer road.
+
+The mill's **16–24px measured bank gap remains proximity only**. Hydraulic fall, wheel/race/head/tail reach, legacy identity deduplication and asset working-face/facade authorability remain UNKNOWN. No extra mill identity, occupant, job, mechanic, watercourse or crossing was added. The original mill source entry retains its null identity and geometry fields; the measured candidate remains separate.
+
+The final correction changes **38 distinct cells** inside two declared support boxes `[[6712, 3736, 6848, 3824], [6424, 4136, 6464, 4184]]`. All 49 typed payloads outside those boxes match the frozen F-partial proposal; outside the union of all declared supports they match actual captured BEFORE. All 24 previously clear A/B/C and F-home footprint/halo sets retain all 49 values, as do water/bridge cells and the protected native features. Heights, tiers, slopes, river/land/closed fields, crater, barrier and keepout masks are unchanged. The six source inputs, r3 archive and F-partial archive remain exact.
+
+Two bounded correction attempts were used, retaining the first actual-mask failure. The final probe exited 0 in 2.222 seconds / peak 74235904 bytes. There was no third correction attempt, project import, engine/world job, production edit or unchanged A/B/C regeneration. D/E/G remain unfitted. Source GO6535910901 / ASSIGN6535926108 / ACK6535926395; the new source is a genuine child of 08ebbab5. Native/game/art/full-gate acceptance and Matt's explicit art/map approval on the PR remain outstanding.
+
