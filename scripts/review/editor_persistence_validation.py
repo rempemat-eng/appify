@@ -102,6 +102,8 @@ MESA_PACKAGE = {
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
 MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+REFUSAL_RECEIVER_PARENT = "f7c6c899912ad60b20726f8f71ac0f81fa812b35"
+REFUSAL_RECEIVER_PARENT_TREE = "9704fce15ed82ab5c28be395a11a0033016603ed"
 INTENT_RECEIVER_PARENT = "f133b4be7427b51fb099206a93877996f2dddac8"
 INTENT_RECEIVER_PARENT_TREE = "f396e07a9b20caf51c04985c087dc0ddea38bbc0"
 REBIND_RECEIVER_PARENT = "a1f3a7f2305f881b48d1824a1bcd16423a363d91"
@@ -1223,7 +1225,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [INTENT_RECEIVER_PARENT]
+                != [REFUSAL_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", REFUSAL_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", INTENT_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", REBIND_RECEIVER_PARENT + "^{tree}").decode().strip() != REBIND_RECEIVER_PARENT_TREE
@@ -1249,7 +1253,7 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
                 != [INVENTORY_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
                 != INVENTORY_RECEIVER_PARENT_TREE):
-            raise RuntimeError("Inventory candidate is not the exact genuine solef133 child")
+            raise RuntimeError("Inventory candidate is not the exact genuine solef7c6 child")
         changed = set(git(candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines())
         if changed != OWNED_PATHS:
             raise RuntimeError("Inventory candidate must change exactly the two existing receiver paths")
@@ -1880,8 +1884,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [INTENT_RECEIVER_PARENT]:
-            raise RuntimeError("Lifecycle intent rebind must be a genuine sole child of frozen405f133")
+        if parents != [REFUSAL_RECEIVER_PARENT]:
+            raise RuntimeError("Refusal evidence must be a genuine sole child of frozen405f7c6")
+        refusal_headers = git(self.candidate, "cat-file", "commit", REFUSAL_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in refusal_headers.splitlines() if x.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H17 receiver ancestry/tree changed")
         intent_receiver_headers = git(self.candidate, "cat-file", "commit", INTENT_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in intent_receiver_headers.splitlines() if x.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE):
@@ -2053,6 +2061,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "refusal_receiver_parent": REFUSAL_RECEIVER_PARENT, "refusal_receiver_parent_headers": refusal_headers,
                     "intent_receiver_parent": INTENT_RECEIVER_PARENT, "intent_receiver_parent_headers": intent_receiver_headers,
                     "rebind_receiver_parent": REBIND_RECEIVER_PARENT, "rebind_receiver_parent_headers": rebind_headers,
                     "startup_receiver_parent": STARTUP_RECEIVER_PARENT, "startup_receiver_parent_headers": startup_receiver_headers,
@@ -2403,6 +2412,66 @@ class Controller:
                     if relative.startswith("game/.godot/"):
                         limit = 64 * 1024**2
                     if limit is None or not 0 < info.st_size <= limit or info.st_mode & 0o111:
+                        if not getattr(self, "_lifecycle_refusal_recorded", False):
+                            self._lifecycle_refusal_recorded = True
+                            record = {"path": relative[:4096], "label": label[:128], "observed_ns": time.time_ns(),
+                                "lstat": {"mode": info.st_mode, "permissions": stat.S_IMODE(info.st_mode),
+                                    "regular": stat.S_ISREG(info.st_mode), "size": info.st_size,
+                                    "nlink": info.st_nlink, "uid": info.st_uid, "dev": info.st_dev,
+                                    "ino": info.st_ino, "mtime_ns": info.st_mtime_ns, "ctime_ns": info.st_ctime_ns},
+                                "limit": limit, "failed": [reason for reason, failed in (
+                                    ("unlisted", limit is None), ("size", limit is not None and not 0 < info.st_size <= limit),
+                                    ("executable", bool(info.st_mode & 0o111))) if failed],
+                                "bracket": "lstat at refusal only; prior cache stat/content not retained",
+                                "content_status": "NOT_READ", "bytes_read": 0, "errors": []}
+                            self.output["lifecycle"]["refusal_evidence"] = record
+                            descriptors = []
+                            try:
+                                if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_mode & 0o111:
+                                    raise RuntimeError("Refused content is not a safe nonexecutable single-link file")
+                                directory = os.open(self.lifecycle_project, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+                                descriptors.append(directory)
+                                parts = Path(relative).parts
+                                if not parts or any(part in (".", "..") for part in parts):
+                                    raise RuntimeError("Refused content path is not owned")
+                                for part in parts[:-1]:
+                                    directory = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory)
+                                    descriptors.append(directory)
+                                fd = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
+                                descriptors.append(fd)
+                                identity = lambda value: (value.st_dev, value.st_ino, value.st_mode, value.st_size,
+                                    value.st_nlink, value.st_uid, value.st_mtime_ns, value.st_ctime_ns)
+                                if identity(os.fstat(fd)) != identity(info):
+                                    raise RuntimeError("Refused content identity changed before read")
+                                data = os.read(fd, 65536)
+                                record["bytes_read"] = len(data)
+                                if identity(os.fstat(fd)) != identity(info):
+                                    raise RuntimeError("Refused content identity changed during read")
+                                with (self.evidence / "lifecycle-refusal.bin").open("xb", buffering=0) as retained:
+                                    written = retained.write(data)
+                                record["retained"] = {"file": "lifecycle-refusal.bin", "bytes": written,
+                                    "sha256": hashlib.sha256(data[:written]).hexdigest(),
+                                    "complete": written == info.st_size, "truncated": written < info.st_size}
+                                if written != len(data):
+                                    raise OSError("Short refusal evidence write")
+                                if written == info.st_size:
+                                    record["retained"]["full_sha256"] = record["retained"]["sha256"]
+                                record["content_status"] = "RETAINED" if written == info.st_size else "PARTIAL"
+                            except Exception as error:
+                                record["content_status"] = "FAILED"
+                                record["errors"] = (record["errors"] + [type(error).__name__ + ": " + str(error)[:512]])[:4]
+                            finally:
+                                for descriptor in reversed(descriptors):
+                                    try:
+                                        os.close(descriptor)
+                                    except Exception as error:
+                                        record["errors"] = (record["errors"] + [type(error).__name__ + ": " + str(error)[:512]])[:4]
+                            try:
+                                if len(json.dumps(record)) > 16384:
+                                    raise RuntimeError("Refusal metadata exceeds16KiB")
+                                write_json(self.evidence / "lifecycle-refusal.json", record)
+                            except Exception as error:
+                                record["metadata_error"] = type(error).__name__ + ": " + str(error)[:512]
                         raise RuntimeError("Unexpected/oversized disposable output: " + relative)
                     if not relative.startswith("game/.godot/"):
                         generated[relative] = {"bytes": info.st_size, "sha256": digest(path)}
@@ -3112,7 +3181,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", REFUSAL_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", INTENT_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", REBIND_RECEIVER_PARENT + "^{tree}").decode().strip() != REBIND_RECEIVER_PARENT_TREE
