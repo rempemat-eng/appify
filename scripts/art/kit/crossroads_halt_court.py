@@ -18,8 +18,8 @@ import traceback
 
 ROOT = Path(__file__).resolve().parents[3]
 FIXTURE = ROOT / "scripts/review/fixtures/crossroads_halt_court.json"
-SOURCE = "a9bbb7d10e55d0b25b5d6408af5d5c3f1c4816cc"
-SOURCE_TREE = "e83d3295abc4e32a5b4956be3c8e5bd229e0508c"
+SOURCE = "06d0bf745d0c46d2d53b8188db38cd680b149357"
+SOURCE_TREE = "820a6e25847c673e36a6ecf56f3544c921331550"
 SOURCE_BASELINE = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
 LAYOUT = "7bf6b026a21e7996a367d6ae9b5862b3344bdd56"
 LAYOUT_BLOB = "2c2c5474f2154ba1430549823a908996261572c8"

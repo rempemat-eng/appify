@@ -1,8 +1,8 @@
 {
   "document": "MyGame Crossroads Halt court native diagnostic",
   "status": "SOURCE_ONLY_UNRUN_NOT_PRODUCTION_ADOPTION",
-  "source_native_commit": "a9bbb7d10e55d0b25b5d6408af5d5c3f1c4816cc",
-  "source_native_tree": "e83d3295abc4e32a5b4956be3c8e5bd229e0508c",
+  "source_native_commit": "06d0bf745d0c46d2d53b8188db38cd680b149357",
+  "source_native_tree": "820a6e25847c673e36a6ecf56f3544c921331550",
   "source_layout_commit": "7bf6b026a21e7996a367d6ae9b5862b3344bdd56",
   "source_layout_json_blob": "2c2c5474f2154ba1430549823a908996261572c8",
   "GO": 6541871017,
@@ -1478,7 +1478,7 @@
     }
   ],
   "source_input_closure": {
-    "qualification": "Exact112-file conservative native closure:106 unchanged historical407 inputs plus6 explicit overrides (houses, softground, town, kit fills, path and worn recipes). All112 entries bind the current shared-material source a9bbb7d10e55d0b25b5d6408af5d5c3f1c4816cc by actual size/mode/Gitblob. Five entries changed since the historical Q5 closure; all107 others remain exact. Before/after raw SHA guards, historical import audit and Q1 failure are retained.",
+    "qualification": "Exact112-file conservative native closure:105 unchanged historical407 inputs plus7 explicit overrides (houses, softground, town, kit fills/surface, path and worn recipes). All112 entries bind the current longitudinal-overlay source 06d0bf745d0c46d2d53b8188db38cd680b149357 by actual size/mode/Gitblob. Two entries changed since Q6-B; all110 others remain exact. Before/after raw SHA guards, historical import audit and Q1 failure are retained.",
     "files": [
       {
         "path": ".github/workflows/verify.yml",
@@ -1896,8 +1896,8 @@
       },
       {
         "path": "scripts/art/kit/surface.py",
-        "blob": "fb9b1688e8352350845d5669135e83cecfce8bf3",
-        "bytes": 22240,
+        "blob": "bd5e49c1f63b3391beafaac5e4c4acacf83b22e0",
+        "bytes": 24151,
         "mode": "100644"
       },
       {
@@ -2040,8 +2040,8 @@
       },
       {
         "path": "scripts/art/native/softground.py",
-        "blob": "c884eb8b4af8c39aea444d7bc70e67c68e594af6",
-        "bytes": 118068,
+        "blob": "01a7da914d67f90797e7409f6d82d06409d82b8a",
+        "bytes": 120839,
         "mode": "100644"
       },
       {
@@ -2791,5 +2791,55 @@
     },
     "scope": "Shared periodic packed-soil body with broken shallow wear and local aggregate, no nearest-cell rims; same native/editor recipe and phase; packed path/worn receive one final bake treatment. Native rut brightening preserves relative tones and sibling families. Existing house forms/seeds, all routes/thresholds, object shadows, density, semantic IDs, physical gates and runtime limits are unchanged. Historical path_detail_revision remains Q5 evidence only.",
     "status": "SOURCE_ONLY_UNRUN; actual new material pixels, matched-scale detail/cleanliness, native/periodic/bake context, path-to-yard seam and four doorstep contacts require separately allocated rendering. No editor-use, quality, terrain or Matt approval."
+  },
+  "surface_overlay_revision": {
+    "GO": 6557913253,
+    "ASSIGN": 6557918889,
+    "ACK": 6557919131,
+    "overlay_source_assignment": {
+      "GO": 6557784128,
+      "ASSIGN": 6557791942,
+      "ACK": 6557792143,
+      "scope_amendment": 6557837949,
+      "amendment_ACK": 6557851178,
+      "HANDOFF": 6557899290
+    },
+    "source_parent": "30265f7e43603aaf670b0630643ac03cb4a177d6",
+    "source_commit": "06d0bf745d0c46d2d53b8188db38cd680b149357",
+    "source_tree": "820a6e25847c673e36a6ecf56f3544c921331550",
+    "changed_source_paths": [
+      "scripts/art/native/softground.py",
+      "scripts/art/kit/surface.py",
+      "scripts/art/kit/bake.py"
+    ],
+    "changed_input_paths": [
+      "scripts/art/kit/surface.py",
+      "scripts/art/native/softground.py"
+    ],
+    "unchanged_Q6_B_input_count": 110,
+    "unchanged_historical407_input_count": 105,
+    "current112_raw_bytes": 3245200,
+    "candidate_art": {
+      "packed_paths": true
+    },
+    "body_recipe": "Unchanged from reusable_path_material_revision; this revision changes only packed road overlays and removes the duplicate width4+ pebble pass.",
+    "run_fields": "Native and baked packed roads share GD.longitudinal_runs(net,eligible,end_pad=12,taper=24), in art texels. Ambiguous directions, endpoints and class changes taper/break rails, crown and tuft anchors. Existing per-renderer offsets, widths and tones remain.",
+    "scope": "Source binding only. All112 guard entries now match immutable C. House forms/seeds, thresholds, route/net geometry, density, semantic IDs, physical/terrain gates, approval statuses and runtime limits are unchanged. SF.assign and automatic/authored stony variants remain unchanged. Historical path_detail_revision and reusable_path_material_revision remain their original source/evidence snapshots.",
+    "historical_first_context_proof": {
+      "source_expected": "30265f7e43603aaf670b0630643ac03cb4a177d6",
+      "GO": 6557720191,
+      "status": "HISTORICAL COMPOSITE PACKET:77of78 inputs matched B, including all44 consumed target files; unused cottage adapter copy differed. Original result/receipts retained; not full-head proof or detail/art acceptance."
+    },
+    "context_harness_state": "SOURCE_ONLY_UNRUN; exact reviewed native-rut/crown control amendment integrated. Original ruts=0 body/phase checks remain unchanged; added native control does not establish terrain/editor/physical acceptance.",
+    "status": "SOURCE_ONLY_UNRUN; corrected native/bake rails, endpoint/class transitions, crown tone detail and visual ground cleanliness require a separately allocated proof. No editor-use, quality, terrain, art or Matt approval.",
+    "context_harness": {
+      "path": "scripts/art/kit/path_material_contexts.py",
+      "bytes": 18776,
+      "sha256": "bc5a129e99d2d25e5784882add6401b67a466a148cb30486731780adbe2fc124",
+      "git_blob": "21559f2cd2723962aacd4b69e2f82611191a143b",
+      "source_handoff": 6557940548,
+      "scope_amendment": 6557944974,
+      "state": "SOURCE_ONLY_UNRUN"
+    }
   }
 }

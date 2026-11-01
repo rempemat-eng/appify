@@ -6,7 +6,8 @@ Run only on a reviewed private source copy, with output outside that copy::
         --source-root /private/candidate --out /private/new-output
 
 Two 384-pixel atlases exercise the existing native painter, the periodic editor
-BODY (on the same native mask, not the Godot shader), and the actual kit bake.
+BODY (on the same native mask, not the Godot shader), the actual kit bake, and
+an additional native packed rut/crown control using an explicit lab road mask.
 The output uses existing palette/cast-shadow operations. Synthetic doorstep and
 shadow controls are labelled; no prop, physics, material ID or approval is added.
 All target imports and rendering are deferred to main. No subprocess is used.
@@ -172,7 +173,7 @@ def body_checks(lib, origin, F, GD, PAL, np) -> tuple[dict, object]:
             "native_edge_rut_variant_overlays_excluded_from_pixel_parity": True}, tile
 
 
-def body_context(p, lib, tile, periodic, B, GD, PAL, np):
+def body_context(p, lib, tile, periodic, B, GD, PAL, np, native_rut_control=False):
     mat = np.array([[p["legend"][c] for c in row] for row in p["rows"]])
     cv = GD.lawn(SIZE, SIZE, lib["lawn"]["terrain"]["paint"]["args"]["seed"])
     net = np.zeros((SIZE, SIZE), bool)
@@ -182,6 +183,12 @@ def body_context(p, lib, tile, periodic, B, GD, PAL, np):
     args = native_args(lib["path"], GD)
     if periodic:
         cv[net] = sample(tile, args["origin"], SIZE, SIZE, np)[net]
+    elif native_rut_control:
+        # Literal lab geometry, not a production-road classifier or house context.
+        road_cells = np.zeros((GRID, GRID), bool)
+        road_cells[8:11, 1:8] = True
+        road_zone = np.repeat(np.repeat(road_cells, CELL, axis=0), CELL, axis=1)
+        GD.dirt(cv, net, **dict(args, ruts=19, rut_mask=road_zone, crown=True))
     else:
         GD.dirt(cv, net, **args)
     turf = (PAL.is_fam(cv, "grass") | PAL.is_fam(cv, "leaf")) & ~net
@@ -243,9 +250,10 @@ def render(root: Path, out: Path, report: dict) -> None:
     report["plan"] = p
     report["contexts"] = notes
     report["cases"] = []
-    columns = ("Native body + native edge", "Periodic editor BODY + native edge", "Actual kit bake + cast control")
+    columns = ("Native body + native edge", "Periodic editor BODY + native edge", "Actual kit bake + cast control",
+               "Native packed ruts/crown LAB")
     row_height = SIZE + 78
-    sheet = Image.new("RGBA", (SIZE * 3, row_height * len(CASES) + 50), "#f8edd7")
+    sheet = Image.new("RGBA", (SIZE * len(columns), row_height * len(CASES) + 50), "#f8edd7")
     draw = ImageDraw.Draw(sheet)
     draw.text((8, 8), "CANDIDATE / visual review required / 24 art px per cell / grain scale fixed", fill="#202020")
     for index, (seed, origin) in enumerate(CASES):
@@ -261,7 +269,23 @@ def render(root: Path, out: Path, report: dict) -> None:
         baked, _ = bake.bake(copy.deepcopy(p), lib=copy.deepcopy(lib))
         baked_codes = SN.to_codes(baked)
         case["baked_palette_roundtrip_exact"] = bool(np.array_equal(PAL.to_rgba(baked_codes), np.asarray(baked)))
-        for col, (title, codes) in enumerate(zip(columns, (native, periodic, baked_codes))):
+        raised, _ = body_context(p, lib, tile, False, bake, GD, PAL, np, native_rut_control=True)
+        soil = net & PAL.is_fam(native, "path") & PAL.is_fam(raised, "path")
+        same_family = native // 8 == raised // 8
+        case["native_packed_rut_crown_control"] = {
+            "ruts_art_px": 19, "crown": True,
+            "literal_road_cells": {"rows": [8, 11], "cols": [1, 8], "end_exclusive": True},
+            "cell_art_px": CELL, "mask_expansion": "repeat rows24, then cols24",
+            "changed_pixels_vs_native_body": int(np.count_nonzero(native != raised)),
+            "soil_pixels_changed": int(np.count_nonzero(soil & (native != raised))),
+            "base_soil_tone4_pixels": int(np.count_nonzero(soil & (native % 8 == 4))),
+            "control_soil_tone5_pixels": int(np.count_nonzero(soil & (raised % 8 == 5))),
+            "same_family_scuff4_to5_pixels": int(np.count_nonzero(
+                soil & same_family & (native % 8 == 4) & (raised % 8 == 5))),
+            "counts_are": "DIAGNOSTIC_ONLY; no art/detail pass threshold",
+            "qualification": "Literal lab mask; no actual cottage, production road classifier or physics proof",
+        }
+        for col, (title, codes) in enumerate(zip(columns, (native, periodic, baked_codes, raised))):
             image, metrics = cast_control(codes, net, CO, PAL, np, ndi)
             y = 50 + index * row_height
             x = col * SIZE
@@ -319,6 +343,7 @@ def main(argv=None) -> int:
                               "Native/fill pixel parity excludes ruts, variants and intentional edge dressing.",
                               "Origins are art-texel render overrides, not production zone coordinates.",
                               "Synthetic doorway and shade controls are not approved placed props.",
+                              "Fourth native rut/crown control uses a literal lab mask, not actual house or production road semantics.",
                               "No X junction is generated or accepted; T/Y are review contexts.",
                               "No Eastward reference or matched character sprite is included."]}
     try:
