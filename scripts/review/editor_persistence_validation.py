@@ -35,6 +35,9 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
+PAYLOAD_PATH = "scripts/review/editor_persistence_payloads.py"
+LOAD_RECEIVER_PARENT = "be56d3dbc937ce143b62ad49b3e4b8063217cf9e"
+LOAD_RECEIVER_PARENT_TREE = "cad391c0d0310ed075ffaff4db04bdc97f60c939"
 GAME_SHA = "40fb915e633c08b01437c54f9f823e0e5fa24ef3"
 EDITED_GAME_PARENT = "39f22beb86fa40a87eb06374160138ef8c336a92"
 EDITED_GAME_PARENT_TREE = "acde63c78c7ed17c55809c657bb47672bfccda17"
@@ -115,7 +118,7 @@ MESA_PACKAGE = {
 }
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
-MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+MODES = ("FRESH_LOAD", "H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
 OBSERVATION_RECEIVER_PARENT = "1e3c88443aed7f53325bc277b1f3ec65297f91d8"
 OBSERVATION_RECEIVER_PARENT_TREE = "0b4e36f552c9fce72da738e7067574533930ee71"
 SAVE_RECEIVER_PARENT = "a60ffc0346799135013815705c65c00b252292cf"
@@ -238,7 +241,7 @@ OWNED_LIMIT = 768 * 1024**2
 FREE_RESERVE = 256 * 1024**2
 RSS_LIMIT = 2048 * 1024**2
 LOG_LIMIT = 4 * 1024**2
-OWNED_PATHS = {".github/workflows/editor-persistence-validation.yml",
+OWNED_PATHS = {PAYLOAD_PATH, ".github/workflows/editor-persistence-validation.yml",
                "scripts/review/editor_persistence_validation.py"}
 PERSISTENCE_METHODS = (
     "test_minimal_authored_zone_survives_disk_export_and_rebuild",
@@ -265,34 +268,7 @@ PYTHON_ERROR_PATTERN = re.compile(
     r"|editor\.validator_(?:io|failed|protocol)"
 )
 
-PROBE = '''@tool
-extends EditorPlugin
-func _enter_tree() -> void:
-    call_deferred("_paths")
-func _paths() -> void:
-    await get_tree().process_frame
-    var paths = EditorInterface.get_editor_paths()
-    var settings = EditorInterface.get_editor_settings()
-    var out = {
-        "version": Engine.get_version_info(), "executable": OS.get_executable_path(),
-        "os_config": OS.get_config_dir(), "os_data": OS.get_data_dir(), "os_cache": OS.get_cache_dir(),
-        "os_user": OS.get_user_data_dir(), "user_uri": ProjectSettings.globalize_path("user://"),
-        "editor_config": paths.get_config_dir(), "editor_data": paths.get_data_dir(),
-        "editor_cache": paths.get_cache_dir(),
-        "project_settings": ProjectSettings.globalize_path(paths.get_project_settings_dir()),
-        "settings_resource": settings.resource_path,
-        "self_contained": paths.is_self_contained(), "portable_marker": paths.get_self_contained_file()
-    }
-    var file = FileAccess.open(OS.get_environment("EDITOR_PERSISTENCE_CANARY_OUTPUT"), FileAccess.WRITE)
-    if file == null:
-        push_error("EDITOR_PERSISTENCE canary output open failed")
-        get_tree().quit(2)
-        return
-    file.store_string(JSON.stringify(out) + "\\n")
-    file.close()
-    print("EDITOR_PERSISTENCE_CANARY_PATHS=" + JSON.stringify(out))
-    get_tree().quit(0)
-'''
+
 
 
 def digest(path: Path, kind: str = "sha256") -> str:
@@ -394,7 +370,7 @@ def direct_children() -> dict[int, dict]:
     return result
 
 
-PYTHON_OBSERVER = "import json, os, sys, traceback, unittest\nfrom pathlib import Path\n\nselectors = json.loads(sys.argv[1])\noutput = Path(sys.argv[2])\nbase = Path(os.environ['PERSISTENCE_OUT'])\nstate = {'expected': selectors, 'observed': [], 'methods': {n: {'state': 'NOTRUN'} for n in selectors}}\nclass Result(unittest.TextTestResult):\n    def startTest(self, test):\n        self.current = test.id().removeprefix('scripts.art.kit.test_bake_publication.')\n        self.before = set(base.iterdir())\n        state['observed'].append(self.current)\n        state['methods'][self.current] = {'state': 'STARTED', 'id': test.id()}\n        output.write_text(json.dumps(state, indent=2) + '\\n')\n        super().startTest(test)\n    def addSuccess(self, test):\n        state['methods'][self.current]['state'] = 'PASS'\n        super().addSuccess(test)\n    def addFailure(self, test, err):\n        state['methods'][self.current].update(state='FAIL', exception_type=err[0].__name__,\n            message=str(err[1]), traceback=''.join(traceback.format_exception(*err)))\n        super().addFailure(test, err)\n    def addError(self, test, err):\n        state['methods'][self.current].update(state='ERROR', exception_type=err[0].__name__,\n            message=str(err[1]), traceback=''.join(traceback.format_exception(*err)))\n        super().addError(test, err)\n    def addSkip(self, test, reason):\n        state['methods'][self.current].update(state='SKIP', reason=reason)\n        super().addSkip(test, reason)\n    def addSubTest(self, test, subtest, err):\n        if err is not None:\n            state['methods'][self.current].update(state='ERROR', message='unexpected subtest',\n                traceback=''.join(traceback.format_exception(*err)))\n        super().addSubTest(test, subtest, err)\n    def stopTest(self, test):\n        state['methods'][self.current]['evidence_roots'] = [str(p) for p in sorted(set(base.iterdir()) - self.before)]\n        output.write_text(json.dumps(state, indent=2) + '\\n')\n        super().stopTest(test)\ntry:\n    suite = unittest.defaultTestLoader.loadTestsFromNames(\n        ['scripts.art.kit.test_bake_publication.' + n for n in selectors])\n    result = unittest.TextTestRunner(verbosity=2, failfast=True, resultclass=Result).run(suite)\n    state['success'] = result.wasSuccessful()\n    state['testsRun'] = result.testsRun\nexcept BaseException:\n    state['harness_error'] = traceback.format_exc()\n    raise\nfinally:\n    output.write_text(json.dumps(state, indent=2) + '\\n')\nsys.exit(0 if state.get('success') else 1)\n"
+
 
 def mesa_host() -> dict:
     release = platform.freedesktop_os_release()
@@ -1223,10 +1199,12 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
 
 
 def receiver_ancestry_mismatch(candidate: Path, event_sha: str, headers: str) -> bool:
-    """The same frozen 39-clause prefix used by the two receiver-only entrypoints."""
+    """The same 41-clause prefix, retaining all39 historical receiver clauses."""
     return (
         git(candidate, 'rev-parse', 'HEAD').decode().strip() != event_sha
-        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [BYTECOUNT_RECEIVER_PARENT]
+        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [LOAD_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', LOAD_RECEIVER_PARENT + '^{tree}').decode().strip() != LOAD_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', LOAD_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [BYTECOUNT_RECEIVER_PARENT]
         or git(candidate, 'rev-parse', BYTECOUNT_RECEIVER_PARENT + '^{tree}').decode().strip() != BYTECOUNT_RECEIVER_PARENT_TREE
         or [line[7:] for line in git(candidate, 'cat-file', 'commit', BYTECOUNT_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [EDITED_RECEIVER_PARENT]
         or git(candidate, 'rev-parse', EDITED_RECEIVER_PARENT + '^{tree}').decode().strip() != EDITED_RECEIVER_PARENT_TREE
@@ -1730,7 +1708,7 @@ class Controller:
         self.evidence = self.root / "evidence"
         self.event_sha = args.event_sha
         self.mode = args.mode
-        self.active_limit = 60 if self.mode == "DISPLAYED_SMOKE" else 240
+        self.active_limit = 60 if self.mode in ("DISPLAYED_SMOKE", "FRESH_LOAD") else 240
         self.phases = {name: {"state": "NOT RUN"} for name in ("dependencies", "versions", "canary", "import", "check-only", "python-canaries", "focused", "python-faults")}
         self.guards = {}
         self.engine = self.root / "engine" / ENGINE_NAME
@@ -1973,8 +1951,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [BYTECOUNT_RECEIVER_PARENT]:
-            raise RuntimeError("Byte-count receiver must retain sole40565b parent")
+        if parents != [LOAD_RECEIVER_PARENT]:
+            raise RuntimeError("Fresh-load receiver must retain sole405be56 parent")
+        load_headers = git(self.candidate, "cat-file", "commit", LOAD_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in load_headers.splitlines() if x.startswith("parent ")] != [BYTECOUNT_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", LOAD_RECEIVER_PARENT + "^{tree}").decode().strip() != LOAD_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H25 receiver ancestry/tree changed")
         bytecount_headers = git(self.candidate, "cat-file", "commit", BYTECOUNT_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in bytecount_headers.splitlines() if x.startswith("parent ")] != [EDITED_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", BYTECOUNT_RECEIVER_PARENT + "^{tree}").decode().strip() != BYTECOUNT_RECEIVER_PARENT_TREE):
@@ -2163,7 +2145,7 @@ class Controller:
         delta = {name for name in baseline_tree.keys() | candidate_tree.keys()
                  if baseline_tree.get(name) != candidate_tree.get(name)}
         if delta != OWNED_PATHS or any(name in baseline_tree for name in OWNED_PATHS):
-            raise RuntimeError(f"Two NEW receiving paths only: {sorted(delta)}")
+            raise RuntimeError(f"Three receiving paths only: {sorted(delta)}")
         production_delta = {name for name in baseline_tree.keys() | source_tree.keys()
                             if baseline_tree.get(name) != source_tree.get(name)}
         if (production_delta != {"scripts/art/kit/bake.py", "game/tools/kit_zone.gd", DEPENDENT_TEST_PATH,
@@ -2186,12 +2168,25 @@ class Controller:
             shutil.copyfile(p, target)
             candidate_rows[name] = {"blob": blob(p), "sha256": digest(p)}
         self.candidate_initial = candidate_rows
+        payload = self.candidate / PAYLOAD_PATH
+        info = payload.lstat()
+        raw = payload.read_bytes()
+        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or stat.S_IMODE(info.st_mode) != 0o644
+                or not 1 <= len(raw) <= 32768
+                or hashlib.sha1(("blob %d\0" % len(raw)).encode() + raw).hexdigest() != candidate_rows[PAYLOAD_PATH]["blob"]):
+            raise RuntimeError("Immutable receiving payload refused before execution")
+        self.payloads = {}
+        exec(compile(raw, str(payload), "exec"), self.payloads)
+        global PROBE, PYTHON_OBSERVER
+        PROBE, PYTHON_OBSERVER = self.payloads["PROBE"], self.payloads["PYTHON_OBSERVER"]
+        self.payloads.update(sha256=digest, write_json=write_json)
         self.initial = self.snapshot()
         write_json(self.evidence / "generated-uids-before.json", self.generated_uids())
         write_json(self.evidence / "source-before.json", self.initial)
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "load_receiver_parent": LOAD_RECEIVER_PARENT, "load_receiver_headers": load_headers,
                     "bytecount_receiver_parent": BYTECOUNT_RECEIVER_PARENT, "bytecount_receiver_headers": bytecount_headers,
                     "tracked_refusal_parent": TRACKED_REFUSAL_PARENT, "tracked_refusal_headers": tracked_headers,
                      "edited_receiver_parent": EDITED_RECEIVER_PARENT, "edited_receiver_headers": edited_headers,
@@ -3502,53 +3497,61 @@ class Controller:
         failure = None
         try:
             self.setup()
-            if self.mode in ("DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE"):
-                self.dependency_deadline = time.monotonic() + 120
-                self.prepare_display_tool()
-                self.prepare_private_driver()
-                self.display_capabilities_initial = self.display_capabilities()
-            self.install_dependencies()
-            self.get_engine()
-            self.canary()
-            if self.mode == "POSITIVE_LIFECYCLE":
+            if self.mode == "FRESH_LOAD":
+                self.output["qualification"] = "Fresh-process read-only material load only; all old suites and lifecycle NOTRUN."
+                self.get_engine()
+                self.canary()
                 self.transaction_started = time.monotonic()
                 self.arm_budget()
-                self.lifecycle_copy()
-                signal.setitimer(signal.ITIMER_REAL, 0)
-                self.lifecycle_clock = self.transaction_started
-                self.transaction_started = None
-            self.lifecycle_import_started = time.monotonic()
-            import_game = self.lifecycle_project / "game" if self.mode == "POSITIVE_LIFECYCLE" else self.game
-            self.require_clean("import", self.phase("import", [str(self.engine), "--headless", "--audio-driver", "Dummy",
-                                                             "--path", str(import_game), "--import"], 180))
-            self.generated_uids_initial = self.generated_uids()
-            write_json(self.evidence / "generated-uids-after-import.json", self.generated_uids_initial)
-            self.transaction_started = (self.lifecycle_clock + (time.monotonic() - self.lifecycle_import_started)
-                if self.mode == "POSITIVE_LIFECYCLE" else time.monotonic())
-            self.arm_budget()
-            write_json(self.evidence / "result.json", {"state": "TRANSACTION_INCOMPLETE_FAILURE",
-                       "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
-                       "mode": self.mode, "qualification": "Provisional failure until the selected mode, terminal guards and packaging finish within budget."})
-            if self.mode == "POSITIVE_LIFECYCLE":
-                self.positive_lifecycle()
-            elif self.mode == "DISPLAYED_SMOKE":
-                self.displayed_smoke()
+                self.payloads["fresh_load"](self)
             else:
-                self.require_clean("check-only", self.phase("check-only", [
-                    str(self.engine), "--headless", "--audio-driver", "Dummy",
-                    "--path", str(self.game), "--check-only", "--script",
-                    "res://" + TEST_PATH.removeprefix("game/")], 20))
-                self.python_stage("python-canaries", PY_CANARIES)
-                self.reconcile(self.phase("focused", [str(self.engine), "--headless", "--audio-driver", "Dummy",
-                    "--path", str(self.game), "-s", "res://addons/gdUnit4/bin/GdUnitCmdTool.gd",
-                    "--ignoreHeadlessMode", "-a", "res://" + TEST_PATH.removeprefix("game/"),
-                    "-a", "res://" + DEPENDENT_TEST_PATH.removeprefix("game/"), "-rd", REPORT_DIR], 90))
-                if self.output["state"] != "TEN_GDUNIT_PASS":
-                    raise RuntimeError("GdUnit stage did not pass; fault methods remain NOTRUN")
-                self.python_stage("python-faults", PY_FAULTS)
-                if any(state != "PASS" for state in self.output["methods"].values()):
-                    raise RuntimeError("Not all sixteen combined controls passed")
-                self.output["state"] = "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS"
+                if self.mode in ("DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE"):
+                    self.dependency_deadline = time.monotonic() + 120
+                    self.prepare_display_tool()
+                    self.prepare_private_driver()
+                    self.display_capabilities_initial = self.display_capabilities()
+                self.install_dependencies()
+                self.get_engine()
+                self.canary()
+                if self.mode == "POSITIVE_LIFECYCLE":
+                    self.transaction_started = time.monotonic()
+                    self.arm_budget()
+                    self.lifecycle_copy()
+                    signal.setitimer(signal.ITIMER_REAL, 0)
+                    self.lifecycle_clock = self.transaction_started
+                    self.transaction_started = None
+                self.lifecycle_import_started = time.monotonic()
+                import_game = self.lifecycle_project / "game" if self.mode == "POSITIVE_LIFECYCLE" else self.game
+                self.require_clean("import", self.phase("import", [str(self.engine), "--headless", "--audio-driver", "Dummy",
+                                                                 "--path", str(import_game), "--import"], 180))
+                self.generated_uids_initial = self.generated_uids()
+                write_json(self.evidence / "generated-uids-after-import.json", self.generated_uids_initial)
+                self.transaction_started = (self.lifecycle_clock + (time.monotonic() - self.lifecycle_import_started)
+                    if self.mode == "POSITIVE_LIFECYCLE" else time.monotonic())
+                self.arm_budget()
+                write_json(self.evidence / "result.json", {"state": "TRANSACTION_INCOMPLETE_FAILURE",
+                           "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
+                           "mode": self.mode, "qualification": "Provisional failure until the selected mode, terminal guards and packaging finish within budget."})
+                if self.mode == "POSITIVE_LIFECYCLE":
+                    self.positive_lifecycle()
+                elif self.mode == "DISPLAYED_SMOKE":
+                    self.displayed_smoke()
+                else:
+                    self.require_clean("check-only", self.phase("check-only", [
+                        str(self.engine), "--headless", "--audio-driver", "Dummy",
+                        "--path", str(self.game), "--check-only", "--script",
+                        "res://" + TEST_PATH.removeprefix("game/")], 20))
+                    self.python_stage("python-canaries", PY_CANARIES)
+                    self.reconcile(self.phase("focused", [str(self.engine), "--headless", "--audio-driver", "Dummy",
+                        "--path", str(self.game), "-s", "res://addons/gdUnit4/bin/GdUnitCmdTool.gd",
+                        "--ignoreHeadlessMode", "-a", "res://" + TEST_PATH.removeprefix("game/"),
+                        "-a", "res://" + DEPENDENT_TEST_PATH.removeprefix("game/"), "-rd", REPORT_DIR], 90))
+                    if self.output["state"] != "TEN_GDUNIT_PASS":
+                        raise RuntimeError("GdUnit stage did not pass; fault methods remain NOTRUN")
+                    self.python_stage("python-faults", PY_FAULTS)
+                    if any(state != "PASS" for state in self.output["methods"].values()):
+                        raise RuntimeError("Not all sixteen combined controls passed")
+                    self.output["state"] = "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS"
         except BaseException as error:
             failure = {"type": type(error).__name__, "message": str(error), "traceback": traceback.format_exc()}
             if self.output["state"] not in ("PERSISTENCE_ASSERTION_RED_REQUIRES_LEAD_REVIEW",
@@ -3723,6 +3726,8 @@ class Controller:
                 self.output["state"] = "FINAL_GUARD_OR_COLLECTION_FAILURE"
             elif self.output["state"] == "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS":
                 self.output["state"] = "SIXTEEN_COMBINED_PASS"
+            elif self.output["state"] == "FRESH_LOAD_PENDING_TERMINAL_GUARDS":
+                self.output["state"] = "FRESH_LOAD_PASS"
             elif self.output["state"] == "POSITIVE_LIFECYCLE_PENDING_TERMINAL_GUARDS":
                 self.output["state"] = "POSITIVE_LIFECYCLE_PASS"
             elif self.output["state"] == "DISPLAYED_SMOKE_PENDING_TERMINAL_GUARDS":
@@ -3739,7 +3744,7 @@ class Controller:
                            "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
                            "budget": self.budget_receipt(), "failure": repr(error),
                            "qualification": "Emergency failure receipt only; original private outputs remain available independently of incomplete archives. Expiry is not proof of runtime release."})
-        return 0 if self.output["state"] in ("SIXTEEN_COMBINED_PASS", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE_PASS") else 1
+        return 0 if self.output["state"] in ("SIXTEEN_COMBINED_PASS", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE_PASS", "FRESH_LOAD_PASS") else 1
 
 
 def main() -> int:
@@ -3785,6 +3790,7 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 
 

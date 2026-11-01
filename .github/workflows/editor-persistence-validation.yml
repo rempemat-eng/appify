@@ -21,7 +21,7 @@ jobs:
     env:
       # Provider-bound displayed candidate; runtime requires a separate lead allocation.
       # Controller default and normal DISPLAYED_SMOKE/H5 checks remain separate.
-      EDITOR_PERSISTENCE_MODE: POSITIVE_LIFECYCLE
+      EDITOR_PERSISTENCE_MODE: FRESH_LOAD
       CI: 'true'
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
@@ -53,12 +53,13 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 30 # edited-observation ->deadline ->observation ->save-evidence ->tracked-refusal ->exact-empty-cache ->refusal-evidence ->f7c6 ->f133 ->a1f ->d7 ->deba ->3b99 ->87dab ->bcbf ->f833 ->3b51 ->f666 ->efc ->a657 ->444 ->cbf ->79a4 ->7c14 ->6c76 ->597 ->632 ->5de ->6903
+          fetch-depth: 31 # edited-observation ->deadline ->observation ->save-evidence ->tracked-refusal ->exact-empty-cache ->refusal-evidence ->f7c6 ->f133 ->a1f ->d7 ->deba ->3b99 ->87dab ->bcbf ->f833 ->3b51 ->f666 ->efc ->a657 ->444 ->cbf ->79a4 ->7c14 ->6c76 ->597 ->632 ->5de ->6903
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /.github/workflows/editor-persistence-validation.yml
             /scripts/review/editor_persistence_validation.py
+            /scripts/review/editor_persistence_payloads.py
 
       - name: Check out pinned full game and complete Python bake/validator/data closure
         id: source
@@ -184,10 +185,10 @@ jobs:
           inventory = os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY'
           receiver_only = os.environ['EDITOR_PERSISTENCE_MODE'] in ('VULKAN_INVENTORY', 'DRIVER_CAPABILITY')
           if receiver_only:
-              # Retain only the two actual receiver files on early failure.
+              # Retain only the three actual receiver files on early failure.
               # No full-game fallback/archive is allowed in the64MiB inventory.
               base = Path(os.environ['GITHUB_WORKSPACE']) / 'runner'
-              for name in ('scripts/review/editor_persistence_validation.py', '.github/workflows/editor-persistence-validation.yml'):
+              for name in ('scripts/review/editor_persistence_validation.py', '.github/workflows/editor-persistence-validation.yml', 'scripts/review/editor_persistence_payloads.py'):
                   source = base / name
                   if not source.exists():
                       continue
@@ -234,6 +235,8 @@ jobs:
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'VULKAN_INVENTORY' else
                   'One private official-tool enumeration only; no game/science/engine/import/GUI/H5 or X11-presentation acceptance.'
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'DRIVER_CAPABILITY' else
+                  'Fresh-process read-only material load; no SAVE/gestures/lifecycle/full-project import or H5. Missing result is failure.'
+                  if os.environ['EDITOR_PERSISTENCE_MODE'] == 'FRESH_LOAD' else
                   'Private POSITIVE_LIFECYCLE author/save, fresh reopen/bake, fresh runtime physics; all phases NOTRUN unless actual result proves them. No H5 rerun/fullcanonical/art acceptance. Missing result is failure, never PASS.'
                   if os.environ['EDITOR_PERSISTENCE_MODE'] == 'POSITIVE_LIFECYCLE' else
                   'Existing DISPLAYED_SMOKE with qualified private ICD prerequisite; undo/restoration and bake refusals, no H5 rerun or successful save/bake/walk/manual acceptance. Missing result is failure, never PASS.'))
@@ -281,6 +284,7 @@ jobs:
             ${{ github.workspace }}/source/game/test/test_world_editor_dependent_edits.gd.uid
           if-no-files-found: error
           retention-days: 7
+
 
 
 
