@@ -20,7 +20,11 @@ func _join(id: String = "bramble", at_level: int = 1) -> void:
 
 func test_supported_schema_versions_are_coherent_and_refuse_future_versions_atomically() -> void:
 	assert_float(catalogue.schema_version).is_equal(2.0)
-	for version in [1, 2]:
+	var parsed_one: Variant = JSON.parse_string("1")
+	var parsed_two: Variant = JSON.parse_string("2")
+	assert_int(typeof(parsed_one)).is_equal(TYPE_FLOAT)
+	assert_int(typeof(parsed_two)).is_equal(TYPE_FLOAT)
+	for version in [1, parsed_one, 2, parsed_two]:
 		var versioned_catalogue := catalogue.duplicate(true)
 		var versioned_documents := documents.duplicate(true)
 		versioned_catalogue.schema_version = version

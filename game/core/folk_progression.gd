@@ -15,7 +15,10 @@ var _maximum_level := 1
 func configure(catalogue: Variant, documents: Variant) -> Error:
 	if not catalogue is Dictionary or not documents is Array:
 		return ERR_INVALID_DATA
-	if not _whole(catalogue.get("schema_version")) or catalogue.schema_version not in [1, 2]:
+	if not _whole(catalogue.get("schema_version")):
+		return ERR_INVALID_DATA
+	# JSON numbers are floats; Array membership distinguishes them from integer literals.
+	if catalogue.schema_version != 1 and catalogue.schema_version != 2:
 		return ERR_INVALID_DATA
 	if not catalogue.get("status") is String or not catalogue.get("levels") is Dictionary:
 		return ERR_INVALID_DATA
