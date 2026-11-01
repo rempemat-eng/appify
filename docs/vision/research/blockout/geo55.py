@@ -846,8 +846,16 @@ def v55_paint(T):
         rec['feedback_ground'] = feedback_ground(T)
     TW.prepare(T, keepout_boxes=[V.BUILT['the woodland']],
                keepout_discs=[(6296, 3088, 150), (6816, 3648, 110), (6484, 3712, 90), (V.CIRCLE[0], V.CIRCLE[1], 120)])
-    towns = (TW.lay_feedback if REVISION == 'v56' else TW.lay_all)(T, sys.modules[__name__])
-    towns.update(TW.launch_cape(T, sys.modules[__name__]))
+    if REVISION == 'v56':
+        # These source-pinned proposals already live in the producer; select
+        # them deliberately so Town.adopt checks their actual final terrain.
+        authored = {pid: TW.PROPOSED_ADOPTIONS[pid] for pid in ('cinderwick', 'hearthold')}
+        towns = TW.lay_feedback(T, sys.modules[__name__], authored=authored)
+        towns.update(TW.launch_cape(T, sys.modules[__name__],
+                                   authored={'launch-cape': TW.PROPOSED_ADOPTIONS['launch-cape']}))
+    else:
+        towns = TW.lay_all(T, sys.modules[__name__])
+        towns.update(TW.launch_cape(T, sys.modules[__name__]))
     towns.update(TW.charcoal_hollow(T, sys.modules[__name__]))
     for t in towns.values():                                         # no impassable deep forest inside a town: open woods
         if t.buildings:

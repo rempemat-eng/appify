@@ -8,7 +8,7 @@
   14,
   22
  ],
- "buildings_counted": 13,
+ "buildings_counted": 15,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -30,7 +30,7 @@
   "fit": "on the cove's slope above the black sand: the Strand on the beach, Kiln Lane above it, terraced",
   "dry": false,
   "fortified": false,
-  "authored": "by the layout generator from hand-written streets",
+  "authored": "existing generated layout with Y15 Cinderwick-only authored additions (issue149 comment6471345306)",
   "tiers": [
    -1,
    6
@@ -412,12 +412,20 @@
     2470,
     5920
    ],
-   "declared": "the stone quay, the chandler and the harbour office",
+   "declared": "the existing stone quay with detached fishing cottages, net sheds and a working boatyard",
    "town": "Cinderwick",
    "id": "cinderwick-d-the-quay",
-   "buildings": [],
-   "mix": {},
-   "function": "homes"
+   "buildings": [
+    "cinderwick-b014",
+    "cinderwick-b015",
+    "cinderwick-b016",
+    "cinderwick-b017"
+   ],
+   "mix": {
+    "cottage": 2,
+    "barn": 0
+   },
+   "function": "docks and transport with homes"
   },
   {
    "id": "cinderwick-d-the-kilns",
@@ -490,9 +498,19 @@
     56,
     72
    ]
+  ],
+  "shed": [
+   [
+    32,
+    48
+   ],
+   [
+    24,
+    40
+   ]
   ]
  },
- "fronts": 13,
+ "fronts": 17,
  "landmarks": [],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
@@ -860,6 +878,128 @@
    "district": "cinderwick-d-the-strand",
    "counted": true,
    "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b014",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    301,
+    719,
+    8,
+    6
+   ],
+   "rect_px": [
+    2408,
+    5752,
+    64,
+    48
+   ],
+   "faces": "cinderwick-s02",
+   "door_cells": [
+    305,
+    725
+   ],
+   "purpose": "a detached fishing cottage",
+   "occupants": "a fisher's household",
+   "district": "cinderwick-d-the-quay",
+   "counted": true,
+   "counts_as": 1,
+   "plot_cells": [
+    301,
+    717,
+    8,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "cinderwick-b015",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    306,
+    727,
+    7,
+    5
+   ],
+   "rect_px": [
+    2448,
+    5816,
+    56,
+    40
+   ],
+   "faces": "cinderwick-s02",
+   "door_cells": [
+    305,
+    729
+   ],
+   "purpose": "a detached fishing cottage",
+   "occupants": "a fisher's household",
+   "district": "cinderwick-d-the-quay",
+   "counted": true,
+   "counts_as": 1,
+   "plot_cells": [
+    306,
+    725,
+    7,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "cinderwick-b016",
+   "type": "barn",
+   "form": "shed",
+   "footprint_cells": [
+    300,
+    736,
+    4,
+    3
+   ],
+   "rect_px": [
+    2400,
+    5888,
+    32,
+    24
+   ],
+   "faces": "cinderwick-s01",
+   "door_cells": [
+    302,
+    735
+   ],
+   "purpose": "a net shed by the boatyard",
+   "occupants": "work storage only; resident roles deferred to X3",
+   "district": "cinderwick-d-the-quay",
+   "counted": false,
+   "counts_as": 0
+  },
+  {
+   "id": "cinderwick-b017",
+   "type": "barn",
+   "form": "shed",
+   "footprint_cells": [
+    306,
+    736,
+    4,
+    3
+   ],
+   "rect_px": [
+    2448,
+    5888,
+    32,
+    24
+   ],
+   "faces": "cinderwick-s01",
+   "door_cells": [
+    308,
+    735
+   ],
+   "purpose": "a net shed by the boatyard",
+   "occupants": "work storage only; resident roles deferred to X3",
+   "district": "cinderwick-d-the-quay",
+   "counted": false,
+   "counts_as": 0
   }
  ],
  "lifted": [
@@ -1038,7 +1178,30 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
- "open_uses": [],
+ "open_uses": [
+  {
+   "id": "cinderwick-o01",
+   "name": "the boatyard work apron",
+   "kind": "yard",
+   "cells": [
+    294,
+    736,
+    6,
+    5
+   ]
+  },
+  {
+   "id": "cinderwick-o02",
+   "name": "the boatyard net-shed frontage",
+   "kind": "yard",
+   "cells": [
+    300,
+    736,
+    11,
+    3
+   ]
+  }
+ ],
  "theme": {
   "tech": "older-made: kilns, sail and the coaster",
   "waystone": {

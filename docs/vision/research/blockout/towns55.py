@@ -2239,16 +2239,17 @@ def _feedback_neon(T, X):
     return out
 
 
-def lay_feedback(T, X):
+def lay_feedback(T, X, *, authored=None):
     """Reuse the unchanged factories for other settlements, then author the two feedback sites.
 
-    The old default path and default-OFF packet interface remain untouched.
+    Explicit authored packets use the same checked adoption path as lay_all.
+    The default v55 path and default-OFF packet interface remain untouched.
     Only target-region arrays are restored before new source placement, so no
     invisible legacy building/yard/street survives beneath the new layout.
     """
     boxes = [(5680, 3120, 7248, 4384), (9600, 3904, 12544, 5888)]
     saved = _feedback_snapshot(T, boxes)
-    towns = lay_all(T, X)
+    towns = lay_all(T, X, authored=authored)
     # Keep the existing Company's fenced shard yard, a story landmark rather
     # than abandoned city paint. Its footprint remains excluded from new fronts.
     company_fence = (T['K'] == 'fence').copy()
