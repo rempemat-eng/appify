@@ -1,8 +1,8 @@
 {
   "document": "MyGame Crossroads Halt court native diagnostic",
   "status": "SOURCE_ONLY_UNRUN_NOT_PRODUCTION_ADOPTION",
-  "source_native_commit": "06d0bf745d0c46d2d53b8188db38cd680b149357",
-  "source_native_tree": "820a6e25847c673e36a6ecf56f3544c921331550",
+  "source_native_commit": "c85c3c88c03061fe5a06f6904a364a69d1c5c576",
+  "source_native_tree": "923e48a44644e459fc907ce9df877d1579d64edc",
   "source_layout_commit": "7bf6b026a21e7996a367d6ae9b5862b3344bdd56",
   "source_layout_json_blob": "2c2c5474f2154ba1430549823a908996261572c8",
   "GO": 6541871017,
@@ -1478,7 +1478,7 @@
     }
   ],
   "source_input_closure": {
-    "qualification": "Exact112-file conservative native closure:105 unchanged historical407 inputs plus7 explicit overrides (houses, softground, town, kit fills/surface, path and worn recipes). All112 entries bind the current longitudinal-overlay source 06d0bf745d0c46d2d53b8188db38cd680b149357 by actual size/mode/Gitblob. Two entries changed since Q6-B; all110 others remain exact. Before/after raw SHA guards, historical import audit and Q1 failure are retained.",
+    "qualification": "Exact112-file conservative cottage inputs bound to the real Crossroads slice source. The only change from the prior Q6 native source is the retained #403 village prop painter; all111 other declared inputs stay exact. Existing geometry, byte/type/mode guards and historical evidence remain unchanged.",
     "files": [
       {
         "path": ".github/workflows/verify.yml",
@@ -2100,8 +2100,8 @@
       },
       {
         "path": "scripts/art/native/village.py",
-        "blob": "78f5e5c48602242d26a52f2e0ce9dbd37610d999",
-        "bytes": 178366,
+        "blob": "f4c5b8393beb8332403a0760bbedc635f4b35adb",
+        "bytes": 185603,
         "mode": "100644"
       },
       {
@@ -2841,5 +2841,19 @@
       "scope_amendment": 6557944974,
       "state": "SOURCE_ONLY_UNRUN"
     }
+  },
+  "crossroads_slice_consolidation": {
+    "source_commit": "c85c3c88c03061fe5a06f6904a364a69d1c5c576",
+    "source_tree": "923e48a44644e459fc907ce9df877d1579d64edc",
+    "source_parent": "4ba82d82f9014d90e19cd455c2ec90520487a912",
+    "folded_prop_source": "d948ac57134ab092e91c8ab9ccc5d62593f064dd",
+    "retained_block_plan_source": "7bf6b026a21e7996a367d6ae9b5862b3344bdd56",
+    "changed_declared_inputs": [
+      "scripts/art/native/village.py"
+    ],
+    "declared_input_count": 112,
+    "declared_input_bytes": 3252437,
+    "status": "Candidate source consolidation; final exact-PR validation remains pending. Existing Q6 render is historical evidence, not a render of this new source.",
+    "unchanged": "House forms, placement, route geometry, body recipe, semantic IDs, runtime limits and approval states."
   }
 }
