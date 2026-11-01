@@ -232,7 +232,8 @@ def bake(plan: dict, lib: dict | None = None):
                 origin=tuple(a.get('origin', (0, 0))), period=a.get('period', GD.PACKED_PATH_PERIOD))
         # width classes and surface variants over the one painted surface
         cls = SF.path_class(SF.widths(cells))
-        SF.path_widths(cv, net, SF.texels(cls), a.get('seed', 43) + 100, fam=a.get('fam', 'path'))
+        SF.path_widths(cv, net, SF.texels(cls), a.get('seed', 43) + 100, fam=a.get('fam', 'path'),
+                       packed=a.get('soft_joints', False))
         var = SF.assign('dirt', cells, given, dict(ctx_, cls=cls), a.get('seed', 43) + 200)
         SF.path_variants(cv, net, var, a.get('seed', 43) + 300, fam=a.get('fam', 'path'))
         SF.tone_field(cv, net, a.get('seed', 43) + 400)

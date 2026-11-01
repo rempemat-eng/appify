@@ -297,6 +297,39 @@ PACKED_PATH_ARGS = {
 PACKED_PATH_PERIOD = 768  # art texels, the editor's existing 32-cell material period
 
 
+def _inside_runs(mask: np.ndarray) -> tuple:
+    """Cardinal inside-run distances in art texels, including this texel (outside=0)."""
+    H, W = mask.shape
+    yy, xx = np.mgrid[0:H, 0:W]
+    left = xx - np.maximum.accumulate(np.where(~mask, xx, -1), axis=1)
+    right = np.minimum.accumulate(np.where(~mask, xx, W)[:, ::-1], axis=1)[:, ::-1] - xx
+    up = yy - np.maximum.accumulate(np.where(~mask, yy, -1), axis=0)
+    down = np.minimum.accumulate(np.where(~mask, yy, H)[::-1, :], axis=0)[::-1, :] - yy
+    return left, right, up, down
+
+
+def longitudinal_runs(net: np.ndarray, eligible: np.ndarray, end_pad: float = 12.0,
+                      taper: float = 24.0) -> tuple:
+    """Shared packed-road fields; inputs/outputs have one element per art texel.
+
+    Return disjoint horizontal/vertical bool masks, cross-axis side-edge distance and fade0..1.
+    Side distances come from net, never a finite road's enclosing EDT contour. End clearance
+    comes from each valid directional eligible run, so ends, class changes and ambiguous
+    bends/junctions taper and break naturally. This function does not change net or any pixels.
+    """
+    left, right, up, down = _inside_runs(net)
+    span_x, span_y = left + right - 1, up + down - 1
+    eligible = eligible & net
+    horizontal = eligible & (span_x > span_y * 1.4)
+    vertical = eligible & (span_y > span_x * 1.4)
+    lh, rh, _u, _d = _inside_runs(horizontal)
+    _l, _r, uv, dv = _inside_runs(vertical)
+    reach = np.where(horizontal, np.minimum(lh, rh), np.minimum(uv, dv))
+    fade = np.clip((reach - end_pad) / max(1.0, taper), 0, 1)
+    across = np.where(horizontal, np.minimum(up, down), np.minimum(left, right))
+    return horizontal, vertical, across, fade
+
+
 def packed_soil(seed: int = 43, P: int = PACKED_PATH_PERIOD, fam: str = 'path',
                 cell: float = 14.0, stones: float = 0.45, joints: float = 1.1,
                 lit: float = 0.8, blades: float = 0.6) -> np.ndarray:
@@ -435,12 +468,21 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
     # ruts: two soft worn bands, a tone down in the damp sibling, lit along their south lip
     if ruts:
         # Road rut/crown contours follow the road, not the wider road-and-path union.
-        dist = ndi.distance_transform_edt(m if rut_mask is None else (m & rut_mask))
+        if soft_joints:
+            horizontal, vertical, dist, fade = longitudinal_runs(m, m if rut_mask is None else m & rut_mask)
+            flow = (horizontal | vertical) & (fade > 0)
+        else:
+            dist = ndi.distance_transform_edt(m if rut_mask is None else (m & rut_mask))
         wob = (nz(H, W, 16.0, seed + 8) - 0.5) * 4.0
         rut = (np.abs(dist - ruts + wob) < 1.6) & (nz(H, W, 30.0, seed + 9) > 0.42) & m
+        if soft_joints:
+            rut = (np.abs(dist - ruts + wob) < 1.6 * fade) & flow & (nz(H, W, 30.0, seed + 9) > 0.42)
         if rut_mask is not None:
             # wheel tracks only down the roads: wider, slightly sunken and damp (Matt, 26 Oct 23:09)
-            rut = (np.abs(dist - ruts + wob) < 2.6) & m & rut_mask
+            if soft_joints:
+                rut = (np.abs(dist - ruts + wob) < 2.6 * fade) & flow
+            else:
+                rut = (np.abs(dist - ruts + wob) < 2.6) & m & rut_mask
         famc[rut] = FI[fam + '_cool']
         if rut_mask is not None:
             # worn smooth (no clods), a tone down all along, darker damp stretches; sunk a little:
@@ -450,6 +492,8 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
             sh_ = rut & (~down(rut, 1) | ~right(rut, 1))
             t[sh_] = 1
             lip = (down(rut, 1) | right(rut, 1)) & ~rut & m
+            if soft_joints:
+                lip = (down(rut & horizontal, 1) | right(rut & vertical, 1)) & ~rut & flow
             # the village's packed earth is dry and light (Matt, 27 Oct: the roads read as
             # trenches): the clods and the soft gaps between them a tone up off the ruts, so only
             # the wheel tracks and the edge look sunken
@@ -468,18 +512,29 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
             famc[lip] = FI[fam + '_warm']
         else:
             t[rut & (t >= 3) & (nz(H, W, 4.0, seed + 10) > 0.35)] = 2
-            t[down(rut, 1) & ~rut & m & (t >= 3)] = 4
+            if soft_joints:
+                lip = (down(rut & horizontal, 1) | right(rut & vertical, 1)) & ~rut & flow
+                t[lip & (t >= 3)] = 4
+            else:
+                t[down(rut, 1) & ~rut & m & (t >= 3)] = 4
     sel = m & (cv >= 0)
     cv[sel] = (famc * 8 + t)[sel]
     if ruts and crown and rut_mask is not None:
         # the crown between the wheel tracks: grass grows back in tufts and thin patches
         # Reuse the same road-only distance as the wheel tracks above.
         cr = m & rut_mask & (dist > ruts + 4)
-        gp = cr & (nz(H, W, 6.0, seed + 31) > 0.7) & (nz(H, W, 2.5, seed + 32) > 0.4)
+        if soft_joints:
+            cr &= flow
+            gp = cr & (nz(H, W, 6.0, seed + 31) > 0.7 + 0.28 * (1 - fade))
+            gp &= nz(H, W, 2.5, seed + 32) > 0.4
+            anchors, crown_ok = cr & (fade > 0.65), cr
+        else:
+            gp = cr & (nz(H, W, 6.0, seed + 31) > 0.7) & (nz(H, W, 2.5, seed + 32) > 0.4)
+            anchors, crown_ok = cr, m
         cv[gp] = C('grass_warm', 2)
-        cy_, cx_ = np.nonzero(cr)
+        cy_, cx_ = np.nonzero(anchors)
         for k in rng.permutation(len(cy_))[: len(cy_) // 160]:
-            stamp(cv, int(cy_[k]), int(cx_[k]), tuft_shape(rng, rng.uniform(0.8, 1.3)), C('grass_warm', 2), m)
+            stamp(cv, int(cy_[k]), int(cx_[k]), tuft_shape(rng, rng.uniform(0.8, 1.3)), C('grass_warm', 2), crown_ok)
     if not soft_joints:
         # dry blades blown onto the dirt: short pale curves (Eastward 12)
         ys2, xs2 = np.nonzero(m & ndi.binary_erosion(m, iterations=6))
