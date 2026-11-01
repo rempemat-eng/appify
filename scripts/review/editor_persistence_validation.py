@@ -38,6 +38,8 @@ import zipfile
 GAME_SHA = "40fb915e633c08b01437c54f9f823e0e5fa24ef3"
 EDITED_GAME_PARENT = "39f22beb86fa40a87eb06374160138ef8c336a92"
 EDITED_GAME_PARENT_TREE = "acde63c78c7ed17c55809c657bb47672bfccda17"
+BYTECOUNT_RECEIVER_PARENT = "65b74391486cd8352fcbb2c4967439f27f1f051a"
+BYTECOUNT_RECEIVER_PARENT_TREE = "86891ac352c1de7c37a9c2ef39826c9e12bbd9ac"
 EDITED_RECEIVER_PARENT = "67d0c96cb245687ae2e14a585273b381dd01ad11"
 EDITED_RECEIVER_PARENT_TREE = "62b40df8407404bc9f36eff9525cae0dfbfcd083"
 DEADLINE_GAME_PARENT = "6a53c907ee55bc573121c12366182bf1ce9efdd9"
@@ -157,7 +159,7 @@ DEPENDENT_TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
 GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
 GAME_COUNT = 6689
-GAME_BYTES = 87907264
+GAME_BYTES = 87907357
 PYTHON_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165),
  'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444),
  'art/scenes/woodland.json': ('4ddc7ed7b91d413f897388969579b4d06a2a7486', 31704),
@@ -1221,10 +1223,12 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
 
 
 def receiver_ancestry_mismatch(candidate: Path, event_sha: str, headers: str) -> bool:
-    """The same frozen 37-clause prefix used by the two receiver-only entrypoints."""
+    """The same frozen 39-clause prefix used by the two receiver-only entrypoints."""
     return (
         git(candidate, 'rev-parse', 'HEAD').decode().strip() != event_sha
-        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [EDITED_RECEIVER_PARENT]
+        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [BYTECOUNT_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', BYTECOUNT_RECEIVER_PARENT + '^{tree}').decode().strip() != BYTECOUNT_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', BYTECOUNT_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [EDITED_RECEIVER_PARENT]
         or git(candidate, 'rev-parse', EDITED_RECEIVER_PARENT + '^{tree}').decode().strip() != EDITED_RECEIVER_PARENT_TREE
         or [line[7:] for line in git(candidate, 'cat-file', 'commit', EDITED_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [DEADLINE_RECEIVER_PARENT]
         or git(candidate, 'rev-parse', DEADLINE_RECEIVER_PARENT + '^{tree}').decode().strip() != DEADLINE_RECEIVER_PARENT_TREE
@@ -1804,15 +1808,15 @@ class Controller:
         mutable_roots = (self.root, self.game / ".godot", self.game / "reports-editor-persistence")
 
         def scan_error(error: OSError) -> None:
-            # Only mutable duty outputs may vanish. Tracked/candidate source,
-            # permission failures and every other I/O error still fail closed.
+
+
             if isinstance(error, FileNotFoundError) and error.filename is not None:
                 path = Path(error.filename)
                 if any(path.is_relative_to(p) for p in mutable_roots):
                     return
-                # Godot's observed asset-side atomic .import-XXXXXX sibling.
-                # Only the established exact-source snapshot grants ownership;
-                # canonical assets/sidecars and tracked lookalikes stay strict.
+
+
+
                 initial = getattr(self, "initial", None)
                 if (self.game == self.source / "game" and path.is_relative_to(self.game)
                         and isinstance(initial, dict) and initial.get("head") == GAME_SHA
@@ -1840,7 +1844,7 @@ class Controller:
                     used += info.st_blocks * 512
         output = self.root / "test-output"
         if output.exists():
-            # Retain all publication/CLI evidence and refuse over-budget output.
+
             output_bytes = sum(p.stat().st_size for p in output.rglob("*") if p.is_file())
             if output_bytes > 64 * 1024**2:
                 raise RuntimeError("Combined test-output64MiB limit")
@@ -1969,8 +1973,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [EDITED_RECEIVER_PARENT]:
-            raise RuntimeError("Edited-resource receiver must retain sole40567d0 parent")
+        if parents != [BYTECOUNT_RECEIVER_PARENT]:
+            raise RuntimeError("Byte-count receiver must retain sole40565b parent")
+        bytecount_headers = git(self.candidate, "cat-file", "commit", BYTECOUNT_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in bytecount_headers.splitlines() if x.startswith("parent ")] != [EDITED_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", BYTECOUNT_RECEIVER_PARENT + "^{tree}").decode().strip() != BYTECOUNT_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H24 receiver ancestry/tree changed")
         edited_headers = git(self.candidate, "cat-file", "commit", EDITED_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in edited_headers.splitlines() if x.startswith("parent ")] != [DEADLINE_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", EDITED_RECEIVER_PARENT + "^{tree}").decode().strip() != EDITED_RECEIVER_PARENT_TREE):
@@ -2184,6 +2192,7 @@ class Controller:
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
+                    "bytecount_receiver_parent": BYTECOUNT_RECEIVER_PARENT, "bytecount_receiver_headers": bytecount_headers,
                     "tracked_refusal_parent": TRACKED_REFUSAL_PARENT, "tracked_refusal_headers": tracked_headers,
                      "edited_receiver_parent": EDITED_RECEIVER_PARENT, "edited_receiver_headers": edited_headers,
                     "deadline_receiver_parent": DEADLINE_RECEIVER_PARENT, "deadline_receiver_headers": deadline_headers,
@@ -2324,7 +2333,7 @@ class Controller:
     def prepare_display_tool(self) -> None:
         host = mesa_host()
         installed = installed_mesa()
-        # Refuse every other missing display prerequisite before any acquisition.
+
         self.display_capabilities("display-capabilities-before-tool.json", missing_glx_ok=True)
         bootstrap = {}
         for name in (("ldd", "dpkg-deb") if installed is None else ("ldd",)):
@@ -2855,7 +2864,7 @@ class Controller:
             if method == PY_FAULTS[2] and exceptional:
                 if call.get("file_limit") is not None or call.get("returncode") not in (0, 1):
                     raise RuntimeError("Rejected-export unexpected signal/exit or file limit")
-                # exit0 is precisely the asserted production failure, never canary success.
+
                 if result["state"] == "PASS" and call.get("returncode") == 0:
                     raise RuntimeError("Rejected-export PASS contradicts actual call")
             if method == PY_FAULTS[3] and exceptional:
@@ -2871,7 +2880,7 @@ class Controller:
         write_json(self.evidence / (method + "-cli.json"), result)
 
     def get_engine(self) -> None:
-        # A partial/mismatching download is part of failure evidence, not a lost temp file.
+
         archive = self.evidence / "engine-download.zip"
         started = time.monotonic()
         downloaded = 0
@@ -2910,8 +2919,8 @@ class Controller:
             raise RuntimeError("Portable marker/settings beside copied executable")
         self.engine_guard = {"bytes": self.engine.stat().st_size, "sha256": digest(self.engine)}
         write_json(self.evidence / "engine.json", self.engine_guard)
-        # Retire only this verified, task-owned download after retaining exact hashes.
-        # No original/donor/cache path is removed. Mismatching downloads remain intact.
+
+
         archive.unlink()
         self.output["verified_download_retired"] = True
         self.capacity()
@@ -3004,8 +3013,8 @@ class Controller:
         except BaseException as error:
             reason = f"controller/prerequisite failure: {type(error).__name__}: {error}"
         finally:
-            # Never asynchronously interrupt the existing identity-safe actual
-            # collection. Its original bounded wait deadlines remain authoritative.
+
+
             signal.setitimer(signal.ITIMER_REAL, 0)
             collection_start = time.monotonic()
             collection_deadline = collection_start + (min(10, max(0, 30 - self.collection_used))
