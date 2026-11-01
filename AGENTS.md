@@ -1,6 +1,6 @@
 # Working on MyGame
 
-> **Codex runs the whole project for now (Matt, 28 Oct 17:24), until Matt says to switch back to Claude.** The Codex lead takes over every Claude lane's role, Claude A's included: coordination, integration and merging, art and map work, and the docs. Wherever this file or the docs say Claude A or a Claude lane does something, the Codex lead does it, or assigns it to a Codex chat. Art and map changes merge after Matt's OK. See docs/codex/handover.md.
+> **Claude A directs again (Matt, 1 Nov 20:23); the Codex lead keeps running the delegation.** Claude A sets priorities, art direction and Matt's review list, and reviews art. The Codex lead keeps coordinating #149, allocating validation, and merging non-art PRs that pass every check. Art and map PRs merge after Matt's OK. The current orders are Claude A's newest post on #149 ("DIRECTOR") and docs/codex/handover.md. They override the 28 Oct takeover note.
 
 The source of truth is `rempemat-eng/appify` on GitHub. The Bilt editor and its preview are outdated. Real multiplayer is a later phase; finish the existing art, motion, HUD and local interactions before adding more content or mechanics.
 
