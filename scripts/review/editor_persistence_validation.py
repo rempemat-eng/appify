@@ -36,6 +36,8 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 PAYLOAD_PATH = "scripts/review/editor_persistence_payloads.py"
+FINISH_RECEIVER_PARENT = "d8b2bdd97315b86070d7403eb8c7a6902f3d1500"
+FINISH_RECEIVER_PARENT_TREE = "6d0f8b05eeeceb1760c7c85732c4d6da9d441f51"
 LOAD_RECEIVER_PARENT = "be56d3dbc937ce143b62ad49b3e4b8063217cf9e"
 LOAD_RECEIVER_PARENT_TREE = "cad391c0d0310ed075ffaff4db04bdc97f60c939"
 GAME_SHA = "40fb915e633c08b01437c54f9f823e0e5fa24ef3"
@@ -1199,10 +1201,12 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
 
 
 def receiver_ancestry_mismatch(candidate: Path, event_sha: str, headers: str) -> bool:
-    """The same 41-clause prefix, retaining all39 historical receiver clauses."""
+    """The same 43-clause prefix, retaining all41 historical receiver clauses."""
     return (
         git(candidate, 'rev-parse', 'HEAD').decode().strip() != event_sha
-        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [LOAD_RECEIVER_PARENT]
+        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [FINISH_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', FINISH_RECEIVER_PARENT + '^{tree}').decode().strip() != FINISH_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', FINISH_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [LOAD_RECEIVER_PARENT]
         or git(candidate, 'rev-parse', LOAD_RECEIVER_PARENT + '^{tree}').decode().strip() != LOAD_RECEIVER_PARENT_TREE
         or [line[7:] for line in git(candidate, 'cat-file', 'commit', LOAD_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [BYTECOUNT_RECEIVER_PARENT]
         or git(candidate, 'rev-parse', BYTECOUNT_RECEIVER_PARENT + '^{tree}').decode().strip() != BYTECOUNT_RECEIVER_PARENT_TREE
