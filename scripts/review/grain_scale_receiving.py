@@ -225,8 +225,10 @@ CONTEXT_PRIVATE_FILES = (
 # Separate, reviewed four-cottage subject. No old source or art pin is repointed.
 HALT_RECEIVER_PARENT = "f8d5269047449ddf7ea9077b90f04e1237797516"
 HALT_RECEIVER_PARENT_TREE = "d30685162bc07b2fc2130431d2a3b55360e33fb5"
-HALT_SOURCE_SHA = "e19307388d09925b88d802d1319f56b18487b256"
-HALT_SOURCE_TREE = "950cff12386a729f11997c17d6d331e414faf8e6"
+HALT_Q5_SOURCE_SHA = "e19307388d09925b88d802d1319f56b18487b256"
+HALT_SOURCE_SHA = "4ba82d82f9014d90e19cd455c2ec90520487a912"
+HALT_Q5_SOURCE_TREE = "950cff12386a729f11997c17d6d331e414faf8e6"
+HALT_SOURCE_TREE = "291c4c4d4a54582d4e0ce68e380b05e69065e14b"
 HALT_PREVIOUS_SOURCE = "58c20c5dcafe59d30656fa85c638b0333396aab8"
 HALT_PREVIOUS_SOURCE_TREE = "e45f58df8c3a2ab9efc1ed991d632283f3d2c9ce"
 HALT_PREVIOUS_ADAPTER_INPUTS = {
@@ -238,6 +240,57 @@ HALT_PATH_NATIVE_TREE = "6bc28b0db77df8b55a1bac3333e2d01ce962f81c"
 HALT_PATH_NATIVE_PATHS = {"scripts/art/native/softground.py", "scripts/art/native/town.py"}
 HALT_PATH_RECEIVER_PARENT = "2689581f23fcf9edfc4ccb9e3ce3b3127e4555c4"
 HALT_PATH_RECEIVER_PARENT_TREE = "96d960af175aa2b2ed4870deab7a8178770b80b2"
+# Q5 remains immutable history; Q6 revisions are checked separately below.
+HALT_Q6_RECEIVER_PARENT = "f39661fc5c8a745f982fbdb9ef2129d788db8743"
+HALT_Q6_RECEIVER_PARENT_TREE = "f166e667e0e4ad9029b2415e54c2f3bbdb4939ed"
+HALT_Q6_REVISIONS = (('a9bbb7d10e55d0b25b5d6408af5d5c3f1c4816cc',
+  'e83d3295abc4e32a5b4956be3c8e5bd229e0508c',
+  'e19307388d09925b88d802d1319f56b18487b256',
+  {'game/kit/pieces/terrain/path.json': ('100644', '5ddcede922f192ac50b04504e0c38272b84d0ad4'),
+   'game/kit/pieces/terrain/worn.json': ('100644', 'beeeadbd5659deb9ef8b4040b4599a606f5cf94d'),
+   'scripts/art/kit/bake.py': ('100644', 'b6d1f4ae65990b48cb23a1d6a100131e2a91b20f'),
+   'scripts/art/kit/fills.py': ('100644', '53390e79ccf36a129c1daffed076c6450eef00c7'),
+   'scripts/art/native/softground.py': ('100644', 'c884eb8b4af8c39aea444d7bc70e67c68e594af6'),
+   'scripts/art/native/town.py': ('100644', '31b2bb4601ad6770ec5e1e91f8acf853a163c8ce')}),
+ ('30265f7e43603aaf670b0630643ac03cb4a177d6',
+  '2984146fddcf9bcd78721520c8bdb5780fb72295',
+  'a9bbb7d10e55d0b25b5d6408af5d5c3f1c4816cc',
+  {'scripts/art/kit/crossroads_halt_court.py': ('100644', 'e5997cf6817263773489ba1112e0161a74191080'),
+   'scripts/review/fixtures/crossroads_halt_court.json': ('100644',
+                                                          '6d5ff249f388fcffdcdcf9c8b93a4acf2318d1d2'),
+   'scripts/art/kit/path_material_contexts.py': ('100644', 'c95f730db7c3b8ef45477001458b806a4a4af12a')}),
+ ('06d0bf745d0c46d2d53b8188db38cd680b149357',
+  '820a6e25847c673e36a6ecf56f3544c921331550',
+  '30265f7e43603aaf670b0630643ac03cb4a177d6',
+  {'scripts/art/kit/bake.py': ('100644', 'd6ba5ec7dd63edc4f2a7a3cd5d9a9c7a1f6c1269'),
+   'scripts/art/kit/surface.py': ('100644', 'bd5e49c1f63b3391beafaac5e4c4acacf83b22e0'),
+   'scripts/art/native/softground.py': ('100644', '01a7da914d67f90797e7409f6d82d06409d82b8a')}),
+ ('4ba82d82f9014d90e19cd455c2ec90520487a912',
+  '291c4c4d4a54582d4e0ce68e380b05e69065e14b',
+  '06d0bf745d0c46d2d53b8188db38cd680b149357',
+  {'scripts/art/kit/crossroads_halt_court.py': ('100644', 'd493966e9c4856e9fed65aefde65edcbfc230331'),
+   'scripts/art/kit/path_material_contexts.py': ('100644', '21559f2cd2723962aacd4b69e2f82611191a143b'),
+   'scripts/review/fixtures/crossroads_halt_court.json': ('100644',
+                                                          '80c44ec4917059760687e80b688f5878d4c03901')}))
+# Actual Q5 run41278465844/artifact13071873638, independently retained packet
+# libfile_edc61bb13f5c8191acbff2c9507d1712/v0 SHA256a1f9a551...b705a.
+# These are body/crop byte regressions only, never terrain/reference approval.
+HALT_Q5_OUTPUT_PINS = {'presentation/crossroads_halt_b039-door.png': {'bytes': 1290,
+                                                'sha256': '43b09737d0018db681c0ed8f62302a223b89eb294f560e30fd283b2a21e93bc5'},
+ 'presentation/crossroads_halt_b038-door.png': {'bytes': 1733,
+                                                'sha256': '42b9a06f493fbac517b15787fbccf93208327c0adb684d7f58d9bc51d331b222'},
+ 'presentation/crossroads_halt_b040-door.png': {'bytes': 1287,
+                                                'sha256': '5224b0b85b135464731f54b0eb53458ed85f7df06d4e39394c125ef00d878d6a'},
+ 'presentation/crossroads_halt_b029-door.png': {'bytes': 1280,
+                                                'sha256': '0a826cee97fbb6443409380e4c1676344b732e96db7b7e75ef980c22c9e989da'},
+ 'game/zones/crossroads_halt_court/art/crossroads_halt_b029.png': {'bytes': 18991,
+                                                                   'sha256': 'c3e571c46e6e7ead167feab0eb1c4580f7c887c82e5a915310bd0a0cb9d0339c'},
+ 'game/zones/crossroads_halt_court/art/crossroads_halt_b040.png': {'bytes': 19163,
+                                                                   'sha256': 'e549978f99689cb961c843783906f24fc44018370c60e03113c604f836a6325b'},
+ 'game/zones/crossroads_halt_court/art/crossroads_halt_b039.png': {'bytes': 19347,
+                                                                   'sha256': '3c0c5beb712baff3d21174013d8d0fd0b71039a4c6457805eacae21ac233c20c'},
+ 'game/zones/crossroads_halt_court/art/crossroads_halt_b038.png': {'bytes': 20120,
+                                                                   'sha256': '2b04a3ecc9ca151c8c66ea21bd1920f77fa3a197cc8b8c5699754e7a0c7efc95'}}
 HALT_SOURCE_CONTEXT = "a25dada748cf398f4c1c32eb5fc0e19308dd7b3b"
 HALT_SOURCE_CONTEXT_TREE = "3ed1a0df87b34e3abd03324356cc59bffdeef249"
 HALT_NATIVE_INTEGRATION = "45f2c80b657169ef4d7445bc9ff5ddd153960707"
@@ -269,7 +322,7 @@ HALT_CLOSURE_RECEIVER_PARENT = "3386ecff5e160bb7ac3749a110025350186abd16"
 HALT_CLOSURE_RECEIVER_PARENT_TREE = "1ba2c8406866197245cffd5abea528e2e5843838"
 HALT_CONTEXT_RECEIVER_PARENT = "45f93407de9ebee6265bf5674f1e15c01a92a7a8"
 HALT_CONTEXT_RECEIVER_PARENT_TREE = "ff921da284e1322a059495dd777c59c68d531f4a"
-HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165, '100644'),
+HALT_Q5_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165, '100644'),
  'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444, '100644'),
  'art/scenes/pilot.json': ('442c2bdf3f33c34a7df6453b0a6110fc4a31169c', 37797, '100644'),
  'art/scenes/woodland.json': ('4ddc7ed7b91d413f897388969579b4d06a2a7486', 31704, '100644'),
@@ -403,6 +456,145 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/water_flow.py': ('4e1ebf799cae783c35642f6c1b9e34463ed300e0', 8888, '100644'),
  'scripts/review/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
  'scripts/review/fixtures/crossroads_halt_court.json': ('8722fd375cf69b2951a44103080771d9241e4b01', 62177, '100644'),
+ 'scripts/review/ground_rules.py': ('0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68', 18956, '100644'),
+ 'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305, '100644')}
+
+HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165, '100644'),
+ 'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444, '100644'),
+ 'art/scenes/pilot.json': ('442c2bdf3f33c34a7df6453b0a6110fc4a31169c', 37797, '100644'),
+ 'art/scenes/woodland.json': ('4ddc7ed7b91d413f897388969579b4d06a2a7486', 31704, '100644'),
+ 'game/assets/characters/moss/manifest.json': ('0840eda370a71247ce76a4f90f48bb4c59058704', 280584, '100644'),
+ 'game/assets/characters/moss/sheets/idle_S.png': ('b82e504e38d223665ba265ca0dbcc54906158e5a',
+                                                   5101,
+                                                   '100644'),
+ 'game/kit/pieces/prop/crossroads_handcart.json': ('d50ff1b2469e67333ecc47b4dd58a794a3a7c21d',
+                                                   1684,
+                                                   '100644'),
+ 'game/kit/pieces/prop/crossroads_sacks.json': ('ad8a77b6d5b63e9863cde3d2ba7980fc2d2c30e8', 1625, '100644'),
+ 'game/kit/pieces/structure/crossroads_smithy.json': ('205e304b0a26e5f2cabff0d77526ec699b4bd668',
+                                                      5267,
+                                                      '100644'),
+ 'game/kit/pieces/terrain/lawn.json': ('1c340e8f9387cc59e89de242e0fc500d5adad04e', 1271, '100644'),
+ 'game/kit/pieces/terrain/path.json': ('5ddcede922f192ac50b04504e0c38272b84d0ad4', 1911, '100644'),
+ 'game/kit/pieces/terrain/worn.json': ('beeeadbd5659deb9ef8b4040b4599a606f5cf94d', 1971, '100644'),
+ 'game/kit/schema/piece.schema.json': ('fd61e5d29ca017e3f3796a013c86fc0afe58dc16', 25094, '100644'),
+ 'game/kit/terrain/decal_bankstone_0.png': ('ddf77156d3d58f20354d84ef9b7ce61f23f1dff0', 275, '100644'),
+ 'game/kit/terrain/decal_bankstone_1.png': ('5fdb5043422f7b5b5ec2fe8128300bb8f9c16b20', 392, '100644'),
+ 'game/kit/terrain/decal_bankstone_2.png': ('05fe9555da522a5f6e5343372cb097eaca99f4f1', 430, '100644'),
+ 'game/kit/terrain/decal_blades_0.png': ('b55bcd0317bac13b62d92c5c7c28869bb5edc75d', 92, '100644'),
+ 'game/kit/terrain/decal_blades_1.png': ('53241ac03be6f74b8643cc278659e85b9d8d330c', 89, '100644'),
+ 'game/kit/terrain/decal_blades_2.png': ('9f83cd2b210bcfe5e25fa95fbdfebe9c77511ee8', 95, '100644'),
+ 'game/kit/terrain/decal_pebble_0.png': ('f7b20ff8808807c6ef7b2716093eb14068453fde', 92, '100644'),
+ 'game/kit/terrain/decal_pebble_1.png': ('904592fcaab25c7caa641e9ad971e9cc20709cd4', 102, '100644'),
+ 'game/kit/terrain/decal_pebble_2.png': ('6fca74306d297fe156f61afc17e687ac7e18233d', 125, '100644'),
+ 'game/kit/terrain/decal_pebble_3.png': ('6079ab32f4085f56c59482bbd00ceda5e1bf40db', 125, '100644'),
+ 'game/kit/terrain/decal_rushes_0.png': ('6b62a84773f1ccc823f18763399239fe2467c810', 185, '100644'),
+ 'game/kit/terrain/decal_rushes_1.png': ('e9187e8d3d6d89ff943e196a843f11f8bfbf06d6', 192, '100644'),
+ 'game/kit/terrain/decal_rushes_2.png': ('f661c9f4d4e12c3fc732a8a1ad30a47739a75fb5', 207, '100644'),
+ 'game/kit/terrain/decal_tuft_0.png': ('7f63c07c10bcf77cf21d1a576c1e9b1d02c7fedc', 129, '100644'),
+ 'game/kit/terrain/decal_tuft_1.png': ('37334286da6babb496acf504a78e4cc014f0b200', 133, '100644'),
+ 'game/kit/terrain/decal_tuft_2.png': ('d74b3e7ee0d5318312c093cb0a5ba46839557277', 124, '100644'),
+ 'game/kit/terrain/decal_tuft_3.png': ('6443a0d10ac79427a474a08a38dd3cf3ddbaa78f', 127, '100644'),
+ 'game/kit/terrain/decal_tuft_4.png': ('584951e7acb946afec5c92c8f84f7b4e4a3c9c19', 130, '100644'),
+ 'game/kit/terrain/decal_tuft_5.png': ('b1cb49799015296addc07f58edee7d736ffd47a3', 135, '100644'),
+ 'game/kit/terrain/fill_cobble_road.png': ('139ba1e3302393b596b80d0b23aa5458fe13219d', 161706, '100644'),
+ 'game/kit/terrain/fill_earth_face.png': ('c2b3a544cfd7ec7ace86e80ab6d4acf2ba770a91', 12039, '100644'),
+ 'game/kit/terrain/fill_lawn.png': ('2da7fe642e60d366fe7b1c7db34928125d93718f', 160150, '100644'),
+ 'game/kit/terrain/fill_path.png': ('928c65c1f1e3d054aafd0a74133e78e602b2afd1', 121824, '100644'),
+ 'game/kit/terrain/fill_scree.png': ('10ad783be4b63c56401c6dff622082c8bc57a3d6', 191874, '100644'),
+ 'game/kit/terrain/fill_water.png': ('bae33576d7b875c455b314b51cad64f51fd8e19f', 21795, '100644'),
+ 'game/kit/terrain/fill_worn.png': ('928c65c1f1e3d054aafd0a74133e78e602b2afd1', 121824, '100644'),
+ 'game/kit/terrain/manifest.json': ('eaa4e0381bb1fba2ebf62657f7e42a7d1e6d21da', 10284, '100644'),
+ 'game/kit/terrain/noise.png': ('2e877679e37e07ebf459f77c6cc73c5bcfb4ef4d', 224556, '100644'),
+ 'game/kit/terrain/over_earth_face_over_any.png': ('7a0877194c4e24708807e856346b826cc7902bf4',
+                                                   26950,
+                                                   '100644'),
+ 'game/kit/terrain/over_lawn_over_earth_face.png': ('a3c30d6847349b6bdb2ba8e5c4eeb642daadf7ec',
+                                                    25071,
+                                                    '100644'),
+ 'game/kit/terrain/over_lawn_over_lower_tier.png': ('91385dcab2d4a001e0131d2e383f0833011a8c79',
+                                                    24541,
+                                                    '100644'),
+ 'game/kit/terrain/over_lawn_over_path.png': ('f78f169f901a1a7204569fc68f2ad182189777f9', 27186, '100644'),
+ 'game/kit/terrain/over_lawn_over_scree.png': ('f78f169f901a1a7204569fc68f2ad182189777f9', 27186, '100644'),
+ 'game/kit/terrain/over_lawn_over_water.png': ('5e5ec3ccd827c8fc258bd583f6105ad533c95630', 37711, '100644'),
+ 'game/kit/terrain/over_lawn_over_worn.png': ('f78f169f901a1a7204569fc68f2ad182189777f9', 27186, '100644'),
+ 'game/kit/terrain/over_path_over_earth_face.png': ('a3c30d6847349b6bdb2ba8e5c4eeb642daadf7ec',
+                                                    25071,
+                                                    '100644'),
+ 'game/kit/terrain/over_path_over_lower_tier.png': ('91385dcab2d4a001e0131d2e383f0833011a8c79',
+                                                    24541,
+                                                    '100644'),
+ 'game/kit/terrain/over_path_over_water.png': ('5e5ec3ccd827c8fc258bd583f6105ad533c95630', 37711, '100644'),
+ 'game/kit/terrain/over_water_over_earth_face.png': ('a3c30d6847349b6bdb2ba8e5c4eeb642daadf7ec',
+                                                     25071,
+                                                     '100644'),
+ 'game/kit/terrain/over_worn_over_path.png': ('9ccba9db0724d211a3a9d4d1b5116462d0928c3a', 14740, '100644'),
+ 'game/zones/crossroads/art/handcart.png': ('c1016d875a02681ecfc24f624b98dc74e3caa35d', 2189, '100644'),
+ 'game/zones/crossroads/art/sacks_12.png': ('26f9bc05d662407557e6c152cf7fbc8c65b41871', 1122, '100644'),
+ 'game/zones/crossroads/art/smithy.png': ('33325f45415f94bb4afcc72a19553c7d1c592951', 26700, '100644'),
+ 'scripts/art/biomes/meadow.json': ('c3f78b2528b9fcc2a6e39bec823e1739944c1eb0', 10422, '100644'),
+ 'scripts/art/biomes/woodland.json': ('6da96e5aa39b945288b2a71e826e7e6b535a7559', 8822, '100644'),
+ 'scripts/art/house_palette.py': ('8a816d1799abd1fc22931a2c93fbe620a14a200e', 17753, '100644'),
+ 'scripts/art/kit/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
+ 'scripts/art/kit/build.py': ('054206b5ea00d227ae0a33075a0b0b2e0355d4b5', 18911, '100644'),
+ 'scripts/art/kit/compose.py': ('4435017b23a5d50ed0a5e8801abc536b84854416', 12458, '100644'),
+ 'scripts/art/kit/crossroads_halt_court.py': ('d493966e9c4856e9fed65aefde65edcbfc230331', 15094, '100644'),
+ 'scripts/art/kit/dressing.py': ('e4b4db15f45a0f1e202012a7c8d506e6f4970c5f', 8356, '100644'),
+ 'scripts/art/kit/edges.py': ('28fdf16622c7a0bed0f8d427e2ed6938fc7bcd69', 23944, '100644'),
+ 'scripts/art/kit/fills.py': ('53390e79ccf36a129c1daffed076c6450eef00c7', 18233, '100644'),
+ 'scripts/art/kit/props.py': ('8fd407ff82f2964c862d5b810c67b5e004bba2a6', 5792, '100644'),
+ 'scripts/art/kit/relations.py': ('dd6b718b24f9f681cd5450ecbb0216e6a1ae8420', 19542, '100644'),
+ 'scripts/art/kit/render_zone.py': ('16da219083adad0bcdd869739e5b3e338933beda', 2237, '100644'),
+ 'scripts/art/kit/schema.py': ('056c1f9a30d49e203badd97624458130c79c81b2', 14148, '100644'),
+ 'scripts/art/kit/surface.py': ('bd5e49c1f63b3391beafaac5e4c4acacf83b22e0', 24151, '100644'),
+ 'scripts/art/native/__init__.py': ('424a4a68c50941eb2550d4bcbdd8dff8fd5c37b9', 2747, '100644'),
+ 'scripts/art/native/accents.json': ('d612eb0e6c3eb7eedf8cf878186c26bc1aaa9486', 921, '100644'),
+ 'scripts/art/native/animate.py': ('a18a7df99b9e351aabc3155ac901877c5a668369', 5604, '100644'),
+ 'scripts/art/native/build.py': ('854aac3918946ba42c9a6d6f9ced3c9913f1dec8', 5828, '100644'),
+ 'scripts/art/native/chars.py': ('864c53227701a7a7c346ab41de75664650f40d81', 23727, '100644'),
+ 'scripts/art/native/check.py': ('12a4d3df0a29958a3acbc646ab758887f74c8eca', 18917, '100644'),
+ 'scripts/art/native/compose.py': ('b6abc53b110b870c82755ce149e71c93448c2b6b', 29597, '100644'),
+ 'scripts/art/native/ctx.py': ('c79cfda10603fcc7092a4b879dc552c01d88f6c1', 1506, '100644'),
+ 'scripts/art/native/export.py': ('b8ee8e36817e67cef0c31bdd05489e118946ddd5', 3638, '100644'),
+ 'scripts/art/native/foliage.py': ('53a1b9800f139fa2afe42ace29b89a71843cda00', 40423, '100644'),
+ 'scripts/art/native/ground.py': ('c74a4b8ffed4f48c2f7e6cc6e0a0d200407069f9', 5072, '100644'),
+ 'scripts/art/native/houses.py': ('5c8d707d8cced8547940da604d60418a69f82108', 93085, '100644'),
+ 'scripts/art/native/masters/zones_props_bush.png': ('56620559c348b132d37753906993de15f6d8f918',
+                                                     685,
+                                                     '100644'),
+ 'scripts/art/native/masters/zones_props_oak.png': ('4ec864da301865d52dccdce40ecd389331a7a286',
+                                                    2180,
+                                                    '100644'),
+ 'scripts/art/native/measure.py': ('246b3b13bc1dcb45ab59ac5f438ead81d21e97a1', 2372, '100644'),
+ 'scripts/art/native/palette.py': ('7685bc30fa29bf2c6fe87cfdc4e2ecae2f908b28', 6189, '100644'),
+ 'scripts/art/native/props.py': ('4a7396cac80431c1080d62510cbd9c2fa7a30132', 84233, '100644'),
+ 'scripts/art/native/raster.py': ('5b19ed242b81eb492bf38b422993b398be30b764', 16968, '100644'),
+ 'scripts/art/native/rig.py': ('0cdc88a77ac6d8c9c5ca0764f03f60fd99f1f203', 7427, '100644'),
+ 'scripts/art/native/rocks.py': ('915357f9e61528d1c296ab41533cca6fdffcc276', 21773, '100644'),
+ 'scripts/art/native/screen.py': ('a7e04486c835a87f281e3785bbabde1e72df178e', 73374, '100644'),
+ 'scripts/art/native/softedge.py': ('d57d6e1a875e3b9c5aa78d2768af5f8a46c20b1e', 5048, '100644'),
+ 'scripts/art/native/softgrid.py': ('365cdd330b3a1628a1e7eca1114648262a506dab', 27518, '100644'),
+ 'scripts/art/native/softground.py': ('01a7da914d67f90797e7409f6d82d06409d82b8a', 120839, '100644'),
+ 'scripts/art/native/terrain/__init__.py': ('955bbcf2a5172718655203a0cc8f6d08671b60ee', 2792, '100644'),
+ 'scripts/art/native/terrain/decals.py': ('fbbac154045fa4e1205561ad21554838c79874a4', 8622, '100644'),
+ 'scripts/art/native/terrain/noise.py': ('0d879d5d85126774b9df5b1b11fa81d88037cc10', 1660, '100644'),
+ 'scripts/art/native/terrain/scene.py': ('406f9f63e988bfb1fe8410dbffd444116d555915', 81041, '100644'),
+ 'scripts/art/native/terrain/sheets.py': ('1c2072d629a5c7f259b93fd303061826e255999d', 43948, '100644'),
+ 'scripts/art/native/terrain/tiles.py': ('e0d05e1c0ddc525a4dd952ae557353178d3a5e2f', 45209, '100644'),
+ 'scripts/art/native/thornback.py': ('8cbb1cbe503cd9f8b54625de12442e013f4c3e98', 32748, '100644'),
+ 'scripts/art/native/town.py': ('31b2bb4601ad6770ec5e1e91f8acf853a163c8ce', 52290, '100644'),
+ 'scripts/art/native/undercroft.py': ('f5d5295bda624d01a11c9fd82486cb3df917dc91', 80899, '100644'),
+ 'scripts/art/native/village.py': ('78f5e5c48602242d26a52f2e0ce9dbd37610d999', 178366, '100644'),
+ 'scripts/art/native/water.py': ('8a18feda4c9d6f8580471a61157529ad8293c637', 22027, '100644'),
+ 'scripts/art/native/zone.py': ('f6635712e08e92fbaeb1979d22f7f50d9d6f9dca', 3221, '100644'),
+ 'scripts/art/pixel.py': ('bc0112b14f9eba4f5b8cf6ff18309603826f8c81', 7894, '100644'),
+ 'scripts/art/size_guide.json': ('f30ecb3249d771e5dc6cdf6546d50400b118cf57', 45069, '100644'),
+ 'scripts/art/water_flow.py': ('4e1ebf799cae783c35642f6c1b9e34463ed300e0', 8888, '100644'),
+ 'scripts/review/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
+ 'scripts/review/fixtures/crossroads_halt_court.json': ('80c44ec4917059760687e80b688f5878d4c03901',
+                                                        67842,
+                                                        '100644'),
  'scripts/review/ground_rules.py': ('0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68', 18956, '100644'),
  'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305, '100644')}
 
@@ -888,10 +1080,12 @@ class Controller:
         for name, (sha, size, mode) in self.inputs.items():
             p = root / name
             st = p.lstat()
-            if (not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or st.st_size != size
-                    or blob(p) != sha or bool(st.st_mode & 0o111) != (mode == "100755")):
+            permissions = {"100644": 0o644, "100755": 0o755}.get(mode)
+            if (permissions is None or not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or st.st_size != size
+                    or blob(p) != sha or stat.S_IMODE(st.st_mode) != permissions):
                 raise RuntimeError(f"Pinned physical input differs: {name}")
-            rows[name] = {"blob": sha, "bytes": size, "mode": mode, "sha256": digest(p)}
+            rows[name] = {"blob": sha, "bytes": size, "mode": mode, "sha256": digest(p),
+                          "physical_mode": stat.S_IMODE(st.st_mode)}
         return rows
 
     def candidate_snapshot(self):
@@ -900,9 +1094,13 @@ class Controller:
         for name in sorted(OWNED_PATHS):
             p = self.candidate / name
             st = p.lstat()
-            if not stat.S_ISREG(st.st_mode) or st.st_nlink != 1 or expected.get(name) != ("100644", blob(p)):
+            pinned = expected.get(name)
+            permissions = {"100644": 0o644, "100755": 0o755}.get(pinned[0] if pinned else None)
+            if (permissions is None or not stat.S_ISREG(st.st_mode) or st.st_nlink != 1
+                    or stat.S_IMODE(st.st_mode) != permissions or pinned != ("100644", blob(p))):
                 raise RuntimeError("Receiving source differs from immutable event")
-            rows[name] = {"blob": blob(p), "sha256": digest(p), "bytes": st.st_size}
+            rows[name] = {"blob": blob(p), "sha256": digest(p), "bytes": st.st_size,
+                          "physical_mode": stat.S_IMODE(st.st_mode)}
         return rows
 
     def setup(self):
@@ -932,8 +1130,17 @@ class Controller:
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_PATH_RECEIVER_PARENT]:
-            raise RuntimeError("Path preview rebind must retain the exact sole2689 receiver parent")
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_Q6_RECEIVER_PARENT]:
+            raise RuntimeError("Q6 rebind must retain the exact solef396 receiver parent")
+        q5_receiver_headers = git(self.candidate, "cat-file", "commit", HALT_Q6_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in q5_receiver_headers.splitlines() if x.startswith("parent ")] != [HALT_PATH_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", HALT_Q6_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_Q6_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen Q5 receiver must retain sole2689 parent/tree")
+        q5_receiver_tree = tree(self.candidate, HALT_Q6_RECEIVER_PARENT)
+        q6_receiver_tree = tree(self.candidate)
+        q6_receiver_delta = {p for p in q5_receiver_tree.keys() | q6_receiver_tree.keys() if q5_receiver_tree.get(p) != q6_receiver_tree.get(p)}
+        if q6_receiver_delta != MODE_PATHS:
+            raise RuntimeError("Q6 receiver changes only existing controller/workflow; fixture frozen")
         path_receiver_headers = git(self.candidate, "cat-file", "commit", HALT_PATH_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in path_receiver_headers.splitlines() if x.startswith("parent ")] != [HALT_FEEDBACK_RECEIVER_PARENT]
                 or git(self.candidate,"rev-parse",HALT_PATH_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_PATH_RECEIVER_PARENT_TREE):
@@ -1057,7 +1264,7 @@ class Controller:
                     or any(feedback_offered[p] != {**HALT_NATIVE_CHANGES, **HALT_PREVIOUS_ADAPTER_INPUTS}[p] for p in feedback_base_delta)):
                 raise RuntimeError("Frozen Q4 subject differs from historical407 only by native two plus adapter two")
             path_native_headers = git(self.source,"cat-file","commit",HALT_PATH_NATIVE).decode().split("\n\n",1)[0]
-            path_headers = git(self.source,"cat-file","commit",HALT_SOURCE_SHA).decode().split("\n\n",1)[0]
+            path_headers = git(self.source,"cat-file","commit",HALT_Q5_SOURCE_SHA).decode().split("\n\n",1)[0]
             if ([x[7:] for x in path_native_headers.splitlines() if x.startswith("parent ")] != [HALT_PREVIOUS_SOURCE]
                     or [x[7:] for x in path_headers.splitlines() if x.startswith("parent ")] != [HALT_PATH_NATIVE]
                     or git(self.source,"rev-parse",HALT_PATH_NATIVE+"^{tree}").decode().strip() != HALT_PATH_NATIVE_TREE):
@@ -1065,17 +1272,38 @@ class Controller:
             path_native = tree(self.source,HALT_PATH_NATIVE)
             path_native_delta = {p for p in feedback_offered.keys() | path_native.keys() if feedback_offered.get(p) != path_native.get(p)}
             if (path_native_delta != HALT_PATH_NATIVE_PATHS
-                    or any(path_native[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in path_native_delta)):
+                    or any(path_native[p] != (HALT_Q5_INPUTS[p][2],HALT_Q5_INPUTS[p][0]) for p in path_native_delta)):
                 raise RuntimeError("Path native A changes only exact reviewed softground and town inputs")
-            path_offered = tree(self.source,HALT_SOURCE_SHA)
+            if git(self.source,"rev-parse",HALT_Q5_SOURCE_SHA+"^{tree}").decode().strip() != HALT_Q5_SOURCE_TREE:
+                raise RuntimeError("Frozen Q5 B tree differs")
+            path_offered = tree(self.source,HALT_Q5_SOURCE_SHA)
             path_delta = {p for p in path_native.keys() | path_offered.keys() if path_native.get(p) != path_offered.get(p)}
             if (path_delta != HALT_SOURCE_NEW
-                    or any(path_offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in path_delta)):
+                    or any(path_offered[p] != (HALT_Q5_INPUTS[p][2],HALT_Q5_INPUTS[p][0]) for p in path_delta)):
                 raise RuntimeError("Path adapter B changes only the exact existing entrypoint and fixture")
             path_base_delta = {p for p in base.keys() | path_offered.keys() if base.get(p) != path_offered.get(p)}
             if (path_base_delta != HALT_SOURCE_NEW | set(HALT_NATIVE_CHANGES) | HALT_PATH_NATIVE_PATHS
-                    or any(path_offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in path_base_delta)):
+                    or any(path_offered[p] != (HALT_Q5_INPUTS[p][2],HALT_Q5_INPUTS[p][0]) for p in path_base_delta)):
                 raise RuntimeError("Current path subject differs from historical407 only by native three plus adapter two")
+            q6_history = []
+            q6_base = path_offered
+            q6_parent = HALT_Q5_SOURCE_SHA
+            for q6_sha, q6_tree, expected_parent, q6_pins in HALT_Q6_REVISIONS:
+                q6_headers = git(self.source,"cat-file","commit",q6_sha).decode().split("\n\n",1)[0]
+                if (expected_parent != q6_parent
+                        or [x[7:] for x in q6_headers.splitlines() if x.startswith("parent ")] != [expected_parent]
+                        or git(self.source,"rev-parse",q6_sha+"^{tree}").decode().strip() != q6_tree):
+                    raise RuntimeError("Q6 A->B->C->D soleparent/tree differs")
+                q6_files = tree(self.source,q6_sha)
+                q6_delta = {p for p in q6_base.keys() | q6_files.keys() if q6_base.get(p) != q6_files.get(p)}
+                if q6_delta != set(q6_pins) or any(q6_files[p] != pin for p,pin in q6_pins.items()):
+                    raise RuntimeError("Q6 revision changes beyond its exact reviewed paths/blobs")
+                q6_history.append({"sha":q6_sha,"tree":q6_tree,"parent":expected_parent,"headers":q6_headers,"changed":sorted(q6_delta)})
+                q6_base, q6_parent = q6_files, q6_sha
+            if (q6_parent != HALT_SOURCE_SHA or len(HALT_INPUTS) != 114
+                    or sum(v[1] for v in HALT_INPUTS.values()) != 3328136
+                    or any(q6_base[p] != (pin[2],pin[0]) for p,pin in HALT_INPUTS.items())):
+                raise RuntimeError("Current114-input Q6 HEAD binding differs")
             self.output["halt_subject_history"] = {"headers":court_headers,"parent_sha":HALT_SOURCE_PARENT,
                 "parent_tree":HALT_SOURCE_PARENT_TREE,"parent_headers":court_parent_headers,
                 "original_sha":HALT_SOURCE_ORIGINAL,"original_tree":HALT_SOURCE_ORIGINAL_TREE,
@@ -1083,11 +1311,12 @@ class Controller:
                 "baseline_sha":HALT_SOURCE_BASE,"baseline_tree":HALT_SOURCE_BASE_TREE,
                 "changed":sorted(changed),"correction_changed":sorted(correction),"not_receiver_ancestor":True,
                 "historical_context_sha":HALT_SOURCE_CONTEXT,"historical_context_tree":HALT_SOURCE_CONTEXT_TREE,
-                "source_sha":HALT_SOURCE_SHA,"source_tree":HALT_SOURCE_TREE,"feedback_headers":path_headers,
+                "source_sha":HALT_SOURCE_SHA,"source_tree":HALT_SOURCE_TREE,"q5_feedback_headers":path_headers,
+                "q5_source_sha":HALT_Q5_SOURCE_SHA,"q5_source_tree":HALT_Q5_SOURCE_TREE,"q6_revisions":q6_history,
                 "native_integration_sha":HALT_NATIVE_INTEGRATION,"native_integration_tree":HALT_NATIVE_INTEGRATION_TREE,
                 "integration_headers":integration_headers,"native_parents":native_parent_history,
                 "integration_changed":sorted(integration_delta),"feedback_changed":sorted(path_delta),
-                "current_changed_from_historical407":sorted(path_base_delta),
+                "q5_changed_from_historical407":sorted(path_base_delta),
                 "qualification":"Actual reviewed integration; historical407 remains baseline. Four nominal width24 rectangular cores do not clear capsule physics: radius12 intrudes4 world px into own floor. Terrain/collision/adoption remain open; no waiver."}
         active_tree = tree(self.candidate, ACTIVE_RECEIVER_PARENT)
         context_tree = tree(self.candidate, CONTEXT_RECEIVER_PARENT)
@@ -1114,7 +1343,8 @@ class Controller:
         write_json(self.evidence / "source-before.json", self.before)
         write_json(self.evidence / "candidate.json", {"head": self.event_sha,
             "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
-            "headers": headers,"feedback_receiver_headers":feedback_receiver_headers,"feedback_receiver_parent":HALT_FEEDBACK_RECEIVER_PARENT,
+            "headers": headers,"q5_receiver_headers":q5_receiver_headers,"q6_receiver_parent":HALT_Q6_RECEIVER_PARENT,
+            "q6_receiver_delta":sorted(q6_receiver_delta),"feedback_receiver_headers":feedback_receiver_headers,"feedback_receiver_parent":HALT_FEEDBACK_RECEIVER_PARENT,
             "goods_feedback_headers":goods_feedback_headers,"goods_feedback_parent":GOODS_FEEDBACK_RECEIVER_PARENT,
             "halt_context_headers":halt_context_headers,"halt_context_parent":HALT_CONTEXT_RECEIVER_PARENT,
             "closure_headers":closure_headers,"closure_parent":HALT_CLOSURE_RECEIVER_PARENT,
@@ -1852,7 +2082,10 @@ def draw_halt_court(root: Path, work: Path, evidence: Path) -> int:
             or any(records[n] != v for n,v in before_receipt.items())
             or sum(v["bytes"] for v in records.values()) > 16*1024**2):
         raise RuntimeError("Actual halt files differ from closed native receipt/16MiB bound")
+    if any(records.get(n) != pin for n,pin in HALT_Q5_OUTPUT_PINS.items()):
+        raise RuntimeError("Q6 cottage body/door PNG bytes differ from retained actual Q5; no acceptance inferred")
     write_json(evidence / "halt_court-result.json", {"state":"PASS","source_sha":HALT_SOURCE_SHA,
+        "q5_body_and_door_byte_pins":"PASS; four whole bodies and four crops match actual Q5 only",
         "source_tree":HALT_SOURCE_TREE,"native_entrypoint_calls":1,"native_town_invocations_started":1,
         "completed_native_body_outputs":4,"constructor_calls":"Planned4HD+4legacy; not instrumented",
         "output_files":records,"native_result":result,
