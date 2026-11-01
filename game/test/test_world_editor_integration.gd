@@ -110,6 +110,42 @@ func test_real_physical_validator_keeps_route_clear_failures() -> void:
 		found = found or finding.check == "rules.route_clear"
 	assert_bool(found).override_failure_message(str(result)).is_true()
 
+func test_validate_checks_unchanged_inherited_spawns_without_changing_export() -> void:
+	for space in ["texels", "cells"]:
+		for at in [Vector2(84, 36), Vector2(36, 12)]:
+			var plan := {"zone": "inherited_spawn_fixture", "lab": true,
+				"coordinate_space": space, "legend": {".": "lawn", "~": "water"},
+				"rows": ["......", "...~~.", "...~~.", "......"],
+				"spawns": {"start": [0.5, 0.5] if space == "cells" else [12, 12]}}
+			var zone := ZonePlan.scene_from_plan(plan)
+			var inherited := Marker2D.new()
+			inherited.name = "inherited"
+			inherited.position = at
+			inherited.set_meta(ZonePlan.EXPLICIT_META, false)
+			inherited.set_meta(&"kit_zone_inherited", at)
+			zone.get_node("Spawns").add_child(inherited)
+			inherited.owner = zone
+			add_child(zone)
+			var library := {}
+			for id in ["lawn", "water"]:
+				library[id] = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/terrain/%s.json" % id))
+			var history := UndoRedo.new()
+			var ops := Operations.new()
+			ops.configure(zone, zone.get_node("Ground"), history, {
+				"library": library, "zone_validator": Callable(Rules, "validate_plan"),
+			})
+			_fixtures.append({"zone": zone, "history": history, "operations": ops})
+			var before := ZonePlan.canonical(ops.export_plan().plan)
+			assert_bool(ops.export_plan().plan.spawns.has("inherited")).is_false()
+			var result := ops.validate()
+			var blocked := at == Vector2(84, 36)
+			assert_bool(result.ok).override_failure_message(str(result)).is_equal(not blocked)
+			var found := false
+			for finding in result.diagnostics:
+				found = found or finding.get("check", "") == "rules.walk"
+			assert_bool(found).override_failure_message(str(result)).is_equal(blocked)
+			assert_str(ZonePlan.canonical(ops.export_plan().plan)).is_equal(before)
+
 func _solid_scene(_id: String) -> KitPiece:
 	var piece := (load("res://kit/props/woodland_forest_bench.tscn") as PackedScene).instantiate() as KitPiece
 	piece.get_node("Solid").collision_layer = 5

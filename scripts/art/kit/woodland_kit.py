@@ -181,6 +181,10 @@ def main(argv=None) -> int:
     kit = B.Kit()
     grid = cells_of(plan)
     st = stands()
+    # Keep both the default entry and spring review stand on the path below the bridge,
+    # clear of the softened riverbank. These overrides belong to this candidate kit zone.
+    st['start'] = [384.0, 996.0]
+    st['spring'] = [384.0, 996.0]
     out = {
         'zone': 'woodland_kit',
         'note': 'The woodland rebuilt with the kit (scripts/art/kit/woodland_kit.py): its plan as cells and pieces, '

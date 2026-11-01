@@ -428,7 +428,7 @@ static func _flow_layer(rows: Array, cell: int) -> TileMapLayer:
 				flow.set_cell(Vector2i(x, y), 0, Vector2i(i, 0))
 	return flow
 
-static func plan_from_scene(root: Node2D, fallback: Dictionary = {}) -> Dictionary:
+static func plan_from_scene(root: Node2D, fallback: Dictionary = {}, include_inherited_spawns: bool = false) -> Dictionary:
 	var plan: Dictionary = root.get_meta(PLAN_META, fallback).duplicate(true)
 	var ground := root.get_node("Ground") as TerrainGround
 	var kit := TerrainKit.shared()
@@ -523,7 +523,7 @@ static func plan_from_scene(root: Node2D, fallback: Dictionary = {}) -> Dictiona
 	for marker in spawn_node.get_children() if spawn_node != null else []:
 		if not marker is Marker2D:
 			continue
-		if not bool(marker.get_meta(EXPLICIT_META, true)) and marker.position == marker.get_meta(&"kit_zone_inherited", marker.position):
+		if not include_inherited_spawns and not bool(marker.get_meta(EXPLICIT_META, true)) and marker.position == marker.get_meta(&"kit_zone_inherited", marker.position):
 			continue
 		var id := _logical_id(marker)
 		spawns[id] = _position_value(marker.position, plan.get("spawns", {}).get(id, []), unit)

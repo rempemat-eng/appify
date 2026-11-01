@@ -51,10 +51,10 @@ from scripts.art.native.palette import C, FI, is_fam
 D = ctx.D
 CELL = 24
 ZONES = os.path.join(ROOT, 'game', 'kit', 'zones')
-# the kit's own code: a change here makes a baked ground stale (check:kit). The native painters
-# (softground, screen, rocks) are shared with every lane, so a change there is picked up at the
-# next bake without failing anyone's check
-SOURCES = ['scripts/art/kit/bake.py', 'scripts/art/kit/surface.py', 'scripts/art/kit/structures.py']
+# The shared soil body is a direct baked-material dependency: changing it must invalidate a bake,
+# just as a recipe change does. Other native painters retain their existing next-bake behaviour.
+SOURCES = ['scripts/art/kit/bake.py', 'scripts/art/kit/surface.py', 'scripts/art/kit/structures.py',
+           'scripts/art/native/softground.py']
 
 
 def _pieces_lib() -> dict:
@@ -198,6 +198,7 @@ def bake(plan: dict, lib: dict | None = None):
     given = np.array([list(r) for r in plan['variants']]) if plan.get('variants') else None
     # routes and worn ground: packed earth, then (after the ledges) their sunken edges
     routes = []
+    dirt_groups = []
     for m, p in sorted(paint.items(), key=lambda kv: kv[1].get('order', 0)):
         a = p.get('args', {})
         if p.get('fn') != 'dirt':
@@ -206,11 +207,42 @@ def bake(plan: dict, lib: dict | None = None):
         net &= ~band
         if a.get('foot_pad'):
             pass
-        GD.dirt(cv, net, a.get('seed', 43), fam=a.get('fam', 'path'), cell=a.get('cell', 12), stones=a.get('stones', 1.0))
+        cells = mat == m
+        if a.get('soft_joints'):
+            # A path and its adjoining worn yard share one material, including width/variant
+            # treatment. Keep each existing outline, but do not introduce a texture reset or
+            # a false material edge merely because their semantic material IDs differ.
+            body_keys = ('seed', 'fam', 'cell', 'stones', 'joints', 'lit', 'blades',
+                         'soft_joints', 'origin', 'period', 'edge_stones')
+            # Numeric controls compare by value (14 and 14.0 are the same recipe), not their
+            # JSON spelling. Origins are normalized to tuples for the same phase comparison.
+            key = tuple(tuple(a.get(k, (0, 0))) if k == 'origin' else a.get(k) for k in body_keys)
+            group = next((g for g in dirt_groups if g[0] == key), None)
+            if group is not None:
+                group[1] |= cells
+                group[2] |= net
+                continue
+        else:
+            key = None
+        dirt_groups.append([key, cells, net, a])
+    for _key, cells, net, a in dirt_groups:
+        packed = a.get('soft_joints', False)
+        body_args = {'fam': a.get('fam', 'path'), 'cell': a.get('cell', 12),
+                     'stones': a.get('stones', 1.0)}
+        if packed:
+            # Packed recipes explicitly opt into the Crossroads providers. Legacy recipes
+            # keep their original API, so editor tooling does not import unapproved art.
+            body_args.update(joints=a.get('joints', 0.28), lit=a.get('lit', 0.4),
+                             blades=a.get('blades', 1.0), soft_joints=True,
+                             origin=tuple(a.get('origin', (0, 0))), period=a.get('period', 768))
+        GD.dirt(cv, net, a.get('seed', 43), **body_args)
         # width classes and surface variants over the one painted surface
-        cls = SF.path_class(SF.widths(mat == m))
-        SF.path_widths(cv, net, SF.texels(cls), a.get('seed', 43) + 100, fam=a.get('fam', 'path'))
-        var = SF.assign('dirt', mat == m, given, dict(ctx_, cls=cls), a.get('seed', 43) + 200)
+        cls = SF.path_class(SF.widths(cells))
+        width_args = {'fam': a.get('fam', 'path')}
+        if packed:
+            width_args['packed'] = True
+        SF.path_widths(cv, net, SF.texels(cls), a.get('seed', 43) + 100, **width_args)
+        var = SF.assign('dirt', cells, given, dict(ctx_, cls=cls), a.get('seed', 43) + 200)
         SF.path_variants(cv, net, var, a.get('seed', 43) + 300, fam=a.get('fam', 'path'))
         SF.tone_field(cv, net, a.get('seed', 43) + 400)
         routes.append((net, a))

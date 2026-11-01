@@ -826,15 +826,10 @@ collision_mask = 0
 [node name="Shape" type="CollisionShape2D" parent="Actors/HaleOnThePath/Hale/Post" unique_id=604465183]
 shape = SubResource("post")
 
-[node name="Hatch" type="Polygon2D" parent="Actors" unique_id=1380246065]
-z_index = -1
-color = Color(0.25, 0.2, 0.15, 1)
-polygon = PackedVector2Array(315, 1018, 345, 1018, 345, 1042, 315, 1042)
-
 [node name="Spawns" type="Node2D" parent="." unique_id=499410481]
 
 [node name="start" type="Marker2D" parent="Spawns" unique_id=995968168]
-position = Vector2(405, 750)
+position = Vector2(384, 996)
 
 [node name="crossroads" type="Marker2D" parent="Spawns" unique_id=1343902074]
 position = Vector2(880, 1340)
@@ -849,7 +844,7 @@ position = Vector2(330, 480)
 position = Vector2(912, 1368)
 
 [node name="spring" type="Marker2D" parent="Spawns" unique_id=1887474058]
-position = Vector2(300, 948)
+position = Vector2(384, 996)
 
 [node name="stones" type="Marker2D" parent="Spawns" unique_id=1820956802]
 position = Vector2(234, 1242)

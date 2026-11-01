@@ -249,7 +249,9 @@ func place_piece(piece_id: String, at: Vector2, options: Dictionary = {}) -> Dic
 	return preview
 
 func validate() -> Dictionary:
-	var snapshot := export_plan()
+	# Export omits unchanged gameplay_from markers to preserve source ownership. Validation
+	# must still check where every effective spawn stands in the current scene.
+	var snapshot := export_plan(true)
 	if not snapshot.ok:
 		return snapshot
 	var approval_diagnostics := _scene_approval_diagnostics()
@@ -283,7 +285,7 @@ func _scene_approval_diagnostics() -> Array[Dictionary]:
 
 ## Export current authoring data, preserving the original plan's unknown fields. Gameplay
 ## ownership stays with its scene; no ordinary node is removed, replaced or reparented here.
-func export_plan() -> Dictionary:
+func export_plan(include_inherited_spawns: bool = false) -> Dictionary:
 	var context := _context(false)
 	if not context.ok:
 		return context
@@ -305,7 +307,7 @@ func export_plan() -> Dictionary:
 				if not seed is Dictionary:
 					return _failure("plan.seed", "The legacy zone plan could not be read: %s." % path)
 				fallback = seed
-	var plan: Dictionary = ZonePlan.plan_from_scene(_zone as Node2D, fallback)
+	var plan: Dictionary = ZonePlan.plan_from_scene(_zone as Node2D, fallback, include_inherited_spawns)
 	if plan.is_empty():
 		return _failure("plan.export", "The shared zone exporter could not snapshot this scene.")
 	return {"ok": true, "diagnostics": [], "plan": plan}
