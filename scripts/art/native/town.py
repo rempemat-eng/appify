@@ -296,6 +296,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     up = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3) + 1, base_tone=2, density=1.3,
                               tufts=not hd).astype(np.int32)
     art = plan.get('art', {})
+    packed_paths = art.get('packed_paths', False)
     upland = np.zeros((H, W), bool)
     for r in art.get('uplands', []):
         upland |= rect_m(r)
@@ -363,7 +364,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             net |= SG.curve_texels(r['points'], n, H, W, r['bend'], plan.get('seed', 7) + 61 + k_)
         road_zone = SG.texels(cells_road, H, W)
         turf0 = is_turf(cv) & ~net
-        GD.dirt(cv, net, plan.get('seed', 7) + 43, fam='path', ruts=19, rut_mask=road_zone, crown=True)
+        GD.dirt(cv, net, plan.get('seed', 7) + 43, fam='path', ruts=19,
+                rut_mask=road_zone, crown=True, clod_relief=not packed_paths)
         GD.sunken_edge(cv, net, turf0, np.random.default_rng(plan.get('seed', 7) + 45))
         keep_marks |= net | ndi.binary_dilation(net, iterations=6)
         pathm |= net
@@ -846,9 +848,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv_new = cv.copy()
         drawn = lawn_detail_hd(cv, pathm | pave, shade_old, foots_old, rng, noise, soft=True)
         # in shade the trodden earth shows its clods closer (the shade keeps them, two tones down)
-        SE.soil_marks(cv, pathm & ndi.binary_erosion(shade_old, iterations=2), rng, drawn, spacing=0.7, p=0.9)
+        if not packed_paths:
+            SE.soil_marks(cv, pathm & ndi.binary_erosion(shade_old, iterations=2), rng, drawn, spacing=0.7, p=0.9)
         drawn_new = lawn_detail_hd(cv_new, pathm | pave, shade, foots, rng_new, noise, soft=True)
-        SE.soil_marks(cv_new, pathm & ndi.binary_erosion(shade, iterations=2), rng_new, drawn_new, spacing=0.7, p=0.9)
+        if not packed_paths:
+            SE.soil_marks(cv_new, pathm & ndi.binary_erosion(shade, iterations=2), rng_new, drawn_new, spacing=0.7, p=0.9)
         local = ndi.binary_dilation(near_old | near_new, iterations=q(2))
         cv[local] = cv_new[local]
         drawn = np.where(local, drawn_new, drawn)

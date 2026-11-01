@@ -292,12 +292,13 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
 # ------------------------------------------------------------------------------------------------
 def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: float = 13.0,
          ruts: float | None = None, stones: float = 1.0, rut_mask: np.ndarray | None = None,
-         crown: bool = False) -> None:
+         crown: bool = False, clod_relief: bool = True) -> None:
     """Packed earth (Eastward 13 and 17): clods 10 to 15 px in two close tones of the family and
     its siblings, each lit along its upper left with a joint a tone down along its lower right
     (joints broken, so the ground never reads as a mesh); large trodden and damp patches; two
     ruts (lit on their south lip) at `ruts` px in from the edge; pebbles in small clusters, lit
-    at their upper left with a shade under them; dark crumbs near the edge."""
+    at their upper left with a shade under them; dark crumbs near the edge.
+    With clod_relief=False, keep broad soil patches without the per-cell accent, gaps or rims."""
     from scipy.spatial import cKDTree
     H, W = m.shape
     if not m.any():
@@ -322,7 +323,8 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
     pc = patches(H, W, seed + 6, 36.0, 0.22) & ~pw
     famc[pw] = FI[fam + '_warm']
     famc[pc] = FI[fam + '_cool']
-    famc[(h < 0.12) & ~pc] = FI[fam + '_warm']
+    if clod_relief:
+        famc[(h < 0.12) & ~pc] = FI[fam + '_warm']
     t = np.full((H, W), 3)
     # rounded clods 10 to 15 px (Eastward 12 and 13: cobble-like packed earth): each a calm dome
     # of the body tone, a tone lighter at its upper left rim on the lighter ones; the gaps between
@@ -332,9 +334,11 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
     rr = cell * 0.5 * (0.86 + 0.22 * nz(H, W, 5.0, seed + 11))
     gap = (d1 > rr) | ((d2 - d1) < 1.3)
     show = nz(H, W, 26.0, seed + 7) > 0.28
-    t[gap & show] = 2
+    if clod_relief:
+        t[gap & show] = 2
     hi = ~gap & ((vx * 0.6 + vy * 0.8) < -0.42 * rr) & (d1 > 0.42 * rr) & (h > 0.4)
-    t[hi] = 4
+    if clod_relief:
+        t[hi] = 4
     # ruts: two soft worn bands, a tone down in the damp sibling, lit along their south lip
     if ruts:
         # Road rut/crown contours follow the road, not the wider road-and-path union.
