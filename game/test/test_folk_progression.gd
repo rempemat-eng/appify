@@ -18,6 +18,34 @@ func _join(id: String = "bramble", at_level: int = 1) -> void:
 	assert_int(model.advance_level(at_level)).is_equal(OK)
 	assert_int(model.join_folk(id)).is_equal(OK)
 
+func test_supported_schema_versions_are_coherent_and_refuse_future_versions_atomically() -> void:
+	assert_float(catalogue.schema_version).is_equal(2.0)
+	for version in [1, 2]:
+		var versioned_catalogue := catalogue.duplicate(true)
+		var versioned_documents := documents.duplicate(true)
+		versioned_catalogue.schema_version = version
+		for doc in versioned_documents:
+			doc.schema_version = version
+		assert_int(model.configure(versioned_catalogue, versioned_documents)).is_equal(OK)
+		_join("bramble", 4)
+		assert_int(model.unlock_node("bramble", "barbed_heads")).is_equal(OK)
+		var before: Dictionary = model.snapshot()
+		var events: Array = []
+		var listener := func(value: Dictionary) -> void: events.append(value)
+		model.changed.connect(listener)
+		for mode in ["future_catalogue", "future_document", "mixed_documents", "mismatched_catalogue"]:
+			var bad_catalogue := versioned_catalogue.duplicate(true)
+			var bad_documents := versioned_documents.duplicate(true)
+			match mode:
+				"future_catalogue": bad_catalogue.schema_version = 3
+				"future_document": bad_documents[0].schema_version = 3
+				"mixed_documents": bad_documents[0].schema_version = 3 - version
+				"mismatched_catalogue": bad_catalogue.schema_version = 3 - version
+			assert_int(model.configure(bad_catalogue, bad_documents)).is_equal(ERR_INVALID_DATA)
+			assert_dict(model.snapshot()).is_equal(before)
+		assert_array(events).is_empty()
+		model.changed.disconnect(listener)
+
 func test_all_fourteen_real_trees_and_tiers_are_consumed_without_mutation() -> void:
 	var original_catalogue := catalogue.duplicate(true)
 	var original_documents := documents.duplicate(true)
@@ -52,7 +80,7 @@ func test_level_points_are_shared_in_level_but_independent_per_folk() -> void:
 	_join()
 	assert_int(model.available_points("bramble")).is_equal(0)
 	assert_int(model.advance_level(2)).is_equal(OK)
-	assert_int(model.unlock_node("bramble", "fletcher")).is_equal(OK)
+	assert_int(model.unlock_node("bramble", "barbed_heads")).is_equal(OK)
 	assert_int(model.available_points("bramble")).is_equal(0)
 	assert_int(model.join_folk("iona")).is_equal(OK)
 	assert_int(model.available_points("iona")).is_equal(1)
@@ -63,23 +91,23 @@ func test_level_points_are_shared_in_level_but_independent_per_folk() -> void:
 
 func test_unlock_needs_level_prerequisites_and_conserved_points() -> void:
 	_join()
-	assert_str(model.node_offer("bramble", "fletcher").reason).is_equal("level")
+	assert_str(model.node_offer("bramble", "barbed_heads").reason).is_equal("level")
 	assert_int(model.advance_level(3)).is_equal(OK)
-	assert_str(model.node_offer("bramble", "steady_aim").reason).is_equal("prerequisite")
-	assert_int(model.unlock_node("bramble", "fletcher")).is_equal(OK)
-	assert_str(model.node_offer("bramble", "steady_aim").reason).is_equal("points")
+	assert_str(model.node_offer("bramble", "fire_heads").reason).is_equal("prerequisite")
+	assert_int(model.unlock_node("bramble", "barbed_heads")).is_equal(OK)
+	assert_str(model.node_offer("bramble", "fire_heads").reason).is_equal("points")
 	assert_int(model.advance_level(4)).is_equal(OK)
-	assert_int(model.unlock_node("bramble", "steady_aim")).is_equal(OK)
+	assert_int(model.unlock_node("bramble", "fire_heads")).is_equal(OK)
 	assert_int(model.available_points("bramble")).is_equal(0)
 	var before: Dictionary = model.snapshot()
-	assert_int(model.unlock_node("bramble", "steady_aim")).is_equal(ERR_UNAVAILABLE)
+	assert_int(model.unlock_node("bramble", "fire_heads")).is_equal(ERR_UNAVAILABLE)
 	assert_int(model.unlock_node("bramble", "unknown")).is_equal(ERR_UNAVAILABLE)
-	assert_int(model.unlock_node("unknown", "fletcher")).is_equal(ERR_UNAVAILABLE)
+	assert_int(model.unlock_node("unknown", "barbed_heads")).is_equal(ERR_UNAVAILABLE)
 	assert_dict(model.snapshot()).is_equal(before)
 
 func test_canonical_changes_stay_unavailable_pending_c60() -> void:
 	_join("bramble", 30)
-	for id in ["fletcher", "steady_aim", "long_eye", "steady_aim_2"]:
+	for id in ["steady_hands", "twin_shot", "long_eye", "three_bolt_spread"]:
 		assert_int(model.unlock_node("bramble", id)).is_equal(OK)
 	var before: Dictionary = model.snapshot()
 	assert_str(model.node_offer("bramble", "briar_volley").reason).is_equal("c60_approval_required")
@@ -123,7 +151,7 @@ func test_tiers_cannot_be_skipped_repeated_or_downgraded() -> void:
 
 func test_late_joiner_gets_unspent_points_and_tier_three_but_not_starfall() -> void:
 	_join("bramble", 24)
-	assert_int(model.unlock_node("bramble", "fletcher")).is_equal(OK)
+	assert_int(model.unlock_node("bramble", "barbed_heads")).is_equal(OK)
 	for tier in [2, 3, 4]:
 		assert_int(model.record_tier("bramble", tier, {"forge_open": true, "great_forge": true})).is_equal(OK)
 	assert_int(model.join_folk("cairn")).is_equal(OK)
@@ -150,21 +178,21 @@ func test_input_configuration_offers_and_snapshots_are_detached() -> void:
 	catalogue.status = "changed"
 	documents[0].abilities.skill_tree.branches[0].nodes[0].cost = 50
 	documents[0].weapon.tiers[1].requires.level = 30
-	assert_bool(model.node_offer("bramble", "fletcher").allowed).is_true()
+	assert_bool(model.node_offer("bramble", "barbed_heads").allowed).is_true()
 	var offer: Dictionary = model.tier_offer("bramble", 2, {"forge_open": true})
 	offer.cost.glint = 0
 	offer.tier.mechanics.clear()
 	assert_float(model.tier_offer("bramble", 2, {"forge_open": true}).cost.glint).is_equal(60.0)
 	var snapshot: Dictionary = model.snapshot()
-	snapshot.folk.bramble.nodes.append("fletcher")
+	snapshot.folk.bramble.nodes.append("barbed_heads")
 	assert_int(model.available_points("bramble")).is_equal(7)
 	model.changed.connect(func(value: Dictionary) -> void: value.folk.clear())
-	assert_int(model.unlock_node("bramble", "fletcher")).is_equal(OK)
+	assert_int(model.unlock_node("bramble", "barbed_heads")).is_equal(OK)
 	assert_bool(model.snapshot().folk.has("bramble")).is_true()
 
 func test_restore_round_trip_keeps_unknown_extensions_and_normalises_numbers() -> void:
 	_join("bramble", 16)
-	for id in ["fletcher", "steady_aim", "long_eye"]:
+	for id in ["barbed_heads", "fire_heads", "fletcher"]:
 		assert_int(model.unlock_node("bramble", id)).is_equal(OK)
 	assert_int(model.record_tier("bramble", 2, {"forge_open": true})).is_equal(OK)
 	var state: Dictionary = model.snapshot()
@@ -187,7 +215,7 @@ func test_restore_round_trip_keeps_unknown_extensions_and_normalises_numbers() -
 
 func test_invalid_restores_refuse_without_mutation_or_signals() -> void:
 	_join("bramble", 4)
-	assert_int(model.unlock_node("bramble", "fletcher")).is_equal(OK)
+	assert_int(model.unlock_node("bramble", "barbed_heads")).is_equal(OK)
 	var before: Dictionary = model.snapshot()
 	var events: Array = []
 	model.changed.connect(func(value: Dictionary) -> void: events.append(value))
@@ -195,8 +223,8 @@ func test_invalid_restores_refuse_without_mutation_or_signals() -> void:
 		{"progression": {"level": 2.5}, "folk": {}}, {"progression": {"level": 31}, "folk": {}},
 		{"progression": {"level": 4}, "folk": {"unknown": {"nodes": [], "weapon_tier": 1}}}]
 	for bad_record in [null, [], {"nodes": [], "weapon_tier": 2},
-			{"nodes": ["steady_aim"], "weapon_tier": 1},
-			{"nodes": ["fletcher", "fletcher"], "weapon_tier": 1},
+			{"nodes": ["fire_heads"], "weapon_tier": 1},
+			{"nodes": ["barbed_heads", "barbed_heads"], "weapon_tier": 1},
 			{"nodes": ["unknown"], "weapon_tier": 1},
 			{"nodes": [], "weapon_tier": "1"}, {"nodes": null, "weapon_tier": 1}]:
 		invalid.append({"progression": {"level": 4}, "folk": {"bramble": bad_record}})
@@ -206,13 +234,13 @@ func test_invalid_restores_refuse_without_mutation_or_signals() -> void:
 	assert_array(events).is_empty()
 
 func test_restore_refuses_overspent_points_even_with_valid_prerequisites() -> void:
-	var state := {"progression": {"level": 3}, "folk": {"bramble": {"nodes": ["fletcher", "steady_aim"], "weapon_tier": 1}}}
+	var state := {"progression": {"level": 3}, "folk": {"bramble": {"nodes": ["barbed_heads", "fire_heads"], "weapon_tier": 1}}}
 	assert_int(model.restore(state)).is_equal(ERR_INVALID_DATA)
 
 func test_malformed_catalogues_and_graphs_are_rejected_atomically() -> void:
 	_join("bramble", 4)
 	var before: Dictionary = model.snapshot()
-	var bad_catalogues: Array = [null, [], {}, {"schema_version": 2}]
+	var bad_catalogues: Array = [null, [], {}, {"schema_version": 3}]
 	for c in bad_catalogues:
 		assert_int(model.configure(c, documents)).is_equal(ERR_INVALID_DATA)
 		assert_dict(model.snapshot()).is_equal(before)
@@ -226,7 +254,7 @@ func test_malformed_catalogues_and_graphs_are_rejected_atomically() -> void:
 			"fraction_cost": nodes[0].cost = 1.5
 			"null_branch": changed[0].abilities.skill_tree.branches[0] = null
 			"invalid_tier": changed[0].weapon.tiers[1].requires.level = 9
-			"future_schema": changed[0].schema_version = 2
+			"future_schema": changed[0].schema_version = 3
 		assert_int(model.configure(catalogue, changed)).is_equal(ERR_INVALID_DATA)
 		assert_dict(model.snapshot()).is_equal(before)
 	assert_int(model.configure(catalogue, documents.slice(1))).is_equal(ERR_INVALID_DATA)
@@ -237,7 +265,7 @@ func test_unconfigured_runtime_cannot_create_progress_or_restore() -> void:
 	assert_int(empty.join_folk("bramble")).is_equal(ERR_DOES_NOT_EXIST)
 	assert_int(empty.advance_level(2)).is_equal(ERR_INVALID_PARAMETER)
 	assert_int(empty.restore({"progression": {"level": 1}, "folk": {}})).is_equal(ERR_INVALID_DATA)
-	assert_bool(empty.node_offer("bramble", "fletcher").allowed).is_false()
+	assert_bool(empty.node_offer("bramble", "barbed_heads").allowed).is_false()
 	assert_bool(empty.tier_offer("bramble", 2).allowed).is_false()
 
 func test_folk_material_costs_are_not_replaced_by_generic_counts() -> void:
