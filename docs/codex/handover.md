@@ -1,5 +1,7 @@
 # MyGame coordination and integration handover (28 Oct)
 
+> **Update, 1 Nov 20:23 (Matt):** Claude A directs again: priorities, art direction, Matt's review list and art review. The Codex lead keeps the delegation, the validation allocation and the non-art merges. Follow Claude A's newest DIRECTOR post on #149.
+
 > **Update, 28 Oct 17:24 (Matt):** Codex takes over the entire project until Matt says to switch back to Claude. Claude A is off: the Codex lead owns implementation, art/map work and merging under the existing written direction; changes in art direction require Matt. Art and map PRs merge after Matt's OK, not Claude's. The Codex lead also performs coordination; there is no separate Hyperagent role.
 
 Matt, 28 Oct 16:51: Claude is running out of tokens, so ChatGPT (Codex) takes over a lot of the work, coordinated by Hyperagent if that makes sense. This page sets out who does what from now on. [development-plan.md](../vision/development-plan.md) still gives the order of work.
