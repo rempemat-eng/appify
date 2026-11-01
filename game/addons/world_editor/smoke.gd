@@ -212,6 +212,8 @@ static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) 
 	var transitions: Array[Dictionary] = []
 	var previous_state: Array = []
 	var dropped_transitions := 0
+	var observation_count: int = 0
+	var last_observation_ms: int = -1000
 	var facts := {"ok": false, "expected_scene": expected_scene, "requested_scene": requested,
 		"limit_ms": 15000, "total_limit_ms": 45000}
 	while true:
@@ -248,6 +250,16 @@ static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) 
 			"readiness_elapsed_ms": now - readiness_started if readiness_started >= 0 else 0,
 			"startup_milestone": milestone, "sources_changed_ms": int(startup.observed_ms) - started if int(startup.observed_ms) >= 0 else -1,
 			"sources_exist": bool(startup.sources_exist)}
+		var observation_elapsed_ms: int = int(facts.elapsed_ms)
+		if observation_count < 46 and observation_elapsed_ms - last_observation_ms >= 1000:
+			observation_count += 1
+			last_observation_ms = observation_elapsed_ms
+			print("WORLD_EDITOR_STARTUP_OBSERVATION ", JSON.stringify({
+				"elapsed_ms": observation_elapsed_ms, "phase": phase, "root_present": facts.root_present,
+				"exact_root": exact_root, "ground_is_terrain": facts.ground_is_terrain,
+				"filesystem_present": facts.filesystem_present, "scanning": scanning, "importing": importing,
+				"readiness_elapsed_ms": facts.readiness_elapsed_ms, "startup_milestone": milestone,
+				"sources_changed_ms": facts.sources_changed_ms}))
 		var state: Array = [phase, root != null, exact_root, target is TerrainGround, filesystem != null, scanning, importing]
 		if state != previous_state:
 			if transitions.size() < 32:
