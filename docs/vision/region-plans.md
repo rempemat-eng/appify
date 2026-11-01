@@ -24,7 +24,7 @@ All points are world px on the v5.3 canvas (11264 x 6912), on the 8 px grid for 
 | `in_water`                                              | on a named thing, pocket, marker or resident that stands in the shallows or on stilts by design |
 | `fights`                                                | the Godot era's fight layer (Claude I's shape): `act`, `story`, `weapons`, `camps` (`{id, roles, kind, at, arena: [x, y, w, h], enemies, cover?, why}`; the arena at least 96 x 64 world px, holding its enemies, touched by a path), `patrols` (`{id, roles, kind, path}`), `cover` (low or high), `waystones`, `shard`, `dungeon` (`{id, name, entrance, by, rooms, keeper, plan}`), `raiders_camp`; enemies, waystones and the entrance are reached like any placed thing |
 | `quest_spots`, `windows`                                | quest spots `{id, at, quest}` (reached like placed things); 16:9 windows `{id, rect: [x, y, 320, 180], focal, clearing, why}`, one Godot screen each, inside the box |
-| `rails[]` (more)                                        | `crossings` (`{with, at}`), `inclines` (`{at, kind}`: cutting, embankment or rope incline), `buffers`, `viaduct`, `tunnel` |
+| `rails[]` (more)                                        | `crossings` (`{with, at}`), `inclines` (`{at, kind}`: cutting, embankment or rope incline), `buffers`, `continues` (`{at}`: the line runs on into a neighbour or a route, so that end is open), `viaduct`, `tunnel` |
 
 ## The check
 

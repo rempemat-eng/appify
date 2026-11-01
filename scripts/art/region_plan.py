@@ -589,7 +589,7 @@ VIADUCT = 128                     # px either side of a rail's viaduct point the
 
 
 def rails_check(P: dict) -> list:
-    """Rails (lane R, 23 Oct): each end at a stop or buffer of the plan (within 64 px: a
+    """Rails (lane R, 23 Oct): each end at a stop, a buffer or a declared `continues` point (within 64 px: a
     platform is long), at another rail, or
     leaving across the box edge; every crossing of a path, another rail or open water declared
     in the rail's `crossings` (or a water bridge, or its viaduct) within 24 px; every change of
@@ -607,7 +607,7 @@ def rails_check(P: dict) -> list:
         for end in (pts[0], pts[-1]):
             on_edge = abs(end[0] - x0) <= 8 or abs(end[0] - x0 - w) <= 8 or abs(end[1] - y0) <= 8 or abs(end[1] - y0 - h) <= 8
             others = [q for o in rails if o is not r for q in o['points']]
-            if not (on_edge or _near(end, stops + list(r.get('buffers', [])), 64) or _near(end, others, 24)):
+            if not (on_edge or _near(end, stops + list(r.get('buffers', [])) + ([r['continues']['at']] if r.get('continues') else []), 64) or _near(end, others, 24)):
                 out.append(f'{pid}: rail {r["id"]} ends at {tuple(end)} with no stop or buffer')
         if r.get('tunnel'):
             continue
