@@ -783,7 +783,11 @@ class PRSheetContracts(unittest.TestCase):
 
     def test_kit_requirement_namespace_does_not_capture_other_documentation(self):
         paths = ['docs/codex/kit-notes.md', 'docs/codex/frostline-kit.md.backup',
-                 'docs/codex/notes/lull-kit.md', 'docs/reference/brackens-kit.md']
+                 'docs/codex/notes/lull-kit.md', 'docs/reference/brackens-kit.md',
+                 'docs/codex/bank-edge-diagnosis.md',
+                 'docs/codex/painted-structure-context-plan.md.backup',
+                 'docs/codex/notes/painted-structure-context-plan.md',
+                 'docs/reference/painted-structure-context-plan.md']
         for path in paths:
             self.write(path, 'Ordinary documentation outside the requirements-file namespace.\n')
         self.commit('other documentation')
@@ -794,6 +798,128 @@ class PRSheetContracts(unittest.TestCase):
         self.assertTrue(manifest['complete'])
         self.assertEqual({row['path'] for row in manifest['other_changes']}, set(paths))
         self.assertTrue(all(row['status'] == 'not_art' for row in manifest['other_changes']))
+
+    def test_painted_structure_context_proposal_cannot_be_no_art(self):
+        path = 'docs/codex/painted-structure-context-plan.md'
+        raw = b'# Unapproved context proposal\nSix bridge faults remain.\xff\n'
+        self.write(path, raw)
+        self.commit('painted structure context proposal')
+        result = self.cli()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['exit_code'], 1)
+        self.assertEqual(manifest['assets'], [])
+        self.assertEqual(manifest['scenes'], [])
+        self.assertIsNone(manifest['preflight'])
+        row = manifest['other_changes'][0]
+        self.assertEqual((row['path'], row['status'], row['category']),
+                         (path, 'source_only', 'kit_concept'))
+        version = row['inputs'][0]
+        self.assertEqual((version['side'], version['ref'], version['path']),
+                         ('after', self.head, path))
+        self.assertEqual(version['blob'], self.git('rev-parse', self.head + ':' + path))
+        self.assertEqual(version['sha256'], hashlib.sha256(raw).hexdigest())
+        self.assertEqual((self.out / version['evidence']).read_bytes(), raw)
+        self.assertEqual(manifest['files'][version['evidence']], version['sha256'])
+
+    def test_context_proposal_rename_outside_docs_keeps_both_source_versions(self):
+        old = 'docs/codex/painted-structure-context-plan.md'
+        new = 'notes/retained-context-proposal.txt'
+        raw = b'Unapproved painted structure context; no placement acceptance.\n'
+        self.write(old, raw)
+        self.base = self.commit('context proposal baseline')
+        self.git('branch', '-f', 'base', self.base)
+        (self.repo / 'notes').mkdir()
+        self.git('mv', old, new)
+        self.commit('context proposal renamed outside docs')
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        row = manifest['other_changes'][0]
+        self.assertEqual(row['change']['status'], 'R100')
+        self.assertEqual((row['status'], row['category']), ('source_only', 'kit_concept'))
+        self.assertEqual([v['path'] for v in row['inputs']], [old, new])
+        self.assertEqual([v['ref'] for v in row['inputs']], [self.base, self.head])
+        for version in row['inputs']:
+            self.assertEqual((self.out / version['evidence']).read_bytes(), raw)
+
+    def test_deleted_context_proposal_retains_missing_head_source_obligation(self):
+        path = 'docs/codex/painted-structure-context-plan.md'
+        raw = b'Context proposal source retained for deletion review.\n'
+        self.write(path, raw)
+        self.base = self.commit('context proposal before deletion')
+        self.git('branch', '-f', 'base', self.base)
+        (self.repo / path).unlink()
+        self.commit('remove context proposal')
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        row = manifest['other_changes'][0]
+        self.assertEqual(row['change']['status'], 'D')
+        self.assertEqual((row['status'], row['category']), ('source_only', 'kit_concept'))
+        self.assertEqual([v['side'] for v in row['inputs']], ['before'])
+        self.assertEqual(row['inputs'][0]['ref'], self.base)
+        self.assertEqual((self.out / row['inputs'][0]['evidence']).read_bytes(), raw)
+
+    def test_context_proposal_fixture_renamed_into_production_loses_exemption(self):
+        old = 'tests/fixtures/painted-structure-context-plan.md'
+        new = 'docs/codex/painted-structure-context-plan.md'
+        raw = b'Invalid proposal fixture becomes production review input.\xff\n'
+        self.write(old, raw)
+        self.base = self.commit('context proposal fixture baseline')
+        self.git('branch', '-f', 'base', self.base)
+        (self.repo / new).parent.mkdir(parents=True)
+        self.git('mv', old, new)
+        self.commit('fixture moved into known proposal path')
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        row = manifest['other_changes'][0]
+        self.assertEqual((row['status'], row['category']), ('source_only', 'kit_concept'))
+        self.assertEqual([v['path'] for v in row['inputs']], [old, new])
+        for version in row['inputs']:
+            self.assertEqual((self.out / version['evidence']).read_bytes(), raw)
+
+    def test_context_proposal_named_fixture_stays_test_evidence(self):
+        path = 'tests/fixtures/docs/codex/painted-structure-context-plan.md'
+        raw = b'Invalid fixture, not a production proposal.\xff\n'
+        self.write(path, raw)
+        self.commit('known proposal basename inside fixture namespace')
+        self.assertEqual(self.cli().returncode, 0)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'test_evidence')
+        self.assertTrue(manifest['complete'])
+        self.assertEqual(manifest['assets'], [])
+        self.assertEqual(manifest['scenes'], [])
+        row = manifest['other_changes'][0]
+        self.assertEqual((row['status'], row['category']), ('test_evidence', 'test_fixture'))
+        self.assertEqual((self.out / row['inputs'][0]['evidence']).read_bytes(), raw)
+
+    def test_context_proposal_renamed_to_png_retains_source_obligation(self):
+        old = 'docs/codex/painted-structure-context-plan.md'
+        new = 'game/zones/woodland/art/recovered-context.png'
+        raw = png_bytes()  # Malformed proposal bytes still require source review.
+        self.write(old, raw)
+        self.base = self.commit('context proposal with malformed PNG bytes')
+        self.git('branch', '-f', 'base', self.base)
+        self.git('mv', old, new)
+        self.commit('context proposal renamed to PNG')
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['assets'][0]['status'], 'pass')
+        row = manifest['other_changes'][0]
+        self.assertEqual((row['status'], row['category']), ('source_only', 'kit_concept'))
+        self.assertEqual([v['path'] for v in row['inputs']], [old, new])
+        self.assertEqual([v['ref'] for v in row['inputs']], [self.base, self.head])
+        for version in row['inputs']:
+            self.assertEqual((self.out / version['evidence']).read_bytes(), raw)
 
     def test_regional_kit_source_keeps_passing_raster_bundle_incomplete(self):
         path = 'docs/codex/brackens-kit.md'

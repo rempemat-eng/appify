@@ -11,6 +11,10 @@ const surfaces = {
   Battle: ['components/game-battle.tsx'],
   'Mission worlds': ['components/world-scene.tsx'],
 };
+const firstLoadRoutes = {
+  Hub: 'app/(tabs)/index.tsx',
+  World: 'app/(tabs)/world.tsx',
+};
 const slash = (s) => s.split(path.sep).join('/');
 const byPath = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 const sourceFile = (p) =>
@@ -98,7 +102,13 @@ function inventory(root, options = {}) {
       if (!fs.existsSync(full) || !fs.lstatSync(full).isFile() || fs.realpathSync(full) !== full)
         throw new Error('Missing/non-file PNG: ' + rel);
       if (!images.has(rel))
-        images.set(rel, { path: rel, category: category(rel), ...pngSize(full), importedBy: [] });
+        images.set(rel, {
+          path: rel,
+          category: category(rel),
+          ...pngSize(full),
+          diskBytes: fs.statSync(full).size,
+          importedBy: [],
+        });
       const owners = images.get(rel).importedBy;
       if (!owners.includes(from)) owners.push(from);
       return [rel];
@@ -192,9 +202,15 @@ function inventory(root, options = {}) {
     const sums = new Map();
     for (const p of paths) {
       const img = images.get(p),
-        row = sums.get(img.category) || { category: img.category, count: 0, decodedBytes: 0 };
+        row = sums.get(img.category) || {
+          category: img.category,
+          count: 0,
+          decodedBytes: 0,
+          diskBytes: 0,
+        };
       row.count++;
       row.decodedBytes += img.decodedBytes;
+      row.diskBytes += img.diskBytes;
       sums.set(img.category, row);
     }
     return [...sums.values()].sort((a, b) => a.category.localeCompare(b.category));
@@ -207,7 +223,17 @@ function inventory(root, options = {}) {
       paths,
       count: paths.length,
       decodedBytes: paths.reduce((n, p) => n + images.get(p).decodedBytes, 0),
+      diskBytes: paths.reduce((n, p) => n + images.get(p).diskBytes, 0),
       groups: groups(paths),
+      largest: paths
+        .map((p) => images.get(p))
+        .sort((a, b) => b.diskBytes - a.diskBytes || byPath(a.path, b.path))
+        .slice(0, 10)
+        .map(({ path: imagePath, diskBytes, decodedBytes }) => ({
+          path: imagePath,
+          diskBytes,
+          decodedBytes,
+        })),
     };
   };
   const screens = routes.map((route) => {
@@ -222,28 +248,56 @@ function inventory(root, options = {}) {
   });
   for (const [name, roots] of Object.entries(options.surfaces ?? surfaces))
     screens.push(summarize(name, [...new Set([...roots, ...shared])]));
+  const firstLoad = Object.entries(firstLoadRoutes).flatMap(([name, route]) => {
+    const screen = screens.find((candidate) => candidate.name === route);
+    return screen
+      ? [
+          {
+            name,
+            route,
+            count: screen.count,
+            diskBytes: screen.diskBytes,
+            decodedBytes: screen.decodedBytes,
+            largest: screen.largest,
+          },
+        ]
+      : [];
+  });
+  const firstLoadBudget = options.firstLoadBudget ?? null;
+  if (firstLoadBudget !== null && (!Number.isSafeInteger(firstLoadBudget) || firstLoadBudget < 0))
+    throw new Error('firstLoadBudget must be a non-negative safe integer');
+  const overBudget = firstLoad.filter((entry) => entry.diskBytes > firstLoadBudget);
+  if (firstLoadBudget !== null && overBudget.length)
+    throw new Error(
+      `First-load PNG budget ${firstLoadBudget} bytes exceeded: ` +
+        overBudget.map((entry) => `${entry.name} ${entry.diskBytes}`).join(', '),
+    );
   const all = [...images.keys()].sort(byPath);
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     estimate:
-      'RGBA8 width x height x 4; conservative static import closure, not measured resident memory',
+      'PNG file bytes and RGBA8 width x height x 4; conservative static import closure, not measured transfer or resident memory',
     images: all.map((p) => ({
       ...images.get(p),
       importedBy: images.get(p).importedBy.sort(byPath),
     })),
     groups: groups(all),
+    totalDiskBytes: all.reduce((n, p) => n + images.get(p).diskBytes, 0),
     totalDecodedBytes: all.reduce((n, p) => n + images.get(p).decodedBytes, 0),
     screens,
+    firstLoad,
+    firstLoadBudget,
   };
 }
 
 const mib = (n) => (n / 1048576).toFixed(3);
+const mb = (n) => (n / 1000000).toFixed(3);
 const cell = (s) => String(s).replaceAll('|', '\\|').replaceAll('\n', ' ');
 function markdown(report) {
   const lines = [
     '# Imported PNG decoded-memory report',
     '',
-    'Report only — no budget threshold. RGBA8 = width × height × 4 bytes; MiB = 1,048,576 bytes.',
+    'Report only — no production first-load budget exists. PNG MB = file bytes / 1,000,000; RGBA8 = width × height × 4 bytes; MiB = 1,048,576 bytes.',
     '',
     'Static import closure includes all catalog entries, animation frames, day/night variants and platform variants. Each path counts once per screen; shared assets count again on other screens. Screen totals are **not additive** and are not measured resident/GPU memory. Shared layouts and global overlays are included. No tree-shaking or conditional-render analysis.',
     '',
@@ -251,30 +305,56 @@ function markdown(report) {
     '',
     '## Unique imported inventory',
     '',
-    '| Group | PNGs | RGBA bytes | MiB |',
-    '| --- | ---: | ---: | ---: |',
+    '| Group | PNGs | PNG bytes | MB | RGBA bytes | MiB |',
+    '| --- | ---: | ---: | ---: | ---: | ---: |',
     ...report.groups.map(
-      (g) => `| ${cell(g.category)} | ${g.count} | ${g.decodedBytes} | ${mib(g.decodedBytes)} |`,
+      (g) =>
+        `| ${cell(g.category)} | ${g.count} | ${g.diskBytes} | ${mb(g.diskBytes)} | ${g.decodedBytes} | ${mib(g.decodedBytes)} |`,
     ),
-    `| **Unique total** | **${report.images.length}** | **${report.totalDecodedBytes}** | **${mib(report.totalDecodedBytes)}** |`,
+    `| **Unique total** | **${report.images.length}** | **${report.totalDiskBytes}** | **${mb(report.totalDiskBytes)}** | **${report.totalDecodedBytes}** | **${mib(report.totalDecodedBytes)}** |`,
     '',
     '## Per-screen import envelopes',
     '',
-    '| Screen / surface | PNGs | RGBA bytes | MiB |',
-    '| --- | ---: | ---: | ---: |',
+    '| Screen / surface | PNGs | PNG bytes | MB | RGBA bytes | MiB |',
+    '| --- | ---: | ---: | ---: | ---: | ---: |',
     ...report.screens.map(
-      (s) => `| ${cell(s.name)} | ${s.count} | ${s.decodedBytes} | ${mib(s.decodedBytes)} |`,
+      (s) =>
+        `| ${cell(s.name)} | ${s.count} | ${s.diskBytes} | ${mb(s.diskBytes)} | ${s.decodedBytes} | ${mib(s.decodedBytes)} |`,
+    ),
+    '',
+    '## Before the first tap: static PNG upper bounds',
+    '',
+    'Lane R measured the hub fetching 7–9 MB of pictures within four seconds. The table puts that network observation beside the repository PNG file bytes reachable from each route. The static closure is an upper bound: it includes every catalogue branch and platform variant imported by the route, whether or not the first render requests it. Conversely, the 7–9 MB observation is transferred data and may reflect cache state and non-PNG resources. These quantities diagnose import coupling; neither is a resident-memory measurement.',
+    '',
+    '| Route | PNGs | Static PNG MB | Decoded MiB | Review measurement | Budget |',
+    '| --- | ---: | ---: | ---: | --- | --- |',
+    ...report.firstLoad.map(
+      (entry) =>
+        `| ${cell(entry.name)} (${cell(entry.route)}) | ${entry.count} | ${mb(entry.diskBytes)} | ${mib(entry.decodedBytes)} | ${entry.name === 'Hub' ? '7–9 MB within 4 s' : 'not measured'} | report only |`,
     ),
     '',
   ];
+  for (const entry of report.firstLoad)
+    lines.push(
+      `### ${cell(entry.name)}: ten largest statically reachable PNGs`,
+      '',
+      '| Path | PNG bytes | MB | Decoded MiB |',
+      '| --- | ---: | ---: | ---: |',
+      ...entry.largest.map(
+        (image) =>
+          `| ${cell(image.path)} | ${image.diskBytes} | ${mb(image.diskBytes)} | ${mib(image.decodedBytes)} |`,
+      ),
+      '',
+    );
   for (const s of report.screens)
     lines.push(
       `<details><summary>${cell(s.name)}: categories</summary>`,
       '',
-      '| Group | PNGs | RGBA bytes | MiB |',
-      '| --- | ---: | ---: | ---: |',
+      '| Group | PNGs | PNG bytes | MB | RGBA bytes | MiB |',
+      '| --- | ---: | ---: | ---: | ---: | ---: |',
       ...s.groups.map(
-        (g) => `| ${cell(g.category)} | ${g.count} | ${g.decodedBytes} | ${mib(g.decodedBytes)} |`,
+        (g) =>
+          `| ${cell(g.category)} | ${g.count} | ${g.diskBytes} | ${mb(g.diskBytes)} | ${g.decodedBytes} | ${mib(g.decodedBytes)} |`,
       ),
       '',
       '</details>',
@@ -283,11 +363,11 @@ function markdown(report) {
   lines.push(
     '## Every imported PNG',
     '',
-    '| Path | Pixels | RGBA bytes | MiB | Importers |',
-    '| --- | ---: | ---: | ---: | --- |',
+    '| Path | Pixels | PNG bytes | MB | RGBA bytes | MiB | Importers |',
+    '| --- | ---: | ---: | ---: | ---: | ---: | --- |',
     ...report.images.map(
       (i) =>
-        `| ${cell(i.path)} | ${i.width} × ${i.height} | ${i.decodedBytes} | ${mib(i.decodedBytes)} | ${cell(i.importedBy.join(', '))} |`,
+        `| ${cell(i.path)} | ${i.width} × ${i.height} | ${i.diskBytes} | ${mb(i.diskBytes)} | ${i.decodedBytes} | ${mib(i.decodedBytes)} | ${cell(i.importedBy.join(', '))} |`,
     ),
     '',
   );

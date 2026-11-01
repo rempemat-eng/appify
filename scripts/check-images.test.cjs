@@ -74,6 +74,10 @@ try {
   const report = run();
   eq(report.images.length, 4);
   eq(report.totalDecodedBytes, 800 + 24 + 112 + 16);
+  eq(
+    report.totalDiskBytes,
+    report.images.reduce((n, image) => n + image.diskBytes, 0),
+  );
   eq(report.images.find((i) => i.path.endsWith('garden/ground.png')).importedBy, [
     'lib/common.ts',
     'lib/cycle.ts',
@@ -83,6 +87,10 @@ try {
   const journal = report.screens.find((s) => s.name.endsWith('journal.tsx'));
   eq(home.count, 2);
   eq(home.decodedBytes, 824);
+  eq(
+    home.diskBytes,
+    home.paths.reduce((n, p) => n + report.images.find((i) => i.path === p).diskBytes, 0),
+  );
   eq(home.roots, ['app/(tabs)/index.tsx', 'app/(tabs)/_layout.tsx', 'app/_layout.tsx']);
   eq(journal.count, 3);
   eq(journal.decodedBytes, 928);
@@ -94,11 +102,30 @@ try {
     report.groups.reduce((n, g) => n + g.decodedBytes, 0),
     report.totalDecodedBytes,
   );
+  eq(
+    report.groups.reduce((n, g) => n + g.diskBytes, 0),
+    report.totalDiskBytes,
+  );
+  eq(
+    report.firstLoad.map((entry) => entry.name),
+    ['Hub'],
+  );
+  eq(report.firstLoad[0].diskBytes, home.diskBytes);
+  eq(
+    report.firstLoad[0].largest.map((image) => image.diskBytes),
+    report.firstLoad[0].largest
+      .map((image) => image.diskBytes)
+      .slice()
+      .sort((a, b) => b - a),
+  );
+  throws(() => inventory(root, { surfaces: {}, firstLoadBudget: 1 }), /First-load PNG budget.*Hub/);
   eq(run(), report); // stable ordering
   const text = markdown(report);
   eq(text.includes('width × height × 4'), true);
   eq(text.includes('not measured resident/GPU memory'), true);
-  eq(text.includes('| assets/garden/ground.png | 10 × 20 | 800 |'), true);
+  eq(text.includes('| assets/garden/ground.png | 10 × 20 |'), true);
+  eq(text.includes('7–9 MB within 4 s'), true);
+  eq(text.includes('ten largest statically reachable PNGs'), true);
   eq(text.includes('unique.png'), false);
   const onlyType = write(
     'lib/type-only.ts',
@@ -171,7 +198,15 @@ try {
       screen.groups.reduce((n, g) => n + g.decodedBytes, 0),
       screen.decodedBytes,
     );
+    eq(
+      screen.groups.reduce((n, g) => n + g.diskBytes, 0),
+      screen.diskBytes,
+    );
   }
+  eq(
+    actual.firstLoad.map((entry) => entry.name),
+    ['Hub', 'World'],
+  );
   const badCli = spawnSync(
     process.execPath,
     [path.join(__dirname, 'check-images.cjs'), '--unknown'],
