@@ -35,7 +35,9 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "d5c9a2390604111c1c482a611ffdc11cc37d0282"
+GAME_SHA = "6a53c907ee55bc573121c12366182bf1ce9efdd9"
+OBSERVATION_GAME_PARENT = "d5c9a2390604111c1c482a611ffdc11cc37d0282"
+OBSERVATION_GAME_PARENT_TREE = "966b30445b59526c2f9b56e1d5e3e6834f7e16bb"
 SAVE_GAME_PARENT = "c7a9114ce1c830cc8889e6e8eb480990522b7c3b"
 SAVE_GAME_PARENT_TREE = "a438b4b1b611892d121423d6453ff057076c70b6"
 INTENT_GAME_PARENT = "0abdab039c5e50166a5a7dfbe740d13f820bee51"
@@ -104,6 +106,8 @@ MESA_PACKAGE = {
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
 MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+OBSERVATION_RECEIVER_PARENT = "1e3c88443aed7f53325bc277b1f3ec65297f91d8"
+OBSERVATION_RECEIVER_PARENT_TREE = "0b4e36f552c9fce72da738e7067574533930ee71"
 SAVE_RECEIVER_PARENT = "a60ffc0346799135013815705c65c00b252292cf"
 SAVE_RECEIVER_PARENT_TREE = "6aee94b9d150276e2da99e76b79ca8c6a88f9c65"
 TRACKED_REFUSAL_PARENT = "1e6241354aeaab205d9fd965cc4236b7b7fd8754"
@@ -118,7 +122,7 @@ REBIND_RECEIVER_PARENT = "a1f3a7f2305f881b48d1824a1bcd16423a363d91"
 REBIND_RECEIVER_PARENT_TREE = "28e97f27d2b50085f78919720d2dc844efe32aaf"
 LIFECYCLE_RECEIVER_PARENT = "d7dacb292ff1b184b68077e7d1ba4471b9cbf20c"
 LIFECYCLE_RECEIVER_PARENT_TREE = "c111635880129121888b726c86dfcd6ed9535644"
-GAME_TREE = "966b30445b59526c2f9b56e1d5e3e6834f7e16bb"
+GAME_TREE = "43261ea7dc637d3386cc3ac5dbb099c8f1a6936c"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
 GAME_GRANDPARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
@@ -140,12 +144,12 @@ TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 EXPORT_BLOB = "61d81ffbdbdf89ebcf0e2e68204eddb87c3b4772"
 PLUGIN_BLOB = "8a9dadd400ce9ef345becef8fc13f2f7179c3449"
-SMOKE_BLOB = "42cac2c371be5f41be88a7cf6094aabbae00b977"
+SMOKE_BLOB = "8ce194593089ac48a706a02a0e5d7abdb3ae5e4d"
 DEPENDENT_TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
 GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
 GAME_COUNT = 6689
-GAME_BYTES = 87905501
+GAME_BYTES = 87906262
 PYTHON_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165),
  'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444),
  'art/scenes/woodland.json': ('4ddc7ed7b91d413f897388969579b4d06a2a7486', 31704),
@@ -1223,7 +1227,9 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [SAVE_RECEIVER_PARENT]
+                != [OBSERVATION_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", OBSERVATION_RECEIVER_PARENT + "^{tree}").decode().strip() != OBSERVATION_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", OBSERVATION_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [SAVE_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", SAVE_RECEIVER_PARENT + "^{tree}").decode().strip() != SAVE_RECEIVER_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", SAVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
                 or git(candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE
@@ -1887,8 +1893,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [SAVE_RECEIVER_PARENT]:
-            raise RuntimeError("Save-evidence rebind must retain sole405a60 parent")
+        if parents != [OBSERVATION_RECEIVER_PARENT]:
+            raise RuntimeError("Startup-observation rebind must retain sole4051e3c parent")
+        observation_headers = git(self.candidate, "cat-file", "commit", OBSERVATION_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in observation_headers.splitlines() if x.startswith("parent ")] != [SAVE_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", OBSERVATION_RECEIVER_PARENT + "^{tree}").decode().strip() != OBSERVATION_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H21 receiver ancestry/tree changed")
         save_headers = git(self.candidate, "cat-file", "commit", SAVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in save_headers.splitlines() if x.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
                 or git(self.candidate, "rev-parse", SAVE_RECEIVER_PARENT + "^{tree}").decode().strip() != SAVE_RECEIVER_PARENT_TREE):
@@ -1997,8 +2007,12 @@ class Controller:
             raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
-                if line.startswith("parent ")] != [SAVE_GAME_PARENT]:
-            raise RuntimeError("Save-evidence410 must retain genuinec7 sole parent")
+                if line.startswith("parent ")] != [OBSERVATION_GAME_PARENT]:
+            raise RuntimeError("Startup-observation410 must retain genuined5c9 sole parent")
+        source_observation_headers = git(self.source, "cat-file", "commit", OBSERVATION_GAME_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in source_observation_headers.splitlines() if x.startswith("parent ")] != [SAVE_GAME_PARENT]
+                or git(self.source, "rev-parse", OBSERVATION_GAME_PARENT + "^{tree}").decode().strip() != OBSERVATION_GAME_PARENT_TREE):
+            raise RuntimeError("Frozen H21 source ancestry/tree changed")
         source_save_headers = git(self.source, "cat-file", "commit", SAVE_GAME_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in source_save_headers.splitlines() if x.startswith("parent ")] != [INTENT_GAME_PARENT]
                 or git(self.source, "rev-parse", SAVE_GAME_PARENT + "^{tree}").decode().strip() != SAVE_GAME_PARENT_TREE):
@@ -2079,6 +2093,7 @@ class Controller:
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
                     "tracked_refusal_parent": TRACKED_REFUSAL_PARENT, "tracked_refusal_headers": tracked_headers,
+                    "observation_receiver_parent": OBSERVATION_RECEIVER_PARENT, "observation_receiver_parent_headers": observation_headers,
                     "empty_cache_receiver_parent": EMPTY_CACHE_RECEIVER_PARENT, "empty_cache_receiver_parent_headers": empty_cache_headers,
                     "refusal_receiver_parent": REFUSAL_RECEIVER_PARENT, "refusal_receiver_parent_headers": refusal_headers,
                     "intent_receiver_parent": INTENT_RECEIVER_PARENT, "intent_receiver_parent_headers": intent_receiver_headers,
@@ -2107,8 +2122,8 @@ class Controller:
                    "return_game_parent": RETURN_GAME_PARENT, "return_game_parent_headers": source_return_parent_headers,
                    "bootstrap_game_parent": BOOTSTRAP_GAME_PARENT, "bootstrap_game_parent_headers": source_bootstrap_parent_headers,
                    "intent_game_parent": INTENT_GAME_PARENT, "intent_game_parent_headers": source_intent_parent_headers,
-                   "tested_game_parent": SAVE_GAME_PARENT, "tested_game_parent_headers": source_save_headers,
-                   "tested_game_grandparent": INTENT_GAME_PARENT, "tested_game_grandparent_headers": source_intent_parent_headers,
+                   "tested_game_parent": OBSERVATION_GAME_PARENT, "tested_game_parent_headers": source_observation_headers,
+                   "tested_game_grandparent": SAVE_GAME_PARENT, "tested_game_grandparent_headers": source_save_headers,
                    "historical407_parent": GAME_PARENT, "historical407_parent_headers": source_parent_headers,
                    "historical407_grandparent": GAME_GRANDPARENT, "historical407_grandparent_headers": source_grandparent_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
@@ -2969,8 +2984,6 @@ class Controller:
                 except BaseException as error:
                     reason = reason or f"actual group cleanup/collection failed: {error!r}"
                 finally:
-                    # A wait deadline/cleanup exception must still retain the actual
-                    # remaining-process evidence; it never proves runtime release.
                     try:
                         result["remaining_after_collection"] = proc_group(process.pid)
                         result["direct_children_after_collection"] = direct_children()
@@ -3113,9 +3126,6 @@ class Controller:
                 if not suite_failed and names != list(expected_methods):
                     raise RuntimeError("Suite stopped without a target assertion")
                 failure_count += suite_failures
-            # Fail-fast breaks the inner case loop, not the executor's suite
-            # loop. Each suite has its own execution prefix; absent cases stay
-            # NOTRUN even though the writer declares that suite's full size.
             if list(root.iter("testcase")) != cases_all:
                 raise RuntimeError("Unexpected testcase outside the requested suites")
             if root_values["tests"] != declared_count or root_values["failures"] != failure_count:
@@ -3165,8 +3175,6 @@ class Controller:
         self.private_driver_provenance_sha256 = digest(provenance)
         self.private_driver_receipt = receipt
         self.private_driver_inputs(require_binding=False)
-        # A documented child-only private ICD selection, never an extension
-        # override, implicit-layer disable or global process environment edit.
         self.env["VK_DRIVER_FILES"] = receipt["private_manifest"]["path"]
         self.env["EDITOR_PRIVATE_VULKAN_PROVENANCE_SHA256"] = self.private_driver_provenance_sha256
         query = self.phase("driver-query", [receipt["selected"]["vulkaninfo"]["path"], "--summary"], 30)
@@ -3207,7 +3215,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [SAVE_RECEIVER_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [OBSERVATION_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", OBSERVATION_RECEIVER_PARENT + "^{tree}").decode().strip() != OBSERVATION_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", OBSERVATION_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [SAVE_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", SAVE_RECEIVER_PARENT + "^{tree}").decode().strip() != SAVE_RECEIVER_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", SAVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
                     or git(self.candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE
@@ -3466,21 +3476,15 @@ class Controller:
                 self.output["state"] = "PREREQUISITE_OR_NON_TARGET_FAILURE"
         finally:
             self.terminal_started = time.monotonic()
-            # A durable fail-closed receipt precedes EVERY terminal copy/hash/tar.
-            # Disarm only for this fixed-size emergency receipt; its time remains
-            # charged to the transaction and is checked before any PASS promotion.
             signal.setitimer(signal.ITIMER_REAL, 0)
             write_json(self.evidence / "result.json", {"state": "TERMINAL_INCOMPLETE_FAILURE",
                        "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
                        "prior_state": self.output["state"], "budget": self.budget_receipt(),
                        "qualification": "No terminal success yet; originals retained by always-upload paths even if archives are cut short."})
-            # Independent final retention attempts; one failing guard must not suppress other evidence.
             final_errors = []
             archives = {}
             if self.mode in ("DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE"):
                 try:
-                    # Exact two secret-file retirement is cleanup, even after
-                    # expiry; elapsed time still counts and cannot produce PASS.
                     self.retire_display_authority()
                 except BaseException as error:
                     final_errors.append("display-authority: " + repr(error))
@@ -3560,8 +3564,6 @@ class Controller:
             if hasattr(self, "env"):
                 self.env.pop("VK_DRIVER_FILES", None)
                 self.env.pop("EDITOR_PRIVATE_VULKAN_PROVENANCE_SHA256", None)
-            # Independent best-effort attempts: a guard/archive failure never
-            # prevents retention of the other original failed-method artifacts.
             for label, source in {"test-output": self.root / "test-output",
                                   "private-data": self.root / "data"}.items():
                 try:
@@ -3569,8 +3571,6 @@ class Controller:
                     if source.exists():
                         archives[label] = "INCOMPLETE"
                         with tarfile.open(self.evidence / (label + ".tar.gz"), "x:gz") as archive:
-                            # Finite, physical regular files only; tarfile copies
-                            # in bounded chunks under the same active timer.
                             total = count = 0
                             for base, dirs, files in os.walk(source, followlinks=False):
                                 for item in dirs + files:
@@ -3631,9 +3631,6 @@ class Controller:
                 final_errors.append("terminal-manifest: " + repr(error))
             finally:
                 signal.setitimer(signal.ITIMER_REAL, 0)
-            # Only fixed-size failure/clock metadata remains outside interruptible
-            # work. Never scan/copy/hash after expiration. Originals are uploaded
-            # from the exact private roots; INCOMPLETE archives are not substitutes.
             if self.budget_remaining() <= 0 or self.collection_used > 30:
                 self.budget_failure = self.budget_failure or "Terminal aggregate budget exhausted"
             if self.budget_failure:
@@ -3641,7 +3638,6 @@ class Controller:
             self.output.update(failure=failure, final_errors=final_errors, finished_at=time.time(),
                                archives=archives, budget=self.budget_receipt(),
                                gui_workflow_pass=False, production_correction_authorised=False)
-            # Seal supporting metadata while the durable result is still failure.
             write_json(self.evidence / "terminal-budget.json", self.budget_receipt())
             if final_errors:
                 self.output["state"] = "FINAL_GUARD_OR_COLLECTION_FAILURE"
@@ -3652,8 +3648,6 @@ class Controller:
             elif self.output["state"] == "DISPLAYED_SMOKE_PENDING_TERMINAL_GUARDS":
                 self.output["state"] = "DISPLAYED_SMOKE"
                 self.output["displayed_smoke"]["state"] = "PASS"
-            # Charge the small final result write too. Overrun replaces even a
-            # just-written PASS with failure before any successful return.
             try:
                 write_json(self.evidence / "result.json", self.output)
                 if self.budget_remaining() <= 0 or self.collection_used > 30:
@@ -3665,8 +3659,6 @@ class Controller:
                            "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
                            "budget": self.budget_receipt(), "failure": repr(error),
                            "qualification": "Emergency failure receipt only; original private outputs remain available independently of incomplete archives. Expiry is not proof of runtime release."})
-        # Only actual success in the selected mode plus all final guards succeeds.
-        # A RED, partial fail-fast, setup or collection failure remains nonzero.
         return 0 if self.output["state"] in ("SIXTEEN_COMBINED_PASS", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE_PASS") else 1
 
 
