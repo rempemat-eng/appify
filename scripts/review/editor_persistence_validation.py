@@ -35,7 +35,9 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "c7a9114ce1c830cc8889e6e8eb480990522b7c3b"
+GAME_SHA = "d5c9a2390604111c1c482a611ffdc11cc37d0282"
+SAVE_GAME_PARENT = "c7a9114ce1c830cc8889e6e8eb480990522b7c3b"
+SAVE_GAME_PARENT_TREE = "a438b4b1b611892d121423d6453ff057076c70b6"
 INTENT_GAME_PARENT = "0abdab039c5e50166a5a7dfbe740d13f820bee51"
 INTENT_GAME_PARENT_TREE = "63ca040b9f8d034988fc7a21bcfbf94c8a6f5bfb"
 BOOTSTRAP_GAME_PARENT = "c413e9b00a806920b5447127660943d4ce048aea"
@@ -102,6 +104,8 @@ MESA_PACKAGE = {
 DISPLAY_RECEIVER_PARENT = "79a4fb5162df4599c5db5573b095b60e661194d3"
 DISPLAY_RECEIVER_PARENT_TREE = "2fddb86ded9ce68f0a96821946d9a58b6352bc70"
 MODES = ("H5_COMBINED", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE", "VULKAN_INVENTORY", "DRIVER_CAPABILITY")
+SAVE_RECEIVER_PARENT = "a60ffc0346799135013815705c65c00b252292cf"
+SAVE_RECEIVER_PARENT_TREE = "6aee94b9d150276e2da99e76b79ca8c6a88f9c65"
 TRACKED_REFUSAL_PARENT = "1e6241354aeaab205d9fd965cc4236b7b7fd8754"
 TRACKED_REFUSAL_PARENT_TREE = "944e07c4836bd837d10739606b2d94dabf96c10c"
 EMPTY_CACHE_RECEIVER_PARENT = "f511a86c5a56cf92612fe71d510b73695d2adf05"
@@ -114,7 +118,7 @@ REBIND_RECEIVER_PARENT = "a1f3a7f2305f881b48d1824a1bcd16423a363d91"
 REBIND_RECEIVER_PARENT_TREE = "28e97f27d2b50085f78919720d2dc844efe32aaf"
 LIFECYCLE_RECEIVER_PARENT = "d7dacb292ff1b184b68077e7d1ba4471b9cbf20c"
 LIFECYCLE_RECEIVER_PARENT_TREE = "c111635880129121888b726c86dfcd6ed9535644"
-GAME_TREE = "a438b4b1b611892d121423d6453ff057076c70b6"
+GAME_TREE = "966b30445b59526c2f9b56e1d5e3e6834f7e16bb"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
 GAME_GRANDPARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
@@ -136,15 +140,12 @@ TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 EXPORT_BLOB = "61d81ffbdbdf89ebcf0e2e68204eddb87c3b4772"
 PLUGIN_BLOB = "8a9dadd400ce9ef345becef8fc13f2f7179c3449"
-SMOKE_BLOB = "9757a55d1de483d1e2649c77fbff7d90d4d63ca0"
+SMOKE_BLOB = "42cac2c371be5f41be88a7cf6094aabbae00b977"
 DEPENDENT_TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
 GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
 GAME_COUNT = 6689
-GAME_BYTES = 87900444
-# Static import/data closure of corrected bake, unchanged validator and tiny fixture.
-# Full game supplies library/schema/terrain/index/fixtures. No master raster is
-# reached by this pieces=[] lawn-only probe. scripts/art are namespace packages.
+GAME_BYTES = 87905501
 PYTHON_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165),
  'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444),
  'art/scenes/woodland.json': ('4ddc7ed7b91d413f897388969579b4d06a2a7486', 31704),
@@ -250,7 +251,6 @@ PYTHON_ERROR_PATTERN = re.compile(
     r"|editor\.validator_(?:io|failed|protocol)"
 )
 
-# Tiny separate editor project: measure actual APIs/settings file, not merely env.
 PROBE = '''@tool
 extends EditorPlugin
 func _enter_tree() -> void:
@@ -298,7 +298,6 @@ def blob(path: Path) -> str:
 
 
 def write_json(path: Path, value: object) -> None:
-    # Atomic replacement keeps the provisional failure intact if sealing expires.
     temporary = path.with_name(path.name + ".partial")
     temporary.write_text(json.dumps(value, sort_keys=True, indent=2) + "\n")
     temporary.replace(path)
@@ -632,8 +631,6 @@ def qualified_python_binding(environment: dict | None = None) -> dict | None:
         return {key: getattr(info, key) for key in stable_keys}
 
     def safe(info) -> bool:
-        # Provider-writable Python inputs are already selected by the pinned
-        # action. Record their exact modes; unrelated/native rules stay strict.
         return info.st_uid in (0, os.getuid()) and not info.st_mode & 0o6000
 
     directory = libdir.lstat()
@@ -1100,7 +1097,6 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
             if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
                     or info.st_mtime_ns < receipt["editor_started_ns"] or not 0 < info.st_size <= 64 * 1024**2):
                 raise RuntimeError("Missing/nonphysical/stale displayed output")
-        # The verified private Pillow stage checks the original rendered bytes.
         sys.path.insert(0, str(root / "dependencies"))
         from PIL import Image
         with Image.open(png) as image:
@@ -1221,15 +1217,15 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         row["trust"] = "Observed root-owned installed host bytes; not independently authenticated package bytes"
         return row
     try:
-        # Record actual selected hosting facts before any rejecting policy.
-        # This never invokes/approves the strict Python-binding qualifier.
         python_runtime_facts(result, save)
         result["host"] = mesa_host()
         candidate = args.candidate.resolve(strict=True)
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
                 or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [TRACKED_REFUSAL_PARENT]
+                != [SAVE_RECEIVER_PARENT]
+                or git(candidate, "rev-parse", SAVE_RECEIVER_PARENT + "^{tree}").decode().strip() != SAVE_RECEIVER_PARENT_TREE
+                or [line[7:] for line in git(candidate, "cat-file", "commit", SAVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
                 or git(candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE
                 or [line[7:] for line in git(candidate, "cat-file", "commit", TRACKED_REFUSAL_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
@@ -1885,15 +1881,18 @@ class Controller:
                 or any((self.source / name).exists() or (self.source / name).is_symlink()
                        for name in GENERATED_UID_PATHS)):
             raise RuntimeError("Project has prior import/report/UID state; requires fresh physical checkout")
-        # The workflow opens controller.log before spawning this process.
         if set(self.root.iterdir()) != {self.evidence} or set(self.evidence.iterdir()) != {
             self.evidence / "bootstrap.json", self.evidence / "controller.log"
         }:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [TRACKED_REFUSAL_PARENT]:
-            raise RuntimeError("Tracked-refusal correction must be a genuine sole child of frozen4051e624")
+        if parents != [SAVE_RECEIVER_PARENT]:
+            raise RuntimeError("Save-evidence rebind must retain sole405a60 parent")
+        save_headers = git(self.candidate, "cat-file", "commit", SAVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in save_headers.splitlines() if x.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
+                or git(self.candidate, "rev-parse", SAVE_RECEIVER_PARENT + "^{tree}").decode().strip() != SAVE_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H20 receiver ancestry/tree changed")
         tracked_headers = git(self.candidate, "cat-file", "commit", TRACKED_REFUSAL_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in tracked_headers.splitlines() if x.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE):
@@ -1998,8 +1997,12 @@ class Controller:
             raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
-                if line.startswith("parent ")] != [INTENT_GAME_PARENT]:
-            raise RuntimeError("Intent410 must retain genuine0ab sole parent")
+                if line.startswith("parent ")] != [SAVE_GAME_PARENT]:
+            raise RuntimeError("Save-evidence410 must retain genuinec7 sole parent")
+        source_save_headers = git(self.source, "cat-file", "commit", SAVE_GAME_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in source_save_headers.splitlines() if x.startswith("parent ")] != [INTENT_GAME_PARENT]
+                or git(self.source, "rev-parse", SAVE_GAME_PARENT + "^{tree}").decode().strip() != SAVE_GAME_PARENT_TREE):
+            raise RuntimeError("Frozen H17 source ancestry/tree changed")
         source_intent_parent_headers = git(self.source, "cat-file", "commit", INTENT_GAME_PARENT).decode().split("\n\n", 1)[0]
         if ([line[7:] for line in source_intent_parent_headers.splitlines() if line.startswith("parent ")] != [BOOTSTRAP_GAME_PARENT]
                 or git(self.source, "rev-parse", INTENT_GAME_PARENT + "^{tree}").decode().strip() != INTENT_GAME_PARENT_TREE):
@@ -2043,7 +2046,6 @@ class Controller:
                 raise RuntimeError("Original game baseline tree differs")
         source_tree, candidate_tree = tree(self.source), tree(self.candidate)
         baseline_tree = tree(self.source, ORIGINAL_GAME_SHA)
-        # The corrected production child is deliberately NOT a receiver ancestor.
         delta = {name for name in baseline_tree.keys() | candidate_tree.keys()
                  if baseline_tree.get(name) != candidate_tree.get(name)}
         if delta != OWNED_PATHS or any(name in baseline_tree for name in OWNED_PATHS):
@@ -2070,7 +2072,6 @@ class Controller:
             shutil.copyfile(p, target)
             candidate_rows[name] = {"blob": blob(p), "sha256": digest(p)}
         self.candidate_initial = candidate_rows
-        # Project checkout is the new physical project, NOT a link/copy of any donor.
         self.initial = self.snapshot()
         write_json(self.evidence / "generated-uids-before.json", self.generated_uids())
         write_json(self.evidence / "source-before.json", self.initial)
@@ -2106,13 +2107,11 @@ class Controller:
                    "return_game_parent": RETURN_GAME_PARENT, "return_game_parent_headers": source_return_parent_headers,
                    "bootstrap_game_parent": BOOTSTRAP_GAME_PARENT, "bootstrap_game_parent_headers": source_bootstrap_parent_headers,
                    "intent_game_parent": INTENT_GAME_PARENT, "intent_game_parent_headers": source_intent_parent_headers,
-                   "tested_game_parent": INTENT_GAME_PARENT, "tested_game_parent_headers": source_intent_parent_headers,
-                   "tested_game_grandparent": BOOTSTRAP_GAME_PARENT, "tested_game_grandparent_headers": source_bootstrap_parent_headers,
+                   "tested_game_parent": SAVE_GAME_PARENT, "tested_game_parent_headers": source_save_headers,
+                   "tested_game_grandparent": INTENT_GAME_PARENT, "tested_game_grandparent_headers": source_intent_parent_headers,
                    "historical407_parent": GAME_PARENT, "historical407_parent_headers": source_parent_headers,
                    "historical407_grandparent": GAME_GRANDPARENT, "historical407_grandparent_headers": source_grandparent_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
-        # Retain full actual game AND actual Python inputs before engine setup.
-        # The snapshot describes these bytes, never an invented successful import.
         with tarfile.open(self.evidence / "source-inputs.tar.gz", "x:gz") as archive:
             for number, name in enumerate(sorted(self.initial["game"] | self.initial["python_closure"])):
                 archive.add(self.source / name, arcname=name, recursive=False)
@@ -2186,8 +2185,6 @@ class Controller:
         return rows
 
     def install_dependencies(self) -> None:
-        # setup() already verifies attempt/ref/source/scope/private roots. Exact
-        # main885b version convention, fresh private --target, no cache or donor.
         requirements = (self.source / ".github/workflows/verify.yml").read_text()
         if any(f"{name}=={version}" not in requirements for name, version in DEPENDENCIES.items()):
             raise RuntimeError("Pinned scientific convention differs")
@@ -2271,7 +2268,6 @@ class Controller:
                 missing.append(name)
                 continue
             tools[name] = {"path": str(path), "bytes": path.stat().st_size, "sha256": digest(path)}
-        # Loader lookup only: no unmonitored ldconfig/compiler/package process.
         libraries = {}
         for name in ("libGL.so.1", "libGLX.so.0"):
             try:
@@ -2687,7 +2683,6 @@ class Controller:
                 if (row.get("exception_type") != "AssertionError" or "test_bake_publication.py" not in trace
                         or not any(message in row.get("message", "") for message in boundaries)):
                     raise RuntimeError("Prerequisite/other assertion failure; no intended persistence RED")
-                # Real tests assert these observations before their defect assertion.
                 if method.startswith("PublicationFaults.") and not all((root / (n + ".json")).is_file() for n in ("before", "after")):
                     raise RuntimeError("No retained actual publication fault snapshots")
         log = diagnostic_text(self.evidence / (name + ".log"))
@@ -3212,7 +3207,9 @@ class Controller:
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
             if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
+                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [SAVE_RECEIVER_PARENT]
+                    or git(self.candidate, "rev-parse", SAVE_RECEIVER_PARENT + "^{tree}").decode().strip() != SAVE_RECEIVER_PARENT_TREE
+                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", SAVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
                     or git(self.candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE
                     or [x[7:] for x in git(self.candidate, "cat-file", "commit", TRACKED_REFUSAL_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
                     or git(self.candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
@@ -3427,7 +3424,6 @@ class Controller:
                 self.transaction_started = time.monotonic()
                 self.arm_budget()
                 self.lifecycle_copy()
-                # Existing180s import remains a separate phase; copy elapsed is still charged.
                 signal.setitimer(signal.ITIMER_REAL, 0)
                 self.lifecycle_clock = self.transaction_started
                 self.transaction_started = None
