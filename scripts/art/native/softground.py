@@ -290,55 +290,148 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
 # ------------------------------------------------------------------------------------------------
 # packed earth
 # ------------------------------------------------------------------------------------------------
+PACKED_PATH_ARGS = {
+    'seed': 43, 'fam': 'path', 'cell': 14.0, 'joints': 1.1, 'lit': 0.8,
+    'stones': 0.45, 'blades': 0.6, 'soft_joints': True,
+}
+PACKED_PATH_PERIOD = 768  # art texels, the editor's existing 32-cell material period
+
+
+def packed_soil(seed: int = 43, P: int = PACKED_PATH_PERIOD, fam: str = 'path',
+                cell: float = 14.0, stones: float = 0.45, joints: float = 1.1,
+                lit: float = 0.8, blades: float = 0.6) -> np.ndarray:
+    """One world-anchored packed-earth body for native paint, kit fill and final bake.
+
+    Broad dry/damp fields carry broken, shallow scuffs and small aggregate drifts. No nearest-cell
+    boundaries are drawn: this soil has surface wear, not a network of outlined paving plates.
+    `cell` sets the grain's physical scale; `lit` leaves that share of scuff sites calm; `joints`
+    suppresses dark aggregate (above 1, only sibling-colour flecks remain). Existing stones/blades
+    keep their recipe densities. Every field and stamp wraps at P, including stamps at the edge.
+    The returned palette codes are unshaded; callers apply their actual ruts, edges and shadows.
+    """
+    rng = np.random.default_rng(seed + 701)
+    famc = np.full((P, P), FI[fam], np.int32)
+    warm = blobs(P, P, seed + 5, 40.0, 0.28)
+    cool = blobs(P, P, seed + 6, 36.0, 0.22) & ~warm
+    famc[warm] = FI[fam + '_warm']
+    famc[cool] = FI[fam + '_cool']
+    cv = famc * 8 + 3
+    drift = blobs(P, P, seed + 21, 52.0, 0.38)
+
+    def mark(y, x, code):
+        cv[y % P, x % P] = code
+
+    # Broken flat brush shapes, 7-18 by 2-4 texels at the current 74-px adult scale. A few
+    # clustered grains sit beside them; no enclosing dark lower/right contour or raised dome.
+    for _ in range(int(P * P / max(1.0, cell * cell * 0.35))):
+        y, x = int(rng.integers(P)), int(rng.integers(P))
+        if not drift[y, x] or rng.random() < lit:
+            continue
+        length = max(5, int(round(rng.uniform(0.5, 1.3) * cell)))
+        width = int(rng.integers(2, 5))
+        skew = int(rng.integers(-1, 2))
+        body = int(famc[y, x])
+        for dy in range(width):
+            start = int(rng.integers(0, 3))
+            end = length - int(rng.integers(0, 4))
+            for dx in range(start, max(start + 2, end)):
+                mark(y + dy + skew * dx // max(1, length // 2), x + dx, body * 8 + 4)
+        # Aggregate stays in the same local drift, in two or three connected flecks, not grit
+        # scattered over the whole surface or added only where an object casts its shadow.
+        for _grain in range(int(rng.integers(1, 4))):
+            gy = y + int(rng.integers(-4, width + 5))
+            gx = x + int(rng.integers(-4, length + 5))
+            grain_fam = FI[fam + '_cool'] if body != FI[fam + '_cool'] else FI[fam]
+            tone = 2 if rng.random() > joints else 3
+            for dx in range(int(rng.integers(2, 5))):
+                mark(gy, gx + dx, grain_fam * 8 + tone)
+
+    # Nine periodic copies preserve the existing read/modify/write pebble shadow at a seam.
+    margin = 32
+    padded = np.pad(cv, margin, mode='wrap')
+
+    def copies(y, x):
+        for dy in (-P, 0, P):
+            for dx in (-P, 0, P):
+                yield y + margin + dy, x + margin + dx
+
+    for _ in range(int(P * P / 1800 * blades)):
+        y, x = int(rng.integers(P)), int(rng.integers(P))
+        length = int(rng.integers(3, 7))
+        direction = 1 if rng.random() < 0.5 else -1
+        for Y, X in copies(y, x):
+            for j in range(length):
+                put(padded, Y - (j * j) // 6, X + direction * j,
+                    C('grass_warm', 4 if j < length - 1 else 5))
+    if stones > 0:
+        for _ in range(max(1, int(P * P / 2600 * stones))):
+            ky, kx = int(rng.integers(P)), int(rng.integers(P))
+            for _j in range(int(rng.integers(2, 6))):
+                py, px = (ky + int(rng.normal(0, 4))) % P, (kx + int(rng.normal(0, 6))) % P
+                big, stamp_seed = rng.random() < 0.15, int(rng.integers(0, 2 ** 31))
+                for Y, X in copies(py, px):
+                    pebble(padded, Y, X, np.random.default_rng(stamp_seed), big=big)
+    return padded[margin:margin + P, margin:margin + P].copy()
+
+
 def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: float = 13.0,
          ruts: float | None = None, stones: float = 1.0, rut_mask: np.ndarray | None = None,
-         crown: bool = False, clod_relief: bool = True) -> None:
+         crown: bool = False, clod_relief: bool = True, joints: float = 0.28,
+         lit: float = 0.4, blades: float = 1.0, soft_joints: bool = False,
+         origin: tuple[int, int] = (0, 0), period: int = PACKED_PATH_PERIOD) -> None:
     """Packed earth (Eastward 13 and 17): clods 10 to 15 px in two close tones of the family and
     its siblings, each lit along its upper left with a joint a tone down along its lower right
     (joints broken, so the ground never reads as a mesh); large trodden and damp patches; two
     ruts (lit on their south lip) at `ruts` px in from the edge; pebbles in small clusters, lit
     at their upper left with a shade under them; dark crumbs near the edge.
-    With clod_relief=False, keep broad soil patches without the per-cell accent, gaps or rims."""
+    With clod_relief=False, keep broad soil patches without the per-cell accent, gaps or rims.
+    soft_joints selects the shared packed-soil body instead of relief clods; origin is its (x,y)
+    world texel offset. Legacy callers retain their previous painter and random sequence."""
     from scipy.spatial import cKDTree
     H, W = m.shape
     if not m.any():
         return
     rng = np.random.default_rng(seed)
     yy, xx = np.mgrid[0:H, 0:W]
-    # clods: a jittered lattice of seeds, nearest two
-    pts = []
-    sy = cell * 0.82
-    for j, gy in enumerate(np.arange(-cell, H + cell, sy)):
-        for gx in np.arange(-cell + (j % 2) * cell / 2, W + cell, cell):
-            pts.append((gx + rng.uniform(-0.32, 0.32) * cell, gy + rng.uniform(-0.3, 0.3) * sy))
-    pts = np.array(pts)
-    tree = cKDTree(pts)
-    d, i = tree.query(np.stack([xx.ravel() + 0.5, yy.ravel() + 0.5], 1), k=2)
-    d1, d2 = d[:, 0].reshape(H, W), d[:, 1].reshape(H, W)
-    cid = i[:, 0].reshape(H, W)
-    h = (cid * 2654435761 % 1000) / 1000.0
-    famc = np.full((H, W), FI[fam])
-    # big soft patches decide the sibling: dry (warm) and damp (cool); the clods add a little more
-    pw = patches(H, W, seed + 5, 40.0, 0.28)
-    pc = patches(H, W, seed + 6, 36.0, 0.22) & ~pw
-    famc[pw] = FI[fam + '_warm']
-    famc[pc] = FI[fam + '_cool']
-    if clod_relief:
-        famc[(h < 0.12) & ~pc] = FI[fam + '_warm']
-    t = np.full((H, W), 3)
-    # rounded clods 10 to 15 px (Eastward 12 and 13: cobble-like packed earth): each a calm dome
-    # of the body tone, a tone lighter at its upper left rim on the lighter ones; the gaps between
-    # them a tone down, soft and round, hidden in stretches by a slow field so the ground never
-    # reads as a mesh
-    vx, vy = (xx + 0.5 - pts[cid, 0]), (yy + 0.5 - pts[cid, 1])
-    rr = cell * 0.5 * (0.86 + 0.22 * nz(H, W, 5.0, seed + 11))
-    gap = (d1 > rr) | ((d2 - d1) < 1.3)
-    show = nz(H, W, 26.0, seed + 7) > 0.28
-    if clod_relief:
-        t[gap & show] = 2
-    hi = ~gap & ((vx * 0.6 + vy * 0.8) < -0.42 * rr) & (d1 > 0.42 * rr) & (h > 0.4)
-    if clod_relief:
-        t[hi] = 4
+    if soft_joints:
+        body = packed_soil(seed, period, fam, cell, stones, joints, lit, blades)
+        body = body[(yy + origin[1]) % period, (xx + origin[0]) % period]
+        famc, t = body // 8, body % 8
+    else:
+        # clods: a jittered lattice of seeds, nearest two
+        pts = []
+        sy = cell * 0.82
+        for j, gy in enumerate(np.arange(-cell, H + cell, sy)):
+            for gx in np.arange(-cell + (j % 2) * cell / 2, W + cell, cell):
+                pts.append((gx + rng.uniform(-0.32, 0.32) * cell, gy + rng.uniform(-0.3, 0.3) * sy))
+        pts = np.array(pts)
+        tree = cKDTree(pts)
+        d, i = tree.query(np.stack([xx.ravel() + 0.5, yy.ravel() + 0.5], 1), k=2)
+        d1, d2 = d[:, 0].reshape(H, W), d[:, 1].reshape(H, W)
+        cid = i[:, 0].reshape(H, W)
+        h = (cid * 2654435761 % 1000) / 1000.0
+        famc = np.full((H, W), FI[fam])
+        # big soft patches decide the sibling: dry (warm) and damp (cool); the clods add a little more
+        pw = patches(H, W, seed + 5, 40.0, 0.28)
+        pc = patches(H, W, seed + 6, 36.0, 0.22) & ~pw
+        famc[pw] = FI[fam + '_warm']
+        famc[pc] = FI[fam + '_cool']
+        if clod_relief:
+            famc[(h < 0.12) & ~pc] = FI[fam + '_warm']
+        t = np.full((H, W), 3)
+        # rounded clods 10 to 15 px (Eastward 12 and 13: cobble-like packed earth): each a calm dome
+        # of the body tone, a tone lighter at its upper left rim on the lighter ones; the gaps between
+        # them a tone down, soft and round, hidden in stretches by a slow field so the ground never
+        # reads as a mesh
+        vx, vy = (xx + 0.5 - pts[cid, 0]), (yy + 0.5 - pts[cid, 1])
+        rr = cell * 0.5 * (0.86 + 0.22 * nz(H, W, 5.0, seed + 11))
+        gap = (d1 > rr) | ((d2 - d1) < 1.3)
+        show = nz(H, W, 26.0, seed + 7) > joints
+        if clod_relief:
+            t[gap & show] = 2
+        hi = ~gap & ((vx * 0.6 + vy * 0.8) < -0.42 * rr) & (d1 > 0.42 * rr) & (h > lit)
+        if clod_relief:
+            t[hi] = 4
     # ruts: two soft worn bands, a tone down in the damp sibling, lit along their south lip
     if ruts:
         # Road rut/crown contours follow the road, not the wider road-and-path union.
@@ -360,9 +453,17 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
             # the village's packed earth is dry and light (Matt, 27 Oct: the roads read as
             # trenches): the clods and the soft gaps between them a tone up off the ruts, so only
             # the wheel tracks and the edge look sunken
-            up_ = m & ~rut & ~lip & (t <= 3) & (t >= 2)
-            t[up_] = t[up_] + 1
-            famc[up_ & (famc == FI[fam + '_cool'])] = FI[fam]
+            if soft_joints:
+                # Raise the packed soil's WHOLE relative ramp: body 3->4, shallow scuff 4->5,
+                # grain 2->3. Do not flatten the new scuffs into an already raised body, erase
+                # cool patches, or brighten the periodic pebbles and dry blades as though soil.
+                soil = np.isin(famc, [FI[fam], FI[fam + '_warm'], FI[fam + '_cool']])
+                up_ = m & ~rut & ~lip & soil
+                t[up_] = np.minimum(t[up_] + 1, 6)
+            else:
+                up_ = m & ~rut & ~lip & (t <= 3) & (t >= 2)
+                t[up_] = t[up_] + 1
+                famc[up_ & (famc == FI[fam + '_cool'])] = FI[fam]
             t[lip] = np.maximum(t[lip], 5)
             famc[lip] = FI[fam + '_warm']
         else:
@@ -379,25 +480,26 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
         cy_, cx_ = np.nonzero(cr)
         for k in rng.permutation(len(cy_))[: len(cy_) // 160]:
             stamp(cv, int(cy_[k]), int(cx_[k]), tuft_shape(rng, rng.uniform(0.8, 1.3)), C('grass_warm', 2), m)
-    # dry blades blown onto the dirt: short pale curves (Eastward 12)
-    ys2, xs2 = np.nonzero(m & ndi.binary_erosion(m, iterations=6))
-    for k in rng.permutation(len(ys2))[: len(ys2) // 1800]:
-        y, x = int(ys2[k]), int(xs2[k])
-        L = int(rng.integers(3, 7))
-        d_ = 1 if rng.random() < 0.5 else -1
-        for j in range(L):
-            put(cv, y - (j * j) // 6, x + d_ * j, C('grass_warm', 4 if j < L - 1 else 5), m)
-    # pebbles in small clusters, a larger stone now and then
-    inner = m & ndi.binary_erosion(m, iterations=5)
-    iy, ix = np.nonzero(inner)
-    if len(iy) and stones > 0:
-        n_cl = max(1, int(len(iy) / 2600 * stones))
-        for _ in range(n_cl):
-            k = int(rng.integers(0, len(iy)))
-            for _j in range(int(rng.integers(2, 6))):
-                py = iy[k] + int(rng.normal(0, 4.0))
-                px = ix[k] + int(rng.normal(0, 6.0))
-                pebble(cv, py, px, rng, big=rng.random() < 0.15, ok=m)
+    if not soft_joints:
+        # dry blades blown onto the dirt: short pale curves (Eastward 12)
+        ys2, xs2 = np.nonzero(m & ndi.binary_erosion(m, iterations=6))
+        for k in rng.permutation(len(ys2))[: int(len(ys2) / 1800 * blades)]:
+            y, x = int(ys2[k]), int(xs2[k])
+            L = int(rng.integers(3, 7))
+            d_ = 1 if rng.random() < 0.5 else -1
+            for j in range(L):
+                put(cv, y - (j * j) // 6, x + d_ * j, C('grass_warm', 4 if j < L - 1 else 5), m)
+        # pebbles in small clusters, a larger stone now and then
+        inner = m & ndi.binary_erosion(m, iterations=5)
+        iy, ix = np.nonzero(inner)
+        if len(iy) and stones > 0:
+            n_cl = max(1, int(len(iy) / 2600 * stones))
+            for _ in range(n_cl):
+                k = int(rng.integers(0, len(iy)))
+                for _j in range(int(rng.integers(2, 6))):
+                    py = iy[k] + int(rng.normal(0, 4.0))
+                    px = ix[k] + int(rng.normal(0, 6.0))
+                    pebble(cv, py, px, rng, big=rng.random() < 0.15, ok=m)
     # crumbs along the edge, dark, 1 to 2 px
     edge = m & ~ndi.binary_erosion(m, iterations=4)
     ey, ex = np.nonzero(edge)
@@ -2161,3 +2263,4 @@ def tidy_bank(cv: np.ndarray, water: np.ndarray, near: int = 6) -> None:
                     cv[y, x] = max(set(vals), key=vals.count)
         bank = (np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']]) |
                 (zone & ~((is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 >= 2)))) & (cv >= 0)
+

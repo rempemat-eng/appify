@@ -364,8 +364,15 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             net |= SG.curve_texels(r['points'], n, H, W, r['bend'], plan.get('seed', 7) + 61 + k_)
         road_zone = SG.texels(cells_road, H, W)
         turf0 = is_turf(cv) & ~net
-        GD.dirt(cv, net, plan.get('seed', 7) + 43, fam='path', ruts=19,
-                rut_mask=road_zone, crown=True, clod_relief=not packed_paths)
+        if packed_paths:
+            # The editor path/yard material, at world phase even for a cropped town diagnostic.
+            # Geometry, wheel tracks, turf contacts and object shadows remain the town's own.
+            origin = plan.get('origin_on_canvas', (0, 0))
+            GD.dirt(cv, net, **GD.PACKED_PATH_ARGS, ruts=19, rut_mask=road_zone, crown=True,
+                    origin=(int(round(origin[0] * ctx.D)), int(round(origin[1] * ctx.D))))
+        else:
+            GD.dirt(cv, net, plan.get('seed', 7) + 43, fam='path', ruts=19,
+                    rut_mask=road_zone, crown=True)
         GD.sunken_edge(cv, net, turf0, np.random.default_rng(plan.get('seed', 7) + 45))
         keep_marks |= net | ndi.binary_dilation(net, iterations=6)
         pathm |= net
@@ -961,3 +968,4 @@ def main(argv=None) -> int:
 
 if __name__ == '__main__':
     sys.exit(main())
+

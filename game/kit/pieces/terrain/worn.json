@@ -45,10 +45,14 @@
       "module": "scripts.art.native.softground",
       "fn": "dirt",
       "args": {
-        "seed": 451,
+        "seed": 43,
         "fam": "path",
-        "cell": 11,
-        "stones": 0.6,
+        "cell": 14.0,
+        "joints": 1.1,
+        "lit": 0.8,
+        "stones": 0.45,
+        "blades": 0.6,
+        "soft_joints": true,
         "shape": {
           "seed": 451,
           "r_out": 0.6,
@@ -73,10 +77,16 @@
       "args": {
         "seed": 43,
         "fam": "path",
-        "cell": 12
+        "cell": 14.0,
+        "joints": 1.1,
+        "lit": 0.8,
+        "stones": 0.45,
+        "blades": 0.6,
+        "soft_joints": true
       }
     },
     "size_class": "ground",
     "eastward_ref": "Eastward 12, 13 (dirt paths); refs local only"
   }
 }
+
