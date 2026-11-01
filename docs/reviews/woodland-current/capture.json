@@ -1,0 +1,15 @@
+{
+  "source": "fcc86645d802ef494dfd1e2b123b52531ef807c1",
+  "tree": "2ef3b30ef82c61b919a2fb78d66f0aee927b2424",
+  "image": "woodland_kit_spring.png",
+  "width": 1920,
+  "height": 1080,
+  "sha256": "55bee644e6cfd08c971cb7e5b2292017358ec89646ce51f35c028e38d5790d12",
+  "git_blob": "a8b21d1eb6bf095e019d6d553cc668aaba1a0caf",
+  "capture": "Documented direct game --zone/--spawn/--shot command; actual Mesa llvmpipe/OpenGL4.5 capture exit0; clean source before/after.",
+  "changes": [
+    "Inert Hatch dark square removed; Door retained.",
+    "Spring player spawn is on walkable path below bridge at384,996."
+  ],
+  "qualification": "Actual candidate render. No scene-detector, final canonical-gate, live-editor acceptance or art approval claimed. Later b5a971e5 only synchronizes scene-intake bake hash."
+}
