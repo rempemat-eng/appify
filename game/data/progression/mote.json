@@ -1,18 +1,22 @@
 {
-  "schema_version": 1,
-  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "schema_version": 2,
+  "status": "proposal (claude-a/progression-2, 26 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "id": "mote",
   "name": "Mote",
   "identity": "genderless observatory keeper; long navy coat edged in gold with glass-inlaid hem fragments; two gold crescent hooks at the shoulders; the chest core (gold ring, blue lens); glass shards form in the RIGHT hand",
   "home_region": "lumen",
-  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "home_region_note": "see docs/vision/world-and-cast.md (26 Oct); it sets the tier material",
   "abilities": {
-    "kit": "game/data/abilities/mote.json (Codex, #261); base and powered form unchanged",
+    "kit": "game/data/abilities/mote.json (Codex, #261); base and powered form unchanged; every node is a modifier over it",
     "base": {
       "primary": "Glass volley",
       "secondary": "Gravity anchor",
       "block": "Glass crescent",
       "special": "Aphelion"
+    },
+    "loadout_kind": {
+      "label": "glass",
+      "rule": "one loaded at a time, chosen outside fights; the base kind is free"
     },
     "skill_tree": {
       "branches": [
@@ -24,12 +28,12 @@
           ],
           "nodes": [
             {
-              "id": "fine_glass",
-              "kind": "passive",
-              "name": "Fine Glass",
-              "effect": "Shards fly 6 % faster.",
+              "id": "clear_glass",
+              "kind": "kind",
+              "name": "Clear glass",
+              "effect": "Loads clear: shards pierce one.",
               "numbers": {
-                "shard_speed_pct": 6
+                "pierce": 1
               },
               "level": 2,
               "cost": 1,
@@ -37,57 +41,47 @@
               "touches_canonical": false
             },
             {
-              "id": "refraction",
-              "name": "Refraction",
-              "binding": "passive: a shard that passes through a gravity anchor",
-              "effect": "The shard splits in two.",
+              "id": "violet_glass",
+              "kind": "kind",
+              "name": "Violet glass",
+              "effect": "Loads violet: shards chill.",
               "numbers": {
-                "split": 2,
-                "split_damage_pct": 50
+                "chill_seconds": 1.5
               },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "split glint"
-                ],
-                "reuses": []
-              },
-              "touches_canonical": false,
-              "kind": "technique",
               "level": 3,
               "cost": 2,
               "requires": [
-                "fine_glass"
-              ]
-            },
-            {
-              "id": "clear_sight",
-              "kind": "passive",
-              "name": "Clear Sight",
-              "effect": "Glass volley recovers 5 % faster.",
-              "numbers": {
-                "primary_cooldown_pct": -5
-              },
-              "level": 6,
-              "cost": 1,
-              "requires": [
-                "refraction"
+                "clear_glass"
               ],
               "touches_canonical": false
             },
             {
-              "id": "refraction_2",
-              "kind": "technique upgrade",
-              "name": "Refraction II",
-              "effect": "Split shards slow what they hit.",
+              "id": "fine_glass",
+              "kind": "minor",
+              "name": "Fine glass",
+              "effect": "Shards fly 6 % faster.",
               "numbers": {
-                "slow_pct": 15,
-                "slow_seconds": 1.5
+                "shard_speed_pct": 6
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "violet_glass"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "mirror_glass",
+              "kind": "kind",
+              "name": "Mirror glass",
+              "effect": "Loads mirror: shards bounce once off walls.",
+              "numbers": {
+                "bounces": 1
               },
               "level": 12,
               "cost": 3,
               "requires": [
-                "clear_sight"
+                "fine_glass"
               ],
               "touches_canonical": false
             },
@@ -95,14 +89,14 @@
               "id": "prism",
               "kind": "keystone",
               "name": "Prism",
-              "effect": "Split shards split once more.",
+              "effect": "Shards that pass an anchor split in two.",
               "numbers": {
-                "extra_split": 1
+                "split": 2
               },
               "level": 22,
               "cost": 4,
               "requires": [
-                "refraction_2"
+                "mirror_glass"
               ],
               "touches_canonical": false
             }
@@ -112,14 +106,15 @@
           "id": "gravity",
           "name": "Gravity",
           "covers": [
-            "secondary"
+            "secondary",
+            "special"
           ],
           "nodes": [
             {
               "id": "heavy_point",
-              "kind": "passive",
-              "name": "Heavy Point",
-              "effect": "Gravity anchor radius +8 %.",
+              "kind": "minor",
+              "name": "Heavy point",
+              "effect": "Anchor radius +8 %.",
               "numbers": {
                 "radius_pct": 8
               },
@@ -129,35 +124,24 @@
               "touches_canonical": false
             },
             {
-              "id": "pane_step",
-              "name": "Pane Step",
-              "binding": "a perfect dodge",
-              "effect": "One glass pane stays standing where Mote rolled and stops one projectile.",
-              "numbers": {
-                "pane_seconds": 2,
-                "blocks": 1
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "standing pane (rise 2, hold, shatter 3)"
-                ],
-                "reuses": [
-                  "dodge"
-                ]
-              },
-              "touches_canonical": false,
+              "id": "starfall",
               "kind": "technique",
+              "name": "Starfall",
+              "effect": "An anchor holding three foes calls a small rain of light.",
+              "numbers": {
+                "min_foes": 3
+              },
               "level": 9,
               "cost": 2,
               "requires": [
                 "heavy_point"
-              ]
+              ],
+              "touches_canonical": false
             },
             {
               "id": "tidal_pull",
-              "kind": "passive",
-              "name": "Tidal Pull",
+              "kind": "minor",
+              "name": "Tidal pull",
               "effect": "Anchor pull +10 %.",
               "numbers": {
                 "pull_pct": 10
@@ -165,18 +149,17 @@
               "level": 11,
               "cost": 1,
               "requires": [
-                "pane_step"
+                "starfall"
               ],
               "touches_canonical": false
             },
             {
-              "id": "pane_step_2",
-              "kind": "technique upgrade",
-              "name": "Pane Step II",
-              "effect": "A pane that blocks shatters into a small volley.",
+              "id": "starfall_ii",
+              "kind": "upgrade",
+              "name": "Starfall II",
+              "effect": "The rain covers a quarter more ground.",
               "numbers": {
-                "volley_shards": 3,
-                "shard_damage_pct": 30
+                "radius_pct": 25
               },
               "level": 20,
               "cost": 3,
@@ -186,34 +169,34 @@
               "touches_canonical": false
             },
             {
-              "id": "event_horizon",
+              "id": "aphelion_bloom",
               "kind": "keystone",
-              "name": "Event Horizon",
-              "effect": "The anchor holds foes 0.3 s longer.",
+              "name": "Aphelion bloom",
+              "effect": "Aphelion's orbit gains one shard.",
               "numbers": {
-                "hold_seconds": 0.3
+                "orbit_shards": 1
               },
               "level": 24,
               "cost": 4,
               "requires": [
-                "pane_step_2"
+                "starfall_ii"
               ],
-              "touches_canonical": false
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
             }
           ]
         },
         {
-          "id": "orbit",
-          "name": "Orbit",
+          "id": "panes",
+          "name": "Panes",
           "covers": [
-            "block",
-            "special"
+            "block"
           ],
           "nodes": [
             {
               "id": "bright_panes",
-              "kind": "passive",
-              "name": "Bright Panes",
+              "kind": "minor",
+              "name": "Bright panes",
               "effect": "Glass crescent cost -8 %.",
               "numbers": {
                 "guard_cost_pct": -8
@@ -224,76 +207,64 @@
               "touches_canonical": false
             },
             {
-              "id": "starfall",
-              "name": "Starfall",
-              "binding": "a gravity anchor that draws in three or more foes",
-              "effect": "A small rain of light falls on the anchor a moment later.",
-              "numbers": {
-                "min_foes": 3,
-                "delay_seconds": 0.6,
-                "damage": 16,
-                "radius": 22
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "light rain (6 drawings, finite)"
-                ],
-                "reuses": []
-              },
-              "touches_canonical": false,
+              "id": "pane_step",
               "kind": "technique",
+              "name": "Pane step",
+              "effect": "A perfect dodge leaves a pane that stops one shot.",
+              "numbers": {
+                "pane_seconds": 2
+              },
               "level": 16,
               "cost": 2,
               "requires": [
                 "bright_panes"
-              ]
+              ],
+              "touches_canonical": false
             },
             {
-              "id": "night_sky",
-              "kind": "passive",
-              "name": "Night Sky",
-              "effect": "Starfall's rain falls 0.1 s sooner.",
+              "id": "clear_sight",
+              "kind": "minor",
+              "name": "Clear sight",
+              "effect": "Volley recovers 5 % faster.",
               "numbers": {
-                "delay_seconds": -0.1
+                "fire_interval_pct": -5
               },
               "level": 18,
               "cost": 1,
               "requires": [
-                "starfall"
+                "pane_step"
               ],
               "touches_canonical": false
             },
             {
-              "id": "starfall_2",
-              "kind": "technique upgrade",
-              "name": "Starfall II",
-              "effect": "The rain covers a quarter more ground.",
+              "id": "pane_step_ii",
+              "kind": "upgrade",
+              "name": "Pane step II",
+              "effect": "A pane that blocks shatters into a small volley.",
               "numbers": {
-                "radius_pct": 25
+                "shards": 3
               },
               "level": 26,
               "cost": 3,
               "requires": [
-                "night_sky"
+                "clear_sight"
               ],
               "touches_canonical": false
             },
             {
-              "id": "aphelion_bloom",
+              "id": "event_horizon",
               "kind": "keystone",
-              "name": "Aphelion Bloom",
-              "effect": "Aphelion's orbit gains one more shard.",
+              "name": "Event horizon",
+              "effect": "Anchors hold foes 0.3 s longer.",
               "numbers": {
-                "orbit_shards": 1
+                "hold_seconds": 0.3
               },
-              "touches_canonical": true,
-              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
               "level": 28,
               "cost": 4,
               "requires": [
-                "starfall_2"
-              ]
+                "pane_step_ii"
+              ],
+              "touches_canonical": false
             }
           ]
         }
@@ -305,48 +276,42 @@
   "weapon": {
     "item": "core and glass",
     "equipment_tag": "core",
+    "line": "Observatory core > Dropped hooks > Orrery > Little moon",
     "tiers": [
       {
         "tier": 1,
         "name": "Observatory core",
-        "art": {
-          "silhouette": "today's drawing: gold ring round a blue glass lens with an amber light; clear blue shards",
-          "materials": [
-            "gold",
-            "glass blue",
-            "amber"
-          ],
-          "glow": "the core's light as drawn",
-          "size": "as drawn",
-          "read_check": "the current drawing"
-        },
-        "mechanics": {},
+        "form": "glass volley",
+        "level": 1,
         "requires": {
           "level": 1
         },
-        "sockets": 1
+        "sockets": 1,
+        "art": {
+          "description": "the tier-1 drawing: gold ring round a blue lens; clear blue shards formed in the right hand",
+          "read_check": "the current drawing"
+        },
+        "rig": "as drawn",
+        "mechanics": {}
       },
       {
         "tier": 2,
         "name": "Dropped hooks",
-        "art": {
-          "silhouette": "the crescent hooks gain hanging glass drops (2 px); the shards gain a faceted light edge",
-          "materials": [
-            "gold",
-            "glass blue"
-          ],
-          "glow": "none",
-          "size": "as drawn",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "shard_speed_pct": 8
-        },
+        "form": "glass volley",
+        "level": 8,
         "requires": {
           "level": 8,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "glass drops hang from the crescent hooks; faceted shards",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts",
+        "mechanics": {
+          "shard_speed_pct": 10
+        },
         "cost": {
           "glint": 60,
           "scrap": 5,
@@ -358,26 +323,22 @@
       },
       {
         "tier": 3,
-        "name": "Orrery core",
-        "art": {
-          "silhouette": "a thin gold orrery ring (1 px) tilted round the core; violet-tinted shards",
-          "materials": [
-            "gold",
-            "violet",
-            "glass blue"
-          ],
-          "glow": "none",
-          "size": "ring 2 px outside the core",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "anchor_radius_pct": 8
-        },
+        "name": "Orrery",
+        "form": "orrery volley",
+        "level": 16,
         "requires": {
           "level": 16,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "a thin gold orrery ring tilted round the body at chest height (2 px outside the coat) carrying two glass beads; each volley also fires one shard from each bead",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: ring and bead effect sprites anchored to the core (no body redraw)",
+        "mechanics": {
+          "extra_shards": 2
+        },
         "cost": {
           "glint": 150,
           "scrap": 10,
@@ -390,25 +351,22 @@
       {
         "tier": 4,
         "name": "Little moon",
-        "art": {
-          "silhouette": "the lens becomes a tiny full moon (starlight disc with two craters); the hooks tipped with stars",
-          "materials": [
-            "starlight (new)",
-            "gold"
-          ],
-          "glow": "the moon glows one tone; shards leave a 1 px trail of two drawings (off under reduced motion)",
-          "size": "as tier 3",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "named": "Little moon: volley shards converge 15 % sooner",
-          "converge_pct": -15
-        },
+        "form": "orrery volley",
+        "level": 24,
         "requires": {
           "level": 24,
           "great_forge": true
         },
         "sockets": 3,
+        "art": {
+          "description": "the core lens becomes a tiny full moon; the hooks tipped with stars; the beads lit",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: ramp swap on tier 3",
+        "mechanics": {
+          "named": "Little moon: shards converge 15 % sooner",
+          "converge_pct": -15
+        },
         "cost": {
           "glint": 300,
           "scrap": 20,
