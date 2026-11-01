@@ -1,0 +1,47 @@
+{
+ "id": "terrain/fill_scree",
+ "file": "game/kit/terrain/fill_scree.png",
+ "sha256": "eb09fd7aee6f7eda27f600d1282811c4eae9f0d9a27b1a00c624877f1e6e5582",
+ "kind": "fill_scree",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  768,
+  768
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    148,
+    148
+   ],
+   "message": "terrain/fill_scree: the bare fill's blotches are 15 art px (0.20 H) across; Eastward's are 0.35 to 0.77 H",
+   "fix": "paint blotches 26 to 57 art px across",
+   "score": 0.20270270270270271,
+   "threshold": 0.25,
+   "subject": "terrain/fill_scree",
+   "extra": {
+    "class": "grain",
+    "measure": "blotch"
+   },
+   "box_source": [
+    0,
+    0,
+    148,
+    148
+   ]
+  }
+ ]
+}

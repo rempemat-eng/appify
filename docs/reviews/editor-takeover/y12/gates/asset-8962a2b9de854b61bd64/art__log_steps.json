@@ -1,0 +1,21 @@
+{
+ "id": "art/log_steps",
+ "file": "game/kit/props/art/log_steps.png",
+ "sha256": "5ec1d067473a34d97ccfb4571032f49b1e53bfd2594bc7d071a2aa2d941459cd",
+ "kind": "log_steps",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  48,
+  48
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": []
+}

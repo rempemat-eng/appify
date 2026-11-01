@@ -1,0 +1,67 @@
+{
+ "id": "terrain/decal_tuft_5",
+ "file": "game/kit/terrain/decal_tuft_5.png",
+ "sha256": "89092f8087e4bcae4a6e40a497ad89ab713dfddc2616ea3ee9d09658cb25f6be",
+ "kind": "decal_tuft",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  16,
+  16
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "fault",
+   "box": [
+    8,
+    9,
+    9,
+    16
+   ],
+   "message": "terrain/decal_tuft_5: wide 1 art px (0.01 A) is too small for a grass tuft: the size table gives 7 to 30 (0.09 to 0.41 A); Eastward at the same character height: tufts 6 to 14 E (0.11 to 0.26 A) in 12 and 13",
+   "fix": "redraw it 7 to 30 art px wide (target about 18), checked beside Bramble (74 art px) in the asset sheet",
+   "score": 1.0,
+   "threshold": 7.0,
+   "subject": "terrain/decal_tuft_5",
+   "extra": {
+    "class": "grass_tuft",
+    "measure": "wide",
+    "range": [
+     7,
+     30
+    ],
+    "value": 1.0
+   },
+   "box_source": [
+    8,
+    9,
+    9,
+    16
+   ]
+  }
+ ]
+}

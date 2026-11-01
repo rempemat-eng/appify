@@ -1,0 +1,35 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/scratch/13b98d2e0841/lead-state/palette-pr-sheet-d572.py",
+    "--repo",
+    "/workspace/scratch/13b98d2e0841/palette-editor-review",
+    "--base",
+    "71a402aff0bd64ee42a24b075317c31d1b7320a7",
+    "--head",
+    "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "--out",
+    "/workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/y12",
+    "--scene",
+    "woodland_kit",
+    "--pr",
+    "PR302 frozen-head review"
+  ],
+  "started_at": "2026-10-28T17:48:18Z",
+  "duration_seconds": 263.37,
+  "exit_code": 1,
+  "source_before": {
+    "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+    "tracked_changes": "",
+    "pass": true
+  },
+  "source_after": {
+    "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+    "tracked_changes": "",
+    "pass": true
+  },
+  "stdout_sha256": "20594e88b9d48a1587a8f7daf94a4d2e0db07fcbd2532dc3ee0edd576253bda1",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

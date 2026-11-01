@@ -1,0 +1,21 @@
+{
+ "id": "terrain/fill_lawn",
+ "file": "game/kit/terrain/fill_lawn.png",
+ "sha256": "6cab2d59cd53fbf41e7db91fa3aeeeb03d137e6f56cbca59aae867e506703597",
+ "kind": "fill_lawn",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  768,
+  768
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": []
+}

@@ -1,0 +1,3 @@
+FAIL art/waterfall_4                          {'blocker': 0, 'fault': 7, 'polish': 1}  detail.bar, detail.glyph, detail.water_flat
+
+1 assets, 1 fail, 0 pass. Reports and sheets in /workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/y12/gates/asset-0fc8f0cab620826257e4
