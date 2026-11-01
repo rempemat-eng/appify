@@ -2011,16 +2011,20 @@ FEEDBACK_BUILDINGS = {'crossroads': [(1, 'cottage', 80, 40, []),
                   (81, 'row_house', 32, 32, [{'w_cells': 4, 'storeys': 1, 'roof': 'tile'}])]}
 
 
-def _feedback_rows(town, records, rows, *, props=('sign', 'potted plants', 'water butt')):
+def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'potted plants', 'water butt')):
     """Lay the pinned buildings along deliberately authored street edges.
 
     A row is (axis, fixed coordinate, start, end, side, street name). Gaps are
     actual side streets/water/door clearances, never random radial infill.
+    Overflow rows receive only records the original rows could not place. Their
+    extra capacity must not redistribute the already-laid original frontages.
     Failed placement remains a failure; no footprint is painted over water.
     """
     import copy
     queue = list(records)
     placed = []
+    primary_count = len(rows)
+    rows = list(rows) + list(overflow_rows)
     for row_index, (axis, fixed, lo, hi, side, name) in enumerate(rows):
         if not queue:
             break
@@ -2044,7 +2048,8 @@ def _feedback_rows(town, records, rows, *, props=('sign', 'potted plants', 'wate
         edge = int(fixed + side * street['width_px'] / 2)
         pos = int(lo)
         row_start = len(placed)
-        row_target = math.ceil(len(queue) / (len(rows) - row_index))
+        rows_left = (primary_count if row_index < primary_count else len(rows)) - row_index
+        row_target = math.ceil(len(queue) / rows_left)
         while queue and pos < hi and len(placed) - row_start < row_target:
             ident, form, ow, od, bays = queue[0]
             along, depth = (ow, od) if bays else (max(ow, od), min(ow, od))
@@ -2150,8 +2155,8 @@ def _feedback_crossroads(T, X):
     _feedback_rows(t, inventory[7:23], [('y', 6256, 3832, 4384, -1, 'Mill Street west'),
                                       ('y', 6256, 3832, 4384, 1, 'Mill Street east'),
                                       ('y', 6528, 3832, 4384, 1, 'Orchard Lane east'),
-                                      ('y', 6528, 3832, 4384, -1, 'Orchard Lane west'),
-                                      ('x', 3936, 6608, 7008, 1, 'Granary Row south')])
+                                      ('y', 6528, 3832, 4384, -1, 'Orchard Lane west')],
+                   overflow_rows=[('x', 3936, 6608, 7008, 1, 'Granary Row south')])
     _feedback_rows(t, inventory[23:29], [('y', 5968, 3832, 4288, -1, 'Halt Road west'),
                                        ('y', 5968, 3832, 4288, 1, 'Halt Road east')])
     _feedback_rows(t, inventory[29:37], [('x', 3416, 6608, 7232, -1, 'Market Lane north'),
