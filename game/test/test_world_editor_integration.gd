@@ -138,7 +138,7 @@ func test_validate_checks_unchanged_inherited_spawns_without_changing_export() -
 			var before := ZonePlan.canonical(ops.export_plan().plan)
 			assert_bool(ops.export_plan().plan.spawns.has("inherited")).is_false()
 			var result := ops.validate()
-			var blocked := at == Vector2(84, 36)
+			var blocked: bool = at == Vector2(84, 36)
 			assert_bool(result.ok).override_failure_message(str(result)).is_equal(not blocked)
 			var found := false
 			for finding in result.diagnostics:
