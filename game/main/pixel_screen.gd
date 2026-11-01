@@ -34,6 +34,19 @@ func fit() -> void:
 	screen.size = ART
 	screen.scale = Vector2(scale_k, scale_k)
 	screen.position = ((win - ART * scale_k) / 2.0).floor()
+	# UI targets use logical display points, independently of the world's art scale.
+	# Keep the native display query here; tests/callers can supply explicit ratios.
+	var ratio := DisplayServer.screen_get_scale()
+	if not is_finite(ratio) or ratio <= 0.0:
+		ratio = 1.0
+	var safe := Rect2(Vector2.ZERO, win)
+	if OS.has_feature("mobile"):
+		var display_safe := Rect2(DisplayServer.get_display_safe_area())
+		display_safe.position -= Vector2(get_window().position)
+		var visible_safe := safe.intersection(display_safe)
+		if visible_safe.has_area():
+			safe = visible_safe
+	get_tree().call_group(&"pause_screen_layout", &"fit_screen", win, scale_k, screen.position, ratio, safe)
 	if exact:
 		screen.material = null
 		screen.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST

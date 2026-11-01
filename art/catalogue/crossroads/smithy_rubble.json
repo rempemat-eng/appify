@@ -10,10 +10,10 @@
   126,
   97
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 2
  },
  "detail_bar": {
@@ -35,18 +35,6 @@
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "logic.scale",
-   "severity": "fault",
-   "box": [
-    0,
-    36,
-    121,
-    93
-   ],
-   "message": "crossroads/smithy_rubble: 19 world px tall (0.76 of an adult); the size guide gives 72 to 112 for a smithy (a forge or bathhouse: an arch 36 for the hearth, a chimney or roof vent)",
-   "fix": "redraw it 72 to 112 world px tall (216 to 336 texels at density 3) and stand it next to Bramble to check"
-  },
   {
    "detector": "detail.light",
    "severity": "polish",

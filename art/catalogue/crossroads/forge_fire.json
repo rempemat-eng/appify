@@ -1,7 +1,7 @@
 {
  "id": "crossroads/forge_fire",
  "file": "game/zones/crossroads/art/forge_fire.png",
- "sha256": "4bf9b4d89800b3b2881cbdb0c9b2a5521a0d25f7e6d0caf63e96e36bc147148c",
+ "sha256": "256e3e1db6ffcde94f172c736232fbdaad963bbe992a2c6f5252eb2b39384c9a",
  "kind": "forge_fire",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 4,
-   "tones": 19.0,
-   "shapes": 29.25
+   "tones": 18.5,
+   "shapes": 30.25
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.581,
-  "tones_ratio": 0.704,
-  "shapes_ratio": 0.581,
+  "ratio": 0.601,
+  "tones_ratio": 0.685,
+  "shapes_ratio": 0.601,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     53,
     68
    ],
-   "message": "crossroads/forge_fire: detail bar 0.58 of Eastward's prop band (19.0 tones, 29.2 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/forge_fire: detail bar 0.60 of Eastward's prop band (18.5 tones, 30.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -60,7 +60,7 @@
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

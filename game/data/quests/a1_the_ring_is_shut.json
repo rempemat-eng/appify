@@ -1,0 +1,42 @@
+{
+  "id": "a1_the_ring_is_shut",
+  "title": "The ring is shut",
+  "kind": "main",
+  "region": "frostline",
+  "chapter": [
+    "frostline",
+    2
+  ],
+  "summary": "The hut warden has shut the Col hut's ring until the High Fells are safe to walk.",
+  "start": {
+    "on": "talk:hut_warden",
+    "if": {
+      "done": [
+        "a1_bread_for_the_bothy"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "fells",
+      "text": "Free the shardstruck ibex on the High Fells",
+      "on": "camp:fells_ibex",
+      "done_if": {
+        "flags": [
+          "camp_cleared:fells_ibex"
+        ]
+      }
+    },
+    {
+      "id": "report",
+      "text": "Tell the hut warden the fells are clear",
+      "on": "talk:hut_warden"
+    }
+  ],
+  "rewards": {
+    "glint": 40,
+    "flags": [
+      "ring_open:frostline"
+    ]
+  }
+}

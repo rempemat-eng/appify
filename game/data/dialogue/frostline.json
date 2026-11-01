@@ -1,0 +1,257 @@
+{
+  "hut_warden": {
+    "name": "Hut warden",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_training_yard"
+          ]
+        },
+        "lines": [
+          "Training yard on the green, is it? Good. Tell Hale I said the stove goes on the north side, out of the wind."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_a_cup_by_the_stove"
+          ]
+        },
+        "lines": [
+          "You'll want a ring in Crossroads too, now. Somewhere to practise that isn't my doorstep.",
+          "Restore the old one on the green. I'll send down how we built the hut's: a stove beside it, always lit."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_under_the_snout"
+          ],
+          "not_started": [
+            "a1_a_cup_by_the_stove"
+          ]
+        },
+        "lines": [
+          "Tam's sitting by my stove, and I'm sitting next to her. Both of us. Sitting.",
+          "Go and say hello. She's been asking for you."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_under_the_snout",
+            "lantern"
+          ]
+        },
+        "lines": [
+          "Take the shard down to your town's lantern. Tam will be along when her hands warm up."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_under_the_snout",
+            "shard"
+          ]
+        },
+        "lines": [
+          "You found Tam? Thank the hills.",
+          "Take that light down off my mountain. Carefully. It's colder than it looks."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_under_the_snout",
+            "cutter"
+          ]
+        },
+        "lines": [
+          "The ice-cutter's by the tarn. She saw the light go under the glacier, and Tam right after it."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_under_the_snout"
+          ]
+        },
+        "lines": [
+          "The caves are under the glacier's snout, past the crevasse trod. Keep to the blue ice. The white ice breaks."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_ring_is_shut",
+            "report"
+          ]
+        },
+        "lines": [
+          "The fells are clear? Then I can open the ring again, and you can hear the rest.",
+          "The light that fell up here slid under the glacier. Tam went in after it, the night of the starfall.",
+          "Tam came up here to sit in the snow and think. She's stubborn and she's warm-blooded. Go and fetch her."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_ring_is_shut"
+          ]
+        },
+        "lines": [
+          "The ibex are up on the High Fells, on the bench past the boulder field. They're not mean. They're frightened.",
+          "Use the boulders. Let them come to you."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_bread_for_the_bothy",
+            "warden"
+          ]
+        },
+        "lines": [
+          "Bread! Real bread, from Moss! Sit down. No, the bench, I'll stand. I always stand.",
+          "Since the storm I've kept the hut open on my own. Kettle on, door open, ring shut.",
+          "The ring stays shut till the fells are safe. The ibex up there have gone wild. Free them and we'll talk."
+        ]
+      },
+      {
+        "lines": [
+          "The hut is always open. The kettle is always on. Mind the step; it has opinions about boots."
+        ]
+      }
+    ]
+  },
+  "ice_cutter": {
+    "name": "Ice-cutter",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_under_the_snout"
+          ]
+        },
+        "lines": [
+          "The tarn's quiet again. Quiet enough to hear the ice sing at night. It never used to do that."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_under_the_snout",
+            "cutter"
+          ]
+        },
+        "lines": [
+          "The night of the storm a light came down on the glacier and slid, like a stone on a frozen pond.",
+          "It went in under the snout. A blue mouth in the ice, at the end of the crevasse trod.",
+          "Tam went in after it with nothing but her beads. Bring her back, will you?"
+        ]
+      },
+      {
+        "lines": [
+          "I cut ice for the inn at Cogsworth. Or I did, before the line went down. Now I just cut ice."
+        ]
+      }
+    ]
+  },
+  "forager": {
+    "name": "Forager",
+    "entries": [
+      {
+        "if": {
+          "flags": [
+            "camp_cleared:cirque_choughs"
+          ]
+        },
+        "lines": [
+          "The choughs gave my baskets back. Well, they dropped them. Same thing."
+        ]
+      },
+      {
+        "lines": [
+          "The choughs over the cirque took my baskets, every one. Birds with baskets. I ask you."
+        ]
+      }
+    ]
+  },
+  "tam": {
+    "name": "Tam",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_a_cup_by_the_stove"
+          ]
+        },
+        "lines": [
+          "Kettle's on. Sit when you can. Stand when you must. That's all the wisdom I have today."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_under_the_snout"
+          ]
+        },
+        "lines": [
+          "The warden sat down. She actually sat down, with a cup, and didn't get up for the whole cup.",
+          "The fells are quiet, the shard is gone, and the warden has me to argue with now.",
+          "So the hut doesn't need me as much as I thought. But you might. Can I walk with you a while?"
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_under_the_snout",
+            "shard"
+          ]
+        },
+        "lines": [
+          "The light is yours now. Take it somewhere warm. I'll follow when my hands remember how to be hands."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_under_the_snout",
+            "tam"
+          ]
+        },
+        "lines": [
+          "You came in. Good. I've been holding the cold back from the light with my palms, and my palms are tired.",
+          "It's quiet now. Thank you for freeing the old wyrm. It was only cold and scared, like me.",
+          "Take the shard. I'll come out behind you."
+        ]
+      },
+      {
+        "lines": [
+          "Breathe in. Breathe out. Then go gently."
+        ]
+      }
+    ]
+  },
+  "frost_shard": {
+    "name": "Great shard",
+    "entries": [
+      {
+        "if": {
+          "flags": [
+            "shard_taken:frostline"
+          ]
+        },
+        "lines": [
+          "The hollow in the ice where the shard was is already filling with snow."
+        ]
+      },
+      {
+        "lines": [
+          "The great shard is frozen into the chamber wall. When you touch it the ice lets go at once, as if it was waiting."
+        ]
+      }
+    ]
+  }
+}

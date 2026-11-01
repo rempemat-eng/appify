@@ -1,0 +1,18 @@
+{
+  "version": 0,
+  "glint": -3,
+  "player": {
+    "hp": 3
+  },
+  "settings": {
+    "pixel_scale": "whole"
+  },
+  "extension": {
+    "items": [
+      "kept",
+      {
+        "value": 4
+      }
+    ]
+  }
+}

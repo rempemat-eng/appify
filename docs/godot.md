@@ -13,7 +13,7 @@ $GODOT --headless --path game --import            # re-import after adding or ch
 $GODOT --path game -- --fresh --zone=woodland --spawn=stones   # play (needs a display)
 ```
 
-`check:godot` (`game/tools/check.sh`) fails on any `SCRIPT ERROR` or engine `ERROR:` line, not only on the exit code, and keeps user data and editor settings in a temporary folder. It is not part of `npm run verify` (that needs no Godot); the `Godot` GitHub Actions job (`.github/workflows/godot.yml`) runs it on ready PRs and on `main` when `game/` changes. Draft PRs run no CI, so run it locally before marking a PR ready.
+`check:godot` (`game/tools/check.sh`) fails on any `SCRIPT ERROR` or engine `ERROR:` line, not only on the exit code, and runs a byte-identical private copy of the selected executable. Before even `--version`, it copies only the executable into an empty private directory, checks the bytes and executable permission, and refuses setup failures with exit 2. It never copies portable markers, `editor_data`, settings or player profiles. Each version/import/main/GdUnit child receives fresh private HOME, XDG config/data/cache and TMPDIR directories; the runtime is removed on exit. It is not part of `npm run verify` (that needs no Godot); the `Godot` GitHub Actions job (`.github/workflows/godot.yml`) runs it on ready PRs and on `main` when `game/` changes. Draft PRs run no CI, so run it locally before marking a PR ready.
 
 Game options, after `--`: `--fresh` ignores the save, `--zone=<id>` and `--spawn=<name>` choose where to start, `--shot=<png>` waits 2 s (`--wait=<s>` to change), saves the whole window 1:1 and quits; `--demo` walks the player right, down, left and up with a bow shot after each (`--quit` to end after it). For a video that keeps real time on a slow machine, use the movie maker: `DISPLAY=:96 $GODOT --path game --audio-driver Dummy --resolution 1920x1080 --write-movie out.avi --fixed-fps 30 -- --fresh --demo --quit`.
 
@@ -27,11 +27,31 @@ DISPLAY=:96 $GODOT --path game --audio-driver Dummy --resolution 1920x1080 --pos
 
 Use `--resolution 3840x2160` (on a matching Xvfb screen) for 4x, and an odd size such as `1600x900` to see the sharp-bilinear fallback.
 
+`npm run review:scene -- <zone>` uses the caller's nonempty `DISPLAY` and preserves
+`XAUTHORITY` for both import and capture. This also supports an authenticated local
+TCP display such as `DISPLAY=localhost:96.0` when Unix X sockets are unavailable;
+the caller must start the server, configure its authentication and transport, and
+stop it afterwards. The runner never stops a caller-managed display. With no
+`DISPLAY`, it starts its existing local Xvfb fallback and terminates and reaps only
+that process. In both cases its XDG configuration and data directories are
+disposable; it does not change the parent environment.
+
+The scene runner keeps import and per-spawn stdout/stderr in `render-import.log`
+and `<zone>_<spawn>.log` under `--out`. It removes prior capture outputs before
+rendering and rejects failed commands, engine-error logs, missing or stale shots,
+and invalid PNGs. Render failure writes an `incomplete` report with the existing
+detector findings and diagnostics, and exits 2; exit 1 still means blocker/fault
+findings and exit 0 means no such findings. A composite alone does not establish
+requested capture coverage. A previous report is removed before new work, so an
+earlier success cannot stand in for a failed producer. Crop sheets round only the
+pixel slice bounds outwards for fractional findings, keeping the finding boxes;
+invalid, empty or wholly outside boxes get a labelled unavailable cell.
+
 ## Traps (from the evaluation slice)
 
 - **A `SCRIPT ERROR` does not stop a run.** Godot logs it and carries on, and still exits 0. Always scan the log (check.sh does). `--quit-after <frames>` ends a run; `get_tree().quit()` from a script is the other way out.
 - **No `-d` for headless test runs.** With the debugger on, a parse error drops into Godot's interactive `debug>` prompt and the run hangs; `--remote-debug` to a closed port now logs errors of its own. check.sh runs GdUnit4 without either.
-- **Godot writes to `~/.config/godot` and `~/.local/share/godot`** whenever it runs. Use self-contained mode (an empty `_sc_` file beside the binary; `get_godot.sh` adds it) or point `XDG_CONFIG_HOME` and `XDG_DATA_HOME` somewhere disposable, as check.sh does. The game's own `user://` is `~/.local/share/napattack` (`config/custom_user_dir_name`).
+- **Godot writes to `~/.config/godot` and `~/.local/share/godot`** whenever it runs. Portable mode (an empty `_sc_` file beside the binary; `get_godot.sh` adds it) can override XDG paths. `check.sh` therefore uses the verified executable-only copy described above, without portable markers, and fresh private roots for every child. Direct engine commands in the recipes above do not acquire that wrapper isolation. The game's own `user://` is `~/.local/share/napattack` (`config/custom_user_dir_name`).
 - **Node paths into an instanced scene** (`NodePath` exports such as a camera's follow target) only resolve when the instance has editable children, and break silently when the inner scene changes. Bind them in code (`pcam.follow_target = player` in `game.gd`) or use groups (`get_first_node_in_group("player")`).
 - **Headless frames are unthrottled.** In tests, wait on `get_tree().physics_frame`, not process frames, before checking anything physics does (areas, movement, timers on physics).
 - **Hand-written `.tscn` files** are fine (the generator writes them) but use `format=3` and string ids; the editor adds `uid=` on save. Commit the `.uid` and `.import` files Godot creates; never commit `game/.godot/`.
@@ -101,7 +121,7 @@ The sample quest, **Thorns by the stones** (`data/quests/woodland_stones.json`):
 
 The characters are drawn and animated by Claude A's procedural rig outside the repo (the castwork: one pose-driven build per character, renders S, N, E and W from the same pose, 17 clips, timings fitted to Codex's studio). `python3 game/tools/import_cast.py <castwork>/out bramble` copies one character into `game/assets/characters/<id>/`: a strip per clip and facing (`sheets/<clip>_<F>.png`, 160 x 144 cells, foot pivot (80, 136)), `frames.tres` (animations `<clip>_<F>` as AtlasTexture regions) and `manifest.json` (per-drawing durations, release frames and times, anchors such as `arrow_tip` and `hand_R` in pixels from the foot pivot, `walk_speed`). It checks each frame's size and sha256 against the manifest.
 
-`actors/cast_sprite.gd` (`CastSprite`, an AnimatedSprite2D) loads a character and keeps time from the manifest itself, so gameplay can ask which drawing is showing and where its anchors are; `CastSprite.facing_for(v)` picks S, N, E or W (the larger axis wins). The player spawns its arrow (`actors/arrow.gd`) on the primary's `release_frame`, at that drawing's `arrow_tip` (or the drawing before, once the arrow has left the bow), flying along the aim; `test/test_cast.gd` checks the facing choice, the release frame and position in all four facings, the walk speed, the dodge and hit clips and that defeat plays before `downed`.
+`actors/cast_sprite.gd` (`CastSprite`, an AnimatedSprite2D) loads a character and keeps time from the manifest itself, so gameplay can ask which drawing is showing and where its anchors are; `CastSprite.facing_for(v, current)` picks the nearest of the four body facings (S, N, E, W) with 10 degrees of hysteresis round the current one (animation contract v2, castwork CONTRACT.md; Matt 26 Oct: four directions like Eastward, the weapon in more). Weapon clips (the manifest's `aim_clips`, Bramble's bow shot) are also drawn at five aims within each facing, every 22.5 degrees (16 directions): `play_clip` shows `<clip>_<F>_<tag>` for the aim (`set_aim`, or the parent's `_shot_dir` while shooting, or its `aim`), and `anchor()` reads that aim's drawings, so the arrow leaves from the aimed arrow tip and flies along the exact aim. Turns are smooth (Matt, 26 Oct, after Eastward's gameplay): when the facing changes in idle, walk or a weapon clip, the sprite shows the stored three-quarter drawing between the two facings (`<clip>_<D>`, the manifest's `turn_inbetweens`) for 0.07 s, keeping the drawing index and clip time, and a reversal passes through one side in three 0.055 s steps (`CastSprite.turn_steps`); a weapon aim that changes mid-clip steps one aim per 0.04 s. Bramble and Velvet are the v2 pilots (12-drawing walks, more drawings with anticipation and follow-through, walk speed 78.1 px/s, idle fidgets: after 4 s of idle the sprite plays one and returns to idle, any other clip cancels it). A manifest with eight directions (the stored three-quarter work) still plays them (`facing_for8`, `resolve_facing`). The player spawns its arrow (`actors/arrow.gd`) on the primary's `release_frame`, at that drawing's `arrow_tip` (or the drawing before, once the arrow has left the bow), flying along the aim; `test/test_cast.gd` checks the facing choice and hysteresis, the turn in-betweens (path, held stride), the aim chosen within the facing (16 directions), the release frame and position in every facing and at off-facing angles (the arrow leaves the aimed `arrow_tip` and flies along the exact aim), the idle fidget, the walk speed, the dodge and hit clips and that defeat plays before `downed`.
 
 All fourteen are imported (`python3 game/tools/import_cast.py <castwork>/out`, 26 MB). **Character select (debug):** keys 1 to 0 pick Bramble, Iona, Pendle, Cairn, Morel, Velvet, Tam, Mirra, Brine and Ashe, and Shift+1 to 4 pick Clack, Nix, Rook and Mote (`Player.CAST`; the label at the bottom left names the current one). Bramble keeps his wired bow shot; the others play idle, walk, primary (no projectile or effect yet), dodge, hit and defeat until the ability runner lands. `--lineup` stands the whole cast in a row, and `--cycle` turns the player into each one in turn (walk, primary, walk back), and `--character=<id>` starts as that one.
 

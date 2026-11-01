@@ -1,74 +1,31 @@
 import assert from 'node:assert/strict';
-import { registerHooks } from 'node:module';
+import { createRequire, registerHooks } from 'node:module';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
 import type { TogetherSession } from './game';
 
 // Test-only native boundaries. Game rules, store methods, cards, visitors and
 // backend availability are all imported from the actual source below.
 const boundaries = new Map([
-  [
-    '@react-native-async-storage/async-storage',
-    `
-      // tsx can load a boundary through both import paths. Both handles must
-      // address the same simulated device storage for save-migration checks.
-      const storageKey = Symbol.for('napattack.integration.storage');
-      const values = globalThis[storageKey] ??= new Map();
-      export default {
-        async getItem(key) { return values.get(key) ?? null; },
-        async setItem(key, value) { values.set(key, value); },
-        async removeItem(key) { values.delete(key); },
-        async clear() { values.clear(); },
-        async getAllKeys() { return [...values.keys()]; }
-      };
-    `,
-  ],
-  [
-    'react-native',
-    `
-      export const Platform = { OS: 'web' };
-      export const AppState = {
-        currentState: 'active',
-        addEventListener() { return { remove() {} }; }
-      };
-      export const Vibration = { vibrate() {} };
-    `,
-  ],
-  [
-    'expo-crypto',
-    `
-      import { randomBytes } from 'node:crypto';
-      export { randomUUID } from 'node:crypto';
-      export function getRandomBytes(size) { return new Uint8Array(randomBytes(size)); }
-    `,
-  ],
-  [
-    'expo-haptics',
-    `
-      export const ImpactFeedbackStyle = { Light: 'light', Medium: 'medium', Heavy: 'heavy' };
-      export const NotificationFeedbackType = { Success: 'success', Error: 'error' };
-      export async function impactAsync() {}
-      export async function selectionAsync() {}
-      export async function notificationAsync() {}
-    `,
-  ],
+  ['@react-native-async-storage/async-storage', 'async-storage.cjs'],
+  ['react-native', 'react-native.cjs'],
+  ['expo-crypto', 'expo-crypto.cjs'],
+  ['expo-haptics', 'expo-haptics.cjs'],
 ]);
 
+// A synchronous load hook sees source-less CommonJS results from tsx's older
+// async loader on Node 22 and early Node 24. Resolve real fixtures and let the
+// normal loader handle both require and import without that extra load hook.
 const hooks = registerHooks({
   resolve(specifier, context, nextResolve) {
-    const source = boundaries.get(specifier);
-    return source === undefined
+    const fixture = boundaries.get(specifier);
+    return fixture === undefined
       ? nextResolve(specifier, context)
-      : { url: `data:text/javascript,${encodeURIComponent(source)}`, shortCircuit: true };
-  },
-  load(url, context, nextLoad) {
-    const prefix = 'data:text/javascript,';
-    return url.startsWith(prefix)
-      ? {
-          format: 'module',
-          source: decodeURIComponent(url.slice(prefix.length)),
+      : {
+          url: pathToFileURL(join(__dirname, 'fixtures', 'game-native', fixture)).href,
           shortCircuit: true,
-        }
-      : nextLoad(url, context);
+        };
   },
 });
 
@@ -100,6 +57,20 @@ async function main() {
       await gameStore.getState().init();
       await flushGameSave();
     };
+
+    const { default: importedStorage } = await import('@react-native-async-storage/async-storage');
+    const requiredStorage: unknown = createRequire(__filename)(
+      '@react-native-async-storage/async-storage',
+    );
+    const interopLabel = 'Native storage import and require share the same fixture instance';
+    assert.strictEqual(requiredStorage, importedStorage, interopLabel);
+    lines.push(`PASS: ${interopLabel}`);
+    await importedStorage.setItem('loader-interop-check', 'shared');
+    check(
+      (await requiredStorage.getItem('loader-interop-check')) === 'shared',
+      'Both loader paths observe the same simulated device storage',
+    );
+    await importedStorage.removeItem('loader-interop-check');
 
     check(bilt === null && !backendConfigured, 'Actual backend boundary starts in local mode');
     await gameStore.getState().init();

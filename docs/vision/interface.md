@@ -69,3 +69,12 @@
 - Every control has a role and a label. Decorative art is hidden from assistive tech.
 - Every `accessibilityRole="switch"` control (pixel switches, Quiet view, battle AUTO) works with pointer, Enter and Space on web. React Native Web only maps Space for buttons, so switches spread `switchKeys(toggle, disabled)` from `lib/switch-keys.ts` (or call `onSwitchKey` inline where the toggle touches a ref). Space must not scroll the sheet or toggle repeatedly while held; native presses stay with Pressable. `check:pixel-controls` and `check:garden-view` cover the emitted handlers, not browser or device event dispatch.
 - Reduced motion: no bobbing, no idle chatter rotation, instant walking.
+
+## The desktop game's interface (Godot, 25 Oct)
+
+The Godot game (`docs/godot.md`) draws its interface on the same 960 x 540 art grid as the world, one image pixel per texel, so it is pixel-crisp at 2x on 1080p and 4x on 4K. `game/ui/ui_style.gd` holds the look; `game/ui/art/gen_hud.py` draws the pictures from `art/materials.json`.
+
+- **Type:** Pixelify Sans (OFL, `game/ui/fonts/OFL.txt`) at 11 px, one glyph pixel per texel, with no antialiasing, no hinting, whole-pixel positions and no ligatures (its "fi" ligature reads as "A" at this size). Cream text on a one-texel ink shadow, down and right. Titles are gold.
+- **HUD:** hearts (11 x 10) and roll charges (9 x 9) top left, with an empty socket for each one spent. The tracked quest has its own dark wood panel under them, a gold title over the step. Glint is top right, a number and its mark. The interact prompt is bottom right, a key cap with the last device's key (E or Y) and the verb.
+- **Pause menu:** Esc or Start. It offers Resume, Reduced motion, Pixel scale (fill or whole) and Quit, and dims the world. Keyboard and gamepad move the focus (a gold chevron), and the mouse or a tap picks a row. Rows are 22 texels tall, 44 screen px at 2x. Settings are saved at once.
+- Keyboard and mouse first, gamepad next, touch last (docs/godot.md). Nothing is hover-only.

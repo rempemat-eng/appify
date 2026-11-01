@@ -29,7 +29,8 @@ The grid shape (Matt, 21 Oct 11:44, crew board to-all-grid-2x): like Eastward's,
 runs straight along x or y and turns only at cell boundaries, its corners rounded when
 painted; the plan's earlier irregular bends (5.6) and the benchmark's "no straight run over
 240 px" are withdrawn. A run is at least MIN_RUN long, and nothing turns on a bridge, ford,
-causeway or stair. Where a lane has drawn the line itself (FIXED), it stays as drawn.
+causeway or stair. Where a lane has drawn the line itself in its merged region plan
+(art/regions/*.json), it stays as drawn (splice_lanes).
 
 Where the lines come from. The block-out (Claude A's geo52.py and stats-v52.json) is not
 in the repository. The briefs place every route's markers (ten a screen, either side of
@@ -48,9 +49,12 @@ only fall downstream, and the ends meet the tiers given in STOPS. The region lan
 their ground to the tier at each meeting cell; a lane that needs another tier there says
 so on the crew board and this file changes.
 
-Who draws what. Inside a region's footprint the region lane paints the route's surface to
-this line, width and tier, with its own kits. Between the footprints, the land and the
-route are lane G's, and the threshold objects are lane G's everywhere.
+Who draws what. Inside a region's box the region plan wins (Claude A, crew board
+a-to-gh-meets): where a lane's merged plan draws a route, this data carries the lane's own
+line, width and stairs there (drawnBy names the plan), and lane G's line meets it exactly
+at the box edge. Where no plan has merged yet, the region lane builds up to lane G's line.
+Between the footprints, the land and the route are lane G's, and the threshold objects are
+lane G's everywhere.
 
 Run: python3 scripts/art/world_routes.py (writes lib/world-routes.ts and
 docs/vision/regions/route-meets.md; ROUTES_PREVIEW=<file.png> also draws the routes over
@@ -189,15 +193,11 @@ ANCHORS = {
     'cape-road': [(10600, 4952), (10656, 5024), (10784, 5120), (10816, 5200), (10848, 5240), (10864, 5296), (10952, 5432), (10976, 5520)],
 }
 
-# Stretches a region lane has drawn path first in its own plan (inside its footprint): the
-# line is taken exactly as drawn there (no smoothing, not laid on the grid's runs, no turn,
-# since the lane drew its own), as anchor indices (first, last), with the lane, its file
-# and the width it drew (None keeps ours).
-FIXED = {
-    'col-path': [(4, 24, 'claude-f', 'art/regions/frostline.json', 24)],
-    'high-fells': [(0, 17, 'claude-f', 'art/regions/frostline.json', 24)],
-    'drovers-road': [(3, 20, 'claude-f', 'art/regions/brackens.json', 32)],
-}
+# Stretches a region lane draws in its own plan. Inside a region's box the region plan wins
+# (Claude A, crew board a-to-gh-meets): every route a merged plan in art/regions/*.json
+# draws (`routes`, with its `stairs` or `tiers`) is spliced into the line exactly as drawn,
+# with the lane's width and stairs, in place of lane G's course there (see splice_lanes).
+REGION_PLANS = os.path.join(worlds.ROOT, 'art', 'regions')
 
 # id: name, kind, from, to, base width, (brief walk s, brief tier changes).
 ROUTES = [
@@ -227,28 +227,26 @@ ROUTES = [
 # fraction, kind or kinds, tiers after each change), its changes spread evenly in it, or
 # ((x, y), kind, tier after) for a change a lane has placed (a stair in its plan).
 TIERS = {
-    'col-path': (5, [(0.10, 0.45, 'switchback', [6, 7]),
-                     # lane F's four stairs up the step (frostline.json col_1 to col_lip)
-                     ((6204, 2252), 'stair', 8), ((6308, 2188), 'stair', 9),
-                     ((6188, 2116), 'stair', 10), ((6236, 2048), 'stair', 11)]),
-    'high-fells': (11, [((6316, 1740), 'stair', 12),   # lane F's fells_1
-                        # level along the shoulder (lane G's corridor), down to the north gate
-                        # in Claude H's land
-                        (0.62, 0.90, 'stair', [11, 10, 9, 8])]),
-    'foothill-road': (5, [(0.08, 0.52, 'stair', [6, 7, 8, 9]), (0.66, 0.90, 'stair', [8, 7])]),
+    # E's and F's plans place every stair on the Col Path (valley.json, frostline.json)
+    'col-path': (5, []),
+    # F's stair up to the shoulder, level along it (lane G's corridor), H's stairs down to
+    # the north gate (frostline.json, cogsworth.json)
+    'high-fells': (11, []),
+    # E's and H's plans place every stair (valley.json, cogsworth.json)
+    'foothill-road': (4, []),
     'towpath': (7, [(0.04, 0.20, 'stair', [6, 5]), (0.30, 0.80, 'stair', [4, 3])]),
     'lull-road': (4, [(0.60, 0.66, 'stair', [3])]),   # level across the plain; down to Lullford in I's land
     'coast-path': (3, []),   # level along the coast to Lullford
-    'headland-lane': (3, []),
-    'shell-bar': (0, []),
-    # level through the Brackens' gap (lane F's plan keeps the road on its base tier)
-    'drovers-road': (4, [(0.32, 0.40, 'stair', [5]), (0.58, 0.96, 'stair', [6, 7, 8])]),
-    'lode-track': (8, [(0.15, 0.92, 'switchback', [9, 10])]),
-    'canyon-road': (8, [(0.03, 0.12, 'stair', [7, 6, 5]), (0.20, 0.30, 'stair', [6]),
-                        (0.40, 0.84, 'stair', [7, 8, 9, 10, 11]), (0.92, 0.99, 'stair', [12])]),
-    'forge-stair': (12, [(0.05, 0.95, 'stair', [13, 14, 15])]),
-    'ember-way': (11, [(0.03, 0.97, 'stair', [10, 9, 8, 7, 6, 5, 4, 3, 2])]),
-    'ash-coast': (4, [(0.02, 0.12, 'stair', [3]), (0.38, 0.46, 'stair', [2]), (0.54, 0.62, 'stair', [3])]),
+    'headland-lane': (3, []),   # E's plan steps it down to the tip (valley.json)
+    'shell-bar': (1, []),       # from the tip's tier down onto the bar (valley.json)
+    # E's, F's and D's plans place every stair from the valley to Dust Gulch and the coast
+    # (valley.json, brackens.json, sunstone.json, fire-country.json)
+    'drovers-road': (4, []),
+    'lode-track': (8, []),
+    'canyon-road': (8, []),
+    'forge-stair': (11, []),
+    'ember-way': (7, []),
+    'ash-coast': (4, []),
     'delta-road': (3, [(0.25, 0.95, 'stair', [4, 5, 6])]),
     'harbour-bridge': (6, [(0.80, 1.00, 'stair', [5, 4, 3])]),
     'old-bridges': (3, []),
@@ -588,13 +586,198 @@ def grid_line(pts, fixed, no_turn, start, end, pins=()):
     return keep
 
 
+def _dense(pts):
+    """A line at one point every 8 px along each run along x or y (a diagonal a lane drew is
+    kept as its two ends)."""
+    out = [tuple(pts[0])]
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        if (x0, y0) == (x1, y1):
+            continue
+        if x0 == x1 or y0 == y1:
+            n = max(abs(x1 - x0), abs(y1 - y0)) // GRID
+            for k in range(1, n + 1):
+                out.append((x0 + (x1 - x0) * k // n, y0 + (y1 - y0) * k // n))
+        else:
+            out.append((x1, y1))
+    return out
+
+
+def _on_grid(p):
+    """A lane's point on the 8 px grid (a point drawn half a cell off goes to the cell
+    edge south or east of it, the same way every time)."""
+    return tuple(int((v + GRID // 2) // GRID) * GRID for v in p[:2])
+
+
+def off_grid_points():
+    """The lanes' route points that are not on the 8 px grid, for the meeting notes."""
+    out = []
+    for rid, pcs in LANE_RAW.items():
+        for pc in pcs:
+            bad = [p for p in pc['points'] if p[0] % GRID or p[1] % GRID]
+            if bad:
+                out.append((rid, pc['lane'], pc['source'], bad))
+    return out
+
+
+def lane_pieces():
+    """Every route stretch a merged region plan draws (art/regions/*.json): its points, its
+    width along them, and its stairs in world tiers (the plan's tier plus its base_tier)."""
+    ids = {r[0] for r in ROUTES}
+    out = {}
+    for fn in sorted(os.listdir(REGION_PLANS)):
+        if not fn.endswith('.json'):
+            continue
+        rel = f'art/regions/{fn}'
+        with open(os.path.join(REGION_PLANS, fn)) as f:
+            plan = json.load(f)
+        base = (plan.get('base_tier') or {}).get('value', 0) or 0
+        for r in plan.get('routes', []):
+            rid = r['id'].replace('_', '-')
+            if rid not in ids or len(r.get('points', [])) < 2 or (rid, plan['owner']) in KEEP_OURS:
+                continue
+            stairs = []
+            for s_ in plan.get('stairs', []):
+                if s_.get('on', '').replace('_', '-') == rid:
+                    k = 'switchback' if s_.get('kind') == 'switchback' else 'stair'
+                    stairs.append((tuple(s_['at']), s_['from_tier'] + base, s_['to_tier'] + base, k))
+            if not stairs and r.get('tiers'):
+                for (x0, y0, t0), (x1, y1, t1) in zip(r['tiers'], r['tiers'][1:]):
+                    if t1 != t0:
+                        stairs.append(((x1, y1), t0 + base, t1 + base, 'stair'))
+            LANE_RAW.setdefault(rid, []).append({'lane': plan['owner'], 'source': rel,
+                                                 'points': [tuple(p[:2]) for p in r['points']]})
+            out.setdefault(rid, []).append({
+                'lane': plan['owner'], 'source': rel, 'points': [_on_grid(p) for p in r['points']],
+                'width': r.get('width'), 'widths': [tuple(w) for w in r.get('widths', [])],
+                'stairs': stairs})
+    return out
+
+
+# Plans that paint lane G's own line rather than drawing one (their owner_note says so):
+# lane G's line stays there.
+KEEP_OURS = {
+    ('shell-bar', 'claude-c'): "tidebloom.json paints lane G's Shell Bar to G's line",
+}
+LANE_RAW: dict = {}
+LANE_PIECES = lane_pieces()
+
+
+def splice_lanes(rid, verts):
+    """Lane G's line with each lane's drawn stretch put in its place, as a dense 8 px line:
+    (points, the piece each point belongs to or None, the lane's width there or None, the
+    pieces in order along the route). A stretch's end meets lane G's line within 40 px (it
+    is joined to it by an L), or, at a route's end, the stretch is the route's end."""
+    line = _dense(verts)
+    src = [None] * len(line)
+    lw = [None] * len(line)
+    pcs = LANE_PIECES.get(rid, [])
+    ls = arclen(line)
+    order = sorted(pcs, key=lambda pc: project(line, ls, pc['points'][len(pc['points']) // 2])[0])
+    done = []
+    for pc in order:
+        k = len(done)
+        P = _dense(pc['points'])
+        ls = arclen(line)
+        s0, d0 = project(line, ls, P[0])
+        s1, d1 = project(line, ls, P[-1])
+        if s1 < s0 or (s1 == s0 and math.dist(P[-1], line[0]) < math.dist(P[0], line[0])):
+            P = P[::-1]
+            (s0, d0), (s1, d1) = (s1, d1), (s0, d0)
+        near = lambda p: min(range(len(line)), key=lambda i: math.dist(line[i], p))   # noqa: E731
+        if d0 <= 40:
+            i0 = near(P[0])
+        elif math.dist(P[0], line[0]) <= 400:
+            i0 = 0
+        else:
+            raise SystemExit(f"{rid}: {pc['lane']}'s line starts at {P[0]}, {d0:.0f} px off lane G's")
+        if d1 <= 40:
+            i1 = near(P[-1])
+        elif math.dist(P[-1], line[-1]) <= 400:
+            i1 = len(line) - 1
+        else:
+            raise SystemExit(f"{rid}: {pc['lane']}'s line ends at {P[-1]}, {d1:.0f} px off lane G's")
+        if i1 < i0:
+            raise SystemExit(f"{rid}: {pc['lane']}'s line runs against the route")
+        # where the stretch overlaps what is kept, start and end it at the kept line
+        # (lane G's own line is laid again to meet the stretch exactly, below; another lane's
+        # stretch is kept as drawn)
+        lane_before = i0 > 0 and src[i0 - 1] is not None
+        lane_after = i1 < len(line) - 1 and src[i1 + 1] is not None
+        if lane_before:
+            j0 = min(range(len(P)), key=lambda j: math.dist(P[j], line[i0]))
+            P = P[j0:]
+        if lane_after:
+            j1 = min(range(len(P)), key=lambda j: math.dist(P[j], line[i1]))
+            P = P[:j1 + 1]
+        widths = []
+        cur = pc['width']
+        marks = {min(range(len(P)), key=lambda j: math.dist(P[j], (wx, wy))): w for (wx, wy, w) in pc['widths']}
+        for j in range(len(P)):
+            cur = marks.get(j, cur)
+            widths.append(cur)
+
+        def link(a, b):   # an L from a to b along the grid, without a and b
+            if a == b:
+                return []
+            mids = [] if (a[0] == b[0] or a[1] == b[1]) else [(a[0], b[1])]
+            return _dense([a] + mids + [b])[1:-1]
+        head, tail = line[:i0], line[i1 + 1:]
+        h_src, t_src, h_lw, t_lw = src[:i0], src[i1 + 1:], lw[:i0], lw[i1 + 1:]
+        a_link = link(head[-1], P[0]) if lane_before else []
+        b_link = link(P[-1], tail[0]) if lane_after else []
+        line = head + a_link + P + b_link + tail
+        src = h_src + [k] * (len(a_link) + len(P) + len(b_link)) + t_src
+        lw = h_lw + [widths[0]] * len(a_link) + widths + [widths[-1]] * len(b_link) + t_lw
+        done.append(pc)
+        # no point twice in a row, and no doubling back on itself
+        changed = True
+        while changed:
+            changed = False
+            for i in range(1, len(line)):
+                if line[i] == line[i - 1]:
+                    del line[i], src[i], lw[i]
+                    changed = True
+                    break
+            for i in range(1, len(line) - 1):
+                if line[i - 1] == line[i + 1]:
+                    del line[i:i + 2], src[i:i + 2], lw[i:i + 2]
+                    changed = True
+                    break
+    # lane G's own stretches between the lanes' lines: laid again on the grid from the end of
+    # one lane's line to the start of the next, along lane G's course, so they meet exactly
+    if done:
+        drew = {pc['lane'] for pc in done}
+        runs, i = [], 0
+        while i < len(line):
+            if src[i] is None:
+                j = i
+                while j + 1 < len(line) and src[j + 1] is None:
+                    j += 1
+                runs.append((i, j))
+                i = j + 1
+            else:
+                i += 1
+        for (i, j) in reversed(runs):
+            a = line[i - 1] if i > 0 else line[i]
+            b = line[j + 1] if j + 1 < len(line) else line[j]
+            # along lane G's course where it lies in lane G's land (not cutting into a box)
+            course = [a] + [q for q in line[i:j + 1] if owner(*q)[0] not in drew] + [b]
+            n = len(course)
+            g = _dense(grid_line(course, [False] * n, [False] * n, a, b))
+            g = g[1:] if i > 0 else g
+            g = g[:-1] if j + 1 < len(line) else g
+            line[i:j + 1] = g
+            src[i:j + 1] = [None] * len(g)
+            lw[i:j + 1] = [None] * len(g)
+    return line, src, lw, done
+
+
 def build_route(spec):
     rid, name, kind, frm, to, base_w, (b_walk, b_tiers) = spec
     anchors = ANCHORS[rid]
     raw = resample(anchors)
     rs = arclen(raw)
-    a_s = arclen([tuple(map(float, a)) for a in anchors])
-    fixed = [(a_s[i0], a_s[i1], w) for (i0, i1, _lane, _src, w) in FIXED.get(rid, ())]
+    fixed: list = []   # (from s, to s, width): lane G's course kept unsmoothed there (none now)
 
     def in_fixed(si, pad=0.0):
         return any(lo - pad <= si <= hi + pad for lo, hi, _ in fixed)
@@ -709,21 +892,64 @@ def build_route(spec):
     verts = grid_line(pre, fixed_flags, no_turn, ANCHORS[rid][0], ANCHORS[rid][-1], pins)
     vs = arclen(verts)
     for c, m in zip(changes, marks_c):
-        c['s'] = project(verts, vs, m)[0]
-    for c, m in zip(crossings, marks_x):
-        c['s'] = project(verts, vs, m)[0]
-    thresholds = [(t, project(verts, vs, m)[0]) for (t, st), m in zip(thresholds, marks_t)]
-    drawn = []
-    for (i0, i1, lane, src, w) in FIXED.get(rid, ()):
-        a0 = (snap(ANCHORS[rid][i0][0]), snap(ANCHORS[rid][i0][1]))
-        a1 = (snap(ANCHORS[rid][i1][0]), snap(ANCHORS[rid][i1][1]))
-        drawn.append({'from': round(project(verts, vs, a0)[0]), 'to': round(project(verts, vs, a1)[0]),
-                      'lane': lane, 'source': src})
-    fixed = [(d['from'], d['to'], w) for d, (_, _, _, _, w) in zip(drawn, FIXED.get(rid, ()))]
-    base_total = vs[-1]
-    total = vs[-1]
+        c['mark'] = at_s(verts, vs, project(verts, vs, m)[0])
+        c['by'] = BETWEEN
 
-    # tiers per vertex
+    # the lanes' own lines inside their boxes (the region plan wins), on an 8 px dense line
+    line, src, lane_w, pieces = splice_lanes(rid, verts)
+    ds = arclen(line)
+    rngs = []
+    for k in range(len(pieces)):
+        idx = [i for i, p in enumerate(src) if p == k]
+        rngs.append((ds[idx[0]], ds[idx[-1]], idx[0], idx[-1]))
+
+    def in_piece(si):
+        return any(lo - 4 <= si <= hi + 4 for lo, hi, _, _ in rngs)
+
+    # lane G's changes stay where its line stays; inside a lane's stretch the lane's stairs
+    # stand instead
+    kept = []
+    for c in changes:
+        sc, d = project(line, ds, c['mark'])
+        if d <= 8 and not in_piece(sc):
+            c['s'] = sc
+            kept.append(c)
+    lane_ch = []
+    for k, pc in enumerate(pieces):
+        lo, hi, i0, i1 = rngs[k]
+        sub, sub_s = line[i0:i1 + 1], [x - ds[i0] for x in ds[i0:i1 + 1]]
+        for (at, a, b, sk) in pc['stairs']:
+            sc, d = project(sub, sub_s, at)
+            if d > 48:
+                raise SystemExit(f"{name}: {pc['lane']}'s stair at {at} is {d:.0f} px off its line")
+            lane_ch.append({'s': ds[i0] + sc, 'kind': sk, 'pair': (a, b), 'run': RUN[sk],
+                            'placed': True, 'by': pc['lane'], 'source': pc['source']})
+    merged = sorted(kept + lane_ch, key=lambda c: c['s'])
+    changes = []
+    tier = tier0
+    for c in merged:
+        if 'pair' in c:
+            a, b = c.pop('pair')
+            if tier == a:
+                t_to = b
+            elif tier == b:
+                t_to = a
+            else:
+                raise SystemExit(f"{name}: {c['by']}'s stair at s {c['s']:.0f} joins tiers {a} and {b}, "
+                                 f"but the route arrives at tier {tier}")
+            n = abs(t_to - tier)
+            step = 1 if t_to > tier else -1
+            for j in range(n):   # a stair over several tiers: one change a tier, 8 px apart
+                cj = dict(c, s=c['s'] + GRID * (j - (n - 1) / 2), **{'from': tier, 'to': tier + step})
+                changes.append(cj)
+                tier += step
+            continue
+        if c['from'] != tier:
+            raise SystemExit(f"{name}: lane G's {c['kind']} at s {c['s']:.0f} goes {c['from']} to "
+                             f"{c['to']}, but the route is at tier {tier} there")
+        changes.append(c)
+        tier = c['to']
+
     def tier_at(si):
         t = tier0
         for c in changes:
@@ -731,12 +957,45 @@ def build_route(spec):
                 t = c['to']
         return t
 
-    # widths: base, +8 at bends, +16 at thresholds (a settlement's square at a route's end is
-    # its lane's); a lane's drawn stretch keeps its width (+8 at a threshold), and so does
-    # the route where it meets that stretch
-    scale_f = total / base_total
+    # the dense line's tiers; keep every corner, a vertex every VERTEX_EVERY, and both sides
+    # of every change of tier, owner of the drawing or width (removed points lie on straight
+    # runs, so arc lengths stay as they are)
+    dt = [tier_at(x) for x in ds]
+    n = len(line)
+    keep = [0]
+    for j in range(1, n - 1):
+        a, b, c = line[keep[-1]], line[j], line[j + 1]
+        straight = (a[0] == b[0] == c[0]) or (a[1] == b[1] == c[1])
+        edge = (dt[j] != dt[j - 1] or dt[j] != dt[j + 1] or src[j] != src[j - 1] or src[j] != src[j + 1]
+                or lane_w[j] != lane_w[j - 1] or lane_w[j] != lane_w[j + 1])
+        if not straight or edge or math.dist(a, c) > VERTEX_EVERY:
+            keep.append(j)
+    keep.append(n - 1)
+    verts = [line[j] for j in keep]
+    vsrc = [src[j] for j in keep]
+    vlw = [lane_w[j] for j in keep]
+    vs = [ds[j] for j in keep]
+    total = vs[-1]
+    base_total = total
+
+    for c, m in zip(crossings, marks_x):
+        sc, d = project(verts, vs, m)
+        if d > 96:
+            raise SystemExit(f"{name}: {c['name']} at {m} is {d:.0f} px from the line")
+        c['s'] = sc
+    thresholds = [(t, project(verts, vs, m)[0]) for (t, st), m in zip(thresholds, marks_t)]
+    drawn = [{'from': round(lo), 'to': round(hi), 'lane': pc['lane'], 'source': pc['source']}
+             for (lo, hi, _, _), pc in zip(rngs, pieces)]
+
+    # widths: in a lane's stretch the lane's; elsewhere base, +8 at bends, +16 at thresholds
+    # (a settlement's square at a route's end is its lane's), and the lane's width where the
+    # route meets its stretch
     widths = []
     for i, v in enumerate(verts):
+        si = vs[i]
+        if vsrc[i] is not None:
+            widths.append(vlw[i])
+            continue
         w = base_w
         a = verts[max(0, i - 2)]
         b = verts[min(len(verts) - 1, i + 2)]
@@ -745,15 +1004,15 @@ def build_route(spec):
             h1 = heading(v, b) if b != v else h0
             if abs(turn(h0, h1)) > 25:
                 w += 8
-        si = vs[i]
         for (t, st) in thresholds:
             if abs(si - st) < 48:
                 w = max(w, base_w + 16)
         if kind == 'bar':
             w = 40 + 8 * int(3 * _hash(rid, 'bar', i // 3))
-        for lo, hi, fw in fixed:
-            if fw and lo - 32 <= si <= hi + 32:   # and where it meets the lane's line
-                w = fw + (8 if any(abs(si - st) < 48 for (t, st) in thresholds) else 0)
+        for j, (lo, hi, _, _) in enumerate(rngs):
+            if lo - 32 <= si <= hi + 32:
+                near = min(range(len(verts)), key=lambda q: abs(vs[q] - min(max(si, lo), hi)) + (1e9 if vsrc[q] != j else 0))
+                w = vlw[near]
         w = max(WIDTH_MIN, min(WIDTH_MAX, int(round(w / GRID)) * GRID))
         widths.append(w)
 
@@ -770,7 +1029,7 @@ def build_route(spec):
         north = b[1] < a[1]
         out_changes.append({'at': [snap(p[0]), snap(p[1])], 's': round(c['s']), 'kind': c['kind'],
                             'from': c['from'], 'to': c['to'], 'run': c['run'],
-                            'land': owner(*p)[0], 'leg': leg,
+                            'land': owner(*p)[0], 'by': c.get('by', BETWEEN), 'leg': leg,
                             'rises': 'north' if (c['to'] > c['from']) == north else 'south'})
     out_cross = []
     for c in crossings:
@@ -790,24 +1049,46 @@ def build_route(spec):
             'objectBy': BETWEEN, 'bandFade': 160,
         })
 
-    # meeting cells: where the line passes from one owner's land into another's
+    # meeting cells: where the line passes from one owner into another's. A stretch a lane
+    # drew is that lane's wherever it runs (on a box line too), so where two drawn stretches
+    # or a drawn stretch and lane G's line join, the meet is the joint itself
+    def part_of(lane, v):
+        who, part = owner(*v)
+        if who == lane:
+            return part
+        # on a box line, or just outside it: the lane's nearest box
+        def gap(box):
+            x0, y0, x1, y1 = box
+            return math.hypot(max(x0 - v[0], 0, v[0] - x1), max(y0 - v[1], 0, v[1] - y1))
+        return min(((gap(bx), n) for (w, n, bx) in FOOTPRINTS if w == lane))[1]
+
+    def holder(i):
+        if vsrc[i] is not None:
+            lane = pieces[vsrc[i]]['lane']
+            return lane, part_of(lane, verts[i])
+        return owner(*verts[i])
+
     meets = []
-    prev = owner(*verts[0])
+    prev = holder(0)
     for i in range(1, len(verts)):
         a, b = verts[i - 1], verts[i]
-        cur = owner(*b)
-        if cur[0] == prev[0] and cur[1] == prev[1]:
+        cur = holder(i)
+        if cur == prev:
             continue
-        # find the crossing between a and b at 1 px
-        n = max(1, int(math.dist(a, b)))
-        q = b
-        for j in range(1, n + 1):
-            x = a[0] + (b[0] - a[0]) * j / n
-            y = a[1] + (b[1] - a[1]) * j / n
-            if owner(x, y) != prev:
-                q = (x, y)
-                break
-        sq = vs[i - 1] + math.dist(a, q)
+        if vsrc[i - 1] != vsrc[i]:
+            k = i if vsrc[i] is not None else i - 1
+            q, sq = verts[k], vs[k]
+        else:
+            # find the crossing between a and b at 1 px
+            n = max(1, int(math.dist(a, b)))
+            q = b
+            for j in range(1, n + 1):
+                x = a[0] + (b[0] - a[0]) * j / n
+                y = a[1] + (b[1] - a[1]) * j / n
+                if owner(x, y) != prev:
+                    q = (x, y)
+                    break
+            sq = vs[i - 1] + math.dist(a, q)
         meets.append({
             'route': rid, 'from': prev[0], 'fromPart': prev[1], 'to': cur[0], 'toPart': cur[1],
             'at': [snap(q[0]), snap(q[1])], 'cell': [snap(q[0]) // GRID, snap(q[1]) // GRID],
@@ -825,17 +1106,20 @@ def build_route(spec):
     }
     out['_scale'] = 1.0
     out['drawnBy'] = drawn
-    out['sidePaths'] = side_paths(rid, verts, vs)
-    out['pockets'] = pocket_paths(rid, verts, vs)
+    # side paths and pockets inside a lane's box that draws this route are the lane's own
+    # (its plan seats them, or drops them)
+    theirs = {pc['lane'] for pc in pieces}
+    out['sidePaths'] = side_paths(rid, verts, vs, theirs)
+    out['pockets'] = pocket_paths(rid, verts, vs, theirs)
     return out
 
 
-def side_paths(rid, verts, vs):
+def side_paths(rid, verts, vs, theirs=()):
     """A side path round each obstacle: off the road at a shallow Y about 300 px before,
     round the far side with two gentle bends, back at a Y after (plan 5.6)."""
     out = []
     for (r, what, at) in OBSTACLES:
-        if r != rid:
+        if r != rid or owner(*at)[0] in theirs:
             continue
         so, d = project(verts, vs, at)
         total = vs[-1]
@@ -863,12 +1147,12 @@ def side_paths(rid, verts, vs):
     return out
 
 
-def pocket_paths(rid, verts, vs):
+def pocket_paths(rid, verts, vs, theirs=()):
     """A dead-end path to each secret pocket, leaving the route at its nearest point,
     with one gentle bend, ending in a clearing (80 px or more long, plan 6.4)."""
     out = []
     for (r, holds, at) in POCKETS:
-        if r != rid:
+        if r != rid or owner(*at)[0] in theirs:
             continue
         so, d = project(verts, vs, at)
         p0 = at_s(verts, vs, so)
@@ -908,6 +1192,8 @@ def check(routes):
             problems.append(f"{r['name']}: starts at tier {pts[0][3]}")
         prev_end = -1e9
         for c in r['changes']:
+            if c['by'] != BETWEEN:
+                continue   # a lane's own stairs are its plan's to space (check:region-plans)
             lo = c['s'] - c['run'] / 2
             if lo < prev_end - 0.5:
                 problems.append(f"{r['name']}: tier changes overlap at s {c['s']}")
@@ -1085,7 +1371,7 @@ def export_ts(routes, steps, path):
         'export type LaneId = string;',
         '/** A vertex: x, y (world px, on the 8 px grid), width (px), tier. */',
         'export type RoutePoint = readonly [number, number, number, number];',
-        "export interface TierChange { at: readonly [number, number]; s: number; kind: TierChangeKind; from: number; to: number; run: number; land: LaneId; leg: 'n-s' | 'e-w' | 'drawn'; rises: 'north' | 'south' }",
+        "export interface TierChange { at: readonly [number, number]; s: number; kind: TierChangeKind; from: number; to: number; run: number; land: LaneId; /** whose plan places it */ by: LaneId; leg: 'n-s' | 'e-w' | 'drawn'; rises: 'north' | 'south' }",
         'export interface Crossing { kind: CrossingKind; name: string; way: string | null; at: readonly [number, number]; s: number; span: number }',
         'export interface SidePath { obstacle: string; at: readonly [number, number]; leaves: readonly [number, number]; rejoins: readonly [number, number]; points: readonly (readonly [number, number])[]; width: number }',
         'export interface PocketPath { holds: string; clearing: readonly [number, number]; leaves: readonly [number, number]; points: readonly (readonly [number, number])[]; length: number; width: number; clearingRadius: number }',

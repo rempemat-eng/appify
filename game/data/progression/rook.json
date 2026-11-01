@@ -3,7 +3,7 @@
   "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "id": "rook",
   "name": "Rook",
-  "identity": "orbital salvager in a cream pressure suit; one pulse carbine (right hand on the grip, left on the fore-end); ONE helmet at the RIGHT hip, worn only in Orbital Rig; twin-thruster pack with two nozzles",
+  "identity": "observatory moon-walker (Matt, 26 Oct: design C) in a quilted beige suit with midnight-blue pads and brass trim, two little chest lanterns, a rolled star chart across the pack; one pulse carbine (right hand on the grip, left on the fore-end); ONE glass bubble helmet in a brass ring at the RIGHT hip, worn only in Orbital Rig (his hair always inside the glass); twin-thruster pack with two nozzles",
   "home_region": "halcyon",
   "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
   "abilities": {
@@ -465,6 +465,40 @@
       "unlock": {
         "source": "drop",
         "event": "drop:halcyon"
+      }
+    },
+    {
+      "id": "cogsworth_brass",
+      "name": "Cogsworth brass",
+      "status": "proposal",
+      "description": "design A (26 Oct): an oiled-canvas suit with a riveted brass collar and chest plate, a round brass diving-style helmet with a porthole, hand-cranked oxygen tanks feeding the thrusters",
+      "parts": [
+        "suit",
+        "helmet",
+        "pack"
+      ],
+      "source_art": "castwork/src/rook_opts.py use('brass')",
+      "unlock": {
+        "source": "tbd",
+        "event": "tbd",
+        "note": "unlock source to be decided (Matt, 26 Oct: 'remember the other designs for possible cosmetic changes later on')"
+      }
+    },
+    {
+      "id": "shard_defector",
+      "name": "Shard defector",
+      "status": "proposal",
+      "description": "design B (26 Oct): the Company's graphite shard-tech suit with violet shard cells in the chest and pack, a sleek visor raised over the brow, the Company mark scratched through",
+      "parts": [
+        "suit",
+        "helmet",
+        "pack"
+      ],
+      "source_art": "castwork/src/rook_opts.py use('shard')",
+      "unlock": {
+        "source": "tbd",
+        "event": "tbd",
+        "note": "unlock source to be decided (Matt, 26 Oct)"
       }
     }
   ],

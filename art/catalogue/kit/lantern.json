@@ -10,10 +10,10 @@
   54,
   120
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 2,
+  "fault": 0,
   "polish": 2
  },
  "detail_bar": {
@@ -36,18 +36,6 @@
  },
  "findings": [
   {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    3,
-    6,
-    37,
-    117
-   ],
-   "message": "kit/lantern: no cylinder shading across the shaft (luminance spread 142 L, brightest at 62% of its width, darkest at 28%)",
-   "fix": "shade it as a cylinder lit from the upper left: a highlight band left of centre, the body, a core shadow toward the right edge with a little reflected light at the rim, an elliptical top face and occlusion where it meets the floor"
-  },
-  {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
@@ -58,18 +46,6 @@
    ],
    "message": "kit/lantern: the wood is lit from the right (luminance rises 125 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "fault",
-   "box": [
-    2,
-    5,
-    38,
-    118
-   ],
-   "message": "kit/lantern: lit from the right: luminance rises 113 L per H to the east",
-   "fix": "relight from the upper left: lit faces west and up, shade east and down, the cast shadow east"
   },
   {
    "detector": "detail.bar",
@@ -84,7 +60,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

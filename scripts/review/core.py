@@ -261,9 +261,24 @@ def crop_sheet(native: np.ndarray, findings: list[Finding], path: str, zoom: int
     sheet = Image.new('RGB', (cols * cell, rows * (cell + 26)), (24, 24, 24))
     d = ImageDraw.Draw(sheet)
     for i, f in enumerate(findings):
+        gx, gy = (i % cols) * cell, (i // cols) * (cell + 26)
+        d.text((gx + 3, gy + 2), f'{i + 1}. {f.detector}', fill=COLOURS.get(f.severity, (255, 255, 0)))
+        d.text((gx + 3, gy + 13), f'{f.subject[:40]}', fill=(220, 220, 220))
+        try:
+            valid = len(f.box) == 4 and all(math.isfinite(v) for v in f.box)
+        except (TypeError, OverflowError):
+            valid = False
+        if not valid:
+            d.text((gx + 3, gy + 30), 'No crop: invalid box', fill=(220, 220, 220))
+            continue
         x0, y0, x1, y1 = f.box
-        m = max(4, int(0.25 * max(x1 - x0, y1 - y0)))
-        cx0, cy0, cx1, cy1 = max(0, x0 - m), max(0, y0 - m), min(W, x1 + m), min(H, y1 + m)
+        if x1 <= x0 or y1 <= y0 or x1 <= 0 or y1 <= 0 or x0 >= W or y0 >= H:
+            d.text((gx + 3, gy + 30), 'No crop: empty or outside image', fill=(220, 220, 220))
+            continue
+        # Bound the margin before integer conversion, even for extreme finite coordinates.
+        m = max(4, int(min(0.25 * max(x1 - x0, y1 - y0), max(W, H))))
+        cx0, cy0 = math.floor(max(0, x0 - m)), math.floor(max(0, y0 - m))
+        cx1, cy1 = math.ceil(min(W, x1 + m)), math.ceil(min(H, y1 + m))
         cr = Image.fromarray(native[cy0:cy1, cx0:cx1, :3].astype(np.uint8))
         z = max(1, min(zoom * 2, cell // max(1, max(cr.width, cr.height))))
         cr = cr.resize((cr.width * z, cr.height * z), Image.NEAREST)
@@ -274,10 +289,7 @@ def crop_sheet(native: np.ndarray, findings: list[Finding], path: str, zoom: int
         rx0, ry0 = (x0 - cx0) * z, (y0 - cy0) * z            # a thin box at a fractional zoom must not invert
         dd.rectangle([rx0, ry0, max(rx0, (x1 - cx0) * z - 1), max(ry0, (y1 - cy0) * z - 1)],
                      outline=COLOURS.get(f.severity, (255, 255, 0)), width=2)
-        gx, gy = (i % cols) * cell, (i // cols) * (cell + 26)
         sheet.paste(cr, (gx, gy + 26))
-        d.text((gx + 3, gy + 2), f'{i + 1}. {f.detector}', fill=COLOURS.get(f.severity, (255, 255, 0)))
-        d.text((gx + 3, gy + 13), f'{f.subject[:40]}', fill=(220, 220, 220))
     sheet.save(path)
 
 

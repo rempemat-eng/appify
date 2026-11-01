@@ -6,17 +6,18 @@
   "kit": null,
   "about": "The Frostline and the massif: an alpine cirque above the valley, crag over boulder faces, fir in the hollow, short turf and scree on the benches, a tarn, snow and a glacier on the top tiers. The cliff core's 'highland' biome and edge set (scripts/art/cliff_core.py) are the start; this brief adds what the Frostline needs on top of them, as data, for the kit owner (rules-system.md 4: the Frostline is the contrasting test region, built end to end on kit v1). Every family is a house ramp. 'kit' is pinned when kit v1 exists.",
   "palette_intent": "Cool and clear above the valley: grey-blue crag (crag_cool, crag) with warm crag bands catching the light, fresh green turf going cooler and sparser with height, near-black fir, white-blue snow and pale blue ice. The tarn is the one deep blue. Warmth comes only from lit rock bands, the hut's timber and small clusters of alpine flowers.",
-  "families": {
-    "rock": ["crag", "crag_cool", "crag_warm"],
-    "loose": ["crag", "stone_cool"],
-    "turf": ["grass", "grass_cool", "grass_warm"],
-    "fir": ["leaf_cool", "grass_cool", "timber_cool"],
-    "moss_and_fern": ["leaf", "leaf_cool"],
-    "snow": ["snow", "snow_cool", "snow_warm"],
-    "ice": ["sky", "sky_cool", "water_cool"],
-    "water": ["water", "water_cool", "lagoon_cool"],
-    "track": ["path_cool", "stone"],
-    "flowers": ["plaster", "brass", "dusk", "berry", "sky"]
+  "families": ["berry", "brass", "crag", "crag_cool", "crag_warm", "dusk", "grass", "grass_cool", "grass_warm", "lagoon_cool", "leaf", "leaf_cool", "path_cool", "plaster", "sky", "sky_cool", "snow", "snow_cool", "snow_warm", "stone", "stone_cool", "timber_cool", "water", "water_cool"],
+  "materials": {
+    "rock": {"families": ["crag", "crag_cool", "crag_warm"]},
+    "loose": {"families": ["crag", "stone_cool"]},
+    "turf": {"families": ["grass", "grass_cool", "grass_warm"]},
+    "fir": {"families": ["leaf_cool", "grass_cool", "timber_cool"]},
+    "moss_and_fern": {"families": ["leaf", "leaf_cool"]},
+    "snow": {"families": ["snow", "snow_cool", "snow_warm"]},
+    "ice": {"families": ["sky", "sky_cool", "water_cool"]},
+    "water": {"families": ["water", "water_cool", "lagoon_cool"]},
+    "track": {"families": ["path_cool", "stone"]},
+    "flowers": {"families": ["plaster", "brass", "dusk", "berry", "sky"]}
   },
   "cliff_core": {
     "biome": "highland",

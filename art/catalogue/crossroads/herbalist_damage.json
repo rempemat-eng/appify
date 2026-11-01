@@ -1,26 +1,26 @@
 {
  "id": "crossroads/herbalist_damage",
  "file": "game/zones/crossroads/art/herbalist_damage.png",
- "sha256": "34e2db3ccf1194ce4b89478f3b8073d186749e2a086e0221376450efeff5e73f",
+ "sha256": "5a3bd026c2559783e01c23d5820bd9e4d07056ff11527579a2b03764a2f6dc53",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  252,
-  192
+  240,
+  231
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 1
+  "fault": 0,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 15,
-   "tones": 19.2,
-   "shapes": 35.46666666666667
+   "patches": 10,
+   "tones": 27.8,
+   "shapes": 40.7
   },
   "band": {
    "tones": 27.0,
@@ -28,42 +28,43 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.704,
-  "tones_ratio": 0.711,
-  "shapes_ratio": 0.704,
+  "ratio": 0.808,
+  "tones_ratio": 1.03,
+  "shapes_ratio": 0.808,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.volume",
-   "severity": "fault",
+   "detector": "detail.light",
+   "severity": "polish",
    "box": [
-    91,
-    16,
-    113,
-    24
+    74,
+    35,
+    132,
+    72
    ],
-   "message": "crossroads/herbalist_damage: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+   "message": "crossroads/herbalist_damage: the wood is lit from the right (luminance rises 13 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    28,
-    15,
-    163,
-    174
+    21,
+    35,
+    164,
+    228
    ],
-   "message": "crossroads/herbalist_damage: detail bar 0.70 of Eastward's prop band (19.2 tones, 35.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist_damage: detail bar 0.81 of Eastward's prop band (27.8 tones, 40.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#298 review at 2e554c05: holes torn course by course with snapped rafters and hanging slates (thatch: straw fringe); no barred-window shapes."
  }
 }

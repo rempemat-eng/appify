@@ -1,14 +1,14 @@
 {
  "id": "woodland/birch",
  "file": "game/zones/woodland/art/birch.png",
- "sha256": "a0bd2cea3d6077e239bcca2398c800b5549261d4c3d65b9c5e55b07d830f04b0",
+ "sha256": "db06cfadf22eddf4827a3cd8d976a680c201c84e36230f2998cab36bf9e5ec1f",
  "kind": "birch",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   106,
-  211
+  204
  ],
  "status": "pass",
  "counts": {
@@ -48,7 +48,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

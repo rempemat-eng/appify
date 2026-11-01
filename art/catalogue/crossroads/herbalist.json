@@ -1,26 +1,26 @@
 {
  "id": "crossroads/herbalist",
  "file": "game/zones/crossroads/art/herbalist.png",
- "sha256": "bd860308513a86f200a6186c7e3162a5ca4451bac7c344b3574bb9996313d3a1",
+ "sha256": "c3000d1a0b6b6ed46ad0a50e85de238c224f38d33f4684fb48a177bb190e455c",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  252,
-  192
+  240,
+  231
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 6,
-  "polish": 3
+  "fault": 0,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 116,
-   "tones": 16.146551724137932,
-   "shapes": 28.56896551724138
+   "patches": 133,
+   "tones": 25.30827067669173,
+   "shapes": 47.19548872180451
   },
   "band": {
    "tones": 27.0,
@@ -28,10 +28,10 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.567,
-  "tones_ratio": 0.598,
-  "shapes_ratio": 0.567,
-  "passed": false,
+  "ratio": 0.937,
+  "tones_ratio": 0.937,
+  "shapes_ratio": 0.937,
+  "passed": true,
   "group": "prop"
  },
  "findings": [
@@ -39,115 +39,32 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    88,
-    95,
-    110,
-    134
+    52,
+    140,
+    58,
+    171
    ],
-   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 121 L per H to the east)",
+   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 48 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    12,
-    97,
-    48,
-    136
+    9,
+    166,
+    230,
+    229
    ],
-   "message": "crossroads/herbalist: the wood is lit from the right (luminance rises 33 L per H to the east)",
+   "message": "crossroads/herbalist: the stone is lit from the right (luminance rises 7 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    109,
-    140,
-    154,
-    150
-   ],
-   "message": "crossroads/herbalist: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    43,
-    141,
-    88,
-    150
-   ],
-   "message": "crossroads/herbalist: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    0,
-    13,
-    252,
-    190
-   ],
-   "message": "crossroads/herbalist: detail bar 0.57 of Eastward's prop band (16.1 tones, 28.6 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    43,
-    141,
-    88,
-    150
-   ],
-   "message": "crossroads/herbalist: a flat wood area: one smooth patch covers 52% (0.033 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    109,
-    140,
-    154,
-    150
-   ],
-   "message": "crossroads/herbalist: a flat wood area: one smooth patch covers 52% (0.033 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    54,
-    100,
-    64,
-    108
-   ],
-   "message": "crossroads/herbalist: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    120,
-    100,
-    130,
-    108
-   ],
-   "message": "crossroads/herbalist: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#298 review at 2e554c05: roof planes lit with thickness, fascia, gutter and stepped eave shadow; recessed openings; wall form and proud plinth; trade details read. Detail bar 0.86 to 0.94 (above the 0.8 gate, below the 1.0 in art-style)."
  }
 }

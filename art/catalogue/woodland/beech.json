@@ -1,14 +1,14 @@
 {
  "id": "woodland/beech",
  "file": "game/zones/woodland/art/beech.png",
- "sha256": "7fe332994967325e87a528a4b5dd3d0acb0267f9e4a77d75d76d624b4b07efe4",
+ "sha256": "cdf86338170520fb05b5181472808dbc4769cf06596617fefd52e2da99e5fe83",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  172,
-  259
+  174,
+  252
  ],
  "status": "pass",
  "counts": {
@@ -48,7 +48,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

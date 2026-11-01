@@ -65,7 +65,7 @@ def stage_states(plan) -> dict:
 
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
-INPUTS = ('village.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
+INPUTS = ('village.py', 'houses.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
           'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png')
 
 
@@ -83,6 +83,163 @@ def input_hash(plan_path: str, density: float) -> str:
 
 
 # ------------------------------------------------------------------------------------------------
+def soil_texture_hd(cv, mask, rng, drawn=None, spacing=1.0, p=0.7):
+    """Bare ground drawn as ground: softedge.soil_marks."""
+    from scripts.art.native import softedge as SE
+    SE.soil_marks(cv, mask, rng, drawn, spacing, p)
+
+
+def crater_hd(cv, WX, WY, cx, cy, rx, ry, rng, noise, drawn=None):
+    """The blast crater at density 3 and up as a landform lit from the upper left (26 Oct, fix queue:
+    it read as flat bands of brown): a raised lip whose outer slope faces out (lit to the north-west,
+    in shade to the south-east), a bowl whose inner walls face in (the south-east wall lit, the
+    north-west wall in its own shade), a dark floor of loose earth, thrown clods and stones outside
+    it thinning into the lawn, scorch broken into the grass."""
+    from scripts.art.native import village as V
+    from scripts.art.native.palette import C, step
+    H, W = cv.shape
+    e = np.sqrt(((WX - cx) / rx) ** 2 + ((WY - cy) / ry) ** 2) + noise(1.4, 41, 0.05)
+    ang = np.arctan2((WY - cy) / ry, (WX - cx) / rx)
+    ux, uy = np.cos(ang), np.sin(ang)                           # outward
+    L = (-0.55, -0.30, 0.78)
+    # the bowl: slope steepest near the lip, flat floor in the middle
+    bowl = e < 0.8
+    sl = np.clip((e - 0.25) / 0.55, 0, 1) * 0.85
+    nx, ny, nz = -ux * sl, -uy * sl, np.sqrt(1 - sl * sl)
+    I = nx * L[0] + ny * L[1] + nz * L[2]
+    tb = np.clip(np.round(1.0 + 2.6 * I), 0, 4).astype(int)
+    fam = np.where(tb >= 3, 'earth_warm', np.where(tb <= 1, 'earth_cool', 'earth'))
+    for f in ('earth_warm', 'earth', 'earth_cool'):
+        sel = bowl & (fam == f)
+        cv[sel] = C(f, 0) + tb[sel]
+    # the lip: outer slope faces out
+    lip = (e >= 0.8) & (e < 1.12)
+    so = np.clip((e - 0.8) / 0.32, 0, 1)
+    sl2 = 0.55 * np.sin(np.pi * so)                              # up then down over the lip
+    out = np.where(so > 0.35, 1.0, -0.6)
+    nx, ny, nz = ux * sl2 * out, uy * sl2 * out, np.sqrt(1 - sl2 * sl2)
+    I = nx * L[0] + ny * L[1] + nz * L[2]
+    tl = np.clip(np.round(1.6 + 2.6 * I), 1, 5).astype(int)
+    fam = np.where(tl >= 4, 'path_warm', np.where(tl <= 1, 'earth_cool', 'earth'))
+    for f in ('path_warm', 'earth', 'earth_cool'):
+        sel = lip & (fam == f)
+        cv[sel] = C(f, 0) + np.minimum(tl[sel], 4)
+    # the thrown earth and scorch outside, broken into the lawn
+    from scripts.art.native import softedge as SE
+    thrown = SE.soft((e >= 1.12) & (e < 1.6) & (noise(1.3, 42) > -0.2 + 0.9 * (e - 1.12) / 0.48 * 2))
+    cv[thrown] = C('earth', 2)
+    cv[thrown & (noise(0.6, 43) > 0.5)] = C('earth', 3)
+    scorch = SE.soft((e >= 1.05) & (e < 1.9) & (noise(1.2, 44) > 0.6 + (e - 1.05))) & ~thrown
+    cv[scorch] = step(cv[scorch], -2)
+    # stones and clods thrown out, lit at their upper left
+    for _ in range(26):
+        a_ = rng.uniform(0, 2 * math.pi)
+        rr = rng.uniform(0.9, 1.9) if rng.random() < 0.8 else rng.uniform(0.3, 0.75)
+        sx, sy = cx + math.cos(a_) * rx * rr, cy + math.sin(a_) * ry * rr
+        sw, sh = rng.uniform(1.4, 3.6), rng.uniform(1.2, 2.4)
+        V.blk(cv, V.q(sx), V.q(sy), V.q(sx) + V.q(sw), V.q(sy) + V.q(sh),
+              ('crag', 'crag_warm', 'stone', 'earth')[int(rng.integers(0, 4))], int(rng.choice([2, 3, 4])), cut=1)
+    soil_texture_hd(cv, e < 1.6, rng, drawn)
+
+
+def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise):
+    """The village lawn at density 3 and up (26 Oct, fix queue: the sheet's tufts repeated as one
+    stamp, the shade fell as one-tone rugs on a calm field). Drawn in codes before the shadows,
+    which keep it: Eastward's blade texture (small V marks a tone down, staggered about 2.5 world
+    px, gathered by a slow field and twice as close in shade), soft hue patches where the field is
+    calm, tufts from the kit's tuft painter in clumps of varied size, tone and kind (never one
+    stamp), denser at the feet of walls, fences and things and thin where people walk, and small
+    flowers and clover in a few drifts."""
+    from scripts.art.native import ctx as CX
+    from scripts.art.native import ground as GR
+    from scripts.art.native import props as P4
+    from scripts.art.native.palette import C, FI, step, sib, is_fam
+    from scripts.art.native.screen import to_codes
+    D = CX.D
+    H, W = cv.shape
+    drawn = np.zeros((H, W), bool)
+    grass = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6) & ~keep_out
+    lawn = ndi.binary_erosion(grass, iterations=2)
+    slow = noise(30.0, 301)
+    # soft hue patches where the field is calm
+    win = int(round(5 * D))
+    calm = lawn & (ndi.maximum_filter(cv, size=win) == ndi.minimum_filter(cv, size=win))
+    calm = ndi.binary_dilation(calm, iterations=int(round(2 * D))) & lawn
+    va = noise(7.0, 303) + 0.25 * noise(2.0, 305)
+    dn = calm & (va > 1.05 - 0.4 * np.clip(slow, 0, 1.2))
+    upm = calm & (va < -1.15 + 0.25 * np.clip(slow, 0, 1.2))
+    warm = dn & np.isin(cv // 8, [FI['grass_warm'], FI['leaf_warm']])
+    cv[warm] = sib(cv[warm], 'body')
+    cv[dn & ~warm] = sib(cv[dn & ~warm], 'cool')
+    cv[upm] = sib(cv[upm], 'warm')
+    # the blade texture
+    sp_x, sp_y = max(6, int(round(2.6 * D))), max(5, int(round(1.9 * D)))
+    dens = np.clip(0.6 + 0.35 * slow, 0.4, 0.95)
+    grid = [(gy, gx) for gy in range(0, H, sp_y) for gx in range((gy // sp_y) % 2 * (sp_x // 2), W, sp_x)]
+    grid += [(gy, gx) for gy in range(sp_y // 2, H, sp_y) for gx in range((gy // sp_y) % 2 * (sp_x // 2) + sp_x // 4, W, sp_x)
+             if shade[gy, min(W - 1, gx)]]
+    # (4-connected, so no mark is a lone texel)
+    shapes = (((0, 0), (1, 0), (1, 1), (0, 2), (1, 2)), ((0, 0), (0, 1)), ((0, 1), (1, 0), (1, 1)), ((0, 0), (1, 0), (1, 1)))
+    for (gy, gx) in grid:
+        y0, x0 = gy + int(rng.integers(-1, 2)), gx + int(rng.integers(-2, 3))
+        if not (1 <= y0 < H - 2 and 1 <= x0 < W - 3) or not lawn[y0, x0]:
+            continue
+        if rng.random() > (0.95 if (shade[y0, x0] or cv[y0, x0] % 8 >= 4) else dens[y0, x0]):
+            continue
+        for (dy, dx) in shapes[int(rng.integers(0, 4))]:
+            yy, xx = y0 + dy, x0 + dx
+            if lawn[yy, xx] and cv[yy, xx] % 8 > 0:
+                cv[yy, xx] = step(cv[yy, xx], -1)
+                drawn[yy, xx] = True
+    # tufts in clumps: round the feet of things and along the edges of paths and walls, a few
+    # drifts in the open lawn
+    edge = ndi.binary_dilation(keep_out, iterations=int(round(3 * D))) & ~ndi.binary_dilation(keep_out, iterations=int(round(1 * D)))
+    centres = []
+    for (fx, fy, kind) in foots:
+        if kind in ('building', 'shadow'):
+            continue
+        if rng.random() < 0.6:
+            centres.append((fx + rng.uniform(-6, 6), fy + rng.uniform(0, 3), int(rng.integers(1, 4))))
+    ys, xs = np.nonzero(edge & lawn)
+    for k in rng.choice(len(ys), size=min(len(ys), int(len(ys) / (180 * D * D))), replace=False) if len(ys) else []:
+        centres.append((xs[k] / D, ys[k] / D, int(rng.integers(1, 4))))
+    for cy in np.arange(0, H / D, 34.0):
+        for cx in np.arange(0, W / D, 34.0):
+            if rng.random() < 0.4 + 0.25 * float(np.clip(slow[min(H - 1, int(cy * D)), min(W - 1, int(cx * D))], -1, 1)):
+                centres.append((cx + rng.uniform(0, 34), cy + rng.uniform(0, 34), int(rng.integers(2, 5))))
+    placed = []
+    for (cx, cy, n) in centres:
+        for _ in range(n):
+            tx, ty = cx + rng.normal(0, 3.2), cy + rng.normal(0, 2.6)
+            X0, Y0 = int(tx * D), int(ty * D)
+            if not (0 <= Y0 < H and 0 <= X0 < W) or not lawn[Y0, X0]:
+                continue
+            # tufts of a clump stand apart and at different depths (no row of tips reading as a line)
+            if any(abs(tx - px_) < 4.0 and abs(ty - py_) < 2.0 for (px_, py_) in placed):
+                continue
+            placed.append((tx, ty))
+            r = rng.random()
+            if r < 0.78:
+                fam = ('grass', 'leaf', 'grass', 'grass')[int(rng.integers(0, 4))]
+                img = GR.tuft(D, int(rng.integers(0, 10 ** 6)), float(rng.uniform(0.5, 1.5)), fam=fam)
+            else:
+                kind = ('white', 'yellow', 'violet', 'white')[int(rng.integers(0, 4))]
+                img = P4.flowers4(D, int(rng.integers(0, 10 ** 6)), kind=kind, n=int(rng.integers(2, 4)))
+            dec = to_codes(img)
+            hh, ww = dec.shape
+            al = dec >= 0
+            if not al.any():
+                continue
+            bys, bxs = np.nonzero(al)
+            ox, oy = X0 - int((bxs.min() + bxs.max()) / 2), Y0 - int(bys.max())
+            for yy_, xx_ in zip(bys, bxs):
+                Y_, X_ = oy + yy_, ox + xx_
+                if 0 <= Y_ < H and 0 <= X_ < W and grass[Y_, X_]:
+                    cv[Y_, X_] = dec[yy_, xx_]
+                    drawn[Y_, X_] = True
+    return drawn
+
+
 def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     from scripts.art.native import compose as CO
     from scripts.art.native import village as V
@@ -91,6 +248,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
 
     D = ctx.D
     q = V.q
+    # fix queue 2: the props get their density-3 forms, passed explicitly (never a module switch);
+    # the buildings too (houses.py, the building lead's redraw); the ground painters default to hd=False
+    PROP_HD = D >= 2.5
     bx, by, bw, bh = plan['box']
     W, H = q(bw), q(bh)
     rng = np.random.default_rng(plan.get('seed', 7))
@@ -107,8 +267,15 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         return ndi.zoom(a, 3, order=1)[:H, :W] * amp
 
     # --- the lawn and the uplands ---------------------------------------------------------------
-    cv = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3)).astype(np.int32)
-    up = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3) + 1, base_tone=2, density=1.3).astype(np.int32)
+    hd = D >= 2.5
+    from scripts.art.native import softedge as SE
+
+    def is_turf(c):
+        return np.isin(c // 8, [FI['grass'], FI['grass_warm'], FI['grass_cool'], FI['leaf'], FI['leaf_warm']]) & (c % 8 < 6)
+    keep_marks = np.zeros((H, W), bool)             # density 3: drawn marks the lone-pixel tidy keeps
+    cv = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3), tufts=not hd).astype(np.int32)
+    up = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3) + 1, base_tone=2, density=1.3,
+                              tufts=not hd).astype(np.int32)
     art = plan.get('art', {})
     upland = np.zeros((H, W), bool)
     for r in art.get('uplands', []):
@@ -126,7 +293,17 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             cx, cy, rx, ry, wd = art['ring']
             e = ((WX - cx) / rx) ** 2 + ((WY - cy) / ry) ** 2
             band = (e > (1 - wd / rx) ** 2) & (e < 1) & (noise(2.0, 51) > -0.7)
-            cv[band] = np.where(noise(1.2, 52)[band] > 0.3, C('grass_warm', 3), C('path', 4))
+            if hd:
+                # density 3: the trodden ring on the soft grid, grass growing back over it in a few
+                # rounded patches, its north edge under the turf's lip, the turf south of it lit
+                band = SE.soft(band)
+                cv[band] = C('path', 4)
+                regrow = band & SE.soft(noise(1.8, 52) > 0.55)
+                cv[regrow] = C('grass_warm', 3)
+                soil_texture_hd(cv, band & ~regrow, rng, keep_marks, spacing=0.7, p=0.8)
+                SE.rim(cv, band & ~regrow, (cv // 8 == FI['grass']) | (cv // 8 == FI['grass_warm']) | (cv // 8 == FI['grass_cool']))
+            else:
+                cv[band] = np.where(noise(1.2, 52)[band] > 0.3, C('grass_warm', 3), C('path', 4))
 
     # --- roads and paths, worn at their edges ------------------------------------------------------
     def polyline_dist(pts):
@@ -145,13 +322,28 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         wob = noise(3.0, 60 + k, 1.4) + noise(1.0, 80 + k, 0.5)
         m = d < hw + wob
         src = dirt if r['kind'] == 'road' else track
-        cv[m] = src[m]
+        if hd:
+            # density 3 (Matt, 26 Oct 10:19: paths on the soft grid): the edge smooth, stepping a
+            # texel at a time, no teeth; inside calm, one body tone with a few large trodden and dry
+            # patches and clods (the sheets' speckle read as blotches)
+            m = SE.soft(m, smooth=0.6)
+            fam_ = 'path' if r['kind'] == 'road' else 'path_warm'
+            pt = noise(9.0, 140 + k)
+            calm = np.where(pt > 0.9, 4, np.where(pt < -1.4, 2, 3))     # (few dark patches: shade must still show the clods)
+            cv[m] = (FI[fam_] * 8 + calm)[m]
+            # clods in a few drifts (gathered by a slow field), calm earth between them
+            soil_texture_hd(cv, m & (d < hw + wob - 1.2) & (noise(7.0, 150 + k) > 0.1), rng, keep_marks, spacing=1.1, p=0.6)
+        else:
+            cv[m] = src[m]
         # ruts down a road: two worn lines a tone down
         if r['kind'] == 'road':
             for off in (-hw * 0.45, hw * 0.45):
-                rut = (np.abs(d - abs(off)) < 0.9) & m & (noise(1.5, 90 + k) > -0.4)
+                rut = (np.abs(d - abs(off)) < (0.45 if hd else 0.9)) & m & (noise(1.5, 90 + k) > -0.4)
                 cv[rut] = step(cv[rut], -1)
         pathm |= m
+    if hd:
+        turf_ = is_turf(cv)
+        SE.rim(cv, pathm, turf_ & ~pathm)
 
     # --- places ------------------------------------------------------------------------------------
     # the paved square: rounded on the soft grid (cell 8 world px, corner radius one cell)
@@ -174,7 +366,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 fam = ('stone_warm', 'stone_warm', 'stone_warm', 'stone_cool')[int(rng.integers(0, 4))]
                 t = int(rng.choice([4, 4, 4, 4, 4, 3, 5]))
                 jx = int(rng.integers(0, 2))         # irregular joints: some setts butt tight
-                V.blk(flags, x, y, x + sw - jx, y + rh - 1, fam, t, cut=1, top=1, left=0, bot=0, right=0)
+                # density 3: some setts sit a texel lower
+                # and some butt tight on the row below, so no joint runs ruler-straight across the square
+                jy = int(rng.random() < 0.3) if hd else 0
+                jb = int(rng.random() < 0.5) if hd and not jy else 0
+                V.blk(flags, x, y + jy, x + sw - jx, y + rh - 1 + jb, fam, t, cut=1, top=1, left=0, bot=0, right=0)
                 if rng.random() < 0.06:
                     V.fill(flags, x + 2, y + 2, x + 4, y + 4, C(fam, max(2, t - 1)))   # a worn dip
                 x += sw
@@ -192,6 +388,34 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             disc = (((WX - cx) / r1) ** 2 + ((WY - cy) / (r1 * 0.86)) ** 2) < 1.0
             cv[disc] = C('stone_warm', 3)
             rr = r0
+            if hd:
+                # density 3: setts laid in true rings (each its own tone, lit on its north-west
+                # edges, shaded on its south-east, calm joints between), on in under the well's foot
+                ex_, ey_ = (WX - cx), (WY - cy) / 0.86
+                rad_ = np.hypot(ex_, ey_)
+                th_ = np.arctan2(ey_, ex_)
+                inside = disc & (rad_ < r1 - 2.0)
+                ring_w = 2.8
+                ri = np.floor(rad_ / ring_w).astype(int)
+                nring = np.maximum(3, (2 * math.pi * (ri + 0.5) * ring_w / 4.2).astype(int))
+                off = (ri * 0.37) % 1.0
+                si = np.floor((th_ / (2 * math.pi) + 0.5) * nring + off).astype(int)
+                key = ri * 1000 + si
+                fr = rad_ / ring_w - ri
+                fa = (th_ / (2 * math.pi) + 0.5) * nring + off - si
+                joint = (fr < 0.16) | (fa * (2 * math.pi * rad_ / nring) * D < 1.0)
+                hsh = (key * 2654435761) % 997
+                tone = np.where(hsh % 5 == 0, 3, np.where(hsh % 7 == 0, 5, 4))
+                famk = np.where(hsh % 3 == 0, FI['stone'], FI['stone_warm'])
+                # lit north-west edge of each sett, shaded south-east
+                lit_e = (fr > 0.75) & (np.cos(th_ - 3.93) > 0.3) | (fa > 0.8) & (np.sin(th_) < 0)
+                dark_e = (fr < 0.32) & (np.cos(th_ - 0.785) > 0.3)
+                tone = np.clip(tone + lit_e.astype(int) - dark_e.astype(int), 2, 5)
+                codes_ = famk * 8 + tone
+                sel = inside & ~joint
+                cv[sel] = codes_[sel]
+                cv[inside & joint] = C('stone_warm', 2)
+                rr = r1          # (the rings are laid)
             while rr < r1 - 2.5:
                 n = max(8, int(2 * math.pi * rr / 4.4))
                 ph = rng.uniform(0, 1)
@@ -204,6 +428,18 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             kerb_r = disc & ~((((WX - cx) / (r1 - 2.0)) ** 2 + ((WY - cy) / ((r1 - 2.0) * 0.86)) ** 2) < 1.0)
             cv[kerb_r] = C('stone_warm', 4)
             cv[kerb_r & (WY > cy + 3)] = C('stone_warm', 3)
+            if hd:
+                # density 3: the kerb laid in curved blocks: a joint every 5 world px round it, each
+                # block lit on its north-west and a tone down to its south-east end
+                thk = np.arctan2((WY - cy) / 0.86, WX - cx)
+                nb = max(8, int(2 * math.pi * r1 / 5.0))
+                fa = (thk / (2 * math.pi) + 0.5) * nb
+                fr_ = fa - np.floor(fa)
+                cv[kerb_r & (fr_ * (2 * math.pi * r1 / nb) * D < 1.0)] = C('stone', 2)
+                sel = kerb_r & (fr_ > 0.7) & (cv % 8 > 2)
+                cv[sel] = cv[sel] - 1
+                sel = kerb_r & (fr_ > 0.1) & (fr_ < 0.3) & (cv % 8 < 5) & (WY < cy)
+                cv[sel] = cv[sel] + 1
             rim_in = kerb_r & ~ndi.binary_erosion(disc, iterations=q(2.0) + 1)
             outer_line = disc & ~ndi.binary_erosion(disc, iterations=1)
             cv[outer_line] = C('stone', 2)
@@ -240,6 +476,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv[tuft & (noise(0.7, 38) > 0.5)] = C('grass_cool', 2)
         cv[tuft & (noise(0.7, 40) > 1.0)] = C('grass', 4)
         worn = (out_d > 0) & (out_d < 3.5) & (noise(2.0, 39) > 1.3) & ~pathm
+        if hd:
+            worn = SE.soft(worn) & (out_d > 0) & ~pathm
         cv[worn] = C('path_warm', 4)
         cv[worn & (out_d > 2.5)] = C('grass_warm', 3)
 
@@ -247,6 +485,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     for k_, (px, py, prx, pry) in enumerate(art.get('puddles', [])):
         e = ((WX - px) / prx) ** 2 + ((WY - py) / pry) ** 2 + noise(1.2, 120 + k_, 0.12)
         m = e < 1.0
+        if hd:
+            m = SE.soft(m, smooth=0.4, min_area=1.0)
         cv[m] = C('water', 2)
         cv[m & (WY > py)] = C('water', 3)
         cv[m & (e < 0.35) & (WX < px)] = C('sky', 4)
@@ -257,7 +497,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
 
     for pl in plan.get('places', []):
         x, y, w, h = pl['rect']
-        if pl['kind'] == 'crater':
+        if pl['kind'] == 'crater' and hd:
+            cx, cy, rx, ry = x + w / 2, y + h / 2, w / 2, h / 2
+            crater_hd(cv, WX, WY, cx, cy, rx, ry, rng, noise, keep_marks)
+        elif pl['kind'] == 'crater':
             cx, cy, rx, ry = x + w / 2, y + h / 2, w / 2, h / 2
             e = np.sqrt(((WX - cx) / rx) ** 2 + ((WY - cy) / ry) ** 2)
             wob = noise(1.6, 41, 0.07)
@@ -287,10 +530,17 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         # the burnt ground: ash and soot in soft clusters, its edge frayed into the lawn
         e = np.maximum(np.abs(WX - (x + w / 2)) / (w / 2), np.abs(WY - (y + h / 2)) / (h / 2))
         m = e < 1.0 + noise(1.6, 70 + k_, 0.08)
+        if hd:
+            m = SE.soft(m, smooth=0.6)
         cv[m] = C('earth', 2)
         cv[m & (noise(1.8, 71 + k_) > 0.1)] = C('earth_cool', 2)
         cv[m & (noise(2.2, 72 + k_) > 0.7)] = C('earth_cool', 1)
-        cv[m & (e > 0.82) & (noise(1.0, 75 + k_) > 0.4)] = C('grass_cool', 2)
+        if hd:
+            cv[m & (e > 0.82) & SE.soft(noise(1.4, 75 + k_) > 0.4)] = C('grass_cool', 2)
+        else:
+            cv[m & (e > 0.82) & (noise(1.0, 75 + k_) > 0.4)] = C('grass_cool', 2)
+        if hd:
+            soil_texture_hd(cv, m & (e <= 0.82), rng, keep_marks, spacing=0.8, p=0.85)
         # the old footings: a course of stones round where the walls stood, broken in places
         tmp = np.full((H, W), -1, np.int32)
         V.rubble(tmp, q(x + 4), q(y + 4), q(x + w - 4), q(y + h - 4), rng, base=3, course=(3, 3.6), length=(4, 7), moss=0.3)
@@ -338,6 +588,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         foot = rect_m([x, y + h, w, 2.6]) & ~cut
         cv[foot] = step(cv[foot], -1)
         foot2 = rect_m([x, y + h, w, 1.0]) & ~cut
+        if hd:      # the damp line at the foot follows the stones: broken, a texel up or down
+            foot2 = (rect_m([x, y + h - 0.34, w, 1.0]) | rect_m([x, y + h + 0.34, w, 1.0])) & ~cut & \
+                np.where(noise(1.2, 93) > 0, rect_m([x, y + h, w, 1.0]), rect_m([x, y + h + 0.34, w, 0.67])) & \
+                (noise(0.7, 91) > -0.8)
         cv[foot2] = step(cv[foot2], -1)
         for k in range(int(w / 14)):
             px = x + rng.uniform(0, w)
@@ -389,7 +643,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         x, y, w, h = b['rect']
         look.setdefault('w', w)
         look.setdefault('depth', h)
-        built = V.building(look, seed=look.get('seed', sum(map(ord, b['id']))))
+        built = V.building(look, seed=look.get('seed', sum(map(ord, b['id']))), hd=PROP_HD)
         foot = (q(x + w / 2), q(y + h))
         objects.append(dict(id=b['id'], kind='building', png=add_pic(b['id'], built.base.rgba()),
                             foot=foot, anchor=(built.base.ax, built.base.ay), alpha=built.base.alpha(),
@@ -425,7 +679,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             entry.update(png=None)          # drawn in the building's damage overlay
             objects.append(entry)
             continue
-        pic = V.prop(kind, w, h, seed=sum(map(ord, p['id'])))
+        pic = V.prop(kind, w, h, seed=sum(map(ord, p['id'])), hd=PROP_HD)
         foot = (q(x + w / 2), q(y + h))
         if host is not None and kind == 'glow':
             # the fire burns inside the forge's mouth: sort it just in front of the building
@@ -438,7 +692,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     THING_KIND = {'notice_board': 'notice_board', 'waystone': 'waystone'}
     for t in plan.get('things', []):
         if t['speaker'] in THING_KIND:
-            pic = V.prop(THING_KIND[t['speaker']], 10, 6, seed=5)
+            pic = V.prop(THING_KIND[t['speaker']], 10, 6, seed=5, hd=PROP_HD)
             x, y = t['at']
             objects.append(dict(id=t['id'], kind=t['speaker'], png=add_pic(t['id'], pic.rgba()), foot=(q(x), q(y)),
                                 anchor=(pic.ax, pic.ay), alpha=pic.alpha(), cond=cond_of(t), solid=None, static=not cond_of(t)))
@@ -460,7 +714,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             solid = [x - 6, y - 4, 12, 5]
         else:
             w, h = dr.get('size', [12, 8])
-            pic = V.prop(kind, w, h, seed=seed)
+            pic = V.prop(kind, w, h, seed=seed, hd=PROP_HD)
             img, anc, a = pic.rgba(), (pic.ax, pic.ay), pic.alpha()
             solid = [x - w / 2, y - h, w, h] if dr.get('solid', True) else None
         did = dr.get('id', f'{kind}_{k}')
@@ -471,11 +725,80 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     kx, ky = CO.SHADOW
     rim = max(2, q(2))
     def shade_masks(o):
-        m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
+        if hd and o['kind'] == 'oak':
+            # density 3: a crown's shade lies under the crown as the woodland's does (scalloped, sun
+            # flecks), from the trunk's foot east, not the sprite's long silhouette thrown on the lawn
+            from scripts.art.native import screen as SN
+            m = SN.tree_shadow_hd(o['foot'][0] / D, o['foot'][1] / D, tree_ex['oak'], W, H)
+        else:
+            m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
         contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
         return m, ndi.binary_erosion(m, iterations=rim), contact
 
     NOSHADE = ('glow', 'smoke', 'damage', 'debris')
+    if hd:
+        shade = np.zeros((H, W), bool)
+        foots = []
+        # The lawn's scatter (blade marks, tufts, flowers, clods) is drawn from one random sequence
+        # that the shade steers, so redrawing a building would reshuffle the whole lawn, which is
+        # the terrain lead's. So the scatter is drawn twice from the same state: once with the
+        # buildings' shade as their density-2 drawing throws it (the lawn as it stands), once with
+        # their shade as drawn now; the second is kept only round the buildings (their footprints,
+        # sprites and shadows, either drawing), the first everywhere else.
+        legacy = []
+        for b in plan.get('buildings', []):
+            look = dict(looks.get(b['id'], {}))
+            x, y, w, h = b['rect']
+            look.setdefault('w', w)
+            look.setdefault('depth', h)
+            # `lawn_as`: what the silhouette was when the lawn was laid (a taller wall, a moved stack)
+            look.update(look.pop('lawn_as', {}))
+            old = V.building(look, seed=look.get('seed', sum(map(ord, b['id']))), hd=False).base
+            legacy.append((b['id'], old))
+        olds = {bid: pic for bid, pic in legacy}
+
+        def lawn_inputs(objs):
+            sh = np.zeros((H, W), bool)
+            ft = []
+            near = np.zeros((H, W), bool)
+            for o in objs:
+                if o.get('png') is None or o['kind'] in NOSHADE:
+                    continue
+                m, _core, contact = shade_masks(o)
+                sh |= m | contact
+                ft.append((o['foot'][0] / D, o['foot'][1] / D, o['kind']))
+                if o['kind'] == 'building':
+                    near |= m | contact
+                    ah, aw = o['alpha'].shape
+                    X0, Y0 = int(o['foot'][0] - o['anchor'][0]), int(o['foot'][1] - o['anchor'][1])
+                    near[max(0, Y0):max(0, Y0 + ah), max(0, X0):max(0, X0 + aw)] = True
+            return sh, ft, near
+
+        objs_old = []
+        for o in objects:
+            if o['kind'] == 'building' and o['id'] in olds:
+                pic = olds[o['id']]
+                key = '__legacy_' + o['id']
+                pics[key] = pic.rgba()
+                o = dict(o, png=key, alpha=pic.alpha(), anchor=(pic.ax, pic.ay))
+            objs_old.append(o)
+        shade_old, foots_old, near_old = lawn_inputs(objs_old)
+        shade, foots, near_new = lawn_inputs(objects)
+        for k in [k for k in pics if k.startswith('__legacy_')]:
+            del pics[k]
+        rng_new = np.random.default_rng()
+        rng_new.bit_generator.state = rng.bit_generator.state
+        cv_new = cv.copy()
+        drawn = lawn_detail_hd(cv, pathm | pave, shade_old, foots_old, rng, noise)
+        # in shade the trodden earth shows its clods closer (the shade keeps them, two tones down)
+        SE.soil_marks(cv, pathm & ndi.binary_erosion(shade_old, iterations=2), rng, drawn, spacing=0.7, p=0.9)
+        drawn_new = lawn_detail_hd(cv_new, pathm | pave, shade, foots, rng_new, noise)
+        SE.soil_marks(cv_new, pathm & ndi.binary_erosion(shade, iterations=2), rng_new, drawn_new, spacing=0.7, p=0.9)
+        local = ndi.binary_dilation(near_old | near_new, iterations=q(2))
+        cv[local] = cv_new[local]
+        drawn = np.where(local, drawn_new, drawn)
+    else:
+        drawn = np.zeros((H, W), bool)
     for o in objects:
         if not o.get('static') or o.get('png') is None or o['kind'] in NOSHADE:
             continue
@@ -483,7 +806,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv[m] = step(cv[m], -1)
         cv[core] = step(cv[core], -1)
         cv[contact] = step(cv[contact], -1)
-    lone_fix(cv, keep=(cv % 8 >= 6))
+    lone_fix(cv, keep=(cv % 8 >= 6) | drawn | keep_marks)        # (the blade marks are diagonal: they stay)
     # an object that comes and goes carries its cast and contact shadow in a picture of its own: the
     # ground under it stepped down, laid just above the ground in the same condition
     for o in list(objects):

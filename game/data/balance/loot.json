@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "status": "proposal (Claude L, 25 Oct): first values for the sim, not settings",
+  "rarity_order": ["common", "fine", "rare", "heroic", "starforged"],
+  "affixes_by_rarity": {
+    "common": 0,
+    "fine": 1,
+    "rare": 2,
+    "heroic": 3,
+    "starforged": "2 plus one named effect"
+  },
+  "rarity_weights": {
+    "normal_enemy": {
+      "common": 60,
+      "fine": 28,
+      "rare": 10,
+      "heroic": 2
+    },
+    "elite": {
+      "common": 20,
+      "fine": 45,
+      "rare": 28,
+      "heroic": 7
+    },
+    "camp_chest": {
+      "fine": 70,
+      "rare": 25,
+      "heroic": 5
+    },
+    "dungeon_chest": {
+      "fine": 40,
+      "rare": 45,
+      "heroic": 15
+    },
+    "bounty": {
+      "rare": 75,
+      "heroic": 25
+    }
+  },
+  "drops": {
+    "camp_chest_items": [1, 2],
+    "camp_chest_floor": "fine",
+    "boss": "one heroic or better fitting of the region's family, plus 1 to 2 more from dungeon_chest",
+    "boss_first_defeat": "its fixed starforged fitting",
+    "main_quest": "one fine or better fitting",
+    "region_family_share": 0.6,
+    "bad_luck": {
+      "counter": 8,
+      "rule": "after 8 rare-or-better drops with no heroic, the next rare-or-better is heroic"
+    }
+  },
+  "seeds": {
+    "regional_foe_chance": 0.15,
+    "boss": "one rare seed",
+    "note": "seeds go to the seed tin, never the satchel"
+  },
+  "materials": {
+    "per_region_foe_chance": 0.25,
+    "camp_chest": [2, 4],
+    "boss_bundle": 10
+  },
+  "salvage": {
+    "scrap_by_rarity": {
+      "common": 2,
+      "fine": 4,
+      "rare": 8,
+      "heroic": 16,
+      "starforged": "never salvaged; kept on the trophy rack"
+    },
+    "glint_by_rarity": {
+      "common": 3,
+      "fine": 6,
+      "rare": 12,
+      "heroic": 25
+    },
+    "region_material_if_family_item": 1
+  },
+  "published_in_journal": true,
+  "rules": "no loot boxes, no paid rerolls, no timers, no premium currency (game-design 5.6)",
+  "rarity_order_applies_to": "fittings (the loot set into each folk's signature weapon, #279) and the familiar charm",
+  "cosmetics": {
+    "see": "game/data/progression (#279): rare outfit and accessory drops, camp chests 3 %, elites 2 %, guaranteed by the 12th chest in a region; owned by Claude A"
+  }
+}

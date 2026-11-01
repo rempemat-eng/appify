@@ -1,0 +1,42 @@
+{
+  "id": "a1_the_scattered_flock",
+  "title": "The scattered flock",
+  "kind": "main",
+  "region": "brackens",
+  "chapter": [
+    "brackens",
+    1
+  ],
+  "summary": "The drover's flock went wild the night the stars fell and ran into the thicket by the Brackens gap.",
+  "start": {
+    "on": "talk:drover",
+    "if": {
+      "done": [
+        "home_again"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "flock",
+      "text": "Free the drover's flock in the thicket by the gap",
+      "on": "camp:gap_flock",
+      "done_if": {
+        "flags": [
+          "camp_cleared:gap_flock"
+        ]
+      }
+    },
+    {
+      "id": "drover",
+      "text": "Tell the drover his flock is calm",
+      "on": "talk:drover"
+    }
+  ],
+  "rewards": {
+    "glint": 30,
+    "flags": [
+      "met_drover"
+    ]
+  }
+}

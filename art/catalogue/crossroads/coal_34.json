@@ -1,7 +1,7 @@
 {
  "id": "crossroads/coal_34",
  "file": "game/zones/crossroads/art/coal_34.png",
- "sha256": "5978681f1cb5227ab92db50f01e83cf8689ce14fe8fd605fdb2918b5ff0af36a",
+ "sha256": "cc7fac8268b1b3b820a3173af6f5b0a9691e4f697b291d73ea7e7eff6a52231f",
  "kind": "pile",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   60,
   57
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 14.0,
-   "shapes": 21.833333333333332
+   "tones": 17.666666666666668,
+   "shapes": 30.5
   },
   "band": {
    "tones": 27.0,
@@ -28,39 +28,27 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.434,
-  "tones_ratio": 0.519,
-  "shapes_ratio": 0.434,
+  "ratio": 0.606,
+  "tones_ratio": 0.654,
+  "shapes_ratio": 0.606,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.light",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    4,
-    17,
-    49,
-    38
-   ],
-   "message": "crossroads/coal_34: the stone is lit from the right (luminance rises 6 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "fault",
-   "box": [
-    3,
-    16,
-    55,
+    1,
+    14,
+    59,
     54
    ],
-   "message": "crossroads/coal_34: detail bar 0.43 of Eastward's prop band (14.0 tones, 21.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/coal_34: detail bar 0.61 of Eastward's prop band (17.7 tones, 30.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

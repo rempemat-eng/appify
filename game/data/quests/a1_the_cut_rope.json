@@ -1,0 +1,78 @@
+{
+  "id": "a1_the_cut_rope",
+  "title": "The cut rope",
+  "kind": "main",
+  "region": "brackens",
+  "chapter": [
+    "brackens",
+    2
+  ],
+  "summary": "The drove well's rope is cut and its bucket is gone. Something dragged it into the old barrow, where the moor's shard came down.",
+  "start": {
+    "on": "talk:drover",
+    "if": {
+      "done": [
+        "a1_the_scattered_flock"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "well",
+      "text": "Look at the drove well",
+      "on": "talk:drove_well"
+    },
+    {
+      "id": "barrow",
+      "text": "Go into the barrow on the Fold spur",
+      "on": "enter:the_barrow"
+    },
+    {
+      "id": "rooms",
+      "text": "Free the shardstruck in the barrow",
+      "on": "camp:barrow_rooms",
+      "done_if": {
+        "flags": [
+          "camp_cleared:barrow_rooms"
+        ]
+      }
+    },
+    {
+      "id": "fang",
+      "text": "Free Old Fang",
+      "on": "camp:old_fang",
+      "done_if": {
+        "flags": [
+          "camp_cleared:old_fang"
+        ]
+      }
+    },
+    {
+      "id": "shard",
+      "text": "Take the great shard from the barrow's hearth",
+      "on": "talk:barrow_shard",
+      "set_flags": [
+        "shard_taken:brackens"
+      ]
+    },
+    {
+      "id": "lantern",
+      "text": "Set the shard in the lantern on the square",
+      "on": "talk:shard_lantern",
+      "if": {
+        "flags": [
+          "shard_taken:brackens"
+        ]
+      },
+      "set_flags": [
+        "shard_home:brackens"
+      ]
+    }
+  ],
+  "rewards": {
+    "glint": 60,
+    "flags": [
+      "old_fang_freed"
+    ]
+  }
+}

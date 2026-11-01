@@ -1,0 +1,665 @@
+{
+  "moss": {
+    "name": "Moss",
+    "entries": [
+      {
+        "if": {
+          "step": [
+            "a1_the_landslip",
+            "moss"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The landslip's gone? Then the line to Cogsworth runs. Go and tell the tinkerers we're still here."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_choked_well",
+            "moss"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "Clear water! I'd forgotten what the well sounds like.",
+          "A man in a good coat came through this morning offering Glint for 'starlight', if we found any. I said we hadn't.",
+          "I didn't like his coat."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_bread_for_the_bothy",
+            "col"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The col's under shard crows, last I heard. Free them and take the loaf up the Col Path."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_landslip"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The halt's platform first, then the Millrace cutting. The slip's full of boars dug in for the winter."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_choked_well"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The well's mark is by the lantern. Rubble mostly, and one very surprised frog."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_bread_for_the_bothy"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The hut warden's at the Col hut, up past the col. She likes the crust."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_the_landslip"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "A train to Cogsworth! I'll need to order things. I'd forgotten I could order things."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_the_wolf_moon"
+          ],
+          "not_started": [
+            "a1_the_landslip"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "We held! The whole square held!",
+          "Now, the train. Valley Halt's platform is matchwood and the Millrace cutting's under a landslip.",
+          "Fix both and Cogsworth's a morning's ride away. They'll have news. Tinkerers always have news."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_bread_for_the_bothy"
+          ],
+          "not_started": [
+            "a1_the_choked_well"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The warden's fed? Good. Now our well. It's still full of the storm.",
+          "Clear it at the mark by the lantern and we'll have water on the square again."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "home_again"
+          ],
+          "not_started": [
+            "a1_bread_for_the_bothy"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "Before the storm the hut warden came down from the Frostline every week for a loaf. She hasn't come since.",
+          "Here, take her one. The ridge col's full of shard crows, so go ready."
+        ]
+      }
+    ]
+  },
+  "hale": {
+    "name": "Hale",
+    "entries": [
+      {
+        "if": {
+          "step": [
+            "a1_the_wolf_moon",
+            "siege"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "Here they come, down the halt road. Stand by the lantern with me. We'll see them off together."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_wolf_moon",
+            "hale"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "Did you hear them? Howling all night, and not one of them reached the lantern. Not one!"
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_wolf_moon",
+            "ring"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "Ring when you're ready, not before. The bell tells them we're waiting."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_training_yard",
+            "hale"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "A ring on the green, a stove beside it. The hut warden's idea? I can tell. It's very sensible and very cold."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_wolf_moon",
+            "bell"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The bell cupola's mark is on the library. Get it up and we'll hear them coming."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_the_wolf_moon"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "A bell, a ring, a lantern with three lights in it. If my grandmother could see this square."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_the_circle_wakes"
+          ],
+          "not_started": [
+            "a1_the_wolf_moon"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "That lantern's too bright to miss now, and the moor's noticed. The wolves were howling at it last night.",
+          "Get the library's bell back up so it can warn us, and we'll meet them on the square."
+        ]
+      }
+    ]
+  },
+  "morel": {
+    "name": "Morel",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_torn_roof"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The jars are back on the shelves, mostly the right way up. Come by before you go out. I'll fill your flasks."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_torn_roof",
+            "morel"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "A roof! I can hear the rain on it and none of the rain on me.",
+          "I'll brew for the town. But the fever in those creatures comes from the light, and the light is out there.",
+          "Take me with you. Somebody has to see what it does up close, and I'd rather it was someone who takes notes."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_torn_roof"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The mark's on my door. Timber and slates. Then I can brew again."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "home_again"
+          ],
+          "not_started": [
+            "a1_the_torn_roof"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "You're back. Good. My roof is still in the bakery's yard, and my jars are still on the floor.",
+          "Help me put it on again and the herbalist's is an apothecary. Tonics for the road."
+        ]
+      }
+    ]
+  },
+  "shard_lantern": {
+    "name": "Shard lantern",
+    "entries": [
+      {
+        "if": {
+          "flags": [
+            "shard_home:woodland",
+            "shard_home:frostline",
+            "shard_home:brackens"
+          ],
+          "not_started": [
+            "a1_the_circle_wakes"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "Three great shards hum together. The light runs down into the well and, faintly, up the stair toward the woods."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_the_circle_wakes"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The lantern's light has gone up to the circle. It still glows, softer now, like a coal kept for the morning."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_under_the_snout",
+            "lantern"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "You lift the Frostline's shard into a cradle. Frost runs along the iron, then melts."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_cut_rope",
+            "lantern"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "You lift the moor's shard into a cradle. For a moment the square smells of heather."
+        ]
+      }
+    ]
+  },
+  "circle_stones": {
+    "name": "Stone circle",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_circle_wakes"
+          ]
+        },
+        "lines": [
+          "Every stone is warm to the touch."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_circle_wakes",
+            "cairn"
+          ]
+        },
+        "lines": [
+          "The stones hum. One in the ring is not a stone at all: it is turning its head."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_circle_wakes",
+            "stones"
+          ]
+        },
+        "lines": [
+          "The light comes up the stair behind you and runs into the stones. The ground shakes. Something in the ring wants to see what you're made of."
+        ]
+      },
+      {
+        "lines": [
+          "Old standing stones, moss to the knee. They feel like they're listening."
+        ]
+      }
+    ]
+  },
+  "cairn": {
+    "name": "Cairn",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_circle_wakes"
+          ]
+        },
+        "lines": [
+          "Fourteen stones. A few are lit. I am counting. Stones are good at waiting."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_circle_wakes",
+            "cairn"
+          ]
+        },
+        "lines": [
+          "You stood well. The circle had to know.",
+          "I have stood here since before the valley had a name. The light in your lantern is the light we were built to hold.",
+          "There is more of it out there. I would like to walk, for once. Slowly, if you don't mind."
+        ]
+      }
+    ]
+  },
+  "bell_tower": {
+    "name": "Bell",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_wolf_moon"
+          ]
+        },
+        "lines": [
+          "The bell hangs quiet, one ear cocked for trouble."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_wolf_moon",
+            "ring"
+          ]
+        },
+        "lines": [
+          "You ring the bell. Across the square shutters close, lamps go out, and Hale picks up her hammer."
+        ]
+      },
+      {
+        "if": {
+          "restored": [
+            "bell_tower"
+          ]
+        },
+        "lines": [
+          "The bell hangs in its new frame. Ring it when you're ready."
+        ]
+      },
+      {
+        "lines": [
+          "An empty cupola on the library roof. The bell lies in the street below it."
+        ]
+      }
+    ]
+  },
+  "velvet": {
+    "name": "Velvet",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_dark_lighthouse"
+          ]
+        },
+        "lines": [
+          "The light's burning and the boats are coming home. Now, where is the next dark place?"
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_dark_lighthouse",
+            "velvet"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "You lit it. I saw it from the quay, turning, the way it should.",
+          "I keep that light so boats find their way past what's in the water. There's more in the water now than rocks.",
+          "Wherever the rest of those shards fell, someone will need a light. I'd like it to be mine. May I come?"
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_dark_lighthouse"
+          ]
+        },
+        "lines": [
+          "Driftwood's down the harbour road. Mind the quay. Whatever's on it bites."
+        ]
+      },
+      {
+        "lines": [
+          "Velvet. I keep the Driftwood light. Since the storm the quay is overrun and the lamp is out.",
+          "There are shards in the bay now, and boats out there with no way home. Help me light it again?"
+        ]
+      }
+    ]
+  },
+  "lighthouse_lamp": {
+    "name": "Lighthouse lamp",
+    "entries": [
+      {
+        "if": {
+          "flags": [
+            "lighthouse_lit"
+          ]
+        },
+        "lines": [
+          "The lamp turns slowly, throwing its beam across the bay."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_dark_lighthouse",
+            "lamp"
+          ]
+        },
+        "lines": [
+          "You trim the wick and light the lamp. The great lens turns, and its beam swings out over the water."
+        ]
+      },
+      {
+        "lines": [
+          "A cold lamp behind a great glass lens."
+        ]
+      }
+    ]
+  },
+  "restore_apothecary": {
+    "name": "Morel's herbalist's",
+    "entries": [
+      {
+        "if": {
+          "restored": [
+            "apothecary"
+          ]
+        },
+        "lines": [
+          "The apothecary is open."
+        ]
+      },
+      {
+        "if": {
+          "glint_at_least": 40
+        },
+        "lines": [
+          "You pay 40 Glint for timber and slates. By evening the roof is back on and Morel is sweeping up glass."
+        ]
+      },
+      {
+        "lines": [
+          "Half the roof is in the bakery's yard. Putting it back needs 40 Glint of timber and slates."
+        ]
+      }
+    ]
+  },
+  "restore_well": {
+    "name": "The well",
+    "entries": [
+      {
+        "if": {
+          "restored": [
+            "well"
+          ]
+        },
+        "lines": [
+          "Clear water, all the way down."
+        ]
+      },
+      {
+        "if": {
+          "glint_at_least": 20
+        },
+        "lines": [
+          "You pay 20 Glint for rope and a hired barrow. The rubble comes out, and one very surprised frog."
+        ]
+      },
+      {
+        "lines": [
+          "The well is choked with rubble. Clearing it needs 20 Glint for rope and a barrow."
+        ]
+      }
+    ]
+  },
+  "restore_training_yard": {
+    "name": "The ring on the green",
+    "entries": [
+      {
+        "if": {
+          "restored": [
+            "training_yard"
+          ]
+        },
+        "lines": [
+          "The training yard is open, its stove lit."
+        ]
+      },
+      {
+        "if": {
+          "glint_at_least": 40
+        },
+        "lines": [
+          "You pay 40 Glint. New posts, a fresh rope, and a little stone stove on the north side, out of the wind."
+        ]
+      },
+      {
+        "lines": [
+          "The old ring on the green is flattened. Rebuilding it needs 40 Glint."
+        ]
+      }
+    ]
+  },
+  "restore_bell_tower": {
+    "name": "The bell cupola",
+    "entries": [
+      {
+        "if": {
+          "restored": [
+            "bell_tower"
+          ]
+        },
+        "lines": [
+          "The bell is back in its cupola."
+        ]
+      },
+      {
+        "if": {
+          "glint_at_least": 50
+        },
+        "lines": [
+          "You pay 50 Glint. Hale and two neighbours haul the bell back up and fix it in a new frame."
+        ]
+      },
+      {
+        "lines": [
+          "The library's bell lies in the street. A new frame and a hoist need 50 Glint."
+        ]
+      }
+    ]
+  },
+  "restore_halt": {
+    "name": "Valley Halt's platform",
+    "entries": [
+      {
+        "if": {
+          "restored": [
+            "halt"
+          ]
+        },
+        "lines": [
+          "The platform is whole again."
+        ]
+      },
+      {
+        "if": {
+          "glint_at_least": 60
+        },
+        "lines": [
+          "You pay 60 Glint for sleepers and planks. The platform goes back up, lamp and all."
+        ]
+      },
+      {
+        "lines": [
+          "The platform is matchwood. Rebuilding it needs 60 Glint of sleepers and planks."
+        ]
+      }
+    ]
+  }
+}

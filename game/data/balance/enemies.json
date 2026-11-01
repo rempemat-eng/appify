@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "status": "proposal (Claude L, 25 Oct): first values for the sim, not settings; Codex owns the formulas as code (C60, C61)",
+  "units": {
+    "health": "canonical damage points, 1:1 with the damage values in abilities-v1.json (a Bramble arrow is 22)",
+    "damage": "same points; the player's health is in levels.json",
+    "time": "seconds",
+    "distance": "original canonical planar units (C60's units.json converts to world px)"
+  },
+  "scaling": {
+    "health_per_level": 1.11,
+    "health_formula": "role.health x health_per_level^(enemy_level - 1)",
+    "damage_formula": "role.damage x (1 + damage_per_level x (enemy_level - 1))",
+    "damage_per_level": 0.12,
+    "why_damage_is_linear": "player health grows linearly (100 + 12 per level), so a hit takes the same share of the bar at every equal level"
+  },
+  "roles": {
+    "swarmer": {
+      "health": 35,
+      "damage": 5,
+      "windup_s": 0.9,
+      "count_in_pack": 4,
+      "xp_share_of_level": 0.004,
+      "glint": [1, 2],
+      "item_chance": 0.03
+    },
+    "grunt": {
+      "health": 100,
+      "damage": 12,
+      "windup_s": 1.1,
+      "xp_share_of_level": 0.01,
+      "glint": [2, 4],
+      "item_chance": 0.06
+    },
+    "shooter": {
+      "health": 75,
+      "damage": 8,
+      "windup_s": 1.0,
+      "projectile_speed_vs_roll": 0.8,
+      "xp_share_of_level": 0.01,
+      "glint": [2, 4],
+      "item_chance": 0.06
+    },
+    "lunger": {
+      "health": 115,
+      "damage": 18,
+      "windup_s": 1.3,
+      "xp_share_of_level": 0.012,
+      "glint": [3, 5],
+      "item_chance": 0.07
+    },
+    "caster": {
+      "health": 85,
+      "damage": 6,
+      "windup_s": 1.2,
+      "summons": "two swarmers, at most once per 10 s",
+      "xp_share_of_level": 0.012,
+      "glint": [3, 5],
+      "item_chance": 0.07
+    },
+    "tank": {
+      "health": 235,
+      "damage": 16,
+      "windup_s": 1.4,
+      "front_damage_taken": 0.5,
+      "xp_share_of_level": 0.02,
+      "glint": [5, 8],
+      "item_chance": 0.1
+    }
+  },
+  "elite": {
+    "health": 1.8,
+    "damage": 1.3,
+    "windup_s": 0.75,
+    "xp": 4,
+    "glint": 4,
+    "item_chance": 0.6,
+    "note": "multipliers on the role; wind-up 0.6 to 1.0 s (game-design 4.4)"
+  },
+  "boss": {
+    "health_vs_grunt": 30,
+    "damage_vs_grunt": 1.5,
+    "phases": 3,
+    "time_to_free_s": [90, 180],
+    "note": "a boss's own table is authored per boss; these are the budget it must fit"
+  },
+  "difficulty": {
+    "story": { "damage_taken": 0.5, "telegraph": 1.5, "attack_tokens": 1 },
+    "normal": { "damage_taken": 1.0, "telegraph": 1.0, "attack_tokens": 2 },
+    "hard": { "damage_taken": 1.4, "telegraph": 0.85, "attack_tokens": 3 },
+    "note": "loot and XP are the same on every setting (game-design 4.6); enemy health never changes with difficulty"
+  },
+  "targets": {
+    "grunt_time_to_free_s": [3, 5],
+    "camp_time_to_free_s": [20, 40],
+    "grunt_hits_to_free_melee": 4,
+    "hits_to_defeat_player_by_grunt_at_equal_level": 8,
+    "assumed_uptime": 0.5
+  }
+}

@@ -21,7 +21,7 @@ The rules below still hold. Where one names a pixel size drawn at 1x, its 2x equ
 
 ## Density 3: foliage, water and the woodland (Matt, 25 Oct 19:16)
 
-"Especially the trees look really strange." The 2x foliage algorithm (leaf stamps, crease pockets) does not scale: at density 3 it drew a mesh of thin dark contours round many small cells. From density 3 the kit paints foliage as Eastward does: a few large clumps per crown, each a dome lit from the upper left (lit top, mid-tone body, shaded lower right, dark under-shade where it tucks under the clump in front), tones meeting in leaf-shaped scallops whose lit tips point down, sparse leaf marks and glints, leaf tips breaking the silhouette only, and an outline on the silhouette only. Bushes sit on the ground with no stems. Trunks have bark (plates, smooth beech, birch dashes), flare into roots, and reach up under the crown so it always covers them. Water at density 3 has curved banks on the soft grid (no stair steps), a wet edge, a bank lip with stones and grass hanging over it, depth from the bank to the middle and one-texel ripple lines; a fall has a lip, volume, streaks, foam, spray and rings. Size and colour choices per kind are data (the biome recipe's `crown` and `bark`).
+"Especially the trees look really strange." The 2x foliage algorithm (leaf stamps, crease pockets) does not scale: at density 3 it drew a mesh of thin dark contours round many small cells. From density 3 the kit paints foliage as Eastward does: a few large clumps per crown, each a dome lit from the upper left (lit top, mid-tone body, shaded lower right, dark under-shade where it tucks under the clump in front), tones meeting in leaf-shaped scallops whose lit tips point down, sparse leaf marks and glints, leaf tips breaking the silhouette only, and an outline on the silhouette only. Bushes sit on the ground with no stems. Trunks have bark (plates, smooth beech, birch dashes), flare into roots, and reach up under the crown so it always covers them. Water at density 3 has curved banks on the soft grid (no stair steps), a wet edge, a bank lip with stones and grass hanging over it, depth from the bank to the middle and one-texel ripple lines; a fall has a lip, volume, streaks, foam, spray and rings. Size and colour choices per kind are data (the biome recipe's `crown` and `bark`). From 26 Oct (Matt: "the lamp and bench are exactly the style i'm going for" and paths should "adhere to the soft grid more"): every organic edge at density 3 (paths, worn earth, puddles, lots, rings, craters, the talus) runs smooth on the soft grid with no one-texel teeth, the surface dark under the turf's north lip and the turf lit south of it, and calm inside (a few large patches, clods in drifts); structures and props stand on the 8 world px cell (`scripts/art/native/softedge.py`, `scripts/art/grid_snap.py`, review-agents.md).
 
 ## References
 
@@ -136,12 +136,13 @@ And in every place, the drawing itself must make sense (Matt's 10:15 review of t
 
 ## Where the code lives
 
-| File                                            | What it draws                                                                                                       |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `scripts/art/style.py`                          | The rules above as functions: `leafy`, `trunk`, `facet_stone`, `cast_shadow`, `dither_dark`, `tuft`                 |
-| `scripts/art/garden.py`                         | The garden map, its objects and ground (192×384 native, plus a 32 px forest band above y = 0; 384×768 and 64 at 2x) |
-| `scripts/art/garden_meadow.py`                  | The stream, bridge, meadow beds, orchard and growth-stage sprites                                                   |
-| `scripts/art/pets.py`, `battle.py`, `worlds.py` | Companions, battle backdrops and mission worlds. **These still use the older style and need the same pass.**        |
+| File                                            | What it draws                                                                                                                                             |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/art/style.py`                          | The rules above as functions: `leafy`, `trunk`, `facet_stone`, `cast_shadow`, `dither_dark`, `tuft`                                                       |
+| `scripts/art/garden.py`                         | The garden map, its objects and ground (192×384 native, plus a 32 px forest band above y = 0; 384×768 and 64 at 2x)                                       |
+| `scripts/art/garden_meadow.py`                  | The stream, bridge, meadow beds, orchard and growth-stage sprites                                                                                         |
+| `scripts/art/native/houses.py`                  | The village buildings at density 3: lit roof planes with thickness and eave shadow, recessed openings, trades; their damage overlays and the crater smoke |
+| `scripts/art/pets.py`, `battle.py`, `worlds.py` | Companions, battle backdrops and mission worlds. **These still use the older style and need the same pass.**                                              |
 
 ## Review checklist
 

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { regionPoint, travelPoints } from './world-places';
 
 // Simulate the next layout at the version/migration boundary only. The actual
@@ -15,32 +16,24 @@ const version = readFileSync(join(__dirname, 'world-layouts.ts'), 'utf8').match(
 assert.ok(version, 'current layout declares its version');
 const currentLayoutVersion = Number(version[1]);
 const moved = { region: 'west', ...regionPoint(travelPoints.west) };
-const source = `
-  export const LAYOUT_VERSION = ${currentLayoutVersion + 1};
-  export const carryForward = (version) =>
-    (globalThis[Symbol.for("napattack.map-layout-migrations")]++, version === ${currentLayoutVersion})
-      ? ${JSON.stringify(moved)} : null;
-`;
-const url = `data:text/javascript,${encodeURIComponent(source)}`;
+const fixtureKey = Symbol.for('napattack.map-layout-fixture');
+const fixtureUrl = pathToFileURL(join(__dirname, 'fixtures/world-map-layout.cjs')).href;
+// Let Node load a real CommonJS fixture. A delegating synchronous load hook
+// receives no source for some CJS dependencies on Node 22 and early Node 24.
 const hooks = registerHooks({
   resolve(specifier, context, nextResolve) {
     if (specifier === './world-layouts' || specifier === '@/lib/world-layouts')
-      return { url, shortCircuit: true };
+      return nextResolve(fixtureUrl, context);
     return nextResolve(specifier, context);
-  },
-  load(target, context, nextLoad) {
-    if (target === url)
-      return {
-        format: 'module',
-        source,
-        shortCircuit: true,
-      };
-    return nextLoad(target, context);
   },
 });
 
 async function main() {
   try {
+    Object.defineProperty(globalThis, fixtureKey, {
+      value: { currentLayoutVersion, moved },
+      configurable: true,
+    });
     const { buildWorldMap } = await import('./world-map');
     const live = {
       region: 'valley' as const,
@@ -72,6 +65,7 @@ async function main() {
     console.log('World map layout boundary: 10 checks passed (simulated next version).');
   } finally {
     hooks.deregister();
+    Reflect.deleteProperty(globalThis, fixtureKey);
     delete (globalThis as typeof globalThis & { [key: symbol]: number })[
       Symbol.for('napattack.map-layout-migrations')
     ];

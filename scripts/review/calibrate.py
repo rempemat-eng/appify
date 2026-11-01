@@ -142,7 +142,8 @@ def main(argv=None):
             if '@' in ref:
                 p, zn, nm = pinned(ref, os.path.join(a.out, 'pinned'))
             else:
-                p, zn, nm = A.asset_path(ref)
+                # a frozen picture in the repo (scripts/review/calibration/...) or a live asset
+                p, zn, nm = A.asset_path(os.path.join(REPO, ref) if ref.endswith('.png') else ref)
             assets[ref] = A.review(p, zn, nm)['findings']
         return assets[ref]
 

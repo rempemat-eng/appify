@@ -1,14 +1,14 @@
 {
  "id": "woodland/hollow_tree",
  "file": "game/zones/woodland/art/hollow_tree.png",
- "sha256": "42591374f088b24a5c591fd9ed8209e7e7849de1de7d1bbebcc76f903c560fdf",
+ "sha256": "5590d6b100050736e4932e72224d1f4e2583fde9664e067c46adb35846f5d417",
  "kind": "veteran_tree",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  229,
-  316
+  231,
+  309
  ],
  "status": "pass",
  "counts": {
@@ -48,7 +48,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

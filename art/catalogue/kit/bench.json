@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -36,18 +36,6 @@
  },
  "findings": [
   {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    2,
-    2,
-    106,
-    51
-   ],
-   "message": "kit/bench: 16 world px tall (0.65 of an adult); the size guide gives 12 to 14 for a bench (seat 7, back 13, length 32: two people sit (scale table))",
-   "fix": "redraw it 12 to 14 world px tall (36 to 42 texels at density 3) and stand it next to Bramble to check"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
@@ -60,10 +48,15 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",
   "note": "detectors only; the agent checklist has not been run on this asset"
+ },
+ "style_anchor": {
+  "since": "2026-10-26",
+  "by": "Matt",
+  "note": "\"the lamp and bench are exactly the style i'm going for\" (Matt, 26 Oct 10:19, on the cast-v2 video background): the reference the detail and style gates compare props against (props.bench4 and props.lantern4, the pilot golden's bench and lamp)"
  }
 }

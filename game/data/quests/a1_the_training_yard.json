@@ -1,0 +1,39 @@
+{
+  "id": "a1_the_training_yard",
+  "title": "A ring of our own",
+  "kind": "village",
+  "region": "valley",
+  "summary": "The hut warden thinks Crossroads should have a ring of its own, with a stove beside it.",
+  "start": {
+    "on": "talk:hut_warden",
+    "if": {
+      "done": [
+        "a1_a_cup_by_the_stove"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "yard",
+      "text": "Restore the ring on the green as the training yard",
+      "on": "restore:training_yard",
+      "done_if": {
+        "restored": [
+          "training_yard"
+        ]
+      }
+    },
+    {
+      "id": "hale",
+      "text": "Show Hale the training yard",
+      "on": "talk:hale"
+    }
+  ],
+  "rewards": {
+    "glint": 0,
+    "flags": [
+      "training_yard_open",
+      "mover:bothy_keeper"
+    ]
+  }
+}

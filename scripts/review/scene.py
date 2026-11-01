@@ -622,6 +622,45 @@ def check_wiring(zone_ids=None) -> list[Finding]:
     return fs
 
 
+GRID_CELL = 8.0          # world px: the soft grid's cell (eastward-edges.md 1.1)
+GRID_CLUTTER = ('damage', 'smoke', 'fire', 'glow', 'rubble', 'debris', 'shadow', 'fx', 'boards', 'mushroom',
+                'fern', 'flower', 'tuft', 'leaf')
+
+
+def check_grid(z: Zone, H=GAME_H, tol: float = 0.5) -> list[Finding]:
+    """logic.off_grid: every structure and prop stands on the soft grid (Matt, 26 Oct 10:42:
+    "following the soft grid should also make world design and placement easier"; the board note
+    to-all-grid-placement-1026). A sprite's foot (its y-sort origin) lies on a half-cell column (x a
+    multiple of 4 world px) and a cell row (y a multiple of 8), within `tol` world px; clutter
+    (rubble, debris, smoke and fire, damage overlays and shadows, low plants) may sit anywhere."""
+    d = 3.0
+    if z.plan and z.plan.get('box') and z.size[0]:
+        d = z.size[0] / float(z.plan['box'][2])
+    elif z.size[0]:
+        d = 3.0
+    fs = []
+    for sp in z.sprites:
+        if not sp.visible:
+            continue
+        nm = (sp.name + ' ' + sp.path).lower()
+        if any(k in nm for k in GRID_CLUTTER):
+            continue
+        if any(k in sp.parent for k in ('Camp', 'Enem', 'People', 'Villager', 'Player')):
+            continue                      # what walks (creatures, people) is not placed on the grid
+        fx, fy = sp.origin[0] / d, sp.origin[1] / d
+        ex = min(fx % (GRID_CELL / 2), GRID_CELL / 2 - fx % (GRID_CELL / 2))
+        ey = min(fy % GRID_CELL, GRID_CELL - fy % GRID_CELL)
+        if ex > tol or ey > tol:
+            x0, y0, x1, y1 = (int(v) for v in sp.box)
+            fs.append(Finding('logic.off_grid', 'fault', (x0, y0, x1, y1),
+                              f'{sp.name}: its foot ({fx:.1f}, {fy:.1f}) world px is off the soft grid by '
+                              f'{ex:.1f} across and {ey:.1f} down (a cell is {GRID_CELL:g} world px)',
+                              'stand it on a cell: its foot on a multiple of 4 world px across and 8 down (python3 -m '
+                              'scripts.art.grid_snap --write <zone> lays a plan on the grid, then regenerate the zone)',
+                              score=max(ex, ey), threshold=tol, subject=sp.name))
+    return fs
+
+
 def review_zone(zone_id: str, H=GAME_H, wiring=True) -> dict:
     z = load_zone(zone_id)
     fs = []
@@ -632,6 +671,9 @@ def review_zone(zone_id: str, H=GAME_H, wiring=True) -> dict:
     fs += check_shadows(z, H)
     fs += check_light_sources(z, H)
     fs += check_rows(z, H)
+    fs += check_grid(z, H)
+    from . import scale as S
+    fs += S.check_zone(z, H)          # logic.scale: sizes against a person, doors, stairs, ground grain
     if wiring:
         fs += check_wiring([zone_id])
     return dict(zone=z, findings=fs)

@@ -1,0 +1,51 @@
+{
+  "id": "a1_the_landslip",
+  "title": "The Millrace landslip",
+  "kind": "main",
+  "region": "valley",
+  "summary": "With the halt's platform rebuilt, only the landslip in the Millrace cutting stops the train to Cogsworth.",
+  "start": {
+    "on": "talk:moss",
+    "if": {
+      "done": [
+        "a1_the_wolf_moon"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "halt",
+      "text": "Rebuild Valley Halt's platform",
+      "on": "restore:halt",
+      "done_if": {
+        "restored": [
+          "halt"
+        ]
+      }
+    },
+    {
+      "id": "slip",
+      "text": "Free the shardstruck boars dug into the Millrace landslip",
+      "on": "camp:millrace_slip",
+      "done_if": {
+        "flags": [
+          "camp_cleared:millrace_slip"
+        ]
+      },
+      "set_flags": [
+        "way_open:W3"
+      ]
+    },
+    {
+      "id": "moss",
+      "text": "Tell Moss the line to Cogsworth is open",
+      "on": "talk:moss"
+    }
+  ],
+  "rewards": {
+    "glint": 40,
+    "flags": [
+      "act1_done"
+    ]
+  }
+}

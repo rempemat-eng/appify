@@ -6,17 +6,18 @@
   "kit": null,
   "about": "The Brackens' heather moor: a low ridge of peat and gritstone with ling, bilberry, bracken and gorse, sheep-bitten turf on the ways between, Scots pines on the crest. A brief as data (rules-system.md 4, 'Adding a biome'), from draft #182's moor_kit, which is frozen; the kit owner ports its techniques. Every family is a house ramp (art/house-palette.json). Numbers are shares of walkable ground unless named otherwise. 'kit' is pinned when kit v1 (woodland@1) exists.",
   "palette_intent": "Purple-brown and olive, warmer and drier than the valley's meadow: heather reads as one dusky purple-brown from afar and as many small lit tufts up close; the turf yellows towards the gap and the steppe beyond; peat faces are dark cool brown with red-brown sphagnum; grit is pale grey. Flowers are rare and clustered (mauve ling tips, gorse yellow), never speckle.",
-  "families": {
-    "ground": ["grass", "grass_warm", "grass_cool", "sand_warm"],
-    "heather": ["earth", "earth_warm", "dusk_warm", "berry_cool"],
-    "bilberry": ["leaf"],
-    "bracken": ["grass_warm", "leaf_warm", "clay"],
-    "gorse": ["leaf_cool", "leaf", "brass", "brass_warm"],
-    "peat_face": ["earth_cool", "earth", "clay_cool"],
-    "grit": ["stone", "stone_cool", "stone_warm"],
-    "pine": ["timber_cool", "clay_cool", "leaf_cool", "grass_cool"],
-    "track": ["path", "path_cool", "earth_warm"],
-    "water": ["water", "water_cool", "sky_cool"]
+  "families": ["berry_cool", "brass", "brass_warm", "clay", "clay_cool", "dusk_warm", "earth", "earth_cool", "earth_warm", "grass", "grass_cool", "grass_warm", "leaf", "leaf_cool", "leaf_warm", "path", "path_cool", "sand_warm", "sky_cool", "stone", "stone_cool", "stone_warm", "timber_cool", "water", "water_cool"],
+  "materials": {
+    "ground": {"families": ["grass", "grass_warm", "grass_cool", "sand_warm"]},
+    "heather": {"families": ["earth", "earth_warm", "dusk_warm", "berry_cool"]},
+    "bilberry": {"families": ["leaf"]},
+    "bracken": {"families": ["grass_warm", "leaf_warm", "clay"]},
+    "gorse": {"families": ["leaf_cool", "leaf", "brass", "brass_warm"]},
+    "peat_face": {"families": ["earth_cool", "earth", "clay_cool"]},
+    "grit": {"families": ["stone", "stone_cool", "stone_warm"]},
+    "pine": {"families": ["timber_cool", "clay_cool", "leaf_cool", "grass_cool"]},
+    "track": {"families": ["path", "path_cool", "earth_warm"]},
+    "water": {"families": ["water", "water_cool", "sky_cool"]}
   },
   "ground": {
     "base": "turf: grass with warm and cool siblings in broad patches (scale about 7 texels at 1x), dry sand_warm patches growing towards the gap (yellow 0.25 inside the ridge, 0.5 at the gap)",

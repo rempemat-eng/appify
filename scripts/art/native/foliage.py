@@ -687,7 +687,11 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
         # in front of its lower leaves and the trunk; each strand a ribbon of small leaves, lit
         # on its west edge (more on the crown's west), a darker leaf every few texels, its tip
         # a tone down; one texel of air between strands so the trunk shows through
-        rw = max(2, int(round(0.67 * d)))
+        # (#288 review S2: evenly spaced one-texel lines read as a barcode.) The curtain hangs in
+        # clumps: each clump two to four ribbons side by side, 2 to 3 texels wide, of different
+        # lengths, tapering to their tips, lit on the west edge and dark on the east, a darker leaf
+        # every few texels; air between clumps, not between every strand; the clumps near the
+        # trunk a tone darker (the inner curtain in the crown's shade)
         seg = max(3, int(round(1.3 * d)))
         cols_ = np.nonzero(painted.any(0))[0]
         xl, xr = cols_.min(), cols_.max()
@@ -695,29 +699,58 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
         ch_ = np.nonzero(painted.any(1))[0].max() - ytop
         sm = np.zeros((Hp, Wp), bool)
         st = np.full((Hp, Wp), 2)
-        for xa in range(xl + 1, xr - rw + 1, rw + 2 + int(d // 2)):
-            col = np.nonzero(painted[:, xa])[0]
-            if not len(col):
-                continue
+        xa = xl + 1 + int(rng.integers(0, 3))
+        while xa < xr - 2:
+            nrib = int(rng.integers(2, 5))
             uu = (xa - (xl + xr) / 2) / max(1, (xr - xl) / 2)
-            start = int(col.max() - (0.12 + 0.2 * abs(uu)) * ch_ * rng.uniform(0.6, 1.0))
-            L = int(ch_ * (0.3 + 0.4 * abs(uu)) * rng.uniform(0.6, 1.15))
-            ph = int(rng.integers(0, seg))
-            west = uu < 0.1
-            for y in range(max(0, start), min(Hp - 1, start + L)):
-                for k_ in range(rw):
-                    x = xa + k_
-                    if not (0 <= x < Wp):
-                        continue
-                    t = (4 if west else 3) if k_ == 0 else 2
-                    if (y + ph) % seg == 0:
-                        t = t - 1
-                    if y >= start + L - max(2, int(d)):
-                        t = min(t, 2) if k_ == 0 else 1
-                    if (y - start) < max(2, int(d)) and painted[y, x]:
-                        continue                               # it hangs from the leaves above
-                    sm[y, x] = True
-                    st[y, x] = t
+            inner = abs(uu) < 0.35
+            for r_ in range(nrib):
+                rw = int(rng.integers(2, 4))
+                col = np.nonzero(painted[:, min(Wp - 1, xa + rw // 2)])[0]
+                if not len(col):
+                    xa += rw
+                    continue
+                start = int(col.max() - (0.12 + 0.2 * abs(uu)) * ch_ * rng.uniform(0.6, 1.0))
+                L = int(ch_ * (0.25 + 0.4 * abs(uu)) * rng.uniform(0.55, 1.2))
+                ph = int(rng.integers(0, seg))
+                west = uu < 0.1
+                # each ribbon sways: it drifts outward from the trunk toward its tip and wavers
+                # gently, so the curtain reads as hanging leaves, not ruled lines; its leaves are
+                # ticks off alternate sides (lit off the west edge, dark off the east), one texel
+                # darkened at a time, never a whole row
+                drift = (1 if uu >= 0 else -1) * rng.uniform(0.5, 2.2) * d / 3
+                wph, wamp = rng.uniform(0, 6.3), rng.uniform(0.3, 0.9)
+                for y in range(max(0, start), min(Hp - 1, start + L)):
+                    f = (y - start) / max(1, L)
+                    w_ = rw if f < 0.7 else max(1, int(round(rw * (1 - (f - 0.7) / 0.3))))
+                    off = int(round(drift * f ** 1.6 + wamp * np.sin(wph + y / (2.2 * d))))
+                    leaf = (y + ph) % seg == 0
+                    side = ((y + ph) // seg) % 2
+                    for k_ in range(-1, w_ + 1):
+                        x = xa + k_ + off
+                        if not (0 <= x < Wp):
+                            continue
+                        if k_ < 0 or k_ >= w_:                     # a leaf tick off one side
+                            if not leaf or f > 0.85 or (k_ < 0) != (side == 0):
+                                continue
+                            t = (4 if west else 3) if k_ < 0 else 1
+                        else:
+                            t = (4 if west else 3) if k_ == 0 else (1 if k_ == w_ - 1 and w_ > 1 else 2)
+                            if leaf and k_ == (0 if side else w_ - 1):
+                                t = t - 1
+                        if inner:
+                            t = max(1, t - 1)
+                        if f > 0.85:
+                            t = min(t, 2)
+                        if (y - start) < max(2, int(d)) and painted[y, x]:
+                            continue                               # it hangs from the leaves above
+                        sm[y, x] = True
+                        st[y, x] = t
+                xa += rw
+            xa += int(rng.integers(3, 7))                          # air between clumps
+        lab_, _n = ndi.label(sm | painted, structure=np.ones((3, 3), bool))
+        keep_ = np.unique(lab_[painted & (lab_ > 0)])
+        sm &= np.isin(lab_, keep_)                                 # no leaf floats free
         out_t[sm] = st[sm]
         painted |= sm
         LAST_MASS['strands'] = sm

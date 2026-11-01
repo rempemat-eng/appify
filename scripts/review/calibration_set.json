@@ -1,5 +1,5 @@
 {
- "_about": "Matt's flagged faults (25 Oct) as the calibration set for both gates. The screenshots are Matt's and stay local (never committed): pass their folder with --flagged. Boxes are in art px of each picture after core.to_native (the woodland shot is 3066 x 1740 at 3.14 screen px a texel, Retina; the crops likewise; 49583f7d is 6.28). Each fault lists what must catch it: 'screen' = the scene gate's image detectors on Matt's picture, 'zone' = the scene gate's data checks on the Godot zone, 'asset' = the asset gate on the asset that draws it. A fault counts as caught when at least one listed route finds it with a listed detector (in the box, for screen and zone routes). Asset refs are pinned to the commit Matt saw ('zone/name@commit', 'file:<repo path>@commit|x0,y0,x1,y1' for a frame of a sheet), so later redraws do not change the calibration.",
+ "_about": "Matt's flagged faults (25 Oct) as the calibration set for both gates. The screenshots are Matt's and stay local (never committed): pass their folder with --flagged. Boxes are in art px of each picture after core.to_native (the woodland shot is 3066 x 1740 at 3.14 screen px a texel, Retina; the crops likewise; 49583f7d is 6.28). Each fault lists what must catch it: 'screen' = the scene gate's image detectors on Matt's picture, 'zone' = the scene gate's data checks on the Godot zone, 'asset' = the asset gate on the asset that draws it. A fault counts as caught when at least one listed route finds it with a listed detector (in the box, for screen and zone routes). Asset refs are pinned to the commit Matt saw ('zone/name@commit', 'file:<repo path>@commit|x0,y0,x1,y1' for a frame of a sheet), so later redraws do not change the calibration. Kit pieces are drawn from the generator, so the two Matt saw (W6, W10) are kept as rendered at main 561235c2 under scripts/review/calibration/kit/ (pinned 26 Oct, fix queue 2).",
  "H": 74,
  "faults": [
   {
@@ -113,7 +113,7 @@
     60
    ],
    "asset": {
-    "kit/mushroom_ring": [
+    "scripts/review/calibration/kit/mushroom_ring.png": [
      "logic.scale",
      "logic.prop_row"
     ]
@@ -197,7 +197,7 @@
     355
    ],
    "asset": {
-    "kit/fern": [
+    "scripts/review/calibration/kit/fern.png": [
      "logic.biome"
     ]
    }

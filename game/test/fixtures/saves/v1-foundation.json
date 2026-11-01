@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "zone": "woodland",
+  "spawn": "start",
+  "glint": 15,
+  "flags": {},
+  "quests": {},
+  "player": {
+    "hp": 4,
+    "max_hp": 5
+  },
+  "settings": {
+    "reduced_motion": true,
+    "pixel_scale": "fill"
+  }
+}

@@ -1,14 +1,14 @@
 {
  "id": "woodland/oak",
  "file": "game/zones/woodland/art/oak.png",
- "sha256": "edd27df1905eff8e8f17dea8fc3a2718ccbee40ebf4b00355d6e469d8c7f5e5f",
+ "sha256": "51e1e44a683e3ef0a669df02abdc71465e2f129cdd7ffad6e3d42a597dec9216",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  211,
-  250
+  212,
+  243
  ],
  "status": "pass",
  "counts": {
@@ -48,7 +48,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

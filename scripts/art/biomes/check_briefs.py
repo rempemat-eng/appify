@@ -3,6 +3,9 @@ every family they name is a house ramp and is in the brief's own `families`, eve
 says is in the cliff core is there (and belongs to this biome or is shared by name), and every
 variant uses only ground kinds and edge sets the brief defines.
 
+The shape follows the kit's reference biome, meadow.json (#215): `families` is one flat list of
+house ramps, and a material's own families sit under `materials.<name>.families`.
+
     python3 scripts/art/biomes/check_briefs.py
 
 Claude C, 21 Oct. Data only: nothing here paints (to-all-kit-freeze).
@@ -37,6 +40,8 @@ def check(path: str, ramps: set, edge_sets: dict) -> list:
     b = json.load(open(path))
     bid = b['id']
     out = []
+    if not isinstance(b.get('families'), list):
+        return [f'{bid}: families must be a list of house ramps, as in meadow.json (roles go under materials)']
     own = set(b['families'])
     for f in sorted(own - ramps):
         out.append(f'{bid}: family {f!r} is not a house ramp')

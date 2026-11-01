@@ -1,26 +1,26 @@
 {
  "id": "woodland/stump",
  "file": "game/zones/woodland/art/stump.png",
- "sha256": "7d07e309cbab2e6ad1637397904d33f7be3e018e87d569bfd36d03c02986ada8",
+ "sha256": "732f83302b8687ecb2c62040ad9ff80521e3e3a56e21ab6593b8d205bf69be99",
  "kind": "stump",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  75,
+  87,
   57
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 2,
-  "polish": 1
+  "fault": 0,
+  "polish": 0
  },
  "detail_bar": {
   "ours": {
-   "patches": 4,
-   "tones": 14.75,
-   "shapes": 35.25
+   "patches": 6,
+   "tones": 25.5,
+   "shapes": 45.833333333333336
   },
   "band": {
    "tones": 27.0,
@@ -28,51 +28,14 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.546,
-  "tones_ratio": 0.546,
-  "shapes_ratio": 0.7,
-  "passed": false,
+  "ratio": 0.91,
+  "tones_ratio": 0.944,
+  "shapes_ratio": 0.91,
+  "passed": true,
   "group": "prop"
  },
- "findings": [
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    46,
-    17,
-    68,
-    53
-   ],
-   "message": "woodland/stump: the red reads 2D: 1 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    7,
-    10,
-    68,
-    54
-   ],
-   "message": "woodland/stump: detail bar 0.55 of Eastward's prop band (14.8 tones, 35.2 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    46,
-    17,
-    68,
-    53
-   ],
-   "message": "woodland/stump: a flat red area: one smooth patch covers 44% (0.019 H^2), 3 tones",
-   "fix": "draw the red as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  }
- ],
- "reviewed": "2026-10-25",
+ "findings": [],
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

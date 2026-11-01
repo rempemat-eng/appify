@@ -1,26 +1,26 @@
 {
  "id": "crossroads/fern_cottage",
  "file": "game/zones/crossroads/art/fern_cottage.png",
- "sha256": "a9f3ecdae704fcdd2c11243ab007bcfc2b7aa0c7af5e98f8309de05203f2bead",
+ "sha256": "1b2df1137dc67fb6a086caad80363bad0dc32019bacb63398786c1244b945639",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  234,
+  240,
   264
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 5,
-  "polish": 5
+  "fault": 0,
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
-   "patches": 137,
-   "tones": 17.562043795620436,
-   "shapes": 26.963503649635037
+   "patches": 144,
+   "tones": 27.104166666666668,
+   "shapes": 44.09722222222222
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.535,
-  "tones_ratio": 0.65,
-  "shapes_ratio": 0.535,
+  "ratio": 0.876,
+  "tones_ratio": 1.004,
+  "shapes_ratio": 0.876,
   "passed": false,
   "group": "prop"
  },
@@ -39,73 +39,25 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    163,
-    22,
-    203,
-    94
+    194,
+    51,
+    231,
+    62
    ],
-   "message": "crossroads/fern_cottage: the stone is lit from the right (luminance rises 15 L per H to the east)",
+   "message": "crossroads/fern_cottage: the red is lit from the right (luminance rises 67 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
-   "detector": "detail.light",
+   "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    163,
-    6,
-    197,
-    14
+    30,
+    182,
+    77,
+    261
    ],
-   "message": "crossroads/fern_cottage: the stone is lit from the right (luminance rises 14 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    9,
-    62,
-    127,
-    73
-   ],
-   "message": "crossroads/fern_cottage: the stone is lit from the right (luminance rises 9 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    3,
-    56,
-    230,
-    256
-   ],
-   "message": "crossroads/fern_cottage: the wood is lit from the right (luminance rises 6 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    127,
-    213,
-    172,
-    222
-   ],
-   "message": "crossroads/fern_cottage: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    57,
-    116,
-    74,
-    123
-   ],
-   "message": "crossroads/fern_cottage: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+   "message": "crossroads/fern_cottage door latch: across 8 art px (0.11 A) is too big for a door handle: the size table gives 3 to 7 (0.04 to 0.09 A); Eastward at the same character height: knob or latch 3 to 4 E (0.06 to 0.07 A) at 0.5 to 0.6 of the leaf (17, 12)",
+   "fix": "redraw it 3 to 7 art px across (target about 5), checked beside Bramble (74 art px) in the asset sheet"
   },
   {
    "detector": "detail.bar",
@@ -113,53 +65,18 @@
    "box": [
     2,
     0,
-    232,
+    238,
     262
    ],
-   "message": "crossroads/fern_cottage: detail bar 0.54 of Eastward's prop band (17.6 tones, 27.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage: detail bar 0.88 of Eastward's prop band (27.1 tones, 44.1 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    127,
-    213,
-    172,
-    222
-   ],
-   "message": "crossroads/fern_cottage: a flat wood area: one smooth patch covers 52% (0.033 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    57,
-    116,
-    74,
-    123
-   ],
-   "message": "crossroads/fern_cottage: a flat stone area: one smooth patch covers 51% (0.011 H^2), 2 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    138,
-    172,
-    148,
-    180
-   ],
-   "message": "crossroads/fern_cottage: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#298 review at 2e554c05: roof planes lit with thickness, fascia, gutter and stepped eave shadow; recessed openings; wall form and proud plinth; trade details read. Detail bar 0.86 to 0.94 (above the 0.8 gate, below the 1.0 in art-style)."
  }
 }

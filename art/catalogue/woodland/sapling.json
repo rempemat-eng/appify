@@ -1,14 +1,14 @@
 {
  "id": "woodland/sapling",
  "file": "game/zones/woodland/art/sapling.png",
- "sha256": "53bdd2d36db069dbce8ab1f13a5687a393bc5ecd83c08bec894b601d158b31bf",
+ "sha256": "3ab817c9fa568ccf15e3be8fc0f36635f87f36590115909afd4f35c40d9bb081",
  "kind": "sapling",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  73,
-  97
+  75,
+  90
  ],
  "status": "pass",
  "counts": {
@@ -48,7 +48,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",
