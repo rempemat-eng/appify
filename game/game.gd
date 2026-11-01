@@ -188,7 +188,7 @@ func _camp() -> void:
 	await get_tree().process_frame
 	var camp: Node2D = (load("res://enemies/woodland_camp.tscn") as PackedScene).instantiate()
 	var off := Vector2(0, -70.0)
-	var xy := String(args.camp).split(",")
+	var xy := str(args.camp).split(",")
 	if xy.size() == 2:
 		off = Vector2(float(xy[0]), float(xy[1]))
 	camp.position = player.position + off * DENSITY
