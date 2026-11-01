@@ -35,7 +35,11 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "39f22beb86fa40a87eb06374160138ef8c336a92"
+GAME_SHA = "40fb915e633c08b01437c54f9f823e0e5fa24ef3"
+EDITED_GAME_PARENT = "39f22beb86fa40a87eb06374160138ef8c336a92"
+EDITED_GAME_PARENT_TREE = "acde63c78c7ed17c55809c657bb47672bfccda17"
+EDITED_RECEIVER_PARENT = "67d0c96cb245687ae2e14a585273b381dd01ad11"
+EDITED_RECEIVER_PARENT_TREE = "62b40df8407404bc9f36eff9525cae0dfbfcd083"
 DEADLINE_GAME_PARENT = "6a53c907ee55bc573121c12366182bf1ce9efdd9"
 DEADLINE_GAME_PARENT_TREE = "43261ea7dc637d3386cc3ac5dbb099c8f1a6936c"
 DEADLINE_RECEIVER_PARENT = "6eb61f5af0cd5483406dee9b2e1e218edf5f92c1"
@@ -126,7 +130,7 @@ REBIND_RECEIVER_PARENT = "a1f3a7f2305f881b48d1824a1bcd16423a363d91"
 REBIND_RECEIVER_PARENT_TREE = "28e97f27d2b50085f78919720d2dc844efe32aaf"
 LIFECYCLE_RECEIVER_PARENT = "d7dacb292ff1b184b68077e7d1ba4471b9cbf20c"
 LIFECYCLE_RECEIVER_PARENT_TREE = "c111635880129121888b726c86dfcd6ed9535644"
-GAME_TREE = "acde63c78c7ed17c55809c657bb47672bfccda17"
+GAME_TREE = "86aadc4a77caa96c6788f12ffffa82104442596d"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
 GAME_GRANDPARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
@@ -148,7 +152,7 @@ TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 EXPORT_BLOB = "61d81ffbdbdf89ebcf0e2e68204eddb87c3b4772"
 PLUGIN_BLOB = "8a9dadd400ce9ef345becef8fc13f2f7179c3449"
-SMOKE_BLOB = "216d98d1291d44afaec45af0785fbcba32760564"
+SMOKE_BLOB = "fb6f6635286ca36f98459e76aa0981b4bb0ae5e5"
 DEPENDENT_TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
 GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
@@ -312,7 +316,7 @@ def write_json(path: Path, value: object) -> None:
 
 
 def diagnostic_text(path: Path) -> str:
-    # Raw bytes stay untouched in the artifact. Strip terminal escapes for scanning only.
+
     return re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", path.read_text(errors="replace")).replace("\r", "")
 
 
@@ -322,7 +326,7 @@ def orphan_diagnostics(text: str) -> list[str]:
         if re.search(r"ObjectDB instances leaked|resources? still in use|RID.*leak", line, re.I):
             found.append(line)
         elif re.search(r"\borphans?\b", line, re.I):
-            # Diagnostic words/counts, not GdUnitOrphan* class registration.
+
             counts = re.findall(
                 r"\borphans?(?:\s+nodes?)?\s*[:=]\s*(\d+)\b|\b(\d+)\s+orphans?(?:\s+nodes?)?\b",
                 line, re.I
@@ -333,7 +337,7 @@ def orphan_diagnostics(text: str) -> list[str]:
 
 
 def git(repo: Path, *args: str) -> bytes:
-    # Metadata only; no hooks, lazy network fetch, refresh, index or worktree writes.
+
     env = {**os.environ, "GIT_OPTIONAL_LOCKS": "0", "GIT_NO_LAZY_FETCH": "1"}
     command = ["git", "-C", str(repo), *args]
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -577,15 +581,15 @@ def mesa_tool_stage(args: argparse.Namespace) -> int:
             if process.returncode is not None:
                 continue
             try:
-                # Direct unreaped child identity prevents numeric PID reuse.
+
                 if os.waitid(os.P_PID, process.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None:
                     os.kill(process.pid, signal.SIGTERM)
                 collect(process, 2)
             except BaseException as error:
                 receipt["state"] = "FAILED"
                 receipt.setdefault("cleanup_errors", []).append(repr(error))
-        # The existing outer phase remains authoritative for final group kill,
-        # adoption/wait4 and absence, including a killed/incomplete bootstrap.
+
+
         write_json(output / "provenance.json", receipt)
     return 0 if receipt["state"] == "VERIFIED" else 1
 
@@ -1010,8 +1014,8 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
         receipt["display_files"] = {str(p): {"inode": p.lstat().st_ino, "uid": p.lstat().st_uid}
                                     for p in (socket, lock)}
         gui_env = {**base_env, "DISPLAY": f":{display}", "XAUTHORITY": str(authority)}
-        # H7 reproduced this exact pinned Mesa build's ordinary255/raw65280
-        # denial. Upstream source was unavailable; this is observed binary evidence.
+
+
         denied_info = denied_authority.lstat()
         if (not stat.S_ISREG(denied_info.st_mode) or denied_info.st_nlink != 1
                 or denied_info.st_uid != os.getuid() or stat.S_IMODE(denied_info.st_mode) != 0o600
@@ -1181,8 +1185,8 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
     except BaseException as error:
         failure = {"type": type(error).__name__, "message": str(error)}
     finally:
-        # All children are direct, unreaped identities until collect(); never
-        # signal a reaped numeric PID. Outer phase still owns last group cleanup.
+
+
         for name in reversed(list(children)):
             process = children[name]
             if process.returncode is not None:
@@ -1217,10 +1221,12 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
 
 
 def receiver_ancestry_mismatch(candidate: Path, event_sha: str, headers: str) -> bool:
-    """The same frozen 35-clause prefix used by the two receiver-only entrypoints."""
+    """The same frozen 37-clause prefix used by the two receiver-only entrypoints."""
     return (
         git(candidate, 'rev-parse', 'HEAD').decode().strip() != event_sha
-        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [DEADLINE_RECEIVER_PARENT]
+        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [EDITED_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', EDITED_RECEIVER_PARENT + '^{tree}').decode().strip() != EDITED_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', EDITED_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [DEADLINE_RECEIVER_PARENT]
         or git(candidate, 'rev-parse', DEADLINE_RECEIVER_PARENT + '^{tree}').decode().strip() != DEADLINE_RECEIVER_PARENT_TREE
         or [line[7:] for line in git(candidate, 'cat-file', 'commit', DEADLINE_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [OBSERVATION_RECEIVER_PARENT]
         or git(candidate, 'rev-parse', OBSERVATION_RECEIVER_PARENT + '^{tree}').decode().strip() != OBSERVATION_RECEIVER_PARENT_TREE
@@ -1349,7 +1355,7 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
                 or stat.S_IMODE((candidate / name).stat().st_mode) != 0o644 for name in OWNED_PATHS)):
             raise RuntimeError("Inventory working source bytes/modes differ from immutable event tree")
         result["candidate"] = {"headers": headers, "delta": sorted(changed), "immutable_paths": expected}
-        # Selector values are data only. Never dump the environment or modify a selector.
+
         keys = ("VK_DRIVER_FILES", "VK_ICD_FILENAMES", "VK_ADD_DRIVER_FILES",
                 "VK_LOADER_DRIVERS_SELECT", "VK_LOADER_DRIVERS_DISABLE", "VK_LAYER_PATH",
                 "VK_ADD_LAYER_PATH", "VK_INSTANCE_LAYERS", "VK_LOADER_LAYERS_ENABLE",
@@ -1517,14 +1523,14 @@ def vulkan_driver_stage(args: argparse.Namespace) -> int:
         if (args.mode not in ("DRIVER_CAPABILITY", "DISPLAYED_SMOKE", "POSITIVE_LIFECYCLE") or os.getpgrp() != os.getpid()
                 or os.environ.get("GITHUB_REF") != "refs/heads/codex/editor-persistence-validation-run"):
             raise RuntimeError("Driver preparation requires its exact allocated monitored phase")
-        # The selected action-derived CPython lib directory is observed and
-        # retained for all descendants. Every other lookup override still fails.
+
+
         receipt["python_hosting_binding"] = qualified_python_binding()
         write_json(output / "provenance.json", receipt)
         if any(os.environ.get(key) for key in DRIVER_SELECTOR_KEYS if key != "LD_LIBRARY_PATH"):
             raise RuntimeError("Ambient Vulkan/linker selector present; no guessed override")
-        # Current standard layer facts are recorded before acquisition. Unknown
-        # compiled loader roots remain a disclosed limit; no layer is disabled.
+
+
         for key, defaults in (("XDG_CONFIG_DIRS", ("/etc/xdg",)), ("XDG_DATA_DIRS", ("/usr/local/share", "/usr/share"))):
             values = tuple(Path(value) for value in (os.environ.get(key) or ":".join(defaults)).split(":"))
             if values != tuple(Path(value) for value in defaults):
@@ -1560,8 +1566,8 @@ def vulkan_driver_stage(args: argparse.Namespace) -> int:
             packages[name] = {k: found[0].get(k) for k in ("Package", "Version", "Architecture", "Status")}
         receipt["host_packages_before_acquisition"] = packages
         receipt["host_package_status_sha256"] = digest(status)
-        # These actual ELF facts precede acquisition. Full selected dependency
-        # closure is inspected below, not inferred from package declarations.
+
+
         for name in ("libvulkan.so.1", "libLLVM.so.20.1", "libc.so.6", "libstdc++.so.6", "libgcc_s.so.1"):
             observe(Path("/usr/lib/x86_64-linux-gnu") / name)
         bootstrap = {}
@@ -1633,7 +1639,7 @@ def vulkan_driver_stage(args: argparse.Namespace) -> int:
                         selected.add(name)
                         receipt["selected"][destination] = {"path": str(target), "bytes": target.stat().st_size,
                             "sha256": digest(target), "mode": mode, "package_sha256": package["sha256"], "member": name}
-                    # Unselected links/files are never extracted, registered or run.
+
             process.stdout.close()
             if collect(process) != 0 or selected != set(package["members"]):
                 raise RuntimeError("Driver/tool extraction or exact selected member set failed")
@@ -1765,8 +1771,8 @@ class Controller:
 
     def budget_remaining(self) -> float:
         if self.transaction_started is None:
-            # Setup/import are separate phases. Their failed terminal retention
-            # gets at most30s, never a fresh successful sixteen-control transaction.
+
+
             return 30 - (time.monotonic() - self.terminal_started)
         return min(self.active_limit - (time.monotonic() - self.transaction_started - self.collection_used),
                    self.active_limit + 30 - (time.monotonic() - self.transaction_started))
@@ -1779,9 +1785,9 @@ class Controller:
         remaining = self.budget_remaining()
         if self.budget_failure or remaining <= 0 or self.collection_used > 30:
             self.budget_expired()
-        # Covers between-phase audits, finite copy/hash chunks and terminal work.
-        # The phase finally disarms this before identity-safe kill/wait/absence;
-        # expiry itself never establishes collection or release.
+
+
+
         signal.setitimer(signal.ITIMER_REAL, remaining)
 
     def budget_receipt(self) -> dict:
@@ -1963,8 +1969,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [DEADLINE_RECEIVER_PARENT]:
-            raise RuntimeError("Deadline receiver must retain sole4056eb parent")
+        if parents != [EDITED_RECEIVER_PARENT]:
+            raise RuntimeError("Edited-resource receiver must retain sole40567d0 parent")
+        edited_headers = git(self.candidate, "cat-file", "commit", EDITED_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in edited_headers.splitlines() if x.startswith("parent ")] != [DEADLINE_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", EDITED_RECEIVER_PARENT + "^{tree}").decode().strip() != EDITED_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H23 receiver ancestry/tree changed")
         deadline_headers = git(self.candidate, "cat-file", "commit", DEADLINE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in deadline_headers.splitlines() if x.startswith("parent ")] != [OBSERVATION_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", DEADLINE_RECEIVER_PARENT + "^{tree}").decode().strip() != DEADLINE_RECEIVER_PARENT_TREE):
@@ -2081,8 +2091,12 @@ class Controller:
             raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
-                if line.startswith("parent ")] != [DEADLINE_GAME_PARENT]:
-            raise RuntimeError("Deadline410 must retain genuine6a53 sole parent")
+                if line.startswith("parent ")] != [EDITED_GAME_PARENT]:
+            raise RuntimeError("Edited-resource410 must retain genuine39f sole parent")
+        source_edited_headers = git(self.source, "cat-file", "commit", EDITED_GAME_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in source_edited_headers.splitlines() if x.startswith("parent ")] != [DEADLINE_GAME_PARENT]
+                or git(self.source, "rev-parse", EDITED_GAME_PARENT + "^{tree}").decode().strip() != EDITED_GAME_PARENT_TREE):
+            raise RuntimeError("Frozen H23 source ancestry/tree changed")
         source_deadline_headers = git(self.source, "cat-file", "commit", DEADLINE_GAME_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in source_deadline_headers.splitlines() if x.startswith("parent ")] != [OBSERVATION_GAME_PARENT]
                 or git(self.source, "rev-parse", DEADLINE_GAME_PARENT + "^{tree}").decode().strip() != DEADLINE_GAME_PARENT_TREE):
@@ -2171,6 +2185,7 @@ class Controller:
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
                     "tracked_refusal_parent": TRACKED_REFUSAL_PARENT, "tracked_refusal_headers": tracked_headers,
+                     "edited_receiver_parent": EDITED_RECEIVER_PARENT, "edited_receiver_headers": edited_headers,
                     "deadline_receiver_parent": DEADLINE_RECEIVER_PARENT, "deadline_receiver_headers": deadline_headers,
                     "observation_receiver_parent": OBSERVATION_RECEIVER_PARENT, "observation_receiver_parent_headers": observation_headers,
                     "empty_cache_receiver_parent": EMPTY_CACHE_RECEIVER_PARENT, "empty_cache_receiver_parent_headers": empty_cache_headers,
@@ -2202,8 +2217,9 @@ class Controller:
                    "bootstrap_game_parent": BOOTSTRAP_GAME_PARENT, "bootstrap_game_parent_headers": source_bootstrap_parent_headers,
                    "intent_game_parent": INTENT_GAME_PARENT, "intent_game_parent_headers": source_intent_parent_headers,
                    "deadline_game_parent": DEADLINE_GAME_PARENT, "deadline_game_headers": source_deadline_headers,
-                   "tested_game_parent": DEADLINE_GAME_PARENT, "tested_game_parent_headers": source_deadline_headers,
-                   "tested_game_grandparent": OBSERVATION_GAME_PARENT, "tested_game_grandparent_headers": source_observation_headers,
+                   "tested_game_parent": EDITED_GAME_PARENT, "tested_game_parent_headers": source_edited_headers,
+                   "tested_game_grandparent": DEADLINE_GAME_PARENT, "tested_game_grandparent_headers": source_deadline_headers,
+                    "observation_game_parent": OBSERVATION_GAME_PARENT, "observation_game_parent_headers": source_observation_headers,
                    "historical407_parent": GAME_PARENT, "historical407_parent_headers": source_parent_headers,
                    "historical407_grandparent": GAME_GRANDPARENT, "historical407_grandparent_headers": source_grandparent_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
