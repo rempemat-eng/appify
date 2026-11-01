@@ -18,8 +18,8 @@ import traceback
 
 ROOT = Path(__file__).resolve().parents[3]
 FIXTURE = ROOT / "scripts/review/fixtures/crossroads_halt_court.json"
-SOURCE = "45f2c80b657169ef4d7445bc9ff5ddd153960707"
-SOURCE_TREE = "7e7561eac9b7a9f15e54ff62b169dd7cf500bad5"
+SOURCE = "727d2012603b675fa9bbdcdcc8a7048e3144ade8"
+SOURCE_TREE = "6bc28b0db77df8b55a1bac3333e2d01ce962f81c"
 SOURCE_BASELINE = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
 LAYOUT = "7bf6b026a21e7996a367d6ae9b5862b3344bdd56"
 LAYOUT_BLOB = "2c2c5474f2154ba1430549823a908996261572c8"
@@ -106,7 +106,7 @@ def plan_from_fixture(fixture: dict) -> dict:
     return {"id":"crossroads_halt_court", "box":fixture["native_box"],
             "origin_on_canvas":origin, "buildings":buildings, "routes":routes,
             "stages":[{"id":"candidate", "why":"Private unapproved native-parts diagnostic only"}],
-            "art":{"biome":"meadow", "looks":looks},
+            "art":{"biome":"meadow", "looks":looks, "packed_paths":True},
             "_diagnostic_only":True, "_terrain":"UNMEASURED against actual continent", "_inputs":None}
 
 
