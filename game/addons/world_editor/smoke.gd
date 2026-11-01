@@ -195,7 +195,7 @@ static func requested_editor_scene() -> String:
 			paths.append(ProjectSettings.localize_path(arg))
 	return paths[0] if paths.size() == 1 else ""
 
-static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) -> Dictionary:
+static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String, receiving_expiry: String = "") -> Dictionary:
 	# Plugins load before the first filesystem scan; the CLI scene opens after that scan.
 	# The same15s readiness follows that milestone, inside a total45s helper ceiling.
 	var started := Time.get_ticks_msec()
@@ -217,6 +217,12 @@ static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String) 
 	var facts := {"ok": false, "expected_scene": expected_scene, "requested_scene": requested,
 		"limit_ms": 15000, "total_limit_ms": 45000}
 	while true:
+		# Parent clock owns the receiving cap; this signal makes no shared-clock claim.
+		if not receiving_expiry.is_empty() and (FileAccess.file_exists(receiving_expiry) or DirAccess.dir_exists_absolute(receiving_expiry)):
+			facts["failure"] = "Receiving editor-phase execution budget expired."
+			facts["receiving_expiry_observed"] = true
+			facts["receiving_terminal_state"] = "UNOBSERVED; other facts are the last sampled state, not expiry-time state."
+			break
 		if not is_instance_valid(plugin) or not plugin.is_inside_tree():
 			facts["failure"] = "Editor plugin left the tree before scene readiness."
 			break
@@ -390,7 +396,12 @@ static func run_lifecycle(plugin: EditorPlugin, await_startup: bool = false) -> 
 		failures.append("One editor lifecycle phase is required without legacy smoke/capture flags.")
 		return zone_plan.lifecycle_finish(context, result)
 	if await_startup:
-		var readiness: Dictionary = await wait_for_editor_scene(plugin, zone_plan.LIFECYCLE_SCENE)
+		var receiving_expiry := OS.get_environment("MYGAME_EDITOR_STARTUP_EXPIRY")
+		var expected_expiry: String = String(context.evidence).path_join(phase + "-startup.expired")
+		if not receiving_expiry.is_absolute_path() or receiving_expiry != expected_expiry or FileAccess.file_exists(receiving_expiry) or DirAccess.dir_exists_absolute(receiving_expiry):
+			failures.append("A fresh exact receiving startup-expiry marker path is required.")
+			return zone_plan.lifecycle_finish(context, result)
+		var readiness: Dictionary = await wait_for_editor_scene(plugin, zone_plan.LIFECYCLE_SCENE, receiving_expiry)
 		result["startup_readiness"] = readiness
 		if not bool(readiness.get("ok", false)):
 			failures.append("Editor startup scene readiness failed.")
