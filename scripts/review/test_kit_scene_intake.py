@@ -105,9 +105,11 @@ class IntakeFixture(unittest.TestCase):
         self.addCleanup(self.patch.stop)
         for path in ('data', 'world/terrain', 'kit/terrain', 'kit/zones', 'kit/props', 'kit/pieces/material', 'zones/example'):
             (self.game / path).mkdir(parents=True, exist_ok=True)
-        (self.root / 'scripts/art/kit').mkdir(parents=True)
-        for name in ('bake.py', 'surface.py', 'structures.py'):
-            shutil.copyfile(ROOT / 'scripts/art/kit' / name, self.root / 'scripts/art/kit' / name)
+        for source in ('scripts/art/kit/bake.py', 'scripts/art/kit/surface.py',
+                       'scripts/art/kit/structures.py', 'scripts/art/native/softground.py'):
+            target = self.root / source
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(ROOT / source, target)
         (self.game / 'world/terrain/terrain_ground.gd').write_text('@export var grid_size := Vector2i(3, 2)\n')
         self.write('data/zones.json', {'example': 'res://zones/example/example.tscn'})
         self.write('kit/terrain/manifest.json', {'cell': 24, 'materials': [{'id': 'lawn'}, {'id': 'path'}]})
@@ -198,10 +200,12 @@ position = Vector2(36, 24)
     def test_stale_stamp_or_changed_bake_source_is_rejected(self):
         self.write('zones/example/ground_baked.json', {'zone': 'example', 'hash': 'old'})
         self.fails('stale baked-ground input hash')
-        self.flush()
-        with (self.root / 'scripts/art/kit/surface.py').open('a') as f:
-            f.write('\n# changed producer\n')
-        self.fails('stale baked-ground input hash')
+        for source in ('scripts/art/kit/surface.py', 'scripts/art/native/softground.py'):
+            with self.subTest(source=source):
+                self.flush()
+                with (self.root / source).open('a') as f:
+                    f.write('\n# changed producer\n')
+                self.fails('stale baked-ground input hash')
 
     def test_baked_texture_extent_must_match_grid(self):
         Image.new('RGB', (72, 24)).save(self.game / 'zones/example/ground_baked.png')

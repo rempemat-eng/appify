@@ -244,8 +244,9 @@ def _bake_hash(plan: dict, lib: dict) -> str:
     """The existing bake.input_hash contract, read-only and without importing painters."""
     root = os.path.dirname(GAME)
     h = hashlib.sha256()
-    for name in ('bake.py', 'surface.py', 'structures.py'):
-        with open(os.path.join(root, 'scripts', 'art', 'kit', name), 'rb') as f:
+    for source in ('scripts/art/kit/bake.py', 'scripts/art/kit/surface.py',
+                   'scripts/art/kit/structures.py', 'scripts/art/native/softground.py'):
+        with open(os.path.join(root, source), 'rb') as f:
             h.update(f.read())
     keep = {k: plan.get(k) for k in ('legend', 'rows', 'tiers', 'pieces', 'variants', 'spawns', 'decor')}
     h.update(json.dumps(keep, sort_keys=True).encode())
