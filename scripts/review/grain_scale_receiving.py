@@ -225,8 +225,19 @@ CONTEXT_PRIVATE_FILES = (
 # Separate, reviewed four-cottage subject. No old source or art pin is repointed.
 HALT_RECEIVER_PARENT = "f8d5269047449ddf7ea9077b90f04e1237797516"
 HALT_RECEIVER_PARENT_TREE = "d30685162bc07b2fc2130431d2a3b55360e33fb5"
-HALT_SOURCE_SHA = "58c20c5dcafe59d30656fa85c638b0333396aab8"
-HALT_SOURCE_TREE = "e45f58df8c3a2ab9efc1ed991d632283f3d2c9ce"
+HALT_SOURCE_SHA = "e19307388d09925b88d802d1319f56b18487b256"
+HALT_SOURCE_TREE = "950cff12386a729f11997c17d6d331e414faf8e6"
+HALT_PREVIOUS_SOURCE = "58c20c5dcafe59d30656fa85c638b0333396aab8"
+HALT_PREVIOUS_SOURCE_TREE = "e45f58df8c3a2ab9efc1ed991d632283f3d2c9ce"
+HALT_PREVIOUS_ADAPTER_INPUTS = {
+    "scripts/art/kit/crossroads_halt_court.py": ("100644", "1a458aa7e18a638f265339d0166564e37e694f07"),
+    "scripts/review/fixtures/crossroads_halt_court.json": ("100644", "fb9bd8c2c12b2b134811552ecb2c3ef68c4fb1ee"),
+}
+HALT_PATH_NATIVE = "727d2012603b675fa9bbdcdcc8a7048e3144ade8"
+HALT_PATH_NATIVE_TREE = "6bc28b0db77df8b55a1bac3333e2d01ce962f81c"
+HALT_PATH_NATIVE_PATHS = {"scripts/art/native/softground.py", "scripts/art/native/town.py"}
+HALT_PATH_RECEIVER_PARENT = "2689581f23fcf9edfc4ccb9e3ce3b3127e4555c4"
+HALT_PATH_RECEIVER_PARENT_TREE = "96d960af175aa2b2ed4870deab7a8178770b80b2"
 HALT_SOURCE_CONTEXT = "a25dada748cf398f4c1c32eb5fc0e19308dd7b3b"
 HALT_SOURCE_CONTEXT_TREE = "3ed1a0df87b34e3abd03324356cc59bffdeef249"
 HALT_NATIVE_INTEGRATION = "45f2c80b657169ef4d7445bc9ff5ddd153960707"
@@ -338,7 +349,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/kit/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
  'scripts/art/kit/build.py': ('054206b5ea00d227ae0a33075a0b0b2e0355d4b5', 18911, '100644'),
  'scripts/art/kit/compose.py': ('4435017b23a5d50ed0a5e8801abc536b84854416', 12458, '100644'),
- 'scripts/art/kit/crossroads_halt_court.py': ('1a458aa7e18a638f265339d0166564e37e694f07', 15073, '100644'),
+ 'scripts/art/kit/crossroads_halt_court.py': ('7c2fe6966044421c9dc467ee44c5d1f1309a4cdf', 15094, '100644'),
  'scripts/art/kit/dressing.py': ('e4b4db15f45a0f1e202012a7c8d506e6f4970c5f', 8356, '100644'),
  'scripts/art/kit/edges.py': ('28fdf16622c7a0bed0f8d427e2ed6938fc7bcd69', 23944, '100644'),
  'scripts/art/kit/fills.py': ('3cbde218f4ea757a7327887060a60dfd65138df4', 18297, '100644'),
@@ -374,7 +385,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/native/screen.py': ('a7e04486c835a87f281e3785bbabde1e72df178e', 73374, '100644'),
  'scripts/art/native/softedge.py': ('d57d6e1a875e3b9c5aa78d2768af5f8a46c20b1e', 5048, '100644'),
  'scripts/art/native/softgrid.py': ('365cdd330b3a1628a1e7eca1114648262a506dab', 27518, '100644'),
- 'scripts/art/native/softground.py': ('159ac5f6271c56b58b3b88b1792212f46e026bb5', 112295, '100644'),
+ 'scripts/art/native/softground.py': ('1e0f24edfc8d95af56602c0f56d971d0f2150ea2', 112488, '100644'),
  'scripts/art/native/terrain/__init__.py': ('955bbcf2a5172718655203a0cc8f6d08671b60ee', 2792, '100644'),
  'scripts/art/native/terrain/decals.py': ('fbbac154045fa4e1205561ad21554838c79874a4', 8622, '100644'),
  'scripts/art/native/terrain/noise.py': ('0d879d5d85126774b9df5b1b11fa81d88037cc10', 1660, '100644'),
@@ -382,7 +393,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/native/terrain/sheets.py': ('1c2072d629a5c7f259b93fd303061826e255999d', 43948, '100644'),
  'scripts/art/native/terrain/tiles.py': ('e0d05e1c0ddc525a4dd952ae557353178d3a5e2f', 45209, '100644'),
  'scripts/art/native/thornback.py': ('8cbb1cbe503cd9f8b54625de12442e013f4c3e98', 32748, '100644'),
- 'scripts/art/native/town.py': ('fedd255dcffc57aa42c7668de6c80ef1e7a17f58', 51678, '100644'),
+ 'scripts/art/native/town.py': ('325b0cbf772df24c7d0d3045344794775da96bd5', 51840, '100644'),
  'scripts/art/native/undercroft.py': ('f5d5295bda624d01a11c9fd82486cb3df917dc91', 80899, '100644'),
  'scripts/art/native/village.py': ('78f5e5c48602242d26a52f2e0ce9dbd37610d999', 178366, '100644'),
  'scripts/art/native/water.py': ('8a18feda4c9d6f8580471a61157529ad8293c637', 22027, '100644'),
@@ -391,9 +402,7 @@ HALT_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6
  'scripts/art/size_guide.json': ('f30ecb3249d771e5dc6cdf6546d50400b118cf57', 45069, '100644'),
  'scripts/art/water_flow.py': ('4e1ebf799cae783c35642f6c1b9e34463ed300e0', 8888, '100644'),
  'scripts/review/__init__.py': ('e69de29bb2d1d6434b8b29ae775ad8c2e48c5391', 0, '100644'),
- 'scripts/review/fixtures/crossroads_halt_court.json': ('fb9bd8c2c12b2b134811552ecb2c3ef68c4fb1ee',
-                                                        60727,
-                                                        '100644'),
+ 'scripts/review/fixtures/crossroads_halt_court.json': ('8722fd375cf69b2951a44103080771d9241e4b01', 62177, '100644'),
  'scripts/review/ground_rules.py': ('0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68', 18956, '100644'),
  'scripts/review/kit_scene.py': ('6c71732fb52cbe86e8fa723c4d09a0af4d553371', 28305, '100644')}
 
@@ -923,8 +932,12 @@ class Controller:
         if git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha:
             raise RuntimeError("Candidate head differs")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_FEEDBACK_RECEIVER_PARENT]:
-            raise RuntimeError("Cottage feedback rebind must retain the exact sole aaba receiver parent")
+        if [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [HALT_PATH_RECEIVER_PARENT]:
+            raise RuntimeError("Path preview rebind must retain the exact sole2689 receiver parent")
+        path_receiver_headers = git(self.candidate, "cat-file", "commit", HALT_PATH_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in path_receiver_headers.splitlines() if x.startswith("parent ")] != [HALT_FEEDBACK_RECEIVER_PARENT]
+                or git(self.candidate,"rev-parse",HALT_PATH_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_PATH_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen Q4 receiver must retain the exact soleaaba parent/tree")
         feedback_receiver_headers = git(self.candidate, "cat-file", "commit", HALT_FEEDBACK_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in feedback_receiver_headers.splitlines() if x.startswith("parent ")] != [GOODS_FEEDBACK_RECEIVER_PARENT]
                 or git(self.candidate,"rev-parse",HALT_FEEDBACK_RECEIVER_PARENT+"^{tree}").decode().strip() != HALT_FEEDBACK_RECEIVER_PARENT_TREE):
@@ -1011,11 +1024,12 @@ class Controller:
             changed = {p for p in base.keys() | offered.keys() if base.get(p) != offered.get(p)}
             if changed != HALT_SOURCE_NEW or any(p in base or offered[p] != HALT_CONTEXT_NEW_INPUTS[p] for p in changed):
                 raise RuntimeError("Halt subject must add only the two reviewed new files")
-            feedback_court_headers = git(self.source,"cat-file","commit",HALT_SOURCE_SHA).decode().split("\n\n",1)[0]
+            feedback_court_headers = git(self.source,"cat-file","commit",HALT_PREVIOUS_SOURCE).decode().split("\n\n",1)[0]
             integration_headers = git(self.source,"cat-file","commit",HALT_NATIVE_INTEGRATION).decode().split("\n\n",1)[0]
             if ([x[7:] for x in feedback_court_headers.splitlines() if x.startswith("parent ")] != [HALT_NATIVE_INTEGRATION]
                     or [x[7:] for x in integration_headers.splitlines() if x.startswith("parent ")] != [p[0] for p in HALT_NATIVE_PARENTS]
-                    or git(self.source,"rev-parse",HALT_NATIVE_INTEGRATION+"^{tree}").decode().strip() != HALT_NATIVE_INTEGRATION_TREE):
+                    or git(self.source,"rev-parse",HALT_NATIVE_INTEGRATION+"^{tree}").decode().strip() != HALT_NATIVE_INTEGRATION_TREE
+                    or git(self.source,"rev-parse",HALT_PREVIOUS_SOURCE+"^{tree}").decode().strip() != HALT_PREVIOUS_SOURCE_TREE):
                 raise RuntimeError("Feedback subject must retain actual 58c20->45f2 ordered two-parent integration")
             native_parent_history = []
             for native_sha, native_tree, native_path in HALT_NATIVE_PARENTS:
@@ -1033,15 +1047,35 @@ class Controller:
             if (integration_delta != set(HALT_NATIVE_CHANGES)
                     or any(integration[p] != pin for p,pin in HALT_NATIVE_CHANGES.items())):
                 raise RuntimeError("Native integration must be the exact reviewed two-file union")
-            feedback_offered = tree(self.source,HALT_SOURCE_SHA)
+            feedback_offered = tree(self.source,HALT_PREVIOUS_SOURCE)
             feedback_delta = {p for p in integration.keys() | feedback_offered.keys() if integration.get(p) != feedback_offered.get(p)}
             if (feedback_delta != HALT_SOURCE_NEW
-                    or any(feedback_offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in feedback_delta)):
+                    or any(feedback_offered[p] != HALT_PREVIOUS_ADAPTER_INPUTS[p] for p in feedback_delta)):
                 raise RuntimeError("Feedback child changes only the exact existing adapter and fixture")
             feedback_base_delta = {p for p in base.keys() | feedback_offered.keys() if base.get(p) != feedback_offered.get(p)}
             if (feedback_base_delta != HALT_SOURCE_NEW | set(HALT_NATIVE_CHANGES)
-                    or any(feedback_offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in feedback_base_delta)):
-                raise RuntimeError("Current subject differs from historical407 only by native two plus adapter two")
+                    or any(feedback_offered[p] != {**HALT_NATIVE_CHANGES, **HALT_PREVIOUS_ADAPTER_INPUTS}[p] for p in feedback_base_delta)):
+                raise RuntimeError("Frozen Q4 subject differs from historical407 only by native two plus adapter two")
+            path_native_headers = git(self.source,"cat-file","commit",HALT_PATH_NATIVE).decode().split("\n\n",1)[0]
+            path_headers = git(self.source,"cat-file","commit",HALT_SOURCE_SHA).decode().split("\n\n",1)[0]
+            if ([x[7:] for x in path_native_headers.splitlines() if x.startswith("parent ")] != [HALT_PREVIOUS_SOURCE]
+                    or [x[7:] for x in path_headers.splitlines() if x.startswith("parent ")] != [HALT_PATH_NATIVE]
+                    or git(self.source,"rev-parse",HALT_PATH_NATIVE+"^{tree}").decode().strip() != HALT_PATH_NATIVE_TREE):
+                raise RuntimeError("Path candidate must retain exact B->A->58 source parents/trees")
+            path_native = tree(self.source,HALT_PATH_NATIVE)
+            path_native_delta = {p for p in feedback_offered.keys() | path_native.keys() if feedback_offered.get(p) != path_native.get(p)}
+            if (path_native_delta != HALT_PATH_NATIVE_PATHS
+                    or any(path_native[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in path_native_delta)):
+                raise RuntimeError("Path native A changes only exact reviewed softground and town inputs")
+            path_offered = tree(self.source,HALT_SOURCE_SHA)
+            path_delta = {p for p in path_native.keys() | path_offered.keys() if path_native.get(p) != path_offered.get(p)}
+            if (path_delta != HALT_SOURCE_NEW
+                    or any(path_offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in path_delta)):
+                raise RuntimeError("Path adapter B changes only the exact existing entrypoint and fixture")
+            path_base_delta = {p for p in base.keys() | path_offered.keys() if base.get(p) != path_offered.get(p)}
+            if (path_base_delta != HALT_SOURCE_NEW | set(HALT_NATIVE_CHANGES) | HALT_PATH_NATIVE_PATHS
+                    or any(path_offered[p] != (HALT_INPUTS[p][2],HALT_INPUTS[p][0]) for p in path_base_delta)):
+                raise RuntimeError("Current path subject differs from historical407 only by native three plus adapter two")
             self.output["halt_subject_history"] = {"headers":court_headers,"parent_sha":HALT_SOURCE_PARENT,
                 "parent_tree":HALT_SOURCE_PARENT_TREE,"parent_headers":court_parent_headers,
                 "original_sha":HALT_SOURCE_ORIGINAL,"original_tree":HALT_SOURCE_ORIGINAL_TREE,
@@ -1049,11 +1083,11 @@ class Controller:
                 "baseline_sha":HALT_SOURCE_BASE,"baseline_tree":HALT_SOURCE_BASE_TREE,
                 "changed":sorted(changed),"correction_changed":sorted(correction),"not_receiver_ancestor":True,
                 "historical_context_sha":HALT_SOURCE_CONTEXT,"historical_context_tree":HALT_SOURCE_CONTEXT_TREE,
-                "source_sha":HALT_SOURCE_SHA,"source_tree":HALT_SOURCE_TREE,"feedback_headers":feedback_court_headers,
+                "source_sha":HALT_SOURCE_SHA,"source_tree":HALT_SOURCE_TREE,"feedback_headers":path_headers,
                 "native_integration_sha":HALT_NATIVE_INTEGRATION,"native_integration_tree":HALT_NATIVE_INTEGRATION_TREE,
                 "integration_headers":integration_headers,"native_parents":native_parent_history,
-                "integration_changed":sorted(integration_delta),"feedback_changed":sorted(feedback_delta),
-                "current_changed_from_historical407":sorted(feedback_base_delta),
+                "integration_changed":sorted(integration_delta),"feedback_changed":sorted(path_delta),
+                "current_changed_from_historical407":sorted(path_base_delta),
                 "qualification":"Actual reviewed integration; historical407 remains baseline. Four nominal width24 rectangular cores do not clear capsule physics: radius12 intrudes4 world px into own floor. Terrain/collision/adoption remain open; no waiver."}
         active_tree = tree(self.candidate, ACTIVE_RECEIVER_PARENT)
         context_tree = tree(self.candidate, CONTEXT_RECEIVER_PARENT)
