@@ -35,7 +35,11 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "6a53c907ee55bc573121c12366182bf1ce9efdd9"
+GAME_SHA = "39f22beb86fa40a87eb06374160138ef8c336a92"
+DEADLINE_GAME_PARENT = "6a53c907ee55bc573121c12366182bf1ce9efdd9"
+DEADLINE_GAME_PARENT_TREE = "43261ea7dc637d3386cc3ac5dbb099c8f1a6936c"
+DEADLINE_RECEIVER_PARENT = "6eb61f5af0cd5483406dee9b2e1e218edf5f92c1"
+DEADLINE_RECEIVER_PARENT_TREE = "b6d4d158f7237ad4c2d26731122e4e1a18c227c4"
 OBSERVATION_GAME_PARENT = "d5c9a2390604111c1c482a611ffdc11cc37d0282"
 OBSERVATION_GAME_PARENT_TREE = "966b30445b59526c2f9b56e1d5e3e6834f7e16bb"
 SAVE_GAME_PARENT = "c7a9114ce1c830cc8889e6e8eb480990522b7c3b"
@@ -122,7 +126,7 @@ REBIND_RECEIVER_PARENT = "a1f3a7f2305f881b48d1824a1bcd16423a363d91"
 REBIND_RECEIVER_PARENT_TREE = "28e97f27d2b50085f78919720d2dc844efe32aaf"
 LIFECYCLE_RECEIVER_PARENT = "d7dacb292ff1b184b68077e7d1ba4471b9cbf20c"
 LIFECYCLE_RECEIVER_PARENT_TREE = "c111635880129121888b726c86dfcd6ed9535644"
-GAME_TREE = "43261ea7dc637d3386cc3ac5dbb099c8f1a6936c"
+GAME_TREE = "acde63c78c7ed17c55809c657bb47672bfccda17"
 GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
 GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
 GAME_GRANDPARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
@@ -144,12 +148,12 @@ TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 EXPORT_BLOB = "61d81ffbdbdf89ebcf0e2e68204eddb87c3b4772"
 PLUGIN_BLOB = "8a9dadd400ce9ef345becef8fc13f2f7179c3449"
-SMOKE_BLOB = "8ce194593089ac48a706a02a0e5d7abdb3ae5e4d"
+SMOKE_BLOB = "216d98d1291d44afaec45af0785fbcba32760564"
 DEPENDENT_TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
 KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
 GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
 GAME_COUNT = 6689
-GAME_BYTES = 87906262
+GAME_BYTES = 87907264
 PYTHON_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cbb6474a07a1e', 2165),
  'art/house-palette.json': ('7e97a7463b3641425e667d7b7764f34510489a54', 20444),
  'art/scenes/woodland.json': ('4ddc7ed7b91d413f897388969579b4d06a2a7486', 31704),
@@ -502,8 +506,6 @@ def mesa_tool_stage(args: argparse.Namespace) -> int:
             package = output / "mesa-utils-bin_9.0.0-2_amd64.deb"
             received = 0
             try:
-                # Same bounded urllib/chunk/hash pattern as existing get_engine;
-                # one literal vendor URL only, no mirrors/retry/install/scripts.
                 class NoPackageRedirect(urllib.request.HTTPRedirectHandler):
                     def redirect_request(self, *_args, **_kwargs):
                         raise RuntimeError("Pinned Mesa vendor redirect refused")
@@ -1074,6 +1076,30 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
             command = command[:command.index("res://zones/kitlab/kitlab.tscn")] + [
                 "res://zones/editor_lifecycle_probe/editor_lifecycle_probe.tscn", "--", "--we-lifecycle=" + lifecycle_phase]
         receipt["editor_command"] = command
+        expiry = None
+        gui_env.pop("MYGAME_EDITOR_STARTUP_EXPIRY", None)
+        if lifecycle_phase:
+            parent = root / "evidence/editor_lifecycle"
+            for directory in (root / "evidence", parent):
+                if directory == parent:
+                    try:
+                        directory.mkdir(mode=0o700)
+                    except FileExistsError:
+                        pass
+                info = directory.lstat()
+                if (not stat.S_ISDIR(info.st_mode) or directory.resolve(strict=True) != directory
+                        or info.st_uid != os.getuid() or info.st_mode & 0o022):
+                    raise RuntimeError("Expiry parent is not private physical owned directory")
+            expiry = parent / (lifecycle_phase + "-startup.expired")
+            try:
+                expiry.lstat()
+            except FileNotFoundError:
+                pass
+            else:
+                raise RuntimeError("Expiry marker already exists")
+            gui_env["MYGAME_EDITOR_STARTUP_EXPIRY"] = str(expiry)
+            receipt["execution_budget"] = {"allowance_s": 40, "hard_limit_s": 45,
+                "marker_path": str(expiry), "marker_created": False, "terminal_observed_elapsed_s": None}
         receipt["private_environment"] = {key: gui_env[key] for key in
             ("DISPLAY", "XAUTHORITY", "XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_RUNTIME_DIR", "TMPDIR", "VK_DRIVER_FILES", "EDITOR_PRIVATE_VULKAN_PROVENANCE_SHA256")}
         receipt["private_environment"]["LD_LIBRARY_PATH"] = gui_env.get("LD_LIBRARY_PATH")
@@ -1081,13 +1107,51 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
             receipt["private_environment"][key] = gui_env.get(key)
         save()
         editor = launch("editor", command, gui_env, stdin=subprocess.DEVNULL)
-        deadline = time.monotonic() + 45
+        started = time.monotonic()
+        deadline = started + 45
         while os.waitid(os.P_PID, editor.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is None:
             if os.waitid(os.P_PID, server.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None:
                 raise RuntimeError("Xvfb ended before editor/capture completion")
-            if time.monotonic() >= deadline:
+            now = time.monotonic()
+            if now >= deadline:
                 raise TimeoutError("Displayed editor deadline")
+            if expiry is not None and now - started >= 40 and not receipt["execution_budget"]["marker_created"]:
+                budget = receipt["execution_budget"]
+                budget["marker_state"] = "ATTEMPTED"
+                save()
+                budget["marker_attempt_elapsed_s"] = time.monotonic() - started
+                if budget["marker_attempt_elapsed_s"] >= 45:
+                    raise TimeoutError("Displayed editor deadline before expiry creation")
+                content = b"receiving-editor-phase-budget-expired\n"
+                with expiry.open("xb", buffering=0) as handle:
+                    budget["marker_created"] = True
+                    if handle.write(content) != len(content):
+                        raise OSError("Short expiry marker write")
+                    os.fsync(handle.fileno())
+                    info = os.fstat(handle.fileno())
+                if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or info.st_uid != os.getuid()
+                        or info.st_size != len(content) or info.st_mode & 0o111 or digest(expiry) != hashlib.sha256(content).hexdigest()):
+                    raise RuntimeError("Expiry marker physical identity/content mismatch")
+                budget.update(marker_state="WRITTEN", marker_write_elapsed_s=time.monotonic() - started,
+                    marker={"bytes": info.st_size, "sha256": digest(expiry), "mode": stat.S_IMODE(info.st_mode),
+                            "uid": info.st_uid, "dev": info.st_dev, "ino": info.st_ino})
+                save()
+                if budget["marker_write_elapsed_s"] >= 45:
+                    raise TimeoutError("Displayed editor deadline during expiry write")
             time.sleep(0.02)
+        if expiry is not None:
+            budget = receipt["execution_budget"]
+            budget["terminal_observed_elapsed_s"] = time.monotonic() - started
+            save()
+            if budget["marker_created"] or budget["terminal_observed_elapsed_s"] >= 40:
+                raise TimeoutError("Receiving editor-phase execution allowance expired")
+            try:
+                expiry.lstat()
+            except FileNotFoundError:
+                budget["marker_state"] = "NOT_WRITTEN_TERMINAL_OBSERVED_BEFORE_ALLOWANCE"
+            else:
+                raise RuntimeError("Unexpected expiry marker at terminal observation")
+            save()
         if collect("editor", 1) != 0:
             raise RuntimeError("Displayed editor returned nonzero")
         if os.waitid(os.P_PID, server.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None:
@@ -1150,6 +1214,47 @@ def displayed_lifetime(args: argparse.Namespace) -> int:
         receipt["state"] = "COLLECTED" if failure is None and not receipt["cleanup_errors"] else "FAILED"
         save()
     return 0 if receipt["state"] == "COLLECTED" else 1
+
+
+def receiver_ancestry_mismatch(candidate: Path, event_sha: str, headers: str) -> bool:
+    """The same frozen 35-clause prefix used by the two receiver-only entrypoints."""
+    return (
+        git(candidate, 'rev-parse', 'HEAD').decode().strip() != event_sha
+        or [line[7:] for line in headers.splitlines() if line.startswith('parent ')] != [DEADLINE_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', DEADLINE_RECEIVER_PARENT + '^{tree}').decode().strip() != DEADLINE_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', DEADLINE_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [OBSERVATION_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', OBSERVATION_RECEIVER_PARENT + '^{tree}').decode().strip() != OBSERVATION_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', OBSERVATION_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [SAVE_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', SAVE_RECEIVER_PARENT + '^{tree}').decode().strip() != SAVE_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', SAVE_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [TRACKED_REFUSAL_PARENT]
+        or git(candidate, 'rev-parse', TRACKED_REFUSAL_PARENT + '^{tree}').decode().strip() != TRACKED_REFUSAL_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', TRACKED_REFUSAL_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [EMPTY_CACHE_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', EMPTY_CACHE_RECEIVER_PARENT + '^{tree}').decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', EMPTY_CACHE_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [REFUSAL_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', REFUSAL_RECEIVER_PARENT + '^{tree}').decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', REFUSAL_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [INTENT_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', INTENT_RECEIVER_PARENT + '^{tree}').decode().strip() != INTENT_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', INTENT_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [REBIND_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', REBIND_RECEIVER_PARENT + '^{tree}').decode().strip() != REBIND_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', REBIND_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [LIFECYCLE_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', LIFECYCLE_RECEIVER_PARENT + '^{tree}').decode().strip() != LIFECYCLE_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', LIFECYCLE_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [STARTUP_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', STARTUP_RECEIVER_PARENT + '^{tree}').decode().strip() != STARTUP_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', STARTUP_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [RETURN_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', RETURN_RECEIVER_PARENT + '^{tree}').decode().strip() != RETURN_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', RETURN_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [READINESS_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', READINESS_RECEIVER_PARENT + '^{tree}').decode().strip() != READINESS_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', READINESS_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [PYTHON_PROVIDER_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', PYTHON_PROVIDER_RECEIVER_PARENT + '^{tree}').decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', PYTHON_PROVIDER_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [PYTHON_FACTS_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', PYTHON_FACTS_RECEIVER_PARENT + '^{tree}').decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', PYTHON_FACTS_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [PYTHON_BINDING_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', PYTHON_BINDING_RECEIVER_PARENT + '^{tree}').decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', PYTHON_BINDING_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [DISPLAY_ICD_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', DISPLAY_ICD_RECEIVER_PARENT + '^{tree}').decode().strip() != DISPLAY_ICD_RECEIVER_PARENT_TREE
+        or [line[7:] for line in git(candidate, 'cat-file', 'commit', DISPLAY_ICD_RECEIVER_PARENT).decode().split('\n\n', 1)[0].splitlines() if line.startswith('parent ')] != [DRIVER_RECEIVER_PARENT]
+        or git(candidate, 'rev-parse', DRIVER_RECEIVER_PARENT + '^{tree}').decode().strip() != DRIVER_RECEIVER_PARENT_TREE
+    )
 
 
 def vulkan_inventory(args: argparse.Namespace) -> int:
@@ -1225,40 +1330,7 @@ def vulkan_inventory(args: argparse.Namespace) -> int:
         result["host"] = mesa_host()
         candidate = args.candidate.resolve(strict=True)
         headers = git(candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-        if (git(candidate, "rev-parse", "HEAD").decode().strip() != args.event_sha
-                or [line[7:] for line in headers.splitlines() if line.startswith("parent ")]
-                != [OBSERVATION_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", OBSERVATION_RECEIVER_PARENT + "^{tree}").decode().strip() != OBSERVATION_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", OBSERVATION_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [SAVE_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", SAVE_RECEIVER_PARENT + "^{tree}").decode().strip() != SAVE_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", SAVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
-                or git(candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", TRACKED_REFUSAL_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", EMPTY_CACHE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", REFUSAL_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", INTENT_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", REBIND_RECEIVER_PARENT + "^{tree}").decode().strip() != REBIND_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", REBIND_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [LIFECYCLE_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", LIFECYCLE_RECEIVER_PARENT + "^{tree}").decode().strip() != LIFECYCLE_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", LIFECYCLE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [STARTUP_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", STARTUP_RECEIVER_PARENT + "^{tree}").decode().strip() != STARTUP_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", STARTUP_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [RETURN_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", RETURN_RECEIVER_PARENT + "^{tree}").decode().strip() != RETURN_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", RETURN_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [READINESS_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", READINESS_RECEIVER_PARENT + "^{tree}").decode().strip() != READINESS_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", READINESS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [PYTHON_PROVIDER_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", PYTHON_PROVIDER_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_PROVIDER_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_FACTS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", PYTHON_BINDING_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", DISPLAY_ICD_RECEIVER_PARENT + "^{tree}").decode().strip() != DISPLAY_ICD_RECEIVER_PARENT_TREE
-                or [line[7:] for line in git(candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
-                or git(candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
+        if (receiver_ancestry_mismatch(candidate, args.event_sha, headers)
                 or [line[7:] for line in git(candidate, "cat-file", "commit", DRIVER_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if line.startswith("parent ")]
                 != [INVENTORY_RECEIVER_PARENT]
                 or git(candidate, "rev-parse", INVENTORY_RECEIVER_PARENT + "^{tree}").decode().strip()
@@ -1504,8 +1576,6 @@ def vulkan_driver_stage(args: argparse.Namespace) -> int:
             bootstrap[name] = {"path": str(canonical), "bytes": info.st_size, "sha256": digest(canonical)}
         receipt["bootstrap"] = bootstrap
         write_json(output / "provenance.json", receipt)
-        # This fixed extractor is adapted from mesa_tool_stage: literal official
-        # URLs only, exact package hashes, no redirects/mirrors/retries/scripts.
         for package in DRIVER_PACKAGES:
             path = output / Path(package["url"]).name
             received = 0
@@ -1893,8 +1963,12 @@ class Controller:
             raise RuntimeError("Duty runtime/evidence is not fresh")
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
-        if parents != [OBSERVATION_RECEIVER_PARENT]:
-            raise RuntimeError("Startup-observation rebind must retain sole4051e3c parent")
+        if parents != [DEADLINE_RECEIVER_PARENT]:
+            raise RuntimeError("Deadline receiver must retain sole4056eb parent")
+        deadline_headers = git(self.candidate, "cat-file", "commit", DEADLINE_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in deadline_headers.splitlines() if x.startswith("parent ")] != [OBSERVATION_RECEIVER_PARENT]
+                or git(self.candidate, "rev-parse", DEADLINE_RECEIVER_PARENT + "^{tree}").decode().strip() != DEADLINE_RECEIVER_PARENT_TREE):
+            raise RuntimeError("Frozen H22 receiver ancestry/tree changed")
         observation_headers = git(self.candidate, "cat-file", "commit", OBSERVATION_RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in observation_headers.splitlines() if x.startswith("parent ")] != [SAVE_RECEIVER_PARENT]
                 or git(self.candidate, "rev-parse", OBSERVATION_RECEIVER_PARENT + "^{tree}").decode().strip() != OBSERVATION_RECEIVER_PARENT_TREE):
@@ -2007,8 +2081,12 @@ class Controller:
             raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
-                if line.startswith("parent ")] != [OBSERVATION_GAME_PARENT]:
-            raise RuntimeError("Startup-observation410 must retain genuined5c9 sole parent")
+                if line.startswith("parent ")] != [DEADLINE_GAME_PARENT]:
+            raise RuntimeError("Deadline410 must retain genuine6a53 sole parent")
+        source_deadline_headers = git(self.source, "cat-file", "commit", DEADLINE_GAME_PARENT).decode().split("\n\n", 1)[0]
+        if ([x[7:] for x in source_deadline_headers.splitlines() if x.startswith("parent ")] != [OBSERVATION_GAME_PARENT]
+                or git(self.source, "rev-parse", DEADLINE_GAME_PARENT + "^{tree}").decode().strip() != DEADLINE_GAME_PARENT_TREE):
+            raise RuntimeError("Frozen H22 source ancestry/tree changed")
         source_observation_headers = git(self.source, "cat-file", "commit", OBSERVATION_GAME_PARENT).decode().split("\n\n", 1)[0]
         if ([x[7:] for x in source_observation_headers.splitlines() if x.startswith("parent ")] != [SAVE_GAME_PARENT]
                 or git(self.source, "rev-parse", OBSERVATION_GAME_PARENT + "^{tree}").decode().strip() != OBSERVATION_GAME_PARENT_TREE):
@@ -2093,6 +2171,7 @@ class Controller:
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
                     "tracked_refusal_parent": TRACKED_REFUSAL_PARENT, "tracked_refusal_headers": tracked_headers,
+                    "deadline_receiver_parent": DEADLINE_RECEIVER_PARENT, "deadline_receiver_headers": deadline_headers,
                     "observation_receiver_parent": OBSERVATION_RECEIVER_PARENT, "observation_receiver_parent_headers": observation_headers,
                     "empty_cache_receiver_parent": EMPTY_CACHE_RECEIVER_PARENT, "empty_cache_receiver_parent_headers": empty_cache_headers,
                     "refusal_receiver_parent": REFUSAL_RECEIVER_PARENT, "refusal_receiver_parent_headers": refusal_headers,
@@ -2122,8 +2201,9 @@ class Controller:
                    "return_game_parent": RETURN_GAME_PARENT, "return_game_parent_headers": source_return_parent_headers,
                    "bootstrap_game_parent": BOOTSTRAP_GAME_PARENT, "bootstrap_game_parent_headers": source_bootstrap_parent_headers,
                    "intent_game_parent": INTENT_GAME_PARENT, "intent_game_parent_headers": source_intent_parent_headers,
-                   "tested_game_parent": OBSERVATION_GAME_PARENT, "tested_game_parent_headers": source_observation_headers,
-                   "tested_game_grandparent": SAVE_GAME_PARENT, "tested_game_grandparent_headers": source_save_headers,
+                   "deadline_game_parent": DEADLINE_GAME_PARENT, "deadline_game_headers": source_deadline_headers,
+                   "tested_game_parent": DEADLINE_GAME_PARENT, "tested_game_parent_headers": source_deadline_headers,
+                   "tested_game_grandparent": OBSERVATION_GAME_PARENT, "tested_game_grandparent_headers": source_observation_headers,
                    "historical407_parent": GAME_PARENT, "historical407_parent_headers": source_parent_headers,
                    "historical407_grandparent": GAME_GRANDPARENT, "historical407_grandparent_headers": source_grandparent_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
@@ -2580,6 +2660,13 @@ class Controller:
             self.private_driver_inputs()
             text = self.require_clean(phase, result)
             lifetime = json.loads((output / "lifetime.json").read_text())
+            budget = lifetime.get("execution_budget", {})
+            observed = budget.get("terminal_observed_elapsed_s")
+            if (budget.get("allowance_s") != 40 or budget.get("hard_limit_s") != 45
+                    or budget.get("marker_created") is not False
+                    or budget.get("marker_path") != str(self.evidence / "editor_lifecycle" / (selected + "-startup.expired"))
+                    or type(observed) not in (int, float) or not 0 <= observed < 40):
+                raise RuntimeError("Lifecycle receiving execution allowance did not reconcile")
             expected_names = {"xauth", "Xvfb", "unauthorized-glx", "authenticated-glx", "editor"}
             waits, processes = lifetime.get("wait4", []), lifetime.get("processes", {})
             exits = {row["name"]: row["exit"] for row in waits}
@@ -3214,39 +3301,7 @@ class Controller:
                     or set(self.evidence.iterdir()) != {self.evidence / "bootstrap.json", self.evidence / "controller.log"}):
                 raise RuntimeError("Driver mode requires a fresh receiver-only checkout and evidence")
             headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
-            if (git(self.candidate, "rev-parse", "HEAD").decode().strip() != self.event_sha
-                    or [x[7:] for x in headers.splitlines() if x.startswith("parent ")] != [OBSERVATION_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", OBSERVATION_RECEIVER_PARENT + "^{tree}").decode().strip() != OBSERVATION_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", OBSERVATION_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [SAVE_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", SAVE_RECEIVER_PARENT + "^{tree}").decode().strip() != SAVE_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", SAVE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [TRACKED_REFUSAL_PARENT]
-                    or git(self.candidate, "rev-parse", TRACKED_REFUSAL_PARENT + "^{tree}").decode().strip() != TRACKED_REFUSAL_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", TRACKED_REFUSAL_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [EMPTY_CACHE_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", EMPTY_CACHE_RECEIVER_PARENT + "^{tree}").decode().strip() != EMPTY_CACHE_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", EMPTY_CACHE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [REFUSAL_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", REFUSAL_RECEIVER_PARENT + "^{tree}").decode().strip() != REFUSAL_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", REFUSAL_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [INTENT_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", INTENT_RECEIVER_PARENT + "^{tree}").decode().strip() != INTENT_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", INTENT_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [REBIND_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", REBIND_RECEIVER_PARENT + "^{tree}").decode().strip() != REBIND_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", REBIND_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [LIFECYCLE_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", LIFECYCLE_RECEIVER_PARENT + "^{tree}").decode().strip() != LIFECYCLE_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", LIFECYCLE_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [STARTUP_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", STARTUP_RECEIVER_PARENT + "^{tree}").decode().strip() != STARTUP_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", STARTUP_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [RETURN_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", RETURN_RECEIVER_PARENT + "^{tree}").decode().strip() != RETURN_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", RETURN_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [READINESS_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", READINESS_RECEIVER_PARENT + "^{tree}").decode().strip() != READINESS_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", READINESS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [PYTHON_PROVIDER_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", PYTHON_PROVIDER_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_PROVIDER_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_PROVIDER_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [PYTHON_FACTS_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", PYTHON_FACTS_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_FACTS_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_FACTS_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [PYTHON_BINDING_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", PYTHON_BINDING_RECEIVER_PARENT + "^{tree}").decode().strip() != PYTHON_BINDING_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", PYTHON_BINDING_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DISPLAY_ICD_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", DISPLAY_ICD_RECEIVER_PARENT + "^{tree}").decode().strip() != DISPLAY_ICD_RECEIVER_PARENT_TREE
-                    or [x[7:] for x in git(self.candidate, "cat-file", "commit", DISPLAY_ICD_RECEIVER_PARENT).decode().split("\n\n", 1)[0].splitlines() if x.startswith("parent ")] != [DRIVER_RECEIVER_PARENT]
-                    or git(self.candidate, "rev-parse", DRIVER_RECEIVER_PARENT + "^{tree}").decode().strip() != DRIVER_RECEIVER_PARENT_TREE
+            if (receiver_ancestry_mismatch(self.candidate, self.event_sha, headers)
                     or set(git(self.candidate, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").decode().splitlines()) != OWNED_PATHS):
                 raise RuntimeError("Driver mode requires the genuine solef133 two-file candidate")
             if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
