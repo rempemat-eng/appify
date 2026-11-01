@@ -199,11 +199,17 @@ def path_widths(cv: np.ndarray, net: np.ndarray, cls_t: np.ndarray, seed: int, f
     if three.any() and packed:
         _packed_road(cv, net, three, seed, fam, rng, wob)
     elif three.any():
-        rut = three & (np.abs(dist - 17 + wob) < 2.4) & (GD.nz(H, W, 30.0, seed + 9) > 0.3)
-        cv[rut] = C(fam + '_cool', 2)
-        cv[rut & (GD.nz(H, W, 9.0, seed + 10) > 0.62)] = C(fam + '_cool', 1)
-        lip = GD.down(rut, 1) & ~rut & three & (GD.nz(H, W, 5.0, seed + 11) > 0.5)
-        cv[lip] = C(fam + '_warm', 4)
+        # Claude A's Crossroads review (1 Nov): the ruts read as cracks. They follow the road's
+        # straight runs (never its outline's lumps or a junction's corner), a narrow worn band one
+        # tone down in the earth's own hue, broken where the wheels lifted, without dark speckle
+        horizontal, vertical, across, fade = GD.longitudinal_runs(net, three)
+        flow = (horizontal | vertical) & (fade > 0)
+        rut = flow & (np.abs(across - 17 + wob * 0.4) < 1.6 * fade) & (GD.nz(H, W, 30.0, seed + 9) > 0.38)
+        rut &= (cv >= 0) & (cv % 8 > 1)
+        cv[rut] = cv[rut] - 1
+        lip = (GD.down(rut & horizontal, 1) | GD.right(rut & vertical, 1)) & ~rut & flow & (cv >= 0) & (cv % 8 < 5)
+        lip &= GD.nz(H, W, 5.0, seed + 11) > 0.62
+        cv[lip] = cv[lip] + 1
         crown = three & (dist > 23)
         gp = crown & (GD.nz(H, W, 6.0, seed + 31) > 0.62) & (GD.nz(H, W, 2.5, seed + 32) > 0.35)
         cv[gp] = C('grass_warm', 2)

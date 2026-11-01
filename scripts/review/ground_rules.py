@@ -15,6 +15,9 @@ These checks read a zone's plan (world px) and say where it breaks a rule:
     rules.route_ends        each route end meets a destination: a zone edge, a stand, a bridge,
                             a door, a place, or another route
     rules.route_clear       nothing stands on a route (only bridges and signposts by design)
+    rules.building_overlap  no two buildings overlap: their footprints with the eaves stand at
+                            least a cell apart, and their drawn bodies (walls and roofs) never
+                            cover each other
     rules.seating           a bench stands beside a route (its edge within 2 cells), not on it,
                             facing it (the route in front of the bench's face)
     rules.rock_overlap      rocks rest on the ground side by side; two never overlap unless the
@@ -362,6 +365,44 @@ def seating(plan):
 
 
 # ------------------------------------------------------------------------------------------------
+# 5. structures
+# ------------------------------------------------------------------------------------------------
+def _building_boxes(plan, b):
+    """(footprint with the eaves, drawn body) of a building as (x0, y0, x1, y1) world px. The body
+    is what the 3/4 view draws above the floor's front edge: the eaves' width, the wall and the
+    roof's height (its look; a plan without looks has only the footprint)."""
+    x, y, w, h = b['rect']
+    look = dict((plan.get('art') or {}).get('looks', {}).get(b['id'], {}), **(b.get('look') or {}))
+    eave = float(look.get('overhang', 3))
+    foot = (x - eave, y - eave, x + w + eave, y + h + eave)
+    tall = float(look.get('wall_h', 0)) + float(look.get('roof_h', 0))
+    body = (x - eave, y + h - tall, x + w + eave, y + h) if tall else None
+    return foot, body
+
+
+def _overlap(a, b, gap=0.0):
+    return min(a[2], b[2]) + gap - max(a[0], b[0]) > 0 and min(a[3], b[3]) + gap - max(a[1], b[1]) > 0
+
+
+def building_overlap(plan):
+    """Claude A's Crossroads review (1 Nov): one cottage's roof covered its neighbour's wall and door.
+    Footprints with their eaves keep a cell of ground between them; drawn bodies never overlap."""
+    out = []
+    bl = [b for b in plan.get('buildings', []) if 'rect' in b]
+    for i, a in enumerate(bl):
+        fa, ba = _building_boxes(plan, a)
+        for b in bl[i + 1:]:
+            fb, bb = _building_boxes(plan, b)
+            if _overlap(fa, fb, CELL):
+                out.append(_f('rules.building_overlap', f'{a["id"]} and {b["id"]}: their footprints with the eaves are '
+                              'less than a cell apart: move one a cell or more away', a['rect'][:2]))
+            elif ba and bb and _overlap(ba, bb):
+                out.append(_f('rules.building_overlap', f'{a["id"]} and {b["id"]}: one\'s roof or wall covers the '
+                              'other\'s: move them apart', a['rect'][:2]))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------
 # 6. props by role and 7. clutter
 # ------------------------------------------------------------------------------------------------
 def _rock_box(b):
@@ -410,8 +451,8 @@ def stage_debris(kit, plan=None):
     return out
 
 
-CHECKS = (water_source, water_end, water_fall, ground_water, route_grid, route_ends, route_clear, seating,
-          rock_overlap, clutter)
+CHECKS = (water_source, water_end, water_fall, ground_water, route_grid, route_ends, route_clear,
+          building_overlap, seating, rock_overlap, clutter)
 
 
 def check_plan(plan) -> list[dict]:
@@ -431,6 +472,9 @@ def plans():
         if f.endswith('.json'):
             kit = os.path.join(ROOT, 'game', 'zones', f[:-5], 'kit.json')
             yield f[:-5], os.path.join(zdir, f), kit if os.path.exists(kit) else None
+    # review studies whose plans are code (strict: they declare "ground_rules")
+    from scripts.art.kit import crossroads_slice
+    yield 'crossroads_slice', crossroads_slice.plan(), None
 
 
 def main(argv=None) -> int:
@@ -439,7 +483,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     bad = 0
     for name, path, kit in plans():
-        plan = json.load(open(path))
+        plan = path if isinstance(path, dict) else json.load(open(path))
         fs = check_plan(plan)
         if kit:
             fs += stage_debris(json.load(open(kit)), plan)

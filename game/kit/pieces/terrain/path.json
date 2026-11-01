@@ -47,12 +47,8 @@
       "args": {
         "seed": 43,
         "fam": "path",
-        "cell": 14.0,
-        "joints": 1.1,
-        "lit": 0.8,
-        "stones": 0.45,
-        "blades": 0.6,
-        "soft_joints": true,
+        "cell": 12,
+        "stones": 1.0,
         "shape": {
           "seed": 41,
           "smooth": 4
@@ -75,16 +71,10 @@
       "args": {
         "seed": 43,
         "fam": "path",
-        "cell": 14.0,
-        "joints": 1.1,
-        "lit": 0.8,
-        "stones": 0.45,
-        "blades": 0.6,
-        "soft_joints": true
+        "cell": 12
       }
     },
     "size_class": "ground",
     "eastward_ref": "Eastward 12, 13 (dirt paths); refs local only"
   }
 }
-

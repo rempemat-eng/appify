@@ -14,9 +14,9 @@ made periodic in three ways:
    crosses the right edge comes back on the left. The copies are applied in the same order
    everywhere, so local read-modify-write stamps stay consistent; the centre is cropped.
 
-Codes are palette codes (family * 8 + tone, palette.py). The legacy painters here follow
-softground.lawn and relief dirt line by line. Packed soil already shares softground.packed_soil
-exactly; body grain, stamps and phase therefore cannot drift between native paint and editor fill.
+Codes are palette codes (family * 8 + tone, palette.py). The painters here follow softground.lawn
+and softground.dirt line by line (same sizes, shares, seeds' roles); a change to the look is made
+in both until softground grows a periodic mode of its own.
 """
 from __future__ import annotations
 
@@ -199,11 +199,7 @@ def dirt(seed: int = 43, P: int = PERIOD, fam: str = 'path', cell: float = 12.0,
     The crumbs along an edge belong to the transition (edges.py), not to the fill. `joints` is the
     slow field's threshold above which the gaps between clods show (softground's 0.28 shows most:
     a cobbled look, kept for the cobble road; 0.62 shows a few soft joints in drifts, the calm
-    packed earth of the swatches), `lit` the share of clods without a lit rim. soft_joints uses
-    the native painter's shared periodic packed soil: flat broken wear/aggregate drifts instead
-    of nearest-cell boundaries. Legacy relief/cobble recipes retain their existing output."""
-    if soft_joints:
-        return GD.packed_soil(seed, P, fam, cell, stones, joints, lit, blades)
+    packed earth of the swatches), `lit` the share of clods without a lit rim."""
     rng = np.random.default_rng(seed)
     with periodic_noise(P):
         yy, xx = np.mgrid[0:P, 0:P]
@@ -236,6 +232,13 @@ def dirt(seed: int = 43, P: int = PERIOD, fam: str = 'path', cell: float = 12.0,
         gap = (d1 > rr) | ((d2 - d1) < 1.3)
         show = nz(P, 26.0, seed + 7) > joints
         t[gap & show] = 2
+        if soft_joints:
+            # the hidden joints still part the clods, in the damp sibling at the body's tone: the
+            # clods read as packed earth, never as cobbles or as cracks breaking off in drifts
+            hid = gap & ~show
+            base_ = hid & (famc == FI[fam])
+            famc[hid & (famc == FI[fam + '_warm'])] = FI[fam]
+            famc[base_] = FI[fam + '_cool']
         hi = ~gap & ((vx * 0.6 + vy * 0.8) < -0.42 * rr) & (d1 > 0.42 * rr) & (h > lit)
         t[hi] = 4
         cv = (famc * 8 + t).astype(np.int32)
@@ -379,4 +382,3 @@ def seam_error(f: np.ndarray) -> float:
     across = np.mean(f[0] != f[-1]) + np.mean(f[:, 0] != f[:, -1])
     inside = np.mean(f[1] != f[0]) + np.mean(f[:, 1] != f[:, 0])
     return float(across / max(1e-9, inside))
-
