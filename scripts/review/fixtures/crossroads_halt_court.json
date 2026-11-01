@@ -1,8 +1,8 @@
 {
   "document": "MyGame Crossroads Halt court native diagnostic",
   "status": "SOURCE_ONLY_UNRUN_NOT_PRODUCTION_ADOPTION",
-  "source_native_commit": "727d2012603b675fa9bbdcdcc8a7048e3144ade8",
-  "source_native_tree": "6bc28b0db77df8b55a1bac3333e2d01ce962f81c",
+  "source_native_commit": "a9bbb7d10e55d0b25b5d6408af5d5c3f1c4816cc",
+  "source_native_tree": "e83d3295abc4e32a5b4956be3c8e5bd229e0508c",
   "source_layout_commit": "7bf6b026a21e7996a367d6ae9b5862b3344bdd56",
   "source_layout_json_blob": "2c2c5474f2154ba1430549823a908996261572c8",
   "GO": 6541871017,
@@ -1478,7 +1478,7 @@
     }
   ],
   "source_input_closure": {
-    "qualification": "Exact112-file conservative native closure:109 unchanged historical407 inputs plus3 explicit native overrides (houses, softground and town). Current source is the genuine native-only child of the historical Q4 subject. All112 paths, actual size/mode/Gitblob and before/after raw SHA guards remain; historical import audit and Q1 failure are retained.",
+    "qualification": "Exact112-file conservative native closure:106 unchanged historical407 inputs plus6 explicit overrides (houses, softground, town, kit fills, path and worn recipes). All112 entries bind the current shared-material source a9bbb7d10e55d0b25b5d6408af5d5c3f1c4816cc by actual size/mode/Gitblob. Five entries changed since the historical Q5 closure; all107 others remain exact. Before/after raw SHA guards, historical import audit and Q1 failure are retained.",
     "files": [
       {
         "path": ".github/workflows/verify.yml",
@@ -1542,14 +1542,14 @@
       },
       {
         "path": "game/kit/pieces/terrain/path.json",
-        "blob": "d7eec9d1d293ed2974c85589240c66d2b6e35a29",
-        "bytes": 1691,
+        "blob": "5ddcede922f192ac50b04504e0c38272b84d0ad4",
+        "bytes": 1911,
         "mode": "100644"
       },
       {
         "path": "game/kit/pieces/terrain/worn.json",
-        "blob": "c21d2922c772d920630d2941caea37dc2c9b04de",
-        "bytes": 1752,
+        "blob": "beeeadbd5659deb9ef8b4040b4599a606f5cf94d",
+        "bytes": 1971,
         "mode": "100644"
       },
       {
@@ -1866,8 +1866,8 @@
       },
       {
         "path": "scripts/art/kit/fills.py",
-        "blob": "3cbde218f4ea757a7327887060a60dfd65138df4",
-        "bytes": 18297,
+        "blob": "53390e79ccf36a129c1daffed076c6450eef00c7",
+        "bytes": 18233,
         "mode": "100644"
       },
       {
@@ -2040,8 +2040,8 @@
       },
       {
         "path": "scripts/art/native/softground.py",
-        "blob": "1e0f24edfc8d95af56602c0f56d971d0f2150ea2",
-        "bytes": 112488,
+        "blob": "c884eb8b4af8c39aea444d7bc70e67c68e594af6",
+        "bytes": 118068,
         "mode": "100644"
       },
       {
@@ -2088,8 +2088,8 @@
       },
       {
         "path": "scripts/art/native/town.py",
-        "blob": "325b0cbf772df24c7d0d3045344794775da96bd5",
-        "bytes": 51840,
+        "blob": "31b2bb4601ad6770ec5e1e91f8acf853a163c8ce",
+        "bytes": 52290,
         "mode": "100644"
       },
       {
@@ -2736,5 +2736,60 @@
       "root_release": 6547990423
     },
     "status": "SOURCE_ONLY_UNRUN; actual new pixels, calmness/detail and threshold continuity require a separate allocated render."
+  },
+  "reusable_path_material_revision": {
+    "GO": 6557648261,
+    "ASSIGN": 6557654398,
+    "ACK": 6557654620,
+    "material_source_assignment": {
+      "ASSIGN": 6557496588,
+      "ACK": 6557499528,
+      "HANDOFF": 6557610270
+    },
+    "source_parent": "e19307388d09925b88d802d1319f56b18487b256",
+    "source_commit": "a9bbb7d10e55d0b25b5d6408af5d5c3f1c4816cc",
+    "source_tree": "e83d3295abc4e32a5b4956be3c8e5bd229e0508c",
+    "candidate_art": {
+      "packed_paths": true
+    },
+    "changed_source_paths": [
+      "scripts/art/native/softground.py",
+      "scripts/art/native/town.py",
+      "scripts/art/kit/fills.py",
+      "scripts/art/kit/bake.py",
+      "game/kit/pieces/terrain/path.json",
+      "game/kit/pieces/terrain/worn.json"
+    ],
+    "changed_input_paths": [
+      "game/kit/pieces/terrain/path.json",
+      "game/kit/pieces/terrain/worn.json",
+      "scripts/art/kit/fills.py",
+      "scripts/art/native/softground.py",
+      "scripts/art/native/town.py"
+    ],
+    "unchanged_Q5_input_count": 107,
+    "unchanged_historical407_input_count": 106,
+    "current112_raw_bytes": 3240518,
+    "shared_body_recipe": {
+      "seed": 43,
+      "fam": "path",
+      "cell": 14,
+      "joints": 1.1,
+      "lit": 0.8,
+      "stones": 0.45,
+      "blades": 0.6,
+      "soft_joints": true
+    },
+    "body_period_art_texels": 768,
+    "native_body_origin": "Existing plan origin_on_canvas world-pixel (x,y) multiplied by density; shared body sampled modulo768. This does not add a production editor-zone coordinate contract.",
+    "context_harness": {
+      "path": "scripts/art/kit/path_material_contexts.py",
+      "bytes": 16922,
+      "sha256": "9045976505bd389b14378f78bcb63c081c54b501f5d72fd001b4a138abe0468f",
+      "source_handoff": 6557607134,
+      "state": "SOURCE_ONLY_UNRUN"
+    },
+    "scope": "Shared periodic packed-soil body with broken shallow wear and local aggregate, no nearest-cell rims; same native/editor recipe and phase; packed path/worn receive one final bake treatment. Native rut brightening preserves relative tones and sibling families. Existing house forms/seeds, all routes/thresholds, object shadows, density, semantic IDs, physical gates and runtime limits are unchanged. Historical path_detail_revision remains Q5 evidence only.",
+    "status": "SOURCE_ONLY_UNRUN; actual new material pixels, matched-scale detail/cleanliness, native/periodic/bake context, path-to-yard seam and four doorstep contacts require separately allocated rendering. No editor-use, quality, terrain or Matt approval."
   }
 }
