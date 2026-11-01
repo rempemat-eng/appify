@@ -301,7 +301,7 @@ static func wait_for_editor_scene(plugin: EditorPlugin, expected_scene: String, 
 ## Receiving diagnostics only: scene/library loading already happened before this hook.
 static func _materials_evidence_start(ground: TerrainGround) -> Dictionary:
 	var report := {"path": "res://kit/terrain/materials.tres", "read_cap_bytes": 16384, "snapshot_limit": 4, "resource_limit": 8, "counter_limit": 65535,
-		"qualification": "Entry is AFTER existing scene/library loading; changed notifications are not engine edited flags. File observations are bounded, not atomic.", "snapshots": [], "errors": []}
+		"qualification": "Entry is AFTER existing scene/library loading; changed notifications and engine edited flags are observed separately. Flag and file observations are bounded, not atomic.", "snapshots": [], "errors": []}
 	var state := {"report": report, "resources": [], "handlers": [], "counts": {}}
 	if ground.kit == null or not ground.kit.tileset is TileSet:
 		report.errors.append("UNOBSERVED: existing shared TileSet unavailable.")
@@ -345,6 +345,7 @@ static func _materials_evidence_sample(state: Dictionary, label: String) -> void
 		var identity := resource.get_instance_id()
 		var count: Variant = state.counts.get(identity)
 		observation.resources.append({"instance_id": identity, "class": String(resource.get_class()).left(96), "path": resource.resource_path.left(256), "path_length": resource.resource_path.length(), "path_truncated": resource.resource_path.length() > 256,
+			"engine_edited": EditorInterface.is_object_edited(resource),
 			"changed_notifications": count, "counter_saturated": count != null and int(count) >= 65535})
 	var file := FileAccess.open("res://kit/terrain/materials.tres", FileAccess.READ)
 	if file == null:
