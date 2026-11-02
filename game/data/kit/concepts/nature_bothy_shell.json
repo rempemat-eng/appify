@@ -1,0 +1,97 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_bothy_shell",
+  "name": "Bothy and shepherd hut family",
+  "kind": "structure",
+  "biomes": [
+    "frostline",
+    "brackens"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "col_bothy",
+      "note": "Squat col shelter of rough stone with a heavy slate roof, a deeply inset door and a short chimney seated against the hill."
+    },
+    {
+      "id": "shepherd_hut",
+      "note": "Low shepherd shelter with a turf or slate roof, a modest side store and the door opening toward the drove path."
+    },
+    {
+      "id": "rain_shelter",
+      "note": "Open-fronted island rain shelter with timber supports and a broad pitched roof; leave its dry standing area visible beneath it."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      240,
+      204
+    ]
+  },
+  "placement": {
+    "role": "structure",
+    "ground": {
+      "allow": [
+        "stone",
+        "earth",
+        "turf"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "other_footprint"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Reuse rough shelter construction while keeping the named Col hut a site-specific assembly."
+  },
+  "audit": {
+    "size_class": "hut",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Reuse rough shelter construction while keeping the named Col hut a site-specific assembly.",
+      "Visual brief: Low stone wall mass, deeply inset dark door, squat chimney and a heavy slate or turf roof seen from above; place wood and rescue gear beside the door, never across its apron.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Size: hut 148-252 art px high, 178-296 wide; ordinary door leaf 70-96 high, 33-53 wide. Keep a 4x2-cell same-tier apron.",
+      "The monastery/Saddle House is a separate unapproved proposal, not a reskin of this approved geographic hut.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

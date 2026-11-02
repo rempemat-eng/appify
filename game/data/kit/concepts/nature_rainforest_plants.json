@@ -1,0 +1,93 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_rainforest_plants",
+  "name": "Rainforest crown and understorey family",
+  "kind": "prop",
+  "biomes": [
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "broadleaf",
+      "note": "Heavy broadleaf crown with layered leaf masses, a visible stem and broad contact shade on its rooted base."
+    },
+    {
+      "id": "palm",
+      "note": "Arcing palm fronds around a visible upright trunk, with separate near and far frond planes; obtain its own reviewed size range before art."
+    },
+    {
+      "id": "tree_fern",
+      "note": "Raised fern crown on a short fibrous trunk, with overlapping umbrella-like fronds and a dark centre."
+    },
+    {
+      "id": "understorey_fern",
+      "note": "Low fan-shaped fern clump with thick stems and several large leaf planes; keep it outside the clear route."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      204,
+      264
+    ]
+  },
+  "placement": {
+    "role": "tree",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "cluster",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Build humid island forest from three scales without hiding its walked route."
+  },
+  "audit": {
+    "size_class": "broadleaf",
+    "eastward_ref": "docs/vision/eastward-edges.md, references 02 and 22 (trunks on cells; organic crowns and undergrowth)",
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P2.",
+      "Purpose: Build humid island forest from three scales without hiding its walked route.",
+      "Visual brief: Broadleaf crowns, arcing palm fronds and heavy fern fans have visible stems, layered leaf planes and a grounded shaded base; keep fronds free of the grid while anchoring trunks on cells.",
+      "Source: docs/vision/regions/tidebloom-isles.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Size: broadleaf 148-311 art px high and 133-259 wide; fern 20-41 high and 24-52 wide. Palm needs a reviewed class/range before drawing; no invented exact palm gate.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_building_damage",
+  "name": "Storm damage overlay family",
+  "kind": "decal",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "village",
+    "valley"
+  ],
+  "variants": [
+    {
+      "id": "roof_slates",
+      "note": "Fallen slates keep the roof material and damage source."
+    },
+    {
+      "id": "door_boards",
+      "note": "Boards sit in front of the correct door and clear on its restore event."
+    },
+    {
+      "id": "storm_rubble",
+      "note": "Ground pile belongs to a damaged structure, not random route clutter."
+    }
+  ],
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "stage_damage",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "damaged_building",
+        "note": "Every overlay records its parent and matching broken-stage condition."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "door_apron",
+        "note": "Except a deliberate quest obstruction with a complete restore/route fixture."
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "free",
+    "stages": [
+      "broken"
+    ],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": "rubble",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P0",
+      "Purpose: Change restoration state while preserving the same building and door.",
+      "Visual brief: Broken slates follow the roof pitch, charred boards follow the facade and rubble rests on ground. A repaired stage removes the damage rather than replacing the building silhouette.",
+      "Size: Rubble 15–63 art px high and 37–133 wide; roof damage clipped to its parent facade.",
+      "Source: game/data/plans/crossroads.json stages/restore sites; vertical-slice.md",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Stage dependency: parent restore condition controls overlay, collision and interaction together; no new cost or restoration quest."
+    ]
+  }
+}

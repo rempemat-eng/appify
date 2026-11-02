@@ -1,0 +1,101 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_temperate_trees",
+  "name": "Temperate tree family expansion",
+  "kind": "prop",
+  "biomes": [
+    "woodland",
+    "valley",
+    "crossroads"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "oak",
+      "note": "Broad oak crown in several heavy lobes, rough visible trunk and flared roots; warm upper planes sit over deep leaf pockets."
+    },
+    {
+      "id": "beech",
+      "note": "Smoother beech crown with narrower linked masses and a clean pale trunk entering leaf litter."
+    },
+    {
+      "id": "birch",
+      "note": "Slender pale birch trunk and a lighter narrow crown, with small dark bark breaks; use the birch size class on promotion."
+    },
+    {
+      "id": "pollard_willow",
+      "note": "Heavy pollard head with long drooping willow shoots above a wet-bank root flare; use the willow size class rather than the broadleaf envelope."
+    },
+    {
+      "id": "orchard",
+      "note": "Low branching orchard tree with a broad accessible canopy and a legible trunk fork; fruit, if shown, remains quiet stage dressing."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      192,
+      240
+    ]
+  },
+  "placement": {
+    "role": "tree",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "cluster",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Complete mixed tree edges from the existing oak, beech and birch rather than add another forest painter."
+  },
+  "audit": {
+    "size_class": "broadleaf",
+    "eastward_ref": "docs/vision/eastward-edges.md, references 02 and 22 (trunks on cells; organic crowns and undergrowth)",
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P0.",
+      "Purpose: Complete mixed tree edges from the existing oak, beech and birch rather than add another forest painter.",
+      "Visual brief: Each crown is an organic scalloped volume with warm upper-left planes, cool depth between leaf masses, a trunk visibly entering its own roots and a crown-shaped cast shadow. Pollard and orchard forms differ in silhouette.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md; docs/world-editor.md; docs/vision/eastward-edges.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Reuse: woodland_oak, woodland_beech, woodland_birch, woodland_willow, woodland_sapling; do not create near-duplicate entries after their approvals.",
+      "Size: broadleaf 148-311 art px high and 133-259 wide; birch/willow variants must use their own size classes, not the nominal broadleaf envelope.",
+      "Draw three or more species/sizes for a tree wall; never more than three identical crowns consecutively.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

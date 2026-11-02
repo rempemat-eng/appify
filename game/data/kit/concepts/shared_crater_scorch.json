@@ -1,0 +1,94 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_crater_scorch",
+  "name": "Homeward shard-scorch dressing",
+  "kind": "decal",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "valley",
+    "frostline",
+    "brackens",
+    "sunstone",
+    "fire_country",
+    "tidebloom",
+    "cogsworth",
+    "neon",
+    "lumen"
+  ],
+  "variants": [
+    {
+      "id": "fresh",
+      "note": "Scorch with occasional recessed glass."
+    },
+    {
+      "id": "cooled",
+      "note": "Dark seams retain direction with less local glow."
+    },
+    {
+      "id": "recovered",
+      "note": "Local vegetation returns at the edges; existing story state only."
+    }
+  ],
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "crater_dressing",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "within",
+        "what": "shard_crater",
+        "note": "Direction is a world-space vector to the valley, not a per-tile random facing."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_centre"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "free",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P1",
+      "Purpose: Connect different regional craters through one restrained visual language.",
+      "Visual brief: Violet-gold glass flecks embedded in the local ground and long fracture/scorch strokes directed toward the valley; geology remains visible between marks.",
+      "Size: Composition follows a named crater footprint; flecks stay below the 74-art-px hero and never resemble collectible shards.",
+      "Source: world-and-cast.md The device in full (proposed visual channel beyond decided device)",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Proposal: requires story/art approval of the regional crater and state mapping; no damage zone, harvest or reward is implied.",
+      "Each crater bowl and boss arena is custom; only the glass vocabulary and decal recipe repeat."
+    ]
+  }
+}

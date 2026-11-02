@@ -1,0 +1,89 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_frostline_tarn_headwall",
+  "name": "Snowmelt Lake headwall composition",
+  "kind": "structure",
+  "biomes": [
+    "frostline"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "late_snow",
+      "note": "Asymmetric rock bowl with patchy late snow in shaded grooves, a moraine toe and a visible tarn outlet below the headwall."
+    },
+    {
+      "id": "shard_state",
+      "note": "The same cirque geometry with any story-specific shard treatment confined to an authored overlay after story approval; the water outlet and routes stay clear."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "landmark",
+    "ground": {
+      "allow": [
+        "rock"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "within",
+        "what": "closed_cirque",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      },
+      {
+        "rel": "adjacent",
+        "what": "water_outlet",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_occlusion"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "composition": "centre",
+    "stages": [],
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Snowmelt Lake is the source-country landmark. The Rime Wyrm story is sourced from world-and-cast proposal; its arena must be authored separately."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom. One authored site composition; repeated construction components remain shared.",
+      "Priority: P1.",
+      "Purpose: Frame the source of the Sleepwater and the cirque as one memorable landform built from shared snow, rock and water.",
+      "Visual brief: An asymmetric rock bowl with dark vertical bands, patchy late snow, a moraine toe and a calm tarn reflecting the headwall. The outlet is visible; a distant glacier and peaks continue beyond the playable edge.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Composite scene, not a single giant PNG or placeable cliff tile. Use root catalogue rock-cliff/tier primitives; custom outline and vista only.",
+      "Per-zone maximum: 1; preserve routes, declared water source and actor space in the authored plan.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

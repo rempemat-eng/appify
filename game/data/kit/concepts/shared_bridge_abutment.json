@@ -1,0 +1,100 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_bridge_abutment",
+  "name": "Bridge abutments and landing pair",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "valley",
+    "woodland",
+    "coast",
+    "tidebloom",
+    "cogsworth",
+    "lull",
+    "sunstone"
+  ],
+  "variants": [
+    {
+      "id": "timber",
+      "note": "Bank piles support a timber sill, with rails on both sides."
+    },
+    {
+      "id": "stone",
+      "note": "Squared shoulders and coping on masonry banks."
+    }
+  ],
+  "geometry": {
+    "z_sort": "foot",
+    "size_cells": [
+      3,
+      2
+    ]
+  },
+  "placement": {
+    "role": "deck_support",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "bank",
+        "note": "Both ends touch land at the same deck tier."
+      },
+      {
+        "rel": "on",
+        "what": "water",
+        "note": "Only the explicitly marked deck may override blocked water."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "waterfall_lip"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P0",
+      "Purpose: Make deck kits meet two supported banks rather than float over a water image.",
+      "Visual brief: Two load-bearing timber sills or stone shoulders; beam underside and its shadow remain visible, with rail caps independent of walkable deck.",
+      "Size: Deck width 2/3/4 cells; 1-cell stepping stones are a separate approved feature. Length equals the measured bank gap.",
+      "Source: docs/world-editor.md Crossings; ground-rules.md Water and Routes",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Widths: 2, 3 and 4 cells must match the route and the existing footbridge family; length is site data, not an arbitrary stretched picture.",
+      "Reuse woodland_footbridge and footbridge_2/footbridge_4 after their own approval, not an unreviewed replacement."
+    ]
+  }
+}

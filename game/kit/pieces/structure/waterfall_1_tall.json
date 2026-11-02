@@ -1,0 +1,122 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "waterfall_1_tall",
+ "name": "Waterfall, 1 cells, a two-tier drop",
+ "kind": "structure",
+ "biomes": [
+  "woodland",
+  "valley",
+  "highland"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "w1",
+   "weight": 1.0,
+   "png": "res://kit/props/art/waterfall_1_tall.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "ground-rules.md 2 (rules.water_fall), eastward-edges.md 5.3",
+  "note": "the woodland's painted cascade as a piece over a face of 4 cells"
+ },
+ "geometry": {
+  "size_px": [
+   72,
+   142
+  ],
+  "size_cells": [
+   1,
+   4
+  ],
+  "foot": [
+   36.0,
+   108.0
+  ],
+  "z_sort": "ground",
+  "collision": {
+   "shape": "none"
+  },
+  "footprint": [
+   [
+    0,
+    -4
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "role": "waterfall",
+  "snap": "cell",
+  "requires": [
+   {
+    "rel": "on",
+    "what": "face",
+    "note": "its footprint is the face under water crossing a south rim"
+   },
+   {
+    "rel": "under",
+    "what": "water",
+    "note": "water on the tier above, as wide as the fall"
+   }
+  ],
+  "composition": "axis"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": false,
+  "paint": {
+   "module": "scripts.art.native.rocks",
+   "fn": "fall",
+   "args": {
+    "seed": 10,
+    "face_px": 96
+   }
+  },
+  "animations": [
+   {
+    "clip": "fall",
+    "loop": true,
+    "reduced_motion": "hold:0",
+    "on_screen_only": true
+   }
+  ]
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.native.water",
+   "fn": "fall_hd",
+   "args": {
+    "seed": 66
+   }
+  },
+  "seeded_from": "scripts/art/kit/structures.py",
+  "todo": [
+   "the falling animation (the woodland flow strip)"
+  ]
+ }
+}

@@ -1,0 +1,165 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_bush_nonblocking",
+ "name": "Bush",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "bush_14",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_14.png",
+   "foot": [
+    57,
+    73
+   ]
+  },
+  {
+   "id": "bush_15",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_15.png",
+   "foot": [
+    57,
+    73
+   ]
+  },
+  {
+   "id": "bush_16",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_16.png",
+   "foot": [
+    57,
+    73
+   ]
+  },
+  {
+   "id": "bush_17",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_17.png",
+   "foot": [
+    57,
+    73
+   ]
+  },
+  {
+   "id": "bush_18",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_18.png",
+   "foot": [
+    57,
+    73
+   ]
+  },
+  {
+   "id": "bush_22",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_22.png",
+   "foot": [
+    57,
+    73
+   ]
+  },
+  {
+   "id": "bush_23",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_23.png",
+   "foot": [
+    57,
+    73
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   112,
+   91
+  ],
+  "size_cells": [
+   5,
+   4
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   57,
+   73
+  ],
+  "footprint": []
+ },
+ "placement": {},
+ "rendering": {},
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "bush_14",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_15",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_16",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_17",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_18",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_22",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_23",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

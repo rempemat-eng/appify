@@ -1,0 +1,81 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_coal_spoil",
+  "name": "Coal and shale spoil surface",
+  "kind": "terrain",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "coal_hills",
+    "cogsworth"
+  ],
+  "variants": [
+    {
+      "id": "shale",
+      "note": "Angular shale plates."
+    },
+    {
+      "id": "coal",
+      "note": "Coal-rich dark band."
+    },
+    {
+      "id": "weathered",
+      "note": "Weeds only at the toe and old stable slopes."
+    }
+  ],
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "rock",
+        "cells": 1,
+        "note": "A heap meets the ground or a supported hill toe; never floats over a route."
+      }
+    ],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": false,
+    "cast_shadow": {
+      "shape": "none"
+    }
+  },
+  "function": {},
+  "story": {
+    "lore": "Give spoil heaps and mine yards a recognisable material while reusing the hill geometry."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Give spoil heaps and mine yards a recognisable material while reusing the hill geometry.",
+      "Visual brief: Broad charcoal and brown shale masses, a few fractured plates and subdued glints; face texture follows gravity without turning every clod into a black pixel.",
+      "Source: docs/vision/regions/cogsworth-plan.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Widths: Whole-cell patches; narrow seams are decals, not a new one-cell walking route.",
+      "Schema/runtime intake: concept state is not yet in the base schema. Material IDs, render priorities and painters are deliberately unallocated; terrain/transition runtime blocks await the schema owner and art review.",
+      "Reuse candidate: scree for coarse shape and ground grain; different material only if the coal ramp and seam read require it.",
+      "Rule proposal: a spoil-heap crest is not walkable by appearance alone; any accessible upper tier has its own stair and tier metadata."
+    ]
+  }
+}

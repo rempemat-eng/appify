@@ -2521,9 +2521,114 @@ def p_debris(w, h, seed, hd=False):
     return finish(p)
 
 def p_cart(w, h, seed):
-    """A handcart left in the square when the village ran: a bed of boards with side rails and nails,
-    its shafts on the ground, a sack and a crate on it, one iron-tyred wheel side on with hub and six
-    spokes."""
+    """The same parked handcart: at density 3 the shafts lap into the underframe, a bearing
+    carries the axle, and the bed, end boards and wheel have separate material planes. Wear
+    follows joints and handholds; the existing load, canvas and ground anchor stay in place.
+    Lower densities retain their original drawing below."""
+    if D >= 2.5:
+        rng = np.random.default_rng(seed)
+        p = _pic(w, h, up=18, side=7)
+        a, cx, yb = p.a, p.ax, p.ay
+        Y, X = grid(a)
+        x0, x1 = cx - q(w / 2), cx + q(w / 2)
+        wc = (cx + q(w * 0.12), yb - q(6))
+        R = q(6)
+
+        # Shafts are continuous timbers, not detached diagonal marks. Their inner ends
+        # continue behind the front boards and lap into the cross rail.
+        for dy in (0, q(3)):
+            sy = yb - q(1.5) - dy
+            board(a, x0 - q(6), sy, q(16), q(1.6), -38,
+                  'timber', 3, rng, split=False)
+            bar(a, x0 - q(5.8), sy + 2, x0 - q(4.3), sy - q(1),
+                1.0, 'timber_warm', 3)
+        board(a, x0 + q(1), yb - q(8), x1 - x0 - q(2), q(2.2),
+              0, 'timber_cool', 2, rng, split=False)
+        bar(a, x0 + q(1), yb - q(7), wc[0], yb - q(12),
+            q(0.8), 'timber', 2)
+        bar(a, x0 + q(3), wc[1], wc[0] + q(1), wc[1],
+            q(0.8), 'iron', 1)
+        bar(a, x0 + q(3), wc[1] - 1, wc[0], wc[1] - 1,
+            1.0, 'iron', 3)
+
+        # Back rail, exposed floor, front boards, dark east end and the underside.
+        # Board grain stays inside its actual face; no texture over every plane.
+        box_hd(a, x0, x1, yb - q(18), yb - q(16), q(0.8),
+               ('timber_cool', 'timber', 'timber_warm'), base=2.8, side=q(1.5))
+        top, front, east = box_hd(a, x0, x1, yb - q(16.5), yb - q(8), q(4),
+                                   ('timber_cool', 'timber', 'timber_warm'), base=2.8, side=q(2))
+        for k in range(3):
+            board(a, x0 + 1, yb - q(16) + k * q(1.2), x1 - x0 - 2,
+                  q(1.1), 0, 'timber', 3, rng, split=False, where=top)
+            board(a, x0 + 1, yb - q(12.4) + k * q(1.5), x1 - x0 - 2,
+                  q(1.4), 0, 'timber_warm' if k == 1 else 'timber', 3,
+                  rng, split=(k == 2), where=front)
+        fill(a, x0, yb - q(8) - 2, x1, yb - q(8), code('timber_cool', 0))
+        # End grain at the narrow side, with interrupted checks rather than bright stripes.
+        for yy in (yb - q(11), yb - q(9.5)):
+            fill(a, x1 - q(1.6), yy, x1 - 1, yy + 1, code('timber', 1), where=east)
+
+        # Corner stiles reach the cross rail. Iron straps and paired fasteners explain
+        # the join; only the top edge of each strap catches light.
+        for xx in (x0 + 1, x1 - q(1.5)):
+            box_hd(a, xx, xx + q(1.2), yb - q(17), yb - q(7), q(0.7),
+                   ('timber_cool', 'timber', 'timber_warm'), base=2.6, side=1)
+            fill(a, xx, yb - q(13.5), xx + q(1.2), yb - q(12.5), code('iron', 1))
+            fill(a, xx, yb - q(13.5), xx + q(1.2) - 1, yb - q(13.5) + 1, code('iron', 3))
+            for yy in (yb - q(16), yb - q(10)):
+                nail(a, xx, yy, rust=False)
+        board(a, x0, yb - q(16.5), x1 - x0, q(1.4), 0,
+              'timber_warm', 3, rng, split=False, grain=False)
+        for xx, yy, ln in ((x0 + q(2), yb - q(16.5), q(2)),
+                           (x1 - q(5), yb - q(12.4), q(1.2))):
+            fill(a, xx, yy, xx + ln, yy + 1, code('timber_warm', 4))
+            fill(a, xx + ln - 2, yy + 1, xx + ln, yy + 2, code('timber', 2))
+
+        # Keep the old sack/crate load in its original position. Shade only this
+        # local sack; shared sack() and every other caller remain unchanged.
+        scx, scy = x0 + q(w * 0.35), yb - q(19.5)
+        rx, ry = q(4.2), q(3.4)
+        sack(a, scx, scy, rx, ry, fam='sand')
+        nx, ny = (X - scx) / rx, (Y - scy) / ry
+        d = nx * nx + ny * ny
+        cloth = d <= 1
+        paint(a, cloth, ('sand_cool', 'sand', 'sand_warm'),
+              2.2 + 1.8 * lam(nx, ny * 0.8, np.sqrt(np.clip(1 - d, 0, 1))), lo=1, hi=4)
+        seam = cloth & (np.abs(nx - 0.35 - ny * 0.15) < 0.06) & (ny > -0.6)
+        _step(a, seam, -1)
+        bar(a, scx - q(1), scy - ry + 1, scx - q(2), scy - q(0.5),
+            0.8, 'sand', 2, where=cloth)
+        prism(a, x1 - q(9), yb - q(22), x1 - q(2), yb - q(16.5),
+              q(1.6), 'timber', 3, side=q(1))
+        bar(a, x1 - q(8), yb - q(17.2), x1 - q(3.2), yb - q(20.7),
+            1.0, 'timber_warm', 2)
+        for xx in (x1 - q(8), x1 - q(3.5)):
+            nail(a, xx, yb - q(18), rust=False)
+
+        # A visible bearing joins the axle to the underframe, behind the near wheel.
+        box_hd(a, wc[0] - q(1.8), wc[0] + q(1.8), wc[1] - q(2.8), wc[1] + q(1),
+               q(0.7), 'iron', base=2.0, side=q(0.7))
+        radial = np.sqrt((X - wc[0]) ** 2 + (Y - wc[1]) ** 2)
+        tyre = (radial <= R) & (radial > R - q(1))
+        felloe = (radial <= R - q(1)) & (radial > R - q(2.2))
+        paint(a, felloe, ('timber_cool', 'timber', 'timber_warm'),
+              2.5 - 0.7 * (X - wc[0]) / R - 0.6 * (Y - wc[1]) / R)
+        paint(a, tyre, 'iron', 1.6 - 0.9 * (X - wc[0]) / R - 0.8 * (Y - wc[1]) / R)
+        # Six load-bearing spokes meet six wooden felloe joints, not a solid wheel disk.
+        for k in range(6):
+            ang = k * math.pi / 3
+            ex, ey = math.cos(ang), math.sin(ang)
+            joint = seg_mask(a.shape, wc[0] + ex * (R - q(2.3)), wc[1] + ey * (R - q(2.3)),
+                             wc[0] + ex * (R - q(0.9)), wc[1] + ey * (R - q(0.9)), 0.6)
+            _step(a, joint & felloe, -1)
+            bar(a, wc[0], wc[1], wc[0] + ex * (R - q(2)), wc[1] + ey * (R - q(2)),
+                max(1.2, q(0.5)), 'timber_warm', 3)
+        blob(a, ellipse_mask(a.shape, wc[0], wc[1], q(2), q(2)), 'timber', 2)
+        blob(a, ellipse_mask(a.shape, wc[0], wc[1], q(1.2), q(1.2)), 'iron', 2)
+        fill(a, wc[0] - 1, wc[1] - 2, wc[0] + 1, wc[1], code('iron', 4))
+        fill(a, wc[0] - 1, wc[1] + 1, wc[0] + 2, wc[1] + 2, code('iron', 0))
+        return finish(p)
+
     rng = np.random.default_rng(seed)
     p = _pic(w, h, up=18, side=7)
     a, cx, yb = p.a, p.ax, p.ay
@@ -3019,33 +3124,57 @@ def p_hay_hd(w, h, seed):
 
 
 def p_sacks_hd(w, h, seed, hd=False):
-    """Seed sacks, two on the ground and one lying on them: each a soft volume (lit cap upper left,
-    the core shadow low right, a bounce at the rim), burlap weave drawn as a fine cross of tone
-    steps, a seam, folds running to the tied neck, the top sack's shadow on those under it."""
+    """The existing three-sack group: slumped shoulders, gathered mouths and stitched seams.
+    Folds converge on each tie; broad cloth planes stay quiet, with short weave clusters only
+    beside the seam. Overlap shade belongs to the sacks below, never to empty ground."""
     rng = np.random.default_rng(seed)
     p = _pic(w, h, up=12, side=2)
     a, cx, yb = p.a, p.ax, p.ay
     Y, X = grid(a)
-    weave = ((X.astype(int) + Y.astype(int)) % 3 == 0) | ((X.astype(int) - Y.astype(int)) % 4 == 0)
     sacks = ((-0.25, 0.0, 1.0), (0.22, 0.0, 0.9), (0.0, -1.0, 0.85))
     for k, (dx, dy, s_) in enumerate(sacks):
         scx, rx, ry = cx + q(w * dx), q(4.2 * s_), q(4.6 * s_)
         scy = yb - q(5 * s_) - (q(4.0 if hd else 5.5) if dy else 0)      # (scale gate: the top sack slumps, about 40 tall)
-        nx, ny = (X - scx) / rx, (Y - scy) / ry
+        ny = (Y - scy) / ry
+        # Narrow the shoulders inside the old radii; the weighted lower body stays broad.
+        nx = (X - scx) / (rx * (1 - 0.12 * np.clip(-ny, 0, 1)))
         d = nx * nx + ny * ny
         m = d <= 1
-        t = 2.8 + 2.4 * lam(nx, ny * 0.8, np.sqrt(np.clip(1 - d, 0, 1))) + 0.6 * (d > 0.82) * (nx > 0.2)
-        t = t - 0.6 * weave
-        paint(a, m, ('sand_cool', 'sand', 'sand_warm'), t - 0.5)
-        fold = m & (np.abs(X - scx - rx * 0.15 - (Y - scy) * 0.25) < 0.7) & (Y > scy - ry * 0.5)
-        a[fold] = a[fold] - 1 * ((a[fold] % 8) > 0)
+        # Contact shade is clipped to already occupied cloth, offset down/east from this bag.
+        contact = ellipse_mask(a.shape, scx + 1, scy + 2, rx + 1, ry + 1) & ~m & (a >= 0) & (Y > scy)
+        _step(a, contact, -1)
+        t = 2.2 + 1.8 * lam(nx, ny * 0.8, np.sqrt(np.clip(1 - d, 0, 1)))
+        t -= 0.5 * (ny > 0.65)                         # the compressed, weighted foot
+        paint(a, m, ('sand_cool', 'sand', 'sand_warm'), t, lo=1, hi=4)
+        # Three shallow gathers: dark trough and short raised lip, not stripe texture.
+        for reach in (-0.55, 0.12, 0.55):
+            fx = scx + rx * reach * np.clip((ny + 1) / 1.4, 0, 1)
+            fold = m & (np.abs(X - fx) < 0.65) & (ny > -0.8) & (ny < 0.25)
+            lip = m & (X >= fx - 1.8) & (X < fx - 0.65) & (ny > -0.55) & (ny < -0.05)
+            _step(a, fold, -1)
+            _step(a, lip & (a % 8 < 4), 1)
+        seam_x = scx + rx * (0.38 + 0.1 * ny * ny)
+        seam = m & (np.abs(X - seam_x) < 0.65) & (ny > -0.45) & (ny < 0.78)
+        _step(a, seam, -1)
+        # Paired stitches and a few weave runs are attached to the seam, never a full lattice.
+        for f in (-0.25, 0.05, 0.35, 0.6):
+            sy = int(scy + ry * f)
+            sx = int(scx + rx * (0.38 + 0.1 * f * f))
+            fill(a, sx - 2, sy, sx, sy + 1, code('sand', 3), where=m)
+            fill(a, sx - 2, sy + 1, sx - 1, sy + 2, code('sand', 2), where=m)
+        for _ in range(2):
+            sy = int(scy + ry * rng.uniform(0.1, 0.55))
+            sx = int(scx - rx * rng.uniform(0.15, 0.45))
+            fill(a, sx, sy, sx + 2, sy + 1, code('sand', 2), where=m)
+            fill(a, sx, sy + 1, sx + 1, sy + 2, code('sand', 3), where=m)
         neck = (np.abs(X - scx) < q(1.3)) & (Y >= scy - ry - q(1.6)) & (Y < scy - ry + 1)
-        paint(a, neck, ('sand_cool', 'sand', 'sand_warm'), 3.0 - 1.5 * (X > scx))
+        paint(a, neck, ('sand_cool', 'sand', 'sand_warm'), 2.8 - 1.2 * (X > scx))
+        _step(a, neck & (np.abs(X - scx + 1) < 0.6), -1)
         tie = (np.abs(X - scx) < q(1.4)) & (np.abs(Y - (scy - ry)) < 1)
-        a[tie] = code('timber_warm', 2)
-        if dy:                                                         # its shade on the sacks below
-            under = (np.abs(X - scx - q(1)) < rx) & (Y > scy + ry * 0.6) & (Y < scy + ry + q(1.2)) & (a >= 0) & ~m
-            a[under] = a[under] - 1 * ((a[under] % 8) > 0)
+        a[tie] = code('timber', 1)
+        a[tie & (Y < scy - ry)] = code('timber_warm', 3)
+        blob(a, ellipse_mask(a.shape, scx + 1, scy - ry, 1.5, 1), 'timber_warm', 2)
+        bar(a, scx, scy - ry + 1, scx - 2, scy - ry + 4, 0.8, 'timber', 2, where=m)
     return finish(p)
 
 
@@ -3215,6 +3344,91 @@ def p_grindstone_hd(w, h, seed):
     return finish(p)
 
 
+def p_bench_side_hd(w, h, seed, facing='east'):
+    """The house bench turned side on (Matt, 26 Oct: benches face the well), its sitter looking
+    `facing` (east or west): in our oblique view a plane running north to south shows only its
+    top, so the seat is three planks seen from above running north to south, the back a narrow
+    rail standing up along the far side (its top arris lit), the posts rising above the seat at
+    each end, and only the south end shows its height: the seat's end grain, the two south legs
+    and the stretcher between them. Lit from the west whichever way it faces."""
+    rng = np.random.default_rng(seed)
+    L, dep = 18.0, 6.0                                                 # world px: length (north-south), depth
+    p = _pic(dep, L, up=13, side=1)
+    a, cx, yb = p.a, p.ax, p.ay
+    Y, X = grid(a)
+    tf = ('timber_cool', 'timber', 'timber_warm')
+    x0, x1 = cx - q(dep / 2), cx + q(dep / 2)
+    bw = q(1.4)                                                        # the back rail's width
+    back_w = facing == 'east'                                          # the back on the west side
+    bx0 = x0 if back_w else x1 - bw
+    sx0, sx1 = (x0 + bw - 1, x1) if back_w else (x0, x1 - bw + 1)     # the seat under the back's foot
+    yN = yb - q(L)
+    zs, zb = q(7), q(13)
+    ys0, ys1 = yN - zs, yb - zs                                        # the seat's top plane on screen
+    th = q(1.2)                                                        # the seat's thickness
+    lw = q(1.5)
+
+    def leg(px, top, base):
+        m = (X >= px) & (X < px + lw) & (Y >= top) & (Y < yb)
+        t = np.where(X < px + max(1, q(0.5)), base + 1.2, np.where(X >= px + lw - max(1, q(0.5)), base - 1.0, base))
+        paint(a, m, tf, t - 0.8 * (Y >= yb - q(0.6)))
+    # the far (north) post shows above the seat; the back rail runs along the seat's far side
+    post = (X >= bx0) & (X < bx0 + bw)
+    paint(a, post & (Y >= yN - zb) & (Y < ys0 + 1), tf, np.where(X < bx0 + 1, 4.0, 2.6))
+    # the seat: three planks from above, a dark gap between, the end grain lit at the south end
+    a[(X >= sx0) & (X < sx1) & (Y >= ys0) & (Y < ys1)] = code('timber', 0)
+    pw = (sx1 - sx0) / 3.0
+    for k in range(3):
+        px0 = int(round(sx0 + k * pw))
+        px1 = int(round(sx0 + (k + 1) * pw)) - (1 if k < 2 else 0)
+        m = (X >= px0) & (X < px1) & (Y >= ys0) & (Y < ys1)
+        base = (5.0, 4.4, 4.0)[k] if back_w else (4.6, 4.2, 3.6)[k]
+        t = np.full(a.shape, base)
+        t = np.where(X == px0, base + 0.6, t)                          # a lit west arris
+        t = np.where(X == px1 - 1, base - 1.2, t)
+        t = np.where(Y < ys0 + 2, base + 0.4, t)                       # the sawn north end
+        # grain: short runs along the plank
+        gr = (np.abs(X - (px0 + px1) / 2.0) < 0.6) & ((((Y - ys0) // max(4, q(3))) + k) % 3 == 0)
+        t = np.where(gr, t - 1.0, t)
+        paint(a, m, ('timber_warm', 'timber_warm', 'timber_warm') if k == (0 if back_w else 2) else tf, t)
+    # the seat's south end: its end grain (lit) and the shade under it
+    endm = (X >= sx0) & (X < sx1) & (Y >= ys1) & (Y < ys1 + th)
+    paint(a, endm, tf, np.where(Y < ys1 + 1, 3.8, 3.0) + 0.6 * (X < sx0 + q(1.0)))
+    # the back rail: its top seen from above along the far side, the rear post running down to the
+    # ground at the south end (the back stands in front of nothing: it shows as one upright band)
+    rail = post & (Y >= yN - zb) & (Y < ys1 - (zb - zs) + q(1.6))
+    paint(a, rail, tf, np.where(X < bx0 + 1, 4.4, np.where(X >= bx0 + bw - 1, 2.2, 3.4)))
+    a[rail & (Y >= yN - zb) & (Y < yN - zb + 1)] = code('timber_warm', 5)
+    for ry in (yN - zb + q(2.4), ys1 - (zb - zs) - q(1.2)):            # pegs where the rails meet the posts
+        fill(a, bx0 + bw // 2 - 1, int(ry), bx0 + bw // 2 + 1, int(ry) + 2, code('timber_cool', 2))
+    rpost = post & (Y >= ys1 - (zb - zs)) & (Y < yb)
+    paint(a, rpost, tf, np.where(X < bx0 + 1, 3.8, 2.4) - 0.8 * (Y >= yb - q(0.6)))
+    # the front south leg under the seat's outer edge, then the stretcher to the rear post
+    fx = sx1 - lw if back_w else sx0
+    leg(fx, ys1 + th, 2.8)
+    sy = yb - q(2.6)
+    lo, hi = (bx0 + bw, fx) if back_w else (fx + lw, bx0)
+    st = (X >= lo) & (X < hi) & (Y >= sy) & (Y < sy + q(1.0))
+    paint(a, st, tf, np.where(Y < sy + 1, 3.6, 2.4))
+    sh = (X >= sx0) & (X < sx1) & (Y >= ys1 + th) & (Y < ys1 + th + q(1.0)) & (a >= 0)
+    a[sh] = a[sh] - 2 * ((a[sh] % 8) > 1)
+    for px in (fx, bx0):                                               # contact shade at the south feet
+        foot = (X >= px - 1) & (X < px + lw + 1) & (Y >= yb) & (Y < yb + 1) & (a < 0)
+        a[foot] = code('earth_cool', 1)
+    # the story of use: nail heads where the planks cross the end bearers, a seat patch worn pale
+    for yk in (ys0 + q(1.6), ys1 - q(1.8)):
+        for k in range(3):
+            nx_ = int(sx0 + (k + 0.5) * pw)
+            fill(a, nx_, int(yk), nx_ + 2, int(yk) + 2, code('iron', 1))
+            fill(a, nx_, int(yk), nx_ + 1, int(yk) + 1, code('iron', 3))
+    sx_ = (sx0 + sx1) / 2.0
+    for sy_ in (ys0 + (ys1 - ys0) * 0.32, ys0 + (ys1 - ys0) * 0.68):
+        wm = ((X - sx_) / q(1.4)) ** 2 + ((Y - sy_) / q(2.6)) ** 2 <= 1
+        wm &= (a % 8 >= 3) & (a % 8 <= 4) & (rng.random(a.shape) < 0.55) & (Y >= ys0) & (Y < ys1)
+        a[wm] = a[wm] + 1
+    return finish(p)
+
+
 PROPS_HD = {
     'barrel': p_barrel_hd,
     'anvil': p_anvil_hd,
@@ -3224,5 +3438,7 @@ PROPS_HD = {
     'hay': p_hay_hd,
     'sacks': p_sacks_hd,
     'bench': p_bench_hd,
+    'bench_side_e': lambda w, h, s: p_bench_side_hd(w, h, s, facing='east'),
+    'bench_side_w': lambda w, h, s: p_bench_side_hd(w, h, s, facing='west'),
     'grindstone': p_grindstone_hd,
 }
