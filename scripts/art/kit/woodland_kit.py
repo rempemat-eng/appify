@@ -60,7 +60,7 @@ def cells_of(plan) -> np.ndarray:
     river &= ~SG.cells_rects(s['river'].get('cut', []), h, w)
     wat = keep_width(river, s['river']['cells'])
     wat |= SG.cells_rects(s['pool'], h, w)
-    wat |= SG.cells_route(s['rill']['points'], s['rill']['cells_plan'], h, w)
+    wat |= SG.cells_route(RILL, s['rill']['cells_plan'], h, w)
     # the rill runs on into the pool where the woodland's fall drops (the fall itself is a piece to come)
     f = plan['water']['fall']
     wat |= SG.cells_rects([[f['x0'], f['y0'], f['w'], f['y1'] - f['y0']]], h, w)
@@ -108,8 +108,13 @@ def smooth_cells(m: np.ndarray, passes: int = 3) -> np.ndarray:
 # in an unrealistic way on the top bit"): the face is one tier (two cells) high, the height a face
 # strip draws (a two-tier drop drew its lower half as a dark band), its rim two cells further south
 # so the fall still lands in the same pool
-RAISED = (0, 12, 0, 33)          # columns x0..x1, rows y0..y1 (cells, exclusive ends)
-LEVEL = 1                        # one tier up: a face two cells high
+RAISED = (0, 12, 0, 31)          # columns x0..x1, rows y0..y1 (cells, exclusive ends)
+LEVEL = 2                        # two tiers up: a face four cells high, tall enough to read as a fall
+                                 # (faces taller than their strip render whole since 2 Nov)
+# the rill straight down its line from the escarpment to the fall (the painted plan's two jogs of
+# two cells read as abrupt sideways steps in the kit's soft grid, Claude A 2 Nov); centred on the
+# fall's columns so the channel keeps its line and width over the rim
+RILL = [[80, -8], [80, 256]]
 GLADE_END = (128, 150, 18, 13)   # the trodden ground where the north path opens into the glade (world px)
 # pieces of the base scene moved off what they must not stand on (texels): a bush off the face,
 # the willow (it stood far from water with its trunk on a path) to the river's south bank, the east stone of the ring clear of the north-south path

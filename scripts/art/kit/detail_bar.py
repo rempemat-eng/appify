@@ -166,7 +166,9 @@ def regions(plan: dict, H: int, W: int) -> dict:
     for p in plan.get('pieces', []):
         if (((lib.get(p['piece']) or {}).get('rendering') or {}).get('paint') or {}).get('fn') == 'fall':
             x, y = p['at']
-            falls[max(0, y - 72):y + 48, max(0, x - 60):x + 60] = True
+            # the whole face it falls over (two cells a tier) and a cell above its rim
+            up = int(((lib.get(p['piece']) or {}).get('geometry') or {}).get('size_cells', [0, 2])[1]) * CELL + CELL
+            falls[max(0, y - max(72, up)):y + 48, max(0, x - 60):x + 60] = True
     out['_falls'] = falls
     return out
 

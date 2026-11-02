@@ -267,13 +267,32 @@ def bake(plan: dict, lib: dict | None = None):
         # the top's west and east edges a wall 4 px across on the lower turf, the west one lit, the
         # east one in shade, a dark line outside, the top's edge column a lit lip
         turf_l = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~tm & ~_face
+        # Each band is its own distance from the top's edge (a texel at k columns out, not within
+        # k: the old loop let the last, darkest row overwrite the whole band, so the side read as a
+        # lone black line across the lawn, Claude A 2 Nov). West: the lit side wall, warm earth
+        # stepping down to its foot. East: the wall in shade, a dark foot, then the bank's shadow
+        # thrown east over the lower turf, so the side reads as a bank with its lip and shadow.
+        srng = np.random.default_rng(311 + t)
+        jag = ndi.gaussian_filter(srng.random((h, 1)), 3.0)
+        jag = np.round((jag - jag.mean()) / max(1e-6, jag.std())).astype(int).clip(-1, 1)
         for side, lit in ((-1, True), (1, False)):
-            for k in range(1, 5):
-                wall = turf_l & GD.right(tm, side * k)
-                if k == 4:
-                    cv[wall] = C('earth_cool', 0)
-                else:
-                    cv[wall] = C('earth_warm', 4 - k // 2) if lit else C('earth', 2 - k // 2)
+            out_ = np.zeros((h, w), np.int32)
+            for k in range(16, 0, -1):
+                out_[GD.right(tm, side * k)] = k
+            dist = np.where(turf_l, out_, 0) - np.where(out_ > 0, jag, 0)
+            if lit:
+                tones = {1: C('earth_warm', 4), 2: C('earth_warm', 3), 3: C('earth', 3), 4: C('earth', 2), 5: C('earth_cool', 1)}
+            else:
+                tones = {1: C('earth', 2), 2: C('earth', 2), 3: C('earth', 1), 4: C('earth_cool', 1), 5: C('earth_cool', 1), 6: C('earth_cool', 0)}
+            for k, c in tones.items():
+                cv[turf_l & (dist == k)] = c
+            if not lit:
+                shd = turf_l & (dist > 6) & (dist <= 14) & (cv % 8 > 0) & (cv % 8 < 6)
+                cv[shd] = cv[shd] - 1
+            # pebbles and roots in the wall
+            wy, wx = np.nonzero(turf_l & (dist >= 2) & (dist <= 4))
+            for j in srng.permutation(len(wy))[: len(wy) // 40]:
+                cv[wy[j], wx[j]] = C('stone', 3) if srng.random() < 0.6 else C('timber_cool', 1)
             lipc = tm & ~GD.right(tm, -side)
             cv[lipc & (cv % 8 < 5)] = cv[lipc & (cv % 8 < 5)] + 1
         for img_, anc_, (fx_, fy_) in items:
@@ -322,7 +341,9 @@ def bake(plan: dict, lib: dict | None = None):
         grassy_ = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 <= 2) & nearw
         cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
         GD.tidy_bank(cv, wm)
-        items += SF.water_widths(cv, wm, wcells, wcls, a.get('seed', 402) + 100)
+        # no stream stone at a fall's lip: keep them off the cells over and just above a face
+        bandc = band.reshape(R, CELL, Cc, CELL).any(axis=(1, 3))
+        items += SF.water_widths(cv, wm, wcells, wcls, a.get('seed', 402) + 100, avoid=bandc)
         shore = ndi.binary_dilation(~wcells, iterations=1) & wcells
         wvar = SF.assign('water', wcells, given, dict(ctx_, cls=wcls, shore=shore), a.get('seed', 402) + 200)
         SF.water_variants(cv, wm, wvar, a.get('seed', 402) + 300)
