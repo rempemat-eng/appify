@@ -1,0 +1,121 @@
+name: MyGame v56 production render
+
+on:
+  push:
+    branches: [codex/v56-render-run]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mygame-v56-production-render
+  cancel-in-progress: false
+
+jobs:
+  render:
+    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/v56-render-run'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      MAP_SOURCE_SHA: 71fe47b6120269b67f5d8f3e0f40278bbf946126
+      REPO_ROOT: ${{ github.workspace }}/map-source
+      BLOCKOUT_OUT: ${{ runner.temp }}/v56-delivery/maps
+      MAP55_OUT: ${{ runner.temp }}/v56-delivery/maps
+      MYGAME_MAP_REVISION: v56
+      DEV_PKL: ${{ runner.temp }}/v56-delivery/failure-context.pkl
+      PYTHONDONTWRITEBYTECODE: '1'
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      VECLIB_MAXIMUM_THREADS: '1'
+
+    steps:
+      - name: Prepare production receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/v56-delivery/maps"
+          printf 'NOT RUN\n' > "$RUNNER_TEMP/v56-delivery/producer.exit"
+          printf 'wrapper_commit=%s\nmap_source=%s\n' "$GITHUB_SHA" "$MAP_SOURCE_SHA" > "$RUNNER_TEMP/v56-delivery/provenance.txt"
+
+      - name: Check out the frozen map source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 71fe47b6120269b67f5d8f3e0f40278bbf946126
+          path: map-source
+          persist-credentials: false
+
+      - name: Set up the production Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12.14'
+
+      - name: Install the production packages and complete DejaVu fonts
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends fonts-dejavu-core fonts-dejavu-extra
+          python -m pip install 'Pillow==12.3.0' 'numpy==2.3.5' 'scipy==1.17.0' 'scikit-image==0.26.0'
+          python -m pip freeze > "$RUNNER_TEMP/v56-delivery/python-packages.txt"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from PIL import ImageFont
+          root = Path(os.environ['REPO_ROOT'])
+          fonts = [root / 'game/ui/fonts/PixelifySans-Regular.ttf',
+                   root / 'game/addons/phantom_camera/fonts/Nunito-Black.ttf',
+                   root / 'game/addons/phantom_camera/fonts/Nunito-Regular.ttf']
+          fonts += [Path('/usr/share/fonts/truetype/dejavu') / name for name in
+                    ['DejaVuSansCondensed.ttf', 'DejaVuSansCondensed-Bold.ttf', 'DejaVuSerif-Italic.ttf']]
+          for font in fonts:
+              ImageFont.truetype(str(font), 12)
+              print('Font opened:', font)
+          PY
+
+      - name: Run the complete ordinary v56 producer once
+        shell: bash
+        working-directory: map-source
+        run: |
+          set -euo pipefail
+          unset TOWN_FIT_ONLY OLD_CACHE QUICK DEV_PRE RENDER_ONLY
+          # These are generated outputs, never the frozen v54/input files.
+          # A failed fresh run must not deliver tracked older v56 pictures.
+          python - <<'PY'
+          from pathlib import Path
+          import shutil
+          output = Path('docs/vision/research/blockout')
+          for pattern in ('*-v56.json', '*-v56.png'):
+              for path in output.glob(pattern):
+                  path.unlink()
+          shutil.rmtree(output / 'towns-v56', ignore_errors=True)
+          PY
+          delivery="$RUNNER_TEMP/v56-delivery"
+          git rev-parse HEAD 'HEAD^{tree}' >> "$delivery/provenance.txt"
+          cpu=$(python -c 'import os; print(min(os.sched_getaffinity(0)))')
+          printf 'cpu=%s\n' "$cpu" >> "$delivery/provenance.txt"
+          date -u +%FT%TZ > "$delivery/started-utc.txt"
+          printf 'RUNNING\n' > "$delivery/producer.exit"
+          set +e
+          timeout --signal=TERM --kill-after=10s 2100s taskset -c "$cpu" \
+            python -I -B -u docs/vision/research/blockout/geo55.py > "$delivery/producer.log" 2>&1
+          code=$?
+          set -e
+          printf '%s\n' "$code" > "$delivery/producer.exit"
+          date -u +%FT%TZ > "$delivery/finished-utc.txt"
+          cat "$delivery/producer.log"
+          exit "$code"
+
+      - name: Retain maps, plans, reports and actual failure output
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: mygame-v56-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/v56-delivery/
+            ${{ github.workspace }}/map-source/docs/vision/research/blockout/*-v56.json
+            ${{ github.workspace }}/map-source/docs/vision/research/blockout/*-v56.png
+            ${{ github.workspace }}/map-source/docs/vision/research/blockout/towns-v56/
+          if-no-files-found: error
+          retention-days: 7
