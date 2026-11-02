@@ -51,7 +51,8 @@
     "note": "its whole flight on face cells, the rim straight above it"
    }
   ],
-  "composition": "axis"
+  "composition": "axis",
+  "purpose": "climb"
  },
  "rendering": {
   "cast_shadow": {

@@ -352,32 +352,21 @@ def bake(plan: dict, lib: dict | None = None):
             cx, foot = pc['at'][0] / D, pc['at'][1] / D
             rim = foot - rp.get('args', {}).get('face_px', face_h) / D
             seed = rp.get('args', {}).get('seed', 11)
-            k = cw / 16.0                                   # the woodland's fall is a 16 world px channel
-            # the cascade as the woodland painted it (screen.terrain): the rock face behind, then
-            # the stepped slabs either side and the lip ledge, the rounded stones at their feet,
-            # back to front; the sheet and its foam over them; the face scaled to this face's height
-            RK.face(cv, cx - 18 * k, rim, cx + 18 * k, foot + 1, seed=seed + 3)
-            q = (foot - rim) / 40.0
-            heap = [(0, 6, 28, 10, 205, True), (-28, 10, 22, 13, 203, True), (28, 10, 22, 13, 204, True),
-                    (-26, 28, 22, 15, 206, True), (26, 28, 20, 14, 207, True), (-46, 16, 12, 10, 201, False),
-                    (-44, 34, 10, 8, 208, False), (-14, 38, 9, 6, 210, False), (15, 38, 8, 5, 211, False)]
-            chan = wm.copy()
-            chan[int(rim * D):] = False
-            chan[:max(0, int((rim - 40) * D))] = False
-            for (dx, dy, bw, bh, sd, slab) in sorted(heap, key=lambda b: b[1]):
-                sc = 1.0 if q >= 0.75 else min(1.0, 0.55 + 0.45 * q)
-                dec, anc = RK.rock(bw * sc * (k if dx == 0 else 1.0), bh * sc, sd, flat=slab, moss=0.6)
-                X, Y = int(round((cx + dx * k) * D - anc[0])), int(round((rim + dy * q) * D - anc[1]))
-                hh, ww = dec.shape
-                sub = chan[max(0, Y):Y + hh, max(0, X):X + ww]
-                dec[max(0, -Y):max(0, -Y) + sub.shape[0], max(0, -X):max(0, -X) + sub.shape[1]][sub] = -1
-                SN.DC.paste(cv, dec, X, Y, shadow=True, shadow_dx=SN.P(2), shadow_dy=SN.P(1))
-            SN.WA.wet_rock(cv, cx - cw / 2, cw, rim - 2, foot)
-            # the falling sheet; its foam and rings inside the pool only (2 texels in from its bank)
+            # Matt, 2 Nov: "the waterfall overlaps in an unrealistic way on the top bit". The fall
+            # is the channel going over the rim: a rock face framing the drop a little wider than
+            # the channel, from the rim to the pool and nothing above the rim; the sheet
+            # (structures.fall_sheet, the piece's own painter) exactly the channel's columns from
+            # the rim down, in front of the face; its plume and rings on the pool only. No lip
+            # ledge or slabs standing over the banks or the stream above.
+            from scripts.art.kit import structures as ST
+            RK.face(cv, cx - cw / 2 - 6, rim, cx + cw / 2 + 6, foot + 1, seed=seed + 3)
+            above = np.zeros_like(wm)
+            above[:int(round(rim * D))] = True
             tmp = cv.copy()
-            RK.fall(tmp, cx - cw / 2, cw, rim, foot + 4, seed=seed)
-            ok = ndi.binary_erosion(wm, iterations=2)
-            ok[int((rim - 2) * D):int(foot * D), max(0, int((cx - cw / 2 - 2) * D)):int((cx + cw / 2 + 2) * D)] = True
+            sx0, sw = int(round((cx - cw / 2) * D)), int(round(cw * D))
+            ST.fall_sheet(tmp, sx0, sw, int(round(rim * D)), int(round(foot * D)), seed=seed)
+            ok = ndi.binary_erosion(wm, iterations=2) & ~above
+            ok[int(round(rim * D)):int(round(foot * D)), sx0:sx0 + sw] = True
             cv[ok] = tmp[ok]
     # shadows and the lawn's detail (screen.build's order)
     casts, things, trees, objects = [], [], [], []

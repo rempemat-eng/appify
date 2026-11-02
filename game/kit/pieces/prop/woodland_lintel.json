@@ -43,7 +43,23 @@
   "footprint": []
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "ruin",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "marker",
+    "cells": 2,
+    "note": "a lintel fallen from the ring"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

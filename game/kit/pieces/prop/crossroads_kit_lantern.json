@@ -91,7 +91,8 @@
     "rel": "on",
     "what": "route"
    }
-  ]
+  ],
+  "purpose": "light"
  },
  "rendering": {
   "cast_shadow": {

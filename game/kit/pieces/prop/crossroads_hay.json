@@ -54,7 +54,23 @@
   "footprint": []
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "feed",
+  "role": "feed",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "pen",
+    "cells": 1,
+    "note": "in a paddock, a barn or a cart"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

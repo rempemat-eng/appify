@@ -506,11 +506,15 @@ class SeedCompleteness(unittest.TestCase):
             self.assertEqual(v['foot'], [-n for n in obj['offset']], obj['id'])
 
     def test_unknown_woodland_collision_is_not_fabricated(self):
+        # the seeder never guesses a woodland box: a piece has none (and says so) unless Claude
+        # authored one, which a refresh keeps (2 Nov, from the shipped prop scenes)
         for p in self.pieces:
             if p['id'].startswith('woodland_') and p['id'] != 'woodland_stone_sign':
-                self.assertIsNone(p['geometry']['collision'])
-                self.assertNotIn('blocks_move', p['gameplay'])
-                self.assertTrue(any('unknown' in t for t in p['audit']['todo']))
+                if p['geometry']['collision'] is None:
+                    self.assertNotIn('blocks_move', p['gameplay'])
+                    self.assertTrue(any('unknown' in t for t in p['audit']['todo']))
+                else:
+                    self.assertTrue(any('authored by Claude A' in t for t in p['audit']['todo']), p['id'])
 
     def test_thin_and_negative_local_collisions_keep_coverage(self):
         self.assertEqual(self.seed.footprint([-1, -1, 2, 2]), [[-1, -1], [0, -1], [-1, 0], [0, 0]])

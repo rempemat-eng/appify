@@ -100,7 +100,9 @@ def stepping_stones(force: bool, cells: int) -> None:
         'geometry': {'size_px': [W, H], 'size_cells': [1, cells + 1], 'foot': foot, 'z_sort': 'ground', 'collision': {'shape': 'none'}, 'footprint': []},
         'placement': {'role': 'bridge', 'snap': 'cell',
                       'requires': [{'rel': 'on', 'what': 'water', 'note': 'across a channel %d cell%s wide' % (cells, 's' if cells > 1 else '')},
-                                   {'rel': 'adjacent', 'what': 'route', 'cells': 1, 'note': 'a footpath meets it at both banks'}],
+                                   # its deck carries its own landing stones onto both banks, so the
+                                   # footpath meets it on them (within, not adjacent)
+                                   {'rel': 'within', 'what': 'route', 'cells': 1, 'note': 'a footpath meets it at both banks'}],
                       'composition': 'axis'},
         'rendering': {'cast_shadow': {'shape': 'baked'}, 'contact_ao': False,
                       'paint': {'module': 'scripts.art.kit.structures', 'fn': 'stepping_stones', 'args': {'seed': 40 + cells}}},

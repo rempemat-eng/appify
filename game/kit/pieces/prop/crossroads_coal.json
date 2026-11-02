@@ -60,7 +60,23 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "store",
+  "role": "store",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "forge",
+    "cells": 2,
+    "note": "fuel for the forge"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

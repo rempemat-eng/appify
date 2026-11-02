@@ -104,7 +104,8 @@
   ],
   "stages": [
    "restored"
-  ]
+  ],
+  "purpose": "light"
  },
  "rendering": {
   "cast_shadow": {

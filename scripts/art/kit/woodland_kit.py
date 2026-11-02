@@ -112,8 +112,11 @@ RAISED = (0, 12, 0, 33)          # columns x0..x1, rows y0..y1 (cells, exclusive
 LEVEL = 1                        # one tier up: a face two cells high
 GLADE_END = (128, 150, 18, 13)   # the trodden ground where the north path opens into the glade (world px)
 # pieces of the base scene moved off what they must not stand on (texels): a bush off the face,
-# the willow's trunk off the path, the east stone of the ring clear of the north-south path
-MOVED = {'bush-2': (96, 768), 'willow': (780, 1344), 'stone-7': (324, 1209)}
+# the willow (it stood far from water with its trunk on a path) to the river's south bank, the east stone of the ring clear of the north-south path
+# and, with the woodland pieces' solid boxes restored (2 Nov), a holly inside the zone's edge and a
+# bramble clear of the oak beside it
+MOVED = {'bush-2': (96, 768), 'willow': (816, 1008), 'stone-7': (324, 1209), 'wood-15': (56, 744),
+         'wood-42': (504, 1632), 'pine-1': (144, 192)}
 
 
 def tiers_of(grid) -> list:
@@ -196,6 +199,7 @@ def pieces_of(plan) -> list:
         27: (289, 45),
         28: (298, 41),
         29: (309, 50),
+        36: (40, 290),        # clear of the oak's trunk beside the pool (2 Nov)
     }
     for i, b in enumerate(plan['rock']['talus']['boulders'] + plan['rock']['heap']):
         cx, cy = int(b['at'][0] // CELL_W), int((b['at'][1] - 0.5) // CELL_W)

@@ -323,7 +323,7 @@
    "id": "pine-1",
    "piece": "woodland_pine",
    "at": [
-    204,
+    144,
     192
    ],
    "variant": "pine"
@@ -458,8 +458,8 @@
    "id": "willow",
    "piece": "woodland_willow",
    "at": [
-    780,
-    1344
+    816,
+    1008
    ],
    "variant": "willow"
   },
@@ -602,8 +602,8 @@
    "id": "wood-15",
    "piece": "woodland_holly_b",
    "at": [
-    24,
-    768
+    56,
+    744
    ],
    "variant": "holly_b"
   },
@@ -827,7 +827,7 @@
    "id": "wood-42",
    "piece": "woodland_bramble_b",
    "at": [
-    492,
+    504,
     1632
    ],
    "variant": "bramble_b"
@@ -1142,7 +1142,7 @@
    "id": "boulder-36",
    "piece": "woodland_boulder",
    "at": [
-    108,
+    120,
     870
    ],
    "variant": "b0"

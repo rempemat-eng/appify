@@ -3,7 +3,8 @@
 The shared cases are engineering fixtures, pending Claude's authored design cases.
 Positions default to texels (24 per cell); coordinate_space="cells" is explicit.
 Feet on a horizontal cell line belong to the cell immediately above it. Geometry
-footprints are authored offsets from floor(anchor); absent footprints use that
+footprints are authored offsets from floor(anchor); absent footprints use the
+cells under a walkable deck (gameplay.deck) when the piece has one, else that
 single foot cell, never a guessed sprite-sized box. Logical facing does not rotate
 geometry: current KitPiece rendering does not rotate it either.
 
@@ -69,7 +70,7 @@ def _foot(position):
     return math.floor(position[0]), math.floor(position[1] - EPS)
 
 
-def _occupied(entry, piece, plan, overhang=False):
+def _occupied(entry, piece, plan, overhang=False, deck=True):
     position = _position(entry, plan)
     if position is None:
         return set()
@@ -78,9 +79,23 @@ def _occupied(entry, piece, plan, overhang=False):
     if not offsets and overhang:
         offsets = geometry.get('footprint')
     if not offsets:
+        span = (piece.get('gameplay') or {}).get('deck') if deck else None
+        if span and not overhang and len(span) == 4 and all(_number(v) for v in span):
+            return _deck_cells(position, span) or {_foot(position)}
         return {_foot(position)}
     origin = math.floor(position[0]), math.floor(position[1])
     return {(origin[0] + int(c[0]), origin[1] + int(c[1])) for c in offsets}
+
+
+def _deck_cells(position, deck):
+    """A walkable piece with no solid footprint (a bridge, stepping stones, log steps) stands where
+    its deck is: the cells whose centres lie inside the deck rect (world px, 8 to a cell, from the
+    foot). Its south-bank foot cell is where its route lands, not what it spans (Claude A, 2 Nov:
+    the woodland footbridge's two rules.requires faults)."""
+    x0, y0 = position[0] + deck[0] / 8.0, position[1] + deck[1] / 8.0
+    x1, y1 = x0 + deck[2] / 8.0, y0 + deck[3] / 8.0
+    return {(x, y) for x in range(math.floor(x0), math.ceil(x1)) for y in range(math.floor(y0), math.ceil(y1))
+            if x0 - EPS <= x + 0.5 < x1 - EPS and y0 - EPS <= y + 0.5 < y1 - EPS}
 
 
 def _context(plan, materials):
@@ -303,7 +318,8 @@ def check_zone(plan, library=None, materials=None):
             continue
         occupied = _occupied(entry, piece, plan)
         placement = piece.get('placement') or {}
-        if any(x < 0 or y < 0 or x >= width or y >= height for x, y in occupied):
+        # bounds by the footprint alone: a deck leaving the zone is rules.deck's finding
+        if any(x < 0 or y < 0 or x >= width or y >= height for x, y in _occupied(entry, piece, plan, deck=False)):
             out.append(_finding('rules.bounds', eid + ': footprint is outside the zone', at))
         snap = placement.get('snap', 'free')
         step = (0.5, 1.0) if snap == 'cell' else (0.5, 0.5)

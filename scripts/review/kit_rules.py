@@ -231,9 +231,7 @@ def check_zone(plan) -> list:
                              'fall is the channel\'s width and on its line' % (p.get('id'), lo, hi, xs[0], xs[-1]), p['at']))
             if not (bot + 1 < H and all(water[bot + 1, x] for x in xs)):
                 fs.append(_f('rules.water_fall', '%s: no pool under the face to catch the fall' % p.get('id'), p['at']))
-            src = os.path.join(ROOT, 'game', 'kit', 'pieces', 'structure', p['piece'] + '.json')
-            geo = json.load(open(src)).get('geometry', {}) if os.path.exists(src) else {}
-            sheet, foot = geo.get('sheet_px'), geo.get('foot')
+            sheet, foot = e.get('sheet_px'), e.get('foot')
             if sheet and foot:
                 sx0 = p['at'][0] - foot[0] + sheet[0]
                 sy0 = p['at'][1] - foot[1] + sheet[2]

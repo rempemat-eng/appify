@@ -532,6 +532,11 @@
           "type": "string",
           "description": "The ground-rules role (seat, light, hearth, marker, clutter, tree, structure ...)."
         },
+        "purpose": {
+          "enum": ["contain", "exclude", "mark", "rest", "light", "store", "feed", "cross", "guide", "work",
+                   "live", "grow", "climb", "flow", "care", "water", "aftermath"],
+          "description": "What the piece is for (docs/vision/placement-logic.md; table in scripts/art/kit/placement_audit.py)."
+        },
         "ground": {
           "type": "object",
           "additionalProperties": false,

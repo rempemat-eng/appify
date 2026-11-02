@@ -104,7 +104,8 @@
   ],
   "stages": [
    "broken"
-  ]
+  ],
+  "purpose": "light"
  },
  "rendering": {
   "cast_shadow": {

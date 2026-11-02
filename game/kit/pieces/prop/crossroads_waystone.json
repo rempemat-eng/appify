@@ -82,7 +82,8 @@
     "what": "route",
     "cells": 2
    }
-  ]
+  ],
+  "purpose": "guide"
  },
  "rendering": {
   "cast_shadow": {

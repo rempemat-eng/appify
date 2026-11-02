@@ -110,7 +110,8 @@
   ],
   "stages": [
    "broken"
-  ]
+  ],
+  "purpose": "water"
  },
  "rendering": {
   "cast_shadow": {

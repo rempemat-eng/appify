@@ -94,7 +94,8 @@
   ],
   "stages": [
    "restored"
-  ]
+  ],
+  "purpose": "water"
  },
  "rendering": {
   "cast_shadow": {

@@ -76,6 +76,26 @@ bool lt2(int d2, int t, int j) {
 	return tj > 0 && d2 < tj * tj;
 }
 
+// a face cell straight under water (through its face run): a fall, read as water (compose.fall_faces)
+bool fall_face(int m, ivec2 q) {
+	if (!is_strip(material_at(q.x, q.y))) {
+		return false;
+	}
+	for (int k = 1; k <= 8; k++) {
+		if (q.y - k < 0) {
+			return false;
+		}
+		int a = material_at(q.x, q.y - k);
+		if (a == m) {
+			return true;
+		}
+		if (!is_strip(a)) {
+			return false;
+		}
+	}
+	return false;
+}
+
 // softground.water's depth from the true distance to the shore cells around (compose.water_delta)
 int water_delta(int m, ivec2 p) {
 	ivec2 c = p / cell;
@@ -86,7 +106,7 @@ int water_delta(int m, ivec2 p) {
 	for (int oy = -2; oy <= 2; oy++) {
 		for (int ox = -2; ox <= 2; ox++) {
 			ivec2 q = c + ivec2(ox, oy);
-			if (q.x < 0 || q.y < 0 || q.x >= grid.x || q.y >= grid.y || material_at(q.x, q.y) == m) {
+			if (q.x < 0 || q.y < 0 || q.x >= grid.x || q.y >= grid.y || material_at(q.x, q.y) == m || fall_face(m, q)) {
 				continue;
 			}
 			int ddx = max(max(q.x * cell - p.x, p.x - (q.x * cell + cell - 1)), 0);
@@ -130,7 +150,25 @@ int fill_code(int m, ivec2 p) {
 					run = k;
 				}
 			}
-			fy = run * cell + p.y % cell;
+			// a face taller than its strip (two tiers or more): the lip cell at the top, the foot
+			// cell at the bottom, the strip's middle between (compose.strip_row)
+			int below = 0;
+			for (int k = 1; k <= 8; k++) {
+				if (cy + k < grid.y && material_at(cx, cy + k) == m && below == k - 1) {
+					below = k;
+				}
+			}
+			if ((run + below + 1) * cell > strip) {
+				if (below == 0) {
+					fy = strip - cell + p.y % cell;
+				} else if (run == 0) {
+					fy = p.y % cell;
+				} else {
+					fy = cell / 2 + p.y % cell;
+				}
+			} else {
+				fy = run * cell + p.y % cell;
+			}
 		} else if (cy + 1 < grid.y && material_at(cx, cy + 1) == m) {
 			fy = 0;
 		} else {

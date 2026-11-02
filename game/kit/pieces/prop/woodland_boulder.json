@@ -109,7 +109,8 @@
     "what": "route"
    }
   ],
-  "composition": "cluster"
+  "composition": "cluster",
+  "purpose": "mark"
  },
  "rendering": {
   "cast_shadow": {

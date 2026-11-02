@@ -84,7 +84,15 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "aftermath",
+  "role": "clutter",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

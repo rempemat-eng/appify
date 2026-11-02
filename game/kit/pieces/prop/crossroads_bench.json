@@ -96,7 +96,8 @@
     "rel": "on",
     "what": "water"
    }
-  ]
+  ],
+  "purpose": "rest"
  },
  "rendering": {
   "cast_shadow": {

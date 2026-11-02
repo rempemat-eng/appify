@@ -100,7 +100,21 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "work",
+  "role": "stall",
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

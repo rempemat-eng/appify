@@ -73,7 +73,22 @@
    }
   ]
  },
- "placement": {},
+ "placement": {
+  "purpose": "guide",
+  "role": "marker",
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
+ },
  "rendering": {},
  "function": {
   "interact": {

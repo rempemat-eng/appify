@@ -76,6 +76,7 @@ def entry(p: dict) -> dict:
             'size_cells': g.get('size_cells'), 'footprint': g.get('footprint'), 'function': p.get('function', {}), 'story': p.get('story', {}),
             'role': p.get('placement', {}).get('role'), 'snap': p.get('placement', {}).get('snap', 'cell'),
             'approval': p['approval']['state'], 'painted': bool(r.get('paint')),
+            **({'sheet_px': g['sheet_px']} if g.get('sheet_px') else {}),
             'variants': {v['id']: {'png': v['png'], 'foot': v.get('foot', foot)} for v in p.get('variants', [])}}
 
 
@@ -99,20 +100,36 @@ def scene(pid: str, e: dict) -> str:
     return '\n'.join(lines)
 
 
-def build() -> int:
+def build(check: bool = False) -> int:
+    """Write every prop scene and the index; with check, write nothing and fail if a committed
+    scene or the index is not what the pieces make (Claude A, 2 Nov: the index had drifted from
+    the pieces since the schema migration)."""
     os.makedirs(OUT, exist_ok=True)
-    index = {}
+    index, scenes = {}, {}
     for f in piece_files():
         p = json.load(open(f))
         if p['kind'] not in ('prop', 'structure') or not p.get('variants'):
             continue
         e = entry(p)
         index[p['id']] = e
-        open(os.path.join(OUT, p['id'] + '.tscn'), 'w').write(scene(p['id'], e))
-    json.dump(index, open(os.path.join(OUT, 'index.json'), 'w'), indent=1, sort_keys=True)
+        scenes[p['id'] + '.tscn'] = scene(p['id'], e)
+    text = json.dumps(index, indent=1, sort_keys=True)
+    if check:
+        stale = [n for n, t in scenes.items()
+                 if not os.path.exists(os.path.join(OUT, n)) or open(os.path.join(OUT, n)).read() != t]
+        if open(os.path.join(OUT, 'index.json')).read().rstrip('\n') != text:
+            stale.append('index.json')
+        if stale:
+            print('props: stale %s (run python3 -m scripts.art.kit.props)' % ', '.join(sorted(stale)))
+            return 1
+        print('props: %d scenes and the index match the pieces' % len(index))
+        return 0
+    for n, t in scenes.items():
+        open(os.path.join(OUT, n), 'w').write(t)
+    open(os.path.join(OUT, 'index.json'), 'w').write(text)
     print('props: %d scenes' % len(index))
     return 0
 
 
 if __name__ == '__main__':
-    sys.exit(build())
+    sys.exit(build(check='--check' in sys.argv[1:]))

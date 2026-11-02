@@ -90,7 +90,19 @@
   "footprint": []
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "contain",
+  "role": "boundary",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

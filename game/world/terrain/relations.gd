@@ -91,7 +91,7 @@ static func _position(entry: Dictionary, plan: Dictionary) -> Variant:
 static func _foot(position: Vector2) -> Vector2i:
 	return Vector2i(floori(position.x), floori(position.y - EPS))
 
-static func _occupied(entry: Dictionary, piece: Dictionary, plan: Dictionary, overhang := false) -> Dictionary:
+static func _occupied(entry: Dictionary, piece: Dictionary, plan: Dictionary, overhang := false, use_deck := true) -> Dictionary:
 	var position = _position(entry, plan)
 	if position == null:
 		return {}
@@ -100,12 +100,33 @@ static func _occupied(entry: Dictionary, piece: Dictionary, plan: Dictionary, ov
 	if not _truth(offsets) and overhang:
 		offsets = geometry.get("footprint")
 	if not _truth(offsets):
+		var gameplay = piece.get("gameplay", {})
+		var deck = gameplay.get("deck") if gameplay is Dictionary else null
+		if use_deck and not overhang and deck is Array and deck.size() == 4:
+			var under := _deck_cells(position, deck)
+			if not under.is_empty():
+				return under
 		return {_foot(position): true}
 	var origin := Vector2i(floori(position.x), floori(position.y))
 	var cells := {}
 	for offset in offsets:
 		cells[origin + Vector2i(int(offset[0]), int(offset[1]))] = true
 	return cells
+
+## A walkable piece with no solid footprint stands where its deck is: the cells whose centres lie
+## inside the deck rect (world px, 8 to a cell, from the foot). Mirrors relations._deck_cells.
+static func _deck_cells(position: Vector2, deck: Array) -> Dictionary:
+	var x0 := position.x + float(deck[0]) / 8.0
+	var y0 := position.y + float(deck[1]) / 8.0
+	var x1 := x0 + float(deck[2]) / 8.0
+	var y1 := y0 + float(deck[3]) / 8.0
+	var cells := {}
+	for x in range(floori(x0), ceili(x1)):
+		for y in range(floori(y0), ceili(y1)):
+			if x0 - EPS <= x + 0.5 and x + 0.5 < x1 - EPS and y0 - EPS <= y + 0.5 and y + 0.5 < y1 - EPS:
+				cells[Vector2i(x, y)] = true
+	return cells
+
 
 static func _context(plan: Dictionary, materials: Dictionary) -> Variant:
 	var rows = plan.get("rows")
@@ -420,7 +441,8 @@ static func check_zone(plan: Variant, library: Variant = null, materials: Varian
 			continue
 		var occupied := _occupied(entry, piece, plan)
 		var placement: Dictionary = piece.get("placement", {}) if piece.get("placement") != null else {}
-		for cell in occupied:
+		# bounds by the footprint alone: a deck leaving the zone is rules.deck's finding
+		for cell in _occupied(entry, piece, plan, false, false):
 			if cell.x < 0 or cell.y < 0 or cell.x >= context.width or cell.y >= context.height:
 				out.append(_finding("rules.bounds", eid + ": footprint is outside the zone", at))
 				break

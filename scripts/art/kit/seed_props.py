@@ -222,6 +222,11 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
         known = _source_variant_ids(zone) | {v['id'] for v in variants}
         variants += [copy.deepcopy(v) for v in old.get('variants', []) if v['id'] not in known]
     w, h = (max(s[0] for s in sizes), max(s[1] for s in sizes)) if sizes else (0, 0)
+    # a solid box Claude authored where the source has none (the woodland's trees, shrubs, stones
+    # and bench, 2 Nov, from the shipped prop scenes) survives a refresh like placement does
+    authored = collision is None and bool(old) and bool((old.get('geometry') or {}).get('collision'))
+    if authored:
+        collision = copy.deepcopy(old['geometry']['collision'])
     g = {'size_px': [w, h], 'size_cells': [math.ceil(w / D / CELL_W), math.ceil(h / D / CELL_W)],
          'z_sort': 'foot', 'collision': collision}
     if variants:
@@ -239,6 +244,8 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
         todo.append('placement.role, requires and forbids (Claude design decision; ground-rules.md 6)')
     if collision is None:
         todo.append('object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)')
+    if authored:
+        todo.append('collision box authored by Claude A (2 Nov) from the shipped prop scene; review with the size guide')
     if g['footprint']:
         todo.append('footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot')
     if todo_circle:

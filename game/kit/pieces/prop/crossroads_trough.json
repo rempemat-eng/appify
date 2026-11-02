@@ -68,7 +68,23 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "feed",
+  "role": "trough",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "pen",
+    "cells": 0,
+    "note": "inside a pen or paddock with its animals"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

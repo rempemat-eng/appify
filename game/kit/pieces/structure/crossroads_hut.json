@@ -269,7 +269,19 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "live",
+  "role": "house",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {
