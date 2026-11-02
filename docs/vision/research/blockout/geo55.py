@@ -984,7 +984,17 @@ def data_stage():
     warp_tables(); set_dims(NEW_W, NEW_H)
     g.FRAME = T['FRAME']
     u_warp = usable(T)
-    rec = v55_paint(T)
+    try:
+        rec = v55_paint(T)
+    except Exception:
+        # Keep the actual failed ground in the existing development output; never cache it as OLD_CACHE.
+        if os.environ.get('DEV_PKL'):
+            try:
+                with open(os.environ['DEV_PKL'], 'wb') as failed:
+                    pickle.dump({'T': T}, failed, protocol=4)
+            except Exception as retention_error:
+                print('DEV_PKL failure context could not be retained:', retention_error, file=sys.stderr)
+        raise
     towns = rec['towns']
     update_tables(T, towns)
     K = T['K']
