@@ -64,3 +64,14 @@ These are dry-fixture geometry results. The real terrain had more missing buildi
 **Discovery** (`docs/vision/pillars.md`, density beats size): every plan has a `discovery` list (landmark views, secrets, shortcuts, resident activities, each with its screen); the checker's `discovery` rule fails a plan with a screen that holds a building and nothing to discover.
 
 **Not done.** The canvas was not grown: the reshaped basin and the reclaimed quays gave the city its room, and density beats size. Interiors, residents and props stay for later passes.
+
+### Neon Harbour, second pass (2 Nov, Claude A)
+
+- **The basin** is about 20 % smaller (x 10428 to 10972, y 4720 to 5520, still symmetrical about x 10700); the ground goes to the Heights, the docks and a deeper north promenade (the old quays at y 4704). Its water reads busy: a shallow band along every quay, a deep channel from the mouth to the islands, the rest between (drawn from `features.harbour`), and moored boats at every pier, ferries at the ferry piers, barges on the canal, the floating market's sampans round Chapel Islet and a pilot boat in the channel (`features.harbour.boats`).
+- **Density**: every street of the old waterfront, the Lanes, the East Shore, the Heights and the canal quarter is packed on both sides (deeper fronts, shop signs, stalls, neon, vending in the frontage props), gaps closed to one cell; blocks left between the streets are named terrace gardens and courts, never bare paving. Nothing new stands on a regional route's band. The city counts 161 (guide raised to 130 to 200 for the packed city) plus its landmarks; the 81 inventory records all stand (72 counted).
+- **The Heights**: three stairs between the terrace levels with public lifts where they meet the terrace streets (`features.lifts`), the Harbour Bridge's approach a road on the new land.
+- **The Company core**: one landmark spire (64 floors, express lifts, the observation deck under the beacon), a megablock and smaller towers among the inventory's slabs; a covered shop arcade (walkable) round every tower base with stalls, neon and vending (`street_level` on the buildings), the tower-foot night stalls; sky bridges between towers within 96 px.
+- **Verticality on the plan**: every tall building casts a shadow by its floor count, and the towers one can go up carry a lift mark; the funicular from the canal mouth to the Skyport and the elevated maglev (viaduct, rail and pylons) are drawn.
+- **Edges**: the north allotments and the Company park where the grid meets the northern woods, the east beach park along the shore.
+- **Labels**: the canal-mouth night market is named once (its yard), no longer also as a landmark.
+- **Charcoal Hollow** fell from 7 to 5 because Cogsworth's liveliness pass placed three houses in the hamlet's clearing; Cogsworth's pass now stays west of x 8300 and Charcoal Hollow is back to 7.

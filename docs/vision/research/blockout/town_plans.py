@@ -185,6 +185,7 @@ THEME = {
 # Matt's 2 Nov pass, for the v56 map only: the v55 tables above keep their published values (the v55 exports stay byte for byte)
 import copy as _copy
 GAME_V56 = {k: _copy.deepcopy(GAME[k]) for k in ('crossroads', 'neon-harbour')}
+GAME_V56['neon-harbour']['landmarks'] = [q for q in GAME_V56['neon-harbour']['landmarks'] if q[0] != 'the canal-mouth night market']  # one label (its yard)
 THEME_V56 = {'neon-harbour': dict(THEME['neon-harbour'], moss='the canal-mouth night market')}
 GAME['crossroads']['landmarks'] = [(('the halt and its water tank', (5835, 4040)) if n_ == 'the halt yard and its water tank' else (n_, xy))
                                    for n_, xy in GAME['crossroads']['landmarks']]
@@ -659,7 +660,7 @@ def plan_one(T, name, ts, X, tp):
     dropped = _access(T, net, pass_, sl, pid, box, ts)
     # 5. no street that serves nothing, no empty block: unused unnamed streets lifted, thin blocks built up or given a named use
     _prune(T, net, sl, ts)
-    opens = _blocks(T, net, sl, pid, box, ts)
+    opens = _blocks(T, net, sl, pid, box, ts, v56_city=pid == 'neon-harbour' and getattr(X, 'REVISION', 'v55') == 'v56')
     dropped += _access(T, net, _passable(T, sl, ts), sl, pid, box, ts)
     if len(ts) > 1:
         _city_paving(T, net, sl, box, ts, keep_planned=getattr(X, 'REVISION', 'v55') == 'v56')
@@ -809,7 +810,7 @@ def _covered(T, net, ts, box):
     return cov
 
 
-def _blocks(T, net, sl, pid, box, ts):
+def _blocks(T, net, sl, pid, box, ts, v56_city=False):
     c0, r0, w, h = box
     K = T['K']
     sub = K[sl]
@@ -831,6 +832,8 @@ def _blocks(T, net, sl, pid, box, ts):
             t = min(ts, key=lambda t: math.hypot(t.centre[0] - cx, t.centre[1] - cy))
             dname = t.name.split(': ', 1)[1] if ': ' in t.name else None
             forms = NEON_FORMS.get(dname) if dname else BLOCK_FORMS.get(pid) or ('house', 'cottage')
+            if v56_city:                                               # v56 Neon: its streets are already built up; a leftover block gets a use
+                forms = None
             # 1. buildings: on the block's free ground next to its streets, while the town has room
             if it < 2 and forms:
                 edge_d = ndi.distance_transform_edt(m)
@@ -1127,16 +1130,20 @@ def vertical_city(P, T, X):
     an inside 'interior: later'. Sky bridges join Company towers standing within 96 px of each other; the harbour, the funicular
     and the elevated maglev go into the plan's features."""
     tall = []
+    dtown = {d_['id']: d_.get('town', '') for d_ in P['districts']}
     for b in P['buildings']:
         f = b['form']
         if f in VERTICAL:
             n, roof, acc = VERTICAL[f]
-            b['vertical'] = {'floors': n, 'roof_level': roof, 'access': acc, 'sky_bridges': []}
-            if f in ('bigtower', 'slab'):
+            if f == 'tower' and dtown.get(b['district'], '').endswith('the Company district'):
+                n, roof, acc = (64, 'the spire: an observation deck under the shard-light beacon', 'express lifts') if b.get('spire') else \
+                    (28, 'a roof garden and antennae', 'lifts and a fire stair')
+            b['vertical'] = {'floors': n, 'roof_level': roof, 'access': acc, 'sky_bridges': [], 'way_up': 'lift' in acc or 'funicular' in acc}
+            if f in ('bigtower', 'slab') or (f == 'tower' and n >= 28):
                 tall.append(b)
         elif f == 'row_tenement':
             b['vertical'] = {'floors': max(q.get('storeys', 3) for q in b.get('bays', [{}])) + 2, 'roof_level': 'roof terraces and water tanks',
-                             'access': 'a shared stair at each alley', 'sky_bridges': []}
+                             'access': 'a shared stair at each alley', 'sky_bridges': [], 'way_up': False}
         if f in INTERIOR_LATER:
             b['interior'] = 'later'
     bridges = []
@@ -1166,6 +1173,8 @@ def vertical_city(P, T, X):
     fe['sky_bridges'] = bridges
     if T.get('neon_basin'):
         fe['harbour'] = T['neon_basin']
+    if T.get('neon_lifts'):
+        fe['lifts'] = T['neon_lifts']
     sky = next((b for b in P['buildings'] if b['form'] == 'skyport'), None)
     if sky:
         x, y, w, h = sky['rect_px']
@@ -1330,6 +1339,10 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                     rec[field] = description[field]
             if b.get('plan'):
                 rec['from_zone_plan'] = True
+            if b.get('spire'):
+                rec['spire'] = True
+            if b.get('street_level'):
+                rec['street_level'] = b['street_level']
             if b.get('bays'):
                 rec['bays'] = b['bays']                               # the fronts sharing this block's walls, each its own width and roof
                 rec['fronts'] = len(b['bays'])
@@ -1457,7 +1470,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         for rec in bl:
             if rec['id'] in authored_buildings and rec != authored_buildings[rec['id']]:
                 raise ValueError(f"{rec['id']}: authored record disagrees with computed count or metadata")
-    tgt = lead.target if len(ts) == 1 else ((90, 130) if getattr(X, 'REVISION', 'v55') == 'v56' else (60, 90))   # v56: the city round its basin
+    tgt = lead.target if len(ts) == 1 else ((130, 200) if getattr(X, 'REVISION', 'v55') == 'v56' else (60, 90))   # v56: the packed city round its basin
     size = lead.size if len(ts) == 1 else 'city'
     lv = [L for L in T.get('levelled', []) if fb[0] - 8 <= L[0] <= fb[2] and fb[1] - 8 <= L[1] <= fb[3]]
     plan = {

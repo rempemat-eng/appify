@@ -486,6 +486,46 @@ def draw_city_features(d, S, R, ink, P, k, s, plans=None):
         if hb and hb.get('lighthouse'):
             X, Y = P(*hb['lighthouse']); r_ = max(4.0, 90 * k)
             d.pieslice([X - r_, Y - r_, X + r_, Y + r_], 200, 250, fill=(255, 244, 170, 60))
+        BOAT = {'ferry': ((236, 236, 230), (200, 60, 60)), 'boat': ((230, 226, 214), (90, 120, 160)), 'barge': ((92, 70, 52), (150, 120, 80)),
+                'sampan': ((176, 140, 92), (220, 90, 70)), 'pilot boat': ((240, 200, 60), (40, 40, 40))}
+        for bt in (hb or {}).get('boats', []):                          # the busy water: moored boats, ferries, barges, sampans
+            x, y = bt['xy_px']; L = bt['len_px']; Wd = max(6, L // 3)
+            hw_, hh_ = (L / 2, Wd / 2) if bt['along'] == 'x' else (Wd / 2, L / 2)
+            X0, Y0 = P(x - hw_, y - hh_); X1, Y1 = P(x + hw_, y + hh_)
+            hull, deck = BOAT.get(bt['kind'], BOAT['boat'])
+            if X1 - X0 < 3 or Y1 - Y0 < 3:
+                d.rectangle([X0, Y0, max(X0, X1), max(Y0, Y1)], fill=hull + (255,))
+                continue
+            d.rounded_rectangle([X0, Y0, X1, Y1], radius=max(1, int(min(X1 - X0, Y1 - Y0) / 2) - 1), fill=hull + (255,), outline=ink + (200,))
+            if X1 - X0 > 6 and Y1 - Y0 > 3:
+                mx, my = (X0 + X1) / 2, (Y0 + Y1) / 2
+                d.rectangle([mx - (X1 - X0) * 0.18, my - (Y1 - Y0) * 0.22, mx + (X1 - X0) * 0.18, my + (Y1 - Y0) * 0.22], fill=deck + (255,))
+        ml = fe.get('maglev')
+        if ml and len(ml.get('px', [])) >= 2:                          # the elevated maglev: a dark viaduct, a cyan rail, its pylons
+            pts = [P(x, y) for x, y in ml['px']]
+            d.line(pts, fill=(54, 50, 62, 255), width=max(3, int(round(12 * k))))
+            d.line(pts, fill=(80, 230, 255, 255), width=max(1, int(round(3 * k))))
+            (ax, ay), (bx, by) = ml['px'][0], ml['px'][-1]; L = math.hypot(bx - ax, by - ay)
+            for i in range(0, int(L // 64) + 1):
+                X, Y = P(ax + (bx - ax) * i * 64 / max(L, 1), ay + (by - ay) * i * 64 / max(L, 1)); r_ = max(1.5, 5 * k)
+                d.rectangle([X - r_, Y - r_, X + r_, Y + r_], fill=(110, 104, 120, 255))
+        for lf in fe.get('lifts', []):                                  # public lifts between the terrace levels
+            X, Y = P(*lf['xy_px']); r_ = max(2.0, 7 * k)
+            d.rectangle([X - r_, Y - r_, X + r_, Y + r_], fill=(250, 210, 80, 255), outline=ink + (255,))
+            d.line([(X, Y - r_ * 0.7), (X, Y + r_ * 0.7)], fill=ink + (255,), width=1)
+        for b in P_.get('buildings', []):                               # verticality: a long shadow by floor count (light from the
+            v = b.get('vertical')                                       # upper left), and a mark on the towers one can go up
+            if not v:
+                continue
+            x, y, w, h_ = b['rect_px']; L = min(80, v['floors'] * 1.6)
+            if L >= 8:
+                for (sx0, sy0, sx1, sy1) in ((x + w, y + L * 0.5, x + w + L, y + h_ + L), (x + L * 0.5, y + h_, x + w + L, y + h_ + L)):
+                    X0, Y0 = P(sx0, sy0); X1, Y1 = P(sx1, sy1)
+                    d.rectangle([X0, Y0, X1, Y1], fill=(20, 18, 34, min(110, 30 + int(v['floors'] * 2))))
+            if v.get('way_up') and k > 0.3:
+                X, Y = P(x + 10, y + 10); r_ = max(3.0, 6 * k)
+                d.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(250, 250, 250, 255), outline=ink + (255,))
+                d.polygon([(X, Y - r_ * 0.6), (X - r_ * 0.5, Y + r_ * 0.4), (X + r_ * 0.5, Y + r_ * 0.4)], fill=ink + (255,))
 
 
 def draw_shrines(d, S, R, ink, P, k, s, plans=None):
@@ -1417,11 +1457,23 @@ def ground_tints(rgb, S):
     return rgb
 
 
-def sea_tints(sea_rgb, S):
+def sea_tints(sea_rgb, S, R=None):
     mat = S.get('mat')
     if mat is None:
         return sea_rgb
     sea_rgb = sea_rgb.copy()
+    hb = (((S.get('plans') or {}).get('neon-harbour') or {}).get('features') or {}).get('harbour')
+    if hb and R is not None:                                           # Neon's basin: a shallow band along every quay, a deep
+        bx0, by0, bx1, by1 = hb['basin_px']                            # channel from the mouth to the islands, the rest between
+        Hh, Ww = S['land'].shape
+        yy, xx = np.mgrid[0:Hh, 0:Ww]; Xw = (xx + 0.5) * CELL; Yw = (yy + 0.5) * CELL
+        inb = (Xw >= bx0 - 8) & (Xw <= bx1 + 8) & (Yw >= by0 - 8) & (Yw <= by1 + 200) & ~S['land']
+        d = ndi.distance_transform_edt(~S['land']) * CELL
+        cx0, cy0, cx1, cy1 = hb['channel_px']
+        chan = (Xw >= cx0) & (Xw <= cx1) & (Yw >= cy0) & (Yw <= cy1)
+        sea_rgb[inb] = R['water_warm'][3]
+        sea_rgb[inb & chan & (d > 24)] = R['water'][2]
+        sea_rgb[inb & (d <= 24)] = R['water_warm'][4]
     m = (mat == 23) & ~S['land']
     if m.any():
         import town_plans as TP
@@ -1494,7 +1546,7 @@ def render_all(S, M):
     prefix = 'map' + revision[1:]
     R, ink = load_palette(M.ROOT)
     cg, names_, cid, cols = class_grid(S, R, M)
-    rgb = ground_tints(M54.cell_colours(S, R, cg, cid, cols), S); sea_rgb = sea_tints(M54.sea_colours(S, R), S)
+    rgb = ground_tints(M54.cell_colours(S, R, cg, cid, cols), S); sea_rgb = sea_tints(M54.sea_colours(S, R), S, R)
     paths = act1_path(S, M); lines = rail_lines(S)
     outs = [os.environ.get('MAP55_OUT')] if os.environ.get('MAP55_OUT') else []
     outs.append(M.HERE)

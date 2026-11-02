@@ -8,7 +8,7 @@
   30,
   45
  ],
- "buildings_counted": 41,
+ "buildings_counted": 40,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -928,7 +928,7 @@
     "dust-gulch-b012",
     "dust-gulch-b013",
     "dust-gulch-b020",
-    "dust-gulch-b043"
+    "dust-gulch-b042"
    ],
    "mix": {
     "shop": 1,
@@ -980,12 +980,11 @@
     "dust-gulch-b025",
     "dust-gulch-b029",
     "dust-gulch-b036",
-    "dust-gulch-b038",
-    "dust-gulch-b042"
+    "dust-gulch-b038"
    ],
    "mix": {
     "shop": 1,
-    "cottage": 9,
+    "cottage": 8,
     "house": 2,
     "workshop": 1
    },
@@ -1189,7 +1188,7 @@
    ]
   ]
  },
- "fronts": 46,
+ "fronts": 45,
  "landmarks": [
   {
    "building": "dust-gulch-b008",
@@ -2630,40 +2629,6 @@
    "type": "cottage",
    "form": "adobe",
    "footprint_cells": [
-    275,
-    324,
-    5,
-    4
-   ],
-   "rect_px": [
-    2200,
-    2592,
-    40,
-    32
-   ],
-   "faces": "dust-gulch-s06",
-   "door_cells": [
-    277,
-    323
-   ],
-   "purpose": "a cottage",
-   "occupants": "a teamster's household",
-   "district": "dust-gulch-d-water-street",
-   "counted": true,
-   "plot_cells": [
-    275,
-    328,
-    5,
-    2
-   ],
-   "plot": "yard",
-   "counts_as": 1
-  },
-  {
-   "id": "dust-gulch-b043",
-   "type": "cottage",
-   "form": "adobe",
-   "footprint_cells": [
     325,
     324,
     5,
@@ -2681,7 +2646,7 @@
     323
    ],
    "purpose": "a cottage",
-   "occupants": "a miner's household",
+   "occupants": "a teamster's household",
    "district": "dust-gulch-d-front-street",
    "counted": true,
    "plot_cells": [
@@ -2833,7 +2798,7 @@
   "yards": "sand and adobe yards",
   "edges": "irrigated gardens along the Amber; desert round it",
   "materials_cells": {
-   "packed sand": 6231,
+   "packed sand": 6241,
    "adobe yards": 897,
    "dry gravel": 266
   }
