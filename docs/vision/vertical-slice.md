@@ -63,6 +63,81 @@ $GODOT --path game -- --fresh --zone=crossroads    # straight to the broken squa
 
 The loop: woodland, the east door to Crossroads' terrace, the square, the smithy's mark, back west to the woodland, the hatch by the stones, the Undercroft, back to the lantern.
 
+## Play the current slice by hand (2 Nov)
+
+This is a **source-derived checklist, not a completed manual playtest**, for
+main `bf85f174`. Claude's accepted endpoint is **Home again**: the woodland
+shard home, Ada welcomed and Cairn's existing statue answer observed. Full circle
+waking remains gated. The older beat table above is the wider design, not a
+claim that every beat is currently playable.
+
+Use a display and a separately isolated, disposable Godot user-data profile
+before launching the woodland at `start` with `--fresh`, as in
+[the Godot instructions](../godot.md#commands). Do not use a normal player
+profile: `--fresh` skips loading, but `game.gd` still autosaves on zone and
+quest changes; portable mode can also override XDG isolation. Do not use
+`--stage`, `--at`, `--camp` or `--bossfight` to skip this route.
+
+Current controls: WASD/arrows move, mouse aims, left click fires Bramble's bow,
+Space rolls, E interacts; E/Enter advances dialogue (first finishes the text,
+then advances/closes it). Finish each conversation before moving on. The old
+melee-combo helper is not bound to the attack action.
+
+- [ ] Start in the woodland. Approach the weathered sign and read it.
+- [ ] Free the three enemies in the meadow camp through normal combat, then
+  read the sign again: *Thorns by the stones* completes, with 40 Glint.
+- [ ] Talk to Hale on the east path, then walk through the east door to
+  Crossroads. Talk to Moss: *The road home* completes, with 50 Glint total.
+- [ ] Talk to Hale in the square. Use the smithy's Restore mark (30 Glint),
+  finish its dialogue, then talk to Hale at the forge. *The cold forge*
+  completes; the Undercroft hatch opens. Expected balance: 20 Glint.
+- [ ] Walk back through Crossroads' woodland door, then enter the hatch by the
+  stones. Do not use a zone/spawn jump to bypass either door.
+- [ ] Traverse the Undercroft and free its five room-camp enemies. Step onto the
+  seal plate, then approach and pull the lever: the seal opens. Neither a
+  console flag nor a script-emitted area signal counts as manual completion.
+- [ ] Free the Thornback through normal combat, take the revealed great shard,
+  and look at Cairn's statue: its answer mentions a glow; Cairn does not join.
+- [ ] Walk out to the woodland, return to Crossroads and interact with the shard
+  lantern. *Under the stones* completes and the village enters homecoming.
+- [ ] Talk to Moss, restore the Ferns' cottage (20 Glint), finish the dialogue,
+  then welcome Ada. *Home again* completes; expected balance is 85 Glint with
+  `fern_home`, `seeds:valley` and `shard_home:woodland` set by normal consumers.
+- [ ] Stop here and record the last completed beat plus any obstructed
+  approach, failed prompt, dialogue, fight or transition. Do not grant flags
+  or teleport to turn a blocked manual run into a pass.
+
+### What the script proves, and what remains blocked or unplayed
+
+The merged [scene-consumer scenario](../../game/test/test_slice.gd)
+(`test_reachable_slice_through_home_again_uses_scene_consumers`) completes the
+quest chain, but calls interactables directly, closes dialogue automatically
+because no dialogue box is attached, emits body-entry signals for all six door
+crossings and the plate, and supplies lethal hits to all nine enemies. Walking,
+collision/proximity, aiming, surviving the fights and using the visible dialogue
+box therefore remain **unplayed at each corresponding checklist step**. The
+source provides normal input/area consumers for them; this is not evidence that
+they require scripting, nor proof that no physical blocker exists.
+
+**Beyond this endpoint, the full circle cannot currently be reached through
+the registered scenes.** [The zone registry](../../game/data/zones.json) contains
+only woodland, Crossroads and Undercroft. Frostline, ice caves, Brackens and the
+barrow routes needed for the other two shards are absent. The woodland also
+does not place the later `circle_stones`/`cairn` interactions or
+`circle_trial` camp described in [Act 1](../story/act1.md#what-other-lanes-need-to-place).
+The scenario explicitly leaves those shards absent and `circle_awake` false.
+Do not substitute its earlier state-seeding tests for a manual route.
+The first-night raid, planting two beds and a first weapon upgrade in the
+older beat table are outside the accepted scenario's completion evidence.
+
+Source references: [input bindings](../../game/core/inputs.gd),
+[player input](../../game/actors/player.gd),
+[dialogue UI](../../game/ui/dialogue_box.gd),
+[door consumer](../../game/world/door.gd),
+[plate](../../game/world/pressure_plate.gd),
+[lever](../../game/world/seal_lever.gd) and
+[restore consumer](../../game/world/restore_site.gd).
+
 ## Open for Matt
 
 1. The forge first (reasons in beat 5), with the apothecary as act 1's first restore.
