@@ -462,6 +462,32 @@ def draw_forest(d, S, R, ink, P, k, s):
     d.arc([X - r_ * 0.55, Y - r_ * 0.55, X + r_ * 0.55, Y + r_ * 0.55], 180, 330, fill=R['stone'][4], width=max(1, int(round(3 * k))))
 
 
+def draw_city_features(d, S, R, ink, P, k, s, plans=None):
+    """Neon Harbour's vertical links: sky bridges between towers (a pale deck with a cyan edge), the funicular up the Heights
+    (a dark track with a car at each station), the lighthouse's beam arc at the harbour mouth."""
+    for P_ in (plans or (S.get('plans') or {}).values()):
+        fe = P_.get('features') or {}
+        for sb in fe.get('sky_bridges', []):
+            (ax, ay), (bx, by) = sb['px']
+            X0, Y0 = P(ax, ay); X1, Y1 = P(bx, by)
+            wd = max(2, int(round(10 * k)))
+            d.line([(X0, Y0), (X1, Y1)], fill=(214, 220, 232, 255), width=wd)
+            d.line([(X0, Y0), (X1, Y1)], fill=(80, 230, 255, 220), width=max(1, wd // 4))
+        fu = fe.get('funicular')
+        if fu:
+            pts = [P(x, y) for x, y in fu['px']]
+            d.line(pts, fill=(60, 52, 60, 255), width=max(2, int(round(6 * k))))
+            for i in range(1, 12):
+                X = pts[0][0] + (pts[1][0] - pts[0][0]) * i / 12; Y = pts[0][1] + (pts[1][1] - pts[0][1]) * i / 12
+                r_ = max(1.0, 4 * k); d.line([(X - r_, Y - r_), (X + r_, Y + r_)], fill=(150, 140, 150, 255), width=1)
+            for X, Y in pts:
+                r_ = max(2.0, 7 * k); d.rectangle([X - r_, Y - r_, X + r_, Y + r_], fill=(230, 80, 90, 255), outline=ink + (255,))
+        hb = fe.get('harbour')
+        if hb and hb.get('lighthouse'):
+            X, Y = P(*hb['lighthouse']); r_ = max(4.0, 90 * k)
+            d.pieslice([X - r_, Y - r_, X + r_, Y + r_], 200, 250, fill=(255, 244, 170, 60))
+
+
 def draw_shrines(d, S, R, ink, P, k, s, plans=None):
     """A shrine path drawn as a stone stair (a light line with step ticks) and its repeated timber gates with vermilion
     lintels; a footbridge where a plan has one."""
@@ -814,6 +840,8 @@ def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='conti
     FE = features(S, M)
     icons = []
     settle = dict(g.SETTLE); settle.pop('Home valley', None); settle.pop('the Frostline', None)
+    if getattr(M, 'REVISION', 'v55') == 'v56':
+        settle.pop('Canalside', None); settle.pop('Glintside', None)    # districts of Neon Harbour in v56 (Matt, 2 Nov)
     settle['Crossroads'] = (M.CROSSROADS[0], M.CROSSROADS[1], 300, 'town')
     for nm, (x, y, r, kind) in settle.items():
         if nm in MAJOR:
@@ -1033,6 +1061,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     draw_lines(d, lines, P, R, ink, s)
     draw_street_bridges(d, S, R, ink, P, k)
     draw_shrines(d, S, R, ink, P, k, s)
+    draw_city_features(d, S, R, ink, P, k, s)
     draw_forest(d, S, R, ink, P, k, s)
     draw_kerbs(d, S, R, P, k)
     draw_walls(d, S, R, ink, P, k)
@@ -1074,7 +1103,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
 
 
 # ------------------------------------------------------------------------------------------ the town plans, one inset each
-TOWN_INSETS = (('crossroads', 8.0), ('dust-gulch', 8.0), ('hearthold', 8.0), ('neon-harbour', 4.5), ('highgarth', 8.0), ('cinderwick', 8.0))
+TOWN_INSETS = (('crossroads', 8.0), ('dust-gulch', 8.0), ('hearthold', 8.0), ('neon-harbour', 6.0), ('highgarth', 8.0), ('cinderwick', 8.0))
 CLASS_COL = {'main': (247, 236, 206), 'side': (236, 220, 186), 'lane': (222, 204, 168), 'close': (204, 184, 150)}
 FN_COL = {'market and civic': (178, 64, 74), 'homes': (196, 120, 74), 'crafts and work': (150, 112, 52), 'docks and transport': (54, 106, 150),
           'offices and trade': (112, 74, 150), 'edge': (88, 128, 64)}
@@ -1134,6 +1163,7 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
             d.line(q, fill=ink + (90 if st['class'] != 'close' else 60,), width=1)
     draw_street_bridges(d, S, R, ink, Pf, kb)
     draw_shrines(d, S, R, ink, Pf, kb, max(1.0, ppc / 4), [P])
+    draw_city_features(d, S, R, ink, Pf, kb, max(1.0, ppc / 4), [P])
     draw_kerbs(d, S, R, Pf, kb, [P])
     draw_walls(d, S, R, ink, Pf, kb)
     draw_towns(d, S, R, ink, Pf, max(1.0, ppc / 4), kb)

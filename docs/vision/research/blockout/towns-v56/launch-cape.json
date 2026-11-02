@@ -686,26 +686,26 @@
    "b": "bridge"
   },
   "rows": [
-   "3.34g6r22g9.5#",
-   "5.22g8.g6r23g9.5#",
-   "6.21g8.g6r24g8.5#",
-   "6.21g8.g6rg8.15g8.5#",
-   "8.19g8.g5r2g8.15g9.4#",
-   "9.18g8.6r2g8.17g7.4#",
-   "9.18g8.6r2g8.17g7.4#",
-   "9.26g6r2g8.17g7.4#",
-   "11.24g5r3g8.18g6.4#",
-   "11.24g5r29g6.4#",
-   "13.22g5r29g7.3#",
-   "13.22g5r2g15.12g7.3#",
-   "14.21g5r2g15.12g7.3#",
-   "14.21g5r2g15.12g7.3#",
-   "16.19g5r2g15.12g7.3#",
-   "2.g14.5g12.g5r2g15.12g6.4#",
-   ".2g14.5g12.g5r2g15.12g6.4#",
-   "2g2.g15.2g12.g5r2g15.12g5.5#",
-   "20.2g12.g5r6.23g5.5#",
-   "20.2g13.5r24.5g5.5#",
+   "37g6r22g9.5#",
+   "27g8.g6r23g9.5#",
+   "27g8.g6r24g8.5#",
+   "27g8.g6rg8.15g8.5#",
+   "27g8.g5r2g8.15g9.4#",
+   "27g8.6r2g8.17g7.4#",
+   "27g8.6r2g8.17g7.4#",
+   "35g6r2g8.17g7.4#",
+   "35g5r3g8.18g6.4#",
+   "35g5r29g6.4#",
+   "35g5r29g7.3#",
+   "35g5r2g15.12g7.3#",
+   "35g5r2g15.12g7.3#",
+   "35g5r2g15.12g7.3#",
+   "35g5r2g15.12g7.3#",
+   "22g12.g5r2g15.12g6.4#",
+   "22g12.g5r2g15.12g6.4#",
+   "22g12.g5r2g15.12g5.5#",
+   "22g12.g5r6.23g5.5#",
+   "22g13.5r24.5g5.5#",
    "35.5r24.5g5.5#",
    "35.5r24.4g5.6#",
    "35.5r24.4g4.7#",
@@ -795,6 +795,69 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "a hangar, Launch Cape's largest building",
+   "xy_px": [
+    12156,
+    6204
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "a detached staff cottage at the edge, seen first from the the Pad Road",
+   "xy_px": [
+    11984,
+    5840
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the works gate",
+   "xy_px": [
+    12000,
+    5960
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the works yard: carts and the transporter road to the pad",
+   "xy_px": [
+    12105,
+    5980
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the workshop: the master and apprentices about their day",
+   "building": "launch-cape-b002",
+   "xy_px": [
+    12156,
+    6120
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  }
+ ],
  "open_uses": [],
  "theme": {
   "waystone": {

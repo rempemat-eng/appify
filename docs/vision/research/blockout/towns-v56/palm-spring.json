@@ -8,7 +8,7 @@
   14,
   22
  ],
- "buildings_counted": 20,
+ "buildings_counted": 22,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -613,11 +613,13 @@
     "palm-spring-b016",
     "palm-spring-b018",
     "palm-spring-b019",
-    "palm-spring-b020"
+    "palm-spring-b020",
+    "palm-spring-b021",
+    "palm-spring-b022"
    ],
    "mix": {
     "shop": 1,
-    "cottage": 5,
+    "cottage": 7,
     "house": 1
    },
    "function": "homes"
@@ -702,6 +704,20 @@
    ],
    "buildings": [],
    "town": "Palm Spring"
+  },
+  {
+   "id": "palm-spring-d-the-palm-market",
+   "name": "the palm market",
+   "function": "edge: yards and pens",
+   "declared": "dates, water jars and cloth under the palms beside the pool",
+   "box_px": [
+    3320,
+    2800,
+    3400,
+    2832
+   ],
+   "buildings": [],
+   "town": "Palm Spring"
   }
  ],
  "gathering_places": [
@@ -762,7 +778,7 @@
    ]
   ]
  },
- "fronts": 20,
+ "fronts": 22,
  "landmarks": [],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
@@ -1377,6 +1393,74 @@
    "type": "cottage",
    "form": "adobe",
    "footprint_cells": [
+    426,
+    327,
+    6,
+    5
+   ],
+   "rect_px": [
+    3408,
+    2616,
+    48,
+    40
+   ],
+   "faces": "palm-spring-s01",
+   "door_cells": [
+    425,
+    331
+   ],
+   "purpose": "a cottage",
+   "occupants": "a water carrier's household",
+   "district": "palm-spring-d-spring-row",
+   "counted": true,
+   "plot_cells": [
+    426,
+    332,
+    6,
+    2
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b020",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    386,
+    329,
+    5,
+    4
+   ],
+   "rect_px": [
+    3088,
+    2632,
+    40,
+    32
+   ],
+   "faces": "palm-spring-s09",
+   "door_cells": [
+    386,
+    333
+   ],
+   "purpose": "a cottage",
+   "occupants": "a herder's household",
+   "district": "palm-spring-d-spring-row",
+   "counted": true,
+   "plot_cells": [
+    386,
+    333,
+    5,
+    2
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b021",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
     398,
     335,
     6,
@@ -1394,13 +1478,13 @@
     334
    ],
    "purpose": "a cottage",
-   "occupants": "a water carrier's household",
+   "occupants": "a gardener's household",
    "district": "palm-spring-d-spring-row",
    "counted": true,
    "counts_as": 1
   },
   {
-   "id": "palm-spring-b020",
+   "id": "palm-spring-b022",
    "type": "cottage",
    "form": "adobe",
    "footprint_cells": [
@@ -1421,7 +1505,7 @@
     346
    ],
    "purpose": "a cottage",
-   "occupants": "a herder's household",
+   "occupants": "a date grower's household",
    "district": "palm-spring-d-spring-row",
    "counted": true,
    "counts_as": 1
@@ -1440,6 +1524,17 @@
    ],
    "plots": 1,
    "why": "date palms, figs and vegetables on the channels"
+  },
+  {
+   "kind": "plaza",
+   "name": "the palm market",
+   "box": [
+    3320,
+    2800,
+    3400,
+    2832
+   ],
+   "why": "dates, water jars and cloth under the palms beside the pool"
   }
  ],
  "game_layout": {
@@ -1498,9 +1593,9 @@
   "yards": "adobe yards",
   "edges": "irrigated green only along the two channels",
   "materials_cells": {
-   "packed sand": 1555,
-   "adobe yards": 567,
-   "dry gravel": 2470
+   "packed sand": 1718,
+   "adobe yards": 609,
+   "dry gravel": 2400
   }
  },
  "terrain": {
@@ -1566,8 +1661,8 @@
    "30.8r3.3~.~26.g20.2g14.",
    "29.g.8r2.2~.2~47.2g11.3g",
    "29.g2.7rg~3.~3.3~42.3g10.3g",
-   "30.2g7rb3.~3.5~41.3g10.3g",
-   "29.4g5r2br2~4.~3.2~40.4g8.4g",
+   "30.2g7rb3.~3.5~g40.3g10.3g",
+   "29.4g5r2br2~4.~3.2~g39.4g8.4g",
    "29.5g.2r2br3b3.2~4.2b39.5g7.4g",
    "29.g.4gr2brb4r2.~6.b39.5g6.5g",
    "29.6g~brb6r2~8.b37.4g3.4r5g",
@@ -1620,6 +1715,130 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the spring pool and its palms",
+   "xy_px": [
+    3282,
+    2738
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the caravanserai",
+   "xy_px": [
+    3420,
+    2800
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the pool steps, off the busy spring square",
+   "xy_px": [
+    3282,
+    2700
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the channel path through the date gardens to Palm Row",
+   "xy_px": [
+    3250,
+    2950
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the spring square",
+   "xy_px": [
+    3350,
+    2780
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the pool steps",
+   "xy_px": [
+    3282,
+    2700
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the date gardens: date palms, figs and vegetables on the channels",
+   "xy_px": [
+    3280,
+    2980
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the palm market: dates, water jars and cloth under the palms beside the pool",
+   "xy_px": [
+    3360,
+    2816
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a date grower's household about their day",
+   "building": "palm-spring-b012",
+   "xy_px": [
+    3356,
+    2728
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the caravanserai: the innkeeper, staff and guests about their day",
+   "building": "palm-spring-b003",
+   "xy_px": [
+    3456,
+    3000
+   ],
+   "screen": [
+    1,
+    2
+   ]
+  }
+ ],
  "open_uses": [
   {
    "id": "palm-spring-o01",

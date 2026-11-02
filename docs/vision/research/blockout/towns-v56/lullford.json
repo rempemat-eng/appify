@@ -1052,6 +1052,71 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the workshop, Lullford's largest building",
+   "xy_px": [
+    8968,
+    4496
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "a cottage at the edge, seen first from the Towpath",
+   "xy_px": [
+    8932,
+    4168
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a farming household about their day",
+   "building": "lullford-b001",
+   "xy_px": [
+    8612,
+    4292
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the shop: the shopkeeper, living above about their day",
+   "building": "lullford-b003",
+   "xy_px": [
+    8836,
+    4444
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a family house: a farming household about their day",
+   "building": "lullford-b010",
+   "xy_px": [
+    8812,
+    4504
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  }
+ ],
  "open_uses": [],
  "theme": {
   "waystone": {

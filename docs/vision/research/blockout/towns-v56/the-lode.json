@@ -453,6 +453,33 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "a family house, the Lode's largest building",
+   "xy_px": [
+    2736,
+    1684
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a craft household about their day",
+   "building": "the-lode-b004",
+   "xy_px": [
+    2876,
+    1844
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  }
+ ],
  "open_uses": [],
  "theme": {
   "waystone": {

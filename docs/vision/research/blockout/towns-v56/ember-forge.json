@@ -381,6 +381,20 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "a family house, Ember forge's largest building",
+   "xy_px": [
+    2144,
+    4920
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  }
+ ],
  "open_uses": [],
  "theme": {
   "waystone": {

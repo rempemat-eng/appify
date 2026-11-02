@@ -838,17 +838,132 @@ def scan_place(t, box, forms, n, near=5, counted=True, plot=None, step=16, shore
         for hx in range(int(x0), int(x1), step):
             if got >= n:
                 return got
-            f, w_, d_ = forms[got % len(forms)]
-            a_, b_ = C(hx, hy); c_, e_ = a_ + d_ // CELL, b_ + w_ // CELL
-            if a_ - margin < 0 or b_ - margin < 0 or c_ + margin > H or e_ + margin > W:
-                continue
-            win = (slice(a_ - margin, c_ + margin), slice(b_ - margin, e_ + margin))
-            if not nearm[a_:c_, b_:e_].any() or T['taken'][win].any() or T['street'][win].any() or T['barrier'][win].any() \
-                    or T['keepout'][win].any() or wetn[a_:c_, b_:e_].any() or not np.isin(K[win], list(BUILDABLE - ROUTE)).all():
-                continue
-            if t.hand(hx, hy, w_, d_, f, plot=plot, counted=counted):
-                got += 1
+            for k_ in range(len(forms)):                                # the preferred form first, then the smaller ones
+                f, w_, d_ = forms[(got + k_) % len(forms)]
+                a_, b_ = C(hx, hy); c_, e_ = a_ + d_ // CELL, b_ + w_ // CELL
+                if a_ - margin < 0 or b_ - margin < 0 or c_ + margin > H or e_ + margin > W:
+                    continue
+                win = (slice(a_ - margin, c_ + margin), slice(b_ - margin, e_ + margin))
+                if not nearm[a_:c_, b_:e_].any() or T['taken'][win].any() or T['street'][win].any() or T['barrier'][win].any() \
+                        or T['keepout'][win].any() or wetn[a_:c_, b_:e_].any() or not np.isin(K[win], list(BUILDABLE - ROUTE)).all():
+                    continue
+                if t.hand(hx, hy, w_, d_, f, plot=plot, counted=counted):
+                    got += 1
+                    break
     return got
+
+
+def close_front_gaps(t, form='row_house'):
+    """Every gap wider than one cell between two fronts on a continuous street: filled wall to wall by a row block of exactly
+    its width (fronts of 3 to 6 cells), or, where nothing can stand, crossed by a one-cell alley so it is a way through."""
+    T = t.T; filled = alleys = 0
+    for s_ in t.streets:
+        if s_.get('frontage') != 'continuous':
+            continue
+        hw = s_['width_px'] / 2
+        P_ = s_['pts']
+        for (ax, ay), (bx, by) in zip(P_, P_[1:]):
+            if abs(by - ay) <= 0.36 * abs(bx - ax):
+                axis, a0, a1, c = 'x', min(ax, bx), max(ax, bx), (ay + by) / 2
+            elif abs(bx - ax) <= 0.36 * abs(by - ay):
+                axis, a0, a1, c = 'y', min(ay, by), max(ay, by), (ax + bx) / 2
+            else:
+                continue
+            for side in (1, -1):
+                edge = math.ceil((c + hw) / CELL) * CELL if side > 0 else math.floor((c - hw) / CELL) * CELL
+                rc = int(edge // CELL) if side > 0 else int(edge // CELL) - 1
+                lo, hi = int(a0 // CELL), int(a1 // CELL)
+                line = T['taken'][rc, lo:hi] if axis == 'x' else T['taken'][lo:hi, rc]
+                idx = np.nonzero(line)[0]
+                if len(idx) < 2:
+                    continue
+                i = int(idx[0])
+                while i < idx[-1]:
+                    if line[i]:
+                        i += 1; continue
+                    j = i
+                    while j < len(line) and not line[j]:
+                        j += 1
+                    n = int(j - i)
+                    on_st = (T['street'][rc, lo + i:lo + j] if axis == 'x' else T['street'][lo + i:lo + j, rc]).any()
+                    if n >= 2 and j <= idx[-1] and not on_st:
+                        g0 = (lo + i) * CELL; ok = False
+                        # a front set back one cell from the street: brought forward to the street's edge
+                        back = rc + side
+                        seg_b = (T['taken'][back, lo + i:lo + j] if axis == 'x' else T['taken'][lo + i:lo + j, back])
+                        seg_f = (T['street'][rc, lo + i:lo + j] | T['barrier'][rc, lo + i:lo + j]) if axis == 'x' else \
+                            (T['street'][lo + i:lo + j, rc] | T['barrier'][lo + i:lo + j, rc])
+                        if seg_b.any():
+                            for b in t.buildings:
+                                bx0, by0, bx1, by1 = b['x'] // CELL, b['y'] // CELL, (b['x'] + b['w']) // CELL, (b['y'] + b['h']) // CELL
+                                fr_ok = lambda a_, b_: not (T['street'][rc, a_:b_] | T['barrier'][rc, a_:b_] | T['taken'][rc, a_:b_]).any() if axis == 'x' \
+                                    else not (T['street'][a_:b_, rc] | T['barrier'][a_:b_, rc] | T['taken'][a_:b_, rc]).any()
+                                if axis == 'x' and ((side < 0 and by1 == rc) or (side > 0 and by0 == rc + 1)) and bx0 < lo + j and bx1 > lo + i \
+                                        and fr_ok(bx0, bx1):
+                                    if side < 0:
+                                        b['h'] += CELL
+                                    else:
+                                        b['y'] -= CELL; b['h'] += CELL
+                                    T['taken'][rc, max(bx0, 0):bx1] = True; T['K'][rc, bx0:bx1] = T['K'][rc + side, bx0:bx1]
+                                elif axis == 'y' and ((side < 0 and bx1 == rc) or (side > 0 and bx0 == rc + 1)) and by0 < lo + j and by1 > lo + i \
+                                        and fr_ok(by0, by1):
+                                    if side < 0:
+                                        b['w'] += CELL
+                                    else:
+                                        b['x'] -= CELL; b['w'] += CELL
+                                    T['taken'][by0:by1, rc] = True; T['K'][by0:by1, rc] = T['K'][by0:by1, rc + side]
+                            ok = bool((T['taken'][rc, lo + i:lo + j] if axis == 'x' else T['taken'][lo + i:lo + j, rc]).all())
+                            if ok:
+                                filled += 1
+                        if n == 2 and not ok:                              # two cells: the front before it widened by one
+                            for b in t.buildings:
+                                bx0, by0, bx1, by1 = b['x'] // CELL, b['y'] // CELL, (b['x'] + b['w']) // CELL, (b['y'] + b['h']) // CELL
+                                hit = (axis == 'x' and bx1 == lo + i and by0 <= rc < by1) or (axis == 'y' and by1 == lo + i and bx0 <= rc < bx1)
+                                if not hit:
+                                    continue
+                                sl_ = (slice(by0, by1), slice(bx1, bx1 + 1)) if axis == 'x' else (slice(by1, by1 + 1), slice(bx0, bx1))
+                                if not (T['taken'][sl_] | T['street'][sl_] | T['barrier'][sl_]).any():
+                                    if axis == 'x':
+                                        b['w'] += CELL
+                                    else:
+                                        b['h'] += CELL
+                                    T['taken'][sl_] = True; T['K'][sl_] = T['K'][by0, bx0]
+                                    if b.get('bays'):
+                                        b['bays'][-1]['w_cells'] += 1
+                                    ok = True
+                                break
+                        if n > 24 and not ok:                              # a long gap: filled in blocks of at most 20 fronts' cells
+                            k_ = math.ceil(n / 20); sz = [n // k_ + (1 if q < n % k_ else 0) for q in range(k_)]; at = g0
+                            for sz_ in sz:
+                                for dd in (40, 32, 24):
+                                    xx, yy, ww, hh = ((at, edge if side > 0 else edge - dd, sz_ * CELL, dd) if axis == 'x' else
+                                                      (edge if side > 0 else edge - dd, at, dd, sz_ * CELL))
+                                    if t.hand(xx, yy, ww, hh, form):
+                                        t.buildings[-1]['bays'] = [{'w_cells': sz_ // 2, 'storeys': 3, 'roof': 'flat'},
+                                                                   {'w_cells': sz_ - sz_ // 2, 'storeys': 2, 'roof': 'tin'}]
+                                        filled += 1
+                                        break
+                                at += sz_ * CELL
+                            ok = bool((T['taken'][rc, lo + i:lo + j] if axis == 'x' else T['taken'][lo + i:lo + j, rc]).all())
+                        if 3 <= n <= 24 and not ok:
+                            for dd in (40, 32, 24):
+                                xx, yy, ww, hh = ((g0, edge if side > 0 else edge - dd, n * CELL, dd) if axis == 'x' else
+                                                  (edge if side > 0 else edge - dd, g0, dd, n * CELL))
+                                if t.hand(xx, yy, ww, hh, form):
+                                    b = t.buildings[-1]; k_, ws = n, []
+                                    while k_ > 0:
+                                        w_ = min(k_, (3, 5, 4, 6)[len(ws) % 4]) if k_ - min(k_, (3, 5, 4, 6)[len(ws) % 4]) != 1 else k_
+                                        ws.append(w_); k_ -= w_
+                                    b['bays'] = [{'w_cells': w_, 'storeys': 2 + q % 3, 'roof': ('flat', 'tin', 'tile')[q % 3]} for q, w_ in enumerate(ws)]
+                                    filled += 1; ok = True
+                                    break
+                        if not ok:                                         # a way through: an alley across the gap
+                            m = g0 + (n * CELL) // 2
+                            pts = ([(m, edge - side * 4), (m, edge + side * 40)] if axis == 'x' else [(edge - side * 4, m), (edge + side * 40, m)])
+                            t.street(pts, 'close', name=None)
+                            t.streets[-1]['alley'] = True; alleys += 1
+                    i = j
+    return filled, alleys
 
 
 def _lm(pts, width):
@@ -984,6 +1099,7 @@ def lay_all(T, X, *, authored=None):
     """Every settlement's footprint, in the order of Matt's allocation, then the smaller places. X: the geo55 module."""
     authored = _authored_inputs(authored, {'cinderwick', 'hearthold'})
     towns = {}
+    V56 = getattr(X, 'REVISION', 'v55') == 'v56'                      # Matt's 2 Nov pass: the v56 map only (v55 stays as it was)
     rng = np.random.default_rng(55)
 
     # ---------------------------------------------------------------- Crossroads (large): the market town at the routes' hub
@@ -1093,6 +1209,10 @@ def lay_all(T, X, *, authored=None):
     t.yard(2600, 2120, 2700, 2210, name='the ore yard', why="the Lode's ore, down the mule track, waiting for the train")
     t.fields(2330, 2600, 2580, 2780, ('orchard', 'field2'), name='the river gardens', why='irrigated from the Amber: vegetables, figs, fodder', dry=True, size=(64, 128))
     t.fill(38, 260, ('adobe', 'adobe', 'workshop', 'adobe', 'house'))
+    if V56:                                                          # liveliness (Matt, 2 Nov; a western main street)
+        t.cap = 45
+        scan_place(t, (2168, 2096, 2912, 2800), [('adobe', 48, 40), ('house', 80, 48), ('adobe', 40, 32)], 5, plot=(0, 1, 24, 'yard'), near=3)
+        t.yard(2400, 2480, 2480, 2520, name='the trading post yard', why='wagons unloading hides, flour and ore; the Saturday market on the boards')
     towns['Dust Gulch'] = t
 
     # ---------------------------------------------------------------- Palm Spring (medium): the oasis
@@ -1124,6 +1244,10 @@ def lay_all(T, X, *, authored=None):
     t.fields(3080, 2880, 3480, 3080, ('orchard', 'field2', 'orchard'), name='the date gardens', why='date palms, figs and vegetables on the channels', dry=True, size=(64, 128))
     t.fields(3150, 2560, 3420, 2640, ('orchard',), name='the north grove', why='palms along the Willow Run', dry=True, size=(64, 112), hedge=False)
     t.fill(18, 170, ('adobe', 'house', 'adobe'), plot=(24, 'yard'))
+    if V56:                                                          # liveliness (an oasis town round its pool)
+        t.cap = 22
+        scan_place(t, (3024, 2552, 3648, 3072), [('adobe', 48, 40), ('adobe', 40, 32)], 2, plot=(0, 1, 16, 'yard'), near=3)
+        t.yard(3320, 2800, 3400, 2832, kind='plaza', name='the palm market', why='dates, water jars and cloth under the palms beside the pool')
     towns['Palm Spring'] = t
 
     # ---------------------------------------------------------------- Fernhollow (medium): the timber town in the Fern hills
@@ -1187,9 +1311,20 @@ def lay_all(T, X, *, authored=None):
     t.yard(8300, 2770, 8470, 2860, name='the railway yard', why='the terminus sidings, the engine shed and the coal stage')
     t.fields(8360, 2430, 8520, 2560, ('field2',), name='the allotments', why="the terraces' vegetable plots", size=(48, 80))
     t.fill(26, 260, ('terrace', 'workshop', 'townhouse', 'house'), box=(7900, 2250, 8560, 2900))
+    for nm in (('Pit Row', 'Terrace Lane', 'Engine Lane', 'Station Lane') if V56 else ()):   # liveliness (a railway works town)
+        t.cap = 45
+        q = next((s_['pts'] for s_ in t.streets if s_['name'] == nm), None)
+        if q:
+            t.frontage(q, sides=(-1, 1), form='row_house', block=(96, 160), depth=(32, 40), alley=(0, 8), limit=3,
+                       why="the works' brick terraces: the workers' houses wall to wall by the works, as in a railway town",
+                       props=('chimney pots', 'coal bunker', 'washing line', 'bicycle'), roofs=('slate', 'slate', 'tile'))
+    if V56:
+        scan_place(t, (7880, 2272, 8592, 2872), [('workshop', 96, 56), ('house', 80, 48)], 3, plot=(0, 1, 16, 'yard'), near=3)
     towns['Cogsworth'] = t
 
     towns['Hearthold'] = hearthold(T, X, authored={k: v for k, v in authored.items() if k == 'hearthold'})
+    if V56:
+        hearthold_v56(T, towns['Hearthold'])
 
     # ---------------------------------------------------------------- Cinderwick (medium): the black-sand cove
     clear_paint(T, 2250, 5700, 2750, 5960)
@@ -1214,8 +1349,9 @@ def lay_all(T, X, *, authored=None):
     t.row(t.streets[1]['pts'], ['workshop', 'townhouse', 'cottage'], limit=7, plot=None, gap=(2, 8))
     t.row(route_part(T, 'Ember Way', (2200, 5700, 2420, 5860)), ['cottage', 'house'], limit=3, start=10)
     t.yard(2620, 5760, 2720, 5840, name='the kilns', why='charcoal from the dead forest; black-sand glass')
-    t.square(2552, 5892, 40, 14, name='the harbour square')
-    t.yard(2496, 5880, 2624, 5912, kind='quay', name='the stone quay', why="the fishing boats tie up here; nets dry on the quay's edge")
+    if V56:
+        t.square(2552, 5892, 40, 14, name='the harbour square')
+        t.yard(2496, 5880, 2624, 5912, kind='quay', name='the stone quay', why="the fishing boats tie up here; nets dry on the quay's edge")
     t.row(t.streets[3]['pts'], ['cottage', 'house'], limit=4)
     t.row(t.streets[4]['pts'], ['cottage', 'house', 'workshop'], limit=4)
     t.row(route_part(T, 'Ash Coast', (2480, 5760, 2760, 5900)), ['cottage', 'house'], limit=3, start=10)
@@ -1342,7 +1478,7 @@ def hearthold(T, X, *, authored=None):
     fp = ('sign', 'potted plants', 'woodpile', 'water butt', 'lamp')
     # the lower town's home streets: detached houses with their yards (Matt, 28 Oct 11:26), not wall to wall
     t.row(t.S('Ash Lane'), ['house', 'cottage', 'house', 'workshop', 'cottage'], limit=6, plot=(16, 'yard'), reach=32)
-    t.row(t.S("Potters' Lane"), ['cottage', 'house', 'workshop', 'house', 'cottage'], limit=7, plot=(16, 'yard'), reach=32, sides=(-1,))
+    t.row(t.S("Potters' Lane"), ['cottage', 'house', 'workshop', 'house', 'cottage'], limit=7, plot=(16, 'yard'), reach=32)
     t.hand(2248, 5520, 40, 48, 'townhouse')                             # the gate market's corner house
     t.hand(2632, 5600, 120, 40, 'terrace')                               # Vine Lane's terrace above the lava
     # a calm ground: the lower town's leftover rough ground made plain yard, its terraces stepping down in three levels
@@ -1355,9 +1491,29 @@ def hearthold(T, X, *, authored=None):
     t.fields(2480, 5120, 2620, 5400, ('orchard',), name='the vines', why="vines on the cooled ash of the rock's warm east side", size=(64, 112), hedge=False)
     t.fields(2140, 5744, 2600, 5800, ('field', 'field2'), name='the lower fields', why='barley and beans between the town and the cove', size=(80, 144))
     _adopt_requested(t, authored, 'hearthold')
+    return t
+
+
+def hearthold_v56(T, t):
+    """Hearthold in the v56 map (Matt, 2 Nov): the houses Potters' Lane put on the cove's upper street go (that street is
+    Cinderwick's), the lower town's free ground gets detached homes with yards, the gate market its stalls."""
+    K = T['K']
+    keep = []
+    for b in t.buildings:
+        if b['y'] >= 5724 and not b.get('authored_id'):
+            a, c_ = C(b['x'], b['y']); sl = (slice(a, a + b['h'] // CELL), slice(c_, c_ + b['w'] // CELL))
+            K[sl] = T['K0'][sl]; T['taken'][sl] = False
+            if b.get('plot'):
+                pc, pr, pw, ph = b['plot'][:4]; ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+                K[ps] = T['K0'][ps]
+        else:
+            keep.append(b)
+    t.buildings[:] = keep
     t.cap = max(t.cap, 45)
-    scan_place(t, (2000, 5360, 2800, 5690), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 48), ('workshop', 88, 56)], 4,
+    scan_place(t, (2000, 5360, 2800, 5690), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 48), ('workshop', 88, 56)], 6,
                plot=(0, 1, 16, 'yard'), near=3)                    # the lower town's detached homes and yards where there is room
+    scan_place(t, (2000, 5096, 2824, 5400), [('townhouse', 48, 48), ('shop', 64, 48)], 3, plot=(0, 1, 16, 'yard'), near=2)
+    t.yard(2280, 5460, 2360, 5500, kind='plaza', name='the market stalls', why="the walled town's market: bread, ash-grown wine, iron goods from the smiths")
     return t
 
 
@@ -2166,8 +2322,10 @@ def _widen(form, ow, od, bays, fill, seed=0):
         nb[0:1] = [dict(nb[0], w_cells=3 + seed % 2), dict(nb[0], w_cells=w0 - 3 - seed % 2, storeys=nb[0].get('storeys', 2) + 1)]
     k = 0
     while sum(q['w_cells'] for q in nb) * CELL < target and len(nb) < 5:
-        w = (4, 6, 3, 5, 7)[(len(nb) + k + ow // 8 + seed) % 5]
-        w = min(w, target // CELL - sum(q['w_cells'] for q in nb))
+        room = target // CELL - sum(q['w_cells'] for q in nb)
+        used = {q['w_cells'] for q in nb}
+        cyc = [(4, 6, 3, 5, 7)[(len(nb) + k + ow // 8 + seed + q) % 5] for q in range(5)]
+        w = next((c_ for c_ in cyc if c_ <= room and c_ not in used), None) or next((c_ for c_ in cyc if c_ <= room), 0)
         if w < 3:
             break
         nb.append({'w_cells': w, 'storeys': 2 + len(nb) % 2, 'roof': nb[len(nb) % len(bays)].get('roof', 'flat')}); k += 1
@@ -2366,24 +2524,124 @@ def _feedback_crossroads(T, X):
     return t
 
 
-FILL = {'the old waterfront': 1.5, 'the Lanes and the East Shore': 1.5, 'the Heights and the Skyport': 1.6}   # widen rows toward full fronts
+BASIN = {'centre_x': 10700, 'x': (10360, 11040), 'y': (4640, 5640), 'corner': 160, 'mouth': (10640, 10760), 'wall_y': (5640, 5672),
+          'reclaim': (10200, 4520, 11240, 5640), 'islands': {'Chapel Islet': (10700, 5104, 80), 'the shard-light platform': (10700, 5424, 64)},
+          'canal_y': 4600, 'canal_x': (9440, 10432), 'falls_x': (10680, 10872)}
+
+
+def neon_basin(T):
+    """Neon Harbour's harbour reshaped (Matt, 2 Nov: "a more symmetrical harbour, with things right by the waterfront and things
+    on one or two islands in the middle; you are allowed to and should change the terrain"): the ria becomes a near-symmetrical
+    basin about x 10700 (a rounded rectangle) with quays and promenades round it, piers and ferry slips on both shores, two
+    harbour walls with a lighthouse at the mouth, and two islands in the middle: Chapel Islet (the old fort and the floating
+    market, the Harbour Bridge resting on it) and the Company's shard-light platform (the Beacon Causeway's end). Canalside's
+    canal is straightened into an urban canal along y 4600 into the basin. Every array the layout and the checks read is updated."""
+    K, K0 = T['K'], T['K0']
+    B = BASIN; (bx0, bx1), (by0, by1), r = B['x'], B['y'], B['corner']
+    qx = np.clip(PX, bx0 + r, bx1 - r); qy = np.clip(PY, by0 + r, by1 - r)
+    basin = (np.hypot(PX - qx, PY - qy) <= r) & (PX >= bx0) & (PX <= bx1) & (PY >= by0) & (PY <= by1 + r)
+    basin &= PY <= by1 + 4                                             # open at the mouth: the walls close it
+    rx0, ry0, rx1, ry1 = B['reclaim']
+    R = (PX >= rx0) & (PX < rx1) & (PY >= ry0) & (PY < ry1)
+    wy0, wy1 = B['wall_y']; m0, m1 = B['mouth']
+    walls = (PY >= wy0) & (PY < wy1) & (PX >= rx0) & (PX < rx1) & ~((PX >= m0) & (PX < m1))
+    walls |= (PX >= m1) & (PX < m1 + 80) & (PY >= wy0) & (PY < wy1 + 48)     # the mole at the east wall's head: the lighthouse
+    mouth = (PY >= wy0) & (PY < wy1 + 160) & (PX >= m0) & (PX < m1)
+    keep = np.isin(K, ['falls', 'river', 'rapids'])                      # the Glint's falls still drop into the basin
+    # the canal: the old diagonal cut filled, a straight canal along canal_y into the basin's north-west corner
+    oldcanal = (K == 'canal')
+    cx0, cx1 = B['canal_x']; cy = B['canal_y']
+    canal = ((PX >= cx0) & (PX < cx1) & (PY >= cy - 12) & (PY < cy + 12)) | ((PX >= cx1 - 24) & (PX < cx1) & (PY >= cy - 12) & (PY < 4776))
+    falls = np.zeros_like(canal)
+    for fx in B['falls_x']:                                            # the Glint's falls run on to the basin in short stone channels
+        falls |= (PX >= fx) & (PX < fx + 24) & (PY >= 4496) & (PY < by0 + 16)
+    island = np.zeros_like(R)
+    for nm, (ix, iy, ir) in B['islands'].items():
+        island |= np.hypot(PX - ix, PY - iy) <= ir
+    water = ((R & basin) | mouth | canal | (falls & ~keep)) & ~island
+    land = ((R & ~basin & ~keep) | walls | island | (oldcanal & ~canal)) & ~water
+    was_land = T['land'].copy()
+    # nearest original land and water for heights and tiers
+    _, (lr, lc) = ndi.distance_transform_edt(~(was_land & ~R), return_indices=True)
+    seaz = float(np.median(T['h'][T['sea']])) if T['sea'].any() else 0.0
+    for key in ('h',):
+        T[key][land & ~was_land] = T[key][lr, lc][land & ~was_land]
+        T[key][water] = seaz
+    if 'tiers_pre' in T:
+        T['tiers_pre'][land] = T['tiers_pre'][lr, lc][land]
+    T['land'][land] = True; T['land'][water] = False
+    T['sea'][water & ~canal] = True; T['sea'][land] = False
+    if 'sea' in T['barriers']:
+        T['barriers']['sea'][water & ~canal] = True; T['barriers']['sea'][land] = False
+    T['FRAME'][land | water] = False
+    for key in ('slope', 'dv'):
+        if key in T and isinstance(T[key], np.ndarray):
+            T[key][land] = 0
+    shore = ndi.binary_dilation(water & ~canal, iterations=3)
+    newk = np.where(shore, 'quay', 'meadow')
+    K[land] = newk[land]; K0[land] = newk[land]
+    K[water] = 'sea'; K0[water] = 'sea'
+    K[canal] = 'canal'; K0[canal] = 'canal'
+    K[falls & ~keep] = 'river'; K0[falls & ~keep] = 'river'
+    K[walls & ~water] = 'quay'; K0[walls & ~water] = 'quay'
+    for nm, (ix, iy, ir) in B['islands'].items():                     # the islands' paved rims
+        rim = (np.hypot(PX - ix, PY - iy) <= ir) & (np.hypot(PX - ix, PY - iy) > ir - 16)
+        K[rim] = 'quay'; K0[rim] = 'quay'
+    # piers and ferry slips into the basin: three cells wide, on both shores (walkable decks over the water)
+    piers = []
+    for (px0, py0, px1, py1, nm) in ((bx0, 4824, bx0 + 72, 4848, 'the west ferry pier'), (bx0, 5288, bx0 + 64, 5312, 'the Heights slip'),
+                                     (bx1 - 72, 4840, bx1, 4864, 'the east ferry pier'), (bx1 - 88, 5000, bx1, 5024, 'the cargo pier'),
+                                     (bx1 - 88, 5248, bx1, 5272, 'the long quay pier'), (bx1 - 64, 5520, bx1, 5544, 'the pilot slip')):
+        m = (PX >= px0) & (PX < px1) & (PY >= py0) & (PY < py1) & water
+        K[m] = 'bridge'; K0[m] = 'bridge'
+        piers.append({'name': nm, 'rect_px': [px0, py0, px1 - px0, py1 - py0]})
+    T['neon_basin'] = {'piers': piers, 'lighthouse': [m1 + 40, wy0 + 40], 'islands': {k: list(v) for k, v in B['islands'].items()},
+                       'basin_px': [bx0, by0, bx1, by1], 'mouth_px': [m0, m1], 'canal_px': [[cx0, cy], [cx1, cy]]}
+    # the routes over the water: the Harbour Bridge (unchanged line, now resting on Chapel Islet) and the Beacon Causeway to
+    # the shard-light platform; their decks painted where they cross the basin
+    ix, iy, ir = B['islands']['the shard-light platform']
+    T['route_px']['Beacon Causeway'] = [(11258.0, 5497.0), (11200.0, 5424.0), (float(ix + ir - 8), float(iy))]
+    for rn in ('Harbour Bridge', 'Beacon Causeway'):
+        band = _lm(T['route_px'][rn], 24) & R
+        K[band & (K == 'sea')] = 'bridge'
+    for rn, v in T['route_px'].items():                               # every road over the new canal or the falls channels: a bridge
+        band = _lm(v, 24)
+        K[band & ((K == 'canal') | ((K == 'river') & falls))] = 'bridge'
+    # the barrier masks again (prepare's rule), now that water and land moved
+    bar = np.zeros_like(R)
+    for m in T['barriers'].values():
+        bar |= m
+    bar |= np.isin(K, ['river', 'rapids', 'creek', 'canal', 'oxbow', 'tarn', 'mere', 'sea', 'surf', 'lava', 'aa', 'fissure', 'crater', 'falls',
+                       'channel', 'pool', 'cliff', 'crag', 'wall', 'castlewall', 'shardglass', 'craterrim', 'scorch', 'circle', 'spoil', 'rockfall',
+                       'closedroad', 'viaduct', 'viapier', 'mud', 'sandbar'])
+    T['barrier'] = ndi.binary_dilation(bar, iterations=1)
+    return T['neon_basin']
+
+
+FILL = {'the old waterfront': 2.0, 'the Lanes and the East Shore': 2.0, 'the Heights and the Skyport': 2.2}   # widen rows toward full fronts
 
 
 def _feedback_neon(T, X):
-    """Five connected districts; existing81-record inventory still counts72."""
+    """The city round its harbour basin (Matt, 2 Nov): the 81-record inventory (72 counted) kept whole in its districts, the
+    basin reshaped, Canalside and the Glintside mills taken into the city as the canal quarter, every street then built up
+    wall to wall where a city would, the Company core vertical."""
     out = {}
     old = FEEDBACK_BUILDINGS['neon-harbour']
+    neon_basin(T)
     # the regional roads through the city are its planned streets again (the restore took v55's straightening back): straight
     # x and y runs the districts hang off, bending only at the water (the plan check's 75 %)
     T.setdefault('straightened', {})
     for rn, bx in (('Quay Street', (10950, 4380, 11600, 5600)), ('Old Bridges', (10450, 4300, 11150, 4520)), ('Cape Road', (11400, 5000, 12300, 5800)),
                    ('Lull Road', (9650, 4250, 10560, 4580)), ('Delta Road', (9780, 4380, 10400, 5700))):
         T['straightened'][rn] = straighten(T, rn, bx, 40 if g.ROUTES[rn][1] == 'road' else 24, g.ROUTES[rn][1] if g.ROUTES[rn][1] in ('road', 'path') else 'road')
+    for rn, v in T['route_px'].items():                               # roads over the canal and the falls channels: bridges
+        band = _lm(v, 24)
+        T['K'][band & np.isin(T['K'], ['canal']) & (g.PX > 9400) & (g.PX < 10700)] = 'bridge'
     # the old route lines the straightening left behind become ground again, except where a street or a route still runs
     K = T['K']; live = np.zeros(K.shape, bool)
     for rn, v in T['route_px'].items():
         live |= _lm(v, 48)
-    stray = np.isin(K, ['road', 'path', 'trail']) & ~T['street'] & ~live & (g.PX > 9600) & (g.PX < 12544) & (g.PY > 3904) & (g.PY < 5888)
+    stray = np.isin(K, ['road', 'path', 'trail']) & ~T['street'] & ~live & (g.PX > 9400) & (g.PX < 12544) & (g.PY > 3904) & (g.PY < 5888)
     K[stray] = 'meadow'
     props = ('sign', 'awning', 'potted plants', 'pipes', 'AC unit')
     specs = [
@@ -2427,8 +2685,8 @@ def _feedback_neon(T, X):
             t.square(10112, 5720, 96, 40, kind='garden', name='the belvedere gardens')
         elif label == 'the old waterfront':
             for x in (10552, 10936, 11272):
-                t.street([(x, 4256), (x, 4656)], 'side', name='the waterfront cross lane')
-            t.street([(10552, 4656), (11272, 4656)], 'side', name='the old quays')
+                t.street([(x, 4256), (x, 4624)], 'side', name='the waterfront cross lane')
+            t.street([(10440, 4624), (11272, 4624)], 'side', name='the old quays')
         elif label == 'the Lanes and the East Shore':
             for x, top, bottom in ((11272, 4256, 4816), (11720, 4256, 5520), (12280, 4960, 5520)):
                 t.street([(x, top), (x, bottom)], 'side', name='the neighbourhood link')
@@ -2452,11 +2710,11 @@ def _feedback_neon(T, X):
         else:
             _feedback_rows(t, records, rows, props=props, fill=FILL.get(label), overflow_rows={
                 'the old waterfront': [('x', 4500, 11296, 11696, 1, 'Courtyard Lane'), ('x', 4644, 11296, 11696, 1, 'Arcade Lane'),
-                                       ('x', 4656, 10576, 11264, -1, 'the old quays north'),
+                                       ('x', 4624, 10576, 11264, -1, 'the old quays north'),
                                        ('y', 10552, 4176, 4288, -1, 'the falls steps'), ('y', 11272, 4176, 4288, -1, 'the waterfront cross lane'),
-                                       ('x', 4656, 10576, 11264, 1, 'the old quays south'),
-                                       ('y', 10936, 4288, 4656, -1, 'the waterfront cross lane'),
-                                       ('y', 11272, 4288, 4656, -1, 'the waterfront cross lane'),
+
+                                       ('y', 10936, 4288, 4624, -1, 'the waterfront cross lane'),
+                                       ('y', 11272, 4288, 4624, -1, 'the waterfront cross lane'),
                                        ('x', 5332, 11808, 12256, 1, 'Sea Garden Lane'), ('x', 5476, 11808, 12256, 1, 'Shore End')],
                 'the docks': [('x', 5040, 11320, 11640, 1, 'Warehouse Quay'), ('x', 5232, 11320, 11640, 1, 'Repair Quay'),
                               ('x', 5456, 11320, 11640, 1, 'South Cargo Quay'), ('y', 11648, 4752, 5664, -1, 'Quay Street service spine')],
@@ -2480,8 +2738,68 @@ def _feedback_neon(T, X):
                                       (11480, 5248, 11640, 5312, 'the crane berth', 'gantry cranes over the long quay, the lighters below'),
                                       (11320, 5472, 11480, 5528, 'the timber and coal stacks', 'bulk cargo for the city and the line')):
         docks.yard(a0, b0, a1, b1, name=nm, why=why)
-    for i, b in enumerate([b for b in docks.buildings if 'layout_id' not in b]):
-        b['layout_id'] = f'neon-harbour-b{101 + i:03d}'            # the docks' warehouses and sheds: outside the 81-record inventory
+    # the harbour's islands and the lighthouse: landmarks (they add nothing to the count)
+    B = T['neon_basin']
+    docks.hand(10656, 5048, 88, 48, 'chapel')                         # the old chapel-fort on Chapel Islet
+    docks.yard(10640, 5136, 10760, 5184, name='the floating market', why='boats moored round Chapel Islet sell fish, noodles and salvage by night')
+    docks.hand(10668, 5392, 64, 64, 'tower')                          # the Company's shard-light, the brightest point in the city
+    lx, ly = B['lighthouse']
+    docks.hand(lx - 32, ly - 32, 64, 64, 'tower')                      # the lighthouse on the mole at the harbour mouth
+    # Canalside, taken into the city (Matt, 2 Nov: "remove this village and extend Neon Harbour"): the canal quarter on both
+    # banks of the straightened canal, the Glintside mills by the Glint, the night market at the canal's mouth
+    t = Town(T, 'Neon Harbour: Canalside, the canal quarter', (9960, 4540), 'city district', (14, 30),
+             "the city's canal quarter: houses and workshops wall to wall on both banks, barges, lock-keepers and the night market",
+             'the old canal cut straightened through the market gardens into the basin', seed=206,
+             neighbourhoods=[('Canalside', 'the canal quarter: rows on both banks, workshops, the lock', 9960, 4560),
+                             ('the Glintside mills', 'the old mills by the Glint, now workshops and studios', 10380, 4330)],
+             gathering=[('the canal-mouth night market', 10360, 4672)])
+    t.cap = 10 ** 6
+    cy = B['canal_px'][0][1]
+    for (y_, nm) in ((cy - 88, 'Lock Street'), (cy - 24, 'Canal Street'), (cy + 32, 'Canal Walk')):
+        t.street([(9456, y_), (10424 if nm != 'Canal Walk' else 10392, y_)], 'lane', name=nm)
+    for x_ in (9520, 9696, 9872, 10048, 10224):
+        t.street([(x_, cy - 136), (x_, cy + 88)], 'lane', name='the canal bridges')
+    t.street([(10320, 4248), (10320, cy - 88)], 'lane', name='Mill Path')
+    t.yard(10328, 4648, 10400, 4704, kind='plaza', name='the canal-mouth night market', why='stalls on the quay where the canal meets the basin, open late')
+    cw = 'Canalside, taken into the city: wall-to-wall houses and workshops on both banks of the canal, as on a city canal'
+    for nm in ('Canal Street', 'Canal Walk', 'Lock Street'):
+        t.frontage(t.S(nm), sides=(-1, 1), form='row_house', block=(96, 176), depth=(32, 40), alley=(0, 8), why=cw,
+                   props=('sign', 'awning', 'potted plants', 'washing line', 'bicycle rack'), roofs=('tile', 'flat', 'tin'), limit=10)
+    scan_place(t, (10336, 4240, 10560, 4400), [('workshop', 88, 56), ('mill', 88, 56)], 2, plot=(0, 1, 16, 'yard'), near=3)
+    # the delta's wet ground reaching into the city by the Delta Road's gate, and the canal's garden at its head (the mixing band)
+    t.yard(9700, 4840, 9800, 4900, kind='watermeadow', name='the gate meadow', why="the delta's wet meadow reaching up to the Heights' gate")
+    t.yard(9700, 4900, 9800, 4964, kind='carr', name='the willow carr', why='willows on the wet ground below the Heights, cut for baskets')
+    t.yard(9440, 4496, 9520, 4544, kind='garden', name="the lock-keeper's garden", why='vegetables and a bench by the lock at the head of the canal')
+    out[t.name] = t
+    # every street built up (Matt, 2 Nov: "more buildings/houses ... bustling"): continuous fronts wherever a street still has room
+    fill = {'the old waterfront': ('row_house', 8), 'the Lanes and the East Shore': ('row_tenement', 12),
+            'the Heights and the Skyport': ('row_house', 8)}
+    co = out['Neon Harbour: the Company district']
+    co.cap = 10 ** 6
+    scan_place(co, (11720, 4240, 12420, 5040), [('bigtower', 104, 104), ('bigtower', 96, 96), ('slab', 144, 88)], 6, near=3)
+    scan_place(docks, (11060, 4700, 11720, 5640), [('longwarehouse', 176, 64), ('warehouse', 112, 64), ('shed', 40, 32)], 12,
+               counted=False, shore=3)
+    for label, (form, lim) in fill.items():
+        d = out['Neon Harbour: ' + label]
+        d.cap = 10 ** 6
+        placed = 0
+        for s_ in list(d.streets):
+            if placed >= lim or s_.get('route') or not s_.get('name') or s_['width_px'] < 24:
+                continue
+            placed += d.frontage(s_['pts'], sides=(-1, 1), form=form, block=(128, 192), depth=(32, 40), alley=(0, 8), limit=lim - placed,
+                                 why='the dense city: wall-to-wall fronts on every street, alleys between',
+                                 props=('sign', 'awning', 'AC unit', 'pipes', 'potted plants', 'neon sign'), roofs=('flat', 'tin', 'flat')) or 0
+    for label in ('the old waterfront', 'the Lanes and the East Shore', 'the Heights and the Skyport', 'Canalside, the canal quarter'):
+        d = out['Neon Harbour: ' + label]
+        d.cap = 10 ** 6
+        for _ in range(3):                                             # again: a block placed for one street can open a gap on another
+            if close_front_gaps(d, 'row_tenement' if 'Lanes' in label else 'row_house') == (0, 0):
+                break
+    n = 101
+    for t_ in out.values():                                            # everything outside the 81-record inventory gets its own id
+        for b in t_.buildings:
+            if 'layout_id' not in b:
+                b['layout_id'] = f'neon-harbour-b{n:03d}'; n += 1
     return out
 
 
@@ -2493,7 +2811,7 @@ def lay_feedback(T, X, *, authored=None):
     Only target-region arrays are restored before new source placement, so no
     invisible legacy building/yard/street survives beneath the new layout.
     """
-    boxes = [(5680, 3120, 7248, 4384), (9600, 3904, 12544, 5888)]
+    boxes = [(5680, 3120, 7248, 4384), (9400, 3904, 12544, 5888)]
     saved = _feedback_snapshot(T, boxes)
     towns = lay_all(T, X, authored=authored)
     # Keep the existing Company's fenced shard yard, a story landmark rather
@@ -2502,15 +2820,13 @@ def lay_feedback(T, X, *, authored=None):
     _feedback_restore(T, saved, boxes)
     T['K'][company_fence] = 'fence'
     for nm in list(towns):
-        if nm == 'Crossroads' or nm.startswith('Neon Harbour') or nm in ('Canalside', 'Glintside', 'Halcyon Row'):
+        if nm == 'Crossroads' or nm.startswith('Neon Harbour') or nm in ('Canalside', 'Glintside', 'Halcyon Row'):   # (Canalside, Glintside: the city now)
             del towns[nm]
     revised = {'Crossroads': _feedback_crossroads(T, X)}
     revised.update(_feedback_neon(T, X))
     # These approach settlements retain their own scale; they form the inhabited fringe.
     for nm, centre, seed, target, route, box in (
-            ('Canalside', (10000, 4430), 206, (6, 12), 'Lull Road', (9700, 4300, 10500, 4520)),
-            ('Glintside', (10440, 4340), 207, (3, 6), 'Lull Road', (10280, 4360, 10560, 4480)),
-            ('Halcyon Row', (12020, 5590), 208, (8, 14), 'Cape Road', (11700, 5300, 12300, 5800))):
+            ('Halcyon Row', (12020, 5590), 208, (8, 14), 'Cape Road', (11700, 5300, 12300, 5800)),):
         t = Town(T, nm, centre, 'outskirts' if nm != 'Glintside' else 'hamlet', target,
                  'homes and small trades on the city approach, with gardens beyond the last frontage',
                  'dry ground between the route, its working gardens and the shore', seed=seed)
@@ -2537,8 +2853,16 @@ def lay_feedback(T, X, *, authored=None):
             if t.buildings and t.buildings[-1]['form'] == 'public':
                 b = t.buildings[-1]
                 t.named_landmarks = [('the canteen by the Cape Road, the first building on the way in', (b['x'] + b['w'] // 2, b['y'] + b['h'] // 2))]
-            scan_place(t, (11700, 5352, 12300, 5880), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 48)],
-                       max(0, 10 - t.count()), plot=(0, 1, 16, 'garden'), near=5)
+            # the city's edge stepping down to the country (Matt, 2 Nov: "improve the transition"): terraces where the city
+            # ends, then houses with gardens, then the market gardens, then the heath toward the cape
+            t.frontage(t.streets[0]['pts'], sides=(-1, 1), form='row_house', block=(96, 144), depth=(32, 40), alley=(0, 8), limit=3,
+                       why='the suburban terraces where the city ends: short rows before the houses with gardens',
+                       props=('potted plants', 'bicycle rack', 'washing line'), roofs=('tile', 'tile', 'flat'))
+            scan_place(t, (11700, 5352, 12300, 5800), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 48)],
+                       max(0, 11 - t.count()), plot=(0, 1, 16, 'garden'), near=5)
+            t.fields(11720, 5720, 12280, 5808, ('field', 'orchard', 'field2'), name='the market gardens',
+                     why="the city's vegetables and fruit, grown on its edge where the houses thin out")
+            t.yard(11720, 5808, 11912, 5968, kind='heath', name='the cape heath', why='open heath between the last gardens and the launch site')
         revised[nm] = t
     revised.update(towns)
     T['feedback_layout'] = {'id': 'v56', 'source_inventory': '303@4984438d', 'counted': {'crossroads': 40, 'neon-harbour': 72}}

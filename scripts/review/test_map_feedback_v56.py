@@ -137,9 +137,10 @@ class MapFeedbackV56(unittest.TestCase):
             self.assertFalse(T['street'][b['y']//8:(b['y']+b['h'])//8,b['x']//8:(b['x']+b['w'])//8].any())
             T=terrain();T['K'][14:20,:]='river'
             t=towns.Town(T,'Neon Harbour: test',(200,200),'city district',(1,10),'fixture','fixture',seed=201)
-            with self.assertRaisesRegex(ValueError,'cannot place'):
-                towns._feedback_rows(t,[(1,'row_house',64,32,[])],[('x',160,64,448,-1,'frontage')])
+            towns._feedback_rows(t,[(1,'row_house',64,32,[])],[('x',160,64,448,-1,'frontage')])   # 2 Nov: refused -> deferred, logged
             self.assertEqual(t.buildings,[]);self.assertTrue(T.get('hand_fail'))
+            self.assertEqual([d['id'] for d in t.deferred_fill],['neon-harbour-b001'])
+            self.assertIn('terrain and occupancy fit',t.deferred_fill[0]['reason'])
 
     def test_actual_frontage_refuses_impassable_or_reserved_ground(self):
         # These are real Town.hand/free refusals, with no checker or method stub.
@@ -150,9 +151,9 @@ class MapFeedbackV56(unittest.TestCase):
                     T[kind][:20,:]=True
                 else:
                     T['K'][:20,:]=kind
-                with self.assertRaisesRegex(ValueError,'cannot place'):
-                    towns._feedback_rows(t,[(8,'row_house',80,24,[])],[('x',160,64,448,-1,'reserved frontage')])
+                towns._feedback_rows(t,[(8,'row_house',80,24,[])],[('x',160,64,448,-1,'reserved frontage')])   # refused -> deferred, never forced
                 self.assertEqual(t.buildings,[])
+                self.assertEqual([d['id'] for d in t.deferred_fill],['crossroads-b008'])
         with patch.multiple(towns,H=48,W=64):
             T=terrain();t=towns.Town(T,'Crossroads',(200,200),'large',(30,45),'fixture','fixture',seed=101)
             self.assertFalse(t.hand(-8,64,48,48,'house'))
@@ -196,10 +197,11 @@ class MapFeedbackV56(unittest.TestCase):
         self.assertIn('retained_count: 71 != 72',out['neon-harbour']['failures'])
 
     def test_report_refuses_missing_target_missing_other_and_all_pass_subset(self):
-        all_ids={p.stem for p in (BLOCKOUT/'towns').glob('*.json')}
-        self.assertEqual(len(all_ids),21)
+        all_ids=set(world.EXPECTED_TOWN_PLANS)     # 2 Nov: Canalside and Glintside are districts of Neon Harbour now
+        self.assertEqual(len(all_ids),19)
+        self.assertTrue({p.stem for p in (BLOCKOUT/'towns').glob('*.json')} - all_ids == {'canalside','glintside'})
         checker=plans.TW._review()
-        for missing in ({'crossroads'},{'canalside'},all_ids-{'crossroads','neon-harbour'}):
+        for missing in ({'crossroads'},{'halcyon-row'},all_ids-{'crossroads','neon-harbour'}):
             with self.subTest(missing=sorted(missing)):
                 T=terrain((8,8));T['route_px']={}
                 provided={pid:{'terrain':{'box_cells':[0,0,8,8],'rows':[]},

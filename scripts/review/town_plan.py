@@ -338,7 +338,7 @@ def check_plan(P, blockout):
         got = {tl(*i['xy_px']) for i in P['discovery'] if i.get('kind') in ('secret', 'resident activity', 'shortcut', 'landmark view') and i.get('what')}
         if need - got:
             fails.append(f'discovery: {len(need - got)} of {len(need)} screens with buildings have nothing to discover')
-    else:
+    elif 'v56' in str((P.get('grid') or {}).get('origin', '')):       # the v56 plans carry one (the v55 exports predate the rule)
         fails.append('discovery: the plan has no discovery list')
     # layout: a landmark within two screens of every entry; a loop
     GL = P['game_layout']
@@ -479,7 +479,8 @@ def check_plan(P, blockout):
                 for i_ in range(idx[0], idx[-1] + 1):
                     if ln_occ[i_] or ln_ok[i_]:
                         if run > mg and left_b and ln_occ[i_]:
-                            fails.append(f"frontage: {st['id']} ({st.get('name') or 'a street'}) has a gap of {run} cells between two fronts (continuous allows {mg})")
+                            at_ = ((max(0, ca) + i_ + c0) * CELL, int(fr)) if axis == 'x' else (int(fr), (max(0, ra) + i_ + r0) * CELL)
+                            fails.append(f"frontage: {st['id']} ({st.get('name') or 'a street'}) has a gap of {run} cells between two fronts, ending at {list(at_)} (continuous allows {mg})")
                         if run == 0:
                             left_b = bool(ln_occ[i_])
                         elif ln_occ[i_]:

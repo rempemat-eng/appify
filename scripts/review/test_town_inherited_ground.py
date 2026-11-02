@@ -28,7 +28,8 @@ def plan(buildings=None, origin=(0, 0)):
             'game_layout': {'landmarks': []}, 'footprint_px': [c*8, r*8, (c+12)*8, (r+12)*8],
             'size_table_px': {'cottage': [[16, 32], [16, 32]]},
             'theme': {'waystone': {'xy_px': [(c+8)*8, (r+8)*8]},
-                      'sightline': {}, 'crater': {}, 'moss': {}, 'company': {}, 'tech': {}}}
+                      'sightline': {}, 'crater': {}, 'moss': {}, 'company': {}, 'tech': {}},
+            'discovery': [{'kind': 'resident activity', 'what': 'the fixture cottage at work', 'xy_px': [(c+3)*8, (r+3)*8]}]}
 
 
 def terrain_cell(p, c, r, value):

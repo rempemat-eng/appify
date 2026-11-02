@@ -133,11 +133,15 @@ GAME = {
                   'shortcuts_later': [('the shrine path past its last gate, to the sealed pass', (8064, 660), 'later, with the region north of the range (closed now)'),
                                       ('the quarry incline down to Terrace Lane', (8168, 1200), 'when the quarry works again')],
                   'quiet_corners': [('the pine grove above the temple, beside the busy post road', (8010, 896)), ('the moon-viewing terrace by the bathhouse', (7736, 1296))]},
-    'neon-harbour': {'arrival': 'Lull Road', 'first_view': 'off the Lull Road at Canalside: the canal basin, the funicular up to the Skyport, the airships over the Heights and the neon of the Company district across the ria',
+    'neon-harbour': {'arrival': 'Lull Road', 'first_view': 'off the Lull Road into Canalside: the canal running between wall-to-wall houses into the harbour basin, the shard-light blazing on its platform in the middle, the funicular up to the Skyport and the towers of the Company core across the water',
                      'landmarks': [('the Skyport masts and airships', (10040, 4900)), ("the Company's tower", (11850, 4560)), ('Bridgefoot and the falls', (11135, 4462)),
                                    ('the cranes on the long quay', (11250, 5000)), ('the lido on the East Shore', (12100, 5150)), ('the maglev terminus', (11650, 4565)),
-                                   ('the launch tower on the cape', (12125, 6425)), ('the Glintside mills', (11120, 4150)),
-                                   ("Canalside's market gardens and the canal", (10000, 4560)), ('Halcyon Row and its canteen', (12020, 5560))],
+                                   ('the launch tower on the cape', (12125, 6425)), ('the Glintside mills', (10400, 4330)),
+                                   ('the canal-mouth night market', (10364, 4676)), ('Halcyon Row and its canteen', (12020, 5560)),
+                                   ("the shard-light on its platform in the basin, the city's brightest point", (10700, 5424)),
+                                   ('the old chapel-fort and the floating market on Chapel Islet', (10700, 5060)),
+                                   ('the lighthouse on the mole at the harbour mouth', (10800, 5664)), ('the Delta Road gate of the Heights', (9840, 4880)),
+                                   ('the lock at the head of the canal, where the Lull Road enters the city', (9472, 4560))],
                      'shortcuts_later': [('the funicular from the canal basin to the Skyport', (10074, 4935), 'when the funicular is repaired'),
                                          ('the skybridge from the Heights over the ria to the old waterfront', (10500, 4600), 'with the Skyport pass'),
                                          ('the maglev from Glintside to the terminus', (11400, 4300), 'with a Company ticket')],
@@ -173,10 +177,26 @@ THEME = {
     'highgarth': {'crater_effect': "the Starfall's tremor brought the rockfall down on the pass road; the lord sealed the pass, and the shrine "
                                    "path's last timber gate stands below the fallen rock", 'moss': 'the post square',
                   'company': ("a buyer's room at the post inn", 'inn'), 'tech': 'older-made: timber, tile, slate and the water mill; the Garth Road only'},
-    'neon-harbour': {'crater_effect': "the Company crater lies fenced in the Company's yard: its shard light is pumped to the neon", 'moss': 'the market by Canalside',
+    'neon-harbour': {'crater_effect': "the Company crater lies fenced in the Company's yard: its shard light is pumped to the neon", 'moss': 'the canal-mouth night market',
                      'company': ("the Company's tower and its yard: the headquarters", 'tower'),
                      'tech': 'bought shard light: the neon, the maglev and the airships. The old waterfront is the town that was there before the Company'},
 }
+
+# Matt's 2 Nov pass, for the v56 map only: the v55 tables above keep their published values (the v55 exports stay byte for byte)
+import copy as _copy
+GAME_V56 = {k: _copy.deepcopy(GAME[k]) for k in ('crossroads', 'neon-harbour')}
+THEME_V56 = {'neon-harbour': dict(THEME['neon-harbour'], moss='the canal-mouth night market')}
+GAME['crossroads']['landmarks'] = [(('the halt and its water tank', (5835, 4040)) if n_ == 'the halt yard and its water tank' else (n_, xy))
+                                   for n_, xy in GAME['crossroads']['landmarks']]
+GAME['neon-harbour']['first_view'] = ('off the Lull Road at Canalside: the canal basin, the funicular up to the Skyport, the airships over the '
+                                      'Heights and the neon of the Company district across the ria')
+_V56_ONLY = {'the canal-mouth night market', "the shard-light on its platform in the basin, the city's brightest point",
+             'the old chapel-fort and the floating market on Chapel Islet', 'the lighthouse on the mole at the harbour mouth',
+             'the Delta Road gate of the Heights', 'the lock at the head of the canal, where the Lull Road enters the city'}
+GAME['neon-harbour']['landmarks'] = [(n_, (11120, 4150) if n_ == 'the Glintside mills' else xy) for n_, xy in GAME['neon-harbour']['landmarks']
+                                     if n_ not in _V56_ONLY]
+GAME['neon-harbour']['landmarks'].insert(len(GAME['neon-harbour']['landmarks']) - 1, ("Canalside's market gardens and the canal", (10000, 4560)))
+THEME['neon-harbour']['moss'] = 'the market by Canalside'
 MAIN_SQUARE = {'hearthold': 'the gate market', 'highgarth': 'the post square'}
 
 
@@ -184,7 +204,7 @@ def theme_block(T, pid, P, ts, X):
     """The plan's theme: the waystone on the main square or at the gate, the sightline toward the beam, the crater, Moss, the
     Company's buyer and the technology. Moves (or adds) the town's waystone in the content table."""
     V = X.V
-    th = dict(THEME.get(pid, {}))
+    th = dict((THEME_V56 if getattr(X, 'REVISION', 'v55') == 'v56' and pid in THEME_V56 else THEME).get(pid, {}))
     fb = P['footprint_px']; cx, cy = (fb[0] + fb[2]) / 2, (fb[1] + fb[3]) / 2
     # the waystone: the named main square, else the first square, else beside the main street
     sq = None
@@ -642,7 +662,7 @@ def plan_one(T, name, ts, X, tp):
     opens = _blocks(T, net, sl, pid, box, ts)
     dropped += _access(T, net, _passable(T, sl, ts), sl, pid, box, ts)
     if len(ts) > 1:
-        _city_paving(T, net, sl, box, ts)
+        _city_paving(T, net, sl, box, ts, keep_planned=getattr(X, 'REVISION', 'v55') == 'v56')
     # 6. the record
     P = _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X)
     P['open_uses'] = opens
@@ -677,7 +697,7 @@ WILD_GREEN = ['meadow', 'watermeadow', 'broadleaf', 'conifer', 'clearing', 'lawn
               'reeds', 'fireweed', 'scrub', 'steppe']
 
 
-def _city_paving(T, net, sl, box, ts):
+def _city_paving(T, net, sl, box, ts, keep_planned=False):
     """Inside a city, grass and trees only where they are planned (plots, parks, squares, allotments): the rest of the open
     ground within the built envelope becomes paved yards."""
     built = _bmask(ts, box).copy()
@@ -686,6 +706,13 @@ def _city_paving(T, net, sl, box, ts):
     env = ndi.binary_fill_holes(ndi.binary_closing(ndi.distance_transform_edt(~built) <= 8, iterations=6)) & T['land'][sl]
     K = T['K'][sl]
     m = env & np.isin(K, WILD_GREEN) & ~T['taken'][sl]
+    if keep_planned:                                                   # v56: a named open use (a meadow, a carr, a garden) is planned
+        c0, r0 = box[0], box[1]
+        for t in ts:
+            for o in t.outskirts:
+                if o.get('name'):
+                    x0, y0, x1, y1 = o['box']
+                    m[max(0, y0 // CELL - r0):max(0, y1 // CELL - r0), max(0, x0 // CELL - c0):max(0, x1 // CELL - c0)] = False
     K[m] = 'yard'
     return int(m.sum())
 
@@ -741,9 +768,11 @@ def _prune(T, net, sl, ts):
 BLOCK_FORMS = {'neon-harbour': None, 'dust-gulch': ('adobe', 'adobe', 'workshop'), 'palm-spring': ('adobe', 'cottage'), 'hearthold': ('townhouse', 'workshop'),
                'cinderwick': ('cottage', 'townhouse'), 'cogsworth': ('terrace', 'workshop'), 'highgarth': ('house', 'cottage'), 'lagoon-landing': ('cottage', 'boathouse')}
 NEON_FORMS = {'the old waterfront': ('oldhouse', 'oldhouse', 'shop'), 'the docks': ('longwarehouse', 'warehouse'), 'the Lanes and the East Shore': ('aptrow', 'terrace'),
-              'the Company district': ('slab', 'bigtower'), 'the Heights and the Skyport': ('townhouse', 'house')}
+              'the Company district': ('slab', 'bigtower'), 'the Heights and the Skyport': ('townhouse', 'house'),
+              'Canalside, the canal quarter': ('oldhouse', 'townhouse', 'workshop')}
 OPEN_USE = {'the old waterfront': ('a pocket park', 'garden'), 'the docks': ('a stacking yard', 'yard'), 'the Lanes and the East Shore': ('a courtyard', 'yard'),
-            'the Company district': ('a planted plaza', 'plaza'), 'the Heights and the Skyport': ('a terrace garden', 'garden')}
+            'the Company district': ('a planted plaza', 'plaza'), 'the Heights and the Skyport': ('a terrace garden', 'garden'),
+            'Canalside, the canal quarter': ('a canal-side court', 'yard')}
 
 
 def block_masks(streets_m, ter_bad):
@@ -1086,6 +1115,66 @@ def _district_fn(uses):
 
 
 SCREEN_PX = (40 * CELL, 22.5 * CELL)
+VERTICAL = {'bigtower': (32, 'a roof garden and a helipad', 'lifts and a fire stair'), 'slab': (18, 'roof plant under the neon signs', 'lifts and a fire stair'),
+            'skyport': (8, 'the airship mooring masts', 'lifts and the funicular'), 'tower': (10, 'the lantern gallery', 'a spiral stair'),
+            'aptrow': (7, 'roof terraces and washing lines', 'a stair core')}
+INTERIOR_LATER = {'bigtower', 'slab', 'skyport', 'tower', 'chapel', 'inn', 'public', 'hall', 'station', 'longwarehouse'}
+
+
+def vertical_city(P, T, X):
+    """Neon Harbour's verticality (Matt, 2 Nov: "skyscrapers that you can go up in"): every tall building carries 'vertical'
+    (floors, what is on its roof, how one goes up, its sky bridges); the tenement rows their floors; the buildings that will get
+    an inside 'interior: later'. Sky bridges join Company towers standing within 96 px of each other; the harbour, the funicular
+    and the elevated maglev go into the plan's features."""
+    tall = []
+    for b in P['buildings']:
+        f = b['form']
+        if f in VERTICAL:
+            n, roof, acc = VERTICAL[f]
+            b['vertical'] = {'floors': n, 'roof_level': roof, 'access': acc, 'sky_bridges': []}
+            if f in ('bigtower', 'slab'):
+                tall.append(b)
+        elif f == 'row_tenement':
+            b['vertical'] = {'floors': max(q.get('storeys', 3) for q in b.get('bays', [{}])) + 2, 'roof_level': 'roof terraces and water tanks',
+                             'access': 'a shared stair at each alley', 'sky_bridges': []}
+        if f in INTERIOR_LATER:
+            b['interior'] = 'later'
+    bridges = []
+    for i, a in enumerate(tall):
+        for c in tall[i + 1:]:
+            ax, ay, aw, ah = a['rect_px']; cx, cy, cw, ch = c['rect_px']
+            gx = max(cx - (ax + aw), ax - (cx + cw)); gy = max(cy - (ay + ah), ay - (cy + ch))
+            if 0 < gx <= 96 and min(ay + ah, cy + ch) - max(ay, cy) >= 32:
+                y = (max(ay, cy) + min(ay + ah, cy + ch)) // 2
+                xa, xb = (ax + aw, cx) if ax < cx else (cx + cw, ax)
+            elif 0 < gy <= 96 and min(ax + aw, cx + cw) - max(ax, cx) >= 32:
+                x = (max(ax, cx) + min(ax + aw, cx + cw)) // 2
+                xa = xb = x; y = None
+            else:
+                continue
+            if len(a['vertical']['sky_bridges']) >= 2 or len(c['vertical']['sky_bridges']) >= 2:
+                continue
+            fl = min(a['vertical']['floors'], c['vertical']['floors']) * 2 // 3
+            if y is not None:
+                seg = [[int(xa), int(y)], [int(xb), int(y)]]
+            else:
+                ya, yb = (ay + ah, cy) if ay < cy else (cy + ch, ay)
+                seg = [[int(xa), int(ya)], [int(xb), int(yb)]]
+            bridges.append({'between': [a['id'], c['id']], 'floor': fl, 'px': seg})
+            a['vertical']['sky_bridges'].append(c['id']); c['vertical']['sky_bridges'].append(a['id'])
+    fe = P.setdefault('features', {})
+    fe['sky_bridges'] = bridges
+    if T.get('neon_basin'):
+        fe['harbour'] = T['neon_basin']
+    sky = next((b for b in P['buildings'] if b['form'] == 'skyport'), None)
+    if sky:
+        x, y, w, h = sky['rect_px']
+        fe['funicular'] = {'px': [[10392, 4720], [int(x + w), int(y + h // 2)]], 'stations': ['the canal mouth', 'the Skyport'],
+                           'why': 'up the Heights from the canal mouth to the Skyport'}
+    ml = next((q for q in g.SHORTCUTS if q[0].startswith('maglev')), None)
+    if ml and ml[2] in g.STATIONS:
+        fe['maglev'] = {'elevated': True, 'px': [[int(a), int(b)] for a, b in ml[5][-1:]] + [list(map(int, g.STATIONS[ml[2]]))],
+                        'terminus': ml[2], 'why': 'the elevated maglev from Cogsworth over the city into its terminus'}
 
 
 def discovery(P, ts):
@@ -1286,7 +1375,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
             s = {k: el[k] for k in ('id', 'name', 'class', 'width_cells', 'vertices_px') if k in el}
             if el['kind'] == 'street':
                 s['frontage'] = el.get('frontage', 'detached')
-                if s['frontage'] == 'continuous' and (ndi.binary_dilation(el['mask'], iterations=1) & ~el['mask'] & bm_all).sum() < 12:
+                if s['frontage'] == 'continuous' and (ndi.binary_dilation(el['mask'], iterations=1) & ~el['mask'] & bm_all).sum() < \
+                        (24 if getattr(X, 'REVISION', 'v55') == 'v56' else 12):
                     s['frontage'] = 'detached'                         # a piece of the street with no row along it
                 if s['frontage'] == 'continuous':
                     s['max_gap_cells'] = el.get('max_gap_cells') or 1
@@ -1312,7 +1402,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         for gp in t.gathering:
             gathering.append({'name': gp[0], 'xy_px': [int(gp[1]), int(gp[2])]})
     # the game layout
-    GL = GAME.get(pid)
+    GL = (GAME_V56 if getattr(X, 'REVISION', 'v55') == 'v56' and pid in GAME_V56 else GAME).get(pid)
     entries = [e for a in arrivals for e in a['entries_px']]
     if GL:
         lms = [{'name': n_, 'xy': list(xy)} for n_, xy in GL['landmarks']]
@@ -1367,7 +1457,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         for rec in bl:
             if rec['id'] in authored_buildings and rec != authored_buildings[rec['id']]:
                 raise ValueError(f"{rec['id']}: authored record disagrees with computed count or metadata")
-    tgt = lead.target if len(ts) == 1 else (60, 90)
+    tgt = lead.target if len(ts) == 1 else ((90, 130) if getattr(X, 'REVISION', 'v55') == 'v56' else (60, 90))   # v56: the city round its basin
     size = lead.size if len(ts) == 1 else 'city'
     lv = [L for L in T.get('levelled', []) if fb[0] - 8 <= L[0] <= fb[2] and fb[1] - 8 <= L[1] <= fb[3]]
     plan = {
@@ -1404,7 +1494,10 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                     'of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and '
                     'workplaces to the ids here, and walk residents on the streets (ids) only.',
     }
-    plan['discovery'] = discovery(plan, ts)
+    if getattr(X, 'REVISION', 'v55') == 'v56':                       # Matt's 2 Nov pass and pillars.md: the v56 map only
+        if pid == 'neon-harbour':
+            vertical_city(plan, T, X)
+        plan['discovery'] = discovery(plan, ts)
     fill_def = [copy.deepcopy(rec) for t in ts for rec in getattr(t, 'deferred_fill', [])]
     if deferred or fill_def:
         plan['deferred_buildings'] = deferred + fill_def
@@ -1439,7 +1532,8 @@ TOWN_MAT = {   # plan id: (streets and squares, yards, open ground inside the to
     'lagoon-landing': (21, 22, 22), 'crossroads': (24, 25, None), 'highgarth': (17, 27, 28), 'fernhollow': (25, 25, None), 'lullford': (24, 25, None),
     'driftwood': (22, 22, None), 'gullwick': (22, 22, None), 'canalside': (24, 25, None), 'glintside': (1, 25, None),
     'halcyon-row': (24, 22, None), 'launch-cape': (12, 12, None)}
-NEON_MAT = {'the old waterfront': 1, 'the docks': 4, 'the Lanes and the East Shore': 3, 'the Company district': 2, 'the Heights and the Skyport': 5}
+NEON_MAT = {'the old waterfront': 1, 'the docks': 4, 'the Lanes and the East Shore': 3, 'the Company district': 2, 'the Heights and the Skyport': 5,
+            'Canalside, the canal quarter': 1}
 STREET_K = ['lane', 'plaza', 'boulevard', 'arcade', 'quay', 'road', 'path', 'stair', 'trail', 'dock', 'stall', 'fishmarket']
 OPEN_K = ['meadow', 'watermeadow', 'steppe', 'scrub', 'broadleaf', 'conifer', 'clearing', 'lawn', 'heath', 'gorse', 'fallow', 'thicket', 'felltree',
           'bramble', 'wild', 'tor', 'boulders', 'scree', 'barren', 'desert', 'sand', 'alpine', 'carr', 'reeds', 'fireweed']

@@ -1440,6 +1440,117 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the chapel on the green",
+   "xy_px": [
+    7230,
+    3040
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the sawmill",
+   "xy_px": [
+    7400,
+    2975
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the charcoal burners' cottages on Fern Lane",
+   "xy_px": [
+    7212,
+    3280
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the green, beside the noisy sawmill yard",
+   "xy_px": [
+    7232,
+    3078
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the timber slide from the wood yards down to Cooper Lane",
+   "xy_px": [
+    7380,
+    3060
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the green",
+   "xy_px": [
+    7230,
+    3075
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the sawmill yard",
+   "xy_px": [
+    7400,
+    2975
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the wood yards: the Fern hills' timber, seasoning in stacks",
+   "xy_px": [
+    7405,
+    2940
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the joiner: the master and apprentices about their day",
+   "building": "fernhollow-b012",
+   "xy_px": [
+    7340,
+    3264
+   ],
+   "screen": [
+    1,
+    2
+   ]
+  }
+ ],
  "open_uses": [
   {
    "id": "fernhollow-o01",

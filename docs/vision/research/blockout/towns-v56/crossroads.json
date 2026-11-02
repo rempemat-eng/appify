@@ -2808,6 +2808,330 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the well and the library on the square",
+   "xy_px": [
+    6296,
+    3536
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the mill on the Sleepwater",
+   "xy_px": [
+    6200,
+    3905
+   ],
+   "screen": [
+    1,
+    3
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the halt yard and its water tank",
+   "xy_px": [
+    5960,
+    4336
+   ],
+   "screen": [
+    0,
+    5
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the inn at the drovers' market",
+   "xy_px": [
+    6712,
+    3532
+   ],
+   "screen": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "your hut and the garden gate",
+   "xy_px": [
+    6316,
+    3290
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the farrier's forge at Eastgate",
+   "xy_px": [
+    6780,
+    3420
+   ],
+   "screen": [
+    3,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the weir on Weir Lane",
+   "xy_px": [
+    6400,
+    4110
+   ],
+   "screen": [
+    1,
+    4
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the mill green, beside the busy mill yard",
+   "xy_px": [
+    6365,
+    3905
+   ],
+   "screen": [
+    1,
+    3
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the library's reading garden off the square",
+   "xy_px": [
+    6250,
+    3500
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the weir footbridge from Weir Lane to the halt farms",
+   "xy_px": [
+    6300,
+    4100
+   ],
+   "screen": [
+    1,
+    4
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the woodland stile from West Lane to the circle",
+   "xy_px": [
+    5900,
+    3560
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the square",
+   "xy_px": [
+    6296,
+    3536
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the mill green",
+   "xy_px": [
+    6400,
+    3880
+   ],
+   "screen": [
+    1,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the halt yard",
+   "xy_px": [
+    5968,
+    4304
+   ],
+   "screen": [
+    0,
+    5
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the halt yard: loading carts, animal tethering and the water tank beside the halt approach",
+   "xy_px": [
+    5960,
+    4336
+   ],
+   "screen": [
+    0,
+    5
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the mill farms: grain and orchard plots beyond the last homes",
+   "xy_px": [
+    6752,
+    4172
+   ],
+   "screen": [
+    2,
+    5
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a shepherd's household about their day",
+   "building": "crossroads-b040",
+   "xy_px": [
+    5956,
+    3676
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a farmhand household about their day",
+   "building": "crossroads-b024",
+   "xy_px": [
+    5932,
+    3988
+   ],
+   "screen": [
+    0,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a family house: a miller's household about their day",
+   "building": "crossroads-b025",
+   "xy_px": [
+    5924,
+    4096
+   ],
+   "screen": [
+    0,
+    4
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a terraced townhouse: a weaver's household about their day",
+   "building": "crossroads-b009",
+   "xy_px": [
+    6208,
+    4232
+   ],
+   "screen": [
+    1,
+    5
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a carter's household about their day",
+   "building": "crossroads-b007",
+   "xy_px": [
+    6468,
+    3640
+   ],
+   "screen": [
+    2,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the saddler: the shopkeeper, living above about their day",
+   "building": "crossroads-b035",
+   "xy_px": [
+    6648,
+    3892
+   ],
+   "screen": [
+    2,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the grocer: the shopkeeper, living above about their day",
+   "building": "crossroads-b013",
+   "xy_px": [
+    6568,
+    4084
+   ],
+   "screen": [
+    2,
+    4
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the Crossed Keys inn: the innkeeper, staff and guests about their day",
+   "building": "crossroads-b031",
+   "xy_px": [
+    6776,
+    3468
+   ],
+   "screen": [
+    3,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the draper: the shopkeeper, living above about their day",
+   "building": "crossroads-b037",
+   "xy_px": [
+    6840,
+    3896
+   ],
+   "screen": [
+    3,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a retired household about their day",
+   "building": "crossroads-b034",
+   "xy_px": [
+    7148,
+    3456
+   ],
+   "screen": [
+    4,
+    1
+   ]
+  }
+ ],
  "open_uses": [],
  "theme": {
   "tech": "the valley halt and the mill: rail and water, no bought shard light",

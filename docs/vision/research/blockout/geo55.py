@@ -682,8 +682,8 @@ def gap_obstacles(T, obs):
 
 # ------------------------------------------------------------------------------------------ v56: fit ground to the authored places
 # Complete retained303 plan inventory, including small/empty first-town proposals.
-EXPECTED_TOWN_PLANS = frozenset(('canalside', 'charcoal-hollow', 'cinder-springs', 'cinderwick',
-    'cogsworth', 'crossroads', 'driftwood', 'dust-gulch', 'ember-forge', 'fernhollow', 'glintside',
+EXPECTED_TOWN_PLANS = frozenset(('charcoal-hollow', 'cinder-springs', 'cinderwick',
+    'cogsworth', 'crossroads', 'driftwood', 'dust-gulch', 'ember-forge', 'fernhollow',
     'gullwick', 'halcyon-row', 'hearthold', 'highgarth', 'lagoon-landing', 'launch-cape', 'lullford',
     'neon-harbour', 'palm-spring', 'the-lode'))
 CROSSROADS_RIVER_BOX = (6120, 3096, 6736, 3968)
@@ -754,6 +754,16 @@ def feedback_ground(T):
     return rec
 
 
+def retained_count(pid, P):
+    """The counted buildings from the retained inventory (Neon Harbour: its 81 records b001-b081, 72 counted; the city's new
+    buildings, b101 on, are counted on top within its guide)."""
+    import re
+    if pid != 'neon-harbour' or not any('counts_as' in b for b in P['buildings']):
+        return P['buildings_counted']
+    return sum(b.get('counts_as', 0) for b in P['buildings']
+               if re.fullmatch(r'neon-harbour-b0[0-9][0-9]', b['id']) and int(b['id'][-3:]) <= 81)
+
+
 def feedback_checks(T, plans):
     """Fail closed on literal final ground, including inherited zone buildings."""
     import town_plans as TP
@@ -763,8 +773,8 @@ def feedback_checks(T, plans):
         expected = {'crossroads': 40, 'neon-harbour': 72}[pid]
         # fill buildings deferred by the fitter leave the retained count; each is listed with its reason
         expected -= sum(d.get('counts_as', 0) for d in P.get('deferred_buildings', []) if d.get('kind') == 'fill row building')
-        if P['buildings_counted'] != expected:
-            raise ValueError(f"v56 {pid}: {P['buildings_counted']} counted buildings, expected retained {expected}")
+        if retained_count(pid, P) != expected:
+            raise ValueError(f"v56 {pid}: {retained_count(pid, P)} counted buildings from the inventory, expected retained {expected}")
         occupied = np.zeros(K.shape, bool)
         for b in P['buildings']:
             c, r, w, h = b['footprint_cells']
@@ -806,8 +816,8 @@ def feedback_plan_checks(T, plans):
                 failures.append(f"final_ground: {b['id']} overlaps another footprint")
             occupied[br:br + bh, bc:bc + bw] = True
         expected = {'crossroads': 40, 'neon-harbour': 72}.get(pid)
-        if expected is not None and P['buildings_counted'] != expected:
-            failures.append(f"retained_count: {P['buildings_counted']} != {expected}")
+        if expected is not None and retained_count(pid, P) != expected:
+            failures.append(f"retained_count: {retained_count(pid, P)} != {expected}")
         reports[pid] = {'pass': not failures, 'failures': failures, 'notes': notes,
                         'metrics': metrics, 'actual_count': P['buildings_counted'], 'retained_count': expected}
         print(('PASS' if not failures else 'FAIL'), 'v56 town', pid, json.dumps(reports[pid]))

@@ -1268,8 +1268,8 @@
   "yards": "black sand and ash",
   "edges": "the black-sand beach",
   "materials_cells": {
-   "basalt setts": 1584,
-   "ash yards": 957
+   "basalt setts": 1583,
+   "ash yards": 946
   }
  },
  "terrain": {
@@ -1304,16 +1304,16 @@
    "4.8r41.58g3.4g.g5.19#",
    "5.8r36.3g.10g7.24g.16g3.11g19#",
    "7.8r27.5g.15g7.16g.4g3.g.3g2.10g3.3g.7g.18#",
-   "7.8r27.5g.15g38.16g.7g.18#",
-   "6.g.13r20.6g.15g3.3g31.19g.g.4g18#",
-   "5.g.g3.18r19.6g12.3g31.18g6.2g16#2b",
-   "13.25r11.5g12.29g11.12g6.2g13#5b",
-   "5.g7.32r5.4g12.29g11.9g2.g6.2g12#6b",
+   "7.8r27.8g2.11g37.17g.7g.18#",
+   "6.g.13r20.22g3.3g31.19g.g.4g18#",
+   "5.g.g3.18r19.2g3.g12.3g31.18g6.2g16#2b",
+   "13.25r10.4g.g12.29g11.12g6.2g13#5b",
+   "5.g7.32r2.2g.4g12.29g11.9g2.g6.2g12#6b",
    "5.g7.3r.32r3g.g3.6g51.4g7.2g9#8b",
-   "6g7.3r3.37r.5g52.4g6.4g6#10b",
-   "6g7.3r3.3g.g.13r.g2.16r5g32.3r16.4g6.4g3#13b",
-   "6g7.3r4.g3.2g2.g7.g2.2g5.18r7g12.8g14r9.4g7.2g.g14b#",
-   "6g7.3r20.g2.2g5.18r7g12.8g14r9.9g2.2g.g14b#",
+   "6g7.3r3.37r.6g51.4g6.4g6#10b",
+   "6g7.3r3.3g.g.13r.g2.15r6g51.4g6.4g3#13b",
+   "6g7.3r4.g3.2g2.g7.g2.2g5.18r7g11.9g14r9.4g7.2g.g14b#",
+   "6g7.3r20.g2.2g5.18r7g11.9g14r9.9g2.2g.g14b#",
    "5g8.3r15.g6.8g.2g22r11.7g21rg.5g.g.7g3r10b4#",
    ".5g.6g3r15.g2.2g4.g9.22r10.5g28r2.2g.g.8r8b6#",
    "6g.4g2.3r2.g15.4g.2g9.3g19r10.g48r6b7#",
@@ -1363,6 +1363,156 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the stone quay",
+   "xy_px": [
+    2470,
+    5915
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the kilns and their smoke",
+   "xy_px": [
+    2660,
+    5800
+   ],
+   "screen": [
+    2,
+    0
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the net lofts at the Strand's west end, past the busy quay",
+   "xy_px": [
+    2310,
+    5872
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the beach path under the kilns to the Ash Coast",
+   "xy_px": [
+    2680,
+    5880
+   ],
+   "screen": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the quay",
+   "xy_px": [
+    2470,
+    5915
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the kiln yard",
+   "xy_px": [
+    2640,
+    5795
+   ],
+   "screen": [
+    2,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the kilns: charcoal from the dead forest; black-sand glass",
+   "xy_px": [
+    2670,
+    5800
+   ],
+   "screen": [
+    2,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the stone quay: the fishing boats tie up here; nets dry on the quay's edge",
+   "xy_px": [
+    2560,
+    5896
+   ],
+   "screen": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the cooperage: the master and apprentices about their day",
+   "building": "cinderwick-b012",
+   "xy_px": [
+    2060,
+    5840
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the glassworks: the master and apprentices about their day",
+   "building": "cinderwick-b008",
+   "xy_px": [
+    2176,
+    6004
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a boathouse: a boat owner about their day",
+   "building": "cinderwick-b018",
+   "xy_px": [
+    2056,
+    6036
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a fisher's household about their day",
+   "building": "cinderwick-b005",
+   "xy_px": [
+    2480,
+    5820
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  }
+ ],
  "open_uses": [
   {
    "id": "cinderwick-o03",

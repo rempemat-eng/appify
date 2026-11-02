@@ -2282,6 +2282,225 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the five-storey pagoda",
+   "xy_px": [
+    8104,
+    1040
+   ],
+   "screen": [
+    1,
+    2
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the lord's watch keep by its tarn",
+   "xy_px": [
+    7940,
+    700
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the post square and its gate",
+   "xy_px": [
+    7976,
+    1188
+   ],
+   "screen": [
+    0,
+    3
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the temple hall on its plinth",
+   "xy_px": [
+    8072,
+    976
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the pine grove above the temple, beside the busy post road",
+   "xy_px": [
+    8010,
+    896
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the moon-viewing terrace by the bathhouse",
+   "xy_px": [
+    7736,
+    1296
+   ],
+   "screen": [
+    0,
+    3
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the shrine path past its last gate, to the sealed pass",
+   "xy_px": [
+    8064,
+    660
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the quarry incline down to Terrace Lane",
+   "xy_px": [
+    8168,
+    1200
+   ],
+   "screen": [
+    1,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the post square",
+   "xy_px": [
+    7976,
+    1188
+   ],
+   "screen": [
+    0,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the temple court",
+   "xy_px": [
+    8060,
+    1040
+   ],
+   "screen": [
+    1,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the moon-viewing terrace",
+   "xy_px": [
+    7736,
+    1296
+   ],
+   "screen": [
+    0,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the temple court: raked gravel, stone lanterns and the bell",
+   "xy_px": [
+    8064,
+    1000
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the moon-viewing terrace: facing the beam over the valley; the bathhouse's pools hold the moon's light",
+   "xy_px": [
+    7736,
+    1296
+   ],
+   "screen": [
+    0,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the pine grove: the shrine's pines on the slope",
+   "xy_px": [
+    8012,
+    896
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the slate quarry: slate for the roofs of Cogsworth and the valley",
+   "xy_px": [
+    8256,
+    1192
+   ],
+   "screen": [
+    1,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the folds: sheepfolds below the summer pastures",
+   "xy_px": [
+    7890,
+    905
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the terraced paddies: rice stepping down the valley on stone walls, every other terrace flooded",
+   "xy_px": [
+    7904,
+    1492
+   ],
+   "screen": [
+    0,
+    4
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the Drovers' inn: the innkeeper, staff and guests about their day",
+   "building": "highgarth-b004",
+   "xy_px": [
+    7868,
+    1076
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  }
+ ],
  "open_uses": [
   {
    "id": "highgarth-o01",

@@ -1429,6 +1429,156 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the pier head and the inn",
+   "xy_px": [
+    6490,
+    6420
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the lagoon front",
+   "xy_px": [
+    6600,
+    6555
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the boatyard slip",
+   "xy_px": [
+    6810,
+    6520
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the naturalist's garden on Net Row, beside the busy pier",
+   "xy_px": [
+    6560,
+    6470
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "stepping stones across the lagoon's mouth to the boatyard",
+   "xy_px": [
+    6760,
+    6560
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the lagoon steps",
+   "xy_px": [
+    6600,
+    6555
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the pier head",
+   "xy_px": [
+    6490,
+    6415
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the boatyard: hulls on the slip, the repair shed",
+   "xy_px": [
+    6810,
+    6522
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a fisher's household about their day",
+   "building": "lagoon-landing-b002",
+   "xy_px": [
+    6516,
+    6588
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the chandler: the shopkeeper, living above about their day",
+   "building": "lagoon-landing-b003",
+   "xy_px": [
+    6684,
+    6512
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a net maker's household about their day",
+   "building": "lagoon-landing-b009",
+   "xy_px": [
+    6912,
+    6528
+   ],
+   "screen": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a family house: a fisher's household about their day",
+   "building": "lagoon-landing-b011",
+   "xy_px": [
+    7008,
+    6752
+   ],
+   "screen": [
+    2,
+    2
+   ]
+  }
+ ],
  "open_uses": [
   {
    "id": "lagoon-landing-o01",

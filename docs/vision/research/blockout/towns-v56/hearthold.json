@@ -612,15 +612,15 @@
    "town": "Hearthold"
   },
   {
-   "id": "hearthold-d-the-lower-fields",
-   "name": "the lower fields",
-   "function": "edge: farms and gardens",
-   "declared": "barley and beans between the town and the cove",
+   "id": "hearthold-d-the-market-stalls",
+   "name": "the market stalls",
+   "function": "edge: yards and pens",
+   "declared": "the walled town's market: bread, ash-grown wine, iron goods from the smiths",
    "box_px": [
-    2140,
-    5744,
-    2600,
-    5800
+    2280,
+    5460,
+    2360,
+    5500
    ],
    "buildings": [],
    "town": "Hearthold"
@@ -1476,20 +1476,20 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    315,
+    314,
     706,
-    8,
+    9,
     6
    ],
    "rect_px": [
-    2520,
+    2512,
     5648,
-    64,
+    72,
     48
    ],
    "faces": "hearthold-s08",
    "door_cells": [
-    319,
+    318,
     712
    ],
    "purpose": "a cottage",
@@ -1497,9 +1497,9 @@
    "district": "hearthold-d-smiths-row",
    "counted": true,
    "plot_cells": [
-    315,
+    314,
     704,
-    8,
+    9,
     2
    ],
    "plot": "yard",
@@ -1511,15 +1511,15 @@
    "form": "house",
    "footprint_cells": [
     328,
-    706,
+    705,
     12,
-    6
+    7
    ],
    "rect_px": [
     2624,
-    5648,
+    5640,
     96,
-    48
+    56
    ],
    "faces": "hearthold-s08",
    "door_cells": [
@@ -1532,7 +1532,7 @@
    "counted": true,
    "plot_cells": [
     328,
-    704,
+    703,
     12,
     2
    ],
@@ -1763,20 +1763,19 @@
     2620,
     5400
    ],
-   "plots": 4,
+   "plots": 2,
    "why": "vines on the cooled ash of the rock's warm east side"
   },
   {
-   "kind": "field",
-   "name": "the lower fields",
+   "kind": "plaza",
+   "name": "the market stalls",
    "box": [
-    2140,
-    5744,
-    2600,
-    5800
+    2280,
+    5460,
+    2360,
+    5500
    ],
-   "plots": 1,
-   "why": "barley and beans between the town and the cove"
+   "why": "the walled town's market: bread, ash-grown wine, iron goods from the smiths"
   }
  ],
  "game_layout": {
@@ -1856,8 +1855,8 @@
   "yards": "ash and basalt yards",
   "edges": "vines and barley on the old flow's weathered ash",
   "materials_cells": {
-   "basalt setts": 3506,
-   "ash yards": 3152
+   "basalt setts": 3509,
+   "ash yards": 3206
   }
  },
  "terrain": {
@@ -1904,28 +1903,28 @@
    ".22r8.6r.2#32.2#15.2g.g.g.23#10.",
    ".g25r4.6r.2#32.2#18.g.g2.23#9.",
    ".g2.25r2.6r.2#32.2#26.21#8.",
-   "6.25r.4r2.2#32.2#13.6g7.23#6.",
-   "g10.21r6.2#32.2#5.g7.6g7.g23#4.g",
-   "20.14r4.2#32.2#14.5g8.24#4.",
-   "23.11r2.4#32.4#11.6g8.24#4.",
-   "23.11r2.4#32.4#11.6g8.24#4.",
-   "27.7r2.4#32.4#10.7g7.g24#4.",
-   "29.3r4.4#32.4#10.7g9.27#",
-   "31.5r2.2#32.2#4.g7.7g10.26#",
-   "30.7r.2#32.2#3.g5.g3.6g10.2g24#",
-   "29.8r.2#32.2#4.2g3.g2.3g2.2g10.4g22#",
+   "6.25r.4r2.2#32.2#26.23#6.",
+   "g10.21r6.2#32.2#5.g20.g23#4.g",
+   "20.14r4.2#32.2#27.24#4.",
+   "23.11r2.4#32.4#25.24#4.",
+   "23.11r2.4#32.4#25.24#4.",
+   "27.7r2.4#32.4#24.g24#4.",
+   "29.3r4.4#32.4#26.27#",
+   "31.5r2.2#32.2#4.g24.26#",
+   "30.7r.2#32.2#3.g5.g19.2g24#",
+   "29.8r.2#32.2#4.2g3.g19.4g22#",
    "28.9r.2#2.g2.2g25.2#2.g.g.g2.g17.7g21#",
    "27.9r2.2#5.g26.2#.g.g24.5g2.20#",
    "24.11r3.2#32.2#3.g.g20.5g4.20#",
    "24.11r3.2#32.2#3.g.g20.5g4.20#",
    "23.11r4.2#32.2#6.g8.4g2.2g2.6g4.g19#",
    "21.11r6.2#32.2#4.3g12.g.12g.3g18#",
-   "19.12r7.2#32.2#3.9g5.g2.g2.14g18#",
-   "18.11r9.2#32.2#2.11g5.11g.g2.4g18#",
-   "17.11r10.2#32.2#2.11g4.g.17g.g17#",
-   "14.12r12.2#32.2#3.10g2.13g.9g17#",
+   "19.12r7.2#32.2#17.g2.g2.14g18#",
+   "18.11r9.2#32.2#5.g12.11g.g2.4g18#",
+   "17.11r10.2#32.2#2.12g3.g.17g.g17#",
+   "14.12r12.2#32.2#3.11g.13g.9g17#",
    "13.10r15.2#32.2#2.26g.10g16#",
-   "12.10r16.2#32.2#2.8g2.8g.4g5.9g2.14#",
+   "12.10r16.2#32.2#2.18g.4g5.9g2.14#",
    "12.10r16.2#32.2#2.8g2.8g.4g5.9g2.14#",
    "12.8r18.2#32.2#2.8g.3g3.6g7.11g14#",
    "11.8r19.2#32.2#2.10g2.g2.g.3g11.3g.4g14#",
@@ -1971,16 +1970,16 @@
    "2.8r41.58g3.4g.g5.6#",
    "3.8r36.3g.10g7.24g.16g3.11g6#",
    "5.8r27.5g.15g7.16g.4g3.g.3g2.10g3.3g.7g.5#",
-   "5.8r27.5g.15g38.16g.7g.5#",
-   "4.g.13r20.6g.15g3.3g31.19g.g.4g5#",
-   "3.g.g3.18r19.6g12.3g31.18g6.2g5#",
-   "11.25r11.5g12.29g11.12g6.2g5#",
-   "3.g7.32r5.4g12.29g11.9g2.g6.2g5#",
+   "5.8r27.8g2.11g37.17g.7g.5#",
+   "4.g.13r20.22g3.3g31.19g.g.4g5#",
+   "3.g.g3.18r19.2g3.g12.3g31.18g6.2g5#",
+   "11.25r10.4g.g12.29g11.12g6.2g5#",
+   "3.g7.32r2.2g.4g12.29g11.9g2.g6.2g5#",
    "3.g7.3r.32r3g.g3.6g51.4g7.2g4#",
-   "4g7.3r3.37r.5g52.4g6.4g3#",
-   "4g7.3r3.3g.g.13r.g2.16r5g32.3r16.4g6.4g3#",
-   "4g7.3r4.g3.2g2.g7.g2.2g5.18r7g12.8g14r9.4g7.2g.g2b",
-   "4g7.3r20.g2.2g5.18r7g12.8g14r9.9g2.2g.g2b",
+   "4g7.3r3.37r.6g51.4g6.4g3#",
+   "4g7.3r3.3g.g.13r.g2.15r6g51.4g6.4g3#",
+   "4g7.3r4.g3.2g2.g7.g2.2g5.18r7g11.9g14r9.4g7.2g.g2b",
+   "4g7.3r20.g2.2g5.18r7g11.9g14r9.9g2.2g.g2b",
    "3g8.3r15.g6.8g.2g22r11.7g21rg.5g.g.7g3rb",
    "4g.6g3r15.g2.2g4.g9.22r10.5g28r2.2g.g.8rb",
    "4g.4g2.3r2.g15.4g.2g9.3g19r10.g48r",
@@ -2000,6 +1999,240 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the keep on the rock",
+   "xy_px": [
+    2312,
+    5136
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the gate and its towers",
+   "xy_px": [
+    2312,
+    5416
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the smiths' chimneys",
+   "xy_px": [
+    2540,
+    5470
+   ],
+   "screen": [
+    1,
+    2
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the gate market",
+   "xy_px": [
+    2312,
+    5492
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the chapel close inside the wall, beside the drill yard",
+   "xy_px": [
+    2224,
+    5330
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the vines on the cooled ash, above the forges",
+   "xy_px": [
+    2550,
+    5260
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the west postern from the castle yard to the Forge Stair",
+   "xy_px": [
+    2184,
+    5232
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the vine stair from Smiths' Row up to the vines",
+   "xy_px": [
+    2560,
+    5420
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the inner square",
+   "xy_px": [
+    2388,
+    5224
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the gate market",
+   "xy_px": [
+    2312,
+    5492
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the drill yard",
+   "xy_px": [
+    2388,
+    5380
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the drill yard: the knights' and the guard's training ground, beside the barracks",
+   "xy_px": [
+    2388,
+    5380
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the castle yard: basalt setts inside the wall",
+   "xy_px": [
+    2320,
+    5244
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the vines: vines on the cooled ash of the rock's warm east side",
+   "xy_px": [
+    2550,
+    5260
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the market stalls: the walled town's market: bread, ash-grown wine, iron goods from the smiths",
+   "xy_px": [
+    2320,
+    5480
+   ],
+   "screen": [
+    1,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a family house: a farmer's household about their day",
+   "building": "hearthold-b021",
+   "xy_px": [
+    2196,
+    5640
+   ],
+   "screen": [
+    0,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a knight's household about their day",
+   "building": "hearthold-b022",
+   "xy_px": [
+    2368,
+    5640
+   ],
+   "screen": [
+    1,
+    3
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the smithy: the master and apprentices about their day",
+   "building": "hearthold-b017",
+   "xy_px": [
+    2684,
+    5464
+   ],
+   "screen": [
+    2,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a family house: a potter's household about their day",
+   "building": "hearthold-b025",
+   "xy_px": [
+    2672,
+    5668
+   ],
+   "screen": [
+    2,
+    3
+   ]
+  }
+ ],
  "open_uses": [
   {
    "id": "hearthold-o01",
