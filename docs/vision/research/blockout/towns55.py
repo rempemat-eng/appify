@@ -1150,7 +1150,7 @@ def lay_all(T, X, *, authored=None):
     T['keepout'] |= north
     t.street([(2290, 5872), (2450, 5868), (2610, 5878)], 'side', name='the Strand')
     t.street([(2370, 5790), (2500, 5798), (2620, 5806)], 24, name='Kiln Lane')
-    t.street([(2440, 5800), (2450, 5860)], 24, name='Quay Lane')
+    t.street([(2440, 5800), (2450, 5860), (2496, 5860), (2496, 6000)], 24, name='Quay Lane')
     t.street([(2270, 5800), (2330, 5760), (2400, 5730)], 24, name='Back Lane')
     t.street([(2420, 5752), (2530, 5745), (2640, 5758)], 24, name='Kiln Row')
     t.street([(2624, 5760), (2624, 5880)], 'lane', name='Kiln Steps')
@@ -2244,7 +2244,8 @@ def _feedback_crossroads(T, X):
     _feedback_rows(t, inventory[23:29], [('y', 5968, 3832, 4288, -1, 'Halt Road west'),
                                        ('y', 5968, 3832, 4288, 1, 'Halt Road east')])
     _feedback_rows(t, inventory[29:37], [('x', 3416, 6608, 7232, -1, 'Market Lane north'),
-                                       ('x', 3416, 6608, 7232, 1, 'Market Lane south')])
+                                       ('x', 3416, 6608, 7232, 1, 'Market Lane south')],
+                   overflow_rows=[('x', 3936, 6608, 7008, -1, 'Granary Row north')])
     _feedback_rows(t, inventory[37:], [('y', 5984, 3440, 3808, -1, 'West Lane gardens')])
     t.square(6400, 3864, 48, 32, kind='garden', name='the mill green')
     t.yard(5840, 4304, 6080, 4368, name='the halt yard', why='loading carts, animal tethering and the water tank beside the halt approach')
@@ -2320,7 +2321,14 @@ def _feedback_neon(T, X):
             _feedback_rows(t, records[:10], rows[:4], props=props)
             _feedback_rows(t, records[10:], rows[4:], props=props)
         else:
-            _feedback_rows(t, records, rows, props=props)
+            _feedback_rows(t, records, rows, props=props, overflow_rows={
+                'the old waterfront': [('x', 4656, 10576, 11264, -1, 'the old quays north'),
+                                       ('x', 4656, 10576, 11264, 1, 'the old quays south'),
+                                       ('y', 10936, 4288, 4656, -1, 'the waterfront cross lane'),
+                                       ('y', 11272, 4288, 4656, -1, 'the waterfront cross lane')],
+                'the docks': [('y', 11648, 4752, 5664, -1, 'Quay Street service spine')],
+                'the Company district': [('y', 12000, 4288, 5024, 1, 'the Company cross avenue')],
+            }.get(label, ()))
         out[t.name] = t
     # The river/dock coast is a working edge, with purposeful open land rather than blank city paint.
     docks = out['Neon Harbour: the docks']
@@ -2386,30 +2394,30 @@ PROPOSED_ADOPTIONS = {'cinderwick': {'status': 'proposal',
                 'buildings': [{'id': 'cinderwick-b014',
                                'type': 'cottage',
                                'form': 'cottage',
-                               'footprint_cells': [301, 719, 8, 6],
-                               'rect_px': [2408, 5752, 64, 48],
+                               'footprint_cells': [302, 741, 8, 6],
+                               'rect_px': [2416, 5928, 64, 48],
                                'faces': 'cinderwick-s02',
-                               'door_cells': [305, 725],
+                               'door_cells': [310, 743],
                                'purpose': 'a detached fishing cottage',
                                'occupants': "a fisher's household",
                                'district': 'cinderwick-d-the-quay',
                                'counted': True,
                                'counts_as': 1,
-                               'plot_cells': [301, 717, 8, 2],
+                               'plot_cells': [300, 741, 2, 8],
                                'plot': 'yard'},
                               {'id': 'cinderwick-b015',
                                'type': 'cottage',
                                'form': 'cottage',
-                               'footprint_cells': [306, 727, 7, 5],
-                               'rect_px': [2448, 5816, 56, 40],
+                               'footprint_cells': [314, 741, 7, 5],
+                               'rect_px': [2512, 5928, 56, 40],
                                'faces': 'cinderwick-s02',
-                               'door_cells': [305, 729],
+                               'door_cells': [313, 743],
                                'purpose': 'a detached fishing cottage',
                                'occupants': "a fisher's household",
                                'district': 'cinderwick-d-the-quay',
                                'counted': True,
                                'counts_as': 1,
-                               'plot_cells': [306, 725, 7, 2],
+                               'plot_cells': [321, 741, 2, 7],
                                'plot': 'yard'},
                               {'id': 'cinderwick-b016',
                                'type': 'barn',
@@ -2489,15 +2497,15 @@ PROPOSED_ADOPTIONS = {'cinderwick': {'status': 'proposal',
                              {'id': 'hearthold-b035',
                               'type': 'workshop',
                               'form': 'workshop',
-                              'footprint_cells': [343, 690, 11, 7],
-                              'rect_px': [2744, 5520, 88, 56],
+                              'footprint_cells': [342, 690, 11, 7],
+                              'rect_px': [2736, 5520, 88, 56],
                               'faces': 'hearthold-s06',
-                              'door_cells': [345, 689],
+                              'door_cells': [344, 689],
                               'purpose': 'a craft workshop; specific trade not yet authored',
                               'occupants': 'craft workers; individual workers and routines not yet authored',
                               'district': 'hearthold-d-smiths-row',
                               'counted': True,
-                              'plot_cells': [343, 697, 11, 2],
+                              'plot_cells': [342, 697, 11, 2],
                               'plot': 'yard',
                               'counts_as': 1}],
                'districts': [],
