@@ -112,7 +112,7 @@ melee-combo helper is not bound to the attack action.
 The merged [scene-consumer scenario](../../game/test/test_slice.gd)
 (`test_reachable_slice_through_home_again_uses_scene_consumers`) completes the
 quest chain, but calls interactables directly, closes dialogue automatically
-because no dialogue box is attached, emits body-entry signals for all six door
+because no dialogue box is attached, emits body-entry signals for all five door
 crossings and the plate, and supplies lethal hits to all nine enemies. Walking,
 collision/proximity, aiming, surviving the fights and using the visible dialogue
 box therefore remain **unplayed at each corresponding checklist step**. The
