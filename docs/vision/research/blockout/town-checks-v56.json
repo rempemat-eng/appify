@@ -14,11 +14,12 @@
   "pass": true,
   "failures": [],
   "notes": [
-   "94% of the city roads in x and y runs",
-   "29 blocks, 39 dead ends, 9.2 x 8.5 screens"
+   "count (warning): 228 counted buildings, a little outside 150 to 200",
+   "95% of the city roads in x and y runs",
+   "33 blocks, 56 dead ends, 9.2 x 8.8 screens"
   ],
-  "metrics": 161,
-  "actual_count": 161,
+  "metrics": 228,
+  "actual_count": 228,
   "retained_count": 72
  },
  "halcyon-row": {

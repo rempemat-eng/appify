@@ -2456,20 +2456,20 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    742,
+    741,
     456,
     5,
     7
    ],
    "rect_px": [
-    5936,
+    5928,
     3648,
     40,
     56
    ],
    "faces": "crossroads-s17",
    "door_cells": [
-    747,
+    746,
     459
    ],
    "purpose": "a cottage",
@@ -2693,13 +2693,13 @@
    "6g.26g6.12g6r9g4.5g4r9g2#3g8.8r13g4~63g4r13g3.",
    "33g6.11g7r8g5.5g4r11g2#g9.9r7g4.3~.63g4r12g4.",
    "34g5.10g8r7g5.6g4r11g3#9.g9r6g4.3~.63g5r8g6.g",
-   "2g.28g8.9g8r7g5.8g2r12g3#9.2g9r5g4.3~.63g6r6g6.2g",
-   "31g8.8g8r7g5.9g2r12g3#9.3g9r4g4.3~.63g6r5g5.4g",
-   "g.29g9.5g9r8g4.10g2r13g4#6.6g8r3g4.3~.63g7r3g5.5g",
-   "12g2.17g9.4g9r9g3.11gr15g3#6.4#3g8r2g4.3~.63g7r3g3.7g",
-   "13g.17g9.3g8r11g2.28g3#6.4#4g8rg4.3~.64g7r3g.8g",
-   "31g8.2g9r12g.30g13#4g9r3g3~65g8r11g",
-   "31g8.g9r30grgr10g14#5g9r2g3~66g8r10g",
+   "2g.27g9.9g8r7g5.8g2r12g3#9.2g9r5g4.3~.63g6r6g6.2g",
+   "30g5.g3.8g8r7g5.9g2r12g3#9.3g9r4g4.3~.63g6r5g5.4g",
+   "g.28g5.g4.5g9r8g4.10g2r13g4#6.6g8r3g4.3~.63g7r3g5.5g",
+   "12g2.16g5.g4.4g9r9g3.11gr15g3#6.4#3g8r2g4.3~.63g7r3g3.7g",
+   "13g.16g5.g4.3g8r11g2.28g3#6.4#4g8rg4.3~.64g7r3g.8g",
+   "30g5.g3.2g9r12g.30g13#4g9r3g3~65g8r11g",
+   "30g5.g3.g9r30grgr10g14#5g9r2g3~66g8r10g",
    "g.34g3.9r31grgr11g14#2.3g10r3~66g9r9g",
    "36g.10r32grgr11g14#3.4g8r2b~68g8r8g",
    "36g9r33g2rgr12g10#r2#2.6g6r4b3r66g8r7g",
@@ -3006,7 +3006,7 @@
    "what": "a cottage: a shepherd's household about their day",
    "building": "crossroads-b040",
    "xy_px": [
-    5956,
+    5948,
     3676
    ],
    "screen": [

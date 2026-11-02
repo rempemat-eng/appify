@@ -138,9 +138,10 @@ GAME = {
                                    ('the cranes on the long quay', (11250, 5000)), ('the lido on the East Shore', (12100, 5150)), ('the maglev terminus', (11650, 4565)),
                                    ('the launch tower on the cape', (12125, 6425)), ('the Glintside mills', (10400, 4330)),
                                    ('the canal-mouth night market', (10364, 4676)), ('Halcyon Row and its canteen', (12020, 5560)),
-                                   ("the shard-light on its platform in the basin, the city's brightest point", (10700, 5424)),
-                                   ('the old chapel-fort and the floating market on Chapel Islet', (10700, 5060)),
-                                   ('the lighthouse on the mole at the harbour mouth', (10800, 5664)), ('the Delta Road gate of the Heights', (9840, 4880)),
+                                   ("the shard-light on its platform in the bay, the city's brightest point", (10700, 5540)),
+                                   ('the old chapel-fort and the floating market on Chapel Islet', (10700, 5290)),
+                                   ("the lighthouse on the east horn's mole", (11030, 5720)), ("the Company beacon on the west horn's mole", (10370, 5720)),
+                                   ('the Delta Road gate of the Heights', (9840, 4880)),
                                    ('the lock at the head of the canal, where the Lull Road enters the city', (9472, 4560))],
                      'shortcuts_later': [('the funicular from the canal basin to the Skyport', (10074, 4935), 'when the funicular is repaired'),
                                          ('the skybridge from the Heights over the ria to the old waterfront', (10500, 4600), 'with the Skyport pass'),
@@ -191,8 +192,9 @@ GAME['crossroads']['landmarks'] = [(('the halt and its water tank', (5835, 4040)
                                    for n_, xy in GAME['crossroads']['landmarks']]
 GAME['neon-harbour']['first_view'] = ('off the Lull Road at Canalside: the canal basin, the funicular up to the Skyport, the airships over the '
                                       'Heights and the neon of the Company district across the ria')
-_V56_ONLY = {'the canal-mouth night market', "the shard-light on its platform in the basin, the city's brightest point",
-             'the old chapel-fort and the floating market on Chapel Islet', 'the lighthouse on the mole at the harbour mouth',
+_V56_ONLY = {'the canal-mouth night market', "the shard-light on its platform in the bay, the city's brightest point",
+             'the old chapel-fort and the floating market on Chapel Islet', "the lighthouse on the east horn's mole",
+             "the Company beacon on the west horn's mole",
              'the Delta Road gate of the Heights', 'the lock at the head of the canal, where the Lull Road enters the city'}
 GAME['neon-harbour']['landmarks'] = [(n_, (11120, 4150) if n_ == 'the Glintside mills' else xy) for n_, xy in GAME['neon-harbour']['landmarks']
                                      if n_ not in _V56_ONLY]
@@ -770,10 +772,10 @@ BLOCK_FORMS = {'neon-harbour': None, 'dust-gulch': ('adobe', 'adobe', 'workshop'
                'cinderwick': ('cottage', 'townhouse'), 'cogsworth': ('terrace', 'workshop'), 'highgarth': ('house', 'cottage'), 'lagoon-landing': ('cottage', 'boathouse')}
 NEON_FORMS = {'the old waterfront': ('oldhouse', 'oldhouse', 'shop'), 'the docks': ('longwarehouse', 'warehouse'), 'the Lanes and the East Shore': ('aptrow', 'terrace'),
               'the Company district': ('slab', 'bigtower'), 'the Heights and the Skyport': ('townhouse', 'house'),
-              'Canalside, the canal quarter': ('oldhouse', 'townhouse', 'workshop')}
+              'Canalside, the canal quarter': ('oldhouse', 'townhouse', 'workshop'), 'the Crescent': ('oldhouse', 'townhouse')}
 OPEN_USE = {'the old waterfront': ('a pocket park', 'garden'), 'the docks': ('a stacking yard', 'yard'), 'the Lanes and the East Shore': ('a courtyard', 'yard'),
             'the Company district': ('a planted plaza', 'plaza'), 'the Heights and the Skyport': ('a terrace garden', 'garden'),
-            'Canalside, the canal quarter': ('a canal-side court', 'yard')}
+            'Canalside, the canal quarter': ('a canal-side court', 'yard'), 'the Crescent': ('a promenade garden', 'garden')}
 
 
 def block_masks(streets_m, ter_bad):
@@ -1470,7 +1472,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         for rec in bl:
             if rec['id'] in authored_buildings and rec != authored_buildings[rec['id']]:
                 raise ValueError(f"{rec['id']}: authored record disagrees with computed count or metadata")
-    tgt = lead.target if len(ts) == 1 else ((130, 200) if getattr(X, 'REVISION', 'v55') == 'v56' else (60, 90))   # v56: the packed city round its basin
+    tgt = lead.target if len(ts) == 1 else ((150, 200) if getattr(X, 'REVISION', 'v55') == 'v56' else (60, 90))   # v56: the packed city round its bay
     size = lead.size if len(ts) == 1 else 'city'
     lv = [L for L in T.get('levelled', []) if fb[0] - 8 <= L[0] <= fb[2] and fb[1] - 8 <= L[1] <= fb[3]]
     plan = {
@@ -1546,7 +1548,7 @@ TOWN_MAT = {   # plan id: (streets and squares, yards, open ground inside the to
     'driftwood': (22, 22, None), 'gullwick': (22, 22, None), 'canalside': (24, 25, None), 'glintside': (1, 25, None),
     'halcyon-row': (24, 22, None), 'launch-cape': (12, 12, None)}
 NEON_MAT = {'the old waterfront': 1, 'the docks': 4, 'the Lanes and the East Shore': 3, 'the Company district': 2, 'the Heights and the Skyport': 5,
-            'Canalside, the canal quarter': 1}
+            'Canalside, the canal quarter': 1, 'the Crescent': 1}
 STREET_K = ['lane', 'plaza', 'boulevard', 'arcade', 'quay', 'road', 'path', 'stair', 'trail', 'dock', 'stall', 'fishmarket']
 OPEN_K = ['meadow', 'watermeadow', 'steppe', 'scrub', 'broadleaf', 'conifer', 'clearing', 'lawn', 'heath', 'gorse', 'fallow', 'thicket', 'felltree',
           'bramble', 'wild', 'tor', 'boulders', 'scree', 'barren', 'desert', 'sand', 'alpine', 'carr', 'reeds', 'fireweed']

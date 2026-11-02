@@ -39,7 +39,7 @@
  },
  "footprint_px": [
   11704,
-  5280,
+  5288,
   12192,
   5768
  ],
@@ -55,7 +55,7 @@
    "entries_px": [
     [
      11668,
-     5163
+     5169
     ]
    ],
    "route_kind": "road"
@@ -121,7 +121,7 @@
    "vertices_px": [
     [
      11668.0,
-     5163.2
+     5169.3
     ],
     [
      11668.0,
@@ -274,7 +274,7 @@
    ]
   ]
  },
- "fronts": 10,
+ "fronts": 9,
  "landmarks": [],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
@@ -351,20 +351,20 @@
    "type": "townhouse",
    "form": "row_house",
    "footprint_cells": [
-    1467,
-    660,
-    9,
-    5
+    1472,
+    661,
+    4,
+    4
    ],
    "rect_px": [
-    11736,
-    5280,
-    72,
-    40
+    11776,
+    5288,
+    32,
+    32
    ],
    "faces": "halcyon-row-s01",
    "door_cells": [
-    1471,
+    1474,
     665
    ],
    "purpose": "a terraced townhouse",
@@ -373,17 +373,12 @@
    "counted": true,
    "bays": [
     {
-     "w_cells": 3,
-     "storeys": 2,
-     "roof": "flat"
-    },
-    {
-     "w_cells": 6,
-     "storeys": 3,
+     "w_cells": 4,
+     "storeys": 1,
      "roof": "flat"
     }
    ],
-   "fronts": 2,
+   "fronts": 1,
    "counts_as": 1
   },
   {
@@ -391,15 +386,15 @@
    "type": "townhouse",
    "form": "row_house",
    "footprint_cells": [
-    1472,
+    1473,
     670,
-    5,
+    4,
     11
    ],
    "rect_px": [
-    11776,
+    11784,
     5360,
-    40,
+    32,
     88
    ],
    "faces": "halcyon-row-s01",
@@ -413,14 +408,14 @@
    "counted": true,
    "bays": [
     {
-     "w_cells": 5,
-     "storeys": 1,
+     "w_cells": 7,
+     "storeys": 3,
      "roof": "tile"
     },
     {
-     "w_cells": 6,
-     "storeys": 3,
-     "roof": "flat"
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
     }
    ],
    "fronts": 2,
@@ -431,15 +426,15 @@
    "type": "townhouse",
    "form": "row_house",
    "footprint_cells": [
-    1504,
+    1505,
     711,
-    5,
+    4,
     3
    ],
    "rect_px": [
-    12032,
+    12040,
     5688,
-    40,
+    32,
     24
    ],
    "faces": "halcyon-row-s01",
@@ -454,8 +449,8 @@
    "bays": [
     {
      "w_cells": 3,
-     "storeys": 2,
-     "roof": "tile"
+     "storeys": 1,
+     "roof": "flat"
     }
    ],
    "fronts": 1,
@@ -575,7 +570,7 @@
     12280,
     5808
    ],
-   "plots": 4,
+   "plots": 5,
    "why": "the city's vegetables and fruit, grown on its edge where the houses thin out"
   },
   {
@@ -604,8 +599,8 @@
    {
     "name": "a terraced townhouse at the edge, seen first from the Cape Road",
     "xy": [
-     11772,
-     5300
+     11792,
+     5304
     ]
    }
   ],
@@ -614,7 +609,7 @@
   "first_screen_cells": [
    [
     1438,
-    634,
+    635,
     40,
     22.5
    ]
@@ -629,10 +624,11 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "composite slab": 114,
-   "patched paving": 2548,
-   "steel deck plates": 975,
-   "heath and scrub": 591,
+   "worn cobbles": 281,
+   "composite slab": 92,
+   "patched paving": 2270,
+   "steel deck plates": 957,
+   "heath and scrub": 527,
    "dunes": 54,
    "bare rock": 829,
    "concrete apron": 88,
@@ -643,9 +639,9 @@
  "terrain": {
   "box_cells": [
    1448,
-   645,
+   646,
    92,
-   92
+   91
   ],
   "codes": {
    ".": "land",
@@ -656,49 +652,48 @@
    "b": "bridge"
   },
   "rows": [
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.5r76.3g",
-   "8.25r56.3g",
-   "8.26r55.3g",
-   "8.26r55.3g",
-   "8.26r55.3g",
-   "9.25r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
-   "29.5r55.3g",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.5r79.",
+   "8.25r59.",
+   "8.26r58.",
+   "8.26r58.",
+   "8.26r58.",
+   "9.25r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
+   "29.5r58.",
    "29.5r55.3g",
    "29.36r24.3g",
    "29.37r26.",
@@ -722,9 +717,9 @@
    "27.13g9.4g8.5r9.4g8.5g",
    "26.27g8.5r2g7.4g8.5g",
    "25.28g8.5r2g7.4g8.5g",
-   "24.32g5.5r2g7.4g9.4g",
-   "22.34g5.5r2g7.4g9.4g",
-   "19.37g5.5r11g11.4g",
+   "24.33g4.5r2g7.4g9.4g",
+   "22.35g4.5r2g7.4g9.4g",
+   "19.38g4.5r11g11.4g",
    "18.43g5r13g11.2g",
    "17.33g7.4g5r2g8.3g13.",
    "16.34g7.4g5r2g8.3g13.",
@@ -770,8 +765,8 @@
    "kind": "landmark view",
    "what": "a terraced townhouse at the edge, seen first from the Cape Road",
    "xy_px": [
-    11772,
-    5300
+    11792,
+    5304
    ],
    "screen": [
     0,
@@ -849,12 +844,12 @@
     11780,
     4159
    ],
-   "distance_px": 1375,
+   "distance_px": 1379,
    "effect": "the Company crater lies 1300 px away; its scorch points to the valley",
    "road": "Cape Road",
    "road_leaves_at_px": [
     11668,
-    5163
+    5169
    ]
   },
   "moss": {
