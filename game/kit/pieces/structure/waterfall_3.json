@@ -75,6 +75,7 @@
  },
  "placement": {
   "role": "waterfall",
+  "purpose": "flow",
   "snap": "cell",
   "requires": [
    {
@@ -88,8 +89,7 @@
     "note": "water on the tier above, as wide as the fall"
    }
   ],
-  "composition": "axis",
-  "purpose": "flow"
+  "composition": "axis"
  },
  "rendering": {
   "cast_shadow": {

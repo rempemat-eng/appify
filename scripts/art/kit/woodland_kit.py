@@ -60,10 +60,9 @@ def cells_of(plan) -> np.ndarray:
     river &= ~SG.cells_rects(s['river'].get('cut', []), h, w)
     wat = keep_width(river, s['river']['cells'])
     wat |= SG.cells_rects(s['pool'], h, w)
-    wat |= SG.cells_route(RILL, s['rill']['cells_plan'], h, w)
-    # the rill runs on into the pool where the woodland's fall drops (the fall itself is a piece to come)
-    f = plan['water']['fall']
-    wat |= SG.cells_rects([[f['x0'], f['y0'], f['w'], f['y1'] - f['y0']]], h, w)
+    wat |= SG.cells_route(RILL, RILL_CELLS, h, w)
+    wat |= SG.cells_rects([PLUNGE], h, w)
+    # the rill runs straight on over the rim into the plunge pool (the fall is its piece)
     wat = smooth_cells(wat)
     grid[wat] = '~'
     return grid
@@ -114,7 +113,9 @@ LEVEL = 2                        # two tiers up: a face four cells high, tall en
 # the rill straight down its line from the escarpment to the fall (the painted plan's two jogs of
 # two cells read as abrupt sideways steps in the kit's soft grid, Claude A 2 Nov); centred on the
 # fall's columns so the channel keeps its line and width over the rim
-RILL = [[80, -8], [80, 256]]
+RILL = [[64, -8], [64, 280]]           # three cells (Matt's fall reads as a feature at 1x)
+RILL_CELLS = 3
+PLUNGE = [40, 280, 72, 16]     # a short wide plunge pool under the fall (world px), joining the river
 GLADE_END = (128, 150, 18, 13)   # the trodden ground where the north path opens into the glade (world px)
 # pieces of the base scene moved off what they must not stand on (texels): a bush off the face,
 # the willow (it stood far from water with its trunk on a path) to the river's south bank, the east stone of the ring clear of the north-south path

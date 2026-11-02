@@ -184,7 +184,9 @@ def compare(zone: str, painted: str, out_dir: str | None = None) -> dict:
     for name, m in regs.items():
         if name.startswith('_'):
             continue
-        a, b = texture(A, m), texture(B, m)
+        # a fall's sheet and foam are a feature, not the water's surface or its bank
+        mt = m & ~regs['_falls'] if name == 'water' else m
+        a, b = texture(A, mt), texture(B, mt)
         if name in ('water', 'path'):
             f = blue if name == 'water' else pathlike
             # a fall is not a bank: its sheet and foam are left out of the outline

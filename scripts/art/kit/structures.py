@@ -63,7 +63,7 @@ def footbridge(force: bool, cells: int = 3) -> None:
                      'note': 'softground.footbridge painted as a piece: abutments, deck, kerbs, posts and rails'},
         'geometry': {'size_px': [W, H], 'size_cells': [round(W / 24), round(H / 24)], 'foot': foot, 'z_sort': 'ground',
                      'collision': {'shape': 'none'}, 'footprint': []},
-        'placement': {'role': 'bridge', 'snap': 'cell',
+        'placement': {'role': 'bridge', 'purpose': 'cross', 'snap': 'cell',
                       'requires': [{'rel': 'on', 'what': 'water', 'note': 'spans a channel %d cells wide, north to south' % cells},
                                    {'rel': 'adjacent', 'what': 'route', 'cells': 1, 'note': 'a route meets it at both ends'}],
                       'composition': 'axis'},
@@ -98,7 +98,7 @@ def stepping_stones(force: bool, cells: int) -> None:
         'approval': {'state': 'candidate', 'by': None, 'at': None, 'standard': 'ground-rules.md 3 (a route crosses water only on a span or stones)',
                      'note': 'a footpath crossing a rill or a stream'},
         'geometry': {'size_px': [W, H], 'size_cells': [1, cells + 1], 'foot': foot, 'z_sort': 'ground', 'collision': {'shape': 'none'}, 'footprint': []},
-        'placement': {'role': 'bridge', 'snap': 'cell',
+        'placement': {'role': 'bridge', 'purpose': 'cross', 'snap': 'cell',
                       'requires': [{'rel': 'on', 'what': 'water', 'note': 'across a channel %d cell%s wide' % (cells, 's' if cells > 1 else '')},
                                    # its deck carries its own landing stones onto both banks, so the
                                    # footpath meets it on them (within, not adjacent)
@@ -157,7 +157,7 @@ def boulders(force: bool) -> None:
                      'note': 'props.boulder4 at six sizes (10 x 7 to 22 x 13 world px), mossy and bare'},
         'geometry': {'size_px': [w0, h0], 'size_cells': [1, 1], 'foot': [float(feet[0][0]), float(feet[0][1])], 'z_sort': 'foot',
                      'collision': {'shape': 'rect', 'rect': [-4.0, -4.0, 8.0, 4.0]}},
-        'placement': {'role': 'rock', 'snap': 'free', 'forbids': [{'rel': 'not_overlap', 'what': 'rock'}, {'rel': 'on', 'what': 'route'}],
+        'placement': {'role': 'rock', 'purpose': 'mark', 'snap': 'free', 'forbids': [{'rel': 'not_overlap', 'what': 'rock'}, {'rel': 'on', 'what': 'route'}],
                       'composition': 'cluster'},
         'rendering': {'cast_shadow': {'shape': 'ellipse', 'size': [7.0, 3.0], 'dir': [2.0, -1.0]}, 'contact_ao': True},
         'function': {}, 'story': {'owner': None},
@@ -185,7 +185,7 @@ def log_steps(force: bool, cells: int = 2) -> None:
                      'note': 'softground.log_steps as a piece, for a face of two cells'},
         'geometry': {'size_px': [W, H], 'size_cells': [cells, 2], 'foot': [W / 2.0, float(H)], 'z_sort': 'ground',
                      'collision': {'shape': 'none'}, 'footprint': []},
-        'placement': {'role': 'stair', 'snap': 'cell',
+        'placement': {'role': 'stair', 'purpose': 'climb', 'snap': 'cell',
                       'requires': [{'rel': 'on', 'what': 'face', 'note': 'its whole flight on face cells, the rim straight above it'}],
                       'composition': 'axis'},
         'rendering': {'cast_shadow': {'shape': 'baked'}, 'contact_ao': False,
@@ -242,16 +242,23 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int) -> 
             if r > 1.0 or (Y < y1 and not (x0 <= X < x0 + w)):
                 continue                                       # above the pool only over the sheet
             lit = (X - cx) < 0.3 * w
-            cv[Y, X] = C('snow', 5) if (Y < y1 + 3 and r < 0.6 and lit) else (C('snow', 4) if r < 0.7 else C('snow', 2))
+            # churning white lit on its upper left, greying into the pool at its rim (dithered)
+            if r < 0.45 and Y < y1 + 4:
+                c = C('snow', 5) if lit else C('snow', 4)
+            elif r < 0.75:
+                c = C('snow', 4) if ((X + Y) % 3) or Y < y1 + 2 else C('snow', 2)
+            else:
+                c = C('snow', 2) if (X + Y) % 2 else C('water', 4)
+            cv[Y, X] = c
     waters = [FI[n] for n in ('water', 'water_warm', 'water_cool')]
-    for k, (rx, ry) in enumerate(((w * 0.95, 8), (w * 1.35, 11))):   # foam rings spreading on the pool
+    for k, (rx, ry) in enumerate(((w * 0.8, 7), (w * 1.1, 10), (w * 1.45, 13))):   # rings and ripples spreading on the pool
         for Y in range(y1, min(H, y1 + int(ry) + 8)):
             for X in range(max(0, int(cx - rx - 3)), min(W, int(cx + rx + 3))):
                 if (cv[Y, X] // 8) not in waters:
                     continue
                 q = ((X - cx) / rx) ** 2 + ((Y - (y1 + 4)) / ry) ** 2
-                if abs(q - 1.0) < 0.09 and ((X // 6) + k) % 3:
-                    cv[Y, X] = C('water', 4) if k == 0 else C('water', 3)
+                if abs(q - 1.0) < 0.09 - 0.02 * k and ((X // (6 + 2 * k)) + k) % 3:
+                    cv[Y, X] = C('snow', 2) if k == 0 else C('water', 4)
 
 
 def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
@@ -287,7 +294,7 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
                      'collision': {'shape': 'none'},
                      'footprint': [[c, -r] for r in range(2 * drop, 0, -1) for c in cols],
                      'sheet_px': [24, 24 + wpx, 12, 12 + face]},
-        'placement': {'role': 'waterfall', 'snap': 'cell',
+        'placement': {'role': 'waterfall', 'purpose': 'flow', 'snap': 'cell',
                       'requires': [{'rel': 'on', 'what': 'face', 'note': 'its footprint is the face under water crossing a south rim'},
                                    {'rel': 'under', 'what': 'water', 'note': 'water on the tier above, as wide as the fall'}],
                       'composition': 'axis'},
