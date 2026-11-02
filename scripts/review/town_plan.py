@@ -13,6 +13,7 @@ What it checks, per plan (ground-rules.md 4 and 5, size-guide.md 0, Matt's brief
   off_streets no building on a street, square or arrival
   off_water   no building on water or a barrier; a street crosses water only on a bridge
   reach       every building has a door within three cells of the street it faces (a close two cells wide if it is set back)
+  discovery   at least one point of interest (secret, resident activity, shortcut, landmark view) on every screen with a building
   count       the counted buildings (a row of 3 to 5 joined houses 1, any house 1, landmarks apart, each with a reason)
               within the town's range: a little outside warns, beyond 25 % fails
   arrivals    every arrival lies on its regional route (blockout-v55.json) or at its station (a ferry)
@@ -329,6 +330,16 @@ def check_plan(P, blockout):
             fails.append(f"districts: {len(P['districts'])} districts, functions {sorted(fn)}")
         if len(P['gathering_places']) < 2:
             fails.append('districts: fewer than two gathering places')
+    # discovery (docs/vision/pillars.md): at least one point of interest on every screen of the town that holds a building
+    if 'discovery' in P:
+        fx0, fy0 = P['footprint_px'][0], P['footprint_px'][1]
+        tl = lambda x, y: (int((x - fx0) // (40 * CELL)), int((y - fy0) // (22.5 * CELL)))
+        need = {tl(b['rect_px'][0] + b['rect_px'][2] / 2, b['rect_px'][1] + b['rect_px'][3] / 2) for b in P['buildings']}
+        got = {tl(*i['xy_px']) for i in P['discovery'] if i.get('kind') in ('secret', 'resident activity', 'shortcut', 'landmark view') and i.get('what')}
+        if need - got:
+            fails.append(f'discovery: {len(need - got)} of {len(need)} screens with buildings have nothing to discover')
+    else:
+        fails.append('discovery: the plan has no discovery list')
     # layout: a landmark within two screens of every entry; a loop
     GL = P['game_layout']
     lms = GL['landmarks']

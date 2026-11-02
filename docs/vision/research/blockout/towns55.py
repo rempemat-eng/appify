@@ -13,6 +13,7 @@ and props, and the journey checks) are a plan in README.md, "v55", for the lanes
 
 Called by geo55.py (lay_all); not run on its own."""
 import math
+import os
 import numpy as np
 from scipy import ndimage as ndi
 import geo5 as g
@@ -821,6 +822,35 @@ class Town:
                 'streets': self.streets, 'buildings': [[b['x'], b['y'], b['w'], b['h'], b['use'], int(b['counted'])] for b in bs]}
 
 
+def scan_place(t, box, forms, n, near=5, counted=True, plot=None, step=16, shore=0, margin=1):
+    """Up to n buildings on free, buildable ground in box (x0, y0, x1, y1), each within `near` cells of a street or route
+    (so it has a way to its door) and, with shore > 0, at least that many cells from water (quay edges kept clear for
+    boats). forms cycles through (form, w, d). Returns how many were placed; nothing is forced."""
+    T = t.T; K = T['K']
+    way = np.zeros(K.shape, bool)                                   # this town's own streets (its doors face them)
+    for s_ in t.streets:
+        way |= _lm(s_['pts'], s_['width_px'])
+    nearm = ndi.binary_dilation(way, iterations=near)
+    wet = np.isin(K, ['sea', 'river', 'canal', 'surf', 'lagoon', 'shallows', 'channel', 'creek', 'falls', 'rapids'])
+    wetn = ndi.binary_dilation(wet, iterations=shore) if shore else np.zeros_like(wet)
+    x0, y0, x1, y1 = box; got = 0
+    for hy in range(int(y0), int(y1), step):
+        for hx in range(int(x0), int(x1), step):
+            if got >= n:
+                return got
+            f, w_, d_ = forms[got % len(forms)]
+            a_, b_ = C(hx, hy); c_, e_ = a_ + d_ // CELL, b_ + w_ // CELL
+            if a_ - margin < 0 or b_ - margin < 0 or c_ + margin > H or e_ + margin > W:
+                continue
+            win = (slice(a_ - margin, c_ + margin), slice(b_ - margin, e_ + margin))
+            if not nearm[a_:c_, b_:e_].any() or T['taken'][win].any() or T['street'][win].any() or T['barrier'][win].any() \
+                    or T['keepout'][win].any() or wetn[a_:c_, b_:e_].any() or not np.isin(K[win], list(BUILDABLE - ROUTE)).all():
+                continue
+            if t.hand(hx, hy, w_, d_, f, plot=plot, counted=counted):
+                got += 1
+    return got
+
+
 def _lm(pts, width):
     """geo5's own line mask (geo52 swaps in a varied-width one for the routes)."""
     import geo52 as G
@@ -1184,6 +1214,8 @@ def lay_all(T, X, *, authored=None):
     t.row(t.streets[1]['pts'], ['workshop', 'townhouse', 'cottage'], limit=7, plot=None, gap=(2, 8))
     t.row(route_part(T, 'Ember Way', (2200, 5700, 2420, 5860)), ['cottage', 'house'], limit=3, start=10)
     t.yard(2620, 5760, 2720, 5840, name='the kilns', why='charcoal from the dead forest; black-sand glass')
+    t.square(2552, 5892, 40, 14, name='the harbour square')
+    t.yard(2496, 5880, 2624, 5912, kind='quay', name='the stone quay', why="the fishing boats tie up here; nets dry on the quay's edge")
     t.row(t.streets[3]['pts'], ['cottage', 'house'], limit=4)
     t.row(t.streets[4]['pts'], ['cottage', 'house', 'workshop'], limit=4)
     t.row(route_part(T, 'Ash Coast', (2480, 5760, 2760, 5900)), ['cottage', 'house'], limit=3, start=10)
@@ -1310,7 +1342,7 @@ def hearthold(T, X, *, authored=None):
     fp = ('sign', 'potted plants', 'woodpile', 'water butt', 'lamp')
     # the lower town's home streets: detached houses with their yards (Matt, 28 Oct 11:26), not wall to wall
     t.row(t.S('Ash Lane'), ['house', 'cottage', 'house', 'workshop', 'cottage'], limit=6, plot=(16, 'yard'), reach=32)
-    t.row(t.S("Potters' Lane"), ['cottage', 'house', 'workshop', 'house', 'cottage'], limit=7, plot=(16, 'yard'), reach=32)
+    t.row(t.S("Potters' Lane"), ['cottage', 'house', 'workshop', 'house', 'cottage'], limit=7, plot=(16, 'yard'), reach=32, sides=(-1,))
     t.hand(2248, 5520, 40, 48, 'townhouse')                             # the gate market's corner house
     t.hand(2632, 5600, 120, 40, 'terrace')                               # Vine Lane's terrace above the lava
     # a calm ground: the lower town's leftover rough ground made plain yard, its terraces stepping down in three levels
@@ -1323,6 +1355,9 @@ def hearthold(T, X, *, authored=None):
     t.fields(2480, 5120, 2620, 5400, ('orchard',), name='the vines', why="vines on the cooled ash of the rock's warm east side", size=(64, 112), hedge=False)
     t.fields(2140, 5744, 2600, 5800, ('field', 'field2'), name='the lower fields', why='barley and beans between the town and the cove', size=(80, 144))
     _adopt_requested(t, authored, 'hearthold')
+    t.cap = max(t.cap, 45)
+    scan_place(t, (2000, 5360, 2800, 5690), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 48), ('workshop', 88, 56)], 4,
+               plot=(0, 1, 16, 'yard'), near=3)                    # the lower town's detached homes and yards where there is room
     return t
 
 
@@ -2118,7 +2153,29 @@ FEEDBACK_BUILDINGS = {'crossroads': [(1, 'cottage', 80, 40, []),
                   (81, 'row_house', 32, 32, [{'w_cells': 4, 'storeys': 1, 'roof': 'tile'}])]}
 
 
-def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'potted plants', 'water butt')):
+def _widen(form, ow, od, bays, fill, seed=0):
+    """A row block widened toward a full street front (Matt's Eastward street): more fronts sharing walls, still one row of at
+    most 5 fronts (counted 1 under Matt's rule) and within its form's width range; None if it cannot widen."""
+    if not bays or not fill or form not in ('row_house', 'row_tenement', 'row_shop'):
+        return None
+    hi = BLD[form][0][1]
+    target = min(hi, int(round(ow * fill / CELL)) * CELL)
+    nb = [dict(q) for q in bays]
+    if nb[0]['w_cells'] >= 7 and len(nb) < 5:                        # a long front split: a narrow shop beside a wider house
+        w0 = nb[0]['w_cells']
+        nb[0:1] = [dict(nb[0], w_cells=3 + seed % 2), dict(nb[0], w_cells=w0 - 3 - seed % 2, storeys=nb[0].get('storeys', 2) + 1)]
+    k = 0
+    while sum(q['w_cells'] for q in nb) * CELL < target and len(nb) < 5:
+        w = (4, 6, 3, 5, 7)[(len(nb) + k + ow // 8 + seed) % 5]
+        w = min(w, target // CELL - sum(q['w_cells'] for q in nb))
+        if w < 3:
+            break
+        nb.append({'w_cells': w, 'storeys': 2 + len(nb) % 2, 'roof': nb[len(nb) % len(bays)].get('roof', 'flat')}); k += 1
+    along = sum(q['w_cells'] for q in nb) * CELL
+    return (along, nb) if along > ow else None
+
+
+def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'potted plants', 'water butt'), fill=None, gap=None):
     """Lay the pinned buildings along deliberately authored street edges.
 
     A row is (axis, fixed coordinate, start, end, side, street name). Gaps are
@@ -2157,14 +2214,30 @@ def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'pot
         row_start = len(placed)
         rows_left = (primary_count if row_index < primary_count else len(rows)) - row_index
         row_target = math.ceil(len(queue) / rows_left)
+        fails_here = 0
+        row_fill = fill
+        if fill:                                                     # widen this row's share to fill its street edge
+            share = queue[:row_target]
+            orig = sum((r_[2] if r_[4] else max(r_[2], r_[3])) + 8 for r_ in share)
+            row_fill = max(1.0, min(fill, (hi - lo) * 0.92 / max(1, orig)))
         while queue and pos < hi and len(placed) - row_start < row_target:
             ident, form, ow, od, bays = queue[0]
             along, depth = (ow, od) if bays else (max(ow, od), min(ow, od))
+            wide = _widen(form, ow, od, bays, row_fill, ident) if street['frontage'] == 'continuous' else None
             if pos + along > hi:
                 break
-            x, y, w, h = ((pos, edge if side > 0 else edge - depth, along, depth) if axis == 'x' else
-                          (edge if side > 0 else edge - depth, pos, depth, along))
-            if town.hand(x, y, w, h, form, plot=None):
+            ok_ = False
+            split = None
+            if street['frontage'] == 'continuous' and bays and len(bays) == 1 and bays[0]['w_cells'] >= 7:
+                wc_ = bays[0]['w_cells']                               # one long front read as two of different widths
+                split = (along, [dict(bays[0], w_cells=3), dict(bays[0], w_cells=wc_ - 3, storeys=bays[0].get('storeys', 2) + 1)])
+            for along_, bays_ in ([wide] if wide and pos + wide[0] <= hi else []) + [split or (along, bays)]:
+                x, y, w, h = ((pos, edge if side > 0 else edge - depth, along_, depth) if axis == 'x' else
+                              (edge if side > 0 else edge - depth, pos, depth, along_))
+                if town.hand(x, y, w, h, form, plot=None):
+                    ok_ = True; along, bays = along_, bays_
+                    break
+            if ok_:
                 b = town.buildings[-1]
                 b['layout_id'] = ('neon-harbour' if town.name.startswith('Neon Harbour') else 'crossroads') + f'-b{ident:03d}'
                 if bays:
@@ -2176,7 +2249,7 @@ def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'pot
                         street['frontage_props'].append({'kind': kind, 'at_px': at})
                 queue.pop(0); placed.append(b['layout_id'])
                 # A side alley every fourth building, detached yards otherwise.
-                pos += along + (8 if street['frontage'] == 'continuous' else 24)
+                pos += along + (gap if gap is not None else (8 if street['frontage'] == 'continuous' else 24))
                 if len(placed) % 4 == 0:
                     mid = pos + 8
                     alley = ([(mid, edge - side * 4), (mid, edge + side * (depth + 16))] if axis == 'x' else
@@ -2186,7 +2259,9 @@ def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'pot
                     pos += 16
             else:
                 # Search only along this street edge, preserving the intended block.
-                pos += CELL
+                pos += CELL; fails_here += 1
+        if os.environ.get('ROWS_DEBUG'):
+            print('ROW', town.name.split(': ')[-1], name, side, (lo, hi), 'placed', len(placed) - row_start, 'refused', fails_here, 'left', len(queue))
         # Metadata does not claim a continuous street where no fronts were placed.
         if not street.get('frontage_props') and street['frontage'] == 'continuous':
             street['frontage'] = 'detached'; street.pop('max_gap_cells', None)
@@ -2291,10 +2366,25 @@ def _feedback_crossroads(T, X):
     return t
 
 
+FILL = {'the old waterfront': 1.5, 'the Lanes and the East Shore': 1.5, 'the Heights and the Skyport': 1.6}   # widen rows toward full fronts
+
+
 def _feedback_neon(T, X):
     """Five connected districts; existing81-record inventory still counts72."""
     out = {}
     old = FEEDBACK_BUILDINGS['neon-harbour']
+    # the regional roads through the city are its planned streets again (the restore took v55's straightening back): straight
+    # x and y runs the districts hang off, bending only at the water (the plan check's 75 %)
+    T.setdefault('straightened', {})
+    for rn, bx in (('Quay Street', (10950, 4380, 11600, 5600)), ('Old Bridges', (10450, 4300, 11150, 4520)), ('Cape Road', (11400, 5000, 12300, 5800)),
+                   ('Lull Road', (9650, 4250, 10560, 4580)), ('Delta Road', (9780, 4380, 10400, 5700))):
+        T['straightened'][rn] = straighten(T, rn, bx, 40 if g.ROUTES[rn][1] == 'road' else 24, g.ROUTES[rn][1] if g.ROUTES[rn][1] in ('road', 'path') else 'road')
+    # the old route lines the straightening left behind become ground again, except where a street or a route still runs
+    K = T['K']; live = np.zeros(K.shape, bool)
+    for rn, v in T['route_px'].items():
+        live |= _lm(v, 48)
+    stray = np.isin(K, ['road', 'path', 'trail']) & ~T['street'] & ~live & (g.PX > 9600) & (g.PX < 12544) & (g.PY > 3904) & (g.PY < 5888)
+    K[stray] = 'meadow'
     props = ('sign', 'awning', 'potted plants', 'pipes', 'AC unit')
     specs = [
         ('the old waterfront', (10912, 4464), 201, old[:26],
@@ -2355,21 +2445,43 @@ def _feedback_neon(T, X):
             t.street([(11272, 4552), (12408, 4552)], 'main', kind='boulevard', name='the connected city spine')
             t.square(11664, 4552, 48, 40, name='Terminus Square')
         if label == 'the Lanes and the East Shore':
-            _feedback_rows(t, records[:10], rows[:4], props=props)
-            _feedback_rows(t, records[10:], rows[4:], props=props)
+            _feedback_rows(t, records[:10], rows[:4], props=props, fill=FILL.get(label),
+                           overflow_rows=[('x', 4500, 11296, 11696, 1, 'Courtyard Lane'), ('x', 4644, 11296, 11696, 1, 'Arcade Lane')])
+            _feedback_rows(t, records[10:], rows[4:], props=props, fill=FILL.get(label),
+                           overflow_rows=[('x', 5044, 11808, 12256, 1, 'East Shore Terrace'), ('x', 5188, 11808, 12256, 1, 'Lido Lane')])
         else:
-            _feedback_rows(t, records, rows, props=props, overflow_rows={
-                'the old waterfront': [('x', 4656, 10576, 11264, -1, 'the old quays north'),
+            _feedback_rows(t, records, rows, props=props, fill=FILL.get(label), overflow_rows={
+                'the old waterfront': [('x', 4500, 11296, 11696, 1, 'Courtyard Lane'), ('x', 4644, 11296, 11696, 1, 'Arcade Lane'),
+                                       ('x', 4656, 10576, 11264, -1, 'the old quays north'),
+                                       ('y', 10552, 4176, 4288, -1, 'the falls steps'), ('y', 11272, 4176, 4288, -1, 'the waterfront cross lane'),
                                        ('x', 4656, 10576, 11264, 1, 'the old quays south'),
                                        ('y', 10936, 4288, 4656, -1, 'the waterfront cross lane'),
-                                       ('y', 11272, 4288, 4656, -1, 'the waterfront cross lane')],
-                'the docks': [('y', 11648, 4752, 5664, -1, 'Quay Street service spine')],
-                'the Company district': [('y', 12000, 4288, 5024, 1, 'the Company cross avenue')],
+                                       ('y', 11272, 4288, 4656, -1, 'the waterfront cross lane'),
+                                       ('x', 5332, 11808, 12256, 1, 'Sea Garden Lane'), ('x', 5476, 11808, 12256, 1, 'Shore End')],
+                'the docks': [('x', 5040, 11320, 11640, 1, 'Warehouse Quay'), ('x', 5232, 11320, 11640, 1, 'Repair Quay'),
+                              ('x', 5456, 11320, 11640, 1, 'South Cargo Quay'), ('y', 11648, 4752, 5664, -1, 'Quay Street service spine')],
+                'the Company district': [('x', 4740, 12176, 12400, -1, 'Works Avenue'), ('x', 5232, 11300, 11640, -1, 'Repair Quay'),
+                                         ('x', 5044, 12080, 12280, 1, 'East Shore Terrace'), ('x', 4848, 11320, 11640, 1, 'North Cargo Quay'),
+                                         ('y', 12000, 4288, 5024, 1, 'the Company cross avenue')],
+                'the Heights and the Skyport': [('x', 5188, 9824, 10240, 1, 'Middle Terrace'), ('x', 5332, 9824, 10240, 1, 'Lower Terrace'),
+                                                ('x', 5476, 9872, 10240, 1, 'Belvedere Terrace')],
             }.get(label, ()))
         out[t.name] = t
     # The river/dock coast is a working edge, with purposeful open land rather than blank city paint.
     docks = out['Neon Harbour: the docks']
     docks.yard(11280, 5664, 11648, 5744, name='the southern working quay', why="boat storage and the slip approach at the city's water edge")
+    # the working docks filled (Claude A, 2 Nov): bonded warehouses and cargo sheds on the apron (landmarks and outbuildings,
+    # not homes: they add nothing to the 72 counted), stacked cargo yards and the crane berths between them; the quay edges
+    # (3 cells from the water) stay clear for boats
+    docks.cap = 10 ** 6
+    scan_place(docks, (11300, 4860, 11640, 5440), [('warehouse', 120, 72), ('shed', 40, 32), ('shed', 32, 32)], 9, counted=False, shore=3)
+    scan_place(docks, (11180, 4700, 11720, 5640), [('shed', 40, 32), ('shed', 32, 24)], 10, counted=False, shore=3)
+    for (a0, b0, a1, b1, nm, why) in ((11320, 4872, 11480, 4936, 'the container stacks', 'cargo stacked three high between the warehouses'),
+                                      (11480, 5248, 11640, 5312, 'the crane berth', 'gantry cranes over the long quay, the lighters below'),
+                                      (11320, 5472, 11480, 5528, 'the timber and coal stacks', 'bulk cargo for the city and the line')):
+        docks.yard(a0, b0, a1, b1, name=nm, why=why)
+    for i, b in enumerate([b for b in docks.buildings if 'layout_id' not in b]):
+        b['layout_id'] = f'neon-harbour-b{101 + i:03d}'            # the docks' warehouses and sheds: outside the 81-record inventory
     return out
 
 
@@ -2397,7 +2509,7 @@ def lay_feedback(T, X, *, authored=None):
     # These approach settlements retain their own scale; they form the inhabited fringe.
     for nm, centre, seed, target, route, box in (
             ('Canalside', (10000, 4430), 206, (6, 12), 'Lull Road', (9700, 4300, 10500, 4520)),
-            ('Glintside', (11120, 4150), 207, (3, 6), 'Old Bridges', (10512, 4200, 11320, 4544)),
+            ('Glintside', (10440, 4340), 207, (3, 6), 'Lull Road', (10280, 4360, 10560, 4480)),
             ('Halcyon Row', (12020, 5590), 208, (8, 14), 'Cape Road', (11700, 5300, 12300, 5800))):
         t = Town(T, nm, centre, 'outskirts' if nm != 'Glintside' else 'hamlet', target,
                  'homes and small trades on the city approach, with gardens beyond the last frontage',
@@ -2414,6 +2526,19 @@ def lay_feedback(T, X, *, authored=None):
               plot=(32, 'garden'), gap=(8, 16), reach=32)
         if nm == 'Canalside':
             t.fields(9728, 4512, 10400, 4680, ('field', 'orchard'), name='the market gardens', why='gardens and allotments between the canal and the city edge')
+        if nm == 'Glintside':                                         # the hamlet by the Glint's mill path, off the Lull Road
+            t.street([(10440, 4416), (10440, 4248)], 'lane', name='Mill Path')
+            scan_place(t, (10296, 4240, 10560, 4400), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 40)], 4,
+                       plot=(0, 1, 16, 'garden'), near=3)
+            scan_place(t, (10400, 4456, 10560, 4640), [('cottage', 56, 40)], 2, plot=(0, 1, 16, 'garden'), near=3)
+        if nm == 'Halcyon Row':                                       # its canteen by the way in, then homes with gardens on its road
+            t.cap = 14
+            scan_place(t, (11700, 5352, 11830, 5528), [('public', 88, 56)], 1, near=3)
+            if t.buildings and t.buildings[-1]['form'] == 'public':
+                b = t.buildings[-1]
+                t.named_landmarks = [('the canteen by the Cape Road, the first building on the way in', (b['x'] + b['w'] // 2, b['y'] + b['h'] // 2))]
+            scan_place(t, (11700, 5352, 12300, 5880), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 48)],
+                       max(0, 10 - t.count()), plot=(0, 1, 16, 'garden'), near=5)
         revised[nm] = t
     revised.update(towns)
     T['feedback_layout'] = {'id': 'v56', 'source_inventory': '303@4984438d', 'counted': {'crossroads': 40, 'neon-harbour': 72}}
@@ -2431,30 +2556,30 @@ PROPOSED_ADOPTIONS = {'cinderwick': {'status': 'proposal',
                 'buildings': [{'id': 'cinderwick-b014',
                                'type': 'cottage',
                                'form': 'cottage',
-                               'footprint_cells': [302, 741, 8, 6],
-                               'rect_px': [2416, 5928, 64, 48],
-                               'faces': 'cinderwick-s02',
-                               'door_cells': [310, 743],
-                               'purpose': 'a detached fishing cottage',
+                               'footprint_cells': [242, 709, 7, 5],
+                               'rect_px': [1936, 5672, 56, 40],
+                               'faces': 'cinderwick-a1',
+                               'door_cells': [242, 714],
+                               'purpose': "a detached fisher's cottage on the Ember Way above the west beach (re-authored 2 Nov: the cove front is full)",
                                'occupants': "a fisher's household",
-                               'district': 'cinderwick-d-the-quay',
+                               'district': 'cinderwick-d-the-strand',
                                'counted': True,
                                'counts_as': 1,
-                               'plot_cells': [300, 741, 2, 8],
+                               'plot_cells': [242, 707, 7, 2],
                                'plot': 'yard'},
                               {'id': 'cinderwick-b015',
                                'type': 'cottage',
                                'form': 'cottage',
-                               'footprint_cells': [314, 741, 7, 5],
-                               'rect_px': [2512, 5928, 56, 40],
-                               'faces': 'cinderwick-s02',
-                               'door_cells': [313, 743],
-                               'purpose': 'a detached fishing cottage',
+                               'footprint_cells': [238, 721, 7, 5],
+                               'rect_px': [1904, 5768, 56, 40],
+                               'faces': 'cinderwick-a1',
+                               'door_cells': [242, 720],
+                               'purpose': "a detached fisher's cottage on the Ember Way above the west beach (re-authored 2 Nov: the cove front is full)",
                                'occupants': "a fisher's household",
-                               'district': 'cinderwick-d-the-quay',
+                               'district': 'cinderwick-d-the-strand',
                                'counted': True,
                                'counts_as': 1,
-                               'plot_cells': [321, 741, 2, 7],
+                               'plot_cells': [238, 726, 7, 2],
                                'plot': 'yard'},
                               {'id': 'cinderwick-b016',
                                'type': 'barn',

@@ -41,7 +41,7 @@
   1784,
   5392,
   1976,
-  5776
+  5784
  ],
  "fortification": null,
  "style": null,
@@ -300,29 +300,29 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    229,
-    716,
+    228,
+    717,
     9,
     6
    ],
    "rect_px": [
-    1832,
-    5728,
+    1824,
+    5736,
     72,
     48
    ],
    "faces": "cinder-springs-a1",
    "door_cells": [
-    237,
-    715
+    236,
+    716
    ],
    "purpose": "a cottage",
    "occupants": "a carting household",
    "district": "cinder-springs-d-cinder-springs",
    "counted": true,
    "plot_cells": [
-    229,
-    722,
+    228,
+    723,
     9,
     4
    ],
@@ -424,7 +424,7 @@
   ],
   "screens": [
    0.6,
-   2.1
+   2.2
   ]
  },
  "ground": {
@@ -432,8 +432,8 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "basalt setts": 665,
-   "ash yards": 678
+   "basalt setts": 739,
+   "ash yards": 541
   }
  },
  "terrain": {
@@ -441,7 +441,7 @@
    208,
    659,
    55,
-   79
+   80
   ],
   "codes": {
    ".": "land",
@@ -509,28 +509,29 @@
    "4#g23.5r22.",
    "4#.g22.8r19.",
    "5#.g13.g.g6.8r18.",
+   "5#3.g4.2g2.2g4.g7.8r16.",
    "5#3.g4.2g2.2g12.8r16.",
-   "5#3.g4.2g2.2g12.8r16.",
-   "4#g2.g5.g6.g9.g.13r10.",
-   "4#.2g6.3g3.g11.g3.18r2.",
-   "3#g2.5g.4g.2g.g16.18r",
-   "3#g.4g3.3g.g13.2g5.18r",
-   "#3g.6g.8g.10g.g4.3r.14r",
-   "#10g.3g.3g2.11g.2g.g3rg2.12r",
-   "g4.g.4g.7g.11g2.3g.3r3.3g.g.6r",
-   ".2g3.5g.21g4.3rg3.g3.2g2.g2.",
-   ".2g3.5g.9g.2g.2g.5g4.3rg3.g3.2g2.g2.",
-   "3g3.g2.2g.10g2.5g.g.g4.3rg14.",
-   "3g.g2.4g.12g.5g.6g3rg3.g.3g3.g2.",
-   "#2.g4.g2.19g.4g2.3r3g8.3g.",
-   "5#.5g.25g3r.2g8.3g.",
-   "5#g.g.3g.24g3r3g9.g2.",
-   "5#.2g.23g.3g4r11.3g.",
-   "5#g.g.2g.21g3.4rg10.3g.",
-   "4#.g.25g4.3r8g.7g",
-   "4#.g.25g4.3r8g.7g",
-   "4#.2g.23g.g2.4r6g2.3g2.3g",
-   "5#.2g3.24g4r7.g8."
+   "4#g2.g5.g16.g.13r10.",
+   "4#.2g6.3g3.g9.g.g3.18r2.",
+   "3#g2.5g.4g.2g18.18r",
+   "3#g.4g3.3g.g12.g7.18r",
+   "#3g.6g.8g9.g7.3r.14r",
+   "#10g.3g.3g.10g7.3r3.12r",
+   "g4.g.4g.7g.10g7.3r3.3g.g.6r",
+   ".2g3.5g.18g7.3r4.g3.2g2.g2.",
+   ".2g3.5g.18g7.3r15.",
+   "3g3.g2.2g.10g2.5g8.3r15.",
+   "3g.g2.4g.12g.5g.6g3r15.",
+   "#2.g4.g2.19g.4g2.3r2.g12.",
+   "5#.5g.25g3r2.2g11.",
+   "5#g.g.3g.24g3r2.2g11.",
+   "5#.2g.23g.3g4r15.",
+   "5#g.g.2g.21g3.4r3.g11.",
+   "4#.g.25g4.3rg2.5g.7g",
+   "4#.g.25g4.3r2g5.g.7g",
+   "4#.2g.23g.g2.4r2g6.3g2.3g",
+   "5#.2g3.24g4r.g5.9g",
+   "5#3.25g5rg.g6.g.6g"
   ]
  },
  "residents": [],
@@ -552,11 +553,11 @@
    "kind": "viewpoint",
    "from_px": [
     1960,
-    5478
+    5480
    ],
    "to_px": [
     2093,
-    5390
+    5391
    ],
    "toward": "the stone circle (the beam over the valley)",
    "off_by_deg": 0,
@@ -568,7 +569,7 @@
     3550,
     4991
    ],
-   "distance_px": 1772,
+   "distance_px": 1773,
    "effect": "the Ember shard's heat warms the springs under the town; the pools hold the moon's light",
    "road": "Ember Way",
    "road_leaves_at_px": [

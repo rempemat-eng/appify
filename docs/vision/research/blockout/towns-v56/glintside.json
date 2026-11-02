@@ -8,7 +8,7 @@
   3,
   6
  ],
- "buildings_counted": 1,
+ "buildings_counted": 6,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -32,16 +32,16 @@
   "fortified": false,
   "authored": "by the layout generator from hand-written streets",
   "tiers": [
-   -1,
+   5,
    7
   ],
   "levelled_footprints": 2
  },
  "footprint_px": [
-  10516,
-  4328,
-  11084,
-  4451
+  10248,
+  4240,
+  10536,
+  4504
  ],
  "fortification": null,
  "style": null,
@@ -54,8 +54,8 @@
    "street": "glintside-a1",
    "entries_px": [
     [
-     10418,
-     4413
+     10129,
+     4444
     ]
    ],
    "route_kind": "road"
@@ -65,18 +65,10 @@
    "kind": "road",
    "route": "Old Bridges",
    "street": "glintside-a2",
-   "entries_px": [],
-   "route_kind": "road"
-  },
-  {
-   "id": "glintside-arr3",
-   "kind": "road",
-   "route": "Quay Street",
-   "street": "glintside-a3",
    "entries_px": [
     [
-     11111,
-     4556
+     10664,
+     4420
     ]
    ],
    "route_kind": "road"
@@ -90,47 +82,75 @@
    "width_cells": 4,
    "vertices_px": [
     [
+     10286.0,
+     4444.0
+    ],
+    [
+     10292.0,
+     4444.0
+    ],
+    [
+     10292.0,
+     4420.0
+    ],
+    [
+     10516.0,
+     4420.0
+    ],
+    [
      10516.0,
      4417.5
-    ],
-    [
-     10714.0,
-     4392.5
-    ],
-    [
-     10776.5,
-     4389.0
-    ],
-    [
-     10837.5,
-     4390.5
-    ],
-    [
-     10928.0,
-     4403.5
-    ],
-    [
-     11084.5,
-     4451.0
     ]
    ],
    "frontage": "detached",
-   "follows_route": "Old Bridges",
+   "follows_route": "Lull Road",
    "connects": [
     "glintside-a1",
     "glintside-a2",
-    "glintside-a3"
+    "glintside-s05"
+   ]
+  },
+  {
+   "id": "glintside-s02",
+   "name": "Mill Path",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10436.0,
+     4332.0
+    ],
+    [
+     10436.0,
+     4244.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "glintside-s05"
    ]
   },
   {
    "id": "glintside-a1",
    "name": "Lull Road",
    "class": "arrival",
-   "width_cells": 3,
+   "width_cells": 5,
    "vertices_px": [
     [
-     10418.2,
-     4413.0
+     10128.5,
+     4444.0
+    ],
+    [
+     10292.0,
+     4444.0
+    ],
+    [
+     10292.0,
+     4420.0
+    ],
+    [
+     10516.0,
+     4420.0
     ],
     [
      10516.1,
@@ -140,70 +160,59 @@
    "follows_route": "Lull Road",
    "connects": [
     "glintside-a2",
-    "glintside-s01"
+    "glintside-s01",
+    "glintside-s05"
    ]
   },
   {
    "id": "glintside-a2",
    "name": "Old Bridges",
    "class": "arrival",
-   "width_cells": 5,
+   "width_cells": 2,
    "vertices_px": [
     [
      10516.1,
      4417.4
     ],
     [
-     10713.8,
-     4392.4
+     10516.0,
+     4420.0
     ],
     [
-     10776.3,
-     4388.8
-    ],
-    [
-     10837.5,
-     4390.4
-    ],
-    [
-     10928.1,
-     4403.7
-    ],
-    [
-     11084.6,
-     4451.2
+     10663.7,
+     4420.0
     ]
    ],
    "follows_route": "Old Bridges",
    "connects": [
     "glintside-a1",
-    "glintside-a3",
     "glintside-s01"
    ]
   },
   {
-   "id": "glintside-a3",
-   "name": "Quay Street",
-   "class": "arrival",
-   "width_cells": 5,
+   "id": "glintside-s05",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
    "vertices_px": [
     [
-     11084.6,
-     4462.4
+     10428.0,
+     4340.0
     ],
     [
-     11094.8,
-     4489.9
+     10372.0,
+     4340.0
     ],
     [
-     11111.4,
-     4555.8
+     10372.0,
+     4396.0
     ]
    ],
-   "follows_route": "Quay Street",
+   "frontage": "detached",
+   "link": true,
    "connects": [
-    "glintside-a2",
-    "glintside-s01"
+    "glintside-s01",
+    "glintside-s02"
    ]
   }
  ],
@@ -212,23 +221,40 @@
   {
    "name": "Glintside",
    "centre_px": [
-    11120,
-    4150
+    10440,
+    4340
    ],
    "declared": "homes and small trades on the city approach, with gardens beyond the last frontage",
    "town": "Glintside",
    "id": "glintside-d-glintside",
    "buildings": [
-    "glintside-b001"
+    "glintside-b001",
+    "glintside-b002",
+    "glintside-b003",
+    "glintside-b004",
+    "glintside-b005",
+    "glintside-b006"
    ],
    "mix": {
-    "house": 1
+    "house": 3,
+    "cottage": 2,
+    "shop": 1
    },
    "function": "homes"
   }
  ],
  "gathering_places": [],
  "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
   "house": [
    [
     80,
@@ -238,9 +264,19 @@
     48,
     64
    ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
   ]
  },
- "fronts": 1,
+ "fronts": 6,
  "landmarks": [],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
@@ -249,31 +285,201 @@
    "type": "house",
    "form": "house",
    "footprint_cells": [
-    1371,
-    541,
-    10,
-    7
+    1306,
+    555,
+    11,
+    8
    ],
    "rect_px": [
-    10968,
-    4328,
-    80,
-    56
+    10448,
+    4440,
+    88,
+    64
    ],
-   "faces": "glintside-a2",
+   "faces": "glintside-s01",
    "door_cells": [
-    1371,
-    548
+    1311,
+    554
    ],
    "purpose": "a family house",
    "occupants": "a farming household",
    "district": "glintside-d-glintside",
    "counted": true,
    "plot_cells": [
-    1371,
-    537,
-    10,
+    1306,
+    563,
+    11,
     4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "glintside-b002",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1281,
+    541,
+    12,
+    8
+   ],
+   "rect_px": [
+    10248,
+    4328,
+    96,
+    64
+   ],
+   "faces": "glintside-s01",
+   "door_cells": [
+    1287,
+    549
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1281,
+    537,
+    12,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "glintside-b003",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1298,
+    544,
+    8,
+    5
+   ],
+   "rect_px": [
+    10384,
+    4352,
+    64,
+    40
+   ],
+   "faces": "glintside-s05",
+   "door_cells": [
+    1302,
+    543
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1298,
+    540,
+    8,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "glintside-b004",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1307,
+    543,
+    9,
+    6
+   ],
+   "rect_px": [
+    10456,
+    4344,
+    72,
+    48
+   ],
+   "faces": "glintside-s01",
+   "door_cells": [
+    1311,
+    549
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1307,
+    539,
+    9,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "glintside-b005",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1291,
+    530,
+    10,
+    6
+   ],
+   "rect_px": [
+    10328,
+    4240,
+    80,
+    48
+   ],
+   "faces": "glintside-s02",
+   "door_cells": [
+    1301,
+    533
+   ],
+   "purpose": "a family house",
+   "occupants": "a craft household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1291,
+    536,
+    10,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "glintside-b006",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1307,
+    530,
+    7,
+    5
+   ],
+   "rect_px": [
+    10456,
+    4240,
+    56,
+    40
+   ],
+   "faces": "glintside-s02",
+   "door_cells": [
+    1306,
+    532
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1307,
+    535,
+    7,
+    2
    ],
    "plot": "garden",
    "counts_as": 1
@@ -288,15 +494,8 @@
    {
     "name": "a family house, Glintside's largest building",
     "xy": [
-     11008,
-     4356
-    ]
-   },
-   {
-    "name": "a family house at the edge, seen first from the Lull Road",
-    "xy": [
-     11008,
-     4356
+     10296,
+     4360
     ]
    }
   ],
@@ -304,15 +503,15 @@
   "quiet_corners": [],
   "first_screen_cells": [
    [
-    1282,
-    540,
+    1246,
+    544,
     40,
     22.5
    ]
   ],
   "screens": [
-   1.8,
-   0.7
+   0.9,
+   1.5
   ]
  },
  "ground": {
@@ -320,18 +519,18 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "worn cobbles": 2892,
-   "made land, paved": 110,
-   "worn paving": 52,
-   "packed earth": 100
+   "worn cobbles": 1165,
+   "made land, paved": 14,
+   "worn paving": 50,
+   "packed earth": 50
   }
  },
  "terrain": {
   "box_cells": [
-   1299,
-   526,
-   102,
-   46
+   1266,
+   515,
+   67,
+   64
   ],
   "codes": {
    ".": "land",
@@ -342,52 +541,70 @@
    "b": "bridge"
   },
   "rows": [
-   "12g44.3g3.13~27.",
-   "11g50.14~27.",
-   "11g50.14~27.",
-   "11g48.14~29.",
-   "10g47.9~4b2~30.",
-   "10g47.9~4b32.",
-   "10g46.10~2b34.",
-   "10g46.10~2b34.",
-   "10g44.12~b31.2r2.",
-   "10g44.11b27.5r5.",
-   "10g46.8b23.4r11.",
-   "10g46.8b8.6g9.4r11.",
-   "10g46.8~8.9g21.",
-   "10g49.2~11.3g4.2r21.",
-   "10g62.r3.6g20.",
-   "10g60.2r30.",
-   "10g54.r37.",
-   "10g47.2r43.",
-   "10g33.14r45.",
-   "10g25.30r37.",
-   "10g25.30r37.",
-   "10g21.36r35.",
-   "10g13.49r30.",
-   "75r27.",
-   "78r24.",
-   "83r19.",
-   "48r6.32r16.",
-   "26r41.24r11.",
-   "r9g3.5r52.22r10.",
-   "rg11.5r52.22r10.",
-   "2g73.19r8.",
-   "2g76.17r7.",
-   "2g77.16r7.",
-   "2g77.16r7.",
-   "2g77.16r7.",
-   "2g27.9~41.16r7.",
-   "12g17.9~24.10~9.14r7.",
-   "12g17.9~24.10~9.16r5.",
-   "12g17.9~24.10~9.16r5.",
-   "12g17.9~24.10~9.16r5.",
-   "10g19.9~11.7~6.10~9.16r5.",
-   "10g35.16~.10~9.16r5.",
-   "10g33.19~19.16r5.",
-   "10g30.25~18.15r4.",
-   "10g28.27~18.15r4.",
-   "10g27.30~16.15r4."
+   "26g3~16g9.8g3~2g",
+   "27g3~13g13.3g5~3g",
+   "29g3~10g14.4~7g",
+   "30g5~7g10.5~.9g",
+   "30g5~6g11.5~2.8g",
+   "34g3~3g9.5~6.7g",
+   "37g12~12.6g",
+   "39g28.",
+   "38g29.",
+   "38g29.",
+   "38g29.",
+   "37g30.",
+   "37g30.",
+   "38g29.",
+   "37g30.",
+   "25g10.2g30.",
+   "25g10.2g30.",
+   "25g10.2g30.",
+   "25g10.2g30.",
+   "25g10.2g3.g26.",
+   "25g10.2g3.8g19.",
+   "37g3.8g19.",
+   "37g3.3g24.",
+   "37g3.3g24.",
+   "37g3.10g17.",
+   "37g3.10g17.",
+   "15g12.2g11.10g17.",
+   "15g12.2g11.10g17.",
+   "15g12.2g11.g26.",
+   "15g12.2g11.g26.",
+   "15g12.2g11.g26.",
+   "9.6g12.2g11.g26.",
+   "9.6g12.2g11.g25.r",
+   "9.6g12.2g11.g25.r",
+   "9.20g3.5g3.3g23.r",
+   "9.10g31r.16r",
+   "9.9g33r.15r",
+   "18g33r.15r",
+   "51r.15r",
+   "50r.16r",
+   "23r17g27.",
+   "23r7g9.g27.",
+   "22r8g9.g27.",
+   "19g10.g9.g27.",
+   "4.2g11.2g10.g9.g27.",
+   "4.2g11.2g10.g9.g27.",
+   "4.2g11.2g10.g9.g22.5~",
+   "4.2g11.2g10.11g22.5~",
+   "4.2g11.2g10.22g11.5~",
+   "4.2g11.2g10.22g11.5~",
+   "6g11.34g11.5~",
+   "6g11.34g11.5~",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24.",
+   "43g24."
   ]
  },
  "residents": [],
@@ -397,8 +614,8 @@
  "theme": {
   "waystone": {
    "xy_px": [
-    10836,
-    4388
+    10292,
+    4420
    ],
    "at": "beside Glintside road",
    "table_name": "Glintside",
@@ -409,16 +626,16 @@
    "street": "glintside-s01",
    "name": "Glintside road",
    "from_px": [
-    11084,
-    4451
+    10516,
+    4420
    ],
    "to_px": [
-    10928,
-    4403
+    10292,
+    4420
    ],
    "toward": "the stone circle (the beam over the valley)",
-   "off_by_deg": 1,
-   "bearing_deg": -164
+   "off_by_deg": 17,
+   "bearing_deg": -163
   },
   "crater": {
    "name": "the Company crater",
@@ -426,19 +643,19 @@
     11780,
     4159
    ],
-   "distance_px": 1006,
-   "effect": "the Company crater lies 1000 px away; its scorch points to the valley",
-   "road": "Quay Street",
+   "distance_px": 1404,
+   "effect": "the Company crater lies 1400 px away; its scorch points to the valley",
+   "road": "Old Bridges",
    "road_leaves_at_px": [
-    11111,
-    4556
+    10664,
+    4420
    ]
   },
   "moss": {
    "where": "the market",
    "xy_px": [
-    10836,
-    4388
+    10292,
+    4420
    ]
   },
   "company": {

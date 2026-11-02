@@ -8,7 +8,7 @@
   8,
   14
  ],
- "buildings_counted": 2,
+ "buildings_counted": 8,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -32,16 +32,16 @@
   "fortified": false,
   "authored": "by the layout generator from hand-written streets",
   "tiers": [
-   2,
-   5
+   -1,
+   6
   ],
   "levelled_footprints": 2
  },
  "footprint_px": [
-  11796,
-  5306,
-  12184,
-  5722
+  11704,
+  5340,
+  12208,
+  5752
  ],
  "fortification": null,
  "style": null,
@@ -54,8 +54,8 @@
    "street": "halcyon-row-a1",
    "entries_px": [
     [
-     11691,
-     5250
+     11668,
+     5218
     ]
    ],
    "route_kind": "road"
@@ -67,8 +67,8 @@
    "street": "halcyon-row-a2",
    "entries_px": [
     [
-     12046,
-     5833
+     12037,
+     5873
     ]
    ],
    "route_kind": "road"
@@ -82,40 +82,24 @@
    "width_cells": 4,
    "vertices_px": [
     [
-     11796.0,
-     5306.0
+     11704.0,
+     5340.0
     ],
     [
-     11816.5,
-     5323.0
+     11836.0,
+     5340.0
     ],
     [
-     11850.5,
-     5359.0
+     11836.0,
+     5532.0
     ],
     [
-     11909.0,
-     5450.5
+     12092.0,
+     5532.0
     ],
     [
-     11926.0,
-     5472.0
-    ],
-    [
-     12018.0,
-     5562.0
-    ],
-    [
-     12052.0,
-     5601.5
-    ],
-    [
-     12063.5,
-     5621.5
-    ],
-    [
-     12080.5,
-     5663.0
+     12092.0,
+     5724.0
     ],
     [
      12095.5,
@@ -126,7 +110,8 @@
    "follows_route": "Cape Road",
    "connects": [
     "halcyon-row-a1",
-    "halcyon-row-a2"
+    "halcyon-row-a2",
+    "halcyon-row-c02"
    ]
   },
   {
@@ -136,36 +121,28 @@
    "width_cells": 5,
    "vertices_px": [
     [
-     11691.0,
-     5250.2
+     11668.0,
+     5218.1
     ],
     [
-     11773.5,
-     5290.6
+     11668.0,
+     5340.0
     ],
     [
-     11816.3,
-     5322.8
+     11836.0,
+     5340.0
     ],
     [
-     11850.5,
-     5358.9
+     11836.0,
+     5532.0
     ],
     [
-     11925.8,
-     5472.2
+     12092.0,
+     5532.0
     ],
     [
-     12017.9,
-     5562.1
-    ],
-    [
-     12052.1,
-     5601.4
-    ],
-    [
-     12080.4,
-     5662.9
+     12092.0,
+     5724.0
     ],
     [
      12095.5,
@@ -175,6 +152,8 @@
    "follows_route": "Cape Road",
    "connects": [
     "halcyon-row-a2",
+    "halcyon-row-c01",
+    "halcyon-row-c02",
     "halcyon-row-s01"
    ]
   },
@@ -182,7 +161,7 @@
    "id": "halcyon-row-a2",
    "name": "the Pad Road",
    "class": "arrival",
-   "width_cells": 5,
+   "width_cells": 4,
    "vertices_px": [
     [
      12095.0,
@@ -193,13 +172,54 @@
      5813.4
     ],
     [
-     12046.1,
-     5832.7
+     12037.2,
+     5873.4
     ]
    ],
    "follows_route": "the Pad Road",
    "connects": [
     "halcyon-row-a1",
+    "halcyon-row-s01"
+   ]
+  },
+  {
+   "id": "halcyon-row-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11800.0,
+     5544.0
+    ],
+    [
+     11816.0,
+     5544.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "halcyon-row-a1",
+    "halcyon-row-s01"
+   ]
+  },
+  {
+   "id": "halcyon-row-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     12136.0,
+     5544.0
+    ],
+    [
+     12112.0,
+     5544.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
     "halcyon-row-s01"
    ]
   }
@@ -217,16 +237,34 @@
    "id": "halcyon-row-d-halcyon-row",
    "buildings": [
     "halcyon-row-b001",
-    "halcyon-row-b002"
+    "halcyon-row-b002",
+    "halcyon-row-b003",
+    "halcyon-row-b004",
+    "halcyon-row-b005",
+    "halcyon-row-b006",
+    "halcyon-row-b007",
+    "halcyon-row-b008"
    ],
    "mix": {
-    "house": 2
+    "house": 4,
+    "cottage": 3,
+    "shop": 1
    },
    "function": "homes"
   }
  ],
  "gathering_places": [],
  "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
   "house": [
    [
     80,
@@ -236,9 +274,19 @@
     48,
     64
    ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
   ]
  },
- "fronts": 2,
+ "fronts": 8,
  "landmarks": [],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
@@ -247,65 +295,269 @@
    "type": "house",
    "form": "house",
    "footprint_cells": [
-    1495,
-    701,
-    7,
-    13
+    1468,
+    670,
+    8,
+    12
    ],
    "rect_px": [
-    11960,
-    5608,
-    56,
-    104
+    11744,
+    5360,
+    64,
+    96
    ],
-   "faces": "halcyon-row-a1",
+   "faces": "halcyon-row-s01",
    "door_cells": [
-    1502,
-    701
+    1472,
+    669
    ],
    "purpose": "a family house",
    "occupants": "a farming household",
    "district": "halcyon-row-d-halcyon-row",
    "counted": true,
    "plot_cells": [
-    1491,
-    701,
-    4,
-    13
+    1467,
+    670,
+    1,
+    12
    ],
    "plot": "garden",
    "counts_as": 1
   },
   {
    "id": "halcyon-row-b002",
-   "type": "house",
-   "form": "house",
+   "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    1516,
-    700,
-    7,
-    10
+    1475,
+    695,
+    9,
+    6
    ],
    "rect_px": [
-    12128,
-    5600,
-    56,
-    80
+    11800,
+    5560,
+    72,
+    48
    ],
-   "faces": "halcyon-row-a1",
+   "faces": "halcyon-row-s01",
    "door_cells": [
-    1515,
-    709
+    1479,
+    694
    ],
-   "purpose": "a family house",
+   "purpose": "a cottage",
    "occupants": "a fishing household",
    "district": "halcyon-row-d-halcyon-row",
    "counted": true,
    "plot_cells": [
-    1523,
-    700,
+    1475,
+    701,
+    9,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "halcyon-row-b003",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1502,
+    702,
+    6,
+    8
+   ],
+   "rect_px": [
+    12016,
+    5616,
+    48,
+    64
+   ],
+   "faces": "halcyon-row-s01",
+   "door_cells": [
+    1508,
+    706
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "halcyon-row-d-halcyon-row",
+   "counted": true,
+   "plot_cells": [
+    1498,
+    702,
     4,
-    10
+    8
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "halcyon-row-b004",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1516,
+    699,
+    8,
+    12
+   ],
+   "rect_px": [
+    12128,
+    5592,
+    64,
+    96
+   ],
+   "faces": "halcyon-row-s01",
+   "door_cells": [
+    1515,
+    705
+   ],
+   "purpose": "a family house",
+   "occupants": "a carting household",
+   "district": "halcyon-row-d-halcyon-row",
+   "counted": true,
+   "plot_cells": [
+    1524,
+    699,
+    4,
+    12
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "halcyon-row-b005",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1464,
+    693,
+    10,
+    6
+   ],
+   "rect_px": [
+    11712,
+    5544,
+    80,
+    48
+   ],
+   "faces": "halcyon-row-c01",
+   "door_cells": [
+    1474,
+    693
+   ],
+   "purpose": "a family house",
+   "occupants": "a craft household",
+   "district": "halcyon-row-d-halcyon-row",
+   "counted": true,
+   "plot_cells": [
+    1464,
+    699,
+    10,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "halcyon-row-b006",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1518,
+    693,
+    7,
+    5
+   ],
+   "rect_px": [
+    12144,
+    5544,
+    56,
+    40
+   ],
+   "faces": "halcyon-row-c02",
+   "door_cells": [
+    1517,
+    693
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "halcyon-row-d-halcyon-row",
+   "counted": true,
+   "plot_cells": [
+    1518,
+    698,
+    7,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "halcyon-row-b007",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1498,
+    711,
+    8,
+    6
+   ],
+   "rect_px": [
+    11984,
+    5688,
+    64,
+    48
+   ],
+   "faces": "halcyon-row-a2",
+   "door_cells": [
+    1506,
+    716
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fishing household",
+   "district": "halcyon-row-d-halcyon-row",
+   "counted": true,
+   "plot_cells": [
+    1498,
+    717,
+    8,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "halcyon-row-b008",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1516,
+    713,
+    10,
+    6
+   ],
+   "rect_px": [
+    12128,
+    5704,
+    80,
+    48
+   ],
+   "faces": "halcyon-row-s01",
+   "door_cells": [
+    1515,
+    716
+   ],
+   "purpose": "a family house",
+   "occupants": "a carting household",
+   "district": "halcyon-row-d-halcyon-row",
+   "counted": true,
+   "plot_cells": [
+    1516,
+    719,
+    10,
+    2
    ],
    "plot": "garden",
    "counts_as": 1
@@ -320,15 +572,15 @@
    {
     "name": "a family house, Halcyon Row's largest building",
     "xy": [
-     11988,
-     5660
+     11776,
+     5408
     ]
    },
    {
-    "name": "a family house at the edge, seen first from the Cape Road",
+    "name": "a family house at the edge, seen first from the the Pad Road",
     "xy": [
-     12156,
-     5640
+     12168,
+     5728
     ]
    }
   ],
@@ -336,14 +588,14 @@
   "quiet_corners": [],
   "first_screen_cells": [
    [
-    1441,
-    645,
+    1438,
+    641,
     40,
     22.5
    ]
   ],
   "screens": [
-   1.2,
+   1.6,
    2.3
   ]
  },
@@ -352,21 +604,23 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "patched paving": 3651,
-   "steel deck plates": 341,
-   "heath and scrub": 785,
-   "dunes": 68,
-   "bare rock": 397,
-   "concrete apron": 55,
-   "sand": 97,
-   "worn paving": 107
+   "worn cobbles": 102,
+   "composite slab": 56,
+   "patched paving": 3060,
+   "steel deck plates": 918,
+   "heath and scrub": 806,
+   "dunes": 80,
+   "bare rock": 699,
+   "concrete apron": 78,
+   "sand": 130,
+   "worn paving": 77
   }
  },
  "terrain": {
   "box_cells": [
-   1459,
-   648,
-   80,
+   1448,
+   652,
+   94,
    83
   ],
   "codes": {
@@ -378,89 +632,89 @@
    "b": "bridge"
   },
   "rows": [
-   "80.",
-   "80.",
-   "80.",
-   "3r77.",
-   "5r75.",
-   "8r72.",
-   "8r72.",
-   "11r69.",
-   "13r67.",
-   "14r66.",
-   "19r61.",
-   "21r59.",
-   "2.20r58.",
-   "5.19r56.",
-   "6.19r55.",
-   "6.19r55.",
-   "8.19r53.",
-   "8.19r53.",
-   "9.19r52.",
-   "11.19r50.",
-   "11.19r50.",
-   "13.19r48.",
-   "14.18r48.",
-   "14.19r47.",
-   "14.19r47.",
-   "16.17r47.",
-   "16.19r45.",
-   "17.18r45.",
-   "17.18r45.",
-   "19.17r44.",
-   "19.17r44.",
-   "21.15r44.",
-   "21.15r44.",
-   "21.15r44.",
-   "21.15r44.",
-   "22.14r44.",
-   "24.14r42.",
-   "28.10r42.",
-   "28.12r40.",
-   "30.11r39.",
-   "32.11r37.",
-   "32.11r37.",
-   "32.11r37.",
-   "29.4g11r13g23.",
-   "29.6g11r11g23.",
-   "29.7g11r10g23.",
-   "29.7g11r10g23.",
-   "29.9g11r8g23.",
-   "29.11g11r6g23.",
-   "29.12g10r6g23.",
-   "29.12g11r5g23.",
-   "29.12g11r5g21.2g",
-   "29.14g9r5g7.4g2.10g",
-   "32.4g7.9r12.4g3.9g",
-   "32.4g8.10r10.4g3.9g",
-   "20.g11.4g8.10r10.4g5.7g",
-   "19.3g10.4g10.8r10.4g5.7g",
-   "18.5g9.4g10.9r9.4g5.7g",
-   "17.7g8.4g10.9r9.4g6.6g",
-   "16.10g6.4g10.9r9.4g8.4g",
-   "15.14g3.4g10.9r9.4g8.4g",
-   "14.22g7.4g8r2g7.4g8.4g",
-   "14.22g7.4g8r10g11.4g",
-   "13.23g7.4g10r9g11.3g",
-   "11.25g7.4g10r9g11.3g",
-   "8.28g7.6g8r9g11.3g",
-   "7.42g8r11g11.g",
-   "6.43g8r11g12.",
-   "5.44g8r11g12.",
-   "3.46g8r11g12.",
-   "48g7r13g12.",
-   "2.46g6r16g10.",
-   "2.45g7r16g10.",
-   "3.44g6r17g10.",
-   "5.41g7r18g9.",
-   "6.40g6r19g9.",
-   "8.37g7r19g9.",
-   "11.34g6r22g7.",
-   "11.34g6r22g7.",
-   "13.22g8.g6r23g7.",
-   "14.21g8.g6r24g6.",
-   "14.21g8.g6rg8.15g6.",
-   "16.19g8.g5r2g8.15g6."
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.5r81.",
+   "8.25r61.",
+   "8.26r60.",
+   "8.26r60.",
+   "8.26r60.",
+   "9.25r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "19.g9.5r60.",
+   "29.5r60.",
+   "29.5r60.",
+   "29.5r60.",
+   "29.5r60.",
+   "29.5r60.",
+   "29.5r60.",
+   "29.5r60.",
+   "29.36r29.",
+   "29.37r28.",
+   "29.37r2g26.",
+   "29.37r28.",
+   "30.36r28.",
+   "40.21g5r2g26.",
+   "40.21g5r2g26.",
+   "40.21g5r2g26.",
+   "40.21g5r2g26.",
+   "40.21g5r2g2.7g17.",
+   "16.10g14.21g5r2g8.4g9.2g3.",
+   "16.10g14.21g5r2g8.4g.10g3.",
+   "27.9g25.5r10.4g2.9g3.",
+   "27.9g14.4g7.5r10.4g2.9g3.",
+   "27.9g14.4g7.5r10.4g4.7g3.",
+   "27.9g14.4g7.5r10.4g4.7g3.",
+   "29.5g16.4g7.5r10.4g4.8g2.",
+   "28.7g15.4g7.5r10.4g5.7g2#",
+   "27.10g13.4g7.5r10.4g7.5g2#",
+   "26.14g10.4g7.5r10.4g7.5g2#",
+   "25.29g6.g5r2g8.4g7.5g2#",
+   "25.36g5r2g8.4g7.6g#",
+   "24.26g8.3g5r11g11.5g#",
+   "22.28g8.3g5r11g11.5g#",
+   "19.31g8.3g5r2g20.5g#",
+   "18.32g8.3g5r2g10.g11.3g#",
+   "17.33g8.3g5r2g10.g13.g#",
+   "16.34g8.3g5r2g10.g13.g#",
+   "14.46grg3r3g10.g13.g#",
+   "11.48g3r3gr2g10.g13.g#",
+   "13.46g6r16g12.#",
+   "13.45g7r16g12.#",
+   "14.44g6r17g12.#",
+   "16.41g7r18g11.#",
+   "2g15.40g6r19g11.#",
+   "2g17.37g7r19g12.",
+   "3g19.34g6r22g9.#",
+   "3g19.34g6r22g9.#",
+   "5g19.22g8.g6r23g9.#",
+   "6g19.21g8.g6r24g8.#",
+   "6g19.21g8.g6rg8.15g8.#",
+   "6g21.19g8.g5r2g8.15g9.",
+   "2g.2g23.18g8.6r2g8.17g7.",
+   "2g2.g5.~17.18g8.6r2g8.17g7.",
+   "2g8.3~15.26g6r2g8.17g7.",
+   "2g9.3~16.24g5r3g8.18g6."
   ]
  },
  "residents": [],
@@ -470,8 +724,8 @@
  "theme": {
   "waystone": {
    "xy_px": [
-    12020,
-    5564
+    12092,
+    5532
    ],
    "at": "beside Halcyon Row road",
    "table_name": "Halcyon Row",
@@ -482,12 +736,12 @@
    "street": "halcyon-row-s01",
    "name": "Halcyon Row road",
    "from_px": [
-    12018,
-    5562
+    11836,
+    5340
    ],
    "to_px": [
-    11926,
-    5472
+    11704,
+    5340
    ],
    "toward": "the stone circle (the beam over the valley)",
    "off_by_deg": 22,
@@ -499,19 +753,19 @@
     11780,
     4159
    ],
-   "distance_px": 1371,
+   "distance_px": 1398,
    "effect": "the Company crater lies 1300 px away; its scorch points to the valley",
    "road": "Cape Road",
    "road_leaves_at_px": [
-    11691,
-    5250
+    11668,
+    5218
    ]
   },
   "moss": {
    "where": "the market",
    "xy_px": [
-    12020,
-    5564
+    12092,
+    5532
    ]
   },
   "company": {

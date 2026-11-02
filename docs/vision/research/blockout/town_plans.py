@@ -89,7 +89,7 @@ OFFICE = {'office', 'tower'}
 # entries (the checker wants one within two screens of each); later shortcuts; quiet corners next to busy ones.
 GAME = {
     'crossroads': {'arrival': 'Valley lane north', 'first_view': 'down the lane from the stone circle into the square: the well in the middle, the bakery and the library either side, the woodland on the right',
-                   'landmarks': [('the well and the library on the square', (6296, 3536)), ('the mill on the Sleepwater', (6200, 3905)), ('the halt and its water tank', (5835, 4040)),
+                   'landmarks': [('the well and the library on the square', (6296, 3536)), ('the mill on the Sleepwater', (6200, 3905)), ('the halt yard and its water tank', (5960, 4336)),
                                  ("the inn at the drovers' market", (6712, 3532)), ('your hut and the garden gate', (6316, 3290)),
                                  ("the farrier's forge at Eastgate", (6780, 3420)), ('the weir on Weir Lane', (6400, 4110))],
                    'shortcuts_later': [('the weir footbridge from Weir Lane to the halt farms', (6300, 4100), 'when the miller trusts you (act 2)'),
@@ -647,6 +647,13 @@ def plan_one(T, name, ts, X, tp):
     P = _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X)
     P['open_uses'] = opens
     if authored:
+        taken_ids = {item['id'] for item in authored['open_uses']}
+        k_ = 0
+        for o in opens:                                              # generated open uses never take an authored one's id
+            if o['id'] in taken_ids:
+                while f'{pid}-o{len(opens) + 1 + k_:02d}' in taken_ids | {q['id'] for q in opens}:
+                    k_ += 1
+                o['id'] = f'{pid}-o{len(opens) + 1 + k_:02d}'
         ids = {o['id'] for o in opens}
         for item in authored['open_uses']:
             if item['id'] in ids:
@@ -1078,6 +1085,49 @@ def _district_fn(uses):
     return best + (' with homes' if sh['homes'] >= 0.3 else '')
 
 
+SCREEN_PX = (40 * CELL, 22.5 * CELL)
+
+
+def discovery(P, ts):
+    """Things to find (docs/vision/pillars.md, density beats size): at least one point of interest on every screen of the town
+    that holds a building: a landmark view, a secret (a quiet corner), a shortcut, or a resident activity (a square, a yard, a
+    workplace). Named features come first; a screen with none gets the activity of its most public building."""
+    x0, y0, x1, y1 = P['footprint_px']
+    tile = lambda x, y: (int((x - x0) // SCREEN_PX[0]), int((y - y0) // SCREEN_PX[1]))
+    items = []
+    GL = P['game_layout']
+    for l in GL.get('landmarks', []):
+        items.append({'kind': 'landmark view', 'what': l['name'], 'xy_px': [int(l['xy'][0]), int(l['xy'][1])]})
+    for q in GL.get('quiet_corners', []):
+        items.append({'kind': 'secret', 'what': q['what'], 'xy_px': [int(q['xy'][0]), int(q['xy'][1])]})
+    for q in GL.get('shortcuts_later', []):
+        items.append({'kind': 'shortcut', 'what': q['what'], 'xy_px': [int(q['xy'][0]), int(q['xy'][1])]})
+    for g_ in P.get('gathering_places', []):
+        items.append({'kind': 'resident activity', 'what': f"people meet at {g_['name']}", 'xy_px': list(g_['xy_px'])})
+    for o in P.get('outskirts', []):
+        if o.get('name'):
+            bx = o['box']
+            items.append({'kind': 'resident activity', 'what': f"{o['name']}: {o.get('why') or 'worked by the townsfolk'}",
+                          'xy_px': [int((bx[0] + bx[2]) / 2), int((bx[1] + bx[3]) / 2)]})
+    have = {tile(*i['xy_px']) for i in items}
+    rank = {'public': 0, 'inn': 1, 'shop': 2, 'workshop': 3, 'hall': 4, 'mill': 5, 'boathouse': 6, 'warehouse': 7}
+    by_tile = {}
+    for b in P['buildings']:
+        x, y, w, h = b['rect_px']
+        by_tile.setdefault(tile(x + w / 2, y + h / 2), []).append(b)
+    for tl, bs in sorted(by_tile.items()):
+        if tl in have:
+            continue
+        b = min(bs, key=lambda b: (rank.get(b['type'], 9), b['id']))
+        x, y, w, h = b['rect_px']
+        items.append({'kind': 'resident activity', 'what': f"{b['purpose']}: {b['occupants']} about their day", 'building': b['id'],
+                      'xy_px': [int(x + w / 2), int(y + h / 2)]})
+        have.add(tl)
+    for i in items:
+        i['screen'] = list(tile(*i['xy_px']))
+    return items
+
+
 LANDMARK_FORMS = {'keep', 'watchkeep', 'temple_hall', 'pagoda', 'tower', 'bigtower', 'station', 'depot', 'skyport', 'warehouse', 'longwarehouse',
                   'hall', 'hangar', 'barracks', 'chapel'}
 LANDMARK_TYPES = {'keep', 'tower', 'station', 'warehouse', 'hall', 'hangar'}
@@ -1147,9 +1197,14 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         i = cyc.get(key, 0); cyc[key] = i + 1
         return L[i % len(L)]
     nb_ = 0
+    reserved_ids = {b_.get('layout_id') or b_.get('authored_id') for t_ in ts for b_ in t_.buildings} | set(authored_buildings) \
+        | {d_['id'] for d_ in deferred}
     for t in ts:
         for b in t.buildings:
             nb_ += 1
+            if not (b.get('layout_id') or b.get('authored_id')):        # a generated id never takes an authored or explicit one
+                while f'{pid}-b{nb_:03d}' in reserved_ids:
+                    nb_ += 1
             bid = b.get('layout_id', b.get('authored_id', f'{pid}-b{nb_:03d}'))
             if b.get('layout_id') and (not re.fullmatch(re.escape(pid) + r'-b[0-9]{3}', bid)):
                 raise ValueError(f'{pid}: invalid explicit layout identity {bid}')
@@ -1267,7 +1322,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     else:
         big = max(bl, key=lambda b: b['rect_px'][2] * b['rect_px'][3]) if bl else None
         lm = {'name': f"{big['purpose']}, {name}'s largest building" if big else name, 'xy': [big['rect_px'][0] + big['rect_px'][2] // 2, big['rect_px'][1] + big['rect_px'][3] // 2] if big else list(lead.centre)}
-        lms = [lm]
+        lms = [{'name': n_, 'xy': [int(xy[0]), int(xy[1])]} for t_ in ts for n_, xy in getattr(t_, 'named_landmarks', [])] + [lm]
         for e in entries:                                          # a small place: the first building seen from each way in
             sd = lambda xy: max(abs(e[0] - xy[0]) / CELL / 40, abs(e[1] - xy[1]) / CELL / 22.5)
             if bl and min(sd(l['xy']) for l in lms) > 1.8:
@@ -1349,6 +1404,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                     'of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and '
                     'workplaces to the ids here, and walk residents on the streets (ids) only.',
     }
+    plan['discovery'] = discovery(plan, ts)
     fill_def = [copy.deepcopy(rec) for t in ts for rec in getattr(t, 'deferred_fill', [])]
     if deferred or fill_def:
         plan['deferred_buildings'] = deferred + fill_def
