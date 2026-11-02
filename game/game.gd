@@ -10,7 +10,8 @@ extends Node2D
 ## --lineup (the whole cast in a row), --cycle (the player becomes each cast member in turn) and
 ## --character=<id> (start as that cast member), --stage=<id> (a zone plan's named state),
 ## --at=x,y (stand at a world point), --camp[=dx,dy] (set the woodland enemy camp north of the player,
-## to see and fight the creatures; it is not placed in any zone yet).
+## to see and fight the creatures; it is not placed in any zone yet). --camp --quit ends after
+## camp setup and the following frame unless another selected mode owns completion.
 ## See docs/godot.md.
 
 const DENSITY := 3.0
@@ -193,6 +194,14 @@ func _camp() -> void:
 		off = Vector2(float(xy[0]), float(xy[1]))
 	camp.position = player.position + off * DENSITY
 	player.get_parent().add_child(camp)
+	# Other selected modes retain their existing completion/quit owner.
+	if args.has("quit") and not (args.has("shot") or args.has("demo") or args.has("cycle")
+			or args.has("bossfight") or args.has("lineup")):
+		await get_tree().process_frame
+		_quit_after_camp()
+
+func _quit_after_camp() -> void:
+	get_tree().quit()
 
 ## --lineup: the whole cast standing in a row facing the camera, centred under the player.
 func _lineup() -> void:

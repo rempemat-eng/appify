@@ -21,6 +21,16 @@ class QuietCamera extends PhantomCamera2D:
 		pass
 
 class CampHarness extends "res://game.gd":
+	var camp_quit_calls := 0
+	var camp_quit_frame := -1
+	var camp_children_at_quit := -1
+
+	# Intercept only the final process-quit boundary, never the real _camp consumer.
+	func _quit_after_camp() -> void:
+		camp_quit_calls += 1
+		camp_quit_frame = Engine.get_process_frames()
+		camp_children_at_quit = player.get_parent().get_child_count()
+
 	func _ready() -> void:
 		pass
 	func _process(_delta: float) -> void:
@@ -114,3 +124,32 @@ func test_explicit_negative_decimal_offset_reaches_real_consumer() -> void:
 
 func test_explicit_zero_offset_is_not_replaced_by_default() -> void:
 	await _assert_real_camp(PackedStringArray(["--camp=0,0"]), Vector2.ZERO)
+
+# CAMP-QUIT: new controls below are source-prepared and UNRUN until separately allocated.
+func _assert_camp_completion(tokens: PackedStringArray, expected_quit_calls: int) -> void:
+	var fixture := _fixture(tokens)
+	var game: CampHarness = fixture[0]
+	var host: Node2D = fixture[1]
+	var started_frame := Engine.get_process_frames()
+	game.call_deferred("_camp")
+	assert_int(game.camp_quit_calls).is_equal(0)
+	for _frame in 4:
+		await get_tree().process_frame
+	assert_int(host.get_child_count()).is_equal(2)
+	assert_int(game.camp_quit_calls).is_equal(expected_quit_calls)
+	if expected_quit_calls == 1:
+		assert_int(game.camp_children_at_quit).is_equal(2)
+		assert_bool(game.camp_quit_frame >= started_frame + 2).is_true()
+	else:
+		assert_int(game.camp_quit_frame).is_equal(-1)
+
+func test_camp_quit_follows_actual_setup_and_another_frame() -> void:
+	for camp in ["--camp", "--camp=-4.5,2.25"]:
+		await _assert_camp_completion(PackedStringArray([camp, "--quit"]), 1)
+
+func test_interactive_camp_keeps_running_without_quit() -> void:
+	await _assert_camp_completion(PackedStringArray(["--camp"]), 0)
+
+func test_camp_quit_does_not_preempt_other_selected_modes() -> void:
+	for mode in ["--shot=unused.png", "--demo", "--cycle", "--bossfight", "--lineup"]:
+		await _assert_camp_completion(PackedStringArray(["--camp", "--quit", mode]), 0)
