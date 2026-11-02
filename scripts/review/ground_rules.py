@@ -18,6 +18,10 @@ These checks read a zone's plan (world px) and say where it breaks a rule:
     rules.building_overlap  no two buildings overlap: their footprints with the eaves stand at
                             least a cell apart, and their drawn bodies (walls and roofs) never
                             cover each other
+    rules.fences            fence runs go along x or y and form closed enclosures: every end
+                            meets another run or a gate, or stands against a building's wall;
+                            a gate sits between two runs and opens onto a route; no run
+                            stands on a route
     rules.seating           a bench stands beside a route (its edge within 2 cells), not on it,
                             facing it (the route in front of the bench's face)
     rules.rock_overlap      rocks rest on the ground side by side; two never overlap unless the
@@ -281,6 +285,9 @@ def _destinations(plan):
     for st in plan.get('stairs', []):
         if 'at' in st:
             d.append(tuple(st['at']))
+    for fe in plan.get('fences', []):
+        if fe.get('kind') == 'gate':
+            d.append(((fe['a'][0] + fe['b'][0]) / 2.0, (fe['a'][1] + fe['b'][1]) / 2.0))
     return d
 
 
@@ -405,6 +412,54 @@ def building_overlap(plan):
 # ------------------------------------------------------------------------------------------------
 # 6. props by role and 7. clutter
 # ------------------------------------------------------------------------------------------------
+def _on_wall(p, plan, tol=1.5):
+    """On the outline of a building's footprint (a fence run ends against its wall)."""
+    for b in plan.get('buildings', []):
+        if 'rect' not in b:
+            continue
+        x, y, w, h = b['rect']
+        inside = x - tol <= p[0] <= x + w + tol and y - tol <= p[1] <= y + h + tol
+        deep = x + tol < p[0] < x + w - tol and y + tol < p[1] < y + h - tol
+        if inside and not deep:
+            return True
+    return False
+
+
+def fences(plan):
+    """Matt, 2 Nov, on the Crossroads cottages: "what is the point of fences if they don't enclose
+    anything?" A fence encloses something: its runs join end to end (a gate counts as a run) into a
+    closed loop, or end against a building's wall. A gate stands between two runs and opens onto a
+    route; no run stands on a route."""
+    out = []
+    fl = plan.get('fences', [])
+    ends = {}
+    for fe in fl:
+        a, b = tuple(fe['a']), tuple(fe['b'])
+        if a[0] != b[0] and a[1] != b[1]:
+            out.append(_f('rules.fences', f'{fe["id"]}: a slanting run {a} to {b}; fences run along x or y', a))
+        for e in (a, b):
+            ends.setdefault((round(e[0] * 2) / 2, round(e[1] * 2) / 2), []).append(fe)
+    for e, runs in ends.items():
+        if len(runs) < 2 and not _on_wall(e, plan):
+            out.append(_f('rules.fences', f'{runs[0]["id"]}: its end at {e} is loose: join it to another run or a '
+                          'gate, or end it against a wall, so the fence encloses something', e))
+    for fe in fl:
+        a, b = fe['a'], fe['b']
+        mid = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)
+        if fe.get('kind') == 'gate':
+            if not _on_route(mid, plan):
+                out.append(_f('rules.fences', f'{fe["id"]}: the gate at {mid} opens onto no route: lead a path through it',
+                              mid))
+            continue
+        L = max(1, int(math.hypot(b[0] - a[0], b[1] - a[1]) / 2))
+        for j in range(L + 1):
+            pt = (a[0] + (b[0] - a[0]) * j / L, a[1] + (b[1] - a[1]) * j / L)
+            if _on_route(pt, plan):
+                out.append(_f('rules.fences', f'{fe["id"]}: the fence crosses a route at {pt}: give it a gate there', pt))
+                break
+    return out
+
+
 def _rock_box(b):
     x, y = b['at']
     w, h = b['size']
@@ -452,7 +507,7 @@ def stage_debris(kit, plan=None):
 
 
 CHECKS = (water_source, water_end, water_fall, ground_water, route_grid, route_ends, route_clear,
-          building_overlap, seating, rock_overlap, clutter)
+          building_overlap, fences, seating, rock_overlap, clutter)
 
 
 def check_plan(plan) -> list[dict]:

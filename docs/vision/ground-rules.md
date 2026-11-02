@@ -71,6 +71,13 @@ Checks:
 - Checked by `roads_clear` (`check:kit`), `grid_snap`, and `logic.composition` for structures with
   props. The Crossroads plan's doors are its route ends (`rules.route_ends`).
 
+- **Fences enclose something.** A fence closes a garden, a paddock or a yard: its runs go along x
+  or y, meet post on post at the corners, and every end joins another run or a gate or stands
+  against a building's wall. A gate stands between two runs and opens onto a route (a trodden way
+  leads through it); no run stands on a route. A fence along the front only, open at the sides,
+  is a fault (Matt, 2 Nov: "what is the point of fences if they don't enclose anything?").
+  Checked by `rules.fences` on plans that list `fences` (`{id, kind: fence|gate, a, b}`).
+
 ### 6. Props by role
 
 Every prop has a placement relation and a clearance.

@@ -1016,3 +1016,5 @@ class GroundRules(unittest.TestCase):
             self.assertTrue(cells[y // 8, x // 8 - 1:x // 8 + 1].all())
             self.assertFalse(cells[y // 8, x // 8 - 2] or cells[y // 8, x // 8 + 1])
             self.assertEqual(int(cls[y // 8, x // 8]), 2)
+        # Matt, 2 Nov: every fence encloses something, one gate per enclosure, on a path
+        self.assertEqual(len([f for f in p['fences'] if f['kind'] == 'gate']), len(p['buildings']))
