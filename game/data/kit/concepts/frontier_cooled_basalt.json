@@ -1,0 +1,90 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_cooled_basalt",
+  "name": "Cooled basalt paving and natural crust",
+  "kind": "terrain",
+  "biomes": [
+    "fire_country",
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "natural",
+      "note": "Large cooled plates with sparse seams."
+    },
+    {
+      "id": "laid",
+      "note": "Foot-worn town flags; straight built edges."
+    },
+    {
+      "id": "old_flow",
+      "note": "Ropey folded crust over the old solid flow, with no glowing seam."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "rock",
+        "stone"
+      ],
+      "deny": [
+        "lava",
+        "water"
+      ]
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Share stable cooled volcanic ground between the fire country and the Isles, with region-specific dressing."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Share stable cooled volcanic ground between the fire country and the Isles, with region-specific dressing.",
+      "Visual brief: Broad rounded slabs, lit top planes and violet recesses; few hairline fissures. Laid blocks in Hearthold have regular courses, natural crust does not.",
+      "Widths and size: 24 art px cells; 2–4+ cell route classes; natural slabs cross the cell grid.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "The old-flow route is only walkable where the authored plan already allows it; crust art cannot convert active lava to ground.",
+      "Implement after review: the schema owner supplies the runtime material/pair block and stable ID only after the design is accepted; no executable painter is asserted here.",
+      "Sizing basis: material/edge extent is specified in 24-art-px logical cells; no opaque-object scale class is assigned. Review grain, width class and derived face height instead.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

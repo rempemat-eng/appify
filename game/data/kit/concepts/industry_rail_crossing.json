@@ -1,0 +1,93 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_rail_crossing",
+  "name": "Pedestrian rail-crossing deck",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "cogsworth",
+    "coal_hills"
+  ],
+  "variants": [
+    {
+      "id": "timber",
+      "note": "Service-yard crossing."
+    },
+    {
+      "id": "stone",
+      "note": "Station-side public crossing."
+    }
+  ],
+  "placement": {
+    "role": "crossing",
+    "ground": {
+      "allow": [
+        "rail_bed",
+        "paving",
+        "earth"
+      ],
+      "deny": [
+        "water"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "on",
+        "what": "rail"
+      },
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 1
+      }
+    ],
+    "forbids": [],
+    "clearance": 1,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "axis"
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {},
+  "story": {
+    "lore": "Allow an explicitly authored walking route to cross a rail alignment without leaving ballast as an accidental shortcut."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Allow an explicitly authored walking route to cross a rail alignment without leaving ballast as an accidental shortcut.",
+      "Visual brief: Flush timber or stone infill between rails, obvious pedestrian approach and paired barrier posts outside the walk width.",
+      "Source: docs/vision/regions/cogsworth-plan.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Geometry: proposed authoring envelope 5x3 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "Widths: Walking opening 3 cells minimum; clear gate sweep and queue area outside the track envelope.",
+      "Rule proposal: a crossing is the only exception permitting a walking route over rails; live line access must come from the transport owner’s gate state.",
+      "Do not assign a walkable deck rectangle until exact rail/route intersection and gate policy are agreed."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      5,
+      3
+    ],
+    "z_sort": "foot"
+  }
+}

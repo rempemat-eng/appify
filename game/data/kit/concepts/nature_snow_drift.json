@@ -1,0 +1,97 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_snow_drift",
+  "name": "Snow drift and cornice dressing",
+  "kind": "decal",
+  "biomes": [
+    "frostline",
+    "massif"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "windward_drift",
+      "note": "Low wind-packed mound with a broad lit crest and a long shallow striation following the local wind direction."
+    },
+    {
+      "id": "rock_cap",
+      "note": "Rounded snow cap seated on a visible rock top, with a cool underside and exposed stone below its lip."
+    },
+    {
+      "id": "sheltered_mound",
+      "note": "Soft accumulation in the lee of a solid form, with a fuller rounded profile and a shaded seated foot."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "clutter",
+    "ground": {
+      "allow": [
+        "snow",
+        "rock"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "snow_shelf",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      },
+      {
+        "rel": "on",
+        "what": "water_outlet"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "free",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Provide local snow accumulation around solid forms without changing their support rules."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Provide local snow accumulation around solid forms without changing their support rules.",
+      "Visual brief: A low smooth mound with a blue-violet seated underside, a broad lit top and wind-striations that merge into the fill; a cornice has visible rock underneath, not a floating white rectangle.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Width 1-3 cells; drift height is visual only. A blocking bank or overhanging cornice requires separate tier/footprint authoring.",
+      "Proposed check: no drift may conceal an authored rim, safe landing or quest interaction point.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

@@ -1,0 +1,55 @@
+name: Kit scene intake
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - '.github/workflows/kit-scene-intake.yml'
+      - 'scripts/review/**'
+      - 'scripts/art/kit/**'
+      - 'game/kit/**'
+      - 'game/zones/**'
+      - 'game/data/zones.json'
+      - 'game/world/terrain/**'
+      - 'game/actors/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/kit-scene-intake.yml'
+      - 'scripts/review/**'
+      - 'scripts/art/kit/**'
+      - 'game/kit/**'
+      - 'game/zones/**'
+      - 'game/data/zones.json'
+      - 'game/world/terrain/**'
+      - 'game/actors/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  intake:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install existing review dependencies
+        run: python -m pip install 'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1'
+      - name: Verify actual kit zones, stale inputs and legacy intake
+        env:
+          OPENBLAS_NUM_THREADS: '1'
+          OMP_NUM_THREADS: '1'
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python -m unittest scripts.review.test_kit_scene_intake -v

@@ -1,0 +1,101 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_thornback_chamber",
+  "name": "Thornback chamber composition",
+  "kind": "structure",
+  "biomes": [
+    "undercroft"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "occupied",
+      "note": "The shard’s small focus remains visible behind the calm combat floor."
+    },
+    {
+      "id": "freed",
+      "note": "The same arena after the bramble shell is broken; no new decoration or reward claim."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      22,
+      18
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "arena_shell",
+    "ground": {
+      "allow": [
+        "stone",
+        "paving"
+      ],
+      "deny": [
+        "water"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "thornback_arena"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "combat_clear_band",
+        "note": " Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "stages": [
+      "occupied",
+      "freed"
+    ],
+    "composition": "centre",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [
+      "under_the_stones"
+    ],
+    "lore": "Keep the slice boss arena, skylight and shard sightline unique while its walls and floor are shared."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P0",
+      "Purpose: Keep the slice boss arena, skylight and shard sightline unique while its walls and floor are shared.",
+      "Visual brief: A low broad underground chamber whose north vault is split by the circle’s skylight; calm floor inside the fight band, roots and broken masonry gathered at edges, Cairn’s alcove visible beyond the encounter.",
+      "Widths and size: Source chamber176×144 world px; arena160×132 inside it. This is a composition envelope, not one solid footprint or sprite.",
+      "Source: game/data/plans/undercroft.json; docs/vision/vertical-slice.md beat 6",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "No arena collision rectangle is emitted by this concept. Preserve the source walls, spawn, rest point, shard approach and 160×132 clear fight area as separate plan data.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

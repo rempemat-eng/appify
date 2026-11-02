@@ -65,6 +65,40 @@ def _godot_command(args: list[str], env: dict, log_path: str, timeout: int) -> N
         raise RenderError(f'Godot command failed (exit {result.returncode}); see {log_path}')
 
 
+def _kit_plan(target, zone, override=None):
+    """Read an explicit exported plan, or the authoritative kit plan for a zone."""
+    path = override or (target if target.endswith('.json') else None)
+    if path is None and zone:
+        path = os.path.join(REPO, 'game', 'kit', 'zones', zone + '.json')
+    if not path:
+        return None
+    if not os.path.isfile(path):
+        if override or target.endswith('.json'):
+            raise ValueError('cannot read exported kit plan: ' + str(path))
+        return None
+    with open(path) as stream:
+        plan = json.load(stream)
+    if override or target.endswith('.json'):
+        if not isinstance(plan, dict):
+            raise ValueError('an exported kit plan must be an object')
+        return plan
+    return plan if isinstance(plan, dict) and 'rows' in plan and 'legend' in plan else None
+
+
+def _kit_findings(plan, error=None):
+    from .kit_scene import check_zone
+    raw = ([dict(check='rules.plan', message=error, at=None, severity='fault')]
+           if error is not None else check_zone(plan))
+    findings = []
+    for f in raw:
+        at = f.get('at')
+        x, y = (float(at[0]) * 3, float(at[1]) * 3) if isinstance(at, (list, tuple)) and len(at) == 2 else (0, 0)
+        findings.append(Finding(f['check'], 'polish' if f.get('severity') == 'advice' else 'fault',
+                                (x - 6, y - 6, x + 6, y + 6), f['message'],
+                                'Correct the exported cell/piece data and validate again.'))
+    return raw, findings
+
+
 def godot_bin() -> str:
     env = os.environ.get('GODOT')
     if env:
@@ -205,8 +239,21 @@ def main(argv=None):
         prior_report = os.path.join(a.out, 'report.json')
         if os.path.lexists(prior_report):
             os.unlink(prior_report)
-    with open(os.path.join(REPO, 'game', 'data', 'zones.json')) as handle:
-        zones = json.load(handle)
+    try:
+        with open(os.path.join(REPO, 'game', 'data', 'zones.json')) as source:
+            zones = json.load(source)
+        if not isinstance(zones, dict):
+            raise ValueError('zone registry must be an object')
+    except (OSError, ValueError, TypeError) as err:
+        name = os.path.splitext(os.path.basename(t))[0]
+        out = a.out or os.path.join(REPO, 'artifacts', 'review', name)
+        os.makedirs(out, exist_ok=True)
+        failure = SN.SceneIntakeError(t, 'cannot read zone registry: ' + str(err))
+        write_json(os.path.join(out, 'report.json'),
+                   dict(target=t, generated=time.strftime('%Y-%m-%d %H:%M'), pictures=[], complete=False,
+                        scene=dict(zone=None, complete=False, error=str(failure))))
+        print(str(failure), file=sys.stderr)
+        return 1
     zone = None
     if t in zones:
         zone = t
@@ -220,15 +267,37 @@ def main(argv=None):
         os.unlink(report_path)
     report = dict(target=t, generated=time.strftime('%Y-%m-%d %H:%M'), pictures=[], scene=None)
 
-    if zone:
-        z = SN.load_zone(zone)
-        res = SN.review_zone(zone, a.H)
-        comp = SN.composite(z)
+    kit_error = None
+    try:
+        kit_plan = _kit_plan(t, zone, a.plan)
+    except (OSError, ValueError) as exc:
+        kit_plan, kit_error = {}, str(exc)
+    kit_findings = []
+    if kit_plan is not None:
+        raw, kit_findings = _kit_findings(kit_plan, kit_error)
+        report['kit'] = dict(zone=kit_plan.get('zone'), findings=raw)
+
+    # An exported JSON plan is a data review; a zone id still gets the normal
+    # composite/screenshot review, augmented by the same kit-plan checks.
+    if kit_plan is not None and t.endswith('.json'):
+        pass
+    elif zone:
+        try:
+            z = SN.load_zone(zone)
+            res = SN.review_zone(zone, a.H)
+            comp = SN.composite(z)
+        except SN.SceneIntakeError as err:
+            report['scene'] = dict(zone=zone, complete=False, error=str(err))
+            report['complete'] = False
+            write_json(os.path.join(out, 'report.json'), report)
+            print(str(err), file=sys.stderr)
+            return 1
         Image.fromarray(comp[..., :3]).save(os.path.join(out, f'{zone}_zone.png'))
         report['scene'] = dict(zone=zone, size=list(z.size), sprites=len(z.sprites), spawns=list(z.spawns),
                                doors=[{k: d[k] for k in ('name', 'zone', 'spawn')} for d in z.doors],
                                findings=[f.to_json() for f in res['findings']])
-        report['pictures'].append(review_picture(comp, a.H, f'{zone}_zone', out, extra=res['findings'], biome=a.biome))
+        report['pictures'].append(review_picture(comp, a.H, f'{zone}_zone', out,
+                                                 extra=res['findings'] + kit_findings, biome=a.biome))
         if not a.no_render:
             spawns = a.spawn or list(z.spawns)
             try:
@@ -245,9 +314,19 @@ def main(argv=None):
         img, off = crop_nonblack(img)
         native, s, org = to_native(img, a.scale)
         org = (org[0] + off[0], org[1] + off[1])
-        report['pictures'].append(review_picture(native, a.H, name, out, s, org, biome=a.biome))
+        # structures that carry props, declared beside the picture (logic.composition)
+        from . import composition as CP
+        sts = CP.sidecar(t)
+        extra = CP.check(sts) if sts else []
+        from . import tiers as TI
+        tp = CP.sidecar_plan(t)
+        if tp and tp.get('tiers'):
+            extra += TI.check(tp)
+        report['pictures'].append(review_picture(native, a.H, name, out, s, org, extra=extra, biome=a.biome))
 
     allf = [f for p in report['pictures'] for f in p['findings']]
+    if kit_plan is not None and t.endswith('.json'):
+        allf += [f.to_json() for f in kit_findings]
     if report['scene']:
         allf += report['scene']['findings']
     counts = {k: sum(1 for f in allf if f['severity'] == k) for k in ('blocker', 'fault', 'polish')}

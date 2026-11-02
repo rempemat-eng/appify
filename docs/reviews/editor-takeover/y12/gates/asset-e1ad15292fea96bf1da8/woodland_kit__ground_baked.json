@@ -1,0 +1,176 @@
+{
+ "id": "woodland_kit/ground_baked",
+ "file": "game/zones/woodland_kit/ground_baked.png",
+ "sha256": "5d92199546fa0cc79e3ec5e2bfe772fc18c9aabcd21eb098295e50507bc2cbaf",
+ "kind": "ground_baked",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  960,
+  1728
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 7,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    293,
+    853,
+    321,
+    942
+   ],
+   "message": "water bank steps in a staircase of 5 teeth (4 px risers, 2 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth",
+   "score": 5.0,
+   "threshold": 4,
+   "subject": "water bank",
+   "extra": {},
+   "box_source": [
+    293,
+    853,
+    321,
+    942
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    70,
+    91,
+    134,
+    139
+   ],
+   "message": "a flat foliage area of one tone, 1200 px (0.22 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.2191380569758948,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    70,
+    91,
+    134,
+    139
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    105,
+    227,
+    163,
+    271
+   ],
+   "message": "a flat foliage area of one tone, 1112 px (0.20 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.20306793279766253,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    105,
+    227,
+    163,
+    271
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    54,
+    504,
+    134,
+    547
+   ],
+   "message": "a flat foliage area of one tone, 1065 px (0.19 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.19448502556610664,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    54,
+    504,
+    134,
+    547
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    110,
+    382,
+    165,
+    432
+   ],
+   "message": "a flat foliage area of one tone, 834 px (0.15 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.1523009495982469,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    110,
+    382,
+    165,
+    432
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    104,
+    663,
+    163,
+    726
+   ],
+   "message": "a flat foliage area of one tone, 832 px (0.15 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.15193571950328708,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    104,
+    663,
+    163,
+    726
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    20,
+    235,
+    56,
+    272
+   ],
+   "message": "a flat foliage area of one tone, 804 px (0.15 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.1468224981738495,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    20,
+    235,
+    56,
+    272
+   ]
+  }
+ ]
+}

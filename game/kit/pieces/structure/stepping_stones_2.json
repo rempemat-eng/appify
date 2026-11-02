@@ -1,0 +1,98 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "stepping_stones_2",
+ "name": "Stepping stones, 2 cells",
+ "kind": "structure",
+ "biomes": [
+  "woodland",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "w2",
+   "weight": 1.0,
+   "png": "res://kit/props/art/stepping_stones_2.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "ground-rules.md 3 (a route crosses water only on a span or stones)",
+  "note": "a footpath crossing a rill or a stream"
+ },
+ "geometry": {
+  "size_px": [
+   30,
+   96
+  ],
+  "size_cells": [
+   1,
+   3
+  ],
+  "foot": [
+   15.0,
+   96.0
+  ],
+  "z_sort": "ground",
+  "collision": {
+   "shape": "none"
+  },
+  "footprint": []
+ },
+ "placement": {
+  "role": "bridge",
+  "snap": "cell",
+  "requires": [
+   {
+    "rel": "on",
+    "what": "water",
+    "note": "across a channel 2 cells wide"
+   },
+   {
+    "rel": "adjacent",
+    "what": "route",
+    "cells": 1,
+    "note": "a footpath meets it at both banks"
+   }
+  ],
+  "composition": "axis"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": false,
+  "paint": {
+   "module": "scripts.art.kit.structures",
+   "fn": "stepping_stones",
+   "args": {
+    "seed": 42
+   }
+  }
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false,
+  "deck": [
+   -5.0,
+   -32.0,
+   10.0,
+   32.0
+  ]
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.structures",
+   "fn": "stones_into",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/structures.py",
+  "todo": []
+ }
+}

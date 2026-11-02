@@ -1,0 +1,308 @@
+{
+ "id": "terrain/over_lawn_over_lower_tier",
+ "file": "game/kit/terrain/over_lawn_over_lower_tier.png",
+ "sha256": "79691b1e35159e7d376d4ca9b502c78d9a963fd355d3622f3e91fde6aed17944",
+ "kind": "over_lawn_over_lower_tier",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  1536,
+  264
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 12,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    384,
+    192,
+    768,
+    255
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 96% (1.63 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.9645770477148284,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    384,
+    192,
+    768,
+    255
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    1405,
+    168,
+    1455,
+    253
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 94% (0.21 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.9376646180860404,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    1405,
+    168,
+    1455,
+    253
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    0,
+    0,
+    1536,
+    72
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 93% (7.74 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.9285798495673292,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    0,
+    0,
+    1536,
+    72
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    754,
+    110,
+    1165,
+    168
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 93% (2.31 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.9285601515629933,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    754,
+    110,
+    1165,
+    168
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    1104,
+    192,
+    1166,
+    254
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 91% (0.35 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.9111928533893852,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    1104,
+    192,
+    1166,
+    254
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    1210,
+    72,
+    1263,
+    144
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 89% (0.30 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.8941538461538462,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    1210,
+    72,
+    1263,
+    144
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    731,
+    72,
+    792,
+    120
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 89% (0.21 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.8887931034482759,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    731,
+    72,
+    792,
+    120
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    58,
+    96,
+    111,
+    154
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 88% (0.23 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.8837391987431265,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    58,
+    96,
+    111,
+    154
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    635,
+    72,
+    696,
+    120
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 88% (0.21 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.8770421324161651,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    635,
+    72,
+    696,
+    120
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    251,
+    96,
+    312,
+    154
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 87% (0.25 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.866232827187274,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    251,
+    96,
+    312,
+    154
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    346,
+    83,
+    408,
+    154
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 86% (0.24 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.8615149196633511,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    346,
+    83,
+    408,
+    154
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    1498,
+    83,
+    1536,
+    144
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 86% (0.22 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.8608119304059652,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    1498,
+    83,
+    1536,
+    144
+   ]
+  },
+  {
+   "detector": "logic.void",
+   "severity": "blocker",
+   "box": [
+    0,
+    0,
+    1536,
+    48
+   ],
+   "message": "the screen shows 8% empty black outside the world",
+   "fix": "clamp the camera to the zone bounds from the first frame (snap it to the spawn before damping) and draw the world past every edge the camera can reach",
+   "score": 0.0783987334280303,
+   "threshold": 0.05,
+   "subject": "camera",
+   "extra": {},
+   "box_source": [
+    0,
+    0,
+    1536,
+    48
+   ]
+  }
+ ]
+}

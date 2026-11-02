@@ -1,0 +1,102 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_debris_c",
+ "name": "Debris c",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "debris_c",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/debris_c.png",
+   "foot": [
+    48,
+    41
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   96,
+   45
+  ],
+  "size_cells": [
+   4,
+   2
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   48,
+   41
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "free",
+  "role": "clutter",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "stages": [
+   "broken"
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   }
+  }
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "debris_c",
+    "part": "body",
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

@@ -1,0 +1,101 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_bollard",
+  "name": "Mooring bollard and cleat",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "lull",
+    "lullford",
+    "gullwick",
+    "delta",
+    "neon_harbour",
+    "cogsworth"
+  ],
+  "variants": [
+    {
+      "id": "single",
+      "note": "Single cast-iron post."
+    },
+    {
+      "id": "double",
+      "note": "Pair of low horns on one plate."
+    },
+    {
+      "id": "rope",
+      "note": "Same bollard with one grounded coiled line."
+    }
+  ],
+  "placement": {
+    "role": "mooring",
+    "ground": {
+      "allow": [
+        "paving",
+        "stone",
+        "wood"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "water"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "half",
+    "stages": [],
+    "composition": "edge"
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {},
+  "story": {
+    "lore": "Mark genuine vessel mooring points without filling every quay tile with generic clutter."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Mark genuine vessel mooring points without filling every quay tile with generic clutter.",
+      "Visual brief: Heavy round iron bollard with flared base and a bright worn rope groove; the object stays round despite cell placement.",
+      "Source: docs/vision/regions/neon-harbour-delta.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Geometry: proposed authoring envelope 1x1 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "Scale: no density3 bollard class exists; start below barrel height (31-46 art px) and review against a 74-art-px adult rather than inventing a new class.",
+      "Rule proposal: a tied boat and bollard share one mooring relation; ropes do not cross a public route."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "foot"
+  }
+}

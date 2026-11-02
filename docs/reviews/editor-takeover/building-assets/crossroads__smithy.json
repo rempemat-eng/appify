@@ -1,0 +1,94 @@
+{
+ "id": "crossroads/smithy",
+ "file": "game/zones/crossroads/art/smithy.png",
+ "sha256": "9f3123f7b4318370da6dd34609d892150bf98f2a6ae6c770f57f5b95bc5dc98f",
+ "kind": "smithy",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  288,
+  327
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 220,
+   "tones": 25.21818181818182,
+   "shapes": 43.77272727272727
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.869,
+  "tones_ratio": 0.934,
+  "shapes_ratio": 0.869,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    8,
+    69,
+    87,
+    196
+   ],
+   "message": "crossroads/smithy: the red is lit from the right (luminance rises 14 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south",
+   "score": 13.57669527714561,
+   "threshold": 6.0,
+   "subject": "crossroads/smithy",
+   "extra": {
+    "area": 531,
+    "area_h": 0.09696859021183346,
+    "flat": 0.018832391713747645,
+    "flat_h": 0.0018261504747991235,
+    "tones": 10,
+    "planes": 4,
+    "lrange": 87.9520034790039,
+    "gx": 13.57669527714561,
+    "gy": -25.90685292542728,
+    "edges": 0.8834080717488789
+   },
+   "box_source": [
+    8,
+    69,
+    87,
+    196
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    2,
+    0,
+    286,
+    325
+   ],
+   "message": "crossroads/smithy: detail bar 0.87 of Eastward's prop band (25.2 tones, 43.8 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.869,
+   "threshold": 0.9,
+   "subject": "crossroads/smithy",
+   "extra": {},
+   "box_source": [
+    2,
+    0,
+    286,
+    325
+   ]
+  }
+ ]
+}

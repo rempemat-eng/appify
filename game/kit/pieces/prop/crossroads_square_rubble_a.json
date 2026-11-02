@@ -1,0 +1,163 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_square_rubble_a",
+ "name": "Square rubble a",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "square_rubble_a",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/square_rubble_a.png",
+   "foot": [
+    54,
+    105
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   108,
+   109
+  ],
+  "size_cells": [
+   5,
+   5
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "rect": [
+    -15.0,
+    -18.0,
+    30,
+    18
+   ],
+   "shape": "rect"
+  },
+  "foot": [
+   54,
+   105
+  ],
+  "footprint": [
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "stages": [
+   "broken"
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   }
+  }
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "square_rubble_a",
+    "part": "body",
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "square_rubble_a_shadow",
+    "part": "shadow",
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow square_rubble_a_shadow from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

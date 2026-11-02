@@ -1,0 +1,105 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_mine_portal",
+  "name": "Supported mine-mouth family",
+  "kind": "structure",
+  "biomes": [
+    "lode",
+    "coal_hills"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "ore",
+      "note": "Pale dust and iron-copper spoil at the Lode."
+    },
+    {
+      "id": "coal",
+      "note": "Dark soot and coal fragments, using the coal-hills palette."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      6,
+      3
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "door",
+    "ground": {
+      "allow": [
+        "rock",
+        "stone",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "lava"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "cliff_face"
+      },
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_clear_band",
+        "note": "The jambs cannot occupy the approach; only the opening terminates the route. Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "enter",
+      "triggers": []
+    }
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Share the structural portal and support logic for mines while keeping the Lode’s rail destination authored."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "wide_door",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Share the structural portal and support logic for mines while keeping the Lode’s rail destination authored.",
+      "Visual brief: A dark opening recessed into a real face, heavy timber jambs bearing a lintel, rock sitting above the supports and a short track emerging onto ground.",
+      "Widths and size: Opening 59–111 art px wide and 74–130 high; 6×3-cell cart apron; portal foot flush with the lower tier.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Rail/transport links reuse the transport owner’s existing way contract; do not create a new mine fast-travel edge.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting.",
+      "Scale proxy: wide_door constrains the clear doorway opening only, not the complete frame, tube, slab or jamb image. No measured size_px or pass is claimed; retain authored source geometry and review any aperture outside that range explicitly."
+    ]
+  }
+}

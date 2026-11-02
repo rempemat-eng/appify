@@ -1,0 +1,109 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_forest_bench",
+ "name": "Forest bench",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "forest_bench",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/forest_bench.png",
+   "foot": [
+    54.0,
+    51.0
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   108,
+   51
+  ],
+  "size_cells": [
+   5,
+   3
+  ],
+  "z_sort": "foot",
+  "collision": null,
+  "foot": [
+   54.0,
+   51.0
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "role": "seat",
+  "requires": [
+   {
+    "rel": "adjacent",
+    "what": "route_edge",
+    "cells": 2,
+    "facing": true
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    16.2,
+    3.0
+   ],
+   "dir": [
+    2.0,
+    -1.0
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {
+  "interact": {
+   "verb": "sit",
+   "triggers": []
+  }
+ },
+ "story": {
+  "owner": null
+ },
+ "gameplay": {},
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "sources": [
+   {
+    "zone": "woodland",
+    "object": "bench",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

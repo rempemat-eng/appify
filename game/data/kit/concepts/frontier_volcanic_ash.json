@@ -1,0 +1,92 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_volcanic_ash",
+  "name": "Volcanic ash and black-sand surface family",
+  "kind": "terrain",
+  "biomes": [
+    "fire_country",
+    "cinderwick",
+    "ash_coast"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "dry_ash",
+      "note": "Broad powder drifts on inland basalt."
+    },
+    {
+      "id": "black_sand",
+      "note": "Dense wet beach body with a darker swash margin."
+    },
+    {
+      "id": "recolonised",
+      "note": "Small separated fireweed clumps in cooled ground; never on active lava."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "sand",
+        "rock",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "lava"
+      ]
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Reuse the volcano’s fallout across Cinder Rise, dead forest and the black-sand cove."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Reuse the volcano’s fallout across Cinder Rise, dead forest and the black-sand cove.",
+      "Visual brief: Cool charcoal body with broad warm ash patches; fine detail clusters into wind deposits at obstacles. Black-sand shore is damp and smoother, not a colour swap of grass.",
+      "Widths and size: 24 art px cells; 2/3/4+ cell routes keep their continuous clear band.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "If dry ash and wet black sand need different walkability or priorities, split them after review instead of putting behaviour into variant colour.",
+      "Implement after review: the schema owner supplies the runtime material/pair block and stable ID only after the design is accepted; no executable painter is asserted here.",
+      "Sizing basis: material/edge extent is specified in 24-art-px logical cells; no opaque-object scale class is assigned. Review grain, width class and derived face height instead.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

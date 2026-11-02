@@ -1,0 +1,77 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_meadow_sward",
+  "name": "Meadow sward family",
+  "kind": "terrain",
+  "biomes": [
+    "valley",
+    "woodland",
+    "crossroads",
+    "brackens",
+    "coast"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "grazed",
+      "note": "Short even turf with sparse rooted tufts and open low-contrast patches, suitable for a village green or grazed field."
+    },
+    {
+      "id": "hay_edge",
+      "note": "Longer grouped grass at the field margin with warm dry tips, while the broad field centre remains quiet."
+    },
+    {
+      "id": "damp_margin",
+      "note": "Darker turf at a bank or low hollow, with larger cool tufts and a restrained wet-earth transition."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Carry the same credible turf from the village green through the woodland margins; adapt the existing lawn rather than introduce a near-duplicate material."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P0.",
+      "Purpose: Carry the same credible turf from the village green through the woodland margins; adapt the existing lawn rather than introduce a near-duplicate material.",
+      "Visual brief: Calm two-sibling green field; sparse rooted tufts and broad low-contrast blotches. Grazed and hay looks differ in clump size, never by a full outline around each cell.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md; game/kit/pieces/terrain/lawn.json",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Area fill; narrow shoulders 1 cell, clearings 3+; route widths belong to path, not this fill.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Reuse: lawn; extend its context variants only after the existing material passes the library gate.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

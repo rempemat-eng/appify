@@ -55,6 +55,50 @@
  },
  "water": {
   "_about": "the Hollow's brook comes in at the top edge, falls from the spring's boulder heap into the rock pool, and leaves east as the garden's stream on the garden's own rows; mask = today's water pixels",
+  "soft": {
+   "_about": "the soft grid's water (Matt, 27 Oct; Eastward 37's pond and the Strange Forest stream): the river three cells wide on cells with a few rounded cell-steps (it widens and narrows by a cell), its banks lumped, stones breaking them, rushes in a few clumps; the fall's pool a rounded union of cells under a stone lip; the rill the river at a smaller scale: one cell wide on cells, gentle one-cell offsets for its bends, lumped banks, stones, wider at the lip (screen.water_mask_soft); water_rle stays the 1x footprint for density 2",
+   "river": {
+    "points": [
+     [96, 300],
+     [336, 300]
+    ],
+    "cells": 3,
+    "add": [
+     [160, 280, 48, 8],
+     [240, 312, 64, 8]
+    ],
+    "cut": [
+     [248, 288, 56, 8]
+    ]
+   },
+   "pool": [
+    [56, 288, 56, 24],
+    [64, 280, 40, 8]
+   ],
+   "rill": {
+    "points": [
+     [80, -8],
+     [80, 64],
+     [64, 64],
+     [64, 192],
+     [80, 192],
+     [80, 256]
+    ],
+    "mouth": [72, 232, 16, 32],
+    "cells_plan": 2,
+    "amp": [2.0, 4.0],
+    "lump": [12, 28],
+    "r_out": 0.6,
+    "r_in": 0.6
+   },
+   "seed": 402,
+   "amp": [2.5, 5.0],
+   "lump": [10, 26],
+   "stones": 0.7,
+   "rush_clumps": 3,
+   "side_w": 8,
+   "reeds": 0.25
+  },
   "water_rle": [
    [79, 86],
    [79, 85],
@@ -634,11 +678,12 @@
    []
   ],
   "fall": {
-   "x0": 79,
-   "w": 6,
-   "y0": 258,
+   "x0": 72,
+   "w": 16,
+   "y0": 256,
    "y1": 296,
-   "seed": 65
+   "seed": 65,
+   "face": [62, 256, 98, 292]
   },
   "still": [
    [60, 284, 116, 312]
@@ -1242,45 +1287,67 @@
   ],
   "heap": [
    {
-    "at": [78, 262],
-    "size": [22, 16],
-    "seed": 64,
+    "at": [34, 272],
+    "size": [12, 10],
+    "seed": 201,
+    "shape": "round",
     "moss": true
    },
    {
-    "at": [93, 274],
-    "size": [24, 22],
-    "seed": 71,
+    "at": [80, 262],
+    "size": [28, 10],
+    "seed": 205,
+    "shape": "slab",
+    "moss": false,
+    "lip": true
+   },
+   {
+    "at": [52, 266],
+    "size": [22, 13],
+    "seed": 203,
+    "shape": "slab",
     "moss": true
    },
    {
-    "at": [66, 276],
-    "size": [26, 22],
-    "seed": 78,
+    "at": [108, 266],
+    "size": [22, 13],
+    "seed": 204,
+    "shape": "slab",
     "moss": true
    },
    {
-    "at": [112, 278],
-    "size": [16, 12],
-    "seed": 85,
+    "at": [54, 284],
+    "size": [22, 15],
+    "seed": 206,
+    "shape": "slab",
     "moss": true
    },
    {
-    "at": [40, 278],
-    "size": [18, 13],
-    "seed": 92,
+    "at": [106, 284],
+    "size": [20, 14],
+    "seed": 207,
+    "shape": "slab",
     "moss": true
    },
    {
-    "at": [50, 289],
-    "size": [30, 22],
-    "seed": 99,
+    "at": [36, 290],
+    "size": [10, 8],
+    "seed": 208,
+    "shape": "round",
     "moss": true
    },
    {
-    "at": [102, 289],
-    "size": [28, 20],
-    "seed": 106,
+    "at": [66, 294],
+    "size": [9, 6],
+    "seed": 210,
+    "shape": "round",
+    "moss": false
+   },
+   {
+    "at": [95, 294],
+    "size": [8, 5],
+    "seed": 211,
+    "shape": "round",
     "moss": true
    }
   ],
@@ -1468,56 +1535,23 @@
   {
    "points": [
     [336, 456],
-    [248, 456]
-   ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [256, 456],
-    [192, 424],
-    [152, 384],
-    [128, 328]
-   ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [128, 272],
-    [152, 200],
-    [128, 152]
-   ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [128, 336],
-    [128, 304]
-   ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [128, 272],
-    [128, 296]
-   ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [152, 384],
-    [120, 408]
-   ],
-   "radius": 4
-  },
-  {
-   "points": [
-    [144, 216],
-    [160, 208],
-    [176, 208]
+    [296, 456],
+    [296, 424],
+    [128, 424],
+    [128, 160]
    ],
    "radius": 8,
-   "spur": true
+   "bend": 24,
+   "why_shape": "on the soft grid (ground rules, Matt 27 Oct 13:26): straight runs on cells, each turn a rounded bend, from the garden's gate past the stone circle and over the bridge to the clearing; the brambles and the stump stand beside it"
+  },
+  {
+   "points": [
+    [128, 408],
+    [112, 408]
+   ],
+   "radius": 4,
+   "spur": true,
+   "why": "to the stone ring's entrance, the gap in the ring facing east"
   }
  ],
  "brook_line": {
@@ -1544,16 +1578,17 @@
    "rough": 0.3
   },
   "circle_out": {
-   "at": [78, 410],
-   "r": [46, 26],
+   "at": [80, 414],
+   "r": [38, 22],
    "seed": 68,
-   "rough": 0.12
+   "rough": 0.16,
+   "worn": true
   },
   "circle_in": {
-   "at": [78, 410],
-   "r": [30.799999999999997, 16.32],
+   "at": [80, 414],
+   "r": [29, 15],
    "seed": 69,
-   "rough": 0.14
+   "rough": 0.12
   },
   "pool": {
    "at": [86, 299],
@@ -1566,10 +1601,10 @@
    "r": [15, 8]
   },
   "bridge": {
-   "x0": 123,
-   "w": 14,
-   "y0": 292,
-   "y1": 306
+   "x0": 118,
+   "w": 20,
+   "y0": 288,
+   "y1": 312
   },
   "light_pools": [
    [150, 208, 10, 5],
@@ -1604,7 +1639,10 @@
    [270, 236, 2126, 1.35],
    [204, 176, 1604, 1.2],
    [16, 404, 516, 1.5],
-   [292, 560, 2604, 1.5]
+   [292, 560, 2604, 1.5],
+   [44, 272, 3103, 1.0],
+   [24, 284, 3101, 1.2],
+   [40, 302, 3102, 1.1]
   ],
   "leaves": [
    [209, 141, 0],
@@ -1680,13 +1718,15 @@
   ]
  },
  "objects": [
-  ["stone-1", "standing_stone", 68, 363, 16, 29],
-  ["stone-2", "standing_stone_b", 103.5, 371, 17, 29],
-  ["stone-3", "standing_stone_low", 112.5, 403, 15, 21],
-  ["stone-4", "standing_stone", 100, 411, 16, 29],
-  ["stone-5", "standing_stone_b", 43.5, 411, 17, 29],
-  ["stone-6", "standing_stone_low", 28.5, 395, 15, 21],
-  ["stone-7", "standing_stone_low", 40.5, 379, 15, 21],
+  ["stone-1", "standing_stone_lean", 104.5, 411, 15, 21],
+  ["stone-2", "standing_stone_low", 72.5, 419, 15, 21],
+  ["stone-3", "standing_stone_runes", 40.5, 411, 15, 21],
+  ["stone-4", "standing_stone_broken", 28.5, 395, 15, 21],
+  ["stone-5", "standing_stone_b", 40.5, 379, 15, 21],
+  ["stone-6", "standing_stone", 72, 363, 16, 29],
+  ["stone-7", "standing_stone_low", 104.5, 379, 15, 21],
+  ["lintel-1", "lintel", 47, 415, 26, 9],
+  ["stone-top", "stone_top", 18, 433, 12, 7],
   ["stump-1", "stump", 165.5, 232, 21, 16],
   ["stump-2", "stump", 41.5, 344, 21, 16],
   ["stump-3", "stump", 237.5, 120, 21, 16],
@@ -1710,7 +1750,7 @@
   ["oak", "hollow_tree", 72.5, 28, 71, 100],
   ["log-1", "mossy_log", 193, 232, 54, 16],
   ["log-2", "mossy_log", 129, 472, 54, 16],
-  ["bench", "forest_bench", 156, 197, 32, 11],
+  ["bench", "forest_bench", 152, 397, 32, 11],
   ["willow", "willow", 226, 345, 68, 95],
   ["bush-1", "bush", 288, 375, 32, 25],
   ["wood-1", "sapling", -1.5, 45, 19, 27],
@@ -1765,5 +1805,6 @@
   "spring": [100, 316],
   "stones": [78, 414]
  },
- "walk": "unchanged: the 1x zone's walk rows (lib/zone-maps.ts zoneMaps.woodland.walk)"
+ "walk": "unchanged: the 1x zone's walk rows (lib/zone-maps.ts zoneMaps.woodland.walk)",
+ "ground_rules": true
 }

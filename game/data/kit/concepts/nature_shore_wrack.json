@@ -1,0 +1,97 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_shore_wrack",
+  "name": "Shore wrack and driftwood dressing",
+  "kind": "decal",
+  "biomes": [
+    "coast",
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "seaweed",
+      "note": "Tangled dull seaweed ropes in a shore-parallel clump, with broad wet highlights and a shaded underside."
+    },
+    {
+      "id": "shell_scatter",
+      "note": "A few pale broken shells grouped along the upper wet line, with varied orientation and no sparkling item treatment."
+    },
+    {
+      "id": "driftwood_small",
+      "note": "Small water-rounded wood fragments clustered with wrack, showing smooth pale upper planes and darker wet seats."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "clutter",
+    "ground": {
+      "allow": [
+        "sand",
+        "stone"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "shore",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_centre"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "interaction_apron"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "free",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Mark the high-water line and shelter pockets with reusable sea-borne material."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P2.",
+      "Purpose: Mark the high-water line and shelter pockets with reusable sea-borne material.",
+      "Visual brief: Tangled dark seaweed ropes, rounded driftwood and a few pale shells grouped along one shore-parallel arc; each clump is seated, with a shaded lower side and no flashing pickup colour.",
+      "Source: docs/vision/regions/tidebloom-isles.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Clumps span roughly 1-2 cells; large driftwood uses log class 22-56 art px high and 89-222 wide as a separate prop.",
+      "No timed collection, food resource or beach-cleaning chore.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

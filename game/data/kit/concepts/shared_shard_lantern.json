@@ -1,0 +1,103 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_shard_lantern",
+  "name": "Crossroads Shard Lantern",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "village"
+  ],
+  "variants": [
+    {
+      "id": "empty",
+      "note": "Dark chamber and visible supports."
+    },
+    {
+      "id": "woodland_shard_home",
+      "note": "Same anchors, lit chamber from the existing homecoming state."
+    }
+  ],
+  "geometry": {
+    "z_sort": "foot",
+    "size_cells": [
+      2,
+      2
+    ]
+  },
+  "placement": {
+    "role": "story_landmark",
+    "ground": {
+      "allow": [
+        "stone",
+        "paving",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "centre",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "talk",
+      "triggers": []
+    },
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [
+      "under_the_stones",
+      "home_again"
+    ],
+    "owner": null,
+    "lore": "One lantern in Crossroads. Do not reuse it as a generic street lamp."
+  },
+  "audit": {
+    "size_class": "shard",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P0",
+      "Purpose: Make the return of the great shard visible at the village centre.",
+      "Visual brief: A stone plinth with a framed glass chamber; one unmistakable silhouette, deep glass and solid corners. The lit version preserves the dark body and illuminates adjacent planes without a flat glow disc.",
+      "Size: Shard class: 59–104 art px high and 22–59 wide measures the glass/shard element; plinth and whole assembly require a dedicated reviewed class.",
+      "Source: crossroads.json lantern_dark/lantern_lit/shard_lantern; vertical-slice.md homecoming",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Reuse/upgrade the seeded crossroads_lantern_dark and crossroads_lantern_lit as state variants of one identity after review.",
+      "Exact existing speaker: shard_lantern; W0 adds no quest reward or progression rule."
+    ]
+  }
+}

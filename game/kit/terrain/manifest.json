@@ -1,0 +1,703 @@
+{
+ "cell": 24,
+ "period": 768,
+ "variants": 1,
+ "profiles": 4,
+ "curves": [
+  [
+   0.0068,
+   0.0609,
+   0.1653,
+   0.313,
+   0.4939,
+   0.6956,
+   0.9044,
+   1.1061,
+   1.287,
+   1.4347,
+   1.5391,
+   1.5932,
+   1.5932,
+   1.5391,
+   1.4347,
+   1.287,
+   1.1061,
+   0.9044,
+   0.6956,
+   0.4939,
+   0.313,
+   0.1653,
+   0.0609,
+   0.0068
+  ],
+  [
+   -0.0111,
+   -0.099,
+   -0.2686,
+   -0.5086,
+   -0.8025,
+   -1.1303,
+   -1.4697,
+   -1.7975,
+   -2.0914,
+   -2.3314,
+   -2.501,
+   -2.5889,
+   -2.5889,
+   -2.501,
+   -2.3314,
+   -2.0914,
+   -1.7975,
+   -1.4697,
+   -1.1303,
+   -0.8025,
+   -0.5086,
+   -0.2686,
+   -0.099,
+   -0.0111
+  ],
+  [
+   0.0734,
+   0.3719,
+   0.7593,
+   1.1608,
+   1.515,
+   1.7711,
+   1.8913,
+   1.8534,
+   1.6529,
+   1.3033,
+   0.8338,
+   0.2869,
+   -0.2869,
+   -0.8338,
+   -1.3033,
+   -1.6529,
+   -1.8534,
+   -1.8913,
+   -1.7711,
+   -1.515,
+   -1.1608,
+   -0.7593,
+   -0.3719,
+   -0.0734
+  ],
+  [
+   0.0001,
+   0.0039,
+   0.0198,
+   0.0579,
+   0.1283,
+   0.2405,
+   0.4019,
+   0.6168,
+   0.8845,
+   1.1984,
+   1.5442,
+   1.9003,
+   2.2381,
+   2.5237,
+   2.7217,
+   2.7997,
+   2.734,
+   2.5154,
+   2.1547,
+   1.6854,
+   1.1629,
+   0.6601,
+   0.2577,
+   0.0302
+  ]
+ ],
+ "decals": {
+  "tuft_0": {
+   "png": "decal_tuft_0.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_1": {
+   "png": "decal_tuft_1.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_2": {
+   "png": "decal_tuft_2.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_3": {
+   "png": "decal_tuft_3.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_4": {
+   "png": "decal_tuft_4.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_5": {
+   "png": "decal_tuft_5.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "blades_0": {
+   "png": "decal_blades_0.png",
+   "anchor": [
+    5,
+    0
+   ]
+  },
+  "blades_1": {
+   "png": "decal_blades_1.png",
+   "anchor": [
+    5,
+    0
+   ]
+  },
+  "blades_2": {
+   "png": "decal_blades_2.png",
+   "anchor": [
+    5,
+    0
+   ]
+  },
+  "pebble_0": {
+   "png": "decal_pebble_0.png",
+   "anchor": [
+    8,
+    8
+   ]
+  },
+  "pebble_1": {
+   "png": "decal_pebble_1.png",
+   "anchor": [
+    8,
+    8
+   ]
+  },
+  "pebble_2": {
+   "png": "decal_pebble_2.png",
+   "anchor": [
+    8,
+    8
+   ]
+  },
+  "pebble_3": {
+   "png": "decal_pebble_3.png",
+   "anchor": [
+    8,
+    8
+   ]
+  },
+  "rushes_0": {
+   "png": "decal_rushes_0.png",
+   "anchor": [
+    10,
+    30
+   ]
+  },
+  "rushes_1": {
+   "png": "decal_rushes_1.png",
+   "anchor": [
+    10,
+    30
+   ]
+  },
+  "rushes_2": {
+   "png": "decal_rushes_2.png",
+   "anchor": [
+    10,
+    30
+   ]
+  },
+  "bankstone_0": {
+   "png": "decal_bankstone_0.png",
+   "anchor": [
+    16,
+    18
+   ]
+  },
+  "bankstone_1": {
+   "png": "decal_bankstone_1.png",
+   "anchor": [
+    19,
+    21
+   ]
+  },
+  "bankstone_2": {
+   "png": "decal_bankstone_2.png",
+   "anchor": [
+    21,
+    23
+   ]
+  }
+ },
+ "atlas_cols": 64,
+ "lut": "lut.png",
+ "palette": "palette.png",
+ "tileset": "materials.tres",
+ "tiers_tileset": "tiers.tres",
+ "noise": "noise.png",
+ "surface_variants": {
+  "dirt": {
+   "b": [
+    "plain",
+    3.0
+   ],
+   "w": [
+    "worn centre",
+    1.4
+   ],
+   "g": [
+    "grassy verge",
+    0.6
+   ],
+   "s": [
+    "stony",
+    1.0
+   ],
+   "d": [
+    "damp, a puddle",
+    0.5
+   ],
+   "l": [
+    "leaf litter",
+    0.0
+   ],
+   "c": [
+    "compacted",
+    0.0
+   ]
+  },
+  "lawn": {
+   "b": [
+    "calm field",
+    6.0
+   ],
+   "v": [
+    "clover",
+    0.6
+   ],
+   "f": [
+    "daisies",
+    0.5
+   ],
+   "n": [
+    "long grass",
+    0.6
+   ],
+   "t": [
+    "trampled",
+    0.0
+   ]
+  },
+  "water": {
+   "b": [
+    "still",
+    3.0
+   ],
+   "r": [
+    "rippled",
+    1.2
+   ],
+   "e": [
+    "reedy",
+    0.0
+   ],
+   "y": [
+    "lilies",
+    0.0
+   ],
+   "o": [
+    "shallow over stones",
+    0.0
+   ]
+  }
+ },
+ "ops": {
+  "keep": 0,
+  "upper": 1,
+  "delta": 2,
+  "abs": 3
+ },
+ "materials": [
+  {
+   "id": "lawn",
+   "material_id": 1,
+   "priority": 30,
+   "fill": "fill_lawn.png",
+   "walkable": true,
+   "surface": "turf",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "3b4d59fbd6c270d2"
+  },
+  {
+   "id": "path",
+   "material_id": 2,
+   "priority": 20,
+   "fill": "fill_path.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": true,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "73155a344dee7211"
+  },
+  {
+   "id": "cobble_road",
+   "material_id": 3,
+   "priority": 20,
+   "fill": "fill_cobble_road.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": true,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "ec7355f747c5af76"
+  },
+  {
+   "id": "water",
+   "material_id": 4,
+   "priority": 10,
+   "fill": "fill_water.png",
+   "walkable": false,
+   "surface": "water",
+   "route": false,
+   "water": {
+    "body": "stream",
+    "depth": "shallow",
+    "flow": true
+   },
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "3683766be75e663f"
+  },
+  {
+   "id": "scree",
+   "material_id": 5,
+   "priority": 15,
+   "fill": "fill_scree.png",
+   "walkable": true,
+   "surface": "rock",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "320d371688d37a53"
+  },
+  {
+   "id": "worn",
+   "material_id": 6,
+   "priority": 21,
+   "fill": "fill_worn.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "9af4048bc54c7fc1"
+  },
+  {
+   "id": "earth_face",
+   "material_id": 7,
+   "priority": 40,
+   "fill": "fill_earth_face.png",
+   "walkable": false,
+   "surface": "earth",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    0,
+    96
+   ],
+   "face": {
+    "height_cells": 2,
+    "strip_px": 48
+   },
+   "hash": "1be46f837b7b339d"
+  }
+ ],
+ "transitions": [
+  {
+   "id": "earth_face_over_any",
+   "upper": "earth_face",
+   "lower": "*",
+   "png": "over_earth_face_over_any.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.5,
+    "north": [
+     "tuft_0",
+     "tuft_2",
+     "tuft_3",
+     "tuft_5",
+     "pebble_0"
+    ],
+    "south": [],
+    "side": [
+     "tuft_1",
+     "pebble_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "7bdf2516029a04be"
+  },
+  {
+   "id": "lawn_over_earth_face",
+   "upper": "lawn",
+   "lower": "earth_face",
+   "png": "over_lawn_over_earth_face.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "d0f7f7063725acd2"
+  },
+  {
+   "id": "lawn_over_lower_tier",
+   "upper": "lawn",
+   "lower": "^",
+   "png": "over_lawn_over_lower_tier.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "692e588f0cbbfe35"
+  },
+  {
+   "id": "lawn_over_path",
+   "upper": "lawn",
+   "lower": "path",
+   "png": "over_lawn_over_path.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "tuft_2",
+     "tuft_3",
+     "tuft_4",
+     "tuft_5",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "blades_1",
+     "blades_2",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "pebble_1",
+     "pebble_3",
+     "tuft_2",
+     "tuft_4"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "0c55ce2c10e2b23d"
+  },
+  {
+   "id": "lawn_over_scree",
+   "upper": "lawn",
+   "lower": "scree",
+   "png": "over_lawn_over_scree.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_2",
+     "tuft_4",
+     "pebble_2",
+     "pebble_3"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_2",
+     "pebble_3",
+     "blades_1"
+    ],
+    "side": [
+     "pebble_2",
+     "pebble_3",
+     "tuft_1"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "1930f4fcaa87b7e8"
+  },
+  {
+   "id": "lawn_over_water",
+   "upper": "lawn",
+   "lower": "water",
+   "png": "over_lawn_over_water.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.5,
+    "south": [
+     "rushes_0",
+     "rushes_1",
+     "rushes_2",
+     "tuft_0",
+     "tuft_3"
+    ],
+    "north": [
+     "bankstone_0",
+     "bankstone_1",
+     "bankstone_2",
+     "pebble_2",
+     "tuft_1"
+    ],
+    "side": [
+     "tuft_1",
+     "rushes_1",
+     "tuft_0"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "fb8a9e99f4f6c83e"
+  },
+  {
+   "id": "lawn_over_worn",
+   "upper": "lawn",
+   "lower": "worn",
+   "png": "over_lawn_over_worn.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "tuft_2",
+     "tuft_3",
+     "tuft_4",
+     "tuft_5",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "blades_1",
+     "blades_2",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "pebble_1",
+     "pebble_3",
+     "tuft_2",
+     "tuft_4"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "2c54d56a455a5a40"
+  },
+  {
+   "id": "path_over_earth_face",
+   "upper": "path",
+   "lower": "earth_face",
+   "png": "over_path_over_earth_face.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "eff53004b7861166"
+  },
+  {
+   "id": "path_over_lower_tier",
+   "upper": "path",
+   "lower": "^",
+   "png": "over_path_over_lower_tier.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "256efcf93480f5db"
+  },
+  {
+   "id": "path_over_water",
+   "upper": "path",
+   "lower": "water",
+   "png": "over_path_over_water.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.3,
+    "south": [
+     "pebble_0",
+     "pebble_2"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_3"
+    ],
+    "side": [
+     "pebble_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "f6d9427f828335c9"
+  },
+  {
+   "id": "water_over_earth_face",
+   "upper": "water",
+   "lower": "earth_face",
+   "png": "over_water_over_earth_face.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "0739ed4e542f2e3e"
+  },
+  {
+   "id": "worn_over_path",
+   "upper": "worn",
+   "lower": "path",
+   "png": "over_worn_over_path.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "01dc7b383ce1264f"
+  }
+ ]
+}
