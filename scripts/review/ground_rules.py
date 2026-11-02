@@ -22,6 +22,10 @@ These checks read a zone's plan (world px) and say where it breaks a rule:
                             meets another run or a gate, or stands against a building's wall;
                             a gate sits between two runs and opens onto a route; no run
                             stands on a route
+    rules.enclosures        an enclosure holds what it is for, visibly (animals in a pen, crops in
+                            a kitchen garden, flowers in a front garden), with what that needs (a
+                            coop for hens, a trough for sheep), at a size that fits (a chicken
+                            run 3 to 4 cells a side, a sheep fold 6 to 10): placement-logic.md
     rules.seating           a bench stands beside a route (its edge within 2 cells), not on it,
                             facing it (the route in front of the bench's face)
     rules.rock_overlap      rocks rest on the ground side by side; two never overlap unless the
@@ -460,6 +464,42 @@ def fences(plan):
     return out
 
 
+ENCLOSE = {    # holds: (the object kind it must show, what it needs beside, side in cells min, max)
+    'chickens': ('chicken', ('coop',), 3, 4),
+    'sheep': ('sheep', ('trough',), 6, 10),
+    'horses': ('horse', ('trough',), 10, 99),
+    'crops': ('bed', (), 0, 99),
+    'flowers': ('flowers', (), 0, 99),
+}
+
+
+def enclosures(plan):
+    """Matt, 2 Nov: "think deeply about parts of the game like fences. where would they be? what
+    would they fence in?" (docs/vision/placement-logic.md, rules 3 and 4). An empty pen is a story
+    beat: the plan marks it "empty"."""
+    out = []
+    objs = list(_objects(plan))
+    for e in plan.get('enclosures', []):
+        x0, y0, x1, y1 = e['rect']
+        spec = ENCLOSE.get(e.get('holds'))
+        if spec is None:
+            out.append(_f('rules.enclosures', f'{e["id"]}: holds {e.get("holds")!r}, not a known purpose', (x0, y0)))
+            continue
+        kind, needs, lo, hi = spec
+        inside = {k for _id, k, (fx, fy), _s in objs if x0 < fx < x1 and y0 < fy < y1}
+        if kind not in inside and not e.get('empty'):
+            out.append(_f('rules.enclosures', f'{e["id"]}: holds {e["holds"]} but shows no {kind} inside', (x0, y0)))
+        for n in needs:
+            if n not in inside:
+                out.append(_f('rules.enclosures', f'{e["id"]}: {e["holds"]} need a {n} inside', (x0, y0)))
+        for side in ((x1 - x0) / CELL, (y1 - y0) / CELL):
+            if not lo <= side <= hi:
+                out.append(_f('rules.enclosures', f'{e["id"]}: a side of {side:g} cells; {e["holds"]} take {lo} to {hi}',
+                              (x0, y0)))
+                break
+    return out
+
+
 def _rock_box(b):
     x, y = b['at']
     w, h = b['size']
@@ -507,7 +547,7 @@ def stage_debris(kit, plan=None):
 
 
 CHECKS = (water_source, water_end, water_fall, ground_water, route_grid, route_ends, route_clear,
-          building_overlap, fences, seating, rock_overlap, clutter)
+          building_overlap, fences, enclosures, seating, rock_overlap, clutter)
 
 
 def check_plan(plan) -> list[dict]:

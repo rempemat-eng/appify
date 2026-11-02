@@ -269,6 +269,16 @@ class KitSceneTests(unittest.TestCase):
                               {'id': 'e', 'kind': 'fence', 'a': [32, 40], 'b': [32, 24]}]}
         self.assertEqual(ground_rules.fences(to_wall), [])
 
+    def test_enclosures_hold_what_they_are_for(self):
+        run = {'id': 'run', 'holds': 'chickens', 'rect': [0, 0, 32, 32]}
+        hens = [['h', 'chicken', 10, 10, 5, 3], ['c', 'coop', 18, 10, 14, 8]]
+        self.assertEqual(ground_rules.enclosures({'enclosures': [run], 'objects': hens}), [])
+        self.assertTrue(ground_rules.enclosures({'enclosures': [run], 'objects': hens[1:]}))       # no hens
+        self.assertTrue(ground_rules.enclosures({'enclosures': [run], 'objects': hens[:1]}))       # no coop
+        big = dict(run, rect=[0, 0, 80, 80])
+        self.assertTrue(ground_rules.enclosures({'enclosures': [big], 'objects': hens}))           # too big for hens
+        self.assertEqual(ground_rules.enclosures({'enclosures': [dict(run, empty=True)], 'objects': hens[1:]}), [])
+
     def test_old_painted_path_helpers_remain_unchanged(self):
         p = {'paths': [{'id': 'road', 'points': [[0, 8], [40, 8]], 'radius': 4}]}
         self.assertEqual(ground_rules._on_route((10, 8), p), ['road'])

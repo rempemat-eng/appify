@@ -77,6 +77,11 @@ Checks:
   leads through it); no run stands on a route. A fence along the front only, open at the sides,
   is a fault (Matt, 2 Nov: "what is the point of fences if they don't enclose anything?").
   Checked by `rules.fences` on plans that list `fences` (`{id, kind: fence|gate, a, b}`).
+- **Enclosures hold what they are for** ([placement-logic.md](placement-logic.md)): animals in a
+  pen with what they need (hens and a coop, sheep and a trough), crops in a kitchen garden,
+  flowers in a front garden, at a size that fits (a chicken run 3 to 4 cells a side, a sheep fold
+  6 to 10, a horse paddock 10 or more). An empty pen is a story beat the plan marks `empty`.
+  Checked by `rules.enclosures` on plans that list `enclosures` (`{id, holds, rect}`).
 
 ### 6. Props by role
 

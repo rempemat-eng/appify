@@ -1425,7 +1425,9 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         cw = q(spec.get('chimney_w', 9))
         x0 = L + q(cx) - cw // 2
         wide = trade in ('bakery', 'smithy') or cw >= q(12)
-        chimney(a, rm, x0, x0 + cw, y_r - q(chim), y_r + q(roof_h * 0.45), rng, wide=wide,
+        # the stack rises through the ridge: its foot just below the ridge line on the front slope,
+        # not low down the slope (Matt, 2 Nov: "make sure there are no logic or detail errors")
+        chimney(a, rm, x0, x0 + cw, y_r - q(chim), y_r + q(roof_h * 0.14), rng, wide=wide,
                 soot=1.8 if trade in ('bakery', 'smithy') else 1.0)
     if spec.get('sign'):
         sx, kind = spec['sign']
