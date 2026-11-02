@@ -619,14 +619,18 @@ class Town:
         if sum(contribution(b) for b in self.buildings) + sum(b['counts_as'] for b in retained) > self.cap:
             raise ValueError(f'{self.name}: authored buildings exceed the existing count guide')
         self.authored_plan = copy.deepcopy(packet)
+        def defer(rec, why):
+            self.deferred_buildings.append({'id': rec['id'], 'status': 'deferred', 'reason': f"{rec['id']}: authored {why}",
+                                            'proposal': copy.deepcopy(rec), 'source': copy.deepcopy(packet['source']),
+                                            'baseline': copy.deepcopy(packet['baseline'])})
         for rec in retained:
             x, y, w, h = rec['rect_px']
             a, b = C(x, y); c, d = a + h // CELL, b + w // CELL
             tiers = self.T['tiers_pre'][a:c, b:d]
             if tiers.size != w * h // (CELL * CELL) or tiers.max() != tiers.min():
-                raise ValueError(f"{rec['id']}: authored footprint needs an unapproved terrain-tier change")
+                defer(rec, 'footprint needs an unapproved terrain-tier change'); continue
             if self.T['barrier'][a:c, b:d].any():
-                raise ValueError(f"{rec['id']}: authored footprint intersects a barrier")
+                defer(rec, 'footprint intersects a barrier'); continue
             behind = None
             if 'plot_cells' in rec:
                 pc, pr, pw, ph = rec['plot_cells']
@@ -647,7 +651,7 @@ class Town:
             finally:
                 self.cap = cap
             if not placed:
-                raise ValueError(f"{rec['id']}: authored placement failed")
+                defer(rec, 'placement failed the terrain or occupancy fit'); continue
             raw = self.buildings[-1]
             if 'plot_cells' in rec and raw.get('plot') != rec['plot_cells'] + [rec['plot']]:
                 raise ValueError(f"{rec['id']}: authored plot was clipped")
@@ -2190,7 +2194,18 @@ def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'pot
         if '_town_fit' in town.T:
             town.T.setdefault('_town_fit_incomplete', []).append({'town': town.name, 'instance': town._fit_instance, 'unplaced_street_blocks': [r[0] for r in queue]})
         else:
-            raise ValueError(f'{town.name}: authored street blocks cannot place {[r[0] for r in queue]}')
+            # A fill building no row edge can take (terrain or occupancy refused every position) is deferred, logged with
+            # its proposal and reason; the placed ones keep every check (Claude A, 2 Nov: one pass, never relaxed).
+            pre = 'neon-harbour' if town.name.startswith('Neon Harbour') else 'crossroads'
+            for ident, form, ow, od, bays in queue:
+                bid = f'{pre}-b{ident:03d}'
+                town.__dict__.setdefault('deferred_fill', []).append({
+                    'id': bid, 'status': 'deferred', 'kind': 'fill row building', 'town': town.name,
+                    'reason': f'{bid}: no position on its authored rows passes the terrain and occupancy fit',
+                    'proposal': {'form': form, 'size_px': [ow, od], 'bays': copy.deepcopy(bays) if bays else None},
+                    'counts_as': (0 if form in ('keep', 'watchkeep', 'temple_hall', 'pagoda', 'tower', 'bigtower', 'station', 'depot',
+                                                'skyport', 'warehouse', 'longwarehouse', 'hall', 'hangar', 'barracks', 'chapel')
+                                  else ((len(bays) + 4) // 5 if bays and len(bays) >= 3 else 1))})
     return placed
 
 

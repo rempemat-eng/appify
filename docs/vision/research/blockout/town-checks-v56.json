@@ -1,0 +1,226 @@
+{
+ "crossroads": {
+  "pass": false,
+  "failures": [
+   "layout: no landmark within two screens of the entry [6296, 4514] (crossroads-arr4): 2.2"
+  ],
+  "notes": [
+   "7 buildings from the built zone's own plan (street/door/form checks delegated)",
+   "4 blocks, 9 dead ends, 4.5 x 6.3 screens"
+  ],
+  "metrics": 40,
+  "actual_count": 40,
+  "retained_count": 40
+ },
+ "neon-harbour": {
+  "pass": false,
+  "failures": [
+   "planned: only 15% of the regional roads inside the city run in x and y runs",
+   "retained_count: 64 != 72"
+  ],
+  "notes": [
+   "15% of the city roads in x and y runs",
+   "18 blocks, 27 dead ends, 8.2 x 8.4 screens"
+  ],
+  "metrics": 64,
+  "actual_count": 64,
+  "retained_count": 72
+ },
+ "canalside": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "0 blocks, 0 dead ends, 2.5 x 1.2 screens"
+  ],
+  "metrics": 10,
+  "actual_count": 10,
+  "retained_count": null
+ },
+ "glintside": {
+  "pass": false,
+  "failures": [
+   "count: 1 counted buildings, more than 25 % outside 3 to 6"
+  ],
+  "notes": [
+   "0 blocks, 0 dead ends, 1.8 x 0.7 screens"
+  ],
+  "metrics": 1,
+  "actual_count": 1,
+  "retained_count": null
+ },
+ "halcyon-row": {
+  "pass": false,
+  "failures": [
+   "count: 2 counted buildings, more than 25 % outside 8 to 14",
+   "layout: no landmark within two screens of the entry [11691, 5250] (halcyon-row-arr1): 2.2"
+  ],
+  "notes": [
+   "0 blocks, 0 dead ends, 1.2 x 2.3 screens"
+  ],
+  "metrics": 2,
+  "actual_count": 2,
+  "retained_count": null
+ },
+ "dust-gulch": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "1 blocks, 5 dead ends, 2.3 x 3.9 screens"
+  ],
+  "metrics": 36,
+  "actual_count": 36,
+  "retained_count": null
+ },
+ "palm-spring": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "1 blocks, 1 dead ends, 1.9 x 2.9 screens"
+  ],
+  "metrics": 20,
+  "actual_count": 20,
+  "retained_count": null
+ },
+ "fernhollow": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "2 blocks, 0 dead ends, 1.5 x 2.6 screens"
+  ],
+  "metrics": 15,
+  "actual_count": 15,
+  "retained_count": null
+ },
+ "cogsworth": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "3 blocks, 0 dead ends, 2.2 x 3.3 screens"
+  ],
+  "metrics": 15,
+  "actual_count": 15,
+  "retained_count": null
+ },
+ "hearthold": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "walled: 1 gate, 8 towers",
+   "5 blocks, 5 dead ends, 2.6 x 3.9 screens"
+  ],
+  "metrics": 31,
+  "actual_count": 31,
+  "retained_count": null
+ },
+ "cinderwick": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "count (warning): 13 counted buildings, a little outside 14 to 22",
+   "1 blocks, 1 dead ends, 2.8 x 1.7 screens"
+  ],
+  "metrics": 13,
+  "actual_count": 13,
+  "retained_count": null
+ },
+ "lagoon-landing": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "1 blocks, 2 dead ends, 2.7 x 3.0 screens"
+  ],
+  "metrics": 18,
+  "actual_count": 18,
+  "retained_count": null
+ },
+ "highgarth": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "2 blocks, 1 dead ends, 1.9 x 3.8 screens"
+  ],
+  "metrics": 27,
+  "actual_count": 27,
+  "retained_count": null
+ },
+ "lullford": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "2 blocks, 3 dead ends, 1.4 x 2.1 screens"
+  ],
+  "metrics": 12,
+  "actual_count": 12,
+  "retained_count": null
+ },
+ "driftwood": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "0 blocks, 1 dead ends, 1.3 x 1.6 screens"
+  ],
+  "metrics": 10,
+  "actual_count": 10,
+  "retained_count": null
+ },
+ "gullwick": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "0 blocks, 1 dead ends, 1.0 x 1.3 screens"
+  ],
+  "metrics": 8,
+  "actual_count": 8,
+  "retained_count": null
+ },
+ "cinder-springs": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "0 blocks, 0 dead ends, 0.6 x 2.1 screens"
+  ],
+  "metrics": 6,
+  "actual_count": 6,
+  "retained_count": null
+ },
+ "the-lode": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "0 blocks, 1 dead ends, 0.7 x 1.2 screens"
+  ],
+  "metrics": 4,
+  "actual_count": 4,
+  "retained_count": null
+ },
+ "ember-forge": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "0 blocks, 0 dead ends, 0.6 x 1.0 screens"
+  ],
+  "metrics": 3,
+  "actual_count": 3,
+  "retained_count": null
+ },
+ "launch-cape": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "0 blocks, 0 dead ends, 1.2 x 3.9 screens"
+  ],
+  "metrics": 6,
+  "actual_count": 6,
+  "retained_count": null
+ },
+ "charcoal-hollow": {
+  "pass": true,
+  "failures": [],
+  "notes": [
+   "0 blocks, 0 dead ends, 0.7 x 1.6 screens"
+  ],
+  "metrics": 7,
+  "actual_count": 7,
+  "retained_count": null
+ }
+}

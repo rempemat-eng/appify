@@ -1,0 +1,525 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "halcyon-row",
+ "name": "Halcyon Row",
+ "size": "outskirts",
+ "size_note": "outskirts",
+ "target": [
+  8,
+  14
+ ],
+ "buildings_counted": 2,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the prospective v56 continent (blockout-v56.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "homes and small trades on the city approach, with gardens beyond the last frontage",
+  "terrain": "dry ground between the route, its working gardens and the shore",
+  "fit": "",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   2,
+   5
+  ],
+  "levelled_footprints": 2
+ },
+ "footprint_px": [
+  11796,
+  5306,
+  12184,
+  5722
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "halcyon-row-arr1",
+   "kind": "road",
+   "route": "Cape Road",
+   "street": "halcyon-row-a1",
+   "entries_px": [
+    [
+     11691,
+     5250
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "halcyon-row-arr2",
+   "kind": "road",
+   "route": "the Pad Road",
+   "street": "halcyon-row-a2",
+   "entries_px": [
+    [
+     12046,
+     5833
+    ]
+   ],
+   "route_kind": "road"
+  }
+ ],
+ "streets": [
+  {
+   "id": "halcyon-row-s01",
+   "name": "Halcyon Row road",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11796.0,
+     5306.0
+    ],
+    [
+     11816.5,
+     5323.0
+    ],
+    [
+     11850.5,
+     5359.0
+    ],
+    [
+     11909.0,
+     5450.5
+    ],
+    [
+     11926.0,
+     5472.0
+    ],
+    [
+     12018.0,
+     5562.0
+    ],
+    [
+     12052.0,
+     5601.5
+    ],
+    [
+     12063.5,
+     5621.5
+    ],
+    [
+     12080.5,
+     5663.0
+    ],
+    [
+     12095.5,
+     5722.5
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Cape Road",
+   "connects": [
+    "halcyon-row-a1",
+    "halcyon-row-a2"
+   ]
+  },
+  {
+   "id": "halcyon-row-a1",
+   "name": "Cape Road",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     11691.0,
+     5250.2
+    ],
+    [
+     11773.5,
+     5290.6
+    ],
+    [
+     11816.3,
+     5322.8
+    ],
+    [
+     11850.5,
+     5358.9
+    ],
+    [
+     11925.8,
+     5472.2
+    ],
+    [
+     12017.9,
+     5562.1
+    ],
+    [
+     12052.1,
+     5601.4
+    ],
+    [
+     12080.4,
+     5662.9
+    ],
+    [
+     12095.5,
+     5722.3
+    ]
+   ],
+   "follows_route": "Cape Road",
+   "connects": [
+    "halcyon-row-a2",
+    "halcyon-row-s01"
+   ]
+  },
+  {
+   "id": "halcyon-row-a2",
+   "name": "the Pad Road",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     12095.0,
+     5722.0
+    ],
+    [
+     12052.3,
+     5813.4
+    ],
+    [
+     12046.1,
+     5832.7
+    ]
+   ],
+   "follows_route": "the Pad Road",
+   "connects": [
+    "halcyon-row-a1",
+    "halcyon-row-s01"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Halcyon Row",
+   "centre_px": [
+    12020,
+    5590
+   ],
+   "declared": "homes and small trades on the city approach, with gardens beyond the last frontage",
+   "town": "Halcyon Row",
+   "id": "halcyon-row-d-halcyon-row",
+   "buildings": [
+    "halcyon-row-b001",
+    "halcyon-row-b002"
+   ],
+   "mix": {
+    "house": 2
+   },
+   "function": "homes"
+  }
+ ],
+ "gathering_places": [],
+ "size_table_px": {
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ]
+ },
+ "fronts": 2,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "halcyon-row-b001",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1495,
+    701,
+    7,
+    13
+   ],
+   "rect_px": [
+    11960,
+    5608,
+    56,
+    104
+   ],
+   "faces": "halcyon-row-a1",
+   "door_cells": [
+    1502,
+    701
+   ],
+   "purpose": "a family house",
+   "occupants": "a farming household",
+   "district": "halcyon-row-d-halcyon-row",
+   "counted": true,
+   "plot_cells": [
+    1491,
+    701,
+    4,
+    13
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "halcyon-row-b002",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1516,
+    700,
+    7,
+    10
+   ],
+   "rect_px": [
+    12128,
+    5600,
+    56,
+    80
+   ],
+   "faces": "halcyon-row-a1",
+   "door_cells": [
+    1515,
+    709
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "halcyon-row-d-halcyon-row",
+   "counted": true,
+   "plot_cells": [
+    1523,
+    700,
+    4,
+    10
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Cape Road",
+  "first_view": "Halcyon Row from the Cape Road: a family house, Halcyon Row's largest building ahead",
+  "landmarks": [
+   {
+    "name": "a family house, Halcyon Row's largest building",
+    "xy": [
+     11988,
+     5660
+    ]
+   },
+   {
+    "name": "a family house at the edge, seen first from the Cape Road",
+    "xy": [
+     12156,
+     5640
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    1441,
+    645,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.2,
+   2.3
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields",
+  "materials_cells": {
+   "patched paving": 3651,
+   "steel deck plates": 341,
+   "heath and scrub": 785,
+   "dunes": 68,
+   "bare rock": 397,
+   "concrete apron": 55,
+   "sand": 97,
+   "worn paving": 107
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   1459,
+   648,
+   80,
+   83
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "80.",
+   "80.",
+   "80.",
+   "3r77.",
+   "5r75.",
+   "8r72.",
+   "8r72.",
+   "11r69.",
+   "13r67.",
+   "14r66.",
+   "19r61.",
+   "21r59.",
+   "2.20r58.",
+   "5.19r56.",
+   "6.19r55.",
+   "6.19r55.",
+   "8.19r53.",
+   "8.19r53.",
+   "9.19r52.",
+   "11.19r50.",
+   "11.19r50.",
+   "13.19r48.",
+   "14.18r48.",
+   "14.19r47.",
+   "14.19r47.",
+   "16.17r47.",
+   "16.19r45.",
+   "17.18r45.",
+   "17.18r45.",
+   "19.17r44.",
+   "19.17r44.",
+   "21.15r44.",
+   "21.15r44.",
+   "21.15r44.",
+   "21.15r44.",
+   "22.14r44.",
+   "24.14r42.",
+   "28.10r42.",
+   "28.12r40.",
+   "30.11r39.",
+   "32.11r37.",
+   "32.11r37.",
+   "32.11r37.",
+   "29.4g11r13g23.",
+   "29.6g11r11g23.",
+   "29.7g11r10g23.",
+   "29.7g11r10g23.",
+   "29.9g11r8g23.",
+   "29.11g11r6g23.",
+   "29.12g10r6g23.",
+   "29.12g11r5g23.",
+   "29.12g11r5g21.2g",
+   "29.14g9r5g7.4g2.10g",
+   "32.4g7.9r12.4g3.9g",
+   "32.4g8.10r10.4g3.9g",
+   "20.g11.4g8.10r10.4g5.7g",
+   "19.3g10.4g10.8r10.4g5.7g",
+   "18.5g9.4g10.9r9.4g5.7g",
+   "17.7g8.4g10.9r9.4g6.6g",
+   "16.10g6.4g10.9r9.4g8.4g",
+   "15.14g3.4g10.9r9.4g8.4g",
+   "14.22g7.4g8r2g7.4g8.4g",
+   "14.22g7.4g8r10g11.4g",
+   "13.23g7.4g10r9g11.3g",
+   "11.25g7.4g10r9g11.3g",
+   "8.28g7.6g8r9g11.3g",
+   "7.42g8r11g11.g",
+   "6.43g8r11g12.",
+   "5.44g8r11g12.",
+   "3.46g8r11g12.",
+   "48g7r13g12.",
+   "2.46g6r16g10.",
+   "2.45g7r16g10.",
+   "3.44g6r17g10.",
+   "5.41g7r18g9.",
+   "6.40g6r19g9.",
+   "8.37g7r19g9.",
+   "11.34g6r22g7.",
+   "11.34g6r22g7.",
+   "13.22g8.g6r23g7.",
+   "14.21g8.g6r24g6.",
+   "14.21g8.g6rg8.15g6.",
+   "16.19g8.g5r2g8.15g6."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    12020,
+    5564
+   ],
+   "at": "beside Halcyon Row road",
+   "table_name": "Halcyon Row",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "halcyon-row-s01",
+   "name": "Halcyon Row road",
+   "from_px": [
+    12018,
+    5562
+   ],
+   "to_px": [
+    11926,
+    5472
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 22,
+   "bearing_deg": -158
+  },
+  "crater": {
+   "name": "the Company crater",
+   "xy_px": [
+    11780,
+    4159
+   ],
+   "distance_px": 1371,
+   "effect": "the Company crater lies 1300 px away; its scorch points to the valley",
+   "road": "Cape Road",
+   "road_leaves_at_px": [
+    11691,
+    5250
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    12020,
+    5564
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

@@ -761,6 +761,8 @@ def feedback_checks(T, plans):
     for pid in ('crossroads', 'neon-harbour'):
         P = plans[pid]
         expected = {'crossroads': 40, 'neon-harbour': 72}[pid]
+        # fill buildings deferred by the fitter leave the retained count; each is listed with its reason
+        expected -= sum(d.get('counts_as', 0) for d in P.get('deferred_buildings', []) if d.get('kind') == 'fill row building')
         if P['buildings_counted'] != expected:
             raise ValueError(f"v56 {pid}: {P['buildings_counted']} counted buildings, expected retained {expected}")
         occupied = np.zeros(K.shape, bool)

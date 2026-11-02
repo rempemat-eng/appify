@@ -1,0 +1,6556 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "neon-harbour",
+ "name": "Neon Harbour",
+ "size": "city",
+ "size_note": "city",
+ "target": [
+  60,
+  90
+ ],
+ "buildings_counted": 64,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the prospective v56 continent (blockout-v56.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the ria's deep water at the end of the Lull Road and the line: the continent's port, its trade and the Company",
+  "terrain": "round the ria's head and east shore, on the flats east of it and up the Heights to the west",
+  "fit": "the districts blend from the docks on the deep water, through the old waterfront and the Lanes, to the Company flats and up the Heights",
+  "dry": false,
+  "fortified": false,
+  "authored": "v56 source-authored street blocks, retained303 inventory; new real-ground checks required",
+  "tiers": [
+   -1,
+   9
+  ],
+  "levelled_footprints": 12
+ },
+ "footprint_px": [
+  9796,
+  4240,
+  12408,
+  5760
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "neon-harbour-arr1",
+   "kind": "road",
+   "route": "Lull Road",
+   "street": "neon-harbour-a1",
+   "entries_px": [
+    [
+     9706,
+     4444
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "neon-harbour-arr2",
+   "kind": "path",
+   "route": "Delta Road",
+   "street": "neon-harbour-a2",
+   "entries_px": [
+    [
+     9677,
+     4792
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "neon-harbour-arr3",
+   "kind": "road",
+   "route": "Old Bridges",
+   "street": "neon-harbour-a3",
+   "entries_px": [],
+   "route_kind": "road"
+  },
+  {
+   "id": "neon-harbour-arr4",
+   "kind": "road",
+   "route": "Quay Street",
+   "street": "neon-harbour-a4",
+   "entries_px": [],
+   "route_kind": "road"
+  },
+  {
+   "id": "neon-harbour-arr5",
+   "kind": "path",
+   "route": "Beacon Causeway",
+   "street": "neon-harbour-a5",
+   "entries_px": [],
+   "route_kind": "bridge"
+  },
+  {
+   "id": "neon-harbour-arr6",
+   "kind": "road",
+   "route": "Cape Road",
+   "street": "neon-harbour-a6",
+   "entries_px": [],
+   "route_kind": "road"
+  }
+ ],
+ "streets": [
+  {
+   "id": "neon-harbour-s01",
+   "name": "the waterfront cross lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     10552.0,
+     4256.0
+    ],
+    [
+     10552.0,
+     4656.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a1",
+    "neon-harbour-a3",
+    "neon-harbour-s05",
+    "neon-harbour-s07",
+    "neon-harbour-s11",
+    "neon-harbour-s14"
+   ]
+  },
+  {
+   "id": "neon-harbour-s02",
+   "name": "the waterfront cross lane (1)",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     10936.0,
+     4256.0
+    ],
+    [
+     10936.0,
+     4320.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s03"
+   ]
+  },
+  {
+   "id": "neon-harbour-s03",
+   "name": "the waterfront cross lane (2)",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     10936.0,
+     4336.0
+    ],
+    [
+     10936.0,
+     4464.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a3",
+    "neon-harbour-s02",
+    "neon-harbour-s11"
+   ]
+  },
+  {
+   "id": "neon-harbour-s04",
+   "name": "the waterfront cross lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11272.0,
+     4264.0
+    ],
+    [
+     11272.0,
+     4656.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11252,
+      4312
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11252,
+      4328
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11252,
+      4392
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11252,
+      4408
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11252,
+      4456
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11252,
+      4472
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11252,
+      4584
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11252,
+      4596
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s06",
+    "neon-harbour-s17",
+    "neon-harbour-s18",
+    "neon-harbour-s20",
+    "neon-harbour-s22",
+    "neon-harbour-s26",
+    "neon-harbour-s27",
+    "neon-harbour-s29",
+    "neon-harbour-s48"
+   ]
+  },
+  {
+   "id": "neon-harbour-s05",
+   "name": "the old quays (1)",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     10552.0,
+     4656.0
+    ],
+    [
+     10624.0,
+     4656.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s01"
+   ]
+  },
+  {
+   "id": "neon-harbour-s06",
+   "name": "the old quays (2)",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     10992.0,
+     4656.0
+    ],
+    [
+     11272.0,
+     4656.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11000,
+      4676
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11016,
+      4676
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11088,
+      4676
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11104,
+      4676
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-a4",
+    "neon-harbour-s04",
+    "neon-harbour-s21",
+    "neon-harbour-s22",
+    "neon-harbour-s29"
+   ]
+  },
+  {
+   "id": "neon-harbour-s07",
+   "name": "Falls Row",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10580.0,
+     4292.0
+    ],
+    [
+     10900.0,
+     4292.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      10584,
+      4272
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10600,
+      4272
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      10680,
+      4272
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10696,
+      4272
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s01",
+    "neon-harbour-s10"
+   ]
+  },
+  {
+   "id": "neon-harbour-s08",
+   "name": "Falls Row (1)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10580.0,
+     4292.0
+    ],
+    [
+     10796.0,
+     4292.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      10584,
+      4304
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10600,
+      4304
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      10680,
+      4304
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10696,
+      4304
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s01",
+    "neon-harbour-s07",
+    "neon-harbour-s10"
+   ]
+  },
+  {
+   "id": "neon-harbour-s09",
+   "name": "Falls Row (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10852.0,
+     4292.0
+    ],
+    [
+     10884.0,
+     4292.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s07"
+   ]
+  },
+  {
+   "id": "neon-harbour-s10",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     10792.0,
+     4296.0
+    ],
+    [
+     10792.0,
+     4352.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s07"
+   ]
+  },
+  {
+   "id": "neon-harbour-s11",
+   "name": "Old Quay Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10580.0,
+     4436.0
+    ],
+    [
+     10916.0,
+     4436.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a3",
+    "neon-harbour-s01",
+    "neon-harbour-s03",
+    "neon-harbour-s13"
+   ]
+  },
+  {
+   "id": "neon-harbour-s12",
+   "name": "Old Quay Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10580.0,
+     4436.0
+    ],
+    [
+     10916.0,
+     4436.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      10584,
+      4448
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10600,
+      4448
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      10672,
+      4448
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10684,
+      4448
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      10704,
+      4448
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10720,
+      4448
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      10800,
+      4448
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10816,
+      4448
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-a3",
+    "neon-harbour-s01",
+    "neon-harbour-s03",
+    "neon-harbour-s11",
+    "neon-harbour-s13"
+   ]
+  },
+  {
+   "id": "neon-harbour-s13",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     10840.0,
+     4440.0
+    ],
+    [
+     10840.0,
+     4480.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s11"
+   ]
+  },
+  {
+   "id": "neon-harbour-s14",
+   "name": "Quayside Row",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10580.0,
+     4564.0
+    ],
+    [
+     10660.0,
+     4564.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s01"
+   ]
+  },
+  {
+   "id": "neon-harbour-s15",
+   "name": "Quayside Row",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10580.0,
+     4564.0
+    ],
+    [
+     10660.0,
+     4564.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s01",
+    "neon-harbour-s14"
+   ]
+  },
+  {
+   "id": "neon-harbour-s16",
+   "name": "Bridgefoot Row (1)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11028.0,
+     4292.0
+    ],
+    [
+     11116.0,
+     4292.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11032,
+      4272
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11048,
+      4272
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11144,
+      4272
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11160,
+      4272
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s17"
+   ]
+  },
+  {
+   "id": "neon-harbour-s17",
+   "name": "Bridgefoot Row (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11140.0,
+     4292.0
+    ],
+    [
+     11268.0,
+     4292.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s04",
+    "neon-harbour-s16"
+   ]
+  },
+  {
+   "id": "neon-harbour-s18",
+   "name": "Bridgefoot Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11028.0,
+     4436.0
+    ],
+    [
+     11268.0,
+     4436.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11088,
+      4416
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11104,
+      4416
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-a3",
+    "neon-harbour-s04",
+    "neon-harbour-s19"
+   ]
+  },
+  {
+   "id": "neon-harbour-s19",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11200.0,
+     4424.0
+    ],
+    [
+     11200.0,
+     4368.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s18"
+   ]
+  },
+  {
+   "id": "neon-harbour-s20",
+   "name": "Old Bridges frontage",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11028.0,
+     4564.0
+    ],
+    [
+     11268.0,
+     4564.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a4",
+    "neon-harbour-s04",
+    "neon-harbour-s48"
+   ]
+  },
+  {
+   "id": "neon-harbour-s21",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11144.0,
+     4672.0
+    ],
+    [
+     11144.0,
+     4728.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s06"
+   ]
+  },
+  {
+   "id": "neon-harbour-s22",
+   "name": "the neighbourhood link",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11272.0,
+     4264.0
+    ],
+    [
+     11272.0,
+     4816.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a4",
+    "neon-harbour-s04",
+    "neon-harbour-s06",
+    "neon-harbour-s17",
+    "neon-harbour-s18",
+    "neon-harbour-s20",
+    "neon-harbour-s26",
+    "neon-harbour-s27",
+    "neon-harbour-s29",
+    "neon-harbour-s39",
+    "neon-harbour-s48"
+   ]
+  },
+  {
+   "id": "neon-harbour-s23",
+   "name": "the neighbourhood link",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11720.0,
+     4264.0
+    ],
+    [
+     11720.0,
+     5520.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a6",
+    "neon-harbour-q02",
+    "neon-harbour-s25",
+    "neon-harbour-s26",
+    "neon-harbour-s27",
+    "neon-harbour-s29",
+    "neon-harbour-s39",
+    "neon-harbour-s40",
+    "neon-harbour-s41",
+    "neon-harbour-s42",
+    "neon-harbour-s48",
+    "neon-harbour-s51",
+    "neon-harbour-s53",
+    "neon-harbour-s55"
+   ]
+  },
+  {
+   "id": "neon-harbour-s24",
+   "name": "the neighbourhood link",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     12280.0,
+     4960.0
+    ],
+    [
+     12280.0,
+     5520.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s25",
+    "neon-harbour-s32",
+    "neon-harbour-s33",
+    "neon-harbour-s35",
+    "neon-harbour-s36"
+   ]
+  },
+  {
+   "id": "neon-harbour-s25",
+   "name": "the sea-front link",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11720.0,
+     5520.0
+    ],
+    [
+     12280.0,
+     5520.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a6",
+    "neon-harbour-q01",
+    "neon-harbour-s23",
+    "neon-harbour-s24"
+   ]
+  },
+  {
+   "id": "neon-harbour-s26",
+   "name": "Laundry Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11300.0,
+     4356.0
+    ],
+    [
+     11700.0,
+     4356.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11304,
+      4336
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11320,
+      4336
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11424,
+      4336
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11440,
+      4336
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11552,
+      4336
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11568,
+      4336
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s04",
+    "neon-harbour-s23"
+   ]
+  },
+  {
+   "id": "neon-harbour-s27",
+   "name": "Courtyard Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11300.0,
+     4500.0
+    ],
+    [
+     11700.0,
+     4500.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11304,
+      4480
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11320,
+      4480
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11448,
+      4480
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11464,
+      4480
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11568,
+      4480
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11584,
+      4480
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-q02",
+    "neon-harbour-s04",
+    "neon-harbour-s23",
+    "neon-harbour-s28"
+   ]
+  },
+  {
+   "id": "neon-harbour-s28",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11432.0,
+     4488.0
+    ],
+    [
+     11432.0,
+     4432.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s27"
+   ]
+  },
+  {
+   "id": "neon-harbour-s29",
+   "name": "Arcade Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11300.0,
+     4644.0
+    ],
+    [
+     11700.0,
+     4644.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11304,
+      4624
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11320,
+      4624
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11424,
+      4624
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11440,
+      4624
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s04",
+    "neon-harbour-s23",
+    "neon-harbour-s30"
+   ]
+  },
+  {
+   "id": "neon-harbour-s30",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11544.0,
+     4632.0
+    ],
+    [
+     11544.0,
+     4576.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s29",
+    "neon-harbour-s48"
+   ]
+  },
+  {
+   "id": "neon-harbour-s31",
+   "name": "School Court frontage",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11300.0,
+     4356.0
+    ],
+    [
+     11700.0,
+     4356.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11304,
+      4368
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11320,
+      4368
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11408,
+      4368
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11424,
+      4368
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s04",
+    "neon-harbour-s23",
+    "neon-harbour-s26"
+   ]
+  },
+  {
+   "id": "neon-harbour-s32",
+   "name": "East Shore Terrace",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11812.0,
+     5044.0
+    ],
+    [
+     12260.0,
+     5044.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11816,
+      5024
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11832,
+      5024
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11976,
+      5024
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11992,
+      5024
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      12088,
+      5024
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      12104,
+      5024
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s24"
+   ]
+  },
+  {
+   "id": "neon-harbour-s33",
+   "name": "Lido Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11812.0,
+     5188.0
+    ],
+    [
+     12260.0,
+     5188.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11816,
+      5168
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11832,
+      5168
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      11984,
+      5168
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      12000,
+      5168
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s24",
+    "neon-harbour-s34"
+   ]
+  },
+  {
+   "id": "neon-harbour-s34",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11968.0,
+     5176.0
+    ],
+    [
+     11968.0,
+     5120.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s33"
+   ]
+  },
+  {
+   "id": "neon-harbour-s35",
+   "name": "Sea Garden Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11812.0,
+     5332.0
+    ],
+    [
+     12260.0,
+     5332.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11896,
+      5312
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11912,
+      5312
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      12008,
+      5312
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      12024,
+      5312
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-a6",
+    "neon-harbour-s24"
+   ]
+  },
+  {
+   "id": "neon-harbour-s36",
+   "name": "Shore End",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11812.0,
+     5476.0
+    ],
+    [
+     12260.0,
+     5476.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      11968,
+      5456
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      11984,
+      5456
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      12096,
+      5456
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      12112,
+      5456
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-a6",
+    "neon-harbour-s24",
+    "neon-harbour-s37"
+   ]
+  },
+  {
+   "id": "neon-harbour-s37",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     12080.0,
+     5464.0
+    ],
+    [
+     12080.0,
+     5408.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s36"
+   ]
+  },
+  {
+   "id": "neon-harbour-s38",
+   "name": "Quay Street service spine",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     11648.0,
+     4704.0
+    ],
+    [
+     11648.0,
+     5664.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a6",
+    "neon-harbour-s39",
+    "neon-harbour-s40",
+    "neon-harbour-s41",
+    "neon-harbour-s42",
+    "neon-harbour-s43"
+   ]
+  },
+  {
+   "id": "neon-harbour-s39",
+   "name": "the cargo cross lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11120.0,
+     4848.0
+    ],
+    [
+     11720.0,
+     4848.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a4",
+    "neon-harbour-s22",
+    "neon-harbour-s23",
+    "neon-harbour-s38"
+   ]
+  },
+  {
+   "id": "neon-harbour-s40",
+   "name": "the cargo cross lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11144.0,
+     5040.0
+    ],
+    [
+     11720.0,
+     5040.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a4",
+    "neon-harbour-s23",
+    "neon-harbour-s38"
+   ]
+  },
+  {
+   "id": "neon-harbour-s41",
+   "name": "the cargo cross lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11232.0,
+     5232.0
+    ],
+    [
+     11720.0,
+     5232.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a4",
+    "neon-harbour-a6",
+    "neon-harbour-s23",
+    "neon-harbour-s38"
+   ]
+  },
+  {
+   "id": "neon-harbour-s42",
+   "name": "the cargo cross lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11224.0,
+     5456.0
+    ],
+    [
+     11720.0,
+     5456.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a4",
+    "neon-harbour-s23",
+    "neon-harbour-s38"
+   ]
+  },
+  {
+   "id": "neon-harbour-s43",
+   "name": "the cargo cross lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11448.0,
+     5632.0
+    ],
+    [
+     11720.0,
+     5632.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s38"
+   ]
+  },
+  {
+   "id": "neon-harbour-s44",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11640.0,
+     5440.0
+    ],
+    [
+     11640.0,
+     5360.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s38"
+   ]
+  },
+  {
+   "id": "neon-harbour-s45",
+   "name": "the Company cross avenue",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11720.0,
+     4264.0
+    ],
+    [
+     11720.0,
+     5040.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-q02",
+    "neon-harbour-s23",
+    "neon-harbour-s26",
+    "neon-harbour-s27",
+    "neon-harbour-s29",
+    "neon-harbour-s39",
+    "neon-harbour-s40",
+    "neon-harbour-s48",
+    "neon-harbour-s51",
+    "neon-harbour-s53",
+    "neon-harbour-s55"
+   ]
+  },
+  {
+   "id": "neon-harbour-s46",
+   "name": "the Company cross avenue",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     12000.0,
+     4488.0
+    ],
+    [
+     12000.0,
+     4976.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s49",
+    "neon-harbour-s52",
+    "neon-harbour-s53",
+    "neon-harbour-s55"
+   ]
+  },
+  {
+   "id": "neon-harbour-s47",
+   "name": "the Company cross avenue",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     12408.0,
+     4256.0
+    ],
+    [
+     12408.0,
+     4400.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s50"
+   ]
+  },
+  {
+   "id": "neon-harbour-s48",
+   "name": "the connected city spine (1)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     11272.0,
+     4552.0
+    ],
+    [
+     11776.0,
+     4552.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-q02",
+    "neon-harbour-s04",
+    "neon-harbour-s20",
+    "neon-harbour-s23",
+    "neon-harbour-s30",
+    "neon-harbour-s51"
+   ]
+  },
+  {
+   "id": "neon-harbour-s49",
+   "name": "the connected city spine (2)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     11928.0,
+     4552.0
+    ],
+    [
+     12352.0,
+     4552.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s46",
+    "neon-harbour-s52"
+   ]
+  },
+  {
+   "id": "neon-harbour-s50",
+   "name": "Terminus North",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     12068.0,
+     4388.0
+    ],
+    [
+     12388.0,
+     4388.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s47",
+    "neon-harbour-s78"
+   ]
+  },
+  {
+   "id": "neon-harbour-s51",
+   "name": "Neon Row (1)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11748.0,
+     4532.0
+    ],
+    [
+     11780.0,
+     4532.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s23",
+    "neon-harbour-s48"
+   ]
+  },
+  {
+   "id": "neon-harbour-s52",
+   "name": "Neon Row (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11924.0,
+     4532.0
+    ],
+    [
+     12364.0,
+     4532.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s46",
+    "neon-harbour-s49",
+    "neon-harbour-s78"
+   ]
+  },
+  {
+   "id": "neon-harbour-s53",
+   "name": "Works Avenue",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11748.0,
+     4740.0
+    ],
+    [
+     12340.0,
+     4740.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s23",
+    "neon-harbour-s46",
+    "neon-harbour-s54"
+   ]
+  },
+  {
+   "id": "neon-harbour-s54",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11936.0,
+     4728.0
+    ],
+    [
+     11936.0,
+     4592.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s53"
+   ]
+  },
+  {
+   "id": "neon-harbour-s55",
+   "name": "Company South",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11748.0,
+     4916.0
+    ],
+    [
+     12356.0,
+     4916.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s23",
+    "neon-harbour-s46"
+   ]
+  },
+  {
+   "id": "neon-harbour-s56",
+   "name": "the terrace steps",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9796.0,
+     4820.0
+    ],
+    [
+     9796.0,
+     5532.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a2",
+    "neon-harbour-s79",
+    "neon-harbour-s80",
+    "neon-harbour-s81"
+   ]
+  },
+  {
+   "id": "neon-harbour-s57",
+   "name": "the terrace steps",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10404.0,
+     4916.0
+    ],
+    [
+     10404.0,
+     5044.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s60"
+   ]
+  },
+  {
+   "id": "neon-harbour-s58",
+   "name": "the headland walk",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9972.0,
+     5668.0
+    ],
+    [
+     10180.0,
+     5668.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-q03",
+    "neon-harbour-s79"
+   ]
+  },
+  {
+   "id": "neon-harbour-s59",
+   "name": "Skyport Approach",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9828.0,
+     4852.0
+    ],
+    [
+     10252.0,
+     4852.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      9832,
+      4832
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      9848,
+      4832
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      10048,
+      4832
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10064,
+      4832
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      10120,
+      4832
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      10136,
+      4832
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-a2"
+   ]
+  },
+  {
+   "id": "neon-harbour-s60",
+   "name": "Upper Terrace",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9828.0,
+     5044.0
+    ],
+    [
+     10404.0,
+     5044.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-a2",
+    "neon-harbour-s57",
+    "neon-harbour-s61"
+   ]
+  },
+  {
+   "id": "neon-harbour-s61",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     9920.0,
+     5032.0
+    ],
+    [
+     9920.0,
+     4976.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s60"
+   ]
+  },
+  {
+   "id": "neon-harbour-s62",
+   "name": "Middle Terrace",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9828.0,
+     5188.0
+    ],
+    [
+     10236.0,
+     5188.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      9832,
+      5168
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      9844,
+      5168
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      9864,
+      5168
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      9880,
+      5168
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      9920,
+      5168
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      9936,
+      5168
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s63",
+    "neon-harbour-s80"
+   ]
+  },
+  {
+   "id": "neon-harbour-s63",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     9904.0,
+     5176.0
+    ],
+    [
+     9904.0,
+     5120.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s62"
+   ]
+  },
+  {
+   "id": "neon-harbour-s64",
+   "name": "Lower Terrace",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9828.0,
+     5332.0
+    ],
+    [
+     10188.0,
+     5332.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      9832,
+      5312
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      9848,
+      5312
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      9904,
+      5312
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      9920,
+      5312
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      9968,
+      5312
+     ]
+    },
+    {
+     "kind": "awning",
+     "at_px": [
+      9984,
+      5312
+     ]
+    }
+   ],
+   "frontage_reason": "street-facing blocks with shared courts; alleys and water remain open",
+   "connects": [
+    "neon-harbour-s65",
+    "neon-harbour-s81"
+   ]
+  },
+  {
+   "id": "neon-harbour-s65",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     10072.0,
+     5320.0
+    ],
+    [
+     10072.0,
+     5264.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s64"
+   ]
+  },
+  {
+   "id": "neon-harbour-s66",
+   "name": "Belvedere Terrace",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9876.0,
+     5476.0
+    ],
+    [
+     10228.0,
+     5476.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s82"
+   ]
+  },
+  {
+   "id": "neon-harbour-s67",
+   "name": "Headland Gardens",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9940.0,
+     5620.0
+    ],
+    [
+     10204.0,
+     5620.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "neon-harbour-s68",
+    "neon-harbour-s79"
+   ]
+  },
+  {
+   "id": "neon-harbour-s68",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     10032.0,
+     5608.0
+    ],
+    [
+     10032.0,
+     5552.0
+    ]
+   ],
+   "frontage": "detached",
+   "stair_alley": true,
+   "connects": [
+    "neon-harbour-s67",
+    "neon-harbour-s79"
+   ]
+  },
+  {
+   "id": "neon-harbour-a1",
+   "name": "Lull Road",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     9705.6,
+     4443.6
+    ],
+    [
+     9829.2,
+     4411.7
+    ],
+    [
+     9890.9,
+     4405.9
+    ],
+    [
+     9921.1,
+     4407.3
+    ],
+    [
+     9980.2,
+     4418.1
+    ],
+    [
+     10065.6,
+     4446.8
+    ],
+    [
+     10130.2,
+     4464.4
+    ],
+    [
+     10192.7,
+     4469.2
+    ],
+    [
+     10222.4,
+     4466.7
+    ],
+    [
+     10256.3,
+     4458.4
+    ],
+    [
+     10351.5,
+     4422.0
+    ],
+    [
+     10384.4,
+     4415.5
+    ],
+    [
+     10418.2,
+     4413.0
+    ],
+    [
+     10516.1,
+     4417.4
+    ]
+   ],
+   "follows_route": "Lull Road",
+   "connects": [
+    "neon-harbour-a3",
+    "neon-harbour-s01"
+   ]
+  },
+  {
+   "id": "neon-harbour-a2",
+   "name": "Delta Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9676.8,
+     4791.8
+    ],
+    [
+     9697.4,
+     4810.3
+    ],
+    [
+     9746.2,
+     4843.4
+    ],
+    [
+     9800.6,
+     4871.5
+    ],
+    [
+     9906.9,
+     4917.9
+    ],
+    [
+     9957.1,
+     4944.7
+    ],
+    [
+     9998.3,
+     4974.6
+    ],
+    [
+     10093.4,
+     5060.2
+    ],
+    [
+     10117.5,
+     5076.2
+    ],
+    [
+     10231.8,
+     5120.5
+    ]
+   ],
+   "follows_route": "Delta Road",
+   "connects": [
+    "neon-harbour-s56",
+    "neon-harbour-s59",
+    "neon-harbour-s60"
+   ]
+  },
+  {
+   "id": "neon-harbour-a3",
+   "name": "Old Bridges",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     10516.1,
+     4417.4
+    ],
+    [
+     10713.8,
+     4392.4
+    ],
+    [
+     10776.3,
+     4388.8
+    ],
+    [
+     10837.5,
+     4390.4
+    ],
+    [
+     10928.1,
+     4403.7
+    ],
+    [
+     11084.6,
+     4451.2
+    ]
+   ],
+   "follows_route": "Old Bridges",
+   "connects": [
+    "neon-harbour-a1",
+    "neon-harbour-a4",
+    "neon-harbour-s01",
+    "neon-harbour-s03",
+    "neon-harbour-s11",
+    "neon-harbour-s18"
+   ]
+  },
+  {
+   "id": "neon-harbour-a4",
+   "name": "Quay Street",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     11084.6,
+     4462.4
+    ],
+    [
+     11094.8,
+     4489.9
+    ],
+    [
+     11118.0,
+     4577.8
+    ],
+    [
+     11128.1,
+     4598.5
+    ],
+    [
+     11164.6,
+     4636.4
+    ],
+    [
+     11206.7,
+     4673.7
+    ],
+    [
+     11243.0,
+     4713.1
+    ],
+    [
+     11270.0,
+     4755.2
+    ],
+    [
+     11284.2,
+     4799.3
+    ],
+    [
+     11284.4,
+     4842.5
+    ],
+    [
+     11270.2,
+     4951.3
+    ],
+    [
+     11274.6,
+     5057.3
+    ],
+    [
+     11280.7,
+     5099.4
+    ],
+    [
+     11311.8,
+     5203.6
+    ],
+    [
+     11312.4,
+     5224.3
+    ],
+    [
+     11309.0,
+     5245.2
+    ],
+    [
+     11292.0,
+     5291.0
+    ],
+    [
+     11245.7,
+     5375.3
+    ],
+    [
+     11238.9,
+     5395.4
+    ],
+    [
+     11237.5,
+     5416.2
+    ],
+    [
+     11240.6,
+     5437.9
+    ],
+    [
+     11258.4,
+     5497.3
+    ]
+   ],
+   "follows_route": "Quay Street",
+   "connects": [
+    "neon-harbour-a3",
+    "neon-harbour-a5",
+    "neon-harbour-s06",
+    "neon-harbour-s18",
+    "neon-harbour-s20",
+    "neon-harbour-s22",
+    "neon-harbour-s39",
+    "neon-harbour-s40",
+    "neon-harbour-s41",
+    "neon-harbour-s42"
+   ]
+  },
+  {
+   "id": "neon-harbour-a5",
+   "name": "Beacon Causeway",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     11258.4,
+     5497.3
+    ],
+    [
+     11070.8,
+     5567.6
+    ],
+    [
+     10998.8,
+     5590.1
+    ],
+    [
+     10929.7,
+     5607.0
+    ],
+    [
+     10863.5,
+     5618.3
+    ],
+    [
+     10705.6,
+     5632.3
+    ]
+   ],
+   "follows_route": "Beacon Causeway",
+   "connects": [
+    "neon-harbour-a4"
+   ]
+  },
+  {
+   "id": "neon-harbour-a6",
+   "name": "Cape Road",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     11495.3,
+     5081.1
+    ],
+    [
+     11535.5,
+     5125.6
+    ],
+    [
+     11584.7,
+     5190.0
+    ],
+    [
+     11606.2,
+     5208.7
+    ],
+    [
+     11773.5,
+     5290.6
+    ],
+    [
+     11816.3,
+     5322.8
+    ],
+    [
+     11833.3,
+     5339.9
+    ],
+    [
+     11866.5,
+     5381.1
+    ],
+    [
+     11909.0,
+     5450.4
+    ],
+    [
+     11925.8,
+     5472.2
+    ],
+    [
+     12017.9,
+     5562.1
+    ],
+    [
+     12052.1,
+     5601.4
+    ],
+    [
+     12080.4,
+     5662.9
+    ],
+    [
+     12095.5,
+     5722.3
+    ]
+   ],
+   "follows_route": "Cape Road",
+   "connects": [
+    "neon-harbour-q01",
+    "neon-harbour-s23",
+    "neon-harbour-s25",
+    "neon-harbour-s35",
+    "neon-harbour-s36",
+    "neon-harbour-s38",
+    "neon-harbour-s41"
+   ]
+  },
+  {
+   "id": "neon-harbour-s78",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     12292.0,
+     4396.0
+    ],
+    [
+     12292.0,
+     4516.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "neon-harbour-s49",
+    "neon-harbour-s50",
+    "neon-harbour-s52"
+   ]
+  },
+  {
+   "id": "neon-harbour-s79",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10028.0,
+     5676.0
+    ],
+    [
+     10028.0,
+     5548.0
+    ],
+    [
+     9812.0,
+     5548.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "neon-harbour-q03",
+    "neon-harbour-s56",
+    "neon-harbour-s58",
+    "neon-harbour-s67",
+    "neon-harbour-s68",
+    "neon-harbour-s82"
+   ]
+  },
+  {
+   "id": "neon-harbour-s80",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9836.0,
+     5188.0
+    ],
+    [
+     9812.0,
+     5188.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "neon-harbour-s56",
+    "neon-harbour-s62"
+   ]
+  },
+  {
+   "id": "neon-harbour-s81",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9836.0,
+     5332.0
+    ],
+    [
+     9812.0,
+     5332.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "neon-harbour-s56",
+    "neon-harbour-s64"
+   ]
+  },
+  {
+   "id": "neon-harbour-s82",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     9884.0,
+     5484.0
+    ],
+    [
+     9884.0,
+     5532.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "neon-harbour-s66",
+    "neon-harbour-s79"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "neon-harbour-q01",
+   "name": "the sea-front gardens",
+   "type": "green",
+   "cells": [
+    1488,
+    691,
+    28,
+    10
+   ]
+  },
+  {
+   "id": "neon-harbour-q02",
+   "name": "Terminus Square",
+   "type": "square",
+   "cells": [
+    1452,
+    564,
+    12,
+    10
+   ]
+  },
+  {
+   "id": "neon-harbour-q03",
+   "name": "the belvedere gardens",
+   "type": "green",
+   "cells": [
+    1252,
+    710,
+    24,
+    10
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "the old waterfront",
+   "centre_px": [
+    10912,
+    4464
+   ],
+   "declared": "street-facing homes and trades with shared courts and useful working edges",
+   "town": "Neon Harbour: the old waterfront",
+   "id": "neon-harbour-d-the-old-waterfront",
+   "buildings": [
+    "neon-harbour-b001",
+    "neon-harbour-b002",
+    "neon-harbour-b003",
+    "neon-harbour-b004",
+    "neon-harbour-b005",
+    "neon-harbour-b006",
+    "neon-harbour-b007",
+    "neon-harbour-b008",
+    "neon-harbour-b009",
+    "neon-harbour-b010",
+    "neon-harbour-b011",
+    "neon-harbour-b012",
+    "neon-harbour-b013",
+    "neon-harbour-b014",
+    "neon-harbour-b015",
+    "neon-harbour-b016",
+    "neon-harbour-b017",
+    "neon-harbour-b018",
+    "neon-harbour-b019",
+    "neon-harbour-b020"
+   ],
+   "mix": {
+    "townhouse": 20
+   },
+   "function": "homes"
+  },
+  {
+   "name": "the Lanes",
+   "centre_px": [
+    11488,
+    4544
+   ],
+   "declared": "mixed homes, corner shops and shared courts",
+   "town": "Neon Harbour: the Lanes and the East Shore",
+   "id": "neon-harbour-d-the-lanes",
+   "buildings": [
+    "neon-harbour-b027",
+    "neon-harbour-b028",
+    "neon-harbour-b029",
+    "neon-harbour-b030",
+    "neon-harbour-b031",
+    "neon-harbour-b032",
+    "neon-harbour-b033",
+    "neon-harbour-b034",
+    "neon-harbour-b035",
+    "neon-harbour-b036"
+   ],
+   "mix": {
+    "tenement": 10
+   },
+   "function": "homes"
+  },
+  {
+   "name": "the East Shore",
+   "centre_px": [
+    12032,
+    5272
+   ],
+   "declared": "sea-facing terraces and garden squares",
+   "town": "Neon Harbour: the Lanes and the East Shore",
+   "id": "neon-harbour-d-the-east-shore",
+   "buildings": [
+    "neon-harbour-b037",
+    "neon-harbour-b038",
+    "neon-harbour-b039",
+    "neon-harbour-b040",
+    "neon-harbour-b041",
+    "neon-harbour-b042",
+    "neon-harbour-b043",
+    "neon-harbour-b044",
+    "neon-harbour-b045"
+   ],
+   "mix": {
+    "townhouse": 7,
+    "tenement": 2
+   },
+   "function": "homes"
+  },
+  {
+   "name": "the docks",
+   "centre_px": [
+    11408,
+    5136
+   ],
+   "declared": "street-facing homes and trades with shared courts and useful working edges",
+   "town": "Neon Harbour: the docks",
+   "id": "neon-harbour-d-the-docks",
+   "buildings": [
+    "neon-harbour-b046",
+    "neon-harbour-b047",
+    "neon-harbour-b048",
+    "neon-harbour-b049",
+    "neon-harbour-b050"
+   ],
+   "mix": {
+    "warehouse": 4,
+    "workshop": 1
+   },
+   "function": "docks and transport"
+  },
+  {
+   "name": "the Company district",
+   "centre_px": [
+    12000,
+    4608
+   ],
+   "declared": "street-facing homes and trades with shared courts and useful working edges",
+   "town": "Neon Harbour: the Company district",
+   "id": "neon-harbour-d-the-company-district",
+   "buildings": [
+    "neon-harbour-b054",
+    "neon-harbour-b055",
+    "neon-harbour-b056",
+    "neon-harbour-b057",
+    "neon-harbour-b058",
+    "neon-harbour-b059",
+    "neon-harbour-b060",
+    "neon-harbour-b061"
+   ],
+   "mix": {
+    "office": 7,
+    "tower": 1
+   },
+   "function": "offices and trade"
+  },
+  {
+   "name": "the Heights and the Skyport",
+   "centre_px": [
+    10080,
+    5232
+   ],
+   "declared": "street-facing homes and trades with shared courts and useful working edges",
+   "town": "Neon Harbour: the Heights and the Skyport",
+   "id": "neon-harbour-d-the-heights-and-the-skyport",
+   "buildings": [
+    "neon-harbour-b064",
+    "neon-harbour-b065",
+    "neon-harbour-b066",
+    "neon-harbour-b067",
+    "neon-harbour-b068",
+    "neon-harbour-b069",
+    "neon-harbour-b070",
+    "neon-harbour-b071",
+    "neon-harbour-b072",
+    "neon-harbour-b073",
+    "neon-harbour-b074",
+    "neon-harbour-b075",
+    "neon-harbour-b076",
+    "neon-harbour-b077",
+    "neon-harbour-b078",
+    "neon-harbour-b079",
+    "neon-harbour-b080",
+    "neon-harbour-b081"
+   ],
+   "mix": {
+    "station": 1,
+    "townhouse": 17
+   },
+   "function": "homes"
+  },
+  {
+   "id": "neon-harbour-d-the-repair-and-cargo-yard",
+   "name": "the repair and cargo yard",
+   "function": "docks and works yards",
+   "declared": "turning room, net repairs and cargo handling beside the slip",
+   "box_px": [
+    11248,
+    5504,
+    11584,
+    5600
+   ],
+   "buildings": [],
+   "town": "Neon Harbour: the docks"
+  },
+  {
+   "id": "neon-harbour-d-the-southern-working-quay",
+   "name": "the southern working quay",
+   "function": "docks and works yards",
+   "declared": "boat storage and the slip approach at the city's water edge",
+   "box_px": [
+    11280,
+    5664,
+    11648,
+    5744
+   ],
+   "buildings": [],
+   "town": "Neon Harbour: the docks"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "Bridgefoot",
+   "xy_px": [
+    10912,
+    4464
+   ]
+  },
+  {
+   "name": "the district court",
+   "xy_px": [
+    11632,
+    4752
+   ]
+  },
+  {
+   "name": "the district court",
+   "xy_px": [
+    11408,
+    5136
+   ]
+  },
+  {
+   "name": "Terminus Square",
+   "xy_px": [
+    12000,
+    4608
+   ]
+  },
+  {
+   "name": "the district court",
+   "xy_px": [
+    10080,
+    5232
+   ]
+  }
+ ],
+ "size_table_px": {
+  "aptrow": [
+   [
+    96,
+    144
+   ],
+   [
+    32,
+    40
+   ]
+  ],
+  "bigtower": [
+   [
+    96,
+    128
+   ],
+   [
+    96,
+    128
+   ]
+  ],
+  "longwarehouse": [
+   [
+    176,
+    224
+   ],
+   [
+    64,
+    88
+   ]
+  ],
+  "row_house": [
+   [
+    24,
+    192
+   ],
+   [
+    24,
+    56
+   ]
+  ],
+  "row_tenement": [
+   [
+    24,
+    192
+   ],
+   [
+    24,
+    56
+   ]
+  ],
+  "skyport": [
+   [
+    176,
+    224
+   ],
+   [
+    88,
+    112
+   ]
+  ],
+  "slab": [
+   [
+    144,
+    208
+   ],
+   [
+    88,
+    120
+   ]
+  ],
+  "terrace": [
+   [
+    96,
+    160
+   ],
+   [
+    32,
+    40
+   ]
+  ],
+  "warehouse": [
+   [
+    112,
+    160
+   ],
+   [
+    64,
+    88
+   ]
+  ],
+  "workshop": [
+   [
+    88,
+    120
+   ],
+   [
+    56,
+    72
+   ]
+  ]
+ },
+ "fronts": 107,
+ "landmarks": [
+  {
+   "building": "neon-harbour-b046",
+   "form": "longwarehouse",
+   "reason": "high ground: above the town, seen from its streets"
+  },
+  {
+   "building": "neon-harbour-b047",
+   "form": "longwarehouse",
+   "reason": "on the axis of neon-harbour-s40: closing the view along it"
+  },
+  {
+   "building": "neon-harbour-b048",
+   "form": "longwarehouse",
+   "reason": "on the axis of neon-harbour-s42: closing the view along it"
+  },
+  {
+   "building": "neon-harbour-b050",
+   "form": "warehouse",
+   "reason": "the water's edge: seen from the water and the quays"
+  },
+  {
+   "building": "neon-harbour-b055",
+   "form": "bigtower",
+   "reason": "high ground: above the town, seen from its streets"
+  },
+  {
+   "building": "neon-harbour-b064",
+   "form": "skyport",
+   "reason": "high ground: above the town, seen from its streets"
+  }
+ ],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "neon-harbour-b001",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1322,
+    530,
+    11,
+    5
+   ],
+   "rect_px": [
+    10576,
+    4240,
+    88,
+    40
+   ],
+   "faces": "neon-harbour-s07",
+   "door_cells": [
+    1327,
+    535
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a docker's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 3,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b002",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1334,
+    530,
+    14,
+    4
+   ],
+   "rect_px": [
+    10672,
+    4240,
+    112,
+    32
+   ],
+   "faces": "neon-harbour-s07",
+   "door_cells": [
+    1341,
+    534
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a clerk's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 3,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 8,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b003",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1322,
+    538,
+    11,
+    4
+   ],
+   "rect_px": [
+    10576,
+    4304,
+    88,
+    32
+   ],
+   "faces": "neon-harbour-s07",
+   "door_cells": [
+    1327,
+    537
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a sailor's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 3,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 2,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b004",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1334,
+    538,
+    13,
+    4
+   ],
+   "rect_px": [
+    10672,
+    4304,
+    104,
+    32
+   ],
+   "faces": "neon-harbour-s07",
+   "door_cells": [
+    1340,
+    537
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a shopkeeper's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 3,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b005",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1322,
+    556,
+    10,
+    5
+   ],
+   "rect_px": [
+    10576,
+    4448,
+    80,
+    40
+   ],
+   "faces": "neon-harbour-s11",
+   "door_cells": [
+    1327,
+    555
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a tram driver's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 2,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b006",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1333,
+    556,
+    3,
+    4
+   ],
+   "rect_px": [
+    10664,
+    4448,
+    24,
+    32
+   ],
+   "faces": "neon-harbour-s11",
+   "door_cells": [
+    1334,
+    555
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a neon fitter's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b007",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1337,
+    556,
+    11,
+    5
+   ],
+   "rect_px": [
+    10696,
+    4448,
+    88,
+    40
+   ],
+   "faces": "neon-harbour-s11",
+   "door_cells": [
+    1342,
+    555
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a airship crew's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b008",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1349,
+    556,
+    4,
+    3
+   ],
+   "rect_px": [
+    10792,
+    4448,
+    32,
+    24
+   ],
+   "faces": "neon-harbour-s11",
+   "door_cells": [
+    1351,
+    555
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a teacher's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 3,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b009",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1322,
+    564,
+    5,
+    5
+   ],
+   "rect_px": [
+    10576,
+    4512,
+    40,
+    40
+   ],
+   "faces": "neon-harbour-s14",
+   "door_cells": [
+    1324,
+    569
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a docker's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b010",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1378,
+    530,
+    13,
+    5
+   ],
+   "rect_px": [
+    11024,
+    4240,
+    104,
+    40
+   ],
+   "faces": "neon-harbour-s16",
+   "door_cells": [
+    1384,
+    535
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a clerk's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 8,
+     "storeys": 2,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b011",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1392,
+    530,
+    5,
+    5
+   ],
+   "rect_px": [
+    11136,
+    4240,
+    40,
+    40
+   ],
+   "faces": "neon-harbour-s17",
+   "door_cells": [
+    1394,
+    535
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a sailor's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b012",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1385,
+    548,
+    13,
+    5
+   ],
+   "rect_px": [
+    11080,
+    4384,
+    104,
+    40
+   ],
+   "faces": "neon-harbour-s18",
+   "door_cells": [
+    1391,
+    553
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a shopkeeper's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 7,
+     "storeys": 1,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 3,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b013",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1369,
+    576,
+    13,
+    4
+   ],
+   "rect_px": [
+    10952,
+    4608,
+    104,
+    32
+   ],
+   "faces": "neon-harbour-s06",
+   "door_cells": [
+    1375,
+    580
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a tram driver's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b014",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1401,
+    576,
+    6,
+    4
+   ],
+   "rect_px": [
+    11208,
+    4608,
+    48,
+    32
+   ],
+   "faces": "neon-harbour-s06",
+   "door_cells": [
+    1404,
+    580
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a neon fitter's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b015",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1374,
+    584,
+    10,
+    6
+   ],
+   "rect_px": [
+    10992,
+    4672,
+    80,
+    48
+   ],
+   "faces": "neon-harbour-s06",
+   "door_cells": [
+    1379,
+    583
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a airship crew's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 7,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b016",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1385,
+    584,
+    6,
+    5
+   ],
+   "rect_px": [
+    11080,
+    4672,
+    48,
+    40
+   ],
+   "faces": "neon-harbour-s06",
+   "door_cells": [
+    1388,
+    583
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a teacher's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b017",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1402,
+    538,
+    5,
+    9
+   ],
+   "rect_px": [
+    11216,
+    4304,
+    40,
+    72
+   ],
+   "faces": "neon-harbour-s04",
+   "door_cells": [
+    1407,
+    542
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a docker's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 9,
+     "storeys": 2,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b018",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1402,
+    548,
+    5,
+    4
+   ],
+   "rect_px": [
+    11216,
+    4384,
+    40,
+    32
+   ],
+   "faces": "neon-harbour-s04",
+   "door_cells": [
+    1407,
+    550
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a clerk's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b019",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1403,
+    556,
+    4,
+    10
+   ],
+   "rect_px": [
+    11224,
+    4448,
+    32,
+    80
+   ],
+   "faces": "neon-harbour-s04",
+   "door_cells": [
+    1407,
+    561
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a sailor's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 2,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b020",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1404,
+    572,
+    3,
+    3
+   ],
+   "rect_px": [
+    11232,
+    4576,
+    24,
+    24
+   ],
+   "faces": "neon-harbour-s04",
+   "door_cells": [
+    1407,
+    573
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a shopkeeper's household",
+   "district": "neon-harbour-d-the-old-waterfront",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b027",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1412,
+    538,
+    14,
+    5
+   ],
+   "rect_px": [
+    11296,
+    4304,
+    112,
+    40
+   ],
+   "faces": "neon-harbour-s26",
+   "door_cells": [
+    1419,
+    543
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a tram driver's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 2,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b028",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1427,
+    538,
+    15,
+    5
+   ],
+   "rect_px": [
+    11416,
+    4304,
+    120,
+    40
+   ],
+   "faces": "neon-harbour-s26",
+   "door_cells": [
+    1434,
+    543
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a neon fitter's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 2,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 3,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b029",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1443,
+    538,
+    14,
+    4
+   ],
+   "rect_px": [
+    11544,
+    4304,
+    112,
+    32
+   ],
+   "faces": "neon-harbour-s26",
+   "door_cells": [
+    1450,
+    542
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a airship crew's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 3,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 7,
+     "storeys": 1,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b030",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1412,
+    556,
+    15,
+    5
+   ],
+   "rect_px": [
+    11296,
+    4448,
+    120,
+    40
+   ],
+   "faces": "neon-harbour-s27",
+   "door_cells": [
+    1419,
+    561
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a teacher's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 3,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 3,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b031",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1430,
+    556,
+    14,
+    4
+   ],
+   "rect_px": [
+    11440,
+    4448,
+    112,
+    32
+   ],
+   "faces": "neon-harbour-s28",
+   "door_cells": [
+    1429,
+    558
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a docker's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 3,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 8,
+     "storeys": 3,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b032",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1445,
+    556,
+    5,
+    4
+   ],
+   "rect_px": [
+    11560,
+    4448,
+    40,
+    32
+   ],
+   "faces": "neon-harbour-s27",
+   "door_cells": [
+    1447,
+    560
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a clerk's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b033",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1412,
+    574,
+    14,
+    4
+   ],
+   "rect_px": [
+    11296,
+    4592,
+    112,
+    32
+   ],
+   "faces": "neon-harbour-s29",
+   "door_cells": [
+    1419,
+    578
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a sailor's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 8,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b034",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1427,
+    574,
+    14,
+    5
+   ],
+   "rect_px": [
+    11416,
+    4592,
+    112,
+    40
+   ],
+   "faces": "neon-harbour-s29",
+   "door_cells": [
+    1434,
+    579
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a shopkeeper's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 3,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 4,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b035",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1412,
+    546,
+    12,
+    4
+   ],
+   "rect_px": [
+    11296,
+    4368,
+    96,
+    32
+   ],
+   "faces": "neon-harbour-s26",
+   "door_cells": [
+    1418,
+    545
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a tram driver's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 2,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b036",
+   "type": "tenement",
+   "form": "row_tenement",
+   "footprint_cells": [
+    1425,
+    546,
+    14,
+    5
+   ],
+   "rect_px": [
+    11400,
+    4368,
+    112,
+    40
+   ],
+   "faces": "neon-harbour-s26",
+   "door_cells": [
+    1432,
+    545
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a neon fitter's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-lanes",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 3,
+     "roof": "flat"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b037",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1476,
+    624,
+    19,
+    4
+   ],
+   "rect_px": [
+    11808,
+    4992,
+    152,
+    32
+   ],
+   "faces": "neon-harbour-s32",
+   "door_cells": [
+    1485,
+    628
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a airship crew's household",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b038",
+   "type": "tenement",
+   "form": "aptrow",
+   "footprint_cells": [
+    1496,
+    624,
+    13,
+    5
+   ],
+   "rect_px": [
+    11968,
+    4992,
+    104,
+    40
+   ],
+   "faces": "neon-harbour-s32",
+   "door_cells": [
+    1502,
+    629
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a teacher's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b039",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1510,
+    624,
+    15,
+    5
+   ],
+   "rect_px": [
+    12080,
+    4992,
+    120,
+    40
+   ],
+   "faces": "neon-harbour-s32",
+   "door_cells": [
+    1517,
+    629
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a docker's household",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b040",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1476,
+    642,
+    18,
+    5
+   ],
+   "rect_px": [
+    11808,
+    5136,
+    144,
+    40
+   ],
+   "faces": "neon-harbour-s33",
+   "door_cells": [
+    1485,
+    647
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a clerk's household",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b041",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1497,
+    642,
+    13,
+    4
+   ],
+   "rect_px": [
+    11976,
+    5136,
+    104,
+    32
+   ],
+   "faces": "neon-harbour-s34",
+   "door_cells": [
+    1496,
+    644
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a sailor's household",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b042",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1486,
+    660,
+    13,
+    5
+   ],
+   "rect_px": [
+    11888,
+    5280,
+    104,
+    40
+   ],
+   "faces": "neon-harbour-s35",
+   "door_cells": [
+    1492,
+    665
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a shopkeeper's household",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b043",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1500,
+    660,
+    16,
+    4
+   ],
+   "rect_px": [
+    12000,
+    5280,
+    128,
+    32
+   ],
+   "faces": "neon-harbour-s35",
+   "door_cells": [
+    1508,
+    664
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a tram driver's household",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b044",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1495,
+    678,
+    13,
+    5
+   ],
+   "rect_px": [
+    11960,
+    5424,
+    104,
+    40
+   ],
+   "faces": "neon-harbour-s36",
+   "door_cells": [
+    1501,
+    683
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a neon fitter's household",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b045",
+   "type": "tenement",
+   "form": "aptrow",
+   "footprint_cells": [
+    1511,
+    678,
+    13,
+    5
+   ],
+   "rect_px": [
+    12088,
+    5424,
+    104,
+    40
+   ],
+   "faces": "neon-harbour-s36",
+   "door_cells": [
+    1517,
+    683
+   ],
+   "purpose": "flats round a stair",
+   "occupants": "a airship crew's household (several, one to a floor)",
+   "district": "neon-harbour-d-the-east-shore",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b046",
+   "type": "warehouse",
+   "form": "longwarehouse",
+   "footprint_cells": [
+    1415,
+    594,
+    28,
+    10
+   ],
+   "rect_px": [
+    11320,
+    4752,
+    224,
+    80
+   ],
+   "faces": "neon-harbour-s39",
+   "door_cells": [
+    1429,
+    604
+   ],
+   "purpose": "a bonded warehouse",
+   "occupants": "porters by day, a night watch",
+   "district": "neon-harbour-d-the-docks",
+   "counted": true,
+   "landmark": true,
+   "counts_as": 0
+  },
+  {
+   "id": "neon-harbour-b047",
+   "type": "warehouse",
+   "form": "longwarehouse",
+   "footprint_cells": [
+    1415,
+    620,
+    28,
+    8
+   ],
+   "rect_px": [
+    11320,
+    4960,
+    224,
+    64
+   ],
+   "faces": "neon-harbour-s40",
+   "door_cells": [
+    1429,
+    628
+   ],
+   "purpose": "a cold store",
+   "occupants": "porters by day, a night watch",
+   "district": "neon-harbour-d-the-docks",
+   "counted": true,
+   "landmark": true,
+   "counts_as": 0
+  },
+  {
+   "id": "neon-harbour-b048",
+   "type": "warehouse",
+   "form": "longwarehouse",
+   "footprint_cells": [
+    1410,
+    671,
+    23,
+    9
+   ],
+   "rect_px": [
+    11280,
+    5368,
+    184,
+    72
+   ],
+   "faces": "neon-harbour-s42",
+   "door_cells": [
+    1421,
+    680
+   ],
+   "purpose": "a goods shed",
+   "occupants": "porters by day, a night watch",
+   "district": "neon-harbour-d-the-docks",
+   "counted": true,
+   "landmark": true,
+   "counts_as": 0
+  },
+  {
+   "id": "neon-harbour-b049",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    1436,
+    672,
+    15,
+    8
+   ],
+   "rect_px": [
+    11488,
+    5376,
+    120,
+    64
+   ],
+   "faces": "neon-harbour-s42",
+   "door_cells": [
+    1443,
+    680
+   ],
+   "purpose": "a boat engine shop",
+   "occupants": "the master and apprentices",
+   "district": "neon-harbour-d-the-docks",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b050",
+   "type": "warehouse",
+   "form": "warehouse",
+   "footprint_cells": [
+    1420,
+    691,
+    15,
+    11
+   ],
+   "rect_px": [
+    11360,
+    5528,
+    120,
+    88
+   ],
+   "faces": "neon-harbour-s43",
+   "door_cells": [
+    1429,
+    702
+   ],
+   "purpose": "a bonded warehouse",
+   "occupants": "porters by day, a night watch",
+   "district": "neon-harbour-d-the-docks",
+   "counted": true,
+   "landmark": true,
+   "counts_as": 0
+  },
+  {
+   "id": "neon-harbour-b054",
+   "type": "office",
+   "form": "slab",
+   "footprint_cells": [
+    1506,
+    536,
+    21,
+    11
+   ],
+   "rect_px": [
+    12048,
+    4288,
+    168,
+    88
+   ],
+   "faces": "neon-harbour-s50",
+   "door_cells": [
+    1516,
+    547
+   ],
+   "purpose": "a Company office",
+   "occupants": "clerks by day",
+   "district": "neon-harbour-d-the-company-district",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b055",
+   "type": "tower",
+   "form": "bigtower",
+   "footprint_cells": [
+    1530,
+    534,
+    14,
+    13
+   ],
+   "rect_px": [
+    12240,
+    4272,
+    112,
+    104
+   ],
+   "faces": "neon-harbour-s50",
+   "door_cells": [
+    1537,
+    547
+   ],
+   "purpose": "a tower",
+   "occupants": "offices and the Company",
+   "district": "neon-harbour-d-the-company-district",
+   "counted": true,
+   "landmark": true,
+   "counts_as": 0,
+   "company_foothold": "the Company's tower and its yard: the headquarters"
+  },
+  {
+   "id": "neon-harbour-b056",
+   "type": "office",
+   "form": "slab",
+   "footprint_cells": [
+    1513,
+    552,
+    21,
+    13
+   ],
+   "rect_px": [
+    12104,
+    4416,
+    168,
+    104
+   ],
+   "faces": "neon-harbour-s52",
+   "door_cells": [
+    1523,
+    565
+   ],
+   "purpose": "a shipping office",
+   "occupants": "clerks by day",
+   "district": "neon-harbour-d-the-company-district",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b057",
+   "type": "office",
+   "form": "slab",
+   "footprint_cells": [
+    1468,
+    576,
+    20,
+    14
+   ],
+   "rect_px": [
+    11744,
+    4608,
+    160,
+    112
+   ],
+   "faces": "neon-harbour-s53",
+   "door_cells": [
+    1478,
+    590
+   ],
+   "purpose": "a bank",
+   "occupants": "clerks by day",
+   "district": "neon-harbour-d-the-company-district",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b058",
+   "type": "office",
+   "form": "slab",
+   "footprint_cells": [
+    1502,
+    578,
+    19,
+    12
+   ],
+   "rect_px": [
+    12016,
+    4624,
+    152,
+    96
+   ],
+   "faces": "neon-harbour-s46",
+   "door_cells": [
+    1501,
+    584
+   ],
+   "purpose": "a trading house",
+   "occupants": "clerks by day",
+   "district": "neon-harbour-d-the-company-district",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b059",
+   "type": "office",
+   "form": "slab",
+   "footprint_cells": [
+    1468,
+    598,
+    23,
+    15
+   ],
+   "rect_px": [
+    11744,
+    4784,
+    184,
+    120
+   ],
+   "faces": "neon-harbour-s55",
+   "door_cells": [
+    1479,
+    613
+   ],
+   "purpose": "a Company office",
+   "occupants": "clerks by day",
+   "district": "neon-harbour-d-the-company-district",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b060",
+   "type": "office",
+   "form": "slab",
+   "footprint_cells": [
+    1502,
+    598,
+    18,
+    14
+   ],
+   "rect_px": [
+    12016,
+    4784,
+    144,
+    112
+   ],
+   "faces": "neon-harbour-s46",
+   "door_cells": [
+    1501,
+    605
+   ],
+   "purpose": "a shipping office",
+   "occupants": "clerks by day",
+   "district": "neon-harbour-d-the-company-district",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b061",
+   "type": "office",
+   "form": "slab",
+   "footprint_cells": [
+    1523,
+    602,
+    21,
+    11
+   ],
+   "rect_px": [
+    12184,
+    4816,
+    168,
+    88
+   ],
+   "faces": "neon-harbour-s55",
+   "door_cells": [
+    1533,
+    613
+   ],
+   "purpose": "a bank",
+   "occupants": "clerks by day",
+   "district": "neon-harbour-d-the-company-district",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b064",
+   "type": "station",
+   "form": "skyport",
+   "footprint_cells": [
+    1228,
+    592,
+    26,
+    12
+   ],
+   "rect_px": [
+    9824,
+    4736,
+    208,
+    96
+   ],
+   "faces": "neon-harbour-s59",
+   "door_cells": [
+    1241,
+    604
+   ],
+   "purpose": "the station",
+   "occupants": "the station staff",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "landmark": true,
+   "counts_as": 0
+  },
+  {
+   "id": "neon-harbour-b065",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1255,
+    600,
+    8,
+    5
+   ],
+   "rect_px": [
+    10040,
+    4800,
+    64,
+    40
+   ],
+   "faces": "neon-harbour-s59",
+   "door_cells": [
+    1259,
+    605
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a teacher's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b066",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1264,
+    602,
+    8,
+    3
+   ],
+   "rect_px": [
+    10112,
+    4816,
+    64,
+    24
+   ],
+   "faces": "neon-harbour-s59",
+   "door_cells": [
+    1268,
+    605
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a docker's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b067",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1228,
+    624,
+    10,
+    4
+   ],
+   "rect_px": [
+    9824,
+    4992,
+    80,
+    32
+   ],
+   "faces": "neon-harbour-s60",
+   "door_cells": [
+    1233,
+    628
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a clerk's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 3,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b068",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1262,
+    624,
+    8,
+    5
+   ],
+   "rect_px": [
+    10096,
+    4992,
+    64,
+    40
+   ],
+   "faces": "neon-harbour-s60",
+   "door_cells": [
+    1266,
+    629
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a sailor's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b069",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1271,
+    624,
+    7,
+    4
+   ],
+   "rect_px": [
+    10168,
+    4992,
+    56,
+    32
+   ],
+   "faces": "neon-harbour-s60",
+   "door_cells": [
+    1274,
+    628
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a shopkeeper's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 7,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b070",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1228,
+    644,
+    3,
+    3
+   ],
+   "rect_px": [
+    9824,
+    5152,
+    24,
+    24
+   ],
+   "faces": "neon-harbour-s62",
+   "door_cells": [
+    1229,
+    647
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a tram driver's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b071",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1232,
+    642,
+    4,
+    5
+   ],
+   "rect_px": [
+    9856,
+    5136,
+    32,
+    40
+   ],
+   "faces": "neon-harbour-s62",
+   "door_cells": [
+    1234,
+    647
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a neon fitter's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b072",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1239,
+    642,
+    5,
+    5
+   ],
+   "rect_px": [
+    9912,
+    5136,
+    40,
+    40
+   ],
+   "faces": "neon-harbour-s62",
+   "door_cells": [
+    1241,
+    647
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a airship crew's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 2,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b073",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1228,
+    660,
+    8,
+    5
+   ],
+   "rect_px": [
+    9824,
+    5280,
+    64,
+    40
+   ],
+   "faces": "neon-harbour-s64",
+   "door_cells": [
+    1232,
+    665
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a teacher's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 2,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b074",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1237,
+    660,
+    7,
+    5
+   ],
+   "rect_px": [
+    9896,
+    5280,
+    56,
+    40
+   ],
+   "faces": "neon-harbour-s64",
+   "door_cells": [
+    1240,
+    665
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a docker's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 7,
+     "storeys": 2,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b075",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1245,
+    660,
+    12,
+    4
+   ],
+   "rect_px": [
+    9960,
+    5280,
+    96,
+    32
+   ],
+   "faces": "neon-harbour-s64",
+   "door_cells": [
+    1251,
+    664
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a clerk's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 7,
+     "storeys": 2,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "tin"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b076",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1234,
+    678,
+    3,
+    4
+   ],
+   "rect_px": [
+    9872,
+    5424,
+    24,
+    32
+   ],
+   "faces": "neon-harbour-s66",
+   "door_cells": [
+    1235,
+    682
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a sailor's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b077",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1238,
+    678,
+    8,
+    4
+   ],
+   "rect_px": [
+    9904,
+    5424,
+    64,
+    32
+   ],
+   "faces": "neon-harbour-s66",
+   "door_cells": [
+    1242,
+    682
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a shopkeeper's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 2,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b078",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1247,
+    678,
+    8,
+    4
+   ],
+   "rect_px": [
+    9976,
+    5424,
+    64,
+    32
+   ],
+   "faces": "neon-harbour-s66",
+   "door_cells": [
+    1251,
+    682
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a tram driver's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b079",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1240,
+    696,
+    12,
+    4
+   ],
+   "rect_px": [
+    9920,
+    5568,
+    96,
+    32
+   ],
+   "faces": "neon-harbour-s79",
+   "door_cells": [
+    1252,
+    698
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a neon fitter's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 3,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b080",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1255,
+    696,
+    11,
+    5
+   ],
+   "rect_px": [
+    10040,
+    5568,
+    88,
+    40
+   ],
+   "faces": "neon-harbour-s67",
+   "door_cells": [
+    1260,
+    701
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a airship crew's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "tin"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 3,
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b081",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    1267,
+    696,
+    4,
+    4
+   ],
+   "rect_px": [
+    10136,
+    5568,
+    32,
+    32
+   ],
+   "faces": "neon-harbour-s67",
+   "door_cells": [
+    1269,
+    700
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a teacher's household",
+   "district": "neon-harbour-d-the-heights-and-the-skyport",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1,
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the repair and cargo yard",
+   "box": [
+    11248,
+    5504,
+    11584,
+    5600
+   ],
+   "why": "turning room, net repairs and cargo handling beside the slip"
+  },
+  {
+   "kind": "yard",
+   "name": "the southern working quay",
+   "box": [
+    11280,
+    5664,
+    11648,
+    5744
+   ],
+   "why": "boat storage and the slip approach at the city's water edge"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Lull Road",
+  "first_view": "off the Lull Road at Canalside: the canal basin, the funicular up to the Skyport, the airships over the Heights and the neon of the Company district across the ria",
+  "landmarks": [
+   {
+    "name": "the Skyport masts and airships",
+    "xy": [
+     10040,
+     4900
+    ]
+   },
+   {
+    "name": "the Company's tower",
+    "xy": [
+     11850,
+     4560
+    ]
+   },
+   {
+    "name": "Bridgefoot and the falls",
+    "xy": [
+     11135,
+     4462
+    ]
+   },
+   {
+    "name": "the cranes on the long quay",
+    "xy": [
+     11250,
+     5000
+    ]
+   },
+   {
+    "name": "the lido on the East Shore",
+    "xy": [
+     12100,
+     5150
+    ]
+   },
+   {
+    "name": "the maglev terminus",
+    "xy": [
+     11650,
+     4565
+    ]
+   },
+   {
+    "name": "the launch tower on the cape",
+    "xy": [
+     12125,
+     6425
+    ]
+   },
+   {
+    "name": "the Glintside mills",
+    "xy": [
+     11120,
+     4150
+    ]
+   },
+   {
+    "name": "Canalside's market gardens and the canal",
+    "xy": [
+     10000,
+     4560
+    ]
+   },
+   {
+    "name": "Halcyon Row and its canteen",
+    "xy": [
+     12020,
+     5560
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the funicular from the canal basin to the Skyport",
+    "xy": [
+     10074,
+     4935
+    ],
+    "opens": "when the funicular is repaired"
+   },
+   {
+    "what": "the skybridge from the Heights over the ria to the old waterfront",
+    "xy": [
+     10500,
+     4600
+    ],
+    "opens": "with the Skyport pass"
+   },
+   {
+    "what": "the maglev from Glintside to the terminus",
+    "xy": [
+     11400,
+     4300
+    ],
+    "opens": "with a Company ticket"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "Courtyard Square in the Lanes, between the old waterfront and the Company district",
+    "xy": [
+     11470,
+     4470
+    ]
+   },
+   {
+    "what": "the belvedere on the Heights, over the busy docks",
+    "xy": [
+     10200,
+     5420
+    ]
+   },
+   {
+    "what": "the allotments at Glintside",
+    "xy": [
+     11170,
+     4050
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    1193,
+    544,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   8.2,
+   8.4
+  ]
+ },
+ "ground": {
+  "old waterfront": "worn cobbles and stone quays",
+  "Company district": "wide composite slab paving in cell-aligned modules, light strips along the cell edges, flush tram and maglev tracks, planters",
+  "the Lanes": "narrow patched paving, cable runs, awnings and stalls",
+  "docks": "steel deck plates, crane rails, painted loading bays",
+  "Heights": "terraces, stairs and raised walks to the Skyport; the maglev on its viaduct",
+  "green": "only in planned pockets: the park, square trees, courtyard plants, roof gardens",
+  "edges": "mudflats and salt marsh at the delta, allotments and market gardens at Canalside, heath, scrub and dunes on the Cape Road; bare rock and concrete apron at the cape",
+  "materials_cells": {
+   "worn cobbles": 4034,
+   "composite slab": 4899,
+   "patched paving": 7772,
+   "steel deck plates": 6487,
+   "terrace stone": 6578,
+   "made land, paved": 1039,
+   "heath and scrub": 785,
+   "dunes": 68,
+   "bare rock": 828,
+   "concrete apron": 83,
+   "sand": 97,
+   "worn paving": 873,
+   "packed earth": 104
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   1209,
+   515,
+   358,
+   221
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "83g3~33g3~44g21~27g9#18.#44.#15.43~13.",
+   "84g3~29g5~44g19~33g6#17.#45.#15.41~15.",
+   "86g3~24g4~46g18~36g8#15.#45.#15.13~6.21~3.5g8.",
+   "7g~79g5~17g5~48g17~44g3#13.#46.#15.11~10.19~9g7.",
+   "7g~79g5~17g5~48g17~44g3#13.#46.#15.11~10.19~9g7.",
+   "5g10~76g3~12g5~49g16~46g6#11.#46.#15.8~16.12~15g5.",
+   "5g14~75g12~52g16~52g3#10.#46.#39.11~17g4.",
+   "7g16~85g4.g11.g14.17g.16~9.g5.41g2#8.#46.#39.8~6g4.13g.",
+   "13g14~78g37.11g2.14~22.7g4.31g6.#47.#38.6~5g10.11g",
+   "18g12~73g41.7g3.14~25.2g10.29g5.#47.#38.6~3g14.9g",
+   "4r19g12~67g43.5g4.12~41.24g6r2.#4.5g37.#37.7~3g16.2g6.",
+   "7r19g12~64g44.3g3.13~43.18g7r7g#7g38.#37.7~19.g7.",
+   "8r22g12~59g50.14~44.11g6r14g#6g39.#37.7~27.",
+   "8r22g12~59g50.14~45.10g6r14g#5g39.#38.7~27.",
+   "10r24g9~58g48.14~48.4g7r19g#3g20.2g17.#39.5~29.",
+   "2g11r24g9~54g47.9~4b2~47.8rg15.g8.#22.4g14.#40.3~30.~",
+   "5g10r25g8~52g47.9~4b44.7r32.2#21.5g10.2#74.~",
+   "7g9r27g6~19g7r25g46.10~2b87.14#7.6g7.2#75.2~",
+   "8g8r29g4~19g7r25g46.10~2b35.2r71.8g4.#15~62.2~",
+   "10g8r28g5~17g7r25g44.12~b31.2r2.r73.8g.3#18~59.3~",
+   "12g7r29g5~17g5r25g44.11b27.5r79.7g2#22~58.3~",
+   "13g8r27g5~17g5r25g46.8b23.4r85.3g4#2g22~57.4~",
+   "13g8r27g5~17g5r25g46.8b8.6g9.4r85.9g22~57.4~",
+   "13g8r28g5~16g5r25g46.8~8.9g95.9g22~56.5~",
+   "7~8g8r26g5~16g5r25g49.2~11.3g4.2r95.9g21~57.5~",
+   "7~9g8r25g5~16g5r25g62.r3.6g94.9g21~56.6~",
+   "10~4g12.23g5~14g7r25g60.2r104.8g22~55.7~",
+   "12~2g12.r22g5~14g7r25g54.r111.8g22~55.7~",
+   "13~g12.3r3g8.9g5~14g5r27g47.2r117.6g24~55.7~",
+   "12~2g12.4r2g8.9g5~13g6r27g33.14r120.26~57.8~",
+   "10~4g12.6r8.9g5~11g8r27g25.30r112.23~60.8~",
+   "10~4g12.6r8.9g5~11g8r27g25.30r112.23~60.8~",
+   "8~6g12.6r8.9g5~11g8r27g21.36r109.20~63.9~",
+   "7~14g16r11g6~2g11.5r28g13.49r104.19~63.10~",
+   "5~10g25r8g5~3g11.3r16g79r101.17~64.11~",
+   "4~6g33r3g7~3g11.3r11g87r95.19~64.12~",
+   "5g40r3b3~5g11.r10g95r86.21~65.13~",
+   "2g43r4b2r5g11.9g62r6.32r85.14~70.13~",
+   "24r6g13r6b5r2g11.6g43r41.24r83.3~77.14~",
+   "18r19g5r6b16r6g21r9g3.5r52.22r84.g77.14~",
+   "18r7.12g5r6b16r6g21rg11.5r52.22r84.g77.14~",
+   "15r3g7.13g2~6b40r6g73.19r83.2g74.15~",
+   "10r8g7.12g6~2b38r9g76.17r83.g74.15~",
+   "5r11.2g7.10g7~4g33r3g8.2g77.16r84.2g72.15~",
+   "5g11.2g7.7g8~9g27r6g8.2g77.16r157.16~",
+   "5g11.2g7.5g8~3g9.4g19r9g8.2g77.16r157.16~",
+   "5g11.13g6~6g9.2g13.3g11.3g8.2g27.9~41.16r156.17~",
+   "5g11.11g7~7g9.2g13.3g11.3g8.12g17.9~24.10~9.14r156.17~",
+   "5g11.8g8~9g9.2g13.3g11.23g17.9~24.10~9.16r154.17~",
+   "5g11.8g8~9g9.2g13.3g11.23g17.9~24.10~9.16r153.18~",
+   "5g11.7g7~11g9.2g13.3g11.23g17.9~24.10~9.16r153.18~",
+   "21g6~14g9.2g13.3g11.21g19.9~11.7~6.10~9.16r153.18~",
+   "16g10~26g13.3g11.21g35.16~.10~9.16r82.9~62.18~",
+   "5~7g11~77g33.19~19.16r80.11~62.18~",
+   "21~79g30.25~18.15r81.9~61.19~",
+   "18~82g28.27~18.15r152.18~",
+   "5g8~87g27.30~16.15r152.18~",
+   "5~95g27.31~15.15r153.17~",
+   "5~95g27.31~15.15r153.17~",
+   "10~90g25.33~15.15r153.17~",
+   "15~85g25.33~16.14r153.17~",
+   "21~79g25.35~14.14r153.17~",
+   "5g21~74g24.36~16.14r152.16~",
+   "12g18~70g24.36~17.15r149.17~",
+   "16g19~65g24.36~22.10r149.17~",
+   "23g17~60g24.36~22.11r147.18~",
+   "27g16~44g2.2g6.3g24.38~22.11r145.18~",
+   "27g16~44g2.2g6.3g24.38~22.11r144.19~",
+   "30g18~28g7.3g36.40~23.11r143.19~",
+   "22g13.18~19g50.40~25.11r140.20~",
+   "16g24.16~11g3.2g22.g27.41~24.11r139.21~",
+   "14g31.15~5g7.g16.2g31.41~25.11r137.22~",
+   "13g35.16~12.2g11.11~21.42~27.11r135.22~",
+   "13g39.g14~.2g9.29~13.42~27.11r135.22~",
+   "12g41.3g16~4.38~7.44~27.9r135.22~",
+   "12g42.5g.54~7.44~28.10r134.21~",
+   "12g43.4g.54~7.44~28.10r134.21~",
+   "11g45.3g5.53~2g46~28.10r134.21~",
+   "11g46.2g5.g2.99~29.9r133.21~",
+   "10g54.g3.98~29.9r133.21~",
+   "9g58.g2.96~30.8r133.21~",
+   "2r6g62.96~30.10r131.21~",
+   "4r4g62.98~28.10r131.21~",
+   "5r2g65.96~28.10r132.20~",
+   "7r65.96~30.8r132.20~",
+   "7r65.96~30.8r131.21~",
+   "7r7.3r55.94~32.8r131.21~",
+   "8r6.3r55.94~32.8r131.21~",
+   "2g11r.3r56.93~32.8r131.21~",
+   "4g13r58.93~30.8r131.21~",
+   "5g13r63.87~30.8r131.21~",
+   "6g.12r62.85~32.8r131.21~",
+   "6g.16r60.83~30.10r131.21~",
+   "6g2.16r62.12~2.66~30.10r133.19~",
+   "6g2.16r62.12~2.66~30.10r133.19~",
+   "6g4.17r64.~14.59~31.10r133.19~",
+   "6g7.17r60.r.r13.59~31.8r135.19~",
+   "6g8.18r58.3r13.59~31.8r135.19~",
+   "6g8.3r.17r55.3r13.60~30.8r135.19~",
+   "6g8.3r4.16r53.3r13.62~28.8r135.19~",
+   "6g8.3r6.15r52.3r12.63~28.8r135.19~",
+   "6g8.3r9.14r50.3r12.61~30.8r135.19~",
+   "6g8.3r10.15r48.3r10.63~30.8r135.19~",
+   "6g8.3r10.15r48.3r10.63~30.8r136.18~",
+   "6g8.3r13.13r47.3r9.64~30.8r136.18~",
+   "6g8.3r15.13r45.3r9.69~24.11r134.18~",
+   "6g8.3r17.12r44.3r7.71~24.11r134.18~",
+   "6g8.3r18.13r42.3r7.73~22.11r134.18~",
+   "6g8.3r20.11r42.3r5.75~22.11r134.18~",
+   "6g8.3r21.11r41.3r5.76~21.11r135.17~",
+   "6g8.3r23.11r39.3r4.77~21.11r135.17~",
+   "6g8.3r25.11r37.3r4.77~21.11r136.16~",
+   "6g8.3r25.11r37.3r4.77~21.11r137.15~",
+   "6g8.3r25.11r37.3r4.84~14.11r137.15~",
+   "6g8.3r26.11r36.3r4.84~14.11r136.16~",
+   "6g8.3r28.11r34.3r2.86~14.11r136.16~",
+   "6g8.3r29.11r33.3r2.86~14.11r20.5r111.16~",
+   "6g8.3r29.13r31.3r.39~8.40~14.11r19.8r110.15~",
+   "6g8.3r31.16r26.2r2.31~21.35~14.11r17.11r109.15~",
+   "6g8.3r32.16r25.r.32~23.34~14.11r17.11r102.g6.15~",
+   "6g8.3r34.17r22.r.29~b25r8b26~14.12r16.13r100.g6.15~",
+   "6g8.3r34.17r22.r.29~b25r8b26~14.12r16.13r100.g6.15~",
+   "6g8.3r36.19r18.r.27~2b6r6.14r10b24~14.12r16.14r99.g7.14~",
+   "6g8.3r39.36r27b8r6.16r33b25r16.14r99.2g6.14~",
+   "6g8.3r42.33r27b8r6.18r31b24r19.14r97.2g6.14~",
+   "6g8.3r45.30r27b8r6.18r33b22r20.13r97.2g5.15~",
+   "6g8.3r48.27r27b8r6.18r33b23r19.15r95.2g5.15~",
+   "6g8.3r51.24r29b6r6.16r35b23r21.13r95.2g5.15~",
+   "6g8.3r72.2g28~2b25r11b28~13.9r22.13r94.2g5.15~",
+   "6g8.3r69.35~b22r11b30~14.8r22.13r94.2g6.14~",
+   "6g8.3r69.35~b22r11b30~14.8r22.13r94.2g6.14~",
+   "6g8.3r59.49~18.42~14.8r24.13r92.3g5.14~",
+   "6g8.3r59.52~5.54~12.10r22.14r91.3g5.14~",
+   "6g8.3r58.112~12.10r24.12r91.2g6.14~",
+   "6g8.3r58.112~14.8r24.15r88.g7.14~",
+   "6g8.3r56.115~13.8r25.16r86.g6.15~",
+   "6g8.3r53.118~13.8r27.17r83.g6.15~",
+   "6g8.3r50.123~11.8r28.18r81.g6.15~",
+   "6g8.3r50.123~11.8r30.19r78.g6.15~",
+   "6g8.3r50.123~11.8r30.19r78.g6.15~",
+   "6g8.3r50.125~9.8r32.20r75.g6.15~",
+   "6g8.3r48.127~7.10r33.21r73.g6.15~",
+   "6g8.3r48.127~7.10r35.20r72.g5.16~",
+   "6g8.3r48.127~7.8r40.22r67.g5.16~",
+   "6g8.3r50.125~7.8r41.23r65.2g4.16~",
+   "6g8.3r50.125~6.9r45.20r64.2g4.16~",
+   "6g8.3r51.122~8.9r48.19r62.g5.16~",
+   "6g8.3r50.121~8.10r50.19r61.g5.16~",
+   "6g8.3r50.121~8.10r50.19r61.g4.17~",
+   "6g8.3r50.121~8.10r52.19r59.g5.16~",
+   "6g8.3r51.122~6.10r52.19r59.g5.16~",
+   "6g8.3r51.122~5.9r55.19r58.2g4.16~",
+   "6g8.3r51.122~5.9r57.19r56.2g4.16~",
+   "6g8.3r51.122~3.11r57.19r56.g5.16~",
+   "6g8.3r51.120~5.10r60.19r60.16~",
+   "6g8.3r53.118~5.10r61.18r59.17~",
+   "6g8.3r53.118~4.9r63.19r58.17~",
+   "6g8.3r53.118~4.9r63.19r58.17~",
+   "6g8.3r55.116~4.9r65.17r58.17~",
+   "6g8.3r55.116~4.9r65.19r56.17~",
+   "6g8.3r55.115~5.7r68.18r55.18~",
+   "6g8.3r55.120~7r68.18r55.18~",
+   "6g8.3r55.120~7r70.17r54.18~",
+   "6g8.3r55.120~7r70.17r53.19~",
+   "6g8.3r56.119~9r70.15r53.19~",
+   "6g8.3r56.119~9r70.15r52.20~",
+   "6g8.3r56.119~9r70.15r52.20~",
+   "6g8.3r56.117~3.8r70.15r52.20~",
+   "6g8.3r58.115~2.11r69.14r52.20~",
+   "6g8.3r56.115~4b12r70.14r50.20~",
+   "6g8.3r56.112~7b14r72.10r49.21~",
+   "6g8.3r56.109~10b14r72.12r47.21~",
+   "6g8.3r56.106~13b14r74.11r46.21~",
+   "6g8.3r56.104~13b16r76.11r44.21~",
+   "6g8.3r56.101~19b13r76.11r44.21~",
+   "6g8.3r56.101~19b13r76.11r44.21~",
+   "6g8.3r56.100~22b9r75.4g11r13g30.21~",
+   "6g8.3r56.98~25b7r76.6g11r11g30.21~",
+   "2g3.2g7.3r56.96~30b80.7g11r10g30.21~",
+   "73.51~3.41~28b5~78.7g11r10g28.23~",
+   "73.41~19.32~28b10~76.9g11r8g28.23~",
+   "75.38~25.22~30b14~75.11g11r6g28.23~",
+   "75.36~28.18~30b19~73.12g10r6g28.23~",
+   "2g73.33~33.8~35b22~73.12g11r5g28.23~",
+   "2g73.33~33.8~35b22~73.12g11r5g21.2g6.22~",
+   "4g71.31~11.11g11.5r37b26~72.14g9r5g7.4g2.10g6.22~",
+   "5g70.31~10.14g16r23b42~71.4g7.9r12.4g3.9g5.23~",
+   "5g65.36~10.14g16r19b47~70.4g8.10r10.4g3.9g5.23~",
+   "7g63.38~8.14g16r14b54~56.g11.4g8.10r10.4g5.7g6.22~",
+   "7g63.38~9.13g14r10b61~54.3g10.4g10.8r10.4g5.7g6.22~",
+   "7g63.39~12.7g2.14r74~50.5g9.4g10.9r9.4g5.8g5.22~",
+   "10g58.40~22.2r11.77~47.7g8.4g10.9r9.4g6.7g5#22~",
+   "12g56.43~30.81~44.10g6.4g10.9r9.4g8.5g5#22~",
+   "12g56.43~30.81~43.14g3.4g10.9r9.4g8.5g6#21~",
+   "12g55.46~26.84~41.22g7.4g8r2g7.4g8.5g6#21~",
+   "12g34.20g.46~25.87~39.22g7.4g8r10g11.6g5#21~",
+   "12g31.22g2.52~16.90~38.23g7.4g10r9g11.5g6#20~",
+   "12g31.21g.59~3.101~33.25g7.4g10r9g11.5g5#21~",
+   "12g31.19g2.165~29.28g7.6g8r9g11.5g5#21~",
+   "10g33.18g.167~g27.42g8r11g11.3g5#21~",
+   "7g36.17g2.167~g26.43g8r11g13.g5#21~",
+   "5g38.16g.169~g25.44g8r11g13.g5#21~",
+   "5g38.16g.169~g23.46g8r11g13.g5#21~",
+   "2g41.16g.169~5g16.48g7r13g13.g5#21~",
+   "2g41.16g.169~7g16.46g6r16g12.5#21~",
+   "42.~16.170~8g15.45g7r16g12.5#21~",
+   "40.5~14.170~10g14.44g6r17g12.5#21~",
+   "40.5~12.172~10g16.41g7r18g11.5#21~",
+   "38.7~11.173~12g15.40g6r19g11.6#20~",
+   "38.8~8.175~12g17.37g7r19g12.5#20~",
+   "37.9~7.177~12g19.34g6r22g9.6#20~",
+   "37.9~7.178~11g19.34g6r22g9.5#21~",
+   "35.11~5.180~13g19.22g8.g6r23g9.5#21~",
+   "35.13~3.181~13g19.21g8.g6r24g8.5#21~",
+   "34.200~11g19.21g8.g6rg8.15g8.6#20~",
+   "32.202~11g21.19g8.g5r2g8.15g9.5#20~",
+   "30.205~6g.2g23.18g8.6r2g8.17g7.5#20~",
+   "19.4~4.209~5g2.g5.~17.18g8.6r2g8.17g7.5#20~",
+   "18.5~3.210~5g8.3~15.26g6r2g8.17g7.5#20~",
+   "15.8~.214~3g9.3~16.24g5r3g8.18g6.5#20~",
+   "15.8~.215~2g9.4~15.24g5r29g6.5#20~"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "deferred_buildings": [
+  {
+   "id": "neon-harbour-b021",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the old waterfront",
+   "reason": "neon-harbour-b021: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "row_house",
+    "size_px": [
+     32,
+     24
+    ],
+    "bays": [
+     {
+      "w_cells": 4,
+      "storeys": 2,
+      "roof": "tile"
+     }
+    ]
+   },
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b022",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the old waterfront",
+   "reason": "neon-harbour-b022: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "row_house",
+    "size_px": [
+     48,
+     40
+    ],
+    "bays": [
+     {
+      "w_cells": 6,
+      "storeys": 3,
+      "roof": "tin"
+     }
+    ]
+   },
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b023",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the old waterfront",
+   "reason": "neon-harbour-b023: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "row_house",
+    "size_px": [
+     48,
+     32
+    ],
+    "bays": [
+     {
+      "w_cells": 6,
+      "storeys": 2,
+      "roof": "flat"
+     }
+    ]
+   },
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b024",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the old waterfront",
+   "reason": "neon-harbour-b024: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "row_house",
+    "size_px": [
+     56,
+     32
+    ],
+    "bays": [
+     {
+      "w_cells": 7,
+      "storeys": 1,
+      "roof": "flat"
+     }
+    ]
+   },
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b025",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the old waterfront",
+   "reason": "neon-harbour-b025: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "row_house",
+    "size_px": [
+     64,
+     32
+    ],
+    "bays": [
+     {
+      "w_cells": 8,
+      "storeys": 2,
+      "roof": "flat"
+     }
+    ]
+   },
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b026",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the old waterfront",
+   "reason": "neon-harbour-b026: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "row_house",
+    "size_px": [
+     32,
+     32
+    ],
+    "bays": [
+     {
+      "w_cells": 4,
+      "storeys": 1,
+      "roof": "tile"
+     }
+    ]
+   },
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b051",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the docks",
+   "reason": "neon-harbour-b051: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "longwarehouse",
+    "size_px": [
+     192,
+     80
+    ],
+    "bays": null
+   },
+   "counts_as": 0
+  },
+  {
+   "id": "neon-harbour-b052",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the docks",
+   "reason": "neon-harbour-b052: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "workshop",
+    "size_px": [
+     104,
+     64
+    ],
+    "bays": null
+   },
+   "counts_as": 1
+  },
+  {
+   "id": "neon-harbour-b053",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the docks",
+   "reason": "neon-harbour-b053: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "warehouse",
+    "size_px": [
+     128,
+     72
+    ],
+    "bays": null
+   },
+   "counts_as": 0
+  },
+  {
+   "id": "neon-harbour-b062",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the Company district",
+   "reason": "neon-harbour-b062: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "bigtower",
+    "size_px": [
+     104,
+     104
+    ],
+    "bays": null
+   },
+   "counts_as": 0
+  },
+  {
+   "id": "neon-harbour-b063",
+   "status": "deferred",
+   "kind": "fill row building",
+   "town": "Neon Harbour: the Company district",
+   "reason": "neon-harbour-b063: no position on its authored rows passes the terrain and occupancy fit",
+   "proposal": {
+    "form": "slab",
+    "size_px": [
+     176,
+     104
+    ],
+    "bays": null
+   },
+   "counts_as": 1
+  }
+ ],
+ "open_uses": [
+  {
+   "id": "neon-harbour-o01",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1411,
+    546,
+    52,
+    15
+   ],
+   "block_cells": 780
+  },
+  {
+   "id": "neon-harbour-o02",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1411,
+    564,
+    41,
+    2
+   ],
+   "block_cells": 82
+  },
+  {
+   "id": "neon-harbour-o03",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1411,
+    572,
+    52,
+    7
+   ],
+   "block_cells": 342
+  },
+  {
+   "id": "neon-harbour-o04",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1411,
+    582,
+    52,
+    22
+   ],
+   "block_cells": 989
+  },
+  {
+   "id": "neon-harbour-o05",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1459,
+    608,
+    4,
+    20
+   ],
+   "block_cells": 80
+  },
+  {
+   "id": "neon-harbour-o06",
+   "name": "a stacking yard",
+   "kind": "yard",
+   "cells": [
+    1459,
+    632,
+    4,
+    20
+   ],
+   "block_cells": 77
+  },
+  {
+   "id": "neon-harbour-o07",
+   "name": "a stacking yard",
+   "kind": "yard",
+   "cells": [
+    1459,
+    656,
+    4,
+    24
+   ],
+   "block_cells": 78
+  },
+  {
+   "id": "neon-harbour-o08",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1411,
+    546,
+    52,
+    15
+   ],
+   "block_cells": 780
+  },
+  {
+   "id": "neon-harbour-o09",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1411,
+    564,
+    41,
+    2
+   ],
+   "block_cells": 82
+  },
+  {
+   "id": "neon-harbour-o10",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1411,
+    572,
+    52,
+    7
+   ],
+   "block_cells": 342
+  },
+  {
+   "id": "neon-harbour-o11",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1411,
+    582,
+    52,
+    22
+   ],
+   "block_cells": 989
+  },
+  {
+   "id": "neon-harbour-o12",
+   "name": "a courtyard",
+   "kind": "yard",
+   "cells": [
+    1459,
+    608,
+    4,
+    20
+   ],
+   "block_cells": 80
+  },
+  {
+   "id": "neon-harbour-o13",
+   "name": "a stacking yard",
+   "kind": "yard",
+   "cells": [
+    1459,
+    632,
+    4,
+    20
+   ],
+   "block_cells": 77
+  },
+  {
+   "id": "neon-harbour-o14",
+   "name": "a stacking yard",
+   "kind": "yard",
+   "cells": [
+    1459,
+    656,
+    4,
+    24
+   ],
+   "block_cells": 78
+  }
+ ],
+ "theme": {
+  "tech": "bought shard light: the neon, the maglev and the airships. The old waterfront is the town that was there before the Company",
+  "waystone": {
+   "xy_px": [
+    11644,
+    4532
+   ],
+   "at": "on Terminus Square",
+   "table_name": "the market (Neon)",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "neon-harbour-s05",
+   "name": "the old quays (1)",
+   "from_px": [
+    10624,
+    4656
+   ],
+   "to_px": [
+    10552,
+    4656
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 21,
+   "bearing_deg": -159
+  },
+  "crater": {
+   "name": "the Company crater",
+   "xy_px": [
+    11780,
+    4159
+   ],
+   "distance_px": 1080,
+   "effect": "the Company crater lies fenced in the Company's yard: its shard light is pumped to the neon",
+   "road": "Lull Road",
+   "road_leaves_at_px": [
+    9706,
+    4444
+   ]
+  },
+  "moss": {
+   "where": "the market by Canalside",
+   "xy_px": [
+    10912,
+    4464
+   ]
+  },
+  "company": {
+   "foothold": "the Company's tower and its yard: the headquarters",
+   "building": "neon-harbour-b055",
+   "xy_px": [
+    12296,
+    4324
+   ]
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

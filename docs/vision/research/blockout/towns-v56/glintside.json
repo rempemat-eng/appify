@@ -1,0 +1,452 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "glintside",
+ "name": "Glintside",
+ "size": "hamlet",
+ "size_note": "hamlet",
+ "target": [
+  3,
+  6
+ ],
+ "buildings_counted": 1,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the prospective v56 continent (blockout-v56.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "homes and small trades on the city approach, with gardens beyond the last frontage",
+  "terrain": "dry ground between the route, its working gardens and the shore",
+  "fit": "",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   -1,
+   7
+  ],
+  "levelled_footprints": 2
+ },
+ "footprint_px": [
+  10516,
+  4328,
+  11084,
+  4451
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "glintside-arr1",
+   "kind": "road",
+   "route": "Lull Road",
+   "street": "glintside-a1",
+   "entries_px": [
+    [
+     10418,
+     4413
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "glintside-arr2",
+   "kind": "road",
+   "route": "Old Bridges",
+   "street": "glintside-a2",
+   "entries_px": [],
+   "route_kind": "road"
+  },
+  {
+   "id": "glintside-arr3",
+   "kind": "road",
+   "route": "Quay Street",
+   "street": "glintside-a3",
+   "entries_px": [
+    [
+     11111,
+     4556
+    ]
+   ],
+   "route_kind": "road"
+  }
+ ],
+ "streets": [
+  {
+   "id": "glintside-s01",
+   "name": "Glintside road",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     10516.0,
+     4417.5
+    ],
+    [
+     10714.0,
+     4392.5
+    ],
+    [
+     10776.5,
+     4389.0
+    ],
+    [
+     10837.5,
+     4390.5
+    ],
+    [
+     10928.0,
+     4403.5
+    ],
+    [
+     11084.5,
+     4451.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Old Bridges",
+   "connects": [
+    "glintside-a1",
+    "glintside-a2",
+    "glintside-a3"
+   ]
+  },
+  {
+   "id": "glintside-a1",
+   "name": "Lull Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10418.2,
+     4413.0
+    ],
+    [
+     10516.1,
+     4417.4
+    ]
+   ],
+   "follows_route": "Lull Road",
+   "connects": [
+    "glintside-a2",
+    "glintside-s01"
+   ]
+  },
+  {
+   "id": "glintside-a2",
+   "name": "Old Bridges",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     10516.1,
+     4417.4
+    ],
+    [
+     10713.8,
+     4392.4
+    ],
+    [
+     10776.3,
+     4388.8
+    ],
+    [
+     10837.5,
+     4390.4
+    ],
+    [
+     10928.1,
+     4403.7
+    ],
+    [
+     11084.6,
+     4451.2
+    ]
+   ],
+   "follows_route": "Old Bridges",
+   "connects": [
+    "glintside-a1",
+    "glintside-a3",
+    "glintside-s01"
+   ]
+  },
+  {
+   "id": "glintside-a3",
+   "name": "Quay Street",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     11084.6,
+     4462.4
+    ],
+    [
+     11094.8,
+     4489.9
+    ],
+    [
+     11111.4,
+     4555.8
+    ]
+   ],
+   "follows_route": "Quay Street",
+   "connects": [
+    "glintside-a2",
+    "glintside-s01"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Glintside",
+   "centre_px": [
+    11120,
+    4150
+   ],
+   "declared": "homes and small trades on the city approach, with gardens beyond the last frontage",
+   "town": "Glintside",
+   "id": "glintside-d-glintside",
+   "buildings": [
+    "glintside-b001"
+   ],
+   "mix": {
+    "house": 1
+   },
+   "function": "homes"
+  }
+ ],
+ "gathering_places": [],
+ "size_table_px": {
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ]
+ },
+ "fronts": 1,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "glintside-b001",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1371,
+    541,
+    10,
+    7
+   ],
+   "rect_px": [
+    10968,
+    4328,
+    80,
+    56
+   ],
+   "faces": "glintside-a2",
+   "door_cells": [
+    1371,
+    548
+   ],
+   "purpose": "a family house",
+   "occupants": "a farming household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1371,
+    537,
+    10,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Lull Road",
+  "first_view": "Glintside from the Lull Road: a family house, Glintside's largest building ahead",
+  "landmarks": [
+   {
+    "name": "a family house, Glintside's largest building",
+    "xy": [
+     11008,
+     4356
+    ]
+   },
+   {
+    "name": "a family house at the edge, seen first from the Lull Road",
+    "xy": [
+     11008,
+     4356
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    1282,
+    540,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.8,
+   0.7
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields",
+  "materials_cells": {
+   "worn cobbles": 2892,
+   "made land, paved": 110,
+   "worn paving": 52,
+   "packed earth": 100
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   1299,
+   526,
+   102,
+   46
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "12g44.3g3.13~27.",
+   "11g50.14~27.",
+   "11g50.14~27.",
+   "11g48.14~29.",
+   "10g47.9~4b2~30.",
+   "10g47.9~4b32.",
+   "10g46.10~2b34.",
+   "10g46.10~2b34.",
+   "10g44.12~b31.2r2.",
+   "10g44.11b27.5r5.",
+   "10g46.8b23.4r11.",
+   "10g46.8b8.6g9.4r11.",
+   "10g46.8~8.9g21.",
+   "10g49.2~11.3g4.2r21.",
+   "10g62.r3.6g20.",
+   "10g60.2r30.",
+   "10g54.r37.",
+   "10g47.2r43.",
+   "10g33.14r45.",
+   "10g25.30r37.",
+   "10g25.30r37.",
+   "10g21.36r35.",
+   "10g13.49r30.",
+   "75r27.",
+   "78r24.",
+   "83r19.",
+   "48r6.32r16.",
+   "26r41.24r11.",
+   "r9g3.5r52.22r10.",
+   "rg11.5r52.22r10.",
+   "2g73.19r8.",
+   "2g76.17r7.",
+   "2g77.16r7.",
+   "2g77.16r7.",
+   "2g77.16r7.",
+   "2g27.9~41.16r7.",
+   "12g17.9~24.10~9.14r7.",
+   "12g17.9~24.10~9.16r5.",
+   "12g17.9~24.10~9.16r5.",
+   "12g17.9~24.10~9.16r5.",
+   "10g19.9~11.7~6.10~9.16r5.",
+   "10g35.16~.10~9.16r5.",
+   "10g33.19~19.16r5.",
+   "10g30.25~18.15r4.",
+   "10g28.27~18.15r4.",
+   "10g27.30~16.15r4."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    10836,
+    4388
+   ],
+   "at": "beside Glintside road",
+   "table_name": "Glintside",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "glintside-s01",
+   "name": "Glintside road",
+   "from_px": [
+    11084,
+    4451
+   ],
+   "to_px": [
+    10928,
+    4403
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 1,
+   "bearing_deg": -164
+  },
+  "crater": {
+   "name": "the Company crater",
+   "xy_px": [
+    11780,
+    4159
+   ],
+   "distance_px": 1006,
+   "effect": "the Company crater lies 1000 px away; its scorch points to the valley",
+   "road": "Quay Street",
+   "road_leaves_at_px": [
+    11111,
+    4556
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    10836,
+    4388
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

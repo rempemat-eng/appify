@@ -1,0 +1,852 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "canalside",
+ "name": "Canalside",
+ "size": "outskirts",
+ "size_note": "outskirts",
+ "target": [
+  6,
+  12
+ ],
+ "buildings_counted": 10,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the prospective v56 continent (blockout-v56.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "homes and small trades on the city approach, with gardens beyond the last frontage",
+  "terrain": "dry ground between the route, its working gardens and the shore",
+  "fit": "",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   4,
+   7
+  ],
+  "levelled_footprints": 4
+ },
+ "footprint_px": [
+  9705,
+  4328,
+  10491,
+  4544
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "canalside-arr1",
+   "kind": "road",
+   "route": "Lull Road",
+   "street": "canalside-a1",
+   "entries_px": [
+    [
+     9601,
+     4461
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "canalside-arr2",
+   "kind": "road",
+   "route": "Old Bridges",
+   "street": "canalside-a2",
+   "entries_px": [
+    [
+     10600,
+     4406
+    ]
+   ],
+   "route_kind": "road"
+  }
+ ],
+ "streets": [
+  {
+   "id": "canalside-s01",
+   "name": "Canalside road",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     9705.5,
+     4443.5
+    ],
+    [
+     9829.0,
+     4411.5
+    ],
+    [
+     9891.0,
+     4406.0
+    ],
+    [
+     9921.0,
+     4407.5
+    ],
+    [
+     9980.0,
+     4418.0
+    ],
+    [
+     10065.5,
+     4447.0
+    ],
+    [
+     10130.0,
+     4464.5
+    ],
+    [
+     10192.5,
+     4469.0
+    ],
+    [
+     10222.5,
+     4466.5
+    ],
+    [
+     10256.5,
+     4458.5
+    ],
+    [
+     10351.5,
+     4422.0
+    ],
+    [
+     10384.5,
+     4415.5
+    ],
+    [
+     10418.0,
+     4413.0
+    ],
+    [
+     10491.5,
+     4416.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Lull Road",
+   "connects": [
+    "canalside-a1"
+   ]
+  },
+  {
+   "id": "canalside-a1",
+   "name": "Lull Road",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     9601.2,
+     4461.1
+    ],
+    [
+     9670.0,
+     4452.0
+    ],
+    [
+     9829.2,
+     4411.7
+    ],
+    [
+     9890.9,
+     4405.9
+    ],
+    [
+     9921.1,
+     4407.3
+    ],
+    [
+     9980.2,
+     4418.1
+    ],
+    [
+     10065.6,
+     4446.8
+    ],
+    [
+     10130.2,
+     4464.4
+    ],
+    [
+     10192.7,
+     4469.2
+    ],
+    [
+     10222.4,
+     4466.7
+    ],
+    [
+     10256.3,
+     4458.4
+    ],
+    [
+     10351.5,
+     4422.0
+    ],
+    [
+     10384.4,
+     4415.5
+    ],
+    [
+     10418.2,
+     4413.0
+    ],
+    [
+     10516.1,
+     4417.4
+    ]
+   ],
+   "follows_route": "Lull Road",
+   "connects": [
+    "canalside-a2",
+    "canalside-s01"
+   ]
+  },
+  {
+   "id": "canalside-a2",
+   "name": "Old Bridges",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     10516.1,
+     4417.4
+    ],
+    [
+     10600.4,
+     4406.4
+    ]
+   ],
+   "follows_route": "Old Bridges",
+   "connects": [
+    "canalside-a1",
+    "canalside-s01"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Canalside",
+   "centre_px": [
+    10000,
+    4430
+   ],
+   "declared": "homes and small trades on the city approach, with gardens beyond the last frontage",
+   "town": "Canalside",
+   "id": "canalside-d-canalside",
+   "buildings": [
+    "canalside-b001",
+    "canalside-b002",
+    "canalside-b003",
+    "canalside-b004",
+    "canalside-b005",
+    "canalside-b006",
+    "canalside-b007",
+    "canalside-b008",
+    "canalside-b009",
+    "canalside-b010"
+   ],
+   "mix": {
+    "house": 4,
+    "cottage": 3,
+    "shop": 3
+   },
+   "function": "homes"
+  },
+  {
+   "id": "canalside-d-the-market-gardens",
+   "name": "the market gardens",
+   "function": "edge: farms and gardens",
+   "declared": "gardens and allotments between the canal and the city edge",
+   "box_px": [
+    9728,
+    4512,
+    10400,
+    4680
+   ],
+   "buildings": [],
+   "town": "Canalside"
+  }
+ ],
+ "gathering_places": [],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
+  ]
+ },
+ "fronts": 10,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "canalside-b001",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1214,
+    558,
+    11,
+    8
+   ],
+   "rect_px": [
+    9712,
+    4464,
+    88,
+    64
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1214,
+    557
+   ],
+   "purpose": "a family house",
+   "occupants": "a farming household",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1214,
+    566,
+    11,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b002",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1227,
+    555,
+    7,
+    6
+   ],
+   "rect_px": [
+    9816,
+    4440,
+    56,
+    48
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1230,
+    554
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fishing household",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1227,
+    561,
+    7,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b003",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1250,
+    560,
+    9,
+    7
+   ],
+   "rect_px": [
+    10000,
+    4480,
+    72,
+    56
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1258,
+    559
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1250,
+    567,
+    9,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b004",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1261,
+    561,
+    13,
+    7
+   ],
+   "rect_px": [
+    10088,
+    4488,
+    104,
+    56
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1267,
+    560
+   ],
+   "purpose": "a family house",
+   "occupants": "a carting household",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1261,
+    568,
+    13,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b005",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1277,
+    561,
+    11,
+    7
+   ],
+   "rect_px": [
+    10216,
+    4488,
+    88,
+    56
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1278,
+    560
+   ],
+   "purpose": "a family house",
+   "occupants": "a craft household",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1277,
+    568,
+    11,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b006",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1291,
+    558,
+    8,
+    5
+   ],
+   "rect_px": [
+    10328,
+    4464,
+    64,
+    40
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1291,
+    557
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1291,
+    563,
+    8,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b007",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1301,
+    555,
+    10,
+    7
+   ],
+   "rect_px": [
+    10408,
+    4440,
+    80,
+    56
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1310,
+    554
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1301,
+    562,
+    10,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b008",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1223,
+    541,
+    12,
+    7
+   ],
+   "rect_px": [
+    9784,
+    4328,
+    96,
+    56
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1233,
+    548
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1223,
+    537,
+    12,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b009",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1241,
+    543,
+    8,
+    5
+   ],
+   "rect_px": [
+    9928,
+    4344,
+    64,
+    40
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1245,
+    548
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1241,
+    539,
+    8,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "canalside-b010",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1265,
+    548,
+    11,
+    6
+   ],
+   "rect_px": [
+    10120,
+    4384,
+    88,
+    48
+   ],
+   "faces": "canalside-a1",
+   "door_cells": [
+    1265,
+    554
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1265,
+    544,
+    11,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "field",
+   "name": "the market gardens",
+   "box": [
+    9728,
+    4512,
+    10400,
+    4680
+   ],
+   "plots": 5,
+   "why": "gardens and allotments between the canal and the city edge"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Lull Road",
+  "first_view": "Canalside from the Lull Road: a family house, Canalside's largest building ahead",
+  "landmarks": [
+   {
+    "name": "a family house, Canalside's largest building",
+    "xy": [
+     10140,
+     4516
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    1180,
+    546,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   2.5,
+   1.2
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields",
+  "materials_cells": {
+   "worn cobbles": 725,
+   "worn paving": 773,
+   "packed earth": 104
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   1198,
+   526,
+   129,
+   58
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "18r19g12~64g16.",
+   "7g12r22g12~59g17.",
+   "7g12r22g12~59g17.",
+   "10g11r24g9~58g17.",
+   "13g11r24g9~54g18.",
+   "16g10r25g8~52g18.",
+   "18g9r27g6~19g7r25g18.",
+   "19g8r29g4~19g7r25g18.",
+   "21g8r28g5~17g7r25g18.",
+   "~22g7r29g5~17g5r25g18.",
+   "2~22g8r27g5~17g5r25g18.",
+   "2~22g8r27g5~17g5r25g18.",
+   "8~16g8r28g5~16g5r25g18.",
+   "18~8g8r26g5~16g5r25g18.",
+   "18~9g8r25g5~16g5r25g18.",
+   "21~4g12.23g5~14g7r25g18.",
+   "23~2g12.r22g5~14g7r25g18.",
+   "24~g12.3r3g8.9g5~14g5r27g18.",
+   "23~2g12.4r2g8.9g5~13g6r27g18.",
+   "21~4g12.6r8.9g5~11g8r27g18.",
+   "21~4g12.6r8.9g5~11g8r27g18.",
+   "19~6g12.6r8.9g5~11g8r27g18.",
+   "7g11~14g16r11g6~2g11.5r28g13.5r",
+   "8g8~10g25r8g5~3g11.3r16g32r",
+   "10g5~6g33r3g7~3g11.3r11g37r",
+   "16g40r3b3~5g11.r10g40r",
+   "13g43r4b2r5g11.9g42r",
+   "8g27r6g13r6b5r2g11.6g43r2.",
+   "29r19g5r6b16r6g21r9g3.5r10.",
+   "29r7.12g5r6b16r6g21rg11.5r10.",
+   "b25r3g7.13g2~6b40r6g26.",
+   "2b19r8g7.12g6~2b38r9g26.",
+   "2b14r11.2g7.10g7~4g33r3g8.2g26.",
+   "2b9r5g11.2g7.7g8~9g27r6g8.2g26.",
+   "2~14g11.2g7.5g8~3g9.4g19r9g8.2g26.",
+   "4~12g11.13g6~6g9.2g13.3g11.3g8.2g26.",
+   "5~11g11.11g7~7g9.2g13.3g11.3g8.12g16.",
+   "g4~11g11.8g8~9g9.2g13.3g11.23g16.",
+   "g4~11g11.8g8~9g9.2g13.3g11.23g16.",
+   "g6~9g11.7g7~11g9.2g13.3g11.23g16.",
+   "2g6~24g6~14g9.2g13.3g11.21g18.",
+   "r3g7~16g10~26g13.3g11.21g18.",
+   "g4r11~7g11~77g18.",
+   "5g3r24~79g18.",
+   "4~6g19~82g18.",
+   "10~6g8~87g18.",
+   "16~95g18.",
+   "16~95g18.",
+   "g20~90g18.",
+   "5g21~85g18.",
+   "11g21~79g18.",
+   "r15g21~74g18.",
+   "2r21g18~70g18.",
+   "2r25g19~65g18.",
+   "4r30g17~60g18.",
+   "4r34g16~44g2.2g6.3g18.",
+   "4r34g16~44g2.2g6.3g18.",
+   "5r36g18~28g7.3g32."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    10196,
+    4468
+   ],
+   "at": "beside Canalside road",
+   "table_name": "Canalside",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "canalside-s01",
+   "name": "Canalside road",
+   "from_px": [
+    10065,
+    4447
+   ],
+   "to_px": [
+    9980,
+    4418
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -162
+  },
+  "crater": {
+   "name": "the Company crater",
+   "xy_px": [
+    11780,
+    4159
+   ],
+   "distance_px": 1704,
+   "effect": "the Company crater lies 1700 px away; its scorch points to the valley",
+   "road": "Old Bridges",
+   "road_leaves_at_px": [
+    10600,
+    4406
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    10196,
+    4468
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

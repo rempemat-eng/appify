@@ -1074,7 +1074,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
 
 
 # ------------------------------------------------------------------------------------------ the town plans, one inset each
-TOWN_INSETS = (('crossroads', 8.0), ('dust-gulch', 8.0), ('hearthold', 8.0), ('neon-harbour', 4.5), ('highgarth', 8.0))
+TOWN_INSETS = (('crossroads', 8.0), ('dust-gulch', 8.0), ('hearthold', 8.0), ('neon-harbour', 4.5), ('highgarth', 8.0), ('cinderwick', 8.0))
 CLASS_COL = {'main': (247, 236, 206), 'side': (236, 220, 186), 'lane': (222, 204, 168), 'close': (204, 184, 150)}
 FN_COL = {'market and civic': (178, 64, 74), 'homes': (196, 120, 74), 'crafts and work': (150, 112, 52), 'docks and transport': (54, 106, 150),
           'offices and trade': (112, 74, 150), 'edge': (88, 128, 64)}

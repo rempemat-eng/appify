@@ -1349,8 +1349,9 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                     'of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and '
                     'workplaces to the ids here, and walk residents on the streets (ids) only.',
     }
-    if deferred:
-        plan['deferred_buildings'] = deferred
+    fill_def = [copy.deepcopy(rec) for t in ts for rec in getattr(t, 'deferred_fill', [])]
+    if deferred or fill_def:
+        plan['deferred_buildings'] = deferred + fill_def
     if authored and 'site_authored' in authored:
         plan['site']['authored'] = authored['site_authored']
     if getattr(X, 'REVISION', 'v55') == 'v56':
