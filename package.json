@@ -36,7 +36,7 @@
     "check:art-density": "node scripts/check-art-density.cjs",
     "check:art-repro": "node scripts/check-art-repro.cjs",
     "check:clusters": "python3 scripts/art/prop_clusters.py --check",
-    "check:density": "python3 scripts/art/density.py --check",
+    "check:density": "python3 scripts/art/density.py --check && python3 scripts/art/texel_test.py",
     "check:art-repro-test": "node scripts/check-art-repro.test.cjs",
     "check:assets": "node scripts/check-assets.cjs",
     "check:assets-test": "node scripts/check-assets.cjs --self-test",
