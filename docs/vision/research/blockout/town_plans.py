@@ -1102,6 +1102,18 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     authored = _authored_packet(ts, pid)
     authored_buildings = {b['id']: b for b in authored['buildings']} if authored else {}
     actual_authored = [b['authored_id'] for t in ts for b in t.buildings if 'authored_id' in b]
+    import copy
+    deferred = [copy.deepcopy(rec) for t in ts for rec in getattr(t, 'deferred_buildings', [])]
+    deferred_ids = [rec['id'] for rec in deferred]
+    if (len(set(deferred_ids)) != len(deferred_ids) or set(actual_authored) & set(deferred_ids)
+            or set(actual_authored) | set(deferred_ids) != set(authored_buildings)):
+        raise ValueError(f'{pid}: retained/deferred authored IDs do not partition the original proposals')
+    for rec in deferred:
+        if (rec.get('status') != 'deferred' or rec.get('proposal') != authored_buildings[rec['id']]
+                or not isinstance(rec.get('reason'), str) or not rec['reason'].startswith(rec['id'] + ': authored ')
+                or rec.get('source') != authored['source'] or rec.get('baseline') != authored['baseline']):
+            raise ValueError(f'{pid}: deferred proposal lost its original data, identity or fit reason')
+    authored_buildings = {bid: rec for bid, rec in authored_buildings.items() if bid not in set(deferred_ids)}
     if len(set(actual_authored)) != len(actual_authored) or set(actual_authored) != set(authored_buildings):
         raise ValueError(f'{pid}: duplicate or unmatched authored building IDs')
     # districts
@@ -1337,6 +1349,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                     'of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and '
                     'workplaces to the ids here, and walk residents on the streets (ids) only.',
     }
+    if deferred:
+        plan['deferred_buildings'] = deferred
     if authored and 'site_authored' in authored:
         plan['site']['authored'] = authored['site_authored']
     if getattr(X, 'REVISION', 'v55') == 'v56':

@@ -531,7 +531,7 @@ class Town:
         """Append source-authored proposals using the existing placement forms.
 
         Metadata travels explicitly to town_plans; no generated JSON is read.
-        Authored terrain, access and identity failures stop regeneration.
+        Fit-refused proposals remain deferred; retained placement/access/identity failures stop regeneration.
         """
         import copy
         import town_plans
@@ -563,29 +563,51 @@ class Town:
                         self.T['_town_fit'][-1]['window_failure'] = True
             self.T.setdefault('_town_fit_unplaced', []).extend(rec['id'] for rec in packet['buildings'])
             return
+        retained = []
+        self.deferred_buildings = []
         for rec in packet['buildings']:
-            c, r, w, h = rec['footprint_cells']
-            if r + h > H or c + w > W:
-                raise ValueError(f"{rec['id']}: authored footprint leaves the real terrain")
-            if not (wc <= c and wr <= r and c + w <= wc + ww and r + h <= wr + wh):
-                raise ValueError(f"{rec['id']}: authored footprint leaves its terrain window")
-            sl = (slice(r, r + h), slice(c, c + w))
-            if not np.isin(self.T['K'][sl], list(BUILDABLE)).all() or any(
-                    self.T[key][sl].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[sl].any() or protected[sl].any():
-                raise ValueError(f"{rec['id']}: authored footprint overlaps blocked ground or another use")
-            tiers = self.T['tiers_pre'][sl]
-            if tiers.max() != tiers.min():
-                raise ValueError(f"{rec['id']}: authored footprint needs an unapproved terrain-tier change")
-            reserved[sl] = True
-            if 'plot_cells' in rec:
-                pc, pr, pw, ph = rec['plot_cells']
-                ps = (slice(pr, pr + ph), slice(pc, pc + pw))
-                if not (wc <= pc and wr <= pr and pc + pw <= wc + ww and pr + ph <= wr + wh):
-                    raise ValueError(f"{rec['id']}: authored plot leaves its terrain window")
-                if pr + ph > H or pc + pw > W or not np.isin(self.T['K'][ps], list(BUILDABLE - ROUTE)).all() or any(
-                        self.T[key][ps].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[ps].any() or protected[ps].any():
-                    raise ValueError(f"{rec['id']}: authored plot is clipped or overlaps another use")
-                reserved[ps] = True
+            candidate_reserved = reserved.copy()
+            try:
+                c, r, w, h = rec['footprint_cells']
+                if r + h > H or c + w > W:
+                    raise ValueError(f"{rec['id']}: authored footprint leaves the real terrain")
+                if not (wc <= c and wr <= r and c + w <= wc + ww and r + h <= wr + wh):
+                    raise ValueError(f"{rec['id']}: authored footprint leaves its terrain window")
+                sl = (slice(r, r + h), slice(c, c + w))
+                if not np.isin(self.T['K'][sl], list(BUILDABLE)).all() or any(
+                        self.T[key][sl].any() for key in ('taken', 'street', 'barrier', 'keepout')) or candidate_reserved[sl].any() or protected[sl].any():
+                    raise ValueError(f"{rec['id']}: authored footprint overlaps blocked ground or another use")
+                tiers = self.T['tiers_pre'][sl]
+                if tiers.max() != tiers.min():
+                    raise ValueError(f"{rec['id']}: authored footprint needs an unapproved terrain-tier change")
+                candidate_reserved[sl] = True
+                if 'plot_cells' in rec:
+                    pc, pr, pw, ph = rec['plot_cells']
+                    ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+                    if not (wc <= pc and wr <= pr and pc + pw <= wc + ww and pr + ph <= wr + wh):
+                        raise ValueError(f"{rec['id']}: authored plot leaves its terrain window")
+                    if pr + ph > H or pc + pw > W or not np.isin(self.T['K'][ps], list(BUILDABLE - ROUTE)).all() or any(
+                            self.T[key][ps].any() for key in ('taken', 'street', 'barrier', 'keepout')) or candidate_reserved[ps].any() or protected[ps].any():
+                        raise ValueError(f"{rec['id']}: authored plot is clipped or overlaps another use")
+                    candidate_reserved[ps] = True
+            except ValueError as error:
+                # Only our explicit fit refusals become proposals for later repair.
+                # Schema/programming failures and all retained placement checks still fail closed.
+                if str(error) not in (
+                        f"{rec['id']}: authored footprint leaves the real terrain",
+                        f"{rec['id']}: authored footprint leaves its terrain window",
+                        f"{rec['id']}: authored footprint overlaps blocked ground or another use",
+                        f"{rec['id']}: authored footprint needs an unapproved terrain-tier change",
+                        f"{rec['id']}: authored plot leaves its terrain window",
+                        f"{rec['id']}: authored plot is clipped or overlaps another use"):
+                    raise
+                self.deferred_buildings.append({'id': rec['id'], 'status': 'deferred',
+                                                'reason': str(error), 'proposal': copy.deepcopy(rec),
+                                                'source': copy.deepcopy(packet['source']),
+                                                'baseline': copy.deepcopy(packet['baseline'])})
+                continue
+            reserved = candidate_reserved
+            retained.append(rec)
         # The existing JSON convention excludes landmarks and groups joined fronts.
         # put() predates that convention and caps raw records instead; retain its
         # geometry checks while checking authored capacity by the actual convention.
@@ -594,10 +616,10 @@ class Town:
                 return 0
             n = len(raw.get('bays', [])) or 1
             return (n + 4) // 5 if n >= 3 else 1
-        if sum(contribution(b) for b in self.buildings) + sum(b['counts_as'] for b in packet['buildings']) > self.cap:
+        if sum(contribution(b) for b in self.buildings) + sum(b['counts_as'] for b in retained) > self.cap:
             raise ValueError(f'{self.name}: authored buildings exceed the existing count guide')
         self.authored_plan = copy.deepcopy(packet)
-        for rec in packet['buildings']:
+        for rec in retained:
             x, y, w, h = rec['rect_px']
             a, b = C(x, y); c, d = a + h // CELL, b + w // CELL
             tiers = self.T['tiers_pre'][a:c, b:d]
