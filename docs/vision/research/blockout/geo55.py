@@ -846,6 +846,8 @@ def v55_paint(T):
         rec['feedback_ground'] = feedback_ground(T)
     TW.prepare(T, keepout_boxes=[V.BUILT['the woodland']],
                keepout_discs=[(6296, 3088, 150), (6816, 3648, 110), (6484, 3712, 90), (V.CIRCLE[0], V.CIRCLE[1], 120)])
+    if os.environ.get('TOWN_FIT_ONLY'):
+        T['_town_fit'] = []
     if REVISION == 'v56':
         # These source-pinned proposals already live in the producer; select
         # them deliberately so Town.adopt checks their actual final terrain.
@@ -857,6 +859,27 @@ def v55_paint(T):
         towns = TW.lay_all(T, sys.modules[__name__])
         towns.update(TW.launch_cape(T, sys.modules[__name__]))
     towns.update(TW.charcoal_hollow(T, sys.modules[__name__]))
+    if '_town_fit' in T:
+        # This diagnostic stops before plan finishing, acceptance, exports or render.
+        import town_plans as TP
+        observed = {TP.slug('Neon Harbour' if nm.startswith('Neon Harbour') else nm) for nm in towns}
+        report = {'mode': 'town-fit-only', 'revision': REVISION, 'acceptance': False,
+                  'towns': sorted(towns), 'instances': T.get('_town_fit_towns', []),
+                  'active_instances': {nm: t._fit_instance for nm, t in towns.items()},
+                  'expected_plan_ids': sorted(EXPECTED_TOWN_PLANS),
+                  'observed_plan_ids': sorted(observed), 'missing_plan_ids': sorted(EXPECTED_TOWN_PLANS - observed),
+                  'records': T['_town_fit'], 'rejected_search_probes': T.get('_town_fit_rejected', {}),
+                  'unplaced_authored_ids': T.get('_town_fit_unplaced', []),
+                  'incomplete': T.get('_town_fit_incomplete', []),
+                  'qualification': 'Raw pre-placement observations. Authored packets are observed but unplaced; '
+                                   'later occupancy is conditional. Filter replaced town instances using active_instances. '
+                                   'Rejected search probes are not final buildings. '
+                                   'No access/plan finishing, corrected production, terrain or art acceptance.'}
+        path = os.path.abspath(os.environ['TOWN_FIT_ONLY'])
+        with open(path, 'x') as f:
+            json.dump(report, f, indent=1)
+        print('TOWN_FIT_ONLY diagnostic written:', path)
+        raise SystemExit(2)  # diagnostic completion is never a producer PASS
     for t in towns.values():                                         # no impassable deep forest inside a town: open woods
         if t.buildings:
             x0, y0, x1, y1 = t.record()['footprint_box']
@@ -1184,6 +1207,8 @@ def sync_names():
 
 
 if __name__ == '__main__':
+    if os.environ.get('TOWN_FIT_ONLY') and (REVISION != 'v56' or any(os.environ.get(k) for k in ('RENDER_ONLY', 'DEV_PRE'))):
+        raise ValueError('TOWN_FIT_ONLY requires v56 normal data entry, without RENDER_ONLY or DEV_PRE')
     if os.environ.get('RENDER_ONLY'):
         state = pickle.load(open(os.path.join(HERE, f'state{SUF}.pkl'), 'rb'))
         restore_tables(state)

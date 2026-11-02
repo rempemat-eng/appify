@@ -135,6 +135,58 @@ class Town:
         self.rng = np.random.default_rng(g.stable_name_seed(name, 2 ** 31) if seed is None else seed)
         self.level = 1; self.slope_max = 0.016
         self.cap = target[1] if isinstance(target, (tuple, list)) else target
+        if '_town_fit' in T:
+            self._fit_instance = len(T.setdefault('_town_fit_towns', []))
+            T['_town_fit_towns'].append(name)
+
+    def _fit_record(self, cells, part, *, ident=None, kinds=None, uniform=False, check_tiers=True,
+                    extra=None, accepted=None, candidate=False):
+        """Observe raw cells before mutation; never replace the normal placement decision."""
+        if '_town_fit' not in self.T:
+            return
+        c, r, w, h = cells
+        T = self.T
+        kinds = BUILDABLE if kinds is None else kinds
+        blocked, tiers = [], []
+        for rr in range(r, r + h):
+            for cc in range(c, c + w):
+                reasons = []
+                if not (0 <= rr < H and 0 <= cc < W):
+                    reasons.append('bounds')
+                else:
+                    if T['K'][rr, cc] not in kinds:
+                        reasons.append('kind:' + str(T['K'][rr, cc]))
+                    reasons += [key for key in ('taken', 'street', 'barrier', 'keepout') if T[key][rr, cc]]
+                    reasons += [key for key, mask in (extra or {}).items() if mask[rr, cc]]
+                    if part == 'base footprint' and not getattr(self, '_hand', False) and T['slope'][rr, cc] > self.slope_max:
+                        reasons.append('slope')
+                    tiers.append(int(T['tiers_pre'][rr, cc]))
+                if reasons:
+                    blocked.append({'cell': [cc, rr], 'reasons': reasons})
+        if part == 'base footprint' and not getattr(self, '_hand', False):
+            for rr in range(max(0, r - 1), min(H, r + h + 1)):
+                for cc in range(max(0, c - 1), min(W, c + w + 1)):
+                    if T['taken'][rr, cc] and not (r <= rr < r + h and c <= cc < c + w):
+                        blocked.append({'cell': [cc, rr], 'reasons': ['taken-clearance']})
+        tier_range = [min(tiers), max(tiers)] if tiers else None
+        tier_failure = bool(check_tiers and tiers and (max(tiers) != min(tiers) if uniform else max(tiers) - min(tiers) > self.level))
+        rec = {'town': self.name, 'instance': self._fit_instance, 'id': ident, 'part': part, 'cells': list(cells),
+               'blocked': blocked, 'tier_range': tier_range, 'tier_failure': tier_failure,
+               'normal_free_accepted': accepted,
+               'normal_bounds_failure': part == 'base footprint' and (r < 1 or c < 1 or r + h >= H - 1 or c + w >= W - 1)}
+        if candidate and accepted is False:
+            # Rejected search probes are not buildings. Keep their cell union and
+            # attempt count separately instead of flooding the footprint records.
+            out = T.setdefault('_town_fit_rejected', {}).setdefault(str(self._fit_instance), {'town': self.name, 'attempts': 0, 'cells': {}})
+            out['attempts'] += 1
+            for item in blocked:
+                key = ','.join(map(str, item['cell']))
+                out['cells'][key] = sorted(set(out['cells'].get(key, [])) | set(item['reasons']))
+            if tier_failure:
+                out.setdefault('tier_ranges', {})[str(tier_range)] = True
+        else:
+            T['_town_fit'].append(rec)
+        return rec
 
     # -------------------------------------------------------------------------------------- the masks
     def free(self, a, b, c, d, kinds=BUILDABLE):
@@ -402,6 +454,16 @@ class Town:
         x0 = int(round(x0 / CELL)) * CELL; y0 = int(round(y0 / CELL)) * CELL
         w = max(CELL, int(round(w / CELL)) * CELL); d = max(CELL, int(round(d / CELL)) * CELL)
         a, b = C(x0, y0); c, e = a + d // CELL, b + w // CELL
+        if '_town_fit' in self.T:
+            ok = self.free(a, b, c, e)
+            self._fit_record((b, a, e - b, c - a), 'base footprint',
+                             ident='base-' + str(len(self.buildings) + 1), accepted=ok, candidate=not getattr(self, '_hand', False))
+            if behind and ok:
+                dx, dy, dep, kind = behind
+                plot = (b, c if dy > 0 else a - dep // CELL, e - b, dep // CELL) if dy else \
+                    (e if dx > 0 else b - dep // CELL, a, dep // CELL, c - a)
+                self._fit_record(plot, 'requested base yard', check_tiers=False, kinds=BUILDABLE -
+                                 {'building', 'warehouse', 'tower', 'keep', 'hangar', 'terminal'} - ROUTE)
         if not self.free(a, b, c, e):
             return False
         T = self.T; K = T['K']
@@ -486,6 +548,21 @@ class Town:
             protected[max(0, r):r + h, max(0, c):c + w] = True
         reserved = np.zeros(self.T['K'].shape, dtype=bool)
         wc, wr, ww, wh = packet['terrain_box_cells']
+        if '_town_fit' in self.T:
+            # Observe every proposal without placing any of them. This is not a
+            # substitute production layout: downstream occupancy is conditional.
+            for rec in packet['buildings']:
+                for part, cells, kinds in [('authored footprint', rec['footprint_cells'], BUILDABLE)] + \
+                        ([('authored yard', rec['plot_cells'], BUILDABLE - ROUTE)] if 'plot_cells' in rec else []):
+                    self._fit_record(cells, part, ident=rec['id'], kinds=kinds, uniform=part == 'authored footprint',
+                                     check_tiers=part == 'authored footprint',
+                                     extra={'reserved': reserved, 'protected': protected})
+                    c, r, w, h = cells
+                    reserved[max(0, r):min(H, r + h), max(0, c):min(W, c + w)] = True
+                    if not (wc <= c and wr <= r and c + w <= wc + ww and r + h <= wr + wh):
+                        self.T['_town_fit'][-1]['window_failure'] = True
+            self.T.setdefault('_town_fit_unplaced', []).extend(rec['id'] for rec in packet['buildings'])
+            return
         for rec in packet['buildings']:
             c, r, w, h = rec['footprint_cells']
             if r + h > H or c + w > W:
@@ -650,6 +727,8 @@ class Town:
             self.buildings.append({'x': x0, 'y': y0, 'w': w, 'h': d, 'use': u, 'counted': True, 'plan': True})
             if door is not None:
                 self.buildings[-1]['zone_door'] = door
+            if '_town_fit' in self.T:
+                self._fit_record((x0 // CELL, y0 // CELL, w // CELL, d // CELL), 'fixed zone footprint', check_tiers=False)
             a, b = C(x0, y0); self.T['taken'][a:a + d // CELL, b:b + w // CELL] = True
             sub = self.T['K'][a:a + d // CELL, b:b + w // CELL]; sub[~np.isin(sub, list(ROUTE) + ['river', 'creek'])] = 'building'
 
@@ -686,6 +765,8 @@ class Town:
     def yard(self, x0, y0, x1, y1, kind='yard', name=None, why=None):
         T = self.T; K = T['K']
         a, b = C(x0, y0); c, e = C(x1, y1)
+        if '_town_fit' in T:
+            self._fit_record((b, a, e - b, c - a), 'requested working yard', ident=name, check_tiers=False)
         sub = K[a:c, b:e]
         ok = np.isin(sub, list(BUILDABLE)) & ~T['taken'][a:c, b:e] & ~T['street'][a:c, b:e] & ~T['barrier'][a:c, b:e] & ~T['keepout'][a:c, b:e]
         sub[ok & ~np.isin(sub, list(ROUTE))] = kind; T['used'][a:c, b:e] |= ok
@@ -2084,7 +2165,10 @@ def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'pot
         if not street.get('frontage_props') and street['frontage'] == 'continuous':
             street['frontage'] = 'detached'; street.pop('max_gap_cells', None)
     if queue:
-        raise ValueError(f'{town.name}: authored street blocks cannot place {[r[0] for r in queue]}')
+        if '_town_fit' in town.T:
+            town.T.setdefault('_town_fit_incomplete', []).append({'town': town.name, 'instance': town._fit_instance, 'unplaced_street_blocks': [r[0] for r in queue]})
+        else:
+            raise ValueError(f'{town.name}: authored street blocks cannot place {[r[0] for r in queue]}')
     return placed
 
 
@@ -2275,6 +2359,9 @@ def lay_feedback(T, X, *, authored=None):
                  'dry ground between the route, its working gardens and the shore', seed=seed)
         line = route_part(T, route, box)
         if len(line) < 2:
+            if '_town_fit' in T:
+                T.setdefault('_town_fit_incomplete', []).append({'town': nm, 'missing_joined_regional_route': True})
+                continue
             raise ValueError(f'{nm}: city approach has no joined regional route')
         t.street(line, 'side', name=nm + ' road', route=route)
         t.level, t.slope_max = 2, 0.03
