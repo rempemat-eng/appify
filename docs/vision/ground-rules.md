@@ -33,6 +33,14 @@ Water has a source and flows downhill:
 - A waterfall happens only at a tier edge or a rock face. Its lip is flush with the rim.
 - The fall is centred on the channel that feeds it and is as wide as that channel. It lands in a
   pool.
+- The sheet starts on the rim and falls down the face, in front of the face only: nothing of it
+  (no ledge stone, no crest) stands above the rim over the banks or the stream, it never spreads
+  over the stones either side, and spray and foam are only where it lands, on the pool (Matt,
+  2 Nov: "the waterfall overlaps in an unrealistic way on the top bit"). A face is one tier high
+  (two cells), the height a face strip draws. On kit zones `rules.water_fall` (kit_rules) checks
+  that the water at the rim is exactly the fall's columns, that its sheet (`geometry.sheet_px`)
+  is that width and starts at the rim, and that water below the face catches it; `test_kit`
+  checks the pictures draw nothing above the rim or beside the sheet.
 - Water never runs uphill or ends in a dead end. Every end is a pool, a lake, the sea, a fall or
   the zone edge.
 

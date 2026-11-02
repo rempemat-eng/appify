@@ -162,6 +162,31 @@ class Rules(unittest.TestCase):
         self.assertFalse(self.faults(dict(self.plan(rows, [fall]), tiers=tiers), 'rules.water_fall'))
         aside = dict(fall, at=[24, 96])                                         # off the channel
         self.assertTrue(self.faults(dict(self.plan(rows, [aside]), tiers=tiers), 'rules.water_fall'))
+        # Matt, 2 Nov: the fall continues its channel: a three-cell channel over a two-cell fall,
+        # or a fall with no pool under its face, is a fault
+        wide = ['.~~~..', '.~~~..', '..~~..', '..~~..', '..~~..', '..~~..']
+        self.assertTrue(self.faults(dict(self.plan(wide, [fall]), tiers=tiers), 'rules.water_fall'))
+        dry = ['..~~..', '..~~..', '..~~..', '..~~..', '......', '......']
+        self.assertTrue(self.faults(dict(self.plan(dry, [fall]), tiers=tiers), 'rules.water_fall'))
+
+    def test_waterfall_pictures_start_at_the_rim(self):
+        """Each waterfall picture draws nothing above the rim and, above the pool, nothing outside
+        its sheet: the sheet is the channel's width (sheet_px) and starts on the face's top edge."""
+        from PIL import Image
+        from scripts.art.kit.schema import ROOT
+        for c in (1, 2, 3, 4):
+            for tall in ('', '_tall'):
+                pc = json.load(open(os.path.join(ROOT, 'game', 'kit', 'pieces', 'structure', 'waterfall_%d%s.json' % (c, tall))))
+                x0, x1, y0, y1 = pc['geometry']['sheet_px']
+                self.assertEqual(x1 - x0, 24 * c)
+                self.assertEqual((pc['geometry']['foot'][0] - x0) * 2, x1 - x0)
+                self.assertEqual(pc['geometry']['foot'][1], y1)
+                a = np.asarray(Image.open(os.path.join(ROOT, 'game', pc['variants'][0]['png'][len('res://'):])))[..., 3] > 0
+                self.assertFalse(a[:y0].any(), pc['id'])
+                above = a[:y1 - 5].copy()
+                above[:, x0:x1] = False
+                self.assertFalse(above.any(), pc['id'])
+                self.assertTrue(a[y0, x0:x1].all(), pc['id'])
 
 
 class Crossings(unittest.TestCase):

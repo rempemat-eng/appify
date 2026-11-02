@@ -398,6 +398,15 @@
           },
           "description": "Drawn over but walkable behind (a crown, an eave)."
         },
+        "sheet_px": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "description": "A waterfall's sheet in the sprite, texels: x0, x1, the rim's row, the pool's row (kit_rules rules.water_fall checks it against the channel)."
+        },
         "height_px": {
           "type": "number",
           "minimum": 0,

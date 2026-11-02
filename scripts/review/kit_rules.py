@@ -22,7 +22,10 @@ scripts/review/ground_rules.py on painted plans):
     rules.stair           a stair whose flight is not all face, whose head is not flush with the
                           rim above it or whose foot does not land on the lower ground
     rules.water_fall      water crossing a south rim with no waterfall over the face under it, or a
-                          waterfall with no water above it (ground-rules 2)
+                          waterfall with no water above it (ground-rules 2); the fall continues
+                          its channel: the water at the rim is exactly the fall's columns (same
+                          width, aligned), the fall's sheet (sheet_px) is the footprint's width
+                          and starts at the rim, and the water below the face catches it
     rules.tier_route      a route that changes tier with no stair between (faces are derived
                           under every south rim: compose.derive, as the game draws them)
 
@@ -213,6 +216,32 @@ def check_zone(plan) -> list:
             if not cells_ or not all(0 <= c[1] < H and 0 <= c[0] < W and g[c[1], c[0]] and mats[g[c[1], c[0]]].get('face') for c in cells_) \
                     or not all(top - 1 >= 0 and water[top - 1, c[0]] for c in cells_):
                 fs.append(_f('rules.water_fall', '%s: not over a face with water above it, the width of the channel' % p.get('id'), p['at']))
+                continue
+            # Matt, 2 Nov: "the waterfall overlaps in an unrealistic way on the top bit": the fall
+            # continues its channel, no wider and no narrower, from the rim to the pool
+            xs = sorted({c[0] for c in cells_})
+            bot = max(c[1] for c in cells_)
+            lo, hi = xs[0], xs[-1]
+            while lo - 1 >= 0 and water[top - 1, lo - 1]:
+                lo -= 1
+            while hi + 1 < W and water[top - 1, hi + 1]:
+                hi += 1
+            if (lo, hi) != (xs[0], xs[-1]):
+                fs.append(_f('rules.water_fall', '%s: the channel at the rim spans cells %d..%d, the fall %d..%d: the '
+                             'fall is the channel\'s width and on its line' % (p.get('id'), lo, hi, xs[0], xs[-1]), p['at']))
+            if not (bot + 1 < H and all(water[bot + 1, x] for x in xs)):
+                fs.append(_f('rules.water_fall', '%s: no pool under the face to catch the fall' % p.get('id'), p['at']))
+            src = os.path.join(ROOT, 'game', 'kit', 'pieces', 'structure', p['piece'] + '.json')
+            geo = json.load(open(src)).get('geometry', {}) if os.path.exists(src) else {}
+            sheet, foot = geo.get('sheet_px'), geo.get('foot')
+            if sheet and foot:
+                sx0 = p['at'][0] - foot[0] + sheet[0]
+                sy0 = p['at'][1] - foot[1] + sheet[2]
+                if abs(sx0 - xs[0] * CELL) > 0.5 or abs((sheet[1] - sheet[0]) - len(xs) * CELL) > 0.5 \
+                        or abs(sy0 - top * CELL) > 0.5:
+                    fs.append(_f('rules.water_fall', '%s: its sheet (x %g, width %g, top %g) is not the channel (x %d, '
+                                 'width %d) starting at the rim (%d)' % (p.get('id'), sx0, sheet[1] - sheet[0], sy0,
+                                                                         xs[0] * CELL, len(xs) * CELL, top * CELL), p['at']))
     for y in range(H - 1):
         for x in range(W):
             if water[y, x] and g[y + 1, x] and mats[g[y + 1, x]].get('face') and (x, y + 1) not in falls:

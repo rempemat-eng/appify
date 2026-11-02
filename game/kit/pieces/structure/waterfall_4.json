@@ -73,6 +73,12 @@
     1,
     -1
    ]
+  ],
+  "sheet_px": [
+   24,
+   120,
+   12,
+   60
   ]
  },
  "placement": {
@@ -124,8 +130,8 @@
  },
  "audit": {
   "painter": {
-   "module": "scripts.art.native.water",
-   "fn": "fall_hd",
+   "module": "scripts.art.kit.structures",
+   "fn": "fall_sheet",
    "args": {
     "seed": 69
    }

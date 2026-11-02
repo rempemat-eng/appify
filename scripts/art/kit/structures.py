@@ -195,13 +195,69 @@ def log_steps(force: bool, cells: int = 2) -> None:
     }, force)
 
 
+def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int) -> None:
+    """A fall drawn from the rim down (texels): the stream's own water bends over the face's top
+    edge at row y0 and falls as one sheet exactly the channel's width (x0 .. x0 + w), in front of
+    the face and behind nothing. Matt, 2 Nov: "the waterfall overlaps in an unrealistic way on the
+    top bit": so no ledge stone or crest stands proud of the rim over the banks or the stream
+    above, the sheet never spreads over the stones either side, and the white water is only where
+    the sheet lands: the plume and the foam rings lie on the pool (rows y1 and below), no spray on
+    the face. Across the ribbon: lit west, a body, shade east; falling streaks in broken runs; the
+    glassy tongue where it leaves the rim, then the crest's white curl and its shade."""
+    from scripts.art.native.palette import C, FI
+    H, W = cv.shape
+    rng = np.random.default_rng(seed)
+    cols = {}
+    for Y in range(y0, y1):
+        for X in range(x0, x0 + w):
+            s = (X + 0.5 - x0) / w                              # 0 west .. 1 east across the ribbon
+            tt = 4 if s < 0.18 else (3 if s < 0.62 else (2 if s < 0.88 else 1))
+            c = C('water', tt)
+            key = X - x0
+            if key not in cols:                                 # a streak per column, thin and broken
+                cols[key] = (rng.uniform(0, 60), rng.uniform(6, 18), rng.uniform(4, 16), rng.random() < 0.42)
+            ph, run, gap, on_ = cols[key]
+            dy = Y - y0
+            if on_ and ((dy + ph) % (run + gap)) < run and 0.06 < s < 0.86 and dy > 6:
+                c = C('snow', 4) if s < 0.45 else (C('water', 4) if s < 0.7 else C('snow', 2))   # a falling streak
+            elif ((dy + ph * 0.5) % (run + gap)) < 2 and on_ and dy > 8:
+                c = C('water', max(1, tt - 1))                     # the trough behind a streak
+            wob = int(round(1.2 * np.sin(X * 0.9)))
+            if dy < 2:
+                c = C('water', 4) if s < 0.7 else C('water', 3)  # the glassy tongue leaving the rim
+            elif dy < 5 + wob:
+                c = C('snow', 5) if s < 0.7 else C('snow', 4)    # the crest curling over
+            elif dy < 6 + wob:
+                c = C('water', 2)                                # its shade under the curl
+            cv[Y, X] = c
+    cx = x0 + w / 2.0
+    # the plume where it lands: churning white on the pool, no higher than a few texels up the sheet
+    parts = [(cx + rng.uniform(-0.45, 0.45) * w, y1 + rng.uniform(-0.2, 1.0) * 6, w * rng.uniform(0.4, 0.62),
+              7 * rng.uniform(0.6, 0.9)) for _ in range(6)]
+    for Y in range(y1 - 5, min(H, y1 + 12)):
+        for X in range(max(0, int(cx - w * 1.2)), min(W, int(cx + w * 1.2) + 1)):
+            r = min(((X - px) / pw) ** 2 + ((Y - py) / ph) ** 2 for (px, py, pw, ph) in parts)
+            if r > 1.0 or (Y < y1 and not (x0 <= X < x0 + w)):
+                continue                                       # above the pool only over the sheet
+            lit = (X - cx) < 0.3 * w
+            cv[Y, X] = C('snow', 5) if (Y < y1 + 3 and r < 0.6 and lit) else (C('snow', 4) if r < 0.7 else C('snow', 2))
+    waters = [FI[n] for n in ('water', 'water_warm', 'water_cool')]
+    for k, (rx, ry) in enumerate(((w * 0.95, 8), (w * 1.35, 11))):   # foam rings spreading on the pool
+        for Y in range(y1, min(H, y1 + int(ry) + 8)):
+            for X in range(max(0, int(cx - rx - 3)), min(W, int(cx + rx + 3))):
+                if (cv[Y, X] // 8) not in waters:
+                    continue
+                q = ((X - cx) / rx) ** 2 + ((Y - (y1 + 4)) / ry) ** 2
+                if abs(q - 1.0) < 0.09 and ((X // 6) + k) % 3:
+                    cv[Y, X] = C('water', 4) if k == 0 else C('water', 3)
+
+
 def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
     """A fall where water crosses a south rim (ground-rules 2: lip flush with the rim, centred on
-    the channel and as wide as it, landing in a pool): the woodland's painted fall (water.fall_hd:
-    the stone lip, the sheet with streaks, the plume, foam rings and spray), over a face of two
-    cells per tier it drops (`drop`: 1, or 2 for the woodland's own cascade, four cells high), for a
-    channel `cells_w` cells wide."""
-    from scripts.art.native import water as WA
+    the channel and as wide as it, landing in a pool): fall_sheet, from the rim (row 12 of the
+    picture, the face's top edge) to the pool (the foot, the face's bottom), over a face of two cells
+    per tier it drops (`drop`: 1 or 2), for a channel `cells_w` cells wide. Nothing is drawn above
+    the rim or outside the channel's columns above the pool (test_kit checks the picture)."""
     from scripts.art.native.palette import C as CC
     wpx = cells_w * 24
     face = 48 * drop
@@ -212,8 +268,7 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
     for pool in (CC('water', 2), CC('water', 1)):
         cv = np.full((H, W), -1, np.int32)
         cv[12 + face:, :] = pool
-        # the sheet a few texels wider than the channel, so it covers the bank lumps either side
-        WA.fall_hd(cv, 20 / D, (wpx + 8) / D, 12 / D, (12 + face) / D, seed=65 + cells_w)
+        fall_sheet(cv, 24, wpx, 12, 12 + face, seed=65 + cells_w)
         runs.append(cv)
     cv = np.where(runs[0] == runs[1], runs[0], -1)
     os.makedirs(ART, exist_ok=True)
@@ -228,7 +283,8 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
                      'note': "the woodland's painted cascade as a piece over a face of %d cells" % (2 * drop)},
         'geometry': {'size_px': [W, H], 'size_cells': [cells_w, 2 * drop], 'foot': [W / 2.0, float(12 + face)], 'z_sort': 'ground',
                      'collision': {'shape': 'none'},
-                     'footprint': [[c, -r] for r in range(2 * drop, 0, -1) for c in cols]},
+                     'footprint': [[c, -r] for r in range(2 * drop, 0, -1) for c in cols],
+                     'sheet_px': [24, 24 + wpx, 12, 12 + face]},
         'placement': {'role': 'waterfall', 'snap': 'cell',
                       'requires': [{'rel': 'on', 'what': 'face', 'note': 'its footprint is the face under water crossing a south rim'},
                                    {'rel': 'under', 'what': 'water', 'note': 'water on the tier above, as wide as the fall'}],
@@ -238,7 +294,7 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
                       'animations': [{'clip': 'fall', 'loop': True, 'reduced_motion': 'hold:0', 'on_screen_only': True}]},
         'function': {}, 'story': {'owner': None},
         'gameplay': {'blocks_move': True, 'blocks_shots': False},
-        'audit': {'painter': {'module': 'scripts.art.native.water', 'fn': 'fall_hd', 'args': {'seed': 65 + cells_w}},
+        'audit': {'painter': {'module': 'scripts.art.kit.structures', 'fn': 'fall_sheet', 'args': {'seed': 65 + cells_w}},
                   'seeded_from': 'scripts/art/kit/structures.py', 'todo': ['the falling animation (the woodland flow strip)']},
     }, force)
 

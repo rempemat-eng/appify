@@ -49,6 +49,10 @@ def cells_of(plan) -> np.ndarray:
     out_ = ((cx - co['at'][0]) / co['r'][0]) ** 2 + ((cy - co['at'][1]) / co['r'][1]) ** 2 <= 1
     in_ = ((cx - ci['at'][0]) / ci['r'][0]) ** 2 + ((cy - ci['at'][1]) / ci['r'][1]) ** 2 <= 1
     grid[SG.join4(out_ & ~in_) & (grid != '#')] = 'w'    # worn ground, not a route: the stones stand on it
+    # the north path does not stop dead in the lawn: it opens into the glade, its end trodden wide
+    gx, gy, grx, gry = GLADE_END
+    glade = ((cx - gx) / grx) ** 2 + ((cy - gy) / gry) ** 2 <= 1
+    grid[SG.join4(glade) & (grid == '.')] = 'w'
     # water wins where a route crosses it (the footbridge spans it)
     s = plan['water']['soft']
     river = SG.cells_route(s['river']['points'], s['river']['cells'], h, w)
@@ -100,9 +104,16 @@ def smooth_cells(m: np.ndarray, passes: int = 3) -> np.ndarray:
 
 
 # the spring's ground: the rill comes down from the escarpment's foot on raised ground west of the
-# clearing and falls into the pool over its face (the woodland's painted fall); one tier up
-RAISED = (0, 12, 0, 31)          # columns x0..x1, rows y0..y1 (cells, exclusive ends)
-LEVEL = 2                        # two tiers up: a face four cells high, the painted cascade's height
+# clearing and falls into the pool over its face; one tier up. Matt, 2 Nov ("the waterfall overlaps
+# in an unrealistic way on the top bit"): the face is one tier (two cells) high, the height a face
+# strip draws (a two-tier drop drew its lower half as a dark band), its rim two cells further south
+# so the fall still lands in the same pool
+RAISED = (0, 12, 0, 33)          # columns x0..x1, rows y0..y1 (cells, exclusive ends)
+LEVEL = 1                        # one tier up: a face two cells high
+GLADE_END = (128, 150, 18, 13)   # the trodden ground where the north path opens into the glade (world px)
+# pieces of the base scene moved off what they must not stand on (texels): a bush off the face,
+# the willow's trunk off the path, the east stone of the ring clear of the north-south path
+MOVED = {'bush-2': (96, 768), 'willow': (780, 1344), 'stone-7': (324, 1209)}
 
 
 def tiers_of(grid) -> list:
@@ -151,6 +162,7 @@ def decor_of(plan) -> list:
 def pieces_of(plan) -> list:
     out = []
     for name, kind, x, y in base_objects():
+        x, y = MOVED.get(name, (x, y))
         out.append({'id': name, 'piece': 'woodland_' + kind, 'at': [int(round(x)), int(round(y))], 'variant': kind})
     water = cells_of(plan) == '~'
     x0, x1, y0, y1 = RAISED
@@ -201,7 +213,7 @@ def pieces_of(plan) -> list:
     fy = river_top - 24 + fb['geometry']['foot'][1]
     # the fall where the rill crosses the raised ground's rim: centred on its two columns
     rill_cols = [x for x in range(x0, x1) if water[y1 - 1, x]]
-    out.append({'id': 'waterfall', 'piece': 'waterfall_%d%s' % (len(rill_cols), '_tall' if LEVEL == 2 else ''),
+    out.append({'id': 'waterfall', 'piece': 'waterfall_%d%s' % (len(rill_cols), '_tall' if LEVEL == 2 else ''),  # sheet = channel
                 'at': [int((rill_cols[0] + len(rill_cols) / 2.0) * 24), (y1 + 2 * LEVEL) * 24], 'variant': 'w%d' % len(rill_cols)})
     out.append({'id': 'footbridge', 'piece': 'woodland_footbridge',
                 'at': [int(round((br['x0'] + br['w'] / 2) * D)), int(round(fy))], 'variant': 'river3'})
