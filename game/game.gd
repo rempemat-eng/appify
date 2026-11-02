@@ -12,6 +12,7 @@ extends Node2D
 ## --at=x,y (stand at a world point), --camp[=dx,dy] (set the woodland enemy camp north of the player,
 ## to see and fight the creatures; it is not placed in any zone yet). --camp --quit ends after
 ## camp setup and the following frame unless another selected mode owns completion.
+## --debug-controls shows the optional character-selection debug label (hidden by default).
 ## See docs/godot.md.
 
 const DENSITY := 3.0
@@ -78,7 +79,11 @@ func _ready() -> void:
 		_camp.call_deferred()
 	if args.has("cycle"):
 		_cycle.call_deferred()
+	_setup_cast_label()
+
+func _setup_cast_label() -> void:
 	_cast_label = Label.new()
+	_cast_label.visible = args.has("debug-controls")
 	_cast_label.position = Vector2(8, 520)
 	_cast_label.add_theme_font_size_override("font_size", 8)
 	$UI.add_child(_cast_label)

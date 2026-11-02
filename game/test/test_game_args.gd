@@ -153,3 +153,40 @@ func test_interactive_camp_keeps_running_without_quit() -> void:
 func test_camp_quit_does_not_preempt_other_selected_modes() -> void:
 	for mode in ["--shot=unused.png", "--demo", "--cycle", "--bossfight", "--lineup"]:
 		await _assert_camp_completion(PackedStringArray(["--camp", "--quit", mode]), 0)
+
+# SLICE-DEBUG-CONTROLS: source-prepared controls, UNRUN until separately allocated.
+func _debug_label_fixture(tokens: PackedStringArray) -> CampHarness:
+	var fixture := _fixture(tokens)
+	var game: CampHarness = fixture[0]
+	# Use the real label builder and character consumer; only unrelated boot is bypassed.
+	game._setup_cast_label()
+	var sprite := CastSprite.new()
+	game.player.add_child(sprite)
+	game.player.sprite = sprite
+	return game
+
+func test_debug_label_is_hidden_without_explicit_opt_in() -> void:
+	for tokens in [[], ["--character=ashe"], ["--cycle"], ["--demo"], ["--shot=unused.png"]]:
+		var game := _debug_label_fixture(PackedStringArray(tokens))
+		assert_bool(game._cast_label.visible).is_false()
+		assert_str(game._cast_label.text).is_equal("1-0, Shift+1-4: character")
+		assert_object(game._cast_label.get_parent()).is_same(game.get_node("UI"))
+
+func test_debug_label_is_visible_with_explicit_opt_in() -> void:
+	var game := _debug_label_fixture(PackedStringArray(["--debug-controls"]))
+	assert_bool(game.args.has("debug-controls")).is_true()
+	assert_bool(game._cast_label.visible).is_true()
+	assert_str(game._cast_label.text).is_equal("1-0, Shift+1-4: character")
+
+func test_character_selection_preserves_debug_label_visibility() -> void:
+	for debug in [false, true]:
+		var tokens := PackedStringArray(["--character=ashe"])
+		if debug:
+			tokens.append("--debug-controls")
+		var game := _debug_label_fixture(tokens)
+		for character in ["ashe", "bramble"]:
+			game.select_character(character)
+			assert_str(game.player.character).is_equal(character)
+			assert_str(game._cast_label.text).is_equal(
+				"%s  (1-0, Shift+1-4: character)" % character.capitalize())
+			assert_bool(game._cast_label.visible).is_equal(debug)
