@@ -154,14 +154,46 @@ def pieces_of(plan) -> list:
         out.append({'id': name, 'piece': 'woodland_' + kind, 'at': [int(round(x)), int(round(y))], 'variant': kind})
     water = cells_of(plan) == '~'
     x0, x1, y0, y1 = RAISED
+    # The retained talus boulders stand on the lawn below the scree, clear of each other.
+    talus_feet = {
+        1: (9, 45),
+        2: (17, 54),
+        3: (29, 44),
+        4: (38, 45),
+        5: (48, 51),
+        6: (56, 54),
+        8: (98, 48),
+        9: (108, 54),
+        10: (115, 42),
+        11: (124, 40),
+        12: (134, 41),
+        13: (148, 53),
+        14: (156, 46),
+        15: (167, 54),
+        16: (176, 47),
+        17: (185, 40),
+        18: (199, 55),
+        19: (207, 53),
+        20: (215, 55),
+        21: (229, 45),
+        22: (239, 53),
+        23: (249, 50),
+        24: (256, 42),
+        25: (265, 49),
+        26: (279, 46),
+        27: (289, 45),
+        28: (298, 41),
+        29: (309, 50),
+    }
     for i, b in enumerate(plan['rock']['talus']['boulders'] + plan['rock']['heap']):
         cx, cy = int(b['at'][0] // CELL_W), int((b['at'][1] - 0.5) // CELL_W)
         if water[max(0, cy - 1):cy + 2, max(0, cx - 1):cx + 2].any():
             continue          # no boulder stands in the water or on its bank's edge unless placed as a stepping stone
         if x0 <= cx < x1 and y1 <= cy < y1 + 2 * LEVEL:
             continue          # nor on the face under the raised ground
+        at = talus_feet.get(i + 1, b['at'])
         out.append({'id': 'boulder-%d' % (i + 1), 'piece': 'woodland_boulder',
-                    'at': [int(round(b['at'][0] * D)), int(round(b['at'][1] * D))], 'variant': boulder_variant(b['size'])})
+                    'at': [int(round(at[0] * D)), int(round(at[1] * D))], 'variant': boulder_variant(b['size'])})
     br = plan['places']['bridge']
     fb = json.load(open(os.path.join(ROOT, 'game', 'kit', 'pieces', 'structure', 'woodland_footbridge.json')))
     # the bridge's sprite spans the river with 24 texels above its north bank (structures.py)
