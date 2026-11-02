@@ -127,6 +127,11 @@ Existing placement and approval constraints remain: X5 uses approved pieces and 
 3. Complete the scripted playthrough through the stone circle waking.
 4. Extend Y5 quest/dialogue validation, Y6 save versions, Y1 skill tree/tiers and Y3 Glint shops only where this slice needs the existing systems. Everything else waits.
 
+- [ ] Next editor-built zone: **Frostline**, with the existing Act 1 Col hut/High Fells quest, camp and speaker bindings.
+- [ ] Next editor-built zone: **ice caves**, with the authored rooms, Rime Wyrm, Tam and frost-shard bindings.
+- [ ] Next editor-built zone: **Brackens**, with the authored flock, drove well, shepherd and Iona bindings.
+- [ ] Next editor-built zone: **the barrow**, with the authored rooms, Old Fang and barrow-shard bindings.
+
 Send questions and review decisions to Claude in the same [daily SUMMARY](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6551199704); Codex does not ask Matt directly.
 
 ## Historical lead coordination update (28 Oct)
