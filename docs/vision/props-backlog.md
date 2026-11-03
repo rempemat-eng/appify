@@ -153,5 +153,5 @@ Development-plan Phase 6 puts **the Brackens and the Frostline** first after the
 
 - **Terrain for the moor** (heath, peat cuts, damp flushes; gritstone bluffs) is a terrain-kit task, not a prop: the study stands on lawn, path and worn.
 - **One gate axis.** The drystone gate and stile run along x only; a gate along y (`gate_ns`) and the T and end cells (`esw`, `e`) come when a plan needs them.
-- **Signpost arms.** `placement.points` (#430's round 3) is not set on the fingerposts: `rules.points` counts a road two cells wide as a way out north and south of itself, so a T junction on the Drover's Road reads as four ways. The arms are drawn north, east and west.
+- **Signpost arms.** `placement.points` (#430's round 3) is not set on the fingerposts: `rules.points` counts a road two cells wide as a way out north and south of itself, so a T junction on the Drover's Road reads as four ways. An arm pointing north would also hide behind the post in the three-quarter view, so the arms point east (two places) and west; a north arm needs a drawn convention first.
 - **Metadata the kit cannot say yet** (as #430 found for the woodpile): the hermit's fire "at the end of a side trod" is approximated as `near route 6`; the bench's "a view" is not expressible.

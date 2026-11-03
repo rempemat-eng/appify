@@ -532,7 +532,8 @@ def cairn(toppled=False, seed=3):
 
 def signpost(arms=3, seed=5):
     """An oak fingerpost at a junction: a squared post with a weathered cap, its arms pointing down
-    the ways (north, east and west at a T junction, or east and west), painted white and weathered,
+    the ways (two places east on the one road and one west, or one each way; an arm pointing north
+    would hide behind the post in the three-quarter view), painted white and weathered,
     each with a cut point and a name in black letters; stones packed at its foot."""
     sc = K.Scene(-40, 40, -30, 30, 110)
     mx = K.noise((sc.H, sc.W), np.random.default_rng(seed), 1.2)            # silvered and brown by streaks
@@ -542,7 +543,7 @@ def signpost(arms=3, seed=5):
     sc.ellipsoid(0, 0, 83, 3.6, 3.6, 2.8, OAK, base=3.2, k=1.8, tag='wood', mix=0.6, flat=1.4)
     arm_specs = [(1, 3, 27, 68, 74, 'e'), (-1, 3, 25, 60, 66, 'w')]
     if arms == 3:
-        arm_specs.append((0, 3, 20, 50, 56, 'n'))
+        arm_specs.append((1, 3, 21, 51, 57, 'e'))
     for (sgn, x0, L, z0, z1, d) in arm_specs:
         if d == 'n':
             sc.box(-1.8, -3.0 - L, z0, 1.8, -3.0, z1, PAINT, base=3.2, k=1.4, tag='arm', round_=0.8, mix=mx, tex='wood_v')
@@ -1298,7 +1299,7 @@ def prop_jobs():
             collision={'shape': 'rect', 'rect': [-2.0, -2.0, 4, 2]}, shadow=(6, 3), composition='corner',
             requires=[_rel('at_corner', 'route', 2, 'at a junction: routes on two sides at right angles, its arms down them')],
             forbids=NATURE, size_class='sign (67 to 126 tall, 18 to 81 wide: a fingerpost 1.6 to 2.4 m)', eastward='13 (the farm\'s signs), 12 (the lantern post)',
-            note='An oak fingerpost at a T junction: arms north, east and west with painted names.')),
+            note='An oak fingerpost at a junction: two arms east (two places down that road) and one west, painted names.')),
         ('brackens_signpost_two', [('still', lambda: signpost(2))], dict(
             name='Fingerpost, two arms', purpose='guide', role='signpost', cells=(2, 1), fp=[[0, -1]],
             collision={'shape': 'rect', 'rect': [-2.0, -2.0, 4, 2]}, shadow=(6, 3), composition='corner',
