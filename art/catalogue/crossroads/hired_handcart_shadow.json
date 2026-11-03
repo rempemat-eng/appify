@@ -1,7 +1,7 @@
 {
  "id": "crossroads/hired_handcart_shadow",
  "file": "game/zones/crossroads/art/hired_handcart_shadow.png",
- "sha256": "3b2289e52a127bb77a754bd72374a7e864ed611083443722102cfa9708e40651",
+ "sha256": "805b9ece284ad4a19cb66b42ea98764450f19accea224f671bbc672c51c49ad2",
  "kind": "hired_handcart_shadow",
  "biome": "valley",
  "H": 74.0,

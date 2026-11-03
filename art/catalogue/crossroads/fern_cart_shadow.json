@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_cart_shadow",
  "file": "game/zones/crossroads/art/fern_cart_shadow.png",
- "sha256": "71e871f466ba68941790fa76549c7dab12dec6cafe9762cd4f85bf91fdf6d6a2",
+ "sha256": "2fbf4036072e1d5efc22504079c7c88eac25d9e05aa8e40e267d08f7e86b14c3",
  "kind": "fern_cart_shadow",
  "biome": "valley",
  "H": 74.0,

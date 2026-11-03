@@ -979,7 +979,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"well\"],\"not_flags\":[\"well_clear\"]}"
 
 [node name="WellSpoilRubble" type="Sprite2D" parent="Props/If_well_spoil_rubble"]
-position = Vector2(789, 948)
+position = Vector2(792, 960)
 texture = ExtResource("t29")
 centered = false
 offset = Vector2(-36, -70)
@@ -988,7 +988,7 @@ offset = Vector2(-36, -70)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_well_spoil_rubble/WellSpoilRubbleBody"]
-position = Vector2(789, 930)
+position = Vector2(792, 942)
 shape = SubResource("s31")
 
 [node name="If_hired_handcart" type="Node2D" parent="Props"]
@@ -996,7 +996,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"well\"],\"not_flags\":[\"well_clear\"]}"
 
 [node name="HiredHandcart" type="Sprite2D" parent="Props/If_hired_handcart"]
-position = Vector2(711, 996)
+position = Vector2(708, 984)
 texture = ExtResource("t30")
 centered = false
 offset = Vector2(-57, -80)
@@ -1005,7 +1005,7 @@ offset = Vector2(-57, -80)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_hired_handcart/HiredHandcartBody"]
-position = Vector2(711, 984)
+position = Vector2(708, 972)
 shape = SubResource("s15")
 
 [node name="If_well_pail" type="Node2D" parent="Props"]
@@ -1013,7 +1013,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"well_clear\"]}"
 
 [node name="WellPail" type="Sprite2D" parent="Props/If_well_pail"]
-position = Vector2(906, 960)
+position = Vector2(900, 960)
 texture = ExtResource("t31")
 centered = false
 offset = Vector2(-18, -44)
@@ -1023,7 +1023,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"],\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernCart" type="Sprite2D" parent="Props/If_fern_cart"]
-position = Vector2(1053, 1032)
+position = Vector2(1056, 1032)
 texture = ExtResource("t32")
 centered = false
 offset = Vector2(-57, -80)
@@ -1032,7 +1032,7 @@ offset = Vector2(-57, -80)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_fern_cart/FernCartBody"]
-position = Vector2(1053, 1020)
+position = Vector2(1056, 1020)
 shape = SubResource("s15")
 
 [node name="If_fern_bundles" type="Node2D" parent="Props"]
@@ -1040,7 +1040,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"],\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernBundles" type="Sprite2D" parent="Props/If_fern_bundles"]
-position = Vector2(975, 1044)
+position = Vector2(972, 1032)
 texture = ExtResource("t33")
 centered = false
 offset = Vector2(-30, -62)
@@ -1049,7 +1049,7 @@ offset = Vector2(-30, -62)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_fern_bundles/FernBundlesBody"]
-position = Vector2(975, 1032)
+position = Vector2(972, 1020)
 shape = SubResource("s16")
 
 [node name="NoticeBoard" type="Sprite2D" parent="Props"]
@@ -1572,7 +1572,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"well\"],\"not_flags\":[\"well_clear\"]}"
 
 [node name="WellSpoilRubbleShadow" type="Sprite2D" parent="Props/If_well_spoil_rubble_shadow"]
-position = Vector2(754, 944)
+position = Vector2(757, 956)
 texture = ExtResource("t108")
 centered = false
 offset = Vector2(0, 0)
@@ -1583,7 +1583,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"well\"],\"not_flags\":[\"well_clear\"]}"
 
 [node name="HiredHandcartShadow" type="Sprite2D" parent="Props/If_hired_handcart_shadow"]
-position = Vector2(659, 992)
+position = Vector2(656, 980)
 texture = ExtResource("t109")
 centered = false
 offset = Vector2(0, 0)
@@ -1594,7 +1594,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"well_clear\"]}"
 
 [node name="WellPailShadow" type="Sprite2D" parent="Props/If_well_pail_shadow"]
-position = Vector2(896, 956)
+position = Vector2(890, 956)
 texture = ExtResource("t110")
 centered = false
 offset = Vector2(0, 0)
@@ -1605,7 +1605,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"],\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernCartShadow" type="Sprite2D" parent="Props/If_fern_cart_shadow"]
-position = Vector2(1001, 1028)
+position = Vector2(1004, 1028)
 texture = ExtResource("t111")
 centered = false
 offset = Vector2(0, 0)
@@ -1616,7 +1616,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"],\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernBundlesShadow" type="Sprite2D" parent="Props/If_fern_bundles_shadow"]
-position = Vector2(953, 1040)
+position = Vector2(950, 1028)
 texture = ExtResource("t112")
 centered = false
 offset = Vector2(0, 0)

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/well_spoil_rubble_shadow",
  "file": "game/zones/crossroads/art/well_spoil_rubble_shadow.png",
- "sha256": "a0e5962bd22379af589d5eee7ab70a1bee8726817f4daca47969e13bc0b18cf7",
+ "sha256": "cac6e4f1e9294d02a87bec5832c386259c1b620f9ce5a010de705470d4e95d34",
  "kind": "well_spoil_rubble_shadow",
  "biome": "valley",
  "H": 74.0,

@@ -770,8 +770,8 @@
       "id": "well_spoil_rubble",
       "kind": "rubble",
       "rect": [
-        254,
-        304,
+        255,
+        308,
         18,
         12
       ],
@@ -791,8 +791,8 @@
       "id": "hired_handcart",
       "kind": "cart",
       "rect": [
-        226,
-        324,
+        225,
+        320,
         22,
         8
       ],
@@ -812,7 +812,7 @@
       "id": "well_pail",
       "kind": "pail",
       "rect": [
-        299,
+        297,
         314,
         6,
         6
@@ -830,7 +830,7 @@
       "id": "fern_cart",
       "kind": "cart",
       "rect": [
-        340,
+        341,
         336,
         22,
         8
@@ -851,8 +851,8 @@
       "id": "fern_bundles",
       "kind": "sacks",
       "rect": [
-        318,
-        340,
+        317,
+        336,
         14,
         8
       ],

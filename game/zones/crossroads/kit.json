@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "6586849c4c099a4244658dc332a4619ad5e428919c36eb0866a69a5fbb7a4020",
+ "inputs": "da5b19ee8e65e6d63e5a3a2a6593f5bb3769b675b6528dde9aa2fda20e332e7d",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -664,8 +664,8 @@
    "kind": "rubble",
    "png": "well_spoil_rubble.png",
    "foot": [
-    789,
-    948
+    792,
+    960
    ],
    "offset": [
     -36,
@@ -680,8 +680,8 @@
     ]
    },
    "solid": [
-    254,
-    304,
+    255,
+    308,
     18,
     12
    ]
@@ -691,8 +691,8 @@
    "kind": "cart",
    "png": "hired_handcart.png",
    "foot": [
-    711,
-    996
+    708,
+    984
    ],
    "offset": [
     -57,
@@ -707,8 +707,8 @@
     ]
    },
    "solid": [
-    226,
-    324,
+    225,
+    320,
     22,
     8
    ]
@@ -718,7 +718,7 @@
    "kind": "pail",
    "png": "well_pail.png",
    "foot": [
-    906,
+    900,
     960
    ],
    "offset": [
@@ -737,7 +737,7 @@
    "kind": "cart",
    "png": "fern_cart.png",
    "foot": [
-    1053,
+    1056,
     1032
    ],
    "offset": [
@@ -753,7 +753,7 @@
     ]
    },
    "solid": [
-    340,
+    341,
     336,
     22,
     8
@@ -764,8 +764,8 @@
    "kind": "sacks",
    "png": "fern_bundles.png",
    "foot": [
-    975,
-    1044
+    972,
+    1032
    ],
    "offset": [
     -30,
@@ -780,8 +780,8 @@
     ]
    },
    "solid": [
-    318,
-    340,
+    317,
+    336,
     14,
     8
    ]
@@ -2182,8 +2182,8 @@
    "kind": "shadow",
    "png": "well_spoil_rubble_shadow.png",
    "foot": [
-    754,
-    944
+    757,
+    956
    ],
    "offset": [
     0,
@@ -2205,8 +2205,8 @@
    "kind": "shadow",
    "png": "hired_handcart_shadow.png",
    "foot": [
-    659,
-    992
+    656,
+    980
    ],
    "offset": [
     0,
@@ -2228,7 +2228,7 @@
    "kind": "shadow",
    "png": "well_pail_shadow.png",
    "foot": [
-    896,
+    890,
     956
    ],
    "offset": [
@@ -2248,7 +2248,7 @@
    "kind": "shadow",
    "png": "fern_cart_shadow.png",
    "foot": [
-    1001,
+    1004,
     1028
    ],
    "offset": [
@@ -2271,8 +2271,8 @@
    "kind": "shadow",
    "png": "fern_bundles_shadow.png",
    "foot": [
-    953,
-    1040
+    950,
+    1028
    ],
    "offset": [
     0,

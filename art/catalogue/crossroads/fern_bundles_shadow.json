@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_bundles_shadow",
  "file": "game/zones/crossroads/art/fern_bundles_shadow.png",
- "sha256": "745d9de3281a800e5ce256ebe2d452a327c8c64950fc5d376d587b17e33a4ebc",
+ "sha256": "6fa2b56e72710e168547088635cee97831113f9fbc541e2c5b2268c706b739b5",
  "kind": "fern_bundles_shadow",
  "biome": "valley",
  "H": 74.0,
