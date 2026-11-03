@@ -106,5 +106,17 @@ Every item was looked at on the 1920 and 3840 overviews, the reference and the N
 16. **Done.** No stamped or repeated texture is left in the range or the edges; the trees are placed per cell with jitter and density, the dunes follow one wind.
 17. **Done.** The new coast past the east edge wanders and bends north-east; Neon's east coast keeps its coves.
 18. **Done.** Soft-grid rules: dither only in the edge fades; outlines only where height changes (crest lines, the rock's foot) and in the face's own darks; the relief takes its colours from the stone, snow and basalt ramps.
-19. **Not done.** The world's own wall along the old east edge (a straight strip of conifers about 130 px wide, lane G's wall) now shows inside the drawing as a faint straight band; it is world ground, so it stays until lane G redraws that edge.
+19. **Done on the overview (v2).** The world's own wall along the old east edge (a straight strip of conifers about 130 px wide, lane G's wall) showed inside the drawing as a straight band. The world ground is unchanged; the overview now draws that strip and the forest either side as irregular stands of conifer and old forest, so it no longer reads as a wall.
 20. **Done.** The scale panel says what is drawn: the world 12544 x 7168, drawn to 13568 x 7744.
+
+### Art director review of 382dbc59, applied (v2, 3 Nov)
+
+Overview drawing only: no world cell, plan, route or table changes in this round, so the data and every check are those of 382dbc59.
+
+1. **Snow and cloud.** The snowline is higher (snow on the high peaks, crests and the back range's snowfields only), with bare rock and scree between. The north cloud bank is a different material: a front row of warm-white puffs whose scalloped lower edge is the line where the range ends, lit on their upper left with a lit top edge against the bank behind, shaded underneath, a rim along the scallops and a cast shadow on the peaks below. The old fade over the range is gone.
+2. **Snowfields** take the rock's light model: broad swells shaded lit top-left and blue-grey on the shade side, with crevasse lines across them, instead of flat pale-lavender blocks.
+3. **The range's faces.** Spurs are closer, of mixed length (short ones between long ones), at varied angles with one or two side branches each, and the cones are traced in finer height steps, so the faces break into ridges and gullies instead of long parallel strokes.
+4. **The coast north-east of Neon.** The straight north-south shore there was a sheet of mere in the drawn band; the band is now bog with scattered meres, and its coast has a headland running out south-east, a cove either side and a beach. No town moved. Neon's own east shore (x 12440, from the 2 Nov pass) is world ground and is unchanged.
+5. **Edge fog** on the east, south and west is fewer, larger, softer forms with the four-step fade; the small ripple texture and its lighting are gone.
+6. **The conifer strip:** see item 19 above.
+7. **Fire country.** The salt lake has a clean shoreline, a damp margin and two crust rings with its cracks faint. The fire country's speckle of ash, aa, black sand and scree is drawn as fields (a majority over 5 x 5 cells), the aa and basalt flows as lobes shaded from the world's heights, and the dot marks on ash and lavastone are left out.

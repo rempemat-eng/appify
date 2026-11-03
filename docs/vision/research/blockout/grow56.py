@@ -108,7 +108,9 @@ def draw_lines56(S):
 def coast_rows(n):
     """The fens' coast past the east edge: from the world's coast row (4232) bending north-east, wandering."""
     x = np.arange(n) * CELL
-    y = 4236 - 0.3 * x - 160 * np.sin(x / 700.0) ** 2 + fbm1(n, [(40, 110), (14, 36), (5, 10)], 5611) * np.clip(x / 260, 0, 1)
+    y = (4236 - 0.3 * x - 160 * np.sin(x / 700.0) ** 2 + fbm1(n, [(40, 110), (14, 36), (5, 10)], 5611) * np.clip(x / 260, 0, 1)
+         + 230 * np.exp(-((x - 430) / 95) ** 2)                      # a headland running out south-east
+         - 120 * np.exp(-((x - 640) / 70) ** 2) - 90 * np.exp(-((x - 190) / 60) ** 2))   # coves either side of it
     return (y // CELL).astype(int)
 
 
@@ -143,14 +145,19 @@ def extend(S, R, cg, rgb, sea_rgb, cid, cols, sea_new):
     open_ = np.isin(K, [kid[k] for k in ('steppe', 'scrub', 'meadow', 'scree', 'scree2', 'alpine', 'barren', 'talus', 'moraine', 'boulders') if k in kid])
     K = np.where(ne & open_, np.where(nz_ > 0.1, kid['ancient'], kid['conifer']), K)
     yrow = (np.arange(H + NY) - NY)[:, None] * CELL
-    wet = nz_ * 0.6 + np.clip((yrow - 2600) / 1400, 0, 1) * 1.8 - 0.75
+    wet = nz_ * 0.75 + np.clip((yrow - 2600) / 1400, 0, 1) * 0.8 - 0.35   # bog with scattered meres, not one sheet of water
     nz2 = ndi.gaussian_filter(np.random.default_rng(5613).standard_normal(land.shape).astype(np.float32), 3)
     nz2 /= nz2.std() + 1e-6
-    eb = np.zeros_like(band); eb[:, W:] = (nz2[:, W:] * 0.35 + np.arange(NX)[None, :] / 28.0) > 0.7    # the world's edge ground runs on a little
+    eb = np.zeros_like(band); eb[:, W:] = (nz2[:, W:] * 0.9 + np.arange(NX)[None, :] / 28.0) > 0.7    # the world's edge ground runs on a little
     eb &= land
-    fen = np.where(wet > 0.9, kid['mere'], np.where(wet > 0.45, kid['bog'], np.where(nz_ > -0.2, kid['ancient'], kid['conifer'])))
+    fen = np.where(wet > 1.05, kid['mere'], np.where(wet > 0.35, kid['bog'], np.where(nz_ > -0.2, kid['ancient'], kid['conifer'])))
     # the band starts a little inside the world's wall, so its straight strip of trees does not double
     K = np.where(eb, fen, K)
+    wk = np.isin(K, [kid[k] for k in ('sea', 'surf') if k in kid])        # no mirrored sea left on the band's land
+    if (band & land & wk).any():
+        K = np.where(band & land & wk, kid['bog'], K)
+    beach = east_land & ~np.vstack([east_land[2:], np.zeros((2, NX), bool)]) & (nz2[:, W:] > -0.6)
+    K[:, W:][beach] = kid['sand']                                    # a beach along the band's coast, broken where the fen comes down
     K[:, W:][~east_land] = kid['sea']
     sea_tier = int(np.min(S['tiers'][~S['land']])) if (~S['land']).any() else -1
     tiers[:, W:][~east_land] = sea_tier
@@ -257,7 +264,7 @@ def range_field(Sx, rivers, closed, M=None):
     x = 160.0
     spurs = 0
     while x < Wpx - 80:
-        x += rng.uniform(250, 420)
+        x += rng.uniform(150, 330)
         if abs(x - PASS_X) < 230:
             continue
         i = int(x / 4)
@@ -265,14 +272,15 @@ def range_field(Sx, rivers, closed, M=None):
             break
         y0, h0 = ys[i], ht[i]
         c0 = int(x / CELL)
-        target = foot[min(c0, Wc - 1)] * rng.uniform(0.82, 1.0)
+        target = y0 + (foot[min(c0, Wc - 1)] - y0) * rng.choice([rng.uniform(0.3, 0.55), rng.uniform(0.82, 1.0)], p=[0.45, 0.55])
         L = max(160.0, target - y0)
-        th = math.radians(90 + rng.uniform(-24, 24))
+        th = math.radians(90 + rng.uniform(-40, 40))
         pts = [(x, y0)]; hs = [h0]
         px_, py_ = x, y0; steps = int(L / 16)
-        branch_at = rng.uniform(0.3, 0.6) if rng.random() < 0.7 else 2.0
+        branch_at = rng.uniform(0.25, 0.6) if rng.random() < 0.9 else 2.0
         for st in range(1, steps + 1):
-            th += math.radians(rng.normal(0, 4))
+            th += math.radians(rng.normal(0, 7))
+            th = min(max(th, math.radians(35)), math.radians(145))
             px_ += 16 * math.cos(th); py_ += 16 * math.sin(th)
             rr, cc = int(py_ / CELL + NY), int(px_ / CELL)
             if not (0 <= rr < Hc and 0 <= cc < Wc) or d_line[rr, cc] < 150 or d_town[rr, cc] < 200 or d_water[rr, cc] < 90:
@@ -280,7 +288,7 @@ def range_field(Sx, rivers, closed, M=None):
             t = st / steps
             bump = 0.07 * math.sin(t * math.pi * rng.uniform(2, 3.4))
             pts.append((px_, py_)); hs.append(h0 * (1 - 0.72 * t ** 0.85) + bump * h0)
-            if abs(t - branch_at) < 1 / steps:
+            if abs(t - branch_at) < 1 / steps or (branch_at < 1 and abs(t - branch_at - 0.25) < 1 / steps and rng.random() < 0.5):
                 bt = th + math.radians(rng.choice([-1, 1]) * rng.uniform(38, 58))
                 bx, by = px_, py_; bpts = [(bx, by)]; bhs = [hs[-1]]
                 nb = int(steps * rng.uniform(0.3, 0.45))
@@ -302,7 +310,7 @@ def range_field(Sx, rivers, closed, M=None):
     # the cone: every cell takes the highest ridge height less a fall with (Euclidean) distance, by height levels
     s1 = 0.0125                                                    # height per cell of distance: faces of about 30 degrees
     Hm = np.zeros((Hc, Wc), np.float32)
-    for L in np.linspace(0.02, float(R0.max()), 48):
+    for L in np.linspace(0.02, float(R0.max()), 96):
         m = R0 >= L
         if not m.any():
             continue
@@ -317,7 +325,8 @@ def range_field(Sx, rivers, closed, M=None):
     t = ((NY - np.arange(NY)) / NY)[:, None]
     hw[:NY] = np.maximum(hw[:NY], hw[NY][None, :] + (0.85 - hw[NY][None, :]) * t)
     Hm *= np.clip((hw - 0.36) / 0.22, 0, 1)
-    out = dict(H=Hm.astype(np.float32), Hs=ndi.gaussian_filter(Hm, 1.5).astype(np.float32), spurs=spurs, spine=(xs, ys, ht), back=(xs, yb, hb), d_line=d_line, d_town=d_town)
+    out = dict(H=Hm.astype(np.float32), Hs=ndi.gaussian_filter(Hm, 1.5).astype(np.float32), spurs=spurs,
+               plat=ndi.gaussian_filter((inside & (wgt > 0.3)).astype(np.float32), 2.0), spine=(xs, ys, ht), back=(xs, yb, hb), d_line=d_line, d_town=d_town)
     _RANGE[key] = out
     return out
 
@@ -342,13 +351,20 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
     out_all = arr_all.copy()
     sc = k * 150
     N1 = Noise2((Hi, Wi), max(3.0, sc), 7101); N2 = Noise2((Hi, Wi), max(2.0, sc * 0.35), 7102)
+    NB = Noise2((Hi, Wi), max(4.0, k * 260), 7103); NC = Noise2((Hi, Wi), max(3.0, k * 110), 7104)   # snowfield swells, crevasses
+    salt_cells = None
+    if cgx is not None and cid is not None and 'salt' in cid:
+        salt_cells = ndi.gaussian_filter((cgx == cid['salt']).astype(np.float32), 1.3)
+        salt_d = ndi.distance_transform_edt(salt_cells > 0.5).astype(np.float32)    # cells in from the shore
     px = ((np.arange(Wi, dtype=np.float32) - ox) / k / CELL - 0.5).astype(np.float32)
     Xw1 = (px + 0.5) * CELL
     east1 = np.clip((Xw1 - 8800) / 2400, 0, 1).astype(np.float32)
     st = R['stone']; sw = R['stone_warm']; sc_ = R['slate']; sn = R['snow']; snc = R['snow_cool']
     rock_c = np.array([sc_[2], st[2], st[3], sw[4]], np.float32)
-    snow_c = np.array([snc[2], snc[3], sn[4], sn[5]], np.float32)
+    snow_c = np.array([snc[1], snc[2], sn[4], sn[5]], np.float32)       # blue-grey shade side, white lit face
+    scree_c = np.array([sc_[2], sw[2], sw[3], sw[4]], np.float32)
     fac = np.array([0.8, 0.9, 1.0, 1.08], np.float32)
+    sw5 = R['snow_warm']; sa = R['sand']; saw = R['sand_warm']
     rk_cells = None
     if cgx is not None and cid is not None:
         rk_cells = np.isin(cgx, [cid[n] for n in ('rock', 'crag') if n in cid]).astype(np.float32)
@@ -366,20 +382,28 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
         Yw = (Y + 0.5) * CELL - DY
         n1 = N1.rows(a0, a1); n2 = N2.rows(a0, a1)
         rid = 1 - np.abs(n1 * 0.7 + n2 * 0.3)
-        Hp = Hp + 0.022 * (rid - 0.6) * np.clip(Hp / 0.4, 0, 1) * np.clip((0.66 - Hp) / 0.1, 0.25, 1)   # calmer on the snow
+        plat = ndi.map_coordinates(F['plat'], [Y, X], order=1, mode='nearest', output=np.float32)
+        nb = NB.rows(a0, a1)
+        Hp = Hp + 0.026 * (rid - 0.6) * np.clip(Hp / 0.4, 0, 1) + 0.05 * nb * plat   # gullies; swells on the snowfields
         lv = np.digitize(_shade(Hp, k, 380), [0.2, 0.36, 0.78]).astype(np.int8)   # 0 deep shade .. 3 full light: lit north-west
         east = east1[None, :]
-        snowline = 0.64 + 0.4 * east + 0.05 * n2 - 0.04 * (lv <= 1)
+        snowline = 0.8 + 0.35 * east + 0.05 * n2 - 0.05 * (lv <= 1)              # snow on the high peaks and crests
         rock = Hp > 0.17 + 0.26 * east + 0.02 * n1
         if rk_cells is not None:                                  # the world's own rock and crag take the stone too
             rk = ndi.map_coordinates(rk_cells, [Y, X], order=0, mode='nearest', output=np.float32) > 0.5
             rock |= rk & (Hp > 0.04) & (Yw < 1400)
-        snow = rock & (Hp > snowline)
+        field = rock & (plat > 0.55) & (Hp > 0.6 + 0.08 * n1)                 # the back range's snowfields
+        snow = rock & ((Hp > snowline) | field)
         foot = (Hp > 0.05) & ~rock
         out = arr.copy()
         m = rock & ~snow
         out[m] = rock_c[lv[m]]
+        sq = m & (Hp < 0.42) & (n2 > 0.25)                                  # scree on the lower slopes
+        out[sq] = scree_c[lv[sq]]
         out[snow] = snow_c[lv[snow]]
+        nc = NC.rows(a0, a1)                                                # crevasse lines across the snowfields
+        crev = field & snow & (np.abs(np.sin(nc * 9.0)) < 0.09) & (n1 > -0.1) & (lv >= 2)
+        out[crev] = np.array(snc[2], np.float32)
         out[foot] = np.clip(arr[foot] * fac[lv[foot]][:, None], 0, 255)   # foothills and forested ridges: the ground's own colour
         crest = np.zeros_like(rock)                                # where full light meets shade across a ridge: the shade's dark
         crest[:, 1:] = (lv[:, :-1] >= 2) & (lv[:, 1:] <= 1) & rock[:, 1:]
@@ -399,6 +423,17 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
                 out[rockv] = bas[lvv[rockv]]
                 rest = Vm & ~rockv
                 out[rest] = np.clip(arr[rest] * np.array([0.72, 0.86, 1.0, 1.08], np.float32)[lvv[rest]][:, None], 0, 255)
+        if salt_cells is not None:                                # the salt lake: a clean shore and crust rings
+            sm = ndi.map_coordinates(salt_cells, [Y, X], order=1, mode='nearest', output=np.float32)
+            if (sm > 0.2).any():
+                inside = sm > 0.5
+                ring = ndi.map_coordinates(salt_d, [Y, X], order=1, mode='nearest', output=np.float32)
+                out[inside] = out[inside] * 0.3 + np.array(sw5[5], np.float32) * 0.7          # calm white crust, cracks faint
+                out[inside & (ring < 0.9)] = np.array(saw[4], np.float32)                    # the damp margin
+                out[inside & (ring >= 1.5) & (ring < 2.0)] = np.array(sw5[3], np.float32)    # the first crust ring
+                out[inside & (ring >= 3.6) & (ring < 4.0)] = np.array(sw5[3], np.float32)    # an inner ring
+                shore = (sm > 0.38) & ~inside
+                out[shore] = np.array(sa[2], np.float32)                                     # the shoreline
         out_all[r0:r1] = np.clip(out[r0 - a0:r0 - a0 + (r1 - r0)], 0, 255).astype(np.uint8)
     return Image.fromarray(out_all), None
 
@@ -417,8 +452,10 @@ def volcanic_mask(Sx):
     zone = (rows[:, None] > 3500) & (cols[None, :] < 4600)
     v &= zone
     v = ndi.binary_closing(v, iterations=2) & Sx['land'] & zone
+    v = ndi.binary_opening(v, iterations=1)
     Sx['vol_mask'] = v
-    Sx['vol_rock'] = v & np.isin(K, [i for i, k in enumerate(kinds) if k in VOL_ROCK])
+    vr = v & np.isin(K, [i for i, k in enumerate(kinds) if k in VOL_ROCK])
+    Sx['vol_rock'] = (ndi.gaussian_filter(vr.astype(np.float32), 2.2) > 0.42) & v   # the flows as lobes, not speckle
     return v
 
 
@@ -434,6 +471,27 @@ def range_classes(Sx, cgx, cid, rivers, closed):
     keep = np.isin(cg, [cid[n] for n in ('water',) if n in cid]) | (cg < 0)
     cg[rock & ~keep] = cid['rock']
     cg[snow & ~keep] = cid['snow']
+    return cg
+
+
+def overview_classes(Sx, cg, cid):
+    """Overview drawing only (no cell of the world changes kind): the fire country's speckle of ash, aa, blacksand and
+    scree generalised into fields and flows (a majority over 5 x 5 cells), and the straight strip of conifers along the old
+    east edge (the world's wall) broken into irregular stands mixed with the old forest, so it does not read as a wall."""
+    cg = cg.copy()
+    Hc, Wc = cg.shape
+    rows = (np.arange(Hc) - NY)[:, None] * CELL; cols = np.arange(Wc)[None, :] * CELL
+    ids = [cid[n] for n in ('ash', 'lavastone', 'basalt', 'blacksand', 'rock', 'desert', 'erg', 'salt', 'scrub', 'badland') if n in cid]
+    zone = (rows > 3300) & (cols < 4600) & np.isin(cg, ids)
+    votes = np.stack([ndi.uniform_filter((cg == i).astype(np.float32), 5) for i in ids])
+    best = np.array(ids, np.int16)[np.argmax(votes, axis=0)]
+    cg = np.where(zone & (votes.max(axis=0) > 0.3), best, cg)
+    fo = [cid[n] for n in ('conifer', 'oldforest') if n in cid]
+    if len(fo) == 2:
+        nz = ndi.gaussian_filter(np.random.default_rng(5614).standard_normal((Hc, Wc)).astype(np.float32), 4)
+        nz /= nz.std() + 1e-6
+        near = (np.abs(cols - 12480) + 90 * nz < 300) & np.isin(cg, fo) & (rows < 4300)
+        cg = np.where(near, np.where(nz > 0.15, fo[0], fo[1]), cg)
     return cg
 
 
@@ -471,7 +529,28 @@ def edge_frame(canvas, Sx, R, s, k, ox, oy, isles_clear=True, band=320):
 
     def ramp(d, depth, soft):
         return np.clip((depth - d) / soft + 1, 0, 1) ** 1.3
-    T1 = Noise2((Hc, Wc), 11 * s, 915); T2 = Noise2((Hc, Wc), 4 * s, 916); ST = Noise2((max(1, Hc // 3), Wc), 30 * s, 917)
+    T1 = Noise2((Hc, Wc), 36 * s, 915); ST = Noise2((max(1, Hc // 3), Wc), 30 * s, 917)   # fewer, larger, softer forms
+    # the north cloud bank: a front row of puffs whose lower scallops make a clear line where the range ends and cloud begins
+    rngp = np.random.default_rng(918)
+    puffs = []; x_ = -10.0 * s
+    while x_ < Wc + 20 * s:
+        r_ = rngp.uniform(9, 17) * s
+        cxp = x_ + r_ * 0.8
+        puffs.append((cxp, float(dN[int(min(max(cxp, 0), Wc - 1))]) - r_ * 0.3, r_))
+        x_ += rngp.uniform(1.0, 1.5) * r_
+    e = np.full(Wc, -1e9, np.float32); fi = np.zeros(Wc, int)
+    for i, (cxp, cyp, r_) in enumerate(puffs):
+        xs_ = np.arange(max(0, int(cxp - r_)), min(Wc, int(cxp + r_) + 1))
+        if len(xs_) == 0:
+            continue
+        bot = cyp + np.sqrt(np.clip(r_ * r_ - (xs_ - cxp) ** 2, 0, None))
+        upd = bot > e[xs_]
+        e[xs_[upd]] = bot[upd]; fi[xs_[upd]] = i
+    pcx = np.array([puffs[i][0] for i in fi], np.float32); pcy = np.array([puffs[i][1] for i in fi], np.float32)
+    prr = np.array([puffs[i][2] for i in fi], np.float32)
+    warm = np.array(R['snow'][5], np.float32) * 0.5 + np.array(R['sand_warm'][5], np.float32) * 0.5
+    lit_c = np.minimum(warm + 8, 255); under_c = warm * 0.65 + np.array(R['sand_warm'][3], np.float32) * 0.35
+    rim_c = np.array(R['sand_warm'][2], np.float32) * 0.55 + np.array(R['snow'][2], np.float32) * 0.45
     colN = np.array(R['snow'][4], np.float32)
     dust = np.array(R['sand'][5], np.float32) * 0.6 + np.array(R['sand_warm'][4], np.float32) * 0.4
     mist = np.array(R['snow'][3], np.float32) * 0.62 + np.array(R['grass_cool'][4], np.float32) * 0.38
@@ -480,25 +559,24 @@ def edge_frame(canvas, Sx, R, s, k, ox, oy, isles_clear=True, band=320):
     bay = _bayer(Hc, Wc)
     xx1 = np.arange(Wc, dtype=np.float32)
     PAD = int(12 * s) + 4
-    sh_ = int(round(3 * s))
     for r0 in range(0, Hc, band):
         r1 = min(Hc, r0 + band); a0 = max(0, r0 - PAD); a1 = min(Hc, r1 + PAD); n = a1 - a0
         yy = np.arange(a0, a1, dtype=np.float32)[:, None]; xx = xx1[None, :]
-        aN = ramp(yy, dN[None, :] + 14 * s, 26 * s)
+        aN = np.zeros((n, Wc), np.float32)
         aS = ramp(Hc - 1 - yy, dS[None, :], 20 * s)
         aW = ramp(xx, dW[a0:a1, None], 30 * s)
         aE = ramp(Wc - 1 - xx, dE[a0:a1, None], 42 * s)
         if dl is not None:                                        # no fog over land in the south: the isles stay clear
             cy, cx = cell_of(np.broadcast_to(xx, (n, Wc)), np.broadcast_to(yy, (n, Wc)))
             aS = aS * np.clip((dl[cy, cx] - 10 * s) / (26 * s), 0, 1)
-        tex = T1.rows(a0, a1) * 0.55 + T2.rows(a0, a1) * 0.12
+        tex = T1.rows(a0, a1)
         q0, q1 = a0 // 3, a1 // 3 + 1
         streak = np.repeat(ST.rows(q0, q1), 3, 0)[a0 - q0 * 3:a0 - q0 * 3 + n]   # wind-laid streaks in the dust
         aW_ = np.clip(aW * (0.85 + 0.25 * streak), 0, 1)
         lw = landW[a0:a1, None, None]; le = landE[a0:a1, None, None]
         cW = lw * dust + (1 - lw) * seafog; cE = le * mist + (1 - le) * seafog
-        stack = [(aN * (0.9 + 0.2 * tex), colN[None, None, :]), (aS * (0.9 + 0.16 * tex), seafog[None, None, :]), (aW_, cW),
-                 (aE * (0.9 + 0.16 * tex), cE)]
+        stack = [(aN, colN[None, None, :]), (aS * (0.8 + 0.3 * tex), seafog[None, None, :]), (aW_, cW),
+                 (aE * (0.8 + 0.3 * tex), cE)]
         A = np.zeros((n, Wc), np.float32); Csum = np.zeros((n, Wc, 3), np.float32); wsum = np.zeros((n, Wc), np.float32)
         for a, c in stack:
             a = np.clip(a, 0, 1).astype(np.float32)
@@ -506,22 +584,31 @@ def edge_frame(canvas, Sx, R, s, k, ox, oy, isles_clear=True, band=320):
             Csum += a[..., None] * c; wsum += a
         Cm = Csum / np.maximum(wsum, 1e-4)[..., None]
         del Csum
-        ty, tx = np.gradient(ndi.gaussian_filter(tex, 2 * s))     # light on the fog: brighter toward each puff's upper left
-        Cm *= (1 + np.clip(-(tx + ty) * 6 * s, -0.05, 0.06)[..., None])
+        Cm *= (1 + 0.035 * tex)[..., None]                          # a broad, soft lightening on the fog's thick parts
         qd = A * 4
         lo = np.clip(np.floor(qd).astype(np.int8), 0, 4); fr = qd - lo; hi = np.clip(lo + 1, 0, 4)
         Aq = np.where(fr > bay[a0:a1], steps[hi], steps[lo]).astype(np.float32)
         out = arr_all[a0:a1].astype(np.float32) * (1 - Aq[..., None]) + Cm * Aq[..., None]
         del Cm
-        # the north cloud's body: a soft bank with puffs lit on their upper left and a shade under the bank
-        bank = yy < (dN[None, :] - 6 * s + 10 * s * tex)
-        bm = ndi.gaussian_filter(bank.astype(np.float32), 1.2 * s)
-        puff = np.clip(0.5 - 3 * s * (tx + ty), 0, 1)[..., None]
-        under = np.zeros_like(bank); under[sh_:] = bank[:-sh_]; under &= ~bank
-        out[under] = out[under] * 0.86
-        b4 = bm > 0.5
-        bc = np.array(R['snow'][5], np.float32) * puff + np.array(R['snow'][3], np.float32) * (1 - puff)
-        out[b4] = bc[b4]
+        # the north cloud's body: warm white puffs, lit on their upper left, shaded underneath, a rim along the scallops and
+        # a cast shadow on the peaks below
+        E = e[None, :]
+        bank = yy < E
+        dxp = (xx - pcx[None, :]) / prr[None, :]; dyp = (yy - pcy[None, :]) / prr[None, :]
+        inp = dxp * dxp + dyp * dyp <= 1.0
+        fill = np.broadcast_to(warm, (n, Wc, 3)).copy()
+        litm = bank & inp & (dxp * 0.6 + dyp * 0.8 < -0.45)
+        fill[litm] = lit_c
+        und = bank & inp & (dyp > 0.62)
+        fill[und] = under_c
+        top = bank & ~inp & (yy > E - 26 * s) & (np.abs(yy - (pcy[None, :] - np.sqrt(np.clip(1 - dxp * dxp, 0, 1)) * prr[None, :])) < 0.8 * s)
+        fill[top] = lit_c                                           # the front puff's lit top edge against the bank behind
+        rim = bank & (yy > E - 1.2 * s)
+        fill[rim] = rim_c
+        out[bank] = fill[bank]
+        sh1 = ~bank & (yy < E + 2.5 * s); sh2 = ~bank & ~sh1 & (yy < E + 5 * s)
+        out[sh1] = out[sh1] * 0.7; out[sh2] = out[sh2] * 0.85
+        Aq = np.where(bank, 1.0, Aq).astype(np.float32)
         k0 = r0 - a0
         out_all[r0:r1] = np.clip(out[k0:k0 + (r1 - r0)], 0, 255).astype(np.uint8)
         Aq_all[r0:r1] = Aq[k0:k0 + (r1 - r0)]

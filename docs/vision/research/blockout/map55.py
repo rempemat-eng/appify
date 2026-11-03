@@ -145,7 +145,7 @@ def tones(c):
     return mix(c, (255, 248, 226), 0.22), c, mix(c, (30, 26, 40), 0.32)
 
 
-def stamps55(im, S, R, cg, cid, k, ox, oy, M, ink, peaks=True):
+def stamps55(im, S, R, cg, cid, k, ox, oy, M, ink, peaks=True, calm=()):
     """Tree, tuft, marsh, crevasse and pebble marks, then the range: one treatment (three tones from one ramp, a thin ink
     outline, a cast shadow to the south-east); forests in uneven density with clearings."""
     d = ImageDraw.Draw(im, 'RGBA'); rng = np.random.default_rng(11)
@@ -174,7 +174,7 @@ def stamps55(im, S, R, cg, cid, k, ox, oy, M, ink, peaks=True):
     gy_, gx_ = np.gradient(ndi.gaussian_filter(S['h'].astype(np.float32), 2.0))
     marks = []
     for nm, sp, kind, c, r in spec:
-        if nm not in cid:
+        if nm not in cid or nm in calm:                              # v56 leaves the lava field's dots to its relief
             continue
         ci = cid[nm]; sp = sp * kk; r = r * kk
         ys = np.arange(sp / 2, im.height, sp); xs = np.arange(sp / 2, im.width, sp)
@@ -1751,6 +1751,7 @@ def grow_setup(S, M, R, cg, cid, cols, rgb, sea_rgb):
         _FEAT[id(Sx)] = dict(Fw, m=np.pad(Fw['m'], ((GR.NY, 0), (0, GR.NX)), mode='symmetric'))
         GR.range_field(Sx, rivers, closed)
         cgr = GR.range_classes(Sx, cgx, cid, rivers, closed)
+        cgr = GR.overview_classes(Sx, cgr, cid)
     finally:
         M.set_dims(W0, H0)
     audit = lambda Aq, k, ox, oy, lines: GR.haze_audit(Aq, S, M, k, ox, oy, lines, rivers, closed)
@@ -1776,7 +1777,7 @@ def grow_base(GX, S, M, R, ink, cid, k, ppc):
         base = M54.base_hi(Sx, R, ink, GX['cg'], cid, GX['rgb'], GX['sea'], M, (0, 0, Wc_, Hc_), ppc)
         base = base.resize((int(round(GX['Wf'] * k)), int(round(GX['Hf'] * k))), Image.LANCZOS)
         base, _ = GR.relief(base, Sx, R, ink, k, GX['rivers'], GX['closed'], cgx=GX['cg'], cid=cid)
-        stamps55(base, Sx, R, GX['cg'], cid, k, 0, 0, M, ink, peaks=False)
+        stamps55(base, Sx, R, GX['cg'], cid, k, 0, 0, M, ink, peaks=False, calm=('ash', 'lavastone'))
     finally:
         M.set_dims(GX['W0'], GX['H0'])
     return base
