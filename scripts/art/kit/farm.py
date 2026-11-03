@@ -1464,7 +1464,7 @@ def animals():
     stock = (
         ('farm_cow', 'cow', 1, 5, 0, [-11.0, -3.0, 22, 3], 3, 'cattle', 'trough', 14, 'A cow in her paddock, her tail swishing'),
         ('farm_calf', 'calf', -1, 8, 3, [-6.5, -2.0, 13, 2], 2, 'cattle', 'trough', 14, 'A calf at grass near its mother, an ear flicking'),
-        ('farm_horse', 'horse', -1, 5, 2, [-9.0, -3.0, 18, 3], 3, 'horses', 'trough', 14, 'A bay horse in its paddock, dipping its head to graze'),
+        ('farm_horse', 'horse', -1, 5, 6, [-9.0, -3.0, 18, 3], 3, 'horses', 'trough', 14, 'A bay horse in its paddock, dipping its head to graze'),
         ('farm_pig', 'pig', 1, 2, 5, [-7.5, -3.0, 15, 3], 2, 'pigs', 'wallow', 6, 'A pig in the sty\'s run, its snout working'),
         ('farm_goat', 'goat', -1, 9, 1, [-6.0, -2.0, 12, 2], 2, 'goats', 'shelter', 8, 'A goat in its pen, chewing'),
         ('farm_goat_b', 'goat_b', 1, 3, 6, [-6.0, -2.0, 12, 2], 2, 'goats', 'shelter', 8, 'A brown goat grazing'),
