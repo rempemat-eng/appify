@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/fence/fence_wattle_nsw_plain.png",
    "foot": [
     12,
-    57
+    56
    ]
   }
  ],
@@ -28,8 +28,8 @@
  },
  "geometry": {
   "size_px": [
-   16,
-   61
+   17,
+   59
   ],
   "size_cells": [
    1,
@@ -48,7 +48,7 @@
   },
   "foot": [
    12,
-   57
+   56
   ],
   "footprint": [
    [

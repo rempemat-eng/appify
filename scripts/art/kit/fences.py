@@ -78,6 +78,21 @@ def ramp(fams, t):
 
 HAZEL = ('timber_cool', 'timber', 'timber_warm')
 WASH = ('plaster_warm', 'plaster', 'plaster')
+# hazel rods differ rod to rod (grey-brown, red-brown, silvered); whitewash paling to paling
+HAZELS = [HAZEL, ('earth_cool', 'earth', 'earth_warm'), ('timber_cool', 'earth_warm', 'timber_warm')]
+WASHES = [WASH, ('sand_cool', 'sand', 'plaster'), ('stone_warm', 'plaster_warm', 'plaster')]
+
+
+def ramp_mix(sets, t, mix):
+    """As ramp, the triple picked per pixel from `sets` by mix (0 .. 1)."""
+    t = np.clip(np.round(np.asarray(t, float)), 0, 5).astype(int)
+    mix = np.broadcast_to(np.asarray(mix, float), t.shape)
+    k = np.clip((mix * len(sets)).astype(int), 0, len(sets) - 1)
+    out = np.zeros(t.shape, int)
+    for i, (cool, body, warm) in enumerate(sets):
+        f = np.where(t >= 4, FI[warm], np.where(t <= 1, FI[cool], FI[body]))
+        out = np.where(k == i, f * 8 + t, out)
+    return out
 
 
 def _hash(x, y, k=0):
@@ -188,7 +203,12 @@ def wattle_front(ph, seed):
         bind = Z >= ph - 3
         tb = np.where(((X + 2 * Z) // 3) % 2 == 0, 4.2, 2.6) - 0.8 * (Z == ph - 3)
         t = np.where(bind, tb, t)
-        return ramp(HAZEL, t)
+        bay = np.mod(np.floor((X - 6) / HALF), 2)
+        mix = np.mod(k * 0.37 + bay * 0.5, 1.0)                  # a rod's hue, the same along its bay
+        c = ramp_mix(HAZELS, t, np.where(bind, 0.0, mix))
+        lichen = (_hash(np.mod(X, CELL), Z, 9) < 0.025) & ~bind & (Z > 4)
+        c = np.where(lichen, np.where(_hash(np.mod(X, CELL), Z, 11) < 0.5, C('leaf_cool', 3), C('stone', 4)), c)
+        return c
     return f
 
 
@@ -201,12 +221,21 @@ def wattle_top(seed):
 
 
 def wattle_top_ns(gx):
-    """The binding of a run along y seen from above: the twist runs down it, lit on its west edge."""
+    """A hurdle along y seen from above and a little from the west (the house's three-quarter
+    view): its west face a band of rod ends, course over course, each lit on its top and its own
+    hue; the twisted binding along the top, lit; the east face a step into shade, darkest at its
+    edge."""
     def f(X, Y, z=None):
         X = np.asarray(X, float)
         Y = np.asarray(Y, float)
-        t = np.where(((Y + 2 * X) // 3) % 2 == 0, 4.0, 3.0) + 0.9 * (X <= gx - 2) - 1.4 * (X >= gx + 1)
-        return ramp(HAZEL, t)
+        rel = X - gx
+        k = np.floor(np.mod(Y, CELL) / 3.0)
+        face = 2.5 + 1.6 * (np.mod(Y, 3) == 0) - 1.3 * (np.mod(Y, 3) == 2) + 0.6 * (rel == -3)
+        bind = np.where(((Y + 2 * X) // 3) % 2 == 0, 4.6, 3.4)
+        east = np.where(np.mod(Y, 3) == 0, 2.2, 1.4) - 0.8 * (rel >= 3)
+        t = np.where(rel <= -2, face, np.where(rel <= 0, bind, east))
+        mix = np.where(rel <= -2, np.mod(k * 0.37, 1.0), 0.0)
+        return ramp_mix(HAZELS, t, mix)
     return f
 
 
@@ -223,8 +252,8 @@ def stake_front(x0, w, ph=None, weave=None, fam=HAZEL, base=3.0):
         X = np.asarray(X, float)
         Z = np.asarray(Z, float)
         t = base + 1.2 * (X == x0) - 1.3 * (X == x0 + w - 1) + 0.0 * Z
-        t = t - 0.9 * (((Z * 5 + (X - x0) * 3) % 13) == 0) - 0.8 * (Z < 2)
-        c = ramp(fam, t)
+        t = t - 0.9 * (((Z * 5 + (X - x0) * 3) % 13) == 0) - 0.8 * (Z < 2) + 0.5 * (((Z + (X - x0)) % 7) == 0)
+        c = ramp_mix([fam, ('earth_cool', 'earth', 'timber_warm')], t, np.mod(np.floor(Z / 5), 2) * 0.6) if fam == HAZEL else ramp(fam, t)
         if weave:
             k = np.floor(Z / 4.0)
             d = np.cos(math.pi * (X - 6) / HALF + math.pi * k)
@@ -247,12 +276,31 @@ def wash_front(x0, w, base=4.0, seed=0):
     def f(X, Z, y=None):
         X = np.asarray(X, float)
         Z = np.asarray(Z, float)
-        t = base + 1.0 * (X == x0) - 1.2 * (X == x0 + w - 1) - 0.6 * (Z < 4) - 0.8 * (Z < 2)
-        c = ramp(WASH, t)
+        t = base + 1.0 * (X == x0) - 1.2 * (X == x0 + w - 1) - 0.6 * (Z < 4) - 0.8 * (Z < 2) - 0.6 * (Z < 7) * (X == x0 + w - 1)
+        t = t + 0.6 * (np.mod(Z, 9) == 0) * (X > x0)                     # the grain catching the light
+        t = t + 0.4 - 0.045 * np.clip(36 - Z, 0, 36)                     # bright at the top, the bounce of the grass low down
+        c = ramp_mix(WASHES, t, np.mod(np.floor((X - 6) / 8), 3) / 3.0)
         worn = (_hash(X, Z, seed) < 0.035) & (Z > 3)
-        c = np.where(worn, C('timber', 3), c)
-        c = np.where(Z < 2, C('earth', 2), c)
-        return c
+        c = np.where(worn, np.where(_hash(X, Z, seed + 1) < 0.5, C('timber', 3), C('timber_warm', 2)), c)
+        c = np.where((Z < 3) & (_hash(X, Z, seed + 2) < 0.5), C('earth', 2), np.where(Z < 2, C('earth_cool', 2), c))   # splashed earth at the foot
+        green = (Z >= 2) & (Z < 6) & (_hash(X, Z, seed + 3) < 0.12)
+        return np.where(green, C('leaf_cool', 3), c)                                   # a little green damp low down
+    return f
+
+
+def paling_side(x0, w, top, mix):
+    """A paling of a run along y as the view shows it between the paling behind and the one in
+    front: its face lit under its point and falling into the shade the next paling casts on it,
+    lit on its west edge, shaded on its east."""
+    def f(X, Z, y=None):
+        X = np.asarray(X, float)
+        Z = np.asarray(Z, float)
+        down = top - 1 - Z                                   # texels below its point
+        t = 5.0 - 0.8 * down + 0.7 * (X == x0) - 1.5 * (X >= x0 + w - 1)
+        t = np.where(down >= 4, 1.4 - 0.6 * (X >= x0 + w - 1), t)
+        c = ramp_mix(WASHES, t, mix)
+        # between two palings the grass shows at the run's west edge: a notch, so they read apart
+        return np.where((down >= 4) & (X <= x0 + 1), -1, c)
     return f
 
 
@@ -263,9 +311,10 @@ def wash_top(X, Y, z=None):
 # ------------------------------------------------------------------------------------------------
 # the parts of a cell
 # ------------------------------------------------------------------------------------------------
-def _stake(sc, x, y, h, w, owner, ph=None, weave=False, fam=HAZEL, cap=None):
+def _stake(sc, x, y, h, w, owner, ph=None, weave=False, fam=HAZEL, cap=None, top=None):
     x0 = int(round(x - w / 2))
-    sc.box(x0, x0 + w, y - w // 2, y - w // 2 + w, 0, h, owner, stake_front(x0, w, ph, weave, fam), cut_top(x0, w), order=2)
+    sc.box(x0, x0 + w, y - w // 2, y - w // 2 + w, 0, h, owner, stake_front(x0, w, ph, weave, fam),
+           cut_top(x0, w, top) if top else cut_top(x0, w), order=2)
     if cap:
         sc.box(x0 - 1, x0 + w + 1, y - w // 2 - 1, y - w // 2 + w + 1, h, h + 2, owner,
                lambda X, Z, y_=None: ramp(fam, np.full(np.shape(X), 3.0) + 1.2 * (np.asarray(X) == x0 - 1)), cut_top(x0 - 1, w + 2), order=3)
@@ -308,7 +357,10 @@ def arm_x(sc, style, xa, xb, y, owner, seed, node=0, posted=False):
         ph = S['panel']
         for zr in (11, 29):                                     # the rails behind the palings
             sc.box(xa, xb, y - 3, y - 1, zr, zr + 4, owner,
-                   lambda X, Z, y_=None, zr=zr: ramp(WASH, np.where(np.asarray(Z) == zr + 3, 4.6, np.where(np.asarray(Z) == zr, 2.4, 3.6))),
+                   lambda X, Z, y_=None, zr=zr: ramp_mix(
+                       WASHES, np.where(np.asarray(Z) == zr + 3, 4.6, np.where(np.asarray(Z) == zr, 2.4, 3.6))
+                       - 1.6 * (np.mod(np.asarray(X) - 6, 8) == 4) - 0.8 * (np.mod(np.asarray(X) - 6, 8) == 5),   # each paling's shade on the rail
+                       0.7),
                    wash_top, order=1)
         for px in range(xa - ((xa - 6) % 8) - 8, xb, 8):           # palings at x = 6 (mod 8): they tile
             if px + 4 <= xa or px >= xb:
@@ -332,27 +384,34 @@ def arm_y(sc, style, ya, yb, x, owner, seed, node=0, posted=False):
     S = STYLES[style]
     if style == 'wattle':
         ph = S['panel']
-        sc.box(x - 2, x + 2, ya, yb, 0, ph, owner, wattle_end, wattle_top_ns(x), order=1)
+        sc.box(x - 3, x + 4, ya, yb, 0, ph, owner, wattle_end, wattle_top_ns(x), order=1)
         if not posted:
             for yy in (node - 6, node + 6):
                 if ya < yy < yb:
-                    _stake(sc, x, yy, S['stake'] + (1 if yy > node else -1), 4, owner)
+                    _stake(sc, x + 0.5, yy, S['stake'] + (1 if yy > node else -1), 5, owner, top=HAZEL)
     else:
         ph = S['panel']
+        # the two rails seen end on: lower than the palings, so between two palings the rail's lit
+        # top shows a step down (the sawtooth of a paled fence seen from its end)
         for zr in (11, 29):
-            sc.box(x + 1, x + 3, ya, yb, zr, zr + 4, owner,
-                   lambda X, Z, y_=None: ramp(WASH, np.full(np.shape(X), 3.0)), lambda X, Y, z=None: ramp(WASH, np.full(np.shape(X), 3.4)), order=1)
+            sc.box(x + 2, x + 5, ya, yb, zr, zr + 4, owner,
+                   lambda X, Z, y_=None, zr=zr: ramp_mix(WASHES, np.where(np.asarray(Z) == zr + 3, 3.6, 2.2) - 0.9 * (np.asarray(X) >= x + 4), 0.0),
+                   lambda X, Y, z=None: ramp_mix(WASHES, 3.8 - 1.4 * (np.asarray(X) >= x + 4) - 1.2 * (np.mod(np.asarray(Y) - 6, 8) < 4), 0.4),
+                   order=1)
         for py in range(ya - ((ya - 6) % 8) - 8, yb, 8):
             if py + 4 <= ya or py >= yb:
                 continue
             p0, p1 = max(py, ya), min(py + 4, yb)
-            # each paling seen edge on: its pointed top along y, its south face (a few rows show
-            # before the next paling covers it)
+            mix = (np.floor((py - 6) / 8) % 3) / 3.0
+            # each paling seen from its end and a little from the west: a lit west side, its cut
+            # top (the point along y), the east side in shade
             for yy in range(p0, p1):
                 tipped = yy in (py, py + 3)
-                sc.box(x - 1, x + 2, yy, yy + 1, 0, ph - (2 if tipped else 0), owner,
-                       wash_front(x - 1, 3, 3.6, seed),
-                       lambda X, Y, z=None: ramp(WASH, 5.0 - 1.2 * (np.asarray(X) == x + 1)), order=2)
+                sc.box(x - 2, x + 3, yy, yy + 1, 0, ph - (2 if tipped else 0), owner,
+                       paling_side(x - 2, 5, ph - (2 if tipped else 0), mix),
+                       lambda X, Y, z=None, mix=mix, tipped=tipped: np.where(
+                           tipped & (np.asarray(X) == x - 2), -1, ramp_mix(
+                               WASHES, 4.6 + 0.6 * (np.asarray(X) == x - 1) - 1.6 * (np.asarray(X) >= x + 2), mix)), order=2)
 
 
 def node_post(sc, style, x, y, owner, seed, kind='post'):
@@ -361,9 +420,9 @@ def node_post(sc, style, x, y, owner, seed, kind='post'):
         if kind == 'stake':
             _stake(sc, x, y, S['stake'] + 1, 4, owner, S['panel'], True)
         else:
-            _stake(sc, x, y, S['post'], 6, owner, cap=None)
+            _stake(sc, x + 0.5, y, S['post'], 7, owner, cap=None)
     else:
-        _wash_post(sc, x, y, S['post'], 6, owner, seed)
+        _wash_post(sc, x + 0.5, y, S['post'], 7, owner, seed)
 
 
 # ------------------------------------------------------------------------------------------------

@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/fence/fence_wattle_new_plain.png",
    "foot": [
     12,
-    57
+    56
    ]
   }
  ],
@@ -48,7 +48,7 @@
   },
   "foot": [
    12,
-   57
+   56
   ],
   "footprint": [
    [

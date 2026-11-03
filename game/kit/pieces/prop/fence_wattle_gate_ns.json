@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_e.png",
    "foot": [
     4,
-    92
+    91
    ]
   },
   {
@@ -24,7 +24,7 @@
    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_w.png",
    "foot": [
     59,
-    92
+    91
    ]
   },
   {
@@ -33,7 +33,7 @@
    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_shut.png",
    "foot": [
     4,
-    92
+    91
    ]
   }
  ],
@@ -47,7 +47,7 @@
  "geometry": {
   "size_px": [
    66,
-   127
+   86
   ],
   "size_cells": [
    1,
@@ -60,7 +60,7 @@
   },
   "foot": [
    4,
-   92
+   91
   ],
   "footprint": [
    [
