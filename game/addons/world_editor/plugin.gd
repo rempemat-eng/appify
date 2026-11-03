@@ -31,6 +31,7 @@ var _preview: Dictionary = {}
 var _revision := 0
 var _baking := false
 var _fence_style := ""
+var clipboard: Array = []
 
 func _enter_tree() -> void:
 	operations.changed.connect(_operations_changed)
@@ -136,6 +137,9 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			_fence_style = fence_style(brush.substr(6)) if brush.begins_with("piece:") else ""
+			if brush == "group:":
+				_say_result(operations.paste_group(clipboard, local), "Pasted the group")
+				return true
 			if brush.begins_with("piece:") and _fence_style == "":
 				_say_result(place_piece(brush.substr(6), local), "Placed piece")
 				return true
@@ -217,6 +221,14 @@ func fence_style(id: String) -> String:
 		return ""
 	return String(boundary.get("style", ""))
 
+## Copy the pieces selected in the scene tree or on the canvas (group copy, round 4).
+func copy_selection() -> Dictionary:
+	var nodes: Array = EditorInterface.get_selection().get_selected_nodes() if Engine.is_editor_hint() else []
+	var result := operations.copy_group(nodes)
+	if bool(result.get("ok", false)):
+		clipboard = result.group
+	return result
+
 func place_piece(id: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
 	var chosen := _piece_options()
 	chosen.merge(options, true)
@@ -279,11 +291,31 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 		return
 	var transform := ground.get_global_transform_with_canvas()
 	var cell_size := ground.kit.cell
+	if brush == "group:":
+		# the group's footprints where it would land
+		var corner := (_hover_local / cell_size).floor() * cell_size
+		for g in clipboard:
+			var foot: Vector2 = corner + Vector2(g.get("offset", Vector2.ZERO))
+			var c := Vector2i(floori(foot.x / cell_size), floori((foot.y - 1) / cell_size))
+			_draw_rect(overlay, transform, Rect2(Vector2(c * cell_size), Vector2.ONE * cell_size), Color(0.9, 0.75, 0.4, 0.35))
+		return
 	if not brush.begins_with("piece:") or (painting and _fence_style != ""):
 		var cell := Vector2i(floori(_hover_local.x / cell_size), floori(_hover_local.y / cell_size))
 		var cells := _stroke_cells if painting else Tools.brush_cells(cell, brush_size)
 		for target in _bounded_cells(cells):
 			_draw_rect(overlay, transform, Rect2(Vector2(target * cell_size), Vector2.ONE * cell_size), Color(0.55, 0.8, 1.0, 0.22))
+		if painting and _fence_style != "":
+			# the pieces the run will choose: each cell's arms from its node
+			var chosen: Dictionary = operations.preview_fence_run(_fence_style, _bounded_cells(_stroke_cells))
+			for at in chosen:
+				var id := String(chosen[at])
+				var node := Vector2(at.x * cell_size + cell_size / 2.0, (at.y + 1) * cell_size)
+				var joins := id.get_slice("_", id.get_slice_count("_") - 1) if id != "" else ""
+				for side in joins:
+					var arm: Vector2 = Vector2(Tools.SIDES[side]) * (cell_size / 2.0)
+					overlay.draw_line(transform * node, transform * (node + arm), Color(0.95, 0.85, 0.3, 0.95) if id != "" else Color(1, 0.3, 0.3), 3.0)
+				if id == "":
+					overlay.draw_circle(transform * node, 3.0, Color(1, 0.3, 0.3))
 		return
 	var id := brush.substr(6)
 	var result := preview_piece(id, _hover_local)

@@ -357,3 +357,41 @@ func test_a_fence_run_joins_its_cells_and_the_fence_it_meets_in_one_action() -> 
 	# a lone cell joins nothing and is refused
 	var lone: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(6, 4)])
 	assert_bool(lone.ok).is_false()
+
+func test_a_copied_pen_pastes_whole_in_one_action_with_its_contents_inside() -> void:
+	var rows := []
+	for y in 6:
+		rows.append("............")
+	var f := _fixture({"library": _fence_library(), "plan": {"rows": rows}})
+	# a ring of fence cells round (1..3, 1..3) and a bench inside it
+	var ring := [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(3, 2), Vector2i(3, 3), Vector2i(2, 3), Vector2i(1, 3), Vector2i(1, 2), Vector2i(1, 1)]
+	assert_bool(f.operations.place_fence_run("wattle", ring).ok).is_true()
+	assert_bool(f.operations.place_piece("woodland_forest_bench", Vector2(60, 72), {"variant": "forest_bench", "stage": "restored", "id": "seat"}).ok).is_true()
+	var nodes: Array = []
+	for child in f.zone.get_node("Props").get_children():
+		if child is KitPiece:
+			nodes.append(child)
+	var copied: Dictionary = f.operations.copy_group(nodes)
+	assert_bool(copied.ok).is_true()
+	assert_int(copied.group.size()).is_equal(9)
+	# the group's corner is the cell corner at the pen's top-left foot (24, 48); pasted at the
+	# cell under (149, 51), whose corner is (144, 48): every piece moves 5 cells east
+	var pasted: Dictionary = f.operations.paste_group(copied.group, Vector2(24 * 6 + 5, 51))
+	assert_bool(pasted.ok).is_true()
+	assert_int(pasted.nodes.size()).is_equal(9)
+	# every piece keeps its place relative to the others
+	var before := {}
+	for node in nodes:
+		before[node.piece_id + str(node.position)] = true
+	for node in pasted.nodes:
+		assert_bool(before.has(node.piece_id + str(node.position - Vector2(120, 0)))).is_true()
+	assert_bool(f.history.undo()).is_true()
+	for node in pasted.nodes:
+		assert_object(node.get_parent()).is_null()
+	assert_bool(f.history.redo()).is_true()
+	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(18)
+	# the fence-run preview names the pieces a run would place without placing them
+	var preview: Dictionary = f.operations.preview_fence_run("wattle", [Vector2i(9, 4), Vector2i(10, 4)])
+	assert_str(preview[Vector2i(9, 4)]).is_equal("fence_wattle_e")
+	assert_str(preview[Vector2i(10, 4)]).is_equal("fence_wattle_w")
+	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(18)

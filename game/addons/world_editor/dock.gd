@@ -139,6 +139,20 @@ func _ready() -> void:
 	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	card.text = "Select or hover a swatch to inspect its definition."
 	_content.add_child(card)
+	var copy_button := Button.new()
+	copy_button.name = "CopyGroup"
+	copy_button.text = "Copy selected pieces"
+	copy_button.tooltip_text = "Copy the pieces selected in the scene (a pen, its gate and what it holds) as a group."
+	copy_button.pressed.connect(_copy_group)
+	var paste_button := Button.new()
+	paste_button.name = "PasteGroup"
+	paste_button.text = "Paste group"
+	paste_button.tooltip_text = "Click the canvas to paste the copied group, its pieces at their places relative to each other (one undo)."
+	paste_button.pressed.connect(_paste_group)
+	var group_row := HBoxContainer.new()
+	group_row.add_child(copy_button)
+	group_row.add_child(paste_button)
+	_content.add_child(group_row)
 	validate_button = Button.new()
 	validate_button.text = "Validate zone"
 	validate_button.pressed.connect(_validate)
@@ -659,6 +673,24 @@ func _bake() -> void:
 		result["message"] = "Bake completed."
 	say(_message(result, "Bake failed; no output was accepted."))
 	bake_button.disabled = not is_instance_valid(zone)
+
+func _copy_group() -> void:
+	if not is_instance_valid(plugin) or not plugin.has_method("copy_selection"):
+		return
+	say(_message(plugin.call("copy_selection"), "Select placed pieces to copy."))
+
+func _paste_group() -> void:
+	if not is_instance_valid(plugin):
+		return
+	if (plugin.get("clipboard") as Array).is_empty():
+		say("Copy a group of pieces first.")
+		return
+	mats.deselect_all()
+	variants.deselect_all()
+	pieces.deselect_all()
+	plugin.set("brush", "group:")
+	say("Paste: click where the group's top-left cell goes. Every piece is checked with the rest of the group; one undo.")
+	_refresh_overlay()
 
 func _validate() -> void:
 	if not is_instance_valid(zone):

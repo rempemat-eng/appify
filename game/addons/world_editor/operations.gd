@@ -339,6 +339,151 @@ func place_fence_run(style: String, cells: Array, options: Dictionary = {}) -> D
 	return {"ok": true, "diagnostics": [], "changed": true, "added": added.size() - removed.size(), "rejoined": removed.size(),
 		"message": "Fence run: %d new cells, %d re-joined." % [added.size() - removed.size(), removed.size()]}
 
+## What a fence run would place, without placing it (the canvas preview): {cell: piece id} for
+## the run's cells and the existing cells it would re-join.
+func preview_fence_run(style: String, cells: Array) -> Dictionary:
+	var context := _context(false)
+	if not context.ok:
+		return {}
+	var props := _zone.get_node_or_null("Props") as Node2D
+	if props == null:
+		return {}
+	var existing := {}
+	var fixed := {}
+	for child in props.get_children():
+		if not child is KitPiece:
+			continue
+		var boundary: Variant = definition(child.piece_id).get("placement", {}).get("boundary")
+		if not boundary is Dictionary or String(boundary.get("style", "")) != style:
+			continue
+		var foot: Vector2 = _ground.to_local(props.to_global(child.position)) if props.is_inside_tree() else child.position
+		var at := Tools.fence_cell(foot, _ground.kit.cell)
+		if bool(boundary.get("gate", false)):
+			fixed.merge(Tools.gate_ends(at, boundary.get("joins", [])), true)
+		elif bool(boundary.get("stile", false)):
+			fixed[at] = boundary.get("joins", [])
+		else:
+			existing[at] = child.piece_id
+	var all_cells: Array = existing.keys()
+	for value in cells:
+		var at := Vector2i(value)
+		if not existing.has(at) and not fixed.has(at) and at not in all_cells:
+			all_cells.append(at)
+	var chosen := Tools.fence_pieces(style, all_cells + fixed.keys(), fixed)
+	var out := {}
+	for at in chosen:
+		if String(existing.get(at, "")) != String(chosen[at]):
+			out[at] = chosen[at]
+	return out
+
+## Group copy (round 4): the given pieces as a clipboard, each entry's foot relative to a cell
+## corner, so a pasted pen keeps its fences on their lines and what it holds inside them.
+func copy_group(nodes: Array) -> Dictionary:
+	var context := _context(false)
+	if not context.ok:
+		return context
+	var props := _zone.get_node_or_null("Props") as Node2D
+	var feet: Array = []
+	for node in nodes:
+		if node is KitPiece and node.get_parent() == props:
+			var foot: Vector2 = _ground.to_local(props.to_global(node.position)) if props.is_inside_tree() else node.position
+			feet.append([node, foot])
+	if feet.is_empty():
+		return _failure("editor.selection", "Select placed pieces to copy.")
+	var size := float(_ground.kit.cell)
+	var corner := Vector2(INF, INF)
+	for pair in feet:
+		corner = corner.min(pair[1])
+	corner = (corner / size).floor() * size
+	var group: Array = []
+	for pair in feet:
+		var node: KitPiece = pair[0]
+		var entry := {"piece": node.piece_id, "offset": pair[1] - corner, "facing": String(node.get_meta("facing", "s"))}
+		if node.variant != "":
+			entry["variant"] = node.variant
+		if node.has_meta("stage"):
+			entry["stage"] = node.get_meta("stage")
+		group.append(entry)
+	return {"ok": true, "diagnostics": [], "group": group, "message": "Copied %d pieces." % group.size()}
+
+## Paste a copied group with its cell corner at the cell under `at`: every piece is checked by the
+## shared relation engine against the zone with the rest of the group in it (a hen needs the
+## coop pasted with her), and all are placed in one undo action, or none.
+func paste_group(group: Array, at: Vector2) -> Dictionary:
+	var context := _context(true)
+	if not context.ok:
+		return context
+	if group.is_empty():
+		return _failure("editor.selection", "Copy a group of pieces first.")
+	var props := _zone.get_node_or_null("Props") as Node2D
+	if props == null:
+		return _failure("editor.props_missing", "The zone needs its authored Props container before placing pieces.")
+	var evaluator = _options.get("relation_evaluator", Callable())
+	if not evaluator is Callable or not evaluator.is_valid():
+		return _failure("rules.provider_missing", "Placement is unavailable until the shared relation engine is installed.")
+	var size := float(_ground.kit.cell)
+	var corner := (at / size).floor() * size
+	var snapshot := export_plan()
+	if not snapshot.ok:
+		return snapshot
+	var unit := size if String(snapshot.plan.get("coordinate_space", "texels")) == "cells" else 1.0
+	var taken: Array = snapshot.plan.get("pieces", []).duplicate()
+	var instances: Array = []
+	for g in group:
+		var id := String(g.get("piece", ""))
+		var raw := definition(id)
+		if raw.is_empty():
+			return _failure("rules.unknown_piece", "Unknown piece '%s' in the group." % id)
+		var gate := _approval(raw)
+		if not gate.ok:
+			return gate
+		var foot: Vector2 = corner + Vector2(g.get("offset", Vector2.ZERO))
+		if foot.x < 0 or foot.y < 0 or foot.x >= _ground.size_px().x or foot.y >= _ground.size_px().y:
+			return _failure("rules.bounds", "The group does not fit in the zone here.")
+		var instance := {"piece": id, "at": [foot.x / unit, foot.y / unit], "facing": String(g.get("facing", "s")),
+			"id": _free_id(id, taken)}
+		for key in ["variant", "stage"]:
+			if g.has(key):
+				instance[key] = g[key]
+		taken.append(instance)
+		instances.append(instance)
+	var whole: Dictionary = snapshot.plan.duplicate(true)
+	for k in instances.size():
+		var others: Array = snapshot.plan.get("pieces", []).duplicate(true)
+		for j in instances.size():
+			if j != k:
+				others.append(instances[j].duplicate(true))
+		whole["pieces"] = others
+		var verdict := _provider_result(evaluator.call(whole.duplicate(true), instances[k].duplicate(true), _library.duplicate(true)), "relation engine")
+		if not verdict.ok:
+			return verdict
+	var added: Array[KitPiece] = []
+	for instance in instances:
+		var made := _instantiate(String(instance.piece))
+		if not made.ok:
+			for node in added:
+				node.free()
+			return made
+		var piece: KitPiece = made.node
+		piece.name = String(instance.id)
+		piece.piece_id = String(instance.piece)
+		piece.variant = String(instance.get("variant", ""))
+		piece.set_meta("kit_zone_entry", instance.duplicate(true))
+		piece.set_meta("facing", instance.facing)
+		if instance.has("stage"):
+			piece.set_meta("stage", instance.stage)
+		var foot := Vector2(instance.at[0], instance.at[1]) * unit
+		piece.position = props.to_local(_ground.to_global(foot)) if props.is_inside_tree() else foot
+		added.append(piece)
+	var before := {"baked": _ground.baked, "baked_live": _ground.showing_baked()}
+	_begin("Paste group (%d pieces)" % added.size())
+	_do(Callable(self, "_apply_swap").bind(_zone, _ground, props, [], added, true, before))
+	_undo(Callable(self, "_apply_swap").bind(_zone, _ground, props, [], added, false, before))
+	for node in added:
+		_history.add_do_reference(node)
+	_history.commit_action()
+	return {"ok": true, "diagnostics": [], "changed": true, "nodes": added, "message": "Pasted %d pieces." % added.size()}
+
 func validate() -> Dictionary:
 	# Export omits unchanged gameplay_from markers to preserve source ownership. Validation
 	# must still check where every effective spawn stands in the current scene.
