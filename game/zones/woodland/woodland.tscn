@@ -100,7 +100,7 @@ only_if = "{\"not_flags\":[\"undercroft_open\"]}"
 
 [node name="Sprite" type="Sprite2D" parent="Actors/HatchClosed"]
 z_index = -1
-position = Vector2(330, 1042)
+position = Vector2(336, 1032)
 texture = ExtResource("10")
 centered = false
 offset = Vector2(-19, -54)
@@ -111,7 +111,7 @@ only_if = "{\"flags\":[\"undercroft_open\"]}"
 
 [node name="Sprite" type="Sprite2D" parent="Actors/HatchOpen"]
 z_index = -1
-position = Vector2(330, 1042)
+position = Vector2(336, 1032)
 texture = ExtResource("11")
 centered = false
 offset = Vector2(-19, -54)
@@ -130,7 +130,7 @@ position = Vector2(330, 1080)
 [node name="Doors" type="Node2D" parent="."]
 
 [node name="ToUndercroft" type="Area2D" parent="Doors"]
-position = Vector2(330, 1030)
+position = Vector2(336, 1020)
 script = ExtResource("7")
 target_zone = "undercroft"
 target_spawn = "start"

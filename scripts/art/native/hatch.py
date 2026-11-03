@@ -17,7 +17,9 @@ front, the kerb standing a little proud of the turf).
   tread lit on its nosing and a tone darker the deeper it lies, the bottom in the dark with a faint
   cool draught dithered over it. No animation.
 
-Both pictures share one canvas, so the scene places them with the same offset. Drawn at density 3 in
+Both pictures share one canvas, so the scene places them with the same offset. The scene stands the
+opening's south edge on the soft grid at (112, 344) world px (texels 336, 1032), and the door's
+collision sits exactly over the opening (centre 336, 1020). Drawn at density 3 in
 house palette codes (palette.py); the outline is the stone's own darkest tone; no lone texels inside
 (village.tidy).
 """
