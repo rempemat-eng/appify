@@ -1,0 +1,97 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_well_pail",
+ "name": "Well pail",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "well_pail",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/well_pail.png",
+   "foot": [
+    18,
+    44
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   36,
+   48
+  ],
+  "size_cells": [
+   2,
+   2
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   18,
+   44
+  ],
+  "footprint": []
+ },
+ "placement": {},
+ "rendering": {},
+ "function": {},
+ "story": {
+  "owner": null,
+  "gating": {
+   "if": {
+    "flags": [
+     "well_clear"
+    ]
+   }
+  }
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "well_pail",
+    "part": "body",
+    "condition": {
+     "flags": [
+      "well_clear"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "well_pail_shadow",
+    "part": "shadow",
+    "condition": {
+     "flags": [
+      "well_clear"
+     ]
+    }
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow well_pail_shadow from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

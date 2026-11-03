@@ -1,0 +1,146 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_well_spoil_rubble",
+ "name": "Well spoil rubble",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "well_spoil_rubble",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/well_spoil_rubble.png",
+   "foot": [
+    36,
+    70
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   72,
+   74
+  ],
+  "size_cells": [
+   3,
+   4
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "rect": [
+    -9.0,
+    -12.0,
+    18,
+    12
+   ],
+   "shape": "rect"
+  },
+  "foot": [
+   36,
+   70
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {},
+ "rendering": {},
+ "function": {},
+ "story": {
+  "owner": null,
+  "gating": {
+   "if": {
+    "restored": [
+     "well"
+    ],
+    "not_flags": [
+     "well_clear"
+    ]
+   }
+  }
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "well_spoil_rubble",
+    "part": "body",
+    "condition": {
+     "restored": [
+      "well"
+     ],
+     "not_flags": [
+      "well_clear"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "well_spoil_rubble_shadow",
+    "part": "shadow",
+    "condition": {
+     "restored": [
+      "well"
+     ],
+     "not_flags": [
+      "well_clear"
+     ]
+    }
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow well_spoil_rubble_shadow from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}
