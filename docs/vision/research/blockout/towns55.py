@@ -2606,8 +2606,8 @@ def neon_basin(T):
     yy_ = PY[:, 0]
     wob = 14 * np.sin(yy_ / 61.0 + 1.3) + 7 * np.sin(yy_ / 23.0 + 0.4)
     # two headlands running out to the world's edge (the map draws them on past it) and coves between them
-    shape_ = (20 * np.exp(-((yy_ - 4330) / 60.0) ** 2) + 150 * np.exp(-((yy_ - 4660) / 120.0) ** 2) - 34 * np.exp(-((yy_ - 4950) / 70.0) ** 2)
-              + 130 * np.exp(-((yy_ - 5230) / 95.0) ** 2) - 34 * np.exp(-((yy_ - 5480) / 60.0) ** 2))
+    import grow56                                                      # one profile for the world and the map past it
+    shape_ = grow56.east_shore_profile(yy_)
     coast_x = np.clip(12470 + wob + shape_, 12440, 12560)[:, None]
     band_ = (PY >= ey0) & (PY < ey1) & (PX >= 12380)
     land |= band_ & (PX < coast_x) & ~T['land']

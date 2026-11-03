@@ -607,6 +607,18 @@ def draw_farmsteads56(d, S, steads, R, ink, P, s, k):
                 d.rectangle([X0, Y0, X1, Y1], outline=ink + (150,), width=1)
 
 
+def draw_trees56(d, pts, R, ink, P, k):
+    """Lone trees, small stands and hedgerow trees: a round crown lit on its upper left, a shadow to the south-east."""
+    r = max(1.1, 13 * k)
+    lt, md, sh = tones(R['leaf'][3])
+    for i, (x, y) in enumerate(sorted(pts, key=lambda p: p[1])):
+        X, Y = P(x, y); rr = r * (0.85 + 0.3 * ((i * 37) % 10) / 10)
+        d.ellipse([X - rr + 0.5 * rr, Y - rr + 0.6 * rr, X + rr + 0.5 * rr, Y + rr + 0.6 * rr], fill=ink + (60,))
+        d.ellipse([X - rr, Y - rr, X + rr, Y + rr], fill=md, outline=ink + (110,) if rr > 2.5 else None)
+        if rr > 1.6:
+            d.pieslice([X - rr * 0.9, Y - rr * 0.9, X + rr * 0.55, Y + rr * 0.55], 150, 330, fill=lt)
+
+
 def roof_details56(d, R, ink, X0, Y0, X1, Y1, x, y, kk):
     """A flat city roof seen from above: rooftop plant, a light well, a planted roof terrace, a helipad on the tallest, now
     and then a neon roof sign; chosen per building so no two neighbours repeat."""
@@ -1214,6 +1226,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     draw_walls(d, S, R, ink, P, k)
     if grow is not None:
         draw_farmsteads56(d, S, grow.get('steads', []), R, ink, P, s, k)
+        draw_trees56(d, grow.get('trees', []), R, ink, P, k)
     draw_towns(d, S, R, ink, P, s, k, roofs=grow is not None)
     neon_accents(d, S, P, s, k, lines)
     draw_closed_pass(d, S, M, R, ink, P, s)
@@ -1247,6 +1260,13 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
         reserved += [M54.built_tag(P, s)]
     lab, pl = labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode=mode, box=box)
     built = overlay_built56(S, M, R, ink, s, k, ox, oy, Wc, Hc, F) if grow is not None else M54.overlay_built(S, M, R, ink, s, k, ox, oy, Wc, Hc, F)
+    if grow is not None:                                             # the built outline breaks round every name instead of crossing it
+        ba = np.asarray(built).copy(); tb_ = built_tag56(M, P, s)
+        for b_ in pl.boxes:
+            x0_, y0_, x1_, y1_ = [int(round(v)) for v in (b_[0] - 2 * s, b_[1] - 2 * s, b_[2] + 2 * s, b_[3] + 2 * s)]
+            if x1_ < tb_[0] or x0_ > tb_[2] or y1_ < tb_[1] or y0_ > tb_[3]:
+                ba[max(0, y0_):max(0, y1_), max(0, x0_):max(0, x1_), 3] = 0
+        built = Image.fromarray(ba, 'RGBA')
     layers = [built]
     if act:
         layers.insert(0, M54.overlay_ring(S, M, R, ink, s, k, ox, oy, Wc, Hc, F))
@@ -1858,8 +1878,10 @@ def grow_setup(S, M, R, cg, cid, cols, rgb, sea_rgb):
         GR.range_field(Sx, rivers, closed)
         cgr = GR.range_classes(Sx, cgx, cid, rivers, closed)
         cg0 = cgr.copy()
-        cgr = GR.overview_classes(Sx, cgr, cid)
+        cgr = GR.overview_classes(Sx, cgr, cid, rivers)
         rgbx = GR.recolour(Sx, cgr, rgbx, cols, R, (cgr != cg0) | GR.ne_zone(Sx))   # the ground's colour follows the drawn class
+        rgbx = GR.glade_texture(Sx, rgbx, R)
+        seax = GR.sea_polish(Sx, seax, R)
         cgr, rgbx, steads = GR.farm_overview(S, Sx, cgr, rgbx, cid, R)
     finally:
         M.set_dims(W0, H0)
@@ -1874,7 +1896,8 @@ def grow_fit(GX, Wc, Hc, s):
     if GX['Wf'] * k > Wc - 20 * s:
         k = (Wc - 20 * s) / GX['Wf']
     oxe = (Wc - GX['Wf'] * k) / 2; oye = (Hc - GX['Hf'] * k) / 2
-    return k, oxe, oye + GX['GR'].DY * k, {'ox': oxe, 'oy': oye, 'Sx': GX['Sx'], 'steads': GX.get('steads', [])}
+    return k, oxe, oye + GX['GR'].DY * k, {'ox': oxe, 'oy': oye, 'Sx': GX['Sx'], 'steads': GX.get('steads', []),
+                                         'trees': GX['Sx'].get('glade_trees', []) + GX['Sx'].get('hedge_trees', [])}
 
 
 def grow_base(GX, S, M, R, ink, cid, k, ppc):
@@ -1887,7 +1910,8 @@ def grow_base(GX, S, M, R, ink, cid, k, ppc):
         base = M54.base_hi(Sx, R, ink, GX['cg'], cid, GX['rgb'], GX['sea'], M, (0, 0, Wc_, Hc_), ppc)
         base = base.resize((int(round(GX['Wf'] * k)), int(round(GX['Hf'] * k))), Image.LANCZOS)
         base, _ = GR.relief(base, Sx, R, ink, k, GX['rivers'], GX['closed'], cgx=GX['cg'], cid=cid)
-        stamps55(base, Sx, R, GX['cg'], cid, k, 0, 0, M, ink, peaks=False, calm=('ash', 'lavastone'), sparse={'deadwood': 1.8, 'heath': 1.4})
+        stamps55(base, Sx, R, GX['cg'], cid, k, 0, 0, M, ink, peaks=False, calm=('ash', 'lavastone'),
+                 sparse={'deadwood': 1.8, 'heath': 1.9, 'scrub': 1.7, 'desert': 1.5, 'steppe': 1.3})
     finally:
         M.set_dims(GX['W0'], GX['H0'])
     return base
