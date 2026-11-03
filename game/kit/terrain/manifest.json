@@ -458,6 +458,57 @@
     "strip_px": 48
    },
    "hash": "1be46f837b7b339d"
+  },
+  {
+   "id": "heath",
+   "material_id": 8,
+   "priority": 29,
+   "fill": "fill_heath.png",
+   "walkable": true,
+   "surface": "turf",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "e4df02e4212d31e6"
+  },
+  {
+   "id": "peat",
+   "material_id": 9,
+   "priority": 18,
+   "fill": "fill_peat.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "1340a5eac1257b3d"
+  },
+  {
+   "id": "drove",
+   "material_id": 10,
+   "priority": 19,
+   "fill": "fill_drove.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": true,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "ecc54243ef3c9420"
   }
  ],
  "transitions": [
@@ -486,6 +537,106 @@
    "hash": "7bdf2516029a04be"
   },
   {
+   "id": "heath_over_drove",
+   "upper": "heath",
+   "lower": "drove",
+   "png": "over_heath_over_drove.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "tuft_2",
+     "tuft_3",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "blades_1",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "pebble_1",
+     "tuft_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "476acea425016cda"
+  },
+  {
+   "id": "heath_over_path",
+   "upper": "heath",
+   "lower": "path",
+   "png": "over_heath_over_path.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "tuft_2",
+     "tuft_3",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "blades_1",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "pebble_1",
+     "tuft_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "7ed0adc8e327809f"
+  },
+  {
+   "id": "heath_over_peat",
+   "upper": "heath",
+   "lower": "peat",
+   "png": "over_heath_over_peat.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "a5a917508f78fdf1"
+  },
+  {
+   "id": "heath_over_worn",
+   "upper": "heath",
+   "lower": "worn",
+   "png": "over_heath_over_worn.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "tuft_2",
+     "tuft_3",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "blades_1",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "pebble_1",
+     "tuft_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "55ba7a4eb8fafc5a"
+  },
+  {
    "id": "lawn_over_earth_face",
    "upper": "lawn",
    "lower": "earth_face",
@@ -494,6 +645,16 @@
    "dressing": null,
    "approval": "candidate",
    "hash": "d0f7f7063725acd2"
+  },
+  {
+   "id": "lawn_over_heath",
+   "upper": "lawn",
+   "lower": "heath",
+   "png": "over_lawn_over_heath.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "48cfed7816fe3297"
   },
   {
    "id": "lawn_over_lower_tier",
@@ -637,6 +798,16 @@
    "hash": "2c54d56a455a5a40"
   },
   {
+   "id": "path_over_drove",
+   "upper": "path",
+   "lower": "drove",
+   "png": "over_path_over_drove.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "3f5f39e7bb25df5a"
+  },
+  {
    "id": "path_over_earth_face",
    "upper": "path",
    "lower": "earth_face",
@@ -688,6 +859,16 @@
    "dressing": null,
    "approval": "candidate",
    "hash": "0739ed4e542f2e3e"
+  },
+  {
+   "id": "worn_over_drove",
+   "upper": "worn",
+   "lower": "drove",
+   "png": "over_worn_over_drove.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "5c3ae4ff6c84e94e"
   },
   {
    "id": "worn_over_path",

@@ -34,6 +34,7 @@ class BrackensSet(unittest.TestCase):
         cls.idx = json.load(open(IDX))
         cls.ids = [pid for pid, _v, _k in B.jobs()]
         cls.plan = BS.plan()
+        cls.lab = BS.wall_lab()
 
     def test_pictures_are_what_the_painters_draw(self):
         self.assertEqual(self.B.check(), 0)
@@ -51,13 +52,16 @@ class BrackensSet(unittest.TestCase):
             self.assertEqual(p['approval']['state'], 'candidate', pid)
 
     def test_wall_cells_close_loops_and_keep_sheep(self):
-        for jn in ('ew', 'ns', 'es', 'sw', 'ne', 'nw'):
+        # every way a cell can join: straights, corners, Ts, the cross and the ends
+        for jn in ('ew', 'ns', 'es', 'sw', 'ne', 'nw', 'nes', 'esw', 'nsw', 'new', 'nesw', 'n', 'e', 's', 'w'):
             b = self.lib['wall_drystone_' + jn]['placement']['boundary']
             self.assertEqual(''.join(b['joins']), jn)
             self.assertIn('sheep', b['encloses'])
-        g = self.lib['wall_drystone_gate_ew']
-        self.assertTrue(g['placement']['boundary']['gate'])
-        self.assertFalse(g['gameplay']['blocks_move'])
+        for gid, joins in (('wall_drystone_gate_ew', ['e', 'w']), ('wall_drystone_gate_ns', ['n', 's'])):
+            g = self.lib[gid]
+            self.assertTrue(g['placement']['boundary']['gate'], gid)
+            self.assertEqual(sorted(g['placement']['boundary']['joins']), sorted(joins), gid)
+            self.assertFalse(g['gameplay']['blocks_move'], gid)
         st = self.lib['wall_drystone_stile_ew']
         self.assertFalse(st['placement']['boundary']['gate'])           # the flock stays behind it
         self.assertTrue(st['placement']['boundary']['stile'])
@@ -110,9 +114,41 @@ class BrackensSet(unittest.TestCase):
         from scripts.art.kit import placement_audit as PA
         self.assertEqual(PA.check_plan(self.plan), [])                  # needs (the peat's hearth), faces, avoid, points
 
-    def test_the_study_uses_every_piece_of_the_set(self):
-        used = {pc['piece'] for pc in self.plan['pieces']}
+    def test_the_wall_lab_passes_every_check(self):
+        # the yard of four folds (corners, Ts, the cross, gates along x and y) and the walls ending
+        # against houses (the end cells), checked as a zone is
+        from scripts.art.kit import relations as RL
+        from scripts.review import kit_rules as KR
+        from scripts.art.kit import placement_audit as PA
+        self.assertEqual([f for f in KR.check_zone(self.lab) if f['severity'] == 'fault'], [])
+        self.assertEqual(RL.check_zone(self.lab), [])
+        self.assertEqual(self.EN.check_zone(self.lab, self.lib), [])
+        self.assertEqual(self.BS.layout_faults(self.lab), [])
+        self.assertEqual(PA.check_plan(self.lab), [])
+
+    def test_the_study_and_the_lab_use_every_piece_of_the_set(self):
+        used = {pc['piece'] for pc in self.plan['pieces'] + self.lab['pieces']}
         self.assertEqual(set(self.ids) - used, set())
+
+    def test_the_study_stands_on_moor(self):
+        legend = set(self.plan['legend'].values())
+        self.assertTrue({'heath', 'peat', 'drove'} <= legend)
+        for m in ('heath', 'peat', 'drove'):
+            self.assertIn(m, self.lib_terrain(), m)
+
+    def lib_terrain(self):
+        from scripts.art.kit import bake as BK
+        return {k for k, v in BK._pieces_lib().items() if v.get('terrain')}
+
+    def test_no_picture_is_speckled(self):
+        # Claude A, round 2: clean 2 to 4 px clusters, isolated pixels at 4 % or less, runs of 3 or
+        # fewer at 15 % or less (scripts/art/kit/tone_audit.py), every still and every loop strip
+        import glob
+        from scripts.art.kit import tone_audit as TA
+        for p in sorted(glob.glob(os.path.join(ROOT, 'game', 'kit', 'props', 'art', 'brackens', '*.png'))):
+            r = TA.measure(p)
+            self.assertLessEqual(r['isolated'], TA.ISOLATED_MAX, os.path.basename(p))
+            self.assertLessEqual(r['specks'], TA.SPECKS_MAX, os.path.basename(p))
 
     def test_open_folds_and_misplaced_pieces_are_caught(self):
         import copy

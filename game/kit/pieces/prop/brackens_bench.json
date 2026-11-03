@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/brackens/brackens_bench.png",
    "foot": [
     47,
-    50
+    46
    ]
   }
  ],
@@ -29,14 +29,14 @@
  "geometry": {
   "size_px": [
    94,
-   56
+   67
   ],
   "size_cells": [
    4,
    1
   ],
   "z_sort": "foot",
-  "height_px": 56,
+  "height_px": 67,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -48,7 +48,7 @@
   },
   "foot": [
    47,
-   50
+   46
   ],
   "footprint": [
    [

@@ -50,6 +50,7 @@ import os
 import sys
 
 import numpy as np
+from scipy import ndimage as ndi
 from PIL import Image
 
 from scripts.art.kit.schema import PIECES, ROOT
@@ -237,14 +238,21 @@ def wall_scene(links, me_box, variant=0, pad=64, gate=False):
             node = (u, fixed) if axis == 'x' else (fixed, u)
             perp = any(d[0] == 0 for d in nodes[node]) if axis == 'x' else any(d[1] == 0 for d in nodes[node])
             cap = node in gate_ends(gate)
-            ends.append(u + sgn * (HB if perp and not cap else 0.0))
+            free = len(nodes[node]) == 1 and not cap and abs(u) < CELL      # this piece's own end: a cheek
+            ext = (HB if axis == 'x' else 2.0) if perp and not cap else (3.0 if free else 0.0)
+            ends.append(u + sgn * ext)
         runs.append((axis, fixed, ends[0], ends[1]))
-    for axis, fixed, a0, a1 in runs:
-        _hearting(sc, axis, fixed, a0, a1, owner_of)
-        _run_stones(sc, axis, fixed, a0, a1, owner_of, variant_at)
-    # the coping: along each run, and a flat capstone over a corner or a tee
     corners = [n for n, ds in nodes.items() if any(d[0] == 0 for d in ds) and any(d[1] == 0 for d in ds)]
     for axis, fixed, a0, a1 in runs:
+        if axis == 'x':
+            _hearting(sc, axis, fixed, a0, a1, owner_of)
+            _run_stones(sc, axis, fixed, a0, a1, owner_of, variant_at)
+        else:
+            _ns_run(sc, fixed, a0, a1, corners)
+    # the coping: along each run, and a flat capstone over a corner or a tee
+    for axis, fixed, a0, a1 in runs:
+        if axis == 'y':
+            continue
         skip = []
         for (nx, ny) in corners:
             if axis == 'x' and ny == fixed:
@@ -253,22 +261,107 @@ def wall_scene(links, me_box, variant=0, pad=64, gate=False):
                 skip.append((ny - HT - 1, ny + HT + 1))
         _coping(sc, axis, fixed, a0, a1, owner_of, variant_at, skip)
     for (nx, ny) in corners:
-        sc.ellipsoid(nx + 0.4, ny, H_WALL + 1.5, HT + 1.6, HT + 1.4, 5.0, K_GRIT, base=2.8, k=1.9,
-                     owner=owner_of(nx, ny), tag='cope', mix=0.3)
+        sc.box(nx - HT - 1.5, ny - HT - 1.5, H_WALL, nx + HT + 1.5, ny + HT + 1.5, H_WALL + 5, K_GRIT, base=2.9, k=1.7,
+               owner=owner_of(nx, ny), tag='cap', round_=2.0, mix=0.3)
     return sc
 
 
+COPE_NS = ((-12, 4, 4), (-8, 5, 2), (-3, 3, 5), (0, 5, 3), (5, 4, 4), (9, 3, 2))    # the end-on coping's bars: 24 in all
+NS_CT = 3.8                                   # half the end-on coping's width: a band of face stones each side
+
+
+def _ns_run(sc, fixed, a0, a1, corners):
+    """A run along y seen end-on in the three-quarter view, as #430's fence side runs are drawn:
+    the wall's body full thickness to the coping's bed (its top band painted by `_ns_paint` with
+    the stones of its west face in courses, lit, and of its east face in shade), and the coping's
+    stones on edge as bars across it, tall and short by turns, each a box so a taller one steps up
+    over the next."""
+    sc.box(fixed - HB, a0, 0, fixed + HB, a1, H_WALL, K_GRIT, base=2.6, k=1.2, tag='ns_body', mix=0.3)
+    k0 = int(math.floor((a0 + HALF) / CELL)) - 1
+    k1 = int(math.ceil((a1 + HALF) / CELL)) + 1
+    for k in range(k0, k1 + 1):
+        node = k * CELL
+        if any(nx == fixed and ny == node for (nx, ny) in corners):
+            continue                                 # the corner's capstone sits here
+        for j, (st, w, h) in enumerate(COPE_NS):
+            u0, u1 = node + st, node + st + w
+            c0, c1 = max(u0, a0), min(u1, a1)
+            if c1 - c0 < 1.5:
+                continue
+            kk = hash_key(('c', j, 17))
+            sc.box(fixed - NS_CT + 0.2 * (j % 2), c0 + 0.3, H_WALL, fixed + NS_CT - 0.3 * (j % 3 == 1), c1 - 0.7, H_WALL + h, K_GRIT,
+                   base=2.3 + (hsh(kk, 5) - 0.5) * 1.2, k=0.9, tag='ns_cope', round_=1.0, mix=hsh(kk, 6))
+
+
+def _ns_paint(sc, a):
+    """The end-on run's body: its top band's west strip as the west face's stones in courses (lit,
+    a dark joint under each, a lit edge on each), its east strip the east face's in shade; a face
+    seen from the south (a run's end) in courses as the east-west face."""
+    H, W = a.shape
+    X = np.arange(W)[None, :] - sc.ox + 0.5 + np.zeros((H, 1))
+    for i, s in enumerate(sc.solids):
+        if s.tag != 'ns_body':
+            continue
+        m = sc.label == i
+        if not m.any():
+            continue
+        fixed = 0.5 * (s.p[0] + s.p[3])
+        u = X - fixed
+        v = sc.gy
+        top = m & (sc.n[..., 2] > 0.5)
+        front = m & ~top
+        t = np.zeros((H, W))
+        mix = np.zeros((H, W))
+        # top band: three courses of stones per side, side by side across the band (the face
+        # laid flat), each stone along v from the course's joints
+        side = np.sign(u)
+        band = np.zeros(u.shape, int)
+        for c in range(1):
+            sel = top & (band == c)
+            local = ((v + HALF) % CELL) - HALF
+            hi, cuts, lo, sw = _course_joints(c + 4, 0)
+            js = np.array(sorted([hi] + cuts + [lo] + [lo + sw - CELL]))
+            idx = np.searchsorted(js, local, side='right')
+            pos = local - js[np.clip(idx - 1, 0, len(js) - 1)]
+            nxt = js[np.clip(idx, 0, len(js) - 1)] - local
+            key = idx * 7 + c * 31 + (side > 0) * 101
+            tt = 2.8 + (K.vhash(key, c, 3) - 0.5) * 1.4 + np.where(side < 0, 0.6, -1.0)
+            tt = np.where(pos < 1.2, tt + 1.0, tt)                    # the stone's lit north edge
+            tt = np.where(nxt < 1.0, 0.6, tt)                         # the dry joint south of it
+            tt = np.where(np.abs(u) < NS_CT + 1.0, tt - 1.0, tt)      # the coping's shadow at its foot
+            tt = np.where(np.abs(u) > HB - 1.0, tt - 0.6, tt)         # the face turning away at its edge
+            t = np.where(sel, tt, t)
+            mix = np.where(sel, K.vhash(key, c, 4), mix)
+        # a face seen from the south (a run's end): courses by height, stones across
+        z = sc.depth
+        zc = np.cumsum((0,) + COURSES)
+        ci = np.clip(np.searchsorted(zc, z, side='right') - 1, 0, len(COURSES) - 1)
+        loc = (u + 40 + ci * 3.0 + (ci % 2) * 2.0)
+        wid = 5.0 + 2.0 * (ci % 3 == 1)
+        sidx = (loc // wid).astype(int)
+        ft = 2.6 + (K.vhash(sidx, ci, 5) - 0.5) * 1.4 - 0.6 * (u > 2)
+        ft = np.where((loc % wid) >= wid - 0.9, 0.8, ft)
+        ft = np.where(z - zc[ci] > COURSES[0] - 1.2, ft + 0.9, ft)
+        ft = np.where(z - zc[ci] < 0.9, 0.7, ft)
+        t = np.where(front, ft, t)
+        mix = np.where(front, K.vhash(sidx, ci, 6), mix)
+        rpaint(a, m, GRIT, t, mix)
+    return a
+
+
 def gate_ends(gate):
+    if gate == 'ns':
+        return {(0, -STOOP_X), (0, STOOP_X)}
     return {(-STOOP_X, 0), (STOOP_X, 0)} if gate else set()
 
 
 def _dress_wall(sc, a):
-    """Lichen on the lit stones, moss in the low joints and on the coping's north side, grass
-    tufts along the foot; each mark tied to its stone, so a stone two cells share looks the same
-    in both."""
+    """The end-on runs' painted bands, then lichen on the lit stones and moss in the low joints;
+    each mark tied to its stone, so a stone two cells share looks the same in both."""
+    _ns_paint(sc, a)
     lab = sc.label
     for i, s in enumerate(sc.solids):
-        if s.tag not in ('face', 'cope', 'stoop'):
+        if s.tag not in ('face', 'cope', 'stoop', 'ns_cope', 'cap'):
             continue
         ys, xs = np.nonzero(lab == i)
         if len(ys) < 6:
@@ -280,7 +373,7 @@ def _dress_wall(sc, a):
             k = int(hk * 1000) % max(1, sel.sum())
             y, x = ys[sel][k], xs[sel][k]
             fam, t = LICHEN[int(hk * 97) % len(LICHEN)]
-            for dy, dx in ((0, 0), (0, 1), (1, 0)) if hk < 0.2 else ((0, 0), (0, 1)):
+            for dy, dx in ((0, 0), (0, 1), (1, 0), (1, 1)):
                 yy, xx = y + dy + 1, x + dx
                 if 0 <= yy < a.shape[0] and 0 <= xx < a.shape[1] and lab[yy, xx] == i:
                     a[yy, xx] = C(fam, t)
@@ -296,57 +389,65 @@ def _dress_wall(sc, a):
 
 
 def _tufts(sc, a, own, runs_x, me):
-    """Grass tufts at the foot of the south face (the turf meets the wall), periodic along x."""
+    """Grass tufts at the foot of the south face (the turf meets the wall), periodic along x: each
+    two texels wide, a cool root, a body and a lit tip, so they read as clumps, not specks."""
     for (fixed, a0, a1) in runs_x:
         yb = sc.oy + int(fixed + HB)               # the canvas row of the foot's front edge
-        for x in range(int(math.floor(a0)), int(math.ceil(a1))):
+        for x in range(int(math.floor(a0)), int(math.ceil(a1)), 2):
             u = x % CELL
             h = hsh(u, 31)
-            if h > 0.3 or not me[0] <= x + 0.5 < me[2]:
+            if h > 0.32 or not (me[0] <= x + 0.5 < me[2] and me[0] <= x + 1.5 < me[2]):
                 continue
             cx = x + sc.ox
-            ht = 2 + int(hsh(u, 32) * 4)
+            ht = 3 + int(hsh(u, 32) * 3)
             for k in range(ht):
                 yy = yb + 1 - k
-                xx = cx + (1 if k > 2 and hsh(u, 33) > 0.5 else 0)
-                if 0 <= yy < a.shape[0] and 0 <= xx < a.shape[1]:
-                    a[yy, xx] = C('grass' if k > 0 else 'grass_cool', 2 + min(3, k))
+                tone = ('grass_cool', 2) if k == 0 else (('grass', 4) if k >= ht - 1 else ('grass', 3))
+                for dx in (0, 1):
+                    xx = cx + dx + (1 if k >= ht - 1 and hsh(u, 33) > 0.5 else 0)
+                    if 0 <= yy < a.shape[0] and 0 <= xx < a.shape[1]:
+                        a[yy, xx] = C(*tone)
 
 
-def render_wall(joins=None, gate=False, stile=False, variant=0):
-    """(Pic, owned) for one wall cell (joins), the gate (three cells along x) or the stile."""
+def render_wall(joins=None, gate=None, stile=False, variant=0):
+    """A Pic for one wall cell (joins), a gate three cells long ('ew' or 'ns') or the stile."""
     links = []
     if gate:
+        ax, ay = (1, 0) if gate == 'ew' else (0, 1)
         for sgn in (-1, 1):
             for k in range(3):
-                x0 = sgn * (STOOP_X + k * CELL)
-                links.append(((x0, 0), (x0 + sgn * CELL, 0)))
-        me = (-STOOP_X, -HALF, STOOP_X, HALF)
+                u0 = sgn * (STOOP_X + k * CELL)
+                links.append(((u0 * ax, u0 * ay), ((u0 + sgn * CELL) * ax, (u0 + sgn * CELL) * ay)))
+        me = (-STOOP_X, -HALF, STOOP_X, HALF) if gate == 'ew' else (-HALF, -STOOP_X, HALF, STOOP_X)
     else:
         js = joins if not stile else ['e', 'w']
-        for s in js:
-            dx, dy = VEC[s]
+        for s_ in js:
+            dx, dy = VEC[s_]
             for k in range(3):
                 links.append(((dx * CELL * k, dy * CELL * k), (dx * CELL * (k + 1), dy * CELL * (k + 1))))
         me = (-HALF, -HALF, HALF, HALF)
-    links = [((int(a[0]), int(a[1])), (int(b[0]), int(b[1]))) for a, b in links]
+    links = [((int(a_[0]), int(a_[1])), (int(b_[0]), int(b_[1]))) for a_, b_ in links]
     sc = wall_scene(links, me, variant=variant, pad=96 if gate else 64, gate=gate)
     if gate:
-        _stoops(sc)
+        _stoops(sc, gate)
     a = K.modular(sc, me, dress=_dress_wall)
     own = np.where(a >= 0, 0, -1)
-    if gate:
+    if gate == 'ew':
         runs_x = [(0, -96, -STOOP_X + STOOP_W), (0, STOOP_X - STOOP_W, 96)]
-    elif stile or set(joins) & {'e', 'w'}:
-        xs = [0.0] + ([-96] if (stile or 'w' in joins) else []) + ([96] if (stile or 'e' in joins) else [])
+    elif not gate and (stile or set(joins) & {'e', 'w'}):
+        js = ['e', 'w'] if stile else joins
+        xs = [0.0] + ([-96] if 'w' in js else [-3.0]) + ([96] if 'e' in js else [3.0])
         runs_x = [(0, min(xs), max(xs))]
     else:
         runs_x = []
     over = np.full(a.shape, -1, np.int32)
-    if gate:
+    if gate == 'ew':
         _gate_leaf(sc, over)
+    elif gate == 'ns':
+        _gate_leaf_ns(sc, over)
     if stile:
         _stile_steps(sc, a, over)
+    K.despeckle(over, keep=np.isin(over, [C('iron', t) for t in range(6)]))
     if (over >= 0).any():
         o2 = over.copy()
         V.outline(o2)
@@ -355,14 +456,36 @@ def render_wall(joins=None, gate=False, stile=False, variant=0):
     return K.crop(a, sc.ox, sc.oy)
 
 
-def _stoops(sc):
+def _stoops(sc, gate='ew'):
     """The gate's two stoops: tall dressed gateposts at the opening's ends, the wall built into
-    them, an iron hanging eye on the west one and a latch on the east."""
+    them, each on a footing stone."""
     for sgn in (-1, 1):
-        x0 = sgn * STOOP_X if sgn < 0 else STOOP_X - STOOP_W
-        x1 = x0 + STOOP_W
-        sc.box(x0, -5.5, 0, x1, 5.5, 54, K_GRIT, base=2.7, k=1.7, owner=0, tag='stoop', round_=2.5, mix=0.15 if sgn < 0 else 0.4)
-        sc.box(x0 - 0.5, -6.5, 0, x1 + 0.5, 6.5, 7, K_GRIT, base=2.6, k=1.4, owner=0, tag='stoop', round_=1.0, mix=0.6)
+        u0 = sgn * STOOP_X if sgn < 0 else STOOP_X - STOOP_W
+        u1 = u0 + STOOP_W
+        if gate == 'ew':
+            sc.box(u0, -5.5, 0, u1, 5.5, 54, K_GRIT, base=2.7, k=1.7, owner=0, tag='stoop', round_=2.5, mix=0.15 if sgn < 0 else 0.4)
+            sc.box(u0 - 0.5, -6.5, 0, u1 + 0.5, 6.5, 7, K_GRIT, base=2.6, k=1.4, owner=0, tag='stoop', round_=1.0, mix=0.6)
+        else:
+            sc.box(-5.5, u0, 0, 5.5, u1, 54, K_GRIT, base=2.7, k=1.7, owner=0, tag='stoop', round_=2.5, mix=0.15 if sgn < 0 else 0.4)
+            sc.box(-6.5, u0 - 0.5, 0, 6.5, u1 + 0.5, 7, K_GRIT, base=2.6, k=1.4, owner=0, tag='stoop', round_=1.0, mix=0.6)
+
+
+def _gate_leaf_ns(sc, a):
+    """The five-bar gate between stoops on a run along y, shut, seen edge-on from the south as the
+    run is: its top rail and stiles a narrow oak band from stoop to stoop, the rails' lit tops
+    stepping down it, a dark side in shade, iron at the hanging stile."""
+    oy, ox = sc.oy, sc.ox
+    ya, yb = -STOOP_X + STOOP_W, STOOP_X - STOOP_W
+    H_, W_ = a.shape
+    r0, r1 = oy + ya - 42, oy + yb - 4
+    for r in range(r0, r1):
+        k = (r - r0)
+        t = 3.2 + (0.9 if k % 8 in (0, 1) else 0.0) - (0.8 if k % 8 == 7 else 0.0)
+        for dx, dt in ((-1, 1.0), (0, 0.0), (1, -1.4)):
+            if 0 <= r < H_:
+                a[r, ox + dx] = C('timber_warm' if t + dt >= 4 else 'timber', t + dt)
+    for r in (r0 + 6, r0 + 7, r1 - 10, r1 - 9):
+        a[r, ox - 1:ox + 2] = C('iron', 2)
 
 
 def _gate_leaf(sc, a):
@@ -447,6 +570,7 @@ def _solo(sc, dress=None, line=True):
     if dress:
         dress(sc, a)
     V.tidy(a)
+    K.despeckle(a)
     if line:
         V.outline(a)
         V.tidy(a, passes=1)
@@ -547,52 +671,70 @@ def _bench_marks(sc, a, seed):
 
 
 def bench(seed=7):
-    """A drovers' seat: a long gritstone slab on two uprights, two rough back slabs set in the
-    ground behind it, pitted and lichened, the grass grown up round the uprights."""
-    sc = K.Scene(-56, 56, -30, 24, 70)
-    mx = K.noise((sc.H, sc.W), np.random.default_rng(seed), 1.8)            # weathering: buff, grey, brown by patches
-    sc.ellipsoid(-22, -9.5, 18, 22, 3.2, 21, GRIT, base=2.6, k=1.6, tag='stone', mix=mx, flat=3.5, tex='stone')
-    sc.ellipsoid(22, -9.8, 16.5, 21, 3.2, 19.5, GRIT, base=2.5, k=1.6, tag='stone', mix=mx, flat=3.5, tex='stone')
-    for x0, x1 in ((-38, -28), (28, 38)):
-        sc.box(x0, -5, 0, x1, 4, 17, GRIT, base=2.4, k=1.6, tag='stone', round_=1.5, mix=mx, tex='stone')
-    sc.ellipsoid(0, -0.5, 20, 46, 6.5, 3.4, GRIT, base=2.8, k=1.7, tag='stone', mix=mx, flat=4.0, tex='stone')
+    """A drovers' seat: one long gritstone slab on two squat stone legs, a low back of one long slab
+    set in the ground behind it, lichen on its lit edges, and the turf worn bare in front where feet
+    rest (that patch has no outline: it is ground)."""
+    sc = K.Scene(-56, 56, -30, 26, 70)
+    mx = K.noise((sc.H, sc.W), np.random.default_rng(seed), 2.2)
+    sc.box(-44, -13, 0, 44, -8.5, 32, GRIT, base=2.4, k=1.5, tag='stone', round_=2.5, mix=mx, tex='stone')
+    for x0, x1 in ((-34, -22), (22, 34)):
+        sc.box(x0, -6, 0, x1, 3, 13, GRIT, base=2.2, k=1.5, tag='stone', round_=2.0, mix=mx, tex='stone')
+    sc.box(-46, -8, 13, 46, 5, 19, GRIT, base=2.8, k=1.6, tag='stone', round_=2.5, mix=mx, tex='stone')
     a = _solo(sc, dress=lambda s, a: _bench_marks(s, a, seed))
-    _ground_tufts(a, sc.ox, sc.oy + 4, [-39, -36, -27, 27, 30, 37, 40], seed)
+    # the worn patch in front: bare earth fading into the turf in two-texel steps
+    H, W = a.shape
+    Yg, Xg = np.mgrid[0:H, 0:W] + 0.5
+    d = ((Xg - sc.ox) / 40.0) ** 2 + ((Yg - (sc.oy + 13)) / 8.0) ** 2
+    edge = K.vhash((Xg // 2).astype(int), (Yg // 2).astype(int), seed) * 0.35
+    worn = (d + edge < 1.0) & (a < 0)
+    rpaint(a, worn, [('earth_cool', 'earth', 'earth_warm')], 2.6 - 0.8 * (d > 0.6) + 0.8 * (Yg < sc.oy + 10), 0.0)
+    _ground_tufts(a, sc.ox, sc.oy + 3, [-36, -33, -21, 21, 24, 35], seed)
     return K.crop(a, sc.ox, sc.oy)
 
 
 def peat_stack(seed=9):
-    """Cut turves stacked to dry beside a home: brick-like and fibrous, laid in shrinking courses
-    on a herringbone with the courses crossing, a few on top leaning."""
-    rng = np.random.default_rng(seed)
-    sc = K.Scene(-50, 50, -40, 24, 60)
-    mx = K.noise((sc.H, sc.W), rng, 1.4)
-    layers = [(6, 0.0, 30), (5, 4.5, 26), (5, 9.0, 22), (4, 13.5, 18), (3, 18.0, 13), (2, 22.5, 8)]
-    for li, (n, z, half) in enumerate(layers):
-        for row in range(2):
-            y0 = -16 + row * 9 + li * 0.8
-            xs = np.linspace(-half, half, n + 1)
-            for k in range(n):
-                x0, x1 = xs[k] + rng.uniform(0, 0.8), xs[k + 1] - rng.uniform(0.4, 1.2)
-                sc.box(x0, y0 + rng.uniform(-0.6, 0.6), z, x1, y0 + 8 + rng.uniform(-0.6, 0.6), z + 4.4,
-                       PEAT, base=2.5 + rng.uniform(-0.6, 0.7), k=1.6, tag='turf', round_=1.2, mix=mx, tex='turf')
-    for (x, z) in ((-6, 27.0), (5, 27.0)):
-        sc.box(x - 4, -10, z, x + 4, -2, z + 4, PEAT, base=2.7, k=1.6, tag='turf', round_=1.2, mix=rng.random())
-    a = _solo(sc)
-    # fibres: pale roots and heather stalks in the cut faces, dark peat crumbs
+    """Cut peats stacked to dry in a ridge: courses of blocks leaning herringbone, each course the
+    other way, gaps between for the wind; the top courses dry and pale brown, the base dark and wet,
+    a dark seep in the turf at its foot."""
+    sc = K.Scene(-56, 56, -36, 24, 50)
+    for k in range(5):
+        x0, x1 = -38 + k * 4, 38 - k * 4
+        y0, y1 = -9 + k * 1.8, 9 - k * 1.8
+        sc.box(x0, y0, k * 5, x1, y1, k * 5 + 5, PEAT, base=2.4 + 0.25 * k, k=1.4, tag='course%d' % k, round_=1.5, mix=0.3)
+    sc.box(-16, -1.5, 25, 16, 1.5, 28, PEAT, base=3.0, k=1.4, tag='course5', round_=1.2, mix=0.6)
+    sc.render()
+    a = sc.shade(crevice=1, rim=0.4)
     H, W = a.shape
-    for i, s in enumerate(sc.solids):
-        ys, xs = np.nonzero(sc.label == i)
-        for j in range(len(ys) // 9):
-            k = int(hsh(i, j, 71) * len(ys)) % len(ys)
-            y, x = ys[k], xs[k]
-            fam = ('timber_warm', 3) if hsh(i, j, 72) > 0.5 else ('soot', 1)
-            a[y, x] = C(*fam)
-            if hsh(i, j, 73) > 0.6 and x + 1 < W and sc.label[y, x + 1] == i:
-                a[y, x + 1] = C(*fam)
+    Xg = np.arange(W)[None, :] - sc.ox + np.zeros((H, 1))
+    z = sc.depth
+    m = sc.label >= 0
+    course = np.clip((z / 5.0).astype(int), 0, 5)
+    t_in = z - course * 5.0
+    dirn = np.where(course % 2 == 0, 1.0, -1.0)
+    u = np.floor(Xg + dirn * np.floor(t_in) + course * 3.0)
+    blk = np.floor(u / 7.0)
+    gap = (u % 7.0) < 2.0                       # two texels wide, stepping one a row: a joined diagonal
+    L_ = sc.light()
+    t = 1.8 + 1.2 * L_ + 0.25 * course + (K.vhash(blk.astype(int), course, seed) - 0.5) * 1.0
+    t = np.where(gap, 0.4, t)
+    t = np.where((t_in > 3.8) & ~gap, t + 0.8, t)                       # each block's dry, lit top edge
+    t = np.where(course == 0, t - 0.9, t)                               # the wet base
+    fams = np.where(course >= 3, 0.45, np.where(course == 0, 0.05, 0.3))
+    rpaint(a, m, PEAT, t, fams)
+    # fibres in two-texel flecks on the cut faces
+    for j in range(int(m.sum() * 0.02)):
+        y, x = int(hsh(seed, j, 1) * (H - 1)), int(hsh(seed, j, 2) * (W - 2))
+        if m[y, x] and m[y, x + 1]:
+            a[y, x:x + 2] = C('timber_warm', 3) if hsh(seed, j, 3) > 0.5 else C('soot', 1)
+    K.despeckle(a)
     V.outline(a)
-    V.tidy(a, passes=1)
-    _ground_tufts(a, sc.ox, sc.oy + 1, [-31, -26, 22, 29], seed)
+    # the seep at its foot: dark wet earth and a glint, ground (no outline)
+    Yg, Xg2 = np.mgrid[0:H, 0:W] + 0.5
+    d = ((Xg2 - sc.ox - 4) / 38.0) ** 2 + ((Yg - (sc.oy + 11)) / 5.0) ** 2
+    seep = (d < 1.0) & (a < 0)
+    rpaint(a, seep, [('soot', 'earth_cool', 'earth')], 1.6 + 0.8 * (d > 0.6), 0.0)
+    a[(seep & (np.abs(Yg - (sc.oy + 11)) < 1.0) & (np.abs(Xg2 - sc.ox + 10) < 3))] = C('water', 2)
+    _ground_tufts(a, sc.ox, sc.oy + 6, [-42, -38, 36, 40], seed)
     return K.crop(a, sc.ox, sc.oy)
 
 
@@ -694,8 +836,8 @@ def _flames(a, cx, base_y, i, seed, scale=1.0):
         p = (t + k * 0.5) % 1.0
         sx = int(cx + 4 * math.sin(2 * math.pi * (p + k * 0.3)) + (k * 5 - 2))
         sy = int(base_y - 16 * scale - p * 14)
-        if 0 <= sy < H and 0 <= sx < W:
-            a[sy, sx] = C('lamp', 5 if k else 4)
+        if 0 <= sy < H - 1 and 0 <= sx < W:
+            a[sy:sy + 2, sx] = C('lamp', 5 if k else 4)
 
 
 def fire_ring(lit=False, seed=13):
@@ -729,14 +871,15 @@ def fire_ring(lit=False, seed=13):
     H, W = a.shape
     for j in range(40):
         y, x = int(hsh(seed, j, 91) * H), int(hsh(seed, j, 92) * W)
-        if ash[y, x]:
-            a[y, x] = C('soot', 0) if hsh(seed, j, 93) > 0.4 else C('ash', 4)
+        if ash[y, x] and x + 1 < W and ash[y, x + 1]:
+            a[y, x:x + 2] = C('soot', 0) if hsh(seed, j, 93) > 0.4 else C('ash', 4)
     if lit:
         logs_m = np.isin(sc.label, [i for i, s in enumerate(sc.solids) if s.tag == 'log'])
         for j in range(60):
             y, x = int(hsh(seed, j, 94) * H), int(hsh(seed, j, 95) * W)
-            if logs_m[y, x] or (ash[y, x] and hsh(seed, j, 96) > 0.6):
-                a[y, x] = C('lava', 3) if hsh(seed, j, 97) > 0.3 else C('lamp', 4)
+            if (logs_m[y, x] or (ash[y, x] and hsh(seed, j, 96) > 0.6)) and x + 1 < W:
+                a[y, x:x + 2] = C('lava', 3) if hsh(seed, j, 97) > 0.3 else C('lamp', 4)
+    K.despeckle(a)
     V.tidy(a)
     V.outline(a)
     V.tidy(a, passes=1)
@@ -747,6 +890,7 @@ def fire_ring(lit=False, seed=13):
     for i in range(FIRE_FRAMES):
         f = a.copy()
         _flames(f, sc.ox - 0.5, sc.oy - 4, i, seed)
+        K.despeckle(f)
         frames.append(f)
     ys, xs = np.nonzero(np.any([f >= 0 for f in frames], axis=0))
     x0, x1, y0, y1 = xs.min(), xs.max() + 1, ys.min(), ys.max() + 1
@@ -770,61 +914,54 @@ def _leaf_marks(X, Y, seed, w=6, h=4):
 
 
 def gorse(variant='a', seed=17):
-    """A gorse clump at density 3 as the woodland's bushes are drawn (art-style, "Density 3"): a few
-    large domes, each built of leaf clumps lit on their upper west with a dark under-shade where a
-    clump tucks under the one in front; spines as dark flecks and pale glints; yellow flowers in
-    small clusters on the lit crowns; spines breaking the silhouette only; no stems."""
+    """A gorse clump: a few domes of dark spiny green, each built of upright spiny sprays (the
+    spines break the silhouette at the top and the sides), lit on their upper west with a dark
+    under-shade where a spray tucks under the one in front; yellow flowers in clusters at the
+    sprays' tips on the lit side; no stems."""
     rng = np.random.default_rng(seed + (0 if variant == 'a' else 50))
-    sc = K.Scene(-48, 48, -40, 20, 70)
+    sc = K.Scene(-50, 50, -44, 20, 80)
     G = [('leaf_cool', 'leaf_cool', 'leaf'), ('grass_cool', 'leaf_cool', 'leaf'), ('leaf_cool', 'grass_cool', 'grass')]
     domes = ([(-13, -7, 13, 12, 9, 13), (10, -9, 14, 13, 9, 15), (-1, -17, 15, 12, 8, 16), (-21, 2, 8, 8, 6, 9),
               (17, 1, 9, 9, 6, 10), (1, 0, 10, 11, 7, 11)] if variant == 'a' else
              [(-8, -5, 11, 11, 8, 12), (9, -4, 10, 10, 8, 11), (0, -12, 12, 10, 8, 14), (-1, 2, 9, 9, 6, 9)])
+    tips = []
     for (x, y, z, rx, ry, rz) in domes:
-        for j in range(9):
+        sc.ellipsoid(x, y, z * 0.5, rx * 0.85, ry * 0.85, rz * 0.8, G, base=1.5, k=1.4, tag='core', mix=0.3)
+        for j in range(14):
             th = rng.uniform(0, 2 * math.pi)
-            ph = rng.uniform(0.15, 1.3)
-            cx = x + rx * 0.7 * math.cos(th) * math.cos(ph)
-            cy = y + ry * 0.7 * math.sin(th) * math.cos(ph)
-            cz = z * 0.55 + rz * 0.7 * math.sin(ph)
-            r = rng.uniform(4.6, 6.4)
-            sc.ellipsoid(cx, cy, cz, r, r * 0.85, r * 0.9, G, base=2.1 + 0.5 * math.sin(ph) + rng.uniform(-0.3, 0.3), k=1.6,
-                         tag='clump', mix=rng.random())
-        sc.ellipsoid(x, y, z * 0.55, rx * 0.85, ry * 0.85, rz * 0.8, G, base=1.4, k=1.4, tag='core', mix=0.3)
+            ph = rng.uniform(0.25, 1.35)
+            cx = x + rx * 0.8 * math.cos(th) * math.cos(ph)
+            cy = y + ry * 0.8 * math.sin(th) * math.cos(ph)
+            cz = z * 0.5 + rz * 0.8 * math.sin(ph)
+            up = math.sin(ph) > 0.6
+            rx_, rz_ = (rng.uniform(2.4, 3.2), rng.uniform(6.0, 8.5)) if up else (rng.uniform(5.0, 7.0), rng.uniform(2.6, 3.4))
+            sc.ellipsoid(cx, cy, cz, rx_, rng.uniform(2.4, 3.2), rz_, G, base=2.1 + 0.4 * math.sin(ph), k=1.6, tag='spray',
+                         mix=rng.random())
+            tips.append((cx + (0 if up else (rx_ if math.cos(th) > 0 else -rx_)), cy, cz + (rz_ if up else 0)))
     sc.render()
-    a = sc.shade(crevice=2, rim=0.8)
+    a = sc.shade(crevice=2, rim=0.7)
     H, W = a.shape
     m = sc.label >= 0
     L = sc.light()
-    for j in range(int(m.sum() * 0.08)):
-        y, x = int(hsh(seed, j, 1) * H), int(hsh(seed, j, 2) * W)
-        if m[y, x] and x + 1 < W:
-            if hsh(seed, j, 3) > 0.5:
-                a[y, x] = C('leaf_cool', 1)
-                if m[y + 1, x + 1] if y + 1 < H else False:
-                    a[y + 1, x + 1] = C('leaf_cool', 1)
-            elif L[y, x] > 0.2:
-                a[y, x] = C('grass', 4)
-                a[y, x + 1] = C('grass_warm', 4) if m[y, x + 1] else a[y, x + 1]
-    lit = m & (L > 0.3)
+    # flowers at the sprays' tips on the lit side: a cluster of 3 to 4 texels each
     k = 0
-    for j in range(600):
-        y, x = int(hsh(seed, j, 11) * H), int(hsh(seed, j, 12) * W)
-        if lit[y, x] and k < (30 if variant == 'a' else 20):
-            k += 1
-            cl = ((0, 0), (0, 1), (1, 0)) if hsh(seed, j, 13) > 0.4 else ((0, 0), (1, 1), (0, 1), (1, 0))
-            for dy, dx in cl:
-                if 0 <= y + dy < H and 0 <= x + dx < W and m[y + dy, x + dx]:
-                    a[y + dy, x + dx] = C('brass_warm', 4) if (dy, dx) != (0, 0) else C('lamp', 4)
-            if y + 2 < H and m[y + 2, x]:
-                a[y + 2, x] = C('brass', 2)
+    for j, (tx, ty, tz) in enumerate(tips):
+        sx, sy = int(round(tx + sc.ox)), int(round(ty - tz + sc.oy)) + 1
+        if not (0 < sy < H - 2 and 0 < sx < W - 2) or not m[sy, sx] or L[sy, sx] < 0.15 or hsh(seed, j, 9) > 0.55:
+            continue
+        for dy, dx in ((0, 0), (0, 1), (1, 0), (1, 1)):
+            if m[sy + dy, sx + dx]:
+                a[sy + dy, sx + dx] = C('lamp', 4) if (dy, dx) == (0, 0) else C('brass_warm', 4)
+        if m[sy + 2, sx]:
+            a[sy + 2, sx:sx + 2] = C('brass', 2)
+        k += 1
+    # spines: short dark strokes on the sprays and a few breaking the top silhouette
     edge = m & ~np.roll(m, 1, 0)
     ys, xs = np.nonzero(edge)
     for j in range(len(ys)):
-        if hsh(seed, j, 21) < 0.22 and ys[j] > 2:
-            a[ys[j] - 1, xs[j]] = C('leaf_cool', 2)
-            if hsh(seed, j, 22) < 0.4:
-                a[ys[j] - 2, xs[j] + (1 if hsh(seed, j, 23) > 0.5 else -1)] = C('leaf_cool', 2)
+        if hsh(seed, j, 21) < 0.18 and ys[j] > 3:
+            a[ys[j] - 2:ys[j], xs[j]] = C('leaf_cool', 2)
+    K.despeckle(a, keep=np.isin(a, [C('lamp', 4), C('brass_warm', 4), C('brass', 2)]), size=3)
     V.tidy(a)
     V.outline(a)
     return K.crop(a, sc.ox, sc.oy)
@@ -858,8 +995,8 @@ def fold_ruin(seed=19):
                 sc.ellipsoid(x, y, z + 0.5 * hc, abs(ru * math.sin(th)) + 2.6, abs(ru * math.cos(th)) + 2.6, 0.5 * hc + 0.6,
                              GRIT, base=2.4 + rng.uniform(-0.8, 0.8), k=1.6, tag='stone', mix=rng.random(), flat=2.2)
     # the floor inside, trodden bare where the flock stood, grass coming back at its edge
-    sc.ellipsoid(0, cy + 2, -1.2, R - 4, (R - 4) * 0.92, 1.8, [('grass_cool', 'grass_cool', 'grass'), ('earth_cool', 'earth', 'grass')],
-                 base=2.9, k=0.5, tag='floor', mix=0.2, tex='turf')
+    sc.ellipsoid(0, cy + 2, -1.2, R - 4, (R - 4) * 0.92, 1.8, [('grass_cool', 'grass_cool', 'grass')],
+                 base=2.9, k=0.5, tag='floor', mix=0.2)
     # spilled stones in the gaps and the grass round them
     for _ in range(16):
         th = rng.uniform(0.0, math.pi)
@@ -869,22 +1006,28 @@ def fold_ruin(seed=19):
                      base=2.5 + rng.uniform(-0.6, 0.6), k=1.7, tag='stone', mix=rng.random(), flat=1.6)
     # nettles inside, against the back wall
     NET = [('leaf_cool', 'leaf', 'grass'), ('grass_cool', 'leaf', 'leaf_warm')]
-    for (x, y) in ((-16, cy - 20), (-6, cy - 24), (8, cy - 22), (20, cy - 16), (-24, cy - 12)):
+    for (x, y) in ((-10, cy - 26), (-1, cy - 28), (14, cy - 22)):
         sc.ellipsoid(x, y, 5, 6.5, 4.5, 6, NET, base=2.4, k=1.9, tag='nettle', mix=rng.random())
     sc.render()
     a = sc.shade()
     _lichen(sc, a, tags=('stone',), rate=0.35, seed=seed)
     H, W = a.shape
     Yg, Xg = np.mgrid[0:H, 0:W] + 0.5
+    # the floor calm grass: one tone with a few broad lighter patches, and its north-west corner in
+    # the shelter of the standing wall dark and cool
     fl = sc.label == [i for i, s_ in enumerate(sc.solids) if s_.tag == 'floor'][0]
-    worn = fl & (K.noise(a.shape, np.random.default_rng(seed + 5), 2.2) > 0.55)
-    rpaint(a, worn, [('earth_cool', 'earth', 'earth_warm')], 2.4 + 0.8 * (K.vhash(Xg.astype(int) // 2, Yg.astype(int), 3) > 0.8), 0.0)
+    patch = K.noise(a.shape, np.random.default_rng(seed + 5), 5.0) > 0.62
+    gx, gy = Xg - sc.ox, sc.gy
+    corner = ((gx + 26) / 22.0) ** 2 + ((gy - (cy - 24)) / 16.0) ** 2
+    tf = 2.8 + 0.6 * patch - 1.0 * (corner < 1.0) - 0.8 * (corner < 0.45)
+    rpaint(a, fl, [('grass_cool', 'grass_cool', 'grass'), ('grass_cool', 'grass', 'grass')], tf, 0.3 + 0.4 * patch)
     for i, s in enumerate(sc.solids):
         if s.tag == 'nettle':
             mi = sc.label == i
             marks = _leaf_marks(Xg, Yg, seed + i, w=4, h=3)
             rpaint(a, mi, NET, s.base + s.k * sc.light() + 0.8 * marks, s.mix)
     V.tidy(a)
+    K.despeckle(a)
     V.outline(a)
     V.tidy(a, passes=1)
     _ground_tufts(a, sc.ox, sc.oy + 2, [-38, -30, -20, 22, 31, 40], seed)
@@ -898,7 +1041,6 @@ def drove_well(seed=23):
     """The drove well: a spring-house of drystone under stepped slab roofing, an arched mouth over
     the dark water, a stone spout pouring into a long trough where the flocks drink, the overflow
     running off east through the trodden mud; the trickle and the trough's rings loop."""
-    rng = np.random.default_rng(seed)
     sc = K.Scene(-60, 60, -60, 30, 80)
     # the house: front, sides and back as drystone runs (the front's stones leave the arch open)
     zc = 0.0
@@ -1013,77 +1155,158 @@ def _smoke_frame(i, seed):
         tt = np.clip(np.round(np.where(t < 2.6, t + 1.5, t)), 1, 5).astype(int)
         thin = p > 0.55
         if thin:
-            m &= ((X.astype(int) + Y.astype(int) + i) % 2 == 0) | (d2 < 0.35 * (1.1 - p))
+            m &= ((X.astype(int) // 2 + Y.astype(int) // 2 + i) % 2 == 0) | (d2 < 0.35 * (1.1 - p))
         if p > 0.85:
-            m &= (X.astype(int) * 3 + Y.astype(int)) % 4 == 0
+            m &= (X.astype(int) // 2 * 3 + Y.astype(int) // 2) % 4 == 0
         a[m] = (fam * 8 + tt)[m]
+    # wisps in clean clusters: a scrap of three texels or fewer goes, a lone tone joins its puff
+    K.despeckle(a, size=3)
+    lab, n = ndi.label(a >= 0)
+    if n:
+        sizes = np.bincount(lab.ravel())
+        a[(lab > 0) & (sizes[lab] <= 3)] = -1
     return a
 
 
+THATCH = [('soot', 'earth_cool', 'earth_cool'), ('soot', 'earth_cool', 'earth')]
+TURF = [('leaf_cool', 'leaf_cool', 'grass_cool'), ('soot', 'leaf_cool', 'grass_cool')]
+
+
 def shepherds_hut(seed=29):
-    """The shepherd's hut on the Drover's Road: one room of gritstone under a heather thatch held
-    down by ropes weighted with stones, a gable chimney; drawn with the village's house painter
-    (scripts/art/native/houses.py) for the walls, door, window and roof's form, its materials the
-    Brackens' own. The smoke from the pot loops over it (the still has none)."""
+    """The shepherd's hut on the Drover's Road: a one-room bothy of gritstone (the walls, door and
+    window drawn by the village house painter, scripts/art/native/houses.py, recoloured to gritstone)
+    under a heather thatch drawn as one rounded mass of soft lumpy clusters, dark purple-brown, a turf
+    ridge along its crown, moss on its north side, ropes over it weighted with stones along the
+    eave, and a gritstone chimney at the east gable whose smoke loops over it (the still has none)."""
     from scripts.art.native import houses as HS
-    spec = {'kind': 'hut', 'w': 58, 'depth': 40, 'wall': 'stone', 'wall_h': 34, 'roof': 'thatch', 'roof_h': 24, 'door': 17,
-            'door_w': 15, 'door_h': 26, 'windows': [41], 'win_w': 11, 'win_h': 11, 'win_top': 27, 'chimney': [50],
-            'chimney_h': 10, 'paint': 'timber', 'shutters': False}
+    spec = {'kind': 'hut', 'w': 58, 'depth': 30, 'wall': 'stone', 'wall_h': 30, 'roof': 'thatch', 'roof_h': 12, 'door': 15,
+            'door_w': 14, 'door_h': 24, 'windows': [41], 'win_w': 10, 'win_h': 10, 'win_top': 22, 'paint': 'timber',
+            'shutters': False}
     b = HS.building(spec, seed=seed)
-    p = b.base
-    a = p.a
+    house = b.base.a.copy()
+    hx, hy = b.base.ax, b.base.ay
     rm = b.info['roof']
-    fam = a // 8
-    tone = a % 8
+    house[rm] = -1
+    house[:, :max(0, b.info['L'])] = -1                    # the painter's eave board, wider than the walls
+    house[:, b.info['R'] + 1:] = -1
+    fam = house // 8
+    tone = house % 8
     rng = np.random.default_rng(seed)
-    H, W = a.shape
-    Yg, Xg = np.mgrid[0:H, 0:W]
-    # heather thatch: the straw's tones recoloured dark brown and heather-purple, a step darker
-    straw = (a >= 0) & np.isin(fam, [FI[f] for f in ('sand', 'sand_warm', 'sand_cool', 'brass', 'brass_warm', 'plaster_warm')]) & rm
-    n = K.noise(a.shape, rng, 1.6)
-    t2 = np.clip(tone - 1, 0, 5)
-    n2 = K.noise(a.shape, np.random.default_rng(seed + 1), 4.0)
-    heather = np.where(t2 >= 4, np.where(n2 > 0.5, FI['sand_cool'], FI['earth_warm']),
-                       np.where(t2 <= 1, np.where(n2 > 0.5, FI['timber_cool'], FI['earth_cool']),
-                                np.where(n2 > 0.55, FI['earth'], FI['timber'])))
-    a[straw] = (heather * 8 + np.where(t2 <= 5, t2, 5))[straw]
-    # the heather's dry flower heads in small clusters, and moss creeping up from the eave
-    eave = b.info.get('y_eave', b.info['y_e'])
-    fl = straw & (K.noise(a.shape, np.random.default_rng(seed + 6), 1.0) > 0.8) & (Yg < eave - 6)
-    a[fl] = np.where(tone[fl] >= 3, C('berry_cool', 3), C('berry_cool', 2))
-    moss = straw & (Yg > eave - 22) & (K.noise(a.shape, np.random.default_rng(seed + 3), 2.0) > 0.68)
-    a[moss] = np.where(tone[moss] >= 3, C('leaf', 3), C('leaf_cool', 2))
-    a[moss & (K.vhash(Xg, Yg, seed + 4) > 0.8)] = C('grass_warm', 4)
-    # gritstone walls: the house's grey stone turned buff and brown
-    stone = (a >= 0) & np.isin(fam, [FI[f] for f in ('stone', 'stone_cool', 'stone_warm')])
-    n3 = K.noise(a.shape, np.random.default_rng(seed + 2), 2.5)
+    n = K.noise(house.shape, rng, 1.6)
+    n3 = K.noise(house.shape, np.random.default_rng(seed + 2), 2.5)
+    stone = (house >= 0) & np.isin(fam, [FI[f] for f in ('stone', 'stone_cool', 'stone_warm')])
     gm = np.where(tone >= 4, np.where(n3 > 0.5, FI['ashlar_warm'], np.where(n > 0.5, FI['stone_warm'], FI['sand_cool'])),
                   np.where(tone <= 1, np.where(n3 > 0.5, FI['earth_cool'], FI['stone_cool']),
                            np.where(n3 > 0.62, FI['earth_warm'], np.where(n > 0.5, FI['stone_warm'], FI['stone']))))
-    a[stone] = (gm * 8 + tone)[stone]
-    # ropes over the thatch, weighted with stones along the eave
-    y_r, y_e = b.info['y_r'], b.info.get('y_eave', b.info['y_e'])
-    rx0, rx1 = b.info['rx']
-    for k, x in enumerate(range(int(rx0) + 14, int(rx1) - 6, 22)):
-        for y in range(int(y_r) + 6, int(y_e) + 1):
-            xx = x + (y - y_r) // 6
-            if 0 <= xx < W and rm[y, xx] and a[y, xx] >= 0 and (y + k) % 3:
-                a[y, xx] = C('timber_cool', 1)
-                if xx + 1 < W and rm[y, xx + 1]:
-                    a[y, xx + 1] = C('timber_warm', 3)
-        sx = x + (int(y_e) - int(y_r)) // 6
-        m = V.ellipse_mask(a.shape, sx + 0.5, y_e + 4.5, 3.2, 2.6)
-        rpaint(a, m, GRIT, 3.6 - 1.4 * (Yg > y_e + 4) - 0.8 * (Xg > sx + 1), 0.3)
-    V.outline(a)
+    house[stone] = (gm * 8 + tone)[stone]
+    # the thatch, chimney and weights as solids over the walls
+    L, R = b.info['L'] - hx, b.info['R'] - hx
+    wall_z = (b.info['B'] - b.info['y_e'])                # texels from the foot to the wall's top
+    D = 30 * 3
+    W2 = (R - L) / 2.0
+    sc = K.Scene(-W2 - 30, W2 + 30, -D - 30, 16, wall_z + 110)
+    cz = wall_z - 13
+    rz = 27.0
+    ra, rb = W2 + 1, D / 2.0 + 2
+    sc.ellipsoid(0, -D / 2.0, cz, ra, rb, rz, THATCH, base=1.5, k=1.4, tag='thatch', mix=0.2, flat=2.4)
+    # the eave: a thick rounded skirt of thatch sitting on the wall heads all round, so the mass
+    # covers the corners as a bothy's roof does, not a dome perched on the walls
+    sc.box(-ra, -D / 2.0, wall_z - 9, ra, 2, wall_z - 1, THATCH, base=1.5, k=1.4, tag='thatch', round_=5.0, mix=0.2)
+    for j in range(15):                                           # the eave's swells break the outline
+        th = (j + 0.5) * math.pi / 15
+        x = (ra - 3) * math.cos(th)
+        y = -D / 2.0 + (rb - 3) * math.sin(th)
+        sc.ellipsoid(x, y, cz + 2, 6.0, 5.0, 4.5 + 1.5 * hsh(seed, j, 61), THATCH, base=1.5, k=1.4, tag='thatch', mix=0.2, flat=1.0)
+    # the turf ridge, one cap bedded into the crown, its back lumped where sods meet
+    sc.ellipsoid(0, -D / 2.0 - 1, cz + rz * 0.86, W2 - 12, 5.5, 4.0, TURF, base=1.7, k=1.2, tag='ridge', mix=0.2, flat=2.6)
+    for j in range(5):
+        sc.ellipsoid(-W2 + 26 + j * (2 * W2 - 52) / 4.0, -D / 2.0 - 2, cz + rz * 0.86 + 1.0, 8.0, 4.5, 3.8 + hsh(seed, j, 63),
+                     TURF, base=1.7, k=1.2, tag='ridge', mix=0.3 * rng.random())
+    chx = W2 - 16
+    sc.box(chx - 6, -D / 2.0 - 7, cz + rz * 0.5, chx + 6, -D / 2.0 + 5, cz + rz + 14, K_GRIT, base=2.6, k=1.7, tag='chimney', round_=1.5,
+           mix=0.4, tex='stone')
+    sc.box(chx - 7.5, -D / 2.0 - 8.5, cz + rz + 12, chx + 7.5, -D / 2.0 + 6.5, cz + rz + 16, K_GRIT, base=2.4, k=1.4,
+           tag='chimney', round_=1.0, mix=0.6, tex='stone')
+    ropes = [-W2 + 14 + k * (2 * W2 - 34) / 4.0 for k in range(5)]
+    eave_y = 2.0
+    for k, x in enumerate(ropes):
+        sc.ellipsoid(x + 1, eave_y + 4, cz - 4, 4.0, 3.2, 4.4, GRIT, base=2.7, k=1.8, tag='weight', mix=hsh(k, 3), flat=1.6)
+    sc.render()
+    a = sc.shade(crevice=1, rim=0.5)
+    H, W = a.shape
+    lab = sc.label
+    # soft lumpy clusters: the thatch's tone swells and dips in broad patches over the form
+    th_m = np.isin(lab, [i for i, s_ in enumerate(sc.solids) if s_.tag == 'thatch'])
+    lump = K.noise((H, W), np.random.default_rng(seed + 7), 4.0)
+    # one mass: the light over the dome, the eave and its swells blurred together, so the seams
+    # between the solids do not show and the thatch turns as one rounded body
+    from scipy import ndimage as _nd
+    wm = _nd.gaussian_filter(th_m.astype(float), 4.0)
+    Ls = _nd.gaussian_filter(np.where(th_m, sc.light(), 0.0), 4.0) / np.maximum(wm, 1e-3)
+    edge = th_m & ~_nd.binary_erosion(th_m, iterations=2)
+    Xr = (np.arange(W)[None, :] - sc.ox) / max(1.0, W2) + np.zeros((H, 1))
+    tt = 1.3 + 2.0 * Ls - 0.5 * np.clip(Xr, 0, 1) - 0.6 * (edge & (sc.n[..., 1] > 0.3))
+    tt = tt + np.round((lump - 0.5) * 2.0) * 0.5
+    rpaint(a, th_m, THATCH, tt, 0.25 + 0.5 * (K.noise((H, W), np.random.default_rng(seed + 8), 6.0) > 0.6))
+    tagm = {t: np.isin(lab, [i for i, s_ in enumerate(sc.solids) if s_.tag == t]) for t in ('thatch', 'ridge', 'chimney', 'weight', 'core')}
+    # soft lumpy clusters: tufts of laid heather on a staggered grid, each lit on its upper west and
+    # tucked dark under its lower east rim, so the mass reads as bunched stems, not a smooth shell
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    L_ = sc.light()
+    for gy in range(0, H, 7):
+        for gx in range(0, W, 10):
+            cx = gx + (5 if (gy // 7) % 2 else 0) + (hsh(seed, gx, gy, 64) - 0.5) * 4
+            cy = gy + (hsh(seed, gx, gy, 65) - 0.5) * 2
+            ix, iy = int(cx), int(cy)
+            if not (0 <= iy < H and 0 <= ix < W) or not tagm['thatch'][iy, ix] or hsh(seed, gx, gy, 67) < 0.3:
+                continue
+            y0, y1, x0, x1 = max(0, iy - 5), min(H, iy + 6), max(0, ix - 8), min(W, ix + 9)
+            Yw, Xw = Yg[y0:y1, x0:x1] + 0.5, Xg[y0:y1, x0:x1] + 0.5
+            rx, ry = 5.0 + hsh(seed, gx, gy, 66) * 2.0, 3.6
+            d = ((Xw - cx) / rx) ** 2 + ((Yw - cy) / ry) ** 2
+            sub = a[y0:y1, x0:x1]
+            on = tagm['thatch'][y0:y1, x0:x1]
+            rim = on & (d > 0.5) & (d <= 1.0) & ((Yw - cy) > 0.8) & ((Xw - cx) > -rx * 0.4)
+            crown = on & (d <= 0.3) & ((Yw - cy) < 0) & (L_[y0:y1, x0:x1] > 0.1)
+            V._step(sub, rim, -1)
+            V._step(sub, crown, 1)
+    # moss on the thatch's north (back) side and down its shaded east end
+    moss = tagm['thatch'] & ((sc.gy < -D / 2.0 - 4) | (sc.n[..., 0] > 0.55)) & (K.noise((H, W), np.random.default_rng(seed + 3), 2.4) > 0.55)
+    rpaint(a, moss, TURF, 2.0 + 1.2 * sc.light(), 0.3)
+    # the ropes: from the ridge down over the front to the eave, each a two-texel cord
+    Xs = np.arange(W)[None, :] - sc.ox + 0.5 + np.zeros((H, 1))
+    for x in ropes:
+        cord = tagm['thatch'] & (np.abs(Xs - x) < 1.0) & (sc.gy > -D / 2.0)
+        a[cord & (Xs < x)] = C('earth', 3)
+        a[cord & (Xs >= x)] = C('soot', 1)
+    # the house's walls, door and window under it (the dome hangs over the wall's top as its eave)
+    out = a.copy()
+    hh, hw = house.shape
+    oxh, oyh = sc.ox - hx, sc.oy - hy
+    reg = out[oyh:oyh + hh, oxh:oxh + hw]
+    wall = house >= 0
+    keep = (reg < 0) | tagm['core'][oyh:oyh + hh, oxh:oxh + hw]
+    reg[wall & keep] = house[wall & keep]
+    # the eave's shadow on the wall's top under the overhang
+    under = np.zeros((H, W), bool)
+    hang = tagm['thatch'] | tagm['weight']
+    for k in range(1, 6):
+        under[k:] |= hang[:-k]
+    under &= ~hang & (out >= 0) & ~tagm['chimney']
+    V._step(out, under, -1)
+    K.despeckle(out)
+    V.tidy(out)
+    V.outline(out)
+    p = K.crop(out, sc.ox, sc.oy)
     # the canvas grows up and east for the smoke loop over the pot (the still has no smoke)
-    cxp = b.info['L'] + V.q(50)
-    top = int(y_r - V.q(10))
+    pot_x = int(p.ax + chx)
+    pot_y = int(p.ay - (cz + rz + 18) + (-D / 2.0 - 1))
     sw, sh = SMOKE_BOX
-    up = max(0, sh - top + 2)
-    east = max(0, cxp - 6 + sw - W)
-    q_ = V.Pic(W + east, H + up, p.ax, p.ay + up)
-    q_.a[up:, :W] = a
-    region = (cxp - 6, top + up - sh, sw, sh)
+    up = max(0, sh - pot_y + 2)
+    east = max(0, pot_x - 6 + sw - p.W)
+    q_ = V.Pic(p.W + east, p.H + up, p.ax, p.ay + up)
+    q_.a[up:, :p.W] = p.a
+    region = (pot_x - 6, pot_y + up - sh, sw, sh)
     frames = [V.Pic(sw, sh, 0, sh) for _ in range(SMOKE_FRAMES)]
     for i, fr in enumerate(frames):
         fr.a[:] = _smoke_frame(i, seed)
@@ -1159,9 +1382,11 @@ def _wall_collision(js):
     return {'shape': 'rect', 'rect': [x0, y0, x1 - x0, y1 - y0]}
 
 
-WALL_CELLS = ('ew', 'ns', 'es', 'sw', 'ne', 'nw')
+WALL_CELLS = ('ew', 'ns', 'es', 'sw', 'ne', 'nw', 'nes', 'esw', 'nsw', 'new', 'nesw', 'n', 'e', 's', 'w')
 WALL_NAMES = {'ew': 'straight along x', 'ns': 'straight along y', 'es': 'corner (east and south)', 'sw': 'corner (south and west)',
-              'ne': 'corner (north and east)', 'nw': 'corner (north and west)'}
+              'ne': 'corner (north and east)', 'nw': 'corner (north and west)', 'nes': 'T (north, east and south)',
+              'esw': 'T (east, south and west)', 'nsw': 'T (north, south and west)', 'new': 'T (north, east and west)',
+              'nesw': 'cross', 'n': 'end (its run north)', 'e': 'end (its run east)', 's': 'end (its run south)', 'w': 'end (its run west)'}
 ENCLOSES = ['sheep', 'horses', 'cattle']
 WALL_EW = '12 (the drystone and boulder walls by the thatched hut), 17 (the farm fence and gate, 40 E = 0.75 A)'
 
@@ -1174,13 +1399,24 @@ def wall_jobs():
         vs = [('a' if jn == 'ew' else 'plain', lambda js=js: render_wall(js, variant=0))]
         if jn == 'ew':
             vs.append(('b', lambda js=js: render_wall(js, variant=1)))
+        end = len(jn) == 1
         jobs.append(('wall_drystone_' + jn, vs, dict(
             name='Drystone wall, ' + WALL_NAMES[jn], purpose='contain', role='boundary', cells=(1, 1), fp=[[0, -1]],
             collision=_wall_collision(js), forbids=[OFF_ROUTE, OFF_WATER], composition='edge',
             boundary={'style': 'drystone', 'joins': js, 'gate': False, 'span_cells': 1, 'encloses': ENCLOSES},
             shadow=(9, 3), size_class='fence (size-guide: drystone wall 14 world px, 10 to 18)', eastward=WALL_EW, height=47,
-            fn='render_wall', note='A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping.')))
-    jobs.append(('wall_drystone_gate_ew', [('shut', lambda: render_wall(gate=True))], dict(
+            fn='render_wall', note=('A gritstone wall\'s end, its run built against a house or a byre (enclosures.py: an end stands '
+                                    'against a wall).' if end else 'A gritstone wall cell: closes a fold with its neighbours '
+                                    '(enclosures.py); dry joints, cock-and-hen coping.'))))
+    jobs.append(('wall_drystone_gate_ns', [('shut', lambda: render_wall(gate='ns'))], dict(
+        name='Drystone wall, field gate along y', purpose='contain', role='gate', cells=(1, 3), fp=[[0, -2], [0, -1], [0, 0]],
+        collision={'shape': 'none'}, blocks=False, composition='edge',
+        requires=[_rel('on', 'route', note='a gate stands where the path its owner walks crosses the wall (placement-logic rule 2)')],
+        boundary={'style': 'drystone', 'joins': ['n', 's'], 'gate': True, 'span_cells': GATE, 'encloses': ENCLOSES},
+        interact={'verb': 'open', 'triggers': []}, shadow=(8, 3), height=54,
+        size_class='fence (stoops 54; size-guide "field gate 32 to 48 wide so a cart passes")',
+        eastward=WALL_EW, fn='render_wall', note='The five-bar gate in a run along y, shut, seen edge-on as the run is.')))
+    jobs.append(('wall_drystone_gate_ew', [('shut', lambda: render_wall(gate='ew'))], dict(
         name='Drystone wall, field gate along x', purpose='contain', role='gate', cells=(3, 1), fp=[[-1, -1], [0, -1], [1, -1]],
         collision={'shape': 'none'}, blocks=False, composition='edge',
         requires=[_rel('on', 'route', note='a gate stands where the path its owner walks crosses the wall (placement-logic rule 2)')],
@@ -1218,11 +1454,11 @@ def prop_jobs():
             size_class='well (89 to 141 tall, 70 to 118 wide)', eastward=EW_RURAL + '; 13 (the bell frame, 1.1 A)',
             note='A spring-house over the well and a trough in front; the trickle and rings loop (8 frames).')),
         ('brackens_shepherds_hut', [('still', lambda: shepherds_hut())], dict(
-            name="Shepherd's hut", purpose='live', role='house', cells=(9, 6), fp=_fp(8, 5),
-            collision={'shape': 'rect', 'rect': [-29.0, -36.0, 58, 36]}, shadow=(56, 8), composition='edge',
+            name="Shepherd's hut", purpose='live', role='house', cells=(9, 5), fp=_fp(8, 4),
+            collision={'shape': 'rect', 'rect': [-29.0, -30.0, 58, 30]}, shadow=(56, 8), composition='edge',
             requires=[_rel('near', 'route', 3, 'beside the Drover\'s Road, its door on the trod')], forbids=NATURE,
             extra={'provides': ['home', 'hearth']},
-            size_class='hut (148 to 252 tall, 178 to 296 wide; size-guide "stone refuge, shepherd\'s bothy: as a hut")',
+            size_class='hut (148 to 252 tall, 178 to 296 wide: a one-room bothy near the class\'s small end; size-guide "stone refuge, shepherd\'s bothy: as a hut")',
             eastward='12 (the thatched hut: 2.5 A to the ridge, 3 A wide)',
             note='One room of gritstone under roped heather thatch; the chimney\'s smoke loops (8 frames) over the still.')),
         ('brackens_fold_ruin', [('still', lambda: fold_ruin())], dict(

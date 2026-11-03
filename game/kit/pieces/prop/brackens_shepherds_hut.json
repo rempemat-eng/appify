@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png",
    "foot": [
-    99,
-    270
+    92,
+    234
    ]
   }
  ],
@@ -28,61 +28,29 @@
  },
  "geometry": {
   "size_px": [
-   198,
-   274
+   197,
+   237
   ],
   "size_cells": [
    9,
-   6
+   5
   ],
   "z_sort": "foot",
-  "height_px": 274,
+  "height_px": 237,
   "collision": {
    "shape": "rect",
    "rect": [
     -29.0,
-    -36.0,
+    -30.0,
     58,
-    36
+    30
    ]
   },
   "foot": [
-   99,
-   270
+   92,
+   234
   ],
   "footprint": [
-   [
-    -4,
-    -5
-   ],
-   [
-    -3,
-    -5
-   ],
-   [
-    -2,
-    -5
-   ],
-   [
-    -1,
-    -5
-   ],
-   [
-    0,
-    -5
-   ],
-   [
-    1,
-    -5
-   ],
-   [
-    2,
-    -5
-   ],
-   [
-    3,
-    -5
-   ],
    [
     -4,
     -4
@@ -268,7 +236,7 @@
     "reduced_motion": "hold:0",
     "on_screen_only": true,
     "region_px": [
-     156,
+     157,
      2,
      40,
      64
@@ -285,7 +253,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "hut (148 to 252 tall, 178 to 296 wide; size-guide \"stone refuge, shepherd's bothy: as a hut\")",
+  "size_class": "hut (148 to 252 tall, 178 to 296 wide: a one-room bothy near the class's small end; size-guide \"stone refuge, shepherd's bothy: as a hut\")",
   "eastward_ref": "12 (the thatched hut: 2.5 A to the ridge, 3 A wide)",
   "painter": {
    "module": "scripts.art.kit.sets.brackens",

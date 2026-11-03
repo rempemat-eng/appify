@@ -305,6 +305,36 @@ class Scene:
         return np.where(self.label >= 0, np.where(inside, 0, 1), -1)
 
 
+def despeckle(a, keep=None, size=2, passes=2):
+    """Clean clusters (Claude A, round 2: "clean 2 to 4 px clusters rather than single-pixel
+    speckle"): a run of one colour of `size` texels or fewer (four-connected) takes the colour most
+    of its neighbours share. `keep` protects texels that must stay (eyes, glints, lettering)."""
+    H, W = a.shape
+    for _ in range(passes):
+        changed = False
+        for v in np.unique(a[a >= 0]):
+            lab, n = ndi.label(a == v)
+            if n == 0:
+                continue
+            sizes = np.bincount(lab.ravel())
+            small = np.nonzero(sizes[1:] <= size)[0] + 1
+            if not len(small):
+                continue
+            sm = np.isin(lab, small)
+            if keep is not None:
+                sm &= ~keep
+            ys, xs = np.nonzero(sm)
+            for y, x in zip(ys, xs):
+                nb = [a[yy, xx] for yy, xx in ((y - 1, x), (y + 1, x), (y, x - 1), (y, x + 1))
+                      if 0 <= yy < H and 0 <= xx < W and a[yy, xx] >= 0 and a[yy, xx] != v]
+                if nb:
+                    a[y, x] = max(set(nb), key=nb.count)
+                    changed = True
+        if not changed:
+            break
+    return a
+
+
 def modular(sc, box, dress=None):
     """A modular piece's picture (fences.py's cell model) from its neighbourhood scene: the texels
     where its own solids, cut at its ground box, are seen (so a placed neighbour drawn after it by
@@ -318,6 +348,7 @@ def modular(sc, box, dress=None):
     if dress:
         dress(sc, aF)
     V.tidy(aF)
+    despeckle(aF)
     O = copy.copy(sc)
     O.clip = box
     O.render()
@@ -325,6 +356,7 @@ def modular(sc, box, dress=None):
     if dress:
         dress(O, aO)
     V.tidy(aO)
+    despeckle(aO)
     H, W = aF.shape
     X = np.arange(W)[None, :] - sc.ox + 0.5
     insideF = (X >= box[0]) & (X < box[2]) & (sc.gy >= box[1]) & (sc.gy < box[3])

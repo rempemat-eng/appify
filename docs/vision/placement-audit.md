@@ -13,7 +13,7 @@ Verdicts: **fine** (fits), **fixed** (its data or a placement was corrected in t
 (the drawing does not fit its purpose: the art queue), **missing** (cannot be placed sensibly until a
 companion piece exists).
 
-Totals: 168 fine, 28 fixed.
+Totals: 178 fine, 28 fixed.
 
 ## Placements fixed in the kit zones
 
@@ -201,14 +201,24 @@ out, so a two-cell lane counts once; three ways or more make a junction).
 | `log_steps_3` | climb | stair | on face | - | **fine** | As log_steps. |
 | `stepping_stones_1` | cross | bridge | on water; within route 1 | - | **fixed** | A footpath over a rill; its deck includes its landing stones, so the path meets it within a cell (was "adjacent", which no landing can satisfy). |
 | `stepping_stones_2` | cross | bridge | on water; within route 1 | - | **fixed** | As stepping_stones_1, over a stream. |
+| `wall_drystone_e` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall's end, its run built against a house or a byre (enclosures.py: an end stands against a wall). |
 | `wall_drystone_es` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_esw` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
 | `wall_drystone_ew` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
 | `wall_drystone_gate_ew` | contain | gate | on route | - | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A five-bar oak gate hung on two gritstone stoops, shut: it keeps the flock in. |
+| `wall_drystone_gate_ns` | contain | gate | on route | - | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): The five-bar gate in a run along y, shut, seen edge-on as the run is. |
+| `wall_drystone_n` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall's end, its run built against a house or a byre (enclosures.py: an end stands against a wall). |
 | `wall_drystone_ne` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_nes` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_nesw` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_new` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
 | `wall_drystone_ns` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_nsw` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
 | `wall_drystone_nw` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_s` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall's end, its run built against a house or a byre (enclosures.py: an end stands against a wall). |
 | `wall_drystone_stile_ew` | cross | stile | on route | - | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): Three through-stones jut from the face as steps; walkers cross, sheep do not (a closed wall to enclosures.py). |
 | `wall_drystone_sw` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_w` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall's end, its run built against a house or a byre (enclosures.py: an end stands against a wall). |
 | `waterfall_1` | flow | waterfall | on face; under water | - | **fixed** | Water crossing a rim: the sheet starts at the rim, the channel's width, foam on the pool only (2 Nov). |
 | `waterfall_1_tall` | flow | waterfall | on face; under water | - | **fixed** | Water crossing a rim: the sheet starts at the rim, the channel's width, foam on the pool only (2 Nov). |
 | `waterfall_2` | flow | waterfall | on face; under water | - | **fixed** | Water crossing a rim: the sheet starts at the rim, the channel's width, foam on the pool only (2 Nov). |

@@ -1,0 +1,122 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "wall_drystone_n",
+ "name": "Drystone wall, end (its run north)",
+ "kind": "prop",
+ "biomes": [
+  "brackens",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "plain",
+   "weight": 1.0,
+   "png": "res://kit/props/art/brackens/wall_drystone_n_plain.png",
+   "foot": [
+    10,
+    54
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A gritstone wall's end, its run built against a house or a byre (enclosures.py: an end stands against a wall)."
+ },
+ "geometry": {
+  "size_px": [
+   19,
+   59
+  ],
+  "size_cells": [
+   1,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 47,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -2.5,
+    -4.0,
+    5.0,
+    6.5
+   ]
+  },
+  "foot": [
+   10,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "contain",
+  "role": "boundary",
+  "composition": "edge",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "boundary": {
+   "style": "drystone",
+   "joins": [
+    "n"
+   ],
+   "gate": false,
+   "span_cells": 1,
+   "encloses": [
+    "sheep",
+    "horses",
+    "cattle"
+   ]
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    9,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "fence (size-guide: drystone wall 14 world px, 10 to 18)",
+  "eastward_ref": "12 (the drystone and boulder walls by the thatched hut), 17 (the farm fence and gate, 40 E = 0.75 A)",
+  "painter": {
+   "module": "scripts.art.kit.sets.brackens",
+   "fn": "render_wall",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/brackens.py",
+  "todo": []
+ }
+}

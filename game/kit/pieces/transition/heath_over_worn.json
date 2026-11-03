@@ -1,0 +1,59 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "heath_over_worn",
+ "name": "Heath over worn",
+ "kind": "transition",
+ "biomes": [
+  "brackens"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Brackens brief (heather, peat, gritstone)",
+  "note": "The heath over trodden ground."
+ },
+ "transition": {
+  "upper": "heath",
+  "lower": "worn",
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "sunken",
+   "args": {
+    "fray": true
+   }
+  },
+  "variants": 1,
+  "shape": "lower",
+  "dressing": {
+   "density": 0.6,
+   "south": [
+    "tuft_0",
+    "tuft_1",
+    "tuft_2",
+    "tuft_3",
+    "pebble_0"
+   ],
+   "north": [
+    "blades_0",
+    "blades_1",
+    "pebble_1",
+    "pebble_2"
+   ],
+   "side": [
+    "pebble_0",
+    "pebble_1",
+    "tuft_2"
+   ]
+  }
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.sets.moor",
+   "fn": "dress",
+   "args": {}
+  },
+  "eastward_ref": "Eastward 12 and 13, crops 10-grass-dirt"
+ }
+}
