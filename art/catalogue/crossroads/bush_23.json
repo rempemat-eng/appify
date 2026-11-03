@@ -1,7 +1,7 @@
 {
  "id": "crossroads/bush_23",
  "file": "game/zones/crossroads/art/bush_23.png",
- "sha256": "e8b950cf09d8de27e1dd59c63abc8abec341f407085842355cf3a80deeff7a90",
+ "sha256": "baf9eb71d32a1f1c8a3ad574ca34ddc24562e9cfff232574a9e1f3a9fd05d358",
  "kind": "bush",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 13,
-   "tones": 19.692307692307693,
-   "shapes": 34.76923076923077
+   "tones": 22.46153846153846,
+   "shapes": 37.92307692307692
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.549,
-  "tones_ratio": 0.711,
-  "shapes_ratio": 0.549,
+  "ratio": 0.599,
+  "tones_ratio": 0.811,
+  "shapes_ratio": 0.599,
   "passed": false,
   "group": "foliage"
  },
@@ -44,11 +44,11 @@
     104,
     73
    ],
-   "message": "crossroads/bush_23: detail bar 0.55 of Eastward's foliage band (19.7 tones, 34.8 shapes a patch against 27.71, 63.32)",
+   "message": "crossroads/bush_23: detail bar 0.60 of Eastward's foliage band (22.5 tones, 37.9 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-03",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

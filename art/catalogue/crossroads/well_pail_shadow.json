@@ -1,0 +1,27 @@
+{
+ "id": "crossroads/well_pail_shadow",
+ "file": "game/zones/crossroads/art/well_pail_shadow.png",
+ "sha256": "bd190d970d0964f9af092f4c30579aa73899404a3ab55827efcca5717916459b",
+ "kind": "well_pail_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  29,
+  11
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-03",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

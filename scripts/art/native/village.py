@@ -2690,6 +2690,7 @@ PROPS = {
     'fence': p_fence,
     'flower_tub': p_flower_tub,
     'sacks': p_sacks,
+    'pail': lambda w, h, s: p_pail_hd(w, h, s),     # (drawn at density 3 only; defined below)
 }
 
 
@@ -2837,6 +2838,46 @@ def p_barrel_hd(w, h, seed, hd=False):
         a[inner & (np.abs(X - bx0) < 0.6)] = code('timber', 1)
     a[sh] = code('timber', 1)
     a[lw & ~sh] = code('timber_warm', 4)
+    return finish(p)
+
+
+def p_pail_hd(w, h, seed, hd=False):
+    """A wooden pail of water (the well's first draw, a1_the_choked_well's end): five staves tapering
+    to the foot, lit down the west with the core shadow east of centre; two iron hoops proud of
+    the wood with lit top edges; the water's face inside the rim, dark under the rim's north lip and
+    a sky glint to the south-west; an iron bail arching over it to two lugs. Shin height (about
+    0.3 m, a third of the barrel)."""
+    rng = np.random.default_rng(seed)
+    p = _pic(w, h, up=8, side=2)
+    a, cx, yb = p.a, p.ax, p.ay
+    r = q(min(w, 6.0) / 2)
+    top, bot = yb - q(5.6), yb
+    half = lambda f: r * (1.0 - 0.16 * f)
+    m, u, f = upright(a, cx, top, bot, half, ('timber_cool', 'timber', 'timber_warm'), base=2.8, seams=5, rng=rng, hd=hd)
+    Y, X = grid(a)
+    for hy in (top + q(1.3), bot - q(1.7)):
+        hm = m & (Y >= hy) & (Y < hy + q(0.8))
+        nzs = np.sqrt(np.clip(1 - u * u, 0, 1))
+        paint(a, hm, ('iron', 'iron', 'iron'), 2.2 + 2.2 * lam(u, nzs, 0.1) + 1.2 * (Y < hy + 1))
+        below = m & (Y >= hy + q(0.8)) & (Y < hy + q(0.8) + 1)
+        a[below] = a[below] - 1 * ((a[below] % 8) > 0)
+    # the rim round the water: the stave ends lit, the water's face recessed inside
+    hm, inner, sh, lw = ellipse_top(a, cx, top, r * 0.95, q(1.3), ('timber_cool', 'timber', 'timber_warm'), base=3.6, rim=q(0.6))
+    Y, X = grid(a)
+    du = (X - cx) / max(1.0, r * 0.8)
+    paint(a, inner, ('water_cool', 'water', 'water'), 2.4 + 0.8 * (du < -0.1))
+    a[sh] = code('water_cool', 1)
+    glint = inner & (np.abs(X - (cx - r * 0.35)) < q(0.6)) & (Y > top + 1)
+    a[glint] = code('sky', 4)
+    a[lw & ~sh] = code('timber_warm', 4)
+    # the bail: an iron arc from lug to lug over the water, lit along its top
+    for k in range(13):
+        t0, t1 = k / 13, (k + 1) / 13
+        ax0, ay0 = cx - r + 2 * r * t0, top - q(2.6) * math.sin(math.pi * t0)
+        ax1, ay1 = cx - r + 2 * r * t1, top - q(2.6) * math.sin(math.pi * t1)
+        bar(a, ax0, ay0, ax1, ay1, 0.6, 'iron', 2 if t0 > 0.5 else 3)
+    for lx in (cx - r, cx + r - 1):
+        fill(a, int(lx), int(top) - 1, int(lx) + 2, int(top) + 2, code('iron', 1 if lx > cx else 2))
     return finish(p)
 
 
@@ -3441,4 +3482,5 @@ PROPS_HD = {
     'bench_side_e': lambda w, h, s: p_bench_side_hd(w, h, s, facing='east'),
     'bench_side_w': lambda w, h, s: p_bench_side_hd(w, h, s, facing='west'),
     'grindstone': p_grindstone_hd,
+    'pail': p_pail_hd,
 }

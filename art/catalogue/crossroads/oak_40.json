@@ -1,7 +1,7 @@
 {
  "id": "crossroads/oak_40",
  "file": "game/zones/crossroads/art/oak_40.png",
- "sha256": "0202ba6f4f252b4afd7e303e00f7dc3d8a21156c5c4f6b7f39ce5214f85642ca",
+ "sha256": "afda1ab3c5eddda4314b4bb6d1d9a7a5c0db83c3fb384254667d30db3d790c57",
  "kind": "broadleaf",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 78,
-   "tones": 17.08974358974359,
-   "shapes": 31.32051282051282
+   "tones": 18.76923076923077,
+   "shapes": 34.58974358974359
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.495,
-  "tones_ratio": 0.617,
-  "shapes_ratio": 0.495,
+  "ratio": 0.546,
+  "tones_ratio": 0.677,
+  "shapes_ratio": 0.546,
   "passed": false,
   "group": "foliage"
  },
@@ -44,11 +44,11 @@
     203,
     243
    ],
-   "message": "crossroads/oak_40: detail bar 0.49 of Eastward's foliage band (17.1 tones, 31.3 shapes a patch against 27.71, 63.32)",
+   "message": "crossroads/oak_40: detail bar 0.55 of Eastward's foliage band (18.8 tones, 34.6 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-03",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

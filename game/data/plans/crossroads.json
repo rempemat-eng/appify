@@ -37,6 +37,37 @@
         ]
       },
       "why": "the woodland's great shard in the lantern; the first household comes home"
+    },
+    {
+      "id": "well_restored",
+      "if": {
+        "restored": [
+          "forge",
+          "fern_cottage",
+          "well"
+        ],
+        "flags": [
+          "shard_home:woodland",
+          "fern_home"
+        ]
+      },
+      "why": "a1_the_choked_well's restore: the rubble hauled out of the well and heaped beside it with the hired barrow; the windlass and hood back on"
+    },
+    {
+      "id": "well_clear",
+      "if": {
+        "restored": [
+          "forge",
+          "fern_cottage",
+          "well"
+        ],
+        "flags": [
+          "shard_home:woodland",
+          "fern_home",
+          "well_clear"
+        ]
+      },
+      "why": "the quest's end (well_clear): the spoil carted off, a full pail on the kerb"
     }
   ],
   "restores": [
@@ -60,6 +91,19 @@
         ]
       },
       "why": "the first household home (the homecoming quest); cost is a placeholder"
+    },
+    {
+      "id": "well",
+      "name": "The well on the square",
+      "cost": {
+        "glint": 20
+      },
+      "if": {
+        "active": [
+          "a1_the_choked_well"
+        ]
+      },
+      "why": "a1_the_choked_well's step 'well' (restore:well); the cost is the one the restore_well lines already name (data/dialogue/a1_valley.json)"
     }
   ],
   "tiers": [
@@ -463,11 +507,11 @@
       "solid": true,
       "colour": "#5b5249",
       "if": {
-        "not_flags": [
-          "shard_home:woodland"
+        "not_restored": [
+          "well"
         ]
       },
-      "why": "the well choked with rubble"
+      "why": "the well choked with rubble until a1_the_choked_well's restore"
     },
     {
       "id": "well",
@@ -481,10 +525,11 @@
       "solid": true,
       "colour": "#55708a",
       "if": {
-        "flags": [
-          "shard_home:woodland"
+        "restored": [
+          "well"
         ]
-      }
+      },
+      "why": "the well cleared and its windlass and hood back on (restore:well)"
     },
     {
       "id": "smithy_rubble",
@@ -581,7 +626,13 @@
         16
       ],
       "solid": true,
-      "colour": "#5b5249"
+      "colour": "#5b5249",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "fallen slates by the stall, cleared for the homecoming"
     },
     {
       "id": "fern_boards",
@@ -714,6 +765,108 @@
       "solid": true,
       "colour": "#b08a4a",
       "why": "Moss's stall, the one thing open"
+    },
+    {
+      "id": "well_spoil_rubble",
+      "kind": "rubble",
+      "rect": [
+        254,
+        304,
+        18,
+        12
+      ],
+      "solid": true,
+      "colour": "#5b5249",
+      "if": {
+        "restored": [
+          "well"
+        ],
+        "not_flags": [
+          "well_clear"
+        ]
+      },
+      "why": "the rubble hauled out of the well, heaped on the setts until it is carted off"
+    },
+    {
+      "id": "hired_handcart",
+      "kind": "cart",
+      "rect": [
+        226,
+        324,
+        22,
+        8
+      ],
+      "solid": true,
+      "colour": "#7a5a3a",
+      "if": {
+        "restored": [
+          "well"
+        ],
+        "not_flags": [
+          "well_clear"
+        ]
+      },
+      "why": "the hired barrow the restore_well lines pay for, beside the spoil"
+    },
+    {
+      "id": "well_pail",
+      "kind": "pail",
+      "rect": [
+        299,
+        314,
+        6,
+        6
+      ],
+      "solid": false,
+      "colour": "#7a5a3a",
+      "if": {
+        "flags": [
+          "well_clear"
+        ]
+      },
+      "why": "the first full pail drawn, set on the kerb"
+    },
+    {
+      "id": "fern_cart",
+      "kind": "cart",
+      "rect": [
+        340,
+        336,
+        22,
+        8
+      ],
+      "solid": true,
+      "colour": "#7a5a3a",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "the Ferns' handcart, loaded at the halt farm, stopped on the square by the lit lantern"
+    },
+    {
+      "id": "fern_bundles",
+      "kind": "sacks",
+      "rect": [
+        318,
+        340,
+        14,
+        8
+      ],
+      "solid": true,
+      "colour": "#b0a080",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "their bundles, lifted down beside the cart"
     }
   ],
   "people": [
@@ -727,7 +880,50 @@
         384,
         262
       ],
-      "colour": "#c9a050"
+      "colour": "#c9a050",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      }
+    },
+    {
+      "id": "moss_homecoming",
+      "face": "W",
+      "speaker": "moss",
+      "name": "Moss",
+      "at": [
+        392,
+        324
+      ],
+      "colour": "#c9a050",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "Moss has left her stall to meet the Ferns by the lantern"
+    },
+    {
+      "id": "moss_after",
+      "face": "S",
+      "work": true,
+      "speaker": "moss",
+      "name": "Moss",
+      "at": [
+        384,
+        262
+      ],
+      "colour": "#c9a050",
+      "if": {
+        "restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "back at her stall once the Ferns are in"
     },
     {
       "id": "hale_square",
@@ -760,6 +956,50 @@
       "if": {
         "restored": [
           "forge"
+        ],
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      }
+    },
+    {
+      "id": "hale_homecoming",
+      "face": "W",
+      "speaker": "hale",
+      "name": "Hale",
+      "at": [
+        452,
+        304
+      ],
+      "colour": "#a05040",
+      "if": {
+        "restored": [
+          "forge"
+        ],
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "out from the anvil to the edge of the square, looking across at the Ferns"
+    },
+    {
+      "id": "hale_forge_after",
+      "face": "W",
+      "work": true,
+      "speaker": "hale",
+      "name": "Hale",
+      "at": [
+        510,
+        298
+      ],
+      "colour": "#a05040",
+      "if": {
+        "restored": [
+          "forge",
+          "fern_cottage"
         ]
       }
     },
@@ -776,6 +1016,26 @@
       "why": "the alchemist outside his torn herbalist's (cast: Codex's fourteen); joins in act 1"
     },
     {
+      "id": "ada_homecoming",
+      "face": "E",
+      "speaker": "ada_fern",
+      "name": "Ada Fern",
+      "at": [
+        368,
+        330
+      ],
+      "colour": "#7aa0c0",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "the first household home: Ada with the family's cart on the square, waiting for her roof"
+    },
+    {
       "id": "ada",
       "face": "S",
       "work": true,
@@ -787,11 +1047,11 @@
       ],
       "colour": "#7aa0c0",
       "if": {
-        "flags": [
-          "shard_home:woodland"
+        "restored": [
+          "fern_cottage"
         ]
       },
-      "why": "placeholder villager: the first household home"
+      "why": "home: at her own door once the cottage is mended"
     }
   ],
   "things": [
@@ -864,6 +1124,22 @@
         ],
         "not_restored": [
           "fern_cottage"
+        ]
+      }
+    },
+    {
+      "id": "well_site",
+      "restore": "well",
+      "at": [
+        288,
+        328
+      ],
+      "if": {
+        "active": [
+          "a1_the_choked_well"
+        ],
+        "not_restored": [
+          "well"
         ]
       }
     }

@@ -205,12 +205,13 @@ def flower(cv, y, x, kind, ok=None):
 # lawn
 # ------------------------------------------------------------------------------------------------
 def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: float = 1.0,
-         flowers: float = 1.0, grain: float = 1.0, mottle: float = 3.0) -> np.ndarray:
+         flowers: float = 1.0, grain: float = 1.0, mottle: float = 3.0, blotch: bool = True) -> np.ndarray:
     """Eastward's lawn at our density (shots 12, 13, 37): one calm field tone; large soft blotches
     (26 to 57 px) a step darker in the cool sibling and a few lit ones in the warm sibling, their
     edges frayed by blades; tufts in loose clumps, dense where the turf is long and sparse between
     (never a uniform stipple, never a calm stretch large enough to read as a flat fill); short lit
-    blades in the sun; flowers in small groups."""
+    blades in the sun; flowers in small groups. With `blotch=False` the field has no random
+    blotches: the caller lays its patches where light, shade and wear put them (town.py)"""
     rng = np.random.default_rng(seed)
     cv = np.full((H, W), C(fam, base), np.int32)
     # blotches (Eastward 13 and 37): damp patches where the turf grows long, in the cool sibling,
@@ -222,6 +223,9 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
     # (the two hues share the field about evenly, so neither reads as a shape on the other)
     dark = blobs(H, W, seed + 1, 70.0, 0.42)
     lit = blobs(H, W, seed + 2, 80.0, 0.2) & ~ndi.binary_dilation(dark, iterations=4)
+    if not blotch:
+        dark = np.zeros((H, W), bool)
+        lit = np.zeros((H, W), bool)
     yy, xx = np.mgrid[0:H, 0:W]
     chk = ((xx // 2 + yy // 2) % 2) == 0
     cv[dark] = C(cool, base)

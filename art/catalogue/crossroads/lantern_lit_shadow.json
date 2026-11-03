@@ -1,7 +1,7 @@
 {
  "id": "crossroads/lantern_lit_shadow",
  "file": "game/zones/crossroads/art/lantern_lit_shadow.png",
- "sha256": "edd10b872a7770a5f2c6926f7b43865ce6f98226b2a3ee1288538698ea00b7f1",
+ "sha256": "f7a1f2c6b7920db952a1ca10023b61414eca89b30b7d69d1ef91c03865fc38bc",
  "kind": "lantern_lit_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-03",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

@@ -1,0 +1,27 @@
+{
+ "id": "crossroads/hired_handcart_shadow",
+ "file": "game/zones/crossroads/art/hired_handcart_shadow.png",
+ "sha256": "3b2289e52a127bb77a754bd72374a7e864ed611083443722102cfa9708e40651",
+ "kind": "hired_handcart_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  111,
+  21
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-03",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

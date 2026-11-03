@@ -1,7 +1,7 @@
 {
  "id": "crossroads/north_cottages_damage",
  "file": "game/zones/crossroads/art/north_cottages_damage.png",
- "sha256": "29afdc45e72b745db80ea50c6a7d9a98c932fbc1596c1e98aa5182e0958e1a87",
+ "sha256": "df3a952498413bd7ade6cece9f27adb994bea7d206170c1e41f2af0601be13a2",
  "kind": "north_cottages",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 38,
-   "tones": 16.05263157894737,
-   "shapes": 25.263157894736842
+   "tones": 15.5,
+   "shapes": 24.86842105263158
   },
   "band": {
    "tones": 27.0,
@@ -28,43 +28,30 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.502,
-  "tones_ratio": 0.595,
-  "shapes_ratio": 0.502,
+  "ratio": 0.494,
+  "tones_ratio": 0.574,
+  "shapes_ratio": 0.494,
   "passed": false,
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    100,
-    199,
-    145,
-    219
-   ],
-   "message": "crossroads/north_cottages_damage: the red is lit from the right (luminance rises 11 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
     23,
     60,
-    292,
-    276
+    280,
+    275
    ],
-   "message": "crossroads/north_cottages_damage: detail bar 0.50 of Eastward's prop band (16.1 tones, 25.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/north_cottages_damage: detail bar 0.49 of Eastward's prop band (15.5 tones, 24.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-03",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-10-26",
-  "note": "#298 review at 2e554c05: holes torn course by course with snapped rafters and hanging slates (thatch: straw fringe); no barred-window shapes."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
