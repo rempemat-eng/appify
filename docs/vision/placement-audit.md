@@ -13,7 +13,7 @@ Verdicts: **fine** (fits), **fixed** (its data or a placement was corrected in t
 (the drawing does not fit its purpose: the art queue), **missing** (cannot be placed sensibly until a
 companion piece exists).
 
-Totals: 64 fine, 18 fixed, 4 redraw, 1 missing.
+Totals: 102 fine, 28 fixed.
 
 ## Placements fixed in the kit zones
 
@@ -29,11 +29,10 @@ Totals: 64 fine, 18 fixed, 4 redraw, 1 missing.
 
 ## Missing pieces
 
-- **Animals** (hens, sheep, a cow or a horse) and **pen boundaries** (hurdles, a chicken run, a
-  paddock rail with a gate): without them a trough or hay has nothing to serve. The Crossroads
-  slice's painters (#421) are the starting point.
-- **Fence corners and gates**, and a **front-garden picket**: see `crossroads_fence`.
-- **A signpost for junctions** (a waystone stands in for now) and **a coop / field shelter**.
+- ~~Animals and pen boundaries~~ (3 Nov): hens, sheep, a hen ark, a field shelter and fence cells in
+  wattle and picket that close loops (`scripts/art/kit/farm.py`, `fences.py`; the loops and what they
+  hold are checked by `enclosures.py`). Still missing: a cow, a horse and a paddock rail.
+- **A signpost for junctions** (a waystone stands in for now).
 
 ## Table
 
@@ -42,8 +41,8 @@ Totals: 64 fine, 18 fixed, 4 redraw, 1 missing.
 | `crossroads_anvil` | work | workplace | near forge 3 | on route | **fine** | Beside the forge. |
 | `crossroads_bakery` | live | house | - | on route; on water | **fine** | A shop-home on the square; its door onto a route. |
 | `crossroads_barrel` | store | store | within house 2 | on route | **fine** | By a door or a shop, never loose on a lawn. |
-| `crossroads_beds_dug` | grow | garden | - | on route; on water | **redraw** | Four boarded boxes on bare earth that read as crates (Matt's Crossroads review); redraw as soil beds with crops in a dug patch, inside a garden boundary. |
-| `crossroads_beds_scorched` | grow | garden | - | on route; on water | **redraw** | The burnt stage of the beds: redraw with them. |
+| `crossroads_beds_dug` | grow | garden | - | on route; on water | **fixed** | Redrawn (3 Nov, scripts/art/kit/farm.py): three soil ridges with a crop on each (cabbage, leek, lettuce; carrot, cabbage, beans) in a dug patch with a rough spade edge, no boards. Holds crops for a kitchen garden's wattle (placement.enclosure). |
+| `crossroads_beds_scorched` | grow | garden | - | on route; on water | **fixed** | Redrawn with the beds (3 Nov): the same ridges burnt, crops black stubs in ash, green coming back. |
 | `crossroads_bench` | rest | seat | adjacent route_edge 2 | on route; on water | **fine** | Beside a route, facing it. |
 | `crossroads_boulder` | mark | rock | - | not_overlap rock; on route | **fine** | Field stones at the village edge. |
 | `crossroads_bush` | grow | shrub | - | on route; on water | **fine** | Hedges and garden shrubs. |
@@ -55,18 +54,18 @@ Totals: 64 fine, 18 fixed, 4 redraw, 1 missing.
 | `crossroads_debris_b` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_debris_c` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_debris_d` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
-| `crossroads_fence` | contain | boundary | - | on route; on water | **redraw** | One straight post-and-rail segment with no corner post, side run or gate, so it cannot close an enclosure (rules.fences). Redraw as runs along x and y with corner posts and a gate, in the styles placement-logic gives (wattle, hurdle, picket, rail); the Crossroads slice's painters are the model. |
+| `crossroads_fence` | contain | boundary | - | on route; on water | **fixed** | Retired (3 Nov): one straight post-and-rail segment could not close an enclosure. Replaced by the modular fence cells `fence_wattle_*` and `fence_picket_*` (scripts/art/kit/fences.py): straights, corners, Ts, a cross, end posts and a gate three cells wide, which close loops (enclosures.py). |
 | `crossroads_fern_cottage` | live | house | - | on route; on water | **fine** | A cottage on a lane. |
 | `crossroads_fern_rubble` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_flower_tub` | care | planter | within house 1 | on route | **fine** | By a door. |
 | `crossroads_grindstone` | work | workplace | near forge 3 | on route | **fine** | In the smithy's yard. |
 | `crossroads_handcart` | store | cart | at_edge route | on route | **fine** | At a road's edge by a shop or the market. |
-| `crossroads_hay` | feed | feed | within pen 1 | on route | **redraw** | Reads as pale slabs, not loose or baled hay; and like the trough it needs a pen. Redraw (the slice's hay heap is the model). |
+| `crossroads_hay` | feed | feed | near stock 6 | on route | **fixed** | Redrawn (3 Nov): three tied bales stacked, and a heap forked out loose; placed by the animals it feeds. |
 | `crossroads_herbalist` | live | house | - | on route; on water | **fine** | A shop-home. |
 | `crossroads_hut` | live | house | - | on route; on water | **fine** | The companion's hut. |
-| `crossroads_kit_lantern` | light | light | at_edge route 1 | on route | **fine** | Along streets, at junctions and gates. |
-| `crossroads_lantern_dark` | light | light | at_edge route 1 | on route | **fine** | As the lantern, unlit (story). |
-| `crossroads_lantern_lit` | light | light | at_edge route 1 | on route | **fine** | As the lantern. |
+| `crossroads_kit_lantern` | light | light | at_edge route 1 | on route; not_near centrepiece | **fixed** | Along streets, at junctions and gates. Props sweep (3 Nov): never on a well. |
+| `crossroads_lantern_dark` | light | light | at_edge route 1 | on route; not_near centrepiece | **fixed** | As the lantern, unlit (story). |
+| `crossroads_lantern_lit` | light | light | at_edge route 1 | on route; not_near centrepiece | **fixed** | As the lantern; its solid box is the plinth (was 22 world px deep up the post). |
 | `crossroads_library` | live | house | - | on route; on water | **fine** | A public building on the square. |
 | `crossroads_north_cottages` | live | house | - | on route; on water | **fine** | A terrace on the north lane. |
 | `crossroads_notice_board` | guide | marker | at_edge route 1 | on route | **fine** | On the square, at a route's edge. |
@@ -78,13 +77,56 @@ Totals: 64 fine, 18 fixed, 4 redraw, 1 missing.
 | `crossroads_square_rubble_a` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_square_rubble_b` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_stall` | work | stall | at_edge route | on route | **fine** | In rows on the square with aisles; its front to the route. |
-| `crossroads_trough` | feed | trough | within pen 0 | on route | **missing** | A trough needs animals and a pen; the kit has neither yet (no animal pieces, no pen boundary). |
-| `crossroads_waystone` | guide | marker | at_edge route 2 | - | **fine** | At a junction; points down real routes. |
-| `crossroads_well` | water | centrepiece | - | on route | **fine** | Central to the square. |
+| `crossroads_trough` | feed | trough | near stock 4; within boundary 4 | on route | **fixed** | The kit now has animals (`farm_sheep*`, `farm_hen_*`, role stock) and pens (the fence cells): it stands inside a fold with its flock (placement.enclosure: what sheep and horses need). |
+| `crossroads_waystone` | guide | marker | at_corner route 2 | - | **fixed** | At a junction, pointing down real routes. Props sweep (3 Nov): at_corner route (was at_edge, which a straight path also met). |
+| `crossroads_well` | water | centrepiece | near house 8 | on route; not_near water | **fixed** | Central to the square. Props sweep (3 Nov): requires homes within 8 cells, forbids a river within 6. |
 | `crossroads_well_choked` | water | centrepiece | - | on route | **fine** | The storm-broken well (story stage). |
 | `crossroads_woodpile` | store | store | within house 2 | on route | **fine** | Against a gable wall or under the eaves; never away from a hearth. |
+| `farm_coop` | live | coop | within boundary 2; near stock 4 | on route; on water | **fine** | In the run's back corner against its fence; the hens about it. |
+| `farm_hen_brown` | live | stock | within coop 4; within boundary 3 | on route; on water | **fine** | As the white hen. |
+| `farm_hen_speckled` | live | stock | within coop 4; within boundary 3 | on route; on water | **fine** | As the white hen. |
+| `farm_hen_white` | live | stock | within coop 4; within boundary 3 | on route; on water | **fine** | In a chicken run of 3 to 4 cells, near its coop. |
+| `farm_sheep` | live | stock | within trough 9; within boundary 5 | on route; on water | **fine** | In a fold of 6 to 10 cells with its trough and shelter. |
+| `farm_sheep_graze` | live | stock | within trough 9; within boundary 5 | on route; on water | **fine** | As the sheep. |
+| `farm_sheep_lie` | live | stock | within trough 9; within boundary 5 | on route; on water | **fine** | As the sheep. |
+| `farm_shelter` | live | shelter | within boundary 2; near stock 8 | on route; on water | **fine** | Its back to the fold's hurdles, its open side away from the weather. |
+| `fence_picket_e` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms e): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_es` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms es): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_esw` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms esw): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_ew` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms ew): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_gate_ew` | mark | gate | on route | - | **fine** | A picket gate three cells wide, on the path its owner walks (requires on route). |
+| `fence_picket_gate_ns` | mark | gate | on route | - | **fine** | A picket gate three cells wide, on the path its owner walks (requires on route). |
+| `fence_picket_n` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms n): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_ne` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms ne): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_nes` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms nes): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_nesw` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms nesw): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_new` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms new): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_ns` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms ns): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_nsw` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms nsw): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_nw` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms nw): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_s` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms s): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_sw` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms sw): closes a loop with its neighbours (enclosures.py). |
+| `fence_picket_w` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms w): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_e` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms e): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_es` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms es): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_esw` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms esw): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_ew` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms ew): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_gate_ew` | contain | gate | on route | - | **fine** | A wattle gate three cells wide, on the path its owner walks (requires on route). |
+| `fence_wattle_gate_ns` | contain | gate | on route | - | **fine** | A wattle gate three cells wide, on the path its owner walks (requires on route). |
+| `fence_wattle_n` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms n): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_ne` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms ne): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_nes` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms nes): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_nesw` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms nesw): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_new` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms new): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_ns` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms ns): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_nsw` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms nsw): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_nw` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms nw): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_s` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms s): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_sw` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms sw): closes a loop with its neighbours (enclosures.py). |
+| `fence_wattle_w` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms w): closes a loop with its neighbours (enclosures.py). |
 | `footbridge_2` | cross | bridge | on water; adjacent route 1 | - | **fine** | Exactly where a route meets a two-cell stream, the route's width. |
 | `footbridge_4` | cross | bridge | on water; adjacent route 1 | - | **fine** | As footbridge_2, over four cells. |
+| `garden_flower_border` | care | planter | within boundary 3; near house 6 | on route; on water | **fine** | In a front garden, beside the door path. |
 | `log_steps` | climb | stair | on face | - | **fine** | Where a route climbs a face; on the face, a route at head and foot. |
 | `log_steps_1` | climb | stair | on face | - | **fine** | As log_steps. |
 | `log_steps_3` | climb | stair | on face | - | **fine** | As log_steps. |

@@ -107,28 +107,39 @@ TABLE = {
     'crossroads_handcart': ('store', 'cart', [R('at_edge', 'route')], [OFF_ROUTE], 'fine', 'At a road\'s edge by a shop or the market.'),
     'crossroads_stall': ('work', 'stall', [R('at_edge', 'route')], [OFF_ROUTE], 'fine', 'In rows on the square with aisles; its front to the route.'),
     'crossroads_flower_tub': ('care', 'planter', [R('within', HOUSE_ROLE, 1, 'by a door or under a window')], [OFF_ROUTE], 'fine', 'By a door.'),
-    'crossroads_well': ('water', 'centrepiece', [], [OFF_ROUTE], 'fine', 'Central to the square.'),
+    'crossroads_well': ('water', 'centrepiece', [R('near', HOUSE_ROLE, 8, 'water for homes: a square or a farmyard')],
+                        [OFF_ROUTE, R('not_near', 'water', 6, 'never beside a river that is easier to draw from')], 'fixed',
+                        'Central to the square. Props sweep (3 Nov): requires homes within 8 cells, forbids a river within 6.'),
     'crossroads_well_choked': ('water', 'centrepiece', [], [OFF_ROUTE], 'fine', 'The storm-broken well (story stage).'),
     # ---- light and guidance --------------------------------------------------------------------
-    'crossroads_kit_lantern': ('light', 'light', None, None, 'fine', 'Along streets, at junctions and gates.'),
-    'crossroads_lantern_lit': ('light', 'light', None, None, 'fine', 'As the lantern.'),
-    'crossroads_lantern_dark': ('light', 'light', None, None, 'fine', 'As the lantern, unlit (story).'),
+    'crossroads_kit_lantern': ('light', 'light', [R('at_edge', 'route', 1)], [OFF_ROUTE, R('not_near', 'centrepiece', 1, 'never on a well')],
+                               'fixed', 'Along streets, at junctions and gates. Props sweep (3 Nov): never on a well.'),
+    'crossroads_lantern_lit': ('light', 'light', [R('at_edge', 'route', 1)], [OFF_ROUTE, R('not_near', 'centrepiece', 1, 'never on a well')],
+                               'fixed', 'As the lantern; its solid box is the plinth (was 22 world px deep up the post).'),
+    'crossroads_lantern_dark': ('light', 'light', [R('at_edge', 'route', 1)], [OFF_ROUTE, R('not_near', 'centrepiece', 1, 'never on a well')],
+                                'fixed', 'As the lantern, unlit (story).'),
     'crossroads_notice_board': ('guide', 'marker', None, None, 'fine', 'On the square, at a route\'s edge.'),
-    'crossroads_waystone': ('guide', 'marker', None, None, 'fine', 'At a junction; points down real routes.'),
+    'crossroads_waystone': ('guide', 'marker', [R('at_corner', 'route', 2, 'at a junction: routes on two sides at right angles')], [], 'fixed',
+                            'At a junction, pointing down real routes. Props sweep (3 Nov): at_corner route (was at_edge, which a straight path also met).'),
     'crossroads_bench': ('rest', 'seat', None, None, 'fine', 'Beside a route, facing it.'),
     # ---- gardens, animals, boundaries ----------------------------------------------------------
-    'crossroads_fence': ('contain', 'boundary', [], [OFF_ROUTE, OFF_WATER], 'redraw',
-                         'One straight post-and-rail segment with no corner post, side run or gate, so it cannot close an enclosure '
-                         '(rules.fences). Redraw as runs along x and y with corner posts and a gate, in the styles placement-logic '
-                         'gives (wattle, hurdle, picket, rail); the Crossroads slice\'s painters are the model.'),
-    'crossroads_beds_dug': ('grow', 'garden', [], [OFF_ROUTE, OFF_WATER], 'redraw',
-                            'Four boarded boxes on bare earth that read as crates (Matt\'s Crossroads review); redraw as soil beds '
-                            'with crops in a dug patch, inside a garden boundary.'),
-    'crossroads_beds_scorched': ('grow', 'garden', [], [OFF_ROUTE, OFF_WATER], 'redraw', 'The burnt stage of the beds: redraw with them.'),
-    'crossroads_trough': ('feed', 'trough', [R('within', 'pen', 0, 'inside a pen or paddock with its animals')], [OFF_ROUTE], 'missing',
-                          'A trough needs animals and a pen; the kit has neither yet (no animal pieces, no pen boundary).'),
-    'crossroads_hay': ('feed', 'feed', [R('within', 'pen', 1, 'in a paddock, a barn or a cart')], [OFF_ROUTE], 'redraw',
-                       'Reads as pale slabs, not loose or baled hay; and like the trough it needs a pen. Redraw (the slice\'s hay heap is the model).'),
+    'crossroads_fence': ('contain', 'boundary', [], [OFF_ROUTE, OFF_WATER], 'fixed',
+                         'Retired (3 Nov): one straight post-and-rail segment could not close an enclosure. Replaced by the '
+                         'modular fence cells `fence_wattle_*` and `fence_picket_*` (scripts/art/kit/fences.py): straights, '
+                         'corners, Ts, a cross, end posts and a gate three cells wide, which close loops (enclosures.py).'),
+    'crossroads_beds_dug': ('grow', 'garden', [], [OFF_ROUTE, OFF_WATER], 'fixed',
+                            'Redrawn (3 Nov, scripts/art/kit/farm.py): three soil ridges with a crop on each (cabbage, leek, lettuce; '
+                            'carrot, cabbage, beans) in a dug patch with a rough spade edge, no boards. Holds crops for a kitchen '
+                            "garden's wattle (placement.enclosure)."),
+    'crossroads_beds_scorched': ('grow', 'garden', [], [OFF_ROUTE, OFF_WATER], 'fixed',
+                                 'Redrawn with the beds (3 Nov): the same ridges burnt, crops black stubs in ash, green coming back.'),
+    'crossroads_trough': ('feed', 'trough', [R('near', 'stock', 4, 'its animals drink from it'),
+                                             R('within', 'boundary', 4, 'inside their pen or paddock')], [OFF_ROUTE], 'fixed',
+                          'The kit now has animals (`farm_sheep*`, `farm_hen_*`, role stock) and pens (the fence cells): it stands '
+                          'inside a fold with its flock (placement.enclosure: what sheep and horses need).'),
+    'crossroads_hay': ('feed', 'feed', [R('near', 'stock', 6, 'feed forked out for the stock, in a paddock, a fold or a barn')],
+                       [OFF_ROUTE], 'fixed',
+                       'Redrawn (3 Nov): three tied bales stacked, and a heap forked out loose; placed by the animals it feeds.'),
     'crossroads_bush': ('grow', 'shrub', [], NATURE, 'fine', 'Hedges and garden shrubs.'),
     'crossroads_bush_nonblocking': ('grow', 'shrub', [], NATURE, 'fine', 'Low shrubs the companion walks through.'),
     'crossroads_oak': ('grow', 'tree', [], NATURE, 'fine', 'The square\'s tree.'),
@@ -139,6 +150,35 @@ TABLE = {
                  'crossroads_square_rubble_a', 'crossroads_square_rubble_b', 'crossroads_square_puddles',
                  'crossroads_smithy_rubble', 'crossroads_fern_rubble', 'crossroads_crater_smoke')},
 }
+
+
+def _farm_rows():
+    """The modular fences and the farmyard (scripts/art/kit/fences.py, farm.py): their purpose,
+    role, requires and forbids are written by those painters (None keeps them)."""
+    rows = {}
+    for style, purpose in (('wattle', 'contain'), ('picket', 'mark')):
+        for mask in range(1, 16):
+            jn = ''.join(c for i, c in enumerate('nesw') if mask & (1 << i))
+            rows['fence_%s_%s' % (style, jn)] = (purpose, 'boundary', None, None, 'fine',
+                                                 'A %s fence cell (arms %s): closes a loop with its neighbours (enclosures.py).' % (style, jn))
+        for ax in ('ew', 'ns'):
+            rows['fence_%s_gate_%s' % (style, ax)] = (purpose, 'gate', None, None, 'fine',
+                                                       'A %s gate three cells wide, on the path its owner walks (requires on route).' % style)
+    rows.update({
+        'farm_hen_white': ('live', 'stock', None, None, 'fine', 'In a chicken run of 3 to 4 cells, near its coop.'),
+        'farm_hen_brown': ('live', 'stock', None, None, 'fine', 'As the white hen.'),
+        'farm_hen_speckled': ('live', 'stock', None, None, 'fine', 'As the white hen.'),
+        'farm_sheep': ('live', 'stock', None, None, 'fine', 'In a fold of 6 to 10 cells with its trough and shelter.'),
+        'farm_sheep_graze': ('live', 'stock', None, None, 'fine', 'As the sheep.'),
+        'farm_sheep_lie': ('live', 'stock', None, None, 'fine', 'As the sheep.'),
+        'farm_coop': ('live', 'coop', None, None, 'fine', 'In the run\'s back corner against its fence; the hens about it.'),
+        'farm_shelter': ('live', 'shelter', None, None, 'fine', 'Its back to the fold\'s hurdles, its open side away from the weather.'),
+        'garden_flower_border': ('care', 'planter', None, None, 'fine', 'In a front garden, beside the door path.'),
+    })
+    return rows
+
+
+TABLE.update(_farm_rows())
 
 PURPOSES = ('contain', 'exclude', 'mark', 'rest', 'light', 'store', 'feed', 'cross', 'guide', 'work',
             'live', 'grow', 'climb', 'flow', 'care', 'water', 'aftermath')
@@ -215,11 +255,10 @@ Totals: %s.
 
 ## Missing pieces
 
-- **Animals** (hens, sheep, a cow or a horse) and **pen boundaries** (hurdles, a chicken run, a
-  paddock rail with a gate): without them a trough or hay has nothing to serve. The Crossroads
-  slice's painters (#421) are the starting point.
-- **Fence corners and gates**, and a **front-garden picket**: see `crossroads_fence`.
-- **A signpost for junctions** (a waystone stands in for now) and **a coop / field shelter**.
+- ~~Animals and pen boundaries~~ (3 Nov): hens, sheep, a hen ark, a field shelter and fence cells in
+  wattle and picket that close loops (`scripts/art/kit/farm.py`, `fences.py`; the loops and what they
+  hold are checked by `enclosures.py`). Still missing: a cow, a horse and a paddock rail.
+- **A signpost for junctions** (a waystone stands in for now).
 
 ## Table
 

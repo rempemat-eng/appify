@@ -37,10 +37,10 @@
   "z_sort": "foot",
   "collision": {
    "rect": [
+    -7.0,
     -5.0,
-    -22.0,
-    10,
-    22
+    14,
+    5
    ],
    "shape": "rect"
   },
@@ -49,22 +49,6 @@
    218
   ],
   "footprint": [
-   [
-    -1,
-    -3
-   ],
-   [
-    0,
-    -3
-   ],
-   [
-    -1,
-    -2
-   ],
-   [
-    0,
-    -2
-   ],
    [
     -1,
     -1
@@ -100,6 +84,12 @@
    {
     "rel": "on",
     "what": "route"
+   },
+   {
+    "rel": "not_near",
+    "what": "centrepiece",
+    "cells": 1,
+    "note": "never on a well"
    }
   ],
   "stages": [
@@ -184,6 +174,9 @@
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "retain shadow lantern_lit_shadow from source scene with its own condition and offset; not a standalone random variant",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "collision"
   ]
  }
 }
