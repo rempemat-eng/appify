@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "status": "proposal-not-runtime",
+  "requestedByMatt": "18 October 2026: add Hawaii/Indonesia-inspired island biome and snowy mountain part",
+  "reviewedNewMain": "601849dc38485b033335eeeae9e95c1bb5241476",
+  "baseContract": "topology.json",
+  "scope": "Eight new proposed landscape segments, not eight new mechanics. The base contract remains frozen to its documented source; this additive contract is not imported by the game.",
+  "policies": {
+    "runtimeImported": false,
+    "changesGameRules": false,
+    "addsRewards": false,
+    "addsTravelCosts": false,
+    "resetsPlayerData": false,
+    "weatherAffectsRoutes": false,
+    "tidesAffectAccess": false,
+    "addsMissionIds": false,
+    "requiresReturnVisits": false
+  },
+  "regions": [
+    {
+      "id": "isles",
+      "name": "Tidebloom Isles",
+      "role": "A separate offshore walking region; dormant volcanic relief and a sheltered lagoon, not another active lava country."
+    }
+  ],
+  "districts": [
+    {
+      "id": "frostline",
+      "name": "Frostline Highlands",
+      "physicalRegion": "valley",
+      "anchor": "ridge",
+      "zones": ["ridge", "fir_hollow", "snow_lake", "snow_saddle", "high_lookout"],
+      "reason": "A continuous elevational extension above the existing ridge, with no second station or replacement mountain mission."
+    },
+    {
+      "id": "tidebloom",
+      "name": "Tidebloom Isles",
+      "physicalRegion": "isles",
+      "anchor": "lagoon_landing",
+      "zones": ["lagoon_landing", "rainforest", "headwaters", "black_sand"],
+      "reason": "A compact island circuit with one legible landing and a real sea gap from the mainland."
+    }
+  ],
+  "zones": [
+    {
+      "id": "fir_hollow",
+      "name": "Fir Hollow",
+      "region": "valley",
+      "col": -1,
+      "row": -1,
+      "tier": 3,
+      "role": "Sheltered subalpine trees and snow patches, reached west from the ridge cabin; steep bluff blocks the woodland below."
+    },
+    {
+      "id": "snow_lake",
+      "name": "Snowmelt Lake",
+      "region": "valley",
+      "col": -1,
+      "row": -2,
+      "tier": 4,
+      "role": "Open alpine cirque and meltwater lake. Dry shore path, supported stream crossing and a real outflow; no walking across thin ice."
+    },
+    {
+      "id": "snow_saddle",
+      "name": "Snow Saddle",
+      "region": "valley",
+      "col": 0,
+      "row": -2,
+      "tier": 4,
+      "role": "Broad treeless shoulder; a safe switchback descends south to the existing ridge cabin."
+    },
+    {
+      "id": "high_lookout",
+      "name": "High Lookout",
+      "region": "valley",
+      "col": 0,
+      "row": -3,
+      "tier": 5,
+      "role": "Short optional terminal lookout on a broad path; distant peaks are scenery, not climbing or survival mechanics."
+    },
+    {
+      "id": "lagoon_landing",
+      "name": "Lagoon Landing",
+      "region": "isles",
+      "col": 0,
+      "row": 1,
+      "tier": 0,
+      "role": "Sheltered southwest shore, pier and clear return landmark; coastal mangrove fringe stays outside the dry route."
+    },
+    {
+      "id": "rainforest",
+      "name": "Rainforest",
+      "region": "isles",
+      "col": 0,
+      "row": 0,
+      "tier": 1,
+      "role": "Northwest forested valley; stream from headwaters drains south to the lagoon, with supported bridge approaches."
+    },
+    {
+      "id": "headwaters",
+      "name": "Headwaters",
+      "region": "isles",
+      "col": 1,
+      "row": 0,
+      "tier": 2,
+      "role": "Rain-catching upland and waterfall above the west-draining forest stream. Path skirts the falls, never runs up the water or over a cliff face."
+    },
+    {
+      "id": "black_sand",
+      "name": "Black-sand Cove",
+      "region": "isles",
+      "col": 1,
+      "row": 1,
+      "tier": 0,
+      "role": "Exposed southeast basalt coast and sheltered path above the beach; no fresh lava, volcanic damage or tide gate."
+    }
+  ],
+  "connections": [
+    {
+      "id": "ridge-fir",
+      "kind": "walk",
+      "a": { "zone": "ridge", "side": "west" },
+      "b": { "zone": "fir_hollow", "side": "east" },
+      "span": [320, 376],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Cabin terrace bends into a sheltered fir hollow, with patchy snow before the alpine slope.",
+      "frame": "Rock shoulders and fir belts frame the only shared opening."
+    },
+    {
+      "id": "fir-lake",
+      "kind": "walk",
+      "a": { "zone": "fir_hollow", "side": "north" },
+      "b": { "zone": "snow_lake", "side": "south" },
+      "span": [144, 200],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Wide switchback passes thinning trees, then opens at the dry shore of the cirque.",
+      "frame": "Talus and a continuous visible scarp block all non-trail spans."
+    },
+    {
+      "id": "lake-saddle",
+      "kind": "walk",
+      "a": { "zone": "snow_lake", "side": "east" },
+      "b": { "zone": "snow_saddle", "side": "west" },
+      "span": [248, 304],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Dry lake-bank route crosses the outflow on a supported footbridge and reaches the broad saddle.",
+      "frame": "Lake water and rock rim stay blocked outside the bridge and shore path."
+    },
+    {
+      "id": "saddle-ridge",
+      "kind": "walk",
+      "a": { "zone": "snow_saddle", "side": "south" },
+      "b": { "zone": "ridge", "side": "north" },
+      "span": [176, 232],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Long gentle switchback reveals the cabin roof and returns to the familiar ridge trail.",
+      "frame": "Stepped rock shoulders show the descent; no cliff-face walking."
+    },
+    {
+      "id": "saddle-lookout",
+      "kind": "walk",
+      "a": { "zone": "snow_saddle", "side": "north" },
+      "b": { "zone": "high_lookout", "side": "south" },
+      "span": [120, 168],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "One short sheltered rising path ends at a broad lookout; no onward route into distant peaks.",
+      "frame": "Continuous rock and snow banks close the other edges without implying a timed closure."
+    },
+    {
+      "id": "landing-rainforest",
+      "kind": "walk",
+      "a": { "zone": "lagoon_landing", "side": "north" },
+      "b": { "zone": "rainforest", "side": "south" },
+      "span": [128, 184],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Dry shore lane climbs beside the stream through palms into layered forest canopy.",
+      "frame": "Mangrove water and planted slopes frame a wide supported bank path."
+    },
+    {
+      "id": "rainforest-headwaters",
+      "kind": "walk",
+      "a": { "zone": "rainforest", "side": "east" },
+      "b": { "zone": "headwaters", "side": "west" },
+      "span": [224, 280],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Forested switchback climbs outside the waterfall gorge; bridge meets solid dry land at both ends.",
+      "frame": "Gorge walls and canopy close the seam outside the path."
+    },
+    {
+      "id": "headwaters-black-sand",
+      "kind": "walk",
+      "a": { "zone": "headwaters", "side": "south" },
+      "b": { "zone": "black_sand", "side": "north" },
+      "span": [192, 248],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Terraced descent around the island's east shoulder; coastal cove visible before the final bend.",
+      "frame": "Vegetated basalt cliffs make the two-tier descent legible, never an unbroken vertical face."
+    },
+    {
+      "id": "black-sand-landing",
+      "kind": "walk",
+      "a": { "zone": "black_sand", "side": "west" },
+      "b": { "zone": "lagoon_landing", "side": "east" },
+      "span": [352, 408],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Dry coast path rounds a basalt headland into the sheltered lagoon and familiar landing.",
+      "frame": "Sea on one side, vegetated bluff on the other; reef and outer islets remain scenery."
+    },
+    {
+      "id": "harbour-isles",
+      "kind": "proposed-sea-link",
+      "a": { "zone": "harbour", "at": [192, 440] },
+      "b": { "zone": "lagoon_landing", "at": [112, 440] },
+      "activation": "explicit-interaction-only",
+      "runtimeEnabled": false,
+      "status": "design-choice-awaiting-approved-implementation",
+      "mode": "boat-candidate-not-existing-service",
+      "returnPolicy": "Same two endpoints in reverse, always optional; no schedule, tide condition, fare, reward or forced return.",
+      "integrationGap": "The game currently has no boat service. Do not insert this into travelLinks, travelVehicle, saves or runtime RegionId from this proposal. Claude/Matt must approve the concrete transport adapter separately."
+    }
+  ],
+  "loops": [
+    {
+      "id": "frostline-circuit",
+      "zones": ["ridge", "fir_hollow", "snow_lake", "snow_saddle", "ridge"]
+    },
+    {
+      "id": "tidebloom-circuit",
+      "zones": ["lagoon_landing", "rainforest", "headwaters", "black_sand", "lagoon_landing"]
+    }
+  ],
+  "blockedAdjacencies": [
+    {
+      "a": "fir_hollow",
+      "b": "woodland",
+      "reason": "Visible steep escarpment. The altitude transition is through the ridge approach, not a shortcut through the woodland canopy."
+    }
+  ],
+  "watercourses": [
+    {
+      "id": "frostline-meltwater",
+      "from": "snow_lake",
+      "via": ["fir_hollow", "ridge"],
+      "outlet": "riverside",
+      "note": "Scenic drainage can cross closed foot seams; water continuity does not grant walk access."
+    },
+    {
+      "id": "island-watershed",
+      "from": "headwaters",
+      "via": ["rainforest"],
+      "outlet": "lagoon_landing",
+      "note": "Freshwater runs downhill west then south; sheltered brackish fringe is distinct from outer reef and exposed black-sand coast."
+    }
+  ],
+  "saveIntegration": {
+    "status": "not-implemented",
+    "snowOriginShiftArtPixels": [0, 1152],
+    "reason": "Extending valley minRow from -1 to -3 changes the absolute region origin even though existing zone-local coordinates do not move. Resolve legacy zone first, then retain local offset against final layout. Never just reuse/clamp old absolute y.",
+    "islandDiscovery": "New island zones stay unvisited until actually visited; do not award anything or mark them visited during migration.",
+    "futureFields": "Preserve unknown regions/discoveries and all unrelated account/save fields. This file performs no migration."
+  }
+}
