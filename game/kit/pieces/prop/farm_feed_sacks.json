@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_feed_sacks.png",
    "foot": [
-    29,
-    42
+    26,
+    33
    ]
   }
  ],
@@ -28,15 +28,15 @@
  },
  "geometry": {
   "size_px": [
-   58,
-   46
+   50,
+   37
   ],
   "size_cells": [
    2,
-   1
+   2
   ],
   "z_sort": "foot",
-  "height_px": 42,
+  "height_px": 33,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,8 +47,8 @@
    ]
   },
   "foot": [
-   29,
-   42
+   26,
+   33
   ],
   "footprint": [
    [
@@ -107,7 +107,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "sack (size-guide 3)",
+  "size_class": "pile",
   "eastward_ref": "17: sacks by the barn door",
   "painter": {
    "module": "scripts.art.kit.farm",

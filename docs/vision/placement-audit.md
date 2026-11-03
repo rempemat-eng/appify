@@ -13,7 +13,7 @@ Verdicts: **fine** (fits), **fixed** (its data or a placement was corrected in t
 (the drawing does not fit its purpose: the art queue), **missing** (cannot be placed sensibly until a
 companion piece exists).
 
-Totals: 135 fine, 28 fixed.
+Totals: 150 fine, 28 fixed.
 
 ## Placements fixed in the kit zones
 
@@ -32,12 +32,38 @@ Totals: 135 fine, 28 fixed.
 - ~~Animals and pen boundaries~~ (3 Nov): hens, sheep, a hen ark, a field shelter and fence cells in
   wattle and picket that close loops (`scripts/art/kit/farm.py`, `fences.py`; the loops and what they
   hold are checked by `enclosures.py`). Still missing: a cow, a horse and a paddock rail.
-- **A signpost for junctions** (a waystone stands in for now).
+- ~~A signpost for junctions~~ (3 Nov): fingerposts, one per set of arms (`commons_fingerpost_*`);
+  their arms must point along the routes that leave the junction (`placement.points`): the routes crossing a band 3 to 5 cells out from the post on each side.
+
+## Placement logic beyond relations (3 Nov)
+
+`placement_audit.check_plan` (in `--check`, over every kit zone and the village-green study) reads
+four fields relations cannot express: **needs** (a tag some piece `provides` within N cells, e.g. a
+woodpile needs a hearth; `side: yard` means behind the provider, so washing never hangs before the
+front door), **faces** (from the piece's `facing`, a cone N cells deep must hold a feature, a view,
+water or lower ground), **avoid** (`wild_woods`: three or more trees within 4 cells and no home
+within 8) and **points** (a signpost's arms equal the sides on which routes leave it, read 3 to 5 cells
+out, so a two-cell lane counts once; three ways or more make a junction).
 
 ## Table
 
 | Piece | Purpose | Role | Requires | Forbids | Verdict | Why, and what was done |
 |---|---|---|---|---|---|---|
+| `commons_bench` | rest | seat | - | on route; on water | **fine** | Facing a feature, a view, water or the land falling away (faces, 6 cells). |
+| `commons_cart` | store | cart | at_edge route 1 | on route; on water | **fine** | At a road's edge, off the way. |
+| `commons_chopping_block` | work | chopping_block | - | on route; on water | **fine** | Near a hearth (needs hearth 6), by the woodpile. |
+| `commons_fingerpost_esw` | guide | signpost | - | on route; on water | **fine** | At a junction whose routes leave E-S-W (points). |
+| `commons_fingerpost_nes` | guide | signpost | - | on route; on water | **fine** | At a junction whose routes leave N-E-S (points). |
+| `commons_fingerpost_nesw` | guide | signpost | - | on route; on water | **fine** | At a junction whose routes leave N-E-S-W (points). |
+| `commons_fingerpost_new` | guide | signpost | - | on route; on water | **fine** | At a junction whose routes leave N-E-W (points). |
+| `commons_fingerpost_nsw` | guide | signpost | - | on route; on water | **fine** | At a junction whose routes leave N-S-W (points). |
+| `commons_notice_board` | guide | marker | at_edge route 1 | on route; on water | **fine** | At a route's edge where people pass; never in wild woods. |
+| `commons_pump` | water | centrepiece | near house 8 | on route; on water | **fine** | On a green near homes; a feature benches face. |
+| `commons_shrine` | mark | marker | at_edge route 1 | on route; on water | **fine** | At the wayside; a feature to face. |
+| `commons_stall_cloth` | work | stall | at_edge route 1 | on route; on water | **fine** | As the produce stall. |
+| `commons_stall_produce` | work | stall | at_edge route 1 | on route; on water | **fine** | At a route's edge on the green or square, beside its pair. |
+| `commons_washing_line` | work | washing_line | - | on route; on water | **fine** | In a house's back yard (needs home 4, yard side); never in wild woods. |
+| `commons_woodpile` | store | store | - | on route; on water | **fine** | Against a house with a chimney (needs hearth 4). |
 | `crossroads_anvil` | work | workplace | near forge 3 | on route | **fine** | Beside the forge. |
 | `crossroads_bakery` | live | house | - | on route; on water | **fine** | A shop-home on the square; its door onto a route. |
 | `crossroads_barrel` | store | store | within house 2 | on route | **fine** | By a door or a shop, never loose on a lawn. |

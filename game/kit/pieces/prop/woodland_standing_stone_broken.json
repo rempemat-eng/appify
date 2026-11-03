@@ -75,6 +75,10 @@
     "rel": "on",
     "what": "route"
    }
+  ],
+  "provides": [
+   "feature",
+   "view"
   ]
  },
  "rendering": {

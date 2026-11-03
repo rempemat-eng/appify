@@ -10,4 +10,4 @@ piece_id = "garden_flower_border"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-40, -40)
+offset = Vector2(-37, -26)

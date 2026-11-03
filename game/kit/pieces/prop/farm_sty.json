@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_sty.png",
    "foot": [
-    52,
-    72
+    51,
+    57
    ]
   }
  ],
@@ -28,15 +28,15 @@
  },
  "geometry": {
   "size_px": [
-   104,
-   78
+   102,
+   58
   ],
   "size_cells": [
-   5,
-   3
+   4,
+   2
   ],
   "z_sort": "foot",
-  "height_px": 72,
+  "height_px": 57,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,8 +47,8 @@
    ]
   },
   "foot": [
-   52,
-   72
+   51,
+   57
   ],
   "footprint": [
    [
@@ -141,7 +141,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "pigsty (size-guide 4: \"shed, hen house\"; a low stone house, under a man's height at the eave)",
+  "size_class": "shed",
   "eastward_ref": "17: the barn's stone and slate, its dark door",
   "painter": {
    "module": "scripts.art.kit.farm",

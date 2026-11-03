@@ -95,7 +95,10 @@
   "stages": [
    "broken"
   ],
-  "purpose": "light"
+  "purpose": "light",
+  "avoid": [
+   "wild_woods"
+  ]
  },
  "rendering": {
   "cast_shadow": {

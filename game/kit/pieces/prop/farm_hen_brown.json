@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_hen_brown.png",
    "foot": [
-    17,
-    28
+    14,
+    25
    ]
   }
  ],
@@ -28,21 +28,21 @@
  },
  "geometry": {
   "size_px": [
-   34,
-   31
+   31,
+   28
   ],
   "size_cells": [
    1,
    1
   ],
   "z_sort": "foot",
-  "height_px": 28,
+  "height_px": 25,
   "collision": {
    "shape": "none"
   },
   "foot": [
-   17,
-   28
+   14,
+   25
   ],
   "footprint": [
    [
@@ -107,8 +107,8 @@
     "fps": 4.0,
     "strip": "res://kit/props/art/farm/farm_hen_brown_idle.png",
     "frame_px": [
-     34,
-     31
+     31,
+     28
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true,
@@ -125,7 +125,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "hen (size-guide 2)",
+  "size_class": "small_animal",
   "eastward_ref": "17: the farm's animals, each a readable mass with its own pose",
   "painter": {
    "module": "scripts.art.kit.farm",

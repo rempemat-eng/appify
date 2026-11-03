@@ -151,7 +151,7 @@ def plan() -> dict:
         {'id': 'pd_shelter', 'piece': 'farm_shelter', 'at': [1020, 168]},
         {'id': 'pd_trough', 'piece': 'crossroads_trough', 'at': [996, 288]},
         {'id': 'horse', 'piece': 'farm_horse', 'at': [1140, 168]},
-        {'id': 'cow', 'piece': 'farm_cow', 'at': [1164, 264]},
+        {'id': 'cow', 'piece': 'farm_cow', 'at': [1140, 264]},
         {'id': 'calf', 'piece': 'farm_calf', 'at': [1140, 312]},
         # the goat pen: its shelter against the north hurdles, a trough, two goats
         {'id': 'gt_shelter', 'piece': 'farm_shelter', 'at': [1356, 144]},

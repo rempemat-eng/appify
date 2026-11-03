@@ -98,7 +98,10 @@
     "note": "never on a well"
    }
   ],
-  "purpose": "light"
+  "purpose": "light",
+  "avoid": [
+   "wild_woods"
+  ]
  },
  "rendering": {
   "cast_shadow": {

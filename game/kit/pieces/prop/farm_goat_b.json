@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_goat_b.png",
    "foot": [
-    42,
-    62
+    24,
+    47
    ]
   }
  ],
@@ -28,15 +28,15 @@
  },
  "geometry": {
   "size_px": [
-   84,
-   68
+   52,
+   51
   ],
   "size_cells": [
-   4,
-   3
+   2,
+   2
   ],
   "z_sort": "foot",
-  "height_px": 62,
+  "height_px": 47,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,8 +47,8 @@
    ]
   },
   "foot": [
-   42,
-   62
+   24,
+   47
   ],
   "footprint": [
    [
@@ -117,8 +117,8 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_goat_b_idle.png",
     "frame_px": [
-     84,
-     68
+     52,
+     51
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true,
@@ -135,7 +135,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "goat (size-guide 2: livestock)",
+  "size_class": "sheep",
   "eastward_ref": "17: cows 0.9 A and pigs 0.55 A, chunky with a dark outline",
   "painter": {
    "module": "scripts.art.kit.farm",

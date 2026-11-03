@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_muck_heap.png",
    "foot": [
-    35,
-    46
+    31,
+    42
    ]
   }
  ],
@@ -28,15 +28,15 @@
  },
  "geometry": {
   "size_px": [
-   70,
-   52
+   62,
+   43
   ],
   "size_cells": [
    3,
-   1
+   2
   ],
   "z_sort": "foot",
-  "height_px": 46,
+  "height_px": 42,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,8 +47,8 @@
    ]
   },
   "foot": [
-   35,
-   46
+   31,
+   42
   ],
   "footprint": [
    [
@@ -111,7 +111,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "heap (size-guide 3)",
+  "size_class": "pile",
   "eastward_ref": "17: the farm's heaps of straw and dung, a fork in one",
   "painter": {
    "module": "scripts.art.kit.farm",

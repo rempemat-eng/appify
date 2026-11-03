@@ -13,7 +13,7 @@ piece_id = "farm_churns"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-30, -44)
+offset = Vector2(-27, -35)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0

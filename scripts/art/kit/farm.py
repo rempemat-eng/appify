@@ -313,7 +313,7 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
 # ------------------------------------------------------------------------------------------------
 BEASTS = {
     # kind: canvas (w, h, foot x, foot y), body rx, ry, belly height, leg width, head (rx, ry, reach, lift), coat
-    'cow': dict(c=(132, 100, 66, 94), rx=30, ry=17, up=20, leg=6, head=(8.5, 8, 6, 18), coat='pied', horns=True, udder=True, tail=26),
+    'cow': dict(c=(144, 108, 72, 102), rx=33, ry=18.5, up=22, leg=6, head=(9, 8.5, 6, 19), coat='pied', horns=True, udder=True, tail=26),
     'calf': dict(c=(96, 72, 48, 66), rx=18, ry=11, up=15, leg=4, head=(6.5, 6.5, 4, 13), coat='pied', horns=False, udder=False, tail=15),
     'horse': dict(c=(136, 116, 68, 110), rx=28, ry=14, up=32, leg=5, head=(6, 9.5, 14, 34), coat='bay', horns=False, udder=False, tail=32, mane=True),
     'pig': dict(c=(84, 58, 42, 52), rx=21, ry=12.5, up=9, leg=5, head=(7.5, 7, 3, 4), coat='pig', horns=False, udder=False, tail=6, snout=True),
@@ -383,16 +383,21 @@ def beast(kind, frame='a', face=1, seed=0):
     # the form: the shoulder and the haunch catch the light, the ribs and the flank between in shade
     sh = sphere_light(X, Y, cx + face * rx * 0.55, by - ry * 0.1, rx * 0.4, ry * 0.8)
     hn = sphere_light(X, Y, cx - face * rx * 0.55, by - ry * 0.15, rx * 0.42, ry * 0.85)
-    t = 2.4 + 1.5 * lit + 0.6 * np.maximum(sh, hn) + 1.1 * (nz - 0.5)
+    t = 2.4 + 1.5 * lit + 0.6 * np.maximum(sh, hn) + (1.1 if B['coat'] != 'pied' else 1.5) * (nz - 0.5)
+    if B['coat'] == 'pied':                                      # a white coat shows its ribs and hip under the hair
+        t = t - 0.7 * ((np.mod(X * 0.5 + 0.3 * Y, 4.0) < 0.6) & (np.abs(X - cx) < rx * 0.35) & (Y > by - ry * 0.3))
     hair = (np.mod(X * 2 + Y * face, 7) == 0) & (rng.random(a.shape) < 0.5)
     t = t - 0.8 * hair
     mixn = noise(a.shape, np.random.default_rng(seed + 11), 1.6)      # the coat's hue drifts apart from its light
     rpaint(a, body, coat, t, mixn)
+    dark = np.zeros(a.shape, bool)
     if B['coat'] == 'pied':                                      # black patches with soft edges
         pn = noise(a.shape, np.random.default_rng(seed + 3), 6.5) + 0.25 * (X - cx) * face / rx
         patch = body & (pn > np.percentile(pn[body], 50))
         patch = ndi.binary_opening(ndi.binary_closing(patch, iterations=2), iterations=2) & body
-        rpaint(a, patch, marks, 1.4 + 1.6 * lit, nz)
+        dark = patch
+        edge = patch & ~ndi.binary_erosion(patch, iterations=1)
+        rpaint(a, patch, marks, 1.3 + 1.7 * lit + 0.5 * np.maximum(sh, hn) - 0.5 * edge, np.where(lit > 0.4, 0.45, 0.1))
     elif B['coat'] == 'goat':
         patch = body & (noise(a.shape, np.random.default_rng(seed + 5), 5.0) > 0.62)
         patch = ndi.binary_opening(patch, iterations=1)
@@ -424,7 +429,8 @@ def beast(kind, frame='a', face=1, seed=0):
     top = body & ~np.roll(body, 1, axis=0)
     back = (top | np.roll(top, 1, axis=0)) & body & (lit > 0.15)
     a[back] = C('sand_warm' if B['coat'] != 'pied' else 'plaster', 5)
-    sheen = body & (sh > 0.55) & (rng.random(a.shape) < 0.35)
+    near_sh = ((X - (cx + face * rx * 0.55)) / (rx * 0.4)) ** 2 + ((Y - (by - ry * 0.1)) / (ry * 0.8)) ** 2 <= 1
+    sheen = body & near_sh & (sh > 0.55) & (rng.random(a.shape) < 0.35) & ~dark
     a[sheen] = C('brass_warm' if B['coat'] in ('bay', 'pig') else 'plaster', 4)
     under = body & ~np.roll(body, -1, axis=0)
     under = (under | np.roll(under, -1, axis=0)) & body
@@ -1338,6 +1344,24 @@ def _fp(cols, rows):
     return [[c, -r] for r in range(rows, 0, -1) for c in xs]
 
 
+def trim(pics):
+    """The pictures cropped to what any of them draws (and the foot), the foot moved with them:
+    a piece's size_px is its art, as the size guide measures it."""
+    m = np.zeros(pics[0].a.shape, bool)
+    for q in pics:
+        m |= q.a >= 0
+    ys, xs = np.nonzero(m)
+    ax, ay = pics[0].ax, pics[0].ay
+    x0, x1 = min(xs.min(), ax), max(xs.max() + 1, ax + 1)
+    y0, y1 = min(ys.min(), ay - 1), max(ys.max() + 1, ay)
+    out = []
+    for q in pics:
+        t = V.Pic(int(x1 - x0), int(y1 - y0), q.ax - x0, q.ay - y0)
+        t.a[:] = q.a[y0:y1, x0:x1]
+        out.append(t)
+    return out
+
+
 def strip(frames):
     w, h = frames[0].W, frames[0].H
     s = np.full((h, w * len(frames)), -1, np.int32)
@@ -1355,7 +1379,7 @@ def _base(pid, name, png_still, foot, size, purpose, role, *, cells, fp, collisi
                       'foot': list(foot)}],
         'approval': {'state': 'candidate', 'by': None, 'at': None,
                      'standard': "art-style.md (Eastward's level of detail), placement-logic.md", 'note': note},
-        'geometry': {'size_px': list(size), 'size_cells': list(cells), 'z_sort': 'foot', 'height_px': size[1] - (size[1] - foot[1]),
+        'geometry': {'size_px': list(size), 'size_cells': [max(1, int(math.floor(v / 24 + 0.5))) for v in size], 'z_sort': 'foot', 'height_px': size[1] - (size[1] - foot[1]),
                      'collision': collision, 'foot': list(foot), 'footprint': fp},
         'placement': {'snap': 'cell', 'purpose': purpose, 'role': role,
                       **({'requires': list(requires)} if requires else {}), **({'forbids': list(forbids)} if forbids else {}),
@@ -1398,7 +1422,7 @@ def animals():
             requires=[_rel('within', 'coop', 4, 'hens live in a run with their coop (placement-logic: keep animals in)'),
                       _rel('within', 'boundary', 3, 'inside the run\'s fence')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['chickens'], 'as': 'contents'},
-            eastward='17: the farm\'s animals, each a readable mass with its own pose', size_class='hen (size-guide 2)',
+            eastward='17: the farm\'s animals, each a readable mass with its own pose', size_class='small_animal',
             note='A hen pecking in her run; 8 idle frames at 4 fps.')))
     for pose, face, seed in (('stand', -1, 3), ('graze', 1, 5), ('lie', -1, 7)):
         frames = [sheep(pose, f, face, seed) for f in SHEEP_FRAMES[pose]]
@@ -1411,7 +1435,7 @@ def animals():
             requires=[_rel('within', 'trough', 9, 'a fold holds its trough (placement-logic: keep animals in)'),
                       _rel('within', 'boundary', 5, 'inside the fold\'s hurdles')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['sheep'], 'as': 'contents'},
-            eastward='17: cows 0.9 A and pigs 0.55 A, chunky with a dark outline', size_class='sheep (size-guide 2)',
+            eastward='17: cows 0.9 A and pigs 0.55 A, chunky with a dark outline', size_class='sheep',
             note='A ewe in her fold; 8 idle frames at 3 fps.')))
     # the paddock, the sty and the goat pen: (piece, kind, facing, seed, loop start, collision in
     # world px from the foot, footprint cols, what holds it, what it needs within, how far)
@@ -1434,7 +1458,7 @@ def animals():
                       _rel('within', 'boundary', 8 if big else 5, 'inside its fence')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': [holds], 'as': 'contents'},
             eastward='17: cows 0.9 A and pigs 0.55 A, chunky with a dark outline',
-            size_class='%s (size-guide 2: livestock)' % kind, note=note + '; 8 idle frames at 3 fps.')))
+            size_class={'cow': 'cow', 'horse': 'horse'}.get(kind, 'sheep'), note=note + '; 8 idle frames at 3 fps.')))
     return out
 
 
@@ -1447,14 +1471,14 @@ def statics():
             requires=[_rel('within', 'boundary', 2, 'against the run\'s fence, in its back corner'),
                       _rel('near', 'stock', 4, 'its hens about it')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['chickens'], 'as': 'needs'},
-            size_class='hen house (size-guide 4: "shed, hen house"; this is the small ark a 3 to 4 cell run takes)',
+            size_class='shed',
             eastward='17: the barn\'s boarded walls, knots and nail heads', note='The hens\' house in their run.')),
         ('farm_shelter', shelter(seed=31), dict(
             name='Field shelter', purpose='live', role='shelter', cells=(5, 3), fp=_fp(4, 2),
             collision={'shape': 'rect', 'rect': [-16.0, -14.0, 32, 10]}, shadow=(34, 5),
             requires=[_rel('within', 'boundary', 2, 'its back to the fold\'s hurdles'), _rel('near', 'stock', 8, 'the flock it shelters')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['sheep', 'horses', 'cattle', 'goats'], 'as': 'needs'},
-            size_class='field shelter (size-guide 4: shed row, the open front of a stable)',
+            size_class='shed',
             eastward='17: the barn\'s timber, its eave\'s shade', note='Shelter for the flock, its open side south.')),
         ('garden_flower_border', flower_border(seed=61), dict(
             name='Flower border', purpose='care', role='planter', cells=(3, 1), fp=_fp(3, 1),
@@ -1462,53 +1486,53 @@ def statics():
             requires=[_rel('within', 'boundary', 3, 'inside a front garden\'s fence or along a house\'s wall'),
                       _rel('near', 'house', 6, 'a home\'s garden')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['flowers'], 'as': 'contents'},
-            size_class='flower (size-guide: heads 4 to 8 art px, clumps 0.2 to 0.4 m)',
+            size_class='flowers',
             eastward='12 and 13: flower clumps, heads a touch big', note='A cottage border in a front garden.')),
         ('farm_sty', sty(seed=8), dict(
             name='Pigsty', purpose='live', role='sty', cells=(5, 3), fp=_fp(4, 2),
             collision={'shape': 'rect', 'rect': [-17.0, -11.0, 34, 11]}, shadow=(34, 5),
             requires=[_rel('near', 'stock', 6, 'its pigs in the run before it')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['pigs'], 'as': 'needs', 'serves': ['sty', 'trough']},
-            size_class='pigsty (size-guide 4: "shed, hen house"; a low stone house, under a man\'s height at the eave)',
+            size_class='shed',
             eastward='17: the barn\'s stone and slate, its dark door', note='The pigs\' house, its run fenced before it; a trough in its wall.')),
         ('farm_wallow', wallow(seed=7), dict(
             name='Wallow', purpose='live', role='wallow', cells=(3, 1), fp=_fp(3, 1),
             collision={'shape': 'none'}, blocks=False, shadow=None,
             requires=[_rel('within', 'boundary', 5, 'in the pigs\' run')], forbids=[OFF_ROUTE, OFF_WATER],
-            enclosure={'holds': ['pigs'], 'as': 'needs'}, size_class='ground patch',
+            enclosure={'holds': ['pigs'], 'as': 'needs'}, size_class='pile',
             eastward='17: mud and puddles, dark and glossy', note='A pig\'s mud wallow in the sty\'s run.')),
         ('farm_churns', churns(seed=1), dict(
             name='Milk churns', purpose='store', role='churns', cells=(2, 1), fp=_fp(2, 1),
             collision={'shape': 'rect', 'rect': [-8.0, -3.0, 16, 3]}, shadow=(16, 3),
             requires=[_rel('near', 'gate', 3, 'set out by the paddock gate or the yard\'s for the cart')], forbids=[OFF_ROUTE, OFF_WATER],
-            size_class='churn (size-guide 3: barrel)', eastward='17: tins and buckets by the barn', note='Churns waiting for the milk cart.')),
+            size_class='barrel', eastward='17: tins and buckets by the barn', note='Churns waiting for the milk cart.')),
         ('farm_water_butt', water_butt(seed=2), dict(
             name='Water butt', purpose='water', role='water_butt', cells=(2, 1), fp=_fp(1, 1),
             collision={'shape': 'rect', 'rect': [-4.0, -4.0, 8, 4]}, shadow=(12, 3),
             requires=[_rel('adjacent', 'house', 1, 'at a building\'s downpipe')], forbids=[OFF_ROUTE, OFF_WATER],
-            size_class='barrel (size-guide 3)', eastward='17 and 12: barrels by the walls', note='Rain from the roof, by a wall.')),
+            size_class='barrel', eastward='17 and 12: barrels by the walls', note='Rain from the roof, by a wall.')),
         ('farm_wheelbarrow', wheelbarrow(seed=3), dict(
             name='Wheelbarrow', purpose='work', role='barrow', cells=(3, 1), fp=_fp(2, 1),
             collision={'shape': 'rect', 'rect': [-8.0, -3.0, 18, 3]}, shadow=(22, 3),
             requires=[_rel('near', 'muck_heap', 4, 'left by the muck heap or the beds it serves')], forbids=[OFF_ROUTE, OFF_WATER],
-            size_class='barrow (size-guide 3: cart, small)', eastward='17: the farm\'s tools left where they are used',
+            size_class='handcart', eastward='17: the farm\'s tools left where they are used',
             note='A barrow by the muck heap.')),
         ('farm_scarecrow', scarecrow(seed=4), dict(
             name='Scarecrow', purpose='grow', role='scarecrow', cells=(3, 1), fp=_fp(1, 1),
             collision={'shape': 'rect', 'rect': [-1.5, -1.5, 3, 1.5]}, shadow=(8, 3),
             requires=[_rel('within', 'garden', 3, 'in the crops it keeps the birds off')], forbids=[OFF_ROUTE, OFF_WATER],
-            size_class='scarecrow (a man\'s height: 1.0 A on its pole)', eastward='17: a figure in the field, its coat patched',
+            size_class='scarecrow', eastward='17: a figure in the field, its coat patched',
             note='A scarecrow in the beds.')),
         ('farm_feed_sacks', feed_sacks(seed=5), dict(
             name='Feed sacks', purpose='store', role='sacks', cells=(2, 1), fp=_fp(2, 1),
             collision={'shape': 'rect', 'rect': [-8.0, -4.0, 16, 4]}, shadow=(18, 3),
             requires=[_rel('near', 'stock', 8, 'by the stock it feeds, at a shelter or a coop')], forbids=[OFF_ROUTE, OFF_WATER],
-            size_class='sack (size-guide 3)', eastward='17: sacks by the barn door', note='Sacks of feed on a pallet.')),
+            size_class='pile', eastward='17: sacks by the barn door', note='Sacks of feed on a pallet.')),
         ('farm_muck_heap', muck_heap(seed=6), dict(
             name='Muck heap', purpose='store', role='muck_heap', cells=(3, 1), fp=_fp(3, 1),
             collision={'shape': 'rect', 'rect': [-10.0, -4.0, 20, 4]}, shadow=(26, 3),
             requires=[_rel('near', 'stock', 10, 'mucked out of the pens beside it')], forbids=[OFF_ROUTE, OFF_WATER],
-            size_class='heap (size-guide 3)', eastward='17: the farm\'s heaps of straw and dung, a fork in one',
+            size_class='pile', eastward='17: the farm\'s heaps of straw and dung, a fork in one',
             note='Straw and dung forked out of the pens, steaming.')),
     ]
 
@@ -1517,6 +1541,7 @@ def build(write=True, force=False):
     out = {}
     pieces = []
     for pid, frames, fps, kw in animals():
+        frames = trim(frames)
         still = frames[0]
         sp = os.path.join(ART, pid + '.png')
         st = os.path.join(ART, pid + '_idle.png')
@@ -1527,6 +1552,7 @@ def build(write=True, force=False):
         pieces.append(_base(pid, kw.pop('name'), sp, (still.ax, still.ay), (still.W, still.H), kw.pop('purpose'), kw.pop('role'),
                             anim=anim, **kw))
     for pid, pic, kw in statics():
+        pic = trim([pic])[0]
         sp = os.path.join(ART, pid + '.png')
         out[sp] = to_rgba(pic.a)
         pieces.append(_base(pid, kw.pop('name'), sp, (pic.ax, pic.ay), (pic.W, pic.H), kw.pop('purpose'), kw.pop('role'), **kw))
@@ -1539,6 +1565,7 @@ def build(write=True, force=False):
         'crossroads_trough': [('trough', trough(seed=71))],
     }
     for pid, vs in redraw.items():
+        vs[:] = [(vid, trim([pic])[0]) for vid, pic in vs]
         for vid, pic in vs:
             out[os.path.join(ART, vid + '.png')] = to_rgba(pic.a)
     if write:

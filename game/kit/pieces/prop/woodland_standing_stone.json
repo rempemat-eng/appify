@@ -76,6 +76,10 @@
     "cells": 4,
     "note": "one of a ring: its neighbours within four cells"
    }
+  ],
+  "provides": [
+   "feature",
+   "view"
   ]
  },
  "rendering": {

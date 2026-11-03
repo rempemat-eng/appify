@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_horse.png",
    "foot": [
-    68,
-    110
+    53,
+    88
    ]
   }
  ],
@@ -28,15 +28,15 @@
  },
  "geometry": {
   "size_px": [
-   136,
-   116
+   93,
+   89
   ],
   "size_cells": [
-   6,
+   4,
    4
   ],
   "z_sort": "foot",
-  "height_px": 110,
+  "height_px": 88,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,8 +47,8 @@
    ]
   },
   "foot": [
-   68,
-   110
+   53,
+   88
   ],
   "footprint": [
    [
@@ -121,8 +121,8 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_horse_idle.png",
     "frame_px": [
-     136,
-     116
+     93,
+     89
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true,
@@ -139,7 +139,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "horse (size-guide 2: livestock)",
+  "size_class": "horse",
   "eastward_ref": "17: cows 0.9 A and pigs 0.55 A, chunky with a dark outline",
   "painter": {
    "module": "scripts.art.kit.farm",

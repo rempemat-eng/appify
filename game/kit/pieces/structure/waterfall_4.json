@@ -97,7 +97,11 @@
     "note": "water on the tier above, as wide as the fall"
    }
   ],
-  "composition": "axis"
+  "composition": "axis",
+  "provides": [
+   "view",
+   "water"
+  ]
  },
  "rendering": {
   "cast_shadow": {

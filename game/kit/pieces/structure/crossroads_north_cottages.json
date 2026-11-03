@@ -310,6 +310,10 @@
     "rel": "on",
     "what": "water"
    }
+  ],
+  "provides": [
+   "home",
+   "hearth"
   ]
  },
  "rendering": {

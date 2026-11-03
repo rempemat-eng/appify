@@ -6,15 +6,15 @@
  "biomes": [
   "village"
  ],
- "version": 3,
+ "version": 4,
  "variants": [
   {
    "id": "beds_scorched",
    "weight": 1.0,
    "png": "res://kit/props/art/farm/beds_scorched.png",
    "foot": [
-    126,
-    130
+    122,
+    122
    ]
   }
  ],
@@ -27,8 +27,8 @@
  },
  "geometry": {
   "size_px": [
-   252,
-   136
+   241,
+   128
   ],
   "size_cells": [
    11,
@@ -39,8 +39,8 @@
    "shape": "none"
   },
   "foot": [
-   126,
-   130
+   122,
+   122
   ],
   "footprint": []
  },

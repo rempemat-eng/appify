@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_churns.png",
    "foot": [
-    30,
-    44
+    27,
+    35
    ]
   }
  ],
@@ -28,15 +28,15 @@
  },
  "geometry": {
   "size_px": [
-   60,
-   48
+   55,
+   39
   ],
   "size_cells": [
    2,
-   1
+   2
   ],
   "z_sort": "foot",
-  "height_px": 44,
+  "height_px": 35,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,8 +47,8 @@
    ]
   },
   "foot": [
-   30,
-   44
+   27,
+   35
   ],
   "footprint": [
    [
@@ -107,7 +107,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "churn (size-guide 3: barrel)",
+  "size_class": "barrel",
   "eastward_ref": "17: tins and buckets by the barn",
   "painter": {
    "module": "scripts.art.kit.farm",

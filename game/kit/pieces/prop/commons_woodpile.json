@@ -1,0 +1,123 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "commons_woodpile",
+ "name": "Woodpile",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "woodpile",
+   "weight": 1.0,
+   "png": "res://kit/props/art/commons/woodpile.png",
+   "foot": [
+    35,
+    43
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Fuel stacked by the hearth it feeds."
+ },
+ "geometry": {
+  "size_px": [
+   70,
+   44
+  ],
+  "size_cells": [
+   3,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 43,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -11.0,
+    -4.0,
+    22,
+    4
+   ]
+  },
+  "foot": [
+   35,
+   43
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "store",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "needs": [
+   {
+    "what": "hearth",
+    "cells": 4,
+    "note": "fuel is stacked against the house with the chimney"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    26,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "woodpile",
+  "eastward_ref": "17 and 12: split logs stacked under the eaves, cut ends lit",
+  "painter": {
+   "module": "scripts.art.kit.commons",
+   "fn": "commons_woodpile",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/commons.py",
+  "todo": []
+ }
+}

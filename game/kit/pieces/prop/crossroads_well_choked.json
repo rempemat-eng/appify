@@ -95,7 +95,10 @@
   "stages": [
    "broken"
   ],
-  "purpose": "water"
+  "purpose": "water",
+  "provides": [
+   "feature"
+  ]
  },
  "rendering": {
   "cast_shadow": {

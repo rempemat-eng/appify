@@ -196,6 +196,48 @@ def _farm_rows():
 
 TABLE.update(_farm_rows())
 
+
+def _commons_rows():
+    """The village commons (scripts/art/kit/commons.py): written by that painter (None keeps)."""
+    rows = {
+        'commons_washing_line': ('work', 'washing_line', 'In a house\'s back yard (needs home 4, yard side); never in wild woods.'),
+        'commons_chopping_block': ('work', 'chopping_block', 'Near a hearth (needs hearth 6), by the woodpile.'),
+        'commons_woodpile': ('store', 'store', 'Against a house with a chimney (needs hearth 4).'),
+        'commons_bench': ('rest', 'seat', 'Facing a feature, a view, water or the land falling away (faces, 6 cells).'),
+        'commons_notice_board': ('guide', 'marker', 'At a route\'s edge where people pass; never in wild woods.'),
+        'commons_pump': ('water', 'centrepiece', 'On a green near homes; a feature benches face.'),
+        'commons_stall_produce': ('work', 'stall', 'At a route\'s edge on the green or square, beside its pair.'),
+        'commons_stall_cloth': ('work', 'stall', 'As the produce stall.'),
+        'commons_cart': ('store', 'cart', 'At a road\'s edge, off the way.'),
+        'commons_shrine': ('mark', 'marker', 'At the wayside; a feature to face.'),
+    }
+    out = {pid: (pu, ro, None, None, 'fine', note) for pid, (pu, ro, note) in rows.items()}
+    for pts in ('nes', 'esw', 'nsw', 'new', 'nesw'):
+        out['commons_fingerpost_' + pts] = ('guide', 'signpost', None, None, 'fine',
+                                            'At a junction whose routes leave %s (points).' % '-'.join(pts.upper()))
+    return out
+
+
+TABLE.update(_commons_rows())
+
+# What the existing pieces offer the placement logic (provides) and where they never stand (avoid):
+# check_plan reads them; apply() writes them.
+LOGIC = {
+    **{pid: {'provides': ['home', 'hearth']} for pid in ('crossroads_bakery', 'crossroads_fern_cottage', 'crossroads_herbalist',
+                                                         'crossroads_hut', 'crossroads_north_cottages')},
+    'crossroads_library': {'provides': ['hearth']},
+    'crossroads_smithy': {'provides': ['hearth']},
+    'crossroads_well': {'provides': ['feature', 'water']},
+    'crossroads_well_choked': {'provides': ['feature']},
+    **{pid: {'provides': ['feature', 'view']} for pid in ('woodland_standing_stone', 'woodland_standing_stone_b', 'woodland_standing_stone_broken',
+                                                          'woodland_standing_stone_lean', 'woodland_standing_stone_low',
+                                                          'woodland_standing_stone_runes')},
+    **{pid: {'provides': ['view', 'water']} for pid in ('waterfall_1', 'waterfall_1_tall', 'waterfall_2', 'waterfall_2_tall', 'waterfall_3',
+                                                        'waterfall_3_tall', 'waterfall_4', 'waterfall_4_tall')},
+    **{pid: {'avoid': ['wild_woods']} for pid in ('crossroads_kit_lantern', 'crossroads_lantern_lit', 'crossroads_lantern_dark',
+                                                  'crossroads_notice_board', 'crossroads_stall')},
+}
+
 PURPOSES = ('contain', 'exclude', 'mark', 'rest', 'light', 'store', 'feed', 'cross', 'guide', 'work',
             'live', 'grow', 'climb', 'flow', 'care', 'water', 'aftermath')
 
@@ -292,20 +334,22 @@ def check_plan(plan, lib=None, mats=None) -> list:
             if near_trees >= 3 and not any(_dist(occ, o) <= 8 for o in homes):
                 f('rules.avoid', eid, 'stands in wild woods (%d trees within 4 cells, no home within 8)' % near_trees, at)
         if pl.get('points'):
+            # the ways out of the junction: for each side, a route crossing the band 3 to 5 cells
+            # out from the post (2 either side of its line), so a two-cell lane counts once
             fx, fy = int(pos[0]), int(pos[1] - 1e-7)
-            best = None
-            for cy in range(fy - 1, fy + 2):
-                for cx in range(fx - 1, fx + 2):
-                    if (cx, cy) not in route:
-                        continue
-                    dirs = {d for d, (ux, uy) in DIRS.items() if (cx + ux, cy + uy) in route}
-                    if len(dirs) >= 3 and (best is None or len(dirs) > len(best[1])):
-                        best = ((cx, cy), dirs)
-            if best is None:
-                f('rules.points', eid, 'a signpost stands at no junction (a route cell with three or more ways out beside it)', at)
-            elif set(pl['points']) != best[1]:
+            dirs = set()
+            for d, (ux, uy) in DIRS.items():
+                for k in range(3, 6):
+                    for w in range(-2, 3):
+                        cx_, cy_ = fx + ux * k + uy * w, fy + uy * k + ux * w
+                        if (cx_, cy_) in route:
+                            dirs.add(d)
+            if len(dirs) < 3:
+                f('rules.points', eid, 'a signpost stands at no junction (routes leave its corner %s: three or more ways make one)'
+                  % (''.join(d for d in 'nesw' if d in dirs) or 'nowhere'), at)
+            elif set(pl['points']) != dirs:
                 f('rules.points', eid, 'its arms point %s but the routes leave the junction %s' % (''.join(d for d in 'nesw' if d in pl['points']),
-                                                                                                   ''.join(d for d in 'nesw' if d in best[1])), at)
+                                                                                                   ''.join(d for d in 'nesw' if d in dirs)), at)
     return out
 
 
@@ -317,6 +361,11 @@ def check_zones() -> list:
         if fn.endswith('.json'):
             plan = json.load(open(os.path.join(zdir, fn)))
             out += [(fn[:-5], x) for x in check_plan(plan)]
+    # the review studies built from kit pieces (farm_study, village_study)
+    from scripts.art.kit import build as _B  # noqa: F401  (configures the density)
+    from scripts.art.kit import farm_study, village_study
+    for name, mod in (('farm_study', farm_study), ('village_study', village_study)):
+        out += [(name, x) for x in check_plan(mod.plan())]
     return out
 
 
@@ -333,6 +382,7 @@ def _files():
 def apply(piece: dict) -> dict:
     purpose, role, req, forb, _v, _n = TABLE[piece['id']]
     pl = piece.setdefault('placement', {})
+    pl.update(LOGIC.get(piece['id'], {}))
     pl['purpose'] = purpose
     if role:
         pl['role'] = role
@@ -394,7 +444,18 @@ Totals: %s.
 - ~~Animals and pen boundaries~~ (3 Nov): hens, sheep, a hen ark, a field shelter and fence cells in
   wattle and picket that close loops (`scripts/art/kit/farm.py`, `fences.py`; the loops and what they
   hold are checked by `enclosures.py`). Still missing: a cow, a horse and a paddock rail.
-- **A signpost for junctions** (a waystone stands in for now).
+- ~~A signpost for junctions~~ (3 Nov): fingerposts, one per set of arms (`commons_fingerpost_*`);
+  their arms must point along the routes that leave the junction (`placement.points`): the routes crossing a band 3 to 5 cells out from the post on each side.
+
+## Placement logic beyond relations (3 Nov)
+
+`placement_audit.check_plan` (in `--check`, over every kit zone and the village-green study) reads
+four fields relations cannot express: **needs** (a tag some piece `provides` within N cells, e.g. a
+woodpile needs a hearth; `side: yard` means behind the provider, so washing never hangs before the
+front door), **faces** (from the piece's `facing`, a cone N cells deep must hold a feature, a view,
+water or lower ground), **avoid** (`wild_woods`: three or more trees within 4 cells and no home
+within 8) and **points** (a signpost's arms equal the sides on which routes leave it, read 3 to 5 cells
+out, so a two-cell lane counts once; three ways or more make a junction).
 
 ## Table
 
@@ -432,7 +493,7 @@ def main(argv=None) -> int:
             for z, x in zf:
                 print('placement audit: %s %s %s' % (z, x['check'], x['message']))
             return 1
-        print('placement audit: %d pieces, each with a purpose; kit zones meet needs, faces, avoid and points' % len(files))
+        print('placement audit: %d pieces, each with a purpose; kit zones and the studies meet needs, faces, avoid and points' % len(files))
         return 0
     counts = write_doc()
     print('placement audit: %d pieces; %s' % (len(files), counts))

@@ -1,0 +1,115 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "commons_chopping_block",
+ "name": "Chopping block",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "chopping_block",
+   "weight": 1.0,
+   "png": "res://kit/props/art/commons/chopping_block.png",
+   "foot": [
+    22,
+    40
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Where the kindling is split."
+ },
+ "geometry": {
+  "size_px": [
+   47,
+   43
+  ],
+  "size_cells": [
+   2,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 40,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -4.0,
+    -3.0,
+    8,
+    3
+   ]
+  },
+  "foot": [
+   22,
+   40
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "work",
+  "role": "chopping_block",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "needs": [
+   {
+    "what": "hearth",
+    "cells": 6,
+    "note": "wood is split near the fire it feeds"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    12,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "stump",
+  "eastward_ref": "17: the axe in the block by the woodshed",
+  "painter": {
+   "module": "scripts.art.kit.commons",
+   "fn": "commons_chopping_block",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/commons.py",
+  "todo": []
+ }
+}

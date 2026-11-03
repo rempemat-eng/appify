@@ -865,5 +865,83 @@ class FencesAndFarm(unittest.TestCase):
                 np.testing.assert_array_equal(strip[:, k * w:(k + 1) * w] >= 0, m)
 
 
+
+class VillageCommons(unittest.TestCase):
+    """The commons carry where they belong (needs, faces, avoid, points), the audit catches each
+    one put in the wrong place, and the village-green study built from kit pieces passes every
+    check (scripts/art/kit/commons.py, placement_audit.check_plan, village_study.py; 3 Nov)."""
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.kit import placement_audit as PA
+        from scripts.art.kit import village_study as VS
+        cls.PA, cls.VS = PA, VS
+        cls.plan = VS.plan()
+
+    def _msgs(self, plan):
+        return [f['message'] for f in self.PA.check_plan(plan)]
+
+    def _moved(self, pid, at, **kw):
+        import copy
+        q = copy.deepcopy(self.plan)
+        for pc in q['pieces']:
+            if pc['id'] == pid:
+                pc['at'] = list(at)
+                pc.update(kw)
+        return q
+
+    def test_pictures_are_what_the_painter_draws(self):
+        from scripts.art.kit import commons
+        self.assertEqual(commons.check(), 0)
+
+    def test_the_village_study_passes_every_check(self):
+        from scripts.art.kit import enclosures as EN
+        from scripts.art.kit import relations as RL
+        from scripts.review import kit_rules as KR
+        self.assertEqual([f for f in KR.check_zone(self.plan) if f['severity'] == 'fault'], [])
+        self.assertEqual(RL.check_zone(self.plan), [])
+        self.assertEqual(EN.check_zone(self.plan), [])
+        self.assertEqual(self.PA.check_plan(self.plan), [])
+        self.assertEqual(self.VS.layout_faults(self.plan), [])
+
+    def test_washing_hangs_in_a_back_yard_not_before_the_door(self):
+        # south of the cottage (before its door) it is within reach of the home but not its yard
+        self.assertTrue(any(m.startswith('washing: needs a home') and 'yard' in m for m in self._msgs(self._moved('washing', (396, 312)))))
+        self.assertTrue(any(m.startswith('washing: needs a home') for m in self._msgs(self._moved('washing', (396, 672)))))
+
+    def test_firewood_needs_a_hearth(self):
+        self.assertTrue(any(m.startswith('woodpile: needs a hearth') for m in self._msgs(self._moved('woodpile', (300, 672)))))
+        self.assertTrue(any(m.startswith('block: needs a hearth') for m in self._msgs(self._moved('block', (300, 672)))))
+
+    def test_a_bench_faces_something(self):
+        self.assertTrue(any(m.startswith('bench: faces n') for m in self._msgs(self._moved('bench', (708, 432), facing='n'))))
+
+    def test_a_fingerpost_points_along_its_junction(self):
+        import copy
+        q = copy.deepcopy(self.plan)
+        for pc in q['pieces']:
+            if pc['id'] == 'fingerpost':
+                pc['piece'] = 'commons_fingerpost_esw'
+        self.assertTrue(any('its arms point esw but the routes leave the junction nesw' in m for m in self._msgs(q)))
+        self.assertTrue(any(m.startswith('fingerpost: a signpost stands at no junction') for m in self._msgs(self._moved('fingerpost', (204, 720)))))
+
+    def test_lamps_and_lines_stay_out_of_wild_woods(self):
+        import copy
+        q = copy.deepcopy(self.plan)
+        q['pieces'] = [pc for pc in q['pieces'] if pc['id'] not in ('cottage', 'herbalist', 'hut')]
+        for k, (x, y) in enumerate(((300, 600), (372, 600), (300, 672), (372, 672))):
+            q['pieces'].append({'id': 'tree_%d' % k, 'piece': 'woodland_oak', 'at': [x, y]})
+        for pc in q['pieces']:
+            if pc['id'] == 'lantern':
+                pc['at'] = [348, 648]
+        self.assertTrue(any(m.startswith('lantern: stands in wild woods') for m in self._msgs(q)))
+
+    def test_existing_pieces_provide_what_the_logic_reads(self):
+        lib = self.PA._files()
+        for pid, tags in (('crossroads_fern_cottage', {'home', 'hearth'}), ('crossroads_smithy', {'hearth'}),
+                          ('crossroads_well', {'feature', 'water'}), ('commons_pump', {'feature', 'water'})):
+            self.assertTrue(tags <= set(json.load(open(lib[pid]))['placement'].get('provides', [])), pid)
+
+
 if __name__ == '__main__':
     unittest.main()

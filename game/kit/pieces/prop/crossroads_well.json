@@ -109,6 +109,10 @@
     "cells": 8,
     "note": "water for homes: a square or a farmyard"
    }
+  ],
+  "provides": [
+   "feature",
+   "water"
   ]
  },
  "rendering": {
