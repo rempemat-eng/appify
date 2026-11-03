@@ -237,18 +237,18 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
     mix = np.zeros(a.shape)
     crease = np.zeros(a.shape, bool)
     hi = np.zeros(a.shape, bool)
-    curls = rng.uniform(-1, 1, (85, 2))                          # fewer, larger curls: soft at 3x, not speckled
+    curls = rng.uniform(-1, 1, (48, 2))                          # few, large curl clusters: soft at 3x, never speckled
     curls = curls[(curls ** 2).sum(1) <= 1.08]
     cm_all = np.zeros(a.shape, bool)
     for ux, uy in sorted(curls.tolist(), key=lambda c: c[1]):
         px, py = cx + ux * (rx - 2.0), by + uy * (ry - 1.5)
-        r1, r2 = rng.uniform(3.2, 4.2), rng.uniform(2.5, 3.2)
+        r1, r2 = rng.uniform(4.2, 5.4), rng.uniform(3.2, 4.0)
         m = ((X - px) / r1) ** 2 + ((Y - py) / r2) ** 2 <= 1
         inner = ((X - px + 0.7) / (r1 - 0.9)) ** 2 + ((Y - py + 0.7) / (r2 - 0.8)) ** 2 <= 1
         crease = (crease & ~m) | (m & ~inner & ((X - px) + (Y - py) > 0.3))
-        hi = (hi & ~m) | (m & ((X - px + 1.1) ** 2 + (Y - py + 1.0) ** 2 <= 0.9))
+        hi = (hi & ~m) | (m & ((X - px + 1.4) ** 2 + (Y - py + 1.2) ** 2 <= 2.3))
         cm_all |= m
-        mix = np.where(m, rng.random() * 0.999, mix)                   # each curl its own cream
+        mix = np.where(m, 0.1 if rng.random() < 0.7 else 0.7, mix)    # most curls one cream, a few yellowed
         t = np.where(m, (2.1 if lie else 2.5) + 1.5 * sphere_light(X, Y, cx, by, rx, ry) + 1.3 * sphere_light(X, Y, px, py, r1, r2), t)
     fleece = (fleece | cm_all) & (Y < yb - (0 if lie else 7))
     rpaint(a, fleece, WOOL, t, mix)
@@ -271,7 +271,7 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
             a[ky:ky + 1, kx + face * 5 - (1 if face > 0 else 0)] = C('soot', 0)
         a[fleece & (Y >= yb - 2)] = C('stone_warm', 1)
     belly = fleece & (Y > by + ry * 0.55)
-    rpaint(a, belly, [('stone_warm', 'sand_cool', 'sand'), ('stone_cool', 'stone_warm', 'sand_cool')], 1.6 + 0.9 * (nz > 0.55), mix)
+    rpaint(a, belly, [('stone_warm', 'sand_cool', 'sand'), ('stone_cool', 'stone_warm', 'sand_cool')], 1.6 + 0.9 * (Y < by + ry * 0.75), mix)
     # the head
     if pose == 'graze':
         chew = 1 if frame == 'chew' else 0
@@ -319,7 +319,7 @@ BEASTS = {
     # width, half height, how far before the chest, how high above the back's middle; coat; extras
     'cow': dict(c=(164, 116, 82, 112), rx=40, ry=22, leg=15, lw=9, head=(11, 11.5, 2, 11), coat='tan', horns=True, udder=True, tail=24, ears='side'),
     'calf': dict(c=(96, 72, 48, 68), rx=20, ry=12, leg=9, lw=6, head=(7.5, 8, 1, 7), coat='pied', horns=False, udder=False, tail=14, ears='side'),
-    'horse': dict(c=(164, 132, 82, 128), rx=34, ry=18, leg=19, lw=8, head=(8, 11.5, 9, 33), coat='bay', horns=False, udder=False, tail=28, ears='up', mane=True),
+    'horse': dict(c=(164, 132, 82, 128), rx=29, ry=18, leg=19, lw=8, head=(8, 11.5, 14, 33), coat='bay', horns=False, udder=False, tail=28, ears='up', mane=True),
     'pig': dict(c=(100, 64, 50, 60), rx=23, ry=13.5, leg=8, lw=7, head=(8.5, 9, 4, 2), coat='pig', horns=False, udder=False, tail=0, ears='flop', snout=True),
     'goat': dict(c=(88, 80, 44, 76), rx=19, ry=12, leg=9, lw=5, head=(6.5, 8, 2, 12), coat='goat', horns=True, udder=False, tail=5, ears='droop', beard=True),
     'goat_b': dict(c=(88, 80, 44, 76), rx=19, ry=12, leg=9, lw=5, head=(6.5, 8, 2, 12), coat='goat_b', horns=True, udder=False, tail=5, ears='droop', beard=True),
@@ -404,7 +404,7 @@ def beast(kind, frame='a', face=1, seed=0):
         u = (X - x0) / lw
         sets = mark_sets if B['coat'] == 'bay' and True else body_sets
         tl = 2.6 - (1.0 if far else 0) + 1.1 * (u < 0.25) - 1.0 * (u > 0.75) - 0.6 * f_
-        rpaint(a, legm, body_sets, tl, smooth)
+        rpaint(a, legm, [body_sets[0] if not far else body_sets[-1]], tl, 0)
         if B['coat'] == 'bay':                                   # a bay's black points, one white sock
             lower = legm & (Y > yh - leg * 0.7)
             rpaint(a, lower, mark_sets, 1.4 - (0.6 if far else 0) + 1.0 * (u < 0.3), 0.2)
@@ -413,70 +413,96 @@ def beast(kind, frame='a', face=1, seed=0):
         hoof = legm & (Y >= yh - 3)
         a[hoof] = C('soot', 0 if far else 1)
         a[hoof & (Y == yh - 3) & (u < 0.6)] = C('slate_cool', 2 if far else 3)
-    # the body's coat: lit on the upper left, the underside a band darker, a cool bounce at the
-    # very bottom, the hair's lie in faint strokes
+    # the body in planned clusters (round 5, after the art director's review: tones from a few
+    # large shapes, never from scattered pixels): a light plane along the back and over the shoulder
+    # and haunch, the mid flank, a core shadow band along the belly, light reflected up under it
+    # from the grass, a dark rim on the bottom contour; each its own ramp, each a solid shape
     depth = (Y - topr) / np.maximum(1, bottom - topr)
-    # the form: shoulder and haunch swell and catch the light, the barrel between in half shade
     sh = sphere_light(X, Y, cx + face * rx * 0.45, by - ry * 0.15, rx * 0.4, ry * 0.75)
     hn = sphere_light(X, Y, cx - face * rx * 0.5, by - ry * 0.2, rx * 0.42, ry * 0.8)
-    under_shade = 1.7 * np.clip((depth - 0.55) / 0.45, 0, 1)
-    pale = B['coat'] in ('pied', 'tan', 'goat')                  # a pale coat shows its form in more steps
-    t = (1.9 if pale else 2.3) + (1.9 if pale else 1.4) * lit + 0.8 * np.maximum(sh, hn) + 1.0 * (nz - 0.5) - under_shade
-    t = t + 0.6 * ((depth > 0.6) & (depth < 0.7) & (X * face < cx * face))    # the light bounced up onto the flank
-    strokes = (np.mod(X * 2 - Y * face * 3 + (rng.random(a.shape) < 0.2) * 3, 6) == 0) & (depth < 0.7)
-    t = t - 0.6 * strokes
-    rpaint(a, body, body_sets, t, smooth)
+    lobe = np.maximum(sh, hn)
+    east = (X - cx) / rx                                         # the light comes from the upper left
+    v = 0.4 * depth + 0.45 * (1 - lit) + 0.1 * east - 0.18 * np.clip(lobe, 0, 1)
+    v = ndi.gaussian_filter(v, 1.4)                              # band edges as smooth curves round the form
+    cuts = np.quantile(v[body], [0.06, 0.2, 0.36, 0.52, 0.68, 0.82, 0.93])
+    band = np.digitize(v, cuts)                                  # 0 the highlight .. 7 the rim
+    band = np.where(body & (Y >= bottom - 1), 7, band)
+    zone = np.select([band <= 1, band <= 3, band <= 5, band == 6], [0, 1, 2, 3], 4)
+    cool = ('dusk_cool', 'slate_cool', 'stone_cool') if B['coat'] != 'pig' else ('dusk_cool', 'crag', 'clay')
+    if B['coat'] == 'pig':                                       # a warm pink, not a cream
+        bands = [('crag_cool', 'clay', 'clay'), ('crag_cool', 'berry', 'berry'), ('crag_cool', 'berry', 'berry'), ('crag_cool', 'clay', 'clay'),
+                 ('crag_cool', 'crag_warm', 'crag_warm'), ('crag_cool', 'crag', 'crag'), cool, ('dusk_cool', 'crag', 'crag')]
+        tones_ = [5, 5, 4, 4, 3, 2, 3, 1]
+    else:
+        w_, m_ = body_sets[0], body_sets[min(1, len(body_sets) - 1)]
+        # one house ramp from the lit back to the belly (its hue shifts warm in the light and cool in
+        # the shade), a second close ramp for the half tones, the reflected light cool
+        bands = [w_, w_, w_, m_, w_, m_, cool, w_]
+        tones_ = [5, 4, 3, 3, 2, 2, 3, 1]
+    for k in range(8):                                           # each band one ramp and one tone: a solid shape
+        rpaint(a, body & (band == k), [bands[k]], np.full(a.shape, float(tones_[k])), 0)
     dark = np.zeros(a.shape, bool)
-    if B['coat'] in ('pied', 'tan'):                             # big soft-edged patches
+    if B['coat'] in ('pied', 'tan'):                             # big soft-edged patches, shaded by the same plan
         pn = noise(a.shape, np.random.default_rng(seed + 3), 6.0) + 0.2 * (X - cx) * face / rx
         patch = body & (pn > np.percentile(pn[body], 52 if B['coat'] == 'pied' else 55))
         patch = ndi.binary_opening(ndi.binary_closing(patch, iterations=2), iterations=2) & body
-        edge = patch & ~ndi.binary_erosion(patch, iterations=1)
-        rpaint(a, patch, mark_sets, 1.4 + 1.7 * lit + 0.6 * np.maximum(sh, hn) - 0.8 * under_shade - 0.4 * edge + 0.7 * (nz - 0.5) - 0.5 * strokes, smooth)
+        mt = [4, 4, 3, 3, 2, 2, 2, 1]
+        for k in range(8):
+            rpaint(a, patch & (band == k), [mark_sets[0]], np.full(a.shape, float(mt[k])), 0)
         dark = patch
     elif B['coat'] == 'goat':
         patch = body & (noise(a.shape, np.random.default_rng(seed + 5), 4.5) > 0.6)
-        patch = ndi.binary_opening(patch, iterations=1)
-        rpaint(a, patch, mark_sets, 2.4 + 1.6 * lit - 1.0 * (depth > 0.72), smooth)
+        patch = ndi.binary_opening(patch, iterations=2)
+        for k, tz in enumerate((4, 4, 3, 3, 2, 2, 2, 1)):
+            rpaint(a, patch & (band == k), [mark_sets[0] if k < 4 else mark_sets[-1]], np.full(a.shape, float(tz)), 0)
     elif B['coat'] == 'goat_b':                                  # a dark stripe down the back
         stripe = body & (Y - topr <= 2)
-        rpaint(a, stripe, mark_sets, 1.6 + 1.0 * lit, 0.3)
+        rpaint(a, stripe, [mark_sets[0]], 1.8 + 1.0 * (lobe > 0.4), 0)
         dark = stripe
-    elif B['coat'] == 'pig':                                     # mud splashed up the lower body and legs
-        mud = (body | (Y > fy - leg - 4)) & (a >= 0) & (Y > by + ry * 0.15) & \
-            (depth > 0.4) & (noise(a.shape, np.random.default_rng(seed + 7), 1.4) + 0.6 * depth > 0.95)
-        rpaint(a, mud, mark_sets, 1.6 + 1.2 * lit + 0.8 * (nz - 0.5), smooth)
-        bristle = body & (rng.random(a.shape) < 0.02) & (lit > 0.3)
-        a[bristle] = C('plaster_warm', 4)
-    # the coat's lie: short tufts of hair along the body, each a tone off its neighbours and a
-    # little off in hue (lit tufts on the lit side, shaded on the shaded), so a broad flank reads as
-    # hair, not as a flat fill
-    ys_, xs_ = np.nonzero(body & (depth < 0.85))
-    for k in rng.choice(len(ys_), size=max(1, len(ys_) // 10), replace=False):
-        y0_, x0_ = ys_[k], xs_[k]
-        code = a[y0_, x0_]
-        if code < 0:
-            continue
-        fam, tone = code // 8, code % 8
-        step = 1 if lit[y0_, x0_] > 0.25 and rng.random() < 0.6 else -1
-        sets_ = mark_sets if dark[y0_, x0_] else body_sets
-        alt = sets_[int(rng.integers(0, len(sets_)))]
-        nfam = FI[alt[2] if tone + step >= 4 else alt[0] if tone + step <= 1 else alt[1]]
-        for j in range(3):
-            yy, xx = y0_ + j // 2, x0_ + face * j
-            if 0 <= yy < H and 0 <= xx < W and body[yy, xx] and a[yy, xx] // 8 == fam:
-                a[yy, xx] = nfam * 8 + int(np.clip(tone + step, 0, 5))
-    if B['coat'] == 'bay':                                       # dapples on the quarters
-        for _ in range(12):
-            dx_, dy_ = rng.uniform(-0.9, -0.1) * face * rx, rng.uniform(-0.6, 0.3) * ry
-            ring = body & (np.abs(np.hypot(X - cx - dx_, Y - by - dy_) - 1.6) < 0.6)
-            a[ring] = np.minimum(a[ring] + 1, (a[ring] // 8) * 8 + 5)
-    rim = body & (Y - topr <= 0) & (lit > 0.05) & ~dark
+    elif B['coat'] == 'pig':                                     # two or three shaped splashes of mud on the belly and legs
+        mud = np.zeros(a.shape, bool)
+        for k, (ux, uy, sx, sy) in enumerate(((-0.45, 0.78, 7.0, 3.6), (0.25, 0.86, 6.0, 3.0), (0.7, 0.7, 3.6, 2.6))):
+            mx_, my_ = cx + face * ux * rx, by + uy * ry
+            blob = _ell(X, Y, mx_, my_, sx, sy) | _ell(X, Y, mx_ - face * sx * 0.6, my_ + sy * 0.9, sx * 0.5, sy * 0.9)
+            mud |= blob
+        mud &= (a >= 0) & (Y > by + ry * 0.3)
+        rpaint(a, mud, [mark_sets[0]], 2.0 + 0.8 * (Y < by + ry * 0.75) - 0.8 * (Y >= bottom - 1), 0)
+        rpaint(a, mud & ~ndi.binary_erosion(mud, iterations=1) & (Y < by + ry * 0.75), [mark_sets[2]], np.full(a.shape, 3.4), 0)   # a wet lit lip
+    # a few deliberate strokes of hair along the light plane's lower edge, 2 to 4 px each
+    edge_zone = body & (band >= 1) & (band <= 5) & ndi.binary_dilation(np.diff(band, axis=0, prepend=band[:1]) != 0, iterations=1)
+    ys_, xs_ = np.nonzero(edge_zone)
+    if len(ys_):
+        for k in rng.choice(len(ys_), size=min(len(ys_), int(rx * 1.6)), replace=False):
+            y0_, x0_ = ys_[k], xs_[k]
+            code = a[y0_, x0_]
+            up = band[y0_, x0_] >= 4                             # in the shade a lock catches light, in the light it shades
+            new = min(code + 1, (code // 8) * 8 + 5) if up else max(code - 1, (code // 8) * 8)
+            for (dy_, dx_) in ((0, 0), (0, 1), (1, 1), (1, 2)):           # a lock of hair: four connected pixels
+                yy, xx = y0_ + dy_, x0_ - face * dx_
+                if 0 <= yy < H and 0 <= xx < W and body[yy, xx] and a[yy, xx] == code:
+                    a[yy, xx] = new
+    if kind == 'horse':                                          # the chest and the hindquarter, each its own mass
+        crease = body & (np.abs(np.hypot((X - (cx - face * rx * 0.28)) / (rx * 0.5), (Y - (by + ry * 0.1)) / (ry * 1.05)) - 1.0) < 0.05) \
+            & ((X - (cx - face * rx * 0.28)) * face > 0) & (depth > 0.15) & (depth < 0.85)
+        a[crease] = np.maximum(a[crease] - 1, (a[crease] // 8) * 8)
+        chest = body & _ell(X, Y, cx + face * rx * 0.78, by + ry * 0.35, rx * 0.22, ry * 0.45) & (zone >= 1)
+        a[chest & (zone == 1)] = np.minimum(a[chest & (zone == 1)] + 1, (a[chest & (zone == 1)] // 8) * 8 + 5)
+    # the accents a painter would place: the shine on the shoulder and the hip bone (a few pixels,
+    # one cluster each), the patches' edges a step darker, a cool rim where the back turns from the
+    # light, the shade where the legs go up into the body
+    for lx_, ly_ in ((0.42, -0.5), (-0.5, -0.55)):
+        shine = body & _ell(X, Y, cx + face * rx * lx_ - face * 2, by + ry * ly_, 2.6, 1.6) & (band <= 2)
+        a[shine] = np.minimum(a[shine] + 1, (a[shine] // 8) * 8 + 5)
+    if B['coat'] in ('pied', 'tan'):
+        pe = dark & ~ndi.binary_erosion(dark, iterations=1) & (band >= 2)
+        a[pe] = np.maximum(a[pe] - 1, (a[pe] // 8) * 8)
+    back_rim = body & (Y - topr <= 1) & (east > 0.45)
+    a[back_rim] = np.maximum(a[back_rim] - 1, (a[back_rim] // 8) * 8)
+    for lx_ in (-0.55, 0.5):
+        ao = body & (np.abs(X - (cx + face * lx_ * rx)) <= B['lw'] / 2 + 1) & (Y >= bottom - 3) & (Y < bottom - 1)
+        a[ao] = np.maximum(a[ao] - 1, (a[ao] // 8) * 8)
+    rim = body & (Y - topr <= 0) & (east < 0.5) & ~dark
     a[rim] = C('sand_warm' if B['coat'] in ('bay', 'pig', 'goat_b') else 'plaster', 5)
-    hip = body & (np.hypot(X - (cx - face * rx * 0.45), Y - (by - ry * 0.45)) <= 1.6) & ~dark
-    a[hip] = np.minimum(a[hip] + 1, (a[hip] // 8) * 8 + 5)
-    under = body & (Y >= bottom - 1)
-    a[under] = np.maximum(a[under] - 1, (a[under] // 8) * 8)
     if B['udder']:
         ud = _ell(X, Y, cx - face * rx * 0.2, by + ry + 1, 4.5, 3.2) & ~body
         rpaint(a, ud, muzzle_sets, 2.4 + sphere_light(X, Y, cx - face * rx * 0.2, by + ry, 4.5, 3.2), 0)
@@ -505,15 +531,17 @@ def beast(kind, frame='a', face=1, seed=0):
     neck = V.seg_mask(a.shape, nx0, ny0, hx - face * hrx * 0.4, hy, hrx * (0.85 if kind != 'horse' else 0.95)) & ~body
     if kind == 'horse':
         neck |= V.seg_mask(a.shape, nx0 - face * 4, ny0 + 5, hx - face * hrx * 0.2, hy + 3, hrx * 1.05) & ~body
-    rpaint(a, neck, body_sets, 2.6 + 1.4 * sphere_light(X, Y, nx0, ny0 - 6, 9, 12) - 0.7 * (Y > ny0 + 4), smooth)
+    rpaint(a, neck, [body_sets[0] if kind != 'pig' else ('crag_cool', 'berry', 'berry')],
+           2.4 + 1.6 * (sphere_light(X, Y, nx0, ny0 - 6, 9, 12) > 0.25) - 0.9 * (Y > ny0 + 4), 0)
     if B.get('mane'):
         mane = V.seg_mask(a.shape, nx0 - face * 3, ny0 - 8, hx - face * hrx * 0.9, hy - hry * 0.75, 2.0) & ~body
-        rpaint(a, mane, mark_sets, 1.4 + 1.2 * (Y < ny0 - 12) + 0.6 * (np.mod(X + Y, 3) == 0), 0)
+        rpaint(a, mane, [mark_sets[0]], 1.4 + 1.2 * (Y < ny0 - 12), 0)
     head = _ell(X, Y, hx, hy, hrx, hry)
     if kind == 'horse':                                          # a long face down to the muzzle
         head |= V.seg_mask(a.shape, hx, hy - 2, hx + face * hrx * 0.9, hy + hry * 0.9, hrx * 0.78)
-    head_sets = mark_sets if B['coat'] == 'pied' else body_sets
-    rpaint(a, head, head_sets, 2.8 + 1.6 * sphere_light(X, Y, hx - face * 1, hy - 1, hrx, hry) + 0.5 * (nz - 0.5), smooth)
+    head_sets = mark_sets if B['coat'] == 'pied' else ([('crag_cool', 'berry', 'berry')] if kind == 'pig' else body_sets)
+    hl = sphere_light(X, Y, hx - face * 1, hy - 1, hrx, hry)
+    rpaint(a, head, [head_sets[0]], 2.4 + 1.0 * (hl > 0.0) + 1.0 * (hl > 0.45) - 0.8 * (hl < -0.45), 0)
     # where the head stands before the neck or the body, a shadow line parts them
     parted = head & ~ndi.binary_erosion(head, iterations=1) & ndi.binary_dilation(body | neck, iterations=1) & (X * face < hx * face)
     a[parted] = np.maximum(a[parted] - 2, (a[parted] // 8) * 8)
@@ -528,6 +556,7 @@ def beast(kind, frame='a', face=1, seed=0):
         rpaint(a, disc, muzzle_sets, 3.0 + 1.4 * sphere_light(X, Y, sx - face, sy - 1, 3.2, 3.8), 0)
         for dy_ in (-1, 1):
             a[int(round(sy + dy_)), int(round(sx + face * 0.5))] = C('berry_cool', 1)
+        a[int(round(sy - 3)), int(round(sx - face)):int(round(sx - face)) + 2] = C('plaster_warm', 5)   # the snout's highlight
     else:
         mx, my = hx + face * hrx * (0.5 if kind != 'horse' else 1.15), hy + hry * (0.5 if kind != 'horse' else 0.95) + jaw
         mrx, mry = hrx * (0.72 if kind != 'horse' else 0.62), hry * 0.42
@@ -544,6 +573,26 @@ def beast(kind, frame='a', face=1, seed=0):
     a[ey + 1, ex:ex + 2] = C(head_sets[0][0], 2)
     fx2 = int(round(hx + face * hrx * 0.62))
     a[ey - 1:ey + 1, fx2] = C('soot', 0)
+    # the face's planes (round 5): a darker brow over the eye, a lighter cheek below and behind it,
+    # a jaw line on the cow and the horse; one expression a kind
+    def step(m, k):
+        a[m] = np.clip(a[m] + k, (a[m] // 8) * 8, (a[m] // 8) * 8 + 5)
+    lift_brow = 1 if kind.startswith('goat') else 0                  # a goat's raised brow: cheeky
+    brow = head & (Y >= ey - 3 - lift_brow) & (Y <= ey - 2 - lift_brow) & (np.abs(X - (ex + 0.5)) <= 2)
+    step(brow, -1)
+    cheek = head & (Y >= ey + 2) & (Y <= ey + 3) & ((X - ex) * face <= -1) & ((X - ex) * face >= -4)
+    step(cheek, 1)
+    if kind in ('cow', 'calf', 'horse'):
+        jaw = head & ~ndi.binary_erosion(head, iterations=1) & (Y > hy + hry * 0.15) & ((X - hx) * face < hrx * 0.5)
+        step(jaw, -1)
+    if kind == 'cow':                                            # placid: the lid half down over the eye
+        a[ey - 1, ex:ex + 2] = C(head_sets[0][1], 2)
+        a[ey, ex + (1 if face < 0 else 0)] = C('plaster', 5)
+    elif kind == 'horse':                                        # alert: the white of the eye showing
+        a[ey, ex + (2 if face > 0 else -1)] = C('plaster_warm', 4)
+    elif kind.startswith('goat'):                                # cheeky: the mouth's corner turned up
+        mcx = int(round(hx + face * hrx * 0.5 - face * 2))
+        a[int(round(hy + hry * 0.5)) - 1, mcx] = C('soot', 2)
     # the ears break the outline
     flick = 2 if frame == 'ear' else 0
     top_y = hy - hry * 0.7
@@ -678,16 +727,16 @@ def hay_heap(seed=0):
     m = (((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 <= 1 + 1.6 * (rough - 0.5)) & (Y < 42)
     lit = sphere_light(X, Y, cx, cy, rx, ry)
     nz = noise(a.shape, rng, 0.9)
-    rpaint(a, m, STRAW, 1.4 + 1.4 * lit + 1.4 * (nz - 0.5), nz)          # the dark core between the layers
-    for layer, (n, base, fams) in enumerate(((140, 2.2, STRAW[1:2]), (150, 3.2, STRAW[:1]), (120, 4.2, STRAW[2:]))):
+    rpaint(a, m, STRAW, 1.4 + 1.4 * lit, 0.3)                          # the dark core between the layers
+    for layer, (n, base, fams) in enumerate(((60, 2.2, STRAW[1:2]), (70, 3.2, STRAW[:1]), (55, 4.2, STRAW[2:]))):
         for _ in range(n):
             x0, y0 = rng.uniform(cx - rx, cx + rx), rng.uniform(cy - ry, 41)
             ang = rng.uniform(-0.8, 0.8) + (math.pi if rng.random() < 0.5 else 0)
             L = rng.uniform(3, 8)
-            s = V.seg_mask(a.shape, x0, y0, x0 + L * math.cos(ang), y0 + L * math.sin(ang), 0.45) & m
+            s = V.seg_mask(a.shape, x0, y0, x0 + L * math.cos(ang), y0 + L * math.sin(ang), 0.7) & m
             if layer == 2:
                 s &= lit > 0.0                                          # the top layer catches the light
-            tone = base + 1.2 * lit + rng.uniform(-0.8, 0.8)
+            tone = base + 1.2 * lit + rng.choice([-0.6, 0.0, 0.6])
             rpaint(a, s, fams if rng.random() < 0.7 else STRAW, tone, rng.random())
     a[m & (Y >= 40)] = C('brass', 1)                                    # where it lies on the ground
     for _ in range(14):
@@ -1062,7 +1111,7 @@ def scarecrow(seed=0):
         for k in range(5):
             ang = rng.uniform(0.5, 2.6) if sy > 50 else rng.uniform(-0.8, 0.8) + (math.pi if sx < 30 else 0)
             L = rng.uniform(3, 6)
-            a[V.seg_mask(a.shape, sx, sy, sx + L * math.cos(ang), sy + L * math.sin(ang), 0.45)] = C('brass_warm' if k % 2 else 'sand_warm', 4)
+            a[V.seg_mask(a.shape, sx, sy, sx + L * math.cos(ang), sy + L * math.sin(ang), 0.7)] = C('brass_warm' if k % 2 else 'sand_warm', 4)
     head = ((X - 31) / 7.0) ** 2 + ((Y - 24) / 7.5) ** 2 <= 1
     rpaint(a, head, [('earth_cool', 'sand', 'sand_warm'), ('stone_warm', 'sand_cool', 'sand')], 2.6 + 1.6 * sphere_light(X, Y, 31, 24, 7, 7.5), nz)
     a[head & (np.mod(X + Y, 2) == 0) & (nz > 0.55)] -= 1                 # the hessian's weave
@@ -1128,7 +1177,7 @@ def muck_heap(seed=0):
     for _ in range(70):                                          # straw through it, brightest on top
         x0, y0 = rng.uniform(cx - rx, cx + rx), rng.uniform(cy - ry, 45)
         ang = rng.uniform(-0.8, 0.8) + (math.pi if rng.random() < 0.5 else 0)
-        sm = V.seg_mask(a.shape, x0, y0, x0 + 4 * math.cos(ang), y0 + 4 * math.sin(ang), 0.45) & m
+        sm = V.seg_mask(a.shape, x0, y0, x0 + 4 * math.cos(ang), y0 + 4 * math.sin(ang), 0.7) & m
         rpaint(a, sm, STRAW, 2.0 + 2.4 * lit, rng.random())
     a[m & (Y >= 43)] = C('soot', 1)
     wet = m & (Y >= 40) & (rng.random(a.shape) < 0.08)
@@ -1446,7 +1495,7 @@ def animals():
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['chickens'], 'as': 'contents'},
             eastward='17: the farm\'s animals, each a readable mass with its own pose', size_class='small_animal',
             note='A hen pecking in her run; 8 idle frames at 4 fps.')))
-    for pose, face, seed in (('stand', -1, 3), ('graze', 1, 5), ('lie', -1, 5)):
+    for pose, face, seed in (('stand', -1, 3), ('graze', 1, 5), ('lie', -1, 3)):
         frames = [sheep(pose, f, face, seed) for f in SHEEP_FRAMES[pose]]
         # each ewe keeps her own rhythm, as the hens do: the loop starts at a different beat
         shift = {'stand': 0, 'graze': 3, 'lie': 5}[pose]
@@ -1462,9 +1511,9 @@ def animals():
     # the paddock, the sty and the goat pen: (piece, kind, facing, seed, loop start, collision in
     # world px from the foot, footprint cols, what holds it, what it needs within, how far)
     stock = (
-        ('farm_cow', 'cow', 1, 5, 0, [-11.0, -3.0, 22, 3], 3, 'cattle', 'trough', 14, 'A cow in her paddock, her tail swishing'),
+        ('farm_cow', 'cow', 1, 8, 0, [-11.0, -3.0, 22, 3], 3, 'cattle', 'trough', 14, 'A cow in her paddock, her tail swishing'),
         ('farm_calf', 'calf', -1, 8, 3, [-6.5, -2.0, 13, 2], 2, 'cattle', 'trough', 14, 'A calf at grass near its mother, an ear flicking'),
-        ('farm_horse', 'horse', -1, 5, 6, [-9.0, -3.0, 18, 3], 3, 'horses', 'trough', 14, 'A bay horse in its paddock, dipping its head to graze'),
+        ('farm_horse', 'horse', -1, 1, 6, [-9.0, -3.0, 18, 3], 3, 'horses', 'trough', 14, 'A bay horse in its paddock, dipping its head to graze'),
         ('farm_pig', 'pig', 1, 2, 5, [-7.5, -3.0, 15, 3], 2, 'pigs', 'wallow', 6, 'A pig in the sty\'s run, its snout working'),
         ('farm_goat', 'goat', -1, 9, 1, [-6.0, -2.0, 12, 2], 2, 'goats', 'shelter', 8, 'A goat in its pen, chewing'),
         ('farm_goat_b', 'goat_b', 1, 3, 6, [-6.0, -2.0, 12, 2], 2, 'goats', 'shelter', 8, 'A brown goat grazing'),

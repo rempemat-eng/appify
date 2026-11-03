@@ -28,7 +28,7 @@
  },
  "geometry": {
   "size_px": [
-   95,
+   90,
    90
   ],
   "size_cells": [
@@ -121,7 +121,7 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_horse_idle.png",
     "frame_px": [
-     95,
+     90,
      90
     ],
     "reduced_motion": "hold:0",

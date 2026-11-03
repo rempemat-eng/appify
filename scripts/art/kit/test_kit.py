@@ -943,6 +943,22 @@ class VillageCommons(unittest.TestCase):
             self.assertTrue(tags <= set(json.load(open(lib[pid]))['placement'].get('provides', [])), pid)
 
 
+class ToneAndNoise(unittest.TestCase):
+    """No tone target met with speckle (Claude A's review of the v4 images): every farm and commons
+    picture keeps isolated pixels at 4 % or less, and the animals and the commons keep their runs of
+    3 pixels or fewer at 15 % or less (scripts/art/kit/tone_audit.py). Hens, 10 world px long,
+    are drawn in 1 to 3 pixel features (an eye, a comb, a beak) and are not held to the speck share."""
+
+    def test_no_picture_is_speckled(self):
+        from scripts.art.kit import tone_audit as TA
+        for p in TA.pictures():
+            r = TA.measure(p)
+            name = os.path.basename(p)
+            self.assertLessEqual(r['isolated'], TA.ISOLATED_MAX, name)
+            if ('commons' in p or name.startswith(('farm_cow', 'farm_calf', 'farm_horse', 'farm_pig', 'farm_goat', 'farm_sheep'))):
+                self.assertLessEqual(r['specks'], TA.SPECKS_MAX, name)
+
+
 # the prop sets' own tests (scripts/art/kit/sets/), run with the kit's
 from scripts.art.kit.sets.test_brackens import BrackensSet  # noqa: E402,F401
 

@@ -341,50 +341,40 @@ def notice_board(seed=0):
 
 
 def pump(seed=0):
-    """A village pump (90 x 112, well scale): a cast iron column painted dark green on a stone
-    plinth, lit down its west side, a fluted cap and a brass knob, its long handle raised, the spout
-    over a broad stone trough with water in it, a bucket on the trough's rim, moss at the foot."""
+    """A village hand pump (50 x 80, pump scale: chest high to a person, its handle raised over
+    it): a cast iron column painted dark green on a stone block, lit down its west side in one
+    clean band, a fluted cap and a brass knob, the spout over a small stone basin with water in it,
+    moss at the foot."""
     rng = np.random.default_rng(seed)
-    p = canvas(96, 118, 48, 114)
+    p = canvas(54, 86, 27, 82)
     a = p.a
     Y, X = grid(a)
-    nz = noise(a.shape, rng, 1.0)
-    V.prism(a, 4, 84, 92, 114, 8, 'stone', 3, side=4)                    # the trough
-    tr = (X >= 6) & (X < 90) & (Y >= 84) & (Y < 114)
-    front = (X >= 4) & (X < 86) & (Y >= 93) & (Y < 113)
-    V.ashlar(a, 4, 93, 86, 113, rng, hd=True, where=front)
-    _weather(a, tr | front, rng, 'ashlar_warm', 'stone_cool')
-    a[tr & (noise(a.shape, rng, 1.3) > 0.78) & (Y > 100)] = C('leaf_cool', 2)
-    water = (X >= 10) & (X < 86) & (Y >= 86) & (Y < 91)
-    rpaint(a, water, [('water_cool', 'water', 'sky'), ('dusk_cool', 'water_cool', 'water')],
-           2.2 + 1.6 * (np.mod(X + 2 * Y, 9) == 0) + 0.8 * (Y == 86), np.mod(X // 6 * 0.3, 1))
-    V.prism(a, 26, 72, 58, 86, 4, 'stone', 4, side=3)                   # the plinth
-    _weather(a, (X >= 26) & (X < 58) & (Y >= 72) & (Y < 86), rng, 'ashlar_warm', 'slate_cool')
-    green = [('dusk_cool', 'leaf_cool', 'leaf'), ('soot', 'leaf_cool', 'grass_cool'), ('slate_cool', 'leaf_cool', 'leaf_warm')]
-    col = (np.abs(X - 42) <= 8) & (Y >= 22) & (Y < 74)
-    u = (X - 42) / 8
-    rpaint(a, col, green, 2.4 + 1.7 * np.exp(-((u + 0.45) / 0.3) ** 2) - 1.0 * (u > 0.5) + 0.5 * (nz - 0.5), np.mod((Y // 9) * 0.37, 1))
-    for b in (30, 46, 66):                                               # the cast bands
-        a[col & (np.abs(Y - b) < 1)] = C('leaf_cool', 1)
-        a[col & (Y == b - 1) & (u < 0)] = C('leaf', 4)
-    a[col & (rng.random(a.shape) < 0.05) & (u > -0.6)] = C('crag_cool', 2)     # rust where the paint has gone
-    cap = ((X - 42) / 11.0) ** 2 + ((Y - 18) / 5.5) ** 2 <= 1
-    rpaint(a, cap, green, 2.6 + 1.8 * sphere_light(X, Y, 42, 18, 11, 5.5) - 0.8 * (np.mod(X, 3) == 0), 0)
-    knob = ((X - 42) / 3.2) ** 2 + ((Y - 10) / 3.2) ** 2 <= 1
-    rpaint(a, knob, [('brass', 'brass', 'brass_warm')], 3.0 + 1.8 * sphere_light(X, Y, 42, 10, 3.2, 3.2), 0)
-    V.bar(a, 48, 36, 80, 16, 1.6, 'iron', 3)                             # the handle, raised
-    a[V.seg_mask(a.shape, 79, 16, 84, 14, 2.0)] = C('iron', 2)
-    spout = (X >= 48) & (X < 64) & (Y >= 50) & (Y < 56)
-    rpaint(a, spout, green, 2.8 + 1.3 * (Y == 50) - 1.0 * (X > 60), 0)
-    a[56:86, 61:63] = C('water', 3)
-    a[56:86:3, 61] = C('sky', 4)
-    bucket = (X >= 70) & (X < 86) & (Y >= 68) & (Y < 85) & (np.abs(X - 78) <= 7 + (85 - Y) * 0.06)
-    rpaint(a, bucket, WOOD, 2.8 + 1.3 * (X < 73) - 1.0 * (X > 82) + 0.5 * (np.mod(X, 3) == 0), 0.4)
-    for b in (72, 80):
-        a[bucket & (np.abs(Y - b) < 0.6)] = C('iron', 2)
-    V.bar(a, 70, 68, 78, 60, 0.6, 'iron', 3)
-    V.bar(a, 78, 60, 86, 68, 0.6, 'iron', 3)
-    a[(Y == 68) & bucket] = C('water', 3)
+    V.prism(a, 4, 64, 50, 82, 5, 'stone', 3, side=3)                    # the basin
+    bas = (X >= 4) & (X < 50) & (Y >= 64) & (Y < 82)
+    front = (X >= 4) & (X < 45) & (Y >= 70) & (Y < 81)
+    V.ashlar(a, 4, 70, 45, 81, rng, hd=True, where=front)              # dressed blocks, each lit on its arris
+    _weather(a, bas, rng, 'ashlar_warm', 'stone_cool', 3.0)
+    a[(Y >= 65) & (Y < 69) & (X >= 28) & (X < 34)] = C('water_cool', 1)   # the column's shadow on the water
+    water = (X >= 7) & (X < 46) & (Y >= 65) & (Y < 69)
+    rpaint(a, water, [('water_cool', 'water', 'sky')], 2.4 + 1.2 * (Y == 65) + 1.0 * ((X > 12) & (X < 18)), 0)
+    a[bas & (Y > 76) & (X < 14)] = C('leaf_cool', 2)
+    green = [('dusk_cool', 'leaf_cool', 'leaf')]
+    col = (np.abs(X - 22) <= 6) & (Y >= 22) & (Y < 66)
+    u = (X - 22) / 6.0
+    rpaint(a, col, green, 2.4 + 1.6 * (u < -0.45) + 0.8 * ((u >= -0.45) & (u < 0)) - 1.0 * (u > 0.5), 0)
+    for b_ in (30, 52):                                                  # the cast bands
+        a[col & (np.abs(Y - b_) < 1)] = C('leaf_cool', 1)
+        a[col & (Y == b_ - 1) & (u < 0)] = C('leaf', 4)
+    cap = ((X - 22) / 8.5) ** 2 + ((Y - 19) / 4.0) ** 2 <= 1
+    rpaint(a, cap, green, 2.6 + 1.6 * (X < 20) - 0.8 * (X > 25), 0)
+    knob = ((X - 22) / 2.6) ** 2 + ((Y - 13) / 2.6) ** 2 <= 1
+    rpaint(a, knob, [('brass', 'brass', 'brass_warm')], 3.0 + 1.6 * ((X < 22) & (Y < 13)), 0)
+    V.bar(a, 26, 32, 48, 14, 1.4, 'iron', 3)                             # the handle, raised
+    a[V.seg_mask(a.shape, 46, 15, 50, 13, 1.6)] = C('iron', 2)
+    spout = (X >= 26) & (X < 38) & (Y >= 44) & (Y < 49)
+    rpaint(a, spout, green, 2.8 + 1.3 * (Y == 44) - 1.0 * (X > 35), 0)
+    a[49:66, 35:37] = C('water', 3)
+    a[49:66, 35] = C('sky', 4)
     V.finish(p)
     return p
 
@@ -648,11 +638,11 @@ def statics():
             forbids=[FM.OFF_ROUTE, FM.OFF_WATER], size_class='sign',
             eastward='12: notices pinned to boards by the doors', note='Notices where people pass.'),
          {'avoid': WILD}),
-        ('commons_pump', pump(seed=13), dict(
-            name='Village pump', purpose='water', role='centrepiece', cells=(4, 1), fp=FM._fp(4, 1),
-            collision={'shape': 'rect', 'rect': [-14.0, -6.0, 28, 6]}, shadow=(30, 4),
+        ('commons_pump', pump(seed=5), dict(
+            name='Village pump', purpose='water', role='centrepiece', cells=(2, 1), fp=FM._fp(2, 1),
+            collision={'shape': 'rect', 'rect': [-7.5, -5.0, 15, 5]}, shadow=(16, 3),
             requires=[_rel('near', 'house', 8, 'water for homes')], forbids=[FM.OFF_ROUTE, FM.OFF_WATER],
-            size_class='well', eastward='12: the square\'s ironwork painted dark, lit down one side',
+            size_class='pump', eastward='12: the square\'s ironwork painted dark, lit down one side',
             note='The pump on the green, its trough below the spout.'),
          {'provides': ['feature', 'water'], 'avoid': WILD}),
         ('commons_stall_produce', stall('produce', seed=15), dict(
