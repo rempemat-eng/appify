@@ -326,6 +326,11 @@ def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.nda
         for x in range(1, Cc - 1):
             if wcells[y, x]:
                 continue
+            if avoid is not None and avoid[y, x]:
+                # a face's foot is not the inside of a river's bend: a pool beside a cliff or under
+                # a fall gets no shingle bar (Claude A, 3 Nov: the woodland's half-hidden tan
+                # "stone" under the plunge pool's foam was this bar at the cascade's foot)
+                continue
             for dy, dx in ((1, 1), (1, -1), (-1, 1), (-1, -1)):
                 if not (wcells[y + dy, x] and wcells[y, x + dx] and wcells[y + dy, x + dx]):
                     continue
