@@ -671,7 +671,7 @@ def statics():
          {'provides': ['feature']}),
     ]
     for k, pts in enumerate(FINGERPOSTS):
-        out.append(('commons_fingerpost_' + pts, fingerpost(pts, seed=31 + k), dict(
+        out.append(('commons_fingerpost_' + pts, fingerpost(pts, seed={'new': 36}.get(pts, 31 + k)), dict(
             name='Fingerpost, %s' % '-'.join(pts.upper()), purpose='guide', role='signpost', cells=(3, 1), fp=[[0, -1]],
             collision={'shape': 'rect', 'rect': [-1.5, -1.5, 3, 1.5]}, shadow=(6, 2),
             forbids=[FM.OFF_ROUTE, FM.OFF_WATER], size_class='sign',

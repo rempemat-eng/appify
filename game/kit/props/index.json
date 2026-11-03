@@ -4127,7 +4127,7 @@
   "collision": null,
   "deck": null,
   "foot": [
-   36,
+   39,
    53
   ],
   "footprint": [],
@@ -4162,7 +4162,7 @@
   "variants": {
    "hay_bales": {
     "foot": [
-     36,
+     39,
      53
     ],
     "png": "res://kit/props/art/farm/hay_bales.png"
@@ -8034,8 +8034,8 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -53,
-    -86
+    -54,
+    -79
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_horse_idle.png"
@@ -8050,8 +8050,8 @@
   ],
   "deck": null,
   "foot": [
-   53,
-   86
+   54,
+   79
   ],
   "footprint": [
    [
@@ -8108,7 +8108,7 @@
   },
   "size_cells": [
    4,
-   4
+   3
   ],
   "snap": "cell",
   "story": {
@@ -8117,8 +8117,8 @@
   "variants": {
    "farm_horse": {
     "foot": [
-     53,
-     86
+     54,
+     79
     ],
     "png": "res://kit/props/art/farm/farm_horse.png"
    }
@@ -8472,7 +8472,7 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -28,
+    -29,
     -35
    ],
    "reduced_motion": "hold:0",
@@ -8488,7 +8488,7 @@
   ],
   "deck": null,
   "foot": [
-   28,
+   29,
    35
   ],
   "footprint": [
@@ -8551,7 +8551,7 @@
   "variants": {
    "farm_sheep_graze": {
     "foot": [
-     28,
+     29,
      35
     ],
     "png": "res://kit/props/art/farm/farm_sheep_graze.png"
