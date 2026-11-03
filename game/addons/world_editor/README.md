@@ -30,6 +30,13 @@ Building places from the kit (round 3, 3 Nov):
   the run's ends join a gate's ends, and existing cells of that style it meets are
   re-joined (an end becomes a corner or a T). One undo action; a refused cell refuses
   the run. Gates and stiles are still placed one at a time on their path.
+  While you drag, the canvas draws the arms of the piece each cell will get.
+- **Group copy and paste.** Select placed pieces (a pen, its gate and what it holds)
+  and press Copy selected pieces; Paste group, then click: the group lands with its
+  top-left cell under the pointer, every piece at its place relative to the others
+  (fences stay on their lines, contents inside them). Each piece is checked by the
+  shared relation engine against the zone with the rest of the group in it; all are
+  placed in one undo action, or none.
 - **Validate zone** now also runs `scripts/art/kit/enclosures.py` (closed loops,
   what each pen holds and needs, every stretch keeping its stock) and
   `placement_audit.check_plan` (needs a hearth or home, faces a feature, avoids wild
