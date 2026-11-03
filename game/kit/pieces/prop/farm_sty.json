@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_sty.png",
    "foot": [
-    51,
-    57
+    57,
+    115
    ]
   }
  ],
@@ -28,27 +28,27 @@
  },
  "geometry": {
   "size_px": [
-   102,
-   58
+   114,
+   116
   ],
   "size_cells": [
-   4,
-   2
+   5,
+   5
   ],
   "z_sort": "foot",
-  "height_px": 57,
+  "height_px": 115,
   "collision": {
    "shape": "rect",
    "rect": [
-    -17.0,
+    -17.5,
     -11.0,
-    34,
+    35,
     11
    ]
   },
   "foot": [
-   51,
-   57
+   57,
+   115
   ],
   "footprint": [
    [
@@ -122,7 +122,7 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    34,
+    36,
     5
    ],
    "dir": [

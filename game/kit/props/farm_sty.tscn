@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://kit/props/art/farm/farm_sty.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(102, 33)
+size = Vector2(105, 33)
 
 [node name="FarmSty" type="Node2D"]
 script = ExtResource("1")
@@ -13,7 +13,7 @@ piece_id = "farm_sty"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-51, -57)
+offset = Vector2(-57, -115)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0

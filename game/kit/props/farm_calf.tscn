@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" path="res://kit/props/art/farm/farm_calf.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(36, 6)
+size = Vector2(39, 6)
 
 [node name="FarmCalf" type="Node2D"]
 script = ExtResource("1")
@@ -16,13 +16,13 @@ piece_id = "farm_calf"
 texture = ExtResource("2")
 visible = false
 centered = false
-offset = Vector2(-28, -41)
+offset = Vector2(-29, -36)
 
 [node name="Idle" type="Sprite2D" parent="."]
 script = ExtResource("3")
 texture = ExtResource("4")
 centered = false
-offset = Vector2(-28, -41)
+offset = Vector2(-29, -36)
 hframes = 8
 fps = 3
 

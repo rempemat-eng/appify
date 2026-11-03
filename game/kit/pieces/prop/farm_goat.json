@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/farm/farm_goat.png",
    "foot": [
     27,
-    47
+    45
    ]
   }
  ],
@@ -24,31 +24,31 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A goat in its pen; 8 idle frames at 3 fps."
+  "note": "A goat in its pen, chewing; 8 idle frames at 3 fps."
  },
  "geometry": {
   "size_px": [
-   51,
-   51
+   53,
+   46
   ],
   "size_cells": [
    2,
    2
   ],
   "z_sort": "foot",
-  "height_px": 47,
+  "height_px": 45,
   "collision": {
    "shape": "rect",
    "rect": [
-    -5.0,
+    -6.0,
     -2.0,
-    10,
+    12,
     2
    ]
   },
   "foot": [
    27,
-   47
+   45
   ],
   "footprint": [
    [
@@ -100,7 +100,7 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    27,
+    32,
     4
    ],
    "dir": [
@@ -117,8 +117,8 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_goat_idle.png",
     "frame_px": [
-     51,
-     51
+     53,
+     46
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true,

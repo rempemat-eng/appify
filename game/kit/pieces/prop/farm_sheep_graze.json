@@ -28,8 +28,8 @@
  },
  "geometry": {
   "size_px": [
-   55,
-   36
+   57,
+   37
   ],
   "size_cells": [
    2,
@@ -117,8 +117,8 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_sheep_graze_idle.png",
     "frame_px": [
-     55,
-     36
+     57,
+     37
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true,

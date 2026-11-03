@@ -233,7 +233,7 @@
   "deck": null,
   "foot": [
    26,
-   91
+   92
   ],
   "footprint": [
    [
@@ -279,7 +279,7 @@
    "fingerpost_esw": {
     "foot": [
      26,
-     91
+     92
     ],
     "png": "res://kit/props/art/commons/fingerpost_esw.png"
    }
@@ -297,8 +297,8 @@
   ],
   "deck": null,
   "foot": [
-   9,
-   91
+   11,
+   92
   ],
   "footprint": [
    [
@@ -343,8 +343,8 @@
   "variants": {
    "fingerpost_nes": {
     "foot": [
-     9,
-     91
+     11,
+     92
     ],
     "png": "res://kit/props/art/commons/fingerpost_nes.png"
    }
@@ -363,7 +363,7 @@
   "deck": null,
   "foot": [
    26,
-   91
+   92
   ],
   "footprint": [
    [
@@ -409,7 +409,7 @@
    "fingerpost_nesw": {
     "foot": [
      26,
-     91
+     92
     ],
     "png": "res://kit/props/art/commons/fingerpost_nesw.png"
    }
@@ -428,7 +428,7 @@
   "deck": null,
   "foot": [
    26,
-   91
+   92
   ],
   "footprint": [
    [
@@ -474,7 +474,7 @@
    "fingerpost_new": {
     "foot": [
      26,
-     91
+     92
     ],
     "png": "res://kit/props/art/commons/fingerpost_new.png"
    }
@@ -493,7 +493,7 @@
   "deck": null,
   "foot": [
    26,
-   91
+   92
   ],
   "footprint": [
    [
@@ -539,7 +539,7 @@
    "fingerpost_nsw": {
     "foot": [
      26,
-     91
+     92
     ],
     "png": "res://kit/props/art/commons/fingerpost_nsw.png"
    }
@@ -626,23 +626,31 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.0,
-   -15.0,
-   42,
-   15
+   -42.0,
+   -18.0,
+   84,
+   18
   ],
   "deck": null,
   "foot": [
-   23,
-   66
+   45,
+   108
   ],
   "footprint": [
+   [
+    -2,
+    -1
+   ],
    [
     -1,
     -1
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ],
@@ -675,13 +683,13 @@
     3
    ],
    "size": [
-    54,
-    9
+    90,
+    12
    ]
   },
   "size_cells": [
-   2,
-   3
+   4,
+   5
   ],
   "snap": "cell",
   "story": {
@@ -690,8 +698,8 @@
   "variants": {
    "pump": {
     "foot": [
-     23,
-     66
+     45,
+     108
     ],
     "png": "res://kit/props/art/commons/pump.png"
    }
@@ -702,15 +710,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -18.0,
-   -9.0,
-   36,
-   9
+   -27.0,
+   -12.0,
+   54,
+   12
   ],
   "deck": null,
   "foot": [
-   21,
-   76
+   32,
+   106
   ],
   "footprint": [
    [
@@ -719,6 +727,10 @@
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ],
@@ -751,13 +763,13 @@
     3
    ],
    "size": [
-    42,
+    60,
     9
    ]
   },
   "size_cells": [
-   2,
-   3
+   3,
+   4
   ],
   "snap": "cell",
   "story": {
@@ -766,8 +778,8 @@
   "variants": {
    "shrine": {
     "foot": [
-     21,
-     76
+     32,
+     106
     ],
     "png": "res://kit/props/art/commons/shrine.png"
    }
@@ -778,17 +790,21 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -42.0,
+   -63.0,
    -12.0,
-   84,
+   126,
    12
   ],
   "deck": null,
   "foot": [
-   45,
-   75
+   69,
+   115
   ],
   "footprint": [
+   [
+    -3,
+    -1
+   ],
    [
     -2,
     -1
@@ -803,6 +819,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ],
@@ -835,13 +855,13 @@
     3
    ],
    "size": [
-    90,
+    132,
     9
    ]
   },
   "size_cells": [
-   4,
-   3
+   6,
+   5
   ],
   "snap": "cell",
   "story": {
@@ -850,8 +870,8 @@
   "variants": {
    "stall_cloth": {
     "foot": [
-     45,
-     75
+     69,
+     115
     ],
     "png": "res://kit/props/art/commons/stall_cloth.png"
    }
@@ -862,17 +882,21 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -42.0,
+   -63.0,
    -12.0,
-   84,
+   126,
    12
   ],
   "deck": null,
   "foot": [
-   45,
-   75
+   69,
+   115
   ],
   "footprint": [
+   [
+    -3,
+    -1
+   ],
    [
     -2,
     -1
@@ -887,6 +911,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ],
@@ -919,13 +947,13 @@
     3
    ],
    "size": [
-    90,
+    132,
     9
    ]
   },
   "size_cells": [
-   4,
-   3
+   6,
+   5
   ],
   "snap": "cell",
   "story": {
@@ -934,8 +962,8 @@
   "variants": {
    "stall_produce": {
     "foot": [
-     45,
-     75
+     69,
+     115
     ],
     "png": "res://kit/props/art/commons/stall_produce.png"
    }
@@ -1038,8 +1066,8 @@
   ],
   "deck": null,
   "foot": [
-   35,
-   43
+   43,
+   58
   ],
   "footprint": [
    [
@@ -1082,8 +1110,8 @@
    ]
   },
   "size_cells": [
-   3,
-   2
+   4,
+   3
   ],
   "snap": "cell",
   "story": {
@@ -1092,8 +1120,8 @@
   "variants": {
    "woodpile": {
     "foot": [
-     35,
-     43
+     43,
+     58
     ],
     "png": "res://kit/props/art/commons/woodpile.png"
    }
@@ -6141,8 +6169,8 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -28,
-    -41
+    -29,
+    -36
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_calf_idle.png"
@@ -6150,15 +6178,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -18.0,
+   -19.5,
    -6.0,
-   36,
+   39,
    6
   ],
   "deck": null,
   "foot": [
-   28,
-   41
+   29,
+   36
   ],
   "footprint": [
    [
@@ -6205,7 +6233,7 @@
     3
    ],
    "size": [
-    96,
+    105,
     12
    ]
   },
@@ -6220,8 +6248,8 @@
   "variants": {
    "farm_calf": {
     "foot": [
-     28,
-     41
+     29,
+     36
     ],
     "png": "res://kit/props/art/farm/farm_calf.png"
    }
@@ -6232,21 +6260,17 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -24.0,
-   -9.0,
-   48,
-   9
+   -12.0,
+   -6.0,
+   24,
+   6
   ],
   "deck": null,
   "foot": [
-   27,
-   35
+   16,
+   41
   ],
   "footprint": [
-   [
-    -1,
-    -1
-   ],
    [
     0,
     -1
@@ -6264,7 +6288,7 @@
   ],
   "function": {},
   "kind": "prop",
-  "name": "Milk churns",
+  "name": "Milk churn",
   "painted": false,
   "requires": [
    {
@@ -6281,12 +6305,12 @@
     3
    ],
    "size": [
-    48,
+    30,
     9
    ]
   },
   "size_cells": [
-   2,
+   1,
    2
   ],
   "snap": "cell",
@@ -6296,8 +6320,8 @@
   "variants": {
    "farm_churns": {
     "foot": [
-     27,
-     35
+     16,
+     41
     ],
     "png": "res://kit/props/art/farm/farm_churns.png"
    }
@@ -6308,23 +6332,47 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -24.0,
-   -12.0,
-   48,
-   12
+   -37.5,
+   -18.0,
+   75,
+   18
   ],
   "deck": null,
   "foot": [
-   25,
-   48
+   50,
+   119
   ],
   "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
    [
     -1,
     -1
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ],
@@ -6340,7 +6388,7 @@
   ],
   "function": {},
   "kind": "prop",
-  "name": "Hen ark",
+  "name": "Hen house",
   "painted": false,
   "requires": [
    {
@@ -6363,13 +6411,13 @@
     3
    ],
    "size": [
-    54,
-    12
+    90,
+    15
    ]
   },
   "size_cells": [
-   2,
-   2
+   4,
+   5
   ],
   "snap": "cell",
   "story": {
@@ -6378,8 +6426,8 @@
   "variants": {
    "farm_coop": {
     "foot": [
-     25,
-     48
+     50,
+     119
     ],
     "png": "res://kit/props/art/farm/farm_coop.png"
    }
@@ -6393,8 +6441,8 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -44,
-    -62
+    -52,
+    -60
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_cow_idle.png"
@@ -6402,15 +6450,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -30.0,
+   -33.0,
    -9.0,
-   60,
+   66,
    9
   ],
   "deck": null,
   "foot": [
-   44,
-   62
+   52,
+   60
   ],
   "footprint": [
    [
@@ -6461,7 +6509,7 @@
     3
    ],
    "size": [
-    162,
+    177,
     15
    ]
   },
@@ -6476,8 +6524,8 @@
   "variants": {
    "farm_cow": {
     "foot": [
-     44,
-     62
+     52,
+     60
     ],
     "png": "res://kit/props/art/farm/farm_cow.png"
    }
@@ -6568,7 +6616,7 @@
    "frames": 8,
    "offset": [
     -27,
-    -47
+    -45
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_goat_idle.png"
@@ -6576,15 +6624,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -15.0,
+   -18.0,
    -6.0,
-   30,
+   36,
    6
   ],
   "deck": null,
   "foot": [
    27,
-   47
+   45
   ],
   "footprint": [
    [
@@ -6631,7 +6679,7 @@
     3
    ],
    "size": [
-    81,
+    96,
     12
    ]
   },
@@ -6647,7 +6695,7 @@
    "farm_goat": {
     "foot": [
      27,
-     47
+     45
     ],
     "png": "res://kit/props/art/farm/farm_goat.png"
    }
@@ -6661,8 +6709,8 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -24,
-    -47
+    -26,
+    -45
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_goat_b_idle.png"
@@ -6670,15 +6718,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -15.0,
+   -18.0,
    -6.0,
-   30,
+   36,
    6
   ],
   "deck": null,
   "foot": [
-   24,
-   47
+   26,
+   45
   ],
   "footprint": [
    [
@@ -6702,7 +6750,7 @@
   ],
   "function": {},
   "kind": "prop",
-  "name": "Goat, grazing",
+  "name": "Goat, brown, grazing",
   "painted": false,
   "requires": [
    {
@@ -6725,7 +6773,7 @@
     3
    ],
    "size": [
-    81,
+    96,
     12
    ]
   },
@@ -6740,8 +6788,8 @@
   "variants": {
    "farm_goat_b": {
     "foot": [
-     24,
-     47
+     26,
+     45
     ],
     "png": "res://kit/props/art/farm/farm_goat_b.png"
    }
@@ -7011,7 +7059,7 @@
    "frames": 8,
    "offset": [
     -53,
-    -88
+    -86
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_horse_idle.png"
@@ -7027,7 +7075,7 @@
   "deck": null,
   "foot": [
    53,
-   88
+   86
   ],
   "footprint": [
    [
@@ -7094,7 +7142,7 @@
    "farm_horse": {
     "foot": [
      53,
-     88
+     86
     ],
     "png": "res://kit/props/art/farm/farm_horse.png"
    }
@@ -7188,8 +7236,8 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -29,
-    -34
+    -33,
+    -33
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_pig_idle.png"
@@ -7197,15 +7245,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.0,
+   -22.5,
    -9.0,
-   42,
+   45,
    9
   ],
   "deck": null,
   "foot": [
-   29,
-   34
+   33,
+   33
   ],
   "footprint": [
    [
@@ -7252,7 +7300,7 @@
     3
    ],
    "size": [
-    111,
+    120,
     12
    ]
   },
@@ -7267,8 +7315,8 @@
   "variants": {
    "farm_pig": {
     "foot": [
-     29,
-     34
+     33,
+     33
     ],
     "png": "res://kit/props/art/farm/farm_pig.png"
    }
@@ -7354,7 +7402,7 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -27,
+    -29,
     -37
    ],
    "reduced_motion": "hold:0",
@@ -7370,7 +7418,7 @@
   ],
   "deck": null,
   "foot": [
-   27,
+   29,
    37
   ],
   "footprint": [
@@ -7433,7 +7481,7 @@
   "variants": {
    "farm_sheep": {
     "foot": [
-     27,
+     29,
      37
     ],
     "png": "res://kit/props/art/farm/farm_sheep.png"
@@ -7542,8 +7590,8 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -26,
-    -26
+    -27,
+    -29
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_sheep_lie_idle.png"
@@ -7558,8 +7606,8 @@
   ],
   "deck": null,
   "foot": [
-   26,
-   26
+   27,
+   29
   ],
   "footprint": [
    [
@@ -7621,8 +7669,8 @@
   "variants": {
    "farm_sheep_lie": {
     "foot": [
-     26,
-     26
+     27,
+     29
     ],
     "png": "res://kit/props/art/farm/farm_sheep_lie.png"
    }
@@ -7633,15 +7681,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -48.0,
+   -60.0,
    -42.0,
-   96,
+   120,
    30
   ],
   "deck": null,
   "foot": [
-   53,
-   83
+   63,
+   115
   ],
   "footprint": [
    [
@@ -7661,6 +7709,10 @@
     -2
    ],
    [
+    2,
+    -2
+   ],
+   [
     -2,
     -1
    ],
@@ -7674,6 +7726,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ],
@@ -7712,13 +7768,13 @@
     3
    ],
    "size": [
-    102,
+    126,
     15
    ]
   },
   "size_cells": [
    5,
-   4
+   5
   ],
   "snap": "cell",
   "story": {
@@ -7727,8 +7783,8 @@
   "variants": {
    "farm_shelter": {
     "foot": [
-     53,
-     83
+     63,
+     115
     ],
     "png": "res://kit/props/art/farm/farm_shelter.png"
    }
@@ -7739,15 +7795,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -51.0,
+   -52.5,
    -33.0,
-   102,
+   105,
    33
   ],
   "deck": null,
   "foot": [
-   51,
-   57
+   57,
+   115
   ],
   "footprint": [
    [
@@ -7812,13 +7868,13 @@
     3
    ],
    "size": [
-    102,
+    108,
     15
    ]
   },
   "size_cells": [
-   4,
-   2
+   5,
+   5
   ],
   "snap": "cell",
   "story": {
@@ -7827,8 +7883,8 @@
   "variants": {
    "farm_sty": {
     "foot": [
-     51,
-     57
+     57,
+     115
     ],
     "png": "res://kit/props/art/farm/farm_sty.png"
    }

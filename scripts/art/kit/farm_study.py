@@ -95,15 +95,15 @@ def plan() -> dict:
     g = np.full((ROWS, COLS), '.', '<U1')
     g[19:21, :] = '#'                                   # the lane
     # the chicken run (4 x 4 cells), scratched bare inside, its gate's trodden way to the lane
-    g[8:11, 4:7] = 'w'
-    g[11:19, 5:7] = '#'
+    g[10:13, 3:9] = 'w'
+    g[12:19, 5:7] = '#'
     # the sheep fold (10 x 8 cells): worn by the trough and the gate, the way to the lane
     g[7:10, 11:19] = 'w'
     g[10:19, 15:17] = '#'
     # the cottage's door path through its garden gate to the lane
     g[12:19, 26:28] = '#'
     pieces = []
-    pieces += _ring('wattle', 3, 7, 7, 11, 5, 'run')
+    pieces += _ring('wattle', 2, 9, 5, 12, 5, 'run')
     pieces += _ring('wattle', 10, 20, 2, 10, 15, 'fold')
     pieces += _front_garden('picket', 24, 32, 11, 16, 26, 'garden')
     # the paddock (12 x 11 cells of post and rail): its gate's way to the lane, a footpath in over
@@ -112,7 +112,7 @@ def plan() -> dict:
     g[7:19, 44:46] = '#'
     g[0:8, 51] = '#'
     g[7, 51] = '#'
-    g[4:7, 39:43] = 'w'
+    g[5:8, 38:43] = 'w'
     pieces += _ring('rail', 38, 50, 2, 13, 44, 'paddock')
     for pc in pieces:
         if pc['id'].startswith('paddock_') and pc.get('variant') == 'plain' and pc['at'][0] % 96 == 12:
@@ -128,18 +128,18 @@ def plan() -> dict:
     g[14:19, 68:70] = '#'
     pieces += _front_garden('wattle', 66, 70, 8, 14, 68, 'sty')
     pieces += [
-        # the run: the ark against the back fence, two hens beside it, clear of the near fence
-        {'id': 'coop', 'piece': 'farm_coop', 'at': [120, 240]},
-        {'id': 'hen_1', 'piece': 'farm_hen_white', 'at': [156, 216]},
-        {'id': 'hen_2', 'piece': 'farm_hen_brown', 'at': [156, 240]},
+        # the run: the hen house against the back fence, two hens before it, clear of the near fence
+        {'id': 'coop', 'piece': 'farm_coop', 'at': [132, 264]},
+        {'id': 'hen_1', 'piece': 'farm_hen_white', 'at': [108, 288]},
+        {'id': 'hen_2', 'piece': 'farm_hen_brown', 'at': [204, 288]},
         # the fold: the shelter against the north hurdles, hay forked out in the far corner, the
-        # trough on the west side, the flock spread out, the gateway clear
-        {'id': 'shelter', 'piece': 'farm_shelter', 'at': [324, 168]},
-        {'id': 'hay', 'piece': 'crossroads_hay', 'at': [432, 120], 'variant': 'hay_heap'},
-        {'id': 'trough', 'piece': 'crossroads_trough', 'at': [312, 216]},
-        {'id': 'sheep_1', 'piece': 'farm_sheep', 'at': [384, 216]},
-        {'id': 'sheep_2', 'piece': 'farm_sheep_graze', 'at': [444, 216]},
-        {'id': 'sheep_3', 'piece': 'farm_sheep_lie', 'at': [432, 168]},
+        # trough by the east hurdles, the flock spread out along the south, the gateway clear
+        {'id': 'shelter', 'piece': 'farm_shelter', 'at': [324, 192]},
+        {'id': 'hay', 'piece': 'crossroads_hay', 'at': [444, 120], 'variant': 'hay_heap'},
+        {'id': 'trough', 'piece': 'crossroads_trough', 'at': [444, 168]},
+        {'id': 'sheep_1', 'piece': 'farm_sheep', 'at': [300, 240]},
+        {'id': 'sheep_2', 'piece': 'farm_sheep_graze', 'at': [432, 240]},
+        {'id': 'sheep_3', 'piece': 'farm_sheep_lie', 'at': [372, 240]},
         # bales stacked outside the fold's east side for the next forking out
         {'id': 'bales', 'piece': 'crossroads_hay', 'at': [540, 216], 'variant': 'hay_bales'},
         # the cottage and its front garden: two flower borders east of the door path
@@ -148,16 +148,16 @@ def plan() -> dict:
         {'id': 'border_2', 'piece': 'garden_flower_border', 'at': [708, 360]},
         # the paddock: the field shelter's back to the north rails, the trough by the west rails,
         # the cattle and the horse spread over the grass, off the footpath
-        {'id': 'pd_shelter', 'piece': 'farm_shelter', 'at': [1020, 168]},
+        {'id': 'pd_shelter', 'piece': 'farm_shelter', 'at': [996, 192]},
         {'id': 'pd_trough', 'piece': 'crossroads_trough', 'at': [996, 288]},
         {'id': 'horse', 'piece': 'farm_horse', 'at': [1140, 168]},
         {'id': 'cow', 'piece': 'farm_cow', 'at': [1140, 264]},
         {'id': 'calf', 'piece': 'farm_calf', 'at': [1140, 312]},
         # the goat pen: its shelter against the north hurdles, a trough, two goats
-        {'id': 'gt_shelter', 'piece': 'farm_shelter', 'at': [1356, 144]},
-        {'id': 'gt_trough', 'piece': 'crossroads_trough', 'at': [1452, 144]},
-        {'id': 'goat_1', 'piece': 'farm_goat', 'at': [1332, 216]},
-        {'id': 'goat_2', 'piece': 'farm_goat_b', 'at': [1452, 216]},
+        {'id': 'gt_shelter', 'piece': 'farm_shelter', 'at': [1356, 168]},
+        {'id': 'gt_trough', 'piece': 'crossroads_trough', 'at': [1380, 240]},
+        {'id': 'goat_1', 'piece': 'farm_goat', 'at': [1464, 192]},
+        {'id': 'goat_2', 'piece': 'farm_goat_b', 'at': [1464, 240]},
         # the sty, its pig and its wallow
         {'id': 'sty', 'piece': 'farm_sty', 'at': [1644, 216]},
         {'id': 'wallow', 'piece': 'farm_wallow', 'at': [1644, 336]},
@@ -219,6 +219,12 @@ def layout_faults(p: dict | None = None) -> list:
                 out.append('%s is drawn over the fence %s' % (pc['id'], q[4]))
         for other in things:
             if other['id'] < pc['id'] and hit(r, boxes[other['id']]):
+                # an animal a cell or more in front of a building stands before its foot, as a
+                # hen before her house: drawn after it, it hides only the house's base (round 4)
+                front, back = (pc, other) if pc['at'][1] > other['at'][1] else (other, pc)
+                if lib[front['piece']]['placement']['role'] == 'stock' and lib[back['piece']]['placement']['role'] in ('coop', 'shelter', 'sty') \
+                        and front['at'][1] - back['at'][1] >= CELL:
+                    continue
                 out.append('%s and %s are drawn over each other' % (pc['id'], other['id']))
         if lib[pc['piece']]['placement']['role'] == 'stock':
             fx, fy = pc['at']

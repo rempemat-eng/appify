@@ -1,7 +1,7 @@
 {
  "schema": "napattack.piece/1",
  "id": "farm_goat_b",
- "name": "Goat, grazing",
+ "name": "Goat, brown, grazing",
  "kind": "prop",
  "biomes": [
   "village",
@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_goat_b.png",
    "foot": [
-    24,
-    47
+    26,
+    45
    ]
   }
  ],
@@ -24,31 +24,31 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A goat, its head down; 8 idle frames at 3 fps."
+  "note": "A brown goat grazing; 8 idle frames at 3 fps."
  },
  "geometry": {
   "size_px": [
-   52,
-   51
+   53,
+   49
   ],
   "size_cells": [
    2,
    2
   ],
   "z_sort": "foot",
-  "height_px": 47,
+  "height_px": 45,
   "collision": {
    "shape": "rect",
    "rect": [
-    -5.0,
+    -6.0,
     -2.0,
-    10,
+    12,
     2
    ]
   },
   "foot": [
-   24,
-   47
+   26,
+   45
   ],
   "footprint": [
    [
@@ -100,7 +100,7 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    27,
+    32,
     4
    ],
    "dir": [
@@ -117,8 +117,8 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_goat_b_idle.png",
     "frame_px": [
-     52,
-     51
+     53,
+     49
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true,

@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/commons/stall_produce.png",
    "foot": [
-    45,
-    75
+    69,
+    115
    ]
   }
  ],
@@ -28,29 +28,33 @@
  },
  "geometry": {
   "size_px": [
-   90,
-   76
+   138,
+   116
   ],
   "size_cells": [
-   4,
-   3
+   6,
+   5
   ],
   "z_sort": "foot",
-  "height_px": 75,
+  "height_px": 115,
   "collision": {
    "shape": "rect",
    "rect": [
-    -14.0,
+    -21.0,
     -4.0,
-    28,
+    42,
     4
    ]
   },
   "foot": [
-   45,
-   75
+   69,
+   115
   ],
   "footprint": [
+   [
+    -3,
+    -1
+   ],
    [
     -2,
     -1
@@ -65,6 +69,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ]
@@ -99,7 +107,7 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    30,
+    44,
     3
    ],
    "dir": [

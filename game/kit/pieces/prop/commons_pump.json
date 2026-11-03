@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/commons/pump.png",
    "foot": [
-    23,
-    66
+    45,
+    108
    ]
   }
  ],
@@ -28,35 +28,43 @@
  },
  "geometry": {
   "size_px": [
-   46,
-   67
+   90,
+   109
   ],
   "size_cells": [
-   2,
-   3
+   4,
+   5
   ],
   "z_sort": "foot",
-  "height_px": 66,
+  "height_px": 108,
   "collision": {
    "shape": "rect",
    "rect": [
-    -7.0,
-    -5.0,
-    14,
-    5
+    -14.0,
+    -6.0,
+    28,
+    6
    ]
   },
   "foot": [
-   23,
-   66
+   45,
+   108
   ],
   "footprint": [
+   [
+    -2,
+    -1
+   ],
    [
     -1,
     -1
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ]
@@ -95,8 +103,8 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    18,
-    3
+    30,
+    4
    ],
    "dir": [
     1,

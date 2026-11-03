@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_cow.png",
    "foot": [
-    44,
-    62
+    52,
+    60
    ]
   }
  ],
@@ -24,31 +24,31 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A cow in her paddock; 8 idle frames at 3 fps."
+  "note": "A cow in her paddock, her tail swishing; 8 idle frames at 3 fps."
  },
  "geometry": {
   "size_px": [
-   93,
-   63
+   104,
+   61
   ],
   "size_cells": [
    4,
    3
   ],
   "z_sort": "foot",
-  "height_px": 62,
+  "height_px": 60,
   "collision": {
    "shape": "rect",
    "rect": [
-    -10.0,
+    -11.0,
     -3.0,
-    20,
+    22,
     3
    ]
   },
   "foot": [
-   44,
-   62
+   52,
+   60
   ],
   "footprint": [
    [
@@ -104,7 +104,7 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    54,
+    59,
     5
    ],
    "dir": [
@@ -121,8 +121,8 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_cow_idle.png",
     "frame_px": [
-     93,
-     63
+     104,
+     61
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true,

@@ -11,7 +11,7 @@ pieces' metadata, never pixels:
                        sheep, crops, flowers) that the fence's style may keep (boundary.encloses),
                        with what it needs inside (a coop for hens, a trough for sheep, water and a
                        field shelter in a paddock, a sty, a wallow and a trough for pigs), at a
-                       size that fits (a chicken run 3 to 4 cells a side, a sheep fold 6 to 10, a
+                       size that fits (a chicken run 4 to 7 cells a side (a hen house is shed-sized), a sheep fold 6 to 10, a
                        paddock 10 or more), and has a gate (a stile lets people over, not stock)
 Where a gate meets its path is relations.py's `requires on route` on the gate pieces.
 
@@ -37,7 +37,7 @@ ENCLOSE = {
     'chickens': ('coop',), 'sheep': ('trough',), 'horses': ('trough', 'shelter'), 'cattle': ('trough', 'shelter'),
     'goats': ('trough', 'shelter'), 'pigs': ('sty', 'wallow', 'trough'), 'crops': (), 'flowers': (),
 }
-SIDES = {'chickens': (3, 4), 'sheep': (6, 10), 'horses': (10, 99), 'cattle': (10, 99), 'goats': (4, 10), 'pigs': (3, 7),
+SIDES = {'chickens': (4, 7), 'sheep': (6, 10), 'horses': (10, 99), 'cattle': (10, 99), 'goats': (4, 10), 'pigs': (3, 7),
          'crops': (2, 99), 'flowers': (1, 99)}
 WALLS = ('house', 'forge', 'shelter', 'sty')
 

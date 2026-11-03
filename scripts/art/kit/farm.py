@@ -216,21 +216,21 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
     cx, yb = 42 - face * 3, 52
     lie = pose == 'lie'
     breathe = 1 if (lie and frame == 'out') else 0
-    by = yb - (12 if lie else 21)
-    rx, ry = 22.5, (12.5 + breathe * 0.5 if lie else 13.0)
+    by = yb - (14 if lie else 21)
+    rx, ry = 22.5, (14.0 + breathe * 0.5 if lie else 13.0)
     nz = noise(a.shape, rng, 1.0)
     if not lie:
         for lx, far in ((-12.5, True), (8.5, True), (-9.5, False), (12.0, False)):
             x = int(round(cx + face * lx))
             t = 1 if far else 2
             knee = yb - 6
-            a[int(by + 6):knee, x:x + 3] = C('soot', t)                 # the thigh under the wool
+            a[int(by + 6):knee, x:x + 4] = C('soot', t)                 # the thigh under the wool, thick
             a[int(by + 6):knee, x] = C('soot', t + 2)
-            a[knee:knee + 1, x - 1:x + 3] = C('soot', t + 1)            # the knee, a knob lit on its top
+            a[knee:knee + 1, x - 1:x + 4] = C('soot', t + 1)            # the knee, a knob lit on its top
             a[knee, x - 1] = C('soot', t + 3)
-            a[knee + 1:yb - 1, x:x + 2] = C('soot', t)                  # the shank
+            a[knee + 1:yb - 1, x:x + 3] = C('soot', t)                  # the shank
             a[knee + 1:yb - 1, x] = C('soot', t + 2)
-            a[yb - 2:yb, x - (1 if face < 0 else 0):x + 3] = C('soot', 0)   # the hoof
+            a[yb - 2:yb, x - (1 if face < 0 else 0):x + 4] = C('soot', 0)   # the hoof
             a[yb - 2, x] = C('stone_cool', 1)
     fleece = ((X - cx) / rx) ** 2 + ((Y - by) / ry) ** 2 <= 1
     t = 2.6 + 1.7 * sphere_light(X, Y, cx, by, rx, ry)
@@ -283,22 +283,25 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
     else:
         hx, hy = cx + face * (rx + 0.5), by - 8
     hface = face if frame != 'turn' else 0
-    head = ((X - hx - hface * 1.2) / 4.6) ** 2 + ((Y - hy) / 5.6) ** 2 <= 1
+    head = ((X - hx - hface * 1.2) / 5.4) ** 2 + ((Y - hy) / 6.4) ** 2 <= 1
     muzzle = ((X - hx - hface * 3.8) / 2.8) ** 2 + ((Y - hy - 2.5) / 2.8) ** 2 <= 1
     hm = head | muzzle
     rpaint(a, hm, [('soot', 'soot', 'iron')], 1.5 + 1.8 * sphere_light(X, Y, hx, hy, 5, 6), 0)
-    a[muzzle & (Y > hy + 3.2)] = C('stone_cool', 1)                       # the grey muzzle
+    rpaint(a, muzzle & (X * (hface or 1) > (hx + (hface or 1) * 2.4) * (hface or 1)), [('soot', 'slate_cool', 'stone')],
+           2.0 + 1.6 * sphere_light(X, Y, hx + hface * 3.8, hy + 1.5, 2.8, 2.8), 0)   # the grey muzzle, lit on its bridge
+    a[muzzle & (Y > hy + 4.2)] = C('stone_cool', 1)
     nx_ = int(round(hx + hface * 5.6))
     a[int(round(hy + 2.4)), nx_] = C('soot', 0)                           # a nostril
     ey, ex = int(round(hy - 1.5)), int(round(hx + hface * 2.0))
-    a[ey, ex] = C('brass', 4)                                             # the eye, amber, with a glint
-    a[ey, ex + (1 if hface >= 0 else -1)] = C('soot', 0)
+    a[ey - 1:ey + 1, ex - 1:ex + 2] = C('brass', 3)                       # the eye, amber, with a glint
+    a[ey - 1:ey + 1, ex + (1 if hface >= 0 else -1)] = C('soot', 0)
     a[ey - 1, ex] = C('plaster', 5)
+    a[ey - 2, ex - 1:ex + 2] = C('slate_cool', 2)                         # the brow catching the light
     flick = frame == 'ear'
     for side in (-1, 1):
         ex0 = hx - face * 2.0 + side * 3.0
         ey0 = hy - 4.5 - (1.5 if (flick and side > 0) else 0)
-        ear = ((X - (ex0 + side * 2.6)) / 3.0) ** 2 + ((Y - ey0) / 1.4) ** 2 <= 1
+        ear = ((X - (ex0 + side * 3.4)) / 3.8) ** 2 + ((Y - ey0) / 1.7) ** 2 <= 1
         a[ear & ~hm] = C('soot', 2 if side < 0 else 1)
         lining = ear & ~hm & ((X - (ex0 + side * 2.6)) ** 2 / 4.0 + (Y - ey0 - 0.3) ** 2 <= 0.5)
         a[lining] = C('berry_cool', 2)
@@ -312,209 +315,270 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
 # the larger stock: cow and calf, horse, pig, goat
 # ------------------------------------------------------------------------------------------------
 BEASTS = {
-    # kind: canvas (w, h, foot x, foot y), body rx, ry, belly height, leg width, head (rx, ry, reach, lift), coat
-    'cow': dict(c=(144, 108, 72, 102), rx=33, ry=18.5, up=22, leg=6, head=(9, 8.5, 6, 19), coat='pied', horns=True, udder=True, tail=26),
-    'calf': dict(c=(96, 72, 48, 66), rx=18, ry=11, up=15, leg=4, head=(6.5, 6.5, 4, 13), coat='pied', horns=False, udder=False, tail=15),
-    'horse': dict(c=(136, 116, 68, 110), rx=28, ry=14, up=32, leg=5, head=(6, 9.5, 14, 34), coat='bay', horns=False, udder=False, tail=32, mane=True),
-    'pig': dict(c=(84, 58, 42, 52), rx=21, ry=12.5, up=9, leg=5, head=(7.5, 7, 3, 4), coat='pig', horns=False, udder=False, tail=6, snout=True),
-    'goat': dict(c=(84, 68, 42, 62), rx=17, ry=10.5, up=16, leg=4, head=(5.5, 6.5, 6, 14), coat='goat', horns=True, udder=False, tail=5, beard=True),
+    # canvas (w, h, foot x, foot y); body half length and half depth; leg length and width; head half
+    # width, half height, how far before the chest, how high above the back's middle; coat; extras
+    'cow': dict(c=(164, 116, 82, 112), rx=40, ry=22, leg=15, lw=9, head=(11, 11.5, 2, 11), coat='tan', horns=True, udder=True, tail=24, ears='side'),
+    'calf': dict(c=(96, 72, 48, 68), rx=20, ry=12, leg=9, lw=6, head=(7.5, 8, 1, 7), coat='pied', horns=False, udder=False, tail=14, ears='side'),
+    'horse': dict(c=(164, 132, 82, 128), rx=34, ry=18, leg=19, lw=8, head=(8, 11.5, 9, 33), coat='bay', horns=False, udder=False, tail=28, ears='up', mane=True),
+    'pig': dict(c=(100, 64, 50, 60), rx=23, ry=13.5, leg=8, lw=7, head=(8.5, 9, 4, 2), coat='pig', horns=False, udder=False, tail=0, ears='flop', snout=True),
+    'goat': dict(c=(88, 80, 44, 76), rx=19, ry=12, leg=9, lw=5, head=(6.5, 8, 2, 12), coat='goat', horns=True, udder=False, tail=5, ears='droop', beard=True),
+    'goat_b': dict(c=(88, 80, 44, 76), rx=19, ry=12, leg=9, lw=5, head=(6.5, 8, 2, 12), coat='goat_b', horns=True, udder=False, tail=5, ears='droop', beard=True),
 }
 COATS = {
-    # hue-shifted ramps: shade leans violet, light leans gold (house-style), two or three per coat
-    'pied': ([('stone_cool', 'plaster_warm', 'plaster'), ('dusk_cool', 'sand', 'plaster'), ('slate_cool', 'stone_warm', 'sand_warm')],
-             [('soot', 'soot', 'slate_cool'), ('soot', 'slate_cool', 'slate'), ('dusk_cool', 'slate_cool', 'stone_cool')]),
-    'bay': ([('dusk_cool', 'fox', 'brass_warm'), ('crag_cool', 'crag_warm', 'fox'), ('earth_cool', 'clay', 'brass')],
-            [('soot', 'soot', 'slate_cool')]),
+    # body ramps (shade leans violet, light leans gold), patches, the head's own ramp, the muzzle's
+    'pied': ([('stone_cool', 'plaster_warm', 'plaster'), ('dusk_cool', 'sand', 'plaster'), ('slate_cool', 'stone_warm', 'sand_warm'),
+              ('sand_cool', 'sand_warm', 'snow_warm')],
+             [('soot', 'soot', 'slate_cool'), ('soot', 'slate_cool', 'slate'), ('dusk_cool', 'slate_cool', 'stone_cool')],
+             [('berry_cool', 'plaster_warm', 'sand_warm'), ('crag_cool', 'clay', 'plaster_warm')]),
+    'tan': ([('stone_cool', 'plaster_warm', 'plaster'), ('stone_warm', 'sand', 'plaster')],
+            [('earth_cool', 'fox', 'brass_warm'), ('crag_cool', 'clay', 'fox'), ('earth_cool', 'earth_warm', 'fox')],
+            [('berry_cool', 'plaster_warm', 'sand_warm'), ('crag_cool', 'clay', 'plaster_warm')]),
+    'bay': ([('dusk_cool', 'fox', 'brass_warm'), ('crag_cool', 'crag_warm', 'fox'), ('earth_cool', 'clay', 'brass'),
+             ('timber_cool', 'earth_warm', 'sand_warm')],
+            [('soot', 'soot', 'slate_cool'), ('soot', 'dusk_cool', 'slate')],
+            [('soot', 'slate_cool', 'stone'), ('dusk_cool', 'stone_cool', 'stone')]),
     'pig': ([('crag_cool', 'clay', 'sand_warm'), ('berry_cool', 'clay', 'plaster_warm'), ('dusk_cool', 'crag_warm', 'sand')],
-            [('earth_cool', 'earth', 'earth_warm')]),
-    'goat': ([('stone_cool', 'plaster_warm', 'plaster'), ('stone_warm', 'sand', 'plaster')], [('clay_cool', 'fox', 'brass_warm')]),
+            [('earth_cool', 'earth', 'earth_warm'), ('soot', 'earth_cool', 'earth'), ('path_cool', 'path', 'path_warm')],
+            [('berry_cool', 'berry', 'plaster_warm'), ('crag_cool', 'clay', 'sand_warm')]),
+    'goat': ([('stone_cool', 'plaster_warm', 'plaster'), ('stone_warm', 'sand', 'plaster'), ('sand_cool', 'plaster_warm', 'snow_warm'),
+              ('slate_cool', 'stone_warm', 'sand_warm')],
+             [('clay_cool', 'fox', 'brass_warm'), ('earth_cool', 'earth_warm', 'sand_warm')],
+             [('stone_cool', 'stone_warm', 'sand'), ('slate_cool', 'stone', 'plaster_warm')]),
+    'goat_b': ([('earth_cool', 'earth', 'earth_warm'), ('timber_cool', 'earth_warm', 'sand_warm'), ('crag_cool', 'clay', 'brass')],
+               [('soot', 'earth_cool', 'timber_cool'), ('soot', 'slate_cool', 'earth_cool')],
+               [('stone_cool', 'stone_warm', 'sand'), ('timber_cool', 'earth', 'sand_warm')]),
 }
+# one character beat a kind, over eight frames
 BEAST_FRAMES = {
-    'cow': ['a', 'a', 'tail', 'a', 'ear', 'a', 'graze', 'graze'],
-    'calf': ['a', 'ear', 'a', 'a', 'tail', 'a', 'a', 'blink'],
-    'horse': ['a', 'tail', 'a', 'a', 'ear', 'a', 'graze', 'a'],
-    'pig': ['a', 'a', 'snuffle', 'a', 'ear', 'a', 'tail', 'a'],
-    'goat': ['a', 'chew', 'a', 'chew', 'ear', 'a', 'graze', 'graze'],
+    'cow': ['a', 'a', 'tail1', 'tail2', 'tail1', 'a', 'a', 'a'],
+    'calf': ['a', 'a', 'a', 'ear', 'ear', 'a', 'a', 'a'],
+    'horse': ['a', 'a', 'dip1', 'dip2', 'dip2', 'dip1', 'a', 'a'],
+    'pig': ['a', 'snuff1', 'snuff2', 'snuff1', 'a', 'a', 'a', 'a'],
+    'goat': ['a', 'chew', 'a', 'chew', 'a', 'chew', 'a', 'a'],
+    'goat_b': ['dip2', 'dip2', 'chew2', 'dip2', 'chew2', 'dip2', 'dip2', 'dip2'],
 }
+
+
+def _ell(X, Y, cx, cy, rx, ry):
+    return ((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 <= 1
 
 
 def beast(kind, frame='a', face=1, seed=0):
-    """A farm animal side on, in the house's three-quarter view: a body lit on its upper left and
-    shading to a cool belly, its coat (pied, bay, pink or a goat's cream with tan) in two or three
-    hues; four legs with a knee and a hoof (the far pair a step darker); a head with an eye that
-    catches the light, ears, and what its kind has (a cow's horns and udder, a horse's mane and long
-    tail, a pig's snout and curl, a goat's horns and beard). `frame`: a (still), tail (a swish),
-    ear (a flick), graze (head down), chew, blink, snuffle."""
+    """A farm animal in the house's three-quarter view (round 4, after the art director's review:
+    no boxes on stilts). The body is a bean, rump and chest swelling either side of a soft belly
+    curve, lit on its upper left, a darker band along its underside and cool light reflected under
+    it; legs short and thick (a third of the body's depth, a horse's a half), tapering to dark
+    hooves, the far pair a tone darker and half hidden; the head large (about two fifths of the body
+    and more), turned three quarters to us: a lit brow, both eyes (the near one with its highlight),
+    a lighter muzzle or snout with its nostrils, ears that break the outline. `frame`: a (still),
+    tail1/tail2 (a swish), ear (a flick), dip1/dip2 (the head down to graze), snuff1/snuff2 (a
+    pig's snout working), chew/chew2 (the jaw)."""
     B = BEASTS[kind]
     rng = np.random.default_rng(seed)
     W, H, fx, fy = B['c']
     p = canvas(W, H, fx, fy)
     a = p.a
     Y, X = grid(a)
-    nz = noise(a.shape, rng, 1.2)
-    coat, marks = COATS[B['coat']]
-    cx, yb = fx - face * 4, fy
+    body_sets, mark_sets, muzzle_sets = COATS[B['coat']]
     rx, ry = B['rx'], B['ry']
-    by = yb - B['up'] - ry
-    lw = B['leg']
-    # legs: thigh, knee, shank, hoof; far pair first and a step darker
-    for lx, far in ((-0.66, True), (0.46, True), (-0.5, False), (0.66, False)):
-        x = int(round(cx + face * lx * rx)) + (0 if far else face * 2)
-        top = int(by + ry * 0.55)
-        knee = yb - max(3, int(B['up'] * 0.45))
-        sets = coat if B['coat'] != 'bay' else coat
-        f_ = np.clip((knee - Y) / max(1, knee - top), 0, 1)                      # 0 at the knee, 1 at the body
-        legm = (X >= x - np.round(1.2 * f_)) & (X < x + lw + np.round(1.6 * f_)) & (Y >= top) & (Y < yb - 1)
-        legm |= (X >= x - 1) & (X < x + lw + 1) & (Y >= knee - 1) & (Y < knee + 1)        # the knee
-        rpaint(a, legm, sets, 2.4 - (0.9 if far else 0) + 1.2 * (X == x) - 0.9 * (X >= x + lw - 1) + 0.6 * (Y < knee - 2), 0.2)
-        if kind == 'horse' and not far:                         # white socks on the near legs
-            sock = legm & (Y >= yb - 8)
-            rpaint(a, sock, [('stone_cool', 'plaster_warm', 'plaster')], 3.4 + 1.2 * (X == x), 0)
-        hoof = (X >= x - (1 if face < 0 else 0)) & (X < x + lw + (1 if face > 0 else 0)) & (Y >= yb - 3) & (Y < yb)
-        a[hoof] = C('soot', 0 if far else 1)
-        a[hoof & (Y == yb - 3)] = C('soot', 2)
-    # the body
-    body = ((X - cx) / rx) ** 2 + ((Y - by) / ry) ** 2 <= 1
-    if kind == 'horse':                                          # a deep chest and a round hindquarter
-        body |= ((X - (cx + face * rx * 0.6)) / (rx * 0.42)) ** 2 + ((Y - (by + 2)) / (ry * 1.15)) ** 2 <= 1
-        body |= ((X - (cx - face * rx * 0.62)) / (rx * 0.42)) ** 2 + ((Y - (by - 1)) / (ry * 1.1)) ** 2 <= 1
-    body = ndi.binary_opening(body, structure=np.ones((2, 2), bool)) | (body & (np.abs(Y - by) < ry - 1))
+    cx = fx - face * 5
+    by = fy - B['leg'] - ry + 3
+    nz = noise(a.shape, rng, 1.0)
+    smooth = noise(a.shape, np.random.default_rng(seed + 11), 2.5)
+    # the bean: rump, chest and a belly that sags a little between them
+    body = (_ell(X, Y, cx - face * rx * 0.38, by - 0.5, rx * 0.64, ry * 0.98) | _ell(X, Y, cx + face * rx * 0.36, by, rx * 0.66, ry * 0.95)
+            | _ell(X, Y, cx, by + ry * 0.12, rx * 0.78, ry * 0.92))
+    body = ndi.gaussian_filter(body.astype(float), 1.6) > 0.5
+    bottom = np.where(body.any(axis=0), H - 1 - np.argmax(body[::-1], axis=0), -1)[None, :]
+    topr = np.where(body.any(axis=0), np.argmax(body, axis=0), H)[None, :]
     lit = sphere_light(X, Y, cx, by, rx, ry)
-    # the form: the shoulder and the haunch catch the light, the ribs and the flank between in shade
-    sh = sphere_light(X, Y, cx + face * rx * 0.55, by - ry * 0.1, rx * 0.4, ry * 0.8)
-    hn = sphere_light(X, Y, cx - face * rx * 0.55, by - ry * 0.15, rx * 0.42, ry * 0.85)
-    t = 2.4 + 1.5 * lit + 0.6 * np.maximum(sh, hn) + (1.1 if B['coat'] != 'pied' else 1.5) * (nz - 0.5)
-    if B['coat'] == 'pied':                                      # a white coat shows its ribs and hip under the hair
-        t = t - 0.7 * ((np.mod(X * 0.5 + 0.3 * Y, 4.0) < 0.6) & (np.abs(X - cx) < rx * 0.35) & (Y > by - ry * 0.3))
-    hair = (np.mod(X * 2 + Y * face, 7) == 0) & (rng.random(a.shape) < 0.5)
-    t = t - 0.8 * hair
-    mixn = noise(a.shape, np.random.default_rng(seed + 11), 1.6)      # the coat's hue drifts apart from its light
-    rpaint(a, body, coat, t, mixn)
+    # the legs, the far pair first (a tone darker, set back and half hidden by the body)
+    lw, leg = B['lw'], B['leg']
+    for lx, far in ((-0.62, True), (0.42, True), (-0.48, False), (0.6, False)):
+        x0 = cx + face * lx * rx - lw / 2 + (-face * 3 if far else 0)
+        yt = by + ry * 0.4
+        yh = fy - (1 if far else 0)
+        f_ = np.clip((Y - yt) / max(1, yh - yt), 0, 1)
+        wid = lw * (1.0 - 0.3 * f_) + 1.5 * (np.abs(Y - (yh - leg * 0.45)) < 1.2)      # thick at the top, a knee
+        legm = (X >= x0 + (lw - wid) / 2) & (X < x0 + (lw + wid) / 2) & (Y >= yt) & (Y < yh)
+        u = (X - x0) / lw
+        sets = mark_sets if B['coat'] == 'bay' and True else body_sets
+        tl = 2.6 - (1.0 if far else 0) + 1.1 * (u < 0.25) - 1.0 * (u > 0.75) - 0.6 * f_
+        rpaint(a, legm, body_sets, tl, smooth)
+        if B['coat'] == 'bay':                                   # a bay's black points, one white sock
+            lower = legm & (Y > yh - leg * 0.7)
+            rpaint(a, lower, mark_sets, 1.4 - (0.6 if far else 0) + 1.0 * (u < 0.3), 0.2)
+            if not far and lx > 0:
+                rpaint(a, legm & (Y > yh - 5), [('stone_cool', 'plaster_warm', 'plaster')], 3.6 + (u < 0.3), 0)
+        hoof = legm & (Y >= yh - 3)
+        a[hoof] = C('soot', 0 if far else 1)
+        a[hoof & (Y == yh - 3) & (u < 0.6)] = C('slate_cool', 2 if far else 3)
+    # the body's coat: lit on the upper left, the underside a band darker, a cool bounce at the
+    # very bottom, the hair's lie in faint strokes
+    depth = (Y - topr) / np.maximum(1, bottom - topr)
+    # the form: shoulder and haunch swell and catch the light, the barrel between in half shade
+    sh = sphere_light(X, Y, cx + face * rx * 0.45, by - ry * 0.15, rx * 0.4, ry * 0.75)
+    hn = sphere_light(X, Y, cx - face * rx * 0.5, by - ry * 0.2, rx * 0.42, ry * 0.8)
+    under_shade = 1.7 * np.clip((depth - 0.55) / 0.45, 0, 1)
+    pale = B['coat'] in ('pied', 'tan', 'goat')                  # a pale coat shows its form in more steps
+    t = (1.9 if pale else 2.3) + (1.9 if pale else 1.4) * lit + 0.8 * np.maximum(sh, hn) + 1.0 * (nz - 0.5) - under_shade
+    t = t + 0.6 * ((depth > 0.6) & (depth < 0.7) & (X * face < cx * face))    # the light bounced up onto the flank
+    strokes = (np.mod(X * 2 - Y * face * 3 + (rng.random(a.shape) < 0.2) * 3, 6) == 0) & (depth < 0.7)
+    t = t - 0.6 * strokes
+    rpaint(a, body, body_sets, t, smooth)
     dark = np.zeros(a.shape, bool)
-    if B['coat'] == 'pied':                                      # black patches with soft edges
-        pn = noise(a.shape, np.random.default_rng(seed + 3), 6.5) + 0.25 * (X - cx) * face / rx
-        patch = body & (pn > np.percentile(pn[body], 50))
+    if B['coat'] in ('pied', 'tan'):                             # big soft-edged patches
+        pn = noise(a.shape, np.random.default_rng(seed + 3), 6.0) + 0.2 * (X - cx) * face / rx
+        patch = body & (pn > np.percentile(pn[body], 52 if B['coat'] == 'pied' else 55))
         patch = ndi.binary_opening(ndi.binary_closing(patch, iterations=2), iterations=2) & body
-        dark = patch
         edge = patch & ~ndi.binary_erosion(patch, iterations=1)
-        rpaint(a, patch, marks, 1.3 + 1.7 * lit + 0.5 * np.maximum(sh, hn) - 0.5 * edge, np.where(lit > 0.4, 0.45, 0.1))
+        rpaint(a, patch, mark_sets, 1.4 + 1.7 * lit + 0.6 * np.maximum(sh, hn) - 0.8 * under_shade - 0.4 * edge + 0.7 * (nz - 0.5) - 0.5 * strokes, smooth)
+        dark = patch
     elif B['coat'] == 'goat':
-        patch = body & (noise(a.shape, np.random.default_rng(seed + 5), 5.0) > 0.62)
+        patch = body & (noise(a.shape, np.random.default_rng(seed + 5), 4.5) > 0.6)
         patch = ndi.binary_opening(patch, iterations=1)
-        rpaint(a, patch, marks, 2.4 + 1.6 * lit, nz)
-    elif B['coat'] == 'pig':
-        mud = body & (Y > by + ry * 0.2) & (noise(a.shape, np.random.default_rng(seed + 7), 1.5) > 0.7)
-        rpaint(a, mud, marks, 1.8 + lit, nz)
-        bristle = body & (rng.random(a.shape) < 0.025) & (lit > 0.3)
+        rpaint(a, patch, mark_sets, 2.4 + 1.6 * lit - 1.0 * (depth > 0.72), smooth)
+    elif B['coat'] == 'goat_b':                                  # a dark stripe down the back
+        stripe = body & (Y - topr <= 2)
+        rpaint(a, stripe, mark_sets, 1.6 + 1.0 * lit, 0.3)
+        dark = stripe
+    elif B['coat'] == 'pig':                                     # mud splashed up the lower body and legs
+        mud = (body | (Y > fy - leg - 4)) & (a >= 0) & (Y > by + ry * 0.15) & \
+            (depth > 0.4) & (noise(a.shape, np.random.default_rng(seed + 7), 1.4) + 0.6 * depth > 0.95)
+        rpaint(a, mud, mark_sets, 1.6 + 1.2 * lit + 0.8 * (nz - 0.5), smooth)
+        bristle = body & (rng.random(a.shape) < 0.02) & (lit > 0.3)
         a[bristle] = C('plaster_warm', 4)
-        # an old spot: a few dark patches on the pink
-        pn = noise(a.shape, np.random.default_rng(seed + 9), 3.0)
-        spots = ndi.binary_opening(body & (pn > np.percentile(pn[body], 84)), iterations=1)
-        rpaint(a, spots, [('soot', 'earth_cool', 'crag_cool'), ('dusk_cool', 'crag_cool', 'earth')], 1.6 + 1.4 * lit, pn)
-    a[body & (Y > by + ry * 0.62)] = np.maximum(a[body & (Y > by + ry * 0.62)] - 1, (a[body & (Y > by + ry * 0.62)] // 8) * 8)
-    # the muscles: the edge of the shoulder and of the haunch a fine darker line, a light spot on
-    # the hip bone; a bay horse dappled on its quarters
-    for lobe in (sh, hn):
-        edge_ = body & (lobe > 0.30) & (lobe < 0.40)
-        a[edge_] = np.maximum(a[edge_] - 1, (a[edge_] // 8) * 8)
-    hip = body & (((X - (cx - face * rx * 0.5)) ** 2 + (Y - (by - ry * 0.55)) ** 2) <= 2.2)
-    a[hip] = np.minimum(a[hip] + 1, (a[hip] // 8) * 8 + 5)
-    if B['coat'] == 'bay':
-        for _ in range(14):
-            dx_, dy_ = rng.uniform(-0.9, -0.1) * face * rx, rng.uniform(-0.6, 0.4) * ry
+    # the coat's lie: short tufts of hair along the body, each a tone off its neighbours and a
+    # little off in hue (lit tufts on the lit side, shaded on the shaded), so a broad flank reads as
+    # hair, not as a flat fill
+    ys_, xs_ = np.nonzero(body & (depth < 0.85))
+    for k in rng.choice(len(ys_), size=max(1, len(ys_) // 10), replace=False):
+        y0_, x0_ = ys_[k], xs_[k]
+        code = a[y0_, x0_]
+        if code < 0:
+            continue
+        fam, tone = code // 8, code % 8
+        step = 1 if lit[y0_, x0_] > 0.25 and rng.random() < 0.6 else -1
+        sets_ = mark_sets if dark[y0_, x0_] else body_sets
+        alt = sets_[int(rng.integers(0, len(sets_)))]
+        nfam = FI[alt[2] if tone + step >= 4 else alt[0] if tone + step <= 1 else alt[1]]
+        for j in range(3):
+            yy, xx = y0_ + j // 2, x0_ + face * j
+            if 0 <= yy < H and 0 <= xx < W and body[yy, xx] and a[yy, xx] // 8 == fam:
+                a[yy, xx] = nfam * 8 + int(np.clip(tone + step, 0, 5))
+    if B['coat'] == 'bay':                                       # dapples on the quarters
+        for _ in range(12):
+            dx_, dy_ = rng.uniform(-0.9, -0.1) * face * rx, rng.uniform(-0.6, 0.3) * ry
             ring = body & (np.abs(np.hypot(X - cx - dx_, Y - by - dy_) - 1.6) < 0.6)
             a[ring] = np.minimum(a[ring] + 1, (a[ring] // 8) * 8 + 5)
-    # light as a material: a sheen along the lit back and shoulder, cool reflected light under the
-    # belly, the crease where the leg meets the body
-    top = body & ~np.roll(body, 1, axis=0)
-    back = (top | np.roll(top, 1, axis=0)) & body & (lit > 0.15)
-    a[back] = C('sand_warm' if B['coat'] != 'pied' else 'plaster', 5)
-    near_sh = ((X - (cx + face * rx * 0.55)) / (rx * 0.4)) ** 2 + ((Y - (by - ry * 0.1)) / (ry * 0.8)) ** 2 <= 1
-    sheen = body & near_sh & (sh > 0.55) & (rng.random(a.shape) < 0.35) & ~dark
-    a[sheen] = C('brass_warm' if B['coat'] in ('bay', 'pig') else 'plaster', 4)
-    under = body & ~np.roll(body, -1, axis=0)
-    under = (under | np.roll(under, -1, axis=0)) & body
+    rim = body & (Y - topr <= 0) & (lit > 0.05) & ~dark
+    a[rim] = C('sand_warm' if B['coat'] in ('bay', 'pig', 'goat_b') else 'plaster', 5)
+    hip = body & (np.hypot(X - (cx - face * rx * 0.45), Y - (by - ry * 0.45)) <= 1.6) & ~dark
+    a[hip] = np.minimum(a[hip] + 1, (a[hip] // 8) * 8 + 5)
+    under = body & (Y >= bottom - 1)
     a[under] = np.maximum(a[under] - 1, (a[under] // 8) * 8)
     if B['udder']:
-        ud = ((X - (cx - face * rx * 0.25)) / 4.5) ** 2 + ((Y - (by + ry + 1)) / 3.0) ** 2 <= 1
-        rpaint(a, ud & ~body, [('berry_cool', 'plaster_warm', 'plaster_warm')], 2.6 + sphere_light(X, Y, cx, by + ry, 4, 3), 0)
-    # the tail
-    tl = B['tail']
-    sw = {'tail': 3.5, 'a': 0.0}.get(frame, 0.0)
-    tx0, ty0 = cx - face * (rx - 1), by - ry * 0.4
+        ud = _ell(X, Y, cx - face * rx * 0.2, by + ry + 1, 4.5, 3.2) & ~body
+        rpaint(a, ud, muzzle_sets, 2.4 + sphere_light(X, Y, cx - face * rx * 0.2, by + ry, 4.5, 3.2), 0)
+    # the tail: a swish (a pig's a curl)
+    tx0, ty0 = cx - face * (rx - 2), by - ry * 0.45
     if kind == 'pig':
-        for k in range(5):                                       # a curl
-            ang = k * 1.4
-            a[int(ty0 + 1.8 * math.sin(ang)), int(tx0 - face * (2 + 1.2 * math.cos(ang)))] = C('sand_warm', 3)
-    else:
-        tip = (tx0 - face * (2 + sw), ty0 + tl)
-        tm = V.seg_mask(a.shape, tx0, ty0, tip[0], tip[1], 1.0 if kind != 'horse' else 2.6)
-        rpaint(a, tm & ~body, marks if kind == 'horse' else coat, 2.2 + 0.8 * (X * -face > -face * tx0), 0.3)
+        for k in range(7):
+            ang = k * 1.1
+            px_, py_ = tx0 - face * (2.5 + 1.6 * math.cos(ang) + 0.4 * k), ty0 - 1 + 1.8 * math.sin(ang)
+            a[int(round(py_)):int(round(py_)) + 2, int(round(px_))] = C('clay' if k % 2 else 'sand_warm', 3 + (k % 2))
+    elif B['tail']:
+        sw = {'tail1': 2.5, 'tail2': 5.0}.get(frame, 0.0)
+        tip = (tx0 - face * (2 + sw), ty0 + B['tail'])
+        tm = V.seg_mask(a.shape, tx0, ty0, tip[0], tip[1], 1.0 if kind != 'horse' else 2.4) & ~body
+        rpaint(a, tm, mark_sets if kind == 'horse' else body_sets, 1.8 + 0.8 * (Y < ty0 + 4), 0.3)
         if kind in ('cow', 'calf'):
-            tuft = ((X - tip[0]) / 2.0) ** 2 + ((Y - tip[1]) / 3.0) ** 2 <= 1
-            a[tuft & ~body] = C('soot', 1)
-    # the neck and the head
+            a[_ell(X, Y, tip[0], tip[1], 2.0, 3.0) & ~body] = C('soot', 1)
+    # the head: up, dipped half or right down to the grass
     hrx, hry, reach, lift = B['head']
-    graze = frame == 'graze'
-    hx = cx + face * (rx + reach)
-    hy = (yb - hry - 2) if graze else (by - lift + ry * 0.6)
-    nx0, ny0 = cx + face * rx * 0.75, by - ry * 0.25
-    neck = V.seg_mask(a.shape, nx0, ny0, hx - face * hrx * 0.5, hy, hrx * (0.95 if kind != 'horse' else 1.05))
-    if kind == 'horse':                                          # the neck deepens to the chest
-        neck |= V.seg_mask(a.shape, nx0 - face * 3, ny0 + 4, hx - face * hrx * 0.2, hy + 4, hrx * 1.1)
-    rpaint(a, neck & ~body, coat, 2.7 + 1.5 * sphere_light(X, Y, nx0, ny0 - 4, 8, 10), nz)
-    if B.get('mane'):
-        mane = V.seg_mask(a.shape, nx0 - face * 2, ny0 - 6, hx - face * hrx * 0.9, hy - hry * 0.7, 1.8) & ~body
-        rpaint(a, mane, marks, 1.5 + 1.2 * (Y < ny0 - 10), 0)
-    head = ((X - hx) / hrx) ** 2 + ((Y - hy) / hry) ** 2 <= 1
-    head = ndi.binary_opening(head, structure=np.ones((2, 2), bool)) | (head & (np.abs(Y - hy) < hry - 1))
+    dip = {'dip1': 0.5, 'dip2': 1.0}.get(frame, 0.0)
+    hx = cx + face * (rx + reach - 2 * dip)
+    hy_up = by - lift
+    hy_dn = fy - hry - 1
+    hy = hy_up + (hy_dn - hy_up) * dip + {'snuff1': 1, 'snuff2': 2}.get(frame, 0)
+    nx0, ny0 = cx + face * rx * 0.6, by - ry * 0.3
+    neck = V.seg_mask(a.shape, nx0, ny0, hx - face * hrx * 0.4, hy, hrx * (0.85 if kind != 'horse' else 0.95)) & ~body
     if kind == 'horse':
-        head |= V.seg_mask(a.shape, hx, hy - 2, hx + face * hrx * 1.4, hy + hry * 0.7, hrx * 0.7)
-    rpaint(a, head, coat, 2.9 + 1.5 * sphere_light(X, Y, hx, hy, hrx, hry), nz)
-    if B['coat'] == 'pied':                                      # a white blaze on a dark head
-        a[head & (np.abs(X - (hx + face * 1.5)) > 2.6)] = C('soot', 2)
-        a[head & (np.abs(X - (hx + face * 1.5)) > 2.6) & (Y < hy - 2)] = C('slate_cool', 2)
-    muzzle = ((X - (hx + face * hrx * (0.85 if kind != 'horse' else 1.9))) / (hrx * 0.55)) ** 2 + ((Y - (hy + hry * 0.45)) / (hry * 0.42)) ** 2 <= 1
-    mfam = [('berry_cool', 'plaster_warm', 'plaster_warm')] if kind in ('cow', 'calf', 'pig') else [('soot', 'stone_cool', 'stone')]
-    rpaint(a, muzzle, mfam, 2.6 + sphere_light(X, Y, hx + face * hrx, hy + hry * 0.4, 3, 3) + (0.6 if frame == 'snuffle' else 0), 0)
-    nxp = int(round(hx + face * hrx * (1.1 if kind != 'horse' else 2.2)))
-    a[int(round(hy + hry * 0.5)), nxp] = C('soot', 0)              # a nostril
+        neck |= V.seg_mask(a.shape, nx0 - face * 4, ny0 + 5, hx - face * hrx * 0.2, hy + 3, hrx * 1.05) & ~body
+    rpaint(a, neck, body_sets, 2.6 + 1.4 * sphere_light(X, Y, nx0, ny0 - 6, 9, 12) - 0.7 * (Y > ny0 + 4), smooth)
+    if B.get('mane'):
+        mane = V.seg_mask(a.shape, nx0 - face * 3, ny0 - 8, hx - face * hrx * 0.9, hy - hry * 0.75, 2.0) & ~body
+        rpaint(a, mane, mark_sets, 1.4 + 1.2 * (Y < ny0 - 12) + 0.6 * (np.mod(X + Y, 3) == 0), 0)
+    head = _ell(X, Y, hx, hy, hrx, hry)
+    if kind == 'horse':                                          # a long face down to the muzzle
+        head |= V.seg_mask(a.shape, hx, hy - 2, hx + face * hrx * 0.9, hy + hry * 0.9, hrx * 0.78)
+    head_sets = mark_sets if B['coat'] == 'pied' else body_sets
+    rpaint(a, head, head_sets, 2.8 + 1.6 * sphere_light(X, Y, hx - face * 1, hy - 1, hrx, hry) + 0.5 * (nz - 0.5), smooth)
+    # where the head stands before the neck or the body, a shadow line parts them
+    parted = head & ~ndi.binary_erosion(head, iterations=1) & ndi.binary_dilation(body | neck, iterations=1) & (X * face < hx * face)
+    a[parted] = np.maximum(a[parted] - 2, (a[parted] // 8) * 8)
+    if B['coat'] in ('pied', 'bay', 'tan'):                      # a white blaze down the face
+        blaze = head & (np.abs(X - (hx + face * hrx * 0.35)) < (1.2 if kind == 'horse' else 2.2)) & (Y < hy + hry * 0.4)
+        rpaint(a, blaze, [('stone_cool', 'plaster_warm', 'plaster')], 3.6 + (Y < hy), 0)
+    # the muzzle (or a pig's snout), lighter, its nostrils
+    jaw = {'chew': 1, 'chew2': 1}.get(frame, 0)
     if B.get('snout'):
-        sn = ((X - (hx + face * (hrx + 1.5))) / 2.0) ** 2 + ((Y - (hy + 1)) / 2.8) ** 2 <= 1
-        rpaint(a, sn, [('berry_cool', 'sand_warm', 'plaster_warm')], 3.0 + sphere_light(X, Y, hx + face * hrx, hy, 2, 2), 0)
-        a[int(hy + 1), int(hx + face * (hrx + 1.5))] = C('berry_cool', 1)
-    # the eye: dark with a glint (shut on blink)
-    ex, ey = int(round(hx + face * hrx * 0.25)), int(round(hy - hry * 0.25))
-    if frame == 'blink':
-        a[ey, ex - 1:ex + 2] = C('soot', 1)
+        sx, sy = hx + face * (hrx + 1.5), hy + 2 + jaw
+        disc = _ell(X, Y, sx, sy, 3.2, 3.8)
+        rpaint(a, disc, muzzle_sets, 3.0 + 1.4 * sphere_light(X, Y, sx - face, sy - 1, 3.2, 3.8), 0)
+        for dy_ in (-1, 1):
+            a[int(round(sy + dy_)), int(round(sx + face * 0.5))] = C('berry_cool', 1)
     else:
-        a[ey, ex] = C('soot', 0)
-        a[ey, ex + face] = C('soot', 1)
-        a[ey - 1, ex] = C('plaster', 5)
-    # ears (a flick lifts the near one), horns, beard
-    flick = 2.0 if frame == 'ear' else 0.0
-    for side, far in ((-1, True), (1, False)):
-        ex0 = hx - face * hrx * 0.4 + side * 1.5
-        ey0 = hy - hry * 0.75 - (flick if not far else 0)
-        if kind == 'pig':
-            ear = V.seg_mask(a.shape, ex0, ey0 + 2, ex0 + face * 4, ey0 + 4, 1.6)
-        elif kind == 'horse':
-            ear = V.seg_mask(a.shape, ex0, ey0, ex0 - face * 0.5, ey0 - 5, 1.2)
-        else:
-            ear = V.seg_mask(a.shape, ex0, ey0 + 1, ex0 - face * 4.5, ey0 - 0.5 + side, 1.3)
-        rpaint(a, ear & ~head, coat if B['coat'] != 'pied' else marks, 2.2 - (0.8 if far else 0) + 0.8 * (Y < ey0), 0.3)
+        mx, my = hx + face * hrx * (0.5 if kind != 'horse' else 1.15), hy + hry * (0.5 if kind != 'horse' else 0.95) + jaw
+        mrx, mry = hrx * (0.72 if kind != 'horse' else 0.62), hry * 0.42
+        muzzle = _ell(X, Y, mx, my, mrx, mry)
+        rpaint(a, muzzle, muzzle_sets, 3.0 + 1.2 * sphere_light(X, Y, mx - face, my - 1, mrx, mry) - 0.8 * (Y > my + mry * 0.5), 0.3)
+        nxp = int(round(mx + face * mrx * 0.45))
+        a[int(round(my - 0.5)), nxp] = C('soot', 1)
+        a[int(round(my - 0.5)), nxp - face * 2] = C('soot', 1) if kind in ('cow', 'calf', 'horse') else a[int(round(my - 0.5)), nxp - face * 2]
+        a[int(round(my + mry * 0.6)), int(round(mx - face * 1)):int(round(mx + face * 2)) + 1] = C('soot', 2)   # the mouth
+    # the eyes: the near one large with its highlight, the far one beyond the nose bridge
+    ex, ey = int(round(hx - face * hrx * 0.1)), int(round(hy - hry * 0.18))
+    a[ey - 1:ey + 1, ex:ex + 2] = C('soot', 0)
+    a[ey - 1, ex + (1 if face < 0 else 0)] = C('plaster', 5)
+    a[ey + 1, ex:ex + 2] = C(head_sets[0][0], 2)
+    fx2 = int(round(hx + face * hrx * 0.62))
+    a[ey - 1:ey + 1, fx2] = C('soot', 0)
+    # the ears break the outline
+    flick = 2 if frame == 'ear' else 0
+    top_y = hy - hry * 0.7
+    if B['ears'] == 'side':
+        for side, far in ((-1, False), (1, True)):
+            e0 = hx + side * face * hrx * 0.55
+            em = V.seg_mask(a.shape, e0, top_y + 1, e0 + side * face * 6, top_y - 1 - (flick if not far else 0), 1.6)
+            rpaint(a, em & ~head, head_sets, 2.4 - (0.9 if far else 0) + 0.8 * (Y < top_y), 0.3)
+            a[em & ~head & (np.abs(X - (e0 + side * face * 4)) < 1)] = C('berry_cool', 2 if far else 3)
+    elif B['ears'] == 'up':
+        for k, far in ((-1, True), (1, False)):
+            e0 = hx - face * hrx * 0.3 + k * 2
+            em = V.seg_mask(a.shape, e0, hy - hry + 2, e0 - face * 1, hy - hry - 5 - (flick if not far else 0), 1.3)
+            rpaint(a, em & ~head, body_sets, 2.4 - (0.9 if far else 0) + 0.8 * (Y < hy - hry), 0.3)
+    elif B['ears'] == 'flop':                                    # a pig's big ears tipped forward over its eyes
+        for k, far in ((-1, True), (1, False)):
+            e0 = hx - face * 2 + k * 3.5
+            tri = (Y >= top_y - 3) & (Y <= top_y + 4) & (np.abs(X - (e0 + face * (Y - (top_y - 3)) * 0.8)) <= 2.2 - 0.25 * np.abs(Y - top_y))
+            rpaint(a, tri, body_sets, 3.0 - (1.0 if far else 0) + 0.8 * (Y < top_y), 0.4)
+            a[tri & (Y == int(top_y + 5))] = C('berry_cool', 2)
+    else:                                                        # a goat's long ears out and down
+        for side, far in ((-1, False), (1, True)):
+            e0 = hx + side * face * hrx * 0.6
+            em = V.seg_mask(a.shape, e0, top_y + 2, e0 + side * face * 5, top_y + 5 - (flick if not far else 0), 1.4)
+            rpaint(a, em & ~head, head_sets, 2.6 - (0.9 if far else 0), 0.3)
     if B['horns']:
-        hb = (hx - face * hrx * 0.1, hy - hry * 0.85)
-        if kind == 'goat':
-            horn = V.seg_mask(a.shape, hb[0], hb[1], hb[0] - face * 5, hb[1] - 5, 1.1) | V.seg_mask(a.shape, hb[0] - face * 5, hb[1] - 5, hb[0] - face * 8, hb[1] - 3, 1.0)
+        hb = (hx - face * hrx * 0.1, hy - hry * 0.8)
+        if kind.startswith('goat'):
+            horn = V.seg_mask(a.shape, hb[0], hb[1], hb[0] - face * 4, hb[1] - 6, 1.2) | V.seg_mask(a.shape, hb[0] - face * 4, hb[1] - 6, hb[0] - face * 8, hb[1] - 4, 1.0)
         else:
-            horn = V.seg_mask(a.shape, hb[0], hb[1], hb[0] + face * 3, hb[1] - 4, 1.1)
-        rpaint(a, horn & ~head, [('stone_warm', 'sand', 'plaster')], 3.6 - 0.8 * (Y > hb[1] - 2), 0)
+            horn = V.seg_mask(a.shape, hb[0] - 3, hb[1], hb[0] - 5, hb[1] - 4, 1.1) | V.seg_mask(a.shape, hb[0] + 3, hb[1], hb[0] + 5, hb[1] - 4, 1.1)
+        rpaint(a, horn & ~head, [('stone_warm', 'sand', 'plaster')], 3.6 - 0.9 * (Y > hb[1] - 2), 0)
     if B.get('beard'):
-        bm = V.seg_mask(a.shape, hx + face * hrx * 0.5, hy + hry * 0.8, hx + face * hrx * 0.3, hy + hry * 0.8 + 5 + (1 if frame == 'chew' else 0), 1.0)
+        bm = V.seg_mask(a.shape, hx + face * hrx * 0.5, hy + hry * 0.85, hx + face * hrx * 0.35, hy + hry * 0.85 + 5 + jaw, 1.1)
         rpaint(a, bm & ~head, [('stone_cool', 'stone_warm', 'sand')], 2.6, 0)
-    if frame == 'chew' and not graze:
-        a[int(round(hy + hry * 0.85)), int(round(hx + face * hrx * 0.6))] = C('soot', 1)
     V.finish(p)
     return p
 
@@ -527,149 +591,6 @@ def beast_frames(kind, face, seed, shift):
 # ------------------------------------------------------------------------------------------------
 # the coop and the shelter
 # ------------------------------------------------------------------------------------------------
-def coop(seed=0):
-    """A hen ark (48 x 47 texels): a boarded house on four legs, its gabled shingle roof with a
-    lit west slope over the south gable, a pop hole with a ramp down to the run."""
-    rng = np.random.default_rng(seed)
-    p = canvas(66, 56, 32, 50)
-    a = p.a
-    Y, X = grid(a)
-    x0, x1, yb = 12, 52, 50
-    wt, wb = 21, 42                     # the south gable's wall, top and foot
-    nzc = noise(a.shape, rng, 1.5)
-    # legs
-    for lx in (x0 + 2, x1 - 6):
-        V.prism(a, lx, wb - 2, lx + 4, yb, 1, 'timber', 2, side=1)
-    for lx in (x0 + 8, x1 - 12):        # the far legs, in shade
-        V.prism(a, lx, wb - 2, lx + 3, yb - 4, 1, 'timber_cool', 1, side=1)
-    # the gable wall: vertical boards, lit at their west edge, a darker east end
-    wall = (X >= x0) & (X < x1) & (Y >= wt) & (Y < wb)
-    board = ((X - x0) // 6).astype(int)
-    t = 3.0 + 0.4 * np.sin(board * 2.1) - 1.0 * (((X - x0) % 6) == 5) + 0.8 * (((X - x0) % 6) == 0) - 0.9 * (X > x1 - 9)
-    # weathered boards: some silvered, some still brown, a stain of damp at the foot
-    rpaint(a, wall, [('timber_cool', 'timber', 'timber_warm'), ('earth_cool', 'earth', 'earth_warm'), ('timber_cool', 'timber_warm', 'sand_warm')],
-           t - 0.5 * (Y > wb - 4), ((board * 7) % 3) / 3.0 + 0.05)
-    for k in range(12):                 # knots and nail heads
-        kx, ky = int(rng.integers(x0 + 2, x1 - 2)), int(rng.integers(wt + 3, wb - 2))
-        a[ky, kx] = C('timber_cool', 1)
-    for bx in range(x0 + 2, x1, 6):
-        a[wt + 3, bx] = C('iron', 2)
-        a[wb - 3, bx] = C('iron', 2)
-    a[wb - 1, x0:x1] = C('timber_cool', 0)
-    # the gable's triangle and the roof: two shingle slopes meeting at the ridge over the gable
-    ridge_y, eave_y, ov = 3, wt + 2, 3
-    rx0, rx1 = x0 - ov, x1 + ov
-    mid = (rx0 + rx1) / 2
-    roof = (Y >= ridge_y) & (Y < eave_y) & (np.abs(X - mid) <= (Y - ridge_y) * (rx1 - mid) / (eave_y - ridge_y) + 1)
-    west = roof & (X < mid)
-    row = ((Y - ridge_y) // 4).astype(int)
-    shing = ((X + 3 * (row % 2)) // 6).astype(int)
-    tr = np.where(west, 3.4, 2.1) + 0.45 * np.sin(shing * 1.7 + row) - 1.6 * (((Y - ridge_y) % 4) == 3) \
-        + 0.9 * (((Y - ridge_y) % 4) == 0)
-    tr = tr - 1.0 * ((((X + 3 * (row % 2)) % 6) == 5) & ((Y - ridge_y) % 4 < 3))
-    rpaint(a, roof, [('slate_cool', 'slate', 'slate_warm'), ('stone_cool', 'slate', 'slate_warm')], tr, nzc)
-    moss = roof & (nzc > 0.72) & (((Y - ridge_y) % 4) == 3)
-    a[moss] = C('leaf_cool', 2)
-    a[roof & (np.abs(X - mid) < 1.0)] = C('slate_warm', 5)            # the ridge
-    # the barge boards along the gable's slopes
-    for side in (-1, 1):
-        V.bar(a, mid, ridge_y + 1, mid + side * (rx1 - mid), eave_y, 1.2, 'timber_warm' if side < 0 else 'timber', 4 if side < 0 else 2)
-    # the eave's shadow on the wall
-    a[(Y >= eave_y) & (Y < eave_y + 2) & wall] = C('timber_cool', 1)
-    # the pop hole and its ramp, a perch peg
-    hx = int(mid - 8)
-    a[wb - 11:wb - 2, hx - 3:hx + 4] = C('soot', 0)
-    a[wb - 11, hx - 3:hx + 4] = C('timber_warm', 4)
-    a[wb - 11:wb - 2, hx + 3] = C('timber_cool', 1)
-    ramp = V.seg_mask(a.shape, hx, wb - 1, hx - 5, yb - 1, 2.2)
-    V.paint(a, ramp, ('timber_cool', 'timber', 'timber_warm'), 3.6 - 0.4 * ((Y - wb) > 4))
-    for k in range(3):
-        ty = int(wb + 2 + k * 3)
-        tx = int(hx - 2 * (ty - wb) / (yb - wb) * 3)
-        a[ty, tx - 3:tx + 2] = C('timber_cool', 1)
-    # straw poking from the pop hole
-    for k in range(4):
-        a[wb - 3, hx - 3 + 2 * k] = C('brass', 4)
-    V.finish(p)
-    return p
-
-
-def shelter(seed=0):
-    """A field shelter for the flock (108 x 92 texels): a single-pitch roof of boards on two square
-    front posts falling to the south, the posts drawn with a lit west face and a shaded east side
-    and standing in the ground with a dark contact line; inside, the boarded back wall in deep
-    shade with a hay rack on it, straw on the floor that spills out past the front edge onto the
-    grass, the floor darkest at the back under the roof."""
-    rng = np.random.default_rng(seed)
-    p = canvas(122, 98, 58, 86)
-    a = p.a
-    Y, X = grid(a)
-    nz = noise(a.shape, rng, 1.2)
-    x0, x1, yb = 10, 108, 86
-    back_foot = yb - 26
-    inside = (X >= x0) & (X < x1) & (Y >= back_foot - 34) & (Y < yb)
-    wall = inside & (Y < back_foot)
-    plank = ((X - x0) // 8)
-    rpaint(a, wall, [('earth_cool', 'timber_cool', 'timber'), ('soot', 'earth_cool', 'earth')],
-           1.6 + 0.7 * (((X - x0) % 8) == 0) - 0.6 * (((X - x0) % 8) == 7) - 0.5 * (Y > back_foot - 6) + 0.25 * np.sin(plank * 2.3)
-           + 1.2 * (nz - 0.5),
-           (plank % 2) * 0.6)
-    floor = inside & (Y >= back_foot)
-    depth = (Y - back_foot) / (yb - back_foot)                     # 0 at the back .. 1 at the front
-    rpaint(a, floor, [('soot', 'earth_cool', 'earth'), ('earth_cool', 'earth', 'earth_warm')], 1.0 + 1.6 * depth + 0.4 * (nz - 0.5), depth)
-    # straw: strands across the floor, in shade at the back and lit at the open front, a few
-    # spilling past the front edge onto the grass
-    for _ in range(260):
-        sx = rng.uniform(x0 + 2, x1 - 2)
-        sy = rng.uniform(back_foot + 1, yb + 5)
-        ang = rng.uniform(-0.7, 0.7)
-        L = rng.uniform(2, 6)
-        m = V.seg_mask(a.shape, sx, sy, sx + L * math.cos(ang), sy + L * math.sin(ang), 0.5)
-        m &= (floor | ((Y >= yb) & (Y < yb + 6) & (X > x0 + 4) & (X < x1 - 4)))
-        d_ = (sy - back_foot) / (yb - back_foot)
-        tone = (3.6 if sy > yb else 0.8 + 2.8 * d_) + rng.uniform(-0.9, 0.9)
-        rpaint(a, m, STRAW, tone, rng.random())
-    # a hay rack on the back wall: slats, hay pulled through them
-    rk = (X >= x0 + 30) & (X < x0 + 64) & (Y >= back_foot - 24) & (Y < back_foot - 12)
-    rpaint(a, rk, [('brass', 'brass_warm', 'sand_warm'), ('clay_cool', 'brass', 'brass_warm')], 2.4 + 1.0 * np.sin(X * 1.9 + Y * 0.8), nz)
-    a[rk & (((X - x0) % 5) == 0)] = C('timber', 2)
-    a[(Y == back_foot - 12) & (X >= x0 + 30) & (X < x0 + 64)] = C('timber', 3)
-    a[(Y == back_foot - 25) & (X >= x0 + 29) & (X < x0 + 65)] = C('timber_warm', 4)
-    # the roof: boards along the slope, the front edge lit, moss on the lower boards
-    rt, rb = 4, 26
-    rx0, rx1 = x0 - 4, x1 + 4
-    roof = (X >= rx0) & (X < rx1) & (Y >= rt) & (Y < rb)
-    rplank = (X - rx0) // 7
-    f = (Y - rt) / (rb - rt)
-    t = 3.8 - 1.4 * f + 0.5 * np.sin(rplank * 2.3) - 1.6 * (((X - rx0) % 7) == 6) + 0.8 * (((X - rx0) % 7) == 0)
-    t = t + 1.4 * (nz - 0.5) - 0.8 * ((((Y * 3 + rplank * 5) % 11) == 0) & (((X - rx0) % 7) > 1))      # grain and knots
-    rpaint(a, roof, [('timber_cool', 'timber', 'timber_warm'), ('earth_cool', 'timber', 'sand_warm'), ('timber_cool', 'earth_warm', 'timber_warm')],
-           t, ((rplank * 5) % 3) / 3.0)
-    a[roof & (nz > 0.74) & (f > 0.5)] = C('leaf_cool', 2)
-    a[roof & (nz > 0.82) & (f > 0.5)] = C('leaf', 3)
-    a[roof & (Y == rt)] = C('timber_warm', 5)
-    a[(Y >= rb - 3) & (Y < rb) & (X >= rx0) & (X < rx1)] = C('timber', 2)        # the fascia
-    a[(Y == rb - 3) & (X >= rx0) & (X < rx1)] = C('timber_warm', 4)
-    for bx in range(rx0 + 3, rx1, 7):
-        a[rb - 2, bx] = C('iron', 2)
-    a[(Y >= rb) & (Y < rb + 3) & inside] = C('soot', 1)                            # deep shade under the eave
-    # the end boards (the west lit, the east in shade) and the two square front posts: a lit west
-    # face, a body, a shaded east side, a dark line where each stands in the ground
-    V.prism(a, x0, rb, x0 + 5, yb, 1, 'timber', 3, side=1)
-    V.prism(a, x1 - 5, rb, x1, yb, 1, 'timber_cool', 2, side=1)
-    for px in (x0 + 2, x1 - 9):
-        post = (X >= px) & (X < px + 7) & (Y >= rb - 1) & (Y < yb)
-        tp = 3.0 + 1.6 * (X == px) + 0.6 * (X == px + 1) - 1.4 * (X >= px + 5) - 0.6 * (((Y - rb) % 9) == 0)
-        rpaint(a, post, [('timber_cool', 'timber', 'timber_warm')], tp, 0)
-        a[post & (X == px + 6)] = C('timber_cool', 0)
-        a[yb - 1, px - 1:px + 8] = C('soot', 1)
-        a[yb - 2, px - 1] = C('grass_cool', 2)
-        a[yb - 3:yb - 1, px + 7] = C('grass', 3)
-    a[yb - 1, x0:x1][a[yb - 1, x0:x1] >= 0] = np.minimum(a[yb - 1, x0:x1][a[yb - 1, x0:x1] >= 0], C('earth_cool', 1))
-    V.finish(p)
-    return p
-
-
 # ------------------------------------------------------------------------------------------------
 # hay
 # ------------------------------------------------------------------------------------------------
@@ -1053,30 +974,6 @@ def _cyl(a, cx, top, bot, half, sets, mix, rng, bands=(), lit_k=1.6):
     return m
 
 
-def churns(seed=0):
-    """Two milk churns by a gate (52 x 40): tinned steel, a lit band down the left of each, the
-    core shadow on the right, a rolled shoulder, a lid with its knob, a ring handle, mud at the foot."""
-    rng = np.random.default_rng(seed)
-    p = canvas(60, 48, 30, 44)
-    a = p.a
-    Y, X = grid(a)
-    nz = noise(a.shape, rng, 1.0)
-    for cx, h, k in ((19, 34, 0), (39, 30, 1)):
-        top = 44 - h
-        half = lambda f: np.where(f < 0.12, 4.5 + 30 * f, np.where(f < 0.3, 8.0 - 6 * (f - 0.12), 9.0))
-        _cyl(a, cx, top + 4, 44, half, METAL, nz, rng, bands=(top + 12, 44 - 5))
-        lid = ((X - cx) / 5.5) ** 2 + ((Y - (top + 3)) / 2.2) ** 2 <= 1
-        rpaint(a, lid, METAL, 4.2 - 1.2 * (X > cx + 1), 0.4)
-        a[top:top + 2, cx - 1:cx + 2] = C('stone', 4)
-        a[top, cx - 1] = C('plaster', 5)
-        ring = np.abs(np.hypot(X - (cx + 9), Y - (top + 13)) - 2.0) < 0.6
-        a[ring & (X > cx + 7)] = C('iron', 2)
-    mud = (((X - 30) / 26) ** 2 + ((Y - 44) / 3.0) ** 2 <= 1) & (Y >= 42) & (a < 0)
-    rpaint(a, mud, [('earth_cool', 'earth', 'earth_warm')], 1.6 + nz, 0)
-    V.finish(p)
-    return p
-
-
 def water_butt(seed=0):
     """A water butt at a downpipe (34 x 46): a coopered barrel on a brick stand, staves lit on
     the left, two iron hoops, a lid of boards, a brass tap and a drip stain on the bricks."""
@@ -1285,52 +1182,177 @@ def wallow(seed=0):
     return p
 
 
-def sty(seed=0):
-    """A pigsty (96 x 70): a low house of rubble stone with a slate pent roof, a dark doorway the
-    pigs come out of, a stone trough set in its front wall, moss in the joints."""
+# ------------------------------------------------------------------------------------------------
+# sheds at the size guide's scale (round 4: "shed" 32 to 56 by 40 to 64 world px)
+# ------------------------------------------------------------------------------------------------
+BOARDS = [('timber_cool', 'timber', 'timber_warm'), ('earth_cool', 'earth', 'earth_warm'), ('timber_cool', 'earth_warm', 'sand_warm'),
+          ('slate_cool', 'timber_cool', 'stone_warm'), ('crag_cool', 'clay', 'sand_warm'), ('stone_cool', 'stone_warm', 'ashlar_warm')]
+
+
+def _boards(a, m, x0, x1, rng, w=6, base=2.8, east=True):
+    """Vertical boards: each its own hue and tone, lit on its west edge, a dark gap, the grain in
+    streaks, a nail head top and bottom, the east end of the wall a step into shade."""
+    Y, X = grid(a)
+    k = ((X - x0) // w).astype(int)
+    u = np.mod(X - x0, w)
+    tb = rng.uniform(-0.5, 0.5, 64)[np.clip(k, 0, 63)]
+    t = base + tb + 1.0 * (u == 0) - 1.6 * (u == w - 1) - 0.7 * (_hash2(X, Y // 5) < 0.18) - (0.8 * (X > x0 + 0.75 * (x1 - x0)) if east else 0)
+    rpaint(a, m, BOARDS, t, np.mod(k * 0.37, 1))
+    lich = m & (noise(a.shape, rng, 1.2) > 0.82) & (u > 0) & (u < w - 1)
+    rpaint(a, lich, [('brass', 'sand_warm', 'leaf_warm'), ('leaf_cool', 'leaf', 'brass')], 2.6 + rng.random(a.shape), rng.random(a.shape))
+
+
+def _hash2(x, y):
+    v = np.sin(np.asarray(x, float) * 12.9898 + np.asarray(y, float) * 78.233) * 43758.5453
+    return v - np.floor(v)
+
+
+def _shingles(a, m, top, rng, sets=None, row=4, w=6, lit_left=True, x_mid=None):
+    Y, X = grid(a)
+    r = ((Y - top) // row).astype(int)
+    k = ((X + 3 * (r % 2)) // w).astype(int)
+    t = 3.4 - 0.12 * (Y - top) / row + rng.uniform(-0.6, 0.6, (200, 200))[np.clip(r, 0, 199), np.clip(k, 0, 199)] - 1.6 * (np.mod(Y - top, row) == row - 1) \
+        - 0.8 * (np.mod(X + 3 * (r % 2), w) == 0) + 0.5 * (np.mod(Y - top, row) == 0)
+    t = t - 0.7 * ((_hash2(X // 3, 0) < 0.12) & (np.mod(Y - top, row) < row - 1))      # rain streaks down the courses
+    if x_mid is not None:
+        t = t - (1.2 * (X > x_mid) if lit_left else 0)
+    rpaint(a, m, sets or [('timber_cool', 'timber', 'timber_warm'), ('slate_cool', 'timber_cool', 'stone_warm'), ('earth_cool', 'earth', 'earth_warm')],
+           t, np.mod(k * 0.29 + r * 0.17, 1))
+    moss = m & (noise(a.shape, rng, 1.6) > 0.8)
+    rpaint(a, moss, [('leaf_cool', 'leaf', 'brass'), ('grass_cool', 'leaf_cool', 'leaf_warm')], 2.2 + 1.2 * (np.mod(Y - top, row) == 0), rng.random(a.shape))
+
+
+def coop(seed=0):
+    """A hen house (100 x 120, shed scale): a boarded house on short legs, its gable end to us
+    under a shingled roof, a wire-meshed window, a nest box on its side with a lid, the pop hole and
+    its slatted ramp down to the run, a little straw at the door."""
     rng = np.random.default_rng(seed)
-    p = canvas(104, 78, 52, 72)
+    p = canvas(104, 126, 50, 122)
     a = p.a
     Y, X = grid(a)
-    x0, x1, yb = 6, 98, 72
-    wt = 36
+    for lx in (16, 80):                                                  # the legs
+        V.prism(a, lx, 106, lx + 5, 122, 1, 'timber', 2, side=1)
+    wall = (X >= 12) & (X < 88) & (Y >= 54) & (Y < 108)
+    gable = (Y >= 14) & (Y < 54) & (np.abs(X - 50) <= (Y - 14) * 0.95)
+    _boards(a, wall | gable, 12, 88, rng)
+    a[(Y >= 106) & (Y < 108) & (X >= 12) & (X < 88)] = C('soot', 1)      # the sill's shade
+    # the roof's two slopes along the gable, overhanging, shingled; the left lit
+    roofm = (Y >= 6) & (Y < 62) & (np.abs(np.abs(X - 50) - (Y - 14) * 0.95) <= 6) & (Y >= 6 + 0 * X)
+    _shingles(a, roofm, 6, rng, x_mid=50)
+    a[roofm & (np.abs(np.abs(X - 50) - (Y - 14) * 0.95 - 6) <= 0.6)] = C('timber_warm', 4)
+    a[(Y >= 4) & (Y < 9) & (np.abs(X - 50) < 3)] = C('timber', 2)        # the ridge's finial
+    # the window with its wire
+    win = (X >= 24) & (X < 40) & (Y >= 64) & (Y < 78)
+    a[win] = C('soot', 1)
+    a[win & ((np.mod(X - Y, 4) == 0) | (np.mod(X + Y, 4) == 0))] = C('stone_cool', 2)
+    V.prism(a, 22, 62, 42, 64, 1, 'timber', 4, side=1)
+    # the nest box on the east side, its lid lifting
+    V.prism(a, 88, 74, 100, 98, 4, 'timber', 3, side=2)
+    V.bar(a, 87, 72, 101, 70, 1.2, 'timber_warm', 4)
+    # the pop hole and the ramp
+    hole = (X >= 44) & (X < 58) & (Y >= 88) & (Y < 106) & ((X - 51) ** 2 / 49 + (Y - 92) ** 2 / 16 <= 1) | ((X >= 44) & (X < 58) & (Y >= 92) & (Y < 106))
+    a[hole] = C('soot', 0)
+    ramp = V.seg_mask(a.shape, 51, 106, 64, 122, 3.2)
+    rpaint(a, ramp, BOARDS, 3.2 - 1.5 * (np.mod(Y, 3) == 0), 0.2)
+    for _ in range(12):
+        sx, sy = rng.uniform(40, 80), rng.uniform(118, 123)
+        a[V.seg_mask(a.shape, sx, sy, sx + rng.uniform(-3, 3), sy - 1, 0.45)] = C('brass' if rng.random() < 0.5 else 'sand_warm', 4)
+    V.finish(p)
+    return p
+
+
+def shelter(seed=0):
+    """A field shelter (124 x 118, shed scale): open to the south under a pent roof of boards, its
+    back and sides boarded, the inside in deep shade with a hay rack on the back wall and straw on
+    the floor, the corner posts lit on their west faces."""
+    rng = np.random.default_rng(seed)
+    p = canvas(128, 122, 64, 118)
+    a = p.a
+    Y, X = grid(a)
+    inner = (X >= 10) & (X < 118) & (Y >= 46) & (Y < 112)
+    _boards(a, inner, 10, 118, rng, base=1.4, east=False)                  # the back wall in shade
+    rack = (X >= 30) & (X < 98) & (Y >= 56) & (Y < 72)
+    a[rack & (np.mod(X, 5) == 0)] = C('timber', 2)
+    a[rack & ((Y == 56) | (Y == 71))] = C('timber', 3)
+    hay = (X >= 32) & (X < 96) & (Y >= 58) & (Y < 70) & (rng.random(a.shape) < 0.55)
+    rpaint(a, hay, STRAW, 2.0 + 1.2 * (Y < 63), rng.random(a.shape))
+    floor = (X >= 10) & (X < 118) & (Y >= 98) & (Y < 114)
+    rpaint(a, floor, STRAW, 1.6 + 1.6 * (Y > 106) + 0.8 * (noise(a.shape, rng, 0.8) - 0.5), rng.random(a.shape))
+    side = (X >= 6) & (X < 14) & (Y >= 40) & (Y < 116)
+    _boards(a, side, 6, 14, rng, w=4, base=3.0, east=False)
+    for px in (6, 114):                                                  # the corner posts
+        V.prism(a, px, 40, px + 7, 118, 1, 'timber', 3, side=1)
+    roof = (X >= 2) & (X < 126) & (Y >= 4) & (Y < 44)
+    _shingles(a, roof, 4, rng, row=5, w=8)
+    a[(Y >= 42) & (Y < 46) & (X >= 2) & (X < 126)] = C('timber', 2)       # the fascia
+    a[(Y == 42) & (X >= 2) & (X < 126)] = C('timber_warm', 4)
+    a[(Y >= 46) & (Y < 50) & (X >= 14) & (X < 114)] = C('soot', 0)       # the eave's shade inside
+    V.finish(p)
+    return p
+
+
+def sty(seed=0):
+    """A pigsty (112 x 118, shed scale): a low house of rubble under a slate roof, its ridge capped,
+    a dark doorway the pigs come out of, a stone trough set in its front wall with swill in it, moss
+    in the lower joints, the roof's eave throwing a shadow on the wall."""
+    rng = np.random.default_rng(seed)
+    p = canvas(116, 124, 58, 120)
+    a = p.a
+    Y, X = grid(a)
+    x0, x1, wt, yb = 6, 110, 74, 120
     wall = (X >= x0) & (X < x1) & (Y >= wt) & (Y < yb)
     V.rubble(a, x0, wt, x1, yb, rng, course=(2.0, 3.0), length=(3.0, 6.5), hd=True)
-    a[wall & (X > x1 - 6)] = np.maximum(a[wall & (X > x1 - 6)] - 1, (a[wall & (X > x1 - 6)] // 8) * 8)
-    moss = wall & (noise(a.shape, rng, 1.5) > 0.75) & (Y > yb - 12)
-    a[moss] = C('leaf_cool', 2)
-    # the pent roof of slates falling to the front, its eave's shade
-    rt, rb = 16, wt + 2
-    roof = (X >= x0 - 4) & (X < x1 + 4) & (Y >= rt) & (Y < rb)
-    row = (Y - rt) // 4
-    tr = 3.6 - 1.2 * (Y - rt) / (rb - rt) + 0.4 * np.sin(((X + 3 * (row % 2)) // 6) * 1.7 + row) - 1.5 * (np.mod(Y - rt, 4) == 3) - 0.8 * (X > x1 - 8)
-    rpaint(a, roof, [('slate_cool', 'slate', 'slate_warm'), ('stone_cool', 'slate', 'slate_warm'), ('dusk_cool', 'slate', 'stone')],
-           tr, noise(a.shape, rng, 1.5))
-    a[roof & (Y == rt)] = C('slate_warm', 5)
-    lich = roof & (noise(a.shape, rng, 1.0) > 0.86) & (np.mod(Y - rt, 4) != 3)
-    rpaint(a, lich, [('brass', 'sand_warm', 'leaf_warm'), ('leaf_cool', 'leaf', 'brass')], 2.5 + (X < 50), rng.random(a.shape))
-    a[(Y >= rb) & (Y < rb + 2) & wall] = C('soot', 1)
-    a[(Y == rb - 1) & roof] = C('slate_cool', 1)
-    a[(Y == rb - 2) & roof & (np.mod(X, 6) < 4)] = C('slate', 2)
-    # the doorway and its lintel
-    a[yb - 22:yb, 20:36] = C('soot', 0)
-    a[yb - 20:yb, 22:34] = C('soot', 1)
-    a[yb - 22:yb, 18:20] = C('timber', 3)
-    a[yb - 22:yb, 36:38] = C('timber_cool', 2)
-    a[yb - 22:yb, 18] = C('timber_warm', 4)
-    stain = wall & (Y > rb + 1) & (Y < rb + 9) & (np.mod(X * 7 + 3, 11) < 2)
-    a[stain] = np.maximum(a[stain] - 1, (a[stain] // 8) * 8)
-    for _ in range(12):                                          # weeds at its foot
+    a[wall & (X > x1 - 10)] = np.maximum(a[wall & (X > x1 - 10)] - 1, (a[wall & (X > x1 - 10)] // 8) * 8)
+    a[wall & (noise(a.shape, rng, 1.5) > 0.75) & (Y > yb - 16)] = C('leaf_cool', 2)
+    roof = (X >= x0 - 4) & (X < x1 + 4) & (Y >= 6) & (Y < wt + 2)
+    _shingles(a, roof, 8, rng, sets=[('slate_cool', 'slate', 'slate_warm'), ('stone_cool', 'slate', 'slate_warm'), ('dusk_cool', 'slate', 'stone'),
+                                     ('crag_cool', 'stone_cool', 'stone_warm'), ('dusk_cool', 'dusk', 'ashlar')],
+              row=5, w=7)
+    a[roof & (Y < 9)] = C('stone', 3)                                     # the ridge tiles
+    a[roof & (Y == 6)] = C('stone_warm', 4)
+    lich = roof & (noise(a.shape, rng, 1.0) > 0.86)
+    rpaint(a, lich, [('brass', 'sand_warm', 'leaf_warm'), ('leaf_cool', 'leaf', 'brass')], 2.5 + (X < 58), rng.random(a.shape))
+    a[(Y >= wt + 2) & (Y < wt + 5) & wall] = C('soot', 1)
+    a[yb - 26:yb, 18:38] = C('soot', 0)                                  # the doorway, its jambs
+    a[yb - 24:yb, 20:36] = C('soot', 1)
+    a[yb - 26:yb, 16:18] = C('timber', 3)
+    a[yb - 26:yb, 38:40] = C('timber_cool', 2)
+    V.prism(a, 14, yb - 30, 42, yb - 26, 2, 'stone', 4, side=2)          # the lintel
+    V.prism(a, 54, yb - 14, 100, yb, 3, 'stone', 3, side=3)              # the trough in the wall
+    sw = (X >= 57) & (X < 97) & (Y >= yb - 13) & (Y < yb - 10)
+    rpaint(a, sw, [('earth_cool', 'earth', 'brass')], 2.0 + 1.2 * (np.mod(X, 4) == 0), 0)
+    for _ in range(12):
         wx = rng.uniform(x0 + 2, x1 - 2)
-        if 18 < wx < 38 or 50 < wx < 90:
+        if 14 < wx < 42 or 52 < wx < 102:
             continue
         for k in range(3):
             a[V.seg_mask(a.shape, wx, yb, wx + rng.uniform(-2, 2), yb - rng.uniform(3, 7), 0.45)] = C(('grass', 'leaf', 'grass_warm')[k], 2 + k)
-    V.prism(a, 17, yb - 26, 39, yb - 22, 2, 'stone', 4, side=2)
-    # the trough set in the wall, with swill in it
-    V.prism(a, 52, yb - 11, 88, yb, 3, 'stone', 3, side=3)
-    sw = (X >= 55) & (X < 85) & (Y >= yb - 10) & (Y < yb - 7)
-    rpaint(a, sw, [('earth_cool', 'earth', 'brass')], 2.0 + 1.2 * (np.mod(X, 4) == 0), 0)
+    V.finish(p)
+    return p
+
+
+def churns(seed=0):
+    """A milk churn (36 x 44, barrel scale): tinned steel, a lit band down its left, the core
+    shadow on its right, a rolled shoulder, a lid with its knob, a ring handle, mud at its foot."""
+    rng = np.random.default_rng(seed)
+    p = canvas(40, 50, 20, 46)
+    a = p.a
+    Y, X = grid(a)
+    nz = noise(a.shape, rng, 1.0)
+    cx, top = 19, 6
+    half = lambda f: np.where(f < 0.12, 5.0 + 30 * f, np.where(f < 0.3, 8.6 - 6 * (f - 0.12), 9.6))
+    _cyl(a, cx, top + 4, 46, half, METAL, nz, rng, bands=(top + 14, 46 - 6))
+    lid = ((X - cx) / 6.0) ** 2 + ((Y - (top + 3)) / 2.4) ** 2 <= 1
+    rpaint(a, lid, METAL, 4.2 - 1.2 * (X > cx + 1), 0.4)
+    a[top:top + 2, cx - 1:cx + 2] = C('stone', 4)
+    a[top, cx - 1] = C('plaster', 5)
+    for hx_ in (cx - 11, cx + 11):
+        ring = np.abs(np.hypot(X - hx_, Y - (top + 15)) - 2.2) < 0.6
+        a[ring & (np.abs(X - cx) > 9)] = C('iron', 2)
+    a[(Y >= top + 26) & (Y < top + 30) & (np.abs(X - cx) <= 6)] = C('berry_cool', 2)    # the dairy's painted band
+    a[(Y == top + 26) & (np.abs(X - cx) <= 6) & (X < cx)] = C('berry', 3)
+    mud = (((X - cx) / 14) ** 2 + ((Y - 46) / 2.6) ** 2 <= 1) & (Y >= 44) & (a < 0)
+    rpaint(a, mud, [('earth_cool', 'earth', 'earth_warm')], 1.6 + nz, 0)
     V.finish(p)
     return p
 
@@ -1424,7 +1446,7 @@ def animals():
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['chickens'], 'as': 'contents'},
             eastward='17: the farm\'s animals, each a readable mass with its own pose', size_class='small_animal',
             note='A hen pecking in her run; 8 idle frames at 4 fps.')))
-    for pose, face, seed in (('stand', -1, 3), ('graze', 1, 5), ('lie', -1, 7)):
+    for pose, face, seed in (('stand', -1, 3), ('graze', 1, 5), ('lie', -1, 5)):
         frames = [sheep(pose, f, face, seed) for f in SHEEP_FRAMES[pose]]
         # each ewe keeps her own rhythm, as the hens do: the loop starts at a different beat
         shift = {'stand': 0, 'graze': 3, 'lie': 5}[pose]
@@ -1440,18 +1462,18 @@ def animals():
     # the paddock, the sty and the goat pen: (piece, kind, facing, seed, loop start, collision in
     # world px from the foot, footprint cols, what holds it, what it needs within, how far)
     stock = (
-        ('farm_cow', 'cow', 1, 9, 0, [-10.0, -3.0, 20, 3], 3, 'cattle', 'trough', 14, 'A cow in her paddock'),
-        ('farm_calf', 'calf', -1, 4, 3, [-6.0, -2.0, 12, 2], 2, 'cattle', 'trough', 14, 'A calf at grass near its mother'),
-        ('farm_horse', 'horse', -1, 12, 2, [-9.0, -3.0, 18, 3], 3, 'horses', 'trough', 14, 'A bay horse in its paddock'),
-        ('farm_pig', 'pig', 1, 12, 5, [-7.0, -3.0, 14, 3], 2, 'pigs', 'wallow', 6, 'A pig in the sty\'s run'),
-        ('farm_goat', 'goat', -1, 7, 1, [-5.0, -2.0, 10, 2], 2, 'goats', 'shelter', 8, 'A goat in its pen'),
-        ('farm_goat_b', 'goat', 1, 8, 6, [-5.0, -2.0, 10, 2], 2, 'goats', 'shelter', 8, 'A goat, its head down'),
+        ('farm_cow', 'cow', 1, 5, 0, [-11.0, -3.0, 22, 3], 3, 'cattle', 'trough', 14, 'A cow in her paddock, her tail swishing'),
+        ('farm_calf', 'calf', -1, 8, 3, [-6.5, -2.0, 13, 2], 2, 'cattle', 'trough', 14, 'A calf at grass near its mother, an ear flicking'),
+        ('farm_horse', 'horse', -1, 5, 2, [-9.0, -3.0, 18, 3], 3, 'horses', 'trough', 14, 'A bay horse in its paddock, dipping its head to graze'),
+        ('farm_pig', 'pig', 1, 2, 5, [-7.5, -3.0, 15, 3], 2, 'pigs', 'wallow', 6, 'A pig in the sty\'s run, its snout working'),
+        ('farm_goat', 'goat', -1, 9, 1, [-6.0, -2.0, 12, 2], 2, 'goats', 'shelter', 8, 'A goat in its pen, chewing'),
+        ('farm_goat_b', 'goat_b', 1, 3, 6, [-6.0, -2.0, 12, 2], 2, 'goats', 'shelter', 8, 'A brown goat grazing'),
     )
     for pid, kind, face, seed, shift, rect, cols, holds, need, far, note in stock:
         frames = beast_frames(kind, face, seed, shift)
         big = kind in ('cow', 'horse')
         out.append((pid, frames, 3.0, dict(
-            name={'farm_goat_b': 'Goat, grazing'}.get(pid, kind.capitalize()), purpose='live', role='stock',
+            name={'farm_goat_b': 'Goat, brown, grazing'}.get(pid, kind.capitalize()), purpose='live', role='stock',
             cells=(6 if big else 4, 4 if big else 3), fp=_fp(cols, 1), collision={'shape': 'rect', 'rect': rect},
             shadow=(int(rect[2] * 3 * 0.9), 5 if big else 4),
             requires=[_rel('within', need, far, 'stock keep to what their pen gives them (placement-logic: keep animals in)'),
@@ -1466,16 +1488,16 @@ def statics():
     """(piece id, picture, piece kwargs) for the coop, the shelter and the hay."""
     return [
         ('farm_coop', coop(seed=21), dict(
-            name='Hen ark', purpose='live', role='coop', cells=(3, 2), fp=_fp(2, 1),
-            collision={'shape': 'rect', 'rect': [-8.0, -4.0, 16, 4]}, shadow=(18, 4),
+            name='Hen house', purpose='live', role='coop', cells=(4, 5), fp=_fp(4, 2),
+            collision={'shape': 'rect', 'rect': [-12.5, -6.0, 25, 6]}, shadow=(30, 5),
             requires=[_rel('within', 'boundary', 2, 'against the run\'s fence, in its back corner'),
                       _rel('near', 'stock', 4, 'its hens about it')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['chickens'], 'as': 'needs'},
             size_class='shed',
             eastward='17: the barn\'s boarded walls, knots and nail heads', note='The hens\' house in their run.')),
         ('farm_shelter', shelter(seed=31), dict(
-            name='Field shelter', purpose='live', role='shelter', cells=(5, 3), fp=_fp(4, 2),
-            collision={'shape': 'rect', 'rect': [-16.0, -14.0, 32, 10]}, shadow=(34, 5),
+            name='Field shelter', purpose='live', role='shelter', cells=(5, 5), fp=_fp(5, 2),
+            collision={'shape': 'rect', 'rect': [-20.0, -14.0, 40, 10]}, shadow=(42, 5),
             requires=[_rel('within', 'boundary', 2, 'its back to the fold\'s hurdles'), _rel('near', 'stock', 8, 'the flock it shelters')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['sheep', 'horses', 'cattle', 'goats'], 'as': 'needs'},
             size_class='shed',
@@ -1490,7 +1512,7 @@ def statics():
             eastward='12 and 13: flower clumps, heads a touch big', note='A cottage border in a front garden.')),
         ('farm_sty', sty(seed=8), dict(
             name='Pigsty', purpose='live', role='sty', cells=(5, 3), fp=_fp(4, 2),
-            collision={'shape': 'rect', 'rect': [-17.0, -11.0, 34, 11]}, shadow=(34, 5),
+            collision={'shape': 'rect', 'rect': [-17.5, -11.0, 35, 11]}, shadow=(36, 5),
             requires=[_rel('near', 'stock', 6, 'its pigs in the run before it')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['pigs'], 'as': 'needs', 'serves': ['sty', 'trough']},
             size_class='shed',
@@ -1502,8 +1524,8 @@ def statics():
             enclosure={'holds': ['pigs'], 'as': 'needs'}, size_class='pile',
             eastward='17: mud and puddles, dark and glossy', note='A pig\'s mud wallow in the sty\'s run.')),
         ('farm_churns', churns(seed=1), dict(
-            name='Milk churns', purpose='store', role='churns', cells=(2, 1), fp=_fp(2, 1),
-            collision={'shape': 'rect', 'rect': [-8.0, -3.0, 16, 3]}, shadow=(16, 3),
+            name='Milk churn', purpose='store', role='churns', cells=(1, 2), fp=_fp(1, 1),
+            collision={'shape': 'rect', 'rect': [-4.0, -2.0, 8, 2]}, shadow=(10, 3),
             requires=[_rel('near', 'gate', 3, 'set out by the paddock gate or the yard\'s for the cart')], forbids=[OFF_ROUTE, OFF_WATER],
             size_class='barrel', eastward='17: tins and buckets by the barn', note='Churns waiting for the milk cart.')),
         ('farm_water_butt', water_butt(seed=2), dict(

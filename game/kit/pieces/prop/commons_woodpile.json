@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/commons/woodpile.png",
    "foot": [
-    35,
-    43
+    43,
+    58
    ]
   }
  ],
@@ -28,15 +28,15 @@
  },
  "geometry": {
   "size_px": [
-   70,
-   44
+   86,
+   62
   ],
   "size_cells": [
-   3,
-   2
+   4,
+   3
   ],
   "z_sort": "foot",
-  "height_px": 43,
+  "height_px": 58,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,8 +47,8 @@
    ]
   },
   "foot": [
-   35,
-   43
+   43,
+   58
   ],
   "footprint": [
    [

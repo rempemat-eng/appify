@@ -34,7 +34,7 @@ from scripts.art.kit import farm as FM
 from scripts.art.kit.farm import C, METAL, WOOD, canvas, grid, noise, rpaint, sphere_light
 from scripts.art.kit.schema import PIECES, ROOT
 from scripts.art.native import village as V
-from scripts.art.native.palette import to_rgba
+from scripts.art.native.palette import FI, to_rgba
 
 ART = os.path.join(ROOT, 'game', 'kit', 'props', 'art', 'commons')
 RES = 'res://kit/props/art/commons/'
@@ -77,11 +77,17 @@ def washing_line(seed=0):
     for x0, x1, kind in items:
         top = sag(np.arange(x0, x1 + 1))
         tm = int(round(top.min())) + 1
-        if kind == 'sheet':
-            m = (X >= x0) & (X <= x1) & (Y >= sag(X) + 1) & (Y < tm + 28 + np.sin(X * 0.7) * 1.5)
-            _cloth(a, m, LINEN, x0, x1, rng, 3.0, 3.4)
-            a[m & (np.abs(Y - (tm + 21)) < 1.2)] = C('sky', 3)
-            a[m & (np.abs(Y - (tm + 21)) < 1.2) & (X > x1 - 6)] = C('sky_cool', 2)
+        if kind == 'sheet':                                              # a patchwork quilt airing
+            m = (X >= x0) & (X <= x1) & (Y >= sag(X) + 1) & (Y < tm + 30 + np.sin(X * 0.7) * 1.5)
+            patches = [LINEN, [('berry_cool', 'clay', 'sand_warm')], [('dusk_cool', 'sky_cool', 'sky')], [('leaf_cool', 'grass_warm', 'brass')],
+                       [('earth_cool', 'brass', 'sand_warm')], [('crag_cool', 'fox', 'brass_warm')]]
+            f = np.sin((X - x0) / max(1, x1 - x0) * math.pi * 3 + 0.4)
+            for j in range(12):
+                cx_, cy_ = j % 3, j // 3
+                pm = m & ((X - x0) // 7 == cx_) & ((Y - tm) // 7 == cy_)
+                rpaint(a, pm, patches[(j * 5 + 1) % len(patches)], 3.2 + 0.9 * f - 0.15 * (Y - tm) / 2 - 0.8 * (X > x1 - 2), 0)
+            seamq = m & ((np.mod(X - x0, 7) == 6) | (np.mod(Y - tm, 7) == 6))
+            a[seamq] = np.maximum(a[seamq] - 1, (a[seamq] // 8) * 8)
         elif kind == 'shirt':
             body = (X >= x0 + 2) & (X <= x1 - 2) & (Y >= sag(X) + 1) & (Y < tm + 17)
             sleeves = (Y >= sag(X) + 1) & (Y < tm + 9) & (X >= x0 - 2) & (X <= x1 + 2) & (np.abs(X - (x0 + x1) / 2) > 3)
@@ -114,60 +120,63 @@ def washing_line(seed=0):
 
 
 ARM_Y = {'e': 16, 'w': 22, 'n': 30, 's': 37}
+OAK = [('timber_cool', 'timber', 'timber_warm'), ('slate_cool', 'timber_cool', 'stone_warm'), ('earth_cool', 'earth', 'sand_warm')]
 
 
 def fingerpost(points, seed=0):
-    """A fingerpost (72 x 92): a white-painted oak post with a ball finial, its arms at different
-    heights, each pointed and lettered: east and west seen side on, north and south foreshortened
-    (north behind the post, south before it)."""
+    """A fingerpost (round 4): a square oak post weathered grey-brown, lit on its west face and its
+    grain running up it, a lead-capped top; its arms at different heights, oak with carved letters
+    (dark grooves lit on their lower lip) and the pointing ends painted white; east and west side
+    on, north behind the post, south before it; a stone and a tuft at the foot."""
     rng = np.random.default_rng(seed)
-    p = canvas(76, 96, 38, 92)
+    p = canvas(76, 98, 38, 94)
     a = p.a
     Y, X = grid(a)
     cx = 38
     nz = noise(a.shape, rng, 1.0)
+    sm = noise(a.shape, rng, 2.0)
 
-    def arm(m, t0):
-        ys = np.nonzero(m)[0]
+    def arm(m, t0, d):
+        ys, xs = np.nonzero(m)
         y0, y1 = ys.min(), ys.max()
-        rpaint(a, m, PAINT, t0 + 1.1 * (Y == y0) - 1.2 * (Y == y1) - 0.5 * (Y == y1 - 1) + 0.7 * (nz - 0.5), 0.2 * nz)
+        rpaint(a, m, OAK, t0 + 1.1 * (Y == y0) - 1.2 * (Y == y1) - 0.6 * (Y == y1 - 1) + 0.7 * (nz - 0.5)
+               - 0.7 * (np.mod(X + 2 * Y, 7) == 0), sm)
+        tip = m & ((X - cx) * d > (xs.max() - cx if d > 0 else cx - xs.min()) - 5) if d else m & False
+        rpaint(a, tip, [('stone_cool', 'plaster_warm', 'plaster')], 3.6 + 1.0 * (Y == y0) - 1.2 * (Y == y1), 0)
         mid = (y0 + y1) // 2
-        xs = np.nonzero(m[mid])[0]
-        for lx in range(xs.min() + 3, xs.max() - 4, 3):                 # the letters: a word of blocks
+        lo, hi = xs.min() + 3, xs.max() - (7 if d else 3)
+        for lx in range(lo, hi, 3):                                  # carved letters
             if rng.random() < 0.8:
                 hgt = 2 if rng.random() < 0.7 else 3
-                a[mid - 1:mid - 1 + hgt, lx:lx + 2][m[mid - 1:mid - 1 + hgt, lx:lx + 2]] = C('soot', 1 + int(rng.random() < 0.3))
-        worn = m & (rng.random(a.shape) < 0.06) & (Y != y0)
-        a[worn] = C('timber', 2)                                        # the paint flaking to the oak
-        lich = m & (rng.random(a.shape) < 0.04) & (Y == y1 - 1)
-        a[lich] = C('brass', 3)
-    if 'n' in points:                                                    # behind the post, pointing away
-        m = ((X >= cx - 2) & (X <= cx + 9) & (Y >= ARM_Y['n'] - 4) & (Y < ARM_Y['n'] + 1) & (Y - ARM_Y['n'] > -(X - cx) * 0.3 - 4))
-        arm(m, 2.6)
-    # the post, its finial
-    post = (X >= cx - 3) & (X <= cx + 3) & (Y >= 8) & (Y < 92)
-    rpaint(a, post, PAINT, 3.2 + 1.2 * (X == cx - 3) + 0.4 * (X == cx - 2) - 1.4 * (X >= cx + 2) - 0.8 * (Y > 80) - 0.6 * (Y > 70)
-           + 0.6 * (nz - 0.5) - 0.7 * (np.mod(Y * 3 + X, 11) == 0), 0.2 * nz + 0.5 * (Y > 74))
-    a[post & (Y > 64) & (X == cx + 3) & (np.mod(Y, 3) == 0)] = C('leaf_cool', 2)
-    flake = post & (rng.random(a.shape) < 0.04) & (Y > 40)
-    a[flake] = C('timber', 2)
-    a[(Y > 86) & post] = C('timber', 2)
-    a[(Y > 88) & post & (X < cx)] = C('leaf_cool', 2)
-    ball = ((X - cx) / 3.6) ** 2 + ((Y - 5) / 3.6) ** 2 <= 1
-    rpaint(a, ball, PAINT, 3.0 + 1.8 * sphere_light(X, Y, cx, 5, 3.6, 3.6), 0)
-    for s in ('e', 'w'):
-        if s in points:
-            y0 = ARM_Y[s]
-            d = 1 if s == 'e' else -1
+                g = m[mid - 1:mid - 1 + hgt, lx:lx + 2]
+                a[mid - 1:mid - 1 + hgt, lx:lx + 2][g] = C('soot', 1)
+                if m[mid - 1 + hgt, lx]:
+                    a[mid - 1 + hgt, lx] = C('timber_warm', 4)            # the groove's lit lip
+    if 'n' in points:
+        m = (X >= cx - 2) & (X <= cx + 9) & (Y >= ARM_Y['n'] - 4) & (Y < ARM_Y['n'] + 1) & (Y - ARM_Y['n'] > -(X - cx) * 0.3 - 4)
+        arm(m, 2.4, 0)
+    post = (X >= cx - 3) & (X <= cx + 3) & (Y >= 9) & (Y < 94)
+    rpaint(a, post, OAK, 3.0 + 1.3 * (X == cx - 3) + 0.4 * (X == cx - 2) - 1.4 * (X >= cx + 2) - 0.8 * (Y > 86) + 0.7 * (nz - 0.5)
+           - 0.8 * (np.mod(Y * 3 + X * 5, 13) == 0), sm)
+    a[post & (X == cx) & (Y > 44) & (Y < 60)] = C('soot', 1)            # a shake down the post
+    a[post & (Y > 82) & (rng.random(a.shape) < 0.25)] = C('leaf_cool', 2)
+    cap = (Y >= 4) & (Y < 9) & (np.abs(X - cx) <= 4 - (9 - Y) * 0.6)
+    rpaint(a, cap, [('slate_cool', 'slate', 'stone')], 3.4 - 1.2 * (X > cx) + 0.8 * (X < cx - 1), 0)
+    a[3, cx - 1:cx + 1] = C('stone', 4)
+    for s_ in ('e', 'w'):
+        if s_ in points:
+            y0 = ARM_Y[s_]
+            d = 1 if s_ == 'e' else -1
             L = 26
-            xs = (X - cx) * d
-            m = (xs >= 0) & (xs <= L) & (Y >= y0 - 3) & (Y <= y0 + 3) & (np.abs(Y - y0) <= 3 - np.clip(xs - (L - 4), 0, 4) * 0.8)
-            arm(m, 3.2)
-    if 's' in points:                                                    # before the post, towards us
+            xs_ = (X - cx) * d
+            m = (xs_ >= 0) & (xs_ <= L) & (Y >= y0 - 3) & (Y <= y0 + 3) & (np.abs(Y - y0) <= 3 - np.clip(xs_ - (L - 4), 0, 4) * 0.8)
+            arm(m, 3.0, d)
+    if 's' in points:
         m = (X >= cx - 8) & (X <= cx + 2) & (Y >= ARM_Y['s'] - 3) & (Y < ARM_Y['s'] + 4) & (Y - ARM_Y['s'] < (cx - X) * 0.35 + 2)
-        arm(m, 3.4)
-    for gx in (cx - 6, cx - 3, cx + 4, cx + 6):
-        a[V.seg_mask(a.shape, gx, 92, gx + rng.uniform(-2, 2), 87, 0.45)] = C('grass' if gx < cx else 'grass_cool', 3)
+        arm(m, 3.2, 0)
+    V.stone_chunk(a, cx - 10, 88, 9, 6, 'stone', 3, rng)              # a stone at its foot
+    for gx in (cx - 5, cx - 2, cx + 4, cx + 6, cx + 8):
+        a[V.seg_mask(a.shape, gx, 94, gx + rng.uniform(-2, 2), 88, 0.45)] = C('grass' if gx < cx else 'grass_cool', 3)
     V.finish(p)
     return p
 
@@ -204,46 +213,63 @@ def chopping_block(seed=0):
 
 
 def woodpile(seed=0):
-    """A woodpile against a gable (72 x 52): split logs stacked between two stakes, their cut ends
-    to us, pale wedges ringed and checked, bark dark between them; a board laid on top."""
+    """A woodpile under a lean-to (84 x 62, round 4): logs stacked with their cut ends to us, each
+    end a pale round with its rings, a split and a dark bark rim, the halves and quarters of split
+    logs among the rounds; above the face the top of the stack, the logs' lengths running back,
+    barked and lit along their tops; a board roof on two posts; a few split logs at the foot."""
     rng = np.random.default_rng(seed)
-    p = canvas(76, 58, 38, 54)
+    p = canvas(88, 66, 44, 62)
     a = p.a
     Y, X = grid(a)
-    V.prism(a, 6, 12, 10, 54, 1, 'timber', 3, side=1)
-    V.prism(a, 66, 12, 70, 54, 1, 'timber', 3, side=1)
-    back = (X >= 10) & (X < 66) & (Y >= 18) & (Y < 54)
-    a[back] = C('earth_cool', 1)
-    sets = [('earth_warm', 'sand', 'sand_warm'), ('earth_cool', 'sand_cool', 'plaster_warm'), ('timber_cool', 'earth_warm', 'sand'),
+    nz = noise(a.shape, rng, 1.0)
+    for px in (6, 80):                                                   # the lean-to's posts
+        V.prism(a, px, 10, px + 4, 62, 1, 'timber', 3, side=1)
+    bark = [('timber_cool', 'timber', 'timber_warm'), ('earth_cool', 'earth', 'earth_warm'), ('slate_cool', 'timber_cool', 'stone_warm')]
+    ends = [('earth_warm', 'sand', 'sand_warm'), ('earth_cool', 'sand_cool', 'plaster_warm'), ('timber_cool', 'earth_warm', 'sand'),
             ('clay_cool', 'sand_warm', 'plaster_warm')]
+    x0, x1, top, depth = 10, 78, 26, 8
+    # the top of the stack: the top course's lengths running back, rounded and lit on the left
+    for k, lx in enumerate(range(x0, x1, 9)):
+        m = (X >= lx) & (X < lx + 9) & (Y >= top - depth) & (Y < top)
+        u = (X - lx) / 9.0
+        rpaint(a, m, bark, 2.4 + 1.8 * np.exp(-((u - 0.3) / 0.25) ** 2) - 1.2 * (u > 0.8) + 0.6 * (nz - 0.5)
+               - 0.8 * (np.mod(Y + k * 3, 5) == 0), np.mod(k * 0.37, 1))
+        a[m & (Y == top - depth)] = C('sand', 4)                     # the far ends, cut and pale
+    back = (X >= x0) & (X < x1) & (Y >= top) & (Y < 62)
+    a[back] = C('earth_cool', 1)
+    # the face: rounds, halves and quarters, packed course on course
     for r in range(5):
-        yc = 49 - r * 7.5
-        off = 0 if r % 2 == 0 else 4
-        for k in range(7):
-            xc = 14 + off + k * 8 + rng.uniform(-0.6, 0.6)
-            if xc > 63:
+        yc = 57 - r * 7.4
+        off = 0 if r % 2 == 0 else 4.5
+        for k in range(8):
+            xc = x0 + 4.5 + off + k * 9 + rng.uniform(-0.6, 0.6)
+            if xc > x1 - 4:
                 continue
-            rr = rng.uniform(4.4, 5.0)
+            rr = rng.uniform(4.3, 4.9)
             dd = np.hypot(X - xc, Y - yc)
             m = (dd <= rr) & back
-            # most are split: a half or a third of a round, its flat face catching the light
-            if rng.random() < 0.35:
-                ang = rng.choice([0.3, 1.9, 3.4, 4.9]) + rng.uniform(-0.3, 0.3)
-                m &= np.cos(np.arctan2(Y - yc, X - xc) - ang) > -0.35
+            if rng.random() < 0.35:                                  # a split log: its flat face catches the light
+                ang = rng.choice([0.4, 2.0, 3.5, 5.0])
+                m &= np.cos(np.arctan2(Y - yc, X - xc) - ang) > -0.3
             d = dd / rr
             lit = sphere_light(X, Y, xc, yc, rr, rr)
-            rpaint(a, m, sets, 3.4 + 0.9 * lit - 0.9 * (np.mod(d * 3.5, 1) < 0.22) - 0.6 * (X > xc + 2), rng.random())
+            rpaint(a, m, ends, 3.5 + 0.9 * lit - 0.9 * (np.mod(d * 3.2, 1) < 0.22) - 0.5 * (X > xc + 2), rng.random())
             ring = m & ~ndi.binary_erosion(m, iterations=1)
-            a[ring] = C('timber_cool', 1) if rng.random() < 0.5 else C('earth_cool', 2)
-            a[ring & (Y < yc) & (X < xc)] = C('timber', 3)
-            pith = m & (dd < 0.8)
-            a[pith] = C('earth', 2)
+            rpaint(a, ring, bark, 1.6 + 1.2 * ((Y < yc) & (X < xc)), rng.random())
+            a[m & (dd < 0.8)] = C('earth', 2)                           # the pith
             if rng.random() < 0.5:
                 ca = rng.uniform(0, math.pi)
-                a[m & (np.abs((X - xc) * math.sin(ca) - (Y - yc) * math.cos(ca)) < 0.5) & (dd > 1.5)] = C('earth', 2)    # a check
-    board = (X >= 4) & (X < 72) & (Y >= 13) & (Y < 18)
-    rpaint(a, board, WOOD, 3.0 + 1.4 * (Y == 13) - 1.0 * (Y == 17) - 0.8 * (X > 64), 0.5)
-    a[board & (np.mod(X, 13) == 0)] = C('iron', 3)
+                a[m & (np.abs((X - xc) * math.sin(ca) - (Y - yc) * math.cos(ca)) < 0.5) & (dd > 1.5) & (dd < rr - 1)] = C('earth', 2)
+    # the roof: boards falling to the front, their lit edges, the shade under the eave
+    roof = (X >= 2) & (X < 86) & (Y >= 4 + (86 - X) * 0.03) & (Y < 14)
+    rpaint(a, roof, [('timber_cool', 'timber', 'timber_warm'), ('slate_cool', 'timber_cool', 'timber')],
+           3.6 - 0.25 * (Y - 4) - 1.3 * (np.mod(X, 7) == 6) - 0.8 * (X > 80) + 0.5 * (nz - 0.5), np.mod(X // 7 * 0.41, 1))
+    a[roof & (Y == 13)] = C('soot', 1)
+    a[(Y >= 14) & (Y < 16) & (X >= x0) & (X < x1)] = C('soot', 1)
+    # split logs at the foot
+    for k, (lx, ly) in enumerate(((16, 63), (30, 64), (60, 63))):
+        m = V.seg_mask(a.shape, lx, ly, lx + 10, ly - 1 + k % 2, 1.6)
+        rpaint(a, m, bark if k % 2 else ends, 2.8 + 1.2 * (Y < ly - 1), 0.4)
     V.finish(p)
     return p
 
@@ -315,38 +341,50 @@ def notice_board(seed=0):
 
 
 def pump(seed=0):
-    """A village pump (48 x 72): a cast iron column painted dark green, lit down its west side, a
-    fluted cap, its handle raised, the spout over a stone trough with water in it, a bucket."""
+    """A village pump (90 x 112, well scale): a cast iron column painted dark green on a stone
+    plinth, lit down its west side, a fluted cap and a brass knob, its long handle raised, the spout
+    over a broad stone trough with water in it, a bucket on the trough's rim, moss at the foot."""
     rng = np.random.default_rng(seed)
-    p = canvas(56, 76, 28, 72)
+    p = canvas(96, 118, 48, 114)
     a = p.a
     Y, X = grid(a)
     nz = noise(a.shape, rng, 1.0)
-    V.prism(a, 6, 56, 50, 72, 5, 'stone', 3, side=3)                     # the trough
-    water = (X >= 9) & (X < 47) & (Y >= 57) & (Y < 60)
-    rpaint(a, water, [('water_cool', 'water', 'sky')], 2.4 + 1.6 * (np.mod(X, 7) == 0) + 0.8 * (Y == 57), 0)
-    col = (np.abs(X - 22) <= 5) & (Y >= 18) & (Y < 57)
-    u = (X - 22) / 5
-    green = [('dusk_cool', 'leaf_cool', 'leaf'), ('soot', 'leaf_cool', 'grass_cool')]
-    rpaint(a, col, green, 2.4 + 1.6 * np.exp(-((u + 0.45) / 0.3) ** 2) - 1.0 * (u > 0.5) + 0.4 * (nz - 0.5), nz)
-    for b in (24, 50):
+    V.prism(a, 4, 84, 92, 114, 8, 'stone', 3, side=4)                    # the trough
+    tr = (X >= 6) & (X < 90) & (Y >= 84) & (Y < 114)
+    front = (X >= 4) & (X < 86) & (Y >= 93) & (Y < 113)
+    V.ashlar(a, 4, 93, 86, 113, rng, hd=True, where=front)
+    _weather(a, tr | front, rng, 'ashlar_warm', 'stone_cool')
+    a[tr & (noise(a.shape, rng, 1.3) > 0.78) & (Y > 100)] = C('leaf_cool', 2)
+    water = (X >= 10) & (X < 86) & (Y >= 86) & (Y < 91)
+    rpaint(a, water, [('water_cool', 'water', 'sky'), ('dusk_cool', 'water_cool', 'water')],
+           2.2 + 1.6 * (np.mod(X + 2 * Y, 9) == 0) + 0.8 * (Y == 86), np.mod(X // 6 * 0.3, 1))
+    V.prism(a, 26, 72, 58, 86, 4, 'stone', 4, side=3)                   # the plinth
+    _weather(a, (X >= 26) & (X < 58) & (Y >= 72) & (Y < 86), rng, 'ashlar_warm', 'slate_cool')
+    green = [('dusk_cool', 'leaf_cool', 'leaf'), ('soot', 'leaf_cool', 'grass_cool'), ('slate_cool', 'leaf_cool', 'leaf_warm')]
+    col = (np.abs(X - 42) <= 8) & (Y >= 22) & (Y < 74)
+    u = (X - 42) / 8
+    rpaint(a, col, green, 2.4 + 1.7 * np.exp(-((u + 0.45) / 0.3) ** 2) - 1.0 * (u > 0.5) + 0.5 * (nz - 0.5), np.mod((Y // 9) * 0.37, 1))
+    for b in (30, 46, 66):                                               # the cast bands
         a[col & (np.abs(Y - b) < 1)] = C('leaf_cool', 1)
         a[col & (Y == b - 1) & (u < 0)] = C('leaf', 4)
-    cap = ((X - 22) / 7.5) ** 2 + ((Y - 15) / 4.0) ** 2 <= 1
-    rpaint(a, cap, green, 2.6 + 1.6 * sphere_light(X, Y, 22, 15, 7.5, 4), 0)
-    knob = ((X - 22) / 2.2) ** 2 + ((Y - 9) / 2.2) ** 2 <= 1
-    rpaint(a, knob, [('brass', 'brass', 'brass_warm')], 3.0 + 1.6 * sphere_light(X, Y, 22, 9, 2.2, 2.2), 0)
-    V.bar(a, 26, 28, 44, 16, 1.1, 'iron', 3)                              # the handle, raised
-    a[V.seg_mask(a.shape, 43, 16, 46, 15, 1.2)] = C('iron', 2)
-    spout = (X >= 26) & (X < 36) & (Y >= 38) & (Y < 42)
-    rpaint(a, spout, green, 2.8 + 1.2 * (Y == 38) - 1.0 * (X > 33), 0)
-    a[42:57, 34] = C('water', 3)
-    a[42:57:3, 34] = C('sky', 4)
-    bucket = (X >= 38) & (X < 48) & (Y >= 62) & (Y < 72) & (np.abs(X - 43) <= 4 + (72 - Y) * 0.06)
-    rpaint(a, bucket, WOOD, 2.8 + 1.2 * (X < 40) - 1.0 * (X > 45), 0.4)
-    a[bucket & (np.abs(Y - 65) < 0.6)] = C('iron', 2)
-    a[bucket & (np.abs(Y - 69) < 0.6)] = C('iron', 2)
-    a[(Y == 62) & bucket] = C('water', 3)
+    a[col & (rng.random(a.shape) < 0.05) & (u > -0.6)] = C('crag_cool', 2)     # rust where the paint has gone
+    cap = ((X - 42) / 11.0) ** 2 + ((Y - 18) / 5.5) ** 2 <= 1
+    rpaint(a, cap, green, 2.6 + 1.8 * sphere_light(X, Y, 42, 18, 11, 5.5) - 0.8 * (np.mod(X, 3) == 0), 0)
+    knob = ((X - 42) / 3.2) ** 2 + ((Y - 10) / 3.2) ** 2 <= 1
+    rpaint(a, knob, [('brass', 'brass', 'brass_warm')], 3.0 + 1.8 * sphere_light(X, Y, 42, 10, 3.2, 3.2), 0)
+    V.bar(a, 48, 36, 80, 16, 1.6, 'iron', 3)                             # the handle, raised
+    a[V.seg_mask(a.shape, 79, 16, 84, 14, 2.0)] = C('iron', 2)
+    spout = (X >= 48) & (X < 64) & (Y >= 50) & (Y < 56)
+    rpaint(a, spout, green, 2.8 + 1.3 * (Y == 50) - 1.0 * (X > 60), 0)
+    a[56:86, 61:63] = C('water', 3)
+    a[56:86:3, 61] = C('sky', 4)
+    bucket = (X >= 70) & (X < 86) & (Y >= 68) & (Y < 85) & (np.abs(X - 78) <= 7 + (85 - Y) * 0.06)
+    rpaint(a, bucket, WOOD, 2.8 + 1.3 * (X < 73) - 1.0 * (X > 82) + 0.5 * (np.mod(X, 3) == 0), 0.4)
+    for b in (72, 80):
+        a[bucket & (np.abs(Y - b) < 0.6)] = C('iron', 2)
+    V.bar(a, 70, 68, 78, 60, 0.6, 'iron', 3)
+    V.bar(a, 78, 60, 86, 68, 0.6, 'iron', 3)
+    a[(Y == 68) & bucket] = C('water', 3)
     V.finish(p)
     return p
 
@@ -356,66 +394,172 @@ AWNINGS = {'produce': (('berry_cool', 'berry', 'fox'), ('sand_cool', 'plaster_wa
 
 
 def stall(kind='produce', seed=0):
-    """A market stall (92 x 80): a striped awning on four poles, its scalloped valance, a trestle
-    under a cloth, and its goods: crates of apples, cabbages and carrots, or bolts of cloth."""
+    """A market stall (140 x 122, stall scale): a striped awning on four poles sagging between them,
+    its scalloped valance, a trestle under a cloth with an embroidered hem, price slates, and its
+    goods: crates of apples, cabbages and carrots and a basket of eggs, or bolts of cloth stacked
+    with a measuring rule."""
     rng = np.random.default_rng(seed)
-    p = canvas(96, 84, 48, 80)
+    W, H = 144, 126
+    p = canvas(W, H, W // 2, H - 4)
     a = p.a
     Y, X = grid(a)
     nz = noise(a.shape, rng, 1.0)
-    for px in (10, 84):                                                  # the back poles
-        V.bar(a, px, 10, px, 52, 1.0, 'timber', 2)
-    stripe_a, stripe_b = AWNINGS[kind]
-    aw = (X >= 4) & (X < 92) & (Y >= 6) & (Y < 22) & (Y - 6 >= (np.abs(X - 48) - 40) * 0.3)
-    st = np.mod((X - 4) // 8, 2) == 0
-    sag = np.sin(np.mod(X - 4, 16) / 16 * math.pi)
-    t = 3.4 - 0.12 * (Y - 6) + 0.6 * (Y < 9) - 0.8 * (X > 84) + 0.6 * (nz - 0.5) + 0.7 * sag - 0.8 * (np.mod(X - 4, 8) == 7)
-    rpaint(a, aw & st, [stripe_a, (stripe_a[0], stripe_a[1], 'brass_warm')], t, nz)
-    rpaint(a, aw & ~st, [stripe_b, ('stone_warm', 'sand', 'plaster')], t + 0.4, nz)
-    val = (X >= 4) & (X < 92) & (Y >= 22) & (Y < 26) & (np.hypot(np.mod(X - 4, 8) - 4, Y - 21.5) <= 4.2)
-    rpaint(a, val & st, [stripe_a], 2.4, 0)
-    rpaint(a, val & ~st, [stripe_b], 3.0, 0)
-    table = (X >= 10) & (X < 86) & (Y >= 46) & (Y < 50)
-    rpaint(a, table, WOOD, 3.6 + 1.0 * (Y == 46) - 0.8 * (X > 80), 0.3)
-    cloth = (X >= 10) & (X < 86) & (Y >= 50) & (Y < 74) & (Y < 72 + 1.5 * np.sin(X * 0.6))
+    L, R = 8, W - 8
+    for px in (L + 8, R - 8):                                            # the back poles
+        V.bar(a, px, 14, px, 80, 1.3, 'timber', 2)
+    sa, sb = AWNINGS[kind]
+    aw = (X >= L - 4) & (X < R + 4) & (Y >= 8) & (Y < 34) & (Y - 8 >= (np.abs(X - W / 2) - (R - L) / 2 + 4) * 0.4)
+    st = np.mod((X - L) // 11, 2) == 0
+    sag = np.sin(np.mod(X - L, 22) / 22 * math.pi)
+    t = 3.4 - 0.08 * (Y - 8) + 0.6 * (Y < 11) - 0.8 * (X > R - 12) + 0.6 * (nz - 0.5) + 0.7 * sag - 0.8 * (np.mod(X - L, 11) == 10)
+    rpaint(a, aw & st, [sa, (sa[0], sa[1], 'brass_warm')], t, nz)
+    rpaint(a, aw & ~st, [sb, ('stone_warm', 'sand', 'plaster')], t + 0.4, nz)
+    stain = aw & (noise(a.shape, rng, 2.2) > 0.68)                       # weather stains on the canvas
+    a[stain] = np.maximum(a[stain] - 1, (a[stain] // 8) * 8)
+    seam = aw & (np.mod(X - L, 11) == 5) & (np.mod(Y, 2) == 0)
+    a[seam] = np.maximum(a[seam] - 1, (a[seam] // 8) * 8)
+    val = (X >= L - 4) & (X < R + 4) & (Y >= 34) & (Y < 40) & (np.hypot(np.mod(X - L, 11) - 5.5, Y - 33.5) <= 5.8)
+    rpaint(a, val & st, [sa], 2.4, 0)
+    rpaint(a, val & ~st, [sb], 3.0, 0)
+    a[(Y >= 40) & (Y < 42) & (X >= L) & (X < R)] = C('soot', 1)
+    ty = 74
+    table = (X >= L + 6) & (X < R - 6) & (Y >= ty) & (Y < ty + 5)
+    rpaint(a, table, WOOD, 3.6 + 1.0 * (Y == ty) - 0.8 * (X > R - 14), 0.3)
+    cloth = (X >= L + 6) & (X < R - 6) & (Y >= ty + 5) & (Y < H - 10 + 2 * np.sin(X * 0.5))
     cs = ([('dusk_cool', 'sky_cool', 'sky'), ('slate_cool', 'sky_cool', 'sky'), ('dusk_cool', 'dusk', 'sky')] if kind == 'produce' else
           [('crag_cool', 'clay', 'brass'), ('earth_cool', 'clay', 'brass'), ('crag_cool', 'crag_warm', 'sand_warm')])
-    fold = np.sin((X - 10) / 76 * math.pi * 9 + 0.4)
-    rpaint(a, cloth, cs, 2.9 + 0.7 * fold - 0.6 * ((Y - 50) / 24) + 0.6 * (X < 13) - 0.9 * (X > 82) + 0.8 * (Y < 52), noise(a.shape, rng, 2.0))
-    hem = cloth & (Y >= 66) & (Y < 69)
+    fold = np.sin((X - L) / (R - L) * math.pi * 12 + 0.4)
+    rpaint(a, cloth, cs, 2.9 + 0.7 * fold - 0.6 * ((Y - ty) / 40) + 0.6 * (X < L + 9) - 0.9 * (X > R - 10) + 0.8 * (Y < ty + 7),
+           noise(a.shape, rng, 2.0))
+    if kind == 'produce':                                                # gingham: the checks fold with the cloth
+        chk = cloth & ((np.mod(X - L, 8) < 4) ^ (np.mod(Y - ty, 8) < 4))
+        rpaint(a, chk, [('stone_cool', 'plaster_warm', 'plaster'), ('sky_cool', 'sky', 'plaster')],
+               3.2 + 0.7 * fold - 0.6 * ((Y - ty) / 40) - 0.9 * (X > R - 10), 0.5 * ((np.mod(X - L, 8) < 4) & (np.mod(Y - ty, 8) < 4)))
+    else:                                                                # a striped cloth with sprigs of flowers
+        band = cloth & (np.mod(X - L, 12) < 4)
+        rpaint(a, band, [('earth_cool', 'brass', 'sand_warm'), ('clay_cool', 'brass', 'brass_warm')],
+               3.0 + 0.7 * fold - 0.6 * ((Y - ty) / 40) - 0.9 * (X > R - 10), 0.3)
+        spr = cloth & (np.mod(X - L + 3 * ((Y - ty) // 7), 9) == 0) & (np.mod(Y - ty, 7) == 3)
+        a[spr] = C('plaster_warm', 4)
+        a[np.roll(spr, 1, axis=1) & cloth] = C('leaf', 3)
+    hem = cloth & (Y >= H - 20) & (Y < H - 16)
     rpaint(a, hem, [('brass', 'brass_warm', 'sand_warm') if kind == 'produce' else ('dusk_cool', 'sky_cool', 'sky')],
-           3.0 + 1.2 * (np.mod(X, 4) == 0) - 0.8 * (Y == 68) + 0.5 * fold, 0)
-    for tx in (20, 48, 74):                                              # price slates
-        a[44:47, tx:tx + 5] = C('soot', 1)
-        a[45, tx + 1:tx + 4:2] = C('plaster', 4)
-    for px in (6, 88):                                                   # the front poles
-        V.prism(a, px - 1, 12, px + 2, 80, 1, 'timber', 3, side=1)
+           3.0 + 1.2 * (np.mod(X, 4) == 0) - 0.8 * (Y == H - 17) + 0.5 * fold, 0)
+    for px in (L, R):                                                    # the front poles
+        V.prism(a, px - 2, 16, px + 2, H - 4, 1, 'timber', 3, side=1)
     if kind == 'produce':
-        crates = ((14, 'apples'), (38, 'cabbages'), (62, 'carrots'))
-        for x0, what in crates:
-            V.prism(a, x0, 38, x0 + 22, 47, 2, 'timber', 3, side=2)
-            for k in range(14):
-                gx, gy = x0 + 3 + rng.uniform(0, 16), 36 + rng.uniform(0, 4)
+        for x0, what in ((L + 10, 'apples'), (L + 40, 'cabbages'), (L + 70, 'carrots'), (L + 100, 'eggs')):
+            if what == 'eggs':                                           # a basket of eggs
+                bk = ((X - (x0 + 9)) / 10) ** 2 + ((Y - (ty - 3)) / 5) ** 2 <= 1
+                rpaint(a, bk & (Y > ty - 5), FM.STRAW, 2.4 + 1.2 * (np.mod(X + Y, 3) == 0), 0.3)
+                for k in range(6):
+                    ex_, ey_ = x0 + 3 + 2.5 * k, ty - 6 - (k % 2)
+                    a[_ell_m(X, Y, ex_, ey_, 1.6, 2.0)] = C('plaster_warm', 4 if k % 2 else 3)
+                V.bar(a, x0 + 1, ty - 4, x0 + 9, ty - 14, 0.7, 'timber_warm', 3)
+                V.bar(a, x0 + 9, ty - 14, x0 + 17, ty - 4, 0.7, 'timber_warm', 3)
+                continue
+            V.prism(a, x0, ty - 12, x0 + 26, ty, 3, 'timber', 3, side=2)
+            for k in range(18):
+                gx, gy = x0 + 3 + rng.uniform(0, 20), ty - 14 + rng.uniform(0, 4)
                 if what == 'apples':
-                    m = np.hypot(X - gx, Y - gy) <= 2.2
-                    rpaint(a, m, [('berry_cool', 'berry', 'fox'), ('leaf_cool', 'grass_warm', 'brass')], 2.4 + 2.0 * sphere_light(X, Y, gx, gy, 2.2, 2.2),
+                    m = np.hypot(X - gx, Y - gy) <= 2.4
+                    rpaint(a, m, [('berry_cool', 'berry', 'fox'), ('leaf_cool', 'grass_warm', 'brass')], 2.4 + 2.0 * sphere_light(X, Y, gx, gy, 2.4, 2.4),
                            0.0 if k % 4 else 0.9)
-                elif what == 'cabbages' and k < 5:
-                    m = np.hypot(X - gx, Y - gy + 1) <= 3.6
+                elif what == 'cabbages' and k < 6:
+                    m = np.hypot(X - gx, Y - gy + 1) <= 4.2
                     rpaint(a, m, [('leaf_cool', 'leaf', 'grass_warm'), ('grass_cool', 'leaf', 'leaf_warm')],
-                           2.2 + 2.0 * sphere_light(X, Y, gx, gy - 1, 3.6, 3.6) - 0.9 * (np.mod(np.arctan2(Y - gy, X - gx) * 3, 1) < 0.2), 0.4)
+                           2.2 + 2.0 * sphere_light(X, Y, gx, gy - 1, 4.2, 4.2) - 0.9 * (np.mod(np.arctan2(Y - gy, X - gx) * 3, 1) < 0.2), 0.4)
                 elif what == 'carrots':
-                    a[V.seg_mask(a.shape, gx, gy + 2, gx + 3, gy - 1, 0.9)] = C('fox', 3 + k % 2)
-                    a[int(gy) - 2, int(gx) + 3] = C('leaf', 3)
+                    a[V.seg_mask(a.shape, gx, gy + 3, gx + 4, gy - 1, 1.0)] = C('fox', 3 + k % 2)
+                    a[int(gy) - 2:int(gy), int(gx) + 4] = C('leaf', 3)
     else:
-        bolts = ((14, ('berry_cool', 'berry', 'fox')), (26, ('dusk_cool', 'sky_cool', 'sky')), (38, ('leaf_cool', 'leaf', 'grass_warm')),
-                 (50, ('earth_cool', 'brass', 'brass_warm')), (62, ('dusk_cool', 'dusk', 'sky')), (74, ('stone_cool', 'plaster_warm', 'plaster')))
-        for x0, fam in bolts:
-            for k in range(2):
-                y0 = 40 - k * 5
-                m = (X >= x0 + k) & (X < x0 + 10 - k) & (Y >= y0) & (Y < y0 + 5)
-                rpaint(a, m, [fam], 3.0 + 1.3 * (Y == y0) - 1.0 * (Y == y0 + 4) - 0.8 * (X >= x0 + 8 - k), 0)
-                a[m & (X == x0 + 9 - k)] = C(fam[0], 2)
+        fams = (('berry_cool', 'berry', 'fox'), ('dusk_cool', 'sky_cool', 'sky'), ('leaf_cool', 'leaf', 'grass_warm'),
+                ('earth_cool', 'brass', 'brass_warm'), ('dusk_cool', 'dusk', 'sky'), ('stone_cool', 'plaster_warm', 'plaster'),
+                ('crag_cool', 'clay', 'sand_warm'), ('slate_cool', 'stone', 'plaster_warm'))
+        for j, fam in enumerate(fams):
+            x0 = L + 10 + j * 14
+            for k in range(3 - j % 2):
+                y0 = ty - 6 - k * 6
+                m = (X >= x0 + k) & (X < x0 + 12 - k) & (Y >= y0) & (Y < y0 + 6)
+                rpaint(a, m, [fam], 3.0 + 1.3 * (Y == y0) - 1.0 * (Y == y0 + 5) - 0.8 * (X >= x0 + 10 - k), 0)
+                a[m & (X == x0 + 11 - k)] = C(fam[0], 2)
+        V.bar(a, L + 12, ty - 2, R - 30, ty - 2, 0.6, 'brass', 4)         # the measuring rule
+    for tx in (L + 20, L + 50, L + 80):                                   # price slates
+        a[ty + 7:ty + 11, tx:tx + 7] = C('soot', 1)
+        a[ty + 8, tx + 1:tx + 6:2] = C('plaster', 4)
+    V.finish(p)
+    return p
+
+
+def _refam(a, m, fam):
+    """The same tones in another family (weathering: a stone warmed by lichen, cooled by damp)."""
+    a[m] = FI[fam] * 8 + np.mod(a[m], 8)
+
+
+def _weather(a, m, rng, warm='stone_warm', cool='stone_cool', sigma=2.0):
+    n = noise(a.shape, rng, sigma)
+    _refam(a, m & (n > 0.66) & (a >= 0), warm)
+    _refam(a, m & (n < 0.3) & (a >= 0), cool)
+
+
+def _ell_m(X, Y, cx, cy, rx, ry):
+    return ((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 <= 1
+
+
+def shrine(seed=0):
+    """A wayside shrine (62 x 104, shrine scale): a dressed stone pillar on a step under a little
+    gabled roof of slates with a stone cross, a niche with a lamp burning low and its glow on the
+    stone, moss and lichen on the north side, flowers in a jar and candle stubs on the step."""
+    rng = np.random.default_rng(seed)
+    p = canvas(66, 110, 33, 106)
+    a = p.a
+    Y, X = grid(a)
+    V.prism(a, 4, 92, 62, 106, 4, 'stone', 3, side=3)                   # the step
+    pil = (X >= 14) & (X < 52) & (Y >= 30) & (Y < 94)
+    V.ashlar(a, 14, 30, 52, 94, rng, hd=True, where=pil)
+    a[pil & (X >= 47)] = np.maximum(a[pil & (X >= 47)] - 1, (a[pil & (X >= 47)] // 8) * 8)
+    _weather(a, pil, rng, 'ashlar_warm', 'stone_cool', 1.6)
+    damp = pil & (noise(a.shape, rng, 1.0) > 0.72) & (Y > 60)
+    a[damp] = np.maximum(a[damp] - 1, (a[damp] // 8) * 8)
+    _weather(a, (X >= 4) & (X < 62) & (Y >= 92), rng, 'stone_warm', 'slate_cool')
+    niche = (X >= 22) & (X < 44) & (Y >= 40) & (Y < 68) & (Y >= 40 + 0.08 * (X - 33) ** 2)
+    rpaint(a, niche, [('dusk_cool', 'sky_cool', 'sky'), ('soot', 'dusk_cool', 'sky_cool')], 1.4 + 0.9 * (Y < 50) - 0.8 * (X > 40), 0.3)   # painted inside
+    stars = niche & (np.mod(X * 3 + Y * 5, 17) == 0) & (Y < 54)
+    a[stars] = C('brass', 4)
+    a[niche & (Y > 62)] = C('soot', 0)
+    dist = np.hypot(X - 33, Y - 57)
+    glow = niche & (dist <= 7)
+    rpaint(a, glow, [('dusk_cool', 'crag_cool', 'clay'), ('crag_cool', 'clay', 'lamp')], 3.4 - 0.4 * dist, 0)
+    flame = (np.abs(X - 33) <= 1) & (Y >= 53) & (Y < 58)
+    a[flame] = C('lamp', 5)
+    a[56:58, 32:35] = C('lamp', 4)
+    a[58:64, 30:37] = C('brass', 3)
+    a[58:64, 30] = C('brass_warm', 4)
+    a[pil & ~niche & (np.hypot(X - 33, Y - 66) < 6) & (Y > 66)] = C('ashlar_warm', 4)     # the glow on the sill
+    moss = pil & (noise(a.shape, rng, 1.2) > 0.7) & (Y > 70)
+    rpaint(a, moss, [('leaf_cool', 'leaf', 'brass'), ('grass_cool', 'leaf_cool', 'leaf_warm')], 2.4 + rng.random(a.shape), rng.random(a.shape))
+    for k in range(5):                                                   # ivy up the west side
+        y0 = 92 - k * 11
+        a[V.seg_mask(a.shape, 15, y0, 13 + (k % 2) * 3, y0 - 9, 0.5)] = C('leaf_cool', 2)
+        lf = _ell_m(X, Y, 13 + (k % 2) * 4, y0 - 5, 2.0, 1.5)
+        rpaint(a, lf, [('leaf_cool', 'leaf', 'leaf_warm')], 2.6 + 1.2 * (X < 14 + (k % 2) * 4), 0)
+    lich = pil & (rng.random(a.shape) < 0.03) & (Y < 70)
+    a[lich] = C('brass', 3)
+    roof = (Y >= 12) & (Y < 34) & (np.abs(X - 33) <= 6 + (Y - 12) * 1.2)
+    rpaint(a, roof, [('slate_cool', 'slate', 'slate_warm'), ('dusk_cool', 'slate', 'stone')],
+           3.6 - 1.5 * (X > 33) - 1.2 * (np.mod(Y - 12, 4) == 3) + 0.4 * (np.mod(X + (Y // 4) * 3, 6) == 0), np.mod((Y // 4) * 0.4, 1))
+    a[roof & (np.abs(X - 33) < 1.2)] = C('stone_warm', 4)
+    a[(Y >= 32) & (Y < 35) & (X >= 12) & (X < 54)] = C('soot', 1)
+    cross = ((np.abs(X - 33) <= 1) & (Y >= 1) & (Y < 13)) | ((np.abs(Y - 5) <= 1) & (np.abs(X - 33) <= 4))
+    rpaint(a, cross, [('stone_cool', 'stone', 'stone_warm')], 3.4 + 1.2 * (X < 33), 0)
+    V.prism(a, 8, 84, 16, 93, 1, 'clay', 3, side=1)                      # the jar and its flowers
+    for k, (fx_, fam) in enumerate(((7, 'berry'), (10, 'sky'), (13, 'brass_warm'), (16, 'plaster'), (9, 'fox'))):
+        a[V.seg_mask(a.shape, 12, 84, fx_, 76 - k % 2, 0.5)] = C('leaf_cool', 3)
+        a[75 - k % 2:77 - k % 2, fx_ - 1:fx_ + 1] = C(fam, 4)
+    for cx_ in (50, 55):                                                 # candle stubs
+        a[86:93, cx_:cx_ + 3] = C('plaster', 4)
+        a[86:93, cx_ + 2] = C('plaster_warm', 3)
+        a[84:86, cx_ + 1] = C('lamp', 5)
     V.finish(p)
     return p
 
@@ -452,42 +596,6 @@ def cart(seed=0):
             C('timber', 3 if math.cos(ang) + math.sin(ang) < 0 else 2)
     hub = d <= 3.2
     rpaint(a, hub, [('soot', 'iron', 'stone')], 2.4 + 1.6 * sphere_light(X, Y, wx, wy, 3.2, 3.2), 0)
-    V.finish(p)
-    return p
-
-
-def shrine(seed=0):
-    """A wayside shrine (40 x 76): a dressed stone pillar under a little gabled slate roof, a niche
-    with a lamp burning low, flowers in a jar and a candle stub at its foot, moss on the north side."""
-    rng = np.random.default_rng(seed)
-    p = canvas(44, 80, 22, 76)
-    a = p.a
-    Y, X = grid(a)
-    V.prism(a, 4, 66, 40, 76, 3, 'stone', 3, side=2)                     # the step
-    pil = (X >= 10) & (X < 34) & (Y >= 18) & (Y < 68)
-    V.ashlar(a, 10, 18, 34, 68, rng, hd=True, where=pil)
-    a[pil & (X >= 30)] = np.maximum(a[pil & (X >= 30)] - 1, (a[pil & (X >= 30)] // 8) * 8)
-    niche = (X >= 15) & (X < 29) & (Y >= 26) & (Y < 44) & (Y >= 26 + 0.1 * (X - 22) ** 2)
-    a[niche] = C('soot', 1)
-    a[niche & (Y > 40)] = C('soot', 0)
-    glow = np.hypot(X - 22, Y - 37) <= 3.5
-    rpaint(a, glow & niche, [('lamp', 'lamp', 'lamp'), ('brass', 'lamp', 'lamp')], 2.6 + 2.0 * (np.hypot(X - 22, Y - 37) < 1.6), 0)
-    a[38:42, 21:24] = C('brass', 3)
-    moss = pil & (noise(a.shape, rng, 1.2) > 0.7) & (Y > 48)
-    a[moss] = C('leaf_cool', 2 + int(rng.random() < 0.5))
-    roof = (Y >= 6) & (Y < 20) & (np.abs(X - 22) <= 4 + (Y - 6) * 1.25)
-    rpaint(a, roof, [('slate_cool', 'slate', 'slate_warm')], 3.6 - 1.4 * (X > 22) - 1.2 * (np.mod(Y - 6, 4) == 3) + 0.3 * (np.mod(X, 5) == 0), 0)
-    a[roof & (np.abs(X - 22) < 1)] = C('stone_warm', 4)
-    cross = ((np.abs(X - 22) < 1) & (Y >= 1) & (Y < 7)) | ((np.abs(Y - 3) < 1) & (np.abs(X - 22) < 3))
-    a[cross] = C('stone', 4)
-    # the jar of flowers and the candle on the step
-    V.prism(a, 8, 62, 13, 68, 1, 'clay', 3, side=1)
-    for k, (fx, fam) in enumerate(((8, 'berry'), (10, 'sky'), (12, 'brass_warm'), (9, 'plaster'))):
-        a[V.seg_mask(a.shape, 10.5, 62, fx, 57 - k % 2, 0.45)] = C('leaf_cool', 3)
-        a[57 - k % 2 - 1:57 - k % 2 + 1, fx - 1:fx + 1] = C(fam, 4)
-    a[60:66, 31:33] = C('plaster', 4)
-    a[60:66, 32] = C('plaster_warm', 3)
-    a[58:60, 31:33] = C('lamp', 5)
     V.finish(p)
     return p
 
@@ -541,21 +649,21 @@ def statics():
             eastward='12: notices pinned to boards by the doors', note='Notices where people pass.'),
          {'avoid': WILD}),
         ('commons_pump', pump(seed=13), dict(
-            name='Village pump', purpose='water', role='centrepiece', cells=(2, 1), fp=FM._fp(2, 1),
-            collision={'shape': 'rect', 'rect': [-7.0, -5.0, 14, 5]}, shadow=(18, 3),
+            name='Village pump', purpose='water', role='centrepiece', cells=(4, 1), fp=FM._fp(4, 1),
+            collision={'shape': 'rect', 'rect': [-14.0, -6.0, 28, 6]}, shadow=(30, 4),
             requires=[_rel('near', 'house', 8, 'water for homes')], forbids=[FM.OFF_ROUTE, FM.OFF_WATER],
             size_class='well', eastward='12: the square\'s ironwork painted dark, lit down one side',
             note='The pump on the green, its trough below the spout.'),
          {'provides': ['feature', 'water'], 'avoid': WILD}),
         ('commons_stall_produce', stall('produce', seed=15), dict(
-            name='Market stall, produce', purpose='work', role='stall', cells=(4, 1), fp=FM._fp(4, 1),
-            collision={'shape': 'rect', 'rect': [-14.0, -4.0, 28, 4]}, shadow=(30, 3), requires=on_edge,
+            name='Market stall, produce', purpose='work', role='stall', cells=(6, 1), fp=FM._fp(6, 1),
+            collision={'shape': 'rect', 'rect': [-21.0, -4.0, 42, 4]}, shadow=(44, 3), requires=on_edge,
             forbids=[FM.OFF_ROUTE, FM.OFF_WATER], size_class='stall',
             eastward='12 and 13: striped awnings, crates of produce', note='A greengrocer\'s stall at the market.'),
          {'avoid': WILD}),
-        ('commons_stall_cloth', stall('cloth', seed=17), dict(
-            name='Market stall, cloth', purpose='work', role='stall', cells=(4, 1), fp=FM._fp(4, 1),
-            collision={'shape': 'rect', 'rect': [-14.0, -4.0, 28, 4]}, shadow=(30, 3), requires=on_edge,
+        ('commons_stall_cloth', stall('cloth', seed=4), dict(
+            name='Market stall, cloth', purpose='work', role='stall', cells=(6, 1), fp=FM._fp(6, 1),
+            collision={'shape': 'rect', 'rect': [-21.0, -4.0, 42, 4]}, shadow=(44, 3), requires=on_edge,
             forbids=[FM.OFF_ROUTE, FM.OFF_WATER], size_class='stall',
             eastward='12 and 13: striped awnings, bolts of cloth', note='A draper\'s stall beside the greengrocer\'s.'),
          {'avoid': WILD}),
@@ -565,9 +673,9 @@ def statics():
             forbids=[FM.OFF_ROUTE, FM.OFF_WATER], size_class='handcart',
             eastward='17: the farm cart, its big wheel', note='A cart left at the road\'s edge.'),
          {}),
-        ('commons_shrine', shrine(seed=21), dict(
-            name='Wayside shrine', purpose='mark', role='marker', cells=(2, 1), fp=FM._fp(2, 1),
-            collision={'shape': 'rect', 'rect': [-6.0, -3.0, 12, 3]}, shadow=(14, 3), requires=on_edge,
+        ('commons_shrine', shrine(seed=3), dict(
+            name='Wayside shrine', purpose='mark', role='marker', cells=(3, 1), fp=FM._fp(3, 1),
+            collision={'shape': 'rect', 'rect': [-9.0, -4.0, 18, 4]}, shadow=(20, 3), requires=on_edge,
             forbids=[FM.OFF_ROUTE, FM.OFF_WATER], size_class='shrine',
             eastward='38 and 12: small stone shrines by the way, a light kept in them', note='A lamp kept at the wayside.'),
          {'provides': ['feature']}),

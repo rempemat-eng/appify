@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/commons/fingerpost_nesw.png",
    "foot": [
     26,
-    91
+    92
    ]
   }
  ],
@@ -29,14 +29,14 @@
  "geometry": {
   "size_px": [
    53,
-   92
+   93
   ],
   "size_cells": [
    2,
    4
   ],
   "z_sort": "foot",
-  "height_px": 91,
+  "height_px": 92,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -48,7 +48,7 @@
   },
   "foot": [
    26,
-   91
+   92
   ],
   "footprint": [
    [

@@ -769,7 +769,7 @@ class FencesAndFarm(unittest.TestCase):
             q = copy.deepcopy(self.plan)
             q['pieces'] = [x for x in q['pieces'] if x['id'] not in ids and not any(x['id'].startswith(i + '*') for i in ids)]
             return [f['message'] for f in self.EN.check_zone(q, self.lib)]
-        self.assertTrue(any('meets no run' in m for m in without('run_7_11')))
+        self.assertTrue(any('meets no run' in m for m in without('run_9_12')))
         self.assertTrue(any('no coop' in m for m in without('coop')))
         self.assertTrue(any('holds nothing' in m for m in without('sheep_1', 'sheep_2', 'sheep_3', 'trough', 'hay', 'shelter')))
         self.assertTrue(any('meets no run' in m for m in without('fold_gate')))
