@@ -14,7 +14,7 @@ lit from the upper left, closed with the house outline; sizes in texels at densi
 - a sheep 38 tall, 55 long (size-guide 2: 12 to 17 by 16 to 22 world px), a curly fleece and a black
   face: standing (an ear flick and a turn of the head), grazing (her head down, chewing) and
   lying (breathing);
-- the hen ark, 54 wide and 62 tall, on legs, a pop hole and a ramp, a nest box on its east end;
+- the hen ark, 48 wide and 47 tall, on legs, with a pop hole and a ramp;
 - the field shelter, four cells wide, open to the south, a boarded back, straw inside;
 - hay: three bales stacked and tied, and a heap forked out loose (size-guide "haystack");
 - the kitchen garden's beds: soil ridged into rows with a crop on each, in a dug patch with its
@@ -65,84 +65,127 @@ def sphere_light(X, Y, cx, cy, rx, ry):
     return -0.55 * nx - 0.65 * ny + 0.5 * nz
 
 
+def rpaint(a, m, sets, t, mix):
+    """Paint mask m with float tones t (0..5) in one of several (cool, body, warm) triples chosen
+    per pixel by mix (0..1): hue shifts across a material (a fleece's cream and grey, a bale's
+    gold and straw), so a surface is more than one ramp."""
+    t = np.clip(np.round(np.broadcast_to(np.asarray(t, float), m.shape)), 0, 5).astype(int)
+    mix = np.broadcast_to(np.asarray(mix, float), m.shape)
+    k = np.clip((mix * len(sets)).astype(int), 0, len(sets) - 1)
+    fam = np.zeros(m.shape, int)
+    for i, (cool, body, warm) in enumerate(sets):
+        f = np.where(t >= 4, FI[warm], np.where(t <= 1, FI[cool], FI[body]))
+        fam = np.where(k == i, f, fam)
+    a[m] = (fam * 8 + t)[m]
+
+
+def noise(shape, rng, sigma=1.0):
+    n = ndi.gaussian_filter(rng.random(shape), sigma)
+    return (n - n.min()) / max(1e-6, n.max() - n.min())
+
+
 # ------------------------------------------------------------------------------------------------
 # hens
 # ------------------------------------------------------------------------------------------------
 HENS = {
-    # id: body (cool, body, warm), wing, tail, face (1 east, -1 west), speckles
-    'white': (('plaster_warm', 'plaster', 'plaster'), 'plaster_warm', 'plaster_warm', 1, None),
-    'brown': (('clay_cool', 'fox', 'fox'), 'clay', 'soot', -1, None),
-    'speckled': (('stone_cool', 'stone', 'stone_warm'), 'stone_cool', 'soot', 1, 'soot'),
+    # kind: body sets, wing sets, tail sets, face (1 east, -1 west), speckle family
+    'white': ([('stone_cool', 'plaster_warm', 'plaster'), ('sand_cool', 'sand', 'snow_warm')],
+              [('stone_warm', 'plaster_warm', 'plaster')], [('stone_cool', 'plaster_warm', 'snow_warm')], -1, None),
+    'brown': ([('clay_cool', 'fox', 'brass_warm'), ('crag_cool', 'crag_warm', 'fox')],
+              [('clay_cool', 'clay', 'fox')], [('soot', 'soot', 'sky_cool')], -1, None),
+    'speckled': ([('slate_cool', 'stone', 'stone_warm'), ('stone_cool', 'ashlar', 'plaster_warm')],
+                 [('stone_cool', 'stone', 'stone_warm')], [('soot', 'slate_cool', 'slate')], 1, 'soot'),
 }
 HEN_FRAMES = ['up', 'up', 'look', 'up', 'peck', 'peck2', 'peck', 'up']
 
 
 def hen(kind, pose='up', seed=0):
-    """A hen (21 x 26 texels): a round body lit on top, the wing folded on her flank in two rows of
-    feathers, the tail cocked up behind, the head forward with its red comb and wattle, a yellow
-    beak, a dark eye with a glint, yellow legs. `pose`: up, look (head turned back), peck, peck2
-    (head down to the ground)."""
-    body_f, wing_f, tail_f, face, speck = HENS[kind]
-    rng = np.random.default_rng(seed)
-    p = canvas(34, 30, 17, 27)
+    """A hen (about 22 x 26 texels): a round body lit on its upper left, its breast pale and its
+    belly shaded; the folded wing a separate shape with a dark edge and two rows of feathers; the
+    tail a fan of separate feathers cocked up behind, the sickles darker with a sheen; the head
+    forward with a red comb lit on its crown and a wattle, a yellow beak, an amber eye with a glint;
+    scaled yellow legs. `pose`: up, look (head turned back), peck, peck2 (head down at the ground)."""
+    body_s, wing_s, tail_s, face, speck = HENS[kind]
+    rng = np.random.default_rng(seed + 7)
+    p = canvas(34, 31, 17, 28)
     a = p.a
     Y, X = grid(a)
-    cx, yb = 17 - face * 1, 27
-    # legs and feet (behind the body)
-    for dx in (-2, 2):
+    cx, yb = 17 - face * 1, 28
+    nz = noise(a.shape, rng, 0.8)
+    for dx in (-2, 2):                                          # legs: scaled, a toe forward
         x = int(cx + dx)
-        a[yb - 6:yb - 1, x:x + 1] = C('brass', 3)
+        a[yb - 6:yb - 1, x] = C('brass', 3)
+        a[yb - 6:yb - 1:2, x] = C('brass', 4)
         a[yb - 1, x - 1:x + 2] = C('brass', 2)
-    by = yb - 11.5
+        a[yb - 1, x + face * 2] = C('brass', 2)
     peck = pose in ('peck', 'peck2')
     tilt = 1.0 if peck else 0.0
-    body = ((X - cx) / 8.2) ** 2 + ((Y - by - tilt) / 6.4) ** 2 <= 1
-    tail = ((X - (cx - face * 8.0)) / 3.6) ** 2 + ((Y - (by - 5.0 + tilt * 1.5)) / 5.6) ** 2 <= 1
-    tail &= (Y < by + 2)
-    m = body | tail
-    lit = sphere_light(X, Y, cx, by, 8.5, 7.0)
-    V.paint(a, m, body_f, 3.0 + 1.6 * lit)
-    # tail feathers: dark sickles over a lighter fan
-    tf = tail & (((X * face + Y) % 3) == 0)
-    a[tf] = C(tail_f if tail_f != 'soot' else 'soot', 2 if tail_f == 'soot' else 2)
-    # the folded wing: two rows of scalloped feathers on the flank, a step darker
-    wx, wy = cx - face * 1.0, by + 0.5
-    wing = (((X - wx) / 5.6) ** 2 + ((Y - wy) / 3.6) ** 2 <= 1) & body
-    V.paint(a, wing, (wing_f, wing_f, wing_f), 2.4 + 0.9 * sphere_light(X, Y, wx, wy - 2, 6, 4))
-    for row, yy in enumerate((wy - 0.5, wy + 1.8)):
-        sc = wing & (np.abs(Y - yy - 0.9 * np.cos((X - wx) * 1.2 + row)) < 0.5)
-        a[sc] = C(wing_f, 1)
+    by = yb - 12 + tilt
+    body = ((X - cx) / 8.6) ** 2 + ((Y - by) / 6.6) ** 2 <= 1
+    lit = sphere_light(X, Y, cx, by, 8.6, 6.6)
+    # the tail: four feathers fanned up and back, each its own lit blade with a dark edge
+    tail = np.zeros(a.shape, bool)
+    blades = []
+    for i, (ang, L) in enumerate(((1.75, 9.5), (2.15, 10.5), (2.55, 9.5), (2.95, 7.5))):
+        bx0, by0 = cx - face * 5.5, by - 1.0 + tilt
+        tip = (bx0 - face * L * abs(math.cos(ang)), by0 - L * math.sin(ang))
+        m = V.seg_mask(a.shape, bx0, by0, tip[0], tip[1], 1.45) & ~body
+        tail |= m
+        blades.append(m)
+    rpaint(a, tail, tail_s, 3.2 + 1.3 * sphere_light(X, Y, cx - face * 8, by - 6, 6, 6), nz)
+    for i, m in enumerate(blades):                              # each feather's shaded edge, so they separate
+        if i % 2:
+            a[m & ~ndi.binary_erosion(m) & (Y > by - 12)] = C(tail_s[0][1], 2)
+    # the body
+    rpaint(a, body, body_s, 2.9 + 1.7 * lit, nz)
+    a[body & (Y > by + 4.0) & ~((X - cx) * face > 3)] = C(body_s[0][0], 2)        # the belly in shade
+    a[body & (Y > by + 5.4)] = C(body_s[0][0], 1)
+    # the breast, pale and catching the light at the front
+    br = body & (((X - (cx + face * 5.0)) / 3.8) ** 2 + ((Y - (by - 0.5)) / 4.0) ** 2 <= 1)
+    rpaint(a, br, body_s, 3.6 + 1.2 * lit, nz)
+    # the wing: its own shape over the flank, a dark line along its top edge, two feather rows
+    wx, wy = cx - face * 1.2, by + 0.6
+    wing = (((X - wx) / 5.8) ** 2 + ((Y - wy) / 3.4) ** 2 <= 1) & body
+    rpaint(a, wing, wing_s, 3.0 + 1.0 * sphere_light(X, Y, wx, wy - 2, 6, 4), nz)
+    edge = wing & ~ndi.binary_erosion(wing) & (Y < wy + 1)
+    a[edge] = C(wing_s[0][0], 2)
+    sc = wing & (np.abs(Y - wy - 1.4 - 0.8 * np.cos((X - wx) * 1.4)) < 0.5)        # the flight feathers' row
+    a[sc] = C(wing_s[0][0], 2)
+    a[wing & (Y > wy + 2.2)] = C(wing_s[0][0], 1)                                  # the wing tips, tucked
+    a[edge & (X * face < wx * face)] = C(wing_s[0][2], 4)                          # its lit top edge
     if speck:
-        sp = body & (rng.random(a.shape) < 0.09) & ~wing
+        sp = body & (rng.random(a.shape) < 0.10) & ~wing
         a[sp] = C(speck, 2)
-    # belly shade and the line where she sits on the ground
-    a[body & (Y > by + 4.2 + tilt)] = C(body_f[0], 1 if kind != 'white' else 2)
+        a[body & (rng.random(a.shape) < 0.05) & ~wing] = C('plaster', 5)
     # the head
     if pose == 'look':
-        hx, hy = cx + face * 4.0, by - 7.5
+        hx, hy = cx + face * 4.2, by - 7.4
     elif peck:
         hx, hy = cx + face * 9.0, yb - (4.5 if pose == 'peck' else 3.0)
     else:
-        hx, hy = cx + face * 6.6, by - 7.0
-    neck = V.seg_mask(a.shape, cx + face * 3.5, by - 2.5, hx, hy + 1, 2.6)
-    head = ((X - hx) / 3.1) ** 2 + ((Y - hy) / 3.0) ** 2 <= 1
+        hx, hy = cx + face * 6.8, by - 7.0
+    neck = V.seg_mask(a.shape, cx + face * 3.6, by - 2.5, hx, hy + 1, 2.7)
+    head = ((X - hx) / 3.2) ** 2 + ((Y - hy) / 3.1) ** 2 <= 1
     hm = (neck | head) & ~(body & (Y > by - 1))
-    V.paint(a, hm, body_f, 3.4 + 1.3 * sphere_light(X, Y, hx, hy, 3.5, 3.5))
+    rpaint(a, hm, body_s, 3.5 + 1.4 * sphere_light(X, Y, hx, hy, 3.5, 3.5), nz)
     fwd = face if pose != 'look' else -face
-    # comb (three red bumps on the crown) and wattle (under the beak)
-    for k, dx in enumerate((-1.6, 0.0, 1.6)):
-        cm = ((X - (hx + dx * fwd * 0.8 - fwd * 0.4)) / 1.1) ** 2 + ((Y - (hy - 3.2 + 0.3 * abs(dx))) / 1.4) ** 2 <= 1
-        a[cm] = C('berry', 4 if k == 0 else 3)
-    wm = ((X - (hx + fwd * 1.6)) / 1.0) ** 2 + ((Y - (hy + 2.8)) / 1.6) ** 2 <= 1
+    for k, dx in enumerate((-1.7, 0.0, 1.7)):                   # the comb, lit on its crown
+        cm = ((X - (hx + dx * fwd * 0.8 - fwd * 0.4)) / 1.15) ** 2 + ((Y - (hy - 3.3 + 0.3 * abs(dx))) / 1.5) ** 2 <= 1
+        a[cm] = C('berry', 3)
+        a[cm & (Y < hy - 3.6 + 0.3 * abs(dx))] = C('berry', 5 if k == 1 else 4)
+    wm = ((X - (hx + fwd * 1.6)) / 1.0) ** 2 + ((Y - (hy + 2.9)) / 1.7) ** 2 <= 1
     a[wm] = C('berry', 3)
-    # beak and eye
+    a[wm & (X * fwd < (hx + fwd * 1.6) * fwd)] = C('berry', 4)
+    a[wm & (Y > hy + 3.8)] = C('berry_cool', 2)
     bx = int(round(hx + fwd * 3.0))
     by_ = int(round(hy))
-    a[by_ - 1:by_ + 1, min(bx, bx + fwd * 2):max(bx, bx + fwd * 2) + 1] = C('brass', 4)
+    a[by_ - 1, min(bx, bx + fwd * 2):max(bx, bx + fwd * 2) + 1] = C('brass', 5)
     a[by_, min(bx, bx + fwd * 2):max(bx, bx + fwd * 2) + 1] = C('brass', 3)
     ex = int(round(hx + fwd * 0.9))
-    a[by_ - 1, ex] = C('soot', 0)
-    if pose == 'peck2':                              # a seed picked up
+    a[by_ - 1, ex] = C('brass', 4)
+    a[by_ - 1, ex + (1 if fwd > 0 else -1) * 0] = C('soot', 0)
+    a[by_ - 2, ex] = C('plaster', 5)
+    if pose == 'peck2':
         a[yb - 1, int(hx + fwd * 4)] = C('brass', 5)
     V.finish(p)
     return p
@@ -156,12 +199,16 @@ SHEEP_FRAMES = {
     'graze': ['down', 'chew', 'down', 'chew', 'down', 'down', 'ear', 'down'],
     'lie': ['in', 'in', 'out', 'out', 'in', 'in', 'out', 'ear'],
 }
+WOOL = [('sand_cool', 'plaster_warm', 'plaster'), ('sand_cool', 'sand', 'snow_warm'), ('stone_warm', 'plaster_warm', 'snow_warm'),
+        ('stone_warm', 'sand', 'sand_warm')]            # the last: wool yellowed with lanolin
 
 
 def sheep(pose='stand', frame='a', face=1, seed=0):
-    """A ewe (55 x 38 texels standing): a fleece of curls, each lit on its upper left, shading to
-    her belly and rump, a black face and ears, four black legs (the far pair a step darker); grazing
-    her head is down at the grass; lying her legs are folded under and her fleece is on the ground."""
+    """A ewe (about 55 x 38 texels standing): a fleece built of clustered curls, each a small dome
+    lit on its upper left with a cream highlight and a grey crease under it, the mass shading to a
+    cool belly; a black face with a grey muzzle, an amber eye with a glint, ears out with a pink
+    lining, a topknot of wool; legs black with a wool-covered thigh, a knee and a hoof (the far pair
+    a step darker). Grazing her head is down at the grass; lying her legs are folded under."""
     rng = np.random.default_rng(seed)
     p = canvas(84, 56, 42, 52)
     a = p.a
@@ -171,40 +218,67 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
     breathe = 1 if (lie and frame == 'out') else 0
     by = yb - (12 if lie else 21)
     rx, ry = 22.5, (12.5 + breathe * 0.5 if lie else 13.0)
-    # legs (behind the fleece): short and thin, the far pair a step darker, a lit west edge
+    nz = noise(a.shape, rng, 1.0)
     if not lie:
         for lx, far in ((-12.5, True), (8.5, True), (-9.5, False), (12.0, False)):
             x = int(round(cx + face * lx))
             t = 1 if far else 2
-            a[int(by + 6):yb - 1, x:x + 3] = C('soot', t)
-            a[int(by + 6):yb - 1, x] = C('soot', t + 2)
-            a[yb - 2:yb, x - (1 if face < 0 else 0):x + 3 + (1 if face > 0 else 0)] = C('soot', 0)
-    # the fleece: the body mass and a crust of curls over it, each a little dome lit on its upper
-    # left with a dark crease round its lower right
+            knee = yb - 6
+            a[int(by + 6):knee, x:x + 3] = C('soot', t)                 # the thigh under the wool
+            a[int(by + 6):knee, x] = C('soot', t + 2)
+            a[knee:knee + 1, x - 1:x + 3] = C('soot', t + 1)            # the knee, a knob lit on its top
+            a[knee, x - 1] = C('soot', t + 3)
+            a[knee + 1:yb - 1, x:x + 2] = C('soot', t)                  # the shank
+            a[knee + 1:yb - 1, x] = C('soot', t + 2)
+            a[yb - 2:yb, x - (1 if face < 0 else 0):x + 3] = C('soot', 0)   # the hoof
+            a[yb - 2, x] = C('stone_cool', 1)
     fleece = ((X - cx) / rx) ** 2 + ((Y - by) / ry) ** 2 <= 1
-    curls = rng.uniform(-1, 1, (110, 2))
-    curls = curls[(curls ** 2).sum(1) <= 1.05]
-    cmask = np.zeros(a.shape, bool)
-    t = 2.7 + 1.6 * sphere_light(X, Y, cx, by, rx, ry)
+    t = 2.6 + 1.7 * sphere_light(X, Y, cx, by, rx, ry)
+    mix = np.zeros(a.shape)
     crease = np.zeros(a.shape, bool)
-    for k, (ux, uy) in enumerate(sorted(curls.tolist(), key=lambda c: c[1])):
+    hi = np.zeros(a.shape, bool)
+    curls = rng.uniform(-1, 1, (150, 2))
+    curls = curls[(curls ** 2).sum(1) <= 1.08]
+    cm_all = np.zeros(a.shape, bool)
+    for ux, uy in sorted(curls.tolist(), key=lambda c: c[1]):
         px, py = cx + ux * (rx - 2.0), by + uy * (ry - 1.5)
-        m = ((X - px) / 2.9) ** 2 + ((Y - py) / 2.4) ** 2 <= 1
-        ring = m & ~(((X - px + 0.6) / 2.2) ** 2 + ((Y - py + 0.6) / 1.7) ** 2 <= 1)
-        cmask |= m
-        crease = (crease & ~m) | (ring & ((X - px) + (Y - py) > 0.4))
-        t = np.where(m, 2.7 + 1.6 * sphere_light(X, Y, cx, by, rx, ry) + 0.8 * sphere_light(X, Y, px, py, 2.9, 2.4), t)
-    fleece = (fleece | cmask) & (Y < yb - (0 if lie else 7))
-    V.paint(a, fleece, ('sand_cool', 'plaster_warm', 'plaster'), t)
-    a[crease & fleece] = np.where((Y < by)[crease & fleece], C('plaster_warm', 2), C('sand_cool', 1))
-    a[fleece & (Y > by + ry * 0.6)] = C('sand_cool', 1 if not lie else 2)
-    lit = sphere_light(X, Y, cx, by, rx, ry)
-    # the head: black, at the front; ears out to the sides
+        r1, r2 = rng.uniform(2.4, 3.3), rng.uniform(1.9, 2.6)
+        m = ((X - px) / r1) ** 2 + ((Y - py) / r2) ** 2 <= 1
+        inner = ((X - px + 0.7) / (r1 - 0.9)) ** 2 + ((Y - py + 0.7) / (r2 - 0.8)) ** 2 <= 1
+        crease = (crease & ~m) | (m & ~inner & ((X - px) + (Y - py) > 0.3))
+        hi = (hi & ~m) | (m & ((X - px + 1.1) ** 2 + (Y - py + 1.0) ** 2 <= 0.9))
+        cm_all |= m
+        mix = np.where(m, rng.random() * 0.999, mix)                   # each curl its own cream
+        t = np.where(m, 2.2 + 1.25 * sphere_light(X, Y, cx, by, rx, ry) + 1.5 * sphere_light(X, Y, px, py, r1, r2), t)
+    fleece = (fleece | cm_all) & (Y < yb - (0 if lie else 7))
+    rpaint(a, fleece, WOOL, t, mix)
+    shade = sphere_light(X, Y, cx, by, rx, ry)
+    # the creases between curls: deeper where the fleece turns from the light, each curl's own hue
+    cr = crease & fleece
+    ct = np.where(shade < 0.15, 1, 2) + (shade > 0.55)
+    cf = np.where(mix < 0.25, FI['sand_cool'], np.where(mix < 0.5, FI['stone_warm'], np.where(mix < 0.75, FI['stone_cool'], FI['sand'])))
+    a[cr] = (cf * 8 + ct)[cr]
+    hm_ = hi & fleece & (shade > -0.2)
+    hf = np.where(mix < 0.34, FI['snow_warm'], np.where(mix < 0.67, FI['plaster'], FI['sand_warm']))
+    a[hm_] = (hf * 8 + 5)[hm_]
+    if lie:
+        # the forelegs folded under her chest, a black knee and hoof showing, the wool pressed into
+        # the grass along her underside
+        for k, lx in enumerate((10.0, 15.5)):
+            kx = int(round(cx + face * lx))
+            ky = yb - 3
+            a[ky - 1:ky + 1, min(kx, kx + face * 5):max(kx, kx + face * 5)] = C('soot', 1 + k)
+            a[ky - 1, min(kx, kx + face * 5):max(kx, kx + face * 5)] = C('soot', 3)
+            a[ky:ky + 1, kx + face * 5 - (1 if face > 0 else 0)] = C('soot', 0)
+        a[fleece & (Y >= yb - 2)] = C('stone_warm', 1)
+    belly = fleece & (Y > by + ry * 0.55)
+    rpaint(a, belly, [('stone_warm', 'sand_cool', 'sand'), ('stone_cool', 'stone_warm', 'sand_cool')], 1.6 + 0.9 * (nz > 0.55), mix)
+    # the head
     if pose == 'graze':
         chew = 1 if frame == 'chew' else 0
         hx, hy = cx + face * (rx + 0.5), yb - 7 + chew
-        neck = V.seg_mask(a.shape, cx + face * (rx - 5), by - 1, hx, hy - 2, 4.0)
-        V.paint(a, neck & ~fleece, ('sand_cool', 'plaster_warm', 'plaster'), 3.0 + sphere_light(X, Y, hx, by, 5, 5))
+        neck = V.seg_mask(a.shape, cx + face * (rx - 5), by - 1, hx, hy - 2, 4.2)
+        rpaint(a, neck & ~fleece, WOOL, 2.8 + sphere_light(X, Y, hx, by, 5, 5), mix)
     elif lie:
         hx, hy = cx + face * (rx - 1.0), by - 6
     else:
@@ -212,19 +286,25 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
     hface = face if frame != 'turn' else 0
     head = ((X - hx - hface * 1.2) / 4.6) ** 2 + ((Y - hy) / 5.6) ** 2 <= 1
     muzzle = ((X - hx - hface * 3.8) / 2.8) ** 2 + ((Y - hy - 2.5) / 2.8) ** 2 <= 1
-    hm = (head | muzzle)
-    V.paint(a, hm, ('soot', 'soot', 'soot'), 1.8 + 1.4 * sphere_light(X, Y, hx, hy, 5, 6))
+    hm = head | muzzle
+    rpaint(a, hm, [('soot', 'soot', 'iron')], 1.5 + 1.8 * sphere_light(X, Y, hx, hy, 5, 6), 0)
+    a[muzzle & (Y > hy + 3.2)] = C('stone_cool', 1)                       # the grey muzzle
+    nx_ = int(round(hx + hface * 5.6))
+    a[int(round(hy + 2.4)), nx_] = C('soot', 0)                           # a nostril
     ey, ex = int(round(hy - 1.5)), int(round(hx + hface * 2.0))
-    a[ey, ex] = C('plaster', 4)
+    a[ey, ex] = C('brass', 4)                                             # the eye, amber, with a glint
+    a[ey, ex + (1 if hface >= 0 else -1)] = C('soot', 0)
+    a[ey - 1, ex] = C('plaster', 5)
     flick = frame == 'ear'
     for side in (-1, 1):
         ex0 = hx - face * 2.0 + side * 3.0
         ey0 = hy - 4.5 - (1.5 if (flick and side > 0) else 0)
         ear = ((X - (ex0 + side * 2.6)) / 3.0) ** 2 + ((Y - ey0) / 1.4) ** 2 <= 1
         a[ear & ~hm] = C('soot', 2 if side < 0 else 1)
-    # a topknot of fleece on the crown
+        lining = ear & ~hm & ((X - (ex0 + side * 2.6)) ** 2 / 4.0 + (Y - ey0 - 0.3) ** 2 <= 0.5)
+        a[lining] = C('berry_cool', 2)
     tk = ((X - (hx - face * 1.5)) / 3.0) ** 2 + ((Y - (hy - 5.5)) / 2.0) ** 2 <= 1
-    V.paint(a, tk & ~hm, ('sand_cool', 'plaster_warm', 'plaster'), 4.0 + sphere_light(X, Y, hx, hy - 6, 3, 2))
+    rpaint(a, tk & ~hm, WOOL, 4.0 + sphere_light(X, Y, hx, hy - 6, 3, 2), mix)
     V.finish(p)
     return p
 
@@ -233,15 +313,15 @@ def sheep(pose='stand', frame='a', face=1, seed=0):
 # the coop and the shelter
 # ------------------------------------------------------------------------------------------------
 def coop(seed=0):
-    """A hen ark (54 x 62 texels): a boarded house on four legs, its gabled shingle roof with a
-    lit west slope over the south gable, a pop hole with a ramp down to the run, a nest box on the
-    east end under its own lid, a perch peg by the door."""
+    """A hen ark (48 x 47 texels): a boarded house on four legs, its gabled shingle roof with a
+    lit west slope over the south gable, a pop hole with a ramp down to the run."""
     rng = np.random.default_rng(seed)
-    p = canvas(72, 72, 34, 66)
+    p = canvas(66, 56, 32, 50)
     a = p.a
     Y, X = grid(a)
-    x0, x1, yb = 10, 58, 66
-    wt, wb = 30, 56                     # the south gable's wall, top and foot
+    x0, x1, yb = 12, 52, 50
+    wt, wb = 21, 42                     # the south gable's wall, top and foot
+    nzc = noise(a.shape, rng, 1.5)
     # legs
     for lx in (x0 + 2, x1 - 6):
         V.prism(a, lx, wb - 2, lx + 4, yb, 1, 'timber', 2, side=1)
@@ -251,7 +331,9 @@ def coop(seed=0):
     wall = (X >= x0) & (X < x1) & (Y >= wt) & (Y < wb)
     board = ((X - x0) // 6).astype(int)
     t = 3.0 + 0.4 * np.sin(board * 2.1) - 1.0 * (((X - x0) % 6) == 5) + 0.8 * (((X - x0) % 6) == 0) - 0.9 * (X > x1 - 9)
-    V.paint(a, wall, ('timber_cool', 'timber', 'timber_warm'), t)
+    # weathered boards: some silvered, some still brown, a stain of damp at the foot
+    rpaint(a, wall, [('timber_cool', 'timber', 'timber_warm'), ('earth_cool', 'earth', 'earth_warm'), ('timber_cool', 'timber_warm', 'sand_warm')],
+           t - 0.5 * (Y > wb - 4), ((board * 7) % 3) / 3.0 + 0.05)
     for k in range(12):                 # knots and nail heads
         kx, ky = int(rng.integers(x0 + 2, x1 - 2)), int(rng.integers(wt + 3, wb - 2))
         a[ky, kx] = C('timber_cool', 1)
@@ -260,7 +342,7 @@ def coop(seed=0):
         a[wb - 3, bx] = C('iron', 2)
     a[wb - 1, x0:x1] = C('timber_cool', 0)
     # the gable's triangle and the roof: two shingle slopes meeting at the ridge over the gable
-    ridge_y, eave_y, ov = 6, wt + 2, 4
+    ridge_y, eave_y, ov = 3, wt + 2, 3
     rx0, rx1 = x0 - ov, x1 + ov
     mid = (rx0 + rx1) / 2
     roof = (Y >= ridge_y) & (Y < eave_y) & (np.abs(X - mid) <= (Y - ridge_y) * (rx1 - mid) / (eave_y - ridge_y) + 1)
@@ -270,7 +352,9 @@ def coop(seed=0):
     tr = np.where(west, 3.4, 2.1) + 0.45 * np.sin(shing * 1.7 + row) - 1.6 * (((Y - ridge_y) % 4) == 3) \
         + 0.9 * (((Y - ridge_y) % 4) == 0)
     tr = tr - 1.0 * ((((X + 3 * (row % 2)) % 6) == 5) & ((Y - ridge_y) % 4 < 3))
-    V.paint(a, roof, ('slate_cool', 'slate', 'slate_warm'), tr)
+    rpaint(a, roof, [('slate_cool', 'slate', 'slate_warm'), ('stone_cool', 'slate', 'slate_warm')], tr, nzc)
+    moss = roof & (nzc > 0.72) & (((Y - ridge_y) % 4) == 3)
+    a[moss] = C('leaf_cool', 2)
     a[roof & (np.abs(X - mid) < 1.0)] = C('slate_warm', 5)            # the ridge
     # the barge boards along the gable's slopes
     for side in (-1, 1):
@@ -278,22 +362,16 @@ def coop(seed=0):
     # the eave's shadow on the wall
     a[(Y >= eave_y) & (Y < eave_y + 2) & wall] = C('timber_cool', 1)
     # the pop hole and its ramp, a perch peg
-    hx = int(mid - 9)
-    a[wb - 13:wb - 2, hx - 4:hx + 4] = C('soot', 0)
-    a[wb - 13, hx - 4:hx + 4] = C('timber_warm', 4)
-    a[wb - 13:wb - 2, hx + 3] = C('timber_cool', 1)
-    ramp = V.seg_mask(a.shape, hx, wb - 1, hx - 6, yb - 1, 2.5)
+    hx = int(mid - 8)
+    a[wb - 11:wb - 2, hx - 3:hx + 4] = C('soot', 0)
+    a[wb - 11, hx - 3:hx + 4] = C('timber_warm', 4)
+    a[wb - 11:wb - 2, hx + 3] = C('timber_cool', 1)
+    ramp = V.seg_mask(a.shape, hx, wb - 1, hx - 5, yb - 1, 2.2)
     V.paint(a, ramp, ('timber_cool', 'timber', 'timber_warm'), 3.6 - 0.4 * ((Y - wb) > 4))
     for k in range(3):
         ty = int(wb + 2 + k * 3)
         tx = int(hx - 2 * (ty - wb) / (yb - wb) * 3)
         a[ty, tx - 3:tx + 2] = C('timber_cool', 1)
-    # the nest box on the east end, its lid lit
-    nx0, nx1 = x1 - 2, x1 + 9
-    V.prism(a, nx0, wt + 12, nx1, wb - 4, 4, 'timber', 3, side=3)
-    a[wt + 12:wt + 16, nx0 - 1:nx1 + 1] = C('timber_warm', 4)
-    a[wt + 12, nx0 - 1:nx1 + 1] = C('timber_warm', 5)
-    a[wt + 18, nx0 + 4] = C('iron', 3)                                  # the lid's hasp
     # straw poking from the pop hole
     for k in range(4):
         a[wb - 3, hx - 3 + 2 * k] = C('brass', 4)
@@ -302,52 +380,77 @@ def coop(seed=0):
 
 
 def shelter(seed=0):
-    """A field shelter for the flock (100 x 84 texels): a single-pitch roof of boards on two front
-    posts falling to the south, a boarded back wall seen inside in deep shade, straw on its floor,
-    a hay rack on the back wall."""
+    """A field shelter for the flock (108 x 92 texels): a single-pitch roof of boards on two square
+    front posts falling to the south, the posts drawn with a lit west face and a shaded east side
+    and standing in the ground with a dark contact line; inside, the boarded back wall in deep
+    shade with a hay rack on it, straw on the floor that spills out past the front edge onto the
+    grass, the floor darkest at the back under the roof."""
     rng = np.random.default_rng(seed)
-    p = canvas(118, 92, 58, 86)
+    p = canvas(122, 98, 58, 86)
     a = p.a
     Y, X = grid(a)
+    nz = noise(a.shape, rng, 1.2)
     x0, x1, yb = 10, 108, 86
     back_foot = yb - 26
     inside = (X >= x0) & (X < x1) & (Y >= back_foot - 34) & (Y < yb)
-    # the back wall's inner face (in shade) and the floor
     wall = inside & (Y < back_foot)
-    V.paint(a, wall, ('earth_cool', 'timber_cool', 'timber'), 1.4 + 0.6 * (((X - x0) % 8) == 0) - 0.5 * (((X - x0) % 8) == 7))
+    plank = ((X - x0) // 8)
+    rpaint(a, wall, [('earth_cool', 'timber_cool', 'timber'), ('soot', 'earth_cool', 'earth')],
+           1.6 + 0.7 * (((X - x0) % 8) == 0) - 0.6 * (((X - x0) % 8) == 7) - 0.5 * (Y > back_foot - 6) + 0.25 * np.sin(plank * 2.3)
+           + 1.2 * (nz - 0.5),
+           (plank % 2) * 0.6)
     floor = inside & (Y >= back_foot)
-    V.paint(a, floor, ('earth_cool', 'earth', 'earth_warm'), 1.6 + 0.6 * np.sin(X * 0.7 + Y * 1.3))
-    # straw: strands lying across the floor, brighter towards the open front
-    for _ in range(140):
-        sx, sy = rng.uniform(x0 + 2, x1 - 2), rng.uniform(back_foot + 1, yb - 2)
-        ang = rng.uniform(-0.5, 0.5)
-        L = rng.uniform(2, 5)
-        m = V.seg_mask(a.shape, sx, sy, sx + L * math.cos(ang), sy + L * math.sin(ang), 0.5) & floor
-        a[m] = C('brass', 3 if sy > back_foot + 12 else 2)
-    # a hay rack on the back wall: a slatted frame with hay in it
+    depth = (Y - back_foot) / (yb - back_foot)                     # 0 at the back .. 1 at the front
+    rpaint(a, floor, [('soot', 'earth_cool', 'earth'), ('earth_cool', 'earth', 'earth_warm')], 1.0 + 1.6 * depth + 0.4 * (nz - 0.5), depth)
+    # straw: strands across the floor, in shade at the back and lit at the open front, a few
+    # spilling past the front edge onto the grass
+    for _ in range(260):
+        sx = rng.uniform(x0 + 2, x1 - 2)
+        sy = rng.uniform(back_foot + 1, yb + 5)
+        ang = rng.uniform(-0.7, 0.7)
+        L = rng.uniform(2, 6)
+        m = V.seg_mask(a.shape, sx, sy, sx + L * math.cos(ang), sy + L * math.sin(ang), 0.5)
+        m &= (floor | ((Y >= yb) & (Y < yb + 6) & (X > x0 + 4) & (X < x1 - 4)))
+        d_ = (sy - back_foot) / (yb - back_foot)
+        tone = (3.6 if sy > yb else 0.8 + 2.8 * d_) + rng.uniform(-0.9, 0.9)
+        rpaint(a, m, STRAW, tone, rng.random())
+    # a hay rack on the back wall: slats, hay pulled through them
     rk = (X >= x0 + 30) & (X < x0 + 64) & (Y >= back_foot - 24) & (Y < back_foot - 12)
-    V.paint(a, rk, ('brass', 'brass_warm', 'sand_warm'), 2.6 + 0.8 * np.sin(X * 1.9 + Y * 0.8))
+    rpaint(a, rk, [('brass', 'brass_warm', 'sand_warm'), ('clay_cool', 'brass', 'brass_warm')], 2.4 + 1.0 * np.sin(X * 1.9 + Y * 0.8), nz)
     a[rk & (((X - x0) % 5) == 0)] = C('timber', 2)
     a[(Y == back_foot - 12) & (X >= x0 + 30) & (X < x0 + 64)] = C('timber', 3)
-    # the roof: boards along the slope, the front edge lit, the eave's shade under it
+    a[(Y == back_foot - 25) & (X >= x0 + 29) & (X < x0 + 65)] = C('timber_warm', 4)
+    # the roof: boards along the slope, the front edge lit, moss on the lower boards
     rt, rb = 4, 26
     rx0, rx1 = x0 - 4, x1 + 4
     roof = (X >= rx0) & (X < rx1) & (Y >= rt) & (Y < rb)
-    plank = ((X - rx0) // 7).astype(int)
+    rplank = (X - rx0) // 7
     f = (Y - rt) / (rb - rt)
-    t = 4.0 - 1.4 * f + 0.6 * np.sin(plank * 2.3) - 1.6 * (((X - rx0) % 7) == 6) + 0.8 * (((X - rx0) % 7) == 0)
-    V.paint(a, roof, ('timber_cool', 'timber', 'timber_warm'), t)
+    t = 3.8 - 1.4 * f + 0.5 * np.sin(rplank * 2.3) - 1.6 * (((X - rx0) % 7) == 6) + 0.8 * (((X - rx0) % 7) == 0)
+    t = t + 1.4 * (nz - 0.5) - 0.8 * ((((Y * 3 + rplank * 5) % 11) == 0) & (((X - rx0) % 7) > 1))      # grain and knots
+    rpaint(a, roof, [('timber_cool', 'timber', 'timber_warm'), ('earth_cool', 'timber', 'sand_warm'), ('timber_cool', 'earth_warm', 'timber_warm')],
+           t, ((rplank * 5) % 3) / 3.0)
+    a[roof & (nz > 0.74) & (f > 0.5)] = C('leaf_cool', 2)
+    a[roof & (nz > 0.82) & (f > 0.5)] = C('leaf', 3)
     a[roof & (Y == rt)] = C('timber_warm', 5)
     a[(Y >= rb - 3) & (Y < rb) & (X >= rx0) & (X < rx1)] = C('timber', 2)        # the fascia
     a[(Y == rb - 3) & (X >= rx0) & (X < rx1)] = C('timber_warm', 4)
     for bx in range(rx0 + 3, rx1, 7):
         a[rb - 2, bx] = C('iron', 2)
-    a[(Y >= rb) & (Y < rb + 3) & inside] = C('timber_cool', 0)                     # deep shade under the eave
-    # the side boards at the west end (lit), the east end in shade, and the two front posts
+    a[(Y >= rb) & (Y < rb + 3) & inside] = C('soot', 1)                            # deep shade under the eave
+    # the end boards (the west lit, the east in shade) and the two square front posts: a lit west
+    # face, a body, a shaded east side, a dark line where each stands in the ground
     V.prism(a, x0, rb, x0 + 5, yb, 1, 'timber', 3, side=1)
     V.prism(a, x1 - 5, rb, x1, yb, 1, 'timber_cool', 2, side=1)
-    for px in (x0 + 2, x1 - 7):
-        V.prism(a, px, rb - 1, px + 5, yb, 1, 'timber', 3, side=2)
+    for px in (x0 + 2, x1 - 9):
+        post = (X >= px) & (X < px + 7) & (Y >= rb - 1) & (Y < yb)
+        tp = 3.0 + 1.6 * (X == px) + 0.6 * (X == px + 1) - 1.4 * (X >= px + 5) - 0.6 * (((Y - rb) % 9) == 0)
+        rpaint(a, post, [('timber_cool', 'timber', 'timber_warm')], tp, 0)
+        a[post & (X == px + 6)] = C('timber_cool', 0)
+        a[yb - 1, px - 1:px + 8] = C('soot', 1)
+        a[yb - 2, px - 1] = C('grass_cool', 2)
+        a[yb - 3:yb - 1, px + 7] = C('grass', 3)
+    a[yb - 1, x0:x1][a[yb - 1, x0:x1] >= 0] = np.minimum(a[yb - 1, x0:x1][a[yb - 1, x0:x1] >= 0], C('earth_cool', 1))
     V.finish(p)
     return p
 
@@ -355,43 +458,81 @@ def shelter(seed=0):
 # ------------------------------------------------------------------------------------------------
 # hay
 # ------------------------------------------------------------------------------------------------
-def bale(a, x0, y0, w, h, d, rng, lit_side=True):
-    """A rectangular bale seen from above the south: its top (d texels deep, lit), its south face
-    (the cut stalk ends), its east end in shade, two twine bands round it."""
+STRAW = [('brass', 'brass_warm', 'sand_warm'), ('earth_warm', 'brass', 'brass_warm'), ('brass', 'sand_warm', 'sand')]
+
+
+def bale(a, x0, y0, w, h, d, rng, east=True):
+    """A compressed bale, rounded at its arrises: its top (d texels deep) lit and combed along its
+    length, its south face the cut ends of the stalks (a stipple of light ends and dark holes), its
+    east end turning into shade, two twines wrapping the volume over the top, down the front and
+    round the end, loose wisps at the edges, a dark line where it rests."""
     Y, X = grid(a)
-    top = (X >= x0) & (X < x0 + w) & (Y >= y0) & (Y < y0 + d)
-    front = (X >= x0) & (X < x0 + w) & (Y >= y0 + d) & (Y < y0 + d + h)
-    east = (X >= x0 + w - 4)
-    nz = rng.random(a.shape)
-    tt = 4.0 + 0.6 * (nz > 0.7) - 0.6 * (nz < 0.15) + 0.5 * (Y == y0) - 1.0 * east
-    V.paint(a, top, ('brass', 'sand_warm', 'sand_warm'), tt)
-    stalks = 3.0 + 0.8 * ((X * 3 + Y * 5) % 4 == 0) - 0.8 * ((X + Y * 2) % 5 == 0) - 1.2 * east - 0.6 * (Y > y0 + d + h - 3)
-    V.paint(a, front, ('brass', 'brass_warm', 'sand_warm'), stalks)
+    nz = noise(a.shape, rng, 0.7)
+    R = 3.0
+    yt, yf, ye = y0, y0 + d, y0 + d + h
+    box = (X >= x0) & (X < x0 + w) & (Y >= yt) & (Y < ye)
+    cx0, cx1 = np.clip(X, x0 + R, x0 + w - 1 - R), None
+    # rounded corners: distance to the inner box
+    ix = np.clip(X, x0 + R, x0 + w - 1 - R)
+    iy = np.clip(Y, yt + R, ye - 1 - R)
+    box &= (X - ix) ** 2 + (Y - iy) ** 2 <= R * R
+    top = box & (Y < yf)
+    front = box & (Y >= yf)
+    u = (X - x0) / max(1, w - 1)                                 # 0 west .. 1 east
+    # the top: lit, combed along x, darker towards the east end and the far edge
+    tt = 4.1 - 1.2 * np.clip(u - 0.65, 0, 1) * 3 - 0.6 * (Y == yt) + 0.8 * (Y == yf - 1) + 0.9 * (nz - 0.5)
+    tt += 0.6 * (((Y + (X // 5)) % 3) == 0)
+    rpaint(a, top, STRAW, tt, nz)
+    # the cut face: stalk ends, a stipple of lit ends and dark holes, rounded into shade at the
+    # foot and the east end
+    ft = 3.0 + 0.6 * (Y == yf) - 1.0 * (Y >= ye - 2) - 1.3 * np.clip(u - 0.7, 0, 1) * 3 + 1.2 * (nz - 0.5)
+    ends = (rng.random(a.shape) < 0.22)
+    holes = (rng.random(a.shape) < 0.12)
+    ft = ft + 1.2 * ends - 1.2 * holes
+    rpaint(a, front, STRAW, ft, 1 - nz)
+    a[front & (Y == yf)] = C('brass', 2)                         # the arris's shade under the lit top
+    a[box & (Y == ye - 1)] = C('earth_cool', 1)                  # where it rests
+    # two twines: over the top, down the front, a lit strand and its shade
     for tx in (x0 + w // 4, x0 + 3 * w // 4 - 1):
-        a[(Y >= y0) & (Y < y0 + d + h) & (X >= tx) & (X < tx + 2) & (top | front)] = C('timber', 2)
-        a[(Y >= y0) & (Y < y0 + d) & (X == tx)] = C('timber_warm', 3)
-    a[front & (Y == y0 + d)] = C('brass', 2)                     # the arris under the lit top
+        tw = box & (X >= tx) & (X < tx + 2)
+        a[tw] = C('clay_cool', 2)
+        a[tw & (X == tx) & (Y < yf)] = C('clay', 4)
+        a[tw & (X == tx) & (Y >= yf)] = C('clay', 3)
+        a[box & (Y == yf - 1) & (X >= tx - 1) & (X < tx + 3)] = C('clay', 3)       # the twine bends over the arris
+    # loose wisps at the top edge and the ends
+    for _ in range(int(w / 3)):
+        sx = rng.uniform(x0, x0 + w)
+        sy = yt + rng.uniform(-0.5, 1.5)
+        L = rng.uniform(2, 4)
+        ang = rng.uniform(-2.6, -0.5)
+        m = V.seg_mask(a.shape, sx, sy, sx + L * math.cos(ang), sy + L * math.sin(ang), 0.45) & ~box
+        a[m] = C('sand_warm', 4) if rng.random() < 0.6 else C('brass_warm', 3)
 
 
 def hay_bales(seed=0):
-    """Three bales: two side by side, one across them on top (66 x 50 texels)."""
+    """Three bales: two side by side, one across them on top (about 68 x 52 texels), with stalks
+    fallen round their foot."""
     rng = np.random.default_rng(seed)
-    p = canvas(80, 64, 40, 58)
+    p = canvas(82, 66, 41, 60)
     a = p.a
-    bale(a, 6, 30, 32, 14, 12, rng)
-    bale(a, 38, 30, 34, 14, 12, rng)
-    bale(a, 18, 10, 36, 14, 12, rng)
+    bale(a, 6, 32, 34, 14, 12, rng)
+    bale(a, 40, 32, 34, 14, 12, rng)
+    bale(a, 20, 12, 38, 14, 12, rng)
     Y, X = grid(a)
-    for _ in range(18):                                        # loose stalks round the foot
-        x = rng.uniform(4, 76)
-        V.bar(a, x, 57, x + rng.uniform(-4, 4), 57 - rng.uniform(0, 2), 0.5, 'brass', 3)
+    # the top bale's shade on the two below
+    sh = (Y >= 38) & (Y < 40) & (X >= 22) & (X < 60) & (a >= 0)
+    a[sh] = np.maximum(a[sh] - 1, (a[sh] // 8) * 8)
+    for _ in range(24):
+        x = rng.uniform(4, 78)
+        V.bar(a, x, 59, x + rng.uniform(-5, 5), 59 - rng.uniform(0, 2), 0.5, 'brass_warm' if rng.random() < 0.5 else 'brass', 3)
     V.finish(p)
     return p
 
 
 def hay_heap(seed=0):
-    """Loose hay forked out for the stock (60 x 34 texels): a low dome of tangled stalks lit on its
-    upper left, its east flank and foot in shade, stalks fallen round it."""
+    """Loose hay forked out for the stock (about 60 x 34 texels): a dome of tangled stalks laid in
+    layers, the deep layer dark and the top layer lit on its upper left, a darker core where the
+    stalks overhang it, stalks fallen round its foot."""
     rng = np.random.default_rng(seed)
     p = canvas(76, 48, 38, 42)
     a = p.a
@@ -400,18 +541,81 @@ def hay_heap(seed=0):
     rough = ndi.gaussian_filter(rng.random(a.shape), 1.2)
     m = (((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 <= 1 + 1.6 * (rough - 0.5)) & (Y < 42)
     lit = sphere_light(X, Y, cx, cy, rx, ry)
-    V.paint(a, m, ('brass', 'brass_warm', 'sand_warm'), 2.9 + 1.7 * lit + 1.0 * (ndi.gaussian_filter(rng.random(a.shape), 0.7) - 0.5))
-    for _ in range(170):
-        x0, y0 = rng.uniform(cx - rx, cx + rx), rng.uniform(cy - ry, 41)
-        ang = rng.uniform(-0.7, 0.7) + (math.pi if rng.random() < 0.5 else 0)
-        L = rng.uniform(3, 7)
-        s = V.seg_mask(a.shape, x0, y0, x0 + L * math.cos(ang), y0 + L * math.sin(ang), 0.45) & m
-        up = lit > 0.1
-        a[s & up] = C('sand_warm', 5)
-        a[s & ~up] = C('brass', 2)
-    for _ in range(10):
+    nz = noise(a.shape, rng, 0.9)
+    rpaint(a, m, STRAW, 1.4 + 1.4 * lit + 1.4 * (nz - 0.5), nz)          # the dark core between the layers
+    for layer, (n, base, fams) in enumerate(((140, 2.2, STRAW[1:2]), (150, 3.2, STRAW[:1]), (120, 4.2, STRAW[2:]))):
+        for _ in range(n):
+            x0, y0 = rng.uniform(cx - rx, cx + rx), rng.uniform(cy - ry, 41)
+            ang = rng.uniform(-0.8, 0.8) + (math.pi if rng.random() < 0.5 else 0)
+            L = rng.uniform(3, 8)
+            s = V.seg_mask(a.shape, x0, y0, x0 + L * math.cos(ang), y0 + L * math.sin(ang), 0.45) & m
+            if layer == 2:
+                s &= lit > 0.0                                          # the top layer catches the light
+            tone = base + 1.2 * lit + rng.uniform(-0.8, 0.8)
+            rpaint(a, s, fams if rng.random() < 0.7 else STRAW, tone, rng.random())
+    a[m & (Y >= 40)] = C('brass', 1)                                    # where it lies on the ground
+    for _ in range(14):
         x = rng.uniform(cx - rx - 4, cx + rx + 4)
-        V.bar(a, x, 42, x + rng.uniform(-5, 5), 42 - rng.uniform(0, 2), 0.5, 'brass', 3)
+        V.bar(a, x, 42, x + rng.uniform(-6, 6), 42 - rng.uniform(0, 2), 0.5, 'brass', 3)
+    V.finish(p)
+    return p
+
+
+# ------------------------------------------------------------------------------------------------
+# the trough
+# ------------------------------------------------------------------------------------------------
+def trough(seed=0):
+    """A stone stock trough (84 x 40 texels): its rim lit along the top and the west end, the inner
+    north wall in shade above the water, the water dark in its depth and catching the sky in a
+    pale streak and a glint near the south rim, the outer face of dressed stone in courses darker
+    at the foot, mud trodden round its base and tufts of grass the hooves missed."""
+    rng = np.random.default_rng(seed)
+    p = canvas(96, 50, 48, 44)
+    a = p.a
+    Y, X = grid(a)
+    nz = noise(a.shape, rng, 1.0)
+    x0, x1 = 8, 88
+    yt, yr, yb = 8, 28, 44                    # the rim's top, the front face's top, the foot
+    # mud and trodden grass round the base (under everything else)
+    mud = (((X - 48) / 42) ** 2 + ((Y - (yb - 2)) / 5.0) ** 2 <= 1 + 0.5 * (nz - 0.5)) & (Y >= yb - 6)
+    rpaint(a, mud, [('earth_cool', 'earth', 'earth_warm'), ('soot', 'earth_cool', 'earth')], 1.6 + 1.2 * (nz - 0.3), nz)
+    a[mud & (rng.random(a.shape) < 0.06)] = C('water_cool', 2)                     # a puddle's glint in a hoofprint
+    for _ in range(8):
+        tx = int(rng.uniform(x0 - 4, x1 + 4))
+        for k in range(int(rng.integers(3, 6))):
+            a[yb - 1 - k, tx + (k > 2)] = C('grass', 3 if k < 2 else 4)
+        a[yb - 1, tx + 1] = C('grass_cool', 2)
+    # the outer front face: dressed stone in two courses, lit west end, dark foot
+    face = (X >= x0) & (X < x1) & (Y >= yr) & (Y < yb - 2)
+    course = (Y - yr) // 6
+    block = (X - x0 + 7 * (course % 2)) // 14
+    tf = 3.0 + 0.5 * np.sin(block * 2.7 + course) - 1.2 * (((X - x0 + 7 * (course % 2)) % 14) == 13) \
+        - 1.0 * (((Y - yr) % 6) == 5) - 0.9 * (Y >= yb - 4) + 0.9 * (X < x0 + 2) - 0.9 * (X > x1 - 4)
+    rpaint(a, face, [('stone_cool', 'stone', 'stone_warm'), ('stone_cool', 'ashlar', 'ashlar_warm'), ('slate_cool', 'stone_warm', 'ashlar_warm')],
+           tf + 0.9 * (nz - 0.5), np.mod((block * 2 + course) * 0.37, 1.0))
+    chips = face & (rng.random(a.shape) < 0.04)
+    a[chips] = C('stone_warm', 4)
+    a[face & (nz > 0.78) & (Y > yb - 8)] = C('leaf_cool', 2)                       # moss at the damp foot
+    # the rim: a lit top all round, the inner basin below it
+    outer = (X >= x0) & (X < x1) & (Y >= yt) & (Y < yr)
+    inner = (X >= x0 + 5) & (X < x1 - 5) & (Y >= yt + 3) & (Y < yr - 2)
+    rim = outer & ~inner
+    rpaint(a, rim, [('stone_cool', 'stone', 'stone_warm')], 4.0 + 0.8 * (Y == yt) + 0.6 * (X < x0 + 3) - 1.2 * (X > x1 - 4) - 1.0 * (Y >= yr - 2), 0)
+    a[rim & (Y >= yr - 1)] = C('stone', 2)                                          # the front arris in shade
+    # the inner north wall in shade, then the water: dark in its depth, a pale streak of sky and
+    # a glint near the south rim, a ring where it meets the stone
+    wallm = inner & (Y < yt + 6)
+    rpaint(a, wallm, [('stone_cool', 'stone_cool', 'stone')], 1.4 + 0.5 * (Y - yt - 3) / 3, 0)
+    water = inner & ~wallm
+    dep = (Y - (yt + 6)) / max(1, (yr - 2) - (yt + 6))
+    rpaint(a, water, [('water_cool', 'water', 'water_warm'), ('water_cool', 'water_cool', 'water'), ('dusk_cool', 'water_cool', 'sky')],
+           1.0 + 2.0 * dep + 0.8 * (nz - 0.5), nz)
+    a[water & (rng.random(a.shape) < 0.03) & (dep > 0.4)] = C('sky', 4)                 # ripples catching the sky
+    a[water & (Y == yt + 6)] = C('water_cool', 0)
+    streak = water & (np.abs(Y - (yr - 4)) < 0.6) & (X > x0 + 12) & (X < x0 + 40)
+    a[streak] = C('sky', 4)
+    a[water & (np.abs(Y - (yr - 5)) < 0.6) & (X > x0 + 48) & (X < x0 + 58)] = C('sky', 3)
+    a[water & (Y == yr - 3) & ((X == x0 + 20) | (X == x0 + 21))] = C('snow', 5)
     V.finish(p)
     return p
 
@@ -422,55 +626,79 @@ def hay_heap(seed=0):
 CROPS = {'dug': ('cabbage', 'leek', 'lettuce'), 'dug_b': ('carrot', 'cabbage', 'beans')}
 
 
-def _plant(a, crop, px, cy, rng, burnt=False):
+LEAF = [('leaf_cool', 'leaf', 'leaf_warm'), ('grass_cool', 'leaf', 'grass_warm'), ('leaf_cool', 'grass', 'leaf_warm')]
+SOIL = [('earth_cool', 'earth', 'earth_warm'), ('path_cool', 'path', 'path_warm'), ('earth_cool', 'earth_warm', 'sand_warm')]
+BURNT = [('soot', 'ash', 'ash'), ('stone_cool', 'ash', 'stone'), ('soot', 'earth_cool', 'earth'), ('slate_cool', 'stone_cool', 'ash')]
+
+
+def _plant(a, crop, px, cy, rng, burnt=False, s=1.0, lean=0.0):
+    """One plant on its ridge, sized `s` (0.7 .. 1.25: some came on faster) and leaning `lean`
+    texels at its top, lit on its upper left with its shade east and down on the soil."""
     Y, X = grid(a)
     if burnt:
         # a charred stub: a dark stalk and a curl of black leaf, ash at its foot
-        a[int(cy - 4):int(cy + 1), int(px):int(px) + 1] = C('soot', 1)
-        cm = ((X - px - 1.5) / 2.0) ** 2 + ((Y - cy + 4) / 1.2) ** 2 <= 1
+        h = int(4 + 4 * s)
+        a[V.seg_mask(a.shape, px, cy + 1, px + lean, cy - h, 0.7)] = C('soot', 1)
+        a[V.seg_mask(a.shape, px - 0.4, cy + 1, px - 0.4 + lean, cy - h, 0.3)] = C('soot', 3)
+        cm = ((X - px - lean - 1.5) / (2.0 + 1.5 * s)) ** 2 + ((Y - cy + h) / 1.5) ** 2 <= 1
         a[cm] = C('soot', 0 if rng.random() < 0.5 else 2)
-        a[int(cy + 1), int(px - 1):int(px + 3)] = C('ash', 3)
+        a[cm & (X < px + lean + 1) & (Y < cy - h)] = C('soot', 4)                    # a charred leaf's lit curl
+        a[int(cy + 1), int(px - 2):int(px + 3)] = C('ash', 4)
+        a[int(cy + 2), int(px - 1):int(px + 3)] = C('earth_cool', 1)
+        if rng.random() < 0.25:
+            a[int(cy), int(px + 1)] = C('lava', 3)                                   # an ember still glowing
         return
+    mix = rng.random()
     if crop == 'cabbage':
-        m = ((X - px) / 5.6) ** 2 + ((Y - cy) / 4.4) ** 2 <= 1
-        V.paint(a, m, ('leaf_cool', 'leaf', 'leaf_warm'), 2.8 + 1.6 * sphere_light(X, Y, px, cy, 5.6, 4.4))
-        heart = ((X - px + 0.5) / 2.8) ** 2 + ((Y - cy + 0.8) / 2.2) ** 2 <= 1
-        V.paint(a, heart, ('leaf', 'leaf_warm', 'grass_warm'), 4.0 + sphere_light(X, Y, px, cy - 1, 3, 2))
+        rx_, ry_ = 5.6 * s, 4.4 * s
+        m = ((X - px) / rx_) ** 2 + ((Y - cy) / ry_) ** 2 <= 1 + 0.18 * np.sin(np.arctan2(Y - cy, X - px) * 6 + mix * 6)
+        rpaint(a, m, LEAF, 2.6 + 1.7 * sphere_light(X, Y, px, cy, rx_, ry_), mix)
+        heart = ((X - px + 0.5 - lean * 0.3) / (2.8 * s)) ** 2 + ((Y - cy + 0.8) / (2.2 * s)) ** 2 <= 1
+        rpaint(a, heart, [('leaf', 'leaf_warm', 'grass_warm')], 4.0 + sphere_light(X, Y, px, cy - 1, 3, 2), 0)
         for k in range(4):                                     # the outer leaves' veins
-            ang = k * math.pi / 2 + 0.6
-            a[V.seg_mask(a.shape, px, cy, px + 4.5 * math.cos(ang), cy + 3.5 * math.sin(ang), 0.4) & m & ~heart] = C('leaf_cool', 2)
+            ang = k * math.pi / 2 + 0.6 + mix
+            a[V.seg_mask(a.shape, px, cy, px + 4.5 * s * math.cos(ang), cy + 3.5 * s * math.sin(ang), 0.4) & m & ~heart] = C('leaf_cool', 2)
     elif crop == 'lettuce':
-        m = ((X - px) / 4.2) ** 2 + ((Y - cy) / 3.4) ** 2 <= 1 + 0.25 * np.sin(np.arctan2(Y - cy, X - px) * 7)
-        V.paint(a, m, ('leaf', 'grass_warm', 'grass_warm'), 3.2 + 1.5 * sphere_light(X, Y, px, cy, 4.2, 3.4))
+        rx_, ry_ = 4.2 * s, 3.4 * s
+        m = ((X - px) / rx_) ** 2 + ((Y - cy) / ry_) ** 2 <= 1 + 0.25 * np.sin(np.arctan2(Y - cy, X - px) * 7 + mix * 5)
+        rpaint(a, m, [('leaf', 'grass_warm', 'grass_warm'), ('grass', 'grass_warm', 'leaf_warm')], 3.0 + 1.6 * sphere_light(X, Y, px, cy, rx_, ry_), mix)
+        a[m & (((X - px) ** 2 + (Y - cy) ** 2) < 1.2)] = C('grass_warm', 5)
     elif crop == 'leek':
         for dx, h, t in ((-1.5, 9, 3), (0.5, 11, 4), (2.0, 8, 2)):
-            a[V.seg_mask(a.shape, px + dx * 0.3, cy + 1, px + dx, cy + 1 - h, 0.8)] = C('leaf_cool', t)
+            a[V.seg_mask(a.shape, px + dx * 0.3, cy + 1, px + dx + lean, cy + 1 - h * s, 0.8)] = C('leaf_cool', t)
+        a[V.seg_mask(a.shape, px + 0.5, cy, px + 0.5 + lean, cy - 9 * s, 0.4)] = C('leaf', 4)
         a[int(cy - 1):int(cy + 2), int(px - 1):int(px + 2)] = C('plaster', 4)       # the white shank
+        a[int(cy + 1), int(px - 1):int(px + 2)] = C('plaster_warm', 3)
     elif crop == 'carrot':
         for dx in (-2, 0, 2):
-            a[V.seg_mask(a.shape, px, cy + 1, px + dx, cy - 6 + abs(dx), 0.6)] = C('grass', 4 if dx < 1 else 3)
-        fm = ((X - px) / 3.0) ** 2 + ((Y - cy + 5) / 2.0) ** 2 <= 1
-        a[fm] = C('grass_warm', 4)
+            a[V.seg_mask(a.shape, px, cy + 1, px + dx * s + lean, cy - (6 - abs(dx)) * s, 0.6)] = C('grass', 4 if dx < 1 else 3)
+        fm = ((X - px - lean) / (3.0 * s)) ** 2 + ((Y - cy + 5 * s) / (2.0 * s)) ** 2 <= 1
+        rpaint(a, fm, [('grass', 'grass_warm', 'leaf_warm')], 3.4 + 1.2 * sphere_light(X, Y, px, cy - 5, 3, 2), 0)
         a[int(cy + 1), int(px - 1):int(px + 2)] = C('clay', 4)                      # the shoulder
+        a[int(cy + 1), int(px + 1)] = C('clay', 3)
     elif crop == 'beans':
-        a[V.seg_mask(a.shape, px, cy + 1, px, cy - 18, 0.7)] = C('timber', 3)        # the cane
+        a[V.seg_mask(a.shape, px, cy + 1, px + lean, cy - 18 * s, 0.7)] = C('timber', 3)        # the cane
+        a[V.seg_mask(a.shape, px - 0.5, cy + 1, px - 0.5 + lean, cy - 18 * s, 0.3)] = C('timber_warm', 4)
         for k in range(5):
-            ly = cy - 3 - k * 3
-            lm = ((X - px - (2 if k % 2 else -2)) / 2.0) ** 2 + ((Y - ly) / 1.5) ** 2 <= 1
-            a[lm] = C('leaf', 4 if k % 2 == 0 else 3)
-        a[int(cy - 9), int(px + 2)] = C('berry', 4)                                  # a flower
+            ly = cy - 3 - k * 3 * s
+            lx = px + lean * (k / 5) + (2 if k % 2 else -2)
+            lm = ((X - lx) / 2.0) ** 2 + ((Y - ly) / 1.5) ** 2 <= 1
+            rpaint(a, lm, LEAF, 3.6 if k % 2 == 0 else 2.6, mix)
+        a[int(cy - 9 * s), int(px + 2)] = C('berry', 4)                                # a flower
     # the plant's shade on the soil, east and down
-    sh = ((X - px - 2.5) / 4.0) ** 2 + ((Y - cy - 3.5) / 1.4) ** 2 <= 1
-    a[sh & (a // 8 == FI['earth'])] = C('earth_cool', 1)
+    sh = ((X - px - 2.5 * s) / (4.0 * s)) ** 2 + ((Y - cy - 3.5 * s) / 1.4) ** 2 <= 1
+    soil_f = [FI[f] for f in ('earth', 'earth_warm', 'path', 'path_warm', 'sand_warm')]
+    a[sh & np.isin(a // 8, soil_f)] = C('earth_cool', 1)
 
 
 def beds(kind='dug', seed=0):
     """A kitchen garden's beds in a dug patch (240 x 120 texels, ten cells by five): three soil
-    ridges east to west with a path of trodden earth between them, each ridge lit on its north rim
-    and its south lip a step down, crumbs of soil with clods lit on their upper left, a crop in a
-    row on each; the patch's edge rough where the spade stopped short of the grass. `scorched`:
-    the same ground burnt grey, the crops black stubs, ash drifted in the furrows, a few green
-    shoots coming back."""
+    ridges east to west with a trodden furrow between them, each ridge's crest catching the light
+    and the furrow under it in shade, crumbs of soil and clods lit on their upper left, a row of
+    one crop on each ridge, the plants of a row each its own size and lean with a gap where one
+    failed; the patch's edge dug ragged into the turf, the grass hanging over it. `scorched`: the
+    same ground burnt grey, the crops black stubs, ash drifted in the furrows, a few green shoots
+    coming back."""
     burnt = kind == 'scorched'
     rng = np.random.default_rng(seed)
     W, H = 252, 136
@@ -480,13 +708,23 @@ def beds(kind='dug', seed=0):
     x0, x1, y0, y1 = 8, W - 8, 10, H - 6
     nz = ndi.gaussian_filter(rng.random(a.shape), 2.5)
     nz = (nz - nz.mean()) / max(1e-6, nz.std())
+    fine = noise(a.shape, rng, 0.8)
     d = np.minimum.reduce([X - x0, x1 - X, Y - y0, y1 - Y])
     patch = d + 2.2 * nz > 2
-    soil = ('ash', 'ash', 'stone_cool') if burnt else ('earth_cool', 'earth', 'earth_warm')
-    V.paint(a, patch, soil, (2.2 if burnt else 2.4) + 0.4 * nz)
+    sets = BURNT if burnt else SOIL
+    rpaint(a, patch, sets, (2.0 if burnt else 2.2) + 0.5 * nz + 1.2 * (fine - 0.5), fine)
+    # the edge: no outline; the soil a step darker where the spade cut the turf, broken by grass
+    # blades hanging over it from the lawn
     edge = patch & ~ndi.binary_erosion(patch, iterations=2)
-    a[edge] = C('earth_cool' if not burnt else 'soot', 1)
-    # three ridges
+    darker = edge & (rng.random(a.shape) < 0.6)
+    a[darker] = np.maximum(a[darker] - 1, (a[darker] // 8) * 8)
+    ey, ex = np.nonzero(edge & (rng.random(a.shape) < 0.07))
+    for y_, x_ in zip(ey, ex):
+        L = int(rng.integers(2, 5))
+        for k in range(L):
+            yy, xx = y_ - k if y_ > H / 2 else y_ + k - 1, x_ + (k // 2) * (1 if rng.random() < 0.5 else -1)
+            if 0 <= yy < H and 0 <= xx < W:
+                a[yy, xx] = C('grass', 3 if k else 2) if not burnt else C('ash', 3)
     rows = 3
     pitch = (y1 - y0 - 12) / rows
     crops = CROPS.get(kind, CROPS['dug'])
@@ -494,36 +732,45 @@ def beds(kind='dug', seed=0):
         ry0 = y0 + 8 + r * pitch
         ry1 = ry0 + pitch - 9
         rr = 4.0
-        ridge = (np.abs(X - (x0 + x1) / 2) <= (x1 - x0) / 2 - 10) & (Y >= ry0) & (Y < ry1)
+        ridge = (np.abs(X - (x0 + x1) / 2) <= (x1 - x0) / 2 - 10 + 3 * nz) & (Y >= ry0) & (Y < ry1)
         ridge &= ~((X < x0 + 14) & (Y < ry0 + rr) & ((X - x0 - 14) ** 2 + (Y - ry0 - rr) ** 2 > rr * rr))
         fr = (Y - ry0) / max(1, ry1 - ry0)
-        t = 3.4 - 1.2 * fr + 0.9 * (Y < ry0 + 2) + 0.35 * nz - 0.9 * (Y >= ry1 - 3) - 0.6 * (X > x1 - 16)
-        if burnt:
-            V.paint(a, ridge, ('soot', 'ash', 'ash'), t - 0.4)
-        else:
-            V.paint(a, ridge, soil, t)
-        for _ in range(int((x1 - x0) * pitch / 16)):            # clods, lit on their upper left
+        t = 3.4 - 1.2 * fr + 0.35 * nz - 0.9 * (Y >= ry1 - 3) - 0.6 * (X > x1 - 16) + 1.0 * (fine - 0.5)
+        rpaint(a, ridge, [('soot', 'ash', 'ash'), ('stone_cool', 'ash', 'stone')] if burnt else SOIL, t - (0.4 if burnt else 0), fine)
+        # the crest catching the light, the furrow under the ridge in shade
+        crest = ridge & (Y < ry0 + 2) & (fine > 0.25)
+        a[crest] = C('ash', 4) if burnt else C('earth_warm', 4)
+        a[crest & (fine > 0.7)] = C('stone', 4) if burnt else C('sand_warm', 4)
+        furrow = patch & ~ridge & (Y >= ry1) & (Y < ry1 + 4)
+        a[furrow] = C('soot', 1) if burnt else np.where(fine[furrow] > 0.5, C('earth_cool', 1), C('path_cool', 1))
+        for _ in range(int((x1 - x0) * pitch / 12)):            # clods, lit on their upper left
             cx_, cy_ = int(rng.uniform(x0 + 12, x1 - 12)), int(rng.uniform(ry0 + 2, ry1 - 3))
             if ridge[cy_, cx_]:
-                a[cy_, cx_:cx_ + 2] = C('earth_warm' if not burnt else 'ash', 4)
+                a[cy_, cx_:cx_ + 2] = C('earth_warm' if not burnt else 'ash', 4 + (rng.random() < 0.3))
                 a[cy_ + 1, cx_ + 1:cx_ + 3] = C('earth_cool' if not burnt else 'soot', 1)
         crop = crops[r % len(crops)]
         step = {'cabbage': 15, 'lettuce': 11, 'leek': 8, 'carrot': 8, 'beans': 14}[crop]
         cy = ry0 + (ry1 - ry0) * 0.5
         n = int((x1 - x0 - 32) // step)
         for i in range(n + 1):
-            px = x0 + 16 + (x1 - x0 - 32) * i / max(1, n) + rng.integers(-1, 2)
-            if burnt and rng.random() < 0.35:
-                continue                                       # the storm took it
-            _plant(a, crop, px, cy, rng, burnt=burnt)
+            px = x0 + 16 + (x1 - x0 - 32) * i / max(1, n) + rng.uniform(-1.5, 1.5)
+            if rng.random() < (0.35 if burnt else 0.1):
+                continue                                       # a gap: one that failed (or the storm took)
+            _plant(a, crop, px, cy + rng.uniform(-1, 1), rng, burnt=burnt, s=rng.uniform(0.72, 1.22), lean=rng.uniform(-1.6, 1.6))
         if burnt:
-            for _ in range(3):                                 # green coming back
+            for _ in range(4):                                 # green coming back
                 sx = int(rng.uniform(x0 + 20, x1 - 20))
                 a[int(cy + 2):int(cy + 5), sx] = C('grass', 4)
                 a[int(cy + 2), sx - 1:sx + 2] = C('grass_warm', 4)
     if burnt:
-        ash = patch & (ndi.gaussian_filter(rng.random(a.shape), 1.5) > 0.56)
-        a[ash & (a // 8 != FI['soot'])] = C('ash', 4)
+        # ash drifted along the furrows and in hollows, pale where it lies thickest
+        drift = patch & (ndi.gaussian_filter(rng.random(a.shape), 1.5) > 0.6) & (nz < 0.3)
+        a[drift & (a // 8 != FI['soot'])] = C('ash', 4)
+        a[drift & (fine > 0.8) & (a // 8 != FI['soot'])] = C('ash', 5)
+        a[drift & (fine < 0.15) & (a // 8 != FI['soot'])] = C('snow_cool', 2)
+        # where the fire passed quickly the soil is only browned: patches of it showing through
+        brown = patch & (nz > 0.9) & (a // 8 != FI['soot'])
+        rpaint(a, brown, SOIL[:2], 1.4 + 1.6 * (fine - 0.3), fine)
     V.finish(p, line=False)
     return p
 
@@ -639,6 +886,9 @@ def animals():
             note='A hen pecking in her run; 8 idle frames at 4 fps.')))
     for pose, face, seed in (('stand', -1, 3), ('graze', 1, 5), ('lie', -1, 7)):
         frames = [sheep(pose, f, face, seed) for f in SHEEP_FRAMES[pose]]
+        # each ewe keeps her own rhythm, as the hens do: the loop starts at a different beat
+        shift = {'stand': 0, 'graze': 3, 'lie': 5}[pose]
+        frames = frames[shift:] + frames[:shift]
         out.append(('farm_sheep' + ('' if pose == 'stand' else '_' + pose), frames, 3.0, dict(
             name='Sheep, ' + {'stand': 'standing', 'graze': 'grazing', 'lie': 'lying'}[pose], purpose='live', role='stock',
             cells=(3, 1), fp=_fp(2, 1), collision={'shape': 'rect', 'rect': [-9.0, -3.0, 18, 3]}, shadow=(18, 4),
@@ -655,7 +905,7 @@ def statics():
     return [
         ('farm_coop', coop(seed=21), dict(
             name='Hen ark', purpose='live', role='coop', cells=(3, 2), fp=_fp(2, 1),
-            collision={'shape': 'rect', 'rect': [-9.0, -5.0, 18, 5]}, shadow=(20, 4),
+            collision={'shape': 'rect', 'rect': [-8.0, -4.0, 16, 4]}, shadow=(18, 4),
             requires=[_rel('within', 'boundary', 2, 'against the run\'s fence, in its back corner'),
                       _rel('near', 'stock', 4, 'its hens about it')],
             forbids=[OFF_ROUTE, OFF_WATER], enclosure={'holds': ['chickens'], 'as': 'needs'},
@@ -702,6 +952,7 @@ def build(write=True, force=False):
         'crossroads_hay': [('hay_bales', hay_bales(seed=41)), ('hay_heap', hay_heap(seed=43))],
         'crossroads_beds_dug': [('beds_dug', beds('dug', seed=51)), ('beds_dug_b', beds('dug_b', seed=53))],
         'crossroads_beds_scorched': [('beds_scorched', beds('scorched', seed=51))],
+        'crossroads_trough': [('trough', trough(seed=71))],
     }
     for pid, vs in redraw.items():
         for vid, pic in vs:
@@ -748,8 +999,9 @@ REVIEWED_BOXES = {
     'crossroads_boulder': [-11.0, -6.0, 22, 6],         # was 12 wide under a 25 wide cluster
     'crossroads_bush': [-13.0, -6.0, 26, 6],            # was 16 wide under a 31 wide bush (woodland bushes: 85 %)
     'crossroads_well_choked': [-10.0, -16.0, 20, 16],   # was 24 x 20 round a 19 wide ring; now the well's own box
+    'crossroads_trough': [-13.0, -8.0, 26, 8],          # the redrawn trough is 27 wide (was 20 under a 27 wide picture)
 }
-REDRAWN = ('crossroads_beds_dug', 'crossroads_beds_scorched', 'crossroads_hay')
+REDRAWN = ('crossroads_beds_dug', 'crossroads_beds_scorched', 'crossroads_hay', 'crossroads_trough')
 
 
 def _save(path, pc):

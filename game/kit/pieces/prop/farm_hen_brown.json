@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/farm/farm_hen_brown.png",
    "foot": [
     17,
-    27
+    28
    ]
   }
  ],
@@ -29,20 +29,20 @@
  "geometry": {
   "size_px": [
    34,
-   30
+   31
   ],
   "size_cells": [
    1,
    1
   ],
   "z_sort": "foot",
-  "height_px": 27,
+  "height_px": 28,
   "collision": {
    "shape": "none"
   },
   "foot": [
    17,
-   27
+   28
   ],
   "footprint": [
    [
@@ -108,7 +108,7 @@
     "strip": "res://kit/props/art/farm/farm_hen_brown_idle.png",
     "frame_px": [
      34,
-     30
+     31
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true

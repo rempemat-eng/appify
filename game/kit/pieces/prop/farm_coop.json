@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_coop.png",
    "foot": [
-    34,
-    66
+    32,
+    50
    ]
   }
  ],
@@ -28,27 +28,27 @@
  },
  "geometry": {
   "size_px": [
-   72,
-   72
+   66,
+   56
   ],
   "size_cells": [
    3,
    2
   ],
   "z_sort": "foot",
-  "height_px": 66,
+  "height_px": 50,
   "collision": {
    "shape": "rect",
    "rect": [
-    -9.0,
-    -5.0,
-    18,
-    5
+    -8.0,
+    -4.0,
+    16,
+    4
    ]
   },
   "foot": [
-   34,
-   66
+   32,
+   50
   ],
   "footprint": [
    [
@@ -100,7 +100,7 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    20,
+    18,
     4
    ],
    "dir": [

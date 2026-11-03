@@ -6,15 +6,15 @@
  "biomes": [
   "village"
  ],
- "version": 3,
+ "version": 4,
  "variants": [
   {
    "id": "hay_bales",
    "weight": 1.0,
    "png": "res://kit/props/art/farm/hay_bales.png",
    "foot": [
-    40,
-    58
+    41,
+    60
    ]
   },
   {
@@ -36,8 +36,8 @@
  },
  "geometry": {
   "size_px": [
-   80,
-   64
+   82,
+   66
   ],
   "size_cells": [
    4,
@@ -48,8 +48,8 @@
    "shape": "none"
   },
   "foot": [
-   40,
-   58
+   41,
+   60
   ],
   "footprint": []
  },
