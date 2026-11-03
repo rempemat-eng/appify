@@ -1,0 +1,99 @@
+{
+  "id": "hale",
+  "contract": 2,
+  "walk_speed": 76.1,
+  "v1_walk_speed": 76.1,
+  "clips": [
+    {
+      "clip": "idle",
+      "drawings": 12,
+      "duration": 1.6,
+      "ticks": [9, 7, 7, 9, 9, 9, 8, 8, 7, 8, 4, 11],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "walk",
+      "drawings": 12,
+      "duration": 0.4872,
+      "ticks": [2, 2, 3, 2, 3, 2, 3, 2, 2, 3, 2, 3],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "talk",
+      "drawings": 12,
+      "duration": 1.5996,
+      "ticks": [7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "work",
+      "drawings": 12,
+      "duration": 1.1999,
+      "ticks": [6, 6, 15, 1, 2, 5, 4, 4, 9, 5, 5, 9],
+      "sub_tick": [],
+      "v1_drawings": 12,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "fidget_hammer",
+      "drawings": 10,
+      "duration": 1.5001,
+      "ticks": [9, 7, 7, 10, 12, 12, 8, 7, 8, 10],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "fidget_neck",
+      "drawings": 10,
+      "duration": 1.3167,
+      "ticks": [9, 7, 7, 8, 7, 7, 8, 8, 8, 10],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": 0.0
+    }
+  ],
+  "walk_skate": {
+    "S": {
+      "planted_px_s": 27.1,
+      "body_px_s": 76.1,
+      "slide_px_s": 49.0,
+      "ok": false
+    },
+    "N": {
+      "planted_px_s": 27.1,
+      "body_px_s": 76.1,
+      "slide_px_s": 49.0,
+      "ok": false
+    },
+    "E": {
+      "planted_px_s": 76.4,
+      "body_px_s": 76.1,
+      "slide_px_s": -0.3,
+      "ok": true
+    },
+    "W": {
+      "planted_px_s": 76.4,
+      "body_px_s": 76.1,
+      "slide_px_s": -0.3,
+      "ok": true
+    }
+  },
+  "fidgets": {
+    "fidget_hammer": {
+      "seamless": true,
+      "facings_off_idle0": []
+    },
+    "fidget_neck": {
+      "seamless": true,
+      "facings_off_idle0": []
+    }
+  },
+  "canonical": []
+}
