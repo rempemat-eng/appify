@@ -2022,8 +2022,8 @@
   "collision": null,
   "deck": null,
   "foot": [
-   40,
-   58
+   41,
+   60
   ],
   "footprint": [],
   "forbids": [
@@ -2057,8 +2057,8 @@
   "variants": {
    "hay_bales": {
     "foot": [
-     40,
-     58
+     41,
+     60
     ],
     "png": "res://kit/props/art/farm/hay_bales.png"
    },
@@ -4611,15 +4611,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -30.0,
+   -39.0,
    -24.0,
-   60,
+   78,
    24
   ],
   "deck": null,
   "foot": [
    48,
-   53
+   44
   ],
   "footprint": [
    [
@@ -4674,12 +4674,12 @@
    "owner": null
   },
   "variants": {
-   "trough_35": {
+   "trough": {
     "foot": [
      48,
-     53
+     44
     ],
-    "png": "res://zones/crossroads/art/trough_35.png"
+    "png": "res://kit/props/art/farm/trough.png"
    }
   },
   "z_sort": "foot"
@@ -5037,15 +5037,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -27.0,
-   -15.0,
-   54,
-   15
+   -24.0,
+   -12.0,
+   48,
+   12
   ],
   "deck": null,
   "foot": [
-   34,
-   66
+   32,
+   50
   ],
   "footprint": [
    [
@@ -5092,7 +5092,7 @@
     3
    ],
    "size": [
-    60,
+    54,
     12
    ]
   },
@@ -5107,8 +5107,8 @@
   "variants": {
    "farm_coop": {
     "foot": [
-     34,
-     66
+     32,
+     50
     ],
     "png": "res://kit/props/art/farm/farm_coop.png"
    }
@@ -5123,7 +5123,7 @@
    "frames": 8,
    "offset": [
     -17,
-    -27
+    -28
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_hen_brown_idle.png"
@@ -5134,7 +5134,7 @@
   "deck": null,
   "foot": [
    17,
-   27
+   28
   ],
   "footprint": [
    [
@@ -5193,7 +5193,7 @@
    "farm_hen_brown": {
     "foot": [
      17,
-     27
+     28
     ],
     "png": "res://kit/props/art/farm/farm_hen_brown.png"
    }
@@ -5208,7 +5208,7 @@
    "frames": 8,
    "offset": [
     -17,
-    -27
+    -28
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_hen_speckled_idle.png"
@@ -5219,7 +5219,7 @@
   "deck": null,
   "foot": [
    17,
-   27
+   28
   ],
   "footprint": [
    [
@@ -5278,7 +5278,7 @@
    "farm_hen_speckled": {
     "foot": [
      17,
-     27
+     28
     ],
     "png": "res://kit/props/art/farm/farm_hen_speckled.png"
    }
@@ -5293,7 +5293,7 @@
    "frames": 8,
    "offset": [
     -17,
-    -27
+    -28
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/farm/farm_hen_white_idle.png"
@@ -5304,7 +5304,7 @@
   "deck": null,
   "foot": [
    17,
-   27
+   28
   ],
   "footprint": [
    [
@@ -5363,7 +5363,7 @@
    "farm_hen_white": {
     "foot": [
      17,
-     27
+     28
     ],
     "png": "res://kit/props/art/farm/farm_hen_white.png"
    }
@@ -6109,7 +6109,7 @@
   "deck": null,
   "foot": [
    4,
-   93
+   92
   ],
   "footprint": [
    [
@@ -6165,21 +6165,21 @@
    "open_e": {
     "foot": [
      4,
-     93
+     92
     ],
     "png": "res://kit/props/art/fence/fence_picket_gate_ns_open_e.png"
    },
    "open_w": {
     "foot": [
      59,
-     93
+     92
     ],
     "png": "res://kit/props/art/fence/fence_picket_gate_ns_open_w.png"
    },
    "shut": {
     "foot": [
      4,
-     93
+     92
     ],
     "png": "res://kit/props/art/fence/fence_picket_gate_ns_shut.png"
    }
@@ -6522,7 +6522,7 @@
   ],
   "deck": null,
   "foot": [
-   2,
+   3,
    50
   ],
   "footprint": [
@@ -6568,7 +6568,7 @@
   "variants": {
    "plain": {
     "foot": [
-     2,
+     3,
      50
     ],
     "png": "res://kit/props/art/fence/fence_picket_ns_plain.png"
@@ -7259,7 +7259,7 @@
   "deck": null,
   "foot": [
    4,
-   92
+   91
   ],
   "footprint": [
    [
@@ -7315,21 +7315,21 @@
    "open_e": {
     "foot": [
      4,
-     92
+     91
     ],
     "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_e.png"
    },
    "open_w": {
     "foot": [
      59,
-     92
+     91
     ],
     "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_w.png"
    },
    "shut": {
     "foot": [
      4,
-     92
+     91
     ],
     "png": "res://kit/props/art/fence/fence_wattle_gate_ns_shut.png"
    }
@@ -7348,7 +7348,7 @@
   "deck": null,
   "foot": [
    4,
-   57
+   56
   ],
   "footprint": [
    [
@@ -7394,7 +7394,7 @@
    "plain": {
     "foot": [
      4,
-     57
+     56
     ],
     "png": "res://kit/props/art/fence/fence_wattle_n_plain.png"
    }
@@ -7413,7 +7413,7 @@
   "deck": null,
   "foot": [
    4,
-   57
+   56
   ],
   "footprint": [
    [
@@ -7459,7 +7459,7 @@
    "plain": {
     "foot": [
      4,
-     57
+     56
     ],
     "png": "res://kit/props/art/fence/fence_wattle_ne_plain.png"
    }
@@ -7478,7 +7478,7 @@
   "deck": null,
   "foot": [
    4,
-   57
+   56
   ],
   "footprint": [
    [
@@ -7524,7 +7524,7 @@
    "plain": {
     "foot": [
      4,
-     57
+     56
     ],
     "png": "res://kit/props/art/fence/fence_wattle_nes_plain.png"
    }
@@ -7543,7 +7543,7 @@
   "deck": null,
   "foot": [
    12,
-   57
+   56
   ],
   "footprint": [
    [
@@ -7589,7 +7589,7 @@
    "plain": {
     "foot": [
      12,
-     57
+     56
     ],
     "png": "res://kit/props/art/fence/fence_wattle_nesw_plain.png"
    }
@@ -7608,7 +7608,7 @@
   "deck": null,
   "foot": [
    12,
-   57
+   56
   ],
   "footprint": [
    [
@@ -7654,7 +7654,7 @@
    "plain": {
     "foot": [
      12,
-     57
+     56
     ],
     "png": "res://kit/props/art/fence/fence_wattle_new_plain.png"
    }
@@ -7672,7 +7672,7 @@
   ],
   "deck": null,
   "foot": [
-   3,
+   4,
    54
   ],
   "footprint": [
@@ -7718,7 +7718,7 @@
   "variants": {
    "plain": {
     "foot": [
-     3,
+     4,
      54
     ],
     "png": "res://kit/props/art/fence/fence_wattle_ns_plain.png"
@@ -7726,7 +7726,7 @@
    "post": {
     "foot": [
      4,
-     57
+     56
     ],
     "png": "res://kit/props/art/fence/fence_wattle_ns_post.png"
    }
@@ -7745,7 +7745,7 @@
   "deck": null,
   "foot": [
    12,
-   57
+   56
   ],
   "footprint": [
    [
@@ -7791,7 +7791,7 @@
    "plain": {
     "foot": [
      12,
-     57
+     56
     ],
     "png": "res://kit/props/art/fence/fence_wattle_nsw_plain.png"
    }
@@ -7810,7 +7810,7 @@
   "deck": null,
   "foot": [
    12,
-   57
+   56
   ],
   "footprint": [
    [
@@ -7856,7 +7856,7 @@
    "plain": {
     "foot": [
      12,
-     57
+     56
     ],
     "png": "res://kit/props/art/fence/fence_wattle_nw_plain.png"
    }

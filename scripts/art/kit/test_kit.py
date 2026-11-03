@@ -756,6 +756,11 @@ class FencesAndFarm(unittest.TestCase):
         self.assertEqual(RL.check_zone(self.plan), [])
         self.assertEqual(self.EN.check_zone(self.plan, self.lib), [])
 
+    def test_the_farm_study_is_staged_clear(self):
+        # every animal a cell inside its fence and off the gateway; nothing drawn over a fence
+        # behind it or over another piece (Claude A's review of #430)
+        self.assertEqual(self.FS.layout_faults(self.plan), [])
+
     def test_open_runs_empty_pens_and_missing_needs_are_caught(self):
         import copy
 

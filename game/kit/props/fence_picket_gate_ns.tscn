@@ -10,4 +10,4 @@ piece_id = "fence_picket_gate_ns"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-4, -93)
+offset = Vector2(-4, -92)

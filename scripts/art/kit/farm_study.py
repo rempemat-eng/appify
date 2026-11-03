@@ -53,7 +53,7 @@ def _ring(style, c0, c1, r0, r1, gate_col, prefix):
             pc['variant'] = 'post' if (c + r) % 4 == 0 and style == 'picket' else 'plain'
         out.append(pc)
     out.append({'id': prefix + '_gate', 'piece': 'fence_%s_gate_ew' % style, 'at': [gate_col * CELL + 12, (r1 + 1) * CELL],
-                'variant': 'open' if style == 'wattle' else 'shut'})
+                'variant': 'shut'})                         # shut: the gate keeps the stock in
     return out
 
 
@@ -91,31 +91,33 @@ def _front_garden(style, c0, c1, r_wall, r1, gate_col, prefix):
 def plan() -> dict:
     g = np.full((ROWS, COLS), '.', '<U1')
     g[19:21, :] = '#'                                   # the lane along the bottom
-    # the chicken run (4 x 3 cells), scratched bare inside, its gate's trodden way to the lane
-    g[11:14, 4:7] = 'w'
-    g[13:19, 5:7] = '#'
-    # the sheep fold (8 x 6 cells): worn by the trough and the gate, the way to the lane
-    g[8:10, 13:18] = 'w'
-    g[9:19, 14:16] = '#'
+    # the chicken run (4 x 4 cells), scratched bare inside, its gate's trodden way to the lane
+    g[8:11, 4:7] = 'w'
+    g[11:19, 5:7] = '#'
+    # the sheep fold (10 x 8 cells): worn by the trough and the gate, the way to the lane
+    g[7:10, 11:19] = 'w'
+    g[10:19, 15:17] = '#'
     # the cottage's door path through its garden gate to the lane
     g[12:19, 26:28] = '#'
     pieces = []
-    pieces += _ring('wattle', 3, 7, 10, 13, 5, 'run')
-    pieces += _ring('wattle', 10, 18, 3, 9, 14, 'fold')
+    pieces += _ring('wattle', 3, 7, 7, 11, 5, 'run')
+    pieces += _ring('wattle', 10, 20, 2, 10, 15, 'fold')
     pieces += _front_garden('picket', 24, 32, 11, 16, 26, 'garden')
     pieces += [
-        # the run: the coop in its back corner, three hens about it
-        {'id': 'coop', 'piece': 'farm_coop', 'at': [120, 288]},
-        {'id': 'hen_1', 'piece': 'farm_hen_white', 'at': [108, 312]},
-        {'id': 'hen_2', 'piece': 'farm_hen_brown', 'at': [156, 288]},
-        {'id': 'hen_3', 'piece': 'farm_hen_speckled', 'at': [156, 312]},
-        # the fold: the shelter against the north hurdles, the trough by the gate, hay, the flock
-        {'id': 'shelter', 'piece': 'farm_shelter', 'at': [336, 168]},
-        {'id': 'trough', 'piece': 'crossroads_trough', 'at': [408, 192]},
-        {'id': 'hay', 'piece': 'crossroads_hay', 'at': [420, 120], 'variant': 'hay_heap'},
-        {'id': 'sheep_1', 'piece': 'farm_sheep', 'at': [312, 216]},
-        {'id': 'sheep_2', 'piece': 'farm_sheep_graze', 'at': [420, 144]},
-        {'id': 'sheep_3', 'piece': 'farm_sheep_lie', 'at': [300, 192]},
+        # the run: the ark against the back fence, two hens beside it, clear of the near fence
+        {'id': 'coop', 'piece': 'farm_coop', 'at': [120, 240]},
+        {'id': 'hen_1', 'piece': 'farm_hen_white', 'at': [156, 216]},
+        {'id': 'hen_2', 'piece': 'farm_hen_brown', 'at': [156, 240]},
+        # the fold: the shelter against the north hurdles, hay forked out in the far corner, the
+        # trough on the west side, the flock spread out, the gateway clear
+        {'id': 'shelter', 'piece': 'farm_shelter', 'at': [324, 168]},
+        {'id': 'hay', 'piece': 'crossroads_hay', 'at': [432, 120], 'variant': 'hay_heap'},
+        {'id': 'trough', 'piece': 'crossroads_trough', 'at': [312, 216]},
+        {'id': 'sheep_1', 'piece': 'farm_sheep', 'at': [384, 216]},
+        {'id': 'sheep_2', 'piece': 'farm_sheep_graze', 'at': [444, 216]},
+        {'id': 'sheep_3', 'piece': 'farm_sheep_lie', 'at': [432, 168]},
+        # bales stacked outside the fold's east side for the next forking out
+        {'id': 'bales', 'piece': 'crossroads_hay', 'at': [540, 216], 'variant': 'hay_bales'},
         # the cottage and its front garden: two flower borders east of the door path
         {'id': 'cottage', 'piece': 'crossroads_fern_cottage', 'at': [696, 288]},
         {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [708, 312]},
@@ -123,6 +125,66 @@ def plan() -> dict:
     ]
     return {'zone': 'farm_study', 'note': 'Review study (scripts/art/kit/farm_study.py), not a playable zone.',
             'legend': {'.': 'lawn', '#': 'path', 'w': 'worn'}, 'rows': [''.join(r) for r in g], 'pieces': pieces, 'decor': []}
+
+
+def _opaque_box(pc, idx):
+    """A placed piece's drawn box in the zone (texels): its picture's opaque pixels about its foot."""
+    e = idx[pc['piece']]
+    v = e['variants'].get(pc.get('variant')) or next(iter(e['variants'].values()))
+    with Image.open(os.path.join(ROOT, 'game', v['png'][len('res://'):])) as im:
+        bb = im.convert('RGBA').getbbox()
+    x0, y0 = pc['at'][0] - v['foot'][0], pc['at'][1] - v['foot'][1]
+    return (x0 + bb[0], y0 + bb[1], x0 + bb[2], y0 + bb[3])
+
+
+def layout_faults(p: dict | None = None) -> list:
+    """The study's own staging rules (Claude A's review of #430, 3 Nov): every animal's foot at
+    least a cell from any fence line and off the gateway; no animal, coop, shelter, trough or hay
+    drawn over a fence (its box clear of each run's drawn body, the run's line up to its stakes'
+    height) or over another of them."""
+    from scripts.art.kit import build as _B  # noqa: F401  (configures the density)
+    from scripts.art.kit import compose as CO
+    from scripts.art.kit import enclosures as EN
+    p = p or plan()
+    idx = CO.piece_index()
+    lib = EN.library()
+    out = []
+    segs = EN.segments(p, lib)
+    bodies = []
+    for a, b, pc, s in segs:
+        x0, x1 = sorted((a[0], b[0]))
+        y0, y1 = sorted((a[1], b[1]))
+        bodies.append((x0 - 5, y0 - 48, x1 + 5, y1, pc['id'], pc['at'][1]))
+    things = [pc for pc in p['pieces'] if (lib[pc['piece']].get('placement') or {}).get('role') in
+              ('stock', 'coop', 'shelter', 'trough', 'feed')]
+    boxes = {pc['id']: _opaque_box(pc, idx) for pc in things}
+
+    def hit(r, q, tol=3):                  # outlines and a roof corner may touch
+        return r[0] + tol < q[2] and q[0] + tol < r[2] and r[1] + tol < q[3] and q[1] + tol < r[3]
+    for pc in things:
+        r = boxes[pc['id']]
+        for q in bodies:
+            # a fence whose foot is behind this piece's (north of it) is drawn first: the piece
+            # would stand over it; one in front is drawn after and only hides the piece's foot
+            if q[5] <= pc['at'][1] and hit(r, q):
+                out.append('%s is drawn over the fence %s' % (pc['id'], q[4]))
+        for other in things:
+            if other['id'] < pc['id'] and hit(r, boxes[other['id']]):
+                out.append('%s and %s are drawn over each other' % (pc['id'], other['id']))
+        if lib[pc['piece']]['placement']['role'] == 'stock':
+            fx, fy = pc['at']
+            for a, b, q, s in segs:
+                x0, x1 = sorted((a[0], b[0]))
+                y0, y1 = sorted((a[1], b[1]))
+                dx = max(x0 - fx, 0, fx - x1)
+                dy = max(y0 - fy, 0, fy - y1)
+                if max(dx, dy) < CELL:
+                    out.append('%s stands within a cell of the fence %s' % (pc['id'], q['id']))
+                    break
+            cx, cy = int(fx // CELL), int((fy - 1) // CELL)
+            if p['rows'][cy][cx] == '#':
+                out.append('%s stands in the gateway or on the path' % pc['id'])
+    return out
 
 
 def render(p: dict | None = None) -> Image.Image:
@@ -133,7 +195,7 @@ def render(p: dict | None = None) -> Image.Image:
     ground, _ = BK.bake(p)
     img = ground.convert('RGBA')
     idx = CO.piece_index()
-    for pc in sorted(p['pieces'], key=lambda q: (q['at'][1], q['at'][0])):
+    for pc in sorted(p['pieces'], key=lambda q: (q['at'][1], q['at'][0])):     # by foot, as the zone y-sorts
         e = idx[pc['piece']]
         v = e['variants'].get(pc.get('variant')) or next(iter(e['variants'].values()))
         sp = Image.open(os.path.join(ROOT, 'game', v['png'][len('res://'):])).convert('RGBA')
