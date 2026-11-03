@@ -533,8 +533,25 @@
           "description": "The ground-rules role (seat, light, hearth, marker, clutter, tree, structure ...)."
         },
         "purpose": {
-          "enum": ["contain", "exclude", "mark", "rest", "light", "store", "feed", "cross", "guide", "work",
-                   "live", "grow", "climb", "flow", "care", "water", "aftermath"],
+          "enum": [
+            "contain",
+            "exclude",
+            "mark",
+            "rest",
+            "light",
+            "store",
+            "feed",
+            "cross",
+            "guide",
+            "work",
+            "live",
+            "grow",
+            "climb",
+            "flow",
+            "care",
+            "water",
+            "aftermath"
+          ],
           "description": "What the piece is for (docs/vision/placement-logic.md; table in scripts/art/kit/placement_audit.py)."
         },
         "ground": {
@@ -626,6 +643,70 @@
             "row",
             "cluster"
           ]
+        },
+        "boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "style",
+            "joins"
+          ],
+          "description": "A fence, hurdle or wall cell (placement-logic.md, Fences): its style, the sides its run leaves the cell by (n, e, s, w; a closed loop joins every side to a neighbour that joins back), and whether it is a gate. Read by scripts/art/kit/enclosures.py.",
+          "properties": {
+            "style": {
+              "type": "string",
+              "description": "wattle, picket, rail, wall ..."
+            },
+            "joins": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "n",
+                  "e",
+                  "s",
+                  "w"
+                ]
+              }
+            },
+            "gate": {
+              "type": "boolean"
+            },
+            "span_cells": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Cells along the run the piece covers (a gate 2)."
+            },
+            "encloses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "What this style may hold (scripts/art/kit/enclosures.py ENCLOSE keys)."
+            }
+          }
+        },
+        "enclosure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "holds",
+            "as"
+          ],
+          "description": "What a piece is to an enclosure: its contents (hens in a run, crops in a garden) or what those contents need beside them (a coop, a trough). scripts/art/kit/enclosures.py checks each closed fence loop against it.",
+          "properties": {
+            "holds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "as": {
+              "enum": [
+                "contents",
+                "needs"
+              ]
+            }
+          }
         }
       }
     },
@@ -715,6 +796,27 @@
               },
               "on_screen_only": {
                 "type": "boolean"
+              },
+              "strip": {
+                "type": "string",
+                "description": "res:// path of the frames, side by side (frame 0 is the still the variant shows)."
+              },
+              "fps": {
+                "type": "number",
+                "minimum": 0
+              },
+              "frame_px": {
+                "$ref": "#/$defs/pxxy",
+                "description": "One frame's size, texels."
+              },
+              "region_px": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 4,
+                "maxItems": 4,
+                "description": "Where the frames lie on the piece's picture: x, y, w, h texels (a fall's sheet and plume)."
               }
             }
           }
@@ -1020,6 +1122,17 @@
               }
             }
           }
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "collision",
+              "variants",
+              "approval"
+            ]
+          },
+          "description": "Source-backed fields Claude reviewed and authored over the seeded source (scripts/art/kit/seed_props.py keeps them on refresh; the source's values stay in audit.sources and the zone's kit.json)."
         }
       }
     }
