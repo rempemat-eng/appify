@@ -100,6 +100,19 @@
    {
     "clip": "fall",
     "loop": true,
+    "frames": 8,
+    "fps": 10,
+    "strip": "res://kit/props/art/waterfall_1_tall_flow.png",
+    "frame_px": [
+     36,
+     98
+    ],
+    "region_px": [
+     18,
+     20,
+     36,
+     98
+    ],
     "reduced_motion": "hold:0",
     "on_screen_only": true
    }
@@ -122,8 +135,6 @@
    }
   },
   "seeded_from": "scripts/art/kit/structures.py",
-  "todo": [
-   "the falling animation (the woodland flow strip)"
-  ]
+  "todo": []
  }
 }
