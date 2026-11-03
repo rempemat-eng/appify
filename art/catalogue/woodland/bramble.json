@@ -1,7 +1,7 @@
 {
  "id": "woodland/bramble",
  "file": "game/zones/woodland/art/bramble.png",
- "sha256": "e756739d57e27a4a58617d0aedea1be3a4366a9442b7c781f6037ad9296e6496",
+ "sha256": "f2f9c1b9c8e9480d704afed7bf34d1636a6edd91f3bd08ad5f1f33cc5cc6143e",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 24.166666666666668,
-   "shapes": 41.0
+   "tones": 24.666666666666668,
+   "shapes": 43.333333333333336
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.648,
-  "tones_ratio": 0.872,
-  "shapes_ratio": 0.648,
+  "ratio": 0.684,
+  "tones_ratio": 0.89,
+  "shapes_ratio": 0.684,
   "passed": false,
   "group": "foliage"
  },
@@ -44,11 +44,11 @@
     115,
     66
    ],
-   "message": "woodland/bramble: detail bar 0.65 of Eastward's foliage band (24.2 tones, 41.0 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bramble: detail bar 0.68 of Eastward's foliage band (24.7 tones, 43.3 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-03",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",
