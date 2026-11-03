@@ -65,7 +65,7 @@
   },
   "Launch Cape": {
    "on_foot_s": 181.6,
-   "with_shortcuts_s": 92.5
+   "with_shortcuts_s": 95.0
   },
   "Palm Spring": {
    "on_foot_s": 82.7,
@@ -15758,7 +15758,7 @@
    },
    "Launch Cape": {
     "on_foot_s": 279.0,
-    "with_shortcuts_s": 142.1
+    "with_shortcuts_s": 146.0
    },
    "Palm Spring": {
     "on_foot_s": 127.1,

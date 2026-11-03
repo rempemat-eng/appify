@@ -63,7 +63,7 @@ These are dry-fixture geometry results. The real terrain had more missing buildi
 
 **Discovery** (`docs/vision/pillars.md`, density beats size): every plan has a `discovery` list (landmark views, secrets, shortcuts, resident activities, each with its screen); the checker's `discovery` rule fails a plan with a screen that holds a building and nothing to discover.
 
-**Not done.** The canvas was not grown: the reshaped basin and the reclaimed quays gave the city its room, and density beats size. Interiors, residents and props stay for later passes.
+**Not done.** The canvas was not grown: the reshaped basin and the reclaimed quays gave the city its room, and density beats size. (On 3 Nov the drawing grew north and east instead; the world did not: see the polish pass below.) Interiors, residents and props stay for later passes.
 
 ### Neon Harbour, second pass (2 Nov, Claude A)
 
@@ -75,3 +75,36 @@ These are dry-fixture geometry results. The real terrain had more missing buildi
 - **Edges**: the north allotments and the Company park where the grid meets the northern woods, the east beach park along the shore.
 - **Labels**: the canal-mouth night market is named once (its yard), no longer also as a landmark.
 - **Charcoal Hollow** fell from 7 to 5 because Cogsworth's liveliness pass placed three houses in the hamlet's clearing; Cogsworth's pass now stays west of x 8300 and Charcoal Hollow is back to 7.
+
+## Matt's 3 Nov polish pass (Claude A)
+
+Matt, 3 Nov 16:09: "make sure everything is polished and well thought out. also make sure the world borders on the side (the clouds) make sense can you expand the map slightly to the north and to the east. also make the mountains look a bit better on the map."
+
+- **The frame grows, the world does not move** (`grow56.py`). The map is drawn on a 13568 x 7744 canvas: 576 px (8.0 %) more to the north and 1024 px (8.2 %) more to the east. The world (terrain, towns, plans, gates, routes, the benchmark, the insets) stays on its 12544 x 7168 canvas and every point lands at (x, y + 576) on the drawing: one uniform offset applied once, at projection (`map_frame` in `blockout-v56.json`). Relative positions cannot change, and the data stage's outputs are those of the same run without the frame. The new bands are drawn ground with nothing in them to walk: the north band carries the range's back ridge, snowfields and valley heads; the east band carries the old forest and the fens running on, a coast bending north-east, and open sea beyond Neon Harbour and Launch Cape.
+- **The edges are weather, one kind per side** (`grow56.edge_frame`). North: the peaks and snowfields rise into a cloud bank, its puffs lit from the upper left, a shadow under it. West: the dune sea thins into dust haze, laid in streaks along the wind (sea fog where the west edge is sea). East: the old forest and the fens fade into marsh mist, and the sea beyond Neon into sea fog, blended where the coast meets the edge. South: a low sea fog over the open sea with far islands on the horizon; the Tidebloom Isles stay clear (no fog within 10 to 36 screen px of land). Cover comes in four steps with an ordered dither between them (a fade of light, never a boundary, per the edges rules). Nothing is under it: the render's haze audit (`grow56.haze_audit`, printed in the log) finds no town, road, rail or ferry point under more than 30 % cover at 1920 or 3840, and the label placer keeps every name out of the bands. The only lines that run into it are the ones that leave the world: the closed Northway through its col into the cloud, the rivers' heads and the Glint out of the fens.
+- **The range is one hand-drawn massif** (`grow56.range_field`, `grow56.relief`), replacing the rows of stamped triangles: a main spine with peaks and saddles, a higher back range in the cloud with snowfields between, spurs on the interfluves that step down to the foot of the range with side branches, and cones of a fixed fall (about 30 degrees) round every ridge (Euclidean, so no repeated stamp and no seam). The Highgarth pass is a col in the spine where the road crosses, the Garth valley a basin round the town, every river and road in the range runs in a valley cut along it, tarns keep their shores. Light comes from the upper left in four values: stone in warm light and violet-grey shade, snow above a snowline that follows height (lower on shaded faces, rising east until the north-eastern ridges are forest), a one-pixel crest line in the face's own dark where light meets shade, a darker row at the rock's foot. Below the rock the foothills keep the ground's own colour in the same four values, over the soft-grid tiers, into the Frostline and the forest; no tree is stamped on rock or snow. The Amber, the Cog, the Lull and the Sorrel now rise in cirques under the spine (the Rift keeps its gorge north). Mount Ember and the Ember range (the Sunstone side's volcanic arc) are shaded from the world's own heights in basalt, with no snow.
+
+### Self-critique before the final regenerate
+
+Every item was looked at on the 1920 and 3840 overviews, the reference and the Neon inset; the river, crossing and berth items were also checked from the state (`critique` in the session's scratch: river ends, downhill, crossings, line ends).
+
+1. **Done.** The range was identical white-capped triangles in rows: redrawn as the massif above.
+2. **Done.** The canvas ended at the world on every side, so the north had no depth behind the peaks and Neon and the fens ran into the frame: grown north and east.
+3. **Done.** The cloud bank was the same snow cloud on the top and both sides, and the south had none: four weathers, one per side.
+4. **Done.** The closed Northway stopped at the old top edge under a window in the cloud: it runs on through its col into the cloud; the window and the far ridges in it are gone.
+5. **Done.** Rivers in the north started at the edge of the canvas: four now rise in cirques in the range; the Glint comes out of the fens past the old east edge.
+6. **Checked, no change.** Every river flows downhill (each one's start is higher than its end) and ends in the sea, the salt lake (the Amber, by design: the Sunstone basin drains inland), the Lull's delta, Neon's bay by the Glint's falls, or another river (the Sorrel, the Cog, the Willow Run, the Brackens beck, the Heather burn and the Sedgeburn join within 44 px). No orphan stream.
+7. **Done.** Five rail and cart crossings of rivers had no bridge drawn (the valley train over the Cog, the desert line's Rift viaduct, the maglev's Narrows viaduct over the Lull and over the Glint, the mine cart over the Willow Run): each now has a stone deck with parapets, the two viaducts with piers. Every road crossing already stood on bridge cells.
+8. **Done.** The coastal steamer's Neon berth was still the old waterfront, under the Crescent since the half-moon bay: it berths at the west ferry pier's head (`Neon steamer pier`, moved in `towns55.neon_basin`). The Driftwood ferry and steamer ended in open water and the Lagoon ferry on the beach: each ends at a timber jetty with a landing stage, drawn on the map.
+9. **Not done (proposal).** Driftwood's and Lagoon Landing's plans have no pier record; the jetties are drawn on the overview only. Proposal to their lanes (C for the isles, E for Driftwood): add a jetty to each plan where the ferry berths, (6520, 5130 to 5227) and (6480, 6406) out to the water.
+10. **Done.** The legend showed the ferry in blue while it is drawn as white dashes on the water, the closed pass as a plain bar, and left out the shard lines, the built area and the edges; the title ran past its panel. All fixed.
+11. **Done.** The dashed inset rectangles are gone from the overview (the insets are their own maps), and BUILT NOW is one outline of the built area on its cell lines with the tag on its corner, instead of two boxes with a wash.
+12. **Done.** Act 1's beats 5 and 11 overlapped at Crossroads: they are set apart.
+13. **Done.** "the Narrows" sat on the old crossing's line: moved onto the gorge's east wall.
+14. **Checked, no change.** Labels never overlap each other (the placer); the region names sit over the land they name.
+15. **Checked.** The Neon bay reads as a half moon at 1920 and 3840.
+16. **Done.** No stamped or repeated texture is left in the range or the edges; the trees are placed per cell with jitter and density, the dunes follow one wind.
+17. **Done.** The new coast past the east edge wanders and bends north-east; Neon's east coast keeps its coves.
+18. **Done.** Soft-grid rules: dither only in the edge fades; outlines only where height changes (crest lines, the rock's foot) and in the face's own darks; the relief takes its colours from the stone, snow and basalt ramps.
+19. **Not done.** The world's own wall along the old east edge (a straight strip of conifers about 130 px wide, lane G's wall) now shows inside the drawing as a faint straight band; it is world ground, so it stays until lane G redraws that edge.
+20. **Done.** The scale panel says what is drawn: the world 12544 x 7168, drawn to 13568 x 7744.

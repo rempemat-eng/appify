@@ -2675,6 +2675,9 @@ def neon_basin(T):
     lh, bc = heads['east'], heads['west']
     for w_, lst in g.BEHIND.items():                                   # Beacon Isle went under the city: its reach target is the lighthouse
         g.BEHIND[w_] = [(lh if isinstance(q, tuple) and rx0 - 100 <= q[0] <= rx1 and ry0 <= q[1] <= ry1 + 240 else q) for q in lst]
+    wf = [q for q in piers if q['name'] == 'the west ferry pier'][0]       # the coastal steamer berths at the west ferry pier's head
+    if 'Neon steamer pier' in g.STATIONS:                              # (its old berth went under the city with the old waterfront)
+        g.STATIONS['Neon steamer pier'] = (float(wf['to_px'][0]), float(wf['to_px'][1]))
     T['neon_basin'] = {'shape': 'half moon', 'piers': piers, 'boats': boats, 'lighthouse': list(lh), 'beacon': list(bc),
                        'islands': {k: list(v) for k, v in B['islands'].items()}, 'bay_centre_px': [cx, cy_], 'bay_radius_px': Rb,
                        'opening_px': [heads['west'][0] + 40, heads['east'][0] - 40], 'canal_px': [[cx0, cy], [cx1, cy]],

@@ -145,7 +145,7 @@ def tones(c):
     return mix(c, (255, 248, 226), 0.22), c, mix(c, (30, 26, 40), 0.32)
 
 
-def stamps55(im, S, R, cg, cid, k, ox, oy, M, ink):
+def stamps55(im, S, R, cg, cid, k, ox, oy, M, ink, peaks=True):
     """Tree, tuft, marsh, crevasse and pebble marks, then the range: one treatment (three tones from one ramp, a thin ink
     outline, a cast shadow to the south-east); forests in uneven density with clearings."""
     d = ImageDraw.Draw(im, 'RGBA'); rng = np.random.default_rng(11)
@@ -226,7 +226,8 @@ def stamps55(im, S, R, cg, cid, k, ox, oy, M, ink):
                 continue
             ux, uy = -gy0 / n_, gx0 / n_
             d.line([(x - ux * r, y - uy * r), (x + ux * r, y + uy * r)], fill=md + (190,), width=max(1, int(kk)))
-    mountains55(d, S, R, k, ox, oy, M, np.asarray(im).copy(), ink)
+    if peaks:                                                       # v56 draws the range as relief (grow56) instead
+        mountains55(d, S, R, k, ox, oy, M, np.asarray(im).copy(), ink)
     return im
 
 
@@ -834,6 +835,9 @@ def names(M):
     biome = [b for b in biome if b[0] not in ('the Heights',)]
     biome = [(t, 7860, 1880) if t == 'the coal hills' else (t, x, y) for t, x, y in biome]   # on the hills, off the old forest
     biome += [('the upper Cog', 8200, 1500), ('the east coast', 12440, 4720)]
+    if getattr(M, 'REVISION', 'v55') == 'v56':                         # off the old crossing's line, onto the gorge's east wall
+        biome = [(t, x + 120, y - 150) if t == 'the Narrows' else (t, x, y) for t, x, y in biome]
+        region = [(t, 1300, 4930) if t == 'THE FIRE COUNTRY' else (t, x, y) for t, x, y in region]   # clear of the west haze
     small = [(nm, *Pr((x, y)), kind) for nm, x, y, kind in M54.SMALL_PLACES if nm not in ('the old town', 'the docks', 'new town', 'the Skyport', 'Gull Strand')]
     small += [('the rockfall', M.ROCKFALL[0] + 40, M.ROCKFALL[1], 'gate'), ('the slate quarry', 8256, 1192, 'place'), ('the folds', 7915, 900, 'place'),
               ('the Skyport', 10030, 4905, 'place'), ('the pad', M.PAD[0], M.PAD[1] + 40, 'place'), ("the Company's yard", 11780, 4159, 'place'),
@@ -1064,8 +1068,39 @@ def panels55(lay, S, M, R, ink, s, k, Wc, Hc, F, act1=True, title='The continent
     d.text((bx + 12 * s, lb[1] + 42.5 * s), 'a building', font=F['small'], fill=ink, anchor='lm')
     d.rectangle([bx - 2 * s, lb[1] + 56 * s, bx + 10 * s, lb[1] + 58.4 * s], fill=R['berry'][4], outline=ink)
     d.text((bx + 12 * s, lb[1] + 57 * s), 'closed pass', font=F['small'], fill=ink, anchor='lm')
+    if getattr(M, 'REVISION', 'v55') == 'v56':
+        paper = R['plaster'][5] + (236,)
+        x0 = lb[0] + 12 * s
+        yy = lb[1] + 174 * s                                       # the ferry row: white dashes on water, as drawn
+        d.rectangle([x0 - 1 * s, yy - 4 * s, x0 + 17 * s, yy + 4 * s], fill=paper)
+        d.rectangle([x0, yy - 3 * s, x0 + 16 * s, yy + 3 * s], fill=R['water_warm'][3])
+        for q in range(1, 16, 6):
+            d.line([(x0 + q * s, yy), (x0 + (q + 3) * s, yy)], fill=R['snow'][5], width=max(1, int(1.6 * s)))
+        d.rectangle([bx - 3 * s, lb[1] + 53 * s, bx + 11 * s, lb[1] + 61 * s], fill=paper)          # the closed pass, as drawn
+        for q in (0, 5):
+            d.line([(bx - 2 * s + q * s, lb[1] + 57 * s), (bx + 1 * s + q * s, lb[1] + 57 * s)], fill=R['timber'][2], width=max(1, int(1.4 * s)))
+        for i in range(2):
+            d.rectangle([bx + 6 * s + i * 2 * s, lb[1] + 55.6 * s, bx + 8 * s + i * 2 * s, lb[1] + 58.4 * s], fill=(R['berry'][4] if i == 0 else R['plaster'][5]), outline=ink)
+        y_ = lb[1] + 73 * s                                        # the shard lines
+        d.line([(bx - 2 * s, y_), (bx + 10 * s, y_)], fill=R['plaster'][5], width=max(1, int(3 * s)))
+        for q in (0, 6):
+            d.line([(bx - 2 * s + q * s, y_), (bx + 2 * s + q * s, y_)], fill=R['dusk'][2], width=max(1, int(1.6 * s)))
+        d.text((bx + 12 * s, y_), 'shard line', font=F['small'], fill=ink, anchor='lm')
+        y_ = lb[1] + 110 * s                                       # the built area
+        d.rectangle([bx - 2 * s, y_ - 3.5 * s, bx + 10 * s, y_ + 3.5 * s], outline=R['brass'][5], width=max(1, int(1.4 * s)))
+        d.text((bx + 12 * s, y_), 'built now', font=F['small'], fill=ink, anchor='lm')
+        y_ = lb[1] + 126 * s                                       # the edges
+        for i, a in enumerate((60, 120, 190, 235)):
+            d.rectangle([bx - 2 * s + i * 3 * s, y_ - 3.5 * s, bx + 1 * s + i * 3 * s, y_ + 3.5 * s], fill=R['snow'][4] + (a,))
+        d.rectangle([bx - 2 * s, y_ - 3.5 * s, bx + 10 * s, y_ + 3.5 * s], outline=R['timber'][2], width=1)
+        d.text((bx + 12 * s, y_), 'past the world', font=F['small'], fill=ink, anchor='lm')
     rb = panel_boxes(Wc, Hc, s)[1]
-    d.text((rb[2] - 10 * s, rb[1] + 12 * s), f"{getattr(M, 'REVISION', 'v55')} canvas {g.WPX} x {g.HPX} world px (v54: 11264 x 6912)", font=F['small'], fill=R['timber'][2], anchor='rt')
+    if getattr(M, 'REVISION', 'v55') == 'v56':
+        import grow56 as GR
+        txt = f"v56 world {g.WPX} x {g.HPX} px, drawn to {g.WPX + GR.EX} x {g.HPX + GR.DY} (the edges past it)"
+    else:
+        txt = f"{getattr(M, 'REVISION', 'v55')} canvas {g.WPX} x {g.HPX} world px (v54: 11264 x 6912)"
+    d.text((rb[2] - 10 * s, rb[1] + 12 * s), txt, font=F['small'], fill=R['timber'][2], anchor='rt')
 
 
 # ------------------------------------------------------------------------------------------ compose
@@ -1077,11 +1112,13 @@ def frame_fit(Wc, Hc, s):
     return k, ox, oy
 
 
-def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title, panels_on=True, box=None, act=True):
+def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title, panels_on=True, box=None, act=True, grow=None):
     F = M54.fonts54(M.ROOT, s)
     F['quiet'] = ImageFont.truetype(os.path.join(M.ROOT, 'game', 'ui', 'fonts', 'PixelifySans-Regular.ttf'), int(round(13 * s)))
     canvas = Image.new('RGB', (Wc, Hc), R['snow'][3])
     px0, py0 = (0, 0) if box is not None else (int(round(ox)), int(round(oy)))     # an inset's base is already cut to its box
+    if grow is not None:                                             # v56: the base is the grown frame, its row 0 north of the world
+        px0, py0 = int(round(grow['ox'])), int(round(grow['oy']))
     canvas.paste(base, (px0, py0))
     # the sea runs on flat into the margins where the edge is sea
     arr = np.asarray(canvas).copy(); x0 = px0; x1 = min(Wc, x0 + base.width)
@@ -1098,6 +1135,10 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     P = lambda x, y: (x * k + ox, y * k + oy)
     M54.water_and_routes(canvas, S, R, ink, k, ox, oy, M)
     d = ImageDraw.Draw(canvas, 'RGBA')
+    if grow is not None:                                             # v56: boats berth at jetties, rails cross rivers on bridges
+        lines, jet = boat_ends56(S, lines)
+        draw_jetties56(d, jet, P, R, ink, s)
+        rail_bridges56(d, S, lines, P, R, ink, s)
     draw_lines(d, lines, P, R, ink, s)
     draw_street_bridges(d, S, R, ink, P, k)
     draw_shrines(d, S, R, ink, P, k, s)
@@ -1111,35 +1152,190 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     draw_cape(d, S, M, R, ink, P, s)
     canvas = neon_glow(canvas, S, P, s, k, M)
     d = ImageDraw.Draw(canvas, 'RGBA')
-    if box is None:
+    haze = None
+    if box is None and grow is not None:                             # v56: four edges of weather, far islands in the south fog
+        import grow56 as GR
+        canvas, haze = GR.edge_frame(canvas, grow['Sx'], R, s, k, grow['ox'], grow['oy'])
+        d = ImageDraw.Draw(canvas, 'RGBA'); GR.far_islands(d, R, s, Wc, Hc)
+    elif box is None:
         canvas = cloud_bank(canvas, S, M, R, s, k, ox, oy, window=P(*M.HIGHGARTH_PASS))
         far_land(canvas, M, R, s, P)
         d = ImageDraw.Draw(canvas, 'RGBA')
-    if box is None and mode == 'continent':
+    if box is None and mode == 'continent' and grow is None:         # v56 drops the dashed inset boxes (the insets are their own maps)
         M54.inset_mark(d, M, R, ink, P, s)
-    if box is None and mode == 'continent':
+    if box is None and mode == 'continent' and grow is None:
         nb = M.NEON_INSET; pts = [(nb[0], nb[1]), (nb[2], nb[1]), (nb[2], nb[3]), (nb[0], nb[3]), (nb[0], nb[1])]
         polyline(d, pts, P, R['plaster'][5] + (170,), 2.4 * s, dash=(6 * s, 5 * s)); polyline(d, pts, P, ink + (150,), 1.0 * s, dash=(6 * s, 5 * s))
     d.rectangle([3 * s, 3 * s, Wc - 3 * s, Hc - 3 * s], outline=ink, width=max(1, int(2 * s)))
     d.rectangle([7 * s, 7 * s, Wc - 7 * s, Hc - 7 * s], outline=R['timber'][3], width=max(1, int(s)))
     reserved = (panel_boxes(Wc, Hc, s) if panels_on else []) + [(0, 0, Wc, 26 * s)]
+    _am = M54.act_marks
+    if grow is not None:
+        M54.act_marks = act_marks56                                  # v56: beats that share a spot are set apart
     reserved += [(X - 7 * s, Y - 7 * s, X + 7 * s, Y + 7 * s) for i, X, Y in M54.act_marks(M, P, s)] if act else []
-    reserved += [M54.built_tag(P, s)]
+    if grow is not None:
+        reserved += [(0, 0, Wc, 52 * s), (0, 0, 52 * s, Hc), (Wc - 48 * s, 0, Wc, Hc), (0, Hc - 30 * s, Wc, Hc), built_tag56(M, P, s)]
+    else:
+        reserved += [M54.built_tag(P, s)]
     lab, pl = labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode=mode, box=box)
-    built = M54.overlay_built(S, M, R, ink, s, k, ox, oy, Wc, Hc, F)
+    built = overlay_built56(S, M, R, ink, s, k, ox, oy, Wc, Hc, F) if grow is not None else M54.overlay_built(S, M, R, ink, s, k, ox, oy, Wc, Hc, F)
     layers = [built]
     if act:
         layers.insert(0, M54.overlay_ring(S, M, R, ink, s, k, ox, oy, Wc, Hc, F))
     layers.append(lab)
     if act:
+        M54.act_marks = act_marks56 if grow is not None else _am
         layers.append(M54.overlay_act1(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, paths))
+    M54.act_marks = _am
     out = canvas.convert('RGBA')
     for layer in layers:
         out.alpha_composite(layer)
     if panels_on:
         pan = Image.new('RGBA', (Wc, Hc), (0, 0, 0, 0)); panels55(pan, S, M, R, ink, s, k, Wc, Hc, F, act1=act, title=title)
         out.alpha_composite(pan)
-    return out, pl.missed, {'canvas': canvas, 'built': built, 'labels': lab}
+    return out, pl.missed, {'canvas': canvas, 'built': built, 'labels': lab, 'haze': haze}
+
+
+def act_marks56(M, P, s):
+    """act 1's beat marks, each set apart from any earlier one it would overlap (stepped west, then north)."""
+    out = []
+    for i, (nm, p, what) in enumerate(M.ACT1):
+        X, Y = P(*p); X -= 9 * s; Y -= 9 * s
+        for step in range(12):
+            if all(math.hypot(X - a, Y - b) >= 14 * s for _, a, b in out):
+                break
+            X -= 14 * s if step % 2 == 0 else 0; Y -= 0 if step % 2 == 0 else 14 * s
+        out.append((i, X, Y))
+    return out
+
+
+def _crossings(P_, Q_):
+    """Where polyline P_ crosses polyline Q_: (x, y, segment index in P_)."""
+    out = []
+    P_ = np.asarray(P_, float); Q_ = np.asarray(Q_, float)
+    if len(P_) < 2 or len(Q_) < 2:
+        return out
+    qa, qb = Q_[:-1], Q_[1:]
+    for i in range(len(P_) - 1):
+        a, b = P_[i], P_[i + 1]
+        dd = (b[0] - a[0]) * (qb[:, 1] - qa[:, 1]) - (b[1] - a[1]) * (qb[:, 0] - qa[:, 0])
+        with np.errstate(divide='ignore', invalid='ignore'):
+            t = ((qa[:, 0] - a[0]) * (qb[:, 1] - qa[:, 1]) - (qa[:, 1] - a[1]) * (qb[:, 0] - qa[:, 0])) / dd
+            u = ((qa[:, 0] - a[0]) * (b[1] - a[1]) - (qa[:, 1] - a[1]) * (b[0] - a[0])) / dd
+        for j in np.flatnonzero((dd != 0) & (t >= 0) & (t <= 1) & (u >= 0) & (u <= 1)):
+            x, y = a[0] + t[j] * (b[0] - a[0]), a[1] + t[j] * (b[1] - a[1])
+            if all(math.hypot(x - x2, y - y2) > 60 for x2, y2, _ in out):
+                out.append((x, y, i))
+    return out
+
+
+def rail_bridges56(d, S, lines, P, R, ink, s):
+    """Where a rail or cart line crosses a river, a bridge: a stone deck over the water with parapets in ink (a viaduct's
+    piers below it when the line is a viaduct)."""
+    rivers = {nm: p for nm, p in S['river_px'].items() if nm not in ('the Dry Fork', 'Brackens wash')}
+    for nm, kind, pts, way in lines:
+        if kind == 'boat':
+            continue
+        for rn, rp in rivers.items():
+            for x, y, i in _crossings(pts, rp):
+                (ax, ay), (bx, by) = pts[i], pts[i + 1]
+                L = math.hypot(bx - ax, by - ay) or 1; ux, uy = (bx - ax) / L, (by - ay) / L
+                half = 110 if 'viaduct' in nm.lower() else 56
+                X0, Y0 = P(x - ux * half, y - uy * half); X1, Y1 = P(x + ux * half, y + uy * half)
+                Ls = math.hypot(X1 - X0, Y1 - Y0) or 1; nx, ny = -(Y1 - Y0) / Ls, (X1 - X0) / Ls
+                w = 3.0 * s
+                quad = [(X0 + nx * w, Y0 + ny * w), (X1 + nx * w, Y1 + ny * w), (X1 - nx * w, Y1 - ny * w), (X0 - nx * w, Y0 - ny * w)]
+                d.polygon([(qx + 1.2 * s, qy + 1.6 * s) for qx, qy in quad], fill=ink + (90,))      # its shadow on the water
+                d.polygon(quad, fill=R['stone'][4], outline=ink)
+                if 'viaduct' in nm.lower():
+                    for f in np.linspace(0.15, 0.85, 4):
+                        cx_, cy_ = X0 + (X1 - X0) * f, Y0 + (Y1 - Y0) * f
+                        d.rectangle([cx_ - 0.8 * s, cy_ + w, cx_ + 0.8 * s, cy_ + w + 2.4 * s], fill=R['stone'][2], outline=ink)
+
+
+def boat_ends56(S, lines):
+    """Ferry and steamer lines end at a jetty, not on the beach or in open water: a line whose end is on land is cut back
+    to the shore and given a jetty out to its new end; a line ending in open water gets a jetty from the nearest shore. An
+    end already at a plan's pier (Neon's ferry piers) is left alone. Returns the lines and the jetties (shore, head)."""
+    land = S['land']; Hh, Ww = land.shape
+    piers = []
+    for P_ in (S.get('plans') or {}).values():
+        hb = (P_.get('features') or {}).get('harbour') or {}
+        piers += [tuple(q['to_px']) for q in hb.get('piers', [])]
+    _, (iy, ix) = ndi.distance_transform_edt(~land, return_indices=True)
+
+    def on_land(p):
+        cy, cx = int(min(max(p[1] // CELL, 0), Hh - 1)), int(min(max(p[0] // CELL, 0), Ww - 1))
+        return bool(land[cy, cx]), (cy, cx)
+    out = []; jet = []
+    for nm, kind, pts, way in lines:
+        if kind != 'boat':
+            out.append((nm, kind, pts, way)); continue
+        pts = list(pts)
+        for end in (0, -1):
+            q = pts if end == 0 else pts[::-1]
+            e = q[0]
+            if any(math.hypot(e[0] - a, e[1] - b) < 48 for a, b in piers):
+                continue
+            ld, (cy, cx) = on_land(e)
+            if ld:                                                  # cut back to the first water, a jetty from the shore out 64 px
+                j = 0
+                while j < len(q) - 1 and on_land(q[j])[0]:
+                    j += 1
+                (sx, sy) = q[max(0, j - 1)]; (wx, wy) = q[j]
+                L = math.hypot(wx - sx, wy - sy) or 1; ux, uy = (wx - sx) / L, (wy - sy) / L
+                head = (sx + ux * 64, sy + uy * 64)
+                q = [head] + q[j + 1:] if math.hypot(q[j][0] - sx, q[j][1] - sy) < 64 else [head] + q[j:]
+                jet.append(((sx, sy), head))
+            else:                                                   # in open water: a jetty from the nearest shore cell
+                sx, sy = (ix[cy, cx] + 0.5) * CELL, (iy[cy, cx] + 0.5) * CELL
+                if math.hypot(e[0] - sx, e[1] - sy) < 240:
+                    jet.append(((sx, sy), e))
+            pts = q if end == 0 else q[::-1]
+        out.append((nm, kind, pts, way))
+    return out, jet
+
+
+def draw_jetties56(d, jet, P, R, ink, s):
+    """A timber jetty: planks on posts, lit on its west edge, its shadow on the water."""
+    for (sx, sy), (hx, hy) in jet:
+        A = P(sx, sy); B = P(hx, hy)
+        L = math.hypot(B[0] - A[0], B[1] - A[1]) or 1; nx, ny = -(B[1] - A[1]) / L, (B[0] - A[0]) / L
+        w = 1.8 * s
+        quad = [(A[0] + nx * w, A[1] + ny * w), (B[0] + nx * w, B[1] + ny * w), (B[0] - nx * w, B[1] - ny * w), (A[0] - nx * w, A[1] - ny * w)]
+        d.polygon([(qx + 1.0 * s, qy + 1.4 * s) for qx, qy in quad], fill=ink + (80,))
+        d.polygon(quad, fill=R['timber'][4], outline=ink)
+        d.rectangle([B[0] - 2.6 * s, B[1] - 2.6 * s, B[0] + 2.6 * s, B[1] + 2.6 * s], fill=R['timber'][3], outline=ink)   # the landing stage
+
+
+def built_tag56(M, P, s):
+    x0 = min(b[0] for b in M.BUILT.values()); y0 = min(b[1] for b in M.BUILT.values())
+    X, Y = P(x0, y0)
+    return (X, Y - 13 * s, X + 56 * s, Y)
+
+
+def overlay_built56(S, M, R, ink, s, k, ox, oy, Wc, Hc, F):
+    """What the game has built so far, as one outline: the union of the built boxes drawn as a single brass line on the
+    cell lines (no wash over the map, no dashes), with its tag sitting on the outline's top-left corner like a file tab."""
+    lay = Image.new('RGBA', (Wc, Hc), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
+    P = lambda x, y: (x * k + ox, y * k + oy)
+    m = Image.new('L', (Wc, Hc), 0); dm = ImageDraw.Draw(m)
+    for nm, (x0, y0, x1, y1) in M.BUILT.items():
+        if 'below' in nm:
+            continue
+        a, b = P(x0, y0), P(x1, y1)
+        dm.rectangle([round(a[0]), round(a[1]), round(b[0]), round(b[1])], fill=255)
+    mm = np.asarray(m) > 0
+    edge = mm & ~ndi.binary_erosion(mm, iterations=max(1, int(round(1.4 * s))))
+    outer = ndi.binary_dilation(mm, iterations=max(1, int(round(1.0 * s)))) & ~mm
+    arr = np.zeros((Hc, Wc, 4), np.uint8)
+    arr[outer] = ink + (150,)
+    arr[edge] = R['brass'][5] + (255,)
+    lay = Image.fromarray(arr, 'RGBA'); d = ImageDraw.Draw(lay)
+    tb = built_tag56(M, P, s)
+    d.rectangle(tb, fill=R['brass'][4] + (255,), outline=ink)
+    d.text(((tb[0] + tb[2]) / 2, (tb[1] + tb[3]) / 2 + 0.5 * s), 'BUILT NOW', font=F['way'], fill=ink, anchor='mm')
+    return lay
 
 
 # ------------------------------------------------------------------------------------------ the town plans, one inset each
@@ -1541,6 +1737,51 @@ def neon_accents(d, S, P, s, k, lines=()):
             d.line(qq, fill=NEON_CYAN + (235,), width=wpx)
 
 
+def grow_setup(S, M, R, cg, cid, cols, rgb, sea_rgb):
+    """v56's grown frame (grow56): the state's cells grown north and east, the class grid with the massif's rock and snow,
+    the lines with their runs past the world's edge. The world's own dims are restored before returning."""
+    import grow56 as GR
+    W0, H0 = S['dims']
+    Fw = features(S, M)
+    rivers, closed = GR.draw_lines56(S)
+    Wf, Hf = GR.frame_dims(W0, H0)
+    M.set_dims(Wf, Hf)
+    try:
+        Sx, cgx, rgbx, seax = GR.extend(S, R, cg, rgb, sea_rgb, cid, cols, lambda Sx_: M54.sea_colours(Sx_, R))
+        _FEAT[id(Sx)] = dict(Fw, m=np.pad(Fw['m'], ((GR.NY, 0), (0, GR.NX)), mode='symmetric'))
+        GR.range_field(Sx, rivers, closed)
+        cgr = GR.range_classes(Sx, cgx, cid, rivers, closed)
+    finally:
+        M.set_dims(W0, H0)
+    audit = lambda Aq, k, ox, oy, lines: GR.haze_audit(Aq, S, M, k, ox, oy, lines, rivers, closed)
+    return dict(GR=GR, Sx=Sx, cg=cgr, rgb=rgbx, sea=seax, rivers=rivers, closed=closed, Wf=Wf, Hf=Hf, W0=W0, H0=H0, audit_fn=audit)
+
+
+def grow_fit(GX, Wc, Hc, s):
+    """The grown frame fitted to the canvas: k, the world origin's canvas position (for P), and the frame's own origin."""
+    k = Hc / GX['Hf']
+    if GX['Wf'] * k > Wc - 20 * s:
+        k = (Wc - 20 * s) / GX['Wf']
+    oxe = (Wc - GX['Wf'] * k) / 2; oye = (Hc - GX['Hf'] * k) / 2
+    return k, oxe, oye + GX['GR'].DY * k, {'ox': oxe, 'oy': oye, 'Sx': GX['Sx']}
+
+
+def grow_base(GX, S, M, R, ink, cid, k, ppc):
+    """The grown frame's ground at k: the cells at ppc, the massif and the fire country's hills in relief, then the
+    trees and tufts (no stamped peaks)."""
+    GR = GX['GR']; Sx = GX['Sx']
+    M.set_dims(GX['Wf'], GX['Hf'])
+    try:
+        Hc_, Wc_ = Sx['K'].shape
+        base = M54.base_hi(Sx, R, ink, GX['cg'], cid, GX['rgb'], GX['sea'], M, (0, 0, Wc_, Hc_), ppc)
+        base = base.resize((int(round(GX['Wf'] * k)), int(round(GX['Hf'] * k))), Image.LANCZOS)
+        base, _ = GR.relief(base, Sx, R, ink, k, GX['rivers'], GX['closed'], cgx=GX['cg'], cid=cid)
+        stamps55(base, Sx, R, GX['cg'], cid, k, 0, 0, M, ink, peaks=False)
+    finally:
+        M.set_dims(GX['W0'], GX['H0'])
+    return base
+
+
 def render_all(S, M):
     revision = getattr(M, 'REVISION', 'v55')
     prefix = 'map' + revision[1:]
@@ -1556,20 +1797,36 @@ def render_all(S, M):
     missed_all = {}
     # the continent at 1920 and 3840 (one base at the 3840 scale, resampled for 1920)
     s2 = 2; Wc, Hc = BASE_W * s2, BASE_H * s2
-    k, ox, oy = frame_fit(Wc, Hc, s2)
-    base = M54.base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, full_box, 2.5)          # 2.5 px a cell: whole strips, no seams
-    base = base.resize((int(round(g.WPX * k)), int(round(g.HPX * k))), Image.LANCZOS)
-    stamps55(base, S, R, cg, cid, k, 0, 0, M, ink)
-    res2, missed, parts2 = compose(S, M, R, ink, s2, base, k, ox, oy, Wc, Hc, paths, lines, 'continent', f'The continent: overview ({revision})')
+    GX = grow_setup(S, M, R, cg, cid, cols, rgb, sea_rgb) if revision == 'v56' else None
+    Sd = dict(S, river_px=GX['rivers'], closed_px=GX['closed']) if GX else S       # the lines with their runs past the edge
+    if GX:
+        k, ox, oy, g2 = grow_fit(GX, Wc, Hc, s2)
+        base = grow_base(GX, S, M, R, ink, cid, k, 2.5)
+        res2, missed, parts2 = compose(Sd, M, R, ink, s2, base, k, ox, oy, Wc, Hc, paths, lines, 'continent', f'The continent ({revision})', grow=g2)
+    else:
+        k, ox, oy = frame_fit(Wc, Hc, s2)
+        base = M54.base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, full_box, 2.5)          # 2.5 px a cell: whole strips, no seams
+        base = base.resize((int(round(g.WPX * k)), int(round(g.HPX * k))), Image.LANCZOS)
+        stamps55(base, S, R, cg, cid, k, 0, 0, M, ink)
+        res2, missed, parts2 = compose(S, M, R, ink, s2, base, k, ox, oy, Wc, Hc, paths, lines, 'continent', f'The continent: overview ({revision})')
     missed_all['3840'] = missed
     s1 = 1; Wc1, Hc1 = BASE_W, BASE_H
-    k1, ox1, oy1 = frame_fit(Wc1, Hc1, s1)
-    base1 = base.resize((int(round(g.WPX * k1)), int(round(g.HPX * k1))), Image.LANCZOS)
-    res1, missed, parts1 = compose(S, M, R, ink, s1, base1, k1, ox1, oy1, Wc1, Hc1, paths, lines, 'continent', f'The continent: overview ({revision})')
+    if GX:
+        k1, ox1, oy1, g1 = grow_fit(GX, Wc1, Hc1, s1)
+        base1 = base.resize((int(round(GX['Wf'] * k1)), int(round(GX['Hf'] * k1))), Image.LANCZOS)
+        res1, missed, parts1 = compose(Sd, M, R, ink, s1, base1, k1, ox1, oy1, Wc1, Hc1, paths, lines, 'continent', f'The continent ({revision})', grow=g1)
+        GX['audit'] = {'1920': GX['audit_fn'](parts1['haze'], k1, ox1, oy1, lines), '3840': GX['audit_fn'](parts2['haze'], k, ox, oy, lines)}
+        print('haze audit:', json.dumps(GX['audit']))
+    else:
+        k1, ox1, oy1 = frame_fit(Wc1, Hc1, s1)
+        base1 = base.resize((int(round(g.WPX * k1)), int(round(g.HPX * k1))), Image.LANCZOS)
+        res1, missed, parts1 = compose(S, M, R, ink, s1, base1, k1, ox1, oy1, Wc1, Hc1, paths, lines, 'continent', f'The continent: overview ({revision})')
     missed_all['1920'] = missed
     for o in outs:
         res1.convert('RGB').save(os.path.join(o, f'{prefix}-1920.png'))
         res2.convert('RGB').save(os.path.join(o, f'{prefix}-3840.png'))
+    if os.environ.get('MAP56_CONTINENT_ONLY'):                      # a quick look while drawing: the two overviews only
+        return missed_all
     small = res1.convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
     small.save(os.path.join(M.DATA, f'continent-1x-{revision}.png'), optimize=True)
     v54 = Image.open(os.path.join(M.DATA, 'continent-1x-v54.png')).convert('RGB')
@@ -1577,17 +1834,23 @@ def render_all(S, M):
     cmp_.paste(v54, (0, 40)); cmp_.paste(res1.convert('RGB'), (1920 + 24, 40))
     Fc = fonts(M.ROOT, 1)
     dc.text((10, 20), 'v54 (11264 x 6912 world px)', font=Fc['title'], fill=(240, 230, 210), anchor='lm')
-    dc.text((1920 + 34, 20), f'{revision} (12544 x 7168: towns, the east coast, Launch Cape and the closed pass)', font=Fc['title'],
+    dc.text((1920 + 34, 20), f'{revision} (12544 x 7168: towns, the east coast, Launch Cape and the closed pass)' if revision != 'v56' else
+            'v56 (world 12544 x 7168, drawn to 13568 x 7744: the range, the fens and the sea past the world)', font=Fc['title'],
             fill=(240, 230, 210), anchor='lm')
     for o in outs:
         cmp_.save(os.path.join(o, f'{prefix}-v54-vs-{revision}.png'))
     # the reference: the whole continent at 3x with every name
     s3 = 3; Wc3, Hc3 = BASE_W * s3, BASE_H * s3
-    k3, ox3, oy3 = frame_fit(Wc3, Hc3, s3)
-    base3 = M54.base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, full_box, 3.75)
-    base3 = base3.resize((int(round(g.WPX * k3)), int(round(g.HPX * k3))), Image.LANCZOS)
-    stamps55(base3, S, R, cg, cid, k3, 0, 0, M, ink)
-    res3, missed, _ = compose(S, M, R, ink, s3 * 0.8, base3, k3, ox3, oy3, Wc3, Hc3, paths, lines, 'full', f'The continent: reference ({revision}), every name')
+    if GX:
+        k3, ox3, oy3, g3 = grow_fit(GX, Wc3, Hc3, s3)
+        base3 = grow_base(GX, S, M, R, ink, cid, k3, 3.75)
+        res3, missed, _ = compose(Sd, M, R, ink, s3 * 0.8, base3, k3, ox3, oy3, Wc3, Hc3, paths, lines, 'full', f'The continent: reference ({revision}), every name', grow=g3)
+    else:
+        k3, ox3, oy3 = frame_fit(Wc3, Hc3, s3)
+        base3 = M54.base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, full_box, 3.75)
+        base3 = base3.resize((int(round(g.WPX * k3)), int(round(g.HPX * k3))), Image.LANCZOS)
+        stamps55(base3, S, R, cg, cid, k3, 0, 0, M, ink)
+        res3, missed, _ = compose(S, M, R, ink, s3 * 0.8, base3, k3, ox3, oy3, Wc3, Hc3, paths, lines, 'full', f'The continent: reference ({revision}), every name')
     missed_all['reference'] = missed
     for o in outs:
         res3.convert('RGB').save(os.path.join(o, f'{prefix}-reference.png'))

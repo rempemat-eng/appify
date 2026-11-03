@@ -1144,6 +1144,12 @@ def write_data(S):
     v55['closed_routes'] = {'the Northway (closed)': {'polyline': [[int(round(x)), int(round(y))] for x, y in T['route_px']['the Northway (closed)']],
                                                       'closed': True, 'closed_for': ['movement', 'navigation', 'travel'], 'way': 'C1'}}
     v55['old_forest'] = T.get('forest')
+    if REVISION == 'v56':                                            # the drawn frame past the world (grow56): one offset at projection
+        import grow56
+        v55['map_frame'] = {'world_px': [g.WPX, g.HPX], 'canvas_px': list(grow56.frame_dims(g.WPX, g.HPX)),
+                            'world_origin_in_canvas_px': [0, grow56.DY], 'grown_px': {'north': grow56.DY, 'east': grow56.EX},
+                            'note': 'the map is drawn on the canvas; every world coordinate here is unchanged and lands at (x, y + 576) on it. '
+                                    'The bands past the world carry no town, road, rail, ferry or label (the haze audit in the render log).'}
     bj[REVISION] = v55
     with open(os.path.join(DATA, f'blockout{SUF}.json'), 'w') as f:
         json.dump(bj, f, separators=(',', ':'))
