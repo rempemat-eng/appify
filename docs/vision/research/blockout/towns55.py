@@ -2604,8 +2604,11 @@ def neon_basin(T):
     # the east coast: a natural shoreline of coves and headlands instead of the grid's straight edge (never west of x 12408)
     ey0, ey1, ex = B['east_coast']
     yy_ = PY[:, 0]
-    wob = 44 * np.sin(yy_ / 157.0) + 22 * np.sin(yy_ / 61.0 + 1.3) + 10 * np.sin(yy_ / 23.0 + 0.4)
-    coast_x = np.maximum(12440, ex + 40 + wob)[:, None]
+    wob = 14 * np.sin(yy_ / 61.0 + 1.3) + 7 * np.sin(yy_ / 23.0 + 0.4)
+    # two headlands running out to the world's edge (the map draws them on past it) and coves between them
+    shape_ = (20 * np.exp(-((yy_ - 4330) / 60.0) ** 2) + 150 * np.exp(-((yy_ - 4660) / 120.0) ** 2) - 34 * np.exp(-((yy_ - 4950) / 70.0) ** 2)
+              + 130 * np.exp(-((yy_ - 5230) / 95.0) ** 2) - 34 * np.exp(-((yy_ - 5480) / 60.0) ** 2))
+    coast_x = np.clip(12470 + wob + shape_, 12440, 12560)[:, None]
     band_ = (PY >= ey0) & (PY < ey1) & (PX >= 12380)
     land |= band_ & (PX < coast_x) & ~T['land']
     water |= band_ & (PX >= coast_x) & T['land'] & ~T['taken'] & ~T['street']
@@ -2627,6 +2630,7 @@ def neon_basin(T):
             T[key][land] = 0
     shore = ndi.binary_dilation(water & ~canal, iterations=3)
     newk = np.where(shore, np.where(PX > 12380, 'sand', 'quay'), 'meadow')
+    newk = np.where(shore & (PX >= 12504) & band_, 'boulders', newk)       # rocks on the headlands' points, sand in the coves
     K[land] = newk[land]; K0[land] = newk[land]
     K[water] = 'sea'; K0[water] = 'sea'
     K[canal] = 'canal'; K0[canal] = 'canal'

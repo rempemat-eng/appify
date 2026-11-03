@@ -98,6 +98,19 @@ def draw_lines56(S):
         x0, y0 = pts[0]
         lead = [(x0 + 640 - i * 64 + 18 * math.sin(i * 0.9), y0 - 120 + i * 12 + 22 * math.cos(i * 0.7)) for i in range(10)]
         rivers['the Glint'] = lead + pts
+    if 'the Glint' in rivers:                                        # two becks down from the range through the old forest
+        def beck(pts, seed):
+            q = []
+            for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+                for t in np.linspace(0, 1, 6, endpoint=False):
+                    q.append((ax + (bx - ax) * t, ay + (by - ay) * t))
+            q.append(pts[-1])
+            w = fbm1(len(q), [(7, 46), (3, 16)], seed)
+            return [(x + w[i] * (0 < i < len(q) - 1), y) for i, (x, y) in enumerate(q)]
+        g0 = rivers['the Glint']
+        ja = min(g0, key=lambda p: abs(p[0] - 12520) + abs(p[1] - 3300)); jb = min(g0, key=lambda p: abs(p[0] - 12980) + abs(p[1] - 3180))
+        rivers['the Mossbeck'] = beck([(11880, -230), (11820, 320), (12010, 950), (11900, 1650), (12120, 2350), (12300, 2950), ja], 4411)
+        rivers['the Fernwater'] = beck([(13120, -210), (13060, 700), (12980, 1500), (13020, 2350), jb], 4412)
     closed = list(S['closed_px'])
     x1, y1 = closed[-1]
     closed = closed + [(x1 + 4, y1 - 120), (x1 + 14, y1 - 260), (x1 + 8, y1 - 420), (x1 - 6, y1 - 560), (x1 - 10, -DY - 60)]
@@ -130,6 +143,14 @@ def extend(S, R, cg, rgb, sea_rgb, cid, cols, sea_new):
     cr = coast_rows(NX) + NY
     rows = np.arange(H + NY)[:, None]
     east_land = rows < cr[None, :]
+    # Neon's two headlands (towns55.neon_basin's east coast, at y 4660 and 5230) run on past the world's edge: points
+    # tapering east from their roots at the edge, a cove between them
+    yw_ = (np.arange(H) + 0.5) * CELL
+    Lpx = 380 * np.exp(-((yw_ - 4660) / 95.0) ** 2) + 300 * np.exp(-((yw_ - 5230) / 75.0) ** 2)
+    Lpx *= 1 + 0.12 * fbm1(H, [(6, 1.0)], 5615)
+    hd = np.zeros((H + NY, NX), bool)
+    hd[NY:, :] = (np.arange(NX)[None, :] * CELL < Lpx[:, None] - 24) & S['land'][:, W - 1][:, None]
+    east_land |= hd
     land[:, W:] = east_land
     natural = np.isin(K, [kid[k] for k in NATURAL if k in kid])
     fix = band & land & ~natural
@@ -156,8 +177,12 @@ def extend(S, R, cg, rgb, sea_rgb, cid, cols, sea_new):
     wk = np.isin(K, [kid[k] for k in ('sea', 'surf') if k in kid])        # no mirrored sea left on the band's land
     if (band & land & wk).any():
         K = np.where(band & land & wk, kid['bog'], K)
-    beach = east_land & ~np.vstack([east_land[2:], np.zeros((2, NX), bool)]) & (nz2[:, W:] > -0.6)
+    beach = east_land & ~np.vstack([east_land[2:], np.zeros((2, NX), bool)]) & (nz2[:, W:] > -0.6) & ~hd
     K[:, W:][beach] = kid['sand']                                    # a beach along the band's coast, broken where the fen comes down
+    if hd.any():                                                     # the headlands: heath and gorse, rocks round the point
+        rim = hd & ~ndi.binary_erosion(hd, iterations=2)
+        K[:, W:][hd] = np.where(nz2[:, W:][hd] > 0.3, kid['scrub'], kid['meadow'])
+        K[:, W:][rim] = kid['boulders']
     K[:, W:][~east_land] = kid['sea']
     sea_tier = int(np.min(S['tiers'][~S['land']])) if (~S['land']).any() else -1
     tiers[:, W:][~east_land] = sea_tier
@@ -486,13 +511,155 @@ def overview_classes(Sx, cg, cid):
     votes = np.stack([ndi.uniform_filter((cg == i).astype(np.float32), 5) for i in ids])
     best = np.array(ids, np.int16)[np.argmax(votes, axis=0)]
     cg = np.where(zone & (votes.max(axis=0) > 0.3), best, cg)
+    if 'beach' in cid and 'meadow' in cid:                           # lone beach cells inland read as white flecks
+        be = cg == cid['beach']
+        dw = ndi.distance_transform_edt(Sx['land'])
+        alone = be & (ndi.uniform_filter(be.astype(np.float32), 5) < 0.3) & (dw > 3)
+        if alone.any():
+            ok = (cg >= 0) & ~be
+            _, (iy, ix) = ndi.distance_transform_edt(~ok, return_indices=True)
+            cg = np.where(alone, cg[iy, ix], cg)
     fo = [cid[n] for n in ('conifer', 'oldforest') if n in cid]
     if len(fo) == 2:
         nz = ndi.gaussian_filter(np.random.default_rng(5614).standard_normal((Hc, Wc)).astype(np.float32), 4)
         nz /= nz.std() + 1e-6
         near = (np.abs(cols - 12480) + 90 * nz < 300) & np.isin(cg, fo) & (rows < 4300)
         cg = np.where(near, np.where(nz > 0.15, fo[0], fo[1]), cg)
+    # the old forest (north-east): old-growth cores, lighter mixed edges, glades, rock outcrops, a ragged edge to the open
+    # ground and the fens
+    fid = {n: cid[n] for n in ('conifer', 'oldforest', 'broadleaf', 'meadow', 'rock', 'steppe', 'scrub', 'wetland', 'heath') if n in cid}
+    if len(fid) == 9:
+        rng = np.random.default_rng(5620)
+
+        def nzf(sig):
+            a = ndi.gaussian_filter(rng.standard_normal((Hc, Wc)).astype(np.float32), sig)
+            return a / (a.std() + 1e-6)
+        ne = (cols > 9300) & (rows < 3500)
+        F = ne & np.isin(cg, [fid['conifer'], fid['oldforest'], fid['broadleaf']])
+        opn = ne & np.isin(cg, [fid['steppe'], fid['scrub'], fid['meadow'], fid['heath'], fid['wetland']])
+        n1, n2, _, n4 = nzf(4), nzf(6), nzf(1.6), nzf(2.5)   # the third draw is kept so the noise stays the same
+        n1b = nzf(1.5)
+        dF = ndi.distance_transform_edt(~F); dO = ndi.distance_transform_edt(~opn)
+        wet = cg == fid['wetland']
+        reach = 10 + 4 * n1b                                                        # tongues and bays up to ~14 cells deep
+        grow = opn & (dF <= reach) & (n1 > 0.35)                                    # stands running out into the open and the fen
+        bite = F & (dO <= reach) & (n1 < -0.35)                                     # the open and the fen biting into the wood
+        bite_w = bite & (ndi.distance_transform_edt(~wet) <= reach)
+        cg = np.where(grow & wet, fid['broadleaf'], np.where(grow, fid['conifer'], cg))
+        cg = np.where(bite_w, fid['wetland'], np.where(bite & (n4 > 0), fid['meadow'], np.where(bite, fid['heath'], cg)))
+        F = ne & np.isin(cg, [fid['conifer'], fid['oldforest'], fid['broadleaf']])
+        din = ndi.distance_transform_edt(F)
+        cg = np.where(F & (din <= 5) & (n2 > -0.3), fid['broadleaf'], cg)                # lighter mixed edges
+        cg = np.where(F & (din > 12) & (n2 > -0.6), fid['oldforest'], cg)                # dark old-growth cores
+        cg = np.where(F & (din > 5) & (din <= 12), np.where(n2 > 0.2, fid['oldforest'], fid['conifer']), cg)
+        gl = nzf(9)
+        cg = np.where(F & (din > 6) & (gl > 1.35), fid['meadow'], cg)                    # glades
+        ro = nzf(4)
+        cg = np.where(F & (din > 5) & (ro > 2.3), fid['rock'], cg)                       # a few rock outcrops
     return cg
+
+
+def ne_zone(Sx):
+    Hc, Wc = Sx['K'].shape
+    rows = (np.arange(Hc) - NY)[:, None] * CELL; cols = np.arange(Wc)[None, :] * CELL
+    return (cols > 9300) & (rows < 3500) & Sx['land']
+
+
+def recolour(Sx, cg, rgbx, cols, R, mask):
+    """The cells in mask coloured from their (drawn) class as map54 colours every cell: the class colour, a faint mottle,
+    the frame's tint."""
+    m = mask & (cg >= 0) & Sx['land']
+    if not m.any():
+        return rgbx
+    rgbx = rgbx.copy()
+    nz = ndi.gaussian_filter(np.random.default_rng(5).standard_normal(cg.shape).astype(np.float32), 6) * 6
+    c = cols[cg[m]] * (1 + 0.012 * nz[m])[:, None]
+    fr = Sx['frame'][m][:, None]
+    rgbx[m] = np.where(fr, c * 0.88 + np.array(R['plaster'][2], np.float32) * 0.12, c)
+    return rgbx
+
+
+def farm_overview(S, Sx, cg, rgbx, cid, R):
+    """The home valley's and the Lull's farmland, drawn as farmed country (overview only): every field parcel between the
+    hedges takes its own crop colour, and each old farmstead block (one big roof) becomes a yard for a cluster of small
+    buildings, drawn later with a lane to the nearest road. Returns the class grid, the colours and the farmsteads."""
+    Hc, Wc = cg.shape
+    kinds = list(Sx['kinds']); kid = {k: i for i, k in enumerate(kinds)}
+    K = Sx['K']
+    rows = (np.arange(Hc) - NY)[:, None] * CELL; cols = np.arange(Wc)[None, :] * CELL
+    zone = (cols > 5000) & (cols < 9400) & (rows > 3200) & (rows < 5400)
+    fp = np.zeros((Hc, Wc), bool)
+    for P_ in (S.get('plans') or {}).values():
+        x0, y0, x1, y1 = P_['footprint_px']
+        fp[y0 // CELL + NY:y1 // CELL + NY + 1, x0 // CELL:x1 // CELL + 1] = True
+    rgbx = rgbx.copy(); cg = cg.copy()
+    fields = zone & ~fp & np.isin(K, [kid[k] for k in ('field', 'field2', 'fallow') if k in kid])
+    # the hedged closes of meadow are fields too (crop or pasture): any meadow parcel the hedges enclose, up to ~25 ha
+    mead = zone & ~fp & np.isin(K, [kid[k] for k in ('meadow',) if k in kid])
+    hedge = np.isin(K, [kid['hedge']]) if 'hedge' in kid else np.zeros_like(mead)
+    if hedge.any():                                                  # closes: meadow parcels the hedges (gaps closed) enclose
+        wall = ndi.binary_dilation(hedge, iterations=2)
+        ml, mn = ndi.label(mead & ~wall)
+        if mn:
+            size = ndi.sum(np.ones_like(ml), ml, index=np.arange(1, mn + 1))
+            keep = np.zeros(mn + 1, bool); keep[1:] = (size >= 8) & (size <= 900)
+            close = keep[ml]
+            _, (iy, ix) = ndi.distance_transform_edt(~close, return_indices=True)    # the parcels reach back to their hedges
+            grow = mead & wall & ~hedge & (ndi.distance_transform_edt(~close) <= 2.5)
+            fields |= close | grow
+    lab, n = ndi.label(fields & ~(ndi.binary_dilation(hedge, iterations=0) if hedge.any() else np.zeros_like(fields)))
+    if hedge.any():
+        _, (iy, ix) = ndi.distance_transform_edt(lab == 0, return_indices=True)
+        lab = np.where(fields & (lab == 0), lab[iy, ix], lab)
+    crops = np.array([(214, 186, 112), (226, 208, 150), (150, 170, 92), (124, 156, 84), (172, 138, 104), (196, 190, 120),
+                      (138, 166, 94), (204, 172, 108)], np.float32)
+    pick = (np.arange(n + 1) * 2654435761 % 977) % len(crops)
+    nz = ndi.gaussian_filter(np.random.default_rng(5621).standard_normal((Hc, Wc)).astype(np.float32), 2) * 4
+    m = lab > 0
+    rgbx[m] = crops[pick[lab[m]]] * (1 + 0.01 * nz[m])[:, None]
+    # the open meadow round the farms: a patchwork of hedged parcels on the cell grid (rows of varied depth, each row cut
+    # at its own widths), crops in varied colours, a one-cell hedge between parcels
+    blocks0 = zone & ~fp & np.isin(K, [kid[k] for k in ('building', 'hut', 'warehouse') if k in kid])
+    farmed = ndi.distance_transform_edt(~(fields | blocks0)) < 45
+    routes_ = np.zeros((Hc, Wc), bool)
+    for pts in S['route_px'].values():
+        r_, c_ = to_cells(pts, Hc, Wc); routes_[r_, c_] = True
+    water_ = np.isin(K, [kid[k] for k in ('river', 'creek', 'pool', 'mere', 'tarn', 'canal') if k in kid])
+    open_ = zone & ~fp & farmed & np.isin(K, [kid['meadow']]) & ~ndi.binary_dilation(routes_ | water_, iterations=2) & (cg == cid['meadow'])
+    rr = np.random.default_rng(5622)
+    pid_ = np.zeros((Hc, Wc), np.int32); hedge2 = np.zeros((Hc, Wc), bool)
+    r0 = int(np.argmax(zone.any(1))); r1 = Hc - int(np.argmax(zone.any(1)[::-1]))
+    c0 = int(np.argmax(zone.any(0))); c1 = Wc - int(np.argmax(zone.any(0)[::-1]))
+    nid = 1; y_ = r0
+    while y_ < r1:
+        hh = int(rr.integers(9, 16)); x_ = c0 + int(rr.integers(0, 10))
+        hedge2[y_, c0:c1] = True
+        while x_ < c1:
+            ww = int(rr.integers(10, 24))
+            pid_[y_ + 1:y_ + hh, x_ + 1:x_ + ww] = nid; hedge2[y_:y_ + hh, x_] = True
+            nid += 1; x_ += ww
+        y_ += hh
+    pid_ = np.where(open_, pid_, 0)
+    hedge2 &= open_ & ndi.binary_dilation(pid_ > 0, iterations=1)
+    m2 = (pid_ > 0) & ~hedge2
+    pick2 = (np.arange(nid + 1) * 40503 % 991) % len(crops)
+    pasture = (np.arange(nid + 1) * 2246822519 % 7) < 2                    # about a third stays grass, a shade apart
+    colp = np.where(pasture[pid_[m2]][:, None], np.array((134, 170, 92), np.float32), crops[pick2[pid_[m2]]])
+    rgbx[m2] = colp * (1 + 0.01 * nz[m2])[:, None]
+    rgbx[hedge2] = np.array(R['leaf'][2], np.float32)
+    blocks = zone & ~fp & np.isin(K, [kid[k] for k in ('building', 'hut', 'warehouse') if k in kid])
+    lb, nb = ndi.label(blocks)
+    steads = []
+    yard = np.array((176, 152, 112), np.float32)
+    for i, sl in enumerate(ndi.find_objects(lb)):
+        if sl is None:
+            continue
+        mm = lb[sl] == i + 1
+        sub_cg = cg[sl]; sub_cg[mm] = cid['meadow']; cg[sl] = sub_cg
+        sub = rgbx[sl]; sub[mm] = yard; rgbx[sl] = sub
+        y0 = (sl[0].start - NY) * CELL; y1 = (sl[0].stop - NY) * CELL; x0 = sl[1].start * CELL; x1 = sl[1].stop * CELL
+        steads.append((x0, y0, x1, y1))
+    return cg, rgbx, steads
 
 
 # ------------------------------------------------------------------------------------------ the edges

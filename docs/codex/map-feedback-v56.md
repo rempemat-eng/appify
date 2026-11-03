@@ -120,3 +120,25 @@ Overview drawing only: no world cell, plan, route or table changes in this round
 5. **Edge fog** on the east, south and west is fewer, larger, softer forms with the four-step fade; the small ripple texture and its lighting are gone.
 6. **The conifer strip:** see item 19 above.
 7. **Fire country.** The salt lake has a clean shoreline, a damp margin and two crust rings with its cracks faint. The fire country's speckle of ash, aa, black sand and scree is drawn as fields (a majority over 5 x 5 cells), the aa and basalt flows as lobes shaded from the world's heights, and the dot marks on ash and lavastone are left out.
+
+### Round 3 (3 Nov, Claude A): "continue working/improving the map"
+
+1. **Neon's east shore** (data, `towns55.neon_basin`): the shore east of the Lanes and the East Shore has two headlands (at y 4660 and 5230, rocks round their points) and coves between and beside them (sand), all east of x 12440; the map draws the two headlands on past the world's edge as points of scrub with a rocky rim. Every plan, the benchmark and the gates pass unchanged; the only table changes are two counts in `stats-v56.json` (walkable zone area 182.1 to 182.3, usable land cells 560313 to 560864, the increase 28.3 to 28.4 %) and the Neon plan's terrain rows. `gates-v56.json` is unchanged.
+2. **The old forest** (overview only): dark old-growth cores, a lighter mixed edge, glades, a few rock outcrops, and a ragged edge (tongues of trees running out, bays of meadow, heath and fen biting in) to the open ground and the fens. Two becks come down from the range through it to the Glint: the Mossbeck and the Fernwater (drawn on the map; no world cell or route changes).
+3. **Farmland** (overview only): every hedged parcel takes its own crop colour, the open meadow round the farms is a patchwork of hedged parcels on the cell grid (about a third pasture), and each farmstead is a small cluster (house, barn, shed round a yard) with a lane to the nearest road where no river is in the way.
+4. **Neon** (overview only): flat roofs carry plant, light wells, planted terraces, helipads and now and then a neon sign; the bay has a wider shelf, a dark deep centre and two wake lines, so it reads at 1920. The plan has no diagonal avenue, so none was drawn; the canal already breaks the grid on the west.
+
+**Region-by-region self-critique at 3840** (crops of every region; fixed this round unless marked):
+
+- *Sunstone Reach.* 1. The dry beds were near-white streaks with no source: drawn in sand now. 2. The two buttes' red mesas and their shadows read well; no change. 3. **Not fixed:** the moor's heath dots and the Reach's scrub dots are dense at 3840 (stamps, not noise, but busy).
+- *The Brackens.* 1. Heath speckle thinned (stamp spacing 1.4 x). 2. **Not fixed:** the BUILT NOW outline crosses the stone circle's label; the outline marks real built ground and the label is placed clear of other labels only.
+- *The Frostline.* 1. The tarn's snow patch reads as cells at 3840 (the world's glacier class); left as world ground. 2. Act 1's beat marks sit on the route as drawn; no clash.
+- *Cogsworth.* 1. No fault found: the town, the coal hills and the railway yard read; labels clear.
+- *The Narrows.* 1. The old forest's boardwalk crossed the Lull in the gorge with no bridge: a timber footbridge is drawn where it crosses. 2. "the Narrows" label clear of it (since v1).
+- *The Home Valley.* 1. Scattered red squares (old farm blocks) read as noise: farmsteads and a field patchwork now. 2. Lone beach cells inland at Driftwood read as white flecks: drawn as the ground round them. 3. **Not fixed:** the BUILT NOW outline is large over Crossroads; it is the built area.
+- *The Lull.* 1. As the valley: patchwork and farmsteads. 2. Rivers and the delta flow to the sea; no change.
+- *Neon Harbour.* 1. East shore straight: headlands and coves (item 1). 2. Company roofs flat grey: roof details (item 4). 3. **Not fixed:** the slabs of the Company district stay a regular grid; the plan has no diagonal and the plan was not changed.
+- *The Tidebloom Isles.* 1. No fault on the isles. 2. **Not fixed:** an isolated deep-water fleck west of the ferry line (the world's sea depth bands).
+- *The Fire Country.* 1. The dead forest's snags read as dark speckle: spaced 1.8 x. 2. The lava flow runs from Mount Ember to the sea past Hearthold's wall, logical; no change. 3. The salt lake and the lava field: fixed in v2.
+- *The coast.* 1. Ferry and steamer berths: fixed in v1. 2. Beaches continuous; the Ash Coast cliffs read as cliffs. No further change.
+- *The range and the north.* 1. Snow, cloud and faces: fixed in v2. 2. **Not fixed:** the Highgarth basin's glacier cells beside the town read as white cells at 3840 (world ground).

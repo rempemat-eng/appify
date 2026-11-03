@@ -3,7 +3,7 @@
   12544,
   7168
  ],
- "walkable_zone_areas": 182.1,
+ "walkable_zone_areas": 182.3,
  "routes_s": {
   "Col Path": 27.5,
   "High Fells": 51.2,
@@ -15911,8 +15911,8 @@
    "definition": "land cells outside the frame that are walkable or built on (8 px cells)",
    "v54_cells": 436837,
    "after_warp_cells": 529123,
-   "v55_cells": 560313,
-   "increase_pct": 28.3
+   "v55_cells": 560864,
+   "increase_pct": 28.4
   },
   "settlements": {
    "Crossroads": {
