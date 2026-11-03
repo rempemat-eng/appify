@@ -73,10 +73,16 @@
   "role": "trough",
   "requires": [
    {
+    "rel": "near",
+    "what": "stock",
+    "cells": 4,
+    "note": "its animals drink from it"
+   },
+   {
     "rel": "within",
-    "what": "pen",
-    "cells": 0,
-    "note": "inside a pen or paddock with its animals"
+    "what": "boundary",
+    "cells": 4,
+    "note": "inside their pen or paddock"
    }
   ],
   "forbids": [
@@ -84,7 +90,14 @@
     "rel": "on",
     "what": "route"
    }
-  ]
+  ],
+  "enclosure": {
+   "holds": [
+    "sheep",
+    "horses"
+   ],
+   "as": "needs"
+  }
  },
  "rendering": {
   "cast_shadow": {
