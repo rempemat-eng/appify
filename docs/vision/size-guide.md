@@ -50,6 +50,7 @@ Art px at density 3. A = 74 art px = 1.7 m, so 43.5 art px a metre; Eastward's a
 | bucket | 13 to 24 | 13 to 22 | 0.18 to 0.32 | 0.3 m | pails 12 to 16 E (0.22 to 0.3 A) (13, 17) | a touch big |
 | well | 89 to 141 | 70 to 118 | 1.20 to 1.90 | a well with its roof 2.2 to 2.6 m, ring 1.2 m across | the bell frame in 13: 58 x 60 E (1.07 x 1.1 A) | the roof may stand over a person's head (1.2 to 1.9 A) |
 | well ring | 41 to 78 | 70 to 118 | 0.55 to 1.05 | the ring 0.8 m high, 1.2 m across | as the well |  |
+| pump | 66 to 84 | 42 to 54 | 0.90 to 1.15 | a hand pump: the column 1.2 to 1.4 m, its handle raised over it | none in the shots; from real size (Claude A's review of #430, 3 Nov) | the stone basin under the spout stays within its width |
 | trough | 26 to 44 | 59 to 104 | 0.35 to 0.60 | 0.6 m high, 1.5 m long | none; from real size (stall counters 0.45 to 0.6 A in 04) | a touch big |
 | lamp | 107 to 178 | 15 to 52 | 1.45 to 2.40 | a street lamp 2.5 to 4 m | lamp posts 88 to 100 E (1.6 to 1.85 A) in 13 and 17 | up to 2.4 A where it lights a square |
 | post lantern | 44 to 81 | 15 to 118 | 0.60 to 1.10 | a lantern on a short post or a wall torch | post lanterns 44 to 45 E (0.8 A) in 12 and 38 |  |

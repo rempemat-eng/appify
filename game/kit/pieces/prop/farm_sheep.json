@@ -28,7 +28,7 @@
  },
  "geometry": {
   "size_px": [
-   57,
+   56,
    38
   ],
   "size_cells": [
@@ -117,7 +117,7 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_sheep_idle.png",
     "frame_px": [
-     57,
+     56,
      38
     ],
     "reduced_motion": "hold:0",

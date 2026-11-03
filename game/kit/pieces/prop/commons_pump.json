@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/commons/pump.png",
    "foot": [
-    45,
-    108
+    24,
+    72
    ]
   }
  ],
@@ -28,43 +28,35 @@
  },
  "geometry": {
   "size_px": [
-   90,
-   109
+   50,
+   73
   ],
   "size_cells": [
-   4,
-   5
+   2,
+   3
   ],
   "z_sort": "foot",
-  "height_px": 108,
+  "height_px": 72,
   "collision": {
    "shape": "rect",
    "rect": [
-    -14.0,
-    -6.0,
-    28,
-    6
+    -7.5,
+    -5.0,
+    15,
+    5
    ]
   },
   "foot": [
-   45,
-   108
+   24,
+   72
   ],
   "footprint": [
-   [
-    -2,
-    -1
-   ],
    [
     -1,
     -1
    ],
    [
     0,
-    -1
-   ],
-   [
-    1,
     -1
    ]
   ]
@@ -103,8 +95,8 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    30,
-    4
+    16,
+    3
    ],
    "dir": [
     1,
@@ -122,7 +114,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "well",
+  "size_class": "pump",
   "eastward_ref": "12: the square's ironwork painted dark, lit down one side",
   "painter": {
    "module": "scripts.art.kit.commons",

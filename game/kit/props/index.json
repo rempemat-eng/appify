@@ -626,31 +626,23 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -42.0,
-   -18.0,
-   84,
-   18
+   -22.5,
+   -15.0,
+   45,
+   15
   ],
   "deck": null,
   "foot": [
-   45,
-   108
+   24,
+   72
   ],
   "footprint": [
-   [
-    -2,
-    -1
-   ],
    [
     -1,
     -1
    ],
    [
     0,
-    -1
-   ],
-   [
-    1,
     -1
    ]
   ],
@@ -683,13 +675,13 @@
     3
    ],
    "size": [
-    90,
-    12
+    48,
+    9
    ]
   },
   "size_cells": [
-   4,
-   5
+   2,
+   3
   ],
   "snap": "cell",
   "story": {
@@ -698,8 +690,8 @@
   "variants": {
    "pump": {
     "foot": [
-     45,
-     108
+     24,
+     72
     ],
     "png": "res://kit/props/art/commons/pump.png"
    }
@@ -7496,7 +7488,7 @@
    "fps": 3.0,
    "frames": 8,
    "offset": [
-    -27,
+    -28,
     -35
    ],
    "reduced_motion": "hold:0",
@@ -7512,7 +7504,7 @@
   ],
   "deck": null,
   "foot": [
-   27,
+   28,
    35
   ],
   "footprint": [
@@ -7575,7 +7567,7 @@
   "variants": {
    "farm_sheep_graze": {
     "foot": [
-     27,
+     28,
      35
     ],
     "png": "res://kit/props/art/farm/farm_sheep_graze.png"

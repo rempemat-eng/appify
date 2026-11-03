@@ -14,7 +14,7 @@
    "weight": 1.0,
    "png": "res://kit/props/art/farm/farm_sheep_graze.png",
    "foot": [
-    27,
+    28,
     35
    ]
   }
@@ -28,7 +28,7 @@
  },
  "geometry": {
   "size_px": [
-   57,
+   58,
    37
   ],
   "size_cells": [
@@ -47,7 +47,7 @@
    ]
   },
   "foot": [
-   27,
+   28,
    35
   ],
   "footprint": [
@@ -117,7 +117,7 @@
     "fps": 3.0,
     "strip": "res://kit/props/art/farm/farm_sheep_graze_idle.png",
     "frame_px": [
-     57,
+     58,
      37
     ],
     "reduced_motion": "hold:0",
