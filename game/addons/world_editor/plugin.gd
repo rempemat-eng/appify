@@ -30,6 +30,7 @@ var _preview_key: Array = []
 var _preview: Dictionary = {}
 var _revision := 0
 var _baking := false
+var _fence_style := ""
 
 func _enter_tree() -> void:
 	operations.changed.connect(_operations_changed)
@@ -134,7 +135,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return painting
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			if brush.begins_with("piece:"):
+			_fence_style = fence_style(brush.substr(6)) if brush.begins_with("piece:") else ""
+			if brush.begins_with("piece:") and _fence_style == "":
 				_say_result(place_piece(brush.substr(6), local), "Placed piece")
 				return true
 			if not _inside(cell):
@@ -150,6 +152,11 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			_extend_stroke(cell)
 			var cells := _bounded_cells(_stroke_cells)
 			_cancel_stroke()
+			if _fence_style != "":
+				var style := _fence_style
+				_fence_style = ""
+				_say_result(operations.place_fence_run(style, cells), "Fence run placed")
+				return true
 			var material := brush.substr(9) if brush.begins_with("material:") else ""
 			var variant := brush.substr(8) if brush.begins_with("variant:") else ""
 			_say_result(paint_cells(cells, material, variant), "Painted %d cells" % cells.size())
@@ -167,6 +174,14 @@ func _bounded_cells(cells: Array) -> Array[Vector2i]:
 	return result
 
 func _extend_stroke(cell: Vector2i) -> void:
+	if _fence_style != "":
+		# a fence run follows the pointer cell by cell, four-connected, as the run will join
+		for target in Tools.line_cells(_stroke_last, cell):
+			if target not in _stroke_cells:
+				_stroke_cells.append(target)
+		_stroke_last = cell
+		update_overlays()
+		return
 	match tool_mode:
 		"rectangle":
 			_stroke_cells = Tools.rectangle_cells(_stroke_start, cell)
@@ -193,6 +208,14 @@ func _cancel_stroke() -> void:
 ## The dock and non-UI acceptance tests share this operations API.
 func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dictionary:
 	return operations.paint_cells(cells, material_id, variant)
+
+## The fence style of a fence cell piece (a run is drawn by dragging), or "" for anything else
+## (gates and stiles are placed one at a time, on their path).
+func fence_style(id: String) -> String:
+	var boundary: Variant = operations.definition(id).get("placement", {}).get("boundary")
+	if not boundary is Dictionary or bool(boundary.get("gate", false)) or bool(boundary.get("stile", false)):
+		return ""
+	return String(boundary.get("style", ""))
 
 func place_piece(id: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
 	var chosen := _piece_options()
@@ -256,7 +279,7 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 		return
 	var transform := ground.get_global_transform_with_canvas()
 	var cell_size := ground.kit.cell
-	if not brush.begins_with("piece:"):
+	if not brush.begins_with("piece:") or (painting and _fence_style != ""):
 		var cell := Vector2i(floori(_hover_local.x / cell_size), floori(_hover_local.y / cell_size))
 		var cells := _stroke_cells if painting else Tools.brush_cells(cell, brush_size)
 		for target in _bounded_cells(cells):

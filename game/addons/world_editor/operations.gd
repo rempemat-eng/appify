@@ -211,24 +211,10 @@ func place_piece(piece_id: String, at: Vector2, options: Dictionary = {}) -> Dic
 	var props := _zone.get_node_or_null("Props") as Node2D
 	if props == null:
 		return _failure("editor.props_missing", "The zone needs its authored Props container before placing pieces.")
-	var inst: Node
-	var factory = _options.get("scene_factory", Callable())
-	if factory is Callable and factory.is_valid():
-		var created = factory.call(piece_id)
-		if created is Node:
-			inst = created
-	else:
-		var scene_path := String(_index.get(piece_id, {}).get("scene", "res://kit/props/%s.tscn" % piece_id))
-		if not ResourceLoader.exists(scene_path):
-			return _failure("library.scene_missing", "The built scene for '%s' is missing." % piece_id)
-		var scene := load(scene_path) as PackedScene
-		if scene != null:
-			inst = scene.instantiate()
-	if not inst is KitPiece or inst.get_parent() != null:
-		if is_instance_valid(inst) and inst.get_parent() == null:
-			inst.free()
-		return _failure("library.scene_invalid", "The piece factory must return a detached KitPiece scene.")
-	var piece := inst as KitPiece
+	var made := _instantiate(piece_id)
+	if not made.ok:
+		return made
+	var piece: KitPiece = made.node
 	piece.name = preview.instance.id
 	piece.piece_id = piece_id
 	piece.variant = String(preview.instance.get("variant", ""))
@@ -247,6 +233,111 @@ func place_piece(piece_id: String, at: Vector2, options: Dictionary = {}) -> Dic
 	preview["node"] = piece
 	preview["changed"] = true
 	return preview
+
+## A fence run (round 3, 3 Nov): the cells a stroke crossed become fence cells of `style`, each
+## piece chosen by its neighbours (fence_<style>_<joins>, scripts/art/kit/fences.py), and the
+## existing cells of that style the run meets are re-joined to it; gates keep their place and the
+## run's ends join them. One undo action; a refused cell refuses the whole run.
+func place_fence_run(style: String, cells: Array, options: Dictionary = {}) -> Dictionary:
+	var context := _context(true)
+	if not context.ok:
+		return context
+	if not _history.has_method("add_undo_reference"):
+		return _failure("editor.no_history", "The editor undo history is incompatible.")
+	var props := _zone.get_node_or_null("Props") as Node2D
+	if props == null:
+		return _failure("editor.props_missing", "The zone needs its authored Props container before placing pieces.")
+	var size := _ground.kit.cell
+	var existing := {}
+	var fixed := {}
+	for child in props.get_children():
+		if not child is KitPiece:
+			continue
+		var boundary: Variant = definition(child.piece_id).get("placement", {}).get("boundary")
+		if not boundary is Dictionary or String(boundary.get("style", "")) != style:
+			continue
+		var foot: Vector2 = _ground.to_local(props.to_global(child.position)) if props.is_inside_tree() else child.position
+		var at := Tools.fence_cell(foot, size)
+		if bool(boundary.get("gate", false)):
+			fixed.merge(Tools.gate_ends(at, boundary.get("joins", [])), true)
+		elif bool(boundary.get("stile", false)):
+			fixed[at] = boundary.get("joins", [])
+		else:
+			existing[at] = child
+	var run: Array[Vector2i] = []
+	for value in cells:
+		var at := Vector2i(value)
+		if not _in_bounds(at):
+			return _failure("rules.bounds", "The fence run leaves the zone at %s." % at)
+		if at not in run and not fixed.has(at):
+			run.append(at)
+	if run.size() + existing.size() < 2:
+		return _failure("rules.fences", "A fence run needs two cells or more: drag along it.")
+	var all_cells: Array = existing.keys()
+	for at in run:
+		if not existing.has(at):
+			all_cells.append(at)
+	var chosen := Tools.fence_pieces(style, all_cells + fixed.keys(), fixed)
+	var removed: Array[KitPiece] = []
+	var added: Array[KitPiece] = []
+	var snapshot := export_plan()
+	if not snapshot.ok:
+		return snapshot
+	var taken: Array = snapshot.plan.get("pieces", []).duplicate()
+	for at in all_cells:
+		var id := String(chosen.get(at, ""))
+		if id == "":
+			return _failure("rules.fences", "The fence cell at %s joins nothing: a run must be continuous." % at)
+		var raw := definition(id)
+		if raw.is_empty():
+			return _failure("rules.unknown_piece", "Unknown fence piece '%s'." % id)
+		var gate := _approval(raw)
+		if not gate.ok:
+			return gate
+		var old: KitPiece = existing.get(at)
+		if old != null and old.piece_id == id:
+			continue
+		var foot := Tools.fence_foot(at, size)
+		var entry := {}
+		if old == null:
+			var preview := preview_piece(id, foot, {"id": _free_id(id, taken), "facing": "s"})
+			if not preview.ok:
+				return preview
+			entry = preview.instance
+			taken.append(entry)
+		else:
+			var kept: Variant = old.get_meta("kit_zone_entry", {})
+			entry = kept.duplicate(true) if kept is Dictionary else {}
+			entry["piece"] = id
+			entry["id"] = String(old.name)
+			removed.append(old)
+		var made := _instantiate(id)
+		if not made.ok:
+			for node in added:
+				node.free()
+			return made
+		var piece: KitPiece = made.node
+		piece.name = String(entry.id)
+		piece.piece_id = id
+		piece.variant = "plain"
+		entry["variant"] = piece.variant
+		piece.set_meta("kit_zone_entry", entry)
+		piece.set_meta("facing", "s")
+		piece.position = props.to_local(_ground.to_global(foot)) if props.is_inside_tree() else foot
+		added.append(piece)
+	if added.is_empty():
+		return {"ok": true, "diagnostics": [], "changed": false, "message": "The fence already joins."}
+	var before := {"baked": _ground.baked, "baked_live": _ground.showing_baked()}
+	_begin("Fence run (%s, %d cells)" % [style, run.size()])
+	_do(Callable(self, "_apply_swap").bind(_zone, _ground, props, removed, added, true, before))
+	_undo(Callable(self, "_apply_swap").bind(_zone, _ground, props, removed, added, false, before))
+	for node in added:
+		_history.add_do_reference(node)
+	for node in removed:
+		_history.add_undo_reference(node)
+	_history.commit_action()
+	return {"ok": true, "diagnostics": [], "changed": true, "added": added.size() - removed.size(), "rejoined": removed.size(),
+		"message": "Fence run: %d new cells, %d re-joined." % [added.size() - removed.size(), removed.size()]}
 
 func validate() -> Dictionary:
 	# Export omits unchanged gameplay_from markers to preserve source ownership. Validation
@@ -401,6 +492,40 @@ func _apply_placement(zone: Node, target: TerrainGround, props: Node2D, piece: K
 		if piece.get_parent() == props:
 			props.remove_child(piece)
 		_restore_ground(target, before)
+
+func _apply_swap(zone: Node, target: TerrainGround, props: Node2D, removed: Array, added: Array, forward: bool, before: Dictionary) -> void:
+	if not is_instance_valid(zone) or not is_instance_valid(target):
+		return
+	var going: Array = removed if forward else added
+	var coming: Array = added if forward else removed
+	for node in going:
+		if is_instance_valid(node) and node.get_parent() == props:
+			props.remove_child(node)
+	for node in coming:
+		if is_instance_valid(node) and node.get_parent() == null:
+			props.add_child(node)
+			node.owner = zone
+	_restore_ground(target, {"baked": before.baked, "baked_live": false} if forward else before)
+
+func _instantiate(piece_id: String) -> Dictionary:
+	var inst: Node
+	var factory = _options.get("scene_factory", Callable())
+	if factory is Callable and factory.is_valid():
+		var created = factory.call(piece_id)
+		if created is Node:
+			inst = created
+	else:
+		var scene_path := String(_index.get(piece_id, {}).get("scene", "res://kit/props/%s.tscn" % piece_id))
+		if not ResourceLoader.exists(scene_path):
+			return _failure("library.scene_missing", "The built scene for '%s' is missing." % piece_id)
+		var scene := load(scene_path) as PackedScene
+		if scene != null:
+			inst = scene.instantiate()
+	if not inst is KitPiece or inst.get_parent() != null:
+		if is_instance_valid(inst) and inst.get_parent() == null:
+			inst.free()
+		return _failure("library.scene_invalid", "The piece factory must return a detached KitPiece scene.")
+	return {"ok": true, "diagnostics": [], "node": inst}
 
 func _restore_ground(target: TerrainGround, state: Dictionary) -> void:
 	# Re-derive before restoring baked validity, so TileMapLayer's later changed notification

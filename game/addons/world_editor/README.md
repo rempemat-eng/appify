@@ -19,6 +19,23 @@ and prop index supply the preview swatches and scenes.
   refused everywhere, including direct non-UI calls and validation of existing
   scene content. This tool never changes approval records.
 
+Building places from the kit (round 3, 3 Nov):
+
+- **Search and category.** Above the pieces list, a search box (every word must
+  appear in the piece's id, name, role or purpose) and a category (fences, farm,
+  commons, village, woodland, water) narrow the 178-piece palette; filtering does
+  not reload the library.
+- **Fence runs.** Select any fence cell piece (`fence_<style>_*`) and drag along the
+  run: each cell's piece is chosen by its neighbours (straights, corners, Ts, ends),
+  the run's ends join a gate's ends, and existing cells of that style it meets are
+  re-joined (an end becomes a corner or a T). One undo action; a refused cell refuses
+  the run. Gates and stiles are still placed one at a time on their path.
+- **Validate zone** now also runs `scripts/art/kit/enclosures.py` (closed loops,
+  what each pen holds and needs, every stretch keeping its stock) and
+  `placement_audit.check_plan` (needs a hearth or home, faces a feature, avoids wild
+  woods, a fingerpost's arms along its junction), and lists every finding by its
+  check.
+
 Terrain and placement transactions preserve cell/variant/baked state, node
 ownership, ordinary gameplay nodes and W2's plan metadata. Undo remains bound to
 the original scene after selection changes. Accepted edits refresh W4's derived

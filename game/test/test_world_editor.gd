@@ -317,3 +317,43 @@ func test_validate_delegates_complete_snapshot_and_preserves_findings() -> void:
 	assert_str(result.diagnostics[0].rule).is_equal("rules.walk")
 	assert_that(received[0].plan.spawns.start).is_equal([36, 48])
 	assert_int(received[0].library.size()).is_equal(4)
+
+func _fence_library() -> Dictionary:
+	var result := _library()
+	for joins in ["e", "w", "n", "s", "ew", "ns", "es", "sw", "ne", "nw", "esw", "nes", "new", "nsw", "nesw"]:
+		var piece: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/prop/fence_wattle_%s.json" % joins))
+		piece.approval.state = "approved"
+		result[piece.id] = piece
+	return result
+
+func _piece_at(f: Dictionary, cell: Vector2i) -> KitPiece:
+	for child in f.zone.get_node("Props").get_children():
+		if child is KitPiece and Vector2i(floori(child.position.x / 24), roundi(child.position.y / 24) - 1) == cell:
+			return child
+	return null
+
+func test_a_fence_run_joins_its_cells_and_the_fence_it_meets_in_one_action() -> void:
+	var f := _fixture({"library": _fence_library()})
+	var first: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)])
+	assert_bool(first.ok).is_true()
+	assert_str(_piece_at(f, Vector2i(1, 1)).piece_id).is_equal("fence_wattle_e")
+	assert_str(_piece_at(f, Vector2i(2, 1)).piece_id).is_equal("fence_wattle_ew")
+	assert_str(_piece_at(f, Vector2i(3, 1)).piece_id).is_equal("fence_wattle_w")
+	assert_that(_piece_at(f, Vector2i(2, 1)).position).is_equal(Vector2(60, 48))
+	# a second run south from the east end turns that end into a corner
+	var second: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(3, 2), Vector2i(3, 3)])
+	assert_bool(second.ok).is_true()
+	assert_int(second.rejoined).is_equal(1)
+	assert_str(_piece_at(f, Vector2i(3, 1)).piece_id).is_equal("fence_wattle_sw")
+	assert_str(_piece_at(f, Vector2i(3, 2)).piece_id).is_equal("fence_wattle_ns")
+	assert_str(_piece_at(f, Vector2i(3, 3)).piece_id).is_equal("fence_wattle_n")
+	var snapshot: Dictionary = f.operations.export_plan()
+	assert_int(snapshot.plan.pieces.size()).is_equal(5)
+	assert_bool(f.history.undo()).is_true()
+	assert_str(_piece_at(f, Vector2i(3, 1)).piece_id).is_equal("fence_wattle_w")
+	assert_object(_piece_at(f, Vector2i(3, 2))).is_null()
+	assert_bool(f.history.redo()).is_true()
+	assert_str(_piece_at(f, Vector2i(3, 1)).piece_id).is_equal("fence_wattle_sw")
+	# a lone cell joins nothing and is refused
+	var lone: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(6, 4)])
+	assert_bool(lone.ok).is_false()

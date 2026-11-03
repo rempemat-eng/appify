@@ -113,3 +113,33 @@ func _reachable_count(cells: Array[Vector2i]) -> int:
 				seen[adjacent] = true
 				pending.append(adjacent)
 	return seen.size()
+
+func test_palette_groups_and_search_every_word() -> void:
+	var fence := {"placement": {"role": "boundary", "purpose": "contain", "boundary": {"style": "wattle", "joins": ["e", "w"]}}}
+	var cow := {"placement": {"role": "stock", "purpose": "live"}}
+	assert_str(Tools.piece_category("fence_wattle_ew", fence)).is_equal("fences")
+	assert_str(Tools.piece_category("farm_cow", cow)).is_equal("farm")
+	assert_str(Tools.piece_category("commons_pump", {})).is_equal("commons")
+	assert_str(Tools.piece_category("waterfall_2", {})).is_equal("water")
+	assert_str(Tools.piece_category("woodland_oak", {})).is_equal("woodland")
+	assert_str(Tools.piece_category("crossroads_well", {})).is_equal("village")
+	assert_bool(Tools.palette_matches("farm_cow", "Cow", cow, "", "all")).is_true()
+	assert_bool(Tools.palette_matches("farm_cow", "Cow", cow, "STOCK cow", "farm")).is_true()
+	assert_bool(Tools.palette_matches("farm_cow", "Cow", cow, "cow pig", "")).is_false()
+	assert_bool(Tools.palette_matches("farm_cow", "Cow", cow, "cow", "fences")).is_false()
+
+func test_fence_cells_join_their_neighbours_and_a_gates_ends() -> void:
+	assert_that(Tools.fence_cell(Tools.fence_foot(Vector2i(3, 5)))).is_equal(Vector2i(3, 5))
+	assert_that(Tools.fence_foot(Vector2i(3, 5))).is_equal(Vector2(84, 144))
+	# an L: an end, a corner, an end
+	var l := Tools.fence_pieces("wattle", [Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1)])
+	assert_str(l[Vector2i(0, 0)]).is_equal("fence_wattle_e")
+	assert_str(l[Vector2i(1, 0)]).is_equal("fence_wattle_sw")
+	assert_str(l[Vector2i(1, 1)]).is_equal("fence_wattle_n")
+	# a gate along x centred on (4, 0): the run's cell west of it joins its west end, and the
+	# cell north of the gate's end does not join it
+	var fixed := Tools.gate_ends(Vector2i(4, 0), ["e", "w"])
+	var g := Tools.fence_pieces("rail", [Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, -1)] + fixed.keys(), fixed)
+	assert_str(g[Vector2i(2, 0)]).is_equal("fence_rail_ew")
+	assert_str(g[Vector2i(3, -1)]).is_equal("")
+	assert_bool(g.has(Vector2i(3, 0))).is_false()

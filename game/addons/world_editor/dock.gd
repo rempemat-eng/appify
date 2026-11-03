@@ -18,6 +18,9 @@ var route_select: OptionButton
 var facing_select: OptionButton
 var piece_variant_select: OptionButton
 var stage_select: OptionButton
+var search: LineEdit
+var category_select: OptionButton
+var _catalog_pieces: Array = []
 var zone_label: Label
 var approval_label: Label
 var validate_button: Button
@@ -94,7 +97,20 @@ func _ready() -> void:
 	variants.item_selected.connect(_surface_selected)
 	_content.add_child(variants)
 
-	_content.add_child(_label("Pieces: place the foot on the soft grid"))
+	_content.add_child(_label("Pieces: place the foot on the soft grid; drag a fence cell to lay a run"))
+	search = LineEdit.new()
+	search.name = "PieceSearch"
+	search.placeholder_text = "Search pieces (name, id, role, purpose)"
+	search.clear_button_enabled = true
+	search.text_changed.connect(func(_text: String) -> void: _filter_changed())
+	_content.add_child(search)
+	category_select = OptionButton.new()
+	category_select.name = "PieceCategory"
+	for category in Tools.CATEGORIES:
+		category_select.add_item(_text(category).capitalize())
+		category_select.set_item_metadata(category_select.item_count - 1, category)
+	category_select.item_selected.connect(func(_index: int) -> void: _filter_changed())
+	_content.add_child(_row("Category", category_select))
 	pieces = _list("Pieces", 240, Vector2i(40, 40))
 	pieces.item_selected.connect(_piece_selected)
 	pieces.gui_input.connect(func(event: InputEvent) -> void: _palette_hover(event, pieces, "piece"))
@@ -241,16 +257,8 @@ func refresh_palette() -> void:
 		var index := mats.add_item(_entry_label(entry), _material_swatch(entry))
 		mats.set_item_metadata(index, id)
 		mats.set_item_tooltip(index, _entry_label(entry))
-	for entry in result.get("pieces", []):
-		if not (entry is Dictionary) or not _allowed(entry):
-			continue
-		var id := _text(entry.get("id", ""))
-		if id == "":
-			continue
-		_pieces[id] = entry
-		var index := pieces.add_item(_entry_label(entry), _piece_swatch(entry))
-		pieces.set_item_metadata(index, id)
-		pieces.set_item_tooltip(index, _entry_label(entry))
+	_catalog_pieces = result.get("pieces", [])
+	var hidden := _fill_pieces()
 	_fill_surface_variants()
 	var restored := false
 	if previous.begins_with("material:"):
@@ -269,11 +277,44 @@ func refresh_palette() -> void:
 	if mats.item_count == 0 and pieces.item_count == 0:
 		say("No eligible pieces in this zone. Every current piece still awaits approval; use an explicit lab to review candidates.")
 	else:
-		say("%d terrain materials; %d pieces. %s" % [mats.item_count, pieces.item_count, "Lab review only." if _last_lab else "Approved library only."])
+		say("%d terrain materials; %d pieces%s. %s" % [mats.item_count, pieces.item_count, " (%d hidden by the search)" % hidden if hidden > 0 else "",
+			"Lab review only." if _last_lab else "Approved library only."])
 	_building = false
 
 func _fill() -> void:
 	refresh_palette()
+
+## The pieces list from the last catalog, through the search and the category (no library reload).
+func _fill_pieces() -> int:
+	pieces.clear()
+	_pieces.clear()
+	var query := search.text if search != null else ""
+	var category := _text(category_select.get_selected_metadata()) if category_select != null and category_select.selected >= 0 else "all"
+	var hidden := 0
+	for entry in _catalog_pieces:
+		if not (entry is Dictionary) or not _allowed(entry):
+			continue
+		var id := _text(entry.get("id", ""))
+		if id == "":
+			continue
+		var raw: Variant = entry.get("definition", {})
+		if not Tools.palette_matches(id, _text(entry.get("name", id)), raw if raw is Dictionary else {}, query, category):
+			hidden += 1
+			continue
+		_pieces[id] = entry
+		var index := pieces.add_item(_entry_label(entry), _piece_swatch(entry))
+		pieces.set_item_metadata(index, id)
+		pieces.set_item_tooltip(index, _entry_label(entry))
+	return hidden
+
+func _filter_changed() -> void:
+	if pieces == null or _building:
+		return
+	var hidden := _fill_pieces()
+	var current := _text(plugin.get("brush")) if is_instance_valid(plugin) else ""
+	if current.begins_with("piece:"):
+		_select_list(pieces, current.substr(6))
+	say("%d pieces shown%s." % [pieces.item_count, ", %d hidden by the search" % hidden if hidden > 0 else ""])
 
 func _entry_label(entry: Dictionary) -> String:
 	var approval: Variant = entry.get("approval", "")
@@ -450,7 +491,10 @@ func _piece_selected(index: int) -> void:
 	var id := _text(pieces.get_item_metadata(index))
 	plugin.set("brush", "piece:" + id)
 	show_piece(id)
-	say("Piece: %s. Move over the zone to preview placement." % id)
+	if plugin.has_method("fence_style") and _text(plugin.call("fence_style", id)) != "":
+		say("Fence: %s. Drag along the run; each cell's piece is chosen by its neighbours, and the run joins the fence it meets." % id)
+	else:
+		say("Piece: %s. Move over the zone to preview placement." % id)
 	_refresh_overlay()
 
 func _refresh_overlay() -> void:
@@ -587,7 +631,7 @@ func _message(result: Variant, fallback: String) -> String:
 	var lines: PackedStringArray = []
 	for diagnostic in result.get("diagnostics", []):
 		if diagnostic is Dictionary:
-			var rule := _text(diagnostic.get("rule", diagnostic.get("code", "")))
+			var rule := _text(diagnostic.get("rule", diagnostic.get("code", diagnostic.get("check", ""))))
 			var detail := _text(diagnostic.get("message", ""))
 			if detail != "":
 				lines.append((rule + ": " if rule != "" else "") + detail)

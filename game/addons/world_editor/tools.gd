@@ -5,6 +5,10 @@ extends RefCounted
 
 const FACINGS := ["s", "w", "n", "e"]
 const ROUTE_SIMPLIFY_DISTANCE := 0.75
+## Palette groups, by what a piece is for in a place (round 3, 3 Nov).
+const CATEGORIES := ["all", "fences", "farm", "commons", "village", "woodland", "water"]
+const SIDES := {"n": Vector2i(0, -1), "e": Vector2i(1, 0), "s": Vector2i(0, 1), "w": Vector2i(-1, 0)}
+const OPPOSITE := {"n": "s", "e": "w", "s": "n", "w": "e"}
 
 static func snap(local: Vector2, how: String, cell: int = 24) -> Vector2:
 	if cell <= 0:
@@ -146,3 +150,73 @@ static func _distance_squared(point: Vector2, a: Vector2, b: Vector2) -> float:
 
 static func _before(a: Vector2i, b: Vector2i) -> bool:
 	return a.x < b.x or (a.x == b.x and a.y < b.y)
+
+## The palette group of a piece: fences (anything with a placement.boundary), the farmyard, the
+## village commons, the rest of the village, the woods and the water's pieces.
+static func piece_category(id: String, definition: Dictionary) -> String:
+	var placement: Variant = definition.get("placement", {})
+	if (placement is Dictionary and placement.has("boundary")) or id.begins_with("fence_"):
+		return "fences"
+	if id.begins_with("farm_") or id.begins_with("garden_"):
+		return "farm"
+	if id.begins_with("commons_"):
+		return "commons"
+	if id.begins_with("waterfall") or id.begins_with("footbridge") or id.begins_with("stepping_stones"):
+		return "water"
+	if id.begins_with("woodland_") or id.begins_with("log_steps"):
+		return "woodland"
+	return "village"
+
+## Whether a palette entry shows under a category and a search: every word of the query must
+## appear in its id, name, role or purpose.
+static func palette_matches(id: String, name: String, definition: Dictionary, query: String, category: String) -> bool:
+	if category != "" and category != "all" and piece_category(id, definition) != category:
+		return false
+	var words := query.strip_edges().to_lower().split(" ", false)
+	if words.is_empty():
+		return true
+	var placement: Variant = definition.get("placement", {})
+	var role := String(placement.get("role", "")) if placement is Dictionary else ""
+	var purpose := String(placement.get("purpose", "")) if placement is Dictionary else ""
+	var haystack := " ".join([id, name, role, purpose]).to_lower()
+	for word in words:
+		if not haystack.contains(word):
+			return false
+	return true
+
+## The soft-grid cell a fence piece stands in: its foot is the middle of the cell's south line.
+static func fence_cell(foot: Vector2, cell: int = 24) -> Vector2i:
+	return Vector2i(floori(foot.x / cell), roundi(foot.y / cell) - 1)
+
+## A fence cell piece's foot.
+static func fence_foot(at: Vector2i, cell: int = 24) -> Vector2:
+	return Vector2(at.x * cell + cell / 2.0, (at.y + 1) * cell)
+
+## The cells a gate spans (three along its run) and the sides its ends join, as {cell: [sides]}.
+static func gate_ends(foot_cell: Vector2i, joins: Array) -> Dictionary:
+	if "e" in joins or "w" in joins:
+		return {foot_cell + Vector2i(-1, 0): ["w"], foot_cell: [], foot_cell + Vector2i(1, 0): ["e"]}
+	return {foot_cell + Vector2i(0, -1): ["n"], foot_cell: [], foot_cell + Vector2i(0, 1): ["s"]}
+
+## The fence piece every cell of a run needs, chosen by its neighbours: each cell joins every side
+## where another fence cell lies (a gate's cell only on the side its end opens). `fixed` holds the
+## cells pieces already decide (gates): {cell: [sides it joins]}. A cell with no neighbour gets "".
+static func fence_pieces(style: String, cells: Array, fixed: Dictionary = {}) -> Dictionary:
+	var taken := {}
+	for c in cells:
+		taken[Vector2i(c)] = true
+	var out := {}
+	for c in cells:
+		var at := Vector2i(c)
+		if fixed.has(at):
+			continue
+		var joins := ""
+		for side in ["n", "e", "s", "w"]:
+			var next: Vector2i = at + SIDES[side]
+			if fixed.has(next):
+				if OPPOSITE[side] in fixed[next]:
+					joins += side
+			elif taken.has(next):
+				joins += side
+		out[at] = "fence_%s_%s" % [style, joins] if joins != "" else ""
+	return out
