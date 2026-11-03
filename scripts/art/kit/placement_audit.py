@@ -156,7 +156,7 @@ def _farm_rows():
     """The modular fences and the farmyard (scripts/art/kit/fences.py, farm.py): their purpose,
     role, requires and forbids are written by those painters (None keeps them)."""
     rows = {}
-    for style, purpose in (('wattle', 'contain'), ('picket', 'mark')):
+    for style, purpose in (('wattle', 'contain'), ('picket', 'mark'), ('rail', 'contain')):
         for mask in range(1, 16):
             jn = ''.join(c for i, c in enumerate('nesw') if mask & (1 << i))
             rows['fence_%s_%s' % (style, jn)] = (purpose, 'boundary', None, None, 'fine',
@@ -174,6 +174,22 @@ def _farm_rows():
         'farm_coop': ('live', 'coop', None, None, 'fine', 'In the run\'s back corner against its fence; the hens about it.'),
         'farm_shelter': ('live', 'shelter', None, None, 'fine', 'Its back to the fold\'s hurdles, its open side away from the weather.'),
         'garden_flower_border': ('care', 'planter', None, None, 'fine', 'In a front garden, beside the door path.'),
+        'fence_rail_stile_ew': ('contain', 'stile', None, None, 'fine', 'Where a footpath crosses a paddock\'s rails: people over, stock in.'),
+        'fence_rail_stile_ns': ('contain', 'stile', None, None, 'fine', 'As the stile along x.'),
+        'farm_cow': ('live', 'stock', None, None, 'fine', 'In a paddock of 10 cells or more with water and a field shelter.'),
+        'farm_calf': ('live', 'stock', None, None, 'fine', 'As the cow, near her.'),
+        'farm_horse': ('live', 'stock', None, None, 'fine', 'In a paddock of 10 cells or more with water and a field shelter.'),
+        'farm_pig': ('live', 'stock', None, None, 'fine', 'In the run before its sty, with a wallow and a trough.'),
+        'farm_goat': ('live', 'stock', None, None, 'fine', 'In a pen of 4 to 8 cells with a shelter and water.'),
+        'farm_goat_b': ('live', 'stock', None, None, 'fine', 'As the goat.'),
+        'farm_sty': ('live', 'sty', None, None, 'fine', 'The north wall of its pigs\' run, its door and trough facing into it.'),
+        'farm_wallow': ('live', 'wallow', None, None, 'fine', 'In the pigs\' run, off the trodden way.'),
+        'farm_churns': ('store', 'churns', None, None, 'fine', 'By a yard or paddock gate, where the cart stops.'),
+        'farm_water_butt': ('water', 'water_butt', None, None, 'fine', 'Against a building, under its downpipe.'),
+        'farm_wheelbarrow': ('work', 'barrow', None, None, 'fine', 'By the muck heap or the beds it serves.'),
+        'farm_scarecrow': ('grow', 'scarecrow', None, None, 'fine', 'In the crops, never on the path.'),
+        'farm_feed_sacks': ('store', 'sacks', None, None, 'fine', 'By the stock they feed, at a shelter or coop.'),
+        'farm_muck_heap': ('store', 'muck_heap', None, None, 'fine', 'Beside the pens it is mucked out of, away from the house door.'),
     })
     return rows
 
@@ -182,6 +198,126 @@ TABLE.update(_farm_rows())
 
 PURPOSES = ('contain', 'exclude', 'mark', 'rest', 'light', 'store', 'feed', 'cross', 'guide', 'work',
             'live', 'grow', 'climb', 'flow', 'care', 'water', 'aftermath')
+
+
+# ------------------------------------------------------------------------------------------------
+# the placement logic relations cannot say (round 3, 3 Nov): what a piece needs near it, what it
+# faces, where it never stands and where a signpost's arms point
+# ------------------------------------------------------------------------------------------------
+DIRS = {'n': (0, -1), 'e': (1, 0), 's': (0, 1), 'w': (-1, 0)}
+
+
+def _plan_logic_context(plan, lib, mats):
+    from scripts.art.kit import relations as RL
+    ctx = RL._context(plan, mats)
+    if ctx is None:
+        return None
+    grid, tiers, width, height = ctx
+    route = {c for c, m in grid.items() if RL._matches_material('route', m, mats)}
+    water = {c for c, m in grid.items() if RL._matches_material('water', m, mats)}
+    placed = []
+    for i, e in enumerate(plan.get('pieces', [])):
+        piece = lib.get(e.get('piece'))
+        if piece is None or RL._position(e, plan) is None:
+            continue
+        placed.append((i, e, piece, RL._occupied(e, piece, plan), RL._position(e, plan)))
+    return RL, grid, tiers, route, water, placed
+
+
+def _dist(a, b):
+    return min((max(abs(x - X), abs(y - Y)) for x, y in a for X, Y in b), default=10 ** 6)
+
+
+def check_plan(plan, lib=None, mats=None) -> list:
+    """rules.needs, rules.faces, rules.avoid and rules.points on a kit plan (see the schema's
+    placement.needs, faces, avoid and points)."""
+    from scripts.art.kit import relations as RL
+    lib = lib if lib is not None else RL.default_library()
+    mats = mats if mats is not None else RL.default_materials()
+    c = _plan_logic_context(plan, lib, mats)
+    if c is None:
+        return []
+    RL, grid, tiers, route, water, placed = c
+    out = []
+
+    def f(check, eid, msg, at):
+        out.append({'check': check, 'message': '%s: %s' % (eid, msg), 'at': at, 'severity': 'fault'})
+    providers = {}
+    for i, e, piece, occ, pos in placed:
+        for tag in (piece.get('placement') or {}).get('provides', []):
+            providers.setdefault(tag, []).append((i, e, piece, occ, pos))
+    trees = [pos for i, e, piece, occ, pos in placed if (piece.get('placement') or {}).get('role') == 'tree']
+    for i, e, piece, occ, pos in placed:
+        pl = piece.get('placement') or {}
+        eid = str(e.get('id', e.get('piece')))
+        at = e.get('at')
+        for need in pl.get('needs', []):
+            ok = False
+            for j, e2, p2, occ2, pos2 in providers.get(need['what'], []):
+                if j == i or _dist(occ, occ2) > need['cells']:
+                    continue
+                if need.get('side') == 'yard' and pos[1] > pos2[1] + 1e-6:
+                    continue                                # in front of the house: not its yard
+                ok = True
+                break
+            if not ok:
+                f('rules.needs', eid, 'needs a %s within %g cells%s%s' % (need['what'], need['cells'], ' (in its yard)' if need.get('side') == 'yard' else '',
+                                                                       ': ' + need['note'] if need.get('note') else ''), at)
+        if pl.get('faces'):
+            fc = pl['faces']
+            facing = str(e.get('facing', 's')).lower()
+            dx, dy = DIRS.get(facing, (0, 1))
+            targets = set()
+            for tag in fc['what']:
+                if tag == 'water':
+                    targets |= water
+                elif tag == 'lower':
+                    targets |= {cc for cc, t in tiers.items() if any(tiers.get(o, t) > t for o in occ)}
+                for j, e2, p2, occ2, pos2 in providers.get(tag, []):
+                    if j != i:
+                        targets |= occ2
+            seen = False
+            for x, y in targets:
+                rx, ry = x + 0.5 - pos[0], y + 0.5 - pos[1]
+                dot, cross = rx * dx + ry * dy, rx * dy - ry * dx
+                if 0 < dot <= fc['cells'] + 0.5 and abs(cross) <= dot + 1e-7:
+                    seen = True
+                    break
+            if not seen:
+                f('rules.faces', eid, 'faces %s and sees no %s within %g cells%s' % (facing, ' or '.join(fc['what']), fc['cells'],
+                                                                                  ': ' + fc['note'] if fc.get('note') else ''), at)
+        if 'wild_woods' in pl.get('avoid', []):
+            near_trees = sum(1 for t in trees if max(abs(t[0] - pos[0]), abs(t[1] - pos[1])) <= 4)
+            homes = [occ2 for j, e2, p2, occ2, pos2 in providers.get('home', [])]
+            if near_trees >= 3 and not any(_dist(occ, o) <= 8 for o in homes):
+                f('rules.avoid', eid, 'stands in wild woods (%d trees within 4 cells, no home within 8)' % near_trees, at)
+        if pl.get('points'):
+            fx, fy = int(pos[0]), int(pos[1] - 1e-7)
+            best = None
+            for cy in range(fy - 1, fy + 2):
+                for cx in range(fx - 1, fx + 2):
+                    if (cx, cy) not in route:
+                        continue
+                    dirs = {d for d, (ux, uy) in DIRS.items() if (cx + ux, cy + uy) in route}
+                    if len(dirs) >= 3 and (best is None or len(dirs) > len(best[1])):
+                        best = ((cx, cy), dirs)
+            if best is None:
+                f('rules.points', eid, 'a signpost stands at no junction (a route cell with three or more ways out beside it)', at)
+            elif set(pl['points']) != best[1]:
+                f('rules.points', eid, 'its arms point %s but the routes leave the junction %s' % (''.join(d for d in 'nesw' if d in pl['points']),
+                                                                                                   ''.join(d for d in 'nesw' if d in best[1])), at)
+    return out
+
+
+def check_zones() -> list:
+    """check_plan over every kit zone: (zone, finding)."""
+    out = []
+    zdir = os.path.join(ROOT, 'game', 'kit', 'zones')
+    for fn in sorted(os.listdir(zdir)):
+        if fn.endswith('.json'):
+            plan = json.load(open(os.path.join(zdir, fn)))
+            out += [(fn[:-5], x) for x in check_plan(plan)]
+    return out
 
 
 def _files():
@@ -291,7 +427,12 @@ def main(argv=None) -> int:
         if stale:
             print('placement audit: pieces differ from the table: %s (run python3 -m scripts.art.kit.placement_audit)' % ', '.join(stale))
             return 1
-        print('placement audit: %d pieces, each with a purpose' % len(files))
+        zf = check_zones()
+        if zf:
+            for z, x in zf:
+                print('placement audit: %s %s %s' % (z, x['check'], x['message']))
+            return 1
+        print('placement audit: %d pieces, each with a purpose; kit zones meet needs, faces, avoid and points' % len(files))
         return 0
     counts = write_doc()
     print('placement audit: %d pieces; %s' % (len(files), counts))

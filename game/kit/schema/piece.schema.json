@@ -674,7 +674,7 @@
             "span_cells": {
               "type": "integer",
               "minimum": 1,
-              "description": "Cells along the run the piece covers (a gate 2)."
+              "description": "Cells along the run the piece covers (a gate 3)."
             },
             "encloses": {
               "type": "array",
@@ -682,6 +682,10 @@
                 "type": "string"
               },
               "description": "What this style may hold (scripts/art/kit/enclosures.py ENCLOSE keys)."
+            },
+            "stile": {
+              "type": "boolean",
+              "description": "A stile: people climb over, stock stay in (it encloses as a fence cell; it stands on a route)."
             }
           }
         },
@@ -692,21 +696,113 @@
             "holds",
             "as"
           ],
-          "description": "What a piece is to an enclosure: its contents (hens in a run, crops in a garden) or what those contents need beside them (a coop, a trough). scripts/art/kit/enclosures.py checks each closed fence loop against it.",
+          "description": "What a piece is to an enclosure: its contents (hens in a run, crops in a garden) or what those contents need beside them (a coop, a trough, a field shelter, a sty, a wallow). scripts/art/kit/enclosures.py checks each closed fence loop against it.",
           "properties": {
             "holds": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "description": "Contents kinds (enclosures.py ENCLOSE keys: chickens, sheep, horses, cattle, goats, pigs, crops, flowers)."
             },
             "as": {
               "enum": [
                 "contents",
                 "needs"
               ]
+            },
+            "serves": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "For \"needs\": the needs it meets (ENCLOSE values: coop, trough, shelter, sty, wallow). Defaults to the piece's placement.role; a sty with a trough in its wall serves sty and trough."
             }
           }
+        },
+        "provides": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "What this piece offers the pieces round it: hearth (a chimney or forge), home, view, feature, water (placement_audit.check_plan reads it)."
+        },
+        "needs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "what",
+              "cells"
+            ],
+            "properties": {
+              "what": {
+                "type": "string",
+                "description": "A tag some piece provides (hearth, home, ...)."
+              },
+              "cells": {
+                "type": "number",
+                "minimum": 0
+              },
+              "side": {
+                "enum": [
+                  "any",
+                  "yard"
+                ],
+                "description": "yard: not in front of the provider (its foot not south of the provider's front)."
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Pieces providing a tag within so many cells (a woodpile needs a hearth within 2)."
+        },
+        "faces": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "what",
+            "cells"
+          ],
+          "properties": {
+            "what": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cells": {
+              "type": "number",
+              "minimum": 1
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "description": "What the piece must look at along its facing within so many cells: provided tags, or water and lower ground (a bench faces a view or a feature)."
+        },
+        "avoid": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "wild_woods"
+            ]
+          },
+          "description": "Settings the piece never stands in: wild_woods (three or more trees within 4 cells and no home within 8)."
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "n",
+              "e",
+              "s",
+              "w"
+            ]
+          },
+          "description": "A signpost's arms: each points along a route leaving the junction beside it, one arm per route."
         }
       }
     },
@@ -817,6 +913,13 @@
                 "minItems": 4,
                 "maxItems": 4,
                 "description": "Where the frames lie on the piece's picture: x, y, w, h texels (a fall's sheet and plume)."
+              },
+              "phase": {
+                "enum": [
+                  "piece",
+                  "placement"
+                ],
+                "description": "piece: the strip's own start beat; placement: the runtime should offset the start frame by the placed node's id (not implemented by world/loop_fx.gd yet)."
               }
             }
           }

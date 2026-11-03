@@ -728,7 +728,7 @@ class FencesAndFarm(unittest.TestCase):
         self.assertEqual(farm.check(), 0)
 
     def test_every_fence_cell_and_gate_exists_in_both_styles(self):
-        for style in ('wattle', 'picket'):
+        for style in ('wattle', 'picket', 'rail'):
             for mask in range(1, 16):
                 jn = ''.join(c for i, c in enumerate('nesw') if mask & (1 << i))
                 b = self.lib['fence_%s_%s' % (style, jn)]['placement']['boundary']
@@ -742,7 +742,8 @@ class FencesAndFarm(unittest.TestCase):
 
     def test_farm_pieces_carry_purpose_collision_and_enclosure(self):
         for pid in ('farm_hen_white', 'farm_hen_brown', 'farm_hen_speckled', 'farm_sheep', 'farm_sheep_graze', 'farm_sheep_lie',
-                    'farm_coop', 'farm_shelter', 'garden_flower_border', 'crossroads_trough', 'crossroads_beds_dug'):
+                    'farm_coop', 'farm_shelter', 'garden_flower_border', 'crossroads_trough', 'crossroads_beds_dug',
+                    'farm_cow', 'farm_calf', 'farm_horse', 'farm_pig', 'farm_goat', 'farm_goat_b', 'farm_sty', 'farm_wallow'):
             p = self.lib[pid]
             self.assertIn('purpose', p['placement'], pid)
             self.assertIn('enclosure', p['placement'], pid)
@@ -773,6 +774,46 @@ class FencesAndFarm(unittest.TestCase):
         self.assertTrue(any('holds nothing' in m for m in without('sheep_1', 'sheep_2', 'sheep_3', 'trough', 'hay', 'shelter')))
         self.assertTrue(any('meets no run' in m for m in without('fold_gate')))
 
+    def test_paddocks_sties_and_goat_pens_need_what_their_stock_needs(self):
+        # round 3: a paddock needs water and a field shelter, a sty's run a wallow and a trough
+        # (the sty's own, in its wall), a goat pen a shelter and water
+        import copy
+
+        def without(*ids):
+            q = copy.deepcopy(self.plan)
+            q['pieces'] = [x for x in q['pieces'] if x['id'] not in ids]
+            return [f['message'] for f in self.EN.check_zone(q, self.lib)]
+        self.assertTrue(any('holds cattle but has no shelter' in m for m in without('pd_shelter')))
+        self.assertTrue(any('holds horses but has no trough' in m for m in without('pd_trough')))
+        self.assertTrue(any('holds pigs but has no wallow' in m for m in without('wallow')))
+        # the sty is the run's north side: without it the run's end posts stand free
+        self.assertTrue(any('sty_66_8' in m and 'standing free' in m for m in without('sty')))
+        self.assertTrue(any('holds goats but has no shelter' in m for m in without('gt_shelter')))
+
+    def test_a_stile_keeps_stock_in_and_stands_on_its_footpath(self):
+        import copy
+        from scripts.art.kit import relations as RL
+        st = self.lib['fence_rail_stile_ns']
+        self.assertTrue(st['placement']['boundary']['stile'])
+        self.assertFalse(st['placement']['boundary']['gate'])
+        self.assertFalse(st['gameplay']['blocks_move'])
+        q = copy.deepcopy(self.plan)
+        q['pieces'] = [x for x in q['pieces'] if x['id'] != 'paddock_50_7']
+        self.assertTrue(any('meets no run' in f['message'] for f in self.EN.check_zone(q, self.lib)))
+        q = copy.deepcopy(self.plan)
+        q['rows'][7] = q['rows'][7][:50] + '.' + q['rows'][7][51:]
+        self.assertTrue(any(f['message'].startswith('paddock_50_7: requires on route') for f in RL.check_zone(q)))
+
+    def test_rail_fences_keep_cattle_and_hurdles_do_not(self):
+        import copy
+        q = copy.deepcopy(self.plan)
+        for pc in q['pieces']:
+            if pc['id'].startswith('paddock_') and pc['piece'].startswith('fence_rail_') and 'stile' not in pc['piece']:
+                pc['piece'] = pc['piece'].replace('fence_rail_', 'fence_wattle_')
+                pc.pop('variant', None)
+        msgs = [f['message'] for f in self.EN.check_zone(q, self.lib)]
+        self.assertTrue(any('holds cattle' in m and 'wattle fence' in m for m in msgs), msgs)
+
     def test_a_mixed_run_is_judged_stretch_by_stretch(self):
         # the Codex lead's review of #430: a sheep fold of wattle with one side in picket must
         # fault, though wattle alone would keep the sheep
@@ -797,7 +838,8 @@ class FencesAndFarm(unittest.TestCase):
 
     def test_the_loops_scenes_play_the_strip_over_or_instead_of_the_still(self):
         idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
-        for pid, node in (('farm_hen_white', 'Idle'), ('farm_sheep_graze', 'Idle'), ('waterfall_3_tall', 'Flow'), ('waterfall_1', 'Flow')):
+        for pid, node in (('farm_hen_white', 'Idle'), ('farm_sheep_graze', 'Idle'), ('farm_cow', 'Idle'), ('farm_pig', 'Idle'),
+                          ('waterfall_3_tall', 'Flow'), ('waterfall_1', 'Flow')):
             self.assertIn('anim', idx[pid], pid)
             with open(os.path.join(S.ROOT, 'game', 'kit', 'props', pid + '.tscn')) as f:
                 text = f.read()

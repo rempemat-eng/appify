@@ -94,7 +94,9 @@
   "enclosure": {
    "holds": [
     "sheep",
-    "horses"
+    "horses",
+    "cattle",
+    "goats"
    ],
    "as": "needs"
   }

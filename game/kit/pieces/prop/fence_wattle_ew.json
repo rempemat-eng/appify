@@ -92,7 +92,9 @@
    "encloses": [
     "sheep",
     "chickens",
-    "crops"
+    "crops",
+    "goats",
+    "pigs"
    ]
   }
  },

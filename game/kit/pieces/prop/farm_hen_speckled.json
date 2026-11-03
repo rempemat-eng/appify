@@ -111,7 +111,8 @@
      31
     ],
     "reduced_motion": "hold:0",
-    "on_screen_only": true
+    "on_screen_only": true,
+    "phase": "placement"
    }
   ]
  },

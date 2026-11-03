@@ -13,7 +13,7 @@ Verdicts: **fine** (fits), **fixed** (its data or a placement was corrected in t
 (the drawing does not fit its purpose: the art queue), **missing** (cannot be placed sensibly until a
 companion piece exists).
 
-Totals: 102 fine, 28 fixed.
+Totals: 135 fine, 28 fixed.
 
 ## Placements fixed in the kit zones
 
@@ -82,14 +82,28 @@ Totals: 102 fine, 28 fixed.
 | `crossroads_well` | water | centrepiece | near house 8 | on route; not_near water | **fixed** | Central to the square. Props sweep (3 Nov): requires homes within 8 cells, forbids a river within 6. |
 | `crossroads_well_choked` | water | centrepiece | - | on route | **fine** | The storm-broken well (story stage). |
 | `crossroads_woodpile` | store | store | within house 2 | on route | **fine** | Against a gable wall or under the eaves; never away from a hearth. |
+| `farm_calf` | live | stock | within trough 14; within boundary 5 | on route; on water | **fine** | As the cow, near her. |
+| `farm_churns` | store | churns | near gate 3 | on route; on water | **fine** | By a yard or paddock gate, where the cart stops. |
 | `farm_coop` | live | coop | within boundary 2; near stock 4 | on route; on water | **fine** | In the run's back corner against its fence; the hens about it. |
+| `farm_cow` | live | stock | within trough 14; within boundary 8 | on route; on water | **fine** | In a paddock of 10 cells or more with water and a field shelter. |
+| `farm_feed_sacks` | store | sacks | near stock 8 | on route; on water | **fine** | By the stock they feed, at a shelter or coop. |
+| `farm_goat` | live | stock | within shelter 8; within boundary 5 | on route; on water | **fine** | In a pen of 4 to 8 cells with a shelter and water. |
+| `farm_goat_b` | live | stock | within shelter 8; within boundary 5 | on route; on water | **fine** | As the goat. |
 | `farm_hen_brown` | live | stock | within coop 4; within boundary 3 | on route; on water | **fine** | As the white hen. |
 | `farm_hen_speckled` | live | stock | within coop 4; within boundary 3 | on route; on water | **fine** | As the white hen. |
 | `farm_hen_white` | live | stock | within coop 4; within boundary 3 | on route; on water | **fine** | In a chicken run of 3 to 4 cells, near its coop. |
+| `farm_horse` | live | stock | within trough 14; within boundary 8 | on route; on water | **fine** | In a paddock of 10 cells or more with water and a field shelter. |
+| `farm_muck_heap` | store | muck_heap | near stock 10 | on route; on water | **fine** | Beside the pens it is mucked out of, away from the house door. |
+| `farm_pig` | live | stock | within wallow 6; within boundary 5 | on route; on water | **fine** | In the run before its sty, with a wallow and a trough. |
+| `farm_scarecrow` | grow | scarecrow | within garden 3 | on route; on water | **fine** | In the crops, never on the path. |
 | `farm_sheep` | live | stock | within trough 9; within boundary 5 | on route; on water | **fine** | In a fold of 6 to 10 cells with its trough and shelter. |
 | `farm_sheep_graze` | live | stock | within trough 9; within boundary 5 | on route; on water | **fine** | As the sheep. |
 | `farm_sheep_lie` | live | stock | within trough 9; within boundary 5 | on route; on water | **fine** | As the sheep. |
 | `farm_shelter` | live | shelter | within boundary 2; near stock 8 | on route; on water | **fine** | Its back to the fold's hurdles, its open side away from the weather. |
+| `farm_sty` | live | sty | near stock 6 | on route; on water | **fine** | The north wall of its pigs' run, its door and trough facing into it. |
+| `farm_wallow` | live | wallow | within boundary 5 | on route; on water | **fine** | In the pigs' run, off the trodden way. |
+| `farm_water_butt` | water | water_butt | adjacent house 1 | on route; on water | **fine** | Against a building, under its downpipe. |
+| `farm_wheelbarrow` | work | barrow | near muck_heap 4 | on route; on water | **fine** | By the muck heap or the beds it serves. |
 | `fence_picket_e` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms e): closes a loop with its neighbours (enclosures.py). |
 | `fence_picket_es` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms es): closes a loop with its neighbours (enclosures.py). |
 | `fence_picket_esw` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms esw): closes a loop with its neighbours (enclosures.py). |
@@ -107,6 +121,25 @@ Totals: 102 fine, 28 fixed.
 | `fence_picket_s` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms s): closes a loop with its neighbours (enclosures.py). |
 | `fence_picket_sw` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms sw): closes a loop with its neighbours (enclosures.py). |
 | `fence_picket_w` | mark | boundary | - | on route; on water | **fine** | A picket fence cell (arms w): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_e` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms e): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_es` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms es): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_esw` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms esw): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_ew` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms ew): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_gate_ew` | contain | gate | on route | - | **fine** | A rail gate three cells wide, on the path its owner walks (requires on route). |
+| `fence_rail_gate_ns` | contain | gate | on route | - | **fine** | A rail gate three cells wide, on the path its owner walks (requires on route). |
+| `fence_rail_n` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms n): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_ne` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms ne): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_nes` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms nes): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_nesw` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms nesw): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_new` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms new): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_ns` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms ns): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_nsw` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms nsw): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_nw` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms nw): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_s` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms s): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_stile_ew` | contain | stile | on route | - | **fine** | Where a footpath crosses a paddock's rails: people over, stock in. |
+| `fence_rail_stile_ns` | contain | stile | on route | - | **fine** | As the stile along x. |
+| `fence_rail_sw` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms sw): closes a loop with its neighbours (enclosures.py). |
+| `fence_rail_w` | contain | boundary | - | on route; on water | **fine** | A rail fence cell (arms w): closes a loop with its neighbours (enclosures.py). |
 | `fence_wattle_e` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms e): closes a loop with its neighbours (enclosures.py). |
 | `fence_wattle_es` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms es): closes a loop with its neighbours (enclosures.py). |
 | `fence_wattle_esw` | contain | boundary | - | on route; on water | **fine** | A wattle fence cell (arms esw): closes a loop with its neighbours (enclosures.py). |

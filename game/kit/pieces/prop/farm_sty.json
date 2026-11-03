@@ -1,0 +1,154 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_sty",
+ "name": "Pigsty",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_sty",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_sty.png",
+   "foot": [
+    52,
+    72
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "The pigs' house, its run fenced before it; a trough in its wall."
+ },
+ "geometry": {
+  "size_px": [
+   104,
+   78
+  ],
+  "size_cells": [
+   5,
+   3
+  ],
+  "z_sort": "foot",
+  "height_px": 72,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -17.0,
+    -11.0,
+    34,
+    11
+   ]
+  },
+  "foot": [
+   52,
+   72
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "live",
+  "role": "sty",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "stock",
+    "cells": 6,
+    "note": "its pigs in the run before it"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "enclosure": {
+   "holds": [
+    "pigs"
+   ],
+   "as": "needs",
+   "serves": [
+    "sty",
+    "trough"
+   ]
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    34,
+    5
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "pigsty (size-guide 4: \"shed, hen house\"; a low stone house, under a man's height at the eave)",
+  "eastward_ref": "17: the barn's stone and slate, its dark door",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_sty",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}

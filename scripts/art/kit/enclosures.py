@@ -9,9 +9,10 @@ pieces' metadata, never pixels:
                        building; a gate lies in a loop
     rules.enclosures   each closed loop holds something (placement.enclosure "contents": hens,
                        sheep, crops, flowers) that the fence's style may keep (boundary.encloses),
-                       with what it needs inside (a coop for hens, a trough for sheep), at a size
-                       that fits (a chicken run 3 to 4 cells a side, a sheep fold 6 to 10, a horse
-                       paddock 10 or more), and has a gate
+                       with what it needs inside (a coop for hens, a trough for sheep, water and a
+                       field shelter in a paddock, a sty, a wallow and a trough for pigs), at a
+                       size that fits (a chicken run 3 to 4 cells a side, a sheep fold 6 to 10, a
+                       paddock 10 or more), and has a gate (a stile lets people over, not stock)
 Where a gate meets its path is relations.py's `requires on route` on the gate pieces.
 
     python3 -m scripts.art.kit.enclosures [zone ...]       report (every kit zone by default)
@@ -30,12 +31,15 @@ from scripts.art.kit.schema import ROOT
 CELL = 24
 HALF = 12
 VEC = {'n': (0, -1), 'e': (1, 0), 's': (0, 1), 'w': (-1, 0)}
-# holds: (contents it shows, what it needs inside, side in cells: min, max); as ground_rules.ENCLOSE
+# holds: what it needs inside, each a piece's placement.role (or one its enclosure.serves names);
+# side in cells: min, max. As ground_rules.ENCLOSE.
 ENCLOSE = {
-    'chickens': ('coop',), 'sheep': ('trough',), 'horses': ('trough',), 'crops': (), 'flowers': (),
+    'chickens': ('coop',), 'sheep': ('trough',), 'horses': ('trough', 'shelter'), 'cattle': ('trough', 'shelter'),
+    'goats': ('trough', 'shelter'), 'pigs': ('sty', 'wallow', 'trough'), 'crops': (), 'flowers': (),
 }
-SIDES = {'chickens': (3, 4), 'sheep': (6, 10), 'horses': (10, 99), 'crops': (2, 99), 'flowers': (1, 99)}
-WALLS = ('house', 'forge', 'shelter')
+SIDES = {'chickens': (3, 4), 'sheep': (6, 10), 'horses': (10, 99), 'cattle': (10, 99), 'goats': (4, 10), 'pigs': (3, 7),
+         'crops': (2, 99), 'flowers': (1, 99)}
+WALLS = ('house', 'forge', 'shelter', 'sty')
 
 
 def library():
@@ -148,12 +152,21 @@ def check_zone(plan, lib=None) -> list:
         box = (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1)
         holds, needs = set(), set()
         for pc in plan.get('pieces', []):
-            enc = (lib.get(pc['piece'], {}).get('placement') or {}).get('enclosure')
+            pl = lib.get(pc['piece'], {}).get('placement') or {}
+            enc = pl.get('enclosure')
             if not enc:
                 continue
             x, y = int(pc['at'][0]), int(pc['at'][1]) - 2
-            if 0 <= y < region.shape[0] and 0 <= x < region.shape[1] and region[y, x]:
-                (holds if enc['as'] == 'contents' else needs).update(enc['holds'])
+            inside = 0 <= y < region.shape[0] and 0 <= x < region.shape[1] and region[y, x]
+            if not inside and pl.get('role') in WALLS:
+                # a sty or a shelter is the pen's wall: it counts if its front faces into the pen
+                inside = bool(region[max(0, y + 3):y + 3 + CELL, max(0, x - CELL):x + CELL].any())
+            if inside:
+                if enc['as'] == 'contents':
+                    holds.update(enc['holds'])
+                else:
+                    for h in enc['holds']:
+                        needs.update((h, r) for r in (enc.get('serves') or [pl.get('role')]))
         at = [box[0], box[1]]
         if not holds:
             fs.append(_f('rules.enclosures', 'the enclosure at %s holds nothing: put in what it is for (animals, crops, '
@@ -176,7 +189,7 @@ def check_zone(plan, lib=None) -> list:
                 fs.append(_f('rules.enclosures', 'the enclosure at %s holds %s, but its %s fence (%s) does not keep them: '
                              'every stretch round a pen must' % (at, h, '/'.join(styles), ', '.join(weak[:4]) + (' ...' if len(weak) > 4 else '')), at))
             for need in ENCLOSE.get(h, ()):
-                if h not in needs and need:
+                if (h, need) not in needs:
                     fs.append(_f('rules.enclosures', 'the enclosure at %s holds %s but has no %s inside' % (at, h, need), at))
             lo, hi = SIDES.get(h, (0, 99))
             for side in ((box[2] - box[0]) / CELL, (box[3] - box[1]) / CELL):

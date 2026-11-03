@@ -1,0 +1,116 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_water_butt",
+ "name": "Water butt",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_water_butt",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_water_butt.png",
+   "foot": [
+    20,
+    52
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Rain from the roof, by a wall."
+ },
+ "geometry": {
+  "size_px": [
+   40,
+   56
+  ],
+  "size_cells": [
+   2,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 52,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -4.0,
+    -4.0,
+    8,
+    4
+   ]
+  },
+  "foot": [
+   20,
+   52
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "water",
+  "role": "water_butt",
+  "requires": [
+   {
+    "rel": "adjacent",
+    "what": "house",
+    "cells": 1,
+    "note": "at a building's downpipe"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    12,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "barrel (size-guide 3)",
+  "eastward_ref": "17 and 12: barrels by the walls",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_water_butt",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}

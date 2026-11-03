@@ -1,0 +1,120 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_churns",
+ "name": "Milk churns",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_churns",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_churns.png",
+   "foot": [
+    30,
+    44
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Churns waiting for the milk cart."
+ },
+ "geometry": {
+  "size_px": [
+   60,
+   48
+  ],
+  "size_cells": [
+   2,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 44,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -8.0,
+    -3.0,
+    16,
+    3
+   ]
+  },
+  "foot": [
+   30,
+   44
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "churns",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "gate",
+    "cells": 3,
+    "note": "set out by the paddock gate or the yard's for the cart"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    16,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "churn (size-guide 3: barrel)",
+  "eastward_ref": "17: tins and buckets by the barn",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_churns",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}

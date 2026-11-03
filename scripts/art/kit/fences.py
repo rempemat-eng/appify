@@ -26,11 +26,16 @@ front of the one north of it, as the boxes were drawn.
 - wattle: hazel rods woven between stakes a half cell apart (in front of one stake, behind the
   next, the next course the other way), a twisted binding rod along the top, the stakes' cut tops
   standing proud and a thicker post at corners, ends and Ts; a hurdle gate on two gate posts;
+- rail: a paddock's post and rail, three split oak rails silvered with weather, lichen on them,
+  mortised into square posts with a sloped cut top at the corners, ends, Ts and every few cells
+  of a straight (the post variant); a five-bar field gate with its diagonal brace on heavier
+  posts, and a stile (a straight cell with two steps people climb and stock cannot);
 - picket: pointed palings a third of a cell apart nailed to two rails, whitewashed, posts at the
   corners, ends, Ts and gates (and a straight variant with a post); a ledged and braced gate.
 
 Heights (art px at density 3, A = 74): wattle 42 to the binding, stakes 48, posts 54 (0.57 to
-0.73 A: a hurdle 1 to 1.2 m, size-guide "fence" 41 to 67); picket 42, posts 50.
+0.73 A: a hurdle 1 to 1.2 m, size-guide "fence" 41 to 67); picket 42, posts 50; rail 50 to the top
+rail, posts 56, gate posts 62 (Eastward 17: the farm's rail fence 0.75 A).
 """
 from __future__ import annotations
 
@@ -58,9 +63,11 @@ OPP = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
 
 STYLES = {
     'wattle': dict(panel=42, stake=48, post=54, gate_post=58, thick=4, name='Wattle hurdle',
-                   encloses=['sheep', 'chickens', 'crops'], material='hazel'),
+                   encloses=['sheep', 'chickens', 'crops', 'goats', 'pigs'], material='hazel'),
     'picket': dict(panel=42, stake=0, post=50, gate_post=54, thick=3, name='Picket fence',
                    encloses=['flowers', 'crops'], material='whitewashed timber'),
+    'rail': dict(panel=50, stake=0, post=56, gate_post=62, thick=3, name='Post and rail',
+                 encloses=['horses', 'cattle', 'sheep'], material='weathered oak'),
 }
 
 
@@ -212,6 +219,78 @@ def wattle_front(ph, seed):
     return f
 
 
+# split oak silvers to grey; rail to rail it keeps a little of its brown, or greens with lichen
+RAILS = [('stone_cool', 'timber_cool', 'stone_warm'), ('timber_cool', 'timber', 'stone_warm'), ('slate_cool', 'stone', 'sand_warm')]
+RAIL_Z = (14, 30, 46)            # the rails' bottoms (each 4 high): the top rail's top is the panel
+
+
+def rail_front(zr, k):
+    """A split rail's south face: its rounded top lit, the face, the underside dark, the grain
+    running along it in streaks, a split here and there, lichen."""
+    def f(X, Z, y=None):
+        X = np.asarray(X, float)
+        Z = np.asarray(Z, float)
+        r = Z - zr
+        t = np.where(r == 3, 4.2, np.where(r == 0, 1.2, 2.7 + 0.6 * (r == 2)))
+        Xm = np.mod(X, CELL)
+        streak = _hash(np.floor(Xm / 5), r, 5 + k) < 0.3
+        t = t - 0.8 * streak * (r > 0) * (r < 3)
+        split = (_hash(np.floor(Xm / 7), 0, 13 + k) < 0.25) & (r == 1) & (np.mod(Xm, 7) > 1)
+        t = t - 1.2 * split
+        mix = np.mod(k * 0.41 + 0.3 * np.floor(np.mod(X - 6, 72) / CELL), 1.0)
+        c = ramp_mix(RAILS, t, mix)
+        lichen = (_hash(Xm, Z, 21 + k) < 0.05) & (r >= 2)
+        return np.where(lichen, np.where(_hash(Xm, Z, 23) < 0.5, C('brass', 3), C('leaf_cool', 3)), c)
+    return f
+
+
+def rail_top(k):
+    def f(X, Y, z=None):
+        return ramp_mix(RAILS, np.full(np.shape(X), 4.6) - 0.8 * (_hash(np.mod(np.asarray(X, float), CELL), 0, 31 + k) < 0.25), k * 0.41 % 1.0)
+    return f
+
+
+def rail_end_top(x, k):
+    """A rail along y from above and a little from the west: a lit west edge, its top, its
+    shaded east edge, the grain across it."""
+    def f(X, Y, z=None):
+        X = np.asarray(X, float)
+        Y = np.asarray(Y, float)
+        t = 3.8 + 0.8 * (X == x) - 1.6 * (X >= x + 3) - 0.8 * (X == x + 2) - 0.8 * (_hash(0, np.floor(np.mod(Y, CELL) / 5), 41 + k) < 0.3)
+        return ramp_mix(RAILS, t, k * 0.41 % 1.0)
+    return f
+
+
+def rail_end_front(x, zr, k):
+    def f(X, Z, y=None):
+        X = np.asarray(X, float)
+        Z = np.asarray(Z, float)
+        return ramp_mix(RAILS, np.where(Z == zr + 3, 3.4, 1.8) - 0.6 * (X >= x + 3), k * 0.41 % 1.0)
+    return f
+
+
+def oak_post(x0, w, base=3.0, seed=0):
+    """A square oak post: a lit west face, a shaded east one, the grain up it, the mortises the
+    rails leave dark, a split, green damp at its foot."""
+    def f(X, Z, y=None):
+        X = np.asarray(X, float)
+        Z = np.asarray(Z, float)
+        t = base + 1.3 * (X == x0) + 0.5 * (X == x0 + 1) - 1.4 * (X >= x0 + w - 2) - 0.6 * (X == x0 + w - 1)
+        t = t - 0.8 * (_hash(X - x0, np.floor(Z / 6), 51 + seed) < 0.2) - 0.7 * (Z < 3)
+        c = ramp_mix(RAILS, t, np.where(X >= x0 + w - 2, 0.0, 0.5))
+        c = np.where((X == x0 + w // 2) & (Z > 20) & (Z < 34), C('stone_cool', 1), c)      # a shake down the post
+        return np.where((Z < 5) & (_hash(X, Z, 53 + seed) < 0.3), C('leaf_cool', 2), c)
+    return f
+
+
+def oak_post_top(x0, w):
+    """The cut top, sloped to the south to shed rain: lit, its west edge brightest."""
+    def f(X, Y, z=None):
+        X = np.asarray(X, float)
+        return ramp_mix(RAILS, 4.4 + 0.8 * (X == x0) - 1.2 * (X == x0 + w - 1), 0.66)
+    return f
+
+
 def wattle_top(seed):
     def f(X, Y, z=None):
         X = np.asarray(X, float)
@@ -341,9 +420,20 @@ def _tufts(sc, x, y, owner, seed):
         sc.stamp(pts[h // 2:], C('grass', 4), owner)
 
 
+def _oak_post(sc, x, y, h, w, owner, seed):
+    x0 = int(round(x - w / 2))
+    sc.box(x0, x0 + w, y - w // 2, y - w // 2 + w, 0, h, owner, oak_post(x0, w, 3.0, seed), oak_post_top(x0, w), order=2)
+    # the sloped top: a step down to the south face
+    sc.box(x0, x0 + w, y - w // 2, y - w // 2 + 2, h, h + 2, owner, oak_post(x0, w, 3.4, seed), oak_post_top(x0, w), order=3)
+
+
 def arm_x(sc, style, xa, xb, y, owner, seed, node=0, posted=False):
     """A run along x from xa to xb (local texels) on the ground line y."""
     S = STYLES[style]
+    if style == 'rail':
+        for k, zr in enumerate(RAIL_Z):
+            sc.box(xa, xb, y - 2, y + 1, zr, zr + 4, owner, rail_front(zr, k), rail_top(k), order=1)
+        return
     if style == 'wattle':
         ph = S['panel']
         sc.box(xa, xb, y - 2, y + 1, 0, ph, owner, wattle_front(ph, seed), wattle_top(seed), order=1)
@@ -382,6 +472,10 @@ def arm_y(sc, style, ya, yb, x, owner, seed, node=0, posted=False):
     """A run along y from ya to yb (local texels) on the line x: seen end on, its top running down
     the picture with the stakes' or palings' tops standing out of it."""
     S = STYLES[style]
+    if style == 'rail':
+        for k, zr in enumerate(RAIL_Z):
+            sc.box(x - 1, x + 3, ya, yb, zr, zr + 4, owner, rail_end_front(x - 1, zr, k), rail_end_top(x - 1, k), order=1)
+        return
     if style == 'wattle':
         ph = S['panel']
         sc.box(x - 3, x + 4, ya, yb, 0, ph, owner, wattle_end, wattle_top_ns(x), order=1)
@@ -416,7 +510,9 @@ def arm_y(sc, style, ya, yb, x, owner, seed, node=0, posted=False):
 
 def node_post(sc, style, x, y, owner, seed, kind='post'):
     S = STYLES[style]
-    if style == 'wattle':
+    if style == 'rail':
+        _oak_post(sc, x + 0.5, y, S['post'], 7, owner, seed)
+    elif style == 'wattle':
         if kind == 'stake':
             _stake(sc, x, y, S['stake'] + 1, 4, owner, S['panel'], True)
         else:
@@ -441,6 +537,34 @@ def cell_pieces():
     return out
 
 
+def _draw_stile(sc, style, joins, owner, seed, at=(0, 0)):
+    """A stile in a run: two posts and the rails between, a step either side (a plank on a
+    block), worn pale where boots go."""
+    nx, ny = at
+    S = STYLES[style]
+    if set(joins) == {'e', 'w'}:
+        arm_x(sc, style, nx - HALF, nx + HALF, ny, owner, seed, nx, True)
+        for px in (nx - 9, nx + 9):
+            _oak_post(sc, px, ny, S['post'] - 4, 5, owner, seed)
+        for sy, z in ((ny - 7, 16), (ny + 6, 16)):           # the steps, north and south of the rails
+            sc.box(nx - 7, nx + 7, sy - 2, sy + 2, z - 3, z, owner,
+                   lambda X, Z, y_=None: ramp_mix(RAILS, 3.0 + 1.6 * (np.asarray(Z) == np.max(Z)) - 0.8 * (np.asarray(X) > nx + 4), 0.5),
+                   lambda X, Y, z_=None: np.where(np.abs(np.asarray(X) - nx) < 3, C('sand', 5), C('stone_warm', 4)), order=3)
+            for bx in (nx - 6, nx + 4):
+                sc.box(bx, bx + 2, sy - 1, sy + 1, 0, z - 3, owner, oak_post(bx, 2, 2.4, seed), oak_post_top(bx, 2), order=3)
+    else:
+        arm_y(sc, style, ny - HALF, ny + HALF, nx, owner, seed, ny, True)
+        for py in (ny - 9, ny + 9):
+            _oak_post(sc, nx + 0.5, py, S['post'] - 4, 5, owner, seed)
+        for sx in (nx - 7, nx + 7):
+            sc.box(sx - 3, sx + 3, ny - 6, ny + 6, 13, 16, owner,
+                   lambda X, Z, y_=None: ramp_mix(RAILS, np.full(np.shape(X), 2.6), 0.5),
+                   lambda X, Y, z_=None, sx=sx: np.where(np.abs(np.asarray(Y) - ny) < 3, C('sand', 5), ramp_mix(RAILS, np.full(np.shape(X), 4.4), 0.5)),
+                   order=3)
+            sc.box(sx - 1, sx + 1, ny - 1, ny + 1, 0, 13, owner, oak_post(sx - 1, 2, 2.4, seed), oak_post_top(sx - 1, 2), order=3)
+    _tufts(sc, nx, ny, owner, seed + 5)
+
+
 def _draw_cell(sc, style, joins, owner, seed, at=(0, 0), post=None):
     """One cell's arms and its node (local texels, node at `at`)."""
     nx, ny = at
@@ -458,7 +582,7 @@ def _draw_cell(sc, style, joins, owner, seed, at=(0, 0), post=None):
         arm_y(sc, style, ny, ny + HALF, nx, owner, seed, ny, post)
     if post:
         node_post(sc, style, nx, ny, owner, seed)
-        if style == 'wattle' or 'e' in js or 'w' in js:
+        if style != 'picket' or 'e' in js or 'w' in js:
             _tufts(sc, nx, ny, owner, seed + 5)
 
 
@@ -479,7 +603,9 @@ def _draw_gate(sc, style, axis, owner, seed, state, at=(0, 0)):
     else:
         posts = [(gx, gy - GATE_POST), (gx, gy + GATE_POST)]
     for (px, py) in posts:
-        if style == 'wattle':
+        if style == 'rail':
+            _oak_post(sc, px, py, gp, 8, owner, seed)
+        elif style == 'wattle':
             _stake(sc, px, py, gp, 6, owner, cap=None)
         else:
             _wash_post(sc, px, py, gp, 6, owner, seed)
@@ -505,6 +631,26 @@ def _draw_gate(sc, style, axis, owner, seed, state, at=(0, 0)):
 def _leaf_x(sc, style, xa, xb, y, owner, seed, lift):
     S = STYLES[style]
     ph = S['panel'] - 2
+    if style == 'rail':
+        # a five-bar gate: the heel (hung on the west post) and the head, five bars, the brace
+        # from the heel's foot to the head's top
+        for k in range(5):
+            zb = lift + 4 + k * 9
+            sc.box(xa, xb, y, y + 2, zb, zb + 3, owner, rail_front(zb - 1, k), rail_top(k), order=2)
+        for x0, w in ((xa, 4), (xb - 3, 3)):
+            sc.box(x0, x0 + w, y - 1, y + 3, lift, ph, owner, oak_post(x0, w, 3.4, seed), oak_post_top(x0, w), order=3)
+        L = xb - xa
+
+        def brace(X, Z, y_=None):
+            X = np.asarray(X, float)
+            Z = np.asarray(Z, float)
+            zc = lift + 4 + (X - xa) * (ph - lift - 10) / max(1, L)
+            on = np.abs(Z - zc) <= 1.2
+            return np.where(on, ramp_mix(RAILS, 3.6 + 0.9 * (Z > zc), 0.4), -1)
+        sc.box(xa + 3, xb - 3, y + 2, y + 3, lift + 2, ph, owner, brace, lambda X, Y, z=None: np.full(np.shape(X), -1), order=4)
+        sc.box(xb - 1, xb + 2, y, y + 2, ph - 12, ph - 9, owner, lambda X, Z, y_=None: np.full(np.shape(X), C('iron', 3)),
+               lambda X, Y, z=None: np.full(np.shape(X), C('iron', 4)), order=5)          # the latch
+        return
     if style == 'wattle':
         # a hurdle: its two end sails and the weave between, hung a little off the ground
         sc.box(xa, xb, y - 2, y + 1, lift, ph, owner, wattle_front(ph, seed + 3), wattle_top(seed), order=1)
@@ -536,6 +682,13 @@ def _leaf_x(sc, style, xa, xb, y, owner, seed, lift):
 def _leaf_y(sc, style, ya, yb, x, owner, seed, lift):
     S = STYLES[style]
     ph = S['panel'] - 2
+    if style == 'rail':
+        for k in range(5):
+            zb = lift + 4 + k * 9
+            sc.box(x - 1, x + 1, ya, yb, zb, zb + 3, owner, rail_end_front(x - 1, zb, k), rail_end_top(x - 1, k), order=2)
+        for yy in (ya + 1, yb - 2):
+            sc.box(x - 2, x + 2, yy - 1, yy + 2, lift, ph, owner, oak_post(x - 2, 4, 3.4, seed), oak_post_top(x - 2, 4), order=3)
+        return
     if style == 'wattle':
         sc.box(x - 2, x + 2, ya, yb, lift, ph, owner, wattle_end, wattle_top_ns(x), order=1)
         for yy in (ya + 1, yb - 2):
@@ -553,7 +706,7 @@ def _leaf_y(sc, style, ya, yb, x, owner, seed, lift):
 PAD = 84
 
 
-def render_piece(style, joins=None, gate=None, state='shut', post=None, seed=0):
+def render_piece(style, joins=None, gate=None, state='shut', post=None, seed=0, stile=False):
     """(Pic, foot, owned mask) for one piece: a cell (joins) or a gate (gate='ew' or 'ns')."""
     S = STYLES[style]
     top = max(S['gate_post'], S['post']) + 10
@@ -567,7 +720,10 @@ def render_piece(style, joins=None, gate=None, state='shut', post=None, seed=0):
             dx, dy = VEC[s]
             for k in (1, 2):
                 _draw_cell(sc, style, [s, OPP[s]], nb, seed + 17 * k, at=(dx * CELL * k, dy * CELL * k), post=False)
-        _draw_cell(sc, style, joins, ME, seed, post=post)
+        if stile:
+            _draw_stile(sc, style, joins, ME, seed)
+        else:
+            _draw_cell(sc, style, joins, ME, seed, post=post)
     else:
         for k in (2, 3):
             if gate == 'ew':
@@ -598,6 +754,9 @@ def _pieces_for(style):
         if straight:
             vs.append(('post', dict(joins=js, post=True)))
         out.append(('fence_%s_%s' % (style, jn), vs, js, None))
+    if style == 'rail':
+        out.append(('fence_rail_stile_ew', [('plain', dict(joins=['e', 'w'], stile=True))], ['e', 'w'], 'stile'))
+        out.append(('fence_rail_stile_ns', [('plain', dict(joins=['n', 's'], stile=True))], ['n', 's'], 'stile'))
     out.append(('fence_%s_gate_ew' % style, [('open', dict(gate='ew', state='open')), ('shut', dict(gate='ew', state='shut'))], ['e', 'w'], 'ew'))
     out.append(('fence_%s_gate_ns' % style, [('open_e', dict(gate='ns', state='open_e')), ('open_w', dict(gate='ns', state='open_w')),
                                               ('shut', dict(gate='ns', state='shut'))], ['n', 's'], 'ns'))
@@ -617,6 +776,18 @@ def _collision(js, gate):
 
 def piece_json(style, pid, variants, js, gate, sizes):
     S = STYLES[style]
+    if gate == 'stile':
+        pc = piece_json(style, pid, variants, js, None, sizes)
+        pc['name'] = S['name'] + ', stile along %s' % ('x' if set(js) == {'e', 'w'} else 'y')
+        pc['placement'].update(role='stile', requires=[{'rel': 'on', 'what': 'route', 'note': 'a footpath crosses the paddock here: '
+                                                        'people climb the stile, stock stay in (placement-logic rule 2)'}])
+        pc['placement'].pop('forbids', None)
+        pc['placement']['boundary']['stile'] = True
+        pc['geometry']['collision'] = {'shape': 'none'}
+        pc['geometry']['height_px'] = S['post']
+        pc['gameplay']['blocks_move'] = False
+        pc['approval']['note'] = 'A stile in a post-and-rail run (scripts/art/kit/fences.py): a footpath over the fence, stock kept in.'
+        return pc
     name = S['name'] + (', gate along %s' % ('x' if gate == 'ew' else 'y') if gate else ', ' + {
         1: 'end post', 2: 'straight' if set(js) in ({'e', 'w'}, {'n', 's'}) else 'corner', 3: 'T', 4: 'cross'}[len(js)])
     w, h, foot = sizes
@@ -663,7 +834,7 @@ def build(write=True, force=False):
         for k, (pid, variants, js, gate) in enumerate(_pieces_for(style)):
             pics = []
             for j, (vid, kw) in enumerate(variants):
-                pic = render_piece(style, seed=101 + 7 * k + j if style == 'wattle' else 3 + k, **kw)
+                pic = render_piece(style, seed={'wattle': 101 + 7 * k + j, 'rail': 211 + 5 * k + j}.get(style, 3 + k), **kw)
                 pics.append((vid, pic))
                 out[os.path.join(ART, '%s_%s.png' % (pid, vid))] = to_rgba(pic.a)
             sizes = (max(p.W for _v, p in pics), max(p.H for _v, p in pics), [(p.ax, p.ay) for _v, p in pics])

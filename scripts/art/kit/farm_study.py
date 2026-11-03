@@ -1,7 +1,10 @@
 """A farmyard built only from kit pieces, as a review study (not a playable zone): a chicken run
-with its coop and hens, a sheep fold with its shelter, trough, hay and flock, and a cottage's front
-garden behind a picket with its gate on the door path; every pen's gate on the trodden way to the
-lane (docs/vision/placement-logic.md).
+with its coop and hens, a sheep fold with its shelter, trough, hay and flock, a cottage's front
+garden behind a picket with its gate on the door path, a post-and-rail paddock with its field
+shelter, trough, cattle and a horse and a footpath over its stile, a goat pen, a pigsty and its
+run with a wallow, and the yard's things (churns at the gate, a water butt at the cottage, the
+muck heap and its barrow, feed sacks, a kitchen garden with its scarecrow); every pen's gate on the
+trodden way to the lane (docs/vision/placement-logic.md).
 
     python3 -m scripts.art.kit.farm_study OUT.png [--scale 3]     # the baked frame with every sprite
 
@@ -21,7 +24,7 @@ from PIL import Image
 from scripts.art.kit.schema import ROOT
 
 CELL = 24
-COLS, ROWS = 36, 22
+COLS, ROWS = 74, 30
 
 
 def _ring(style, c0, c1, r0, r1, gate_col, prefix):
@@ -90,7 +93,7 @@ def _front_garden(style, c0, c1, r_wall, r1, gate_col, prefix):
 
 def plan() -> dict:
     g = np.full((ROWS, COLS), '.', '<U1')
-    g[19:21, :] = '#'                                   # the lane along the bottom
+    g[19:21, :] = '#'                                   # the lane
     # the chicken run (4 x 4 cells), scratched bare inside, its gate's trodden way to the lane
     g[8:11, 4:7] = 'w'
     g[11:19, 5:7] = '#'
@@ -103,6 +106,27 @@ def plan() -> dict:
     pieces += _ring('wattle', 3, 7, 7, 11, 5, 'run')
     pieces += _ring('wattle', 10, 20, 2, 10, 15, 'fold')
     pieces += _front_garden('picket', 24, 32, 11, 16, 26, 'garden')
+    # the paddock (12 x 11 cells of post and rail): its gate's way to the lane, a footpath in over
+    # the stile on its east side and across to the gate, grazed short by the shelter and trough
+    g[7, 44:51] = '#'
+    g[7:19, 44:46] = '#'
+    g[0:8, 51] = '#'
+    g[7, 51] = '#'
+    g[4:7, 39:43] = 'w'
+    pieces += _ring('rail', 38, 50, 2, 13, 44, 'paddock')
+    for pc in pieces:
+        if pc['id'].startswith('paddock_') and pc.get('variant') == 'plain' and pc['at'][0] % 96 == 12:
+            pc['variant'] = 'post'                       # a post every four cells along a straight
+    stile = next(pc for pc in pieces if pc['id'] == 'paddock_50_7')
+    stile['piece'], stile['variant'] = 'fence_rail_stile_ns', 'plain'
+    # the goat pen (9 x 9 cells of hurdles) and its way down to the lane
+    g[7:10, 54:62] = 'w'
+    g[10:19, 58:60] = '#'
+    pieces += _ring('wattle', 53, 62, 1, 10, 58, 'goats')
+    # the sty: its run of hurdles before it, the sty's front wall the run's north side
+    g[9:15, 67:70] = 'w'
+    g[14:19, 68:70] = '#'
+    pieces += _front_garden('wattle', 66, 70, 8, 14, 68, 'sty')
     pieces += [
         # the run: the ark against the back fence, two hens beside it, clear of the near fence
         {'id': 'coop', 'piece': 'farm_coop', 'at': [120, 240]},
@@ -122,6 +146,31 @@ def plan() -> dict:
         {'id': 'cottage', 'piece': 'crossroads_fern_cottage', 'at': [696, 288]},
         {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [708, 312]},
         {'id': 'border_2', 'piece': 'garden_flower_border', 'at': [708, 360]},
+        # the paddock: the field shelter's back to the north rails, the trough by the west rails,
+        # the cattle and the horse spread over the grass, off the footpath
+        {'id': 'pd_shelter', 'piece': 'farm_shelter', 'at': [1020, 168]},
+        {'id': 'pd_trough', 'piece': 'crossroads_trough', 'at': [996, 288]},
+        {'id': 'horse', 'piece': 'farm_horse', 'at': [1140, 168]},
+        {'id': 'cow', 'piece': 'farm_cow', 'at': [1164, 264]},
+        {'id': 'calf', 'piece': 'farm_calf', 'at': [1140, 312]},
+        # the goat pen: its shelter against the north hurdles, a trough, two goats
+        {'id': 'gt_shelter', 'piece': 'farm_shelter', 'at': [1356, 144]},
+        {'id': 'gt_trough', 'piece': 'crossroads_trough', 'at': [1452, 144]},
+        {'id': 'goat_1', 'piece': 'farm_goat', 'at': [1332, 216]},
+        {'id': 'goat_2', 'piece': 'farm_goat_b', 'at': [1452, 216]},
+        # the sty, its pig and its wallow
+        {'id': 'sty', 'piece': 'farm_sty', 'at': [1644, 216]},
+        {'id': 'wallow', 'piece': 'farm_wallow', 'at': [1644, 336]},
+        {'id': 'pig', 'piece': 'farm_pig', 'at': [1644, 264]},
+        # the yard's things
+        {'id': 'churns', 'piece': 'farm_churns', 'at': [1140, 384]},
+        {'id': 'butt', 'piece': 'farm_water_butt', 'at': [564, 288]},
+        {'id': 'muck', 'piece': 'farm_muck_heap', 'at': [852, 216]},
+        {'id': 'barrow', 'piece': 'farm_wheelbarrow', 'at': [852, 288]},
+        {'id': 'sacks', 'piece': 'farm_feed_sacks', 'at': [468, 312]},
+        # the kitchen garden south of the lane, its scarecrow among the beds
+        {'id': 'beds', 'piece': 'crossroads_beds_dug', 'at': [264, 672], 'stage': 'restored'},
+        {'id': 'scarecrow', 'piece': 'farm_scarecrow', 'at': [276, 600]},
     ]
     return {'zone': 'farm_study', 'note': 'Review study (scripts/art/kit/farm_study.py), not a playable zone.',
             'legend': {'.': 'lawn', '#': 'path', 'w': 'worn'}, 'rows': [''.join(r) for r in g], 'pieces': pieces, 'decor': []}
@@ -156,7 +205,7 @@ def layout_faults(p: dict | None = None) -> list:
         y0, y1 = sorted((a[1], b[1]))
         bodies.append((x0 - 5, y0 - 48, x1 + 5, y1, pc['id'], pc['at'][1]))
     things = [pc for pc in p['pieces'] if (lib[pc['piece']].get('placement') or {}).get('role') in
-              ('stock', 'coop', 'shelter', 'trough', 'feed')]
+              ('stock', 'coop', 'shelter', 'trough', 'feed', 'churns', 'water_butt', 'barrow', 'sacks', 'muck_heap')]
     boxes = {pc['id']: _opaque_box(pc, idx) for pc in things}
 
     def hit(r, q, tol=3):                  # outlines and a roof corner may touch

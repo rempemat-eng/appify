@@ -1,0 +1,148 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_goat",
+ "name": "Goat",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_goat",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_goat.png",
+   "foot": [
+    42,
+    62
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A goat in its pen; 8 idle frames at 3 fps."
+ },
+ "geometry": {
+  "size_px": [
+   84,
+   68
+  ],
+  "size_cells": [
+   4,
+   3
+  ],
+  "z_sort": "foot",
+  "height_px": 62,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -2.0,
+    10,
+    2
+   ]
+  },
+  "foot": [
+   42,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "live",
+  "role": "stock",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "shelter",
+    "cells": 8,
+    "note": "stock keep to what their pen gives them (placement-logic: keep animals in)"
+   },
+   {
+    "rel": "within",
+    "what": "boundary",
+    "cells": 5,
+    "note": "inside its fence"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "enclosure": {
+   "holds": [
+    "goats"
+   ],
+   "as": "contents"
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    27,
+    4
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true,
+  "animations": [
+   {
+    "clip": "idle",
+    "loop": true,
+    "frames": 8,
+    "fps": 3.0,
+    "strip": "res://kit/props/art/farm/farm_goat_idle.png",
+    "frame_px": [
+     84,
+     68
+    ],
+    "reduced_motion": "hold:0",
+    "on_screen_only": true,
+    "phase": "placement"
+   }
+  ]
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "goat (size-guide 2: livestock)",
+  "eastward_ref": "17: cows 0.9 A and pigs 0.55 A, chunky with a dark outline",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_goat",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}
