@@ -492,6 +492,8 @@ class SeedCompleteness(unittest.TestCase):
             if not obj.get('solid'):
                 continue
             p = self.by_id[self.index['crossroads', obj['id']]]
+            if 'collision' in p['audit'].get('overrides', []):
+                continue                    # reviewed against the art and the size guide (farm.REVIEWED_BOXES)
             r = p['geometry']['collision']['rect']
             actual = [r[0] + obj['foot'][0] / 3, r[1] + obj['foot'][1] / 3, *r[2:]]
             np.testing.assert_allclose(actual, obj['solid'], atol=0.00001, err_msg=obj['id'])
@@ -502,6 +504,8 @@ class SeedCompleteness(unittest.TestCase):
             if not obj.get('png') or obj['kind'] in ('shadow', 'damage', 'glow', 'smoke'):
                 continue
             p = self.by_id[self.index['crossroads', obj['id']]]
+            if 'variants' in p['audit'].get('overrides', []):
+                continue                    # redrawn in the kit (farm.REDRAWN); the source keeps its own picture
             v = next(v for v in p['variants'] if v['id'] == os.path.splitext(obj['png'])[0])
             self.assertEqual(v['foot'], [-n for n in obj['offset']], obj['id'])
 
@@ -703,6 +707,99 @@ print(json.dumps([m for m,p in sorted(paint.items(),key=lambda item:item[1].get(
         paint = B.material_paints(['worn', 'path', 'worn'], lib)
         self.assertEqual(list(paint), ['worn', 'path'])
         self.assertEqual([m for m,p in sorted(paint.items(),key=lambda item:item[1].get('order',0))], ['path', 'worn'])
+
+
+class FencesAndFarm(unittest.TestCase):
+    """The fence cells close loops, the farmyard pieces carry what the enclosure rules read, the
+    farm study built from kit pieces passes every check, and the pictures are what the painters
+    draw (scripts/art/kit/fences.py, farm.py, enclosures.py, farm_study.py; 3 Nov)."""
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.kit import enclosures as EN
+        from scripts.art.kit import farm_study as FS
+        cls.EN, cls.FS = EN, FS
+        cls.lib = EN.library()
+        cls.plan = FS.plan()
+
+    def test_pictures_are_what_the_painters_draw(self):
+        from scripts.art.kit import farm, fences
+        self.assertEqual(fences.check(), 0)
+        self.assertEqual(farm.check(), 0)
+
+    def test_every_fence_cell_and_gate_exists_in_both_styles(self):
+        for style in ('wattle', 'picket'):
+            for mask in range(1, 16):
+                jn = ''.join(c for i, c in enumerate('nesw') if mask & (1 << i))
+                b = self.lib['fence_%s_%s' % (style, jn)]['placement']['boundary']
+                self.assertEqual(''.join(b['joins']), jn)
+                self.assertFalse(b['gate'])
+            for ax in ('ew', 'ns'):
+                g = self.lib['fence_%s_gate_%s' % (style, ax)]
+                self.assertTrue(g['placement']['boundary']['gate'])
+                self.assertIn({'rel': 'on', 'what': 'route', 'note': g['placement']['requires'][0]['note']}, g['placement']['requires'])
+                self.assertFalse(g['gameplay']['blocks_move'])
+
+    def test_farm_pieces_carry_purpose_collision_and_enclosure(self):
+        for pid in ('farm_hen_white', 'farm_hen_brown', 'farm_hen_speckled', 'farm_sheep', 'farm_sheep_graze', 'farm_sheep_lie',
+                    'farm_coop', 'farm_shelter', 'garden_flower_border', 'crossroads_trough', 'crossroads_beds_dug'):
+            p = self.lib[pid]
+            self.assertIn('purpose', p['placement'], pid)
+            self.assertIn('enclosure', p['placement'], pid)
+            self.assertIn('collision', p['geometry'], pid)
+            self.assertIn('size_px', p['geometry'], pid)
+
+    def test_the_farm_study_passes_every_check(self):
+        from scripts.art.kit import relations as RL
+        from scripts.review import kit_rules as KR
+        self.assertEqual([f for f in KR.check_zone(self.plan) if f['severity'] == 'fault'], [])
+        self.assertEqual(RL.check_zone(self.plan), [])
+        self.assertEqual(self.EN.check_zone(self.plan, self.lib), [])
+
+    def test_open_runs_empty_pens_and_missing_needs_are_caught(self):
+        import copy
+
+        def without(*ids):
+            q = copy.deepcopy(self.plan)
+            q['pieces'] = [x for x in q['pieces'] if x['id'] not in ids and not any(x['id'].startswith(i + '*') for i in ids)]
+            return [f['message'] for f in self.EN.check_zone(q, self.lib)]
+        self.assertTrue(any('meets no run' in m for m in without('run_7_11')))
+        self.assertTrue(any('no coop' in m for m in without('coop')))
+        self.assertTrue(any('holds nothing' in m for m in without('sheep_1', 'sheep_2', 'sheep_3', 'trough', 'hay', 'shelter')))
+        self.assertTrue(any('meets no run' in m for m in without('fold_gate')))
+
+    def test_kit_zones_have_no_enclosure_faults(self):
+        zdir = os.path.join(S.ROOT, 'game', 'kit', 'zones')
+        for f in sorted(os.listdir(zdir)):
+            plan = json.load(open(os.path.join(zdir, f)))
+            self.assertEqual(self.EN.check_zone(plan, self.lib), [], f)
+
+    def test_the_loops_scenes_play_the_strip_over_or_instead_of_the_still(self):
+        idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        for pid, node in (('farm_hen_white', 'Idle'), ('farm_sheep_graze', 'Idle'), ('waterfall_3_tall', 'Flow'), ('waterfall_1', 'Flow')):
+            self.assertIn('anim', idx[pid], pid)
+            with open(os.path.join(S.ROOT, 'game', 'kit', 'props', pid + '.tscn')) as f:
+                text = f.read()
+            self.assertIn('[node name="%s" type="Sprite2D" parent="."]' % node, text)
+            self.assertIn('res://world/loop_fx.gd', text)
+            self.assertIn('hframes = 8', text)
+            self.assertEqual(idx[pid]['anim']['reduced_motion'], 'hold:0')
+
+    def test_a_falls_first_frame_is_the_still_the_bake_draws(self):
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C
+        for c, drop in ((3, 2), (1, 1)):
+            strip, (x0, y0, w, h) = ST.fall_frames(c, drop)
+            wpx, face = c * 24, 48 * drop
+            base = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+            ST.fall_sheet(base, 24, wpx, 12, 12 + face, seed=9 + c, rings=False)
+            f0 = strip[:, :w]
+            m = f0 >= 0
+            np.testing.assert_array_equal(f0[m], base[y0:y0 + h, x0:x0 + w][m])
+            self.assertEqual(strip.shape[1], w * ST.FALL_FRAMES)
+            # every frame covers the same pixels (the loop never uncovers the baked pool)
+            for k in range(1, ST.FALL_FRAMES):
+                np.testing.assert_array_equal(strip[:, k * w:(k + 1) * w] >= 0, m)
 
 
 if __name__ == '__main__':

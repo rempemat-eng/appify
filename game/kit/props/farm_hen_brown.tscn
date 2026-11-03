@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/terrain/kit_piece.gd" id="1"]
+[ext_resource type="Script" path="res://world/loop_fx.gd" id="3"]
+[ext_resource type="Texture2D" path="res://kit/props/art/farm/farm_hen_brown_idle.png" id="4"]
+[ext_resource type="Texture2D" path="res://kit/props/art/farm/farm_hen_brown.png" id="2"]
+
+[node name="FarmHenBrown" type="Node2D"]
+script = ExtResource("1")
+piece_id = "farm_hen_brown"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+visible = false
+centered = false
+offset = Vector2(-17, -27)
+
+[node name="Idle" type="Sprite2D" parent="."]
+script = ExtResource("3")
+texture = ExtResource("4")
+centered = false
+offset = Vector2(-17, -27)
+hframes = 8
+fps = 4
