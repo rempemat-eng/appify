@@ -1,4 +1,1020 @@
 {
+ "brackens_bench": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -45.0,
+   -12.0,
+   90,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   47,
+   50
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drovers' seat",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "beside the road, facing it and the view (size-guide: a bench faces a view or a feature)",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "seat",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    90,
+    12
+   ]
+  },
+  "size_cells": [
+   4,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     47,
+     50
+    ],
+    "png": "res://kit/props/art/brackens/brackens_bench.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_cairn": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -12.0,
+   30,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   17,
+   47
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Cairn",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "a waymark beside the trail, one every 64 to 96 world px along a high way",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "marker",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    36,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "standing": {
+    "foot": [
+     17,
+     47
+    ],
+    "png": "res://kit/props/art/brackens/brackens_cairn_standing.png"
+   },
+   "toppled": {
+    "foot": [
+     19,
+     22
+    ],
+    "png": "res://kit/props/art/brackens/brackens_cairn_toppled.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_cart_broken": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -33.0,
+   -15.0,
+   66,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   51,
+   42
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Peat cart with a broken wheel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "it broke down on the road and was pulled to the verge",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "story",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    84,
+    12
+   ]
+  },
+  "size_cells": [
+   5,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     51,
+     42
+    ],
+    "png": "res://kit/props/art/brackens/brackens_cart_broken.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_drove_well": {
+  "anim": {
+   "clip": "trickle",
+   "cover": true,
+   "fps": 8.0,
+   "frames": 8,
+   "offset": [
+    -37,
+    -78
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/brackens/brackens_drove_well_loop.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -36.0,
+   -39.0,
+   72,
+   48
+  ],
+  "deck": null,
+  "foot": [
+   37,
+   78
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "cells": 4,
+    "note": "a spring is walled where there is no stream to drink from",
+    "rel": "not_near",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drove well",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "beside the drove road, where the flocks are watered on the way",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "well",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    78,
+    15
+   ]
+  },
+  "size_cells": [
+   5,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     37,
+     78
+    ],
+    "png": "res://kit/props/art/brackens/brackens_drove_well.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_fire_ring_cold": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": [
+   -15.0,
+   -18.0,
+   30,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   18,
+   20
+  ],
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Cold fire ring",
+  "painted": false,
+  "requires": [],
+  "role": "story",
+  "shadow": null,
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     18,
+     20
+    ],
+    "png": "res://kit/props/art/brackens/brackens_fire_ring_cold.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_fire_ring_lit": {
+  "anim": {
+   "clip": "burn",
+   "cover": true,
+   "fps": 8.0,
+   "frames": 8,
+   "offset": [
+    -18,
+    -33
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/brackens/brackens_fire_ring_lit_loop.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -18.0,
+   30,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   18,
+   33
+  ],
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Hermit's fire",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 6,
+    "note": "at the end of a side trod off the road (a secret pocket)",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "hearth",
+  "shadow": null,
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     18,
+     33
+    ],
+    "png": "res://kit/props/art/brackens/brackens_fire_ring_lit.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_fold_ruin": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -36.0,
+   -87.0,
+   72,
+   15
+  ],
+  "deck": null,
+  "foot": [
+   52,
+   116
+  ],
+  "footprint": [
+   [
+    -2,
+    -4
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    2,
+    -4
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Broken sheepfold",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "a fold stood by the drove road; its ruin still does",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "ruin",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    84,
+    12
+   ]
+  },
+  "size_cells": [
+   5,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     52,
+     116
+    ],
+    "png": "res://kit/props/art/brackens/brackens_fold_ruin.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_gorse": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -30.0,
+   -15.0,
+   60,
+   15
+  ],
+  "deck": null,
+  "foot": [
+   33,
+   45
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Gorse",
+  "painted": false,
+  "requires": [],
+  "role": "shrub",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    54,
+    12
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "a": {
+    "foot": [
+     33,
+     45
+    ],
+    "png": "res://kit/props/art/brackens/brackens_gorse_a.png"
+   },
+   "b": {
+    "foot": [
+     21,
+     39
+    ],
+    "png": "res://kit/props/art/brackens/brackens_gorse_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_peat_stack": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -30.0,
+   -18.0,
+   60,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   32,
+   43
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Peat stack",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "fuel stacked to dry by the hut it warms",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    66,
+    12
+   ]
+  },
+  "size_cells": [
+   3,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     32,
+     43
+    ],
+    "png": "res://kit/props/art/brackens/brackens_peat_stack.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "brackens_shepherds_hut": {
+  "anim": {
+   "clip": "smoke",
+   "cover": false,
+   "fps": 6.0,
+   "frames": 8,
+   "offset": [
+    57,
+    -268
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/brackens/brackens_shepherds_hut_loop.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -87.0,
+   -108.0,
+   174,
+   108
+  ],
+  "deck": null,
+  "foot": [
+   99,
+   270
+  ],
+  "footprint": [
+   [
+    -4,
+    -5
+   ],
+   [
+    -3,
+    -5
+   ],
+   [
+    -2,
+    -5
+   ],
+   [
+    -1,
+    -5
+   ],
+   [
+    0,
+    -5
+   ],
+   [
+    1,
+    -5
+   ],
+   [
+    2,
+    -5
+   ],
+   [
+    3,
+    -5
+   ],
+   [
+    -4,
+    -4
+   ],
+   [
+    -3,
+    -4
+   ],
+   [
+    -2,
+    -4
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    2,
+    -4
+   ],
+   [
+    3,
+    -4
+   ],
+   [
+    -4,
+    -3
+   ],
+   [
+    -3,
+    -3
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    2,
+    -3
+   ],
+   [
+    3,
+    -3
+   ],
+   [
+    -4,
+    -2
+   ],
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    3,
+    -2
+   ],
+   [
+    -4,
+    -1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ],
+   [
+    3,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Shepherd's hut",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "beside the Drover's Road, its door on the trod",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "house",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    168,
+    24
+   ]
+  },
+  "size_cells": [
+   9,
+   6
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     99,
+     270
+    ],
+    "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "commons_bench": {
   "approval": "candidate",
   "blocks_move": true,
@@ -12100,6 +13116,530 @@
    }
   },
   "z_sort": "ground"
+ },
+ "wall_drystone_es": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -7.5,
+   -7.5,
+   19.5,
+   19.5
+  ],
+  "deck": null,
+  "foot": [
+   13,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drystone wall, corner (east and south)",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    27,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     13,
+     54
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_es_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "wall_drystone_ew": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -7.5,
+   24.0,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   13,
+   47
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drystone wall, straight along x",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    27,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "a": {
+    "foot": [
+     13,
+     47
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_ew_a.png"
+   },
+   "b": {
+    "foot": [
+     13,
+     47
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_ew_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "wall_drystone_gate_ew": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   38,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {
+   "interact": {
+    "triggers": [],
+    "verb": "open"
+   }
+  },
+  "kind": "prop",
+  "name": "Drystone wall, field gate along x",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a gate stands where the path its owner walks crosses the wall (placement-logic rule 2)",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "gate",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    66,
+    9
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "shut": {
+    "foot": [
+     38,
+     62
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_gate_ew_shut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "wall_drystone_ne": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -7.5,
+   -12.0,
+   19.5,
+   19.5
+  ],
+  "deck": null,
+  "foot": [
+   13,
+   53
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drystone wall, corner (north and east)",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    27,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     13,
+     53
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_ne_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "wall_drystone_ns": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -7.5,
+   -12.0,
+   15.0,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   10,
+   53
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drystone wall, straight along y",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    27,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     10,
+     53
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_ns_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "wall_drystone_nw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   19.5,
+   19.5
+  ],
+  "deck": null,
+  "foot": [
+   13,
+   53
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drystone wall, corner (north and west)",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    27,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     13,
+     53
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_nw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "wall_drystone_stile_ew": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   13,
+   47
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Drystone wall, step stile along x",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a stile carries a footpath over the wall; the flock stays behind it",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "stile",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    27,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "steps": {
+    "foot": [
+     13,
+     47
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_stile_ew_steps.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "wall_drystone_sw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -7.5,
+   19.5,
+   19.5
+  ],
+  "deck": null,
+  "foot": [
+   13,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drystone wall, corner (south and west)",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    27,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     13,
+     54
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_sw_plain.png"
+   }
+  },
+  "z_sort": "foot"
  },
  "waterfall_1": {
   "anim": {

@@ -13,7 +13,7 @@ Verdicts: **fine** (fits), **fixed** (its data or a placement was corrected in t
 (the drawing does not fit its purpose: the art queue), **missing** (cannot be placed sensibly until a
 companion piece exists).
 
-Totals: 150 fine, 28 fixed.
+Totals: 168 fine, 28 fixed.
 
 ## Placements fixed in the kit zones
 
@@ -49,6 +49,16 @@ out, so a two-cell lane counts once; three ways or more make a junction).
 
 | Piece | Purpose | Role | Requires | Forbids | Verdict | Why, and what was done |
 |---|---|---|---|---|---|---|
+| `brackens_bench` | rest | seat | near route 2 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone slab on two uprights, two back slabs set in the ground behind it. |
+| `brackens_cairn` | guide | marker | near route 2 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A waymark of stones in shrinking rings, a long stone upright on top; or tumbled, its top stones spilled east. |
+| `brackens_cart_broken` | mark | story | near route 2 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): The story slot "cart with a broken wheel": the bed propped on a stone, the wheel lying broken, turves spilled. |
+| `brackens_drove_well` | water | well | near route 2 | on route; not_near water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A spring-house over the well and a trough in front; the trickle and rings loop (8 frames). |
+| `brackens_fire_ring_cold` | mark | story | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): The story slot "cold fire ring": stones round grey ash and charcoal, a half-burnt brand. |
+| `brackens_fire_ring_lit` | light | hearth | near route 6 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A small wood fire in a ring of stones; the flames loop (8 frames), held still under reduced motion. |
+| `brackens_fold_ruin` | mark | ruin | near route 4 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A round fold tumbled to a horseshoe: the back stands, the front is footings and spilled stones. |
+| `brackens_gorse` | grow | shrub | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gorse clump at the moor's edge (a fade clump for grass and fields, size-guide boundaries). |
+| `brackens_peat_stack` | store | store | within house 3 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): Cut turves stacked to dry in shrinking courses. |
+| `brackens_shepherds_hut` | live | house | near route 3 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): One room of gritstone under roped heather thatch; the chimney's smoke loops (8 frames) over the still. |
 | `commons_bench` | rest | seat | - | on route; on water | **fine** | Facing a feature, a view, water or the land falling away (faces, 6 cells). |
 | `commons_cart` | store | cart | at_edge route 1 | on route; on water | **fine** | At a road's edge, off the way. |
 | `commons_chopping_block` | work | chopping_block | - | on route; on water | **fine** | Near a hearth (needs hearth 6), by the woodpile. |
@@ -191,6 +201,14 @@ out, so a two-cell lane counts once; three ways or more make a junction).
 | `log_steps_3` | climb | stair | on face | - | **fine** | As log_steps. |
 | `stepping_stones_1` | cross | bridge | on water; within route 1 | - | **fixed** | A footpath over a rill; its deck includes its landing stones, so the path meets it within a cell (was "adjacent", which no landing can satisfy). |
 | `stepping_stones_2` | cross | bridge | on water; within route 1 | - | **fixed** | As stepping_stones_1, over a stream. |
+| `wall_drystone_es` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_ew` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_gate_ew` | contain | gate | on route | - | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A five-bar oak gate hung on two gritstone stoops, shut: it keeps the flock in. |
+| `wall_drystone_ne` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_ns` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_nw` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
+| `wall_drystone_stile_ew` | cross | stile | on route | - | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): Three through-stones jut from the face as steps; walkers cross, sheep do not (a closed wall to enclosures.py). |
+| `wall_drystone_sw` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall cell: closes a fold with its neighbours (enclosures.py); dry joints, cock-and-hen coping. |
 | `waterfall_1` | flow | waterfall | on face; under water | - | **fixed** | Water crossing a rim: the sheet starts at the rim, the channel's width, foam on the pool only (2 Nov). |
 | `waterfall_1_tall` | flow | waterfall | on face; under water | - | **fixed** | Water crossing a rim: the sheet starts at the rim, the channel's width, foam on the pool only (2 Nov). |
 | `waterfall_2` | flow | waterfall | on face; under water | - | **fixed** | Water crossing a rim: the sheet starts at the rim, the channel's width, foam on the pool only (2 Nov). |

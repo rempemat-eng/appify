@@ -1,9 +1,9 @@
 """A stretch of the Drover's Road through the Brackens built only from kit pieces, as a review
 study (not a playable zone): the road east to west with a trod turning north at a fingerpost; a
 drystone fold with its gate on the path from the road, a stile where a footpath crosses its back
-wall, its trough and its flock; the drove well and the drovers' seat by the road; the shepherd's
+wall, its trough and its flock; the drove well and the drovers' seat by the road (facing a toppled cairn across it); the shepherd's
 hut with its peat stack; a broken cart and a cold fire ring on the verge; a broken fold; a cairn on
-the trod and a toppled one by the road; a hermit's fire up the trod; gorse at the edges
+the trod; a hermit's fire up the trod; gorse at the edges
 (docs/vision/regions/home-valley-frostline-brackens.md, sections 2, 3 and 5).
 
     python3 -m scripts.art.kit.sets.brackens_study OUT.png [--scale 3]   # the baked frame and every still
@@ -84,8 +84,8 @@ def plan() -> dict:
         # by the road: the drovers' seat at the west end, the drove well, the fingerpost at the junction
         {'id': 'seat', 'piece': 'brackens_bench', 'at': [48, 408]},
         {'id': 'well', 'piece': 'brackens_drove_well', 'at': [372, 384]},
-        {'id': 'fingerpost', 'piece': 'brackens_signpost', 'at': [516, 408], 'variant': 'three'},
-        {'id': 'fingerpost_fold', 'piece': 'brackens_signpost_two', 'at': [204, 408]},
+        {'id': 'fingerpost', 'piece': 'commons_fingerpost_new', 'at': [516, 408]},
+        {'id': 'fingerpost_fold', 'piece': 'commons_fingerpost_new', 'at': [204, 408]},
         # the shepherd's hut, its door to the road, its peat stack at the gable
         {'id': 'hut', 'piece': 'brackens_shepherds_hut', 'at': [756, 384]},
         {'id': 'peat', 'piece': 'brackens_peat_stack', 'at': [900, 384]},
@@ -93,7 +93,7 @@ def plan() -> dict:
         {'id': 'cart', 'piece': 'brackens_cart_broken', 'at': [336, 504]},
         {'id': 'fire_cold', 'piece': 'brackens_fire_ring_cold', 'at': [192, 504]},
         {'id': 'ruin', 'piece': 'brackens_fold_ruin', 'at': [588, 552]},
-        {'id': 'cairn_toppled', 'piece': 'brackens_cairn', 'at': [888, 480], 'variant': 'toppled'},
+        {'id': 'cairn_toppled', 'piece': 'brackens_cairn', 'at': [72, 504], 'variant': 'toppled'},
         # up the trod: a cairn beside it, the hermit's fire off it
         {'id': 'cairn', 'piece': 'brackens_cairn', 'at': [492, 144], 'variant': 'standing'},
         {'id': 'hermit_fire', 'piece': 'brackens_fire_ring_lit', 'at': [636, 96]},

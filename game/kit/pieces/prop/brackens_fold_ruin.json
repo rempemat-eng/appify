@@ -77,6 +77,10 @@
   "snap": "cell",
   "purpose": "mark",
   "role": "ruin",
+  "provides": [
+   "feature",
+   "view"
+  ],
   "composition": "free",
   "requires": [
    {

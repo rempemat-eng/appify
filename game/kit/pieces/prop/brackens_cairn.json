@@ -74,6 +74,9 @@
   "snap": "cell",
   "purpose": "guide",
   "role": "marker",
+  "provides": [
+   "feature"
+  ],
   "composition": "edge",
   "requires": [
    {

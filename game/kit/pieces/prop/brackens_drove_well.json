@@ -97,6 +97,10 @@
   "snap": "cell",
   "purpose": "water",
   "role": "well",
+  "provides": [
+   "feature",
+   "water"
+  ],
   "composition": "edge",
   "requires": [
    {

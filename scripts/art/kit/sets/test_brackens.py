@@ -122,9 +122,13 @@ class BrackensSet(unittest.TestCase):
         self.assertTrue(any('meets no run' in f['message'] for f in self.EN.check_zone(q, self.lib)))
         q = copy.deepcopy(self.plan)
         for x in q['pieces']:
-            if x['id'] == 'fingerpost':
-                x['at'] = [516, 240]                 # beside the trod, at no junction
-        self.assertTrue(any('fingerpost' in f['message'] for f in RL.check_zone(q)))
+            if x['id'] == 'cairn':
+                x['at'] = [372, 144]                 # out in the heather, far from any way
+        self.assertTrue(any(f['message'].startswith('cairn:') for f in RL.check_zone(q)))
+        from scripts.art.kit import placement_audit as PA
+        q = copy.deepcopy(self.plan)
+        q['pieces'] = [x for x in q['pieces'] if x['id'] != 'cairn_toppled']
+        self.assertTrue(any('seat: faces' in f['message'] for f in PA.check_plan(q)))
         from scripts.art.kit import placement_audit as PA
         q = copy.deepcopy(self.plan)
         q['pieces'] = [x for x in q['pieces'] if x['id'] != 'hut']

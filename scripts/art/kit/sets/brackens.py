@@ -30,8 +30,8 @@ upper left, the house palette, every piece drawn as solids in the three-quarter 
 - the broken fold: a round fold tumbled to a horseshoe, its stones spilled, nettles in it;
 - the stone seat: a gritstone slab on two uprights with a back slab (Drover's Road "stile and bench");
 - the cairn: a waymark pile of stones, standing or toppled;
-- the fingerpost: an oak post with two or three arms at a junction (placement-audit: "a signpost for
-  junctions" was missing);
+- (the junctions' fingerposts are the village commons' `commons_fingerpost_*`, whose arms point
+  along the routes: scripts/art/kit/commons.py);
 - the peat stack: cut turves stacked to dry beside a home;
 - the broken cart: a peat cart down on one side, its wheel off and broken, turves spilled;
 - the fire ring: a ring of stones round ash, cold (a story mark) or lit (a hermit's fire, its flames
@@ -527,58 +527,6 @@ def cairn(toppled=False, seed=3):
         sc.box(16, -6, 0, 34, 0, 5, GRIT, base=2.8, k=1.6, tag='stone', round_=2.2, mix=0.55)          # the waymark lying
     a = _solo(sc, dress=lambda s, a: _lichen(s, a, rate=0.5, seed=seed))
     _ground_tufts(a, sc.ox, sc.oy + 2, [-12, -6, 9, 14] if not toppled else [-12, 8, 37], seed)
-    return K.crop(a, sc.ox, sc.oy)
-
-
-def signpost(arms=3, seed=5):
-    """An oak fingerpost at a junction: a squared post with a weathered cap, its arms pointing down
-    the ways (two places east on the one road and one west, or one each way; an arm pointing north
-    would hide behind the post in the three-quarter view), painted white and weathered,
-    each with a cut point and a name in black letters; stones packed at its foot."""
-    sc = K.Scene(-40, 40, -30, 30, 110)
-    mx = K.noise((sc.H, sc.W), np.random.default_rng(seed), 1.2)            # silvered and brown by streaks
-    OAKS = OAK + [('timber_cool', 'earth_warm', 'timber_warm'), ('stone_cool', 'timber', 'sand_warm')]
-    PAINT = [('stone_cool', 'plaster_warm', 'plaster'), ('sand_cool', 'sand', 'snow_warm'), ('stone_cool', 'stone_warm', 'plaster_warm')]
-    sc.box(-3.5, -3.0, 0, 3.5, 3.0, 82, OAKS, base=2.9, k=1.6, tag='wood', round_=1.2, mix=mx, tex='wood_v')
-    sc.ellipsoid(0, 0, 83, 3.6, 3.6, 2.8, OAK, base=3.2, k=1.8, tag='wood', mix=0.6, flat=1.4)
-    arm_specs = [(1, 3, 27, 68, 74, 'e'), (-1, 3, 25, 60, 66, 'w')]
-    if arms == 3:
-        arm_specs.append((1, 3, 21, 51, 57, 'e'))
-    for (sgn, x0, L, z0, z1, d) in arm_specs:
-        if d == 'n':
-            sc.box(-1.8, -3.0 - L, z0, 1.8, -3.0, z1, PAINT, base=3.2, k=1.4, tag='arm', round_=0.8, mix=mx, tex='wood_v')
-        elif sgn > 0:
-            sc.box(x0 - 1, -1.2, z0, x0 + L, 1.2, z1, PAINT, base=3.2, k=1.4, tag='arm', round_=0.8, mix=mx, tex='wood')
-        else:
-            sc.box(-x0 - L, -1.2, z0, -x0 + 1, 1.2, z1, PAINT, base=3.2, k=1.4, tag='arm', round_=0.8, mix=mx, tex='wood')
-    stone_pile(sc, [(4.5, 5, 0.0, 3.2, 0.6)], seed + 2, flat=1.6)
-    a = _solo(sc, dress=lambda s_, a_: _lichen(s_, a_, tags=('wood',), rate=1.0, seed=seed))
-    # the points and the lettering: each arm's tip cut to a point, a painted name along its face
-    oy, ox = sc.oy, sc.ox
-    for (sgn, x0, L, z0, z1, d) in arm_specs:
-        if d == 'n':
-            continue
-        tip = ox + (x0 + L if sgn > 0 else -x0 - L)
-        r0, r1 = oy + int(-1.2 - z1), oy + int(1.2 - z0)
-        for k in range(3):
-            for yy in (r0 + k, r1 - 1 - k):
-                xx = tip - sgn * (2 - k) - (1 if sgn > 0 else 0)
-                if 0 <= yy < a.shape[0]:
-                    for x_ in range(xx, xx + sgn * 3, sgn) if sgn > 0 else range(xx, xx + 3):
-                        if 0 <= x_ < a.shape[1]:
-                            a[yy, x_] = -1
-        # letters: short dark strokes on the arm's front face, in two rows of word marks
-        fr = oy + int(1.2 - z1) + 2
-        xs = range(ox + 4, ox + L - 3) if sgn > 0 else range(ox - L, ox - 4)
-        for x_ in xs:
-            h = hsh(x_, seed, 61)
-            if h < 0.55 and a[fr, x_] >= 0:
-                a[fr, x_] = C('soot', 1)
-                if h < 0.25 and a[fr + 1, x_] >= 0:
-                    a[fr + 1, x_] = C('soot', 1)
-    V.outline(a)
-    V.tidy(a, passes=1)
-    _ground_tufts(a, sc.ox, sc.oy + 1, [-7, -4, 5, 8], seed)
     return K.crop(a, sc.ox, sc.oy)
 
 
@@ -1266,6 +1214,7 @@ def prop_jobs():
             collision={'shape': 'rect', 'rect': [-12.0, -13.0, 24, 16]}, shadow=(26, 5), composition='edge',
             requires=[_rel('near', 'route', 2, 'beside the drove road, where the flocks are watered on the way')],
             forbids=[OFF_ROUTE, _rel('not_near', 'water', 4, 'a spring is walled where there is no stream to drink from')],
+            extra={'provides': ['feature', 'water']},
             size_class='well (89 to 141 tall, 70 to 118 wide)', eastward=EW_RURAL + '; 13 (the bell frame, 1.1 A)',
             note='A spring-house over the well and a trough in front; the trickle and rings loop (8 frames).')),
         ('brackens_shepherds_hut', [('still', lambda: shepherds_hut())], dict(
@@ -1280,32 +1229,24 @@ def prop_jobs():
             name='Broken sheepfold', purpose='mark', role='ruin', cells=(5, 4), fp=[[c, -4] for c in range(-2, 3)],
             collision={'shape': 'rect', 'rect': [-12.0, -29.0, 24, 5]}, shadow=(28, 4), composition='free',
             requires=[_rel('near', 'route', 4, 'a fold stood by the drove road; its ruin still does')], forbids=NATURE,
+            extra={'provides': ['feature', 'view']},
             size_class='ruin (a fold 4 to 5 cells across, walls to 34 at the back; size-guide drystone wall 14 world px)',
             eastward=WALL_EW, note='A round fold tumbled to a horseshoe: the back stands, the front is footings and spilled stones.')),
         ('brackens_bench', [('still', lambda: bench())], dict(
             name='Drovers\' seat', purpose='rest', role='seat', cells=(4, 1), fp=_fp(4, 1),
             collision={'shape': 'rect', 'rect': [-15.0, -4.0, 30, 4]}, shadow=(30, 4), composition='edge',
             requires=[_rel('near', 'route', 2, 'beside the road, facing it and the view (size-guide: a bench faces a view or a feature)')],
+            extra={'faces': {'what': ['feature', 'view', 'water', 'lower'], 'cells': 6,
+                             'note': 'a seat looks at something: across the road to a cairn, a ruin or a well'}},
             forbids=NATURE, size_class='bench (37 to 68 tall, 70 to 107 wide)', eastward='12 and 38 (the bench, 1.2 x 0.87 A)',
             note='A gritstone slab on two uprights, two back slabs set in the ground behind it.')),
         ('brackens_cairn', [('standing', lambda: cairn(False)), ('toppled', lambda: cairn(True))], dict(
             name='Cairn', purpose='guide', role='marker', cells=(2, 2), fp=_fp(2, 1),
             collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]}, shadow=(12, 3), composition='edge',
             requires=[_rel('near', 'route', 2, 'a waymark beside the trail, one every 64 to 96 world px along a high way')],
+            extra={'provides': ['feature']},
             forbids=NATURE, size_class='cairn (size-guide: 12 to 28 tall, 12 to 24 wide in world px)', eastward='13 (the boulder, 0.35 x 0.42 A); 12 (the cliff\'s stones)',
             note='A waymark of stones in shrinking rings, a long stone upright on top; or tumbled, its top stones spilled east.')),
-        ('brackens_signpost', [('three', lambda: signpost(3))], dict(
-            name='Fingerpost, three arms', purpose='guide', role='signpost', cells=(2, 1), fp=[[0, -1]],
-            collision={'shape': 'rect', 'rect': [-2.0, -2.0, 4, 2]}, shadow=(6, 3), composition='corner',
-            requires=[_rel('at_corner', 'route', 2, 'at a junction: routes on two sides at right angles, its arms down them')],
-            forbids=NATURE, size_class='sign (67 to 126 tall, 18 to 81 wide: a fingerpost 1.6 to 2.4 m)', eastward='13 (the farm\'s signs), 12 (the lantern post)',
-            note='An oak fingerpost at a junction: two arms east (two places down that road) and one west, painted names.')),
-        ('brackens_signpost_two', [('still', lambda: signpost(2))], dict(
-            name='Fingerpost, two arms', purpose='guide', role='signpost', cells=(2, 1), fp=[[0, -1]],
-            collision={'shape': 'rect', 'rect': [-2.0, -2.0, 4, 2]}, shadow=(6, 3), composition='corner',
-            requires=[_rel('at_corner', 'route', 2, 'where a path leaves the road: its arms along the road both ways')],
-            forbids=NATURE, size_class='sign (67 to 126 tall, 18 to 81 wide)', eastward='13 (the farm\'s signs), 12 (the lantern post)',
-            note='An oak fingerpost where a side path meets the road: arms east and west along the road.')),
         ('brackens_peat_stack', [('still', lambda: peat_stack())], dict(
             name='Peat stack', purpose='store', role='store', cells=(3, 2), fp=_fp(3, 1),
             collision={'shape': 'rect', 'rect': [-10.0, -6.0, 20, 6]}, shadow=(22, 4), composition='edge',

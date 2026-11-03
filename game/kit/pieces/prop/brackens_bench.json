@@ -73,6 +73,16 @@
   "snap": "cell",
   "purpose": "rest",
   "role": "seat",
+  "faces": {
+   "what": [
+    "feature",
+    "view",
+    "water",
+    "lower"
+   ],
+   "cells": 6,
+   "note": "a seat looks at something: across the road to a cairn, a ruin or a well"
+  },
   "composition": "edge",
   "requires": [
    {
