@@ -1,0 +1,130 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "brackens_cairn",
+ "name": "Cairn",
+ "kind": "prop",
+ "biomes": [
+  "brackens",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "standing",
+   "weight": 1.0,
+   "png": "res://kit/props/art/brackens/brackens_cairn_standing.png",
+   "foot": [
+    17,
+    47
+   ]
+  },
+  {
+   "id": "toppled",
+   "weight": 0.6,
+   "png": "res://kit/props/art/brackens/brackens_cairn_toppled.png",
+   "foot": [
+    19,
+    22
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A waymark of stones in shrinking rings, a long stone upright on top; or tumbled, its top stones spilled east."
+ },
+ "geometry": {
+  "size_px": [
+   57,
+   60
+  ],
+  "size_cells": [
+   2,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 60,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -4.0,
+    10,
+    4
+   ]
+  },
+  "foot": [
+   17,
+   47
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "guide",
+  "role": "marker",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 2,
+    "note": "a waymark beside the trail, one every 64 to 96 world px along a high way"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    12,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "cairn (size-guide: 12 to 28 tall, 12 to 24 wide in world px)",
+  "eastward_ref": "13 (the boulder, 0.35 x 0.42 A); 12 (the cliff's stones)",
+  "painter": {
+   "module": "scripts.art.kit.sets.brackens",
+   "fn": "brackens_cairn",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/brackens.py",
+  "todo": []
+ }
+}

@@ -943,5 +943,9 @@ class VillageCommons(unittest.TestCase):
             self.assertTrue(tags <= set(json.load(open(lib[pid]))['placement'].get('provides', [])), pid)
 
 
+# the prop sets' own tests (scripts/art/kit/sets/), run with the kit's
+from scripts.art.kit.sets.test_brackens import BrackensSet  # noqa: E402,F401
+
+
 if __name__ == '__main__':
     unittest.main()

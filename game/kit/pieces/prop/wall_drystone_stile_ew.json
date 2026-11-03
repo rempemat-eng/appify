@@ -1,0 +1,115 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "wall_drystone_stile_ew",
+ "name": "Drystone wall, step stile along x",
+ "kind": "prop",
+ "biomes": [
+  "brackens",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "steps",
+   "weight": 1.0,
+   "png": "res://kit/props/art/brackens/wall_drystone_stile_ew_steps.png",
+   "foot": [
+    13,
+    47
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Three through-stones jut from the face as steps; walkers cross, sheep do not (a closed wall to enclosures.py)."
+ },
+ "geometry": {
+  "size_px": [
+   25,
+   56
+  ],
+  "size_cells": [
+   1,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 47,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   13,
+   47
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "cross",
+  "role": "stile",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "on",
+    "what": "route",
+    "note": "a stile carries a footpath over the wall; the flock stays behind it"
+   }
+  ],
+  "boundary": {
+   "style": "drystone",
+   "joins": [
+    "e",
+    "w"
+   ],
+   "gate": false,
+   "span_cells": 1,
+   "encloses": [
+    "sheep",
+    "horses",
+    "cattle"
+   ],
+   "stile": true
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    9,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "fence (the wall) with steps 11, 22 and 33 up (stair pitch 12 to 22)",
+  "eastward_ref": "12 (the drystone and boulder walls by the thatched hut), 17 (the farm fence and gate, 40 E = 0.75 A); 13 (the farm stair, 12 E a step)",
+  "painter": {
+   "module": "scripts.art.kit.sets.brackens",
+   "fn": "render_wall",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/brackens.py",
+  "todo": []
+ }
+}
