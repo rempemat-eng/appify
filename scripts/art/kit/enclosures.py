@@ -159,17 +159,22 @@ def check_zone(plan, lib=None) -> list:
             fs.append(_f('rules.enclosures', 'the enclosure at %s holds nothing: put in what it is for (animals, crops, '
                          'flowers), or open it' % (at,), at))
             continue
-        # the styles round it may keep what it holds
-        styles = set()
+        # every fence piece round it must keep what it holds: a fold of hurdles with a stretch of
+        # picket in it lets the sheep out there (the Codex lead's review of #430: one permitting
+        # style must not mask another that does not)
+        bounding = {}
         bounds = ndi.binary_dilation(region, iterations=3) & ~region
         for a, b, pc, s in segs:
             x0, x1 = sorted((int(round(a[0])), int(round(b[0]))))
             y0, y1 = sorted((int(round(a[1])), int(round(b[1]))))
             if bounds[max(0, y0):y1 + 1, max(0, x0):x1 + 1].any():
-                styles.add(tuple(lib[pc['piece']]['placement']['boundary'].get('encloses', [])))
+                bounding[pc['id']] = (pc['piece'], lib[pc['piece']]['placement']['boundary'].get('encloses', []))
         for h in sorted(holds):
-            if styles and not any(h in st for st in styles):
-                fs.append(_f('rules.enclosures', 'the enclosure at %s holds %s behind a fence that does not keep them' % (at, h), at))
+            weak = sorted(pid for pid, (_piece, keeps) in bounding.items() if h not in keeps)
+            if weak:
+                styles = sorted({lib[bounding[pid][0]]['placement']['boundary']['style'] for pid in weak})
+                fs.append(_f('rules.enclosures', 'the enclosure at %s holds %s, but its %s fence (%s) does not keep them: '
+                             'every stretch round a pen must' % (at, h, '/'.join(styles), ', '.join(weak[:4]) + (' ...' if len(weak) > 4 else '')), at))
             for need in ENCLOSE.get(h, ()):
                 if h not in needs and need:
                     fs.append(_f('rules.enclosures', 'the enclosure at %s holds %s but has no %s inside' % (at, h, need), at))

@@ -773,6 +773,22 @@ class FencesAndFarm(unittest.TestCase):
         self.assertTrue(any('holds nothing' in m for m in without('sheep_1', 'sheep_2', 'sheep_3', 'trough', 'hay', 'shelter')))
         self.assertTrue(any('meets no run' in m for m in without('fold_gate')))
 
+    def test_a_mixed_run_is_judged_stretch_by_stretch(self):
+        # the Codex lead's review of #430: a sheep fold of wattle with one side in picket must
+        # fault, though wattle alone would keep the sheep
+        import copy
+        q = copy.deepcopy(self.plan)
+        swapped = 0
+        for pc in q['pieces']:
+            if pc['id'].startswith('fold_20_') and pc['piece'].startswith('fence_wattle_'):
+                pc['piece'] = pc['piece'].replace('fence_wattle_', 'fence_picket_')
+                swapped += 1
+        self.assertGreater(swapped, 3)
+        msgs = [f['message'] for f in self.EN.check_zone(q, self.lib)]
+        self.assertTrue(any('holds sheep' in m and 'picket fence' in m for m in msgs), msgs)
+        self.assertFalse(any('holds sheep' in m and 'picket fence' in m for m in
+                             (f['message'] for f in self.EN.check_zone(self.plan, self.lib))))
+
     def test_kit_zones_have_no_enclosure_faults(self):
         zdir = os.path.join(S.ROOT, 'game', 'kit', 'zones')
         for f in sorted(os.listdir(zdir)):
