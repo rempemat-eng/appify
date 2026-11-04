@@ -482,6 +482,41 @@
           "items": {
             "$ref": "#/$defs/cellxy"
           }
+        },
+        "doors": {
+          "type": "array",
+          "description": "Doorways, texels from the foot: the opening between the frame posts (x0 to x1) and the side it faces; a path leaving the door centres on it and nothing stands in its threshold and swing (scripts/art/kit/thresholds.py).",
+          "items": {
+            "type": "object",
+            "required": [
+              "x",
+              "faces"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "x": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "faces": {
+                "enum": [
+                  "n",
+                  "e",
+                  "s",
+                  "w"
+                ]
+              },
+              "swing": {
+                "type": "number",
+                "minimum": 0,
+                "description": "How deep in front of the door stays clear, texels (default: the opening's width, a cell at least)."
+              }
+            }
+          }
         }
       }
     },

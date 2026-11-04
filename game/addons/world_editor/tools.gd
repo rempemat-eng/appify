@@ -237,3 +237,57 @@ static func next_variant(variants: Array, current: String) -> String:
 ## The short name of a finding's rule, for the live overlay's label.
 static func short_rule(check: String) -> String:
 	return check.trim_prefix("rules.").replace("_", " ")
+
+## Door paths (Matt, 4 Nov; scripts/art/kit/thresholds.py rules.door_path): a route stroke that
+## reaches the row before a door snaps to the door's centre line. The stroke's cells in the two rows
+## before the door (within a cell of its opening) become a run centred on the opening, as wide as the
+## stroke was there (one wider when the door's centre needs the other parity: a cell's centre takes
+## an odd run, a cell's edge an even one), so the path leaves the door centred and straight for a
+## cell. `door` holds the opening's x0, x1 and the door's foot y (ground texels). A stroke that does
+## not touch the door's own row is left as it is.
+static func door_path_cells(cells: Array, door: Dictionary, cell: int = 24) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	var x0 := float(door.x0)
+	var x1 := float(door.x1)
+	var row := ceili(float(door.y) / cell - 0.000001)
+	var lo := floori(x0 / cell) - 1
+	var hi := floori((x1 - 0.000001) / cell) + 1
+	var counts := {row: 0, row + 1: 0}
+	for value in cells:
+		var c := Vector2i(value)
+		if counts.has(c.y) and c.x >= lo and c.x <= hi:
+			counts[c.y] += 1
+		elif c not in out:
+			out.append(c)
+	if counts[row] == 0:
+		out.clear()
+		for value in cells:
+			if Vector2i(value) not in out:
+				out.append(Vector2i(value))
+		return out
+	var width := maxi(counts[row], counts[row + 1])
+	var centre := (x0 + x1) / 2.0
+	var odd := absf(fposmod(centre, float(cell)) - cell / 2.0) <= cell / 4.0
+	if odd != (width % 2 == 1):
+		width += 1
+	var start := roundi(centre / cell - width / 2.0)
+	for r in [row, row + 1]:
+		for k in width:
+			var c := Vector2i(start + k, r)
+			if c not in out:
+				out.append(c)
+	return out
+
+## Gates on paths (rules.gate_path): of the spans a gate could take on a run, the one centred on the
+## path that crosses it. `spans` are the candidate centres' positions along the run (texels), `path`
+## the crossing path's centre; with no crossing (path is NAN) the first span is kept.
+static func centred_span(spans: Array, path: float) -> int:
+	if spans.is_empty():
+		return -1
+	if is_nan(path):
+		return 0
+	var best := 0
+	for i in spans.size():
+		if absf(float(spans[i]) - path) < absf(float(spans[best]) - path) - 0.001:
+			best = i
+	return best

@@ -95,6 +95,7 @@ func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dic
 		if cell not in chosen:
 			chosen.append(cell)
 	var variant_only := material_id == "" and variant != ""
+	var snapped := false
 	if material_id != "":
 		var raw := definition(material_id)
 		if raw.is_empty() or raw.get("kind") != "terrain" or not _ground.kit.by_id.has(material_id):
@@ -102,6 +103,10 @@ func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dic
 		var gate := _approval(raw)
 		if not gate.ok:
 			return gate
+		if bool(raw.get("terrain", {}).get("route", false)):
+			var centred := _door_snap(chosen)
+			snapped = centred != chosen
+			chosen = centred
 	if variant != "" and not _known_variant(variant):
 		return _failure("rules.variant", "Unknown surface variant '%s'." % variant)
 	# A variant-only brush still uses its cells' current materials, so it cannot bypass approval.
@@ -145,7 +150,72 @@ func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dic
 	_do(Callable(self, "_apply_paint").bind(_ground, after))
 	_undo(Callable(self, "_apply_paint").bind(_ground, before))
 	_history.commit_action()
-	return {"ok": true, "diagnostics": [], "changed": true, "cells": chosen}
+	return {"ok": true, "diagnostics": [], "changed": true, "cells": chosen, "snapped": snapped}
+
+## Door paths: a route stroke that reaches the row before a placed door is centred on the door
+## (Tools.door_path_cells), so the path leaves it centred and straight for a cell. Cells the snap
+## would put outside the zone are dropped.
+func _door_snap(cells: Array[Vector2i]) -> Array[Vector2i]:
+	var out: Array[Vector2i] = cells.duplicate()
+	for door in _doors():
+		out = Tools.door_path_cells(out, door, _ground.kit.cell)
+	var inside: Array[Vector2i] = []
+	for c in out:
+		if _in_bounds(c) and c not in inside:
+			inside.append(c)
+	return inside
+
+## Every placed door facing south: its opening's x0 and x1 and its foot y, in ground texels
+## (the pieces' geometry.doors).
+func _doors() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var props := _zone.get_node_or_null("Props") as Node2D
+	if props == null:
+		return out
+	for child in props.get_children():
+		if not child is KitPiece:
+			continue
+		var doors: Variant = definition(child.piece_id).get("geometry", {}).get("doors", [])
+		if not doors is Array:
+			continue
+		var foot: Vector2 = _ground.to_local(props.to_global(child.position)) if props.is_inside_tree() else child.position
+		for d in doors:
+			if d is Dictionary and String(d.get("faces", "s")) == "s" and d.get("x") is Array and d.x.size() == 2:
+				out.append({"x0": foot.x + float(d.x[0]), "x1": foot.x + float(d.x[1]), "y": foot.y})
+	return out
+
+## The centre (texels along the run) of the path crossing a fence run near a cell, or NAN: along x,
+## route cells on both sides of the cell's south line; along y, route cells in the run's column and
+## both columns beside it. The crossing nearest the cell, four cells either way.
+func _crossing_path(at: Vector2i, along_x: bool, size: int) -> float:
+	var runs: Array = []
+	for i in range(-4, 5):
+		var crosses := false
+		if along_x:
+			var c := at + Vector2i(i, 0)
+			crosses = _is_route(c) and _is_route(c + Vector2i(0, 1))
+		else:
+			var c := at + Vector2i(0, i)
+			crosses = _is_route(c) and _is_route(c + Vector2i(-1, 0)) and _is_route(c + Vector2i(1, 0))
+		if crosses:
+			if not runs.is_empty() and runs.back()[1] == i - 1:
+				runs.back()[1] = i
+			else:
+				runs.append([i, i])
+	if runs.is_empty():
+		return NAN
+	var best: Array = runs[0]
+	for r in runs:
+		if mini(absi(r[0]), absi(r[1])) < mini(absi(best[0]), absi(best[1])) or (r[0] <= 0 and r[1] >= 0):
+			best = r
+	var base := at.x if along_x else at.y
+	return (base * 2 + best[0] + best[1] + 1) * size / 2.0
+
+## Whether a ground cell's material is a route (a path, a road).
+func _is_route(cell: Vector2i) -> bool:
+	if not _in_bounds(cell):
+		return false
+	return bool(definition(_material_piece(cell)).get("terrain", {}).get("route", false))
 
 func preview_piece(piece_id: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
 	var context := _context(false)
@@ -554,6 +624,7 @@ func place_crossing(piece_id: String, at: Vector2, options: Dictionary = {}) -> 
 	var step := Vector2i(1, 0) if along_x else Vector2i(0, 1)
 	var straight := "_ew" if along_x else "_ns"
 	var centre := Vector2i(-9999, -9999)
+	var spans: Array[Vector2i] = []
 	for d in [0, -1, 1, -2, 2]:
 		var c: Vector2i = click + step * d
 		var ok := true
@@ -563,8 +634,15 @@ func place_crossing(piece_id: String, at: Vector2, options: Dictionary = {}) -> 
 				ok = false
 				break
 		if ok:
-			centre = c
-			break
+			spans.append(c)
+	# of the spans it could take, the gate takes the one centred on the path that crosses the run
+	var along: Array = []
+	for c in spans:
+		var foot := Tools.fence_foot(c, size)
+		along.append(foot.x if along_x else foot.y)
+	var pick := Tools.centred_span(along, _crossing_path(click, along_x, size))
+	if pick >= 0:
+		centre = spans[pick]
 	if centre.x == -9999:
 		return _failure("rules.crossing", "No straight %s run of %d cell%s here: a %s needs %s cell%s of a straight run along %s within two cells of the click." % [
 			style, span, "s" if span > 1 else "", "stile" if stile else "gate", span, "s" if span > 1 else "", "x" if along_x else "y"])
