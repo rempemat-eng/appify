@@ -301,6 +301,65 @@ class WaterBanks(unittest.TestCase):
             else:
                 self.assertEqual(int(face.sum()), 0, side)
 
+    def test_current_marks_run_with_the_flow(self):
+        # the woodland review (4 Nov): on a wide east-flowing stream the moving water drew vertical
+        # marks drifting south, and the ground a four-armed cross sparkle. Marks lie along the flow
+        # and move downstream; glints are pairs
+        from scripts.art.native import animate as AN
+        from scripts.art.native import softground as GD
+        from scripts.art.native.palette import C
+        H_, W_ = 220, 640
+        m = np.zeros((H_, W_), bool)
+        m[50:170] = True                                   # 120 texels wide, running east-west
+        codes = np.where(m, C('water', 2), C('grass', 3)).astype(np.int32)
+        frames = AN.water(codes, m, np.zeros_like(m), 3.0, thin=True)
+        inner = np.zeros_like(m)
+        inner[60:160, 40:600] = True
+        for f in frames:
+            on = (f[..., 3] > 0) & inner
+            horiz = int((on[:, 1:] & on[:, :-1]).sum())
+            vert = int((on[1:] & on[:-1]).sum())
+            self.assertGreater(horiz, 5 * max(1, vert), 'marks lie east-west on an east-west stream')
+        a = (frames[0][..., 3] > 0) & inner
+        b = (frames[1][..., 3] > 0) & inner
+        shift = int(round(4 * 3.0))
+        self.assertGreater(int((a[:, :-shift] & b[:, shift:]).sum()), 0.8 * a[:, :-shift].sum(), 'they drift east')
+        cv = self._paint(m)
+        w5 = cv == C('water', 5)
+        light = (cv == C('water', 5)) | (cv == C('water', 4))
+        cross = w5.copy()
+        for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0)):
+            cross &= np.roll(np.roll(light, dy, 0), dx, 1)
+        self.assertEqual(int(cross[60:160].sum()), 0, 'no four-armed glint')
+
+    def test_the_plunge_churns_every_frame(self):
+        # the woodland review (4 Nov): the foam stood still in 5 of 8 frames. rocks.fall's foot
+        # (the woodland) and fall_sheet's (the kit's pieces) both churn in every frame but the still
+        from scripts.art.native import rocks as RK
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C
+        cv = np.full((190, 220), C('grass', 3), np.int32)
+        cv[60:130, 40:180] = C('stone', 2)
+        cv[0:64, 87:133] = C('water', 2)
+        cv[128:, 10:210] = C('water', 2)
+        under = cv.copy()
+        info = RK.fall(cv, 32.0, 16.0, 64 / 3.0 + 1.5, 128 / 3.0, seed=65)
+        self.assertEqual((info['xl'] - 87 <= 0, info['xr'] - 133 >= 0), (True, True))
+        ov = RK.plunge_frames(cv, info)
+        self.assertEqual(len(ov), RK.PLUNGE_FRAMES)
+        self.assertEqual(int((ov[0] >= 0).sum()), 0, 'frame 0 is the still')
+        for t in range(1, RK.PLUNGE_FRAMES):
+            self.assertGreater(int((ov[t] >= 0).sum()), 20, 'frame %d churns' % t)
+        # the lip is the channel's width: nothing above the bend outside the channel's columns
+        top = int(round((64 / 3.0 + 1.5 - 1.5) * 3))
+        self.assertTrue((cv[top:top + 3, :87] == under[top:top + 3, :87]).all())
+        self.assertTrue((cv[top:top + 3, 133:] == under[top:top + 3, 133:]).all())
+        strip, (x0, y0, w, h) = ST.fall_frames(2, 1)
+        f0 = strip[:, :w]
+        for t in range(1, ST.FALL_FRAMES):
+            ft = strip[:, t * w:(t + 1) * w]
+            self.assertGreater(int((ft[-14:] != f0[-14:]).sum()), 20, 'kit fall frame %d churns' % t)
+
     def test_one_rim_round_every_shore(self):
         # an irregular pool and channel: every water texel beside land is the rim's wet earth (or
         # the north face, or a turf tongue), never bare water; and inside the rim the waterline

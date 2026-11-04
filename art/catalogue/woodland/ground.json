@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "91d893d98789763feb49db64d8e43492456301de992ebac624dfa4d1693e2812",
+ "sha256": "0f329bb11625968f85f92ac207828381a46f2a401387507426befa6158f22193",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pending",
   "date": "2026-11-04",
-  "note": "fail (docs/reviews/2026-11-04-woodland-water.md, at 4881fee7). Fault 1: the plunge pool's foam is a flat two-tone white plate, 118 x 19 art px (x 183-301, y 877-896), two tones split by a hard vertical seam at x 253, twice the sheet's width, hard outline, no spray, bubbles, rings or churn: the calibration's flat white bar (W3) turned on its side. Polish: the crest is a 53 x 6 rectangle overhanging the channel 3 px each side; six vertical streaks across the east-flowing stream; repeated arrowhead deep cores and a geometric bend in the rill; a ruler-straight cut through the north rubble band. The 5.3a banks pass (side and south rims earth_cool 1 then RIM_LINE, north faces with a light waterline, stones with wet feet)."
+  "note": "re-rendered after the independent audit of 4881fee7 failed it (docs/reviews/2026-11-04-woodland-water.md): the plunge foam, the current marks, the churn, the crest, the stream streaks, the rill core and banks and the terrace are redrawn; detectors pass (0 findings). The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
  }
 }

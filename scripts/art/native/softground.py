@@ -986,11 +986,21 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     famw = np.full((H, W), FI[fam])
     sky = blobs(H, W, seed + 2, 70.0, 0.25) & (d_in > 10)
     famw[sky] = FI[fam + '_warm'] if fam + '_warm' in FI else FI[fam]
-    # deeper water in the middle of wide water: a tone down, its edge a checker (a depth fade)
+    # deeper water a tone down, its edge a checker (a depth fade), on the depth smoothed so a bend
+    # never cuts it straight (the woodland review, 4 Nov: a 45-degree cut and a square notch at the
+    # rill's bend): in wide water the middle; in a channel one continuous thread down its middle
+    # (the depth against the deepest within a few texels across), so a channel that breathes
+    # wider and narrower never stamps the same arrowhead at each wide point
     yy0, xx0 = np.mgrid[0:H, 0:W]
-    dp = d_in > 22 + 6 * nz(H, W, 30.0, seed + 13)
+    ds = ndi.gaussian_filter(d_in, 3.0) * wat
+    wide = ndi.grey_dilation(ds, size=(61, 61)) > 30
+    znz = nz(H, W, 30.0, seed + 13)
+    rel = ds / np.maximum(1.0, ndi.grey_dilation(ds, size=(15, 15)))
+    thread = wat & (ds > 9) & ~wide
+    dp = (wide & (ds > 22 + 6 * znz)) | (thread & (rel > 0.9 - 0.06 * znz))
     t[dp] = 1
-    t[(d_in > 18 + 6 * nz(H, W, 30.0, seed + 13)) & ~dp & ((xx0 + yy0) % 2 == 0)] = 1
+    fade = (wide & (ds > 18 + 6 * znz)) | (thread & (rel > 0.76 - 0.06 * znz))
+    t[fade & ~dp & ((xx0 + yy0) % 2 == 0)] = 1
     # shade under the north bank: the rows below the bank, in three steps back to the body
     rb = runs_from_top(wat)
     band = (7 + (fbm(H, W, 14.0, seed + 4) - 0.5) * 6).astype(int)
@@ -1004,10 +1014,10 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     t[wat & (d_in <= 1.5) & ~under_n] = 4
     # ripples: short lit lines along the flow, a darker texel below; gathered, not even
     if isinstance(flow, str):
-        # along the channel: across the gradient of the distance to the banks
-        dsm = ndi.gaussian_filter(ndi.distance_transform_edt(m), 6.0)
-        gy_, gx_ = np.gradient(dsm)
-        fx, fy = np.abs(gy_) + 1e-6, np.abs(gx_)
+        # along the channel (water.flow_dir: the same current the moving frames follow)
+        from .water import flow_dir
+        fx, fy = flow_dir(m)
+        fx = fx + 1e-6
     else:
         fx, fy = flow if flow is not None else (1.0, 0.0)
     ys, xs = np.nonzero(wat & (d_in > 4))
@@ -1029,10 +1039,11 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
                 Y2, X2 = (Y, X + 1) if vertical else (Y + 1, X)
                 if 0 <= Y2 < H and 0 <= X2 < W and wat[Y2, X2]:
                     t[Y2, X2] = max(0, t[Y2, X2] - 1)
-    # glints
+    # glints: a pair of light texels along the flow (never a four-armed cross; the woodland review)
     for k in rng.permutation(len(ys))[: len(ys) // 4000 + 1]:
         y, x = int(ys[k]), int(xs[k])
-        for (dy, dx) in ((0, 0), (0, 1), (-1, 0), (0, -1), (1, 0)):
+        vert = abs(fy) > abs(fx) if np.ndim(fx) == 0 else abs(fy[y, x]) > abs(fx[y, x])
+        for (dy, dx) in ((0, 0), (1, 0) if vert else (0, 1)):
             if wat[min(H - 1, y + dy), min(W - 1, x + dx)]:
                 t[min(H - 1, y + dy), min(W - 1, x + dx)] = 5 if (dy, dx) == (0, 0) else 4
     out = cv.copy()

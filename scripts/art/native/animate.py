@@ -50,6 +50,13 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
     T = np.where(codes >= 0, codes % 8, 0)
     ys, xs = np.mgrid[0:H, 0:W]
     fx, fy, coh = water_flow._flow(mask)
+    if thin:
+        # at density 3 a channel is too wide for _flow's fixed blur, whose middle reads south (the
+        # woodland review, 4 Nov: marks drifting south across an east-flowing stream): the current
+        # the ground's ripples follow (water.flow_dir), on the same 1/256 grid
+        from .water import flow_dir
+        ffx, ffy = flow_dir(mask)
+        fx, fy = np.round(ffx * 256).astype(np.int64), np.round(ffy * 256).astype(np.int64)
     depth = water_flow._depth(mask)
     run = mask & ~still & (depth >= 1)
     shift = int(round(4 * s))
@@ -64,8 +71,16 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
     length = (2 + (lh >> np.uint32(9)) % 4).astype(np.int64) * max(1, int(round(s)))
     gh = _h(xs // (3 * max(1, int(s))), ys // (2 * max(1, int(s))), np.zeros_like(xs) + 11)
     glint = still & (depth >= 2) & ((gh % 23) == 0) & (xs % 2 == 0)
+    if thin:
+        # one pair a cell (g and its east neighbour below), never the cell's whole block lit
+        si = max(1, int(s))
+        glint &= (xs % (3 * si) == 0) & (ys % (2 * si) == 0)
     g_phase = ((gh >> np.uint32(6)) % np.uint32(n)).astype(np.int64)
     shore = mask & (depth == 0)
+    if thin:
+        # lap on the water's own texels only: the rim's wet earth stays still
+        from .palette import FI
+        shore &= np.isin(F, [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI])
     out = []
     for f in range(n):
         dT = np.zeros((H, W), np.int32)

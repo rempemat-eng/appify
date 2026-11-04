@@ -196,7 +196,7 @@ The dressing adds clumps of rushes standing in the shallows off a south shore an
 
 **Crossings.** A route crosses water only on a deck: `woodland_footbridge` is `softground.footbridge` as a structure (`rules.route_water`, `rules.deck`).
 
-**Falls.** Where water crosses a south rim, the face under it must be covered by a fall piece (`rules.water_fall`). `waterfall_2` and `waterfall_3` are the woodland's painted fall (`water.fall_hd`): the stone lip, the falling sheet with streaks, the plume and foam rings. Each covers a channel two or three cells wide over the two-cell face. Below a fall, `water_over_earth_face` carries the water down the face.
+**Falls.** Where water crosses a south rim, the face under it must be covered by a fall piece (`rules.water_fall`). `waterfall_2` and `waterfall_3` are the woodland's painted fall (`structures.fall_sheet`): the glassy tongue and the bend line at the rim, the falling sheet with streaks, and where it lands `rocks.plunge`, the same foam the woodland's fall draws (broken clumps in 4 to 5 tones within the foot plus 8 px, flecks, spray on the water, ripple arcs, a churn in every frame). Each covers a channel two or three cells wide over the two-cell face. Below a fall, `water_over_earth_face` carries the water down the face.
 
 **Not yet:**
 

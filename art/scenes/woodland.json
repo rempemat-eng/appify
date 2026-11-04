@@ -89,8 +89,10 @@
     "amp": [2.0, 4.0],
     "lump": [12, 28],
     "r_out": 0.6,
-    "r_in": 0.6
+    "r_in": 0.6,
+    "wobble": 2.0
    },
+   "rim_stones": [[71.5, 13.0, 7.5, 1651], [88.3, 31.0, 6.5, 1652]],
    "seed": 402,
    "amp": [2.5, 5.0],
    "lump": [10, 26],
@@ -704,6 +706,11 @@
   "pool_row": 1,
   "rill_x": 0,
   "pool_bottom": 0
+ },
+ "terrace": {
+  "_about": "the ground the fall drops from (the woodland review, 4 Nov; ground-rules.md: a fall only at a tier edge or a rock face): north of y 256 from the cascade's east side to the east edge the lawn is a tier up, its earth face running down to the river's north bank, log steps carrying the path down to the bridge; west of the cascade the boulder heap and the oak grove stand on the slope",
+  "x0": 92, "x1": 320, "y": 256, "face": 32, "kind": "earth", "seed": 461,
+  "steps": {"x0": 116, "x1": 140, "n": 6}
  },
  "rock": {
   "_about": "the spring's heap of mossy boulders and the talus the Hollow's escarpment has shed along the top edge",

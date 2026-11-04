@@ -90,6 +90,35 @@ class Water(unittest.TestCase):
         b[60:140, 180:210, :3] = (120, 80, 40)       # lands 20 px on each bank
         self.assertFalse(any(f.detector == 'logic.bridge_span' for f in water.check_bridges(b, H)))
 
+    def test_flat_foam_plate_is_caught(self):
+        # the woodland's plunge foam the auditor failed on 4 Nov (calibration W15): a 118 x 19 plate in
+        # two tones at the foot of a streaked sheet, which check_falls (tall bands only) never saw
+        p = Path(core.REPO) / 'scripts' / 'review' / 'calibration' / 'woodland_plunge_foam_4881fee7.png'
+        a = np.asarray(Image.open(p).convert('RGBA'))
+        fs = [f for f in water.check_foam(a, 74) if f.detector == 'detail.foam_flat']
+        self.assertEqual(len(fs), 1)
+        x0, y0, x1, y1 = fs[0].box
+        self.assertGreaterEqual(x1 - x0, 100)
+        self.assertLessEqual(y1 - y0, 24)
+
+    def test_broken_plunge_foam_passes(self):
+        # rocks.plunge: broken clumps in 4 to 5 tones with the pool between them, within the foot
+        from scripts.art.native import ctx, load_biome
+        ctx.configure(3.0, load_biome('woodland'), {})
+        from scripts.art.native import rocks as RK
+        from scripts.art.native.palette import C as CC, LUT
+        cv = np.full((120, 200), CC('water', 2), np.int32)
+        cv[:40, 70:132] = CC('water', 3)                  # the sheet's foot
+        foam = RK.plunge(cv, 70, 132, 40, seed=65)
+        rgb = LUT[cv]
+        a = np.dstack([rgb, np.full(cv.shape, 255, np.uint8)])
+        self.assertFalse(any(f.detector == 'detail.foam_flat' for f in water.check_foam(a, 74)))
+        ys, xs = np.nonzero(foam)
+        self.assertGreaterEqual(int(xs.min()), 70 - RK.PLUNGE_PAD)
+        self.assertLess(int(xs.max()), 132 + RK.PLUNGE_PAD)
+        self.assertLessEqual(int(ys.max()), 40 + 10)
+        self.assertGreaterEqual(len(np.unique(cv[foam])), 4, 'four or more tones in the foam')
+
 
 class Screen(unittest.TestCase):
     def test_dotted_line(self):

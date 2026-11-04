@@ -283,7 +283,12 @@ def water_mask_soft(plan: dict, W: int, H: int) -> np.ndarray:
         mr = SG.shape(rc, h, w, sw.get('seed', 402) + 1, r_out=rl.get('r_out', 0.45), r_in=rl.get('r_in', 0.45), amp=tuple(rl.get('amp', SG.AMP)),
                       lump=tuple(rl.get('lump', sw.get('lump', SG.LUMP))))
         # a narrow channel's lumps step a few texels at a time, never a one-texel spur on its bank
-        m |= ndi.gaussian_filter(np.pad(mr, 8, mode='edge').astype(float), 2.2)[8:-8, 8:-8] > 0.5
+        mr = ndi.gaussian_filter(np.pad(mr, 8, mode='edge').astype(float), 2.2)[8:-8, 8:-8] > 0.5
+        # each bank wanders on its own by up to rl['wobble'] texels over 20 to 40 rows (the woodland
+        # review, 4 Nov: two parallel ruler-straight banks through the rubble read as a cut canal)
+        if rl.get('wobble'):
+            mr = wobble_banks(mr, rl['wobble'], sw.get('seed', 402) + 5)
+        m |= mr
     else:
         m |= SG.curve_texels(rl['points'], rl['cells'], h, w, rl['bend'], sw.get('seed', 402) + 1, rl.get('share', 0.95),
                              rl.get('breathe', 0.0), amp=tuple(rl.get('amp', (0.0, 0.0))))
@@ -291,6 +296,66 @@ def water_mask_soft(plan: dict, W: int, H: int) -> np.ndarray:
         # wider where it meets the fall's lip
         m |= SG.shape(SG.cells_rects([rl['mouth']], h, w), h, w, sw.get('seed', 402) + 2, r_out=1.0, r_in=0.6, **lump)
     return m
+
+
+def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> None:
+    """The ground the fall drops from (the woodland review, 4 Nov, after ground-rules.md: a
+    waterfall happens only at a tier edge or a rock face; the upper and lower lawns had read at one
+    level): plan['terrace'] raises the ground north of its rim row from x0 to x1 (world px) by a
+    face `face` world px tall, drawn as the cliff core draws a tier (softground.ledge: the raised
+    turf lighter, a grass lip in lumps over an earth face, a dark foot, its shadow on the lower
+    ground, a side wall where it ends), the water staying water at its foot; log steps carry the
+    path down the face (softground.log_steps; eastward-edges.md 6.1)."""
+    tr = plan.get('terrace')
+    if not tr:
+        return
+    from . import softground as GD
+    h, w = cv.shape
+    from .palette import sib, is_fam
+    rim = P(tr['y'], 0)
+    # the whole ground north of the rim is the upper tier (its water too), so no side wall runs
+    # north through the lawn; the face is kept only from x0 east (west of it the cascade's rocks,
+    # the heap and the oak grove stand on the slope)
+    top = np.zeros((h, w), bool)
+    top[:rim, :] = True
+    under = cv.copy()
+    rng = np.random.default_rng(tr.get('seed', 461))
+    face, _items, lip = GD.ledge(cv, top, P(tr['face'], 0), rng, seed=tr.get('seed', 461), kind=tr.get('kind', 'earth'),
+                                 shadow_px=P(5, 0))
+    # the upper lawn keeps its own field (ledge's lighter sibling over a whole lawn merged its sun
+    # patches into flat areas and drew its lit band as a stray straw line; the rim reads by its lip,
+    # the under-lip shade and the face), and the lip hangs in the lawn's own green
+    cv[:rim] = under[:rim]
+    lw = lip & (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & np.isin(cv // 8, [FI.get('grass_warm', -1), FI.get('leaf_warm', -1)])
+    cv[lw] = sib(cv[lw], 'body')
+    cv[rim:, :P(tr['x0'], 0)] = under[rim:, :P(tr['x0'], 0)]
+    cv[wm] = under[wm]                                   # the river runs on at the face's foot
+    st = tr.get('steps')
+    if st:
+        GD.log_steps(cv, P(st['x0'], 0), P(st['x1'], 0), P(tr['y'], 0) - 2, P(tr['y'] + tr['face'], 0),
+                     st.get('n', 6), np.random.default_rng(tr.get('seed', 461) + 1))
+
+
+def wobble_banks(m: np.ndarray, amp: float, seed: int) -> np.ndarray:
+    """A mostly north-south channel with its west and east banks each moved by a smooth wander of
+    up to `amp` texels (two incommensurate waves a bank), so its sides never run ruler-straight."""
+    rng = np.random.default_rng(seed)
+    h, w = m.shape
+    yy = np.arange(h, dtype=float)
+    def wave():
+        p1, p2 = rng.uniform(20, 40), rng.uniform(11, 19)
+        a1, a2 = rng.uniform(0, 6.3), rng.uniform(0, 6.3)
+        return np.round(amp * (0.7 * np.sin(yy / p1 * 2 * np.pi + a1) + 0.3 * np.sin(yy / p2 * 2 * np.pi + a2))).astype(int)
+    dl, dr = wave(), wave()
+    out = np.zeros_like(m)
+    for y in range(h):
+        for a, b in zip(*[np.nonzero(np.diff(np.concatenate([[0], m[y].astype(np.int8), [0]])) == k)[0] for k in (1, -1)]):
+            a2, b2 = max(0, a + dl[y]), min(w, b + dr[y])
+            if b2 - a2 >= max(4, (b - a) // 2):
+                out[y, a2:b2] = True
+            else:
+                out[y, a:b] = True
+    return out
 
 
 def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
@@ -1120,6 +1185,12 @@ def terrain(plan: dict, layers: dict) -> tuple:
             from . import softground as GD
             items = GD.water(cv, wm, 402, bank_h=P(3.4, 0), flow='auto', stones=plan['water']['soft'].get('stones', 0.0),
                              reeds=plan['water']['soft'].get('reeds', 0.8), rush_clumps=plan['water']['soft'].get('rush_clumps'))
+            # a few of the rubble band's stones on the rill's rims (the woodland review, 4 Nov), laid
+            # with the bank stones so each one standing in the water gets its wet contact
+            from . import props as P4_
+            for (sx_, sy_, sw_, sd_) in plan['water']['soft'].get('rim_stones', []):
+                img_, anc_, _a = P4_.boulder4(D, sw_, sw_ * 0.62, seed=sd_, moss='top' if sd_ % 2 else None)
+                items.append((img_, anc_, (sx_ * D, sy_ * D)))
             # the turf at the water's edge is short and even (no dark blades standing on the bank's
             # line, which would fray it into spurs)
             nearw = ndi.binary_dilation(wm, iterations=P(3)) & ~wm
@@ -1132,6 +1203,7 @@ def terrain(plan: dict, layers: dict) -> tuple:
                                     for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])],
                            lambda c, d, x, y: DC.paste(c, d, x, y, shadow=True, shadow_dx=P(1), shadow_dy=P(0.5)))
             GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wm, np.random.default_rng(12))
+            terrace(cv, plan, wm)
         else:
             WA.paint_hd(cv, wm)            # (no reeds at density 3: their stalks bit stairs into the bank)
             footbridge_hd(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)
@@ -1162,7 +1234,7 @@ def terrain(plan: dict, layers: dict) -> tuple:
         WA.wet_rock(cv, f['x0'], f['w'], f['y0'] - 2, f['y1'])
         if soft_w:
             from . import rocks as RK
-            RK.fall(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
+            layers['plunge'] = RK.fall(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
         else:
             WA.fall_hd(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
     else:
@@ -1211,6 +1283,11 @@ def foot_at_bottom_centre(img, anc, a, ex):
     na = np.zeros((h + bottom + top, W2), bool)
     na[top:top + a.shape[0], left:left + a.shape[1]] = a
     return out, (ax + left, ay + top), na, ex
+
+
+def RK_PLUNGE_FRAMES() -> int:
+    from . import rocks as RK
+    return RK.PLUNGE_FRAMES
 
 
 def build() -> Zone:
@@ -1330,6 +1407,18 @@ def build() -> Zone:
         box[P(y0, 0):P(y1, 0), P(x0, 0):P(x1, 0)] = True
         moving &= box
     frames = animate.water(codes, moving, still & moving, D, thin=D >= HD)
+    if layers.get('plunge') and len(frames) == RK_PLUNGE_FRAMES():
+        # the fall's foam churns (the woodland review, 4 Nov: it stood still in 5 of 8 frames):
+        # rocks.plunge redrawn each frame over what lies under it, only what moved, frame 0 empty
+        from . import rocks as RK
+        from .palette import LUT
+        info = layers['plunge']
+        bx0, by0, bx1, by1 = info['box']
+        for fr, ov in zip(frames, RK.plunge_frames(codes, info, len(frames))):
+            sel = ov >= 0
+            region = fr[by0:by1, bx0:bx1]
+            region[sel, :3] = LUT[ov[sel]][:, :3]
+            region[sel, 3] = 255
     flow = animate.pack(frames)
     return Zone(ground=ground, objects=objects, sprites={k: v[0] for k, v in sprites.items()}, flow=flow, night=None,
                 layers=layers, codes=codes)

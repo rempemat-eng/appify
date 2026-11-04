@@ -100,14 +100,14 @@
     "fps": 10,
     "strip": "res://kit/props/art/waterfall_1_flow.png",
     "frame_px": [
-     36,
-     50
+     48,
+     53
     ],
     "region_px": [
-     18,
+     12,
      20,
-     36,
-     50
+     48,
+     53
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true

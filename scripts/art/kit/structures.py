@@ -239,8 +239,9 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
 
     `t` is the frame of the fall's loop (FALL_FRAMES frames): the streaks have one period
     (FALL_PERIOD texels) and fall FALL_PERIOD / FALL_FRAMES texels a frame, so the loop closes; the
-    plume churns inside the outline it has at frame 0 (`keep`, the pixels frame 0 drew), so a frame
-    laid over the baked ground never uncovers the pool. Frame 0 is the still the bake draws."""
+    foam churns (rocks.plunge). Frame 0 is the still the bake draws. `keep` is unused (kept for
+    old callers): fall_frames owns every pixel any frame draws, so where the foam leaves, the
+    frame shows the pool."""
     from scripts.art.native.palette import C, FI
     H, W = cv.shape
     rng = np.random.default_rng(seed)
@@ -271,43 +272,11 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
             elif dy < 4 + fd and fd:
                 c = C('water', 2)                                # its shade
             cv[Y, X] = c
-    cx = x0 + w / 2.0
-    # the plume where it lands: churning white on the pool, no higher than a few texels up the sheet
-    parts = [(cx + rng.uniform(-0.45, 0.45) * w, y1 + rng.uniform(-0.2, 1.0) * 6, w * rng.uniform(0.4, 0.62),
-              7 * rng.uniform(0.6, 0.9)) for _ in range(6)]
-    if t:
-        a_ = 2 * math.pi * t / FALL_FRAMES
-        parts = [(px + 1.6 * math.sin(a_ + 1.7 * i), py + 1.1 * math.cos(a_ + 2.3 * i), pw * (1 + 0.08 * math.sin(a_ + i)), ph)
-                 for i, (px, py, pw, ph) in enumerate(parts)]
-    for Y in range(y1 - 5, min(H, y1 + 12)):
-        for X in range(max(0, int(cx - w * 1.2)), min(W, int(cx + w * 1.2) + 1)):
-            r = min(((X - px) / pw) ** 2 + ((Y - py) / ph) ** 2 for (px, py, pw, ph) in parts)
-            if keep is not None:
-                if not keep[Y, X]:
-                    continue
-                r = min(r, 0.99)                               # inside frame 0's outline: foam, churned
-            if r > 1.0 or (Y < y1 and not (x0 <= X < x0 + w)):
-                continue                                       # above the pool only over the sheet
-            lit = (X - cx) < 0.3 * w
-            # churning white lit on its upper left, greying into the pool at its rim (dithered)
-            if r < 0.45 and Y < y1 + 4:
-                c = C('snow', 5) if lit else C('snow', 4)
-            elif r < 0.75:
-                c = C('snow', 4) if ((X + Y) % 3) or Y < y1 + 2 else C('snow', 2)
-            else:
-                c = C('snow', 2) if (X + Y) % 2 else C('water', 4)
-            cv[Y, X] = c
-    if not rings:
-        return
-    waters = [FI[n] for n in ('water', 'water_warm', 'water_cool')]
-    for k, (rx, ry) in enumerate(((w * 0.8, 7), (w * 1.1, 10), (w * 1.45, 13))):   # rings and ripples spreading on the pool
-        for Y in range(y1, min(H, y1 + int(ry) + 8)):
-            for X in range(max(0, int(cx - rx - 3)), min(W, int(cx + rx + 3))):
-                if (cv[Y, X] // 8) not in waters:
-                    continue
-                q = ((X - cx) / rx) ** 2 + ((Y - (y1 + 4)) / ry) ** 2
-                if abs(q - 1.0) < 0.09 - 0.02 * k and ((X // (6 + 2 * k)) + k) % 3:
-                    cv[Y, X] = C('snow', 2) if k == 0 else C('water', 4)
+    # where it lands (rocks.plunge, shared with the woodland's fall; the woodland review, 4 Nov):
+    # broken clumps of churning white in 4 to 5 tones within the foot plus a few texels, flecks
+    # dissolving into the pool, spray on the water beside the foot, ripple arcs going downstream
+    from scripts.art.native import rocks as RK
+    RK.plunge(cv, x0, x0 + w, y1, seed, t=t % FALL_FRAMES, n=FALL_FRAMES, rings=rings)
 
 
 def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
@@ -366,23 +335,28 @@ def fall_frames(cells_w: int, drop: int = 1):
     W, H = wpx + 48, 12 + face + 34
     seed = 9 + cells_w
     base = np.full((H, W), CC('water', 2), np.int32)
-    f0 = base.copy()
-    fall_sheet(f0, 24, wpx, 12, 12 + face, seed=seed, rings=False)
-    own = f0 != base
+    drawn = []
+    for t in range(FALL_FRAMES):
+        f = base.copy()
+        fall_sheet(f, 24, wpx, 12, 12 + face, seed=seed, t=t, rings=False)
+        drawn.append(f)
+    own = np.zeros((H, W), bool)
+    for f in drawn:
+        own |= f != base                 # every pixel some frame draws: where the foam leaves, the pool
     own[12:12 + face, 24:24 + wpx] = True
     # only what surely lies over the fall's own pixels in any zone: not the crest (the rim's lip
-    # stones cast their shade on it in the bake, and it does not move), and the plume only over
-    # the pool straight under the sheet (the bake keeps foam off the banks beside it)
+    # stones cast their shade on it in the bake, and it does not move), and the foam only over the
+    # pool within the foot plus rocks.PLUNGE_PAD (the bake keeps foam off the banks beside it)
     own[:12 + 8] = False
-    own[:, :24 - 6] = False
-    own[:, 24 + wpx + 6:] = False
-    own[12 + face + 10:] = False
+    from scripts.art.native import rocks as RK
+    own[:, :24 - RK.PLUNGE_PAD - 4] = False
+    own[:, 24 + wpx + RK.PLUNGE_PAD + 4:] = False
+    own[12 + face + 14:] = False
     ys, xs = np.nonzero(own)
     x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
     frames = []
-    for t in range(FALL_FRAMES):
-        f = base.copy()
-        fall_sheet(f, 24, wpx, 12, 12 + face, seed=seed, t=t, rings=False, keep=own if t else None)
+    for f in drawn:
+        f = f.copy()
         f[~own] = -1
         frames.append(f[y0:y1, x0:x1])
     return np.concatenate(frames, axis=1), [x0, y0, x1 - x0, y1 - y0]

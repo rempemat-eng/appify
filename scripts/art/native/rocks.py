@@ -202,83 +202,244 @@ def rock(w: float, h: float, seed: int, flat: bool = False, moss: float = 0.5):
 # ------------------------------------------------------------------------------------------------
 # the fall
 # ------------------------------------------------------------------------------------------------
-def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 11) -> None:
-    """The water over the lip and down into the pool (world px): at the lip the water thickens and
-    curls over the rock's lit edge, catching the light in a bright band; the sheet widens a little
-    as it falls, shaded as a ribbon (lit west, body, shade east), with streaks running at different
-    speeds (long and short, bright and dim) and a darker thinning near the foot; white foam and
-    spray where it lands, and rings of ripples spreading on the pool."""
+PLUNGE_FRAMES = 8       # the foam's churn: a closed loop of 8 frames
+PLUNGE_PAD = 8          # texels the foam may reach beyond the sheet's foot on each side
+
+
+def _runs(row: np.ndarray):
+    """(start, stop) of each run of True in a 1-D mask."""
+    d = np.diff(np.concatenate([[0], row.astype(np.int8), [0]]))
+    return list(zip(np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]))
+
+
+def crest_breaks(w: int, rng) -> np.ndarray:
+    """How deep the white water breaks under the bend, per column of a lip `w` texels wide (the
+    woodland review, 4 Nov: the crest read as one lid): two or three runs of different lengths,
+    1 to 3 texels deep and rounded at their ends, with a gap or two where the darker sheet goes
+    straight on."""
+    out = np.zeros(w, np.int32)
+    n = int(rng.choice([2, 3, 3]))
+    gaps = [int(rng.integers(3, 8)) for _ in range(n - 1)]
+    edge = [int(rng.integers(1, 4)), int(rng.integers(1, 4))]
+    room = max(n * 4, w - sum(gaps) - sum(edge))
+    cut = np.sort(rng.choice(np.arange(3, room - 2), n - 1, replace=False)) if n > 1 and room > 8 else []
+    lens = np.diff(np.concatenate([[0], cut, [room]])).astype(int)
+    x = edge[0]
+    for k, L in enumerate(lens):
+        prof = np.clip(np.round(1.4 + rng.uniform(0.6, 1.6) * np.sin(np.linspace(0.15, np.pi - 0.15, max(1, L)))
+                                + rng.uniform(-0.4, 0.4, max(1, L))), 1, 3).astype(int)
+        out[x:x + L] = prof[:max(0, min(L, w - x))]
+        x += L + (gaps[k] if k < len(gaps) else 0)
+    return out
+
+
+def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 11, t: int = 0) -> dict:
+    """The water over the lip and down into the pool (world px), fitted to the channel that feeds it
+    (the woodland review, 4 Nov: the crest overhung the channel and read as a lid): the channel's
+    last rows lighten into a glassy tongue; the lip is exactly the channel's width, its bend line
+    bowed a texel or two downstream; the white water breaks under it in two or three runs with gaps;
+    the sheet widens a little as it falls, shaded as a ribbon (lit west, body, shade east), with
+    streaks at different speeds and a darker thinning near the foot; at the foot plunge() churns.
+    Returns where the foot lies (texels) for the churn's frames."""
     H, W = cv.shape
     D = ctx.D
     rng = np.random.default_rng(seed)
     cx = x0 + w / 2.0
+    Y0, Y1 = _P(y0 - 1.5, 0), _P(y1, 0)
+    water = np.isin(cv // 8, [FI[n] for n in WATERS]) & (cv >= 0)
+    # the channel's columns just above the lip (the run nearest the fall's centre)
+    cl, cr = _P(cx - w / 2.0, 0), _P(cx + w / 2.0, 0)
+    for yy_ in range(Y0 - 1, max(0, Y0 - 6), -1):
+        runs = [(a, b) for a, b in _runs(water[yy_]) if b - a >= _P(4)]
+        if runs:
+            a, b = min(runs, key=lambda r: abs((r[0] + r[1]) / 2.0 - cx * D))
+            if abs((a + b) / 2.0 - cx * D) < w * D:
+                cl, cr = int(a), int(b)
+                break
+    lw = cr - cl
+    # the glassy tongue: the channel's last rows lighten as the water speeds up to the lip
+    for k in range(4):
+        Y = Y0 - 4 + k
+        if 0 <= Y < H:
+            for X in range(cl, cr):
+                if water[Y, X]:
+                    s = (X + 0.5 - cl) / lw
+                    cv[Y, X] = C('water', (4 if k >= 2 else 3) if s < 0.7 else 3)
+    brk = crest_breaks(lw, rng)
     cols = {}
-    for Y in range(_P(y0 - 1.5, 0), _P(y1, 0)):
-        yw = (Y + 0.5) / D
-        f = (yw - y0) / max(1.0, (y1 - y0))
-        hw = w / 2.0 + 0.6 + max(0.0, f) * 2.4                           # wider as it falls
-        if yw < y0:                                                      # the curl over the lip: a bulge
-            hw = w / 2.0 + 0.9
-        hl = hw + 0.35 * math.sin(yw / 3.1)
-        hr = hw + 0.35 * math.sin(yw / 2.6 + 1.0)
-        for X in range(max(0, _P(cx - hw - 1.5, 0)), min(W, _P(cx + hw + 1.5, 0) + 1)):
-            uu = (X + 0.5) / D - cx
-            if not (-hl <= uu <= hr) or not (0 <= Y < H):
+    foot = (cl, cr)
+    for Y in range(Y0, Y1):
+        if not (0 <= Y < H):
+            continue
+        f = (Y - Y0) / max(1.0, (Y1 - Y0))
+        widen = max(0.0, f) * 2.4 * D
+        wob_l = 0.35 * D * math.sin(Y / D / 3.1) * min(1.0, f * 4)
+        wob_r = 0.35 * D * math.sin(Y / D / 2.6 + 1.0) * min(1.0, f * 4)
+        xl, xr = cl - widen * 0.45 - wob_l, cr + widen * 0.55 + wob_r
+        foot = (int(math.floor(xl)), int(math.ceil(xr)))
+        for X in range(max(0, int(math.floor(xl))), min(W, int(math.ceil(xr)))):
+            if not (xl <= X + 0.5 <= xr):
                 continue
-            s = (uu + hl) / (hl + hr)
-            bulge = 1.4 * (1.0 - (2.0 * s - 1.0) ** 2)               # the curl hangs lowest mid-sheet
-            if yw < y0 - 0.6:
-                cv[Y, X] = C('water', 4) if s < 0.6 else C('water', 3)   # glassy water sliding to the edge
-                continue
-            if yw < y0 + 0.2 + bulge:
-                # the water thickening as it bends over the edge: a lit band, a white crest at its rim
-                rim = yw > y0 - 0.2 + bulge
-                c = C('snow', 5) if (rim and s < 0.8) else (C('water', 5) if s < 0.55 else C('water', 4))
-                cv[Y, X] = c
-                continue
-            if yw < y0 + 1.2 + bulge:
-                cv[Y, X] = C('water', 2) if s > 0.15 else C('water', 3)    # the shade just under the curl
-                continue
-            tt = 4 if s < 0.2 else (3 if s < 0.6 else (2 if s < 0.85 else 1))
-            if f > 0.75:
-                tt = max(1, tt - 1)                                      # thinner and darker near the foot
-            c = C('water', tt)
-            key = int(((X + 0.5) / D - (cx - hw)) * 2.2)
-            if key not in cols:
-                # each streak its own speed: long fast ones and short slow ones
-                cols[key] = (rng.uniform(0, 40), rng.uniform(4, 18), rng.uniform(2, 9), rng.random())
-            ph, run, gap, kind = cols[key]
-            if ((yw - y0 + ph) % (run + gap)) < run and 0.05 < s < 0.85:
-                c = C('snow', 5) if (kind < 0.35 and s < 0.5) else (C('snow', 4) if kind < 0.7 else C('water', 5))
+            s = (X + 0.5 - xl) / max(1.0, xr - xl)
+            k_ = min(lw - 1, max(0, X - cl))
+            bow = int(round(1.6 * (1.0 - (2.0 * min(1.0, max(0.0, (X + 0.5 - cl) / lw)) - 1.0) ** 2)))
+            dy = Y - Y0 - bow
+            d_ = int(brk[k_]) if cl <= X < cr else 0
+            if dy < 2:
+                c = C('water', 4) if s < 0.65 else C('water', 3)       # the glassy tongue over the edge
+            elif dy == 2:
+                c = C('water', 5) if s < 0.7 else C('water', 4)       # the bend line, one texel
+            elif d_ and dy < 3 + d_:
+                c = C('snow', 5) if s < 0.65 else C('snow', 4)        # the white water breaking under it
+            elif d_ and dy < 4 + d_:
+                c = C('water', 2)                                      # its shade
+            elif not d_ and cl <= X < cr and dy < 7:
+                c = C('water', 3) if s < 0.45 else C('water', 2)      # a gap: the darker sheet going on
+            elif dy < 4:
+                c = C('water', 3) if s < 0.6 else C('water', 2)
+            else:
+                tt = 4 if s < 0.2 else (3 if s < 0.6 else (2 if s < 0.85 else 1))
+                if f > 0.75:
+                    tt = max(1, tt - 1)                                # thinner and darker near the foot
+                c = C('water', tt)
+                key = int((X + 0.5 - cl) / D * 2.2)
+                if key not in cols:
+                    # each streak its own speed: long fast ones and short slow ones
+                    cols[key] = (rng.uniform(0, 40), rng.uniform(4, 18), rng.uniform(2, 9), rng.random())
+                ph, run, gap, kind = cols[key]
+                if (((Y + 0.5) / D - y0 + ph) % (run + gap)) < run and 0.05 < s < 0.85:
+                    c = C('snow', 5) if (kind < 0.35 and s < 0.5) else (C('snow', 4) if kind < 0.7 else C('water', 5))
             cv[Y, X] = c
-    # foam and spray where it lands
-    parts = [(cx + rng.uniform(-0.8, 0.8) * w, y1 + rng.uniform(-0.8, 0.5) * 2.4, w * rng.uniform(0.4, 0.75),
-              2.4 * rng.uniform(0.6, 1.0)) for _ in range(8)]
-    for Y in range(_P(y1 - 5, 0), _P(y1 + 5, 0) + 1):
-        for X in range(_P(cx - w * 2, 0), _P(cx + w * 2, 0) + 1):
-            if not (0 <= Y < H and 0 <= X < W):
-                continue
-            r = min(((X / D - px) / pw) ** 2 + ((Y / D - py) / ph) ** 2 for (px, py, pw, ph) in parts)
-            if r <= 1.0:
-                lit = (X / D - cx) < 0.3 * w
-                cv[Y, X] = C('snow', 5) if (r < 0.55 and lit) else (C('snow', 4) if r < 0.8 else C('snow', 2))
-    water = np.isin(cv // 8, [FI[n] for n in WATERS])
-    for k, (rx, ry) in enumerate(((w * 1.5, 2.4), (w * 2.2, 3.4), (w * 3.0, 4.4))):
-        for Y in range(_P(y1 - ry, 0), _P(y1 + ry + 2.5, 0) + 1):
-            for X in range(_P(cx - rx - 1, 0), _P(cx + rx + 1, 0) + 1):
-                if not (0 <= Y < H and 0 <= X < W) or not water[Y, X]:
-                    continue
-                q = ((X / D - cx) / rx) ** 2 + ((Y / D - (y1 + 1.0)) / ry) ** 2
-                if abs(q - 1.0) < 0.08 and (Y / D) > y1 - 0.5 and ((X // _P(2)) + k) % 3:
-                    cv[Y, X] = C('water', 5 - min(k, 2))
-    for k in range(14):
-        side = -1 if k % 2 else 1
-        sx = cx + side * (w * 0.9 + (k // 2) * 1.2 + rng.uniform(0, 1.2))
-        sy = y1 - 2.0 - (k // 2) * 1.1 - rng.uniform(0, 1.0)
-        Y, X = _P(sy, 0), _P(sx, 0)
-        for (a_, b_) in ((0, 0), (0, 1), (1, 0)):
-            if 0 <= Y + a_ < H and 0 <= X + b_ < W and (k < 6 or (a_, b_) == (0, 0)):
-                cv[Y + a_, X + b_] = C('snow', 5) if k < 6 else C('snow', 4)
+    box = plunge_box(foot[0], foot[1], Y1, H, W)
+    pre = cv[box[1]:box[3], box[0]:box[2]].copy()        # what lies under the foam (its frames)
+    plunge(cv, foot[0], foot[1], Y1, seed, t=t)
+    return {'xl': foot[0], 'xr': foot[1], 'y1': Y1, 'seed': seed, 'box': box, 'under': pre}
+
+
+def plunge_box(xl: int, xr: int, y1: int, H: int, W: int):
+    """(x0, y0, x1, y1) texels: everything plunge() may draw."""
+    return (max(0, int(xl - PLUNGE_PAD - 4)), max(0, int(y1 - 4)), min(W, int(xr + PLUNGE_PAD + 4)), min(H, int(y1 + 30)))
+
+
+def plunge_frames(codes: np.ndarray, info: dict, n: int = PLUNGE_FRAMES) -> list:
+    """The foam's churn as overlays (codes, -1 where nothing changes) of the box plunge() draws,
+    one per frame: frame t drawn over what lay under the foam, against frame 0, so frame 0 is
+    empty (the still the ground shows) and every other frame holds only what moved."""
+    x0, y0, x1, y1 = info['box']
+    outs = []
+    base = None
+    for t in range(n):
+        cv = codes.copy()
+        cv[y0:y1, x0:x1] = info['under']
+        plunge(cv, info['xl'], info['xr'], info['y1'], info['seed'], t=t, n=n)
+        sub = cv[y0:y1, x0:x1]
+        if base is None:
+            base = sub.copy()
+        outs.append(np.where(sub != base, sub, -1))
+    return outs
+
+
+
+def plunge(cv: np.ndarray, xl: int, xr: int, y1: int, seed: int, t: int = 0, n: int = PLUNGE_FRAMES,
+           rings: bool = True) -> np.ndarray:
+    """The white water where a fall lands (texels; the sheet's foot spans xl .. xr at row y1), after
+    the woodland review (4 Nov: a flat two-tone plate twice the sheet's width; Eastward 37's mist).
+    It keeps to the foot plus PLUNGE_PAD each side and about 10 texels down; it is a heap of broken
+    clumps, each lit white on its upper left over a pale blue-grey body, mid-blue water showing in
+    the gaps between them, a darker band under its downstream edge; its outline breaks into
+    loose flecks that dissolve into the pool; spray specks fly up beside the foot (on the water
+    only: no spray on the face, Matt, 2 Nov); ripple arcs spread downstream. Only water (and the
+    sheet's own foot) is painted, so the stones beside the fall keep their wet feet.
+
+    `t` (0 .. n-1) is the frame: the clumps swell, drift and break, flecks pop, spray rises and
+    the arcs travel downstream, in a closed loop; frame 0 is the still. Returns the foam mask."""
+    H, W = cv.shape
+    rng = np.random.default_rng(seed * 31 + 7)
+    fw = max(4, xr - xl)
+    cx = (xl + xr) / 2.0
+    X0, Y0, X1, Y1 = plunge_box(xl, xr, y1, H, W)
+    sub = cv[Y0:Y1, X0:X1]
+    ok = (np.isin(sub // 8, [FI[n_] for n_ in WATERS] + [FI['snow']]) & (sub >= 0))
+    ok &= ~((np.arange(Y0, Y1)[:, None] < y1) & ~((np.arange(X0, X1)[None, :] >= xl) & (np.arange(X0, X1)[None, :] < xr)))
+    yy, xx = np.mgrid[Y0:Y1, X0:X1].astype(float)
+    a = 2.0 * math.pi * t / n
+    best = np.full(sub.shape, 9.0)
+    lit = np.zeros(sub.shape)
+    K = max(9, int(fw / 4) + 8)
+    for k in range(K):
+        u = rng.uniform(-1.0, 1.0)
+        px = cx + u * (fw / 2.0 + PLUNGE_PAD * 0.4) * rng.uniform(0.6, 1.0)
+        py = y1 + rng.uniform(-0.5, 5.5) * (1.0 - 0.45 * abs(u))
+        r = rng.uniform(3.0, 6.0) * (1.2 - 0.45 * abs(u))
+        ph = rng.uniform(0.0, 2.0 * math.pi)
+        swell = 1.0 + 0.28 * math.sin(a + ph)
+        if t and math.sin(a + ph) < -0.8:
+            continue                                         # this clump has broken (its flecks below)
+        dx, dy = 1.1 * math.sin(a + 1.7 * ph), 0.9 * math.sin(a + ph + 1.0)
+        rx, ry = r * swell, r * 0.7 * swell
+        q = ((xx - px - dx) / rx) ** 2 + ((yy - py - dy) / ry) ** 2
+        nearer = q < best
+        best = np.where(nearer, q, best)
+        lit = np.where(nearer, -((xx - px - dx) / rx + (yy - py - dy) / ry), lit)
+    inside = (np.abs(xx - cx) <= fw / 2.0 + PLUNGE_PAD) & (yy <= y1 + 10)
+    foam = (best < 1.0) & ok & inside
+    out = sub.copy()
+    gaps = ndi.binary_closing(foam, structure=np.ones((5, 5), bool)) & ~foam & ok & inside
+    out[gaps] = C('water', 3)                                   # the pool showing between the clumps
+    tone = np.where((best < 0.5) & (lit > 0.1), 5, np.where(best < 0.78, np.where(lit > -0.4, 4, 3), np.where(lit > 0.2, 3, 2)))
+    out[foam] = (FI['snow'] * 8 + tone)[foam]
+    # the outer rim dissolves into the pool in a checker on the shaded side (Eastward 37's mist)
+    fray = foam & (best > 0.82) & (lit < 0.3) & (((xx + yy).astype(int) + t) % 2 == 0)
+    out[fray] = C('water', 4)
+    # a darker band under the downstream edge (its shade on the pool), two texels under the middle
+    mass = foam | gaps
+    under = np.zeros_like(mass)
+    under[1:] = mass[:-1]
+    under &= ~mass & ok & (yy >= y1)
+    under2 = np.zeros_like(mass)
+    under2[2:] = mass[:-2]
+    under2 &= ~mass & ~under & ok & (yy >= y1) & (np.abs(xx - cx) < fw * 0.35) & ((xx.astype(int) + t) % 2 == 0)
+    out[under] = C('water', 1)
+    out[under2] = C('water', 1)
+    taken = mass | under | under2
+    # flecks round the outline, dissolving into the pool: pairs and singles that pop in and out
+    for j in range(int(fw / 3) + 10):
+        ang = rng.uniform(0.0, math.pi) if rng.random() < 0.8 else rng.uniform(math.pi, 2 * math.pi)
+        rr = rng.uniform(1.05, 1.5)
+        fx_ = cx + math.cos(ang) * (fw / 2.0 + PLUNGE_PAD * 0.6) * rr
+        fy_ = y1 + 3.0 + math.sin(ang) * 6.0 * rr
+        on = ((t + j * 3) % n) < 5
+        if not on:
+            continue
+        X, Y = int(round(fx_ + 0.7 * math.sin(a + j))) - X0, int(round(fy_ + 0.5 * math.cos(a + j))) - Y0
+        pair = rng.random() < 0.6
+        for (b_, c_) in ((0, C('snow', 4)), (1, C('snow', 2))) if pair else ((0, C('snow', 3)),):
+            if 0 <= Y < out.shape[0] and 0 <= X + b_ < out.shape[1] and ok[Y, X + b_] and not taken[Y, X + b_]:
+                out[Y, X + b_] = c_
+    # spray: 2 texel specks thrown up beside the foot, over the pool only (no spray on the face)
+    for j in range(8):
+        side = -1 if j % 2 else 1
+        sx = (xl - rng.uniform(2, PLUNGE_PAD + 2)) if side < 0 else (xr + rng.uniform(1, PLUNGE_PAD + 1))
+        sy = y1 + 3 - ((j * 2 + t) % 4) - rng.uniform(0, 1.5)
+        X, Y = int(round(sx)) - X0, int(round(sy)) - Y0
+        for (b_, c_) in ((0, C('snow', 5)), (1, C('snow', 3))):
+            if 0 <= Y + b_ < out.shape[0] and 0 <= X < out.shape[1] and ok[Y + b_, X] and not taken[Y + b_, X]:
+                out[Y + b_, X] = c_
+    if rings:
+        # ripple arcs spreading downstream from the foam, broken, fading as they go
+        top = int(np.max(np.nonzero(mass.any(1))[0])) + Y0 if mass.any() else y1 + 6
+        for k in range(3):
+            r = 4.0 + ((k * 6.0 + t * 6.0 / n) % 18.0)
+            rx, ry = fw / 2.0 + r * 0.9, 2.0 + r * 0.55
+            q = ((xx - cx) / rx) ** 2 + ((yy - (top - 2)) / ry) ** 2
+            arc = (np.abs(q - 1.0) < 1.1 / max(rx, 1.0) + 0.04) & (yy > top) & ok & ~taken
+            arc &= (((xx.astype(int) // (5 + k)) + k) % 3) != 0
+            out[arc] = C('water', 5 if r < 9 else (4 if r < 15 else 3))
+    cv[Y0:Y1, X0:X1] = out
+    full = np.zeros((H, W), bool)
+    full[Y0:Y1, X0:X1] = foam
+    return full
+
 
 
 # ------------------------------------------------------------------------------------------------
