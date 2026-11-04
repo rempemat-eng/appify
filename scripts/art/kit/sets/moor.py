@@ -190,11 +190,14 @@ def heath(cv, m, seed, keep=None, calm=None):
     bilb = m & ~mass & ~calm & ~straw & (berry > 0.55)
     # the ground: olive turf, straw in the bands, the heather's dark floor under the masses
     t = 1.5 + np.round((n1 - 0.5) * 2.0) * 0.5
-    rpaint(cv, m & ~mass & ~straw, OLIVE, t + 0.4 * calm, np.where(n1 > 0.62, 0.8, 0.2))
+    # the grazed turf a step lighter, blending in over four texels in two-texel steps (no ring)
+    dcal = ndi.distance_transform_edt(calm)
+    lift = (np.clip(dcal / 4.0, 0, 1) + J * 0.6) > 0.5
+    rpaint(cv, m & ~mass & ~straw, OLIVE, t + 0.4 * lift, np.where(n1 > 0.62, 0.8, 0.2))
     rpaint(cv, straw, STRAW, 2.6 + np.round((n1 - 0.5) * 2.0) * 0.5, (mid > 0.55).astype(float))
     floor = mass & (depth > 5)
     rpaint(cv, floor, FLOOR, 1.2 + 0.6 * (n1 > 0.6), n1)
-    rpaint(cv, mass & ~floor, OLIVE, t - 0.5, 0.2)
+    rpaint(cv, mass & ~floor, OLIVE, t, 0.2)
     near = ndi.distance_transform_edt(~mass) < 14
     edge_calm = calm & ~ndi.binary_erosion(calm, iterations=3)
     cands = []
@@ -234,7 +237,7 @@ def heath(cv, m, seed, keep=None, calm=None):
         veg[sy, sx] |= ((((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2) <= 1.0) & ok[sy, sx]
     shadow = np.zeros((H, W), bool)
     shadow[2:, 2:] = veg[:-2, :-2]
-    V._step(cv, shadow & ~veg & ok & ~mass, -1)
+    V._step(cv, shadow & ~veg & ok & ~mass & (J > -0.1), -1)          # broken, not a ring
     heather = np.zeros((H, W), bool)
     for cy, cx, kind, h, size in sorted(cands):
         if kind == 'tussock':
@@ -318,6 +321,23 @@ def trod(cv, mask, core, seed=0):
     rpaint(cv, core & ~bare, [('grass_cool', 'grass_cool', 'grass')], 2.2, 0.0)
     rpaint(cv, bare, [('earth_cool', 'earth', 'earth')], 2.6 + 0.8 * (K.vhash(Xg // 2, Yg, seed + 12) > 0.75), 0.0)
     return mask
+
+
+def ruts(cv, shape, pts, gauge=10):
+    """A cart's two wheel ruts along a polyline: dark wet earth, a texel lip lit on their north."""
+    H, W = shape
+    m = np.zeros((H, W), bool)
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        L = max(1.0, math.hypot(x1 - x0, y1 - y0))
+        nx, ny = -(y1 - y0) / L, (x1 - x0) / L
+        for sgn in (-1, 1):
+            ox, oy = nx * gauge / 2 * sgn, ny * gauge / 2 * sgn
+            m |= V.seg_mask((H, W), x0 + ox, y0 + oy, x1 + ox, y1 + oy, 1.2)
+    rpaint(cv, m, [('soot', 'earth_cool', 'earth')], 1.4, 0.0)
+    lip = np.zeros((H, W), bool)
+    lip[:-1] = m[1:] & ~m[:-1]
+    cv[lip & (cv >= 0)] = C('earth', 3)
+    return m | lip
 
 
 def peat_shape(m, seed):
@@ -565,6 +585,9 @@ def dress(plan, img_with, img_without, lib=None):
         paint_mask |= hag
     if trods.any():
         trod(cv, trods, cores)
+    for pts in plan.get('ruts', []):
+        rut = ruts(cv, (h, w), pts)
+        paint_mask |= rut
     for k, (x, y, rx, ry) in enumerate(plan.get('outcrops', [])):
         a_, ox, oy = outcrop(rx, ry, 1400 + k)
         hh, ww = a_.shape

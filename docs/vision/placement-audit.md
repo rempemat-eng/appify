@@ -45,6 +45,22 @@ water or lower ground), **avoid** (`wild_woods`: three or more trees within 4 ce
 within 8) and **points** (a signpost's arms equal the sides on which routes leave it, read 3 to 5 cells
 out, so a two-cell lane counts once; three ways or more make a junction).
 
+## Doors, paths, gates and where fences meet buildings (4 Nov)
+
+Matt's review of the farm study ("the placement of the fence, doors and pathways does not align"):
+`thresholds.py`, run by `check_plan`, so the editor's live overlay and Validate read it too. Doors
+are each building's `geometry.doors` (the opening between the frame posts, texels from the foot).
+**door_path**: a path leaving a door starts centred on the opening (within a texel) and runs
+straight out a cell before it bends; a door whose centre is off the half-cell grid (the fern
+cottage's, the smithy's bay) can never have a path of whole cells centred on it, and its drawing's
+door must move. **door_clear**: nothing stands in a door's threshold and swing. **gate_path**: a gate
+or a stile is centred on the path through it (a north-south run's cells centre on row lines, so its
+path is an even number of cells wide). **path_through_fence**: a path crosses a boundary only at a
+gate or a stile. **fence_wall**: a boundary meets a building at a front corner or along its wall
+foot, its end post beside the wall, never drawn in front of the façade; a front garden is enclosed
+from the house's front corners. The editor snaps a path painted from a door onto the door's centre
+line and a gate onto the path crossing its run.
+
 ## Table
 
 | Piece | Purpose | Role | Requires | Forbids | Verdict | Why, and what was done |

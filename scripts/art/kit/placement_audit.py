@@ -281,7 +281,8 @@ def _dist(a, b):
 
 def check_plan(plan, lib=None, mats=None) -> list:
     """rules.needs, rules.faces, rules.avoid and rules.points on a kit plan (see the schema's
-    placement.needs, faces, avoid and points)."""
+    placement.needs, faces, avoid and points), then thresholds.py's rules.door_path, door_clear,
+    gate_path, path_through_fence and fence_wall."""
     from scripts.art.kit import relations as RL
     lib = lib if lib is not None else RL.default_library()
     mats = mats if mats is not None else RL.default_materials()
@@ -359,7 +360,9 @@ def check_plan(plan, lib=None, mats=None) -> list:
             elif set(pl['points']) != dirs:
                 f('rules.points', eid, 'its arms point %s but the routes leave the junction %s' % (''.join(d for d in 'nesw' if d in pl['points']),
                                                                                                    ''.join(d for d in 'nesw' if d in dirs)), at)
-    return out
+    # doors, door paths, gates on paths and where fences meet buildings (thresholds.py)
+    from scripts.art.kit import thresholds as TH
+    return out + TH.check_plan(plan, lib, mats)
 
 
 def check_zones() -> list:
@@ -465,6 +468,22 @@ front door), **faces** (from the piece's `facing`, a cone N cells deep must hold
 water or lower ground), **avoid** (`wild_woods`: three or more trees within 4 cells and no home
 within 8) and **points** (a signpost's arms equal the sides on which routes leave it, read 3 to 5 cells
 out, so a two-cell lane counts once; three ways or more make a junction).
+
+## Doors, paths, gates and where fences meet buildings (4 Nov)
+
+Matt's review of the farm study ("the placement of the fence, doors and pathways does not align"):
+`thresholds.py`, run by `check_plan`, so the editor's live overlay and Validate read it too. Doors
+are each building's `geometry.doors` (the opening between the frame posts, texels from the foot).
+**door_path**: a path leaving a door starts centred on the opening (within a texel) and runs
+straight out a cell before it bends; a door whose centre is off the half-cell grid (the fern
+cottage's, the smithy's bay) can never have a path of whole cells centred on it, and its drawing's
+door must move. **door_clear**: nothing stands in a door's threshold and swing. **gate_path**: a gate
+or a stile is centred on the path through it (a north-south run's cells centre on row lines, so its
+path is an even number of cells wide). **path_through_fence**: a path crosses a boundary only at a
+gate or a stile. **fence_wall**: a boundary meets a building at a front corner or along its wall
+foot, its end post beside the wall, never drawn in front of the façade; a front garden is enclosed
+from the house's front corners. The editor snaps a path painted from a door onto the door's centre
+line and a gate onto the path crossing its run.
 
 ## Table
 

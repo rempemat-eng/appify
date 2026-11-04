@@ -10,4 +10,4 @@ piece_id = "wall_drystone_gate_ns"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-10, -90)
+offset = Vector2(-13, -90)

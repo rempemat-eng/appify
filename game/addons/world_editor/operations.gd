@@ -95,6 +95,7 @@ func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dic
 		if cell not in chosen:
 			chosen.append(cell)
 	var variant_only := material_id == "" and variant != ""
+	var snapped := false
 	if material_id != "":
 		var raw := definition(material_id)
 		if raw.is_empty() or raw.get("kind") != "terrain" or not _ground.kit.by_id.has(material_id):
@@ -102,6 +103,10 @@ func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dic
 		var gate := _approval(raw)
 		if not gate.ok:
 			return gate
+		if bool(raw.get("terrain", {}).get("route", false)):
+			var centred := _door_snap(chosen)
+			snapped = centred != chosen
+			chosen = centred
 	if variant != "" and not _known_variant(variant):
 		return _failure("rules.variant", "Unknown surface variant '%s'." % variant)
 	# A variant-only brush still uses its cells' current materials, so it cannot bypass approval.
@@ -145,7 +150,72 @@ func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dic
 	_do(Callable(self, "_apply_paint").bind(_ground, after))
 	_undo(Callable(self, "_apply_paint").bind(_ground, before))
 	_history.commit_action()
-	return {"ok": true, "diagnostics": [], "changed": true, "cells": chosen}
+	return {"ok": true, "diagnostics": [], "changed": true, "cells": chosen, "snapped": snapped}
+
+## Door paths: a route stroke that reaches the row before a placed door is centred on the door
+## (Tools.door_path_cells), so the path leaves it centred and straight for a cell. Cells the snap
+## would put outside the zone are dropped.
+func _door_snap(cells: Array[Vector2i]) -> Array[Vector2i]:
+	var out: Array[Vector2i] = cells.duplicate()
+	for door in _doors():
+		out = Tools.door_path_cells(out, door, _ground.kit.cell)
+	var inside: Array[Vector2i] = []
+	for c in out:
+		if _in_bounds(c) and c not in inside:
+			inside.append(c)
+	return inside
+
+## Every placed door facing south: its opening's x0 and x1 and its foot y, in ground texels
+## (the pieces' geometry.doors).
+func _doors() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var props := _zone.get_node_or_null("Props") as Node2D
+	if props == null:
+		return out
+	for child in props.get_children():
+		if not child is KitPiece:
+			continue
+		var doors: Variant = definition(child.piece_id).get("geometry", {}).get("doors", [])
+		if not doors is Array:
+			continue
+		var foot: Vector2 = _ground.to_local(props.to_global(child.position)) if props.is_inside_tree() else child.position
+		for d in doors:
+			if d is Dictionary and String(d.get("faces", "s")) == "s" and d.get("x") is Array and d.x.size() == 2:
+				out.append({"x0": foot.x + float(d.x[0]), "x1": foot.x + float(d.x[1]), "y": foot.y})
+	return out
+
+## The centre (texels along the run) of the path crossing a fence run near a cell, or NAN: along x,
+## route cells on both sides of the cell's south line; along y, route cells in the run's column and
+## both columns beside it. The crossing nearest the cell, four cells either way.
+func _crossing_path(at: Vector2i, along_x: bool, size: int) -> float:
+	var runs: Array = []
+	for i in range(-4, 5):
+		var crosses := false
+		if along_x:
+			var c := at + Vector2i(i, 0)
+			crosses = _is_route(c) and _is_route(c + Vector2i(0, 1))
+		else:
+			var c := at + Vector2i(0, i)
+			crosses = _is_route(c) and _is_route(c + Vector2i(-1, 0)) and _is_route(c + Vector2i(1, 0))
+		if crosses:
+			if not runs.is_empty() and runs.back()[1] == i - 1:
+				runs.back()[1] = i
+			else:
+				runs.append([i, i])
+	if runs.is_empty():
+		return NAN
+	var best: Array = runs[0]
+	for r in runs:
+		if mini(absi(r[0]), absi(r[1])) < mini(absi(best[0]), absi(best[1])) or (r[0] <= 0 and r[1] >= 0):
+			best = r
+	var base := at.x if along_x else at.y
+	return (base * 2 + best[0] + best[1] + 1) * size / 2.0
+
+## Whether a ground cell's material is a route (a path, a road).
+func _is_route(cell: Vector2i) -> bool:
+	if not _in_bounds(cell):
+		return false
+	return bool(definition(_material_piece(cell)).get("terrain", {}).get("route", false))
 
 func preview_piece(piece_id: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
 	var context := _context(false)
@@ -287,15 +357,22 @@ func place_fence_run(style: String, cells: Array, options: Dictionary = {}) -> D
 	if not snapshot.ok:
 		return snapshot
 	var taken: Array = snapshot.plan.get("pieces", []).duplicate()
+	var chosen_options := {}
+	for key in ["facing", "stage", "variant"]:
+		if String(options.get(key, "")) != "":
+			chosen_options[key] = options[key]
 	for at in all_cells:
 		var id := String(chosen.get(at, ""))
 		if id == "":
+			_discard(added)
 			return _failure("rules.fences", "The fence cell at %s joins nothing: a run must be continuous." % at)
 		var raw := definition(id)
 		if raw.is_empty():
+			_discard(added)
 			return _failure("rules.unknown_piece", "Unknown fence piece '%s'." % id)
 		var gate := _approval(raw)
 		if not gate.ok:
+			_discard(added)
 			return gate
 		var old: KitPiece = existing.get(at)
 		if old != null and old.piece_id == id:
@@ -303,8 +380,13 @@ func place_fence_run(style: String, cells: Array, options: Dictionary = {}) -> D
 		var foot := Tools.fence_foot(at, size)
 		var entry := {}
 		if old == null:
-			var preview := preview_piece(id, foot, {"id": _free_id(id, taken), "facing": "s"})
+			var opts := chosen_options.duplicate()
+			opts["id"] = _free_id(id, taken)
+			if opts.has("variant") and not _piece_variant(raw, String(opts.variant)):
+				opts.erase("variant")                            # a corner has no 'post': it takes its own
+			var preview := preview_piece(id, foot, opts)
 			if not preview.ok:
+				_discard(added)
 				return preview
 			entry = preview.instance
 			taken.append(entry)
@@ -313,21 +395,18 @@ func place_fence_run(style: String, cells: Array, options: Dictionary = {}) -> D
 			entry = kept.duplicate(true) if kept is Dictionary else {}
 			entry["piece"] = id
 			entry["id"] = String(old.name)
-			removed.append(old)
 		var made := _instantiate(id)
 		if not made.ok:
-			for node in added:
-				node.free()
+			_discard(added)
 			return made
 		var piece: KitPiece = made.node
 		piece.name = String(entry.id)
 		piece.piece_id = id
-		piece.variant = "plain"
-		entry["variant"] = piece.variant
-		piece.set_meta("kit_zone_entry", entry)
-		piece.set_meta("facing", "s")
+		_dress(piece, entry, old, chosen_options, "plain")
 		piece.position = props.to_local(_ground.to_global(foot)) if props.is_inside_tree() else foot
 		added.append(piece)
+		if old != null:
+			removed.append(old)
 	if added.is_empty():
 		return {"ok": true, "diagnostics": [], "changed": false, "message": "The fence already joins."}
 	var before := {"baked": _ground.baked, "baked_live": _ground.showing_baked()}
@@ -401,7 +480,12 @@ func copy_group(nodes: Array) -> Dictionary:
 	var group: Array = []
 	for pair in feet:
 		var node: KitPiece = pair[0]
-		var entry := {"piece": node.piece_id, "offset": pair[1] - corner, "facing": String(node.get_meta("facing", "s"))}
+		var kept: Variant = node.get_meta("kit_zone_entry", {})
+		var entry := {"piece": node.piece_id, "offset": pair[1] - corner, "facing": String(node.get_meta("facing", "s")),
+			"entry": kept.duplicate(true) if kept is Dictionary else {}, "meta": {}}
+		for key in node.get_meta_list():
+			if key != "kit_zone_entry":
+				entry.meta[key] = node.get_meta(key)
 		if node.variant != "":
 			entry["variant"] = node.variant
 		if node.has_meta("stage"):
@@ -443,8 +527,9 @@ func paste_group(group: Array, at: Vector2) -> Dictionary:
 		var foot: Vector2 = corner + Vector2(g.get("offset", Vector2.ZERO))
 		if foot.x < 0 or foot.y < 0 or foot.x >= _ground.size_px().x or foot.y >= _ground.size_px().y:
 			return _failure("rules.bounds", "The group does not fit in the zone here.")
-		var instance := {"piece": id, "at": [foot.x / unit, foot.y / unit], "facing": String(g.get("facing", "s")),
-			"id": _free_id(id, taken)}
+		var instance: Dictionary = Dictionary(g.get("entry", {})).duplicate(true)
+		instance.merge({"piece": id, "at": [foot.x / unit, foot.y / unit], "facing": String(g.get("facing", "s")),
+			"id": _free_id(id, taken)}, true)
 		for key in ["variant", "stage"]:
 			if g.has(key):
 				instance[key] = g[key]
@@ -464,13 +549,14 @@ func paste_group(group: Array, at: Vector2) -> Dictionary:
 	for instance in instances:
 		var made := _instantiate(String(instance.piece))
 		if not made.ok:
-			for node in added:
-				node.free()
+			_discard(added)
 			return made
 		var piece: KitPiece = made.node
 		piece.name = String(instance.id)
 		piece.piece_id = String(instance.piece)
 		piece.variant = String(instance.get("variant", ""))
+		for key in Dictionary(group[instances.find(instance)].get("meta", {})):
+			piece.set_meta(key, group[instances.find(instance)].meta[key])
 		piece.set_meta("kit_zone_entry", instance.duplicate(true))
 		piece.set_meta("facing", instance.facing)
 		if instance.has("stage"):
@@ -514,7 +600,7 @@ func _fence_nodes(style: String) -> Dictionary:
 ## cells of the click. A stile goes only on a drystone or post-and-rail run, and (its relation)
 ## only where a path crosses. The cells either side keep their joins: they now meet the gate's or
 ## the stile's ends. One undo action.
-func place_crossing(piece_id: String, at: Vector2) -> Dictionary:
+func place_crossing(piece_id: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
 	var context := _context(true)
 	if not context.ok:
 		return context
@@ -538,6 +624,7 @@ func place_crossing(piece_id: String, at: Vector2) -> Dictionary:
 	var step := Vector2i(1, 0) if along_x else Vector2i(0, 1)
 	var straight := "_ew" if along_x else "_ns"
 	var centre := Vector2i(-9999, -9999)
+	var spans: Array[Vector2i] = []
 	for d in [0, -1, 1, -2, 2]:
 		var c: Vector2i = click + step * d
 		var ok := true
@@ -547,8 +634,15 @@ func place_crossing(piece_id: String, at: Vector2) -> Dictionary:
 				ok = false
 				break
 		if ok:
-			centre = c
-			break
+			spans.append(c)
+	# of the spans it could take, the gate takes the one centred on the path that crosses the run
+	var along: Array = []
+	for c in spans:
+		var foot := Tools.fence_foot(c, size)
+		along.append(foot.x if along_x else foot.y)
+	var pick := Tools.centred_span(along, _crossing_path(click, along_x, size))
+	if pick >= 0:
+		centre = spans[pick]
 	if centre.x == -9999:
 		return _failure("rules.crossing", "No straight %s run of %d cell%s here: a %s needs %s cell%s of a straight run along %s within two cells of the click." % [
 			style, span, "s" if span > 1 else "", "stile" if stile else "gate", span, "s" if span > 1 else "", "x" if along_x else "y"])
@@ -582,8 +676,12 @@ func place_crossing(piece_id: String, at: Vector2) -> Dictionary:
 	var piece: KitPiece = made.node
 	piece.name = String(instance.id)
 	piece.piece_id = piece_id
-	piece.set_meta("kit_zone_entry", instance.duplicate(true))
-	piece.set_meta("facing", "s")
+	# the gate keeps what was authored on the cell at its middle (its stage, its notes)
+	var centre_node: Node = cells[centre]
+	var kept: Variant = centre_node.get_meta("kit_zone_entry", {})
+	var entry: Dictionary = kept.duplicate(true) if kept is Dictionary else {}
+	entry.merge(instance, true)
+	_dress(piece, entry, centre_node, options)
 	piece.position = props.to_local(_ground.to_global(foot)) if props.is_inside_tree() else foot
 	var before := {"baked": _ground.baked, "baked_live": _ground.showing_baked()}
 	_begin("Place %s on the run" % piece_id)
@@ -768,24 +866,28 @@ func scatter(piece_id: String, cells: Array, options: Dictionary = {}) -> Dictio
 					variant = variants[i]
 					break
 		var foot := Vector2(c.x * size + size / 2.0, (c.y + 1) * size)
-		var instance := {"piece": piece_id, "at": [foot.x / unit, foot.y / unit], "facing": "s", "id": _free_id(piece_id, plan.get("pieces", []))}
+		var instance := {"piece": piece_id, "at": [foot.x / unit, foot.y / unit], "facing": String(options.get("facing", "s")),
+			"id": _free_id(piece_id, plan.get("pieces", []))}
 		if variant != "":
 			instance["variant"] = variant
+		if String(options.get("stage", "")) != "":
+			instance["stage"] = options.stage
 		var verdict := _provider_result(evaluator.call(plan.duplicate(true), instance.duplicate(true), _library.duplicate(true)), "relation engine")
 		if not verdict.ok:
 			skipped.rules += 1
 			continue
 		var made := _instantiate(piece_id)
 		if not made.ok:
-			for node in added:
-				node.free()
+			_discard(added)
 			return made
 		var piece: KitPiece = made.node
 		piece.name = String(instance.id)
 		piece.piece_id = piece_id
 		piece.variant = variant
 		piece.set_meta("kit_zone_entry", instance.duplicate(true))
-		piece.set_meta("facing", "s")
+		piece.set_meta("facing", instance.facing)
+		if instance.has("stage"):
+			piece.set_meta("stage", instance.stage)
 		piece.position = props.to_local(_ground.to_global(foot)) if props.is_inside_tree() else foot
 		added.append(piece)
 		plan.pieces.append(instance)
@@ -970,6 +1072,42 @@ func _apply_swap(zone: Node, target: TerrainGround, props: Node2D, removed: Arra
 			props.add_child(node)
 			node.owner = zone
 	_restore_ground(target, {"baked": before.baked, "baked_live": false} if forward else before)
+
+## A new piece's authored data (the Codex lead's review of #430, P2): a piece that replaces one
+## (a re-joined fence cell, a gate on a run) keeps the old node's metadata (stage, facing and any
+## other meta) and entry fields, and takes the selected options only where the old one had none;
+## a new piece takes the selected options. The variant is the old one, else the selected one,
+## whichever this piece has, else `fallback`.
+func _dress(piece: KitPiece, entry: Dictionary, old: Node, options: Dictionary, fallback: String = "") -> void:
+	var raw := definition(piece.piece_id)
+	if old != null:
+		for key in old.get_meta_list():
+			if key != "kit_zone_entry":
+				piece.set_meta(key, old.get_meta(key))
+	for key in ["facing", "stage"]:
+		if not piece.has_meta(key) and String(options.get(key, "")) != "":
+			piece.set_meta(key, options[key])
+	if not piece.has_meta("facing"):
+		piece.set_meta("facing", "s")
+	entry["facing"] = piece.get_meta("facing")
+	if piece.has_meta("stage"):
+		entry["stage"] = piece.get_meta("stage")
+	piece.variant = fallback
+	for wanted in [String(old.variant) if old is KitPiece else "", String(options.get("variant", ""))]:
+		if wanted != "" and _piece_variant(raw, wanted):
+			piece.variant = wanted
+			break
+	if piece.variant != "" or entry.has("variant"):
+		entry["variant"] = piece.variant
+	piece.set_meta("kit_zone_entry", entry)
+
+## Free pieces made for an operation that was then refused: nothing was attached or recorded, so
+## the scene and the undo history stay as they were (the Codex lead's review of #430, P2).
+func _discard(nodes: Array) -> void:
+	for node in nodes:
+		if is_instance_valid(node) and node.get_parent() == null:
+			node.free()
+	nodes.clear()
 
 func _instantiate(piece_id: String) -> Dictionary:
 	var inst: Node

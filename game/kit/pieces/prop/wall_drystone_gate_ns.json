@@ -14,7 +14,25 @@
    "weight": 1.0,
    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_shut.png",
    "foot": [
-    10,
+    13,
+    90
+   ]
+  },
+  {
+   "id": "open_w",
+   "weight": 0.6,
+   "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_open_w.png",
+   "foot": [
+    56,
+    90
+   ]
+  },
+  {
+   "id": "open_e",
+   "weight": 0.6,
+   "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_open_e.png",
+   "foot": [
+    13,
     90
    ]
   }
@@ -28,7 +46,7 @@
  },
  "geometry": {
   "size_px": [
-   19,
+   69,
    126
   ],
   "size_cells": [
@@ -41,7 +59,7 @@
    "shape": "none"
   },
   "foot": [
-   10,
+   13,
    90
   ],
   "footprint": [
