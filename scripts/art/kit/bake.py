@@ -470,12 +470,15 @@ def bake(plan: dict, lib: dict | None = None):
             # rocks.plunge paints only water)
             from scripts.art.native import rocks as RK_
             waters_ = [GD.FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in GD.FI]
+            stones_ = [GD.FI[n_] for n_ in ('stone', 'stone_warm', 'stone_cool') if n_ in GD.FI]
             for X in range(max(0, sx0 - RK_.PLUNGE_PAD), min(w, sx0 + sw + RK_.PLUNGE_PAD)):
                 col = wm[r1:min(h, r1 + SN.P(8)), X]
                 if not col.any():
                     continue
                 open_ = np.nonzero(np.isin(cv[r1:min(h, r1 + SN.P(8)), X] // 8, waters_) & col)[0]
                 stop = r1 + (int(open_[0]) if len(open_) else len(col))
+                if np.isin(cv[r1:stop, X] // 8, stones_).any():
+                    continue                     # a bank stone stays on its bank (its wet contact is laid)
                 for Y in range(r1, stop):
                     if wm[Y, X]:
                         cv[Y, X] = C('water', 1)
