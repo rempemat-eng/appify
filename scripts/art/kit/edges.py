@@ -286,21 +286,28 @@ def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side
     # face's foot at the land's edge and the light waterline inside it, with no wall seen edge-on.
     # Where the north face ends beside open water its edge column is that wet earth too, so the rim
     # runs on round inside and outside bends.
+    # (what hangs on the face's end is kept off the CALM border strips, which must depend only on
+    # the border's own cells and profile: test_kit.test_tiles_canonical_at_borders)
+    yy2, xx2 = np.mgrid[0:N, 0:N]
+    away = ((yy2 >= T0 + CALM + 1) & (yy2 < T1 - CALM - 1) & (xx2 >= T0 + CALM + 1) & (xx2 < T1 - CALM - 1))
     face = nb & (rt <= 6)
-    face_end = face & (GD.right(m2 & ~nb, 1) | GD.right(m2 & ~nb, -1))
+    face_end = face & (GD.right(m2 & ~nb, 1) | GD.right(m2 & ~nb, -1)) & away
     ops.own[face_end] = 2
     ops.ab[face_end] = C('earth_cool', 0)
-    rim, wline = GD.shore_rim(m2, face)
+    rim, _w = GD.shore_rim(m2, face)
     rim &= ~nb
-    wline &= ~nb & ~(col_bank & (rt == 7))
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    wline = m2 & ~nb & ~rim & (ndi.binary_dilation(rim, structure=cross) |
+                               (ndi.binary_dilation(face, structure=cross) & away))
     ops.own[rim] = 2
     ops.ab[rim] = C('earth_cool', 0)
     ops.own[wline] = 2
     ops.ab[wline] = C('water', 5)
-    # the shallows inside the rim lit, 1 tone for two texels more
+    # the shallows inside the rim lit a tone (within 3.5 texels of the land: the bands' reach the
+    # corners leave canonical at the borders)
     dist = ndi.distance_transform_edt(m2)
     shal = m2 & ~nb & ~rim & ~wline & (ops.own == 1)
-    ops.shift(shal & (dist <= 4.5), 1)
+    ops.shift(shal & (dist <= 3.5), 1)
     s_lip = land & GD.down(m2, 1)
     ops.shift(s_lip, 1)
     return ops.encode((slice(T0, T1), slice(T0, T1)))
