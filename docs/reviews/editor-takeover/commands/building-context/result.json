@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-m",
+    "scripts.review.assets",
+    "crossroads/bakery",
+    "crossroads/fern_cottage",
+    "crossroads/herbalist",
+    "crossroads/hut",
+    "crossroads/library",
+    "crossroads/north_cottages",
+    "crossroads/smithy",
+    "--out",
+    "/workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/building-assets",
+    "--no-sheet"
+  ],
+  "started_at": "2026-10-28T17:54:36Z",
+  "duration_seconds": 5.643,
+  "exit_code": 0,
+  "source_before": {
+    "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+    "tracked_changes": "",
+    "pass": true
+  },
+  "source_after": {
+    "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+    "tracked_changes": "",
+    "pass": true
+  },
+  "stdout_sha256": "85b924e27200f62eb38b72cae678d73185cd3288ef06e55a8b69229c5c692bd9",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,33 @@
+[kit rules] kitlab: ok
+  advice rules.unapproved: material 'lawn' is candidate, not approved
+  advice rules.unapproved: material 'path' is candidate, not approved
+  advice rules.unapproved: material 'water' is candidate, not approved
+  advice rules.unapproved: 4 pieces placed before the library gate approved them: woodland_boulder, woodland_forest_bench, woodland_oak, woodland_stump
+[kit rules] kitlab_tiers: ok
+  advice rules.unapproved: material 'lawn' is candidate, not approved
+  advice rules.unapproved: material 'path' is candidate, not approved
+  advice rules.unapproved: material 'water' is candidate, not approved
+  advice rules.unapproved: 4 pieces placed before the library gate approved them: log_steps, waterfall_2, woodland_boulder, woodland_forest_bench
+[kit rules] kitlab_widths: ok
+  advice rules.unapproved: material 'lawn' is candidate, not approved
+  advice rules.unapproved: material 'path' is candidate, not approved
+  advice rules.unapproved: material 'water' is candidate, not approved
+  advice rules.off_grid: bridge (woodland_footbridge): its foot [360, 156] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.unapproved: 5 pieces placed before the library gate approved them: stepping_stones_2, woodland_beech, woodland_footbridge, woodland_forest_bench, woodland_oak
+[kit rules] woodland_kit: ok
+  advice rules.unapproved: material 'lawn' is candidate, not approved
+  advice rules.unapproved: material 'path' is candidate, not approved
+  advice rules.unapproved: material 'water' is candidate, not approved
+  advice rules.unapproved: material 'scree' is candidate, not approved
+  advice rules.unapproved: material 'worn' is candidate, not approved
+  advice rules.off_grid: stone-1 (woodland_standing_stone_lean): its foot [336, 1305] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: stone-2 (woodland_standing_stone_low): its foot [240, 1329] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: stone-3 (woodland_standing_stone_runes): its foot [144, 1305] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: stone-4 (woodland_standing_stone_broken): its foot [108, 1257] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: stone-5 (woodland_standing_stone_b): its foot [144, 1209] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: stone-6 (woodland_standing_stone): its foot [240, 1185] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: stone-7 (woodland_standing_stone_low): its foot [336, 1209] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: lintel-1 (woodland_lintel): its foot [180, 1278] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: stone-top (woodland_stone_top): its foot [72, 1326] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.off_grid: footbridge (woodland_footbridge): its foot [384, 948] is off the soft grid (x on 4, y on 8 world px)
+  advice rules.unapproved: 28 pieces placed before the library gate approved them: waterfall_2_tall, woodland_beech, woodland_birch, woodland_boulder, woodland_bramble, woodland_bramble_b ...

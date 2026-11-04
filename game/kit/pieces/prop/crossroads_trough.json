@@ -6,15 +6,15 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 4,
  "variants": [
   {
-   "id": "trough_35",
+   "id": "trough",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/trough_35.png",
+   "png": "res://kit/props/art/farm/trough.png",
    "foot": [
-    48,
-    53
+    42,
+    37
    ]
   }
  ],
@@ -27,26 +27,26 @@
  },
  "geometry": {
   "size_px": [
-   96,
-   57
+   86,
+   42
   ],
   "size_cells": [
    4,
-   3
+   2
   ],
   "z_sort": "foot",
   "collision": {
    "rect": [
-    -10.0,
+    -13.0,
     -8.0,
-    20,
+    26,
     8
    ],
    "shape": "rect"
   },
   "foot": [
-   48,
-   53
+   42,
+   37
   ],
   "footprint": [
    [
@@ -68,7 +68,38 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "feed",
+  "role": "trough",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "stock",
+    "cells": 4,
+    "note": "its animals drink from it"
+   },
+   {
+    "rel": "within",
+    "what": "boundary",
+    "cells": 4,
+    "note": "inside their pen or paddock"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "enclosure": {
+   "holds": [
+    "sheep",
+    "horses",
+    "cattle",
+    "goats"
+   ],
+   "as": "needs"
+  }
  },
  "rendering": {
   "cast_shadow": {
@@ -101,6 +132,10 @@
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "collision",
+   "variants"
   ]
  }
 }

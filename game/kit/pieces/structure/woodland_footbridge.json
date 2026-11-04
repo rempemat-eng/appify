@@ -57,7 +57,8 @@
     "note": "a route meets it at both ends"
    }
   ],
-  "composition": "axis"
+  "composition": "axis",
+  "purpose": "cross"
  },
  "rendering": {
   "cast_shadow": {

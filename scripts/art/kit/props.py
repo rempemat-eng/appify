@@ -55,6 +55,19 @@ def crown_shadow(png_res: str, foot, out_name: str):
     return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
 
+def _anim(rendering: dict, foot) -> dict | None:
+    """The piece's looping strip (rendering.animations with a strip): where it is, its frames and
+    rate, and its offset from the foot (a fall's frames cover its sheet; an animal's its whole
+    picture, frame 0 being the still)."""
+    for a in rendering.get('animations') or []:
+        if a.get('strip') and a.get('frames', 0) > 1:
+            region = a.get('region_px') or [0, 0] + list(a.get('frame_px') or [0, 0])
+            return {'clip': a['clip'], 'strip': a['strip'], 'frames': int(a['frames']), 'fps': float(a.get('fps', 8)),
+                    'offset': [region[0] - foot[0], region[1] - foot[1]], 'cover': not a.get('region_px'),
+                    'reduced_motion': a.get('reduced_motion', 'hold:0')}
+    return None
+
+
 def entry(p: dict) -> dict:
     g = p.get('geometry', {})
     r = p.get('rendering', {})
@@ -76,6 +89,8 @@ def entry(p: dict) -> dict:
             'size_cells': g.get('size_cells'), 'footprint': g.get('footprint'), 'function': p.get('function', {}), 'story': p.get('story', {}),
             'role': p.get('placement', {}).get('role'), 'snap': p.get('placement', {}).get('snap', 'cell'),
             'approval': p['approval']['state'], 'painted': bool(r.get('paint')),
+            **({'sheet_px': g['sheet_px']} if g.get('sheet_px') else {}),
+            **({'anim': _anim(r, foot)} if _anim(r, foot) else {}),
             'variants': {v['id']: {'png': v['png'], 'foot': v.get('foot', foot)} for v in p.get('variants', [])}}
 
 
@@ -91,6 +106,19 @@ def scene(pid: str, e: dict) -> str:
               'script = ExtResource("1")', 'piece_id = "%s"' % pid, '',
               '[node name="Sprite" type="Sprite2D" parent="."]', 'texture = ExtResource("2")', 'centered = false',
               'offset = Vector2(%g, %g)' % (-v0['foot'][0], -v0['foot'][1]), '']
+    an = e.get('anim')
+    if an:
+        # the loop (world/loop_fx.gd: only on screen and while the screen is active, frame 0 under
+        # reduced motion). An animal's loop replaces its still (the still stays for the variant
+        # picker, the bake and the shadow); a fall's lies over the sheet the bake drew.
+        lines[3:3] = ['[ext_resource type="Script" path="res://world/loop_fx.gd" id="3"]',
+                      '[ext_resource type="Texture2D" path="%s" id="4"]' % an['strip']]
+        if an['cover']:
+            i = lines.index('centered = false')
+            lines[i:i] = ['visible = false']
+        lines += ['[node name="%s" type="Sprite2D" parent="."]' % ('Idle' if an['cover'] else 'Flow'),
+                  'script = ExtResource("3")', 'texture = ExtResource("4")', 'centered = false',
+                  'offset = Vector2(%g, %g)' % tuple(an['offset']), 'hframes = %d' % an['frames'], 'fps = %g' % an['fps'], '']
     if e['collision']:
         x, y, w, h = e['collision']
         lines += ['[node name="Solid" type="StaticBody2D" parent="."]', 'collision_mask = 0', '',
@@ -99,20 +127,36 @@ def scene(pid: str, e: dict) -> str:
     return '\n'.join(lines)
 
 
-def build() -> int:
+def build(check: bool = False) -> int:
+    """Write every prop scene and the index; with check, write nothing and fail if a committed
+    scene or the index is not what the pieces make (Claude A, 2 Nov: the index had drifted from
+    the pieces since the schema migration)."""
     os.makedirs(OUT, exist_ok=True)
-    index = {}
+    index, scenes = {}, {}
     for f in piece_files():
         p = json.load(open(f))
         if p['kind'] not in ('prop', 'structure') or not p.get('variants'):
             continue
         e = entry(p)
         index[p['id']] = e
-        open(os.path.join(OUT, p['id'] + '.tscn'), 'w').write(scene(p['id'], e))
-    json.dump(index, open(os.path.join(OUT, 'index.json'), 'w'), indent=1, sort_keys=True)
+        scenes[p['id'] + '.tscn'] = scene(p['id'], e)
+    text = json.dumps(index, indent=1, sort_keys=True)
+    if check:
+        stale = [n for n, t in scenes.items()
+                 if not os.path.exists(os.path.join(OUT, n)) or open(os.path.join(OUT, n)).read() != t]
+        if open(os.path.join(OUT, 'index.json')).read().rstrip('\n') != text:
+            stale.append('index.json')
+        if stale:
+            print('props: stale %s (run python3 -m scripts.art.kit.props)' % ', '.join(sorted(stale)))
+            return 1
+        print('props: %d scenes and the index match the pieces' % len(index))
+        return 0
+    for n, t in scenes.items():
+        open(os.path.join(OUT, n), 'w').write(t)
+    open(os.path.join(OUT, 'index.json'), 'w').write(text)
     print('props: %d scenes' % len(index))
     return 0
 
 
 if __name__ == '__main__':
-    sys.exit(build())
+    sys.exit(build(check='--check' in sys.argv[1:]))

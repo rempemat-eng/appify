@@ -317,3 +317,320 @@ func test_validate_delegates_complete_snapshot_and_preserves_findings() -> void:
 	assert_str(result.diagnostics[0].rule).is_equal("rules.walk")
 	assert_that(received[0].plan.spawns.start).is_equal([36, 48])
 	assert_int(received[0].library.size()).is_equal(4)
+
+func _fence_library() -> Dictionary:
+	var result := _library()
+	for joins in ["e", "w", "n", "s", "ew", "ns", "es", "sw", "ne", "nw", "esw", "nes", "new", "nsw", "nesw"]:
+		var piece: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/prop/fence_wattle_%s.json" % joins))
+		piece.approval.state = "approved"
+		result[piece.id] = piece
+	return result
+
+func _piece_at(f: Dictionary, cell: Vector2i) -> KitPiece:
+	for child in f.zone.get_node("Props").get_children():
+		if child is KitPiece and Vector2i(floori(child.position.x / 24), roundi(child.position.y / 24) - 1) == cell:
+			return child
+	return null
+
+func test_a_fence_run_joins_its_cells_and_the_fence_it_meets_in_one_action() -> void:
+	var f := _fixture({"library": _fence_library()})
+	var first: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)])
+	assert_bool(first.ok).is_true()
+	assert_str(_piece_at(f, Vector2i(1, 1)).piece_id).is_equal("fence_wattle_e")
+	assert_str(_piece_at(f, Vector2i(2, 1)).piece_id).is_equal("fence_wattle_ew")
+	assert_str(_piece_at(f, Vector2i(3, 1)).piece_id).is_equal("fence_wattle_w")
+	assert_that(_piece_at(f, Vector2i(2, 1)).position).is_equal(Vector2(60, 48))
+	# a second run south from the east end turns that end into a corner
+	var second: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(3, 2), Vector2i(3, 3)])
+	assert_bool(second.ok).is_true()
+	assert_int(second.rejoined).is_equal(1)
+	assert_str(_piece_at(f, Vector2i(3, 1)).piece_id).is_equal("fence_wattle_sw")
+	assert_str(_piece_at(f, Vector2i(3, 2)).piece_id).is_equal("fence_wattle_ns")
+	assert_str(_piece_at(f, Vector2i(3, 3)).piece_id).is_equal("fence_wattle_n")
+	var snapshot: Dictionary = f.operations.export_plan()
+	assert_int(snapshot.plan.pieces.size()).is_equal(5)
+	assert_bool(f.history.undo()).is_true()
+	assert_str(_piece_at(f, Vector2i(3, 1)).piece_id).is_equal("fence_wattle_w")
+	assert_object(_piece_at(f, Vector2i(3, 2))).is_null()
+	assert_bool(f.history.redo()).is_true()
+	assert_str(_piece_at(f, Vector2i(3, 1)).piece_id).is_equal("fence_wattle_sw")
+	# a lone cell joins nothing and is refused
+	var lone: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(6, 4)])
+	assert_bool(lone.ok).is_false()
+
+func test_a_copied_pen_pastes_whole_in_one_action_with_its_contents_inside() -> void:
+	var rows := []
+	for y in 6:
+		rows.append("............")
+	var f := _fixture({"library": _fence_library(), "plan": {"rows": rows}})
+	# a ring of fence cells round (1..3, 1..3) and a bench inside it
+	var ring := [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(3, 2), Vector2i(3, 3), Vector2i(2, 3), Vector2i(1, 3), Vector2i(1, 2), Vector2i(1, 1)]
+	assert_bool(f.operations.place_fence_run("wattle", ring).ok).is_true()
+	assert_bool(f.operations.place_piece("woodland_forest_bench", Vector2(60, 72), {"variant": "forest_bench", "stage": "restored", "id": "seat"}).ok).is_true()
+	var nodes: Array = []
+	for child in f.zone.get_node("Props").get_children():
+		if child is KitPiece:
+			nodes.append(child)
+	var copied: Dictionary = f.operations.copy_group(nodes)
+	assert_bool(copied.ok).is_true()
+	assert_int(copied.group.size()).is_equal(9)
+	# the group's corner is the cell corner at the pen's top-left foot (24, 48); pasted at the
+	# cell under (149, 51), whose corner is (144, 48): every piece moves 5 cells east
+	var pasted: Dictionary = f.operations.paste_group(copied.group, Vector2(24 * 6 + 5, 51))
+	assert_bool(pasted.ok).is_true()
+	assert_int(pasted.nodes.size()).is_equal(9)
+	# every piece keeps its place relative to the others
+	var before := {}
+	for node in nodes:
+		before[node.piece_id + str(node.position)] = true
+	for node in pasted.nodes:
+		assert_bool(before.has(node.piece_id + str(node.position - Vector2(120, 0)))).is_true()
+	assert_bool(f.history.undo()).is_true()
+	for node in pasted.nodes:
+		assert_object(node.get_parent()).is_null()
+	assert_bool(f.history.redo()).is_true()
+	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(18)
+	# the fence-run preview names the pieces a run would place without placing them
+	var preview: Dictionary = f.operations.preview_fence_run("wattle", [Vector2i(9, 4), Vector2i(10, 4)])
+	assert_str(preview[Vector2i(9, 4)]).is_equal("fence_wattle_e")
+	assert_str(preview[Vector2i(10, 4)]).is_equal("fence_wattle_w")
+	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(18)
+
+func _crossing_library() -> Dictionary:
+	var result := _fence_library()
+	for id in ["fence_wattle_gate_ew", "fence_rail_e", "fence_rail_w", "fence_rail_ew", "fence_rail_stile_ew", "farm_hen_white"]:
+		var piece: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/prop/%s.json" % id))
+		piece.approval.state = "approved"
+		result[piece.id] = piece
+	return result
+
+func _wide_rows(n: int = 12) -> Array:
+	var rows := []
+	for y in 6:
+		rows.append(".".repeat(n))
+	return rows
+
+func test_a_gate_or_a_stile_replaces_the_run_it_is_clicked_onto() -> void:
+	var f := _fixture({"library": _crossing_library(), "plan": {"rows": _wide_rows()}})
+	var run := []
+	for x in range(1, 8):
+		run.append(Vector2i(x, 2))
+	assert_bool(f.operations.place_fence_run("wattle", run).ok).is_true()
+	# clicked near the run's end, the gate snaps to the nearest span of three straight cells
+	var placed: Dictionary = f.operations.place_crossing("fence_wattle_gate_ew", Vector2(1 * 24 + 5, 2 * 24 + 5))
+	assert_bool(placed.ok).is_true()
+	assert_that(placed.cell).is_equal(Vector2i(3, 2))
+	assert_int(placed.replaced).is_equal(3)
+	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(5)
+	assert_object(_piece_at(f, Vector2i(2, 2))).is_null()
+	assert_str(_piece_at(f, Vector2i(1, 2)).piece_id).is_equal("fence_wattle_e")      # the end keeps its join, now to the gate
+	assert_bool(f.history.undo()).is_true()
+	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(7)
+	assert_str(_piece_at(f, Vector2i(2, 2)).piece_id).is_equal("fence_wattle_ew")
+	assert_bool(f.history.redo()).is_true()
+	# nowhere near a straight span, and a stile on hurdles: both refused with the reason
+	var nowhere: Dictionary = f.operations.place_crossing("fence_wattle_gate_ew", Vector2(10 * 24 + 5, 5 * 24 + 5))
+	assert_bool(nowhere.ok).is_false()
+	assert_str(nowhere.message).contains("No straight wattle run")
+	# a stile goes on a post-and-rail run
+	assert_bool(f.operations.place_fence_run("rail", [Vector2i(8, 4), Vector2i(9, 4), Vector2i(10, 4)]).ok).is_true()
+	var stile: Dictionary = f.operations.place_crossing("fence_rail_stile_ew", Vector2(9 * 24 + 12, 4 * 24 + 12))
+	assert_bool(stile.ok).is_true()
+	assert_int(stile.replaced).is_equal(1)
+
+func test_the_ghost_is_checked_by_the_full_validator_once_per_place() -> void:
+	var calls := [0]
+	var validator := func(plan: Dictionary, _library_data: Dictionary) -> Dictionary:
+		calls[0] += 1
+		var ghost: Dictionary = plan.pieces.back()
+		return {"ok": false, "diagnostics": [
+			{"check": "rules.needs", "message": "%s: needs a hearth within 4 cells" % ghost.id, "at": ghost.at, "severity": "fault"},
+			{"check": "rules.fences", "message": "far away", "at": [999, 999], "severity": "fault"}]}
+	var rows := []
+	for y in 30:
+		rows.append(".".repeat(40))
+	var f := _fixture({"zone_validator": validator, "plan": {"rows": rows}})
+	var first: Dictionary = f.operations.ghost_check("woodland_forest_bench", Vector2(480, 360))
+	assert_str(first.severity).is_equal("fault")
+	assert_str(first.rule).is_equal("needs")
+	var info: Dictionary = f.operations.ghost_plan("woodland_forest_bench", Vector2(480, 360))
+	assert_int(info.plan.rows.size()).is_less_equal(17)
+	assert_int(String(info.plan.rows[0]).length()).is_less_equal(17)
+	f.operations.ghost_check("woodland_forest_bench", Vector2(482, 361))       # the same snapped place: cached
+	assert_int(calls[0]).is_equal(1)
+	f.operations.ghost_check("woodland_forest_bench", Vector2(552, 360))       # a new place: one more run
+	assert_int(calls[0]).is_equal(2)
+
+func test_the_scatter_brush_is_deterministic_spaced_ruled_and_one_undo() -> void:
+	var refuse_column := func(_plan: Dictionary, instance: Dictionary, _library_data: Dictionary) -> Dictionary:
+		if int(instance.at[0]) == 2 * 24 + 12:
+			return {"ok": false, "diagnostics": [{"rule": "rules.forbids", "message": "forbidden here"}]}
+		return {"ok": true, "diagnostics": []}
+	var f := _fixture({"library": _crossing_library(), "plan": {"rows": _wide_rows()}, "relation_evaluator": refuse_column})
+	var cells := []
+	for y in range(0, 6):
+		for x in range(0, 12):
+			cells.append(Vector2i(x, y))
+	var first: Dictionary = f.operations.scatter("farm_hen_white", cells, {"density": 0.6, "seed": 3})
+	assert_bool(first.ok).is_true()
+	var feet := []
+	for node in first.nodes:
+		feet.append(node.position)
+		assert_bool(int(node.position.x) != 2 * 24 + 12).is_true()            # its forbids respected
+	assert_int(feet.size()).is_greater(3)
+	for i in feet.size():
+		for j in feet.size():
+			if i < j:
+				var a: Vector2 = feet[i]
+				var b: Vector2 = feet[j]
+				assert_bool(maxf(absf(a.x - b.x), absf(a.y - b.y)) >= 48).is_true()   # a cell of clearance
+	assert_bool(f.history.undo()).is_true()                                    # the whole stroke
+	assert_int(f.operations.export_plan().plan.get("pieces", []).size()).is_equal(0)
+	var again: Dictionary = f.operations.scatter("farm_hen_white", cells, {"density": 0.6, "seed": 3})
+	var feet2 := []
+	for node in again.nodes:
+		feet2.append(node.position)
+	assert_that(feet2).is_equal(feet)                                          # the same per-cell choices
+	assert_bool(f.operations.scatter("fence_wattle_ew", cells).ok).is_false()  # fences are not dressing
+
+## The Codex lead's review of #430 (P2): a run keeps authored stages and the selected options, and
+## a refused run leaves no pending nodes behind.
+func _staged(f: Dictionary) -> Dictionary:
+	var out := {}
+	for e in f.operations.export_plan().plan.get("pieces", []):
+		out[String(e.id)] = String(e.get("stage", ""))
+	return out
+
+func test_a_staged_fence_keeps_its_stage_through_export_undo_and_redo() -> void:
+	var f := _fixture({"library": _fence_library()})
+	var made: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)], {"stage": "restored"})
+	assert_bool(made.ok).is_true()
+	var staged := _staged(f)
+	assert_int(staged.size()).is_equal(3)
+	for id in staged:
+		assert_str(staged[id]).is_equal("restored")
+	assert_bool(f.history.undo()).is_true()
+	assert_int(f.operations.export_plan().plan.get("pieces", []).size()).is_equal(0)
+	assert_bool(f.history.redo()).is_true()
+	assert_that(_staged(f)).is_equal(staged)
+
+func test_a_run_keeps_stages_and_options_on_new_and_rejoined_cells() -> void:
+	var f := _fixture({"library": _fence_library(), "plan": {"rows": _wide_rows()}})
+	assert_bool(f.operations.place_fence_run("wattle", [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)], {"stage": "restored", "variant": "post"}).ok).is_true()
+	assert_str(_piece_at(f, Vector2i(2, 1)).variant).is_equal("post")         # a straight takes the selected variant
+	assert_str(_piece_at(f, Vector2i(1, 1)).variant).is_equal("plain")        # an end has none: its own
+	_piece_at(f, Vector2i(3, 1)).set_meta("note", "the old gap by the oak")    # authored data on the end that will turn
+	var second: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(3, 2), Vector2i(3, 3)], {"stage": "ruined", "variant": "post"})
+	assert_bool(second.ok).is_true()
+	var corner := _piece_at(f, Vector2i(3, 1))
+	assert_str(corner.piece_id).is_equal("fence_wattle_sw")
+	assert_str(corner.get_meta("stage")).is_equal("restored")                 # the rejoined cell keeps its authored stage
+	assert_str(corner.get_meta("note")).is_equal("the old gap by the oak")    # and its other metadata
+	assert_str(_piece_at(f, Vector2i(3, 2)).get_meta("stage")).is_equal("ruined")
+	assert_str(_piece_at(f, Vector2i(3, 2)).variant).is_equal("post")
+	var staged := _staged(f)
+	assert_str(staged[String(corner.name)]).is_equal("restored")
+	assert_str(staged[String(_piece_at(f, Vector2i(3, 3)).name)]).is_equal("ruined")
+	# a rejoined cell that had no stage takes the run's selected one
+	assert_bool(f.operations.place_fence_run("wattle", [Vector2i(7, 2), Vector2i(8, 2)]).ok).is_true()
+	assert_bool(f.operations.place_fence_run("wattle", [Vector2i(8, 3)], {"stage": "ruined"}).ok).is_true()
+	assert_str(_piece_at(f, Vector2i(8, 2)).get_meta("stage")).is_equal("ruined")
+	assert_bool(f.history.undo()).is_true()
+	assert_bool(f.history.redo()).is_true()
+	assert_str(_staged(f)[String(_piece_at(f, Vector2i(3, 1)).name)]).is_equal("restored")
+
+func test_a_refused_run_leaves_the_scene_and_history_unchanged() -> void:
+	var made: Array = []
+	var factory := func(_id: String) -> KitPiece:
+		var node := KitPiece.new()
+		made.append(node)
+		return node
+	var refuse_third := func(_plan: Dictionary, instance: Dictionary, _library_data: Dictionary) -> Dictionary:
+		if int(instance.at[0]) == 3 * 24 + 12:
+			return {"ok": false, "diagnostics": [{"rule": "rules.forbids", "message": "not here"}]}
+		return {"ok": true, "diagnostics": []}
+	var f := _fixture({"library": _fence_library(), "scene_factory": factory, "relation_evaluator": refuse_third})
+	var props: Node = f.zone.get_node("Props")
+	var children := props.get_child_count()
+	var result: Dictionary = f.operations.place_fence_run("wattle", [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(4, 1)])
+	assert_bool(result.ok).is_false()
+	assert_int(props.get_child_count()).is_equal(children)
+	assert_bool(f.history.has_undo()).is_false()
+	assert_int(made.size()).is_greater(0)                                       # cells were made before the refusal
+	for node in made:
+		assert_bool(is_instance_valid(node)).is_false()                         # and every one was freed
+
+func test_a_pasted_group_keeps_its_stages_and_metadata() -> void:
+	var f := _fixture({"library": _crossing_library(), "plan": {"rows": _wide_rows()}})
+	var bench: Dictionary = f.operations.place_piece("woodland_forest_bench", Vector2(60, 72), {"variant": "forest_bench", "stage": "restored", "id": "seat"})
+	assert_bool(bench.ok).is_true()
+	bench.node.set_meta("note", "Mira's bench")
+	var copied: Dictionary = f.operations.copy_group([bench.node])
+	var pasted: Dictionary = f.operations.paste_group(copied.group, Vector2(24 * 6 + 5, 51))
+	assert_bool(pasted.ok).is_true()
+	var copy: KitPiece = pasted.nodes[0]
+	assert_str(copy.get_meta("stage")).is_equal("restored")
+	assert_str(copy.get_meta("note")).is_equal("Mira's bench")
+	assert_str(copy.variant).is_equal("forest_bench")
+	assert_str(_staged(f)[String(copy.name)]).is_equal("restored")
+
+func _threshold_library() -> Dictionary:
+	var result := _crossing_library()
+	var hut: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/structure/crossroads_hut.json"))
+	hut.approval.state = "approved"
+	result[hut.id] = hut
+	return result
+
+func test_a_path_painted_from_a_door_snaps_to_its_centre_line() -> void:
+	var rows := []
+	for y in 9:
+		rows.append(".".repeat(14))
+	var f := _fixture({"library": _threshold_library(), "plan": {"rows": rows}})
+	# the hut's door opening is x -24 to 23 from its foot: at x 180 its centre is 179.5, cell 7's middle; row 6 is before it
+	assert_bool(f.operations.place_piece("crossroads_hut", Vector2(180, 144), {"variant": "hut", "id": "hut"}).ok).is_true()
+	var ground := f.ground as TerrainGround
+	var stroke := [Vector2i(8, 6), Vector2i(8, 7), Vector2i(8, 8)]
+	var painted: Dictionary = f.operations.paint_cells(stroke, "path")
+	assert_bool(painted.ok).is_true()
+	assert_bool(painted.snapped).is_true()
+	assert_int(ground.material_at(Vector2i(7, 6))).is_equal(2)
+	assert_int(ground.material_at(Vector2i(7, 7))).is_equal(2)
+	assert_int(ground.material_at(Vector2i(8, 6))).is_equal(1)
+	assert_int(ground.material_at(Vector2i(8, 7))).is_equal(1)
+	assert_int(ground.material_at(Vector2i(8, 8))).is_equal(2)      # past the first cell out it may bend
+	# one undo takes the whole snapped stroke back
+	assert_bool(f.history.undo()).is_true()
+	assert_bool(f.history.has_undo()).is_true()
+	assert_int(ground.material_at(Vector2i(7, 6))).is_equal(1)
+	assert_int(ground.material_at(Vector2i(8, 8))).is_equal(1)
+	# a stroke nowhere near the door is painted where it was drawn
+	var far: Dictionary = f.operations.paint_cells([Vector2i(0, 8), Vector2i(1, 8)], "path")
+	assert_bool(far.snapped).is_false()
+	assert_int(ground.material_at(Vector2i(0, 8))).is_equal(2)
+
+func test_a_gate_snaps_onto_the_path_crossing_its_run() -> void:
+	var rows := []
+	for y in 9:
+		rows.append(".".repeat(14))
+	var f := _fixture({"library": _threshold_library(), "plan": {"rows": rows}})
+	# a three-cell path crossing the run's line (between rows 5 and 6) on columns 9 to 11
+	var path := []
+	for r in range(3, 9):
+		for c in range(9, 12):
+			path.append(Vector2i(c, r))
+	assert_bool(f.operations.paint_cells(path, "path").ok).is_true()
+	var run := []
+	for x in range(1, 13):
+		run.append(Vector2i(x, 5))
+	assert_bool(f.operations.place_fence_run("wattle", run).ok).is_true()
+	# clicked two cells west of the path, the gate takes the span centred on it (cell 10), not the click's
+	var placed: Dictionary = f.operations.place_crossing("fence_wattle_gate_ew", Vector2(8 * 24 + 5, 5 * 24 + 5))
+	assert_bool(placed.ok).is_true()
+	assert_that(placed.cell).is_equal(Vector2i(10, 5))
+	assert_that(placed.node.position).is_equal(Vector2(252, 144))
+	# with no path crossing, the click's own span is kept
+	assert_bool(f.history.undo()).is_true()
+	var g := _fixture({"library": _threshold_library(), "plan": {"rows": rows}})
+	assert_bool(g.operations.place_fence_run("wattle", run).ok).is_true()
+	var plain: Dictionary = g.operations.place_crossing("fence_wattle_gate_ew", Vector2(8 * 24 + 5, 5 * 24 + 5))
+	assert_that(plain.cell).is_equal(Vector2i(8, 5))

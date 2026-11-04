@@ -103,6 +103,14 @@
   "snap": "cell",
   "stages": [
    "broken"
+  ],
+  "purpose": "aftermath",
+  "role": "clutter",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
   ]
  },
  "rendering": {

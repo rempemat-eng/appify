@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "standing_stone_lean",
@@ -35,16 +35,51 @@
    4
   ],
   "z_sort": "foot",
-  "collision": null,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -7.7,
+    -5.0,
+    15.4,
+    5.0
+   ]
+  },
   "foot": [
    33.0,
    96.0
   ],
-  "footprint": []
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
  },
  "placement": {
   "snap": "cell",
-  "role": "marker"
+  "role": "marker",
+  "purpose": "mark",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "marker",
+    "cells": 4
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "provides": [
+   "feature",
+   "view"
+  ]
  },
  "rendering": {
   "cast_shadow": {
@@ -64,7 +99,10 @@
  "story": {
   "owner": null
  },
- "gameplay": {},
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
@@ -78,8 +116,9 @@
    }
   ],
   "todo": [
+   "collision box authored by Claude A (2 Nov) from the shipped prop scene; review with the size guide",
    "composition role and clearance",
-   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "review size-guide class and Eastward comparison before the library gate"
   ]
  }

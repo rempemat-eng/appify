@@ -212,7 +212,15 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
         variants.append({'id': os.path.splitext(obj['png'])[0], 'weight': 1.0,
                          'png': png_res, 'foot': obj['anchor']})
     variants = list({v['id']: v for v in variants}.values())
-    if old:
+    overrides = set((old or {}).get('audit', {}).get('overrides', []))
+    if 'variants' in overrides:
+        # a redraw (3 Nov): the kit's own pictures replace the source's; the source objects stay in
+        # audit.sources, and their pictures in the zone they came from
+        variants = [copy.deepcopy(v) for v in old['variants']]
+        sizes = []
+        for v in variants:
+            sizes.append(_size(os.path.join(ROOT, 'game', v['png'][len('res://'):]))[0])
+    elif old:
         prior = {v['id']: v for v in old.get('variants', [])}
         for v in variants:
             # Weight/note are authored; source supplies the current texture and exact foot.
@@ -222,6 +230,14 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
         known = _source_variant_ids(zone) | {v['id'] for v in variants}
         variants += [copy.deepcopy(v) for v in old.get('variants', []) if v['id'] not in known]
     w, h = (max(s[0] for s in sizes), max(s[1] for s in sizes)) if sizes else (0, 0)
+    # a solid box Claude authored where the source has none (the woodland's trees, shrubs, stones
+    # and bench, 2 Nov, from the shipped prop scenes) survives a refresh like placement does
+    authored = collision is None and bool(old) and bool((old.get('geometry') or {}).get('collision'))
+    if 'collision' in overrides:
+        # a box reviewed against the art and the size guide (3 Nov) stands over the source's
+        collision = copy.deepcopy(old['geometry']['collision'])
+    elif authored:
+        collision = copy.deepcopy(old['geometry']['collision'])
     g = {'size_px': [w, h], 'size_cells': [math.ceil(w / D / CELL_W), math.ceil(h / D / CELL_W)],
          'z_sort': 'foot', 'collision': collision}
     if variants:
@@ -239,6 +255,8 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
         todo.append('placement.role, requires and forbids (Claude design decision; ground-rules.md 6)')
     if collision is None:
         todo.append('object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)')
+    if authored:
+        todo.append('collision box authored by Claude A (2 Nov) from the shipped prop scene; review with the size guide')
     if g['footprint']:
         todo.append('footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot')
     if todo_circle:
@@ -248,7 +266,8 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
     p = {'schema': 'napattack.piece/1', 'id': pid, 'name': base.replace('_', ' ').capitalize(),
          'kind': 'structure' if building else 'prop', 'biomes': ['woodland' if zone == 'woodland' else 'village'],
          'version': old.get('version', 1) if old else 1, 'variants': variants,
-         'approval': {'state': 'candidate', 'by': None, 'at': None, 'standard': None,
+         'approval': copy.deepcopy(old['approval']) if 'approval' in overrides else
+                     {'state': 'candidate', 'by': None, 'at': None, 'standard': None,
                       'note': 'Source metadata only; seeded designs still require the library gate and Matt approval.'},
          'geometry': g, 'placement': copy.deepcopy(old.get('placement', {})) if old else {},
          'rendering': copy.deepcopy(old.get('rendering', {})) if old else {},
@@ -323,7 +342,7 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
             # An old heuristic is not evidence for an unknown woodland solid box.
             p['gameplay'].pop('blocks_move', None)
             p['gameplay'].pop('blocks_shots', None)
-        for key in ('overhang', 'height_px'):
+        for key in ('overhang', 'height_px', 'doors'):        # doors: measured on the art (thresholds.py)
             if key in old.get('geometry', {}):
                 g[key] = copy.deepcopy(old['geometry'][key])
         source_points = {point['id'] for point in points}

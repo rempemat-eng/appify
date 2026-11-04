@@ -77,7 +77,23 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "store",
+  "role": "store",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "house",
+    "cells": 2,
+    "note": "fuel against the gable wall of a house with a chimney"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

@@ -67,7 +67,29 @@
    ]
   ]
  },
- "placement": {},
+ "placement": {
+  "purpose": "light",
+  "role": "light",
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route",
+    "cells": 1
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "not_near",
+    "what": "centrepiece",
+    "cells": 1,
+    "note": "never on a well"
+   }
+  ]
+ },
  "rendering": {},
  "function": {},
  "story": {

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/square_rubble_b_shadow",
  "file": "game/zones/crossroads/art/square_rubble_b_shadow.png",
- "sha256": "f1fb85d5091ecca963b1035f2b371417045c5dbe1ffa57ca254b121a8797e5ca",
+ "sha256": "9a86eec52e5cf318ef614bc245c78b52170a31df3a7bacc6f15b22e2b4f27208",
  "kind": "square_rubble_b_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-03",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

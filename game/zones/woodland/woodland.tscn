@@ -92,11 +92,6 @@ collision_mask = 0
 [node name="Shape" type="CollisionShape2D" parent="Actors/HaleOnThePath/Hale/Post"]
 shape = SubResource("post")
 
-[node name="Hatch" type="Polygon2D" parent="Actors"]
-z_index = -1
-color = Color(0.25, 0.2, 0.15, 1)
-polygon = PackedVector2Array(315, 1018, 345, 1018, 345, 1042, 315, 1042)
-
 [node name="Spawns" type="Node2D" parent="."]
 
 [node name="start" type="Marker2D" parent="Spawns"]

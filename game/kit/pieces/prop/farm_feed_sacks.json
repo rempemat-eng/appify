@@ -1,0 +1,120 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_feed_sacks",
+ "name": "Feed sacks",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_feed_sacks",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_feed_sacks.png",
+   "foot": [
+    26,
+    33
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Sacks of feed on a pallet."
+ },
+ "geometry": {
+  "size_px": [
+   50,
+   37
+  ],
+  "size_cells": [
+   2,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 33,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -8.0,
+    -4.0,
+    16,
+    4
+   ]
+  },
+  "foot": [
+   26,
+   33
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "sacks",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "stock",
+    "cells": 8,
+    "note": "by the stock it feeds, at a shelter or a coop"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    18,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "pile",
+  "eastward_ref": "17: sacks by the barn door",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_feed_sacks",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}

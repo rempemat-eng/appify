@@ -60,7 +60,22 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "work",
+  "role": "workplace",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "forge",
+    "cells": 3
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

@@ -51,13 +51,14 @@
     "note": "across a channel 2 cells wide"
    },
    {
-    "rel": "adjacent",
+    "rel": "within",
     "what": "route",
     "cells": 1,
     "note": "a footpath meets it at both banks"
    }
   ],
-  "composition": "axis"
+  "composition": "axis",
+  "purpose": "cross"
  },
  "rendering": {
   "cast_shadow": {

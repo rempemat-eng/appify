@@ -90,10 +90,29 @@
    {
     "rel": "on",
     "what": "route"
+   },
+   {
+    "rel": "not_near",
+    "what": "water",
+    "cells": 6,
+    "note": "never beside a river that is easier to draw from"
    }
   ],
   "stages": [
    "restored"
+  ],
+  "purpose": "water",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "house",
+    "cells": 8,
+    "note": "water for homes: a square or a farmyard"
+   }
+  ],
+  "provides": [
+   "feature",
+   "water"
   ]
  },
  "rendering": {

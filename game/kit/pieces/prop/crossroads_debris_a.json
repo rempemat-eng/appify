@@ -55,7 +55,8 @@
   ],
   "stages": [
    "broken"
-  ]
+  ],
+  "purpose": "aftermath"
  },
  "rendering": {
   "cast_shadow": {

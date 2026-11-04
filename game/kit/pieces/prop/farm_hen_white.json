@@ -1,0 +1,138 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_hen_white",
+ "name": "Hen, white",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_hen_white",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_hen_white.png",
+   "foot": [
+    14,
+    25
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A hen pecking in her run; 8 idle frames at 4 fps."
+ },
+ "geometry": {
+  "size_px": [
+   31,
+   28
+  ],
+  "size_cells": [
+   1,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 25,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   14,
+   25
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "live",
+  "role": "stock",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "coop",
+    "cells": 4,
+    "note": "hens live in a run with their coop (placement-logic: keep animals in)"
+   },
+   {
+    "rel": "within",
+    "what": "boundary",
+    "cells": 3,
+    "note": "inside the run's fence"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "enclosure": {
+   "holds": [
+    "chickens"
+   ],
+   "as": "contents"
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    6,
+    2
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true,
+  "animations": [
+   {
+    "clip": "idle",
+    "loop": true,
+    "frames": 8,
+    "fps": 4.0,
+    "strip": "res://kit/props/art/farm/farm_hen_white_idle.png",
+    "frame_px": [
+     31,
+     28
+    ],
+    "reduced_motion": "hold:0",
+    "on_screen_only": true,
+    "phase": "placement"
+   }
+  ]
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "small_animal",
+  "eastward_ref": "17: the farm's animals, each a readable mass with its own pose",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_hen_white",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}

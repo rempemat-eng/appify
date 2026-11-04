@@ -1,10 +1,10 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://world/terrain/kit_piece.gd" id="1"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_14.png" id="2"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_47.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(48, 18)
+size = Vector2(78, 18)
 
 [node name="CrossroadsBush" type="Node2D"]
 script = ExtResource("1")
@@ -19,5 +19,5 @@ offset = Vector2(-57, -73)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Solid"]
-position = Vector2(0, -6)
+position = Vector2(0, -9)
 shape = SubResource("solid")

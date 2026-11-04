@@ -67,7 +67,23 @@
    ]
   ]
  },
- "placement": {},
+ "placement": {
+  "purpose": "store",
+  "role": "store",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "house",
+    "cells": 2
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
+ },
  "rendering": {},
  "function": {},
  "story": {

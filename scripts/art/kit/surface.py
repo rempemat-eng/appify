@@ -324,7 +324,7 @@ def lawn_variants(cv: np.ndarray, turf: np.ndarray, var: np.ndarray, seed: int) 
 # ------------------------------------------------------------------------------------------------
 # water
 # ------------------------------------------------------------------------------------------------
-def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.ndarray, seed: int) -> list:
+def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.ndarray, seed: int, avoid=None) -> list:
     """Stones standing in a stream; shingle on the inside of a river's bends and a scoured deep
     channel on the outside; broad shallows and swell lines along a wide river's or lake's shore.
     Returns sprites (stones) to lay into the ground."""
@@ -336,27 +336,41 @@ def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.nda
     items = []
     inner = wm & ndi.binary_erosion(wm, iterations=5)
     R, Cc = wcells.shape
-    # 2: a stream, a stone standing in it every few cells, a ring of lit water round its foot
+    # 2: a stream: one or two stones at the bank's edge, never mid-stream (scattered stones read as
+    # debris, Claude A 2 Nov), a ring of lit water round each foot
+    banks = []
     for y in range(R):
         for x in range(Cc):
-            if cls[y, x] == 2 and rng.random() < 0.22:
-                cy, cx = int((y + rng.uniform(0.3, 0.8)) * CELL), int((x + rng.uniform(0.3, 0.7)) * CELL)
-                if 0 <= cy < H and 0 <= cx < W and inner[cy, cx]:
-                    w_ = rng.uniform(4.0, 6.5)
-                    img, anc, _a = P4.boulder4(D, w_, w_ * 0.6, seed=int(rng.integers(0, 10 ** 6)), moss='top' if rng.random() < 0.5 else None)
-                    y0, y1, x0, x1 = max(0, cy - 12), min(H, cy + 12), max(0, cx - 24), min(W, cx + 24)
-                    ly, lx = np.mgrid[y0:y1, x0:x1]
-                    ring = ((lx - cx) / (w_ * D * 0.7)) ** 2 + ((ly - cy) / (w_ * D * 0.3)) ** 2
-                    rs = wm[y0:y1, x0:x1] & (ring <= 1.0) & (ring > 0.55)
-                    sub = cv[y0:y1, x0:x1]
-                    sub[rs] = step(sub[rs], 1)
-                    items.append((img, anc, (cx, cy)))
+            if cls[y, x] == 2:
+                for dx, f in ((-1, 0.3), (1, 0.7)):
+                    if 0 <= x + dx < Cc and not wcells[y, x + dx] and wcells[max(0, y - 2):y + 3, x].all():
+                        banks.append((y, x, f))
+    if avoid is not None:
+        banks = [b for b in banks if not avoid[max(0, b[0] - 1):b[0] + 4, b[1]].any()]
+    picks = [banks[i] for i in sorted(rng.choice(len(banks), size=min(2, len(banks)), replace=False))] if banks else []
+    for y, x, f in picks:
+        cy, cx = int((y + rng.uniform(0.3, 0.8)) * CELL), int((x + f) * CELL)
+        if 0 <= cy < H and 0 <= cx < W and wm[cy, cx]:
+            w_ = rng.uniform(4.0, 6.5)
+            img, anc, _a = P4.boulder4(D, w_, w_ * 0.6, seed=int(rng.integers(0, 10 ** 6)), moss='top' if rng.random() < 0.5 else None)
+            y0, y1, x0, x1 = max(0, cy - 12), min(H, cy + 12), max(0, cx - 24), min(W, cx + 24)
+            ly, lx = np.mgrid[y0:y1, x0:x1]
+            ring = ((lx - cx) / (w_ * D * 0.7)) ** 2 + ((ly - cy) / (w_ * D * 0.3)) ** 2
+            rs = wm[y0:y1, x0:x1] & (ring <= 1.0) & (ring > 0.55)
+            sub = cv[y0:y1, x0:x1]
+            sub[rs] = step(sub[rs], 1)
+            items.append((img, anc, (cx, cy)))
     # 3 to 5: bends. A land cell with water on two adjacent sides and the diagonal between them
     # is the inside of a bend: shingle there; the far side of the bend scours a deep channel
     yy, xx = np.mgrid[0:H, 0:W]
     for y in range(1, R - 1):
         for x in range(1, Cc - 1):
             if wcells[y, x]:
+                continue
+            if avoid is not None and avoid[y, x]:
+                # a face's foot is not the inside of a river's bend: a pool beside a cliff or under
+                # a fall gets no shingle bar (Claude A, 3 Nov: the woodland's half-hidden tan
+                # "stone" under the plunge pool's foam was this bar at the cascade's foot)
                 continue
             for dy, dx in ((1, 1), (1, -1), (-1, 1), (-1, -1)):
                 if not (wcells[y + dy, x] and wcells[y, x + dx] and wcells[y + dy, x + dx]):

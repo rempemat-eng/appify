@@ -37,10 +37,10 @@
   "z_sort": "foot",
   "collision": {
    "rect": [
-    -12.0,
-    -20.0,
-    24,
-    20
+    -10.0,
+    -16.0,
+    20,
+    16
    ],
    "shape": "rect"
   },
@@ -49,22 +49,6 @@
    80
   ],
   "footprint": [
-   [
-    -2,
-    -3
-   ],
-   [
-    -1,
-    -3
-   ],
-   [
-    0,
-    -3
-   ],
-   [
-    1,
-    -3
-   ],
    [
     -2,
     -2
@@ -110,6 +94,10 @@
   ],
   "stages": [
    "broken"
+  ],
+  "purpose": "water",
+  "provides": [
+   "feature"
   ]
  },
  "rendering": {
@@ -172,6 +160,9 @@
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "retain shadow well_choked_shadow from source scene with its own condition and offset; not a standalone random variant",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "collision"
   ]
  }
 }

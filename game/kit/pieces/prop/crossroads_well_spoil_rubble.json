@@ -83,7 +83,16 @@
    ]
   ]
  },
- "placement": {},
+ "placement": {
+  "purpose": "aftermath",
+  "role": "clutter",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
  "rendering": {},
  "function": {},
  "story": {

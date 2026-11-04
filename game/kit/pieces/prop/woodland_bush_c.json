@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "bush_c",
@@ -35,15 +35,52 @@
    3
   ],
   "z_sort": "foot",
-  "collision": null,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -15.4,
+    -6.0,
+    30.8,
+    6.0
+   ]
+  },
   "foot": [
    66.0,
    67.0
   ],
-  "footprint": []
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "grow",
+  "role": "shrub",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {
@@ -63,7 +100,10 @@
  "story": {
   "owner": null
  },
- "gameplay": {},
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
@@ -83,8 +123,9 @@
    }
   ],
   "todo": [
+   "collision box authored by Claude A (2 Nov) from the shipped prop scene; review with the size guide",
    "composition role and clearance",
-   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
    "review size-guide class and Eastward comparison before the library gate"
   ]

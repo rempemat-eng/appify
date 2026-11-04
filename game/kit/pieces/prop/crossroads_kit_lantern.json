@@ -90,7 +90,17 @@
    {
     "rel": "on",
     "what": "route"
+   },
+   {
+    "rel": "not_near",
+    "what": "centrepiece",
+    "cells": 1,
+    "note": "never on a well"
    }
+  ],
+  "purpose": "light",
+  "avoid": [
+   "wild_woods"
   ]
  },
  "rendering": {

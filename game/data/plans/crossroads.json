@@ -315,14 +315,14 @@
         ],
         [
           472,
-          432
+          448
         ],
         [
           320,
-          432
+          448
         ]
       ],
-      "why": "the Ferns' door path: leaves the door's centre a cell below the sill (as the slice's spurs do) straight south two cells, then west to the green lane (Matt, 4 Nov: paths centred on doors)"
+      "why": "the Ferns' door path: centred on the door's opening (x 472, on the half-cell grid since #430), it leaves a cell below the sill and runs straight south three cells before it bends west to the green lane (thresholds door_path: straight out at least a cell, then bend)"
     }
   ],
   "stairs": [
@@ -642,7 +642,7 @@
       "kind": "rubble",
       "rect": [
         396,
-        214,
+        216,
         26,
         16
       ],
@@ -653,7 +653,7 @@
           "shard_home:woodland"
         ]
       },
-      "why": "fallen slates by the stall, cleared for the homecoming"
+      "why": "fallen slates by the stall, cleared for the homecoming; clear of the north cottages' east door's threshold"
     },
     {
       "id": "fern_boards",
@@ -2170,8 +2170,8 @@
       {
         "kind": "boulder",
         "at": [
-          352,
-          456
+          400,
+          424
         ],
         "why": "moved off the Ferns' path"
       },
@@ -2324,11 +2324,11 @@
       {
         "kind": "oak",
         "at": [
-          216,
-          360
+          248,
+          448
         ],
         "id": "square_oak",
-        "why": "the square's old tree: shade over the west bench, the square's one green"
+        "why": "the square's old tree, on the grass below its south-west corner (review of #421, 4 Nov: not out of the paving): its crown clear of the well, the walkway and Morel's corner, inside the green lane's bend"
       },
       {
         "kind": "sacks",
@@ -2457,6 +2457,105 @@
         ],
         "id": "tub_fern",
         "why": "the Ferns' window box"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          432,
+          232
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "id": "stock_ne_barrel",
+        "why": "Moss's back stock in the square's north-east corner, against the cottages' end wall"
+      },
+      {
+        "kind": "sacks",
+        "at": [
+          416,
+          240
+        ],
+        "size": [
+          14,
+          8
+        ],
+        "id": "stock_ne_sacks"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          232,
+          376
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "id": "planters_sw_butt",
+        "why": "a water butt and the planters it feeds, gathered on the kerb in the square's south-west corner (clear of Morel at the herbalist's corner)"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          224,
+          368
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "planters_sw_tub_a"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          212,
+          376
+        ],
+        "size": [
+          16,
+          8
+        ],
+        "id": "planters_sw_tub_b"
+      },
+      {
+        "kind": "crates",
+        "at": [
+          392,
+          360
+        ],
+        "size": [
+          12,
+          10
+        ],
+        "id": "drop_se_crates",
+        "why": "goods carried up the harbour road and set down in the square's south-east corner"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          380,
+          352
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "id": "drop_se_barrel"
+      },
+      {
+        "kind": "sacks",
+        "at": [
+          400,
+          376
+        ],
+        "size": [
+          14,
+          8
+        ],
+        "id": "drop_se_sacks"
       }
     ],
     "setts": [

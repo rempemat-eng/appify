@@ -37,10 +37,10 @@
   "z_sort": "foot",
   "collision": {
    "rect": [
+    -11.0,
     -6.0,
-    -4.0,
-    12,
-    5
+    22,
+    6
    ],
    "shape": "rect"
   },
@@ -50,6 +50,10 @@
   ],
   "footprint": [
    [
+    -2,
+    -1
+   ],
+   [
     -1,
     -1
    ],
@@ -58,12 +62,8 @@
     -1
    ],
    [
-    -1,
-    0
-   ],
-   [
-    0,
-    0
+    1,
+    -1
    ]
   ]
  },
@@ -79,7 +79,8 @@
     "rel": "on",
     "what": "route"
    }
-  ]
+  ],
+  "purpose": "mark"
  },
  "rendering": {
   "cast_shadow": {
@@ -111,6 +112,9 @@
    "composition role and clearance",
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "collision"
   ]
  }
 }

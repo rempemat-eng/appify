@@ -57,10 +57,17 @@
     0,
     -1
    ]
+  ],
+  "sheet_px": [
+   24,
+   48,
+   12,
+   108
   ]
  },
  "placement": {
   "role": "waterfall",
+  "purpose": "flow",
   "snap": "cell",
   "requires": [
    {
@@ -74,7 +81,11 @@
     "note": "water on the tier above, as wide as the fall"
    }
   ],
-  "composition": "axis"
+  "composition": "axis",
+  "provides": [
+   "view",
+   "water"
+  ]
  },
  "rendering": {
   "cast_shadow": {
@@ -93,6 +104,19 @@
    {
     "clip": "fall",
     "loop": true,
+    "frames": 8,
+    "fps": 10,
+    "strip": "res://kit/props/art/waterfall_1_tall_flow.png",
+    "frame_px": [
+     36,
+     98
+    ],
+    "region_px": [
+     18,
+     20,
+     36,
+     98
+    ],
     "reduced_motion": "hold:0",
     "on_screen_only": true
    }
@@ -108,15 +132,13 @@
  },
  "audit": {
   "painter": {
-   "module": "scripts.art.native.water",
-   "fn": "fall_hd",
+   "module": "scripts.art.kit.structures",
+   "fn": "fall_sheet",
    "args": {
     "seed": 66
    }
   },
   "seeded_from": "scripts/art/kit/structures.py",
-  "todo": [
-   "the falling animation (the woodland flow strip)"
-  ]
+  "todo": []
  }
 }

@@ -166,7 +166,9 @@ def regions(plan: dict, H: int, W: int) -> dict:
     for p in plan.get('pieces', []):
         if (((lib.get(p['piece']) or {}).get('rendering') or {}).get('paint') or {}).get('fn') == 'fall':
             x, y = p['at']
-            falls[max(0, y - 72):y + 48, max(0, x - 60):x + 60] = True
+            # the whole face it falls over (two cells a tier) and a cell above its rim
+            up = int(((lib.get(p['piece']) or {}).get('geometry') or {}).get('size_cells', [0, 2])[1]) * CELL + CELL
+            falls[max(0, y - max(72, up)):y + 48, max(0, x - 60):x + 60] = True
     out['_falls'] = falls
     return out
 
@@ -182,7 +184,9 @@ def compare(zone: str, painted: str, out_dir: str | None = None) -> dict:
     for name, m in regs.items():
         if name.startswith('_'):
             continue
-        a, b = texture(A, m), texture(B, m)
+        # a fall's sheet and foam are a feature, not the water's surface or its bank
+        mt = m & ~regs['_falls'] if name == 'water' else m
+        a, b = texture(A, mt), texture(B, mt)
         if name in ('water', 'path'):
             f = blue if name == 'water' else pathlike
             # a fall is not a bank: its sheet and foam are left out of the outline

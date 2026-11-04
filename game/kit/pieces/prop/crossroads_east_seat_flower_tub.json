@@ -59,7 +59,24 @@
    ]
   ]
  },
- "placement": {},
+ "placement": {
+  "purpose": "care",
+  "role": "planter",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "house",
+    "cells": 1,
+    "note": "by a door or under a window"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
+ },
  "rendering": {},
  "function": {},
  "story": {

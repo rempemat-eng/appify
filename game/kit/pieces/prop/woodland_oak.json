@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "oak",
@@ -35,12 +35,29 @@
    11
   ],
   "z_sort": "foot",
-  "collision": null,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -5.0,
+    10.0,
+    5.0
+   ]
+  },
   "foot": [
    106.0,
    243.0
   ],
-  "footprint": []
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
  },
  "placement": {
   "snap": "cell",
@@ -54,7 +71,8 @@
     "rel": "on",
     "what": "water"
    }
-  ]
+  ],
+  "purpose": "grow"
  },
  "rendering": {
   "cast_shadow": {
@@ -74,7 +92,10 @@
  "story": {
   "owner": null
  },
- "gameplay": {},
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
@@ -172,8 +193,9 @@
    }
   ],
   "todo": [
+   "collision box authored by Claude A (2 Nov) from the shipped prop scene; review with the size guide",
    "composition role and clearance",
-   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "review size-guide class and Eastward comparison before the library gate"
   ]
  }

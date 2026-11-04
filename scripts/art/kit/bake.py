@@ -226,14 +226,22 @@ def bake(plan: dict, lib: dict | None = None):
             key = None
         dirt_groups.append([key, cells, net, a])
     for _key, cells, net, a in dirt_groups:
-        GD.dirt(cv, net, a.get('seed', 43), fam=a.get('fam', 'path'), cell=a.get('cell', 12),
-                stones=a.get('stones', 1.0), joints=a.get('joints', 0.28), lit=a.get('lit', 0.4),
-                blades=a.get('blades', 1.0), soft_joints=a.get('soft_joints', False),
-                origin=tuple(a.get('origin', (0, 0))), period=a.get('period', GD.PACKED_PATH_PERIOD))
+        packed = a.get('soft_joints', False)
+        body_args = {'fam': a.get('fam', 'path'), 'cell': a.get('cell', 12),
+                     'stones': a.get('stones', 1.0)}
+        if packed:
+            # Packed recipes explicitly opt into the Crossroads providers. Legacy recipes
+            # keep their original API, so editor tooling does not import unapproved art.
+            body_args.update(joints=a.get('joints', 0.28), lit=a.get('lit', 0.4),
+                             blades=a.get('blades', 1.0), soft_joints=True,
+                             origin=tuple(a.get('origin', (0, 0))), period=a.get('period', 768))
+        GD.dirt(cv, net, a.get('seed', 43), **body_args)
         # width classes and surface variants over the one painted surface
         cls = SF.path_class(SF.widths(cells))
-        SF.path_widths(cv, net, SF.texels(cls), a.get('seed', 43) + 100, fam=a.get('fam', 'path'),
-                       packed=a.get('soft_joints', False))
+        width_args = {'fam': a.get('fam', 'path')}
+        if packed:
+            width_args['packed'] = True
+        SF.path_widths(cv, net, SF.texels(cls), a.get('seed', 43) + 100, **width_args)
         var = SF.assign('dirt', cells, given, dict(ctx_, cls=cls), a.get('seed', 43) + 200)
         SF.path_variants(cv, net, var, a.get('seed', 43) + 300, fam=a.get('fam', 'path'))
         SF.tone_field(cv, net, a.get('seed', 43) + 400)
@@ -259,13 +267,32 @@ def bake(plan: dict, lib: dict | None = None):
         # the top's west and east edges a wall 4 px across on the lower turf, the west one lit, the
         # east one in shade, a dark line outside, the top's edge column a lit lip
         turf_l = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~tm & ~_face
+        # Each band is its own distance from the top's edge (a texel at k columns out, not within
+        # k: the old loop let the last, darkest row overwrite the whole band, so the side read as a
+        # lone black line across the lawn, Claude A 2 Nov). West: the lit side wall, warm earth
+        # stepping down to its foot. East: the wall in shade, a dark foot, then the bank's shadow
+        # thrown east over the lower turf, so the side reads as a bank with its lip and shadow.
+        srng = np.random.default_rng(311 + t)
+        jag = ndi.gaussian_filter(srng.random((h, 1)), 3.0)
+        jag = np.round((jag - jag.mean()) / max(1e-6, jag.std())).astype(int).clip(-1, 1)
         for side, lit in ((-1, True), (1, False)):
-            for k in range(1, 5):
-                wall = turf_l & GD.right(tm, side * k)
-                if k == 4:
-                    cv[wall] = C('earth_cool', 0)
-                else:
-                    cv[wall] = C('earth_warm', 4 - k // 2) if lit else C('earth', 2 - k // 2)
+            out_ = np.zeros((h, w), np.int32)
+            for k in range(16, 0, -1):
+                out_[GD.right(tm, side * k)] = k
+            dist = np.where(turf_l, out_, 0) - np.where(out_ > 0, jag, 0)
+            if lit:
+                tones = {1: C('earth_warm', 4), 2: C('earth_warm', 3), 3: C('earth', 3), 4: C('earth', 2), 5: C('earth_cool', 1)}
+            else:
+                tones = {1: C('earth', 2), 2: C('earth', 2), 3: C('earth', 1), 4: C('earth_cool', 1), 5: C('earth_cool', 1), 6: C('earth_cool', 0)}
+            for k, c in tones.items():
+                cv[turf_l & (dist == k)] = c
+            if not lit:
+                shd = turf_l & (dist > 6) & (dist <= 14) & (cv % 8 > 0) & (cv % 8 < 6)
+                cv[shd] = cv[shd] - 1
+            # pebbles and roots in the wall
+            wy, wx = np.nonzero(turf_l & (dist >= 2) & (dist <= 4))
+            for j in srng.permutation(len(wy))[: len(wy) // 40]:
+                cv[wy[j], wx[j]] = C('stone', 3) if srng.random() < 0.6 else C('timber_cool', 1)
             lipc = tm & ~GD.right(tm, -side)
             cv[lipc & (cv % 8 < 5)] = cv[lipc & (cv % 8 < 5)] + 1
         for img_, anc_, (fx_, fy_) in items:
@@ -289,7 +316,8 @@ def bake(plan: dict, lib: dict | None = None):
             half = lib[pc['piece']]['geometry']['size_cells'][0] * CELL // 2
             x, y = pc['at']
             GD.log_steps(cv, x - half, x + half, y - face_h - 1, y + 2, rp.get('args', {}).get('n', 4), np.random.default_rng(5))
-    # water
+    # water (the ground before it, so a fall's face beside its sheet keeps the cliff's own texture)
+    pre_water = cv.copy()
     wm = np.zeros((h, w), bool)
     for m, p in paint.items():
         if p.get('fn') != 'water':
@@ -301,6 +329,27 @@ def bake(plan: dict, lib: dict | None = None):
         before = cv.copy()
         items = GD.water(cv, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=a.get('stones', 0.0),
                          reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('side_w', 5))
+        # a running channel (north-south, the rill) has no bank stones from the painter (they read
+        # as debris, Claude A 2 Nov; surface.water_widths sets at most two); river and pool shores keep theirs
+        lab_v = ndi.label(wcells, structure=[[0, 1, 0], [0, 1, 0], [0, 1, 0]])[0]
+        lab_h = ndi.label(wcells, structure=[[0, 0, 0], [1, 1, 1], [0, 0, 0]])[0]
+        vlen, hlen = np.bincount(lab_v.ravel())[lab_v], np.bincount(lab_h.ravel())[lab_h]
+        chan = ndi.binary_dilation(wcells & (vlen > 2 * hlen) & (vlen >= 6), iterations=1)
+        if chan.any():
+            # the channel's water painted again without the painter's stones (their shade rings
+            # would stay behind as notches in the bank)
+            ns = before.copy()
+            GD.water(ns, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=0.0,
+                     reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('side_w', 5))
+            zc = SF.texels(chan & ~ndi.binary_dilation(wcells & ~chan, iterations=1))[:h, :w]
+            cv[zc] = ns[zc]
+        kept = []
+        for it in sorted(items, key=lambda it: (it[2][1], it[2][0])):
+            cy_, cx_ = int(it[2][1] // CELL), int(it[2][0] // CELL)
+            if 0 <= cy_ < R and 0 <= cx_ < Cc and chan[cy_, cx_] and not (ndi.binary_dilation(wcells & ~chan, iterations=1)[cy_, cx_]):
+                continue
+            kept.append(it)
+        items = kept
         narrow = (wcls >= 1) & (wcls <= 2)
         if narrow.any():
             # a rill's or a stream's banks: the narrow walls of the woodland's rill (side_w 3), not the
@@ -314,10 +363,36 @@ def bake(plan: dict, lib: dict | None = None):
         grassy_ = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 <= 2) & nearw
         cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
         GD.tidy_bank(cv, wm)
-        items += SF.water_widths(cv, wm, wcells, wcls, a.get('seed', 402) + 100)
+        # no stream stone at a fall's lip: keep them off the cells over and just above a face
+        bandc = band.reshape(R, CELL, Cc, CELL).any(axis=(1, 3))
+        items += SF.water_widths(cv, wm, wcells, wcls, a.get('seed', 402) + 100, avoid=bandc)
+        if chan.any():
+            # the running channel's own one or two stones at its banks
+            items += SF.water_widths(cv, wm, wcells, np.where(chan & wcells & (wcls >= 3), 2, 0), a.get('seed', 402) + 150, avoid=bandc)
         shore = ndi.binary_dilation(~wcells, iterations=1) & wcells
         wvar = SF.assign('water', wcells, given, dict(ctx_, cls=wcls, shore=shore), a.get('seed', 402) + 200)
         SF.water_variants(cv, wm, wvar, a.get('seed', 402) + 300)
+        # running water: short broken glints along the flow (down a north-south channel, across an
+        # east-west one), so a channel three cells wide or more is not a flat depth band
+        frng_ = np.random.default_rng(a.get('seed', 402) + 400)
+        vrun = np.zeros(wcells.shape, int)
+        hrun = np.zeros(wcells.shape, int)
+        for lab_, out_, ax_ in ((ndi.label(wcells, structure=[[0, 1, 0], [0, 1, 0], [0, 1, 0]])[0], vrun, 0),
+                                (ndi.label(wcells, structure=[[0, 0, 0], [1, 1, 1], [0, 0, 0]])[0], hrun, 1)):
+            sizes_ = np.bincount(lab_.ravel())
+            out_[:] = np.where(lab_ > 0, sizes_[lab_], 0)
+        vert = SF.texels(vrun > hrun)[:h, :w]
+        inner_ = ndi.binary_erosion(wm, iterations=SN.P(2)) & SF.texels(wcls >= 3)[:h, :w]
+        sy_, sx_ = np.nonzero(inner_ & (frng_.random((h, w)) < 0.004))
+        for y_, x_ in zip(sy_, sx_):
+            L_ = int(frng_.integers(4, 10))
+            if vert[y_, x_]:
+                seg = (slice(y_, min(h, y_ + L_)), slice(x_, x_ + 1))
+            else:
+                seg = (slice(y_, y_ + 1), slice(x_, min(w, x_ + L_)))
+            sub_ = cv[seg]
+            ok_ = inner_[seg] & (sub_ % 8 < 5)
+            sub_[ok_] = sub_[ok_] + 1
         for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1]):
             SN.DC.paste(cv, SN.to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True,
                         shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
@@ -344,33 +419,61 @@ def bake(plan: dict, lib: dict | None = None):
             cx, foot = pc['at'][0] / D, pc['at'][1] / D
             rim = foot - rp.get('args', {}).get('face_px', face_h) / D
             seed = rp.get('args', {}).get('seed', 11)
-            k = cw / 16.0                                   # the woodland's fall is a 16 world px channel
-            # the cascade as the woodland painted it (screen.terrain): the rock face behind, then
-            # the stepped slabs either side and the lip ledge, the rounded stones at their feet,
-            # back to front; the sheet and its foam over them; the face scaled to this face's height
-            RK.face(cv, cx - 18 * k, rim, cx + 18 * k, foot + 1, seed=seed + 3)
-            q = (foot - rim) / 40.0
-            heap = [(0, 6, 28, 10, 205, True), (-28, 10, 22, 13, 203, True), (28, 10, 22, 13, 204, True),
-                    (-26, 28, 22, 15, 206, True), (26, 28, 20, 14, 207, True), (-46, 16, 12, 10, 201, False),
-                    (-44, 34, 10, 8, 208, False), (-14, 38, 9, 6, 210, False), (15, 38, 8, 5, 211, False)]
-            chan = wm.copy()
-            chan[int(rim * D):] = False
-            chan[:max(0, int((rim - 40) * D))] = False
-            for (dx, dy, bw, bh, sd, slab) in sorted(heap, key=lambda b: b[1]):
-                sc = 1.0 if q >= 0.75 else min(1.0, 0.55 + 0.45 * q)
-                dec, anc = RK.rock(bw * sc * (k if dx == 0 else 1.0), bh * sc, sd, flat=slab, moss=0.6)
-                X, Y = int(round((cx + dx * k) * D - anc[0])), int(round((rim + dy * q) * D - anc[1]))
-                hh, ww = dec.shape
-                sub = chan[max(0, Y):Y + hh, max(0, X):X + ww]
-                dec[max(0, -Y):max(0, -Y) + sub.shape[0], max(0, -X):max(0, -X) + sub.shape[1]][sub] = -1
-                SN.DC.paste(cv, dec, X, Y, shadow=True, shadow_dx=SN.P(2), shadow_dy=SN.P(1))
-            SN.WA.wet_rock(cv, cx - cw / 2, cw, rim - 2, foot)
-            # the falling sheet; its foam and rings inside the pool only (2 texels in from its bank)
+            # Matt, 2 Nov: "the waterfall overlaps in an unrealistic way on the top bit". The fall
+            # is the channel going over the rim: a rock face framing the drop a little wider than
+            # the channel, from the rim to the pool and nothing above the rim; the sheet
+            # (structures.fall_sheet, the piece's own painter) exactly the channel's columns from
+            # the rim down, in front of the face; its plume and rings on the pool only. No lip
+            # ledge or slabs standing over the banks or the stream above.
+            from scripts.art.kit import structures as ST
+            from scripts.art.native import props as P4
+            r0, r1 = int(round(rim * D)), int(round(foot * D))
+            sx0, sw = int(round((cx - cw / 2) * D)), int(round(cw * D))
+            frng = np.random.default_rng(seed + 7)
+            # the cliff beside the sheet is the cliff: the face as the ledge painted it, where the
+            # water's mask ran down the face (no flat slabs, no water beside the sheet)
+            span = np.zeros((h, w), bool)
+            span[r0:r1, max(0, sx0 - SN.P(14)):sx0 + sw + SN.P(14)] = True
+            sheet = np.zeros((h, w), bool)
+            sheet[r0:r1, sx0:sx0 + sw] = True
+            cv[span & ~sheet] = pre_water[span & ~sheet]
+            # wet rock near the sheet: darker, a ragged edge (no seam), sheen on the lit stone tops
+            # and moss in the joints; spray darkening the foot of the face either side
+            Yf, Xf = np.mgrid[0:h, 0:w]
+            dx_ = np.where(Xf < sx0, sx0 - Xf, Xf - (sx0 + sw - 1))
+            nz = ndi.gaussian_filter(frng.random((h, w)), 2.0)
+            nz = (nz - nz.mean()) / max(1e-6, nz.std())
+            face_px = span & ~sheet & (cv >= 0)
+            wet = face_px & (dx_ < SN.P(7) + 4 * nz)
+            spray = face_px & (Yf > r1 - SN.P(9) + 3 * nz) & (dx_ < SN.P(13) + 4 * nz)
+            for m_ in (wet, spray, wet & (dx_ < SN.P(3) + 2 * nz)):
+                sel = m_ & (cv % 8 > 0) & (cv % 8 < 6)
+                cv[sel] = cv[sel] - 1
+            # sheen: short wet glints running down the lit stone tops nearest the sheet
+            seeds_ = wet & (dx_ < SN.P(4)) & (pre_water % 8 >= 3) & (frng.random((h, w)) < 0.012)
+            glint = seeds_ | GD.down(seeds_, 1) | GD.down(seeds_, 2)
+            cv[glint & wet] = C('water', 4)
+            cv[seeds_] = C('snow', 4)
+            moss = (wet | spray) & (pre_water % 8 <= 1) & (nz > 0.6) & (frng.random((h, w)) < 0.5)
+            cv[moss] = np.where(frng.random(moss.sum()) < 0.5, C('leaf', 2), C('leaf_cool', 2))
+            # the sheet and its plume, rings and ripples on the pool
+            above = np.zeros_like(wm)
+            above[:r0] = True
             tmp = cv.copy()
-            RK.fall(tmp, cx - cw / 2, cw, rim, foot + 4, seed=seed)
-            ok = ndi.binary_erosion(wm, iterations=2)
-            ok[int((rim - 2) * D):int(foot * D), max(0, int((cx - cw / 2 - 2) * D)):int((cx + cw / 2 + 2) * D)] = True
+            ST.fall_sheet(tmp, sx0, sw, r0, r1, seed=seed)
+            ok = ndi.binary_erosion(wm, iterations=2) & ~above & ~span
+            ok |= sheet
+            ok[r1:r1 + SN.P(14)] |= ndi.binary_erosion(wm, iterations=2)[r1:r1 + SN.P(14)]
             cv[ok] = tmp[ok]
+            # lip stones on the rim beside the sheet, never over it: they sit on the top tier's
+            # edge, each lit on its upper left with its shadow
+            for side_, k_, w_ in ((-1, 0, 6.5), (1, 0, 5.5), (-1, 1, 3.8), (1, 1, 3.4)):
+                img_, anc_, _a = P4.boulder4(D, w_, w_ * 0.62, seed=seed * 31 + k_ * 7 + side_, moss='top' if k_ == 0 else None)
+                gap = SN.P(1) + int(img_.width / 2) + (SN.P(w_ + 1) if k_ else 0)
+                fx_ = sx0 - gap if side_ < 0 else sx0 + sw + gap
+                fy_ = r0 + SN.P(0.5) - (SN.P(2) if k_ else 0)
+                SN.DC.paste(cv, SN.to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True,
+                            shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
     # shadows and the lawn's detail (screen.build's order)
     casts, things, trees, objects = [], [], [], []
     for pc in pieces:
@@ -510,4 +613,3 @@ def main(argv=None) -> int:
 
 if __name__ == '__main__':
     sys.exit(main())
-

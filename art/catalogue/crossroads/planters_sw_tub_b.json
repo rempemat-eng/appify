@@ -1,0 +1,69 @@
+{
+ "id": "crossroads/planters_sw_tub_b",
+ "file": "game/zones/crossroads/art/planters_sw_tub_b.png",
+ "sha256": "b4534f2ecbe7bcf998deaa51feb5efd8d4139a3d20cf8582ab2ea0006cb14c92",
+ "kind": "planters_sw_tub",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  66,
+  63
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 2,
+   "tones": 27.0,
+   "shapes": 42.5
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.844,
+  "tones_ratio": 1.0,
+  "shapes_ratio": 0.844,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    6,
+    29,
+    61,
+    60
+   ],
+   "message": "crossroads/planters_sw_tub_b: wide 55 art px (0.74 A) is too big for a flower tub: the size table gives 22 to 52 (0.30 to 0.70 A); Eastward at the same character height: the potted plants in 01: 0.6 to 0.75 A",
+   "fix": "redraw it 22 to 52 art px wide (target about 37), checked beside Bramble (74 art px) in the asset sheet"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    6,
+    29,
+    61,
+    60
+   ],
+   "message": "crossroads/planters_sw_tub_b: detail bar 0.84 of Eastward's prop band (27.0 tones, 42.5 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

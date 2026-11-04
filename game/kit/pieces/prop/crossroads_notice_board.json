@@ -88,6 +88,10 @@
     "rel": "on",
     "what": "route"
    }
+  ],
+  "purpose": "guide",
+  "avoid": [
+   "wild_woods"
   ]
  },
  "rendering": {

@@ -398,6 +398,15 @@
           },
           "description": "Drawn over but walkable behind (a crown, an eave)."
         },
+        "sheet_px": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "description": "A waterfall's sheet in the sprite, texels: x0, x1, the rim's row, the pool's row (kit_rules rules.water_fall checks it against the channel)."
+        },
         "height_px": {
           "type": "number",
           "minimum": 0,
@@ -473,6 +482,41 @@
           "items": {
             "$ref": "#/$defs/cellxy"
           }
+        },
+        "doors": {
+          "type": "array",
+          "description": "Doorways, texels from the foot: the opening between the frame posts (x0 to x1) and the side it faces; a path leaving the door centres on it and nothing stands in its threshold and swing (scripts/art/kit/thresholds.py).",
+          "items": {
+            "type": "object",
+            "required": [
+              "x",
+              "faces"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "x": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "faces": {
+                "enum": [
+                  "n",
+                  "e",
+                  "s",
+                  "w"
+                ]
+              },
+              "swing": {
+                "type": "number",
+                "minimum": 0,
+                "description": "How deep in front of the door stays clear, texels (default: the opening's width, a cell at least)."
+              }
+            }
+          }
         }
       }
     },
@@ -522,6 +566,28 @@
         "role": {
           "type": "string",
           "description": "The ground-rules role (seat, light, hearth, marker, clutter, tree, structure ...)."
+        },
+        "purpose": {
+          "enum": [
+            "contain",
+            "exclude",
+            "mark",
+            "rest",
+            "light",
+            "store",
+            "feed",
+            "cross",
+            "guide",
+            "work",
+            "live",
+            "grow",
+            "climb",
+            "flow",
+            "care",
+            "water",
+            "aftermath"
+          ],
+          "description": "What the piece is for (docs/vision/placement-logic.md; table in scripts/art/kit/placement_audit.py)."
         },
         "ground": {
           "type": "object",
@@ -612,6 +678,166 @@
             "row",
             "cluster"
           ]
+        },
+        "boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "style",
+            "joins"
+          ],
+          "description": "A fence, hurdle or wall cell (placement-logic.md, Fences): its style, the sides its run leaves the cell by (n, e, s, w; a closed loop joins every side to a neighbour that joins back), and whether it is a gate. Read by scripts/art/kit/enclosures.py.",
+          "properties": {
+            "style": {
+              "type": "string",
+              "description": "wattle, picket, rail, wall ..."
+            },
+            "joins": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "n",
+                  "e",
+                  "s",
+                  "w"
+                ]
+              }
+            },
+            "gate": {
+              "type": "boolean"
+            },
+            "span_cells": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Cells along the run the piece covers (a gate 3)."
+            },
+            "encloses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "What this style may hold (scripts/art/kit/enclosures.py ENCLOSE keys)."
+            },
+            "stile": {
+              "type": "boolean",
+              "description": "A stile: people climb over, stock stay in (it encloses as a fence cell; it stands on a route)."
+            }
+          }
+        },
+        "enclosure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "holds",
+            "as"
+          ],
+          "description": "What a piece is to an enclosure: its contents (hens in a run, crops in a garden) or what those contents need beside them (a coop, a trough, a field shelter, a sty, a wallow). scripts/art/kit/enclosures.py checks each closed fence loop against it.",
+          "properties": {
+            "holds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Contents kinds (enclosures.py ENCLOSE keys: chickens, sheep, horses, cattle, goats, pigs, crops, flowers)."
+            },
+            "as": {
+              "enum": [
+                "contents",
+                "needs"
+              ]
+            },
+            "serves": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "For \"needs\": the needs it meets (ENCLOSE values: coop, trough, shelter, sty, wallow). Defaults to the piece's placement.role; a sty with a trough in its wall serves sty and trough."
+            }
+          }
+        },
+        "provides": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "What this piece offers the pieces round it: hearth (a chimney or forge), home, view, feature, water (placement_audit.check_plan reads it)."
+        },
+        "needs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "what",
+              "cells"
+            ],
+            "properties": {
+              "what": {
+                "type": "string",
+                "description": "A tag some piece provides (hearth, home, ...)."
+              },
+              "cells": {
+                "type": "number",
+                "minimum": 0
+              },
+              "side": {
+                "enum": [
+                  "any",
+                  "yard"
+                ],
+                "description": "yard: not in front of the provider (its foot not south of the provider's front)."
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Pieces providing a tag within so many cells (a woodpile needs a hearth within 2)."
+        },
+        "faces": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "what",
+            "cells"
+          ],
+          "properties": {
+            "what": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cells": {
+              "type": "number",
+              "minimum": 1
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "description": "What the piece must look at along its facing within so many cells: provided tags, or water and lower ground (a bench faces a view or a feature)."
+        },
+        "avoid": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "wild_woods"
+            ]
+          },
+          "description": "Settings the piece never stands in: wild_woods (three or more trees within 4 cells and no home within 8)."
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "n",
+              "e",
+              "s",
+              "w"
+            ]
+          },
+          "description": "A signpost's arms: each points along a route leaving the junction beside it, one arm per route."
         }
       }
     },
@@ -701,6 +927,34 @@
               },
               "on_screen_only": {
                 "type": "boolean"
+              },
+              "strip": {
+                "type": "string",
+                "description": "res:// path of the frames, side by side (frame 0 is the still the variant shows)."
+              },
+              "fps": {
+                "type": "number",
+                "minimum": 0
+              },
+              "frame_px": {
+                "$ref": "#/$defs/pxxy",
+                "description": "One frame's size, texels."
+              },
+              "region_px": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 4,
+                "maxItems": 4,
+                "description": "Where the frames lie on the piece's picture: x, y, w, h texels (a fall's sheet and plume)."
+              },
+              "phase": {
+                "enum": [
+                  "piece",
+                  "placement"
+                ],
+                "description": "piece: the strip's own start beat; placement: the runtime should offset the start frame by the placed node's id (not implemented by world/loop_fx.gd yet)."
               }
             }
           }
@@ -1006,6 +1260,17 @@
               }
             }
           }
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "collision",
+              "variants",
+              "approval"
+            ]
+          },
+          "description": "Source-backed fields Claude reviewed and authored over the seeded source (scripts/art/kit/seed_props.py keeps them on refresh; the source's values stay in audit.sources and the zone's kit.json)."
         }
       }
     }

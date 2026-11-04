@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_dark.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(30, 66)
+size = Vector2(42, 15)
 
 [node name="CrossroadsLanternDark" type="Node2D"]
 script = ExtResource("1")
@@ -19,5 +19,5 @@ offset = Vector2(-42, -218)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Solid"]
-position = Vector2(0, -33)
+position = Vector2(0, -7.5)
 shape = SubResource("solid")

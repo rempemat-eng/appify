@@ -94,6 +94,34 @@ def strip_rows(cells: np.ndarray, kit) -> np.ndarray:
     return out
 
 
+def strip_below(cells: np.ndarray, kit) -> np.ndarray:
+    """Per face cell, the number of face cells straight below it (0 on the strip's last row)."""
+    rows, cols = cells.shape
+    out = np.zeros((rows, cols), np.int32)
+    fm = kit.face_material
+    if fm is None:
+        return out
+    for x in range(cols):
+        run = 0
+        for y in range(rows - 1, -1, -1):
+            if cells[y, x] == fm:
+                out[y, x] = run
+                run += 1
+            else:
+                run = 0
+    return out
+
+
+def strip_row(r, b, y, cell, strip):
+    """The strip row a face texel samples: a face as high as its strip reads it top to bottom; a
+    taller face (a drop of two tiers or more) keeps the strip's top cell (the lip) and bottom cell
+    (the foot) and fills the cells between from the strip's middle, the face's body, instead of
+    repeating its last row (Claude A, 2 Nov: the dark band on two-tier faces)."""
+    tall = (r + b + 1) * cell > strip
+    mid = np.where(b == 0, strip - cell + y, np.where(r == 0, y, cell // 2 + y))
+    return np.where(tall, mid, r * cell + y)
+
+
 WATER_REACH = 2   # cells a shore distance looks around (terrain.gdshader's water_delta loops)
 FAR = 1 << 20
 
@@ -104,7 +132,25 @@ def _lt(d2, t, j):
     return (tj > 0) & (d2 < tj * tj)
 
 
-def water_delta(cells: np.ndarray, Y: np.ndarray, X: np.ndarray, m: int, noise=None) -> np.ndarray:
+def fall_faces(cells: np.ndarray, kit) -> np.ndarray:
+    """Face cells a stream falls over: the face run straight under a water cell. Water reads them
+    as more water, not as a shore, so no lit shallows line the rim of a fall (Claude A, 2 Nov)."""
+    out = np.zeros(cells.shape, bool)
+    fm = kit.face_material
+    if fm is None:
+        return out
+    rows, cols = cells.shape
+    for x in range(cols):
+        wet = False
+        for y in range(rows):
+            if cells[y, x] == fm:
+                out[y, x] = wet
+            else:
+                wet = bool(kit.water and cells[y, x] in kit.water)
+    return out
+
+
+def water_delta(cells: np.ndarray, Y: np.ndarray, X: np.ndarray, m: int, noise=None, fall=None) -> np.ndarray:
     """softground.water's depth, from the true distance (texels) to the shore cells around: darker in
     a band under a north bank (stepping back to the body through a checker), darker again in the
     middle of wide water, lit shallows along the other shores. m is the water material; its texels
@@ -120,6 +166,8 @@ def water_delta(cells: np.ndarray, Y: np.ndarray, X: np.ndarray, m: int, noise=N
             qy, qx = cy + oy, cx + ox
             ok = (qy >= 0) & (qx >= 0) & (qy < rows) & (qx < cols)
             land = ok & (cells[np.clip(qy, 0, rows - 1), np.clip(qx, 0, cols - 1)] != m)
+            if fall is not None:
+                land &= ~fall[np.clip(qy, 0, rows - 1), np.clip(qx, 0, cols - 1)]
             ddx = np.maximum(np.maximum(qx * CELL - X, X - (qx * CELL + CELL - 1)), 0)
             ddy = np.maximum(np.maximum(qy * CELL - Y, Y - (qy * CELL + CELL - 1)), 0)
             d2 = np.where(land, ddx * ddx + ddy * ddy, FAR)
@@ -151,6 +199,8 @@ def render(cells: np.ndarray, kit, dressing: bool = True, pieces=None, tiers=Non
     out = np.full((H, W), -1, np.int32)
     P = kit.period
     sr = strip_rows(cells, kit)
+    sb = strip_below(cells, kit)
+    ff = fall_faces(cells, kit)
     yy, xx = np.mgrid[0:CELL, 0:CELL]
 
     def eprio(L):
@@ -159,10 +209,11 @@ def render(cells: np.ndarray, kit, dressing: bool = True, pieces=None, tiers=Non
     def fill(m, Y, X):
         if m in kit.strip:
             r = sr[Y // CELL, X // CELL]
-            fy = np.where(r >= 0, r * CELL + Y % CELL, np.where(r == -1, 0, kit.strip[m] - 1))
+            rb = sb[Y // CELL, X // CELL]
+            fy = np.where(r >= 0, strip_row(r, rb, Y % CELL, CELL, kit.strip[m]), np.where(r == -1, 0, kit.strip[m] - 1))
             return kit.fills[m][np.clip(fy, 0, kit.strip[m] - 1), X % P]
         if m in kit.water:
-            return step(kit.fills[m][Y % P, X % P], water_delta(cells, Y, X, m, kit.noise))
+            return step(kit.fills[m][Y % P, X % P], water_delta(cells, Y, X, m, kit.noise, ff))
         return kit.fills[m][Y % P, X % P]
 
     for j in range(rows + 1):

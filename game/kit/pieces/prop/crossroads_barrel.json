@@ -87,7 +87,23 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "store",
+  "role": "store",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "house",
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {

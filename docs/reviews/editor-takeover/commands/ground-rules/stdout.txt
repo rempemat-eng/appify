@@ -1,0 +1,4 @@
+[ground rules] woodland: ok
+[ground rules] crossroads: 1 finding(s) (advisory)
+  rules.stage_debris: square_rubble_b: storm debris or puddles in every stage: give it the broken stage's condition
+[ground rules] undercroft: ok

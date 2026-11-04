@@ -1,17 +1,1138 @@
 {
+ "commons_bench": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -42.0,
+   -9.0,
+   84,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   43,
+   37
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Bench",
+  "painted": false,
+  "requires": [],
+  "role": "seat",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    96,
+    9
+   ]
+  },
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "bench": {
+    "foot": [
+     43,
+     37
+    ],
+    "png": "res://kit/props/art/commons/bench.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_cart": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -42.0,
+   -12.0,
+   90,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   45,
+   54
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Farm cart",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "beside the way people walk",
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "cart",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    108,
+    12
+   ]
+  },
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "cart": {
+    "foot": [
+     45,
+     54
+    ],
+    "png": "res://kit/props/art/commons/cart.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_chopping_block": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -9.0,
+   24,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   22,
+   40
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Chopping block",
+  "painted": false,
+  "requires": [],
+  "role": "chopping_block",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    36,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "chopping_block": {
+    "foot": [
+     22,
+     40
+    ],
+    "png": "res://kit/props/art/commons/chopping_block.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_fingerpost_esw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9,
+   4.5
+  ],
+  "deck": null,
+  "foot": [
+   26,
+   92
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fingerpost, E-S-W",
+  "painted": false,
+  "requires": [],
+  "role": "signpost",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "fingerpost_esw": {
+    "foot": [
+     26,
+     92
+    ],
+    "png": "res://kit/props/art/commons/fingerpost_esw.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_fingerpost_nes": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9,
+   4.5
+  ],
+  "deck": null,
+  "foot": [
+   11,
+   92
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fingerpost, N-E-S",
+  "painted": false,
+  "requires": [],
+  "role": "signpost",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "fingerpost_nes": {
+    "foot": [
+     11,
+     92
+    ],
+    "png": "res://kit/props/art/commons/fingerpost_nes.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_fingerpost_nesw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9,
+   4.5
+  ],
+  "deck": null,
+  "foot": [
+   26,
+   92
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fingerpost, N-E-S-W",
+  "painted": false,
+  "requires": [],
+  "role": "signpost",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "fingerpost_nesw": {
+    "foot": [
+     26,
+     92
+    ],
+    "png": "res://kit/props/art/commons/fingerpost_nesw.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_fingerpost_new": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9,
+   4.5
+  ],
+  "deck": null,
+  "foot": [
+   26,
+   92
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fingerpost, N-E-W",
+  "painted": false,
+  "requires": [],
+  "role": "signpost",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "fingerpost_new": {
+    "foot": [
+     26,
+     92
+    ],
+    "png": "res://kit/props/art/commons/fingerpost_new.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_fingerpost_nsw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9,
+   4.5
+  ],
+  "deck": null,
+  "foot": [
+   26,
+   92
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fingerpost, N-S-W",
+  "painted": false,
+  "requires": [],
+  "role": "signpost",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "fingerpost_nsw": {
+    "foot": [
+     26,
+     92
+    ],
+    "png": "res://kit/props/art/commons/fingerpost_nsw.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_notice_board": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -6.0,
+   48,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   31,
+   79
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Notice board",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "beside the way people walk",
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "marker",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    60,
+    6
+   ]
+  },
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "notice_board": {
+    "foot": [
+     31,
+     79
+    ],
+    "png": "res://kit/props/art/commons/notice_board.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_pump": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -22.5,
+   -15.0,
+   45,
+   15
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   72
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Village pump",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 8,
+    "note": "water for homes",
+    "rel": "near",
+    "what": "house"
+   }
+  ],
+  "role": "centrepiece",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "pump": {
+    "foot": [
+     24,
+     72
+    ],
+    "png": "res://kit/props/art/commons/pump.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_shrine": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -12.0,
+   54,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   32,
+   106
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wayside shrine",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "beside the way people walk",
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "marker",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    60,
+    9
+   ]
+  },
+  "size_cells": [
+   3,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "shrine": {
+    "foot": [
+     32,
+     106
+    ],
+    "png": "res://kit/props/art/commons/shrine.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_stall_cloth": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -63.0,
+   -12.0,
+   126,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   69,
+   115
+  ],
+  "footprint": [
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Market stall, cloth",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "beside the way people walk",
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "stall",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    132,
+    9
+   ]
+  },
+  "size_cells": [
+   6,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stall_cloth": {
+    "foot": [
+     69,
+     115
+    ],
+    "png": "res://kit/props/art/commons/stall_cloth.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_stall_produce": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -63.0,
+   -12.0,
+   126,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   69,
+   115
+  ],
+  "footprint": [
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Market stall, produce",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "beside the way people walk",
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "stall",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    132,
+    9
+   ]
+  },
+  "size_cells": [
+   6,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stall_produce": {
+    "foot": [
+     69,
+     115
+    ],
+    "png": "res://kit/props/art/commons/stall_produce.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_washing_line": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -57.0,
+   -4.5,
+   114,
+   4.5
+  ],
+  "deck": null,
+  "foot": [
+   62,
+   67
+  ],
+  "footprint": [
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Washing line",
+  "painted": false,
+  "requires": [],
+  "role": "washing_line",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    108,
+    6
+   ]
+  },
+  "size_cells": [
+   5,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "washing_line": {
+    "foot": [
+     62,
+     67
+    ],
+    "png": "res://kit/props/art/commons/washing_line.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "commons_woodpile": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -33.0,
+   -12.0,
+   66,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   43,
+   58
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Woodpile",
+  "painted": false,
+  "requires": [],
+  "role": "store",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    78,
+    9
+   ]
+  },
+  "size_cells": [
+   4,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "woodpile": {
+    "foot": [
+     43,
+     58
+    ],
+    "png": "res://kit/props/art/commons/woodpile.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "crossroads_anvil": {
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.0,
    -24.0,
-   42.0,
-   24.0
+   -24.0,
+   48,
+   24
   ],
   "deck": null,
   "foot": [
-   45.0,
-   77.0
+   48,
+   77
   ],
   "footprint": [
    [
@@ -49,17 +1170,24 @@
   "shadow": null,
   "size_cells": [
    4,
-   3
+   4
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "restored": [
+      "forge"
+     ]
+    }
+   },
    "owner": "hale"
   },
   "variants": {
    "anvil": {
     "foot": [
-     45.0,
-     77.0
+     48,
+     77
     ],
     "png": "res://zones/crossroads/art/anvil.png"
    }
@@ -72,16 +1200,20 @@
   "collision": [
    -108.0,
    -144.0,
-   216.0,
-   144.0
+   216,
+   144
   ],
   "deck": null,
   "foot": [
-   120.0,
-   296.0
+   120,
+   296
   ],
   "footprint": [
    [
+    -5,
+    -6
+   ],
+   [
     -4,
     -6
    ],
@@ -118,6 +1250,10 @@
     -6
    ],
    [
+    -5,
+    -5
+   ],
+   [
     -4,
     -5
    ],
@@ -154,6 +1290,10 @@
     -5
    ],
    [
+    -5,
+    -4
+   ],
+   [
     -4,
     -4
    ],
@@ -190,6 +1330,10 @@
     -4
    ],
    [
+    -5,
+    -3
+   ],
+   [
     -4,
     -3
    ],
@@ -226,6 +1370,10 @@
     -3
    ],
    [
+    -5,
+    -2
+   ],
+   [
     -4,
     -2
    ],
@@ -260,6 +1408,10 @@
    [
     4,
     -2
+   ],
+   [
+    -5,
+    -1
    ],
    [
     -4,
@@ -298,17 +1450,26 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "structure",
   "name": "Bakery",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "house",
   "shadow": null,
   "size_cells": [
    10,
-   12
+   13
   ],
   "snap": "cell",
   "story": {
@@ -317,8 +1478,8 @@
   "variants": {
    "bakery": {
     "foot": [
-     120.0,
-     296.0
+     120,
+     296
     ],
     "png": "res://zones/crossroads/art/bakery.png"
    }
@@ -331,31 +1492,47 @@
   "collision": [
    -15.0,
    -24.0,
-   30.0,
-   24.0
+   30,
+   24
   ],
   "deck": null,
   "foot": [
-   24.0,
-   71.0
+   24,
+   71
   ],
   "footprint": [
+   [
+    -1,
+    -1
+   ],
    [
     0,
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Barrel",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
   "shadow": null,
   "size_cells": [
    2,
-   3
+   4
   ],
   "snap": "cell",
   "story": {
@@ -364,29 +1541,29 @@
   "variants": {
    "barrel_29": {
     "foot": [
-     24.0,
-     71.0
+     24,
+     71
     ],
     "png": "res://zones/crossroads/art/barrel_29.png"
    },
    "barrel_31": {
     "foot": [
-     24.0,
-     71.0
+     24,
+     71
     ],
     "png": "res://zones/crossroads/art/barrel_31.png"
    },
    "barrel_37": {
     "foot": [
-     24.0,
-     71.0
+     24,
+     71
     ],
     "png": "res://zones/crossroads/art/barrel_37.png"
    },
    "barrel_39": {
     "foot": [
-     24.0,
-     71.0
+     24,
+     71
     ],
     "png": "res://zones/crossroads/art/barrel_39.png"
    }
@@ -399,17 +1576,26 @@
   "collision": null,
   "deck": null,
   "foot": [
-   129.0,
-   140.0
+   122,
+   122
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Beds dug",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "garden",
   "shadow": null,
   "size_cells": [
    11,
@@ -417,15 +1603,29 @@
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "beds_dug": {
     "foot": [
-     129.0,
-     140.0
+     122,
+     122
     ],
-    "png": "res://zones/crossroads/art/beds_dug.png"
+    "png": "res://kit/props/art/farm/beds_dug.png"
+   },
+   "beds_dug_b": {
+    "foot": [
+     121,
+     122
+    ],
+    "png": "res://kit/props/art/farm/beds_dug_b.png"
    }
   },
   "z_sort": "foot"
@@ -436,17 +1636,26 @@
   "collision": null,
   "deck": null,
   "foot": [
-   129.0,
-   140.0
+   122,
+   122
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Beds scorched",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "garden",
   "shadow": null,
   "size_cells": [
    11,
@@ -454,15 +1663,22 @@
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "beds_scorched": {
     "foot": [
-     129.0,
-     140.0
+     122,
+     122
     ],
-    "png": "res://zones/crossroads/art/beds_scorched.png"
+    "png": "res://kit/props/art/farm/beds_scorched.png"
    }
   },
   "z_sort": "foot"
@@ -473,21 +1689,29 @@
   "collision": [
    -36.0,
    -18.0,
-   72.0,
-   18.0
+   72,
+   18
   ],
   "deck": null,
   "foot": [
-   45.0,
-   59.0
+   45,
+   59
   ],
   "footprint": [
+   [
+    -2,
+    -1
+   ],
    [
     -1,
     -1
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ],
@@ -531,15 +1755,15 @@
   "variants": {
    "bench_28": {
     "foot": [
-     45.0,
-     59.0
+     45,
+     59
     ],
     "png": "res://zones/crossroads/art/bench_28.png"
    },
    "bench_58": {
     "foot": [
-     45.0,
-     59.0
+     45,
+     59
     ],
     "png": "res://zones/crossroads/art/bench_58.png"
    }
@@ -550,17 +1774,34 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
+   -33.0,
    -18.0,
-   -12.0,
-   36.0,
-   15.0
+   66,
+   18
   ],
   "deck": null,
   "foot": [
-   41.0,
-   52.0
+   41,
+   52
   ],
-  "footprint": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
   "forbids": [
    {
     "rel": "not_overlap",
@@ -580,7 +1821,7 @@
   "shadow": null,
   "size_cells": [
    4,
-   2
+   3
   ],
   "snap": "cell",
   "story": {
@@ -589,8 +1830,8 @@
   "variants": {
    "boulder_52": {
     "foot": [
-     41.0,
-     52.0
+     41,
+     52
     ],
     "png": "res://zones/crossroads/art/boulder_52.png"
    }
@@ -601,17 +1842,21 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -24.0,
-   -15.0,
-   48.0,
-   18.0
+   -39.0,
+   -18.0,
+   78,
+   18
   ],
   "deck": null,
   "foot": [
-   57.0,
-   73.0
+   57,
+   73
   ],
   "footprint": [
+   [
+    -2,
+    -1
+   ],
    [
     -1,
     -1
@@ -619,15 +1864,116 @@
    [
     0,
     -1
+   ],
+   [
+    1,
+    -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Bush",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "shrub",
+  "shadow": null,
+  "size_cells": [
+   5,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "bush_47": {
+    "foot": [
+     57,
+     73
+    ],
+    "png": "res://zones/crossroads/art/bush_47.png"
+   },
+   "bush_48": {
+    "foot": [
+     57,
+     73
+    ],
+    "png": "res://zones/crossroads/art/bush_48.png"
+   },
+   "bush_49": {
+    "foot": [
+     57,
+     73
+    ],
+    "png": "res://zones/crossroads/art/bush_49.png"
+   },
+   "bush_50": {
+    "foot": [
+     57,
+     73
+    ],
+    "png": "res://zones/crossroads/art/bush_50.png"
+   },
+   "bush_51": {
+    "foot": [
+     57,
+     73
+    ],
+    "png": "res://zones/crossroads/art/bush_51.png"
+   },
+   "bush_7": {
+    "foot": [
+     57,
+     73
+    ],
+    "png": "res://zones/crossroads/art/bush_7.png"
+   },
+   "bush_8": {
+    "foot": [
+     57,
+     73
+    ],
+    "png": "res://zones/crossroads/art/bush_8.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_bush_nonblocking": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   57,
+   73
+  ],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Bush",
+  "painted": false,
+  "requires": [],
+  "role": "shrub",
   "shadow": null,
   "size_cells": [
    5,
@@ -640,101 +1986,52 @@
   "variants": {
    "bush_14": {
     "foot": [
-     57.0,
-     73.0
+     57,
+     73
     ],
     "png": "res://zones/crossroads/art/bush_14.png"
    },
    "bush_15": {
     "foot": [
-     57.0,
-     73.0
+     57,
+     73
     ],
     "png": "res://zones/crossroads/art/bush_15.png"
    },
    "bush_16": {
     "foot": [
-     57.0,
-     73.0
+     57,
+     73
     ],
     "png": "res://zones/crossroads/art/bush_16.png"
    },
    "bush_17": {
     "foot": [
-     57.0,
-     73.0
+     57,
+     73
     ],
     "png": "res://zones/crossroads/art/bush_17.png"
    },
    "bush_18": {
     "foot": [
-     57.0,
-     73.0
+     57,
+     73
     ],
     "png": "res://zones/crossroads/art/bush_18.png"
    },
    "bush_22": {
     "foot": [
-     57.0,
-     73.0
+     57,
+     73
     ],
     "png": "res://zones/crossroads/art/bush_22.png"
    },
    "bush_23": {
     "foot": [
-     57.0,
-     73.0
+     57,
+     73
     ],
     "png": "res://zones/crossroads/art/bush_23.png"
-   },
-   "bush_47": {
-    "foot": [
-     57.0,
-     73.0
-    ],
-    "png": "res://zones/crossroads/art/bush_47.png"
-   },
-   "bush_48": {
-    "foot": [
-     57.0,
-     73.0
-    ],
-    "png": "res://zones/crossroads/art/bush_48.png"
-   },
-   "bush_49": {
-    "foot": [
-     57.0,
-     73.0
-    ],
-    "png": "res://zones/crossroads/art/bush_49.png"
-   },
-   "bush_50": {
-    "foot": [
-     57.0,
-     73.0
-    ],
-    "png": "res://zones/crossroads/art/bush_50.png"
-   },
-   "bush_51": {
-    "foot": [
-     57.0,
-     73.0
-    ],
-    "png": "res://zones/crossroads/art/bush_51.png"
-   },
-   "bush_7": {
-    "foot": [
-     57.0,
-     73.0
-    ],
-    "png": "res://zones/crossroads/art/bush_7.png"
-   },
-   "bush_8": {
-    "foot": [
-     57.0,
-     73.0
-    ],
-    "png": "res://zones/crossroads/art/bush_8.png"
    }
   },
   "z_sort": "foot"
@@ -745,13 +2042,13 @@
   "collision": [
    -24.0,
    -24.0,
-   48.0,
-   24.0
+   48,
+   24
   ],
   "deck": null,
   "foot": [
-   30.0,
-   53.0
+   30,
+   53
   ],
   "footprint": [
    [
@@ -763,17 +2060,29 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Coal",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "fuel for the forge",
+    "rel": "near",
+    "what": "forge"
+   }
+  ],
+  "role": "store",
   "shadow": null,
   "size_cells": [
-   2,
-   2
+   3,
+   3
   ],
   "snap": "cell",
   "story": {
@@ -782,13 +2091,62 @@
   "variants": {
    "coal_34": {
     "foot": [
-     30.0,
-     53.0
+     30,
+     53
     ],
     "png": "res://zones/crossroads/art/coal_34.png"
    }
   },
   "z_sort": "foot"
+ },
+ "crossroads_crater_smoke": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   126,
+   206
+  ],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Crater smoke",
+  "painted": false,
+  "requires": [],
+  "role": "clutter",
+  "shadow": null,
+  "size_cells": [
+   11,
+   9
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "crater_smoke": {
+    "foot": [
+     126,
+     206
+    ],
+    "png": "res://zones/crossroads/art/crater_smoke.png"
+   }
+  },
+  "z_sort": "above"
  },
  "crossroads_crates": {
   "approval": "candidate",
@@ -796,30 +2154,53 @@
   "collision": [
    -18.0,
    -30.0,
-   36.0,
-   30.0
+   36,
+   30
   ],
   "deck": null,
   "foot": [
-   27.0,
-   110.0
+   27,
+   110
   ],
   "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
    [
     0,
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Crates",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
   "shadow": null,
   "size_cells": [
-   2,
+   3,
    5
   ],
   "snap": "cell",
@@ -829,15 +2210,15 @@
   "variants": {
    "crates_30": {
     "foot": [
-     27.0,
-     110.0
+     27,
+     110
     ],
     "png": "res://zones/crossroads/art/crates_30.png"
    },
    "crates_32": {
     "foot": [
-     27.0,
-     110.0
+     27,
+     110
     ],
     "png": "res://zones/crossroads/art/crates_32.png"
    }
@@ -850,10 +2231,10 @@
   "collision": null,
   "deck": null,
   "foot": [
-   51.0,
-   47.0
+   51,
+   47
   ],
-  "footprint": null,
+  "footprint": [],
   "forbids": [
    {
     "rel": "on",
@@ -868,18 +2249,25 @@
   "role": "clutter",
   "shadow": null,
   "size_cells": [
-   4,
-   2
+   5,
+   3
   ],
   "snap": "free",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "debris_a": {
     "foot": [
-     51.0,
-     47.0
+     51,
+     47
     ],
     "png": "res://zones/crossroads/art/debris_a.png"
    }
@@ -892,10 +2280,10 @@
   "collision": null,
   "deck": null,
   "foot": [
-   45.0,
-   41.0
+   45,
+   41
   ],
-  "footprint": null,
+  "footprint": [],
   "forbids": [
    {
     "rel": "on",
@@ -915,13 +2303,20 @@
   ],
   "snap": "free",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "debris_b": {
     "foot": [
-     45.0,
-     41.0
+     45,
+     41
     ],
     "png": "res://zones/crossroads/art/debris_b.png"
    }
@@ -934,10 +2329,10 @@
   "collision": null,
   "deck": null,
   "foot": [
-   48.0,
-   41.0
+   48,
+   41
   ],
-  "footprint": null,
+  "footprint": [],
   "forbids": [
    {
     "rel": "on",
@@ -957,13 +2352,20 @@
   ],
   "snap": "free",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "debris_c": {
     "foot": [
-     48.0,
-     41.0
+     48,
+     41
     ],
     "png": "res://zones/crossroads/art/debris_c.png"
    }
@@ -976,10 +2378,10 @@
   "collision": null,
   "deck": null,
   "foot": [
-   42.0,
-   41.0
+   42,
+   41
   ],
-  "footprint": null,
+  "footprint": [],
   "forbids": [
    {
     "rel": "on",
@@ -999,39 +2401,313 @@
   ],
   "snap": "free",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "debris_d": {
     "foot": [
-     42.0,
-     41.0
+     42,
+     41
     ],
     "png": "res://zones/crossroads/art/debris_d.png"
    }
   },
   "z_sort": "foot"
  },
- "crossroads_fence": {
+ "crossroads_drop_se_barrel": {
   "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drop se barrel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "drop_se_barrel": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://zones/crossroads/art/drop_se_barrel.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_drop_se_crates": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -30.0,
+   36,
+   30
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   110
+  ],
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drop se crates",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "drop_se_crates": {
+    "foot": [
+     27,
+     110
+    ],
+    "png": "res://zones/crossroads/art/drop_se_crates.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_drop_se_sacks": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drop se sacks",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "drop_se_sacks": {
+    "foot": [
+     30,
+     62
+    ],
+    "png": "res://zones/crossroads/art/drop_se_sacks.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_east_seat_flower_tub": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "East seat flower tub",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "east_seat_flower_tub": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/east_seat_flower_tub.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_fence": {
+  "approval": "retired",
   "blocks_move": false,
   "collision": null,
   "deck": null,
   "foot": [
-   78.0,
-   59.0
+   78,
+   59
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Fence",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "boundary",
   "shadow": null,
   "size_cells": [
-   6,
+   7,
    3
   ],
   "snap": "cell",
@@ -1041,45 +2717,196 @@
   "variants": {
    "fence_0": {
     "foot": [
-     78.0,
-     59.0
+     78,
+     59
     ],
     "png": "res://zones/crossroads/art/fence_0.png"
    },
    "fence_1": {
     "foot": [
-     78.0,
-     59.0
+     78,
+     59
     ],
     "png": "res://zones/crossroads/art/fence_1.png"
    },
    "fence_2": {
     "foot": [
-     78.0,
-     59.0
+     78,
+     59
     ],
     "png": "res://zones/crossroads/art/fence_2.png"
    },
    "fence_3": {
     "foot": [
-     78.0,
-     59.0
+     78,
+     59
     ],
     "png": "res://zones/crossroads/art/fence_3.png"
    },
    "fence_4": {
     "foot": [
-     78.0,
-     59.0
+     78,
+     59
     ],
     "png": "res://zones/crossroads/art/fence_4.png"
    },
    "fence_5": {
     "foot": [
-     78.0,
-     59.0
+     78,
+     59
     ],
     "png": "res://zones/crossroads/art/fence_5.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_fern_bundles": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fern bundles",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "flags": [
+      "shard_home:woodland"
+     ],
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "fern_bundles": {
+    "foot": [
+     30,
+     62
+    ],
+    "png": "res://zones/crossroads/art/fern_bundles.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_fern_cart": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -33.0,
+   -24.0,
+   66,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   57,
+   80
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fern cart",
+  "painted": false,
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "cart",
+  "shadow": null,
+  "size_cells": [
+   5,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "flags": [
+      "shard_home:woodland"
+     ],
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "fern_cart": {
+    "foot": [
+     57,
+     80
+    ],
+    "png": "res://zones/crossroads/art/fern_cart.png"
    }
   },
   "z_sort": "foot"
@@ -1090,16 +2917,20 @@
   "collision": [
    -108.0,
    -144.0,
-   216.0,
-   144.0
+   216,
+   144
   ],
   "deck": null,
   "foot": [
-   120.0,
-   260.0
+   120,
+   260
   ],
   "footprint": [
    [
+    -5,
+    -6
+   ],
+   [
     -4,
     -6
    ],
@@ -1136,6 +2967,10 @@
     -6
    ],
    [
+    -5,
+    -5
+   ],
+   [
     -4,
     -5
    ],
@@ -1172,6 +3007,10 @@
     -5
    ],
    [
+    -5,
+    -4
+   ],
+   [
     -4,
     -4
    ],
@@ -1208,6 +3047,10 @@
     -4
    ],
    [
+    -5,
+    -3
+   ],
+   [
     -4,
     -3
    ],
@@ -1244,6 +3087,10 @@
     -3
    ],
    [
+    -5,
+    -2
+   ],
+   [
     -4,
     -2
    ],
@@ -1278,6 +3125,10 @@
    [
     4,
     -2
+   ],
+   [
+    -5,
+    -1
    ],
    [
     -4,
@@ -1316,8 +3167,29 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {
+   "costs": [
+    "res://data/plans/crossroads.json#/restores/1/cost"
+   ],
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/plans/crossroads.json#/restores/1",
+      "type": "restore"
+     }
+    ],
+    "verb": "restore"
+   },
    "saves": [
     "village.restored.fern_cottage"
    ]
@@ -1326,7 +3198,7 @@
   "name": "Fern cottage",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "house",
   "shadow": null,
   "size_cells": [
    10,
@@ -1334,13 +3206,17 @@
   ],
   "snap": "cell",
   "story": {
-   "owner": null
+   "milestone": "fern_cottage",
+   "owner": null,
+   "quests": [
+    "res://data/quests/home_again.json"
+   ]
   },
   "variants": {
    "fern_cottage": {
     "foot": [
-     120.0,
-     260.0
+     120,
+     260
     ],
     "png": "res://zones/crossroads/art/fern_cottage.png"
    }
@@ -1353,69 +3229,81 @@
   "collision": [
    -45.0,
    -42.0,
-   90.0,
-   42.0
+   90,
+   42
   ],
   "deck": null,
   "foot": [
-   54.0,
-   82.0
+   54,
+   82
   ],
   "footprint": [
    [
     -2,
-    -1
+    -2
    ],
    [
     -1,
-    -1
+    -2
    ],
    [
     0,
-    -1
+    -2
    ],
    [
     1,
-    -1
+    -2
    ],
    [
     -2,
-    0
+    -1
    ],
    [
     -1,
-    0
+    -1
    ],
    [
     0,
-    0
+    -1
    ],
    [
     1,
-    0
+    -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Fern rubble",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "clutter",
   "shadow": null,
   "size_cells": [
-   4,
+   5,
    4
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "fern_rubble": {
     "foot": [
-     54.0,
-     82.0
+     54,
+     82
     ],
     "png": "res://zones/crossroads/art/fern_rubble.png"
    }
@@ -1428,102 +3316,13 @@
   "collision": [
    -18.0,
    -18.0,
-   36.0,
-   18.0
+   36,
+   18
   ],
   "deck": null,
   "foot": [
-   27.0,
-   53.0
-  ],
-  "footprint": [
-   [
-    0,
-    -1
-   ]
-  ],
-  "forbids": [],
-  "function": {},
-  "kind": "prop",
-  "name": "Flower tub",
-  "painted": false,
-  "requires": [],
-  "role": null,
-  "shadow": null,
-  "size_cells": [
-   2,
-   2
-  ],
-  "snap": "cell",
-  "story": {
-   "owner": null
-  },
-  "variants": {
-   "flower_tub_10": {
-    "foot": [
-     27.0,
-     53.0
-    ],
-    "png": "res://zones/crossroads/art/flower_tub_10.png"
-   },
-   "flower_tub_26": {
-    "foot": [
-     27.0,
-     53.0
-    ],
-    "png": "res://zones/crossroads/art/flower_tub_26.png"
-   },
-   "flower_tub_27": {
-    "foot": [
-     27.0,
-     53.0
-    ],
-    "png": "res://zones/crossroads/art/flower_tub_27.png"
-   },
-   "flower_tub_38": {
-    "foot": [
-     27.0,
-     53.0
-    ],
-    "png": "res://zones/crossroads/art/flower_tub_38.png"
-   },
-   "flower_tub_59": {
-    "foot": [
-     27.0,
-     53.0
-    ],
-    "png": "res://zones/crossroads/art/flower_tub_59.png"
-   },
-   "flower_tub_60": {
-    "foot": [
-     27.0,
-     53.0
-    ],
-    "png": "res://zones/crossroads/art/flower_tub_60.png"
-   },
-   "flower_tub_9": {
-    "foot": [
-     27.0,
-     53.0
-    ],
-    "png": "res://zones/crossroads/art/flower_tub_9.png"
-   }
-  },
-  "z_sort": "foot"
- },
- "crossroads_grindstone": {
-  "approval": "candidate",
-  "blocks_move": true,
-  "collision": [
-   -21.0,
-   -18.0,
-   42.0,
-   18.0
-  ],
-  "deck": null,
-  "foot": [
-   42.0,
-   80.0
+   27,
+   53
   ],
   "footprint": [
    [
@@ -1535,13 +3334,217 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Flower tub",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "flower_tub_10": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/flower_tub_10.png"
+   },
+   "flower_tub_26": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/flower_tub_26.png"
+   },
+   "flower_tub_27": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/flower_tub_27.png"
+   },
+   "flower_tub_38": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/flower_tub_38.png"
+   },
+   "flower_tub_59": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/flower_tub_59.png"
+   },
+   "flower_tub_60": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/flower_tub_60.png"
+   },
+   "flower_tub_9": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/flower_tub_9.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_grain_scale": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -48,
+   -24,
+   96,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   84,
+   132
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   },
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Grain-weighing station",
+  "painted": false,
+  "requires": [],
+  "role": "workbench",
+  "shadow": {
+   "dir": [
+    6,
+    3
+   ],
+   "size": [
+    48,
+    9
+   ]
+  },
+  "size_cells": [
+   7,
+   6
+  ],
+  "snap": "cell",
+  "story": {
+   "lore": "Ordinary market and mill-yard work equipment proposed for a service-court edge. Its illustrated grain and measures introduce no game service or economy."
+  },
+  "variants": {
+   "loaded": {
+    "foot": [
+     84,
+     132
+    ],
+    "png": "res://kit/props/art/crossroads_grain_scale_loaded.png"
+   },
+   "ready": {
+    "foot": [
+     84,
+     132
+    ],
+    "png": "res://kit/props/art/crossroads_grain_scale_ready.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_grindstone": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -18.0,
+   42,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   42,
+   80
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Grindstone",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "cells": 3,
+    "rel": "near",
+    "what": "forge"
+   }
+  ],
+  "role": "workplace",
   "shadow": null,
   "size_cells": [
    4,
@@ -1554,8 +3557,8 @@
   "variants": {
    "grindstone_36": {
     "foot": [
-     42.0,
-     80.0
+     42,
+     80
     ],
     "png": "res://zones/crossroads/art/grindstone_36.png"
    }
@@ -1568,15 +3571,19 @@
   "collision": [
    -33.0,
    -24.0,
-   66.0,
-   24.0
+   66,
+   24
   ],
   "deck": null,
   "foot": [
-   57.0,
-   80.0
+   57,
+   80
   ],
   "footprint": [
+   [
+    -2,
+    -1
+   ],
    [
     -1,
     -1
@@ -1590,13 +3597,23 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Handcart",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "cart",
   "shadow": null,
   "size_cells": [
    5,
@@ -1609,8 +3626,8 @@
   "variants": {
    "handcart": {
     "foot": [
-     57.0,
-     80.0
+     57,
+     80
     ],
     "png": "res://zones/crossroads/art/handcart.png"
    }
@@ -1623,17 +3640,162 @@
   "collision": null,
   "deck": null,
   "foot": [
-   33.0,
-   62.0
+   39,
+   53
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Hay",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "cells": 6,
+    "note": "feed forked out for the stock, in a paddock, a fold or a barn",
+    "rel": "near",
+    "what": "stock"
+   }
+  ],
+  "role": "feed",
+  "shadow": null,
+  "size_cells": [
+   4,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "hay_bales": {
+    "foot": [
+     39,
+     53
+    ],
+    "png": "res://kit/props/art/farm/hay_bales.png"
+   },
+   "hay_heap": {
+    "foot": [
+     32,
+     31
+    ],
+    "png": "res://kit/props/art/farm/hay_heap.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_herb_corner_barrel": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Herb corner barrel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "herb_corner_barrel": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://zones/crossroads/art/herb_corner_barrel.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_herb_window_flower_tub_a": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Herb window flower tub a",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
   "shadow": null,
   "size_cells": [
    3,
@@ -1644,19 +3806,75 @@
    "owner": null
   },
   "variants": {
-   "hay_19": {
+   "herb_window_flower_tub_a": {
     "foot": [
-     33.0,
-     62.0
+     27,
+     53
     ],
-    "png": "res://zones/crossroads/art/hay_19.png"
-   },
-   "hay_20": {
+    "png": "res://zones/crossroads/art/herb_window_flower_tub_a.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_herb_window_flower_tub_b": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Herb window flower tub b",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "herb_window_flower_tub_b": {
     "foot": [
-     33.0,
-     62.0
+     27,
+     53
     ],
-    "png": "res://zones/crossroads/art/hay_20.png"
+    "png": "res://zones/crossroads/art/herb_window_flower_tub_b.png"
    }
   },
   "z_sort": "foot"
@@ -1667,16 +3885,20 @@
   "collision": [
    -108.0,
    -144.0,
-   216.0,
-   144.0
+   216,
+   144
   ],
   "deck": null,
   "foot": [
-   120.0,
-   227.0
+   120,
+   227
   ],
   "footprint": [
    [
+    -5,
+    -6
+   ],
+   [
     -4,
     -6
    ],
@@ -1713,6 +3935,10 @@
     -6
    ],
    [
+    -5,
+    -5
+   ],
+   [
     -4,
     -5
    ],
@@ -1749,6 +3975,10 @@
     -5
    ],
    [
+    -5,
+    -4
+   ],
+   [
     -4,
     -4
    ],
@@ -1785,6 +4015,10 @@
     -4
    ],
    [
+    -5,
+    -3
+   ],
+   [
     -4,
     -3
    ],
@@ -1821,6 +4055,10 @@
     -3
    ],
    [
+    -5,
+    -2
+   ],
+   [
     -4,
     -2
    ],
@@ -1855,6 +4093,10 @@
    [
     4,
     -2
+   ],
+   [
+    -5,
+    -1
    ],
    [
     -4,
@@ -1893,13 +4135,22 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "structure",
   "name": "Herbalist",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "house",
   "shadow": null,
   "size_cells": [
    10,
@@ -1912,10 +4163,89 @@
   "variants": {
    "herbalist": {
     "foot": [
-     120.0,
-     227.0
+     120,
+     227
     ],
     "png": "res://zones/crossroads/art/herbalist.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_hired_handcart": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -33.0,
+   -24.0,
+   66,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   57,
+   80
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Hired handcart",
+  "painted": false,
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "cart",
+  "shadow": null,
+  "size_cells": [
+   5,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "well_clear"
+     ],
+     "restored": [
+      "well"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "hired_handcart": {
+    "foot": [
+     57,
+     80
+    ],
+    "png": "res://zones/crossroads/art/hired_handcart.png"
    }
   },
   "z_sort": "foot"
@@ -1926,13 +4256,13 @@
   "collision": [
    -120.0,
    -120.0,
-   240.0,
-   120.0
+   240,
+   120
   ],
   "deck": null,
   "foot": [
-   132.0,
-   188.0
+   132,
+   188
   ],
   "footprint": [
    [
@@ -2136,13 +4466,32 @@
     -1
    ]
   ],
-  "forbids": [],
-  "function": {},
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/dialogue/crossroads.json#/hut_door",
+      "type": "dialogue"
+     }
+    ],
+    "verb": "enter"
+   }
+  },
   "kind": "structure",
   "name": "Hut",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "house",
   "shadow": null,
   "size_cells": [
    11,
@@ -2150,13 +4499,16 @@
   ],
   "snap": "cell",
   "story": {
+   "dialogue": [
+    "res://data/dialogue/crossroads.json#/hut_door"
+   ],
    "owner": null
   },
   "variants": {
    "hut": {
     "foot": [
-     132.0,
-     188.0
+     132,
+     188
     ],
     "png": "res://zones/crossroads/art/hut.png"
    }
@@ -2169,19 +4521,42 @@
   "collision": [
    -6.0,
    -6.0,
-   12.0,
-   9.0
+   12,
+   9
   ],
   "deck": null,
   "foot": [
-   12.0,
-   118.0
+   12,
+   118
   ],
-  "footprint": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
   "forbids": [
    {
     "rel": "on",
     "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
    }
   ],
   "function": {},
@@ -2198,7 +4573,7 @@
   "role": "light",
   "shadow": null,
   "size_cells": [
-   2,
+   3,
    5
   ],
   "snap": "cell",
@@ -2208,17 +4583,245 @@
   "variants": {
    "kit_lantern_24": {
     "foot": [
-     12.0,
-     118.0
+     12,
+     118
     ],
     "png": "res://zones/crossroads/art/kit_lantern_24.png"
    },
    "kit_lantern_25": {
     "foot": [
-     12.0,
-     118.0
+     12,
+     118
     ],
     "png": "res://zones/crossroads/art/kit_lantern_25.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_lamp_square_e": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -6.0,
+   12,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   118
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Lamp square e",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "light",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "lamp_square_e": {
+    "foot": [
+     12,
+     118
+    ],
+    "png": "res://zones/crossroads/art/lamp_square_e.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_lamp_square_s": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -6.0,
+   12,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   118
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Lamp square s",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "light",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "lamp_square_s": {
+    "foot": [
+     12,
+     118
+    ],
+    "png": "res://zones/crossroads/art/lamp_square_s.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_lamp_square_w": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -6.0,
+   12,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   118
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Lamp square w",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "light",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "lamp_square_w": {
+    "foot": [
+     12,
+     118
+    ],
+    "png": "res://zones/crossroads/art/lamp_square_w.png"
    }
   },
   "z_sort": "foot"
@@ -2227,25 +4830,17 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
+   -21.0,
    -15.0,
-   -66.0,
-   30.0,
-   66.0
+   42,
+   15
   ],
   "deck": null,
   "foot": [
-   42.0,
-   218.0
+   42,
+   218
   ],
   "footprint": [
-   [
-    -1,
-    -2
-   ],
-   [
-    0,
-    -2
-   ],
    [
     -1,
     -1
@@ -2259,9 +4854,25 @@
    {
     "rel": "on",
     "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
    }
   ],
-  "function": {},
+  "function": {
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/dialogue/crossroads.json#/shard_lantern",
+      "type": "dialogue"
+     }
+    ],
+    "verb": "look"
+   }
+  },
   "kind": "prop",
   "name": "Lantern dark",
   "painted": false,
@@ -2276,17 +4887,33 @@
   "shadow": null,
   "size_cells": [
    4,
-   9
+   10
   ],
   "snap": "cell",
   "story": {
-   "owner": null
+   "dialogue": [
+    "res://data/dialogue/crossroads.json#/shard_lantern"
+   ],
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
+   "owner": null,
+   "quests": [
+    "res://data/quests/a1_the_circle_wakes.json",
+    "res://data/quests/a1_the_cut_rope.json",
+    "res://data/quests/a1_under_the_snout.json",
+    "res://data/quests/under_the_stones.json"
+   ]
   },
   "variants": {
    "lantern_dark": {
     "foot": [
-     42.0,
-     218.0
+     42,
+     218
     ],
     "png": "res://zones/crossroads/art/lantern_dark.png"
    }
@@ -2297,25 +4924,17 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
+   -21.0,
    -15.0,
-   -66.0,
-   30.0,
-   66.0
+   42,
+   15
   ],
   "deck": null,
   "foot": [
-   42.0,
-   218.0
+   42,
+   218
   ],
   "footprint": [
-   [
-    -1,
-    -2
-   ],
-   [
-    0,
-    -2
-   ],
    [
     -1,
     -1
@@ -2329,9 +4948,25 @@
    {
     "rel": "on",
     "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
    }
   ],
-  "function": {},
+  "function": {
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/dialogue/crossroads.json#/shard_lantern",
+      "type": "dialogue"
+     }
+    ],
+    "verb": "look"
+   }
+  },
   "kind": "prop",
   "name": "Lantern lit",
   "painted": false,
@@ -2346,17 +4981,33 @@
   "shadow": null,
   "size_cells": [
    4,
-   9
+   10
   ],
   "snap": "cell",
   "story": {
-   "owner": null
+   "dialogue": [
+    "res://data/dialogue/crossroads.json#/shard_lantern"
+   ],
+   "gating": {
+    "if": {
+     "flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
+   "owner": null,
+   "quests": [
+    "res://data/quests/a1_the_circle_wakes.json",
+    "res://data/quests/a1_the_cut_rope.json",
+    "res://data/quests/a1_under_the_snout.json",
+    "res://data/quests/under_the_stones.json"
+   ]
   },
   "variants": {
    "lantern_lit": {
     "foot": [
-     42.0,
-     218.0
+     42,
+     218
     ],
     "png": "res://zones/crossroads/art/lantern_lit.png"
    }
@@ -2369,13 +5020,13 @@
   "collision": [
    -144.0,
    -120.0,
-   288.0,
-   120.0
+   288,
+   120
   ],
   "deck": null,
   "foot": [
-   156.0,
-   230.0
+   156,
+   230
   ],
   "footprint": [
    [
@@ -2619,13 +5270,22 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "structure",
   "name": "Library",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "house",
   "shadow": null,
   "size_cells": [
    13,
@@ -2638,8 +5298,8 @@
   "variants": {
    "library": {
     "foot": [
-     156.0,
-     230.0
+     156,
+     230
     ],
     "png": "res://zones/crossroads/art/library.png"
    }
@@ -2652,13 +5312,13 @@
   "collision": [
    -144.0,
    -120.0,
-   288.0,
-   120.0
+   288,
+   120
   ],
   "deck": null,
   "foot": [
-   156.0,
-   272.0
+   156,
+   272
   ],
   "footprint": [
    [
@@ -2902,13 +5562,22 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "structure",
   "name": "North cottages",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "house",
   "shadow": null,
   "size_cells": [
    13,
@@ -2921,8 +5590,8 @@
   "variants": {
    "north_cottages": {
     "foot": [
-     156.0,
-     272.0
+     156,
+     272
     ],
     "png": "res://zones/crossroads/art/north_cottages.png"
    }
@@ -2931,14 +5600,31 @@
  },
  "crossroads_notice_board": {
   "approval": "candidate",
-  "blocks_move": false,
+  "blocks_move": true,
   "collision": null,
   "deck": null,
   "foot": [
-   48.0,
-   128.0
+   48,
+   128
   ],
-  "footprint": null,
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
   "forbids": [
    {
     "rel": "on",
@@ -2947,7 +5633,12 @@
   ],
   "function": {
    "interact": {
-    "triggers": [],
+    "triggers": [
+     {
+      "ref": "res://data/dialogue/crossroads.json#/notice_board",
+      "type": "dialogue"
+     }
+    ],
     "verb": "read"
    }
   },
@@ -2969,13 +5660,16 @@
   ],
   "snap": "cell",
   "story": {
+   "dialogue": [
+    "res://data/dialogue/crossroads.json#/notice_board"
+   ],
    "owner": null
   },
   "variants": {
    "notice_board": {
     "foot": [
-     48.0,
-     128.0
+     48,
+     128
     ],
     "png": "res://zones/crossroads/art/notice_board.png"
    }
@@ -2988,15 +5682,32 @@
   "collision": [
    -12.0,
    -9.0,
-   24.0,
-   12.0
+   24,
+   12
   ],
   "deck": null,
   "foot": [
-   105.0,
-   243.0
+   105,
+   243
   ],
-  "footprint": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
   "forbids": [
    {
     "rel": "on",
@@ -3024,7 +5735,7 @@
   },
   "size_cells": [
    9,
-   10
+   11
   ],
   "snap": "cell",
   "story": {
@@ -3033,73 +5744,325 @@
   "variants": {
    "oak_13": {
     "foot": [
-     105.0,
-     243.0
+     105,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_13.png"
    },
    "oak_21": {
     "foot": [
-     105.0,
-     243.0
+     106,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_21.png"
    },
    "oak_40": {
     "foot": [
-     105.0,
-     243.0
+     106,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_40.png"
    },
    "oak_41": {
     "foot": [
-     105.0,
-     243.0
+     106,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_41.png"
    },
    "oak_42": {
     "foot": [
-     105.0,
-     243.0
+     106,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_42.png"
    },
    "oak_43": {
     "foot": [
-     105.0,
-     243.0
+     105,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_43.png"
    },
    "oak_44": {
     "foot": [
-     105.0,
-     243.0
+     105,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_44.png"
    },
    "oak_45": {
     "foot": [
-     105.0,
-     243.0
+     106,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_45.png"
    },
    "oak_46": {
     "foot": [
-     105.0,
-     243.0
+     105,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_46.png"
    },
    "oak_6": {
     "foot": [
-     105.0,
-     243.0
+     105,
+     243
     ],
     "png": "res://zones/crossroads/art/oak_6.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_oven_gable_woodpile": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -24.0,
+   48,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Oven gable woodpile",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "fuel against the gable wall of a house with a chimney",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "oven_gable_woodpile": {
+    "foot": [
+     30,
+     71
+    ],
+    "png": "res://zones/crossroads/art/oven_gable_woodpile.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_planters_sw_butt": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Planters sw butt",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "planters_sw_butt": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://zones/crossroads/art/planters_sw_butt.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_planters_sw_tub_a": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Planters sw tub a",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "planters_sw_tub_a": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/planters_sw_tub_a.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_planters_sw_tub_b": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -24.0,
+   48,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   33,
+   59
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Planters sw tub b",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "planters_sw_tub_b": {
+    "foot": [
+     33,
+     59
+    ],
+    "png": "res://zones/crossroads/art/planters_sw_tub_b.png"
    }
   },
   "z_sort": "foot"
@@ -3110,30 +6073,45 @@
   "collision": [
    -21.0,
    -24.0,
-   42.0,
-   24.0
+   42,
+   24
   ],
   "deck": null,
   "foot": [
-   30.0,
-   62.0
+   30,
+   62
   ],
   "footprint": [
+   [
+    -1,
+    -1
+   ],
    [
     0,
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Sacks",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
   "shadow": null,
   "size_cells": [
-   2,
+   3,
    3
   ],
   "snap": "cell",
@@ -3143,8 +6121,8 @@
   "variants": {
    "sacks_12": {
     "foot": [
-     30.0,
-     62.0
+     30,
+     62
     ],
     "png": "res://zones/crossroads/art/sacks_12.png"
    }
@@ -3157,16 +6135,20 @@
   "collision": [
    -132.0,
    -168.0,
-   264.0,
-   168.0
+   264,
+   168
   ],
   "deck": null,
   "foot": [
-   144.0,
-   323.0
+   144,
+   323
   ],
   "footprint": [
    [
+    -6,
+    -7
+   ],
+   [
     -5,
     -7
    ],
@@ -3211,6 +6193,10 @@
     -7
    ],
    [
+    -6,
+    -6
+   ],
+   [
     -5,
     -6
    ],
@@ -3255,6 +6241,10 @@
     -6
    ],
    [
+    -6,
+    -5
+   ],
+   [
     -5,
     -5
    ],
@@ -3299,6 +6289,10 @@
     -5
    ],
    [
+    -6,
+    -4
+   ],
+   [
     -5,
     -4
    ],
@@ -3343,6 +6337,10 @@
     -4
    ],
    [
+    -6,
+    -3
+   ],
+   [
     -5,
     -3
    ],
@@ -3387,6 +6385,10 @@
     -3
    ],
    [
+    -6,
+    -2
+   ],
+   [
     -5,
     -2
    ],
@@ -3429,6 +6431,10 @@
    [
     5,
     -2
+   ],
+   [
+    -6,
+    -1
    ],
    [
     -5,
@@ -3475,13 +6481,38 @@
     -1
    ]
   ],
-  "forbids": [],
-  "function": {},
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {
+   "costs": [
+    "res://data/plans/crossroads.json#/restores/0/cost"
+   ],
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/plans/crossroads.json#/restores/0",
+      "type": "restore"
+     }
+    ],
+    "verb": "restore"
+   },
+   "saves": [
+    "village.restored.forge"
+   ]
+  },
   "kind": "structure",
   "name": "Smithy",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "forge",
   "shadow": null,
   "size_cells": [
    12,
@@ -3489,13 +6520,17 @@
   ],
   "snap": "cell",
   "story": {
-   "owner": null
+   "milestone": "forge",
+   "owner": null,
+   "quests": [
+    "res://data/quests/cold_forge.json"
+   ]
   },
   "variants": {
    "smithy": {
     "foot": [
-     144.0,
-     323.0
+     144,
+     323
     ],
     "png": "res://zones/crossroads/art/smithy.png"
    }
@@ -3508,15 +6543,23 @@
   "collision": [
    -54.0,
    -48.0,
-   108.0,
-   48.0
+   108,
+   48
   ],
   "deck": null,
   "foot": [
-   63.0,
-   93.0
+   63,
+   93
   ],
   "footprint": [
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
    [
     -1,
     -2
@@ -3532,6 +6575,10 @@
    [
     2,
     -2
+   ],
+   [
+    -3,
+    -1
    ],
    [
     -2,
@@ -3554,32 +6601,169 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Smithy rubble",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "clutter",
   "shadow": null,
   "size_cells": [
-   5,
-   4
+   6,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_restored": [
+      "forge"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "smithy_rubble": {
+    "foot": [
+     63,
+     93
+    ],
+    "png": "res://zones/crossroads/art/smithy_rubble.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_square_oak": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -9.0,
+   24,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   105,
+   243
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Square oak",
+  "painted": false,
+  "requires": [],
+  "role": "tree",
+  "shadow": {
+   "mask": {
+    "offset": [
+     -78,
+     -72
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_square_oak.png"
+   }
+  },
+  "size_cells": [
+   9,
+   11
   ],
   "snap": "cell",
   "story": {
    "owner": null
   },
   "variants": {
-   "smithy_rubble": {
+   "square_oak": {
     "foot": [
-     63.0,
-     93.0
+     105,
+     243
     ],
-    "png": "res://zones/crossroads/art/smithy_rubble.png"
+    "png": "res://zones/crossroads/art/square_oak.png"
    }
   },
   "z_sort": "foot"
+ },
+ "crossroads_square_puddles": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   0,
+   0
+  ],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Square puddles",
+  "painted": false,
+  "requires": [],
+  "role": "clutter",
+  "shadow": null,
+  "size_cells": [
+   25,
+   13
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_restored": [
+      "forge"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "square_puddles": {
+    "foot": [
+     0,
+     0
+    ],
+    "png": "res://zones/crossroads/art/square_puddles.png"
+   }
+  },
+  "z_sort": "ground"
  },
  "crossroads_square_rubble_a": {
   "approval": "candidate",
@@ -3587,15 +6771,35 @@
   "collision": [
    -45.0,
    -54.0,
-   90.0,
-   54.0
+   90,
+   54
   ],
   "deck": null,
   "foot": [
-   54.0,
-   105.0
+   54,
+   105
   ],
   "footprint": [
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    -2,
+    -2
+   ],
    [
     -1,
     -2
@@ -3623,41 +6827,41 @@
    [
     1,
     -1
-   ],
-   [
-    -1,
-    0
-   ],
-   [
-    0,
-    0
-   ],
-   [
-    1,
-    0
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Square rubble a",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "clutter",
   "shadow": null,
   "size_cells": [
-   4,
+   5,
    5
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "square_rubble_a": {
     "foot": [
-     54.0,
-     105.0
+     54,
+     105
     ],
     "png": "res://zones/crossroads/art/square_rubble_a.png"
    }
@@ -3670,15 +6874,31 @@
   "collision": [
    -39.0,
    -48.0,
-   78.0,
-   48.0
+   78,
+   48
   ],
   "deck": null,
   "foot": [
-   48.0,
-   93.0
+   48,
+   93
   ],
   "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
    [
     -2,
     -1
@@ -3694,41 +6914,41 @@
    [
     1,
     -1
-   ],
-   [
-    -1,
-    0
-   ],
-   [
-    0,
-    0
-   ],
-   [
-    1,
-    0
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Square rubble b",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "clutter",
   "shadow": null,
   "size_cells": [
    4,
-   4
+   5
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "square_rubble_b": {
     "foot": [
-     48.0,
-     93.0
+     48,
+     93
     ],
     "png": "res://zones/crossroads/art/square_rubble_b.png"
    }
@@ -3741,16 +6961,20 @@
   "collision": [
    -54.0,
    -48.0,
-   108.0,
-   48.0
+   108,
+   48
   ],
   "deck": null,
   "foot": [
-   69.0,
-   158.0
+   69,
+   158
   ],
   "footprint": [
    [
+    -3,
+    -2
+   ],
+   [
     -2,
     -2
    ],
@@ -3767,6 +6991,14 @@
     -2
    ],
    [
+    2,
+    -2
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
     -2,
     -1
    ],
@@ -3780,16 +7012,30 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Stall",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "stall",
   "shadow": null,
   "size_cells": [
    6,
@@ -3802,126 +7048,27 @@
   "variants": {
    "stall": {
     "foot": [
-     69.0,
-     158.0
+     69,
+     158
     ],
     "png": "res://zones/crossroads/art/stall.png"
    }
   },
   "z_sort": "foot"
  },
- "crossroads_trough": {
+ "crossroads_stall_crates_b": {
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
+   -18.0,
    -30.0,
-   -24.0,
-   60.0,
-   24.0
+   36,
+   30
   ],
   "deck": null,
   "foot": [
-   48.0,
-   53.0
-  ],
-  "footprint": [
-   [
-    -1,
-    -1
-   ],
-   [
-    0,
-    -1
-   ]
-  ],
-  "forbids": [],
-  "function": {},
-  "kind": "prop",
-  "name": "Trough",
-  "painted": false,
-  "requires": [],
-  "role": null,
-  "shadow": null,
-  "size_cells": [
-   4,
-   2
-  ],
-  "snap": "cell",
-  "story": {
-   "owner": null
-  },
-  "variants": {
-   "trough_35": {
-    "foot": [
-     48.0,
-     53.0
-    ],
-    "png": "res://zones/crossroads/art/trough_35.png"
-   }
-  },
-  "z_sort": "foot"
- },
- "crossroads_waystone": {
-  "approval": "candidate",
-  "blocks_move": false,
-  "collision": null,
-  "deck": null,
-  "foot": [
-   45.0,
-   134.0
-  ],
-  "footprint": null,
-  "forbids": [],
-  "function": {
-   "interact": {
-    "triggers": [],
-    "verb": "read"
-   }
-  },
-  "kind": "prop",
-  "name": "Waystone",
-  "painted": false,
-  "requires": [
-   {
-    "cells": 2,
-    "rel": "at_edge",
-    "what": "route"
-   }
-  ],
-  "role": "marker",
-  "shadow": null,
-  "size_cells": [
-   4,
-   6
-  ],
-  "snap": "cell",
-  "story": {
-   "owner": null
-  },
-  "variants": {
-   "waystone": {
-    "foot": [
-     45.0,
-     134.0
-    ],
-    "png": "res://zones/crossroads/art/waystone.png"
-   }
-  },
-  "z_sort": "foot"
- },
- "crossroads_well": {
-  "approval": "candidate",
-  "blocks_move": true,
-  "collision": [
-   -30.0,
-   -48.0,
-   60.0,
-   48.0
-  ],
-  "deck": null,
-  "foot": [
-   57.0,
-   170.0
+   27,
+   110
   ],
   "footprint": [
    [
@@ -3947,6 +7094,562 @@
     "what": "route"
    }
   ],
+  "function": {},
+  "kind": "prop",
+  "name": "Stall crates b",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stall_crates_b": {
+    "foot": [
+     27,
+     110
+    ],
+    "png": "res://zones/crossroads/art/stall_crates_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_stall_sacks": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Stall sacks",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stall_sacks": {
+    "foot": [
+     30,
+     62
+    ],
+    "png": "res://zones/crossroads/art/stall_sacks.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_stock_ne_barrel": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Stock ne barrel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stock_ne_barrel": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://zones/crossroads/art/stock_ne_barrel.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_stock_ne_sacks": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Stock ne sacks",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stock_ne_sacks": {
+    "foot": [
+     30,
+     62
+    ],
+    "png": "res://zones/crossroads/art/stock_ne_sacks.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_trough": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -39.0,
+   -24.0,
+   78,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   42,
+   37
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Trough",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "its animals drink from it",
+    "rel": "near",
+    "what": "stock"
+   },
+   {
+    "cells": 4,
+    "note": "inside their pen or paddock",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "trough",
+  "shadow": null,
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "trough": {
+    "foot": [
+     42,
+     37
+    ],
+    "png": "res://kit/props/art/farm/trough.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_tub_board": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Tub board",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "tub_board": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/tub_board.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_tub_fern": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Tub fern",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "tub_fern": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/tub_fern.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_waystone": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   45,
+   134
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [],
+  "function": {
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/dialogue/crossroads.json#/waystone",
+      "type": "dialogue"
+     }
+    ],
+    "verb": "use"
+   }
+  },
+  "kind": "prop",
+  "name": "Waystone",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "at a junction: routes on two sides at right angles",
+    "rel": "at_corner",
+    "what": "route"
+   }
+  ],
+  "role": "marker",
+  "shadow": null,
+  "size_cells": [
+   4,
+   6
+  ],
+  "snap": "cell",
+  "story": {
+   "dialogue": [
+    "res://data/dialogue/crossroads.json#/waystone"
+   ],
+   "owner": null
+  },
+  "variants": {
+   "waystone": {
+    "foot": [
+     45,
+     134
+    ],
+    "png": "res://zones/crossroads/art/waystone.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_well": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -30.0,
+   -48.0,
+   60,
+   48
+  ],
+  "deck": null,
+  "foot": [
+   57,
+   170
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "cells": 6,
+    "note": "never beside a river that is easier to draw from",
+    "rel": "not_near",
+    "what": "water"
+   }
+  ],
   "function": {
    "interact": {
     "triggers": [],
@@ -3956,22 +7659,39 @@
   "kind": "prop",
   "name": "Well",
   "painted": false,
-  "requires": [],
+  "requires": [
+   {
+    "cells": 8,
+    "note": "water for homes: a square or a farmyard",
+    "rel": "near",
+    "what": "house"
+   }
+  ],
   "role": "centrepiece",
   "shadow": null,
   "size_cells": [
    5,
-   7
+   8
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "flags": [
+      "shard_home:woodland"
+     ],
+     "restored": [
+      "well"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
    "well": {
     "foot": [
-     57.0,
-     170.0
+     57,
+     170
     ],
     "png": "res://zones/crossroads/art/well.png"
    }
@@ -3982,25 +7702,17 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -36.0,
-   -60.0,
-   72.0,
-   60.0
+   -30.0,
+   -48.0,
+   60,
+   48
   ],
   "deck": null,
   "foot": [
-   63.0,
-   80.0
+   63,
+   80
   ],
   "footprint": [
-   [
-    -1,
-    -3
-   ],
-   [
-    0,
-    -3
-   ],
    [
     -2,
     -2
@@ -4053,20 +7765,227 @@
   "role": "centrepiece",
   "shadow": null,
   "size_cells": [
-   5,
+   6,
    4
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ],
+     "not_restored": [
+      "well"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "well_choked": {
+    "foot": [
+     63,
+     80
+    ],
+    "png": "res://zones/crossroads/art/well_choked.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_well_pail": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   18,
+   44
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Well pail",
+  "painted": false,
+  "requires": [],
+  "role": null,
+  "shadow": null,
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "flags": [
+      "well_clear"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "well_pail": {
+    "foot": [
+     18,
+     44
+    ],
+    "png": "res://zones/crossroads/art/well_pail.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_well_spoil_rubble": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -36.0,
+   54,
+   36
+  ],
+  "deck": null,
+  "foot": [
+   36,
+   70
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Well spoil rubble",
+  "painted": false,
+  "requires": [],
+  "role": "clutter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "well_clear"
+     ],
+     "restored": [
+      "well"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "well_spoil_rubble": {
+    "foot": [
+     36,
+     70
+    ],
+    "png": "res://zones/crossroads/art/well_spoil_rubble.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_west_seat_flower_tub": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "West seat flower tub",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
   ],
   "snap": "cell",
   "story": {
    "owner": null
   },
   "variants": {
-   "well_choked": {
+   "west_seat_flower_tub": {
     "foot": [
-     63.0,
-     80.0
+     27,
+     53
     ],
-    "png": "res://zones/crossroads/art/well_choked.png"
+    "png": "res://zones/crossroads/art/west_seat_flower_tub.png"
    }
   },
   "z_sort": "foot"
@@ -4077,13 +7996,2296 @@
   "collision": [
    -33.0,
    -24.0,
-   66.0,
-   24.0
+   66,
+   24
   ],
   "deck": null,
   "foot": [
-   39.0,
-   71.0
+   39,
+   71
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Woodpile",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "fuel against the gable wall of a house with a chimney",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   4,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "woodpile_11": {
+    "foot": [
+     39,
+     71
+    ],
+    "png": "res://zones/crossroads/art/woodpile_11.png"
+   },
+   "woodpile_33": {
+    "foot": [
+     39,
+     71
+    ],
+    "png": "res://zones/crossroads/art/woodpile_33.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_calf": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -29,
+    -36
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_calf_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -19.5,
+   -6.0,
+   39,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   29,
+   36
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Calf",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 14,
+    "note": "stock keep to what their pen gives them (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "trough"
+   },
+   {
+    "cells": 5,
+    "note": "inside its fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    105,
+    12
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_calf": {
+    "foot": [
+     29,
+     36
+    ],
+    "png": "res://kit/props/art/farm/farm_calf.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_churns": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -6.0,
+   24,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   16,
+   41
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Milk churn",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "set out by the paddock gate or the yard's for the cart",
+    "rel": "near",
+    "what": "gate"
+   }
+  ],
+  "role": "churns",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    30,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_churns": {
+    "foot": [
+     16,
+     41
+    ],
+    "png": "res://kit/props/art/farm/farm_churns.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_coop": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -37.5,
+   -18.0,
+   75,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   50,
+   119
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Hen house",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "against the run's fence, in its back corner",
+    "rel": "within",
+    "what": "boundary"
+   },
+   {
+    "cells": 4,
+    "note": "its hens about it",
+    "rel": "near",
+    "what": "stock"
+   }
+  ],
+  "role": "coop",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    90,
+    15
+   ]
+  },
+  "size_cells": [
+   4,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_coop": {
+    "foot": [
+     50,
+     119
+    ],
+    "png": "res://kit/props/art/farm/farm_coop.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_cow": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -52,
+    -60
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_cow_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -33.0,
+   -9.0,
+   66,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   52,
+   60
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Cow",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 14,
+    "note": "stock keep to what their pen gives them (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "trough"
+   },
+   {
+    "cells": 8,
+    "note": "inside its fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    177,
+    15
+   ]
+  },
+  "size_cells": [
+   4,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_cow": {
+    "foot": [
+     52,
+     60
+    ],
+    "png": "res://kit/props/art/farm/farm_cow.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_feed_sacks": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -12.0,
+   48,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   26,
+   33
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Feed sacks",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 8,
+    "note": "by the stock it feeds, at a shelter or a coop",
+    "rel": "near",
+    "what": "stock"
+   }
+  ],
+  "role": "sacks",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    54,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_feed_sacks": {
+    "foot": [
+     26,
+     33
+    ],
+    "png": "res://kit/props/art/farm/farm_feed_sacks.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_goat": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -27,
+    -45
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_goat_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -6.0,
+   36,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   45
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Goat",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 8,
+    "note": "stock keep to what their pen gives them (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "shelter"
+   },
+   {
+    "cells": 5,
+    "note": "inside its fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    96,
+    12
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_goat": {
+    "foot": [
+     27,
+     45
+    ],
+    "png": "res://kit/props/art/farm/farm_goat.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_goat_b": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -26,
+    -45
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_goat_b_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -6.0,
+   36,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   26,
+   45
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Goat, brown, grazing",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 8,
+    "note": "stock keep to what their pen gives them (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "shelter"
+   },
+   {
+    "cells": 5,
+    "note": "inside its fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    96,
+    12
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_goat_b": {
+    "foot": [
+     26,
+     45
+    ],
+    "png": "res://kit/props/art/farm/farm_goat_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_hen_brown": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 4.0,
+   "frames": 8,
+   "offset": [
+    -14,
+    -25
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_hen_brown_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   14,
+   25
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Hen, brown",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "hens live in a run with their coop (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "coop"
+   },
+   {
+    "cells": 3,
+    "note": "inside the run's fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_hen_brown": {
+    "foot": [
+     14,
+     25
+    ],
+    "png": "res://kit/props/art/farm/farm_hen_brown.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_hen_speckled": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 4.0,
+   "frames": 8,
+   "offset": [
+    -17,
+    -25
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_hen_speckled_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   17,
+   25
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Hen, speckled",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "hens live in a run with their coop (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "coop"
+   },
+   {
+    "cells": 3,
+    "note": "inside the run's fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_hen_speckled": {
+    "foot": [
+     17,
+     25
+    ],
+    "png": "res://kit/props/art/farm/farm_hen_speckled.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_hen_white": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 4.0,
+   "frames": 8,
+   "offset": [
+    -14,
+    -25
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_hen_white_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   14,
+   25
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Hen, white",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "hens live in a run with their coop (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "coop"
+   },
+   {
+    "cells": 3,
+    "note": "inside the run's fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_hen_white": {
+    "foot": [
+     14,
+     25
+    ],
+    "png": "res://kit/props/art/farm/farm_hen_white.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_horse": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -54,
+    -79
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_horse_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -9.0,
+   54,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   54,
+   79
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Horse",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 14,
+    "note": "stock keep to what their pen gives them (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "trough"
+   },
+   {
+    "cells": 8,
+    "note": "inside its fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    144,
+    15
+   ]
+  },
+  "size_cells": [
+   4,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_horse": {
+    "foot": [
+     54,
+     79
+    ],
+    "png": "res://kit/props/art/farm/farm_horse.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_muck_heap": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -30.0,
+   -12.0,
+   60,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   31,
+   42
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Muck heap",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 10,
+    "note": "mucked out of the pens beside it",
+    "rel": "near",
+    "what": "stock"
+   }
+  ],
+  "role": "muck_heap",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    78,
+    9
+   ]
+  },
+  "size_cells": [
+   3,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_muck_heap": {
+    "foot": [
+     31,
+     42
+    ],
+    "png": "res://kit/props/art/farm/farm_muck_heap.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_pig": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -33,
+    -33
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_pig_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -22.5,
+   -9.0,
+   45,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   33,
+   33
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Pig",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 6,
+    "note": "stock keep to what their pen gives them (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "wallow"
+   },
+   {
+    "cells": 5,
+    "note": "inside its fence",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    120,
+    12
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_pig": {
+    "foot": [
+     33,
+     33
+    ],
+    "png": "res://kit/props/art/farm/farm_pig.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_scarecrow": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9,
+   4.5
+  ],
+  "deck": null,
+  "foot": [
+   29,
+   79
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Scarecrow",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "in the crops it keeps the birds off",
+    "rel": "within",
+    "what": "garden"
+   }
+  ],
+  "role": "scarecrow",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_scarecrow": {
+    "foot": [
+     29,
+     79
+    ],
+    "png": "res://kit/props/art/farm/farm_scarecrow.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_sheep": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -29,
+    -37
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_sheep_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -9.0,
+   54,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   29,
+   37
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Sheep, standing",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 9,
+    "note": "a fold holds its trough (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "trough"
+   },
+   {
+    "cells": 5,
+    "note": "inside the fold's hurdles",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    54,
+    12
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_sheep": {
+    "foot": [
+     29,
+     37
+    ],
+    "png": "res://kit/props/art/farm/farm_sheep.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_sheep_graze": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -29,
+    -35
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_sheep_graze_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -9.0,
+   54,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   29,
+   35
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Sheep, grazing",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 9,
+    "note": "a fold holds its trough (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "trough"
+   },
+   {
+    "cells": 5,
+    "note": "inside the fold's hurdles",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    54,
+    12
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_sheep_graze": {
+    "foot": [
+     29,
+     35
+    ],
+    "png": "res://kit/props/art/farm/farm_sheep_graze.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_sheep_lie": {
+  "anim": {
+   "clip": "idle",
+   "cover": true,
+   "fps": 3.0,
+   "frames": 8,
+   "offset": [
+    -27,
+    -29
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/farm/farm_sheep_lie_idle.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -9.0,
+   54,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   29
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Sheep, lying",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 9,
+    "note": "a fold holds its trough (placement-logic: keep animals in)",
+    "rel": "within",
+    "what": "trough"
+   },
+   {
+    "cells": 5,
+    "note": "inside the fold's hurdles",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "stock",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    54,
+    12
+   ]
+  },
+  "size_cells": [
+   2,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_sheep_lie": {
+    "foot": [
+     27,
+     29
+    ],
+    "png": "res://kit/props/art/farm/farm_sheep_lie.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_shelter": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -60.0,
+   -42.0,
+   120,
+   30
+  ],
+  "deck": null,
+  "foot": [
+   63,
+   115
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Field shelter",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "its back to the fold's hurdles",
+    "rel": "within",
+    "what": "boundary"
+   },
+   {
+    "cells": 8,
+    "note": "the flock it shelters",
+    "rel": "near",
+    "what": "stock"
+   }
+  ],
+  "role": "shelter",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    126,
+    15
+   ]
+  },
+  "size_cells": [
+   5,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_shelter": {
+    "foot": [
+     63,
+     115
+    ],
+    "png": "res://kit/props/art/farm/farm_shelter.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_sty": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -52.5,
+   -33.0,
+   105,
+   33
+  ],
+  "deck": null,
+  "foot": [
+   57,
+   115
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Pigsty",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 6,
+    "note": "its pigs in the run before it",
+    "rel": "near",
+    "what": "stock"
+   }
+  ],
+  "role": "sty",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    108,
+    15
+   ]
+  },
+  "size_cells": [
+   5,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_sty": {
+    "foot": [
+     57,
+     115
+    ],
+    "png": "res://kit/props/art/farm/farm_sty.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_wallow": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   34,
+   25
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wallow",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 5,
+    "note": "in the pigs' run",
+    "rel": "within",
+    "what": "boundary"
+   }
+  ],
+  "role": "wallow",
+  "shadow": null,
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_wallow": {
+    "foot": [
+     34,
+     25
+    ],
+    "png": "res://kit/props/art/farm/farm_wallow.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_water_butt": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   24,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   14,
+   46
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Water butt",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "at a building's downpipe",
+    "rel": "adjacent",
+    "what": "house"
+   }
+  ],
+  "role": "water_butt",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    36,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_water_butt": {
+    "foot": [
+     14,
+     46
+    ],
+    "png": "res://kit/props/art/farm/farm_water_butt.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "farm_wheelbarrow": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -9.0,
+   54,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   33,
+   29
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wheelbarrow",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "left by the muck heap or the beds it serves",
+    "rel": "near",
+    "what": "muck_heap"
+   }
+  ],
+  "role": "barrow",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    66,
+    9
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "farm_wheelbarrow": {
+    "foot": [
+     33,
+     29
+    ],
+    "png": "res://kit/props/art/farm/farm_wheelbarrow.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_e": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   16.5,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   5,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     5,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_e_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_es": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   16.5,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   6,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     6,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_es_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_esw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   24.0,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_esw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_ew": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   24.0,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   43
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, straight",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     43
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_ew_plain.png"
+   },
+   "post": {
+    "foot": [
+     12,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_ew_post.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_gate_ew": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   35,
+   96
   ],
   "footprint": [
    [
@@ -4100,15 +10302,112 @@
    ]
   ],
   "forbids": [],
-  "function": {},
+  "function": {
+   "interact": {
+    "triggers": [],
+    "verb": "open"
+   }
+  },
   "kind": "prop",
-  "name": "Woodpile",
+  "name": "Picket fence, gate along x",
   "painted": false,
-  "requires": [],
-  "role": null,
-  "shadow": null,
+  "requires": [
+   {
+    "note": "a gate stands where the path its owner walks crosses the fence (placement-logic rule 2); the trodden way runs through it",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "gate",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    66,
+    9
+   ]
+  },
   "size_cells": [
    3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "open": {
+    "foot": [
+     35,
+     96
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_gate_ew_open.png"
+   },
+   "shut": {
+    "foot": [
+     35,
+     62
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_gate_ew_shut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_gate_ns": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   4,
+   92
+  ],
+  "footprint": [
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [],
+  "function": {
+   "interact": {
+    "triggers": [],
+    "verb": "open"
+   }
+  },
+  "kind": "prop",
+  "name": "Picket fence, gate along y",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a gate stands where the path its owner walks crosses the fence (placement-logic rule 2); the trodden way runs through it",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "gate",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
    3
   ],
   "snap": "cell",
@@ -4116,19 +10415,3162 @@
    "owner": null
   },
   "variants": {
-   "woodpile_11": {
+   "open_e": {
     "foot": [
-     39.0,
-     71.0
+     4,
+     92
     ],
-    "png": "res://zones/crossroads/art/woodpile_11.png"
+    "png": "res://kit/props/art/fence/fence_picket_gate_ns_open_e.png"
    },
-   "woodpile_33": {
+   "open_w": {
     "foot": [
-     39.0,
-     71.0
+     59,
+     92
     ],
-    "png": "res://zones/crossroads/art/woodpile_33.png"
+    "png": "res://kit/props/art/fence/fence_picket_gate_ns_open_w.png"
+   },
+   "shut": {
+    "foot": [
+     4,
+     92
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_gate_ns_shut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_n": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   9.0,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_n_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_ne": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   16.5,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   5,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     5,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_ne_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_nes": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   16.5,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   6,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     6,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_nes_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_nesw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   24.0,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, cross",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_nesw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_new": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   24.0,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_new_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_ns": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   9.0,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   3,
+   50
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, straight",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     3,
+     50
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_ns_plain.png"
+   },
+   "post": {
+    "foot": [
+     4,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_ns_post.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_nsw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   16.5,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_nsw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_nw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   16.5,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_nw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_s": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9.0,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_s_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_sw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   16.5,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_sw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_picket_w": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   16.5,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Picket fence, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_picket_w_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_e": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   16.5,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   5,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     5,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_e_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_es": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   16.5,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   7,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     7,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_es_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_esw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   24.0,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_esw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_ew": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   24.0,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   52
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, straight",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     52
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_ew_plain.png"
+   },
+   "post": {
+    "foot": [
+     12,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_ew_post.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_gate_ew": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   36,
+   105
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {
+   "interact": {
+    "triggers": [],
+    "verb": "open"
+   }
+  },
+  "kind": "prop",
+  "name": "Post and rail, gate along x",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a gate stands where the path its owner walks crosses the fence (placement-logic rule 2); the trodden way runs through it",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "gate",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    66,
+    9
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "open": {
+    "foot": [
+     36,
+     105
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_gate_ew_open.png"
+   },
+   "shut": {
+    "foot": [
+     36,
+     68
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_gate_ew_shut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_gate_ns": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   5,
+   99
+  ],
+  "footprint": [
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [],
+  "function": {
+   "interact": {
+    "triggers": [],
+    "verb": "open"
+   }
+  },
+  "kind": "prop",
+  "name": "Post and rail, gate along y",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a gate stands where the path its owner walks crosses the fence (placement-logic rule 2); the trodden way runs through it",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "gate",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "open_e": {
+    "foot": [
+     5,
+     99
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_gate_ns_open_e.png"
+   },
+   "open_w": {
+    "foot": [
+     59,
+     99
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_gate_ns_open_w.png"
+   },
+   "shut": {
+    "foot": [
+     5,
+     99
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_gate_ns_shut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_n": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   9.0,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_n_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_ne": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   16.5,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_ne_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_nes": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   16.5,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   5,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     5,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_nes_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_nesw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   24.0,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, cross",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_nesw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_new": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   24.0,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_new_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_ns": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   9.0,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   2,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, straight",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     2,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_ns_plain.png"
+   },
+   "post": {
+    "foot": [
+     4,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_ns_post.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_nsw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   16.5,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_nsw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_nw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   16.5,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_nw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_s": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9.0,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_s_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_stile_ew": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   13,
+   56
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, stile along x",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a footpath crosses the paddock here: people climb the stile, stock stay in (placement-logic rule 2)",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "stile",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     13,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_stile_ew_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_stile_ns": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   11,
+   65
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, stile along y",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a footpath crosses the paddock here: people climb the stile, stock stay in (placement-logic rule 2)",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "stile",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     11,
+     65
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_stile_ns_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_sw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   16.5,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_sw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_rail_w": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   16.5,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   61
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Post and rail, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_rail_w_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_e": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   16.5,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   7,
+   57
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     7,
+     57
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_e_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_es": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   16.5,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   57
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     57
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_es_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_esw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   24.0,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   57
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     57
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_esw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_ew": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   24.0,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   51
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, straight",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     51
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_ew_plain.png"
+   },
+   "post": {
+    "foot": [
+     12,
+     57
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_ew_post.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_gate_ew": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   35,
+   100
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {
+   "interact": {
+    "triggers": [],
+    "verb": "open"
+   }
+  },
+  "kind": "prop",
+  "name": "Wattle hurdle, gate along x",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a gate stands where the path its owner walks crosses the fence (placement-logic rule 2); the trodden way runs through it",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "gate",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    66,
+    9
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "open": {
+    "foot": [
+     35,
+     100
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ew_open.png"
+   },
+   "shut": {
+    "foot": [
+     35,
+     61
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ew_shut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_gate_ns": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   4,
+   91
+  ],
+  "footprint": [
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [],
+  "function": {
+   "interact": {
+    "triggers": [],
+    "verb": "open"
+   }
+  },
+  "kind": "prop",
+  "name": "Wattle hurdle, gate along y",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a gate stands where the path its owner walks crosses the fence (placement-logic rule 2); the trodden way runs through it",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "gate",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "open_e": {
+    "foot": [
+     4,
+     91
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_e.png"
+   },
+   "open_w": {
+    "foot": [
+     59,
+     91
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_w.png"
+   },
+   "shut": {
+    "foot": [
+     4,
+     91
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_shut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_n": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   9.0,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   56
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_n_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_ne": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   16.5,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   56
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_ne_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_nes": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   16.5,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   56
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_nes_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_nesw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   24.0,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   56
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, cross",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_nesw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_new": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   24.0,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   56
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_new_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_ns": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -12.0,
+   9.0,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   4,
+   54
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, straight",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     4,
+     54
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_ns_plain.png"
+   },
+   "post": {
+    "foot": [
+     4,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_ns_post.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_nsw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   16.5,
+   24.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   56
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, T",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_nsw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_nw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -12.0,
+   16.5,
+   15.0
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   56
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     56
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_nw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_s": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9.0,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   7,
+   57
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     7,
+     57
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_s_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_sw": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   16.5,
+   16.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   57
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, corner",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     57
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_sw_plain.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "fence_wattle_w": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -4.5,
+   16.5,
+   7.5
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   57
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wattle hurdle, end post",
+  "painted": false,
+  "requires": [],
+  "role": "boundary",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "plain": {
+    "foot": [
+     12,
+     57
+    ],
+    "png": "res://kit/props/art/fence/fence_wattle_w_plain.png"
    }
   },
   "z_sort": "foot"
@@ -4240,6 +13682,78 @@
    }
   },
   "z_sort": "ground"
+ },
+ "garden_flower_border": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   37,
+   26
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Flower border",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "inside a front garden's fence or along a house's wall",
+    "rel": "within",
+    "what": "boundary"
+   },
+   {
+    "cells": 6,
+    "note": "a home's garden",
+    "rel": "near",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "garden_flower_border": {
+    "foot": [
+     37,
+     26
+    ],
+    "png": "res://kit/props/art/farm/garden_flower_border.png"
+   }
+  },
+  "z_sort": "foot"
  },
  "log_steps": {
   "approval": "candidate",
@@ -4414,7 +13928,7 @@
    {
     "cells": 1,
     "note": "a footpath meets it at both banks",
-    "rel": "adjacent",
+    "rel": "within",
     "what": "route"
    }
   ],
@@ -4468,7 +13982,7 @@
    {
     "cells": 1,
     "note": "a footpath meets it at both banks",
-    "rel": "adjacent",
+    "rel": "within",
     "what": "route"
    }
   ],
@@ -4494,6 +14008,18 @@
   "z_sort": "ground"
  },
  "waterfall_1": {
+  "anim": {
+   "clip": "fall",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -18.0,
+    -40.0
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/waterfall_1_flow.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": null,
@@ -4531,6 +14057,12 @@
   ],
   "role": "waterfall",
   "shadow": null,
+  "sheet_px": [
+   24,
+   48,
+   12,
+   60
+  ],
   "size_cells": [
    1,
    2
@@ -4551,6 +14083,18 @@
   "z_sort": "ground"
  },
  "waterfall_1_tall": {
+  "anim": {
+   "clip": "fall",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -18.0,
+    -88.0
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/waterfall_1_tall_flow.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": null,
@@ -4596,6 +14140,12 @@
   ],
   "role": "waterfall",
   "shadow": null,
+  "sheet_px": [
+   24,
+   48,
+   12,
+   108
+  ],
   "size_cells": [
    1,
    4
@@ -4616,6 +14166,18 @@
   "z_sort": "ground"
  },
  "waterfall_2": {
+  "anim": {
+   "clip": "fall",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -30.0,
+    -40.0
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/waterfall_2_flow.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": null,
@@ -4661,6 +14223,12 @@
   ],
   "role": "waterfall",
   "shadow": null,
+  "sheet_px": [
+   24,
+   72,
+   12,
+   60
+  ],
   "size_cells": [
    2,
    2
@@ -4681,6 +14249,18 @@
   "z_sort": "ground"
  },
  "waterfall_2_tall": {
+  "anim": {
+   "clip": "fall",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -30.0,
+    -88.0
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/waterfall_2_tall_flow.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": null,
@@ -4742,6 +14322,12 @@
   ],
   "role": "waterfall",
   "shadow": null,
+  "sheet_px": [
+   24,
+   72,
+   12,
+   108
+  ],
   "size_cells": [
    2,
    4
@@ -4762,6 +14348,18 @@
   "z_sort": "ground"
  },
  "waterfall_3": {
+  "anim": {
+   "clip": "fall",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -42.0,
+    -40.0
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/waterfall_3_flow.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": null,
@@ -4815,6 +14413,12 @@
   ],
   "role": "waterfall",
   "shadow": null,
+  "sheet_px": [
+   24,
+   96,
+   12,
+   60
+  ],
   "size_cells": [
    3,
    2
@@ -4835,6 +14439,18 @@
   "z_sort": "ground"
  },
  "waterfall_3_tall": {
+  "anim": {
+   "clip": "fall",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -42.0,
+    -88.0
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/waterfall_3_tall_flow.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": null,
@@ -4912,6 +14528,12 @@
   ],
   "role": "waterfall",
   "shadow": null,
+  "sheet_px": [
+   24,
+   96,
+   12,
+   108
+  ],
   "size_cells": [
    3,
    4
@@ -4932,6 +14554,18 @@
   "z_sort": "ground"
  },
  "waterfall_4": {
+  "anim": {
+   "clip": "fall",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -54.0,
+    -40.0
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/waterfall_4_flow.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": null,
@@ -4993,6 +14627,12 @@
   ],
   "role": "waterfall",
   "shadow": null,
+  "sheet_px": [
+   24,
+   120,
+   12,
+   60
+  ],
   "size_cells": [
    4,
    2
@@ -5013,6 +14653,18 @@
   "z_sort": "ground"
  },
  "waterfall_4_tall": {
+  "anim": {
+   "clip": "fall",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -54.0,
+    -88.0
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/waterfall_4_tall_flow.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": null,
@@ -5106,6 +14758,12 @@
   ],
   "role": "waterfall",
   "shadow": null,
+  "sheet_px": [
+   24,
+   120,
+   12,
+   108
+  ],
   "size_cells": [
    4,
    4
@@ -5139,8 +14797,26 @@
    87.0,
    252.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Beech",
@@ -5157,8 +14833,8 @@
    }
   },
   "size_cells": [
-   7,
-   10
+   8,
+   11
   ],
   "snap": "cell",
   "story": {
@@ -5179,18 +14855,36 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -15.0,
-   -15.0,
-   30.0,
-   15.0
+   -10.5,
+   -12.0,
+   21.0,
+   12.0
   ],
   "deck": null,
   "foot": [
    53.0,
    204.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Birch",
@@ -5207,8 +14901,8 @@
    }
   },
   "size_cells": [
-   4,
-   8
+   5,
+   9
   ],
   "snap": "cell",
   "story": {
@@ -5334,14 +15028,40 @@
    64.0,
    66.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Bramble",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "shrub",
   "shadow": {
    "dir": [
     9,
@@ -5353,7 +15073,7 @@
    ]
   },
   "size_cells": [
-   5,
+   6,
    3
   ],
   "snap": "cell",
@@ -5385,14 +15105,40 @@
    54.0,
    66.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Bramble b",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "shrub",
   "shadow": {
    "dir": [
     9,
@@ -5436,14 +15182,40 @@
    57.0,
    73.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Bush",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "shrub",
   "shadow": {
    "dir": [
     9,
@@ -5456,7 +15228,7 @@
   },
   "size_cells": [
    5,
-   3
+   4
   ],
   "snap": "cell",
   "story": {
@@ -5487,14 +15259,40 @@
    47.0,
    63.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Bush b",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "shrub",
   "shadow": {
    "dir": [
     9,
@@ -5538,14 +15336,40 @@
    66.0,
    67.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Bush c",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "shrub",
   "shadow": {
    "dir": [
     9,
@@ -5643,7 +15467,24 @@
    54.0,
    51.0
   ],
-  "footprint": null,
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
   "forbids": [
    {
     "rel": "on",
@@ -5683,8 +15524,8 @@
    ]
   },
   "size_cells": [
-   4,
-   2
+   5,
+   3
   ],
   "snap": "cell",
   "story": {
@@ -5715,8 +15556,26 @@
    115.0,
    309.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Hollow tree",
@@ -5765,14 +15624,40 @@
    48.0,
    81.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Holly",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "shrub",
   "shadow": {
    "dir": [
     9,
@@ -5784,8 +15669,8 @@
    ]
   },
   "size_cells": [
-   4,
-   3
+   5,
+   4
   ],
   "snap": "cell",
   "story": {
@@ -5816,14 +15701,40 @@
    54.0,
    88.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Holly b",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "shrub",
   "shadow": {
    "dir": [
     9,
@@ -5862,14 +15773,26 @@
    45.0,
    39.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Lintel",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "a lintel fallen from the ring",
+    "rel": "within",
+    "what": "marker"
+   }
+  ],
+  "role": "ruin",
   "shadow": {
    "dir": [
     3,
@@ -5913,14 +15836,56 @@
    91.0,
    54.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -4,
+    -1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ],
+   [
+    3,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Mossy log",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "log",
   "shadow": {
    "dir": [
     6,
@@ -5933,7 +15898,7 @@
   },
   "size_cells": [
    8,
-   2
+   3
   ],
   "snap": "cell",
   "story": {
@@ -5964,7 +15929,16 @@
    106.0,
    243.0
   ],
-  "footprint": null,
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
   "forbids": [
    {
     "rel": "on",
@@ -5992,7 +15966,7 @@
   },
   "size_cells": [
    9,
-   10
+   11
   ],
   "snap": "cell",
   "story": {
@@ -6023,8 +15997,26 @@
    62.0,
    240.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Pine",
@@ -6041,7 +16033,7 @@
    }
   },
   "size_cells": [
-   5,
+   6,
    10
   ],
   "snap": "cell",
@@ -6068,26 +16060,34 @@
    37.0,
    90.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Sapling",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "tree",
   "shadow": {
-   "dir": [
-    3,
-    -3
-   ],
-   "size": [
-    26,
-    6
-   ]
+   "mask": {
+    "offset": [
+     -21,
+     -26
+    ],
+    "png": "res://kit/props/art/shadow_woodland_sapling.png"
+   }
   },
   "size_cells": [
-   3,
+   4,
    4
   ],
   "snap": "cell",
@@ -6119,7 +16119,16 @@
    30.0,
    114.0
   ],
-  "footprint": null,
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
   "forbids": [
    {
     "rel": "on",
@@ -6130,7 +16139,14 @@
   "kind": "prop",
   "name": "Standing stone",
   "painted": false,
-  "requires": [],
+  "requires": [
+   {
+    "cells": 4,
+    "note": "one of a ring: its neighbours within four cells",
+    "rel": "within",
+    "what": "marker"
+   }
+  ],
   "role": "marker",
   "shadow": {
    "dir": [
@@ -6175,13 +16191,33 @@
    28.0,
    90.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Standing stone b",
   "painted": false,
-  "requires": [],
+  "requires": [
+   {
+    "cells": 4,
+    "rel": "within",
+    "what": "marker"
+   }
+  ],
   "role": "marker",
   "shadow": {
    "dir": [
@@ -6194,7 +16230,7 @@
    ]
   },
   "size_cells": [
-   2,
+   3,
    4
   ],
   "snap": "cell",
@@ -6226,13 +16262,33 @@
    28.0,
    81.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Standing stone broken",
   "painted": false,
-  "requires": [],
+  "requires": [
+   {
+    "cells": 4,
+    "rel": "within",
+    "what": "marker"
+   }
+  ],
   "role": "marker",
   "shadow": {
    "dir": [
@@ -6245,8 +16301,8 @@
    ]
   },
   "size_cells": [
-   2,
-   3
+   3,
+   4
   ],
   "snap": "cell",
   "story": {
@@ -6277,13 +16333,33 @@
    33.0,
    96.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Standing stone lean",
   "painted": false,
-  "requires": [],
+  "requires": [
+   {
+    "cells": 4,
+    "rel": "within",
+    "what": "marker"
+   }
+  ],
   "role": "marker",
   "shadow": {
    "dir": [
@@ -6328,13 +16404,41 @@
    40.0,
    78.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Standing stone low",
   "painted": false,
-  "requires": [],
+  "requires": [
+   {
+    "cells": 4,
+    "rel": "within",
+    "what": "marker"
+   }
+  ],
   "role": "marker",
   "shadow": {
    "dir": [
@@ -6347,8 +16451,8 @@
    ]
   },
   "size_cells": [
-   3,
-   3
+   4,
+   4
   ],
   "snap": "cell",
   "story": {
@@ -6379,13 +16483,33 @@
    29.0,
    87.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Standing stone runes",
   "painted": false,
-  "requires": [],
+  "requires": [
+   {
+    "cells": 4,
+    "rel": "within",
+    "what": "marker"
+   }
+  ],
   "role": "marker",
   "shadow": {
    "dir": [
@@ -6398,7 +16522,7 @@
    ]
   },
   "size_cells": [
-   2,
+   3,
    4
   ],
   "snap": "cell",
@@ -6416,6 +16540,86 @@
   },
   "z_sort": "foot"
  },
+ "woodland_stone_sign": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   16.0,
+   40.0
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/dialogue/woodland.json#/stone_sign",
+      "type": "dialogue"
+     }
+    ],
+    "verb": "read"
+   }
+  },
+  "kind": "prop",
+  "name": "Stone sign",
+  "painted": false,
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "marker",
+  "shadow": null,
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "dialogue": [
+    "res://data/dialogue/woodland.json#/stone_sign"
+   ],
+   "owner": null,
+   "quests": [
+    "res://data/quests/woodland_stones.json"
+   ]
+  },
+  "variants": {
+   "sign": {
+    "foot": [
+     16.0,
+     40.0
+    ],
+    "png": "res://art/placeholder/sign.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "woodland_stone_top": {
   "approval": "candidate",
   "blocks_move": false,
@@ -6425,14 +16629,26 @@
    24.0,
    33.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Stone top",
   "painted": false,
-  "requires": [],
-  "role": null,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "a capstone fallen from the ring",
+    "rel": "within",
+    "what": "marker"
+   }
+  ],
+  "role": "ruin",
   "shadow": {
    "dir": [
     3,
@@ -6445,7 +16661,7 @@
   },
   "size_cells": [
    2,
-   1
+   2
   ],
   "snap": "cell",
   "story": {
@@ -6476,14 +16692,32 @@
    43.0,
    57.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Stump",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "stump",
   "shadow": {
    "dir": [
     6,
@@ -6496,7 +16730,7 @@
   },
   "size_cells": [
    4,
-   2
+   3
   ],
   "snap": "cell",
   "story": {
@@ -6527,13 +16761,38 @@
    111.0,
    294.0
   ],
-  "footprint": null,
-  "forbids": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Willow",
   "painted": false,
-  "requires": [],
+  "requires": [
+   {
+    "cells": 4,
+    "note": "willows grow by water",
+    "rel": "within",
+    "what": "water"
+   }
+  ],
   "role": "tree",
   "shadow": {
    "mask": {
@@ -6545,8 +16804,8 @@
    }
   },
   "size_cells": [
-   9,
-   12
+   10,
+   13
   ],
   "snap": "cell",
   "story": {

@@ -64,7 +64,7 @@
  "source_sha256": {
   "art/house-palette.json": "7fd8e8cfd481bc627b4ca6e8425ec3001f80103ae2309f6bc7249ef6326b03dd",
   "game/kit/props/art/shadow_woodland_oak.png": "46bc86fb8e2020a4a46ffec5ce53d5457733fb76045b57444b16f4c5c1779607",
-  "game/kit/props/index.json": "d0c8b6b607d5f761fa0e84838261c3e06350b4aa9d3e961db23b5e8cd581d55e",
+  "game/kit/props/index.json": "0ee65259ae15245594ec7cf9c199af071ae817764fde64ec6d72d4eae2f97c4c",
   "game/kit/terrain/decal_bankstone_0.png": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
   "game/kit/terrain/decal_bankstone_1.png": "ff6e6e4534c777c8d97798f24621fc0d84997f2a871006fdd5c82c35cf6facb8",
   "game/kit/terrain/decal_bankstone_2.png": "e7c654f3980aeb16378897d9cc92e1274e784642a9bcf4da60db845da68ade6d",
@@ -110,7 +110,7 @@
   "game/test/fixtures/kit/generate.py": "06d57a3e5d1a18961611f86b6a4bfa4bf7e1e3c6105358dc79b18e77bb349a25",
   "scripts/art/house_palette.py": "2b64312392fcdeda1c4164c881aa1e35c6c167a5cfaafd704b3a5abc707103ba",
   "scripts/art/kit/build.py": "617fd76854e4bb4787dbd3142458d3bd0bf9077e1ec6527b4e65b18fab89419a",
-  "scripts/art/kit/compose.py": "db385fa37f68d1e14247c8850d606f6ddff1279cffdbe20f1f20f85ab8fa6fb2",
+  "scripts/art/kit/compose.py": "bb23f57830a10e59049c87f7d7f07e5bc02c10dc7ebc99bfa3cc18a9f5be0997",
   "scripts/art/kit/dressing.py": "2c3d80e0f06df646480803f92123512a239d629ba5737194de77c66251fffd3d",
   "scripts/art/kit/edges.py": "5babd36a237fb1da32e0e6f142f556c71eafc0a64d9f87a172e378ec54ab5048",
   "scripts/art/native/accents.json": "4116ad6d7e32ef62efba5789a93b694d15b00db7dc8f23cf61b6f00c48a25b09",

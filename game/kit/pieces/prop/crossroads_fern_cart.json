@@ -67,7 +67,22 @@
    ]
   ]
  },
- "placement": {},
+ "placement": {
+  "purpose": "store",
+  "role": "cart",
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
+ },
  "rendering": {},
  "function": {},
  "story": {

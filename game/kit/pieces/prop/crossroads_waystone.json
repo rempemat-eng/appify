@@ -78,11 +78,13 @@
   "role": "marker",
   "requires": [
    {
-    "rel": "at_edge",
+    "rel": "at_corner",
     "what": "route",
-    "cells": 2
+    "cells": 2,
+    "note": "at a junction: routes on two sides at right angles"
    }
-  ]
+  ],
+  "purpose": "guide"
  },
  "rendering": {
   "cast_shadow": {

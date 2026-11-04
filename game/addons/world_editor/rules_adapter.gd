@@ -2,7 +2,10 @@
 extends RefCounted
 ## Transport only. Placement and full physical findings remain W5/W6 outputs.
 const Relations := preload("res://world/terrain/relations.gd")
-const VALIDATE := "import json,sys; sys.path.insert(0,sys.argv[1]); from scripts.review.kit_scene import check_zone; p=json.load(open(sys.argv[2])); fs=check_zone(p['plan'],p['library'],p['materials']); print(json.dumps({'findings':fs})); sys.exit(1 if any(f.get('severity','fault')=='fault' for f in fs) else 0)"
+## The zone's physical and relation checks (kit_scene), then what fences enclose (enclosures) and
+## the placement logic relations cannot say (placement_audit.check_plan: needs, faces, avoid,
+## points), each on the texel-space plan; the latter two only when the plan itself is sound.
+const VALIDATE := "import json,sys; sys.path.insert(0,sys.argv[1]); from scripts.review.kit_scene import check_zone, normalize; from scripts.art.kit import enclosures, placement_audit; p=json.load(open(sys.argv[2])); fs=check_zone(p['plan'],p['library'],p['materials']); q=normalize(p['plan']) if not any(f.get('check') in ('rules.unknown_piece','rules.plan') for f in fs) else None; fs+=(enclosures.check_zone(q,p['library'])+placement_audit.check_plan(q,p['library'],p['materials'])) if q is not None else []; print(json.dumps({'findings':fs})); sys.exit(1 if any(f.get('severity','fault')=='fault' for f in fs) else 0)"
 static var _sequence := 0
 
 static func failure(check: String, message: String) -> Dictionary:

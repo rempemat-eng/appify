@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_cottage",
  "file": "game/zones/crossroads/art/fern_cottage.png",
- "sha256": "526c298b81a8f1da08f25e65aaf17fce5cf161f6de6dbdc9c3002229f63a0244",
+ "sha256": "48d120c63a2860b28ae25bcd27f2f6dec9be249b1cefad16c8078013cb52c96b",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 144,
-   "tones": 26.631944444444443,
-   "shapes": 43.583333333333336
+   "tones": 26.36111111111111,
+   "shapes": 44.31944444444444
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.865,
-  "tones_ratio": 0.986,
-  "shapes_ratio": 0.865,
+  "ratio": 0.88,
+  "tones_ratio": 0.976,
+  "shapes_ratio": 0.88,
   "passed": false,
   "group": "prop"
  },
@@ -44,16 +44,16 @@
     231,
     62
    ],
-   "message": "crossroads/fern_cottage: the red is lit from the right (luminance rises 67 L per H to the east)",
+   "message": "crossroads/fern_cottage: the red is lit from the right (luminance rises 62 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    30,
+    36,
     182,
-    77,
+    83,
     261
    ],
    "message": "crossroads/fern_cottage door latch: across 8 art px (0.11 A) is too big for a door handle: the size table gives 3 to 7 (0.04 to 0.09 A); Eastward at the same character height: knob or latch 3 to 4 E (0.06 to 0.07 A) at 0.5 to 0.6 of the leaf (17, 12)",
@@ -68,11 +68,11 @@
     238,
     262
    ],
-   "message": "crossroads/fern_cottage: detail bar 0.86 of Eastward's prop band (26.6 tones, 43.6 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage: detail bar 0.88 of Eastward's prop band (26.4 tones, 44.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-03",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

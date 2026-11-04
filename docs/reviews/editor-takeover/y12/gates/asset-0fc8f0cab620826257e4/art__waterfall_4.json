@@ -1,0 +1,270 @@
+{
+ "id": "art/waterfall_4",
+ "file": "game/kit/props/art/waterfall_4.png",
+ "sha256": "5e9af4e9360966068d8c9219575e025c402365ec1fd9c247dc47ccb98d9f79a8",
+ "kind": "waterfall",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  144,
+  94
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 7,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 26,
+   "tones": 9.26923076923077,
+   "shapes": 12.576923076923077
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.25,
+  "tones_ratio": 0.343,
+  "shapes_ratio": 0.25,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.water_flat",
+   "severity": "fault",
+   "box": [
+    68,
+    15,
+    77,
+    50
+   ],
+   "message": "art/waterfall_4: the water is flat: 3 tones, one smooth patch covers 55%",
+   "fix": "give water depth: a dark band under the near rim, the inner wall lit or shaded as the opening curves, a 1 px light waterline and a few short highlights (eastward-edges.md 5.3)",
+   "score": 0.5515463917525774,
+   "threshold": 0.5,
+   "subject": "art/waterfall_4",
+   "extra": {
+    "area": 194,
+    "area_h": 0.035427319211102995,
+    "flat": 0.5515463917525774,
+    "flat_h": 0.01953981008035062,
+    "tones": 3,
+    "planes": 1,
+    "lrange": 0.0,
+    "gx": -68.94076139396422,
+    "gy": 6.120451642495743,
+    "edges": 0.059322033898305086
+   },
+   "box_source": [
+    68,
+    15,
+    77,
+    50
+   ]
+  },
+  {
+   "detector": "detail.glyph",
+   "severity": "fault",
+   "box": [
+    68,
+    15,
+    77,
+    50
+   ],
+   "message": "art/waterfall_4: a flat water mark of 3 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
+   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light",
+   "score": 0.5515463917525774,
+   "threshold": 0.45,
+   "subject": "art/waterfall_4",
+   "extra": {},
+   "box_source": [
+    68,
+    15,
+    77,
+    50
+   ]
+  },
+  {
+   "detector": "detail.water_flat",
+   "severity": "fault",
+   "box": [
+    17,
+    15,
+    45,
+    53
+   ],
+   "message": "art/waterfall_4: the water is flat: 4 tones, one smooth patch covers 32%",
+   "fix": "give water depth: a dark band under the near rim, the inner wall lit or shaded as the opening curves, a 1 px light waterline and a few short highlights (eastward-edges.md 5.3)",
+   "score": 0.3214695752009185,
+   "threshold": 0.5,
+   "subject": "art/waterfall_4",
+   "extra": {
+    "area": 871,
+    "area_h": 0.15905770635500366,
+    "flat": 0.3214695752009185,
+    "flat_h": 0.05113221329437546,
+    "tones": 4,
+    "planes": 3,
+    "lrange": 111.13001251220703,
+    "gx": 47.755765816685106,
+    "gy": 30.285259937319946,
+    "edges": 0.5159574468085106
+   },
+   "box_source": [
+    17,
+    15,
+    45,
+    53
+   ]
+  },
+  {
+   "detector": "detail.water_flat",
+   "severity": "fault",
+   "box": [
+    21,
+    4,
+    123,
+    12
+   ],
+   "message": "art/waterfall_4: the water is flat: 2 tones, one smooth patch covers 28%",
+   "fix": "give water depth: a dark band under the near rim, the inner wall lit or shaded as the opening curves, a 1 px light waterline and a few short highlights (eastward-edges.md 5.3)",
+   "score": 0.27548209366391185,
+   "threshold": 0.5,
+   "subject": "art/waterfall_4",
+   "extra": {
+    "area": 726,
+    "area_h": 0.13257852447041638,
+    "flat": 0.27548209366391185,
+    "flat_h": 0.036523009495982466,
+    "tones": 2,
+    "planes": 2,
+    "lrange": 27.301002502441406,
+    "gx": 2.797021184138922e-15,
+    "gy": -407.7300772026713,
+    "edges": 0.38372093023255816
+   },
+   "box_source": [
+    21,
+    4,
+    123,
+    12
+   ]
+  },
+  {
+   "detector": "detail.water_flat",
+   "severity": "fault",
+   "box": [
+    77,
+    15,
+    128,
+    49
+   ],
+   "message": "art/waterfall_4: the water is flat: 4 tones, one smooth patch covers 26%",
+   "fix": "give water depth: a dark band under the near rim, the inner wall lit or shaded as the opening curves, a 1 px light waterline and a few short highlights (eastward-edges.md 5.3)",
+   "score": 0.2604982206405694,
+   "threshold": 0.5,
+   "subject": "art/waterfall_4",
+   "extra": {
+    "area": 1405,
+    "area_h": 0.25657414170927684,
+    "flat": 0.2604982206405694,
+    "flat_h": 0.06683710737764792,
+    "tones": 4,
+    "planes": 3,
+    "lrange": 60.28199768066406,
+    "gx": -119.24236317066193,
+    "gy": 21.353471882921564,
+    "edges": 0.296875
+   },
+   "box_source": [
+    77,
+    15,
+    128,
+    49
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    0,
+    4,
+    144,
+    75
+   ],
+   "message": "art/waterfall_4: detail bar 0.25 of Eastward's prop band (9.3 tones, 12.6 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.25,
+   "threshold": 0.9,
+   "subject": "art/waterfall_4",
+   "extra": {},
+   "box_source": [
+    0,
+    4,
+    144,
+    75
+   ]
+  },
+  {
+   "detector": "detail.water_flat",
+   "severity": "fault",
+   "box": [
+    47,
+    15,
+    68,
+    51
+   ],
+   "message": "art/waterfall_4: the water is flat: 3 tones, one smooth patch covers 19%",
+   "fix": "give water depth: a dark band under the near rim, the inner wall lit or shaded as the opening curves, a 1 px light waterline and a few short highlights (eastward-edges.md 5.3)",
+   "score": 0.1946564885496183,
+   "threshold": 0.5,
+   "subject": "art/waterfall_4",
+   "extra": {
+    "area": 524,
+    "area_h": 0.09569028487947406,
+    "flat": 0.1946564885496183,
+    "flat_h": 0.01862673484295106,
+    "tones": 3,
+    "planes": 2,
+    "lrange": 111.13001251220703,
+    "gx": 129.50802458257778,
+    "gy": -12.681165839142485,
+    "edges": 0.45187165775401067
+   },
+   "box_source": [
+    47,
+    15,
+    68,
+    51
+   ]
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    0,
+    4,
+    144,
+    75
+   ],
+   "message": "art/waterfall_4: only 9% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)",
+   "score": 0.08828522920203735,
+   "threshold": 0.4,
+   "subject": "art/waterfall_4",
+   "extra": {},
+   "box_source": [
+    0,
+    4,
+    144,
+    75
+   ]
+  }
+ ]
+}

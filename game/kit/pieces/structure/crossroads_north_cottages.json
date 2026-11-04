@@ -295,10 +295,42 @@
     3,
     0
    ]
+  ],
+  "doors": [
+   {
+    "x": [
+     -132,
+     -85
+    ],
+    "faces": "s"
+   },
+   {
+    "x": [
+     48,
+     95
+    ],
+    "faces": "s"
+   }
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "purpose": "live",
+  "role": "house",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "provides": [
+   "home",
+   "hearth"
+  ]
  },
  "rendering": {
   "cast_shadow": {

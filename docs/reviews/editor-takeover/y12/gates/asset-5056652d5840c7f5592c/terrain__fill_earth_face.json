@@ -1,0 +1,21 @@
+{
+ "id": "terrain/fill_earth_face",
+ "file": "game/kit/terrain/fill_earth_face.png",
+ "sha256": "86e662d06b3807649046b5ee4702de49a9ba411d92441e48c9a22dd0c93fc174",
+ "kind": "fill_earth_face",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  768,
+  768
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": []
+}
