@@ -162,3 +162,10 @@ Overview drawing only: no world cell, plan, route or table changes in this round
    4. *Recorded:* Hearthold, Cinder Springs and the lava flow crowd one another at 1920 (labels clear, the ground busy).
    5. *Recorded:* the Company district's slabs remain a regular grid of dark roofs at 1920 (the roof details show from 3840).
    6. *Recorded:* the shard lines (purple dashes) cross the whole map and compete with the roads at 1920; they are a story overlay, so they stay.
+
+### Round 6 (4 Nov, Claude A): the last map round for now (overview drawing only)
+
+1. **The back range at 1920** reads as separate snowfields, not one pale strip: snow keeps to ridges and peaks (above a snowline that varies along the range, and only where the ground stands above its surroundings), bare rock in the rock's own light lies between fields and between the lower peaks, rock ribs show through the fields, and each field's south-east rim is in shade. The world's own ice along the north edge is broken the same way.
+2. **The Company district** keeps the plan's grid: each block casts a shadow to the south-east by its height (18-floor slabs short, 28 to 32-floor towers long), towers have pale steel roofs and slabs slate, the bank and the head office take verdigris copper roofs, the Company park and the plan's squares and yards are drawn as lighter breaks, and street trees line the avenues and the spine.
+3. **Hearthold, Cinder Springs and the lava**: within 40 cells of the fire country's towns the scattered ground is generalised (a majority over 9 x 9 cells) and carries no specks or dot marks (`calm_mask`, read by `map54.base_hi` and `stamps55` only when present, so v55 is unchanged); the lava flow is cooled dark crust with one bright core line and a warm glow beside it.
+4. **The old forest's east edge** fades deeper into the fog than the sea does (22 screen px more where the edge is land), so it reads as forest going into fog.

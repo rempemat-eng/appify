@@ -146,6 +146,7 @@ def tones(c):
 
 
 def stamps55(im, S, R, cg, cid, k, ox, oy, M, ink, peaks=True, calm=(), sparse=None):
+    calm_m = S.get('calm_mask')                                      # v56: no dot, tuft or snag marks round the fire country's towns
     """Tree, tuft, marsh, crevasse and pebble marks, then the range: one treatment (three tones from one ramp, a thin ink
     outline, a cast shadow to the south-east); forests in uneven density with clearings."""
     d = ImageDraw.Draw(im, 'RGBA'); rng = np.random.default_rng(11)
@@ -183,6 +184,8 @@ def stamps55(im, S, R, cg, cid, k, ox, oy, M, ink, peaks=True, calm=(), sparse=N
                 jx, jy = x + rng.uniform(-sp * 0.32, sp * 0.32), y + rng.uniform(-sp * 0.32, sp * 0.32)
                 cc = cell(jx, jy)
                 if cc is None or cg[cc[1], cc[0]] != ci:
+                    continue
+                if calm_m is not None and kind in ('dot', 'tuft', 'snag') and calm_m[cc[1], cc[0]]:
                     continue
                 cx_, cy_ = cc
                 if kind in ('round', 'cone'):
@@ -619,6 +622,74 @@ def draw_trees56(d, pts, R, ink, P, k):
             d.pieslice([X - rr * 0.9, Y - rr * 0.9, X + rr * 0.55, Y + rr * 0.55], 150, 330, fill=lt)
 
 
+COMPANY = 'Neon Harbour: the Company district'
+COMPANY_BOX = (11600, 4150, 12470, 5180)
+
+
+def company_floors(S):
+    P_ = (S.get('plans') or {}).get('neon-harbour') or {}
+    dt = {d_['id']: d_.get('town', '') for d_ in P_.get('districts', [])}
+    return {tuple(b['rect_px']): (b.get('vertical') or {}).get('floors', 4) for b in P_.get('buildings', []) if dt.get(b['district']) == COMPANY}
+
+
+def draw_company56(d, S, R, ink, P, s, k):
+    """The Company district from above, before its roofs: the plan's open spaces (the park, the squares, the yards) as
+    lighter breaks, street trees along its avenues and the spine, and every block's shadow cast to the south-east by its
+    height (18-floor slabs short, 28 to 32-floor towers long), so the roofs stand at their heights."""
+    P_ = (S.get('plans') or {}).get('neon-harbour')
+    if not P_:
+        return
+    bx0, by0, bx1, by1 = COMPANY_BOX
+    inb = lambda x, y: bx0 <= x <= bx1 and by0 <= y <= by1
+    for dd in P_['districts']:                                       # the Company park
+        if dd['id'].endswith('company-park') and dd.get('box_px'):
+            x0, y0, x1, y1 = dd['box_px']; A = P(x0, y0); B = P(x1, y1)
+            d.rectangle([A[0], A[1], B[0], B[1]], fill=R['grass'][3])
+            for i in range(int((x1 - x0) // 36)):
+                draw_trees56(d, [(x0 + 18 + 36 * i, y0 + 16 + (i % 2) * 22)], R, ink, P, k * 0.7)
+    for sq in P_.get('squares', []) + P_.get('open_uses', []):
+        c = sq.get('cells')
+        if not c or len(c) != 4:
+            continue
+        x, y, w, h_ = c[0] * CELL, c[1] * CELL, c[2] * CELL, c[3] * CELL
+        if not inb(x + w / 2, y + h_ / 2):
+            continue
+        A = P(x, y); B = P(x + w, y + h_)
+        green = sq.get('type') == 'green' or 'garden' in (sq.get('name') or '')
+        d.rectangle([A[0], A[1], B[0], B[1]], fill=(R['grass'][3] if green else R['concrete'][5]) + (235,))
+    for st in P_['streets']:                                         # street trees on the avenues and the spine
+        if st['class'] not in ('main', 'side'):
+            continue
+        v = st['vertices_px']
+        if not all(inb(x, y) for x, y in v):
+            continue
+        hw = st['width_cells'] * CELL / 2 - 3
+        for (ax, ay), (bx, by) in zip(v, v[1:]):
+            L = math.hypot(bx - ax, by - ay)
+            if L < 40:
+                continue
+            ux, uy = (bx - ax) / L, (by - ay) / L; nx, ny = -uy, ux
+            pts = [(ax + ux * t_ + nx * sg * hw, ay + uy * t_ + ny * sg * hw) for t_ in np.arange(20, L - 10, 44) for sg in (-1, 1)]
+            draw_trees56(d, pts, R, ink, P, k * 0.55)
+    fl = company_floors(S)                                           # shadows by height, longest first
+    for (x, y, w, h_), f in sorted(fl.items(), key=lambda kv: -kv[1]):
+        Ls = 2.2 * f
+        corners = [(x + w, y), (x + w, y + h_), (x, y + h_)]
+        poly = [P(*corners[0]), P(corners[0][0] + Ls, corners[0][1] + Ls * 0.8), P(corners[1][0] + Ls, corners[1][1] + Ls * 0.8),
+                P(corners[2][0] + Ls, corners[2][1] + Ls * 0.8), P(*corners[2]), P(*corners[1])]
+        d.polygon(poly, fill=ink + (95 if f >= 28 else 70,))
+
+
+def company_roof(R, f, x, y):
+    """Roof colour by height: towers pale steel, slabs a mid slate; the two landmark slabs (the bank, the Company's head
+    office) in verdigris copper."""
+    if (x, y) == (11744, 4608):
+        return R['copper'][3]
+    if (x, y) == (12048, 4280):
+        return R['copper_cool'][4] if 'copper_cool' in R else R['brass'][3]
+    return R['concrete'][4] if f >= 28 else (R['slate'][3] if f >= 18 else R['iron'][3])
+
+
 def roof_details56(d, R, ink, X0, Y0, X1, Y1, x, y, kk):
     """A flat city roof seen from above: rooftop plant, a light well, a planted roof terrace, a helipad on the tallest, now
     and then a neon roof sign; chosen per building so no two neighbours repeat."""
@@ -643,6 +714,9 @@ def roof_details56(d, R, ink, X0, Y0, X1, Y1, x, y, kk):
         d.line([(px_, py_), (px_ + 2.4 * u, py_)], fill=R['iron'][5], width=1)
     if hsh % 5 == 2 and w > 6:                                       # a neon roof sign
         d.line([(X0 + w * 0.2, Y0 + 1), (X0 + w * 0.6, Y0 + 1)], fill=(64, 232, 240) if hsh % 2 else (236, 72, 196), width=max(1, int(u)))
+
+
+_CF = {}
 
 
 def draw_towns(d, S, R, ink, P, s, k, neon_lights=True, roofs=False):
@@ -679,11 +753,21 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True, roofs=False):
         if form in OLD_JP:
             draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door)
             continue
-        c = roof_colour(R, town, use); lt, md, sh = tones(c)
+        c = roof_colour(R, town, use)
+        cfl = None
+        if roofs and town == COMPANY:
+            cfl = _CF.get(id(S))
+            if cfl is None:
+                cfl = _CF[id(S)] = company_floors(S)
+            f_ = cfl.get((x, y, w, h_))
+            if f_ is not None:
+                c = company_roof(R, f_, x, y)
+        lt, md, sh = tones(c)
         if form == 'adobe':
             lt, md, sh = tones(R['sand_warm'][3] if 'sand_warm' in R else c)
         off = max(1.0, 0.9 * kk)
-        d.rectangle([X0 + off, Y0 + off, X1 + off, Y1 + off], fill=ink + (70,))
+        if not (cfl and (x, y, w, h_) in cfl):                         # the Company's shadows are cast by height (draw_company56)
+            d.rectangle([X0 + off, Y0 + off, X1 + off, Y1 + off], fill=ink + (70,))
         d.rectangle([X0, Y0, X1, Y1], fill=sh)
         long_x = (X1 - X0) >= (Y1 - Y0)
         if use in FLAT or form in ('adobe', 'slab', 'bigtower'):
@@ -1229,6 +1313,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     if grow is not None:
         draw_farmsteads56(d, S, grow.get('steads', []), R, ink, P, s, k)
         draw_trees56(d, grow.get('trees', []), R, ink, P, k)
+        draw_company56(d, S, R, ink, P, s, k)
     draw_towns(d, S, R, ink, P, s, k, roofs=grow is not None)
     neon_accents(d, S, P, s, k, lines)
     draw_closed_pass(d, S, M, R, ink, P, s)
@@ -1885,6 +1970,9 @@ def grow_setup(S, M, R, cg, cid, cols, rgb, sea_rgb):
         rgbx = GR.glade_texture(Sx, rgbx, R)
         seax = GR.sea_polish(Sx, seax, R)
         cgr, rgbx, steads = GR.farm_overview(S, Sx, cgr, rgbx, cid, R)
+        cg1 = cgr.copy()
+        cgr, rgbx = GR.fire_calm(S, Sx, cgr, rgbx, cid, R)
+        rgbx = GR.recolour(Sx, cgr, rgbx, cols, R, (cgr != cg1) & (cgr != cid.get('lava', -9)))
     finally:
         M.set_dims(W0, H0)
     audit = lambda Aq, k, ox, oy, lines: GR.haze_audit(Aq, S, M, k, ox, oy, lines, rivers, closed)

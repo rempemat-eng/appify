@@ -456,6 +456,7 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
     sc = k * 150
     N1 = Noise2((Hi, Wi), max(3.0, sc), 7101); N2 = Noise2((Hi, Wi), max(2.0, sc * 0.35), 7102)
     NB = Noise2((Hi, Wi), max(4.0, k * 260), 7103); NC = Noise2((Hi, Wi), max(3.0, k * 110), 7104)   # snowfield swells, crevasses
+    NF = Noise2((Hi, Wi), max(4.0, k * 380), 7105); NR = Noise2((Hi, Wi), max(3.0, k * 240), 7106)   # gaps between fields, rock ribs
     salt_cells = None
     if cgx is not None and cid is not None and 'salt' in cid:
         salt_cells = ndi.gaussian_filter((cgx == cid['salt']).astype(np.float32), 1.3)
@@ -477,6 +478,7 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
     gl_cells = gl_h = None
     if cgx is not None and cid is not None and 'glacier' in cid:      # the world's glaciers: a domed body, transverse crevasses
         g0 = (cgx == cid['glacier']) | ((cgx == cid['snow']) if 'snow' in cid else False)   # the world's ice and snowfields
+        g0 &= F['H'] < 0.17                                             # (not the massif's: its snow follows the relief's snowline)
         gice = ndi.gaussian_filter((cgx == cid['glacier']).astype(np.float32), 0.8)
         if g0.any():
             gl_cells = ndi.gaussian_filter(g0.astype(np.float32), 0.8)
@@ -486,7 +488,7 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
         + np.array(R['sky'][5], np.float32) * 0.2
     ba = R['basalt']; bw = R['basalt_warm']
     bas = np.array([ba[1], ba[2], bw[3], bw[4]], np.float32)
-    PAD = 3
+    PAD = 8
     for r0 in range(0, Hi, band):
         r1 = min(Hi, r0 + band); a0 = max(0, r0 - PAD); a1 = min(Hi, r1 + PAD)
         arr = arr_all[a0:a1].astype(np.float32)
@@ -507,7 +509,15 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
             rk = ndi.map_coordinates(rk_cells, [Y, X], order=0, mode='nearest', output=np.float32) > 0.5
             rock |= rk & (Hp > 0.04) & (Yw < 1400)
         field = rock & (plat > 0.55) & (Hp > 0.6 + 0.08 * n1)                 # the back range's snowfields
-        snow = rock & ((Hp > snowline) | field)
+        nf = NF.rows(a0, a1); nr = NR.rows(a0, a1)
+        zone_ = rock & (plat > 0.15) & (Hp > 0.5)                              # the back range and its snowfields
+        gap = (zone_ & (nf < 0.15)) | (rock & (Hp < 1.02) & (nf < -0.05))      # bare rock between separate fields and peaks
+        rib = zone_ & ~gap & (np.abs(nr) < 0.12) & (nf < 0.45)               # rock ribs showing through a field
+        field &= ~gap & ~rib
+        snowline = snowline + 0.13 * nf                                      # the snow keeps to the peaks; the saddles between go bare
+        hrel = Hp - ndi.gaussian_filter(Hp, max(2.0, k * 90))                # above or below the ground round it
+        high = (Hp > snowline) & (hrel > -0.012 + 0.03 * nf)                  # ridges and peaks white, hollows and lower faces bare
+        snow = rock & (high | field) & ~gap & ~rib
         foot = (Hp > 0.05) & ~rock
         out = arr.copy()
         m = rock & ~snow
@@ -515,6 +525,11 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
         sq = m & (Hp < 0.42) & (n2 > 0.25)                                  # scree on the lower slopes
         out[sq] = scree_c[lv[sq]]
         out[snow] = snow_c[lv[snow]]
+        out[gap] = rock_c[lv[gap]]                                         # the gaps: the rock in its own light
+        sh_ = max(2, int(round(k * 40)))                                     # each field's lee: its south-east rim in shade
+        far = np.zeros_like(field); far[:-sh_, :-sh_] = field[sh_:, sh_:]
+        lee = field & ~far
+        out[lee] = snow_c[np.minimum(lv[lee], 1)]
         nc = NC.rows(a0, a1)                                                # crevasse lines across the snowfields
         crev = field & snow & (np.abs(np.sin(nc * 9.0)) < 0.09) & (n1 > -0.1) & (lv >= 2)
         out[crev] = np.array(snc[2], np.float32)
@@ -540,6 +555,10 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
         if gl_cells is not None:
             gm = ndi.map_coordinates(gl_cells, [Y, X], order=1, mode='nearest', output=np.float32) > 0.5
             gm &= ~rock
+            brk = gm & (Yw < 700)                                         # the ice along the world's north edge: separate fields
+            gapg = brk & (nf < 0.08); ribg = brk & ~gapg & (np.abs(nr) < 0.12) & (nf < 0.45)
+            out[gapg] = rock_c[lv[gapg]]; out[ribg] = rock_c[lv[ribg]]
+            gm &= ~gapg & ~ribg
             if gm.any():
                 gh = ndi.map_coordinates(gl_h, [Y, X], order=1, mode='nearest', output=np.float32)
                 lvg = np.digitize(_shade(gh, k, 500), [0.3, 0.55, 0.8]).astype(np.int8)
@@ -550,6 +569,9 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
                 out[crv] = np.array(R['snow_cool'][0], np.float32) * 0.7 + np.array(R['sky'][2], np.float32) * 0.3
                 ge = gm & ~ndi.binary_erosion(gm, iterations=1)
                 out[ge] = out[ge] * 0.82
+                farg = np.zeros_like(gm); farg[:-sh_, :-sh_] = gm[sh_:, sh_:]
+                leeg = gm & ~farg & (Yw < 700)
+                out[leeg] = ice_c[np.minimum(lvg[leeg], 1)]
         if salt_cells is not None:                                # the salt lake: a clean shore and crust rings
             sm = ndi.map_coordinates(salt_cells, [Y, X], order=1, mode='nearest', output=np.float32)
             if (sm > 0.2).any():
@@ -702,6 +724,46 @@ def overview_classes(Sx, cg, cid, rivers=None):
         ro = nzf(4)
         cg = np.where(F & (din > 5) & (ro > 2.3), fid['rock'], cg)                       # a few rock outcrops
     return cg
+
+
+FIRE_TOWNS = ('Hearthold', 'Cinder Springs', 'Cinderwick', 'Ember forge')
+
+
+def fire_calm(S, Sx, cg, rgbx, cid, R):
+    """Overview only: round the fire country's towns (within 40 cells of a footprint) the scattered ground is generalised
+    (a majority over 9 x 9 cells) and marked calm (no fringe specks, no dot marks); the lava flow is drawn as cooled dark
+    crust with one bright core line down its middle."""
+    Hc, Wc = cg.shape
+    near = np.zeros((Hc, Wc), bool)
+    for nm in FIRE_TOWNS:
+        t = (S.get('towns') or {}).get(nm)
+        if t and t.get('footprint_box'):
+            x0, y0, x1, y1 = t['footprint_box']
+            near[y0 // CELL + NY:y1 // CELL + NY + 1, x0 // CELL:x1 // CELL + 1] = True
+    near = ndi.distance_transform_edt(~near) <= 40
+    keep = [cid[n] for n in ('water', 'lava', 'paved', 'roof', 'tower', 'wallc', 'beach') if n in cid]
+    ids = [i for i in np.unique(cg[near]) if i >= 0 and i not in keep]
+    cg = cg.copy()
+    if ids:
+        votes = np.stack([ndi.uniform_filter((cg == i).astype(np.float32), 9) for i in ids])
+        best = np.array(ids, np.int16)[np.argmax(votes, axis=0)]
+        swap = near & np.isin(cg, ids)
+        cg = np.where(swap, best, cg)
+    Sx['calm_mask'] = near
+    rgbx = rgbx.copy()
+    if 'lava' in cid:
+        rows = (np.arange(Hc) - NY)[:, None] * CELL; cols = np.arange(Wc)[None, :] * CELL
+        lv_ = (cg == cid['lava']) & (rows > 3300) & (cols < 4600)
+        if lv_.any():
+            d = ndi.distance_transform_edt(lv_)
+            core = lv_ & (d >= 2) & (d >= ndi.maximum_filter(d, 7) - 1.0)
+            crust = np.array(R['basalt_warm'][2], np.float32) * 0.7 + np.array(R['lava'][1], np.float32) * 0.3
+            warm = np.array(R['basalt_warm'][3], np.float32) * 0.5 + np.array(R['lava'][2], np.float32) * 0.5
+            rgbx[lv_] = crust
+            inner = lv_ & (d >= 2) & ~core
+            rgbx[inner & (ndi.distance_transform_edt(~core) <= 1.5)] = warm      # the glow either side of the core
+            rgbx[core] = np.array(R['lava'][3], np.float32)
+    return cg, rgbx
 
 
 def ne_zone(Sx):
@@ -912,6 +974,7 @@ def edge_frame(canvas, Sx, R, s, k, ox, oy, isles_clear=True, band=320):
     cyW, _ = cell_of(np.zeros(Hc) + ox + 2, np.arange(Hc)); cyE, cxE = cell_of(np.zeros(Hc) + Wc - 3, np.arange(Hc))
     landW = ndi.gaussian_filter1d(landx[cyW, 0].astype(np.float32), 26 * s)
     landE = ndi.gaussian_filter1d(landx[cyE, cxE].astype(np.float32), 26 * s)
+    dE = dE + 22 * s * landE                                         # the forest fades deeper into the fog than the sea does
     dl = (ndi.distance_transform_edt(~landx) * CELL * k).astype(np.float32) if isles_clear else None
 
     def ramp(d, depth, soft):

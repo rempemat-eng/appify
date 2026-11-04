@@ -349,6 +349,8 @@ def base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, box, ppc, realistic=False):
                 img[rim] *= 0.80
                 dist = ndi.distance_transform_edt(~ash)
                 fringe = (dist > 0) & (dist < 14) & land_hi & (rnd < 0.42 * (1 - dist / 14)) & ~np.isin(cgh, [cid['water'], cid['lava']])
+                if S.get('calm_mask') is not None:                    # v56's overview: no specks round the fire country's towns
+                    fringe &= ~up(S['calm_mask'])
                 img[fringe] = img[fringe] * 0.35 + np.array(R['basalt'][3], np.float32) * 0.65
             wg = cgh == ids['wetgrass']
             if wg.any():
