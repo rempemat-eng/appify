@@ -1291,7 +1291,70 @@ TRADE = {'bread': 'bakery', 'leaf': 'herbalist', 'book': 'library', 'hammer': 's
 INSIDE = {'bakery': 'bread', 'herbalist': 'jars', 'library': 'books'}
 
 
+HALF_CELL = 4.0          # world px: half a cell of the soft grid (8 world px)
+
+
+def on_half_grid(x: float, w: float) -> float:
+    """A door's centre (x from the west end, world px) on the half-cell grid: the nearest line a
+    whole number of half cells from the front's middle (the foot, which sits on the soft grid), a
+    tie going towards the middle. A path of whole cells centres only on a cell's middle or edge
+    (scripts/art/kit/thresholds.py rules.door_path; Matt, 4 Nov: the doors are redesigned, not the
+    houses swapped)."""
+    r = (x - w / 2.0) / HALF_CELL
+    k = math.floor(abs(r) + 0.5 - 1e-9)
+    return w / 2.0 + math.copysign(k, r) * HALF_CELL
+
+
+def doors_on_grid(spec: dict) -> dict:
+    """The look with every door (and the forge's mouth) on the half-cell grid. What is drawn about a
+    door moves with it, so the front keeps its composition: the frame post that stands beside the
+    door on the side it moves towards (within 8 world px of its edge, so the gap between them stays
+    as drawn), and the storm's boards nailed over the opening. A window between the posts is
+    centred between them again. Everything else (the windows, the roof, the chimney, the sign)
+    keeps its place."""
+    s = dict(spec)
+    w = s['w']
+    width = s.get('mouth_w', 30) if s.get('kind') == 'forge' else s.get('door_w', 16)
+    moves = {}
+    if isinstance(s.get('door'), (int, float)):
+        moves[s['door']] = on_half_grid(s['door'], w)
+        s['door'] = moves[s['door']]
+    if s.get('doors'):
+        out = []
+        for dx, paint in s['doors']:
+            moves[dx] = on_half_grid(dx, w)
+            out.append([moves[dx], paint])
+        s['doors'] = out
+    posts = list(s.get('posts', []))
+    moved = set()
+    damage = [list(d) if isinstance(d, (list, tuple)) else d for d in s.get('damage', [])]
+    for old, new in moves.items():
+        delta = new - old
+        if not delta:
+            continue
+        edge = old + math.copysign(width / 2.0, delta)
+        for i, p in enumerate(posts):
+            if 0 < (p - edge) * math.copysign(1, delta) < 8:
+                posts[i] = p + delta
+                moved.add(posts[i])
+        damage = [[d[0], d[1] + delta] + d[2:] if d and d[0] == 'boards' and d[1] == old else d for d in damage]
+    if moved:
+        s['posts'] = posts
+        # a window in a bay whose post moved sits in the middle of that bay again
+        bays = sorted(set([0] + posts + [w]))
+        wins = []
+        for wx in s.get('windows', []):
+            bay = next(((a, b) for a, b in zip(bays, bays[1:]) if a < wx < b), None)
+            ok = bay and (bay[0] in moved or bay[1] in moved) and not any(bay[0] <= m <= bay[1] for m in moves.values())
+            wins.append((bay[0] + bay[1]) / 2.0 if ok else wx)
+        s['windows'] = wins
+    if 'damage' in s:
+        s['damage'] = damage
+    return s
+
+
 def building(spec: dict, seed: int = 0) -> 'V.Built':
+    spec = doors_on_grid(spec)
     rng = np.random.default_rng(seed)
     w, dep = spec['w'], spec['depth']
     wall_h = spec.get('wall_h', 40)
@@ -1349,6 +1412,8 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         for (dx, dpaint) in doors:
             busy.append(door(a, L + q(dx), B, spec.get('door_w', 16), spec.get('door_h', 26), dpaint, rng, wall=wall,
                              arch=spec.get('arch', False)))
+    # each opening's centre in texels from the foot: on the half-cell grid (a multiple of 12)
+    info['doors'] = [L + q(dx) - p.ax for (dx, _paint) in doors] if spec.get('kind') != 'forge' else [L + q(spec['door']) - p.ax]
 
     # the trade's own things on the front
     if trade == 'bakery' and doors:

@@ -106,12 +106,12 @@ def plan() -> dict:
     g[7:10, 11:19] = 'w'
     g[10:19, 14:16] = '#'
     # the cottage's door path, straight out of its door through its garden gate to the lane
-    g[12:19, 28:30] = '#'
+    g[12:19, 26:28] = '#'
     pieces = []
     pieces += _ring('wattle', 2, 9, 5, 12, 5, 'run', dx=-12)
     pieces += _ring('wattle', 10, 20, 2, 10, 15, 'fold', dx=-12)
     # the front garden is the cottage's width: its side runs leave the house's front corners
-    pieces += _front_garden('picket', 24, 34, 11, 16, 29, 'garden', dx=-12)
+    pieces += _front_garden('picket', 25, 34, 11, 16, 27, 'garden', dx=-12)
     # the paddock (12 x 11 cells of post and rail): a footpath straight across it, in over the stile
     # in its north rails and out through its gate to the lane (one cell: a footpath, centred on both),
     # grazed short by the shelter and trough
@@ -146,13 +146,11 @@ def plan() -> dict:
         {'id': 'sheep_3', 'piece': 'farm_sheep_lie', 'at': [360, 240]},
         # bales stacked outside the fold's east side for the next forking out
         {'id': 'bales', 'piece': 'crossroads_hay', 'at': [540, 216], 'variant': 'hay_bales'},
-        # the cottage (its door on the half-cell grid, so its path can centre on it) and its front
-        # garden: flower borders either side of the door path, clear of the door's swing
-        {'id': 'cottage', 'piece': 'crossroads_hut', 'at': [696, 288]},
-        {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [624, 312]},
-        {'id': 'border_2', 'piece': 'garden_flower_border', 'at': [768, 312]},
-        {'id': 'border_3', 'piece': 'garden_flower_border', 'at': [624, 360]},
-        {'id': 'border_4', 'piece': 'garden_flower_border', 'at': [768, 360]},
+        # the farmhouse (the fern cottage, its door drawn on the half-cell grid so its path centres
+        # on it) and its front garden: flower borders east of the door path, clear of the door's swing
+        {'id': 'cottage', 'piece': 'crossroads_fern_cottage', 'at': [708, 288]},
+        {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [744, 312]},
+        {'id': 'border_2', 'piece': 'garden_flower_border', 'at': [744, 360]},
         # the paddock: the field shelter's back to the north rails, the trough by the west rails,
         # the cattle and the horse spread over the grass, off the footpath
         {'id': 'pd_shelter', 'piece': 'farm_shelter', 'at': [996, 192]},
