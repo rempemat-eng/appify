@@ -295,3 +295,204 @@ The detectors reported 0 findings on both assets, so **0 were rejected**. They m
 - **Reduced motion:** judged from frame 0 only. It shows the clumped foam, the dashes and a static share of the R2-5 specks.
 - **The kit's waterfall pieces and strips** (`game/kit/props/art/waterfall_*`) and the kitlab bakes, which share `rocks.plunge`: outside this gate. They should be gated on their own records.
 - **Matt's ruling on spray** (2 Nov, none on the face) is followed. Whether he wants the west grove on the upper or the lower tier for L1 is his call.
+
+## Round 3 (b2410e5e)
+
+A third independent detail-auditor run on the repaint that answers round 2: commits 95a7a6f7, c206e022 and b2410e5e on `claude-a/water-polish` (draft PR #434). This auditor did not paint it and did not write rounds 1 or 2.
+
+**Verdicts: `woodland/ground` fail, `woodland/flow` pass.** Every round-2 art finding is fixed, and so are logic L1, L2 and L4. L3 is half fixed. The ground fails on one new fault: a boulder now sits over the channel just above the fall's lip (R3-1). The fix is small. The flow passes. Its strip is too heavy for a phone (R3-6), which is reported but not graded as art.
+
+### The rule applied to a 32-world-px face
+
+A single rock face 32 world px tall (96 art px, 1.3 H) is acceptable as one tier step:
+- eastward-edges 2.1 gives two face heights: an earth ledge of 12 to 16, and a rock cliff of 32 and up.
+- world-rules 3.2 lists 32 as a ledge between walkable tiers.
+- world-rules 7.2 asks for falls to be stacked in tiers only when they drop more than 48.
+- ground-rules 1 says "a face is as tall as the height difference it divides".
+
+The sentence in ground-rules 2, "A face is one tier high (two cells), the height a face strip draws", describes the kit's two-cell face strip. It does not cap a painted rock face. So round 2's L4 read it too strictly. ground-rules 2 should say so, to stop the next reviewer from tripping on it. The face must be rock, never earth, and this one is.
+
+### What was reviewed
+
+- `game/zones/woodland/art/ground.png` (960 x 1728, sha256 `5961568d...`).
+- `game/zones/woodland/art/flow.png`: 1576 x 3736, 2 x 4 frames of 788 x 934, placed at (172, 0), at 0.16 s a frame. Its sha256 is `b618dd08...`.
+- The plan's `terrace`, `water.animate`, `rock.heap` and `objects`, plus `walk.txt` rows 59 to 79.
+- `screen.terrace`, `rocks.fall`, `rocks.plunge`, `animate.water` and the bake change in `kit/bake.py`.
+- The painter's capture `woodland_native_before_after_1x_round3.png`.
+- `game/zones/kitlab_tiers/ground_baked.png`, before and after.
+- Each flow frame was composited over the ground. The frames were played as local GIFs (fall top at 3x, rill and stream at 2x, foam at 5x) and laid out as contact sheets.
+
+### Commands
+
+- `python3 -m scripts.review.calibrate --flagged <Matt's screenshots> --eastward <Eastward shots>`: **recall 39 of 39**. False positives: 5 on 6 clean screens and 29 on 22 clean props, the same as rounds 1 and 2. `calibration_results.json` was reverted afterwards.
+- `npm run review:asset -- woodland/ground --record` and `-- woodland/flow --record`: both pass the detectors with 0 findings. They missed R3-1 to R3-5.
+- The flow sheet is about 94 MP (PIL warns that it may be a decompression bomb). It is almost all empty grey, because the moving texels are sparse. The flow was therefore judged on the composites, not on the sheet.
+- `python3 -m scripts.review.ground_rules --check`: woodland ok.
+- `python3 -m scripts.review.gate --check --zone woodland` after the verdicts: ok. The ground stays in the seeded fix queue.
+
+### Eastward comparison (same character height)
+
+Each shot was brought to native: 12 and 13 by `core.to_native` at 3.00x, and 15 and 37 box-averaged to 640 x 360. Each was then scaled 1.37x with nearest neighbour. Ours went through `bands.jpeg_roundtrip` (3x, q85) before `bands.patch_counts` (0.25 H patches). The crops stay local.
+
+- **12, the rock cliff (native box 40-80 x 40-140), against our face (560-640 x 760-900).** Crop: `cmp_e12_vs_face_3x.png`.
+  - The bands now match: lip, under-lip shade, a band of horizontal slabs, then boulders lit top left with dark gaps.
+  - Eastward's boulders are calmer, lower in contrast and larger. The biggest is about 35 art px at our scale; ours are 14 to 25 px.
+  - Counts: the face has 23.6 tones and 39.9 shapes a patch (west part: 25.9 and 39.9). 12's cliff has 20.8 and 50.3. So the face reaches 113 % of the tones and 79 % of the shapes. Round 2's earth face had 78 % and 58 % of 13's.
+- **13, the farm ledge (native box 100-200 x 230-290).** Crop: `cmp_e13_vs_face_3x.png`.
+  - 13's earth ledge is about 0.5 H. That is the earth limit our face no longer has to meet, because it is now rock.
+  - In 13 a bush or boulder crosses the rim every one to two tiles. Our east face has one fern and five vines over 540 px, which is the low end of eastward-edges 8.1.
+- **15, the channels (water-only box 480-560 x 0-90).** Crop: `cmp_e15_vs_stream_3x.png`.
+  - 15's body is almost bare (10.8 tones and 21.0 shapes, mostly JPEG grain).
+  - Our stream has 9.3 and 6.0, with depth bands and short east-west dashes. That is the same calm reading.
+- **37, the mist (native box 540-640 x 190-320).** Crop: `cmp_e37_vs_foam_3x.png`.
+  - Our foam heap with its frayed edge reads as foam, not a plate.
+  - The pool and foam box has 30.7 tones and 41.3 shapes, against 37's mist at 26.4 and 68.4.
+
+### Round 2's findings, checked
+
+- **R2-1 and L4, the terrace face: fixed.** Crops: `z_west_4x.png`, `w_east_3x.png`, `z_face_7x.png`, `z_lip_10x.png`.
+  - The face is `ledge(kind='rock')` in stone.
+  - Under a lumpy grass lip there is a 1 px dark line, then about 7 px of under-lip shade cut into horizontal slabs with lit top edges (rows 773-780). Below that is a band of small flat stones (about 781-800).
+  - Then come boulders 14 to 25 px across, each lit top left with a mid body and a dark underside: (181,168,151), (152,142,133), (142,135,130), (112,103,106) and (81,72,80), with gaps of (45,33,47).
+  - Vines hang from the lip at about x 70, 575, 640, 700, 885 and 932. Ferns grow in the face. Fallen boulders lie on the lower lawn at the west foot.
+  - No 100 px run repeats. Residual polish is R3-2 to R3-4.
+- **L1, no tier west of the fall: fixed.** The face runs from x 0 to the cascade, and `walk.txt` blocks rows 64 to 71 from column 0. The west grove is split: holly_b and bush_b stand on the upper tier with their feet at y 248 world, one cell back from the rim, and the oaks wood-16, tree-3 and wood-17 stand below with their feet at 296 to 312. The oaks' crowns overlap the face, as plants over an edge should.
+- **L2, three foot levels: fixed.** The river's lobe, cut and widening are gone. East of the cascade the foot is one line at y 862-870. Wet rock runs down to a 1 px light waterline (76,134,180), then the dark band (14,32,88) and the body. There is no turf lip and no old bank. West of the fall the foot lands on the lower lawn at about y 860, with weeds and fallen stones. Polish on the wet foot is R3-4.
+- **L3, the stair lands on the bridge: half fixed.** See R3-5.
+  - The bridge now has a north abutment, a lit cap row at y 846-850 with blocks either side, and corner posts.
+  - The plan's landing (y 840-870) is real ground, but the deck is drawn from y 850. So the deck covers 23 px of dry landing, and only 6 px of path shows between the last tread (foot at y 839) and the abutment.
+  - `walk.txt` keeps the stair (columns 29 to 34) and the bridge (columns 30 to 33) open.
+- **R2-2, the joints between the ashlar blocks: fixed.** They are now dark crevice stone with moss, not a rope (`z_ashlar_6x.png`).
+- **R2-3, the crest's tongue: fixed.**
+  - The tongue's top steps between rows 760 and 762, over a checker fade.
+  - Two 1 px lit streaks (x 231-232 and x 243) run down to the lip.
+  - The white water breaks at rows 767-770 into runs at x 220-237 and 243-255, with a 5 px gap of mid blue.
+  - Left over: the tongue is still two flat fields, pale over x 216-242 and mid over x 243-258. This is too small to count.
+  - Crops: `z_crest_8x.png` and `z_crest_r2_8x.png`.
+- **R2-4, the foam's clumps: fixed.**
+  - There is now one large heap under the sheet's middle, with smaller clumps at the sides.
+  - Of 759 light texels in the foam, 183 are blue-greys (24 %), up from 12 % in round 2. They sit on the lower right of the clumps.
+  - The foam stays within x 210-266, against a sheet foot of 214-258. In the frames it swells, splits and pops. Crop: `sheet_foam_4x.png`.
+- **R2-5, the specks across the current: fixed.**
+  - `animate.water` now snaps the lanes to eight directions and drops a lifted texel with no neighbour along the flow.
+  - Lone moving texels fall from 151-183 a frame to 2-14. All but three lie in the foam and spray box (y 884-906), where flecks are wanted. The other three are on the sheet.
+  - Every mark of two or more texels in the stream (x ≥ 430, y 845-945) is horizontal: 21 to 25 a frame, none vertical or diagonal. Tracked marks step 8 px east a frame.
+  - Crop: `sheet_stream_3x.png`.
+- **R2-6, the rill does not move: fixed.**
+  - The animate box is now [0, 0, 320, 330].
+  - The rill's dashes run south in lanes 9 to 12 px long and step 12 px a frame. At the jogs they turn diagonal.
+  - Between frames, 556 to 584 texels change in the rill.
+  - Crops: `sheet_rill_2x.png` and `sheet_crest_4x.png`.
+
+### New findings
+
+Coordinates are art px in `ground.png`, or in the scene for flow (the same frame of reference). The crops are local.
+
+**R3-1. Fault (ground): a boulder over the channel just above the lip.**
+- Location: x 243-266, y 744-762. Crops `z_crest_8x.png` and `z_lipstone_r2_vs_r3.png` (232-275 x 736-772 at 12x, round 2 beside round 3).
+- What is wrong:
+  - A mossy two-part boulder and a loose flat stone at its west end cover the east third of the channel from row 744 down to the tongue. At row 743 the water still reaches x 265.
+  - The channel narrows from 47 to about 31 px (x 219-249), then reopens under the rock to x 260 at rows 760-766, so the water seems to run out from under a stone into a 43 px sheet.
+  - The stone has no wet contact: no darker foot, no light ripple line and no shade on the water (eastward-edges 5.3a).
+  - ground-rules 2 allows nothing above the rim over the stream (Matt, 2 Nov: "the waterfall overlaps in an unrealistic way on the top bit").
+  - It is new in this round. Round 2 had clear water there. It sits on the most-viewed spot of the fall-top view.
+  - I did not trace which step lays it. Candidates are the cascade's narrowed face ([68, 93] world, was [62, 98]) with the heap's lip slab (`rock.heap` at [80, 262]), or a seated bank stone.
+- Fix:
+  - Keep the channel clear down to the lip, its banks wobbling at x 216-219 and 263-267 as above row 743.
+  - Set any stone at the lip wholly on the east bank (x ≥ 268, foot on grass or rock).
+  - If a stone must stand in the water, lay it through `softground.seat_stones` so it gets a wet contact, and keep the sheet as wide as the channel at the lip.
+
+**R3-2. Polish (ground): moss hats and boulders of one size.**
+- Location: the whole face, x 0-960, y 790-860. Crops `z_face_7x.png` and `w_east_3x.png`.
+- What is wrong:
+  - About 35 boulders carry the same two-tone lime cap with a drip fringe on their crowns. The fix in R2-1 and 5.3b asked for "moss in the lower joints". Caps on crowns echo calibration's "boulders with moss hats".
+  - The boulders are all 14 to 25 px, with no larger boulder (2.3: "the odd larger boulder"; 12's biggest is about 35 px at our scale). Over 960 px this reads as an even field.
+- Fix:
+  - Move most of the moss into the dark joints and onto the lower, shaded sides, in the leaf_cool ramp, in 3 to 6 px tufts of different shapes.
+  - Keep caps on at most one boulder in five.
+  - Add one boulder of 30 to 40 px every 150 to 250 px.
+  - Add one or two more ferns or a small bush crossing the rim east of the bridge (8.1).
+
+**R3-3. Polish (ground): blades hang from the lip.**
+- Location: the lip, y 772-780. There are 37 thin green strokes 3 or more px long in rows 774-800, besides the vines. Crop `z_lip_10x.png`.
+- What is wrong: olive grass blades 2 to 5 px long hang over the dark under-lip line. eastward-edges 3.1 (Matt, 21 Oct) asks for turf lips without teeth. Round 2's fix line "tufts hanging from the lip" was wrong on this point, and is withdrawn.
+- Fix: a clean lip (`ledge(..., tufts=0)` or blades only standing up). Keep the lumps and the vines.
+
+**R3-4. Polish (ground): a comb on the wet foot.**
+- Location: x 300-960, y 861-863, and the flat wet-rock band at y 864-870. Crops `z_foot_10x.png` and `z_ashlar_6x.png` (the slab under the stack at x 315-347, y 863-873).
+- What is wrong:
+  - `terrace` recolours the ledge's foot weeds into rock tones (`wee`), so the blades remain as a row of 1 px vertical ticks in alternating rock tones. That is a stripe along the foot (2.4: marks run across, never down).
+  - Below it the wet rock is a mostly flat two-tone band.
+- Fix:
+  - Clear the weed blades to the plain wet-rock tone before recolouring, or remove them instead of recolouring.
+  - Break the band with 2 to 4 px wet stones, each with a lit top (3.2: "pebbles and the odd stone").
+
+**R3-5. Logic polish (L3 left over): the deck covers the landing.**
+- Location: x 355-415, y 839-873. Crops `z_steps_6x.png` and `z_steps_r2_6x.png`.
+- What is wrong: the deck and its abutment start at y 846-850, where the landing begins, not at the water (y 873). The stair seems to step straight onto the bridge, with 6 px of path between. The south end is drawn correctly, with its abutment at the shore.
+- Fix: start the north abutment at the water's north edge (about y 866-873), and leave y 840-866 as open path with the stair's foot on it.
+
+**R3-6. Budget (flow, not graded as art).**
+- What is wrong:
+  - The strip is 1576 x 3736 RGBA, imported lossless (`compress/mode=0`), so it takes about 23.6 MB of texture memory decoded.
+  - Only 8,520 of its 5.9 M texels are not transparent (0.14 %), about 550 to 1,200 a frame. The ground under it is 960 x 1728.
+  - Its height is under 4096, so phones can load it. But on a phone that is 3.5 times the ground's own texture memory, spent on about 1,000 moving texels a frame.
+  - Judgment: too heavy for a phone.
+- Fix: split it into a rill strip (about x 150-300, y 0-770) and a stream-and-pool strip (x 172-960, y 740-934), each cropped to its water. Together that is about 2.1 M texels, about 8 MB. A scrolling shader or a palette-indexed strip would cut it further.
+
+**Flow polish (no number):** the rill's dashes run in six fixed columns (x 188, 200, 212, 220, 240 and 248) at a 96 px period, in step, which reads slightly mechanical at 2x. Phase each lane's period by a hash of its lane index.
+
+### The kit: kitlab_tiers' pool under the fall
+
+**K3-1. Fault (kit bake), more than the painter's "minor".**
+- Location: `game/zones/kitlab_tiers/ground_baked.png`, x 615-685, y 326-360. Crops `kt_r2_vs_r3.png` (570-740 x 230-400 at 5x) and `kt_notch_10x.png`.
+- What is wrong:
+  - The new bake turned the pool's north bank into water only below row 337, in a box x 621-667 by y 338-347 with straight vertical sides and square corners.
+  - The rows under the sheet's foot (336-337, the bank's grass lip and rim line) are unchanged. So the white water still lands on a strip of turf and earth, and the foam sits in a separate box below it.
+  - A column of bank earth (the stone c206e022 keeps, x 629-632) stands inside the box.
+  - The box's sides carry no 5.3a rim, and the box breaks the soft grid's rounded corners (1.6) and art-faults rule 3.
+  - Round 2's bake had the same turf strip under the sheet, so the fall has never reached its pool here.
+- Fix:
+  - Start the conversion at the sheet's foot row, not at `r1` in the water mask, so the lip and rim rows under the sheet's columns become water too.
+  - Round the inlet's corners to 2 to 3 texels, and run the 5.3a rim (earth_cool 1, RIM_LINE) down both sides.
+  - Move or drop the bank stone, so it does not stand as a pillar in the plunge.
+
+### Per-part notes (ground)
+
+- **Upper lawn and lip:** the field is kept. The lip is in lumps with a dark line under it. Polish R3-3.
+- **Face:** pass, with polish R3-2. It is rock per 2.3, from x 0 to x 960, behind the cascade, the ashlar stack and the steps.
+- **Cascade face and sheet:** the sheet is x 216-258 and falls in front of wet rock. Pass.
+- **Crest and tongue:** pass, except for the stone R3-1.
+- **Foam, spray and arcs:** pass.
+- **East ashlar stack:** crevice joints. Pass.
+- **Log steps:** five treads with dark risers, the head flush at y 766. Treads 1 and 2 are 3 px narrower on the west, where the stack's shadow falls. That is fine. The foot is R3-5.
+- **Bridge:** planks, nails, posts and both abutments. The north end is R3-5.
+- **Foot and river:** one line with a light waterline. Polish R3-4.
+- **West foot:** the lower lawn, with fallen boulders and weeds. Pass.
+- **Rill, banks and bank stones:** unchanged from round 2 apart from re-seating. Pass.
+
+### Tile log (ground, every region opened against round 2)
+
+| Tile (art px) | View | Notes |
+| --- | --- | --- |
+| 0-480 x 0-576 | 1x, rill at 2x across 8 frames | 8818 texels changed. The rill, its two jogs with north faces, bank stones with wet feet and the rubble band all read; the rill now moves |
+| 480-960 x 0-576 | 1x | 526 texels changed (lawn dressing); no water |
+| 0-480 x 576-1152 | 1x, 3x, crops at 4x to 12x | Upper lawn and lip (R3-3); the face from x 0 (R3-2); the west foot on the lawn with fallen stones; cascade, crest (R3-1), sheet, foam; ashlar stack; steps and landing (R3-5); bridge; pool |
+| 480-960 x 576-1152 | 1x, 3x, 7x, 10x | The face, with vines and a fern (R3-2); the one-line wet foot (R3-4); the stream, its rims, stones and reeds |
+| 0-480 x 1152-1728 | 1x, diff map | 6430 texels: tufts and flowers reshuffled; no water |
+| 480-960 x 1152-1728 | 1x, diff map | 11427 texels: the same; the path is unchanged |
+
+### False positives
+
+The detectors reported 0 findings on both assets, so **0 were rejected**. They missed R3-1 to R3-5 and K3-1. Leads for the detectors:
+
+- A lip check: any non-water texel inside the channel's columns within 24 px above a fall's rim, where the rows above were water.
+- In `test_kit.WaterBanks`: under a fall, the rows between the sheet's foot and the pool must be water, and a water inlet with straight sides and square corners should fail.
+
+### Not checked
+
+- **Motion at speed on a device:** the frames were played as GIFs and contact sheets on a desktop. There was no phone or native check, and no measurement of texture memory on a device (R3-6 is arithmetic).
+- **Night tint:** not checked.
+- **Reduced motion:** judged from frame 0 only. It is the ground plus 541 texels of dashes, with no lone specks.
+- **The kit's waterfall pieces and strips** (`game/kit/props/art/waterfall_*`, changed in this range): not gated here, apart from the kitlab_tiers bake above. They need their own records.
+- **Whether the lower-tier oaks' crowns should hide more of the west face** is a composition call for Matt.

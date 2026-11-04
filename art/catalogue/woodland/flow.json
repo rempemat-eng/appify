@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
+  "verdict": "pass",
   "date": "2026-11-04",
-  "note": "re-rendered after round 2 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 02c10a25: ground fail on the terrace, flow pass): the terrace is a rock face across the whole zone with one foot line and a landing at the bridge, the stack joints are crevice stone, the crest fades and breaks, the foam clumps vary and shade blue-grey, the moving water runs in whole-texel lanes and covers the rill; detectors pass (0 findings). The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
+  "note": "pass, round 3 (docs/reviews/2026-11-04-woodland-water.md, at b2410e5e). R2-5 is fixed: lone moving texels fall from 151-183 a frame to 2-14, nearly all foam flecks and spray at the pool; every mark of two or more texels in the stream is horizontal (21-25 a frame) and steps 8 px east. R2-6 is fixed: the strip covers the rill and the channel above the fall, whose dashes step 12 px south a frame (diagonal at the jogs). The foam churns in every step (370-471 texels change in its box) and frame 0 is a still. Polish: the rill's dashes run in six fixed columns at a 96 px period, in step. Budget, not graded as art: the strip is 1576 x 3736 RGBA, about 23.6 MB uncompressed (compress/mode 0), for 550 to 1,200 moving texels a frame (0.14 % of its area). That is too heavy for a phone. Split it into a rill strip and a stream-and-pool strip, each cropped to its water, to cut it to about a third."
  }
 }
