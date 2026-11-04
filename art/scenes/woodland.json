@@ -63,11 +63,9 @@
      [336, 300]
     ],
     "cells": 3,
-    "add": [
-     [240, 312, 64, 8]
-    ],
+    "add": [],
     "cut": [],
-    "_terrace": "(4 Nov, review round 2 L2) the north lobe at x 160 to 208 and the cut at x 248 to 304 are gone: the river's north bank runs along the terrace's foot, so the face has one foot line"
+    "_terrace": "(4 Nov, review round 2 L2) the north lobe at x 160 to 208, the cut at x 248 to 304 and the matching widening at x 240 to 304 are gone: the river's north bank runs along the terrace's foot, so the face has one foot line, and the river keeps one width under it (its banks still lumped)"
    },
    "pool": [
     [56, 288, 56, 24],
@@ -1725,13 +1723,13 @@
   ["pine-6", "pine", 2, 107, 36, 77],
   ["pine-7", "pine", 110, -13, 36, 77],
   ["tree-8", "bush_c", 5, 383, 30, 65],
-  ["bush-2", "bush_b", 4, 227, 32, 25],
+  ["bush-2", "bush_b", 4, 223, 32, 25],
   ["bush-3", "bush_c", 160, 39, 32, 25],
   ["tree-1", "oak", -4.5, -14, 65, 78],
   ["pine-1", "pine", 50, -13, 36, 77],
   ["tree-2", "oak", 199.5, -14, 65, 78],
   ["pine-2", "pine", 250, -21, 36, 77],
-  ["tree-3", "oak", -4.5, 216, 65, 78],
+  ["tree-3", "oak", -4.5, 226, 65, 78],
   ["pine-3", "pine", 2, 331, 36, 77],
   ["tree-4", "oak", 227.5, 170, 65, 78],
   ["tree-5", "birch", 205, 311, 30, 65],
@@ -1759,8 +1757,8 @@
   ["wood-12", "holly", 250.5, 191, 27, 25],
   ["wood-13", "oak", 251.5, 138, 65, 78],
   ["wood-14", "sapling", 298.5, 205, 19, 27],
-  ["wood-15", "holly_b", -5.5, 227, 27, 25],
-  ["wood-16", "oak", -20.5, 214, 65, 78],
+  ["wood-15", "holly_b", -5.5, 223, 27, 25],
+  ["wood-16", "oak", -20.5, 218, 65, 78],
   ["wood-17", "pine", -6, 235, 36, 77],
   ["wood-18", "bramble_b", 18, 308, 36, 20],
   ["wood-19", "oak", -16.5, 258, 65, 78],

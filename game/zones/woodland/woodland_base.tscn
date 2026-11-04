@@ -315,25 +315,25 @@ size = Vector2(108, 12)
 size = Vector2(192, 48)
 
 [sub_resource type="RectangleShape2D" id="r95"]
-size = Vector2(84, 36)
+size = Vector2(36, 12)
 
 [sub_resource type="RectangleShape2D" id="r96"]
-size = Vector2(168, 12)
+size = Vector2(108, 12)
 
 [sub_resource type="RectangleShape2D" id="r97"]
-size = Vector2(12, 12)
+size = Vector2(84, 24)
 
 [sub_resource type="RectangleShape2D" id="r98"]
-size = Vector2(12, 12)
+size = Vector2(168, 12)
 
 [sub_resource type="RectangleShape2D" id="r99"]
-size = Vector2(192, 12)
+size = Vector2(12, 12)
 
 [sub_resource type="RectangleShape2D" id="r100"]
-size = Vector2(156, 24)
+size = Vector2(12, 12)
 
 [sub_resource type="RectangleShape2D" id="r101"]
-size = Vector2(180, 12)
+size = Vector2(156, 24)
 
 [sub_resource type="RectangleShape2D" id="r102"]
 size = Vector2(120, 36)
@@ -623,7 +623,7 @@ centered = false
 offset = Vector2(-66, -67)
 
 [node name="bush-2" type="Sprite2D" parent="Objects"]
-position = Vector2(60, 756)
+position = Vector2(60, 744)
 texture = ExtResource("t_bush_b")
 centered = false
 offset = Vector2(-47, -63)
@@ -659,7 +659,7 @@ centered = false
 offset = Vector2(-62, -240)
 
 [node name="tree-3" type="Sprite2D" parent="Objects"]
-position = Vector2(84, 882)
+position = Vector2(84, 912)
 texture = ExtResource("t_oak")
 centered = false
 offset = Vector2(-106, -243)
@@ -827,13 +827,13 @@ centered = false
 offset = Vector2(-37, -90)
 
 [node name="wood-15" type="Sprite2D" parent="Objects"]
-position = Vector2(24, 756)
+position = Vector2(24, 744)
 texture = ExtResource("t_holly_b")
 centered = false
 offset = Vector2(-54, -88)
 
 [node name="wood-16" type="Sprite2D" parent="Objects"]
-position = Vector2(36, 876)
+position = Vector2(36, 888)
 texture = ExtResource("t_oak")
 centered = false
 offset = Vector2(-106, -243)
@@ -1396,31 +1396,31 @@ position = Vector2(264, 900)
 shape = SubResource("r94")
 
 [node name="c95" type="CollisionShape2D" parent="Walls"]
-position = Vector2(42, 918)
+position = Vector2(42, 894)
 shape = SubResource("r95")
 
 [node name="c96" type="CollisionShape2D" parent="Walls"]
-position = Vector2(276, 930)
+position = Vector2(54, 906)
 shape = SubResource("r96")
 
 [node name="c97" type="CollisionShape2D" parent="Walls"]
-position = Vector2(498, 942)
+position = Vector2(42, 924)
 shape = SubResource("r97")
 
 [node name="c98" type="CollisionShape2D" parent="Walls"]
-position = Vector2(570, 942)
+position = Vector2(276, 930)
 shape = SubResource("r98")
 
 [node name="c99" type="CollisionShape2D" parent="Walls"]
-position = Vector2(816, 942)
+position = Vector2(498, 942)
 shape = SubResource("r99")
 
 [node name="c100" type="CollisionShape2D" parent="Walls"]
-position = Vector2(78, 960)
+position = Vector2(570, 942)
 shape = SubResource("r100")
 
 [node name="c101" type="CollisionShape2D" parent="Walls"]
-position = Vector2(822, 954)
+position = Vector2(78, 960)
 shape = SubResource("r101")
 
 [node name="c102" type="CollisionShape2D" parent="Walls"]
