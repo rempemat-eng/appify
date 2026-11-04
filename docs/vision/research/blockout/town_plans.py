@@ -89,7 +89,7 @@ OFFICE = {'office', 'tower'}
 # entries (the checker wants one within two screens of each); later shortcuts; quiet corners next to busy ones.
 GAME = {
     'crossroads': {'arrival': 'Valley lane north', 'first_view': 'down the lane from the stone circle into the square: the well in the middle, the bakery and the library either side, the woodland on the right',
-                   'landmarks': [('the well and the library on the square', (6296, 3536)), ('the mill on the Sleepwater', (6200, 3905)), ('the halt and its water tank', (5835, 4040)),
+                   'landmarks': [('the well and the library on the square', (6296, 3536)), ('the mill on the Sleepwater', (6200, 3905)), ('the halt yard and its water tank', (5960, 4336)),
                                  ("the inn at the drovers' market", (6712, 3532)), ('your hut and the garden gate', (6316, 3290)),
                                  ("the farrier's forge at Eastgate", (6780, 3420)), ('the weir on Weir Lane', (6400, 4110))],
                    'shortcuts_later': [('the weir footbridge from Weir Lane to the halt farms', (6300, 4100), 'when the miller trusts you (act 2)'),
@@ -133,11 +133,16 @@ GAME = {
                   'shortcuts_later': [('the shrine path past its last gate, to the sealed pass', (8064, 660), 'later, with the region north of the range (closed now)'),
                                       ('the quarry incline down to Terrace Lane', (8168, 1200), 'when the quarry works again')],
                   'quiet_corners': [('the pine grove above the temple, beside the busy post road', (8010, 896)), ('the moon-viewing terrace by the bathhouse', (7736, 1296))]},
-    'neon-harbour': {'arrival': 'Lull Road', 'first_view': 'off the Lull Road at Canalside: the canal basin, the funicular up to the Skyport, the airships over the Heights and the neon of the Company district across the ria',
+    'neon-harbour': {'arrival': 'Lull Road', 'first_view': 'off the Lull Road into Canalside: the canal running between wall-to-wall houses into the harbour basin, the shard-light blazing on its platform in the middle, the funicular up to the Skyport and the towers of the Company core across the water',
                      'landmarks': [('the Skyport masts and airships', (10040, 4900)), ("the Company's tower", (11850, 4560)), ('Bridgefoot and the falls', (11135, 4462)),
                                    ('the cranes on the long quay', (11250, 5000)), ('the lido on the East Shore', (12100, 5150)), ('the maglev terminus', (11650, 4565)),
-                                   ('the launch tower on the cape', (12125, 6425)), ('the Glintside mills', (11120, 4150)),
-                                   ("Canalside's market gardens and the canal", (10000, 4560)), ('Halcyon Row and its canteen', (12020, 5560))],
+                                   ('the launch tower on the cape', (12125, 6425)), ('the Glintside mills', (10400, 4330)),
+                                   ('the canal-mouth night market', (10364, 4676)), ('Halcyon Row and its canteen', (12020, 5560)),
+                                   ("the shard-light on its platform in the bay, the city's brightest point", (10700, 5540)),
+                                   ('the old chapel-fort and the floating market on Chapel Islet', (10700, 5290)),
+                                   ("the lighthouse on the east horn's mole", (11030, 5720)), ("the Company beacon on the west horn's mole", (10370, 5720)),
+                                   ('the Delta Road gate of the Heights', (9840, 4880)),
+                                   ('the lock at the head of the canal, where the Lull Road enters the city', (9472, 4560))],
                      'shortcuts_later': [('the funicular from the canal basin to the Skyport', (10074, 4935), 'when the funicular is repaired'),
                                          ('the skybridge from the Heights over the ria to the old waterfront', (10500, 4600), 'with the Skyport pass'),
                                          ('the maglev from Glintside to the terminus', (11400, 4300), 'with a Company ticket')],
@@ -173,10 +178,28 @@ THEME = {
     'highgarth': {'crater_effect': "the Starfall's tremor brought the rockfall down on the pass road; the lord sealed the pass, and the shrine "
                                    "path's last timber gate stands below the fallen rock", 'moss': 'the post square',
                   'company': ("a buyer's room at the post inn", 'inn'), 'tech': 'older-made: timber, tile, slate and the water mill; the Garth Road only'},
-    'neon-harbour': {'crater_effect': "the Company crater lies fenced in the Company's yard: its shard light is pumped to the neon", 'moss': 'the market by Canalside',
+    'neon-harbour': {'crater_effect': "the Company crater lies fenced in the Company's yard: its shard light is pumped to the neon", 'moss': 'the canal-mouth night market',
                      'company': ("the Company's tower and its yard: the headquarters", 'tower'),
                      'tech': 'bought shard light: the neon, the maglev and the airships. The old waterfront is the town that was there before the Company'},
 }
+
+# Matt's 2 Nov pass, for the v56 map only: the v55 tables above keep their published values (the v55 exports stay byte for byte)
+import copy as _copy
+GAME_V56 = {k: _copy.deepcopy(GAME[k]) for k in ('crossroads', 'neon-harbour')}
+GAME_V56['neon-harbour']['landmarks'] = [q for q in GAME_V56['neon-harbour']['landmarks'] if q[0] != 'the canal-mouth night market']  # one label (its yard)
+THEME_V56 = {'neon-harbour': dict(THEME['neon-harbour'], moss='the canal-mouth night market')}
+GAME['crossroads']['landmarks'] = [(('the halt and its water tank', (5835, 4040)) if n_ == 'the halt yard and its water tank' else (n_, xy))
+                                   for n_, xy in GAME['crossroads']['landmarks']]
+GAME['neon-harbour']['first_view'] = ('off the Lull Road at Canalside: the canal basin, the funicular up to the Skyport, the airships over the '
+                                      'Heights and the neon of the Company district across the ria')
+_V56_ONLY = {'the canal-mouth night market', "the shard-light on its platform in the bay, the city's brightest point",
+             'the old chapel-fort and the floating market on Chapel Islet', "the lighthouse on the east horn's mole",
+             "the Company beacon on the west horn's mole",
+             'the Delta Road gate of the Heights', 'the lock at the head of the canal, where the Lull Road enters the city'}
+GAME['neon-harbour']['landmarks'] = [(n_, (11120, 4150) if n_ == 'the Glintside mills' else xy) for n_, xy in GAME['neon-harbour']['landmarks']
+                                     if n_ not in _V56_ONLY]
+GAME['neon-harbour']['landmarks'].insert(len(GAME['neon-harbour']['landmarks']) - 1, ("Canalside's market gardens and the canal", (10000, 4560)))
+THEME['neon-harbour']['moss'] = 'the market by Canalside'
 MAIN_SQUARE = {'hearthold': 'the gate market', 'highgarth': 'the post square'}
 
 
@@ -184,7 +207,7 @@ def theme_block(T, pid, P, ts, X):
     """The plan's theme: the waystone on the main square or at the gate, the sightline toward the beam, the crater, Moss, the
     Company's buyer and the technology. Moves (or adds) the town's waystone in the content table."""
     V = X.V
-    th = dict(THEME.get(pid, {}))
+    th = dict((THEME_V56 if getattr(X, 'REVISION', 'v55') == 'v56' and pid in THEME_V56 else THEME).get(pid, {}))
     fb = P['footprint_px']; cx, cy = (fb[0] + fb[2]) / 2, (fb[1] + fb[3]) / 2
     # the waystone: the named main square, else the first square, else beside the main street
     sq = None
@@ -382,6 +405,127 @@ def _box(ts):
     return [int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))]
 
 
+def validate_authored_packet(packet, pid):
+    """Validate the explicit authoring channel; generated outputs are never inputs."""
+    import re
+    if not isinstance(packet, dict) or packet.get('status') != 'proposal':
+        raise ValueError(f'{pid}: authored input must remain a proposal')
+    fields = {'status', 'source', 'baseline', 'terrain_box_cells', 'buildings', 'districts',
+              'district_descriptions', 'open_uses', 'site_authored'}
+    if set(packet) - fields:
+        raise ValueError(f'{pid}: unsupported authored input field')
+    for key in ('source', 'baseline'):
+        pin = packet.get(key)
+        if not isinstance(pin, dict) or set(pin) != {'commit', 'blob', 'path'} or any(
+                not isinstance(pin[x], str) or not re.fullmatch('[0-9a-f]{40}', pin[x]) for x in ('commit', 'blob')):
+            raise ValueError(f'{pid}: missing exact {key} identity')
+        if pin['path'] != f'docs/vision/research/blockout/towns/{pid}.json':
+            raise ValueError(f'{pid}: authored source path mismatch')
+    box = packet.get('terrain_box_cells')
+    if not isinstance(box, list) or len(box) != 4 or any(type(x) is not int for x in box) or min(box) < 0 or min(box[2:]) < 1:
+        raise ValueError(f'{pid}: invalid authored terrain window')
+    records = packet.get('buildings')
+    if not isinstance(records, list) or not records:
+        raise ValueError(f'{pid}: authored buildings must be a nonempty array')
+    seen = set()
+    required = {'id', 'type', 'form', 'footprint_cells', 'rect_px', 'faces', 'door_cells',
+                'purpose', 'occupants', 'district', 'counted', 'counts_as'}
+    for rec in records:
+        if not isinstance(rec, dict) or not required <= set(rec) or set(rec) - required - {'plot_cells', 'plot'}:
+            raise ValueError(f'{pid}: unsupported or incomplete authored building')
+        bid = rec['id']
+        if not isinstance(bid, str) or not re.fullmatch(re.escape(pid) + '-b[0-9]{3}', bid) or bid in seen:
+            raise ValueError(f'{pid}: duplicate or invalid authored building ID')
+        seen.add(bid)
+        for field, length in [('rect_px', 4), ('footprint_cells', 4), ('door_cells', 2)]:
+            value = rec[field]
+            if not isinstance(value, list) or len(value) != length or any(type(x) is not int for x in value):
+                raise ValueError(f'{bid}: invalid {field}')
+        x, y, w, h = rec['rect_px']
+        if min(x, y) < 0 or min(w, h) <= 0 or any(v % CELL for v in rec['rect_px']) or rec['footprint_cells'] != [v // CELL for v in rec['rect_px']]:
+            raise ValueError(f'{bid}: footprint disagrees with its soft-grid rectangle')
+        form = rec['form']
+        if not isinstance(form, str) or form not in TW.BLD or rec['type'] != TW.TYPE_OF.get(form, form):
+            raise ValueError(f'{bid}: unknown or mismatched existing form')
+        (lo, hi), (dlo, dhi) = TW.BLD[form]
+        if not (lo <= w <= hi and dlo <= h <= dhi):
+            raise ValueError(f'{bid}: dimensions outside its existing form')
+        if type(rec['counted']) is not bool or type(rec['counts_as']) is not int or rec['counts_as'] != int(rec['counted']):
+            raise ValueError(f'{bid}: authored contribution disagrees with its standalone building')
+        for key in ('faces', 'district', 'purpose', 'occupants'):
+            if not isinstance(rec[key], str) or not rec[key]:
+                raise ValueError(f'{bid}: missing authored {key}')
+        if ('plot_cells' in rec) != ('plot' in rec):
+            raise ValueError(f'{bid}: incomplete authored plot')
+        if 'plot_cells' in rec:
+            p = rec['plot_cells']
+            if not isinstance(p, list) or len(p) != 4 or any(type(v) is not int for v in p) or min(p) < 0 or min(p[2:]) < 1 or rec['plot'] not in ('yard', 'garden'):
+                raise ValueError(f'{bid}: invalid authored plot')
+    for key in ('districts', 'open_uses'):
+        rows = packet.get(key)
+        if not isinstance(rows, list) or any(not isinstance(r, dict) or not isinstance(r.get('id'), str) for r in rows) or len({r['id'] for r in rows}) != len(rows):
+            raise ValueError(f'{pid}: duplicate or malformed authored {key}')
+    for row in packet['districts']:
+        if set(row) != {'id', 'name', 'centre_px', 'declared', 'town', 'function'} or any(
+                not isinstance(row[k], str) or not row[k] for k in ('id', 'name', 'declared', 'town', 'function')):
+            raise ValueError(f'{pid}: unsupported authored district fields')
+        centre = row['centre_px']
+        if not isinstance(centre, list) or len(centre) != 2 or any(type(v) is not int for v in centre):
+            raise ValueError(f'{pid}: invalid authored district centre')
+    for row in packet['open_uses']:
+        if set(row) != {'id', 'name', 'kind', 'cells'} or any(not isinstance(row[k], str) or not row[k] for k in ('id', 'name', 'kind')):
+            raise ValueError(f'{pid}: unsupported authored open-use fields')
+        cells = row['cells']
+        if not isinstance(cells, list) or len(cells) != 4 or any(type(v) is not int for v in cells) or min(cells) < 0 or min(cells[2:]) < 1:
+            raise ValueError(f'{pid}: invalid authored open-use cells')
+        if not row['id'].startswith(pid + '-o') or row['kind'] not in TW.BUILDABLE:
+            raise ValueError(f'{pid}: unmatched authored open-use identity or kind')
+    if 'site_authored' in packet and (not isinstance(packet['site_authored'], str) or not packet['site_authored']):
+        raise ValueError(f'{pid}: invalid source-authored site description')
+    if not isinstance(packet.get('district_descriptions'), dict):
+        raise ValueError(f'{pid}: invalid district descriptions')
+    for changes in packet['district_descriptions'].values():
+        if not isinstance(changes, dict) or set(changes) - {'declared', 'function'} or any(not isinstance(v, str) or not v for v in changes.values()):
+            raise ValueError(f'{pid}: unsupported district description')
+
+
+def _authored_packet(ts, pid):
+    packets = [t.authored_plan for t in ts if hasattr(t, 'authored_plan')]
+    if not packets:
+        return None
+    if len(packets) != 1 or len(ts) != 1:
+        raise ValueError(f'{pid}: ambiguous authored town input')
+    validate_authored_packet(packets[0], pid)
+    return packets[0]
+
+
+def _authored_access(ts, net, box, pas):
+    """Explicit doors still need a clear route to their declared existing street."""
+    c0, r0, w, h = box
+    occ = _bmask(ts, box)
+    for t in ts:
+        for b in t.buildings:
+            if not b.get('authored_id'):
+                continue
+            bid = b['authored_id']; dc, dr = b['door']; x, y = dc - c0, dr - r0
+            ring = {(rr, cc) for rr, cc, _ in _ring(b['x'] // CELL - c0, b['y'] // CELL - r0, b['w'] // CELL, b['h'] // CELL)}
+            if not (0 <= x < w and 0 <= y < h) or (y, x) not in ring:
+                raise ValueError(f'{bid}: authored door is not on its exterior ring')
+            faces = [e for e in net.elems if e['id'] == b['faces'] and e.get('alive', True)]
+            if len(faces) != 1 or not faces[0]['mask'].any():
+                raise ValueError(f'{bid}: missing or ambiguous authored street')
+            dt, (iy, ix) = ndi.distance_transform_edt(~faces[0]['mask'], return_indices=True)
+            if dt[y, x] > 3.01:
+                raise ValueError(f'{bid}: authored door cannot reach its declared street')
+            ty, tx = iy[y, x], ix[y, x]; n = max(abs(ty - y), abs(tx - x)) + 1
+            line = [(round(y + (ty - y) * k / n), round(x + (tx - x) * k / n)) for k in range(n + 1)]
+            if any(occ[rr, cc] or not pas[rr, cc] and not net.mask[rr, cc] for rr, cc in line):
+                raise ValueError(f'{bid}: authored door access crosses blocked ground')
+            barrier = t.T.get('barrier')
+            if barrier is not None and any(barrier[rr + r0, cc + c0] and not net.mask[rr, cc] for rr, cc in line):
+                raise ValueError(f'{bid}: authored door access crosses a real barrier')
+
+
 def plan_one(T, name, ts, X, tp):
     K = T['K']; H, W = K.shape
     pid = slug(name)
@@ -391,6 +535,19 @@ def plan_one(T, name, ts, X, tp):
     c0 = max(0, (fb[0] - PAD) // CELL); r0 = max(0, (fb[1] - PAD) // CELL)
     c1 = min(W, (fb[2] + PAD) // CELL + 1); r1 = min(H, (fb[3] + PAD) // CELL + 1)
     box = (c0, r0, c1 - c0, r1 - r0)
+    authored = _authored_packet(ts, pid)
+    if authored:
+        c0, r0, w, h = authored['terrain_box_cells']
+        if c0 + w > W or r0 + h > H or not (c0 * CELL <= fb[0] <= fb[2] <= (c0 + w) * CELL and r0 * CELL <= fb[1] <= fb[3] <= (r0 + h) * CELL):
+            raise ValueError(f'{pid}: authored terrain window clips the actual footprint')
+        for t in ts:
+            for b in t.buildings:
+                if b.get('plot'):
+                    pc, pr, pw, ph = b['plot'][:4]
+                    if not (c0 <= pc and r0 <= pr and pc + pw <= c0 + w and pr + ph <= r0 + h):
+                        raise ValueError(f'{pid}: authored terrain window clips an existing plot')
+        c1, r1 = c0 + w, r0 + h
+        box = (c0, r0, w, h)
     sl = (slice(r0, r1), slice(c0, c1))
     net = Net(box, tp)
     streets_out = []
@@ -498,19 +655,44 @@ def plan_one(T, name, ts, X, tp):
                              'street': aid, 'entries_px': [[int(sx), int(sy)]], 'route_kind': 'ferry'})
     # 3. joined to an arrival: orphans get a lane, or are lifted
     pass_ = _passable(T, sl, ts)
+    if authored:
+        _authored_access(ts, net, box, pass_)
     _join(T, net, arrivals, pass_, sl, pid, box, ts)
     # 4. access: doors and closes
     dropped = _access(T, net, pass_, sl, pid, box, ts)
     # 5. no street that serves nothing, no empty block: unused unnamed streets lifted, thin blocks built up or given a named use
     _prune(T, net, sl, ts)
-    opens = _blocks(T, net, sl, pid, box, ts)
+    opens = _blocks(T, net, sl, pid, box, ts, v56_city=pid == 'neon-harbour' and getattr(X, 'REVISION', 'v55') == 'v56')
     dropped += _access(T, net, _passable(T, sl, ts), sl, pid, box, ts)
     if len(ts) > 1:
-        _city_paving(T, net, sl, box, ts)
+        _city_paving(T, net, sl, box, ts, keep_planned=getattr(X, 'REVISION', 'v55') == 'v56')
     # 6. the record
     P = _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X)
     P['open_uses'] = opens
+    if authored:
+        taken_ids = {item['id'] for item in authored['open_uses']}
+        k_ = 0
+        for o in opens:                                              # generated open uses never take an authored one's id
+            if o['id'] in taken_ids:
+                while f'{pid}-o{len(opens) + 1 + k_:02d}' in taken_ids | {q['id'] for q in opens}:
+                    k_ += 1
+                o['id'] = f'{pid}-o{len(opens) + 1 + k_:02d}'
+        ids = {o['id'] for o in opens}
+        for item in authored['open_uses']:
+            if item['id'] in ids:
+                raise ValueError(f'{pid}: duplicate authored open-use ID')
+            cells = item.get('cells')
+            if not isinstance(cells, list) or len(cells) != 4 or any(type(v) is not int for v in cells) or min(cells[2:]) < 1:
+                raise ValueError(f'{pid}: invalid authored open use')
+            if not (c0 <= cells[0] and r0 <= cells[1] and cells[0] + cells[2] <= c1 and cells[1] + cells[3] <= r1):
+                raise ValueError(f'{pid}: authored open use leaves its terrain window')
+            ids.add(item['id']); P['open_uses'].append(dict(item))
     P['theme'] = theme_block(T, pid, P, ts, X)
+    if authored:
+        blockout = {'routes': {rn: {'polyline': pts} for rn, pts in T['route_px'].items()}, 'stations': g.STATIONS}
+        fails, _, _ = tp.check_plan(P, blockout)
+        if fails:
+            raise ValueError(f'{pid}: authored plan fails existing checks: ' + '; '.join(fails))
     return P
 
 
@@ -518,7 +700,7 @@ WILD_GREEN = ['meadow', 'watermeadow', 'broadleaf', 'conifer', 'clearing', 'lawn
               'reeds', 'fireweed', 'scrub', 'steppe']
 
 
-def _city_paving(T, net, sl, box, ts):
+def _city_paving(T, net, sl, box, ts, keep_planned=False):
     """Inside a city, grass and trees only where they are planned (plots, parks, squares, allotments): the rest of the open
     ground within the built envelope becomes paved yards."""
     built = _bmask(ts, box).copy()
@@ -527,6 +709,13 @@ def _city_paving(T, net, sl, box, ts):
     env = ndi.binary_fill_holes(ndi.binary_closing(ndi.distance_transform_edt(~built) <= 8, iterations=6)) & T['land'][sl]
     K = T['K'][sl]
     m = env & np.isin(K, WILD_GREEN) & ~T['taken'][sl]
+    if keep_planned:                                                   # v56: a named open use (a meadow, a carr, a garden) is planned
+        c0, r0 = box[0], box[1]
+        for t in ts:
+            for o in t.outskirts:
+                if o.get('name'):
+                    x0, y0, x1, y1 = o['box']
+                    m[max(0, y0 // CELL - r0):max(0, y1 // CELL - r0), max(0, x0 // CELL - c0):max(0, x1 // CELL - c0)] = False
     K[m] = 'yard'
     return int(m.sum())
 
@@ -582,9 +771,11 @@ def _prune(T, net, sl, ts):
 BLOCK_FORMS = {'neon-harbour': None, 'dust-gulch': ('adobe', 'adobe', 'workshop'), 'palm-spring': ('adobe', 'cottage'), 'hearthold': ('townhouse', 'workshop'),
                'cinderwick': ('cottage', 'townhouse'), 'cogsworth': ('terrace', 'workshop'), 'highgarth': ('house', 'cottage'), 'lagoon-landing': ('cottage', 'boathouse')}
 NEON_FORMS = {'the old waterfront': ('oldhouse', 'oldhouse', 'shop'), 'the docks': ('longwarehouse', 'warehouse'), 'the Lanes and the East Shore': ('aptrow', 'terrace'),
-              'the Company district': ('slab', 'bigtower'), 'the Heights and the Skyport': ('townhouse', 'house')}
+              'the Company district': ('slab', 'bigtower'), 'the Heights and the Skyport': ('townhouse', 'house'),
+              'Canalside, the canal quarter': ('oldhouse', 'townhouse', 'workshop'), 'the Crescent': ('oldhouse', 'townhouse')}
 OPEN_USE = {'the old waterfront': ('a pocket park', 'garden'), 'the docks': ('a stacking yard', 'yard'), 'the Lanes and the East Shore': ('a courtyard', 'yard'),
-            'the Company district': ('a planted plaza', 'plaza'), 'the Heights and the Skyport': ('a terrace garden', 'garden')}
+            'the Company district': ('a planted plaza', 'plaza'), 'the Heights and the Skyport': ('a terrace garden', 'garden'),
+            'Canalside, the canal quarter': ('a canal-side court', 'yard'), 'the Crescent': ('a promenade garden', 'garden')}
 
 
 def block_masks(streets_m, ter_bad):
@@ -621,7 +812,7 @@ def _covered(T, net, ts, box):
     return cov
 
 
-def _blocks(T, net, sl, pid, box, ts):
+def _blocks(T, net, sl, pid, box, ts, v56_city=False):
     c0, r0, w, h = box
     K = T['K']
     sub = K[sl]
@@ -643,6 +834,8 @@ def _blocks(T, net, sl, pid, box, ts):
             t = min(ts, key=lambda t: math.hypot(t.centre[0] - cx, t.centre[1] - cy))
             dname = t.name.split(': ', 1)[1] if ': ' in t.name else None
             forms = NEON_FORMS.get(dname) if dname else BLOCK_FORMS.get(pid) or ('house', 'cottage')
+            if v56_city:                                               # v56 Neon: its streets are already built up; a leftover block gets a use
+                forms = None
             # 1. buildings: on the block's free ground next to its streets, while the town has room
             if it < 2 and forms:
                 edge_d = ndi.distance_transform_edt(m)
@@ -926,15 +1119,153 @@ def _district_fn(uses):
     return best + (' with homes' if sh['homes'] >= 0.3 else '')
 
 
+SCREEN_PX = (40 * CELL, 22.5 * CELL)
+VERTICAL = {'bigtower': (32, 'a roof garden and a helipad', 'lifts and a fire stair'), 'slab': (18, 'roof plant under the neon signs', 'lifts and a fire stair'),
+            'skyport': (8, 'the airship mooring masts', 'lifts and the funicular'), 'tower': (10, 'the lantern gallery', 'a spiral stair'),
+            'aptrow': (7, 'roof terraces and washing lines', 'a stair core')}
+INTERIOR_LATER = {'bigtower', 'slab', 'skyport', 'tower', 'chapel', 'inn', 'public', 'hall', 'station', 'longwarehouse'}
+
+
+def vertical_city(P, T, X):
+    """Neon Harbour's verticality (Matt, 2 Nov: "skyscrapers that you can go up in"): every tall building carries 'vertical'
+    (floors, what is on its roof, how one goes up, its sky bridges); the tenement rows their floors; the buildings that will get
+    an inside 'interior: later'. Sky bridges join Company towers standing within 96 px of each other; the harbour, the funicular
+    and the elevated maglev go into the plan's features."""
+    tall = []
+    dtown = {d_['id']: d_.get('town', '') for d_ in P['districts']}
+    for b in P['buildings']:
+        f = b['form']
+        if f in VERTICAL:
+            n, roof, acc = VERTICAL[f]
+            if f == 'tower' and dtown.get(b['district'], '').endswith('the Company district'):
+                n, roof, acc = (64, 'the spire: an observation deck under the shard-light beacon', 'express lifts') if b.get('spire') else \
+                    (28, 'a roof garden and antennae', 'lifts and a fire stair')
+            b['vertical'] = {'floors': n, 'roof_level': roof, 'access': acc, 'sky_bridges': [], 'way_up': 'lift' in acc or 'funicular' in acc}
+            if f in ('bigtower', 'slab') or (f == 'tower' and n >= 28):
+                tall.append(b)
+        elif f == 'row_tenement':
+            b['vertical'] = {'floors': max(q.get('storeys', 3) for q in b.get('bays', [{}])) + 2, 'roof_level': 'roof terraces and water tanks',
+                             'access': 'a shared stair at each alley', 'sky_bridges': [], 'way_up': False}
+        if f in INTERIOR_LATER:
+            b['interior'] = 'later'
+    bridges = []
+    for i, a in enumerate(tall):
+        for c in tall[i + 1:]:
+            ax, ay, aw, ah = a['rect_px']; cx, cy, cw, ch = c['rect_px']
+            gx = max(cx - (ax + aw), ax - (cx + cw)); gy = max(cy - (ay + ah), ay - (cy + ch))
+            if 0 < gx <= 96 and min(ay + ah, cy + ch) - max(ay, cy) >= 32:
+                y = (max(ay, cy) + min(ay + ah, cy + ch)) // 2
+                xa, xb = (ax + aw, cx) if ax < cx else (cx + cw, ax)
+            elif 0 < gy <= 96 and min(ax + aw, cx + cw) - max(ax, cx) >= 32:
+                x = (max(ax, cx) + min(ax + aw, cx + cw)) // 2
+                xa = xb = x; y = None
+            else:
+                continue
+            if len(a['vertical']['sky_bridges']) >= 2 or len(c['vertical']['sky_bridges']) >= 2:
+                continue
+            fl = min(a['vertical']['floors'], c['vertical']['floors']) * 2 // 3
+            if y is not None:
+                seg = [[int(xa), int(y)], [int(xb), int(y)]]
+            else:
+                ya, yb = (ay + ah, cy) if ay < cy else (cy + ch, ay)
+                seg = [[int(xa), int(ya)], [int(xb), int(yb)]]
+            bridges.append({'between': [a['id'], c['id']], 'floor': fl, 'px': seg})
+            a['vertical']['sky_bridges'].append(c['id']); c['vertical']['sky_bridges'].append(a['id'])
+    fe = P.setdefault('features', {})
+    fe['sky_bridges'] = bridges
+    if T.get('neon_basin'):
+        fe['harbour'] = T['neon_basin']
+    if T.get('neon_lifts'):
+        fe['lifts'] = T['neon_lifts']
+    sky = next((b for b in P['buildings'] if b['form'] == 'skyport'), None)
+    if sky:
+        x, y, w, h = sky['rect_px']
+        fe['funicular'] = {'px': [[10392, 4720], [int(x + w), int(y + h // 2)]], 'stations': ['the canal mouth', 'the Skyport'],
+                           'why': 'up the Heights from the canal mouth to the Skyport'}
+    ml = next((q for q in g.SHORTCUTS if q[0].startswith('maglev')), None)
+    if ml and ml[2] in g.STATIONS:
+        fe['maglev'] = {'elevated': True, 'px': [[int(a), int(b)] for a, b in ml[5][-1:]] + [list(map(int, g.STATIONS[ml[2]]))],
+                        'terminus': ml[2], 'why': 'the elevated maglev from Cogsworth over the city into its terminus'}
+
+
+def discovery(P, ts):
+    """Things to find (docs/vision/pillars.md, density beats size): at least one point of interest on every screen of the town
+    that holds a building: a landmark view, a secret (a quiet corner), a shortcut, or a resident activity (a square, a yard, a
+    workplace). Named features come first; a screen with none gets the activity of its most public building."""
+    x0, y0, x1, y1 = P['footprint_px']
+    tile = lambda x, y: (int((x - x0) // SCREEN_PX[0]), int((y - y0) // SCREEN_PX[1]))
+    items = []
+    GL = P['game_layout']
+    for l in GL.get('landmarks', []):
+        items.append({'kind': 'landmark view', 'what': l['name'], 'xy_px': [int(l['xy'][0]), int(l['xy'][1])]})
+    for q in GL.get('quiet_corners', []):
+        items.append({'kind': 'secret', 'what': q['what'], 'xy_px': [int(q['xy'][0]), int(q['xy'][1])]})
+    for q in GL.get('shortcuts_later', []):
+        items.append({'kind': 'shortcut', 'what': q['what'], 'xy_px': [int(q['xy'][0]), int(q['xy'][1])]})
+    for g_ in P.get('gathering_places', []):
+        items.append({'kind': 'resident activity', 'what': f"people meet at {g_['name']}", 'xy_px': list(g_['xy_px'])})
+    for o in P.get('outskirts', []):
+        if o.get('name'):
+            bx = o['box']
+            items.append({'kind': 'resident activity', 'what': f"{o['name']}: {o.get('why') or 'worked by the townsfolk'}",
+                          'xy_px': [int((bx[0] + bx[2]) / 2), int((bx[1] + bx[3]) / 2)]})
+    have = {tile(*i['xy_px']) for i in items}
+    rank = {'public': 0, 'inn': 1, 'shop': 2, 'workshop': 3, 'hall': 4, 'mill': 5, 'boathouse': 6, 'warehouse': 7}
+    by_tile = {}
+    for b in P['buildings']:
+        x, y, w, h = b['rect_px']
+        by_tile.setdefault(tile(x + w / 2, y + h / 2), []).append(b)
+    for tl, bs in sorted(by_tile.items()):
+        if tl in have:
+            continue
+        b = min(bs, key=lambda b: (rank.get(b['type'], 9), b['id']))
+        x, y, w, h = b['rect_px']
+        items.append({'kind': 'resident activity', 'what': f"{b['purpose']}: {b['occupants']} about their day", 'building': b['id'],
+                      'xy_px': [int(x + w / 2), int(y + h / 2)]})
+        have.add(tl)
+    for i in items:
+        i['screen'] = list(tile(*i['xy_px']))
+    return items
+
+
 LANDMARK_FORMS = {'keep', 'watchkeep', 'temple_hall', 'pagoda', 'tower', 'bigtower', 'station', 'depot', 'skyport', 'warehouse', 'longwarehouse',
                   'hall', 'hangar', 'barracks', 'chapel'}
 LANDMARK_TYPES = {'keep', 'tower', 'station', 'warehouse', 'hall', 'hangar'}
+
+
+# Published Highgarth semantic corrections (Y15/331). Apply after generic trade selection so
+# public-building cycles still advance; descriptions never select geometry or counting policy.
+FORM_DESCRIPTIONS = {
+    'highgarth': {
+        'temple_hall': {'purpose': 'the temple hall'},
+        'pagoda': {'purpose': 'the five-storey pagoda', 'occupants': 'unassigned; X3 roles and routines deferred'},
+        'bathhouse': {'purpose': 'the hot spring bathhouse'},
+        'watchkeep': {'landmark_reason': "on its stone base behind the tarn: the lord's watch faces the sealed north pass"},
+    },
+}
 
 
 def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     K = T['K']; c0, r0, w, h = box
     tr = TRADES.get(pid, DEFAULT_TRADES)
     lead = ts[0]
+    authored = _authored_packet(ts, pid)
+    authored_buildings = {b['id']: b for b in authored['buildings']} if authored else {}
+    actual_authored = [b['authored_id'] for t in ts for b in t.buildings if 'authored_id' in b]
+    import copy
+    deferred = [copy.deepcopy(rec) for t in ts for rec in getattr(t, 'deferred_buildings', [])]
+    deferred_ids = [rec['id'] for rec in deferred]
+    if (len(set(deferred_ids)) != len(deferred_ids) or set(actual_authored) & set(deferred_ids)
+            or set(actual_authored) | set(deferred_ids) != set(authored_buildings)):
+        raise ValueError(f'{pid}: retained/deferred authored IDs do not partition the original proposals')
+    for rec in deferred:
+        if (rec.get('status') != 'deferred' or rec.get('proposal') != authored_buildings[rec['id']]
+                or not isinstance(rec.get('reason'), str) or not rec['reason'].startswith(rec['id'] + ': authored ')
+                or rec.get('source') != authored['source'] or rec.get('baseline') != authored['baseline']):
+            raise ValueError(f'{pid}: deferred proposal lost its original data, identity or fit reason')
+    authored_buildings = {bid: rec for bid, rec in authored_buildings.items() if bid not in set(deferred_ids)}
+    if len(set(actual_authored)) != len(actual_authored) or set(actual_authored) != set(authored_buildings):
+        raise ValueError(f'{pid}: duplicate or unmatched authored building IDs')
     # districts
     dists = []
     if len(ts) > 1:
@@ -951,6 +1282,12 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
             dists.append({'name': lead.name, 'centre_px': list(map(int, lead.centre)), 'declared': lead.purpose, 'town': lead.name})
     for d in dists:
         d['id'] = f"{pid}-d-{slug(d['name'])}"; d['buildings'] = []
+    generic_districts = list(dists)
+    if authored:
+        for district in authored['districts']:
+            if district['id'] in {d['id'] for d in dists} or not district['id'].startswith(pid + '-d-') or district.get('town') != lead.name:
+                raise ValueError(f'{pid}: duplicate or unmatched authored district')
+            dists.append(dict(district, buildings=[]))
     # buildings
     bl = []
     cyc = {}
@@ -960,13 +1297,28 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         i = cyc.get(key, 0); cyc[key] = i + 1
         return L[i % len(L)]
     nb_ = 0
+    reserved_ids = {b_.get('layout_id') or b_.get('authored_id') for t_ in ts for b_ in t_.buildings} | set(authored_buildings) \
+        | {d_['id'] for d_ in deferred}
     for t in ts:
         for b in t.buildings:
             nb_ += 1
-            bid = f'{pid}-b{nb_:03d}'
+            if not (b.get('layout_id') or b.get('authored_id')):        # a generated id never takes an authored or explicit one
+                while f'{pid}-b{nb_:03d}' in reserved_ids:
+                    nb_ += 1
+            bid = b.get('layout_id', b.get('authored_id', f'{pid}-b{nb_:03d}'))
+            if b.get('layout_id') and (not re.fullmatch(re.escape(pid) + r'-b[0-9]{3}', bid)):
+                raise ValueError(f'{pid}: invalid explicit layout identity {bid}')
+            if any(row['id'] == bid for row in bl):
+                raise ValueError(f'{pid}: duplicate exported building ID {bid}')
             cx, cy = b['x'] + b['w'] / 2, b['y'] + b['h'] / 2
-            cand = [d for d in dists if d['town'] == t.name] or dists
+            cand = [d for d in generic_districts if d['town'] == t.name] or generic_districts
             d = min(cand, key=lambda d: math.hypot(d['centre_px'][0] - cx, d['centre_px'][1] - cy))
+            explicit = authored_buildings.get(bid)
+            if explicit:
+                matches = [d for d in dists if d['id'] == explicit['district']]
+                if len(matches) != 1:
+                    raise ValueError(f'{bid}: missing or ambiguous authored district')
+                d = matches[0]
             u = b['use']
             if u in HOMES:
                 occ = f"a {nxt('home', DEFAULT_TRADES['home'])} household" + (' (several, one to a floor)' if u == 'tenement' else '')
@@ -983,8 +1335,16 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
             rec = {'id': bid, 'type': u, 'form': b.get('form', u), 'footprint_cells': [b['x'] // CELL, b['y'] // CELL, b['w'] // CELL, b['h'] // CELL],
                    'rect_px': [b['x'], b['y'], b['w'], b['h']], 'faces': b.get('faces'), 'door_cells': b.get('door'), 'purpose': purpose,
                    'occupants': occ, 'district': d['id'], 'counted': bool(b['counted'])}
+            description = FORM_DESCRIPTIONS.get(pid, {}).get(rec['form'], {})
+            for field in ('purpose', 'occupants'):
+                if field in description:
+                    rec[field] = description[field]
             if b.get('plan'):
                 rec['from_zone_plan'] = True
+            if b.get('spire'):
+                rec['spire'] = True
+            if b.get('street_level'):
+                rec['street_level'] = b['street_level']
             if b.get('bays'):
                 rec['bays'] = b['bays']                               # the fronts sharing this block's walls, each its own width and roof
                 rec['fronts'] = len(b['bays'])
@@ -993,6 +1353,11 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
             if b.get('plot'):
                 px_, py_, pw_, ph_, kind = b['plot']
                 rec['plot_cells'] = [px_, py_, pw_, ph_]; rec['plot'] = kind
+            if explicit:
+                for field in ('type', 'form', 'rect_px', 'footprint_cells', 'faces', 'door_cells', 'counted', 'plot_cells', 'plot'):
+                    if rec.get(field) != explicit.get(field):
+                        raise ValueError(f'{bid}: authored {field} disagrees with derived geometry')
+                rec['purpose'] = explicit['purpose']; rec['occupants'] = explicit['occupants']
             bl.append(rec); d['buildings'].append(bid)
     for d in dists:
         uses = {}
@@ -1006,6 +1371,17 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                 k in (o['name'] or '') for k in ('dock', 'slip', 'yard', 'quay', 'kiln', 'quarry')) else 'edge: yards and pens')
             dists.append({'id': f"{pid}-d-{slug(o['name'] or o['kind'])}", 'name': o['name'], 'function': fn, 'declared': o.get('why'), 'box_px': o['box'],
                           'buildings': [], 'town': t.name})
+    if authored:
+        new_ids = {d['id'] for d in authored['districts']}
+        dists = [d for d in dists if d['id'] not in new_ids] + [d for d in dists if d['id'] in new_ids]
+        ids = [d['id'] for d in dists]
+        if len(set(ids)) != len(ids):
+            raise ValueError(f'{pid}: ambiguous exported district IDs')
+        for ident, fields in authored['district_descriptions'].items():
+            matches = [d for d in dists if d['id'] == ident]
+            if len(matches) != 1:
+                raise ValueError(f'{pid}: unmatched district description {ident}')
+            matches[0].update(fields)
     # streets
     streets = []
     bm_all = _bmask(ts, box)
@@ -1014,7 +1390,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
             s = {k: el[k] for k in ('id', 'name', 'class', 'width_cells', 'vertices_px') if k in el}
             if el['kind'] == 'street':
                 s['frontage'] = el.get('frontage', 'detached')
-                if s['frontage'] == 'continuous' and (ndi.binary_dilation(el['mask'], iterations=1) & ~el['mask'] & bm_all).sum() < 12:
+                if s['frontage'] == 'continuous' and (ndi.binary_dilation(el['mask'], iterations=1) & ~el['mask'] & bm_all).sum() < \
+                        (24 if getattr(X, 'REVISION', 'v55') == 'v56' else 12):
                     s['frontage'] = 'detached'                         # a piece of the street with no row along it
                 if s['frontage'] == 'continuous':
                     s['max_gap_cells'] = el.get('max_gap_cells') or 1
@@ -1040,7 +1417,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         for gp in t.gathering:
             gathering.append({'name': gp[0], 'xy_px': [int(gp[1]), int(gp[2])]})
     # the game layout
-    GL = GAME.get(pid)
+    GL = (GAME_V56 if getattr(X, 'REVISION', 'v55') == 'v56' and pid in GAME_V56 else GAME).get(pid)
     entries = [e for a in arrivals for e in a['entries_px']]
     if GL:
         lms = [{'name': n_, 'xy': list(xy)} for n_, xy in GL['landmarks']]
@@ -1050,7 +1427,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     else:
         big = max(bl, key=lambda b: b['rect_px'][2] * b['rect_px'][3]) if bl else None
         lm = {'name': f"{big['purpose']}, {name}'s largest building" if big else name, 'xy': [big['rect_px'][0] + big['rect_px'][2] // 2, big['rect_px'][1] + big['rect_px'][3] // 2] if big else list(lead.centre)}
-        lms = [lm]
+        lms = [{'name': n_, 'xy': [int(xy[0]), int(xy[1])]} for t_ in ts for n_, xy in getattr(t_, 'named_landmarks', [])] + [lm]
         for e in entries:                                          # a small place: the first building seen from each way in
             sd = lambda xy: max(abs(e[0] - xy[0]) / CELL / 40, abs(e[1] - xy[1]) / CELL / 22.5)
             if bl and min(sd(l['xy']) for l in lms) > 1.8:
@@ -1083,6 +1460,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                 why = 'a view from the arrival: the first big building the traveller sees'
             else:
                 why = f"on the axis of {b.get('faces') or 'its street'}: closing the view along it"
+            why = FORM_DESCRIPTIONS.get(pid, {}).get(b['form'], {}).get('landmark_reason', why)
             landmarks.append({'building': b['id'], 'form': b['form'], 'reason': why})
         elif b['counted']:
             n = b.get('fronts', 1)
@@ -1090,7 +1468,11 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         else:
             b['counts_as'] = 0
     counted = sum(b['counts_as'] for b in bl)
-    tgt = lead.target if len(ts) == 1 else (60, 90)
+    if authored:
+        for rec in bl:
+            if rec['id'] in authored_buildings and rec != authored_buildings[rec['id']]:
+                raise ValueError(f"{rec['id']}: authored record disagrees with computed count or metadata")
+    tgt = lead.target if len(ts) == 1 else ((150, 200) if getattr(X, 'REVISION', 'v55') == 'v56' else (60, 90))   # v56: the packed city round its bay
     size = lead.size if len(ts) == 1 else 'city'
     lv = [L for L in T.get('levelled', []) if fb[0] - 8 <= L[0] <= fb[2] and fb[1] - 8 <= L[1] <= fb[3]]
     plan = {
@@ -1127,6 +1509,19 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                     'of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and '
                     'workplaces to the ids here, and walk residents on the streets (ids) only.',
     }
+    if getattr(X, 'REVISION', 'v55') == 'v56':                       # Matt's 2 Nov pass and pillars.md: the v56 map only
+        if pid == 'neon-harbour':
+            vertical_city(plan, T, X)
+        plan['discovery'] = discovery(plan, ts)
+    fill_def = [copy.deepcopy(rec) for t in ts for rec in getattr(t, 'deferred_fill', [])]
+    if deferred or fill_def:
+        plan['deferred_buildings'] = deferred + fill_def
+    if authored and 'site_authored' in authored:
+        plan['site']['authored'] = authored['site_authored']
+    if getattr(X, 'REVISION', 'v55') == 'v56':
+        plan['grid']['origin'] = 'world px, top-left of the prospective v56 continent (blockout-v56.json coords)'
+        if pid in ('crossroads', 'neon-harbour'):
+            plan['site']['authored'] = 'v56 source-authored street blocks, retained303 inventory; new real-ground checks required'
     return plan
 
 
@@ -1152,7 +1547,8 @@ TOWN_MAT = {   # plan id: (streets and squares, yards, open ground inside the to
     'lagoon-landing': (21, 22, 22), 'crossroads': (24, 25, None), 'highgarth': (17, 27, 28), 'fernhollow': (25, 25, None), 'lullford': (24, 25, None),
     'driftwood': (22, 22, None), 'gullwick': (22, 22, None), 'canalside': (24, 25, None), 'glintside': (1, 25, None),
     'halcyon-row': (24, 22, None), 'launch-cape': (12, 12, None)}
-NEON_MAT = {'the old waterfront': 1, 'the docks': 4, 'the Lanes and the East Shore': 3, 'the Company district': 2, 'the Heights and the Skyport': 5}
+NEON_MAT = {'the old waterfront': 1, 'the docks': 4, 'the Lanes and the East Shore': 3, 'the Company district': 2, 'the Heights and the Skyport': 5,
+            'Canalside, the canal quarter': 1, 'the Crescent': 1}
 STREET_K = ['lane', 'plaza', 'boulevard', 'arcade', 'quay', 'road', 'path', 'stair', 'trail', 'dock', 'stall', 'fishmarket']
 OPEN_K = ['meadow', 'watermeadow', 'steppe', 'scrub', 'broadleaf', 'conifer', 'clearing', 'lawn', 'heath', 'gorse', 'fallow', 'thicket', 'felltree',
           'bramble', 'wild', 'tor', 'boulders', 'scree', 'barren', 'desert', 'sand', 'alpine', 'carr', 'reeds', 'fireweed']

@@ -1,0 +1,790 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "driftwood",
+ "name": "Driftwood",
+ "size": "village",
+ "size_note": "village",
+ "target": [
+  8,
+  12
+ ],
+ "buildings_counted": 7,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the prospective v56 continent (blockout-v56.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the valley's landing place: fishers' cottages, the lighthouse keeper's house, the ferry pier",
+  "terrain": "the cove at the Sleepwater's mouth under the Headland",
+  "fit": "",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   -1,
+   2
+  ],
+  "levelled_footprints": 0
+ },
+ "footprint_px": [
+  6160,
+  4952,
+  6704,
+  5108
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "driftwood-arr1",
+   "kind": "path",
+   "route": "Coast Path",
+   "street": "driftwood-a1",
+   "entries_px": [
+    [
+     6832,
+     5227
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "driftwood-arr2",
+   "kind": "path",
+   "route": "Valley lane south",
+   "street": "driftwood-a2",
+   "entries_px": [
+    [
+     6379,
+     4845
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "driftwood-s01",
+   "name": "the Strand (1)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6164.0,
+     5108.0
+    ],
+    [
+     6292.0,
+     5108.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "driftwood-c02",
+    "driftwood-c03",
+    "driftwood-s05"
+   ]
+  },
+  {
+   "id": "driftwood-s02",
+   "name": "the Strand (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6340.0,
+     5108.0
+    ],
+    [
+     6660.0,
+     5108.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "driftwood-a1",
+    "driftwood-c01",
+    "driftwood-s05"
+   ]
+  },
+  {
+   "id": "driftwood-a1",
+   "name": "Coast Path",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6660.0,
+     5058.6
+    ],
+    [
+     6676.4,
+     5080.9
+    ],
+    [
+     6717.3,
+     5165.9
+    ],
+    [
+     6730.5,
+     5184.8
+    ],
+    [
+     6767.7,
+     5205.9
+    ],
+    [
+     6831.7,
+     5227.1
+    ]
+   ],
+   "follows_route": "Coast Path",
+   "connects": [
+    "driftwood-a2",
+    "driftwood-s02"
+   ]
+  },
+  {
+   "id": "driftwood-a2",
+   "name": "Valley lane south",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6379.3,
+     4845.5
+    ],
+    [
+     6383.1,
+     4868.0
+    ],
+    [
+     6391.1,
+     4890.2
+    ],
+    [
+     6414.7,
+     4924.6
+    ],
+    [
+     6442.6,
+     4952.3
+    ],
+    [
+     6504.4,
+     4998.2
+    ],
+    [
+     6528.1,
+     5020.5
+    ],
+    [
+     6536.0,
+     5033.6
+    ],
+    [
+     6568.5,
+     5063.2
+    ],
+    [
+     6588.7,
+     5070.2
+    ],
+    [
+     6609.3,
+     5072.6
+    ],
+    [
+     6631.3,
+     5069.7
+    ],
+    [
+     6660.0,
+     5058.6
+    ]
+   ],
+   "follows_route": "Valley lane south",
+   "connects": [
+    "driftwood-a1"
+   ]
+  },
+  {
+   "id": "driftwood-s05",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6292.0,
+     5108.0
+    ],
+    [
+     6324.0,
+     5108.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "driftwood-c01",
+    "driftwood-s01",
+    "driftwood-s02"
+   ]
+  },
+  {
+   "id": "driftwood-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6328.0,
+     5056.0
+    ],
+    [
+     6328.0,
+     5096.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "driftwood-s02",
+    "driftwood-s05"
+   ]
+  },
+  {
+   "id": "driftwood-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6152.0,
+     5040.0
+    ],
+    [
+     6152.0,
+     5096.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "driftwood-s01"
+   ]
+  },
+  {
+   "id": "driftwood-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6232.0,
+     5048.0
+    ],
+    [
+     6232.0,
+     5096.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "driftwood-s01"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Driftwood",
+   "centre_px": [
+    6440,
+    5080
+   ],
+   "declared": "the valley's landing place: fishers' cottages, the lighthouse keeper's house, the ferry pier",
+   "town": "Driftwood",
+   "id": "driftwood-d-driftwood",
+   "buildings": [
+    "driftwood-b001",
+    "driftwood-b002",
+    "driftwood-b003",
+    "driftwood-b004",
+    "driftwood-b005",
+    "driftwood-b006",
+    "driftwood-b007"
+   ],
+   "mix": {
+    "cottage": 4,
+    "house": 2,
+    "boathouse": 1
+   },
+   "function": "homes"
+  },
+  {
+   "id": "driftwood-d-the-quay",
+   "name": "the quay",
+   "function": "docks and works yards",
+   "declared": "the ferry's landing and the boats, at the Sleepwater's mouth",
+   "box_px": [
+    6448,
+    5124,
+    6504,
+    5148
+   ],
+   "buildings": [],
+   "town": "Driftwood"
+  }
+ ],
+ "gathering_places": [],
+ "size_table_px": {
+  "boathouse": [
+   [
+    72,
+    104
+   ],
+   [
+    56,
+    64
+   ]
+  ],
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ]
+ },
+ "fronts": 7,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "driftwood-b001",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    770,
+    632,
+    8,
+    5
+   ],
+   "rect_px": [
+    6160,
+    5056,
+    64,
+    40
+   ],
+   "faces": "driftwood-s01",
+   "door_cells": [
+    774,
+    637
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "driftwood-b002",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    790,
+    625,
+    10,
+    6
+   ],
+   "rect_px": [
+    6320,
+    5000,
+    80,
+    48
+   ],
+   "faces": "driftwood-c01",
+   "door_cells": [
+    790,
+    631
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "driftwood-b003",
+   "type": "boathouse",
+   "form": "boathouse",
+   "footprint_cells": [
+    820,
+    623,
+    9,
+    7
+   ],
+   "rect_px": [
+    6560,
+    4984,
+    72,
+    56
+   ],
+   "faces": "driftwood-a2",
+   "door_cells": [
+    820,
+    630
+   ],
+   "purpose": "a boathouse",
+   "occupants": "a boat owner",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "driftwood-b004",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    830,
+    625,
+    8,
+    5
+   ],
+   "rect_px": [
+    6640,
+    5000,
+    64,
+    40
+   ],
+   "faces": "driftwood-a1",
+   "door_cells": [
+    833,
+    630
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "driftwood-b005",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    770,
+    625,
+    8,
+    5
+   ],
+   "rect_px": [
+    6160,
+    5000,
+    64,
+    40
+   ],
+   "faces": "driftwood-c02",
+   "door_cells": [
+    769,
+    629
+   ],
+   "purpose": "a cottage",
+   "occupants": "a craft household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "driftwood-b006",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    779,
+    625,
+    7,
+    5
+   ],
+   "rect_px": [
+    6232,
+    5000,
+    56,
+    40
+   ],
+   "faces": "driftwood-c03",
+   "door_cells": [
+    779,
+    630
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "driftwood-b007",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    790,
+    619,
+    10,
+    6
+   ],
+   "rect_px": [
+    6320,
+    4952,
+    80,
+    48
+   ],
+   "faces": "driftwood-a2",
+   "door_cells": [
+    799,
+    618
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "quay",
+   "name": "the quay",
+   "box": [
+    6448,
+    5124,
+    6504,
+    5148
+   ],
+   "why": "the ferry's landing and the boats, at the Sleepwater's mouth"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Coast Path",
+  "first_view": "Driftwood from the Coast Path: a boathouse, Driftwood's largest building ahead",
+  "landmarks": [
+   {
+    "name": "a boathouse, Driftwood's largest building",
+    "xy": [
+     6596,
+     5012
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    834,
+    642,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.7,
+   0.9
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields",
+  "materials_cells": {
+   "sand": 471
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   755,
+   604,
+   99,
+   50
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "12g4~13g2~9g3r2b~29g5.3g16.",
+   "7g5~18g~6g.2g3r2b2~21g.5g4.21g",
+   "7~24g~3g.g2.g3r2b2~26g4.22g",
+   "21g.9g2~g4.2g4r2b~26g3.23g",
+   "19g.g7.4g~g5.g4r2b~25g3.24g",
+   "19g.g7.4g~g5.g4r2b~25g3.24g",
+   "14g15.4g~6g4r3b~23g5.20g2.g",
+   "14g9.10g~7g3r3b~21g.3g.18g.6g",
+   "14g.6g.11g~7g4r3b21g.3g.25g",
+   "33g~8g3r3br19g2.29g",
+   "33g~9g2r4br18g2.29g",
+   "33g~9g2r4b2r16g3.22g.6g",
+   "33g~10g2r3b3r15g3.25g.3g",
+   "33g~11gr3b5r39g.5g",
+   "33g~11gr3b5r39g.5g",
+   "33g~g10.g4b6r43g",
+   "32g~2g10.g~3b7r6g2.25g.4g.3g",
+   "32g~2g10.2g2~b8r5g2.34g",
+   "32g~2g10.2g3~10r2g3.34g",
+   "32g~2g10.2g4~10r3g10.25g",
+   "32g~2g10.2g4~2g9r3g9.17g.7g",
+   "15g8.g7.g~2g10.2g4~3g9r2g9.g8.16g",
+   "15g8.g7.g~2g10.3g3~5g8rg9.g8.16g",
+   "15g8.g7.g~2g10.3g3~5g8rg9.g8.16g",
+   "15g8.g7.g~2g10.3g3~6g8r9.g8.16g",
+   "13g10.g7.g~2g10.3g4~7g6r9.g8.16g",
+   "13g2.8g2.7g~2g10.3g4~7g8r9g4r13g.5g",
+   "13g2.8g2.8g~g2.12g3~8g8r6g6r19g",
+   "13g12.8g~g2.12g3~9g19r17g2.",
+   "13g12.8g~g2.12g3~12g16r12g.3g3.",
+   "13g12.9g~2.12g4~12g18r11g5.",
+   "13g12.9g~2.12g4~.g.21g6r9g6.g",
+   "13g12.9g~2.12g4~.g.21g6r9g6.g",
+   "13g36.4b24.7r4g.g6.3g",
+   "14g36.3b25.6r4g6.2g.g.",
+   "14g36.3b26.6r3g4.7g",
+   "47g3.3~16.10g6rg.g2.9g",
+   "47g3.3~3.g3.7~3.10g6r7g.5g",
+   "24g14.7~5.3~.18~8.7r5g.5g.",
+   "24g11.12~3.25~6.6rg4.7g",
+   "6g8.8g10.43~2.g3.7r2g.6g2r",
+   "6g8.8g10.43~2.g3.7r2g.6g2r",
+   "19.2g11.44~6.6r2g.4g4r",
+   "31.46~3.g.7r2g8r",
+   "29.51~3.16r",
+   "28.53~4.14r",
+   "27.55~4.13r",
+   "25.57~4.g.11r",
+   "7.9~8.58~g6.2g8r",
+   "3.15~5.60~6.5g5r"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "a boathouse, Driftwood's largest building",
+   "xy_px": [
+    6596,
+    5012
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the quay: the ferry's landing and the boats, at the Sleepwater's mouth",
+   "xy_px": [
+    6476,
+    5136
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a farming household about their day",
+   "building": "driftwood-b001",
+   "xy_px": [
+    6192,
+    5076
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  }
+ ],
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    6292,
+    5108
+   ],
+   "at": "beside the Strand (1)",
+   "table_name": "Driftwood",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    6351,
+    4955
+   ],
+   "to_px": [
+    6303,
+    4802
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -107
+  },
+  "crater": {
+   "name": "the Crossroads crater",
+   "xy_px": [
+    6484,
+    3712
+   ],
+   "distance_px": 1319,
+   "effect": "the Crossroads crater lies 1300 px away; its scorch points to the valley",
+   "road": "Valley lane south",
+   "road_leaves_at_px": [
+    6379,
+    4845
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    6292,
+    5108
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

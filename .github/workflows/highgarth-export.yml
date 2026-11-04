@@ -1,0 +1,41 @@
+name: Highgarth export semantics
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'docs/vision/research/blockout/town_plans.py'
+      - 'docs/vision/research/blockout/towns55.py'
+      - 'docs/vision/research/blockout/geo5.py'
+      - 'scripts/review/town_plan.py'
+      - 'docs/vision/research/blockout/towns/highgarth.json'
+      - 'docs/vision/research/blockout/towns/gullwick.json'
+      - 'scripts/review/test_highgarth_export.py'
+      - 'docs/codex/highgarth-town-polish.md'
+      - '.github/workflows/highgarth-export.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  export:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install existing blockout dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-dejavu-core fonts-dejavu-extra
+          python -m pip install 'numpy==2.5.3' 'scipy==1.18.1' 'Pillow==12.3.0' 'scikit-image==0.26.0'
+      - name: Check real exporter records and the unchanged town layout
+        run: |
+          python -m unittest scripts.review.test_highgarth_export
+          python scripts/review/town_plan.py --town highgarth

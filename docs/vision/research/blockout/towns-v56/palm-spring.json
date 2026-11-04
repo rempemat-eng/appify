@@ -1,0 +1,1260 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "palm-spring",
+ "name": "Palm Spring",
+ "size": "medium",
+ "size_note": "medium",
+ "target": [
+  14,
+  22
+ ],
+ "buildings_counted": 14,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the prospective v56 continent (blockout-v56.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the first water in the dry country: the Willow Run comes up again in the spring; irrigated gardens, date and fig orchards, the caravans' rest on the Drover's Road, and the diviner (Mirra) who keeps the spring",
+  "terrain": "round the spring pool and along its two channels, on the gravel where the Willow Run resurfaces; scrub and steppe round it",
+  "fit": "the gardens follow the two channels from the spring; houses ring the pool on the dry gravel above them",
+  "dry": true,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   6,
+   8
+  ],
+  "levelled_footprints": 1
+ },
+ "footprint_px": [
+  3040,
+  2596,
+  3536,
+  2960
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "palm-spring-arr1",
+   "kind": "road",
+   "route": "Drover's Road",
+   "street": "palm-spring-a1",
+   "entries_px": [
+    [
+     3645,
+     3027
+    ],
+    [
+     2934,
+     2669
+    ]
+   ],
+   "route_kind": "road"
+  }
+ ],
+ "streets": [
+  {
+   "id": "palm-spring-s01",
+   "name": "the Caravan Road (Drover's Road) (1)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     3536.5,
+     2917.0
+    ],
+    [
+     3500.0,
+     2891.0
+    ],
+    [
+     3480.5,
+     2884.0
+    ],
+    [
+     3449.5,
+     2879.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Drover's Road",
+   "connects": [
+    "palm-spring-a1"
+   ]
+  },
+  {
+   "id": "palm-spring-s02",
+   "name": "the Caravan Road (Drover's Road) (2)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     3319.0,
+     2881.5
+    ],
+    [
+     3274.5,
+     2873.5
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Drover's Road",
+   "connects": [
+    "palm-spring-a1",
+    "palm-spring-s03"
+   ]
+  },
+  {
+   "id": "palm-spring-s03",
+   "name": "the Caravan Road (Drover's Road) (3)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     3238.5,
+     2855.5
+    ],
+    [
+     3212.5,
+     2832.5
+    ],
+    [
+     3159.0,
+     2762.0
+    ],
+    [
+     3129.5,
+     2731.0
+    ],
+    [
+     3112.0,
+     2718.5
+    ],
+    [
+     3072.0,
+     2700.5
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Drover's Road",
+   "connects": [
+    "palm-spring-a1",
+    "palm-spring-c01",
+    "palm-spring-s02",
+    "palm-spring-s06"
+   ]
+  },
+  {
+   "id": "palm-spring-s04",
+   "name": "Spring Ring",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     3060.0,
+     2596.0
+    ],
+    [
+     3396.0,
+     2596.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "palm-spring-s05",
+    "palm-spring-s06"
+   ]
+  },
+  {
+   "id": "palm-spring-s05",
+   "name": "Spring Ring (east)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     3396.0,
+     2596.0
+    ],
+    [
+     3396.0,
+     2820.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "palm-spring-s04",
+    "palm-spring-s07"
+   ]
+  },
+  {
+   "id": "palm-spring-s06",
+   "name": "Spring Ring (west)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     3060.0,
+     2596.0
+    ],
+    [
+     3060.0,
+     2692.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "palm-spring-a1",
+    "palm-spring-s03",
+    "palm-spring-s04"
+   ]
+  },
+  {
+   "id": "palm-spring-s07",
+   "name": "the east gate",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     3396.0,
+     2820.0
+    ],
+    [
+     3396.0,
+     2876.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "palm-spring-a1",
+    "palm-spring-s05"
+   ]
+  },
+  {
+   "id": "palm-spring-a1",
+   "name": "Drover's Road",
+   "class": "arrival",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     3645.4,
+     3027.3
+    ],
+    [
+     3609.7,
+     3002.6
+    ],
+    [
+     3536.3,
+     2916.8
+    ],
+    [
+     3518.7,
+     2901.9
+    ],
+    [
+     3499.9,
+     2891.2
+    ],
+    [
+     3458.8,
+     2879.7
+    ],
+    [
+     3411.3,
+     2878.4
+    ],
+    [
+     3335.4,
+     2882.2
+    ],
+    [
+     3287.2,
+     2877.3
+    ],
+    [
+     3265.6,
+     2870.6
+    ],
+    [
+     3245.6,
+     2860.5
+    ],
+    [
+     3212.3,
+     2832.5
+    ],
+    [
+     3144.9,
+     2745.5
+    ],
+    [
+     3112.0,
+     2718.5
+    ],
+    [
+     3092.8,
+     2708.3
+    ],
+    [
+     3049.6,
+     2694.0
+    ],
+    [
+     2933.8,
+     2669.0
+    ]
+   ],
+   "follows_route": "Drover's Road",
+   "connects": [
+    "palm-spring-s01",
+    "palm-spring-s02",
+    "palm-spring-s03",
+    "palm-spring-s06",
+    "palm-spring-s07"
+   ]
+  },
+  {
+   "id": "palm-spring-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     3112.0,
+     2800.0
+    ],
+    [
+     3152.0,
+     2800.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "palm-spring-s03"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Spring Row",
+   "centre_px": [
+    3282,
+    2680
+   ],
+   "declared": "houses round the pool under the palms",
+   "town": "Palm Spring",
+   "id": "palm-spring-d-spring-row",
+   "buildings": [
+    "palm-spring-b001",
+    "palm-spring-b002",
+    "palm-spring-b003",
+    "palm-spring-b004",
+    "palm-spring-b005",
+    "palm-spring-b014"
+   ],
+   "mix": {
+    "cottage": 5,
+    "shop": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "the caravanserai",
+   "centre_px": [
+    3420,
+    2830
+   ],
+   "declared": "the inn, stables and stores on the Drover's Road",
+   "town": "Palm Spring",
+   "id": "palm-spring-d-the-caravanserai",
+   "buildings": [
+    "palm-spring-b006",
+    "palm-spring-b007",
+    "palm-spring-b012",
+    "palm-spring-b013"
+   ],
+   "mix": {
+    "cottage": 2,
+    "inn": 1,
+    "barn": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "name": "Channel Row",
+   "centre_px": [
+    3170,
+    2900
+   ],
+   "declared": "gardeners' houses along the south-west channel",
+   "town": "Palm Spring",
+   "id": "palm-spring-d-channel-row",
+   "buildings": [
+    "palm-spring-b008",
+    "palm-spring-b009",
+    "palm-spring-b010"
+   ],
+   "mix": {
+    "cottage": 2,
+    "shop": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "name": "Palm Row",
+   "centre_px": [
+    3400,
+    2900
+   ],
+   "declared": "along the south-east channel to the orchards",
+   "town": "Palm Spring",
+   "id": "palm-spring-d-palm-row",
+   "buildings": [
+    "palm-spring-b011"
+   ],
+   "mix": {
+    "cottage": 1
+   },
+   "function": "homes"
+  },
+  {
+   "id": "palm-spring-d-the-date-gardens",
+   "name": "the date gardens",
+   "function": "edge: farms and gardens",
+   "declared": "date palms, figs and vegetables on the channels",
+   "box_px": [
+    3080,
+    2880,
+    3480,
+    3080
+   ],
+   "buildings": [],
+   "town": "Palm Spring"
+  },
+  {
+   "id": "palm-spring-d-the-palm-garden",
+   "name": "the palm garden",
+   "function": "edge: farms and gardens",
+   "declared": "date palms watered from the spring",
+   "box_px": [
+    3200,
+    2560,
+    3240,
+    2600
+   ],
+   "buildings": [],
+   "town": "Palm Spring"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the spring square",
+   "xy_px": [
+    3350,
+    2780
+   ]
+  },
+  {
+   "name": "the pool steps",
+   "xy_px": [
+    3282,
+    2700
+   ]
+  }
+ ],
+ "size_table_px": {
+  "adobe": [
+   [
+    40,
+    56
+   ],
+   [
+    32,
+    40
+   ]
+  ],
+  "barn": [
+   [
+    112,
+    144
+   ],
+   [
+    64,
+    80
+   ]
+  ],
+  "inn": [
+   [
+    112,
+    144
+   ],
+   [
+    64,
+    80
+   ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
+  ]
+ },
+ "fronts": 14,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "palm-spring-b001",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    385,
+    326,
+    6,
+    5
+   ],
+   "rect_px": [
+    3080,
+    2608,
+    48,
+    40
+   ],
+   "faces": "palm-spring-s04",
+   "door_cells": [
+    388,
+    325
+   ],
+   "purpose": "a cottage",
+   "occupants": "a gardener's household",
+   "district": "palm-spring-d-spring-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b002",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    392,
+    328,
+    6,
+    5
+   ],
+   "rect_px": [
+    3136,
+    2624,
+    48,
+    40
+   ],
+   "faces": "palm-spring-s04",
+   "door_cells": [
+    395,
+    327
+   ],
+   "purpose": "a cottage",
+   "occupants": "a date grower's household",
+   "district": "palm-spring-d-spring-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b003",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    399,
+    328,
+    5,
+    5
+   ],
+   "rect_px": [
+    3192,
+    2624,
+    40,
+    40
+   ],
+   "faces": "palm-spring-s04",
+   "door_cells": [
+    401,
+    327
+   ],
+   "purpose": "a cottage",
+   "occupants": "a caravan guide's household",
+   "district": "palm-spring-d-spring-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b004",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    419,
+    326,
+    4,
+    6
+   ],
+   "rect_px": [
+    3352,
+    2608,
+    32,
+    48
+   ],
+   "faces": "palm-spring-s05",
+   "door_cells": [
+    423,
+    329
+   ],
+   "purpose": "a cottage",
+   "occupants": "a water carrier's household",
+   "district": "palm-spring-d-spring-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b005",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    419,
+    333,
+    4,
+    6
+   ],
+   "rect_px": [
+    3352,
+    2664,
+    32,
+    48
+   ],
+   "faces": "palm-spring-s05",
+   "door_cells": [
+    423,
+    336
+   ],
+   "purpose": "a cottage",
+   "occupants": "a herder's household",
+   "district": "palm-spring-d-spring-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b006",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    419,
+    340,
+    4,
+    6
+   ],
+   "rect_px": [
+    3352,
+    2720,
+    32,
+    48
+   ],
+   "faces": "palm-spring-s05",
+   "door_cells": [
+    423,
+    343
+   ],
+   "purpose": "a cottage",
+   "occupants": "a gardener's household",
+   "district": "palm-spring-d-the-caravanserai",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b007",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    419,
+    346,
+    4,
+    6
+   ],
+   "rect_px": [
+    3352,
+    2768,
+    32,
+    48
+   ],
+   "faces": "palm-spring-s05",
+   "door_cells": [
+    423,
+    349
+   ],
+   "purpose": "a cottage",
+   "occupants": "a date grower's household",
+   "district": "palm-spring-d-the-caravanserai",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b008",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    380,
+    344,
+    6,
+    5
+   ],
+   "rect_px": [
+    3040,
+    2752,
+    48,
+    40
+   ],
+   "faces": "palm-spring-s03",
+   "door_cells": [
+    385,
+    343
+   ],
+   "purpose": "a cottage",
+   "occupants": "a caravan guide's household",
+   "district": "palm-spring-d-channel-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b009",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    382,
+    350,
+    6,
+    5
+   ],
+   "rect_px": [
+    3056,
+    2800,
+    48,
+    40
+   ],
+   "faces": "palm-spring-c01",
+   "door_cells": [
+    388,
+    350
+   ],
+   "purpose": "a cottage",
+   "occupants": "a water carrier's household",
+   "district": "palm-spring-d-channel-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b010",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    406,
+    364,
+    8,
+    6
+   ],
+   "rect_px": [
+    3248,
+    2912,
+    64,
+    48
+   ],
+   "faces": "palm-spring-s02",
+   "door_cells": [
+    411,
+    363
+   ],
+   "purpose": "the date seller",
+   "occupants": "the shopkeeper, living above",
+   "district": "palm-spring-d-channel-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b011",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    415,
+    364,
+    6,
+    5
+   ],
+   "rect_px": [
+    3320,
+    2912,
+    48,
+    40
+   ],
+   "faces": "palm-spring-s02",
+   "door_cells": [
+    416,
+    363
+   ],
+   "purpose": "a cottage",
+   "occupants": "a herder's household",
+   "district": "palm-spring-d-palm-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b012",
+   "type": "inn",
+   "form": "inn",
+   "footprint_cells": [
+    428,
+    343,
+    14,
+    8
+   ],
+   "rect_px": [
+    3424,
+    2744,
+    112,
+    64
+   ],
+   "faces": "palm-spring-s05",
+   "door_cells": [
+    427,
+    347
+   ],
+   "purpose": "the caravanserai",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "palm-spring-d-the-caravanserai",
+   "counted": true,
+   "counts_as": 1,
+   "company_foothold": "an agent's room at the caravanserai"
+  },
+  {
+   "id": "palm-spring-b013",
+   "type": "barn",
+   "form": "barn",
+   "footprint_cells": [
+    428,
+    333,
+    14,
+    8
+   ],
+   "rect_px": [
+    3424,
+    2664,
+    112,
+    64
+   ],
+   "faces": "palm-spring-s05",
+   "door_cells": [
+    427,
+    337
+   ],
+   "purpose": "a barn and store",
+   "occupants": "the farm",
+   "district": "palm-spring-d-the-caravanserai",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b014",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    428,
+    325,
+    8,
+    6
+   ],
+   "rect_px": [
+    3424,
+    2600,
+    64,
+    48
+   ],
+   "faces": "palm-spring-s05",
+   "door_cells": [
+    427,
+    328
+   ],
+   "purpose": "the water seller",
+   "occupants": "the shopkeeper, living above",
+   "district": "palm-spring-d-spring-row",
+   "counted": true,
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "orchard",
+   "name": "the date gardens",
+   "box": [
+    3080,
+    2880,
+    3480,
+    3080
+   ],
+   "plots": 1,
+   "why": "date palms, figs and vegetables on the channels"
+  },
+  {
+   "kind": "garden",
+   "name": "the palm garden",
+   "box": [
+    3200,
+    2560,
+    3240,
+    2600
+   ],
+   "why": "date palms watered from the spring"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Drover's Road",
+  "first_view": "the caravanserai gate and, past it, the spring pool under the palms with steps down to the water",
+  "landmarks": [
+   {
+    "name": "the spring pool and its palms",
+    "xy": [
+     3282,
+     2738
+    ]
+   },
+   {
+    "name": "the caravanserai",
+    "xy": [
+     3420,
+     2800
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the channel path through the date gardens to Palm Row",
+    "xy": [
+     3250,
+     2950
+    ],
+    "opens": "when Mirra lets you through the gardens"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "the pool steps, off the busy spring square",
+    "xy": [
+     3282,
+     2700
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    435,
+    367,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.6,
+   2.0
+  ]
+ },
+ "ground": {
+  "centre": "packed sand and stone round the pool",
+  "yards": "adobe yards",
+  "edges": "irrigated green only along the two channels",
+  "materials_cells": {
+   "packed sand": 1019,
+   "adobe yards": 14,
+   "dry gravel": 1162
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   365,
+   309,
+   93,
+   77
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "51.~41.",
+   "51.~41.",
+   "50.2~41.",
+   "50.2~41.",
+   "50.2~41.",
+   "50.2~41.",
+   "50.2~41.",
+   "46.4g2~g40.",
+   "37.2g5.5g~g2~40.",
+   "37.g.3g.6g~2g~g39.",
+   "42.7g~2g~6g34.",
+   "35.5g2.7g~2g~6g34.",
+   "35.5g2.7g~2g~6g34.",
+   "35.5g.6g3~2g~6g34.",
+   "47.2b3.b40.",
+   "47.2b2.2b40.",
+   "47.2b2.b41.",
+   "41.6g2~2g~2g39.",
+   "41.6g2~2g~2g39.",
+   "3r38.6g2~2g~2g39.",
+   "6r34.6g~4g~2g39.",
+   "10r30.6g~3g2~2g39.",
+   "15r25.6g~3g~3g39.",
+   "19r21.6g~3g~6g36.",
+   "20r6.2g11.7g~2g2~3g39.",
+   "21r5.g.2g7.9g~2g~4g39.",
+   "21r5.4g10.6g~2g~4g39.",
+   "25r3.g10.6g~g2~5g39.",
+   "26r13.6g~g2~5g39.",
+   ".26r12.3g7~5g39.",
+   "4.24r11.g9~7g37.",
+   "10.19r10.g11~3g39.",
+   "21.9r8.g12~3g17.g21.",
+   "22.9r7.g12~3g16.g22.",
+   "25.8r3.4g11~3g39.",
+   "26.8r.5g10~4g39.",
+   "26.8r7g8~5g37.g.",
+   "27.8r7.~g3~7g37.2g",
+   "28.8r5.2~g~9g37.2g",
+   "28.8r3.3~g~10g37.2g",
+   "29.8r2g2~g2~10g37.2g",
+   "30.7rg~3g~3g3~5g37.2g",
+   "28.2g7rb3g~3g5~4g37.2g",
+   "26.5g5r2br2~4g~3g2~6g34.2g",
+   "24.8g.2r2br2b~3g2~4g2b4g35.2g",
+   "23.5g.4gr2brb4r2g~6gb5g34.2g",
+   "13.10g2.8g~brb6r2~8gb3g34.2g",
+   "7.3g.3g3.13g3~g~b9r.7gbg36.2g",
+   "7.4g3.12g.g.2~2g2~g14r4.b2.12r.6r15.2g",
+   "5.6g2.7g.6g2~g.3~3g41r13.gr",
+   "5.g.2g2.g.12g~.~2g3~5g41r12.2r",
+   "5.2g3.2g.7g.5~3g2~3g.3g3~39r10.3r",
+   "5.2g2.g11~7g2~8g~3g.39r6.5r",
+   "6.4g~2g.4g.7g2~9g~7g.14r~b4.17r4.6r",
+   "6.5g.6g.4g2.g~9g2~.7g9.3g.2g~b5g15r4.6r",
+   "6.9g2.5g.3~.4g2.2g2~4g15.2g2.3g2b~3g15r2.6r.",
+   "7.7g.7g3~8g.2~5g15.8gb2~3g15r.5r2.",
+   "7.2g.11g2~11g~6g15.11g2~2g20r2.",
+   "7.13g~2g2.g.6g~7g16.11g2~2g18r3.",
+   "7.11g2~7g.3g3~5g19.12g2~2g16r3.",
+   "9.4g2.2g2~.7g.g.~9g21.14g13r5.",
+   "11.3g3~2g.2g.4g.2~9g23.13g13r5.",
+   "9.3g3~3.7g.g2~.9g25.11g.12r5.",
+   ".g7.g2~3g2.9g2~3g2.5g27.6g6.11r5.",
+   "5.5~11g.g3~11g16.5g9.2g8.11r5.",
+   ".5~4.11g2~11g19.5g20.12r3.",
+   "~11.6g2.g~4g.6g20.5g21.13r.",
+   "4.g14.6g28.5g22.13r",
+   "20.g.g17.6g7.5g25.10r",
+   "40.11g2.5g26.9r",
+   ".g38.11g2.5g26.9r",
+   "g39.11g2.5g26.9r",
+   "40.11g2.5g26.4r3.2r",
+   "40.11g2.5g27.3r5.",
+   "40.11g2.6g26.3r5.",
+   "53.6g26.3r5.",
+   "53.6g26.3r5."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the spring pool and its palms",
+   "xy_px": [
+    3282,
+    2738
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the caravanserai",
+   "xy_px": [
+    3420,
+    2800
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the pool steps, off the busy spring square",
+   "xy_px": [
+    3282,
+    2700
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the channel path through the date gardens to Palm Row",
+   "xy_px": [
+    3250,
+    2950
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the spring square",
+   "xy_px": [
+    3350,
+    2780
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the pool steps",
+   "xy_px": [
+    3282,
+    2700
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the date gardens: date palms, figs and vegetables on the channels",
+   "xy_px": [
+    3280,
+    2980
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the palm garden: date palms watered from the spring",
+   "xy_px": [
+    3220,
+    2580
+   ],
+   "screen": [
+    0,
+    -1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the water seller: the shopkeeper, living above about their day",
+   "building": "palm-spring-b014",
+   "xy_px": [
+    3456,
+    2624
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  }
+ ],
+ "open_uses": [],
+ "theme": {
+  "tech": "older-made: water, wind and caravans; off the rail",
+  "waystone": {
+   "xy_px": [
+    3132,
+    2732
+   ],
+   "at": "beside the Caravan Road (Drover's Road) (3)",
+   "table_name": "Palm Spring",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "palm-spring-s04",
+   "name": "Spring Ring",
+   "from_px": [
+    3060,
+    2596
+   ],
+   "to_px": [
+    3396,
+    2596
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 5,
+   "bearing_deg": 5
+  },
+  "crater": {
+   "name": "the Glass field",
+   "xy_px": [
+    1794,
+    2760
+   ],
+   "distance_px": 1494,
+   "effect": "the shard's heat dried the old wells; only the spring came back",
+   "road": "Drover's Road",
+   "road_leaves_at_px": [
+    2934,
+    2669
+   ]
+  },
+  "moss": {
+   "where": "the spring square",
+   "xy_px": [
+    3350,
+    2780
+   ]
+  },
+  "company": {
+   "foothold": "an agent's room at the caravanserai",
+   "building": "palm-spring-b012",
+   "xy_px": [
+    3480,
+    2776
+   ]
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

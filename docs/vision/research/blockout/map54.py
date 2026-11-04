@@ -54,7 +54,7 @@ def class_grid(S, R, M):
     rm = cg == -2
     if rm.any():
         _, (iy, ix) = ndi.distance_transform_edt(rm, return_indices=True); cg = cg[iy, ix]
-    sm_ids = [cid[n] for n in M53.SMOOTH if n in cid]
+    sm_ids = [cid[n] for n in names if n in M53.SMOOTH]   # in the classes' own order: a set's order follows the string hash, which changed the ties run to run
     natural = np.isin(cg, sm_ids)
     votes = np.stack([ndi.uniform_filter((cg == i).astype(np.float32), 5) for i in sm_ids])
     best = np.array(sm_ids, np.int16)[np.argmax(votes, axis=0)]
@@ -349,6 +349,8 @@ def base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, box, ppc, realistic=False):
                 img[rim] *= 0.80
                 dist = ndi.distance_transform_edt(~ash)
                 fringe = (dist > 0) & (dist < 14) & land_hi & (rnd < 0.42 * (1 - dist / 14)) & ~np.isin(cgh, [cid['water'], cid['lava']])
+                if S.get('calm_mask') is not None:                    # v56's overview: no specks round the fire country's towns
+                    fringe &= ~up(S['calm_mask'])
                 img[fringe] = img[fringe] * 0.35 + np.array(R['basalt'][3], np.float32) * 0.65
             wg = cgh == ids['wetgrass']
             if wg.any():

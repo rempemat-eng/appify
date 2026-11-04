@@ -8,7 +8,7 @@
   30,
   45
  ],
- "buildings_counted": 28,
+ "buildings_counted": 31,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -40,7 +40,7 @@
  "footprint_px": [
   1996,
   5096,
-  2776,
+  2832,
   5800
  ],
  "fortification": {
@@ -705,11 +705,12 @@
     "hearthold-b028",
     "hearthold-b029",
     "hearthold-b030",
-    "hearthold-b032"
+    "hearthold-b032",
+    "hearthold-b035"
    ],
    "mix": {
     "shop": 1,
-    "workshop": 5,
+    "workshop": 6,
     "house": 2,
     "cottage": 2,
     "townhouse": 1
@@ -755,11 +756,13 @@
     "hearthold-b023",
     "hearthold-b024",
     "hearthold-b025",
-    "hearthold-b026"
+    "hearthold-b026",
+    "hearthold-b033",
+    "hearthold-b034"
    ],
    "mix": {
-    "house": 3,
-    "cottage": 2,
+    "house": 4,
+    "cottage": 3,
     "workshop": 1
    },
    "function": "homes"
@@ -952,7 +955,7 @@
    ]
   ]
  },
- "fronts": 32,
+ "fronts": 35,
  "landmarks": [
   {
    "building": "hearthold-b001",
@@ -1943,6 +1946,108 @@
    "district": "hearthold-d-smiths-row",
    "counted": true,
    "counts_as": 1
+  },
+  {
+   "id": "hearthold-b033",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    253,
+    706,
+    10,
+    6
+   ],
+   "rect_px": [
+    2024,
+    5648,
+    80,
+    48
+   ],
+   "faces": "hearthold-s09",
+   "door_cells": [
+    263,
+    708
+   ],
+   "purpose": "a detached lower-town house",
+   "occupants": "household; individual residents and routines not yet authored",
+   "district": "hearthold-d-ash-lane",
+   "counted": true,
+   "plot_cells": [
+    251,
+    706,
+    2,
+    6
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "hearthold-b034",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    254,
+    698,
+    9,
+    6
+   ],
+   "rect_px": [
+    2032,
+    5584,
+    72,
+    48
+   ],
+   "faces": "hearthold-s09",
+   "door_cells": [
+    263,
+    700
+   ],
+   "purpose": "a detached lower-town cottage",
+   "occupants": "household; individual residents and routines not yet authored",
+   "district": "hearthold-d-ash-lane",
+   "counted": true,
+   "plot_cells": [
+    252,
+    698,
+    2,
+    6
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "hearthold-b035",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    343,
+    690,
+    11,
+    7
+   ],
+   "rect_px": [
+    2744,
+    5520,
+    88,
+    56
+   ],
+   "faces": "hearthold-s06",
+   "door_cells": [
+    345,
+    689
+   ],
+   "purpose": "a craft workshop; specific trade not yet authored",
+   "occupants": "craft workers; individual workers and routines not yet authored",
+   "district": "hearthold-d-smiths-row",
+   "counted": true,
+   "plot_cells": [
+    343,
+    697,
+    11,
+    2
+   ],
+   "plot": "yard",
+   "counts_as": 1
   }
  ],
  "lifted": [],
@@ -2058,7 +2163,7 @@
    ]
   ],
   "screens": [
-   2.4,
+   2.6,
    3.9
   ]
  },

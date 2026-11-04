@@ -1,0 +1,598 @@
+name: Map recovery measured Crossroads candidate
+
+# Publication on PR381 does not execute this. Only the lead's separate public
+# runtime GO may create this exact execution ref after source/receipt review.
+on:
+  push:
+    branches: [codex/map-recovery-followup-run]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: map-recovery-followup
+  cancel-in-progress: false
+
+jobs:
+  unchanged-replay-preview:
+    if: github.run_attempt == 1 && github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/map-recovery-followup-run'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      TZ: UTC
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      MYGAME_MAP_REVISION: v56
+      EXPECTED_SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - name: Reserve fresh private evidence and refuse reruns
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_RUN_ATTEMPT" = '1'
+          test "$GITHUB_REPOSITORY" = 'rempemat-eng/appify'
+          test "$GITHUB_REF" = 'refs/heads/codex/map-recovery-followup-run'
+          followup_evidence="$RUNNER_TEMP/map-followup-evidence"
+          mkdir -m 700 "$followup_evidence"
+          date +%s > "$followup_evidence/job-start.epoch"
+          printf 'MAP_EVIDENCE=%s\n' "$followup_evidence" >> "$GITHUB_ENV"
+          for name in tmp blockout config data cache runtime; do mkdir -p -m 700 "$followup_evidence/bootstrap/$name"; done
+          for name in TMPDIR TMP TEMP; do printf '%s=%s/bootstrap/tmp\n' "$name" "$followup_evidence" >> "$GITHUB_ENV"; done
+          printf 'BLOCKOUT_OUT=%s/bootstrap/blockout\n' "$followup_evidence" >> "$GITHUB_ENV"
+          printf 'XDG_CONFIG_HOME=%s/bootstrap/config\nXDG_DATA_HOME=%s/bootstrap/data\nXDG_CACHE_HOME=%s/bootstrap/cache\nXDG_RUNTIME_DIR=%s/bootstrap/runtime\n' \
+            "$followup_evidence" "$followup_evidence" "$followup_evidence" "$followup_evidence" >> "$GITHUB_ENV"
+          printf '%s\n' 'MEASURED CANDIDATE NOT RUN; original world FAILED; no art approval' > "$followup_evidence/status.txt"
+
+      - name: Check out exact execution-event source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up verified Python environment
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Reuse the verified native-source and exact-font canary
+        id: source_before
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Reuse the reviewed source/font guard with current helper/test pins;
+          # no alternate supervisor, dependency source, font or project shim.
+          python -I -B - <<'PY'
+          import ast, os
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          lines = (root / '.github/workflows/map-recovery-contracts.yml').read_text().splitlines()
+          matches = [i for i, line in enumerate(lines) if line == '          cat > "$RUNNER_TEMP/map-source-guard.py" <<\'PY\'']
+          assert len(matches) == 1
+          start = matches[0] + 1
+          end = lines.index('          PY', start)
+          assert all(not line or line.startswith('          ') for line in lines[start:end])
+          source = '\n'.join(line[10:] for line in lines[start:end]) + '\n'
+          # Bind this reviewed correction's helper/test bytes while preserving
+          # the original native guard semantics and frozen earlier recipes.
+          for old, new in (
+              ('187a7719cdb587bece44a80ad9046891652ac1a0147e53d1269e418015a7718b', '978ae2b7551da928630b60ebd38fdaa9e08cc108e69d595e2132eddc438f23fb'),
+              ('901ab6916784053872b03b1a9c2eebd28bb09ebbaa94d92cfea8a0d563f7cbc3', '9cb5fbe7246bbd4bc789eba1e47dd2a5b5d7b2d3682549fba0b52509555cf97a')):
+              assert source.count(old) == 1
+              source = source.replace(old, new)
+          ast.parse(source)
+          (Path(os.environ['RUNNER_TEMP']) / 'map-source-guard.py').write_text(source)
+          (evidence / 'map-source-guard.py').write_text(source)
+          target = evidence / 'source/.github/workflows/map-recovery-followup.yml'
+          target.parent.mkdir(parents=True)
+          target.write_bytes((root / '.github/workflows/map-recovery-followup.yml').read_bytes())
+          PY
+          python -I -B "$RUNNER_TEMP/map-source-guard.py" before > "$MAP_EVIDENCE/source-before-canary.log" 2>&1
+          python -I -B - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          fonts = json.loads((evidence / 'font-paths.json').read_text())
+          for item in fonts:
+              path = Path(item['path'])
+              data = path.read_bytes()
+              assert hashlib.sha256(data).hexdigest() == item['sha256']
+              target = evidence / 'font-bytes' / path.name
+              target.parent.mkdir(exist_ok=True)
+              target.write_bytes(data)
+          PY
+
+      - name: Download only the verified capture artifact as its original archive
+        id: actual_input
+        timeout-minutes: 2
+        # Official v8.0.2 tag and action.yml/README verified at this commit.
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: '12984186063'
+          run-id: '41068128419'
+          repository: rempemat-eng/appify
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/map-followup-evidence/download
+          skip-decompress: true
+          digest-mismatch: error
+
+      - name: Verify original replay archive, input and explicit candidate-source bridge
+        id: verified_input
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B - <<'PYCODE' > "$MAP_EVIDENCE/input-verification.log" 2>&1
+          import ast, hashlib, json, os, runpy, stat, zipfile
+          from pathlib import Path, PurePosixPath
+          root = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          evidence = Path(os.environ['MAP_EVIDENCE']).resolve()
+          control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_candidate_input_definitions_only')
+          def safe_members(archive):
+              rows = archive.infolist()
+              assert len(rows) <= 256 and len({row.filename for row in rows}) == len(rows)
+              assert sum(row.file_size for row in rows) <= control['MAX_OWNED']
+              for row in rows:
+                  name = row.filename; normalized = name[:-1] if row.is_dir() else name; path = PurePosixPath(normalized)
+                  assert normalized and chr(92) not in name and chr(0) not in name and not path.is_absolute() and '..' not in path.parts and normalized == path.as_posix()
+                  mode = row.external_attr >> 16; expected_mode = stat.S_IFDIR if row.is_dir() else stat.S_IFREG
+                  assert not stat.S_ISLNK(mode) and stat.S_IFMT(mode) in (0, expected_mode)
+                  assert not row.flag_bits & 1 and row.file_size <= control['MAX_RAW']
+              return rows
+          downloaded = list((evidence / 'download').rglob('*'))
+          assert all(not path.is_symlink() for path in downloaded)
+          files = [path for path in downloaded if path.is_file()]
+          assert len(files) == 1
+          original = files[0]
+          assert original.stat().st_size == 47709075 and control['sha'](original) == '7a2a99f4aedf3cc5f2bd62e88469c74d34398d167165d98c2ae242d8dcb12ef8'
+          reference = evidence / 'reference'; reference.mkdir(mode=0o700)
+          portable = reference / 'actual.zip'
+          marker_exception = {'path': 'status.txt', 'recorded': {'bytes': 76, 'sha256': '67805fa04604a3af66c602d8a128030f56d9fb29131e1ee4498721355d879d65'},
+              'actual': {'bytes': 81, 'sha256': '853c9ed2a4b5bd9602ef899a7d43d62bc6fb098d12fda5c088defebcf1161ca1'}}
+          with zipfile.ZipFile(original) as archive:
+              outer_rows = safe_members(archive)
+              manifest = json.loads(archive.read('artifact-manifest.json'))
+              assert manifest['event_source_sha'] == '106a0cfbc8bef02b35a9d4f05f5051e9f93d8bda' and manifest['passed'] is True
+              assert len(manifest['files']) == 187 and len(outer_rows) == 188 and set(archive.namelist()) == set(manifest['files']) | {'artifact-manifest.json'}
+              for name, expected in manifest['files'].items():
+                  data = archive.read(name); observed = dict(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+                  if name == 'status.txt':
+                      assert expected == marker_exception['recorded'] and observed == marker_exception['actual']
+                  else:
+                      assert observed == expected, name
+              baseline = json.loads(archive.read('replay/replay-result.json'))
+              assert baseline['all_equal'] is True and len(baseline['comparison']) == 15 and all(v is True for v in baseline['comparison'].values())
+              assert len(baseline['array_parity']) == 49 and all(v is True for v in baseline['array_parity'].values())
+              with portable.open('xb') as handle: handle.write(archive.read('reference/actual.zip'))
+              failed_png = archive.read('FAILED-STATE-crossroads-diagnostic.png')
+              assert len(failed_png) == 32792 and hashlib.sha256(failed_png).hexdigest() == '318671e503652df8e49441cee122472c0e63920f0bb87c4acc1f2a2b04fc5aa0'
+              (reference / 'ORIGINAL-FAILED-STATE-crossroads-diagnostic.png').write_bytes(failed_png)
+              for name in ('replay/replay-result.json', 'replay-gate.json', 'preview-gate.json'):
+                  target = reference / 'original-replay' / name; target.parent.mkdir(parents=True, exist_ok=True); target.write_bytes(archive.read(name))
+          assert portable.stat().st_size == 4488608 and control['sha'](portable) == '866f04ab0eac8331701c0efed266290df9391180b4f58b8711e685902e9e5565'
+          receipt = control['verify_bundle'](portable, '866f04ab0eac8331701c0efed266290df9391180b4f58b8711e685902e9e5565')
+          actual = reference / 'actual'; actual.mkdir(mode=0o700)
+          with zipfile.ZipFile(portable) as archive:
+              inner_rows = safe_members(archive); manifest = json.loads(archive.read('PORTABLE-MANIFEST.json'))
+              assert manifest['schema'] == control['SCHEMA'] and manifest['kind'] == 'NEW_R6_REPLACEMENT' and len(manifest['files']) == receipt['files'] == 44
+              for row in inner_rows:
+                  assert not row.is_dir()
+                  target = actual / row.filename; target.parent.mkdir(parents=True, exist_ok=True)
+                  with target.open('xb') as handle: handle.write(archive.read(row.filename))
+          captured = control['json_read'](actual / 'source-before.json')
+          overrides = {'docs/vision/research/blockout/towns55.py': control['CORRECTION_TOWNS_BLOB']}
+          current = control['source_guard'](overrides)
+          assert captured == control['json_read'](actual / 'source-after.json') and captured['head'] == '87ea22a4be342e3b8009b1c9b922c2fb7db56711' and captured['status'] == ''
+          assert current['head'] == os.environ['EXPECTED_SOURCE_SHA'] and current['status'] == '' and set(captured['source_sha256']) == set(current['source_sha256']) and len(current['source_sha256']) == 14
+          changed = {name for name in current['source_sha256'] if current['source_sha256'][name] != captured['source_sha256'][name]}
+          assert changed == {'docs/vision/research/blockout/towns55.py', 'scripts/review/map_failure_capture.py', 'scripts/review/test_map_failure_capture.py'}
+          for name, digest in captured['source_sha256'].items(): assert control['sha'](actual / 'source' / name) == digest
+          def retained_tree(path):
+              tree = ast.parse(path.read_text()); tree.body = [n for n in tree.body if not (isinstance(n, ast.FunctionDef) and n.name == '_feedback_crossroads')]
+              return ast.dump(tree, include_attributes=False)
+          assert retained_tree(actual / 'source/docs/vision/research/blockout/towns55.py') == retained_tree(root / 'docs/vision/research/blockout/towns55.py')
+          def definitions(path):
+              return {n.name: ast.dump(n, include_attributes=False) for n in ast.parse(path.read_text()).body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
+          old_helper = definitions(actual / 'source/scripts/review/map_failure_capture.py')
+          new_helper = definitions(root / 'scripts/review/map_failure_capture.py')
+          for name in ('replay', 'preview', 'Recorder', 'snapshot', 'load_snapshot', 'validate_archive', 'source_guard'):
+              assert old_helper[name] == new_helper[name], 'original oracle/codec altered: ' + name
+          core = control['json_read'](actual / 'capture.json')
+          assert core['schema'] == control['SCHEMA'] and core['complete'] is True and not core['errors'] and core['world_state'] == 'FAILED'
+          assert core['producer_outcome'] == {'kind': 'EXCEPTION', 'type': 'ValueError', 'message': control['EXPECTED_ERROR']}
+          assert all(core['comparison_target'].get(key) is True for key in ('trial125', 'records19', 'queue20_23', 'original_error'))
+          assert len(core['before']['arrays']) == len(core['after']['arrays']) == 49 and len(core['supports']) == 168
+          inventory = {str(path.relative_to(actual)): {'bytes': path.stat().st_size, 'sha256': control['sha'](path)} for path in actual.rglob('*') if path.is_file()}
+          for path in reference.rglob('*'):
+              if path.is_file(): path.chmod(0o444)
+          for path in sorted((p for p in reference.rglob('*') if p.is_dir()), key=lambda p: len(p.parts), reverse=True): path.chmod(0o555)
+          reference.chmod(0o555); original.chmod(0o444)
+          assert control['owned_blocks'](evidence) <= control['MAX_OWNED']
+          value = dict(verified=True, source_run=41068128419, source_artifact=12984186063,
+              raw_archive=dict(path=str(original.relative_to(evidence)), bytes=47709075, sha256=control['sha'](original)),
+              portable=dict(path=str(portable.relative_to(evidence)), bytes=4488608, sha256=control['sha'](portable), receipt=receipt),
+              captured_source=captured, recipe_source=current, changed_consumer_paths=sorted(changed), production_overrides=overrides,
+              original_input_inventory=inventory, original_input=str(actual), original_producer_outcome=core['producer_outcome'],
+              declared_original_manifest_exception=marker_exception, original_replay=baseline,
+              qualification='Original106a replay/rawarchive/FAILEDPNG retained; one declared historical marker mismatch is not waived in NEW evidence. Intentional candidate differs in towns55 Crossroads only plus receiving helper/schema regression; no original49AFTER equality is claimed.')
+          (evidence / 'input-receipt.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
+          PYCODE
+
+      - name: Prepare the exact previously verified numeric wheel pins
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Main885b pins and immutable scikit-image release/wheel identity are
+          # unchanged from the actual Contracts17 hosted pass on f214.
+          python -m pip install --disable-pip-version-check --no-cache-dir --only-binary=:all: --force-reinstall \
+            --timeout 20 --retries 1 --report "$MAP_EVIDENCE/install-report.json" \
+            'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1' 'scikit-image==0.26.0' \
+            > "$MAP_EVIDENCE/install.log" 2>&1
+
+      - name: Bind following-phase allocations and retain the exact acceptance gate
+        id: allocation
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B - <<'PY' > "$MAP_EVIDENCE/allocation-canary.log" 2>&1
+          import importlib.metadata, json, os, runpy, sys, time
+          from pathlib import Path
+          from urllib.parse import unquote, urlparse
+          root = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          evidence = Path(os.environ['MAP_EVIDENCE']).resolve()
+          assert time.time() - float((evidence / 'job-start.epoch').read_text()) <= 180, 'setup reserve exhausted; no replay'
+          report = json.loads((evidence / 'install-report.json').read_text())
+          item = next(x for x in report['install'] if x['metadata']['name'].lower().replace('_', '-') == 'scikit-image')
+          info = item['download_info']
+          assert unquote(Path(urlparse(info['url']).path).name) == 'scikit_image-0.26.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl'
+          assert info['archive_info']['hashes']['sha256'] == '7df650e79031634ac90b11e64a9eedaf5a5e06fcd09bcd03a34be01745744466'
+          packages = {name: importlib.metadata.version(name) for name in ('Pillow', 'numpy', 'scipy', 'scikit-image')}
+          assert packages == {'Pillow': '12.3.0', 'numpy': '2.5.3', 'scipy': '1.18.1', 'scikit-image': '0.26.0'}
+          from PIL import ImageFont
+          for suffix in ('', '-Bold'):
+              ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed' + suffix + '.ttf', 13)
+          control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_following_allocation_definitions_only')
+          guard = control['source_guard']({'docs/vision/research/blockout/towns55.py': control['CORRECTION_TOWNS_BLOB']})
+          receipt = control['json_read'](evidence / 'input-receipt.json')
+          assert receipt['verified'] is True and guard['head'] == os.environ['EXPECTED_SOURCE_SHA'] and guard['status'] == ''
+          assert receipt['recipe_source']['source_sha256'] == guard['source_sha256']
+          following = control['plan']()['replay_crop_following_bound_proposal']
+          assert following == dict(seconds=180, cpus=1, rss_gib=1, address_gib=1.5)
+          assert control['owned_blocks'](evidence) <= control['MAX_OWNED']
+          commands = {}
+          for phase in ('correction', 'corrected-preview'):
+              out = evidence / phase
+              assert not out.exists() and not out.with_suffix('.zip').exists()
+              allocation = dict(schema=control['SCHEMA'], phase=phase, kind='MEASURED_CROSSROADS_CANDIDATE',
+                  go_id='Y35-R6-CROSSROADS-CORRECTION-R1:'+guard['head']+':'+os.environ['GITHUB_RUN_ID']+':attempt1:'+phase,
+                  authorization_kind='lead-only exact execution-ref creation AFTER separate source review and public runtime GO; go_id identifies this event, not an approval comment',
+                  head=guard['head'], source_sha256=guard['source_sha256'], out=str(out), input=receipt['original_input'], python_paths=[],
+                  versions=packages, captured_source_head=receipt['captured_source']['head'],
+                  original_portable_sha256=receipt['portable']['sha256'], production_overrides=receipt['production_overrides'],
+                  original_source_sha256=receipt['captured_source']['source_sha256'], candidate=str(evidence / 'correction'),
+                  physical_tables='SOURCE_DERIVED_geo55_warp_tables_ONCE_before_dimension_rebind',
+                  bounds=dict(**following, log_mib=16, packet_mib=32, raw_snapshot_mib=24, owned_with_portable_mib=128,
+                      start_free_mib=256, emergency_free_mib=64, shared_anon_gib=4.2),
+                  qualification='Existing controller per-phase limits unchanged. Whole evidence is strictly counted before/after each phase and at collection; no test suite or producer is invoked.')
+              path = evidence / (phase+'-allocation.json')
+              with path.open('x') as handle:
+                  json.dump(allocation, handle, sort_keys=True, indent=2); handle.write('\n')
+              commands[phase] = [sys.executable, '-I', '-B', str(root / 'scripts/review/map_failure_capture.py'),
+                  'capture', '--allocation', str(path), '--out', str(out)]
+          (evidence / 'orchestration-command.json').write_text(json.dumps(dict(commands=commands, cwd=str(root), python=sys.version,
+              packages=packages, original_input=receipt['original_input'], original_input_read_only=True,
+              captured_head=receipt['captured_source']['head'], recipe_head=guard['head'], intentional_consumer_changes=receipt['changed_consumer_paths'],
+              environment={key: os.environ[key] for key in ('TMPDIR', 'TMP', 'TEMP', 'BLOCKOUT_OUT', 'MYGAME_MAP_REVISION',
+                  'OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'MKL_NUM_THREADS', 'NUMEXPR_NUM_THREADS')},
+              producer_run=False, geometry_candidate=True, world_success=False, art_approval=False), sort_keys=True, indent=2)+'\n')
+          PY
+          cat > "$MAP_EVIDENCE/phase-gate.py" <<'PY'
+          import json, os, runpy, sys
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE']).resolve(); evidence = Path(os.environ['MAP_EVIDENCE']).resolve()
+          phase = sys.argv[1]; assert phase in ('correction', 'corrected-preview')
+          checks, errors, details = {}, [], {}
+          try:
+              control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_correction_gate_definitions_only')
+              receipt = control['json_read'](evidence / 'input-receipt.json'); original = Path(receipt['original_input'])
+              inventory = {str(path.relative_to(original)): {'bytes': path.stat().st_size, 'sha256': control['sha'](path)} for path in original.rglob('*') if path.is_file()}
+              checks['original_input_unchanged'] = inventory == receipt['original_input_inventory']
+              checks['original_archives_unchanged'] = all((evidence / receipt[key]['path']).stat().st_size == receipt[key]['bytes'] and control['sha'](evidence / receipt[key]['path']) == receipt[key]['sha256'] for key in ('raw_archive', 'portable'))
+              core = control['json_read'](original / 'capture.json'); input_sha = control['sha'](original / 'capture.json')
+              out = evidence / phase; result = control['json_read'](out / 'result.json')
+              controller_exit = int((evidence / (phase+'-controller.exit')).read_text())
+              checks['controller_accepted'] = (controller_exit == 0 and result.get('phase') == phase and result.get('raw_exit') == 0 and result.get('capture_complete') is True
+                  and result.get('stop_reason') is None and result.get('world_success') is False and result.get('source_unchanged') is True and result.get('child_reaped') is True
+                  and result.get('owned_group_absent') is True and result.get('child_identity_lost') is False and result.get('group_signalled_before_reap') is True
+                  and type(result.get('peak_child_rss_bytes')) is int and 0 < result['peak_child_rss_bytes'] <= 1024**3)
+              current = control['source_guard'](receipt['production_overrides'])
+              checks['explicit_candidate_sources'] = current['head'] == os.environ['EXPECTED_SOURCE_SHA'] and current['status'] == '' and current['source_sha256'] == receipt['recipe_source']['source_sha256']
+              checks['portable_verified'] = control['verify_bundle'](out.with_suffix('.zip'), control['sha'](out.with_suffix('.zip')))['retrieved_bytes_verified'] is True
+              checks['owned_evidence_within_bound'] = control['owned_blocks'](evidence) <= control['MAX_OWNED']
+              checks['original_failure_retained'] = core['world_state'] == 'FAILED' and core['producer_outcome'] == {'kind': 'EXCEPTION', 'type': 'ValueError', 'message': control['EXPECTED_ERROR']}
+              candidate = control['json_read'](evidence / 'correction/correction-result.json')
+              expected = {'all40_original_ids_and_cap', 'original19_unchanged', 'inventory_dimensions_preserved', 'exact_saved_before',
+                  'existing_physical_checker_passed', 'export_preserves40_without_lifting_or_refill', 'literal_initial_and_final_ground',
+                  'named_working_yard_preserved', 'zero_outside_changes_including_exporter', 'all_consumer_support_captured', 'candidate_capture_complete'}
+              checks['all_named_correction_checks'] = set(candidate.get('checks', {})) == expected and all(v is True for v in candidate['checks'].values()) and candidate.get('accepted') is True
+              checks['native_physical_checker_passed'] = candidate.get('physical_checker_executed') is True and not candidate.get('physical_failures') and candidate.get('counted') == 40
+              checks['exact_input_and_candidate_source'] = candidate.get('input_capture_sha256') == input_sha and candidate.get('candidate_source') == current
+              plan = control['json_read'](evidence / 'correction/correction-plan.json')
+              ids = {f'crossroads-b{i:03d}' for i in range(1, 41)}
+              checks['all40_native_plan_records'] = len(plan['buildings']) == 40 and {b['id'] for b in plan['buildings']} == ids and plan['buildings_counted'] == 40 and not plan['lifted']
+              keys = {row['container']+'/'+row['source_key'] for row in core['before']['arrays']}
+              checks['zero49_outside_changes'] = len(keys) == 49 and set(candidate['outside_changed_cells']) == keys and all(type(v) is int and v == 0 for v in candidate['outside_changed_cells'].values())
+              context = control['json_read'](evidence / 'correction/correction-context.json')
+              c, r, w, h = plan['terrain']['box_cells']; window = [c*8, r*8, (c+w)*8, (r+h)*8]
+              checks['native_physical_window_captured'] = context['window_px'] == window and control['CROSS'][0] <= window[0] < window[2] <= control['CROSS'][2] and control['CROSS'][1] <= window[1] < window[3] <= control['CROSS'][3]
+              checks['tables_provenance_explicit'] = context['kind'] == 'SOURCE_DERIVED_geo55_warp_tables_ONCE_before_dimension_rebind' and context['actual_captured_global_table_parity'] is False
+              if phase == 'corrected-preview':
+                  prior = control['json_read'](evidence / 'correction-gate.json'); checks['candidate_gate_accepted'] = prior.get('passed') is True
+                  preview = control['json_read'](out / 'preview-result.json'); image = out / 'crossroads-corrected-candidate.png'
+                  checks['corrected_candidate_image_verified'] = (preview.get('input_sha256') == input_sha and preview.get('candidate_result_sha256') == control['sha'](evidence / 'correction/correction-result.json')
+                      and preview.get('file') == image.name and preview.get('label') == 'CORRECTED CANDIDATE DIAGNOSTIC' and preview.get('art_approval') is False and preview.get('world_success') is False
+                      and control['sha'](image) == preview.get('sha256') and image.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'))
+                  if checks['corrected_candidate_image_verified']: (evidence / 'CORRECTED-CANDIDATE-crossroads-diagnostic.png').write_bytes(image.read_bytes())
+                  details['preview'] = preview
+              details.update(result=result, candidate=candidate, input_capture_sha256=input_sha, original_producer_outcome=core['producer_outcome'])
+          except Exception as error:
+              errors.append(dict(type=type(error).__name__, message=str(error)))
+          passed = bool(checks) and all(value is True for value in checks.values()) and not errors
+          value = dict(phase=phase, passed=passed, checks=checks, errors=errors, details=details,
+              label='MEASURED CANDIDATE DIAGNOSTIC', producer_run=False, geometry_candidate=True, world_success=False, art_approval=False)
+          (evidence / (phase+'-gate.json')).write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+
+      - name: Receive only the new captured-inventory stdlib contract
+        id: inventory_unit
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$MAP_EVIDENCE/inventory-unit-worker.py" <<'PY'
+          import json, os, runpy, unittest
+          from pathlib import Path
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          source = Path(os.environ['GITHUB_WORKSPACE']) / 'scripts/review/test_map_failure_capture.py'
+          namespace = runpy.run_path(str(source), run_name='R6_inventory_contract_definitions_only')
+          method = 'test_captured_fixed_seven_use_existing_use_authority_without_form'
+          events = []
+          class Result(unittest.TextTestResult):
+              def startTest(self, test):
+                  events.append(dict(kind='start', method=test._testMethodName)); super().startTest(test)
+              def stopTest(self, test):
+                  events.append(dict(kind='stop', method=test._testMethodName)); super().stopTest(test)
+          suite = unittest.TestSuite([namespace['CorrectionInventory'](method)])
+          result = unittest.TextTestRunner(verbosity=2, resultclass=Result).run(suite)
+          passed = (result.wasSuccessful() and result.testsRun == 1 and not result.skipped
+              and events == [dict(kind='start', method=method), dict(kind='stop', method=method)])
+          value = dict(passed=passed, ran=result.testsRun, method=method, events=events,
+              failures=len(result.failures), errors=len(result.errors), skipped=len(result.skipped),
+              stdlib_only=True, old31_run=False, numeric_run=False, producer_run=False)
+          (evidence / 'inventory-unit-case.json').write_text(json.dumps(value, indent=2)+'\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+          cat > "$MAP_EVIDENCE/inventory-unit-outer.py" <<'PY'
+          import hashlib, json, os, resource, selectors, signal, subprocess, sys, time
+          from pathlib import Path
+          E = Path(os.environ['MAP_EVIDENCE']); root = Path(os.environ['GITHUB_WORKSPACE'])
+          started = time.monotonic(); MIB = 1024**2
+          receipt = json.loads((E / 'input-receipt.json').read_text())
+          paths = ('scripts/review/map_failure_capture.py', 'scripts/review/test_map_failure_capture.py', 'docs/vision/research/blockout/towns55.py')
+          def hashes():
+              return {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in paths}
+          before = hashes()
+          assert before == {name: receipt['recipe_source']['source_sha256'][name] for name in paths}
+          command = [sys.executable, '-I', '-B', str(E / 'inventory-unit-worker.py')]
+          (E / 'inventory-unit-command.json').write_text(json.dumps(dict(command=command, cwd=str(root),
+              interpreter=sys.version, executable=sys.executable, active_seconds=15, total_seconds=20,
+              cpu_seconds=10, address_space_bytes=256*MIB, log_bytes=MIB, one_cpu=True,
+              source_before=before, phase='NEW_INVENTORY_UNIT_ONLY'), indent=2)+'\n')
+          def limits():
+              os.sched_setaffinity(0, {min(os.sched_getaffinity(0))})
+              resource.setrlimit(resource.RLIMIT_AS, (256*MIB, 256*MIB))
+              resource.setrlimit(resource.RLIMIT_CPU, (10, 10))
+          child = None; raw = usage = None; lost = False; reason = None; size = 0
+          selector = selectors.DefaultSelector()
+          log = (E / 'inventory-unit.log').open('xb')
+          def drain(timeout):
+              global size, reason
+              for key, _ in selector.select(timeout):
+                  data = os.read(key.fd, 65536)
+                  if not data:
+                      selector.unregister(key.fileobj); continue
+                  room = MIB-size; log.write(data[:room]); log.flush(); size += min(room, len(data))
+                  if len(data) > room: reason = reason or 'log_bound'
+          try:
+              assert signal.getsignal(signal.SIGCHLD) == signal.SIG_DFL
+              child = subprocess.Popen(command, cwd=root, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                  stderr=subprocess.STDOUT, start_new_session=True, preexec_fn=limits)
+              selector.register(child.stdout, selectors.EVENT_READ)
+              while True:
+                  drain(.02)
+                  try:
+                      terminal = os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                  except ChildProcessError:
+                      lost = True; reason = 'nonreaping_identity_lost'; break
+                  if terminal is not None: break
+                  if time.monotonic()-started >= 15: reason = reason or 'wall_bound'
+                  if reason: break
+          except BaseException as error:
+              reason = reason or repr(error)
+          finally:
+              if child is not None and not lost:
+                  try:
+                      os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                  except OSError:
+                      lost = True; reason = reason or 'cleanup_identity_lost'
+                  if not lost:
+                      try: os.killpg(child.pid, signal.SIGKILL)
+                      except ProcessLookupError: pass
+                      deadline = min(started+19, time.monotonic()+3)
+                      while True:
+                          try: pid, status, ru = os.wait4(child.pid, os.WNOHANG)
+                          except ChildProcessError:
+                              lost = True; reason = reason or 'wait4_identity_lost'; break
+                          if pid:
+                              raw, usage = status, ru; child.returncode = os.waitstatus_to_exitcode(status); break
+                          if time.monotonic() >= deadline:
+                              reason = reason or 'reap_bound'; break
+                          time.sleep(.01)
+              if child is not None and child.stdout:
+                  deadline = min(started+19.5, time.monotonic()+.5)
+                  while selector.get_map() and time.monotonic() < deadline: drain(.01)
+                  child.stdout.close()
+              selector.close(); log.close()
+          absent = False
+          if child is not None:
+              try: os.killpg(child.pid, 0)
+              except ProcessLookupError: absent = True
+              except OSError as error: reason = reason or repr(error)
+          after = {}; case = {}; errors = []
+          try: after = hashes()
+          except Exception as error: errors.append(repr(error))
+          try: case = json.loads((E / 'inventory-unit-case.json').read_text())
+          except Exception as error: errors.append(repr(error))
+          seconds = time.monotonic()-started; peak = usage.ru_maxrss*1024 if usage else None
+          passed = (raw == 0 and reason is None and not lost and absent and not errors and before == after
+              and case.get('passed') is True and case.get('ran') == 1 and seconds <= 20
+              and type(peak) is int and 0 < peak <= 256*MIB)
+          value = dict(passed=passed, raw_wait_status=raw, exit=os.waitstatus_to_exitcode(raw) if raw is not None else None,
+              child_reaped=raw is not None, identity_lost=lost, owned_group_absent=absent, stop_reason=reason,
+              peak_child_rss_bytes=peak, cpu_seconds=usage.ru_utime+usage.ru_stime if usage else None, seconds=seconds,
+              source_before=before, source_after=after, case=case, errors=errors, old31_run=False, producer_run=False)
+          (E / 'inventory-unit-result.json').write_text(json.dumps(value, indent=2)+'\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+          python -I -B "$MAP_EVIDENCE/inventory-unit-outer.py"
+
+      - name: Run the measured candidate once on the exact original BEFORE
+        id: correction
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python -I -B scripts/review/map_failure_capture.py capture --allocation "$MAP_EVIDENCE/correction-allocation.json" --out "$MAP_EVIDENCE/correction" > "$MAP_EVIDENCE/correction-controller.log" 2>&1
+          controller_exit=$?
+          set -e
+          printf '%s\n' "$controller_exit" > "$MAP_EVIDENCE/correction-controller.exit"
+
+      - name: Require full40 native physical acceptance before candidate preview
+        id: correction_verified
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B "$MAP_EVIDENCE/phase-gate.py" correction > "$MAP_EVIDENCE/correction-gate.log" 2>&1
+
+      - name: Preview only the physically accepted candidate AFTER state
+        id: corrected_preview
+        if: success() && steps.correction_verified.outcome == 'success'
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python -I -B scripts/review/map_failure_capture.py capture --allocation "$MAP_EVIDENCE/corrected-preview-allocation.json" --out "$MAP_EVIDENCE/corrected-preview" > "$MAP_EVIDENCE/corrected-preview-controller.log" 2>&1
+          controller_exit=$?
+          set -e
+          printf '%s\n' "$controller_exit" > "$MAP_EVIDENCE/corrected-preview-controller.exit"
+
+      - name: Verify the measured candidate image and original input digest
+        id: preview_verified
+        if: success() && steps.correction_verified.outcome == 'success'
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B "$MAP_EVIDENCE/phase-gate.py" corrected-preview > "$MAP_EVIDENCE/corrected-preview-gate.log" 2>&1
+
+      - name: Preserve the native-event source guard on every outcome
+        id: source_after
+        if: always()
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$RUNNER_TEMP/map-source-guard.py"
+          python -I -B "$RUNNER_TEMP/map-source-guard.py" after > "$MAP_EVIDENCE/source-after-canary.log" 2>&1
+
+      - name: Retain first failure, immutable input receipt and all partial results
+        if: always()
+        timeout-minutes: 1
+        env:
+          SOURCE_GUARD_OUTCOME: ${{ steps.source_after.outcome }}
+        shell: bash
+        run: |
+          python -I -B - <<'PY'
+          import hashlib, json, os, runpy, stat
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          errors, results, files = [], {}, {}
+          def read(path):
+              try:
+                  return json.loads(path.read_text())
+              except Exception as error:
+                  errors.append(dict(file=str(path.relative_to(evidence)), error=repr(error)))
+                  return {}
+          results['inventory_unit'] = read(evidence / 'inventory-unit-result.json')
+          for phase in ('correction', 'corrected-preview'):
+              results[phase] = read(evidence / (phase+'-gate.json'))
+          receipt = read(evidence / 'input-receipt.json')
+          input_unchanged, archives_unchanged, owned = False, False, None
+          try:
+              control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_final_collection_definitions_only')
+              actual = Path(receipt['original_input'])
+              inventory = {str(path.relative_to(actual)): {'bytes': path.stat().st_size, 'sha256': control['sha'](path)} for path in actual.rglob('*') if path.is_file()}
+              input_unchanged = inventory == receipt['original_input_inventory']
+              archives_unchanged = all((evidence / receipt[key]['path']).stat().st_size == receipt[key]['bytes']
+                  and control['sha'](evidence / receipt[key]['path']) == receipt[key]['sha256'] for key in ('raw_archive', 'portable'))
+              owned = control['owned_blocks'](evidence)
+          except Exception as error:
+              errors.append(dict(file='final-guards', error=repr(error)))
+          # Preserve the inventory of early/partial evidence even when setup
+          # never reached a valid input receipt or either phase allocation.
+          try:
+              for path in evidence.rglob('*'):
+                  metadata = path.lstat()
+                  assert not stat.S_ISLNK(metadata.st_mode), 'evidence symlink refused'
+                  if stat.S_ISREG(metadata.st_mode):
+                      files[str(path.relative_to(evidence))] = dict(bytes=metadata.st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+          except Exception as error:
+              errors.append(dict(file='partial-file-inventory', error=repr(error)))
+          passed = (not errors and receipt.get('verified') is True and input_unchanged and archives_unchanged and type(owned) is int and owned <= 128*1024**2
+              and os.environ['SOURCE_GUARD_OUTCOME'] == 'success' and all(result.get('passed') is True for result in results.values()))
+          status = evidence / 'status.txt'
+          status.write_text(('MEASURED CANDIDATE DIAGNOSTIC READY' if passed else 'CANDIDATE FAILED/PARTIAL; no preview acceptance')+'; original world FAILED; no correction/art approval\n')
+          files['status.txt'] = dict(bytes=status.stat().st_size, sha256=hashlib.sha256(status.read_bytes()).hexdigest())
+          assert files['status.txt'] == dict(bytes=status.stat().st_size, sha256=hashlib.sha256(status.read_bytes()).hexdigest()), 'final status changed before manifest'
+          value = dict(event_source_sha=os.environ['EXPECTED_SOURCE_SHA'], captured_source_sha='87ea22a4be342e3b8009b1c9b922c2fb7db56711',
+              passed=passed, results=results, original_input_unchanged=input_unchanged, original_archives_unchanged=archives_unchanged, original_input_receipt=receipt,
+              owned_bytes=owned, errors=errors, files=files, label='MEASURED CANDIDATE DIAGNOSTIC', world_success=False, art_approval=False,
+              qualification='Intentional Crossroads candidate on actual BEFORE; native plan/export/checker plus strict40/ground/yard/support checks. Original unchanged replay/rawsource/FAILEDPNG preserved, not relabelled as candidate equality. Source-derived physical tables are explicit, not captured-global parity. No full world/Neon/all21/art approval. Existing per-phase limits unchanged; whole evidence counted before/after phases. Independent actual-byte retrieval required.')
+          (evidence / 'artifact-manifest.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
+              output.write(value['label']+'\n\nCandidate and corrected preview accepted: '+str(passed)+'\n\nOriginal world: FAILED\n\nMeasured candidate only; no world or art approval. Upload and independently retrieve the actual artifact before the next step.\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+
+      - name: Upload the original input and every partial log, guard, result and PNG
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mygame-map-followup-R1-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/map-followup-evidence/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7

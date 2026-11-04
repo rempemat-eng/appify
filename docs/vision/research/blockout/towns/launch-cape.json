@@ -8,7 +8,7 @@
   4,
   8
  ],
- "buildings_counted": 3,
+ "buildings_counted": 6,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -39,7 +39,7 @@
  },
  "footprint_px": [
   11856,
-  5928,
+  5816,
   12240,
   6515
  ],
@@ -178,11 +178,12 @@
     "launch-cape-b003",
     "launch-cape-b004",
     "launch-cape-b005",
-    "launch-cape-b006"
+    "launch-cape-b006",
+    "launch-cape-b009"
    ],
    "mix": {
     "hangar": 1,
-    "workshop": 2,
+    "workshop": 3,
     "warehouse": 2,
     "public": 1
    },
@@ -201,6 +202,24 @@
    ],
    "buildings": [],
    "town": "Launch Cape"
+  },
+  {
+   "id": "launch-cape-d-staff-homes",
+   "name": "the staff homes",
+   "centre_px": [
+    12048,
+    5848
+   ],
+   "declared": "two detached staff cottages with gardens at the northern entrance, away from the pad",
+   "town": "Launch Cape",
+   "buildings": [
+    "launch-cape-b007",
+    "launch-cape-b008"
+   ],
+   "mix": {
+    "cottage": 2
+   },
+   "function": "homes"
   }
  ],
  "gathering_places": [
@@ -252,9 +271,19 @@
     56,
     72
    ]
+  ],
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
   ]
  },
- "fronts": 6,
+ "fronts": 9,
  "landmarks": [
   {
    "building": "launch-cape-b001",
@@ -480,6 +509,108 @@
    "plot": "yard",
    "landmark": true,
    "counts_as": 0
+  },
+  {
+   "id": "launch-cape-b007",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1494,
+    727,
+    8,
+    6
+   ],
+   "rect_px": [
+    11952,
+    5816,
+    64,
+    48
+   ],
+   "faces": "launch-cape-a1",
+   "door_cells": [
+    1502,
+    729
+   ],
+   "purpose": "a detached staff cottage",
+   "occupants": "staff; individual residents and routines not yet authored",
+   "district": "launch-cape-d-staff-homes",
+   "counted": true,
+   "plot_cells": [
+    1492,
+    727,
+    2,
+    6
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "launch-cape-b008",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1510,
+    729,
+    8,
+    6
+   ],
+   "rect_px": [
+    12080,
+    5832,
+    64,
+    48
+   ],
+   "faces": "launch-cape-a1",
+   "door_cells": [
+    1509,
+    731
+   ],
+   "purpose": "a detached staff cottage",
+   "occupants": "staff; individual residents and routines not yet authored",
+   "district": "launch-cape-d-staff-homes",
+   "counted": true,
+   "plot_cells": [
+    1518,
+    729,
+    2,
+    6
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "launch-cape-b009",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    1509,
+    737,
+    13,
+    7
+   ],
+   "rect_px": [
+    12072,
+    5896,
+    104,
+    56
+   ],
+   "faces": "launch-cape-a1",
+   "door_cells": [
+    1508,
+    739
+   ],
+   "purpose": "a staff settlement workshop",
+   "occupants": "staff; individual workers and routines not yet authored",
+   "district": "launch-cape-d-the-works",
+   "counted": true,
+   "plot_cells": [
+    1522,
+    737,
+    2,
+    7
+   ],
+   "plot": "yard",
+   "counts_as": 1
   }
  ],
  "lifted": [],
@@ -527,7 +658,7 @@
   ],
   "screens": [
    1.2,
-   3.3
+   3.9
   ]
  },
  "ground": {
