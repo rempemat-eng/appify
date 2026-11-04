@@ -143,3 +143,14 @@ func test_fence_cells_join_their_neighbours_and_a_gates_ends() -> void:
 	assert_str(g[Vector2i(2, 0)]).is_equal("fence_rail_ew")
 	assert_str(g[Vector2i(3, -1)]).is_equal("")
 	assert_bool(g.has(Vector2i(3, 0))).is_false()
+
+func test_variants_cycle_and_cells_hash_the_same_way_every_time() -> void:
+	assert_str(Tools.next_variant(["a", "b", "c"], "a")).is_equal("b")
+	assert_str(Tools.next_variant(["a", "b", "c"], "c")).is_equal("a")
+	assert_str(Tools.next_variant(["a", "b"], "missing")).is_equal("a")
+	assert_str(Tools.next_variant([], "a")).is_equal("")
+	var h := Tools.cell_hash(Vector2i(4, 9), 11)
+	assert_float(h).is_equal(Tools.cell_hash(Vector2i(4, 9), 11))
+	assert_bool(h >= 0.0 and h < 1.0).is_true()
+	assert_bool(Tools.cell_hash(Vector2i(4, 9), 12) != h).is_true()
+	assert_str(Tools.short_rule("rules.not_near")).is_equal("not near")

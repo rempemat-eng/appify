@@ -395,3 +395,100 @@ func test_a_copied_pen_pastes_whole_in_one_action_with_its_contents_inside() -> 
 	assert_str(preview[Vector2i(9, 4)]).is_equal("fence_wattle_e")
 	assert_str(preview[Vector2i(10, 4)]).is_equal("fence_wattle_w")
 	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(18)
+
+func _crossing_library() -> Dictionary:
+	var result := _fence_library()
+	for id in ["fence_wattle_gate_ew", "fence_rail_e", "fence_rail_w", "fence_rail_ew", "fence_rail_stile_ew", "farm_hen_white"]:
+		var piece: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/prop/%s.json" % id))
+		piece.approval.state = "approved"
+		result[piece.id] = piece
+	return result
+
+func _wide_rows(n: int = 12) -> Array:
+	var rows := []
+	for y in 6:
+		rows.append(".".repeat(n))
+	return rows
+
+func test_a_gate_or_a_stile_replaces_the_run_it_is_clicked_onto() -> void:
+	var f := _fixture({"library": _crossing_library(), "plan": {"rows": _wide_rows()}})
+	var run := []
+	for x in range(1, 8):
+		run.append(Vector2i(x, 2))
+	assert_bool(f.operations.place_fence_run("wattle", run).ok).is_true()
+	# clicked near the run's end, the gate snaps to the nearest span of three straight cells
+	var placed: Dictionary = f.operations.place_crossing("fence_wattle_gate_ew", Vector2(1 * 24 + 5, 2 * 24 + 5))
+	assert_bool(placed.ok).is_true()
+	assert_that(placed.cell).is_equal(Vector2i(3, 2))
+	assert_int(placed.replaced).is_equal(3)
+	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(5)
+	assert_object(_piece_at(f, Vector2i(2, 2))).is_null()
+	assert_str(_piece_at(f, Vector2i(1, 2)).piece_id).is_equal("fence_wattle_e")      # the end keeps its join, now to the gate
+	assert_bool(f.history.undo()).is_true()
+	assert_int(f.operations.export_plan().plan.pieces.size()).is_equal(7)
+	assert_str(_piece_at(f, Vector2i(2, 2)).piece_id).is_equal("fence_wattle_ew")
+	assert_bool(f.history.redo()).is_true()
+	# nowhere near a straight span, and a stile on hurdles: both refused with the reason
+	var nowhere: Dictionary = f.operations.place_crossing("fence_wattle_gate_ew", Vector2(10 * 24 + 5, 5 * 24 + 5))
+	assert_bool(nowhere.ok).is_false()
+	assert_str(nowhere.message).contains("No straight wattle run")
+	# a stile goes on a post-and-rail run
+	assert_bool(f.operations.place_fence_run("rail", [Vector2i(8, 4), Vector2i(9, 4), Vector2i(10, 4)]).ok).is_true()
+	var stile: Dictionary = f.operations.place_crossing("fence_rail_stile_ew", Vector2(9 * 24 + 12, 4 * 24 + 12))
+	assert_bool(stile.ok).is_true()
+	assert_int(stile.replaced).is_equal(1)
+
+func test_the_ghost_is_checked_by_the_full_validator_once_per_place() -> void:
+	var calls := [0]
+	var validator := func(plan: Dictionary, _library_data: Dictionary) -> Dictionary:
+		calls[0] += 1
+		var ghost: Dictionary = plan.pieces.back()
+		return {"ok": false, "diagnostics": [
+			{"check": "rules.needs", "message": "%s: needs a hearth within 4 cells" % ghost.id, "at": ghost.at, "severity": "fault"},
+			{"check": "rules.fences", "message": "far away", "at": [999, 999], "severity": "fault"}]}
+	var rows := []
+	for y in 30:
+		rows.append(".".repeat(40))
+	var f := _fixture({"zone_validator": validator, "plan": {"rows": rows}})
+	var first: Dictionary = f.operations.ghost_check("woodland_forest_bench", Vector2(480, 360))
+	assert_str(first.severity).is_equal("fault")
+	assert_str(first.rule).is_equal("needs")
+	var info: Dictionary = f.operations.ghost_plan("woodland_forest_bench", Vector2(480, 360))
+	assert_int(info.plan.rows.size()).is_less_equal(17)
+	assert_int(String(info.plan.rows[0]).length()).is_less_equal(17)
+	f.operations.ghost_check("woodland_forest_bench", Vector2(482, 361))       # the same snapped place: cached
+	assert_int(calls[0]).is_equal(1)
+	f.operations.ghost_check("woodland_forest_bench", Vector2(552, 360))       # a new place: one more run
+	assert_int(calls[0]).is_equal(2)
+
+func test_the_scatter_brush_is_deterministic_spaced_ruled_and_one_undo() -> void:
+	var refuse_column := func(_plan: Dictionary, instance: Dictionary, _library_data: Dictionary) -> Dictionary:
+		if int(instance.at[0]) == 2 * 24 + 12:
+			return {"ok": false, "diagnostics": [{"rule": "rules.forbids", "message": "forbidden here"}]}
+		return {"ok": true, "diagnostics": []}
+	var f := _fixture({"library": _crossing_library(), "plan": {"rows": _wide_rows()}, "relation_evaluator": refuse_column})
+	var cells := []
+	for y in range(0, 6):
+		for x in range(0, 12):
+			cells.append(Vector2i(x, y))
+	var first: Dictionary = f.operations.scatter("farm_hen_white", cells, {"density": 0.6, "seed": 3})
+	assert_bool(first.ok).is_true()
+	var feet := []
+	for node in first.nodes:
+		feet.append(node.position)
+		assert_bool(int(node.position.x) != 2 * 24 + 12).is_true()            # its forbids respected
+	assert_int(feet.size()).is_greater(3)
+	for i in feet.size():
+		for j in feet.size():
+			if i < j:
+				var a: Vector2 = feet[i]
+				var b: Vector2 = feet[j]
+				assert_bool(maxf(absf(a.x - b.x), absf(a.y - b.y)) >= 48).is_true()   # a cell of clearance
+	assert_bool(f.history.undo()).is_true()                                    # the whole stroke
+	assert_int(f.operations.export_plan().plan.get("pieces", []).size()).is_equal(0)
+	var again: Dictionary = f.operations.scatter("farm_hen_white", cells, {"density": 0.6, "seed": 3})
+	var feet2 := []
+	for node in again.nodes:
+		feet2.append(node.position)
+	assert_that(feet2).is_equal(feet)                                          # the same per-cell choices
+	assert_bool(f.operations.scatter("fence_wattle_ew", cells).ok).is_false()  # fences are not dressing

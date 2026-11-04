@@ -37,6 +37,26 @@ Building places from the kit (round 3, 3 Nov):
   (fences stay on their lines, contents inside them). Each piece is checked by the
   shared relation engine against the zone with the rest of the group in it; all are
   placed in one undo action, or none.
+- **Gates and stiles on runs** (round 7). With a gate or a stile selected, click a
+  run: the piece replaces the straight cells it spans (a gate three, a stile one),
+  snapping to the nearest straight span within two cells of the click; the cells
+  either side keep their joins, now to the gate's or stile's ends. A stile goes only
+  on a drystone or post-and-rail run, and its relation keeps it on a path. When no
+  span fits, the status says why. One undo action.
+- **Live fault overlay** (round 7). While a piece is placed, the ghost is green,
+  amber (advice) or red (fault), with the failing rule's short name beside it. The
+  relation engine answers at once; the full validator (kit_rules, relations,
+  enclosures, check_plan, as Validate) runs on a worker thread on a crop of the zone
+  8 cells round the ghost, keeping only the findings about the ghost. Crops and
+  verdicts are cached and cleared whenever the scene changes.
+- **Variants and the scatter brush** (round 7). V or Next variant cycles the
+  selected piece's variants (sprites are never mirrored: a flip is a variant drawn
+  for it). With Scatter brush on and a small piece selected (two cells or less, not
+  a fence), drag over the ground: each cell decides by its own seed (the zone's name)
+  whether it takes a piece and which variant, keeps a cell of clearance from every
+  other piece, and is checked by the relation engine with the stroke's earlier
+  pieces in place, so forbids hold. One undo a stroke; the same stroke repainted
+  lands the same pieces.
 - **Validate zone** now also runs `scripts/art/kit/enclosures.py` (closed loops,
   what each pen holds and needs, every stretch keeping its stock) and
   `placement_audit.check_plan` (needs a hearth or home, faces a feature, avoids wild

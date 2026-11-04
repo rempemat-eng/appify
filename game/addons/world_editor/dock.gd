@@ -139,6 +139,23 @@ func _ready() -> void:
 	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	card.text = "Select or hover a swatch to inspect its definition."
 	_content.add_child(card)
+	var variant_button := Button.new()
+	variant_button.name = "NextVariant"
+	variant_button.text = "Next variant (V)"
+	variant_button.tooltip_text = "Cycle the selected piece's variants. Sprites are never mirrored: a flip is a variant drawn for it."
+	variant_button.pressed.connect(cycle_variant)
+	var scatter_check := CheckBox.new()
+	scatter_check.name = "ScatterBrush"
+	scatter_check.text = "Scatter brush"
+	scatter_check.tooltip_text = "Drag to scatter small dressing: a deterministic choice per cell, forbids and a cell of clearance respected, one undo a stroke."
+	scatter_check.toggled.connect(func(on: bool) -> void:
+		if is_instance_valid(plugin):
+			plugin.set("scatter", on)
+		say("Scatter brush on: drag over the ground with a small piece selected." if on else "Scatter brush off."))
+	var vrow := HBoxContainer.new()
+	vrow.add_child(variant_button)
+	vrow.add_child(scatter_check)
+	_content.add_child(vrow)
 	var copy_button := Button.new()
 	copy_button.name = "CopyGroup"
 	copy_button.text = "Copy selected pieces"
@@ -673,6 +690,21 @@ func _bake() -> void:
 		result["message"] = "Bake completed."
 	say(_message(result, "Bake failed; no output was accepted."))
 	bake_button.disabled = not is_instance_valid(zone)
+
+## The next of the selected piece's variants (the V key and the Next variant button).
+func cycle_variant() -> void:
+	if piece_variant_select == null or piece_variant_select.item_count < 2:
+		say("This piece has one variant.")
+		return
+	var ids: Array = []
+	for i in piece_variant_select.item_count:
+		ids.append(_text(piece_variant_select.get_item_metadata(i)))
+	var current := _text(piece_variant_select.get_item_metadata(maxi(0, piece_variant_select.selected)))
+	var next := Tools.next_variant(ids, current)
+	var index := ids.find(next)
+	piece_variant_select.select(index)
+	_piece_variant_selected(index)
+	say("Variant: %s" % (next if next != "" else "auto"))
 
 func _copy_group() -> void:
 	if not is_instance_valid(plugin) or not plugin.has_method("copy_selection"):

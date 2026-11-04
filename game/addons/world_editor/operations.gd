@@ -28,6 +28,9 @@ func configure(zone: Node, ground: TerrainGround, history: Object, options: Dict
 	_library_errors.clear()
 	_library.clear()
 	_index.clear()
+	_ghost_plans.clear()
+	_ghost_verdicts.clear()
+	_ghost_snapshot = {}
 	if options.has("library"):
 		if options.library is Dictionary:
 			_library = options.library.duplicate(true)
@@ -484,6 +487,322 @@ func paste_group(group: Array, at: Vector2) -> Dictionary:
 	_history.commit_action()
 	return {"ok": true, "diagnostics": [], "changed": true, "nodes": added, "message": "Pasted %d pieces." % added.size()}
 
+const CROSSING_STYLES := ["drystone", "rail"]
+const GHOST_RADIUS := 8
+var _ghost_plans: Dictionary = {}
+var _ghost_verdicts: Dictionary = {}
+var _ghost_snapshot: Dictionary = {}
+var ghost_validations := 0
+
+func _fence_nodes(style: String) -> Dictionary:
+	var props := _zone.get_node_or_null("Props") as Node2D
+	var out := {}
+	if props == null:
+		return out
+	for child in props.get_children():
+		if not child is KitPiece:
+			continue
+		var boundary: Variant = definition(child.piece_id).get("placement", {}).get("boundary")
+		if not boundary is Dictionary or String(boundary.get("style", "")) != style or bool(boundary.get("gate", false)) or bool(boundary.get("stile", false)):
+			continue
+		var foot: Vector2 = _ground.to_local(props.to_global(child.position)) if props.is_inside_tree() else child.position
+		out[Tools.fence_cell(foot, _ground.kit.cell)] = child
+	return out
+
+## Gates and stiles on runs (round 7): clicking a run with a gate or a stile replaces the straight
+## cells it spans (a gate three, a stile one), snapping to the nearest straight span within two
+## cells of the click. A stile goes only on a drystone or post-and-rail run, and (its relation)
+## only where a path crosses. The cells either side keep their joins: they now meet the gate's or
+## the stile's ends. One undo action.
+func place_crossing(piece_id: String, at: Vector2) -> Dictionary:
+	var context := _context(true)
+	if not context.ok:
+		return context
+	var raw := definition(piece_id)
+	var boundary: Variant = raw.get("placement", {}).get("boundary")
+	if not boundary is Dictionary or not (bool(boundary.get("gate", false)) or bool(boundary.get("stile", false))):
+		return _failure("rules.crossing", "'%s' is not a gate or a stile." % piece_id)
+	var gate_ok := _approval(raw)
+	if not gate_ok.ok:
+		return gate_ok
+	var style := String(boundary.get("style", ""))
+	var stile := bool(boundary.get("stile", false))
+	if stile and style not in CROSSING_STYLES:
+		return _failure("rules.crossing", "A stile crosses only a drystone or post-and-rail run, not %s." % style)
+	var joins: Array = boundary.get("joins", [])
+	var along_x := "e" in joins
+	var span := int(boundary.get("span_cells", 1)) if not stile else 1
+	var size := _ground.kit.cell
+	var click := Vector2i(floori(at.x / size), floori(at.y / size))
+	var cells := _fence_nodes(style)
+	var step := Vector2i(1, 0) if along_x else Vector2i(0, 1)
+	var straight := "_ew" if along_x else "_ns"
+	var centre := Vector2i(-9999, -9999)
+	for d in [0, -1, 1, -2, 2]:
+		var c: Vector2i = click + step * d
+		var ok := true
+		for k in range(-(span / 2), span / 2 + 1):
+			var node = cells.get(c + step * k)
+			if node == null or not String(node.piece_id).ends_with(straight):
+				ok = false
+				break
+		if ok:
+			centre = c
+			break
+	if centre.x == -9999:
+		return _failure("rules.crossing", "No straight %s run of %d cell%s here: a %s needs %s cell%s of a straight run along %s within two cells of the click." % [
+			style, span, "s" if span > 1 else "", "stile" if stile else "gate", span, "s" if span > 1 else "", "x" if along_x else "y"])
+	var removed: Array = []
+	var names := {}
+	for k in range(-(span / 2), span / 2 + 1):
+		removed.append(cells[centre + step * k])
+		names[String(cells[centre + step * k].name)] = true
+	var snapshot := export_plan()
+	if not snapshot.ok:
+		return snapshot
+	var others: Array = []
+	for e in snapshot.plan.get("pieces", []):
+		if not names.has(String(e.get("id", ""))):
+			others.append(e)
+	var plan: Dictionary = snapshot.plan.duplicate(true)
+	plan["pieces"] = others
+	var foot := Tools.fence_foot(centre, size)
+	var unit := float(size) if String(plan.get("coordinate_space", "texels")) == "cells" else 1.0
+	var instance := {"piece": piece_id, "at": [foot.x / unit, foot.y / unit], "facing": "s", "id": _free_id(piece_id, others)}
+	var evaluator = _options.get("relation_evaluator", Callable())
+	if not evaluator is Callable or not evaluator.is_valid():
+		return _failure("rules.provider_missing", "Placement is unavailable until the shared relation engine is installed.")
+	var verdict := _provider_result(evaluator.call(plan, instance.duplicate(true), _library.duplicate(true)), "relation engine")
+	if not verdict.ok:
+		return verdict
+	var made := _instantiate(piece_id)
+	if not made.ok:
+		return made
+	var props := _zone.get_node_or_null("Props") as Node2D
+	var piece: KitPiece = made.node
+	piece.name = String(instance.id)
+	piece.piece_id = piece_id
+	piece.set_meta("kit_zone_entry", instance.duplicate(true))
+	piece.set_meta("facing", "s")
+	piece.position = props.to_local(_ground.to_global(foot)) if props.is_inside_tree() else foot
+	var before := {"baked": _ground.baked, "baked_live": _ground.showing_baked()}
+	_begin("Place %s on the run" % piece_id)
+	_do(Callable(self, "_apply_swap").bind(_zone, _ground, props, removed, [piece], true, before))
+	_undo(Callable(self, "_apply_swap").bind(_zone, _ground, props, removed, [piece], false, before))
+	_history.add_do_reference(piece)
+	for node in removed:
+		_history.add_undo_reference(node)
+	_history.commit_action()
+	return {"ok": true, "diagnostics": [], "changed": true, "node": piece, "cell": centre, "replaced": removed.size(),
+		"message": "%s placed on the run at %s, replacing %d cell%s." % [piece_id, centre, removed.size(), "s" if removed.size() > 1 else ""]}
+
+## The live fault overlay (round 7), in two halves so the slow one can run off the main thread:
+## ghost_plan (main thread) crops the zone's plan to the ghost's neighbourhood (GHOST_RADIUS cells
+## round it) with the ghost in it, cached per revision; ghost_verdict runs the full validator (the
+## same one Validate uses: kit_rules, relations, enclosures, check_plan) on that crop and keeps the
+## findings about the ghost, cached per crop.
+func ghost_plan(piece_id: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
+	var context := _context(false)
+	if not context.ok:
+		return {}
+	var raw := definition(piece_id)
+	if raw.is_empty():
+		return {}
+	var size := _ground.kit.cell
+	var snapped := Tools.snap(at, String(raw.get("placement", {}).get("snap", "cell")), size)
+	var key := [piece_id, snapped, String(options.get("facing", "s")), String(options.get("variant", "")), String(options.get("stage", ""))]
+	var skey := str(key)
+	if _ghost_plans.has(skey):
+		return _ghost_plans[skey]
+	if _ghost_snapshot.is_empty():
+		var snap := export_plan()
+		if not snap.ok:
+			return {}
+		_ghost_snapshot = snap.plan
+	var plan: Dictionary = _ghost_snapshot
+	var unit := float(size) if String(plan.get("coordinate_space", "texels")) == "cells" else 1.0
+	var cell := Vector2i(floori(snapped.x / size), floori((snapped.y - 1) / size))
+	var rows: Array = plan.get("rows", [])
+	var y0 := maxi(0, cell.y - GHOST_RADIUS)
+	var y1 := mini(rows.size(), cell.y + GHOST_RADIUS + 1)
+	var x0 := maxi(0, cell.x - GHOST_RADIUS)
+	var x1 := mini(String(rows[0]).length() if rows.size() > 0 else 0, cell.x + GHOST_RADIUS + 1)
+	var crop_rows: Array = []
+	for y in range(y0, y1):
+		crop_rows.append(String(rows[y]).substr(x0, x1 - x0))
+	var shift := Vector2(x0 * size, y0 * size)
+	var pieces: Array = []
+	for e in plan.get("pieces", []):
+		var p := Vector2(e.at[0], e.at[1]) * unit - shift
+		if p.x >= 0 and p.y >= 0 and p.x < (x1 - x0) * size and p.y <= (y1 - y0) * size:
+			var c: Dictionary = e.duplicate(true)
+			c["at"] = [p.x, p.y]
+			pieces.append(c)
+	var ghost := {"piece": piece_id, "at": [snapped.x - shift.x, snapped.y - shift.y], "facing": String(options.get("facing", "s")), "id": "ghost_" + piece_id}
+	for k in ["variant", "stage"]:
+		if String(options.get(k, "")) != "":
+			ghost[k] = options[k]
+	pieces.append(ghost)
+	var crop := {"zone": String(plan.get("zone", "zone")) + "_ghost", "legend": plan.get("legend", {}), "rows": crop_rows, "pieces": pieces,
+		"coordinate_space": "texels", "lab": plan.get("lab", false)}
+	var out := {"key": skey, "plan": crop, "ghost": ghost.id, "at": Vector2(ghost.at[0], ghost.at[1])}
+	_ghost_plans[skey] = out
+	return out
+
+func ghost_verdict(info: Dictionary) -> Dictionary:
+	if info.is_empty():
+		return {}
+	if _ghost_verdicts.has(info.key):
+		return _ghost_verdicts[info.key]
+	var out := ghost_compute(info)
+	_ghost_verdicts[info.key] = out
+	return out
+
+## The cached verdict for a crop, or {} while it is still being worked out.
+func ghost_cached(info: Dictionary) -> Dictionary:
+	return _ghost_verdicts.get(info.get("key", ""), {}) if not info.is_empty() else {}
+
+func ghost_store(key: String, verdict: Dictionary) -> void:
+	_ghost_verdicts[key] = verdict
+
+## The slow half, safe off the main thread: it reads only the crop and the library.
+func ghost_compute(info: Dictionary) -> Dictionary:
+	var validator = _options.get("zone_validator", Callable())
+	if not validator is Callable or not validator.is_valid():
+		return {}
+	ghost_validations += 1
+	var result: Variant = validator.call(info.plan.duplicate(true), _library)
+	var worst := ""
+	var rule := ""
+	var message := ""
+	for f in (result.get("diagnostics", []) if result is Dictionary else []):
+		if not f is Dictionary:
+			continue
+		var at_: Variant = f.get("at")
+		var near := String(f.get("message", "")).begins_with(String(info.ghost) + ":")
+		if at_ is Array and at_.size() == 2:
+			near = near or Vector2(float(at_[0]), float(at_[1])).distance_to(info.at) <= 3.0 * _ground.kit.cell
+		if not near:
+			continue
+		var sev := String(f.get("severity", "fault"))
+		if worst != "fault" and (sev == "fault" or worst == ""):
+			worst = sev
+			rule = Tools.short_rule(String(f.get("check", f.get("rule", ""))))
+			message = String(f.get("message", ""))
+	return {"severity": worst, "rule": rule, "message": message}
+
+func ghost_check(piece_id: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
+	return ghost_verdict(ghost_plan(piece_id, at, options))
+
+## The scatter brush (round 7): small dressing (a piece no more than two cells either way, not a
+## fence) over the cells of one stroke, each cell choosing by its own deterministic seed whether to
+## take a piece (density) and which variant (by weight); a cell within a cell of another piece's
+## foot is skipped (clearance) and every piece is checked by the shared relation engine against the
+## zone with the stroke's earlier pieces in it (its forbids). One undo per stroke.
+func scatter(piece_id: String, cells: Array, options: Dictionary = {}) -> Dictionary:
+	var context := _context(true)
+	if not context.ok:
+		return context
+	var raw := definition(piece_id)
+	if raw.is_empty():
+		return _failure("rules.unknown_piece", "Unknown piece '%s'." % piece_id)
+	var gate := _approval(raw)
+	if not gate.ok:
+		return gate
+	var cells_size: Array = raw.get("geometry", {}).get("size_cells", [9, 9])
+	if raw.get("placement", {}).has("boundary") or int(cells_size[0]) > 2 or int(cells_size[1]) > 2:
+		return _failure("rules.scatter", "Scatter takes small dressing only (two cells or less, not a fence): '%s' is %s cells." % [piece_id, cells_size])
+	var props := _zone.get_node_or_null("Props") as Node2D
+	if props == null:
+		return _failure("editor.props_missing", "The zone needs its authored Props container before placing pieces.")
+	var evaluator = _options.get("relation_evaluator", Callable())
+	if not evaluator is Callable or not evaluator.is_valid():
+		return _failure("rules.provider_missing", "Placement is unavailable until the shared relation engine is installed.")
+	var density := float(options.get("density", 0.35))
+	var seed := int(options.get("seed", 7))
+	var size := _ground.kit.cell
+	var snapshot := export_plan()
+	if not snapshot.ok:
+		return snapshot
+	var plan: Dictionary = snapshot.plan.duplicate(true)
+	if not plan.has("pieces"):
+		plan["pieces"] = []
+	var unit := float(size) if String(plan.get("coordinate_space", "texels")) == "cells" else 1.0
+	var taken := {}
+	for e in plan.get("pieces", []):
+		var f := Vector2(e.at[0], e.at[1]) * unit
+		taken[Vector2i(floori(f.x / size), floori((f.y - 1) / size))] = true
+	var variants: Array = []
+	var weights: Array = []
+	for v in raw.get("variants", []):
+		variants.append(String(v.get("id", "")))
+		weights.append(float(v.get("weight", 1.0)))
+	var sorted: Array = cells.duplicate()
+	sorted.sort_custom(func(a: Vector2i, b: Vector2i) -> bool: return a.y < b.y or (a.y == b.y and a.x < b.x))
+	var added: Array[KitPiece] = []
+	var skipped := {"density": 0, "clearance": 0, "rules": 0}
+	for value in sorted:
+		var c := Vector2i(value)
+		if not _in_bounds(c):
+			continue
+		if Tools.cell_hash(c, seed) >= density:
+			skipped.density += 1
+			continue
+		var clear := true
+		for dy in range(-1, 2):
+			for dx in range(-1, 2):
+				if taken.has(c + Vector2i(dx, dy)):
+					clear = false
+		if not clear:
+			skipped.clearance += 1
+			continue
+		var variant := ""
+		if variants.size() > 1:
+			var total := 0.0
+			for w in weights:
+				total += w
+			var pick := Tools.cell_hash(c, seed, 1) * total
+			for i in variants.size():
+				pick -= weights[i]
+				if pick < 0:
+					variant = variants[i]
+					break
+		var foot := Vector2(c.x * size + size / 2.0, (c.y + 1) * size)
+		var instance := {"piece": piece_id, "at": [foot.x / unit, foot.y / unit], "facing": "s", "id": _free_id(piece_id, plan.get("pieces", []))}
+		if variant != "":
+			instance["variant"] = variant
+		var verdict := _provider_result(evaluator.call(plan.duplicate(true), instance.duplicate(true), _library.duplicate(true)), "relation engine")
+		if not verdict.ok:
+			skipped.rules += 1
+			continue
+		var made := _instantiate(piece_id)
+		if not made.ok:
+			for node in added:
+				node.free()
+			return made
+		var piece: KitPiece = made.node
+		piece.name = String(instance.id)
+		piece.piece_id = piece_id
+		piece.variant = variant
+		piece.set_meta("kit_zone_entry", instance.duplicate(true))
+		piece.set_meta("facing", "s")
+		piece.position = props.to_local(_ground.to_global(foot)) if props.is_inside_tree() else foot
+		added.append(piece)
+		plan.pieces.append(instance)
+		taken[c] = true
+	if added.is_empty():
+		return {"ok": true, "diagnostics": [], "changed": false, "nodes": [], "skipped": skipped, "message": "Scatter placed nothing here."}
+	var before := {"baked": _ground.baked, "baked_live": _ground.showing_baked()}
+	_begin("Scatter %s (%d)" % [piece_id, added.size()])
+	_do(Callable(self, "_apply_swap").bind(_zone, _ground, props, [], added, true, before))
+	_undo(Callable(self, "_apply_swap").bind(_zone, _ground, props, [], added, false, before))
+	for node in added:
+		_history.add_do_reference(node)
+	_history.commit_action()
+	return {"ok": true, "diagnostics": [], "changed": true, "nodes": added, "skipped": skipped,
+		"message": "Scattered %d %s (%d cells left by density, %d for clearance, %d refused by the rules)." % [
+			added.size(), piece_id, skipped.density, skipped.clearance, skipped.rules]}
+
 func validate() -> Dictionary:
 	# Export omits unchanged gameplay_from markers to preserve source ownership. Validation
 	# must still check where every effective spawn stands in the current scene.
@@ -681,6 +1000,9 @@ func _restore_ground(target: TerrainGround, state: Dictionary) -> void:
 	target._rebuild()
 	target.rebuild_shadows()
 	last_changed_ground = target
+	_ghost_plans.clear()
+	_ghost_verdicts.clear()
+	_ghost_snapshot = {}
 	changed.emit()
 
 func _begin(title: String) -> void:
