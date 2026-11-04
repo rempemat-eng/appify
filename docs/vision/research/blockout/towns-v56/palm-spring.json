@@ -8,7 +8,7 @@
   14,
   22
  ],
- "buildings_counted": 15,
+ "buildings_counted": 14,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -39,7 +39,7 @@
  },
  "footprint_px": [
   3040,
-  2544,
+  2596,
   3536,
   2960
  ],
@@ -364,11 +364,10 @@
     "palm-spring-b003",
     "palm-spring-b004",
     "palm-spring-b005",
-    "palm-spring-b008",
-    "palm-spring-b015"
+    "palm-spring-b014"
    ],
    "mix": {
-    "cottage": 6,
+    "cottage": 5,
     "shop": 1
    },
    "function": "homes"
@@ -385,13 +384,13 @@
    "buildings": [
     "palm-spring-b006",
     "palm-spring-b007",
-    "palm-spring-b009",
-    "palm-spring-b010"
+    "palm-spring-b012",
+    "palm-spring-b013"
    ],
    "mix": {
     "cottage": 2,
-    "barn": 1,
-    "inn": 1
+    "inn": 1,
+    "barn": 1
    },
    "function": "market and civic with homes"
   },
@@ -405,13 +404,13 @@
    "town": "Palm Spring",
    "id": "palm-spring-d-channel-row",
    "buildings": [
-    "palm-spring-b011",
-    "palm-spring-b013",
-    "palm-spring-b014"
+    "palm-spring-b008",
+    "palm-spring-b009",
+    "palm-spring-b010"
    ],
    "mix": {
-    "shop": 1,
-    "cottage": 2
+    "cottage": 2,
+    "shop": 1
    },
    "function": "market and civic with homes"
   },
@@ -425,7 +424,7 @@
    "town": "Palm Spring",
    "id": "palm-spring-d-palm-row",
    "buildings": [
-    "palm-spring-b012"
+    "palm-spring-b011"
    ],
    "mix": {
     "cottage": 1
@@ -452,10 +451,10 @@
    "function": "edge: farms and gardens",
    "declared": "date palms watered from the spring",
    "box_px": [
-    3120,
-    2700,
-    3152,
-    2780
+    3200,
+    2560,
+    3240,
+    2600
    ],
    "buildings": [],
    "town": "Palm Spring"
@@ -498,16 +497,6 @@
     80
    ]
   ],
-  "cottage": [
-   [
-    56,
-    80
-   ],
-   [
-    40,
-    48
-   ]
-  ],
   "inn": [
    [
     112,
@@ -529,7 +518,7 @@
    ]
   ]
  },
- "fronts": 15,
+ "fronts": 14,
  "landmarks": [],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
@@ -539,20 +528,20 @@
    "form": "adobe",
    "footprint_cells": [
     385,
-    329,
+    326,
     6,
     5
    ],
    "rect_px": [
     3080,
-    2632,
+    2608,
     48,
     40
    ],
-   "faces": "palm-spring-s03",
+   "faces": "palm-spring-s04",
    "door_cells": [
-    386,
-    334
+    388,
+    325
    ],
    "purpose": "a cottage",
    "occupants": "a gardener's household",
@@ -566,20 +555,20 @@
    "form": "adobe",
    "footprint_cells": [
     392,
-    332,
+    328,
     6,
     5
    ],
    "rect_px": [
     3136,
-    2656,
+    2624,
     48,
     40
    ],
-   "faces": "palm-spring-s03",
+   "faces": "palm-spring-s04",
    "door_cells": [
-    392,
-    337
+    395,
+    327
    ],
    "purpose": "a cottage",
    "occupants": "a date grower's household",
@@ -593,20 +582,20 @@
    "form": "adobe",
    "footprint_cells": [
     399,
-    329,
-    6,
+    328,
+    5,
     5
    ],
    "rect_px": [
     3192,
-    2632,
-    48,
+    2624,
+    40,
     40
    ],
    "faces": "palm-spring-s04",
    "door_cells": [
-    402,
-    328
+    401,
+    327
    ],
    "purpose": "a cottage",
    "occupants": "a caravan guide's household",
@@ -701,20 +690,20 @@
    "form": "adobe",
    "footprint_cells": [
     419,
-    347,
+    346,
     4,
     6
    ],
    "rect_px": [
     3352,
-    2776,
+    2768,
     32,
     48
    ],
    "faces": "palm-spring-s05",
    "door_cells": [
     423,
-    350
+    349
    ],
    "purpose": "a cottage",
    "occupants": "a date grower's household",
@@ -724,60 +713,114 @@
   },
   {
    "id": "palm-spring-b008",
-   "type": "shop",
-   "form": "shop",
+   "type": "cottage",
+   "form": "adobe",
    "footprint_cells": [
-    428,
-    325,
-    8,
-    6
+    380,
+    344,
+    6,
+    5
    ],
    "rect_px": [
-    3424,
-    2600,
-    64,
-    48
+    3040,
+    2752,
+    48,
+    40
    ],
-   "faces": "palm-spring-s05",
+   "faces": "palm-spring-s03",
    "door_cells": [
-    427,
-    328
+    385,
+    343
    ],
-   "purpose": "the date seller",
-   "occupants": "the shopkeeper, living above",
-   "district": "palm-spring-d-spring-row",
+   "purpose": "a cottage",
+   "occupants": "a caravan guide's household",
+   "district": "palm-spring-d-channel-row",
    "counted": true,
    "counts_as": 1
   },
   {
    "id": "palm-spring-b009",
-   "type": "barn",
-   "form": "barn",
+   "type": "cottage",
+   "form": "adobe",
    "footprint_cells": [
-    428,
-    333,
-    14,
-    8
+    382,
+    350,
+    6,
+    5
    ],
    "rect_px": [
-    3424,
-    2664,
-    112,
-    64
+    3056,
+    2800,
+    48,
+    40
    ],
-   "faces": "palm-spring-s05",
+   "faces": "palm-spring-c01",
    "door_cells": [
-    427,
-    337
+    388,
+    350
    ],
-   "purpose": "a barn and store",
-   "occupants": "the farm",
-   "district": "palm-spring-d-the-caravanserai",
+   "purpose": "a cottage",
+   "occupants": "a water carrier's household",
+   "district": "palm-spring-d-channel-row",
    "counted": true,
    "counts_as": 1
   },
   {
    "id": "palm-spring-b010",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    406,
+    364,
+    8,
+    6
+   ],
+   "rect_px": [
+    3248,
+    2912,
+    64,
+    48
+   ],
+   "faces": "palm-spring-s02",
+   "door_cells": [
+    411,
+    363
+   ],
+   "purpose": "the date seller",
+   "occupants": "the shopkeeper, living above",
+   "district": "palm-spring-d-channel-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b011",
+   "type": "cottage",
+   "form": "adobe",
+   "footprint_cells": [
+    415,
+    364,
+    6,
+    5
+   ],
+   "rect_px": [
+    3320,
+    2912,
+    48,
+    40
+   ],
+   "faces": "palm-spring-s02",
+   "door_cells": [
+    416,
+    363
+   ],
+   "purpose": "a cottage",
+   "occupants": "a herder's household",
+   "district": "palm-spring-d-palm-row",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "palm-spring-b012",
    "type": "inn",
    "form": "inn",
    "footprint_cells": [
@@ -805,136 +848,55 @@
    "company_foothold": "an agent's room at the caravanserai"
   },
   {
-   "id": "palm-spring-b011",
-   "type": "shop",
-   "form": "shop",
-   "footprint_cells": [
-    404,
-    364,
-    8,
-    6
-   ],
-   "rect_px": [
-    3232,
-    2912,
-    64,
-    48
-   ],
-   "faces": "palm-spring-s02",
-   "door_cells": [
-    411,
-    363
-   ],
-   "purpose": "the water seller",
-   "occupants": "the shopkeeper, living above",
-   "district": "palm-spring-d-channel-row",
-   "counted": true,
-   "counts_as": 1
-  },
-  {
-   "id": "palm-spring-b012",
-   "type": "cottage",
-   "form": "adobe",
-   "footprint_cells": [
-    413,
-    364,
-    6,
-    5
-   ],
-   "rect_px": [
-    3304,
-    2912,
-    48,
-    40
-   ],
-   "faces": "palm-spring-s02",
-   "door_cells": [
-    416,
-    363
-   ],
-   "purpose": "a cottage",
-   "occupants": "a caravan guide's household",
-   "district": "palm-spring-d-palm-row",
-   "counted": true,
-   "counts_as": 1
-  },
-  {
    "id": "palm-spring-b013",
-   "type": "cottage",
-   "form": "adobe",
+   "type": "barn",
+   "form": "barn",
    "footprint_cells": [
-    380,
-    344,
-    6,
-    5
+    428,
+    333,
+    14,
+    8
    ],
    "rect_px": [
-    3040,
-    2752,
-    48,
-    40
+    3424,
+    2664,
+    112,
+    64
    ],
-   "faces": "palm-spring-s03",
+   "faces": "palm-spring-s05",
    "door_cells": [
-    385,
-    343
+    427,
+    337
    ],
-   "purpose": "a cottage",
-   "occupants": "a water carrier's household",
-   "district": "palm-spring-d-channel-row",
+   "purpose": "a barn and store",
+   "occupants": "the farm",
+   "district": "palm-spring-d-the-caravanserai",
    "counted": true,
    "counts_as": 1
   },
   {
    "id": "palm-spring-b014",
-   "type": "cottage",
-   "form": "cottage",
+   "type": "shop",
+   "form": "shop",
    "footprint_cells": [
-    380,
-    350,
+    428,
+    325,
     8,
-    5
+    6
    ],
    "rect_px": [
-    3040,
-    2800,
+    3424,
+    2600,
     64,
-    40
+    48
    ],
-   "faces": "palm-spring-c01",
+   "faces": "palm-spring-s05",
    "door_cells": [
-    388,
-    350
+    427,
+    328
    ],
-   "purpose": "a cottage",
-   "occupants": "a herder's household",
-   "district": "palm-spring-d-channel-row",
-   "counted": true,
-   "counts_as": 1
-  },
-  {
-   "id": "palm-spring-b015",
-   "type": "cottage",
-   "form": "adobe",
-   "footprint_cells": [
-    401,
-    318,
-    6,
-    5
-   ],
-   "rect_px": [
-    3208,
-    2544,
-    48,
-    40
-   ],
-   "faces": "palm-spring-s04",
-   "door_cells": [
-    404,
-    323
-   ],
-   "purpose": "a cottage",
-   "occupants": "a gardener's household",
+   "purpose": "the water seller",
+   "occupants": "the shopkeeper, living above",
    "district": "palm-spring-d-spring-row",
    "counted": true,
    "counts_as": 1
@@ -958,10 +920,10 @@
    "kind": "garden",
    "name": "the palm garden",
    "box": [
-    3120,
-    2700,
-    3152,
-    2780
+    3200,
+    2560,
+    3240,
+    2600
    ],
    "why": "date palms watered from the spring"
   }
@@ -1014,7 +976,7 @@
   ],
   "screens": [
    1.6,
-   2.3
+   2.0
   ]
  },
  "ground": {
@@ -1022,17 +984,17 @@
   "yards": "adobe yards",
   "edges": "irrigated green only along the two channels",
   "materials_cells": {
-   "packed sand": 1040,
-   "adobe yards": 60,
-   "dry gravel": 1441
+   "packed sand": 1019,
+   "adobe yards": 14,
+   "dry gravel": 1162
   }
  },
  "terrain": {
   "box_cells": [
    365,
-   303,
+   309,
    93,
-   83
+   77
   ],
   "codes": {
    ".": "land",
@@ -1043,12 +1005,6 @@
    "b": "bridge"
   },
   "rows": [
-   "52.~40.",
-   "52.~40.",
-   "51.~41.",
-   "51.~41.",
-   "51.~41.",
-   "51.~41.",
    "51.~41.",
    "51.~41.",
    "50.2~41.",
@@ -1058,11 +1014,11 @@
    "50.2~41.",
    "46.4g2~g40.",
    "37.2g5.5g~g2~40.",
-   "43.6g~2g~g39.",
+   "37.g.3g.6g~2g~g39.",
    "42.7g~2g~6g34.",
-   "42.7g~2g~6g34.",
-   "42.7g~2g~6g34.",
-   "42.5g3~2g~6g34.",
+   "35.5g2.7g~2g~6g34.",
+   "35.5g2.7g~2g~6g34.",
+   "35.5g.6g3~2g~6g34.",
    "47.2b3.b40.",
    "47.2b2.2b40.",
    "47.2b2.b41.",
@@ -1070,29 +1026,29 @@
    "41.6g2~2g~2g39.",
    "3r38.6g2~2g~2g39.",
    "6r34.6g~4g~2g39.",
-   "10r18.g11.6g~3g2~2g39.",
-   "15r12.2g11.6g~3g~3g39.",
+   "10r30.6g~3g2~2g39.",
+   "15r25.6g~3g~3g39.",
    "19r21.6g~3g~6g36.",
-   "20r6.g13.6g~2g2~3g39.",
-   "21r5.g10.9g~2g~4g39.",
-   "21r5.g13.6g~2g~4g39.",
-   "25r14.6g~g2~5g39.",
-   "26r3g10.6g~g2~5g39.",
-   ".26r2g10.3g7~5g39.",
+   "20r6.2g11.7g~2g2~3g39.",
+   "21r5.g.2g7.9g~2g~4g39.",
+   "21r5.4g10.6g~2g~4g39.",
+   "25r3.g10.6g~g2~5g39.",
+   "26r13.6g~g2~5g39.",
+   ".26r12.3g7~5g39.",
    "4.24r11.g9~7g37.",
    "10.19r10.g11~3g39.",
    "21.9r8.g12~3g17.g21.",
    "22.9r7.g12~3g16.g22.",
    "25.8r3.4g11~3g39.",
    "26.8r.5g10~4g39.",
-   "25.g8r7g8~5g37.g.",
-   "25.2g8r7.~g3~9g35.2g",
+   "26.8r7g8~5g37.g.",
+   "27.8r7.~g3~7g37.2g",
    "28.8r5.2~g~9g37.2g",
    "28.8r3.3~g~10g37.2g",
    "29.8r2g2~g2~10g37.2g",
    "30.7rg~3g~3g3~5g37.2g",
    "28.2g7rb3g~3g5~4g37.2g",
-   "26.5g5r2br2~4g~3g2~3g37.2g",
+   "26.5g5r2br2~4g~3g2~6g34.2g",
    "24.8g.2r2br2b~3g2~4g2b4g35.2g",
    "23.5g.4gr2brb4r2g~6gb5g34.2g",
    "13.10g2.8g~brb6r2~8gb3g34.2g",
@@ -1104,12 +1060,12 @@
    "5.2g2.g11~7g2~8g~3g.39r6.5r",
    "6.4g~2g.4g.7g2~9g~7g.14r~b4.17r4.6r",
    "6.5g.6g.4g2.g~9g2~.7g9.3g.2g~b5g15r4.6r",
-   "6.9g2.5g.3~.4g2.2g2~2g16.3g2.3g2b~3g15r2.6r.",
-   "7.7g.7g3~8g.2~3g16.9gb2~3g15r.5r2.",
-   "7.2g.11g2~11g~4g17.11g2~2g20r2.",
-   "7.13g~2g2.g.6g~5g18.11g2~2g18r3.",
+   "6.9g2.5g.3~.4g2.2g2~4g15.2g2.3g2b~3g15r2.6r.",
+   "7.7g.7g3~8g.2~5g15.8gb2~3g15r.5r2.",
+   "7.2g.11g2~11g~6g15.11g2~2g20r2.",
+   "7.13g~2g2.g.6g~7g16.11g2~2g18r3.",
    "7.11g2~7g.3g3~5g19.12g2~2g16r3.",
-   "9.4g2.2g2~.7g.g.~8g22.14g13r5.",
+   "9.4g2.2g2~.7g.g.~9g21.14g13r5.",
    "11.3g3~2g.2g.4g.2~9g23.13g13r5.",
    "9.3g3~3.7g.g2~.9g25.11g.12r5.",
    ".g7.g2~3g2.9g2~3g2.5g27.6g6.11r5.",
@@ -1141,7 +1097,7 @@
    ],
    "screen": [
     0,
-    1
+    0
    ]
   },
   {
@@ -1177,7 +1133,7 @@
    ],
    "screen": [
     0,
-    2
+    1
    ]
   },
   {
@@ -1220,18 +1176,18 @@
    "kind": "resident activity",
    "what": "the palm garden: date palms watered from the spring",
    "xy_px": [
-    3136,
-    2740
+    3220,
+    2580
    ],
    "screen": [
     0,
-    1
+    -1
    ]
   },
   {
    "kind": "resident activity",
-   "what": "the date seller: the shopkeeper, living above about their day",
-   "building": "palm-spring-b008",
+   "what": "the water seller: the shopkeeper, living above about their day",
+   "building": "palm-spring-b014",
    "xy_px": [
     3456,
     2624
@@ -1267,8 +1223,8 @@
     2596
    ],
    "toward": "the stone circle (the beam over the valley)",
-   "off_by_deg": 6,
-   "bearing_deg": 6
+   "off_by_deg": 5,
+   "bearing_deg": 5
   },
   "crater": {
    "name": "the Glass field",
@@ -1293,7 +1249,7 @@
   },
   "company": {
    "foothold": "an agent's room at the caravanserai",
-   "building": "palm-spring-b010",
+   "building": "palm-spring-b012",
    "xy_px": [
     3480,
     2776

@@ -235,3 +235,45 @@ The beach behind Gullwick and Driftwood is narrowed where the town stands (`_bea
 **Checks.** All 19 plans pass `town_plan.py`, the benchmark is 21/21, and the gates are unchanged. `towns-v56/gullwick.json`, `driftwood.json`, `lullford.json`, `dust-gulch.json` and `palm-spring.json`, `blockout-v56.json`, `stats-v56.json` and `town-checks-v56.json` follow. No test encoded these five towns' old shapes, so none changed.
 
 **v55.** The v55 data stage, seeded, gives byte-identical results before and after this round (all 24 data files, the state and the log). The v55 committed files are unchanged. Every drawing change is gated to v56: the tile roofs need `roofs`, which is on only for v56, and the label reservation sits in the v56 branch. The v55 renders could not be compared byte for byte this time, because two seeded renders of the same commit (771dd39f) from the same state differ in 8 of 12 images (the terrain textures and canopy). The renderer is no longer deterministic run to run on this machine, which predates this round and is worth a separate look.
+
+### Round 9 (4 Nov, Claude A): nothing stands on a line, Front Street, the ring, and the same picture every run
+
+The art director's review of 7c37b74f: a row of Dust Gulch's houses stood on the railway and another by the river; Dust Gulch must read as Front Street and Palm Spring as a ring; Palm Spring's leader line crossed houses; and two renders of one commit differed.
+
+**Nothing stands on a rail line, a road, a river or water.** A new check in `town-checks-v56.json` covers every v56 town (`geo55.standing_failures`). A building fails if its footprint touches any of these:
+- a rail or cart line, its bed three cells wide as drawn;
+- the centre line of a road or path;
+- a river's line;
+- water in the final ground.
+
+`test_map_feedback_v56.Standing` holds it. The check found more than the review saw: buildings on rail lines in Cogsworth, Crossroads, Dust Gulch, Ember forge, Neon Harbour, Palm Spring and the Lode. The lines were bent round the towns, v56 only (`geo55.RAILS_V56`); the stations and ways are the same:
+- the valley train runs south of Crossroads and west of Cogsworth's terraces;
+- the maglev leaves Cogsworth to the south and comes into Neon round the city's north edge and down its east lane;
+- the mine cart leaves the Lode to the east and passes Dust Gulch east of the goods yard;
+- the desert line passes west of Palm Spring.
+
+Dust Gulch's platform moves from the middle of Front Street to its east end, by the depot (`STATIONS_V56`). The hand-laid towns are now placed clear of every rail line and river line. Two Crossroads buildings, b001 and b005, stand on Valley lanes north and west. They are the built zone's own buildings, held by its inventory, so they are recorded as known notes, not failures, and left to Matt with the other Crossroads changes.
+
+**Dust Gulch is Front Street.** It is drawn as a wide band of packed earth with worn edges and two ruts (`map55.EARTH_STREETS`). False fronts face it from both sides, the saloon among them. The back lane runs behind the north row with the homes beyond it. The depot is at the east end against the desert line's platform, and the goods yard is across the line. The corrals and barns are at the west end, with a few adobes on the trail behind the south row. 31 counted, inside 30 to 45.
+
+**Palm Spring is a ring.** The Spring Ring lane runs round the pool, and the Drover's Road closes it on the south. Adobes face the water from the north and the east. The ring leaves a gap where the stream comes in from the north. Two adobes face it from across the road on the west, and the shop and a house from across the road on the south. The caravanserai (inn, stables and stores) stands on the road at the ring's east gate. 14 counted, inside 14 to 22.
+
+**Driftwood stays at 7 (8 to 12 is a warning).** The creek, the Sleepwater (with its line) and the Valley lane south cut the strand into three short runs. A house set further back stands 14 to 15 cells up a close, past the village rule of 8 (tried this round and refused by the checker).
+
+**Leader lines go round buildings.** A label's leader line may no longer cross any building on the v56 maps (`map53.seg_hits_box`, `Placer.leader_block`). The building under the label's own icon doesn't count. `test_map_feedback_v56.LeaderLines` holds it.
+
+**The same picture every run.** The renders ran under `python3 -I`, which ignores `PYTHONHASHSEED`, so every run had its own string hash. The overview's majority filter took its classes in the order of a Python set (`map53.SMOOTH`), so its ties fell differently each run. That changed the ground classes, and with them the terrain and canopy, in every picture. The filter now takes the classes in their own fixed order (`map53`, `map54`). `test_map_determinism` renders the ground classes of a small world under four hash seeds and compares them; without the fix it fails.
+Two v56 renders under different hash seeds are now byte-identical in all 13 pictures.
+
+The fix changes the v55 pictures the next time v55 is rendered, and that is acceptable for three reasons:
+- There was no stable v55 picture to keep. Every past v55 render took its ties in that run's own random order, and the committed v55 PNGs are one such draw.
+- The fix only pins the order; the classes, colours and data are the same.
+- The committed v55 files are not regenerated in this round, so they stay byte-identical. The v55 data is unchanged too (checked below).
+
+From now on, a v55 render can be compared byte for byte, before and after a change.
+
+**Checks.**
+- All 19 plans pass, including the new standing check; Crossroads' two known lanes are recorded as notes. The benchmark is 21/21, and the gates are unchanged.
+- **v55 is byte-identical.** The v55 data stage at 7c37b74f (with the same hash-order fix) and at this round gives the same 24 data files and the same state. Rendered from that state, all 12 v55 pictures are the same, byte for byte.
+- **The renders are deterministic.** Two v56 renders of this round, under hash seeds 1 and 2, are the same in all 13 pictures.
+- **The crops are fair.** The before pictures for the round 9 crops are 7c37b74f rendered with the hash-order fix, so the before and after differ only where this round changed something.

@@ -1594,6 +1594,8 @@ def _dry_ok(T, x, y, w, d, clear=16):
         return False
     if T['taken'][a:c, b:e].any() or T['street'][a:c, b:e].any() or T['barrier'][a:c, b:e].any() or T['keepout'][a:c, b:e].any():
         return False
+    if '_lines' in T and T['_lines'][a:c, b:e].any():                 # never on a rail line or a river's line (geo55.standing_lines)
+        return False
     r = clear // CELL
     win = K[max(0, a - r):c + r, max(0, b - r):e + r]
     return not np.isin(win, list(ROUTE) + ['sea', 'surf', 'river', 'creek', 'pool', 'canal', 'channel']).any()
@@ -1653,6 +1655,14 @@ def hand_towns_v56(T, towns):
     by the goods yard, the corrals at its west end. Palm Spring: a ring round the spring pool, the caravanserai on the
     Drover's Road."""
     cot, house, boat = ('cottage', 64, 40), ('house', 80, 48), ('boathouse', 72, 56)
+    lines = np.zeros(T['K'].shape, bool)
+    for nm, a, b, _, way, via in g.SHORTCUTS:                         # the rail and cart lines, their beds three cells wide
+        if 'ferry' not in nm and 'steamer' not in nm:
+            lines |= g.line_mask(g.chaikin([g.pt(a)] + list(via) + [g.pt(b)], 3), 24)
+    for nm, pts in (T.get('river_px') or {}).items():
+        if len(pts) >= 2:
+            lines |= g.line_mask(pts, 8)
+    T['_lines'] = lines
     t = towns.get('Gullwick')
     if t is not None:
         _strip_v56(T, t)
@@ -1679,6 +1689,8 @@ def hand_towns_v56(T, towns):
         n = _hug(t, 6160, 6700, 4984, 5100, [cot, house, boat, cot, ('cottage', 56, 40), house, cot, boat], gap=4, n=11, up=True)
         if n < 8:                                                      # a few behind the strand row where it is short
             _hug(t, 6160, 6400, 4920, 5040, [cot, ('cottage', 56, 40), house], gap=8, n=8 - n, up=True)
+        # 7 is what the strand holds: the creek, the Sleepwater (and its line) and the Valley lane south cut it into three short
+        # runs, and a house set further back stands 14 to 15 cells up a close, past the village rule (8)
         t.yard(6448, 5124, 6504, 5148, kind='quay', name='the quay', why="the ferry's landing and the boats, at the Sleepwater's mouth")
     t = towns.get('Lullford')
     if t is not None:
@@ -1696,44 +1708,46 @@ def hand_towns_v56(T, towns):
         _strip_v56(T, t)
         dry_out(T, 2000, 2050, 3100, 2850)
         t.cap = 45
-        t.street([(2136, 2336), (2872, 2336)], 'main', name='Front Street')   # the one long main street
-        t.street([(2136, 2232), (2872, 2232)], 'lane', name='Back Lane')
-        t.street([(2136, 2232), (2136, 2336)], 'lane', name='Corral Lane')
-        t.street([(2872, 2232), (2872, 2336)], 'lane', name='Depot Lane')
-        t.to_route(2136, 2336, "Drover's Road", name='Corral Lane (to the trail)')
-        t.to_route(2872, 2336, "Drover's Road", name='Depot Road')
-        _hand_ok(t, 2896, 2240, 64, 192, 'depot', clear=0)             # the depot at the east end, the corrals at the west
-        _hand_ok(t, 2600, 2152, 80, 56, 'chapel', clear=0)
-        fronts = [('frontshop', 80, 48), ('townhouse', 48, 56), ('saloon', 104, 64), ('frontshop', 88, 56), ('townhouse', 48, 48), ('public', 88, 56),
-                  ('frontshop', 80, 56), ('townhouse', 48, 56)]
-        _street_row(t, 2152, 2856, lambda x: 2336, fronts, gap=2, half=24, n=26, clear=0)
-        homes = [('adobe', 48, 40), ('cottage', 64, 40), ('adobe', 56, 40), ('house', 80, 48)]
-        _street_row(t, 2152, 2856, lambda x: 2232, homes, sides=(-1,), gap=6, half=12, n=14, clear=0)
-        _hug(t, 2152, 2856, 2400, 2560, homes[::-1], gap=10, n=6)         # a few homes behind the south fronts, on the trail
-        for (x, y) in ((2016, 2392), (2016, 2200), (2016, 2472)):
+        clear_paint(T, 2000, 2050, 3100, 2700, kinds=('yard', 'garden', 'plaza', 'lane'))   # the generated town's yards and lanes
+        t.street([(2136, 2336), (2896, 2336)], 'main', name='Front Street')   # the one long main street, packed earth (map55.EARTH_STREETS)
+        t.street([(2136, 2240), (2896, 2240)], 'lane', name='Back Lane')      # behind the north row
+        t.street([(2136, 2240), (2136, 2336)], 'lane', name='Corral Lane')
+        t.street([(2896, 2240), (2896, 2336)], 'lane', name='Depot Lane')
+        t.street([(2136, 2336), (2136, 2496)], 'lane', name='Corral Lane (to the trail)')
+        t.street([(2896, 2336), (2896, 2600)], 'lane', name='Depot Road')    # down to the Drover's Road, past the water tower
+        _hand_ok(t, 2920, 2248, 56, 176, 'depot', clear=0)             # the depot at the east end, beside the desert line's platform
+        fronts = [('frontshop', 80, 48), ('townhouse', 40, 48), ('saloon', 104, 64), ('townhouse', 48, 48), ('frontshop', 80, 56), ('townhouse', 40, 48),
+                  ('public', 88, 56), ('townhouse', 48, 48)]
+        _street_row(t, 2152, 2880, lambda x: 2336, fronts, sides=(-1,), gap=2, half=24, n=14, clear=0)   # false fronts both sides
+        _street_row(t, 2152, 2880, lambda x: 2336, fronts[3:] + fronts[:3], sides=(1,), gap=2, half=24, n=14, clear=0)
+        homes = [('adobe', 48, 40), ('cottage', 64, 40), ('adobe', 40, 40), ('house', 80, 48)]
+        _street_row(t, 2152, 2880, lambda x: 2240, homes, sides=(-1,), gap=8, half=12, n=12, clear=0)   # the homes behind, on the back lane
+        _hand_ok(t, 2760, 2168, 80, 56, 'chapel', clear=0)
+        _hug(t, 2160, 2440, 2416, 2488, [('adobe', 48, 40), ('adobe', 40, 40), ('cottage', 56, 40)], gap=12, n=5)   # adobes on the trail behind
+        for (x, y) in ((2008, 2392), (2008, 2200), (2008, 2464)):
             _hand_ok(t, x, y, 112, 64, 'barn', clear=0)
-        for (x, y) in ((2968, 2464), (2968, 2160)):
-            _hand_ok(t, x, y, 112, 64, 'warehouse', clear=0)
         t.yard(2040, 2280, 2120, 2384, name='the corrals', why='pens for the caravans and the mule trains, at the west end of Front Street')
-        t.yard(2896, 2440, 2960, 2488, name='the water tower yard', why="the depot's tank, filled from the Amber")
-        t.yard(2968, 2240, 3048, 2448, name='the goods yard', why="the desert line's sidings and the ore bins, beside the depot")
+        t.yard(2920, 2440, 2976, 2488, name='the water tower yard', why="the depot's tank, filled from the Amber")
+        t.yard(3016, 2240, 3088, 2440, name='the goods yard', why="the desert line's sidings and the ore bins, across the line from the depot")
     t = towns.get('Palm Spring')
     if t is not None:
         _strip_v56(T, t)
         dry_out(T, 2950, 2500, 3650, 3150, keep=48)
-        t.cap = 22                                                     # the ring round the spring pool; the Drover's Road its south side
-        t.street([(3064, 2592), (3400, 2592)], 'lane', name='Spring Ring')
+        t.cap = 22                                                     # the ring round the spring pool, every house facing the water
+        t.street([(3064, 2592), (3400, 2592)], 'lane', name='Spring Ring')     # its north side, over the stream on a footbridge
         t.street([(3400, 2592), (3400, 2816)], 'lane', name='Spring Ring (east)')
         t.street([(3064, 2592), (3064, 2696)], 'lane', name='Spring Ring (west)')
         t.to_route(3400, 2816, "Drover's Road", name='the east gate')
         t.to_route(3064, 2696, "Drover's Road", name='the west gate')
-        for (x, y, w, d, f) in ((3080, 2632, 48, 40, 'adobe'), (3136, 2656, 48, 40, 'adobe'), (3192, 2632, 48, 40, 'adobe'),   # facing the pool
-                                (3352, 2608, 32, 48, 'adobe'), (3352, 2664, 32, 48, 'adobe'), (3352, 2720, 32, 48, 'adobe'), (3352, 2776, 32, 48, 'adobe'),
-                                (3424, 2600, 64, 48, 'shop'), (3424, 2664, 112, 64, 'barn'), (3424, 2744, 112, 64, 'inn'),   # the caravanserai
-                                (3232, 2912, 64, 48, 'shop'), (3304, 2912, 48, 40, 'adobe'), (3040, 2752, 48, 40, 'adobe'), (3040, 2800, 64, 40, 'cottage'),
-                                (3120, 2544, 80, 48, 'house'), (3208, 2544, 48, 40, 'adobe')):
+        ring = [(3080, 2612, 48, 40, 'adobe'), (3136, 2620, 48, 40, 'adobe'), (3192, 2620, 40, 40, 'adobe'),                 # north, facing south
+                (3352, 2612, 32, 48, 'adobe'), (3352, 2664, 32, 48, 'adobe'), (3352, 2716, 32, 48, 'adobe'), (3352, 2768, 32, 48, 'adobe'),   # east
+                (3040, 2752, 48, 40, 'adobe'), (3056, 2796, 48, 40, 'adobe'),                                                    # across the road
+                (3248, 2912, 64, 48, 'shop'), (3320, 2912, 48, 40, 'adobe'),
+                (3424, 2744, 112, 64, 'inn'), (3424, 2664, 112, 64, 'barn'), (3424, 2600, 64, 48, 'shop')]     # the caravanserai on the road
+        for (x, y, w, d, f) in ring:
             _hand_ok(t, x, y, w, d, f, clear=0)
-        t.yard(3120, 2700, 3152, 2780, kind='garden', name='the palm garden', why='date palms watered from the spring')
+        t.yard(3200, 2560, 3240, 2600, kind='garden', name='the palm garden', why='date palms watered from the spring')
+    T.pop('_lines', None)
 
 
 def hearthold_v56(T, t):

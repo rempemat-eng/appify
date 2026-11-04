@@ -4,7 +4,9 @@
   "failures": [],
   "notes": [
    "7 buildings from the built zone's own plan (street/door/form checks delegated)",
-   "4 blocks, 9 dead ends, 4.5 x 6.3 screens"
+   "4 blocks, 9 dead ends, 4.5 x 6.3 screens",
+   "standing (known, a Crossroads change for Matt): crossroads-b001 on the road (Valley lane north)",
+   "standing (known, a Crossroads change for Matt): crossroads-b005 on the road (Valley lane west)"
   ],
   "metrics": 40,
   "actual_count": 40,
@@ -36,21 +38,20 @@
   "pass": true,
   "failures": [],
   "notes": [
-   "count (warning): 27 counted buildings, a little outside 30 to 45",
-   "2 blocks, 2 dead ends, 3.3 x 2.2 screens"
+   "2 blocks, 1 dead ends, 3.0 x 2.3 screens"
   ],
-  "metrics": 27,
-  "actual_count": 27,
+  "metrics": 31,
+  "actual_count": 31,
   "retained_count": null
  },
  "palm-spring": {
   "pass": true,
   "failures": [],
   "notes": [
-   "1 blocks, 0 dead ends, 1.6 x 2.3 screens"
+   "1 blocks, 0 dead ends, 1.6 x 2.0 screens"
   ],
-  "metrics": 15,
-  "actual_count": 15,
+  "metrics": 14,
+  "actual_count": 14,
   "retained_count": null
  },
  "fernhollow": {

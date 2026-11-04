@@ -267,6 +267,24 @@ def warp_tables():
     V54.INSET = Pbox(V54.INSET)
     for nm in list(V.NEW_ROUTES):
         pts, kind, feats = V.NEW_ROUTES[nm]; V.NEW_ROUTES[nm] = (PL(pts), kind, feats)
+    if REVISION == 'v56':
+        rails_v56()
+
+
+RAILS_V56 = {   # v56 (art director, 4 Nov: "nothing may stand on rails"): each line's bends, in v55 world px, round the towns' houses
+    'valley train': [(5850, 4300), (5880, 4420), (6600, 4420), (6700, 4380), (7440, 3800), (7770, 3000), (7840, 2600)],
+    'desert line (Rift viaduct)': [(4870, 3900), (4211, 3700), (3436, 3100), (3000, 3000), (2992, 2600)],
+    'maglev (Narrows Viaduct)': [(8400, 2900), (8700, 2900), (9208, 2330), (10390, 3300), (11179, 4125), (11400, 4150), (11700, 4150),
+                                 (11716, 4200), (11716, 4480), (11700, 4528), (11600, 4528)],   # round the city's north edge, down its east lane
+    'mine cart (S1)': [(2900, 1720), (3000, 1800), (3060, 2100), (3060, 2520), (2695, 2900), (2581, 3900), (2300, 5000)],
+}
+STATIONS_V56 = {'Dust Gulch platform': (2992, 2336)}   # the depot at Front Street's east end, not the middle of the street
+
+
+def rails_v56():
+    """The v56 rail and cart lines: the same stations and ways, bent round the towns so no building stands on a line."""
+    g.STATIONS.update(STATIONS_V56)
+    g.SHORTCUTS[:] = [(a, b, c, d, e, list(RAILS_V56.get(a, via))) for a, b, c, d, e, via in g.SHORTCUTS]
 
 
 # ------------------------------------------------------------------------------------------ stage 3a: the east coast and Launch Cape
@@ -785,6 +803,43 @@ def feedback_checks(T, plans):
                 raise ValueError(f"v56 {b['id']}: footprint intersects final water/barrier ground")
 
 
+def standing_lines(T):
+    """What a building may never stand on, as cell masks: each rail and cart line and each road or path, three cells wide as
+    drawn, and each river's own line. Water is read from the final ground itself."""
+    rails = {}
+    for nm, a, b, _, way, via in g.SHORTCUTS:
+        if 'ferry' in nm or 'steamer' in nm:
+            continue
+        rails[f'the rail line ({nm})'] = g.line_mask(g.chaikin([g.pt(a)] + list(via) + [g.pt(b)], 3), 24)
+    for nm, pts in (T.get('route_px') or {}).items():
+        if len(pts) >= 2:
+            rails[f'the road ({nm})'] = g.line_mask(pts, 8)
+    for nm, pts in (T.get('river_px') or {}).items():
+        if len(pts) >= 2:
+            rails[f'the river ({nm})'] = g.line_mask(pts, 8)
+    return rails
+
+
+STANDING_KNOWN = {   # the built zone's own buildings (the game's Crossroads, held by its retained inventory) with a valley lane through them:
+    # the lanes are to be re-laid round them with the built zone's own streets, a Crossroads change left to Matt (4 Nov)
+    'crossroads-b001': 'the road (Valley lane north)', 'crossroads-b005': 'the road (Valley lane west)'}
+
+
+def standing_failures(K, P, lines):
+    """v56 (art director, 4 Nov): nothing stands on a rail line, a road, a river or water. One finding per building."""
+    import town_plans as TP
+    out = []
+    for b in P['buildings']:
+        bc, br, bw, bh = b['footprint_cells']
+        sl = (slice(max(0, br), br + bh), slice(max(0, bc), bc + bw))
+        on = [nm for nm, m in lines.items() if m[sl].any()]
+        on += [f'{k} water' for k in sorted(set(np.unique(K[sl]).tolist()) & set(TP.WATER_K))]
+        on = [o for o in on if STANDING_KNOWN.get(b['id']) != o]
+        if on:
+            out.append(f"standing: {b['id']} ({b.get('form', 'building')}) stands on " + ', '.join(on))
+    return out
+
+
 def feedback_plan_checks(T, plans):
     """Retain every final town finding, not only the revised towns' count checks.
 
@@ -796,6 +851,7 @@ def feedback_plan_checks(T, plans):
     checker = TP.TW._review()
     blockout = {'routes': {rn: {'polyline': pts} for rn, pts in T['route_px'].items()}, 'stations': g.STATIONS}
     reports = {}
+    stand_lines = standing_lines(T)
     for pid, P in plans.items():
         c, r, w, h = P['terrain']['box_cells']
         P['terrain']['rows'] = TP.terrain_rows(T['K'][r:r + h, c:c + w])
@@ -815,6 +871,9 @@ def feedback_plan_checks(T, plans):
             if occupied[br:br + bh, bc:bc + bw].any():
                 failures.append(f"final_ground: {b['id']} overlaps another footprint")
             occupied[br:br + bh, bc:bc + bw] = True
+        failures += standing_failures(T['K'], P, stand_lines)
+        notes = list(notes) + [f'standing (known, a Crossroads change for Matt): {b} on {w}' for b, w in STANDING_KNOWN.items()
+                               if b.rsplit('-b', 1)[0] == pid]
         expected = {'crossroads': 40, 'neon-harbour': 72}.get(pid)
         if expected is not None and retained_count(pid, P) != expected:
             failures.append(f"retained_count: {retained_count(pid, P)} != {expected}")

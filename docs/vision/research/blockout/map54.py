@@ -54,7 +54,7 @@ def class_grid(S, R, M):
     rm = cg == -2
     if rm.any():
         _, (iy, ix) = ndi.distance_transform_edt(rm, return_indices=True); cg = cg[iy, ix]
-    sm_ids = [cid[n] for n in M53.SMOOTH if n in cid]
+    sm_ids = [cid[n] for n in names if n in M53.SMOOTH]   # in the classes' own order: a set's order follows the string hash, which changed the ties run to run
     natural = np.isin(cg, sm_ids)
     votes = np.stack([ndi.uniform_filter((cg == i).astype(np.float32), 5) for i in sm_ids])
     best = np.array(sm_ids, np.int16)[np.argmax(votes, axis=0)]

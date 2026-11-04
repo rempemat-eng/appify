@@ -268,6 +268,56 @@ def relief_scene():
     return GR, Sx, R, ink, cgx, cid, Hc, Wc
 
 
+class Standing(unittest.TestCase):
+    """Art director, 4 Nov: nothing may stand on a rail line, a road, a river or water (town-checks, every v56 town)."""
+    def plan(self, rects):
+        return {'buildings': [{'id': f'x-b{i:03d}', 'form': 'house', 'footprint_cells': list(r)} for i, r in enumerate(rects, 1)]}
+
+    def test_rail_road_river_and_water_are_findings(self):
+        shape = (40, 60); K = np.full(shape, 'meadow', dtype=object); K[30:34, 40:50] = 'creek'
+        rail = np.zeros(shape, bool); rail[10, :] = True
+        lines = {'the rail line (test)': rail}
+        P = self.plan([(2, 8, 4, 4), (42, 29, 4, 3), (20, 20, 4, 4)])
+        out = world.standing_failures(K, P, lines)
+        self.assertEqual(len(out), 2)
+        self.assertIn('x-b001 (house) stands on the rail line (test)', out[0])
+        self.assertIn('x-b002 (house) stands on creek water', out[1])
+
+    def test_known_crossroads_lane_is_only_that_lane(self):
+        shape = (40, 60); K = np.full(shape, 'meadow', dtype=object)
+        lane = np.zeros(shape, bool); lane[:, 5] = True; rail = np.zeros(shape, bool); rail[6, :] = True
+        P = {'buildings': [{'id': 'crossroads-b001', 'form': 'cottage', 'footprint_cells': [4, 4, 4, 4]}]}
+        self.assertEqual(world.standing_failures(K, P, {'the road (Valley lane north)': lane}), [])
+        out = world.standing_failures(K, P, {'the road (Valley lane north)': lane, 'the rail line (valley train)': rail})
+        self.assertEqual(out, ['standing: crossroads-b001 (cottage) stands on the rail line (valley train)'])
+
+    def test_actual_towns_stand_clear(self):
+        report = json.loads((BLOCKOUT / 'town-checks-v56.json').read_text())
+        self.assertEqual(set(report), world.EXPECTED_TOWN_PLANS)
+        for pid, r in report.items():
+            self.assertEqual([f for f in r['failures'] if f.startswith('standing')], [], pid)
+        self.assertTrue(any(n.startswith('standing (known') for n in report['crossroads']['notes']))
+
+
+class LeaderLines(unittest.TestCase):
+    """Art director, 4 Nov: a label's leader line never crosses a building."""
+    def test_leader_goes_round_a_building(self):
+        import math
+        from PIL import Image, ImageDraw, ImageFont
+        import map53
+        d = ImageDraw.Draw(Image.new('RGBA', (400, 400)))
+        font = ImageFont.load_default()
+        pl = map53.Placer(d, 400, 400)
+        pl.reserve((150, 150, 250, 250))                              # the near spots round the icon are taken
+        house = (205, 185, 240, 215); pl.leader_block = [house]      # a building just east of the icon
+        b = pl.put((200, 200), 'Palm Spring', font, (0, 0, 0), (255, 255, 255), [(0, 0, 'mm')], leader=[80])
+        self.assertIsNotNone(b)
+        ex, ey = min(max(200, b[0]), b[2]), min(max(200, b[1]), b[3])
+        self.assertFalse(map53.seg_hits_box((200, 200), (ex, ey), house))
+        self.assertTrue(map53.seg_hits_box((200, 200), (260, 200), house))
+        self.assertFalse(map53.seg_hits_box((200, 200), (140, 200), house))
+
+
 class ReliefBands(unittest.TestCase):
     """grow56.relief draws in bands of rows; the result must not depend on where the bands fall."""
 

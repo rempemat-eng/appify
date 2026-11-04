@@ -726,6 +726,29 @@ _CF = {}
 OLD_QUARTER = {'Neon Harbour: the old waterfront', 'Neon Harbour: Canalside, the canal quarter', 'Neon Harbour: the Crescent'}
 
 
+EARTH_STREETS = {'dust-gulch': ('Front Street',)}   # v56: the main streets drawn as wide packed earth (a frontier town's one street)
+
+
+def draw_earth_streets(d, S, R, ink, P, s):
+    """A frontier main street as a wide band of packed earth: wheel-worn edges and two faint ruts down its length."""
+    for pid, names in EARTH_STREETS.items():
+        for st in ((S.get('plans') or {}).get(pid) or {}).get('streets', []):
+            if st.get('name') not in names:
+                continue
+            hw = st['width_cells'] * CELL / 2
+            pts = st['vertices_px']
+            for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+                x0, y0, x1, y1 = min(ax, bx) - hw, min(ay, by) - hw, max(ax, bx) + hw, max(ay, by) + hw
+                X0, Y0 = P(x0, y0); X1, Y1 = P(x1, y1)
+                d.rectangle([X0, Y0, X1, Y1], fill=R['sand_warm'][3])
+                d.rectangle([X0, Y0, X1, Y1], outline=R['timber'][4] + (150,), width=max(1, int(round(0.8 * s))))
+                for f in (0.36, 0.64):                                   # the ruts
+                    if ay == by:
+                        yy = Y0 + (Y1 - Y0) * f; d.line([(X0 + 2 * s, yy), (X1 - 2 * s, yy)], fill=R['timber'][3] + (90,), width=max(1, int(s * 0.6)))
+                    else:
+                        xx = X0 + (X1 - X0) * f; d.line([(xx, Y0 + 2 * s), (xx, Y1 - 2 * s)], fill=R['timber'][3] + (90,), width=max(1, int(s * 0.6)))
+
+
 def draw_towns(d, S, R, ink, P, s, k, neon_lights=True, roofs=False):
     """Every building as a small roof, drawn by its form: a shadow to the south-east, a ridge roof lit on its west slope (an
     apartment row or a terrace split into its houses), flat roofs with a lit parapet (warehouses with roof lights, slabs and towers
@@ -1030,12 +1053,13 @@ MINOR_TOWNS = {'Driftwood', 'Lullford', 'Gullwick', 'Cinder Springs', 'the Lode'
 PRINCIPAL = {"Drover's Road", 'Lull Road', 'Ash Coast', 'Canyon Road', 'Foothill Road', 'the Garth Road', 'Coast Path', 'High Fells', 'Towpath'}
 
 
-def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='continent', box=None):
+def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='continent', box=None, leader_block=()):
     """Names on their own layer, none overlapping. mode 'continent': regions, the towns and the city, the circle, the principal
     routes and the closed pass. mode 'full' (the reference and the insets): every name."""
     lay = Image.new('RGBA', (Wc, Hc), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
     P = lambda x, y: (x * k + ox, y * k + oy)
     pl = Placer(d, Wc, Hc)
+    pl.leader_block = list(leader_block)
     _put = pl.put; done = set()
 
     def put_once(xy, text, *a, **kw):                                # one label per name
@@ -1327,6 +1351,8 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
         draw_farmsteads56(d, S, grow.get('steads', []), R, ink, P, s, k)
         draw_trees56(d, grow.get('trees', []), R, ink, P, k)
         draw_company56(d, S, R, ink, P, s, k)
+    if grow is not None:
+        draw_earth_streets(d, S, R, ink, P, s)
     draw_towns(d, S, R, ink, P, s, k, roofs=grow is not None)
     if grow is not None:                                             # v56: the map's small secrets (map_secrets56, proposals)
         import map_secrets56 as MS
@@ -1365,9 +1391,12 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
             for (x, y, w, h_, *_r) in (S['towns'].get(town) or {}).get('buildings', []):
                 X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
                 reserved.append((X0 - s, Y0 - s, X1 + s, Y1 + s))
+        leader_block = [(*P(x, y), *P(x + w, y + h_)) for r_ in S['towns'].values() for (x, y, w, h_, *_r) in r_.get('buildings', [])]
     else:
+        leader_block = []
+    if grow is None:
         reserved += [M54.built_tag(P, s)]
-    lab, pl = labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode=mode, box=box)
+    lab, pl = labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode=mode, box=box, leader_block=leader_block)
     built = overlay_built56(S, M, R, ink, s, k, ox, oy, Wc, Hc, F) if grow is not None else M54.overlay_built(S, M, R, ink, s, k, ox, oy, Wc, Hc, F)
     if grow is not None:                                             # the built outline breaks round every name instead of crossing it
         ba = np.asarray(built).copy(); tb_ = built_tag56(M, P, s)
