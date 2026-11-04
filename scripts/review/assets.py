@@ -139,7 +139,9 @@ def review(path: str, zone: str, name: str, kind: str | None = None, biome: str 
     base = os.path.basename(name)
     kind = kind or C.kind_of(base)
     biome = biome or ZONE_BIOME.get(zone, 'valley')
-    findings, score = review_rgba(rgba, f'{zone}/{name}', kind, biome, H, density, ground=base in GROUND_ASSETS)
+    # (a zone's further moving-water strips, flow_<name>, are ground overlays like flow)
+    findings, score = review_rgba(rgba, f'{zone}/{name}', kind, biome, H, density,
+                                  ground=base in GROUND_ASSETS or base.startswith('flow_'))
     sev = [f.severity for f in findings]
     status = 'fail' if any(s in FAIL_SEVERITIES for s in sev) else 'pass'
     return dict(id=f'{zone}/{name}', file=os.path.relpath(path, REPO), sha256=sha256(path), kind=kind, biome=biome,

@@ -1,0 +1,28 @@
+{
+ "id": "woodland/flow_rill",
+ "file": "game/zones/woodland/art/flow_rill.png",
+ "sha256": "0069d47b5370634a5dc1cbd5737b2060e15e5a3fc5f2c731540fe961541005ef",
+ "kind": "flow_rill",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  180,
+  3024
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "date": "2026-11-04",
+  "note": "re-rendered after round 3 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, b2410e5e: ground fail on the stone over the lip, flow pass): the run-in is clear to the lip, the face has moss in its joints, the odd large boulder and ferns over a clean lip, the wet foot pebbles, the landing is open path, the moving water is two strips (the rill and the stream) with each lane on its own phase; detectors pass. The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
+ }
+}

@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "5961568db17c7569622180166d370731ed69da2892c7b10aba596851c7c1cd99",
+ "sha256": "d6f95c646ac77920cf8d9e7ef611947edd6175aed8b2bd22841eaa69b57ddd98",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pending",
   "date": "2026-11-04",
-  "note": "fail, round 3 (docs/reviews/2026-11-04-woodland-water.md, at b2410e5e). Round 2 is fixed: the terrace is one rock face 32 world px (96 art px, 1.3 H) across the zone in the fall's grey stone, read as a rock cliff under eastward-edges 2.1 and 2.3 and world-rules 3.2 (a 32 face between walkable tiers), with the under-lip shade, a slab band, lit boulders with dark gaps, vines, a fern and fallen stones; 23.6 tones and 39.9 shapes a patch against Eastward 12's cliff at 20.8 and 50.3 (1.37x). The upper tier runs from x 0, the west grove is split (holly and bush on the upper tier, the oaks below), the foot runs on one line with wet rock to the waterline, the stack joints are crevice stone, the tongue fades and steps with two lit streaks and a 5 px gap in the crest, and the foam heap varies with 24 % blue-grey. New fault R3-1: a mossy boulder and a loose stone sit over the east third of the channel just above the lip (x 243-266, y 744-762), narrowing the feed from 47 to about 31 px, with the water running on under them and no wet contact (ground-rules 2, Matt 2 Nov; eastward-edges 5.3a). Polish: moss as identical lime caps on the boulder crowns rather than in the joints, even boulder sizes and no larger boulder; grass blades hanging from the lip (3.1, no teeth); a comb of recoloured weed blades on the wet foot (y 861-863). Logic L3 is half fixed: the landing is in the plan but the bridge deck covers it, so 6 px of path shows between the last tread and the abutment."
+  "note": "re-rendered after round 3 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, b2410e5e: ground fail on the stone over the lip, flow pass): the run-in is clear to the lip, the face has moss in its joints, the odd large boulder and ferns over a clean lip, the wet foot pebbles, the landing is open path, the moving water is two strips (the rill and the stream) with each lane on its own phase; detectors pass. The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
  }
 }

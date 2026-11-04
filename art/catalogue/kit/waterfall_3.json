@@ -1,0 +1,70 @@
+{
+ "id": "kit/waterfall_3",
+ "file": "game/kit/props/art/waterfall_3.png",
+ "sha256": "37458d58a3615299a5b51ddba423d8ee504337b144a462d1dcaf62a59ed3cab3",
+ "kind": "waterfall",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  120,
+  94
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 11,
+   "tones": 16.181818181818183,
+   "shapes": 20.363636363636363
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.404,
+  "tones_ratio": 0.599,
+  "shapes_ratio": 0.404,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    14,
+    12,
+    108,
+    78
+   ],
+   "message": "kit/waterfall_3: detail bar 0.40 of Eastward's prop band (16.2 tones, 20.4 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    14,
+    12,
+    108,
+    78
+   ],
+   "message": "kit/waterfall_3: only 29% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
+  }
+ ],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "date": "2026-11-04",
+  "note": "its foam is rocks.plunge since claude-a/water-polish (the woodland reviews, 4 Nov); its frames are waterfall_3_flow.png. Not yet reviewed by an independent detail-auditor. The detectors fail it on detail.bar against Eastward's prop band: scripts/review/eastward_bands.json has no water group, so the band is not the right yardstick for a falling sheet (the woodland review noted the same for flow)."
+ }
+}

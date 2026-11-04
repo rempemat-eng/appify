@@ -1,0 +1,82 @@
+{
+ "id": "kit/waterfall_2_tall",
+ "file": "game/kit/props/art/waterfall_2_tall.png",
+ "sha256": "e17b66be51df4eec683485177e3eb750070a966a7a8604455a2e139948f2ca02",
+ "kind": "waterfall",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  96,
+  142
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 16,
+   "tones": 11.0625,
+   "shapes": 17.375
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.345,
+  "tones_ratio": 0.41,
+  "shapes_ratio": 0.345,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    24,
+    15,
+    69,
+    118
+   ],
+   "message": "kit/waterfall_2_tall: the pale is lit from the right (luminance rises 22 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    13,
+    12,
+    84,
+    127
+   ],
+   "message": "kit/waterfall_2_tall: detail bar 0.34 of Eastward's prop band (11.1 tones, 17.4 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    13,
+    12,
+    84,
+    127
+   ],
+   "message": "kit/waterfall_2_tall: only 32% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
+  }
+ ],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "date": "2026-11-04",
+  "note": "its foam is rocks.plunge since claude-a/water-polish (the woodland reviews, 4 Nov); its frames are waterfall_2_tall_flow.png. Not yet reviewed by an independent detail-auditor. The detectors fail it on detail.bar against Eastward's prop band: scripts/review/eastward_bands.json has no water group, so the band is not the right yardstick for a falling sheet (the woodland review noted the same for flow)."
+ }
+}

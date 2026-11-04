@@ -74,6 +74,11 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
     lh = _h(lane, np.zeros_like(lane) + 3)
     lane_on = (lh % 3) == 0
     phase = ((lh >> np.uint32(4)) % np.uint32(period)).astype(np.int64)
+    if thin:
+        # each lane its own phase from a second hash, so neighbouring lanes never run in step
+        # (review round 3: the rill's dashes ran in six columns at one period, together)
+        lh2 = _h(lane * 7919 + 101, np.zeros_like(lane) + 29)
+        phase = ((lh2 >> np.uint32(7)) % np.uint32(period)).astype(np.int64)
     length = (2 + (lh >> np.uint32(9)) % 4).astype(np.int64) * max(1, int(round(s)))
     gh = _h(xs // (3 * max(1, int(s))), ys // (2 * max(1, int(s))), np.zeros_like(xs) + 11)
     glint = still & (depth >= 2) & ((gh % 23) == 0) & (xs % 2 == 0)

@@ -335,8 +335,12 @@ def bake(plan: dict, lib: dict | None = None):
             falls.append((int(round((cx - cw / 2) * D)), int(round(cw * D)), int(round(rim * D)), int(round(foot * D)),
                           rp.get('args', {}).get('seed', 11)))
     clear = np.zeros((h, w), bool)
-    for (fx0, fw, fr0, _fr1, _s) in falls:
+    from scripts.art.native import rocks as RK_
+    for (fx0, fw, fr0, fr1, _s) in falls:
         clear |= SF.run_in_zone(h, w, fx0, fw, fr0)
+        # and the pool's inlet under the sheet: no bank stone, tongue or reed where it lands
+        # (review round 3, K3-1: a seated stone stood as a pillar in the plunge)
+        clear[max(0, fr1 - 2):min(h, fr1 + SN.P(10)), max(0, fx0 - RK_.PLUNGE_PAD - 4):min(w, fx0 + fw + RK_.PLUNGE_PAD + 4)] = True
     wm = np.zeros((h, w), bool)
     for m, p in paint.items():
         if p.get('fn') != 'water':
@@ -398,6 +402,10 @@ def bake(plan: dict, lib: dict | None = None):
             sub_ = cv[seg]
             ok_ = inner_[seg] & (sub_ % 8 < 5)
             sub_[ok_] = sub_[ok_] + 1
+        # no stone where a fall runs in or lands (its run-in and its pool's inlet, `clear`): the
+        # inlet turns the bank under the sheet to water after these are laid (review round 3, K3-1)
+        near_fall = ndi.binary_dilation(clear, iterations=SN.P(3))
+        items = [it for it in items if not (0 <= int(it[2][1]) < h and 0 <= int(it[2][0]) < w and near_fall[int(it[2][1]), int(it[2][0])])]
         # stones at the water: each one that stands in it gets its wet contact (softground.seat_stone)
         GD.seat_stones(cv, wm, [(SN.to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
                                 for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])], _lay)
@@ -464,24 +472,39 @@ def bake(plan: dict, lib: dict | None = None):
             # the sheet and its plume, rings and ripples on the pool
             above = np.zeros_like(wm)
             above[:r0] = True
-            # the pool runs up to the sheet's foot: under the fall and the foam's reach the pool's
-            # own north bank (its grass lip and earth face, inside the water's mask) gives way to
-            # water in its shade, so the white water lands on the pool (the woodland review, 4 Nov:
-            # rocks.plunge paints only water)
+            # the pool runs up to the sheet's foot (review round 3, K3-1): from the sheet's foot row,
+            # under the sheet and the foam's reach, the pool's own north bank (its grass lip, rim and
+            # earth face) gives way to water in its shade down to the open pool, the inlet's top
+            # corners rounded 2 to 3 texels and the 5.3a rim (wet earth, the mid tone) down both
+            # sides, so the white water lands on the pool and on nothing else
             from scripts.art.native import rocks as RK_
             waters_ = [GD.FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in GD.FI]
-            stones_ = [GD.FI[n_] for n_ in ('stone', 'stone_warm', 'stone_cool') if n_ in GD.FI]
-            for X in range(max(0, sx0 - RK_.PLUNGE_PAD), min(w, sx0 + sw + RK_.PLUNGE_PAD)):
-                col = wm[r1:min(h, r1 + SN.P(8)), X]
-                if not col.any():
+            ix0, ix1 = max(0, sx0 - RK_.PLUNGE_PAD), min(w, sx0 + sw + RK_.PLUNGE_PAD)
+            inlet = np.zeros((h, w), bool)
+            for X in range(ix0, ix1):
+                seg = np.isin(cv[r1:min(h, r1 + SN.P(10)), X] // 8, waters_) & wm[r1:min(h, r1 + SN.P(10)), X]
+                if not seg.any():
                     continue
-                open_ = np.nonzero(np.isin(cv[r1:min(h, r1 + SN.P(8)), X] // 8, waters_) & col)[0]
-                stop = r1 + (int(open_[0]) if len(open_) else len(col))
-                if np.isin(cv[r1:stop, X] // 8, stones_).any():
-                    continue                     # a bank stone stays on its bank (its wet contact is laid)
-                for Y in range(r1, stop):
-                    if wm[Y, X]:
-                        cv[Y, X] = C('water', 1)
+                stop = r1 + int(np.argmax(seg))
+                d_edge = min(X - ix0, ix1 - 1 - X)
+                start = r1 + max(0, 3 - d_edge) if d_edge < 3 else r1      # rounded top corners
+                inlet[start:stop, X] = True
+            cv[inlet] = C('water', 1)
+            # beside the sheet the face's foot meets the inlet as a north bank does: the light
+            # waterline under it (5.3), the face's foot pebbles standing in it
+            top_ = inlet & ~GD.down(inlet, 1)
+            top_[:, sx0:sx0 + sw] = False
+            cv[top_] = C('water', 5)
+            wm = wm | inlet
+            iys = np.nonzero(inlet.any(1))[0]
+            for Y in iys:
+                xs_ = np.nonzero(inlet[Y])[0]
+                if len(xs_) < 4:
+                    continue
+                cv[Y, xs_[0]] = GD.rim_earth()
+                cv[Y, xs_[-1]] = GD.rim_earth()
+                cv[Y, xs_[0] + 1] = C('water', GD.RIM_LINE)
+                cv[Y, xs_[-1] - 1] = C('water', GD.RIM_LINE)
             tmp = cv.copy()
             ST.fall_sheet(tmp, sx0, sw, r0, r1, seed=seed)
             ok = ndi.binary_erosion(wm, iterations=2) & ~above & ~span

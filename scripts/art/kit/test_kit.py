@@ -547,6 +547,69 @@ class WaterBanks(unittest.TestCase):
                 seen += 1
         self.assertGreater(seen, 0)
 
+    def test_a_fall_lands_in_its_pool(self):
+        # (review round 3, K3-1) under every baked fall the rows from the sheet's foot down are the
+        # pool's water or its foam, never the pool's grass lip or earth, and the inlet's top
+        # corners are rounded, not square
+        from scripts.art.kit import bake as BK
+        from scripts.art.native import rocks as RK
+        lib = BK._pieces_lib()
+        seen = 0
+        for zone, plan, cv in self._baked():
+            fh = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
+            for pc in plan.get('pieces', []):
+                rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+                if rp.get('fn') != 'fall':
+                    continue
+                sw = lib[pc['piece']]['geometry']['size_cells'][0] * 24
+                x0 = int(round(pc['at'][0] - sw / 2))
+                foot = int(round(pc['at'][1]))
+                wet = self._fam(cv, self.WATER + ('snow',))
+                for y in range(foot, foot + 4):
+                    dry = np.nonzero(~wet[y, x0:x0 + sw])[0]
+                    self.assertEqual(len(dry), 0, '%s row %d under the fall: %s' % (zone, y, (dry + x0)[:8]))
+                self.assertFalse(wet[foot, x0 - RK.PLUNGE_PAD], '%s: a square inlet corner west' % zone)
+                self.assertFalse(wet[foot, x0 + sw + RK.PLUNGE_PAD - 1], '%s: a square inlet corner east' % zone)
+                seen += 1
+        self.assertGreater(seen, 0)
+
+    def test_nothing_stands_over_the_woodlands_channel_above_its_lip(self):
+        # (review round 3, R3-1) no stone or rock prop over the open water of the channel in the 24
+        # rows above the fall's rim: the channel runs clear to the lip
+        import json
+        from PIL import Image
+        from scripts.art.native.palette import LUT, FI
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        plan = json.load(open(os.path.join(root, 'art', 'scenes', 'woodland.json')))
+        f = plan['water']['fall']
+        g = np.asarray(Image.open(os.path.join(root, 'game', 'zones', 'woodland', 'art', 'ground.png')).convert('RGB'))
+        stone_rgb = {tuple(LUT[FI[n] * 8 + t]) for n in ('stone', 'stone_warm', 'stone_cool') for t in range(6)}
+        water_rgb = {tuple(LUT[FI[n] * 8 + t]) for n in self.WATER for t in range(6)}
+        rim = int(round((f['y0'] - 1.5) * 3))
+        row = [tuple(p) in water_rgb for p in g[rim - 30]]
+        xs = [x for x in range(int(f['x0'] * 3) - 30, int((f['x0'] + f['w']) * 3) + 30) if row[x]]
+        self.assertGreater(len(xs), 30)
+        # (the banks wobble up to 3 texels either way; the round-3 stone covered x 243 to 266 of 216 to 266)
+        bad = [(x, y) for y in range(rim - 24, rim) for x in range(min(xs) + 3, max(xs) - 2) if tuple(g[y, x]) in stone_rgb]
+        self.assertEqual(bad[:6], [], 'stone over the channel above the lip')
+
+    def test_flow_strips_keep_to_the_phone_budget(self):
+        # (review round 3, R3-6; docs/godot.md "Moving water's budget") every moving-water strip
+        # decodes to at most 6 MB and a zone's strips to at most 9 MB together
+        import glob
+        from PIL import Image
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        zones = {}
+        for p in glob.glob(os.path.join(root, 'game', 'zones', '*', 'art', 'flow*.png')):
+            w_, h_ = Image.open(p).size
+            mb = w_ * h_ * 4 / 1e6
+            self.assertLessEqual(mb, 6.0, '%s decodes to %.1f MB' % (os.path.relpath(p, root), mb))
+            z = p.split(os.sep)[-3]
+            zones[z] = zones.get(z, 0.0) + mb
+        for z, mb in zones.items():
+            self.assertLessEqual(mb, 9.0, '%s: its flow strips decode to %.1f MB' % (z, mb))
+        self.assertIn('woodland', zones)
+
     def test_a_falls_lip_is_not_stamped(self):
         # one bend line across the sheet, the foam under it broken irregularly: gaps, several
         # depths, and no repeat with a short period

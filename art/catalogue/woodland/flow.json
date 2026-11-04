@@ -1,14 +1,14 @@
 {
  "id": "woodland/flow",
  "file": "game/zones/woodland/art/flow.png",
- "sha256": "b618dd0815a1ceffec6bf7d5bbf2e78d6e07084ffe455a7a43502cc1b0a285a3",
+ "sha256": "91b015b54f0d21e678eebcf75f531f64f8dff9534dce2c649173bb6ac814ba49",
  "kind": "flow",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   1576,
-  3736
+  712
  ],
  "status": "pass",
  "counts": {
@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
+  "verdict": "pending",
   "date": "2026-11-04",
-  "note": "pass, round 3 (docs/reviews/2026-11-04-woodland-water.md, at b2410e5e). R2-5 is fixed: lone moving texels fall from 151-183 a frame to 2-14, nearly all foam flecks and spray at the pool; every mark of two or more texels in the stream is horizontal (21-25 a frame) and steps 8 px east. R2-6 is fixed: the strip covers the rill and the channel above the fall, whose dashes step 12 px south a frame (diagonal at the jogs). The foam churns in every step (370-471 texels change in its box) and frame 0 is a still. Polish: the rill's dashes run in six fixed columns at a 96 px period, in step. Budget, not graded as art: the strip is 1576 x 3736 RGBA, about 23.6 MB uncompressed (compress/mode 0), for 550 to 1,200 moving texels a frame (0.14 % of its area). That is too heavy for a phone. Split it into a rill strip and a stream-and-pool strip, each cropped to its water, to cut it to about a third."
+  "note": "re-rendered after round 3 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, b2410e5e: ground fail on the stone over the lip, flow pass): the run-in is clear to the lip, the face has moss in its joints, the odd large boulder and ferns over a clean lip, the wet foot pebbles, the landing is open path, the moving water is two strips (the rill and the stream) with each lane on its own phase; detectors pass. The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
  }
 }

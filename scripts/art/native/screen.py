@@ -51,6 +51,7 @@ class Zone:
     night: object
     layers: dict = field(default_factory=dict)
     codes: np.ndarray | None = None
+    flows: dict = field(default_factory=dict)      # further strips by name ('rill': (sheet, box, cols))
 
 
 def mask_rle(rows, w, h) -> np.ndarray:
@@ -322,8 +323,11 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
     top[:rim, :] = True
     under = cv.copy()
     rng = np.random.default_rng(tr.get('seed', 461))
+    # a clean lip with no hanging blades (eastward-edges 3.1; review round 3, R3-3), and moss caps on
+    # few crowns (R3-2: the moss goes into the joints below)
     face, items, lip = GD.ledge(cv, top, fh, rng, seed=tr.get('seed', 461), kind=tr.get('kind', 'rock'),
-                                earth=tr.get('earth', 'crag'), roots=tr.get('vines', 1.0), tufts=1.4, shadow_px=P(5, 0))
+                                earth=tr.get('earth', 'crag'), roots=tr.get('vines', 1.0), tufts=0.0, shadow_px=P(5, 0),
+                                moss=tr.get('moss_caps', 0.04))
     cv[:rim] = under[:rim]
     lw = lip & (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & np.isin(cv // 8, [FI.get('grass_warm', -1), FI.get('leaf_warm', -1)])
     cv[lw] = sib(cv[lw], 'body')
@@ -336,14 +340,25 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
     gap = (yy > foot[None, :]) & (yy < first_w[None, :]) & (first_w[None, :] - foot[None, :] <= P(6, 0))
     e_ = tr.get('earth', 'crag')
     ec = e_ + '_cool' if e_ + '_cool' in FI else e_
-    # no turf at a foot that meets the water: the ledge's weeds over its last rows become wet rock
-    nearw = (first_w - foot <= P(6, 0))[None, :]
-    wee = nearw & (yy > foot[None, :] - P(3, 0)) & (yy <= foot[None, :]) & (is_fam(cv, 'grass') | is_fam(cv, 'leaf'))
-    cv[wee] = C(ec, 1)
     cv[gap] = C(ec, 1)
     cv[gap & (yy >= first_w[None, :] - 2)] = C(ec, 0)
-    wet_hi = gap & (yy < first_w[None, :] - 2) & (GD.nz(h, w, 3.0, tr.get('seed', 461) + 7) > 0.7)
-    cv[wet_hi] = C(e_, 2)                                            # wet stones catching the light
+    # wet pebbles and the odd stone along the wet foot, each lit on its top (eastward-edges 3.2;
+    # review round 3, R3-4: the band was flat)
+    gys, gxs = np.nonzero(gap & (yy < first_w[None, :] - 1))
+    prng = np.random.default_rng(tr.get('seed', 461) + 7)
+    taken_x = []
+    for k_ in prng.permutation(len(gys)):
+        y_, x_ = int(gys[k_]), int(gxs[k_])
+        if any(abs(x_ - a_) < 9 for a_ in taken_x):
+            continue
+        taken_x.append(x_)
+        pw = int(prng.integers(2, 5))
+        for dx_ in range(pw):
+            X_ = x_ + dx_
+            if 0 <= X_ < w and gap[y_, X_]:
+                cv[y_, X_] = C(e_, 3 if dx_ < pw - 1 else 2)              # its lit top
+                if y_ + 1 < h and gap[y_ + 1, X_]:
+                    cv[y_ + 1, X_] = C(ec, 2)                             # its wet side
     # the shade under the lip in horizontal slabs (eastward-edges 2.3's streak band): a few lit
     # top edges and dark cracks, so the band is rock in shade, not one flat tone
     r_ = np.random.default_rng(tr.get('seed', 461) + 11)
@@ -354,6 +369,47 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
     cv[slab] = C(ec, 2)
     cv[slab & ~GD.down(slab, 1)] = C(e_, 3)
     cv[band & (fld < 0.22)] = C(ec, 0)
+    # moss in the dark joints and on the shaded undersides, in small tufts of different shapes
+    # (review round 3, R3-2; the leaf_cool ramp)
+    mrng = np.random.default_rng(tr.get('seed', 461) + 13)
+    dark = face & (yy > rim + P(5, 0)) & np.isin(cv, [C(ec, 0), C(e_, 0), C(ec, 1)])
+    dys, dxs = np.nonzero(dark)
+    placed_m = []
+    for k_ in mrng.permutation(len(dys))[: len(dys)]:
+        y_, x_ = int(dys[k_]), int(dxs[k_])
+        if any(abs(x_ - a_) < 22 and abs(y_ - b_) < 14 for a_, b_ in placed_m):
+            continue
+        placed_m.append((x_, y_))
+        tw, th_ = int(mrng.integers(3, 7)), int(mrng.integers(1, 3))
+        for j_ in range(th_ + 1):
+            for i_ in range(-(tw // 2) + (j_ % 2), tw - tw // 2 - (j_ % 2)):
+                Y_, X_ = y_ - j_, x_ + i_
+                if 0 <= Y_ < h and 0 <= X_ < w and face[Y_, X_] and cv[Y_, X_] % 8 <= 1:
+                    cv[Y_, X_] = C('leaf_cool', 2 if j_ == th_ else 1)
+        if len(placed_m) > len(dys) // 60:
+            break
+    # the odd larger boulder (30 to 40 px) every 150 to 250 px (2.3)
+    from . import props as P4_
+    brng = np.random.default_rng(tr.get('seed', 461) + 17)
+    keep_out = [(P(a_, 0), P(b_, 0)) for (a_, b_) in tr.get('keep_out', [])]
+    xb_ = int(brng.integers(40, 140))
+    while xb_ < w - 30:
+        if not any(a_ - 30 <= xb_ <= b_ + 30 for (a_, b_) in keep_out):
+            bw_ = brng.uniform(10.0, 13.3)
+            img_, anc_, _a_ = P4_.boulder4(D, bw_, bw_ * brng.uniform(0.62, 0.75), seed=int(brng.integers(0, 10 ** 6)), moss=None)
+            dec_ = to_codes(img_)
+            fy_ = rim + fh - P(brng.uniform(3.0, 8.0), 0)
+            Xp, Yp = int(round(xb_ - anc_[0])), int(round(fy_ - anc_[1]))
+            hh_, ww_ = dec_.shape
+            sub_ = face[max(0, Yp):Yp + hh_, max(0, Xp):Xp + ww_]
+            d2 = dec_[max(0, -Yp):max(0, -Yp) + sub_.shape[0], max(0, -Xp):max(0, -Xp) + sub_.shape[1]]
+            d2[~sub_] = -1                                              # only on the face
+            DC.paste(cv, dec_, Xp, Yp)
+        xb_ += int(brng.integers(150, 251))
+    # ferns crossing the rim (8.1), where the plan names them
+    for (fx_, seed_) in tr.get('rim_plants', []):
+        img_, anc_, _a_ = P4_.fern4(D, seed=seed_)
+        DC.paste(cv, to_codes(img_), int(round(P(fx_, 0) - anc_[0])), int(round(rim + P(3, 0) - anc_[1])))
     # the masonry stack's joints
     fz = (yy >= rim) & (yy < rim + fh)
     for (c0, c1) in tr.get('crevices', []):
@@ -370,6 +426,15 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
         land = (yy >= sfoot) & (yy < rim + fh + P(2, 0)) & (np.arange(w)[None, :] >= sx0 - P(1, 0)) & \
             (np.arange(w)[None, :] < sx1 + P(1, 0)) & ~water_open
         cv[land] = under[land]
+        # the landing is open path down to the bridge's north abutment (review round 3, R3-5): what
+        # is not the bridge (its timber, ashlar and posts) takes the path's own texture from the
+        # rows above the rim
+        bridge_f = [FI[n_] for n_ in ('timber', 'timber_warm', 'timber_cool', 'ashlar', 'ashlar_warm', 'ashlar_cool') if n_ in FI]
+        lys, lxs = np.nonzero(land & ~np.isin(cv // 8, bridge_f))
+        for y_, x_ in zip(lys, lxs):
+            src_ = under[rim - 3 - ((y_ - sfoot) % P(8, 0)), x_]
+            if src_ >= 0 and is_fam(np.array(src_), 'path'):
+                cv[y_, x_] = src_
         GD.log_steps(cv, sx0, sx1, rim - 2, sfoot, st.get('n', 5), np.random.default_rng(tr.get('seed', 461) + 1))
         items = [it for it in items if not (sx0 - P(4, 0) <= it[2][0] <= sx1 + P(4, 0))]
     return items
@@ -1222,8 +1287,15 @@ def terrain(plan: dict, layers: dict) -> tuple:
             # sparse ripples along the flow, reeds and rushes at the edges; the footbridge spans
             # the river bank to bank at a straight crossing, on an abutment in each bank
             from . import softground as GD
+            # the fall's run-in stays clear: no stone, tongue, reed or rush in the channel's last
+            # stretch above the lip or on its banks (review round 3, R3-1: a bank stone sat over the
+            # channel's east third just above the lip)
+            ff = plan['water']['fall']
+            run_in = np.zeros_like(wm)
+            run_in[P(ff['y0'] - 14, 0):P(ff['y0'], 0) + 2, P(ff['x0'] - 6, 0):P(ff['x0'] + ff['w'] + 6, 0)] = True
             items = GD.water(cv, wm, 402, bank_h=P(3.4, 0), flow='auto', stones=plan['water']['soft'].get('stones', 0.0),
-                             reeds=plan['water']['soft'].get('reeds', 0.8), rush_clumps=plan['water']['soft'].get('rush_clumps'))
+                             reeds=plan['water']['soft'].get('reeds', 0.8), rush_clumps=plan['water']['soft'].get('rush_clumps'),
+                             clear=run_in)
             # a few of the rubble band's stones on the rill's rims (the woodland review, 4 Nov), laid
             # with the bank stones so each one standing in the water gets its wet contact
             from . import props as P4_
@@ -1241,7 +1313,14 @@ def terrain(plan: dict, layers: dict) -> tuple:
             GD.seat_stones(cv, wm, [(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
                                     for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])],
                            lambda c, d, x, y: DC.paste(c, d, x, y, shadow=True, shadow_dx=P(1), shadow_dy=P(0.5)))
-            GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wm, np.random.default_rng(12))
+            # the bridge spans the open water (review round 3, R3-5: its north abutment started on the
+            # bank face, so its deck covered the landing at the foot of the steps)
+            wopen = wm & np.isin(cv // 8, [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI])
+            # its deck rests a little on the land north of the open water (logic.bridge_span: 0.1 H)
+            wspan = wopen.copy()
+            for k_ in range(1, P(3, 0) + 1):
+                wspan |= GD.down(wopen, -k_)
+            GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wspan, np.random.default_rng(12))
             fallen = terrace(cv, plan, wm)
             if fallen:
                 GD.seat_stones(cv, wm, [(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
@@ -1462,8 +1541,24 @@ def build() -> Zone:
             region = fr[by0:by1, bx0:bx1]
             region[sel, :3] = LUT[ov[sel]][:, :3]
             region[sel, 3] = 255
-    flow = animate.pack(frames)
-    return Zone(ground=ground, objects=objects, sprites={k: v[0] for k, v in sprites.items()}, flow=flow, night=None,
+    # one strip per stretch of water, each cropped to what moves in it (review round 3, R3-6: one
+    # strip over the rill and the stream was 1576 x 3736, about 24 MB decoded on a phone for about
+    # a thousand moving texels a frame): plan water.strips names the extra ones by box (world px),
+    # the main strip keeps the rest
+    flows = {}
+    rest = [f.copy() for f in frames]
+    for name, (sx0, sy0, sx1, sy1) in sorted(plan['water'].get('strips', {}).items()):
+        part = []
+        for f_ in rest:
+            fr_ = np.zeros_like(f_)
+            fr_[P(sy0, 0):P(sy1, 0), P(sx0, 0):P(sx1, 0)] = f_[P(sy0, 0):P(sy1, 0), P(sx0, 0):P(sx1, 0)]
+            f_[P(sy0, 0):P(sy1, 0), P(sx0, 0):P(sx1, 0)] = 0
+            part.append(fr_)
+        pk = animate.pack(part)
+        if pk:
+            flows[name] = pk
+    flow = animate.pack(rest)
+    return Zone(ground=ground, objects=objects, sprites={k: v[0] for k, v in sprites.items()}, flow=flow, night=None, flows=flows,
                 layers=layers, codes=codes)
 
 

@@ -615,7 +615,7 @@ def clods(cv, region, rng, earth='earth', size=(9, 15), ratio=0.8, gap_t=1, moss
 
 def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind: str = 'earth',
           earth: str = 'earth', overhang: float = 1.0, roots: float = 1.0, tufts: float = 1.0,
-          shadow_px: int = 10, plants=None) -> tuple:
+          shadow_px: int = 10, plants=None, moss: float = 0.22) -> tuple:
     """Raised ground under a soft plan `top` (texels), its face `face_h` art px tall, seen from the
     south (eastward-edges.md 2 and 3, Matt's 26 Oct screenshot). Top to bottom: a lit band on the
     top's grass behind the lip; the grass lip hanging over the face 1 to 4 px in lumps, its
@@ -695,7 +695,7 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
     if rock:
         u1, u2 = 5, 13                              # under-lip deep shade in two values (E 8 to 11)
         streak = 14
-        clods(cv, face_b & (dt2 > u2 + streak - 4), rng, earth, size=(12, 26), ratio=0.8, gap_t=0, moss=0.22,
+        clods(cv, face_b & (dt2 > u2 + streak - 4), rng, earth, size=(12, 26), ratio=0.8, gap_t=0, moss=moss,
               lit_t=4, seed=seed, stone_share=0.04, spacing=0.82)
         cv[face_b & (dt2 <= u2 + streak) & (dt2 > u2)] = C(e0, 2)
         # the zone under the shade: small flat stones in the shade, wider than tall, lit only along

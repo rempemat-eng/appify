@@ -1,8 +1,9 @@
-[gd_scene load_steps=190 format=3]
+[gd_scene load_steps=191 format=3]
 
 [ext_resource type="Texture2D" path="res://zones/woodland/art/ground.png" id="ground"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/flow.png" id="flow"]
 [ext_resource type="Script" path="res://world/flow_anim.gd" id="flow_anim"]
+[ext_resource type="Texture2D" path="res://zones/woodland/art/flow_rill.png" id="flow_rill"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/beech.png" id="t_beech"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/birch.png" id="t_birch"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/bramble.png" id="t_bramble"]
@@ -522,8 +523,17 @@ centered = false
 
 [node name="Water" type="Sprite2D" parent="."]
 z_index = -9
-position = Vector2(172, 0)
+position = Vector2(172, 756)
 texture = ExtResource("flow")
+centered = false
+hframes = 2
+vframes = 4
+script = ExtResource("flow_anim")
+
+[node name="WaterRill" type="Sprite2D" parent="."]
+z_index = -9
+position = Vector2(174, 0)
+texture = ExtResource("flow_rill")
 centered = false
 hframes = 2
 vframes = 4

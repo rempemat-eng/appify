@@ -36,8 +36,11 @@ Water has a source and flows downhill:
 - The sheet starts on the rim and falls down the face, in front of the face only: nothing of it
   (no ledge stone, no crest) stands above the rim over the banks or the stream, it never spreads
   over the stones either side, and spray and foam are only where it lands, on the pool (Matt,
-  2 Nov: "the waterfall overlaps in an unrealistic way on the top bit"). A face is one tier high
-  (two cells), the height a face strip draws. On kit zones `rules.water_fall` (kit_rules) checks
+  2 Nov: "the waterfall overlaps in an unrealistic way on the top bit"). A kit face strip is one
+  tier high (two cells), the height it draws; this describes the strip, not a cap on a painted
+  face: a rock face 32 world px or more tall (eastward-edges 2.1's rock cliff, world-rules 3.2's
+  ledge between walkable tiers) is one tier step too, and a face that tall is always rock, never
+  an earth ledge (the woodland reviews, 4 Nov, round 3). On kit zones `rules.water_fall` (kit_rules) checks
   that the water at the rim is exactly the fall's columns, that its sheet (`geometry.sheet_px`)
   is that width and starts at the rim, and that water below the face catches it; `test_kit`
   checks the pictures draw nothing above the rim or beside the sheet.

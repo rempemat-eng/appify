@@ -1,0 +1,70 @@
+{
+ "id": "kit/waterfall_1",
+ "file": "game/kit/props/art/waterfall_1.png",
+ "sha256": "1d9e2eafd50fdf5edf7df40fb469e297e9f779859b675509ea6a3fcbdebfe9f6",
+ "kind": "waterfall",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  72,
+  94
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 6,
+   "tones": 15.166666666666666,
+   "shapes": 15.666666666666666
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.311,
+  "tones_ratio": 0.562,
+  "shapes_ratio": 0.311,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    14,
+    12,
+    60,
+    77
+   ],
+   "message": "kit/waterfall_1: detail bar 0.31 of Eastward's prop band (15.2 tones, 15.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    14,
+    12,
+    60,
+    77
+   ],
+   "message": "kit/waterfall_1: only 28% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
+  }
+ ],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "date": "2026-11-04",
+  "note": "its foam is rocks.plunge since claude-a/water-polish (the woodland reviews, 4 Nov); its frames are waterfall_1_flow.png. Not yet reviewed by an independent detail-auditor. The detectors fail it on detail.bar against Eastward's prop band: scripts/review/eastward_bands.json has no water group, so the band is not the right yardstick for a falling sheet (the woodland review noted the same for flow)."
+ }
+}
