@@ -220,3 +220,20 @@ static func fence_pieces(style: String, cells: Array, fixed: Dictionary = {}) ->
 				joins += side
 		out[at] = "fence_%s_%s" % [style, joins] if joins != "" else ""
 	return out
+
+## A stable value in [0, 1) for a cell (the scatter brush's per-cell seed): the same cell and seed
+## always give the same choice, so a stroke repainted after an undo lands the same pieces.
+static func cell_hash(cell: Vector2i, seed: int, salt: int = 0) -> float:
+	var v := sin(float(cell.x) * 12.9898 + float(cell.y) * 78.233 + float(seed) * 37.719 + float(salt) * 4.581) * 43758.5453
+	return v - floor(v)
+
+## The next variant in a piece's list after the current one (the variant cycle).
+static func next_variant(variants: Array, current: String) -> String:
+	if variants.is_empty():
+		return ""
+	var i := variants.find(current)
+	return String(variants[(i + 1) % variants.size()])
+
+## The short name of a finding's rule, for the live overlay's label.
+static func short_rule(check: String) -> String:
+	return check.trim_prefix("rules.").replace("_", " ")
