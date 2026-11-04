@@ -73,7 +73,11 @@
     "note": "water on the tier above, as wide as the fall"
    }
   ],
-  "composition": "axis"
+  "composition": "axis",
+  "provides": [
+   "view",
+   "water"
+  ]
  },
  "rendering": {
   "cast_shadow": {
@@ -92,6 +96,19 @@
    {
     "clip": "fall",
     "loop": true,
+    "frames": 8,
+    "fps": 10,
+    "strip": "res://kit/props/art/waterfall_1_flow.png",
+    "frame_px": [
+     36,
+     50
+    ],
+    "region_px": [
+     18,
+     20,
+     36,
+     50
+    ],
     "reduced_motion": "hold:0",
     "on_screen_only": true
    }
@@ -114,8 +131,6 @@
    }
   },
   "seeded_from": "scripts/art/kit/structures.py",
-  "todo": [
-   "the falling animation (the woodland flow strip)"
-  ]
+  "todo": []
  }
 }

@@ -114,6 +114,9 @@
     "rel": "on",
     "what": "route"
    }
+  ],
+  "avoid": [
+   "wild_woods"
   ]
  },
  "rendering": {

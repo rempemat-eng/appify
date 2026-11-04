@@ -295,6 +295,15 @@
     3,
     0
    ]
+  ],
+  "doors": [
+   {
+    "x": [
+     48,
+     95
+    ],
+    "faces": "s"
+   }
   ]
  },
  "placement": {
@@ -310,6 +319,10 @@
     "rel": "on",
     "what": "water"
    }
+  ],
+  "provides": [
+   "home",
+   "hearth"
   ]
  },
  "rendering": {

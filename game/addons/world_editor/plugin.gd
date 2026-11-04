@@ -30,6 +30,12 @@ var _preview_key: Array = []
 var _preview: Dictionary = {}
 var _revision := 0
 var _baking := false
+var _fence_style := ""
+var clipboard: Array = []
+var scatter := false
+var scatter_density := 0.35
+var _scatter_stroke := false
+var _ghost_busy := ""
 
 func _enter_tree() -> void:
 	operations.changed.connect(_operations_changed)
@@ -106,6 +112,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		if event.keycode == KEY_ESCAPE:
 			_cancel_stroke()
 			return true
+		if brush.begins_with("piece:") and event.keycode == KEY_V:
+			if is_instance_valid(dock):
+				dock.cycle_variant()
+			return true
 		if brush.begins_with("piece:") and event.keycode in [KEY_Q, KEY_E]:
 			facing = Tools.next_facing(facing, -1 if event.keycode == KEY_Q else 1)
 			refresh_preview()
@@ -134,7 +144,15 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return painting
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			if brush.begins_with("piece:"):
+			_fence_style = fence_style(brush.substr(6)) if brush.begins_with("piece:") else ""
+			_scatter_stroke = brush.begins_with("piece:") and scatter and _fence_style == ""
+			if brush == "group:":
+				_say_result(operations.paste_group(clipboard, local), "Pasted the group")
+				return true
+			if brush.begins_with("piece:") and is_crossing(brush.substr(6)):
+				_say_result(operations.place_crossing(brush.substr(6), local, _piece_options()), "Placed on the run")
+				return true
+			if brush.begins_with("piece:") and _fence_style == "" and not _scatter_stroke:
 				_say_result(place_piece(brush.substr(6), local), "Placed piece")
 				return true
 			if not _inside(cell):
@@ -150,9 +168,22 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			_extend_stroke(cell)
 			var cells := _bounded_cells(_stroke_cells)
 			_cancel_stroke()
+			if _fence_style != "":
+				var style := _fence_style
+				_fence_style = ""
+				_say_result(operations.place_fence_run(style, cells, _piece_options()), "Fence run placed")
+				return true
+			if _scatter_stroke:
+				_scatter_stroke = false
+				var zone_seed := String(zone.name).hash() if is_instance_valid(zone) else 7
+				var scatter_options := _piece_options()
+				scatter_options.merge({"density": scatter_density, "seed": zone_seed}, true)
+				_say_result(operations.scatter(brush.substr(6), cells, scatter_options), "Scattered")
+				return true
 			var material := brush.substr(9) if brush.begins_with("material:") else ""
 			var variant := brush.substr(8) if brush.begins_with("variant:") else ""
-			_say_result(paint_cells(cells, material, variant), "Painted %d cells" % cells.size())
+			var painted := paint_cells(cells, material, variant)
+			_say_result(painted, "Painted %d cells%s" % [painted.get("cells", cells).size(), ", centred on the door" if painted.get("snapped", false) else ""])
 			return true
 	return false
 
@@ -167,6 +198,22 @@ func _bounded_cells(cells: Array) -> Array[Vector2i]:
 	return result
 
 func _extend_stroke(cell: Vector2i) -> void:
+	if _scatter_stroke:
+		for centre in Tools.line_cells(_stroke_last, cell):
+			for target in Tools.brush_cells(centre, maxi(brush_size, 2)):
+				if target not in _stroke_cells:
+					_stroke_cells.append(target)
+		_stroke_last = cell
+		update_overlays()
+		return
+	if _fence_style != "":
+		# a fence run follows the pointer cell by cell, four-connected, as the run will join
+		for target in Tools.line_cells(_stroke_last, cell):
+			if target not in _stroke_cells:
+				_stroke_cells.append(target)
+		_stroke_last = cell
+		update_overlays()
+		return
 	match tool_mode:
 		"rectangle":
 			_stroke_cells = Tools.rectangle_cells(_stroke_start, cell)
@@ -193,6 +240,48 @@ func _cancel_stroke() -> void:
 ## The dock and non-UI acceptance tests share this operations API.
 func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dictionary:
 	return operations.paint_cells(cells, material_id, variant)
+
+## A gate or a stile: placed on an existing run (operations.place_crossing).
+func is_crossing(id: String) -> bool:
+	var boundary: Variant = operations.definition(id).get("placement", {}).get("boundary")
+	return boundary is Dictionary and (bool(boundary.get("gate", false)) or bool(boundary.get("stile", false)))
+
+## The live fault overlay's verdict for the ghost: cached, or worked out on a worker thread (the
+## full validator runs a Python process) while the canvas keeps the relation engine's fast verdict.
+func ghost_verdict(id: String, at: Vector2) -> Dictionary:
+	var info := operations.ghost_plan(id, at, _piece_options())
+	if info.is_empty():
+		return {}
+	var cached := operations.ghost_cached(info)
+	if not cached.is_empty():
+		return cached
+	if _ghost_busy == "":
+		_ghost_busy = String(info.key)
+		WorkerThreadPool.add_task(func() -> void:
+			var verdict := operations.ghost_compute(info)
+			_ghost_done.call_deferred(String(info.key), verdict))
+	return {}
+
+func _ghost_done(key: String, verdict: Dictionary) -> void:
+	operations.ghost_store(key, verdict)
+	_ghost_busy = ""
+	update_overlays()
+
+## The fence style of a fence cell piece (a run is drawn by dragging), or "" for anything else
+## (gates and stiles are placed one at a time, on their path).
+func fence_style(id: String) -> String:
+	var boundary: Variant = operations.definition(id).get("placement", {}).get("boundary")
+	if not boundary is Dictionary or bool(boundary.get("gate", false)) or bool(boundary.get("stile", false)):
+		return ""
+	return String(boundary.get("style", ""))
+
+## Copy the pieces selected in the scene tree or on the canvas (group copy, round 4).
+func copy_selection() -> Dictionary:
+	var nodes: Array = EditorInterface.get_selection().get_selected_nodes() if Engine.is_editor_hint() else []
+	var result := operations.copy_group(nodes)
+	if bool(result.get("ok", false)):
+		clipboard = result.group
+	return result
 
 func place_piece(id: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
 	var chosen := _piece_options()
@@ -256,17 +345,51 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 		return
 	var transform := ground.get_global_transform_with_canvas()
 	var cell_size := ground.kit.cell
-	if not brush.begins_with("piece:"):
+	if brush == "group:":
+		# the group's footprints where it would land
+		var corner := (_hover_local / cell_size).floor() * cell_size
+		for g in clipboard:
+			var foot: Vector2 = corner + Vector2(g.get("offset", Vector2.ZERO))
+			var c := Vector2i(floori(foot.x / cell_size), floori((foot.y - 1) / cell_size))
+			_draw_rect(overlay, transform, Rect2(Vector2(c * cell_size), Vector2.ONE * cell_size), Color(0.9, 0.75, 0.4, 0.35))
+		return
+	if not brush.begins_with("piece:") or (painting and (_fence_style != "" or _scatter_stroke)):
 		var cell := Vector2i(floori(_hover_local.x / cell_size), floori(_hover_local.y / cell_size))
 		var cells := _stroke_cells if painting else Tools.brush_cells(cell, brush_size)
 		for target in _bounded_cells(cells):
 			_draw_rect(overlay, transform, Rect2(Vector2(target * cell_size), Vector2.ONE * cell_size), Color(0.55, 0.8, 1.0, 0.22))
+		if painting and _fence_style != "":
+			# the pieces the run will choose: each cell's arms from its node
+			var chosen: Dictionary = operations.preview_fence_run(_fence_style, _bounded_cells(_stroke_cells))
+			for at in chosen:
+				var id := String(chosen[at])
+				var node := Vector2(at.x * cell_size + cell_size / 2.0, (at.y + 1) * cell_size)
+				var joins := id.get_slice("_", id.get_slice_count("_") - 1) if id != "" else ""
+				for side in joins:
+					var arm: Vector2 = Vector2(Tools.SIDES[side]) * (cell_size / 2.0)
+					overlay.draw_line(transform * node, transform * (node + arm), Color(0.95, 0.85, 0.3, 0.95) if id != "" else Color(1, 0.3, 0.3), 3.0)
+				if id == "":
+					overlay.draw_circle(transform * node, 3.0, Color(1, 0.3, 0.3))
 		return
 	var id := brush.substr(6)
 	var result := preview_piece(id, _hover_local)
 	var raw := operations.definition(id)
 	var at: Vector2 = result.get("at", Tools.snap(_hover_local, String(raw.get("placement", {}).get("snap", "cell")), cell_size))
 	var colour := Color(0.4, 0.9, 0.5, 0.4) if bool(result.get("ok", false)) else Color(1.0, 0.35, 0.3, 0.4)
+	var label := ""
+	if not bool(result.get("ok", false)):
+		var d: Array = result.get("diagnostics", [])
+		label = Tools.short_rule(String(d[0].get("rule", d[0].get("check", "")))) if not d.is_empty() and d[0] is Dictionary else "refused"
+	else:
+		var gv := ghost_verdict(id, _hover_local)
+		if String(gv.get("severity", "")) == "fault":
+			colour = Color(1.0, 0.35, 0.3, 0.4)
+			label = String(gv.get("rule", ""))
+		elif String(gv.get("severity", "")) == "advice":
+			colour = Color(1.0, 0.75, 0.2, 0.4)
+			label = String(gv.get("rule", ""))
+		elif gv.is_empty() and _ghost_busy != "":
+			label = "checking..."
 	var footprint: Array = raw.get("geometry", {}).get("footprint", [])
 	if footprint.is_empty():
 		footprint = [[0, -1]] if is_zero_approx(fposmod(at.y, cell_size)) else [[0, 0]]
@@ -276,6 +399,8 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 			var c := foot_cell + Vector2i(int(offset[0]), int(offset[1]))
 			_draw_rect(overlay, transform, Rect2(Vector2(c * cell_size), Vector2.ONE * cell_size), colour)
 	var origin := transform * at
+	if label != "":
+		overlay.draw_string(ThemeDB.fallback_font, origin + Vector2(10, -10), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, colour.lightened(0.6))
 	var direction := Vector2.DOWN
 	match facing:
 		"n": direction = Vector2.UP

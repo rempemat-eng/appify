@@ -6,15 +6,24 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 4,
  "variants": [
   {
    "id": "beds_dug",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/beds_dug.png",
+   "png": "res://kit/props/art/farm/beds_dug.png",
    "foot": [
-    129,
-    140
+    122,
+    122
+   ]
+  },
+  {
+   "id": "beds_dug_b",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/beds_dug_b.png",
+   "foot": [
+    121,
+    122
    ]
   }
  ],
@@ -27,8 +36,8 @@
  },
  "geometry": {
   "size_px": [
-   258,
-   144
+   247,
+   128
   ],
   "size_cells": [
    11,
@@ -39,8 +48,8 @@
    "shape": "none"
   },
   "foot": [
-   129,
-   140
+   122,
+   122
   ],
   "footprint": []
  },
@@ -60,7 +69,13 @@
     "rel": "on",
     "what": "water"
    }
-  ]
+  ],
+  "enclosure": {
+   "holds": [
+    "crops"
+   ],
+   "as": "contents"
+  }
  },
  "rendering": {
   "cast_shadow": {
@@ -114,6 +129,9 @@
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
    "retain shadow beds_dug_shadow from source scene with its own condition and offset; not a standalone random variant",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "variants"
   ]
  }
 }
