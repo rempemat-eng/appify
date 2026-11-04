@@ -573,3 +573,64 @@ func test_a_pasted_group_keeps_its_stages_and_metadata() -> void:
 	assert_str(copy.get_meta("note")).is_equal("Mira's bench")
 	assert_str(copy.variant).is_equal("forest_bench")
 	assert_str(_staged(f)[String(copy.name)]).is_equal("restored")
+
+func _threshold_library() -> Dictionary:
+	var result := _crossing_library()
+	var hut: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/structure/crossroads_hut.json"))
+	hut.approval.state = "approved"
+	result[hut.id] = hut
+	return result
+
+func test_a_path_painted_from_a_door_snaps_to_its_centre_line() -> void:
+	var rows := []
+	for y in 9:
+		rows.append(".".repeat(14))
+	var f := _fixture({"library": _threshold_library(), "plan": {"rows": rows}})
+	# the hut's door opening is x -24 to 23 from its foot: at x 180 its centre is 179.5, cell 7's middle; row 6 is before it
+	assert_bool(f.operations.place_piece("crossroads_hut", Vector2(180, 144), {"variant": "hut", "id": "hut"}).ok).is_true()
+	var ground := f.ground as TerrainGround
+	var stroke := [Vector2i(8, 6), Vector2i(8, 7), Vector2i(8, 8)]
+	var painted: Dictionary = f.operations.paint_cells(stroke, "path")
+	assert_bool(painted.ok).is_true()
+	assert_bool(painted.snapped).is_true()
+	assert_int(ground.material_at(Vector2i(7, 6))).is_equal(2)
+	assert_int(ground.material_at(Vector2i(7, 7))).is_equal(2)
+	assert_int(ground.material_at(Vector2i(8, 6))).is_equal(1)
+	assert_int(ground.material_at(Vector2i(8, 7))).is_equal(1)
+	assert_int(ground.material_at(Vector2i(8, 8))).is_equal(2)      # past the first cell out it may bend
+	# one undo takes the whole snapped stroke back
+	assert_bool(f.history.undo()).is_true()
+	assert_bool(f.history.has_undo()).is_true()
+	assert_int(ground.material_at(Vector2i(7, 6))).is_equal(1)
+	assert_int(ground.material_at(Vector2i(8, 8))).is_equal(1)
+	# a stroke nowhere near the door is painted where it was drawn
+	var far: Dictionary = f.operations.paint_cells([Vector2i(0, 8), Vector2i(1, 8)], "path")
+	assert_bool(far.snapped).is_false()
+	assert_int(ground.material_at(Vector2i(0, 8))).is_equal(2)
+
+func test_a_gate_snaps_onto_the_path_crossing_its_run() -> void:
+	var rows := []
+	for y in 9:
+		rows.append(".".repeat(14))
+	var f := _fixture({"library": _threshold_library(), "plan": {"rows": rows}})
+	# a three-cell path crossing the run's line (between rows 5 and 6) on columns 9 to 11
+	var path := []
+	for r in range(3, 9):
+		for c in range(9, 12):
+			path.append(Vector2i(c, r))
+	assert_bool(f.operations.paint_cells(path, "path").ok).is_true()
+	var run := []
+	for x in range(1, 13):
+		run.append(Vector2i(x, 5))
+	assert_bool(f.operations.place_fence_run("wattle", run).ok).is_true()
+	# clicked two cells west of the path, the gate takes the span centred on it (cell 10), not the click's
+	var placed: Dictionary = f.operations.place_crossing("fence_wattle_gate_ew", Vector2(8 * 24 + 5, 5 * 24 + 5))
+	assert_bool(placed.ok).is_true()
+	assert_that(placed.cell).is_equal(Vector2i(10, 5))
+	assert_that(placed.node.position).is_equal(Vector2(252, 144))
+	# with no path crossing, the click's own span is kept
+	assert_bool(f.history.undo()).is_true()
+	var g := _fixture({"library": _threshold_library(), "plan": {"rows": rows}})
+	assert_bool(g.operations.place_fence_run("wattle", run).ok).is_true()
+	var plain: Dictionary = g.operations.place_crossing("fence_wattle_gate_ew", Vector2(8 * 24 + 5, 5 * 24 + 5))
+	assert_that(plain.cell).is_equal(Vector2i(8, 5))

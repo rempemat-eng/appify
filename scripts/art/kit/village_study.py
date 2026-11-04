@@ -1,5 +1,5 @@
 """A village green built only from kit pieces, as a review study (not a playable zone): two lanes
-crossing with a fingerpost at the corner, a cottage with its woodpile and chopping block at the gable
+crossing with a fingerpost at the corner, a bakehouse with its woodpile and chopping block at the gable
 and its washing in the side yard, a herbalist's and a hut on the green, the pump on the green with a
 bench facing it, a pair of market stalls and a notice board at the lane's edge, a cart pulled in, a
 wayside shrine and a lantern (docs/vision/placement-logic.md; scripts/art/kit/commons.py).
@@ -28,14 +28,14 @@ def plan() -> dict:
     g = np.full((ROWS, COLS), '.', '<U1')
     g[15:17, :] = '#'                                   # the lane east and west
     g[:, 21:23] = '#'                                   # the lane north and south
-    g[11:15, 6:8] = '#'                                 # the cottage's door path
-    g[11:15, 36:38] = '#'                               # the herbalist's
-    g[23:25, 36:38] = '#'                               # the hut's, up to the green
-    g[17:23, 36:38] = '#'
+    # door paths centred on their doors, straight out to the lane (thresholds.py; Matt, 4 Nov)
+    g[11:15, 11:14] = '#'                               # the bakehouse's door path
+    g[11:15, 35:38] = '#'                               # the herbalist's
+    g[17:25, 35:38] = '#'                               # the hut's, up to the green
     g[20:23, 28:35] = 'w'                               # trodden round the pump
     g[19, 26:36] = '#'                                  # the way across the green, before the bench
     pieces = [
-        {'id': 'cottage', 'piece': 'crossroads_fern_cottage', 'at': [228, 264]},
+        {'id': 'cottage', 'piece': 'crossroads_bakery', 'at': [228, 264]},
         {'id': 'woodpile', 'piece': 'commons_woodpile', 'at': [60, 264]},
         {'id': 'block', 'piece': 'commons_chopping_block', 'at': [108, 312]},
         {'id': 'washing', 'piece': 'commons_washing_line', 'at': [420, 144]},

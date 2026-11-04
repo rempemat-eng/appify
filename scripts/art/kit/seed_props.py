@@ -342,7 +342,7 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
             # An old heuristic is not evidence for an unknown woodland solid box.
             p['gameplay'].pop('blocks_move', None)
             p['gameplay'].pop('blocks_shots', None)
-        for key in ('overhang', 'height_px'):
+        for key in ('overhang', 'height_px', 'doors'):        # doors: measured on the art (thresholds.py)
             if key in old.get('geometry', {}):
                 g[key] = copy.deepcopy(old['geometry'][key])
         source_points = {point['id'] for point in points}

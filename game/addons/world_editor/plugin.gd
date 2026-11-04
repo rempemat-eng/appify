@@ -182,7 +182,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			var material := brush.substr(9) if brush.begins_with("material:") else ""
 			var variant := brush.substr(8) if brush.begins_with("variant:") else ""
-			_say_result(paint_cells(cells, material, variant), "Painted %d cells" % cells.size())
+			var painted := paint_cells(cells, material, variant)
+			_say_result(painted, "Painted %d cells%s" % [painted.get("cells", cells).size(), ", centred on the door" if painted.get("snapped", false) else ""])
 			return true
 	return false
 
