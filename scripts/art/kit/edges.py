@@ -231,7 +231,7 @@ def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side
     lip (the only bank that turns a face to the camera): an earth face 6 px (lit top row, clods
     along it from the cell edge's profile, a dark wet bottom row), the 1 px very light waterline,
     then two rows of shade on the water. On every other shore (south, west, east; Matt, 4 Nov) one
-    rim and no face: the turf's lip lit, a texel of wet earth, the light waterline, lit shallows.
+    rim and no face: the turf's lip lit, a texel of wet earth, the water's mid tone, lit shallows.
     All within 9 texels of the outline, so the tile below never needs to know. `side_w` is kept for
     old piece files and ignored (the walls seen edge-on it sized are gone)."""
     m2 = soft_lower(k, prof)                      # the water
@@ -282,9 +282,9 @@ def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side
     ops.shift(land & GD.down(m2, -1), -1)
     nb = col_bank
     # every other shore (Matt, 4 Nov): only a bank with land to its north shows a face in this
-    # top-down 3/4 view; east, west and south shores show one rim, the wet earth of the north
-    # face's foot at the land's edge and the light waterline inside it, with no wall seen edge-on.
-    # Where the north face ends beside open water its edge column is that wet earth too, so the rim
+    # top-down 3/4 view; east, west and south shores show one rim, wet earth at the land's edge and
+    # the water's mid tone inside it (softground.RIM_EARTH, RIM_LINE), with no wall seen edge-on.
+    # Where the north face ends beside open water its edge column is the face's wet foot, so the rim
     # runs on round inside and outside bends.
     # (what hangs on the face's end is kept off the CALM border strips, which must depend only on
     # the border's own cells and profile: test_kit.test_tiles_canonical_at_borders)
@@ -300,9 +300,9 @@ def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side
     wline = m2 & ~nb & ~rim & (ndi.binary_dilation(rim, structure=cross) |
                                (ndi.binary_dilation(face, structure=cross) & away))
     ops.own[rim] = 2
-    ops.ab[rim] = C('earth_cool', 0)
+    ops.ab[rim] = GD.rim_earth()
     ops.own[wline] = 2
-    ops.ab[wline] = C('water', 5)
+    ops.ab[wline] = C('water', GD.RIM_LINE)
     # the shallows inside the rim lit a tone (within 3.5 texels of the land: the bands' reach the
     # corners leave canonical at the borders)
     dist = ndi.distance_transform_edt(m2)

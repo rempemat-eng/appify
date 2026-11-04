@@ -316,10 +316,11 @@ class WaterBanks(unittest.TestCase):
         edge = m & ndi.binary_dilation(~m, structure=CROSS)
         water = self._fam(cv, self.WATER)
         self.assertEqual(int((edge & water).sum()), 0, 'bare water beside the land')
-        rim = edge & (cv == C('earth_cool', 0))
+        from scripts.art.native import softground as GD
+        rim = edge & (cv == GD.rim_earth())
         self.assertGreater(int(rim.sum()), 200)
         inner = m & ~edge & ndi.binary_dilation(rim, structure=CROSS) & water
-        self.assertTrue((cv[inner] == C('water', 5)).all(), 'the waterline inside the rim')
+        self.assertTrue((cv[inner] == C('water', GD.RIM_LINE)).all(), 'the mid tone inside the rim')
 
     def test_a_stone_in_the_water_has_a_wet_contact(self):
         from scripts.art.native import ctx
@@ -444,6 +445,7 @@ class WaterBanks(unittest.TestCase):
         from scripts.art.kit import bake as BK
         from scripts.art.kit import surface as SF
         from scripts.art.native.palette import C
+        from scripts.art.native import softground as GD
         lib = BK._pieces_lib()
         seen = 0
         for zone, plan, cv in self._baked():
@@ -463,8 +465,8 @@ class WaterBanks(unittest.TestCase):
                 for y in range(rim - SF.RUN_IN, rim):
                     cols = np.nonzero(water[y, x0 - SF.RUN_MARGIN:x1 + SF.RUN_MARGIN])[0] + x0 - SF.RUN_MARGIN
                     self.assertEqual((int(cols.min()), int(cols.max()) + 1), (x0, x1), '%s row %d' % (zone, y))
-                    self.assertEqual(int(cv[y, x0 - 1]), C('earth_cool', 0), '%s row %d west bank' % (zone, y))
-                    self.assertEqual(int(cv[y, x1]), C('earth_cool', 0), '%s row %d east bank' % (zone, y))
+                    self.assertEqual(int(cv[y, x0 - 1]), GD.rim_earth(), '%s row %d west bank' % (zone, y))
+                    self.assertEqual(int(cv[y, x1]), GD.rim_earth(), '%s row %d east bank' % (zone, y))
                 seen += 1
         self.assertGreater(seen, 0)
 

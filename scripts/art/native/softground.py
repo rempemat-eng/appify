@@ -951,7 +951,7 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     lip hanging 1 to 3 px over an earth face `bank_h` px tall of small clods, darkest where it
     meets the water; then a 1 px very light waterline; the water under it dark in a band 4 to 14
     px that steps back to the body in three steps (the bank's shade). The south, west and east
-    shores: the turf's lip lit, a texel of wet earth, a light waterline and lit shallows 2 to 5 px.
+    shores: the turf's lip lit, a texel of wet earth, the water's mid tone, lit shallows 2 to 5 px.
     The body one tone with large soft patches a step lighter (the sky), ripple lines 4 to 15 px
     (a lit line over a darker texel) along the flow, a few glints. Stones on the bank, lilies on
     still water. Returns sprites to lay over (stones on the bank); lay each with seat_stone, which
@@ -1111,11 +1111,12 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     # this top-down 3/4 view only a bank with land to its north turns a face to the camera; a bank
     # with land to the east or west is seen edge-on and one with land to the south from behind, so
     # neither shows any face. Every such shore, tongues included, has one rim: a texel of wet earth
-    # (the north face's foot colour) at the land's edge, then the light waterline, running unbroken
+    # (a step lighter than the north face's foot) at the land's edge, then the water's mid tone into
+    # the lit shallows, running unbroken
     # round both kinds of bend and into the north face's foot (eastward-edges.md 5.3).
     rim_ = shore_rim(m, bank, tongues)
-    cv[rim_[0]] = C('earth_cool', 0)
-    cv[rim_[1]] = C(fam, 5)
+    cv[rim_[0]] = rim_earth()
+    cv[rim_[1]] = C(fam, RIM_LINE)
     # stones on the bank and the shore, straddling the waterline (seat_stones gives each its wet
     # contact where it stands in the water)
     from . import props as P4
@@ -1172,6 +1173,18 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
         for k in rng.permutation(len(ys))[: int(len(ys) / 1600 * lilies)]:
             lily(cv, int(ys[k]), int(xs[k]), rng, wat)
     return items
+
+
+# The side and south rim's two tones (Claude A, 4 Nov, against Eastward 15's channel sides, which
+# step from the mud through a mid band into the body with no light line): wet earth a step lighter
+# than the north face's near-black foot (earth_cool 1), then the water's mid tone (3), which runs
+# on into the lit shallows. The north bank keeps its light waterline (shot 13).
+RIM_EARTH = 1
+RIM_LINE = 3
+
+
+def rim_earth() -> int:
+    return C('earth_cool', RIM_EARTH)
 
 
 def shore_rim(m: np.ndarray, bank: np.ndarray, extra_land: np.ndarray | None = None):

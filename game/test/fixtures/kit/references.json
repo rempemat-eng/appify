@@ -5,7 +5,7 @@
    "id": "kitlab",
    "plan": "game/kit/zones/kitlab.json",
    "plan_sha256": "6acb44fb54d7b2ccc6e85eb62cf283af1d31f58208d7e78b2cc2bd940f5d2513",
-   "rgba_sha256": "bc545e6afb6b577a2780563ad4ccdb314d9f4c6b1fb4649327ae399e9882c072",
+   "rgba_sha256": "b14f365dc1e8703e5c9ec61b27d537cb3ba65fc3e65c1dd94fa573e12a21f5fc",
    "size": [
     960,
     552
@@ -17,7 +17,7 @@
    "id": "three_materials",
    "plan": "game/test/fixtures/kit/three_materials.json",
    "plan_sha256": "28b5256ff793b9ad2919c3fcfd0ba6abd2d275deeac31f0822cd0911b683fb11",
-   "rgba_sha256": "85e97c31fb2c10410ff2725e6a90845689c89b7d14d840ba05ec6317532218d5",
+   "rgba_sha256": "dd0b2d20f9b68e570066564f5132a0f94e09e991151e475bb34499b3cff33901",
    "size": [
     192,
     192
@@ -57,7 +57,7 @@
  "negative": {
   "file": "three_materials_shifted_profile.png",
   "mutation": "compose.profile(a + 1, b, c, material, count)",
-  "rgba_sha256": "73046d6b7ae4cf9006a358b845379276b150b024b2fd6363f57b630626d153db"
+  "rgba_sha256": "545775ab559cc99d649c226ba9d516c90cf354216b97cb27937dcbb491303966"
  },
  "scale": 1,
  "schema": "napattack.kit-render-fixtures/1",
@@ -92,18 +92,18 @@
   "game/kit/terrain/fill_water.png": "159cacfd2b93669beab4c09b99df90b74d5eb1964f4f20ac7ef969eca9621a8e",
   "game/kit/terrain/fill_worn.png": "5135bbe8cc18991ba7a1cc5eac811726bcfb4efcc22f2f4300a294702ea86650",
   "game/kit/terrain/lut.png": "344679d392a978b080e5ec1960060a4f66cac656d0605898adbc3a74d3c36a4f",
-  "game/kit/terrain/manifest.json": "39a48d8e366197ed00af14d22c2ac1e6091bf0cd9b5a5ac55223ed2e6774c9df",
+  "game/kit/terrain/manifest.json": "023c3256159bb13a02ab7aad18fdaa061a2b71b0fb9503652c936360d15b578f",
   "game/kit/terrain/noise.png": "84b514c82e834b2cfb1a2d4a9305e403d28550b7216323045dfb91f970ab1a0f",
   "game/kit/terrain/over_earth_face_over_any.png": "ecce94c839017fa221f4b6c0209474e7b795ebc13ba4947b752785d1f1e38cc8",
   "game/kit/terrain/over_lawn_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",
   "game/kit/terrain/over_lawn_over_lower_tier.png": "79691b1e35159e7d376d4ca9b502c78d9a963fd355d3622f3e91fde6aed17944",
   "game/kit/terrain/over_lawn_over_path.png": "2ebf7282b2723f6097fb16cde95c5a35e4b329b97fd771c3a6da2c14c2d5616f",
   "game/kit/terrain/over_lawn_over_scree.png": "2ebf7282b2723f6097fb16cde95c5a35e4b329b97fd771c3a6da2c14c2d5616f",
-  "game/kit/terrain/over_lawn_over_water.png": "7c7a19589804dc36faf51352ef96c3946ed505213a194c3e0ca6bd885b61591d",
+  "game/kit/terrain/over_lawn_over_water.png": "c84e81b42cddaf88d8f35407f644bac1c026159c2f22e34ca4d7fad4a292c2b1",
   "game/kit/terrain/over_lawn_over_worn.png": "2ebf7282b2723f6097fb16cde95c5a35e4b329b97fd771c3a6da2c14c2d5616f",
   "game/kit/terrain/over_path_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",
   "game/kit/terrain/over_path_over_lower_tier.png": "79691b1e35159e7d376d4ca9b502c78d9a963fd355d3622f3e91fde6aed17944",
-  "game/kit/terrain/over_path_over_water.png": "7c7a19589804dc36faf51352ef96c3946ed505213a194c3e0ca6bd885b61591d",
+  "game/kit/terrain/over_path_over_water.png": "c84e81b42cddaf88d8f35407f644bac1c026159c2f22e34ca4d7fad4a292c2b1",
   "game/kit/terrain/over_water_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",
   "game/kit/terrain/over_worn_over_path.png": "8c7e1e7248cb22ee0dd22ca728df3a2cae5eab834080d789b371545a8cf55473",
   "game/kit/terrain/palette.png": "40fe3fac4493230904ab432939eb097ae807f3478f643a6002dec7d0cc199dca",
@@ -112,7 +112,7 @@
   "scripts/art/kit/build.py": "617fd76854e4bb4787dbd3142458d3bd0bf9077e1ec6527b4e65b18fab89419a",
   "scripts/art/kit/compose.py": "bb23f57830a10e59049c87f7d7f07e5bc02c10dc7ebc99bfa3cc18a9f5be0997",
   "scripts/art/kit/dressing.py": "2c3d80e0f06df646480803f92123512a239d629ba5737194de77c66251fffd3d",
-  "scripts/art/kit/edges.py": "cdd4610ff6a2f795b02d00af077c4fcc666bc40f945724a2087e7b2d029ff9b0",
+  "scripts/art/kit/edges.py": "d194046ee73807f880811861ba2e24d6a83bbda80b0f6cd3c7884b28697b5924",
   "scripts/art/native/accents.json": "4116ad6d7e32ef62efba5789a93b694d15b00db7dc8f23cf61b6f00c48a25b09",
   "scripts/art/native/palette.py": "ad8155d9b4d7f0c9afefc373e43f806ec502b7991b621b01453cc7697309d0b9"
  }
