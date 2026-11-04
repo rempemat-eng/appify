@@ -87,7 +87,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-04",
+  "note": "Round 2 (v3): roof now passes (house slate recipe, ridge, barge boards, eave course), size fixed, shadow fixed; but the valance is a flat cream band (scene gate detail.flat, 819 px of one tone) and the bench is two front-on panels with no seat plane and 1-tone legs. Finding R2-8."
  }
 }

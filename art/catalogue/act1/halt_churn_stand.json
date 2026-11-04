@@ -51,7 +51,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-04",
+  "note": "Round 2 (v3, unchanged since v2): size fixed, but each churn is two flat vertical halves with a 1 px highlight, the lid and neck merge into one blob, no rolling bands; reads as grey figurines beside Eastward 17 churns. Bar 0.61. Finding R2-7."
  }
 }

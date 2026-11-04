@@ -38,7 +38,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-04",
+  "note": "Round 2 (v3): hoops and weave read, but the creels have no volume: east third only 13 L darker than the west, bottom third the lightest, no top plane, eyes are flat navy discs. Finding R2-4."
  }
 }

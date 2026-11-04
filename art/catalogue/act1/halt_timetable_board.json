@@ -63,7 +63,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-04",
+  "note": "Round 2 (v3, unchanged since v2): a printed sheet with header, uneven print, a pinned notice and a stepped glint, under a pitched hood; posts lit west. Polish: bar 0.65, the print rows are still evenly ruled."
  }
 }

@@ -99,7 +99,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-04",
+  "note": "Round 2 (v3): the graph paper is gone, but the net reads as an opaque green curtain, its foot mesh is a 1 px checker (dither on a sprite), and the coil is a flat ring. Finding R2-6."
  }
 }
