@@ -32,16 +32,16 @@
   "fortified": false,
   "authored": "by the layout generator from hand-written streets",
   "tiers": [
-   2,
+   -1,
    2
   ],
   "levelled_footprints": 0
  },
  "footprint_px": [
-  7880,
-  4960,
-  8208,
-  5192
+  7848,
+  5076,
+  8248,
+  5352
  ],
  "fortification": null,
  "style": null,
@@ -54,8 +54,8 @@
    "street": "gullwick-a1",
    "entries_px": [
     [
-     7762,
-     5180
+     7741,
+     5182
     ],
     [
      8322,
@@ -71,8 +71,8 @@
    "street": "gullwick-a2",
    "entries_px": [
     [
-     8028,
-     4863
+     8020,
+     4960
     ]
    ],
    "route_kind": "path"
@@ -96,7 +96,7 @@
    ],
    "frontage": "detached",
    "connects": [
-    "gullwick-s06"
+    "gullwick-s07"
    ]
   },
   {
@@ -142,14 +142,51 @@
    ]
   },
   {
+   "id": "gullwick-s04",
+   "name": "the Strand",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7900.0,
+     5348.0
+    ],
+    [
+     7932.0,
+     5348.0
+    ],
+    [
+     7932.0,
+     5324.0
+    ],
+    [
+     8156.0,
+     5324.0
+    ],
+    [
+     8156.0,
+     5332.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "gullwick-c01",
+    "gullwick-s08"
+   ]
+  },
+  {
    "id": "gullwick-a1",
    "name": "Coast Path",
    "class": "arrival",
    "width_cells": 2,
    "vertices_px": [
     [
-     7762.0,
-     5179.8
+     7740.7,
+     5182.4
+    ],
+    [
+     7783.2,
+     5179.1
     ],
     [
      7826.2,
@@ -200,7 +237,7 @@
    "connects": [
     "gullwick-s02",
     "gullwick-s03",
-    "gullwick-s06"
+    "gullwick-s08"
    ]
   },
   {
@@ -210,20 +247,8 @@
    "width_cells": 3,
    "vertices_px": [
     [
-     8028.2,
-     4862.9
-    ],
-    [
-     8018.5,
-     4912.0
-    ],
-    [
-     8018.0,
-     4936.2
-    ],
-    [
-     8024.1,
-     4983.7
+     8019.9,
+     4960.1
     ],
     [
      8042.7,
@@ -239,32 +264,72 @@
     ]
    ],
    "follows_route": "Gull Lane",
-   "connects": []
+   "connects": [
+    "gullwick-s07"
+   ]
   },
   {
-   "id": "gullwick-s06",
+   "id": "gullwick-s07",
    "name": null,
    "class": "lane",
    "width_cells": 3,
    "vertices_px": [
     [
-     7892.0,
-     5084.0
+     7940.0,
+     5068.0
     ],
     [
-     7876.0,
-     5084.0
+     8028.0,
+     5068.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "gullwick-a2",
+    "gullwick-s01"
+   ]
+  },
+  {
+   "id": "gullwick-s08",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8020.0,
+     5316.0
     ],
     [
-     7876.0,
-     5180.0
+     8020.0,
+     5244.0
     ]
    ],
    "frontage": "detached",
    "link": true,
    "connects": [
     "gullwick-a1",
-    "gullwick-s01"
+    "gullwick-s04"
+   ]
+  },
+  {
+   "id": "gullwick-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8192.0,
+     5312.0
+    ],
+    [
+     8168.0,
+     5312.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "gullwick-s04"
    ]
   }
  ],
@@ -290,7 +355,8 @@
     "gullwick-b008"
    ],
    "mix": {
-    "cottage": 6,
+    "cottage": 4,
+    "boathouse": 2,
     "house": 2
    },
    "function": "homes"
@@ -298,6 +364,16 @@
  ],
  "gathering_places": [],
  "size_table_px": {
+  "boathouse": [
+   [
+    72,
+    104
+   ],
+   [
+    56,
+    64
+   ]
+  ],
   "cottage": [
    [
     56,
@@ -328,67 +404,53 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    994,
-    622,
-    6,
-    9
+    987,
+    659,
+    9,
+    5
    ],
    "rect_px": [
-    7952,
-    4976,
-    48,
-    72
+    7896,
+    5272,
+    72,
+    40
    ],
-   "faces": "gullwick-a2",
+   "faces": "gullwick-s04",
    "door_cells": [
-    1000,
-    622
+    991,
+    664
    ],
    "purpose": "a cottage",
    "occupants": "a farming household",
    "district": "gullwick-d-gullwick",
    "counted": true,
-   "plot_cells": [
-    990,
-    622,
-    4,
-    9
-   ],
-   "plot": "garden",
    "counts_as": 1
   },
   {
    "id": "gullwick-b002",
-   "type": "house",
-   "form": "house",
+   "type": "boathouse",
+   "form": "boathouse",
    "footprint_cells": [
-    996,
-    632,
-    7,
-    11
+    1005,
+    656,
+    12,
+    7
    ],
    "rect_px": [
-    7968,
-    5056,
-    56,
-    88
+    8040,
+    5248,
+    96,
+    56
    ],
-   "faces": "gullwick-a2",
+   "faces": "gullwick-s04",
    "door_cells": [
-    1003,
-    637
+    1011,
+    663
    ],
-   "purpose": "a family house",
-   "occupants": "a fishing household",
+   "purpose": "a boathouse",
+   "occupants": "a boat owner",
    "district": "gullwick-d-gullwick",
    "counted": true,
-   "plot_cells": [
-    992,
-    632,
-    4,
-    11
-   ],
-   "plot": "garden",
    "counts_as": 1
   },
   {
@@ -396,185 +458,42 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    1007,
-    620,
+    1025,
+    660,
     6,
-    7
+    9
    ],
    "rect_px": [
-    8056,
-    4960,
+    8200,
+    5280,
     48,
-    56
+    72
    ],
-   "faces": "gullwick-a2",
+   "faces": "gullwick-c01",
    "door_cells": [
-    1006,
-    626
-   ],
-   "purpose": "a cottage",
-   "occupants": "a carting household",
-   "district": "gullwick-d-gullwick",
-   "counted": true,
-   "plot_cells": [
-    1013,
-    620,
-    4,
-    7
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "gullwick-b004",
-   "type": "house",
-   "form": "house",
-   "footprint_cells": [
-    1008,
-    629,
-    7,
-    11
-   ],
-   "rect_px": [
-    8064,
-    5032,
-    56,
-    88
-   ],
-   "faces": "gullwick-s02",
-   "door_cells": [
-    1015,
-    634
-   ],
-   "purpose": "a family house",
-   "occupants": "a craft household",
-   "district": "gullwick-d-gullwick",
-   "counted": true,
-   "plot_cells": [
-    1015,
-    629,
-    4,
-    11
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "gullwick-b005",
-   "type": "cottage",
-   "form": "cottage",
-   "footprint_cells": [
-    985,
-    626,
-    7,
-    6
-   ],
-   "rect_px": [
-    7880,
-    5008,
-    56,
-    48
-   ],
-   "faces": "gullwick-s01",
-   "door_cells": [
-    988,
-    632
-   ],
-   "purpose": "a cottage",
-   "occupants": "a farming household",
-   "district": "gullwick-d-gullwick",
-   "counted": true,
-   "plot_cells": [
-    985,
-    622,
-    7,
-    4
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "gullwick-b006",
-   "type": "cottage",
-   "form": "cottage",
-   "footprint_cells": [
-    987,
-    637,
-    8,
-    5
-   ],
-   "rect_px": [
-    7896,
-    5096,
-    64,
-    40
-   ],
-   "faces": "gullwick-s06",
-   "door_cells": [
-    987,
-    636
+    1024,
+    663
    ],
    "purpose": "a cottage",
    "occupants": "a fishing household",
    "district": "gullwick-d-gullwick",
    "counted": true,
-   "plot_cells": [
-    987,
-    642,
-    8,
-    4
-   ],
-   "plot": "garden",
    "counts_as": 1
   },
   {
-   "id": "gullwick-b007",
-   "type": "cottage",
-   "form": "cottage",
-   "footprint_cells": [
-    1019,
-    642,
-    7,
-    5
-   ],
-   "rect_px": [
-    8152,
-    5136,
-    56,
-    40
-   ],
-   "faces": "gullwick-a1",
-   "door_cells": [
-    1018,
-    643
-   ],
-   "purpose": "a cottage",
-   "occupants": "a carting household",
-   "district": "gullwick-d-gullwick",
-   "counted": true,
-   "plot_cells": [
-    1019,
-    647,
-    7,
-    4
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "gullwick-b008",
+   "id": "gullwick-b004",
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
     999,
     644,
-    8,
+    9,
     5
    ],
    "rect_px": [
     7992,
     5152,
-    64,
+    72,
     40
    ],
    "faces": "gullwick-a2",
@@ -583,7 +502,7 @@
     643
    ],
    "purpose": "a cottage",
-   "occupants": "a craft household",
+   "occupants": "a carting household",
    "district": "gullwick-d-gullwick",
    "counted": true,
    "plot_cells": [
@@ -594,19 +513,155 @@
    ],
    "plot": "garden",
    "counts_as": 1
+  },
+  {
+   "id": "gullwick-b005",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    992,
+    636,
+    10,
+    6
+   ],
+   "rect_px": [
+    7936,
+    5088,
+    80,
+    48
+   ],
+   "faces": "gullwick-s01",
+   "door_cells": [
+    994,
+    635
+   ],
+   "purpose": "a family house",
+   "occupants": "a craft household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    992,
+    642,
+    10,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "gullwick-b006",
+   "type": "boathouse",
+   "form": "boathouse",
+   "footprint_cells": [
+    1018,
+    648,
+    9,
+    7
+   ],
+   "rect_px": [
+    8144,
+    5184,
+    72,
+    56
+   ],
+   "faces": "gullwick-a1",
+   "door_cells": [
+    1017,
+    648
+   ],
+   "purpose": "a boathouse",
+   "occupants": "a boat owner",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    1018,
+    655,
+    9,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "gullwick-b007",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1020,
+    641,
+    8,
+    6
+   ],
+   "rect_px": [
+    8160,
+    5128,
+    64,
+    48
+   ],
+   "faces": "gullwick-a1",
+   "door_cells": [
+    1020,
+    640
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    1020,
+    647,
+    8,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "gullwick-b008",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    981,
+    638,
+    10,
+    7
+   ],
+   "rect_px": [
+    7848,
+    5104,
+    80,
+    56
+   ],
+   "faces": "gullwick-s01",
+   "door_cells": [
+    986,
+    637
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    981,
+    645,
+    10,
+    2
+   ],
+   "plot": "garden",
+   "counts_as": 1
   }
  ],
  "lifted": [],
  "outskirts": [],
  "game_layout": {
   "arrival": "Coast Path",
-  "first_view": "Gullwick from the Coast Path: a family house, Gullwick's largest building ahead",
+  "first_view": "Gullwick from the Coast Path: a boathouse, Gullwick's largest building ahead",
   "landmarks": [
    {
-    "name": "a family house, Gullwick's largest building",
+    "name": "a boathouse, Gullwick's largest building",
     "xy": [
-     7996,
-     5100
+     8088,
+     5276
     ]
    }
   ],
@@ -614,15 +669,15 @@
   "quiet_corners": [],
   "first_screen_cells": [
    [
-    950,
+    947,
     636,
     40,
     22.5
    ]
   ],
   "screens": [
-   1.0,
-   1.3
+   1.2,
+   1.5
   ]
  },
  "ground": {
@@ -630,15 +685,15 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "sand": 585
+   "sand": 755
   }
  },
  "terrain": {
   "box_cells": [
-   970,
-   605,
-   72,
-   60
+   966,
+   619,
+   81,
+   66
   ],
   "codes": {
    ".": "land",
@@ -649,66 +704,72 @@
    "b": "bridge"
   },
   "rows": [
-   "33g3r36g",
-   "3.28g5r36g",
-   "3.28g5r36g",
-   "3.28g4r37g",
-   "3.28g4r37g",
-   "3.28g4r37g",
-   "3.27g5r37g",
-   "3.27g5r37g",
-   "3.27g4r37gr",
-   "3.27g4r37gr",
-   "3.27g4r35g3r",
-   "3.27g4r34g4r",
-   "3.27g4r33g5r",
-   "3.27g4r33g5r",
-   "2.28g4r32g6r",
-   "2.28g5r2g6.21g8r",
-   "2.28g6rg6.20g9r",
-   "2.22g6.6rg6.18g11r",
-   "2.22g6.6rg6.17g12r",
-   "2.22g6.7r6.15g9r2g3r",
-   "2.22g6.7r6.14g7r5g3r",
-   "2.13g7.2g6.g6r6.13g7r6g3r",
-   "2.13g7.2g6.g6r19g7r6g3r",
-   "2.13g7.g8.7r17g6r8g3r",
-   "15g7.g8.7r7.8g7r9g3r",
-   "15g7.g8.7r7.7g7r10g3r",
-   "15g11.7g5r7.6g7r11g3r",
-   "15g18.5r7.5g7r12g3r",
-   "15g18.5r12.6r13g3r",
-   "13g20.5r11.6r.14g2r",
-   "13g20.5r11.4r3.14g2r",
-   "13g5.8g7.5r11.4r3.14g2r",
-   "13g3.g8.g7.5r10.5r3.14g2r",
-   "13g3.g8.g7.5r9.5r4.15gr",
-   ".12g3.g8.g7.5r7.2g4r10g3.7gr",
-   "4.9g3.g8.g7.5r8g5r8g8.4gr",
-   "7.6g3.g8.g7.5r7g5r7g10.5g",
-   "8.5g3.10g7.g3r8g4r7.g10.5g",
-   "7g.5g3.28g5r7.g10.5g",
-   "13g3.13g8.5g6rg19.4g",
-   "13g3.13g8.5g6rg19.4g",
-   "8r5g3.13g8.4g7rg19.4g",
-   "17r12g8.3g7r9g12.4g",
-   "20r9g8.g9r9g11.5g",
-   "b5g19r11g10r10g11.5g",
-   "g2~5g21r2g15r2.8g13.3g",
-   "2.2~3.4g34rg4.5g15.2g",
-   "3.2~4.3g30r2g7.2g19.",
-   "5.2~4.2g28rg24.g5.",
-   "5.2~4.2g28rg24.g5.",
-   "6.2~4.2g24r2g26.g.g3.",
-   "7.2~4.3g19r11g5.g14.4g2.",
-   "8.3~3.4g12r21g12.9g",
-   "9.3~3.5g14r17g11.10g",
-   "12.~4.7g14r14g9.10gr",
-   "13.~6.7g15r10g10.9gr",
-   "14.~13.3g16r6g2.14g3r",
-   "15.~13.6g17r15g5r",
-   "15.~13.6g17r15g5r",
-   "16.~13.5g.3g33r"
+   "6.28g4r32g8r3g",
+   "6.28g5r29g10r3g",
+   "6.28g6r27g10r4g",
+   "6.28g6r25g12r4g",
+   "6.28g6r24g12r5g",
+   "6.28g7r21g9r2g3r5g",
+   "6.28g7r20g7r5g3r5g",
+   "6.29g6r19g7r6g3r5g",
+   "6.29g6r19g7r6g3r5g",
+   "6.28g.7r17g6r8g3r5g",
+   "34g.7r15g7r9g3r5g",
+   "34g.7r14g7r10g3r5g",
+   ".25g4.7g5r13g7r11g4r4g",
+   ".18g18.5r12g7r12g4r4g",
+   ".18g18.5r11g.6r13g4r4g",
+   ".19g17.5r11g6r.14g3r4g",
+   "2.18g6.11g5r11g4r3.14g4r3g",
+   "2.24g10.g5r11g4r3.14g4r3g",
+   "2.24g10.g5r11g4r3.14g4r3g",
+   "4.11g10.g10.g5r11g3r4.15g4r2g",
+   "5.10g10.g10.g5r11g2r10g3.7g4r2g",
+   "8.7g10.g10.g5r8g5r8g8.4g4r2g",
+   "11.4g10.g10.g5r7g5r17.5g5r",
+   "12.3g10.13g3r8g4rg17.5g5r",
+   ".10g.3g10.23g5rg17.5g5r",
+   "15g10.8g9.4g6r2g18.5g4r",
+   "33g9.4g6r2g18.5g4r",
+   "12r21g9.3g7r2g18.5g4r",
+   "b20r12g9.2g7r11g10.5g4r",
+   "r3b20r9g9.9rg9.g9.7g3r",
+   "2r3b5g19r11g10r2g19.7g3r",
+   "4rg2~5g21r7g10r23.5g3r",
+   "2g4.2~3.4g34rg24.4g3r",
+   "7.2~4.3g30r2g28.2g3r",
+   "9.2~4.2g28rg24.g7.3r",
+   "9.2~4.2g28rg24.g7.3r",
+   "10.2~4.2g24r2g8.9g9.g.g4.4r",
+   "11.2~4.3g19r13.9g9.4g3.4r",
+   "12.3~3.4g12rg3.g12.4g12.9g5r",
+   "13.3~3.5g14rg12.4g11.10g5r",
+   "16.~13.9r12.5g9.10g6r",
+   "17.~12.g8r12.5g10.9g4r2g",
+   "18.~13.3g4r12.6g8.8g6r2g",
+   "19.~13.2g3.g12.5r3g6.6g7r3g",
+   "19.~13.2g3.g17r9.6g7r3g",
+   "20.~22.16r6.12r4g",
+   "20.2~26.11r6.11r5g",
+   "53.6r6.9r7g",
+   "66.15g",
+   "70.9g2.",
+   "32.5~8.3~23.7g3.",
+   "28.25~20.g7.",
+   "22.32~27.",
+   "22.32~27.",
+   "17.39~25.",
+   "5.58~18.",
+   "2.63~16.",
+   "66~15.",
+   "67~14.",
+   "70~11.",
+   "73~8.",
+   "73~8.",
+   "73~8.",
+   "72~9.",
+   "71~10.",
+   "71~10."
   ]
  },
  "residents": [],
@@ -717,10 +778,23 @@
  "discovery": [
   {
    "kind": "landmark view",
-   "what": "a family house, Gullwick's largest building",
+   "what": "a boathouse, Gullwick's largest building",
    "xy_px": [
-    7996,
-    5100
+    8088,
+    5276
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a carting household about their day",
+   "building": "gullwick-b004",
+   "xy_px": [
+    8028,
+    5172
    ],
    "screen": [
     0,
@@ -729,14 +803,27 @@
   },
   {
    "kind": "resident activity",
-   "what": "a cottage: a carting household about their day",
-   "building": "gullwick-b007",
+   "what": "a boathouse: a boat owner about their day",
+   "building": "gullwick-b006",
    "xy_px": [
     8180,
-    5156
+    5212
    ],
    "screen": [
-    0,
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a fishing household about their day",
+   "building": "gullwick-b003",
+   "xy_px": [
+    8224,
+    5316
+   ],
+   "screen": [
+    1,
     1
    ]
   }
@@ -745,26 +832,26 @@
  "theme": {
   "waystone": {
    "xy_px": [
-    7876,
-    5084
+    7932,
+    5324
    ],
-   "at": "beside the main street",
+   "at": "beside the Strand",
    "table_name": "Gullwick",
    "status": "proposed"
   },
   "sightline": {
    "kind": "viewpoint",
    "from_px": [
-    7923,
-    4997
+    7905,
+    5117
    ],
    "to_px": [
-    7806,
-    4888
+    7791,
+    5004
    ],
    "toward": "the stone circle (the beam over the valley)",
    "off_by_deg": 0,
-   "bearing_deg": -137
+   "bearing_deg": -135
   },
   "crater": {
    "name": "the Lull crater",
@@ -772,19 +859,19 @@
     8265,
     3560
    ],
-   "distance_px": 1532,
-   "effect": "the Lull crater lies 1500 px away; its scorch points to the valley",
+   "distance_px": 1668,
+   "effect": "the Lull crater lies 1600 px away; its scorch points to the valley",
    "road": "Gull Lane",
    "road_leaves_at_px": [
-    8028,
-    4863
+    8020,
+    4960
    ]
   },
   "moss": {
    "where": "the market",
    "xy_px": [
-    7876,
-    5084
+    7932,
+    5324
    ]
   },
   "company": {

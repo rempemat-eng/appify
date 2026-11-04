@@ -1418,6 +1418,8 @@ def lay_all(T, X, *, authored=None):
     towns['Highgarth'] = highgarth(T, X)
     towns.update(neon(T, X, rng))
     towns.update(smaller(T, X))
+    if V56:                                                          # Matt, 4 Nov: each small town's shape from why it is there
+        shape_small_v56(T, towns)
     return towns
 
 
@@ -1516,6 +1518,65 @@ def hearthold(T, X, *, authored=None):
     t.fields(2140, 5744, 2600, 5800, ('field', 'field2'), name='the lower fields', why='barley and beans between the town and the cove', size=(80, 144))
     _adopt_requested(t, authored, 'hearthold')
     return t
+
+
+def _clear_v56(T, t, keep=lambda b: False):
+    """Take a town's generated buildings (and their plots) off the ground, keeping the authored ones and any keep(b)."""
+    K = T['K']; out = []
+    for b in t.buildings:
+        if b.get('authored_id') or keep(b):
+            out.append(b); continue
+        a, c_ = C(b['x'], b['y']); sl = (slice(a, a + b['h'] // CELL), slice(c_, c_ + b['w'] // CELL))
+        K[sl] = T['K0'][sl]; T['taken'][sl] = False
+        if b.get('plot'):
+            pc, pr, pw, ph = b['plot'][:4]; ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+            K[ps] = T['K0'][ps]
+    t.buildings[:] = out
+
+
+def _strand(T, x0, x1, y0, back=40, step=16):
+    """A strand behind a south-facing cove: for each column, going south from y0, the first sea cell, less `back` px, smoothed."""
+    sea = T['sea']; pts = []
+    for x in range(int(x0), int(x1) + 1, step):
+        c = int(x // CELL); col = sea[int(y0 // CELL):, c]
+        rows = np.flatnonzero(col)
+        if not len(rows) or rows[0] * CELL > 500:
+            continue
+        r = rows[0] + int(y0 // CELL)
+        pts.append((float(x), float(r * CELL - back)))
+    if len(pts) < 3:
+        return pts
+    ys = np.convolve([p[1] for p in pts], np.ones(5) / 5, mode='same')
+    ys[:2] = [p[1] for p in pts[:2]]; ys[-2:] = [p[1] for p in pts[-2:]]
+    return [(x, float(y)) for (x, _), y in zip(pts, ys)]
+
+
+def shape_small_v56(T, towns):
+    """v56 (Matt, 4 Nov: "really think about the shape ... of the cities"): the small towns laid out from their founding
+    reason. Gullwick and Driftwood are fishing coves, so their cottages and net lofts stand shoulder to shoulder along a strand
+    that follows the back of the beach, facing the water, with the boats drawn up below; Lullford is a bridge town, so it is
+    tight round the bridge head on the Lull Road and thins into a ribbon of houses along the road west."""
+    for nm, x0, x1, n, seed in (('Gullwick', 7900, 8200, 8, 4101), ('Driftwood', 6330, 6680, 10, 4102)):
+        t = towns.get(nm)
+        if t is None:
+            continue
+        _clear_v56(T, t)
+        line = _strand(T, x0, x1, t.centre[1] - 60)
+        if len(line) >= 3:
+            t.street(line, 'lane', name='the Strand')
+            st = t.streets[-1]
+            if st['pieces']:
+                t.row(st['pts'], ['cottage', 'boathouse', 'cottage', 'house', 'cottage', 'workshop'], sides=(-1,), limit=n - 2, gap=(0, 6),
+                      plot=None, start=6, reach=40, jitter=2)
+        t.fill(n, 160, ('cottage', 'house', 'boathouse'), reach=96, centre=t.centre, plot=(16, 'garden'))
+    t = towns.get('Lullford')
+    if t is not None:
+        _clear_v56(T, t)
+        head = route_part(T, 'Lull Road', (8900, 4230, 9110, 4480))           # the bridge head: tight, both sides
+        t.row(head, ['shop', 'inn', 'townhouse', 'shop', 'house', 'townhouse'], limit=8, gap=(0, 6), plot=None, start=4, reach=64, jitter=2)
+        ribbon = route_part(T, 'Lull Road', (8560, 4230, 8900, 4480))         # the ribbon west along the road
+        t.row(ribbon, ['cottage', 'house', 'cottage'], limit=6, gap=(28, 64), plot=(32, 'garden'), start=8, reach=64)
+        t.fill(14, 200, ('cottage', 'house', 'workshop'), reach=120, centre=(8960, 4360), plot=(24, 'garden'))
 
 
 def hearthold_v56(T, t):

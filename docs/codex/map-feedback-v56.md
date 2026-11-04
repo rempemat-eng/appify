@@ -173,3 +173,40 @@ Overview drawing only: no world cell, plan, route or table changes in this round
 ### Band seams in the relief (4 Nov, Codex lead review of 8d701012, P2)
 
 `grow56.relief` draws in bands of rows. At 8d701012 each band read only 8 rows of context, but the lee shifts reach 11 rows at 3840 and 17 at 5760, and the ground-relief blur (sigma 25 at 3840, 38 at 5760) reflected at the band's cut edge. So snow and ice classification and lee rims depended on where the bands fell. Each band now reads context covering the blur's full support (4 sigma, scipy's truncation), the lee shift and the one-row gradients and erosions: 115 rows at 3840, 172 at 5760. `test_map_feedback_v56.ReliefBands` draws a scene with snow and ice continuous across every band boundary at both scales, in bands of several sizes, and requires pixel equality with a one-band pass; it fails with the old 8-row context (938 and 9939 pixels differ). With the same hash seed, the fix leaves the 1920 and 3840 overviews pixel-identical (their range lies inside the first band) and changes the 5760 reference only in rows 360 to 383, the seam (2012 pixels).
+
+### Round 7 (4 Nov, Claude A): town shapes from their founding, and the map's secrets
+
+Matt, 4 Nov 09:42: "continue to improve the map. really think about the shape (and layout which you already did) of the cities. and where little easter eggs and tads bits could be on the maps".
+
+**Why each town is where it is, and whether its shape follows.** One line per plan: the founding reason and the site (world-plan 4.5 and the plans' `site`), the shape it should have, and what this round did. "Fits" means the plan's layout already follows its reason; a proposal means the layout fights its reason and the change is larger than this round should force.
+
+| Plan | Founding reason and site | Shape it should have | This round |
+| --- | --- | --- | --- |
+| Crossroads | the market cross where the valley's roads meet, below the hut's terrace | roads converging on the square, plots strung along each road, thinning into fields | fits: the authored plan (40 retained) has the square, the four roads and ribbons along them. **Proposal:** let the last plots on the Lull and halt roads stand further apart so the town visibly thins into the patchwork |
+| Lullford | the Lull's lowest bridging point: the swing bridge, the toll house, bargees' inns, the mill on the island | tight at the bridge head, a ribbon along the Lull Road | **rebuilt (data), partly there:** the generator now lays shops, the inn and townhouses along the road at the bridge head first, then a ribbon of cottages west along the Lull Road (12 counted, inside 10 to 16). On the map it is tighter by the bridge, but the generator's spacing still scatters it. **Proposal:** author the bridge-head row by hand, as Highgarth was |
+| Gullwick | fish: a cove on the open coast west of the delta | cottages and net lofts tight round the curve of the cove, facing the water, boats drawn up | **rebuilt (data), partly there:** a strand lane now follows the back of the beach, and the town is laid from it toward the water (8 counted, inside 6 to 10). The row along the strand places only some buildings, because the beach and the Coast Path leave little room, so the cove front is not yet a continuous crescent. **Proposal:** author the strand row by hand |
+| Driftwood | the valley's landing place at the Sleepwater's mouth under the Headland | the same: a cove front with the ferry pier | **rebuilt (data), partly there:** a strand behind the cove, with the houses pulled down toward the water and the jetty (8 counted, inside 8 to 12). It reads closer to the cove than before, but not yet as a cove front. **Proposal:** as Gullwick |
+| Fernhollow | timber: the wet woods on the Fern hills, on the road to Cogsworth | an irregular clearing village with a green | fits: houses round the road in its clearing. **Proposal:** a green at the fork, the houses facing it |
+| Cogsworth | coal, iron and the Cog's fall for the Millrace | terraced rows along the river and the canal, mills at the weirs, the railway yard | fits: Pit Row, Terrace Lane, Engine Lane and Station Lane are terraces on the benches, the works and the railway yard below |
+| Charcoal Hollow | the burners' hamlet in the old forest's clearing | a few huts round the kilns | fits (7 counted) |
+| Highgarth | a post town on the pass road under the closed pass | compact, along one street climbing the slope, the keep watching the pass | fits: authored by hand (Garth Street, the temple precinct above, the keep behind its tarn) |
+| Dust Gulch | water, the mine above and the railhead | one long main street of false fronts, the depot at one end, the corrals and the mine track at the other | partly fits: the western main street with false fronts, the depot and the corrals exist. **Proposal:** retire the back grid of adobes north of Front Street so the town reads as one street; it holds 41 counted and the checker's band would need the target lowered with it |
+| Palm Spring | the first water in the dry country, where the Willow Run comes up again | a ring round the pool, a caravanserai on the trade road | fits: the v56 pass built the palm market round the pool. **Proposal:** a walled caravanserai yard on the Drover's Road side |
+| Hearthold | the only defensible ground on the volcano's seaward side, a rock between two flows | compact and walled, stepped, round the great hearth | fits: walled, its keep and forge inside; at 1920 its flat grey roofs read as a grid. **Proposal:** draw the inner town in two or three stepped terraces (a tier change in the plan) |
+| Cinder Springs | the hot springs where the sea seeps into the warm flank | terraces stepping down to the pools | fits as a hamlet (6). **Proposal:** the pools drawn as a stepped chain below the bath house |
+| Cinderwick | charcoal and fish in a black-sand cove between the flows | a smelting and fishing village round its quay | fits: the quay, the harbour square, Kiln Row and the kilns |
+| the Lode | iron and copper in the massif's foothills | a mine house, a smithy, a bunkhouse at the adit | fits (4) |
+| Ember forge | the crater's heat at the caldera's lip | one forge hall and an ore store | fits (3) |
+| Lagoon Landing | sheltered water in the main isle's drowned crater | stilt houses and boathouses round the lagoon, the pier on the open shore | fits: Lagoon Front's stilts and boathouses, the East Strand, the pier |
+| Halcyon Row | homes on the Cape Road's approach above the sea | a seaside row stepping down to gardens | fits: short terraces, then houses with gardens, then the market gardens and the heath |
+| Launch Cape | rockets over open sea, away from people | a launch complex on the headland | fits: the pad, the works yard and the transporter road |
+| Neon Harbour | a port for the whole river and coast on a deep ria | the Company's planned grid against an older, crooked harbour quarter | **not achieved:** the old waterfront, Canalside and the Crescent's plain-roofed buildings now take mixed tile roofs (clay, red, timber, slate), but most of the quarter is drawn as rows whose per-house roofs come from the plan, so at 1920 the seam does not yet show. **Proposal:** in the plan, bend the old quarter's back lanes off the grid and give its rows tile roofs; this round keeps the plan's grid |
+
+Lane End is a farmstead on the map, not a plan: its cluster round a yard (round 3) already follows its reason.
+
+**Data changes.** These are `towns55.shape_small_v56`, v56 only; v55 is unchanged:
+- `towns-v56/gullwick.json`, `driftwood.json` and `lullford.json` are rebuilt.
+- `blockout-v56.json` and `stats-v56.json` follow them.
+- All 19 plans pass `town_plan.py`, the benchmark is 21/21, and the gates are unchanged.
+
+**The map's secrets.** There are 26 proposals in [`docs/vision/map-secrets.md`](../vision/map-secrets.md), drawn small and unlabelled (`map_secrets56.py`). The north cloud bank thins over the sky stair and the east fog over the first tree. `map56-3840-secrets.png` circles and numbers each one.

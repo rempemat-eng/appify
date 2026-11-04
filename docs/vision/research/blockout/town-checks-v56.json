@@ -118,7 +118,7 @@
   "pass": true,
   "failures": [],
   "notes": [
-   "2 blocks, 3 dead ends, 1.4 x 2.1 screens"
+   "2 blocks, 2 dead ends, 2.2 x 3.3 screens"
   ],
   "metrics": 12,
   "actual_count": 12,
@@ -128,17 +128,17 @@
   "pass": true,
   "failures": [],
   "notes": [
-   "0 blocks, 1 dead ends, 1.3 x 1.6 screens"
+   "0 blocks, 3 dead ends, 1.5 x 1.7 screens"
   ],
-  "metrics": 10,
-  "actual_count": 10,
+  "metrics": 8,
+  "actual_count": 8,
   "retained_count": null
  },
  "gullwick": {
   "pass": true,
   "failures": [],
   "notes": [
-   "0 blocks, 1 dead ends, 1.0 x 1.3 screens"
+   "0 blocks, 2 dead ends, 1.2 x 1.5 screens"
   ],
   "metrics": 8,
   "actual_count": 8,

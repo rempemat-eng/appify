@@ -717,6 +717,7 @@ def roof_details56(d, R, ink, X0, Y0, X1, Y1, x, y, kk):
 
 
 _CF = {}
+OLD_QUARTER = {'Neon Harbour: the old waterfront', 'Neon Harbour: Canalside, the canal quarter', 'Neon Harbour: the Crescent'}
 
 
 def draw_towns(d, S, R, ink, P, s, k, neon_lights=True, roofs=False):
@@ -754,6 +755,9 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True, roofs=False):
             draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door)
             continue
         c = roof_colour(R, town, use)
+        if roofs and town in OLD_QUARTER:                              # v56: the harbour quarter older than the Company, in mixed tile
+            hq = (int(x) * 2654435761 ^ int(y) * 40503) & 0xffff
+            c = (R['clay'][3], R['clay_warm'][2], R['timber'][3], R['clay'][2], R['slate'][3], R['clay_cool'][3])[hq % 6]
         cfl = None
         if roofs and town == COMPANY:
             cfl = _CF.get(id(S))
@@ -1315,6 +1319,9 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
         draw_trees56(d, grow.get('trees', []), R, ink, P, k)
         draw_company56(d, S, R, ink, P, s, k)
     draw_towns(d, S, R, ink, P, s, k, roofs=grow is not None)
+    if grow is not None:                                             # v56: the map's small secrets (map_secrets56, proposals)
+        import map_secrets56 as MS
+        MS.draw(d, grow['Sx'], P, R, ink, k, s)
     neon_accents(d, S, P, s, k, lines)
     draw_closed_pass(d, S, M, R, ink, P, s)
     draw_cape(d, S, M, R, ink, P, s)
@@ -1325,6 +1332,8 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
         import grow56 as GR
         canvas, haze = GR.edge_frame(canvas, grow['Sx'], R, s, k, grow['ox'], grow['oy'])
         d = ImageDraw.Draw(canvas, 'RGBA'); GR.far_islands(d, R, s, Wc, Hc)
+        import map_secrets56 as MS
+        MS.draw(d, grow['Sx'], P, R, ink, k, s, after=True)
     elif box is None:
         canvas = cloud_bank(canvas, S, M, R, s, k, ox, oy, window=P(*M.HIGHGARTH_PASS))
         far_land(canvas, M, R, s, P)
@@ -2040,6 +2049,10 @@ def render_all(S, M):
         k1, ox1, oy1, g1 = grow_fit(GX, Wc1, Hc1, s1)
         base1 = base.resize((int(round(GX['Wf'] * k1)), int(round(GX['Hf'] * k1))), Image.LANCZOS)
         res1, missed, parts1 = compose(Sd, M, R, ink, s1, base1, k1, ox1, oy1, Wc1, Hc1, paths, lines, 'continent', f'The continent ({revision})', grow=g1)
+        import map_secrets56 as MS                                     # the secrets version: each one circled and numbered
+        sec = MS.overlay(res2.convert('RGB'), GX['Sx'], lambda x, y: (x * k + ox, y * k + oy), R, ink, k, s2, M54.fonts54(M.ROOT, s2)['way'])
+        for o in outs:
+            sec.save(os.path.join(o, f'{prefix}-3840-secrets.png'))
         GX['audit'] = {'1920': GX['audit_fn'](parts1['haze'], k1, ox1, oy1, lines), '3840': GX['audit_fn'](parts2['haze'], k, ox, oy, lines)}
         print('haze audit:', json.dumps(GX['audit']))
     else:

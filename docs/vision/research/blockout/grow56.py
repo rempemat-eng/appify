@@ -213,6 +213,7 @@ def extend(S, R, cg, rgb, sea_rgb, cid, cols, sea_new):
     lab_, n_ = ndi.label(hd)
     yy_, xx_ = np.mgrid[0:H + NY, 0:NX]
     rs = np.random.default_rng(5616)
+    stacks = []
     for i in range(1, n_ + 1):
         rr_, cc_ = np.nonzero(lab_ == i)
         if len(cc_) < 30:
@@ -222,6 +223,7 @@ def extend(S, R, cg, rgb, sea_rgb, cid, cols, sea_new):
             cy_, cx_ = rt + rs.integers(-3, 4) + 2 * k_, tip + 4 + 3 * k_
             rad = rs.uniform(1.0, 1.8)
             hd |= ((yy_ - cy_) / rad) ** 2 + ((xx_ - cx_) / rad) ** 2 <= 1
+            stacks.append(((W + cx_ + 0.5) * CELL, (cy_ - NY + 0.5) * CELL))
     east_land |= hd
     land[:, W:] = east_land
     natural = np.isin(K, [kid[k] for k in NATURAL if k in kid])
@@ -271,6 +273,7 @@ def extend(S, R, cg, rgb, sea_rgb, cid, cols, sea_new):
     Sx = dict(S)
     Sx.update(K=K, h=h, tiers=tiers, real=real, land=land, sea=~land, frame=frame, mat=mat, crater_mask=crater)
     Sx['band'] = band
+    Sx['stacks'] = stacks
     # classes: the world's grid as drawn, the bands by the same lookup
     lut = np.full(len(kinds), cid['meadow'], np.int16)
     from map54 import classes
@@ -979,6 +982,12 @@ def edge_frame(canvas, Sx, R, s, k, ox, oy, isles_clear=True, band=320):
     landW = ndi.gaussian_filter1d(landx[cyW, 0].astype(np.float32), 26 * s)
     landE = ndi.gaussian_filter1d(landx[cyE, cxE].astype(np.float32), 26 * s)
     dE = dE + 22 * s * landE                                         # the forest fades deeper into the fog than the sea does
+    import map_secrets56 as MS
+    yc_ = np.arange(Hc, dtype=np.float32)
+    for y0g, y1g in MS.FOG_GAPS:                                     # where the fog thins over a secret (the first tree)
+        Yc0, Yc1 = oy + (y0g + DY) * k, oy + (y1g + DY) * k
+        mid, half = (Yc0 + Yc1) / 2, (Yc1 - Yc0) / 2
+        dE = dE - 30 * s * np.exp(-((yc_ - mid) / max(half, 1.0)) ** 2)
     dl = (ndi.distance_transform_edt(~landx) * CELL * k).astype(np.float32) if isles_clear else None
 
     def ramp(d, depth, soft):
@@ -1000,6 +1009,11 @@ def edge_frame(canvas, Sx, R, s, k, ox, oy, isles_clear=True, band=320):
         bot = cyp + np.sqrt(np.clip(r_ * r_ - (xs_ - cxp) ** 2, 0, None))
         upd = bot > e[xs_]
         e[xs_[upd]] = bot[upd]; fi[xs_[upd]] = i
+    import map_secrets56 as MS                                       # where the bank thins over a secret (the sky stair)
+    xc_ = np.arange(Wc, dtype=np.float32)
+    for gx_ in MS.CLOUD_GAPS:
+        Xg = ox + gx_ * k
+        e = e - (e - (dN.min() - 30 * s)) * 0.8 * np.exp(-((xc_ - Xg) / (9 * s)) ** 2)
     pcx = np.array([puffs[i][0] for i in fi], np.float32); pcy = np.array([puffs[i][1] for i in fi], np.float32)
     prr = np.array([puffs[i][2] for i in fi], np.float32)
     warm = np.array(R['snow'][5], np.float32) * 0.5 + np.array(R['sand_warm'][5], np.float32) * 0.5

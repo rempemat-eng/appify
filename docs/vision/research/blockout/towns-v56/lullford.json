@@ -35,13 +35,13 @@
    2,
    3
   ],
-  "levelled_footprints": 0
+  "levelled_footprints": 1
  },
  "footprint_px": [
-  8576,
-  4144,
-  9016,
-  4528
+  8584,
+  4048,
+  9280,
+  4640
  ],
  "fortification": null,
  "style": null,
@@ -54,8 +54,8 @@
    "street": "lullford-a1",
    "entries_px": [
     [
-     8600,
-     4046
+     8607,
+     3945
     ]
    ],
    "route_kind": "path"
@@ -71,8 +71,8 @@
      4211
     ],
     [
-     9124,
-     4374
+     9391,
+     4365
     ]
    ],
    "route_kind": "road"
@@ -84,8 +84,8 @@
    "street": "lullford-a3",
    "entries_px": [
     [
-     8538,
-     4647
+     8475,
+     4678
     ]
    ],
    "route_kind": "path"
@@ -179,6 +179,7 @@
    ],
    "frontage": "detached",
    "connects": [
+    "lullford-c03",
     "lullford-s08"
    ]
   },
@@ -188,6 +189,18 @@
    "class": "arrival",
    "width_cells": 3,
    "vertices_px": [
+    [
+     8607.4,
+     3945.2
+    ],
+    [
+     8599.5,
+     3969.6
+    ],
+    [
+     8595.0,
+     4022.2
+    ],
     [
      8599.8,
      4046.2
@@ -215,6 +228,7 @@
    ],
    "follows_route": "Towpath",
    "connects": [
+    "lullford-c04",
     "lullford-s02"
    ]
   },
@@ -273,18 +287,47 @@
      4318.9
     ],
     [
-     9083.8,
-     4343.5
+     9064.0,
+     4330.2
     ],
     [
-     9124.4,
-     4373.6
+     9146.4,
+     4388.3
+    ],
+    [
+     9167.0,
+     4399.2
+    ],
+    [
+     9206.4,
+     4409.4
+    ],
+    [
+     9228.8,
+     4408.5
+    ],
+    [
+     9252.7,
+     4402.8
+    ],
+    [
+     9347.5,
+     4365.3
+    ],
+    [
+     9371.6,
+     4362.6
+    ],
+    [
+     9391.1,
+     4364.6
     ]
    ],
    "follows_route": "Lull Road",
    "connects": [
     "lullford-a3",
     "lullford-c02",
+    "lullford-c06",
     "lullford-s01",
     "lullford-s03"
    ]
@@ -296,20 +339,24 @@
    "width_cells": 3,
    "vertices_px": [
     [
-     8538.0,
-     4647.5
+     8475.3,
+     4677.6
     ],
     [
-     8618.9,
-     4608.5
+     8600.0,
+     4619.3
     ],
     [
-     8669.6,
-     4569.8
+     8654.9,
+     4583.3
     ],
     [
-     8707.5,
-     4519.8
+     8695.1,
+     4538.3
+    ],
+    [
+     8718.7,
+     4500.5
     ],
     [
      8747.1,
@@ -356,12 +403,12 @@
    "width_cells": 2,
    "vertices_px": [
     [
-     8760.0,
-     4480.0
+     8752.0,
+     4512.0
     ],
     [
-     8744.0,
-     4480.0
+     8728.0,
+     4512.0
     ]
    ],
    "frontage": "detached",
@@ -376,22 +423,17 @@
    "width_cells": 2,
    "vertices_px": [
     [
-     9008.0,
-     4400.0
+     9072.0,
+     4392.0
     ],
     [
-     9056.0,
-     4400.0
-    ],
-    [
-     9056.0,
-     4344.0
+     9072.0,
+     4360.0
     ]
    ],
    "frontage": "detached",
    "connects": [
-    "lullford-a2",
-    "lullford-c03"
+    "lullford-a2"
    ]
   },
   {
@@ -401,17 +443,115 @@
    "width_cells": 2,
    "vertices_px": [
     [
-     9008.0,
-     4456.0
+     8936.0,
+     4176.0
     ],
     [
-     9008.0,
-     4408.0
+     8904.0,
+     4176.0
     ]
    ],
    "frontage": "detached",
    "connects": [
-    "lullford-c02"
+    "lullford-c05",
+    "lullford-s04"
+   ]
+  },
+  {
+   "id": "lullford-c04",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8816.0,
+     4040.0
+    ],
+    [
+     8816.0,
+     3936.0
+    ],
+    [
+     8616.0,
+     3936.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "lullford-a1"
+   ]
+  },
+  {
+   "id": "lullford-c05",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8936.0,
+     4136.0
+    ],
+    [
+     8936.0,
+     4168.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "lullford-c03"
+   ]
+  },
+  {
+   "id": "lullford-c06",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8936.0,
+     4424.0
+    ],
+    [
+     8936.0,
+     4392.0
+    ],
+    [
+     8968.0,
+     4392.0
+    ],
+    [
+     8968.0,
+     4328.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "lullford-a2",
+    "lullford-c07"
+   ]
+  },
+  {
+   "id": "lullford-c07",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8920.0,
+     4480.0
+    ],
+    [
+     8920.0,
+     4424.0
+    ],
+    [
+     8928.0,
+     4424.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "lullford-c06"
    ]
   }
  ],
@@ -441,12 +581,12 @@
     "lullford-b012"
    ],
    "mix": {
-    "cottage": 7,
+    "shop": 2,
+    "cottage": 4,
     "house": 3,
-    "shop": 1,
-    "workshop": 1
+    "workshop": 3
    },
-   "function": "homes"
+   "function": "crafts and work with homes"
   }
  ],
  "gathering_places": [],
@@ -498,23 +638,77 @@
  "buildings": [
   {
    "id": "lullford-b001",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1125,
+    550,
+    9,
+    7
+   ],
+   "rect_px": [
+    9000,
+    4400,
+    72,
+    56
+   ],
+   "faces": "lullford-c02",
+   "door_cells": [
+    1133,
+    549
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b002",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1115,
+    528,
+    8,
+    6
+   ],
+   "rect_px": [
+    8920,
+    4224,
+    64,
+    48
+   ],
+   "faces": "lullford-s04",
+   "door_cells": [
+    1114,
+    528
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b003",
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    1072,
+    1073,
     534,
     9,
     5
    ],
    "rect_px": [
-    8576,
+    8584,
     4272,
     72,
     40
    ],
    "faces": "lullford-a2",
    "door_cells": [
-    1080,
+    1081,
     533
    ],
    "purpose": "a cottage",
@@ -522,7 +716,7 @@
    "district": "lullford-d-lullford",
    "counted": true,
    "plot_cells": [
-    1072,
+    1073,
     539,
     9,
     4
@@ -531,102 +725,34 @@
    "counts_as": 1
   },
   {
-   "id": "lullford-b002",
+   "id": "lullford-b004",
    "type": "house",
    "form": "house",
    "footprint_cells": [
-    1075,
-    540,
-    12,
-    7
+    1097,
+    554,
+    11,
+    8
    ],
    "rect_px": [
-    8600,
-    4320,
-    96,
-    56
+    8776,
+    4432,
+    88,
+    64
    ],
-   "faces": "lullford-s03",
+   "faces": "lullford-a3",
    "door_cells": [
-    1082,
-    547
+    1097,
+    553
    ],
    "purpose": "a family house",
    "occupants": "a fishing household",
    "district": "lullford-d-lullford",
    "counted": true,
    "plot_cells": [
-    1075,
-    547,
-    12,
-    4
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "lullford-b003",
-   "type": "shop",
-   "form": "shop",
-   "footprint_cells": [
-    1099,
-    552,
+    1097,
+    562,
     11,
-    7
-   ],
-   "rect_px": [
-    8792,
-    4416,
-    88,
-    56
-   ],
-   "faces": "lullford-s01",
-   "door_cells": [
-    1105,
-    551
-   ],
-   "purpose": "the shop",
-   "occupants": "the shopkeeper, living above",
-   "district": "lullford-d-lullford",
-   "counted": true,
-   "plot_cells": [
-    1099,
-    559,
-    11,
-    4
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "lullford-b004",
-   "type": "cottage",
-   "form": "cottage",
-   "footprint_cells": [
-    1116,
-    550,
-    9,
-    5
-   ],
-   "rect_px": [
-    8928,
-    4400,
-    72,
-    40
-   ],
-   "faces": "lullford-c02",
-   "door_cells": [
-    1125,
-    550
-   ],
-   "purpose": "a cottage",
-   "occupants": "a carting household",
-   "district": "lullford-d-lullford",
-   "counted": true,
-   "plot_cells": [
-    1116,
-    555,
-    9,
     4
    ],
    "plot": "garden",
@@ -637,31 +763,31 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    1097,
-    535,
+    1116,
+    554,
     8,
-    5
+    6
    ],
    "rect_px": [
-    8776,
-    4280,
+    8928,
+    4432,
     64,
-    40
+    48
    ],
-   "faces": "lullford-a1",
+   "faces": "lullford-c06",
    "door_cells": [
-    1101,
-    534
+    1116,
+    553
    ],
    "purpose": "a cottage",
-   "occupants": "a craft household",
+   "occupants": "a carting household",
    "district": "lullford-d-lullford",
    "counted": true,
    "plot_cells": [
-    1097,
-    534,
-    7,
-    1
+    1116,
+    560,
+    8,
+    3
    ],
    "plot": "garden",
    "counts_as": 1
@@ -671,167 +797,167 @@
    "type": "house",
    "form": "house",
    "footprint_cells": [
-    1108,
-    529,
-    11,
+    1114,
+    561,
+    12,
     6
    ],
    "rect_px": [
-    8864,
-    4232,
-    88,
+    8912,
+    4488,
+    96,
     48
    ],
-   "faces": "lullford-s08",
+   "faces": "lullford-c07",
    "door_cells": [
-    1111,
-    528
+    1114,
+    560
    ],
    "purpose": "a family house",
-   "occupants": "a farming household",
+   "occupants": "a craft household",
    "district": "lullford-d-lullford",
    "counted": true,
    "plot_cells": [
-    1108,
-    525,
-    11,
-    4
+    1114,
+    567,
+    12,
+    3
    ],
    "plot": "garden",
    "counts_as": 1
   },
   {
    "id": "lullford-b007",
-   "type": "cottage",
-   "form": "cottage",
+   "type": "workshop",
+   "form": "workshop",
    "footprint_cells": [
-    1076,
-    548,
-    5,
-    8
+    1118,
+    519,
+    11,
+    7
    ],
    "rect_px": [
-    8608,
-    4384,
-    40,
-    64
+    8944,
+    4152,
+    88,
+    56
    ],
-   "faces": "lullford-s03",
+   "faces": "lullford-c03",
    "door_cells": [
-    1081,
-    552
+    1117,
+    521
    ],
-   "purpose": "a cottage",
-   "occupants": "a fishing household",
+   "purpose": "the workshop",
+   "occupants": "the master and apprentices",
    "district": "lullford-d-lullford",
    "counted": true,
    "plot_cells": [
-    1072,
-    548,
-    4,
-    8
+    1118,
+    526,
+    11,
+    3
    ],
    "plot": "garden",
    "counts_as": 1
   },
   {
    "id": "lullford-b008",
-   "type": "cottage",
-   "form": "cottage",
-   "footprint_cells": [
-    1121,
-    525,
-    6,
-    9
-   ],
-   "rect_px": [
-    8968,
-    4200,
-    48,
-    72
-   ],
-   "faces": "lullford-a2",
-   "door_cells": [
-    1124,
-    534
-   ],
-   "purpose": "a cottage",
-   "occupants": "a carting household",
-   "district": "lullford-d-lullford",
-   "counted": true,
-   "plot_cells": [
-    1127,
-    525,
-    4,
-    9
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "lullford-b009",
-   "type": "cottage",
-   "form": "cottage",
-   "footprint_cells": [
-    1120,
-    544,
-    7,
-    5
-   ],
-   "rect_px": [
-    8960,
-    4352,
-    56,
-    40
-   ],
-   "faces": "lullford-a2",
-   "door_cells": [
-    1120,
-    543
-   ],
-   "purpose": "a cottage",
-   "occupants": "a craft household",
-   "district": "lullford-d-lullford",
-   "counted": true,
-   "plot_cells": [
-    1120,
-    549,
-    7,
-    4
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "lullford-b010",
    "type": "house",
    "form": "house",
    "footprint_cells": [
-    1096,
-    560,
-    11,
+    1104,
+    515,
+    12,
     6
    ],
    "rect_px": [
-    8768,
-    4480,
-    88,
+    8832,
+    4120,
+    96,
     48
    ],
-   "faces": "lullford-c01",
+   "faces": "lullford-s04",
    "door_cells": [
-    1095,
-    560
+    1110,
+    521
    ],
    "purpose": "a family house",
    "occupants": "a farming household",
    "district": "lullford-d-lullford",
    "counted": true,
    "plot_cells": [
-    1096,
-    566,
+    1106,
+    521,
+    10,
+    3
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b009",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    1094,
+    565,
     11,
-    4
+    8
+   ],
+   "rect_px": [
+    8752,
+    4520,
+    88,
+    64
+   ],
+   "faces": "lullford-c01",
+   "door_cells": [
+    1094,
+    564
+   ],
+   "purpose": "the workshop",
+   "occupants": "the master and apprentices",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "plot_cells": [
+    1094,
+    573,
+    11,
+    3
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b010",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1117,
+    510,
+    9,
+    6
+   ],
+   "rect_px": [
+    8936,
+    4080,
+    72,
+    48
+   ],
+   "faces": "lullford-c05",
+   "door_cells": [
+    1117,
+    516
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fishing household",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "plot_cells": [
+    1117,
+    516,
+    9,
+    3
    ],
    "plot": "garden",
    "counts_as": 1
@@ -841,31 +967,31 @@
    "type": "workshop",
    "form": "workshop",
    "footprint_cells": [
-    1115,
-    558,
-    12,
+    1102,
+    506,
+    13,
     8
    ],
    "rect_px": [
-    8920,
-    4464,
-    96,
+    8816,
+    4048,
+    104,
     64
    ],
-   "faces": "lullford-c03",
+   "faces": "lullford-c04",
    "door_cells": [
-    1125,
-    557
+    1102,
+    505
    ],
    "purpose": "the workshop",
    "occupants": "the master and apprentices",
    "district": "lullford-d-lullford",
    "counted": true,
    "plot_cells": [
-    1115,
-    566,
-    12,
-    4
+    1102,
+    514,
+    13,
+    3
    ],
    "plot": "garden",
    "counts_as": 1
@@ -875,37 +1001,58 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    1113,
-    518,
+    1153,
+    538,
     7,
     6
    ],
    "rect_px": [
-    8904,
-    4144,
+    9224,
+    4304,
     56,
     48
    ],
-   "faces": "lullford-s04",
+   "faces": "lullford-a2",
    "door_cells": [
-    1112,
-    521
+    1159,
+    544
    ],
    "purpose": "a cottage",
-   "occupants": "a fishing household",
+   "occupants": "a carting household",
    "district": "lullford-d-lullford",
    "counted": true,
    "plot_cells": [
-    1113,
-    524,
-    7,
-    4
+    1153,
+    544,
+    6,
+    3
    ],
    "plot": "garden",
    "counts_as": 1
   }
  ],
- "lifted": [],
+ "lifted": [
+  {
+   "type": "cottage",
+   "rect_px": [
+    8928,
+    4544,
+    72,
+    40
+   ],
+   "why": "no close could reach it"
+  },
+  {
+   "type": "house",
+   "rect_px": [
+    8864,
+    4592,
+    88,
+    48
+   ],
+   "why": "no close could reach it"
+  }
+ ],
  "outskirts": [],
  "game_layout": {
   "arrival": "Towpath",
@@ -914,15 +1061,15 @@
    {
     "name": "the workshop, Lullford's largest building",
     "xy": [
-     8968,
-     4496
+     8868,
+     4080
     ]
    },
    {
-    "name": "a cottage at the edge, seen first from the Towpath",
+    "name": "the workshop at the edge, seen first from the Coast Path",
     "xy": [
-     8932,
-     4168
+     8796,
+     4552
     ]
    }
   ],
@@ -931,14 +1078,14 @@
   "first_screen_cells": [
    [
     1055,
-    494,
+    482,
     40,
     22.5
    ]
   ],
   "screens": [
-   1.4,
-   2.1
+   2.2,
+   3.3
   ]
  },
  "ground": {
@@ -946,18 +1093,18 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "mudflat": 57,
-   "salt marsh": 30,
-   "worn paving": 1018,
-   "packed earth": 58
+   "mudflat": 189,
+   "salt marsh": 79,
+   "worn paving": 1445,
+   "packed earth": 59
   }
  },
  "terrain": {
   "box_cells": [
-   1057,
-   503,
-   86,
-   79
+   1058,
+   491,
+   118,
+   105
   ],
   "codes": {
    ".": "land",
@@ -968,85 +1115,111 @@
    "b": "bridge"
   },
   "rows": [
-   "15g5r10g2~42g~11g",
-   "15g6r10g2~35g4.2g~.g.4g4.",
-   "15g6r11g2~35g.g.2g~g2.4g4.",
-   "15g6r12g~37g.2g~g2.4g4.",
-   "16g6r12g~39g~3.2g6.",
-   "4g2.10g7r12g~38g~11.",
-   "3g3.10g7r12g2~37g~.g9.",
-   "3g3.10g7r12g2~37g~.g9.",
-   "4g2.11g7r12g2~36g~g.g8.",
-   "3g3.12g7r12g~36g~4g7.",
-   "2g4.13g8r11g~35g~5g6.",
-   "3g4.13g9r9g2~34g~4g7.",
-   "3g2.15g10r9g~34g~5g6.",
-   "3g2.16g11r8g~33g~7g4.",
-   "2g3.14g2~2g11r6g2~41g3.",
-   "3g2.16g2~g11r6g~14g7.21g2.",
-   "3g2.16g2~g11r6g~14g7.21g2.",
-   "4g.18g2~11r5g9.6g7.22g.",
-   "4r21g2~10r4g9.3g10.23g",
-   "14r13g2~b8r3g9.3g10.23g",
-   "15r15g~2b6r2g9.3g10.23g",
-   "16r16g3b5rg9.3g3.28g2~",
-   "20r13g2r3b3r9.3g3.8g6.13g3~",
-   "24r10g3r4br14.8g6.5g.6g4~",
-   "26r9g5r3b2g2b9.8g12.4g6~",
-   "26r9g5r3b2g2b9.8g12.4g6~",
-   "29r7g7rb~2b.3g11.2g12.3g7~",
-   "30r7g8r3b~2g11.2g12.3g7~",
-   "14r4g14r6g9rbg~g11.2g12.2g8~",
-   "r20g12r6g8rb~2g11.2g12.2g8~",
-   "r22g11r6g7r.b13.2g6.4g2.2g8~",
-   "2r13g9.g10r6g4r3.2b12.g6rbr7g8~",
-   "2r13g9.3g9r4g9.b.7g.9r2b2r6g8~",
-   "2r13g9.5g8r3g9.2b6g10r2b5r4g8~",
-   "2r13g9.5g8r3g9.2b6g10r2b5r4g8~",
-   "2r13g9.6g8r2g10.b~2g13rb8rg9~",
-   "2r29g8rg11.~g13rb9r2b8~",
-   "2r16g12.2g9r7g2.g~b12r2b8r2br2b6~",
-   "2r16g12.3g11r4g4rb10r3b8r2b2rb3r4.",
-   "2r16g12.4g19rb8r3b2r.3r.r2b9r2.",
-   "2r16g17.18r2b6rb~2g8.~11r.",
-   "r17g19.17r2b3rg2~g10.g.11r",
-   "r17g20.g16r2b2g2~2g10.g2.g9r",
-   "r17g20.g16r2b2g2~2g10.g2.g9r",
-   "r28g9.g12r7.g~3g10.g2.2g.7r",
-   "19g5.g13.7r3g10.~4g10.g2.2g~.6r",
-   "19g5.g12.8r3g10.~9g8.2g4~3rb",
-   "19g5.g11.8r4g10.g17.2g6~2b",
-   "19g5.g3.7g8r5g10.g11.8g8~",
-   "19g5.g3.7g7r16.g11.8g8~",
-   "19g5.g3.6g7r17.g11.8g8~",
-   "19g5.g3.5g7r14.2g~2g11.8g8~",
-   "19g5.g3.5g7r14.2g~11g2.8g8~",
-   "25g3.5g6r15.2g~11g2.8g8~",
-   "25g3.4g7r15.2g~11g2.8g8~",
-   "32g6rg15.2g~g12.8g8~",
-   "16g.14g6r10.4g3.2g~g12.8g8~",
-   "15g3.13g6r13.g3.g~2g12.8g8~",
-   "16g3.11g6r3g11.g3.g~2g12.8g8~",
-   "16g4.10g6r3g11.g2.g2~2g12.8g8~",
-   "16g6.7g7r3g11.g2.g~3g12.8g8~",
-   "16g6.7g7r3g11.4g~3g12.8g8~",
-   "18g4.5g8r4g11.3g2~3g12.8g8~",
-   "19g3.5g7r19g~24g8~",
-   "20g3.3g8r18g2~24g8~",
-   "21g2.2g8r18g2~25g8~",
-   "22g.g8r19g~26g8~",
-   "22g9r19g~27g8~",
-   "21g10r18g2~27g8~",
-   "20g10r19g~28g8~",
-   "20g10r19g~28g8~",
-   "18g9r22g~28g8~",
-   "15g11r22g2~28g8~",
-   "13g12r23g~29g8~",
-   "10g14r24g~29g8~",
-   "7g15r26g~28g9~",
-   "6g14r5g.22g~28g9~",
-   "5g13r6g.23g~27g10~",
-   "3g13r7g4.21g~27g10~"
+   "16g3rb25.28g~17g15~12.",
+   "16g3rb25.28g~17g15~12.",
+   "16g3rb~22g2.28g~17g15~12.",
+   ".14g5r2~21g2.29g~16g14~13.",
+   "6.2g.5g6r2g~20g2.29g~16g14~13.",
+   "13.g6r2g2~19g2.29g~16g14~13.",
+   "4g8.2g6r3g2~18g2.29g~16g14~10.3g",
+   "8g.5g5r5g2~17g2.29g~16g14~10.3g",
+   "14g5r6g3~15g2.29g~16g14~10.3g",
+   "14g5r7g3~14g2.29g~16g14~g2.3g4.3g",
+   "14g5r7g3~14g2.29g~16g14~g2.3g4.3g",
+   "14g5r9g2~13g2.28g2~16g14~13g",
+   "14g5r10g2~12g2.28g~17g14~13g",
+   "14g6r10g2~11g2.22g4.2g~.g.4g10.14~13g",
+   "14g6r11g2~10g2.23g.g.2g~g2.4g10.14~13g",
+   "14g6r12g~11g13.13g.2g~g2.4g10.14~13g",
+   "15g6r12g~10g13.16g~3.2g12.14~13g",
+   "3g2.10g7r12g~9g13.16g~17.14~13g",
+   "2g3.10g7r12g2~8g13.16g~.g15.14~13g",
+   "2g3.10g7r12g2~8g13.2g9.5g~.g15.14~13g",
+   "3g2.11g7r12g2~7g13.2g9.5g~g.g14.14~13g",
+   "2g3.12g7r12g~7g13.2g9.5g~4g13.14~13g",
+   "g4.13g8r11g~6g13.2g9.5g~5g12.14~13g",
+   "2g4.13g9r9g2~20g9.5g~4g12.15~13g",
+   "2g2.15g10r9g~7g12.g9.5g~5g11.15~12g~",
+   "2g2.16g11r8g~6g14.13g~7g8.16~10g3~",
+   "g3.14g2~2g11r6g2~5g14.22g7.16~9g3~g",
+   "2g2.16g2~g11r6g~5g14.23g5.16~9g2~3g",
+   "2g2.16g2~g11r6g~5g25.12g5.16~9g2~3g",
+   "3g.18g2~11r5g31.13g4.16~8g2~4g",
+   "3r21g2~10r4g8.4g19.14g2.16~7g2~6g",
+   "13r13g2~b8r3g8.4g19.15g17~6g2~7g",
+   "14r15g~2b6r2g8.4g3.5g11.14g18~4g2~9g",
+   "15r16g3b5rg9.3g3.5g11.12g19~3g3~10g",
+   "19r13g2r3b3r9.11g11.2~9g23~13g",
+   "23r10g3r4br13.17g~2g.6g21~16g",
+   "25r9g5r3b2g2b8.17g~g2.4g21~18g",
+   "25r9g5r3b2g2b8.3g8.6g~g2.4g21~18g",
+   "28r7g7rb~2b.10g8.6g~g2.3g22~18g",
+   "29r7g8r3b~9g8.5g~2g2.3g21~19g",
+   "13r4g14r6g9rbg~8g8.5g~2g2.2g19~22g",
+   "20g12r6g8rb~9g8.4g2~2g2.2g18~23g",
+   "22g11r6g7r.b2.7g8.4g~3g2.2g17~24g",
+   "r14g9.10r12g.2b.12g6rbr7g17~24g",
+   "r14g9.2g9r12g.b.7g.9r2b2r6g16~21g3rg",
+   "r14g9.4g8r11g.2b6g10r2b5r4g14~22g4rg",
+   "r14g9.4g8r11g.2b6g10r2b5r4g14~22g4rg",
+   "r14g9.5g8r10g2.b~2g13rb8rg15~4g7.10g5rg",
+   "r29g8r9g3.~g13rb9r2b14~4g7.8g7rg",
+   "r30g9r7g2.g~b12r2b8r2br2b12~4g7.7g8rg",
+   "r31g11r4g4rb10r3b8r2b2rb3r6.4~4g7.6g7r3g",
+   "r32g19rb8r3b2r.3r.r2b9r7.~4g7.4g11rg",
+   "r28g5.18r2b6rb~10.~11r7.4g7.2g14r",
+   "29g7.17r2b3rg2~g2.5g3.2g12r5.10g17r",
+   "29g8.g16r2b2g2~2g2.5g3.3g.11r4.8g19r",
+   "29g8.g16r2b2g2~2g2.5g3.3g.11r4.8g19r",
+   "29g8.g12r7.g~3g2.5g3.3g3.11r2.5g22r",
+   "29g8.7r3g10.~6.4g~3.3g2.~.11rb2rg24r",
+   "29g7.8r3g10.~6.2g2~g.5g2.4~3r7b24r3g",
+   "29g6.8r4g10.g2.6g~9.g6~8b24r3g",
+   "24g3.7g8r5g10.g2.4g2~g9.g8~6b15r3g8rg",
+   "24g3.7g7r11g8.2g3~2g9.g10~4b13r6g7rg",
+   "24g3.6g7r.11g8.4~3g9.g14~10r9g7rg",
+   "24g3.5g7r11.2g.2g~10.g9.g14~3g5r12g7r",
+   "24g3.5g7r11.2g.2g~10.g9.g14~3g5r12g7r",
+   "24g3.5g6r12.2g.2g~10.g9.g14~6g6r9g6r",
+   "24g3.4g7r12.2g.2g~10.11g14~11g5r6g5r",
+   "31g6rg12.2g.2g~10.11g14~15g4r3g5r",
+   "15g.14g6r2g12.2g.2g~10.11g14~19g8r",
+   "14g3.13g6r3g11.2g.g~g2.19g14~22g5r",
+   "15g3.11g6r4g11.2g.g~g12.9g14~24g3r",
+   "15g4.10g6r18g2~g12.9g14~25g.r",
+   "15g6.7g7r2.13g2.g~2g12.9g14~24g3.",
+   "15g6.7g7r2.16g~2g12.9g14~24g3.",
+   "17g4.5g8r2g11.5g2~2g12.9g14~24g3.",
+   "18g3.5g7r3g11.5g~3g12.9g14~25g2.",
+   "19g3.3g8r3g11.4g2~24g14~25g.g",
+   "20g2.2g8r4g11.3g2~25g14~25g2.",
+   "21g.g8r5g11.3g~26g14~26g.",
+   "21g9r6g11.2g~27g14~26g.",
+   "20g10r6g11.g2~27g14~27g",
+   "19g10r7g11.g~28g14~26g.",
+   "19g10r19g~28g14~26g.",
+   "17g9r22g~28g14~26g.",
+   "14g11r22g2~28g14~25g2.",
+   "12g12r23g~29g14~25g2.",
+   "9g14r24g~29g14~24g2.g",
+   "6g15r26g~28g15~24g3.",
+   "5g14r5g.22g~28g16~23g2.g",
+   "4g13r6g.23g~27g17~24g2.",
+   "2g13r7g4.21g~27g17~24g2.",
+   "2g13r7g4.21g~27g17~24g2.",
+   "13r10g5.19g2~26g16~26g.",
+   "7r16g3.22g~25g17~26g.",
+   "5r18g5.20g~25g17~27g",
+   "3r21g4.20g~25g17~27g",
+   "r24g5.19g~24g17~27g",
+   "26g4.19g~24g17~27g",
+   "14g4.8g4.19g~23g17~28g",
+   "14g5.9g3.18g~23g17~28g",
+   "14g5.9g3.18g~23g17~28g",
+   "14g5.9g3.19g~22g17~28g",
+   "14g5.10g3.18g~22g17~28g",
+   "14g5.10g3.18g~22g17~28g",
+   "14g5.11g3.18g~20g18~28g"
   ]
  },
  "residents": [],
@@ -1057,63 +1230,89 @@
    "kind": "landmark view",
    "what": "the workshop, Lullford's largest building",
    "xy_px": [
-    8968,
-    4496
+    8868,
+    4080
    ],
    "screen": [
-    1,
-    1
+    0,
+    0
    ]
   },
   {
    "kind": "landmark view",
-   "what": "a cottage at the edge, seen first from the Towpath",
+   "what": "the workshop at the edge, seen first from the Coast Path",
    "xy_px": [
-    8932,
-    4168
+    8796,
+    4552
    ],
    "screen": [
-    1,
-    0
+    0,
+    2
    ]
   },
   {
    "kind": "resident activity",
    "what": "a cottage: a farming household about their day",
-   "building": "lullford-b001",
+   "building": "lullford-b003",
    "xy_px": [
-    8612,
+    8620,
     4292
    ],
    "screen": [
     0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the workshop: the master and apprentices about their day",
+   "building": "lullford-b007",
+   "xy_px": [
+    8988,
+    4180
+   ],
+   "screen": [
+    1,
     0
    ]
   },
   {
    "kind": "resident activity",
    "what": "the shop: the shopkeeper, living above about their day",
-   "building": "lullford-b003",
+   "building": "lullford-b002",
    "xy_px": [
-    8836,
-    4444
+    8952,
+    4248
    ],
    "screen": [
-    0,
+    1,
     1
    ]
   },
   {
    "kind": "resident activity",
-   "what": "a family house: a farming household about their day",
-   "building": "lullford-b010",
+   "what": "the shop: the shopkeeper, living above about their day",
+   "building": "lullford-b001",
    "xy_px": [
-    8812,
-    4504
+    9036,
+    4428
    ],
    "screen": [
-    0,
+    1,
     2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a carting household about their day",
+   "building": "lullford-b012",
+   "xy_px": [
+    9252,
+    4328
+   ],
+   "screen": [
+    2,
+    1
    ]
   }
  ],
@@ -1121,8 +1320,8 @@
  "theme": {
   "waystone": {
    "xy_px": [
-    8668,
-    4396
+    8660,
+    4412
    ],
    "at": "beside Lullford Lane",
    "table_name": "Lullford",
@@ -1141,8 +1340,8 @@
     4396
    ],
    "toward": "the stone circle (the beam over the valley)",
-   "off_by_deg": 24,
-   "bearing_deg": -156
+   "off_by_deg": 23,
+   "bearing_deg": -157
   },
   "crater": {
    "name": "the Lull crater",
@@ -1150,19 +1349,19 @@
     8265,
     3560
    ],
-   "distance_px": 940,
-   "effect": "the Lull crater lies 900 px away; its scorch points to the valley",
+   "distance_px": 1029,
+   "effect": "the Lull crater lies 1000 px away; its scorch points to the valley",
    "road": "Towpath",
    "road_leaves_at_px": [
-    8600,
-    4046
+    8607,
+    3945
    ]
   },
   "moss": {
    "where": "the market",
    "xy_px": [
-    8668,
-    4396
+    8660,
+    4412
    ]
   },
   "company": {

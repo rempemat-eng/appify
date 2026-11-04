@@ -3,7 +3,7 @@
   12544,
   7168
  ],
- "walkable_zone_areas": 182.2,
+ "walkable_zone_areas": 182.1,
  "routes_s": {
   "Col Path": 27.5,
   "High Fells": 51.2,
@@ -56,8 +56,8 @@
    "with_shortcuts_s": 73.6
   },
   "Gullwick": {
-   "on_foot_s": 66.1,
-   "with_shortcuts_s": 66.1
+   "on_foot_s": 66.5,
+   "with_shortcuts_s": 66.5
   },
   "Neon Harbour": {
    "on_foot_s": 136.6,
@@ -831,8 +831,8 @@
    "name": "hay barn",
    "cat": "landmark",
    "biome": "the Lull plain",
-   "x": 8712,
-   "y": 4349,
+   "x": 8692,
+   "y": 4369,
    "route": "Lull Road",
    "off_path": false
   },
@@ -840,8 +840,8 @@
    "name": "reed hide",
    "cat": "wild",
    "biome": "the river belt and delta",
-   "x": 9017,
-   "y": 4268,
+   "x": 9021,
+   "y": 4241,
    "route": "Lull Road",
    "off_path": false
   },
@@ -930,8 +930,8 @@
    "name": "ruined chapel",
    "cat": "ruin",
    "biome": "the Lull plain",
-   "x": 7852,
-   "y": 5118,
+   "x": 7846,
+   "y": 5145,
    "route": "Coast Path",
    "off_path": false
   },
@@ -939,8 +939,8 @@
    "name": "fishing stage",
    "cat": "landmark",
    "biome": "the Lull plain",
-   "x": 8158,
-   "y": 5232,
+   "x": 8138,
+   "y": 5213,
    "route": "Coast Path",
    "off_path": false
   },
@@ -1641,10 +1641,10 @@
    "name": "heron pools",
    "cat": "wild",
    "biome": "the Lull plain",
-   "x": 7863,
-   "y": 4960,
+   "x": 7969,
+   "y": 4952,
    "route": "Gull Lane",
-   "off_path": true
+   "off_path": false
   },
   {
    "name": "crevasse viewpoint",
@@ -1866,8 +1866,8 @@
    "name": "a viewpoint",
    "cat": "view",
    "biome": "the river belt and delta",
-   "x": 8968,
-   "y": 4447,
+   "x": 8933,
+   "y": 4412,
    "route": "Lull Road",
    "off_path": false
   },
@@ -2187,8 +2187,8 @@
   {
    "route": "Coast Path",
    "obstacle": "a building of Driftwood",
-   "x": 6596,
-   "y": 5016,
+   "x": 6604,
+   "y": 5012,
    "side_path": false,
    "v55": true
   },
@@ -2561,14 +2561,6 @@
    "v55": true
   },
   {
-   "route": "Gull Lane",
-   "obstacle": "a building of Gullwick",
-   "x": 7976,
-   "y": 5012,
-   "side_path": false,
-   "v55": true
-  },
-  {
    "route": "the Garth Road",
    "obstacle": "a building of Highgarth",
    "x": 7804,
@@ -2603,8 +2595,8 @@
   {
    "route": "Gull Lane",
    "obstacle": "a building of Gullwick",
-   "x": 8024,
-   "y": 5172,
+   "x": 7976,
+   "y": 5112,
    "side_path": false,
    "v55": true
   },
@@ -2625,6 +2617,14 @@
    "v55": true
   },
   {
+   "route": "Coast Path",
+   "obstacle": "a building of Gullwick",
+   "x": 7888,
+   "y": 5132,
+   "side_path": false,
+   "v55": true
+  },
+  {
    "route": "the Garth Road",
    "obstacle": "a building of Highgarth",
    "x": 7948,
@@ -2635,7 +2635,7 @@
   {
    "route": "Coast Path",
    "obstacle": "a building of Gullwick",
-   "x": 8024,
+   "x": 8028,
    "y": 5172,
    "side_path": false,
    "v55": true
@@ -2651,15 +2651,15 @@
   {
    "route": "Coast Path",
    "obstacle": "a building of Gullwick",
-   "x": 8180,
-   "y": 5156,
+   "x": 8192,
+   "y": 5152,
    "side_path": false,
    "v55": true
   },
   {
    "route": "Lull Road",
    "obstacle": "a building of Lullford",
-   "x": 8612,
+   "x": 8620,
    "y": 4292,
    "side_path": false,
    "v55": true
@@ -2673,34 +2673,18 @@
    "v55": true
   },
   {
-   "route": "Towpath",
-   "obstacle": "a building of Lullford",
-   "x": 8808,
-   "y": 4300,
-   "side_path": false,
-   "v55": true
-  },
-  {
    "route": "Lull Road",
    "obstacle": "a building of Lullford",
-   "x": 8808,
-   "y": 4300,
-   "side_path": false,
-   "v55": true
-  },
-  {
-   "route": "Lull Road",
-   "obstacle": "a building of Lullford",
-   "x": 8908,
-   "y": 4256,
+   "x": 8952,
+   "y": 4248,
    "side_path": false,
    "v55": true
   },
   {
    "route": "Coast Path",
    "obstacle": "a building of Lullford",
-   "x": 8812,
-   "y": 4504,
+   "x": 8796,
+   "y": 4552,
    "side_path": false,
    "v55": true
   },
@@ -2709,6 +2693,14 @@
    "obstacle": "a building of Palm Spring",
    "x": 3456,
    "y": 3000,
+   "side_path": false,
+   "v55": true
+  },
+  {
+   "route": "Lull Road",
+   "obstacle": "a building of Lullford",
+   "x": 9252,
+   "y": 4328,
    "side_path": false,
    "v55": true
   },
@@ -4536,8 +4528,8 @@
    "type": "story",
    "name": "marker stone",
    "biome": "the Lull plain",
-   "x": 8775,
-   "y": 4389,
+   "x": 8802,
+   "y": 4313,
    "route": "Lull Road",
    "along": 2229
   },
@@ -4563,8 +4555,8 @@
    "type": "story",
    "name": "cairn",
    "biome": "the river belt and delta",
-   "x": 8965,
-   "y": 4341,
+   "x": 8968,
+   "y": 4353,
    "route": "Lull Road",
    "along": 2402
   },
@@ -5031,8 +5023,8 @@
    "type": "story",
    "name": "marker stone",
    "biome": "the Lull plain",
-   "x": 7858,
-   "y": 5150,
+   "x": 7838,
+   "y": 5227,
    "route": "Coast Path",
    "along": 1307
   },
@@ -5067,8 +5059,8 @@
    "type": "story",
    "name": "tracks",
    "biome": "the Lull plain",
-   "x": 8089,
-   "y": 5248,
+   "x": 8019,
+   "y": 5116,
    "route": "Coast Path",
    "along": 1538
   },
@@ -5085,8 +5077,8 @@
    "type": "story",
    "name": "old boot",
    "biome": "the Lull plain",
-   "x": 8210,
-   "y": 5174,
+   "x": 8107,
+   "y": 5113,
    "route": "Coast Path",
    "along": 1653
   },
@@ -8793,8 +8785,8 @@
    "type": "story",
    "name": "tracks",
    "biome": "the Lull plain",
-   "x": 8137,
-   "y": 4977,
+   "x": 8069,
+   "y": 4996,
    "route": "Gull Lane",
    "along": 1077
   },
@@ -8802,8 +8794,8 @@
    "type": "ambient",
    "name": "hares",
    "biome": "the Lull plain",
-   "x": 8124,
-   "y": 5055,
+   "x": 8005,
+   "y": 5071,
    "route": "Gull Lane",
    "along": 1134
   },
@@ -10188,8 +10180,8 @@
    "type": "interactable",
    "name": "signpost",
    "biome": "the home valley",
-   "x": 6248,
-   "y": 4976,
+   "x": 6384,
+   "y": 4968,
    "route": null,
    "settlement": "Driftwood"
   },
@@ -10197,50 +10189,50 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "the home valley",
-   "x": 6616,
+   "x": 6584,
    "y": 5128,
    "route": null,
    "settlement": "Driftwood"
   },
   {
    "type": "interactable",
-   "name": "signpost",
+   "name": "door",
    "biome": "the home valley",
-   "x": 6336,
+   "x": 6448,
    "y": 5064,
    "route": null,
    "settlement": "Driftwood"
   },
   {
    "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 6352,
-   "y": 4968,
-   "route": null,
-   "settlement": "Driftwood"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 6272,
-   "y": 4952,
-   "route": null,
-   "settlement": "Driftwood"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the home valley",
-   "x": 6400,
-   "y": 4952,
-   "route": null,
-   "settlement": "Driftwood"
-  },
-  {
-   "type": "interactable",
    "name": "resident",
+   "biome": "the home valley",
+   "x": 6472,
+   "y": 4960,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6448,
+   "y": 4944,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6216,
+   "y": 4952,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
    "biome": "the home valley",
    "x": 6224,
    "y": 5216,
@@ -10249,19 +10241,10 @@
   },
   {
    "type": "interactable",
-   "name": "gate",
+   "name": "resident",
    "biome": "the home valley",
-   "x": 6352,
+   "x": 6240,
    "y": 4992,
-   "route": null,
-   "settlement": "Driftwood"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the home valley",
-   "x": 6280,
-   "y": 4888,
    "route": null,
    "settlement": "Driftwood"
   },
@@ -10269,23 +10252,32 @@
    "type": "story",
    "name": "marker stone",
    "biome": "the home valley",
-   "x": 6408,
-   "y": 4976,
+   "x": 6344,
+   "y": 4888,
    "route": null,
    "settlement": "Driftwood"
   },
   {
    "type": "story",
-   "name": "cold fire ring",
+   "name": "old boot",
    "biome": "the home valley",
-   "x": 6480,
+   "x": 6560,
+   "y": 4968,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6448,
    "y": 4904,
    "route": null,
    "settlement": "Driftwood"
   },
   {
    "type": "story",
-   "name": "mended fence",
+   "name": "cairn",
    "biome": "the home valley",
    "x": 6248,
    "y": 5192,
@@ -10294,10 +10286,10 @@
   },
   {
    "type": "story",
-   "name": "tracks",
+   "name": "cold fire ring",
    "biome": "the home valley",
-   "x": 6640,
-   "y": 5000,
+   "x": 6200,
+   "y": 5008,
    "route": null,
    "settlement": "Driftwood"
   },
@@ -10305,7 +10297,7 @@
    "type": "story",
    "name": "mended fence",
    "biome": "the home valley",
-   "x": 6296,
+   "x": 6376,
    "y": 5032,
    "route": null,
    "settlement": "Driftwood"
@@ -10314,17 +10306,17 @@
    "type": "story",
    "name": "cairn",
    "biome": "the home valley",
-   "x": 6528,
+   "x": 6376,
    "y": 5120,
    "route": null,
    "settlement": "Driftwood"
   },
   {
    "type": "story",
-   "name": "tracks",
+   "name": "cairn",
    "biome": "the home valley",
-   "x": 6384,
-   "y": 5120,
+   "x": 6656,
+   "y": 5112,
    "route": null,
    "settlement": "Driftwood"
   },
@@ -10726,19 +10718,28 @@
   },
   {
    "type": "interactable",
-   "name": "resident",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8776,
+   "y": 4496,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
    "biome": "the river belt and delta",
-   "x": 8992,
-   "y": 4168,
+   "x": 8984,
+   "y": 4128,
    "route": null,
    "settlement": "Lullford"
   },
   {
    "type": "interactable",
    "name": "gate",
-   "biome": "the river belt and delta",
-   "x": 8896,
-   "y": 4328,
+   "biome": "the Lull plain",
+   "x": 8768,
+   "y": 4040,
    "route": null,
    "settlement": "Lullford"
   },
@@ -10747,43 +10748,25 @@
    "name": "bench",
    "biome": "the river belt and delta",
    "x": 8864,
-   "y": 4488,
+   "y": 4336,
    "route": null,
    "settlement": "Lullford"
   },
   {
    "type": "interactable",
-   "name": "door",
+   "name": "water trough",
    "biome": "the river belt and delta",
-   "x": 8880,
-   "y": 4584,
+   "x": 9032,
+   "y": 4496,
    "route": null,
    "settlement": "Lullford"
   },
   {
    "type": "interactable",
-   "name": "bench",
-   "biome": "the river belt and delta",
-   "x": 8872,
-   "y": 4304,
-   "route": null,
-   "settlement": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
+   "name": "gate",
    "biome": "the Lull plain",
-   "x": 8792,
-   "y": 4216,
-   "route": null,
-   "settlement": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the river belt and delta",
-   "x": 8920,
-   "y": 4456,
+   "x": 8616,
+   "y": 4544,
    "route": null,
    "settlement": "Lullford"
   },
@@ -10792,34 +10775,97 @@
    "name": "noticeboard",
    "biome": "the river belt and delta",
    "x": 8936,
-   "y": 4112,
+   "y": 4664,
    "route": null,
    "settlement": "Lullford"
   },
   {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the river belt and delta",
-   "x": 8928,
-   "y": 4320,
-   "route": null,
-   "settlement": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
+   "type": "interactable",
+   "name": "signpost",
    "biome": "the Lull plain",
-   "x": 8656,
-   "y": 4400,
+   "x": 8720,
+   "y": 4520,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the river belt and delta",
+   "x": 9000,
+   "y": 4304,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the river belt and delta",
+   "x": 9096,
+   "y": 4192,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the river belt and delta",
+   "x": 9168,
+   "y": 4336,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Lull plain",
+   "x": 8728,
+   "y": 4184,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the river belt and delta",
+   "x": 9048,
+   "y": 4056,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Lull plain",
+   "x": 8664,
+   "y": 4608,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 8584,
+   "y": 4568,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 8584,
+   "y": 4520,
    "route": null,
    "settlement": "Lullford"
   },
   {
    "type": "story",
    "name": "lost hat",
-   "biome": "the river belt and delta",
-   "x": 8920,
-   "y": 4584,
+   "biome": "the Lull plain",
+   "x": 8736,
+   "y": 4664,
    "route": null,
    "settlement": "Lullford"
   },
@@ -10827,17 +10873,71 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the Lull plain",
-   "x": 8632,
-   "y": 4232,
+   "x": 8656,
+   "y": 4296,
    "route": null,
    "settlement": "Lullford"
   },
   {
    "type": "story",
    "name": "cairn",
+   "biome": "the Lull plain",
+   "x": 8816,
+   "y": 4160,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 8712,
+   "y": 4480,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 8552,
+   "y": 4272,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 8824,
+   "y": 4352,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
    "biome": "the river belt and delta",
-   "x": 8952,
-   "y": 4560,
+   "x": 8936,
+   "y": 4016,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the river belt and delta",
+   "x": 8984,
+   "y": 4368,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Lull plain",
+   "x": 8856,
+   "y": 4168,
    "route": null,
    "settlement": "Lullford"
   },
@@ -10845,35 +10945,26 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "the river belt and delta",
-   "x": 8896,
-   "y": 4280,
-   "route": null,
-   "settlement": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the Lull plain",
-   "x": 8728,
-   "y": 4288,
-   "route": null,
-   "settlement": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the river belt and delta",
-   "x": 8888,
-   "y": 4304,
+   "x": 8992,
+   "y": 4336,
    "route": null,
    "settlement": "Lullford"
   },
   {
    "type": "interactable",
-   "name": "signpost",
+   "name": "gate",
    "biome": "the Lull plain",
-   "x": 8136,
-   "y": 5256,
+   "x": 8000,
+   "y": 5192,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Lull plain",
+   "x": 7904,
+   "y": 5184,
    "route": null,
    "settlement": "Gullwick"
   },
@@ -10881,8 +10972,17 @@
    "type": "interactable",
    "name": "signpost",
    "biome": "the Lull plain",
-   "x": 7888,
-   "y": 5344,
+   "x": 7952,
+   "y": 5144,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Lull plain",
+   "x": 7864,
+   "y": 5248,
    "route": null,
    "settlement": "Gullwick"
   },
@@ -10890,53 +10990,35 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "the Lull plain",
-   "x": 7992,
-   "y": 5232,
+   "x": 8096,
+   "y": 5128,
    "route": null,
    "settlement": "Gullwick"
   },
   {
    "type": "interactable",
-   "name": "gate",
+   "name": "bench",
    "biome": "the Lull plain",
-   "x": 7912,
-   "y": 5360,
+   "x": 7952,
+   "y": 5256,
    "route": null,
    "settlement": "Gullwick"
   },
   {
    "type": "interactable",
-   "name": "signpost",
+   "name": "noticeboard",
    "biome": "the Lull plain",
-   "x": 8056,
-   "y": 5112,
+   "x": 7920,
+   "y": 5192,
    "route": null,
    "settlement": "Gullwick"
   },
   {
    "type": "interactable",
-   "name": "gate",
+   "name": "resident",
    "biome": "the Lull plain",
-   "x": 8032,
-   "y": 5328,
-   "route": null,
-   "settlement": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "the Lull plain",
-   "x": 8080,
-   "y": 5304,
-   "route": null,
-   "settlement": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the Lull plain",
-   "x": 8160,
-   "y": 5264,
+   "x": 8136,
+   "y": 5312,
    "route": null,
    "settlement": "Gullwick"
   },
@@ -10944,35 +11026,8 @@
    "type": "story",
    "name": "old boot",
    "biome": "the Lull plain",
-   "x": 7896,
-   "y": 5360,
-   "route": null,
-   "settlement": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the Lull plain",
-   "x": 8112,
+   "x": 8064,
    "y": 5208,
-   "route": null,
-   "settlement": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the Lull plain",
-   "x": 7912,
-   "y": 5272,
-   "route": null,
-   "settlement": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the Lull plain",
-   "x": 7944,
-   "y": 5168,
    "route": null,
    "settlement": "Gullwick"
   },
@@ -10980,62 +11035,71 @@
    "type": "story",
    "name": "mended fence",
    "biome": "the Lull plain",
-   "x": 8176,
-   "y": 5192,
+   "x": 8088,
+   "y": 5344,
    "route": null,
    "settlement": "Gullwick"
   },
   {
    "type": "story",
-   "name": "marker stone",
+   "name": "mended fence",
    "biome": "the Lull plain",
-   "x": 8088,
+   "x": 7864,
+   "y": 5328,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 7888,
+   "y": 5248,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 7976,
    "y": 5216,
    "route": null,
    "settlement": "Gullwick"
   },
   {
    "type": "story",
-   "name": "marker stone",
+   "name": "lost hat",
    "biome": "the Lull plain",
-   "x": 8184,
-   "y": 5200,
+   "x": 7912,
+   "y": 5320,
    "route": null,
    "settlement": "Gullwick"
   },
   {
    "type": "story",
-   "name": "cairn",
+   "name": "cart with a broken wheel",
    "biome": "the Lull plain",
-   "x": 8016,
-   "y": 5200,
+   "x": 8064,
+   "y": 5192,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Lull plain",
+   "x": 7920,
+   "y": 5216,
    "route": null,
    "settlement": "Gullwick"
   },
   {
    "type": "interactable",
-   "name": "gate",
-   "biome": "",
-   "x": 11776,
-   "y": 3832,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
+   "name": "signpost",
    "biome": "Neon Harbour",
-   "x": 10744,
-   "y": 4392,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 11720,
-   "y": 5360,
+   "x": 11080,
+   "y": 4928,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11043,8 +11107,251 @@
    "type": "interactable",
    "name": "signpost",
    "biome": "Neon Harbour",
-   "x": 11656,
-   "y": 4304,
+   "x": 11288,
+   "y": 4568,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 11720,
+   "y": 4936,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11912,
+   "y": 4920,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 11288,
+   "y": 4704,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 11568,
+   "y": 5360,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 10688,
+   "y": 5192,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 10384,
+   "y": 4440,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "",
+   "x": 10512,
+   "y": 4064,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 12040,
+   "y": 4432,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 10808,
+   "y": 4440,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 11368,
+   "y": 4744,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "",
+   "x": 10688,
+   "y": 4064,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 10704,
+   "y": 4896,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 11728,
+   "y": 5352,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 11040,
+   "y": 4672,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11272,
+   "y": 5296,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 11504,
+   "y": 5264,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 11568,
+   "y": 4848,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "",
+   "x": 11104,
+   "y": 3816,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 12024,
+   "y": 4384,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 11752,
+   "y": 4928,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 11920,
+   "y": 5168,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 10856,
+   "y": 5056,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 11560,
+   "y": 5200,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 12184,
+   "y": 4592,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 11304,
+   "y": 5472,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11800,
+   "y": 5104,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "",
+   "x": 10760,
+   "y": 3928,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11053,187 +11360,7 @@
    "name": "gate",
    "biome": "Neon Harbour",
    "x": 11680,
-   "y": 4848,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "Neon Harbour",
-   "x": 10600,
-   "y": 5176,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 11872,
-   "y": 4928,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 11456,
-   "y": 5472,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "",
-   "x": 11328,
-   "y": 3808,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "",
-   "x": 10608,
-   "y": 3952,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 11272,
-   "y": 5288,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 11368,
-   "y": 4672,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 11584,
-   "y": 4240,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11456,
-   "y": 5296,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 10920,
-   "y": 4600,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "",
-   "x": 11600,
-   "y": 4128,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 10392,
-   "y": 4440,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "Neon Harbour",
-   "x": 11632,
-   "y": 4288,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11720,
-   "y": 5032,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "",
-   "x": 10736,
-   "y": 3936,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 10528,
-   "y": 4408,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11240,
-   "y": 4280,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 12024,
-   "y": 4920,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "",
-   "x": 11768,
-   "y": 3936,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11192,
-   "y": 4928,
+   "y": 5344,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11248,37 +11375,10 @@
   },
   {
    "type": "interactable",
-   "name": "resident",
-   "biome": "",
-   "x": 11520,
-   "y": 3856,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
+   "name": "water trough",
    "biome": "Neon Harbour",
-   "x": 11576,
-   "y": 5256,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11224,
-   "y": 4944,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "Neon Harbour",
-   "x": 11552,
-   "y": 4248,
+   "x": 11624,
+   "y": 5352,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11286,8 +11386,116 @@
    "type": "interactable",
    "name": "bench",
    "biome": "Neon Harbour",
-   "x": 11808,
-   "y": 5040,
+   "x": 11400,
+   "y": 4408,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 10648,
+   "y": 5280,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "",
+   "x": 10520,
+   "y": 4136,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 11784,
+   "y": 4928,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 11832,
+   "y": 4440,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 11264,
+   "y": 4368,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "",
+   "x": 11936,
+   "y": 4016,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "",
+   "x": 11552,
+   "y": 4160,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "",
+   "x": 11320,
+   "y": 3808,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "",
+   "x": 10752,
+   "y": 4168,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 11040,
+   "y": 4992,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11920,
+   "y": 4752,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 11872,
+   "y": 4216,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11295,8 +11503,188 @@
    "type": "interactable",
    "name": "door",
    "biome": "Neon Harbour",
-   "x": 10736,
-   "y": 5352,
+   "x": 11112,
+   "y": 4624,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "",
+   "x": 11752,
+   "y": 3936,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "",
+   "x": 11760,
+   "y": 3832,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "",
+   "x": 10584,
+   "y": 3952,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "",
+   "x": 11456,
+   "y": 3712,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "",
+   "x": 11728,
+   "y": 3888,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11280,
+   "y": 4792,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11264,
+   "y": 4200,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 11688,
+   "y": 4528,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 11528,
+   "y": 4240,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10472,
+   "y": 4256,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "",
+   "x": 11992,
+   "y": 4120,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 10552,
+   "y": 4600,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11400,
+   "y": 4856,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 11104,
+   "y": 4944,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "",
+   "x": 10712,
+   "y": 3936,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 11328,
+   "y": 5368,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "",
+   "x": 11784,
+   "y": 4120,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11680,
+   "y": 5296,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 10944,
+   "y": 4648,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 11072,
+   "y": 5304,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11312,45 +11700,9 @@
   {
    "type": "interactable",
    "name": "noticeboard",
-   "biome": "",
-   "x": 11472,
-   "y": 4056,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "",
-   "x": 12032,
-   "y": 4120,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
    "biome": "Neon Harbour",
-   "x": 11896,
-   "y": 4928,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "",
-   "x": 11416,
-   "y": 4160,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "Neon Harbour",
-   "x": 11928,
-   "y": 4216,
+   "x": 10488,
+   "y": 4232,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11358,17 +11710,26 @@
    "type": "interactable",
    "name": "door",
    "biome": "Neon Harbour",
-   "x": 12080,
-   "y": 4968,
+   "x": 10464,
+   "y": 4408,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "interactable",
-   "name": "resident",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 11152,
+   "y": 5208,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
    "biome": "",
-   "x": 10632,
-   "y": 4024,
+   "x": 10744,
+   "y": 3880,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11376,17 +11737,71 @@
    "type": "interactable",
    "name": "gate",
    "biome": "Neon Harbour",
-   "x": 11024,
-   "y": 4896,
+   "x": 11696,
+   "y": 4456,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "interactable",
-   "name": "door",
+   "name": "noticeboard",
    "biome": "",
-   "x": 10968,
-   "y": 3976,
+   "x": 11544,
+   "y": 4128,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 11128,
+   "y": 5288,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 10440,
+   "y": 4864,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 11960,
+   "y": 4640,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 10472,
+   "y": 4376,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "",
+   "x": 11504,
+   "y": 3856,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "",
+   "x": 10600,
+   "y": 4024,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11402,134 +11817,8 @@
   {
    "type": "interactable",
    "name": "noticeboard",
-   "biome": "Neon Harbour",
-   "x": 11472,
-   "y": 4744,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
    "biome": "",
-   "x": 10800,
-   "y": 4168,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11384,
-   "y": 4704,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 10992,
-   "y": 5192,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 11272,
-   "y": 4992,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "Neon Harbour",
-   "x": 10640,
-   "y": 4376,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "",
-   "x": 10720,
-   "y": 4064,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "Neon Harbour",
-   "x": 12096,
-   "y": 4384,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "Neon Harbour",
-   "x": 11776,
-   "y": 4528,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 11040,
-   "y": 4448,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "Neon Harbour",
-   "x": 11648,
-   "y": 5264,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 11472,
-   "y": 4408,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "",
-   "x": 10824,
-   "y": 3952,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 10456,
-   "y": 4440,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "",
-   "x": 11264,
+   "x": 11256,
    "y": 3800,
    "route": null,
    "settlement": "Neon Harbour"
@@ -11538,224 +11827,8 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "Neon Harbour",
-   "x": 10672,
-   "y": 4232,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "",
-   "x": 10560,
-   "y": 4136,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 11936,
-   "y": 5104,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "",
-   "x": 10680,
-   "y": 4104,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "",
-   "x": 11712,
-   "y": 4088,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 11728,
-   "y": 4368,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 10880,
-   "y": 4440,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 10544,
-   "y": 4536,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "Neon Harbour",
-   "x": 11224,
-   "y": 5304,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "",
-   "x": 10752,
-   "y": 3880,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11904,
-   "y": 4440,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "Neon Harbour",
-   "x": 12024,
-   "y": 4752,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "",
-   "x": 11824,
-   "y": 4120,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "",
-   "x": 11608,
-   "y": 4160,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 11008,
-   "y": 5056,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11048,
-   "y": 5240,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "",
-   "x": 11968,
-   "y": 4016,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 12104,
-   "y": 4536,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "Neon Harbour",
-   "x": 11056,
-   "y": 5360,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "Neon Harbour",
-   "x": 10952,
-   "y": 4600,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 11376,
-   "y": 4568,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 10408,
-   "y": 4648,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 11512,
-   "y": 4856,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 11184,
-   "y": 4920,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "",
-   "x": 11088,
-   "y": 3712,
+   "x": 11176,
+   "y": 5296,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -11763,296 +11836,8 @@
    "type": "story",
    "name": "tracks",
    "biome": "Neon Harbour",
-   "x": 11632,
-   "y": 4688,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "Neon Harbour",
-   "x": 11072,
-   "y": 4280,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "Neon Harbour",
-   "x": 11096,
-   "y": 4520,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "",
-   "x": 11808,
-   "y": 3960,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "",
-   "x": 11872,
-   "y": 3960,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "",
-   "x": 11248,
-   "y": 3944,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "",
-   "x": 11576,
-   "y": 3848,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "",
-   "x": 11320,
-   "y": 3920,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "Neon Harbour",
-   "x": 11136,
-   "y": 5464,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "Neon Harbour",
-   "x": 11032,
-   "y": 5064,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "Neon Harbour",
-   "x": 11376,
-   "y": 4352,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 11840,
-   "y": 5096,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "Neon Harbour",
-   "x": 11280,
-   "y": 4504,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "Neon Harbour",
-   "x": 11496,
-   "y": 5088,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "Neon Harbour",
-   "x": 10544,
-   "y": 4992,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "Neon Harbour",
-   "x": 11568,
+   "x": 11168,
    "y": 5416,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 11240,
-   "y": 5208,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "Neon Harbour",
-   "x": 11264,
-   "y": 4504,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "Neon Harbour",
-   "x": 10704,
-   "y": 4280,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "Neon Harbour",
-   "x": 10576,
-   "y": 5192,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "Neon Harbour",
-   "x": 11624,
-   "y": 4976,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "",
-   "x": 11432,
-   "y": 4152,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "Neon Harbour",
-   "x": 11464,
-   "y": 4256,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "Neon Harbour",
-   "x": 11480,
-   "y": 4560,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "",
-   "x": 11288,
-   "y": 3960,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "",
-   "x": 11936,
-   "y": 4016,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "Neon Harbour",
-   "x": 11272,
-   "y": 5112,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "",
-   "x": 11936,
-   "y": 4000,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 11200,
-   "y": 5016,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "",
-   "x": 11376,
-   "y": 4064,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "Neon Harbour",
-   "x": 11840,
-   "y": 4328,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "Neon Harbour",
-   "x": 10744,
-   "y": 4720,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "",
-   "x": 11536,
-   "y": 3816,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12067,46 +11852,46 @@
   },
   {
    "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 11072,
+   "y": 5016,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
    "name": "marker stone",
+   "biome": "",
+   "x": 10648,
+   "y": 4152,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 10712,
+   "y": 4912,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "",
+   "x": 11608,
+   "y": 4064,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
    "biome": "Neon Harbour",
    "x": 11464,
-   "y": 4416,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "Neon Harbour",
-   "x": 12024,
-   "y": 4776,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "",
-   "x": 11224,
-   "y": 3984,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "",
-   "x": 11416,
-   "y": 3768,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "Neon Harbour",
-   "x": 11608,
-   "y": 5264,
+   "y": 4344,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12114,44 +11899,26 @@
    "type": "story",
    "name": "marker stone",
    "biome": "",
-   "x": 10984,
-   "y": 3832,
+   "x": 11336,
+   "y": 4064,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "story",
-   "name": "mended fence",
+   "name": "old boot",
    "biome": "Neon Harbour",
-   "x": 11120,
-   "y": 5304,
+   "x": 11848,
+   "y": 4440,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "story",
-   "name": "tracks",
+   "name": "marker stone",
    "biome": "Neon Harbour",
-   "x": 10896,
-   "y": 4432,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "Neon Harbour",
-   "x": 11720,
-   "y": 5288,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 11080,
-   "y": 4856,
+   "x": 11152,
+   "y": 5048,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12159,17 +11926,89 @@
    "type": "story",
    "name": "old boot",
    "biome": "",
-   "x": 11680,
-   "y": 4032,
+   "x": 10792,
+   "y": 3904,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "",
+   "x": 11568,
+   "y": 4072,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "",
+   "x": 11304,
+   "y": 3920,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 11096,
+   "y": 5208,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "story",
    "name": "tracks",
+   "biome": "",
+   "x": 11856,
+   "y": 4128,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
    "biome": "Neon Harbour",
-   "x": 11448,
-   "y": 5440,
+   "x": 10568,
+   "y": 4720,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 11664,
+   "y": 4696,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 10992,
+   "y": 4520,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "",
+   "x": 11560,
+   "y": 3848,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 10600,
+   "y": 4712,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12177,7 +12016,160 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "Neon Harbour",
-   "x": 11920,
+   "x": 11680,
+   "y": 5128,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "",
+   "x": 10968,
+   "y": 3832,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 11728,
+   "y": 4736,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "",
+   "x": 11264,
+   "y": 3960,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 10640,
+   "y": 4280,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "",
+   "x": 11048,
+   "y": 4080,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 11168,
+   "y": 5088,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 11464,
+   "y": 5264,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11728,
+   "y": 4968,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 11336,
+   "y": 4632,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 10800,
+   "y": 4488,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "",
+   "x": 11536,
+   "y": 4008,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 11032,
+   "y": 4504,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11928,
+   "y": 4552,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 11568,
+   "y": 5288,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 11344,
+   "y": 4680,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 11408,
+   "y": 4256,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10936,
    "y": 4696,
    "route": null,
    "settlement": "Neon Harbour"
@@ -12186,89 +12178,17 @@
    "type": "story",
    "name": "marker stone",
    "biome": "",
-   "x": 10992,
-   "y": 3912,
+   "x": 11184,
+   "y": 4144,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "story",
-   "name": "marker stone",
-   "biome": "",
-   "x": 11000,
-   "y": 3760,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "",
-   "x": 11608,
-   "y": 4072,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "",
-   "x": 11896,
-   "y": 4128,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
+   "name": "cairn",
    "biome": "Neon Harbour",
-   "x": 10816,
-   "y": 5160,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "",
-   "x": 10976,
-   "y": 4088,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "Neon Harbour",
-   "x": 11520,
-   "y": 5032,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 10424,
-   "y": 4480,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "Neon Harbour",
-   "x": 12096,
-   "y": 4728,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 11848,
-   "y": 5032,
+   "x": 11008,
+   "y": 4280,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12276,26 +12196,62 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "Neon Harbour",
-   "x": 11040,
-   "y": 4912,
+   "x": 11720,
+   "y": 5296,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "story",
-   "name": "tracks",
+   "name": "cart with a broken wheel",
    "biome": "Neon Harbour",
-   "x": 10704,
-   "y": 4712,
+   "x": 11384,
+   "y": 4744,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 10424,
+   "y": 4992,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11144,
+   "y": 4976,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "story",
    "name": "cairn",
+   "biome": "",
+   "x": 10952,
+   "y": 3936,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
    "biome": "Neon Harbour",
-   "x": 12000,
-   "y": 5128,
+   "x": 11728,
+   "y": 4776,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 10680,
+   "y": 5160,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12303,8 +12259,44 @@
    "type": "story",
    "name": "tracks",
    "biome": "",
-   "x": 11440,
+   "x": 11200,
+   "y": 3984,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 11392,
+   "y": 4416,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "",
+   "x": 11432,
    "y": 3784,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "",
+   "x": 10880,
+   "y": 3744,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 11936,
+   "y": 4560,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12312,17 +12304,8 @@
    "type": "story",
    "name": "mended fence",
    "biome": "Neon Harbour",
-   "x": 10416,
-   "y": 4648,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "",
-   "x": 10944,
-   "y": 3920,
+   "x": 11784,
+   "y": 4328,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12330,8 +12313,89 @@
    "type": "story",
    "name": "tracks",
    "biome": "Neon Harbour",
-   "x": 12016,
-   "y": 4552,
+   "x": 12056,
+   "y": 4472,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "",
+   "x": 11904,
+   "y": 4016,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "",
+   "x": 11488,
+   "y": 4120,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "",
+   "x": 10640,
+   "y": 4000,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 12000,
+   "y": 4728,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 11800,
+   "y": 5216,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 11384,
+   "y": 4832,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "",
+   "x": 11792,
+   "y": 4064,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "",
+   "x": 11904,
+   "y": 4000,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11000,
+   "y": 4656,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12339,8 +12403,44 @@
    "type": "story",
    "name": "old boot",
    "biome": "",
-   "x": 10696,
-   "y": 4152,
+   "x": 11408,
+   "y": 3768,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 11600,
+   "y": 5360,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 11296,
+   "y": 4688,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "",
+   "x": 10504,
+   "y": 4144,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 11392,
+   "y": 4560,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12355,28 +12455,10 @@
   },
   {
    "type": "story",
-   "name": "mended fence",
-   "biome": "",
-   "x": 10968,
-   "y": 3936,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "",
-   "x": 11728,
-   "y": 4080,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
    "name": "marker stone",
    "biome": "Neon Harbour",
-   "x": 11144,
-   "y": 5472,
+   "x": 10872,
+   "y": 5296,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12384,8 +12466,62 @@
    "type": "story",
    "name": "tracks",
    "biome": "Neon Harbour",
-   "x": 11168,
-   "y": 5208,
+   "x": 11392,
+   "y": 5032,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "",
+   "x": 11088,
+   "y": 3712,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "",
+   "x": 10992,
+   "y": 3760,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 11136,
+   "y": 5112,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 10480,
+   "y": 4456,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 12136,
+   "y": 4368,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "",
+   "x": 11232,
+   "y": 3944,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12393,26 +12529,26 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "Neon Harbour",
-   "x": 11056,
-   "y": 4688,
+   "x": 10904,
+   "y": 5064,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "story",
-   "name": "marker stone",
-   "biome": "",
-   "x": 10808,
-   "y": 3904,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
+   "name": "lost hat",
    "biome": "Neon Harbour",
-   "x": 10416,
-   "y": 4376,
+   "x": 11968,
+   "y": 4640,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "",
+   "x": 11392,
+   "y": 4152,
    "route": null,
    "settlement": "Neon Harbour"
   },
@@ -12420,89 +12556,26 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "Neon Harbour",
-   "x": 12024,
-   "y": 4560,
+   "x": 10968,
+   "y": 4856,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "story",
-   "name": "marker stone",
-   "biome": "Neon Harbour",
-   "x": 11848,
-   "y": 4968,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "Neon Harbour",
-   "x": 10960,
-   "y": 5224,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "Neon Harbour",
-   "x": 11528,
-   "y": 4344,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
+   "name": "lost hat",
    "biome": "",
-   "x": 11112,
-   "y": 3848,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "",
-   "x": 10664,
-   "y": 4000,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "",
-   "x": 10552,
-   "y": 4144,
-   "route": null,
-   "settlement": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "Neon Harbour",
-   "x": 10480,
-   "y": 4712,
+   "x": 10928,
+   "y": 3920,
    "route": null,
    "settlement": "Neon Harbour"
   },
   {
    "type": "interactable",
-   "name": "gate",
+   "name": "water trough",
    "biome": "Neon Harbour",
-   "x": 12016,
-   "y": 6280,
-   "route": null,
-   "settlement": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 12192,
-   "y": 6432,
+   "x": 12104,
+   "y": 6248,
    "route": null,
    "settlement": "Launch Cape"
   },
@@ -12510,8 +12583,8 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "Neon Harbour",
-   "x": 11992,
-   "y": 6608,
+   "x": 12088,
+   "y": 6264,
    "route": null,
    "settlement": "Launch Cape"
   },
@@ -12519,89 +12592,71 @@
    "type": "interactable",
    "name": "resident",
    "biome": "Neon Harbour",
-   "x": 12136,
-   "y": 6376,
-   "route": null,
-   "settlement": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 12048,
-   "y": 6296,
-   "route": null,
-   "settlement": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 11984,
-   "y": 6536,
-   "route": null,
-   "settlement": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "Neon Harbour",
-   "x": 12056,
-   "y": 6512,
-   "route": null,
-   "settlement": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 12016,
-   "y": 6320,
-   "route": null,
-   "settlement": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 12104,
-   "y": 6328,
-   "route": null,
-   "settlement": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 12144,
-   "y": 6528,
-   "route": null,
-   "settlement": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "Neon Harbour",
-   "x": 11984,
+   "x": 11976,
    "y": 6256,
    "route": null,
    "settlement": "Launch Cape"
   },
   {
-   "type": "story",
-   "name": "lost hat",
+   "type": "interactable",
+   "name": "bench",
    "biome": "Neon Harbour",
-   "x": 12152,
+   "x": 12136,
+   "y": 6424,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 12128,
    "y": 6496,
    "route": null,
    "settlement": "Launch Cape"
   },
   {
-   "type": "story",
-   "name": "cold fire ring",
+   "type": "interactable",
+   "name": "water trough",
    "biome": "Neon Harbour",
-   "x": 12184,
-   "y": 6360,
+   "x": 12112,
+   "y": 6496,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 12176,
+   "y": 6280,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 12032,
+   "y": 6368,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 11912,
+   "y": 6304,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 12136,
+   "y": 6264,
    "route": null,
    "settlement": "Launch Cape"
   },
@@ -12610,25 +12665,52 @@
    "name": "mended fence",
    "biome": "Neon Harbour",
    "x": 12136,
-   "y": 6280,
+   "y": 6544,
    "route": null,
    "settlement": "Launch Cape"
   },
   {
    "type": "story",
-   "name": "cairn",
+   "name": "lost hat",
    "biome": "Neon Harbour",
-   "x": 12184,
-   "y": 6280,
+   "x": 12064,
+   "y": 6392,
    "route": null,
    "settlement": "Launch Cape"
   },
   {
    "type": "story",
-   "name": "mended fence",
+   "name": "marker stone",
    "biome": "Neon Harbour",
-   "x": 12120,
-   "y": 6488,
+   "x": 11928,
+   "y": 6312,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 12088,
+   "y": 6264,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 11976,
+   "y": 6576,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 12176,
+   "y": 6456,
    "route": null,
    "settlement": "Launch Cape"
   },
@@ -12636,44 +12718,8 @@
    "type": "interactable",
    "name": "signpost",
    "biome": "the Sunstone basin",
-   "x": 3064,
-   "y": 2984,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the Sunstone basin",
-   "x": 3304,
-   "y": 2560,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the Sunstone basin",
-   "x": 3336,
-   "y": 2824,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "the Sunstone basin",
-   "x": 3024,
-   "y": 2928,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "the Sunstone basin",
-   "x": 3384,
-   "y": 3072,
+   "x": 3496,
+   "y": 2624,
    "route": null,
    "settlement": "Palm Spring"
   },
@@ -12681,8 +12727,8 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "the Sunstone basin",
-   "x": 3288,
-   "y": 3096,
+   "x": 3376,
+   "y": 2808,
    "route": null,
    "settlement": "Palm Spring"
   },
@@ -12690,8 +12736,8 @@
    "type": "interactable",
    "name": "resident",
    "biome": "the Sunstone basin",
-   "x": 3424,
-   "y": 2544,
+   "x": 2984,
+   "y": 2848,
    "route": null,
    "settlement": "Palm Spring"
   },
@@ -12699,50 +12745,23 @@
    "type": "interactable",
    "name": "signpost",
    "biome": "the Sunstone basin",
-   "x": 3176,
+   "x": 3608,
    "y": 2768,
    "route": null,
    "settlement": "Palm Spring"
   },
   {
    "type": "interactable",
-   "name": "noticeboard",
+   "name": "door",
    "biome": "the Sunstone basin",
-   "x": 3456,
-   "y": 2880,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "the Sunstone basin",
-   "x": 3440,
-   "y": 2560,
+   "x": 3240,
+   "y": 2640,
    "route": null,
    "settlement": "Palm Spring"
   },
   {
    "type": "interactable",
    "name": "door",
-   "biome": "the Sunstone basin",
-   "x": 3328,
-   "y": 2696,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "the Sunstone basin",
-   "x": 3408,
-   "y": 2928,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
    "biome": "the Sunstone basin",
    "x": 3304,
    "y": 2856,
@@ -12750,29 +12769,74 @@
    "settlement": "Palm Spring"
   },
   {
-   "type": "story",
-   "name": "cold fire ring",
+   "type": "interactable",
+   "name": "resident",
    "biome": "the Sunstone basin",
-   "x": 3600,
-   "y": 2768,
+   "x": 3472,
+   "y": 2616,
    "route": null,
    "settlement": "Palm Spring"
   },
   {
-   "type": "story",
-   "name": "mended fence",
+   "type": "interactable",
+   "name": "water trough",
    "biome": "the Sunstone basin",
-   "x": 3096,
+   "x": 3416,
+   "y": 2928,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 3320,
+   "y": 2648,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Sunstone basin",
+   "x": 3192,
+   "y": 2872,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Sunstone basin",
+   "x": 3104,
    "y": 2968,
    "route": null,
    "settlement": "Palm Spring"
   },
   {
    "type": "story",
-   "name": "cold fire ring",
+   "name": "lost hat",
    "biome": "the Sunstone basin",
    "x": 3056,
-   "y": 2928,
+   "y": 2656,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 3320,
+   "y": 2824,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 3312,
+   "y": 3080,
    "route": null,
    "settlement": "Palm Spring"
   },
@@ -12780,7 +12844,16 @@
    "type": "story",
    "name": "tracks",
    "biome": "the Sunstone basin",
-   "x": 3464,
+   "x": 3176,
+   "y": 2928,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 3040,
    "y": 2616,
    "route": null,
    "settlement": "Palm Spring"
@@ -12789,35 +12862,17 @@
    "type": "story",
    "name": "old boot",
    "biome": "the Sunstone basin",
-   "x": 3184,
-   "y": 2872,
+   "x": 3080,
+   "y": 2736,
    "route": null,
    "settlement": "Palm Spring"
   },
   {
    "type": "story",
-   "name": "cold fire ring",
+   "name": "tracks",
    "biome": "the Sunstone basin",
-   "x": 3240,
-   "y": 2640,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "the Sunstone basin",
-   "x": 3368,
-   "y": 2808,
-   "route": null,
-   "settlement": "Palm Spring"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the Sunstone basin",
-   "x": 3320,
-   "y": 2648,
+   "x": 3176,
+   "y": 2680,
    "route": null,
    "settlement": "Palm Spring"
   },
@@ -12825,8 +12880,35 @@
    "type": "story",
    "name": "lost hat",
    "biome": "the Sunstone basin",
-   "x": 2976,
-   "y": 2848,
+   "x": 3600,
+   "y": 2792,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 3072,
+   "y": 2824,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Sunstone basin",
+   "x": 3384,
+   "y": 2912,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 3328,
+   "y": 3088,
    "route": null,
    "settlement": "Palm Spring"
   },
@@ -12835,25 +12917,16 @@
    "name": "resident",
    "biome": "the Sunstone basin",
    "x": 2784,
-   "y": 2168,
+   "y": 2568,
    "route": null,
    "settlement": "Dust Gulch"
   },
   {
    "type": "interactable",
-   "name": "signpost",
+   "name": "gate",
    "biome": "the Sunstone basin",
-   "x": 2192,
-   "y": 2528,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the Sunstone basin",
-   "x": 2648,
-   "y": 2616,
+   "x": 2216,
+   "y": 2688,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -12861,8 +12934,17 @@
    "type": "interactable",
    "name": "bench",
    "biome": "the Sunstone basin",
-   "x": 2104,
-   "y": 2496,
+   "x": 2224,
+   "y": 2504,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 2336,
+   "y": 2136,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -12870,26 +12952,8 @@
    "type": "interactable",
    "name": "door",
    "biome": "the Sunstone basin",
-   "x": 2360,
-   "y": 2792,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the Sunstone basin",
-   "x": 2552,
-   "y": 2280,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the Sunstone basin",
-   "x": 2104,
-   "y": 2472,
+   "x": 2656,
+   "y": 2368,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -12897,8 +12961,8 @@
    "type": "interactable",
    "name": "resident",
    "biome": "the Sunstone basin",
-   "x": 2168,
-   "y": 2224,
+   "x": 2296,
+   "y": 2104,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -12906,8 +12970,8 @@
    "type": "interactable",
    "name": "resident",
    "biome": "the Sunstone basin",
-   "x": 2128,
-   "y": 2448,
+   "x": 2080,
+   "y": 2456,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -12915,8 +12979,26 @@
    "type": "interactable",
    "name": "water trough",
    "biome": "the Sunstone basin",
-   "x": 2456,
-   "y": 2472,
+   "x": 2616,
+   "y": 2208,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 2392,
+   "y": 2560,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 2728,
+   "y": 2320,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -12924,62 +13006,8 @@
    "type": "interactable",
    "name": "water trough",
    "biome": "the Sunstone basin",
-   "x": 2776,
-   "y": 2576,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the Sunstone basin",
-   "x": 2696,
-   "y": 2608,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the Sunstone basin",
-   "x": 2600,
-   "y": 2256,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the Sunstone basin",
-   "x": 2320,
-   "y": 2600,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the Sunstone basin",
-   "x": 2560,
-   "y": 2504,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the Sunstone basin",
-   "x": 2152,
-   "y": 2464,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "the Sunstone basin",
-   "x": 2568,
-   "y": 2464,
+   "x": 2296,
+   "y": 2408,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -12987,62 +13015,62 @@
    "type": "interactable",
    "name": "signpost",
    "biome": "the Sunstone basin",
-   "x": 2392,
-   "y": 2352,
+   "x": 2288,
+   "y": 2544,
    "route": null,
    "settlement": "Dust Gulch"
   },
   {
-   "type": "story",
-   "name": "cart with a broken wheel",
+   "type": "interactable",
+   "name": "signpost",
    "biome": "the Sunstone basin",
-   "x": 2368,
+   "x": 2520,
+   "y": 2456,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Sunstone basin",
+   "x": 2296,
+   "y": 2472,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Sunstone basin",
+   "x": 2488,
    "y": 2808,
    "route": null,
    "settlement": "Dust Gulch"
   },
   {
-   "type": "story",
-   "name": "marker stone",
+   "type": "interactable",
+   "name": "resident",
    "biome": "the Sunstone basin",
-   "x": 2736,
-   "y": 2136,
+   "x": 2296,
+   "y": 2648,
    "route": null,
    "settlement": "Dust Gulch"
   },
   {
-   "type": "story",
-   "name": "cairn",
+   "type": "interactable",
+   "name": "bench",
    "biome": "the Sunstone basin",
-   "x": 2848,
-   "y": 2576,
+   "x": 2184,
+   "y": 2648,
    "route": null,
    "settlement": "Dust Gulch"
   },
   {
-   "type": "story",
-   "name": "cairn",
+   "type": "interactable",
+   "name": "signpost",
    "biome": "the Sunstone basin",
-   "x": 2648,
-   "y": 2208,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "the Sunstone basin",
-   "x": 2176,
-   "y": 2680,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the Sunstone basin",
-   "x": 2624,
-   "y": 2688,
+   "x": 2320,
+   "y": 2176,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -13050,44 +13078,8 @@
    "type": "story",
    "name": "tracks",
    "biome": "the Sunstone basin",
-   "x": 2288,
-   "y": 2168,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the Sunstone basin",
-   "x": 2320,
-   "y": 2704,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the Sunstone basin",
-   "x": 2520,
-   "y": 2360,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the Sunstone basin",
-   "x": 2752,
-   "y": 2680,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the Sunstone basin",
-   "x": 2512,
-   "y": 2352,
+   "x": 2264,
+   "y": 2328,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -13095,53 +13087,35 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "the Sunstone basin",
-   "x": 2248,
-   "y": 2440,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the Sunstone basin",
    "x": 2312,
-   "y": 2656,
+   "y": 2672,
    "route": null,
    "settlement": "Dust Gulch"
   },
   {
    "type": "story",
-   "name": "old boot",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2216,
+   "y": 2272,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2776,
+   "y": 2168,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
    "biome": "the Sunstone basin",
    "x": 2672,
-   "y": 2528,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the Sunstone basin",
-   "x": 2680,
-   "y": 2424,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the Sunstone basin",
-   "x": 2304,
-   "y": 2560,
-   "route": null,
-   "settlement": "Dust Gulch"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the Sunstone basin",
-   "x": 2400,
-   "y": 2552,
+   "y": 2616,
    "route": null,
    "settlement": "Dust Gulch"
   },
@@ -13149,35 +13123,125 @@
    "type": "story",
    "name": "lost hat",
    "biome": "the Sunstone basin",
+   "x": 2280,
+   "y": 2600,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 2576,
+   "y": 2072,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2832,
+   "y": 2488,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 2392,
+   "y": 2560,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2256,
+   "y": 2768,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 2336,
+   "y": 2544,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2688,
+   "y": 2448,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
    "x": 2176,
-   "y": 2464,
+   "y": 2456,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 2760,
+   "y": 2352,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 2328,
+   "y": 2672,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2648,
+   "y": 2536,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 2352,
+   "y": 2096,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2360,
+   "y": 2072,
    "route": null,
    "settlement": "Dust Gulch"
   },
   {
    "type": "interactable",
-   "name": "gate",
-   "biome": "the Sunstone basin",
-   "x": 2920,
-   "y": 1712,
-   "route": null,
-   "settlement": "the Lode"
-  },
-  {
-   "type": "interactable",
    "name": "door",
    "biome": "the Sunstone basin",
-   "x": 2720,
+   "x": 2832,
    "y": 1592,
-   "route": null,
-   "settlement": "the Lode"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the Sunstone basin",
-   "x": 2936,
-   "y": 1672,
    "route": null,
    "settlement": "the Lode"
   },
@@ -13185,50 +13249,14 @@
    "type": "interactable",
    "name": "resident",
    "biome": "the Sunstone basin",
-   "x": 2904,
-   "y": 1664,
-   "route": null,
-   "settlement": "the Lode"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the Sunstone basin",
    "x": 2880,
-   "y": 1688,
-   "route": null,
-   "settlement": "the Lode"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "the Sunstone basin",
-   "x": 2840,
-   "y": 1744,
+   "y": 1624,
    "route": null,
    "settlement": "the Lode"
   },
   {
    "type": "interactable",
    "name": "door",
-   "biome": "the Sunstone basin",
-   "x": 2936,
-   "y": 1648,
-   "route": null,
-   "settlement": "the Lode"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the Sunstone basin",
-   "x": 2856,
-   "y": 1704,
-   "route": null,
-   "settlement": "the Lode"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
    "biome": "the Sunstone basin",
    "x": 2832,
    "y": 1520,
@@ -13236,56 +13264,92 @@
    "settlement": "the Lode"
   },
   {
-   "type": "story",
-   "name": "tracks",
+   "type": "interactable",
+   "name": "gate",
    "biome": "the Sunstone basin",
-   "x": 2880,
+   "x": 2920,
+   "y": 1720,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 2864,
+   "y": 1568,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2856,
+   "y": 1640,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the Sunstone basin",
+   "x": 2920,
+   "y": 1584,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 2864,
    "y": 1688,
    "route": null,
    "settlement": "the Lode"
   },
   {
    "type": "story",
-   "name": "cold fire ring",
-   "biome": "the Sunstone basin",
-   "x": 2872,
-   "y": 1568,
-   "route": null,
-   "settlement": "the Lode"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the Sunstone basin",
-   "x": 2704,
-   "y": 1608,
-   "route": null,
-   "settlement": "the Lode"
-  },
-  {
-   "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the Sunstone basin",
-   "x": 2896,
+   "x": 2928,
+   "y": 1640,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2704,
    "y": 1624,
    "route": null,
    "settlement": "the Lode"
   },
   {
    "type": "story",
-   "name": "mended fence",
+   "name": "tracks",
    "biome": "the Sunstone basin",
-   "x": 2768,
-   "y": 1664,
+   "x": 2864,
+   "y": 1744,
    "route": null,
    "settlement": "the Lode"
   },
   {
    "type": "story",
-   "name": "lost hat",
+   "name": "cairn",
    "biome": "the Sunstone basin",
-   "x": 2824,
-   "y": 1568,
+   "x": 2752,
+   "y": 1616,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 2896,
+   "y": 1704,
    "route": null,
    "settlement": "the Lode"
   },
@@ -13293,80 +13357,44 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the Sunstone basin",
+   "x": 2824,
+   "y": 1728,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2936,
+   "y": 1648,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
    "x": 2848,
-   "y": 1744,
+   "y": 1568,
    "route": null,
    "settlement": "the Lode"
   },
   {
    "type": "interactable",
-   "name": "water trough",
-   "biome": "the fire country",
-   "x": 1904,
-   "y": 5328,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "the fire country",
-   "x": 2016,
-   "y": 5416,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the fire country",
-   "x": 1888,
-   "y": 5232,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the fire country",
-   "x": 2152,
-   "y": 5576,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the fire country",
-   "x": 2088,
-   "y": 5544,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
    "name": "bench",
    "biome": "the fire country",
-   "x": 1992,
-   "y": 5032,
+   "x": 2440,
+   "y": 5384,
    "route": null,
    "settlement": "Hearthold"
   },
   {
    "type": "interactable",
-   "name": "door",
+   "name": "noticeboard",
    "biome": "the fire country",
-   "x": 2144,
-   "y": 5600,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "the fire country",
-   "x": 2336,
-   "y": 5440,
+   "x": 1896,
+   "y": 5184,
    "route": null,
    "settlement": "Hearthold"
   },
@@ -13374,53 +13402,35 @@
    "type": "interactable",
    "name": "water trough",
    "biome": "the fire country",
-   "x": 2320,
-   "y": 5568,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the fire country",
-   "x": 2080,
-   "y": 5128,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the fire country",
-   "x": 1944,
-   "y": 5208,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the fire country",
-   "x": 2360,
-   "y": 5272,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the fire country",
-   "x": 2152,
+   "x": 2240,
    "y": 5288,
    "route": null,
    "settlement": "Hearthold"
   },
   {
    "type": "interactable",
-   "name": "noticeboard",
+   "name": "gate",
    "biome": "the fire country",
-   "x": 2384,
-   "y": 5424,
+   "x": 2168,
+   "y": 5136,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 1824,
+   "y": 5304,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 1984,
+   "y": 5552,
    "route": null,
    "settlement": "Hearthold"
   },
@@ -13428,8 +13438,53 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "the fire country",
-   "x": 2352,
-   "y": 5240,
+   "x": 1928,
+   "y": 5448,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the fire country",
+   "x": 2488,
+   "y": 5272,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the fire country",
+   "x": 1832,
+   "y": 5328,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 1976,
+   "y": 5416,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 1824,
+   "y": 5280,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 1984,
+   "y": 4928,
    "route": null,
    "settlement": "Hearthold"
   },
@@ -13437,8 +13492,143 @@
    "type": "interactable",
    "name": "resident",
    "biome": "the fire country",
-   "x": 2264,
-   "y": 5496,
+   "x": 2000,
+   "y": 5624,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2376,
+   "y": 5016,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2096,
+   "y": 4888,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 1928,
+   "y": 4944,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2080,
+   "y": 5088,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2008,
+   "y": 5104,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 2064,
+   "y": 5352,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 1920,
+   "y": 5384,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 1920,
+   "y": 4960,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2040,
+   "y": 5248,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 2416,
+   "y": 5384,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2048,
+   "y": 5080,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 1880,
+   "y": 5072,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 2072,
+   "y": 5488,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 1912,
+   "y": 5192,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 2096,
+   "y": 4928,
    "route": null,
    "settlement": "Hearthold"
   },
@@ -13447,106 +13637,7 @@
    "name": "cairn",
    "biome": "the fire country",
    "x": 1992,
-   "y": 5312,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "the fire country",
-   "x": 2360,
-   "y": 5016,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "the fire country",
-   "x": 2136,
-   "y": 5040,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the fire country",
-   "x": 1880,
-   "y": 5264,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the fire country",
-   "x": 2064,
-   "y": 5416,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the fire country",
-   "x": 2144,
-   "y": 5136,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the fire country",
-   "x": 2520,
-   "y": 5272,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the fire country",
-   "x": 2496,
-   "y": 5112,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the fire country",
-   "x": 1880,
-   "y": 5224,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "the fire country",
-   "x": 2424,
-   "y": 5296,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the fire country",
-   "x": 2544,
-   "y": 5320,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the fire country",
-   "x": 2176,
-   "y": 4960,
+   "y": 5392,
    "route": null,
    "settlement": "Hearthold"
   },
@@ -13554,53 +13645,35 @@
    "type": "story",
    "name": "cairn",
    "biome": "the fire country",
-   "x": 1912,
-   "y": 5456,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the fire country",
-   "x": 1896,
-   "y": 5384,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the fire country",
-   "x": 2376,
-   "y": 5384,
-   "route": null,
-   "settlement": "Hearthold"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the fire country",
-   "x": 2136,
+   "x": 2528,
    "y": 5360,
    "route": null,
    "settlement": "Hearthold"
   },
   {
-   "type": "interactable",
-   "name": "water trough",
+   "type": "story",
+   "name": "cart with a broken wheel",
    "biome": "the fire country",
-   "x": 2152,
-   "y": 5048,
+   "x": 2376,
+   "y": 4968,
    "route": null,
-   "settlement": "Ember forge"
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 2232,
+   "y": 5184,
+   "route": null,
+   "settlement": "Hearthold"
   },
   {
    "type": "interactable",
-   "name": "water trough",
+   "name": "resident",
    "biome": "the fire country",
-   "x": 2080,
-   "y": 5016,
+   "x": 2160,
+   "y": 5080,
    "route": null,
    "settlement": "Ember forge"
   },
@@ -13608,80 +13681,62 @@
    "type": "interactable",
    "name": "bench",
    "biome": "the fire country",
-   "x": 2016,
-   "y": 4992,
+   "x": 2200,
+   "y": 5056,
    "route": null,
    "settlement": "Ember forge"
   },
   {
    "type": "interactable",
-   "name": "water trough",
+   "name": "gate",
    "biome": "the fire country",
-   "x": 2120,
-   "y": 5064,
+   "x": 2136,
+   "y": 5080,
    "route": null,
    "settlement": "Ember forge"
   },
   {
    "type": "interactable",
-   "name": "water trough",
+   "name": "gate",
    "biome": "the fire country",
-   "x": 2216,
-   "y": 5024,
-   "route": null,
-   "settlement": "Ember forge"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the fire country",
-   "x": 2040,
-   "y": 4960,
-   "route": null,
-   "settlement": "Ember forge"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "the fire country",
-   "x": 2184,
+   "x": 2024,
    "y": 4968,
    "route": null,
    "settlement": "Ember forge"
   },
   {
    "type": "interactable",
-   "name": "noticeboard",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 2016,
+   "y": 4936,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 2224,
+   "y": 5000,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
    "biome": "the fire country",
    "x": 2056,
-   "y": 4904,
+   "y": 4952,
    "route": null,
    "settlement": "Ember forge"
   },
   {
-   "type": "story",
-   "name": "mended fence",
+   "type": "interactable",
+   "name": "noticeboard",
    "biome": "the fire country",
-   "x": 2096,
-   "y": 4920,
-   "route": null,
-   "settlement": "Ember forge"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the fire country",
-   "x": 2192,
-   "y": 5080,
-   "route": null,
-   "settlement": "Ember forge"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the fire country",
-   "x": 2064,
-   "y": 5064,
+   "x": 2048,
+   "y": 4952,
    "route": null,
    "settlement": "Ember forge"
   },
@@ -13689,35 +13744,35 @@
    "type": "story",
    "name": "tracks",
    "biome": "the fire country",
-   "x": 2080,
+   "x": 2232,
+   "y": 5000,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 2160,
+   "y": 5008,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2072,
    "y": 4944,
    "route": null,
    "settlement": "Ember forge"
   },
   {
    "type": "story",
-   "name": "old boot",
+   "name": "cart with a broken wheel",
    "biome": "the fire country",
-   "x": 2088,
-   "y": 5088,
-   "route": null,
-   "settlement": "Ember forge"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the fire country",
-   "x": 2152,
-   "y": 5048,
-   "route": null,
-   "settlement": "Ember forge"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "the fire country",
-   "x": 2096,
-   "y": 4904,
+   "x": 2248,
+   "y": 5016,
    "route": null,
    "settlement": "Ember forge"
   },
@@ -13725,35 +13780,44 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "the fire country",
+   "x": 2216,
+   "y": 5032,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 2216,
+   "y": 5000,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 2120,
+   "y": 5056,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
    "x": 2056,
-   "y": 5072,
+   "y": 5016,
    "route": null,
    "settlement": "Ember forge"
   },
   {
    "type": "interactable",
-   "name": "water trough",
-   "biome": "the fire country",
-   "x": 1768,
-   "y": 5704,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "the fire country",
-   "x": 1888,
-   "y": 5664,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "interactable",
    "name": "signpost",
    "biome": "the fire country",
-   "x": 1728,
-   "y": 5680,
+   "x": 1768,
+   "y": 5760,
    "route": null,
    "settlement": "Cinder Springs"
   },
@@ -13761,98 +13825,89 @@
    "type": "interactable",
    "name": "gate",
    "biome": "the fire country",
-   "x": 1840,
-   "y": 5720,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the fire country",
-   "x": 1936,
-   "y": 5744,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the fire country",
-   "x": 1944,
-   "y": 5472,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the fire country",
-   "x": 1960,
+   "x": 1808,
    "y": 5728,
    "route": null,
    "settlement": "Cinder Springs"
   },
   {
    "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the fire country",
+   "x": 1800,
+   "y": 5592,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 1936,
+   "y": 5600,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
    "name": "resident",
    "biome": "the fire country",
-   "x": 1864,
+   "x": 1752,
    "y": 5720,
    "route": null,
    "settlement": "Cinder Springs"
   },
   {
-   "type": "story",
-   "name": "old boot",
+   "type": "interactable",
+   "name": "bench",
    "biome": "the fire country",
-   "x": 1912,
+   "x": 1840,
+   "y": 5584,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 1760,
+   "y": 5632,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 1736,
+   "y": 5592,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 1752,
    "y": 5752,
    "route": null,
    "settlement": "Cinder Springs"
   },
   {
    "type": "story",
-   "name": "cart with a broken wheel",
+   "name": "cairn",
    "biome": "the fire country",
-   "x": 1992,
+   "x": 1896,
    "y": 5544,
    "route": null,
    "settlement": "Cinder Springs"
   },
   {
    "type": "story",
-   "name": "old boot",
+   "name": "tracks",
    "biome": "the fire country",
-   "x": 1792,
-   "y": 5736,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the fire country",
-   "x": 1816,
-   "y": 5592,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the fire country",
-   "x": 1872,
-   "y": 5696,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the fire country",
-   "x": 1752,
-   "y": 5592,
+   "x": 1992,
+   "y": 5664,
    "route": null,
    "settlement": "Cinder Springs"
   },
@@ -13860,7 +13915,16 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "the fire country",
-   "x": 1784,
+   "x": 2000,
+   "y": 5616,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 1960,
    "y": 5720,
    "route": null,
    "settlement": "Cinder Springs"
@@ -13869,223 +13933,34 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the fire country",
-   "x": 1928,
-   "y": 5480,
-   "route": null,
-   "settlement": "Cinder Springs"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the fire country",
-   "x": 2504,
-   "y": 5488,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the fire country",
-   "x": 2672,
+   "x": 1896,
    "y": 5768,
    "route": null,
-   "settlement": "Cinderwick"
+   "settlement": "Cinder Springs"
   },
   {
-   "type": "interactable",
-   "name": "bench",
+   "type": "story",
+   "name": "marker stone",
    "biome": "the fire country",
-   "x": 2376,
-   "y": 5888,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the fire country",
-   "x": 2528,
-   "y": 5720,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "the fire country",
-   "x": 2568,
-   "y": 5824,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the fire country",
-   "x": 2304,
-   "y": 5640,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the fire country",
-   "x": 2560,
-   "y": 5504,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the fire country",
-   "x": 2624,
-   "y": 5928,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the fire country",
-   "x": 2408,
-   "y": 5640,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the fire country",
-   "x": 2592,
+   "x": 1792,
    "y": 5472,
    "route": null,
-   "settlement": "Cinderwick"
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 1784,
+   "y": 5448,
+   "route": null,
+   "settlement": "Cinder Springs"
   },
   {
    "type": "interactable",
-   "name": "noticeboard",
+   "name": "resident",
    "biome": "the fire country",
-   "x": 2456,
-   "y": 5480,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "the fire country",
-   "x": 2208,
-   "y": 6056,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the fire country",
-   "x": 2280,
-   "y": 6048,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the fire country",
-   "x": 2744,
-   "y": 5928,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the fire country",
-   "x": 2768,
-   "y": 5696,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the fire country",
-   "x": 2560,
-   "y": 5760,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "the fire country",
-   "x": 2560,
-   "y": 5608,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "the fire country",
-   "x": 2624,
-   "y": 5776,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the fire country",
-   "x": 2560,
-   "y": 5864,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the fire country",
-   "x": 2088,
-   "y": 5776,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the fire country",
-   "x": 2776,
-   "y": 5624,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the fire country",
-   "x": 2280,
-   "y": 5808,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the fire country",
-   "x": 2592,
-   "y": 5592,
-   "route": null,
-   "settlement": "Cinderwick"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the fire country",
-   "x": 2184,
+   "x": 2200,
    "y": 5784,
    "route": null,
    "settlement": "Cinderwick"
@@ -14093,18 +13968,216 @@
   {
    "type": "interactable",
    "name": "noticeboard",
-   "biome": "the coast and the isles",
-   "x": 6864,
-   "y": 6232,
+   "biome": "the fire country",
+   "x": 2784,
+   "y": 5624,
    "route": null,
-   "settlement": "Lagoon Landing"
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the fire country",
+   "x": 2704,
+   "y": 5728,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2296,
+   "y": 5808,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2640,
+   "y": 5776,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the fire country",
+   "x": 2768,
+   "y": 5928,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the fire country",
+   "x": 2120,
+   "y": 6056,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2104,
+   "y": 5776,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the fire country",
+   "x": 2776,
+   "y": 5696,
+   "route": null,
+   "settlement": "Cinderwick"
   },
   {
    "type": "interactable",
    "name": "door",
+   "biome": "the fire country",
+   "x": 2112,
+   "y": 5736,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the fire country",
+   "x": 2576,
+   "y": 5760,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the fire country",
+   "x": 2256,
+   "y": 5760,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2104,
+   "y": 5704,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 2288,
+   "y": 5496,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 2264,
+   "y": 5800,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 2160,
+   "y": 5720,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 2112,
+   "y": 5800,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2608,
+   "y": 5688,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 2344,
+   "y": 5496,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2712,
+   "y": 5920,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2328,
+   "y": 5968,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2576,
+   "y": 5488,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2328,
+   "y": 5960,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2856,
+   "y": 5864,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
    "biome": "the coast and the isles",
-   "x": 6264,
-   "y": 6544,
+   "x": 6448,
+   "y": 6536,
    "route": null,
    "settlement": "Lagoon Landing"
   },
@@ -14112,8 +14185,8 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "the coast and the isles",
-   "x": 6264,
-   "y": 6424,
+   "x": 6480,
+   "y": 6368,
    "route": null,
    "settlement": "Lagoon Landing"
   },
@@ -14121,44 +14194,8 @@
    "type": "interactable",
    "name": "door",
    "biome": "the coast and the isles",
-   "x": 6816,
-   "y": 6232,
-   "route": null,
-   "settlement": "Lagoon Landing"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the coast and the isles",
-   "x": 6280,
-   "y": 6696,
-   "route": null,
-   "settlement": "Lagoon Landing"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the coast and the isles",
-   "x": 6544,
-   "y": 6608,
-   "route": null,
-   "settlement": "Lagoon Landing"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the coast and the isles",
-   "x": 6496,
-   "y": 6440,
-   "route": null,
-   "settlement": "Lagoon Landing"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the coast and the isles",
-   "x": 6384,
-   "y": 6544,
+   "x": 6736,
+   "y": 6552,
    "route": null,
    "settlement": "Lagoon Landing"
   },
@@ -14166,8 +14203,62 @@
    "type": "interactable",
    "name": "bench",
    "biome": "the coast and the isles",
-   "x": 6856,
-   "y": 6224,
+   "x": 6928,
+   "y": 6496,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the coast and the isles",
+   "x": 6536,
+   "y": 6560,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the coast and the isles",
+   "x": 6496,
+   "y": 6664,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the coast and the isles",
+   "x": 6216,
+   "y": 6608,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coast and the isles",
+   "x": 6456,
+   "y": 6544,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the coast and the isles",
+   "x": 6472,
+   "y": 6392,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coast and the isles",
+   "x": 6648,
+   "y": 6336,
    "route": null,
    "settlement": "Lagoon Landing"
   },
@@ -14175,17 +14266,35 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the coast and the isles",
-   "x": 6760,
-   "y": 6224,
+   "x": 6848,
+   "y": 6368,
    "route": null,
    "settlement": "Lagoon Landing"
   },
   {
    "type": "story",
-   "name": "cold fire ring",
+   "name": "cairn",
    "biome": "the coast and the isles",
-   "x": 6232,
-   "y": 6608,
+   "x": 6320,
+   "y": 6528,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the coast and the isles",
+   "x": 6680,
+   "y": 6352,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the coast and the isles",
+   "x": 6688,
+   "y": 6296,
    "route": null,
    "settlement": "Lagoon Landing"
   },
@@ -14193,35 +14302,8 @@
    "type": "story",
    "name": "old boot",
    "biome": "the coast and the isles",
-   "x": 6936,
-   "y": 6496,
-   "route": null,
-   "settlement": "Lagoon Landing"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the coast and the isles",
-   "x": 6632,
-   "y": 6568,
-   "route": null,
-   "settlement": "Lagoon Landing"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the coast and the isles",
-   "x": 6240,
-   "y": 6672,
-   "route": null,
-   "settlement": "Lagoon Landing"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the coast and the isles",
-   "x": 6464,
-   "y": 6536,
+   "x": 6488,
+   "y": 6360,
    "route": null,
    "settlement": "Lagoon Landing"
   },
@@ -14229,44 +14311,35 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the coast and the isles",
-   "x": 6336,
-   "y": 6384,
+   "x": 6424,
+   "y": 6768,
    "route": null,
    "settlement": "Lagoon Landing"
   },
   {
    "type": "story",
-   "name": "tracks",
+   "name": "mended fence",
    "biome": "the coast and the isles",
-   "x": 6480,
-   "y": 6392,
+   "x": 6600,
+   "y": 6488,
    "route": null,
    "settlement": "Lagoon Landing"
   },
   {
    "type": "story",
-   "name": "cold fire ring",
+   "name": "cart with a broken wheel",
    "biome": "the coast and the isles",
-   "x": 6472,
-   "y": 6544,
+   "x": 6680,
+   "y": 6816,
    "route": null,
    "settlement": "Lagoon Landing"
   },
   {
    "type": "interactable",
-   "name": "water trough",
+   "name": "door",
    "biome": "the massif and the Frostline",
-   "x": 8216,
-   "y": 1152,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the massif and the Frostline",
-   "x": 7880,
-   "y": 952,
+   "x": 7832,
+   "y": 1168,
    "route": null,
    "settlement": "Highgarth"
   },
@@ -14274,17 +14347,8 @@
    "type": "interactable",
    "name": "signpost",
    "biome": "the massif and the Frostline",
-   "x": 7664,
-   "y": 936,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "biome": "the massif and the Frostline",
-   "x": 8072,
-   "y": 1320,
+   "x": 7632,
+   "y": 1256,
    "route": null,
    "settlement": "Highgarth"
   },
@@ -14292,53 +14356,8 @@
    "type": "interactable",
    "name": "gate",
    "biome": "the massif and the Frostline",
-   "x": 7928,
-   "y": 944,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the massif and the Frostline",
-   "x": 7904,
-   "y": 968,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "the massif and the Frostline",
-   "x": 7760,
-   "y": 1512,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the massif and the Frostline",
-   "x": 8048,
-   "y": 1152,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the massif and the Frostline",
-   "x": 7904,
-   "y": 1472,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the massif and the Frostline",
-   "x": 7816,
-   "y": 1440,
+   "x": 7696,
+   "y": 1088,
    "route": null,
    "settlement": "Highgarth"
   },
@@ -14346,41 +14365,68 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "the massif and the Frostline",
-   "x": 8032,
-   "y": 1216,
+   "x": 7728,
+   "y": 1384,
    "route": null,
    "settlement": "Highgarth"
   },
   {
    "type": "interactable",
-   "name": "resident",
+   "name": "noticeboard",
    "biome": "the massif and the Frostline",
-   "x": 7776,
-   "y": 896,
+   "x": 7920,
+   "y": 1344,
    "route": null,
    "settlement": "Highgarth"
   },
   {
-   "type": "story",
-   "name": "mended fence",
+   "type": "interactable",
+   "name": "bench",
    "biome": "the massif and the Frostline",
-   "x": 7680,
+   "x": 8072,
+   "y": 1360,
+   "route": null,
+   "settlement": "Highgarth"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the massif and the Frostline",
+   "x": 7696,
+   "y": 1080,
+   "route": null,
+   "settlement": "Highgarth"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the massif and the Frostline",
+   "x": 8104,
+   "y": 1456,
+   "route": null,
+   "settlement": "Highgarth"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the massif and the Frostline",
+   "x": 7688,
    "y": 904,
    "route": null,
    "settlement": "Highgarth"
   },
   {
-   "type": "story",
-   "name": "lost hat",
+   "type": "interactable",
+   "name": "door",
    "biome": "the massif and the Frostline",
-   "x": 7688,
-   "y": 1088,
+   "x": 7992,
+   "y": 1120,
    "route": null,
    "settlement": "Highgarth"
   },
   {
-   "type": "story",
-   "name": "cart with a broken wheel",
+   "type": "interactable",
+   "name": "gate",
    "biome": "the massif and the Frostline",
    "x": 8152,
    "y": 960,
@@ -14388,44 +14434,8 @@
    "settlement": "Highgarth"
   },
   {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the massif and the Frostline",
-   "x": 7896,
-   "y": 1072,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the massif and the Frostline",
-   "x": 7816,
-   "y": 1168,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the massif and the Frostline",
-   "x": 8048,
-   "y": 1472,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "the massif and the Frostline",
-   "x": 7688,
-   "y": 1384,
-   "route": null,
-   "settlement": "Highgarth"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
+   "type": "interactable",
+   "name": "bench",
    "biome": "the massif and the Frostline",
    "x": 7856,
    "y": 840,
@@ -14434,10 +14444,10 @@
   },
   {
    "type": "story",
-   "name": "cold fire ring",
+   "name": "tracks",
    "biome": "the massif and the Frostline",
-   "x": 8080,
-   "y": 1456,
+   "x": 8040,
+   "y": 1216,
    "route": null,
    "settlement": "Highgarth"
   },
@@ -14445,17 +14455,35 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the massif and the Frostline",
-   "x": 8056,
-   "y": 1360,
+   "x": 7616,
+   "y": 1240,
    "route": null,
    "settlement": "Highgarth"
   },
   {
    "type": "story",
-   "name": "old boot",
+   "name": "mended fence",
    "biome": "the massif and the Frostline",
-   "x": 8128,
-   "y": 1336,
+   "x": 7824,
+   "y": 1024,
+   "route": null,
+   "settlement": "Highgarth"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the massif and the Frostline",
+   "x": 7776,
+   "y": 928,
+   "route": null,
+   "settlement": "Highgarth"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the massif and the Frostline",
+   "x": 7712,
+   "y": 1064,
    "route": null,
    "settlement": "Highgarth"
   },
@@ -14463,104 +14491,68 @@
    "type": "story",
    "name": "marker stone",
    "biome": "the massif and the Frostline",
-   "x": 7976,
-   "y": 1120,
+   "x": 7632,
+   "y": 1328,
    "route": null,
    "settlement": "Highgarth"
   },
   {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "Neon Harbour",
-   "x": 11784,
-   "y": 5640,
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the massif and the Frostline",
+   "x": 8136,
+   "y": 1224,
    "route": null,
-   "settlement": "Halcyon Row"
+   "settlement": "Highgarth"
   },
   {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "Neon Harbour",
-   "x": 11880,
-   "y": 5640,
+   "type": "story",
+   "name": "tracks",
+   "biome": "the massif and the Frostline",
+   "x": 7880,
+   "y": 1240,
    "route": null,
-   "settlement": "Halcyon Row"
+   "settlement": "Highgarth"
   },
   {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 12192,
-   "y": 5744,
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the massif and the Frostline",
+   "x": 7872,
+   "y": 1440,
    "route": null,
-   "settlement": "Halcyon Row"
+   "settlement": "Highgarth"
   },
   {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "Neon Harbour",
-   "x": 12200,
-   "y": 5512,
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the massif and the Frostline",
+   "x": 8088,
+   "y": 1400,
    "route": null,
-   "settlement": "Halcyon Row"
+   "settlement": "Highgarth"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the massif and the Frostline",
+   "x": 8248,
+   "y": 1240,
+   "route": null,
+   "settlement": "Highgarth"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the massif and the Frostline",
+   "x": 8168,
+   "y": 1424,
+   "route": null,
+   "settlement": "Highgarth"
   },
   {
    "type": "interactable",
    "name": "resident",
-   "biome": "Neon Harbour",
-   "x": 12016,
-   "y": 5464,
-   "route": null,
-   "settlement": "Halcyon Row"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 12184,
-   "y": 5632,
-   "route": null,
-   "settlement": "Halcyon Row"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "Neon Harbour",
-   "x": 11824,
-   "y": 5632,
-   "route": null,
-   "settlement": "Halcyon Row"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 11984,
-   "y": 5768,
-   "route": null,
-   "settlement": "Halcyon Row"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "Neon Harbour",
-   "x": 12024,
-   "y": 5520,
-   "route": null,
-   "settlement": "Halcyon Row"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "Neon Harbour",
-   "x": 11976,
-   "y": 5632,
-   "route": null,
-   "settlement": "Halcyon Row"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
    "biome": "Neon Harbour",
    "x": 11856,
    "y": 5488,
@@ -14568,161 +14560,143 @@
    "settlement": "Halcyon Row"
   },
   {
-   "type": "story",
-   "name": "cairn",
+   "type": "interactable",
+   "name": "signpost",
    "biome": "Neon Harbour",
-   "x": 11808,
-   "y": 5616,
+   "x": 11952,
+   "y": 5632,
    "route": null,
    "settlement": "Halcyon Row"
   },
   {
-   "type": "story",
-   "name": "lost hat",
+   "type": "interactable",
+   "name": "resident",
    "biome": "Neon Harbour",
-   "x": 12008,
+   "x": 11992,
    "y": 5560,
    "route": null,
    "settlement": "Halcyon Row"
   },
   {
-   "type": "story",
-   "name": "cart with a broken wheel",
+   "type": "interactable",
+   "name": "gate",
    "biome": "Neon Harbour",
-   "x": 12080,
-   "y": 5576,
-   "route": null,
-   "settlement": "Halcyon Row"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "Neon Harbour",
-   "x": 11920,
-   "y": 5568,
-   "route": null,
-   "settlement": "Halcyon Row"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "Neon Harbour",
-   "x": 12168,
-   "y": 5776,
+   "x": 11816,
+   "y": 5624,
    "route": null,
    "settlement": "Halcyon Row"
   },
   {
    "type": "interactable",
    "name": "noticeboard",
-   "biome": "",
-   "x": 11192,
-   "y": 4176,
+   "biome": "Neon Harbour",
+   "x": 12120,
+   "y": 5608,
    "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
   },
   {
    "type": "interactable",
-   "name": "bench",
+   "name": "resident",
    "biome": "Neon Harbour",
-   "x": 11072,
-   "y": 4272,
+   "x": 11768,
+   "y": 5592,
    "route": null,
-   "settlement": "Glintside"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "Neon Harbour",
-   "x": 11184,
-   "y": 4200,
-   "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
   },
   {
    "type": "interactable",
    "name": "gate",
-   "biome": "",
-   "x": 11152,
-   "y": 4016,
-   "route": null,
-   "settlement": "Glintside"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
    "biome": "Neon Harbour",
-   "x": 11080,
-   "y": 4200,
+   "x": 12048,
+   "y": 5568,
    "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
   },
   {
    "type": "interactable",
-   "name": "bench",
+   "name": "noticeboard",
    "biome": "Neon Harbour",
-   "x": 11208,
-   "y": 4224,
+   "x": 11840,
+   "y": 5512,
    "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
   },
   {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "",
-   "x": 11072,
-   "y": 4032,
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 11944,
+   "y": 5376,
    "route": null,
-   "settlement": "Glintside"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "",
-   "x": 11096,
-   "y": 4168,
-   "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
   },
   {
    "type": "story",
    "name": "tracks",
    "biome": "Neon Harbour",
-   "x": 11200,
-   "y": 4208,
+   "x": 12152,
+   "y": 5768,
    "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
   },
   {
    "type": "story",
-   "name": "cold fire ring",
-   "biome": "",
-   "x": 10976,
-   "y": 4120,
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 12120,
+   "y": 5416,
    "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
   },
   {
    "type": "story",
-   "name": "old boot",
-   "biome": "",
-   "x": 11000,
-   "y": 4040,
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 11936,
+   "y": 5648,
    "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 11824,
+   "y": 5632,
+   "route": null,
+   "settlement": "Halcyon Row"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 11888,
+   "y": 5544,
+   "route": null,
+   "settlement": "Halcyon Row"
   },
   {
    "type": "story",
    "name": "cold fire ring",
    "biome": "Neon Harbour",
-   "x": 11192,
-   "y": 4240,
+   "x": 11968,
+   "y": 5760,
    "route": null,
-   "settlement": "Glintside"
+   "settlement": "Halcyon Row"
   },
   {
    "type": "story",
-   "name": "mended fence",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 12072,
+   "y": 5608,
+   "route": null,
+   "settlement": "Halcyon Row"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
    "biome": "",
    "x": 10960,
    "y": 4120,
@@ -14730,8 +14704,53 @@
    "settlement": "Glintside"
   },
   {
-   "type": "story",
-   "name": "cart with a broken wheel",
+   "type": "interactable",
+   "name": "gate",
+   "biome": "",
+   "x": 11264,
+   "y": 4112,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "",
+   "x": 11112,
+   "y": 4056,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "",
+   "x": 11136,
+   "y": 4136,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 11160,
+   "y": 4280,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 11032,
+   "y": 4224,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
    "biome": "",
    "x": 11120,
    "y": 4056,
@@ -14739,11 +14758,74 @@
    "settlement": "Glintside"
   },
   {
-   "type": "story",
-   "name": "mended fence",
+   "type": "interactable",
+   "name": "signpost",
    "biome": "Neon Harbour",
-   "x": 11016,
-   "y": 4248,
+   "x": 11168,
+   "y": 4296,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "",
+   "x": 11080,
+   "y": 4048,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "",
+   "x": 10984,
+   "y": 4104,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 11096,
+   "y": 4208,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "",
+   "x": 11216,
+   "y": 4024,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "",
+   "x": 11080,
+   "y": 4160,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 11008,
+   "y": 4264,
+   "route": null,
+   "settlement": "Glintside"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11104,
+   "y": 4280,
    "route": null,
    "settlement": "Glintside"
   },
@@ -14751,44 +14833,17 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "",
-   "x": 11024,
-   "y": 4104,
+   "x": 11208,
+   "y": 4120,
    "route": null,
    "settlement": "Glintside"
   },
   {
    "type": "interactable",
-   "name": "water trough",
+   "name": "noticeboard",
    "biome": "Neon Harbour",
-   "x": 9936,
-   "y": 4320,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 10160,
-   "y": 4512,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "Neon Harbour",
-   "x": 9800,
-   "y": 4440,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "Neon Harbour",
-   "x": 9872,
-   "y": 4416,
+   "x": 9976,
+   "y": 4608,
    "route": null,
    "settlement": "Canalside"
   },
@@ -14796,17 +14851,17 @@
    "type": "interactable",
    "name": "door",
    "biome": "Neon Harbour",
-   "x": 9936,
-   "y": 4592,
+   "x": 9864,
+   "y": 4288,
    "route": null,
    "settlement": "Canalside"
   },
   {
    "type": "interactable",
-   "name": "gate",
+   "name": "noticeboard",
    "biome": "Neon Harbour",
-   "x": 10104,
-   "y": 4568,
+   "x": 10040,
+   "y": 4440,
    "route": null,
    "settlement": "Canalside"
   },
@@ -14814,8 +14869,26 @@
    "type": "interactable",
    "name": "water trough",
    "biome": "Neon Harbour",
+   "x": 9944,
+   "y": 4456,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
    "x": 9928,
-   "y": 4568,
+   "y": 4456,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 9856,
+   "y": 4392,
    "route": null,
    "settlement": "Canalside"
   },
@@ -14823,7 +14896,70 @@
    "type": "interactable",
    "name": "gate",
    "biome": "Neon Harbour",
-   "x": 9840,
+   "x": 9912,
+   "y": 4248,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 9896,
+   "y": 4488,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 10008,
+   "y": 4432,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 9928,
+   "y": 4424,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 9808,
+   "y": 4448,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 9888,
+   "y": 4432,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 9968,
+   "y": 4496,
+   "route": null,
+   "settlement": "Canalside"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 9864,
    "y": 4440,
    "route": null,
    "settlement": "Canalside"
@@ -14832,71 +14968,17 @@
    "type": "story",
    "name": "old boot",
    "biome": "Neon Harbour",
-   "x": 9960,
-   "y": 4456,
+   "x": 9984,
+   "y": 4320,
    "route": null,
    "settlement": "Canalside"
   },
   {
    "type": "story",
-   "name": "lost hat",
+   "name": "cart with a broken wheel",
    "biome": "Neon Harbour",
-   "x": 10072,
+   "x": 9952,
    "y": 4584,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "Neon Harbour",
-   "x": 9968,
-   "y": 4296,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "biome": "Neon Harbour",
-   "x": 10168,
-   "y": 4520,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "Neon Harbour",
-   "x": 9936,
-   "y": 4344,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "Neon Harbour",
-   "x": 10016,
-   "y": 4456,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "Neon Harbour",
-   "x": 9912,
-   "y": 4248,
-   "route": null,
-   "settlement": "Canalside"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "Neon Harbour",
-   "x": 9880,
-   "y": 4344,
    "route": null,
    "settlement": "Canalside"
   }
@@ -14909,7 +14991,7 @@
   },
   {
    "settlement": "Driftwood",
-   "screens": 0.53,
+   "screens": 0.54,
    "per_screen_each": 8.0
   },
   {
@@ -14924,12 +15006,12 @@
   },
   {
    "settlement": "Lullford",
-   "screens": 0.86,
-   "per_screen_each": 8.0
+   "screens": 1.64,
+   "per_screen_each": 7.9
   },
   {
    "settlement": "Gullwick",
-   "screens": 0.4,
+   "screens": 0.35,
    "per_screen_each": 8.0
   },
   {
@@ -15461,13 +15543,13 @@
     "proposed"
    ],
    "Lullford": [
-    8668,
-    4396,
+    8660,
+    4412,
     "proposed"
    ],
    "Gullwick": [
-    7876,
-    5084,
+    7932,
+    5324,
     "proposed"
    ],
    "Lagoon Landing": [
@@ -15749,8 +15831,8 @@
     "with_shortcuts_s": 113.1
    },
    "Gullwick": {
-    "on_foot_s": 101.6,
-    "with_shortcuts_s": 101.6
+    "on_foot_s": 102.2,
+    "with_shortcuts_s": 102.2
    },
    "Neon Harbour": {
     "on_foot_s": 209.9,
@@ -15911,8 +15993,8 @@
    "definition": "land cells outside the frame that are walkable or built on (8 px cells)",
    "v54_cells": 436837,
    "after_warp_cells": 529123,
-   "v55_cells": 560701,
-   "increase_pct": 28.4
+   "v55_cells": 560584,
+   "increase_pct": 28.3
   },
   "settlements": {
    "Crossroads": {
@@ -17541,21 +17623,21 @@
     ],
     "buildings_counted": 12,
     "by_use": {
-     "cottage": 7,
+     "shop": 2,
+     "cottage": 4,
      "house": 3,
-     "shop": 1,
-     "workshop": 1
+     "workshop": 3
     },
-    "homes": 10,
+    "homes": 7,
     "centre": [
      8860,
      4350
     ],
     "footprint_box": [
-     8576,
-     4144,
-     9016,
-     4528
+     8584,
+     4048,
+     9280,
+     4584
     ],
     "purpose": "the lowest bridging place of the Lull: the swing bridge, the toll house, bargees' inns and the mill on the island",
     "setting": "gravel terraces either side of the river",
@@ -17570,22 +17652,22 @@
      8,
      12
     ],
-    "buildings_counted": 10,
+    "buildings_counted": 8,
     "by_use": {
-     "cottage": 7,
+     "cottage": 4,
      "house": 2,
-     "shop": 1
+     "boathouse": 2
     },
-    "homes": 9,
+    "homes": 6,
     "centre": [
      6440,
      5080
     ],
     "footprint_box": [
-     6328,
-     4832,
-     6752,
-     5120
+     6224,
+     4824,
+     6712,
+     5136
     ],
     "purpose": "the valley's landing place: fishers' cottages, the lighthouse keeper's house, the ferry pier",
     "setting": "the cove at the Sleepwater's mouth under the Headland",
@@ -17602,19 +17684,20 @@
     ],
     "buildings_counted": 8,
     "by_use": {
-     "cottage": 6,
+     "cottage": 4,
+     "boathouse": 2,
      "house": 2
     },
-    "homes": 8,
+    "homes": 6,
     "centre": [
      8045,
      5200
     ],
     "footprint_box": [
-     7880,
-     4960,
-     8208,
-     5192
+     7848,
+     5088,
+     8248,
+     5352
     ],
     "purpose": "a fishing cove on the open coast: boats on the beach, net lofts",
     "setting": "the cove west of the delta",
@@ -17855,7 +17938,7 @@
    "Lagoon Landing": 18,
    "Highgarth": 30,
    "Lullford": 12,
-   "Driftwood": 10,
+   "Driftwood": 8,
    "Gullwick": 8,
    "Cinder Springs": 6,
    "the Lode": 4,
@@ -18410,7 +18493,7 @@
    "region (the insets)": "every settlement, gate, crater, peak, biome, water and route in the inset",
    "reference (map55-reference)": "every name on the continent, at 3x"
   },
-  "levelled_footprints": 147,
+  "levelled_footprints": 148,
   "journeys": [
    {
     "journey": "Crossroads - Fernhollow - Cogsworth",
@@ -18654,7 +18737,7 @@
     "pass": true,
     "failures": [],
     "notes": [
-     "2 blocks, 3 dead ends, 1.4 x 2.1 screens"
+     "2 blocks, 2 dead ends, 2.2 x 3.3 screens"
     ],
     "metrics": 12,
     "actual_count": 12,
@@ -18664,17 +18747,17 @@
     "pass": true,
     "failures": [],
     "notes": [
-     "0 blocks, 1 dead ends, 1.3 x 1.6 screens"
+     "0 blocks, 3 dead ends, 1.5 x 1.7 screens"
     ],
-    "metrics": 10,
-    "actual_count": 10,
+    "metrics": 8,
+    "actual_count": 8,
     "retained_count": null
    },
    "gullwick": {
     "pass": true,
     "failures": [],
     "notes": [
-     "0 blocks, 1 dead ends, 1.0 x 1.3 screens"
+     "0 blocks, 2 dead ends, 1.2 x 1.5 screens"
     ],
     "metrics": 8,
     "actual_count": 8,
@@ -18744,7 +18827,7 @@
   {
    "n": 2,
    "check": "longest stretch of path with nothing to notice",
-   "measured": "139 px (Lode Track)",
+   "measured": "139 px (Col Path)",
    "target": "200 px or less",
    "pass": true,
    "note": ""
