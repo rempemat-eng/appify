@@ -14,7 +14,7 @@
    "weight": 1.0,
    "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png",
    "foot": [
-    92,
+    98,
     234
    ]
   }
@@ -28,7 +28,7 @@
  },
  "geometry": {
   "size_px": [
-   197,
+   203,
    237
   ],
   "size_cells": [
@@ -47,7 +47,7 @@
    ]
   },
   "foot": [
-   92,
+   98,
    234
   ],
   "footprint": [
@@ -236,7 +236,7 @@
     "reduced_motion": "hold:0",
     "on_screen_only": true,
     "region_px": [
-     157,
+     163,
      2,
      40,
      64

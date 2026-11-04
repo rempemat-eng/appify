@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/brackens/wall_drystone_nesw_plain.png",
    "foot": [
     13,
-    50
+    55
    ]
   }
  ],
@@ -29,7 +29,7 @@
  "geometry": {
   "size_px": [
    25,
-   62
+   67
   ],
   "size_cells": [
    1,
@@ -48,7 +48,7 @@
   },
   "foot": [
    13,
-   50
+   55
   ],
   "footprint": [
    [

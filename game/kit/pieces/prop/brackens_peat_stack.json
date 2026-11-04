@@ -15,7 +15,7 @@
    "png": "res://kit/props/art/brackens/brackens_peat_stack.png",
    "foot": [
     42,
-    31
+    25
    ]
   }
  ],
@@ -29,14 +29,14 @@
  "geometry": {
   "size_px": [
    84,
-   47
+   41
   ],
   "size_cells": [
    3,
    2
   ],
   "z_sort": "foot",
-  "height_px": 47,
+  "height_px": 41,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -48,7 +48,7 @@
   },
   "foot": [
    42,
-   31
+   25
   ],
   "footprint": [
    [

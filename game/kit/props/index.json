@@ -707,7 +707,7 @@
   "deck": null,
   "foot": [
    42,
-   31
+   25
   ],
   "footprint": [
    [
@@ -768,7 +768,7 @@
    "still": {
     "foot": [
      42,
-     31
+     25
     ],
     "png": "res://kit/props/art/brackens/brackens_peat_stack.png"
    }
@@ -798,7 +798,7 @@
   ],
   "deck": null,
   "foot": [
-   92,
+   98,
    234
   ],
   "footprint": [
@@ -975,7 +975,7 @@
   "variants": {
    "still": {
     "foot": [
-     92,
+     98,
      234
     ],
     "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png"
@@ -13154,7 +13154,7 @@
   "deck": null,
   "foot": [
    13,
-   52
+   47
   ],
   "footprint": [
    [
@@ -13200,7 +13200,7 @@
    "plain": {
     "foot": [
      13,
-     52
+     47
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_es_plain.png"
    }
@@ -13219,7 +13219,7 @@
   "deck": null,
   "foot": [
    13,
-   52
+   47
   ],
   "footprint": [
    [
@@ -13265,7 +13265,7 @@
    "plain": {
     "foot": [
      13,
-     52
+     47
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_esw_plain.png"
    }
@@ -13496,7 +13496,7 @@
   "deck": null,
   "foot": [
    10,
-   54
+   55
   ],
   "footprint": [
    [
@@ -13542,7 +13542,7 @@
    "plain": {
     "foot": [
      10,
-     54
+     55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_n_plain.png"
    }
@@ -13561,7 +13561,7 @@
   "deck": null,
   "foot": [
    13,
-   50
+   55
   ],
   "footprint": [
    [
@@ -13607,7 +13607,7 @@
    "plain": {
     "foot": [
      13,
-     50
+     55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_ne_plain.png"
    }
@@ -13626,7 +13626,7 @@
   "deck": null,
   "foot": [
    13,
-   50
+   55
   ],
   "footprint": [
    [
@@ -13672,7 +13672,7 @@
    "plain": {
     "foot": [
      13,
-     50
+     55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_nes_plain.png"
    }
@@ -13691,7 +13691,7 @@
   "deck": null,
   "foot": [
    13,
-   50
+   55
   ],
   "footprint": [
    [
@@ -13737,7 +13737,7 @@
    "plain": {
     "foot": [
      13,
-     50
+     55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_nesw_plain.png"
    }
@@ -13756,7 +13756,7 @@
   "deck": null,
   "foot": [
    13,
-   50
+   55
   ],
   "footprint": [
    [
@@ -13802,7 +13802,7 @@
    "plain": {
     "foot": [
      13,
-     50
+     55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_new_plain.png"
    }
@@ -13821,7 +13821,7 @@
   "deck": null,
   "foot": [
    10,
-   54
+   55
   ],
   "footprint": [
    [
@@ -13867,7 +13867,7 @@
    "plain": {
     "foot": [
      10,
-     54
+     55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_ns_plain.png"
    }
@@ -13886,7 +13886,7 @@
   "deck": null,
   "foot": [
    13,
-   50
+   55
   ],
   "footprint": [
    [
@@ -13932,7 +13932,7 @@
    "plain": {
     "foot": [
      13,
-     50
+     55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_nsw_plain.png"
    }
@@ -13951,7 +13951,7 @@
   "deck": null,
   "foot": [
    13,
-   50
+   55
   ],
   "footprint": [
    [
@@ -13997,7 +13997,7 @@
    "plain": {
     "foot": [
      13,
-     50
+     55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_nw_plain.png"
    }
@@ -14016,7 +14016,7 @@
   "deck": null,
   "foot": [
    10,
-   48
+   44
   ],
   "footprint": [
    [
@@ -14062,7 +14062,7 @@
    "plain": {
     "foot": [
      10,
-     48
+     44
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_s_plain.png"
    }
@@ -14138,7 +14138,7 @@
   "deck": null,
   "foot": [
    13,
-   52
+   47
   ],
   "footprint": [
    [
@@ -14184,7 +14184,7 @@
    "plain": {
     "foot": [
      13,
-     52
+     47
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_sw_plain.png"
    }
