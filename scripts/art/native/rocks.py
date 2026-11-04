@@ -420,16 +420,23 @@ def plunge(cv: np.ndarray, xl: int, xr: int, y1: int, seed: int, t: int = 0, n: 
     # the outer rim dissolves into the pool in a checker on the shaded side (Eastward 37's mist)
     fray = foam & (best > 0.82) & (lit < 0.3) & (((xx + yy).astype(int) + t) % 2 == 0)
     out[fray] = C('water', 4)
-    # a darker band under the downstream edge (its shade on the pool), two texels under the middle
+    # a darker band under the downstream edge (its shade on the pool): a soft shade one texel deep
+    # that follows the clumps' lobes, two where a lobe hangs lowest, never a comb of ticks (review
+    # round 4, K4-3: the second row was a checker of navy ticks)
     mass = foam | gaps
     under = np.zeros_like(mass)
     under[1:] = mass[:-1]
     under &= ~mass & ok & (yy >= y1)
+    bot = np.where(mass.any(0), mass.shape[0] - 1 - np.argmax(mass[::-1], 0), -1)
+    hang = (bot >= 0) & (bot >= ndi.maximum_filter1d(bot, 5))          # where a lobe hangs lowest
     under2 = np.zeros_like(mass)
-    under2[2:] = mass[:-2]
-    under2 &= ~mass & ~under & ok & (yy >= y1) & (np.abs(xx - cx) < fw * 0.35) & ((xx.astype(int) + t) % 2 == 0)
+    for j in np.nonzero(hang)[0]:
+        if bot[j] + 2 < mass.shape[0]:
+            under2[bot[j] + 2, j] = True
+    under2 &= ~mass & ~under & ok & (yy >= y1)
+    under2 &= ndi.binary_dilation(under2, structure=np.array([[0, 0, 0], [1, 0, 1], [0, 0, 0]], bool))   # runs, not ticks
     out[under] = C('water', 1)
-    out[under2] = C('water', 1)
+    out[under2] = C('water', 2)
     taken = mass | under | under2
     # flecks round the outline, dissolving into the pool: pairs and singles that pop in and out
     for j in range(int(fw / 3) + 10):
@@ -445,15 +452,34 @@ def plunge(cv: np.ndarray, xl: int, xr: int, y1: int, seed: int, t: int = 0, n: 
         for (b_, c_) in ((0, C('snow', 4)), (1, C('snow', 2))) if pair else ((0, C('snow', 3)),):
             if 0 <= Y < out.shape[0] and 0 <= X + b_ < out.shape[1] and ok[Y, X + b_] and not taken[Y, X + b_]:
                 out[Y, X + b_] = c_
-    # spray: 2 texel specks thrown up beside the foot, over the pool only (no spray on the face)
-    for j in range(8):
+    # spray: specks of one and two texels thrown out beside the foot in a loose fan, larger and
+    # denser near the foot, thinning outward, each its own size and phase (review round 4, K4-3: a
+    # row of identical ticks on alternate columns, and a lone block); over the pool only (no spray
+    # on the face, Matt, 2 Nov) and within the foot plus PLUNGE_PAD - 2
+    spr = np.random.default_rng(seed * 53 + 11).random((10, 6))       # the same specks in every frame
+    for j in range(10):
         side = -1 if j % 2 else 1
-        sx = (xl - rng.uniform(2, PLUNGE_PAD + 2)) if side < 0 else (xr + rng.uniform(1, PLUNGE_PAD + 1))
-        sy = y1 + 3 - ((j * 2 + t) % 4) - rng.uniform(0, 1.5)
+        r_ = spr[j]
+        d = PLUNGE_PAD * (0.15 + 0.75 * r_[0] ** 1.6)                      # nearer the foot more often
+        if r_[1] >= 1.0 - 0.6 * d / PLUNGE_PAD:
+            continue                                                        # thinning outward
+        if ((t + j * 5) % n) >= 6 - int(2 * d / PLUNGE_PAD):
+            continue                                                        # it has fallen back
+        sx = (xl - 1 - d) if side < 0 else (xr + d)
+        sy = y1 + 1 + 0.45 * d + (r_[2] * 2.0 - 1.0) - 1.5 * math.sin(a + 6.3 * r_[3]) ** 2
         X, Y = int(round(sx)) - X0, int(round(sy)) - Y0
-        for (b_, c_) in ((0, C('snow', 5)), (1, C('snow', 3))):
-            if 0 <= Y + b_ < out.shape[0] and 0 <= X < out.shape[1] and ok[Y + b_, X] and not taken[Y + b_, X]:
-                out[Y + b_, X] = c_
+        big = d < PLUNGE_PAD * 0.45 and r_[4] < 0.6
+        cells = [(0, 0, C('snow', 5 if big else 4))]
+        if big:
+            cells.append((0, side, C('snow', 3)) if r_[5] < 0.5 else (1, 0, C('snow', 3)))
+        for (dy_, dx_, c_) in cells:
+            Yb, Xb = Y + dy_, X + dx_
+            if not (0 <= Yb < out.shape[0] and 0 <= Xb < out.shape[1]):
+                continue
+            if abs(Xb + X0 - cx) > fw / 2.0 + PLUNGE_PAD - 2:
+                continue
+            if ok[Yb, Xb] and not taken[Yb, Xb] and Yb + Y0 >= y1:
+                out[Yb, Xb] = c_
     if rings:
         # ripple arcs spreading downstream from the foam, broken, fading as they go
         top = int(np.max(np.nonzero(mass.any(1))[0])) + Y0 if mass.any() else y1 + 6

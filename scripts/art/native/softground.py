@@ -1265,6 +1265,106 @@ def seat_stones(cv: np.ndarray, water: np.ndarray, stones, paste) -> list:
     return out
 
 
+def calm_boulder(w: int, h: int, seed: int, stone: str = 'stone') -> tuple:
+    """The odd larger boulder in a rock face (eastward-edges 2.3; review round 4, G4-1: a pasted
+    props.boulder4 read as three or four cracked lobes, a heap of small stones): one rounded calm
+    mass `w` x `h` texels, its silhouette lumpy by a texel or two, a lit plane on its upper left two
+    tones over the body (warm ochre, a highlight texel or two on its very edge), the mid body, the
+    lower right a tone down, and a dark underside 2 to 3 texels deep closed by the dark gap that
+    separates it from the stones below. No crack. Returns (codes, anchor (x, y) at its foot)."""
+    rng = np.random.default_rng(seed)
+    sw_ = stone + '_warm' if stone + '_warm' in FI else stone
+    sc_ = stone + '_cool' if stone + '_cool' in FI else stone
+    H_, W_ = h + 2, w + 2
+    yy, xx = np.mgrid[0:H_, 0:W_].astype(float)
+    cx, cy = (W_ - 1) / 2.0, h * 0.55
+    rx, ry = w / 2.0, h * 0.55
+    ang = np.arctan2((yy - cy) / ry, (xx - cx) / rx)
+    lump = 1.0 + 0.045 * np.sin(3 * ang + rng.uniform(0, 6.3)) + 0.03 * np.sin(5 * ang + rng.uniform(0, 6.3))
+    q = np.sqrt(((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2) / lump
+    # its base flattened where it sits, a little wider than its crown
+    inside = (q <= 1.0) & (yy <= h)
+    inside |= (yy > cy) & (yy <= h) & (np.abs(xx - cx) <= rx * (1.0 - 0.35 * ((yy - cy) / max(1.0, h - cy)) ** 3))
+    out = np.full((H_, W_), -1, np.int32)
+    nx, ny = (xx - cx) / rx, (yy - cy) / ry
+    lit = -(0.62 * nx + 0.78 * ny) + 0.35 * (1.0 - np.clip(q, 0, 1))      # light from the upper left
+    # the lit plane (warm, two steps over the body), a step between, the body, the lower right
+    code = np.where(lit > 0.42, C(sw_, 4), np.where(lit > 0.2, C(sw_, 3), np.where(lit > -0.32, C(stone, 3), C(stone, 2))))
+    out[inside] = code[inside]
+    # the dark underside: the last 2 to 3 rows of each column, and the gap below it
+    for x in range(W_):
+        ys_ = np.nonzero(inside[:, x])[0]
+        if not len(ys_):
+            continue
+        b = int(ys_.max())
+        k = 3 if abs(x - cx) < rx * 0.7 else 2
+        for j in range(k):
+            if b - j >= ys_.min():
+                out[b - j, x] = C(sc_, 1) if j else C(sc_, 0)
+        if b + 1 < H_:
+            out[b + 1, x] = C(sc_, 0)
+    # its outline: the dark gap round the right and lower sides, a seam (a tone up) round the top
+    edge = inside & ~ndi.binary_erosion(inside, structure=CROSS)
+    right = edge & ((xx - cx) / rx + (yy - cy) / ry > 0.15)
+    out[right] = C(sc_, 0)
+    out[edge & ~right & (ny < 0)] = np.where(nx[edge & ~right & (ny < 0)] < 0.2, C(sw_, 3), C(stone, 2))
+    # a highlight on the lit edge, a texel or two
+    hl = edge & (nx < -0.2) & (ny < -0.45)
+    hy, hx = np.nonzero(hl)
+    for k_ in rng.permutation(len(hy))[:2]:
+        out[hy[k_], hx[k_]] = C(sw_, 5)
+    ys_, xs_ = np.nonzero(out >= 0)
+    return out, (cx, float(ys_.max()))
+
+
+def keep_to_banks(stones, water: np.ndarray, share: float = 1.0 / 3.0, gap: int = 24, narrow: int = 72) -> list:
+    """Bank stones on a narrow channel (at most `narrow` texels wide at the stone's foot) kept to
+    their own bank (review round 4, L4-2: since the bank stones were re-seated, two groups on
+    opposite banks of the rill reached into its middle a few rows apart and read as a weir): each
+    stone (dec, X, Y) is moved along its row towards its bank until what of it lies over the water
+    is within the outer `share` of the channel's width, and a stone on the opposite bank within
+    `gap` rows (one cell) of one already kept is left out. Returns the stones kept, moved."""
+    H, W = water.shape
+    kept, placed = [], []
+    for dec, X, Y in stones:
+        hh, ww = dec.shape
+        ys, xs = np.nonzero(dec >= 0)
+        if not len(ys):
+            continue
+        fy = Y + int(ys.max())
+        if not (0 <= fy < H):
+            kept.append((dec, X, Y))
+            continue
+        runs = []
+        row = water[fy]
+        d = np.diff(np.concatenate([[0], row.astype(np.int8), [0]]))
+        runs = list(zip(np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]))
+        sx0, sx1 = X + int(xs.min()), X + int(xs.max()) + 1
+        cx = (sx0 + sx1) / 2.0
+        run = [(a, b) for a, b in runs if a - ww < cx < b + ww]
+        if not run:
+            kept.append((dec, X, Y))
+            continue
+        a, b = min(run, key=lambda r: abs((r[0] + r[1]) / 2.0 - cx))
+        L = b - a
+        if L > narrow:
+            kept.append((dec, X, Y))
+            continue
+        west = cx < (a + b) / 2.0
+        lim = share * L
+        if west:
+            dx = min(0, int(np.floor(a + lim - sx1)))
+        else:
+            dx = max(0, int(np.ceil(b - lim - sx0)))
+        side = 'w' if west else 'e'
+        mid = (a + b) / 2.0
+        if any(s_ != side and abs(y_ - fy) < gap and abs(m_ - mid) < L for (s_, y_, m_) in placed):
+            continue
+        placed.append((side, fy, mid))
+        kept.append((dec, X + dx, Y))
+    return kept
+
+
 def seat_stone(cv: np.ndarray, water: np.ndarray, dec: np.ndarray, X: int, Y: int, paste) -> bool:
     """One stone laid by seat_stones."""
     return seat_stones(cv, water, [(dec, X, Y)], paste)[0]
@@ -2029,13 +2129,15 @@ def roots(cv, x, y, rng, half=12, n=4, wood='timber'):
 # ------------------------------------------------------------------------------------------------
 # a footbridge (Matt, 26 Oct 19:42: bank to bank, abutments on both banks, posts both sides)
 # ------------------------------------------------------------------------------------------------
-def footbridge(cv, x0, x1, water, rng, wood='timber', stone='ashlar') -> list:
+def footbridge(cv, x0, x1, water, rng, wood='timber', stone='ashlar', north=(14, 10)) -> list:
     """A plank footbridge across water running east and west, from x0 to x1 (texels): a dressed
     stone abutment set into each bank, the deck's planks laid across from one abutment to the other
     (each lit along its top, a dark joint, a nail at each end), a kerb beam along both sides, posts
     on both sides at the abutments and mid-span joined by a rail; the deck's thickness shows as a
     narrow side band (lit on the west, in shade on the east) and its shade lies on the water to the
-    east. Returns the deck mask."""
+    east. `north` is how far (texels) the north abutment and the deck reach onto the land north of
+    the water's first row (the woodland's landing, review round 4 L4-1, sets the abutment at the
+    water's edge). Returns the deck mask."""
     H, W = cv.shape
     cols = water[:, x0:x1].any(1)
     ys = np.nonzero(cols)[0]
@@ -2051,7 +2153,7 @@ def footbridge(cv, x0, x1, water, rng, wood='timber', stone='ashlar') -> list:
     shift(cv, sh, -2)
     shift(cv, water & np.roll(sh, 3, 1) & ~sh, -1)
     # the abutments: dressed stone blocks, wider than the deck, their tops lit, faces to the south
-    for (ya, yb) in ((yn - 14, yn + 5), (ys_ - 4, ys_ + 13)):
+    for (ya, yb) in ((yn - north[0], yn + 5), (ys_ - 4, ys_ + 13)):
         for y in range(ya, yb):
             for x in range(x0 - 9, x1 + 9):
                 if not (0 <= y < H and 0 <= x < W):
@@ -2065,7 +2167,7 @@ def footbridge(cv, x0, x1, water, rng, wood='timber', stone='ashlar') -> list:
                     tt = 2 if not jx else 1                       # the abutment's front face
                 cv[y, x] = C(stone, tt)
     # the deck: planks across, from the north abutment's top to the south one's
-    d0, d1 = yn - 10, ys_ + 8
+    d0, d1 = yn - north[1], ys_ + 8
     deck = np.zeros((H, W), bool)
     deck[d0:d1, x0:x1] = True
     for y in range(d0, d1):

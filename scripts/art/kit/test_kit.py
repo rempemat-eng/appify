@@ -623,6 +623,150 @@ class WaterBanks(unittest.TestCase):
                     self.assertIn(0, f.tolist(), (c, seed))
                 for p in range(2, 13):
                     self.assertFalse((f[p:] == f[:-p]).all(), 'period %d (%d, %d)' % (p, c, seed))
+                # (review round 4, K4-2) the white row itself: two or three runs of white, never one
+                # straight row (at most 70 % of the sheet's width white in any one row under the
+                # bend), gaps of 3 to 5 texels between the runs (two of them from two cells up), the
+                # edges glassy, every run rounded off at its ends (no icicle drips)
+                bow = ST.crest_bow(24 * c, seed)
+                rows = np.zeros((ST.CREST_MAX + int(bow.max()) + 1, 24 * c), bool)
+                for x in range(24 * c):
+                    rows[bow[x]:bow[x] + f[x], x] = True
+                self.assertLessEqual(float(rows.mean(1).max()), 0.70, 'a straight white row (%d, %d)' % (c, seed))
+                d = np.diff(np.concatenate([[0], (f > 0).astype(np.int8), [0]]))
+                starts, stops = np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]
+                self.assertIn(len(starts), (2, 3), (c, seed))
+                inner = [int(a - b) for a, b in zip(starts[1:], stops[:-1])]
+                self.assertTrue(all(3 <= g <= 5 for g in inner), (c, seed, inner))
+                if c >= 2:
+                    self.assertGreaterEqual(len(inner), 2, (c, seed))
+                self.assertEqual(int(f[0]), 0, (c, seed))
+                self.assertEqual(int(f[-1]), 0, (c, seed))
+                for a, b in zip(starts, stops):
+                    self.assertEqual((int(f[a]), int(f[b - 1])), (1, 1), 'a run ends in a drip (%d, %d)' % (c, seed))
+
+    def test_a_kit_sheet_is_not_flat_slabs(self):
+        # (review round 4, K4-1) the kit's sheet falls in broken streaks across its whole width: at
+        # most about a quarter of its columns hold one tone over 40 rows (the woodland's sheet: 10
+        # of 44), in frame 0 and in every frame of its loop; its outline is not a rectangle
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C
+        for c in (1, 2, 3, 4):
+            for drop in (1, 2):
+                wpx, face = 24 * c, 48 * drop
+                for t in (0, 3):
+                    cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+                    ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
+                    body = cv[16:12 + face, 24:24 + wpx]
+                    flat = 0
+                    for x in range(wpx):
+                        col = body[:, x]
+                        ch = np.nonzero(np.diff(col) != 0)[0]
+                        runs = np.diff(np.concatenate([[-1], ch, [len(col) - 1]]))
+                        flat += int(runs.max() >= 40)
+                    self.assertLessEqual(flat / wpx, 0.25, 'waterfall_%d drop %d frame %d: %d of %d columns flat' % (c, drop, t, flat, wpx))
+                    tones = set(np.unique(body).tolist())
+                    self.assertGreaterEqual(len(tones), 5, (c, drop))
+                outl = ST.sheet_outline(24, wpx, 12, 12 + face, 9 + c)
+                self.assertGreater(len({tuple(r) for r in outl.tolist()}), 2, 'a rectangle (%d, %d)' % (c, drop))
+                self.assertEqual(tuple(outl[0]), (24, 24 + wpx))
+
+    def test_moving_water_lies_only_on_water(self):
+        # (review round 4, F4-1) no texel of a moving-water strip, in any frame (frame 0, the still
+        # reduced motion shows, included), lies over a ground texel that is not open water, a
+        # fall's sheet or its foam: not a bridge's deck, timber, the wet rock foot, reeds, stones or
+        # faces. The woodland's strips over its ground, and every kit fall's loop over each bake
+        import glob
+        from PIL import Image
+        from scripts.art.kit import bake as BK
+        from scripts.art.native import animate as AN
+        from scripts.art.native.palette import LUT
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        wet_rgb = {tuple(int(v) for v in LUT[i][:3]) for i in range(len(LUT)) if AN.wet_codes(np.array([i]))[0]}
+        zdir = os.path.join(root, 'game', 'zones', 'woodland')
+        g = np.asarray(Image.open(os.path.join(zdir, 'art', 'ground.png')).convert('RGB'))
+        kit = json.load(open(os.path.join(zdir, 'kit.json')))
+        strips = [('flow', kit['flow'])] + [('flow_' + k, v) for k, v in sorted(kit.get('flows', {}).items())]
+        D = 3
+        checked = 0
+        for name, meta in strips:
+            fl = np.asarray(Image.open(os.path.join(zdir, 'art', name + '.png')).convert('RGBA'))
+            bx, by, bw, bh = [int(round(v * D)) for v in meta['rect']]
+            cols = meta['cols']
+            for i in range(8):
+                r, c_ = divmod(i, cols)
+                fr = fl[r * bh:(r + 1) * bh, c_ * bw:(c_ + 1) * bw]
+                ys, xs = np.nonzero(fr[..., 3] > 0)
+                under = g[ys + by, xs + bx]
+                bad = [(int(x + bx), int(y + by)) for (x, y, u) in zip(xs, ys, under) if tuple(int(v) for v in u) not in wet_rgb]
+                self.assertEqual(bad[:6], [], 'woodland %s frame %d: %d moving texels over dry ground' % (name, i, len(bad)))
+                checked += len(ys)
+        self.assertGreater(checked, 1000)
+        idx = json.load(open(os.path.join(root, 'game', 'kit', 'props', 'index.json')))
+        seen = 0
+        for zone, plan, cv in self._baked():
+            wet = AN.wet_codes(cv)
+            for pc in plan.get('pieces', []):
+                an = (idx.get(pc['piece']) or {}).get('anim')
+                if not an or not pc['piece'].startswith('waterfall'):
+                    continue
+                st = np.asarray(Image.open(os.path.join(root, 'game', an['strip'][len('res://'):])).convert('RGBA'))
+                fw = st.shape[1] // an['frames']
+                ox, oy = int(round(pc['at'][0] + an['offset'][0])), int(round(pc['at'][1] + an['offset'][1]))
+                foot = int(round(pc['at'][1]))
+                for i in range(an['frames']):
+                    ys, xs = np.nonzero(st[:, i * fw:(i + 1) * fw, 3] > 0)
+                    if i == 0:
+                        # frame 0 is the still the bake draws: over the sheet they agree texel for texel
+                        sh_ = ys + oy < foot - 4
+                        rgb = st[ys[sh_], xs[sh_], :3].astype(int)
+                        self.assertTrue((LUT[cv[ys[sh_] + oy, xs[sh_] + ox]][:, :3].astype(int) == rgb).all(),
+                                        '%s %s: frame 0 is not the baked sheet' % (zone, pc['piece']))
+                    dry = ~wet[ys + oy, xs + ox]
+                    self.assertEqual(int(dry.sum()), 0, '%s %s frame %d over dry ground at %s' % (
+                        zone, pc['piece'], i, list(zip((xs + ox)[dry][:4].tolist(), (ys + oy)[dry][:4].tolist()))))
+                seen += 1
+        self.assertGreater(seen, 0)
+
+    def test_the_woodlands_landing_is_a_cell_of_open_path(self):
+        # (review round 4, L4-1; eastward-edges 5.3b, 6.1) measured on the rendered ground, art px
+        # at density 3 (1 world px = 3 art px): the log steps rise 5 to 6 world px a step (15 to 18
+        # art px), and between the stair's last riser and the bridge's north abutment lies at least
+        # one cell (8 world px = 24 art px) of open ground, no timber, stone or water; the abutment
+        # starts within 4 world px of the water's edge
+        from PIL import Image
+        from scripts.art.native.palette import LUT, FAMS
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        plan = json.load(open(os.path.join(root, 'art', 'scenes', 'woodland.json')))
+        g = np.asarray(Image.open(os.path.join(root, 'game', 'zones', 'woodland', 'art', 'ground.png')).convert('RGB'))
+        fam = {}
+        for i in range(len(LUT)):
+            fam.setdefault(tuple(int(v) for v in LUT[i][:3]), FAMS[i // 8])
+        D = 3
+        br = plan['places']['bridge']
+        tr = plan['terrace']
+        rim, foot = tr['y'] * D, (tr['y'] + tr['face']) * D
+        x0, x1 = br['x0'] * D, (br['x0'] + br['w']) * D
+        for x in range(x0 + 4, x1 - 4, 6):
+            col = [fam.get(tuple(int(v) for v in g[y, x]), '?') for y in range(rim - 4, foot + 30)]
+            ys = list(range(rim - 4, foot + 30))
+            ab = next(y for y, f in zip(ys, col) if y > rim + 30 and f.split('_')[0] in ('ashlar', 'stone'))   # (ashlar and stone share colours)
+            # the treads' top rows: where timber starts below a riser or the rim
+            treads = [y for k, (y, f) in enumerate(zip(ys, col)) if k and f.startswith('timber') and not col[k - 1].startswith('timber') and y < ab]
+            self.assertEqual(len(treads), tr['steps']['n'], (x, treads))
+            pitch = np.diff(treads)
+            self.assertTrue(((pitch >= 15) & (pitch <= 18)).all(), (x, pitch.tolist()))
+            # the stair's foot: down through the last tread's log, then its riser
+            k = ys.index(treads[-1])
+            while col[k].startswith('timber'):
+                k += 1
+            while col[k].startswith('earth'):
+                k += 1
+            last = ys[k] - 1
+            open_ = [f for y, f in zip(ys, col) if last < y < ab]
+            self.assertGreaterEqual(len(open_), 24, 'column %d: %d art px of landing' % (x, len(open_)))
+            self.assertFalse([f for f in open_ if f.split('_')[0] in ('timber', 'ashlar', 'stone', 'water')], x)
+            wl = next(y for y in range(ab, foot + 60) if fam.get(tuple(int(v) for v in g[y, x1 + 12]), '').startswith('water'))
+            self.assertLessEqual(wl - ab, 12, 'the abutment starts %d art px north of the water' % (wl - ab))
 
 
 class SchemaMigrationTooling(unittest.TestCase):

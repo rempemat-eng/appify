@@ -329,6 +329,17 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
                                 earth=tr.get('earth', 'crag'), roots=tr.get('vines', 1.0), tufts=0.0, shadow_px=P(5, 0),
                                 moss=tr.get('moss_caps', 0.04))
     cv[:rim] = under[:rim]
+    # the stones fallen to the foot, each one calm mass with a dark underside like the face's odd
+    # larger boulder (review round 4, G4-1: pasted props.boulder4 read as cracked heaps)
+    from .palette import to_rgba as _rgba
+    calm = []
+    for k_, (img_, anc_, at_) in enumerate(items):
+        bw0, bh0 = img_.size
+        cw_ = int(np.clip(bw0 - 24, 16, 34))          # the stone itself, without boulder4's margin
+        dec_, anc2_ = GD.calm_boulder(cw_, max(9, int(cw_ * 0.64)), tr.get('seed', 461) * 7 + k_,
+                                      stone=tr.get('earth', 'crag'))
+        calm.append((Image.fromarray(_rgba(dec_), 'RGBA'), anc2_, at_))
+    items = calm
     lw = lip & (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & np.isin(cv // 8, [FI.get('grass_warm', -1), FI.get('leaf_warm', -1)])
     cv[lw] = sib(cv[lw], 'body')
     # the river at the foot: open water as it was; between the face's foot and the water, wet rock
@@ -396,8 +407,9 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
     while xb_ < w - 30:
         if not any(a_ - 30 <= xb_ <= b_ + 30 for (a_, b_) in keep_out):
             bw_ = brng.uniform(10.0, 13.3)
-            img_, anc_, _a_ = P4_.boulder4(D, bw_, bw_ * brng.uniform(0.62, 0.75), seed=int(brng.integers(0, 10 ** 6)), moss=None)
-            dec_ = to_codes(img_)
+            # one calm mass with a dark underside, not a cracked heap (review round 4, G4-1)
+            dec_, anc_ = GD.calm_boulder(P(bw_, 0), P(bw_ * brng.uniform(0.62, 0.75), 0), int(brng.integers(0, 10 ** 6)),
+                                         stone=e_)
             fy_ = rim + fh - P(brng.uniform(3.0, 8.0), 0)
             Xp, Yp = int(round(xb_ - anc_[0])), int(round(fy_ - anc_[1]))
             hh_, ww_ = dec_.shape
@@ -419,25 +431,39 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
         cv[mo] = C('leaf_cool', 1)
         cv[mo & (GD.nz(h, w, 1.5, tr.get('seed', 461) + 10) > 0.6)] = C('leaf', 2)
     st = tr.get('steps')
+    waterline = None
     if st:
         sx0, sx1 = P(st['x0'], 0), P(st['x1'], 0)
-        sfoot = P(tr['y'] + tr['face'] - st.get('landing', 8), 0)
-        # the landing: the ground under the steps' foot as it was (path and the bridge's abutment)
-        land = (yy >= sfoot) & (yy < rim + fh + P(2, 0)) & (np.arange(w)[None, :] >= sx0 - P(1, 0)) & \
-            (np.arange(w)[None, :] < sx1 + P(1, 0)) & ~water_open
+        if st.get('pitch'):
+            # the foot set by the steps' pitch (eastward-edges 6.1: a short flight 5 to 6 world px a
+            # step; review round 4, L4-1: moving the foot up had tightened it to 4.3)
+            sfoot = rim - 2 + st.get('n', 5) * P(st['pitch'], 0)
+        else:
+            sfoot = P(tr['y'] + tr['face'] - st.get('landing', 8), 0)
+        # the waterline the landing runs down to: the river's first open row just east of the
+        # crossing, where the terrace's wet foot meets the water (the river's mask bulges north
+        # under the crossing; there it is landing, not water)
+        ecol = slice(min(w - 1, sx1 + P(2, 0)), min(w, sx1 + P(10, 0)))
+        waterline = int(np.median(first_w[ecol])) if (first_w[ecol] < h).any() else rim + fh + P(2, 0)
+        # the landing (review round 4, L4-1): open path from the steps' foot down to the waterline,
+        # where the bridge (painted after the terrace) sets its north abutment; the path takes its
+        # own texture from the rows above the rim, any other ground under it is the wet rock foot
+        xs_ = np.arange(w)[None, :]
+        land = (yy >= sfoot) & (yy < waterline) & (xs_ >= sx0 - P(1, 0)) & (xs_ < sx1 + P(1, 0))
+        # its top corners rounded into the face (eastward-edges 1.6), not a square notch
+        land &= (np.minimum(xs_ - (sx0 - P(1, 0)), (sx1 + P(1, 0) - 1) - xs_) + (yy - sfoot)) >= 3
         cv[land] = under[land]
-        # the landing is open path down to the bridge's north abutment (review round 3, R3-5): what
-        # is not the bridge (its timber, ashlar and posts) takes the path's own texture from the
-        # rows above the rim
-        bridge_f = [FI[n_] for n_ in ('timber', 'timber_warm', 'timber_cool', 'ashlar', 'ashlar_warm', 'ashlar_cool') if n_ in FI]
-        lys, lxs = np.nonzero(land & ~np.isin(cv // 8, bridge_f))
+        lys, lxs = np.nonzero(land)
+        waters_ = [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI]
         for y_, x_ in zip(lys, lxs):
             src_ = under[rim - 3 - ((y_ - sfoot) % P(8, 0)), x_]
             if src_ >= 0 and is_fam(np.array(src_), 'path'):
                 cv[y_, x_] = src_
+            elif cv[y_, x_] < 0 or cv[y_, x_] // 8 in waters_:
+                cv[y_, x_] = C(ec, 1)
         GD.log_steps(cv, sx0, sx1, rim - 2, sfoot, st.get('n', 5), np.random.default_rng(tr.get('seed', 461) + 1))
         items = [it for it in items if not (sx0 - P(4, 0) <= it[2][0] <= sx1 + P(4, 0))]
-    return items
+    return items, waterline
 
 
 def wobble_banks(m: np.ndarray, amp: float, seed: int) -> np.ndarray:
@@ -1309,19 +1335,22 @@ def terrain(plan: dict, layers: dict) -> tuple:
             cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
             GD.tidy_bank(cv, wm)
             # stones breaking the banks, laid into the ground with their shade; one standing in the
-            # water gets its wet contact (softground.seat_stones, eastward-edges.md 5.3a)
-            GD.seat_stones(cv, wm, [(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
-                                    for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])],
+            # water gets its wet contact (softground.seat_stones, eastward-edges.md 5.3a); on the
+            # rill each keeps to the outer third of the channel on its own bank, and never faces a
+            # stone on the other bank within a cell (review round 4, L4-2: they read as a weir)
+            GD.seat_stones(cv, wm, GD.keep_to_banks([(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
+                                                     for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])], wm),
                            lambda c, d, x, y: DC.paste(c, d, x, y, shadow=True, shadow_dx=P(1), shadow_dy=P(0.5)))
-            # the bridge spans the open water (review round 3, R3-5: its north abutment started on the
-            # bank face, so its deck covered the landing at the foot of the steps)
+            fallen, waterline = terrace(cv, plan, wm)
+            # the bridge after the terrace, on the final waterline (review round 4, L4-1; round 3's
+            # R3-5 painted it first, and the terrace's landing put its old north end back): its north
+            # abutment starts at the water's edge, 10 texels (3.3 world px) onto the land, its deck 8
+            # (2.7 world px, logic.bridge_span asks 0.1 H), so the landing above it is a cell of path
             wopen = wm & np.isin(cv // 8, [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI])
-            # its deck rests a little on the land north of the open water (logic.bridge_span: 0.1 H)
-            wspan = wopen.copy()
-            for k_ in range(1, P(3, 0) + 1):
-                wspan |= GD.down(wopen, -k_)
-            GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wspan, np.random.default_rng(12))
-            fallen = terrace(cv, plan, wm)
+            if waterline is not None:
+                wopen[:waterline] = False
+            GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wopen, np.random.default_rng(12),
+                          north=tuple(br.get('north', (14, 10))))
             if fallen:
                 GD.seat_stones(cv, wm, [(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
                                         for (img_, anc_, (fx_, fy_)) in sorted(fallen, key=lambda it: it[2][1])],
@@ -1541,6 +1570,12 @@ def build() -> Zone:
             region = fr[by0:by1, bx0:bx1]
             region[sel, :3] = LUT[ov[sel]][:, :3]
             region[sel, 3] = 255
+    # nothing moves over what is not water in the final ground (review round 4, F4-1): not a
+    # bridge's deck, timber, the wet rock foot, reeds, stones or faces (their codes), and not
+    # a decal pasted onto the water after the codes were taken (where the picture is not its code)
+    from .palette import LUT as LUT_
+    painted = (np.asarray(ground)[..., :3].astype(np.int16) != LUT_[np.where(codes >= 0, codes, 0)][..., :3].astype(np.int16)).any(-1)
+    frames = animate.keep_to(frames, animate.wet_codes(codes) & ~painted)
     # one strip per stretch of water, each cropped to what moves in it (review round 3, R3-6: one
     # strip over the rill and the stream was 1576 x 3736, about 24 MB decoded on a phone for about
     # a thousand moving texels a frame): plan water.strips names the extra ones by box (world px),

@@ -1,7 +1,7 @@
 {
  "id": "kit/waterfall_3_tall",
  "file": "game/kit/props/art/waterfall_3_tall.png",
- "sha256": "770e7968ec5fab24caa0bb24eaa4b306e0bcb75713838f5bb231d740357b663b",
+ "sha256": "47092d8e6cf9f57d9660118c12d9bf67c34b44a78d12f6f054d93064cad803a0",
  "kind": "waterfall",
  "biome": "woodland",
  "H": 74.0,
@@ -10,41 +10,42 @@
   120,
   142
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 1
+  "fault": 0,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 21,
-   "tones": 13.047619047619047,
-   "shapes": 18.714285714285715
+   "tones": 23.285714285714285,
+   "shapes": 38.095238095238095
   },
   "band": {
-   "tones": 27.0,
-   "shapes": 50.36,
-   "boxes": 10,
-   "patches": 83
+   "tones": 26.93,
+   "shapes": 68.92,
+   "boxes": 2,
+   "patches": 102,
+   "about": "Eastward 37's white water (the falls' mist), for falls: their sheet, crest and foam"
   },
-  "ratio": 0.372,
-  "tones_ratio": 0.483,
-  "shapes_ratio": 0.372,
+  "ratio": 0.553,
+  "tones_ratio": 0.865,
+  "shapes_ratio": 0.553,
   "passed": false,
-  "group": "prop"
+  "group": "water"
  },
  "findings": [
   {
    "detector": "detail.bar",
-   "severity": "fault",
+   "severity": "polish",
    "box": [
     14,
     12,
     108,
     126
    ],
-   "message": "kit/waterfall_3_tall: detail bar 0.37 of Eastward's prop band (13.0 tones, 18.7 shapes a patch against 27.0, 50.36)",
+   "message": "kit/waterfall_3_tall: detail bar 0.55 of Eastward's water band (23.3 tones, 38.1 shapes a patch against 26.93, 68.92)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -56,15 +57,15 @@
     108,
     126
    ],
-   "message": "kit/waterfall_3_tall: only 33% of the silhouette is drawn in an edge tone",
+   "message": "kit/waterfall_3_tall: only 20% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pending",
   "date": "2026-11-04",
-  "note": "docs/reviews/2026-11-04-woodland-water.md, round 4 (3e19c29e). Graded on the water criteria, not the prop band (eastward_bands.json has no water group; the prop band is the wrong yardstick, and detail.outline and detail.light are false positives here). It fails them: K4-1 the sheet is flat vertical slabs (38 to 70 % of its columns one tone over 40 rows with the flow overlaid; the woodland sheet 23 %), the east edge a flat navy slab, streaks 1 px lines on fixed columns; K4-2 the crest is a lid (a flat 3-row tongue in two tones, then one straight white row over 73 to 96 % of the width, icicle drips, no bow; 5.3b wants 2 to 3 runs with gaps and a bow); K4-3 a comb of 1 px navy ticks under the foam and a row of identical spray ticks. Against the house sibling (the woodland sheet, 16.8 tones and 39.5 shapes a patch) it reaches 0.78 to 0.92 of the tones and 0.48 to 0.72 of the shapes; against Eastward 37's white water about half. Fix in scripts/art/kit/structures.py (fall_sheet, crest_foam; the woodland's rocks.fall is the model), then re-record."
+  "note": "redrawn after round 4 of the independent audit (K4-1 to K4-3): structures.fall_sheet draws the sheet as the woodland's rocks.fall does (broken streak runs in 4 to 5 tones over the whole width, a broken dark east edge, edges wandering a texel and swelling at the foot), crest_foam breaks the white into 2 or 3 runs under a bowed bend, the foam's under-band is a soft shade and the spray a fan of specks; its frames are waterfall_3_tall_flow.png. Scored against Eastward 37's white water (groups.water). Not yet reviewed by an independent detail-auditor."
  }
 }

@@ -22,6 +22,11 @@ it is drawn (tones and shapes a patch at least the band's least, times GROUND_TO
 (contrast at most the band's most, times GROUND_CONTRAST_SLACK):
 
     python3 -m scripts.review.bands --ground <folder of Eastward shots>     rebuilds groups.ground
+
+The water band (groups.water) is Eastward 37's white water, measured the same way, and a waterfall
+is scored against it, not against the props:
+
+    python3 -m scripts.review.bands --water <folder of Eastward shots>      rebuilds groups.water
 """
 from __future__ import annotations
 
@@ -166,8 +171,50 @@ def build_ground(folder: str) -> dict:
     return g
 
 
+# Eastward's white water (review round 4 of the woodland water: falls were scored against the prop
+# band, the wrong yardstick): the mist and white water of the falls in 37, box-averaged from its
+# 1920 x 1080 shot to 640 x 360 (a JPEG at 3x keeps its soft edge only that way), native px.
+EW_WATER = {'37': [(560, 190, 640, 300, 'white_water'), (560, 170, 640, 300, 'white_water_top')]}
+
+
+def build_water(folder: str) -> dict:
+    """Measures EW_WATER in a local copy of the shots into groups.water, the band a waterfall (its
+    sheet, crest and foam) is scored against (assets.group_of: kind 'waterfall'). Its own group: the
+    prop, stone, foliage and ground bands and construct.py's checks are untouched."""
+    from PIL import Image as _I
+    d = load_bands()
+    adult = d.get('adult_native', 54)
+    Hh = d.get('H', 74)
+    rows = []
+    for shot, boxes in EW_WATER.items():
+        im = _I.open(os.path.join(folder, shot + '.jpg')).convert('RGB')
+        nat = np.asarray(im.resize((640, 360), _I.BOX))
+        for x0, y0, x1, y1, name in boxes:
+            crop = _I.fromarray(nat[y0:y1, x0:x1, :3])
+            s = Hh / adult
+            big = np.asarray(crop.resize((int(crop.width * s), int(crop.height * s)), _I.NEAREST))
+            pc = patch_counts(big, np.ones(big.shape[:2], bool), Hh)
+            rows.append(dict(shot=f'eastward/{shot}.jpg', box=[x0, y0, x1, y1], name=name, group='water',
+                             patches=pc['patches'], tones=round(pc['tones'], 2), shapes=round(pc['shapes'], 2)))
+    g = dict(tones=round(float(np.mean([r['tones'] for r in rows])), 2),
+             shapes=round(float(np.mean([r['shapes'] for r in rows])), 2), boxes=len(rows),
+             patches=int(sum(r['patches'] for r in rows)),
+             about="Eastward 37's white water (the falls' mist), for falls: their sheet, crest and foam")
+    d['boxes'] = [b for b in d.get('boxes', []) if b.get('group') != 'water'] + rows
+    d.setdefault('groups', {})['water'] = g
+    with open(BANDS, 'w') as f:
+        json.dump(d, f, indent=1)
+        f.write('\n')
+    return g
+
+
 if __name__ == '__main__':
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument('--ground', required=True, help='folder of the Eastward shots (local only)')
-    print(json.dumps(build_ground(ap.parse_args().ground), indent=1))
+    ap.add_argument('--ground', help='folder of the Eastward shots (local only): rebuild groups.ground')
+    ap.add_argument('--water', help='folder of the Eastward shots (local only): rebuild groups.water')
+    a_ = ap.parse_args()
+    if a_.ground:
+        print(json.dumps(build_ground(a_.ground), indent=1))
+    if a_.water:
+        print(json.dumps(build_water(a_.water), indent=1))

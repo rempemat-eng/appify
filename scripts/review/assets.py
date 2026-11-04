@@ -129,6 +129,8 @@ def group_of(kind: str, rgb, alpha) -> str:
         return 'foliage'
     if kind in ('boulder', 'standing_stone', 'rock', 'crag', 'cairn'):
         return 'stone'
+    if kind in ('waterfall', 'fall') and 'water' in B.load_bands().get('groups', {}):
+        return 'water'          # a fall against Eastward's white water (bands.build_water), not the props
     return 'prop'
 
 

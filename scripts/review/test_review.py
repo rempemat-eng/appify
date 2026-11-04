@@ -59,6 +59,19 @@ class Scale(unittest.TestCase):
 
 
 class Water(unittest.TestCase):
+    def test_a_fall_is_scored_against_eastwards_white_water(self):
+        # (woodland water review, round 4) a waterfall's detail bar is Eastward 37's white water
+        # (bands.groups.water), its own group, not the prop band; other kinds keep theirs
+        from scripts.review import bands as B
+        band = B.load_bands()['groups']['water']
+        self.assertGreater(band['tones'], 20)
+        self.assertGreater(band['shapes'], 50)
+        rgb = np.zeros((40, 40, 3), np.uint8)
+        alpha = np.ones((40, 40), bool)
+        self.assertEqual(A.group_of('waterfall', rgb, alpha), 'water')
+        self.assertEqual(A.group_of('bench', rgb, alpha), 'prop')
+        self.assertEqual(A.group_of('boulder', rgb, alpha), 'stone')
+
     def test_staircase_bank(self):
         a = lawn()
         for y in range(300):

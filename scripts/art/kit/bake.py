@@ -447,8 +447,9 @@ def bake(plan: dict, lib: dict | None = None):
             # water's mask ran down the face (no flat slabs, no water beside the sheet)
             span = np.zeros((h, w), bool)
             span[r0:r1, max(0, sx0 - SN.P(14)):sx0 + sw + SN.P(14)] = True
-            sheet = np.zeros((h, w), bool)
-            sheet[r0:r1, sx0:sx0 + sw] = True
+            # the sheet's own outline (structures.sheet_outline: its edges wander a texel in and swell
+            # at the foot; review round 4, K4-1), the face showing where it wanders in
+            sheet = ST.sheet_mask((h, w), sx0, sw, r0, r1, seed)
             cv[span & ~sheet] = pre_water[span & ~sheet]
             # wet rock near the sheet: darker, a ragged edge (no seam), sheen on the lit stone tops
             # and moss in the joints; spray darkening the foot of the face either side
@@ -485,7 +486,10 @@ def bake(plan: dict, lib: dict | None = None):
                 seg = np.isin(cv[r1:min(h, r1 + SN.P(10)), X] // 8, waters_) & wm[r1:min(h, r1 + SN.P(10)), X]
                 if not seg.any():
                     continue
-                stop = r1 + int(np.argmax(seg))
+                # down to where the pool's own water runs on (four rows of it), so a sliver of bank
+                # under a texel of water is not left standing as a pillar in the inlet
+                run4 = np.array([seg[i_:i_ + 4].all() for i_ in range(len(seg))])
+                stop = r1 + (int(np.argmax(run4)) if run4.any() else int(np.argmax(seg)))
                 d_edge = min(X - ix0, ix1 - 1 - X)
                 start = r1 + max(0, 3 - d_edge) if d_edge < 3 else r1      # rounded top corners
                 inlet[start:stop, X] = True
@@ -501,14 +505,33 @@ def bake(plan: dict, lib: dict | None = None):
                 xs_ = np.nonzero(inlet[Y])[0]
                 if len(xs_) < 4:
                     continue
-                cv[Y, xs_[0]] = GD.rim_earth()
-                cv[Y, xs_[-1]] = GD.rim_earth()
-                cv[Y, xs_[0] + 1] = C('water', GD.RIM_LINE)
-                cv[Y, xs_[-1] - 1] = C('water', GD.RIM_LINE)
+                # its sides take the rim only where land lies beyond them (where the pool's own water
+                # already runs on beside the inlet, a rim would stand as a pillar of earth in it)
+                for (xe, xi, xo) in ((xs_[0], xs_[0] + 1, xs_[0] - 1), (xs_[-1], xs_[-1] - 1, xs_[-1] + 1)):
+                    if 0 <= xo < w and cv[Y, xo] >= 0 and cv[Y, xo] // 8 in waters_:
+                        continue
+                    cv[Y, xe] = GD.rim_earth()
+                    cv[Y, xi] = C('water', GD.RIM_LINE)
+            # the inlet is part of the pool (review round 4, K4-4: the pool's north waterline and its
+            # dark band ran on straight across the inlet's mouth, a sill under a basin a step up):
+            # inside the inlet's sides they give way to the inlet's deep water, which runs on into
+            # the pool's body; the waterline and the band end at the inlet's sides
+            for X in range(ix0 + 1, ix1 - 1):
+                col_ = np.nonzero(inlet[:, X])[0]
+                if not len(col_):
+                    continue
+                Y = int(col_.max()) + 1
+                for _k in range(6):
+                    if not (Y < h and wm[Y, X] and cv[Y, X] >= 0 and cv[Y, X] // 8 in waters_ and cv[Y, X] % 8 in (0, 3, 4, 5)):
+                        break
+                    cv[Y, X] = C('water', 1)
+                    Y += 1
             tmp = cv.copy()
             ST.fall_sheet(tmp, sx0, sw, r0, r1, seed=seed)
             ok = ndi.binary_erosion(wm, iterations=2) & ~above & ~span
             ok |= sheet
+            # the channel's last rows fading into the glassy tongue above the rim (5.3b)
+            ok[max(0, r0 - 3):r0, sx0:sx0 + sw] |= wm[max(0, r0 - 3):r0, sx0:sx0 + sw]
             ok[r1:r1 + SN.P(14)] |= ndi.binary_erosion(wm, iterations=2)[r1:r1 + SN.P(14)]
             cv[ok] = tmp[ok]
             # lip stones on the rim beside the sheet, never over it: they sit on the top tier's

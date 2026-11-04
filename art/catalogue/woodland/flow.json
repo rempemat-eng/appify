@@ -1,7 +1,7 @@
 {
  "id": "woodland/flow",
  "file": "game/zones/woodland/art/flow.png",
- "sha256": "91b015b54f0d21e678eebcf75f531f64f8dff9534dce2c649173bb6ac814ba49",
+ "sha256": "04830edbb631fae799e9f6b12ba7c73331502d340b499613c1301f92984a8e89",
  "kind": "flow",
  "biome": "woodland",
  "H": 74.0,
@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pending",
   "date": "2026-11-04",
-  "note": "docs/reviews/2026-11-04-woodland-water.md, round 4 (3e19c29e). F4-1 (fault): the stream lanes draw moving marks over the bridge deck (x 352-414, y 850-941) in every frame, frame 0 (the reduced-motion still) included: 1 to 4 marks, 3 to 35 texels a frame, lifting the planks one timber tone; the same marks cross the wet rock foot (about 16 texels a frame). Fix: lift only texels whose final ground code is open water (not the deck, stones, faces or reeds), and test it. Otherwise passes: horizontal dashes only, no lone specks, foam churns; R3-6 split clean (no overlap, nothing lost), 4.5 MB."
+  "note": "re-rendered after round 4 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 3e19c29e: ground fail on L4-1, flow fail on F4-1, flow_rill pass): the moving water lifts only water, sheet and foam texels in every frame; the bridge is painted after the terrace on the final waterline, its north abutment 10 art px north of the water, the landing 25 art px (8.3 world px) of open path, the steps on a 15 art px (5 world px) pitch; the larger face boulders and the stones fallen to the foot are calm masses; the rill's bank stones keep to the outer third; the foam's under-band is a soft shade and its spray a fan. Not yet reviewed by an independent detail-auditor (the painter may not audit it)."
  }
 }

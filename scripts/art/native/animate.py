@@ -44,10 +44,17 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
     along the flow in one lane in three, drifting downstream by 4 world px a frame (a loop of
     32 world px); still water (a pool): glints that come and go in pairs; banks: foam that
     laps along the edge; falls: light ribbons sliding down the sheet. thin (density 3 and up):
-    a streak is one texel across its lane (a ripple line, not a block). Returns n RGBA arrays."""
+    a streak is one texel across its lane (a ripple line, not a block). Returns n RGBA arrays.
+
+    Only a texel whose final code is water, the sheet or its foam (the water and snow families,
+    `wet_codes`) is ever lifted, in any frame (review round 4, F4-1: the lanes come from the water
+    mask, which still runs under what was painted over it afterwards, so the stream's marks slid
+    over the bridge's deck and the terrace's wet rock foot, frame 0 included). The lanes' geometry
+    still comes from the whole mask, so a lane keeps its line where it passes under a deck."""
     H, W = mask.shape
     F = np.where(codes >= 0, codes // 8, 0)
     T = np.where(codes >= 0, codes % 8, 0)
+    wet = wet_codes(codes)
     ys, xs = np.mgrid[0:H, 0:W]
     fx, fy, coh = water_flow._flow(mask)
     if thin:
@@ -97,7 +104,7 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
         dT = np.zeros((H, W), np.int32)
         fam = F.copy()
         pos = (u + phase - f * shift) % period
-        streak = run & lane_on & (pos < length)
+        streak = run & lane_on & (pos < length) & wet
         if thin:
             streak &= (v % lane_w) == 0
             # no lone texel: each lifted texel has a lifted neighbour along the flow
@@ -127,12 +134,33 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
             dark = box & (fp >= period // 4) & (fp < period // 4 + 2 * s) & (T > 2)
             dT[light] = 1
             dT[dark] = -1
-        sel = dT != 0
+        sel = (dT != 0) & wet
         tt = np.clip(T + dT, 0, 5)
         rgb = LUT[fam * 8 + tt]
         fr = np.zeros((H, W, 4), np.uint8)
         fr[sel, :3] = rgb[sel]
         fr[sel, 3] = 255
+        out.append(fr)
+    return out
+
+
+WET_FAMILIES = ('water', 'water_warm', 'water_cool', 'snow', 'snow_warm', 'snow_cool')
+
+
+def wet_codes(codes) -> np.ndarray:
+    """Where a code is open water, a fall's sheet or its foam (the water and snow families): the
+    only texels the moving water may lift (review round 4, F4-1)."""
+    from .palette import FI
+    codes = np.asarray(codes)
+    return (codes >= 0) & np.isin(np.where(codes >= 0, codes // 8, -1), [FI[n_] for n_ in WET_FAMILIES if n_ in FI])
+
+
+def keep_to(frames, allowed) -> list:
+    """The frames with every lifted texel outside `allowed` cleared (alpha 0)."""
+    out = []
+    for fr in frames:
+        fr = fr.copy()
+        fr[~allowed] = 0
         out.append(fr)
     return out
 
