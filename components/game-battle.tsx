@@ -180,6 +180,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   // 64 art pixels of field in the height left between the HP header and the card tray.
   const unit = pixelScale(width, PixelRatio.get());
   const stageHeight = Math.min(360, height - 420);
+  // a short screen (an iPhone SE, 667 px): compact cards, and the DRAW / DISCARD count joins
+  // the card label, so the whole hand shows above PASS and LEAVE without scrolling
+  const short = height < 720;
   const artFit = Math.min((Math.min(width, 640) - 24) / 80, stageHeight / 64, 8);
   const art = Math.max(2, Math.floor(artFit / unit)) * unit;
   const petSize = 32 * art;
@@ -783,7 +786,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                             ? 'AUTO · 2X SPEED'
                             : lifted !== null && combat.a.hand[lifted]
                               ? cardDetails[combat.a.hand[lifted]]
-                              : 'LIFT A CARD · TAP AGAIN TO PLAY'
+                              : short
+                                ? `LIFT A CARD · TAP AGAIN · DRAW ${combat.a.draw.length} · DISCARD ${combat.a.discard.length}`
+                                : 'LIFT A CARD · TAP AGAIN TO PLAY'
                           : request.practice
                             ? 'SPARRING IN PROGRESS…'
                             : 'RAID IN PROGRESS…'}
@@ -804,6 +809,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                                   combat.a.hand.findIndex((card) => available(card, combat.a))
                               }
                               selected={lifted === index}
+                              compact={short}
                               disabled={!enabled || !available(id, combat.a)}
                               onPress={() => {
                                 if (!enabled) return;
@@ -821,9 +827,11 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                     </>
                   )}
                 </View>
-                <BodyText style={{ textAlign: 'center', fontSize: 11 }}>
-                  DRAW {combat.a.draw.length} · DISCARD {combat.a.discard.length}
-                </BodyText>
+                {!short && (
+                  <BodyText style={{ textAlign: 'center', fontSize: 11 }}>
+                    DRAW {combat.a.draw.length} · DISCARD {combat.a.discard.length}
+                  </BodyText>
+                )}
               </>
             )}
           </ScrollView>

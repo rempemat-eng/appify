@@ -336,7 +336,15 @@ function quietNapPresentation() {
       },
     },
   ).outputText;
-  const boundary = new Proxy({}, { get: (_, name) => name });
+  // components are their names; the window is a 402 x 874 phone (the nap screen sizes its
+  // window from the screen's height)
+  const boundary = new Proxy(
+    {},
+    {
+      get: (_, name) =>
+        name === 'useWindowDimensions' ? () => ({ width: 402, height: 874 }) : name,
+    },
+  );
   // The real shared Space handler for role="switch" controls, on the web.
   const switchKeysModule = { exports: {} };
   vm.runInNewContext(

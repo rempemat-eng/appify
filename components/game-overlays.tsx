@@ -12,6 +12,7 @@ import {
   ScrollView,
   View,
   useWindowDimensions,
+  type ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PixelIcon } from '@/components/pixel-icon';
@@ -37,6 +38,9 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import { gameColumn, gameSideInset, hudClearance } from '@/lib/layout';
 import { switchKeys } from '@/lib/switch-keys';
 import { SaveRecovery, cancelFreshStart } from '@/components/save-recovery';
+
+/** No focus ring on a container that only anchors focus (web only; React Native has none). */
+const quietFocus: ViewStyle = { outlineWidth: 0 };
 function Onboarding() {
   const reduced = useReducedMotion();
   const [step, setStep] = useState(0);
@@ -117,7 +121,11 @@ function Onboarding() {
           alignSelf: 'center',
         }}
       >
-        <View style={{ gap: 16 }}>
+        {/* The modal's focus trap focuses the first focusable thing inside it. Without this
+            anchor that was the Mossling's seed, whose focus ring read as a choice made before
+            any tap; now focus starts on the title, quietly (no ring), and Tab reaches the
+            seeds next. */}
+        <View tabIndex={-1} style={[{ gap: 16 }, Platform.OS === 'web' ? quietFocus : null]}>
           <NapAttackWordmark />
           <BodyText style={{ fontSize: 15 }}>nap to grow. wake to play.</BodyText>
         </View>
@@ -264,6 +272,12 @@ function ScreenOff({
   const m = missions.find((x) => x.id === p.mission_id);
   const guardian = guardianPlayer(p);
   const [napWidth, setNapWidth] = useState(0);
+  const { height: screenHeight } = useWindowDimensions();
+  // The nap window is 0.62 of its width, but on a short screen (an iPhone SE, 667 px) it
+  // gives way so the napped / Dream Dust chip and WAKE UP fit without scrolling: about 520 px
+  // of the screen hold the rest. Never below 0.38 of its width; unchanged on taller phones.
+  const napView = (w: number) =>
+    Math.round(Math.max(w * 0.38, Math.min(w * 0.62, screenHeight - 520)));
   return (
     <View
       onStartShouldSetResponderCapture={() => {
@@ -473,7 +487,7 @@ function ScreenOff({
                     world={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
                     width={napWidth - 4}
                     // a window that follows the companion, as the nap garden does
-                    viewportHeight={Math.round((napWidth - 4) * 0.62)}
+                    viewportHeight={napView(napWidth - 4)}
                     player={p}
                   />
                 </View>
@@ -497,7 +511,7 @@ function ScreenOff({
                     memories={memories}
                     width={napWidth - 4}
                     // a window onto the hut and bed, not the whole tall garden
-                    viewportHeight={Math.round((napWidth - 4) * 0.62)}
+                    viewportHeight={napView(napWidth - 4)}
                     player={p}
                     grumpy={false}
                     sleepy={false}

@@ -44,6 +44,7 @@ export function HabitCard({
   onPress,
   species,
   guided = false,
+  compact = false,
 }: {
   id: CardId;
   count?: number;
@@ -52,6 +53,9 @@ export function HabitCard({
   onPress?: () => void;
   species?: Player['species'];
   guided?: boolean;
+  /** a shorter face for short screens (the battle's hand on an iPhone SE): the name keeps one
+   *  line's height and the face drops its minimum, about 25 px in all */
+  compact?: boolean;
 }) {
   const card = cards[id];
   const reduced = useReducedMotion();
@@ -87,7 +91,7 @@ export function HabitCard({
       : card.effect
   ).replace('⚡', 'energy');
   const face = (
-    <View style={{ minHeight: 168, padding: 3 * u, marginBottom: u }}>
+    <View style={{ minHeight: compact ? 0 : 168, padding: 3 * u, marginBottom: u }}>
       <FrameFill
         depth={1}
         outline={
@@ -135,7 +139,7 @@ export function HabitCard({
           {card.cost}
         </BodyText>
       </View>
-      <View style={{ alignItems: 'center', padding: 6, gap: 4 }}>
+      <View style={{ alignItems: 'center', padding: compact ? 4 : 6, gap: compact ? 2 : 4 }}>
         <View style={{ width: 56, height: 56, alignItems: 'center', justifyContent: 'center' }}>
           <FrameFill fill={c.body} inset />
           <CardIllustration id={id} />
@@ -146,7 +150,7 @@ export function HabitCard({
             fontFamily: 'PixelifySans_700Bold',
             fontSize: 13,
             lineHeight: 17,
-            minHeight: 34,
+            minHeight: compact ? 17 : 34,
             textAlign: 'center',
           }}
         >
