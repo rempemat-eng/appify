@@ -14,7 +14,7 @@ purpose, role and verdict without painting anything.
 """
 from __future__ import annotations
 
-SETS = ('brackens',)
+SETS = ('brackens', 'act1')
 
 
 def audit_rows() -> dict:

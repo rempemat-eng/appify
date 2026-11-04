@@ -13,7 +13,7 @@ Verdicts: **fine** (fits), **fixed** (its data or a placement was corrected in t
 (the drawing does not fit its purpose: the art queue), **missing** (cannot be placed sensibly until a
 companion piece exists).
 
-Totals: 178 fine, 28 fixed.
+Totals: 199 fine, 28 fixed.
 
 ## Placements fixed in the kit zones
 
@@ -49,6 +49,8 @@ out, so a two-cell lane counts once; three ways or more make a junction).
 
 | Piece | Purpose | Role | Requires | Forbids | Verdict | Why, and what was done |
 |---|---|---|---|---|---|---|
+| `barrow_entrance` | mark | tomb | near route 5 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A turf mound with a portal of two uprights and a capstone, the passage dark, kerb stones either side. |
+| `barrow_kerb` | mark | marker | near barrow_entrance 6 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A low gritstone slab on edge with lichen and moss; three shapes. |
 | `brackens_bench` | rest | seat | near route 2 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone slab on two uprights, two back slabs set in the ground behind it. |
 | `brackens_cairn` | guide | marker | near route 2 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A waymark of stones in shrinking rings, a long stone upright on top; or tumbled, its top stones spilled east. |
 | `brackens_cart_broken` | mark | story | near route 2 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): The story slot "cart with a broken wheel": the bed propped on a stone, the wheel lying broken, turves spilled. |
@@ -59,6 +61,12 @@ out, so a two-cell lane counts once; three ways or more make a junction).
 | `brackens_gorse` | grow | shrub | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gorse clump at the moor's edge (a fade clump for grass and fields, size-guide boundaries). |
 | `brackens_peat_stack` | store | store | within house 3 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): Cut turves stacked to dry in shrinking courses. |
 | `brackens_shepherds_hut` | live | house | near route 3 | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): One room of gritstone under roped heather thatch; the chimney's smoke loops (8 frames) over the still. |
+| `coast_boat_beached` | mark | boat | near water 4 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A clinker rowing boat drawn up on the shingle: lapped strakes, blue and white, red below; thwarts and an oar inside. |
+| `coast_buoy` | guide | marker | on water | - | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A red can buoy with a white band and its cage, riding the swell (8 frames), held still under reduced motion. |
+| `coast_harbour_light` | light | beacon | near water 1 | on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A white tower banded red, its gallery and lantern; the lamp's glow swells and eases (8 frames). |
+| `coast_lobster_pots` | store | store | near water 3 | on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): Withy creels on timber bases: three stacked (a), or one with a coil of rope and its float (b). |
+| `coast_mooring_bitt` | contain | mooring | near water 1 | on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A cast-iron bitt on a bolted plate, a hawser round it and trailing off. |
+| `coast_net_rack` | store | rack | near water 4 | on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): Three oak posts and a rail with a green net hung to dry over it, cork floats on its head, two glass floats. |
 | `commons_bench` | rest | seat | - | on route; on water | **fine** | Facing a feature, a view, water or the land falling away (faces, 6 cells). |
 | `commons_cart` | store | cart | at_edge route 1 | on route; on water | **fine** | At a road's edge, off the way. |
 | `commons_chopping_block` | work | chopping_block | - | on route; on water | **fine** | Near a hearth (needs hearth 6), by the woodpile. |
@@ -196,9 +204,22 @@ out, so a two-cell lane counts once; three ways or more make a junction).
 | `footbridge_2` | cross | bridge | on water; adjacent route 1 | - | **fine** | Exactly where a route meets a two-cell stream, the route's width. |
 | `footbridge_4` | cross | bridge | on water; adjacent route 1 | - | **fine** | As footbridge_2, over four cells. |
 | `garden_flower_border` | care | planter | within boundary 3; near house 6 | on route; on water | **fine** | In a front garden, beside the door path. |
+| `halt_churn_stand` | store | store | near route 1 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A timber stand at cart height with three galvanised churns on it and one beside. |
+| `halt_platform_edge` | cross | platform | near route 3 | on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): One cell of the platform's edge along x: stone courses, a coping with a white lip, gravel behind; cells meet. |
+| `halt_platform_lamp` | light | lamp | near route 5 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A fluted green column, the lantern's flame flickering (8 frames), the halt's name plate in marks. |
+| `halt_semaphore` | guide | signal | near route 3 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A white post with a ladder, the red arm with its stripe at danger, the spectacle's red and green glasses. |
+| `halt_timetable_board` | guide | notice | near route 2 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A cream sheet under a slate hood, its rows in pictograms (clock, arrow, train, stop), no words. |
+| `halt_waiting_shelter` | rest | shelter | near route 5 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A green-and-cream timber lean-to with a slate roof, a bench inside and a poster frame. |
+| `hive_skep` | work | hive | near route 3 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A coiled straw skep on a stone stool under a straw hackle, bound with bramble, a bee at its notch. |
+| `hive_wbc` | work | hive | near route 3 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A white WBC hive: legs, plinth, three lifts with their skirts, gabled roof, two bees at the board. |
 | `log_steps` | climb | stair | on face | - | **fine** | Where a route climbs a face; on the face, a route at head and foot. |
 | `log_steps_1` | climb | stair | on face | - | **fine** | As log_steps. |
 | `log_steps_3` | climb | stair | on face | - | **fine** | As log_steps. |
+| `mill_fence_broken` | mark | story | near route 3 | on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A snapped post, a leaning one, the top rail split and hanging to the grass. |
+| `mill_landslip` | mark | barrier | on route | - | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): Wet earth across the road with boulders in it, a snapped birch with its root plate, mud in lobes. |
+| `mill_millstones` | store | store | near route 3 | on route; on water | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): A dressed millstone flat, one on edge against a post, a sack of meal with its flour spilled. |
+| `mill_sluice` | water | sluice | near water 1 | on route | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): Two stone piers, an oak gate drawn up on its rack with a handwheel, the water white under it. |
+| `mill_wheel` | work | wheel | near water 2 | on route | **fine** | Act 1 set (scripts/art/kit/sets/act1.py): An undershot oak wheel on the mill's gable, turning one paddle's pitch over 8 frames; white water at the strike. |
 | `stepping_stones_1` | cross | bridge | on water; within route 1 | - | **fixed** | A footpath over a rill; its deck includes its landing stones, so the path meets it within a cell (was "adjacent", which no landing can satisfy). |
 | `stepping_stones_2` | cross | bridge | on water; within route 1 | - | **fixed** | As stepping_stones_1, over a stream. |
 | `wall_drystone_e` | contain | boundary | - | on route; on water | **fine** | Brackens set (scripts/art/kit/sets/brackens.py): A gritstone wall's end, its run built against a house or a byre (enclosures.py: an end stands against a wall). |

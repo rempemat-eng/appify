@@ -1,0 +1,127 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "coast_lobster_pots",
+ "name": "Lobster pots",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "a",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/coast_lobster_pots_a.png",
+   "foot": [
+    23,
+    26
+   ]
+  },
+  {
+   "id": "b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/act1/coast_lobster_pots_b.png",
+   "foot": [
+    20,
+    17
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Withy creels on timber bases: three stacked (a), or one with a coil of rope and its float (b)."
+ },
+ "geometry": {
+  "size_px": [
+   49,
+   32
+  ],
+  "size_cells": [
+   2,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 32,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -7.0,
+    -3.0,
+    14,
+    4
+   ]
+  },
+  "foot": [
+   23,
+   26
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "store",
+  "composition": "cluster",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "water",
+    "cells": 3,
+    "note": "creels stacked on the quay between trips"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    16,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "crate_stack (a creel 0.5 m long; three stacked 0.6 m)",
+  "eastward_ref": "22 (crates, barrels and stakes on brick plinths, 0.5 to 1.2 A), 30 (rope rails on posts); no harbour in the local refs",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "coast_lobster_pots",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

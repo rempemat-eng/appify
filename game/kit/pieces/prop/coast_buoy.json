@@ -1,0 +1,111 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "coast_buoy",
+ "name": "Buoy",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/coast_buoy.png",
+   "foot": [
+    16,
+    25
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A red can buoy with a white band and its cage, riding the swell (8 frames), held still under reduced motion."
+ },
+ "geometry": {
+  "size_px": [
+   30,
+   33
+  ],
+  "size_cells": [
+   1,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 33,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   16,
+   25
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "guide",
+  "role": "marker",
+  "provides": [
+   "view"
+  ],
+  "composition": "free",
+  "requires": [
+   {
+    "rel": "on",
+    "what": "water",
+    "note": "a can buoy moored off the quay, marking the channel"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true,
+  "animations": [
+   {
+    "clip": "bob",
+    "loop": true,
+    "frames": 8,
+    "fps": 5.0,
+    "strip": "res://kit/props/art/act1/coast_buoy_loop.png",
+    "frame_px": [
+     30,
+     33
+    ],
+    "reduced_motion": "hold:0",
+    "on_screen_only": true
+   }
+  ]
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "buoy (a can buoy 0.6 m above the water)",
+  "eastward_ref": "22 (crates, barrels and stakes on brick plinths, 0.5 to 1.2 A), 30 (rope rails on posts); no harbour in the local refs",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "coast_buoy",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

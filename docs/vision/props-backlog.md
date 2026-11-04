@@ -26,11 +26,11 @@ Development-plan Phase 6 puts **the Brackens and the Frostline** first after the
 | Trees, bushes, bramble, holly, stones, logs, ring                                                                                                                                            | kit (`woodland_*`)                                                                                                                     | grow / mark; off route and water                                     | broadleaf, bush, standing stone    | woodland                    |
 | Fingerposts for junctions; bench, pump, washing line, chopping block, woodpile, notice board, stalls, cart, wayside shrine                                                                   | kit (`commons_*`, scripts/art/kit/commons.py)                                                                                          | as placement-audit.md: `needs`, `faces`, `avoid`, `points`           | sign, bench, post                  | oak, white paint, stone     |
 | Stile and bench                                                                                                                                                                              | **kit (this PR)** `wall_drystone_stile_ew`, `brackens_bench`                                                                           | cross / rest; stile `on route` in a wall, bench `near route 2`       | fence, bench                       | gritstone                   |
-| Beehives                                                                                                                                                                                     | rework (`prop/beehive`, `prop/skep`: REWORK redraw)                                                                                    | work; `near grow 4` (an orchard or beds), off route; 2 to 4 in a row | barrel (0.42 to 0.62 A)            | timber hive, straw skep     |
+| Beehives                                                                                                                                                                                     | **kit (Act 1 set)** `hive_wbc`, `hive_skep` (the REWORK pictures redrawn) | work; `near grow 4` (an orchard or beds), off route; 2 to 4 in a row | barrel (0.42 to 0.62 A)            | timber hive, straw skep     |
 | Hay barn (Coast Path)                                                                                                                                                                        | missing (`prop/barn`: REWORK redraw)                                                                                                   | store; `near route 2`, cart apron 6 x 3                              | barn (96 to 144 world wide)        | timber, slate               |
 | Bandstand (park; the pump is `commons_pump`)                                                                                                                                                 | rework (`prop/bandstand`: REWORK redraw)                                                                                               | rest / water; centre of a green, apron all round                     | civic                              | iron, slate                 |
-| Mill wheel, miller's yard                                                                                                                                                                    | rework (`prop/water_mill`: KEEP at old density)                                                                                        | work; `on water` at a race, `near house 4`                           | wide structure                     | timber, stone               |
-| Lighthouse, quay props (Driftwood)                                                                                                                                                           | rework (`prop/lighthouse`, `prop/net_rack`, `prop/pier_ladder`: REWORK redraw; `prop/boat_blue`, `prop/sailboat`: KEEP at old density) | light / store; on the breakwater, nets `near water 2`                | tower; crate                       | whitewash, tarred timber    |
+| Mill wheel, miller's yard                                                                                                                                                                    | **kit (Act 1 set)** `mill_wheel` (8-frame turn), `mill_sluice`, `mill_millstones` | work; `on water` at a race, `near house 4`                           | wide structure                     | timber, stone               |
+| Lighthouse, quay props (Driftwood)                                                                                                                                                           | **kit (Act 1 set)** `coast_harbour_light`, `coast_net_rack`, `coast_mooring_bitt`; the lighthouse itself and the pier ladder still rework | light / store; on the breakwater, nets `near water 2`                | tower; crate                       | whitewash, tarred timber    |
 
 ## 2. The Brackens (Phase 6, first): built in this PR
 
@@ -78,7 +78,7 @@ Development-plan Phase 6 puts **the Brackens and the Frostline** first after the
 | Gas lamps, iron benches, street signs            | rework (`prop/gas_lamp`, `prop/iron_bench`: REWORK redraw)               | light / rest; `at_edge route 1`                | lamp; bench; sign        | cast iron, glass                    |
 | Coal carts, ore tubs on rails                    | rework (`prop/coal_cart`, `prop/ore_tub`: REWORK redraw)                 | store; on rails (needs a `rail` material)      | ore tub (14 to 22 world) | iron, coal                          |
 | Pit head, collapsed adit, tram tipple, rail ruin | missing                                                                  | work / mark; on a tier edge, rails meeting     | civic; wide door         | brick, iron, timber props           |
-| Signal box, semaphore, water crane               | rework (`prop/signal_box`, `prop/semaphore`, `prop/water_crane`: REWORK) | guide / water; beside the rails                | sign; post               | painted timber, iron                |
+| Signal box, semaphore, water crane               | **kit (Act 1 set)** `halt_semaphore`; signal box and water crane rework | guide / water; beside the rails                | sign; post               | painted timber, iron                |
 | Clock tower, foundry yard props                  | rework (`prop/clock_tower`: REWORK redraw)                               | mark; the square's centre                      | civic                    | brick, glass                        |
 | Charcoal burners' camp                           | missing                                                                  | work (camp); clearing in woods, `near route 2` | tent; pile               | turf-covered clamp, smoke loop      |
 | Crow roost in a dead pine, tor, lookout          | rework (`prop/charred_snag`: REWORK) ; tor missing                       | mark / view; off route                         | conifer; boulder         | dead pine, granite                  |
@@ -123,7 +123,7 @@ Development-plan Phase 6 puts **the Brackens and the Frostline** first after the
 
 | Prop                                                    | Status                                                                                                                                | Purpose and placement                          | Size class         | Material             |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------ | -------------------- |
-| Boats, canoe, buoys, lobster pots, net racks            | rework (`prop/boat_*`, `prop/sailboat`: KEEP at old density; `prop/canoe`, `prop/buoy`, `prop/lobster_pots`, `prop/net_rack`: REWORK) | store / work; `near water 1`, boats `on water` | boat; crate        | painted timber, rope |
+| Boats, canoe, buoys, lobster pots, net racks            | **kit (Act 1 set)** `coast_boat_beached`, `coast_buoy` (8-frame bob), `coast_lobster_pots`, `coast_net_rack`; sailboat and canoe rework | store / work; `near water 1`, boats `on water` | boat; crate        | painted timber, rope |
 | Driftwood piles, beachcomber's camp, wreck on the rocks | rework (`prop/driftwood`: REWORK); camp and wreck missing                                                                             | mark (story); beach fade clumps                | log; rubble        | silvered wood        |
 | Palms, pandanus, tide pools, seal rocks                 | rework (`prop/palm`: KEEP at old density; `prop/pandanus`: REWORK); pools and seal rocks missing                                      | grow / live; beach and rock edges              | broadleaf; boulder | palm, rock           |
 
@@ -135,22 +135,37 @@ Development-plan Phase 6 puts **the Brackens and the Frostline** first after the
 | Prayer-bell posts, closed-pass gate       | missing                                                                       | mark / contain; the pass's gate `on route`, closed (story) | post; fence           | slate, timber, bronze |
 | Snowy pines, cairns                       | rework (`prop/snowy_pine`: REWORK redraw); cairn kit (stone recolour missing) | grow / guide                                               | conifer; cairn        | fir, slate            |
 
+## The Act 1 set (scripts/art/kit/sets/act1.py)
+
+Act 1's scenes come first in play, so the props its route needs where the beats are nearest to playable were built next (Claude A, 4 Nov), to the Brackens bar: tone 11 or more per 16 × 16 patch, isolated texels at 4 % or less and specks at 15 % or less, the size class, placement metadata, finite loops that hold frame 0 under reduced motion, and two studies at 0 faults on every rule check (`sets/act1_study.py`). The asset ledger's REWORK pictures for the net rack, lobster pots, buoy, beehive, skep and semaphore are redrawn, not patched.
+
+| Beat | Pieces | Placement |
+| --- | --- | --- |
+| Driftwood quay and the lighthouse | `coast_net_rack`, `coast_lobster_pots` (a, b), `coast_mooring_bitt`, `coast_boat_beached`, `coast_buoy` (8-frame bob), `coast_harbour_light` (8-frame glow) | near water 1 to 4; the buoy on water; the light at the quay's head |
+| The Halt | `halt_platform_edge` (a, b: cells that meet), `halt_waiting_shelter`, `halt_churn_stand`, `halt_semaphore`, `halt_platform_lamp` (8-frame flicker), `halt_timetable_board` (pictograms, no words) | near the lane 1 to 5 |
+| The Millrace landslip | `mill_wheel` (8-frame turn), `mill_sluice`, `mill_millstones`, `mill_landslip` (on the road; way W3's picture), `mill_fence_broken` | the wheel and sluice on the leat; the slip on the route |
+| Old Fang's barrow | `barrow_entrance`, `barrow_kerb` (a, b, c) | the barrow near a trod 5; kerb stones within 6 of it |
+| Beehives | `hive_wbc`, `hive_skep` | near the path 3, off it |
+
+**New ground** (`sets/coast.py`), additive like the moor: `shingle` and `quay` with their transitions (lawn over both, both over water, path and shingle over quay). Both bake natively through the kit's earth painter, so no zone's bake hash moved. The quay is walkable hard-standing, not a route: `kit_rules` holds routes back from water unless a deck spans it, and a quay meets the water by design.
+
 ## Top missing after this PR, in build order
 
 1. Col hut and Snow Saddle bothy (Frostline; `prop/bothy` REWORK).
 2. Fallen climbers' camp (Frostline story site).
-3. Beehives and skep (Col Path, riverside; `prop/beehive` REWORK).
+3. Signal box and water crane for the Halt (`prop/signal_box`, `prop/water_crane` REWORK).
 4. Snow-capped cairn and wind-cut fir variants (Frostline; `prop/snowy_pine` REWORK).
 5. Ice-cutter's sledge (Frostline lip; `prop/sled` REWORK).
 6. Herders' shieling and haymakers' shelter (High Fells, Col Path).
-7. Mill wheel and the miller's yard (riverside; `prop/water_mill` KEEP at the old density).
+7. The miller's house and the mill itself (the Act 1 set has the wheel, sluice and yard).
 8. Hay barn for the Coast Path (`prop/barn` REWORK).
 9. Bandstand (the park; `prop/bandstand` REWORK).
-10. Lighthouse and quay props for Driftwood (`prop/lighthouse`, `prop/net_rack` REWORK).
+10. The lighthouse tower, the pier ladder and a fish market for Driftwood (`prop/lighthouse`, `prop/pier_ladder` REWORK).
 
 ## Gaps this PR leaves
 
 - **The moor's dressing is a post-pass, not yet a bake hook.** `heath`, `peat` and `drove` are terrain pieces with fills (additive: no existing material, manifest entry or bake hash moved), and the drove road bakes as a dirt route. The heather clumps, hag faces, trods and outcrops are painted by `sets/moor.dress` over the bake, with the pieces' shadows recovered by comparing bakes with and without them. A zone built on the moor needs `bake.py` to call that painter; that edit moves every bake hash, so it belongs to whoever next regenerates the baked zones.
 - **The stile runs along x only**; a stile along y comes when a plan needs one. Every other wall cell (15 join masks) and both gate axes exist and are checked in the study's wall lab (`brackens_study.wall_lab`).
 - **`scripts/review/sizes.json` matches names by substring**, and "cairn" there is the character Cairn (class `large`, 83 to 95 tall), so the stone cairn `brackens_cairn` can be taken for him. The piece keeps its name; tightening the match is for Codex.
+- **The Act 1 set's limits.** The quay is not a route (see above), so a path to a quay ends at its edge. The landslip does not block movement by itself: the way system holds the road shut. The local Eastward references include no harbour or station, so the coast and halt pieces were compared with the town front (21), the crates and stakes (22), the rope rails (30) and the farm (17) at Bramble's height.
 - **Metadata the kit cannot say yet** (as #430 found for the woodpile): the hermit's fire "at the end of a side trod" is approximated as `near route 6`; the bench's "a view" is not expressible.

@@ -1,4 +1,265 @@
 {
+ "barrow_entrance": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -66.0,
+   -66.0,
+   132,
+   60
+  ],
+  "deck": null,
+  "foot": [
+   71,
+   87
+  ],
+  "footprint": [
+   [
+    -3,
+    -4
+   ],
+   [
+    -2,
+    -4
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    2,
+    -4
+   ],
+   [
+    3,
+    -4
+   ],
+   [
+    -3,
+    -3
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    2,
+    -3
+   ],
+   [
+    3,
+    -3
+   ],
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    3,
+    -2
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ],
+   [
+    3,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Old Fang's barrow",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 5,
+    "note": "off the path on its own rise, reached by a short trod",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "tomb",
+  "shadow": null,
+  "size_cells": [
+   7,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "act": 1
+   },
+   "lore": "Old Fang's barrow (the map legend's Act 1 beat)",
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     71,
+     87
+    ],
+    "png": "res://kit/props/art/act1/barrow_entrance.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "barrow_kerb": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -9.0,
+   -4.5,
+   18,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   11,
+   21
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Kerb stone",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 6,
+    "note": "a stone of the ring round the barrow's foot",
+    "rel": "near",
+    "what": "barrow_entrance"
+   }
+  ],
+  "role": "marker",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    6
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "a": {
+    "foot": [
+     11,
+     21
+    ],
+    "png": "res://kit/props/art/act1/barrow_kerb_a.png"
+   },
+   "b": {
+    "foot": [
+     13,
+     18
+    ],
+    "png": "res://kit/props/art/act1/barrow_kerb_b.png"
+   },
+   "c": {
+    "foot": [
+     9,
+     24
+    ],
+    "png": "res://kit/props/art/act1/barrow_kerb_c.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "brackens_bench": {
   "approval": "candidate",
   "blocks_move": true,
@@ -979,6 +1240,469 @@
      234
     ],
     "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "coast_boat_beached": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -42.0,
+   -18.0,
+   84,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   46,
+   26
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Beached boat",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "drawn up the beach above the tide line",
+    "rel": "near",
+    "what": "water"
+   }
+  ],
+  "role": "boat",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    90,
+    15
+   ]
+  },
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     46,
+     26
+    ],
+    "png": "res://kit/props/art/act1/coast_boat_beached.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "coast_buoy": {
+  "anim": {
+   "clip": "bob",
+   "cover": true,
+   "fps": 5.0,
+   "frames": 8,
+   "offset": [
+    -16,
+    -25
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/act1/coast_buoy_loop.png"
+  },
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   16,
+   25
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Buoy",
+  "painted": false,
+  "requires": [
+   {
+    "note": "a can buoy moored off the quay, marking the channel",
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "role": "marker",
+  "shadow": null,
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     16,
+     25
+    ],
+    "png": "res://kit/props/art/act1/coast_buoy.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "coast_harbour_light": {
+  "anim": {
+   "clip": "glow",
+   "cover": true,
+   "fps": 4.0,
+   "frames": 8,
+   "offset": [
+    -14,
+    -100
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/act1/coast_harbour_light_loop.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -13.5,
+   -13.5,
+   27,
+   27
+  ],
+  "deck": null,
+  "foot": [
+   14,
+   100
+  ],
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Harbour light",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "at the quay's head, its light over the harbour mouth",
+    "rel": "near",
+    "what": "water"
+   }
+  ],
+  "role": "beacon",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    18
+   ]
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     14,
+     100
+    ],
+    "png": "res://kit/props/art/act1/coast_harbour_light.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "coast_lobster_pots": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -9.0,
+   42,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   23,
+   26
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Lobster pots",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "creels stacked on the quay between trips",
+    "rel": "near",
+    "what": "water"
+   }
+  ],
+  "role": "store",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "a": {
+    "foot": [
+     23,
+     26
+    ],
+    "png": "res://kit/props/art/act1/coast_lobster_pots_a.png"
+   },
+   "b": {
+    "foot": [
+     20,
+     17
+    ],
+    "png": "res://kit/props/art/act1/coast_lobster_pots_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "coast_mooring_bitt": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -7.5,
+   -7.5,
+   15,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   9,
+   20
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Mooring bitt",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "on the quay's edge, where a boat's line is made fast",
+    "rel": "near",
+    "what": "water"
+   }
+  ],
+  "role": "mooring",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    6
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     9,
+     20
+    ],
+    "png": "res://kit/props/art/act1/coast_mooring_bitt.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "coast_net_rack": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -42.0,
+   -6.0,
+   84,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   39,
+   52
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Net rack",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "nets are hung to dry on the quay, by the boats that set them",
+    "rel": "near",
+    "what": "water"
+   }
+  ],
+  "role": "rack",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    96,
+    12
+   ]
+  },
+  "size_cells": [
+   4,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     39,
+     52
+    ],
+    "png": "res://kit/props/art/act1/coast_net_rack.png"
    }
   },
   "z_sort": "foot"
@@ -12825,6 +13549,623 @@
   },
   "z_sort": "foot"
  },
+ "halt_churn_stand": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -12.0,
+   48,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   23,
+   48
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Milk-churn stand",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "at the lane's side, where the cart sets the churns down for the train",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "store",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    66,
+    12
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     23,
+     48
+    ],
+    "png": "res://kit/props/art/act1/halt_churn_stand.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "halt_platform_edge": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   12,
+   37
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Platform edge",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "the platform runs beside the lane the halt serves",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "platform",
+  "shadow": null,
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "a": {
+    "foot": [
+     12,
+     37
+    ],
+    "png": "res://kit/props/art/act1/halt_platform_edge_a.png"
+   },
+   "b": {
+    "foot": [
+     12,
+     37
+    ],
+    "png": "res://kit/props/art/act1/halt_platform_edge_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "halt_platform_lamp": {
+  "anim": {
+   "clip": "flicker",
+   "cover": true,
+   "fps": 6.0,
+   "frames": 8,
+   "offset": [
+    -10,
+    -127
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/act1/halt_platform_lamp_loop.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   10,
+   127
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Platform lamp",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 5,
+    "note": "along the platform, lighting the way from the lane to the train",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "lamp",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    18,
+    6
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     10,
+     127
+    ],
+    "png": "res://kit/props/art/act1/halt_platform_lamp.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "halt_semaphore": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -6.0,
+   12,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   13,
+   137
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Semaphore signal",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "at the platform's end, where the driver sees it",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "signal",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    24,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     13,
+     137
+    ],
+    "png": "res://kit/props/art/act1/halt_semaphore.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "halt_timetable_board": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -3.0,
+   42,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   28,
+   93
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Timetable board",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "by the platform's entrance from the lane",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "notice",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     28,
+     93
+    ],
+    "png": "res://kit/props/art/act1/halt_timetable_board.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "halt_waiting_shelter": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -42.0,
+   -30.0,
+   84,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   46,
+   85
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Waiting shelter",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 5,
+    "note": "on the platform, open to the line, a few steps from the lane",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "shelter",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    96,
+    18
+   ]
+  },
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     46,
+     85
+    ],
+    "png": "res://kit/props/art/act1/halt_waiting_shelter.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "hive_skep": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -9.0,
+   24,
+   15
+  ],
+  "deck": null,
+  "foot": [
+   14,
+   46
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Straw skep",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "on its stool by a cottage garden wall",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "hive",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    30,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     14,
+     46
+    ],
+    "png": "res://kit/props/art/act1/hive_skep.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "hive_wbc": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -12.0,
+   30,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   18,
+   66
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Beehive",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "in a garden or an orchard by the path, its entrance to the morning sun",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "hive",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    36,
+    9
+   ]
+  },
+  "size_cells": [
+   2,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     18,
+     66
+    ],
+    "png": "res://kit/props/art/act1/hive_wbc.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "log_steps": {
   "approval": "candidate",
   "blocks_move": false,
@@ -12968,6 +14309,441 @@
    }
   },
   "z_sort": "ground"
+ },
+ "mill_fence_broken": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -39.0,
+   -3.0,
+   78,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   44,
+   47
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Broken rail fence",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "the field fence the slip knocked down beside the road",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "story",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    78,
+    9
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     44,
+     47
+    ],
+    "png": "res://kit/props/art/act1/mill_fence_broken.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "mill_landslip": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": [
+   -66.0,
+   -42.0,
+   132,
+   42
+  ],
+  "deck": null,
+  "foot": [
+   64,
+   48
+  ],
+  "footprint": [
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Landslip",
+  "painted": false,
+  "requires": [
+   {
+    "note": "the slip lies across the road: way W3, cleared once the Millrace is mended",
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "role": "barrier",
+  "shadow": null,
+  "size_cells": [
+   6,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "act": 1
+   },
+   "lore": "Way W3 (world-plan.md 6): the Millrace landslip on the Foothill Road; the way system (world-unlocks.md) holds the road shut, this piece is its picture",
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     64,
+     48
+    ],
+    "png": "res://kit/props/art/act1/mill_landslip.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "mill_millstones": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -42.0,
+   -15.0,
+   84,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   47
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Millstones",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 3,
+    "note": "in the miller's yard, by the door they will be carried through",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "store",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    78,
+    12
+   ]
+  },
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     30,
+     47
+    ],
+    "png": "res://kit/props/art/act1/mill_millstones.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "mill_sluice": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -36.0,
+   -12.0,
+   72,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   26,
+   55
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Sluice gate",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "at the leat's head, holding back the race",
+    "rel": "near",
+    "what": "water"
+   }
+  ],
+  "role": "sluice",
+  "shadow": null,
+  "size_cells": [
+   3,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     26,
+     55
+    ],
+    "png": "res://kit/props/art/act1/mill_sluice.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "mill_wheel": {
+  "anim": {
+   "clip": "turn",
+   "cover": true,
+   "fps": 6.0,
+   "frames": 8,
+   "offset": [
+    -57,
+    -111
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/act1/mill_wheel_loop.png"
+  },
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -54.0,
+   -33.0,
+   108,
+   33
+  ],
+  "deck": null,
+  "foot": [
+   57,
+   111
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Mill wheel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "the wheel sits in the leat that drives it",
+    "rel": "near",
+    "what": "water"
+   }
+  ],
+  "role": "wheel",
+  "shadow": null,
+  "size_cells": [
+   5,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     57,
+     111
+    ],
+    "png": "res://kit/props/art/act1/mill_wheel.png"
+   }
+  },
+  "z_sort": "foot"
  },
  "stepping_stones_1": {
   "approval": "candidate",

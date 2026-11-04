@@ -1,0 +1,109 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "halt_platform_edge",
+ "name": "Platform edge",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "a",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/halt_platform_edge_a.png",
+   "foot": [
+    12,
+    37
+   ]
+  },
+  {
+   "id": "b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/act1/halt_platform_edge_b.png",
+   "foot": [
+    12,
+    37
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "One cell of the platform's edge along x: stone courses, a coping with a white lip, gravel behind; cells meet."
+ },
+ "geometry": {
+  "size_px": [
+   24,
+   38
+  ],
+  "size_cells": [
+   1,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 38,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   12,
+   37
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "cross",
+  "role": "platform",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 3,
+    "note": "the platform runs beside the lane the halt serves"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "platform (0.9 m: a front of 12 and a coping)",
+  "eastward_ref": "21 (the street front: lamp posts 2.3 A, posters and boards on posts, timber and painted trim)",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "halt_platform_edge",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}
