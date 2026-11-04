@@ -989,26 +989,61 @@ class Thresholds(unittest.TestCase):
                     'crossroads_smithy', 'crossroads_fern_cottage'):
             ds = lib[pid]['geometry']['doors']
             self.assertTrue(ds and all(d['x'][0] < d['x'][1] for d in ds), pid)
-        # the fern cottage's and the smithy's doors are off the half-cell grid (their art's to move)
-        for pid, ok in (('crossroads_fern_cottage', False), ('crossroads_smithy', False), ('crossroads_hut', True), ('crossroads_herbalist', True)):
-            x0, x1 = lib[pid]['geometry']['doors'][0]['x']
-            self.assertEqual(self.TH.on_half_grid(708 + (x0 + x1) / 2.0), ok, pid)      # a foot on the 4 world px grid
+            # a foot on the 4 world px grid (12 texels): every door's centre on the half-cell grid
+            for d in ds:
+                self.assertTrue(self.TH.on_half_grid(708 + (d['x'][0] + d['x'][1]) / 2.0), pid)
+
+    def test_every_house_door_is_drawn_on_the_half_cell_grid(self):
+        # the rule is in the drawing (houses.doors_on_grid in houses.building; Matt, 4 Nov: redesign the
+        # doors, keep the houses): every look in every zone plan, its doors and a forge's mouth a whole
+        # number of half cells (4 world px) from the front's middle, each moved at most 2 world px
+        import glob
+        from scripts.art.native import houses as HS
+        seen = 0
+        for f in sorted(glob.glob(os.path.join(S.ROOT, 'game', 'data', 'plans', '*.json'))):
+            with open(f) as fh:
+                p = json.load(fh)
+            looks = (p.get('art') or {}).get('looks') or {}
+            for b in p.get('buildings', []):
+                if b['id'] not in looks:
+                    continue
+                look = dict(looks[b['id']], w=b['rect'][2], depth=b['rect'][3])
+                s = HS.doors_on_grid(look)
+                was = [look['door']] if isinstance(look.get('door'), (int, float)) else [d[0] for d in look.get('doors', [])]
+                now = [s['door']] if isinstance(s.get('door'), (int, float)) else [d[0] for d in s.get('doors', [])]
+                for a, b_ in zip(was, now):
+                    seen += 1
+                    self.assertEqual((b_ - look['w'] / 2.0) % 4, 0, b['id'])
+                    self.assertLessEqual(abs(b_ - a), 2, b['id'])
+        self.assertGreaterEqual(seen, 8)
+        # and the drawing puts them there: the two that moved, built (centres in texels from the foot)
+        from scripts.art.native import village as V
+        with open(os.path.join(S.ROOT, 'game', 'data', 'plans', 'crossroads.json')) as fh:
+            p = json.load(fh)
+        rects = {b['id']: b['rect'] for b in p['buildings']}
+        for bid in ('fern_cottage', 'smithy'):
+            look = dict(p['art']['looks'][bid], w=rects[bid][2], depth=rects[bid][3])
+            built = V.building(look, seed=look.get('seed', sum(map(ord, bid))), hd=True)
+            self.assertTrue(built.info['doors'] and all(c % 12 == 0 for c in built.info['doors']), (bid, built.info['doors']))
 
     def test_a_door_path_is_centred_and_runs_straight_out(self):
-        # one cell east of the door's centre line (the farm study's cottage path is columns 28 and 29)
-        shifted = [(28, r, '.') for r in range(12, 19)] + [(30, r, '#') for r in range(12, 19)]
-        self.assertTrue(any('the path from its door is centred at x=720' in m for m in self._faults(self._q(shifted), 'rules.door_path')))
+        # one cell east of the door's centre line (the farm study's cottage path is columns 26 and 27)
+        shifted = [(26, r, '.') for r in range(12, 19)] + [(28, r, '#') for r in range(12, 19)]
+        self.assertTrue(any('the path from its door is centred at x=672' in m for m in self._faults(self._q(shifted), 'rules.door_path')))
         # centred at the door, but bending east in the first cell out
-        bent = [(c, 13, '.') for c in (28, 29)] + [(30, 13, '#'), (31, 13, '#')]
+        bent = [(c, 13, '.') for c in (26, 27)] + [(28, 13, '#'), (29, 13, '#')]
         self.assertTrue(any('bends before it is a cell out' in m for m in self._faults(self._q(bent), 'rules.door_path')))
-        # a house whose door is off the half-cell grid is told so
-        fern = {'id': 'cottage', 'piece': 'crossroads_fern_cottage', 'at': [780, 288]}
-        self.assertTrue(any('off the half-cell grid' in m for m in self._faults(self._q(pieces=[fern]), 'rules.door_path')))
+        # a door drawn off the half-cell grid (the fern cottage's before 4 Nov, 6 texels west) is told so
+        import copy
+        from scripts.art.kit import relations as RL
+        lib = copy.deepcopy(RL.default_library())
+        lib['crossroads_fern_cottage']['geometry']['doors'][0]['x'] = [v - 6 for v in lib['crossroads_fern_cottage']['geometry']['doors'][0]['x']]
+        self.assertTrue(any('off the half-cell grid' in f['message'] for f in self.TH.check_plan(self.plan, lib)))
 
     def test_a_door_stays_clear(self):
-        tub = {'id': 'tub', 'piece': 'crossroads_flower_tub', 'at': [696, 312]}
+        tub = {'id': 'tub', 'piece': 'crossroads_flower_tub', 'at': [648, 312]}
         self.assertTrue(any(m.startswith('tub stands in the doorway of cottage') for m in self._faults(self._q(pieces=[tub]), 'rules.door_clear')))
-        bed = {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [696, 312]}
+        bed = {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [648, 312]}
         self.assertTrue(any(m.startswith('border_1 stands in the doorway') for m in self._faults(self._q(pieces=[bed]), 'rules.door_clear')))
         # beside the door (the study's borders) is clear
         self.assertEqual(self._faults(self.plan, 'rules.door_clear'), [])
@@ -1037,10 +1072,10 @@ class Thresholds(unittest.TestCase):
         q = self._q(pieces=inner, drop=[pc['id'] for pc in self.plan['pieces'] if pc['id'].startswith('garden_34_')])
         self.assertTrue(any(m.startswith('garden_31_11: drawn in front of the façade of cottage') for m in self._faults(q, 'rules.fence_wall')))
         # its west side run a cell short of the west wall: a gap
-        short = [dict(pc, id=pc['id'].replace('garden_24', 'garden_23'), at=[23 * 24, pc['at'][1]])
-                 for pc in self.plan['pieces'] if pc['id'].startswith('garden_24_')]
-        q = self._q(pieces=short, drop=[pc['id'] for pc in self.plan['pieces'] if pc['id'].startswith('garden_24_')])
-        self.assertTrue(any(m.startswith('garden_23_11: its end post stands 24 texels off the wall') for m in self._faults(q, 'rules.fence_wall')))
+        short = [dict(pc, id=pc['id'].replace('garden_25', 'garden_24'), at=[24 * 24, pc['at'][1]])
+                 for pc in self.plan['pieces'] if pc['id'].startswith('garden_25_')]
+        q = self._q(pieces=short, drop=[pc['id'] for pc in self.plan['pieces'] if pc['id'].startswith('garden_25_')])
+        self.assertTrue(any(m.startswith('garden_24_11: its end post stands 24 texels off the wall') for m in self._faults(q, 'rules.fence_wall')))
         # at the corners (the study) they pass
         self.assertEqual(self._faults(self.plan, 'rules.fence_wall'), [])
 
