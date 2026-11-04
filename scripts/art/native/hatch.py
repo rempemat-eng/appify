@@ -38,10 +38,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.a
 OUT = os.path.join(ROOT, 'game', 'zones', 'woodland', 'art')
 OW, OH = 30, 24                # the opening: the door's collision, texels
 K = 4                          # kerb width
+M = 3                          # the worn earth ring round the kerb
 LID_H = 26                     # room above the kerb for the thrown-back lid
-W = OW + 2 * K                 # 38
-H = LID_H + OH + 2 * K + 2     # 60: lid room, kerb, opening, kerb, front
-X0, Y0 = K, LID_H + K          # the opening's top-left in the canvas
+W = OW + 2 * K + 2 * M         # 44
+H = LID_H + M + OH + 2 * K + 2 + M   # 66: lid room, ring, kerb, opening, kerb, front, ring
+X0, Y0 = M + K, LID_H + M + K  # the opening's top-left in the canvas
 FOOT = (X0 + OW // 2, Y0 + OH)  # the opening's south edge centre: the scene's anchor
 
 
@@ -140,6 +141,53 @@ def _outline(a):
     a[lit] = step(a[lit], -1)
 
 
+def _ground(a, seed):
+    """Where the kerb meets the turf (Claude A, 4 Nov: "the kerb sits on the grass like a pasted
+    rectangle"): a ring of worn earth 2 to 3 texels wide, its outer edge wandering a texel in pairs,
+    darker and damper on the north and west in the kerb's shade, drier to the south and east;
+    a few grass blades standing over the kerb's south and east edges and two loose stones. Painted
+    only outside what is drawn, so the kerb, the lid and the opening (the collision) stay put; no
+    outline on ground."""
+    from scripts.art.native.village import tidy
+    rng = np.random.default_rng(seed + 101)
+    drawn = a >= 0
+    yy, xx = np.mgrid[0:H, 0:W]
+    kx0, ky0, kx1, ky1 = X0 - K, Y0 - K, X0 + OW + K, Y0 + OH + K + 2      # the kerb with its front
+    dx = np.maximum(np.maximum(kx0 - xx, xx - (kx1 - 1)), 0)
+    dy = np.maximum(np.maximum(ky0 - yy, yy - (ky1 - 1)), 0)
+    d = np.hypot(dx, dy)
+    # the outer edge wanders in two-texel steps between 2 and 3 texels out
+    wob = np.repeat(np.repeat(rng.integers(0, 2, ((H + 1) // 2, (W + 1) // 2)), 2, 0), 2, 1)[:H, :W]
+    ring = (d > 0) & (d <= 2 + wob) & ~drawn
+    shade = (yy < ky0 + 3) | (xx < kx0 + 3)                    # north and west: the kerb's shade
+    a[ring] = C('path', 3)
+    a[ring & shade] = C('earth', 3)
+    a[ring & shade & (d <= 1)] = C('earth_cool', 2)            # damp against the stones
+    a[ring & ~shade & (d > 2)] = C('path_warm', 4)              # dry, fraying into the turf
+    # clods: a lit texel pair here and there on the dry side
+    for _ in range(6):
+        y, x = int(rng.integers(0, H)), int(rng.integers(0, W - 1))
+        if ring[y, x] and ring[y, x + 1] and not shade[y, x]:
+            a[y, x:x + 2] = C('path_warm', 4)
+    # two loose stones, lit on the upper left
+    for (sy, sx) in ((ky1, kx1 - 9), (ky0 + 9, kx1)):
+        if sy + 2 <= H and sx + 3 <= W:
+            a[sy:sy + 2, sx:sx + 3] = C('stone', 3)
+            a[sy, sx:sx + 2] = C('stone', 4)
+            a[sy + 1, sx + 2] = C('stone', 2)
+    # grass blades over the kerb's south and east edges: two or three texels tall, a lit tip
+    for _ in range(7):
+        bx = int(rng.integers(kx0 + 2, kx1 - 2))
+        h = int(rng.integers(2, 4))
+        a[ky1 - h:ky1, bx] = C('grass', 3)
+        a[ky1 - h, bx] = C('grass', 4)
+    for _ in range(5):
+        by = int(rng.integers(ky0 + 4, ky1 - 2))
+        a[by - 1:by + 1, kx1 - 2] = C('grass', 3)
+        a[by - 1:by + 1, kx1 - 1] = C('grass_cool', 2)
+    tidy(a, passes=1, keep=drawn & ~ring)
+
+
 def closed(seed=7):
     rng = np.random.default_rng(seed)
     a = np.full((H, W), -1, np.int64)
@@ -167,6 +215,7 @@ def closed(seed=7):
     a[ring & ((xx >= cx) & (yy > cy))] = C('iron', 0)
     _tidy(a)
     _outline(a)
+    _ground(a, seed)
     return a
 
 
@@ -203,7 +252,7 @@ def opened(seed=7):
     a[dark & sparse & (((xx // 4 + yy // 4) % 2) == 0)] = C('sky_cool', 0)
     # the lid thrown back over its north hinge, upside down on the turf: planks and two battens,
     # its south edge (the hinge side) showing the board's thickness
-    ly = Y0 - K - 2 - OH
+    ly = Y0 - K - M - 2 - OH
     _planks(a, X0, ly, OW, OH, rng, underside=True)
     for by in (ly + 4, ly + OH - 7):
         a[by:by + 3, X0 + 1:X0 + OW - 1] = C('timber_warm', 3)
@@ -216,6 +265,7 @@ def opened(seed=7):
         a[ly + OH:Y0 - K + 2, hx] = C('iron', 4)
     _tidy(a)
     _outline(a)
+    _ground(a, seed)
     return a
 
 
