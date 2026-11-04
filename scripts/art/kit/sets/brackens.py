@@ -1498,7 +1498,7 @@ STANDARD = "art-style.md (Eastward's level of detail), placement-logic.md"
 
 def _piece(pid, name, variants, size, cells, purpose, role, *, collision, fp, requires=(), forbids=(), enclosure=None,
            boundary=None, anim=None, shadow=(10, 3), blocks=True, size_class=None, eastward=None, note='', height=None,
-           composition=None, interact=None, story=None, fn=None, extra=None, door_cells=None):
+           composition=None, interact=None, story=None, fn=None, extra=None, door_cells=None, doors=None):
     pl = {'snap': 'cell', 'purpose': purpose, 'role': role}
     pl.update(extra or {})
     if composition:
@@ -1521,7 +1521,7 @@ def _piece(pid, name, variants, size, cells, purpose, role, *, collision, fp, re
         'approval': {'state': 'candidate', 'by': None, 'at': None, 'standard': STANDARD, 'note': note},
         'geometry': {'size_px': list(size), 'size_cells': list(cells), 'z_sort': 'foot', 'height_px': int(height or size[1]),
                      'collision': collision, 'foot': list(variants[0][3]), 'footprint': fp,
-                     **({'door_cells': door_cells} if door_cells else {})},
+                     **({'door_cells': door_cells} if door_cells else {}), **({'doors': doors} if doors else {})},
         'placement': pl,
         'rendering': rendering,
         'function': {'interact': interact} if interact else {},
@@ -1617,8 +1617,8 @@ def prop_jobs():
             note='A spring-house over the well and a trough in front; the trickle and rings loop (8 frames).')),
         ('brackens_shepherds_hut', [('still', lambda: shepherds_hut())], dict(
             name="Shepherd's hut", purpose='live', role='house', cells=(9, 4), fp=_fp(8, 3),
-            collision={'shape': 'rect', 'rect': [-29.0, -22.0, 58, 22]}, shadow=(56, 8), composition='edge',
-            door_cells=[[-2, 0], [-1, 0]],
+            collision={'shape': 'rect', 'rect': [-29.5, -22.0, 59, 22]}, shadow=(56, 8), composition='edge',
+            door_cells=[[-2, 0], [-1, 0]], doors=[{'x': [-57, -15], 'faces': 's'}],
             requires=[_rel('near', 'route', 3, 'beside the Drover\'s Road, its door on the trod')], forbids=NATURE,
             extra={'provides': ['home', 'hearth']},
             size_class='hut (148 to 252 tall, 178 to 296 wide: a one-room bothy near the class\'s small end; size-guide "stone refuge, shepherd\'s bothy: as a hut")',

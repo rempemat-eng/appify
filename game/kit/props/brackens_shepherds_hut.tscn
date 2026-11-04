@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" path="res://kit/props/art/brackens/brackens_shepherds_hut.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(174, 66)
+size = Vector2(177, 66)
 
 [node name="BrackensShepherdsHut" type="Node2D"]
 script = ExtResource("1")

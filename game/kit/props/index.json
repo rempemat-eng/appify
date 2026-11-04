@@ -791,9 +791,9 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -87.0,
+   -88.5,
    -66.0,
-   174,
+   177,
    66
   ],
   "deck": null,
