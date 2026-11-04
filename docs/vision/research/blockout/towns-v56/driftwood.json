@@ -8,7 +8,7 @@
   8,
   12
  ],
- "buildings_counted": 8,
+ "buildings_counted": 7,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -33,15 +33,15 @@
   "authored": "by the layout generator from hand-written streets",
   "tiers": [
    -1,
-   3
+   2
   ],
   "levelled_footprints": 0
  },
  "footprint_px": [
-  6224,
-  4824,
-  6712,
-  5136
+  6160,
+  4952,
+  6704,
+  5108
  ],
  "fortification": null,
  "style": null,
@@ -67,8 +67,8 @@
    "street": "driftwood-a2",
    "entries_px": [
     [
-     6399,
-     4725
+     6379,
+     4845
     ]
    ],
    "route_kind": "path"
@@ -77,101 +77,46 @@
  "streets": [
   {
    "id": "driftwood-s01",
-   "name": "Driftwood Lane",
+   "name": "the Strand (1)",
    "class": "lane",
    "width_cells": 3,
    "vertices_px": [
     [
-     6508.0,
-     5012.0
+     6164.0,
+     5108.0
     ],
     [
-     6508.0,
-     5060.0
-    ],
-    [
-     6412.0,
-     5060.0
-    ],
-    [
-     6412.0,
-     5116.0
+     6292.0,
+     5108.0
     ]
    ],
    "frontage": "detached",
    "connects": [
-    "driftwood-a2",
-    "driftwood-s04",
-    "driftwood-s08"
+    "driftwood-c02",
+    "driftwood-c03",
+    "driftwood-s05"
    ]
   },
   {
    "id": "driftwood-s02",
-   "name": "Driftwood Back Lane",
+   "name": "the Strand (2)",
    "class": "lane",
    "width_cells": 3,
    "vertices_px": [
     [
-     6596.0,
-     4948.0
+     6340.0,
+     5108.0
     ],
     [
-     6612.0,
-     4948.0
-    ],
-    [
-     6612.0,
-     4900.0
+     6660.0,
+     5108.0
     ]
    ],
    "frontage": "detached",
    "connects": [
+    "driftwood-a1",
     "driftwood-c01",
-    "driftwood-s07"
-   ]
-  },
-  {
-   "id": "driftwood-s03",
-   "name": "Driftwood Lane",
-   "class": "lane",
-   "width_cells": 3,
-   "vertices_px": [
-    [
-     6452.0,
-     5028.0
-    ],
-    [
-     6388.0,
-     5028.0
-    ]
-   ],
-   "frontage": "detached",
-   "connects": [
-    "driftwood-s08"
-   ]
-  },
-  {
-   "id": "driftwood-s04",
-   "name": "the Strand",
-   "class": "lane",
-   "width_cells": 3,
-   "vertices_px": [
-    [
-     6332.0,
-     5108.0
-    ],
-    [
-     6636.0,
-     5108.0
-    ],
-    [
-     6636.0,
-     5116.0
-    ]
-   ],
-   "frontage": "detached",
-   "connects": [
-    "driftwood-s01"
+    "driftwood-s05"
    ]
   },
   {
@@ -207,7 +152,8 @@
    ],
    "follows_route": "Coast Path",
    "connects": [
-    "driftwood-a2"
+    "driftwood-a2",
+    "driftwood-s02"
    ]
   },
   {
@@ -216,14 +162,6 @@
    "class": "arrival",
    "width_cells": 3,
    "vertices_px": [
-    [
-     6399.0,
-     4725.5
-    ],
-    [
-     6384.3,
-     4798.1
-    ],
     [
      6379.3,
      4845.5
@@ -279,57 +217,30 @@
    ],
    "follows_route": "Valley lane south",
    "connects": [
-    "driftwood-a1",
-    "driftwood-s01",
-    "driftwood-s07"
+    "driftwood-a1"
    ]
   },
   {
-   "id": "driftwood-s07",
+   "id": "driftwood-s05",
    "name": null,
    "class": "lane",
    "width_cells": 3,
    "vertices_px": [
     [
-     6588.0,
-     4940.0
+     6292.0,
+     5108.0
     ],
     [
-     6588.0,
-     4972.0
-    ],
-    [
-     6508.0,
-     4972.0
+     6324.0,
+     5108.0
     ]
    ],
    "frontage": "detached",
    "link": true,
    "connects": [
-    "driftwood-a2",
+    "driftwood-c01",
+    "driftwood-s01",
     "driftwood-s02"
-   ]
-  },
-  {
-   "id": "driftwood-s08",
-   "name": null,
-   "class": "lane",
-   "width_cells": 3,
-   "vertices_px": [
-    [
-     6412.0,
-     5028.0
-    ],
-    [
-     6412.0,
-     5044.0
-    ]
-   ],
-   "frontage": "detached",
-   "link": true,
-   "connects": [
-    "driftwood-s01",
-    "driftwood-s03"
    ]
   },
   {
@@ -339,17 +250,58 @@
    "width_cells": 2,
    "vertices_px": [
     [
-     6648.0,
-     4944.0
+     6328.0,
+     5056.0
     ],
     [
-     6624.0,
-     4944.0
+     6328.0,
+     5096.0
     ]
    ],
    "frontage": "detached",
    "connects": [
-    "driftwood-s02"
+    "driftwood-s02",
+    "driftwood-s05"
+   ]
+  },
+  {
+   "id": "driftwood-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6152.0,
+     5040.0
+    ],
+    [
+     6152.0,
+     5096.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "driftwood-s01"
+   ]
+  },
+  {
+   "id": "driftwood-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6232.0,
+     5048.0
+    ],
+    [
+     6232.0,
+     5096.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "driftwood-s01"
    ]
   }
  ],
@@ -371,15 +323,28 @@
     "driftwood-b004",
     "driftwood-b005",
     "driftwood-b006",
-    "driftwood-b007",
-    "driftwood-b008"
+    "driftwood-b007"
    ],
    "mix": {
     "cottage": 4,
     "house": 2,
-    "boathouse": 2
+    "boathouse": 1
    },
    "function": "homes"
+  },
+  {
+   "id": "driftwood-d-the-quay",
+   "name": "the quay",
+   "function": "docks and works yards",
+   "declared": "the ferry's landing and the boats, at the Sleepwater's mouth",
+   "box_px": [
+    6448,
+    5124,
+    6504,
+    5148
+   ],
+   "buildings": [],
+   "town": "Driftwood"
   }
  ],
  "gathering_places": [],
@@ -415,7 +380,7 @@
    ]
   ]
  },
- "fronts": 8,
+ "fronts": 7,
  "landmarks": [],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
@@ -424,21 +389,21 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    791,
-    631,
+    770,
+    632,
     8,
     5
    ],
    "rect_px": [
-    6328,
-    5048,
+    6160,
+    5056,
     64,
     40
    ],
-   "faces": "driftwood-s04",
+   "faces": "driftwood-s01",
    "door_cells": [
-    795,
-    636
+    774,
+    637
    ],
    "purpose": "a cottage",
    "occupants": "a farming household",
@@ -448,104 +413,83 @@
   },
   {
    "id": "driftwood-b002",
-   "type": "cottage",
-   "form": "cottage",
-   "footprint_cells": [
-    792,
-    622,
-    9,
-    5
-   ],
-   "rect_px": [
-    6336,
-    4976,
-    72,
-    40
-   ],
-   "faces": "driftwood-s03",
-   "door_cells": [
-    797,
-    627
-   ],
-   "purpose": "a cottage",
-   "occupants": "a fishing household",
-   "district": "driftwood-d-driftwood",
-   "counted": true,
-   "plot_cells": [
-    792,
-    627,
-    2,
-    2
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "driftwood-b003",
    "type": "house",
    "form": "house",
    "footprint_cells": [
-    809,
-    613,
+    790,
+    625,
     10,
     6
    ],
    "rect_px": [
-    6472,
-    4904,
+    6320,
+    5000,
     80,
     48
    ],
-   "faces": "driftwood-s07",
+   "faces": "driftwood-c01",
    "door_cells": [
-    814,
-    619
+    790,
+    631
    ],
    "purpose": "a family house",
-   "occupants": "a carting household",
+   "occupants": "a fishing household",
    "district": "driftwood-d-driftwood",
    "counted": true,
-   "plot_cells": [
-    811,
-    619,
-    8,
-    2
-   ],
-   "plot": "garden",
    "counts_as": 1
   },
   {
-   "id": "driftwood-b004",
+   "id": "driftwood-b003",
    "type": "boathouse",
    "form": "boathouse",
    "footprint_cells": [
-    778,
-    634,
-    10,
-    8
+    820,
+    623,
+    9,
+    7
    ],
    "rect_px": [
-    6224,
-    5072,
-    80,
-    64
+    6560,
+    4984,
+    72,
+    56
    ],
-   "faces": "driftwood-s04",
+   "faces": "driftwood-a2",
    "door_cells": [
-    788,
-    638
+    820,
+    630
    ],
    "purpose": "a boathouse",
    "occupants": "a boat owner",
    "district": "driftwood-d-driftwood",
    "counted": true,
-   "plot_cells": [
-    778,
-    642,
-    10,
-    2
+   "counts_as": 1
+  },
+  {
+   "id": "driftwood-b004",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    830,
+    625,
+    8,
+    5
    ],
-   "plot": "garden",
+   "rect_px": [
+    6640,
+    5000,
+    64,
+    40
+   ],
+   "faces": "driftwood-a1",
+   "door_cells": [
+    833,
+    630
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
    "counts_as": 1
   },
   {
@@ -553,155 +497,105 @@
    "type": "cottage",
    "form": "cottage",
    "footprint_cells": [
-    822,
-    624,
-    7,
+    770,
+    625,
+    8,
     5
    ],
    "rect_px": [
-    6576,
-    4992,
-    56,
+    6160,
+    5000,
+    64,
     40
    ],
-   "faces": "driftwood-s07",
+   "faces": "driftwood-c02",
    "door_cells": [
-    824,
-    623
+    769,
+    629
    ],
    "purpose": "a cottage",
    "occupants": "a craft household",
    "district": "driftwood-d-driftwood",
    "counted": true,
-   "plot_cells": [
-    822,
-    629,
-    7,
-    2
-   ],
-   "plot": "garden",
    "counts_as": 1
   },
   {
    "id": "driftwood-b006",
-   "type": "house",
-   "form": "house",
+   "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    804,
-    605,
-    12,
-    7
+    779,
+    625,
+    7,
+    5
    ],
    "rect_px": [
-    6432,
-    4840,
-    96,
-    56
+    6232,
+    5000,
+    56,
+    40
    ],
-   "faces": "driftwood-a2",
+   "faces": "driftwood-c03",
    "door_cells": [
-    803,
-    611
+    779,
+    630
    ],
-   "purpose": "a family house",
+   "purpose": "a cottage",
    "occupants": "a farming household",
    "district": "driftwood-d-driftwood",
    "counted": true,
-   "plot_cells": [
-    804,
-    612,
-    12,
-    2
-   ],
-   "plot": "garden",
    "counts_as": 1
   },
   {
    "id": "driftwood-b007",
-   "type": "boathouse",
-   "form": "boathouse",
+   "type": "house",
+   "form": "house",
    "footprint_cells": [
-    817,
-    603,
+    790,
+    619,
     10,
-    7
-   ],
-   "rect_px": [
-    6536,
-    4824,
-    80,
-    56
-   ],
-   "faces": "driftwood-s02",
-   "door_cells": [
-    825,
-    610
-   ],
-   "purpose": "a boathouse",
-   "occupants": "a boat owner",
-   "district": "driftwood-d-driftwood",
-   "counted": true,
-   "plot_cells": [
-    817,
-    610,
-    10,
-    2
-   ],
-   "plot": "garden",
-   "counts_as": 1
-  },
-  {
-   "id": "driftwood-b008",
-   "type": "cottage",
-   "form": "cottage",
-   "footprint_cells": [
-    832,
-    618,
-    7,
     6
    ],
    "rect_px": [
-    6656,
-    4944,
-    56,
+    6320,
+    4952,
+    80,
     48
    ],
-   "faces": "driftwood-c01",
+   "faces": "driftwood-a2",
    "door_cells": [
-    831,
+    799,
     618
    ],
-   "purpose": "a cottage",
+   "purpose": "a family house",
    "occupants": "a fishing household",
    "district": "driftwood-d-driftwood",
    "counted": true,
-   "plot_cells": [
-    832,
-    624,
-    7,
-    2
-   ],
-   "plot": "garden",
    "counts_as": 1
   }
  ],
  "lifted": [],
- "outskirts": [],
+ "outskirts": [
+  {
+   "kind": "quay",
+   "name": "the quay",
+   "box": [
+    6448,
+    5124,
+    6504,
+    5148
+   ],
+   "why": "the ferry's landing and the boats, at the Sleepwater's mouth"
+  }
+ ],
  "game_layout": {
   "arrival": "Coast Path",
-  "first_view": "Driftwood from the Coast Path: a family house, Driftwood's largest building ahead",
+  "first_view": "Driftwood from the Coast Path: a boathouse, Driftwood's largest building ahead",
   "landmarks": [
    {
-    "name": "a family house, Driftwood's largest building",
+    "name": "a boathouse, Driftwood's largest building",
     "xy": [
-     6480,
-     4868
-    ]
-   },
-   {
-    "name": "a cottage at the edge, seen first from the Coast Path",
-    "xy": [
-     6604,
+     6596,
      5012
     ]
    }
@@ -717,8 +611,8 @@
    ]
   ],
   "screens": [
-   1.5,
-   1.7
+   1.7,
+   0.9
   ]
  },
  "ground": {
@@ -726,15 +620,15 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "sand": 662
+   "sand": 471
   }
  },
  "terrain": {
   "box_cells": [
-   763,
-   588,
-   92,
-   70
+   755,
+   604,
+   99,
+   50
   ],
   "codes": {
    ".": "land",
@@ -745,76 +639,56 @@
    "b": "bridge"
   },
   "rows": [
-   "11g2~21g3b2r4g13.17g17.2g",
-   "12g~21g~2br4g14.17g17.2g",
-   "12g2~20g~2br9g.25g17.2g",
-   "12g2~20g~2br9g.25g17.2g",
-   "13g~20g~2br35g17.2g",
-   "14g~19g~2br35g19.",
-   "14g2~18g3br35g18.g",
-   "15g~18g3br35g18.g",
-   "16g~17g3br37g16.g",
-   "16g2~16g3b38g16.g",
-   "17g2~14gr3b38g16.g",
-   "18g~14gr3b~37g16.g",
-   "18g~14gr3b~37g16.g",
-   "19g~13gr3b~33g.3g16.g",
-   "10g11~12gr2b2~29g.g3.3g16.g",
-   "7g4~8g3~11g2rb2~16g10.4g4.3g16.g",
-   "4g4~13g2~9g3r2b~16g10.3g5.3g16.g",
-   "4~18g~6g.2g3r2b2~2g12.g10.2g4.22g",
-   "23g~3g.g2.g3r2b2~2g12.g10.g4.22g.",
-   "13g.9g2~g4.2g4r2b~2g12.g10.g3.24g",
-   "11g.g7.4g~g5.g4r2b~2g12.g13.25g",
-   "11g.g7.4g~g5.g4r2b~2g12.g13.25g",
-   "6g15.4g~6g4r3b~g12.11g4.20g2.2g",
-   "6g9.10g~7g3r3b~g12.9g4.18g.7g",
-   "6g.6g.11g~7g4r3b21g5.26g",
-   "25g~8g3r3br5g10.4g5.27g",
-   "25g~9g2r4br4g10.4g6.26g",
-   "25g~9g2r4b2r3g10.3g7.18g.7g",
-   "25g~10g2r3b3r2g10.3g7.21g.4g",
-   "25g~11gr3b5r10.3g10.16g.6g",
-   "25g~11gr3b5r10.3g17.9g.6g",
-   "25g~12g4b6r11g7.3g7.16g",
-   "24g~13g~3b7r13.4g2.g7.6g.4g.4g",
-   "24g~14g2~b8r12.4g2.g7.16g",
-   "24g~4g9.g3~10r10.4g2.g7.16g",
-   "24g~4g9.g4~10r.2g.9g2.g7.16g",
-   "24g~4g9.g4~g.9r5g9.15g.8g",
-   "24g~4g9.g4~g.g9r4g7.26g",
-   "24g~4g9.2g2~b2.3g8r3g7.26g",
-   "24g~6g9.3b2.3g8r3g7.26g",
-   "24g~6g9.3b2.4g8r2g7.26g",
-   "24g~6g9.4b.4g2.6r35g",
-   "24g~12g3.4~5g2.8r.8g4r13g.6g",
-   "25g~2g8.g4.3b8.8r6g6r20g",
-   "25g~2g8.g4.3b8.g19r17g3.",
-   "25g~2g8.g4.3b8.g3.16r12g.3g4.",
-   "15g10.g~g8.g3.g4~5g7.18r11g6.",
-   "15g10.g~g8.g3.g4~.g19.g.g6r9g6.g.",
-   "15g10.g~10g3.g4~.g19.g.g6r9g6.g.",
-   "15g26.4b24.7r4g.g6.4g",
-   "15g27.3b25.6r4g6.2g.g.g",
-   "15g27.3b26.6r3g4.8g",
-   "15g27.3~26.6rg.g2.10g",
-   "15g27.3~7.7~13.6r7g.6g",
-   "25g5.7~5.3~.18~8.7r5g.5g.g",
-   "24g3.12~3.25~6.6rg4.7gr",
-   "6.8g10.43~2.g3.7r2g.6g3r",
-   "6.8g10.43~2.g3.7r2g.6g3r",
-   "11.2g11.44~6.6r2g.4g5r",
-   "23.46~3.g.7r2g9r",
-   "21.51~3.17r",
-   "20.53~4.15r",
-   "19.55~4.13rg",
-   "17.57~4.g.12r",
-   "8~8.58~g6.2g9r",
-   "10~5.60~6.5g6r",
-   "10~5.60~6.5g6r",
-   "11~4.60~7.7g3r",
-   "12~3.60~.g6.7g2r",
-   "76~g3.g.10g"
+   "12g4~13g2~9g3r2b~29g5.3g16.",
+   "7g5~18g~6g.2g3r2b2~21g.5g4.21g",
+   "7~24g~3g.g2.g3r2b2~26g4.22g",
+   "21g.9g2~g4.2g4r2b~26g3.23g",
+   "19g.g7.4g~g5.g4r2b~25g3.24g",
+   "19g.g7.4g~g5.g4r2b~25g3.24g",
+   "14g15.4g~6g4r3b~23g5.20g2.g",
+   "14g9.10g~7g3r3b~21g.3g.18g.6g",
+   "14g.6g.11g~7g4r3b21g.3g.25g",
+   "33g~8g3r3br19g2.29g",
+   "33g~9g2r4br18g2.29g",
+   "33g~9g2r4b2r16g3.22g.6g",
+   "33g~10g2r3b3r15g3.25g.3g",
+   "33g~11gr3b5r39g.5g",
+   "33g~11gr3b5r39g.5g",
+   "33g~g10.g4b6r43g",
+   "32g~2g10.g~3b7r6g2.25g.4g.3g",
+   "32g~2g10.2g2~b8r5g2.34g",
+   "32g~2g10.2g3~10r2g3.34g",
+   "32g~2g10.2g4~10r3g10.25g",
+   "32g~2g10.2g4~2g9r3g9.17g.7g",
+   "15g8.g7.g~2g10.2g4~3g9r2g9.g8.16g",
+   "15g8.g7.g~2g10.3g3~5g8rg9.g8.16g",
+   "15g8.g7.g~2g10.3g3~5g8rg9.g8.16g",
+   "15g8.g7.g~2g10.3g3~6g8r9.g8.16g",
+   "13g10.g7.g~2g10.3g4~7g6r9.g8.16g",
+   "13g2.8g2.7g~2g10.3g4~7g8r9g4r13g.5g",
+   "13g2.8g2.8g~g2.12g3~8g8r6g6r19g",
+   "13g12.8g~g2.12g3~9g19r17g2.",
+   "13g12.8g~g2.12g3~12g16r12g.3g3.",
+   "13g12.9g~2.12g4~12g18r11g5.",
+   "13g12.9g~2.12g4~.g.21g6r9g6.g",
+   "13g12.9g~2.12g4~.g.21g6r9g6.g",
+   "13g36.4b24.7r4g.g6.3g",
+   "14g36.3b25.6r4g6.2g.g.",
+   "14g36.3b26.6r3g4.7g",
+   "47g3.3~16.10g6rg.g2.9g",
+   "47g3.3~3.g3.7~3.10g6r7g.5g",
+   "24g14.7~5.3~.18~8.7r5g.5g.",
+   "24g11.12~3.25~6.6rg4.7g",
+   "6g8.8g10.43~2.g3.7r2g.6g2r",
+   "6g8.8g10.43~2.g3.7r2g.6g2r",
+   "19.2g11.44~6.6r2g.4g4r",
+   "31.46~3.g.7r2g8r",
+   "29.51~3.16r",
+   "28.53~4.14r",
+   "27.55~4.13r",
+   "25.57~4.g.11r",
+   "7.9~8.58~g6.2g8r",
+   "3.15~5.60~6.5g5r"
   ]
  },
  "residents": [],
@@ -823,35 +697,22 @@
  "discovery": [
   {
    "kind": "landmark view",
-   "what": "a family house, Driftwood's largest building",
+   "what": "a boathouse, Driftwood's largest building",
    "xy_px": [
-    6480,
-    4868
-   ],
-   "screen": [
-    0,
-    0
-   ]
-  },
-  {
-   "kind": "landmark view",
-   "what": "a cottage at the edge, seen first from the Coast Path",
-   "xy_px": [
-    6604,
+    6596,
     5012
    ],
    "screen": [
     1,
-    1
+    0
    ]
   },
   {
    "kind": "resident activity",
-   "what": "a boathouse: a boat owner about their day",
-   "building": "driftwood-b004",
+   "what": "the quay: the ferry's landing and the boats, at the Sleepwater's mouth",
    "xy_px": [
-    6264,
-    5104
+    6476,
+    5136
    ],
    "screen": [
     0,
@@ -860,14 +721,14 @@
   },
   {
    "kind": "resident activity",
-   "what": "a boathouse: a boat owner about their day",
-   "building": "driftwood-b007",
+   "what": "a cottage: a farming household about their day",
+   "building": "driftwood-b001",
    "xy_px": [
-    6576,
-    4852
+    6192,
+    5076
    ],
    "screen": [
-    1,
+    0,
     0
    ]
   }
@@ -876,26 +737,26 @@
  "theme": {
   "waystone": {
    "xy_px": [
-    6412,
-    5060
+    6292,
+    5108
    ],
-   "at": "beside Driftwood Lane",
+   "at": "beside the Strand (1)",
    "table_name": "Driftwood",
    "status": "proposed"
   },
   "sightline": {
    "kind": "viewpoint",
    "from_px": [
-    6390,
-    4832
+    6351,
+    4955
    ],
    "to_px": [
-    6338,
-    4680
+    6303,
+    4802
    ],
    "toward": "the stone circle (the beam over the valley)",
    "off_by_deg": 0,
-   "bearing_deg": -109
+   "bearing_deg": -107
   },
   "crater": {
    "name": "the Crossroads crater",
@@ -903,19 +764,19 @@
     6484,
     3712
    ],
-   "distance_px": 1268,
-   "effect": "the Crossroads crater lies 1200 px away; its scorch points to the valley",
+   "distance_px": 1319,
+   "effect": "the Crossroads crater lies 1300 px away; its scorch points to the valley",
    "road": "Valley lane south",
    "road_leaves_at_px": [
-    6399,
-    4725
+    6379,
+    4845
    ]
   },
   "moss": {
    "where": "the market",
    "xy_px": [
-    6412,
-    5060
+    6292,
+    5108
    ]
   },
   "company": {

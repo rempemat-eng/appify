@@ -36,20 +36,21 @@
   "pass": true,
   "failures": [],
   "notes": [
-   "1 blocks, 5 dead ends, 2.4 x 3.9 screens"
+   "count (warning): 27 counted buildings, a little outside 30 to 45",
+   "2 blocks, 2 dead ends, 3.3 x 2.2 screens"
   ],
-  "metrics": 40,
-  "actual_count": 40,
+  "metrics": 27,
+  "actual_count": 27,
   "retained_count": null
  },
  "palm-spring": {
   "pass": true,
   "failures": [],
   "notes": [
-   "1 blocks, 1 dead ends, 1.9 x 2.9 screens"
+   "1 blocks, 0 dead ends, 1.6 x 2.3 screens"
   ],
-  "metrics": 22,
-  "actual_count": 22,
+  "metrics": 15,
+  "actual_count": 15,
   "retained_count": null
  },
  "fernhollow": {
@@ -118,30 +119,31 @@
   "pass": true,
   "failures": [],
   "notes": [
-   "2 blocks, 2 dead ends, 2.2 x 3.3 screens"
+   "1 blocks, 0 dead ends, 1.8 x 2.4 screens"
   ],
-  "metrics": 12,
-  "actual_count": 12,
+  "metrics": 11,
+  "actual_count": 11,
   "retained_count": null
  },
  "driftwood": {
   "pass": true,
   "failures": [],
   "notes": [
-   "0 blocks, 3 dead ends, 1.5 x 1.7 screens"
+   "count (warning): 7 counted buildings, a little outside 8 to 12",
+   "0 blocks, 0 dead ends, 1.7 x 0.9 screens"
   ],
-  "metrics": 8,
-  "actual_count": 8,
+  "metrics": 7,
+  "actual_count": 7,
   "retained_count": null
  },
  "gullwick": {
   "pass": true,
   "failures": [],
   "notes": [
-   "0 blocks, 2 dead ends, 1.2 x 1.5 screens"
+   "0 blocks, 1 dead ends, 1.5 x 1.4 screens"
   ],
-  "metrics": 8,
-  "actual_count": 8,
+  "metrics": 7,
+  "actual_count": 7,
   "retained_count": null
  },
  "cinder-springs": {

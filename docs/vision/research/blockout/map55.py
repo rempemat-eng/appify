@@ -323,7 +323,7 @@ def plan_buildings(S):
 ROOF_RGB = {'flat': (150, 150, 146), 'tin': (112, 130, 146), 'tile': (172, 92, 64), 'slate': (88, 96, 112), 'thatch': (190, 160, 96), 'stone': (140, 132, 120)}
 
 
-def draw_bays(d, ink, P, x, y, w, h_, bays, k, kk):
+def draw_bays(d, ink, P, x, y, w, h_, bays, k, kk, tile=None):
     """A block of fronts sharing walls: each bay its own roof (flat with clutter, pitched tin, tiles, slate, thatch), the taller
     ones casting a longer shadow, a dark line on each party wall."""
     along_x = abs(sum(q['w_cells'] for q in bays) * CELL - w) <= abs(sum(q['w_cells'] for q in bays) * CELL - h_)
@@ -340,21 +340,27 @@ def draw_bays(d, ink, P, x, y, w, h_, bays, k, kk):
         bw = q['w_cells'] * CELL
         bx, by, bww, bhh = (x + at, y, bw, h_) if along_x else (x, y + at, w, bw)
         X0, Y0 = P(bx, by); X1, Y1 = P(bx + bww, by + bhh)
-        lt, md, sh = tones(ROOF_RGB.get(q.get('roof'), (150, 140, 130)))
+        roof = q.get('roof')
+        if tile:                                                         # v56's old harbour quarter: mixed tile, pitched, house by house
+            hq = (int(bx) * 2654435761 ^ int(by) * 40503) & 0xffff
+            base = tile[hq % len(tile)]; roof = 'tile'
+        else:
+            base = ROOF_RGB.get(roof, (150, 140, 130))
+        lt, md, sh = tones(base)
         d.rectangle([X0, Y0, X1, Y1], fill=sh)
-        if q.get('roof') == 'flat':
+        if roof == 'flat':
             d.rectangle([X0, Y0, X1, Y0 + (Y1 - Y0) * 0.5], fill=md)
             if X1 - X0 > 5 and Y1 - Y0 > 5:                              # roof clutter: a tank, a vent
                 cx_, cy_ = X0 + (X1 - X0) * (0.3 + 0.4 * (i % 2)), Y0 + (Y1 - Y0) * 0.55
                 d.rectangle([cx_ - 1.2 * kk, cy_ - 1.2 * kk, cx_ + 1.2 * kk, cy_ + 1.2 * kk], fill=lt, outline=ink + (160,))
         elif along_x:
             d.rectangle([X0, Y0, X1, (Y0 + Y1) / 2], fill=lt)                # the ridge along the street, the front slope lit
-            if q.get('roof') == 'tin' and X1 - X0 > 4:
+            if roof == 'tin' and X1 - X0 > 4:
                 for j in range(1, max(2, int((X1 - X0) // max(2, 2 * kk)))):
                     xx = X0 + j * 2 * kk; d.line([(xx, Y0), (xx, Y1)], fill=sh + (160,), width=1)
         else:
             d.rectangle([X0, Y0, (X0 + X1) / 2, Y1], fill=lt)
-            if q.get('roof') == 'tin' and Y1 - Y0 > 4:
+            if roof == 'tin' and Y1 - Y0 > 4:
                 for j in range(1, max(2, int((Y1 - Y0) // max(2, 2 * kk)))):
                     yy = Y0 + j * 2 * kk; d.line([(X0, yy), (X1, yy)], fill=sh + (160,), width=1)
         if i:
@@ -743,7 +749,10 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True, roofs=False):
                 draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door)
             continue
         if bays and X1 - X0 >= 2.5:
-            draw_bays(d, ink, P, x, y, w, h_, bays, k, kk)
+            tile = None
+            if roofs and town in OLD_QUARTER:
+                tile = (R['clay'][3], R['clay_warm'][2], R['timber'][3], R['clay'][2], R['slate'][3], R['clay_cool'][3], R['clay_warm'][3])
+            draw_bays(d, ink, P, x, y, w, h_, bays, k, kk, tile=tile)
             if any(q.get('false_front') for q in bays) and door:
                 dx, dy = door; fx, fy = P(dx * CELL + 4, dy * CELL + 4); t_ = max(1.0, 6 * k); front = R['plaster'][4]
                 if fy >= Y1 - 0.5:
@@ -1352,6 +1361,10 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     reserved += [(X - 7 * s, Y - 7 * s, X + 7 * s, Y + 7 * s) for i, X, Y in M54.act_marks(M, P, s)] if act else []
     if grow is not None:
         reserved += [(0, 0, Wc, 52 * s), (0, 0, 52 * s, Hc), (Wc - 48 * s, 0, Wc, Hc), (0, Hc - 30 * s, Wc, Hc), built_tag56(M, P, s)]
+        for town in ('Gullwick', 'Driftwood', 'Lullford', 'Dust Gulch', 'Palm Spring'):    # the hand-laid towns' names never sit on their houses
+            for (x, y, w, h_, *_r) in (S['towns'].get(town) or {}).get('buildings', []):
+                X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
+                reserved.append((X0 - s, Y0 - s, X1 + s, Y1 + s))
     else:
         reserved += [M54.built_tag(P, s)]
     lab, pl = labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode=mode, box=box)

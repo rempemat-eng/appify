@@ -1419,7 +1419,10 @@ def lay_all(T, X, *, authored=None):
     towns.update(neon(T, X, rng))
     towns.update(smaller(T, X))
     if V56:                                                          # Matt, 4 Nov: each small town's shape from why it is there
-        shape_small_v56(T, towns)
+        if os.environ.get('HAND_SNAP'):                              # a development cache: the ground just before the hand towns
+            import pickle
+            pickle.dump((T, towns), open(os.environ['HAND_SNAP'], 'wb'), protocol=4)
+        hand_towns_v56(T, towns)
     return towns
 
 
@@ -1534,49 +1537,203 @@ def _clear_v56(T, t, keep=lambda b: False):
     t.buildings[:] = out
 
 
-def _strand(T, x0, x1, y0, back=40, step=16):
-    """A strand behind a south-facing cove: for each column, going south from y0, the first sea cell, less `back` px, smoothed."""
-    sea = T['sea']; pts = []
-    for x in range(int(x0), int(x1) + 1, step):
-        c = int(x // CELL); col = sea[int(y0 // CELL):, c]
-        rows = np.flatnonzero(col)
-        if not len(rows) or rows[0] * CELL > 500:
+def _strip_v56(T, t, keep_kinds=('field', 'field2', 'orchard', 'fallow')):
+    """Lift a town's own layout off the ground (its generated buildings and their plots, its streets, squares and yards), so
+    it can be laid again by hand; its fields stay. Only cells this town painted are restored (other paint in the box stays)."""
+    K = T['K']; K0 = T['K0']
+    keep_m = np.zeros(K.shape, bool)                                   # the routes through the town stay as they are, bridges and all
+    for st in t.streets:
+        if st.get('route') and len(st['pts']) >= 2:
+            keep_m |= band_mask(st['pts'], st['width_cells'], st['metric'])
+
+    def restore(m):
+        m = m & ~keep_m
+        nat = np.where(np.isin(K0, ['wild', 'ancient', 'thicket', 'felltree']), 'broadleaf', K0)
+        nat = np.where(np.isin(nat, ['road', 'path', 'stair']), 'meadow', nat)
+        K[m] = nat[m]; T['street'][m] = False; T['used'][m] = False
+    _clear_v56(T, t)
+    for st in t.streets:
+        if st.get('route') or len(st['pts']) < 2:
             continue
-        r = rows[0] + int(y0 // CELL)
-        pts.append((float(x), float(r * CELL - back)))
-    if len(pts) < 3:
-        return pts
-    ys = np.convolve([p[1] for p in pts], np.ones(5) / 5, mode='same')
-    ys[:2] = [p[1] for p in pts[:2]]; ys[-2:] = [p[1] for p in pts[-2:]]
-    return [(x, float(y)) for (x, _), y in zip(pts, ys)]
+        m = band_mask(st['pts'], st['width_cells'], st['metric'])
+        restore(m & (np.isin(K, [st['kind'], 'lane']) | ((K == 'bridge') & np.isin(K0, ['creek', 'river', 'channel', 'canal']))))
+        T['street'][m & ~np.isin(K, list(ROUTE))] = False
+    for sp in t.spaces:
+        x0, y0, w, h = sp['cells']; m = np.zeros_like(T['taken']); m[y0:y0 + h, x0:x0 + w] = True
+        restore(m & np.isin(K, ['plaza', 'garden', 'yard', 'lane']))
+    keep = []
+    for o in t.outskirts:
+        if o['kind'] in keep_kinds:
+            keep.append(o); continue
+        x0, y0, x1, y1 = o['box']; m = np.zeros_like(T['taken']); m[int(y0 // CELL):int(y1 // CELL), int(x0 // CELL):int(x1 // CELL)] = True
+        restore(m & (K == o['kind']))
+    t.streets[:] = [st for st in t.streets if st.get('route')]
+    t.spaces[:] = []; t.outskirts[:] = keep
 
 
-def shape_small_v56(T, towns):
-    """v56 (Matt, 4 Nov: "really think about the shape ... of the cities"): the small towns laid out from their founding
-    reason. Gullwick and Driftwood are fishing coves, so their cottages and net lofts stand shoulder to shoulder along a strand
-    that follows the back of the beach, facing the water, with the boats drawn up below; Lullford is a bridge town, so it is
-    tight round the bridge head on the Lull Road and thins into a ribbon of houses along the road west."""
-    for nm, x0, x1, n, seed in (('Gullwick', 7900, 8200, 8, 4101), ('Driftwood', 6330, 6680, 10, 4102)):
-        t = towns.get(nm)
-        if t is None:
-            continue
-        _clear_v56(T, t)
-        line = _strand(T, x0, x1, t.centre[1] - 60)
-        if len(line) >= 3:
-            t.street(line, 'lane', name='the Strand')
-            st = t.streets[-1]
-            if st['pieces']:
-                t.row(st['pts'], ['cottage', 'boathouse', 'cottage', 'house', 'cottage', 'workshop'], sides=(-1,), limit=n - 2, gap=(0, 6),
-                      plot=None, start=6, reach=40, jitter=2)
-        t.fill(n, 160, ('cottage', 'house', 'boathouse'), reach=96, centre=t.centre, plot=(16, 'garden'))
+def _beach_back(T, x0, y0, x1, y1, keep):
+    """The back of a beach a town stands on: sand farther than keep px from the sea goes back to grass (the town is built
+    behind the strand, never on it)."""
+    K = T['K']
+    a, b, c, d = int(y0 // CELL), int(x0 // CELL), int(y1 // CELL), int(x1 // CELL)
+    sub = K[a:c, b:d]
+    wet = np.isin(sub, ['sea', 'surf', 'river', 'creek', 'pool'])
+    far = ndi.distance_transform_edt(~wet) * CELL > keep
+    m = (sub == 'sand') & far & ~T['taken'][a:c, b:d]
+    sub[m] = 'meadow'
+    return int(m.sum())
+
+
+def _dry_ok(T, x, y, w, d, clear=16):
+    """A hand footprint on dry land only: no beach, water, route or its verge, building, street, barrier or keep-out."""
+    a, b = C(x, y); c, e = a + int(round(d / CELL)), b + int(round(w / CELL))
+    if a < 2 or b < 2 or c >= H - 2 or e >= W - 2:
+        return False
+    K = T['K']
+    if not np.isin(K[a:c, b:e], list(BUILDABLE - {'sand', 'blacksand', 'building', 'lane', 'plaza', 'yard'})).all():
+        return False
+    if T['taken'][a:c, b:e].any() or T['street'][a:c, b:e].any() or T['barrier'][a:c, b:e].any() or T['keepout'][a:c, b:e].any():
+        return False
+    r = clear // CELL
+    win = K[max(0, a - r):c + r, max(0, b - r):e + r]
+    return not np.isin(win, list(ROUTE) + ['sea', 'surf', 'river', 'creek', 'pool', 'canal', 'channel']).any()
+
+
+def _hand_ok(t, x, y, w, d, form, clear=16, plot=None):
+    x = int(round(x / CELL)) * CELL; y = int(round(y / CELL)) * CELL
+    if _dry_ok(t.T, x, y, w, d, clear):
+        return t.hand(x, y, w, d, form, plot=plot)
+    return False
+
+
+def _street_row(t, x0, x1, yfun, kinds, sides=(-1, 1), gap=4, half=12, n=99, clear=8):
+    """Fronts shoulder to shoulder along a street running east-west (yfun(x) its centre line), on its north (-1) and south
+    (+1) sides, each set back half the street's width; a front that will not fit slides along a little."""
+    placed = 0
+    for side in sides:
+        x = x0; i = 0
+        while x < x1 and placed < n:
+            form, w, d = kinds[i % len(kinds)]
+            yc = yfun(x + w / 2)
+            if yc is None:
+                x += 8; continue
+            y = yc - half - d if side < 0 else yc + half
+            ok = False
+            for dy in (0, -8 * side * -1, 8 * side, 16 * side):
+                if _hand_ok(t, x, y + dy, w, d, form, clear):
+                    ok = True; break
+            if ok:
+                placed += 1; i += 1; x += w + gap
+            else:
+                x += 8
+    return placed
+
+
+def _hug(t, x0, x1, y0, y1, kinds, gap=4, n=99, up=False):
+    """A row snug against an edge (a road's verge or the back of a beach): going along x, each front at the first dry spot
+    searched from y0 toward y1 (up: from y1 back toward y0), so the row follows the edge it faces."""
+    placed = 0; x = x0; i = 0
+    while x < x1 and placed < n:
+        form, w, d = kinds[i % len(kinds)]
+        ys = range(int(y0), int(y1) - d + 1, CELL)                 # y1: the lowest the row's backs (or fronts) may reach
+        for y in (reversed(ys) if up else ys):
+            if _dry_ok(t.T, x, y, w, d, 0):
+                t.hand(x, y, w, d, form); placed += 1; i += 1; x += w + gap; break
+        else:
+            x += CELL
+    return placed
+
+
+def hand_towns_v56(T, towns):
+    """v56, Matt 4 Nov ("really think about the shape ... of the cities"), hand-authored as Highgarth was: each town's
+    footprint drawn from why it is there. Gullwick: a crescent of fishers' houses inside the coast trail's curve behind the
+    beach, the Strand along that curve, a slipway down to the water. Driftwood: a strand row behind the beach either side of
+    the Sleepwater's mouth, the quay at the river. Lullford: one row both sides of the Lull Road where it runs down to the
+    bridge over the leat, the mill on the leat. Dust Gulch: one long main street of false fronts, the depot at its east end
+    by the goods yard, the corrals at its west end. Palm Spring: a ring round the spring pool, the caravanserai on the
+    Drover's Road."""
+    cot, house, boat = ('cottage', 64, 40), ('house', 80, 48), ('boathouse', 72, 56)
+    t = towns.get('Gullwick')
+    if t is not None:
+        _strip_v56(T, t)
+        _beach_back(T, 7760, 5150, 8460, 5360, 56)                    # the strand is the cove's own: the town stands behind it
+        t.cap = 10                                                     # the crescent inside the Coast Path's curve behind the strand
+        row = [cot, ('cottage', 56, 40), house, cot, boat, cot, house]
+        n = _hug(t, 8040, 8280, 5170, 5288, row, gap=6, up=True)       # its foot: each house as near the strand as dry land allows
+        for y in (5136, 5184):                                         # its east horn, up the inside of the curve
+            for x in range(8296, 8180, -CELL):
+                if _dry_ok(T, x, y, 56, 40, 0):
+                    t.hand(x, y, 56, 40, 'cottage'); break
+        for y in (5176, 5232):                                         # and two on the outside of the curve, on the cove's east shore
+            for x in range(8392, 8424, CELL):
+                if _dry_ok(T, x, y, 64, 40, 0):
+                    t.hand(x, y, 64, 40, 'cottage'); break
+        t.street([(7992, 5300), (8344, 5300), (8344, 5040)], 'lane', name='the Strand')   # on the coast trail's own curve
+        t.yard(8064, 5304, 8104, 5344, kind='quay', name='the slipway', why='the boats are hauled up the beach on rollers')
+    t = towns.get('Driftwood')
+    if t is not None:
+        _strip_v56(T, t)
+        _beach_back(T, 6150, 5030, 6720, 5140, 24)
+        t.cap = 12
+        t.street([(6168, 5112), (6664, 5112)], 'lane', name='the Strand')    # the strand lane along the back of the beach
+        n = _hug(t, 6160, 6700, 4984, 5100, [cot, house, boat, cot, ('cottage', 56, 40), house, cot, boat], gap=4, n=11, up=True)
+        if n < 8:                                                      # a few behind the strand row where it is short
+            _hug(t, 6160, 6400, 4920, 5040, [cot, ('cottage', 56, 40), house], gap=8, n=8 - n, up=True)
+        t.yard(6448, 5124, 6504, 5148, kind='quay', name='the quay', why="the ferry's landing and the boats, at the Sleepwater's mouth")
     t = towns.get('Lullford')
     if t is not None:
-        _clear_v56(T, t)
-        head = route_part(T, 'Lull Road', (8900, 4230, 9110, 4480))           # the bridge head: tight, both sides
-        t.row(head, ['shop', 'inn', 'townhouse', 'shop', 'house', 'townhouse'], limit=8, gap=(0, 6), plot=None, start=4, reach=64, jitter=2)
-        ribbon = route_part(T, 'Lull Road', (8560, 4230, 8900, 4480))         # the ribbon west along the road
-        t.row(ribbon, ['cottage', 'house', 'cottage'], limit=6, gap=(28, 64), plot=(32, 'garden'), start=8, reach=64)
-        t.fill(14, 200, ('cottage', 'house', 'workshop'), reach=120, centre=(8960, 4360), plot=(24, 'garden'))
+        _strip_v56(T, t)
+        t.cap = 16                                                     # one row on the Lull Road down to the bridge over the leat
+        fr = [('shop', 64, 48), ('townhouse', 48, 48), ('inn', 112, 64), ('townhouse', 48, 56), ('cottage', 64, 40), ('house', 80, 48),
+              ('townhouse', 48, 48), ('shop', 72, 48)]
+        n = _hug(t, 8296, 8760, 4040, 4250, fr, gap=2, n=8, up=True)    # the north side, backs to the fields
+        _hug(t, 8296, 8760, 4140, 4360, fr[3:] + fr[:3], gap=2, n=14 - n)   # the south side, down to the bridge
+        for (x, y) in ((8792, 4424), (8800, 4432), (8792, 4440), (8608, 4392)):   # the mill on the leat (the creek to the Lull)
+            if _hand_ok(t, x, y, 80, 56, 'mill', clear=0):
+                break
+    t = towns.get('Dust Gulch')
+    if t is not None:
+        _strip_v56(T, t)
+        dry_out(T, 2000, 2050, 3100, 2850)
+        t.cap = 45
+        t.street([(2136, 2336), (2872, 2336)], 'main', name='Front Street')   # the one long main street
+        t.street([(2136, 2232), (2872, 2232)], 'lane', name='Back Lane')
+        t.street([(2136, 2232), (2136, 2336)], 'lane', name='Corral Lane')
+        t.street([(2872, 2232), (2872, 2336)], 'lane', name='Depot Lane')
+        t.to_route(2136, 2336, "Drover's Road", name='Corral Lane (to the trail)')
+        t.to_route(2872, 2336, "Drover's Road", name='Depot Road')
+        _hand_ok(t, 2896, 2240, 64, 192, 'depot', clear=0)             # the depot at the east end, the corrals at the west
+        _hand_ok(t, 2600, 2152, 80, 56, 'chapel', clear=0)
+        fronts = [('frontshop', 80, 48), ('townhouse', 48, 56), ('saloon', 104, 64), ('frontshop', 88, 56), ('townhouse', 48, 48), ('public', 88, 56),
+                  ('frontshop', 80, 56), ('townhouse', 48, 56)]
+        _street_row(t, 2152, 2856, lambda x: 2336, fronts, gap=2, half=24, n=26, clear=0)
+        homes = [('adobe', 48, 40), ('cottage', 64, 40), ('adobe', 56, 40), ('house', 80, 48)]
+        _street_row(t, 2152, 2856, lambda x: 2232, homes, sides=(-1,), gap=6, half=12, n=14, clear=0)
+        _hug(t, 2152, 2856, 2400, 2560, homes[::-1], gap=10, n=6)         # a few homes behind the south fronts, on the trail
+        for (x, y) in ((2016, 2392), (2016, 2200), (2016, 2472)):
+            _hand_ok(t, x, y, 112, 64, 'barn', clear=0)
+        for (x, y) in ((2968, 2464), (2968, 2160)):
+            _hand_ok(t, x, y, 112, 64, 'warehouse', clear=0)
+        t.yard(2040, 2280, 2120, 2384, name='the corrals', why='pens for the caravans and the mule trains, at the west end of Front Street')
+        t.yard(2896, 2440, 2960, 2488, name='the water tower yard', why="the depot's tank, filled from the Amber")
+        t.yard(2968, 2240, 3048, 2448, name='the goods yard', why="the desert line's sidings and the ore bins, beside the depot")
+    t = towns.get('Palm Spring')
+    if t is not None:
+        _strip_v56(T, t)
+        dry_out(T, 2950, 2500, 3650, 3150, keep=48)
+        t.cap = 22                                                     # the ring round the spring pool; the Drover's Road its south side
+        t.street([(3064, 2592), (3400, 2592)], 'lane', name='Spring Ring')
+        t.street([(3400, 2592), (3400, 2816)], 'lane', name='Spring Ring (east)')
+        t.street([(3064, 2592), (3064, 2696)], 'lane', name='Spring Ring (west)')
+        t.to_route(3400, 2816, "Drover's Road", name='the east gate')
+        t.to_route(3064, 2696, "Drover's Road", name='the west gate')
+        for (x, y, w, d, f) in ((3080, 2632, 48, 40, 'adobe'), (3136, 2656, 48, 40, 'adobe'), (3192, 2632, 48, 40, 'adobe'),   # facing the pool
+                                (3352, 2608, 32, 48, 'adobe'), (3352, 2664, 32, 48, 'adobe'), (3352, 2720, 32, 48, 'adobe'), (3352, 2776, 32, 48, 'adobe'),
+                                (3424, 2600, 64, 48, 'shop'), (3424, 2664, 112, 64, 'barn'), (3424, 2744, 112, 64, 'inn'),   # the caravanserai
+                                (3232, 2912, 64, 48, 'shop'), (3304, 2912, 48, 40, 'adobe'), (3040, 2752, 48, 40, 'adobe'), (3040, 2800, 64, 40, 'cottage'),
+                                (3120, 2544, 80, 48, 'house'), (3208, 2544, 48, 40, 'adobe')):
+            _hand_ok(t, x, y, w, d, f, clear=0)
+        t.yard(3120, 2700, 3152, 2780, kind='garden', name='the palm garden', why='date palms watered from the spring')
 
 
 def hearthold_v56(T, t):

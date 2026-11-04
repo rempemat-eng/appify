@@ -204,9 +204,34 @@ Matt, 4 Nov 09:42: "continue to improve the map. really think about the shape (a
 
 Lane End is a farmstead on the map, not a plan: its cluster round a yard (round 3) already follows its reason.
 
-**Data changes.** These are `towns55.shape_small_v56`, v56 only; v55 is unchanged:
+**Data changes.** These were `towns55.shape_small_v56` (replaced in round 8 by `hand_towns_v56`), v56 only; v55 is unchanged:
 - `towns-v56/gullwick.json`, `driftwood.json` and `lullford.json` are rebuilt.
 - `blockout-v56.json` and `stats-v56.json` follow them.
 - All 19 plans pass `town_plan.py`, the benchmark is 21/21, and the gates are unchanged.
 
 **The map's secrets.** There are 26 proposals in [`docs/vision/map-secrets.md`](../vision/map-secrets.md), drawn small and unlabelled (`map_secrets56.py`). The north cloud bank thins over the sky stair and the east fog over the first tree. `map56-3840-secrets.png` circles and numbers each one.
+
+### Round 8 (4 Nov, Claude A): the towns' footprints authored by hand
+
+The art director's review of round 7 found that the reshaped towns did not yet read as their founding shapes: Gullwick's houses sat on the beach edge and under its name, and Lullford barely changed. This round lays five towns by hand, as Highgarth was, in `towns55.hand_towns_v56` (v56 only; v55 is unchanged). Each town's generated layout is lifted (its buildings, streets, squares and yards; its fields and the regional routes through it stay), and the footprint is drawn from why the town is there:
+
+| Plan | Founding shape | What is laid | Counted (band) |
+| --- | --- | --- | --- |
+| Gullwick | a crescent facing the cove, behind the strand, with a slipway | the houses and boathouses inside the coast trail's curve, each as near the strand as dry land allows, two more on the cove's east shore; the Strand lane on the curve; the slipway down the beach | 7 (6 to 10) |
+| Driftwood | a strand row with a quay | one row behind the beach either side of the Sleepwater's mouth, facing the sea across the Strand lane; the quay at the river mouth | 7 (8 to 12, a warning) |
+| Lullford | one row along the bridge-head street, the mill on its leat | fronts both sides of the Lull Road's last run down to the bridge over the leat (the north side backs onto the fields); the mill on the leat below the bridge | 11 (10 to 16) |
+| Dust Gulch | one long main street of false fronts, the depot at one end, the corrals at the other | Front Street, straight and wide, with false fronts and the saloon on both sides; a back lane with the homes behind the north side; the depot and the goods yard at the east end, the corrals and the barns at the west end | 27 (30 to 45, a warning; it held 41 as a grid) |
+| Palm Spring | a caravanserai ring round the oasis | the Spring Ring round the pool (the Drover's Road closes it on the south), adobes facing the water on the west and east, the caravanserai inn, its stables and stores on the road | 15 (14 to 22) |
+
+The beach behind Gullwick and Driftwood is narrowed where the town stands (`_beach_back`: sand more than 56 and 24 px from the water becomes grass), so the houses stand on the land behind the strand and none is on the beach or in the water. On the maps, a small town's name is now kept off its houses: the label placer reserves the footprints of the five hand-laid towns (reserving every small town's houses pushed Cinder Springs' name off the map, so it is limited to these five).
+
+**How they read at 1920.** Dust Gulch reads as its main street: two long rows of fronts with the depot's long roof at the east end. Palm Spring reads as houses round the pool with the inn block on the road. Gullwick, Driftwood and Lullford hold 7 to 11 buildings each, which at 1920 is a few pixels per house: their rows sit behind the strand and along the road, off the sand and clear of their names, but the crescent and the bridge-head row are clear only at 3840 (see the 3x crops). The 3840 crops show the shapes; the 1920 overview shows where they sit.
+
+**Not done this round, and why:**
+- Crossroads: its 40 buildings are a retained inventory (`FEEDBACK_BUILDINGS`, held by `test_actual_crossroads_*` and `feedback_checks`). Packing the cross and thinning the four roads means adding and moving inventory buildings, so it needs that inventory changed with it. **Proposal:** six more plots round the cross and one cottage on each valley lane at about 330, 520 and 780 px out, with the inventory and its count raised to match.
+- Hearthold: unchanged. Its inner town comes from authored adoption packets, which the walls and adoption checks hold. **Proposal:** draw the inner town as two or three stepped terraces (a tier change in the plan).
+- Neon Harbour, partly: the old quarter's fronts (rows as well as single buildings) now take mixed tile roofs house by house, so at 1920 the warm old quarter stands against the Company district's grey flat and tin roofs, and the seam shows as a change of roofs. The lanes are still the plan's grid, because the city's 72 retained buildings are an inventory too. **Proposal:** bend the old quarter's back lanes in the plan.
+
+**Checks.** All 19 plans pass `town_plan.py`, the benchmark is 21/21, and the gates are unchanged. `towns-v56/gullwick.json`, `driftwood.json`, `lullford.json`, `dust-gulch.json` and `palm-spring.json`, `blockout-v56.json`, `stats-v56.json` and `town-checks-v56.json` follow. No test encoded these five towns' old shapes, so none changed.
+
+**v55.** The v55 data stage, seeded, gives byte-identical results before and after this round (all 24 data files, the state and the log). The v55 committed files are unchanged. Every drawing change is gated to v56: the tile roofs need `roofs`, which is on only for v56, and the label reservation sits in the v56 branch. The v55 renders could not be compared byte for byte this time, because two seeded renders of the same commit (771dd39f) from the same state differ in 8 of 12 images (the terrain textures and canopy). The renderer is no longer deterministic run to run on this machine, which predates this round and is worth a separate look.
