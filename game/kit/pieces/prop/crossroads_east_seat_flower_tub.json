@@ -1,0 +1,91 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_east_seat_flower_tub",
+ "name": "East seat flower tub",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "east_seat_flower_tub",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/east_seat_flower_tub.png",
+   "foot": [
+    27,
+    53
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   54,
+   57
+  ],
+  "size_cells": [
+   3,
+   3
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "rect": [
+    -6.0,
+    -6.0,
+    12,
+    6
+   ],
+   "shape": "rect"
+  },
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {},
+ "rendering": {},
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "east_seat_flower_tub",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

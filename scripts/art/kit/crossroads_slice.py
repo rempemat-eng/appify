@@ -86,11 +86,18 @@ def _spur(door):
 # The others' fronts stay open, so the lane has variety. Gates of the side enclosures face the spur
 # and a two-cell trodden way leads through them; the front garden's gate stands on the spur itself.
 # id: holds, style, (x0, y0, x1, y1) post centres in world px, gate (side, a0, a1)
+# Matt, 4 Nov, on the farmyard cottage: "the placement of the fence, doors and pathways does not
+# align". So: a door's path leaves its centre and runs straight out at least a cell (the spur); a
+# gate is centred on the path through it and as wide as the path, and no path crosses a fence
+# elsewhere; a fence meets its house at a corner or along the wall's foot, never in front of the
+# facade; the door's threshold stays clear. The side enclosures therefore stand beside the house,
+# their near fence on the line of the house's front wall from its outer corner, the spur and the
+# lawn between them and the spur, and their gate faces the spur on the way that leaves it.
 ENCLOSURES = {
-    'cottage_nw': ('crops', 'wattle', (16, 114, 78, 166), ('e', 124, 148)),
-    'cottage_sw': ('sheep', 'hurdle', (16, 266, 78, 318), ('e', 276, 300)),
-    'cottage_ne': ('chickens', 'low_wattle', (242, 138, 274, 170), ('w', 144, 160)),
-    'cottage_se': ('flowers', 'picket', (200, 280, 264, 304), ('s', 222, 242)),
+    'cottage_nw': ('crops', 'wattle', (4, 104, 56, 160), ('e', 124, 148)),
+    'cottage_sw': ('sheep', 'hurdle', (4, 256, 56, 316), ('e', 276, 300)),
+    'cottage_ne': ('chickens', 'low_wattle', (264, 128, 296, 160), ('w', 132, 156)),
+    'cottage_se': ('flowers', 'picket', (200, 280, 264, 304), ('s', 220, 244)),
 }
 
 
@@ -122,7 +129,7 @@ def _gate_way(cid, door):
     if side == 's':
         return None
     gc = (a0 + a1) // 2
-    reach = 6 if _h == 'chickens' else 14                  # into the run only as far as its coop allows
+    reach = 8 if _h == 'chickens' else 16                  # into the run only as far as its coop allows (on a cell line)
     return [[door[0], gc], [x1 - reach if side == 'e' else x0 + reach, gc]]
 
 
@@ -143,7 +150,7 @@ def _plot(cid, door):
     elif holds == 'sheep':
         out.append((cid + '_shelter', 'shelter', (x0 + 15, y0 + 15), {}))           # back corner, its open side south
         out.append((cid + '_trough', 'trough', (x1 - 20, y1 - 14), {}))             # near the gate, where it is filled
-        for k, (sx, sy, face, pose) in enumerate(((x0 + 12, y0 + 30, 1, 'graze'), (x0 + 30, y0 + 26, 1, 'graze'),
+        for k, (sx, sy, face, pose) in enumerate(((x0 + 12, y0 + 30, 1, 'graze'), (x0 + 40, y0 + 10, 1, 'graze'),
                                                   (x0 + 14, y1 - 12, -1, 'lie'))):
             out.append((cid + '_sheep_%d' % k, 'sheep', (sx, sy), dict(face=face, pose=pose)))
     elif holds == 'chickens':
@@ -160,7 +167,7 @@ def _plot(cid, door):
         out.append((cid + '_gate_leaf', 'gate_leaf', (xi, a0), dict(w=a1 - a0 - 2, dir=-1 if gs == 'e' else 1)))
     # fuel stacked against the outer gable wall, under the eaves; goods by the house; a tub by the door
     if cid in ('cottage_ne', 'cottage_sw'):
-        out.append((cid + '_woodpile', 'woodpile', (x + side * 45, y - 6), dict(variant=0)))
+        out.append((cid + '_woodpile', 'woodpile', (x + side * 45, y - 14), dict(variant=0)))   # clear of the pen's fence
     else:
         out.append((cid + '_barrel', 'barrel', (x - side * 40, y - 4), dict(variant=1)))
     if holds != 'flowers':

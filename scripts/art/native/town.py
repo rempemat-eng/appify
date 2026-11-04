@@ -66,7 +66,8 @@ def stage_states(plan) -> dict:
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
 INPUTS = ('village.py', 'houses.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
-          'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png')
+          'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png', 'softground.py',
+          '../kit/crossroads_slice.py')
 
 
 def input_hash(plan_path: str, density: float) -> str:
@@ -162,7 +163,10 @@ def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise, soft=False):
         # the soft grid's lawn already carries its field, mottle and tufts: only the clumps at the
         # feet of things and along the edges below
         slow = noise(30.0, 301)
-        return _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D)
+        # (Eastward pass, 4 Nov: the open lawn between places read as one flat green) the soft
+        # lawn also gets the loose drifts of tufts and small flowers in the open, steered by the
+        # slow field, so no stretch the size of a house is bare
+        return _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D, drifts=True)
     # soft hue patches where the field is calm
     win = int(round(5 * D))
     calm = lawn & (ndi.maximum_filter(cv, size=win) == ndi.minimum_filter(cv, size=win))
@@ -585,6 +589,26 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             worn = SE.soft(worn) & (out_d > 0) & ~pathm
         cv[worn] = C('path_warm', 4)
         cv[worn & (out_d > 2.5)] = C('grass_warm', 3)
+        if hd:
+            # (Eastward pass, 4 Nov: the square ended in one ruled line) the turf takes the
+            # square back along its quiet edges: within a few world px of the kerb, away from
+            # the roads, moss and grass grow in the joints and a few setts are lost under turf,
+            # thinning inward (eastward-edges.md 5.1: the edge frays, never a ruled line)
+            quiet = pave & ~kerb & ~ndi.binary_dilation(pathm, iterations=q(6))
+            reach_ = 4.0 + 7.0 * np.clip(noise(5.0, 811) * 0.5 + 0.6, 0, 1)
+            near = quiet & (edge_d < reach_)
+            stone_ = np.isin(cv // 8, [FI['stone'], FI['stone_warm'], FI['stone_cool']])
+            # moss in the joints and on the low, dark setts, thinning inward
+            mossy = near & stone_ & (cv % 8 <= 3) & (noise(0.9, 813) > -0.3 + 0.25 * (edge_d - 3.4))
+            cv[mossy] = C('grass_cool', 2)
+            cv[mossy & (noise(0.7, 814) > 0.5)] = C('grass', 3)
+            # setts lost under the turf in a few rounded patches against the kerb
+            lost = near & (edge_d < reach_ - 1.0) & (noise(1.6, 815) > 0.55)
+            lost = ndi.binary_opening(lost, iterations=2) & quiet
+            cv[lost] = C('grass', 3)
+            cv[lost & (noise(0.8, 817) > 0.3)] = C('grass_cool', 3)
+            cv[lost & (noise(0.6, 819) > 1.1)] = C('grass', 4)
+            keep_marks |= mossy | lost
 
     # puddles left by the storm: at density 3 they are drawn later, in the broken stage only, as
     # shallow water lying in sunken setts (Matt, 26 Oct 23:09: "random holes with water")
@@ -731,6 +755,22 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             V.blk(cv, cx0 - 1, top - q(3.5), cx1 + 1, top - q(1.5), 'stone_warm', 4, cut=1)
         # the path meets the stair head and foot
         pathm |= rect_m([sx - sw / 2 + 3, y0w - 6, sw - 6, y1w - y0w + 12])
+
+    # --- doorsteps ------------------------------------------------------------------------------------
+    # (Eastward pass, 4 Nov: doors opened straight onto the turf) a stone slab at the foot of every
+    # door that stands on turf (not on the paving or a road), the trodden turf round it
+    if hd:
+        from scripts.art.kit.crossroads_slice import doorstep
+        for b in plan.get('buildings', []):
+            if 'door' not in b:
+                continue
+            dx_, dy_ = b['door']
+            X_, Y_ = q(dx_), min(H - 1, q(dy_ + 2))
+            if pave[Y_, X_] or pathm[Y_, X_]:
+                continue
+            doorstep(cv, b['door'])
+            slab = rect_m([dx_ - 8, dy_, 16, 5])
+            pathm |= slab
 
     # --- objects ---------------------------------------------------------------------------------------
     objects = []      # dicts: id, png, foot (texels), anchor, if, solid (world rect), sort, kind, layer

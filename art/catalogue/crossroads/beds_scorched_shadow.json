@@ -1,7 +1,7 @@
 {
  "id": "crossroads/beds_scorched_shadow",
  "file": "game/zones/crossroads/art/beds_scorched_shadow.png",
- "sha256": "83666397d1adb285fe5ba7dcbcd128b643a58c151e38548cfc5e60c2ddc04655",
+ "sha256": "a28eda57e2e1ec080d387828f6cd090ffcb9088f721654d4ad0da97998d04ff9",
  "kind": "beds_scorched_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-03",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

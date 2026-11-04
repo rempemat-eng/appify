@@ -303,6 +303,26 @@
           152
         ]
       ]
+    },
+    {
+      "id": "fern_path",
+      "kind": "path",
+      "width": 24,
+      "points": [
+        [
+          472,
+          416
+        ],
+        [
+          472,
+          432
+        ],
+        [
+          320,
+          432
+        ]
+      ],
+      "why": "the Ferns' door path: leaves the door's centre straight south two cells, then west to the green lane (Matt, 4 Nov: paths centred on doors)"
     }
   ],
   "stairs": [
@@ -2149,8 +2169,9 @@
         "kind": "boulder",
         "at": [
           352,
-          432
-        ]
+          456
+        ],
+        "why": "moved off the Ferns' path"
       },
       {
         "kind": "debris",
@@ -2270,6 +2291,170 @@
           12,
           6
         ]
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          208,
+          276
+        ],
+        "id": "lamp_square_w",
+        "why": "the halt road's mouth onto the square (placement-logic: lamps at junctions)"
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          432,
+          292
+        ],
+        "id": "lamp_square_e",
+        "why": "the harbour road's mouth onto the square"
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          304,
+          376
+        ],
+        "id": "lamp_square_s",
+        "why": "the green lane's mouth"
+      },
+      {
+        "kind": "oak",
+        "at": [
+          214,
+          360
+        ],
+        "id": "square_oak",
+        "why": "the square's old tree: shade over the west bench, the square's one green"
+      },
+      {
+        "kind": "sacks",
+        "at": [
+          344,
+          256
+        ],
+        "size": [
+          14,
+          8
+        ],
+        "id": "stall_sacks",
+        "why": "Moss's stock: meal and potatoes beside the stall"
+      },
+      {
+        "kind": "crates",
+        "at": [
+          428,
+          258
+        ],
+        "size": [
+          12,
+          10
+        ],
+        "id": "stall_crates_b",
+        "why": "Moss's stock: a second stack of crates"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          252,
+          370
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "west_seat_flower_tub",
+        "why": "planters at the bench ends: care for the square"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          372,
+          370
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "east_seat_flower_tub"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          220,
+          226
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "tub_board",
+        "why": "a planter by the notice board"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          130,
+          392
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "herb_window_flower_tub_a",
+        "why": "the herbalist's window boxes"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          150,
+          392
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "herb_window_flower_tub_b"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          106,
+          384
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "id": "herb_corner_barrel",
+        "why": "the herbalist's rain barrel at the corner"
+      },
+      {
+        "kind": "woodpile",
+        "at": [
+          100,
+          276
+        ],
+        "size": [
+          16,
+          8
+        ],
+        "id": "oven_gable_woodpile",
+        "why": "fuel for the bakery's oven, against its west gable under the chimney"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          502,
+          424
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "tub_fern",
+        "why": "the Ferns' window box"
       }
     ],
     "setts": [
