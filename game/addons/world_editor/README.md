@@ -62,6 +62,17 @@ Building places from the kit (round 3, 3 Nov):
   `placement_audit.check_plan` (needs a hearth or home, faces a feature, avoids wild
   woods, a fingerpost's arms along its junction), and lists every finding by its
   check.
+- **Doors, paths and gates** (4 Nov, Matt's review of the farm study). Validate and
+  the live overlay also run `scripts/art/kit/thresholds.py` through `check_plan`: a
+  door's path is centred on its opening and straight for a cell (`door_path`), its
+  threshold and swing stay clear (`door_clear`), a gate is centred on the path
+  through it (`gate_path`), a path crosses a fence only at a gate or a stile
+  (`path_through_fence`), and a fence meets a building at a front corner or along
+  its wall foot, never in front of the façade (`fence_wall`). Doors are each
+  building's `geometry.doors`. Painting a route from a door snaps the stroke's
+  first two rows onto the door's centre line (one cell wider when the door's centre
+  needs the other parity), and a gate clicked onto a run takes the span centred on
+  the path crossing it. Both stay one undo.
 
 Terrain and placement transactions preserve cell/variant/baked state, node
 ownership, ordinary gameplay nodes and W2's plan metadata. Undo remains bound to

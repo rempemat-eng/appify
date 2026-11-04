@@ -27,9 +27,11 @@ CELL = 24
 COLS, ROWS = 74, 30
 
 
-def _ring(style, c0, c1, r0, r1, gate_col, prefix):
+def _ring(style, c0, c1, r0, r1, gate_col, prefix, dx=0):
     """A closed loop of fence cells: y-runs on columns c0 and c1 (cell centres), x-runs on the
-    bottom lines of rows r0 and r1; a gate three cells wide on the south run, centred on gate_col."""
+    bottom lines of rows r0 and r1; a gate three cells wide on the south run, centred on gate_col.
+    dx -12 sets the whole loop half a cell west, on the cells' west lines, so its gate is centred
+    on a way two cells wide (columns gate_col - 1 and gate_col; thresholds.py rules.gate_path)."""
     cells = {}
     for c in range(c0, c1 + 1):
         for r in (r0, r1):
@@ -51,18 +53,18 @@ def _ring(style, c0, c1, r0, r1, gate_col, prefix):
     for (c, r), j in sorted(cells.items(), key=lambda t: (t[0][1], t[0][0])):
         jn = ''.join(s for s in 'nesw' if s in j)
         straight = j in ({'e', 'w'}, {'n', 's'})
-        pc = {'id': '%s_%d_%d' % (prefix, c, r), 'piece': 'fence_%s_%s' % (style, jn), 'at': [c * CELL + 12, (r + 1) * CELL]}
+        pc = {'id': '%s_%d_%d' % (prefix, c, r), 'piece': 'fence_%s_%s' % (style, jn), 'at': [c * CELL + 12 + dx, (r + 1) * CELL]}
         if straight:
             pc['variant'] = 'post' if (c + r) % 4 == 0 and style == 'picket' else 'plain'
         out.append(pc)
-    out.append({'id': prefix + '_gate', 'piece': 'fence_%s_gate_ew' % style, 'at': [gate_col * CELL + 12, (r1 + 1) * CELL],
+    out.append({'id': prefix + '_gate', 'piece': 'fence_%s_gate_ew' % style, 'at': [gate_col * CELL + 12 + dx, (r1 + 1) * CELL],
                 'variant': 'shut'})                         # shut: the gate keeps the stock in
     return out
 
 
-def _front_garden(style, c0, c1, r_wall, r1, gate_col, prefix):
-    """A front garden: side runs from the house's front wall (end posts against it, on the line
-    r_wall) south to the front run on row r1's line, its gate on the door path."""
+def _front_garden(style, c0, c1, r_wall, r1, gate_col, prefix, dx=0):
+    """A front garden: side runs from the house's front corners (end posts at them, on its wall foot
+    line r_wall) south to the front run on row r1's line, its gate centred on the door path."""
     cells = {}
     for r in range(r_wall, r1 + 1):
         for c in (c0, c1):
@@ -82,11 +84,11 @@ def _front_garden(style, c0, c1, r_wall, r1, gate_col, prefix):
     out = []
     for (c, r), j in sorted(cells.items(), key=lambda t: (t[0][1], t[0][0])):
         jn = ''.join(s for s in 'nesw' if s in j)
-        pc = {'id': '%s_%d_%d' % (prefix, c, r), 'piece': 'fence_%s_%s' % (style, jn), 'at': [c * CELL + 12, (r + 1) * CELL]}
+        pc = {'id': '%s_%d_%d' % (prefix, c, r), 'piece': 'fence_%s_%s' % (style, jn), 'at': [c * CELL + 12 + dx, (r + 1) * CELL]}
         if j in ({'e', 'w'}, {'n', 's'}):
             pc['variant'] = 'plain'
         out.append(pc)
-    out.append({'id': prefix + '_gate', 'piece': 'fence_%s_gate_ew' % style, 'at': [gate_col * CELL + 12, (r1 + 1) * CELL],
+    out.append({'id': prefix + '_gate', 'piece': 'fence_%s_gate_ew' % style, 'at': [gate_col * CELL + 12 + dx, (r1 + 1) * CELL],
                 'variant': 'shut'})
     return out
 
@@ -94,79 +96,84 @@ def _front_garden(style, c0, c1, r_wall, r1, gate_col, prefix):
 def plan() -> dict:
     g = np.full((ROWS, COLS), '.', '<U1')
     g[19:21, :] = '#'                                   # the lane
+    # every gate is centred on the way through it and the cottage's door path on its door, straight
+    # out a cell (thresholds.py; Matt, 4 Nov): a way two cells wide is centred on a cell's west line,
+    # so the loops it goes through stand half a cell west (dx -12), on the cells' west lines
     # the chicken run (4 x 4 cells), scratched bare inside, its gate's trodden way to the lane
     g[10:13, 3:9] = 'w'
-    g[12:19, 5:7] = '#'
+    g[12:19, 4:6] = '#'
     # the sheep fold (10 x 8 cells): worn by the trough and the gate, the way to the lane
     g[7:10, 11:19] = 'w'
-    g[10:19, 15:17] = '#'
-    # the cottage's door path through its garden gate to the lane
-    g[12:19, 26:28] = '#'
+    g[10:19, 14:16] = '#'
+    # the cottage's door path, straight out of its door through its garden gate to the lane
+    g[12:19, 28:30] = '#'
     pieces = []
-    pieces += _ring('wattle', 2, 9, 5, 12, 5, 'run')
-    pieces += _ring('wattle', 10, 20, 2, 10, 15, 'fold')
-    pieces += _front_garden('picket', 24, 32, 11, 16, 26, 'garden')
-    # the paddock (12 x 11 cells of post and rail): its gate's way to the lane, a footpath in over
-    # the stile on its east side and across to the gate, grazed short by the shelter and trough
-    g[7, 44:51] = '#'
-    g[7:19, 44:46] = '#'
-    g[0:8, 51] = '#'
-    g[7, 51] = '#'
+    pieces += _ring('wattle', 2, 9, 5, 12, 5, 'run', dx=-12)
+    pieces += _ring('wattle', 10, 20, 2, 10, 15, 'fold', dx=-12)
+    # the front garden is the cottage's width: its side runs leave the house's front corners
+    pieces += _front_garden('picket', 24, 34, 11, 16, 29, 'garden', dx=-12)
+    # the paddock (12 x 11 cells of post and rail): a footpath straight across it, in over the stile
+    # in its north rails and out through its gate to the lane (one cell: a footpath, centred on both),
+    # grazed short by the shelter and trough
+    g[0:19, 44] = '#'
     g[5:8, 38:43] = 'w'
     pieces += _ring('rail', 38, 50, 2, 13, 44, 'paddock')
     for pc in pieces:
         if pc['id'].startswith('paddock_') and pc.get('variant') == 'plain' and pc['at'][0] % 96 == 12:
             pc['variant'] = 'post'                       # a post every four cells along a straight
-    stile = next(pc for pc in pieces if pc['id'] == 'paddock_50_7')
-    stile['piece'], stile['variant'] = 'fence_rail_stile_ns', 'plain'
+    stile = next(pc for pc in pieces if pc['id'] == 'paddock_44_2')
+    stile['piece'], stile['variant'] = 'fence_rail_stile_ew', 'plain'
     # the goat pen (9 x 9 cells of hurdles) and its way down to the lane
     g[7:10, 54:62] = 'w'
-    g[10:19, 58:60] = '#'
-    pieces += _ring('wattle', 53, 62, 1, 10, 58, 'goats')
+    g[10:19, 57:59] = '#'
+    pieces += _ring('wattle', 53, 62, 1, 10, 58, 'goats', dx=-12)
     # the sty: its run of hurdles before it, the sty's front wall the run's north side
     g[9:15, 67:70] = 'w'
-    g[14:19, 68:70] = '#'
-    pieces += _front_garden('wattle', 66, 70, 8, 14, 68, 'sty')
+    g[14:19, 67:69] = '#'
+    pieces += _front_garden('wattle', 66, 70, 8, 14, 68, 'sty', dx=-12)
     pieces += [
         # the run: the hen house against the back fence, two hens before it, clear of the near fence
-        {'id': 'coop', 'piece': 'farm_coop', 'at': [132, 264]},
-        {'id': 'hen_1', 'piece': 'farm_hen_white', 'at': [108, 288]},
-        {'id': 'hen_2', 'piece': 'farm_hen_brown', 'at': [204, 288]},
+        {'id': 'coop', 'piece': 'farm_coop', 'at': [120, 264]},
+        {'id': 'hen_1', 'piece': 'farm_hen_white', 'at': [96, 288]},
+        {'id': 'hen_2', 'piece': 'farm_hen_brown', 'at': [192, 288]},
         # the fold: the shelter against the north hurdles, hay forked out in the far corner, the
         # trough by the east hurdles, the flock spread out along the south, the gateway clear
-        {'id': 'shelter', 'piece': 'farm_shelter', 'at': [324, 192]},
-        {'id': 'hay', 'piece': 'crossroads_hay', 'at': [444, 120], 'variant': 'hay_heap'},
-        {'id': 'trough', 'piece': 'crossroads_trough', 'at': [444, 168]},
-        {'id': 'sheep_1', 'piece': 'farm_sheep', 'at': [300, 240]},
-        {'id': 'sheep_2', 'piece': 'farm_sheep_graze', 'at': [432, 240]},
-        {'id': 'sheep_3', 'piece': 'farm_sheep_lie', 'at': [372, 240]},
+        {'id': 'shelter', 'piece': 'farm_shelter', 'at': [312, 192]},
+        {'id': 'hay', 'piece': 'crossroads_hay', 'at': [432, 120], 'variant': 'hay_heap'},
+        {'id': 'trough', 'piece': 'crossroads_trough', 'at': [432, 168]},
+        {'id': 'sheep_1', 'piece': 'farm_sheep', 'at': [288, 240]},
+        {'id': 'sheep_2', 'piece': 'farm_sheep_graze', 'at': [420, 240]},
+        {'id': 'sheep_3', 'piece': 'farm_sheep_lie', 'at': [360, 240]},
         # bales stacked outside the fold's east side for the next forking out
         {'id': 'bales', 'piece': 'crossroads_hay', 'at': [540, 216], 'variant': 'hay_bales'},
-        # the cottage and its front garden: two flower borders east of the door path
-        {'id': 'cottage', 'piece': 'crossroads_fern_cottage', 'at': [696, 288]},
-        {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [708, 312]},
-        {'id': 'border_2', 'piece': 'garden_flower_border', 'at': [708, 360]},
+        # the cottage (its door on the half-cell grid, so its path can centre on it) and its front
+        # garden: flower borders either side of the door path, clear of the door's swing
+        {'id': 'cottage', 'piece': 'crossroads_hut', 'at': [696, 288]},
+        {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [624, 312]},
+        {'id': 'border_2', 'piece': 'garden_flower_border', 'at': [768, 312]},
+        {'id': 'border_3', 'piece': 'garden_flower_border', 'at': [624, 360]},
+        {'id': 'border_4', 'piece': 'garden_flower_border', 'at': [768, 360]},
         # the paddock: the field shelter's back to the north rails, the trough by the west rails,
         # the cattle and the horse spread over the grass, off the footpath
         {'id': 'pd_shelter', 'piece': 'farm_shelter', 'at': [996, 192]},
         {'id': 'pd_trough', 'piece': 'crossroads_trough', 'at': [996, 288]},
-        {'id': 'horse', 'piece': 'farm_horse', 'at': [1140, 168]},
+        {'id': 'horse', 'piece': 'farm_horse', 'at': [1164, 168]},
         {'id': 'cow', 'piece': 'farm_cow', 'at': [1140, 264]},
         {'id': 'calf', 'piece': 'farm_calf', 'at': [1140, 312]},
         # the goat pen: its shelter against the north hurdles, a trough, two goats
-        {'id': 'gt_shelter', 'piece': 'farm_shelter', 'at': [1356, 168]},
-        {'id': 'gt_trough', 'piece': 'crossroads_trough', 'at': [1380, 240]},
-        {'id': 'goat_1', 'piece': 'farm_goat', 'at': [1464, 192]},
-        {'id': 'goat_2', 'piece': 'farm_goat_b', 'at': [1464, 240]},
+        {'id': 'gt_shelter', 'piece': 'farm_shelter', 'at': [1344, 168]},
+        {'id': 'gt_trough', 'piece': 'crossroads_trough', 'at': [1368, 240]},
+        {'id': 'goat_1', 'piece': 'farm_goat', 'at': [1452, 192]},
+        {'id': 'goat_2', 'piece': 'farm_goat_b', 'at': [1452, 240]},
         # the sty, its pig and its wallow
-        {'id': 'sty', 'piece': 'farm_sty', 'at': [1644, 216]},
-        {'id': 'wallow', 'piece': 'farm_wallow', 'at': [1644, 336]},
-        {'id': 'pig', 'piece': 'farm_pig', 'at': [1644, 264]},
+        {'id': 'sty', 'piece': 'farm_sty', 'at': [1632, 216]},
+        {'id': 'wallow', 'piece': 'farm_wallow', 'at': [1632, 336]},
+        {'id': 'pig', 'piece': 'farm_pig', 'at': [1632, 264]},
         # the yard's things
         {'id': 'churns', 'piece': 'farm_churns', 'at': [1140, 384]},
-        {'id': 'butt', 'piece': 'farm_water_butt', 'at': [564, 288]},
-        {'id': 'muck', 'piece': 'farm_muck_heap', 'at': [852, 216]},
-        {'id': 'barrow', 'piece': 'farm_wheelbarrow', 'at': [852, 288]},
+        {'id': 'butt', 'piece': 'farm_water_butt', 'at': [552, 288]},
+        {'id': 'muck', 'piece': 'farm_muck_heap', 'at': [876, 216]},
+        {'id': 'barrow', 'piece': 'farm_wheelbarrow', 'at': [876, 288]},
         {'id': 'sacks', 'piece': 'farm_feed_sacks', 'at': [468, 312]},
         # the kitchen garden south of the lane, its scarecrow among the beds
         {'id': 'beds', 'piece': 'crossroads_beds_dug', 'at': [264, 672], 'stage': 'restored'},

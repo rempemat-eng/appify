@@ -154,3 +154,35 @@ func test_variants_cycle_and_cells_hash_the_same_way_every_time() -> void:
 	assert_bool(h >= 0.0 and h < 1.0).is_true()
 	assert_bool(Tools.cell_hash(Vector2i(4, 9), 12) != h).is_true()
 	assert_str(Tools.short_rule("rules.not_near")).is_equal("not near")
+
+func test_a_door_path_snaps_to_the_door_centre_line() -> void:
+	# the farm study's cottage door: its opening x 684 to 731 (centre 707.5, cell 29's middle), its foot y 288 (row 12 is before it)
+	var door := {"x0": 684.0, "x1": 731.0, "y": 288.0}
+	var line: Array = []
+	for r in range(12, 17):
+		line.append(Vector2i(30, r))
+	var one := Tools.door_path_cells(line, door)
+	# the two rows before the door move onto its centre line; past them the path may bend
+	assert_bool(Vector2i(29, 12) in one and Vector2i(29, 13) in one).is_true()
+	assert_bool(Vector2i(30, 12) in one or Vector2i(30, 13) in one).is_false()
+	assert_bool(Vector2i(30, 14) in one and Vector2i(30, 16) in one).is_true()
+	# two cells wide where the door wants an odd run: three, centred
+	var wide := Tools.door_path_cells([Vector2i(30, 12), Vector2i(31, 12), Vector2i(30, 13), Vector2i(31, 13)], door)
+	var row: Array = []
+	for c in wide:
+		if c.y == 12:
+			row.append(c.x)
+	row.sort()
+	assert_that(row).is_equal([28, 29, 30])
+	# a door whose centre is a cell's edge (x 312 to 359, centre 335.5): a one-cell stroke becomes two, either side of it
+	var edge := Tools.door_path_cells([Vector2i(12, 12), Vector2i(12, 13)], {"x0": 312.0, "x1": 359.0, "y": 288.0})
+	assert_bool(Vector2i(13, 12) in edge and Vector2i(14, 12) in edge and Vector2i(12, 12) not in edge).is_true()
+	# a stroke that never reaches the door's row is left as it is
+	var past := Tools.door_path_cells([Vector2i(30, 14), Vector2i(30, 15)], door)
+	assert_that(past).is_equal([Vector2i(30, 14), Vector2i(30, 15)])
+
+func test_a_gate_takes_the_span_centred_on_its_path() -> void:
+	assert_int(Tools.centred_span([204.0, 180.0, 228.0, 156.0, 252.0], 252.0)).is_equal(4)
+	assert_int(Tools.centred_span([204.0, 180.0, 228.0], 216.0)).is_equal(0)   # a two-cell path: no span centres, the nearest first
+	assert_int(Tools.centred_span([204.0, 180.0], NAN)).is_equal(0)
+	assert_int(Tools.centred_span([], 10.0)).is_equal(-1)

@@ -1000,6 +1000,8 @@ class FencesAndFarm(unittest.TestCase):
         self.assertEqual([f for f in KR.check_zone(self.plan) if f['severity'] == 'fault'], [])
         self.assertEqual(RL.check_zone(self.plan), [])
         self.assertEqual(self.EN.check_zone(self.plan, self.lib), [])
+        from scripts.art.kit import placement_audit as PA
+        self.assertEqual(PA.check_plan(self.plan), [])
 
     def test_the_farm_study_is_staged_clear(self):
         # every animal a cell inside its fence and off the gateway; nothing drawn over a fence
@@ -1037,16 +1039,18 @@ class FencesAndFarm(unittest.TestCase):
     def test_a_stile_keeps_stock_in_and_stands_on_its_footpath(self):
         import copy
         from scripts.art.kit import relations as RL
-        st = self.lib['fence_rail_stile_ns']
-        self.assertTrue(st['placement']['boundary']['stile'])
-        self.assertFalse(st['placement']['boundary']['gate'])
-        self.assertFalse(st['gameplay']['blocks_move'])
+        for sid in ('fence_rail_stile_ns', 'fence_rail_stile_ew'):
+            st = self.lib[sid]
+            self.assertTrue(st['placement']['boundary']['stile'])
+            self.assertFalse(st['placement']['boundary']['gate'])
+            self.assertFalse(st['gameplay']['blocks_move'])
+        # the study's stile is in the paddock's north rails, on the footpath down column 44
         q = copy.deepcopy(self.plan)
-        q['pieces'] = [x for x in q['pieces'] if x['id'] != 'paddock_50_7']
+        q['pieces'] = [x for x in q['pieces'] if x['id'] != 'paddock_44_2']
         self.assertTrue(any('meets no run' in f['message'] for f in self.EN.check_zone(q, self.lib)))
         q = copy.deepcopy(self.plan)
-        q['rows'][7] = q['rows'][7][:50] + '.' + q['rows'][7][51:]
-        self.assertTrue(any(f['message'].startswith('paddock_50_7: requires on route') for f in RL.check_zone(q)))
+        q['rows'][2] = q['rows'][2][:44] + '.' + q['rows'][2][45:]
+        self.assertTrue(any(f['message'].startswith('paddock_44_2: requires on route') for f in RL.check_zone(q)))
 
     def test_rail_fences_keep_cattle_and_hurdles_do_not(self):
         import copy
@@ -1186,6 +1190,103 @@ class VillageCommons(unittest.TestCase):
                           ('crossroads_well', {'feature', 'water'}), ('commons_pump', {'feature', 'water'})):
             self.assertTrue(tags <= set(json.load(open(lib[pid]))['placement'].get('provides', [])), pid)
 
+
+
+class Thresholds(unittest.TestCase):
+    """Doors, door paths, gates on paths and where fences meet buildings (thresholds.py; Matt's
+    review of the farm study, 4 Nov): each rule catches its fault, and the fixed layout (the farm
+    and village studies) passes."""
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.kit import build as _B  # noqa: F401
+        from scripts.art.kit import farm_study as FS
+        from scripts.art.kit import thresholds as TH
+        from scripts.art.kit import village_study as VS
+        cls.FS, cls.TH, cls.VS = FS, TH, VS
+        cls.plan = FS.plan()
+
+    def _q(self, cells=(), pieces=None, drop=()):
+        """The farm study with ground cells set ((col, row, letter), ...), pieces replaced by id and
+        some removed."""
+        import copy
+        q = copy.deepcopy(self.plan)
+        rows = [list(r) for r in q['rows']]
+        for c, r, ch in cells:
+            rows[r][c] = ch
+        q['rows'] = [''.join(r) for r in rows]
+        by = {pc['id']: pc for pc in (pieces or [])}
+        q['pieces'] = [by.pop(pc['id'], pc) for pc in q['pieces'] if pc['id'] not in drop] + list(by.values())
+        return q
+
+    def _faults(self, q, check):
+        return [f['message'] for f in self.TH.check_plan(q) if f['check'] == check]
+
+    def test_the_studies_pass(self):
+        self.assertEqual(self.TH.check_plan(self.plan), [])
+        self.assertEqual(self.TH.check_plan(self.VS.plan()), [])
+
+    def test_houses_carry_their_doors(self):
+        from scripts.art.kit import enclosures as EN
+        lib = EN.library()
+        for pid in ('crossroads_hut', 'crossroads_bakery', 'crossroads_herbalist', 'crossroads_library', 'crossroads_north_cottages',
+                    'crossroads_smithy', 'crossroads_fern_cottage'):
+            ds = lib[pid]['geometry']['doors']
+            self.assertTrue(ds and all(d['x'][0] < d['x'][1] for d in ds), pid)
+        # the fern cottage's and the smithy's doors are off the half-cell grid (their art's to move)
+        for pid, ok in (('crossroads_fern_cottage', False), ('crossroads_smithy', False), ('crossroads_hut', True), ('crossroads_herbalist', True)):
+            x0, x1 = lib[pid]['geometry']['doors'][0]['x']
+            self.assertEqual(self.TH.on_half_grid(708 + (x0 + x1) / 2.0), ok, pid)      # a foot on the 4 world px grid
+
+    def test_a_door_path_is_centred_and_runs_straight_out(self):
+        # one cell east of the door's centre line (the farm study's cottage path is columns 28 and 29)
+        shifted = [(28, r, '.') for r in range(12, 19)] + [(30, r, '#') for r in range(12, 19)]
+        self.assertTrue(any('the path from its door is centred at x=720' in m for m in self._faults(self._q(shifted), 'rules.door_path')))
+        # centred at the door, but bending east in the first cell out
+        bent = [(c, 13, '.') for c in (28, 29)] + [(30, 13, '#'), (31, 13, '#')]
+        self.assertTrue(any('bends before it is a cell out' in m for m in self._faults(self._q(bent), 'rules.door_path')))
+        # a house whose door is off the half-cell grid is told so
+        fern = {'id': 'cottage', 'piece': 'crossroads_fern_cottage', 'at': [780, 288]}
+        self.assertTrue(any('off the half-cell grid' in m for m in self._faults(self._q(pieces=[fern]), 'rules.door_path')))
+
+    def test_a_door_stays_clear(self):
+        tub = {'id': 'tub', 'piece': 'crossroads_flower_tub', 'at': [696, 312]}
+        self.assertTrue(any(m.startswith('tub stands in the doorway of cottage') for m in self._faults(self._q(pieces=[tub]), 'rules.door_clear')))
+        bed = {'id': 'border_1', 'piece': 'garden_flower_border', 'at': [696, 312]}
+        self.assertTrue(any(m.startswith('border_1 stands in the doorway') for m in self._faults(self._q(pieces=[bed]), 'rules.door_clear')))
+        # beside the door (the study's borders) is clear
+        self.assertEqual(self._faults(self.plan, 'rules.door_clear'), [])
+
+    def test_a_gate_is_centred_on_its_path_and_paths_cross_only_at_gates(self):
+        # the way to the chicken run one cell wide (column 5): its centre is half a cell off the gate's
+        one = [(4, r, '.') for r in range(12, 19)]
+        self.assertTrue(any(m.startswith('run_gate: the gate is centred at x=120, the path through it at x=132')
+                            for m in self._faults(self._q(one), 'rules.gate_path')))
+        # four cells wide: it runs through the fence beside the gate
+        four = [(c, r, '#') for c in (6, 7) for r in range(12, 19)]
+        self.assertTrue(any(m.startswith('run_7_12: a path runs through the fence') for m in self._faults(self._q(four), 'rules.path_through_fence')))
+        # a path across the fold's west hurdles with no gate
+        across = [(c, 6, '#') for c in range(6, 13)]
+        self.assertTrue(any(m.startswith('fold_10_5: a path runs through the fence') or m.startswith('fold_10_6: a path runs through the fence')
+                            for m in self._faults(self._q(across), 'rules.path_through_fence')))
+        # a stile in a north-south run with a one-cell path across it: the run's cells centre on row lines
+        stile = {'id': 'paddock_50_7', 'piece': 'fence_rail_stile_ns', 'at': [1212, 192], 'variant': 'plain'}
+        path = [(c, 7, '#') for c in range(49, 53)]
+        self.assertTrue(any('an even number of cells wide' in m for m in self._faults(self._q(path, [stile]), 'rules.gate_path')))
+
+    def test_a_fence_meets_a_building_at_its_corners(self):
+        # the v6 garden: its east side run three cells inside the cottage's east corner, before the façade
+        inner = [dict(pc, id=pc['id'].replace('garden_34', 'garden_31'), at=[31 * 24, pc['at'][1]])
+                 for pc in self.plan['pieces'] if pc['id'].startswith('garden_34_')]
+        q = self._q(pieces=inner, drop=[pc['id'] for pc in self.plan['pieces'] if pc['id'].startswith('garden_34_')])
+        self.assertTrue(any(m.startswith('garden_31_11: drawn in front of the façade of cottage') for m in self._faults(q, 'rules.fence_wall')))
+        # its west side run a cell short of the west wall: a gap
+        short = [dict(pc, id=pc['id'].replace('garden_24', 'garden_23'), at=[23 * 24, pc['at'][1]])
+                 for pc in self.plan['pieces'] if pc['id'].startswith('garden_24_')]
+        q = self._q(pieces=short, drop=[pc['id'] for pc in self.plan['pieces'] if pc['id'].startswith('garden_24_')])
+        self.assertTrue(any(m.startswith('garden_23_11: its end post stands 24 texels off the wall') for m in self._faults(q, 'rules.fence_wall')))
+        # at the corners (the study) they pass
+        self.assertEqual(self._faults(self.plan, 'rules.fence_wall'), [])
 
 
 class ToneAndNoise(unittest.TestCase):
