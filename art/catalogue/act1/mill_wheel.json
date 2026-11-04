@@ -1,26 +1,26 @@
 {
  "id": "act1/mill_wheel",
  "file": "game/kit/props/art/act1/mill_wheel.png",
- "sha256": "c86264a09b8d1467865ab85d757b32378c8eb45aaac8f66ff237748e47d8ca32",
+ "sha256": "11deb56d3e5e641cbea576883dc202a66bcd9d0719a76c8878a620ab13776b65",
  "kind": "mill_wheel",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  124,
-  189
+  128,
+  180
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 3
+  "fault": 0,
+  "polish": 4
  },
  "detail_bar": {
   "ours": {
-   "patches": 52,
-   "tones": 21.653846153846153,
-   "shapes": 45.63461538461539
+   "patches": 70,
+   "tones": 26.485714285714284,
+   "shapes": 39.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.802,
-  "tones_ratio": 0.802,
-  "shapes_ratio": 0.906,
+  "ratio": 0.774,
+  "tones_ratio": 0.981,
+  "shapes_ratio": 0.774,
   "passed": false,
   "group": "prop"
  },
@@ -39,37 +39,25 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    46,
-    120,
-    82,
-    144
+    69,
+    125,
+    93,
+    140
    ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 67 L per H to the east)",
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 143 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    68,
-    134,
-    89,
-    153
+    9,
+    3,
+    118,
+    68
    ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 11 L per H to the east)",
+   "message": "act1/mill_wheel: the red is lit from the right (luminance rises 11 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    70,
-    154,
-    93,
-    173
-   ],
-   "message": "act1/mill_wheel: the red reads 2D: 2 light planes, luminance spread 3",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
   },
   {
    "detector": "detail.bar",
@@ -77,11 +65,23 @@
    "box": [
     0,
     0,
-    124,
-    189
+    128,
+    180
    ],
-   "message": "act1/mill_wheel: detail bar 0.80 of Eastward's prop band (21.7 tones, 45.6 shapes a patch against 27.0, 50.36)",
+   "message": "act1/mill_wheel: detail bar 0.77 of Eastward's prop band (26.5 tones, 39.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    128,
+    180
+   ],
+   "message": "act1/mill_wheel: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-04",

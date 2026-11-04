@@ -11,7 +11,7 @@
   "deck": null,
   "foot": [
    161,
-   153
+   158
   ],
   "footprint": [
    [
@@ -263,7 +263,7 @@
    "still": {
     "foot": [
      161,
-     153
+     158
     ],
     "png": "res://kit/props/art/act1/barrow_entrance.png"
    }
@@ -281,8 +281,8 @@
   ],
   "deck": null,
   "foot": [
-   10,
-   19
+   9,
+   22
   ],
   "footprint": [
    [
@@ -334,22 +334,22 @@
   "variants": {
    "a": {
     "foot": [
-     10,
-     19
+     9,
+     22
     ],
     "png": "res://kit/props/art/act1/barrow_kerb_a.png"
    },
    "b": {
     "foot": [
      13,
-     17
+     18
     ],
     "png": "res://kit/props/art/act1/barrow_kerb_b.png"
    },
    "c": {
     "foot": [
      8,
-     21
+     23
     ],
     "png": "res://kit/props/art/act1/barrow_kerb_c.png"
    }
@@ -1459,8 +1459,8 @@
    "fps": 4.0,
    "frames": 8,
    "offset": [
-    -14,
-    -145
+    -15,
+    -159
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/act1/coast_harbour_light_loop.png"
@@ -1475,8 +1475,8 @@
   ],
   "deck": null,
   "foot": [
-   14,
-   145
+   15,
+   159
   ],
   "footprint": [
    [
@@ -1524,8 +1524,8 @@
   "variants": {
    "still": {
     "foot": [
-     14,
-     145
+     15,
+     159
     ],
     "png": "res://kit/props/art/act1/coast_harbour_light.png"
    }
@@ -13986,7 +13986,7 @@
   "deck": null,
   "foot": [
    71,
-   176
+   177
   ],
   "footprint": [
    [
@@ -14074,7 +14074,7 @@
    "still": {
     "foot": [
      71,
-     176
+     177
     ],
     "png": "res://kit/props/art/act1/halt_waiting_shelter.png"
    }
@@ -14456,8 +14456,8 @@
   ],
   "deck": null,
   "foot": [
-   66,
-   48
+   67,
+   59
   ],
   "footprint": [
    [
@@ -14538,8 +14538,8 @@
   "variants": {
    "still": {
     "foot": [
-     66,
-     48
+     67,
+     59
     ],
     "png": "res://kit/props/art/act1/mill_landslip.png"
    }
@@ -14708,8 +14708,8 @@
    "fps": 6.0,
    "frames": 8,
    "offset": [
-    -62,
-    -174
+    -64,
+    -164
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/act1/mill_wheel_loop.png"
@@ -14724,8 +14724,8 @@
   ],
   "deck": null,
   "foot": [
-   62,
-   174
+   64,
+   164
   ],
   "footprint": [
    [
@@ -14820,8 +14820,8 @@
   "variants": {
    "still": {
     "foot": [
-     62,
-     174
+     64,
+     164
     ],
     "png": "res://kit/props/art/act1/mill_wheel.png"
    }

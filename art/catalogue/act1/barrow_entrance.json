@@ -1,26 +1,26 @@
 {
  "id": "act1/barrow_entrance",
  "file": "game/kit/props/art/act1/barrow_entrance.png",
- "sha256": "abf98ea7e6fd52a694a9d78b8f2d827d11784046a4b9425248f1d6bace4866d0",
+ "sha256": "d2d14fb36b8559728e78636a3d01621d9856182b552d7b087e900ca00da704b4",
  "kind": "barrow_entrance",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   322,
-  171
+  177
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 3,
+  "fault": 0,
   "polish": 3
  },
  "detail_bar": {
   "ours": {
-   "patches": 115,
-   "tones": 19.530434782608694,
-   "shapes": 27.530434782608694
+   "patches": 125,
+   "tones": 18.752,
+   "shapes": 21.688
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.435,
-  "tones_ratio": 0.705,
-  "shapes_ratio": 0.435,
+  "ratio": 0.343,
+  "tones_ratio": 0.677,
+  "shapes_ratio": 0.343,
   "passed": false,
   "group": "foliage"
  },
@@ -40,60 +40,24 @@
    "severity": "polish",
    "box": [
     47,
-    133,
+    135,
     85,
-    154
+    158
    ],
-   "message": "act1/barrow_entrance: the stone is lit from the right (luminance rises 26 L per H to the east)",
+   "message": "act1/barrow_entrance: the stone is lit from the right (luminance rises 56 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    125,
-    49,
-    197,
-    153
+    39,
+    109,
+    58,
+    122
    ],
-   "message": "act1/barrow_entrance: the stone is lit from the right (luminance rises 8 L per H to the east)",
+   "message": "act1/barrow_entrance: the stone is lit from the right (luminance rises 12 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    47,
-    130,
-    73,
-    146
-   ],
-   "message": "act1/barrow_entrance: the wood reads 2D: 2 light planes, luminance spread 14",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    124,
-    49,
-    164,
-    61
-   ],
-   "message": "act1/barrow_entrance: the wood reads 2D: 1 light planes, luminance spread 8",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    204,
-    148,
-    221,
-    159
-   ],
-   "message": "act1/barrow_entrance: the wood reads 2D: 1 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
   },
   {
    "detector": "detail.bar",
@@ -102,9 +66,9 @@
     0,
     0,
     322,
-    171
+    177
    ],
-   "message": "act1/barrow_entrance: detail bar 0.43 of Eastward's foliage band (19.5 tones, 27.5 shapes a patch against 27.71, 63.32)",
+   "message": "act1/barrow_entrance: detail bar 0.34 of Eastward's foliage band (18.8 tones, 21.7 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

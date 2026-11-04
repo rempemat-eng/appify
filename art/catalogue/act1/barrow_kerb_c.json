@@ -1,14 +1,14 @@
 {
  "id": "act1/barrow_kerb_c",
  "file": "game/kit/props/art/act1/barrow_kerb_c.png",
- "sha256": "e98a873f62c74f5f97036501730ae8b6356d39bebea9ef5d2bd07e28aff5bcf7",
+ "sha256": "61df5bf25d227cbada8f0b6241cf7fe5e9ca34fbefab80d86f43b902f72968b8",
  "kind": "boulder",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  17,
-  24
+  18,
+  28
  ],
  "status": "fail",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 0,
-   "tones": 0.0,
-   "shapes": 0.0
+   "patches": 1,
+   "tones": 26.0,
+   "shapes": 31.0
   },
   "band": {
    "tones": 26.25,
@@ -28,8 +28,10 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": null,
-  "passed": null,
+  "ratio": 0.508,
+  "tones_ratio": 0.99,
+  "shapes_ratio": 0.508,
+  "passed": false,
   "group": "stone"
  },
  "findings": [
@@ -39,23 +41,23 @@
    "box": [
     0,
     0,
-    16,
-    24
+    18,
+    28
    ],
-   "message": "act1/barrow_kerb_c: wide 16 art px (0.22 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
+   "message": "act1/barrow_kerb_c: wide 18 art px (0.24 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
    "fix": "redraw it 30 to 96 art px wide (target about 63), checked beside Bramble (74 art px) in the asset sheet"
   },
   {
-   "detector": "detail.cluster_noise",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
     0,
     0,
-    17,
-    24
+    18,
+    28
    ],
-   "message": "act1/barrow_kerb_c: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+   "message": "act1/barrow_kerb_c: detail bar 0.51 of Eastward's stone band (26.0 tones, 31.0 shapes a patch against 26.25, 61.0)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-04",

@@ -1,26 +1,26 @@
 {
  "id": "act1/mill_landslip",
  "file": "game/kit/props/art/act1/mill_landslip.png",
- "sha256": "d990f6782e0cbd37d663d397c3dc557fcbd783f01b102c520e41638e3619622e",
+ "sha256": "9b0639ce67779b4cbd853219f8128ec9360bc8d21adbc0d1f66038360fe8ba6d",
  "kind": "mill_landslip",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  131,
-  67
+  134,
+  79
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 2,
+  "fault": 0,
   "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 18,
-   "tones": 23.72222222222222,
-   "shapes": 35.333333333333336
+   "patches": 26,
+   "tones": 26.923076923076923,
+   "shapes": 38.69230769230769
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.702,
-  "tones_ratio": 0.879,
-  "shapes_ratio": 0.702,
+  "ratio": 0.768,
+  "tones_ratio": 0.997,
+  "shapes_ratio": 0.768,
   "passed": false,
   "group": "prop"
  },
@@ -39,37 +39,13 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    60,
-    1,
-    121,
-    21
+    21,
+    32,
+    87,
+    43
    ],
-   "message": "act1/mill_landslip: the foliage is lit from the right (luminance rises 32 L per H to the east)",
+   "message": "act1/mill_landslip: the pale is lit from the right (luminance rises 37 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    3,
-    29,
-    18,
-    64
-   ],
-   "message": "act1/mill_landslip: the red reads 2D: 1 light planes, luminance spread 5",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    31,
-    59,
-    75,
-    66
-   ],
-   "message": "act1/mill_landslip: the red reads 2D: 1 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
   },
   {
    "detector": "detail.bar",
@@ -77,10 +53,10 @@
    "box": [
     0,
     0,
-    131,
-    67
+    134,
+    79
    ],
-   "message": "act1/mill_landslip: detail bar 0.70 of Eastward's prop band (23.7 tones, 35.3 shapes a patch against 27.0, 50.36)",
+   "message": "act1/mill_landslip: detail bar 0.77 of Eastward's prop band (26.9 tones, 38.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

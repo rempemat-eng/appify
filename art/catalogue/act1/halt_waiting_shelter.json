@@ -1,26 +1,26 @@
 {
  "id": "act1/halt_waiting_shelter",
  "file": "game/kit/props/art/act1/halt_waiting_shelter.png",
- "sha256": "5e325f950ba4ba0c87200a5f14d66990c9b4b04f3393d7e0b7fcd3b16aed6e60",
+ "sha256": "0672c857ff92692270a8b26d2d12723bb3e061b3f19cbeb137f4b77fd28b75f2",
  "kind": "halt_waiting_shelter",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   142,
-  172
+  173
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 4
  },
  "detail_bar": {
   "ours": {
    "patches": 63,
-   "tones": 16.38095238095238,
-   "shapes": 36.698412698412696
+   "tones": 21.396825396825395,
+   "shapes": 35.3968253968254
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.607,
-  "tones_ratio": 0.607,
-  "shapes_ratio": 0.729,
+  "ratio": 0.703,
+  "tones_ratio": 0.792,
+  "shapes_ratio": 0.703,
   "passed": false,
   "group": "prop"
  },
@@ -40,9 +40,9 @@
    "severity": "polish",
    "box": [
     99,
-    72,
+    73,
     137,
-    170
+    171
    ],
    "message": "act1/halt_waiting_shelter: the foliage is lit from the right (luminance rises 71 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
@@ -51,12 +51,12 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    2,
-    23,
-    27,
-    46
+    7,
+    9,
+    135,
+    64
    ],
-   "message": "act1/halt_waiting_shelter: the stone is lit from the right (luminance rises 17 L per H to the east)",
+   "message": "act1/halt_waiting_shelter: the stone is lit from the right (luminance rises 12 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -64,24 +64,12 @@
    "severity": "polish",
    "box": [
     7,
-    72,
+    73,
     135,
-    119
+    120
    ],
    "message": "act1/halt_waiting_shelter: the wood is lit from the right (luminance rises 11 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    2,
-    23,
-    27,
-    46
-   ],
-   "message": "act1/halt_waiting_shelter: the stone reads 2D: 1 light planes, luminance spread 34",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
   },
   {
    "detector": "detail.bar",
@@ -90,9 +78,9 @@
     0,
     0,
     142,
-    172
+    173
    ],
-   "message": "act1/halt_waiting_shelter: detail bar 0.61 of Eastward's prop band (16.4 tones, 36.7 shapes a patch against 27.0, 50.36)",
+   "message": "act1/halt_waiting_shelter: detail bar 0.70 of Eastward's prop band (21.4 tones, 35.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

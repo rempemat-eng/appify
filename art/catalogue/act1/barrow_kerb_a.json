@@ -1,14 +1,14 @@
 {
  "id": "act1/barrow_kerb_a",
  "file": "game/kit/props/art/act1/barrow_kerb_a.png",
- "sha256": "d235776014c2f2d449ba21bf99810557a6c096aa7965d49fad54fbca1d009846",
+ "sha256": "cecee72eed61133e59bef3670a442832aeacc5425de5971e6b39972549385eb8",
  "kind": "boulder",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  21,
-  22
+  20,
+  28
  ],
  "status": "fail",
  "counts": {
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 26.0,
-   "shapes": 46.0
+   "tones": 28.0,
+   "shapes": 33.0
   },
   "band": {
    "tones": 26.25,
@@ -28,9 +28,9 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": 0.754,
-  "tones_ratio": 0.99,
-  "shapes_ratio": 0.754,
+  "ratio": 0.541,
+  "tones_ratio": 1.067,
+  "shapes_ratio": 0.541,
   "passed": false,
   "group": "stone"
  },
@@ -42,7 +42,7 @@
     0,
     0,
     20,
-    22
+    28
    ],
    "message": "act1/barrow_kerb_a: wide 20 art px (0.27 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
    "fix": "redraw it 30 to 96 art px wide (target about 63), checked beside Bramble (74 art px) in the asset sheet"
@@ -53,10 +53,10 @@
    "box": [
     0,
     0,
-    21,
-    22
+    20,
+    28
    ],
-   "message": "act1/barrow_kerb_a: detail bar 0.75 of Eastward's stone band (26.0 tones, 46.0 shapes a patch against 26.25, 61.0)",
+   "message": "act1/barrow_kerb_a: detail bar 0.54 of Eastward's stone band (28.0 tones, 33.0 shapes a patch against 26.25, 61.0)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

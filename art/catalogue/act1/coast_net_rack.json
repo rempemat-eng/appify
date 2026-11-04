@@ -1,7 +1,7 @@
 {
  "id": "act1/coast_net_rack",
  "file": "game/kit/props/art/act1/coast_net_rack.png",
- "sha256": "ed7cafb5dad9c17864a3f7e6ceb8663f4ad8ec6312311f05f618c5e5542592ac",
+ "sha256": "6429ddae2de562f39c3837faca23a8c774a802b921e99b59127b70dcd5182d82",
  "kind": "coast_net_rack",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 9,
-   "tones": 26.77777777777778,
-   "shapes": 41.666666666666664
+   "patches": 8,
+   "tones": 27.75,
+   "shapes": 34.25
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.827,
-  "tones_ratio": 0.992,
-  "shapes_ratio": 0.827,
+  "ratio": 0.68,
+  "tones_ratio": 1.028,
+  "shapes_ratio": 0.68,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,24 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    46,
-    9,
-    57,
-    47
+    42,
+    7,
+    71,
+    38
    ],
-   "message": "act1/coast_net_rack: the foliage is lit from the right (luminance rises 122 L per H to the east)",
+   "message": "act1/coast_net_rack: the foliage is lit from the right (luminance rises 43 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    8,
+    7,
+    37,
+    41
+   ],
+   "message": "act1/coast_net_rack: the foliage is lit from the right (luminance rises 32 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -56,19 +68,7 @@
     86,
     54
    ],
-   "message": "act1/coast_net_rack: the wood is lit from the right (luminance rises 20 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    8,
-    9,
-    22,
-    41
-   ],
-   "message": "act1/coast_net_rack: the foliage is lit from the right (luminance rises 15 L per H to the east)",
+   "message": "act1/coast_net_rack: the wood is lit from the right (luminance rises 17 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -80,7 +80,7 @@
     87,
     55
    ],
-   "message": "act1/coast_net_rack: detail bar 0.83 of Eastward's prop band (26.8 tones, 41.7 shapes a patch against 27.0, 50.36)",
+   "message": "act1/coast_net_rack: detail bar 0.68 of Eastward's prop band (27.8 tones, 34.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -92,7 +92,7 @@
     87,
     55
    ],
-   "message": "act1/coast_net_rack: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "message": "act1/coast_net_rack: 43% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],

@@ -1,7 +1,7 @@
 {
  "id": "act1/coast_lobster_pots_b",
  "file": "game/kit/props/art/act1/coast_lobster_pots_b.png",
- "sha256": "2bd97740fc64849d4c57b752932ce7de810f54731431bc263b18eb434f1b60de",
+ "sha256": "70d124353892d0b998444fad2b2c8a623144afb7be1df8432554b00623eeb0be",
  "kind": "coast_lobster_pots",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   50,
   23
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 2
+  "fault": 0,
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 17.0,
-   "shapes": 29.0
+   "tones": 27.0,
+   "shapes": 50.0
   },
   "band": {
    "tones": 27.0,
@@ -28,10 +28,10 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.576,
-  "tones_ratio": 0.63,
-  "shapes_ratio": 0.576,
-  "passed": false,
+  "ratio": 0.993,
+  "tones_ratio": 1.0,
+  "shapes_ratio": 0.993,
+  "passed": true,
   "group": "prop"
  },
  "findings": [
@@ -44,32 +44,8 @@
     38,
     22
    ],
-   "message": "act1/coast_lobster_pots_b: the wood is lit from the right (luminance rises 92 L per H to the east)",
+   "message": "act1/coast_lobster_pots_b: the wood is lit from the right (luminance rises 78 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    0,
-    0,
-    50,
-    23
-   ],
-   "message": "act1/coast_lobster_pots_b: detail bar 0.58 of Eastward's prop band (17.0 tones, 29.0 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.cluster_noise",
-   "severity": "fault",
-   "box": [
-    0,
-    0,
-    50,
-    23
-   ],
-   "message": "act1/coast_lobster_pots_b: 52% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-04",

@@ -15,8 +15,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/act1/mill_wheel.png",
    "foot": [
-    62,
-    174
+    64,
+    164
    ]
   }
  ],
@@ -25,19 +25,19 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "The mill's gable under a slate roof with its loft door; the undershot wheel turning in its race (8 frames)."
+  "note": "The mill's rubble front with quoins under a slate roof (ridge tiles, barge boards, fascia and gutter); the undershot wheel turning in the race along its foot (8 frames)."
  },
  "geometry": {
   "size_px": [
-   124,
-   189
+   128,
+   180
   ],
   "size_cells": [
    5,
    4
   ],
   "z_sort": "foot",
-  "height_px": 189,
+  "height_px": 180,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -48,8 +48,8 @@
    ]
   },
   "foot": [
-   62,
-   174
+   64,
+   164
   ],
   "footprint": [
    [
@@ -152,8 +152,8 @@
     "fps": 6.0,
     "strip": "res://kit/props/art/act1/mill_wheel_loop.png",
     "frame_px": [
-     124,
-     189
+     128,
+     180
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true
@@ -169,7 +169,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "mill (the mill's south end, 1.6 m to its eaves and a 2.3 m gable; the wheel 1.6 m across; art px: 175 to 205 tall, 115 to 135 wide)",
+  "size_class": "mill (the mill's south front, 1.7 m to its eaves under a slate roof; the wheel 1.6 m across; art px: 175 to 205 tall, 115 to 135 wide)",
   "eastward_ref": "17 (the rocks 460,165,550,250, the fence, sacks), 12 (the boulder wall and the stepping stones in water)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

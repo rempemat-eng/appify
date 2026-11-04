@@ -1,14 +1,14 @@
 {
  "id": "act1/barrow_kerb_b",
  "file": "game/kit/props/art/act1/barrow_kerb_b.png",
- "sha256": "de0661461217fc9e9384f98d1d15ecf6affc7bf99d26502f1315cad1ac0d5b6f",
+ "sha256": "519979db27f1f091a254c3150765dfe4cdb91cf71da0d48822ea5d6fca3e425b",
  "kind": "boulder",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  27,
-  21
+  28,
+  25
  ],
  "status": "pass",
  "counts": {
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 21.0,
-   "shapes": 45.0
+   "tones": 22.0,
+   "shapes": 35.0
   },
   "band": {
    "tones": 26.25,
@@ -28,9 +28,9 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": 0.738,
-  "tones_ratio": 0.8,
-  "shapes_ratio": 0.738,
+  "ratio": 0.574,
+  "tones_ratio": 0.838,
+  "shapes_ratio": 0.574,
   "passed": false,
   "group": "stone"
  },
@@ -41,10 +41,10 @@
    "box": [
     0,
     0,
-    26,
-    21
+    28,
+    25
    ],
-   "message": "act1/barrow_kerb_b: wide 26 art px (0.35 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
+   "message": "act1/barrow_kerb_b: wide 28 art px (0.38 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
    "fix": "redraw it 30 to 96 art px wide (target about 63), checked beside Bramble (74 art px) in the asset sheet"
   },
   {
@@ -53,10 +53,10 @@
    "box": [
     0,
     0,
-    27,
-    21
+    28,
+    25
    ],
-   "message": "act1/barrow_kerb_b: detail bar 0.74 of Eastward's stone band (21.0 tones, 45.0 shapes a patch against 26.25, 61.0)",
+   "message": "act1/barrow_kerb_b: detail bar 0.57 of Eastward's stone band (22.0 tones, 35.0 shapes a patch against 26.25, 61.0)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

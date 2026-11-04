@@ -16,7 +16,7 @@
    "png": "res://kit/props/art/act1/barrow_entrance.png",
    "foot": [
     161,
-    153
+    158
    ]
   }
  ],
@@ -25,19 +25,19 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A turf mound in masses with a portal of jambs and a lintel, the passage receding, set stones either side."
+  "note": "A turf mound in soft masses of grass with a portal of jambs and a capstone, the passage receding in perspective, set stones either side."
  },
  "geometry": {
   "size_px": [
    322,
-   171
+   177
   ],
   "size_cells": [
    14,
    4
   ],
   "z_sort": "foot",
-  "height_px": 171,
+  "height_px": 177,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -49,7 +49,7 @@
   },
   "foot": [
    161,
-   153
+   158
   ],
   "footprint": [
    [

@@ -1,7 +1,7 @@
 {
  "id": "act1/halt_platform_edge_b",
  "file": "game/kit/props/art/act1/halt_platform_edge_b.png",
- "sha256": "b7604c62b3d76921b0c2e70668cb88a76ae2d627efff733ceed35afc4a8fe16e",
+ "sha256": "298713bee503528bc5fee286f879aa9272708e0ecb241d74061c835acbf6f54d",
  "kind": "halt_platform_edge",
  "biome": "valley",
  "H": 74.0,

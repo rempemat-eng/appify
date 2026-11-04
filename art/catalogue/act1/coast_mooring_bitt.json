@@ -1,26 +1,26 @@
 {
  "id": "act1/coast_mooring_bitt",
  "file": "game/kit/props/art/act1/coast_mooring_bitt.png",
- "sha256": "64a53beaeaa84a20274487f1a0ae03262e2488cd9ce180b13631dda380495fca",
+ "sha256": "4bae53c03cb243f43ccba37d09e420adedb72e5f909b61fdb356298f2c31f59a",
  "kind": "coast_mooring_bitt",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   43,
-  22
+  23
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 2
+  "fault": 0,
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 29.0,
-   "shapes": 41.0
+   "tones": 25.0,
+   "shapes": 38.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.814,
-  "tones_ratio": 1.074,
-  "shapes_ratio": 0.814,
+  "ratio": 0.755,
+  "tones_ratio": 0.926,
+  "shapes_ratio": 0.755,
   "passed": false,
   "group": "prop"
  },
@@ -42,21 +42,21 @@
     0,
     0,
     43,
-    22
+    23
    ],
-   "message": "act1/coast_mooring_bitt: detail bar 0.81 of Eastward's prop band (29.0 tones, 41.0 shapes a patch against 27.0, 50.36)",
+   "message": "act1/coast_mooring_bitt: detail bar 0.76 of Eastward's prop band (25.0 tones, 38.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
    "detector": "detail.cluster_noise",
-   "severity": "fault",
+   "severity": "polish",
    "box": [
     0,
     0,
     43,
-    22
+    23
    ],
-   "message": "act1/coast_mooring_bitt: 54% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "message": "act1/coast_mooring_bitt: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   },
   {
@@ -66,9 +66,9 @@
     0,
     0,
     43,
-    22
+    23
    ],
-   "message": "act1/coast_mooring_bitt: only 31% of the silhouette is drawn in an edge tone",
+   "message": "act1/coast_mooring_bitt: only 37% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
