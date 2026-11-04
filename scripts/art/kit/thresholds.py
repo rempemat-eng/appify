@@ -16,7 +16,8 @@ align"). A kit plan's version of docs/vision/placement-logic.md rules 5 to 8:
 Doors are the pieces' geometry.doors: the opening's x span in texels from the foot ("x": [x0, x1),
 the leaf between the frame posts) and the side it faces. A path is a run of route cells, so a door
 whose centre is not on the half-cell grid (a cell's centre or edge) can never have one centred on
-it: the finding says so, and the drawing's door must move.
+it: the finding says so. scripts/art/native/houses.py draws every house's door (and the forge's
+mouth) on that grid (houses.doors_on_grid), so a house drawn there always passes.
 
 Reads a kit plan (game/kit/zones/<zone>.json shape) and the pieces' metadata, never pixels; it runs
 in placement_audit.check_plan, so the editor's live overlay and Validate, `npm run check:kit` and
