@@ -679,14 +679,14 @@ shape = SubResource("s14")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_lamp_square_w"]
-position = Vector2(624, 826.5)
+position = Vector2(624, 814.5)
 shape = SubResource("s17")
 
 [node name="Solid_lamp_square_e" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_lamp_square_e"]
-position = Vector2(1296, 874.5)
+position = Vector2(1296, 862.5)
 shape = SubResource("s17")
 
 [node name="Solid_lamp_square_s" type="StaticBody2D" parent="Walls"]
@@ -700,7 +700,7 @@ shape = SubResource("s17")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_square_oak"]
-position = Vector2(642, 1077)
+position = Vector2(648, 1077)
 shape = SubResource("s12")
 
 [node name="Solid_stall_sacks" type="StaticBody2D" parent="Walls"]
@@ -714,63 +714,63 @@ shape = SubResource("s16")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_stall_crates_b"]
-position = Vector2(1284, 759)
+position = Vector2(1284, 753)
 shape = SubResource("s20")
 
 [node name="Solid_west_seat_flower_tub" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_west_seat_flower_tub"]
-position = Vector2(756, 1101)
+position = Vector2(756, 1095)
 shape = SubResource("s14")
 
 [node name="Solid_east_seat_flower_tub" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_east_seat_flower_tub"]
-position = Vector2(1116, 1101)
+position = Vector2(1116, 1095)
 shape = SubResource("s14")
 
 [node name="Solid_tub_board" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_tub_board"]
-position = Vector2(660, 669)
+position = Vector2(660, 663)
 shape = SubResource("s14")
 
 [node name="Solid_herb_window_flower_tub_a" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_herb_window_flower_tub_a"]
-position = Vector2(390, 1167)
+position = Vector2(396, 1167)
 shape = SubResource("s14")
 
 [node name="Solid_herb_window_flower_tub_b" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_herb_window_flower_tub_b"]
-position = Vector2(450, 1167)
+position = Vector2(456, 1167)
 shape = SubResource("s14")
 
 [node name="Solid_herb_corner_barrel" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_herb_corner_barrel"]
-position = Vector2(318, 1140)
+position = Vector2(324, 1140)
 shape = SubResource("s19")
 
 [node name="Solid_oven_gable_woodpile" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_oven_gable_woodpile"]
-position = Vector2(300, 816)
+position = Vector2(300, 828)
 shape = SubResource("s21")
 
 [node name="Solid_tub_fern" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_tub_fern"]
-position = Vector2(1506, 1263)
+position = Vector2(1512, 1263)
 shape = SubResource("s14")
 
 [node name="Props" type="Node2D" parent="."]
@@ -1559,13 +1559,13 @@ centered = false
 offset = Vector2(-27, -53)
 
 [node name="LampSquareW" type="Sprite2D" parent="Props"]
-position = Vector2(624, 828)
+position = Vector2(624, 816)
 texture = ExtResource("t97")
 centered = false
 offset = Vector2(-12, -118)
 
 [node name="LampSquareE" type="Sprite2D" parent="Props"]
-position = Vector2(1296, 876)
+position = Vector2(1296, 864)
 texture = ExtResource("t98")
 centered = false
 offset = Vector2(-12, -118)
@@ -1577,7 +1577,7 @@ centered = false
 offset = Vector2(-12, -118)
 
 [node name="SquareOak" type="Sprite2D" parent="Props"]
-position = Vector2(642, 1080)
+position = Vector2(648, 1080)
 texture = ExtResource("t100")
 centered = false
 offset = Vector2(-105, -243)
@@ -1589,55 +1589,55 @@ centered = false
 offset = Vector2(-30, -62)
 
 [node name="StallCratesB" type="Sprite2D" parent="Props"]
-position = Vector2(1284, 774)
+position = Vector2(1284, 768)
 texture = ExtResource("t102")
 centered = false
 offset = Vector2(-27, -110)
 
 [node name="WestSeatFlowerTub" type="Sprite2D" parent="Props"]
-position = Vector2(756, 1110)
+position = Vector2(756, 1104)
 texture = ExtResource("t103")
 centered = false
 offset = Vector2(-27, -53)
 
 [node name="EastSeatFlowerTub" type="Sprite2D" parent="Props"]
-position = Vector2(1116, 1110)
+position = Vector2(1116, 1104)
 texture = ExtResource("t104")
 centered = false
 offset = Vector2(-27, -53)
 
 [node name="TubBoard" type="Sprite2D" parent="Props"]
-position = Vector2(660, 678)
+position = Vector2(660, 672)
 texture = ExtResource("t105")
 centered = false
 offset = Vector2(-27, -53)
 
 [node name="HerbWindowFlowerTubA" type="Sprite2D" parent="Props"]
-position = Vector2(390, 1176)
+position = Vector2(396, 1176)
 texture = ExtResource("t106")
 centered = false
 offset = Vector2(-27, -53)
 
 [node name="HerbWindowFlowerTubB" type="Sprite2D" parent="Props"]
-position = Vector2(450, 1176)
+position = Vector2(456, 1176)
 texture = ExtResource("t107")
 centered = false
 offset = Vector2(-27, -53)
 
 [node name="HerbCornerBarrel" type="Sprite2D" parent="Props"]
-position = Vector2(318, 1152)
+position = Vector2(324, 1152)
 texture = ExtResource("t108")
 centered = false
 offset = Vector2(-24, -71)
 
 [node name="OvenGableWoodpile" type="Sprite2D" parent="Props"]
-position = Vector2(300, 828)
+position = Vector2(300, 840)
 texture = ExtResource("t109")
 centered = false
 offset = Vector2(-30, -71)
 
 [node name="TubFern" type="Sprite2D" parent="Props"]
-position = Vector2(1506, 1272)
+position = Vector2(1512, 1272)
 texture = ExtResource("t110")
 centered = false
 offset = Vector2(-27, -53)

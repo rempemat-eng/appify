@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "8dd4b184c6760d23b600653a2a5bb3d9a8e826495d6cd2db81e438370917dcb6",
+ "inputs": "24beb4e8d798f37c1db74836584d13066a42b20cbe9f04b5c07f0984601b85b8",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -1973,7 +1973,7 @@
    "png": "lamp_square_w.png",
    "foot": [
     624,
-    828
+    816
    ],
    "offset": [
     -12,
@@ -1982,7 +1982,7 @@
    "cond": null,
    "solid": [
     206,
-    274,
+    270,
     4,
     3
    ]
@@ -1993,7 +1993,7 @@
    "png": "lamp_square_e.png",
    "foot": [
     1296,
-    876
+    864
    ],
    "offset": [
     -12,
@@ -2002,7 +2002,7 @@
    "cond": null,
    "solid": [
     430,
-    290,
+    286,
     4,
     3
    ]
@@ -2032,7 +2032,7 @@
    "kind": "oak",
    "png": "square_oak.png",
    "foot": [
-    642,
+    648,
     1080
    ],
    "offset": [
@@ -2041,7 +2041,7 @@
    ],
    "cond": null,
    "solid": [
-    210,
+    212,
     357,
     8,
     4
@@ -2073,7 +2073,7 @@
    "png": "stall_crates_b.png",
    "foot": [
     1284,
-    774
+    768
    ],
    "offset": [
     -27,
@@ -2082,7 +2082,7 @@
    "cond": null,
    "solid": [
     422.0,
-    248,
+    246,
     12,
     10
    ]
@@ -2093,7 +2093,7 @@
    "png": "west_seat_flower_tub.png",
    "foot": [
     756,
-    1110
+    1104
    ],
    "offset": [
     -27,
@@ -2102,7 +2102,7 @@
    "cond": null,
    "solid": [
     246.0,
-    364,
+    362,
     12,
     6
    ]
@@ -2113,7 +2113,7 @@
    "png": "east_seat_flower_tub.png",
    "foot": [
     1116,
-    1110
+    1104
    ],
    "offset": [
     -27,
@@ -2122,7 +2122,7 @@
    "cond": null,
    "solid": [
     366.0,
-    364,
+    362,
     12,
     6
    ]
@@ -2133,7 +2133,7 @@
    "png": "tub_board.png",
    "foot": [
     660,
-    678
+    672
    ],
    "offset": [
     -27,
@@ -2142,7 +2142,7 @@
    "cond": null,
    "solid": [
     214.0,
-    220,
+    218,
     12,
     6
    ]
@@ -2152,7 +2152,7 @@
    "kind": "flower_tub",
    "png": "herb_window_flower_tub_a.png",
    "foot": [
-    390,
+    396,
     1176
    ],
    "offset": [
@@ -2161,7 +2161,7 @@
    ],
    "cond": null,
    "solid": [
-    124.0,
+    126.0,
     386,
     12,
     6
@@ -2172,7 +2172,7 @@
    "kind": "flower_tub",
    "png": "herb_window_flower_tub_b.png",
    "foot": [
-    450,
+    456,
     1176
    ],
    "offset": [
@@ -2181,7 +2181,7 @@
    ],
    "cond": null,
    "solid": [
-    144.0,
+    146.0,
     386,
     12,
     6
@@ -2192,7 +2192,7 @@
    "kind": "barrel",
    "png": "herb_corner_barrel.png",
    "foot": [
-    318,
+    324,
     1152
    ],
    "offset": [
@@ -2201,7 +2201,7 @@
    ],
    "cond": null,
    "solid": [
-    101.0,
+    103.0,
     376,
     10,
     8
@@ -2213,7 +2213,7 @@
    "png": "oven_gable_woodpile.png",
    "foot": [
     300,
-    828
+    840
    ],
    "offset": [
     -30,
@@ -2222,7 +2222,7 @@
    "cond": null,
    "solid": [
     92.0,
-    268,
+    272,
     16,
     8
    ]
@@ -2232,7 +2232,7 @@
    "kind": "flower_tub",
    "png": "tub_fern.png",
    "foot": [
-    1506,
+    1512,
     1272
    ],
    "offset": [
@@ -2241,7 +2241,7 @@
    ],
    "cond": null,
    "solid": [
-    496.0,
+    498.0,
     418,
     12,
     6

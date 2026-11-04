@@ -311,7 +311,7 @@
       "points": [
         [
           472,
-          416
+          424
         ],
         [
           472,
@@ -322,7 +322,7 @@
           432
         ]
       ],
-      "why": "the Ferns' door path: leaves the door's centre straight south two cells, then west to the green lane (Matt, 4 Nov: paths centred on doors)"
+      "why": "the Ferns' door path: leaves the door's centre a cell below the sill (as the slice's spurs do) straight south two cells, then west to the green lane (Matt, 4 Nov: paths centred on doors)"
     }
   ],
   "stairs": [
@@ -2296,7 +2296,7 @@
         "kind": "kit_lantern",
         "at": [
           208,
-          276
+          272
         ],
         "id": "lamp_square_w",
         "why": "the halt road's mouth onto the square (placement-logic: lamps at junctions)"
@@ -2305,7 +2305,7 @@
         "kind": "kit_lantern",
         "at": [
           432,
-          292
+          288
         ],
         "id": "lamp_square_e",
         "why": "the harbour road's mouth onto the square"
@@ -2322,7 +2322,7 @@
       {
         "kind": "oak",
         "at": [
-          214,
+          216,
           360
         ],
         "id": "square_oak",
@@ -2345,7 +2345,7 @@
         "kind": "crates",
         "at": [
           428,
-          258
+          256
         ],
         "size": [
           12,
@@ -2358,7 +2358,7 @@
         "kind": "flower_tub",
         "at": [
           252,
-          370
+          368
         ],
         "size": [
           12,
@@ -2371,7 +2371,7 @@
         "kind": "flower_tub",
         "at": [
           372,
-          370
+          368
         ],
         "size": [
           12,
@@ -2383,7 +2383,7 @@
         "kind": "flower_tub",
         "at": [
           220,
-          226
+          224
         ],
         "size": [
           12,
@@ -2395,7 +2395,7 @@
       {
         "kind": "flower_tub",
         "at": [
-          130,
+          132,
           392
         ],
         "size": [
@@ -2408,7 +2408,7 @@
       {
         "kind": "flower_tub",
         "at": [
-          150,
+          152,
           392
         ],
         "size": [
@@ -2420,7 +2420,7 @@
       {
         "kind": "barrel",
         "at": [
-          106,
+          108,
           384
         ],
         "size": [
@@ -2434,7 +2434,7 @@
         "kind": "woodpile",
         "at": [
           100,
-          276
+          280
         ],
         "size": [
           16,
@@ -2446,7 +2446,7 @@
       {
         "kind": "flower_tub",
         "at": [
-          502,
+          504,
           424
         ],
         "size": [
