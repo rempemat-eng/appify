@@ -488,7 +488,12 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
         + np.array(R['sky'][5], np.float32) * 0.2
     ba = R['basalt']; bw = R['basalt_warm']
     bas = np.array([ba[1], ba[2], bw[3], bw[4]], np.float32)
-    PAD = 8
+    # every neighbourhood operation in a band reads real rows, never a band's cut edge: the context each side covers the
+    # widest filter (the ground-relief blur, truncated at 4 sigma as scipy does), the lee shifts and the one-row
+    # gradients and erosions, so the output does not depend on where the bands fall (test_map_feedback_v56)
+    sig_rel = max(2.0, k * 90)
+    sh_ = max(2, int(round(k * 40)))                                     # each field's lee: its south-east rim in shade
+    PAD = int(4.0 * sig_rel + 0.5) + sh_ + 4
     for r0 in range(0, Hi, band):
         r1 = min(Hi, r0 + band); a0 = max(0, r0 - PAD); a1 = min(Hi, r1 + PAD)
         arr = arr_all[a0:a1].astype(np.float32)
@@ -515,7 +520,7 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
         rib = zone_ & ~gap & (np.abs(nr) < 0.12) & (nf < 0.45)               # rock ribs showing through a field
         field &= ~gap & ~rib
         snowline = snowline + 0.13 * nf                                      # the snow keeps to the peaks; the saddles between go bare
-        hrel = Hp - ndi.gaussian_filter(Hp, max(2.0, k * 90))                # above or below the ground round it
+        hrel = Hp - ndi.gaussian_filter(Hp, sig_rel)                         # above or below the ground round it
         high = (Hp > snowline) & (hrel > -0.012 + 0.03 * nf)                  # ridges and peaks white, hollows and lower faces bare
         snow = rock & (high | field) & ~gap & ~rib
         foot = (Hp > 0.05) & ~rock
@@ -526,7 +531,6 @@ def relief(img, Sx, R, ink, k, rivers, closed, cgx=None, cid=None, ox=0.0, oy=0.
         out[sq] = scree_c[lv[sq]]
         out[snow] = snow_c[lv[snow]]
         out[gap] = rock_c[lv[gap]]                                         # the gaps: the rock in its own light
-        sh_ = max(2, int(round(k * 40)))                                     # each field's lee: its south-east rim in shade
         far = np.zeros_like(field); far[:-sh_, :-sh_] = field[sh_:, sh_:]
         lee = field & ~far
         out[lee] = snow_c[np.minimum(lv[lee], 1)]

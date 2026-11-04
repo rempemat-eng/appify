@@ -247,4 +247,53 @@ class MapFeedbackV56(unittest.TestCase):
                 world.write_plans({'T':T,'plans':{'crossroads':P}})
             self.assertEqual(old.read_text(),'historical sentinel');self.assertTrue((folder/'towns-v56/crossroads.json').exists())
 
+
+def relief_scene():
+    """A grown-frame stand-in for grow56.relief: a high back range with plateau snowfields across the whole top, and the
+    world's ice below it (rows inside the world, north of y 700), so continuous snow and ice cross every band boundary."""
+    import grow56 as GR
+    from map53 import load_palette
+    R, ink = load_palette(str(ROOT))
+    Hc, Wc = 130, 150
+    rows = np.arange(Hc)[:, None].astype(np.float32); cols = np.arange(Wc)[None, :].astype(np.float32)
+    H = np.where(rows < 70, 1.05 - 0.004 * rows + 0.03 * np.sin(cols / 7.0) * np.cos(rows / 9.0), 0.0).astype(np.float32)
+    H = np.broadcast_to(H, (Hc, Wc)).copy()
+    plat = np.broadcast_to(np.where(rows < 60, 1.0, 0.0), (Hc, Wc)).astype(np.float32).copy()
+    cid = {'rock': 1, 'crag': 2, 'glacier': 3, 'snow': 4, 'meadow': 0}
+    cgx = np.zeros((Hc, Wc), np.int16)
+    cgx[60:122, 12:138] = cid["glacier"]                             # the ice runs on below the snow
+    cgx[90:110, 60:90] = cid['snow']
+    Sx = {'h': (0.3 + 0.002 * rows + 0.0 * cols).astype(np.float32), 'vol_mask': None}
+    GR._RANGE[id(Sx)] = {'H': H, 'Hs': ndi.gaussian_filter(H, 1.5), 'plat': plat}
+    return GR, Sx, R, ink, cgx, cid, Hc, Wc
+
+
+class ReliefBands(unittest.TestCase):
+    """grow56.relief draws in bands of rows; the result must not depend on where the bands fall."""
+
+    def check(self, k, bands):
+        from PIL import Image
+        GR, Sx, R, ink, cgx, cid, Hc, Wc = relief_scene()
+        Wi, Hi = int(Wc * 8 * k), int(Hc * 8 * k)
+        base = Image.fromarray(np.full((Hi, Wi, 3), (120, 140, 90), np.uint8))
+        whole, _ = GR.relief(base, Sx, R, ink, k, {}, [], cgx=cgx, cid=cid, band=Hi + 1)
+        whole = np.asarray(whole)
+        w16 = whole.astype(np.int16)
+        snow = (w16.min(-1) >= 140) & (w16[..., 2] >= w16[..., 0] - 2)          # snow and ice: pale, not warm
+        self.assertGreater(snow.mean(), 0.2, 'the scene must hold snow and ice')
+        for band in bands:
+            self.assertLess(band, Hi)
+            cut = list(range(band, Hi, band))
+            self.assertTrue(all(snow[r - 4:r + 4].mean() > 0.1 for r in cut), 'snow or ice must cross every band boundary')
+            got = np.asarray(GR.relief(base, Sx, R, ink, k, {}, [], cgx=cgx, cid=cid, band=band)[0])
+            diff = np.argwhere(np.any(got != whole, -1))
+            self.assertEqual(len(diff), 0, f'k {k:.4f} band {band}: {len(diff)} pixels differ, first at {diff[:3].tolist()}')
+
+    def test_bands_match_one_pass_at_3840(self):
+        self.check(2160 / 7744, (64, 97, 150))
+
+    def test_bands_match_one_pass_at_5760(self):
+        self.check(3240 / 7744, (64, 101, 180))
+
+
 if __name__=='__main__':unittest.main()
