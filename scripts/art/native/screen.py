@@ -1119,19 +1119,18 @@ def terrain(plan: dict, layers: dict) -> tuple:
             # the river bank to bank at a straight crossing, on an abutment in each bank
             from . import softground as GD
             items = GD.water(cv, wm, 402, bank_h=P(3.4, 0), flow='auto', stones=plan['water']['soft'].get('stones', 0.0),
-                             reeds=plan['water']['soft'].get('reeds', 0.8), rush_clumps=plan['water']['soft'].get('rush_clumps'),
-                             side_w=plan['water']['soft'].get('side_w', 5))
+                             reeds=plan['water']['soft'].get('reeds', 0.8), rush_clumps=plan['water']['soft'].get('rush_clumps'))
             # the turf at the water's edge is short and even (no dark blades standing on the bank's
             # line, which would fray it into spurs)
             nearw = ndi.binary_dilation(wm, iterations=P(3)) & ~wm
             grassy_ = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 <= 2) & nearw
             cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
             GD.tidy_bank(cv, wm)
-            for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1]):
-                # stones breaking the banks, laid into the ground with their shade
-                dec_ = to_codes(img_)
-                DC.paste(cv, dec_, int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True,
-                         shadow_dx=P(1), shadow_dy=P(0.5))
+            # stones breaking the banks, laid into the ground with their shade; one standing in the
+            # water gets its wet contact (softground.seat_stones, eastward-edges.md 5.3a)
+            GD.seat_stones(cv, wm, [(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
+                                    for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])],
+                           lambda c, d, x, y: DC.paste(c, d, x, y, shadow=True, shadow_dx=P(1), shadow_dy=P(0.5)))
             GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wm, np.random.default_rng(12))
         else:
             WA.paint_hd(cv, wm)            # (no reeds at density 3: their stalks bit stairs into the bank)

@@ -946,7 +946,7 @@ def log_steps(cv: np.ndarray, x0: int, x1: int, y_top: int, y_foot: int, n: int,
 # ------------------------------------------------------------------------------------------------
 def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, lilies: float = 0.0,
           stones: float = 1.0, fam: str = 'water', reeds: float = 1.0, rush_clumps: int | None = None,
-          side_w: int = 5) -> list:
+          side_w: int = 0, clear: np.ndarray | None = None) -> list:
     """Water on a soft plan (eastward-edges.md 5.3, shots 13 and 37). The north bank: the grass
     lip hanging 1 to 3 px over an earth face `bank_h` px tall of small clods, darkest where it
     meets the water; then a 1 px very light waterline; the water under it dark in a band 4 to 14
@@ -954,7 +954,10 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     shores: the turf's lip lit, a texel of wet earth, a light waterline and lit shallows 2 to 5 px.
     The body one tone with large soft patches a step lighter (the sky), ripple lines 4 to 15 px
     (a lit line over a darker texel) along the flow, a few glints. Stones on the bank, lilies on
-    still water. Returns sprites to lay over (stones on the bank)."""
+    still water. Returns sprites to lay over (stones on the bank); lay each with seat_stone, which
+    gives one standing in the water its wet contact. No tongue, reed, rush or stone stands in
+    `clear` (a fall's run-in, whose banks run straight into its lip). `side_w` is ignored (kept
+    for old plans): east and west shores show no wall (Matt, 4 Nov), only the rim."""
     H, W = cv.shape
     rng = np.random.default_rng(seed)
     items = []
@@ -966,6 +969,11 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     rt = runs_from_top(m)
     bh = np.clip(bank_h + (fbm(H, W, 15.0, seed + 1) - 0.5) * 4, 3, bank_h + 3).astype(int)
     bank = m & (rt <= bh)
+    # a face only where the bank runs east-west (Matt, 4 Nov: an east bank showed a brown strip
+    # partway along it): where a side shore's lumps or a rounded corner step the edge so that land
+    # lies a texel north of the water, the face would be a sliver of a few texels a row, a wedge in
+    # the middle of a rim. Each row of the face must run at least bank_h + 3 texels.
+    bank = ndi.binary_opening(bank, structure=np.ones((1, bank_h + 3), bool))
     from .softgrid import clean
     bank = m & ~clean(m & ~bank, min_area=1.0)
     wat = m & ~bank
@@ -1054,44 +1062,19 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     # the other shores: the turf's lip lit
     shore = land & ndi.binary_dilation(wat, structure=CROSS) & ~ndi.binary_dilation(bank, iterations=2)
     out[shore & turf] = step(out[shore & turf], 1)
-    # the east and west banks (Matt, 26 Oct 19:42): a narrow wall of earth 3 px seen almost
-    # edge-on, like a ledge's side: on the west shore it faces east and lies in shade, on the east
-    # shore it faces west and is lit; a light waterline along its foot. Under the north bank the
-    # bank face itself turns the corner, so the bend joins without a seam.
-    westl = np.zeros((H, W), bool)
-    eastl = np.zeros((H, W), bool)
-    for k in range(1, side_w + 1):
-        westl |= right(land, k)
-        eastl |= right(land, -k)
-    rbw = runs_from_top(wat)
-    sideb = wat & (westl ^ eastl) & (rbw > 3)
-    vert = ndi.binary_opening(sideb, structure=np.ones((5, 1), bool))      # only along north-south runs
-    wb = vert & westl
-    eb = vert & eastl
-    out[wb] = C('earth', 2)
-    out[wb & ~right(land, 4) & right(land, 3)] = C('earth', 1)
-    if side_w > 5:
-        # a wider face (a small stream's far bank seen from above): earth clods in shade, darkest
-        # where it meets the water, a few roots
-        clod = wb & (np.random.default_rng(seed + 77).random((H, W)) < 0.18)
-        out[clod] = C('earth_cool', 1)
-        out[wb & ~right(land, side_w - 1) & right(land, side_w - 2)] = C('earth_cool', 1)
-    out[wb & right(land, 1)] = step(np.where(right(land, 1), np.roll(cv, 1, axis=1), C('grass', 2)), -1)[wb & right(land, 1)]
-    out[eb] = C('earth_warm', 3)
-    out[eb & right(land, -2)] = C('earth_warm', 4)
-    out[eb & right(land, -1)] = np.roll(cv, -1, axis=1)[eb & right(land, -1)]
-    seam_ = (((np.mgrid[0:H, 0:W][0]) % 5) == 0)
-    out[(wb | eb) & seam_ & ~right(land, 1) & ~right(land, -1)] = step(out[(wb | eb) & seam_ & ~right(land, 1) & ~right(land, -1)], -1)
-    for b_, d_ in ((wb, 1), (eb, -1)):
-        wl_ = wat & ~vert & right(b_, d_)
-        out[wl_] = C(fam, 5)
+    # the bank face's own outline against the water: where it ends beside open water (at a bend,
+    # or where its depth steps from column to column) its edge column is the wet earth of its foot,
+    # so the rim never breaks where the face meets a side shore
+    out[bank & (right(wat, 1) | right(wat, -1)) & ~lp] = C('earth_cool', 0)
     cv[:] = out
     # the turf hangs over the other shores in rounded tongues (8 to 16 px, 2 to 5 deep), their
     # underside a tone down and their shade on the water, and reed clumps stand at the waterline
     # (solid clumps: their blades rise over the turf, not over the water, so the waterline stays
     # one smooth line; Matt, 26 Oct: no bare banks)
-    sy_, sx_ = np.nonzero(shore & turf)
+    calm = np.zeros((H, W), bool) if clear is None else ndi.binary_dilation(clear, iterations=8)
+    sy_, sx_ = np.nonzero(shore & turf & ~calm)
     placed = []
+    tongues = np.zeros((H, W), bool)
     for k in rng.permutation(len(sy_)):
         y, x = int(sy_[k]), int(sx_[k])
         if any((x - a) ** 2 + (y - b) ** 2 < 26 ** 2 for a, b in placed):
@@ -1114,18 +1097,29 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
                 if 0 <= Y < H and 0 <= X < W:
                     lob[Y, X] = True
         lob = ndi.binary_closing(lob, structure=np.ones((3, 3)))
-        lob &= wat & ~under_n
+        lob &= wat & ~under_n & ~calm
         if lob.sum() < 12:
             continue
         cv[lob] = base
+        tongues |= lob
         cv[lob & ~ndi.binary_erosion(lob | ~wat, structure=CROSS)] = step(base, -1)
         shd = wat & ~lob & ndi.binary_dilation(lob, iterations=2) & ~ndi.binary_dilation(lob, iterations=0)
         cv[shd & (cv % 8 > 0)] = cv[shd & (cv % 8 > 0)] - 1
         if rng.random() < 0.45 * reeds:
             reed_clump(cv, y, x, rng, turf_ok=~wat | ndi.binary_erosion(lob, structure=CROSS))
-    # stones on the bank and the shore, straddling the waterline, a dark ring on the water
+    # the other shores (Matt, 4 Nov: "some stone borders of the water are not entirely clean"). In
+    # this top-down 3/4 view only a bank with land to its north turns a face to the camera; a bank
+    # with land to the east or west is seen edge-on and one with land to the south from behind, so
+    # neither shows any face. Every such shore, tongues included, has one rim: a texel of wet earth
+    # (the north face's foot colour) at the land's edge, then the light waterline, running unbroken
+    # round both kinds of bend and into the north face's foot (eastward-edges.md 5.3).
+    rim_ = shore_rim(m, bank, tongues)
+    cv[rim_[0]] = C('earth_cool', 0)
+    cv[rim_[1]] = C(fam, 5)
+    # stones on the bank and the shore, straddling the waterline (seat_stones gives each its wet
+    # contact where it stands in the water)
     from . import props as P4
-    ey, ex = np.nonzero((bank & (runs_from_bottom(bank) <= 3)) | shore)
+    ey, ex = np.nonzero(((bank & (runs_from_bottom(bank) <= 3)) | shore) & ~calm)
     placed = []
     for k in rng.permutation(len(ey)):
         if len(placed) >= int(len(ey) / 260 * stones) + 1:
@@ -1141,13 +1135,9 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
                                        moss='top' if rng.random() < 0.4 else None)
             fx_, fy_ = x + (j * 9 - 4 if j else 0) + rng.integers(-2, 3), y + 3 + int(rng.integers(-1, 2))
             items.append((img, anc, (fx_, fy_)))
-            # its shade on the water
-            yy, xx = np.mgrid[0:H, 0:W]
-            ring = (((xx - fx_ - 2) / (w_ * 1.7 + 2)) ** 2 + ((yy - fy_ - 1) / 3.0) ** 2 <= 1) & wat
-            cv[ring] = C(fam, 1)
     # reeds and rushes standing in the shallows a few px off the shore (one clump in 40 to 70 px)
     dsh = ndi.distance_transform_edt(m)
-    ey, ex = np.nonzero(wat & (dsh >= 6) & (dsh <= 8) & ~under_n)
+    ey, ex = np.nonzero(wat & (dsh >= 6) & (dsh <= 8) & ~under_n & ~calm)
     placed = []
     if rush_clumps and len(ey):
         # (Matt, 27 Oct: not an even row) a few irregular clumps: 3 to 6 rushes each, crowded
@@ -1182,6 +1172,78 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
         for k in rng.permutation(len(ys))[: int(len(ys) / 1600 * lilies)]:
             lily(cv, int(ys[k]), int(xs[k]), rng, wat)
     return items
+
+
+def shore_rim(m: np.ndarray, bank: np.ndarray, extra_land: np.ndarray | None = None):
+    """The rim of every shore but a north bank's face (`bank`): (wet earth, waterline) masks. The
+    wet earth is the water's first texel beside land (4-connected); the waterline the next texel in,
+    beside the wet earth or the north face's foot, so the two run on unbroken round any bend."""
+    land = ~m if extra_land is None else (~m | extra_land)
+    wat = m & ~bank & ~land
+    rim = wat & ndi.binary_dilation(land, structure=CROSS)
+    wline = wat & ~rim & ndi.binary_dilation(rim | (bank & ~land), structure=CROSS)
+    return rim, wline
+
+
+WATERS = ('water', 'water_warm', 'water_cool')
+SEATED: list = []      # every stone seat_stone laid (bbox, in the water, given its wet contact): for the tests
+
+
+def open_water(cv: np.ndarray, water: np.ndarray) -> np.ndarray:
+    return water & np.isin(cv // 8, [FI[f] for f in WATERS if f in FI]) & (cv >= 0)
+
+
+def seat_stones(cv: np.ndarray, water: np.ndarray, stones, paste) -> list:
+    """Lay stones (each (palette codes `dec`, -1 clear; X, Y its top left)) with
+    `paste(cv, dec, X, Y)`, back to front as given. A stone that stands in open water (Matt, 4 Nov:
+    stones half across the waterline with no clean contact) gets its wet contact: its last two rows
+    over the water a tone darker (wet), the water round its foot a tone darker (its shade) and a
+    light ripple line on the water hugging its foot, drawn once every stone is down so no later
+    stone's shadow dims it. One on land is laid as it is. Returns, per stone, whether it stood in
+    the water."""
+    H, W = cv.shape
+    yy, xx = np.mgrid[0:H, 0:W]
+    laid = np.zeros((H, W), bool)
+    feet = []
+    out = []
+    for dec, X, Y in stones:
+        hh, ww = dec.shape
+        y0, x0, y1, x1 = max(0, Y), max(0, X), min(H, Y + hh), min(W, X + ww)
+        st = np.zeros((H, W), bool)
+        if y1 > y0 and x1 > x0:
+            st[y0:y1, x0:x1] = dec[y0 - Y:y1 - Y, x0 - X:x1 - X] >= 0
+        ow = open_water(cv, water)
+        foot = st & ~down(st, -2)                    # per column, its lowest two texels
+        near = ndi.binary_dilation(foot, structure=CROSS, iterations=2)
+        wet = bool(st.any() and (near & ow & ~st).sum() >= 3)
+        SEATED.append({'bbox': (x0, y0, x1, y1), 'wet': wet})
+        out.append(wet)
+        if not wet:
+            paste(cv, dec, X, Y)
+            laid |= st
+            continue
+        d2 = dec.copy()
+        sel = np.zeros(dec.shape, bool)
+        sel[y0 - Y:y1 - Y, x0 - X:x1 - X] = (foot & ndi.binary_dilation(ow, structure=CROSS))[y0:y1, x0:x1]
+        sel &= (d2 >= 0) & (d2 % 8 > 0)
+        d2[sel] = d2[sel] - 1
+        ys, xs = np.nonzero(foot)
+        cy, cx = ys.max(), (xs.min() + xs.max()) / 2.0
+        rx, ry = (xs.max() - xs.min()) / 2.0 + 4, 3.5
+        shade = ow & ~st & ((((xx - cx - 1) / rx) ** 2 + ((yy - cy) / ry) ** 2) <= 1) & (yy >= cy - 2)
+        cv[shade & (cv % 8 > 0)] = cv[shade & (cv % 8 > 0)] - 1
+        paste(cv, d2, X, Y)
+        laid |= st
+        feet.append((foot, cy))
+    for foot, cy in feet:
+        rip = open_water(cv, water) & ~laid & ndi.binary_dilation(foot, structure=CROSS) & (yy >= cy - 2)
+        cv[rip] = C('water', 5)
+    return out
+
+
+def seat_stone(cv: np.ndarray, water: np.ndarray, dec: np.ndarray, X: int, Y: int, paste) -> bool:
+    """One stone laid by seat_stones."""
+    return seat_stones(cv, water, [(dec, X, Y)], paste)[0]
 
 
 def reed_clump(cv, y, x, rng, turf_ok=None):
@@ -2139,7 +2201,10 @@ def tidy_bank(cv: np.ndarray, water: np.ndarray, near: int = 6) -> None:
     H, W = cv.shape
     wat = np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']])
     turf = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 >= 2)
-    zone = ndi.binary_dilation(wat | water, iterations=near)
+    # only along the outline itself: a rush standing in the shallows a few texels off the shore is
+    # not a bite of turf (tidying it there left only its seed heads, floating as specks)
+    line = ndi.binary_dilation(water, iterations=3) & ~ndi.binary_erosion(water, iterations=3)
+    zone = ndi.binary_dilation(wat | water, iterations=near) & line
     bank = (wat | (zone & ~turf)) & (cv >= 0)
     for _ in range(2):
         op = ndi.binary_opening(bank, structure=CROSS)

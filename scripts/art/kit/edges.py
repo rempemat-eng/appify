@@ -226,28 +226,25 @@ def _bank_marks(prof: int) -> np.ndarray:
     return out
 
 
-def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side_w: int = 3) -> np.ndarray:
+def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side_w: int = 0) -> np.ndarray:
     """Turf (upper) over water (lower), softground.water's banks on the dual grid. Under a north
-    lip: an earth face 3 px (lit top row, clods along it from the cell edge's profile, a dark wet
-    bottom row), the 1 px very light waterline, then two rows of shade on the water. On a south
-    shore: the turf's lip lit and the shallows lit, 2 tones at the edge and 1 for two more. On a
-    west or east shore of a north-south run: a narrow earth wall seen edge-on (in shade facing east,
-    lit facing west) with the waterline at its foot. All within 7 texels of the outline, so the
-    tile below never needs to know."""
+    lip (the only bank that turns a face to the camera): an earth face 6 px (lit top row, clods
+    along it from the cell edge's profile, a dark wet bottom row), the 1 px very light waterline,
+    then two rows of shade on the water. On every other shore (south, west, east; Matt, 4 Nov) one
+    rim and no face: the turf's lip lit, a texel of wet earth, the light waterline, lit shallows.
+    All within 9 texels of the outline, so the tile below never needs to know. `side_w` is kept for
+    old piece files and ignored (the walls seen edge-on it sized are gone)."""
     m2 = soft_lower(k, prof)                      # the water
     land = ~m2
     ops = Ops(land, fill_u, fill_l)
     rt = GD.runs_from_top(m2)                     # 1 on the water's first row under land
     # which bank each texel may carry is read from the cells, not the texels (so a corner's bulge
     # never turns into a bank that a neighbour would not draw): a north bank under a horizontal cell
-    # edge with land north and water south; a wall beside a vertical one
+    # edge with land north and water south
     q = [bool((k >> b) & 1) for b in range(4)]    # nw, ne, sw, se (True = land)
     xs_ = np.arange(N) + 0.5
     left = (xs_ < MID)[None, :]
-    top = (xs_ < MID)[:, None]
     nb_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
-    westwall_cfg = np.where(top, q[0] and not q[1], q[2] and not q[3]).astype(bool)     # land west, water east
-    eastwall_cfg = np.where(top, q[1] and not q[0], q[3] and not q[2]).astype(bool)     # land east, water west
     top_of_run = m2 & GD.down(land, 1)
     col_bank = np.zeros_like(m2)
     for d in range(0, 6):
@@ -284,31 +281,26 @@ def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side
     # the turf's last row over the bank a tone down (its underside)
     ops.shift(land & GD.down(m2, -1), -1)
     nb = col_bank
-    # east and west shores of north-south runs: a narrow wall seen edge-on
-    westl = np.zeros_like(m2)
-    eastl = np.zeros_like(m2)
-    for kk in range(1, side_w + 1):
-        westl |= GD.right(land, kk)
-        eastl |= GD.right(land, -kk)
-    vert = m2 & (westl ^ eastl) & ~nb & (np.abs(xs_[None, :] - MID) < side_w + 4)     # only beside the vertical cell line
-    wb, eb = vert & westl & westwall_cfg, vert & eastl & eastwall_cfg
-    vert = wb | eb
-    ops.own[wb] = 2
-    ops.ab[wb] = C('earth', 2)
-    ops.ab[wb & GD.right(land, 1)] = C('earth', 1)
-    ops.own[eb] = 2
-    ops.ab[eb] = C('earth_warm', 3)
-    ops.ab[eb & GD.right(land, -1)] = C('earth_warm', 4)
-    for b_, d_ in ((wb, 1), (eb, -1)):
-        wl_ = m2 & ~vert & ~nb & GD.right(b_, d_)
-        ops.own[wl_] = 2
-        ops.ab[wl_] = C('water', 5)
-    # south (and remaining) shores: the turf's lip lit, the shallows lit
-    walls = wb | eb | nb
+    # every other shore (Matt, 4 Nov): only a bank with land to its north shows a face in this
+    # top-down 3/4 view; east, west and south shores show one rim, the wet earth of the north
+    # face's foot at the land's edge and the light waterline inside it, with no wall seen edge-on.
+    # Where the north face ends beside open water its edge column is that wet earth too, so the rim
+    # runs on round inside and outside bends.
+    face = nb & (rt <= 6)
+    face_end = face & (GD.right(m2 & ~nb, 1) | GD.right(m2 & ~nb, -1))
+    ops.own[face_end] = 2
+    ops.ab[face_end] = C('earth_cool', 0)
+    rim, wline = GD.shore_rim(m2, face)
+    rim &= ~nb
+    wline &= ~nb & ~(col_bank & (rt == 7))
+    ops.own[rim] = 2
+    ops.ab[rim] = C('earth_cool', 0)
+    ops.own[wline] = 2
+    ops.ab[wline] = C('water', 5)
+    # the shallows inside the rim lit, 1 tone for two texels more
     dist = ndi.distance_transform_edt(m2)
-    shal = m2 & ~walls & ~ndi.binary_dilation(walls, iterations=1) & (ops.own == 1)
-    ops.shift(shal & (dist <= 1.5), 2)
-    ops.shift(shal & (dist > 1.5) & (dist <= 3.5), 1)
+    shal = m2 & ~nb & ~rim & ~wline & (ops.own == 1)
+    ops.shift(shal & (dist <= 4.5), 1)
     s_lip = land & GD.down(m2, 1)
     ops.shift(s_lip, 1)
     return ops.encode((slice(T0, T1), slice(T0, T1)))

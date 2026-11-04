@@ -120,19 +120,17 @@ def stones_into(cv: np.ndarray, water: np.ndarray, x: int, rng) -> None:
     ys = np.nonzero(water[:, max(0, min(W - 1, x))])[0]
     if not len(ys):
         return
+    from scripts.art.native import softground as GD
     y = int(ys.min()) + 6
+    stones = []
     while y < ys.max() - 1:
         w_ = rng.uniform(5.5, 7.0)
         img, anc, _a = P4.boulder4(D, w_, w_ * 0.45, seed=int(rng.integers(0, 10 ** 6)), moss='top' if rng.random() < 0.4 else None)
-        dec = SN.to_codes(img)
         ox = x + int(rng.integers(-2, 3))
-        ring = np.zeros_like(water)
-        ring[max(0, y - 2):y + 3, max(0, ox - int(w_ * D * 0.6)):ox + int(w_ * D * 0.6)] = True
-        ring &= water
-        from scripts.art.native.palette import step
-        cv[ring & (cv >= 0)] = step(cv[ring & (cv >= 0)], 1)
-        SN.DC.paste(cv, dec, int(round(ox - anc[0])), int(round(y - anc[1])), shadow=True, shadow_dx=2, shadow_dy=1)
+        stones.append((SN.to_codes(img), int(round(ox - anc[0])), int(round(y - anc[1]))))
         y += int(rng.integers(9, 12))
+    # each with the one wet contact every stone in the water has (eastward-edges.md 5.3a)
+    GD.seat_stones(cv, water, stones, lambda c, d, x_, y_: SN.DC.paste(c, d, x_, y_, shadow=True, shadow_dx=2, shadow_dy=1))
 
 
 BOULDERS = [(10, 7, 1615, True), (11, 7, 1616, False), (13, 8, 1617, True), (15, 9, 1618, False),
@@ -201,6 +199,32 @@ def log_steps(force: bool, cells: int = 2) -> None:
 FALL_FRAMES, FALL_PERIOD, FALL_FPS = 8, 24, 10      # the fall's loop: 8 frames, the streaks 3 texels a frame
 
 
+CREST_MAX = 4      # the deepest the foam under the lip breaks (texels below the bend)
+
+
+def crest_foam(w: int, seed: int) -> np.ndarray:
+    """How far the white water breaks under the lip, per column of a sheet `w` texels wide (Matt,
+    4 Nov: the lip read as a row of identical white scallops, stamped). One continuous bend line
+    runs across the whole sheet; under it the foam is a broken run of tongues 0 to CREST_MAX
+    texels deep whose lengths and depths come from the fall's seed, with gaps where the glassy
+    water carries straight on, so no two stretches repeat."""
+    rng = np.random.default_rng(seed * 7919 + w)
+    out = np.zeros(w, np.int32)
+    x = int(rng.integers(0, 3))
+    while x < w:
+        L = int(rng.integers(2, 7))
+        if rng.random() < 0.22:
+            d = 0                                   # a gap: the glassy sheet with no break
+        else:
+            d = int(rng.choice([1, 2, 2, 3, 3, 4]))
+        seg = np.full(L, d)
+        if d >= 2 and L >= 3:
+            seg[0] = seg[-1] = d - 1                # each tongue rounds off at its ends
+        out[x:x + L] = seg[:max(0, min(L, w - x))]
+        x += L
+    return out.clip(0, CREST_MAX)
+
+
 def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: int = 0, rings: bool = True,
                keep=None) -> None:
     """A fall drawn from the rim down (texels): the stream's own water bends over the face's top
@@ -210,7 +234,8 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
     above, the sheet never spreads over the stones either side, and the white water is only where
     the sheet lands: the plume and the foam rings lie on the pool (rows y1 and below), no spray on
     the face. Across the ribbon: lit west, a body, shade east; falling streaks in broken runs; the
-    glassy tongue where it leaves the rim, then the crest's white curl and its shade.
+    glassy tongue where it leaves the rim, then one bend line across the whole sheet and the foam
+    breaking under it in irregular tongues (crest_foam), never a stamped row of scallops.
 
     `t` is the frame of the fall's loop (FALL_FRAMES frames): the streaks have one period
     (FALL_PERIOD texels) and fall FALL_PERIOD / FALL_FRAMES texels a frame, so the loop closes; the
@@ -220,6 +245,7 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
     H, W = cv.shape
     rng = np.random.default_rng(seed)
     cols = {}
+    foam = crest_foam(w, seed)
     for Y in range(y0, y1):
         for X in range(x0, x0 + w):
             s = (X + 0.5 - x0) / w                              # 0 west .. 1 east across the ribbon
@@ -235,13 +261,15 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
                 c = C('snow', 4) if s < 0.45 else (C('water', 4) if s < 0.7 else C('snow', 2))   # a falling streak
             elif ((fall + ph * 0.5) % FALL_PERIOD) < 2 and on_ and dy > 8:
                 c = C('water', max(1, tt - 1))                     # the trough behind a streak
-            wob = int(round(1.2 * np.sin(X * 0.9)))
+            fd = foam[X - x0]
             if dy < 2:
                 c = C('water', 4) if s < 0.7 else C('water', 3)  # the glassy tongue leaving the rim
-            elif dy < 5 + wob:
-                c = C('snow', 5) if s < 0.7 else C('snow', 4)    # the crest curling over
-            elif dy < 6 + wob:
-                c = C('water', 2)                                # its shade under the curl
+            elif dy == 2:
+                c = C('water', 5) if s < 0.7 else C('water', 4)  # the one rim where the sheet bends over
+            elif dy < 3 + fd:
+                c = C('snow', 5) if s < 0.7 else C('snow', 4)    # the foam breaking under the bend
+            elif dy < 4 + fd and fd:
+                c = C('water', 2)                                # its shade
             cv[Y, X] = c
     cx = x0 + w / 2.0
     # the plume where it lands: churning white on the pool, no higher than a few texels up the sheet

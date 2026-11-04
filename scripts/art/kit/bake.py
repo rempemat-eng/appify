@@ -57,6 +57,11 @@ SOURCES = ['scripts/art/kit/bake.py', 'scripts/art/kit/surface.py', 'scripts/art
            'scripts/art/native/softground.py']
 
 
+def _lay(cv, dec, x, y):
+    """A stone laid into the ground with its shadow (the water's stones, softground.seat_stone)."""
+    SN.DC.paste(cv, dec, x, y, shadow=True, shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
+
+
 def _pieces_lib() -> dict:
     out = {}
     base = os.path.join(ROOT, 'game', 'kit', 'pieces')
@@ -318,6 +323,20 @@ def bake(plan: dict, lib: dict | None = None):
             GD.log_steps(cv, x - half, x + half, y - face_h - 1, y + 2, rp.get('args', {}).get('n', 4), np.random.default_rng(5))
     # water (the ground before it, so a fall's face beside its sheet keeps the cliff's own texture)
     pre_water = cv.copy()
+    # each fall's sheet (texels: x0, width, rim row, foot row), known before the water is painted:
+    # the channel feeding it runs straight into its lip at exactly its width (SF.fall_run_in)
+    falls = []
+    for pc in pieces:
+        rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+        if rp.get('fn') == 'fall':
+            cw = lib[pc['piece']]['geometry']['size_cells'][0] * CELL / D
+            cx, foot = pc['at'][0] / D, pc['at'][1] / D
+            rim = foot - rp.get('args', {}).get('face_px', face_h) / D
+            falls.append((int(round((cx - cw / 2) * D)), int(round(cw * D)), int(round(rim * D)), int(round(foot * D)),
+                          rp.get('args', {}).get('seed', 11)))
+    clear = np.zeros((h, w), bool)
+    for (fx0, fw, fr0, _fr1, _s) in falls:
+        clear |= SF.run_in_zone(h, w, fx0, fw, fr0)
     wm = np.zeros((h, w), bool)
     for m, p in paint.items():
         if p.get('fn') != 'water':
@@ -326,23 +345,18 @@ def bake(plan: dict, lib: dict | None = None):
         wcells = mat == m
         wcls = SF.water_class(SF.widths(wcells))
         wm |= SF.taper(_shape(wcells, h, w, a.get('shape', {})), wcells, wcls)
-        before = cv.copy()
+        for (fx0, fw, fr0, fr1, _s) in falls:
+            wm = SF.fall_run_in(wm, fx0, fw, fr0, fr1)
+        # (Matt, 4 Nov) one painter for every width: only a north bank shows a face, the other
+        # shores one rim (softground.water), so a rill, a stream and a river share their banks
         items = GD.water(cv, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=a.get('stones', 0.0),
-                         reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('side_w', 5))
+                         reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), clear=clear)
         # a running channel (north-south, the rill) has no bank stones from the painter (they read
         # as debris, Claude A 2 Nov; surface.water_widths sets at most two); river and pool shores keep theirs
         lab_v = ndi.label(wcells, structure=[[0, 1, 0], [0, 1, 0], [0, 1, 0]])[0]
         lab_h = ndi.label(wcells, structure=[[0, 0, 0], [1, 1, 1], [0, 0, 0]])[0]
         vlen, hlen = np.bincount(lab_v.ravel())[lab_v], np.bincount(lab_h.ravel())[lab_h]
         chan = ndi.binary_dilation(wcells & (vlen > 2 * hlen) & (vlen >= 6), iterations=1)
-        if chan.any():
-            # the channel's water painted again without the painter's stones (their shade rings
-            # would stay behind as notches in the bank)
-            ns = before.copy()
-            GD.water(ns, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=0.0,
-                     reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('side_w', 5))
-            zc = SF.texels(chan & ~ndi.binary_dilation(wcells & ~chan, iterations=1))[:h, :w]
-            cv[zc] = ns[zc]
         kept = []
         for it in sorted(items, key=lambda it: (it[2][1], it[2][0])):
             cy_, cx_ = int(it[2][1] // CELL), int(it[2][0] // CELL)
@@ -350,15 +364,6 @@ def bake(plan: dict, lib: dict | None = None):
                 continue
             kept.append(it)
         items = kept
-        narrow = (wcls >= 1) & (wcls <= 2)
-        if narrow.any():
-            # a rill's or a stream's banks: the narrow walls of the woodland's rill (side_w 3), not the
-            # river's wide ones, which would eat a channel one or two cells across
-            nb = before.copy()
-            GD.water(nb, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=0.0,
-                     reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('narrow_side_w', 3))
-            zone = SF.texels(ndi.binary_dilation(narrow, iterations=1) & ~ndi.binary_dilation(wcls >= 3, iterations=1))[:h, :w]
-            cv[zone] = nb[zone]
         nearw = ndi.binary_dilation(wm, iterations=SN.P(3)) & ~wm
         grassy_ = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 <= 2) & nearw
         cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
@@ -393,9 +398,9 @@ def bake(plan: dict, lib: dict | None = None):
             sub_ = cv[seg]
             ok_ = inner_[seg] & (sub_ % 8 < 5)
             sub_[ok_] = sub_[ok_] + 1
-        for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1]):
-            SN.DC.paste(cv, SN.to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True,
-                        shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
+        # stones at the water: each one that stands in it gets its wet contact (softground.seat_stone)
+        GD.seat_stones(cv, wm, [(SN.to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
+                                for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])], _lay)
     # crossings: footbridges on abutments in the banks, stepping stones over a rill or a stream
     for pc in pieces:
         rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}

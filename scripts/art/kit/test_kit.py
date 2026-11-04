@@ -239,6 +239,250 @@ class Surface(unittest.TestCase):
 
 
 
+class WaterBanks(unittest.TestCase):
+    """Matt, 4 Nov ("some stone borders of the water are not entirely clean", "the waterfall still
+    has weird overlap with the water on the top"): the water's banks follow the projection (only a
+    bank with land to its north shows a face), carry one rim round every other shore, a stone in the
+    water has a wet contact, and a fall's channel runs into its lip at the sheet's exact width."""
+
+    @staticmethod
+    def _paint(m, seed=402, **kw):
+        from scripts.art.native import softground as GD
+        cv = GD.lawn(m.shape[0], m.shape[1], 977)
+        GD.water(cv, m, seed, bank_h=10, flow='auto', stones=0.0, **kw)
+        return cv
+
+    @staticmethod
+    def _fam(cv, names):
+        from scripts.art.native.palette import FI
+        return np.isin(cv // 8, [FI[n] for n in names if n in FI]) & (cv >= 0)
+
+    EARTH = ('earth', 'earth_cool', 'earth_warm')
+    WATER = ('water', 'water_warm', 'water_cool')
+
+    def test_only_a_north_bank_shows_a_face(self):
+        # a channel running north-south: its west and east shores carry no face (at most the
+        # one-texel rim of wet earth in any row); one running east-west: the north shore a face
+        # several texels deep, the south shore only the rim
+        H, W = 160, 120
+        m = np.zeros((H, W), bool)
+        m[:, 40:80] = True
+        face = self._face(self._paint(m), m)
+        self.assertEqual(int(face[10:H - 10].sum()), 0, 'a face on a west or east shore')
+        m = np.zeros((H, W), bool)
+        m[40:100, :] = True
+        face = self._face(self._paint(m), m)
+        self.assertGreaterEqual(int(np.median(face[40:70].sum(0)[10:-10])), 3, 'the north bank keeps its face')
+        self.assertEqual(int(face[70:100, 10:-10].sum()), 0, 'a face on a south shore')
+
+    def _face(self, cv, m):
+        """Earth in the water's outline deeper than the rim: texels not beside the land (turf
+        tongues count as land)."""
+        from scipy import ndimage as ndi
+        earth = self._fam(cv, self.EARTH) & m
+        land = ~self._fam(cv, self.EARTH + self.WATER) | ~m
+        return earth & ~ndi.binary_dilation(land, structure=np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool))
+
+    def test_the_dual_grid_bank_follows_the_projection(self):
+        # the editor's live tiles (edges.bank): a west or east shore and a south shore have at most
+        # the one-texel rim of absolute (earth) texels per row or column; a north shore its face
+        from scripts.art.native.palette import C
+        fu = np.full((E.N, E.N), C('grass', 3))
+        fl = np.full((E.N, E.N), C('water', 2))
+        for k, side in ((5, 'west'), (10, 'east'), (12, 'south'), (3, 'north')):
+            t = E.bank(k, fu, fl)
+            ab = t[..., 0] == E.OP_ABS
+            earth = ab & (t[..., 1] // 8 != C('water', 0) // 8)
+            from scipy import ndimage as ndi
+            land = t[..., 0] == E.OP_UPPER
+            face = earth & ~ndi.binary_dilation(land, structure=np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool))
+            if side == 'north':
+                self.assertGreaterEqual(int(np.median(face.sum(0))), 4, side)
+            else:
+                self.assertEqual(int(face.sum()), 0, side)
+
+    def test_one_rim_round_every_shore(self):
+        # an irregular pool and channel: every water texel beside land is the rim's wet earth (or
+        # the north face, or a turf tongue), never bare water; and inside the rim the waterline
+        from scripts.art.native import softgrid as SG
+        from scripts.art.native.palette import C
+        cells = np.zeros((10, 12), bool)
+        cells[0:6, 7:9] = True
+        cells[5:9, 2:10] = True
+        m = SG.shape(cells, 240, 288, 41)
+        cv = self._paint(m)
+        CROSS = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+        from scipy import ndimage as ndi
+        edge = m & ndi.binary_dilation(~m, structure=CROSS)
+        water = self._fam(cv, self.WATER)
+        self.assertEqual(int((edge & water).sum()), 0, 'bare water beside the land')
+        rim = edge & (cv == C('earth_cool', 0))
+        self.assertGreater(int(rim.sum()), 200)
+        inner = m & ~edge & ndi.binary_dilation(rim, structure=CROSS) & water
+        self.assertTrue((cv[inner] == C('water', 5)).all(), 'the waterline inside the rim')
+
+    def test_a_stone_in_the_water_has_a_wet_contact(self):
+        from scripts.art.native import ctx
+        from scripts.art.native import props as P4
+        from scripts.art.native import screen as SN
+        from scripts.art.native import softground as GD
+        from scripts.art.native.palette import C
+        img, anc, _a = P4.boulder4(ctx.D, 7.0, 4.5, seed=5)
+        dec = SN.to_codes(img)
+        hh, ww = dec.shape
+        H, W = 80, 80
+        m = np.zeros((H, W), bool)
+        m[40:, :] = True
+        cv = self._paint(m)
+        X, Y = 40 - ww // 2, 62 - hh
+        lay = lambda c, d, x, y: SN.DC.paste(c, d, x, y)    # noqa: E731
+        before = cv.copy()
+        self.assertTrue(GD.seat_stone(cv, m, dec, X, Y, lay))
+        st = np.zeros((H, W), bool)
+        st[Y:Y + hh, X:X + ww] = dec >= 0
+        foot = st & ~GD.down(st, -1)
+        below = GD.down(foot, 1) & m & ~st
+        self.assertGreaterEqual(int((cv[below] == C('water', 5)).sum()), 3, 'a ripple line at its foot')
+        bottom = st & ~GD.down(st, -2) & m
+        plain = before.copy()
+        SN.DC.paste(plain, dec, X, Y)
+        self.assertTrue((cv[bottom] <= plain[bottom]).all() and (cv[bottom] < plain[bottom]).any(), 'its wet foot darker')
+        # one on land is laid as it is
+        cv2 = self._paint(m)
+        ref = cv2.copy()
+        self.assertFalse(GD.seat_stone(cv2, m, dec, X, 4, lay))
+        SN.DC.paste(ref, dec, X, 4)
+        np.testing.assert_array_equal(cv2, ref)
+
+    def test_a_bank_stone_decal_stands_on_the_face(self):
+        # the editor's bank stones sit on a north bank's face (rows 1 to 6 under the outline, the
+        # waterline at 7), never across the waterline, and only a north bank carries them
+        from scripts.art.kit import dressing as DR
+        for i, w_ in enumerate((5.0, 6.5, 8.0)):
+            dc, (_ax, ay) = DR.bank_stone(1100 + i, w_)
+            rows = np.nonzero((dc >= 0).any(1))[0]
+            self.assertLessEqual(int(rows.max()) - ay, 6, 'bankstone_%d' % i)
+        for name in ('lawn_over_water', 'path_over_water'):
+            pc = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'pieces', 'transition', name + '.json')))
+            dr = pc['transition'].get('dressing') or {}
+            for side in ('south', 'side'):
+                self.assertFalse([d for d in dr.get(side, []) if d.startswith('bankstone')], (name, side))
+
+    @staticmethod
+    def _codes(png):
+        from PIL import Image
+        from scripts.art.native.palette import LUT
+        a = np.asarray(Image.open(png).convert('RGB')).astype(np.int64)
+        key = (a[..., 0] << 16) | (a[..., 1] << 8) | a[..., 2]
+        lut = {(int(c[0]) << 16) | (int(c[1]) << 8) | int(c[2]): i for i, c in enumerate(LUT)}
+        out = np.full(key.shape, -1, np.int64)
+        for k in np.unique(key):
+            out[key == k] = lut.get(int(k), -1)
+        return out
+
+    def _baked(self):
+        from scripts.art.kit import bake as BK
+        for f in sorted(os.listdir(BK.ZONES)):
+            plan = json.load(open(os.path.join(BK.ZONES, f)))
+            if plan.get('bake') and os.path.exists(BK.out_path(f[:-5])):
+                yield f[:-5], plan, self._codes(BK.out_path(f[:-5]))
+
+    def test_baked_stones_in_the_water_have_a_wet_contact(self):
+        # in every baked ground: a stone whose foot stands on water has the light ripple under it
+        # (a footbridge's abutments are the bridge's own painter and are left out)
+        from scipy import ndimage as ndi
+        from scripts.art.kit import bake as BK
+        from scripts.art.native.palette import C
+        lib = BK._pieces_lib()
+        for zone, plan, cv in self._baked():
+            crossing = np.zeros(cv.shape, bool)
+            for pc in plan.get('pieces', []):
+                rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+                if rp.get('fn') == 'footbridge':
+                    pw, ph = lib[pc['piece']]['geometry']['size_px']
+                    x, y = pc['at']
+                    crossing[max(0, int(y - ph)):int(y) + 4, max(0, int(x - pw / 2)):int(x + pw / 2)] = True
+            stone = self._fam(cv, ('stone', 'stone_warm', 'stone_cool')) & ~crossing
+            water = self._fam(cv, self.WATER)
+            lab, n = ndi.label(stone)
+            for i in range(1, n + 1):
+                st = lab == i
+                if st.sum() < 12:
+                    continue
+                ys, xs = np.nonzero(st)
+                foot = st & ~np.roll(st, -1, 0)
+                under = np.roll(foot, 1, 0) & ~st
+                wet = under & water
+                if wet.sum() < max(3, 0.5 * under.sum()):
+                    continue                                 # it stands on land
+                rip = ndi.binary_dilation(foot, iterations=2) & (cv == C('water', 5))
+                self.assertGreaterEqual(int(rip.sum()), 1, '%s: a stone at %d,%d stands in the water with no wet contact' % (zone, xs.mean(), ys.max()))
+
+    def test_rocks_placed_as_props_stand_on_land(self):
+        # a rock the plan places (a Godot sprite over the baked ground) never sits across the water
+        from PIL import Image
+        idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        for zone, plan, cv in self._baked():
+            water = self._fam(cv, self.WATER)
+            for pc in plan.get('pieces', []):
+                e = idx.get(pc['piece']) or {}
+                if e.get('role') != 'rock' or e.get('painted'):
+                    continue
+                v = e['variants'].get(pc.get('variant')) or next(iter(e['variants'].values()))
+                a = np.asarray(Image.open(os.path.join(S.ROOT, 'game', v['png'][len('res://'):])))[..., 3] > 0
+                x0, y0 = int(pc['at'][0] - v['foot'][0]), int(pc['at'][1] - v['foot'][1])
+                ys, xs = np.nonzero(a)
+                over = 0
+                for y, x in zip(ys + y0, xs + x0):
+                    if 0 <= y < cv.shape[0] and 0 <= x < cv.shape[1] and water[y, x]:
+                        over += 1
+                self.assertEqual(over, 0, '%s: %s stands %d texels over the water' % (zone, pc['id'], over))
+
+    def test_a_falls_channel_runs_into_its_lip_at_its_width(self):
+        # above every fall's rim, the channel's open water is exactly the sheet's columns and its
+        # banks (the rim's wet earth) stand straight either side of it
+        from scripts.art.kit import bake as BK
+        from scripts.art.kit import surface as SF
+        from scripts.art.native.palette import C
+        lib = BK._pieces_lib()
+        seen = 0
+        for zone, plan, cv in self._baked():
+            fh = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
+            for pc in plan.get('pieces', []):
+                rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+                if rp.get('fn') != 'fall':
+                    continue
+                g = lib[pc['piece']]['geometry']
+                sw = g['size_cells'][0] * 24
+                x0 = int(round(pc['at'][0] - sw / 2))
+                rim = int(round(pc['at'][1] - rp.get('args', {}).get('face_px', fh)))
+                x1 = x0 + sw
+                # the piece's sheet is the same span
+                self.assertEqual(g['sheet_px'][1] - g['sheet_px'][0], sw)
+                water = self._fam(cv, self.WATER)
+                for y in range(rim - SF.RUN_IN, rim):
+                    cols = np.nonzero(water[y, x0 - SF.RUN_MARGIN:x1 + SF.RUN_MARGIN])[0] + x0 - SF.RUN_MARGIN
+                    self.assertEqual((int(cols.min()), int(cols.max()) + 1), (x0, x1), '%s row %d' % (zone, y))
+                    self.assertEqual(int(cv[y, x0 - 1]), C('earth_cool', 0), '%s row %d west bank' % (zone, y))
+                    self.assertEqual(int(cv[y, x1]), C('earth_cool', 0), '%s row %d east bank' % (zone, y))
+                seen += 1
+        self.assertGreater(seen, 0)
+
+    def test_a_falls_lip_is_not_stamped(self):
+        # one bend line across the sheet, the foam under it broken irregularly: gaps, several
+        # depths, and no repeat with a short period
+        from scripts.art.kit import structures as ST
+        for c in (1, 2, 3, 4):
+            for seed in (9 + c, 11, 65 + c):
+                f = ST.crest_foam(24 * c, seed)
+                self.assertLessEqual(int(f.max()), ST.CREST_MAX)
+                self.assertGreaterEqual(len(set(f.tolist())), 3, (c, seed))
+                if c >= 2:
+                    self.assertIn(0, f.tolist(), (c, seed))
+                for p in range(2, 13):
+                    self.assertFalse((f[p:] == f[:-p]).all(), 'period %d (%d, %d)' % (p, c, seed))
+
+
 class SchemaMigrationTooling(unittest.TestCase):
     """Migrations follow declared schema ids and never guess from piece revision numbers."""
 
