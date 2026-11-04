@@ -238,6 +238,15 @@ LOGIC = {
                                                   'crossroads_notice_board', 'crossroads_stall')},
 }
 
+
+def _set_rows():
+    """The prop sets' pieces (scripts/art/kit/sets/): each set module's AUDIT rows."""
+    from scripts.art.kit import sets
+    return sets.audit_rows()
+
+
+TABLE.update(_set_rows())
+
 PURPOSES = ('contain', 'exclude', 'mark', 'rest', 'light', 'store', 'feed', 'cross', 'guide', 'work',
             'live', 'grow', 'climb', 'flow', 'care', 'water', 'aftermath')
 

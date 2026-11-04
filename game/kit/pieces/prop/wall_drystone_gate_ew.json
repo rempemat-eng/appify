@@ -1,0 +1,127 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "wall_drystone_gate_ew",
+ "name": "Drystone wall, field gate along x",
+ "kind": "prop",
+ "biomes": [
+  "brackens",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "shut",
+   "weight": 1.0,
+   "png": "res://kit/props/art/brackens/wall_drystone_gate_ew_shut.png",
+   "foot": [
+    38,
+    62
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A five-bar oak gate hung on two gritstone stoops, shut: it keeps the flock in."
+ },
+ "geometry": {
+  "size_px": [
+   76,
+   71
+  ],
+  "size_cells": [
+   3,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 54,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   38,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "contain",
+  "role": "gate",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "on",
+    "what": "route",
+    "note": "a gate stands where the path its owner walks crosses the wall (placement-logic rule 2)"
+   }
+  ],
+  "boundary": {
+   "style": "drystone",
+   "joins": [
+    "e",
+    "w"
+   ],
+   "gate": true,
+   "span_cells": 3,
+   "encloses": [
+    "sheep",
+    "horses",
+    "cattle"
+   ]
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    22,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {
+  "interact": {
+   "verb": "open",
+   "triggers": []
+  }
+ },
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "fence (a field gate 1 m, between stoops 1.2 m: size-guide \"field gate 32 to 48 wide so a cart passes\")",
+  "eastward_ref": "12 (the drystone and boulder walls by the thatched hut), 17 (the farm fence and gate, 40 E = 0.75 A)",
+  "painter": {
+   "module": "scripts.art.kit.sets.brackens",
+   "fn": "render_wall",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/brackens.py",
+  "todo": []
+ }
+}

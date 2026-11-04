@@ -1,0 +1,67 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "heath",
+ "name": "Heather moor",
+ "kind": "terrain",
+ "biomes": [
+  "brackens"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Brackens brief (heather, peat, gritstone)",
+  "note": "Heather, bilberry and bleached grass over peaty ground, sheep trods and gritstone breaking through (painted by sets/moor.dress; the editor tile is a dark lawn fill)."
+ },
+ "terrain": {
+  "material_id": 8,
+  "priority": 29,
+  "fill": {
+   "module": "scripts.art.kit.fills",
+   "fn": "lawn",
+   "args": {
+    "seed": 1301,
+    "fam": "leaf",
+    "base": 2,
+    "lush": 0.6,
+    "flowers": 0.2,
+    "mottle": 4.0
+   }
+  },
+  "walkable": true,
+  "surface": "turf",
+  "route": false,
+  "water": null,
+  "swatch": [
+   96,
+   96
+  ],
+  "paint": {
+   "module": "scripts.art.kit.sets.moor",
+   "fn": "heath",
+   "args": {
+    "seed": 1301
+   }
+  }
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false,
+  "nav_cost": 1.1
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.sets.moor",
+   "fn": "heath",
+   "args": {
+    "seed": 1301
+   }
+  },
+  "size_class": "ground",
+  "eastward_ref": "Eastward 12 (the long grass, the stepping stones), 15 (the marsh), 37 (the lawn); refs local only"
+ }
+}
