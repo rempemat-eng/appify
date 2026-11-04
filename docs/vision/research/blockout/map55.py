@@ -1068,6 +1068,8 @@ def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='conti
             name_icon(p, 1, [p[3] + 14 * s, p[3] + 24 * s, p[3] + 36 * s])
     if not full:                                                     # the quieter second tier: edges and landmarks
         qf = F['quiet']; qfill = mix(R['snow'][5], R['stone'][3], 0.3); qst = mix(ink, R['stone'][1], 0.45)
+        if getattr(M, 'REVISION', 'v55') == 'v56':                   # v56: a full ink halo, so the quiet names hold on dark forest at 1920
+            qfill = R['snow'][5]; qst = ink
         for t, x, y in biome:
             if t in QUIET:
                 X, Y = P(x, y)

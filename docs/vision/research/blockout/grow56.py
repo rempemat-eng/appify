@@ -120,33 +120,48 @@ def draw_lines56(S):
         lead = [(x0 + 640 - i * 64 + 18 * math.sin(i * 0.9), y0 - 120 + i * 12 + 22 * math.cos(i * 0.7)) for i in range(10)]
         rivers['the Glint'] = lead + pts
     if 'the Glint' in rivers:                                        # two becks down from the range through the old forest
-        def beck(pts, seed, amp0=45, amp1=140, lam=620):
-            # a meandering beck through the control points: densified, then swung side to side across its line, the bends
-            # wider and slower downstream; the ends stay on their points
-            q = []
-            for (ax, ay), (bx, by) in zip(pts, pts[1:]):
-                n_ = max(2, int(math.hypot(bx - ax, by - ay) / 18))
+        def beck(pts, seed, lam0=380, lam1=230, amp0=55, amp1=85, flat=0.78):
+            # lazy bends: the line through the control points smoothed hard, then swung across it at an even phase, the
+            # wavelength about 15 channel widths up the range and tighter, with wider bends, where the slope flattens into
+            # the fens (the last fifth); the ends stay on their points
+            q = np.array(chaikin_(pts, 4))
+            d_ = []
+            for (ax, ay), (bx, by) in zip(q, q[1:]):
+                n_ = max(1, int(math.hypot(bx - ax, by - ay) / 12))
                 for t in np.linspace(0, 1, n_, endpoint=False):
-                    q.append((ax + (bx - ax) * t, ay + (by - ay) * t))
-            q.append(pts[-1])
-            q = np.array(chaikin_(q, 2))
+                    d_.append((ax + (bx - ax) * t, ay + (by - ay) * t))
+            d_.append(tuple(q[-1])); q = np.array(d_)
             seg = np.r_[0, np.cumsum(np.hypot(*np.diff(q, axis=0).T))]; L = seg[-1] or 1
             t = seg / L
-            tan = np.gradient(q, axis=0); tan /= np.maximum(np.hypot(*tan.T), 1e-6)[:, None]
+            tan = np.gradient(ndi.gaussian_filter1d(q, 8, axis=0), axis=0); tan /= np.maximum(np.hypot(*tan.T), 1e-6)[:, None]
             nrm = np.stack([-tan[:, 1], tan[:, 0]], 1)
-            ph = 2 * math.pi * np.cumsum(np.r_[0, np.diff(seg)] / (lam * (0.8 + 0.6 * t)))
-            amp = (amp0 + (amp1 - amp0) * t) * np.sin(math.pi * np.clip(t * 12, 0, 1) / 2) * np.sin(math.pi * np.clip((1 - t) * 12, 0, 1) / 2)
-            off = amp * np.sin(ph + fbm1(len(q), [(14, 0.7)], seed)) + fbm1(len(q), [(9, 6)], seed + 1)
+            low = np.clip((t - flat) / 0.12, 0, 1)
+            lam = lam0 + (lam1 - lam0) * low
+            ph = 2 * math.pi * np.cumsum(np.r_[0, np.diff(seg)] / lam) + seed % 7
+            env = (amp0 + (amp1 - amp0) * low) * (0.85 + 0.15 * np.sin(2 * math.pi * seg / (lam0 * 3.3) + seed))
+            env *= np.sin(math.pi * np.clip(t * 10, 0, 1) / 2) * np.sin(math.pi * np.clip((1 - t) * 14, 0, 1) / 2)
+            off = ndi.gaussian_filter1d(env * np.sin(ph), 2)
             out = q + nrm * off[:, None]
-            return [(float(x), float(y)) for x, y in out]
+            bows = []                                                  # oxbow hints beside two bends on the flat
+            for want in (flat + 0.06, flat + 0.13):
+                i_ = int(np.argmin(np.abs(t - want)))
+                w0 = max(0, i_ - 30); w1 = min(len(q) - 1, i_ + 30)
+                j_ = w0 + int(np.argmax(np.abs(off[w0:w1])))
+                sgn = 1 if off[j_] > 0 else -1
+                cx_, cy_ = out[j_] + nrm[j_] * sgn * 46
+                r_ = 30.0; a0_ = math.atan2(-nrm[j_][1] * sgn, -nrm[j_][0] * sgn)
+                arc = [(cx_ + r_ * math.cos(a0_ + math.pi + a), cy_ + r_ * math.sin(a0_ + math.pi + a)) for a in np.linspace(-1.9, 1.9, 9)]
+                bows.append([(float(x), float(y)) for x, y in arc])
+            return [(float(x), float(y)) for x, y in out], bows
         g0 = rivers['the Glint']
         ja = min(g0, key=lambda p: abs(p[0] - 12520) + abs(p[1] - 3300)); jb = min(g0, key=lambda p: abs(p[0] - 12980) + abs(p[1] - 3180))
-        mb = beck([(11880, -230), (11820, 320), (12010, 950), (11900, 1650), (12120, 2350), (12300, 2950), ja], 4411)
-        fw = beck([(13120, -210), (13060, 700), (12980, 1500), (13020, 2350), jb], 4412, amp1=80)
+        mb, bows_m = beck([(11880, -230), (11820, 320), (12010, 950), (11900, 1650), (12120, 2350), (12300, 2950), ja], 4411)
+        fw, bows_f = beck([(13120, -210), (13060, 700), (12980, 1500), (13020, 2350), jb], 4412, amp1=75)
         rivers['the Mossbeck'] = mb; rivers['the Fernwater'] = fw
+        rivers['an old bend of the Mossbeck'] = bows_m[0]; rivers['an old bend of the Fernwater'] = bows_f[1]
         jm = mb[int(len(mb) * 0.46)]; jf = fw[int(len(fw) * 0.58)]
-        rivers["the Mossbeck's east sike"] = beck([(12480, 260), (12420, 700), jm], 4413, amp0=25, amp1=60, lam=420)
-        rivers['the Fern sike'] = beck([(12620, 820), (12760, 1300), jf], 4414, amp0=25, amp1=60, lam=420)
+        rivers["the Mossbeck's east sike"] = beck([(12480, 260), (12420, 700), jm], 4413, lam0=260, lam1=260, amp0=30, amp1=30, flat=2)[0]
+        rivers['the Fern sike'] = beck([(12620, 820), (12760, 1300), jf], 4414, lam0=260, lam1=260, amp0=30, amp1=30, flat=2)[0]
     closed = list(S['closed_px'])
     x1, y1 = closed[-1]
     closed = closed + [(x1 + 4, y1 - 120), (x1 + 14, y1 - 260), (x1 + 8, y1 - 420), (x1 - 6, y1 - 560), (x1 - 10, -DY - 60)]
@@ -183,20 +198,30 @@ def extend(S, R, cg, rgb, sea_rgb, cid, cols, sea_new):
     # both flanks), the tips bending south-east; a skerry off the first one's tip
     yw_ = (np.arange(H) + 0.5) * CELL
     excess = np.clip(12470 + east_shore_profile(yw_) - W * CELL, 0, None)   # how far each root passes the world's edge
+    # blunt points: the length rises fast from each flank and flattens across the end (a rounded bluff, not a spit),
+    # about as long as the root is wide; one or two sea stacks off each end
+    peak = ndi.maximum_filter1d(excess, 61)
+    Lb = np.where(peak > 0, 2.1 * peak * (excess / np.maximum(peak, 1e-6)) ** 0.3, 0)
     hd = np.zeros((H + NY, NX), bool)
     xs_ = np.arange(NX) * CELL
     jit = fbm1(H * 2, [(5, 1.0), (2, 0.4)], 5615)
     for j, xj in enumerate(xs_):
-        sh = int(round(0.32 * xj / CELL))                              # the tip drifts south
-        Lr = np.roll(excess * 5.2, sh); Lr[:sh] = 0
-        hd[NY:, j] = (xj + 6 < Lr * (1 + 0.1 * jit[j:j + H])) & np.roll(S['land'][:, W - 1], sh)
-    if hd.any():
-        rr_, cc_ = np.nonzero(hd[:NY + int(5000 // CELL)])
-        if len(cc_):
-            i_ = int(np.argmax(cc_)); r_, c_ = rr_[i_], cc_[i_]
-            yy_, xx_ = np.mgrid[0:H + NY, 0:NX]
-            sk = ((yy_ - (r_ + 5)) / 2.2) ** 2 + ((xx_ - (c_ + 7)) / 3.2) ** 2 <= 1
-            hd |= sk & (xx_ < NX)
+        sh = int(round(0.12 * xj / CELL))                              # the end leans a little south
+        Lr = np.roll(Lb, sh); Lr[:sh] = 0
+        hd[NY:, j] = (xj + 6 < Lr * (1 + 0.06 * jit[j:j + H])) & np.roll(S['land'][:, W - 1], sh)
+    hd = ndi.binary_opening(hd, iterations=1)                         # no one-cell slivers on the flanks
+    lab_, n_ = ndi.label(hd)
+    yy_, xx_ = np.mgrid[0:H + NY, 0:NX]
+    rs = np.random.default_rng(5616)
+    for i in range(1, n_ + 1):
+        rr_, cc_ = np.nonzero(lab_ == i)
+        if len(cc_) < 30:
+            continue
+        tip = cc_.max(); rows_t = rr_[cc_ >= tip - 2]; rt = int(rows_t.mean())
+        for k_ in range(1 + (i % 2)):                                 # sea stacks off the bluff
+            cy_, cx_ = rt + rs.integers(-3, 4) + 2 * k_, tip + 4 + 3 * k_
+            rad = rs.uniform(1.0, 1.8)
+            hd |= ((yy_ - cy_) / rad) ** 2 + ((xx_ - cx_) / rad) ** 2 <= 1
     east_land |= hd
     land[:, W:] = east_land
     natural = np.isin(K, [kid[k] for k in NATURAL if k in kid])
