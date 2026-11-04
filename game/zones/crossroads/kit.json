@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "24beb4e8d798f37c1db74836584d13066a42b20cbe9f04b5c07f0984601b85b8",
+ "inputs": "b15ab499ab5b29508190b766d61d37f51bc52138b3cf11cd4d5ecd2f084c545e",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -440,11 +440,11 @@
    "kind": "anvil",
    "png": "anvil.png",
    "foot": [
-    1488,
+    1380,
     912
    ],
    "offset": [
-    -45,
+    -48,
     -77
    ],
    "cond": {
@@ -453,9 +453,9 @@
     ]
    },
    "solid": [
-    489,
+    452,
     296,
-    14,
+    16,
     8
    ]
   },
@@ -1256,7 +1256,7 @@
    "kind": "kit_lantern",
    "png": "kit_lantern_25.png",
    "foot": [
-    1056,
+    1032,
     600
    ],
    "offset": [
@@ -1265,7 +1265,7 @@
    ],
    "cond": null,
    "solid": [
-    350,
+    342,
     198,
     4,
     3
@@ -2312,7 +2312,7 @@
    "kind": "shadow",
    "png": "anvil_shadow.png",
    "foot": [
-    1461,
+    1353,
     908
    ],
    "offset": [

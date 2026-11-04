@@ -455,7 +455,7 @@ shape = SubResource("s17")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_kit_lantern_25"]
-position = Vector2(1056, 598.5)
+position = Vector2(1032, 598.5)
 shape = SubResource("s17")
 
 [node name="Solid_flower_tub_26" type="StaticBody2D" parent="Walls"]
@@ -949,17 +949,17 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="Anvil" type="Sprite2D" parent="Props/If_anvil"]
-position = Vector2(1488, 912)
+position = Vector2(1380, 912)
 texture = ExtResource("t19")
 centered = false
-offset = Vector2(-45, -77)
+offset = Vector2(-48, -77)
 
 [node name="AnvilBody" type="StaticBody2D" parent="Props/If_anvil"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_anvil/AnvilBody"]
-position = Vector2(1488, 900)
-shape = SubResource("s16")
+position = Vector2(1380, 900)
+shape = SubResource("s21")
 
 [node name="If_square_rubble_a" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1327,7 +1327,7 @@ centered = false
 offset = Vector2(-12, -118)
 
 [node name="KitLantern25" type="Sprite2D" parent="Props"]
-position = Vector2(1056, 600)
+position = Vector2(1032, 600)
 texture = ExtResource("t61")
 centered = false
 offset = Vector2(-12, -118)
@@ -1680,7 +1680,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="AnvilShadow" type="Sprite2D" parent="Props/If_anvil_shadow"]
-position = Vector2(1461, 908)
+position = Vector2(1353, 908)
 texture = ExtResource("t114")
 centered = false
 offset = Vector2(0, 0)
@@ -1945,7 +1945,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"],\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="HaleForge" type="Area2D" parent="Actors/If_hale_forge"]
-position = Vector2(1530, 894)
+position = Vector2(1332, 900)
 script = ExtResource("talk")
 speaker_id = "hale"
 marker_height = 82.0
@@ -1956,7 +1956,7 @@ shape = SubResource("s32")
 [node name="Body" type="AnimatedSprite2D" parent="Actors/If_hale_forge/HaleForge"]
 script = ExtResource("villager")
 character = "hale"
-facing_at_rest = "W"
+facing_at_rest = "E"
 work = true
 centered = false
 offset = Vector2(-80, -136)
@@ -1972,7 +1972,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"],\"flags\":[\"shard_home:woodland\"],\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="HaleHomecoming" type="Area2D" parent="Actors/If_hale_homecoming"]
-position = Vector2(1356, 912)
+position = Vector2(1332, 960)
 script = ExtResource("talk")
 speaker_id = "hale"
 marker_height = 82.0
@@ -1999,7 +1999,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\",\"fern_cottage\"]}"
 
 [node name="HaleForgeAfter" type="Area2D" parent="Actors/If_hale_forge_after"]
-position = Vector2(1530, 894)
+position = Vector2(1332, 900)
 script = ExtResource("talk")
 speaker_id = "hale"
 marker_height = 82.0
@@ -2010,7 +2010,7 @@ shape = SubResource("s32")
 [node name="Body" type="AnimatedSprite2D" parent="Actors/If_hale_forge_after/HaleForgeAfter"]
 script = ExtResource("villager")
 character = "hale"
-facing_at_rest = "W"
+facing_at_rest = "E"
 work = true
 centered = false
 offset = Vector2(-80, -136)

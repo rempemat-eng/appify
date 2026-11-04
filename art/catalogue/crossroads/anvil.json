@@ -1,13 +1,13 @@
 {
  "id": "crossroads/anvil",
  "file": "game/zones/crossroads/art/anvil.png",
- "sha256": "42520d578768c9c7d6d851d211c9c334175e1dd01e1a0a9989584d0480321e68",
+ "sha256": "1da117f3e2d3c747967c76c39fefbd66e942937d0a7d48f22acdfe770d3c6d24",
  "kind": "small_machine",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  90,
+  96,
   81
  ],
  "status": "pass",
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 25.666666666666668,
-   "shapes": 38.0
+   "tones": 22.333333333333332,
+   "shapes": 39.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.755,
-  "tones_ratio": 0.951,
-  "shapes_ratio": 0.755,
+  "ratio": 0.774,
+  "tones_ratio": 0.827,
+  "shapes_ratio": 0.774,
   "passed": false,
   "group": "prop"
  },
@@ -39,20 +39,19 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    12,
+    15,
     34,
-    64,
+    67,
     78
    ],
-   "message": "crossroads/anvil: detail bar 0.76 of Eastward's prop band (25.7 tones, 38.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/anvil: detail bar 0.77 of Eastward's prop band (22.3 tones, 39.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-10-26",
-  "note": "#296 review at 08474c76: checked at 4x beside Bramble and its siblings; passes."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

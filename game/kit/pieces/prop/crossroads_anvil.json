@@ -6,14 +6,14 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "anvil",
    "weight": 1.0,
    "png": "res://zones/crossroads/art/anvil.png",
    "foot": [
-    45,
+    48,
     77
    ]
   }
@@ -27,7 +27,7 @@
  },
  "geometry": {
   "size_px": [
-   90,
+   96,
    81
   ],
   "size_cells": [
@@ -37,15 +37,15 @@
   "z_sort": "foot",
   "collision": {
    "rect": [
-    -7.0,
     -8.0,
-    14,
+    -8.0,
+    16,
     8
    ],
    "shape": "rect"
   },
   "foot": [
-   45,
+   48,
    77
   ],
   "footprint": [
