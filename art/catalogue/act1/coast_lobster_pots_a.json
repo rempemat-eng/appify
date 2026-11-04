@@ -1,0 +1,45 @@
+{
+ "id": "act1/coast_lobster_pots_a",
+ "file": "game/kit/props/art/act1/coast_lobster_pots_a.png",
+ "sha256": "adccb7f0d0498a3e16669a3daa945880e5afaac6140b2e1564361108190acbba",
+ "kind": "coast_lobster_pots",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  46,
+  32
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 1,
+   "tones": 39.0,
+   "shapes": 56.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 1.112,
+  "tones_ratio": 1.444,
+  "shapes_ratio": 1.112,
+  "passed": true,
+  "group": "prop"
+ },
+ "findings": [],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "fail",
+  "date": "2026-11-04",
+  "note": "the creels read as a jumble of brown blocks and green squares, not hooped D-shaped pots; netting stamped as a square grid; b: the rope coil is a flat ring shaded lower left (docs/reviews/2026-11-04-act1-props.md)"
+ }
+}

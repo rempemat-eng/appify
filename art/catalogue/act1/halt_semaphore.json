@@ -1,0 +1,70 @@
+{
+ "id": "act1/halt_semaphore",
+ "file": "game/kit/props/art/act1/halt_semaphore.png",
+ "sha256": "cc46b92f3c919ea899a0e484768d0849788713108132b49517d448151d402828",
+ "kind": "halt_semaphore",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  42,
+  144
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 2,
+   "tones": 28.5,
+   "shapes": 47.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.933,
+  "tones_ratio": 1.056,
+  "shapes_ratio": 0.933,
+  "passed": true,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    7,
+    10,
+    33,
+    115
+   ],
+   "message": "act1/halt_semaphore: the wood is lit from the right (luminance rises 143 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    7,
+    10,
+    33,
+    115
+   ],
+   "message": "act1/halt_semaphore: the wood reads 2D: 2 light planes, luminance spread 33",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  }
+ ],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "fail",
+  "date": "2026-11-04",
+  "note": "the post is a two-tone strip; the spectacle is a dark box with a red and a green square (a traffic-light glyph) apart from the arm; the ladder reads as a film strip; the arm is a flat bar (docs/reviews/2026-11-04-act1-props.md)"
+ }
+}

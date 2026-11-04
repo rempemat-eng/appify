@@ -1,0 +1,28 @@
+{
+ "id": "act1/halt_platform_edge_a",
+ "file": "game/kit/props/art/act1/halt_platform_edge_a.png",
+ "sha256": "0151bbb2881b64dbf69070ca28102d64a03dd4f18e4f21f449b0b26c5e990cf9",
+ "kind": "halt_platform_edge",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  24,
+  38
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "fail",
+  "date": "2026-11-04",
+  "note": "the coping's top is a terrazzo of navy and brown 2 x 2 specks (52 to 54 % of blocks off their neighbourhood); in the valley study the edge runs as a strip across lawn (docs/reviews/2026-11-04-act1-props.md)"
+ }
+}
