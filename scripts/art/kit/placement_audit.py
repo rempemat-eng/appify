@@ -466,9 +466,10 @@ Matt's review of the farm study ("the placement of the fence, doors and pathways
 `thresholds.py`, run by `check_plan`, so the editor's live overlay and Validate read it too. Doors
 are each building's `geometry.doors` (the opening between the frame posts, texels from the foot).
 **door_path**: a path leaving a door starts centred on the opening (within a texel) and runs
-straight out a cell before it bends; a door whose centre is off the half-cell grid (the fern
-cottage's, the smithy's bay) can never have a path of whole cells centred on it, and its drawing's
-door must move. **door_clear**: nothing stands in a door's threshold and swing. **gate_path**: a gate
+straight out a cell before it bends; a door whose centre is off the half-cell grid can never have a
+path of whole cells centred on it, so `houses.building` draws every door and the forge's mouth on
+that grid (`houses.doors_on_grid`; the fern cottage's door and the smithy's mouth moved 2 world px
+east, their frame post and boards with them). **door_clear**: nothing stands in a door's threshold and swing. **gate_path**: a gate
 or a stile is centred on the path through it (a north-south run's cells centre on row lines, so its
 path is an even number of cells wide). **path_through_fence**: a path crosses a boundary only at a
 gate or a stile. **fence_wall**: a boundary meets a building at a front corner or along its wall
