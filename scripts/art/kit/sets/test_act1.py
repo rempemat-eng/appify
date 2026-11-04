@@ -89,6 +89,46 @@ class Act1Set(unittest.TestCase):
             self.assertLessEqual(r['isolated'], TA.ISOLATED_MAX, os.path.basename(p))
             self.assertLessEqual(r['specks'], TA.SPECKS_MAX, os.path.basename(p))
 
+    def test_every_picture_meets_its_own_size_spec(self):
+        # the detail audit of 4 Nov: the shelter at a third of its height, the millstones at 0.74 m of
+        # their 1.2 m, the barrow's portal a third of its own size; each piece now states its box in art
+        # px and every picture is measured against it (scripts/review/scale.py, check_spec)
+        from scripts.review import scale as SZ
+        for pid in self.ids:
+            spec = self.lib[pid]['audit']['size_class']
+            self.assertTrue(SZ.spec_ranges(spec), '%s states no art px box: %s' % (pid, spec))
+            for vid, v in self.idx[pid]['variants'].items():
+                self.assertEqual([f.message for f in SZ.check_spec(_img(v['png']), spec, pid + '/' + vid)], [])
+
+    def test_the_set_is_calm(self):
+        # finding 4: random 2 x 2 value grain (the set's median was 44.8 % of blocks at 8f560abf, against
+        # Eastward's 29 % and the anchors' 28 to 30 %); the grain is now sibling swaps and form-tied steps
+        from scripts.review import cluster_noise as CN
+        shares = []
+        for pid in self.ids:
+            for v in self.idx[pid]['variants'].values():
+                a = _img(v['png'])
+                shares.append(CN.share(a[..., :3], a[..., 3] > 128)[0])
+        self.assertLessEqual(float(np.median(shares)), 0.40)
+        self.assertLessEqual(max(shares), 0.60)
+
+    def test_the_wheel_loop_wraps_at_an_even_step(self):
+        # finding 19: frame 8 to frame 1 changed 2557 px against 1560 to 1680 for the other steps
+        an = self.idx['mill_wheel']['anim']
+        strip = _img(an['strip'])
+        w = strip.shape[1] // an['frames']
+        fr = [strip[:, k * w:(k + 1) * w] for k in range(an['frames'])]
+        steps = [int((fr[k] != fr[(k + 1) % len(fr)]).any(-1).sum()) for k in range(len(fr))]
+        self.assertLessEqual(max(steps), 1.25 * float(np.median(steps)), steps)
+
+    def test_the_barrow_can_be_entered(self):
+        # finding 8: the portal at least 40 x 74 art px (the door class), the mound 300 or more long
+        g = self.lib['barrow_entrance']['geometry']
+        x0, x1 = g['doors'][0]['x']
+        self.assertGreaterEqual(x1 - x0, 40)
+        a = _img(next(iter(self.idx['barrow_entrance']['variants'].values()))['png'])
+        self.assertGreaterEqual(a.shape[1], 300)
+
     def test_the_studies_pass_every_check(self):
         for p in self.plans:
             self.assertEqual(self.AS.faults(p), [], p['zone'])
@@ -107,7 +147,7 @@ class Act1Set(unittest.TestCase):
         q = copy.deepcopy(self.plans[1])
         for x in q['pieces']:
             if x['id'] == 'kerb_1':
-                x['at'] = [36 * 24 + 12, 2 * 24]                        # a kerb stone far from its barrow
+                x['at'] = [40 * 24 + 12, 2 * 24]                        # a kerb stone far from its barrow
         self.assertTrue(any(m.startswith('relations: kerb_1') for m in self.AS.faults(q)))
 
     def test_the_coast_ground_is_additive(self):

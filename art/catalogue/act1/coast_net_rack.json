@@ -1,26 +1,26 @@
 {
  "id": "act1/coast_net_rack",
  "file": "game/kit/props/art/act1/coast_net_rack.png",
- "sha256": "6cf7a00213b6565d8255954551f5f95bb0b0d314c7a8820c1bd42e1c054b7934",
+ "sha256": "ed7cafb5dad9c17864a3f7e6ceb8663f4ad8ec6312311f05f618c5e5542592ac",
  "kind": "coast_net_rack",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  81,
-  63
+  87,
+  55
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 5
  },
  "detail_bar": {
   "ours": {
-   "patches": 10,
-   "tones": 38.0,
-   "shapes": 51.5
+   "patches": 9,
+   "tones": 26.77777777777778,
+   "shapes": 41.666666666666664
   },
   "band": {
    "tones": 27.0,
@@ -28,10 +28,10 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 1.023,
-  "tones_ratio": 1.407,
-  "shapes_ratio": 1.023,
-  "passed": true,
+  "ratio": 0.827,
+  "tones_ratio": 0.992,
+  "shapes_ratio": 0.827,
+  "passed": false,
   "group": "prop"
  },
  "findings": [
@@ -39,32 +39,67 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    1,
-    4,
-    14,
-    55
+    46,
+    9,
+    57,
+    47
    ],
-   "message": "act1/coast_net_rack: the red is lit from the right (luminance rises 57 L per H to the east)",
+   "message": "act1/coast_net_rack: the foliage is lit from the right (luminance rises 122 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    44,
-    5,
-    65,
-    29
+    1,
+    1,
+    86,
+    54
    ],
-   "message": "act1/coast_net_rack: the red is lit from the right (luminance rises 9 L per H to the east)",
+   "message": "act1/coast_net_rack: the wood is lit from the right (luminance rises 20 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    8,
+    9,
+    22,
+    41
+   ],
+   "message": "act1/coast_net_rack: the foliage is lit from the right (luminance rises 15 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    87,
+    55
+   ],
+   "message": "act1/coast_net_rack: detail bar 0.83 of Eastward's prop band (26.8 tones, 41.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    87,
+    55
+   ],
+   "message": "act1/coast_net_rack: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "net drawn as a uniform grid of identical light dashes (graph paper, not hung mesh in folds); the glass floats are flat blue squares; the coil at the foot does not read (docs/reviews/2026-11-04-act1-props.md)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

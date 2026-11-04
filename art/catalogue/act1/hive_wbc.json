@@ -1,26 +1,26 @@
 {
  "id": "act1/hive_wbc",
  "file": "game/kit/props/art/act1/hive_wbc.png",
- "sha256": "e6316b12a83e1787e85f18afe7e9651fb295972805f9b1dc73f07d4db4a9e116",
+ "sha256": "ddb72e2414d42789953242957e468a415ed260c48e3944036d9199df1a37fd58",
  "kind": "hive_wbc",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  36,
-  71
+  37,
+  67
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 1
+  "fault": 0,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 34.5,
-   "shapes": 54.166666666666664
+   "tones": 14.333333333333334,
+   "shapes": 27.0
   },
   "band": {
    "tones": 27.0,
@@ -28,10 +28,10 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 1.076,
-  "tones_ratio": 1.278,
-  "shapes_ratio": 1.076,
-  "passed": true,
+  "ratio": 0.531,
+  "tones_ratio": 0.531,
+  "shapes_ratio": 0.536,
+  "passed": false,
   "group": "prop"
  },
  "findings": [
@@ -39,32 +39,31 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    2,
+    1,
+    1,
     20,
-    33,
-    70
+    30
    ],
-   "message": "act1/hive_wbc: the wood is lit from the right (luminance rises 23 L per H to the east)",
+   "message": "act1/hive_wbc: the stone is lit from the right (luminance rises 106 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
-   "detector": "detail.volume",
-   "severity": "fault",
+   "detector": "detail.bar",
+   "severity": "polish",
    "box": [
-    2,
-    1,
-    30,
-    8
+    0,
+    0,
+    37,
+    67
    ],
-   "message": "act1/hive_wbc: the stone reads 2D: 3 light planes, luminance spread 9",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+   "message": "act1/hive_wbc: detail bar 0.53 of Eastward's prop band (14.3 tones, 27.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "the roof is a flat speckled slab, not the gabled roof the painter describes; the lifts barely separate; the body is 2 x 2 mottle (51 % of blocks) (docs/reviews/2026-11-04-act1-props.md)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

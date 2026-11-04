@@ -3,18 +3,30 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -66.0,
-   -66.0,
-   132,
-   60
+   -159.0,
+   -87.0,
+   318,
+   87
   ],
   "deck": null,
   "foot": [
-   71,
-   87
+   161,
+   153
   ],
   "footprint": [
    [
+    -6,
+    -4
+   ],
+   [
+    -5,
+    -4
+   ],
+   [
+    -4,
+    -4
+   ],
+   [
     -3,
     -4
    ],
@@ -43,6 +55,30 @@
     -4
    ],
    [
+    4,
+    -4
+   ],
+   [
+    5,
+    -4
+   ],
+   [
+    6,
+    -4
+   ],
+   [
+    -6,
+    -3
+   ],
+   [
+    -5,
+    -3
+   ],
+   [
+    -4,
+    -3
+   ],
+   [
     -3,
     -3
    ],
@@ -71,6 +107,30 @@
     -3
    ],
    [
+    4,
+    -3
+   ],
+   [
+    5,
+    -3
+   ],
+   [
+    6,
+    -3
+   ],
+   [
+    -6,
+    -2
+   ],
+   [
+    -5,
+    -2
+   ],
+   [
+    -4,
+    -2
+   ],
+   [
     -3,
     -2
    ],
@@ -99,6 +159,30 @@
     -2
    ],
    [
+    4,
+    -2
+   ],
+   [
+    5,
+    -2
+   ],
+   [
+    6,
+    -2
+   ],
+   [
+    -6,
+    -1
+   ],
+   [
+    -5,
+    -1
+   ],
+   [
+    -4,
+    -1
+   ],
+   [
     -3,
     -1
    ],
@@ -124,6 +208,18 @@
    ],
    [
     3,
+    -1
+   ],
+   [
+    4,
+    -1
+   ],
+   [
+    5,
+    -1
+   ],
+   [
+    6,
     -1
    ]
   ],
@@ -152,7 +248,7 @@
   "role": "tomb",
   "shadow": null,
   "size_cells": [
-   7,
+   14,
    4
   ],
   "snap": "cell",
@@ -166,8 +262,8 @@
   "variants": {
    "still": {
     "foot": [
-     71,
-     87
+     161,
+     153
     ],
     "png": "res://kit/props/art/act1/barrow_entrance.png"
    }
@@ -185,8 +281,8 @@
   ],
   "deck": null,
   "foot": [
-   11,
-   21
+   10,
+   19
   ],
   "footprint": [
    [
@@ -210,7 +306,7 @@
   "painted": false,
   "requires": [
    {
-    "cells": 6,
+    "cells": 4,
     "note": "a stone of the ring round the barrow's foot",
     "rel": "near",
     "what": "barrow_entrance"
@@ -238,22 +334,22 @@
   "variants": {
    "a": {
     "foot": [
-     11,
-     21
+     10,
+     19
     ],
     "png": "res://kit/props/art/act1/barrow_kerb_a.png"
    },
    "b": {
     "foot": [
      13,
-     18
+     17
     ],
     "png": "res://kit/props/art/act1/barrow_kerb_b.png"
    },
    "c": {
     "foot": [
-     9,
-     24
+     8,
+     21
     ],
     "png": "res://kit/props/art/act1/barrow_kerb_c.png"
    }
@@ -1364,7 +1460,7 @@
    "frames": 8,
    "offset": [
     -14,
-    -100
+    -145
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/act1/coast_harbour_light_loop.png"
@@ -1372,29 +1468,17 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -13.5,
-   -13.5,
-   27,
-   27
+   -12.0,
+   -7.5,
+   24,
+   15
   ],
   "deck": null,
   "foot": [
    14,
-   100
+   145
   ],
   "footprint": [
-   [
-    -1,
-    -2
-   ],
-   [
-    0,
-    -2
-   ],
-   [
-    -1,
-    -1
-   ],
    [
     0,
     -1
@@ -1413,7 +1497,7 @@
   "requires": [
    {
     "cells": 1,
-    "note": "at the quay's head, its light over the harbour mouth",
+    "note": "at the jetty's head, its light over the harbour mouth",
     "rel": "near",
     "what": "water"
    }
@@ -1425,13 +1509,13 @@
     3
    ],
    "size": [
-    48,
-    18
+    30,
+    9
    ]
   },
   "size_cells": [
-   2,
-   2
+   1,
+   1
   ],
   "snap": "cell",
   "story": {
@@ -1441,7 +1525,7 @@
    "still": {
     "foot": [
      14,
-     100
+     145
     ],
     "png": "res://kit/props/art/act1/coast_harbour_light.png"
    }
@@ -1459,8 +1543,8 @@
   ],
   "deck": null,
   "foot": [
-   23,
-   26
+   24,
+   38
   ],
   "footprint": [
    [
@@ -1512,15 +1596,15 @@
   "variants": {
    "a": {
     "foot": [
-     23,
-     26
+     24,
+     38
     ],
     "png": "res://kit/props/art/act1/coast_lobster_pots_a.png"
    },
    "b": {
     "foot": [
-     20,
-     17
+     24,
+     19
     ],
     "png": "res://kit/props/art/act1/coast_lobster_pots_b.png"
    }
@@ -1539,7 +1623,7 @@
   "deck": null,
   "foot": [
    9,
-   20
+   19
   ],
   "footprint": [
    [
@@ -1577,7 +1661,7 @@
    ]
   },
   "size_cells": [
-   1,
+   2,
    1
   ],
   "snap": "cell",
@@ -1588,7 +1672,7 @@
    "still": {
     "foot": [
      9,
-     20
+     19
     ],
     "png": "res://kit/props/art/act1/coast_mooring_bitt.png"
    }
@@ -1599,10 +1683,10 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -42.0,
-   -6.0,
-   84,
-   9
+   -39.0,
+   -3.0,
+   78,
+   6
   ],
   "deck": null,
   "foot": [
@@ -1652,7 +1736,7 @@
     3
    ],
    "size": [
-    96,
+    90,
     12
    ]
   },
@@ -13521,15 +13605,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -24.0,
+   -33.0,
    -12.0,
-   48,
-   12
+   66,
+   15
   ],
   "deck": null,
   "foot": [
-   23,
-   48
+   33,
+   67
   ],
   "footprint": [
    [
@@ -13589,8 +13673,8 @@
   "variants": {
    "still": {
     "foot": [
-     23,
-     48
+     33,
+     67
     ],
     "png": "res://kit/props/art/act1/halt_churn_stand.png"
    }
@@ -13666,7 +13750,7 @@
    "frames": 8,
    "offset": [
     -10,
-    -127
+    -135
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/act1/halt_platform_lamp_loop.png"
@@ -13682,7 +13766,7 @@
   "deck": null,
   "foot": [
    10,
-   127
+   135
   ],
   "footprint": [
    [
@@ -13735,7 +13819,7 @@
    "still": {
     "foot": [
      10,
-     127
+     135
     ],
     "png": "res://kit/props/art/act1/halt_platform_lamp.png"
    }
@@ -13753,7 +13837,7 @@
   ],
   "deck": null,
   "foot": [
-   13,
+   11,
    137
   ],
   "footprint": [
@@ -13806,7 +13890,7 @@
   "variants": {
    "still": {
     "foot": [
-     13,
+     11,
      137
     ],
     "png": "res://kit/props/art/act1/halt_semaphore.png"
@@ -13825,7 +13909,7 @@
   ],
   "deck": null,
   "foot": [
-   28,
+   29,
    93
   ],
   "footprint": [
@@ -13872,7 +13956,7 @@
    ]
   },
   "size_cells": [
-   2,
+   3,
    1
   ],
   "snap": "cell",
@@ -13882,7 +13966,7 @@
   "variants": {
    "still": {
     "foot": [
-     28,
+     29,
      93
     ],
     "png": "res://kit/props/art/act1/halt_timetable_board.png"
@@ -13894,18 +13978,22 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -42.0,
-   -30.0,
-   84,
-   12
+   -66.0,
+   -39.0,
+   132,
+   39
   ],
   "deck": null,
   "foot": [
-   46,
-   85
+   71,
+   176
   ],
   "footprint": [
    [
+    -3,
+    -2
+   ],
+   [
     -2,
     -2
    ],
@@ -13922,6 +14010,14 @@
     -2
    ],
    [
+    2,
+    -2
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
     -2,
     -1
    ],
@@ -13935,6 +14031,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ],
@@ -13961,18 +14061,9 @@
    }
   ],
   "role": "shelter",
-  "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    96,
-    18
-   ]
-  },
+  "shadow": null,
   "size_cells": [
-   4,
+   6,
    2
   ],
   "snap": "cell",
@@ -13982,8 +14073,8 @@
   "variants": {
    "still": {
     "foot": [
-     46,
-     85
+     71,
+     176
     ],
     "png": "res://kit/props/art/act1/halt_waiting_shelter.png"
    }
@@ -14002,7 +14093,7 @@
   "deck": null,
   "foot": [
    14,
-   46
+   50
   ],
   "footprint": [
    [
@@ -14055,7 +14146,7 @@
    "still": {
     "foot": [
      14,
-     46
+     50
     ],
     "png": "res://kit/props/art/act1/hive_skep.png"
    }
@@ -14073,8 +14164,8 @@
   ],
   "deck": null,
   "foot": [
-   18,
-   66
+   19,
+   63
   ],
   "footprint": [
    [
@@ -14126,8 +14217,8 @@
   "variants": {
    "still": {
     "foot": [
-     18,
-     66
+     19,
+     63
     ],
     "png": "res://kit/props/art/act1/hive_wbc.png"
    }
@@ -14336,7 +14427,7 @@
    ]
   },
   "size_cells": [
-   3,
+   4,
    1
   ],
   "snap": "cell",
@@ -14365,7 +14456,7 @@
   ],
   "deck": null,
   "foot": [
-   64,
+   66,
    48
   ],
   "footprint": [
@@ -14447,7 +14538,7 @@
   "variants": {
    "still": {
     "foot": [
-     64,
+     66,
      48
     ],
     "png": "res://kit/props/art/act1/mill_landslip.png"
@@ -14459,15 +14550,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -42.0,
-   -15.0,
-   84,
+   -57.0,
+   -18.0,
+   123,
    18
   ],
   "deck": null,
   "foot": [
-   30,
-   47
+   58,
+   56
   ],
   "footprint": [
    [
@@ -14484,6 +14575,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ],
@@ -14516,12 +14611,12 @@
     3
    ],
    "size": [
-    78,
+    90,
     12
    ]
   },
   "size_cells": [
-   4,
+   5,
    2
   ],
   "snap": "cell",
@@ -14531,8 +14626,8 @@
   "variants": {
    "still": {
     "foot": [
-     30,
-     47
+     58,
+     56
     ],
     "png": "res://kit/props/art/act1/mill_millstones.png"
    }
@@ -14551,7 +14646,7 @@
   "deck": null,
   "foot": [
    26,
-   55
+   56
   ],
   "footprint": [
    [
@@ -14599,7 +14694,7 @@
    "still": {
     "foot": [
      26,
-     55
+     56
     ],
     "png": "res://kit/props/art/act1/mill_sluice.png"
    }
@@ -14613,8 +14708,8 @@
    "fps": 6.0,
    "frames": 8,
    "offset": [
-    -57,
-    -111
+    -62,
+    -174
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/act1/mill_wheel_loop.png"
@@ -14622,17 +14717,37 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -54.0,
-   -33.0,
-   108,
-   33
+   -57.0,
+   -66.0,
+   114,
+   66
   ],
   "deck": null,
   "foot": [
-   57,
-   111
+   62,
+   174
   ],
   "footprint": [
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    2,
+    -3
+   ],
    [
     -2,
     -2
@@ -14682,12 +14797,12 @@
   ],
   "function": {},
   "kind": "prop",
-  "name": "Mill wheel",
+  "name": "Mill and wheel",
   "painted": false,
   "requires": [
    {
     "cells": 2,
-    "note": "the wheel sits in the leat that drives it",
+    "note": "the wheel sits in the race that drives it",
     "rel": "near",
     "what": "water"
    }
@@ -14696,7 +14811,7 @@
   "shadow": null,
   "size_cells": [
    5,
-   3
+   4
   ],
   "snap": "cell",
   "story": {
@@ -14705,8 +14820,8 @@
   "variants": {
    "still": {
     "foot": [
-     57,
-     111
+     62,
+     174
     ],
     "png": "res://kit/props/art/act1/mill_wheel.png"
    }

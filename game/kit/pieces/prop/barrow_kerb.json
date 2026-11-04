@@ -15,8 +15,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/act1/barrow_kerb_a.png",
    "foot": [
-    11,
-    21
+    10,
+    19
    ]
   },
   {
@@ -25,7 +25,7 @@
    "png": "res://kit/props/art/act1/barrow_kerb_b.png",
    "foot": [
     13,
-    18
+    17
    ]
   },
   {
@@ -33,8 +33,8 @@
    "weight": 0.6,
    "png": "res://kit/props/art/act1/barrow_kerb_c.png",
    "foot": [
-    9,
-    24
+    8,
+    21
    ]
   }
  ],
@@ -43,19 +43,19 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A low gritstone slab on edge with lichen and moss; three shapes."
+  "note": "A boulder set on edge in the turf, carried in planes, with a crack, lichen rosettes and moss at its foot; three shapes."
  },
  "geometry": {
   "size_px": [
    27,
-   29
+   24
   ],
   "size_cells": [
    1,
    1
   ],
   "z_sort": "foot",
-  "height_px": 29,
+  "height_px": 24,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -66,8 +66,8 @@
    ]
   },
   "foot": [
-   11,
-   21
+   10,
+   19
   ],
   "footprint": [
    [
@@ -85,7 +85,7 @@
    {
     "rel": "near",
     "what": "barrow_entrance",
-    "cells": 6,
+    "cells": 4,
     "note": "a stone of the ring round the barrow's foot"
    }
   ],
@@ -123,8 +123,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "kerb stone (0.3 to 0.4 m)",
-  "eastward_ref": "12 (the thatched hut, the boulder wall, the stepping stones), 13 (the standing stones)",
+  "size_class": "kerb stone (0.35 to 0.45 m set on edge; art px: 16 to 28 tall, 14 to 30 wide)",
+  "eastward_ref": "12 (the thatched hut, the boulder wall), 13 (the rocks 325,247,350,268), 17 (the rockfall for stones carried in planes)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "barrow_kerb",

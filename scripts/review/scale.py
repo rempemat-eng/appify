@@ -89,10 +89,12 @@ def class_of(name: str, kind: str | None = None) -> str | None:
         for cid, c in CLASSES.items():
             if cand in c['names']:
                 return cid
+    # a class name inside the name counts only where it starts a word (haystack is hay, but churn is
+    # not an urn and timetable is not a table: the detail audit of 4 Nov sized the churn stand as a barrel)
     best = None
     for cid, c in CLASSES.items():
         for n in c['names']:
-            if n in b and (best is None or len(n) > len(best[1])):
+            if ('_' + n) in ('_' + b) and (best is None or len(n) > len(best[1])):
                 best = (cid, n)
     return best[0] if best else None
 
@@ -684,6 +686,43 @@ def plan_paving(zone: str, density: float = 3.0):
     art = json.load(open(p)).get('art') or {}
     r = lambda rs: [[x * density, y * density, (x + w) * density, (y + h) * density] for x, y, w, h in rs or []]
     return r(art.get('paving')), r(art.get('setts'))
+
+
+_SPEC = re.compile(r'(\d+(?:\.\d+)?)\s*to\s*(\d+(?:\.\d+)?)\s*(tall|wide)\b')
+_SPEC_AT = re.compile(r'art px:\s*([^)]*)')
+
+
+def spec_ranges(text: str | None) -> dict:
+    """A kit piece's own size spec, from its `audit.size_class`: the ranges after "art px:" (its
+    opaque box at density 3), e.g. "shelter (eave 2.7 m; art px: 150 to 180 tall, 120 to 160 wide)"
+    gives {'tall': (150, 180), 'wide': (120, 160)}. Prose without "art px:" (a size-guide range in
+    world px, a gate's opening) gives {}: nothing to check."""
+    out = {}
+    for seg in _SPEC_AT.findall(text or ''):
+        for lo, hi, ax in _SPEC.findall(seg):
+            out[ax] = (float(lo), float(hi))
+    return out
+
+
+def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[Finding]:
+    """logic.size_spec: the drawn picture's opaque box against the piece's own size spec (the detail
+    audit of 4 Nov: the shelter drawn at a third of its 2.2 m, the millstones at 0.74 m of their 1.2 m,
+    the barrow's portal at a third of its own size). Every picture of a piece is measured."""
+    rng = spec_ranges(size_class)
+    alpha = rgba[..., 3] > 128
+    if not rng or not alpha.any():
+        return []
+    ys, xs = np.nonzero(alpha)
+    got = {'tall': ys.max() - ys.min() + 1, 'wide': xs.max() - xs.min() + 1}
+    out = []
+    for ax, (lo, hi) in rng.items():
+        v = float(got[ax])
+        if v < lo or v > hi:
+            out.append(Finding('logic.size_spec', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
+                               f'{subject}: drawn {v:.0f} art px {ax}, its own spec says {lo:.0f} to {hi:.0f} ({size_class})',
+                               'redraw it to its spec in the generator (prop-logic rule 9: never stretch a bitmap), or correct '
+                               'the spec if the spec is wrong', score=v, threshold=lo if v < lo else hi, subject=subject))
+    return out
 
 
 def check_asset(rgba: np.ndarray, subject: str, kind: str | None = None, H: float = GAME_H, density: float = 3.0,

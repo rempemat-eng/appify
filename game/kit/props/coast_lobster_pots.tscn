@@ -13,7 +13,7 @@ piece_id = "coast_lobster_pots"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-23, -26)
+offset = Vector2(-24, -38)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0

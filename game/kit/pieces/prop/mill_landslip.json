@@ -15,7 +15,7 @@
    "weight": 1.0,
    "png": "res://kit/props/art/act1/mill_landslip.png",
    "foot": [
-    64,
+    66,
     48
    ]
   }
@@ -25,11 +25,11 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "Wet earth across the road with boulders in it, a snapped birch with its root plate, mud in lobes."
+  "note": "Earth come down across the road: a torn turf lip, clods, shaded boulders, a snapped birch with its end grain."
  },
  "geometry": {
   "size_px": [
-   127,
+   131,
    67
   ],
   "size_cells": [
@@ -48,7 +48,7 @@
    ]
   },
   "foot": [
-   64,
+   66,
    48
   ],
   "footprint": [
@@ -137,8 +137,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "landslip (a tongue of earth 6 m across, 1.5 m deep)",
-  "eastward_ref": "13 (the rockfall and boulders, 0.4 to 1.4 A)",
+  "size_class": "landslip (a tongue of earth 3 m across, 0.5 m deep; art px: 56 to 80 tall, 120 to 145 wide)",
+  "eastward_ref": "17 (the rockfall 460,165,550,250: stones carried in planes with dark gaps), 13 (the rocks)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "mill_landslip",

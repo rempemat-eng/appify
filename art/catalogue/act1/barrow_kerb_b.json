@@ -1,26 +1,26 @@
 {
  "id": "act1/barrow_kerb_b",
  "file": "game/kit/props/art/act1/barrow_kerb_b.png",
- "sha256": "b0be3f1b26ab75cf2fc9813b7bbc0750badb6abf2c7676fce22d05745f6768e3",
+ "sha256": "de0661461217fc9e9384f98d1d15ecf6affc7bf99d26502f1315cad1ac0d5b6f",
  "kind": "boulder",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   27,
-  24
+  21
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 26.0,
-   "shapes": 48.0
+   "tones": 21.0,
+   "shapes": 45.0
   },
   "band": {
    "tones": 26.25,
@@ -28,36 +28,24 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": 0.787,
-  "tones_ratio": 0.99,
-  "shapes_ratio": 0.787,
+  "ratio": 0.738,
+  "tones_ratio": 0.8,
+  "shapes_ratio": 0.738,
   "passed": false,
   "group": "stone"
  },
  "findings": [
   {
    "detector": "logic.scale",
-   "severity": "fault",
-   "box": [
-    0,
-    0,
-    25,
-    24
-   ],
-   "message": "act1/barrow_kerb_b: wide 25 art px (0.34 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
-   "fix": "redraw it 30 to 96 art px wide (target about 63), checked beside Bramble (74 art px) in the asset sheet"
-  },
-  {
-   "detector": "detail.light",
    "severity": "polish",
    "box": [
-    1,
-    1,
-    24,
-    23
+    0,
+    0,
+    26,
+    21
    ],
-   "message": "act1/barrow_kerb_b: the stone is lit from the right (luminance rises 21 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+   "message": "act1/barrow_kerb_b: wide 26 art px (0.35 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
+   "fix": "redraw it 30 to 96 art px wide (target about 63), checked beside Bramble (74 art px) in the asset sheet"
   },
   {
    "detector": "detail.bar",
@@ -66,17 +54,16 @@
     0,
     0,
     27,
-    24
+    21
    ],
-   "message": "act1/barrow_kerb_b: detail bar 0.79 of Eastward's stone band (26.0 tones, 48.0 shapes a patch against 26.25, 61.0)",
+   "message": "act1/barrow_kerb_b: detail bar 0.74 of Eastward's stone band (21.0 tones, 45.0 shapes a patch against 26.25, 61.0)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "rectangular tablets that read as headstones: a flat cream top plane, dark 2 x 2 pits on the front, the highlight on the top-right corner (b, c) (docs/reviews/2026-11-04-act1-props.md)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

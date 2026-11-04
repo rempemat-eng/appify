@@ -1,26 +1,26 @@
 {
  "id": "act1/coast_harbour_light",
  "file": "game/kit/props/art/act1/coast_harbour_light.png",
- "sha256": "149c028d67da8cb92e21434a3fd975aed3a4bedc6c71e689309bf55f303c53ab",
+ "sha256": "42be1908d7557a282d72f7bda3971f24aa3f92dc202f94662c73a0207fce5751",
  "kind": "coast_harbour_light",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  28,
-  114
+  27,
+  152
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
-  "polish": 0
+  "fault": 2,
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
-   "patches": 6,
-   "tones": 27.333333333333332,
-   "shapes": 46.166666666666664
+   "patches": 4,
+   "tones": 26.25,
+   "shapes": 28.5
   },
   "band": {
    "tones": 27.0,
@@ -28,18 +28,78 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.917,
-  "tones_ratio": 1.012,
-  "shapes_ratio": 0.917,
-  "passed": true,
+  "ratio": 0.566,
+  "tones_ratio": 0.972,
+  "shapes_ratio": 0.566,
+  "passed": false,
   "group": "prop"
  },
- "findings": [],
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    1,
+    43,
+    26,
+    150
+   ],
+   "message": "act1/coast_harbour_light: the stone is lit from the right (luminance rises 47 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    6,
+    7,
+    22,
+    27
+   ],
+   "message": "act1/coast_harbour_light: the wood reads 2D: 2 light planes, luminance spread 26",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    9,
+    43,
+    19,
+    132
+   ],
+   "message": "act1/coast_harbour_light: the pale reads 2D: 2 light planes, luminance spread 22",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    27,
+    152
+   ],
+   "message": "act1/coast_harbour_light: detail bar 0.57 of Eastward's prop band (26.2 tones, 28.5 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    27,
+    152
+   ],
+   "message": "act1/coast_harbour_light: 46% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+  }
+ ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "blocker: lighthouse vocabulary (banded tower, door, gallery, lantern) at 0.37 m across, its door 8 x 19 art px (0.44 m) against the door class 70 to 96; reads as a toy lighthouse; whitewash and red bands carry random 2 x 2 grain (48 % of blocks) (docs/reviews/2026-11-04-act1-props.md)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

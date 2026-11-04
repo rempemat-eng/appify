@@ -25,7 +25,7 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A clinker rowing boat drawn up on the shingle: lapped strakes, blue and white, red below; thwarts and an oar inside."
+  "note": "A clinker dinghy drawn up on the shingle, dry: lapped strakes, blue and white, red below; thwarts inside."
  },
  "geometry": {
   "size_px": [
@@ -117,8 +117,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "boat (a 3.5 m clinker rowing boat, 0.6 m to its gunwale)",
-  "eastward_ref": "22 (crates, barrels and stakes on brick plinths, 0.5 to 1.2 A), 30 (rope rails on posts); no harbour in the local refs",
+  "size_class": "boat (a 2.1 m clinker dinghy, 0.5 m to its gunwale; art px: 30 to 46 tall, 84 to 100 wide)",
+  "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "coast_boat_beached",

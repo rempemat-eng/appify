@@ -12,6 +12,13 @@ so no zone's bake hash moves and no post-pass is needed:
 Their transitions: lawn over shingle and over quay (the turf's lip), shingle and quay over water (a
 bank), path over quay and shingle over quay (plain).
 
+**The dressing** (`dress`, as the moor's is: a post-pass over a bake, used by the Act 1 study; a real
+zone needs a bake hook, which moves every bake hash, so it waits for the next baked-zone regeneration):
+the quay's setts as rectangular blocks 12 x 7 in staggered courses, each lit along its top-left edge
+with a dark joint; the shingle as loose rounded pebbles 3 to 6 texels on sand, the larger ones higher
+up the beach and in drifts, each lit on its top-left with a dark foot. The bake's lips and banks and
+the pieces' shadows stay.
+
     python3 -m scripts.art.kit.sets.coast --force     # write the terrain and transition pieces
 """
 from __future__ import annotations
@@ -20,6 +27,10 @@ import argparse
 import json
 import os
 import sys
+
+import numpy as np
+from PIL import Image
+from scipy import ndimage as ndi
 
 from scripts.art.kit.schema import PIECES
 
@@ -82,6 +93,96 @@ def pieces():
         _transition('shingle', 'quay', 'plain', None, None, 'Shingle washed against the quay\'s foot.'),
     ]
     return t, tr
+
+
+def _px(mat, h, w):
+    return np.repeat(np.repeat(mat, h // mat.shape[0], 0), w // mat.shape[1], 1)
+
+
+def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0):
+    """Granite setts (or, larger, flags) in courses staggered by half a block, laid as a floor: each
+    block one calm tone of its own sibling ramp (now and then a touch lighter or darker), its top edge
+    lit, a soft joint (a tone down, not black) along its bottom and right, its corners rounded into the
+    joint so the courses read as stones, not as a brick wall."""
+    from scripts.art.kit.sets import _common as K
+    H, W = cv.shape
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    course = Yg // h
+    off = (course % 2) * (w // 2) + (K.vhash(course, 0, seed) * 3).astype(int)
+    sx = (Xg + off) // w
+    ux = (Xg + off) % w
+    uy = Yg % h
+    own = np.where(K.vhash(sx, course, seed) > 0.85, 0.6, np.where(K.vhash(sx, course, seed + 1) < 0.12, -0.6, 0.0))
+    t = 3.0 + own
+    t = np.where((uy == 0) & (ux > 0) & (ux < w - 2), t + 0.8, t)
+    jnt = (uy == h - 1) | (ux == w - 1)
+    corner = ((uy == 0) | (uy == h - 2)) & ((ux == 0) | (ux == w - 2))
+    t = np.where(jnt | corner, joint_t, t)
+    K.rpaint(cv, m, [('slate_cool', 'stone', 'stone_warm'), ('stone_cool', 'stone', 'stone'), ('stone_cool', 'stone_warm', 'stone_warm')], t,
+             np.clip(K.vhash(sx, course, seed + 2) * 0.999, 0, 0.999))
+
+
+def shingle(cv, m, seed=1506):
+    """Loose shingle on sand: a calm sand base; rounded pebbles 3 to 6 texels in drifts, the larger
+    higher up the beach (to the north), each lit on its top-left and dark at its foot, in grey, buff
+    and slate."""
+    from scripts.art.kit.sets import _common as K
+    H, W = cv.shape
+    K.rpaint(cv, m, [('sand_cool', 'sand_cool', 'sand'), ('sand_cool', 'sand', 'sand')], 3.0,
+             np.clip(K.noise((H, W), np.random.default_rng(seed), 9.0) * 0.999, 0, 0.999))
+    ys, xs = np.nonzero(m)
+    if not len(ys):
+        return
+    y0, y1 = ys.min(), ys.max()
+    drift = K.noise((H, W), np.random.default_rng(seed + 1), 6.0)
+    fams = [('slate_cool', 'stone', 'stone_warm'), ('earth_cool', 'sand_cool', 'sand'), ('slate_cool', 'slate', 'slate_warm'),
+            ('stone_cool', 'stone_cool', 'stone')]
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    for gy in range(int(y0), int(y1) + 1, 4):
+        for gx in range(0, W, 5):
+            j = K.hsh(gx, gy, seed)
+            x, y = int(gx + j * 4), int(gy + K.hsh(gy, gx, seed + 1) * 3)
+            if not (0 <= y < H and 0 <= x < W) or not m[y, x]:
+                continue
+            up = 1.0 - (y - y0) / max(1.0, (y1 - y0))
+            if drift[y, x] < 0.35 + 0.25 * (1 - up) and K.hsh(x, y, seed + 2) > 0.25:
+                continue
+            r = 1.4 + 1.6 * up * K.hsh(x, y, seed + 3) + 0.4
+            pm = (((Xg - x) / r) ** 2 + ((Yg - y) / (r * 0.75)) ** 2 <= 1.0) & m
+            u, v = (Xg - x) / r, (Yg - y) / (r * 0.75)
+            t = 3.0 + 1.0 * ((u + v) < -0.4) - 1.2 * ((u + v) > 0.6)
+            K.rpaint(cv, pm, [fams[int(K.hsh(x, y, seed + 4) * len(fams)) % len(fams)]], t, 0.0)
+
+
+def dress(plan, img_with, img_without):
+    """The coast's ground over a baked plan (img_with: the bake; img_without: the bake with no pieces,
+    whose difference is the pieces' shadows): setts on the quay, shingle on the beach, inside the
+    bake's lips; the shadows kept. Returns an RGBA image."""
+    from scripts.art.native.palette import to_rgba
+    from scripts.art.kit.sets import _common as K
+    rows = plan['rows']
+    R, Cn = len(rows), len(rows[0])
+    h, w = R * K.CELL, Cn * K.CELL
+    mat = np.array([[plan['legend'].get(c, '') for c in r] for r in rows])
+    mp = _px(mat, h, w)
+    base = np.asarray(img_with.convert('RGBA')).copy()
+    plain = np.asarray(img_without.convert('RGBA'))
+    lum = lambda im: im[..., :3].astype(float) @ np.array([0.3, 0.59, 0.11])   # noqa: E731
+    shadow = (np.abs(base[..., :3].astype(int) - plain[..., :3].astype(int)).sum(-1) > 0) & (lum(base) < lum(plain) * 0.95)
+    cv = np.full((h, w), -1, np.int32)
+    quay = ndi.binary_erosion(mp == 'quay', iterations=3)
+    beach = ndi.binary_erosion(mp == 'shingle', iterations=3)
+    if (plan.get('dress') or {}).get('quay') == 'flags':
+        setts(cv, quay, w=22, h=14)                     # a platform's flags
+    else:
+        setts(cv, quay)
+    shingle(cv, beach)
+    rgba = to_rgba(cv)
+    m = (cv >= 0) & ~shadow
+    base[m] = rgba[m]
+    sh = (cv >= 0) & shadow
+    base[sh, :3] = (rgba[sh, :3].astype(float) * 0.72).astype(np.uint8)
+    return Image.fromarray(base, 'RGBA')
 
 
 def write_pieces(force=False):

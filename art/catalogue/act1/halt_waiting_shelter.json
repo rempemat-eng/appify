@@ -1,26 +1,26 @@
 {
  "id": "act1/halt_waiting_shelter",
  "file": "game/kit/props/art/act1/halt_waiting_shelter.png",
- "sha256": "abbcc2ba574a13b4af806b1338f1581bf99f0da6366b291695167f727c49a629",
+ "sha256": "5e325f950ba4ba0c87200a5f14d66990c9b4b04f3393d7e0b7fcd3b16aed6e60",
  "kind": "halt_waiting_shelter",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  92,
-  81
+  142,
+  172
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
-  "polish": 1
+  "fault": 1,
+  "polish": 4
  },
  "detail_bar": {
   "ours": {
-   "patches": 16,
-   "tones": 27.0,
-   "shapes": 47.8125
+   "patches": 63,
+   "tones": 16.38095238095238,
+   "shapes": 36.698412698412696
   },
   "band": {
    "tones": 27.0,
@@ -28,10 +28,10 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.949,
-  "tones_ratio": 1.0,
-  "shapes_ratio": 0.949,
-  "passed": true,
+  "ratio": 0.607,
+  "tones_ratio": 0.607,
+  "shapes_ratio": 0.729,
+  "passed": false,
   "group": "prop"
  },
  "findings": [
@@ -39,20 +39,67 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    14,
-    48,
-    78,
-    57
+    99,
+    72,
+    137,
+    170
    ],
-   "message": "act1/halt_waiting_shelter: the wood is lit from the right (luminance rises 6 L per H to the east)",
+   "message": "act1/halt_waiting_shelter: the foliage is lit from the right (luminance rises 71 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    2,
+    23,
+    27,
+    46
+   ],
+   "message": "act1/halt_waiting_shelter: the stone is lit from the right (luminance rises 17 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    7,
+    72,
+    135,
+    119
+   ],
+   "message": "act1/halt_waiting_shelter: the wood is lit from the right (luminance rises 11 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    2,
+    23,
+    27,
+    46
+   ],
+   "message": "act1/halt_waiting_shelter: the stone reads 2D: 1 light planes, luminance spread 34",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    142,
+    172
+   ],
+   "message": "act1/halt_waiting_shelter: detail bar 0.61 of Eastward's prop band (16.4 tones, 36.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "blocker: the eave stands at 46 art px (1.06 m), against the size guide's rain-shelter eaves of 40 to 48 world px (120 to 144 art px); Bramble cannot stand under it. The roof is one flat slab with no fascia, gutter or thickness; the bench is mottle, not boards; the poster is a red glyph (docs/reviews/2026-11-04-act1-props.md)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

@@ -436,6 +436,34 @@
    "chunky": "up to 0.62 A: a touch over real for readability, never as tall as a hip-high crate stack",
    "measure": "bbox"
   },
+  "churns": {
+   "group": "prop",
+   "names": [
+    "churns",
+    "milk_churns"
+   ],
+   "h": [
+    30,
+    56
+   ],
+   "w": [
+    13,
+    111
+   ],
+   "h_A": [
+    0.4,
+    0.75
+   ],
+   "w_A": [
+    0.18,
+    1.5
+   ],
+   "real": "a milk churn 0.7 to 0.75 m, 0.3 to 0.33 m across; a group of two to four",
+   "eastward": "milk cans 0.73 A tall, 30 to 37 art px across at our height (17)",
+   "chunky": "as Eastward: chunky churns 14 to 37 art px across so the shoulder, neck and lid read",
+   "measure": "bbox",
+   "note": "a churn stand is not a churn: the stand and its churns are sized by the piece's own spec"
+  },
   "crate": {
    "group": "prop",
    "names": [
@@ -737,6 +765,7 @@
   "sign": {
    "group": "prop",
    "names": [
+    "fingerpost",
     "signpost",
     "sign"
    ],

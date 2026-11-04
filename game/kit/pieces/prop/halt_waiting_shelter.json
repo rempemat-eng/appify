@@ -15,8 +15,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/act1/halt_waiting_shelter.png",
    "foot": [
-    46,
-    85
+    71,
+    176
    ]
   }
  ],
@@ -25,34 +25,38 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A green-and-cream timber lean-to with a slate roof, a bench inside and a poster frame."
+  "note": "A green-and-cream lean-to: boarded walls, a slate roof with fascia and gutter, a scalloped valance, a board bench, a poster, a flagged floor in the roof's shade."
  },
  "geometry": {
   "size_px": [
-   92,
-   81
+   142,
+   172
   ],
   "size_cells": [
-   4,
+   6,
    2
   ],
   "z_sort": "foot",
-  "height_px": 81,
+  "height_px": 172,
   "collision": {
    "shape": "rect",
    "rect": [
-    -14.0,
-    -10.0,
-    28,
-    4
+    -22.0,
+    -13.0,
+    44,
+    13
    ]
   },
   "foot": [
-   46,
-   85
+   71,
+   176
   ],
   "footprint": [
    [
+    -3,
+    -2
+   ],
+   [
     -2,
     -2
    ],
@@ -69,6 +73,14 @@
     -2
    ],
    [
+    2,
+    -2
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
     -2,
     -1
    ],
@@ -82,6 +94,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ]
@@ -115,15 +131,7 @@
  },
  "rendering": {
   "cast_shadow": {
-   "shape": "ellipse",
-   "size": [
-    32,
-    6
-   ],
-   "dir": [
-    1,
-    1
-   ]
+   "shape": "none"
   },
   "contact_ao": true
  },
@@ -136,8 +144,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "shelter (2.4 m wide, 2.2 m to its roof)",
-  "eastward_ref": "21 (the street front: lamp posts 2.3 A, posters and boards on posts, timber and painted trim)",
+  "size_class": "shelter (size guide: a roof at 36 to 44 world px; eave 118 art px, 2.7 m; art px: 150 to 180 tall, 120 to 160 wide)",
+  "eastward_ref": "13 (the lamp post 375,20,415,125), 17 (the churns 135,47,162,112 and the bench), the anchors kit/lantern and kit/bench",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "halt_waiting_shelter",

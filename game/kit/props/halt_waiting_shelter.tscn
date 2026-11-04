@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://kit/props/art/act1/halt_waiting_shelter.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(84, 12)
+size = Vector2(132, 39)
 
 [node name="HaltWaitingShelter" type="Node2D"]
 script = ExtResource("1")
@@ -13,11 +13,11 @@ piece_id = "halt_waiting_shelter"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-46, -85)
+offset = Vector2(-71, -176)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Solid"]
-position = Vector2(0, -24)
+position = Vector2(0, -19.5)
 shape = SubResource("solid")

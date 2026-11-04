@@ -490,6 +490,25 @@ class SizeTable(unittest.TestCase):
         self.assertIsNone(SZ.class_of('woodland/flow'))
         self.assertIsNone(SZ.class_of('crossroads/bakery_damage'))
 
+    def test_a_piece_is_measured_against_its_own_spec(self):
+        self.assertEqual(SZ.spec_ranges('shelter (eave 2.7 m; art px: 150 to 180 tall, 120 to 160 wide)'),
+                         {'tall': (150.0, 180.0), 'wide': (120.0, 160.0)})
+        self.assertEqual(SZ.spec_ranges('cairn (size-guide: 12 to 28 tall in world px)'), {})
+        s = sprite(60, 200)
+        s[150:198, 10:50, 3] = 255                     # 48 tall: a third of the shelter it claims to be
+        f = SZ.check_spec(s, 'shelter (art px: 150 to 180 tall, 30 to 50 wide)', 'x/shelter')
+        self.assertEqual([x.detector for x in f], ['logic.size_spec'])
+        s[20:198, 10:50, 3] = 255
+        self.assertEqual(SZ.check_spec(s, 'shelter (art px: 150 to 180 tall, 30 to 50 wide)', 'x/shelter'), [])
+
+    def test_a_class_name_counts_only_where_a_word_starts(self):
+        # the detail audit of 4 Nov: "urn" inside "churn" sized the churn stand as a barrel
+        self.assertNotEqual(SZ.class_of('kit/halt_churn_stand'), 'barrel')
+        self.assertNotEqual(SZ.class_of('kit/halt_timetable_board'), 'table')
+        self.assertEqual(SZ.class_of('kit/farm_churns'), 'churns')
+        self.assertEqual(SZ.class_of('kit/fingerpost_nesw'), 'sign')
+        self.assertEqual(SZ.class_of('x/haystack'), 'haystack')
+
     def test_barrel_too_tall_trips_and_true_size_passes(self):
         s = sprite(48, 80)
         s[20:73, 8:40, 3] = 255                       # 53 art px: 0.72 A
@@ -985,3 +1004,33 @@ class GroundRules(unittest.TestCase):
         n = self.names(p)
         self.assertIn('rules.route_ends', n)
         self.assertIn('rules.clutter', n)
+
+
+class ClusterNoise(unittest.TestCase):
+    """detail.cluster_noise (cluster_noise.py): random value grain in 2 x 2 clusters, against a calm
+    form lit across its face (the detail audit of the Act 1 props, 4 Nov, finding 4)."""
+
+    def test_calm_form_passes_and_terrazzo_trips(self):
+        from scripts.review import cluster_noise as CN
+        s = sprite(64, 64)
+        s[4:60, 4:60, 3] = 255
+        x = np.arange(64)[None, :] + np.zeros((64, 1))
+        base = (190 - 1.6 * x).astype(np.uint8)                     # lit west, shaded east, in steps
+        s[..., 0] = s[..., 1] = s[..., 2] = (base // 12) * 12
+        self.assertLess(CN.share(s[..., :3], s[..., 3] > 0)[0], CN.CALM)
+        self.assertEqual(CN.check(s[..., :3], s[..., 3] > 0, H, 'x/slab'), [])
+        rng = np.random.default_rng(1)
+        g = rng.random((32, 32))
+        step = np.where(g > 0.72, 24, np.where(g < 0.28, -24, 0)).repeat(2, 0).repeat(2, 1)   # 56 % of cells step
+        n = np.clip(s[..., :3].astype(int) + step[..., None], 0, 255).astype(np.uint8)
+        s[..., :3] = n
+        f = CN.check(s[..., :3], s[..., 3] > 0, H, 'x/slab')
+        self.assertTrue(f and f[0].detector == 'detail.cluster_noise' and f[0].severity == 'fault')
+
+    def test_the_outline_is_not_material(self):
+        from scripts.review import cluster_noise as CN
+        s = sprite(40, 40)
+        s[4:36, 4:36] = (150, 150, 150, 255)
+        s[4, 4:36] = s[35, 4:36] = (20, 20, 20, 255)
+        s[4:36, 4] = s[4:36, 35] = (20, 20, 20, 255)
+        self.assertLess(CN.share(s[..., :3], s[..., 3] > 0)[0], 0.05)          # only where a corner's outline outvotes the fill

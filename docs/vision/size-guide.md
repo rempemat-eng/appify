@@ -44,6 +44,7 @@ Art px at density 3. A = 74 art px = 1.7 m, so 43.5 art px a metre; Eastward's a
 | table | 30 to 52 | 52 to 111 | 0.40 to 0.70 | 0.75 m high, 1 to 1.6 m long | stall counters 0.45 to 0.6 A (04) |  |
 | bed | 37 to 67 | 56 to 81 | 0.50 to 0.90 | 2 m x 0.9 to 1.4 m, 0.5 m high | none in the shots; from real size seen from above |  |
 | barrel | 31 to 46 | 24 to 37 | 0.42 to 0.62 | 0.9 m tall, 0.6 m across (0.53 x 0.35 A) | tubs and pots 0.3 to 0.4 A (04); milk cans 0.73 A (17) | up to 0.62 A: a touch over real for readability, never as tall as a hip-high crate stack |
+| churns | 30 to 56 | 13 to 111 | 0.40 to 0.75 | a milk churn 0.7 to 0.75 m, 0.3 to 0.33 m across; a group of two to four | milk cans 0.73 A tall, 30 to 37 art px across at our height (17) | as Eastward: chunky churns 14 to 37 art px across so the shoulder, neck and lid read |
 | crate | 22 to 41 | 26 to 44 | 0.30 to 0.55 | 0.5 m cube | fruit crates 26 x 20 E (0.48 x 0.37 A) in 04 | a touch big |
 | crate stack | 41 to 85 | 26 to 59 | 0.55 to 1.15 | two or three crates | 04: stacks to 1 A |  |
 | sack | 22 to 44 | 22 to 59 | 0.30 to 0.60 | a sack 0.6 to 0.8 m | sacks at the stalls 0.35 to 0.5 A (04) |  |

@@ -16,7 +16,7 @@
    "png": "res://kit/props/art/act1/coast_harbour_light.png",
    "foot": [
     14,
-    100
+    145
    ]
   }
  ],
@@ -25,45 +25,33 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A white tower banded red, its gallery and lantern; the lamp's glow swells and eases (8 frames)."
+  "note": "A white cast-iron column on a granite plinth, a red lantern with its cap, vent and finial; it glows (8 frames)."
  },
  "geometry": {
   "size_px": [
-   28,
-   114
+   27,
+   152
   ],
   "size_cells": [
-   2,
-   2
+   1,
+   1
   ],
   "z_sort": "foot",
-  "height_px": 114,
+  "height_px": 152,
   "collision": {
    "shape": "rect",
    "rect": [
-    -4.5,
-    -4.5,
-    9,
-    9
+    -4.0,
+    -2.5,
+    8,
+    5
    ]
   },
   "foot": [
    14,
-   100
+   145
   ],
   "footprint": [
-   [
-    -1,
-    -2
-   ],
-   [
-    0,
-    -2
-   ],
-   [
-    -1,
-    -1
-   ],
    [
     0,
     -1
@@ -84,7 +72,7 @@
     "rel": "near",
     "what": "water",
     "cells": 1,
-    "note": "at the quay's head, its light over the harbour mouth"
+    "note": "at the jetty's head, its light over the harbour mouth"
    }
   ],
   "forbids": [
@@ -98,8 +86,8 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    16,
-    6
+    10,
+    3
    ],
    "dir": [
     1,
@@ -115,8 +103,8 @@
     "fps": 4.0,
     "strip": "res://kit/props/art/act1/coast_harbour_light_loop.png",
     "frame_px": [
-     28,
-     114
+     27,
+     152
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true
@@ -132,8 +120,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "harbour light (a quay-head tower 2.4 m to the lantern)",
-  "eastward_ref": "22 (crates, barrels and stakes on brick plinths, 0.5 to 1.2 A), 30 (rope rails on posts); no harbour in the local refs; 21 (the lamp heads)",
+  "size_class": "lamp (a harbour light: a cast-iron column 3.4 m on its plinth, not the lighthouse; art px: 107 to 178 tall, 20 to 34 wide)",
+  "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs; 13 (the lamp post 375,20,415,125 for the iron and the lantern)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "coast_harbour_light",

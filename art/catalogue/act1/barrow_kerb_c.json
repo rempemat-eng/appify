@@ -1,26 +1,26 @@
 {
  "id": "act1/barrow_kerb_c",
  "file": "game/kit/props/art/act1/barrow_kerb_c.png",
- "sha256": "e23dd1cd446eb254fd15ec9c8e00377fd2bbcc69fb246c321e6a15a86b3075a6",
+ "sha256": "e98a873f62c74f5f97036501730ae8b6356d39bebea9ef5d2bd07e28aff5bcf7",
  "kind": "boulder",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  20,
-  29
+  17,
+  24
  ],
  "status": "fail",
  "counts": {
   "blocker": 0,
   "fault": 1,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 1,
-   "tones": 25.0,
-   "shapes": 41.0
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
   },
   "band": {
    "tones": 26.25,
@@ -28,10 +28,8 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": 0.672,
-  "tones_ratio": 0.952,
-  "shapes_ratio": 0.672,
-  "passed": false,
+  "ratio": null,
+  "passed": null,
   "group": "stone"
  },
  "findings": [
@@ -41,42 +39,29 @@
    "box": [
     0,
     0,
-    17,
-    29
+    16,
+    24
    ],
-   "message": "act1/barrow_kerb_c: wide 17 art px (0.23 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
+   "message": "act1/barrow_kerb_c: wide 16 art px (0.22 A) is too small for a boulder: the size table gives 30 to 96 (0.41 to 1.30 A); Eastward at the same character height: the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
    "fix": "redraw it 30 to 96 art px wide (target about 63), checked beside Bramble (74 art px) in the asset sheet"
   },
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    1,
-    1,
-    16,
-    28
-   ],
-   "message": "act1/barrow_kerb_c: the stone is lit from the right (luminance rises 15 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.bar",
+   "detector": "detail.cluster_noise",
    "severity": "polish",
    "box": [
     0,
     0,
-    20,
-    29
+    17,
+    24
    ],
-   "message": "act1/barrow_kerb_c: detail bar 0.67 of Eastward's stone band (25.0 tones, 41.0 shapes a patch against 26.25, 61.0)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+   "message": "act1/barrow_kerb_c: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "rectangular tablets that read as headstones: a flat cream top plane, dark 2 x 2 pits on the front, the highlight on the top-right corner (b, c) (docs/reviews/2026-11-04-act1-props.md)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

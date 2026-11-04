@@ -16,7 +16,7 @@
    "png": "res://kit/props/art/act1/hive_skep.png",
    "foot": [
     14,
-    46
+    50
    ]
   }
  ],
@@ -25,19 +25,19 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A coiled straw skep on a stone stool under a straw hackle, bound with bramble, a bee at its notch."
+  "note": "A bell of coiled straw sitting on its stone stool, bound coil to coil, its notch at the foot, under a straw hackle."
  },
  "geometry": {
   "size_px": [
-   29,
-   51
+   28,
+   52
   ],
   "size_cells": [
    2,
    1
   ],
   "z_sort": "foot",
-  "height_px": 51,
+  "height_px": 52,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -49,7 +49,7 @@
   },
   "foot": [
    14,
-   46
+   50
   ],
   "footprint": [
    [
@@ -105,8 +105,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "skep (0.45 m on a 0.3 m stool)",
-  "eastward_ref": "12 and 37 (the garden props)",
+  "size_class": "beehive (a skep 0.5 m on a 0.3 m stool, hip high; art px: 40 to 62 tall, 22 to 36 wide)",
+  "eastward_ref": "17 (the churns for a round object's squashed top), 12 (the post box)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "hive_skep",

@@ -16,7 +16,7 @@
    "png": "res://kit/props/art/act1/mill_sluice.png",
    "foot": [
     26,
-    55
+    56
    ]
   }
  ],
@@ -25,19 +25,19 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "Two stone piers, an oak gate drawn up on its rack with a handwheel, the water white under it."
+  "note": "Two coursed stone piers, an oak gate of planks drawn up on its rack, a toothed gear, the water white under it."
  },
  "geometry": {
   "size_px": [
    52,
-   70
+   71
   ],
   "size_cells": [
    3,
    2
   ],
   "z_sort": "foot",
-  "height_px": 70,
+  "height_px": 71,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -49,7 +49,7 @@
   },
   "foot": [
    26,
-   55
+   56
   ],
   "footprint": [
    [
@@ -105,8 +105,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "sluice (piers 0.75 m, the rack to 1 m above)",
-  "eastward_ref": "17 (the farm: cart, fence, sacks), 12 (the boulder wall and the stepping stones in water)",
+  "size_class": "sluice (piers 0.75 m, the rack to 1.1 m; art px: 55 to 80 tall, 44 to 60 wide)",
+  "eastward_ref": "17 (the rocks 460,165,550,250, the fence, sacks), 12 (the boulder wall and the stepping stones in water)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "mill_sluice",

@@ -33,7 +33,7 @@
    57
   ],
   "size_cells": [
-   3,
+   4,
    1
   ],
   "z_sort": "foot",
@@ -109,8 +109,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "fence (41 to 67 tall)",
-  "eastward_ref": "17 (the farm: cart, fence, sacks), 12 (the boulder wall and the stepping stones in water)",
+  "size_class": "fence (art px: 41 to 67 tall, 70 to 96 wide)",
+  "eastward_ref": "17 (the rocks 460,165,550,250, the fence, sacks), 12 (the boulder wall and the stepping stones in water)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "mill_fence_broken",

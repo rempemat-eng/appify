@@ -98,8 +98,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "buoy (a can buoy 0.6 m above the water)",
-  "eastward_ref": "22 (crates, barrels and stakes on brick plinths, 0.5 to 1.2 A), 30 (rope rails on posts); no harbour in the local refs",
+  "size_class": "buoy (a can buoy 0.6 m above the water; art px: 24 to 36 tall, 20 to 30 wide)",
+  "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "coast_buoy",

@@ -4,10 +4,11 @@ pieces and checked as a zone (not playable zones):
 - **Driftwood quay**: the cliff-top turf and the path down to a quay of setts; the net rack, lobster
   pots and mooring bitts along its edge; a jetty out into the harbour with the harbour light at its
   head; the shingle beach with a boat drawn up on it; buoys on the water;
-- **the Halt and the Millrace**: the halt's platform edge along the lane, its shelter, lamps,
-  semaphore, timetable board and the churn stand at the lane's end; the leat with its sluice and the
-  mill wheel; the landslip across the lane where it nears the race, the fence it broke and the
-  miller's spare stones; hives by the lane; Old Fang's barrow on its rise with its kerb stones.
+- **the Halt and the Millrace**: the halt's platform (its stone surface and its edge) along the lane,
+  its shelter, lamps, semaphore, timetable board and the churn stand at the lane's end; the leat from
+  its sluice turning east into the race under the mill's wheel; the landslip across the lane where
+  it nears the leat, the fence it broke and the miller's spare stones in his yard; hives by the lane;
+  Old Fang's barrow, its trod straight out of the portal to the field path, its kerb round its foot.
 
     python3 -m scripts.art.kit.sets.act1_study OUT_DIR [--scale 3]   # coast and valley, baked with every still
 
@@ -43,7 +44,7 @@ def coast() -> dict:
         {'id': 'bitt_2', 'piece': 'coast_mooring_bitt', 'at': [24 * CELL + 12, 9 * CELL]},
         {'id': 'bitt_3', 'piece': 'coast_mooring_bitt', 'at': [26 * CELL + 12, 12 * CELL]},
         {'id': 'net', 'piece': 'coast_net_rack', 'at': [22 * CELL, 6 * CELL]},
-        {'id': 'pots_1', 'piece': 'coast_lobster_pots', 'at': [28 * CELL, 8 * CELL], 'variant': 'a'},
+        {'id': 'pots_1', 'piece': 'coast_lobster_pots', 'at': [27 * CELL, 8 * CELL], 'variant': 'a'},
         {'id': 'pots_2', 'piece': 'coast_lobster_pots', 'at': [31 * CELL, 9 * CELL], 'variant': 'b'},
         {'id': 'boat', 'piece': 'coast_boat_beached', 'at': [12 * CELL, 12 * CELL]},
         {'id': 'buoy_1', 'piece': 'coast_buoy', 'at': [22 * CELL + 12, 14 * CELL]},
@@ -56,41 +57,45 @@ def coast() -> dict:
 
 
 def valley() -> dict:
-    W, H = 40, 26
+    W, H = 44, 30
     g = np.full((H, W), ',', '<U1')
-    g[10:12, 0:25] = '#'                                    # the lane, ending short of the race
-    g[3:8, 2:18] = 'w'                                      # the platform's gravel
-    g[8:10, 3:5] = '#'                                      # the path up onto the platform
-    g[:, 26:29] = '~'                                       # the leat (the Millrace)
-    g[12:16, 7:9] = '#'                                     # the trod up to the barrow
-    g[12:15, 19:23] = 'w'                                   # the miller's yard, trodden
+    g[5:11, 2:20] = 'q'                                     # the platform's surface, stone (the coast's quay setts)
+    g[13:15, 0:25] = '#'                                    # the lane, ending short of the leat
+    g[11:13, 3:5] = '#'                                     # the path up onto the platform
+    g[0:16, 26:29] = '~'                                    # the leat (the Millrace), from its sluice
+    g[14:16, 26:40] = '~'                                   # turning east into the mill's race
+    g[16:19, 29:37] = 'w'                                   # the miller's yard, trodden
+    g[19:30, 30:32] = '#'                                   # the yard's track to the south
+    g[15:29, 2:4] = '#'                                     # the field path from the lane to the barrow
+    g[28:30, 2:13] = '#'
+    g[27:28, 11:13] = '#'                                   # the trod straight out of the barrow's portal
     pieces = [
         # the halt
-        *[{'id': 'edge_%d' % c, 'piece': 'halt_platform_edge', 'at': [c * CELL + 12, 8 * CELL], 'variant': 'a' if c % 3 else 'b'}
-          for c in range(5, 17)],
-        {'id': 'shelter', 'piece': 'halt_waiting_shelter', 'at': [10 * CELL, 5 * CELL]},
-        {'id': 'lamp_1', 'piece': 'halt_platform_lamp', 'at': [6 * CELL + 12, 6 * CELL]},
-        {'id': 'lamp_2', 'piece': 'halt_platform_lamp', 'at': [14 * CELL + 12, 6 * CELL]},
-        {'id': 'signal', 'piece': 'halt_semaphore', 'at': [18 * CELL + 12, 8 * CELL]},
-        {'id': 'timetable', 'piece': 'halt_timetable_board', 'at': [4 * CELL, 13 * CELL]},
-        {'id': 'churns', 'piece': 'halt_churn_stand', 'at': [1 * CELL + 12, 10 * CELL]},
+        *[{'id': 'edge_%d' % c, 'piece': 'halt_platform_edge', 'at': [c * CELL + 12, 11 * CELL], 'variant': 'a' if c % 3 else 'b'}
+          for c in range(5, 18)],
+        {'id': 'shelter', 'piece': 'halt_waiting_shelter', 'at': [11 * CELL, 9 * CELL]},
+        {'id': 'lamp_1', 'piece': 'halt_platform_lamp', 'at': [6 * CELL + 12, 9 * CELL]},
+        {'id': 'lamp_2', 'piece': 'halt_platform_lamp', 'at': [16 * CELL + 12, 9 * CELL]},
+        {'id': 'signal', 'piece': 'halt_semaphore', 'at': [19 * CELL + 12, 11 * CELL]},
+        {'id': 'timetable', 'piece': 'halt_timetable_board', 'at': [7 * CELL, 16 * CELL]},
+        {'id': 'churns', 'piece': 'halt_churn_stand', 'at': [1 * CELL + 12, 13 * CELL]},
         # the Millrace
         {'id': 'sluice', 'piece': 'mill_sluice', 'at': [27 * CELL + 12, 4 * CELL]},
-        {'id': 'wheel', 'piece': 'mill_wheel', 'at': [27 * CELL + 12, 12 * CELL]},
-        {'id': 'slip', 'piece': 'mill_landslip', 'at': [21 * CELL, 12 * CELL]},
-        {'id': 'fence', 'piece': 'mill_fence_broken', 'at': [16 * CELL, 14 * CELL]},
-        {'id': 'stones', 'piece': 'mill_millstones', 'at': [21 * CELL, 15 * CELL]},
+        {'id': 'wheel', 'piece': 'mill_wheel', 'at': [34 * CELL, 15 * CELL]},
+        {'id': 'slip', 'piece': 'mill_landslip', 'at': [21 * CELL, 14 * CELL]},
+        {'id': 'fence', 'piece': 'mill_fence_broken', 'at': [16 * CELL, 17 * CELL]},
+        {'id': 'stones', 'piece': 'mill_millstones', 'at': [33 * CELL, 19 * CELL]},
         # the hives by the lane
-        {'id': 'hive', 'piece': 'hive_wbc', 'at': [12 * CELL + 12, 14 * CELL]},
-        {'id': 'skep', 'piece': 'hive_skep', 'at': [10 * CELL + 12, 14 * CELL]},
-        # Old Fang's barrow and its kerb
-        {'id': 'barrow', 'piece': 'barrow_entrance', 'at': [8 * CELL, 21 * CELL]},
-        {'id': 'kerb_1', 'piece': 'barrow_kerb', 'at': [2 * CELL + 12, 23 * CELL], 'variant': 'a'},
-        {'id': 'kerb_2', 'piece': 'barrow_kerb', 'at': [13 * CELL + 12, 23 * CELL], 'variant': 'b'},
-        {'id': 'kerb_3', 'piece': 'barrow_kerb', 'at': [14 * CELL + 12, 20 * CELL], 'variant': 'c'},
+        {'id': 'hive', 'piece': 'hive_wbc', 'at': [10 * CELL + 12, 17 * CELL]},
+        {'id': 'skep', 'piece': 'hive_skep', 'at': [12 * CELL + 12, 17 * CELL]},
+        # Old Fang's barrow, its trod straight out of the portal, its kerb round its foot
+        {'id': 'barrow', 'piece': 'barrow_entrance', 'at': [12 * CELL, 27 * CELL]},
+        {'id': 'kerb_1', 'piece': 'barrow_kerb', 'at': [4 * CELL + 12, 26 * CELL], 'variant': 'a'},
+        {'id': 'kerb_2', 'piece': 'barrow_kerb', 'at': [20 * CELL + 12, 26 * CELL], 'variant': 'b'},
+        {'id': 'kerb_3', 'piece': 'barrow_kerb', 'at': [19 * CELL + 12, 23 * CELL], 'variant': 'c'},
     ]
     return {'zone': 'act1_valley_study', 'note': 'Review study (scripts/art/kit/sets/act1_study.py), not a playable zone.',
-            'legend': {',': 'lawn', '#': 'path', 'w': 'worn', '~': 'water'},
+            'legend': {',': 'lawn', '#': 'path', 'w': 'worn', '~': 'water', 'q': 'quay'}, 'dress': {'quay': 'flags'},
             'rows': [''.join(r) for r in g], 'pieces': pieces, 'decor': []}
 
 
@@ -118,8 +123,12 @@ def render(p) -> Image.Image:
     reduced-motion picture)."""
     from scripts.art.kit import bake as BK
     from scripts.art.kit import compose as CO
+    from scripts.art.kit.sets import coast as CS
     ground, _ = BK.bake(p)
     img = ground.convert('RGBA')
+    if any('q' in r or 's' in r for r in p['rows']) and 'quay' in p['legend'].values():
+        plain, _ = BK.bake(dict(p, pieces=[]))
+        img = CS.dress(p, ground, plain).convert('RGBA')
     idx = CO.piece_index()
     for pc in sorted(p['pieces'], key=lambda q: (q['at'][1], q['at'][0])):
         e = idx[pc['piece']]

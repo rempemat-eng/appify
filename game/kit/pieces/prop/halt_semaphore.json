@@ -15,7 +15,7 @@
    "weight": 1.0,
    "png": "res://kit/props/art/act1/halt_semaphore.png",
    "foot": [
-    13,
+    11,
     137
    ]
   }
@@ -25,11 +25,11 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A white post with a ladder, the red arm with its stripe at danger, the spectacle's red and green glasses."
+  "note": "A three-tone post with cap and finial, the red arm at danger, its spectacle cast with it, a ladder beside."
  },
  "geometry": {
   "size_px": [
-   42,
+   41,
    144
   ],
   "size_cells": [
@@ -48,7 +48,7 @@
    ]
   },
   "foot": [
-   13,
+   11,
    137
   ],
   "footprint": [
@@ -105,8 +105,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "signal (a semaphore post 3 m)",
-  "eastward_ref": "21 (the street front: lamp posts 2.3 A, posters and boards on posts, timber and painted trim)",
+  "size_class": "signal (a semaphore post 3 m; art px: 125 to 160 tall, 30 to 50 wide)",
+  "eastward_ref": "13 (the lamp post 375,20,415,125), 17 (the churns 135,47,162,112 and the bench), the anchors kit/lantern and kit/bench",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "halt_semaphore",

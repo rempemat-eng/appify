@@ -1,26 +1,26 @@
 {
  "id": "act1/barrow_entrance",
  "file": "game/kit/props/art/act1/barrow_entrance.png",
- "sha256": "f27ed6c4d4c5fcef9c71c8096e33a1090409595a07c6bc5528c3108ab2a7094f",
+ "sha256": "abf98ea7e6fd52a694a9d78b8f2d827d11784046a4b9425248f1d6bace4866d0",
  "kind": "barrow_entrance",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  142,
-  103
+  322,
+  171
  ],
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 2
+  "fault": 3,
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
-   "patches": 30,
-   "tones": 34.36666666666667,
-   "shapes": 51.03333333333333
+   "patches": 115,
+   "tones": 19.530434782608694,
+   "shapes": 27.530434782608694
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.806,
-  "tones_ratio": 1.24,
-  "shapes_ratio": 0.806,
+  "ratio": 0.435,
+  "tones_ratio": 0.705,
+  "shapes_ratio": 0.435,
   "passed": false,
   "group": "foliage"
  },
@@ -39,13 +39,61 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    6,
-    63,
-    29,
-    84
+    47,
+    133,
+    85,
+    154
    ],
-   "message": "act1/barrow_entrance: the stone is lit from the right (luminance rises 170 L per H to the east)",
+   "message": "act1/barrow_entrance: the stone is lit from the right (luminance rises 26 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    125,
+    49,
+    197,
+    153
+   ],
+   "message": "act1/barrow_entrance: the stone is lit from the right (luminance rises 8 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    47,
+    130,
+    73,
+    146
+   ],
+   "message": "act1/barrow_entrance: the wood reads 2D: 2 light planes, luminance spread 14",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    124,
+    49,
+    164,
+    61
+   ],
+   "message": "act1/barrow_entrance: the wood reads 2D: 1 light planes, luminance spread 8",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    204,
+    148,
+    221,
+    159
+   ],
+   "message": "act1/barrow_entrance: the wood reads 2D: 1 light planes, luminance spread 0",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
   },
   {
    "detector": "detail.bar",
@@ -53,30 +101,17 @@
    "box": [
     0,
     0,
-    142,
-    103
+    322,
+    171
    ],
-   "message": "act1/barrow_entrance: detail bar 0.81 of Eastward's foliage band (34.4 tones, 51.0 shapes a patch against 27.71, 63.32)",
+   "message": "act1/barrow_entrance: detail bar 0.43 of Eastward's foliage band (19.5 tones, 27.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.mesh",
-   "severity": "fault",
-   "box": [
-    0,
-    0,
-    142,
-    103
-   ],
-   "message": "act1/barrow_entrance: the foliage is a see-through mesh: 20% of the crown is gaps between outlined blobs",
-   "fix": "paint the crown as one mass of leaf clusters (Eastward): lit clumps on top, a darker band under them, a dark interior showing through narrow gaps, no ground visible through the crown and no outline round every blob (art-style.md 4)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "the mound is wallpapered with identical dark dashes (the detail.mesh lead); the portal is 18 x 32 art px (0.41 x 0.74 m) against its own 0.8 x 1.1 m and the door class, and is a flat indigo rectangle; the mound is 3.2 m long and 0.92 m high against its own 9 m (docs/reviews/2026-11-04-act1-props.md)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

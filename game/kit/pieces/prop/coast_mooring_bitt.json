@@ -16,7 +16,7 @@
    "png": "res://kit/props/art/act1/coast_mooring_bitt.png",
    "foot": [
     9,
-    20
+    19
    ]
   }
  ],
@@ -25,19 +25,19 @@
   "by": null,
   "at": null,
   "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
-  "note": "A cast-iron bitt on a bolted plate, a hawser round it and trailing off."
+  "note": "A cast-iron bitt on a bolted plate, a hawser made fast round its waist and the rest flaked in a coil."
  },
  "geometry": {
   "size_px": [
-   27,
-   26
+   43,
+   22
   ],
   "size_cells": [
-   1,
+   2,
    1
   ],
   "z_sort": "foot",
-  "height_px": 26,
+  "height_px": 22,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -49,7 +49,7 @@
   },
   "foot": [
    9,
-   20
+   19
   ],
   "footprint": [
    [
@@ -101,8 +101,8 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "mooring bitt (0.5 m: 22 tall)",
-  "eastward_ref": "22 (crates, barrels and stakes on brick plinths, 0.5 to 1.2 A), 30 (rope rails on posts); no harbour in the local refs",
+  "size_class": "mooring bitt (0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)",
+  "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
   "painter": {
    "module": "scripts.art.kit.sets.act1",
    "fn": "coast_mooring_bitt",
