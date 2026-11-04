@@ -1,7 +1,7 @@
 {
  "id": "crossroads/herbalist_damage",
  "file": "game/zones/crossroads/art/herbalist_damage.png",
- "sha256": "5a3bd026c2559783e01c23d5820bd9e4d07056ff11527579a2b03764a2f6dc53",
+ "sha256": "45e8d65f364f6012b5781c9f3ae8e4c1734591abc2edf96c69b2223e127b825b",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 10,
-   "tones": 27.8,
-   "shapes": 40.7
+   "patches": 11,
+   "tones": 25.636363636363637,
+   "shapes": 34.81818181818182
   },
   "band": {
    "tones": 27.0,
@@ -28,43 +28,30 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.808,
-  "tones_ratio": 1.03,
-  "shapes_ratio": 0.808,
+  "ratio": 0.691,
+  "tones_ratio": 0.949,
+  "shapes_ratio": 0.691,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    74,
-    35,
-    132,
-    72
-   ],
-   "message": "crossroads/herbalist_damage: the wood is lit from the right (luminance rises 13 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    21,
+    20,
     35,
-    164,
+    163,
     228
    ],
-   "message": "crossroads/herbalist_damage: detail bar 0.81 of Eastward's prop band (27.8 tones, 40.7 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist_damage: detail bar 0.69 of Eastward's prop band (25.6 tones, 34.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-10-26",
-  "note": "#298 review at 2e554c05: holes torn course by course with snapped rafters and hanging slates (thatch: straw fringe); no barred-window shapes."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

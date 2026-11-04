@@ -1096,5 +1096,134 @@ class ToneAndNoise(unittest.TestCase):
                 self.assertLessEqual(r['specks'], TA.SPECKS_MAX, name)
 
 
+class HouseVolume(unittest.TestCase):
+    """Houses read as volumes (Matt, 4 Nov 11:45; eastward-edges 11, scripts/art/native/volume.py):
+    every crossroads house has its eave band (a soffit row, a core no lighter than tone 1, a band
+    no lighter than 2) over a lighter wall, its openings set in (head and west reveal darker than
+    the bottom and the east sliver), its east corner turned away from its lit west arris, a cast
+    shadow on the palette lying east of it and never before its front, and no speckle."""
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.native import houses as HS
+        cls.plan = json.load(open(os.path.join(S.ROOT, 'game', 'data', 'plans', 'crossroads.json')))
+        cls.looks, cls.built = {}, {}
+        for b in cls.plan['buildings']:
+            look = dict(cls.plan['art']['looks'].get(b['id'], {}))
+            look.setdefault('w', b['rect'][2])
+            look.setdefault('depth', b['rect'][3])
+            look.pop('lawn_as', None)
+            cls.looks[b['id']] = look
+            cls.built[b['id']] = HS.building(look, seed=look.get('seed', sum(map(ord, b['id']))))
+
+    def _wall_rows(self, a, info, y0, y1):
+        L, R = info['L'], info['R']
+        from scripts.art.native import village as V
+        from scripts.art.native import volume as VO
+        t = a[y0:y1, L + V.q(3):R - V.q(3)]
+        away = info['stood'].copy()            # what stands off the wall and the openings
+        for (x0, y0_, x1, y1_) in info['openings']:
+            away[y0_:y1_, x0:x1] = True
+        if 'mouth' in info:
+            cx, B, w, h = info['mouth']
+            away[B - h:B, cx - w // 2:cx + w // 2] = True
+        ok = (t >= 0) & ~away[y0:y1, L + V.q(3):R - V.q(3)]
+        # the wall's own surface: timber (frames, lintels, boards) keeps its modelling in the shade,
+        # so a front of boards is read whole and a framed or stone front without its timbers
+        wall = ok & ~VO._form(t)
+        ok = wall if wall.sum() > ok.sum() * 0.3 else ok
+        return np.array([np.median(r[k] % 8) for r, k in zip(t, ok) if k.any()])
+
+    def test_every_house_has_its_eave_band(self):
+        from scripts.art.native import village as V, volume as VO
+        for hid, bl in self.built.items():
+            a, info = bl.base.a, bl.info
+            y = info['eave_top']
+            core = self._wall_rows(a, info, y + VO.SOFFIT, y + VO.SOFFIT + V.q(VO.EAVE_CORE))
+            band = self._wall_rows(a, info, y, y + V.q(VO.EAVE_SOFT['slate']) - V.q(VO.EAVE_BREAK[0]))
+            # the same wall just under the band (its material, out of the eave's shade)
+            body = self._wall_rows(a, info, y + V.q(VO.EAVE_SOFT['thatch'] + 1.5), y + V.q(VO.EAVE_SOFT['thatch'] + 6))
+            self.assertLessEqual(float(np.max(core)), 1, hid)
+            self.assertLessEqual(float(np.max(band)), 2, hid)
+            self.assertGreaterEqual(float(np.mean(body)) - float(np.mean(band)), 1.0, hid)
+
+    def test_openings_are_recesses(self):
+        from scripts.art.native import village as V, volume as VO
+        n = 0
+        for hid, bl in self.built.items():
+            a = bl.base.a
+            for (x0, y0, x1, y1) in bl.info['openings']:
+                o = a[y0:y1, x0:x1] % 8
+                head, rest = o[:V.q(VO.RECESS[0])], o[V.q(VO.RECESS[0]):]
+                self.assertLess(head.mean(), rest[rest.shape[0] // 2:].mean(), hid)
+                self.assertLess(rest[:, :V.q(VO.RECESS[1])].mean(), rest[:, -1].mean(), hid)
+                n += 1
+        self.assertGreaterEqual(n, 12)
+
+    def test_corners_turn(self):
+        from scripts.art.native import village as V, volume as VO
+        for hid, bl in self.built.items():
+            a, (L, R, y_e, y_p) = bl.base.a, bl.info['wall']
+            rows = slice(bl.info['eave_top'] + V.q(8), y_p - V.q(VO.FOOT_AO))
+            west = a[rows, L:L + VO.ARRIS] % 8
+            east = a[rows, R - V.q(VO.CORNER_E):R] % 8
+            self.assertGreater(west.mean() - east.mean(), 1.0, hid)
+            self.assertLessEqual(float(np.median(east)), 3, hid)
+
+    def test_cast_shadow_lies_east_and_never_before_the_front(self):
+        from scripts.art.native import volume as VO
+        for hid, look in self.looks.items():
+            lv, ox, oy = VO.house_cast(look, 3.0)
+            h, w = lv.shape
+            X = np.arange(w)[None, :] + ox
+            Y = np.arange(h)[:, None] + oy
+            self.assertTrue((lv == 2).any() and (lv == 1).any(), hid)
+            self.assertFalse((lv > 0)[np.broadcast_to(Y >= 0, lv.shape)].any(), hid)
+            half = look['w'] * 3.0 / 2
+            east = (lv > 0) & (X > half + 3 * 3)
+            west = (lv > 0) & (X < -half - 3 * 3 - 5)
+            self.assertFalse(west.any(), hid)
+            # a column at least 0.25 adult wide beside the east wall at the eave's height
+            cols = np.nonzero(east.any(0))[0]
+            self.assertGreaterEqual(int(X[0, cols.max()] - half), int(0.25 * 25 * 3), hid)
+
+    def test_cast_shadow_is_on_the_palette_in_the_zone(self):
+        from PIL import Image
+        from scripts.art.native import volume as VO
+        from scripts.art.native.palette import to_rgba
+        from scripts.art.native.palette import FAMS
+        codes = np.array([[f * 8 + t for t in range(7)] for f in range(len(FAMS))]).reshape(1, -1)
+        pal = {tuple(c) for c in to_rgba(codes)[0, :, :3]}
+        kit = json.load(open(os.path.join(S.ROOT, 'game', 'zones', 'crossroads', 'kit.json')))
+        g = np.asarray(Image.open(os.path.join(S.ROOT, 'game', 'zones', 'crossroads', 'art', 'ground.png')).convert('RGB'))
+        for o in kit['objects']:
+            if o['kind'] != 'building':
+                continue
+            lv, ox, oy = VO.house_cast(self.looks[o['id']], 3.0)
+            m, _core = VO.cast_at(lv, ox, oy, o['foot'], g.shape[1], g.shape[0])
+            px = {tuple(c) for c in g[m]}
+            self.assertTrue(px <= pal, (o['id'], sorted(px - pal)[:3]))
+
+    def test_kit_index_lays_the_volume_shadow(self):
+        from PIL import Image
+        idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        houses = ['crossroads_' + b['id'] for b in self.plan['buildings']]
+        self.assertEqual(len(houses), 7)
+        for k in houses:
+            sh = idx[k]['shadow']
+            self.assertEqual(sh.get('kind'), 'volume', k)
+            m = np.asarray(Image.open(os.path.join(S.ROOT, 'game', sh['mask']['png'][len('res://'):])))
+            self.assertTrue(set(np.unique(m)) <= {0, 1, 2} and (m == 2).any(), k)
+            # nothing on the foot line or south of it, before the lit front
+            self.assertFalse(m[max(0, -sh['mask']['offset'][1]):].any(), k)
+
+    def test_no_new_speckle(self):
+        from scripts.art.kit import tone_audit as TA
+        for hid, bl in self.built.items():
+            iso, _cl, specks = TA.noise(np.asarray(bl.base.rgba()))
+            self.assertLessEqual(iso, TA.ISOLATED_MAX, hid)
+            self.assertLessEqual(specks, TA.SPECKS_MAX, hid)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -170,12 +170,137 @@ E is Eastward's native px at an adult of 54; ours is at an adult of 25 (k = 0.46
 | 6.3 | Ramps                    | none                                                                                                                               | none                                                   |
 | 7   | Cast shadows             | east, about 0.6 x height, 43 % darker, soft 4 to 10 (39)                                                                           | east and down, core two tones, rim one tone 2 px       |
 | 8   | Plants over edges        | one per 34 to 68 of rim, overlap 4 to 12 (13)                                                                                      | one per 16 to 32, overlap 2 to 6                       |
+| 11.1 | Eave band               | soffit line 1 to 2 (L 33 to 79); core 2 to 5, 28 to 60 % darker; softer band 3 to 8, broken edge; 3 to 4 in all under a gable eave, 10 to 15 under a slab, a sign box or thatch (B1, B5, B7, B8) | 1 art px tone 0; core 2 two tones; to 5 (thatch 6.6) one tone, broken, leaning east |
+| 11.2 | Recesses                | head 2, west reveal 1 to 2 dark, east lit; sill 3 lit over a 2 to 3 drip (B1, B7)                                                  | head 1, west 0.6 in shade, east sliver lit              |
+| 11.3 | Corners                 | quoins a step lit; wall a step darker over the last 5; dark seam, lit arris; no side wall (B3, B1, B6, B5)                          | west arris lit; east 2.4 a tone down, seam a tone more |
+| 11.4 | Foot                    | a step darker over 4 to 14, a 1 to 2 near-black contact line, ground lit below (B1, B5, B6, B7)                                    | 3 a tone down over the plinth; contact row tone 0     |
+| 11.5 | Protrusions             | an L of shade east and under, 1 to 3 (B1, B7, B3)                                                                                  | 0.8 east, 1.2 under, one tone                          |
+| 11.6 | Ground cast shadow      | a column east from the back to the foot line, following the silhouette; 0.2 to 0.4 A wide; core 45 to 63 % darker, edge 3 to 10; level or a little north, never before the front (B2, B3, B4) | solids projected 0.19 east, 0.10 north a px of height (0.30 A at a 40 wall); core two tones, rim 2 one tone |
 
 ## 10. What this changes
 
 - **Sea of Stars, CrossCode and Chained Echoes are no longer references for edges or the soft grid.** Older notes that compare an edge, a face, a corner or a cliff with them are history. The detail bar's numbers (`detail_bar.py`) are not edge rules and stay as they are; its stream baselines include three Sea of Stars reaches, which Claude A may want to replace with Eastward canals.
 - **Already in line:** the 8 px cell (1.1), rounded corners and staircase diagonals (world-rules 2.3), the 12 and 16 low step and the 32 tier (world-rules 3.2), dither only for fades.
 - **To change in the generators:** faces with vertical bands or columns (2.4); grass lips with hanging teeth (3.1); a lit line at a foot (3.2); outlines between ground types on one level (4.1); hard straight path edges (5.1); stairs that do not reach the upper floor or the path (6.1).
+
+## 11. Building volume and shadows
+
+Matt, 4 Nov 11:45: "one thing i really want you to perfect are the shadows so that 2d houses at least look a little 3d. here is an example from eastward (you should probably look up more)". His example is a building's corner: a quoin column lit on its face, a deep recessed band under the fascia, the wall darker towards the corner, a hard dark contact line at the foot, and a shadow column on the street to the east with a signal pole casting into it.
+
+**Sources and yardstick.** Eight buildings in official shots, read on native frames at the same character height (John 54 E px; ours 74 art px at density 3, so an E length times 1.37 is ours in art px and times 0.46 in world px):
+
+- B1, the shop with the GO door in 01 (native 186 to 288, 96 to 164).
+- B2, the shop with the balcony west of the stair in 01 (60 to 175, 40 to 180).
+- B3, Matt's crop (his phone screenshot, about 5 screen px a native px).
+- B4, the shops on Matt's street screenshot of 28 Oct (2.6 screen px a native px).
+- B5, the farmhouse in 17.
+- B6, the railway halt in 08.
+- B7, the MEM shop in the 2018 press still 002 (Chucklefish's announcement, lossless 1280 x 720, from the Gematsu gallery of 26 Apr 2018).
+- B8, the thatched cottage at night in 38.
+
+The Steam store screenshots of both games and the 2023 Octopia press gallery turned out to be the frames the team already had. 4Gamer's 12 Aug 2021 set added night scenes (a station, a city street), used for 11.8. No crop goes into the repository. Pixpil's notes on making Eastward say its scenes are "a 3D game with a 2D perspective": roofs and walls are separate layers rebuilt in 3D and hand-painted bump maps light them. So its building shadows come from the building's volume, not from its sprite, and ours are drawn the same way (11.6).
+
+The values below are L, luminance from 0 to 255, read as runs down and across columns (`eastward_study.py strip`). Ours stays on the palette: every shadow is a step down a family's own ramp (house-style 6), so it turns violet by the ramp's own lean. The module is `scripts/art/native/volume.py`; `houses.building` applies it to every house, and its tests are in `test_kit` (Volume).
+
+**11.1 The eave throws a band: a soffit line, a core and a softer band with a broken edge.**
+
+- Under the fascia, the slab or the thatch's edge comes a 1 to 2 px line that is the front's darkest value outside its openings: L 75 to 79 (B1, B2), 36 to 38 (B5), 33 to 42 (B7).
+- Then a core of 2 to 5 px. B1 has 4 px at L 79 against the wall's 111 (29 % darker). B7 is 48 % darker; at night B8 has 5 px at L 48 against 120.
+- Then a softer band of 3 to 8 px one step down (B1: 6 px at L 97 to 103). Its lower edge is broken by bumps 2 to 3 px deep every 10 to 15 px (B1).
+- The whole depth follows the overhang: 3 to 4 px under a gable's eave in full sun (B5: the line, then L 100, 110, 113 back to the boards), 10 to 12 under a balcony slab or a sign box (B1, B7), 13 to 15 under thatch (B8).
+- In the band the wall's highlights are gone: its joints still show, its lit tops do not.
+
+Ours, 2 world px = 6 art px of core at density 3:
+
+- a soffit row at tone 0;
+- the core two tones down, no tone above 1;
+- the softer band one tone down, no tone above 2, to 5 world px under slate or shingle and 6.6 under thatch;
+- its edge broken by bumps of up to 1 world px every 3 to 5 world px, and dropping 1.2 world px from west to east (house-style 6: "a row deeper towards the east");
+- timber (posts, lintels, plates and boards) is stepped down with the band but keeps its own modelling, since a beam under the eave still shows its lit arris and dark underside. `review:asset`'s volume check flagged a flattened lintel and the lowest board of the hut.
+
+**11.2 Openings are recesses.**
+
+- The window in B1 has a 2 px dark head inside its frame, a dark west reveal of 1 to 2 px and a lighter east one. Its sill is a 3 px lit slab 1 to 2 px wider than the opening on each side, with a 2 to 3 px dark drip under it.
+- The doors in B1 and B7 have a 1 to 2 px dark head and a 1 px dark west reveal.
+
+Ours:
+
+- the head 1 world px held at tone 1 or darker;
+- the west reveal 0.6 world px at tone 2 or darker;
+- the east reveal's last art px at tone 3 or lighter;
+- `window` and `door` already draw the sill and its drip, the reveals and the lintel to these sizes, and `volume.recess` holds them on every opening, so a redrawn door keeps them.
+
+**11.3 Corners turn: lit quoins, the wall darker towards the east corner, no side wall.**
+
+- In B3 the quoins are a step lighter than the wall (L 161 to 173 against 142 to 147).
+- The wall is a step darker over its last 5 px or so before the corner (L 122).
+- Then come a 1 px dark seam, a 1 to 3 px lit sliver at the arris, and the outline.
+- No front-on shot shows a side wall (B1, B2, B5, B6, B7, B8): Eastward's buildings are fronts and roofs, and the corner does the turning.
+
+Ours:
+
+- the west arris 2 art px a tone up;
+- the east end 2.4 world px (7 art px) a tone down, no tone above 3;
+- its last 2 art px a tone deeper (the seam);
+- the quoins and corner posts as drawn (west lit, east turned away).
+
+**11.4 The foot is darker and ends in a contact line.** The wall is a step darker over the 4 to 14 px above the ground:
+
+| Shot | Band | Its value | The wall above |
+| ---- | ---- | --------- | -------------- |
+| B1   | 9 px | L 82 to 100 | 111 |
+| B2   | 4 px | L 83 to 93 | 119 |
+| B5   | 14 px | L 84 to 102 | 130 |
+| B6   | 6 px | | |
+
+It ends in a 1 to 2 px near-black contact line (B6 L 41, B7 L 38 to 47), and the ground begins lit in the next row. Ours: the wall 3 world px (9 art px) a tone down over the plinth, no tone above 3; its darks (tones 0 and 1, the joints) stay as they are, so the lowest board or course keeps its depth. The plinth keeps its lit ledge, its darker foot and its tone 0 contact row.
+
+**11.5 What stands off the wall throws an L of shade.**
+
+- B1's downpipe (3 px) has a 1 px shade east of it.
+- Its wall boxes have 2 to 3 px under them and 1 to 2 east.
+- B7's sign box throws its whole band (11.1).
+- In B3 the signal pole stands in the building's ground column and casts into it.
+
+Ours: a sign, a downpipe, a plate or a bundle on the wall throws one tone down on the wall, 0.8 world px east and 1.2 under, scaled by how far it stands off (`volume.protrusion`). Sills, window boxes, shutters and stacks keep the shade they already draw.
+
+**11.6 The building's cast shadow is a column east of it, shaped by its volume.**
+
+- B2, B3 and B4 lay a column on the ground beside the east wall. It runs from the back of the footprint down to the front's foot line and never falls before a lit front.
+- Its outer edge follows the silhouette: it bulges where B2's balcony stands out, and it is widest where the roof is highest.
+- It is 0.2 to 0.4 A wide: B2 about 12 px, B3 16 (a 6 px core and 10 px of fade), B4 22.
+- Its core is 45 to 63 % darker than the lit ground (B4 L 86 against 161 to 186; B3 L 55 to 72 against 184 to 190), and its edge fades over 3 to 10 px.
+- It lies level or leans a little north, narrowing towards the foot corner (B3). The street's sun differs by scene (7.1), but in every studied shot the column ends at the front's foot line.
+
+Ours (`volume.house_cast`):
+
+- The house is solids: its walls, its roof (the eave's rectangle and the ridge, shortened by the hips) and its stacks.
+- Each solid is projected 0.19 east and 0.10 north per world px of height and filled as its hull. At a 40 px wall that is 7.6 world px (0.30 A) at the eave, more at the ridge and the stacks.
+- Nothing is drawn south of the foot line.
+- The core is two tones down and the outer 2 world px one tone (7.2).
+- Lean: props keep the biome's east-and-down projection (7.2). A house's shadow leans north, as Eastward's does, because a lean south would lay a band across its own lit front and doorstep, which no Eastward shot shows.
+
+Where it is drawn:
+
+- Crossroads: `town.py`, from `Built.info['cast']`.
+- Kit zones: the kit index carries it as the piece's shadow mask (kind `volume`). The editor, the game's ground and `compose` lay it like a tree's, and the bake lays it with `volume.bake_cast`.
+
+**11.7 Roof against wall.**
+
+- In B5 the lit roof plane (L 119) sits a step under the lit wall (130 to 155), and the shaded plane 2 to 3 steps under it (L 35 to 50).
+- B6's tiles carry a dark line under every course.
+- The soffit is the darkest band of the front (11.1).
+
+Ours: the slate roof's lit plane, its courses and the hips turned away already follow (`houses.slate_roof`, `hip_lines`). This pass does not change them.
+
+**11.8 Night and inside light.**
+
+- At night in B8 the eave band stays the front's darkest (L 48 against 120) while the wall's middle keeps the moonlight, and there is no sun column.
+- Lit openings in 16 and 4Gamer's night station throw a pool of their own light on the ground, as wide as the opening and about its height deep. A lantern adds a warm pool (B8).
+
+Ours: at night cast shadows are one tone (house-style 6). Pools of light from lit openings are proposed, not built in this pass.
+
+The evidence is a local reference sheet of the eight buildings' crops with these readings (made with `eastward_study.py native` and `strip`); like every reference, it is never committed.
 
 ## What the soft grid governs (26 Oct)
 

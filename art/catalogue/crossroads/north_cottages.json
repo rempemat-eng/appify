@@ -1,7 +1,7 @@
 {
  "id": "crossroads/north_cottages",
  "file": "game/zones/crossroads/art/north_cottages.png",
- "sha256": "9406156150c9fb969addc7a4637e67294b056ef4d3e00a2676b102e847c8d92f",
+ "sha256": "3b0971a0a26e1856dcb6c92828f80ad633689708a1002ea7bf5babb82cd4f4db",
  "kind": "north_cottages",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 201,
-   "tones": 25.691542288557216,
-   "shapes": 43.656716417910445
+   "tones": 25.681592039800996,
+   "shapes": 43.52238805970149
   },
   "band": {
    "tones": 27.0,
@@ -28,13 +28,25 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.867,
-  "tones_ratio": 0.952,
-  "shapes_ratio": 0.867,
+  "ratio": 0.864,
+  "tones_ratio": 0.951,
+  "shapes_ratio": 0.864,
   "passed": false,
   "group": "prop"
  },
  "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    170,
+    183,
+    202,
+    218
+   ],
+   "message": "crossroads/north_cottages: the violet is lit from the right (luminance rises 17 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
   {
    "detector": "detail.light",
    "severity": "polish",
@@ -56,15 +68,14 @@
     310,
     274
    ],
-   "message": "crossroads/north_cottages: detail bar 0.87 of Eastward's prop band (25.7 tones, 43.7 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/north_cottages: detail bar 0.86 of Eastward's prop band (25.7 tones, 43.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-10-26",
-  "note": "#298 review at 2e554c05: roof planes lit with thickness, fascia, gutter and stepped eave shadow; recessed openings; wall form and proud plinth; trade details read. Detail bar 0.86 to 0.94 (above the 0.8 gate, below the 1.0 in art-style)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

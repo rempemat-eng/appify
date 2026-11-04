@@ -1466,7 +1466,16 @@
   "painted": false,
   "requires": [],
   "role": "house",
-  "shadow": null,
+  "shadow": {
+   "kind": "volume",
+   "mask": {
+    "offset": [
+     -110,
+     -163
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_bakery.png"
+   }
+  },
   "size_cells": [
    10,
    13
@@ -2790,7 +2799,16 @@
   "painted": false,
   "requires": [],
   "role": "house",
-  "shadow": null,
+  "shadow": {
+   "kind": "volume",
+   "mask": {
+    "offset": [
+     -110,
+     -161
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_fern_cottage.png"
+   }
+  },
   "size_cells": [
    10,
    11
@@ -3465,7 +3483,16 @@
   "painted": false,
   "requires": [],
   "role": "house",
-  "shadow": null,
+  "shadow": {
+   "kind": "volume",
+   "mask": {
+    "offset": [
+     -110,
+     -160
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_herbalist.png"
+   }
+  },
   "size_cells": [
    10,
    10
@@ -3727,7 +3754,16 @@
   "painted": false,
   "requires": [],
   "role": "house",
-  "shadow": null,
+  "shadow": {
+   "kind": "volume",
+   "mask": {
+    "offset": [
+     -122,
+     -134
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_hut.png"
+   }
+  },
   "size_cells": [
    11,
    8
@@ -4293,7 +4329,16 @@
   "painted": false,
   "requires": [],
   "role": "house",
-  "shadow": null,
+  "shadow": {
+   "kind": "volume",
+   "mask": {
+    "offset": [
+     -146,
+     -137
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_library.png"
+   }
+  },
   "size_cells": [
    13,
    10
@@ -4585,7 +4630,16 @@
   "painted": false,
   "requires": [],
   "role": "house",
-  "shadow": null,
+  "shadow": {
+   "kind": "volume",
+   "mask": {
+    "offset": [
+     -146,
+     -137
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_north_cottages.png"
+   }
+  },
   "size_cells": [
    13,
    12
@@ -5268,7 +5322,16 @@
   "painted": false,
   "requires": [],
   "role": "forge",
-  "shadow": null,
+  "shadow": {
+   "kind": "volume",
+   "mask": {
+    "offset": [
+     -134,
+     -186
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_smithy.png"
+   }
+  },
   "size_cells": [
    12,
    14
