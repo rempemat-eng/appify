@@ -155,7 +155,7 @@ def regions(plan: dict, H: int, W: int) -> dict:
     sh = np.zeros((H, W), bool)
     for p in plan.get('pieces', []):
         e = idx.get(p['piece']) or {}
-        if 'mask' in (e.get('shadow') or {}):
+        if 'mask' in (e.get('shadow') or {}) and (e.get('shadow') or {}).get('kind') != 'volume':
             img, _anc = BK._sprite(e, p.get('variant'))
             ex, _k = BK._tree_ex(p['piece'], img)
             sh |= SN.tree_shadow_hd(p['at'][0] / 3.0, p['at'][1] / 3.0, ex, W, H)

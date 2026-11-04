@@ -55,6 +55,29 @@ def crown_shadow(png_res: str, foot, out_name: str):
     return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
 
+def volume_shadow(p: dict, out_name: str) -> dict | None:
+    """A house's cast shadow from its volume (scripts/art/native/volume.py, eastward-edges 11.6): a
+    column east of it shaped by its roof and stacks, from the look its body was drawn from (the
+    piece's audit source in the zone plan). Written as an R8 mask like a crown's (2 the core, 1
+    the rim) with its offset from the foot."""
+    from PIL import Image
+    from scripts.art.native import volume as VOL
+    src = next((s for s in (p.get('audit') or {}).get('sources') or [] if s.get('part') == 'body'), None)
+    plan_path = os.path.join(ROOT, 'game', 'data', 'plans', '%s.json' % (src or {}).get('zone'))
+    if not src or not os.path.exists(plan_path):
+        return None
+    plan = json.load(open(plan_path))
+    b = next((b for b in plan.get('buildings', []) if b['id'] == src.get('object')), None)
+    if b is None:
+        return None
+    look = dict(plan.get('art', {}).get('looks', {}).get(b['id'], {}))
+    look.setdefault('w', b['rect'][2])
+    look.setdefault('depth', b['rect'][3])
+    lv, ox, oy = VOL.house_cast(look, D)
+    Image.fromarray(lv, 'L').save(os.path.join(OUT, 'art', out_name))
+    return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(ox), int(oy)]}
+
+
 def _anim(rendering: dict, foot) -> dict | None:
     """The piece's looping strip (rendering.animations with a strip): where it is, its frames and
     rate, and its offset from the foot (a fall's frames cover its sheet; an animal's its whole
@@ -78,6 +101,10 @@ def entry(p: dict) -> dict:
     shadow = None
     if cs.get('shape') == 'ellipse' and cs.get('size'):
         shadow = {'size': [int(round(v * D)) for v in cs['size']], 'dir': [int(round(v * D)) for v in cs.get('dir', [0, 0])]}
+    if p['kind'] == 'structure' and p.get('variants'):
+        # a building drawn from a zone plan's look (houses.py): its volume's shadow
+        mk = volume_shadow(p, 'shadow_%s.png' % p['id'])
+        shadow = {'mask': mk, 'kind': 'volume'} if mk else shadow
     if p.get('placement', {}).get('role') == 'tree' and p.get('variants'):
         v0 = p['variants'][0]
         shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
