@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
+  "verdict": "fail",
   "date": "2026-11-04",
-  "note": "re-rendered after the independent audit of 4881fee7 failed it (docs/reviews/2026-11-04-woodland-water.md): the plunge foam, the current marks, the churn, the crest, the stream streaks, the rill core and banks and the terrace are redrawn; detectors pass (0 findings). The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
+  "note": "fail, round 2 (docs/reviews/2026-11-04-woodland-water.md, at 02c10a25). Round 1's findings are fixed: the foam is broken clumps within the sheet's foot plus 8 px and about 12 px deep, with spray, arcs and frayed flecks (calibration W15 caught); the lip matches the channel; the stream's baked marks lie east-west (1 short vertical left of 6); the rill's core is one thread with a rounded bend; its banks wander 1 to 2 texels with two seated stones. New fault: the terrace's earth face (x 276-960, y 768-864, 96 art px = 1.3 H, four cells) is an even mosaic of same-sized clods with one fern, at 78 % of Eastward 13's earth-face tones and 58 % of its shapes at the same character height, and 2.6 times that face's height (Eastward has no earth face over 0.55 H). Polish: the crest's glassy tongue is a two-tone band with a straight top; the earth strips between the east ashlar blocks read as a twisted rope; the foam's clumps are mostly two near-whites. Logic, reported separately: no tier west of the fall (one lawn from the rill's west bank to the pool's west shore); the river's old north lobes cut up into the face, leaving a turf lip and bank stones at its foot; the log steps land on the bridge, which has lost its north abutment."
  }
 }
