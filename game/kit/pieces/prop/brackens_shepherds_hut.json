@@ -14,8 +14,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png",
    "foot": [
-    98,
-    234
+    93,
+    215
    ]
   }
  ],
@@ -28,63 +28,31 @@
  },
  "geometry": {
   "size_px": [
-   203,
-   237
+   198,
+   218
   ],
   "size_cells": [
    9,
-   5
+   4
   ],
   "z_sort": "foot",
-  "height_px": 237,
+  "height_px": 218,
   "collision": {
    "shape": "rect",
    "rect": [
     -29.0,
-    -30.0,
+    -22.0,
     58,
-    30
+    22
    ]
   },
   "foot": [
-   98,
-   234
+   93,
+   215
   ],
   "footprint": [
    [
     -4,
-    -4
-   ],
-   [
-    -3,
-    -4
-   ],
-   [
-    -2,
-    -4
-   ],
-   [
-    -1,
-    -4
-   ],
-   [
-    0,
-    -4
-   ],
-   [
-    1,
-    -4
-   ],
-   [
-    2,
-    -4
-   ],
-   [
-    3,
-    -4
-   ],
-   [
-    -4,
     -3
    ],
    [
@@ -178,6 +146,16 @@
    [
     3,
     -1
+   ]
+  ],
+  "door_cells": [
+   [
+    -2,
+    0
+   ],
+   [
+    -1,
+    0
    ]
   ]
  },
@@ -236,7 +214,7 @@
     "reduced_motion": "hold:0",
     "on_screen_only": true,
     "region_px": [
-     163,
+     158,
      2,
      40,
      64

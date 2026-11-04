@@ -126,6 +126,32 @@ class BrackensSet(unittest.TestCase):
         self.assertEqual(self.BS.layout_faults(self.lab), [])
         self.assertEqual(PA.check_plan(self.lab), [])
 
+    def test_every_fold_in_the_lab_has_its_own_gate(self):
+        # Claude A, round 5: each of the yard's four pens is its own enclosure and needs its own gate;
+        # take any one gate away and enclosures names that pen
+        import copy
+        for gid in ('gate_x', 'gate_y', 'gate_y_ne', 'gate_y_nw'):
+            q = copy.deepcopy(self.lab)
+            q['pieces'] = [x for x in q['pieces'] if x['id'] != gid]
+            msgs = [f['message'] for f in self.EN.check_zone(q, self.lib)]
+            self.assertTrue(any('has no gate' in m or 'meets no run' in m for m in msgs), gid)
+
+    def test_every_door_has_a_path_straight_out(self):
+        # each door's cells, one row out from the foot, are a route (a path or the road)
+        for p in (self.plan, self.lab):
+            legend = p['legend']
+            from scripts.art.kit import bake as BK
+            mats = BK._pieces_lib()
+            for pc in p['pieces']:
+                dc = (self.lib[pc['piece']].get('geometry') or {}).get('door_cells')
+                if not dc:
+                    continue
+                x, y = pc['at']
+                for dx, dy in dc:
+                    c, r = int(x // 24) + dx, int(y // 24) + dy
+                    mat = legend[p['rows'][r][c]]
+                    self.assertTrue(mats[mat]['terrain'].get('route'), '%s: door cell %s is %s' % (pc['id'], (c, r), mat))
+
     def test_the_study_and_the_lab_use_every_piece_of_the_set(self):
         used = {pc['piece'] for pc in self.plan['pieces'] + self.lab['pieces']}
         self.assertEqual(set(self.ids) - used, set())

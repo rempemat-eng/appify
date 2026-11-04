@@ -626,8 +626,8 @@
   ],
   "deck": null,
   "foot": [
-   34,
-   48
+   32,
+   38
   ],
   "footprint": [
    [
@@ -680,15 +680,15 @@
   "variants": {
    "a": {
     "foot": [
-     34,
-     48
+     32,
+     38
     ],
     "png": "res://kit/props/art/brackens/brackens_gorse_a.png"
    },
    "b": {
     "foot": [
-     22,
-     40
+     25,
+     33
     ],
     "png": "res://kit/props/art/brackens/brackens_gorse_b.png"
    }
@@ -783,7 +783,7 @@
    "frames": 8,
    "offset": [
     65,
-    -232
+    -213
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/brackens/brackens_shepherds_hut_loop.png"
@@ -792,48 +792,16 @@
   "blocks_move": true,
   "collision": [
    -87.0,
-   -90.0,
+   -66.0,
    174,
-   90
+   66
   ],
   "deck": null,
   "foot": [
-   98,
-   234
+   93,
+   215
   ],
   "footprint": [
-   [
-    -4,
-    -4
-   ],
-   [
-    -3,
-    -4
-   ],
-   [
-    -2,
-    -4
-   ],
-   [
-    -1,
-    -4
-   ],
-   [
-    0,
-    -4
-   ],
-   [
-    1,
-    -4
-   ],
-   [
-    2,
-    -4
-   ],
-   [
-    3,
-    -4
-   ],
    [
     -4,
     -3
@@ -966,7 +934,7 @@
   },
   "size_cells": [
    9,
-   5
+   4
   ],
   "snap": "cell",
   "story": {
@@ -975,8 +943,8 @@
   "variants": {
    "still": {
     "foot": [
-     98,
-     234
+     93,
+     215
     ],
     "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png"
    }
@@ -13154,7 +13122,7 @@
   "deck": null,
   "foot": [
    13,
-   47
+   48
   ],
   "footprint": [
    [
@@ -13200,7 +13168,7 @@
    "plain": {
     "foot": [
      13,
-     47
+     48
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_es_plain.png"
    }
@@ -13219,7 +13187,7 @@
   "deck": null,
   "foot": [
    13,
-   47
+   48
   ],
   "footprint": [
    [
@@ -13265,7 +13233,7 @@
    "plain": {
     "foot": [
      13,
-     47
+     48
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_esw_plain.png"
    }
@@ -13420,7 +13388,7 @@
   "collision": null,
   "deck": null,
   "foot": [
-   10,
+   13,
    90
   ],
   "footprint": [
@@ -13474,9 +13442,23 @@
    "owner": null
   },
   "variants": {
+   "open_e": {
+    "foot": [
+     13,
+     90
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_open_e.png"
+   },
+   "open_w": {
+    "foot": [
+     56,
+     90
+    ],
+    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_open_w.png"
+   },
    "shut": {
     "foot": [
-     10,
+     13,
      90
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_shut.png"
@@ -13495,7 +13477,7 @@
   ],
   "deck": null,
   "foot": [
-   10,
+   13,
    55
   ],
   "footprint": [
@@ -13541,7 +13523,7 @@
   "variants": {
    "plain": {
     "foot": [
-     10,
+     13,
      55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_n_plain.png"
@@ -13561,7 +13543,7 @@
   "deck": null,
   "foot": [
    13,
-   55
+   54
   ],
   "footprint": [
    [
@@ -13607,7 +13589,7 @@
    "plain": {
     "foot": [
      13,
-     55
+     54
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_ne_plain.png"
    }
@@ -13626,7 +13608,7 @@
   "deck": null,
   "foot": [
    13,
-   55
+   54
   ],
   "footprint": [
    [
@@ -13672,7 +13654,7 @@
    "plain": {
     "foot": [
      13,
-     55
+     54
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_nes_plain.png"
    }
@@ -13691,7 +13673,7 @@
   "deck": null,
   "foot": [
    13,
-   55
+   54
   ],
   "footprint": [
    [
@@ -13737,7 +13719,7 @@
    "plain": {
     "foot": [
      13,
-     55
+     54
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_nesw_plain.png"
    }
@@ -13756,7 +13738,7 @@
   "deck": null,
   "foot": [
    13,
-   55
+   54
   ],
   "footprint": [
    [
@@ -13802,7 +13784,7 @@
    "plain": {
     "foot": [
      13,
-     55
+     54
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_new_plain.png"
    }
@@ -13820,7 +13802,7 @@
   ],
   "deck": null,
   "foot": [
-   10,
+   13,
    55
   ],
   "footprint": [
@@ -13866,7 +13848,7 @@
   "variants": {
    "plain": {
     "foot": [
-     10,
+     13,
      55
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_ns_plain.png"
@@ -13886,7 +13868,7 @@
   "deck": null,
   "foot": [
    13,
-   55
+   54
   ],
   "footprint": [
    [
@@ -13932,7 +13914,7 @@
    "plain": {
     "foot": [
      13,
-     55
+     54
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_nsw_plain.png"
    }
@@ -13951,7 +13933,7 @@
   "deck": null,
   "foot": [
    13,
-   55
+   54
   ],
   "footprint": [
    [
@@ -13997,7 +13979,7 @@
    "plain": {
     "foot": [
      13,
-     55
+     54
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_nw_plain.png"
    }
@@ -14015,8 +13997,8 @@
   ],
   "deck": null,
   "foot": [
-   10,
-   44
+   13,
+   48
   ],
   "footprint": [
    [
@@ -14061,8 +14043,8 @@
   "variants": {
    "plain": {
     "foot": [
-     10,
-     44
+     13,
+     48
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_s_plain.png"
    }
@@ -14138,7 +14120,7 @@
   "deck": null,
   "foot": [
    13,
-   47
+   48
   ],
   "footprint": [
    [
@@ -14184,7 +14166,7 @@
    "plain": {
     "foot": [
      13,
-     47
+     48
     ],
     "png": "res://kit/props/art/brackens/wall_drystone_sw_plain.png"
    }
