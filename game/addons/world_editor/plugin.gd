@@ -150,7 +150,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				_say_result(operations.paste_group(clipboard, local), "Pasted the group")
 				return true
 			if brush.begins_with("piece:") and is_crossing(brush.substr(6)):
-				_say_result(operations.place_crossing(brush.substr(6), local), "Placed on the run")
+				_say_result(operations.place_crossing(brush.substr(6), local, _piece_options()), "Placed on the run")
 				return true
 			if brush.begins_with("piece:") and _fence_style == "" and not _scatter_stroke:
 				_say_result(place_piece(brush.substr(6), local), "Placed piece")
@@ -171,12 +171,14 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			if _fence_style != "":
 				var style := _fence_style
 				_fence_style = ""
-				_say_result(operations.place_fence_run(style, cells), "Fence run placed")
+				_say_result(operations.place_fence_run(style, cells, _piece_options()), "Fence run placed")
 				return true
 			if _scatter_stroke:
 				_scatter_stroke = false
 				var zone_seed := String(zone.name).hash() if is_instance_valid(zone) else 7
-				_say_result(operations.scatter(brush.substr(6), cells, {"density": scatter_density, "seed": zone_seed}), "Scattered")
+				var scatter_options := _piece_options()
+				scatter_options.merge({"density": scatter_density, "seed": zone_seed}, true)
+				_say_result(operations.scatter(brush.substr(6), cells, scatter_options), "Scattered")
 				return true
 			var material := brush.substr(9) if brush.begins_with("material:") else ""
 			var variant := brush.substr(8) if brush.begins_with("variant:") else ""
