@@ -108,13 +108,13 @@
     "fps": 10,
     "strip": "res://kit/props/art/waterfall_1_tall_flow.png",
     "frame_px": [
-     48,
+     46,
      101
     ],
     "region_px": [
-     12,
+     14,
      20,
-     48,
+     46,
      101
     ],
     "reduced_motion": "hold:0",

@@ -308,6 +308,7 @@ class WaterBanks(unittest.TestCase):
         from scripts.art.native import animate as AN
         from scripts.art.native import softground as GD
         from scripts.art.native.palette import C
+        from scipy import ndimage as ndi
         H_, W_ = 220, 640
         m = np.zeros((H_, W_), bool)
         m[50:170] = True                                   # 120 texels wide, running east-west
@@ -320,10 +321,27 @@ class WaterBanks(unittest.TestCase):
             horiz = int((on[:, 1:] & on[:, :-1]).sum())
             vert = int((on[1:] & on[:-1]).sum())
             self.assertGreater(horiz, 5 * max(1, vert), 'marks lie east-west on an east-west stream')
+            allon = f[..., 3] > 0
+            lone = allon.copy()
+            for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+                lone &= ~np.roll(np.roll(allon, dy, 0), dx, 1)
+            self.assertEqual(int((lone & inner).sum()), 0, 'no lone lifted texel (review round 2, R2-5)')
         a = (frames[0][..., 3] > 0) & inner
         b = (frames[1][..., 3] > 0) & inner
         shift = int(round(4 * 3.0))
         self.assertGreater(int((a[:, :-shift] & b[:, shift:]).sum()), 0.8 * a[:, :-shift].sum(), 'they drift east')
+        bend = np.zeros((H_, W_), bool)
+        yy_, xx_ = np.mgrid[0:H_, 0:W_]
+        bend |= (np.abs(yy_ - (110 + 40 * np.sin(xx_ / 90.0))) < 45)       # a meandering stream
+        cb = np.where(bend, C('water', 2), C('grass', 3)).astype(np.int32)
+        fb = AN.water(cb, bend, np.zeros_like(bend), 3.0, thin=True)
+        for f in fb:
+            allon = f[..., 3] > 0
+            lone = allon.copy()
+            for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+                lone &= ~np.roll(np.roll(allon, dy, 0), dx, 1)
+            self.assertLessEqual(int((lone & ndi.binary_erosion(bend, iterations=6)).sum()), 2,
+                                 'specks where the current turns')
         cv = self._paint(m)
         w5 = cv == C('water', 5)
         light = (cv == C('water', 5)) | (cv == C('water', 4))

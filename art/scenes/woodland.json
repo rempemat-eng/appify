@@ -64,12 +64,10 @@
     ],
     "cells": 3,
     "add": [
-     [160, 280, 48, 8],
      [240, 312, 64, 8]
     ],
-    "cut": [
-     [248, 288, 56, 8]
-    ]
+    "cut": [],
+    "_terrace": "(4 Nov, review round 2 L2) the north lobe at x 160 to 208 and the cut at x 248 to 304 are gone: the river's north bank runs along the terrace's foot, so the face has one foot line"
    },
    "pool": [
     [56, 288, 56, 24],
@@ -685,12 +683,12 @@
    "y0": 256,
    "y1": 296,
    "seed": 65,
-   "face": [62, 256, 98, 292]
+   "face": [68, 256, 93, 292]
   },
   "still": [
    [60, 284, 116, 312]
   ],
-  "animate": [0, 252, 320, 330],
+  "animate": [0, 0, 320, 330],
   "reeds": [
    [34, 302, 4],
    [124, 306, 4],
@@ -708,9 +706,10 @@
   "pool_bottom": 0
  },
  "terrace": {
-  "_about": "the ground the fall drops from (the woodland review, 4 Nov; ground-rules.md: a fall only at a tier edge or a rock face): north of y 256 from the cascade's east side to the east edge the lawn is a tier up, its earth face running down to the river's north bank, log steps carrying the path down to the bridge; west of the cascade the boulder heap and the oak grove stand on the slope",
-  "x0": 92, "x1": 320, "y": 256, "face": 32, "kind": "earth", "seed": 461,
-  "steps": {"x0": 116, "x1": 140, "n": 6}
+  "_about": "the ground the fall drops from (the woodland reviews, 4 Nov; ground-rules.md: a fall only at a tier edge or a rock face): the whole zone north of y 256 is a tier up behind a rock face 32 px tall (eastward-edges 2.3, softground.ledge kind 'rock' in the grey stone the fall pours over) running from the west edge, behind the oak grove, to the east edge, its foot on the lower lawn west of the fall and wet rock at the river east of it; the cascade's own face and the east ashlar stack (its joints crevice stone and moss) stand in it; log steps carry the path down to a landing one cell deep at the bridge's north abutment",
+  "y": 256, "face": 32, "kind": "rock", "earth": "stone", "vines": 1.2, "seed": 461,
+  "crevices": [[97, 120]],
+  "steps": {"x0": 116, "x1": 140, "n": 5, "landing": 8}
  },
  "rock": {
   "_about": "the spring's heap of mossy boulders and the talus the Hollow's escarpment has shed along the top edge",
@@ -1294,7 +1293,7 @@
   ],
   "heap": [
    {
-    "at": [34, 272],
+    "at": [46, 298],
     "size": [12, 10],
     "seed": 201,
     "shape": "round",
@@ -1309,23 +1308,9 @@
     "lip": true
    },
    {
-    "at": [52, 266],
-    "size": [22, 13],
-    "seed": 203,
-    "shape": "slab",
-    "moss": true
-   },
-   {
     "at": [108, 266],
     "size": [22, 13],
     "seed": 204,
-    "shape": "slab",
-    "moss": true
-   },
-   {
-    "at": [54, 284],
-    "size": [22, 15],
-    "seed": 206,
     "shape": "slab",
     "moss": true
    },
@@ -1740,13 +1725,13 @@
   ["pine-6", "pine", 2, 107, 36, 77],
   ["pine-7", "pine", 110, -13, 36, 77],
   ["tree-8", "bush_c", 5, 383, 30, 65],
-  ["bush-2", "bush_b", 4, 247, 32, 25],
+  ["bush-2", "bush_b", 4, 227, 32, 25],
   ["bush-3", "bush_c", 160, 39, 32, 25],
   ["tree-1", "oak", -4.5, -14, 65, 78],
   ["pine-1", "pine", 50, -13, 36, 77],
   ["tree-2", "oak", 199.5, -14, 65, 78],
   ["pine-2", "pine", 250, -21, 36, 77],
-  ["tree-3", "oak", -4.5, 210, 65, 78],
+  ["tree-3", "oak", -4.5, 216, 65, 78],
   ["pine-3", "pine", 2, 331, 36, 77],
   ["tree-4", "oak", 227.5, 170, 65, 78],
   ["tree-5", "birch", 205, 311, 30, 65],
@@ -1774,8 +1759,8 @@
   ["wood-12", "holly", 250.5, 191, 27, 25],
   ["wood-13", "oak", 251.5, 138, 65, 78],
   ["wood-14", "sapling", 298.5, 205, 19, 27],
-  ["wood-15", "holly_b", -5.5, 231, 27, 25],
-  ["wood-16", "oak", -20.5, 202, 65, 78],
+  ["wood-15", "holly_b", -5.5, 227, 27, 25],
+  ["wood-16", "oak", -20.5, 214, 65, 78],
   ["wood-17", "pine", -6, 235, 36, 77],
   ["wood-18", "bramble_b", 18, 308, 36, 20],
   ["wood-19", "oak", -16.5, 258, 65, 78],

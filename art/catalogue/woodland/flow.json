@@ -1,14 +1,14 @@
 {
  "id": "woodland/flow",
  "file": "game/zones/woodland/art/flow.png",
- "sha256": "17ea57d4c760e75f49c6b73b875fb3521b75ec5f3e4f6145228461fa4cddb9ac",
+ "sha256": "511664a8da505054cd462a3ebe77459131f3d881892b0d93922d84064f80d6ce",
  "kind": "flow",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  1584,
-  832
+  1576,
+  3816
  ],
  "status": "pass",
  "counts": {
@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
+  "verdict": "pending",
   "date": "2026-11-04",
-  "note": "pass, round 2 (docs/reviews/2026-11-04-woodland-water.md, at 02c10a25). The current's marks lie with the flow: over 8 frames 149 horizontal dashes and 1 vertical (round 1: 227 and 68), and the dashes that can be tracked step 2 to 9 px east a frame. The cross sparkle is gone. The foam churns in every frame (356 to 512 texels change between frames), frame 0 is the still, the arcs travel and the spray stays on the water. Polish: about 125 one-tone single-texel specks a frame lie in dotted trails at 30 to 90 degrees to the current and step about 3 px south a frame (animate.water's lane coordinates use absolute x and y with a direction that varies per texel; this predates round 1). The rill and the channel feeding the fall are outside the animate box (plan water.animate, y >= 252 world), so the fall-top view shows still water."
+  "note": "re-rendered after round 2 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 02c10a25: ground fail on the terrace, flow pass): the terrace is a rock face across the whole zone with one foot line and a landing at the bridge, the stack joints are crevice stone, the crest fades and breaks, the foam clumps vary and shade blue-grey, the moving water runs in whole-texel lanes and covers the rill; detectors pass (0 findings). The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
  }
 }

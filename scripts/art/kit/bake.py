@@ -464,6 +464,21 @@ def bake(plan: dict, lib: dict | None = None):
             # the sheet and its plume, rings and ripples on the pool
             above = np.zeros_like(wm)
             above[:r0] = True
+            # the pool runs up to the sheet's foot: under the fall and the foam's reach the pool's
+            # own north bank (its grass lip and earth face, inside the water's mask) gives way to
+            # water in its shade, so the white water lands on the pool (the woodland review, 4 Nov:
+            # rocks.plunge paints only water)
+            from scripts.art.native import rocks as RK_
+            waters_ = [GD.FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in GD.FI]
+            for X in range(max(0, sx0 - RK_.PLUNGE_PAD), min(w, sx0 + sw + RK_.PLUNGE_PAD)):
+                col = wm[r1:min(h, r1 + SN.P(8)), X]
+                if not col.any():
+                    continue
+                open_ = np.nonzero(np.isin(cv[r1:min(h, r1 + SN.P(8)), X] // 8, waters_) & col)[0]
+                stop = r1 + (int(open_[0]) if len(open_) else len(col))
+                for Y in range(r1, stop):
+                    if wm[Y, X]:
+                        cv[Y, X] = C('water', 1)
             tmp = cv.copy()
             ST.fall_sheet(tmp, sx0, sw, r0, r1, seed=seed)
             ok = ndi.binary_erosion(wm, iterations=2) & ~above & ~span

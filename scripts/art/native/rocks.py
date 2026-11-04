@@ -219,7 +219,7 @@ def crest_breaks(w: int, rng) -> np.ndarray:
     straight on."""
     out = np.zeros(w, np.int32)
     n = int(rng.choice([2, 3, 3]))
-    gaps = [int(rng.integers(3, 8)) for _ in range(n - 1)]
+    gaps = [int(rng.integers(3, 6)) for _ in range(n - 1)]
     edge = [int(rng.integers(1, 4)), int(rng.integers(1, 4))]
     room = max(n * 4, w - sum(gaps) - sum(edge))
     cut = np.sort(rng.choice(np.arange(3, room - 2), n - 1, replace=False)) if n > 1 and room > 8 else []
@@ -257,14 +257,37 @@ def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 
                 cl, cr = int(a), int(b)
                 break
     lw = cr - cl
-    # the glassy tongue: the channel's last rows lighten as the water speeds up to the lip
-    for k in range(4):
-        Y = Y0 - 4 + k
-        if 0 <= Y < H:
-            for X in range(cl, cr):
-                if water[Y, X]:
-                    s = (X + 0.5 - cl) / lw
-                    cv[Y, X] = C('water', (4 if k >= 2 else 3) if s < 0.7 else 3)
+    # the glassy tongue: the channel's last rows lighten as the water speeds up to the lip, fading
+    # up into the channel in a checker over two or three rows, its top stepping a row or two
+    # (review round 2, R2-3: it was two flat rectangles with a ruler-straight top)
+    step_top = np.round(1.2 * np.sin(np.arange(lw) / 5.3 + seed) + 0.8 * np.sin(np.arange(lw) / 2.1 + 2 * seed)).astype(int)
+    for k in range(7):
+        Y = Y0 - 7 + k
+        if not (0 <= Y < H):
+            continue
+        for X in range(cl, cr):
+            if not water[Y, X]:
+                continue
+            s = (X + 0.5 - cl) / lw
+            kk = k - int(step_top[X - cl])               # rows into the tongue at this column
+            if kk < 0:
+                continue
+            if kk < 3:
+                if (X + Y) % 2 == 0:
+                    cv[Y, X] = C('water', 3)             # the fade: a checker into the channel
+            else:
+                cv[Y, X] = C('water', (4 if kk >= 5 else 3) if s < 0.7 else 3)
+    # two or three lit streaks in the channel converging on the lip
+    nst = int(rng.integers(2, 4))
+    for j in range(nst):
+        xa = cl + lw * (0.15 + 0.7 * (j + rng.uniform(0.2, 0.8)) / nst)
+        xb = xa + (cl + lw / 2.0 - xa) * 0.3                 # leaning in a little towards the lip's middle
+        L = int(rng.integers(9, 16))
+        for q in range(L):
+            Y = Y0 - 4 - L + q
+            X = int(round(xa + (xb - xa) * q / max(1, L - 1)))
+            if 0 <= Y < H and cl <= X < cr and water[Y, X]:
+                cv[Y, X] = C('water', 5 if q > L * 0.55 else 4)
     brk = crest_breaks(lw, rng)
     cols = {}
     foot = (cl, cr)
@@ -288,7 +311,7 @@ def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 
             if dy < 2:
                 c = C('water', 4) if s < 0.65 else C('water', 3)       # the glassy tongue over the edge
             elif dy == 2:
-                c = C('water', 5) if s < 0.7 else C('water', 4)       # the bend line, one texel
+                c = (C('water', 5) if s < 0.7 else C('water', 4)) if (d_ or not (cl <= X < cr)) else C('water', 3)
             elif d_ and dy < 3 + d_:
                 c = C('snow', 5) if s < 0.65 else C('snow', 4)        # the white water breaking under it
             elif d_ and dy < 4 + d_:
@@ -370,10 +393,13 @@ def plunge(cv: np.ndarray, xl: int, xr: int, y1: int, seed: int, t: int = 0, n: 
         u = rng.uniform(-1.0, 1.0)
         px = cx + u * (fw / 2.0 + PLUNGE_PAD * 0.4) * rng.uniform(0.6, 1.0)
         py = y1 + rng.uniform(-0.5, 5.5) * (1.0 - 0.45 * abs(u))
-        r = rng.uniform(3.0, 6.0) * (1.2 - 0.45 * abs(u))
+        r = rng.uniform(2.4, 6.5) * (1.25 - 0.55 * abs(u))
+        if k == 0:
+            u, r = 0.0, max(6.5, fw / 7.0)                  # one large heap under the sheet's middle
+            px, py = cx + rng.uniform(-1.5, 1.5), y1 + 2.5
         ph = rng.uniform(0.0, 2.0 * math.pi)
         swell = 1.0 + 0.28 * math.sin(a + ph)
-        if t and math.sin(a + ph) < -0.8:
+        if t and k and math.sin(a + ph) < -0.8:
             continue                                         # this clump has broken (its flecks below)
         dx, dy = 1.1 * math.sin(a + 1.7 * ph), 0.9 * math.sin(a + ph + 1.0)
         rx, ry = r * swell, r * 0.7 * swell
@@ -386,7 +412,10 @@ def plunge(cv: np.ndarray, xl: int, xr: int, y1: int, seed: int, t: int = 0, n: 
     out = sub.copy()
     gaps = ndi.binary_closing(foam, structure=np.ones((5, 5), bool)) & ~foam & ok & inside
     out[gaps] = C('water', 3)                                   # the pool showing between the clumps
+    # each clump lit on its upper left, its lower right third in the blue-greys (review round 2, R2-4)
     tone = np.where((best < 0.5) & (lit > 0.1), 5, np.where(best < 0.78, np.where(lit > -0.4, 4, 3), np.where(lit > 0.2, 3, 2)))
+    tone = np.where((lit < -0.55) & (best < 0.85), 2, tone)
+    tone = np.where((lit < -0.95) & (best >= 0.6), 1, tone)
     out[foam] = (FI['snow'] * 8 + tone)[foam]
     # the outer rim dissolves into the pool in a checker on the shaded side (Eastward 37's mist)
     fray = foam & (best > 0.82) & (lit < 0.3) & (((xx + yy).astype(int) + t) % 2 == 0)

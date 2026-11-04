@@ -12100,7 +12100,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -24.0,
+    -22.0,
     -40.0
    ],
    "reduced_motion": "hold:0",
@@ -12175,7 +12175,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -24.0,
+    -22.0,
     -88.0
    ],
    "reduced_motion": "hold:0",
@@ -12646,7 +12646,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -59.0,
+    -60.0,
     -40.0
    ],
    "reduced_motion": "hold:0",
@@ -12745,7 +12745,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -59.0,
+    -60.0,
     -88.0
    ],
    "reduced_motion": "hold:0",

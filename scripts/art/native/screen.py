@@ -298,42 +298,81 @@ def water_mask_soft(plan: dict, W: int, H: int) -> np.ndarray:
     return m
 
 
-def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> None:
-    """The ground the fall drops from (the woodland review, 4 Nov, after ground-rules.md: a
-    waterfall happens only at a tier edge or a rock face; the upper and lower lawns had read at one
-    level): plan['terrace'] raises the ground north of its rim row from x0 to x1 (world px) by a
-    face `face` world px tall, drawn as the cliff core draws a tier (softground.ledge: the raised
-    turf lighter, a grass lip in lumps over an earth face, a dark foot, its shadow on the lower
-    ground, a side wall where it ends), the water staying water at its foot; log steps carry the
-    path down the face (softground.log_steps; eastward-edges.md 6.1)."""
+def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
+    """The ground the fall drops from (the woodland reviews, 4 Nov, after ground-rules.md: a
+    waterfall happens only at a tier edge or a rock face): plan['terrace'] raises the whole ground
+    north of its rim row, across the zone, by a rock face `face` world px tall (eastward-edges 2.3,
+    as the cliff core's swatch draws it: softground.ledge kind 'rock', the under-lip shade, the
+    streak band, lit boulders with moss in their joints, vines and tufts hanging from the lip,
+    fallen stones at the foot). The upper lawn keeps its own field (ledge's lighter sibling over a
+    whole lawn flattened its sun patches); the lip hangs in its own green. Where the face meets
+    the river its foot is wet rock down to the water's light waterline (no turf lip, no old bank).
+    `crevices` (world px column spans) are joints of a masonry stack laid over the face: dark
+    crevice stone with moss. Log steps carry the path down the face to a landing one cell deep,
+    the ground under it kept as it was (the bridge's north abutment). Returns the fallen stones
+    (img, anchor, foot) for the caller to seat."""
     tr = plan.get('terrace')
     if not tr:
-        return
+        return []
     from . import softground as GD
-    h, w = cv.shape
     from .palette import sib, is_fam
-    rim = P(tr['y'], 0)
-    # the whole ground north of the rim is the upper tier (its water too), so no side wall runs
-    # north through the lawn; the face is kept only from x0 east (west of it the cascade's rocks,
-    # the heap and the oak grove stand on the slope)
+    h, w = cv.shape
+    rim, fh = P(tr['y'], 0), P(tr['face'], 0)
     top = np.zeros((h, w), bool)
     top[:rim, :] = True
     under = cv.copy()
     rng = np.random.default_rng(tr.get('seed', 461))
-    face, _items, lip = GD.ledge(cv, top, P(tr['face'], 0), rng, seed=tr.get('seed', 461), kind=tr.get('kind', 'earth'),
-                                 shadow_px=P(5, 0))
-    # the upper lawn keeps its own field (ledge's lighter sibling over a whole lawn merged its sun
-    # patches into flat areas and drew its lit band as a stray straw line; the rim reads by its lip,
-    # the under-lip shade and the face), and the lip hangs in the lawn's own green
+    face, items, lip = GD.ledge(cv, top, fh, rng, seed=tr.get('seed', 461), kind=tr.get('kind', 'rock'),
+                                earth=tr.get('earth', 'crag'), roots=tr.get('vines', 1.0), tufts=1.4, shadow_px=P(5, 0))
     cv[:rim] = under[:rim]
     lw = lip & (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & np.isin(cv // 8, [FI.get('grass_warm', -1), FI.get('leaf_warm', -1)])
     cv[lw] = sib(cv[lw], 'body')
-    cv[rim:, :P(tr['x0'], 0)] = under[rim:, :P(tr['x0'], 0)]
-    cv[wm] = under[wm]                                   # the river runs on at the face's foot
+    # the river at the foot: open water as it was; between the face's foot and the water, wet rock
+    water_open = wm & np.isin(under // 8, [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI])
+    cv[water_open] = under[water_open]
+    yy = np.arange(h)[:, None]
+    first_w = np.where(water_open[rim:].any(0), np.argmax(water_open[rim:], 0) + rim, h)
+    foot = np.where(face.any(0), h - 1 - np.argmax(face[::-1], 0), rim + fh)
+    gap = (yy > foot[None, :]) & (yy < first_w[None, :]) & (first_w[None, :] - foot[None, :] <= P(6, 0))
+    e_ = tr.get('earth', 'crag')
+    ec = e_ + '_cool' if e_ + '_cool' in FI else e_
+    # no turf at a foot that meets the water: the ledge's weeds over its last rows become wet rock
+    nearw = (first_w - foot <= P(6, 0))[None, :]
+    wee = nearw & (yy > foot[None, :] - P(3, 0)) & (yy <= foot[None, :]) & (is_fam(cv, 'grass') | is_fam(cv, 'leaf'))
+    cv[wee] = C(ec, 1)
+    cv[gap] = C(ec, 1)
+    cv[gap & (yy >= first_w[None, :] - 2)] = C(ec, 0)
+    wet_hi = gap & (yy < first_w[None, :] - 2) & (GD.nz(h, w, 3.0, tr.get('seed', 461) + 7) > 0.7)
+    cv[wet_hi] = C(e_, 2)                                            # wet stones catching the light
+    # the shade under the lip in horizontal slabs (eastward-edges 2.3's streak band): a few lit
+    # top edges and dark cracks, so the band is rock in shade, not one flat tone
+    r_ = np.random.default_rng(tr.get('seed', 461) + 11)
+    fld = ndi.gaussian_filter(r_.random((h, w // 5 + 1)), (0.7, 1.4))
+    fld = np.repeat((fld - fld.min()) / max(1e-6, fld.max() - fld.min()), 5, axis=1)[:, :w]
+    band = face & (yy >= rim) & (yy < rim + P(6, 0)) & np.isin(cv, [C(ec, 0), C(ec, 1)])
+    slab = band & (fld > 0.6)
+    cv[slab] = C(ec, 2)
+    cv[slab & ~GD.down(slab, 1)] = C(e_, 3)
+    cv[band & (fld < 0.22)] = C(ec, 0)
+    # the masonry stack's joints
+    fz = (yy >= rim) & (yy < rim + fh)
+    for (c0, c1) in tr.get('crevices', []):
+        jm = fz & (np.arange(w)[None, :] >= P(c0, 0)) & (np.arange(w)[None, :] < P(c1, 0))
+        cv[jm] = C('stone_cool', 0)
+        mo = jm & (GD.nz(h, w, 2.5, tr.get('seed', 461) + 9) > 0.62)
+        cv[mo] = C('leaf_cool', 1)
+        cv[mo & (GD.nz(h, w, 1.5, tr.get('seed', 461) + 10) > 0.6)] = C('leaf', 2)
     st = tr.get('steps')
     if st:
-        GD.log_steps(cv, P(st['x0'], 0), P(st['x1'], 0), P(tr['y'], 0) - 2, P(tr['y'] + tr['face'], 0),
-                     st.get('n', 6), np.random.default_rng(tr.get('seed', 461) + 1))
+        sx0, sx1 = P(st['x0'], 0), P(st['x1'], 0)
+        sfoot = P(tr['y'] + tr['face'] - st.get('landing', 8), 0)
+        # the landing: the ground under the steps' foot as it was (path and the bridge's abutment)
+        land = (yy >= sfoot) & (yy < rim + fh + P(2, 0)) & (np.arange(w)[None, :] >= sx0 - P(1, 0)) & \
+            (np.arange(w)[None, :] < sx1 + P(1, 0)) & ~water_open
+        cv[land] = under[land]
+        GD.log_steps(cv, sx0, sx1, rim - 2, sfoot, st.get('n', 5), np.random.default_rng(tr.get('seed', 461) + 1))
+        items = [it for it in items if not (sx0 - P(4, 0) <= it[2][0] <= sx1 + P(4, 0))]
+    return items
 
 
 def wobble_banks(m: np.ndarray, amp: float, seed: int) -> np.ndarray:
@@ -1203,7 +1242,11 @@ def terrain(plan: dict, layers: dict) -> tuple:
                                     for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])],
                            lambda c, d, x, y: DC.paste(c, d, x, y, shadow=True, shadow_dx=P(1), shadow_dy=P(0.5)))
             GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wm, np.random.default_rng(12))
-            terrace(cv, plan, wm)
+            fallen = terrace(cv, plan, wm)
+            if fallen:
+                GD.seat_stones(cv, wm, [(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
+                                        for (img_, anc_, (fx_, fy_)) in sorted(fallen, key=lambda it: it[2][1])],
+                               lambda c, d, x, y: DC.paste(c, d, x, y, shadow=True, shadow_dx=P(1), shadow_dy=P(0.5)))
         else:
             WA.paint_hd(cv, wm)            # (no reeds at density 3: their stalks bit stairs into the bank)
             footbridge_hd(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)

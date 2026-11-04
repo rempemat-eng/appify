@@ -56,7 +56,13 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
         # the ground's ripples follow (water.flow_dir), on the same 1/256 grid
         from .water import flow_dir
         ffx, ffy = flow_dir(mask)
-        fx, fy = np.round(ffx * 256).astype(np.int64), np.round(ffy * 256).astype(np.int64)
+        # snapped to the nearest of eight directions, so the lane coordinates below are whole
+        # texels: where the direction turned by a 1/256 step the lanes ran north-south through a
+        # lobe and broke into single specks drifting across the current (review round 2, R2-5)
+        sec = np.round(np.arctan2(ffy, ffx) / (np.pi / 4)).astype(np.int64) % 8
+        sx = np.array([1, 1, 0, -1, -1, -1, 0, 1])[sec]
+        sy = np.array([0, 1, 1, 1, 0, -1, -1, -1])[sec]
+        fx, fy = sx * 256, sy * 256
     depth = water_flow._depth(mask)
     run = mask & ~still & (depth >= 1)
     shift = int(round(4 * s))
@@ -89,6 +95,14 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
         streak = run & lane_on & (pos < length)
         if thin:
             streak &= (v % lane_w) == 0
+            # no lone texel: each lifted texel has a lifted neighbour along the flow
+            ax, ay = fx // 256, fy // 256
+            nb = np.zeros_like(streak)
+            for sgn in (1, -1):
+                yy_ = np.clip(ys + sgn * ay, 0, H - 1)
+                xx_ = np.clip(xs + sgn * ax, 0, W - 1)
+                nb |= streak[yy_, xx_]
+            streak &= nb
         head = streak & (pos == 0)
         dT[streak] = 1
         dT[head] = 2
