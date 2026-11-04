@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
+  "verdict": "pass",
   "date": "2026-11-04",
-  "note": "re-rendered after round 3 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, b2410e5e: ground fail on the stone over the lip, flow pass): the run-in is clear to the lip, the face has moss in its joints, the odd large boulder and ferns over a clean lip, the wet foot pebbles, the landing is open path, the moving water is two strips (the rill and the stream) with each lane on its own phase; detectors pass. The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 4 (3e19c29e). The rill strip (180 x 3024, 2.2 MB) passes: dashes run south, lanes now on their own phases (starts 250/223/265 and 80/71/80 against round 3 stepped 196/208/224), 0 to 2 lone texels a frame, joins the main strip at y 756 with no overlap or gap. Polish: the F4-1 cause also lifts about 12 texels a frame over reeds, rim stones and the jogs' north faces; the same fix removes it."
  }
 }

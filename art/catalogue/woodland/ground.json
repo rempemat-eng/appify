@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
+  "verdict": "fail",
   "date": "2026-11-04",
-  "note": "re-rendered after round 3 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, b2410e5e: ground fail on the stone over the lip, flow pass): the run-in is clear to the lip, the face has moss in its joints, the odd large boulder and ferns over a clean lip, the wet foot pebbles, the landing is open path, the moving water is two strips (the rill and the stream) with each lane on its own phase; detectors pass. The independent detail-auditor has not yet reviewed this render (the painter may not audit it)."
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 4 (3e19c29e). The art passes the checklist: R3-1 (clear run-in to the lip), R3-2 (moss, larger boulders, ferns), R3-3 (clean lip) and R3-4 (wet pebbles) are fixed; polish G4-1 (the larger face boulders read as cracked piles). It fails on L4-1, R3-5 not fixed: the bridge is unchanged from round 3 below y 846; its north abutment starts at y 846, 30 art px (10 world px) north of the waterline at y 876, its deck covers 26 art px of land, and the open landing is y 831-845, 15 art px (5 world px, 0.63 of a cell), against eastward-edges 5.3b (a landing one cell deep; the abutment at the water). Logic polish L4-2: two stone groups across the rill at y 378-401 read as a weir. Stays in the seeded fix queue."
  }
 }
