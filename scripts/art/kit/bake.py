@@ -184,7 +184,7 @@ def bake(plan: dict, lib: dict | None = None):
         e = idx.get(pc['piece']) or {}
         cx_, cy_ = int(pc['at'][0] // CELL), int((pc['at'][1] - 1) // CELL)
         if 0 <= cy_ < R and 0 <= cx_ < Cc:
-            if 'mask' in (e.get('shadow') or {}):
+            if 'mask' in (e.get('shadow') or {}) and (e.get('shadow') or {}).get('kind') != 'volume':
                 tree_c[cy_, cx_] = True
             if e.get('role') in ('door', 'gate', 'house'):
                 door_c[cy_, cx_] = True

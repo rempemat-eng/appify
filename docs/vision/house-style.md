@@ -84,6 +84,7 @@ Plaster, sand, earth and grass follow the ground recipe (rule 8).
 - Every object meets the ground with a contact line (the ground at tone 0 or 1) one pixel under its foot.
 - Overhangs (eaves, sills, porch roofs) throw a band on the wall below: two tones down in its first row, one in the next, a row deeper towards the east.
 - Round blob shadows only under round things (a barrel, a pot, a tree's crown).
+- **Building volume uses the measured depth** (eastward-edges 11, 4 Nov). A house's eave band, corners, foot, recesses and sills, and its ground column, take Eastward's measured luminance drops, reached by one to three steps down each texel's own ramp: soffit 62 %, eave core 45 to 50 %, fade 18 %, east corner 22 %, seam 42 %, foot 28 %, opening head 55 %, reveal and drip 40 %. The column is one, two and three tones from its edge in; on grass three steps are 63 % darker, inside Eastward's 45 to 63 %. Everything else keeps the two steps above.
 
 ### 7. Detail density: the Eastward bar
 

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/library",
  "file": "game/zones/crossroads/art/library.png",
- "sha256": "d338babd0ebac7f17787aafe3a4e32547d3ed09bf6143e7a76e7e2e38f20a91a",
+ "sha256": "3f679983ee19926eb99717d1ead52d7d1e14b47e36a0b1e8b08c032fea21b330",
  "kind": "library",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 4
  },
  "detail_bar": {
   "ours": {
    "patches": 186,
-   "tones": 25.634408602150536,
-   "shapes": 42.784946236559136
+   "tones": 25.478494623655912,
+   "shapes": 42.60215053763441
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.85,
-  "tones_ratio": 0.949,
-  "shapes_ratio": 0.85,
+  "ratio": 0.846,
+  "tones_ratio": 0.944,
+  "shapes_ratio": 0.846,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     264,
     173
    ],
-   "message": "crossroads/library: the red is lit from the right (luminance rises 56 L per H to the east)",
+   "message": "crossroads/library: the red is lit from the right (luminance rises 68 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -56,7 +56,19 @@
     84,
     173
    ],
-   "message": "crossroads/library: the red is lit from the right (luminance rises 50 L per H to the east)",
+   "message": "crossroads/library: the red is lit from the right (luminance rises 63 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    21,
+    174,
+    39,
+    196
+   ],
+   "message": "crossroads/library: the foliage is lit from the right (luminance rises 24 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -68,7 +80,7 @@
     310,
     232
    ],
-   "message": "crossroads/library: detail bar 0.85 of Eastward's prop band (25.6 tones, 42.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/library: detail bar 0.85 of Eastward's prop band (25.5 tones, 42.6 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

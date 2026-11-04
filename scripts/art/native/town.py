@@ -777,9 +777,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     def shade_masks(o):
         if o.get('cast') is not None:
             # a house: its volume's shadow (volume.house_cast, eastward-edges 11.6), a column east
-            # of it shaped by its roof and stacks, its core two tones down and its rim one
-            m, core = VO.cast_at(*o['cast'], o['foot'], W, H)
-            return m, core, CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
+            # of it shaped by its roof and stacks, at the measured depth: its outer band one tone,
+            # then two, its core three (the third step is laid by the loop below)
+            lv = VO.cast_at(*o['cast'], o['foot'], W, H)
+            return lv > 0, lv > 1, CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
         if hd and o['kind'] == 'oak':
             # density 3: a crown's shade lies under the crown as the woodland's does (scalloped, sun
             # flecks), from the trunk's foot east, not the sprite's long silhouette thrown on the lawn
@@ -867,6 +868,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv[m] = step(cv[m], -1)
         cv[core] = step(cv[core], -1)
         cv[contact] = step(cv[contact], -1)
+        if o.get('cast') is not None:
+            deep = VO.cast_at(*o['cast'], o['foot'], W, H) > 2
+            cv[deep] = step(cv[deep], -1)
     lone_fix(cv, keep=(cv % 8 >= 6) | drawn | keep_marks)        # (the blade marks are diagonal: they stay)
     # an object that comes and goes carries its cast and contact shadow in a picture of its own: the
     # ground under it stepped down, laid just above the ground in the same condition

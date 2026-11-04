@@ -1,7 +1,7 @@
 {
  "id": "crossroads/library_damage",
  "file": "game/zones/crossroads/art/library_damage.png",
- "sha256": "6d87dff1158660d9b3567b705b0796284556b6209afdadfe581c7ad05be83c14",
+ "sha256": "c8ffb7c640d72015c8f4a16604c08cbf8796560686972e5d5dd7e3e10f2439c3",
  "kind": "library",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 48,
-   "tones": 16.791666666666668,
-   "shapes": 28.6875
+   "patches": 53,
+   "tones": 16.20754716981132,
+   "shapes": 28.132075471698112
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.57,
-  "tones_ratio": 0.622,
-  "shapes_ratio": 0.57,
+  "ratio": 0.559,
+  "tones_ratio": 0.6,
+  "shapes_ratio": 0.559,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    111,
+    65,
     13,
-    148,
-    21
+    135,
+    20
    ],
-   "message": "crossroads/library_damage: the red is lit from the right (luminance rises 57 L per H to the east)",
+   "message": "crossroads/library_damage: the red is lit from the right (luminance rises 16 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -54,9 +54,9 @@
     18,
     13,
     295,
-    234
+    233
    ],
-   "message": "crossroads/library_damage: detail bar 0.57 of Eastward's prop band (16.8 tones, 28.7 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/library_damage: detail bar 0.56 of Eastward's prop band (16.2 tones, 28.1 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

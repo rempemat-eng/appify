@@ -1386,6 +1386,7 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
     units = spec.get('units') or [[0, w, paint]]
     busy = []
     openings = []
+    shapes = []                                # each opening's own shape (an arch's round head)
     stood = np.zeros(a.shape, bool)            # what stands off the wall (11.5), for the tests
     inside = INSIDE.get(trade, 'home')
     for (ux0, ux1, upaint) in units:
@@ -1397,8 +1398,12 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
                 # the frame and glass set into the wall (eastward-edges 11.2), inside the reveals
                 cx_, yt_, ww_, hh_ = L + q(wx), B - q(spec.get('win_top', 31)), q(spec.get('win_w', 13)), q(spec.get('win_h', 13))
                 box_ = (int(cx_ - ww_ / 2) + q(1.2), int(yt_) + q(1.2), int(cx_ + ww_ / 2) - q(1.2) + 1, int(yt_ + hh_))
-                VO.recess(a, box_)
+                shapes.append(VO.recess(a, box_))
                 openings.append(box_)
+                # its sill stands proud: a lit top, its drip on the wall (a planter throws its own)
+                sx0_, sx1_ = int(cx_ - ww_ / 2) - q(1.4), int(cx_ + ww_ / 2) + q(1.4)
+                if not spec.get('box', False):
+                    VO.sill(a, sx0_, sx1_, int(yt_ + hh_), int(yt_ + hh_) + q(1.8))
     doors = spec.get('doors', [[spec['door'], paint]] if 'door' in spec else [])
     if spec.get('kind') == 'forge':
         busy.append(forge_mouth(a, L + q(spec['door']), B, spec.get('mouth_w', 30), spec.get('mouth_h', 27), rng))
@@ -1410,7 +1415,7 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
             # the leaf set back in its frame (eastward-edges 11.2), above the threshold step
             w2_ = q(spec.get('door_w', 16))
             box_ = (int(L + q(dx) - w2_ / 2), B - q(spec.get('door_h', 26)), int(L + q(dx) + w2_ / 2), B - q(2.0))
-            VO.recess(a, box_)
+            shapes.append(VO.recess(a, box_, arch=spec.get('arch', False)))
             openings.append(box_)
     # each opening's centre in texels from the foot: on the half-cell grid (a multiple of 12)
     info['doors'] = [L + q(dx) - p.ax for (dx, _paint) in doors] if spec.get('kind') != 'forge' else [L + q(spec['door']) - p.ax]
@@ -1495,6 +1500,7 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
     info['rx'] = (rx0, rx1)
     info['y_eave'] = y_eave
     info['openings'] = openings
+    info['opening_shapes'] = shapes
     info['stood'] = stood
     info['wall'] = (L, R, y_e, B - fh)
     # its shadow on the ground (eastward-edges 11.6), laid by the zone painter and the kit index

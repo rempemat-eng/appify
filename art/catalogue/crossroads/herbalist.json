@@ -1,7 +1,7 @@
 {
  "id": "crossroads/herbalist",
  "file": "game/zones/crossroads/art/herbalist.png",
- "sha256": "ec3eea976ac370800b20ff327cd5610bf600d9671d7bc8360f3a1ab90fc2116a",
+ "sha256": "95fd7075bb910865bc4196a12d18858c731e7fabb8f5a5a231b3e6e2a678b0b8",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 5
+  "polish": 7
  },
  "detail_bar": {
   "ours": {
    "patches": 133,
-   "tones": 25.075187969924812,
-   "shapes": 46.669172932330824
+   "tones": 24.902255639097746,
+   "shapes": 46.1578947368421
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.927,
-  "tones_ratio": 0.929,
-  "shapes_ratio": 0.927,
+  "ratio": 0.917,
+  "tones_ratio": 0.922,
+  "shapes_ratio": 0.917,
   "passed": true,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     58,
     171
    ],
-   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 330 L per H to the east)",
+   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 337 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -53,10 +53,10 @@
    "box": [
     50,
     131,
-    81,
+    82,
     176
    ],
-   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 147 L per H to the east)",
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 151 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -68,7 +68,43 @@
     148,
     174
    ],
-   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 40 L per H to the east)",
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 103 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    118,
+    141,
+    124,
+    171
+   ],
+   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 60 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    168,
+    167,
+    215,
+    206
+   ],
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 15 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    168,
+    149,
+    216,
+    164
+   ],
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 13 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -81,18 +117,6 @@
     229
    ],
    "message": "crossroads/herbalist: the stone is lit from the right (luminance rises 7 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    118,
-    140,
-    124,
-    171
-   ],
-   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 6 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   }
  ],

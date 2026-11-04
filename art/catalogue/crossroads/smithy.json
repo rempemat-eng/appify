@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy",
  "file": "game/zones/crossroads/art/smithy.png",
- "sha256": "d64b2b62902dfff0b577cabdec2f2b83a807e6839a8fa7cb2d628e1f74318b02",
+ "sha256": "7afbd400b5c0461be1ff31c827c03b7dc8a7550b540da8f1e995b969f973d077",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 220,
-   "tones": 24.572727272727274,
-   "shapes": 43.39545454545455
+   "tones": 24.454545454545453,
+   "shapes": 43.36363636363637
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.862,
-  "tones_ratio": 0.91,
-  "shapes_ratio": 0.862,
+  "ratio": 0.861,
+  "tones_ratio": 0.906,
+  "shapes_ratio": 0.861,
   "passed": false,
   "group": "prop"
  },
@@ -68,7 +68,7 @@
     286,
     325
    ],
-   "message": "crossroads/smithy: detail bar 0.86 of Eastward's prop band (24.6 tones, 43.4 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy: detail bar 0.86 of Eastward's prop band (24.5 tones, 43.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/hut",
  "file": "game/zones/crossroads/art/hut.png",
- "sha256": "845d75b2c6f29dc81e5d1aa5b980b8918bdf35f3da2de96d5f85cb6ea1011577",
+ "sha256": "3a2b51930b2cdeecf817ad1d1f560d688623452d695be4d91aebfbd449f10481",
  "kind": "hut",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 118,
-   "tones": 22.872881355932204,
-   "shapes": 44.067796610169495
+   "tones": 22.440677966101696,
+   "shapes": 43.32203389830509
   },
   "band": {
    "tones": 27.0,
@@ -28,25 +28,13 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.847,
-  "tones_ratio": 0.847,
-  "shapes_ratio": 0.875,
+  "ratio": 0.831,
+  "tones_ratio": 0.831,
+  "shapes_ratio": 0.86,
   "passed": false,
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    46,
-    102,
-    52,
-    132
-   ],
-   "message": "crossroads/hut: the red is lit from the right (luminance rises 35 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",
@@ -56,7 +44,7 @@
     264,
     190
    ],
-   "message": "crossroads/hut: detail bar 0.85 of Eastward's prop band (22.9 tones, 44.1 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/hut: detail bar 0.83 of Eastward's prop band (22.4 tones, 43.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

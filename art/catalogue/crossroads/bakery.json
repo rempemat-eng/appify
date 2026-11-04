@@ -1,7 +1,7 @@
 {
  "id": "crossroads/bakery",
  "file": "game/zones/crossroads/art/bakery.png",
- "sha256": "ebef4b2bb9b7715194a499f2244d1dc1c13f18afb06d663b94f32ee8e88b13ed",
+ "sha256": "ee19085162e076231e225d4373bf04955edaee1f274334d17def66e166cec9f1",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 169,
-   "tones": 25.39644970414201,
-   "shapes": 44.514792899408285
+   "tones": 25.153846153846153,
+   "shapes": 44.30769230769231
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.884,
-  "tones_ratio": 0.941,
-  "shapes_ratio": 0.884,
+  "ratio": 0.88,
+  "tones_ratio": 0.932,
+  "shapes_ratio": 0.88,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     70,
     242
    ],
-   "message": "crossroads/bakery: the red is lit from the right (luminance rises 38 L per H to the east)",
+   "message": "crossroads/bakery: the red is lit from the right (luminance rises 64 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -56,7 +56,7 @@
     136,
     242
    ],
-   "message": "crossroads/bakery: the red is lit from the right (luminance rises 35 L per H to the east)",
+   "message": "crossroads/bakery: the red is lit from the right (luminance rises 61 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -80,7 +80,7 @@
     238,
     298
    ],
-   "message": "crossroads/bakery: detail bar 0.88 of Eastward's prop band (25.4 tones, 44.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery: detail bar 0.88 of Eastward's prop band (25.2 tones, 44.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

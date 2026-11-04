@@ -1,7 +1,7 @@
 {
  "id": "crossroads/bakery_damage",
  "file": "game/zones/crossroads/art/bakery_damage.png",
- "sha256": "ed9c7101392f60524203cdb5096e4fe4682d4867ac21d1d35e0634db05bb7150",
+ "sha256": "d6f88623130278eba8c4423eecc92e99899e2d1f067e8d1b7e42f3103f20b1b0",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 26,
-   "tones": 18.076923076923077,
-   "shapes": 32.03846153846154
+   "patches": 27,
+   "tones": 18.62962962962963,
+   "shapes": 33.925925925925924
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.636,
-  "tones_ratio": 0.67,
-  "shapes_ratio": 0.636,
+  "ratio": 0.674,
+  "tones_ratio": 0.69,
+  "shapes_ratio": 0.674,
   "passed": false,
   "group": "prop"
  },
@@ -41,10 +41,10 @@
    "box": [
     14,
     55,
-    211,
-    300
+    217,
+    299
    ],
-   "message": "crossroads/bakery_damage: detail bar 0.64 of Eastward's prop band (18.1 tones, 32.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery_damage: detail bar 0.67 of Eastward's prop band (18.6 tones, 33.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

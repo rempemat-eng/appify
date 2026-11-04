@@ -1,7 +1,7 @@
 {
  "id": "crossroads/north_cottages",
  "file": "game/zones/crossroads/art/north_cottages.png",
- "sha256": "3b0971a0a26e1856dcb6c92828f80ad633689708a1002ea7bf5babb82cd4f4db",
+ "sha256": "aa2f252f4591b5666b0486abb4ce0abeaa34b3e483469740448c936ec7ecdcec",
  "kind": "north_cottages",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 5
  },
  "detail_bar": {
   "ours": {
    "patches": 201,
-   "tones": 25.681592039800996,
-   "shapes": 43.52238805970149
+   "tones": 25.597014925373134,
+   "shapes": 43.34825870646766
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.864,
-  "tones_ratio": 0.951,
-  "shapes_ratio": 0.864,
+  "ratio": 0.861,
+  "tones_ratio": 0.948,
+  "shapes_ratio": 0.861,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,31 @@
     202,
     218
    ],
-   "message": "crossroads/north_cottages: the violet is lit from the right (luminance rises 17 L per H to the east)",
+   "message": "crossroads/north_cottages: the violet is lit from the right (luminance rises 72 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    204,
+    212,
+    251,
+    251
+   ],
+   "message": "crossroads/north_cottages: the violet is lit from the right (luminance rises 18 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    204,
+    194,
+    252,
+    209
+   ],
+   "message": "crossroads/north_cottages: the violet is lit from the right (luminance rises 16 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -68,7 +92,7 @@
     310,
     274
    ],
-   "message": "crossroads/north_cottages: detail bar 0.86 of Eastward's prop band (25.7 tones, 43.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/north_cottages: detail bar 0.86 of Eastward's prop band (25.6 tones, 43.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
