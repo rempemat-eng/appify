@@ -121,7 +121,15 @@ def write_pieces(force=False):
 # ------------------------------------------------------------------------------------------------
 # the painters (over a baked ground, in palette codes)
 # ------------------------------------------------------------------------------------------------
-HEATHER = [('soot', 'dusk_cool', 'dusk_cool'), ('soot', 'earth_cool', 'dusk_cool'), ('dusk_cool', 'earth_cool', 'earth_cool')]
+HEATHER_OLD = [('soot', 'earth_cool', 'earth'), ('earth_cool', 'earth', 'earth_warm'), ('soot', 'timber_cool', 'earth_warm'),
+               ('soot', 'grass_warm', 'earth')]              # old growth: warm brown and olive
+HEATHER_BLOOM = [('soot', 'soot', 'dusk_cool'), ('soot', 'earth_cool', 'dusk_cool')]   # bloom: mauve-grey, mauve lit
+
+
+def _heather_sets(h):
+    """A clump's ramps: about a third in bloom (low-chroma mauve, grey in the shade), the rest old
+    growth in warm brown and olive (Claude A, round 4)."""
+    return (HEATHER_BLOOM, h / 0.33) if h < 0.33 else (HEATHER_OLD, (h - 0.33) / 0.67)
 BILBERRY = [('soot', 'leaf_cool', 'grass_cool'), ('leaf_cool', 'grass_cool', 'leaf')]
 GRIT = [('stone_cool', 'stone_warm', 'ashlar_warm'), ('earth_cool', 'stone_warm', 'ashlar_warm'), ('stone_cool', 'stone', 'ashlar')]
 BLEACHED = [('earth_cool', 'sand_cool', 'sand_cool'), ('earth_cool', 'earth', 'sand_cool')]
@@ -160,6 +168,13 @@ def heath(cv, m, seed, keep=None, calm=None):
     mid = K.noise((H, W), rng, 9.0)
     band = K.noise((H, W), rng, 22.0)
     berry = K.noise((H, W), rng, 12.0)
+    # every boundary below broken at the pixel scale (2 x 2 steps), not a smooth vector outline
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    J = K.vhash(Xg // 2, Yg // 2, seed + 21) - 0.5
+    n1 = n1 + 0.12 * J
+    mid = mid + 0.12 * J
+    band = band + 0.1 * J
+    berry = berry + 0.1 * J
     # the masses: the low half of a broad field, its edge roughened, kept off the grazed ground
     field = big + 0.32 * (mid - 0.5)
     open_m = m & ~calm
@@ -180,6 +195,8 @@ def heath(cv, m, seed, keep=None, calm=None):
     floor = mass & (depth > 5)
     rpaint(cv, floor, FLOOR, 1.2 + 0.6 * (n1 > 0.6), n1)
     rpaint(cv, mass & ~floor, OLIVE, t - 0.5, 0.2)
+    near = ndi.distance_transform_edt(~mass) < 14
+    edge_calm = calm & ~ndi.binary_erosion(calm, iterations=3)
     cands = []
     sp = 7
     for gy in range(0, H + sp, sp):
@@ -196,11 +213,15 @@ def heath(cv, m, seed, keep=None, calm=None):
                     continue
                 size = 3.5 + 6.0 * min(1.0, dd / 24.0) + 1.8 * h
                 cands.append((cy, cx, 'heather', h, size))
+            elif calm[iy, ix] and near[iy, ix] and r < 0.3:      # a few clumps stepping onto the grazing
+                cands.append((cy, cx, 'heather', h, 3.0 + 2.0 * h))
             elif bilb[iy, ix] and r < 0.55:
                 cands.append((cy, cx, 'bilberry', h, 3.5 + 1.5 * h))
             elif straw[iy, ix] and r < 0.2:
                 cands.append((cy, cx, 'tussock', h, 0))
             elif not calm[iy, ix] and r < 0.012:
+                cands.append((cy, cx, 'tussock', h, 0))
+            elif edge_calm[iy, ix] and r < 0.2:            # tussocks along the grazing's edge
                 cands.append((cy, cx, 'tussock', h, 0))
             elif calm[iy, ix] and r < 0.004:
                 cands.append((cy, cx, 'tussock', h, 0))
@@ -235,11 +256,12 @@ def heath(cv, m, seed, keep=None, calm=None):
         if kind == 'heather':
             tt = 2.4 + 1.2 * lam - 0.8 * ((d > 0.7) & (Y > cy + ry * 0.3))
             tt = tt + 1.0 * ((sprig > 0.78) & (lam > -0.1)) - 1.0 * ((sprig < 0.16) & (lam < 0.3))
-            rpaint(sub, body, HEATHER, tt, h)
+            sets, mx = _heather_sets(h)
+            rpaint(sub, body, sets, tt, mx)
             heather[sy, sx] |= body
-            if h > 0.45:                                 # lilac flower heads on the lit crown
+            if h < 0.33:                                 # the bloom's flower heads on the lit crown
                 fl = body & (lam > 0.25) & (sprig > 0.9)
-                sub[fl] = C('dusk_cool', 4)
+                sub[fl] = C('dusk_cool', 3)
         else:
             tt = 2.4 + 1.3 * lam - 1.0 * ((d > 0.6) & (Y > cy)) + 1.0 * ((sprig > 0.8) & (lam > 0))
             rpaint(sub, body, BILBERRY, tt, h)
@@ -323,8 +345,9 @@ def _heather_clump(cv, ok, cx, cy, rx, h):
     sprig = K.vhash(X.astype(int) // 2, Y.astype(int) // 2, int(h * 997))
     tt = 2.4 + 1.2 * lam - 0.8 * ((d > 0.7) & (Y > cy + ry * 0.3))
     tt = tt + 1.0 * ((sprig > 0.78) & (lam > -0.1)) - 1.0 * ((sprig < 0.16) & (lam < 0.3))
-    rpaint(sub, body, HEATHER, tt, h)
-    sub[body & (lam > 0.25) & (sprig > 0.9) & (h > 0.45)] = C('dusk_cool', 4)
+    sets, mx = _heather_sets(h)
+    rpaint(sub, body, sets, tt, mx)
+    sub[body & (lam > 0.25) & (sprig > 0.9) & (h < 0.33)] = C('dusk_cool', 3)
     return body
 
 
@@ -528,11 +551,14 @@ def dress(plan, img_with, img_without, lib=None):
         for dx, dy in g.get('footprint') or [[0, -1]]:
             c, r = int(x // K.CELL) + dx, int((y - 1) // K.CELL) + dy + 1
             held[max(0, r * K.CELL):max(0, (r + 1) * K.CELL), max(0, c * K.CELL):max(0, (c + 1) * K.CELL)] = True
-    nc = K.noise((h, w), np.random.default_rng(78), 6.0)
-    calm = ndi.distance_transform_edt(~held) < 4 + 16 * nc       # a ragged grazed margin
+    nc = K.noise((h, w), np.random.default_rng(78), 9.0)
+    Yg, Xg = np.mgrid[0:h, 0:w]
+    jit = (K.vhash(Xg // 2, Yg // 2, 79) - 0.5) * 6
+    calm = ndi.distance_transform_edt(~held) < 4 + 24 * nc + jit  # a ragged grazed margin, wobbling
     if heath_m.any():
-        heather = heath(cv, heath_m, shapes.get('heath', (None, 1301))[1], keep=trods, calm=calm)
-        dress.cover = float(heather.sum()) / max(1, int(heath_m.sum()))
+        grow = heath_m | outer                      # the verge's outer turf grazed, but clumps may step in
+        heather = heath(cv, grow, shapes.get('heath', (None, 1301))[1], keep=trods, calm=calm | outer)
+        dress.cover = float((heather & heath_m).sum()) / max(1, int(heath_m.sum()))
         paint_mask |= heath_m
     if hag.any():
         peat(cv, hag, shapes['peat'][1])

@@ -477,8 +477,9 @@ def _stoops(sc, gate='ew'):
             sc.box(u0, -5.5, 0, u1, 5.5, 54, K_GRIT, base=2.7, k=1.7, owner=0, tag='stoop', round_=2.5, mix=0.15 if sgn < 0 else 0.4)
             sc.box(u0 - 0.5, -6.5, 0, u1 + 0.5, 6.5, 7, K_GRIT, base=2.6, k=1.4, owner=0, tag='stoop', round_=1.0, mix=0.6)
         else:
-            sc.box(-5.5, u0, 0, 5.5, u1, 54, K_GRIT, base=2.7, k=1.7, owner=0, tag='stoop', round_=2.5, mix=0.15 if sgn < 0 else 0.4)
-            sc.box(-6.5, u0 - 0.5, 0, 6.5, u1 + 0.5, 7, K_GRIT, base=2.6, k=1.4, owner=0, tag='stoop', round_=1.0, mix=0.6)
+            sc.box(-5.5, u0, 0, 5.5, u1, 54, K_GRIT, base=2.6, k=2.3, owner=0, tag='stoop', round_=2.5, mix=0.15 if sgn < 0 else 0.4,
+                   tex='stone')
+            sc.box(-6.5, u0 - 0.5, 0, 6.5, u1 + 0.5, 7, K_GRIT, base=2.6, k=1.4, owner=0, tag='stoop', round_=1.0, mix=0.6, tex='stone')
 
 
 def _gate_leaf_ns(sc, a):
@@ -491,10 +492,12 @@ def _gate_leaf_ns(sc, a):
     r0, r1 = oy + ya - 42, oy + yb - 4
     for r in range(r0, r1):
         k = (r - r0)
-        t = 3.2 + (0.9 if k % 8 in (0, 1) else 0.0) - (0.8 if k % 8 == 7 else 0.0)
+        t = 3.2 + (0.9 if k % 8 in (0, 1) else 0.0) - (0.8 if k % 8 == 7 else 0.0) + (hsh(k // 2, 31) - 0.5) * 1.2
         for dx, dt in ((-1, 1.0), (0, 0.0), (1, -1.4)):
             if 0 <= r < H_:
-                a[r, ox + dx] = C('timber_warm' if t + dt >= 4 else 'timber', t + dt)
+                tv = int(round(min(5, max(0, t + dt))))
+                fam = 'timber_warm' if tv >= 4 else ('timber_cool' if tv <= 1 or hsh(k // 2, 32) > 0.7 else 'timber')
+                a[r, ox + dx] = C(fam, tv)
     for r in (r0 + 6, r0 + 7, r1 - 10, r1 - 9):
         a[r, ox - 1:ox + 2] = C('iron', 2)
 
@@ -956,7 +959,8 @@ def gorse(variant='a', seed=17):
     sprays' tips on the lit side; no stems."""
     rng = np.random.default_rng(seed + (0 if variant == 'a' else 50))
     sc = K.Scene(-50, 50, -44, 20, 80)
-    G = [('leaf_cool', 'leaf_cool', 'leaf'), ('grass_cool', 'leaf_cool', 'leaf'), ('leaf_cool', 'grass_cool', 'grass')]
+    G = [('leaf_cool', 'leaf_cool', 'leaf'), ('grass_cool', 'leaf_cool', 'leaf'), ('leaf_cool', 'grass_cool', 'grass'),
+         ('soot', 'leaf_cool', 'leaf_warm')]
     domes = ([(-13, -7, 13, 12, 9, 13), (10, -9, 14, 13, 9, 15), (-1, -17, 15, 12, 8, 16), (-21, 2, 8, 8, 6, 9),
               (17, 1, 9, 9, 6, 10), (1, 0, 10, 11, 7, 11)] if variant == 'a' else
              [(-8, -5, 11, 11, 8, 12), (9, -4, 10, 10, 8, 11), (0, -12, 12, 10, 8, 14), (-1, 2, 9, 9, 6, 9)])
@@ -971,7 +975,7 @@ def gorse(variant='a', seed=17):
             cz = z * 0.5 + rz * 0.8 * math.sin(ph)
             up = math.sin(ph) > 0.6
             rx_, rz_ = (rng.uniform(2.4, 3.2), rng.uniform(6.0, 8.5)) if up else (rng.uniform(5.0, 7.0), rng.uniform(2.6, 3.4))
-            sc.ellipsoid(cx, cy, cz, rx_, rng.uniform(2.4, 3.2), rz_, G, base=2.1 + 0.4 * math.sin(ph), k=1.6, tag='spray',
+            sc.ellipsoid(cx, cy, cz, rx_, rng.uniform(2.4, 3.2), rz_, G, base=2.0 + 0.4 * math.sin(ph), k=2.0, tag='spray',
                          mix=rng.random())
             tips.append((cx + (0 if up else (rx_ if math.cos(th) > 0 else -rx_)), cy, cz + (rz_ if up else 0)))
     sc.render()
@@ -1298,32 +1302,27 @@ def shepherds_hut(seed=29):
     tt = tt + np.round((lump - 0.5) * 2.0) * 0.5
     rpaint(a, th_m, THATCH, tt, 0.25 + 0.5 * (K.noise((H, W), np.random.default_rng(seed + 8), 6.0) > 0.6))
     tagm = {t: np.isin(lab, [i for i, s_ in enumerate(sc.solids) if s_.tag == t]) for t in ('thatch', 'ridge', 'chimney', 'weight', 'core')}
-    # soft lumpy clusters: tufts of laid heather on a staggered grid, each lit on its upper west and
-    # tucked dark under its lower east rim, so the mass reads as bunched stems, not a smooth shell
+    # the thatch laid in long fibrous strokes (Claude A, round 4): bundles 3 to 5 texels wide running
+    # down the slope, bowed with the bulge, each lit along its west edge and dark in the gap to its
+    # east, its lower end tucked dark under the next course, the courses staggered bundle to bundle
     Yg, Xg = np.mgrid[0:H, 0:W]
     L_ = sc.light()
-    for gy in range(0, H, 7):
-        for gx in range(0, W, 10):
-            cx = gx + (5 if (gy // 7) % 2 else 0) + (hsh(seed, gx, gy, 64) - 0.5) * 4
-            cy = gy + (hsh(seed, gx, gy, 65) - 0.5) * 2
-            ix, iy = int(cx), int(cy)
-            if not (0 <= iy < H and 0 <= ix < W) or not tagm['thatch'][iy, ix] or hsh(seed, gx, gy, 67) < 0.12:
-                continue
-            y0, y1, x0, x1 = max(0, iy - 5), min(H, iy + 6), max(0, ix - 8), min(W, ix + 9)
-            Yw, Xw = Yg[y0:y1, x0:x1] + 0.5, Xg[y0:y1, x0:x1] + 0.5
-            rx, ry = 5.0 + hsh(seed, gx, gy, 66) * 2.0, 3.6
-            d = ((Xw - cx) / rx) ** 2 + ((Yw - cy) / ry) ** 2
-            sub = a[y0:y1, x0:x1]
-            on = tagm['thatch'][y0:y1, x0:x1]
-            body = on & (d <= 1.0)
-            off = (hsh(seed, gx, gy, 68) - 0.5) * 1.6
-            rpaint(sub, body, LUMPS, tt[y0:y1, x0:x1] + off, hsh(seed, gx, gy, 69))
-            rim = on & (d > 0.5) & (d <= 1.0) & ((Yw - cy) > 0.8) & ((Xw - cx) > -rx * 0.4)
-            crown = on & (d <= 0.3) & ((Yw - cy) < 0) & (L_[y0:y1, x0:x1] > 0.1)
-            tick = on & (d <= 0.5) & ((Yw - cy) < -0.5) & ((Xw - cx) < 0) & (L_[y0:y1, x0:x1] > 0.2) & ((Xw.astype(int) % 3) == 0)
-            V._step(sub, rim, -1)
-            V._step(sub, crown, 1)
-            V._step(sub, tick, 1)
+    thm0 = tagm['thatch']
+    rows_t = np.nonzero(thm0.any(1))[0]
+    yt0, yb0 = rows_t.min(), rows_t.max()
+    vv = np.clip((Yg - yt0) / max(1, yb0 - yt0), 0, 1)
+    xw = (Xg - sc.ox + 0.5) / (1 + 0.07 * np.sin(np.pi * vv))
+    bi, bpos, bnxt = _stone_joints(xw, seed + 40, lo=3.0, hi=5.99)
+    blen = 9 + (K.vhash(bi, 0, seed + 41) * 7).astype(int)            # a course 9 to 15 rows long
+    boff = (K.vhash(bi, 1, seed + 42) * blen).astype(int)
+    ry_ = (Yg + boff) % blen
+    course = (Yg + boff) // blen
+    tone = tt + (K.vhash(bi, course, seed + 43) - 0.5) * 1.4
+    tone = np.where(bpos < 1.0, tone + 0.9, tone)                       # the bundle's lit west edge
+    tone = np.where(bnxt < 1.0, tone - 1.1, tone)                       # the gap to the next bundle
+    tone = np.where(ry_ >= blen - 2, tone - 0.9, tone)                  # tucked under the next course
+    tone = np.where((ry_ <= 1) & (L_ > 0.15), tone + 0.6, tone)        # the course's butt ends catching light
+    rpaint(a, thm0, LUMPS, tone, K.vhash(bi, course, seed + 44))
     # moss on the thatch's north (back) side and down its shaded east end
     moss = tagm['thatch'] & ((sc.gy < -D / 2.0 - 4) | (sc.n[..., 0] > 0.55)) & (K.noise((H, W), np.random.default_rng(seed + 3), 2.4) > 0.55)
     spr = K.vhash(Xg // 2, Yg // 2, seed + 9)
