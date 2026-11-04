@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
+  "verdict": "fail",
   "date": "2026-11-04",
-  "note": "re-rendered with the 4 Nov banks (eastward-edges.md 5.3a) on claude-a/water-polish; detectors pass (0 blocker, 0 fault, 0 polish). The independent detail-auditor checklist has not been run yet: the painter author may not audit it (.claude/agents/detail-auditor.md)."
+  "note": "fail (docs/reviews/2026-11-04-woodland-water.md, at 4881fee7). Fault 1: the plunge pool's foam is a flat two-tone white plate, 118 x 19 art px (x 183-301, y 877-896), two tones split by a hard vertical seam at x 253, twice the sheet's width, hard outline, no spray, bubbles, rings or churn: the calibration's flat white bar (W3) turned on its side. Polish: the crest is a 53 x 6 rectangle overhanging the channel 3 px each side; six vertical streaks across the east-flowing stream; repeated arrowhead deep cores and a geometric bend in the rill; a ruler-straight cut through the north rubble band. The 5.3a banks pass (side and south rims earth_cool 1 then RIM_LINE, north faces with a light waterline, stones with wet feet)."
  }
 }

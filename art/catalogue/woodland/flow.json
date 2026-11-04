@@ -21,8 +21,8 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
+  "verdict": "fail",
   "date": "2026-11-04",
-  "note": "re-rendered with the 4 Nov banks (eastward-edges.md 5.3a) on claude-a/water-polish; detectors pass (0 blocker, 0 fault, 0 polish). The independent detail-auditor checklist has not been run yet: the painter author may not audit it (.claude/agents/detail-auditor.md)."
+  "note": "fail (docs/reviews/2026-11-04-woodland-water.md, at 4881fee7). Fault 1: about ten 1 px vertical marks (3 to 15 px long) a frame drift south across the east-flowing stream in all 8 frames (columns x 448-848, y 854-928), reading as rain or scratches; the current's streaks must lie with the flow. Fault 2: the plunge foam does not churn (0 px of change in five of the eight frames, 32 to 80 px in the others), so the fall pours into a still white plate. Polish: four-armed cross sparkles instead of glints in pairs."
  }
 }
