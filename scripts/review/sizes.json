@@ -1968,5 +1968,11 @@
   "default": "adult",
   "hero": "bramble",
   "_about": "body height excludes thin equipment (a spear, a staff) and floating parts: only rows at least 6 art px wide in the body's connected mass count"
- }
+ },
+ "unsized_rulings": [
+  {"kind": "churns", "not": "churn stand", "why": "sizes.json's churns note: a churn stand is not a churn; the stand and its churns are sized by the piece's own spec", "ruled": "round 6 of the Act 1 detail audit (docs/reviews/2026-11-04-act1-props.md), justified"},
+  {"kind": "fence", "not": "sluice", "why": "a sluice gate between its piers is not a run of fence with a gate in it", "ruled": "round 6 of the Act 1 detail audit, justified (no sluice, weir or gate kind)"},
+  {"kind": "gate", "not": "sluice", "why": "a sluice gate is a timber shutter between masonry piers, not a field or garden gate", "ruled": "round 6 of the Act 1 detail audit, justified (no sluice, weir or gate kind)"},
+  {"kind": "kerb_stone", "not": "platform's edge", "why": "one cell of a platform's edge is a piece of a run, not a stone set on edge in the turf", "ruled": "round 6 of the Act 1 detail audit, justified"}
+ ]
 }

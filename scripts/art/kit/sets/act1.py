@@ -592,9 +592,13 @@ def lobster_pots(variant='a', seed=103):
         t = np.where(endf, 2.0 + 0.4 * hgt, t)
         # the weave between the hoops: willow courses as 2 x 1 lit and dark pairs, alternating course
         # by course (a basket's weave, not a checker of single texels)
+        # (R6-9) a staggered weave, not a checker: each course of 2 rows carries willow runs lit on its
+        # top row, broken by a dark stake every 5 texels, the stakes stepping a texel along from course
+        # to course; the course's lower row and the stakes a full tone under the runs (R5-8). (Runs of
+        # 2 with a texel's gap measured 55 % cluster noise on creel b; runs of 4 keep it at 45 %.)
         crs = (Yg // 2)
-        pair = ((Xg // 2) + crs) % 2 == 0
-        t = np.where(d & ~endf & pair, t + 0.5, np.where(d & ~endf, t - 0.5, t))      # a full tone apart (R5-8)
+        mark = ((Yg % 2) == 0) & (((Xg + crs) % 5) < 4)
+        t = np.where(d & ~endf & mark, t + 0.5, np.where(d & ~endf, t - 0.5, t))
         rpaint(a, d, WEAVE, t, np.clip(((crs % 3) + 0.5) / 3.0, 0, 0.999))
         arc = d & endf & ~ndi.binary_erosion(d | ~endf, iterations=1)
         rim_d = endf & (np.hypot(Xg + 0.5 - dc_x, Yg + 0.5 - (ytop_ + rd)) > rd - 1.5) & (Yg + 0.5 < ytop_ + rd)
@@ -674,100 +678,215 @@ def mooring_bitt(seed=105):
             if k == 0:
                 a[yy - 1, x] = C('sand_cool', 1)                          # the seam to the turn above
     _laid_rope(a, [(ox - 4.5, oy - 4), (ox - 12, oy - 1.5), (ox - 20, oy - 1)], 2.0, seed + 3)
-    _rope_coil(a, ox - 26, oy - 1, rings=3, rx=7.5, ry=3.6, seed=seed)
+    _rope_coil(a, ox - 24, oy - 1, rings=3, rx=7.5, ry=3.6, seed=seed)
     K.despeckle(a, size=1)
     return K.crop(a, ox, oy)
 
 
-def boat_beached(seed=107):
-    """A clinker rowing boat drawn up on the shingle above the tide: its strakes lapped down the hull
-    (each lit along its lower edge), blue with a white sheer strake and red below the waterline; inside,
-    its bottom boards, ribs and two thwarts, an oar laid across them; a stone chocked under the bow.
+BOAT_L, BOAT_B = 128.0, 20.0                                             # 3 m long, 1.3 m in the beam (half-beam 20 in plan)
 
-    v7 (Claude A's ruling on 5 Nov): at the size guide's rowing_boat, a 3 m boat 1.3 m in the beam
-    and 0.6 m to its gunwale; the strakes, ribs and floor boards keep their texel widths, so the bigger
-    hull has more of them, not wider ones."""
-    sc = K.Scene(-72, 72, -32, 24, 54)
-    sc.ellipsoid(0, -5, 2, 63, 20, 17, [('water_cool', 'water_cool', 'water')], base=2.2, k=1.6, tag='hull', mix=0.3, flat=1.1)
-    sc.ellipsoid(-50, 5, 4, 8, 6, 5, GRANITE, base=2.6, k=1.7, tag='stone', mix=0.4, flat=1.5)
+
+def _boat_geom(u):
+    """The hull at u (-1 the stem .. 1 the transom): (half-beam at the gunwale, the gunwale's height,
+    the keel's height). The gunwale is the widest line; the sheer rises to the stem and a little to
+    the transom; the keel runs on the ground amidships and rises in a forefoot to the stem and to the
+    transom's foot."""
+    u = np.asarray(u, float)
+    b = np.where(u < 0, BOAT_B * np.clip(1 - u * u, 0, 1) ** 0.5, BOAT_B * (1 - 0.38 * np.abs(u) ** 2.2))
+    zg = 25.0 + np.where(u < 0, 6.0, 3.0) * u * u                         # 0.6 m to the gunwale amidships
+    zk = np.where(u < -0.4, 14.0 * np.clip((-u - 0.4) / 0.6, 0, 1) ** 1.8,
+                  np.where(u > 0.55, 6.0 * np.clip((u - 0.55) / 0.45, 0, 1) ** 1.6, 0.0))
+    return b, zg, zk
+
+
+def boat_beached(seed=107):
+    """A 3 m clinker rowing boat drawn up on the shingle above the tide, in three-quarter view with its
+    stern turned a little to the viewer (round 6 of the detail audit, R6-2: built from the gunwale
+    outward, so the gunwale is the widest line and only the near, south side of the hull shows). The
+    stem is a post at the gunwale's west point running down to the forefoot; the transom a flat board
+    at the east point with its own plane. Under the white sheer strake the south side's lapped strakes
+    converge into the stem and the transom, each lit on its upper edge over the land's shade, and the
+    side turns under to the keel along a curve lowest amidships, blue, then red below the waterline.
+    Inside: the far inner planking lit, floor boards with frames across them, two thwarts and an oar
+    laid across them; a stone chocked under the forefoot; a contact shadow under the keel."""
+    yaw = 0.2
+    ca, sa = math.cos(yaw), math.sin(yaw)
+    half = BOAT_L / 2.0
+    sc = K.Scene(-74, 74, -34, 30, 40)
+    # the stone under the forefoot (boat frame x = -55, y = 0), placed in the scene's frame
+    sx, sy = -55.0, 1.0
+    sc.ellipsoid(sx * ca - sy * sa, sx * sa + sy * ca, 3.5, 7.5, 5.5, 5.0, GRANITE, base=2.6, k=1.7, tag='stone', mix=0.4, flat=1.5)
     sc.render()
     a = sc.shade(crevice=0.0, rim=0.0)
     _rich(sc, a, ('stone',), seed)
     H, W = a.shape
+    ox, oy = sc.ox, sc.oy
+    zb = sc.depth.copy()
+    part = np.zeros((H, W), int)
+    PU, PT, PY, PZ = (np.zeros((H, W)) for _ in range(4))
+
+    def put(x, y, z, pt, u, t):
+        x, y, z, u, t = (np.broadcast_to(np.asarray(v, float), np.broadcast(x, y, z).shape).ravel() for v in (x, y, z, u, t))
+        X = np.floor(x * ca - y * sa + ox).astype(int)
+        Y = np.floor(x * sa + y * ca - z + oy).astype(int)
+        ok = (X >= 0) & (X < W) & (Y >= 0) & (Y < H)
+        X, Y, x, y, z, u, t = X[ok], Y[ok], x[ok], y[ok], z[ok], u[ok], t[ok]
+        o = np.argsort(z, kind='stable')                                 # the nearest (highest on its ray) last
+        X, Y, y, z, u, t = X[o], Y[o], y[o], z[o], u[o], t[o]
+        keep = z >= zb[Y, X] - 0.5
+        X, Y, y, z, u, t = X[keep], Y[keep], y[keep], z[keep], u[keep], t[keep]
+        zb[Y, X] = z
+        part[Y, X] = pt
+        PU[Y, X], PT[Y, X], PY[Y, X], PZ[Y, X] = u, t, y, z
+
+    uu = np.linspace(-1, 1, 520)
+    tt = np.linspace(0, 1, 90)
+    U, T = np.meshgrid(uu, tt)
+    b, zg, zk = _boat_geom(U)
+    Zs = zk + T * (zg - zk)
+    Ws = b * T ** 0.25                                                    # the section: a firm bilge, full almost to the keel
+    put(U * half, -(Ws - 1.3), Zs, 2, U, T)                               # 2: the far inner planking
+    # 3: the floor boards, flat, from frame to frame
+    uf = np.linspace(-0.82, 0.86, 440)
+    vf = np.linspace(-1, 1, 70)
+    Uf, Vf = np.meshgrid(uf, vf)
+    bf, zgf, zkf = _boat_geom(Uf)
+    zf = zkf + 3.0
+    wf = bf * np.clip((zf - zkf) / (zgf - zkf), 0, 1) ** 0.25 - 1.6
+    put(Uf * half, Vf * wf, zf, 3, Uf, np.zeros_like(Uf))
+    # 5: the thwarts, 6 wide, 5 under the gunwale
+    for ut in (-0.38, 0.2):
+        xs_ = np.linspace(ut * half, ut * half + 6, 14)
+        bt, zgt, zkt = _boat_geom(xs_ / half)
+        zt = zgt - 5.0
+        wt = bt * np.clip((zt - zkt) / (zgt - zkt), 0, 1) ** 0.25 - 1.0
+        Xt, Vt = np.meshgrid(xs_, np.linspace(-1, 1, 60))
+        put(Xt, Vt * wt[None, :], np.broadcast_to(zt[None, :], Xt.shape) + 0.01, 5, Xt / half, (Xt - ut * half) / 6.0)
+    # 9: the oar, laid across the thwarts from the bow quarter to the stern, its blade aft
+    s_ = np.linspace(0, 1, 260)
+    ox0, oy0, oz0, ox1, oy1, oz1 = -46.0, -7.0, 0.0, 38.0, -11.0, 0.0
+    for r_, ph in [(rr, pp) for rr in np.linspace(0, 1.15, 4) for pp in np.linspace(0, 2 * math.pi, 16, endpoint=False)]:
+        xs_o = ox0 + (ox1 - ox0) * s_
+        bo, zgo, zko = _boat_geom(xs_o / half)
+        zo = zgo - 3.4 + r_ * math.sin(ph)
+        blade = np.where(s_ > 0.8, 1.0 + 1.6 * np.clip((s_ - 0.8) / 0.08, 0, 1), 1.0)
+        put(xs_o, oy0 + (oy1 - oy0) * s_ + r_ * math.cos(ph) * blade, zo, 9, xs_o / half, s_)
+    # 1: the near (south) side, outside
+    put(U * half, Ws, Zs, 1, U, T)
+    # 4: the gunwale rail, both sides, 2 wide and 1.5 deep
+    ur = np.linspace(-1, 1, 600)
+    br, zgr, zkr = _boat_geom(ur)
+    for side in (-1, 1):
+        for d_ in np.linspace(0, 2.0, 6):
+            for dz in (0.0, 0.8, 1.5):
+                put(ur * half, side * (br - d_), zgr + 0.5 - dz + 0.0 * ur, 4, ur, np.full_like(ur, d_))
+    # 7: the transom, a flat board at the east point
+    tz = np.linspace(0, 1, 40)
+    bt1, zg1, zk1 = (float(v) for v in _boat_geom(1.0))
+    Vt, Tz = np.meshgrid(np.linspace(-1, 1, 50), tz)
+    put(half + 0.6 + 0 * Vt, Vt * bt1 * Tz ** 0.25, zk1 + Tz * (zg1 - zk1), 7, 1 + 0 * Vt, Tz)
+    # 6: the stem, a post at the west point from the stem head down round the forefoot
+    b0, zg0, zk0 = (float(v) for v in _boat_geom(-1.0))
+    zs_ = np.linspace(zk0 - 1.0, zg0 + 2.0, 50)
+    for dx in np.linspace(-1.8, 0.2, 5):
+        for dy in (-1.0, 0.0, 1.0):
+            put(-half + dx + 0 * zs_, dy + 0 * zs_, zs_, 6, -1 + 0 * zs_, np.full_like(zs_, dx))
+    # 8: the keel, a strip under the hull's centre line
+    uk = np.linspace(-0.98, 0.99, 400)
+    bk, zgk, zkk = _boat_geom(uk)
+    for dz in (0.0, -0.8):
+        for dy in (-0.6, 0.6):
+            put(uk * half, dy + 0 * uk, zkk + dz, 8, uk, np.zeros_like(uk))
     Yg, Xg = np.mgrid[0:H, 0:W]
-    hull = _tagm(sc, 'hull')
-    gx = Xg - sc.ox + 0.5
-    gy = sc.gy + 5
-    half = np.where(gx < 0, 20.0 * np.clip(1 - (gx / 61.0) ** 2, 0, 1) ** 0.9, 20.0 * np.clip(1 - (gx / 65.0) ** 4, 0, 1) ** 0.6)
-    cut = hull & (np.abs(gy) > half)                                  # the plan pointed at the bow, a transom at the stern
-    a[cut] = -1
-    hull &= ~cut
-    z = sc.depth
-    zg = 15.0                                                         # the gunwale: above it the inside shows
     L_ = sc.light()
-    inside = hull & (z >= zg + 1.2)
-    ring_ = ndi.binary_dilation(inside, structure=np.ones((5, 3), bool)) & hull & ~inside
-    rail = ring_ & ~ndi.binary_dilation(~hull, iterations=1)             # the gunwale: a 2-texel rail round the inside
-    out = hull & ~inside & ~rail
-    # outside: the strakes lapped down from the gunwale, 3 texels each (counted from the rail), each
-    # lit along its lower edge over the shade of the next; the sheer strake white, then blue, red
-    # below the waterline; the hull lit at its west and shaded east
-    dist = ndi.distance_transform_cdt(~(inside | rail), metric='taxicab')
-    # strakes of their own widths (R3-13), the sheer strake tapering towards the bow
-    w0 = 3 - (gx > 26).astype(int) - (gx > 46).astype(int)
-    widths = [4, 3, 4, 2, 3, 4, 3, 3, 4, 3, 4, 2, 3, 4, 3]
-    d1 = dist - 1
-    stk = np.where(d1 < w0, 0, 1)
-    start = w0.copy()
-    wid = w0.copy()
-    for k, wk in enumerate(widths, start=1):
-        here = (stk == k) & (d1 >= start + wk)
-        stk = np.where(here, k + 1, stk)
-        start = np.where(here, start + wk, start)
-        wid = np.where(stk == k, wk, wid)
-    wid = np.where(stk == 0, w0, np.where(stk <= len(widths), np.array([0] + widths + [3])[np.clip(stk, 0, len(widths) + 1)], 3))
-    inn = np.where(stk == 0, d1, d1 - start)
-    t = 2.6 + 1.0 * (gx < -28) - 0.9 * (gx > 37) + np.where(inn == wid - 1, 1.0, 0.0) - np.where(inn == 0, 0.7, 0.0)
-    t = t - 0.5 * (gy > 9)
-    rpaint(a, out & (stk == 0), WHITE[:2], t + 0.6, 0.3)
-    rpaint(a, out & (stk >= 1) & (z >= 5.0), [('water_cool', 'water_cool', 'water'), ('water_cool', 'water', 'water')], t,
-           np.clip(K.vhash(stk, 0, seed) * 0.999, 0, 0.999))
-    # the bottom paint as the hull's own volume (v7, at 3 m it is a part of its own): lit at the bow's
-    # west flank, a mid body, and the turn of the bilge going into shade to the east and underneath
-    t_red = t - 0.2 + 0.7 * (gx < -10) + 0.5 * (gx < -34) - 0.6 * (gx > 30) - 0.6 * (z < 2.2)
-    rpaint(a, out & (stk >= 1) & (z < 5.0), RED, t_red, 0.3)
-    flake = out & (z < 11) & (z >= 5.0) & (K.vhash(Xg // 3, Yg // 2, seed) > 0.96)
-    a[flake] = C('timber', 3)
-    # the gunwale's oak rail, lit
-    rpaint(a, rail, OAK, 3.2 + 0.8 * L_, 0.3)
-    # inside: the far inner planking lit, the near inner wall under the gunwale in shade, the floor
-    # boards between with frames across them every 7 texels (2 wide, darker in the bilge), the
-    # thwarts with a lit top edge, the oar laid across with its shadow on the floor
-    rel = gy / np.maximum(half, 1.0)                                    # -1 at the far gunwale, 1 at the near
-    it = np.where(rel < -0.55, 4.0, np.where(rel < -0.25, 3.4, np.where(rel > 0.62, 1.0, np.where(rel > 0.3, 1.8, 2.6))))
-    it = it - 0.6 * ((gy.astype(int) % 4) == 0) * (rel >= -0.25) * (rel <= 0.3)   # the floor boards' seams
-    it = it + 0.4 * ((gy.astype(int) % 3) == 0) * (rel < -0.25)            # the far strakes' lands
-    rib = (((gx.astype(int) + 60) % 7) < 2) & (rel > -0.45) & (rel < 0.62)
-    it = np.where(rib, it - 1.0 - 0.4 * (np.abs(rel) < 0.2), it)
-    rpaint(a, inside, OAK + [('earth_cool', 'timber_cool', 'timber')], it, K.vhash(gy.astype(int) // 3, 0, seed + 6))
-    for tx in (-24, 12):                                              # the two thwarts
-        th = inside & (gx >= tx) & (gx < tx + 6)
-        tys = np.nonzero(th)[0]
-        rpaint(a, th, OAK, np.where(gx < tx + 1, 4.4, np.where(gx >= tx + 5, 1.8, 3.2)), 0.4)
-        a[th & (gx >= tx + 2) & (gx < tx + 3) & (K.vhash(Yg // 3, tx, seed) > 0.6)] = C('timber', 2)   # the thwart's grain
-    oar = _line(a.shape, sc.ox - 44, sc.oy - 23, sc.ox + 34, sc.oy - 18, 2.4) & (inside | rail)
-    oar_sh = _line(a.shape, sc.ox - 43, sc.oy - 20, sc.ox + 35, sc.oy - 15, 1.8) & inside & ~oar
-    V._step(a, oar_sh, -1)
-    rpaint(a, oar, [('timber_cool', 'timber_warm', 'sand')], np.where(np.roll(oar, 1, 0), 3.2, 4.2), 0.0)
-    weed = out & (z < 2.8) & (K.vhash(Xg // 3, 0, seed + 4) > 0.7)
-    a[weed] = C('leaf_cool', 2)
-    under = np.zeros((H, W), bool)
-    under[2:] = hull[:-2]
-    under &= (a < 0) & (Yg > sc.oy - 3)
-    _finish(a, keep=np.isin(a, [C('timber', 3)]))
-    rpaint(a, under & (a < 0), [('slate_cool', 'stone_cool', 'stone_cool')], 1.4, 0.0)
-    B._ground_tufts(a, sc.ox, sc.oy + 6, [-66, 62], seed, fam='grass')
-    return K.crop(a, sc.ox, sc.oy)
+    # ---- paint ----
+    BLUE = [('water_cool', 'water_cool', 'water'), ('water_cool', 'water', 'water')]
+    side = part == 1
+    k = np.floor((1.0 - PT) * 7.0).astype(int)                           # the strakes, counted from the gunwale
+    kk = np.where(side, k, -9)
+    up = np.full_like(kk, -9)
+    up[1:] = kk[:-1]
+    dn = np.full_like(kk, -9)
+    dn[:-1] = kk[1:]
+    t = 3.0 + 0.8 * (PU < -0.3) + 0.4 * (PU < -0.65) - 0.6 * (PU > 0.45)
+    t = t - 1.5 * np.clip((0.4 - PT) / 0.4, 0, 1)                         # the side turning under to the keel
+    land_top = side & (up >= 0) & (up < kk)                             # a strake's upper edge, under the lap above
+    land_bot = side & (dn > kk)                                          # the lap's lower edge, its shade on the next
+    t = t + np.where(land_top, 0.9, 0.0) - np.where(land_bot, 0.7, 0.0)
+    wl = 7.5 + 1.5 * np.abs(PU)                                          # the waterline, rising to the ends with the sheer
+    sheer = side & (k == 0)
+    red = side & ~sheer & (PZ < wl)
+    blue = side & ~sheer & ~red
+    rpaint(a, sheer, WHITE[:2], t + 0.7, 0.3)
+    rpaint(a, blue, BLUE, t, np.clip(K.vhash(np.maximum(k, 0), 0, seed) * 0.999, 0, 0.999))
+    rpaint(a, red, RED, t - 0.2, 0.3)
+    # weathering: the paint worn along a strake to the wood in streaks 3 to 6 long, not squares
+    wear = (sheer | blue) & ~land_top & ~land_bot & (K.vhash(Xg // 5 + (Yg % 3), Yg, seed + 2) > 0.955)
+    a[wear] = C('timber', 3)
+    # weed in short tufts hanging along the waterline
+    wl_edge = red & np.roll(blue | sheer, 1, 0)
+    tuft = wl_edge & (K.vhash(Xg // 2, 1, seed + 4) > 0.72)
+    a[tuft] = C('leaf_cool', 2)
+    tuft2 = np.roll(tuft, 1, 0) & red
+    a[tuft2 & (K.vhash(Xg, 3, seed + 4) > 0.4)] = C('leaf_cool', 1)
+    # inside: the far planking lit with its lands, floor boards with seams and frames across both
+    inw = part == 2
+    flo = part == 3
+    ki = np.where(inw, np.floor((1.0 - PT) * 7.0).astype(int), -9)      # the far strakes, seen from inside
+    kup = np.full_like(ki, -9)
+    kup[1:] = ki[:-1]
+    ti = 3.3 - 0.6 * (PT < 0.3) + 0.3 * (PU < -0.3) - 0.4 * (PU > 0.5)
+    ti = ti - 0.5 * (inw & (kup >= 0) & (kup != ki))                     # each land a darker line
+    # the floor: boards along the boat, seams every 4, in the near side's shade under the gunwale
+    tf = 2.8 - 0.6 * ((np.floor(PY + 40) % 4) == 0) - 0.4 * (PU > 0.5) + 0.3 * (PU < -0.4)
+    tf = tf - 0.9 * (PY > 0.35 * BOAT_B)
+    # the frames: 2 wide every 9 along the boat, across the floor and up the far planking
+    rib = (inw | flo) & (((PU * half + 200.0) % 9.0) < 2.0)
+    rpaint(a, inw, OAK + [('earth_cool', 'timber_cool', 'timber')], np.where(rib, ti - 0.9, ti), K.vhash(np.floor(PU * 30).astype(int), 0, seed + 6))
+    rpaint(a, flo, OAK, np.where(rib, tf - 1.0, tf), K.vhash(np.floor(PY + 40).astype(int) // 4, 1, seed + 6))
+    # the thwarts: a lit top, a lit west edge, a shaded east edge, their shade on the floor
+    th = part == 5
+    rpaint(a, th, OAK, np.where(PT < 0.18, 4.8, np.where(PT > 0.82, 2.4, 4.2)), 0.4)
+    a[th & (np.abs(PT - 0.5) < 0.09) & (K.vhash(Yg // 3, 5, seed) > 0.55)] = C('timber', 2)   # grain
+    th_sh = (np.roll(th, 1, 0) | np.roll(th, 2, 0) | np.roll(np.roll(th, 3, 0), 1, 1)) & (flo | inw)
+    V._step(a, th_sh, -1)
+    # the gunwale rail, oak, its top lit
+    rail = part == 4
+    rpaint(a, rail, OAK, np.where(PT < 0.6, 3.4, 4.2) + 0.5 * (PU < -0.3) - 0.4 * (PU > 0.5), 0.3)
+    # the stem: a lit west face, the east in shade
+    stem = part == 6
+    rpaint(a, stem, OAK, np.where(PT < -1.0, 4.2, 2.6), 0.3)
+    # the transom: a flat board in the shade of its own plane, a lit cap, the sheer strake's white across it
+    tr = part == 7
+    rpaint(a, tr & (PT > 0.86), WHITE[:2], 2.2, 0.3)
+    rpaint(a, tr & (PT <= 0.86) & (PZ >= 6.5), BLUE, 1.9 - 0.5 * (PT < 0.3), 0.4)
+    rpaint(a, tr & (PZ < 6.5), RED, 1.6, 0.3)
+    cap = tr & ~np.roll(tr, 1, 0)
+    rpaint(a, cap, OAK, 4.0, 0.3)
+    # the keel
+    rpaint(a, part == 8, OAK, 1.6, 0.0)
+    # the oar: its shadow on the floor first, then the loom lit on top
+    oar = part == 9
+    osh = (np.roll(np.roll(oar, 3, 0), 1, 1)) & (flo | inw | th) & ~oar
+    V._step(a, osh, -1)
+    oup = np.zeros_like(oar)
+    oup[1:] = oar[:-1]
+    rpaint(a, oar, [('timber_cool', 'timber_warm', 'sand')], np.where(~oup, 4.2, 3.0) - 0.5 * (PT > 0.8), 0.0)
+    hull = part > 0
+    _finish(a, keep=np.isin(a, [C('timber', 3), C('leaf_cool', 2), C('leaf_cool', 1)]))
+    # the contact shadow under the keel where it bears on the shingle, and the cast to the south east
+    low = np.zeros((H, W), bool)
+    for c in range(W):
+        rows = np.nonzero(a[:, c] >= 0)[0]
+        if rows.size == 0:
+            continue
+        r = rows.max()
+        if hull[min(r, H - 1), c] or (r > 0 and hull[r - 1, c]):
+            low[r + 1:min(H, r + 3), c] = True
+    low &= (a < 0) & (Xg - ox > -40) & (Xg - ox < 64)
+    rpaint(a, low, [('slate_cool', 'stone_cool', 'stone_cool')], 1.4, 0.0)
+    B._ground_tufts(a, ox, oy + 6, [-66, 64], seed, fam='grass')
+    return K.crop(a, ox, oy)
 
 
 def _buoy_frame(i, seed=109):
@@ -1636,18 +1755,35 @@ def _moss_cushions(a, rm, y_r, y_eave, seed, n=4, rh=None):
 # (houses.building) like the Crossroads houses, whose eaves are 40: a loading door 32 x 22 on the
 # yard side with a hoist door and its beam above, the wheel 44 across on the water side.
 MILL_SPEC = dict(w=104, depth=56, wall_h=76, roof_h=40, wall='stone', roof='slate', paint='timber', doors=[[18, 'timber']],
-                 door_w=22, door_h=32, windows=[44], win_w=12, win_h=12, win_top=34, shutters=False)
+                 door_w=22, door_h=32, windows=[44], win_w=12, win_h=12, win_top=34, shutters=False,
+                 # round 6 of the detail audit (R6-5, R6-6): a calm slate draw with the lowest third a tone
+                 # darker, no moss stuck mid-slate (the mill lays its own cushions in the joints), a deep
+                 # eave shadow, and a stove chimney to break the roof's field
+                 slate_calm=True, eave_dark=True, roof_moss=0, roof_lichen=0, eave_shadow=8.0, chimney=[88], chimney_w=7, chimney_h=12)
 MILL_WHEEL_R = 66.0            # art px: a wheel 44 world px (132 art px) across
 MILL_DIP = 14                  # art px: the race's surface below the wall's foot, where the wheel stands in it
 _MILL = {}
 
 
+def _rope_2(a, pts, w=2.0):
+    """A rope hanging down a wall: lit on its west side, dark on its east, 2 texels wide."""
+    m = np.zeros(a.shape, bool)
+    for (x0, y0), (x1, y1) in zip(pts[:-1], pts[1:]):
+        m |= _line(a.shape, x0, y0, x1, y1, w)
+    lf = np.zeros_like(m)
+    lf[:, 1:] = m[:, :-1]
+    a[m] = np.where(~lf[m], C('sand', 4), C('sand_cool', 2))
+    return m
+
+
 def _hoist_door(a, cx, sill, w, h, seed):
-    """The mill's hoist door under the eaves, over the loading door: a ledged door of vertical boards
-    (each lit on its west edge over a dark groove, the head in the lintel's shade stepping down in
-    two tones), two ledges lit on top, strap hinges; a dressed lintel and jambs and a sill; above it
-    the hoist beam's end standing out of the wall (end grain with its rings, lit on top, its shadow on
-    the wall) with its pulley and the rope hanging down past the door."""
+    """The mill's hoist door under the eaves, over the loading door (round 6 of the detail audit,
+    R6-6): a ledged door of vertical boards set back in the wall, the head reveal and the west reveal
+    in shade and the east reveal lit, the boards' heads in the lintel's shade; strap hinges; a dressed
+    lintel, jambs and sill. Above it the hoist beam stands out of the wall towards us: its top lit in a
+    strip, its east side in shade, its end grain with rings lit on the upper west, and its shadow on
+    the wall below and east. A pulley wheel hangs under its end, and the rope runs down past the door
+    to a cleat on the east jamb, tied off there with its tail hanging."""
     x0, x1, y0 = int(cx - w // 2), int(cx + w // 2), int(sill - h)
     jw = 5
     # the surround: lintel, jambs, sill
@@ -1660,7 +1796,7 @@ def _hoist_door(a, cx, sill, w, h, seed):
     a[sill:sill + 3, x0 - jw - 2:x1 + jw + 2] = C('stone', 3)
     a[sill, x0 - jw - 2:x1 + jw + 2] = C('stone_warm', 4)
     a[sill + 2, x0 - jw - 2:x1 + jw + 2] = C('stone_cool', 1)
-    # the boards
+    # the boards, set back: the reveals inside the jambs
     for x in range(x0, x1):
         u = (x - x0) % 6
         for y in range(y0, sill):
@@ -1671,9 +1807,7 @@ def _hoist_door(a, cx, sill, w, h, seed):
                 c = C('timber_warm', 4)
             else:
                 c = C('timber_warm', 3) if hsh(seed, x // 6, y // 5) > 0.55 else C('timber', 3)
-            if d < 2:
-                c = C('timber_cool', 1) if u == 0 else C('timber_cool', 2)    # the head in the lintel's shade
-            elif d < 5 and u != 0:
+            if d < 5 and u != 0:
                 c = C('timber', 2)
             a[y, x] = c
     for ly in (y0 + int(h * 0.28), y0 + int(h * 0.72)):              # the ledges
@@ -1684,35 +1818,110 @@ def _hoist_door(a, cx, sill, w, h, seed):
         a[ly + 1, x0:x0 + w // 2] = C('iron', 4)
         for nx in range(x0 + 3, x0 + w // 2, 6):
             a[ly + 2, nx] = C('slate', 4)
-    # the hoist beam's end above the lintel: end grain with its rings, lit on top, its shadow below
-    bx0, by0 = int(cx - 6), y0 - 6 - 14
-    a[by0:by0 + 12, bx0:bx0 + 12] = C('earth_warm', 3)
-    a[by0, bx0:bx0 + 12] = C('timber_warm', 4)
-    a[by0:by0 + 12, bx0] = C('timber_warm', 4)
-    a[by0 + 3:by0 + 9, bx0 + 3:bx0 + 9] = C('earth', 3)
-    a[by0 + 5:by0 + 7, bx0 + 5:bx0 + 7] = C('earth_cool', 2)
-    a[by0 + 11, bx0:bx0 + 12] = C('timber_cool', 1)
-    a[by0 + 12:by0 + 14, bx0 + 2:bx0 + 14] = C('stone_cool', 1)          # its shadow on the wall
-    # the pulley under it and the rope down past the door
-    a[by0 + 12:by0 + 15, int(cx) - 2:int(cx) + 2] = C('iron', 3)
-    a[by0 + 15:sill - 4, int(cx) + 1] = C('sand_cool', 3)
-    a[by0 + 15:sill - 4, int(cx) + 2] = C('sand_cool', 2)
+    a[y0:y0 + 3, x0:x1] = C('stone_warm', 1)                           # the head reveal in shade
+    a[y0 + 3, x0:x1] = C('timber_cool', 1)                             # the door's head under it
+    a[y0 + 3:sill, x0:x0 + 2] = C('stone_warm', 2)                     # the west reveal in shade
+    a[y0 + 3:sill, x0] = C('stone_warm', 1)
+    a[y0 + 3:sill, x1 - 2:x1] = C('stone_warm', 4)                     # the east reveal, lit
+    # the hoist beam standing out over the door: a 10-wide beam seen from above its front
+    bx0, bx1 = int(cx) - 5, int(cx) + 5
+    ya = y0 - 6 - 18                                                   # where it leaves the wall
+    top_ = (slice(ya, ya + 7), slice(bx0, bx1))                        # its top, running towards us
+    a[top_] = C('timber_warm', 3)
+    a[ya:ya + 7, bx0] = C('timber_warm', 4)
+    a[ya:ya + 7, bx1 - 2:bx1] = C('timber_cool', 2)                    # its east side, in shade
+    for gy in (ya + 2, ya + 5):
+        a[gy, bx0 + 2:bx1 - 3] = C('timber', 3)                        # its grain
+    ey0 = ya + 7
+    a[ey0:ey0 + 9, bx0:bx1] = C('earth_warm', 3)                       # the end grain, facing us
+    Ye, Xe = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+    rr = np.hypot(Xe + 0.5 - (bx0 + 4.5), Ye + 0.5 - (ey0 + 4.5))
+    endm = (Ye >= ey0) & (Ye < ey0 + 9) & (Xe >= bx0) & (Xe < bx1)
+    a[endm & (np.abs(rr - 2.6) < 0.6)] = C('earth', 2)                 # its rings
+    a[endm & (rr < 1.2)] = C('earth_cool', 2)
+    a[endm & (Ye == ey0)] = C('sand', 4)                               # its upper arris, lit
+    a[endm & (Xe == bx0)] = C('sand_cool', 4)
+    a[endm & (Xe >= bx1 - 2)] = C('earth_cool', 2)
+    a[endm & (Ye == ey0 + 8)] = C('earth_cool', 1)
+    beam = (Ye >= ya) & (Ye < ey0 + 9) & (Xe >= bx0) & (Xe < bx1)
+    sh = np.zeros_like(beam)
+    sh[5:, 4:] = beam[:-5, :-4]
+    V._step(a, sh & ~beam & (a >= 0), -1)                              # its shadow on the wall, below and east
+    # the pulley under the end on its hook, and the rope down to the cleat on the east jamb
+    py = ey0 + 9 + 5
+    a[ey0 + 9:py - 2, int(cx)] = C('iron', 2)
+    pul = _disc(a.shape, cx + 0.5, py, 3.4)
+    a[pul] = C('iron', 2)
+    a[pul & (Xe + 0.5 < cx) & (Ye + 0.5 < py)] = C('iron', 4)
+    a[_disc(a.shape, cx + 0.5, py, 1.2)] = C('void', 1)
+    clx, cly = x1 + 1, y0 + int(h * 0.5)
+    _rope_2(a, [(cx + 3.5, py), (cx + 4.0, py + 10), (clx + 1.0, cly - 3)])
+    a[cly:cly + 2, clx - 1:clx + 6] = C('timber', 3)                   # the cleat's horns
+    a[cly, clx - 1:clx + 6] = C('timber_warm', 4)
+    a[cly + 2, clx - 1:clx + 6] = C('timber_cool', 1)
+    a[cly - 1:cly + 3, clx + 2] = C('sand', 3)                          # the rope's turns over it
+    a[cly - 1:cly + 3, clx + 3] = C('sand_cool', 2)
+    _rope_2(a, [(clx + 4.5, cly + 3), (clx + 5.0, cly + 11), (clx + 3.5, cly + 15)])   # its tail
+
+
+def _ridge_vent(a, rm, cx, y_r):
+    """A louvred vent on the ridge (R6-5): a little timber housing with three louvre boards, each lit
+    on its upper edge over the dark slot under it, a slated gable cap lit on its west slope, and its
+    shadow on the slates to the east."""
+    x0, x1 = int(cx) - 8, int(cx) + 8
+    y0, y1 = y_r - 12, y_r + 3
+    a[y0:y1, x0:x1] = C('timber', 3)
+    a[y0:y1, x0] = C('timber_warm', 4)
+    a[y0:y1, x1 - 2:x1] = C('timber_cool', 2)
+    for k, ly in enumerate(range(y0 + 2, y1 - 1, 4)):
+        a[ly, x0 + 2:x1 - 2] = C('timber_warm', 4)                        # a louvre's lit edge
+        a[ly + 1, x0 + 2:x1 - 2] = C('timber', 2)
+        a[ly + 2, x0 + 2:x1 - 2] = C('void', 1)                           # the slot under it
+    for r in range(6):
+        y = y0 - 1 - r
+        half = 10 - int(r * 1.7)
+        a[y, int(cx) - half:int(cx)] = C('slate', 4 if r < 4 else 3)
+        a[y, int(cx):int(cx) + half] = C('slate_cool', 2)
+    a[y0 - 1, x0 - 2:x1 + 2] = C('slate_cool', 1)
+    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+    V._step(a, rm & (X >= x1) & (X < x1 + 5) & (Y >= y0) & (Y < y1 + 4), -1)
+
+
+def _recurtain(a, box, fam, inside=None):
+    """A window's curtain (the builder draws berry) recoloured, or drawn back (fam None)."""
+    x0, y0, x1, y1 = box
+    sub = a[y0:y1, x0:x1]
+    berry = (sub >= 0) & (sub // 8 == FI_['berry'])
+    if fam is None:
+        sub[berry] = C('void', 1)
+    else:
+        sub[berry] = FI_[fam] * 8 + (sub[berry] % 8)
 
 
 def _mill_house(seed):
     """The mill's front from the house builder, with its upper storey's windows and the hoist door
-    under the eaves, its beam out over the loading door. Returns (codes, foot x, foot y, info)."""
+    under the eaves, its beam out over the loading door. Returns (codes, foot x, foot y, info).
+    Round 6 (R6-5, R6-6): the builder's own draw (no seed picked to pass), a calm slate field, a
+    stove chimney and a louvred ridge vent, moss as cushions in the lower joints, four windows of
+    their own (curtains and what shows inside), flour sacks at the loading door and a lamp on its
+    bracket beside it."""
     if seed in _MILL:
         a, ax, ay, info = _MILL[seed]
         return a.copy(), ax, ay, info
-    built = Hs.building(dict(MILL_SPEC), seed=seed + 6)              # the slates' draw: no flat run on the roof
+    built = Hs.building(dict(MILL_SPEC), seed=seed)
     p, info = built.base, built.info
     a = p.a
     rng = np.random.default_rng(seed + 7)
     L, B = info['L'], info['B']
     q = Hs.q
-    for wx in (44, 70, 94):                                            # the upper storey's windows
-        Hs.window(a, L + q(wx), B - q(70), 12, 11, 'timber', rng, wall='stone', shutters=False)
+    # the ground floor's window (the builder's): its curtain a sand linen
+    gx = L + q(44)
+    _recurtain(a, (gx - q(7), B - q(35), gx + q(7), B - q(20)), 'sand')
+    for wx, inside, cur in ((44, 'jars', 'berry'), (70, 'books', None), (94, 'bread', 'sky')):   # the upper storey's: bins, ledgers, loaves
+        Hs.window(a, L + q(wx), B - q(70), 12, 11, 'timber', rng, wall='stone', shutters=False, inside=inside)
+        if cur != 'berry':
+            cxw = L + q(wx)
+            _recurtain(a, (cxw - q(7), B - q(71), cxw + q(7), B - q(57)), cur)
     hx = L + q(18)
     _hoist_door(a, hx, B - q(44), q(18), q(24), seed)
     # the doors' broad boards carry their grain (a sibling timber in short runs down each board)
@@ -1721,6 +1930,21 @@ def _mill_house(seed):
         dm = (np.abs(Xd + 0.5 - dcx) < q(dw) / 2 - 1) & (Yd < dB - 2) & (Yd >= dB - q(dh)) & (a >= 0)
         dm &= np.isin(a // 8, [FI_['timber'], FI_['timber_warm'], FI_['timber_cool']])
         _break_flats(a, dm, seed + 3, size=5, jitter=True)
+    rm = info['roof']
+    _moss_cushions(a, rm, info['y_r'], info['y_eave'] - 4, seed, n=5)
+    _ridge_vent(a, rm, L + q(56), info['y_r'])
+    # story at the loading door: two flour sacks slumped east of it, a lamp on its bracket to the west
+    Hs.sack(a, L + q(33), B, rng)
+    Hs.sack(a, L + q(37.5), B, rng)
+    lx, ly = L + q(4.5), B - q(30)
+    a[ly:ly + 2, lx:lx + q(3)] = C('iron', 2)                           # the bracket
+    a[ly, lx:lx + q(3)] = C('iron', 4)
+    a[ly + 2:ly + 4, lx + q(3) - 2] = C('iron', 2)
+    lm = (np.abs(Xd + 0.5 - (lx + q(3) - 1)) < 3.5) & (Yd >= ly + 4) & (Yd < ly + 13)
+    a[lm] = C('iron', 2)
+    a[lm & (np.abs(Xd + 0.5 - (lx + q(3) - 1)) < 2.0) & (Yd >= ly + 6) & (Yd < ly + 11)] = C('lamp', 3)
+    a[lm & (Xd + 0.5 < lx + q(3) - 1) & (Yd >= ly + 6) & (Yd < ly + 8)] = C('lamp', 4)
+    a[lm & (Yd == ly + 4)] = C('iron', 4)
     _MILL[seed] = (a.copy(), p.ax, p.ay, info)
     return a, p.ax, p.ay, info
 
@@ -1792,11 +2016,48 @@ def _wheel_frame(i, seed=141):
         sgn = np.sign(-(nx_ + ny_) + 1e-6)
         tt = np.where(across * sgn > 0.8, 3.8, np.where(across * sgn < -0.8, 1.6, 2.8))
         rpaint(wheel, sp, B.OAK, tt, 0.4)
-    hub = _disc(shape, cx, cy, 6.0)
-    rpaint(wheel, hub, IRON, np.where((X_ < cx) & (Y_ < cy), 3.8, np.where((X_ > cx + 0.5) & (Y_ > cy + 0.5), 1.4, 2.4)), 0.3)
-    wheel[_disc(shape, cx, cy, 2.0)] = C('void', 2)
-    for bx_, by_ in ((-3, -3), (3, 3), (3, -3), (-3, 3)):
-        wheel[int(cy + by_), int(cx + bx_)] = C('slate', 4)                # the hub's bolts
+    # the hub (R6-1): an iron boss lit on its upper west, its rim iron 4 there and iron 1 under the
+    # east, its body iron 2, the axle's dark end in its middle with a glint
+    hub = _disc(shape, cx, cy, 7.0)
+    ul = (X_ - cx) + (Y_ - cy) < -1.5
+    lr = (X_ - cx) + (Y_ - cy) > 1.5
+    rim_h = hub & ~_disc(shape, cx, cy, 5.6)
+    wheel[hub] = C('iron', 2)
+    wheel[rim_h & ul] = C('iron', 4)
+    wheel[rim_h & lr] = C('iron', 1)
+    wheel[_disc(shape, cx, cy, 2.6)] = C('void', 1)
+    wheel[int(cy - 2), int(cx - 1)] = C('iron', 3)
+    for bx_, by_ in ((-4, 0), (4, 0), (0, -4), (0, 4)):
+        wheel[int(cy + by_), int(cx + bx_)] = C('slate', 4) if bx_ + by_ < 0 else C('iron', 3)   # the boss's bolts
+    # the wheel's shade on the wall (R6-1): it stands out from the wall, so the wall behind it is a
+    # tone down and its rim, floats and spokes throw their shape east and down at the house throw;
+    # the shaft runs back from the hub into the wall to its bearing plate
+    wm = wheel >= 0
+    SX, SY, STAND = 14, 9, 18
+    # no weeds at the wall's foot behind the wheel (R6-6: a pale-tipped sprig showed through its floats)
+    foot = (np.abs(X_ - cx) < R + 8) & (Yg < oy) & (Yg >= oy - 10) & (a >= 0)
+    weed = foot & np.isin(a // 8, [FI_[f] for f in ('grass', 'grass_cool', 'grass_warm', 'leaf', 'leaf_cool', 'leaf_warm', 'sky', 'berry', 'snow', 'snow_cool')])
+    a[weed] = C('stone_cool', 2)
+    cast = np.zeros_like(wm)
+    cast[SY:, SX:] = wm[:-SY, :-SX]
+    under_shroud = _disc(shape, cx, cy, R - 5.0) & ~_disc(shape, cx, cy, R - 7.0) & (Y_ < cy)   # 2 rows under the upper shroud
+    wall_ = (a >= 0) & (Yg < oy)
+    V._step(a, wall_ & ~wm & (cast | under_shroud), -1)                # the light through the spokes left as it falls
+    shaft = (np.abs(X_ - cx) < 3.1) & (Y_ > cy - STAND) & (Y_ < cy)
+    a[shaft] = C('iron', 2)
+    a[shaft & (X_ < cx - 1.2)] = C('iron', 4)
+    a[shaft & (X_ > cx + 1.2)] = C('iron', 1)
+    pl = (np.abs(X_ - cx) < 9.0) & (Y_ > cy - STAND - 8) & (Y_ < cy - STAND + 5)
+    a[pl & ~shaft] = C('iron', 3)
+    a[pl & ~shaft & (Y_ < cy - STAND - 6.5)] = C('iron', 4)
+    a[pl & ~shaft & (X_ < cx - 7.5)] = C('iron', 3)
+    a[pl & ~shaft & (Y_ > cy - STAND + 3.5)] = C('iron', 1)
+    a[pl & ~shaft & (X_ > cx + 7.5)] = C('iron', 1)
+    for bx_, by_ in ((-7, -5), (7, -5), (-7, 2), (7, 2)):
+        a[int(cy - STAND + by_), int(cx + bx_)] = C('slate', 4)          # the plate's bolts
+    psh = np.zeros_like(pl)
+    psh[2:, 2:] = pl[:-2, :-2]
+    V._step(a, psh & ~pl & ~shaft & wall_ & ~wm, -1)
     # the waterline broken float by float (R5-4): each float's tip cuts it, the dark band under the
     # cut stepping a row or two from float to float
     half = math.sqrt(max(0.0, R * R - (wl - cy) ** 2)) + 6
@@ -1810,6 +2071,9 @@ def _wheel_frame(i, seed=141):
     span = np.abs(Xg + 0.5 - cx) < half
     band = span & (Yg >= wly) & (Yg < wly + 2)
     a[band] = C('water_cool', 1)
+    # the wheel's shade on the race east of its foot (R6-1): the dark water carried on in its cast
+    rsh = cast & (Yg >= wly + 2) & (Yg < wly + 5) & (Xg + 0.5 > cx) & (a < 0)
+    a[rsh] = C('water_cool', 1)
     # white water where the floats bite in (west), in clumps of 2 to 3 texels, and a lit wake east
     xin = cx - half + 6
     for k in range(5):
@@ -2195,14 +2459,15 @@ def landslip(seed=147):
     cylinder of bark with its lenticels and black scars, its east end splintered, two branch stubs,
     its sawn west end and a dark underside."""
     rng = np.random.default_rng(seed)
-    sc = K.Scene(-72, 72, -50, 24, 70)
+    sc = K.Scene(-72, 72, -50, 28, 70)
     sc.ellipsoid(0, -38, 0, 25, 7, 3.5, EARTH, base=2.6, k=1.4, tag='earth', mix=0.3, flat=1.3)   # the throat, out of the scar
     sc.ellipsoid(0, -14, 0, 58, 20, 10, EARTH, base=2.6, k=1.6, tag='earth', mix=0.3, flat=1.3)
     sc.ellipsoid(-34, 6, 0, 28, 12, 6, EARTH, base=2.5, k=1.6, tag='earth', mix=0.6, flat=1.3)
     sc.ellipsoid(32, 8, 0, 26, 11, 5, EARTH, base=2.5, k=1.6, tag='earth', mix=0.5, flat=1.3)
     # (R5-10) the toe broken into uneven tongues of different lengths, thin where they run out
-    for (tx, ty, trx, try_, tz) in ((-14, 17, 9, 6, 1.6), (12, 19, 6, 6, 1.2), (44, 15, 8, 5, 1.4), (-52, 12, 7, 4, 1.2), (26, 18, 4, 4, 1.0)):
-        sc.ellipsoid(tx, ty, 0, trx, try_, tz, EARTH, base=2.4, k=1.4, tag='earth', mix=0.5, flat=1.2)
+    TONGUES = ((-14, 17, 9, 6, 1.6), (12, 19, 6, 6, 1.2), (44, 15, 8, 5, 1.4), (-52, 12, 7, 4, 1.2), (26, 18, 4, 4, 1.0))
+    for k, (tx, ty, trx, try_, tz) in enumerate(TONGUES):
+        sc.ellipsoid(tx, ty, 0, trx, try_, tz, EARTH, base=2.4, k=1.4, tag='tongue%d' % k, mix=0.5, flat=1.2)
     clods = [(-40, -12, 6, 9, 5, 9), (26, -18, 8, 8, 5, 9), (44, -4, 3, 7, 4, 8), (-14, 4, 3, 6, 4, 7)]
     for k, (x, y, zb, w, d, h) in enumerate(clods):
         sc.ellipsoid(x, y, zb + h * 0.5, w, d, h * 0.62, EARTH, base=2.6, k=1.4, tag='clod%d' % k, mix=0.4, flat=1.7)
@@ -2222,6 +2487,9 @@ def landslip(seed=147):
     et = np.where(z < 3.0, 1.2 + 0.9 * (Ls > 0.0) + 0.5 * (K.vhash(Xg // 4, Yg // 2, seed + 7) > 0.7), et)
     rpaint(a, earth, EARTH, et, _sibling_mix(a.shape, Xg, Yg, seed, 6.0, (4, 3)))
     _soil_masses(a, earth & (z >= 3.0), Ls, seed, rng=rng)
+    # (R6-10) the tongues: loose lit earth running out thin over the grass, not wet and not ringed
+    tongues = _tagm(sc, *['tongue%d' % k for k in range(len(TONGUES))])
+    rpaint(a, tongues, EARTH, np.where(Ls > 0.1, 3.0, 2.4) + 0.4 * (K.vhash(Xg // 3, Yg // 2, seed + 21) > 0.75), _sibling_mix(a.shape, Xg, Yg, seed + 2, 4.0, (3, 2)))
     wet = earth & (z < 2.0)
     rpaint(a, wet, EARTH, np.where(Ls > 0.0, 2.0, 1.0), 0.6)            # the toe dark and wet
     wys, wxs = np.nonzero(wet & (Ls > 0.0))
@@ -2293,6 +2561,29 @@ def landslip(seed=147):
             a[y, x] = -1
             if y - 1 >= 0 and a[y - 1, x] >= 0 and hsh(seed, x, 62) > 0.5:
                 a[y - 1, x] = C('earth', 2)
+    # (R6-10) each tongue's end ragged, a clod or a stone at its tip, and its edge open where it thins
+    # into the grass: no rim along a tongue's south half, its last row lit earth over the turf
+    sol = a >= 0
+    for k, (tx, ty, trx, try_, tz) in enumerate(TONGUES):
+        tm = _tagm(sc, 'tongue%d' % k)
+        if not tm.any():
+            continue
+        tys, txs = np.nonzero(tm)
+        ymid = tys.mean()
+        ring = ndi.binary_dilation(tm, iterations=1) & ~tm & sol & ~earth & (Yg > ymid)
+        ring &= ~_tagm(sc, *['stone%d' % j for j in range(len(boulders))])
+        a[ring & (a % 8 <= 1)] = -1                                        # the open edge
+        low = tm & ~np.roll(tm, -1, 0) & (Yg > ymid)
+        for y, x in zip(*np.nonzero(low)):
+            a[y, x] = C('earth', 3) if hsh(seed, x, k, 71) > 0.35 else -1      # the last row thinning to a scatter
+        ty_ = int(tys.max())
+        tip = (Yg >= ty_ - 1) & tm
+        a[tip & (K.vhash(Xg, Yg, seed + 72 + k) > 0.55)] = -1               # the tip ragged
+        cx_ = int(round(txs[tys >= ty_ - 1].mean())) + (1 if k % 2 else -1)
+        stone_ = k % 2 == 0
+        a[ty_ - 1, cx_:cx_ + 3] = C('stone', 4) if stone_ else C('earth', 4)
+        a[ty_, cx_:cx_ + 3] = C('stone', 3) if stone_ else C('earth', 3)
+        a[ty_ + 1, cx_:cx_ + 3] = C('stone_cool', 1) if stone_ else C('earth_cool', 1)
     # clods and pebbles rolled 2 to 6 texels past the edge onto the lawn, each lit on top, dark under
     for k in range(7):
         bx = ox - 56 + int(112 * hsh(seed, k, 63))
@@ -2811,6 +3102,65 @@ def _seat_in_turf(a, m, seed, depth=3, shadow=4):
 
 
 
+def _barrow_crest(a, mound, mbot, seed):
+    """The barrow's skyline as its edge masses' own tops (round 6 of the detail audit, R6-8; Eastward
+    17's clumps over the rocks): along the crown and the upper flanks, masses 8 to 16 texels wide, each
+    standing 2 to 4 texels out of the dome's smooth line with a texel or two in at the joint to the
+    next; each mass's cap lit on its west half (grass 4 over grass 3) and a tone down on its east; and
+    under each a dark U of grass 1, 2 rows at its ends and 3 in its middle, so the bumps show in value
+    as well as in the outline."""
+    H, W = a.shape
+    solid = a >= 0
+    cols = np.nonzero(mound.any(0))[0]
+    top = np.full(W, -1)
+    for x in cols:
+        r = np.nonzero(solid[:, x])[0]
+        top[x] = r.min() if r.size else -1
+    turf_f = [FI_[f] for f in ('grass', 'grass_cool', 'grass_warm', 'leaf', 'leaf_cool', 'leaf_warm')]
+    run = [x for x in cols if 0 <= top[x] < mbot - 16 and a[top[x] + 1, x] >= 0 and (a[top[x] + 1, x] // 8) in turf_f]
+    if len(run) < 20:
+        return
+    x0, x1 = run[0], run[-1]
+    base = top.astype(float).copy()
+    base[x0:x1 + 1] = ndi.uniform_filter1d(top[x0:x1 + 1].astype(float), 17, mode='nearest')
+    x = x0 + 2
+    k = 0
+    while x < x1 - 6:
+        big = hsh(seed, x, 84) > 0.78                                    # now and then a bigger mass
+        wk = (14 + int(5 * hsh(seed, x, 81))) if big else (7 + int(8 * hsh(seed, x, 81)))
+        wk = min(wk, x1 - 2 - x)
+        if wk < 6:
+            break
+        h = 4 if big else 2 + int(2.5 * hsh(seed, x, 82))
+        dep = (5 if big else 2) + int(3 * hsh(seed, x, 85))              # how far down its U sits
+        has_u = hsh(seed, x, 86) > 0.22                                   # some merge into the next, no U
+        c = x + wk / 2.0
+        for xx in range(x, x + wk):
+            if not (0 <= top[xx] < mbot - 16):
+                continue
+            f = (xx + 0.5 - c) / (wk / 2.0)
+            sq = math.sqrt(max(0.0, 1.0 - f * f))
+            nt = int(round(base[xx] - h * sq + (1.5 if abs(f) > 0.8 else 0.0)))
+            ot = int(top[xx])
+            if nt > ot:
+                a[ot:nt, xx] = -1                                          # in at the joint
+            west = xx < c
+            if nt < ot:
+                a[nt:ot, xx] = C('grass', 3) if west else C('grass_cool', 3)  # out: the mass's own top
+            a[nt, xx] = C('grass', 4) if west else C('grass', 3)            # its lit cap
+            if nt + 1 < H and a[nt + 1, xx] >= 0:
+                a[nt + 1, xx] = C('grass', 3) if west else C('grass_cool', 2)
+            yu = int(round(base[xx] + dep + (1.0 + 0.6 * h) * sq))            # the dark U under it
+            depth = 3 if abs(f) < 0.55 else 2
+            if has_u and abs(f) < 0.9:
+                for j in range(depth):
+                    yy = yu + j
+                    if 0 <= yy < H and mound[yy, xx] and a[yy, xx] >= 0:
+                        a[yy, xx] = C('grass', 1) if j < depth - 1 else C('grass_cool', 1)
+        x += wk
+        k += 1
+
+
 def barrow_entrance(seed=161):
     """Old Fang's barrow from the south: a long turf mound 7.4 m long and 2 m high, its dome lit in
     soft bands (the crown at the upper left, the body, the east and lower flanks) and covered in
@@ -3032,6 +3382,7 @@ def barrow_entrance(seed=161):
     sill = _tagm(sc, 'sill')
     a[sill & ~side] = C('stone', 4)
     a[sill & ~side & (Xg > ox + 12)] = C('stone', 3)
+    _barrow_crest(a, mound, mbot, seed)
     _finish(a, keep=pas)
     # the silhouette broken by tufts of 1 to 3 texels every 6 to 12 along it, each standing out along
     # the outline's normal: a dark blade body, a lit tip on the crown's west
@@ -3373,13 +3724,13 @@ def prop_jobs():
     add('coast_mooring_bitt', [('still', lambda: mooring_bitt())], name='Mooring bitt', purpose='contain', role='mooring',
         cells=(2, 1), fp=_fp(1, 1), collision={'shape': 'rect', 'rect': [-2.5, -2.5, 5, 4]}, shadow=(8, 2), composition='edge',
         requires=[_rel('near', 'water', 1, 'on the quay\'s edge, where a boat\'s line is made fast')], forbids=[OFF_WATER],
-        size_class='unsized (a mooring bitt with its hawser\'s coil on the quay: the guide\'s bollard is the post alone; 0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)', eastward=EW_COAST,
+        size_class='bollard (a cast-iron mooring bitt 0.45 m, its hawser made fast round its waist and coiled beside it on the quay; art px: 16 to 26 tall, 32 to 42 wide)', eastward=EW_COAST,
         note='A cast-iron bitt on a bolted plate, a hawser made fast round its waist and the rest flaked down in a flat coil.')
     add('coast_boat_beached', [('still', lambda: boat_beached())], name='Beached boat', purpose='mark', role='boat',
         cells=(6, 2), fp=_fp(6, 1), collision={'shape': 'rect', 'rect': [-20.0, -8.0, 40, 8]}, shadow=(42, 6), composition='free',
         requires=[_rel('near', 'water', 4, 'drawn up the beach above the tide line')], forbids=[OFF_ROUTE, OFF_WATER],
-        size_class='rowing_boat (a 3 m clinker boat, 1.3 m in the beam, 0.6 m to its gunwale; art px: 44 to 60 tall, 120 to 140 wide)', eastward=EW_COAST,
-        note='A 3 m clinker rowing boat drawn up on the shingle, dry: lapped strakes, blue and white, red below; ribs, floor boards, two thwarts and an oar inside; a stone chocked under the bow.')
+        size_class='rowing_boat (a 3 m clinker boat, 1.3 m in the beam, 0.6 m to its gunwale, its stern turned a little to us; art px: 62 to 76 tall, 124 to 140 wide)', eastward=EW_COAST,
+        note='A 3 m clinker rowing boat drawn up on the shingle, dry, built from the gunwale outward: the gunwale the widest line, a stem post and a transom; under the white sheer strake the south side\'s lapped strakes, blue, then red below the waterline with weed along it; frames, floor boards, two thwarts and an oar inside; a stone chocked under the forefoot.')
     add('coast_buoy', [('still', lambda: buoy())], name='Buoy', purpose='guide', role='marker', cells=(1, 1), fp=_fp(1, 1),
         collision={'shape': 'none'}, shadow=None, blocks=False, composition='free',
         requires=[_rel('on', 'water', note='a can buoy moored off the quay, marking the channel')],
@@ -3397,7 +3748,7 @@ def prop_jobs():
     add('halt_platform_edge', [(v_, (lambda v_=v_: platform_edge(v_))) for v_ in 'abcd'], name='Platform edge',
         purpose='cross', role='platform', cells=(1, 1), fp=[[0, -1]], collision={'shape': 'none'}, shadow=None, blocks=False,
         composition='edge', requires=[_rel('near', 'route', 3, 'the platform runs beside the lane the halt serves')],
-        forbids=[OFF_WATER], size_class='unsized (one cell of a platform\'s edge, a piece of a run, not an object; a 0.3 m front and its coping, the gravel behind; art px: 30 to 44 tall, 24 to 24 wide)',
+        forbids=[OFF_WATER], size_class='unsized (one cell of a platform\'s edge, a piece of a run, not an object; its face the size guide\'s low step for a platform, 12 world px (36 art px; size-guide.md, low step: porch, boardwalk, platform), a 0.3 m front and its coping, the gravel behind; art px: 30 to 44 tall, 24 to 24 wide)',
         eastward=EW_HALT,
         note='One cell of the platform\'s edge along x: dressed blocks, a coping slab standing proud with a worn white lip, flags behind; four variants to shuffle along a run; cells meet.')
     add('halt_waiting_shelter', [('still', lambda: waiting_shelter())], name='Waiting shelter', purpose='rest', role='shelter',
@@ -3418,7 +3769,7 @@ def prop_jobs():
     add('halt_semaphore', [('still', lambda: semaphore())], name='Semaphore signal', purpose='guide', role='signal',
         cells=(2, 1), fp=_fp(1, 1), collision={'shape': 'rect', 'rect': [-2.0, -2.0, 4, 4]}, shadow=(8, 3), composition='edge',
         requires=[_rel('near', 'route', 3, 'at the platform\'s end, where the driver sees it')], forbids=[OFF_ROUTE, OFF_WATER],
-        size_class='unsized (a semaphore signal: no kind in the guide; a semaphore post 3 m; art px: 125 to 160 tall, 30 to 50 wide)', eastward=EW_HALT,
+        size_class='pole (a semaphore home signal 3 m, its arm and lamp on a lattice post with a ladder; art px: 125 to 160 tall, 30 to 50 wide)', eastward=EW_HALT,
         note='A three-tone post with cap and finial, the red arm at danger, its spectacle cast with it, a ladder beside.')
     add('halt_platform_lamp', [('still', lambda: platform_lamp())], name='Platform lamp', purpose='light', role='lamp',
         cells=(1, 1), fp=_fp(1, 1), collision={'shape': 'rect', 'rect': [-1.5, -1.5, 3, 3]}, shadow=(6, 2), composition='edge',
@@ -3433,7 +3784,7 @@ def prop_jobs():
         note='A printed sheet behind glass (a header with a train and a clock, rows of print, a notice pinned askew) under a gabled hood.')
     # the Millrace
     add('mill_wheel', [('still', lambda: mill_wheel())], name='Water mill and wheel', purpose='work', role='wheel', cells=(14, 7),
-        fp=_fp(14, 7), collision={'shape': 'rect', 'rect': [-52.0, -48.0, 104, 48]}, shadow=None, composition='edge',
+        fp=_fp(14, 7), collision={'shape': 'rect', 'rect': [-52.0, -48.0, 104, 48]}, shadow=(112, 12), composition='edge',
         requires=[_rel('near', 'water', 2, 'the wheel sits in the race that drives it')], forbids=[OFF_ROUTE],
         extra={'provides': ['feature', 'water', 'view']},
         size_class='water_mill (the size guide\'s water mill: 104 world px wide, two storeys and a loft, 76 to the eaves; the wheel 44 across on the water side, its race the zone\'s water; art px: 310 to 432 tall, 288 to 384 wide)',

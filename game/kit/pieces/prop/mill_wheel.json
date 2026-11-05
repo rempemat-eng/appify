@@ -16,7 +16,7 @@
    "png": "res://kit/props/art/act1/mill_wheel.png",
    "foot": [
     167,
-    357
+    398
    ]
   }
  ],
@@ -30,14 +30,14 @@
  "geometry": {
   "size_px": [
    334,
-   376
+   420
   ],
   "size_cells": [
    14,
    7
   ],
   "z_sort": "foot",
-  "height_px": 376,
+  "height_px": 420,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -49,7 +49,7 @@
   },
   "foot": [
    167,
-   357
+   398
   ],
   "footprint": [
    [
@@ -473,7 +473,15 @@
  },
  "rendering": {
   "cast_shadow": {
-   "shape": "none"
+   "shape": "ellipse",
+   "size": [
+    112,
+    12
+   ],
+   "dir": [
+    1,
+    1
+   ]
   },
   "contact_ao": true,
   "animations": [
@@ -485,7 +493,7 @@
     "strip": "res://kit/props/art/act1/mill_wheel_loop.png",
     "frame_px": [
      334,
-     376
+     420
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true

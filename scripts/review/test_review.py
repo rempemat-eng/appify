@@ -542,6 +542,52 @@ class SizeTable(unittest.TestCase):
         lamp[:100, :, 3] = 0                            # 42 tall: a bollard, not a platform lamp
         self.assertIn('logic.size_guide', [x.detector for x in SZ.check_spec(lamp, 'platform_lamp (a lamp)', 'x/lamp')])
 
+    def test_an_unsized_spec_with_a_kind_that_fits_is_caught(self):
+        """Round 6 of the Act 1 detail audit (R6-3, R6-12): the v7 bitt said unsized but was the guide's
+        bollard, and the v7 semaphore said unsized but was its pole (a signal mast); a justified
+        unsized spec (the churn stand, ruled in sizes.json) is left alone."""
+        fx = os.path.join(os.path.dirname(FIX_V3), 'act1_v7')
+        bitt = ("unsized (a mooring bitt with its hawser's coil on the quay: the guide's bollard is the post alone; "
+                "0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)")
+        f = SZ.check_spec(_png(os.path.join(fx, 'coast_mooring_bitt.png')), bitt, 'act1/coast_mooring_bitt')
+        self.assertEqual([x.detector for x in f], ['logic.size_unsized'])
+        self.assertIn('bollard', f[0].message)
+        sema = 'unsized (a semaphore signal: no kind in the guide; a semaphore post 3 m; art px: 125 to 160 tall, 30 to 50 wide)'
+        f = SZ.check_spec(_png(os.path.join(fx, 'halt_semaphore.png')), sema, 'act1/halt_semaphore')
+        self.assertIn('pole', [m for x in f for m in [x.message.split("guide's ")[1].split(' ')[0]]])
+        self.assertTrue(all(x.detector == 'logic.size_unsized' for x in f))
+        stand = ("unsized (a churn stand with its churns: the churns kind is the churns alone; deck 0.65 m; "
+                 "art px: 60 to 80 tall, 56 to 80 wide)")
+        self.assertEqual(SZ.unsized_fits(stand, {'tall': 68, 'wide': 66}), [])
+        self.assertEqual(SZ.unsized_fits('unsized (a chambered barrow, a landmark; art px: 160 to 190 tall)',
+                                         {'tall': 177, 'wide': 326}), [])
+        self.assertEqual(SZ.unsized_fits('bollard (art px: 16 to 26 tall)', {'tall': 21, 'wide': 42}), [])
+
+    def test_the_asset_gate_measures_a_kit_piece_against_its_spec(self):
+        """R6-12: logic.size_spec and logic.size_guide ran only in test_act1; the asset gate now reads a
+        kit picture's audit.size_class and runs check_spec, so the reviewer's sheet shows it."""
+        lamp = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'halt_platform_lamp.png')
+        self.assertTrue(SZ.kit_spec(lamp).startswith('platform_lamp ('))
+        self.assertIsNone(SZ.kit_spec(os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'coast_buoy_loop.png')))
+        s = sprite(60, 60)
+        s[10:58, 10:50, 3] = 255                                   # 48 x 40: a third of a water mill
+        f, _ = A.review_rgba(s, 'x/mill', 'mill', 'valley', size_class='water_mill (art px: 300 to 400 tall)')
+        got = [x.detector for x in f]
+        self.assertIn('logic.size_guide', got)
+        self.assertIn('logic.size_spec', got)
+        f, _ = A.review_rgba(s, 'x/mill', 'mill', 'valley')
+        self.assertNotIn('logic.size_guide', [x.detector for x in f])
+
+    def test_a_drying_net_is_not_read_as_a_crown(self):
+        """R6-12: construct.crown_holes read the v7 net rack's green twine as a see-through crown; a net
+        is mostly air (R3-6), so a piece named as a net is skipped. A bush with the same pixels still trips."""
+        im = _png(os.path.join(os.path.dirname(FIX_V3), 'act1_v7', 'coast_net_rack.png'))
+        rgb, alpha = A.on_ground(im, A.NEUTRAL), im[..., 3] > 128
+        self.assertEqual(C.crown_holes(rgb, alpha, 74, 'act1/coast_net_rack'), [])
+        self.assertEqual(C.crown_holes(rgb, alpha, 74, 'x/fishing_net'), [])
+        self.assertEqual([x.detector for x in C.crown_holes(rgb, alpha, 74, 'x/bush')], ['detail.mesh'])
+        self.assertEqual([x.detector for x in C.crown_holes(rgb, alpha, 74, 'x/nettle_bed')], ['detail.mesh'])
+
     def test_a_class_name_counts_only_where_a_word_starts(self):
         # the detail audit of 4 Nov: "urn" inside "churn" sized the churn stand as a barrel
         self.assertNotEqual(SZ.class_of('kit/halt_churn_stand'), 'barrel')

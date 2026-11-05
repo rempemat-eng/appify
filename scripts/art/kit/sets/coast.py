@@ -146,6 +146,8 @@ def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0, irregular=False):
         uy = yy % h
         last_y = uy == h - 1
     own = np.where(K.vhash(sx, course, seed) > 0.95, 1.0, np.where(K.vhash(sx, course, seed + 1) < 0.04, -1.0, 0.0))
+    if irregular:
+        own = np.zeros_like(own)               # (R6-7) flags: no flag a full tone off; the dark ones a cool sibling below
     t = 3.0 + own
     lit = ((uy == 0) & (ux > 0) & (ux < 4)) | ((ux == 0) & (uy > 0) & (uy < 3))
     t = np.where(lit, t + 1.0, t)
@@ -159,6 +161,10 @@ def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0, irregular=False):
         t = np.where(worn & lit, t - 1.0, t)
     K.rpaint(cv, m, [('slate_cool', 'stone', 'stone_warm'), ('stone_cool', 'stone_cool', 'stone')], t,
              np.clip(K.vhash(sx, course, seed + 2) * 0.999, 0, 0.999))
+    if irregular:
+        # (R6-7) a darker flag is the cool sibling at the same tone, half a tone under its neighbours
+        dk = m & (K.vhash(sx, course, seed + 1) < 0.1) & ~(last_y | last_x)
+        K.rpaint(cv, dk, [('slate_cool', 'stone_cool', 'stone_cool')], t, 0.0)
     from scripts.art.native.palette import C as C_
     if not irregular:
         cv[m & worn & (last_y | last_x)] = C_('ashlar', 2)
@@ -166,19 +172,38 @@ def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0, irregular=False):
         # flags (R4-9): the odd flag cracked (a dark line with its lit lip), a worn flag a tone paler
         # at its middle, crust lichen in small clusters
         inner = m & ~(last_y | last_x) & (ux > 1) & (uy > 1)
-        crk = inner & (K.vhash(sx, course, seed + 12) > 0.86) & (np.abs((ux - ww * 0.3) - (uy * 1.6)) < 0.6)
+        crk = inner & (K.vhash(sx, course, seed + 12) > 0.72) & (np.abs((ux - ww * 0.3) - (uy * 1.6)) < 0.6)
         cv[crk] = C_('stone_cool', 1)
         cv[np.roll(crk, 1, 1) & inner & ~crk] = C_('stone', 4)
-        wornf = inner & (K.vhash(sx, course, seed + 13) > 0.8) & (np.abs(ux - ww / 2) < ww / 4) & (np.abs(uy - hh / 2) < hh / 4)
+        wornf = inner & (K.vhash(sx, course, seed + 13) > 0.9) & (np.abs(ux - ww / 2) < ww / 4) & (np.abs(uy - hh / 2) < hh / 4)
         cv[wornf] = C_('stone', 4)
-        # (R5-7) crust lichen in clusters of 3 x 2 (a pale top, a darker foot), never single texels;
         # some flags in a third sibling; the odd worn corner, its arris lit
-        lic = inner & (K.vhash(Xg // 3, Yg // 2, seed + 14) > 0.975)
-        cv[lic] = np.where((Yg[lic] % 2) == 0, C_('stone_warm', 4), C_('brass', 3))
-        third = inner & (K.vhash(sx, course, seed + 15) > 0.7) & (cv % 8 == 3)
+        third = inner & (K.vhash(sx, course, seed + 15) > 0.82) & (cv % 8 == 3)
         cv[third] = C_('ashlar', 3)
+        # (R6-7) the stone's own grain: small clusters swapped to a sibling at the same tone, shapes
+        # without value noise
+        g2 = inner & ~third & (K.vhash(Xg // 2, Yg // 2, seed + 20) > 0.86) & (cv % 8 == 3)
+        sib = K.vhash(Xg // 2, Yg // 2, seed + 21) > 0.5
+        cv[g2 & sib] = C_('stone_warm', 3)
+        cv[g2 & ~sib] = C_('stone_cool', 3)
         corner = m & (ux <= 2) & (uy <= 1) & (K.vhash(sx, course, seed + 16) > 0.6)
         cv[corner] = C_('stone_warm', 4)
+        # (R6-7) chips out of the top arris: a dark bite with its broken face lit under it
+        chip = m & (uy == 0) & (ux > 3) & (ux < ww - 3) & (((ux + sx * 7) % 9) < 2) & (K.vhash(sx, course, seed + 17) > 0.35)
+        cv[chip] = C_('stone_cool', 1)
+        cv[np.roll(chip, 1, 0) & m & ~chip] = C_('stone', 4)
+        # (R6-7) crust lichen as rosettes of 2 to 3 texels, gathered in a flag's corners and along its
+        # joints, not spread evenly: a yellow or grey-green heart, its rim a paler stone
+        seat = inner & (((ux == 2) & (uy == 2)) | ((ux == ww - 3) & (uy == hh - 3)) | ((uy == hh - 3) & (ux == ww // 2)))
+        seat &= K.vhash(sx * 3 + ux, course * 5 + uy, seed + 18) > 0.62
+        arm = np.zeros_like(seat)
+        for dy_, dx_ in ((0, 1), (1, 0), (0, -1)):
+            arm |= np.roll(np.roll(seat, dy_, 0), dx_, 1)
+        arm &= inner & ~seat
+        cv[arm] = C_('stone_warm', 4)
+        yel = K.vhash(sx, course, seed + 19) > 0.5
+        cv[seat & yel] = C_('brass', 3)
+        cv[seat & ~yel] = C_('grass_cool', 3)
 
 
 def shingle(cv, m, seed=1506):

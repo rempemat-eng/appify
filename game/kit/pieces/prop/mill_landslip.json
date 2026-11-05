@@ -30,14 +30,14 @@
  "geometry": {
   "size_px": [
    129,
-   72
+   76
   ],
   "size_cells": [
    6,
    3
   ],
   "z_sort": "foot",
-  "height_px": 72,
+  "height_px": 76,
   "collision": {
    "shape": "rect",
    "rect": [

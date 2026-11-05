@@ -1,14 +1,14 @@
 {
  "id": "act1/mill_wheel",
  "file": "game/kit/props/art/act1/mill_wheel.png",
- "sha256": "3e69958d645e06237095ae8b869ffc7f087ae516b45e1d28096feafb0c2b3d58",
+ "sha256": "ce90a2d676bc6a6264543ccf008fe340eb09d32c72243ca542eb96d74e0ca246",
  "kind": "mill_wheel",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   334,
-  376
+  420
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 348,
-   "tones": 24.701149425287355,
-   "shapes": 43.71264367816092
+   "patches": 340,
+   "tones": 24.83235294117647,
+   "shapes": 43.62352941176471
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.868,
-  "tones_ratio": 0.915,
-  "shapes_ratio": 0.868,
+  "ratio": 0.866,
+  "tones_ratio": 0.92,
+  "shapes_ratio": 0.866,
   "passed": false,
   "group": "prop"
  },
@@ -39,58 +39,10 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    242,
-    324,
-    257,
-    343
-   ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 156 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    211,
-    321,
-    238,
-    343
-   ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 70 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    240,
-    346,
-    268,
-    355
-   ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 54 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    187,
-    310,
-    234,
-    341
-   ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 50 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    203,
-    346,
-    234,
-    355
+    214,
+    364,
+    237,
+    384
    ],
    "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 42 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
@@ -99,24 +51,72 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    209,
-    254,
-    246,
-    306
+    38,
+    302,
+    132,
+    398
    ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 40 L per H to the east)",
+   "message": "act1/mill_wheel: the wood is lit from the right (luminance rises 32 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    249,
-    318,
+    251,
+    360,
     296,
-    341
+    383
    ],
    "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 32 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    187,
+    314,
+    234,
+    350
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 29 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    188,
+    355,
+    231,
+    384
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 14 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    207,
+    385,
+    234,
+    398
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 10 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    40,
+    190,
+    99,
+    266
+   ],
+   "message": "act1/mill_wheel: the wood is lit from the right (luminance rises 9 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -126,9 +126,9 @@
     0,
     0,
     334,
-    375
+    419
    ],
-   "message": "act1/mill_wheel: detail bar 0.87 of Eastward's prop band (24.7 tones, 43.7 shapes a patch against 27.0, 50.36)",
+   "message": "act1/mill_wheel: detail bar 0.87 of Eastward's prop band (24.8 tones, 43.6 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -138,17 +138,16 @@
     0,
     0,
     334,
-    375
+    419
    ],
-   "message": "act1/mill_wheel: 47% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "message": "act1/mill_wheel: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-05",
-  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): R5-1 fixed (334 x 376, eaves 76 world px, wheel 132 art px, the guide's water_mill). Fault R6-1: the wheel stands about 20 px proud of the wall and throws no shadow on it and has no bearing, so at 1x it reads as a decal on the wall. Polish R6-6: the hoist beam is a flat square on the fascia and its rope ends in the air; moss as green stickers mid-slate again (R3-13); four identical windows; one unbroken roof field. Rejected: the 7 detail.light polish boxes (the wheel's spokes and foam over the wall) and cluster_noise 47 % (slates and courses are structure; seeds +0 to +11 all score 47.1 to 49.5 %, so the seed hides no structural fault)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

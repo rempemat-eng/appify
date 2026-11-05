@@ -73,7 +73,8 @@ def valley() -> dict:
     tiers[0:12, 20:26] = 1                                  # a low earth bank between halt and leat (one step, LOW_FACE_PX)
     g[25:30, 30:32] = '#'                                   # the yard's track to the south
     g[23:25, 30:38] = '#'                                   # the yard it ends in, worn in front of the spare millstones
-    g[21:23, 30:33] = '#'                                   # the cart track from the crossing at the loading door down to the yard
+    g[21:23, 32:34] = '#'                                   # the cart track from under the crossing down to the yard (R6-4: the
+                                                            # study paints its last cell up onto the slabs, race_coping)
     g[15:29, 2:4] = '#'                                     # the field path from the lane to the barrow
     g[28:30, 2:13] = '#'
     g[27:28, 11:13] = '#'                                   # the trod straight out of the barrow's portal
@@ -93,7 +94,7 @@ def valley() -> dict:
         {'id': 'wheel', 'piece': 'mill_wheel', 'at': [37 * CELL, 18 * CELL]},   # the water mill, its wall's foot on the race
         {'id': 'slip', 'piece': 'mill_landslip', 'at': [22 * CELL + 12, 14 * CELL]},   # its torn lip at the bank's rim
         {'id': 'fence', 'piece': 'mill_fence_broken', 'at': [16 * CELL, 17 * CELL]},
-        {'id': 'stones', 'piece': 'mill_millstones', 'at': [35 * CELL + 12, 23 * CELL]},   # in the yard beside the track's end
+        {'id': 'stones', 'piece': 'mill_millstones', 'at': [36 * CELL + 12, 23 * CELL]},   # in the yard beside the track's end
         # the hives by the lane
         {'id': 'hive', 'piece': 'hive_wbc', 'at': [10 * CELL + 12, 17 * CELL]},
         {'id': 'skep', 'piece': 'hive_skep', 'at': [12 * CELL + 12, 17 * CELL]},
@@ -106,7 +107,8 @@ def valley() -> dict:
     return {'zone': 'act1_valley_study', 'note': 'Review study (scripts/art/kit/sets/act1_study.py), not a playable zone.',
             'legend': {',': 'lawn', '#': 'path', '~': 'water', 'q': 'quay'}, 'dress': {'quay': 'flags'},
             'rows': [''.join(r) for r in g], 'tiers': [''.join(str(v) for v in r) for r in tiers], 'pieces': pieces, 'decor': [],
-            'race': {'row': 18, 'rows': 2, 'from': 29, 'from_s': 26.5, 'wall': (30, 44), 'bridge': (751, 70)}}   # the crossing: x and width, in front of the loading door
+            'race': {'row': 18, 'rows': 2, 'from': 29, 'from_s': 26.5, 'wall': (30, 44), 'bridge': (751, 70),
+                     'track': (32, 34, 21)}}   # the crossing: x and width, in front of the loading door; the track's columns and first row
 
 
 def _paint(img, cv):
@@ -223,13 +225,18 @@ def platform_ends(img, p, seed=351):
     ys_, xs_ = np.nonzero(cells)
     y0, y1 = ys_.min() * CELL, (ys_.max() + 1) * CELL + CELL           # down to the front's foot
     xw, xe = xs_.min() * CELL, (xs_.max() + 1) * CELL
+    # (R6-7) eastward-edges 3.3's band: 2 lit and 2 dark texels each side, the ink line outside broken
     for y in range(y0, y1):
         if y < y1 - CELL:                                              # the west end: the paving's side (the path climbs on below)
-            cv[y, xw] = C('stone', 4)
-            cv[y, xw + 1] = C('stone', 3)
+            cv[y, xw] = C('stone', 4)                                  # the side, facing west, lit
+            cv[y, xw + 1] = C('stone', 4) if K.hsh(seed, y // 4, 3) > 0.3 else C('stone_warm', 4)
+            cv[y, xw + 2] = C('stone_cool', 2)                         # the lip band's darker inner line
+            cv[y, xw + 3] = C('stone_cool', 2) if K.hsh(seed, y // 3, 4) > 0.25 else C('stone', 2)
             if K.hsh(seed, y // 3, 1) > 0.2:
                 cv[y, xw - 1] = C('void', 1)
-        cv[y, xe - 2] = C('stone_cool', 2)
+        cv[y, xe - 4] = C('stone', 4)                                  # the paving's lit lip at its east end
+        cv[y, xe - 3] = C('stone', 3) if K.hsh(seed, y // 4, 5) > 0.3 else C('stone_warm', 3)
+        cv[y, xe - 2] = C('stone_cool', 2)                             # the side, facing east, in shade
         cv[y, xe - 1] = C('stone_cool', 1)
         if K.hsh(seed, y // 3, 2) > 0.2:
             cv[y, xe] = C('void', 1)
@@ -280,24 +287,58 @@ def race_coping(img, p, seed=341):
             if 0 <= yy < h:
                 cv[yy, x0] = C('stone_warm', 4)
                 cv[yy, x0 - 1] = C('stone_cool', 1)
-    # a crossing of long slabs over the race in front of the mill's loading door, for the carts
+    # a crossing of long slabs over the race in front of the mill's loading door, for the carts (round
+    # 6 of the detail audit, R6-4): four slabs laid side by side across the race, their tops raised
+    # over the copings they bear on, each lit along its west edge and its north end, a dark joint
+    # between each and the next, a cart rut worn along them; the south ends' face 4 rows deep over the
+    # south coping; the crossing's shade on the water east and down of it
     if rc.get('bridge'):
-        bx0, bx1 = rc['bridge'][0], rc['bridge'][0] + rc['bridge'][1]
-        for yy in range(yn - 4, ys + 3):
-            for xx in range(bx0, bx1):
-                k = (xx - bx0) // 10
-                if yy == ys + 2:
-                    c = C('stone_cool', 1)                              # its south face's foot
-                elif yy >= ys:
-                    c = C('stone', 2)                                   # its south face
-                elif (xx - bx0) % 10 == 9:
-                    c = C('stone_cool', 2)                              # the joint between slabs
-                else:
-                    c = C('stone_warm' if k % 2 else 'stone', 4 if yy < yn else 3)
-                cv[yy, xx] = c
-            cv[yy, bx0] = C('stone_warm', 4) if yy < ys else cv[yy, bx0]
-            cv[yy, bx1 - 1] = C('stone_cool', 1)
-    return _paint(img, cv)
+        bx0, bwid = rc['bridge']
+        widths = [17, 18, 17, 18]
+        scale_ = bwid / float(sum(widths))
+        edges_ = [bx0]
+        for wd in widths:
+            edges_.append(edges_[-1] + int(round(wd * scale_)))
+        edges_[-1] = bx0 + bwid
+        ytop0, ytop1 = yn - 6, ys - 2                                       # the tops, raised over both copings
+        for k in range(len(widths)):
+            xa, xb = edges_[k], edges_[k + 1]
+            f = 'stone_warm' if k % 2 else 'stone'
+            for xx in range(xa, xb):
+                for yy in range(ytop0, ytop1):
+                    t = 3
+                    if xx == xa or yy == ytop0:
+                        t = 4                                               # the lit west edge and north end
+                    elif xx >= xb - 2:
+                        t = 2                                               # the east edge, turned away
+                    elif K.hsh(seed, xx // 3, yy // 4 + 50 * k) > 0.9:
+                        t = 4 if K.hsh(seed, xx, yy) > 0.5 else 2           # a chip or a worn hollow
+                    cv[yy, xx] = C(f, t)
+                for j, (ff, t) in enumerate((('stone', 3), ('stone_cool', 2), ('stone_cool', 1), ('void', 2))):
+                    cv[ytop1 + j, xx] = C(ff, t)                            # the south ends' face over the coping
+            for yy in range(ytop0, ytop1 + 4):
+                cv[yy, xb - 1] = C('void', 2)                               # the joint
+        for yy in range(ytop0 + 2, ytop1 - 1):                              # the cart's ruts worn along the slabs
+            for rx in (bx0 + 18, bx0 + bwid - 20):
+                cv[yy, rx] = C('stone_cool', 2)
+                cv[yy, rx + 1] = C('stone', 2)
+        # its shade on the race east and down of it
+        for yy in range(yn + 1, ys - 1):
+            for xx in range(bx0 + bwid, bx0 + bwid + 3 + (yy - yn) // 12):
+                if cv[yy, xx] < 0:
+                    cv[yy, xx] = C('water_cool', 1)
+    out = _paint(img, cv)
+    # the cart track carried on up its last cell onto the crossing's south face (R6-4): the track's own
+    # worn surface two cells lower (inside the track, clear of its top edge), copied up between the
+    # slabs' face and the track's first row
+    if rc.get('bridge') and rc.get('track'):
+        tx0, tx1, trow = rc['track'][0] * CELL, rc['track'][1] * CELL, rc['track'][2] * CELL
+        g_ = np.asarray(out).copy()
+        y0_ = ys + 2
+        for yy in range(y0_, trow + 8):                                    # over the track's own top edge too
+            g_[yy, tx0:tx1] = g_[yy + 2 * CELL, tx0:tx1]
+        out = Image.fromarray(g_, 'RGBA')
+    return out
 
 
 def plans() -> list:

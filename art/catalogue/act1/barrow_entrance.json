@@ -1,14 +1,14 @@
 {
  "id": "act1/barrow_entrance",
  "file": "game/kit/props/art/act1/barrow_entrance.png",
- "sha256": "f1fc9f672de6033386e86cda368adfaf786a180f028b25b99aba85a1884a39e6",
+ "sha256": "8292a9a904726fc22b6ecc3c4d75a21a4a858eb7418e828a235340a4e5df3f8d",
  "kind": "barrow_entrance",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  326,
-  177
+  323,
+  180
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 126,
-   "tones": 22.944444444444443,
-   "shapes": 38.166666666666664
+   "patches": 127,
+   "tones": 23.89763779527559,
+   "shapes": 38.79527559055118
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.603,
-  "tones_ratio": 0.828,
-  "shapes_ratio": 0.603,
+  "ratio": 0.613,
+  "tones_ratio": 0.862,
+  "shapes_ratio": 0.613,
   "passed": false,
   "group": "foliage"
  },
@@ -41,10 +41,10 @@
    "box": [
     0,
     0,
-    326,
-    177
+    323,
+    180
    ],
-   "message": "act1/barrow_entrance: detail bar 0.60 of Eastward's foliage band (22.9 tones, 38.2 shapes a patch against 27.71, 63.32)",
+   "message": "act1/barrow_entrance: detail bar 0.61 of Eastward's foliage band (23.9 tones, 38.8 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -53,18 +53,17 @@
    "box": [
     0,
     0,
-    326,
-    177
+    323,
+    180
    ],
-   "message": "act1/barrow_entrance: only 15% of the silhouette is drawn in an edge tone",
+   "message": "act1/barrow_entrance: only 16% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): R5-2 fixed (no frame round the lintel); R5-3 clip fixed (the scene has room, the ends turn). Bar 0.60. Polish R6-8: the silhouette is smoother than v6 (3 steps of 2 px or more across the top against 28) and the dark Us do not read (texels under 80 L fell from 4.4 to 2.9 %)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

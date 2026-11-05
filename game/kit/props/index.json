@@ -10,8 +10,8 @@
   ],
   "deck": null,
   "foot": [
-   162,
-   158
+   161,
+   161
   ],
   "footprint": [
    [
@@ -262,8 +262,8 @@
   "variants": {
    "still": {
     "foot": [
-     162,
-     158
+     161,
+     161
     ],
     "png": "res://kit/props/art/act1/barrow_entrance.png"
    }
@@ -1320,7 +1320,7 @@
   "deck": null,
   "foot": [
    66,
-   34
+   53
   ],
   "footprint": [
    [
@@ -1393,7 +1393,7 @@
    "still": {
     "foot": [
      66,
-     34
+     53
     ],
     "png": "res://kit/props/art/act1/coast_boat_beached.png"
    }
@@ -1630,7 +1630,7 @@
   ],
   "deck": null,
   "foot": [
-   34,
+   33,
    19
   ],
   "footprint": [
@@ -1679,7 +1679,7 @@
   "variants": {
    "still": {
     "foot": [
-     34,
+     33,
      19
     ],
     "png": "res://kit/props/art/act1/coast_mooring_bitt.png"
@@ -14735,7 +14735,7 @@
    "frames": 8,
    "offset": [
     -167,
-    -357
+    -398
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/act1/mill_wheel_loop.png"
@@ -14751,7 +14751,7 @@
   "deck": null,
   "foot": [
    167,
-   357
+   398
   ],
   "footprint": [
    [
@@ -15166,7 +15166,16 @@
    }
   ],
   "role": "wheel",
-  "shadow": null,
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    336,
+    36
+   ]
+  },
   "size_cells": [
    14,
    7
@@ -15179,7 +15188,7 @@
    "still": {
     "foot": [
      167,
-     357
+     398
     ],
     "png": "res://kit/props/art/act1/mill_wheel.png"
    }

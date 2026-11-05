@@ -1,20 +1,20 @@
 {
  "id": "act1/coast_mooring_bitt",
  "file": "game/kit/props/art/act1/coast_mooring_bitt.png",
- "sha256": "31df1a9a9b7d2c9da78203e4160432a4af456e742d2d21c55fc01482ff8e5ac0",
+ "sha256": "3b552fea62fd0ff7fe2bcf2a66c7842677aebd1dd2a4118eed12c0b531a74732",
  "kind": "coast_mooring_bitt",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  43,
+  42,
   21
  ],
  "status": "fail",
  "counts": {
   "blocker": 0,
   "fault": 1,
-  "polish": 1
+  "polish": 0
  },
  "detail_bar": {
   "ours": {
@@ -34,35 +34,22 @@
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    1,
-    7,
-    40,
-    19
-   ],
-   "message": "act1/coast_mooring_bitt: the wood is lit from the right (luminance rises 11 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
    "detector": "detail.cluster_noise",
    "severity": "fault",
    "box": [
     0,
     0,
-    43,
+    42,
     21
    ],
-   "message": "act1/coast_mooring_bitt: 57% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "message": "act1/coast_mooring_bitt: 60% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): R5-11 done: two 2-row turns with a seam. The detail.cluster_noise fault (57 %) is rejected as structure, as in rounds 4 and 5: the noisy blocks fell from 22 to 21 (the coil's 11 unchanged, the bitt and turns 11 to 10); the share rose only because the interior shrank from 40 to 37 blocks. The status field stays the detector's fail. detail.light (wood) rejected: the pale standing part runs east. Spec note R6-3: its size head word should be bollard, not unsized."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset. Producer's note (v8, not a verdict): the picture changed for R6-3 (the coil moved 2 texels in so the bitt fits the guide's bollard, 42 wide; at v7 the canvas clipped the coil's west outline). detail.cluster_noise is 59.5 % (v7 56.8 %), from the coil's ring seams that round 5 and round 6 rejected as structure; the coil now carries its whole outline. The reviewer decides whether the rejection carries over."
  }
 }
