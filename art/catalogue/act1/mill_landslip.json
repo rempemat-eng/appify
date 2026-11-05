@@ -63,7 +63,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 7 (v8) of docs/reviews/2026-11-04-act1-props.md (ba774db4): R6-10 fixed: the tongues are lit loose earth with open edges where they thin into the grass, ragged tips with a clod or a stone, and the dark rim only on the thick toe. detail.light (pale) rejected: the birch's sawn end and curls (as rounds 4 to 6). Bar 0.76 accepted (polish)."
  }
 }

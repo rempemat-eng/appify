@@ -147,7 +147,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 7 (v8) of docs/reviews/2026-11-04-act1-props.md (ba774db4): R6-1 fixed: the wheel's rim, floats and spokes cast one tone down on the wall 14 px east and 9 down (the wall in the cast 60 L against 84 L beside it), light through the spokes, an iron boss with four bolts, the shaft running back to an 18 x 13 bearing plate. R6-5 and R6-6 done: the plain seed; every draw from +0 to +11 passes the gate with no fault at 44.9 to 47.2 % cluster noise on the committed crop (the roof alone 45.4 to 47.3 %); a chimney with its shade, a ridge vent, moss in the joints, four windows of their own, the beam's end grain and pulley, the rope on a cleat, sacks and a lamp. Seven detail.light findings rejected: five stone boxes are the wheel's pale timber and the white water at its foot, and two wood boxes are the hoist door's lit east reveal (it faces west) and the cream sacks east of the loading door. Bar 0.87 and noise 45 % accepted (polish). Open: R7-1, the piece's ellipse cast shadow bakes as a flat dark band on the lawn beyond the race (a spec and study fault, as R6-3 was for the specs); R7-5 polish (sacks, hoist reveal, the overhung wheel's shaft hidden behind a spoke)."
  }
 }

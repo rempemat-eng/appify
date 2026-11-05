@@ -49,7 +49,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset. Producer's note (v8, not a verdict): the picture changed for R6-3 (the coil moved 2 texels in so the bitt fits the guide's bollard, 42 wide; at v7 the canvas clipped the coil's west outline). detail.cluster_noise is 59.5 % (v7 56.8 %), from the coil's ring seams that round 5 and round 6 rejected as structure; the coil now carries its whole outline. The reviewer decides whether the rejection carries over."
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 7 (v8) of docs/reviews/2026-11-04-act1-props.md (ba774db4): R6-3 done: headed bollard, 42 wide. The detail.cluster_noise fault (59.5 %) is rejected as structure, as in rounds 4 to 6. The pixels are v7's: the bitt is moved 1 texel west and the coil 1 east (the standing part is 2 shorter), and the coil's west outline column is added. Padding v8 by one column gives v7's 56.8 % exactly, so the rise comes from the 2 x 2 grid falling a texel differently on unchanged parts. The 4 extra noisy blocks are 3 on the coil's ring seams and 1 on the post's plane edge, and none is grain. The status field stays the detector's fail."
  }
 }

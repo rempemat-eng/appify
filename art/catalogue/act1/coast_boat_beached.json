@@ -38,7 +38,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 7 (v8) of docs/reviews/2026-11-04-act1-props.md (ba774db4): R6-2 fixed: rebuilt from the gunwale, which is now the widest line; a stem post, a transom, and only the near side showing, 14 to 17 px under the white sheer strake, with no hull past the gunwale at either end. The stickers are now streaks and tufts. At rowing_boat size (133 x 71); no detector findings. Polish R7-4: the transom reads as a 3 px edge rather than a plane, the stem post is unlit, and the weed sits in squares on the keel instead of along the waterline."
  }
 }
