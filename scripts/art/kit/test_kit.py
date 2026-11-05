@@ -658,7 +658,9 @@ class WaterBanks(unittest.TestCase):
         # tone over 40 rows is no more than the woodland sibling's worst window of the same height
         # (measured here on the sibling's ribbon, rows 772-884 of its ground, columns 216-258: 0 to
         # 0.17 over 44 rows, 0.26 to 0.36 over 92 when this was written). Its outline is not a
-        # rectangle
+        # rectangle. This guards against slabs only: a streak on these short sheets runs at most 39
+        # texels (13 world px), one under the 40-row window, so a streaked column never counts as
+        # flat here; test_a_kit_sheet_falls_in_streaks guards the streaks' character (round 9, T9-1)
         from PIL import Image
         from scripts.art.kit import structures as ST
         from scripts.art.native.palette import C
@@ -693,12 +695,17 @@ class WaterBanks(unittest.TestCase):
                     self.assertLessEqual(share, limit[face - 4] + 1e-9, 'waterfall_%d drop %d frame %d: %.2f of its columns flat, the sibling at %d rows %.2f' % (c, drop, t, share, face - 4, limit[face - 4]))
                     tones = set(np.unique(body).tolist())
                     self.assertGreaterEqual(len(tones), 5, (c, drop))
-        # (round 8, K8-2) no navy slab over the whole sheet, lip to foot: in its upper three quarters
-        # the east band of water 1 is at most 9 texels wide in every row (the sibling's widest), and
+        # (round 8, K8-2; round 9, T9-1) no navy slab over the whole sheet, lip to foot: in its upper
+        # three quarters the east band of water 1 is in every row at most the painter's own cap,
+        # ceil(min(0.15 of the row's width, 9)) + 1 texels (9 is the sibling's widest; the 1 is the
+        # edge texel the wobble can add), so at one and two cells it cannot drift back toward a
+        # share-of-width slab while staying under 9; and
         # no one patch of water 1 holds more than 9 texels a row of the sheet's height (the sibling:
         # 988 texels over 124 rows, 7.97 a row; 9 a row is the band's own cap, so a patch can only be
         # the band, never a slab across the ribbon)
+        import math
         from scipy import ndimage as ndi
+        from scripts.art.native import rocks as RK
         w1 = C('water', 1)
         for c in (1, 2, 3, 4):
             for drop in (1, 2):
@@ -707,6 +714,7 @@ class WaterBanks(unittest.TestCase):
                     cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
                     ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
                     m = ST.sheet_mask(cv.shape, 24, wpx, 12, 12 + face, 9 + c)
+                    edges = {Y: (xl, xr) for (Y, xl, xr) in RK.sheet_rows(24, 24 + wpx, 12, 12 + face, phase_y=12)}
                     for Y in range(12, 12 + int(0.75 * face)):
                         xs = np.nonzero(m[Y])[0]
                         band = 0
@@ -714,14 +722,21 @@ class WaterBanks(unittest.TestCase):
                             if cv[Y, X] != w1:
                                 break
                             band += 1
-                        self.assertLessEqual(band, 9, 'waterfall_%d drop %d frame %d row %d: a navy band of %d' % (c, drop, t, Y, band))
+                        xl, xr = edges[Y]
+                        cap = math.ceil(min(0.15 * (xr - xl), 9.0)) + 1
+                        self.assertLessEqual(band, cap, 'waterfall_%d drop %d frame %d row %d: a navy band of %d, cap %d' % (c, drop, t, Y, band, cap))
                     lab, k = ndi.label((cv == w1) & m)
                     big = int(np.bincount(lab.ravel())[1:].max()) if k else 0
                     self.assertLessEqual(big / face, 9.0, 'waterfall_%d drop %d frame %d: a navy patch of %d texels' % (c, drop, t, big))
-        # (review round 5, K5-1) the sheet falls in streaks, not a mosaic of chips: across its body
-        # the lightness changes at least 4 times as often across as down (the woodland's sheet: 10),
-        # and the median vertical run of one colour is at least 6 texels (the woodland's: 15), in
-        # every frame of the loop
+
+    def test_a_kit_sheet_falls_in_streaks(self):
+        # (review round 5, K5-1; round 9, T9-1: the guard of the streaks' character, which the flat
+        # test above cannot fail on) the sheet falls in streaks, not a mosaic of chips: across its
+        # body the lightness changes at least 4 times as often across as down (the woodland's sheet:
+        # 10), and the median vertical run of one colour is at least 6 texels (the woodland's: 15),
+        # for every piece and every frame of the loop
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C
         from scripts.review import bands as B
         from scripts.art.native.palette import LUT
         for c in (1, 2, 3, 4):
