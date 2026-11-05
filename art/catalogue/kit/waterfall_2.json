@@ -61,11 +61,11 @@
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "date": "2026-11-04",
-  "note": "redrawn after round 4 of the independent audit (K4-1 to K4-3): structures.fall_sheet draws the sheet as the woodland's rocks.fall does (broken streak runs in 4 to 5 tones over the whole width, a broken dark east edge, edges wandering a texel and swelling at the foot), crest_foam breaks the white into 2 or 3 runs under a bowed bend, the foam's under-band is a soft shade and the spray a fan of specks; its frames are waterfall_2_flow.png. Scored against Eastward 37's white water; a one-cell sheet adds a fleck family, a glassy band under the crest and a broken mid seam (groups.water). Not yet reviewed by an independent detail-auditor."
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 5 (76241d98). K4-1's flat slabs are gone (0 columns one tone over 40 rows) and K4-2 (crest in 2 to 5 broken runs), K4-3 (soft shade under the foam, spray as a fan) are fixed, but the sheet fails anew, K5-1: it is a mosaic of 2-texel chips with no streak running down. With frame 0 overlaid, tone changes between vertical neighbours are as common as between horizontal ones (horizontal/vertical ratio 0.92 to 1.33; the one-cell pieces 0.92 to 1.02) and the mean vertical run is 1.8 to 2.6 texels; the woodland sheet, the house sibling, has ratio 10.2 and runs of 17.7. At 1x beside Bramble and in the kitlab_tiers bake it reads as blue static or crumbling ice, not falling water. The west edge is ruler-straight at x 24 in every row and the sheet does not swell at the foot. Fix: streak lanes 1 to 3 texels wide whose segments run 8 to 30 texels down (as rocks.fall), broken and offset, in 4 to 5 tones, keep the lit west and darker east, drop the fleck family to a few glints; test the ratio (at least 4) and the median vertical run (at least 6). The detail.bar band it passes (groups.water) measures mist over a lawn and a tree in Eastward 37, not water (finding W5-1), so its 0.52 to 0.57 is no evidence either way."
  }
 }

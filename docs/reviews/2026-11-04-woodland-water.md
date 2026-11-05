@@ -801,3 +801,183 @@ Walk check: `walk.txt` keeps columns 29 to 34 open through the stair, landing an
 - **Reduced motion:** judged from frame 0 only. In the woodland it shows the F4-1 marks on the deck. The kit pieces hold their frame 0.
 - **The kit pieces in a composed kit zone:** seen only in the kitlab_tiers bake at 5x and 10x, not in the game.
 - **Whether the bridge or the stair should move for L4-1** is the painter's call. Both fixes are above.
+
+## Round 5 (76241d98)
+
+A fifth independent detail-auditor run, on the two commits that answer round 4: 6068fd3c ("Woodland water, review round 4: water-only lifts, landing a cell, kit falls redrawn") and 76241d98 ("the one-cell falls reach the water band, the landing's sides lumpy"), branch `claude-a/water-polish`, draft PR #434. This auditor did not paint them and did not write rounds 1 to 4. Every number below was measured on the rendered pictures at 76241d98, in art px at density 3 (1 world px = 3 art px, a cell = 24 art px). The painter's numbers were checked, not copied.
+
+**Verdicts:**
+
+| Asset | Detectors | Verdict | Why |
+| --- | --- | --- | --- |
+| `woodland/ground` | pass, 0 findings | **pass** | L4-1, G4-1 and L4-2 are fixed. Polish P5-1 is a stray waterline chip in the face. It stays in the seeded fix queue for its own `logic.scale` item. |
+| `woodland/flow` | pass, 0 findings | **pass** | F4-1 is fixed in every frame, frame 0 included. The foam still churns, and the spray is now loose specks. |
+| `woodland/flow_rill` | pass, 0 findings | **pass** | No lift over the reeds, rim stones or jog faces. |
+| `kit/waterfall_1` to `_4`, and `_1_tall` to `_4_tall` | pass (`detail.bar` polish 0.52 to 0.57, `detail.outline` polish) | **fail, all eight** | K4-1 to K4-3 are fixed as written, but the sheet is now a mosaic of two-texel chips with no streak running down (K5-1). The band they pass is not water (W5-1). |
+
+`python3 -m scripts.review.gate --check` after the verdicts: **ok** (7 zones, fix queue 2 assets). The kit pieces are not zone art, so the gate does not read their verdicts.
+
+### What was reviewed
+
+- `game/zones/woodland/art/ground.png` (960 x 1728, sha256 `c85e1809...`).
+- `game/zones/woodland/art/flow.png` (1576 x 712, 2 x 4 frames of 788 x 178 at (172, 756), sha256 `04830edb...`) and `flow_rill.png` (172 x 2984, 2 x 4 frames of 86 x 746 at (174, 10), sha256 `accb3feb...`), placed by the `flow` and `flows.rill` rects in `kit.json`.
+- `game/kit/props/art/waterfall_{1..4}{,_tall}.png` with their `_flow.png` strips, placed at foot + `anim.offset` from `game/kit/props/index.json`.
+- `game/zones/kitlab_tiers/ground_baked.png`, `walk.txt` rows 60 to 79, `docs/godot.md` and `scripts/review/eastward_bands.json` with `bands.build_water`.
+- Round 4's ground, flow, rill and kitlab_tiers bake (from 3e19c29e) and 6068fd3c's ground, diffed against 76241d98.
+- The painter's PR comment (issuecomment-6644899952) and both commit messages.
+
+### Commands
+
+- `python3 -m scripts.review.calibrate --flagged <Matt's screenshots> --eastward <Eastward shots>`: **recall 39 of 39**. False positives: 5 on 6 clean screens and 29 on 22 clean props, the same as rounds 1 to 4. `calibration_results.json` was reverted afterwards.
+- `npm run review:asset -- woodland/ground woodland/flow woodland/flow_rill`: all three pass with 0 findings. `assets.review` with kind `waterfall` and biome `woodland` on the eight kit pieces: all pass, each with `detail.bar` polish (0.544, 0.572, 0.530, 0.533, 0.542, 0.553, 0.537, 0.524 for `_1`, `_1_tall`, `_2`, `_2_tall`, `_3`, `_3_tall`, `_4`, `_4_tall`), `detail.outline` polish, and `detail.light` polish on `_3`. The painter's ratios are right. The records were written with `assets.record` and the reviewer field (`audit5/record.py` in the auditor's scratchpad). Every sha256 matches the painter's record.
+- **Own captures.** Godot 4.7.2 under Xvfb rendered the woodland at 76241d98 at 1920 x 1080 (`--zone=woodland --at=130,300` and `--at=190,318`), and a movie of 110 frames at 25 fps with the player off the landing. A GIF was made of the fall, landing and bridge from the movie (`ingame_fall_landing_2x.gif`). The flow strips were also composited frame by frame over the ground (`comp_0` to `comp_7`), and the kit strips over each kit sprite, as GIFs and contact sheets. The painter's in-game sheets were not used.
+- Pixel classes, column runs and connected components on those composites. The numbers below come from them.
+
+### Eastward comparison (same character height)
+
+12 and 13 were brought to native with `core.to_native` (3.00x), and 15 and 37 box-averaged to 640 x 360. All four were scaled 1.37x with nearest neighbour. Ours went through `bands.jpeg_roundtrip` before `bands.patch_counts` (0.25 H patches). The crops are local and not committed.
+
+- **12, the rock cliff (native 40-100 x 40-140), against the face with the calm boulders at x 630-730, y 770-880.** Crop: `cmp_e12_vs_calm_boulder_3x.png`. 12's big boulders are single calm forms lit at their top left. Ours now are too. Counts: 12, 21.4 tones and 56.1 shapes a patch. Ours, 17.1 and 38.0. The face was passed in round 3 at these counts.
+- **13, the farm stair (`eastward_study.py` crop `14-stair-farm`, native 238-332 x 244-312), against our steps and landing at x 320-460, y 750-900.** Crop: `cmp_e13_stair_vs_landing_3x.png`. 13 has four steps on a 12 E pitch (16 art px at our scale). Each is a lit tread over a dark riser, with the bottom tread on the path. Ours has five plank treads on a 15 px pitch: a 10 px tread lit at its front row, over a 5 px riser. The last tread lands on a cell of open path. They match.
+- **15, the channels (native 480-560 x 0-90), against the stream, frame 0.** 15 has 10.8 tones and 21.0 shapes. Ours has 7.2 and 4.9. Both are calm bodies, as in rounds 3 and 4.
+- **37, the "white water" (native 540-640 x 170-300), against the woodland fall and foam.** Crop: `cmp_e37_mist_vs_woodfall_3x.png`. The box holds no water (W5-1). Our woodland sheet has 17.0 tones and 39.5 shapes. The pool and foam have 22.0 and 28.7. The same box shows 37's mist, which frays into leaf-shaped flecks and checker. Our foam frays the same way.
+
+### The painter's claims, checked
+
+- **F4-1, the lifts lie only on water: true.** Over the eight composited frames, 465 (frame 0) to 1257 texels move. Every one lies on one of ten ground colours, all of them water, sheet or foam: deep (30,66,122), body (51,100,153), waterline (76,134,180), dark band (14,32,88), (107,162,194), the foam whites and blue-greys, and (149,151,176), which moves only inside the foam box (x 214-273, y 889-898). None lies on timber, rock, the wet foot, stones or reeds, in the rill strip or in frame 0.
+- **L4-1, measured at the deck's middle (x 390): true to the texel.**
+  - Tread tops are at 766, 781, 796, 811 and 826: a pitch of 15 (5 world px).
+  - The last riser runs 836-839. Open path runs y 841-865: **25 art px, one cell**. At x 360 and 405 the landing's sides carry grass at 845-846 and 860-865, which is still open walkable ground.
+  - The abutment cap is at 866-867, and the deck starts at 868. The waterline beside the bridge (x 425 and 435) is at 876. So the cap is 10 px north of the water, and the deck rests on 8 px of land.
+  - `walk.txt` keeps columns 29 to 34 open through the stair and landing (rows 64 to 71), and 30 to 33 over the bridge (rows 72 to 77).
+- **The landing's sides lump into the rock (76241d98): true.**
+  - Between 6068fd3c and 76241d98 only 161 texels changed, all in x 344-423, y 841-870.
+  - On the east side the rock now steps out to x 419-421 at rows 843-851 and 859-863, against x 423 between them. That is lumps 4 to 5 texels deep and 7 to 9 rows long, edged with the face's darkest tone (45,33,47), broken.
+  - On the west side the dark mossy recess under the masonry reaches 3 texels further east at rows 849-865. The stack keeps its straight side.
+  - Crop: `landing_sides_5a_5b_7x.png`.
+- **K4-1 to K4-3, flat columns 0 and crest white 50 to 69 %: true, and not enough.**
+  - With frame 0 overlaid, no column holds one tone over 40 rows in any piece.
+  - The whitest crest row (17 or 18) covers 50 % (`_1`), 60 % (`_2`), 57 % (`_3`) and 69 % (`_4`) of the width, in two to five runs at staggered heights.
+  - The sheets now fail on what replaced the slabs (K5-1).
+- **G4-1, calm boulders: true.** Crop: `boulders_r4_r5_4x.png`. The four larger boulders, at x about 61, 461, 640-730 (two) and 922, are each one rounded mass: a lit top-left plane, a mid body, a dark underside and a gap below. The fallen stone on the west lawn keeps one short crack, which the fix allowed.
+- **K4-4, the inlet sill: true.** In `kitlab_tiers/ground_baked.png` rows 346-350 across x 618-680, the waterline (76,134,180) and the dark band (14,32,88) stop at the inlet's sides. The inlet's deep tone (30,66,122) runs on into the pool, and the deepest water lies under the foam. Crop: `kt_r4_r5_4x.png`.
+- **L4-2, rill stones: true.** Crop: `rill_weir_r4_r5_6x.png`. The west-bank group at y 393-400 is gone. The east-bank group (x 198-232, y 378-394) reaches only to x 198, in a rill of x 167-212: the outer third. Elsewhere the groups sit on alternate banks. The two nearest, at y 564-577 and 588-605, stand on opposite corners of the lower jog and do not face each other across the water.
+- **D4-1: true.** docs/godot.md now says about 6.5 MB (4.5 + 2.1). The strips decode to 4.49 + 2.05 = 6.54 MB.
+- **The water band, "measured from Eastward 37's white water": the arithmetic is true, the label is not.** See W5-1.
+
+### Round 4's findings, checked
+
+- **F4-1:** fixed (above).
+- **L4-1:** fixed (above).
+- **G4-1:** fixed (above).
+- **L4-2:** fixed (above).
+- **K4-4:** fixed (above).
+- **D4-1:** fixed (above).
+- **K4-1, the flat slabs: fixed as written, failed anew.** See K5-1. Round 4's fix asked for "2 to 4 px streak segments". That was too short, and it is withdrawn. The house sheet's streak segments run 8 to 30 texels down (median vertical run 15).
+- **K4-2, the crest: fixed.** On the whitest row the white water breaks into two to five runs with gaps of 4 to 11 texels, and the runs sit at two or three heights. Left over (polish, not counted): the tongue in rows 12-14 is still a two-tone band with a straight top. In the bake the channel above meets it, so it shows little.
+- **K4-3, the comb and the spray: fixed.** Crop: `kit2_foot_f0_f4_crest_8x.png`. The band under the foam is a one-to-two-row navy shade that follows the lobes. The spray is 1 to 2 texel specks of mixed sizes, thinning outward on both sides.
+- **The woodland foam after the `rocks.plunge` change: pass.** Crops: `foam_r5_f0to7_5x.png` and `foam_r4_f0to7_5x.png`.
+  - The clumps are unchanged from round 4: x 210-275 and y 880-898 over the eight frames, against a sheet foot of about 214-264.
+  - What changed is the spray. Round 4's vertical tick pairs beside the foam became loose single and double specks (18 to 30 light texels outside the clumps a frame, was 24 to 34).
+  - It still churns in all eight frames.
+
+### New findings
+
+Coordinates are art px in `ground.png` (the scene's frame), or in the kit picture. The crops are local, in the auditor's scratchpad, and can be regenerated from the boxes.
+
+**K5-1. Fault (kit, all eight pieces): the sheet is a mosaic of chips, not falling water.**
+- Location: the sheet body, x 25 to 24 + w, rows 20-52 (short) or 20-100 (tall), every frame. Crops: `woodsheet_vs_kit1tall_kit2tall_5x.png` (the woodland sheet beside `waterfall_1_tall` and `_2_tall` at 5x), `kit_waterfall_1_frames_4x.png`, `kit_waterfall_2_frames_4x.png`, `kt_r4_r5_4x.png` (in the kitlab_tiers bake), and the asset sheet `kit__waterfall_1.png` (1x beside Bramble).
+- What is wrong:
+  - The flat columns were replaced by a field of two-texel chips with no direction.
+  - Measured with frame 0 overlaid: in the woodland sheet, 4.6 % of vertical neighbours differ in lightness (over 8 L) against 47 % of horizontal ones, a ratio of 10.2. The mean vertical run of one tone is 17.7 texels. So it reads as streaks running down.
+  - In the kit sheets the ratio is 0.92 to 1.02 for the one-cell pieces and 1.21 to 1.33 for the wider ones. The mean vertical run is 1.8 to 2.6 texels, and the horizontal run 1.8 to 2.0. Tones change as often down the sheet as across it.
+  - The one-cell sheets (76241d98) are the worst. The painter's "small pieces" is exactly what they read as: a column of blue static, or crumbling ice, at 1x beside Bramble and in the bake. The wider sheets read as a tiled glass wall.
+  - The checklist asks for "falls that fall (streaks that wander ...)". House-style 5 asks for water as "the current as 3 to 5 px lit streaks", lying with the flow. A terrazzo of chips is the speckle the checklist rejects.
+  - The silhouette is still a rectangle. The west edge is x 24 in every row of every piece, the top is row 12 straight across, and only the east edge wobbles a texel. Nothing swells toward the foot (K4-1's fourth point).
+  - Reduced motion holds frame 0, so the still is the mosaic.
+- Fix:
+  - Draw the body as `rocks.fall` draws the woodland's: lanes 1 to 3 texels wide whose segments run 8 to 30 texels down, broken by short gaps and offset between lanes, in 4 to 5 tones.
+  - Keep the lit west part and the broken darker east edge.
+  - Cut the one-cell fleck family back to a few two-texel glints. A one-cell sheet needs three or four lanes, not a grid.
+  - Let the west edge wander a texel and both edges swell 1 to 2 texels over the last third.
+  - Test it in `test_kit`: horizontal-to-vertical change ratio at least 4, and median vertical run at least 6 texels, on every piece in frame 0 and across the loop.
+
+**W5-1. Fault (review tooling): `groups.water` is mist over a lawn and a tree, not white water.**
+- Location: `scripts/review/eastward_bands.json` `groups.water` and `bands.EW_WATER` (37, native 560-640 x 190-300 and 560-640 x 170-300). Crop: `e37_waterbox_4x.png`, the measured box at 4x.
+- What is wrong:
+  - The numbers reproduce: 27.6 and 26.3 tones, 69.4 and 68.4 shapes, mean 26.9 and 68.9, as recorded.
+  - But the box holds no water. Shot 37 shows no fall. At its east edge a translucent mist drifts over a pine crown, its trunk, a sunlit lawn and a bush, and that is what the box measures.
+  - Lawns and trees elsewhere in 37 give nearly the same counts: 470-560 x 200-300 (lawn and pines, no mist) has 21.3 and 65.7, and 140-240 x 250-330 (lawn and a tent) has 21.6 and 54.0.
+  - So the band is "Eastward's busy ground with foliage", and the "white water ... for falls: their sheet, crest and foam" note is wrong.
+  - Like 37's mist, it is isotropic (horizontal/vertical ratio 0.9), so it rewards a chip mosaic over streaks. It is part of how K5-1 passed its own gate.
+  - Round 4 started this. Its counts table called the same box "Eastward 37, white water", and it suggested the group. That is withdrawn here.
+- Fix:
+  - Relabel the box as "37: mist over lawn and pines", and stop scoring falls against it.
+  - Until an official Eastward shot with a falling sheet is measured, score a fall against the house sibling, the woodland sheet (17.0 tones and 39.5 shapes a patch through the same pipe), and add a direction check (K5-1's ratio).
+  - If no Eastward fall exists in the official shots, say so in `bands.py` and in 5.3b, rather than borrowing mist.
+
+**P5-1. Polish (ground): a stray waterline chip and slot in the face's foot.**
+- Location: x 478-490, y 860-871. Crop: `foot_notch_10x.png`.
+- What is wrong:
+  - A 4 x 2 block of the waterline tone (76,134,180) sits in a rock joint at x 483-486, y 860-861, eight rows above the wet foot.
+  - Under it, a 4-wide near-black (38,17,24) slot runs from y 864 to 868 across the wet foot band.
+  - At the slot the waterline climbs in a 45-degree tent (x 478-490, y 868-871).
+  - It was there in round 4 and missed. At 1x it reads as a blue speck in the rock above a crack: water with no source, with a spike in a shore that otherwise wobbles a texel (1.4).
+- Fix: clear the chip to the joint's rock tone, close the slot with the wet-foot band and pebbles, and run the waterline flat through x 478-490 at y 871-872 (5.3). If a seep is wanted, draw it as a trickle from a crack with a wet streak down the rock, but nothing here asks for one.
+
+### Logic (reported separately)
+
+No new logic finding. L4-1 and L4-2 are closed (above).
+- The stair lands on one cell of open path. The bridge's north abutment stands at the water's edge (10 px north of the waterline, the deck 8 px on land). The walk mask agrees.
+- P5-1's water above the shore is the only "water from nowhere" left in the zone. It is graded above as polish because of its size.
+
+### Per-part notes
+
+**`woodland/ground`:**
+- **Channel above the lip, tongue, crest and sheet:** unchanged. Pass.
+- **Face:** pass. The larger boulders are calm masses, the moss sits in the joints, two ferns cross the rim, and vines hang from a clean lip. Polish P5-1.
+- **Wet foot and stream:** pass, except P5-1.
+- **Log steps:** five treads on a 15 px pitch, the head flush at 766. Pass.
+- **Landing:** 25 px of open path, the sides lumped into the rock. Pass.
+- **Bridge:** both abutments at the shores. Pass.
+- **Pool, foam, spray, arcs:** pass.
+- **Rill and its stones:** pass.
+
+**`woodland/flow` and `flow_rill`:** lifts on water only, in all eight frames. Horizontal stream dashes, southward rill dashes, foam churn. Pass.
+
+**Kit pieces:**
+- **Sheet:** fail (K5-1).
+- **Crest:** pass, with the tongue polish noted under K4-2.
+- **Foam, its shade band, spray and arcs:** pass.
+- **Inlet in the bake:** pass (K4-4).
+- **Scale:** 1 to 4 cells wide, beside Bramble. Pass.
+
+### Tile log (ground, every region opened against round 4)
+
+| Tile (art px) | View | Notes |
+| --- | --- | --- |
+| 0-480 x 0-576 | 1x side by side with frame 2, 6x at y 350-420 | 2493 texels changed: the rill's west stone group at y 393-400 is gone, and other bank stones were re-seated (L4-2). No lift over reeds or stones. |
+| 480-960 x 0-576 | diff | 0 texels changed. No water. |
+| 0-480 x 576-1152 | 2x side by side, 4x to 7x crops, in-game 2x | 11664 texels: the steps re-pitched, the landing and the bridge's north end moved (L4-1), the landing's sides, the west boulder and fallen stones calmed (G4-1), the pool's spray. |
+| 480-960 x 576-1152 | 4x and 10x crops | 4323 texels: the larger boulders calmed (G4-1). The face's foot has P5-1. |
+| 0-480 x 1152-1728 | diff | 0 texels changed. No water. |
+| 480-960 x 1152-1728 | diff | 0 texels changed. No water. |
+
+### False positives
+
+- **`woodland/*`:** 0 detector findings, so **0 rejected**. They missed P5-1.
+- **Kit pieces: all 17 findings rejected.**
+  - 8 `detail.bar` (polish): measured against W5-1's band, which is not water. The pieces fail on K5-1 whatever the bar says.
+  - 8 `detail.outline` (polish): water and spray take no outline (house-style 2).
+  - 1 `detail.light` (polish, `_3`): the foam's mass sits east of centre. The sheet's light is from the west.
+- Leads for the detectors:
+  - A direction check for falls (K5-1's ratio and run length) in `detail.fall_flat` or in a new `detail.fall_grain`.
+  - A shore check: water-coloured texels not connected to a water body (P5-1). The woodland has one.
+
+### Not checked
+
+- **Motion on a device:** played as GIFs from the composites and from a Godot movie under Xvfb on a desktop. There was no phone or native check.
+- **Night tint:** not checked.
+- **Reduced motion:** judged from frame 0. In the woodland it shows lifts on water only. The kit pieces hold the mosaic.
+- **The kit pieces in a composed kit zone in Godot:** seen only in the kitlab_tiers bake and composited over flat ground, not rendered in the game.
+- **An Eastward falling sheet:** none of the local official shots shows one, so the falls were judged against the house sibling (the woodland sheet) and the checklist, not against Eastward (W5-1).
