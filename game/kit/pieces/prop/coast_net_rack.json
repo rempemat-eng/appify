@@ -15,8 +15,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/act1/coast_net_rack.png",
    "foot": [
-    39,
-    52
+    62,
+    84
    ]
   }
  ],
@@ -29,27 +29,27 @@
  },
  "geometry": {
   "size_px": [
-   87,
-   55
+   139,
+   88
   ],
   "size_cells": [
-   4,
+   5,
    1
   ],
   "z_sort": "foot",
-  "height_px": 55,
+  "height_px": 88,
   "collision": {
    "shape": "rect",
    "rect": [
-    -13.0,
+    -20.0,
     -1.0,
-    26,
+    40,
     2
    ]
   },
   "foot": [
-   39,
-   52
+   62,
+   84
   ],
   "footprint": [
    [
@@ -66,6 +66,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ]
@@ -94,7 +98,7 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    30,
+    44,
     4
    ],
    "dir": [
@@ -113,7 +117,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "unsized (the guide's net_rack is a drying frame 24 to 36 world px tall, higher than this 1.1 m quay rack: a ruling to make; a net rack 1.1 m to its rail, 2 m long; art px: 45 to 62 tall, 75 to 100 wide)",
+  "size_class": "net_rack (nets drying at head height: the rail 1.8 m up, 2.6 m between the end posts; art px: 80 to 96 tall, 120 to 150 wide)",
   "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

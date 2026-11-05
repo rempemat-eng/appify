@@ -1312,17 +1312,21 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -42.0,
-   -18.0,
-   84,
-   18
+   -60.0,
+   -24.0,
+   120,
+   24
   ],
   "deck": null,
   "foot": [
-   46,
-   26
+   66,
+   34
   ],
   "footprint": [
+   [
+    -3,
+    -1
+   ],
    [
     -2,
     -1
@@ -1337,6 +1341,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ],
@@ -1369,12 +1377,12 @@
     3
    ],
    "size": [
-    90,
-    15
+    126,
+    18
    ]
   },
   "size_cells": [
-   4,
+   6,
    2
   ],
   "snap": "cell",
@@ -1384,8 +1392,8 @@
   "variants": {
    "still": {
     "foot": [
-     46,
-     26
+     66,
+     34
     ],
     "png": "res://kit/props/art/act1/coast_boat_beached.png"
    }
@@ -1683,15 +1691,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -39.0,
+   -60.0,
    -3.0,
-   78,
+   120,
    6
   ],
   "deck": null,
   "foot": [
-   39,
-   52
+   62,
+   84
   ],
   "footprint": [
    [
@@ -1708,6 +1716,10 @@
    ],
    [
     1,
+    -1
+   ],
+   [
+    2,
     -1
    ]
   ],
@@ -1736,12 +1748,12 @@
     3
    ],
    "size": [
-    90,
+    132,
     12
    ]
   },
   "size_cells": [
-   4,
+   5,
    1
   ],
   "snap": "cell",
@@ -1751,8 +1763,8 @@
   "variants": {
    "still": {
     "foot": [
-     39,
-     52
+     62,
+     84
     ],
     "png": "res://kit/props/art/act1/coast_net_rack.png"
    }

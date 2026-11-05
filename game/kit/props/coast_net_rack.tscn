@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://kit/props/art/act1/coast_net_rack.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(78, 6)
+size = Vector2(120, 6)
 
 [node name="CoastNetRack" type="Node2D"]
 script = ExtResource("1")
@@ -13,7 +13,7 @@ piece_id = "coast_net_rack"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-39, -52)
+offset = Vector2(-62, -84)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0

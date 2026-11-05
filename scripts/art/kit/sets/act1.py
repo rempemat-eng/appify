@@ -403,11 +403,16 @@ def net_rack(seed=101):
     """A fisherman's net rack on the quay: three oak posts and a top rail; a green net hung over the
     rail to dry, sagging between the posts in folds (lit vertical crests, dark troughs, the diamond
     mesh closing up in the troughs), cork floats along its head rope; two glass floats caught in it,
-    each a sphere in its bag; the net's tail coiled at the end post as rope rings."""
-    sc = K.Scene(-48, 48, -16, 16, 70)
-    for x in (-34, 0, 34):
-        sc.box(x - 2, -2, 0, x + 2, 2, 48, OAK, base=2.6, k=1.4, tag='post', mix=hsh(seed, x))
-    sc.box(-38, -1.6, 46, 38, 1.6, 49.5, OAK, base=2.8, k=1.4, tag='rail', mix=0.4)
+    each a sphere in its bag; the net's tail coiled at the end post as rope rings.
+
+    v7 (Claude A's ruling on 5 Nov): at the size guide's net_rack, its rail at head height (1.8 m, 78
+    art px) and 2.6 m long between the end posts; the mesh keeps its 9-texel diamonds and 2-texel
+    twine, so the bigger net has more of them, not bigger ones."""
+    PX, RZ = 56, 78                                                      # the end posts' offset, the rail's height
+    sc = K.Scene(-74, 84, -16, 16, 104)
+    for x in (-PX, 0, PX):
+        sc.box(x - 2.5, -2.5, 0, x + 2.5, 2.5, RZ + 2, OAK, base=2.6, k=1.4, tag='post', mix=hsh(seed, x))
+    sc.box(-PX - 4, -1.8, RZ, PX + 4, 1.8, RZ + 3.5, OAK, base=2.8, k=1.4, tag='rail', mix=0.4)
     a = _shade(sc, crevice=1.0, rim=0.6)
     H, W = a.shape
     Yg, Xg = np.mgrid[0:H, 0:W]
@@ -415,9 +420,11 @@ def net_rack(seed=101):
     gx = Xg - ox
     side = sc.n[..., 2] < 0.5
     posts = _tagm(sc, 'post')
-    for x in (-34, 0, 34):
-        m = posts & side & (np.abs(gx - x) <= 2)
-        rpaint(a, m, OAK, np.where(gx < x, 3.4, 2.4), 0.3)               # lit west half, shaded east half
+    for x in (-PX, 0, PX):
+        m = posts & side & (np.abs(gx + 0.5 - x) <= 2.5)
+        rpaint(a, m, OAK, np.where(gx + 0.5 < x - 0.8, 3.6, np.where(gx + 0.5 < x + 0.8, 2.9, 2.2)), 0.3)   # lit west, a mid stave, shaded east
+        grain = m & (K.vhash(Xg, Yg // 5, seed + x) > 0.86)
+        V._step(a, grain, -1)                                             # the oak's checks down the post
     rail = _tagm(sc, 'rail')
     rys = np.nonzero(rail & side)[0]
     rys_t = np.nonzero(rail & ~side)[0]
@@ -429,14 +436,14 @@ def net_rack(seed=101):
     # in shade; folds as bands
     # where the diamonds close up, denser and darker, at uneven spacing; gathered solid over the rail;
     # the foot hanging in an uneven sag on its weights, the posts and the quay showing through
-    top = oy - 46 + 1
+    top = oy - RZ + 1
     net = np.zeros((H, W), bool)
     hemrow = {}
-    for (xa, xb) in ((-34, 0), (0, 34)):
+    for (xa, xb) in ((-PX, 0), (0, PX)):
         for x in range(xa + 3, xb - 2):
             u = (x - xa) / float(xb - xa)
-            sag = 9.0 * math.sin(math.pi * u) + 2.2 * math.sin(2.3 * math.pi * u + xa * 0.13) + 1.2 * (hsh(seed, x // 4) - 0.5)
-            hem = oy - 14 + sag
+            sag = 13.0 * math.sin(math.pi * u) + 3.2 * math.sin(2.3 * math.pi * u + xa * 0.13) + 1.6 * (hsh(seed, x // 4) - 0.5)
+            hem = oy - 26 + sag
             hemrow[ox + x] = int(hem)
             net[top:int(hem), ox + x] = True
     gx_ = (Xg - ox).astype(float)
@@ -444,9 +451,9 @@ def net_rack(seed=101):
     # the folds: vertical bands 2 to 4 wide at uneven spacing, bending a little with the depth
     fold = np.zeros((H, W), bool)
     nfold = np.zeros((H, W), int)
-    fx = -32.0
+    fx = -PX + 2.0
     k = 0
-    while fx < 34:
+    while fx < PX:
         fx += 8 + 5 * hsh(seed, k, 11)
         wdt = 3 + int(3 * hsh(seed, k, 12))
         bend = 0.08 * dy * math.sin(k * 1.3)
@@ -465,14 +472,14 @@ def net_rack(seed=101):
     tw = np.where(sb, 4.0, 2.0)
     tw = np.where(fold, np.where(sb, 2.0, 1.0), tw)
     tw = np.where(gathered, np.where(sb, 3.4, 2.6), tw)
-    tw = np.where(dy > 24, tw - 0.6, tw)
+    tw = np.where(dy > 40, tw - 0.6, tw)                                  # the lower net in the rail's shade
     rpaint(a, twine, [('leaf_cool', 'grass_cool', 'grass'), ('leaf_cool', 'leaf', 'grass_cool')], tw, np.where(sb, 0.2, 0.7))
     holes = net & ~twine
     # the head rope along the rail, its corks
     hr = top + 3
     a[net & (Yg >= hr - 1) & (Yg <= hr)] = C('sand_cool', 3)              # the head rope, two texels thick
-    for x in range(-30, 32, 7):
-        if abs(x) < 3 or abs(abs(x) - 34) < 3:
+    for x in range(-PX + 4, PX - 2, 7):
+        if abs(x) < 3 or abs(abs(x) - PX) < 3:
             continue
         a[hr - 1:hr + 1, ox + x:ox + x + 3] = C('fox', 3)                  # a cork on it
         a[hr - 1, ox + x] = C('fox', 4)
@@ -490,10 +497,10 @@ def net_rack(seed=101):
         xw += 5 + int(5 * hsh(seed, xw, 13))
     _finish(a, keep=np.isin(a, [C('fox', 3), C('fox', 4)]) | holes)
     a[holes] = -1
-    _float_ball(a, ox - 20, oy - 26, 3.6, seed)
-    _float_ball(a, ox + 15, oy - 21, 3.2, seed + 1)
-    _rope_coil(a, ox + 40, oy - 2, rings=3, rx=7.5, ry=3.6, seed=seed)
-    B._ground_tufts(a, ox, oy, [-38, -31, 30], seed)
+    _float_ball(a, ox - 33, oy - 44, 4.2, seed)
+    _float_ball(a, ox + 22, oy - 36, 3.8, seed + 1)
+    _rope_coil(a, ox + 66, oy - 2, rings=3, rx=7.5, ry=3.6, seed=seed)
+    B._ground_tufts(a, ox, oy, [-62, -50, 50], seed)
     return K.crop(a, ox, oy)
 
 
@@ -675,10 +682,14 @@ def mooring_bitt(seed=105):
 def boat_beached(seed=107):
     """A clinker rowing boat drawn up on the shingle above the tide: its strakes lapped down the hull
     (each lit along its lower edge), blue with a white sheer strake and red below the waterline; inside,
-    its bottom boards, ribs and two thwarts, an oar laid across them; a stone chocked under the bow."""
-    sc = K.Scene(-52, 52, -24, 18, 40)
-    sc.ellipsoid(0, -4, 2, 44, 14, 13, [('water_cool', 'water_cool', 'water')], base=2.2, k=1.6, tag='hull', mix=0.3, flat=1.1)
-    sc.ellipsoid(-38, 6, 2.5, 6, 4.5, 3.5, GRANITE, base=2.6, k=1.7, tag='stone', mix=0.4, flat=1.5)
+    its bottom boards, ribs and two thwarts, an oar laid across them; a stone chocked under the bow.
+
+    v7 (Claude A's ruling on 5 Nov): at the size guide's rowing_boat, a 3 m boat 1.3 m in the beam
+    and 0.6 m to its gunwale; the strakes, ribs and floor boards keep their texel widths, so the bigger
+    hull has more of them, not wider ones."""
+    sc = K.Scene(-72, 72, -32, 24, 54)
+    sc.ellipsoid(0, -5, 2, 63, 20, 17, [('water_cool', 'water_cool', 'water')], base=2.2, k=1.6, tag='hull', mix=0.3, flat=1.1)
+    sc.ellipsoid(-50, 5, 4, 8, 6, 5, GRANITE, base=2.6, k=1.7, tag='stone', mix=0.4, flat=1.5)
     sc.render()
     a = sc.shade(crevice=0.0, rim=0.0)
     _rich(sc, a, ('stone',), seed)
@@ -686,13 +697,13 @@ def boat_beached(seed=107):
     Yg, Xg = np.mgrid[0:H, 0:W]
     hull = _tagm(sc, 'hull')
     gx = Xg - sc.ox + 0.5
-    gy = sc.gy + 4
-    half = np.where(gx < 0, 14.0 * np.clip(1 - (gx / 43.0) ** 2, 0, 1) ** 0.9, 14.0 * np.clip(1 - (gx / 46.0) ** 4, 0, 1) ** 0.6)
+    gy = sc.gy + 5
+    half = np.where(gx < 0, 20.0 * np.clip(1 - (gx / 61.0) ** 2, 0, 1) ** 0.9, 20.0 * np.clip(1 - (gx / 65.0) ** 4, 0, 1) ** 0.6)
     cut = hull & (np.abs(gy) > half)                                  # the plan pointed at the bow, a transom at the stern
     a[cut] = -1
     hull &= ~cut
     z = sc.depth
-    zg = 11.0                                                         # the gunwale: above it the inside shows
+    zg = 15.0                                                         # the gunwale: above it the inside shows
     L_ = sc.light()
     inside = hull & (z >= zg + 1.2)
     ring_ = ndi.binary_dilation(inside, structure=np.ones((5, 3), bool)) & hull & ~inside
@@ -703,8 +714,8 @@ def boat_beached(seed=107):
     # below the waterline; the hull lit at its west and shaded east
     dist = ndi.distance_transform_cdt(~(inside | rail), metric='taxicab')
     # strakes of their own widths (R3-13), the sheer strake tapering towards the bow
-    w0 = 3 - (gx > 18).astype(int) - (gx > 32).astype(int)
-    widths = [4, 3, 4, 2, 3, 4, 3, 3, 4, 3]
+    w0 = 3 - (gx > 26).astype(int) - (gx > 46).astype(int)
+    widths = [4, 3, 4, 2, 3, 4, 3, 3, 4, 3, 4, 2, 3, 4, 3]
     d1 = dist - 1
     stk = np.where(d1 < w0, 0, 1)
     start = w0.copy()
@@ -716,13 +727,16 @@ def boat_beached(seed=107):
         wid = np.where(stk == k, wk, wid)
     wid = np.where(stk == 0, w0, np.where(stk <= len(widths), np.array([0] + widths + [3])[np.clip(stk, 0, len(widths) + 1)], 3))
     inn = np.where(stk == 0, d1, d1 - start)
-    t = 2.6 + 1.0 * (gx < -20) - 0.9 * (gx > 26) + np.where(inn == wid - 1, 1.0, 0.0) - np.where(inn == 0, 0.7, 0.0)
-    t = t - 0.5 * (gy > 6)
+    t = 2.6 + 1.0 * (gx < -28) - 0.9 * (gx > 37) + np.where(inn == wid - 1, 1.0, 0.0) - np.where(inn == 0, 0.7, 0.0)
+    t = t - 0.5 * (gy > 9)
     rpaint(a, out & (stk == 0), WHITE[:2], t + 0.6, 0.3)
-    rpaint(a, out & (stk >= 1) & (z >= 3.5), [('water_cool', 'water_cool', 'water'), ('water_cool', 'water', 'water')], t,
+    rpaint(a, out & (stk >= 1) & (z >= 5.0), [('water_cool', 'water_cool', 'water'), ('water_cool', 'water', 'water')], t,
            np.clip(K.vhash(stk, 0, seed) * 0.999, 0, 0.999))
-    rpaint(a, out & (stk >= 1) & (z < 3.5), RED, t - 0.3, 0.3)
-    flake = out & (z < 8) & (z >= 3.5) & (K.vhash(Xg // 3, Yg // 2, seed) > 0.96)
+    # the bottom paint as the hull's own volume (v7, at 3 m it is a part of its own): lit at the bow's
+    # west flank, a mid body, and the turn of the bilge going into shade to the east and underneath
+    t_red = t - 0.2 + 0.7 * (gx < -10) + 0.5 * (gx < -34) - 0.6 * (gx > 30) - 0.6 * (z < 2.2)
+    rpaint(a, out & (stk >= 1) & (z < 5.0), RED, t_red, 0.3)
+    flake = out & (z < 11) & (z >= 5.0) & (K.vhash(Xg // 3, Yg // 2, seed) > 0.96)
     a[flake] = C('timber', 3)
     # the gunwale's oak rail, lit
     rpaint(a, rail, OAK, 3.2 + 0.8 * L_, 0.3)
@@ -736,22 +750,23 @@ def boat_beached(seed=107):
     rib = (((gx.astype(int) + 60) % 7) < 2) & (rel > -0.45) & (rel < 0.62)
     it = np.where(rib, it - 1.0 - 0.4 * (np.abs(rel) < 0.2), it)
     rpaint(a, inside, OAK + [('earth_cool', 'timber_cool', 'timber')], it, K.vhash(gy.astype(int) // 3, 0, seed + 6))
-    for tx in (-16, 9):                                               # the two thwarts
-        th = inside & (gx >= tx) & (gx < tx + 5)
+    for tx in (-24, 12):                                              # the two thwarts
+        th = inside & (gx >= tx) & (gx < tx + 6)
         tys = np.nonzero(th)[0]
-        rpaint(a, th, OAK, np.where(gx < tx + 1, 4.4, np.where(gx >= tx + 4, 1.8, 3.2)), 0.4)
-    oar = _line(a.shape, sc.ox - 30, sc.oy - 16, sc.ox + 24, sc.oy - 13, 2.2) & (inside | rail)
-    oar_sh = _line(a.shape, sc.ox - 29, sc.oy - 13.5, sc.ox + 25, sc.oy - 10.5, 1.6) & inside & ~oar
+        rpaint(a, th, OAK, np.where(gx < tx + 1, 4.4, np.where(gx >= tx + 5, 1.8, 3.2)), 0.4)
+        a[th & (gx >= tx + 2) & (gx < tx + 3) & (K.vhash(Yg // 3, tx, seed) > 0.6)] = C('timber', 2)   # the thwart's grain
+    oar = _line(a.shape, sc.ox - 44, sc.oy - 23, sc.ox + 34, sc.oy - 18, 2.4) & (inside | rail)
+    oar_sh = _line(a.shape, sc.ox - 43, sc.oy - 20, sc.ox + 35, sc.oy - 15, 1.8) & inside & ~oar
     V._step(a, oar_sh, -1)
     rpaint(a, oar, [('timber_cool', 'timber_warm', 'sand')], np.where(np.roll(oar, 1, 0), 3.2, 4.2), 0.0)
-    weed = out & (z < 2.0) & (K.vhash(Xg // 3, 0, seed + 4) > 0.7)
+    weed = out & (z < 2.8) & (K.vhash(Xg // 3, 0, seed + 4) > 0.7)
     a[weed] = C('leaf_cool', 2)
     under = np.zeros((H, W), bool)
     under[2:] = hull[:-2]
     under &= (a < 0) & (Yg > sc.oy - 3)
     _finish(a, keep=np.isin(a, [C('timber', 3)]))
     rpaint(a, under & (a < 0), [('slate_cool', 'stone_cool', 'stone_cool')], 1.4, 0.0)
-    B._ground_tufts(a, sc.ox, sc.oy + 5, [-46, 44], seed, fam='grass')
+    B._ground_tufts(a, sc.ox, sc.oy + 6, [-66, 62], seed, fam='grass')
     return K.crop(a, sc.ox, sc.oy)
 
 
@@ -3342,10 +3357,10 @@ def prop_jobs():
     def add(pid, variants, **kw):
         J.append((pid, variants, kw))
     # Driftwood quay
-    add('coast_net_rack', [('still', lambda: net_rack())], name='Net rack', purpose='store', role='rack', cells=(4, 1), fp=_fp(4, 1),
-        collision={'shape': 'rect', 'rect': [-13.0, -1.0, 26, 2]}, shadow=(30, 4), composition='edge',
+    add('coast_net_rack', [('still', lambda: net_rack())], name='Net rack', purpose='store', role='rack', cells=(5, 1), fp=_fp(5, 1),
+        collision={'shape': 'rect', 'rect': [-20.0, -1.0, 40, 2]}, shadow=(44, 4), composition='edge',
         requires=[_rel('near', 'water', 4, 'nets are hung to dry on the quay, by the boats that set them')],
-        forbids=[OFF_WATER], size_class='unsized (the guide\'s net_rack is a drying frame 24 to 36 world px tall, higher than this 1.1 m quay rack: a ruling to make; a net rack 1.1 m to its rail, 2 m long; art px: 45 to 62 tall, 75 to 100 wide)',
+        forbids=[OFF_WATER], size_class='net_rack (nets drying at head height: the rail 1.8 m up, 2.6 m between the end posts; art px: 80 to 96 tall, 120 to 150 wide)',
         eastward=EW_COAST,
         note='Three oak posts and a rail with a net hung to dry: mostly air, twine in diamonds lit to the upper left, folds where the mesh closes, an uneven weighted foot; corks, two glass floats, its tail in a flat coil.')
     add('coast_lobster_pots', [('a', lambda: lobster_pots('a')), ('b', lambda: lobster_pots('b'))], name='Lobster pots',
@@ -3361,10 +3376,10 @@ def prop_jobs():
         size_class='unsized (a mooring bitt with its hawser\'s coil on the quay: the guide\'s bollard is the post alone; 0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)', eastward=EW_COAST,
         note='A cast-iron bitt on a bolted plate, a hawser made fast round its waist and the rest flaked down in a flat coil.')
     add('coast_boat_beached', [('still', lambda: boat_beached())], name='Beached boat', purpose='mark', role='boat',
-        cells=(4, 2), fp=_fp(4, 1), collision={'shape': 'rect', 'rect': [-14.0, -6.0, 28, 6]}, shadow=(30, 5), composition='free',
+        cells=(6, 2), fp=_fp(6, 1), collision={'shape': 'rect', 'rect': [-20.0, -8.0, 40, 8]}, shadow=(42, 6), composition='free',
         requires=[_rel('near', 'water', 4, 'drawn up the beach above the tide line')], forbids=[OFF_ROUTE, OFF_WATER],
-        size_class='unsized (a dinghy drawn up, under the guide\'s rowing_boat of 40 to 64 world px wide: a ruling to make; a 2.1 m clinker dinghy, 0.5 m to its gunwale; art px: 30 to 46 tall, 84 to 100 wide)', eastward=EW_COAST,
-        note='A clinker dinghy drawn up on the shingle, dry: lapped strakes, blue and white, red below; thwarts inside.')
+        size_class='rowing_boat (a 3 m clinker boat, 1.3 m in the beam, 0.6 m to its gunwale; art px: 44 to 60 tall, 120 to 140 wide)', eastward=EW_COAST,
+        note='A 3 m clinker rowing boat drawn up on the shingle, dry: lapped strakes, blue and white, red below; ribs, floor boards, two thwarts and an oar inside; a stone chocked under the bow.')
     add('coast_buoy', [('still', lambda: buoy())], name='Buoy', purpose='guide', role='marker', cells=(1, 1), fp=_fp(1, 1),
         collision={'shape': 'none'}, shadow=None, blocks=False, composition='free',
         requires=[_rel('on', 'water', note='a can buoy moored off the quay, marking the channel')],
