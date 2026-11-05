@@ -2210,7 +2210,8 @@
       "foot": [10880, 4600],
       "w": 72,
       "faces": "south",
-      "why": "the towers clustered by the station (v5.2)"
+      "why": "the Meridian Company's tower in the new town (game-design v2, 8.2): the act's dungeon, the director on its roof",
+      "name": "the Company's tower"
     },
     {
       "id": "tower_5",
@@ -3444,5 +3445,279 @@
     "skyport": "mown field, concrete aprons, painted circles round the masts",
     "strand": "sand and shingle with boats hauled up",
     "cape": "short turf over rock, gorse"
-  }
+  },
+  "fights": {
+    "_about": "Fights for the Godot era (game-design v2, sections 4.4, 4.5, 9, 11.3 and 14; Claude A's to-all-assignments-1025): camps and patrols by Codex's six roles (the kinds are proposals for Codex), the boss arena (about 20 x 14 cells, 160 x 112 world px, inside one 320 x 180 window), low cover (shoot over) and high cover (blocks shots), waystones, the shard's crater, the dungeon's entrance and rooms. Camps refill on each train or ferry arrival, never on a clock. Shardstruck creatures are freed, machines break down, Company troopers and smugglers flee. Raids come only to Crossroads (7.6), so no raiders' camp.",
+    "act": 3,
+    "story": "Neon Harbour (game-design v2, 8.2): the Company's city; a courier and a fixer lead you up through the Heights; the director in the Company's tower",
+    "weapons": {
+      "melee": "arc batons, light blades",
+      "ranged": "pulse pistols, laser rifles, arc casters",
+      "idea": "shock chains, high fire rate"
+    },
+    "camps": [
+      {
+        "id": "docks_checkpoint",
+        "roles": ["grunt", "grunt", "shooter", "tank"],
+        "kind": "Company troopers at a checkpoint (they flee)",
+        "at": [10500, 4700],
+        "enemies": [
+          [10514, 4704],
+          [10493, 4710],
+          [10493, 4695],
+          [10506, 4689]
+        ],
+        "why": "the warehouse yard behind Quay Street: the first ranged fight, cover everywhere",
+        "cover": [
+          {
+            "kind": "low",
+            "what": "stacked crates",
+            "at": [10494, 4690]
+          },
+          {
+            "kind": "low",
+            "what": "bollards and a net heap",
+            "at": [10520, 4730]
+          },
+          {
+            "kind": "high",
+            "what": "a shipping container",
+            "at": [10540, 4670]
+          }
+        ]
+      },
+      {
+        "id": "quay_drones",
+        "roles": ["swarmer", "swarmer", "swarmer", "swarmer"],
+        "kind": "Company drones running wild",
+        "at": [10474, 5080],
+        "enemies": [
+          [10488, 5084],
+          [10467, 5090],
+          [10459, 5075],
+          [10480, 5069]
+        ],
+        "why": "at the Harbour Bridge's flight foot on Quay Street"
+      },
+      {
+        "id": "strand_gulls",
+        "roles": ["swarmer", "swarmer", "swarmer", "swarmer"],
+        "kind": "shardstruck gulls",
+        "at": [10560, 5330],
+        "enemies": [
+          [10574, 5334],
+          [10553, 5340],
+          [10545, 5325],
+          [10566, 5319]
+        ],
+        "why": "on the Gull Strand by the empty crater"
+      },
+      {
+        "id": "boulevard_checkpoint",
+        "roles": ["tank", "shooter", "shooter", "caster"],
+        "kind": "Company troopers and a field medic (they flee)",
+        "at": [10960, 4470],
+        "enemies": [
+          [10974, 4474],
+          [10953, 4480],
+          [10945, 4465],
+          [10966, 4459]
+        ],
+        "why": "on the boulevard at Neon Square, in sight of the Company's tower",
+        "cover": [
+          {
+            "kind": "low",
+            "what": "planters",
+            "at": [10930, 4480]
+          },
+          {
+            "kind": "high",
+            "what": "a news kiosk",
+            "at": [11000, 4470]
+          }
+        ]
+      },
+      {
+        "id": "skyport_loaders",
+        "roles": ["lunger", "lunger", "grunt"],
+        "kind": "cargo loaders running wild",
+        "at": [10900, 5070],
+        "enemies": [
+          [10914, 5074],
+          [10887, 5076],
+          [10898, 5058]
+        ],
+        "why": "on the Skyport's apron between the hangars"
+      },
+      {
+        "id": "rim_toads",
+        "roles": ["lunger", "swarmer", "swarmer"],
+        "kind": "shardstruck fen toads",
+        "at": [10700, 4008],
+        "enemies": [
+          [10714, 4012],
+          [10687, 4014],
+          [10698, 3996]
+        ],
+        "why": "on the rim walk above the scarp, down from the moss fens"
+      }
+    ],
+    "patrols": [
+      {
+        "id": "boulevard_troopers",
+        "roles": ["grunt", "shooter"],
+        "kind": "Company troopers",
+        "path": [
+          [10700, 4470],
+          [11100, 4470]
+        ],
+        "why": "the length of the boulevard"
+      },
+      {
+        "id": "quay_street_troopers",
+        "roles": ["grunt", "grunt"],
+        "kind": "Company troopers",
+        "path": [
+          [10420, 4652],
+          [10420, 4950]
+        ],
+        "why": "up and down Quay Street"
+      },
+      {
+        "id": "heights_watch",
+        "roles": ["shooter", "grunt"],
+        "kind": "Company watchmen",
+        "path": [
+          [9780, 5050],
+          [9700, 5188]
+        ],
+        "why": "on the Heights, where the fixer leads you up"
+      }
+    ],
+    "boss": {
+      "id": "director",
+      "name": "the director",
+      "arena": {
+        "zone": "company_tower_roof",
+        "size": [160, 112]
+      },
+      "at": null,
+      "enter_by": "the tower dungeon",
+      "teaches": "projectile clearing",
+      "why": "the roof of the Company's tower, its own zone plan: the city's lights below, the cracked moon above"
+    },
+    "shard": {
+      "at": [10600, 5350],
+      "crater": "a fenced crater on the Gull Strand, dug out: the Company took the shard",
+      "why": "the shard that fell by the ria's mouth; the Company's vault in the tower holds it now"
+    },
+    "waystones": [
+      {
+        "id": "market_waystone",
+        "at": [9816, 4440],
+        "why": "the market at the old bridges"
+      },
+      {
+        "id": "station_waystone",
+        "at": [10712, 4512],
+        "why": "the station square, where the maglev comes in"
+      },
+      {
+        "id": "skyport_waystone",
+        "at": [10776, 5054],
+        "why": "the Skyport's apron"
+      }
+    ],
+    "dungeon": {
+      "id": "company_tower",
+      "name": "the Company's tower",
+      "entrance": [10916, 4600],
+      "by": "tower_4 door",
+      "rooms": [
+        {
+          "id": "lobby",
+          "what": "the lobby: desks and planters as cover",
+          "camp": ["grunt", "grunt", "shooter", "tank"]
+        },
+        {
+          "id": "labs",
+          "what": "the shard labs: drones and a caster boosting them",
+          "camp": ["swarmer", "swarmer", "swarmer", "caster"]
+        },
+        {
+          "id": "vault",
+          "what": "the vault where the shards are kept",
+          "camp": ["tank", "shooter", "shooter"]
+        },
+        {
+          "id": "roof",
+          "what": "the roof: the director (the boss arena)",
+          "camp": []
+        }
+      ],
+      "plan": "a zone plan of its own, after this PR"
+    },
+    "ring": {
+      "id": "neon_rooftop",
+      "at": [10968, 4472],
+      "what": "the neon rooftop over Neon Square: the Circuit's final (game-design v2, 9)",
+      "enter_by": "a stair from the square (an interior zone)"
+    },
+    "raiders_camp": {
+      "none": true,
+      "why": "raids come only to Crossroads (game-design v2, 7.6)"
+    }
+  },
+  "quest_spots": [
+    {
+      "id": "courier",
+      "at": [10632, 4470],
+      "quest": "the courier meets you off the maglev"
+    },
+    {
+      "id": "dave",
+      "at": [10890, 4292],
+      "quest": "Dave, the fixer, at the arcade's mouth; leads you up through the Heights"
+    },
+    {
+      "id": "daves_runner",
+      "at": [9850, 4424],
+      "quest": "Dave's runner in the market; moves to Crossroads (the lookout) when it's over"
+    },
+    {
+      "id": "nix",
+      "at": [9784, 4950],
+      "quest": "Nix, on the Heights over the ria (the region folk)"
+    }
+  ],
+  "windows": [
+    {
+      "id": "market",
+      "rect": [9680, 4280, 320, 180],
+      "focal": [10176, 4344],
+      "clearing": [9816, 4440],
+      "why": "the market, the Falls Rock and the old bridges beyond"
+    },
+    {
+      "id": "docks",
+      "rect": [10320, 4600, 320, 180],
+      "focal": [10500, 4700],
+      "clearing": [10560, 4760],
+      "why": "the checkpoint fight among the warehouses"
+    },
+    {
+      "id": "neon_square",
+      "rect": [10800, 4360, 320, 180],
+      "focal": [10916, 4520],
+      "clearing": [10960, 4470],
+      "why": "Neon Square under the Company's tower"
+    },
+    {
+      "id": "harbour_bridge",
+      "rect": [9920, 4880, 320, 180],
+      "focal": [10096, 4976],
+      "clearing": [10230, 4990],
+      "why": "the deck over Chapel Islet; tall piers cut by the frame top"
+    }
+  ]
 }
