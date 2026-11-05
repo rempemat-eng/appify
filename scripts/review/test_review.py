@@ -1141,25 +1141,27 @@ class ClusterNoise(unittest.TestCase):
         n = np.clip(s[..., :3].astype(int) + step[..., None], 0, 255).astype(np.uint8)
         s[..., :3] = n
         f = CN.check(s[..., :3], s[..., 3] > 0, H, 'x/slab')
-        # (R7-6) the share is the mean of the grid's four phases: terrazzo laid exactly on the 2 x 2
-        # grid scores 57 % at its own phase but 15 % where every block straddles four cells, so it is
-        # flagged (42 %), not a fault; noise off the grid scores the same at every phase
-        self.assertTrue(f and f[0].detector == 'detail.cluster_noise' and f[0].severity in ('polish', 'fault'))
-        self.assertGreater(CN.phases(s[..., :3], s[..., 3] > 0)[0], CN.FAULT)
+        self.assertTrue(f and f[0].detector == 'detail.cluster_noise' and f[0].severity == 'fault')
 
-    def test_a_texel_shift_does_not_move_the_share(self):
-        """Round 7 of the Act 1 detail audit (R7-6): the v7 bitt's pixels scored 48.9 to 59.5 % at the
-        four phases of the 2 x 2 grid, so the share is their mean: the same bitt one column over (as
-        v8 cut it) scores the same."""
+    def test_the_grid_phase_spread_is_reported(self):
+        """Round 7 of the Act 1 detail audit (R7-6), a documented instability: the verdict is on the grid
+        at the picture's corner, so the same pixels one texel over can score differently (the v7 bitt
+        48.9 to 59.5 %). The finding reports the four phases' spread, for information; it does not
+        average them (Claude A's ruling: averaging diluted the terrazzo above into polish)."""
         from scripts.review import cluster_noise as CN
         im = _png(os.path.join(os.path.dirname(FIX_V3), 'act1_v7', 'coast_mooring_bitt.png'))
-        a = CN.share(im[..., :3], im[..., 3] > 128)[0]
-        for pad in ((0, 0), (1, 0)), ((1, 0), (0, 0)), ((0, 0), (0, 1)):
-            sh = np.pad(im, pad + ((0, 0),))
-            self.assertAlmostEqual(CN.share(sh[..., :3], sh[..., 3] > 128)[0], a, places=6)
         ph = CN.phases(im[..., :3], im[..., 3] > 128)
-        self.assertGreater(max(ph) - min(ph), 0.05)                   # one grid alone would not agree with itself
-        self.assertAlmostEqual(a, float(np.mean(ph)), places=6)
+        self.assertEqual(len(ph), 4)
+        self.assertAlmostEqual(ph[0], CN.share(im[..., :3], im[..., 3] > 128)[0], places=9)
+        self.assertGreater(max(ph) - min(ph), 0.05)                    # the instability, documented
+        shifted = np.pad(im, ((0, 0), (1, 0), (0, 0)))
+        self.assertAlmostEqual(CN.phases(shifted[..., :3], shifted[..., 3] > 128)[1], ph[0], places=9)
+        for sub in (im, shifted):
+            f = CN.check(sub[..., :3], sub[..., 3] > 128, H, 'x/bitt')
+            self.assertTrue(f)
+            self.assertEqual(len(f[0].extra['phases']), 4)
+            self.assertIn('four phases give', f[0].message)
+            self.assertAlmostEqual(f[0].score, CN.share(sub[..., :3], sub[..., 3] > 128)[0], places=9)
 
     def test_the_outline_is_not_material(self):
         from scripts.review import cluster_noise as CN

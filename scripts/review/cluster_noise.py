@@ -57,31 +57,19 @@ CALIBRATION = [
 ]
 
 
-def share(rgb: np.ndarray, alpha: np.ndarray, delta: float = DELTA):
-    """(share of noisy 2 x 2 blocks, the noisy-block mask at block scale, blocks counted), the share
-    the mean over the four phases of the 2 x 2 grid (round 7 of the Act 1 detail audit, R7-6: on one
-    grid the same pixels moved a texel scored anywhere from 48.9 to 59.5 %, so a part shifted by a
-    texel could cross the fault line unchanged). The mask and the count are the grid at (0, 0)'s;
-    `phases` gives each phase's share and the spread."""
-    shares = []
-    first = None
-    for dy, dx in ((0, 0), (0, 1), (1, 0), (1, 1)):
-        s_, noisy, cnt = share_at(rgb[dy:, dx:], alpha[dy:, dx:], delta)
-        if first is None:
-            first = (noisy, cnt)
-        if cnt:
-            shares.append(s_)
-    return (float(np.mean(shares)) if shares else 0.0), first[0], first[1]
-
-
 def phases(rgb: np.ndarray, alpha: np.ndarray, delta: float = DELTA) -> list:
-    """The share at each of the four phases of the 2 x 2 grid ((0,0), (0,1), (1,0), (1,1))."""
-    return [share_at(rgb[dy:, dx:], alpha[dy:, dx:], delta)[0] for dy, dx in ((0, 0), (0, 1), (1, 0), (1, 1))]
+    """The share at each of the four phases of the 2 x 2 grid ((0,0), (0,1), (1,0), (1,1)): information
+    only. The verdict stays on `share`, the grid at the picture's corner (round 7 of the Act 1 detail
+    audit, R7-6, Claude A's ruling): averaging the phases diluted noise laid on the grid, which Matt's
+    flagged terrazzo is, and flipped 178 verdicts with no pixel changed. The same pixels moved a texel
+    can score differently (the v7 bitt 48.9 to 59.5 %), so a reviewer may cite the spread when ruling;
+    a phase-stable measure that still catches the terrazzo is open work (docs/review-agents.md)."""
+    return [share(rgb[dy:, dx:], alpha[dy:, dx:], delta)[0] for dy, dx in ((0, 0), (0, 1), (1, 0), (1, 1))]
 
 
-def share_at(rgb: np.ndarray, alpha: np.ndarray, delta: float = DELTA):
-    """(share of noisy 2 x 2 blocks, the noisy-block mask at block scale, blocks counted) on the grid
-    that starts at the picture's corner."""
+def share(rgb: np.ndarray, alpha: np.ndarray, delta: float = DELTA):
+    """(share of noisy 2 x 2 blocks, the noisy-block mask at block scale, blocks counted), on the grid
+    that starts at the picture's corner: the verdict's basis (see `phases` for the other three)."""
     H, W = alpha.shape
     h2, w2 = H // 2, W // 2
     if h2 < 3 or w2 < 3:
@@ -112,11 +100,13 @@ def check(rgb: np.ndarray, alpha: np.ndarray, H: float, subject: str) -> list[Fi
     box = (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1)
     sev = 'fault' if s > FAULT else 'polish'
     return [Finding('detail.cluster_noise', sev, box,
-                    f'{subject}: {s:.0%} of its 2 x 2 blocks (the mean of the grid\'s four phases, {min(ph):.0%} to {max(ph):.0%}) step more than {DELTA:.0f} L off their neighbourhood '
-                    f'(Eastward\'s props median 29 %, the style anchors 28 to 30 %): random value grain, not material',
+                    f'{subject}: {s:.0%} of its 2 x 2 blocks step more than {DELTA:.0f} L off their neighbourhood '
+                    f'(Eastward\'s props median 29 %, the style anchors 28 to 30 %): random value grain, not material '
+                    f'(the grid\'s four phases give {min(ph):.0%} to {max(ph):.0%}, for information: the verdict is on this grid)',
                     'drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form '
                     '(+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details '
-                    '(house-style.md 4)', score=s, threshold=POLISH if sev == 'polish' else FAULT, subject=subject)]
+                    '(house-style.md 4)', score=s, threshold=POLISH if sev == 'polish' else FAULT, subject=subject,
+                    extra={'phases': [round(float(v), 4) for v in ph]})]
 
 
 def share_png(path: str) -> float:
