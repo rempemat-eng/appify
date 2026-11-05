@@ -473,15 +473,7 @@
  },
  "rendering": {
   "cast_shadow": {
-   "shape": "ellipse",
-   "size": [
-    112,
-    12
-   ],
-   "dir": [
-    1,
-    1
-   ]
+   "shape": "sprite"
   },
   "contact_ao": true,
   "animations": [

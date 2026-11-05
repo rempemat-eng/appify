@@ -58,7 +58,30 @@ CALIBRATION = [
 
 
 def share(rgb: np.ndarray, alpha: np.ndarray, delta: float = DELTA):
-    """(share of noisy 2 x 2 blocks, the noisy-block mask at block scale, blocks counted)."""
+    """(share of noisy 2 x 2 blocks, the noisy-block mask at block scale, blocks counted), the share
+    the mean over the four phases of the 2 x 2 grid (round 7 of the Act 1 detail audit, R7-6: on one
+    grid the same pixels moved a texel scored anywhere from 48.9 to 59.5 %, so a part shifted by a
+    texel could cross the fault line unchanged). The mask and the count are the grid at (0, 0)'s;
+    `phases` gives each phase's share and the spread."""
+    shares = []
+    first = None
+    for dy, dx in ((0, 0), (0, 1), (1, 0), (1, 1)):
+        s_, noisy, cnt = share_at(rgb[dy:, dx:], alpha[dy:, dx:], delta)
+        if first is None:
+            first = (noisy, cnt)
+        if cnt:
+            shares.append(s_)
+    return (float(np.mean(shares)) if shares else 0.0), first[0], first[1]
+
+
+def phases(rgb: np.ndarray, alpha: np.ndarray, delta: float = DELTA) -> list:
+    """The share at each of the four phases of the 2 x 2 grid ((0,0), (0,1), (1,0), (1,1))."""
+    return [share_at(rgb[dy:, dx:], alpha[dy:, dx:], delta)[0] for dy, dx in ((0, 0), (0, 1), (1, 0), (1, 1))]
+
+
+def share_at(rgb: np.ndarray, alpha: np.ndarray, delta: float = DELTA):
+    """(share of noisy 2 x 2 blocks, the noisy-block mask at block scale, blocks counted) on the grid
+    that starts at the picture's corner."""
     H, W = alpha.shape
     h2, w2 = H // 2, W // 2
     if h2 < 3 or w2 < 3:
@@ -84,11 +107,12 @@ def check(rgb: np.ndarray, alpha: np.ndarray, H: float, subject: str) -> list[Fi
     s, noisy, cnt = share(rgb, alpha)
     if cnt < MIN_BLOCKS or s <= POLISH:
         return []
+    ph = phases(rgb, alpha)
     ys, xs = np.nonzero(alpha)
     box = (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1)
     sev = 'fault' if s > FAULT else 'polish'
     return [Finding('detail.cluster_noise', sev, box,
-                    f'{subject}: {s:.0%} of its 2 x 2 blocks step more than {DELTA:.0f} L off their neighbourhood '
+                    f'{subject}: {s:.0%} of its 2 x 2 blocks (the mean of the grid\'s four phases, {min(ph):.0%} to {max(ph):.0%}) step more than {DELTA:.0f} L off their neighbourhood '
                     f'(Eastward\'s props median 29 %, the style anchors 28 to 30 %): random value grain, not material',
                     'drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form '
                     '(+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details '

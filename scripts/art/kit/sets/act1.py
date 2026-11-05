@@ -745,7 +745,14 @@ def boat_beached(seed=107):
     b, zg, zk = _boat_geom(U)
     Zs = zk + T * (zg - zk)
     Ws = b * T ** 0.25                                                    # the section: a firm bilge, full almost to the keel
-    put(U * half, -(Ws - 1.3), Zs, 2, U, T)                               # 2: the far inner planking
+    # (R7-4) the transom raked aft, 0.3 of its height: the topsides run out to meet it, and its face
+    # shows as a plane about 8 px wide with the stern turned to us
+    RAKE = 0.3
+    zk_t = float(_boat_geom(1.0)[2])
+
+    def xr(u_, z_):
+        return u_ * half + RAKE * np.clip((u_ - 0.8) / 0.2, 0, 1) ** 2 * np.maximum(0.0, z_ - zk_t)
+    put(xr(U, Zs), -(Ws - 1.3), Zs, 2, U, T)                             # 2: the far inner planking
     # 3: the floor boards, flat, from frame to frame
     uf = np.linspace(-0.82, 0.86, 440)
     vf = np.linspace(-1, 1, 70)
@@ -772,23 +779,32 @@ def boat_beached(seed=107):
         blade = np.where(s_ > 0.8, 1.0 + 1.6 * np.clip((s_ - 0.8) / 0.08, 0, 1), 1.0)
         put(xs_o, oy0 + (oy1 - oy0) * s_ + r_ * math.cos(ph) * blade, zo, 9, xs_o / half, s_)
     # 1: the near (south) side, outside
-    put(U * half, Ws, Zs, 1, U, T)
+    put(xr(U, Zs), Ws, Zs, 1, U, T)
     # 4: the gunwale rail, both sides, 2 wide and 1.5 deep
     ur = np.linspace(-1, 1, 600)
     br, zgr, zkr = _boat_geom(ur)
     for side in (-1, 1):
         for d_ in np.linspace(0, 2.0, 6):
             for dz in (0.0, 0.8, 1.5):
-                put(ur * half, side * (br - d_), zgr + 0.5 - dz + 0.0 * ur, 4, ur, np.full_like(ur, d_))
+                put(xr(ur, zgr + 0.5 - dz), side * (br - d_), zgr + 0.5 - dz + 0.0 * ur, 4, ur, np.full_like(ur, d_))
     # 7: the transom, a flat board at the east point
     tz = np.linspace(0, 1, 40)
     bt1, zg1, zk1 = (float(v) for v in _boat_geom(1.0))
     Vt, Tz = np.meshgrid(np.linspace(-1, 1, 50), tz)
-    put(half + 0.6 + 0 * Vt, Vt * bt1 * Tz ** 0.25, zk1 + Tz * (zg1 - zk1), 7, 1 + 0 * Vt, Tz)
+    Zt_ = zk1 + Tz * (zg1 - zk1)
+    put(half + 0.6 + RAKE * np.maximum(0.0, Zt_ - zk_t), Vt * bt1 * Tz ** 0.25, Zt_, 7, 1 + 0 * Vt, Tz)
+    # 5: the stern sheet, a seat board across the stern inside the transom
+    xs_s = np.linspace(0.8 * half, 0.95 * half, 18)
+    bs_, zgs_, zks_ = _boat_geom(xs_s / half)
+    zs_s = zgs_ - 5.0
+    ws_ = bs_ * np.clip((zs_s - zks_) / (zgs_ - zks_), 0, 1) ** 0.25 - 1.0
+    Xs_, Vs_ = np.meshgrid(xs_s, np.linspace(-1, 1, 60))
+    put(Xs_ + RAKE * np.clip((Xs_ / half - 0.8) / 0.2, 0, 1) ** 2 * np.maximum(0.0, zs_s[None, :] - zk_t), Vs_ * ws_[None, :],
+        np.broadcast_to(zs_s[None, :], Xs_.shape) + 0.01, 5, Xs_ / half, (Xs_ - 0.8 * half) / (0.15 * half))
     # 6: the stem, a post at the west point from the stem head down round the forefoot
     b0, zg0, zk0 = (float(v) for v in _boat_geom(-1.0))
     zs_ = np.linspace(zk0 - 1.0, zg0 + 2.0, 50)
-    for dx in np.linspace(-1.8, 0.2, 5):
+    for dx in np.linspace(-2.8, 0.2, 7):                                # (R7-4) 3 wide, its west face lit
         for dy in (-1.0, 0.0, 1.0):
             put(-half + dx + 0 * zs_, dy + 0 * zs_, zs_, 6, -1 + 0 * zs_, np.full_like(zs_, dx))
     # 8: the keel, a strip under the hull's centre line
@@ -823,12 +839,16 @@ def boat_beached(seed=107):
     # weathering: the paint worn along a strake to the wood in streaks 3 to 6 long, not squares
     wear = (sheer | blue) & ~land_top & ~land_bot & (K.vhash(Xg // 5 + (Yg % 3), Yg, seed + 2) > 0.955)
     a[wear] = C('timber', 3)
-    # weed in short tufts hanging along the waterline
+    # (R7-4) weed hanging from the waterline (the blue and red boundary) in a few clusters, each of
+    # short strands 2 to 4 long, not evenly spaced and never on the keel
     wl_edge = red & np.roll(blue | sheer, 1, 0)
-    tuft = wl_edge & (K.vhash(Xg // 2, 1, seed + 4) > 0.72)
-    a[tuft] = C('leaf_cool', 2)
-    tuft2 = np.roll(tuft, 1, 0) & red
-    a[tuft2 & (K.vhash(Xg, 3, seed + 4) > 0.4)] = C('leaf_cool', 1)
+    clus = K.vhash(Xg // 11, 2, seed + 4) > 0.55
+    strand = wl_edge & clus & (K.vhash(Xg, 1, seed + 5) > 0.45)
+    for y, x in zip(*np.nonzero(strand)):
+        ln = 2 + int(3 * K.vhash(x, 7, seed + 6))
+        for j in range(ln):
+            if y + j < H and red[y + j, x]:
+                a[y + j, x] = C('leaf_cool', 2) if j < ln - 1 else C('leaf_cool', 1)
     # inside: the far planking lit with its lands, floor boards with seams and frames across both
     inw = part == 2
     flo = part == 3
@@ -855,11 +875,12 @@ def boat_beached(seed=107):
     rpaint(a, rail, OAK, np.where(PT < 0.6, 3.4, 4.2) + 0.5 * (PU < -0.3) - 0.4 * (PU > 0.5), 0.3)
     # the stem: a lit west face, the east in shade
     stem = part == 6
-    rpaint(a, stem, OAK, np.where(PT < -1.0, 4.2, 2.6), 0.3)
+    zmid = 0.5 * (float(_boat_geom(-1.0)[1]) + float(_boat_geom(-1.0)[2]))
+    rpaint(a, stem, OAK, np.where(PT < -1.8, np.where(PZ > zmid, 4.4, 3.4), np.where(PT < -0.6, 3.0, 2.0)), 0.3)
     # the transom: a flat board in the shade of its own plane, a lit cap, the sheer strake's white across it
     tr = part == 7
-    rpaint(a, tr & (PT > 0.86), WHITE[:2], 2.2, 0.3)
-    rpaint(a, tr & (PT <= 0.86) & (PZ >= 6.5), BLUE, 1.9 - 0.5 * (PT < 0.3), 0.4)
+    rpaint(a, tr & (PT > 0.86), WHITE[:2], 2.0, 0.3)
+    rpaint(a, tr & (PT <= 0.86) & (PZ >= 6.5), BLUE, 2.0 - 0.4 * (PT < 0.3), 0.4)        # the face, a plane in shade
     rpaint(a, tr & (PZ < 6.5), RED, 1.6, 0.3)
     cap = tr & ~np.roll(tr, 1, 0)
     rpaint(a, cap, OAK, 4.0, 0.3)
@@ -1818,10 +1839,12 @@ def _hoist_door(a, cx, sill, w, h, seed):
         a[ly + 1, x0:x0 + w // 2] = C('iron', 4)
         for nx in range(x0 + 3, x0 + w // 2, 6):
             a[ly + 2, nx] = C('slate', 4)
-    a[y0:y0 + 3, x0:x1] = C('stone_warm', 1)                           # the head reveal in shade
-    a[y0 + 3, x0:x1] = C('timber_cool', 1)                             # the door's head under it
-    a[y0 + 3:sill, x0:x0 + 2] = C('stone_warm', 2)                     # the west reveal in shade
-    a[y0 + 3:sill, x0] = C('stone_warm', 1)
+    a[y0:y0 + 3, x0:x1] = C('stone_cool', 1)                           # the head reveal in shade (R7-5: darker)
+    a[y0, x0:x1] = C('void', 1)
+    a[y0 + 3, x0:x1] = C('timber_cool', 0)                             # the door's head under it
+    a[y0 + 4, x0:x1] = C('timber_cool', 1)
+    a[y0 + 3:sill, x0:x0 + 3] = C('stone_cool', 1)                     # the west reveal in shade, 3 wide
+    a[y0 + 3:sill, x0] = C('void', 1)
     a[y0 + 3:sill, x1 - 2:x1] = C('stone_warm', 4)                     # the east reveal, lit
     # the hoist beam standing out over the door: a 10-wide beam seen from above its front
     bx0, bx1 = int(cx) - 5, int(cx) + 5
@@ -1887,6 +1910,88 @@ def _ridge_vent(a, rm, cx, y_r):
     V._step(a, rm & (X >= x1) & (X < x1 + 5) & (Y >= y0) & (Y < y1 + 4), -1)
 
 
+def _mill_sack(a, cx, foot, seed, lean=0.0, w0=22, h=24):
+    """A hessian flour sack slumped against the mill's wall (round 7 of the detail audit, R7-5): wider
+    at its foot than at its shoulder, the top gathered into a tied neck with its ear standing up; lit on
+    its upper west, the body, its east third in shade (sand 2), a fold line down from the shoulder, a
+    darker foot and a contact line on the ground; `lean` tips its top over towards the west."""
+    H, W = a.shape
+    Y, X = np.mgrid[0:H, 0:W]
+    r = (foot - Y).astype(float)                                       # rows up from the foot
+    f = np.clip(r / h, 0, 1)
+    cxr = cx + lean * f
+    # slumped: widest a third of the way up, the shoulders rounding into the neck
+    hw = (w0 / 2.0) * (0.9 + 0.12 * np.sin(np.pi * np.clip(f / 0.66, 0, 1))) * (1.0 - 0.22 * f)
+    hw = hw * np.sqrt(np.clip(1.0 - np.clip((f - 0.6) / 0.4, 0, 1) ** 2, 0, 1)) + np.where(f > 0.9, 1.5, 0.0)
+    m = (r >= 0) & (r < h) & (np.abs(X + 0.5 - cxr) <= hw)
+    u = (X + 0.5 - cxr) / np.maximum(hw, 1.0)                          # -1 west .. 1 east
+    t = np.where(u > 0.33, 2.0, 3.0)
+    t = np.where((u < -0.3) & (f > 0.3) & (f < 0.85), 4.0, t)            # lit on its upper west
+    t = np.where((u > 0.6) | (f < 0.12), t - 1.0, t)                     # turning away east and under
+    t = np.where(r < 2, np.where(u > 0.33, 1.0, 2.0), t)               # the foot darker
+    fold = m & (np.abs((X + 0.5 - cxr) - (-0.25 * hw + 0.35 * (h * 0.85 - r))) < 0.7) & (f > 0.25) & (f < 0.8)
+    t = np.where(fold, t - 1.0, t)
+    rpaint(a, m, [('sand_cool', 'sand_cool', 'sand'), ('sand_cool', 'sand_cool', 'sand_warm')], t, 0.3 * hsh(seed, 1))
+    ny = int(round(foot - h))                                          # the tied neck and its ear
+    nx = int(round(cx + lean))
+    a[ny:ny + 2, nx - 2:nx + 3] = C('sand_cool', 2)
+    a[ny, nx - 2:nx + 3] = C('sand', 3)
+    a[ny - 4:ny, nx - 1:nx + 1] = C('sand', 4)
+    a[ny - 4:ny - 1, nx + 1] = C('sand_cool', 2)
+    a[ny - 5, nx - 1] = C('sand', 3)
+    cl = (Y == foot) & (np.abs(X + 0.5 - cx) <= w0 / 2.0 + 1) & (a < 0)
+    a[cl] = C('soot', 1)                                               # the contact line
+
+
+def _lucam(a, rm, cx, y_eave, seed):
+    """A lucam over the hoist door (round 7 of the detail audit, R7-5; R6-5 asked for it): a timber
+    housing standing out of the roof at the eave, weatherboarded in laps each lit on its top over the
+    shadow of the board above, its west edge lit and its east side in shade, a pair of doors in its face
+    with their dark meeting line; a slated gable cap lit on its west slope with a barge board; its shadow
+    thrown down the slates to the east."""
+    x0, x1 = int(cx) - 17, int(cx) + 17
+    y0, y1 = y_eave - 30, y_eave - 2
+    for y in range(y0, y1):
+        k = (y - y0) % 4
+        c = C('timber_warm', 4) if k == 0 else (C('timber_cool', 1) if k == 3 else C('timber', 3))
+        a[y, x0:x1] = c
+    a[y0:y1, x0] = C('timber_warm', 4)
+    a[y0:y1, x1 - 3:x1] = C('timber_cool', 2)
+    a[y0:y1, x1 - 1] = C('timber_cool', 1)
+    a[y0 + 6:y1, int(cx) - 7:int(cx) + 7] = C('timber', 2)             # its doors
+    a[y0 + 6, int(cx) - 7:int(cx) + 7] = C('timber_cool', 0)
+    a[y0 + 7:y1, int(cx)] = C('timber_cool', 0)
+    a[y0 + 7:y1, int(cx) - 6] = C('timber_warm', 3)
+    a[y0 + 7:y1, int(cx) + 1] = C('timber_warm', 3)
+    for hy in (y0 + 10, y1 - 5):
+        a[hy, int(cx) - 6:int(cx) - 2] = C('iron', 2)                    # the hinges
+        a[hy, int(cx) + 3:int(cx) + 7] = C('iron', 2)
+    for r in range(13):                                                 # the gable cap
+        y = y0 - 1 - r
+        half = 21 - int(r * 1.6)
+        if half <= 0:
+            break
+        crs = r // 3                                                    # its slates in courses, joints staggered
+        for x in range(int(cx) - half, int(cx) + half):
+            west = x < cx
+            j = (x - int(cx) + 40 + 3 * (crs % 2)) % 6 == 0
+            if r % 3 == 0:
+                c = C('slate_cool', 1)                                  # a course's dark butt joint
+            elif j:
+                c = C('slate_cool', 1) if west else C('void', 1)
+            elif r % 3 == 1:
+                c = C('slate', 5) if west else C('slate', 3)            # the butt row, lit
+            else:
+                c = C('slate', 4) if west else C('slate_cool', 2)
+            a[y, x] = c
+        a[y, int(cx) - half] = C('timber_warm', 4)                      # the barge board
+        a[y, int(cx) + half - 1] = C('timber_cool', 1)
+    a[y0 - 1, int(cx) - 21:int(cx) + 21] = C('slate_cool', 1)
+    a[y0, int(cx) - 20:int(cx) + 20] = C('void', 1)                      # the cap's shadow on the boards
+    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+    V._step(a, rm & (X >= x1) & (X < x1 + 6 + (Y - y0) // 6) & (Y >= y0 - 8) & (Y < y_eave), -1)
+
+
 def _recurtain(a, box, fam, inside=None):
     """A window's curtain (the builder draws berry) recoloured, or drawn back (fam None)."""
     x0, y0, x1, y1 = box
@@ -1933,9 +2038,10 @@ def _mill_house(seed):
     rm = info['roof']
     _moss_cushions(a, rm, info['y_r'], info['y_eave'] - 4, seed, n=5)
     _ridge_vent(a, rm, L + q(56), info['y_r'])
+    _lucam(a, rm, hx, info['y_eave'], seed)
     # story at the loading door: two flour sacks slumped east of it, a lamp on its bracket to the west
-    Hs.sack(a, L + q(33), B, rng)
-    Hs.sack(a, L + q(37.5), B, rng)
+    _mill_sack(a, L + q(39), B - 1, seed + 1)                           # (R7-5) slumped sacks, one leaning on the other
+    _mill_sack(a, L + q(33.5), B - 1, seed + 2, lean=3.0, w0=20, h=22)
     lx, ly = L + q(4.5), B - q(30)
     a[ly:ly + 2, lx:lx + q(3)] = C('iron', 2)                           # the bracket
     a[ly, lx:lx + q(3)] = C('iron', 4)
@@ -2033,7 +2139,7 @@ def _wheel_frame(i, seed=141):
     # tone down and its rim, floats and spokes throw their shape east and down at the house throw;
     # the shaft runs back from the hub into the wall to its bearing plate
     wm = wheel >= 0
-    SX, SY, STAND = 14, 9, 18
+    SX, SY, STAND = 14, 9, MILL_DIP                                   # (R7-5) the plate at the wheel's stand-off
     # no weeds at the wall's foot behind the wheel (R6-6: a pale-tipped sprig showed through its floats)
     foot = (np.abs(X_ - cx) < R + 8) & (Yg < oy) & (Yg >= oy - 10) & (a >= 0)
     weed = foot & np.isin(a // 8, [FI_[f] for f in ('grass', 'grass_cool', 'grass_warm', 'leaf', 'leaf_cool', 'leaf_warm', 'sky', 'berry', 'snow', 'snow_cool')])
@@ -2043,10 +2149,10 @@ def _wheel_frame(i, seed=141):
     under_shroud = _disc(shape, cx, cy, R - 5.0) & ~_disc(shape, cx, cy, R - 7.0) & (Y_ < cy)   # 2 rows under the upper shroud
     wall_ = (a >= 0) & (Yg < oy)
     V._step(a, wall_ & ~wm & (cast | under_shroud), -1)                # the light through the spokes left as it falls
-    shaft = (np.abs(X_ - cx) < 3.1) & (Y_ > cy - STAND) & (Y_ < cy)
+    shaft = (np.abs(X_ - cx) < 4.6) & (Y_ > cy - STAND) & (Y_ < cy)     # wide enough to show beside a spoke
     a[shaft] = C('iron', 2)
-    a[shaft & (X_ < cx - 1.2)] = C('iron', 4)
-    a[shaft & (X_ > cx + 1.2)] = C('iron', 1)
+    a[shaft & (X_ < cx - 2.6)] = C('iron', 4)
+    a[shaft & (X_ > cx + 2.6)] = C('iron', 1)
     pl = (np.abs(X_ - cx) < 9.0) & (Y_ > cy - STAND - 8) & (Y_ < cy - STAND + 5)
     a[pl & ~shaft] = C('iron', 3)
     a[pl & ~shaft & (Y_ < cy - STAND - 6.5)] = C('iron', 4)
@@ -3729,7 +3835,7 @@ def prop_jobs():
     add('coast_boat_beached', [('still', lambda: boat_beached())], name='Beached boat', purpose='mark', role='boat',
         cells=(6, 2), fp=_fp(6, 1), collision={'shape': 'rect', 'rect': [-20.0, -8.0, 40, 8]}, shadow=(42, 6), composition='free',
         requires=[_rel('near', 'water', 4, 'drawn up the beach above the tide line')], forbids=[OFF_ROUTE, OFF_WATER],
-        size_class='rowing_boat (a 3 m clinker boat, 1.3 m in the beam, 0.6 m to its gunwale, its stern turned a little to us; art px: 62 to 76 tall, 124 to 140 wide)', eastward=EW_COAST,
+        size_class='rowing_boat (a 3 m clinker boat, 1.3 m in the beam, 0.6 m to its gunwale, its stern turned a little to us, the transom raked; art px: 62 to 76 tall, 124 to 146 wide)', eastward=EW_COAST,
         note='A 3 m clinker rowing boat drawn up on the shingle, dry, built from the gunwale outward: the gunwale the widest line, a stem post and a transom; under the white sheer strake the south side\'s lapped strakes, blue, then red below the waterline with weed along it; frames, floor boards, two thwarts and an oar inside; a stone chocked under the forefoot.')
     add('coast_buoy', [('still', lambda: buoy())], name='Buoy', purpose='guide', role='marker', cells=(1, 1), fp=_fp(1, 1),
         collision={'shape': 'none'}, shadow=None, blocks=False, composition='free',
@@ -3784,7 +3890,7 @@ def prop_jobs():
         note='A printed sheet behind glass (a header with a train and a clock, rows of print, a notice pinned askew) under a gabled hood.')
     # the Millrace
     add('mill_wheel', [('still', lambda: mill_wheel())], name='Water mill and wheel', purpose='work', role='wheel', cells=(14, 7),
-        fp=_fp(14, 7), collision={'shape': 'rect', 'rect': [-52.0, -48.0, 104, 48]}, shadow=(112, 12), composition='edge',
+        fp=_fp(14, 7), collision={'shape': 'rect', 'rect': [-52.0, -48.0, 104, 48]}, shadow='sprite', composition='edge',
         requires=[_rel('near', 'water', 2, 'the wheel sits in the race that drives it')], forbids=[OFF_ROUTE],
         extra={'provides': ['feature', 'water', 'view']},
         size_class='water_mill (the size guide\'s water mill: 104 world px wide, two storeys and a loft, 76 to the eaves; the wheel 44 across on the water side, its race the zone\'s water; art px: 310 to 432 tall, 288 to 384 wide)',
@@ -3854,7 +3960,14 @@ def jobs():
 
 
 def _piece(pid, name, variants, size, cells, purpose, role, **kw):
+    sil = kw.get('shadow') == 'sprite'
+    if sil:
+        kw = dict(kw, shadow=None)
     p = B._piece(pid, name, variants, size, cells, purpose, role, **kw)
+    if sil:
+        # a building's cast shadow is its silhouette thrown down and east, in the zone as in the study
+        # (round 7 of the detail audit, R7-1; scripts/art/kit/props.py, silhouette_shadow)
+        p['rendering']['cast_shadow'] = {'shape': 'sprite'}
     p['variants'] = [{'id': vid, 'weight': w, 'png': RES + png, 'foot': list(foot)} for (vid, w, png, foot) in variants]
     p['biomes'] = ['coast', 'valley', 'brackens']
     p['audit']['painter'] = {'module': 'scripts.art.kit.sets.act1', 'fn': kw.get('fn') or pid, 'args': {}}

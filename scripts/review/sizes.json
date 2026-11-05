@@ -1971,8 +1971,8 @@
  },
  "unsized_rulings": [
   {"kind": "churns", "not": "churn stand", "why": "sizes.json's churns note: a churn stand is not a churn; the stand and its churns are sized by the piece's own spec", "ruled": "round 6 of the Act 1 detail audit (docs/reviews/2026-11-04-act1-props.md), justified"},
-  {"kind": "fence", "not": "sluice", "why": "a sluice gate between its piers is not a run of fence with a gate in it", "ruled": "round 6 of the Act 1 detail audit, justified (no sluice, weir or gate kind)"},
-  {"kind": "gate", "not": "sluice", "why": "a sluice gate is a timber shutter between masonry piers, not a field or garden gate", "ruled": "round 6 of the Act 1 detail audit, justified (no sluice, weir or gate kind)"},
+  {"kind": "fence", "not": "sluice", "why": "a sluice gate between its piers is not a run of fence with a gate in it", "ruled": "round 6 of the Act 1 detail audit; confirmed in round 7 for this reason (fence lists gate among its names, but a sluice is not a field fence)"},
+  {"kind": "gate", "not": "sluice", "why": "a sluice gate is a timber shutter between masonry piers, not a field or garden gate", "ruled": "round 6 of the Act 1 detail audit; corrected in round 7 (R7-7): gate is a size-guide kind (a field or garden gate, 12 to 22 x 12 to 48 world px), and the ruling stands for the reason in its why, not for a missing kind"},
   {"kind": "kerb_stone", "not": "platform's edge", "why": "one cell of a platform's edge is a piece of a run, not a stone set on edge in the turf", "ruled": "round 6 of the Act 1 detail audit, justified"}
  ]
 }

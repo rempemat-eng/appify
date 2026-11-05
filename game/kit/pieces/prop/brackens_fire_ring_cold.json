@@ -100,7 +100,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "fire ring (a ring of stones 1.5 m across)",
+  "size_class": "campfire (a fire ring of stones 1.5 m across)",
   "eastward_ref": "05 and 37 (the camp fires)",
   "painter": {
    "module": "scripts.art.kit.sets.brackens",

@@ -859,22 +859,35 @@ def kit_spec(path: str):
         if os.path.exists(idx):
             with open(idx, encoding='utf-8') as fh:
                 index = json.load(fh)
-            specs = {}
+            specs, runs = {}, {}
             for pp in glob.glob(os.path.join(GAME, 'kit', 'pieces', '*', '*.json')):
                 with open(pp, encoding='utf-8') as fh:
                     d = json.load(fh)
                 specs[d.get('id')] = (d.get('audit') or {}).get('size_class')
+                bd = (d.get('placement') or {}).get('boundary')
+                if bd:
+                    runs[d.get('id')] = {'joins': sorted(bd.get('joins') or []), 'span_cells': bd.get('span_cells', 1),
+                                         'role': (d.get('placement') or {}).get('role')}
             for pid, e in index.items():
                 if not isinstance(e, dict):
                     continue
-                for v in (e.get('variants') or {}).values():
+                for vid, v in (e.get('variants') or {}).items():
                     png = (v or {}).get('png') or ''
                     if png.startswith('res://'):
-                        _KIT_SPECS[os.path.normpath(os.path.join(GAME, png[len('res://'):]))] = specs.get(pid)
-    return _KIT_SPECS.get(os.path.normpath(os.path.abspath(path)))
+                        run = dict(runs[pid], variant=vid) if pid in runs else None
+                        _KIT_SPECS[os.path.normpath(os.path.join(GAME, png[len('res://'):]))] = (specs.get(pid), run)
+    return (_KIT_SPECS.get(os.path.normpath(os.path.abspath(path))) or (None, None))[0]
 
 
-def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[Finding]:
+def kit_run(path: str):
+    """The run a kit picture is a cell of ({'joins', 'span_cells', 'role'} from its piece's
+    placement.boundary: a fence, a drystone wall, a gate in one), or None for a whole object (round 7
+    of the Act 1 detail audit, R7-2)."""
+    kit_spec(path)
+    return (_KIT_SPECS.get(os.path.normpath(os.path.abspath(path))) or (None, None))[1]
+
+
+def check_spec(rgba: np.ndarray, size_class: str | None, subject: str, run: dict | None = None) -> list[Finding]:
     """logic.size_spec: the drawn picture's opaque box against the piece's own size spec (the detail
     audit of 4 Nov: the shelter drawn at a third of its 2.2 m, the millstones at 0.74 m of their 1.2 m,
     the barrow's portal at a third of its own size). Every picture of a piece is measured. The spec's
@@ -882,13 +895,22 @@ def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[F
     range too (logic.size_guide), so a spec cannot drift from the guide unseen (round 5 of the Act 1
     detail audit, R5-13: the v6 mill met its own 160 to 190 and was half the guide's water mill). A
     head word that names no kind is a fault, never a silent skip; `unsized (why ...)` says outright
-    that no kind fits."""
+    that no kind fits.
+
+    `run` (kit_run) marks a cell of a run: a fence or wall cell is not a whole fence, so it is measured
+    by its height only, and only where its height is the run's (a straight east-west cell; a cell
+    running north-south or turning a corner draws the run's length down the screen). Round 7, R7-2: a
+    run cell measured as a whole fence raised 93 false faults."""
     rng = spec_ranges(size_class)
     alpha = rgba[..., 3] > 128
     if not alpha.any():
         return []
     ys, xs = np.nonzero(alpha)
     got = {'tall': ys.max() - ys.min() + 1, 'wide': xs.max() - xs.min() + 1}
+    axes = ('tall', 'wide')
+    if run is not None:
+        # a gate swung open draws its leaf down the screen, as a north-south cell does
+        axes = ('tall',) if run.get('joins') == ['e', 'w'] and run.get('variant') != 'open' else ()
     out = []
     gk = guide_kind(size_class)
     if gk and gk[1] is False:
@@ -897,7 +919,7 @@ def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[F
                            'cannot be measured against one', 'name the kind it is as the spec\'s head word, rule a new kind into '
                            f'sizes.json and size-guide.md, or say "{UNSIZED} (why no kind fits; ...)"', subject=subject))
     elif gk and gk[0] == UNSIZED:
-        for kind, shared in unsized_fits(size_class, got):
+        for kind, shared in (unsized_fits(size_class, got) if run is None else []):
             out.append(Finding('logic.size_unsized', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
                                f'{subject}: its spec says no kind fits, but the guide\'s {kind} shares "{", ".join(shared)}" '
                                'with its reason and holds its size', f'head the spec "{kind} (...)" and measure it there, or rule '
@@ -906,6 +928,8 @@ def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[F
     elif gk and gk[1]:
         kind, grng = gk
         for ax, (lo, hi) in grng.items():
+            if ax not in axes:
+                continue
             v = float(got[ax])
             if v < lo or v > hi:
                 out.append(Finding('logic.size_guide', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
@@ -914,6 +938,8 @@ def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[F
                                    'redraw it to the guide in the generator (prop-logic rule 9), or rule a new kind into the '
                                    'size guide first', score=v, threshold=lo if v < lo else hi, subject=subject))
     for ax, (lo, hi) in rng.items():
+        if ax not in axes:
+            continue
         v = float(got[ax])
         if v < lo or v > hi:
             out.append(Finding('logic.size_spec', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),

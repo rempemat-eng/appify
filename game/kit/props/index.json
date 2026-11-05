@@ -1319,7 +1319,7 @@
   ],
   "deck": null,
   "foot": [
-   66,
+   67,
    53
   ],
   "footprint": [
@@ -1392,7 +1392,7 @@
   "variants": {
    "still": {
     "foot": [
-     66,
+     67,
      53
     ],
     "png": "res://kit/props/art/act1/coast_boat_beached.png"
@@ -15167,14 +15167,13 @@
   ],
   "role": "wheel",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    336,
-    36
-   ]
+   "mask": {
+    "offset": [
+     -170,
+     -30
+    ],
+    "png": "res://kit/props/art/shadow_mill_wheel.png"
+   }
   },
   "size_cells": [
    14,

@@ -1629,7 +1629,7 @@ def prop_jobs():
             collision={'shape': 'rect', 'rect': [-12.0, -29.0, 24, 5]}, shadow=(28, 4), composition='free',
             requires=[_rel('near', 'route', 4, 'a fold stood by the drove road; its ruin still does')], forbids=NATURE,
             extra={'provides': ['feature', 'view']},
-            size_class='ruin (a fold 4 to 5 cells across, walls to 34 at the back; size-guide drystone wall 14 world px)',
+            size_class='unsized (a ruined sheep fold, a ring of drystone walls 4 to 5 cells across: no fold or ruin kind in the guide; walls to 34 at the back, size-guide drystone wall 14 world px)',
             eastward=WALL_EW, note='A round fold tumbled to a horseshoe: the back stands, the front is footings and spilled stones.')),
         ('brackens_bench', [('still', lambda: bench())], dict(
             name='Drovers\' seat', purpose='rest', role='seat', cells=(4, 1), fp=_fp(4, 1),
@@ -1662,13 +1662,13 @@ def prop_jobs():
         ('brackens_fire_ring_cold', [('still', lambda: fire_ring(False))], dict(
             name='Cold fire ring', purpose='mark', role='story', cells=(2, 2), fp=_fp(2, 2),
             collision={'shape': 'rect', 'rect': [-5.0, -6.0, 10, 6]}, shadow=None, blocks=False, composition='free',
-            forbids=NATURE, size_class='fire ring (a ring of stones 1.5 m across)', eastward='05 and 37 (the camp fires)',
+            forbids=NATURE, size_class='campfire (a fire ring of stones 1.5 m across)', eastward='05 and 37 (the camp fires)',
             note='The story slot "cold fire ring": stones round grey ash and charcoal, a half-burnt brand.')),
         ('brackens_fire_ring_lit', [('still', lambda: fire_ring(True))], dict(
             name="Hermit's fire", purpose='light', role='hearth', cells=(2, 2), fp=_fp(2, 2),
             collision={'shape': 'rect', 'rect': [-5.0, -6.0, 10, 6]}, shadow=None, composition='free',
             requires=[_rel('near', 'route', 6, 'at the end of a side trod off the road (a secret pocket)')], forbids=NATURE,
-            size_class='fire ring with flames to 0.4 A', eastward='05 and 37 (the camp fires, their glow)',
+            size_class='campfire (a fire ring of stones with flames to 0.4 A)', eastward='05 and 37 (the camp fires, their glow)',
             note='A small wood fire in a ring of stones; the flames loop (8 frames), held still under reduced motion.')),
         ('brackens_gorse', [('a', lambda: gorse('a')), ('b', lambda: gorse('b'))], dict(
             name='Gorse', purpose='grow', role='shrub', cells=(3, 1), fp=_fp(3, 1),

@@ -301,27 +301,36 @@ def race_coping(img, p, seed=341):
             edges_.append(edges_[-1] + int(round(wd * scale_)))
         edges_[-1] = bx0 + bwid
         ytop0, ytop1 = yn - 6, ys - 2                                       # the tops, raised over both copings
+        # (R7-3) the cart's ruts at a cart's track, 56 px apart and clear of the joints: each a 3 px
+        # hollow, its west wall in shade, its floor stone 2, its east wall lit; the slabs polished a
+        # tone lighter beside them, where the wheels run
+        ruts = (bx0 + 6, bx0 + 62)
         for k in range(len(widths)):
             xa, xb = edges_[k], edges_[k + 1]
-            f = 'stone_warm' if k % 2 else 'stone'
             for xx in range(xa, xb):
                 for yy in range(ytop0, ytop1):
-                    t = 3
+                    # two or three sibling patches a slab, at one tone; a tone up along its west third
+                    pv = K.hsh(seed, (xx - xa) // 7 + 11 * k, (yy - ytop0) // 13)
+                    f = 'stone_warm' if pv > 0.66 else ('stone_cool' if pv < 0.3 else 'stone')
+                    t = 4 if (xx - xa) < (xb - xa) / 3.0 else 3
                     if xx == xa or yy == ytop0:
-                        t = 4                                               # the lit west edge and north end
+                        t, f = 4, 'stone'                                   # the lit west edge and north end
                     elif xx >= xb - 2:
                         t = 2                                               # the east edge, turned away
-                    elif K.hsh(seed, xx // 3, yy // 4 + 50 * k) > 0.9:
+                    elif any(abs(xx - (r + 1)) <= 3 and abs(xx - (r + 1)) >= 2 for r in ruts):
+                        t = 4                                               # polished where the wheels run
+                    elif K.hsh(seed, xx // 3, yy // 4 + 50 * k) > 0.93:
                         t = 4 if K.hsh(seed, xx, yy) > 0.5 else 2           # a chip or a worn hollow
                     cv[yy, xx] = C(f, t)
-                for j, (ff, t) in enumerate((('stone', 3), ('stone_cool', 2), ('stone_cool', 1), ('void', 2))):
-                    cv[ytop1 + j, xx] = C(ff, t)                            # the south ends' face over the coping
+                for j, (ff, t) in enumerate((('stone', 4), ('stone', 2), ('stone_cool', 1), ('void', 2))):
+                    cv[ytop1 + j, xx] = C(ff, t)                            # the south ends' face: its lit arris over 2 and 1
             for yy in range(ytop0, ytop1 + 4):
                 cv[yy, xb - 1] = C('void', 2)                               # the joint
-        for yy in range(ytop0 + 2, ytop1 - 1):                              # the cart's ruts worn along the slabs
-            for rx in (bx0 + 18, bx0 + bwid - 20):
-                cv[yy, rx] = C('stone_cool', 2)
-                cv[yy, rx + 1] = C('stone', 2)
+        for yy in range(ytop0 + 1, ytop1):
+            for r in ruts:
+                cv[yy, r] = C('stone_cool', 1)                              # the rut's west wall, in shade
+                cv[yy, r + 1] = C('stone', 2)                               # its floor
+                cv[yy, r + 2] = C('stone', 4)                               # its east wall, lit
         # its shade on the race east and down of it
         for yy in range(yn + 1, ys - 1):
             for xx in range(bx0 + bwid, bx0 + bwid + 3 + (yy - yn) // 12):
@@ -339,6 +348,45 @@ def race_coping(img, p, seed=341):
             g_[yy, tx0:tx1] = g_[yy + 2 * CELL, tx0:tx1]
         out = Image.fromarray(g_, 'RGBA')
     return out
+
+
+def race_shade(before, after, p):
+    """A building's cast shadow over the race (round 7 of the detail audit, R7-1): the bake shades
+    only walkable ground, so the race's water and its copings and crossing (painted by race_coping)
+    are stepped a tone down wherever the building's own shadow mask falls (the mask the zone draws,
+    props.silhouette_shadow), and the shadow runs as one shape from the wall's foot across the race
+    onto the lawn."""
+    from scripts.art.kit import compose as CO
+    from scripts.art.native.palette import LUT, FI
+    idx = CO.piece_index()
+    g = np.asarray(after.convert('RGBA')).copy()
+    b = np.asarray(before.convert('RGBA'))
+    H, W = g.shape[:2]
+    m = np.zeros((H, W), bool)
+    for pc in p['pieces']:
+        e = idx.get(pc['piece']) or {}
+        sh = e.get('shadow') or {}
+        if 'mask' not in sh or e.get('role') == 'tree':
+            continue
+        mk = np.asarray(Image.open(os.path.join(ROOT, 'game', sh['mask']['png'][len('res://'):]))) > 0
+        x0, y0 = int(pc['at'][0]) + sh['mask']['offset'][0], int(pc['at'][1]) + sh['mask']['offset'][1]
+        ys, xs = np.nonzero(mk)
+        X, Y = xs + x0, ys + y0
+        ok = (X >= 0) & (X < W) & (Y >= 0) & (Y < H)
+        m[Y[ok], X[ok]] = True
+    if not m.any():
+        return after
+    L = LUT.astype(int)
+    ys, xs = np.nonzero(m & (g[..., 3] > 0))
+    cols = g[ys, xs, :3].astype(int)
+    uniq, inv = np.unique(cols, axis=0, return_inverse=True)
+    codes = np.array([int(((L - c) ** 2).sum(1).argmin()) for c in uniq])[inv.ravel()]
+    water = np.isin(codes // 8, [FI['water'], FI['water_cool'], FI['water_warm']])
+    painted = (g[ys, xs] != b[ys, xs]).any(-1)
+    sel = water | painted
+    new = (codes // 8) * 8 + np.maximum(0, codes % 8 - 1)
+    g[ys[sel], xs[sel], :3] = LUT[new[sel]][:, :3]
+    return Image.fromarray(g, 'RGBA')
 
 
 def plans() -> list:
@@ -371,15 +419,23 @@ def render(p) -> Image.Image:
     # the valley's bank is one low earth step drawn by the study (low_bank, eastward-edges.md 2.2), so
     # the bake runs without the tier and the shared tier painters stay as they are (R3-11, R4-1)
     q = dict(p, tiers=None) if tiers else p
-    ground, _ = BK.bake(q, lib)
+    # (R7-1) the ground is baked a cell wider than the study and cropped back, so a cast shadow running
+    # off the east edge (the mill's) is not cut short by the shadow mask's erosion at the canvas border
+    Wpx = len(p['rows'][0]) * CELL
+    qw = dict(q, rows=[r + r[-1] for r in q['rows']])
+    ground, _ = BK.bake(qw, lib)
+    ground = ground.crop((0, 0, Wpx, ground.height))
     img = ground.convert('RGBA')
     if any('q' in r or 's' in r for r in p['rows']) and 'quay' in p['legend'].values():
-        plain, _ = BK.bake(dict(q, pieces=[]), lib)
+        plain, _ = BK.bake(dict(qw, pieces=[]), lib)
+        plain = plain.crop((0, 0, Wpx, plain.height))
         img = CS.dress(q, ground, plain).convert('RGBA')
     if tiers:
         img = low_bank(img, p)
     if p.get('race'):
+        before = img
         img = race_coping(img, p)
+        img = race_shade(before, img, p)
     idx = CO.piece_index()
     for pc in sorted(p['pieces'], key=lambda q: (q['at'][1], q['at'][0])):
         e = idx[pc['piece']]

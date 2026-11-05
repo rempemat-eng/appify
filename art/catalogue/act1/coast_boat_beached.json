@@ -1,13 +1,13 @@
 {
  "id": "act1/coast_boat_beached",
  "file": "game/kit/props/art/act1/coast_boat_beached.png",
- "sha256": "3b2585339d39599208f8c5fcf51f3faf7aec0bc1485628e5c13b5e2c816caf61",
+ "sha256": "164fe2552fb7c4b4a55435760a8453cec4f867cfee3c6c4a7d9861e0b26ad2fd",
  "kind": "coast_boat_beached",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  133,
+  141,
   71
  ],
  "status": "pass",
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 17,
-   "tones": 24.941176470588236,
-   "shapes": 51.76470588235294
+   "tones": 25.235294117647058,
+   "shapes": 52.64705882352941
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.924,
-  "tones_ratio": 0.924,
-  "shapes_ratio": 1.028,
+  "ratio": 0.935,
+  "tones_ratio": 0.935,
+  "shapes_ratio": 1.045,
   "passed": true,
   "group": "prop"
  },
@@ -38,8 +38,7 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 7 (v8) of docs/reviews/2026-11-04-act1-props.md (ba774db4): R6-2 fixed: rebuilt from the gunwale, which is now the widest line; a stem post, a transom, and only the near side showing, 14 to 17 px under the white sheer strake, with no hull past the gunwale at either end. The stickers are now streaks and tufts. At rowing_boat size (133 x 71); no detector findings. Polish R7-4: the transom reads as a 3 px edge rather than a plane, the stem post is unlit, and the weed sits in squares on the keel instead of along the waterline."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

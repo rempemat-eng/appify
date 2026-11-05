@@ -488,7 +488,7 @@ def bake(plan: dict, lib: dict | None = None):
         objects.append((pc['id'], pc['piece'].split('_', 1)[-1], fx - (x1 - x0) / D / 2, fy - (y1 - y0) / D, (x1 - x0) / D, (y1 - y0) / D))
         things.append((fy, img, anc, at))
         sh = e.get('shadow') or {}
-        if 'mask' in sh:
+        if 'mask' in sh and e.get('role') == 'tree':
             ex, kind = _tree_ex(pc['piece'], img)
             casts.append(SN.tree_shadow_hd(fx, fy, ex, w, h))
             trees.append((fx, fy, ex['w'], kind))

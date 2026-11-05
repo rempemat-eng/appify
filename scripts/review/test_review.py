@@ -588,6 +588,35 @@ class SizeTable(unittest.TestCase):
         self.assertEqual([x.detector for x in C.crown_holes(rgb, alpha, 74, 'x/bush')], ['detail.mesh'])
         self.assertEqual([x.detector for x in C.crown_holes(rgb, alpha, 74, 'x/nettle_bed')], ['detail.mesh'])
 
+    def test_every_kit_picture_meets_its_spec(self):
+        """Round 7 of the Act 1 detail audit (R7-2): the asset gate's check_spec raised 93 false faults
+        on fence and drystone-wall cells measured as whole fences. Every kit picture is swept through
+        check_spec as the gate runs it (its piece's spec and, for a cell of a run, its run), and none may
+        fault outside KNOWN (empty: the Brackens fire rings and fold were re-headed)."""
+        KNOWN = set()
+        idx = json.load(open(os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'index.json')))
+        faults, n, runs = [], 0, 0
+        for pid, e in sorted(idx.items()):
+            for vid, v in (e.get('variants') or {}).items():
+                p = os.path.join(REPO_ROOT, 'game', v['png'][len('res://'):])
+                spec = SZ.kit_spec(p)
+                if not spec or not os.path.exists(p):
+                    continue
+                n += 1
+                run = SZ.kit_run(p)
+                runs += run is not None
+                for f in SZ.check_spec(_png(p), spec, 'kit/%s/%s' % (pid, vid), run=run):
+                    if '%s/%s' % (pid, vid) not in KNOWN:
+                        faults.append(f.message)
+        self.assertGreater(n, 150)
+        self.assertGreater(runs, 80)
+        self.assertEqual(faults, [])
+        # a north-south fence cell is the run's length down the screen, not a fence's height
+        ns = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'fence', 'fence_rail_ns_plain.png')
+        if os.path.exists(ns):
+            self.assertIn('logic.size_guide', [f.detector for f in SZ.check_spec(_png(ns), 'fence (a rail fence)', 'x/ns')])
+            self.assertEqual(SZ.check_spec(_png(ns), 'fence (a rail fence)', 'x/ns', run=SZ.kit_run(ns)), [])
+
     def test_a_class_name_counts_only_where_a_word_starts(self):
         # the detail audit of 4 Nov: "urn" inside "churn" sized the churn stand as a barrel
         self.assertNotEqual(SZ.class_of('kit/halt_churn_stand'), 'barrel')
@@ -1112,7 +1141,25 @@ class ClusterNoise(unittest.TestCase):
         n = np.clip(s[..., :3].astype(int) + step[..., None], 0, 255).astype(np.uint8)
         s[..., :3] = n
         f = CN.check(s[..., :3], s[..., 3] > 0, H, 'x/slab')
-        self.assertTrue(f and f[0].detector == 'detail.cluster_noise' and f[0].severity == 'fault')
+        # (R7-6) the share is the mean of the grid's four phases: terrazzo laid exactly on the 2 x 2
+        # grid scores 57 % at its own phase but 15 % where every block straddles four cells, so it is
+        # flagged (42 %), not a fault; noise off the grid scores the same at every phase
+        self.assertTrue(f and f[0].detector == 'detail.cluster_noise' and f[0].severity in ('polish', 'fault'))
+        self.assertGreater(CN.phases(s[..., :3], s[..., 3] > 0)[0], CN.FAULT)
+
+    def test_a_texel_shift_does_not_move_the_share(self):
+        """Round 7 of the Act 1 detail audit (R7-6): the v7 bitt's pixels scored 48.9 to 59.5 % at the
+        four phases of the 2 x 2 grid, so the share is their mean: the same bitt one column over (as
+        v8 cut it) scores the same."""
+        from scripts.review import cluster_noise as CN
+        im = _png(os.path.join(os.path.dirname(FIX_V3), 'act1_v7', 'coast_mooring_bitt.png'))
+        a = CN.share(im[..., :3], im[..., 3] > 128)[0]
+        for pad in ((0, 0), (1, 0)), ((1, 0), (0, 0)), ((0, 0), (0, 1)):
+            sh = np.pad(im, pad + ((0, 0),))
+            self.assertAlmostEqual(CN.share(sh[..., :3], sh[..., 3] > 128)[0], a, places=6)
+        ph = CN.phases(im[..., :3], im[..., 3] > 128)
+        self.assertGreater(max(ph) - min(ph), 0.05)                   # one grid alone would not agree with itself
+        self.assertAlmostEqual(a, float(np.mean(ph)), places=6)
 
     def test_the_outline_is_not_material(self):
         from scripts.review import cluster_noise as CN

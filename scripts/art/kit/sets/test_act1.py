@@ -109,7 +109,10 @@ class Act1Set(unittest.TestCase):
             for v in self.idx[pid]['variants'].values():
                 a = _img(v['png'])
                 shares.append(CN.share(a[..., :3], a[..., 3] > 128)[0])
-        self.assertLessEqual(float(np.median(shares)), 0.40)
+        # (R7-6) the share is now the mean of the 2 x 2 grid's four phases, which reads thin pieces
+        # higher: the same 27 pictures at d13634b8 measure a median of 36.6 % on one grid and 40.3 % as
+        # the mean, so the cap moved from 40 to 42 % with no picture changed
+        self.assertLessEqual(float(np.median(shares)), 0.42)
         self.assertLessEqual(max(shares), 0.60)
 
     def test_the_wheel_loop_wraps_at_an_even_step(self):
