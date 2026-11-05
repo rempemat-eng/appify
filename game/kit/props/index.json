@@ -11,7 +11,7 @@
   "deck": null,
   "foot": [
    161,
-   158
+   157
   ],
   "footprint": [
    [
@@ -263,7 +263,7 @@
    "still": {
     "foot": [
      161,
-     158
+     157
     ],
     "png": "res://kit/props/art/act1/barrow_entrance.png"
    }
@@ -1622,7 +1622,7 @@
   ],
   "deck": null,
   "foot": [
-   9,
+   34,
    19
   ],
   "footprint": [
@@ -1671,7 +1671,7 @@
   "variants": {
    "still": {
     "foot": [
-     9,
+     34,
      19
     ],
     "png": "res://kit/props/art/act1/coast_mooring_bitt.png"
@@ -13613,7 +13613,7 @@
   "deck": null,
   "foot": [
    33,
-   67
+   65
   ],
   "footprint": [
    [
@@ -13674,7 +13674,7 @@
    "still": {
     "foot": [
      33,
-     67
+     65
     ],
     "png": "res://kit/props/art/act1/halt_churn_stand.png"
    }
@@ -14646,7 +14646,7 @@
   "deck": null,
   "foot": [
    26,
-   56
+   57
   ],
   "footprint": [
    [
@@ -14694,7 +14694,7 @@
    "still": {
     "foot": [
      26,
-     56
+     57
     ],
     "png": "res://kit/props/art/act1/mill_sluice.png"
    }

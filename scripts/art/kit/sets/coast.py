@@ -99,26 +99,51 @@ def _px(mat, h, w):
     return np.repeat(np.repeat(mat, h // mat.shape[0], 0), w // mat.shape[1], 1)
 
 
-def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0):
-    """Granite setts (or, larger, flags) in courses staggered by half a block, laid as a floor: each
-    block one calm tone of its own sibling ramp (now and then a touch lighter or darker), its top edge
-    lit, a soft joint (a tone down, not black) along its bottom and right, its corners rounded into the
-    joint so the courses read as stones, not as a brick wall."""
+def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0, irregular=False):
+    """Granite setts (or, larger and irregular, flags) laid as a floor: each stone one calm tone in one
+    of two siblings at the same tone, the odd one a tone off; a 1-texel lit edge along its top-west
+    corner only; a soft joint (a tone down, not black) along its bottom and east. Setts run in
+    courses staggered by half a stone; flags (irregular) take courses of their own depth and stones of
+    their own length, so no joint lines up with the next course's and the floor never reads as a
+    block wall."""
     from scripts.art.kit.sets import _common as K
     H, W = cv.shape
     Yg, Xg = np.mgrid[0:H, 0:W]
-    course = Yg // h
-    off = (course % 2) * (w // 2) + (K.vhash(course, 0, seed) * 3).astype(int)
-    sx = (Xg + off) // w
-    ux = (Xg + off) % w
-    uy = Yg % h
-    own = np.where(K.vhash(sx, course, seed) > 0.85, 0.6, np.where(K.vhash(sx, course, seed + 1) < 0.12, -0.6, 0.0))
+    if irregular:
+        edges_y = [0]
+        while edges_y[-1] < H:
+            edges_y.append(edges_y[-1] + int(h - 3 + 6 * K.hsh(len(edges_y), seed)))
+        ey = np.array(edges_y)
+        course = np.searchsorted(ey, Yg, side='right') - 1
+        uy = Yg - ey[course]
+        hh = ey[course + 1] - ey[course]
+        sx = np.zeros((H, W), int)
+        ux = np.zeros((H, W), int)
+        ww = np.zeros((H, W), int)
+        for c in range(len(edges_y) - 1):
+            ex = [-int(w * K.hsh(c, seed + 3))]
+            while ex[-1] < W:
+                ex.append(ex[-1] + int(w * 0.7 + w * 0.7 * K.hsh(c, len(ex), seed + 4)))
+            exa = np.array(ex)
+            rows = course == c
+            k = np.searchsorted(exa, Xg[rows], side='right') - 1
+            sx[rows] = k
+            ux[rows] = Xg[rows] - exa[k]
+            ww[rows] = exa[k + 1] - exa[k]
+        last_x, last_y = ux == ww - 1, uy == hh - 1
+    else:
+        course = Yg // h
+        off = (course % 2) * (w // 2) + (K.vhash(course, 0, seed) * 3).astype(int)
+        sx = (Xg + off) // w
+        ux = (Xg + off) % w
+        uy = Yg % h
+        last_x, last_y = ux == w - 1, uy == h - 1
+    own = np.where(K.vhash(sx, course, seed) > 0.95, 1.0, np.where(K.vhash(sx, course, seed + 1) < 0.04, -1.0, 0.0))
     t = 3.0 + own
-    t = np.where((uy == 0) & (ux > 0) & (ux < w - 2), t + 0.8, t)
-    jnt = (uy == h - 1) | (ux == w - 1)
-    corner = ((uy == 0) | (uy == h - 2)) & ((ux == 0) | (ux == w - 2))
-    t = np.where(jnt | corner, joint_t, t)
-    K.rpaint(cv, m, [('slate_cool', 'stone', 'stone_warm'), ('stone_cool', 'stone', 'stone'), ('stone_cool', 'stone_warm', 'stone_warm')], t,
+    lit = ((uy == 0) & (ux > 0) & (ux < 4)) | ((ux == 0) & (uy > 0) & (uy < 3))
+    t = np.where(lit, t + 1.0, t)
+    t = np.where(last_y | last_x, joint_t, t)
+    K.rpaint(cv, m, [('slate_cool', 'stone', 'stone_warm'), ('stone_cool', 'stone_cool', 'stone')], t,
              np.clip(K.vhash(sx, course, seed + 2) * 0.999, 0, 0.999))
 
 
@@ -145,12 +170,12 @@ def shingle(cv, m, seed=1506):
             if not (0 <= y < H and 0 <= x < W) or not m[y, x]:
                 continue
             up = 1.0 - (y - y0) / max(1.0, (y1 - y0))
-            if drift[y, x] < 0.35 + 0.25 * (1 - up) and K.hsh(x, y, seed + 2) > 0.25:
-                continue
+            if drift[y, x] < 0.55 + 0.2 * (1 - up) or K.hsh(x, y, seed + 2) < 0.2:
+                continue                                                 # sand shows between the drifts
             r = 1.4 + 1.6 * up * K.hsh(x, y, seed + 3) + 0.4
             pm = (((Xg - x) / r) ** 2 + ((Yg - y) / (r * 0.75)) ** 2 <= 1.0) & m
             u, v = (Xg - x) / r, (Yg - y) / (r * 0.75)
-            t = 3.0 + 1.0 * ((u + v) < -0.4) - 1.2 * ((u + v) > 0.6)
+            t = 3.0 + 1.0 * ((u + v) < -0.6) - 1.0 * ((u + v) > 0.7)
             K.rpaint(cv, pm, [fams[int(K.hsh(x, y, seed + 4) * len(fams)) % len(fams)]], t, 0.0)
 
 
@@ -173,7 +198,7 @@ def dress(plan, img_with, img_without):
     quay = ndi.binary_erosion(mp == 'quay', iterations=3)
     beach = ndi.binary_erosion(mp == 'shingle', iterations=3)
     if (plan.get('dress') or {}).get('quay') == 'flags':
-        setts(cv, quay, w=22, h=14)                     # a platform's flags
+        setts(cv, quay, w=26, h=14, irregular=True)     # a platform's flags, laid irregularly
     else:
         setts(cv, quay)
     shingle(cv, beach)

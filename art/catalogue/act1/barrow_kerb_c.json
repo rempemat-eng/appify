@@ -1,7 +1,7 @@
 {
  "id": "act1/barrow_kerb_c",
  "file": "game/kit/props/art/act1/barrow_kerb_c.png",
- "sha256": "61df5bf25d227cbada8f0b6241cf7fe5e9ca34fbefab80d86f43b902f72968b8",
+ "sha256": "be6dc59fd58f6c0de80afaf79bec0f069f640142755f004eeaadd61112c2f030",
  "kind": "barrow_kerb",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 26.0,
-   "shapes": 31.0
+   "tones": 25.0,
+   "shapes": 33.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.616,
-  "tones_ratio": 0.963,
-  "shapes_ratio": 0.616,
+  "ratio": 0.655,
+  "tones_ratio": 0.926,
+  "shapes_ratio": 0.655,
   "passed": false,
   "group": "prop"
  },
@@ -44,15 +44,14 @@
     18,
     28
    ],
-   "message": "act1/barrow_kerb_c: detail bar 0.62 of Eastward's prop band (26.0 tones, 31.0 shapes a patch against 27.0, 50.36)",
+   "message": "act1/barrow_kerb_c: detail bar 0.66 of Eastward's prop band (25.0 tones, 33.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-04",
-  "note": "Round 2 (v3): graded as a kerb stone (own spec). A rough pillar in planes, dark east face, seated. Polish as kerb a."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

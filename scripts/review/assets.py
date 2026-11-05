@@ -188,6 +188,8 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += C.construction(rgb_n, alpha, H, subject, kind)
         findings += C.cylinder(rgb_n, alpha, H, subject)
         findings += __import__('scripts.review.cluster_noise', fromlist=['check']).check(rgba[..., :3], alpha, H, subject)
+        findings += __import__('scripts.review.flat_cylinder', fromlist=['check']).check(rgb_n, alpha, H, subject)
+        findings += __import__('scripts.review.checker_dither', fromlist=['check']).check(rgba, H, subject)
         from . import edges as E
         if any(k in subject.split('/')[-1] for k in E.ORGANIC_SPRITES):
             # a laid-out piece of ground drawn as a sprite (beds, a pond): its outline on the soft grid

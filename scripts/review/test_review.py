@@ -1034,3 +1034,63 @@ class ClusterNoise(unittest.TestCase):
         s[4, 4:36] = s[35, 4:36] = (20, 20, 20, 255)
         s[4:36, 4] = s[4:36, 35] = (20, 20, 20, 255)
         self.assertLess(CN.share(s[..., :3], s[..., 3] > 0)[0], 0.05)          # only where a corner's outline outvotes the fill
+
+
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+FIX_V3 = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures', 'act1_v3')
+
+
+def _png(path):
+    from PIL import Image
+    return np.asarray(Image.open(path).convert('RGBA'))
+
+
+class FlatCylinder(unittest.TestCase):
+    """detail.flat_cylinder (flat_cylinder.py): a log or pipe painted as a strip, a flat lit band that
+    drops hard into its shadow (the detail audit of the Act 1 props, round 2, R2-1: the v3 birch)."""
+
+    def test_the_v3_birch_trips_and_a_shaded_cylinder_passes(self):
+        from scripts.review import flat_cylinder as FC
+        a = _png(os.path.join(FIX_V3, 'mill_landslip.png'))
+        f = FC.check(a[..., :3], a[..., 3] > 128, H, 'act1/mill_landslip')
+        self.assertTrue(f and f[0].detector == 'detail.flat_cylinder' and f[0].severity == 'fault')
+        s = sprite(80, 30)
+        s[8:20, 5:75, 3] = 255
+        ramp = [243, 233, 233, 212, 212, 188, 143, 143, 118, 88, 70, 59]     # five steps, no hard drop
+        for j, v in enumerate(ramp):
+            s[8 + j, 5:75, :3] = v
+        self.assertEqual(FC.check(s[..., :3], s[..., 3] > 0, H, 'x/log'), [])
+        flat = [243, 233, 233, 233, 211, 211, 211, 87, 87, 57, 57, 57]           # the v3 profile
+        for j, v in enumerate(flat):
+            s[8 + j, 5:75, :3] = v
+        self.assertTrue(FC.check(s[..., :3], s[..., 3] > 0, H, 'x/log'))
+
+    def test_the_v4_birch_passes(self):
+        from scripts.review import flat_cylinder as FC
+        p = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'mill_landslip.png')
+        a = _png(p)
+        self.assertEqual(FC.check(a[..., :3], a[..., 3] > 128, H, 'act1/mill_landslip'), [])
+
+
+class CheckerDither(unittest.TestCase):
+    """detail.dither (checker_dither.py): a 1-texel checker on a sprite (the detail audit of the Act 1
+    props, round 2, R2-6: the v3 net rack's foot)."""
+
+    def test_the_v3_net_trips_and_a_mesh_of_diamonds_passes(self):
+        from scripts.review import checker_dither as CD
+        f = CD.check(_png(os.path.join(FIX_V3, 'coast_net_rack.png')), H, 'act1/coast_net_rack')
+        self.assertTrue(f and f[0].detector == 'detail.dither')
+        s = sprite(40, 40)
+        y, x = np.mgrid[0:40, 0:40]
+        line = (((x + y) % 4) == 0) | (((x - y) % 4) == 0)                       # twine in diamonds, holes between
+        s[line] = (60, 120, 60, 255)
+        self.assertEqual(CD.check(s, H, 'x/net'), [])
+        chk = ((x + y) % 2 == 0) & (x > 10) & (x < 26) & (y > 10) & (y < 26)
+        s[(x > 10) & (x < 26) & (y > 10) & (y < 26)] = (90, 90, 90, 255)
+        s[chk] = (140, 140, 140, 255)
+        self.assertTrue(CD.check(s, H, 'x/patch'))
+
+    def test_the_v4_net_passes(self):
+        from scripts.review import checker_dither as CD
+        p = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'coast_net_rack.png')
+        self.assertEqual(CD.check(_png(p), H, 'act1/coast_net_rack'), [])

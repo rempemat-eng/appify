@@ -16,7 +16,7 @@
    "png": "res://kit/props/art/act1/halt_churn_stand.png",
    "foot": [
     33,
-    67
+    65
    ]
   }
  ],
@@ -30,14 +30,14 @@
  "geometry": {
   "size_px": [
    66,
-   71
+   69
   ],
   "size_cells": [
    3,
    1
   ],
   "z_sort": "foot",
-  "height_px": 71,
+  "height_px": 69,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -49,7 +49,7 @@
   },
   "foot": [
    33,
-   67
+   65
   ],
   "footprint": [
    [

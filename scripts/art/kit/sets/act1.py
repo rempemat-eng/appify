@@ -304,31 +304,49 @@ def _strip_frames(fn, n=LOOP):
 # Driftwood quay and the lighthouse
 # ================================================================================================
 def _rope_coil(a, cx, cy, rings=4, rx=9.0, ry=4.0, seed=0):
-    """A coil of rope flaked down on the ground: rings stepping inward and up, each a cord two
-    texels thick lit along its upper arc and dark along its lower, the lay as a short darker tick
-    every few texels on the lit arc only (calm, never stripes); the hole in the middle dark, a contact
-    shade under the bottom ring."""
+    """A coil of rope flaked down on the ground as stacked turns: `rings` turns of the same size, each
+    2 texels thick, laid one on another, so the coil's side shows each turn's top lit (rope 4) over
+    its lower edge in shade (rope 1), a dark seam between turns; the top turn seen whole, with the lay
+    as alternating lit and dark 1 x 2 diagonals, round a hole that is darker on its near side (the far
+    inner wall catches the light); a contact shade along its foot. cy is the bottom turn's centre."""
     H, W = a.shape
     Yg, Xg = np.mgrid[0:H, 0:W]
-    under = (((Xg + 0.5 - cx) / (rx + 0.3)) ** 2 + ((Yg + 0.5 - cy - 1.0) / (ry + 0.2)) ** 2) <= 1.0
+    X, Y = Xg + 0.5, Yg + 0.5
+
+    def ell(yc, rx_, ry_):
+        return (((X - cx) / rx_) ** 2 + ((Y - yc) / ry_) ** 2) <= 1.0
+    shade = ell(cy + 1.2, rx + 0.4, ry + 0.4) & ~ell(cy, rx, ry) & (Y > cy)
+    a[shade & (a < 0)] = C('leaf_cool', 1)
     for k in range(rings):
-        r1, r2 = rx - k * 2.6, ry - k * 1.0
-        yk = cy - k * 1.0
-        outer = (((Xg + 0.5 - cx) / r1) ** 2 + ((Yg + 0.5 - yk) / r2) ** 2) <= 1.0
-        inner = (((Xg + 0.5 - cx) / max(0.8, r1 - 2.2)) ** 2 + ((Yg + 0.5 - yk) / max(0.6, r2 - 1.4)) ** 2) <= 1.0
-        ring = outer & ~inner
-        upper = Yg + 0.5 < yk
-        t = np.where(upper, 3.6, 2.2) + 0.5 * (Xg < cx - r1 * 0.35) - 0.5 * (Xg > cx + r1 * 0.45)
-        tick = upper & ring & (((Xg + k * 2) % 4) == 0) & (Xg > cx - r1 + 1) & (Xg < cx + r1 - 1)
-        t = np.where(tick, t - 1.0, t)
-        rpaint(a, ring, ROPE, t, 0.3)
-        if k > 0:                                                       # the turn sits on the one below: a dark seam
-            dn = np.zeros_like(ring)
-            dn[:-1] = ring[1:]
-            a[ring & ~dn & ~upper] = C('earth_cool', 1)
+        yk = cy - 2 * k
+        cur = ell(yk, rx, ry)
+        above = ell(yk - 2, rx, ry) if k < rings - 1 else np.zeros_like(cur)
+        band = cur & ~above
+        side = Y > yk - 0.2                                                   # the coil's side, below the turn's equator
+        up1 = np.zeros_like(band)
+        up1[1:] = band[:-1]
+        top_row = band & ~up1                                                  # where the turn rises out from under the next
+        dn = np.zeros_like(band)
+        dn[:-1] = band[1:]
+        bottom = band & ~dn
+        west = X < cx - rx * 0.2
+        # each turn's top lit, its lower edge in shade; the seam between turns dark on the shaded
+        # east, only a sibling step on the lit west (so the coil reads as turns without stripes of grain)
+        east = X > cx + rx * 0.3
+        t = np.where(top_row & west, 3.8, 3.0)
+        t = np.where(bottom & east, 1.6, t)
+        t = t - 0.8 * (X > cx + rx * 0.55)
+        rpaint(a, band & side, ROPE, t, np.where(top_row | bottom, 0.8, 0.3))
         if k == rings - 1:
-            a[inner] = C('earth_cool', 1)
-    a[under & (a < 0) & (Yg + 0.5 > cy + ry - 0.5)] = C('leaf_cool', 2)
+            hole = ell(yk, rx - 3.6, ry - 1.8)
+            ring = cur & ~hole
+            tt = np.where(Y < yk, 3.8, 3.0) + 0.5 * (X < cx - rx * 0.3) - 0.6 * (X > cx + rx * 0.45)
+            lay = ring & (((Xg + Yg) % 4) < 2) & (Y < yk + 0.5)
+            tt = np.where(lay, tt - 1.0, tt)
+            rpaint(a, ring, ROPE, tt, 0.3)
+            a[hole] = C('earth_cool', 1)
+            a[hole & (Y > yk + 0.2)] = C('void', 1)                          # darker on its near side
+            a[hole & (Y < yk - (ry - 1.6) * 0.4)] = C('sand_cool', 2)          # the far inner wall, lit
 
 
 def _laid_rope(a, pts, w=2.0, seed=0):
@@ -381,10 +399,11 @@ def net_rack(seed=101):
     posts = _tagm(sc, 'post')
     for x in (-34, 0, 34):
         m = posts & side & (np.abs(gx - x) <= 2)
-        rpaint(a, m, OAK, np.where(gx < x - 1, 3.6, np.where(gx >= x + 1, 1.8, 2.7)), 0.3)
+        rpaint(a, m, OAK, np.where(gx < x, 3.4, 2.4), 0.3)               # lit west half, shaded east half
     rail = _tagm(sc, 'rail')
     rys = np.nonzero(rail & side)[0]
-    rpaint(a, rail, OAK, np.where(~side, 3.9, np.where(Yg == rys.max(), 1.8, 2.8)), 0.3)
+    rys_t = np.nonzero(rail & ~side)[0]
+    rpaint(a, rail, OAK, np.where(~side & (Yg == rys_t.min()), 4.0, np.where(Yg == rys.max(), 2.2, 3.0)), np.where(~side, 0.8, 0.3))
     B._lichen(sc, a, tags=('post',), rate=0.5, seed=seed)
     # the hung net, draped over the rail and sagging between the posts in swags: cloth folds (a lit
     # crest, the body, the shaded side, a deep trough) that run down from where it is gathered on
@@ -407,29 +426,30 @@ def net_rack(seed=101):
     ph = (gx_ + 0.12 * dy * np.sin(gx_ * 0.15)) / 11.0
     f = ph - np.floor(ph)
     t = np.where(f < 0.32, 3.8, np.where(f < 0.66, 3.0, 2.0))
-    t = t - 0.6 * (dy > 24)
-    mesh = ((((Xg + Yg) % 4) == 0) | (((Xg - Yg) % 4) == 0))
+    t = t - 0.4 * (dy > 26)
+    # a drying net is mostly air: twine in diamonds 4 texels across with the ground or the post showing
+    # between them; where the folds bunch (the troughs) and where it is gathered over the rail the
+    # diamonds close to a solid band of twine, which gives the folds their crests and troughs
+    mesh = ((((Xg + Yg) % 5) < 2) | (((Xg - Yg) % 5) < 2))                # twine 2 texels thick, stepping on the diagonal
     hrow = np.array([hemrow.get(x, 0) for x in range(W)])[None, :]
-    single = net & (Yg >= hrow - 7)
-    rpaint(a, net, NET + [('soot', 'grass_cool', 'leaf')], t, np.where(mesh, 0.75, 0.25))
-    rpaint(a, single & mesh, NET, np.where(f < 0.5, 3.0, 2.0), 0.3)       # the knots of the single sheet near the foot
+    bunched = net & ((f >= 0.62) | (Yg < top + 6))
+    tb = np.where(Yg < top + 6, 3.0, np.where(f >= 0.62, 2.4, t))          # gathered on the rail; the bunched trough in its fold's shade
+    rpaint(a, net, NET + [('soot', 'grass_cool', 'leaf')], np.where(bunched, np.maximum(tb, 2.0), t + 0.4), np.where(mesh & ~bunched, 0.75, 0.25))
+    holes = net & ~mesh & ~bunched & (Yg < hrow - 1)
     # the head rope along the rail, its corks
     hr = top + 3
-    a[net & (Yg == hr)] = C('sand_cool', 3)
-    a[net & (Yg == hr - 1)] = C('sand', 4)
+    a[net & (Yg >= hr - 1) & (Yg <= hr)] = C('sand_cool', 3)              # the head rope, two texels thick
     for x in range(-30, 32, 7):
         if abs(x) < 3 or abs(abs(x) - 34) < 3:
             continue
-        a[hr - 1:hr + 2, ox + x:ox + x + 2] = C('fox', 3)
+        a[hr - 1:hr + 1, ox + x:ox + x + 3] = C('fox', 3)                  # a cork on it
         a[hr - 1, ox + x] = C('fox', 4)
-        a[hr + 1, ox + x + 1] = C('crag_warm', 2)
     hem_ = net & ~np.roll(net, -1, 0)
     a[hem_] = C('leaf_cool', 1)
     for x, y in hemrow.items():                                          # lead sinkers on the foot rope
         if (x - ox) % 6 == 0 and 0 <= y < H:
             a[y - 1:y + 1, x:x + 2] = C('slate', 2)
             a[y - 1, x] = C('slate', 4)
-    holes = single & ~mesh & (Yg < hrow - 1)                           # the single sheet is see-through
     _finish(a, keep=np.isin(a, [C('fox', 3), C('fox', 4)]) | holes)
     a[holes] = -1
     _float_ball(a, ox - 20, oy - 26, 3.6, seed)
@@ -462,29 +482,44 @@ def lobster_pots(variant='a', seed=103):
         d = _tagm(sc, 'dome%d' % k)
         lx = gx - x
         dys = np.nonzero(d)[0]
-        cz = (dys.max() - Yg).astype(float) if len(dys) else Yg * 0.0          # the courses run level across the pot
-        body = _cyl_tone(lx, 10.5, lit=3.4, body=2.9, shade=2.0) + 0.4 * (sc.n[..., 2] > 0.7)
-        # the willow weave in clusters: rows of weavers 3 texels high following the dome, each row in
-        # stitches 4 long staggered row to row; a stitch's top lit, its foot dark, a gap between
+        ytop_, ybot = dys.min(), dys.max()
+        cz = (ybot - Yg).astype(float)                                       # the courses run level across the pot
+        f = np.clip(cz / max(1.0, ybot - ytop_), 0, 1)                       # 0 at the foot, 1 at the crown
+        # a half-cylinder lying east-west: the arched top lit on its upper-west quarter, the body, the
+        # east third in shade, a dark band along the foot where it meets the base
+        t = np.full((H, W), 3.0)
+        t = np.where((lx < -2) & (f > 0.45), 4.2, t)
+        t = np.where(lx > 4.0, 1.8, t)
+        t = np.where(cz < 2, np.minimum(t, 1.4), t)
         row = np.floor(cz / 3.0).astype(int)
-        t = body
-        # each course its own sibling at the same tone, so the weave shows without value noise
         WEAVE = [('earth_cool', 'brass', 'brass'), ('earth_cool', 'brass_warm', 'brass_warm'), ('timber_cool', 'sand_cool', 'sand_cool')]
         sib = (row % 3).astype(float)
         sib = np.where(t <= 1.5, 0, sib)
         t = np.where((sib == 2) & (t > 2.5), t - 1.0, t)                       # sand_cool sits a tone lighter
         rpaint(a, d, WEAVE, t, np.clip((sib + 0.5) / 3.0, 0, 0.999))
-        # the hoops: bent hazel standing proud over the weave, lit west, a shadow line east of each
-        for hx in (-6.5, 0.0, 6.5):
-            hoop = d & (lx >= hx - 1) & (lx < hx + 2)
-            rpaint(a, hoop, [('earth_cool', 'timber_warm', 'timber_warm')], np.where(lx < hx, 4.6, 4.0) - 1.0 * (L < -0.2), 0.0)
-        # the mouth at its east end: a funnel's dark eye in a ring of willow
-        mx, my = ox + x + 7.5, oy + y - (z + 6.5)
-        mouth = _disc(a.shape, mx, my, 2.4, 2.8) & d
-        a[mouth] = C('void', 1)
-        a[mouth & (Yg + 0.5 > my + 0.8)] = C('void', 2)
-        ring = _disc(a.shape, mx, my, 3.5, 3.9) & d & ~mouth
-        a[ring] = np.where((Xg[ring] + 0.5 < mx) | (Yg[ring] + 0.5 < my), C('brass', 4), C('timber_cool', 2))
+        # the hoops: bent hazel bowing over the dome like meridians, converging towards the crown,
+        # each lit on its west flank and dark on its east
+        half = np.zeros(H)
+        for yy in range(ytop_, ybot + 1):
+            cols = np.nonzero(d[yy])[0]
+            if len(cols):
+                half[yy] = (cols.max() - cols.min() + 1) / 2.0
+        cxp = ox + x
+        for sphi in (-0.62, 0.0, 0.62):
+            hc = cxp + sphi * half[np.clip(Yg, 0, H - 1)]
+            hoop = d & (Xg + 0.5 >= hc - 1) & (Xg + 0.5 < hc + 1)
+            westc = Xg + 0.5 < hc
+            ht = np.where(westc, 4.2, 3.8) - 1.8 * (lx > 4.0) - 1.2 * (cz < 2)
+            rpaint(a, hoop, [('earth_cool', 'timber_warm', 'timber_warm')], ht, 0.0)
+        # the funnel at its east end: a ring of willow lit at its upper left, the netting cone stepping
+        # inward in two tones, the dark eye
+        mx, my = ox + x + 6.5, oy + y - (z + 6.0)
+        rr = np.hypot((Xg + 0.5 - mx) / 3.8, (Yg + 0.5 - my) / 4.2)
+        ring = d & (rr <= 1.0) & (rr > 0.72)
+        a[ring] = np.where((Xg[ring] + 0.5 < mx) & (Yg[ring] + 0.5 < my + 1), C('brass', 4), C('timber_cool', 2))
+        a[d & (rr <= 0.72) & (rr > 0.5)] = C('leaf_cool', 2)
+        a[d & (rr <= 0.5) & (rr > 0.3)] = C('soot', 1)
+        a[d & (rr <= 0.3)] = C('void', 0)
         pb = _tagm(sc, 'pbase%d' % k)
         rpaint(a, pb, OAK, np.where(sc.n[..., 2] > 0.5, 3.6, 2.4), 0.3)
         if z > 0:                                                          # the contact shade under the top pot
@@ -512,7 +547,7 @@ def mooring_bitt(seed=105):
     in a coil on the quay beside it: tied off, not trailing."""
     W, H = 52, 40
     a = np.full((H, W), -1, np.int32)
-    ox, oy = 18, 34
+    ox, oy = 34, 34
     Yg, Xg = np.mgrid[0:H, 0:W]
     plate = (np.abs(Xg + 0.5 - ox) <= 8) & (Yg >= oy - 3) & (Yg < oy + 1)
     rpaint(a, plate, IRON, np.where(Yg == oy - 3, 3.4, 2.2), 0.3)
@@ -526,12 +561,22 @@ def mooring_bitt(seed=105):
         a[y0:y0 + n, ox + x0:ox + x0 + 2] = C('crag', 2)
         a[y0, ox + x0:ox + x0 + 2] = C('fox', 2)
     _finish(a)
-    # the hawser: two turns round the waist, then led off east to its coil on the quay
-    lash = (np.abs(Xg + 0.5 - ox) <= 4.6) & (Yg >= oy - 10) & (Yg < oy - 5)       # the turns lie side by side: one lashing
-    lash &= a >= 0
-    rpaint(a, lash, ROPE, np.where(Yg == oy - 10, 3.8, 3.0) - 0.4 * (Xg > ox + 2), np.where(((Xg - Yg) % 3) == 0, 0.7, 0.2))
-    _laid_rope(a, [(ox + 4.5, oy - 6), (ox + 12, oy - 2), (ox + 20, oy - 1)], 2.0, seed + 3)
-    _rope_coil(a, ox + 26, oy - 1, rings=3, rx=8.5, ry=4.0, seed=seed)
+    # the silhouette closed in the iron's own darkest edge (the outline round dark iron)
+    body_m = (a >= 0)
+    edge = body_m & ~ndi.binary_erosion(body_m)
+    a[edge] = C('void', 0)
+    # the hawser: three turns round the waist, each a 2-texel band rising a little to the east, lit
+    # on its upper west and in shade where it turns behind the post (a dark end each side), the
+    # standing part leaving from under the last turn and led off east to its coil on the quay
+    for k in range(3):
+        y0 = oy - 6 - 2 * k
+        for x in range(ox - 5, ox + 6):
+            yy = y0 - int(round((x - ox) * 0.18))
+            behind = x in (ox - 5, ox + 5)
+            a[yy, x] = C('sand_cool', 1) if behind else (C('sand', 4) if x < ox - 1 else (C('sand', 3) if x < ox + 2 else C('sand_cool', 2)))
+            a[yy + 1, x] = C('timber_cool', 1) if behind else (C('sand', 3) if x < ox - 1 else (C('sand_cool', 3) if x < ox + 2 else C('sand_cool', 2)))
+    _laid_rope(a, [(ox - 4.5, oy - 4), (ox - 12, oy - 1.5), (ox - 20, oy - 1)], 2.0, seed + 3)
+    _rope_coil(a, ox - 26, oy - 1, rings=3, rx=8.5, ry=4.0, seed=seed)
     K.despeckle(a, size=1)
     return K.crop(a, ox, oy)
 
@@ -559,30 +604,43 @@ def boat_beached(seed=107):
     zg = 11.0                                                         # the gunwale: above it the inside shows
     L_ = sc.light()
     inside = hull & (z >= zg + 1.2)
-    rail = hull & (z >= zg - 1.0) & (z < zg + 1.2)
-    out = hull & (z < zg - 1.0)
-    # outside: the strakes, lapped, blue with a white sheer strake and red below the waterline
-    lapz = (z % 3.0)
-    t = 1.3 + 2.2 * L_ + np.where(lapz < 0.9, 1.0, 0.0) - np.where(lapz > 2.3, 0.7, 0.0)
-    rpaint(a, out & (z >= 8), WHITE[:2], t + 0.4, 0.3)
-    rpaint(a, out & (z < 8) & (z >= 3.5), [('water_cool', 'water_cool', 'water'), ('water_cool', 'water', 'water')], t,
-           np.clip(K.noise(a.shape, np.random.default_rng(seed), 6.0) * 0.999, 0, 0.999))
-    rpaint(a, out & (z < 3.5), RED, t - 0.3, 0.3)
+    ring_ = ndi.binary_dilation(inside, structure=np.ones((5, 3), bool)) & hull & ~inside
+    rail = ring_ & ~ndi.binary_dilation(~hull, iterations=1)             # the gunwale: a 2-texel rail round the inside
+    out = hull & ~inside & ~rail
+    # outside: the strakes lapped down from the gunwale, 3 texels each (counted from the rail), each
+    # lit along its lower edge over the shade of the next; the sheer strake white, then blue, red
+    # below the waterline; the hull lit at its west and shaded east
+    dist = ndi.distance_transform_cdt(~(inside | rail), metric='taxicab')
+    stk = np.floor_divide(dist - 1, 3)
+    inn = (dist - 1) - stk * 3
+    t = 2.6 + 1.0 * (gx < -20) - 0.9 * (gx > 26) + np.where(inn == 2, 1.0, 0.0) - np.where(inn == 0, 0.7, 0.0)
+    t = t - 0.5 * (gy > 6)
+    rpaint(a, out & (stk == 0), WHITE[:2], t + 0.6, 0.3)
+    rpaint(a, out & (stk >= 1) & (z >= 3.5), [('water_cool', 'water_cool', 'water'), ('water_cool', 'water', 'water')], t,
+           np.clip(K.vhash(stk, 0, seed) * 0.999, 0, 0.999))
+    rpaint(a, out & (stk >= 1) & (z < 3.5), RED, t - 0.3, 0.3)
     flake = out & (z < 8) & (z >= 3.5) & (K.vhash(Xg // 3, Yg // 2, seed) > 0.96)
     a[flake] = C('timber', 3)
     # the gunwale's oak rail, lit
     rpaint(a, rail, OAK, 3.2 + 0.8 * L_, 0.3)
-    # inside: bottom boards along the boat, ribs across, the far side lit and the near side in shade
-    far = gy < 0
-    it = 2.0 + 0.9 * far - 0.5 * (np.abs(gy) > half - 3) + 0.6 * ((gy.astype(int) % 3) == 0)
-    rib = ((gx.astype(int) + 60) % 7) == 0
-    it = np.where(rib, it - 1.0, it)
+    # inside: the far inner planking lit, the near inner wall under the gunwale in shade, the floor
+    # boards between with frames across them every 7 texels (2 wide, darker in the bilge), the
+    # thwarts with a lit top edge, the oar laid across with its shadow on the floor
+    rel = gy / np.maximum(half, 1.0)                                    # -1 at the far gunwale, 1 at the near
+    it = np.where(rel < -0.55, 4.0, np.where(rel < -0.25, 3.4, np.where(rel > 0.62, 1.0, np.where(rel > 0.3, 1.8, 2.6))))
+    it = it - 0.6 * ((gy.astype(int) % 4) == 0) * (rel >= -0.25) * (rel <= 0.3)   # the floor boards' seams
+    it = it + 0.4 * ((gy.astype(int) % 3) == 0) * (rel < -0.25)            # the far strakes' lands
+    rib = (((gx.astype(int) + 60) % 7) < 2) & (rel > -0.45) & (rel < 0.62)
+    it = np.where(rib, it - 1.0 - 0.4 * (np.abs(rel) < 0.2), it)
     rpaint(a, inside, OAK + [('earth_cool', 'timber_cool', 'timber')], it, K.vhash(gy.astype(int) // 3, 0, seed + 6))
     for tx in (-16, 9):                                               # the two thwarts
-        th = inside & (gx >= tx) & (gx < tx + 4)
-        rpaint(a, th, OAK, 3.2 + 0.7 * (gx < tx + 1), 0.4)
+        th = inside & (gx >= tx) & (gx < tx + 5)
+        tys = np.nonzero(th)[0]
+        rpaint(a, th, OAK, np.where(gx < tx + 1, 4.4, np.where(gx >= tx + 4, 1.8, 3.2)), 0.4)
     oar = _line(a.shape, sc.ox - 30, sc.oy - 16, sc.ox + 24, sc.oy - 13, 2.2) & (inside | rail)
-    rpaint(a, oar, [('timber_cool', 'timber_warm', 'sand')], 3.4, 0.0)
+    oar_sh = _line(a.shape, sc.ox - 29, sc.oy - 13.5, sc.ox + 25, sc.oy - 10.5, 1.6) & inside & ~oar
+    V._step(a, oar_sh, -1)
+    rpaint(a, oar, [('timber_cool', 'timber_warm', 'sand')], np.where(np.roll(oar, 1, 0), 3.2, 4.2), 0.0)
     weed = out & (z < 2.0) & (K.vhash(Xg // 3, 0, seed + 4) > 0.7)
     a[weed] = C('leaf_cool', 2)
     under = np.zeros((H, W), bool)
@@ -659,6 +717,13 @@ def _light_frame(i, seed=111):
     rpaint(a, cope & side, GRANITE, np.where(z > 18.8, 4.0, 2.6), 0.4)
     a[cope & side & (gx > 10)] = C('stone_cool', 2)
     a[cope & ~side & (gx > 11)] = C('stone', 3)
+    rpaint(a, cope & ~side & (gx > 3.5), [GRANITE[1]], 3.7 + 0.4 * (gx < -6) - 0.6 * (gx > 11), 0.0)   # the second slab, a sibling
+    a[cope & ~side & (np.abs(gx - 3.5) < 0.5)] = C('stone_cool', 1)          # the slab joint
+    a[cope & ~side & (np.abs(gx - 4.5) < 0.5)] = C('stone_warm', 4)
+    cys_ = np.nonzero(cope & side)[0]
+    chip = cope & (gx < -9) & (gx > -13) & (Yg <= cys_.min() + 1) & (Yg >= cys_.min() - 1)
+    a[chip] = C('stone_cool', 2)                                          # a chip off the front-west arris
+    a[chip & (gx < -12)] = C('stone_warm', 4)
     B._lichen(sc, a, tags=('plinth',), rate=0.6, seed=seed)
     # the column, turned: a bell foot with two rings, the fluted shaft with two bands, the capital
     prof = ([7.6, 7.6, 7.0, 6.2, 6.2, 5.6, 5.2, 4.9, 4.7, 5.8, 5.8, 4.6] + [4.2] * 30 + [5.0, 5.0] + [4.2] * 28
@@ -724,8 +789,12 @@ def _light_frame(i, seed=111):
     a[(np.abs(gx) < 1.0) & (Yg == yc - 22)] = C('iron', 4)
     # the mooring ring on the plinth's face, a rope rove through it and hanging in a bight
     ry = oy - 9
-    ring = _disc(a.shape, ox + 0.5, ry, 3.6, 3.4) & ~_disc(a.shape, ox + 0.5, ry, 2.2, 2.0)
-    a[ring] = np.where((Yg[ring] < ry) & (Xg[ring] <= ox), C('iron', 4), np.where(Yg[ring] > ry + 1, C('iron', 1), C('iron', 2)))
+    ring = _disc(a.shape, ox + 0.5, ry, 4.0, 3.8) & ~_disc(a.shape, ox + 0.5, ry, 2.0, 1.8)
+    rsh = np.roll(np.roll(ring, 1, 0), 1, 1) & ~ring & pl
+    V._step(a, rsh, -2)                                                  # its shadow on the stone
+    ra = np.arctan2(Yg + 0.5 - ry, Xg + 0.5 - (ox + 0.5))
+    upw = np.cos(ra + 2.36)
+    a[ring] = np.where(upw[ring] > 0.4, C('slate', 4), np.where(upw[ring] < -0.3, C('iron', 1), C('iron', 2)))
     a[ry - 4:ry - 3, ox - 1:ox + 2] = C('iron', 1)                      # its staple
     # the column stands clear of the coping: its edge where it meets the stone, a contact line at its foot
     nb = ndi.binary_dilation(col, structure=np.ones((3, 3), bool)) & ~col & cope
@@ -787,42 +856,60 @@ def platform_edge(variant='a', seed=121):
         V.put(a, xa, fy0 + 1, m, fam, tt, front)
     foot = front & (Yg >= yb)
     rpaint(a, foot, GRANITE, np.where(Yg == yb, 2.0, 1.0), 0.3)
-    weed = front & (Yg >= yb - 2) & (K.vhash((lx + 12) // 3, 0, seed + 12) > 0.72)
-    a[weed] = np.where(Yg[weed] >= yb, C('leaf_cool', 2), C('grass_cool', 3))
-    # the coping: a calm lit top, the white lip along its front edge, worn where feet go; the nosing
+    # the coping: slabs 24 long whose joints fall off the cell line (a at -5, b at -1), each slab one
+    # calm sibling with a lit nosing; the white paint on its lip worn through where feet go
+    jx = -5 if variant == 'a' else -1
+    slab = np.floor_divide(lx - jx + 48, 24)
     ctop = cop & top
     cfr = cop & ~top
-    lip = ctop & (sc.gy > -1.5)
-    rpaint(a, ctop & ~lip, GRANITE, 3.7, 0.4)
+    lip = ctop & (sc.gy > -1.6)
+    rpaint(a, ctop & ~lip, GRANITE, 3.6, np.clip(K.vhash(slab, 3, seed + 21) * 0.999, 0, 0.999))
     a[ctop & ~lip & (sc.gy < -6)] = C('stone', 3)                     # its back arris, turning away
-    worn = lip & (np.abs(lx - (4 if variant == 'a' else -3)) < (2 if variant == 'a' else 5))
-    a[lip & ~worn] = C('snow', 4)
-    a[lip & ~worn & (sc.gy > -0.5)] = C('snow', 5)
-    rpaint(a, worn, GRANITE, 3.5, 0.6)
+    gaps = [(-10, -7), (1, 6)] if variant == 'a' else [(-4, -2), (4, 7), (9, 11)]
+    worn = np.zeros_like(lip)
+    for g0, g1 in gaps:
+        worn |= lip & (lx >= g0) & (lx <= g1)
+    a[lip & ~worn & (sc.gy > -0.6)] = C('snow', 5)                    # the paint: its top row bright,
+    a[lip & ~worn & (sc.gy <= -0.6)] = C('snow', 3)                    # the row behind a little greyer
+    rpaint(a, worn, GRANITE, np.where(sc.gy > -0.6, 3.6, 3.2), 0.6)    # worn through to the stone
     cfy = np.nonzero(cfr)[0]
-    rpaint(a, cfr, GRANITE, np.where(Yg == cfy.min(), 3.6, np.where(Yg == cfy.max(), 2.0, 3.0)), 0.4)
-    joint = cop & (lx == -12)
+    rpaint(a, cfr, GRANITE, np.where(Yg == cfy.min(), 4.4, np.where(Yg == cfy.max(), 2.0, 3.0)), 0.4)
+    a[cfr & (Yg == cfy.min()) & (lx < jx + 8) & (lx > jx)] = C('stone_warm', 5)   # the nosing's lit arris
+    joint = cop & (lx == jx)
     a[joint] = C('stone_cool', 1)
-    a[cop & (lx == -11) & top] = C('stone_warm', 4)
-    if variant == 'b':
-        chip = cop & (lx >= 7) & (lx <= 10) & (sc.gy > -2.5) & (Yg <= cfy.min() + 1)
-        a[chip] = C('stone_cool', 2)
-        a[chip & (lx == 7)] = C('stone_warm', 4)
+    a[cop & (lx == jx + 1) & top] = C('stone_warm', 4)
+    cx_ = 8 if variant == 'a' else -9                                  # a chip off the nosing
+    chip = cop & (lx >= cx_) & (lx <= cx_ + 2) & (Yg <= cfy.min() + 1) & (Yg >= cfy.min() - 1)
+    a[chip] = C('stone_cool', 2)
+    a[chip & (lx == cx_)] = C('stone_warm', 4)
     # the coping's shadow on the front under its nosing: two rows, deeper to the east
     sh = front & (Yg >= fy0) & (Yg < fy0 + 2)
     V._step(a, sh, -1)
-    # the gravel behind: a calm base, pebbles in sparse clumps, each lit on top with a dark foot
+    # weeds by rule: only in a block joint at the foot, and only on cell b (one in three cells), a
+    # tuft of blades of mixed height, dark at the root and lit at the tip
+    weed_m = np.zeros((H, W), bool)
+    if variant == 'b':
+        for k, (dx, hgt) in enumerate(((-3, 4), (-1, 7), (1, 5), (3, 3))):
+            x = sc.ox + dx
+            for j in range(hgt):
+                y = yb - j
+                if 0 <= y < H:
+                    c = C('grass', 4) if j >= hgt - 2 else (C('grass_cool', 3) if j >= hgt // 2 else C('leaf_cool', 2))
+                    a[y, x:x + 2] = c
+                    weed_m[y, x:x + 2] = True
+    # the platform's top behind: big flags in calm siblings with dark joints, no pebbles
     gr = body & top & ~cop
-    rpaint(a, gr, [('stone_cool', 'stone', 'stone'), ('stone_cool', 'stone_cool', 'stone')], 2.9,
-           np.clip(K.vhash((lx + 12) // 6, Yg // 4, seed + 11) * 0.999, 0, 0.999))
-    drift = K.noise((H, W), np.random.default_rng(seed), 4.0) > 0.55
-    pb = gr & drift & (K.vhash(Xg // 2, Yg // 2, seed + 3) > 0.82)
-    ys, xs = np.nonzero(pb & ((Xg % 2) == 0) & ((Yg % 2) == 0))
-    for y, x in zip(ys, xs):
-        if y + 1 < H and x + 1 < W:
-            a[y, x:x + 2] = C('stone', 4)
-            a[y + 1, x:x + 2] = C('stone_cool', 2)
+    fv = (-sc.gy).astype(float)
+    row = np.floor_divide(fv.astype(int) + 2, 8)
+    fx = lx + 12 + (row % 2) * 9
+    flag = np.floor_divide(fx + 48, 16)
+    rpaint(a, gr, [('stone_cool', 'stone', 'stone'), ('stone_cool', 'stone_cool', 'stone'), ('stone_cool', 'stone_warm', 'stone_warm')], 3.0,
+           np.clip(K.vhash(flag, row, seed + 11) * 0.999, 0, 0.999))
+    fj = gr & ((((fv.astype(int) + 2) % 8) == 0) | (((fx + 48) % 16) == 0))
+    a[fj] = C('stone_cool', 2)
+    keepw = a.copy()
     V.tidy(a)
+    a[weed_m] = keepw[weed_m]
     V.outline(a)
     a[:, :sc.ox - 12] = -1
     a[:, sc.ox + 12:] = -1
@@ -886,7 +973,8 @@ def waiting_shelter(seed=123):
     rx0, rx1 = int(rxs.min()), int(rxs.max()) + 1
     rng = np.random.default_rng(seed + 40)
     a[roof] = C('slate_cool', 0)
-    Hs.slate_roof(a, roof, rx0, rx1, y_r + 5, y_e - 3, rng, fams=('slate', 'slate', 'slate_cool'), moss=0.12, lichen=0.05)
+    Hs.slate_roof(a, roof, rx0, rx1, y_r + 5, y_e - 3, rng, fams=('slate', 'slate', 'slate_cool'), moss=0.0, lichen=0.05)
+    _moss_cushions(a, roof, y_r + 5, y_e - 3, seed + 41, n=4)
     Hs.ridge_tiles(a, roof, rx0 + 3, rx1 - 3, y_r, rng, fam='clay')
     a[roof & (Yg >= y_e - 3) & (Yg == y_e - 3)] = C('slate', 5)                 # the eave course edge on: its lit arris,
     a[roof & (Yg >= y_e - 2)] = C('slate_cool', 2)                                # the slates' thickness,
@@ -908,28 +996,43 @@ def waiting_shelter(seed=123):
         g0 = gys.min()
         a[(Yg == g0 + 1) & gut & ((Xg % 7) != 3)] = C('slate', 4)          # the gutter's highlight
         a[(Yg == gys.max()) & gut] = C('void', 1)
-    # the valance: a fretted board, scalloped along its lower edge
+    # the valance: boards on end, 4 texels wide, each lit on its west edge and darker on its east, a
+    # dark line under the fascia above, the lower edge cut in scallops with the wall behind showing
     val = _tagm(sc, 'valance')
     vys = np.nonzero(val)[0]
-    vb = vys.max()
-    ph = (Xg - ox + 120) % 6
-    cut = val & (((Yg == vb) & np.isin(ph, (4, 5, 0, 1))) | ((Yg == vb - 1) & np.isin(ph, (5, 0))) | ((Yg == vb - 2) & (ph == 5)))
-    rpaint(a, val & ~cut, CREAM, 3.8 - 1.0 * ((Yg == vb) | ((Yg == vb - 1) & np.isin(ph, (1, 4)))), 0.2)
-    rpaint(a, cut, CREAM, 1.8, 0.0)                                       # the shade behind, through the cut-outs
-    hole = val & (ph == 2) & (Yg >= vb - 6) & (Yg <= vb - 5)
+    vt, vb = vys.min(), vys.max()
+    bx = (Xg - ox + 120) % 4
+    vt_ = np.where(bx == 0, 4.2, np.where(bx == 3, 2.6, 3.4))
+    vt_ = vt_ + np.where(K.vhash((Xg - ox + 120) // 4, 0, seed + 7) > 0.8, -0.6, 0.0)
+    rpaint(a, val, CREAM, vt_, np.clip(K.vhash((Xg - ox + 120) // 4, 1, seed + 8) * 0.999, 0, 0.999))
+    a[val & (Yg == vt)] = C('ashlar', 1)                                  # the shade under the fascia
+    ph = (Xg - ox + 120) % 8
+    cut = val & (((Yg == vb) & np.isin(ph, (5, 6, 7, 0, 1))) | ((Yg == vb - 1) & np.isin(ph, (6, 7, 0))) | ((Yg == vb - 2) & (ph == 7)))
+    rpaint(a, cut, CREAM, 2.0, 0.0)                                       # the wall behind, through the cut-outs
+    hole = val & (ph == 3) & (Yg >= vb - 6) & (Yg <= vb - 5)
     a[hole] = C('ashlar', 1)
     # under the roof: the eave's shadow on the back wall and sides, deepest under the eave
-    under = (walls | _tagm(sc, 'leg')) & (z > 0) & (sc.gy < -6)
+    under = walls & (z > 0) & (sc.gy < -6)
     V._step(a, under & (z > 36), -1)
-    # the bench: boards with a lit lip, dark joints, grain and nail heads
+    # the bench: a seat seen as a lit top plane of boards, its front edge, the shade under it, a
+    # backrest of boards, legs lit on their west side, its shadow on the floor
     seat = _tagm(sc, 'seat')
-    _planks(a, seat, OAK, 2.9 + 0.8 * L, gx + 200, (Yg - oy).astype(float) + 300, seed + 4, pitch=4)
+    stop = seat & (sc.n[..., 2] > 0.5)
+    sfr = seat & ~stop
+    _planks(a, stop, OAK, 3.6, gx + 200, (Yg - oy).astype(float) + 300, seed + 4, pitch=4, grain=0.05)
+    sfy = np.nonzero(sfr)[0]
+    rpaint(a, sfr, OAK, np.where(Yg == sfy.min(), 3.2, np.where(Yg == sfy.max(), 1.2, 2.4)), 0.3)
     br = _tagm(sc, 'backrest')
-    _planks(a, br, OAK, 2.7 + 0.6 * L, gx + 200, -z + 300, seed + 5, pitch=5)
-    V._step(a, (seat | br) & ((np.abs(gx + 40) < 0.6) | (np.abs(gx - 26) < 0.6)), 1)
-    nails = (seat | br) & ((np.abs(gx + 40) < 0.6) | (np.abs(gx - 26) < 0.6)) & (((Yg - oy) % 5) == 2)
+    _planks(a, br, OAK, 2.8 + 0.4 * L, gx + 200, -z + 300, seed + 5, pitch=5)
+    nails = (stop | br) & ((np.abs(gx + 40) < 0.6) | (np.abs(gx - 26) < 0.6)) & (((Yg - oy) % 4) == 1)
     a[nails] = C('iron', 1)
-    V._step(a, (seat | br), -1)                                            # in the roof's shade
+    legs = _tagm(sc, 'leg')
+    for x in (-40, -7, 26):
+        lm = legs & (np.abs(gx - x) < 1.6)
+        rpaint(a, lm, IRON, np.where(gx < x - 0.5, 3.4, np.where(gx > x + 0.5, 1.4, 2.4)), 0.3)
+    fl_ = _tagm(sc, 'floor', 'back')
+    sh = fl_ & (Yg > sfy.max()) & (Yg <= sfy.max() + 3) & (gx > -42) & (gx < 33)
+    V._step(a, sh, -1)
     # the poster: a printed sheet in a dark frame with a coloured block and a torn corner
     px, py = ox + 36, oy + YB - 50
     a[py:py + 22, px:px + 18] = C('leaf_cool', 1)
@@ -957,35 +1060,21 @@ CHURN_TIN = [('slate_cool', 'stone_cool', 'stone'), ('slate_cool', 'stone', 'sto
 
 
 def _churn_profile():
-    """A 17-gallon churn's radius from the foot (texels): the foot band, the body, the shoulder band,
-    the taper, the neck, the lid's flange and its mushroom crown."""
-    p = []
-    for h in range(34):
-        if h < 2:
-            r = 8.2
-        elif h < 17:
-            r = 7.6
-        elif h < 19:
-            r = 8.2
-        elif h < 23:
-            r = 7.6 - (h - 18) * 0.85
-        elif h < 27:
-            r = 4.2
-        elif h < 29:
-            r = 5.8
-        else:
-            r = 5.2 - (h - 29) * 1.0
-        p.append(r)
-    return p
+    """A 17-gallon churn's radius from the foot (texels): the foot's rolling band, the body, the
+    shoulder band, the taper, the neck stepping in under the lid, the lid's flange and its crown."""
+    return [8.2] * 3 + [7.6] * 14 + [8.0] * 2 + [7.0, 6.0, 5.0, 4.4] + [4.0] * 3 + [5.6] * 2 + [5.2]
 
 
 def churn_stand(seed=125):
     """A milk-churn stand at the lane's end: a deck of boards at cart height (0.65 m) on four posts with
     a cross-brace, three galvanised churns on it waiting for the train, each 0.78 m tall and 0.35 m
-    across (Eastward's milk cans in 17), drawn as Eastward draws cans: rolling bands at the foot and
-    the shoulder (a lit top line, a dark line under), the shoulder's taper and the neck, a mushroom lid
-    with a handle loop, a side handle each side; the tin lit as a cylinder (a highlight band left of
-    centre, the core shadow on the right third), never split on a diagonal."""
+    across (Eastward's milk cans in 17). Each churn is a cylinder: a highlight band 2 texels wide a
+    third in from the west (tin 5), the body, the east third in shade with a warm reflection from the
+    stand along its lower east edge; rolling bands at the foot and the shoulder, each a lit top line
+    over a dark under line; the neck stepping in under the lid; a mushroom lid seen from above, an
+    ellipse lit on its far rim and dark on its near rim, with a loop handle; two side handles as lit
+    hoops. The three differ: one has its lid handle turned to the front, one a dent, one a painted
+    dairy mark."""
     sc = K.Scene(-40, 40, -14, 10, 72)
     for x in (-28, 28):
         for y in (-9, 1):
@@ -1009,32 +1098,63 @@ def churn_stand(seed=125):
         rpaint(a, m, OAK, np.where(gx < x - 0.5, 3.4, np.where(gx > x + 0.6, 1.8, 2.6)), 0.3)
     B._lichen(sc, a, tags=('leg',), rate=0.6, seed=seed)
     prof = _churn_profile()
+    TINS = [('slate_cool', 'stone_cool', 'snow_cool'), ('slate_cool', 'stone', 'snow_cool')]
     for k, (x, y) in enumerate(((-19, -4), (0, -2), (19, -4))):
         fx, fy = ox + x, oy + y - 28
         m, hh, u, top = _lathe(a.shape, fx, fy, prof)
-        t = _cyl_tone(u, 1.0, lit=4.2, body=3.0, shade=1.6)
-        band = ((hh >= 0) & (hh < 2)) | ((hh >= 17) & (hh < 19))
-        t = np.where(band & (np.floor(hh) % 17 == 1) | (band & (np.floor(hh) == 18)), t + 0.8, t)
-        t = np.where(band & ((np.floor(hh) == 0) | (np.floor(hh) == 17)), t - 1.0, t)
-        t = np.where(top, 3.6 + 0.8 * (u < 0) - 0.6 * (u > 0.5), t)
-        t = np.where((hh >= 27) & (hh < 29) & ~top, t - 0.4, t)            # the lid's flange in its own shade
-        rpaint(a, m, CHURN_TIN, t, 0.3 + 0.4 * (k == 1))
-        a[m & ~top & (np.abs(u + 0.36) < 0.09) & (hh > 4) & (hh < 13)] = C('stone', 5)       # the tin's glint
-        a[m & ~top & (np.abs(u - 0.2) < 0.12) & (np.abs(hh - 9 - 2 * k) < 1.0)] = C('stone_cool', 1)  # a dent
-        # the lid's handle loop, the side handles at the shoulder
-        ly = fy - 34
-        a[ly, fx - 1:fx + 2] = C('iron', 2)
-        a[ly + 1, fx - 1] = C('iron', 1)
-        a[ly + 1, fx + 1] = C('iron', 1)
-        a[ly, fx - 1] = C('slate', 4)
+        hi = np.floor(hh).astype(int)
+        side_ = m & ~top
+        # the cylinder: highlight band a third in from the west, body, the east third in shade
+        t = np.full((H, W), 3.0)
+        t = np.where((u > -0.55) & (u < -0.2), 4.6, t)
+        t = np.where((u >= -0.2) & (u < 0.0), 3.6, t)
+        t = np.where(u > 0.33, 2.0, t)
+        t = np.where(u > 0.7, 1.4, t)
+        t = np.where(u < -0.8, 2.6, t)
+        # rolling bands: a lit top line over a dark under line, at the foot and the shoulder
+        for b0 in (0, 17):
+            t = np.where(side_ & (hi == b0 + 1), np.maximum(t, 4.0), t)
+            t = np.where(side_ & (hi == b0), np.minimum(t, 1.6), t)
+        t = np.where(side_ & (hi == 2), t - 0.6, t)
+        # the neck in the lid's shade, stepping in
+        t = np.where(side_ & (hi >= 23) & (hi < 26), t - 0.7, t)
+        # the lid's flange: its own small cylinder, dark under
+        t = np.where(side_ & (hi >= 26) & (hi < 28), np.where(hi == 26, 1.8, t), t)
+        # upward faces: the shoulder's slope lit, the lid's crown an ellipse lit on its far rim
+        t = np.where(top, 3.6 + 0.8 * (u < 0) - 0.8 * (u > 0.5), t)
+        rpaint(a, m, TINS, t, 0.3 + 0.4 * (k == 1))
+        crown = m & top & (hi >= 27)
+        cys, cxs = np.nonzero(crown)
+        if len(cys):
+            cy0, cy1 = cys.min(), cys.max()
+            a[crown & (Yg == cy0)] = C('snow_cool', 5)                        # the far rim catching the light
+            a[crown & (Yg == cy1)] = C('slate_cool', 1)                       # the near rim dark
+        # the warm light thrown up from the stand's boards along the lower east edge
+        a[side_ & (u > 0.78) & (hi >= 3) & (hi < 7)] = C('timber_warm', 2)
+        # the lid's loop handle, turned to the front on the middle churn
+        ly = fy - 30
+        if k == 1:
+            a[ly - 1, fx - 1:fx + 2] = C('stone', 4)
+            a[ly, fx - 2] = C('stone', 3)
+            a[ly, fx + 2] = C('slate_cool', 1)
+            a[ly, fx - 1:fx + 2] = -1 if a[ly, fx] < 0 else a[ly, fx - 1:fx + 2]
+        else:
+            a[ly - 1, fx - 2:fx + 3] = C('stone', 4)
+            a[ly - 2, fx - 1:fx + 2] = C('snow_cool', 4)
+            a[ly - 1, fx + 2] = C('slate_cool', 1)
+        # side handles: small hoops at the shoulder, lit on top
         for sx in (-1, 1):
             hx = fx + sx * 9
             hy = fy - 20
-            a[hy:hy + 3, hx] = C('iron', 2)
-            a[hy, hx - sx] = C('iron', 2)
-            a[hy + 2, hx - sx] = C('iron', 1)
-            if sx < 0:
-                a[hy, hx] = C('slate', 4)
+            a[hy, hx - (1 if sx > 0 else 0):hx + (1 if sx < 0 else 0) + 1] = C('stone', 4) if sx < 0 else C('stone', 3)
+            a[hy + 1:hy + 4, hx] = C('stone', 3) if sx < 0 else C('slate_cool', 1)
+            a[hy + 3, hx - sx] = C('slate_cool', 1)
+        if k == 0:                                                         # a dent, its lit lower lip
+            a[side_ & (np.abs(u - 0.15) < 0.14) & (np.abs(hh - 10) < 1.2)] = C('stone_cool', 1)
+            a[side_ & (np.abs(u - 0.15) < 0.14) & (np.abs(hh - 8.6) < 0.5)] = C('snow_cool', 4)
+        if k == 2:                                                         # the dairy's painted mark
+            a[side_ & (u > -0.35) & (u < 0.25) & (hi >= 9) & (hi < 12)] = C('clay', 3)
+            a[side_ & (u > -0.35) & (u < 0.25) & (hi == 11)] = C('clay', 4)
     _finish(a)
     B._ground_tufts(a, ox, oy, [-31, -25, 25, 31], seed)
     return K.crop(a, ox, oy)
@@ -1095,7 +1215,14 @@ def semaphore(seed=127):
     a[piv] = C('iron', 3)
     a[oy - 115, ox + 1] = C('slate', 4)
     base = _tagm(sc, 'base')
-    rpaint(a, base & ~side, GRANITE, 3.4 + 0.4 * L, 0.3)
+    btop = base & ~side
+    rpaint(a, btop, GRANITE, np.where(gx < 0, 3.9, 3.4), np.where(gx < 3, 0.1, 0.5))   # two slabs, siblings
+    a[btop & (np.abs(gx - 3) < 0.5)] = C('stone_cool', 1)                  # their joint
+    bfr = np.nonzero(base & side)[0]
+    if len(bfr):
+        a[btop & (Yg == bfr.min() - 1) & (gx < 6)] = C('stone_warm', 5)      # the front arris, lit
+    psh = btop & (gx > 2.5) & (gx < 7) & (Yg < (bfr.min() if len(bfr) else 0) - 1)
+    V._step(a, psh, -1)                                                  # the post's shadow on it
     _stone_parts(a, base & side, gx + 100.0, z, seed, GRANITE, 2.6, lo=9, hi=13, course=6)
     _finish(a, keep=np.isin(a, [C('clay', 3), C('clay', 4), C('leaf', 3), C('leaf', 4), C('fox', 5), C('grass', 5)]))
     # the ladder up beside the post (after the outline, so the ground shows between its stiles):
@@ -1202,8 +1329,9 @@ def timetable_board(seed=131):
     a[cy - 1:cy + 1, cx] = C('slate', 1)
     a[cy, cx:cx + 2] = C('slate', 1)
     # the print: rows of grey dashes of uneven length, in two columns
+    yy = sy0 + 10
     for r_ in range(6):
-        yy = sy0 + 10 + r_ * 4
+        yy += 0 if r_ == 0 else 3 + int(2 * hsh(seed, r_, 77))             # the rows unevenly spaced, as set by hand
         x = sx0 + 2
         k = 0
         while x < sx1 - 3:
@@ -1250,6 +1378,29 @@ def timetable_board(seed=131):
 # ================================================================================================
 # the Millrace landslip
 # ================================================================================================
+def _moss_cushions(a, rm, y_r, y_eave, seed, n=4):
+    """Moss as cushions in a slate roof's lower joints: a few soft mounds 6 to 9 texels wide across a
+    course's foot, lit on their top-west, dark under, never single squares."""
+    H, W = a.shape
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    xs = np.nonzero(rm.any(0))[0]
+    for k in range(n):
+        cx = xs.min() + 8 + (xs.max() - xs.min() - 16) * hsh(seed, k, 1)
+        cy = y_r + (y_eave - y_r) * (0.62 + 0.3 * hsh(seed, k, 2))
+        rx, ry = 3.0 + 1.6 * hsh(seed, k, 3), 1.7
+        m = ((((Xg + 0.5 - cx) / rx) ** 2 + ((Yg + 0.5 - cy) / ry) ** 2) <= 1.0) & rm
+        if not m.any():
+            continue
+        up = np.zeros_like(m)
+        up[1:] = m[:-1]
+        dn = np.zeros_like(m)
+        dn[:-1] = m[1:]
+        a[m] = C('leaf', 2)
+        a[m & ~up] = C('leaf', 3)
+        a[m & ~up & (Xg + 0.5 < cx)] = C('grass', 4)
+        a[m & ~dn] = C('leaf_cool', 1)
+
+
 def _mill_house(shape, ox, oy, seed):
     """The mill's long south front, drawn as the Crossroads houses are (scripts/art/native/houses.py):
     rubble in courses with quoins at both corners, the west arris lit and the east corner turning
@@ -1275,7 +1426,8 @@ def _mill_house(shape, ox, oy, seed):
     y_eave = y_e + 1
     rm = V.roof_mask(shape, rx0, rx1, y_r, y_eave)
     h[rm] = -1
-    Hs.slate_roof(h, rm, rx0, rx1, y_r, y_eave, rng)
+    Hs.slate_roof(h, rm, rx0, rx1, y_r, y_eave, rng, moss=0.0)
+    _moss_cushions(h, rm, y_r, y_eave, seed + 61, n=4)
     Hs.ridge_tiles(h, rm, rx0, rx1, y_r, rng)
     Hs.verges(h, rx0, rx1, y_r, y_eave, rng)
     gb = Hs.fascia_gutter(h, rx0, rx1, y_eave, rng, gutter=True)
@@ -1366,66 +1518,70 @@ def _wheel_frame(i, seed=141):
     # the race
     wy0, wy1 = oy - 20, oy + 10
     water = _race(a, ox, oy, i, 0, W, wy0, wy1, seed)
-    # the wheel: back rim, paddles back to front, front rim and spokes; a quarter spoke-pitch a frame,
-    # its bottom moving east with the water
+    # the wheel: two shrouds (rims) 3 texels wide, the back one a float's width behind; sixteen even
+    # floats between them, boards 3 x 7 at the same angle to the radius, each with a lit top face and
+    # a dark trailing face; eight spokes 2 texels wide, lit on one side and dark on the other; the hub
+    # lit at its upper left. It turns an eighth of a spoke's pitch a frame, its bottom moving east.
     cx, cy = ox, oy - 26
     ang0 = -(2 * math.pi / 8) * (i / float(LOOP))
     shape = a.shape
     wheel = np.full(shape, -1, np.int32)
+    X_, Y_ = Xg + 0.5, Yg + 0.5
 
-    def ring(dy, r0, r1, t0):
-        m = _disc(shape, cx, cy + dy, r1) & ~_disc(shape, cx, cy + dy, r0)
-        tt = t0 + 1.0 * ((Xg - cx) + (Yg - cy - dy) < -R * 0.5) - 0.9 * ((Xg - cx) + (Yg - cy - dy) > R * 0.5)
+    def shroud(dy, t_lit, t_dark):
+        rr = np.hypot(X_ - cx, Y_ - (cy + dy))
+        m = (rr <= R) & (rr > R - 3.0)
+        upw = -((X_ - cx) + (Y_ - cy - dy)) / max(1e-6, R * 1.41)
+        tt = np.where(upw > 0.35, t_lit, np.where(upw < -0.35, t_dark, (t_lit + t_dark) / 2.0))
+        tt = np.where(rr > R - 1.0, tt + 0.6, tt)                        # the outer arris catches a little more
         rpaint(wheel, m, B.OAK, tt, 0.3)
-    ring(-D, R - 3.5, R, 1.8)
+    shroud(-D, 3.0, 1.2)
     for k in range(16):
         th = ang0 + k * 2 * math.pi / 16
         c, s_ = math.cos(th), math.sin(th)
-        pp = [(cx + (R - 9) * c, cy + (R - 9) * s_), (cx + (R + 4) * c, cy + (R + 4) * s_),
-              (cx + (R + 4) * c, cy + (R + 4) * s_ - D), (cx + (R - 9) * c, cy + (R - 9) * s_ - D)]
-        pm = _poly(shape, pp)
-        lit = 0.9 if s_ < -0.2 else (-0.6 if s_ > 0.4 else 0.2)
-        rpaint(wheel, pm, B.OAK, 2.5 + lit, 0.3 + 0.3 * (k % 2))
-        edge = _line(shape, pp[1][0], pp[1][1], pp[2][0], pp[2][1], 1.6)
-        wheel[edge] = C('timber_warm', 4) if s_ < 0 else C('timber_cool', 1)
-    ring(0, R - 3.5, R, 2.6)
+        tx, ty = -s_, c                                                  # the tangent
+        r0, r1 = R - 4.0, R + 4.0
+        p0 = (cx + r0 * c - 1.5 * tx, cy + r0 * s_ - 1.5 * ty)
+        p1 = (cx + r1 * c - 1.5 * tx, cy + r1 * s_ - 1.5 * ty)
+        p2 = (cx + r1 * c + 1.5 * tx, cy + r1 * s_ + 1.5 * ty)
+        p3 = (cx + r0 * c + 1.5 * tx, cy + r0 * s_ + 1.5 * ty)
+        board = _poly(shape, [p0, p1, p2, p3])
+        lit = (s_ < 0.3) and (c < 0.6)
+        rpaint(wheel, board, B.OAK, 3.8 if lit else (2.8 if s_ < 0.3 else 2.0), 0.2 + 0.3 * (k % 2))
+        trail = _line(shape, p2[0], p2[1], p3[0], p3[1], 1.0) & board
+        wheel[trail] = C('timber_cool', 1)                                # its trailing face, dark
+        lead = _line(shape, p0[0], p0[1], p1[0], p1[1], 1.0) & board
+        wheel[lead] = C('timber_warm', 4) if lit else C('timber', 3)        # its leading arris, lit
+    shroud(0, 4.0, 1.8)
     for k in range(8):
         th = ang0 + k * 2 * math.pi / 8 + math.pi / 16
         c, s_ = math.cos(th), math.sin(th)
-        sp = _line(shape, cx + 4 * c, cy + 4 * s_, cx + (R - 3) * c, cy + (R - 3) * s_, 2.2)
-        rpaint(wheel, sp, B.OAK, 2.6 + (0.9 if (c < 0 and s_ < 0) else -0.4), 0.4)
-    low = (wheel >= 0) & (Yg > cy + R * 0.55)
-    V._step(wheel, low, -1)
+        nx_, ny_ = -s_, c
+        for side_, tt in ((-0.5, 3.6), (0.5, 1.8)):
+            sp = _line(shape, cx + 4 * c + side_ * nx_, cy + 4 * s_ + side_ * ny_, cx + (R - 3) * c + side_ * nx_,
+                       cy + (R - 3) * s_ + side_ * ny_, 1.0)
+            lit_side = (side_ * nx_ + side_ * ny_) < 0                       # the side towards the upper left
+            rpaint(wheel, sp, B.OAK, 3.6 if lit_side else 1.8, 0.4)
     hub = _disc(shape, cx, cy, 5.5)
-    rpaint(wheel, hub, IRON, 2.2 + 1.2 * ((Xg < cx) & (Yg < cy)), 0.3)
+    rpaint(wheel, hub, IRON, np.where((X_ < cx) & (Y_ < cy), 3.8, np.where((X_ > cx + 1) & (Y_ > cy + 1), 1.4, 2.4)), 0.3)
     wheel[_disc(shape, cx, cy, 1.8)] = C('void', 2)
     wl = oy - 2                                                        # the waterline on the wheel
     sel = (wheel >= 0) & ~(water & (Yg >= wl)) & ~cop
     a[sel] = wheel[sel]
-    # its reflection-dark under the wheel where it stands in the water
-    shade_w = water & (Yg >= wl) & (Yg < wl + 3) & (np.abs(Xg - cx) < R - 2)
-    V._step(a, shade_w, -1)
-    # the paddles cut the surface: a broken white line along the waterline across the wheel's foot
-    cut = water & (Yg == wl) & (np.abs(Xg - cx) < R) & (((Xg + 2 * i) % 6) < 4)
-    a[cut] = C('snow', 4)
-    a[water & (Yg == wl + 1) & (np.abs(Xg - cx) < R - 3) & (((Xg + 2 * i + 3) % 6) < 3)] = C('snow_cool', 3)
-    # white water where the paddles bite in (upstream, west) and lift out (east); it changes with the turn
-    for k in range(5):
-        x = cx - 26 + k * 4 + (k + i) % 2
+    # a clean cut at the waterline: the wheel's dark band in the water under it, white water only
+    # where the floats bite in on the upstream (west) side and a little where they lift out
+    span = water & (np.abs(Xg + 0.5 - cx) < R - 1)
+    a[span & (Yg >= wl) & (Yg < wl + 2)] = C('water_cool', 1)
+    for k in range(4):
+        x = cx - R + 6 + k * 4 + (k + i) % 2
         yy = wl - 1 + ((k + i) % 3 == 0)
-        sp = _disc(shape, x, yy, 2.0, 1.2)
+        sp = _disc(shape, x, yy, 2.2, 1.3)
         a[sp & ~cop] = C('snow', 5) if (k + i) % 3 == 0 else C('snow', 4)
         a[_disc(shape, x + 1, yy + 2, 1.6, 0.8) & water] = C('snow_cool', 3)
-    for k in range(4):
-        x = cx + 14 + k * 5 + (k + i) % 2
-        yy = wl + (k % 2)
-        sp = _disc(shape, x, yy, 1.8, 1.0)
+    for k in range(2):
+        x = cx + R - 12 + k * 5 + (k + i) % 2
+        sp = _disc(shape, x, wl, 1.8, 1.0)
         a[sp & ~cop] = C('snow', 4) if (k + i) % 2 else C('water_warm', 5)
-    for k in range(3):                                                 # drops thrown off the rising paddles
-        x = cx + 26 + k * 3
-        yy = wl - 6 - ((k + i) % 4) * 2
-        if a[yy, x] < 0 or not ((wheel[yy, x] >= 0) or water[yy, x]):
-            a[yy, x:x + 2] = C('snow', 4)
     _finish(a, keep=None)
     return a, ox, oy
 
@@ -1461,27 +1617,59 @@ def sluice(seed=143):
     slime = gate & ((Yg - sc.oy) > -12) & (K.vhash(Xg // 3, Yg // 2, seed + 9) > 0.7)
     a[slime] = C('leaf_cool', 2)
     a[gate & (((Xg - sc.ox) % 10) == 0)] = C('iron', 1)                    # the straps
-    # the handwheel on the rack's head, face on: rim, four spokes, hub
-    hx, hy = sc.ox + 4, sc.oy - 4 - 44
-    rimm = _disc(a.shape, hx, hy, 6.0) & ~_disc(a.shape, hx, hy, 4.4)
-    for k in range(10):                                                  # the gear's teeth
-        th = k * 2 * math.pi / 10
-        rimm |= _disc(a.shape, hx + 6.6 * math.cos(th), hy + 6.6 * math.sin(th), 1.2)
-    lit_g = (Xg - hx) + (Yg - hy) < -1
-    rpaint(a, rimm, IRON, np.where(lit_g, 3.8, 2.0), 0.3)
-    for (dx, dy) in ((1, 0), (0, 1)):
-        a[_line(a.shape, hx - 4.5 * dx, hy - 4.5 * dy, hx + 4.5 * dx, hy + 4.5 * dy, 1.4)] = C('iron', 2)
-    a[_disc(a.shape, hx, hy, 1.8)] = C('iron', 4)
-    a[int(hy) - 1, int(hx) - 1] = C('slate', 5)
-    # the water: dark in the channel, pouring white from under the gate
+    # the cast-iron gear on the rack's head, seen from the south: a web in iron 2, a rim 2 texels wide
+    # lit on its upper-west arc, ten teeth each lit on its west face, a lit hub with a dark axle; the
+    # rack bar it drives runs down past it
+    hx, hy = sc.ox + 5, sc.oy - 4 - 44
+    gt = np.full((H, W), 2.0)
+    rr = np.hypot(Xg + 0.5 - hx, Yg + 0.5 - hy)
+    ang = np.arctan2(Yg + 0.5 - hy, Xg + 0.5 - hx)
+    web = rr <= 4.6
+    rimm = (rr <= 6.2) & (rr > 4.6)
+    tooth = (rr > 6.2) & (rr <= 8.0) & (np.mod(ang * 10 / (2 * math.pi) + 0.25, 1.0) < 0.5)
+    gear = web | rimm | tooth
+    upw = np.cos(ang + 2.36)                                           # 1 on the upper-west arc
+    gt = np.where(rimm, np.where(upw > 0.3, 4.6, np.where(upw < -0.4, 1.4, 3.0)), gt)
+    tw = np.mod(ang * 10 / (2 * math.pi) + 0.25, 1.0) < 0.22
+    gt = np.where(tooth, np.where(tw, 4.2, 2.6) - 1.0 * (upw < -0.4), gt)
+    rpaint(a, gear & ~web, [('void', 'iron', 'slate'), ('soot', 'iron', 'slate_warm')], gt, 0.3)
+    rpaint(a, web, [('void', 'iron', 'slate')], np.where(np.mod(ang * 4 / (2 * math.pi), 1.0) < 0.2, 3.0, 1.8), 0.0)   # the web's ribs
+    hub = rr <= 2.0
+    a[hub] = C('slate', 4)
+    a[hub & (Xg + 0.5 > hx) & (Yg + 0.5 > hy)] = C('iron', 2)
+    a[(np.abs(Xg + 0.5 - hx) < 0.6) & (np.abs(Yg + 0.5 - hy) < 0.6)] = C('void', 0)
+    rk = (Xg >= hx - 9) & (Xg < hx - 7) & (Yg >= hy - 4) & (Yg < sc.oy - 36)   # the rack bar, toothed on its east face
+    a[rk] = np.where(Xg[rk] == hx - 9, C('iron', 3), C('iron', 1))
+    a[rk & ((Yg % 3) == 0) & (Xg == hx - 8)] = C('iron', 3)
+    # the water leaves under the gate as a jet: a dark band under the gate's lip, a glassy lit tongue
+    # for 3 or 4 rows, then churned white water in uneven clumps, and lit streaks that spread and
+    # wander downstream over their shadow
     wx0, wx1 = sc.ox - 14, sc.ox + 14
     water = (Xg >= wx0) & (Xg < wx1) & (Yg >= sc.oy - 6) & (Yg < sc.oy + 14) & ~_tagm(sc, 'pier', 'gate')
-    st = ((Xg + Yg // 3) % 7) < 2
-    rpaint(a, water, [('water_cool', 'water', 'water_warm'), ('water_cool', 'water_cool', 'water')], 1.8 + 0.9 * st + 0.7 * ((Yg - sc.oy) > 6),
-           ((Xg // 5) % 2) * 0.6)
-    foam = water & (Yg < sc.oy - 2) & (K.vhash(Xg // 2, Yg // 2, seed) > 0.4)
+    r_ = Yg - (sc.oy - 6)
+    wt = np.full((H, W), 2.2)
+    wt = np.where(r_ < 1, 1.0, wt)                                       # under the gate's lip
+    wt = np.where((r_ >= 1) & (r_ < 5), np.where(r_ < 3, 4.4, 3.6), wt)  # the glassy tongue
+    wt = np.where(r_ >= 14, 1.8, wt)
+    cx_ = sc.ox
+    spread = (r_ - 5) * 0.6
+    lane = np.floor((Xg + 0.5 - cx_) / np.maximum(3.0, 3.0 + spread * 0.25) + 0.3 * np.sin(Yg * 0.7))
+    streak = (r_ >= 9) & (((lane % 2) == 0)) & (np.mod(Yg + lane * 2, 4) < 2) & (np.abs(Xg + 0.5 - cx_) < 10 + spread)
+    wt = np.where(streak, 3.6, wt)
+    und = np.zeros_like(streak)
+    und[1:] = streak[:-1]
+    wt = np.where(und & ~streak & (r_ >= 9), 1.6, wt)
+    rpaint(a, water, [('water_cool', 'water', 'water_warm')], wt, 0.0)
+    foam = np.zeros((H, W), bool)
+    for k in range(9):                                                   # churned white water in clumps
+        fx = cx_ - 11 + 22 * hsh(seed, k, 1)
+        fy = sc.oy - 1 + 4 * hsh(seed, k, 2)
+        rx = 1.6 + 1.8 * hsh(seed, k, 3)
+        foam |= _disc(a.shape, fx, fy, rx, 1.2 + 0.6 * hsh(seed, k, 4))
+    foam &= water
     a[foam] = C('snow', 4)
-    a[water & (Yg >= sc.oy - 2) & (Yg < sc.oy) & ((Xg % 3) < 2)] = C('water_warm', 5)
+    ftop = foam & ~np.roll(foam, 1, 0)
+    a[foam & ~ftop & (Yg >= sc.oy + 1)] = C('snow_cool', 3)
     _finish(a, keep=foam)
     return K.crop(a, sc.ox, sc.oy)
 
@@ -1489,16 +1677,17 @@ def sluice(seed=143):
 SACK = [('earth_cool', 'sand_cool', 'sand'), ('earth_cool', 'sand_cool', 'sand_warm')]
 
 
-def _dressing(px, py, harps=8, pitch=4.0):
+def _dressing(px, py, harps=8, pitch=8.0):
     """A millstone's dressing on its face (px, py from its centre, unsquashed): eight harps of
-    furrows, each furrow parallel to its harp's leading line. Returns (furrow, lit lip south of it)."""
+    furrows, each furrow 2 texels wide and parallel to its harp's leading line, a lit lip on its
+    south side. Returns (furrow, lip, the land's coordinates for the pecks)."""
     th = np.arctan2(py, px) + math.pi
     rho = np.hypot(px, py)
     j = np.floor(th / (2 * math.pi / harps))
     lead = j * (2 * math.pi / harps)
     d = rho * np.sin(th - lead)
-    f = (np.mod(d, pitch) < 1.0) & (rho > 6)
-    lip = (np.mod(d, pitch) >= 1.0) & (np.mod(d, pitch) < 2.0) & (rho > 6)
+    f = (np.mod(d, pitch) < 2.0) & (rho > 6)
+    lip = (np.mod(d, pitch) >= 2.0) & (np.mod(d, pitch) < 3.0) & (rho > 6)
     return f, lip
 
 
@@ -1532,88 +1721,125 @@ def millstones(seed=145):
     cx, cy = ox + 22, oy - 1 - 26
     face = _disc(a.shape, cx, cy, R)
     band = _disc(a.shape, cx + 4, cy - 2, R) & ~face
-    rpaint(a, band, GRANITE, np.where(Yg < cy - R * 0.4, 3.9, np.where(Xg > cx + R * 0.5, 1.8, 2.8)), 0.3)
+    bth = np.arctan2(Yg + 0.5 - cy, Xg + 0.5 - cx)
+    rpaint(a, band, GRANITE, np.where(bth < -1.9, 4.6, np.where(bth < -0.9, 3.8, np.where(bth < 0.4, 2.6, 1.2))), 0.3)
     px, py = Xg - cx + 0.5, Yg - cy + 0.5
     rho = np.hypot(px, py)
-    ft = 2.9 + 0.5 * ((px + py) < -10) - 0.5 * ((px + py) > 14)
-    edge = rho > R - 2.2
-    ft = np.where(edge & ((px + py) < 0), 3.9, np.where(edge, 2.0, ft))
+    ft = 3.0 + 0.5 * ((px + py) < -12) - 0.6 * ((px + py) > 14)
+    edge = rho > R - 1.2
+    bev = (rho > R - 3.2) & ~edge
+    ft = np.where(edge, np.where((px + py) < 0, 4.6, 1.2), np.where(bev, np.where((px + py) < 0, 3.8, 2.0), ft))
     f, lip = _dressing(px, py)
-    ft = np.where(f & ~edge, ft - 1.2, np.where(lip & ~edge, ft + 0.7, ft))
+    peck = (K.vhash(Xg // 3, Yg // 2, seed + 31) > 0.97) & ~f & ~lip
+    inner = ~edge & ~bev
+    ft = np.where(f & inner, 1.6, np.where(lip & inner, 3.8, np.where(peck & inner, ft - 1.0, ft)))
     rpaint(a, face, GRANITE, ft, 0.4)
     eye = _disc(a.shape, cx, cy, 4.5)
     a[eye] = C('void', 1)
-    a[eye & (py < -1)] = C('stone_cool', 2)
+    a[eye & (py < -0.5)] = C('stone_warm', 4)                                # the eye's far inner wall, lit
+    a[eye & (py < -2.5)] = C('stone', 3)
+    a[eye & (py > 2.0)] = C('void', 0)                                       # its near wall in the dark
     # the stone lying flat: a lathe of 10 texels, its face seen squashed (0.55)
     sq = 0.55
     fx, fy = ox - 30, oy - 13
     prof = [R] * 10
     m, hh, u, top = _lathe(a.shape, fx, fy, prof, sq)
-    t = _cyl_tone(u, 1.0, lit=3.9, body=2.8, shade=1.6)
+    t = _cyl_tone(u, 1.0, lit=4.6, body=2.8, shade=1.2)
+    t = np.where(u > 0.75, 1.0, t)
     qx, qy = Xg - fx + 0.5, (Yg - (fy - 9) + 0.5) / sq
     qr = np.hypot(qx, qy)
-    tf = 2.9 + 0.4 * ((qx + qy) < -12) - 0.4 * ((qx + qy) > 16)
-    bev = qr > R - 3.0
-    tf = np.where(bev & ((qx + qy) < 0), 3.9, np.where(bev, 2.1, tf))
+    tf = 3.0 + 0.5 * ((qx + qy) < -12) - 0.5 * ((qx + qy) > 16)
+    rim = qr > R - 1.4
+    bev = (qr > R - 3.4) & ~rim
+    tf = np.where(rim, np.where((qx + qy) < 0, 4.6, 2.0), np.where(bev, np.where((qx + qy) < 0, 4.0, 2.2), tf))
     f2, lip2 = _dressing(qx, qy)
-    tf = np.where(f2 & ~bev, tf - 1.2, np.where(lip2 & ~bev, tf + 0.7, tf))
+    peck2 = (K.vhash(Xg // 3, Yg // 2, seed + 33) > 0.97) & ~f2 & ~lip2
+    in2 = ~rim & ~bev
+    tf = np.where(f2 & in2, 1.6, np.where(lip2 & in2, 3.8, np.where(peck2 & in2, tf - 1.0, tf)))
     t = np.where(top, tf, t)
     rpaint(a, m, GRANITE, t, 0.4)
+    _break_flats(a, m & ~top, seed + 5, size=5)                          # pick marks on its rim, as sibling clusters
     eye2 = m & top & (np.hypot(qx, qy) < 4.8)
     a[eye2] = C('void', 1)
-    a[eye2 & (qy < -1)] = C('stone_cool', 2)                                 # the eye's far wall, lit
+    a[eye2 & (qy < -0.5)] = C('stone_warm', 4)                               # the eye's far inner wall, lit
+    a[eye2 & (qy > 2.0)] = C('void', 0)
+    under_ = np.zeros_like(m)
+    under_[1:] = m[:-1]
+    under2 = np.zeros_like(m)
+    under2[2:] = m[:-2]
+    lyst = (under_ | under2) & ~m & (a < 0) & (Xg > fx - R + 2)               # its contact shadow on the yard
     a[m & ~top & (K.vhash(Xg // 3, 0, seed) > 0.8) & (hh < 2)] = C('leaf_cool', 2)  # moss at its foot
     flour = (a < 0) & (Yg > oy - 4) & (Yg < oy + 4) & (np.abs(Xg - ox - 44) < 10) & (K.vhash(Xg // 2, Yg // 2, seed) > 0.55)
     _finish(a)
+    a[lyst & (a < 0)] = C('slate_cool', 1)
     a[flour & (a < 0)] = C('plaster', 4)
     B._ground_tufts(a, ox, oy, [-58, -54, 60, 63], seed)
     return K.crop(a, ox, oy)
 
 
-def _birch_log(a, x0, x1, yc, r, seed, stubs=()):
-    """A fallen birch lying along x, painted as a cylinder seen from above the south: a thin
-    highlight along its top, the lit band, the body and the underside in shade with a dark foot;
-    the lenticels as short dark dashes running round the trunk (upright on the picture), the black
-    scars of birch bark in small clusters, a strip of bark peeled to its warm underlayer; its west
-    end sawn clean (pale end grain with a ring and a dark heart), its east end snapped (pale
-    splinters in jagged spikes over the dark of the break); branch stubs on its top, lit west. yc is
-    its axis' screen row. Returns its mask."""
+BIRCH_ROWS = [('snow', 5), ('snow', 4), ('snow', 4), ('snow_cool', 3), ('snow_cool', 3), ('snow', 2), ('ash', 4), ('ash', 4),
+              ('ash', 3), ('ash', 2)]
+
+
+def _birch_log(a, x0, x1, ytop, seed, stubs=()):
+    """A fallen birch lying along x, 10 texels across, shaded as a cylinder top to bottom in five
+    steps with no hard drop (a highlight row, two lit rows, the pale body, the turn into ash and a
+    dark underside over its outline, Eastward's fallen trunk in shadows/g2018_002); lenticels as 2 to 3
+    texel dashes along the trunk, dark on the lit half and ash on the shaded half, shorter and closer
+    near the top and bottom so they wrap the curve; black bark scars as small diamonds; a strip of
+    bark peeled to its warm underlayer; the west end sawn (an ellipse of pale wood with two rings and
+    a dark rim), the east end snapped (pale splinters over a darker heart); branch stubs angled up
+    and back, 3 texels thick, lit west. ytop is the trunk's top row. Returns its mask."""
     H, W = a.shape
+    n = len(BIRCH_ROWS)
+    m = np.zeros((H, W), bool)
+    m[ytop:ytop + n, x0:x1] = True
+    for j, (f, t) in enumerate(BIRCH_ROWS):
+        a[ytop + j, x0:x1] = C(f, t)
+    rows = {1: (2, 7), 2: (3, 6), 3: (3, 6), 4: (3, 5), 5: (3, 5), 6: (3, 6), 7: (2, 6), 8: (2, 7)}
+    for j, (ln, gap) in rows.items():
+        x = x0 + 3 + (j * 3) % gap
+        while x + ln < x1 - 2:
+            if hsh(seed, x, j) > 0.25:
+                a[ytop + j, x:x + ln] = C('void', 2) if j <= 4 else C('ash', 2)
+            x += ln + gap + int(2 * hsh(seed, x, j, 2))
+    for k in range(3):                                                   # black scars, small diamonds
+        sx = int(x0 + 8 + (x1 - x0 - 16) * (k + 0.5 * hsh(seed, k, 1)) / 3.0)
+        sy = ytop + 3 + int(3 * hsh(seed, k, 2))
+        for dy, (dx0, dx1) in ((-1, (1, 2)), (0, (0, 3)), (1, (1, 2))):
+            a[sy + dy, sx + dx0:sx + dx1 + 1] = C('void', 1)
+    px0 = int(x0 + (x1 - x0) * 0.58)
+    a[ytop + 2:ytop + 4, px0:px0 + 6] = C('sand_warm', 4)              # bark peeled to the warm underlayer
+    a[ytop + 4, px0 + 1:px0 + 6] = C('sand_warm', 3)
+    # the sawn west end: an ellipse of pale wood, two rings, a dark rim, a dark heart
+    cy = ytop + n / 2.0
     Yg, Xg = np.mgrid[0:H, 0:W]
-    m = (Xg >= x0) & (Xg < x1) & (np.abs(Yg + 0.5 - yc) <= r)
-    v = (Yg + 0.5 - (yc - r)) / (2 * r)                                # 0 at its top, 1 under it
-    code = np.where(v < 0.14, C('snow', 5), np.where(v < 0.4, C('snow', 4), np.where(v < 0.66, C('snow_cool', 3),
-                    np.where(v < 0.86, C('ash', 2), C('ash', 1)))))
-    a[m] = code[m]
-    seg = (Xg - x0) // 5
-    len_ = m & (v > 0.2) & (v < 0.8) & (K.vhash(seg, 0, seed) > 0.35) & (((Xg - x0) % 5) == 2)
-    a[len_ & (v < 0.62)] = C('ash', 2)
-    a[len_ & (v >= 0.62)] = C('void', 2)
-    for k in range(int((x1 - x0) / 9)):                                  # the black scars
-        sx = int(x0 + 4 + (x1 - x0 - 10) * hsh(seed, k, 1))
-        sy = int(yc - r + 2 + (2 * r - 4) * hsh(seed, k, 2))
-        w_ = 2 + int(3 * hsh(seed, k, 3))
-        sc_ = m & (Xg >= sx) & (Xg < sx + w_) & (Yg >= sy) & (Yg < sy + 2)
-        a[sc_] = C('void', 1)
-        a[sc_ & (Xg == sx) & (Yg == sy)] = C('ash', 2)
-    peel = m & (v > 0.18) & (v < 0.42) & (Xg > x0 + (x1 - x0) * 0.55) & (Xg < x0 + (x1 - x0) * 0.68)
-    a[peel] = C('sand_warm', 4)
-    a[peel & (v > 0.34)] = C('sand_warm', 3)
-    # the sawn west end and the snapped east end
-    end = _disc(a.shape, x0 - 0.5, yc, 2.0, r) & ~m
-    rpaint(a, end, [('timber', 'sand_cool', 'sand')], np.where(np.hypot(Xg + 0.5 - x0, (Yg + 0.5 - yc) * 2.0 / r) < 1.3, 3.0, 4.0), 0.0)
-    a[end & (np.abs(Xg + 0.5 - (x0 - 1)) < 0.6) & (np.abs(Yg + 0.5 - yc) < 1.0)] = C('timber_cool', 2)
-    brk = (Xg >= x1) & (Xg < x1 + 4) & (np.abs(Yg + 0.5 - yc) <= r)
-    spikes = brk & ((Xg - x1) < (2 + 2 * np.sin(Yg * 1.9 + seed)))
-    a[spikes] = np.where(Yg[spikes] < yc, C('sand', 4), C('sand_cool', 3))
-    a[brk & ~spikes & (Xg == x1)] = C('timber_cool', 1)
-    a[(Xg == x1 - 1) & m & (np.abs(Yg + 0.5 - yc) < r - 1)] = C('timber', 2)
-    for sx in stubs:                                                    # branch stubs on its top, lit west
-        yb = int(yc - r)
-        a[yb - 4:yb + 1, sx] = C('snow', 4)
-        a[yb - 4:yb + 1, sx + 1] = C('ash', 2)
-        a[yb - 5, sx:sx + 2] = C('sand', 4)
-    return m | end | spikes
+    e = (((Xg + 0.5 - (x0 - 0.5)) / 2.6) ** 2 + ((Yg + 0.5 - cy) / 5.0) ** 2) <= 1.0
+    rr = np.hypot((Xg + 0.5 - (x0 - 0.5)) / 2.6, (Yg + 0.5 - cy) / 5.0)
+    a[e] = C('sand', 4)
+    a[e & (rr > 0.45) & (rr < 0.62)] = C('sand_cool', 3)
+    a[e & (rr > 0.85)] = C('timber', 2)
+    a[e & (rr < 0.2)] = C('timber', 3)
+    # the snapped east end: splinters of pale wood over a darker heart
+    heart = (Xg >= x1) & (Xg < x1 + 2) & (Yg >= ytop + 2) & (Yg < ytop + n - 2)
+    a[heart] = C('timber', 2)
+    for k, (dy, ln) in enumerate(((1, 4), (3, 2), (5, 5), (7, 3))):
+        y = ytop + dy
+        a[y:y + 2, x1:x1 + ln] = C('sand', 4) if k % 2 == 0 else C('sand_cool', 3)
+        a[y + 1, x1:x1 + ln - 1] = C('sand_cool', 2)
+        m[y:y + 2, x1:x1 + ln] = True
+    m |= e | heart
+    for sx in stubs:                                                    # branch stubs, up and back, 3 thick
+        for j in range(4):
+            xx = sx - j // 2
+            yy = ytop - 1 - j
+            a[yy, xx] = C('snow', 4)
+            a[yy, xx + 1] = C('snow_cool', 3)
+            a[yy, xx + 2] = C('ash', 3)
+            m[yy, xx:xx + 3] = True
+        a[ytop - 5, sx - 2:sx + 1] = C('sand', 4)                     # its broken tip, pale
+        m[ytop - 5, sx - 2:sx + 1] = True
+    return m
 
 
 def _soil_masses(a, m, light, seed, sx=16, sy=8, rx=(7, 10), ry=(3.6, 5.2), sets=None, rng=None):
@@ -1657,16 +1883,16 @@ def landslip(seed=147):
     turf riding on it, grass on their tops and raw earth on their sides; boulders seated in the
     spill, each carried in planes with its contact shadow; a birch snapped and lying across, a
     cylinder of bark with its lenticels and black scars, its east end splintered, two branch stubs,
-    its crown of twigs at the west end."""
+    its sawn west end and a dark underside."""
     rng = np.random.default_rng(seed)
     sc = K.Scene(-72, 72, -50, 24, 70)
     sc.ellipsoid(0, -33, 0, 66, 8, 24, EARTH, base=2.6, k=1.4, tag='bank', mix=0.3, flat=1.8)
     sc.ellipsoid(0, -14, 0, 58, 20, 10, EARTH, base=2.6, k=1.6, tag='earth', mix=0.3, flat=1.3)
     sc.ellipsoid(-34, 6, 0, 28, 12, 6, EARTH, base=2.5, k=1.6, tag='earth', mix=0.6, flat=1.3)
     sc.ellipsoid(32, 8, 0, 26, 11, 5, EARTH, base=2.5, k=1.6, tag='earth', mix=0.5, flat=1.3)
-    clods = [(-40, -12, 7, 9, 5, 6), (24, -18, 9, 8, 5, 6), (44, -4, 4, 7, 4, 5), (-16, 4, 4, 6, 4, 4)]
+    clods = [(-40, -12, 6, 9, 5, 9), (26, -18, 8, 8, 5, 9), (44, -4, 3, 7, 4, 8), (-14, 4, 3, 6, 4, 7)]
     for k, (x, y, zb, w, d, h) in enumerate(clods):
-        sc.ellipsoid(x, y, zb + h * 0.5, w, d, h * 0.6, EARTH, base=2.6, k=1.4, tag='clod%d' % k, mix=0.4, flat=2.4)
+        sc.ellipsoid(x, y, zb + h * 0.5, w, d, h * 0.62, EARTH, base=2.6, k=1.4, tag='clod%d' % k, mix=0.4, flat=1.7)
     boulders = [(-52, -2, 4, 8.0), (8, -24, 9, 9.0), (50, 10, 2, 6.5), (-6, 12, 2, 3.4), (30, -6, 8, 3.0), (-30, -22, 9, 3.6), (16, 14, 1, 2.8)]
     for k, (x, y, zb, r) in enumerate(boulders):
         sc.ellipsoid(x, y, zb + r * 0.5, r, r * 0.75, r * 0.7, GRANITE, base=2.7, k=1.4, tag='stone%d' % k, mix=0.3, flat=2.2)
@@ -1713,19 +1939,26 @@ def landslip(seed=147):
     et = np.where(z < 3.0, 1.2 + 0.9 * (Ls > 0.0) + 0.5 * (K.vhash(Xg // 4, Yg // 2, seed + 7) > 0.7), et)
     rpaint(a, earth, EARTH, et, _sibling_mix(a.shape, Xg, Yg, seed, 6.0, (4, 3)))
     _soil_masses(a, earth & (z >= 3.0), Ls, seed, rng=rng)
-    wet = earth & (z < 2.0) & (K.vhash(Xg // 4, 0, seed + 3) > 0.7)
-    a[wet] = C('water_cool', 1)
-    a[wet & (K.vhash(Xg // 4, 1, seed + 4) > 0.6) & ((Xg % 4) == 1)] = C('water', 3)
+    wet = earth & (z < 2.0)
+    rpaint(a, wet, EARTH, np.where(Ls > 0.0, 2.0, 1.0), 0.6)            # the toe dark and wet
+    wys, wxs = np.nonzero(wet & (Ls > 0.0))
+    if len(wys):
+        k = len(wys) // 3
+        a[wys[k], wxs[k]:wxs[k] + 2] = C('water_warm', 4)                 # one glint pair in the wet
+        a[wys[k] + 1, wxs[k] + 1:wxs[k] + 3] = C('water', 3)
     # the clods: turf on their tops (a lit front lip, blades over it), raw earth on their sides
     for k in range(len(clods)):
         cm = _tagm(sc, 'clod%d' % k)
-        ct = cm & (sc.n[..., 2] > 0.45)
+        ct = cm & (sc.n[..., 2] > 0.5) & (sc.gy < np.array([clods[k][1]]) + 2)
         cs = cm & ~ct
         ctb = np.where(L > 0.3, 3.0, 2.0)
         rpaint(a, ct, BARROW_TURF, ctb, 0.3 + 0.2 * (k % 2))
         if ct.sum() > 20:
             _turf_clumps(a, ct, ctb, seed + 9 + k, sx=8, sy=4, rx=(3.4, 4.6), ry=(2.2, 3.0), flowers=False, rng=np.random.default_rng(seed + 9 + k))
-        rpaint(a, cs, EARTH, np.where(sc.n[..., 0] > 0.4, 1.6, 2.4) - 0.6 * (z < 1.0 + clods[k][2]), 0.4)
+        rpaint(a, cs, EARTH, np.where(sc.n[..., 0] > 0.4, 2.0, np.where(sc.n[..., 0] < -0.4, 3.2, 2.7)) - 0.8 * (z < 1.5 + clods[k][2]), 0.4)
+        cdn = np.zeros_like(cm)
+        cdn[:-1] = cm[1:]
+        a[np.roll(cm & ~cdn, 1, 0) & ~cm & (a >= 0)] = C('earth_cool', 0)   # its contact line
         dn = np.zeros_like(ct)
         dn[:-1] = ct[1:]
         lip = ct & ~dn
@@ -1749,21 +1982,14 @@ def landslip(seed=147):
             sh |= np.roll(np.roll(bm, d[0], 0), d[1], 1)
         V._step(a, sh & ~bm & (earth | _tagm(sc, *['clod%d' % j for j in range(len(clods))])), -1)
     _finish(a)
-    # the birch: its crown of twigs at the west, the trunk across the spill, its shadow on the earth
-    lx0, lx1, ly = ox - 46, ox + 20, oy - 18
-    for k in range(7):
-        ang = math.pi * (0.55 + 0.8 * hsh(seed, k, 1))
-        ln = 9 + 9 * hsh(seed, k, 2)
-        x2, y2 = lx0 - 2 + ln * math.cos(ang), ly - ln * math.sin(ang) * 0.6
-        tw = _line(a.shape, lx0 - 1, ly + (k % 3) - 1, x2, y2, 1.0)
-        a[tw] = C('timber_cool', 1)
-        lv = _disc(a.shape, x2, y2, 2.4, 1.7)
-        rpaint(a, lv, [('leaf_cool', 'grass_warm', 'brass')], 3.0 + 1.0 * (Yg < y2) + 0.8 * (Xg < x2), 0.0)
+    # the birch: the trunk across the spill, its contact shadow on the earth under it
+    lx0, lx1, ly = ox - 44, ox + 20, oy - 23
     lsh = np.zeros((H, W), bool)
-    lsh[int(ly + 4):int(ly + 7), lx0 + 2:lx1 + 3] = True
-    V._step(a, lsh & (a >= 0), -1)
-    log = _birch_log(a, lx0, lx1, ly, 5.0, seed, stubs=(ox - 30, ox - 6))
-    a[log & ~ndi.binary_erosion(log, iterations=1) & (Yg > ly)] = C('ash', 1)
+    lsh[ly + 10:ly + 12, lx0 + 1:lx1 + 3] = True
+    V._step(a, lsh & (a >= 0), -2)
+    log = _birch_log(a, lx0, lx1, ly, seed, stubs=(ox - 28, ox - 4))
+    a[ly + 10, lx0:lx1] = C('ash', 1)                                   # its outline under, the foot of the cylinder
+    a[ly - 1, lx0:lx1][a[ly - 1, lx0:lx1] != C('snow', 4)] = C('snow_cool', 1)   # and over it, broken by the light
     B._ground_tufts(a, ox, oy, [-64, -58, 58, 64], seed)
     return K.crop(a, ox, oy)
 
@@ -1991,6 +2217,116 @@ def _turf_clumps(a, m, band, seed, sx=30, sy=15, rx=(16, 22), ry=(9, 12), flower
     return a
 
 
+def _break_flats(a, m, seed, size=6):
+    """No area of one colour larger than about size x size: where a window that size inside m is all
+    one code, a 2 x 2 cluster at its middle swaps to a sibling ramp at the same tone (shape without
+    value noise, house-style.md 4)."""
+    H, W = a.shape
+    for _ in range(3):
+        same = np.ones((H - size + 1, W - size + 1), bool)
+        ref = a[:H - size + 1, :W - size + 1]
+        for dy in range(size):
+            for dx in range(size):
+                win = a[dy:dy + H - size + 1, dx:dx + W - size + 1]
+                same &= (win == ref) & m[dy:dy + H - size + 1, dx:dx + W - size + 1]
+        ys, xs = np.nonzero(same)
+        if not len(ys):
+            return
+        done = np.zeros((H, W), bool)
+        for y, x in zip(ys, xs):
+            cy, cx = y + size // 2 - 1, x + size // 2 - 1
+            if done[cy, cx]:
+                continue
+            c = a[cy, cx]
+            fam, t = SIB.get(int(c) // 8), int(c) % 8
+            if fam is None:
+                continue
+            w_ = 2 + int(hsh(seed, cx, cy) > 0.5)
+            a[cy:cy + 2, cx:cx + w_][m[cy:cy + 2, cx:cx + w_]] = FI_[fam] * 8 + t
+            done[max(0, cy - size // 2):cy + size, max(0, cx - size // 2):cx + size] = True
+
+
+SIB = {FI_[a]: b for a, b in (('grass', 'grass_cool'), ('grass_cool', 'grass'), ('leaf_cool', 'leaf'), ('leaf', 'leaf_cool'),
+                              ('stone', 'stone_warm'), ('stone_warm', 'stone'), ('stone_cool', 'stone'), ('earth', 'earth_warm'),
+                              ('earth_cool', 'earth'), ('earth_warm', 'earth'), ('snow', 'snow_cool'), ('snow_cool', 'snow'),
+                              ('timber', 'timber_warm'), ('timber_warm', 'timber'), ('timber_cool', 'timber'),
+                              ('slate', 'slate_warm'), ('slate_warm', 'slate'), ('slate_cool', 'slate'), ('iron', 'slate_cool'),
+                              ('brass', 'brass_warm'), ('brass_warm', 'brass'), ('sand', 'sand_warm'), ('sand_cool', 'sand'),
+                              ('ashlar', 'ashlar_warm'), ('ashlar_warm', 'ashlar'), ('plaster', 'plaster_warm'),
+                              ('plaster_warm', 'plaster'), ('clay', 'clay_cool'), ('clay_cool', 'clay'), ('water', 'water_warm'),
+                              ('water_cool', 'water'), ('water_warm', 'water'))}
+
+
+def _turf_bank(a, m, band, light, seed, over=None, rng=None, n=11, sets=None):
+    """A grassy bank as Eastward draws the grass over its rocks in 17: the dome keeps its bands (lit
+    crown at the upper left, dark east and lower flanks), textured all over with clumps of 2 to 3
+    texels that swap to a sibling green at the same tone, a tone up on the lit side; over it a few
+    big soft masses (8 to 14, from 20 to 45 texels across, of mixed size, out of rows, overlapping),
+    each lit as a sphere inside the band with an irregular, bumpy top, a dark U under its east part
+    and small lit clumps on its lit half. No area of one colour is larger than about 6 x 6."""
+    H, W = a.shape
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    rng = rng or np.random.default_rng(seed)
+    sets = sets or BARROW_TURF
+    allow = m | (over if over is not None else np.zeros_like(m))
+    bnd = band.copy()
+    if over is not None and over.any():
+        idx = ndi.distance_transform_edt(~m, return_distances=False, return_indices=True)
+        bnd = np.where(over, bnd[idx[0], idx[1]], bnd)
+
+    def clumps(mask, lit, step=5, up=0.35):
+        # rows of cells offset by a hashed amount, so the clumps never fall on a grid
+        ro = (K.vhash(Yg // step, 7, seed + 50) * step).astype(int)
+        gxx = (Xg + ro) // step
+        jx = K.vhash(gxx, Yg // step, seed + 51)
+        jy = K.vhash(gxx, Yg // step, seed + 52)
+        cxs = gxx * step - ro + (jx * (step - 1)).astype(int)
+        cys = (Yg // step) * step + (jy * (step - 1)).astype(int)
+        w_ = 2 + (K.vhash(gxx, Yg // step, seed + 53) > 0.55) + (K.vhash(gxx, Yg // step, seed + 55) > 0.85)
+        keep = K.vhash(gxx, Yg // step, seed + 56) > 0.3
+        inside = (Xg >= cxs) & (Xg < cxs + w_) & (Yg >= cys) & (Yg < cys + 2) & mask & keep
+        tq = _tone(a).astype(float)
+        upm = inside & (lit > 0.35) & (K.vhash(Xg // step, Yg // step, seed + 54) < up) & (tq < 5)
+        fam = np.where(upm, 0, 1)
+        rpaint(a, inside & ~upm, [('leaf_cool', 'grass_cool', 'grass_cool')], tq, 0.0)
+        rpaint(a, upm, [('leaf_cool', 'grass', 'grass')], tq + 1, 0.0)
+    clumps(m, light, step=6, up=0.12)
+    # the masses: spread out of rows (sampled with a minimum spacing), mixed sizes
+    ys, xs = np.nonzero(m)
+    masses = []
+    tries = 0
+    while len(masses) < n and tries < 4000:
+        tries += 1
+        k = int(rng.integers(0, len(ys)))
+        cx, cy = float(xs[k]), float(ys[k])
+        rx = float(rng.uniform(10, 22.5))
+        if any(math.hypot((cx - q[0]) / 1.0, (cy - q[1]) * 1.6) < 0.8 * (rx + q[2]) for q in masses):
+            continue
+        masses.append((cx, cy, rx, rx * float(rng.uniform(0.5, 0.68)), int(rng.integers(0, len(sets))), int(rng.integers(0, 999))))
+    for (cx, cy, rx_, ry_, f, sd) in sorted(masses, key=lambda c: -c[1]):
+        b = float(bnd[int(round(cy)), int(round(cx))])
+        sub, pts, u, v = _blob(a.shape, cx, cy, rx_, ry_, sd, lobes=int(5 + sd % 4), wob=0.2)
+        pts &= allow[sub]
+        if not pts.any():
+            continue
+        dn = np.zeros_like(pts)
+        dn[:-1] = pts[1:]
+        lv = _sphere_light(u, v)
+        t = np.full(pts.shape, b)
+        t = np.where(lv > (0.84 if b >= 4 else 0.62), b + 1.0, t)
+        t = np.where(lv < -0.1, b - 1.0, t)
+        t = np.where(pts & ~dn & (v > 0) & (u > -0.4), b - 1.0, t)
+        t = np.where(pts & ~dn & (v > 0) & (u > 0.2) & (b <= 3), b - 1.6, t)
+        _paint_codes(a[sub], pts, sets[f], np.clip(t, 1, 5))
+        here = np.zeros((H, W), bool)
+        here[sub] = pts
+        lit = np.zeros((H, W))
+        lit[sub] = lv
+        clumps(here, lit, step=5, up=0.3)
+    _break_flats(a, allow, seed)
+    return a
+
+
 def _set_stone(sc, a, m, seed, sets=GRANITE):
     """A set stone in planes (art-style.md 5; Eastward's rocks in 17): its top plane lit (tone 4,
     a tone 5 arris along its front-west edge), the west face 3 to 4, the south face 3, the east
@@ -2028,6 +2364,7 @@ def _set_stone(sc, a, m, seed, sets=GRANITE):
         fx = (Xg - xf.min()) / max(1.0, float(np.ptp(xf)))
         fac = front & ~upm & (fx + 0.55 * fdown + 0.08 * np.sin(Yg * 1.3 + seed) > 1.0)
         V._step(a, fac, -1)
+    _break_flats(a, m, seed + 3, size=5)
     dn = np.zeros_like(top)
     dn[:-1] = top[1:]
     arris = top & ~dn
@@ -2065,10 +2402,11 @@ def _stone_marks(a, m, top, seed):
     for k in range(2):
         rx = int(x0 + 2 + (x1 - x0 - 4) * hsh(seed, k, 4))
         ry = int(y0 + 2 + (y1 - y0) * 0.5 * hsh(seed, k, 5))
-        fam = ('grass_cool', 3) if k == 0 else ('sand_cool', 3)
-        for dx, dy in ((0, 0), (1, 0), (0, 1), (1, 1), (2, 1)):
+        fam = 'grass_cool' if k == 0 else 'sand_cool'
+        # a rosette: a 2 x 2 heart a tone up, lobes round it at the lichen's own tone
+        for dx, dy, t in ((0, 0, 4), (1, 0, 4), (0, 1, 4), (1, 1, 3), (-1, 0, 3), (2, 1, 3), (1, -1, 3), (0, 2, 3)):
             if 0 <= ry + dy < a.shape[0] and 0 <= rx + dx < a.shape[1] and m[ry + dy, rx + dx]:
-                a[ry + dy, rx + dx] = C(*fam)
+                a[ry + dy, rx + dx] = C(fam, t)
     ty = np.nonzero(top)[0]
     if len(ty):
         back = top & (np.arange(a.shape[0])[:, None] <= ty.min() + 1)
@@ -2078,6 +2416,12 @@ def _stone_marks(a, m, top, seed):
             mm = back & (np.abs(np.arange(a.shape[1])[None, :] - mx) < 3)
             a[mm] = C('leaf', 3)
             a[mm & (np.arange(a.shape[1])[None, :] < mx)] = C('grass', 4)
+            mys = np.nonzero(mm)[0]
+            if len(mys):                                                 # the cap's drip down the stone
+                dy0 = mys.max() + 1
+                for j, cc in ((0, C('leaf', 2)), (1, C('leaf', 2)), (2, C('leaf_cool', 2))):
+                    if dy0 + j < a.shape[0] and m[dy0 + j, mx + 1]:
+                        a[dy0 + j, mx + 1] = cc
 
 
 def _seat_in_turf(a, m, seed, depth=3, shadow=4):
@@ -2136,14 +2480,25 @@ def barrow_entrance(seed=161):
     sc.box(-36, -11, 80, 36, 2, 93, GRIT, base=2.8, k=1.4, tag='lintel', round_=3.0, mix=0.4)
     sc.box(-21, -9, 0, 21, 2, 2.5, GRIT, base=2.9, k=1.4, tag='sill', mix=0.5, round_=0.8)
     forecourt = []
-    for k, ang in enumerate(np.linspace(0.35, 1.2, 4)):
-        for sgn in (-1, 1):
-            x = sgn * (42 + 70 * math.sin(ang)) + rng.uniform(-2, 2)
+    # the kerb ring: stones of three kinds (dressed slabs, low boulders, pillars), 30 to 50 % apart
+    # in size, the spacing broken where a stone has gone
+    angs = [0.32, 0.55, 0.71, 1.02, 1.2]
+    for sgn in (-1, 1):
+        for k, ang in enumerate(angs):
+            if hsh(seed, k, sgn + 3) < 0.18:
+                continue                                                 # a gap where one has gone
+            x = sgn * (42 + 70 * math.sin(ang + 0.06 * (hsh(seed, k, sgn) - 0.5))) + rng.uniform(-3, 3)
             y = 2 - 20 * (1 - math.cos(ang))
-            h = 16 - k * 2.5 + rng.uniform(-2, 2)
-            w = rng.uniform(6.0, 8.0)
+            sz = 0.75 + 0.6 * hsh(seed, k, sgn + 7)
+            kind = int(3 * hsh(seed, k, sgn + 11))
             forecourt.append((x, y))
-            sc.ellipsoid(x, y, h * 0.5, w, 4.5, h * 0.62, GRIT, base=2.6, k=1.4, tag='set%d' % len(forecourt), mix=rng.random(), flat=2.4)
+            tag = 'set%d' % len(forecourt)
+            if kind == 0:                                                # a dressed slab on edge
+                sc.box(x - 6 * sz, y - 3, 0, x + 6 * sz, y + 3, 14 * sz, GRANITE, base=2.8, k=1.4, tag=tag, round_=1.4, mix=0.3)
+            elif kind == 1:                                              # a low boulder
+                sc.ellipsoid(x, y, 4 * sz, 9 * sz, 5.0, 7 * sz, GRANITE, base=2.8, k=1.4, tag=tag, mix=0.5, flat=2.3)
+            else:                                                        # a pillar
+                sc.ellipsoid(x, y, 7 * sz, 5.5 * sz, 4.0, 9 * sz, GRANITE, base=2.8, k=1.4, tag=tag, mix=0.4, flat=2.5)
     sc.ellipsoid(52, 14, 8, 10, 7, 9, GRIT, base=2.7, k=1.6, tag='block', mix=0.5, flat=2.0)
     sunk = [(-112, -16, 24, 8.0), (98, -12, 18, 7.0), (-62, -6, 10, 5.5)]
     for k, (x, y, zc, r) in enumerate(sunk):
@@ -2176,7 +2531,7 @@ def barrow_entrance(seed=161):
         tp_ = _set_stone(sc, a, sm, seed + 70 + k)[0]
         _stone_marks(a, sm, tp_, seed + 70 + k)
     clump_m = mound & (z >= 3)
-    _turf_clumps(a, clump_m, band, seed, over=above, rng=rng)
+    _turf_bank(a, clump_m, band, Ls + wob, seed, over=above, rng=rng)
     # the stones half sunk: the turf grows over their lower part in a bumpy edge of small clumps,
     # each lit on its cap, with blades standing up against the stone
     for k, (x, y, zc, r) in enumerate(sunk):
@@ -2403,21 +2758,28 @@ def wbc_hive(seed=171):
     z = sc.depth
     L = sc.light()
     side = sc.n[..., 2] < 0.5
-    # the lifts: long boards with a lit lip and a joint, lit west; each skirt's lower edge lit, dark under
+    # the lifts: painted boards, the body in white 3 with its west column lit and its east 3 texels
+    # in white 2, a faint joint between the two boards of each lift; each skirt's lower edge a lit lip
+    # (white 5) with a dark line under it on the lift below (white 1, leaning violet)
     for k in range(3):
-        lf = _tagm(sc, 'lift%d' % k)
-        _planks(a, lf & side, WHITE, 3.2 + 0.6 * (gx < -6) - 0.8 * (gx > 7), gx + 200, -(z - 10 - k * LH) + 40, seed + k, pitch=6,
-                grain=0.0, joint=0.7)
+        lf = _tagm(sc, 'lift%d' % k) & side
+        lys = np.nonzero(lf)[0]
+        t = np.where(gx < -10, 4.0, np.where(gx > 9.5, 2.0, 3.0))
+        if len(lys):
+            mid = (lys.min() + lys.max()) // 2
+            t = np.where(Yg == mid, t - 0.7, t)
+        rpaint(a, lf, WHITE, t, 0.3)
         sk = _tagm(sc, 'skirt%d' % k)
         sys_ = np.nonzero(sk & side)[0]
-        t = np.where(Yg == sys_.max(), 4.4, 3.4) + 0.5 * (gx < -6) - 0.8 * (gx > 8)
+        t = np.where(Yg == sys_.max(), 5.0, np.where(Yg == sys_.min(), 3.4, 4.0)) - 1.0 * (gx > 10)
         rpaint(a, sk & side, WHITE, t, 0.3)
         rpaint(a, sk & ~side, WHITE, 4.4, 0.3)
-        under = np.zeros_like(sk)
-        under[1:2 + 0] = False
         sh = np.zeros_like(sk)
         sh[1:] = (sk & side)[:-1]
-        V._step(a, sh & ~sk, -1)
+        a[sh & ~sk & (a >= 0)] = C('snow_cool', 1)
+        sh2 = np.zeros_like(sk)
+        sh2[1:] = sh[:-1]
+        V._step(a, sh2 & ~sk & ~sh & _tagm(sc, 'lift%d' % max(0, k - 1)), -1)
     for tag in ('leg', 'plinth', 'board'):
         m = _tagm(sc, tag)
         rpaint(a, m, WHITE, np.where(side, 3.0 + 0.6 * (gx < -6) - 0.8 * (gx > 8), 4.4), 0.3)
@@ -2440,16 +2802,24 @@ def wbc_hive(seed=171):
     sh2 = np.zeros_like(roof)
     sh2[2:] = gable[:-2]
     V._step(a, (sh | sh2) & ~roof & _tagm(sc, 'lift2', 'skirt2'), -1)       # the overhang's shadow on the top lift
-    # the entrance under the porch, the landing board's lit top
-    ent = (np.abs(gx) < 7) & (Yg >= oy + 2 - 12) & (Yg < oy + 2 - 10) & _tagm(sc, 'lift0')
+    # the entrance: a dark slot along the foot of the brood lift; the landing board's lit top plane
+    l0 = _tagm(sc, 'lift0') & side
+    l0y = np.nonzero(l0)[0].max()
+    ent = (np.abs(gx) < 7) & (Yg >= l0y - 1) & (Yg <= l0y) & l0
     a[ent] = C('void', 1)
     bd = _tagm(sc, 'board')
     a[bd & ~side] = C('snow', 5)
-    _streaks(a, _tagm(sc, 'lift0', 'lift1', 'lift2') & side, Xg, Yg, seed, rate=0.01, length=(3, 5), fam='snow_cool', step=-1)
-    _finish(a)
-    for (bx, by) in ((ox - 4, oy - 17), (ox + 6, oy - 20)):                  # two bees by the board
-        a[by, bx:bx + 2] = C('lamp', 3)
-        a[by + 1, bx:bx + 2] = C('void', 2)
+    a[bd & side] = C('snow_cool', 2)
+    # weathering run down from the skirts' lips, a few short streaks
+    for (x0, k, n) in ((-6, 1, 5), (4, 2, 4), (8, 0, 6)):
+        sk = _tagm(sc, 'skirt%d' % k) & side
+        sy0 = np.nonzero(sk)[0].max() + 3
+        col = ox + x0
+        a[sy0:sy0 + n, col][a[sy0:sy0 + n, col] >= 0] = C('snow_cool', 2)
+    _finish(a, keep=ent)
+    for (bx, by) in ((ox - 3, l0y + 1), (ox + 1, l0y - 1), (ox + 4, l0y + 2), (ox + 2, l0y - 3)):   # bees at the slot
+        if a[by, bx] >= 0:
+            a[by, bx] = C('void', 1)
     B._ground_tufts(a, ox, oy, [-14, -11, 11, 14], seed)
     return K.crop(a, ox, oy)
 
@@ -2523,7 +2893,8 @@ def skep(seed=173):
     uh = x / hr
     tt = 2.9 + np.where(uh < -0.15, 0.9, 0.0) - np.where(uh > 0.3, 1.0, 0.0)
     ang = np.arctan2(x, np.maximum(1.0, Yg - (fy - hz1)))
-    tt = tt - 1.0 * (((np.floor(ang * 18).astype(int)) % 3) == 0) * (ht > hz0 + 1)
+    sf = np.mod(ang * 13.0, 1.0)                                          # strands running down the cone from its point
+    tt = tt - 1.0 * (sf < 0.22) * (ht > hz0 + 1) + 0.7 * ((sf > 0.5) & (sf < 0.68) & (uh < 0.2)) * (ht > hz0 + 1)
     tt = np.where(ht < hz0 + 1, tt - 0.8, tt)
     rpaint(a, hk, HACKLE, tt, 0.3)
     under = np.zeros_like(hk)

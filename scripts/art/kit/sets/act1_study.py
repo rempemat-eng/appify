@@ -64,7 +64,8 @@ def valley() -> dict:
     g[11:13, 3:5] = '#'                                     # the path up onto the platform
     g[0:16, 26:29] = '~'                                    # the leat (the Millrace), from its sluice
     g[14:16, 26:40] = '~'                                   # turning east into the mill's race
-    g[16:19, 29:37] = 'w'                                   # the miller's yard, trodden
+    tiers = np.zeros((H, W), int)
+    tiers[0:10, 20:26] = 1                                  # the hillside the slip came down from, between halt and leat
     g[19:30, 30:32] = '#'                                   # the yard's track to the south
     g[15:29, 2:4] = '#'                                     # the field path from the lane to the barrow
     g[28:30, 2:13] = '#'
@@ -82,7 +83,7 @@ def valley() -> dict:
         # the Millrace
         {'id': 'sluice', 'piece': 'mill_sluice', 'at': [27 * CELL + 12, 4 * CELL]},
         {'id': 'wheel', 'piece': 'mill_wheel', 'at': [34 * CELL, 15 * CELL]},
-        {'id': 'slip', 'piece': 'mill_landslip', 'at': [21 * CELL, 14 * CELL]},
+        {'id': 'slip', 'piece': 'mill_landslip', 'at': [22 * CELL + 12, 14 * CELL]},
         {'id': 'fence', 'piece': 'mill_fence_broken', 'at': [16 * CELL, 17 * CELL]},
         {'id': 'stones', 'piece': 'mill_millstones', 'at': [33 * CELL, 19 * CELL]},
         # the hives by the lane
@@ -95,8 +96,8 @@ def valley() -> dict:
         {'id': 'kerb_3', 'piece': 'barrow_kerb', 'at': [19 * CELL + 12, 23 * CELL], 'variant': 'c'},
     ]
     return {'zone': 'act1_valley_study', 'note': 'Review study (scripts/art/kit/sets/act1_study.py), not a playable zone.',
-            'legend': {',': 'lawn', '#': 'path', 'w': 'worn', '~': 'water', 'q': 'quay'}, 'dress': {'quay': 'flags'},
-            'rows': [''.join(r) for r in g], 'pieces': pieces, 'decor': []}
+            'legend': {',': 'lawn', '#': 'path', '~': 'water', 'q': 'quay'}, 'dress': {'quay': 'flags'},
+            'rows': [''.join(r) for r in g], 'tiers': [''.join(str(v) for v in r) for r in tiers], 'pieces': pieces, 'decor': []}
 
 
 def plans() -> list:

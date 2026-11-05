@@ -1,7 +1,7 @@
 {
  "id": "act1/coast_boat_beached",
  "file": "game/kit/props/art/act1/coast_boat_beached.png",
- "sha256": "16ee00e2ec0441b25d9f326aa3e899ceb7c6738be95a0eb3855d90fdfd52ae06",
+ "sha256": "d5d3d5038ac7d040f2577c008f7856e637a05180ec9d861dfd9fcb16afc86ad2",
  "kind": "coast_boat_beached",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 27.0,
-   "shapes": 49.333333333333336
+   "tones": 30.166666666666668,
+   "shapes": 45.833333333333336
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.98,
-  "tones_ratio": 1.0,
-  "shapes_ratio": 0.98,
+  "ratio": 0.91,
+  "tones_ratio": 1.117,
+  "shapes_ratio": 0.91,
   "passed": true,
   "group": "prop"
  },
@@ -44,15 +44,14 @@
     92,
     38
    ],
-   "message": "act1/coast_boat_beached: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "message": "act1/coast_boat_beached: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "Round 2 (v3): dry now (bilge fixed), but the inside is a flat tan tray: the near inner wall is as light as the far one and there are no frames. Finding R2-9."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

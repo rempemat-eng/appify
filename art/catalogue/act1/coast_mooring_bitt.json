@@ -1,26 +1,26 @@
 {
  "id": "act1/coast_mooring_bitt",
  "file": "game/kit/props/art/act1/coast_mooring_bitt.png",
- "sha256": "4bae53c03cb243f43ccba37d09e420adedb72e5f909b61fdb356298f2c31f59a",
+ "sha256": "f3cd79af6aaadacb2f2d42e41066fa514835db123c67e89f2c731aeb61108684",
  "kind": "coast_mooring_bitt",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   43,
-  23
+  24
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 1,
-   "tones": 25.0,
-   "shapes": 38.0
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
   },
   "band": {
    "tones": 27.0,
@@ -28,25 +28,11 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.755,
-  "tones_ratio": 0.926,
-  "shapes_ratio": 0.755,
-  "passed": false,
+  "ratio": null,
+  "passed": null,
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    0,
-    0,
-    43,
-    23
-   ],
-   "message": "act1/coast_mooring_bitt: detail bar 0.76 of Eastward's prop band (25.0 tones, 38.0 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
   {
    "detector": "detail.cluster_noise",
    "severity": "polish",
@@ -54,29 +40,16 @@
     0,
     0,
     43,
-    23
+    24
    ],
-   "message": "act1/coast_mooring_bitt: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "message": "act1/coast_mooring_bitt: 46% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    0,
-    0,
-    43,
-    23
-   ],
-   "message": "act1/coast_mooring_bitt: only 37% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "Round 2 (v3): the line is tied off now, but the lashing is a flat two-tone tan band with no turns and the coil is a flat bun with a dark cross. Outline 37 %. Finding R2-5."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

@@ -1,7 +1,7 @@
 {
  "id": "act1/halt_platform_edge_b",
  "file": "game/kit/props/art/act1/halt_platform_edge_b.png",
- "sha256": "298713bee503528bc5fee286f879aa9272708e0ecb241d74061c835acbf6f54d",
+ "sha256": "49c27f7ff4ef8ba3a1567b2ecaf29307e98ef9e362ca393794e67b0115ee0fab",
  "kind": "halt_platform_edge",
  "biome": "valley",
  "H": 74.0,
@@ -21,8 +21,7 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-04",
-  "note": "Round 2 (v3): as edge a; b differs from a only in the lip break. Finding R2-3."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

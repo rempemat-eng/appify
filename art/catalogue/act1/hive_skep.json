@@ -1,7 +1,7 @@
 {
  "id": "act1/hive_skep",
  "file": "game/kit/props/art/act1/hive_skep.png",
- "sha256": "e5990108627e4fbc6fb38cb0c1a07028d9c4d0658e86656a50eeafc0e9e619cd",
+ "sha256": "364660e74ba060efaefc64e56ab0b77776b3b5c74ad1407672792022b1f30408",
  "kind": "hive_skep",
  "biome": "valley",
  "H": 74.0,
@@ -20,7 +20,7 @@
   "ours": {
    "patches": 1,
    "tones": 34.0,
-   "shapes": 51.0
+   "shapes": 49.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 1.013,
+  "ratio": 0.973,
   "tones_ratio": 1.259,
-  "shapes_ratio": 1.013,
+  "shapes_ratio": 0.973,
   "passed": true,
   "group": "prop"
  },
@@ -38,8 +38,7 @@
  "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-04",
-  "note": "Round 2 (v3, unchanged since v2): a bell of lit coils widest at its foot on its stool, entrance notch, conical hackle lit west; reads as a skep at 1x. Polish: the hackle straw is blotches, not strands running down."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

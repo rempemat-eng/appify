@@ -464,6 +464,35 @@
    "measure": "bbox",
    "note": "a churn stand is not a churn: the stand and its churns are sized by the piece's own spec"
   },
+  "kerb_stone": {
+   "group": "stone",
+   "names": [
+    "kerb_stone",
+    "barrow_kerb",
+    "kerbstone"
+   ],
+   "h": [
+    16,
+    30
+   ],
+   "w": [
+    13,
+    24
+   ],
+   "h_A": [
+    0.22,
+    0.41
+   ],
+   "w_A": [
+    0.18,
+    0.32
+   ],
+   "real": "a kerb stone of a barrow ring or a forecourt, 0.3 to 0.55 m, set on edge in the turf",
+   "eastward": "the small boulder in 13 (325,247,350,268): 19 x 23 E (0.35 x 0.42 A)",
+   "chunky": "a touch over real so the lit top plane, the shaded side and the turf at its foot read at phone size",
+   "measure": "bbox",
+   "note": "a stone set on edge, not a boulder: boulders are 30 to 96 wide (the detail audit of 4 Nov, round 2)"
+  },
   "crate": {
    "group": "prop",
    "names": [
