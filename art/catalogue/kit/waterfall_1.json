@@ -1,7 +1,7 @@
 {
  "id": "kit/waterfall_1",
  "file": "game/kit/props/art/waterfall_1.png",
- "sha256": "8154f0bc3f7406d755059f8b4621f17606d215bc37c6f5b8aa1b14892f5e09e4",
+ "sha256": "ff89b23a3b9a8c7ac34ce99ae23f89c2b2062775a4ea8620ce5edf5c8efc1ed2",
  "kind": "waterfall",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 19.5,
-   "shapes": 28.666666666666668
+   "tones": 19.166666666666668,
+   "shapes": 27.0
   },
   "band": {
    "tones": 17.0,
@@ -30,9 +30,9 @@
    "source": "house sibling: the woodland sheet, game/zones/woodland/art/ground.png 220-256 x 772-880 (docs/reviews/2026-11-04-woodland-water.md, round 5)",
    "about": "a falling sheet, crest and foam; no official Eastward shot shows one (bands.py)"
   },
-  "ratio": 0.726,
-  "tones_ratio": 1.147,
-  "shapes_ratio": 0.726,
+  "ratio": 0.684,
+  "tones_ratio": 1.127,
+  "shapes_ratio": 0.684,
   "passed": false,
   "group": "fall"
  },
@@ -46,7 +46,7 @@
     65,
     78
    ],
-   "message": "kit/waterfall_1: detail bar 0.73 of Eastward's fall band (19.5 tones, 28.7 shapes a patch against 17.0, 39.5)",
+   "message": "kit/waterfall_1: detail bar 0.68 of Eastward's fall band (19.2 tones, 27.0 shapes a patch against 17.0, 39.5)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -65,8 +65,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
+  "verdict": "pending",
   "date": "2026-11-05",
-  "note": "docs/reviews/2026-11-04-woodland-water.md, round 8 (ddc50a0b). The sheet is rocks.sheet, the woodland's painter (test_the_kits_sheet_is_the_woodlands passes; the woodland's three pictures are byte-identical to f9ef6366). K7-1 fixed: on the ribbon (s < 0.85) the value matches the sibling over all 8 frames (mean 174-186, sd 51-58, east third under 100 L 0.17-0.38, over 230 L 0.38-0.50, no snow 0-3; sibling 177, 57, 0.34, 0.42), and on the whole sheet too (mean 157-166, east half 137-149, under 90 L 0.16-0.18; sibling 161, 135, 0.18). P7-2 fixed (largest bare foot stretch 0-3 columns in any frame). P7-3 fixed (the tongue's tones meet at a different column each row). No water-blue or white on the face beside the baked falls (woodland_kit 44 -> 0, kitlab_tiers 2 -> 0). Crest runs 7 and 9 with a 3-texel gap, whitest row 0.62; navy band 4-5 texels; flat columns 0-0.05 (sibling 0-0.17 over 44 rows); grain 6.9-9.4, run 7-13. Polish: the middle third over 200 L is 0.25-0.32 against the sibling's 0.40-0.48 (reported only, accepted: the whole ribbon's white share 0.38-0.42 passes)."
+  "note": "redrawn after round 8 of the independent audit (K8-1, K8-2, P8-2): the crest breaks any white run over 24 texels with a gap of 3 to 5 texels (the woodland's longest is 23, so its sheet is unchanged), so the wide lips have three to six runs and no row whiter than 0.70; the navy east band is at most 15 % of the lip and never over 9 texels, the sibling's widest; on these short sheets (under 100 texels) a streak runs at most 13 world px, so no more columns are flat than in the sibling at the same height, in every frame. Still rocks.sheet, the woodland's painter; the picture is the bake's frame 0; its frames are waterfall_1_flow.png. Not yet reviewed by an independent detail-auditor."
  }
 }

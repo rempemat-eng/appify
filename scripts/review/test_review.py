@@ -71,6 +71,57 @@ class Occlusion(unittest.TestCase):
         names = [f.subject for f in SC.check_occlusion(z)]
         self.assertEqual(names, ['tree'])
 
+    def test_a_scene_sprite_takes_its_parents_z(self):
+        # (round 8, L8-1) outside the kit too, a sprite's z is its effective z: a floor plate under
+        # a Node2D at z_index -9 is on the ground layer, as Godot draws it, including through an
+        # instanced scene, unless a node sets z_as_relative false
+        import tempfile
+        from scripts.review import scene as SC
+        with tempfile.TemporaryDirectory() as d:
+            png = os.path.join(d, 'plate.png')
+            Image.fromarray(np.full((8, 8, 4), 255, np.uint8)).save(png)
+            sub = os.path.join(d, 'piece.tscn')
+            with open(sub, 'w') as f:
+                f.write('[gd_scene format=3]\n\n[ext_resource type="Texture2D" path="%s" id="t"]\n\n'
+                        '[node name="Piece" type="Node2D"]\nz_index = 1\n\n'
+                        '[node name="Deck" type="Sprite2D" parent="."]\ntexture = ExtResource("t")\n\n'
+                        '[node name="Top" type="Sprite2D" parent="."]\ntexture = ExtResource("t")\n'
+                        'z_index = 4\nz_as_relative = false\n' % png)
+            top = os.path.join(d, 'zone.tscn')
+            with open(top, 'w') as f:
+                f.write('[gd_scene format=3]\n\n[ext_resource type="PackedScene" path="%s" id="p"]\n\n'
+                        '[node name="Zone" type="Node2D"]\n\n'
+                        '[node name="Floor" type="Node2D" parent="."]\nz_index = -9\n\n'
+                        '[node name="If_up" type="Node2D" parent="Floor"]\n\n'
+                        '[node name="Plate" type="Sprite2D" parent="Floor/If_up"]\nz_index = 2\n\n'
+                        '[node name="Bridge" parent="Floor" instance=ExtResource("p")]\n' % sub)
+            nodes = {e['key']: e['z'] for e in SC._walk_nodes(SC.parse_tscn(top), '')}
+        self.assertEqual(nodes['Floor/If_up/Plate'], -7)
+        self.assertEqual(nodes['Floor/Bridge'], -8)        # the instance's root keeps its own z_index 1
+        self.assertEqual(nodes['Floor/Bridge/Deck'], -8)
+        self.assertEqual(nodes['Floor/Bridge/Top'], 4)
+
+    def test_overlapping_ground_layer_pieces_sort_sensibly(self):
+        # (round 8, L8-1) two ground-layer pieces that overlap: the one drawn over the other must not
+        # stand behind it. A deck whose y-sort point is far below its feet draws over a foam patch that
+        # lies in front of it, a fault; with its point on its foot line it sorts under the foam, clean.
+        # One piece's own parts (one y-sort point) and two states of one thing are not compared
+        from scripts.review import scene as SC
+        a = np.zeros((40, 40, 4), np.uint8)
+        a[..., 3] = 255
+        z = SC.Zone('t', (200, 200), None)
+        deck = SC.Sprite('deck', 'kit/props/art/footbridge.png', (60, 150), (40, 20, 80, 60), -5, True, a, 'Props/deck/Sprite')
+        foam = SC.Sprite('foam', 'kit/props/art/waterfall_3_flow.png', (60, 100), (40, 60 - 10, 80, 90), -5, True, a, 'Props/fall/Flow')
+        z.sprites = [deck, foam]
+        self.assertEqual([f.detector for f in SC.check_ground_layer(z)], ['logic.ground_order'])
+        deck.origin = (60, 60)
+        self.assertEqual(SC.check_ground_layer(z), [])
+        deck.origin = (60, 150)
+        foam.z = -6                                        # meant to lie under: a lower z, clean
+        self.assertEqual(SC.check_ground_layer(z), [])
+        foam.z, foam.origin = -5, (60, 150)                # one piece's parts keep their scene order
+        self.assertEqual(SC.check_ground_layer(z), [])
+
 
 class Water(unittest.TestCase):
     def test_a_fall_is_scored_against_its_house_sibling(self):

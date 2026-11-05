@@ -212,11 +212,11 @@ def _runs(row: np.ndarray):
     return list(zip(np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]))
 
 
-def crest_breaks(w: int, rng) -> np.ndarray:
+def crest_breaks(w: int, rng, seed: int | None = None) -> np.ndarray:
     """How deep the white water breaks under the bend, per column of a lip `w` texels wide (the
     woodland review, 4 Nov: the crest read as one lid): two or three runs of different lengths,
     1 to 3 texels deep and rounded at their ends, with a gap or two where the darker sheet goes
-    straight on."""
+    straight on. With `seed`, no run is longer than a cell (split_long_runs)."""
     out = np.zeros(w, np.int32)
     n = int(rng.choice([2, 3, 3]))
     gaps = [int(rng.integers(3, 6)) for _ in range(n - 1)]
@@ -230,6 +230,43 @@ def crest_breaks(w: int, rng) -> np.ndarray:
                                 + rng.uniform(-0.4, 0.4, max(1, L))), 1, 3).astype(int)
         out[x:x + L] = prof[:max(0, min(L, w - x))]
         x += L + (gaps[k] if k < len(gaps) else 0)
+    if seed is not None:
+        out = split_long_runs(out, seed)
+    return out
+
+
+CREST_RUN_MAX = 24       # no white run under a lip longer than a cell (review round 8, K8-1)
+
+
+def split_long_runs(out: np.ndarray, seed: int) -> np.ndarray:
+    """Any white run longer than CREST_RUN_MAX texels broken by a gap of 3 to 5 where the darker sheet
+    goes on, each new run with its own rounded depth profile (review round 8, K8-1: on a two- to
+    four-cell lip, crest_breaks' two or three runs grew into one white bar 36 to 64 texels long, the
+    round-4 lid). Draws from its own generator (from `seed`), so the fall's other draws keep their
+    order; a crest with no run over a cell (the woodland's longest is 23) is returned unchanged."""
+    out = out.copy()
+    w = len(out)
+    rng = None
+    changed = True
+    while changed:
+        changed = False
+        for a, b in _runs(out > 0):
+            if b - a <= CREST_RUN_MAX:
+                continue
+            if rng is None:
+                rng = np.random.default_rng(seed * 4099 + w)
+            L = b - a
+            g = int(rng.integers(3, 6))
+            # cut so that both sides are at least 6 long and the first at most a cell
+            cut = int(rng.integers(6, min(CREST_RUN_MAX, L - g - 6) + 1))
+            out[a + cut:a + cut + g] = 0
+            for (p, q) in ((a, a + cut), (a + cut + g, b)):
+                n = q - p
+                prof = np.clip(np.round(1.4 + rng.uniform(0.6, 1.6) * np.sin(np.linspace(0.15, np.pi - 0.15, max(1, n)))
+                                        + rng.uniform(-0.4, 0.4, max(1, n))), 1, 3).astype(int)
+                out[p:q] = prof[:n]
+            changed = True
+            break
     return out
 
 
@@ -347,7 +384,7 @@ def sheet(cv: np.ndarray, cl: int, cr: int, Y0: int, Y1: int, y0: float, rng, se
             X = int(round(xa + (xb - xa) * q / max(1, L - 1)))
             if 0 <= Y < H and cl <= X < cr and water[Y, X]:
                 cv[Y, X] = C('water', 5 if q > L * 0.55 else 4)
-    brk = crest_breaks(lw, rng)
+    brk = crest_breaks(lw, rng, seed=seed)
     cols = {}
     foot = (cl, cr)
     for (Y, xl, xr) in sheet_rows(cl, cr, Y0, Y1, phase_y):
@@ -378,7 +415,12 @@ def sheet(cv: np.ndarray, cl: int, cr: int, Y0: int, Y1: int, y0: float, rng, se
             elif dy < 4:
                 c = C('water', 3) if s < 0.6 else C('water', 2)
             else:
-                tt = 4 if s < 0.2 else (3 if s < 0.6 else (2 if s < 0.85 else 1))
+                # the navy east band: the last 0.15 of the sheet, never more than 9 texels (review
+                # round 8, K8-2: as a share of a four-cell sheet it became a flat slab 15 to 17 texels
+                # wide); east of s 0.6 the ribbon (water 2 with its streaks) runs on to it. At the
+                # woodland's width this is exactly s >= 0.85.
+                navy = (xr - X - 0.5) <= min(0.15 * (xr - xl), 9.0)
+                tt = 4 if s < 0.2 else (3 if s < 0.6 else (1 if navy else 2))
                 if f > 0.75:
                     tt = max(1, tt - 1)                                # thinner and darker near the foot
                 c = C('water', tt)
@@ -387,8 +429,13 @@ def sheet(cv: np.ndarray, cl: int, cr: int, Y0: int, Y1: int, y0: float, rng, se
                     # each streak its own speed: long fast ones and short slow ones
                     cols[key] = (rng.uniform(0, 40), rng.uniform(4, 18), rng.uniform(2, 9), rng.random())
                 ph, run, gap, kind = cols[key]
+                if Y1 - Y0 < 100:
+                    # on a sheet under 100 rows (a kit piece; the woodland's is 124) the longest
+                    # streaks are cut to 13 world px, so no more of its columns hold one tone over 40
+                    # rows than the sibling's over the same height (review round 8, P8-2)
+                    run = min(run, 13.0)
                 # frame t of n: each streak a step of its own period down (frame 0 the still)
-                if (((Y + 0.5) / D - y0 + ph - t * (run + gap) / n) % (run + gap)) < run and 0.05 < s < 0.85:
+                if (((Y + 0.5) / D - y0 + ph - t * (run + gap) / n) % (run + gap)) < run and 0.05 < s and not navy:
                     c = C('snow', 5) if (kind < 0.35 and s < 0.5) else (C('snow', 4) if kind < 0.7 else C('water', 5))
             cv[Y, X] = c
     return foot

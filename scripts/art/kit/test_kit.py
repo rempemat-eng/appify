@@ -617,6 +617,7 @@ class WaterBanks(unittest.TestCase):
         # one bend line across the sheet, the foam under it broken irregularly: gaps, several
         # depths, and no repeat with a short period
         from scripts.art.kit import structures as ST
+        from scripts.art.native.rocks import CREST_RUN_MAX as ST_RUN_MAX
         for c in (1, 2, 3, 4):
             for seed in (9 + c, 11, 65 + c):
                 f = ST.crest_foam(24 * c, seed)
@@ -634,17 +635,17 @@ class WaterBanks(unittest.TestCase):
                 rows = np.zeros((ST.CREST_MAX + int(bow.max()) + 1, 24 * c), bool)
                 for x in range(24 * c):
                     rows[bow[x]:bow[x] + f[x], x] = True
-                # (the woodland's own crest: 68 % on its whitest row; the shared crest on a four-cell
-                # sheet up to 76 %; round 4's lid was 85 to 96 % with drips and no gaps)
-                self.assertLessEqual(float(rows.mean(1).max()), 0.80, 'a straight white row (%d, %d)' % (c, seed))
+                self.assertLessEqual(float(rows.mean(1).max()), 0.70, 'a straight white row (%d, %d)' % (c, seed))
                 d = np.diff(np.concatenate([[0], (f > 0).astype(np.int8), [0]]))
                 starts, stops = np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]
-                self.assertIn(len(starts), (2, 3), (c, seed))
+                # two or three runs on a lip up to two cells, a few more on a wider one (no run over a cell)
+                self.assertTrue(2 <= len(starts) <= 2 + c, (c, seed, len(starts)))
                 inner = [int(a - b) for a, b in zip(starts[1:], stops[:-1])]
                 self.assertTrue(all(3 <= g <= 5 for g in inner), (c, seed, inner))
-                # at least one gap where the darker sheet goes on (the woodland's crest: two or
-                # three runs, round 7; round 4 asked two gaps from two cells up of the kit's own)
-                self.assertGreaterEqual(len(inner), 1, (c, seed))
+                if c >= 2:
+                    self.assertGreaterEqual(len(inner), 2, (c, seed))
+                # (review round 8, K8-1) no white run longer than a cell: a longer one is the lid
+                self.assertLessEqual(int(max(b - a for a, b in zip(starts, stops))), ST_RUN_MAX, (c, seed))
                 self.assertEqual(int(f[0]), 0, (c, seed))
                 self.assertEqual(int(f[-1]), 0, (c, seed))
                 for a, b in zip(starts, stops):
@@ -652,33 +653,71 @@ class WaterBanks(unittest.TestCase):
                     self.assertLessEqual(max(int(f[a]), int(f[b - 1])), 2, 'a run ends in a drip (%d, %d)' % (c, seed))
 
     def test_a_kit_sheet_is_not_flat_slabs(self):
-        # (review round 4, K4-1) the kit's sheet falls in broken streaks across its whole width: at
-        # most about a quarter of its columns hold one tone over 40 rows (the woodland's sheet: 10
-        # of 44), in frame 0 and in every frame of its loop; its outline is not a rectangle
+        # (review round 4, K4-1; round 8, P8-2) the kit's sheet falls in broken streaks across its
+        # whole width, in every frame of its loop: the share of its ribbon's columns that hold one
+        # tone over 40 rows is no more than the woodland sibling's worst window of the same height
+        # (measured here on the sibling's ribbon, rows 772-884 of its ground, columns 216-258: 0 to
+        # 0.17 over 44 rows, 0.26 to 0.36 over 92 when this was written). Its outline is not a
+        # rectangle
+        from PIL import Image
         from scripts.art.kit import structures as ST
         from scripts.art.native.palette import C
+
+        def flat_share(body):
+            n = 0
+            for x in range(body.shape[1]):
+                col = body[:, x]
+                ch = np.nonzero(np.diff(col) != 0)[0]
+                runs = np.diff(np.concatenate([[-1], ch, [len(col) - 1]]))
+                n += int(runs.max() >= 40)
+            return n / body.shape[1]
+
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        g = np.asarray(Image.open(os.path.join(root, 'game', 'zones', 'woodland', 'art', 'ground.png')).convert('RGB')).astype(np.int64)
+        sib = ((g[..., 0] << 16) | (g[..., 1] << 8) | g[..., 2])[772:884, 216:258]
+        limit = {}
+        for drop in (1, 2):
+            h = 48 * drop - 4
+            limit[h] = max(flat_share(sib[y:y + h]) for y in range(0, sib.shape[0] - h + 1))
         for c in (1, 2, 3, 4):
             for drop in (1, 2):
                 wpx, face = 24 * c, 48 * drop
-                for t in (0, 3):
+                for t in range(ST.FALL_FRAMES):
                     cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
                     ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
                     # the ribbon west of the navy east band (s < 0.85 of the lip), as the sibling's
-                    # 10 of 44 were counted (round 4)
+                    # columns were counted (round 4)
                     rib = int(round(0.85 * wpx))
                     body = cv[16:12 + face, 24:24 + rib]
-                    flat = 0
-                    for x in range(rib):
-                        col = body[:, x]
-                        ch = np.nonzero(np.diff(col) != 0)[0]
-                        runs = np.diff(np.concatenate([[-1], ch, [len(col) - 1]]))
-                        flat += int(runs.max() >= 40)
-                    # (the sibling over its full height, rows 772-880 of the woodland's ground, holds
-                    # 16 of 42 columns flat, 38 %; over rows 790-870, 9 of 42. Round 4's slabs were 38
-                    # to 70 %, and dark, which the value check below fails as well)
-                    self.assertLessEqual(flat / rib, 0.42, 'waterfall_%d drop %d frame %d: %d of %d columns flat' % (c, drop, t, flat, rib))
+                    share = flat_share(body)
+                    self.assertLessEqual(share, limit[face - 4] + 1e-9, 'waterfall_%d drop %d frame %d: %.2f of its columns flat, the sibling at %d rows %.2f' % (c, drop, t, share, face - 4, limit[face - 4]))
                     tones = set(np.unique(body).tolist())
                     self.assertGreaterEqual(len(tones), 5, (c, drop))
+        # (round 8, K8-2) no navy slab over the whole sheet, lip to foot: in its upper three quarters
+        # the east band of water 1 is at most 9 texels wide in every row (the sibling's widest), and
+        # no one patch of water 1 holds more than 9 texels a row of the sheet's height (the sibling:
+        # 988 texels over 124 rows, 7.97 a row; 9 a row is the band's own cap, so a patch can only be
+        # the band, never a slab across the ribbon)
+        from scipy import ndimage as ndi
+        w1 = C('water', 1)
+        for c in (1, 2, 3, 4):
+            for drop in (1, 2):
+                wpx, face = 24 * c, 48 * drop
+                for t in range(ST.FALL_FRAMES):
+                    cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+                    ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
+                    m = ST.sheet_mask(cv.shape, 24, wpx, 12, 12 + face, 9 + c)
+                    for Y in range(12, 12 + int(0.75 * face)):
+                        xs = np.nonzero(m[Y])[0]
+                        band = 0
+                        for X in xs[::-1]:
+                            if cv[Y, X] != w1:
+                                break
+                            band += 1
+                        self.assertLessEqual(band, 9, 'waterfall_%d drop %d frame %d row %d: a navy band of %d' % (c, drop, t, Y, band))
+                    lab, k = ndi.label((cv == w1) & m)
+                    big = int(np.bincount(lab.ravel())[1:].max()) if k else 0
+                    self.assertLessEqual(big / face, 9.0, 'waterfall_%d drop %d frame %d: a navy patch of %d texels' % (c, drop, t, big))
         # (review round 5, K5-1) the sheet falls in streaks, not a mosaic of chips: across its body
         # the lightness changes at least 4 times as often across as down (the woodland's sheet: 10),
         # and the median vertical run of one colour is at least 6 texels (the woodland's: 15), in

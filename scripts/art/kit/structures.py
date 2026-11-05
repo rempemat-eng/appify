@@ -212,7 +212,7 @@ def crest_foam(w: int, seed: int) -> np.ndarray:
     for _ in range(nst):
         rng.uniform(0.2, 0.8)
         rng.integers(9, 16)
-    return RK.crest_breaks(w, rng)
+    return RK.crest_breaks(w, rng, seed=seed)
 
 
 def crest_bow(w: int, seed: int = 0) -> np.ndarray:
