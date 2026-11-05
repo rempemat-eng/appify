@@ -18,10 +18,11 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 3 (v4): calm flags, joints off the cell line and weeds by rule pass; the worn lip repeats with b every 48 px (same gaps, same dark chip notches) and reads as a stamped frieze; the scene gate finds three one-colour lines of 311 px along the run (R3-2)."
  }
 }

@@ -35,10 +35,11 @@
   "group": "prop"
  },
  "findings": [],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 3 (v4): the creels read as domed loaves or skeps with green-ringed eyes: a front elevation only, with no top plane and no D-shaped end; the underside third is lighter than the top (134.7 against 123.2 L). West-east shade is now 20 to 25 L (R3-5)."
  }
 }

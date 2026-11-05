@@ -60,10 +60,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 3 (v4): the birch is now a cylinder (243 to 87 L in seven steps, sawn and snapped ends, stubs, scars), but its top three rows are one tone each along 57, 48 and 40 of its 66 columns and its lenticels are near-black (28 to 37 L) at even spacing: a blank white tube with printed marks, the brightest thing in the valley study (R3-7)."
  }
 }

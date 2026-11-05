@@ -84,10 +84,11 @@
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 3 (v4): the mill, roof and race pass, and the floats are even; but the wheel is spindly (shrouds and spokes 1 to 2 px, floats short stubs that do not read as paddles), and its lower third is drawn over the water to the race floor, so the waterline does not cut it (R3-10)."
  }
 }

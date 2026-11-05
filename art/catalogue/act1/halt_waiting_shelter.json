@@ -72,10 +72,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 3 (v4): R2-8 fixed: the valance is boards on end lit west with scallops; the bench has a seat plane of lit boards over a front edge and shade. Polish: no cast shadow on the floor under the bench (95.5 against 95.7 L beside it); the roof moss is still 2 to 3 px green stickers mid-slate."
  }
 }

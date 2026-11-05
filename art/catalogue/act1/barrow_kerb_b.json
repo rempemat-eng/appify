@@ -60,10 +60,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 3 (v4): a boulder kerb, lit top left, seated in moss. Polish: 28 px wide against the kerb_stone class's 24 (logic.scale accepted as polish); trim to 24 or widen the class for boulder kerbs."
  }
 }
