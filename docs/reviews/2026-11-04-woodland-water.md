@@ -1469,3 +1469,203 @@ Coordinates are texels in the kit picture, or in the bake named. The crops are l
 - **Reduced motion:** judged from frame 0, which is the bake. It holds K8-1 and K8-2.
 - **The four-cell pieces in a composed zone:** no baked zone places `waterfall_4` or `_4_tall`. They were judged on their asset sheets and composited frames.
 - **An Eastward falling sheet:** none exists in the local official shots.
+
+## Round 9 (ce83b70a)
+
+A ninth independent detail-auditor run, on the commit that answers round 8 (ce83b70a, "Water polish round 9: crest runs split, navy band capped, per-height flat test, effective z", branch `claude-a/water-polish`, draft PR #434). This auditor did not paint it and did not write rounds 1 to 8. Every number below was measured here, on the eight pieces in all eight frames, on their pictures and flow strips, and on the bakes at ce83b70a against 3b200eaa. Units are texels at density 3 (a cell is 24). The painter's numbers were checked, not copied.
+
+**Verdicts:**
+
+| Asset | Detectors | Verdict | Why |
+| --- | --- | --- | --- |
+| `woodland/ground`, `woodland/flow`, `woodland/flow_rill` | not re-run | **round 6's pass stands** | `git diff 3b200eaa ce83b70a -- game/zones/woodland/ art/catalogue/woodland/` is empty (sha256 `88302378`, `04830edb`, `accb3feb`). Records left alone. |
+| `kit/waterfall_1`, `kit/waterfall_1_tall` | pass (`detail.bar` polish 0.68, 0.72; `detail.outline` polish) | **pass** | They were re-recorded because the streak cap changed them, and were judged again. Their crest is unchanged (7, 9). On `_1_tall` the flat columns fall from 0.25-0.40 to 0 in every frame (P8-2 closed). Grain and value are unchanged in kind. |
+| `kit/waterfall_2`, `_2_tall` | pass (`detail.bar` polish 0.88; `detail.outline` polish) | **pass** | K8-1 fixed: crest runs 9, 23, 5, whitest row 0.63. |
+| `kit/waterfall_3`, `_3_tall` | pass (`detail.bar` polish 0.89 on `_3_tall`; `detail.outline` polish) | **pass**, polish P9-1 | K8-1 and K8-2 fixed. The split crest's west half is evenly cut (P9-1). |
+| `kit/waterfall_4`, `_4_tall` | pass (`detail.bar` polish 0.83, 0.78; `detail.outline` polish) | **pass**, polish P9-1 | K8-1 fixed (longest run 22, whitest row 0.63). K8-2 fixed (navy band 9, round 8: 15 to 16). |
+
+`python3 -m scripts.review.gate --check` after the verdicts: **ok** (7 zones, fix queue 2 assets).
+
+### What was reviewed
+
+- `game/kit/props/art/waterfall_{1..4}{,_tall}.png` and their `_flow.png` strips. Each was rebuilt here with `structures.fall_sheet(..., seed=9 + c, t)` for t = 0 to 7.
+  - On every sheet texel, each picture equals frame 0, and each strip's eight frames equal frames 0 to 7.
+- The bakes `woodland_kit`, `kitlab_tiers`, `kitlab` and `kitlab_widths`, diffed against 3b200eaa. A template search in each fall's box finds the piece's picture texel for texel:
+  - `woodland_kit`: `waterfall_3_tall` at (144, 732), 7,245 of 7,245 texels.
+  - `kitlab_tiers`: `waterfall_2` at (600, 276), 2,468 of 2,468 texels.
+- Code: `rocks.crest_breaks` and `split_long_runs`; the navy band and the streak cap in `rocks.sheet`; `structures.crest_foam`; `scene._walk_nodes`, `load_zone`, `_draw_key` and `check_ground_layer`; the `test_kit` and `test_review` changes; ground-rules 2, eastward-edges 5.3b and review-agents.md.
+- The painter's `kit_pieces_before_after_round9_5x.png`. It was looked at, and no number was taken from it. The painter took no in-game captures this round, so the auditor made them (below).
+
+### Commands
+
+- `python3 -m scripts.review.calibrate --flagged <Matt's screenshots> --eastward <Eastward shots>`: **recall 39 of 39**.
+  - False positives: 5 on 6 clean screens and 29 on 22 clean props, the same as rounds 1 to 8.
+  - `calibration_results.json` was reverted afterwards.
+- `assets.review` with kind `waterfall` and biome `woodland` on the eight pieces: all pass the detectors. Every sha256 matches the painter's record. `npm run review:asset -- <png> --kind waterfall --biome woodland` wrote the 4x/1x/2x sheets for `_3` and `_4_tall` (local, not committed). The records were written with `assets.record` and the reviewer field (`audit9/record.py` in the auditor's scratchpad).
+- `python3 -m unittest scripts.art.kit.test_kit.WaterBanks scripts.review.test_review.Occlusion scripts.review.test_review.Water`: 32 tests, OK. These include `test_the_kits_sheet_is_the_woodlands` and the two new L8-1 tests.
+- `scene.review_zone` on all seven zones at ce83b70a and at 3b200eaa (`audit9/zones.py`), with the effective z of every sprite.
+- **Own measurements** (`audit9/meas.py`), run on both commits for every piece and every frame:
+  - The crest, from `crest_foam` and from the picture.
+  - The navy band per row in the upper three quarters, against `min(0.15 (xr - xl), 9)`.
+  - The largest water-1 patch per row of height.
+  - Flat columns against the sibling's worst window at the piece's height.
+  - `bands.fall_grain`, on the full width as `test_kit` measures it and on the ribbon.
+  - `bands.fall_value` on the ribbon.
+  - Widening per side.
+- **Own captures.** Godot 4.7.2 under Xvfb at 1920 x 1080 (2 screen px a texel), from a fresh import of this worktree: `--zone=woodland_kit --at=95,300`, `--zone=kitlab_tiers --at=185,120` and `--zone=woodland --at=130,300`. Crops (all local):
+  - `ig_wkit_fall_4px.png`.
+  - `ig_sibling_vs_wkit_4px.png`: the woodland's sheet beside `waterfall_3_tall`, Bramble in frame.
+  - `ig_kt_fall_6px.png`.
+  - `crests_8x.png`: the sibling, then `_2`, `_3` and `_4` at 3b200eaa and at ce83b70a.
+  - `crests_head_10x.png`.
+  - `frames_{one,four}_base_head.png`: frames 0 and 4 of `_1`, `_1_tall`, `_4` and `_4_tall`, before and after, at 4x.
+
+### Eastward comparison
+
+No official Eastward shot shows a falling sheet (rounds 5 to 8; 5.3b). The pieces were compared with their house sibling, the woodland's sheet, in Godot at 2 and 4 screen px a texel, with Bramble beside them (`ig_sibling_vs_wkit_4px.png`), and at 8x to 10x for the crest.
+
+### The painter's claims, checked
+
+- **K8-1, crest runs capped at 24: true.** `split_long_runs` cuts any run over `CREST_RUN_MAX` = 24 with a gap of 3 to 5. It draws from its own generator, so the fall's other draws keep their order. Every crest also passes the restored test, as the table shows (whitest row at most 0.70, at least two gaps from two cells up, longest run at most 24, from 2 to 2 + c runs). The woodland's crest (longest 23) is unchanged, as its byte-identical sheet shows.
+
+  | | Runs (texels) | Gaps | Longest | Whitest row (foam / picture, all frames) |
+  | --- | --- | --- | --- | --- |
+  | Woodland sheet (49) | 23, 16 | 5 | 23 | 0.65 to 0.67 |
+  | `_1` (24) | 7, 9 | 3 | 9 | 0.63 / 0.63 |
+  | `_2` (48) | 9, 23, 5 | 4, 4 | 23 | 0.63 / 0.63 (round 8: one run of 36, 0.67) |
+  | `_3` (72) | 9, 2, 8, 9, 23 | 3, 5, 4, 4 | 23 | 0.58 / 0.58-0.60 (round 8: 48, 0.69-0.71) |
+  | `_4` (96) | 3, 9, 10, 22, 10, 15 | 5, 3, 5, 5, 4 | 22 | 0.63 / 0.63-0.64 (round 8: 64, 0.76-0.77) |
+
+- **K8-2, the navy band capped at min(0.15 w, 9): true.** Widest east run of water 1 in the upper three quarters, in every frame:
+  - `_1` and `_1_tall`: 5 (cap 4.2 to 4.5).
+  - `_2`: 8 (cap 7.8).
+  - `_2_tall`: 9 (cap 8.1).
+  - `_3`, `_3_tall`, `_4` and `_4_tall`: 9 (cap 9).
+  - Round 8 measured 12, 12, 15 and 16 on the last four. No row in any frame is more than a texel over its cap; the texel is the half-texel offset in the rule.
+  - Largest water-1 patch per row of height: 3.6 to 4.3 (`_1`), 6.5 to 7.7 (`_2`), 7.8 to 8.7 (`_3`), 7.7 to 8.8 (`_4`). Round 8: up to 11.1 on `_3_tall` and 14.7 on `_4_tall`. The painter's worst case, 8.8 on `_4_tall`, is confirmed.
+  - The s 0.6 to 0.85 ribbon now runs on, with its streaks, to the band.
+- **P8-2, the flat limit per height, all frames: true.**
+  - The test computes the sibling's worst window on rows 772-884, columns 216-258 of the woodland's ground: 0.167 over 44 rows and 0.357 over 92 (measured here as well).
+  - The test now runs all eight frames.
+  - The kit measures 0 to 0.066 in every frame of every piece. The worst is `_3_tall` at 0.066, so the painter's "at most 0.07" holds.
+  - The 13 world px cap (`run = min(run, 13)` when `Y1 - Y0 < 100`) applies to all eight pieces, the tall ones included (96 rows). The woodland's sheet (124 rows) is untouched.
+- **D8-1, ground-rules 2 and 5.3b: true.** Both now say these things, and cite 859e1c53, Matt's 2 Nov words "about the top", and round 8 D8-1:
+  - At the rim the sheet is exactly the lip's width.
+  - Nothing stands above the rim or over the lip stones either side.
+  - Below the rim the sheet may widen "a few texels as it falls, as the woodland's approved sheet does".
+  - There is never spray on its face. Spray and foam are only where it lands.
+
+  The two docs no longer disagree. The pieces do as they say:
+  - At the rim each outline is exactly the lip: (24, 24 + 24c).
+  - It holds the lip's width for 3 rows (6 on the tall pieces).
+  - It then widens at most 2 to 4 texels west and 5 east.
+  - The outline code is unchanged since round 8.
+- **L8-1, effective z: true and correct.**
+  - `_walk_nodes` now adds each parent's `z_index` while `z_as_relative` holds, Godot's default. An instance's root takes the instance node's z, with the instance's overrides over its root's.
+  - Only the undercroft changes. Its four `Floor/If_*` sprites (`PlateUp`, `PlateDown`, `ChannelLit`, `SealSunk`) go from 0 to **-9**. The eight `WallFx/Torch1..8` go from 0 to **-8**, because `WallFx` has `z_index = -8`.
+  - Both are what Godot draws: the floor plates and the wall sconces lie under the people. The torches are a side effect that the claim did not mention. It is correct.
+  - No other zone's sprites change z.
+- **`logic.ground_order` (`check_ground_layer`): true as described.** It compares overlapping z < 0 sprites on one z and flags the one drawn later when its feet are more than a quarter of a character behind the other's. It skips:
+  - parts of one piece (one y-sort point),
+  - two states of one thing (`_alternates`),
+  - overlaps under 0.004 H².
+
+  Its two tests pass. It finds nothing in any of the seven zones.
+- **No other zone's review outcome changed.** `review_zone` at 3b200eaa and at ce83b70a gives the same findings in every zone, by detector, severity, subject, box and message:
+  - crossroads 50, kitlab 46, kitlab_tiers 45, kitlab_widths 45, undercroft 49, woodland 57, woodland_kit 84.
+  - The undercroft's re-zed sprites never drew an occlusion finding at 3b200eaa, so skipping them now hides nothing that was found.
+
+### The three questions, judged
+
+1. **Does the 13 world px streak cap bring back round 5's chip mosaic? No.** `bands.fall_grain`, over the full width as `test_kit` measures it, every frame (K5-1 floors: ratio at least 4, median run at least 6; the sibling 10.2 and 15):
+
+   | | Ratio, 3b200eaa | Ratio, ce83b70a | Median run, 3b200eaa | Median run, ce83b70a |
+   | --- | --- | --- | --- | --- |
+   | `_1` | 7.2-9.5 | 6.8-10.1 | 7-13 | 7-13 |
+   | `_1_tall` | 8.4-9.5 | 8.8-9.9 | 12-15 | 12-15 |
+   | `_2` | 8.2-11.1 | 8.4-9.6 | 8-12 | 8-12 |
+   | `_2_tall` | 10.7-11.9 | 10.1-11.2 | 14-18 | 13-16 |
+   | `_3` | 7.9-10.6 | 7.3-9.1 | 8-11 | 7-11 |
+   | `_3_tall` | 9.1-10.3 | 8.7-9.3 | 13-15 | 13-14 |
+   | `_4` | 8.3-9.7 | 8.1-9.6 | 10-11 | 9-11 |
+   | `_4_tall` | 10.0-10.7 | 10.2-10.7 | 13-16 | 14-15 |
+
+   - The ratio stays 6.8 to 11.2 and the median run 7 to 16, with the ribbon alone within a few tenths of the full width. The tall pieces lose at most two texels of median run and stay near the sibling's 15.
+   - By eye (`frames_four_base_head.png`, `ig_sibling_vs_wkit_4px.png`), the streaks are a little shorter and still fall in long lanes, not chips. In Godot, woodland_kit's fall reads as the woodland's sheet beside it.
+   - One caveat for the tooling. The cap, 13 world px or 39 texels, is one texel under the flat-column window of 40 rows. So the flat test now passes for streaked columns by construction (0 to 0.07 against limits of 0.17 and 0.36), and the pieces are less flat than the sibling (0.26 to 0.36 at 92 rows). The grain check, not the flat check, is what guards the streak character now. It passes with a wide margin. Noted under T9-1.
+2. **Do the split crests read as broken water or as stamped teeth? Broken water at play scale, with an even cadence in places at 6x to 10x (polish P9-1).**
+   - In Godot at 2 and 4 screen px a texel, on `_2` in kitlab_tiers and `_3_tall` in woodland_kit, the crest reads as the sibling's: a white break under the tongue with a few dark gaps where the sheet goes on. The 1x and 2x views on the `_4_tall` asset sheet read the same.
+   - At 8x to 10x (`crests_head_10x.png`), each gap is a full-depth rectangular notch of the same depth. Where neighbouring runs are nearly equal, the notches fall at an even pitch, like battlements:
+     - `_3`'s west half: runs 9, 2, 8, 9 behind gaps of 3, 5, 4 and 4, so a pitch of 12, 13 and 13.
+     - `_4`'s middle: runs 9, 10, 10 at a pitch of 12 to 15.
+   - The sibling has one such notch, so it never shows a cadence.
+   - Each run still has its own rounded profile, 1 to 3 deep. The 22- and 23-texel runs keep the sibling's long-run look.
+3. **Is the navy threshold of 9 meaningful, or set just above the worst case? Meaningful for the band, loose at narrow widths, and nearly redundant as a patch test.**
+   - The per-row cap of 9 is the sibling's own widest band (round 8 measured 8 to 9 texels on its rows). It was not fitted to the kit, whose bands were 12 to 16 before.
+   - The patch limit of 9 texels a row is the same cap summed over the height. It sits 0.2 above the kit's worst (8.8) because a band at its cap all the way down measures about 9 × (face - 4) / face plus the foot's widening. So it is not a separate tuned number. It can catch a slab across the ribbon, which it is meant to do, but on a three- or four-cell sheet it adds almost nothing to the per-row test.
+   - The pieces' 7.7 to 8.8 a row is up to a tenth over the sibling's 7.97. That is because their band holds the sibling's widest value all the way down, and is not a fault. At 4 cells the band is 9 of 96 texels (9 %), against the sibling's 9 of 49 (18 %), and it reads as a shaded edge, not a slab.
+   - Where it is loose: at one and two cells the band's own cap is 3.6 to 8.1, but the test allows 9 at every width. It would not see the band there drift back toward a share-of-width slab. Noted under T9-1.
+
+### New findings
+
+Coordinates are texels in the kit picture. The crops are local, in the auditor's scratchpad.
+
+**P9-1. Polish (kit, `_3`, `_3_tall`, `_4`, `_4_tall`): the split crest has an even cadence in places.**
+- Location: rows 13 to 17 across the lip, at columns 24-64 on `_3` and 36-80 on `_4`. Crops: `crests_8x.png`, `crests_head_10x.png`.
+- What is wrong:
+  - `split_long_runs` cuts at a uniform draw between 6 and 24, so a 48- or 64-texel run can split into neighbours within a texel of each other (9, 8, 9 on `_3`; 9, 10, 10 on `_4`).
+  - Each gap is a full-depth notch of 3 to 5 texels. At 6x to 10x the west half of `_3` reads as evenly spaced teeth.
+  - At play scale it reads as broken water, so this is not a fault.
+- Fix: when a cut leaves a run within 2 texels of its neighbour, redraw the cut. Or draw the cut from a skewed range, so that consecutive runs differ by at least 3. Keep the gaps as they are, because the sibling's single gap is full depth too.
+
+**T9-1. Lead (tooling): two of the round-9 tests pass by construction.**
+- The 13 world px streak cap is 39 texels, one under the flat test's 40-row window. So `test_a_kit_sheet_is_not_flat_slabs` cannot fail on a streaked column, and only `fall_grain` guards the streak character.
+  - Leave the cap, but say in the test that the grain check is the guard.
+  - Or measure flat columns over a shorter window (for example 30 rows) against the sibling at the same window.
+- The navy band test allows 9 at every width.
+  - Assert `band <= ceil(min(0.15 (xr - xl), 9)) + 1` per row instead. Every frame of every piece already meets this.
+  - The patch test can then stay as the slab guard.
+
+### Round 8's findings, checked
+
+- **K8-1:** fixed (above).
+- **K8-2:** fixed (above).
+- **P8-2:** fixed. The limit is per height, the test covers every frame, and the kit is at 0 to 0.07.
+- **D8-1:** fixed. The docs agree with each other and with the sheets.
+- **L8-1:** both holes are addressed, by the effective z and by `logic.ground_order`.
+- The third point of round 8's lead was a standing thing put on the ground layer by mistake. Nothing checks for it yet. It is not a regression, and it stays a lead.
+
+### Per-part notes (kit pieces)
+
+- **Tongue:** pass on all eight. The two tones still meet staggered. The code is unchanged.
+- **Crest:** pass on all eight. Polish P9-1 on `_3`, `_3_tall`, `_4` and `_4_tall`.
+- **Sheet streaks and grain:** pass. Ratio 6.8 to 11.2 and median run 7 to 16, in every frame.
+- **Sheet value:** pass. `fall_value` passes on the ribbon in every frame of every piece.
+- **East band:** pass on all eight. The band is 5 to 9 texels, never more than a texel over its cap.
+- **Edges:** pass. The sheet is the lip's width at the rim and widens 2 to 5 texels below, as the docs now say.
+- **Foam, spray, arcs:** pass. These are unchanged from round 8 (the strips' foam was not redrawn).
+- **Light:** pass. Lit west, shaded east.
+- **Picture = bake:** pass. The match is exact on every sheet texel, in both bakes.
+- **Scale:** pass. Beside Bramble on the asset sheets and in Godot.
+
+### Tile log
+
+- The woodland's three pictures and their records: 0 texels changed since 3b200eaa. Round 6's tile log stands.
+- **woodland_kit bake:** 3,058 texels changed, all inside x 169-234, y 747-838, which is the fall's box.
+- **kitlab_tiers bake:** 942 texels changed, all inside x 625-667, y 291-334, which is the fall's box.
+- **kitlab and kitlab_widths:** 0 texels changed. Only their `ground_baked.json` hashes moved, because the hash covers the painter's inputs.
+
+### False positives
+
+- **Kit pieces: all 15 findings rejected.**
+  - 7 `detail.bar` (polish, 0.68 to 0.89): the fall band rewards fragmentation (round 6). `_3` has none.
+  - 8 `detail.outline` (polish): water takes no outline.
+- `review_zone`: no new findings at all, so none were rejected this round.
+
+### Not checked
+
+- **Motion on a device.** The frames were measured and the Godot shots are stills on a desktop. There was no phone or native check.
+- **Night tint.** Not checked.
+- **Reduced motion.** Judged from frame 0, which is the still and the bake.
+- **The four-cell pieces in a composed zone.** No zone places `waterfall_4` or `_4_tall`. They were judged on their asset sheets and on the frames rendered here.
+- **An Eastward falling sheet.** None exists in the local official shots.

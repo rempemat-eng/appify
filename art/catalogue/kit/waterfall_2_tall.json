@@ -65,8 +65,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
+  "verdict": "pass",
   "date": "2026-11-05",
-  "note": "redrawn after round 8 of the independent audit (K8-1, K8-2, P8-2): the crest breaks any white run over 24 texels with a gap of 3 to 5 texels (the woodland's longest is 23, so its sheet is unchanged), so the wide lips have three to six runs and no row whiter than 0.70; the navy east band is at most 15 % of the lip and never over 9 texels, the sibling's widest; on these short sheets (under 100 texels) a streak runs at most 13 world px, so no more columns are flat than in the sibling at the same height, in every frame. Still rocks.sheet, the woodland's painter; the picture is the bake's frame 0; its frames are waterfall_2_tall_flow.png. Not yet reviewed by an independent detail-auditor."
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 9 (ce83b70a). Still rocks.sheet, the woodland's painter; the woodland's ground, flow and rill are byte-identical to 3b200eaa. Picture = frame 0 and the flow strip = frames 0-7 on every sheet texel; the bakes hold the picture exactly. All 8 frames measured: value passes on the ribbon in every frame; grain ratio 6.5-11.2, median run 7-16 (K5-1 floors 4 and 6; the 13 world px streak cap did not bring back the chip mosaic). Navy band in the upper three quarters never more than a texel over min(0.15 w, 9); largest water-1 patch at most 8.8 texels a row. K8-1 fixed: crest runs 9, 23, 5, whitest row 0.63. Navy band 9 (cap 8.1); flat 0.02-0.05 against the sibling's 0.36 at 92 rows."
  }
 }
