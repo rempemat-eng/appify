@@ -21,8 +21,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "docs/reviews/2026-11-04-woodland-water.md, round 5 (76241d98). F4-1's polish here is fixed: no moving texel lies over a reed, a rim stone or a jog face in any frame. Lanes south, own phases."
+  "verdict": "pending",
+  "date": "2026-11-04",
+  "note": "re-rendered after round 5 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 76241d98: ground, flow and flow_rill pass): P5-1, the stray waterline chip and slot in the face's foot at x 478-490 are gone (no river inside the face above its foot) and the shore runs flat there; the moss tufts and wet pebbles along the face reshuffled with it. Not yet reviewed by an independent detail-auditor (the painter may not audit it)."
  }
 }

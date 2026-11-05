@@ -21,8 +21,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "docs/reviews/2026-11-04-woodland-water.md, round 5 (76241d98). F4-1 fixed: composited over the ground at its kit.json rect, frames 0 to 7 move 465 to 1257 texels and every one lies on a water, sheet or foam tone (10 ground colours, all water family; 0 on timber, rock, the wet foot, stones or reeds), frame 0 included. Foam unchanged in extent (x 210-275, y 880-898 against a sheet of about 214-264) and churns in every frame; the spray beside it is now loose 1 to 2 texel specks instead of tick pairs. Stream marks horizontal."
+  "verdict": "pending",
+  "date": "2026-11-04",
+  "note": "re-rendered after round 5 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 76241d98: ground, flow and flow_rill pass): P5-1, the stray waterline chip and slot in the face's foot at x 478-490 are gone (no river inside the face above its foot) and the shore runs flat there; the moss tufts and wet pebbles along the face reshuffled with it. Not yet reviewed by an independent detail-auditor (the painter may not audit it)."
  }
 }

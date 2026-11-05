@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "c85e180946fbf631e7a44084415dd28c09529d726a41a5db8ae86835e1881ebc",
+ "sha256": "88302378b2402398b8d68fcc657a51b1639871456d7c3b4bf9a326d99e280e98",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -21,8 +21,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "docs/reviews/2026-11-04-woodland-water.md, round 5 (76241d98). L4-1 fixed, measured on the rendered ground at x 390: treads at 766, 781, 796, 811, 826 (pitch 15 art px, 5 world px), last riser ends 839, open path 841-865 (25 art px, one cell), abutment cap 866-867, deck from 868, waterline beside it 876; the landing sides lump 4 to 5 texels into the rock with a broken darkest line (3.3). G4-1 fixed: the larger face boulders and fallen stones are single calm masses. L4-2 fixed: the west group across the rill at y 378-401 is gone; the east group keeps to the outer third (x 198-232 in a rill of 167-212). Polish P5-1: a stray 4 x 2 waterline chip in a rock joint at x 483-486, y 860-861, over a near-black slot (y 864-868) and a 45-degree spike of the waterline (x 478-490, y 868-871). Stays in the seeded fix queue for its own logic.scale item."
+  "verdict": "pending",
+  "date": "2026-11-04",
+  "note": "re-rendered after round 5 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 76241d98: ground, flow and flow_rill pass): P5-1, the stray waterline chip and slot in the face's foot at x 478-490 are gone (no river inside the face above its foot) and the shore runs flat there; the moss tufts and wet pebbles along the face reshuffled with it. Not yet reviewed by an independent detail-auditor (the painter may not audit it)."
  }
 }

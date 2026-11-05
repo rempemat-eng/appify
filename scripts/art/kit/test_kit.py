@@ -183,9 +183,15 @@ class Rules(unittest.TestCase):
                 self.assertEqual(pc['geometry']['foot'][1], y1)
                 a = np.asarray(Image.open(os.path.join(ROOT, 'game', pc['variants'][0]['png'][len('res://'):])))[..., 3] > 0
                 self.assertFalse(a[:y0].any(), pc['id'])
-                above = a[:y1 - 5].copy()
+                # over its upper two thirds the sheet keeps to the channel's columns; over the last
+                # third it may swell a texel or two as it spreads toward the pool (review round 5)
+                swell = y0 + int(np.ceil((y1 - y0) * 2.0 / 3.0))
+                above = a[:swell].copy()
                 above[:, x0:x1] = False
                 self.assertFalse(above.any(), pc['id'])
+                low = a[:y1 - 5].copy()
+                low[:, x0 - 2:x1 + 2] = False
+                self.assertFalse(low.any(), pc['id'])
                 self.assertTrue(a[y0, x0:x1].all(), pc['id'])
 
 
@@ -666,6 +672,22 @@ class WaterBanks(unittest.TestCase):
                     self.assertLessEqual(flat / wpx, 0.25, 'waterfall_%d drop %d frame %d: %d of %d columns flat' % (c, drop, t, flat, wpx))
                     tones = set(np.unique(body).tolist())
                     self.assertGreaterEqual(len(tones), 5, (c, drop))
+        # (review round 5, K5-1) the sheet falls in streaks, not a mosaic of chips: across its body
+        # the lightness changes at least 4 times as often across as down (the woodland's sheet: 10),
+        # and the median vertical run of one colour is at least 6 texels (the woodland's: 15), in
+        # every frame of the loop
+        from scripts.review import bands as B
+        from scripts.art.native.palette import LUT
+        for c in (1, 2, 3, 4):
+            for drop in (1, 2):
+                wpx, face = 24 * c, 48 * drop
+                for t in range(ST.FALL_FRAMES):
+                    cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+                    ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
+                    body = LUT[cv[20:12 + face - 4, 25:24 + wpx - 1]][..., :3].astype(np.uint8)
+                    g = B.fall_grain(body, np.ones(body.shape[:2], bool))
+                    self.assertGreaterEqual(g['ratio'], B.GRAIN_RATIO, 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, g))
+                    self.assertGreaterEqual(g['median_run'], B.GRAIN_RUN, 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, g))
                 outl = ST.sheet_outline(24, wpx, 12, 12 + face, 9 + c)
                 self.assertGreater(len({tuple(r) for r in outl.tolist()}), 2, 'a rectangle (%d, %d)' % (c, drop))
                 self.assertEqual(tuple(outl[0]), (24, 24 + wpx))

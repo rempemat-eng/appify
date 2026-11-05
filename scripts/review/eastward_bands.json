@@ -1,5 +1,5 @@
 {
- "about": "Eastward prop, foliage, stone, ground and water (white water, for falls) detail bands at our character height (scripts/review/bands.py). Numbers only; the screenshots are official Steam store shots kept local (refs-games/eastward), boxes in native 640 x 360 px.",
+ "about": "Eastward prop, foliage, stone, ground and mist detail bands, and the fall band (the house sibling: no official Eastward shot shows a falling sheet) at our character height (scripts/review/bands.py). Numbers only; the screenshots are official Steam store shots kept local (refs-games/eastward), boxes in native 640 x 360 px.",
  "adult_native": 54,
  "H": 74,
  "boxes": [
@@ -339,8 +339,8 @@
     640,
     300
    ],
-   "name": "white_water",
-   "group": "water",
+   "name": "mist_over_lawn_and_pines",
+   "group": "mist",
    "patches": 48,
    "tones": 27.6,
    "shapes": 69.4
@@ -353,8 +353,8 @@
     640,
     300
    ],
-   "name": "white_water_top",
-   "group": "water",
+   "name": "mist_over_lawn_and_pines_top",
+   "group": "mist",
    "patches": 54,
    "tones": 26.26,
    "shapes": 68.43
@@ -388,12 +388,20 @@
    "boxes": 6,
    "patches": 126
   },
-  "water": {
+  "mist": {
    "tones": 26.93,
    "shapes": 68.92,
    "boxes": 2,
    "patches": 102,
-   "about": "Eastward 37's white water (the falls' mist), for falls: their sheet, crest and foam"
+   "about": "37: mist over lawn and pines; not water, not a band for falls (round 5, W5-1)"
+  },
+  "fall": {
+   "tones": 17.0,
+   "shapes": 39.5,
+   "boxes": 1,
+   "patches": 12,
+   "source": "house sibling: the woodland sheet, game/zones/woodland/art/ground.png 220-256 x 772-880 (docs/reviews/2026-11-04-woodland-water.md, round 5)",
+   "about": "a falling sheet, crest and foam; no official Eastward shot shows one (bands.py)"
   }
  }
 }

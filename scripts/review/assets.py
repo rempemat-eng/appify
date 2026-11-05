@@ -129,9 +129,49 @@ def group_of(kind: str, rgb, alpha) -> str:
         return 'foliage'
     if kind in ('boulder', 'standing_stone', 'rock', 'crag', 'cairn'):
         return 'stone'
-    if kind in ('waterfall', 'fall') and 'water' in B.load_bands().get('groups', {}):
-        return 'water'          # a fall against Eastward's white water (bands.build_water), not the props
+    if kind in ('waterfall', 'fall') and 'fall' in B.load_bands().get('groups', {}):
+        return 'fall'           # a fall against its house sibling, the woodland sheet (bands.py, W5-1), not the props
     return 'prop'
+
+
+def fall_sheet_box(alpha):
+    """(x0, y0, x1, y1) of a fall picture's sheet body: the columns opaque a few rows under its top,
+    from there down to where the foam widens the picture, inset a texel each side."""
+    rows = np.nonzero(alpha.any(1))[0]
+    if not len(rows):
+        return None
+    top = int(rows[0]) + 8
+    if top >= alpha.shape[0]:
+        return None
+    cols = np.nonzero(alpha[top])[0]
+    if len(cols) < 4:
+        return None
+    x0, x1 = int(cols[0]), int(cols[-1]) + 1
+    y = top
+    while y < alpha.shape[0] and alpha[y].sum() <= (x1 - x0) + 4 and alpha[y, x0 + 1:x1 - 1].all():
+        y += 1
+    y1 = y - 4
+    return (x0 + 1, top, x1 - 1, y1) if y1 - top >= 12 else None
+
+
+def fall_grain(rgb, alpha, subject) -> list:
+    """A fall's sheet must fall in streaks (woodland review, round 5, K5-1): its lightness changing
+    at least bands.GRAIN_RATIO times as often across as down, with a median vertical run of one
+    colour of at least bands.GRAIN_RUN texels. A chip mosaic is about 1."""
+    box = fall_sheet_box(alpha)
+    if box is None:
+        return []
+    x0, y0, x1, y1 = box
+    g = B.fall_grain(rgb[y0:y1, x0:x1], alpha[y0:y1, x0:x1])
+    if g['passed']:
+        return []
+    return [Finding('detail.fall_grain', 'fault', box,
+                    f'{subject}: the sheet does not fall: lightness changes {g["ratio"]:.1f} x as often across as down '
+                    f'(at least {B.GRAIN_RATIO:.0f}) and the median vertical run is {g["median_run"]:.0f} texels '
+                    f'(at least {B.GRAIN_RUN})',
+                    'draw the sheet in streak lanes 1 to 3 texels wide whose runs fall 8 to 30 texels, broken and '
+                    'offset lane to lane, as rocks.fall draws the woodland\'s (eastward-edges 5.3b)',
+                    score=g['ratio'], threshold=B.GRAIN_RATIO, subject=subject)]
 
 
 def review(path: str, zone: str, name: str, kind: str | None = None, biome: str | None = None,
@@ -203,6 +243,8 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
                                     'close the silhouette in the material\'s own dark edge tone (the house outline), '
                                     'broken only where the light hits (art-style.md 1)', score=ol, threshold=0.4,
                                     subject=subject))
+        if kind in ('waterfall', 'fall'):
+            findings += fall_grain(rgb_n, alpha, subject)
         grp = group_of(kind, rgb_n, alpha)
         score = B.score(rgb_n, alpha, H, grp)
         score['group'] = grp

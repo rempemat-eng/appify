@@ -344,15 +344,33 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
     cv[lw] = sib(cv[lw], 'body')
     # the river at the foot: open water as it was; between the face's foot and the water, wet rock
     water_open = wm & np.isin(under // 8, [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI])
-    cv[water_open] = under[water_open]
     yy = np.arange(h)[:, None]
-    first_w = np.where(water_open[rim:].any(0), np.argmax(water_open[rim:], 0) + rim, h)
     foot = np.where(face.any(0), h - 1 - np.argmax(face[::-1], 0), rim + fh)
+    # none of the river shows inside the face, above its foot (review round 5, P5-1: a lump of the
+    # river's mask left a chip of waterline in a rock joint, a slot under it and a tent in the shore)
+    water_open &= ~((yy >= rim) & (yy <= foot[None, :]))
+    first_w = np.where(water_open[rim:].any(0), np.argmax(water_open[rim:], 0) + rim, h)
+    # and the shore under the face runs on one line: where a column's water climbs above its
+    # neighbours' (a spike of the mask), the water starts at their row
+    has_w = first_w < h
+    ref_w = ndi.median_filter(np.where(has_w, first_w, h), size=P(9, 0), mode='nearest')
+    spike = has_w & (ref_w < h) & (first_w < ref_w - 1) & (first_w - foot <= P(6, 0))
+    for x_ in np.nonzero(spike)[0]:
+        water_open[first_w[x_]:ref_w[x_], x_] = False
+    first_w = np.where(spike, ref_w, first_w)
+    cv[water_open] = under[water_open]
     gap = (yy > foot[None, :]) & (yy < first_w[None, :]) & (first_w[None, :] - foot[None, :] <= P(6, 0))
     e_ = tr.get('earth', 'crag')
     ec = e_ + '_cool' if e_ + '_cool' in FI else e_
     cv[gap] = C(ec, 1)
     cv[gap & (yy >= first_w[None, :] - 2)] = C(ec, 0)
+    # the spiked columns take the waterline and dark band of the nearest column that was not cut
+    for x_ in np.nonzero(spike)[0]:
+        for d_ in range(1, P(10, 0)):
+            xr_ = next((c_ for c_ in (x_ - d_, x_ + d_) if 0 <= c_ < w and not spike[c_] and first_w[c_] == first_w[x_]), None)
+            if xr_ is not None:
+                cv[first_w[x_]:first_w[x_] + 6, x_] = cv[first_w[xr_]:first_w[xr_] + 6, xr_]
+                break
     # wet pebbles and the odd stone along the wet foot, each lit on its top (eastward-edges 3.2;
     # review round 3, R3-4: the band was flat)
     gys, gxs = np.nonzero(gap & (yy < first_w[None, :] - 1))

@@ -59,18 +59,33 @@ class Scale(unittest.TestCase):
 
 
 class Water(unittest.TestCase):
-    def test_a_fall_is_scored_against_eastwards_white_water(self):
-        # (woodland water review, round 4) a waterfall's detail bar is Eastward 37's white water
-        # (bands.groups.water), its own group, not the prop band; other kinds keep theirs
+    def test_a_fall_is_scored_against_its_house_sibling(self):
+        # (woodland water review, round 5, W5-1) no official Eastward shot shows a falling sheet, and
+        # 37's box is mist over a lawn: a fall is scored against the woodland's sheet (groups.fall),
+        # and the mist is not a water band; other kinds keep theirs
         from scripts.review import bands as B
-        band = B.load_bands()['groups']['water']
-        self.assertGreater(band['tones'], 20)
-        self.assertGreater(band['shapes'], 50)
+        groups = B.load_bands()['groups']
+        self.assertNotIn('water', groups)
+        self.assertIn('mist', groups)
+        self.assertEqual((groups['fall']['tones'], groups['fall']['shapes']), (17.0, 39.5))
         rgb = np.zeros((40, 40, 3), np.uint8)
         alpha = np.ones((40, 40), bool)
-        self.assertEqual(A.group_of('waterfall', rgb, alpha), 'water')
+        self.assertEqual(A.group_of('waterfall', rgb, alpha), 'fall')
         self.assertEqual(A.group_of('bench', rgb, alpha), 'prop')
         self.assertEqual(A.group_of('boulder', rgb, alpha), 'stone')
+
+    def test_a_falls_grain_runs_down(self):
+        # (round 5, K5-1) streaks falling pass the direction check; a chip mosaic fails it
+        from scripts.review import bands as B
+        rng = np.random.default_rng(3)
+        lanes = rng.integers(60, 200, (1, 30))
+        streaks = np.repeat(np.repeat(lanes, 60, 0)[..., None], 3, 2).astype(np.uint8)
+        streaks[::20] = 255
+        chips = np.repeat(np.repeat(rng.integers(60, 200, (30, 15)), 2, 0), 2, 1)
+        chips = np.repeat(chips[..., None], 3, 2).astype(np.uint8)
+        m = np.ones((60, 30), bool)
+        self.assertTrue(B.fall_grain(streaks, m)['passed'])
+        self.assertFalse(B.fall_grain(chips, m)['passed'])
 
     def test_staircase_bank(self):
         a = lawn()

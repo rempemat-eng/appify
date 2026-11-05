@@ -1,7 +1,7 @@
 {
  "id": "kit/waterfall_4_tall",
  "file": "game/kit/props/art/waterfall_4_tall.png",
- "sha256": "363cac39962b573ac023800e08366433d40ca4f19948f49f5d4a752e61ec5b8f",
+ "sha256": "d2a3ac43715657eb4b8704eed8532fd0590d00f89bf65a5efea19d5c0f1a64a5",
  "kind": "waterfall",
  "biome": "woodland",
  "H": 74.0,
@@ -14,28 +14,41 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 30,
-   "tones": 21.0,
-   "shapes": 36.1
+   "tones": 15.466666666666667,
+   "shapes": 29.1
   },
   "band": {
-   "tones": 26.93,
-   "shapes": 68.92,
-   "boxes": 2,
-   "patches": 102,
-   "about": "Eastward 37's white water (the falls' mist), for falls: their sheet, crest and foam"
+   "tones": 17.0,
+   "shapes": 39.5,
+   "boxes": 1,
+   "patches": 12,
+   "source": "house sibling: the woodland sheet, game/zones/woodland/art/ground.png 220-256 x 772-880 (docs/reviews/2026-11-04-woodland-water.md, round 5)",
+   "about": "a falling sheet, crest and foam; no official Eastward shot shows one (bands.py)"
   },
-  "ratio": 0.524,
-  "tones_ratio": 0.78,
-  "shapes_ratio": 0.524,
+  "ratio": 0.737,
+  "tones_ratio": 0.91,
+  "shapes_ratio": 0.737,
   "passed": false,
-  "group": "water"
+  "group": "fall"
  },
  "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    23,
+    16,
+    93,
+    118
+   ],
+   "message": "kit/waterfall_4_tall: the pale is lit from the right (luminance rises 12 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
   {
    "detector": "detail.bar",
    "severity": "polish",
@@ -45,7 +58,7 @@
     132,
     127
    ],
-   "message": "kit/waterfall_4_tall: detail bar 0.52 of Eastward's water band (21.0 tones, 36.1 shapes a patch against 26.93, 68.92)",
+   "message": "kit/waterfall_4_tall: detail bar 0.74 of Eastward's fall band (15.5 tones, 29.1 shapes a patch against 17.0, 39.5)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -57,15 +70,15 @@
     132,
     127
    ],
-   "message": "kit/waterfall_4_tall: only 26% of the silhouette is drawn in an edge tone",
+   "message": "kit/waterfall_4_tall: only 22% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-05",
-  "note": "docs/reviews/2026-11-04-woodland-water.md, round 5 (76241d98). K4-1's flat slabs are gone (0 columns one tone over 40 rows) and K4-2 (crest in 2 to 5 broken runs), K4-3 (soft shade under the foam, spray as a fan) are fixed, but the sheet fails anew, K5-1: it is a mosaic of 2-texel chips with no streak running down. With frame 0 overlaid, tone changes between vertical neighbours are as common as between horizontal ones (horizontal/vertical ratio 0.92 to 1.33; the one-cell pieces 0.92 to 1.02) and the mean vertical run is 1.8 to 2.6 texels; the woodland sheet, the house sibling, has ratio 10.2 and runs of 17.7. At 1x beside Bramble and in the kitlab_tiers bake it reads as blue static or crumbling ice, not falling water. The west edge is ruler-straight at x 24 in every row and the sheet does not swell at the foot. Fix: streak lanes 1 to 3 texels wide whose segments run 8 to 30 texels down (as rocks.fall), broken and offset, in 4 to 5 tones, keep the lit west and darker east, drop the fleck family to a few glints; test the ratio (at least 4) and the median vertical run (at least 6). The detail.bar band it passes (groups.water) measures mist over a lawn and a tree in Eastward 37, not water (finding W5-1), so its 0.52 to 0.57 is no evidence either way."
+  "verdict": "pending",
+  "date": "2026-11-04",
+  "note": "redrawn after round 5 of the independent audit (K5-1): structures.fall_sheet draws the sheet as rocks.fall draws the woodland's, in streak lanes 1 to 3 texels wide whose runs fall 12 to 30 texels, broken and offset lane to lane, a lit west part, a darker east edge, a few glints, the west edge wandering and both edges swelling over the last third; scored against the house sibling (groups.fall, W5-1) with the direction check detail.fall_grain; its frames are waterfall_4_tall_flow.png. Not yet reviewed by an independent detail-auditor."
  }
 }

@@ -196,7 +196,7 @@ def log_steps(force: bool, cells: int = 2) -> None:
     }, force)
 
 
-FALL_FRAMES, FALL_PERIOD, FALL_FPS = 8, 24, 10      # the fall's loop: 8 frames, the streaks 3 texels a frame
+FALL_FRAMES, FALL_PERIOD, FALL_FPS = 8, 48, 10      # the fall's loop: 8 frames, the streaks 6 texels a frame
 
 
 CREST_MAX = 3      # the deepest the white water under the lip breaks (texels below the bend)
@@ -260,21 +260,26 @@ def crest_bow(w: int, seed: int = 0) -> np.ndarray:
 
 def sheet_outline(x0: int, w: int, y0: int, y1: int, seed: int) -> np.ndarray:
     """The sheet's columns per row (texels; rows y0 .. y1 - 1, each (xl, xr)): exactly the channel's
-    width at the lip and through the crest, below it each edge wandering a texel in now and then
-    (review round 4, K4-1: the silhouette was a perfect rectangle), and swelling a texel or two in
-    the last rows where it meets the pool. Above the last five rows it never leaves x0 .. x0 + w
-    (Matt, 2 Nov: the sheet never spreads over the stones either side)."""
+    width at the lip and through the crest; below it each edge wanders a texel in and out of line
+    (review round 5, K5-1: the west edge was ruler-straight), and over the last third both edges
+    swell outward by one, then two texels as the sheet spreads toward the pool, as the woodland's
+    does. Above the last third it never leaves x0 .. x0 + w (Matt, 2 Nov: the sheet never spreads
+    over the stones either side)."""
     rng = np.random.default_rng(seed * 131 + w)
     pl, pr = rng.uniform(0.0, 2.0 * math.pi, 2)
     out = np.zeros((max(0, y1 - y0), 2), np.int32)
+    n = max(1, y1 - y0)
     for k, Y in enumerate(range(y0, y1)):
         dy = Y - y0
+        f = dy / n
         il = ir = 0
-        if dy >= 8 and Y < y1 - 5:
-            il = int(0.35 * math.sin(dy / 3.7 + pl) + 0.45 * math.sin(dy / 1.7 + 2.0 * pl) > 0.42)
-            ir = int(0.35 * math.sin(dy / 3.1 + pr) + 0.45 * math.sin(dy / 2.3 + 2.0 * pr) > 0.3)
-        sw = 0 if Y < y1 - 4 else (1 if Y < y1 - 2 else 2)
-        out[k] = (x0 + il - sw, x0 + w - ir + sw)
+        if dy >= 8:
+            il = int(0.5 * math.sin(dy / 4.3 + pl) + 0.35 * math.sin(dy / 2.1 + 2.0 * pl) > 0.3)
+            ir = int(0.5 * math.sin(dy / 3.7 + pr) + 0.35 * math.sin(dy / 1.9 + 2.0 * pr) > 0.25)
+        sw = 0 if f < 2.0 / 3.0 else (1 if f < 0.88 else 2)
+        if sw:
+            il, ir = il - sw, ir - sw                         # the swell takes over the wander
+        out[k] = (x0 + il, x0 + w - ir)
     return out
 
 
@@ -288,50 +293,28 @@ def sheet_mask(shape, x0: int, w: int, y0: int, y1: int, seed: int) -> np.ndarra
     return m
 
 
-def _lanes(x0: int, w: int, seed: int, fine: bool = False) -> list:
-    """The sheet's streak lanes across x0 .. x0 + w: (first column, width 1 to 3, phase, pattern)
-    where pattern holds FALL_PERIOD entries, each a tone offset for its row in the loop: a long lit
-    run and a short broken one of a different tone, a darker trough behind each, the body between."""
+def _lanes(x0: int, w: int, seed: int) -> list:
+    """The sheet's streak lanes across x0 .. x0 + w, as rocks.fall draws the woodland's (review round
+    5, K5-1): (first column, width 1 to 3, phase, pattern, jog), where pattern holds FALL_PERIOD
+    entries, one per row of the loop: a lit run 12 to 30 texels long (2), on some lanes a second,
+    paler one 8 to 14 long (1), the body between (0), and on some lanes a glint of two rows in
+    its run (3) on one lane in five. Each lane its own phase, so the runs are broken and offset lane to lane; the jog
+    sets the lane's last column a row lower, so a wide lane's run ends raggedly."""
     rng = np.random.default_rng(seed * 977 + w)
     lanes, x = [], x0
     while x < x0 + w:
         lw = int(rng.choice([1, 1, 2, 2, 3]))
         pat = np.zeros(FALL_PERIOD, np.int32)
-        L1 = int(rng.integers(4, 12))
-        if fine:
-            # a one-cell sheet: lanes two texels wide (a one-texel piece dissolves into the white
-            # water's grain at phone size), shorter runs
-            lw, L1 = 2, int(rng.integers(3, 8))
-        a1 = int(rng.integers(0, FALL_PERIOD))
-        L2 = int(rng.integers(2, 5))
-        a2 = (a1 + L1 + int(rng.integers(2, max(3, FALL_PERIOD - L1 - L2 - 1)))) % FALL_PERIOD
-        for j in range(L1):
-            pat[(a1 + j) % FALL_PERIOD] = 2 if j < L1 - 2 else 1       # the run, fading at its tail
-        for j in range(L2):
-            pat[(a2 + j) % FALL_PERIOD] = 1
-        # a third fleck of light, 2 to 3 texels, where the run's tail has room
-        a3 = (a2 + L2 + int(rng.integers(2, 5))) % FALL_PERIOD
-        L3 = int(rng.integers(2, 4))
-        if all(pat[(a3 + j) % FALL_PERIOD] == 0 and pat[(a3 + j + 1) % FALL_PERIOD] == 0 for j in range(-1, L3)):
-            for j in range(L3):
-                pat[(a3 + j) % FALL_PERIOD] = 2 if j == 0 else 1
-        else:
-            a3, L3 = a2, L2
-        for a_, L_ in ((a1, L1), (a2, L2), (a3, L3)):
-            pat[(a_ + L_) % FALL_PERIOD] = -1                           # the trough behind it
-        if fine == 'pieces':
-            # a one-cell sheet's fleck family: the period cut into pieces of 2 to 4 texels, each its own tone
-            # (lit run, paler, trough, body), never two alike in a row, offset lane to lane
-            pat = np.zeros(FALL_PERIOD, np.int32)
-            y_, last = 0, None
-            while y_ < FALL_PERIOD:
-                L_ = int(rng.integers(2, 5))
-                if y_ + L_ > FALL_PERIOD - 2 and y_ + L_ != FALL_PERIOD:
-                    L_ = FALL_PERIOD - y_
-                v_ = int(rng.choice([q for q in (2, 1, 0, -1) if q != last]))
-                pat[y_:y_ + L_] = v_
-                y_, last = y_ + L_, v_
-        lanes.append((x, lw, int(rng.integers(0, FALL_PERIOD)), pat, 0 if fine else int(rng.integers(0, 2))))
+        L1 = int(rng.integers(12, 31))
+        pat[:L1] = 2
+        if rng.random() < 0.3 and FALL_PERIOD - L1 >= 16:
+            L2 = int(rng.integers(8, min(15, FALL_PERIOD - L1 - 5)))
+            a2 = L1 + int(rng.integers(3, FALL_PERIOD - L1 - L2 - 1))
+            pat[a2:a2 + L2] = 1
+        if rng.random() < 0.15:
+            g = int(rng.integers(2, max(3, L1 - 3)))
+            pat[g:g + 2] = 3
+        lanes.append((x, lw, int(rng.integers(0, FALL_PERIOD)), pat, int(rng.integers(0, 2))))
         x += lw
     return lanes
 
@@ -376,33 +359,25 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
             elif (k == 2 and (X + Y) % 2 == 0) or (k == 3 and (X + 2 * Y) % 4 == 0):
                 cv[Y, X] = C('water', 3)                                         # fading up the channel
     outline = sheet_outline(x0, w, y0, y1, seed)
-    lanes = _lanes(x0, w, seed, fine=w < 40)
     lane_of = {}
-    for n_, (lx, lw, ph, pat, jog) in enumerate(lanes):
+    for n_, (lx, lw, ph, pat, jog) in enumerate(_lanes(x0, w, seed)):
         for j in range(lw):
-            lane_of[lx + j] = (ph, pat, jog if j == lw - 1 else 0)
+            # every other lane's water a step deeper, so the lanes read as strands side by side
+            lane_of[lx + j] = (ph, pat, jog if (j == lw - 1 and lw > 1) else 0, n_ % 2)
     shift = t * FALL_PERIOD // FALL_FRAMES
-    # a one-cell sheet is too narrow for the lanes alone to carry Eastward's white-water detail (the
-    # detail bar against groups.water): a second family of short darker flecks between the runs on
-    # their own phases, a glassy band under the crest, and a broken seam where the lit half meets the
-    # shaded half
-    narrow = w < 40
-    lane_b = {}
-    if narrow:
-        for (lx, lw, ph, pat, jog) in _lanes(x0, w, seed + 101, fine='pieces'):
-            for j in range(lw):
-                lane_b[lx + j] = (ph, pat)
     for k, Y in enumerate(range(y0, y1)):
         if not (0 <= Y < H):
             continue
         xl, xr = int(outline[k][0]), int(outline[k][1])
         f = (Y - y0) / max(1.0, (y1 - y0))
         for X in range(max(0, xl), min(W, xr)):
-            s = (X + 0.5 - xl) / max(1.0, xr - xl)                 # 0 west .. 1 east across the ribbon
+            # 0 west .. 1 east across the ribbon, fixed to the channel (not the wandering edge), so a
+            # lane keeps its tones all the way down
+            s = min(0.999, max(0.0, (X + 0.5 - x0) / w))
             i = min(w - 1, max(0, X - x0))
             dy = Y - y0 - int(bow[i])
             d_ = int(foam[i]) if x0 <= X < x0 + w else 0
-            tt = 4 if s < 0.18 else (3 if s < 0.6 else (2 if s < 0.86 else 1))
+            tt = 4 if s < 0.2 else (3 if s < 0.6 else (2 if s < 0.85 else 1))
             if f > 0.78 + 0.05 * math.sin((X - x0) * 1.7 + seed) + 0.03 * math.sin((X - x0) * 0.61):
                 tt = max(1, tt - 1)                                 # thinner and darker near the foot
             if Y - y0 < 2 or dy < 2:
@@ -415,45 +390,21 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
                 c = C('water', 2)                                   # its shade
             elif not d_ and dy < 6:
                 c = C('water', 3) if s < 0.45 else C('water', 2)    # a gap: the darker sheet going on
-            elif narrow and dy < 9 + (X - x0) % 2 and s < 0.8:
-                # the glassy band under the crest, broken where a lane's light starts early
-                c = C('water', 5) if ((X - x0) // 2 + dy) % 3 == 0 else C('water', 4 if s < 0.5 else 3)
             else:
-                ph, pat, jog = lane_of.get(X, (0, np.zeros(FALL_PERIOD, np.int32), 0))
-                v = int(pat[(Y - y0 + jog - shift + ph) % FALL_PERIOD]) if dy > 6 else 0
-                if v > 0:
-                    # the sheet's surface varies down its height (fixed to the face, so the loop still
-                    # closes): a run passing a thinner stretch dims a step, so a tall sheet does not
-                    # repeat its lane's pattern every FALL_PERIOD rows
-                    band_ = ((Y - y0 + ph * 3) // 9) * 7919 + (X - x0 - jog) // 2 * 104729 + seed * 31
-                    if (band_ * 2654435761 >> 7) % 5 < 2:
-                        v -= 1
-                if s >= 0.86:
+                ph, pat, jog, deep = lane_of.get(X, (0, np.zeros(FALL_PERIOD, np.int32), 0, 0))
+                v = int(pat[(Y - y0 - jog - shift + ph) % FALL_PERIOD]) if dy > 6 else 0
+                if s >= 0.85:
                     # the shaded east edge: broken dark streaks on the darkest body
-                    c = C('water', 2) if v > 0 else (C('water', 0) if v < 0 else C('water', tt))
-                    if narrow and v == 0:
-                        phb, patb = lane_b.get(X, (0, np.zeros(FALL_PERIOD, np.int32)))
-                        if int(patb[(Y - y0 - shift + phb + 11) % FALL_PERIOD]) == 1:
-                            c = C('water', 3)                       # a glint on the shaded edge
+                    c = C('water', 2) if v >= 2 else C('water', tt)
+                elif v == 3:
+                    c = C('snow', 5) if s < 0.6 else C('water', 5)  # a glint
                 elif v == 2:
-                    c = C('snow', 5) if s < 0.32 else (C('snow', 4) if s < 0.5 else (C('water', 5) if s < 0.72 else C('water', 4)))
+                    # a lit run: white on the lit west, pale blue-white in the middle, pale blue east
+                    c = C('snow', 5) if s < 0.3 else (C('snow', 4) if s < 0.5 else (C('water', 5) if s < 0.7 else C('water', 4)))
                 elif v == 1:
                     c = C('water', 5) if s < 0.55 else C('water', 4)
-                elif v == -1:
-                    c = C('water', max(1, tt - 1))                  # the trough behind a streak
                 else:
-                    c = C('water', tt)
-                    if narrow and v == 0:
-                        phb, patb = lane_b.get(X, (0, np.zeros(FALL_PERIOD, np.int32)))
-                        vb = int(patb[(Y - y0 - shift + phb + 11) % FALL_PERIOD])
-                        if vb == 2:
-                            c = C('water', max(0, tt - 1))          # a darker fleck between the runs
-                        elif vb == 1:
-                            c = C('water', min(5, tt + 1))          # or a paler one
-                        elif vb == -1 and s > 0.3:
-                            c = C('water', max(0, tt - 2))          # or a deep one
-                        elif 0.56 <= s < 0.64 and (Y - y0 - shift) % 5 < 3:
-                            c = C('water', max(1, tt - 1))          # the broken seam mid-sheet
+                    c = C('water', max(1, tt - deep))
             cv[Y, X] = c
     # where it lands (rocks.plunge, shared with the woodland's fall; the woodland review, 4 Nov):
     # broken clumps of churning white in 4 to 5 tones within the foot plus a few texels, flecks

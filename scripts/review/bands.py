@@ -23,10 +23,19 @@ it is drawn (tones and shapes a patch at least the band's least, times GROUND_TO
 
     python3 -m scripts.review.bands --ground <folder of Eastward shots>     rebuilds groups.ground
 
-The water band (groups.water) is Eastward 37's white water, measured the same way, and a waterfall
-is scored against it, not against the props:
+Falls (woodland water review, round 5, W5-1). No official Eastward shot shows a falling sheet of
+water: not the Steam store's 11 shots of the base game (all in the local set), not the 5 of the
+Octopia DLC, nor the press images checked (Gematsu, 80.lv), searched on 5 Nov 2026. So a fall is
+scored against its house sibling, the woodland's painted sheet (groups.fall, 17.0 tones and 39.5
+shapes a patch through the same pipe), plus a direction check (fall_grain: changes across at least
+4 x as often as down, a median vertical run of at least 6), never against borrowed mist. groups.mist
+is 37's mist over a lawn and pines (round 4 called it "white water", wrongly; it is isotropic and
+rewards a chip mosaic), kept as a number only:
 
-    python3 -m scripts.review.bands --water <folder of Eastward shots>      rebuilds groups.water
+    python3 -m scripts.review.bands --mist <folder of Eastward shots>       rebuilds groups.mist
+
+When an official Eastward shot with a falling sheet is found, measure the sheet into a group of its
+own (its source noted on its box) and score falls against it.
 """
 from __future__ import annotations
 
@@ -89,7 +98,7 @@ def load_bands() -> dict:
 
 
 def score(rgb: np.ndarray, mask: np.ndarray, H: float, group: str = 'prop') -> dict:
-    """Ours against the Eastward band for `group` (prop, foliage, stone, water); ratio 1 means
+    """Ours against the Eastward band for `group` (prop, foliage, stone; fall is the house sibling); ratio 1 means
     as detailed as Eastward's mean."""
     bands = load_bands().get('groups', {})
     band = bands.get(group) or bands.get('prop')
@@ -101,6 +110,40 @@ def score(rgb: np.ndarray, mask: np.ndarray, H: float, group: str = 'prop') -> d
     r = min(rt, rs)
     return dict(ours=ours, band=band, ratio=round(float(r), 3), tones_ratio=round(float(rt), 3),
                 shapes_ratio=round(float(rs), 3), passed=bool(r >= TOLERANCE))
+
+
+GRAIN_RATIO = 4.0          # a falling sheet: changes across at least 4 x as often as down
+GRAIN_RUN = 6              # and a median vertical run of one colour of at least 6 texels
+
+
+def fall_grain(rgb: np.ndarray, mask: np.ndarray, step: float = 8.0) -> dict:
+    """The direction of a falling sheet's marks (woodland review, round 5, K5-1): the share of
+    horizontal and of vertical neighbours inside `mask` whose lightness differs by more than `step`,
+    their ratio (across / down; the woodland's sheet: 10.2, a chip mosaic about 1), and the median
+    length of the vertical runs of one colour. Streaks that fall run long down and change across."""
+    from .core import lum
+    L = lum(rgb[..., :3]).astype(float)
+    hm = mask[:, 1:] & mask[:, :-1]
+    vm = mask[1:, :] & mask[:-1, :]
+    h = float((np.abs(np.diff(L, axis=1)) > step)[hm].mean()) if hm.any() else 0.0
+    v = float((np.abs(np.diff(L, axis=0)) > step)[vm].mean()) if vm.any() else 0.0
+    key = (rgb[..., 0].astype(np.int64) << 16) | (rgb[..., 1].astype(np.int64) << 8) | rgb[..., 2]
+    runs = []
+    for x in range(rgb.shape[1]):
+        col, m = key[:, x], mask[:, x]
+        n = 0
+        for y in range(rgb.shape[0]):
+            if m[y] and n and col[y] == col[y - 1]:
+                n += 1
+            else:
+                if n:
+                    runs.append(n)
+                n = 1 if m[y] else 0
+        if n:
+            runs.append(n)
+    return dict(across=round(h, 4), down=round(v, 4), ratio=round(h / max(v, 1e-6), 2),
+                median_run=float(np.median(runs)) if runs else 0.0,
+                passed=bool(h / max(v, 1e-6) >= GRAIN_RATIO and (np.median(runs) if runs else 0) >= GRAIN_RUN))
 
 
 def contrast(rgb: np.ndarray, mask: np.ndarray, H: float) -> float:
@@ -171,22 +214,28 @@ def build_ground(folder: str) -> dict:
     return g
 
 
-# Eastward's white water (review round 4 of the woodland water: falls were scored against the prop
-# band, the wrong yardstick): the mist and white water of the falls in 37, box-averaged from its
-# 1920 x 1080 shot to 640 x 360 (a JPEG at 3x keeps its soft edge only that way), native px.
-EW_WATER = {'37': [(560, 190, 640, 300, 'white_water'), (560, 170, 640, 300, 'white_water_top')]}
+# 37: mist over lawn and pines (round 5, W5-1: round 4 measured this box as "white water"; it holds
+# no water), box-averaged from its 1920 x 1080 shot to 640 x 360, native px. Not a band for falls.
+EW_MIST = {'37': [(560, 190, 640, 300, 'mist_over_lawn_and_pines'), (560, 170, 640, 300, 'mist_over_lawn_and_pines_top')]}
+
+# the house sibling a fall is scored against until an Eastward sheet is measured (round 5, W5-1):
+# the woodland's sheet, game/zones/woodland/art/ground.png 220-256 x 772-880, frame 0 overlaid,
+# through jpeg_roundtrip and patch_counts as the auditor measured it
+FALL_BAND = dict(tones=17.0, shapes=39.5, boxes=1, patches=12, source='house sibling: the woodland sheet, '
+                 'game/zones/woodland/art/ground.png 220-256 x 772-880 (docs/reviews/2026-11-04-woodland-water.md, round 5)',
+                 about='a falling sheet, crest and foam; no official Eastward shot shows one (bands.py)')
 
 
 def build_water(folder: str) -> dict:
-    """Measures EW_WATER in a local copy of the shots into groups.water, the band a waterfall (its
-    sheet, crest and foam) is scored against (assets.group_of: kind 'waterfall'). Its own group: the
-    prop, stone, foliage and ground bands and construct.py's checks are untouched."""
+    """Measures EW_MIST in a local copy of the shots into groups.mist (a number only), and writes
+    groups.fall (FALL_BAND), the band a waterfall is scored against (assets.group_of). The prop,
+    stone, foliage and ground bands and construct.py's checks are untouched."""
     from PIL import Image as _I
     d = load_bands()
     adult = d.get('adult_native', 54)
     Hh = d.get('H', 74)
     rows = []
-    for shot, boxes in EW_WATER.items():
+    for shot, boxes in EW_MIST.items():
         im = _I.open(os.path.join(folder, shot + '.jpg')).convert('RGB')
         nat = np.asarray(im.resize((640, 360), _I.BOX))
         for x0, y0, x1, y1, name in boxes:
@@ -194,14 +243,16 @@ def build_water(folder: str) -> dict:
             s = Hh / adult
             big = np.asarray(crop.resize((int(crop.width * s), int(crop.height * s)), _I.NEAREST))
             pc = patch_counts(big, np.ones(big.shape[:2], bool), Hh)
-            rows.append(dict(shot=f'eastward/{shot}.jpg', box=[x0, y0, x1, y1], name=name, group='water',
+            rows.append(dict(shot=f'eastward/{shot}.jpg', box=[x0, y0, x1, y1], name=name, group='mist',
                              patches=pc['patches'], tones=round(pc['tones'], 2), shapes=round(pc['shapes'], 2)))
     g = dict(tones=round(float(np.mean([r['tones'] for r in rows])), 2),
              shapes=round(float(np.mean([r['shapes'] for r in rows])), 2), boxes=len(rows),
              patches=int(sum(r['patches'] for r in rows)),
-             about="Eastward 37's white water (the falls' mist), for falls: their sheet, crest and foam")
-    d['boxes'] = [b for b in d.get('boxes', []) if b.get('group') != 'water'] + rows
-    d.setdefault('groups', {})['water'] = g
+             about="37: mist over lawn and pines; not water, not a band for falls (round 5, W5-1)")
+    d['boxes'] = [b for b in d.get('boxes', []) if b.get('group') not in ('water', 'mist')] + rows
+    d.setdefault('groups', {}).pop('water', None)
+    d['groups']['mist'] = g
+    d['groups']['fall'] = dict(FALL_BAND)
     with open(BANDS, 'w') as f:
         json.dump(d, f, indent=1)
         f.write('\n')
@@ -212,9 +263,9 @@ if __name__ == '__main__':
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument('--ground', help='folder of the Eastward shots (local only): rebuild groups.ground')
-    ap.add_argument('--water', help='folder of the Eastward shots (local only): rebuild groups.water')
+    ap.add_argument('--mist', help='folder of the Eastward shots (local only): rebuild groups.mist and groups.fall')
     a_ = ap.parse_args()
     if a_.ground:
         print(json.dumps(build_ground(a_.ground), indent=1))
-    if a_.water:
-        print(json.dumps(build_water(a_.water), indent=1))
+    if a_.mist:
+        print(json.dumps(build_water(a_.mist), indent=1))
