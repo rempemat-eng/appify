@@ -1,0 +1,535 @@
+{
+  "_about": "The riverside as a zone plan (Claude E, 26 Oct; assignment to-all-assignments-1025), shaped like crossroads.json. World px local to the zone; origin_on_canvas (6456, 2768) is valley.json's riverside, cut at Crossroads' north edge (y 3248) so the two never overlap: the millpond sits 104 px north of valley.json's (that plan is canvas scale; this one is the game's), the mill on its race at the terrace step, the race leaving south through Crossroads' east bank (terrace_bank_e) to the Sleepwater. The miller's cottage, the orchard and the beehives along a hedge; the garden's east gate in the west; the Foothill Road's foot south-east. Every rectangle is a blockout placeholder.",
+  "id": "riverside",
+  "owner": "claude-e",
+  "origin_on_canvas": [
+    6456,
+    2768
+  ],
+  "box": [
+    0,
+    0,
+    480,
+    480
+  ],
+  "screens": [
+    {
+      "id": "orchard",
+      "rect": [
+        160,
+        120,
+        320,
+        180
+      ],
+      "why": "the orchard and the hives along the hedge"
+    },
+    {
+      "id": "millpond",
+      "rect": [
+        0,
+        280,
+        320,
+        180
+      ],
+      "why": "the millpond, the mill on its race, the garden's east gate"
+    },
+    {
+      "id": "miller",
+      "rect": [
+        160,
+        300,
+        320,
+        180
+      ],
+      "why": "the miller's cottage and the lane down to the Foothill Road"
+    }
+  ],
+  "stages": [
+    {
+      "id": "stopped",
+      "why": "the slice: the wheel stopped, the race choked with storm wrack"
+    },
+    {
+      "id": "turning",
+      "if": {
+        "flags": [
+          "mill_cleared"
+        ]
+      },
+      "why": "act 1: the race cleared, the wheel turns"
+    }
+  ],
+  "tiers": [
+    {
+      "id": "terrace",
+      "tier": 5,
+      "colour": "#6f8a52",
+      "outline": [
+        [
+          0,
+          0
+        ],
+        [
+          408,
+          0
+        ],
+        [
+          408,
+          480
+        ],
+        [
+          0,
+          480
+        ]
+      ]
+    },
+    {
+      "id": "shoulder",
+      "tier": 6,
+      "colour": "#86965e",
+      "outline": [
+        [
+          440,
+          0
+        ],
+        [
+          480,
+          0
+        ],
+        [
+          480,
+          480
+        ],
+        [
+          440,
+          480
+        ]
+      ]
+    }
+  ],
+  "faces": [
+    {
+      "id": "shoulder_side",
+      "rect": [
+        408,
+        0,
+        32,
+        448
+      ],
+      "why": "the Fern hills' shoulder (valley.json tier 6) rises east; its side band, no way up here"
+    }
+  ],
+  "routes": [
+    {
+      "id": "garden_east",
+      "kind": "path",
+      "width": 24,
+      "points": [
+        [
+          0,
+          304
+        ],
+        [
+          16,
+          304
+        ],
+        [
+          16,
+          288
+        ],
+        [
+          192,
+          288
+        ],
+        [
+          192,
+          448
+        ],
+        [
+          320,
+          448
+        ],
+        [
+          320,
+          480
+        ]
+      ],
+      "why": "valley.json's garden_east: from the garden's east gate past the pond and the cottage to the Foothill Road's foot"
+    },
+    {
+      "id": "orchard_walk",
+      "kind": "path",
+      "width": 16,
+      "points": [
+        [
+          192,
+          288
+        ],
+        [
+          192,
+          200
+        ],
+        [
+          232,
+          200
+        ]
+      ],
+      "why": "into the orchard to the hives"
+    }
+  ],
+  "stairs": [],
+  "places": [
+    {
+      "id": "millpond",
+      "kind": "pond",
+      "rect": [
+        32,
+        336,
+        136,
+        88
+      ],
+      "colour": "#3a6a8a",
+      "why": "fed by the brook from the garden (a culvert under the east gate), held by the mill's dam"
+    },
+    {
+      "id": "orchard",
+      "kind": "orchard",
+      "rect": [
+        224,
+        168,
+        168,
+        120
+      ],
+      "colour": "#7d9258",
+      "why": "apples in rows 32 to 40 apart (size guide), the hives along its north hedge"
+    },
+    {
+      "id": "hedge",
+      "kind": "hedge",
+      "rect": [
+        224,
+        152,
+        168,
+        12
+      ],
+      "colour": "#4a6a3a"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "mill",
+      "name": "The mill",
+      "rect": [
+        96,
+        430,
+        48,
+        44
+      ],
+      "door": [
+        120,
+        474
+      ],
+      "colour": "#8a7058",
+      "why": "on the terrace step, its wheel on the race at its east wall"
+    },
+    {
+      "id": "millers_cottage",
+      "name": "Miller's cottage",
+      "rect": [
+        232,
+        368,
+        56,
+        40
+      ],
+      "door": [
+        260,
+        408
+      ],
+      "colour": "#9b7b55"
+    }
+  ],
+  "props": [
+    {
+      "id": "pond",
+      "kind": "water",
+      "rect": [
+        32,
+        336,
+        136,
+        88
+      ],
+      "solid": true,
+      "colour": "#3a6a8a"
+    },
+    {
+      "id": "race",
+      "kind": "water",
+      "rect": [
+        144,
+        424,
+        16,
+        56
+      ],
+      "solid": true,
+      "colour": "#3a6a8a",
+      "why": "the race from the pond past the wheel and out south (into Crossroads' east bank)"
+    },
+    {
+      "id": "wheel",
+      "kind": "wheel",
+      "rect": [
+        144,
+        436,
+        16,
+        28
+      ],
+      "solid": true,
+      "colour": "#6a5038"
+    },
+    {
+      "id": "race_wrack",
+      "kind": "rubble",
+      "rect": [
+        144,
+        416,
+        16,
+        12
+      ],
+      "solid": true,
+      "colour": "#5a4a30",
+      "if": {
+        "not_flags": [
+          "mill_cleared"
+        ]
+      },
+      "why": "storm wrack choking the race"
+    },
+    {
+      "id": "hives",
+      "kind": "hives",
+      "rect": [
+        240,
+        168,
+        72,
+        16
+      ],
+      "solid": true,
+      "colour": "#9a8a60"
+    },
+    {
+      "id": "sacks",
+      "kind": "sacks",
+      "rect": [
+        60,
+        448,
+        28,
+        16
+      ],
+      "solid": true,
+      "colour": "#a89870",
+      "why": "flour sacks at the mill door: cover"
+    },
+    {
+      "id": "hedge_body",
+      "kind": "hedge",
+      "rect": [
+        224,
+        152,
+        168,
+        12
+      ],
+      "solid": true,
+      "colour": "#4a6a3a"
+    }
+  ],
+  "things": [
+    {
+      "id": "waystone",
+      "speaker": "waystone",
+      "verb": "Touch",
+      "at": [
+        208,
+        456
+      ],
+      "why": "at the Foothill Road's foot, where the riverside meets the way to Cogsworth"
+    },
+    {
+      "id": "sluice",
+      "speaker": "mill_sluice",
+      "verb": "Open",
+      "at": [
+        168,
+        420
+      ],
+      "radius": 20,
+      "if": {
+        "flags": [
+          "mill_cleared"
+        ]
+      },
+      "why": "the sluice that sets the wheel turning"
+    }
+  ],
+  "camps": [
+    {
+      "id": "orchard",
+      "enemies": [
+        [
+          260,
+          220
+        ],
+        [
+          300,
+          250
+        ],
+        [
+          350,
+          210
+        ],
+        [
+          330,
+          270
+        ]
+      ],
+      "roles": [
+        "rusher",
+        "shooter",
+        "rusher",
+        "shield"
+      ],
+      "why": "shardstruck among the apple trees (the hives are why the miller cannot reach them)"
+    }
+  ],
+  "spawns": [
+    {
+      "id": "start",
+      "at": [
+        192,
+        300
+      ]
+    },
+    {
+      "id": "garden",
+      "at": [
+        16,
+        304
+      ]
+    },
+    {
+      "id": "foothill",
+      "at": [
+        320,
+        468
+      ]
+    },
+    {
+      "id": "crossroads",
+      "at": [
+        320,
+        468
+      ]
+    }
+  ],
+  "doors": [
+    {
+      "id": "to_garden",
+      "rect": [
+        0,
+        288,
+        8,
+        32
+      ],
+      "to": "garden",
+      "spawn": "riverside"
+    },
+    {
+      "id": "to_foothill",
+      "rect": [
+        304,
+        472,
+        32,
+        8
+      ],
+      "to": "park",
+      "spawn": "riverside",
+      "why": "down to the park and the Foothill Road (Claude H's Cogsworth beyond); the park is a later zone"
+    }
+  ],
+  "combat_spaces": [
+    {
+      "id": "orchard_arena",
+      "kind": "arena",
+      "rect": [
+        224,
+        168,
+        168,
+        120
+      ],
+      "camp": "orchard",
+      "cover": [
+        "hedge_body",
+        "hives"
+      ],
+      "why": "rows of trees break sight lines: cover for ranged play, the hedge a wall at its north"
+    },
+    {
+      "id": "pond_bank",
+      "kind": "edge",
+      "rect": [
+        32,
+        320,
+        136,
+        16
+      ],
+      "why": "the pond's north bank: water as a hazard edge (knock-back into the shallows)"
+    },
+    {
+      "id": "mill_yard",
+      "kind": "cover",
+      "rect": [
+        40,
+        432,
+        100,
+        40
+      ],
+      "why": "the sacks and the mill's wall"
+    }
+  ],
+  "quest_spots": [
+    {
+      "id": "race_wrack",
+      "at": [
+        152,
+        420
+      ],
+      "why": "clear the race and open the sluice: the wheel turns (act 1, mill_cleared)"
+    },
+    {
+      "id": "miller",
+      "at": [
+        260,
+        420
+      ],
+      "why": "the miller at the cottage door (a resident for K)"
+    },
+    {
+      "id": "hives",
+      "at": [
+        276,
+        196
+      ],
+      "why": "the orchard camp is in the way of the hives"
+    }
+  ],
+  "rest_spots": [
+    {
+      "id": "pond_bench",
+      "at": [
+        100,
+        312
+      ],
+      "why": "a bench on the pond's north bank"
+    }
+  ],
+  "dungeon_entrance": null
+}

@@ -1,5 +1,6 @@
 {
   "woodland": "res://zones/woodland/woodland.tscn",
   "crossroads": "res://zones/crossroads/crossroads.tscn",
-  "undercroft": "res://zones/undercroft/undercroft.tscn"
+  "undercroft": "res://zones/undercroft/undercroft.tscn",
+  "halt": "res://zones/halt/halt.tscn"
 }

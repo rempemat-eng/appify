@@ -68,7 +68,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Coast Path      | path     | Driftwood                                    | Lullford                                        | 2984        | 74.6     | 56             | 0            | 1                  | -      |
 | Headland Lane   | path     | the Headland's neck, east of Driftwood       | the Headland tip                                | 832         | 20.8     | 14             | 2            | 0                  | W1     |
 | Shell Bar       | bar      | the Headland tip                             | Lagoon Landing                                  | 792         | 19.8     | 15             | 1            | 0                  | W4     |
-| Drover's Road   | road     | the valley halt                              | Dust Gulch                                      | 4528        | 113.2    | 90             | 4            | 22                 | W5     |
+| Drover's Road   | road     | the valley halt                              | Dust Gulch                                      | 4520        | 113.0    | 90             | 4            | 22                 | W5     |
 | Lode Track      | path     | Dust Gulch                                   | the Lode                                        | 840         | 21.0     | 18             | 2            | 2                  | -      |
 | Canyon Road     | path     | Dust Gulch                                   | Hearthold                                       | 3984        | 99.6     | 75             | 1            | 28                 | W6     |
 | Forge Stair     | path     | Hearthold                                    | the Ember forge                                 | 216         | 5.4      | 4              | 3            | 3                  | -      |
@@ -95,7 +95,7 @@ How far each route lies from the block-out's polyline (`docs/vision/research/blo
 | Coast Path      | 24   | 96      | 2456             | 2984 | 24              |
 | Headland Lane   | 34   | 125     | 544              | 832  | 24              |
 | Shell Bar       | 30   | 73      | 582              | 792  | 40              |
-| Drover's Road   | 28   | 106     | 3616             | 4528 | 40              |
+| Drover's Road   | 29   | 106     | 3616             | 4520 | 40              |
 | Lode Track      | 20   | 54      | 947              | 840  | 24              |
 | Canyon Road     | 45   | 318     | 3160             | 3984 | 24              |
 | Forge Stair     | 10   | 37      | 140              | 216  | 24              |
