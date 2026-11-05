@@ -1,7 +1,7 @@
 {
  "id": "act1/halt_platform_edge_a",
  "file": "game/kit/props/art/act1/halt_platform_edge_a.png",
- "sha256": "6e8f713d2241ac965ca3f74300e6d12f8f9a7920c9925c88651dcf3646c1c7bb",
+ "sha256": "c93fda52ed2e98b56d8b0fb99c280562f3414d866d9fe1ed1c81e2e62fb75ea3",
  "kind": "halt_platform_edge",
  "biome": "valley",
  "H": 74.0,
@@ -21,8 +21,7 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): one of four shuffled variants: bitten chips, a nosing row varying by slab (longest one-colour run 80 px), worn and cracked flags. Polish R4-9: the stamped foot tufts."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

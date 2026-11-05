@@ -1,7 +1,7 @@
 {
  "id": "act1/halt_platform_edge_d",
  "file": "game/kit/props/art/act1/halt_platform_edge_d.png",
- "sha256": "a34d3dc7445ab4d71d046eeb47f5ea1b9315b7ee19ae9814cde6d9873250eb78",
+ "sha256": "285138a88f71e46ec5ec05c772afcd67d26c3ec2a8097bb787181a3e385284cf",
  "kind": "halt_platform_edge",
  "biome": "valley",
  "H": 74.0,
@@ -21,8 +21,7 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): new variant: own joint, gaps, chip and flags (see a). Polish R4-9."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

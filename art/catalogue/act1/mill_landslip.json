@@ -1,7 +1,7 @@
 {
  "id": "act1/mill_landslip",
  "file": "game/kit/props/art/act1/mill_landslip.png",
- "sha256": "f98a6e207fc41d94ebee44c82a4ce881af4d982b74eed3c993af8efa2ee357e9",
+ "sha256": "29624991813c143011bbb50d8871e3d6893053c45743ea14ed45bd403ed3bd6c",
  "kind": "mill_landslip",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 19,
-   "tones": 29.473684210526315,
-   "shapes": 41.421052631578945
+   "patches": 15,
+   "tones": 28.2,
+   "shapes": 40.46666666666667
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.822,
-  "tones_ratio": 1.092,
-  "shapes_ratio": 0.822,
+  "ratio": 0.804,
+  "tones_ratio": 1.044,
+  "shapes_ratio": 0.804,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     84,
     31
    ],
-   "message": "act1/mill_landslip: the pale is lit from the right (luminance rises 25 L per H to the east)",
+   "message": "act1/mill_landslip: the pale is lit from the right (luminance rises 23 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -56,15 +56,14 @@
     129,
     68
    ],
-   "message": "act1/mill_landslip: detail bar 0.82 of Eastward's prop band (29.5 tones, 41.4 shapes a patch against 27.0, 50.36)",
+   "message": "act1/mill_landslip: detail bar 0.80 of Eastward's prop band (28.2 tones, 40.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-05",
-  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): the birch passes (capped at 233, cylinder ramp, glints, patches, lichen, curls; polish R4-12: lenticels 40 to 58 L). Fails on R4-1: a 5 to 8 row turf band runs across the whole head, so the slip keeps its own bank and does not come out of a break in the study's bank."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

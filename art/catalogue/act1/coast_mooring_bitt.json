@@ -1,7 +1,7 @@
 {
  "id": "act1/coast_mooring_bitt",
  "file": "game/kit/props/art/act1/coast_mooring_bitt.png",
- "sha256": "15152dae1189485f041e536560375dd37169fc5ceff94ba44b0afa1c5368eb76",
+ "sha256": "439a078377b91e926705fa83bbc463bf76beb4219d8cfa3996ec940ecbd6add6",
  "kind": "coast_mooring_bitt",
  "biome": "valley",
  "H": 74.0,
@@ -10,11 +10,11 @@
   43,
   21
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
-  "polish": 2
+  "fault": 1,
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -38,31 +38,30 @@
    "severity": "polish",
    "box": [
     1,
-    8,
+    7,
     40,
     19
    ],
-   "message": "act1/coast_mooring_bitt: the wood is lit from the right (luminance rises 16 L per H to the east)",
+   "message": "act1/coast_mooring_bitt: the wood is lit from the right (luminance rises 40 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.cluster_noise",
-   "severity": "polish",
+   "severity": "fault",
    "box": [
     0,
     0,
     43,
     21
    ],
-   "message": "act1/coast_mooring_bitt: 43% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "message": "act1/coast_mooring_bitt: 55% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-05",
-  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): R4-3: the coil is a 16 x 8 loaf in three tones (192, 175, 143) in blobs, seams one step apart, outline open on the west and top; no rings at 1x or 8x. Three rings with rope 1 seams; the lashing and bitt pass."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset. The detail.cluster_noise fault is the flaked coil's ring seams: three rings with two-tone seams are structure, as the detail audit ruled in round 4 (R4-3: \"if cluster noise rises over 0.40 from the seams, reject that finding\"), so it is recorded here as rejected, not designed around."
  }
 }

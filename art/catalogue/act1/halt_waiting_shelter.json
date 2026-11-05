@@ -1,7 +1,7 @@
 {
  "id": "act1/halt_waiting_shelter",
  "file": "game/kit/props/art/act1/halt_waiting_shelter.png",
- "sha256": "178e442e9eed126bb79f83b68c7ff9cece22e0a417bfe12e0dad26b7a13ef41e",
+ "sha256": "a4beb44c76884e1939069a02740653f7294e2b3d99377053d767cfdc79959c22",
  "kind": "halt_waiting_shelter",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 63,
-   "tones": 21.825396825396826,
-   "shapes": 36.79365079365079
+   "tones": 21.841269841269842,
+   "shapes": 36.80952380952381
   },
   "band": {
    "tones": 27.0,
@@ -29,7 +29,7 @@
    "patches": 83
   },
   "ratio": 0.731,
-  "tones_ratio": 0.808,
+  "tones_ratio": 0.809,
   "shapes_ratio": 0.731,
   "passed": false,
   "group": "prop"
@@ -75,8 +75,7 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): bench shadow on the floor, moss cushions in the lowest joints. Polish R4-12: the lichen crust reads as pale slate-sized squares."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

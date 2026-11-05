@@ -150,12 +150,29 @@ def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0, irregular=False):
     lit = ((uy == 0) & (ux > 0) & (ux < 4)) | ((ux == 0) & (uy > 0) & (uy < 3))
     t = np.where(lit, t + 1.0, t)
     t = np.where(last_y | last_x, joint_t, t)
+    worn = np.zeros((H, W), bool)
     if not irregular:
-        # worn patches where feet go: the joints filled and the setts polished a step smoother
-        worn = K.noise((H, W), np.random.default_rng(seed + 9), 14.0) > 0.7
-        t = np.where(worn & (last_y | last_x), joint_t + 0.6, np.where(worn & ~(last_y | last_x), np.minimum(t, 3.4), t))
+        # worn patches where feet go (R4-11): soft organic patches in which the setts' lit corners
+        # drop out and the joints fade a tone (filled with grit), never vanish
+        wn = K.noise((H, W), np.random.default_rng(seed + 9), 7.0) + 0.25 * K.noise((H, W), np.random.default_rng(seed + 10), 2.0)
+        worn = wn > 0.78
+        t = np.where(worn & lit, t - 1.0, t)
     K.rpaint(cv, m, [('slate_cool', 'stone', 'stone_warm'), ('stone_cool', 'stone_cool', 'stone')], t,
              np.clip(K.vhash(sx, course, seed + 2) * 0.999, 0, 0.999))
+    from scripts.art.native.palette import C as C_
+    if not irregular:
+        cv[m & worn & (last_y | last_x)] = C_('ashlar', 2)
+    else:
+        # flags (R4-9): the odd flag cracked (a dark line with its lit lip), a worn flag a tone paler
+        # at its middle, crust lichen in small clusters
+        inner = m & ~(last_y | last_x) & (ux > 1) & (uy > 1)
+        crk = inner & (K.vhash(sx, course, seed + 12) > 0.86) & (np.abs((ux - ww * 0.3) - (uy * 1.6)) < 0.6)
+        cv[crk] = C_('stone_cool', 1)
+        cv[np.roll(crk, 1, 1) & inner & ~crk] = C_('stone', 4)
+        wornf = inner & (K.vhash(sx, course, seed + 13) > 0.8) & (np.abs(ux - ww / 2) < ww / 4) & (np.abs(uy - hh / 2) < hh / 4)
+        cv[wornf] = C_('stone', 4)
+        lic = inner & (K.vhash(Xg // 2, Yg // 2, seed + 14) > 0.985)
+        cv[lic] = C_('stone_warm', 4)
 
 
 def shingle(cv, m, seed=1506):
@@ -164,28 +181,42 @@ def shingle(cv, m, seed=1506):
     and slate."""
     from scripts.art.kit.sets import _common as K
     H, W = cv.shape
-    K.rpaint(cv, m, [('sand_cool', 'sand_cool', 'sand'), ('sand_cool', 'sand', 'sand')], 3.0,
-             np.clip(K.noise((H, W), np.random.default_rng(seed), 9.0) * 0.999, 0, 0.999))
+    # the dry sand calm: one field tone, a few large soft blotches a tone down (R4-6)
+    # its grain: sibling sands at the same tone swapped in small clusters (shape, not value noise)
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    blot = K.noise((H, W), np.random.default_rng(seed + 15), 7.0)
+    drift_ = K.noise((H, W), np.random.default_rng(seed), 9.0)
+    sw = K.vhash(Xg // 2 + (Yg // 2) * 3, Yg // 2, seed + 16) > 0.62
+    K.rpaint(cv, m, [('sand_cool', 'sand_cool', 'sand'), ('sand_cool', 'sand', 'sand')], np.where(blot > 0.64, 2.0, 3.0),
+             np.clip(np.where(sw, 1.0 - drift_, drift_) * 0.999, 0, 0.999))
     ys, xs = np.nonzero(m)
     if not len(ys):
         return
     # the sand wet and darker towards the water, its edge lumpy (round 3 of the detail audit, R3-12)
-    Yg, Xg = np.mgrid[0:H, 0:W]
     toward = ndi.distance_transform_edt(~ndi.binary_dilation(~m, iterations=1) | (Yg < ys.min() + 14))
-    lump = 7.0 + 7.0 * K.noise((H, W), np.random.default_rng(seed + 5), 4.0)
+    lump = 12.0 + 16.0 * K.noise((H, W), np.random.default_rng(seed + 5), 4.0)
     wet = m & (toward < lump) & (Yg >= ys.min() + 14)
-    K.rpaint(cv, wet, [('earth_cool', 'sand_cool', 'sand_cool'), ('earth_cool', 'sand_cool', 'sand')], 2.0,
-             np.clip(K.noise((H, W), np.random.default_rng(seed + 6), 6.0) * 0.999, 0, 0.999))
+    K.rpaint(cv, wet, [('earth_cool', 'sand_cool', 'sand_cool'), ('earth_cool', 'sand', 'sand')], 2.0,
+             np.clip(np.where(sw, 1.0 - drift_, drift_) * 0.999, 0, 0.999))
     wedge = wet & ~ndi.binary_erosion(wet) & (toward >= lump - 1.5)
     cv[wedge] = cv[wedge] + 1                                            # the wet line's drying rim, a step up
-    # ripple marks left by the tide: short broken crests every 4 to 5 rows, wandering, a lit crest
-    # row over a shaded trough row (drawn, not blotched; calm: one tone each way)
-    phase = Yg + np.round(1.6 * np.sin(Xg * 0.21 + Yg * 0.05) + 1.2 * np.sin(Xg * 0.07 + 2.0)).astype(int)
-    rip = (phase % np.where(wet, 4, 5) == 0) & (K.noise((H, W), np.random.default_rng(seed + 7), 2.5) > 0.32) & m & (Yg >= ys.min() + 14)
+    # ripple marks left by the tide (round 4 of the detail audit, R4-6): only on the wet sand, in
+    # patches 20 to 60 texels across with calm sand between, each patch its own spacing (4 to 7 rows),
+    # crests short and broken, a lit crest row over a shaded trough row; the dry sand stays calm
+    patch = K.noise((H, W), np.random.default_rng(seed + 8), 9.0)
+    period = 4 + (3.99 * K.noise((H, W), np.random.default_rng(seed + 9), 14.0)).astype(int)
+    phase = Yg + np.round(1.4 * np.sin(Xg * 0.23 + Yg * 0.05) + 1.0 * np.sin(Xg * 0.07 + 2.0)).astype(int)
+    crest = K.noise((H, W), np.random.default_rng(seed + 7), 2.0) > 0.42
+    rip = (phase % period == 0) & crest & wet & (patch > 0.52)
     up_ = np.zeros_like(rip)
     up_[:-1] = rip[1:]
-    K.rpaint(cv, rip, [('earth_cool', 'sand_cool', 'sand')], np.where(wet, 1.4, 2.0), 0.0)
-    K.rpaint(cv, up_ & m & ~rip & ~wet & (Yg >= ys.min() + 14), [('earth_cool', 'sand', 'sand_warm')], 4.0, 0.0)
+    K.rpaint(cv, rip, [('earth_cool', 'sand_cool', 'sand')], 1.4, 0.0)
+    K.rpaint(cv, up_ & wet & ~rip, [('earth_cool', 'sand_cool', 'sand')], 3.0, 0.0)
+    # the wrack line along the top of the wet sand: broken weed and shell, dark and a few pale specks
+    wl = wet & ~ndi.binary_erosion(wet, iterations=2) & (toward >= lump - 3)
+    wk = wl & (K.noise((H, W), np.random.default_rng(seed + 10), 1.5) > 0.6)
+    from scripts.art.native.palette import C as C_
+    cv[wk] = np.where(K.vhash(Xg, Yg, seed + 11)[wk] > 0.85, C_('sand', 4), C_('earth_cool', 2))
     y0, y1 = ys.min(), ys.max()
     drift = K.noise((H, W), np.random.default_rng(seed + 1), 6.0)
     fams = [('slate_cool', 'stone', 'stone_warm'), ('earth_cool', 'sand_cool', 'sand'), ('slate_cool', 'slate', 'slate_warm'),

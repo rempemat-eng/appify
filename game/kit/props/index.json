@@ -14722,7 +14722,7 @@
    "fps": 6.0,
    "frames": 8,
    "offset": [
-    -64,
+    -61,
     -164
    ],
    "reduced_motion": "hold:0",
@@ -14738,7 +14738,7 @@
   ],
   "deck": null,
   "foot": [
-   64,
+   61,
    164
   ],
   "footprint": [
@@ -14834,7 +14834,7 @@
   "variants": {
    "still": {
     "foot": [
-     64,
+     61,
      164
     ],
     "png": "res://kit/props/art/act1/mill_wheel.png"
