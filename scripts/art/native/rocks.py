@@ -240,7 +240,8 @@ def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 
     bowed a texel or two downstream; the white water breaks under it in two or three runs with gaps;
     the sheet widens a little as it falls, shaded as a ribbon (lit west, body, shade east), with
     streaks at different speeds and a darker thinning near the foot; at the foot plunge() churns.
-    Returns where the foot lies (texels) for the churn's frames."""
+    The sheet is sheet(), the one painter the kit's pieces share (structures.fall_sheet). Returns
+    where the foot lies (texels) for the churn's frames."""
     H, W = cv.shape
     D = ctx.D
     rng = np.random.default_rng(seed)
@@ -256,6 +257,64 @@ def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 
             if abs((a + b) / 2.0 - cx * D) < w * D:
                 cl, cr = int(a), int(b)
                 break
+    foot = sheet(cv, cl, cr, Y0, Y1, y0, rng, seed, water)
+    box = plunge_box(foot[0], foot[1], Y1, H, W)
+    pre = cv[box[1]:box[3], box[0]:box[2]].copy()        # what lies under the foam (its frames)
+    plunge(cv, foot[0], foot[1], Y1, seed, t=t)
+    return {'xl': foot[0], 'xr': foot[1], 'y1': Y1, 'seed': seed, 'box': box, 'under': pre}
+
+
+def sheet_rows(cl: int, cr: int, Y0: int, Y1: int, phase_y: int = 0) -> list:
+    """The sheet's edges per row (texels; rows Y0 .. Y1 - 1, each (Y, xl, xr) as floats, a texel X
+    lying on the sheet when xl <= X + 0.5 <= xr): the lip's width at the top, widening a little as it
+    falls (0.45 of it west, 0.55 east) with each edge wobbling a texel. The wobble's phase runs from
+    row `phase_y` (0: the canvas's own rows, as the woodland paints; a piece passes its rim row, so
+    its picture and its bake are the same sheet)."""
+    D = ctx.D
+    out = []
+    for Y in range(Y0, Y1):
+        f = (Y - Y0) / max(1.0, (Y1 - Y0))
+        widen = max(0.0, f) * 2.4 * D
+        Yp = Y - phase_y
+        wob_l = 0.35 * D * math.sin(Yp / D / 3.1) * min(1.0, f * 4)
+        wob_r = 0.35 * D * math.sin(Yp / D / 2.6 + 1.0) * min(1.0, f * 4)
+        out.append((Y, cl - widen * 0.45 - wob_l, cr + widen * 0.55 + wob_r))
+    return out
+
+
+def sheet_mask(shape, cl: int, cr: int, Y0: int, Y1: int, phase_y: int = 0) -> np.ndarray:
+    """The texels sheet() paints for the sheet itself (rows Y0 .. Y1 - 1), on a canvas of `shape`."""
+    H, W = shape
+    m = np.zeros((H, W), bool)
+    for (Y, xl, xr) in sheet_rows(cl, cr, Y0, Y1, phase_y):
+        if not (0 <= Y < H):
+            continue
+        for X in range(max(0, int(math.floor(xl))), min(W, int(math.ceil(xr)))):
+            if xl <= X + 0.5 <= xr:
+                m[Y, X] = True
+    return m
+
+
+def sheet(cv: np.ndarray, cl: int, cr: int, Y0: int, Y1: int, y0: float, rng, seed: int, water=None,
+          t: int = 0, n: int = PLUNGE_FRAMES, phase_y: int = 0, stagger: bool = False) -> tuple:
+    """One falling sheet (texels), the house's one design, painted for the woodland's fall (fall())
+    and for every kit piece (structures.fall_sheet, review round 7: two painters had drifted into two
+    designs): the channel's columns cl .. cr feed a lip at row Y0 and the sheet falls to Y1. Above
+    the lip, where the canvas is water (`water`), the channel's last rows lighten into a glassy
+    tongue fading up in a checker, with two or three lit streaks converging on the lip; the bend
+    line bows a texel or two downstream and the white water breaks under it in runs (crest_breaks);
+    the sheet widens as it falls (sheet_rows), shaded as a ribbon (lit west, body, shade east), with
+    streaks of their own lengths, gaps and phases (y0 is the world row their phase runs from), thinner
+    and darker near the foot. `rng` is the fall's generator, drawn in this order.
+
+    `t` of `n` frames moves each streak down by a step of its own period a frame, so a loop of n
+    frames closes and frame 0 is the still (the woodland's sheet is its frame 0). `phase_y` (sheet_rows)
+    and `stagger` (the tongue's two tones meeting a texel earlier or later row by row, round 7, P7-3)
+    are for pieces; the woodland's sheet uses neither. Returns the foot's columns (xl, xr)."""
+    H, W = cv.shape
+    D = ctx.D
+    if water is None:
+        water = np.isin(cv // 8, [FI[n_] for n_ in WATERS]) & (cv >= 0)
     lw = cr - cl
     # the glassy tongue: the channel's last rows lighten as the water speeds up to the lip, fading
     # up into the channel in a checker over two or three rows, its top stepping a row or two
@@ -291,15 +350,13 @@ def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 
     brk = crest_breaks(lw, rng)
     cols = {}
     foot = (cl, cr)
-    for Y in range(Y0, Y1):
+    for (Y, xl, xr) in sheet_rows(cl, cr, Y0, Y1, phase_y):
         if not (0 <= Y < H):
             continue
         f = (Y - Y0) / max(1.0, (Y1 - Y0))
-        widen = max(0.0, f) * 2.4 * D
-        wob_l = 0.35 * D * math.sin(Y / D / 3.1) * min(1.0, f * 4)
-        wob_r = 0.35 * D * math.sin(Y / D / 2.6 + 1.0) * min(1.0, f * 4)
-        xl, xr = cl - widen * 0.45 - wob_l, cr + widen * 0.55 + wob_r
         foot = (int(math.floor(xl)), int(math.ceil(xr)))
+        # the tongue's tones meet at s 0.65; a piece staggers that a texel or two row by row
+        sd = (0.06 * ((Y - Y0) % 3 - 1) + 0.04 * (((Y - Y0) * 7 + seed) % 3 - 1)) if stagger else 0.0
         for X in range(max(0, int(math.floor(xl))), min(W, int(math.ceil(xr)))):
             if not (xl <= X + 0.5 <= xr):
                 continue
@@ -309,9 +366,9 @@ def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 
             dy = Y - Y0 - bow
             d_ = int(brk[k_]) if cl <= X < cr else 0
             if dy < 2:
-                c = C('water', 4) if s < 0.65 else C('water', 3)       # the glassy tongue over the edge
+                c = C('water', 4) if s < 0.65 + sd else C('water', 3)  # the glassy tongue over the edge
             elif dy == 2:
-                c = (C('water', 5) if s < 0.7 else C('water', 4)) if (d_ or not (cl <= X < cr)) else C('water', 3)
+                c = (C('water', 5) if s < 0.7 + sd else C('water', 4)) if (d_ or not (cl <= X < cr)) else C('water', 3)
             elif d_ and dy < 3 + d_:
                 c = C('snow', 5) if s < 0.65 else C('snow', 4)        # the white water breaking under it
             elif d_ and dy < 4 + d_:
@@ -330,13 +387,11 @@ def fall(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int = 
                     # each streak its own speed: long fast ones and short slow ones
                     cols[key] = (rng.uniform(0, 40), rng.uniform(4, 18), rng.uniform(2, 9), rng.random())
                 ph, run, gap, kind = cols[key]
-                if (((Y + 0.5) / D - y0 + ph) % (run + gap)) < run and 0.05 < s < 0.85:
+                # frame t of n: each streak a step of its own period down (frame 0 the still)
+                if (((Y + 0.5) / D - y0 + ph - t * (run + gap) / n) % (run + gap)) < run and 0.05 < s < 0.85:
                     c = C('snow', 5) if (kind < 0.35 and s < 0.5) else (C('snow', 4) if kind < 0.7 else C('water', 5))
             cv[Y, X] = c
-    box = plunge_box(foot[0], foot[1], Y1, H, W)
-    pre = cv[box[1]:box[3], box[0]:box[2]].copy()        # what lies under the foam (its frames)
-    plunge(cv, foot[0], foot[1], Y1, seed, t=t)
-    return {'xl': foot[0], 'xr': foot[1], 'y1': Y1, 'seed': seed, 'box': box, 'under': pre}
+    return foot
 
 
 def plunge_box(xl: int, xr: int, y1: int, H: int, W: int):
@@ -364,7 +419,7 @@ def plunge_frames(codes: np.ndarray, info: dict, n: int = PLUNGE_FRAMES) -> list
 
 
 def plunge(cv: np.ndarray, xl: int, xr: int, y1: int, seed: int, t: int = 0, n: int = PLUNGE_FRAMES,
-           rings: bool = True) -> np.ndarray:
+           rings: bool = True, seat_gaps: bool = False) -> np.ndarray:
     """The white water where a fall lands (texels; the sheet's foot spans xl .. xr at row y1), after
     the woodland review (4 Nov: a flat two-tone plate twice the sheet's width; Eastward 37's mist).
     It keeps to the foot plus PLUNGE_PAD each side and about 10 texels down; it is a heap of broken
@@ -409,6 +464,24 @@ def plunge(cv: np.ndarray, xl: int, xr: int, y1: int, seed: int, t: int = 0, n: 
         lit = np.where(nearer, -((xx - px - dx) / rx + (yy - py - dy) / ry), lit)
     inside = (np.abs(xx - cx) <= fw / 2.0 + PLUNGE_PAD) & (yy <= y1 + 10)
     foam = (best < 1.0) & ok & inside
+    if seat_gaps:
+        # (a piece's foot, review round 7, P7-2) under any stretch of 4 or more foot columns that no
+        # clump reaches in its first rows, seat one more clump, so the sheet never ends in a ruler
+        # line on the water, in any frame; no draws from rng, so the other clumps are unchanged
+        cover = foam[(yy[:, 0] >= y1) & (yy[:, 0] < y1 + 3)].any(0)
+        cols_ = (xx[0] >= xl) & (xx[0] < xr)
+        bare = cols_ & ~cover
+        for a_, b_ in _runs(bare):
+            if b_ - a_ < 4:
+                continue
+            px = X0 + (a_ + b_) / 2.0 + 0.6 * math.sin(a + a_)
+            py = y1 + 1.8 + 0.5 * math.sin(a + 1.3 * a_)
+            rx, ry = (b_ - a_) / 2.0 + 1.5, 2.6
+            q = ((xx - px) / rx) ** 2 + ((yy - py) / ry) ** 2
+            nearer = q < best
+            best = np.where(nearer, q, best)
+            lit = np.where(nearer, -((xx - px) / rx + (yy - py) / ry), lit)
+        foam = (best < 1.0) & ok & inside
     out = sub.copy()
     gaps = ndi.binary_closing(foam, structure=np.ones((5, 5), bool)) & ~foam & ok & inside
     out[gaps] = C('water', 3)                                   # the pool showing between the clumps

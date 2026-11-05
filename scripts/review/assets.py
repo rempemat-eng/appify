@@ -164,7 +164,8 @@ def fall_grain(rgb, alpha, subject) -> list:
     x0, y0, x1, y1 = box
     g = B.fall_grain(rgb[y0:y1, x0:x1], alpha[y0:y1, x0:x1])
     out = []
-    v = B.fall_value(rgb[y0:y1, x0:x1], alpha[y0:y1, x0:x1])
+    xv = x0 + int(round(0.85 * (x1 - x0)))                 # the ribbon west of the navy band, as the sibling was measured
+    v = B.fall_value(rgb[y0:y1, x0:xv], alpha[y0:y1, x0:xv])
     if not v.get('passed'):
         # (round 6, K6-1) as light as its sibling, the woodland's sheet
         out.append(Finding('detail.fall_value', 'fault', box,

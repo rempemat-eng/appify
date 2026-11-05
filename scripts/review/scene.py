@@ -565,6 +565,12 @@ def check_occlusion(z: Zone, H=GAME_H) -> list[Finding]:
     for s in z.sprites:
         if not s.ysort or s.parent.startswith('Actors') or 'damage' in s.path or 'fx' in s.path:
             continue
+        if s.z < 0:
+            # drawn on a layer under the people (a ground piece: a fall's foam and its loop, a
+            # footbridge, at z_index -5 by kit_zone.gd): never sorted against them, so its y-sort point
+            # cannot put anyone wrongly in front or behind (woodland review, round 7: the fall's loop
+            # strip reaches 20 px past its foot onto the pool)
+            continue
         a = s.rgba[..., 3] > 128
         if not a.any():
             continue

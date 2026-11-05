@@ -183,15 +183,12 @@ class Rules(unittest.TestCase):
                 self.assertEqual(pc['geometry']['foot'][1], y1)
                 a = np.asarray(Image.open(os.path.join(ROOT, 'game', pc['variants'][0]['png'][len('res://'):])))[..., 3] > 0
                 self.assertFalse(a[:y0].any(), pc['id'])
-                # over its upper two thirds the sheet keeps to the channel's columns; over the last
-                # third it may swell a texel or two as it spreads toward the pool (review round 5)
-                swell = y0 + int(np.ceil((y1 - y0) * 2.0 / 3.0))
-                above = a[:swell].copy()
-                above[:, x0:x1] = False
-                self.assertFalse(above.any(), pc['id'])
-                low = a[:y1 - 5].copy()
-                low[:, x0 - 2:x1 + 2] = False
-                self.assertFalse(low.any(), pc['id'])
+                # above the pool the picture is the sheet and nothing else: the woodland's sheet
+                # (rocks.sheet_mask), the lip the channel's width, widening as it falls (round 7)
+                from scripts.art.kit import structures as ST
+                m = ST.sheet_mask(a.shape, x0, x1 - x0, y0, y1)
+                self.assertFalse((a[:y1 - 5] & ~m[:y1 - 5]).any(), pc['id'])
+                self.assertEqual(int(a[y0].sum()), x1 - x0, pc['id'])
                 self.assertTrue(a[y0, x0:x1].all(), pc['id'])
 
 
@@ -637,18 +634,22 @@ class WaterBanks(unittest.TestCase):
                 rows = np.zeros((ST.CREST_MAX + int(bow.max()) + 1, 24 * c), bool)
                 for x in range(24 * c):
                     rows[bow[x]:bow[x] + f[x], x] = True
-                self.assertLessEqual(float(rows.mean(1).max()), 0.70, 'a straight white row (%d, %d)' % (c, seed))
+                # (the woodland's own crest: 68 % on its whitest row; the shared crest on a four-cell
+                # sheet up to 76 %; round 4's lid was 85 to 96 % with drips and no gaps)
+                self.assertLessEqual(float(rows.mean(1).max()), 0.80, 'a straight white row (%d, %d)' % (c, seed))
                 d = np.diff(np.concatenate([[0], (f > 0).astype(np.int8), [0]]))
                 starts, stops = np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]
                 self.assertIn(len(starts), (2, 3), (c, seed))
                 inner = [int(a - b) for a, b in zip(starts[1:], stops[:-1])]
                 self.assertTrue(all(3 <= g <= 5 for g in inner), (c, seed, inner))
-                if c >= 2:
-                    self.assertGreaterEqual(len(inner), 2, (c, seed))
+                # at least one gap where the darker sheet goes on (the woodland's crest: two or
+                # three runs, round 7; round 4 asked two gaps from two cells up of the kit's own)
+                self.assertGreaterEqual(len(inner), 1, (c, seed))
                 self.assertEqual(int(f[0]), 0, (c, seed))
                 self.assertEqual(int(f[-1]), 0, (c, seed))
                 for a, b in zip(starts, stops):
-                    self.assertEqual((int(f[a]), int(f[b - 1])), (1, 1), 'a run ends in a drip (%d, %d)' % (c, seed))
+                    # rounded at its ends (the woodland's crest_breaks: 1 or 2 deep there, never its deepest)
+                    self.assertLessEqual(max(int(f[a]), int(f[b - 1])), 2, 'a run ends in a drip (%d, %d)' % (c, seed))
 
     def test_a_kit_sheet_is_not_flat_slabs(self):
         # (review round 4, K4-1) the kit's sheet falls in broken streaks across its whole width: at
@@ -662,14 +663,20 @@ class WaterBanks(unittest.TestCase):
                 for t in (0, 3):
                     cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
                     ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
-                    body = cv[16:12 + face, 24:24 + wpx]
+                    # the ribbon west of the navy east band (s < 0.85 of the lip), as the sibling's
+                    # 10 of 44 were counted (round 4)
+                    rib = int(round(0.85 * wpx))
+                    body = cv[16:12 + face, 24:24 + rib]
                     flat = 0
-                    for x in range(wpx):
+                    for x in range(rib):
                         col = body[:, x]
                         ch = np.nonzero(np.diff(col) != 0)[0]
                         runs = np.diff(np.concatenate([[-1], ch, [len(col) - 1]]))
                         flat += int(runs.max() >= 40)
-                    self.assertLessEqual(flat / wpx, 0.25, 'waterfall_%d drop %d frame %d: %d of %d columns flat' % (c, drop, t, flat, wpx))
+                    # (the sibling over its full height, rows 772-880 of the woodland's ground, holds
+                    # 16 of 42 columns flat, 38 %; over rows 790-870, 9 of 42. Round 4's slabs were 38
+                    # to 70 %, and dark, which the value check below fails as well)
+                    self.assertLessEqual(flat / rib, 0.42, 'waterfall_%d drop %d frame %d: %d of %d columns flat' % (c, drop, t, flat, rib))
                     tones = set(np.unique(body).tolist())
                     self.assertGreaterEqual(len(tones), 5, (c, drop))
         # (review round 5, K5-1) the sheet falls in streaks, not a mosaic of chips: across its body
@@ -688,12 +695,13 @@ class WaterBanks(unittest.TestCase):
                     g = B.fall_grain(body, np.ones(body.shape[:2], bool))
                     self.assertGreaterEqual(g['ratio'], B.GRAIN_RATIO, 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, g))
                     self.assertGreaterEqual(g['median_run'], B.GRAIN_RUN, 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, g))
-                    # (round 6, K6-1) as light as its sibling, the woodland's sheet: mean lightness
-                    # at least 160, the east half 140, at most 10 % under 90 L, the middle third at
-                    # least 35 % over 200 L, and no flat area of one colour over 250 texels
+                    # (rounds 6 and 7, K6-1 and K7-1) the sibling's value: mean lightness at least 160,
+                    # the east half 140, at most 10 % under 90 L, a spread of at least 48, the east
+                    # third at least 15 % under 100 L, at least 28 % over 230 L, no snow 0 to 3
                     m = ST.sheet_mask(cv.shape, 24, wpx, 12, 12 + face, 9 + c)
                     m[:20] = False
                     m[12 + face - 4:] = False
+                    m[:, 24 + int(round(0.85 * wpx)):] = False       # the ribbon, as the sibling is measured
                     val = B.fall_value(LUT[cv][..., :3].astype(np.uint8), m)
                     self.assertTrue(val['passed'], 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, val))
 
@@ -726,6 +734,97 @@ class WaterBanks(unittest.TestCase):
                 outl = ST.sheet_outline(24, 24 * c, 12, 12 + face, 9 + c)
                 self.assertGreater(len({tuple(r) for r in outl.tolist()}), 2, 'a rectangle (%d, %s)' % (c, tall))
                 self.assertEqual(tuple(outl[0]), (24, 24 + 24 * c))
+
+    def test_the_kits_sheet_is_the_woodlands(self):
+        # (review round 7) one painter for every falling sheet: the woodland's sheet in its ground
+        # is exactly what rocks.sheet paints for the woodland's fall, so the kit's pieces, which call
+        # rocks.sheet too, are the approved design by construction. Re-painted over the committed
+        # ground (the channel above the lip is read from it), the sheet's rows from the lip to above
+        # the foam come out byte for byte the same
+        from PIL import Image
+        from scripts.art.native import ctx, load_biome
+        from scripts.art.native import rocks as RK
+        from scripts.art.native.screen import to_codes
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        plan = json.load(open(os.path.join(root, 'art', 'scenes', 'woodland.json')))
+        D0 = ctx.D
+        ctx.configure(3.0, load_biome(plan['biome']), plan)
+        try:
+            g = Image.open(os.path.join(root, 'game', 'zones', 'woodland', 'art', 'ground.png')).convert('RGBA')
+            f = plan['water']['fall']
+            Y0, Y1 = int(round((f['y0'] - 1.5) * 3)), int(round(f['y1'] * 3))
+            box = (150, Y0 - 30, 330, Y1 + 2)
+            cv = to_codes(g.crop(box)).astype(np.int32)
+            before = cv.copy()
+            # rocks.fall's channel search, on the crop (its x shifted by box[0], its y by box[1])
+            water = np.isin(cv // 8, [RK.FI[n] for n in RK.WATERS]) & (cv >= 0)
+            cx = (f['x0'] + f['w'] / 2.0) * 3 - box[0]
+            y0c = Y0 - box[1]
+            cl = cr = None
+            for yy_ in range(y0c - 1, max(0, y0c - 6), -1):
+                runs = [(a, b) for a, b in RK._runs(water[yy_]) if b - a >= 3]
+                if runs:
+                    a, b = min(runs, key=lambda r: abs((r[0] + r[1]) / 2.0 - cx))
+                    cl, cr = int(a), int(b)
+                    break
+            self.assertIsNotNone(cl)
+            rng = np.random.default_rng(f.get('seed', 11))
+            # the wobble's phase is the ground's own rows (phase_y 0, shifted by the crop)
+            RK.sheet(cv, cl, cr, y0c, Y1 - box[1], f['y0'] - box[1] / 3.0, rng, f.get('seed', 11), water, phase_y=-box[1])
+            m = RK.sheet_mask(cv.shape, cl, cr, y0c, Y1 - box[1] - 6, phase_y=-box[1])
+            diff = (cv != before) & m
+            self.assertGreater(int(m.sum()), 2000)
+            self.assertEqual(int(diff.sum()), 0, 'the woodland sheet differs from rocks.sheet at %d texels' % int(diff.sum()))
+        finally:
+            ctx.D = D0
+
+    def test_a_falls_foot_lands_in_its_foam(self):
+        # (review round 7, P7-2) in every frame of every piece, the foam reaches every stretch of 4
+        # or more of the sheet's foot columns in the foot's first three rows: no ruler line on the water
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C, FI
+        for c in (1, 2, 3, 4):
+            for drop in (1, 2):
+                wpx, face = 24 * c, 48 * drop
+                for t in range(ST.FALL_FRAMES):
+                    cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+                    ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
+                    xs = np.nonzero(ST.sheet_mask(cv.shape, 24, wpx, 12, 12 + face)[12 + face - 1])[0]
+                    cover = np.isin(cv[12 + face:12 + face + 3, xs.min():xs.max() + 1] // 8, [FI['snow']]).any(0)
+                    run = best = 0
+                    for b in ~cover:
+                        run = run + 1 if b else 0
+                        best = max(best, run)
+                    self.assertLess(best, 4, 'waterfall_%d drop %d frame %d: %d foot columns bare' % (c, drop, t, best))
+
+    def test_no_spray_on_the_face_beside_a_baked_fall(self):
+        # (review round 7; Matt, 2 Nov: spray only over the water, never on the face) beside every
+        # baked fall, from its rim to its foot and 14 texels either side of its sheet, no texel of
+        # the face is water-blue or white
+        from scripts.art.kit import bake as BK
+        from scripts.art.kit import structures as ST
+        from scripts.art.native import animate as AN
+        lib = BK._pieces_lib()
+        seen = 0
+        for zone, plan, cv in self._baked():
+            fh = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
+            for pc in plan.get('pieces', []):
+                rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+                if rp.get('fn') != 'fall':
+                    continue
+                sw = lib[pc['piece']]['geometry']['size_cells'][0] * 24
+                x0 = int(round(pc['at'][0] - sw / 2))
+                r1 = int(round(pc['at'][1]))
+                r0 = r1 - int(rp.get('args', {}).get('face_px', fh))
+                side = np.zeros(cv.shape, bool)
+                side[r0 + 2:r1 - 2, max(0, x0 - 42):x0 + sw + 42] = True
+                side &= ~ST.sheet_mask(cv.shape, x0, sw, r0, r1)
+                wet = AN.wet_codes(cv) & side
+                ys, xs = np.nonzero(wet)
+                self.assertEqual(int(wet.sum()), 0, '%s: water-blue or white on the face beside the fall at %s' % (
+                    zone, list(zip(xs[:4].tolist(), ys[:4].tolist()))))
+                seen += 1
+        self.assertGreater(seen, 0)
 
     def test_moving_water_lies_only_on_water(self):
         # (review round 4, F4-1) no texel of a moving-water strip, in any frame (frame 0, the still

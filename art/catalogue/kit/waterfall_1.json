@@ -1,7 +1,7 @@
 {
  "id": "kit/waterfall_1",
  "file": "game/kit/props/art/waterfall_1.png",
- "sha256": "81768a5a9be613a14fb123ad77b2b3c2732c643a295c68462b6b0e5df20751ea",
+ "sha256": "8154f0bc3f7406d755059f8b4621f17606d215bc37c6f5b8aa1b14892f5e09e4",
  "kind": "waterfall",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 24.0,
-   "shapes": 28.833333333333332
+   "tones": 19.5,
+   "shapes": 28.666666666666668
   },
   "band": {
    "tones": 17.0,
@@ -30,9 +30,9 @@
    "source": "house sibling: the woodland sheet, game/zones/woodland/art/ground.png 220-256 x 772-880 (docs/reviews/2026-11-04-woodland-water.md, round 5)",
    "about": "a falling sheet, crest and foam; no official Eastward shot shows one (bands.py)"
   },
-  "ratio": 0.73,
-  "tones_ratio": 1.412,
-  "shapes_ratio": 0.73,
+  "ratio": 0.726,
+  "tones_ratio": 1.147,
+  "shapes_ratio": 0.726,
   "passed": false,
   "group": "fall"
  },
@@ -41,32 +41,32 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    14,
+    10,
     12,
-    60,
+    65,
     78
    ],
-   "message": "kit/waterfall_1: detail bar 0.73 of Eastward's fall band (24.0 tones, 28.8 shapes a patch against 17.0, 39.5)",
+   "message": "kit/waterfall_1: detail bar 0.73 of Eastward's fall band (19.5 tones, 28.7 shapes a patch against 17.0, 39.5)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
    "detector": "detail.outline",
    "severity": "polish",
    "box": [
-    14,
+    10,
     12,
-    60,
+    65,
     78
    ],
-   "message": "kit/waterfall_1: only 31% of the silhouette is drawn in an edge tone",
+   "message": "kit/waterfall_1: only 33% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pending",
   "date": "2026-11-05",
-  "note": "docs/reviews/2026-11-04-woodland-water.md, round 7 (e2a3c545). Fixed: K6-1 as written (fall_value passes on every frame, own measure), P6-1 (each edge steps every 4 to 8 rows, water 4 film on the west column), the tongue seam (now a checker), L6-1 (the PNG sheet equals fall_sheet(9 + c) frame 0 texel for texel, and the woodland_kit bake equals waterfall_3_tall's PNG on the whole sheet body). No overshoot in brightness: on the woodland sheet alone (x 216-258, y 790-870; round 6's box took in 4 to 5 columns of the navy recess) the sibling measures mean 177, east half 165, sd 56, 43 % over 230 L and 33 % of its east third under 100 L; the kit's means sit within -6 to +10 L of it. Fails on K7-1: the value range is compressed and leaves the sibling's ladder. The kit has neither the sibling's whitest whites (18 to 27 % over 230 L against 43 %) nor its shaded east (4 to 20 % of the east third under 100 L against 33 %; the navy edge is one texel in most rows, an off-by-one in fall_sheet: xr - X <= edge_w gives edge_w texels, not edge_w + 1), sd 42 to 45 against 56, and its second lane palette brings in snow 2 and snow 3 (lilac-grey, hue 228 and 216), tones the woodland sheet never uses, up to 28 % of an east third. At game scale beside Bramble it reads as a pale chalky curtain with no core shadow on the right, against the sibling's white streaks falling to a shaded east side. Round 6's fix line \"the dark tones only in the last 2 to 4 texels\" misread the sibling and is withdrawn: its dark tones are broken streaks through the east third. Fix (feasibility-checked on all eight pieces and frames, fall_value, fall_grain and the flat-area cap still passing): FALL_LANE_TONES on the ladder only, disjoint per zone, e.g. palette 0 W (water 4, snow 5, snow 5, snow 5), M (water 3, snow 4, snow 4, snow 4), E (water 3, water 5, water 5, water 5); palette 1 W (water 5, snow 4, snow 4, snow 4), M (water 4, snow 5, snow 5, snow 5), E (water 2, snow 4, snow 4, snow 4); the east edge edge_w 2 or 3; add to fall_value sd at least 48, east third under 100 L at least 0.15, over 230 L at least 0.28, and no snow 0 to 3 in the body. Polish P7-2: the foam leaves the foot bare for up to 9 to 16 texels on the wider pieces (frame 0, which the bakes show). P7-3: the tongue's checker is a rectangle with straight sides. Measured on this piece: mean 172 (169-172), east half 159, sd 44, east third under 100 L 18 %, over 230 L 19 %, middle third over 200 L 0.47 (0.355 at its lowest frame), median run 6.0 at its lowest frame, east navy edge 1 texel in 27 of 36 rows."
+  "note": "redrawn after round 7 of the independent audit (K7-1, P7-2, P7-3): the sheet is now rocks.sheet, the one painter the woodland's fall is drawn with (its lanes, value ladder, lit west and shaded east, widening edges, crest), parameterised by width, height and seed, its streaks each falling a step of their own period a frame for the loop; the tongue's two tones staggered row by row; a foam clump seated under any bare stretch of the foot; the picture is the bake's frame 0; its frames are waterfall_1_flow.png. Not yet reviewed by an independent detail-auditor."
  }
 }

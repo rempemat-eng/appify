@@ -149,15 +149,22 @@ def fall_grain(rgb: np.ndarray, mask: np.ndarray, step: float = 8.0) -> dict:
 VALUE_MEAN = 160.0        # a falling sheet as light as its sibling (round 6, K6-1): mean lightness
 VALUE_EAST = 140.0        # its east half
 VALUE_DARK = 0.10         # at most this share under 90 L
-VALUE_LIT_MID = 0.35      # its middle third at least this share over 200 L
-VALUE_AREA = 250          # no single-colour area larger than this (texels)
+VALUE_LIT_MID = 0.35      # reported: the middle third's share over 200 L (the sibling 0.40; a one-cell sheet's is narrower)
+VALUE_AREA = 250          # reported: the largest single-colour area (the sibling's own is 419 on its ribbon)
+VALUE_SD = 48.0           # its range (round 7, K7-1: a compressed range read chalky): the spread of its lightness
+VALUE_EAST_DARK = 0.15    # its east third at least this share under 100 L (the shaded east side's dark streaks)
+VALUE_WHITE = 0.28        # at least this share over 230 L (the whitest runs)
 
 
 def fall_value(rgb: np.ndarray, mask: np.ndarray) -> dict:
-    """The value of a falling sheet against its sibling, the woodland's (woodland review, round 6,
-    K6-1: the kit's read a third darker, a blue curtain): the mean lightness of the sheet, of its east
-    half and the share under 90 L; the middle third's share over 200 L; and the largest connected
-    area of one colour. `mask` is the sheet; its columns set west, middle and east."""
+    """The value of a falling sheet against its sibling, the woodland's (woodland review, rounds 6
+    and 7, K6-1 and K7-1: the kit's read first a third darker, a blue curtain, then chalky, its range
+    compressed and off the ladder): the mean lightness of the sheet, of its east half and the share
+    under 90 L; the middle third's share over 200 L; the largest connected area of one colour; the
+    spread of the lightness, the east third's share under 100 L, the share over 230 L, and the count
+    of snow 0 to 3 texels (lilac blue-greys the sibling never uses). `mask` is the sheet; its columns
+    set west, middle and east. Measure a sheet as the sibling was measured: its ribbon west of the
+    navy east band (s < 0.85 of the lip), rows from under the crest to above the foam."""
     from .core import lum
     L = lum(rgb[..., :3]).astype(float)
     cols = np.nonzero(mask.any(0))[0]
@@ -174,10 +181,21 @@ def fall_value(rgb: np.ndarray, mask: np.ndarray) -> dict:
         lab, n = ndi.label((key == val) & mask)
         if n:
             big = max(big, int(np.bincount(lab.ravel())[1:].max()))
+    east3 = mask & (xs >= a + 2.0 * wdt / 3.0)
+    # the sibling's ladder has no lilac blue-greys in its body (round 7, K7-1): snow 0 to 3
+    from scripts.art.native.palette import LUT, FI
+    off = {(int(c[0]) << 16) | (int(c[1]) << 8) | int(c[2]) for c in (LUT[FI['snow'] * 8 + t_][:3] for t_ in range(4))}
+    lilac = int(np.isin(key[mask], list(off)).sum())
     r = dict(mean=round(float(L[mask].mean()), 1), east=round(float(L[east].mean()), 1),
-             dark=round(float((L[mask] < 90).mean()), 3), lit_mid=round(float((L[mid] > 200).mean()), 3), area=big)
+             dark=round(float((L[mask] < 90).mean()), 3), lit_mid=round(float((L[mid] > 200).mean()), 3), area=big,
+             sd=round(float(L[mask].std()), 1), east_dark=round(float((L[east3] < 100).mean()), 3),
+             white=round(float((L[mask] > 230).mean()), 3), off_ladder=lilac)
+    # the gate: lightness and range as the sibling's; the middle third's lit share and the largest
+    # flat area are reported only (round 7: on the sibling's own ribbon its largest area is 419, so a
+    # floor of 250 would fail the approved design itself)
     r['passed'] = bool(r['mean'] >= VALUE_MEAN and r['east'] >= VALUE_EAST and r['dark'] <= VALUE_DARK and
-                       r['lit_mid'] >= VALUE_LIT_MID and r['area'] <= VALUE_AREA)
+                       r['sd'] >= VALUE_SD and r['east_dark'] >= VALUE_EAST_DARK and r['white'] >= VALUE_WHITE and
+                       r['off_ladder'] == 0)
     return r
 
 

@@ -58,6 +58,20 @@ class Scale(unittest.TestCase):
         self.assertEqual(core.estimate_scale(art)[0], 1.0)
 
 
+class Occlusion(unittest.TestCase):
+    def test_a_ground_layer_piece_is_not_sorted_against_people(self):
+        # (woodland review, round 7) a sprite whose y-sort point is far from its drawn feet is a
+        # fault, unless it lies on a layer under the people (z_index below 0: a fall's loop, a bridge)
+        a = np.zeros((60, 20, 4), np.uint8)
+        a[:, :, 3] = 255
+        from scripts.review import scene as SC
+        z = SC.Zone('t', (100, 100), None)
+        z.sprites = [SC.Sprite('fall', 'kit/props/art/waterfall_3_tall_flow.png', (50, 30), (40, 0, 60, 60), -5, True, a, 'Props'),
+                     SC.Sprite('tree', 'zones/woodland/art/oak.png', (50, 30), (40, 0, 60, 60), 0, True, a, 'Props')]
+        names = [f.subject for f in SC.check_occlusion(z)]
+        self.assertEqual(names, ['tree'])
+
+
 class Water(unittest.TestCase):
     def test_a_fall_is_scored_against_its_house_sibling(self):
         # (woodland water review, round 5, W5-1) no official Eastward shot shows a falling sheet, and
@@ -88,8 +102,9 @@ class Water(unittest.TestCase):
         self.assertFalse(B.fall_grain(chips, m)['passed'])
         # (round 6, K6-1) and its value: a lit sheet of varied streaks passes, the same sheet a third
         # darker (a blue curtain) fails
-        lit = np.repeat(np.repeat(rng.integers(150, 250, (1, 30)), 60, 0)[..., None], 3, 2).astype(np.uint8)
-        lit[::20] = 255
+        # (round 7, K7-1: and wide in range, with dark streaks through its east third)
+        cols = [(250, 150, 245, 130, 240)[x % 5] if x < 20 else (60, 245, 240, 200, 250)[x % 5] for x in range(30)]
+        lit = np.repeat(np.repeat(np.array([cols]), 60, 0)[..., None], 3, 2).astype(np.uint8)
         self.assertTrue(B.fall_value(lit, m)['passed'], B.fall_value(lit, m))
         self.assertFalse(B.fall_value((lit * 0.66).astype(np.uint8), m)['passed'])
 

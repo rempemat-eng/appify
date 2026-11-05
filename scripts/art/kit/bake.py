@@ -463,11 +463,10 @@ def bake(plan: dict, lib: dict | None = None):
             for m_ in (wet, spray, wet & (dx_ < SN.P(3) + 2 * nz)):
                 sel = m_ & (cv % 8 > 0) & (cv % 8 < 6)
                 cv[sel] = cv[sel] - 1
-            # sheen: short wet glints running down the lit stone tops nearest the sheet
-            seeds_ = wet & (dx_ < SN.P(4)) & (pre_water % 8 >= 3) & (frng.random((h, w)) < 0.012)
-            glint = seeds_ | GD.down(seeds_, 1) | GD.down(seeds_, 2)
-            cv[glint & wet] = C('water', 4)
-            cv[seeds_] = C('snow', 4)
+            # (no sheen of water-blue and white glints on the stone beside the sheet: they read as spray
+            # on the face, against Matt's 2 Nov ruling; review round 7. The wet stone is its darker
+            # tones and the moss.) The random field keeps its draw so the moss below is unchanged.
+            frng.random((h, w))
             moss = (wet | spray) & (pre_water % 8 <= 1) & (nz > 0.6) & (frng.random((h, w)) < 0.5)
             cv[moss] = np.where(frng.random(moss.sum()) < 0.5, C('leaf', 2), C('leaf_cool', 2))
             # the sheet and its plume, rings and ripples on the pool
@@ -530,8 +529,9 @@ def bake(plan: dict, lib: dict | None = None):
             ST.fall_sheet(tmp, sx0, sw, r0, r1, seed=seed)
             ok = ndi.binary_erosion(wm, iterations=2) & ~above & ~span
             ok |= sheet
-            # the channel's last rows fading into the glassy tongue above the rim (5.3b)
-            ok[max(0, r0 - 3):r0, sx0:sx0 + sw] |= wm[max(0, r0 - 3):r0, sx0:sx0 + sw]
+            # the channel's last rows fading into the glassy tongue above the rim, and the lit
+            # streaks converging on the lip (rocks.sheet draws them on the channel's water; 5.3b)
+            ok[max(0, r0 - 24):r0, sx0:sx0 + sw] |= wm[max(0, r0 - 24):r0, sx0:sx0 + sw]
             ok[r1:r1 + SN.P(14)] |= ndi.binary_erosion(wm, iterations=2)[r1:r1 + SN.P(14)]
             cv[ok] = tmp[ok]
             # lip stones on the rim beside the sheet, never over it: they sit on the top tier's

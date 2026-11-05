@@ -109,13 +109,13 @@
     "strip": "res://kit/props/art/waterfall_1_tall_flow.png",
     "frame_px": [
      38,
-     100
+     101
     ],
     "region_px": [
      17,
      20,
      38,
-     100
+     101
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true
