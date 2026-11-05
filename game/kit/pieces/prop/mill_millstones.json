@@ -121,7 +121,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "millstones (1.2 m across; art px: 56 to 76 tall, 112 to 132 wide)",
+  "size_class": "unsized (two spare millstones and a sack: no kind in the guide; 1.2 m across; art px: 56 to 76 tall, 112 to 132 wide)",
   "eastward_ref": "17 (the rocks 460,165,550,250, the fence, sacks), 12 (the boulder wall and the stepping stones in water)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

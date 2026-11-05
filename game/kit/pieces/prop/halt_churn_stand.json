@@ -113,7 +113,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "stand (deck 0.65 m; churns 0.78 m tall, 0.35 m across as Eastward's in 17; art px: 60 to 80 tall, 56 to 80 wide)",
+  "size_class": "unsized (a churn stand with its churns: the churns kind is the churns alone; deck 0.65 m; churns 0.78 m tall, 0.35 m across as Eastward's in 17; art px: 60 to 80 tall, 56 to 80 wide)",
   "eastward_ref": "13 (the lamp post 375,20,415,125), 17 (the churns 135,47,162,112 and the bench), the anchors kit/lantern and kit/bench",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

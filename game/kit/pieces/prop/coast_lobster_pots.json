@@ -114,7 +114,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "creel_stack (no size-guide kind: a creel is smaller than the guide's crate; a creel 0.5 m long, 0.3 m high; three stacked 0.6 m; art px: 18 to 48 tall, 40 to 56 wide)",
+  "size_class": "creel_stack (a creel 0.5 m long, 0.3 m high; three stacked 0.6 m; art px: 18 to 48 tall, 40 to 56 wide)",
   "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

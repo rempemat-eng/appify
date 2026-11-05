@@ -105,7 +105,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "signal (a semaphore post 3 m; art px: 125 to 160 tall, 30 to 50 wide)",
+  "size_class": "unsized (a semaphore signal: no kind in the guide; a semaphore post 3 m; art px: 125 to 160 tall, 30 to 50 wide)",
   "eastward_ref": "13 (the lamp post 375,20,415,125), 17 (the churns 135,47,162,112 and the bench), the anchors kit/lantern and kit/bench",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

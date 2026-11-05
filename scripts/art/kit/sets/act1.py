@@ -3345,25 +3345,25 @@ def prop_jobs():
     add('coast_net_rack', [('still', lambda: net_rack())], name='Net rack', purpose='store', role='rack', cells=(4, 1), fp=_fp(4, 1),
         collision={'shape': 'rect', 'rect': [-13.0, -1.0, 26, 2]}, shadow=(30, 4), composition='edge',
         requires=[_rel('near', 'water', 4, 'nets are hung to dry on the quay, by the boats that set them')],
-        forbids=[OFF_WATER], size_class='rack (a net rack 1.1 m to its rail, 2 m long; art px: 45 to 62 tall, 75 to 100 wide)',
+        forbids=[OFF_WATER], size_class='unsized (the guide\'s net_rack is a drying frame 24 to 36 world px tall, higher than this 1.1 m quay rack: a ruling to make; a net rack 1.1 m to its rail, 2 m long; art px: 45 to 62 tall, 75 to 100 wide)',
         eastward=EW_COAST,
         note='Three oak posts and a rail with a net hung to dry: mostly air, twine in diamonds lit to the upper left, folds where the mesh closes, an uneven weighted foot; corks, two glass floats, its tail in a flat coil.')
     add('coast_lobster_pots', [('a', lambda: lobster_pots('a')), ('b', lambda: lobster_pots('b'))], name='Lobster pots',
         purpose='store', role='store', cells=(2, 1), fp=_fp(2, 1),
         collision={'shape': 'rect', 'rect': [-7.0, -3.0, 14, 4]}, shadow=(16, 3), composition='cluster',
         requires=[_rel('near', 'water', 3, 'creels stacked on the quay between trips')], forbids=[OFF_WATER],
-        size_class='creel_stack (no size-guide kind: a creel is smaller than the guide\'s crate; a creel 0.5 m long, 0.3 m high; three stacked 0.6 m; art px: 18 to 48 tall, 40 to 56 wide)',
+        size_class='creel_stack (a creel 0.5 m long, 0.3 m high; three stacked 0.6 m; art px: 18 to 48 tall, 40 to 56 wide)',
         eastward=EW_COAST,
         note='Woven withy creels on timber bases, half-cylinders in three-quarter view (a lit back, hooped south face, a D-shaped east end with its funnel mouth): three stacked (a), or one with its rope coil and float (b).')
     add('coast_mooring_bitt', [('still', lambda: mooring_bitt())], name='Mooring bitt', purpose='contain', role='mooring',
         cells=(2, 1), fp=_fp(1, 1), collision={'shape': 'rect', 'rect': [-2.5, -2.5, 5, 4]}, shadow=(8, 2), composition='edge',
         requires=[_rel('near', 'water', 1, 'on the quay\'s edge, where a boat\'s line is made fast')], forbids=[OFF_WATER],
-        size_class='mooring bitt (0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)', eastward=EW_COAST,
+        size_class='unsized (a mooring bitt with its hawser\'s coil on the quay: the guide\'s bollard is the post alone; 0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)', eastward=EW_COAST,
         note='A cast-iron bitt on a bolted plate, a hawser made fast round its waist and the rest flaked down in a flat coil.')
     add('coast_boat_beached', [('still', lambda: boat_beached())], name='Beached boat', purpose='mark', role='boat',
         cells=(4, 2), fp=_fp(4, 1), collision={'shape': 'rect', 'rect': [-14.0, -6.0, 28, 6]}, shadow=(30, 5), composition='free',
         requires=[_rel('near', 'water', 4, 'drawn up the beach above the tide line')], forbids=[OFF_ROUTE, OFF_WATER],
-        size_class='boat (a 2.1 m clinker dinghy, 0.5 m to its gunwale; art px: 30 to 46 tall, 84 to 100 wide)', eastward=EW_COAST,
+        size_class='unsized (a dinghy drawn up, under the guide\'s rowing_boat of 40 to 64 world px wide: a ruling to make; a 2.1 m clinker dinghy, 0.5 m to its gunwale; art px: 30 to 46 tall, 84 to 100 wide)', eastward=EW_COAST,
         note='A clinker dinghy drawn up on the shingle, dry: lapped strakes, blue and white, red below; thwarts inside.')
     add('coast_buoy', [('still', lambda: buoy())], name='Buoy', purpose='guide', role='marker', cells=(1, 1), fp=_fp(1, 1),
         collision={'shape': 'none'}, shadow=None, blocks=False, composition='free',
@@ -3382,7 +3382,7 @@ def prop_jobs():
     add('halt_platform_edge', [(v_, (lambda v_=v_: platform_edge(v_))) for v_ in 'abcd'], name='Platform edge',
         purpose='cross', role='platform', cells=(1, 1), fp=[[0, -1]], collision={'shape': 'none'}, shadow=None, blocks=False,
         composition='edge', requires=[_rel('near', 'route', 3, 'the platform runs beside the lane the halt serves')],
-        forbids=[OFF_WATER], size_class='platform (a 0.3 m front and its coping, the gravel behind; art px: 30 to 44 tall, 24 to 24 wide)',
+        forbids=[OFF_WATER], size_class='unsized (one cell of a platform\'s edge, a piece of a run, not an object; a 0.3 m front and its coping, the gravel behind; art px: 30 to 44 tall, 24 to 24 wide)',
         eastward=EW_HALT,
         note='One cell of the platform\'s edge along x: dressed blocks, a coping slab standing proud with a worn white lip, flags behind; four variants to shuffle along a run; cells meet.')
     add('halt_waiting_shelter', [('still', lambda: waiting_shelter())], name='Waiting shelter', purpose='rest', role='shelter',
@@ -3397,24 +3397,24 @@ def prop_jobs():
         cells=(3, 1), fp=_fp(3, 1), collision={'shape': 'rect', 'rect': [-11.0, -4.0, 22, 5]}, shadow=(22, 4), composition='edge',
         requires=[_rel('near', 'route', 1, 'at the lane\'s side, where the cart sets the churns down for the train')],
         forbids=[OFF_ROUTE, OFF_WATER],
-        size_class='stand (deck 0.65 m; churns 0.78 m tall, 0.35 m across as Eastward\'s in 17; art px: 60 to 80 tall, 56 to 80 wide)',
+        size_class='unsized (a churn stand with its churns: the churns kind is the churns alone; deck 0.65 m; churns 0.78 m tall, 0.35 m across as Eastward\'s in 17; art px: 60 to 80 tall, 56 to 80 wide)',
         eastward=EW_HALT,
         note='A board deck on four posts, three galvanised churns in mid-value tin with bands, shoulders, necks, ringed lids and handles.')
     add('halt_semaphore', [('still', lambda: semaphore())], name='Semaphore signal', purpose='guide', role='signal',
         cells=(2, 1), fp=_fp(1, 1), collision={'shape': 'rect', 'rect': [-2.0, -2.0, 4, 4]}, shadow=(8, 3), composition='edge',
         requires=[_rel('near', 'route', 3, 'at the platform\'s end, where the driver sees it')], forbids=[OFF_ROUTE, OFF_WATER],
-        size_class='signal (a semaphore post 3 m; art px: 125 to 160 tall, 30 to 50 wide)', eastward=EW_HALT,
+        size_class='unsized (a semaphore signal: no kind in the guide; a semaphore post 3 m; art px: 125 to 160 tall, 30 to 50 wide)', eastward=EW_HALT,
         note='A three-tone post with cap and finial, the red arm at danger, its spectacle cast with it, a ladder beside.')
     add('halt_platform_lamp', [('still', lambda: platform_lamp())], name='Platform lamp', purpose='light', role='lamp',
         cells=(1, 1), fp=_fp(1, 1), collision={'shape': 'rect', 'rect': [-1.5, -1.5, 3, 3]}, shadow=(6, 2), composition='edge',
         requires=[_rel('near', 'route', 5, 'along the platform, lighting the way from the lane to the train')], forbids=[OFF_ROUTE, OFF_WATER],
-        size_class='platform_lamp (no size-guide kind: a platform lamp is 2.9 m, under the guide\'s street lamp of 50 to 65 world px; a platform lamp 2.9 m; art px: 107 to 178 tall, 15 to 28 wide)', eastward=EW_HALT,
+        size_class='platform_lamp (a platform lamp 2.9 m; art px: 107 to 178 tall, 15 to 28 wide)', eastward=EW_HALT,
         note='A green column on a fluted foot, a ladder bar, a lantern of two panes lit from inside (8 frames), a domed cap.')
     add('halt_timetable_board', [('still', lambda: timetable_board())], name='Timetable board', purpose='guide', role='notice',
         cells=(3, 1), fp=_fp(2, 1), collision={'shape': 'rect', 'rect': [-7.0, -1.0, 14, 2]}, shadow=(16, 3), composition='edge',
         requires=[_rel('near', 'route', 2, 'by the platform\'s entrance from the lane')], forbids=[OFF_ROUTE, OFF_WATER],
         extra={'provides': ['feature']},
-        size_class='notice board (2.2 m; art px: 81 to 126 tall, 44 to 89 wide)', eastward=EW_HALT,
+        size_class='notice_board (2.2 m; art px: 81 to 126 tall, 44 to 89 wide)', eastward=EW_HALT,
         note='A printed sheet behind glass (a header with a train and a clock, rows of print, a notice pinned askew) under a gabled hood.')
     # the Millrace
     add('mill_wheel', [('still', lambda: mill_wheel())], name='Water mill and wheel', purpose='work', role='wheel', cells=(14, 7),
@@ -3428,18 +3428,18 @@ def prop_jobs():
         fp=_fp(3, 1), collision={'shape': 'rect', 'rect': [-12.0, -4.0, 24, 4]}, shadow=None, composition='edge',
         requires=[_rel('near', 'water', 1, 'at the leat\'s head, holding back the race')], forbids=[OFF_ROUTE],
         extra={'provides': ['feature', 'water']},
-        size_class='sluice (piers 0.75 m, the rack to 1.1 m; art px: 55 to 80 tall, 44 to 60 wide)', eastward=EW_MILL,
+        size_class='unsized (a sluice gate between its piers: no kind in the guide; piers 0.75 m, the rack to 1.1 m; art px: 55 to 80 tall, 44 to 60 wide)', eastward=EW_MILL,
         note='Two coursed stone piers, an oak gate of planks drawn up on its rack, a toothed gear, the water white under it.')
     add('mill_millstones', [('still', lambda: millstones())], name='Millstones', purpose='store', role='store', cells=(5, 2),
         fp=_fp(5, 1), collision={'shape': 'rect', 'rect': [-19.0, -6.0, 41, 6]}, shadow=(30, 4), composition='edge',
         requires=[_rel('near', 'route', 3, 'in the miller\'s yard, by the door they will be carried through')],
-        forbids=[OFF_ROUTE, OFF_WATER], size_class='millstones (1.2 m across; art px: 56 to 76 tall, 112 to 132 wide)', eastward=EW_MILL,
+        forbids=[OFF_ROUTE, OFF_WATER], size_class='unsized (two spare millstones and a sack: no kind in the guide; 1.2 m across; art px: 56 to 76 tall, 112 to 132 wide)', eastward=EW_MILL,
         note='A dressed millstone flat and one on edge against a post: bevels, eyes, harps of furrows; a sack of meal.')
     add('mill_landslip', [('still', lambda: landslip())], name='Landslip', purpose='mark', role='barrier', cells=(6, 3),
         fp=_fp(6, 2), collision={'shape': 'rect', 'rect': [-22.0, -14.0, 44, 14]}, shadow=None, blocks=False, composition='free',
         requires=[_rel('on', 'route', note='the slip lies across the road: way W3, cleared once the Millrace is mended')],
         extra={'provides': ['feature']},
-        size_class='landslip (a tongue of earth 3 m across, 0.5 m deep; art px: 56 to 80 tall, 120 to 145 wide)',
+        size_class='unsized (a landslip across a road: ground, not an object; a tongue of earth 3 m across, 0.5 m deep; art px: 56 to 80 tall, 120 to 145 wide)',
         eastward='17 (the rockfall 460,165,550,250: stones carried in planes with dark gaps), 13 (the rocks)',
         story={'owner': None, 'lore': 'Way W3 (world-plan.md 6): the Millrace landslip on the Foothill Road; the way system '
                                       '(world-unlocks.md) holds the road shut, this piece is its picture', 'gating': {'act': 1}},
@@ -3456,7 +3456,7 @@ def prop_jobs():
         doors=[{'x': [-21, 21], 'faces': 's'}],
         requires=[_rel('near', 'route', 5, 'off the path on its own rise, reached by a short trod')], forbids=NATURE,
         extra={'provides': ['feature', 'view']},
-        size_class='barrow (a mound 7.4 m long, 2 m high; its portal 0.95 m wide, 1.8 m high, so Bramble walks in; '
+        size_class='unsized (a chambered barrow, a landmark: no kind in the guide; a mound 7.4 m long, 2 m high; its portal 0.95 m wide, 1.8 m high, so Bramble walks in; '
                    'art px: 150 to 190 tall, 300 to 340 wide)', eastward=EW_RURAL,
         story={'owner': None, 'lore': "Old Fang's barrow (the map legend's Act 1 beat)", 'gating': {'act': 1}},
         note='A turf mound in soft masses of grass with a portal of jambs and a capstone, the passage receding in perspective, set stones either side.')
@@ -3464,7 +3464,7 @@ def prop_jobs():
         name='Kerb stone', purpose='mark', role='marker', cells=(1, 1), fp=_fp(1, 1),
         collision={'shape': 'rect', 'rect': [-3.0, -1.5, 6, 3]}, shadow=(8, 2), composition='cluster',
         requires=[_rel('near', 'barrow_entrance', 4, 'a stone of the ring round the barrow\'s foot')], forbids=NATURE,
-        size_class='kerb stone (0.35 to 0.45 m set on edge; art px: 16 to 28 tall, 14 to 30 wide)', eastward=EW_RURAL,
+        size_class='kerb_stone (0.35 to 0.45 m set on edge; art px: 16 to 28 tall, 14 to 30 wide)', eastward=EW_RURAL,
         note='A stone seated in the turf, carried in planes (a lit top, a shaded side), with a crack, lichen and its contact shadow: a dressed slab, a low boulder, a pillar.')
     # beehives
     add('hive_wbc', [('still', lambda: wbc_hive())], name='Beehive', purpose='work', role='hive', cells=(2, 1), fp=_fp(1, 1),

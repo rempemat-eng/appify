@@ -707,30 +707,46 @@ def spec_ranges(text: str | None) -> dict:
 _GUIDE = None
 
 
+UNSIZED = 'unsized'      # a spec's head word for a piece no kind fits: it must say why in its parentheses
+
+
 def guide_kind(size_class: str | None):
-    """The size guide's kind (scripts/art/size_guide.json, docs/vision/size-guide.md section 9) a
-    piece's size spec names as its head word, e.g. "water_mill (...)", with its height and width in
-    art px at density 3; None when the head word is not one of the guide's kinds."""
+    """The kind a piece's size spec names as its head word ("water_mill (...)"), with its height and
+    width in art px at density 3 and the tolerance: first the asset gate's table (sizes.json, art px,
+    `tol`), then the size guide's kinds (scripts/art/size_guide.json, world px x 3, with its own
+    tolerance). Returns (head, ranges), (head, None) for the explicit `unsized` (no kind fits; the spec
+    says why), or (head, False) when the head word names no kind at all, which check_spec reports
+    loudly rather than skipping (round 5 of the Act 1 detail audit, Claude A's ruling)."""
     global _GUIDE
     if _GUIDE is None:
-        _GUIDE = json.load(open(os.path.join(REPO, 'scripts', 'art', 'size_guide.json')))
+        with open(os.path.join(REPO, 'scripts', 'art', 'size_guide.json'), encoding='utf-8') as fh:
+            _GUIDE = json.load(fh)
     head = (size_class or '').split('(')[0].strip().split(' ')[0] if size_class else ''
+    if not head:
+        return None
+    if head == UNSIZED:
+        return head, None
+    c = CLASSES.get(head)
+    if c and c.get('measure') == 'bbox':
+        return head, {'tall': (c['h'][0] - tol(c['h'][0]), c['h'][1] + tol(c['h'][1])),
+                      'wide': (c['w'][0] - tol(c['w'][0]), c['w'][1] + tol(c['w'][1]))}
     k = _GUIDE['kinds'].get(head)
     if not k:
-        return None
+        return head, False
     d = 3.0                                                          # art px a world px at density 3
-    tol = float(_GUIDE.get('tolerance', 2)) * d
-    return head, {'tall': (k['h'][0] * d - tol, k['h'][1] * d + tol), 'wide': (k['w'][0] * d - tol, k['w'][1] * d + tol)}
+    t = float(_GUIDE.get('tolerance', 2)) * d
+    return head, {'tall': (k['h'][0] * d - t, k['h'][1] * d + t), 'wide': (k['w'][0] * d - t, k['w'][1] * d + t)}
 
 
 def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[Finding]:
     """logic.size_spec: the drawn picture's opaque box against the piece's own size spec (the detail
     audit of 4 Nov: the shelter drawn at a third of its 2.2 m, the millstones at 0.74 m of their 1.2 m,
-    the barrow's portal at a third of its own size). Every picture of a piece is measured. Where the
-    spec names one of the size guide's kinds as its head word ("water_mill (...)"), the picture is
-    measured against the guide's range too (logic.size_guide), so a spec cannot drift from the guide
-    unseen (round 5 of the Act 1 detail audit, R5-13: the v6 mill met its own 160 to 190 and was half
-    the guide's water mill)."""
+    the barrow's portal at a third of its own size). Every picture of a piece is measured. The spec's
+    head word names its kind ("water_mill (...)"), and the picture is measured against that kind's
+    range too (logic.size_guide), so a spec cannot drift from the guide unseen (round 5 of the Act 1
+    detail audit, R5-13: the v6 mill met its own 160 to 190 and was half the guide's water mill). A
+    head word that names no kind is a fault, never a silent skip; `unsized (why ...)` says outright
+    that no kind fits."""
     rng = spec_ranges(size_class)
     alpha = rgba[..., 3] > 128
     if not alpha.any():
@@ -739,14 +755,19 @@ def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[F
     got = {'tall': ys.max() - ys.min() + 1, 'wide': xs.max() - xs.min() + 1}
     out = []
     gk = guide_kind(size_class)
-    if gk:
+    if gk and gk[1] is False:
+        out.append(Finding('logic.size_guide', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
+                           f'{subject}: its size spec names "{gk[0]}", which is no kind in sizes.json or the size guide, so it '
+                           'cannot be measured against one', 'name the kind it is as the spec\'s head word, rule a new kind into '
+                           f'sizes.json and size-guide.md, or say "{UNSIZED} (why no kind fits; ...)"', subject=subject))
+    elif gk and gk[1]:
         kind, grng = gk
         for ax, (lo, hi) in grng.items():
             v = float(got[ax])
             if v < lo or v > hi:
                 out.append(Finding('logic.size_guide', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
-                                   f'{subject}: drawn {v:.0f} art px {ax}, the size guide\'s {kind} is {lo:.0f} to {hi:.0f} '
-                                   f'(world px x 3, with its tolerance)',
+                                   f'{subject}: drawn {v:.0f} art px {ax}, the kind {kind} is {lo:.0f} to {hi:.0f} '
+                                   f'(with its tolerance)',
                                    'redraw it to the guide in the generator (prop-logic rule 9), or rule a new kind into the '
                                    'size guide first', score=v, threshold=lo if v < lo else hi, subject=subject))
     for ax, (lo, hi) in rng.items():

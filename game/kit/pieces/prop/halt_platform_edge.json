@@ -114,7 +114,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "platform (a 0.3 m front and its coping, the gravel behind; art px: 30 to 44 tall, 24 to 24 wide)",
+  "size_class": "unsized (one cell of a platform's edge, a piece of a run, not an object; a 0.3 m front and its coping, the gravel behind; art px: 30 to 44 tall, 24 to 24 wide)",
   "eastward_ref": "13 (the lamp post 375,20,415,125), 17 (the churns 135,47,162,112 and the bench), the anchors kit/lantern and kit/bench",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

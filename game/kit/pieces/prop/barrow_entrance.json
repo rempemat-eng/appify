@@ -318,7 +318,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "barrow (a mound 7.4 m long, 2 m high; its portal 0.95 m wide, 1.8 m high, so Bramble walks in; art px: 150 to 190 tall, 300 to 340 wide)",
+  "size_class": "unsized (a chambered barrow, a landmark: no kind in the guide; a mound 7.4 m long, 2 m high; its portal 0.95 m wide, 1.8 m high, so Bramble walks in; art px: 150 to 190 tall, 300 to 340 wide)",
   "eastward_ref": "12 (the thatched hut, the boulder wall), 13 (the rocks 325,247,350,268), 17 (the rockfall for stones carried in planes)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

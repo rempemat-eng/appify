@@ -137,7 +137,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "landslip (a tongue of earth 3 m across, 0.5 m deep; art px: 56 to 80 tall, 120 to 145 wide)",
+  "size_class": "unsized (a landslip across a road: ground, not an object; a tongue of earth 3 m across, 0.5 m deep; art px: 56 to 80 tall, 120 to 145 wide)",
   "eastward_ref": "17 (the rockfall 460,165,550,250: stones carried in planes with dark gaps), 13 (the rocks)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

@@ -105,7 +105,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "sluice (piers 0.75 m, the rack to 1.1 m; art px: 55 to 80 tall, 44 to 60 wide)",
+  "size_class": "unsized (a sluice gate between its piers: no kind in the guide; piers 0.75 m, the rack to 1.1 m; art px: 55 to 80 tall, 44 to 60 wide)",
   "eastward_ref": "17 (the rocks 460,165,550,250, the fence, sacks), 12 (the boulder wall and the stepping stones in water)",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

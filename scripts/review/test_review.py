@@ -513,7 +513,34 @@ class SizeTable(unittest.TestCase):
         s[4:380, 4:330, 3] = 255                        # 376 x 326: inside the guide's 312 to 432 x 288 to 384
         self.assertEqual(SZ.check_spec(s, 'water_mill (art px: 310 to 432 tall, 288 to 384 wide)', 'x/mill'), [])
         self.assertEqual(SZ.guide_kind('shelter (art px: 150 to 180 tall)')[0], 'shelter')
-        self.assertIsNone(SZ.guide_kind('platform (art px: 30 to 44 tall)'))
+
+    def test_a_size_spec_naming_no_kind_fails_loudly(self):
+        """Claude A's ruling on 5 Nov: a head word that is no kind in sizes.json or the size guide is a
+        fault, not a silent skip; a piece no kind fits says so with 'unsized (why ...)'."""
+        s = sprite(60, 60)
+        s[20:58, 10:50, 3] = 255                        # 38 x 40: inside its own spec
+        self.assertEqual(SZ.guide_kind('platform (art px: 30 to 44 tall)'), ('platform', False))
+        f = SZ.check_spec(s, 'platform (art px: 30 to 44 tall, 36 to 44 wide)', 'x/platform')
+        self.assertEqual([x.detector for x in f], ['logic.size_guide'])
+        self.assertEqual(f[0].severity, 'fault')
+        self.assertIn('"platform"', f[0].message)
+        self.assertEqual(SZ.guide_kind('unsized (a cell of a run; art px: 30 to 44 tall)'), ('unsized', None))
+        self.assertEqual(SZ.check_spec(s, 'unsized (a cell of a run; art px: 30 to 44 tall, 36 to 44 wide)', 'x/edge'), [])
+        self.assertIsNone(SZ.guide_kind(''))
+
+    def test_the_creel_stack_and_platform_lamp_are_kinds(self):
+        # Claude A's ruling on 5 Nov: both pieces are right-sized for what they are, so the guide gains them
+        self.assertEqual(SZ.guide_kind('creel_stack (art px: 40 to 50 tall)')[1],
+                         {'tall': (14, 55.0), 'wide': (20, 66.0)})
+        self.assertEqual(SZ.guide_kind('platform_lamp (art px: 130 to 140 tall)')[1],
+                         {'tall': (105.3, 152.9), 'wide': (9, 34)})
+        lamp = sprite(30, 145)
+        lamp[4:142, 5:25, 3] = 255                      # 138 x 20, as drawn
+        self.assertEqual(SZ.check_spec(lamp, 'platform_lamp (art px: 130 to 145 tall, 14 to 24 wide)', 'x/lamp'), [])
+        lamp[4:20, :, 3] = 0
+        lamp[100:142, 5:25, 3] = 255
+        lamp[:100, :, 3] = 0                            # 42 tall: a bollard, not a platform lamp
+        self.assertIn('logic.size_guide', [x.detector for x in SZ.check_spec(lamp, 'platform_lamp (a lamp)', 'x/lamp')])
 
     def test_a_class_name_counts_only_where_a_word_starts(self):
         # the detail audit of 4 Nov: "urn" inside "churn" sized the churn stand as a barrel

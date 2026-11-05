@@ -101,7 +101,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "mooring bitt (0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)",
+  "size_class": "unsized (a mooring bitt with its hawser's coil on the quay: the guide's bollard is the post alone; 0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)",
   "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

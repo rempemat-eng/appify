@@ -545,6 +545,35 @@
    "chunky": null,
    "measure": "bbox"
   },
+  "creel_stack": {
+   "group": "prop",
+   "names": [
+    "creel_stack",
+    "creels",
+    "lobster_pots"
+   ],
+   "h": [
+    18,
+    50
+   ],
+   "w": [
+    24,
+    60
+   ],
+   "h_A": [
+    0.24,
+    0.68
+   ],
+   "w_A": [
+    0.32,
+    0.81
+   ],
+   "real": "a stack of 1 to 3 lobster creels: one creel about 0.6 m long, 0.45 m wide and 0.4 m tall",
+   "eastward": "no creel in the local Eastward shots; its crates in 04 stack to 1 A",
+   "chunky": null,
+   "measure": "bbox",
+   "note": "Claude A's ruling on 5 Nov (round 5 of the Act 1 detail audit): a creel is smaller than the crate in crate_stack, so the stack has its own kind"
+  },
   "sack": {
    "group": "prop",
    "names": [
@@ -707,6 +736,33 @@
    "eastward": "lamp posts 88 to 100 E (1.6 to 1.85 A) in 13 and 17",
    "chunky": "up to 2.4 A where it lights a square",
    "measure": "bbox"
+  },
+  "platform_lamp": {
+   "group": "prop",
+   "names": [
+    "platform_lamp"
+   ],
+   "h": [
+    117,
+    139
+   ],
+   "w": [
+    13,
+    30
+   ],
+   "h_A": [
+    1.58,
+    1.88
+   ],
+   "w_A": [
+    0.18,
+    0.41
+   ],
+   "real": "a railway platform lamp, about 2.7 to 3.2 m to the lantern's top",
+   "eastward": "lamp posts 88 to 100 E (1.6 to 1.85 A) in 13 and 17",
+   "chunky": null,
+   "measure": "bbox",
+   "note": "Claude A's ruling on 5 Nov (round 5 of the Act 1 detail audit): lower than the street lamp in lamp, so it has its own kind"
   },
   "post_lantern": {
    "group": "prop",
