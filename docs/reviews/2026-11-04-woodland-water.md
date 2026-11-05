@@ -1170,3 +1170,138 @@ The painter had reset `woodland/flow` and `flow_rill` to "pending" though their 
 - **Night tint:** not checked.
 - **Reduced motion:** judged from frame 0, which holds the streaks and the K6-1 value structure.
 - **An Eastward falling sheet:** none exists in the local official shots. The painter's web search was not repeated.
+
+## Round 7 (e2a3c545)
+
+A seventh independent detail-auditor run, on the commit that answers round 6 (e2a3c545, "Woodland water, review round 6: the kit's falls as light as their sibling, picture = bake", branch `claude-a/water-polish`, draft PR #434). This auditor did not paint it and did not write rounds 1 to 6. Every number below was measured here, on the pictures and frames at e2a3c545, in art px at density 3 (a cell is 24 art px), with Rec. 601 lightness. The painter's numbers were checked, not copied.
+
+**Verdicts:**
+
+| Asset | Detectors | Verdict | Why |
+| --- | --- | --- | --- |
+| `woodland/ground`, `woodland/flow`, `woodland/flow_rill` | not re-run | **round 6's pass stands** | `git diff --quiet a5a3d874 e2a3c545` on the three pictures and their records: unchanged. Their records were left alone. |
+| `kit/waterfall_1` to `_4`, and `_1_tall` to `_4_tall` | pass (`detail.bar` polish 0.73 to 0.82 on `_1`, `_1_tall`, `_2`, `_2_tall`, none on `_3` and `_4`; `detail.outline` polish on all; no `fall_grain` or `fall_value` finding) | **fail, all eight** | K6-1, P6-1, L6-1 and the tongue seam are fixed as written, and the sheets do not overshoot in brightness. They fail on K7-1: the value range is compressed and has left the sibling's ladder, so the sheet has no shaded east side and reads as a pale, greyish curtain beside the woodland fall. |
+
+`python3 -m scripts.review.gate --check` after the verdicts: **ok** (7 zones, fix queue 2 assets). The kit pieces are not zone art, so the gate does not read their verdicts.
+
+### What was reviewed
+
+- `game/kit/props/art/waterfall_{1..4}{,_tall}.png` and their `_flow.png` strips, all eight frames, rebuilt here with `structures.fall_sheet(..., seed=9 + c, t)` exactly as `fall_frames` and the test do.
+- `game/zones/woodland_kit/ground_baked.png` (the fall is `waterfall_3_tall` at (204, 840) texels), diffed against a5a3d874's; `game/kit/zones/woodland_kit.json` (tree-3) and `woodland_kit.tscn`.
+- Code: `structures.fall_sheet` (`FALL_LANE_TONES`, the east edge, the tongue), `sheet_outline`, `bands.fall_value`, `assets.fall_grain`, the new `test_kit` checks, and the eastward-edges 5.3b edit.
+- The painter's `kit_pieces_before_after_round7_5x.png` and `kit_falls_ingame_round7.png`, and the commit message. Looked at; no number was taken from them.
+- The woodland's sheet as the sibling: `ground.png` with frame 0 of `flow.png` laid at (172, 756).
+
+### Commands
+
+- `python3 -m scripts.review.calibrate --flagged <Matt's screenshots> --eastward <Eastward shots>`: **recall 39 of 39**. False positives: 5 on 6 clean screens and 29 on 22 clean props, the same as rounds 1 to 6. `calibration_results.json` was reverted afterwards.
+- `assets.review` with kind `waterfall` and biome `woodland` on the eight pieces (sheets in `artifacts/review/assets/kit__waterfall_*.png`, not committed): all pass the detectors. Every sha256 matches the painter's record. The records were then written with `assets.record` and the reviewer field (`audit7/record.py` in the auditor's scratchpad).
+- `python3 -m unittest scripts.art.kit.test_kit.WaterBanks`: 18 tests, OK.
+- **Own captures.** Godot 4.7.2 under Xvfb at 1920 x 1080 (2 screen px a texel): `--zone=woodland --at=130,300`, `--zone=woodland_kit --at=95,300` and `68,295`, `--zone=kitlab_tiers --at=185,120`. Crops: `ig_wood_vs_wkit_2x.png` (the two falls side by side), `row_ingame_2px.png` and `row_ingame_1x.png` (both falls with Bramble, as shown and at one screen px a texel), `wkit_bake_fall_4x.png`, `wkit_bake_r6_r7_3x.png`, `wkit_foot_8x.png`, `wf4_foot_6x.png`, `diff_fallwest.png`, `diff_south.png`. All local.
+- **Own measurements** (`audit7/meas.py`, `hist.py`): grain (share of horizontal against vertical neighbours differing by more than 8 L; median vertical run of one exact colour per column) over rows 20 to foot - 4 and columns 25 to 24 + w - 1; value (mean, east half, share under 90 L, share over 200 L per third, share over 230 L, standard deviation, largest one-colour area) over `sheet_mask` rows 20 to foot - 4; tone counts per third; the per-row edge offsets from `sheet_outline`; foam cover under the foot.
+- `npm run review:scene -- woodland_kit` for the L6-3 scene check (below).
+
+### Eastward comparison
+
+No official Eastward shot in the local set shows a falling sheet (01 to 17, 21, 22, 30, 37 to 39), as rounds 5 and 6 found. The pieces were compared with their house sibling, the woodland sheet, at the same character height: side by side at 2 screen px a texel in Godot (`ig_wood_vs_wkit_2x.png`) and with Bramble beside both (`row_ingame_2px.png`).
+
+### The painter's claims, checked
+
+- **K6-1, value: the numbers are true.**
+  - Frame 0: mean 170.7 to 181.2, east half 156.6 to 164.3, under 90 L 0.006 to 0.021, middle third over 200 L 0.38 to 0.52, largest one-colour area 58 to 122. All as reported.
+  - Across the loop: mean 169.3 to 182.5, east half 153.2 to 167.0, under 90 L at most 0.021, largest area at most 122.
+  - **The thin margin:** `waterfall_1`'s middle third over 200 L is 0.355 at its lowest frame against the test's 0.35. Its frame 0 is 0.47. The next lowest is `waterfall_2`, 0.364. It passes, but a reseed or a small palette change can tip it.
+- **Grain: true, with the thin margin.** Ratio 6.2 to 11.4 over every frame of every piece (the woodland sheet 9.7). Median run 6.0 to 13 (the woodland 14). 6.0, at the threshold, occurs in some frames of `waterfall_1` and `waterfall_2`; the one-tier pieces' runs of 2 texels or less are 12 to 30 % of all runs, against the woodland's 4 %. They read as streaks at 1x. Not a finding.
+- **P6-1: true, with one mistake.** Above the swell each edge steps in or out after runs of 4 to 8 rows in every piece. Every row's west column is the water 4 film. But the navy east edge is **one texel in 58 to 89 % of rows** and two in the rest, not "2 (now and then 3)" as the commit and 5.3b say. `fall_sheet` sets `east = xr - X <= edge_w[k]` with `edge_w` 1 or 2, and `xr` is exclusive, so the edge is `edge_w` texels wide.
+- **The tongue: true.** Rows 12 to 14 meet water 4 and water 3 in a checker from s 0.55 to 0.78; no hard seam is left. What is left is P7-3.
+- **L6-1: true, to the texel.** On all eight pieces the PNG's sheet (rows 12 to foot) equals `fall_sheet(9 + c)` frame 0 in colour and alpha, texel for texel. In the woodland_kit bake the sheet body equals `waterfall_3_tall.png` at (144, 732) on every body texel. `test_a_falls_picture_is_its_baked_frame_0` passes.
+- **L6-3: true.** `tree-3` stands at (60, 864) texels, on the soft grid (5 x 12 across, 36 x 24 down). From `oak.png` and its foot (106, 243), its crown's east edge is at x 156 at most (rows 717 to 753); the channel and the sheet start at x 168. So 12 texels, half a cell, stay clear, and in the Godot capture nothing of the crown lies over the channel or the sheet. The bake changed in 47,468 texels: the fall itself, the canopy shade that moved with the tree, and canopy-shade dressing elsewhere reshuffled in kind (`diff_fallwest.png`, `diff_south.png`). The `.tscn` diff is node ids plus tree-3's `at`. The scene gate lists for tree-3 only its piece status (`rules.unapproved`, candidate) and two `rules.scale` polish lines about the piece's class, which do not depend on where it stands. The zone's other 562 scene findings (most of them `detail.flat` on captures and `logic.off_grid` on dressing) are about the lab zone as a whole and were not graded here.
+- **"Up to 10 L brighter than the woodland sheet, paler and less blue": brighter is wrong, paler and less blue is right, for other reasons.**
+  - Round 6's woodland box (x 216-262) took in 4 to 5 columns of the navy recess east of the sheet (L 61). On the sheet alone (x 216-258, y 790-870, frame 0) the woodland measures **mean 177, east half 165, sd 56, 2.2 % under 90 L, 43 % over 230 L, and 33 % of its east third under 100 L**. Against that the kit's means sit 6 L under to 10 L over. So the sheets do not overshoot in lightness.
+  - What makes them read paler is the range, not the mean: see K7-1.
+
+### Round 6's findings, checked
+
+- **K6-1:** fixed as written. Measured above. The fix line it gave, "the dark tones only in the last 2 to 4 texels", misread the sibling and is withdrawn (K7-1).
+- **P6-1:** fixed, apart from the one-texel east edge (K7-1).
+- **K4-2's tongue polish:** fixed, with P7-3 left.
+- **L6-1:** fixed.
+- **L6-2 (lead):** unchanged and not relied on. The woodland records are pass, and the kit records are now fail.
+- **L6-3:** fixed.
+
+### New findings
+
+Coordinates are texels in the kit picture, or in `woodland_kit/ground_baked.png`. The crops are local, in the auditor's scratchpad.
+
+**K7-1. Fault (kit, all eight pieces): a compressed, off-ladder value range, with no shaded east side.**
+- Location: the sheet body, rows 20 to foot - 4, every frame. Crops: `ig_wood_vs_wkit_2x.png`, `row_ingame_2px.png`, `wkit_bake_r6_r7_3x.png`, and the 4x view in `artifacts/review/assets/kit__waterfall_2_tall.png`.
+- What is wrong, against the woodland sheet alone (frame 0):
+
+  | | Woodland sheet | Kit pieces |
+  | --- | --- | --- |
+  | Mean / east half | 177 / 165 L | 171 to 181 / 157 to 164 L |
+  | Standard deviation | 56 | 42 to 45 |
+  | Over 230 L (the whitest runs) | 43 % | 18 to 27 % |
+  | East third under 100 L (dark streaks) | 33 % | 4 to 20 % (the one-cell pieces 18 to 20, the wider 4 to 8) |
+  | Navy east edge | broken dark streaks through its east third | 1 texel in most rows |
+  | Tones in the body | snow 5, snow 4, water 5, 4, 3, 2, 1 | the same, plus snow 2 and snow 3 |
+
+  - The east third is where the designs part. The woodland's (x 245-258) is lit streaks over navy: water 5 36 %, snow 4 30 %, water 2 25 %, water 1 6 %. The kit's is mid tones only: snow 2 19 to 28 %, water 3, water 4 and water 5 each 14 to 31 %, water 2 and 1 under 8 % on the wider pieces.
+  - `FALL_LANE_TONES`' second palette uses snow 2 (182, 187, 206; hue 228) and snow 3 (214, 222, 234; hue 216). They are lilac-greys, and the woodland sheet never uses them. They are up to 28 % of an east third and 16 to 19 % of a middle third. That is the "less blue".
+  - So at game scale beside Bramble the kit fall is a pale, chalky curtain, lit across its whole width, with a thin blue line for an east edge. The woodland fall beside it is white streaks falling to a shaded east side. The checklist asks for volume, "a highlight band left of centre and a core shadow on the right". It has the highlight but not the shadow. It is the same object in a second design (art-style, one design per object), and it is off 5.3b's ladder, which the commit itself wrote.
+  - Round 6 caused part of this. Its prescription kept the dark tones to the last 2 to 4 texels, but the sibling carries them as broken streaks through its east third. That line is withdrawn.
+- Fix (a tonal change, not a redraw):
+  - Keep `FALL_LANE_TONES` on the ladder and disjoint per zone, for example:
+    - palette 0: W (water 4, snow 5, snow 5, snow 5), M (water 3, snow 4, snow 4, snow 4), E (water 3, water 5, water 5, water 5);
+    - palette 1: W (water 5, snow 4, snow 4, snow 4), M (water 4, snow 5, snow 5, snow 5), E (water 2, snow 4, snow 4, snow 4).
+  - Make the east edge 2 or 3 texels (`edge_w` 2 or 3, or `<` changed to `<=` by one).
+  - Feasibility, checked here with that palette (`audit7/sim4.py`; the edge change not simulated) on all eight pieces and all eight frames: `fall_value` passes (mean 170 to 187, east half 151 to 170, under 90 L at most 0.02, middle third over 200 L 0.355 to 0.57, largest area at most 122), `fall_grain` passes (ratio 6.4 to 12.1, run 6 to 13.5), sd 51 to 56, over 230 L 32 to 49 %, east third under 100 L 17 to 45 %. `waterfall_1`'s middle third stays at 0.355.
+  - Add to `bands.fall_value`, beside its floors: sd at least 48, the east third at least 0.15 under 100 L, at least 0.28 over 230 L, and no snow 0 to 3 in the body. Then a lighter sheet with no shade cannot pass again.
+
+**P7-2. Polish (kit, the wider pieces): the foot lands bare beside the foam.**
+- Location: the foot row and the three under it. In frame 0 the foam covers 76 to 87 % of the foot's columns. `waterfall_4` leaves gaps of 13, 8 and 3 texels (`wf4_foot_6x.png`), and `_2` and `_3` one gap of 9 to 10. Across the loop the largest gap is 4 (`_1`), 9 (`_2`), 12 (`_3`) and 16 (`_4`). In the woodland_kit bake (`wkit_foot_8x.png`) the sheet's east 8 to 10 texels end in a straight line on the inlet water.
+- Why it is new here: the bake has always used seed 9 + c. Now that the catalogued picture is the bake's frame 0 (L6-1), the gate sees the gaps.
+- What is wrong: 5.3b keeps the foam to "the foot plus 8 px each side". The woodland's foam spans its whole foot. A sheet that ends in a ruler line on the water reads as cut off.
+- Fix: in `rocks.plunge`, seat a clump (or a 2 to 3 row white break with flecks) under any run of 4 or more foot columns that no clump reaches, in every frame.
+
+**P7-3. Polish (kit, all eight pieces): the tongue's checker is a rectangle.**
+- Location: rows 12 to 14 (the bend row 15 too), s 0.55 to 0.78. Crop: the 4x view on each asset sheet.
+- What is wrong: the seam became a checker block with straight vertical sides at both ends. On its own picture it reads as a dither patch on the lip. In the bakes the channel above has its own checker fade, so it shows less.
+- Fix: stagger the checker's ends a texel or two per row, or fade the tongue with the row (water 4 to water 3 over the rows) rather than by column.
+
+### Logic and scene (reported separately)
+
+- **L6-3: closed** (above).
+- **Lead, older than this round:** in the woodland_kit bake, 20 light-blue specks of one to two texels lie on the earth face on both sides of the sheet, from the lip to the foot, up to 10 texels from it (x 158-167 and 242-250, y 747-839; round 6's bake had 19). They read as spray on the face, against Matt's 2 Nov ruling (5.3b: "never on the face"). Their source was not traced. It is the face's or the bake's, not the piece's, and it is outside this gate.
+- **Lead:** the scene gate gives `logic.occlusion` on `waterfall_3_tall` in woodland_kit (y-sort point 20 px from its drawn feet). That is unchanged by this commit.
+
+### Per-part notes (kit pieces)
+
+- **Sheet streaks:** pass. Ratio and runs above.
+- **Sheet value:** fail (K7-1).
+- **Edges:** they step every 4 to 8 rows, with a west film. Pass, apart from the one-texel east edge (K7-1).
+- **Tongue and crest:** pass, with P7-3. The white runs break in two to five runs, as in round 5.
+- **Foam, shade band, spray, arcs:** the clumps are unchanged in kind. P7-2 on the wider pieces.
+- **Light:** lit west. The shade east is missing (K7-1).
+- **Picture = bake:** pass (L6-1).
+- **Scale:** 1 to 4 cells wide, beside Bramble on the asset sheets and in Godot. Pass.
+
+### Tile log
+
+The woodland's three pictures are unchanged since a5a3d874 (0 texels), so their round-6 tile log stands. For the woodland_kit bake (not this gate's asset), the diff map was opened in full: the fall (x 144-264, y 732-874), canopy shade moving with tree-3 (x 0-165, y 836-916), and canopy-shade dressing reshuffled in kind at about 35 places (for example x 185-555, y 1597-1728).
+
+### False positives
+
+- **Kit pieces: all 12 findings rejected.**
+  - 4 `detail.bar` (polish, `_1`, `_1_tall`, `_2`, `_2_tall`): the band rewards fragmentation (round 6). The pieces fail on K7-1 whatever it says.
+  - 8 `detail.outline` (polish): water takes no outline.
+- The detectors missed K7-1, P7-2 and P7-3. Leads:
+  - The range checks in K7-1's fix, in `fall_value`.
+  - A foot-cover check in `test_kit`: foam over every run of 4 or more foot columns, in every frame.
+
+### Not checked
+
+- **Motion on a device:** frames were measured and the Godot shots were stills on a desktop. There was no phone or native check.
+- **Night tint:** not checked.
+- **Reduced motion:** judged from frame 0, which is the bake and holds K7-1 and P7-2.
+- **An Eastward falling sheet:** none exists in the local official shots.
