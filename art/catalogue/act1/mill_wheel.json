@@ -147,7 +147,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 8 (v9) of docs/reviews/2026-11-04-act1-props.md (e85285a8): R7-1 fixed: the piece's cast shadow is its own sprite (shadow_mill_wheel.png, the bake's 0.46 / 0.22 projection; identical texel for texel to compose.shadow_mask of the still, 28,290 texels), and the valley study steps the race, the copings and the crossing a tone down under it (the race 86 L outside, 64 L inside), so the shadow runs from the wall's foot across the race to the lawn (75 L core, a one-tone 3-row rim, against 136 to 146 L). R7-5 fixed: two slumped hessian sacks (wider at the foot, a fold, a tied ear, the east third in shade, one leaning on the other), the hoist door's 2-row head reveal and 3 px west reveal in shade, a weatherboarded lucam with doors and a slated cap, and the 9 px shaft showing 3 px either side of the frame-0 spoke for 6 rows between the plate and the boss, the plate at the wheel's 14 px stand-off. The loop: 8 frames, frame 0 the still, every change inside (167,270,327,420), the wrap 10,048 texels against 9,994 to 10,280. Seven detail.light findings rejected (five stone boxes are the wheel's pale timber and the white water; the wood boxes are the hoist door's lit east reveal and the cream sacks east of the dark loading door). Bar 0.87 and noise 45 % (phases 45 to 46 %) accepted (polish). Open polish: R8-1, the lucam's weatherboards are regular two-tone stripes and its cap reads as a flat stack; R8-2, the sacks have no outline and no hessian texture."
  }
 }

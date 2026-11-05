@@ -38,7 +38,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 8 (v9) of docs/reviews/2026-11-04-act1-props.md (e85285a8): R7-4 fixed: the transom is raked aft and the topsides run out to it; the stern shows its inner face in shade (4 to 5 px of dark and mid timber) beside a blue and pale rim and its outline, about 7 px in all, and a stern sheet across the stern inside; the stem is 3 px with its west face lit on its upper half; the weed hangs from the waterline in clusters of 2 to 4 px strands, unevenly spaced. 141 x 71 inside its spec (124 to 146 wide, 62 to 76 tall) and the rowing_boat kind; the foot moved 66 to 67, so the hull stays where it stood. Gate: no findings, bar 0.94. The transom's outer face shows as a 2 to 3 px rim rather than a painted plane; at 0.2 rad with the rake that reads correctly at 1x and 3x (coast r2c1, r2c2), so it is not raised."
  }
 }
