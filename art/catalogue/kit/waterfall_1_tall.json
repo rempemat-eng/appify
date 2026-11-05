@@ -1,0 +1,72 @@
+{
+ "id": "kit/waterfall_1_tall",
+ "file": "game/kit/props/art/waterfall_1_tall.png",
+ "sha256": "d6b70576757bf7dd99c153abb70bb350b42d577e80675b163f00d2cee520b417",
+ "kind": "waterfall",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  72,
+  142
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 10,
+   "tones": 16.6,
+   "shapes": 28.3
+  },
+  "band": {
+   "tones": 17.0,
+   "shapes": 39.5,
+   "boxes": 1,
+   "patches": 12,
+   "source": "house sibling: the woodland sheet, game/zones/woodland/art/ground.png 220-256 x 772-880 (docs/reviews/2026-11-04-woodland-water.md, round 5)",
+   "about": "a falling sheet, crest and foam; no official Eastward shot shows one (bands.py)"
+  },
+  "ratio": 0.716,
+  "tones_ratio": 0.976,
+  "shapes_ratio": 0.716,
+  "passed": false,
+  "group": "fall"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    10,
+    12,
+    65,
+    126
+   ],
+   "message": "kit/waterfall_1_tall: detail bar 0.72 of Eastward's fall band (16.6 tones, 28.3 shapes a patch against 17.0, 39.5)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    10,
+    12,
+    65,
+    126
+   ],
+   "message": "kit/waterfall_1_tall: only 37% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
+  }
+ ],
+ "reviewed": "2026-11-05",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 9 (ce83b70a). Still rocks.sheet, the woodland's painter; the woodland's ground, flow and rill are byte-identical to 3b200eaa. Picture = frame 0 and the flow strip = frames 0-7 on every sheet texel; the bakes hold the picture exactly. All 8 frames measured: value passes on the ribbon in every frame; grain ratio 6.5-11.2, median run 7-16 (K5-1 floors 4 and 6; the 13 world px streak cap did not bring back the chip mosaic). Navy band in the upper three quarters never more than a texel over min(0.15 w, 9); largest water-1 patch at most 8.8 texels a row. Crest runs 7, 9, whitest row 0.63; navy band 5; flat columns 0 in every frame (round 8: up to 0.40, P8-2 closed). detail.bar 0.72 and detail.outline rejected as before."
+ }
+}

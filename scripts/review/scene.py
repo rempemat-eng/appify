@@ -415,12 +415,16 @@ def _kit_sprite(e: dict, index: dict, pieces: dict) -> Sprite:
                   visible, e['draw_order'])
 
 
-def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, hidden=False, out=None, stack=()):
-    """Global positions for every node, following instanced scenes."""
+def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, hidden=False, out=None, stack=(),
+                zbase=None):
+    """Global positions for every node, following instanced scenes, with each node's effective
+    z: its z_index plus its parents' while z_as_relative holds (Godot's default), as kit scenes
+    are read (_kit_nodes). An instanced scene's root takes the instance node's z (zbase)."""
     out = [] if out is None else out
     pos = {'.': offset}
     ys = {'.': ysort_parent}
     vis = {'.': not hidden}
+    zs = {'.': zbase or 0}
     for n in tscn['nodes']:
         parent = n.get('parent')
         name = n['name']
@@ -434,13 +438,24 @@ def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, 
         vis[key] = vis.get(pkey, True) and n['props'].get('visible', True) is not False
         full = prefix + ('' if key == '.' else key)
         inst = n.get('instance')
+        sub = None
         if inst and inst[0] == 'ExtResource':
             path = res_path(tscn['ext'][inst[1]]['path'])
             if path in stack:
                 raise ValueError('cyclic scene instance at ' + full)
             sub = parse_tscn(path)
-            _walk_nodes(sub, full + '/', g, ys.get(pkey, False), not vis[key], out, stack + (path,))
-        out.append(dict(node=n, key=full, pos=g, parent_ysort=ys.get(pkey, False), visible=vis[key], ext=tscn['ext']))
+        props = n['props']
+        if sub is not None and sub['nodes']:
+            props = {**sub['nodes'][0]['props'], **props}   # the instance's overrides over its root's
+        if parent is None and zbase is not None:
+            zs[key] = zbase
+        else:
+            zp = zs.get(pkey, 0) if parent is not None else 0
+            zs[key] = int(props.get('z_index', 0)) + (zp if props.get('z_as_relative', True) is not False else 0)
+        if sub is not None:
+            _walk_nodes(sub, full + '/', g, ys.get(pkey, False), not vis[key], out, stack + (path,), zs[key])
+        out.append(dict(node=n, key=full, pos=g, parent_ysort=ys.get(pkey, False), visible=vis[key], ext=tscn['ext'],
+                        z=zs[key]))
     return out
 
 
@@ -486,7 +501,7 @@ def load_zone(zone_id: str, stage: str | None = None) -> Zone:
             x0 = e['pos'][0] + off[0] - (rgba.shape[1] / 2 if centered else 0)
             y0 = e['pos'][1] + off[1] - (rgba.shape[0] / 2 if centered else 0)
             sp = Sprite(n['name'], os.path.relpath(p, REPO), e['pos'], (x0, y0, x0 + rgba.shape[1], y0 + rgba.shape[0]),
-                        int(props.get('z_index', 0)), e['parent_ysort'], rgba, e['key'],
+                        e['z'], e['parent_ysort'], rgba, e['key'],
                         C.kind_of(os.path.splitext(os.path.basename(p))[0]), e['visible'])
             if n['name'] == 'Ground' or (sp.z < 0 and rgba.shape[0] > 500):
                 if z.ground is None or rgba.shape[0] * rgba.shape[1] > z.ground.shape[0] * z.ground.shape[1]:
@@ -529,8 +544,7 @@ def composite(z: Zone, actors: bool = False) -> np.ndarray:
     if z.ground is not None:
         out[:] = z.ground[..., :3]
     order = sorted([s for s in z.sprites if s.visible and (actors or not s.parent.startswith('Actors'))],
-                   key=lambda s: (s.z, s.origin[1] if s.ysort else -1e9,
-                                  s.draw_order if s.draw_order is not None else s.origin[0]))
+                   key=_draw_key)
     for s in order:
         x0, y0 = int(round(s.box[0])), int(round(s.box[1]))
         h, w = s.rgba.shape[:2]
@@ -565,6 +579,12 @@ def check_occlusion(z: Zone, H=GAME_H) -> list[Finding]:
     for s in z.sprites:
         if not s.ysort or s.parent.startswith('Actors') or 'damage' in s.path or 'fx' in s.path:
             continue
+        if s.z < 0:
+            # drawn on a layer under the people (a ground piece: a fall's foam and its loop, a
+            # footbridge, at z_index -5 by kit_zone.gd): never sorted against them, so its y-sort point
+            # cannot put anyone wrongly in front or behind (woodland review, round 7: the fall's loop
+            # strip reaches 20 px past its foot onto the pool)
+            continue
         a = s.rgba[..., 3] > 128
         if not a.any():
             continue
@@ -578,6 +598,50 @@ def check_occlusion(z: Zone, H=GAME_H) -> list[Finding]:
                               'put the node origin on the foot line (the bottom of the footprint, where it meets the '
                               'ground), or split overhanging parts into their own sorted sprite',
                               score=float(gap), threshold=0.25 * H, subject=s.name))
+    return fs
+
+
+def _draw_key(s: Sprite):
+    """The order composite() draws in, as Godot does: z, then the y-sort point, then the scene."""
+    return (s.z, s.origin[1] if s.ysort else -1e9, s.draw_order if s.draw_order is not None else s.origin[0])
+
+
+def check_ground_layer(z: Zone, H=GAME_H) -> list[Finding]:
+    """Ground-layer sprites (z_index below 0: a fall's loop and foam, a bridge deck, a floor plate)
+    are never sorted against people (check_occlusion skips them), so where two of them overlap they
+    must sort sensibly among themselves (woodland water review, round 8, L8-1): on one z the one
+    drawn later, over the other, does not stand behind it, its drawn feet more than a quarter of a
+    character above the other's. Two parts of one piece (one y-sort point) keep their scene order,
+    and two states of one thing are never shown together."""
+    fs = []
+    g = [s for s in z.sprites if s.z < 0 and s.visible and not s.parent.startswith('Actors')]
+    ms = {id(s): sprite_mask(s, z.size) for s in g}
+    feet = {}
+    for s in g:
+        rows = np.nonzero(ms[id(s)].any(1))[0]
+        feet[id(s)] = int(rows.max()) + 1 if len(rows) else None
+    for i, a in enumerate(g):
+        for b in g[i + 1:]:
+            if a.z != b.z or feet[id(a)] is None or feet[id(b)] is None or _alternates(a, b):
+                continue
+            if a.ysort == b.ysort and tuple(a.origin) == tuple(b.origin):
+                continue
+            if a.box[2] <= b.box[0] or b.box[2] <= a.box[0] or a.box[3] <= b.box[1] or b.box[3] <= a.box[1]:
+                continue
+            n = int((ms[id(a)] & ms[id(b)]).sum())
+            if n < 0.004 * H * H:
+                continue
+            under, top = sorted((a, b), key=_draw_key)
+            lift = feet[id(under)] - feet[id(top)]
+            if lift > 0.25 * H:
+                x0, y0 = int(min(a.box[0], b.box[0])), int(min(a.box[1], b.box[1]))
+                x1, y1 = int(max(a.box[2], b.box[2])), int(max(a.box[3], b.box[3]))
+                fs.append(Finding('logic.ground_order', 'fault', (x0, y0, x1, y1),
+                                  f'{top.name} ({top.kind}) draws over {under.name} ({under.kind}) on the ground layer '
+                                  f'(z {top.z}), though its feet are {lift} px behind; they overlap by {n} px',
+                                  'put each y-sort point on its piece\'s foot line so the nearer piece sorts in front, '
+                                  'or give the one meant to lie under a lower z_index',
+                                  score=float(lift), threshold=0.25 * H, subject=f'{top.name} x {under.name}'))
     return fs
 
 
@@ -980,6 +1044,7 @@ def review_zone(zone_id: str, H=GAME_H, wiring=True) -> dict:
     z = load_zone(zone_id)
     fs = []
     fs += check_occlusion(z, H)
+    fs += check_ground_layer(z, H)
     fs += check_intersect(z, H)
     fs += check_crowns(z, H)
     fs += check_reach(z, H)

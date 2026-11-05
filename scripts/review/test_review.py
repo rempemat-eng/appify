@@ -58,7 +58,107 @@ class Scale(unittest.TestCase):
         self.assertEqual(core.estimate_scale(art)[0], 1.0)
 
 
+class Occlusion(unittest.TestCase):
+    def test_a_ground_layer_piece_is_not_sorted_against_people(self):
+        # (woodland review, round 7) a sprite whose y-sort point is far from its drawn feet is a
+        # fault, unless it lies on a layer under the people (z_index below 0: a fall's loop, a bridge)
+        a = np.zeros((60, 20, 4), np.uint8)
+        a[:, :, 3] = 255
+        from scripts.review import scene as SC
+        z = SC.Zone('t', (100, 100), None)
+        z.sprites = [SC.Sprite('fall', 'kit/props/art/waterfall_3_tall_flow.png', (50, 30), (40, 0, 60, 60), -5, True, a, 'Props'),
+                     SC.Sprite('tree', 'zones/woodland/art/oak.png', (50, 30), (40, 0, 60, 60), 0, True, a, 'Props')]
+        names = [f.subject for f in SC.check_occlusion(z)]
+        self.assertEqual(names, ['tree'])
+
+    def test_a_scene_sprite_takes_its_parents_z(self):
+        # (round 8, L8-1) outside the kit too, a sprite's z is its effective z: a floor plate under
+        # a Node2D at z_index -9 is on the ground layer, as Godot draws it, including through an
+        # instanced scene, unless a node sets z_as_relative false
+        import tempfile
+        from scripts.review import scene as SC
+        with tempfile.TemporaryDirectory() as d:
+            png = os.path.join(d, 'plate.png')
+            Image.fromarray(np.full((8, 8, 4), 255, np.uint8)).save(png)
+            sub = os.path.join(d, 'piece.tscn')
+            with open(sub, 'w') as f:
+                f.write('[gd_scene format=3]\n\n[ext_resource type="Texture2D" path="%s" id="t"]\n\n'
+                        '[node name="Piece" type="Node2D"]\nz_index = 1\n\n'
+                        '[node name="Deck" type="Sprite2D" parent="."]\ntexture = ExtResource("t")\n\n'
+                        '[node name="Top" type="Sprite2D" parent="."]\ntexture = ExtResource("t")\n'
+                        'z_index = 4\nz_as_relative = false\n' % png)
+            top = os.path.join(d, 'zone.tscn')
+            with open(top, 'w') as f:
+                f.write('[gd_scene format=3]\n\n[ext_resource type="PackedScene" path="%s" id="p"]\n\n'
+                        '[node name="Zone" type="Node2D"]\n\n'
+                        '[node name="Floor" type="Node2D" parent="."]\nz_index = -9\n\n'
+                        '[node name="If_up" type="Node2D" parent="Floor"]\n\n'
+                        '[node name="Plate" type="Sprite2D" parent="Floor/If_up"]\nz_index = 2\n\n'
+                        '[node name="Bridge" parent="Floor" instance=ExtResource("p")]\n' % sub)
+            nodes = {e['key']: e['z'] for e in SC._walk_nodes(SC.parse_tscn(top), '')}
+        self.assertEqual(nodes['Floor/If_up/Plate'], -7)
+        self.assertEqual(nodes['Floor/Bridge'], -8)        # the instance's root keeps its own z_index 1
+        self.assertEqual(nodes['Floor/Bridge/Deck'], -8)
+        self.assertEqual(nodes['Floor/Bridge/Top'], 4)
+
+    def test_overlapping_ground_layer_pieces_sort_sensibly(self):
+        # (round 8, L8-1) two ground-layer pieces that overlap: the one drawn over the other must not
+        # stand behind it. A deck whose y-sort point is far below its feet draws over a foam patch that
+        # lies in front of it, a fault; with its point on its foot line it sorts under the foam, clean.
+        # One piece's own parts (one y-sort point) and two states of one thing are not compared
+        from scripts.review import scene as SC
+        a = np.zeros((40, 40, 4), np.uint8)
+        a[..., 3] = 255
+        z = SC.Zone('t', (200, 200), None)
+        deck = SC.Sprite('deck', 'kit/props/art/footbridge.png', (60, 150), (40, 20, 80, 60), -5, True, a, 'Props/deck/Sprite')
+        foam = SC.Sprite('foam', 'kit/props/art/waterfall_3_flow.png', (60, 100), (40, 60 - 10, 80, 90), -5, True, a, 'Props/fall/Flow')
+        z.sprites = [deck, foam]
+        self.assertEqual([f.detector for f in SC.check_ground_layer(z)], ['logic.ground_order'])
+        deck.origin = (60, 60)
+        self.assertEqual(SC.check_ground_layer(z), [])
+        deck.origin = (60, 150)
+        foam.z = -6                                        # meant to lie under: a lower z, clean
+        self.assertEqual(SC.check_ground_layer(z), [])
+        foam.z, foam.origin = -5, (60, 150)                # one piece's parts keep their scene order
+        self.assertEqual(SC.check_ground_layer(z), [])
+
+
 class Water(unittest.TestCase):
+    def test_a_fall_is_scored_against_its_house_sibling(self):
+        # (woodland water review, round 5, W5-1) no official Eastward shot shows a falling sheet, and
+        # 37's box is mist over a lawn: a fall is scored against the woodland's sheet (groups.fall),
+        # and the mist is not a water band; other kinds keep theirs
+        from scripts.review import bands as B
+        groups = B.load_bands()['groups']
+        self.assertNotIn('water', groups)
+        self.assertIn('mist', groups)
+        self.assertEqual((groups['fall']['tones'], groups['fall']['shapes']), (17.0, 39.5))
+        rgb = np.zeros((40, 40, 3), np.uint8)
+        alpha = np.ones((40, 40), bool)
+        self.assertEqual(A.group_of('waterfall', rgb, alpha), 'fall')
+        self.assertEqual(A.group_of('bench', rgb, alpha), 'prop')
+        self.assertEqual(A.group_of('boulder', rgb, alpha), 'stone')
+
+    def test_a_falls_grain_runs_down(self):
+        # (round 5, K5-1) streaks falling pass the direction check; a chip mosaic fails it
+        from scripts.review import bands as B
+        rng = np.random.default_rng(3)
+        lanes = rng.integers(60, 200, (1, 30))
+        streaks = np.repeat(np.repeat(lanes, 60, 0)[..., None], 3, 2).astype(np.uint8)
+        streaks[::20] = 255
+        chips = np.repeat(np.repeat(rng.integers(60, 200, (30, 15)), 2, 0), 2, 1)
+        chips = np.repeat(chips[..., None], 3, 2).astype(np.uint8)
+        m = np.ones((60, 30), bool)
+        self.assertTrue(B.fall_grain(streaks, m)['passed'])
+        self.assertFalse(B.fall_grain(chips, m)['passed'])
+        # (round 6, K6-1) and its value: a lit sheet of varied streaks passes, the same sheet a third
+        # darker (a blue curtain) fails
+        # (round 7, K7-1: and wide in range, with dark streaks through its east third)
+        cols = [(250, 150, 245, 130, 240)[x % 5] if x < 20 else (60, 245, 240, 200, 250)[x % 5] for x in range(30)]
+        lit = np.repeat(np.repeat(np.array([cols]), 60, 0)[..., None], 3, 2).astype(np.uint8)
+        self.assertTrue(B.fall_value(lit, m)['passed'], B.fall_value(lit, m))
+        self.assertFalse(B.fall_value((lit * 0.66).astype(np.uint8), m)['passed'])
+
     def test_staircase_bank(self):
         a = lawn()
         for y in range(300):
@@ -89,6 +189,35 @@ class Water(unittest.TestCase):
         b[80:120, :, :3] = BLUE
         b[60:140, 180:210, :3] = (120, 80, 40)       # lands 20 px on each bank
         self.assertFalse(any(f.detector == 'logic.bridge_span' for f in water.check_bridges(b, H)))
+
+    def test_flat_foam_plate_is_caught(self):
+        # the woodland's plunge foam the auditor failed on 4 Nov (calibration W15): a 118 x 19 plate in
+        # two tones at the foot of a streaked sheet, which check_falls (tall bands only) never saw
+        p = Path(core.REPO) / 'scripts' / 'review' / 'calibration' / 'woodland_plunge_foam_4881fee7.png'
+        a = np.asarray(Image.open(p).convert('RGBA'))
+        fs = [f for f in water.check_foam(a, 74) if f.detector == 'detail.foam_flat']
+        self.assertEqual(len(fs), 1)
+        x0, y0, x1, y1 = fs[0].box
+        self.assertGreaterEqual(x1 - x0, 100)
+        self.assertLessEqual(y1 - y0, 24)
+
+    def test_broken_plunge_foam_passes(self):
+        # rocks.plunge: broken clumps in 4 to 5 tones with the pool between them, within the foot
+        from scripts.art.native import ctx, load_biome
+        ctx.configure(3.0, load_biome('woodland'), {})
+        from scripts.art.native import rocks as RK
+        from scripts.art.native.palette import C as CC, LUT
+        cv = np.full((120, 200), CC('water', 2), np.int32)
+        cv[:40, 70:132] = CC('water', 3)                  # the sheet's foot
+        foam = RK.plunge(cv, 70, 132, 40, seed=65)
+        rgb = LUT[cv]
+        a = np.dstack([rgb, np.full(cv.shape, 255, np.uint8)])
+        self.assertFalse(any(f.detector == 'detail.foam_flat' for f in water.check_foam(a, 74)))
+        ys, xs = np.nonzero(foam)
+        self.assertGreaterEqual(int(xs.min()), 70 - RK.PLUNGE_PAD)
+        self.assertLess(int(xs.max()), 132 + RK.PLUNGE_PAD)
+        self.assertLessEqual(int(ys.max()), 40 + 10)
+        self.assertGreaterEqual(len(np.unique(cv[foam])), 4, 'four or more tones in the foam')
 
 
 class Screen(unittest.TestCase):
