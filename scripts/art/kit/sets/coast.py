@@ -171,8 +171,14 @@ def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0, irregular=False):
         cv[np.roll(crk, 1, 1) & inner & ~crk] = C_('stone', 4)
         wornf = inner & (K.vhash(sx, course, seed + 13) > 0.8) & (np.abs(ux - ww / 2) < ww / 4) & (np.abs(uy - hh / 2) < hh / 4)
         cv[wornf] = C_('stone', 4)
-        lic = inner & (K.vhash(Xg // 2, Yg // 2, seed + 14) > 0.985)
-        cv[lic] = C_('stone_warm', 4)
+        # (R5-7) crust lichen in clusters of 3 x 2 (a pale top, a darker foot), never single texels;
+        # some flags in a third sibling; the odd worn corner, its arris lit
+        lic = inner & (K.vhash(Xg // 3, Yg // 2, seed + 14) > 0.975)
+        cv[lic] = np.where((Yg[lic] % 2) == 0, C_('stone_warm', 4), C_('brass', 3))
+        third = inner & (K.vhash(sx, course, seed + 15) > 0.7) & (cv % 8 == 3)
+        cv[third] = C_('ashlar', 3)
+        corner = m & (ux <= 2) & (uy <= 1) & (K.vhash(sx, course, seed + 16) > 0.6)
+        cv[corner] = C_('stone_warm', 4)
 
 
 def shingle(cv, m, seed=1506):
@@ -193,7 +199,9 @@ def shingle(cv, m, seed=1506):
     if not len(ys):
         return
     # the sand wet and darker towards the water, its edge lumpy (round 3 of the detail audit, R3-12)
-    toward = ndi.distance_transform_edt(~ndi.binary_dilation(~m, iterations=1) | (Yg < ys.min() + 14))
+    # (R5-6) the wet band lies along the water only: the beach's west end (the study's edge, the
+    # quay wall's return) is never a shore
+    toward = ndi.distance_transform_edt(~ndi.binary_dilation(~m, iterations=1) | (Yg < ys.min() + 14) | (Xg < xs.min() + 3))
     lump = 12.0 + 16.0 * K.noise((H, W), np.random.default_rng(seed + 5), 4.0)
     wet = m & (toward < lump) & (Yg >= ys.min() + 14)
     K.rpaint(cv, wet, [('earth_cool', 'sand_cool', 'sand_cool'), ('earth_cool', 'sand', 'sand')], 2.0,
@@ -210,8 +218,9 @@ def shingle(cv, m, seed=1506):
     rip = (phase % period == 0) & crest & wet & (patch > 0.52)
     up_ = np.zeros_like(rip)
     up_[:-1] = rip[1:]
-    K.rpaint(cv, rip, [('earth_cool', 'sand_cool', 'sand')], 1.4, 0.0)
-    K.rpaint(cv, up_ & wet & ~rip, [('earth_cool', 'sand_cool', 'sand')], 3.0, 0.0)
+    from scripts.art.native.palette import C as C_
+    cv[rip] = C_('sand_cool', 1)                                         # the trough a tone down, never near-black (R5-6)
+    cv[up_ & wet & ~rip] = C_('sand', 3)                                  # the lit crest over it
     # the wrack line along the top of the wet sand: broken weed and shell, dark and a few pale specks
     wl = wet & ~ndi.binary_erosion(wet, iterations=2) & (toward >= lump - 3)
     wk = wl & (K.noise((H, W), np.random.default_rng(seed + 10), 1.5) > 0.6)

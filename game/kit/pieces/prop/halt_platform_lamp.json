@@ -120,7 +120,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "lamp (a platform lamp 2.9 m; art px: 107 to 178 tall, 15 to 28 wide)",
+  "size_class": "platform_lamp (no size-guide kind: a platform lamp is 2.9 m, under the guide's street lamp of 50 to 65 world px; a platform lamp 2.9 m; art px: 107 to 178 tall, 15 to 28 wide)",
   "eastward_ref": "13 (the lamp post 375,20,415,125), 17 (the churns 135,47,162,112 and the bench), the anchors kit/lantern and kit/bench",
   "painter": {
    "module": "scripts.art.kit.sets.act1",

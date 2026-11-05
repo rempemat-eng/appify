@@ -1,26 +1,26 @@
 {
  "id": "act1/mill_wheel",
  "file": "game/kit/props/art/act1/mill_wheel.png",
- "sha256": "6f9dd14b3942cd75bd78ba3b4d823ab1b80e198b761b2c33f7d303bb4782a62c",
+ "sha256": "3e69958d645e06237095ae8b869ffc7f087ae516b45e1d28096feafb0c2b3d58",
  "kind": "mill_wheel",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  122,
-  168
+  334,
+  376
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 9
  },
  "detail_bar": {
   "ours": {
-   "patches": 50,
-   "tones": 28.14,
-   "shapes": 43.12
+   "patches": 348,
+   "tones": 24.701149425287355,
+   "shapes": 43.71264367816092
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.856,
-  "tones_ratio": 1.042,
-  "shapes_ratio": 0.856,
+  "ratio": 0.868,
+  "tones_ratio": 0.915,
+  "shapes_ratio": 0.868,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,84 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    6,
-    3,
-    115,
-    68
+    242,
+    324,
+    257,
+    343
    ],
-   "message": "act1/mill_wheel: the red is lit from the right (luminance rises 8 L per H to the east)",
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 156 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    211,
+    321,
+    238,
+    343
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 70 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    240,
+    346,
+    268,
+    355
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 54 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    187,
+    310,
+    234,
+    341
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 50 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    203,
+    346,
+    234,
+    355
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 42 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    209,
+    254,
+    246,
+    306
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 40 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    249,
+    318,
+    296,
+    341
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 32 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -53,10 +125,10 @@
    "box": [
     0,
     0,
-    122,
-    168
+    334,
+    375
    ],
-   "message": "act1/mill_wheel: detail bar 0.86 of Eastward's prop band (28.1 tones, 43.1 shapes a patch against 27.0, 50.36)",
+   "message": "act1/mill_wheel: detail bar 0.87 of Eastward's prop band (24.7 tones, 43.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -65,18 +137,17 @@
    "box": [
     0,
     0,
-    122,
-    168
+    334,
+    375
    ],
-   "message": "act1/mill_wheel: 46% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "message": "act1/mill_wheel: 47% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-05",
-  "note": "Round 5 (v6) of docs/reviews/2026-11-04-act1-props.md (a1473069): one water with the race (R4-5 fixed) and floats dipping 8 px (R4-8 fixed), but the mill is about half the size guide's water mill: eaves about 64 px over the wall's foot (1.5 m, under its own spec's 1.7 m and under a hut's 118 art px) and a wheel about 72 px across against 118 to 166 (R5-1). The 160 to 190 class only moves the old range by the race removed, so it is honest bookkeeping, but neither range is from the size guide. Polish R5-4: the wall's mortar was lightened and the wheel's inner edges dropped to stay under the noise line."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

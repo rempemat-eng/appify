@@ -67,12 +67,13 @@ def valley() -> dict:
     g[5:11, 2:19] = 'q'                                     # the platform's surface, stone (the coast's quay setts), its edge to its east end
     g[13:15, 0:25] = '#'                                    # the lane, ending short of the leat
     g[11:13, 3:5] = '#'                                     # the path up onto the platform
-    g[0:16, 26:29] = '~'                                    # the leat (the Millrace), from its sluice
-    g[14:16, 26:44] = '~'                                   # turning east into the mill's race, out under the study's edge
+    g[0:20, 26:29] = '~'                                    # the leat (the Millrace), from its sluice
+    g[18:20, 26:44] = '~'                                   # turning east into the mill's race, out under the study's edge
     tiers = np.zeros((H, W), int)
     tiers[0:12, 20:26] = 1                                  # a low earth bank between halt and leat (one step, LOW_FACE_PX)
-    g[19:30, 30:32] = '#'                                   # the yard's track to the south
-    g[19:21, 30:38] = '#'                                   # the yard it ends in, worn in front of the spare millstones
+    g[25:30, 30:32] = '#'                                   # the yard's track to the south
+    g[23:25, 30:38] = '#'                                   # the yard it ends in, worn in front of the spare millstones
+    g[21:23, 30:33] = '#'                                   # the cart track from the crossing at the loading door down to the yard
     g[15:29, 2:4] = '#'                                     # the field path from the lane to the barrow
     g[28:30, 2:13] = '#'
     g[27:28, 11:13] = '#'                                   # the trod straight out of the barrow's portal
@@ -89,10 +90,10 @@ def valley() -> dict:
         {'id': 'churns', 'piece': 'halt_churn_stand', 'at': [1 * CELL + 12, 13 * CELL]},
         # the Millrace
         {'id': 'sluice', 'piece': 'mill_sluice', 'at': [27 * CELL + 12, 4 * CELL]},
-        {'id': 'wheel', 'piece': 'mill_wheel', 'at': [34 * CELL, 15 * CELL]},
+        {'id': 'wheel', 'piece': 'mill_wheel', 'at': [37 * CELL, 18 * CELL]},   # the water mill, its wall's foot on the race
         {'id': 'slip', 'piece': 'mill_landslip', 'at': [22 * CELL + 12, 14 * CELL]},   # its torn lip at the bank's rim
         {'id': 'fence', 'piece': 'mill_fence_broken', 'at': [16 * CELL, 17 * CELL]},
-        {'id': 'stones', 'piece': 'mill_millstones', 'at': [35 * CELL + 12, 19 * CELL]},   # in the yard beside the track's end
+        {'id': 'stones', 'piece': 'mill_millstones', 'at': [35 * CELL + 12, 23 * CELL]},   # in the yard beside the track's end
         # the hives by the lane
         {'id': 'hive', 'piece': 'hive_wbc', 'at': [10 * CELL + 12, 17 * CELL]},
         {'id': 'skep', 'piece': 'hive_skep', 'at': [12 * CELL + 12, 17 * CELL]},
@@ -105,7 +106,7 @@ def valley() -> dict:
     return {'zone': 'act1_valley_study', 'note': 'Review study (scripts/art/kit/sets/act1_study.py), not a playable zone.',
             'legend': {',': 'lawn', '#': 'path', '~': 'water', 'q': 'quay'}, 'dress': {'quay': 'flags'},
             'rows': [''.join(r) for r in g], 'tiers': [''.join(str(v) for v in r) for r in tiers], 'pieces': pieces, 'decor': [],
-            'race': {'row': 14, 'rows': 2, 'from': 29, 'wall': (31, 37)}}
+            'race': {'row': 18, 'rows': 2, 'from': 29, 'from_s': 26.5, 'wall': (30, 44), 'bridge': (751, 70)}}   # the crossing: x and width, in front of the loading door
 
 
 def _paint(img, cv):
@@ -208,6 +209,33 @@ def low_bank(img, p, seed=331):
     return _paint(img, cv)
 
 
+def platform_ends(img, p, seed=351):
+    """The platform's two ends given a side face (round 5 of the detail audit, R5-7; eastward-edges
+    3.3): along each end of the raised paving, from its back to the front's foot, a band of 2 texels
+    (lit facing west, in shade facing east) and outside it a dark line broken every few texels, the
+    near-black of a raised side."""
+    from scripts.art.kit.sets import _common as K
+    from scripts.art.native.palette import C
+    rows = p['rows']
+    cells = np.array([[c == 'q' for c in r] for r in rows])
+    R_, C_ = cells.shape
+    cv = np.full((R_ * CELL, C_ * CELL), -1, np.int32)
+    ys_, xs_ = np.nonzero(cells)
+    y0, y1 = ys_.min() * CELL, (ys_.max() + 1) * CELL + CELL           # down to the front's foot
+    xw, xe = xs_.min() * CELL, (xs_.max() + 1) * CELL
+    for y in range(y0, y1):
+        if y < y1 - CELL:                                              # the west end: the paving's side (the path climbs on below)
+            cv[y, xw] = C('stone', 4)
+            cv[y, xw + 1] = C('stone', 3)
+            if K.hsh(seed, y // 3, 1) > 0.2:
+                cv[y, xw - 1] = C('void', 1)
+        cv[y, xe - 2] = C('stone_cool', 2)
+        cv[y, xe - 1] = C('stone_cool', 1)
+        if K.hsh(seed, y // 3, 2) > 0.2:
+            cv[y, xe] = C('void', 1)
+    return _paint(img, cv)
+
+
 def race_coping(img, p, seed=341):
     """Granite coping along the mill race on both banks, out of the water (round 4 of the detail
     audit, R4-5): long slabs whose top is lit, the front a tone down dropping to a wet foot in the
@@ -220,10 +248,11 @@ def race_coping(img, p, seed=341):
     R_, C_ = len(p['rows']), len(p['rows'][0])
     h, w = R_ * CELL, C_ * CELL
     cv = np.full((h, w), -1, np.int32)
-    x0 = rc['from'] * CELL
     yn, ys = rc['row'] * CELL, (rc['row'] + rc['rows']) * CELL
     wall0, wall1 = rc['wall'][0] * CELL + 8, rc['wall'][1] * CELL - 8
     for side, yedge in (('n', yn), ('s', ys)):
+        # the south bank's coping runs on round the bend to meet the leat's earth bank (R5-5)
+        x0 = int((rc.get('from_s', rc['from']) if side == 's' else rc['from']) * CELL)
         x = x0
         while x < w:
             ln = 18 + int(14 * K.hsh(seed, x, side == 'n'))
@@ -251,6 +280,23 @@ def race_coping(img, p, seed=341):
             if 0 <= yy < h:
                 cv[yy, x0] = C('stone_warm', 4)
                 cv[yy, x0 - 1] = C('stone_cool', 1)
+    # a crossing of long slabs over the race in front of the mill's loading door, for the carts
+    if rc.get('bridge'):
+        bx0, bx1 = rc['bridge'][0], rc['bridge'][0] + rc['bridge'][1]
+        for yy in range(yn - 4, ys + 3):
+            for xx in range(bx0, bx1):
+                k = (xx - bx0) // 10
+                if yy == ys + 2:
+                    c = C('stone_cool', 1)                              # its south face's foot
+                elif yy >= ys:
+                    c = C('stone', 2)                                   # its south face
+                elif (xx - bx0) % 10 == 9:
+                    c = C('stone_cool', 2)                              # the joint between slabs
+                else:
+                    c = C('stone_warm' if k % 2 else 'stone', 4 if yy < yn else 3)
+                cv[yy, xx] = c
+            cv[yy, bx0] = C('stone_warm', 4) if yy < ys else cv[yy, bx0]
+            cv[yy, bx1 - 1] = C('stone_cool', 1)
     return _paint(img, cv)
 
 
@@ -299,6 +345,8 @@ def render(p) -> Image.Image:
         v = e['variants'].get(pc.get('variant')) or next(iter(e['variants'].values()))
         sp = Image.open(os.path.join(ROOT, 'game', v['png'][len('res://'):])).convert('RGBA')
         img.alpha_composite(sp, (int(pc['at'][0] - v['foot'][0]), int(pc['at'][1] - v['foot'][1])))
+    if 'q' in ''.join(p['rows']) and (p.get('dress') or {}).get('quay') == 'flags':
+        img = platform_ends(img, p)                                    # over the edge run, so its ends are closed too
     return img
 
 

@@ -497,9 +497,23 @@ class SizeTable(unittest.TestCase):
         s = sprite(60, 200)
         s[150:198, 10:50, 3] = 255                     # 48 tall: a third of the shelter it claims to be
         f = SZ.check_spec(s, 'shelter (art px: 150 to 180 tall, 30 to 50 wide)', 'x/shelter')
-        self.assertEqual([x.detector for x in f], ['logic.size_spec'])
+        self.assertIn('logic.size_spec', [x.detector for x in f])
         s[20:198, 10:50, 3] = 255
-        self.assertEqual(SZ.check_spec(s, 'shelter (art px: 150 to 180 tall, 30 to 50 wide)', 'x/shelter'), [])
+        self.assertNotIn('logic.size_spec', [x.detector for x in SZ.check_spec(s, 'shelter (art px: 150 to 180 tall, 30 to 50 wide)', 'x/shelter')])
+
+    def test_a_piece_is_measured_against_the_size_guide_kind_it_names(self):
+        """Round 5 of the Act 1 detail audit (R5-13): the v6 mill met its own spec (160 to 190 tall)
+        and was half the size guide's water mill; a spec naming the guide's kind is measured there too."""
+        v6 = _png(os.path.join(os.path.dirname(FIX_V3), 'act1_v6', 'mill_wheel.png'))
+        spec = 'water_mill (the mill; art px: 160 to 190 tall, 115 to 135 wide)'
+        f = SZ.check_spec(v6, spec, 'act1/mill_wheel')
+        self.assertIn('logic.size_guide', [x.detector for x in f])
+        self.assertNotIn('logic.size_spec', [x.detector for x in f])
+        s = sprite(340, 380)
+        s[4:380, 4:330, 3] = 255                        # 376 x 326: inside the guide's 312 to 432 x 288 to 384
+        self.assertEqual(SZ.check_spec(s, 'water_mill (art px: 310 to 432 tall, 288 to 384 wide)', 'x/mill'), [])
+        self.assertEqual(SZ.guide_kind('shelter (art px: 150 to 180 tall)')[0], 'shelter')
+        self.assertIsNone(SZ.guide_kind('platform (art px: 30 to 44 tall)'))
 
     def test_a_class_name_counts_only_where_a_word_starts(self):
         # the detail audit of 4 Nov: "urn" inside "churn" sized the churn stand as a barrel

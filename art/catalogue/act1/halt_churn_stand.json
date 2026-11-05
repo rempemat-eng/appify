@@ -1,7 +1,7 @@
 {
  "id": "act1/halt_churn_stand",
  "file": "game/kit/props/art/act1/halt_churn_stand.png",
- "sha256": "9eea45aa805d7a53e633f1e4b4315a36154f32d13b6b612646516cb3551cedca",
+ "sha256": "a6029ccca3a9c41bc856b825cf89be0f53a1b65107cf69923d36c005a2c3462f",
  "kind": "halt_churn_stand",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 6,
-   "tones": 27.0,
-   "shapes": 36.0
+   "patches": 7,
+   "tones": 25.0,
+   "shapes": 33.714285714285715
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.715,
-  "tones_ratio": 1.0,
-  "shapes_ratio": 0.715,
+  "ratio": 0.669,
+  "tones_ratio": 0.926,
+  "shapes_ratio": 0.669,
   "passed": false,
   "group": "prop"
  },
@@ -44,15 +44,14 @@
     66,
     68
    ],
-   "message": "act1/halt_churn_stand: detail bar 0.71 of Eastward's prop band (27.0 tones, 36.0 shapes a patch against 27.0, 50.36)",
+   "message": "act1/halt_churn_stand: detail bar 0.67 of Eastward's prop band (25.0 tones, 33.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 5 (v6) of docs/reviews/2026-11-04-act1-props.md (a1473069): 10 x 4 lids with a lit far rim and the tin's own 67 L edge. Polish R5-9: the lid still reads smaller than Eastward 13's."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

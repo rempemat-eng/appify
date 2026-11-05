@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" path="res://kit/props/art/act1/mill_wheel.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(114, 66)
+size = Vector2(312, 144)
 
 [node name="MillWheel" type="Node2D"]
 script = ExtResource("1")
@@ -16,13 +16,13 @@ piece_id = "mill_wheel"
 texture = ExtResource("2")
 visible = false
 centered = false
-offset = Vector2(-61, -164)
+offset = Vector2(-167, -357)
 
 [node name="Idle" type="Sprite2D" parent="."]
 script = ExtResource("3")
 texture = ExtResource("4")
 centered = false
-offset = Vector2(-61, -164)
+offset = Vector2(-167, -357)
 hframes = 8
 fps = 6
 
@@ -30,5 +30,5 @@ fps = 6
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Solid"]
-position = Vector2(0, -33)
+position = Vector2(0, -72)
 shape = SubResource("solid")

@@ -704,17 +704,51 @@ def spec_ranges(text: str | None) -> dict:
     return out
 
 
+_GUIDE = None
+
+
+def guide_kind(size_class: str | None):
+    """The size guide's kind (scripts/art/size_guide.json, docs/vision/size-guide.md section 9) a
+    piece's size spec names as its head word, e.g. "water_mill (...)", with its height and width in
+    art px at density 3; None when the head word is not one of the guide's kinds."""
+    global _GUIDE
+    if _GUIDE is None:
+        _GUIDE = json.load(open(os.path.join(REPO, 'scripts', 'art', 'size_guide.json')))
+    head = (size_class or '').split('(')[0].strip().split(' ')[0] if size_class else ''
+    k = _GUIDE['kinds'].get(head)
+    if not k:
+        return None
+    d = 3.0                                                          # art px a world px at density 3
+    tol = float(_GUIDE.get('tolerance', 2)) * d
+    return head, {'tall': (k['h'][0] * d - tol, k['h'][1] * d + tol), 'wide': (k['w'][0] * d - tol, k['w'][1] * d + tol)}
+
+
 def check_spec(rgba: np.ndarray, size_class: str | None, subject: str) -> list[Finding]:
     """logic.size_spec: the drawn picture's opaque box against the piece's own size spec (the detail
     audit of 4 Nov: the shelter drawn at a third of its 2.2 m, the millstones at 0.74 m of their 1.2 m,
-    the barrow's portal at a third of its own size). Every picture of a piece is measured."""
+    the barrow's portal at a third of its own size). Every picture of a piece is measured. Where the
+    spec names one of the size guide's kinds as its head word ("water_mill (...)"), the picture is
+    measured against the guide's range too (logic.size_guide), so a spec cannot drift from the guide
+    unseen (round 5 of the Act 1 detail audit, R5-13: the v6 mill met its own 160 to 190 and was half
+    the guide's water mill)."""
     rng = spec_ranges(size_class)
     alpha = rgba[..., 3] > 128
-    if not rng or not alpha.any():
+    if not alpha.any():
         return []
     ys, xs = np.nonzero(alpha)
     got = {'tall': ys.max() - ys.min() + 1, 'wide': xs.max() - xs.min() + 1}
     out = []
+    gk = guide_kind(size_class)
+    if gk:
+        kind, grng = gk
+        for ax, (lo, hi) in grng.items():
+            v = float(got[ax])
+            if v < lo or v > hi:
+                out.append(Finding('logic.size_guide', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
+                                   f'{subject}: drawn {v:.0f} art px {ax}, the size guide\'s {kind} is {lo:.0f} to {hi:.0f} '
+                                   f'(world px x 3, with its tolerance)',
+                                   'redraw it to the guide in the generator (prop-logic rule 9), or rule a new kind into the '
+                                   'size guide first', score=v, threshold=lo if v < lo else hi, subject=subject))
     for ax, (lo, hi) in rng.items():
         v = float(got[ax])
         if v < lo or v > hi:
