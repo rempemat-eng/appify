@@ -65,8 +65,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
+  "verdict": "pass",
   "date": "2026-11-05",
-  "note": "redrawn after round 7 of the independent audit (K7-1, P7-2, P7-3): the sheet is now rocks.sheet, the one painter the woodland's fall is drawn with (its lanes, value ladder, lit west and shaded east, widening edges, crest), parameterised by width, height and seed, its streaks each falling a step of their own period a frame for the loop; the tongue's two tones staggered row by row; a foam clump seated under any bare stretch of the foot; the picture is the bake's frame 0; its frames are waterfall_1_flow.png. Not yet reviewed by an independent detail-auditor."
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 8 (ddc50a0b). The sheet is rocks.sheet, the woodland's painter (test_the_kits_sheet_is_the_woodlands passes; the woodland's three pictures are byte-identical to f9ef6366). K7-1 fixed: on the ribbon (s < 0.85) the value matches the sibling over all 8 frames (mean 174-186, sd 51-58, east third under 100 L 0.17-0.38, over 230 L 0.38-0.50, no snow 0-3; sibling 177, 57, 0.34, 0.42), and on the whole sheet too (mean 157-166, east half 137-149, under 90 L 0.16-0.18; sibling 161, 135, 0.18). P7-2 fixed (largest bare foot stretch 0-3 columns in any frame). P7-3 fixed (the tongue's tones meet at a different column each row). No water-blue or white on the face beside the baked falls (woodland_kit 44 -> 0, kitlab_tiers 2 -> 0). Crest runs 7 and 9 with a 3-texel gap, whitest row 0.62; navy band 4-5 texels; flat columns 0-0.05 (sibling 0-0.17 over 44 rows); grain 6.9-9.4, run 7-13. Polish: the middle third over 200 L is 0.25-0.32 against the sibling's 0.40-0.48 (reported only, accepted: the whole ribbon's white share 0.38-0.42 passes)."
  }
 }

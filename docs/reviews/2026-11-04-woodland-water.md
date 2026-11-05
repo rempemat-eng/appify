@@ -1305,3 +1305,167 @@ The woodland's three pictures are unchanged since a5a3d874 (0 texels), so their 
 - **Night tint:** not checked.
 - **Reduced motion:** judged from frame 0, which is the bake and holds K7-1 and P7-2.
 - **An Eastward falling sheet:** none exists in the local official shots.
+
+## Round 8 (ddc50a0b)
+
+An eighth independent detail-auditor run, on the commit that answers round 7 (ddc50a0b, "Woodland water, review round 7: one sheet painter for the woodland and the kit", branch `claude-a/water-polish`, draft PR #434). This auditor did not paint it and did not write rounds 1 to 7. Every number below was measured here, on the pictures, the eight frames and the bakes at ddc50a0b, in texels at density 3 (a cell is 24), with Rec. 601 lightness. The painter's numbers were checked, not copied.
+
+**Verdicts:**
+
+| Asset | Detectors | Verdict | Why |
+| --- | --- | --- | --- |
+| `woodland/ground`, `woodland/flow`, `woodland/flow_rill` | not re-run | **round 6's pass stands** | `git diff --quiet f9ef6366 ddc50a0b` on the three pictures and their records: byte-identical (sha256 `88302378`, `04830edb`, `accb3feb`). Records left alone. |
+| `kit/waterfall_1`, `kit/waterfall_1_tall` | pass (`detail.bar` polish 0.73, 0.74; `detail.outline` polish) | **pass** | The sibling's sheet at one cell: K7-1, P7-2 and P7-3 fixed, a broken crest, a 4 to 6 texel navy edge. Polish only (P8-2, the middle third's lit share). |
+| `kit/waterfall_2`, `_2_tall`, `_3`, `_3_tall` | pass (`detail.bar` polish 0.83 to 0.88; `detail.outline` polish) | **fail** | K8-1: the shared crest at these widths is one white run of 36 or 48 texels over a straight shade row, the round-4 lid. |
+| `kit/waterfall_4`, `_4_tall` | pass (`detail.bar` polish 0.78, 0.74; `detail.outline` polish) | **fail** | K8-1 (a 64-texel white run, whitest row 0.76 to 0.77) and K8-2 (a flat navy slab 15 to 17 texels wide). |
+
+`python3 -m scripts.review.gate --check` after the verdicts: **ok** (7 zones, fix queue 2 assets). The kit pieces are not zone art, so the gate does not read their verdicts.
+
+### What was reviewed
+
+- `game/kit/props/art/waterfall_{1..4}{,_tall}.png`, each rebuilt here with `structures.fall_sheet(..., seed=9 + c, t)` for all eight frames, as `fall_frames` and the tests do.
+- The bakes `woodland_kit`, `kitlab_tiers`, `kitlab` and `kitlab_widths`, diffed against f9ef6366's.
+- Code: `rocks.sheet`, `sheet_rows`, `sheet_mask`, `crest_breaks` and `plunge(seat_gaps)`; `structures.fall_sheet`, `crest_foam`, `sheet_mask`; the bake's removed sheen and its wider run-in; `bands.fall_value` and `assets.fall_grain` (the s < 0.85 cut); `scene.check_occlusion`; the `test_kit` and `test_review` changes; the 5.3b edit.
+- The painter's `kit_pieces_before_after_round8_5x.png` and `kit_falls_ingame_round8.png`. Looked at; no number was taken from them.
+- The sibling: the woodland's sheet in `ground.png`, its lip found by the same channel search as `rocks.fall` (x 216-265, rows 764-888).
+
+### Commands
+
+- `python3 -m scripts.review.calibrate --flagged <Matt's screenshots> --eastward <Eastward shots>`: **recall 39 of 39**. False positives: 5 on 6 clean screens and 29 on 22 clean props, the same as rounds 1 to 7, so the occlusion change cost no recall. `calibration_results.json` was reverted afterwards.
+- `assets.review` with kind `waterfall` and biome `woodland` on the eight pieces (sheets in `artifacts/review/assets/kit__waterfall_*.png`, not committed): all pass the detectors, with no `fall_grain` or `fall_value` finding. Every sha256 matches the painter's record. The records were written with `assets.record` and the reviewer field (`audit8/record.py` in the auditor's scratchpad).
+- `python3 -m unittest scripts.art.kit.test_kit.WaterBanks scripts.review.test_review.Occlusion scripts.review.test_review.Water`: 30 tests, OK.
+- **Own captures.** Godot 4.7.2 under Xvfb at 1920 x 1080 (2 screen px a texel): `--zone=woodland_kit --at=95,300`, `--zone=kitlab_tiers --at=185,120`, `--zone=woodland --at=130,300`. Crops: `ig_wkit_fall_4px.png`, `wkit_r7_r8_4x.png` and `kt_r7_r8_6x.png` (the bakes before and after), `crests_6x.png` (the sibling's crest beside `_2` and `_4` at rounds 4, 7 and 8), `wf4_lip_8x.png`. All local.
+- **Own measurements** (`audit8/meas.py`, `meas2.py`, `crest.py`, `bake.py`): value on the ribbon (per row, west of s 0.85) and on the whole sheet, rows 20 to foot - 4; grain; flat columns (one tone over 40 rows) per frame; the east navy run per row; the crest's runs from `crest_foam` and from the picture; foot cover; per-row overhang beyond the lip's columns; water-blue and white on the face beside each baked fall; `scene.load_zone` on all seven zones for the occlusion change.
+
+### Eastward comparison
+
+No official Eastward shot in the local set shows a falling sheet, as rounds 5 to 7 found, so the pieces were compared with their house sibling, the woodland's sheet: side by side in Godot at 2 screen px a texel (`g_woodland.png` and `g_woodland_kit.png`, Bramble in both) and at 6x (`crests_6x.png`).
+
+### The painter's claims, checked
+
+- **One painter: true.** `structures.fall_sheet` is `rocks.sheet` plus `rocks.plunge(seat_gaps=True)`; its only piece-specific arguments are `phase_y` (the rim row), `stagger` (the tongue) and the frame `t`. `test_the_kits_sheet_is_the_woodlands` re-paints the woodland's sheet over its committed ground and matches every sheet texel, and passes here. The woodland's ground, flow and rill are byte-identical to f9ef6366, so their pass stands.
+- **K7-1, measured on s < 0.85: true, and fixed.** On the ribbon, over all eight frames: mean 174 to 186, east half 172 to 191, under 90 L 0.003 to 0.032, sd 51 to 58, east third under 100 L 0.17 to 0.38, over 230 L 0.38 to 0.50, no snow 0 to 3. The sibling's ribbon: 177, 168, 0.04, 57, 0.34, 0.42. Frame 0 matches the painter's ranges. On the whole sheet, navy band included, the pieces match too: mean 157 to 166, east half 137 to 149, under 90 L 0.16 to 0.18, sd 65 to 68, east third under 100 L 0.60 to 0.72; the sibling 161, 135, 0.18, 66, 0.66. At 2 screen px a texel in Godot, woodland_kit's fall now reads as the woodland's: white streaks falling to a shaded east side.
+- **P7-2, no bare foot gaps: true.** The largest stretch of foot columns with no foam in the first three rows is 0 to 3 in every frame of every piece (round 7: up to 16).
+- **P7-3, the tongue staggered: true.** Where water 4 meets water 3 moves row by row (`_4`: columns 57, 66, 93, 74 in rows 12 to 15). It still reads as a flat pale band at 8x (`wf4_lip_8x.png`), which is the sibling's tongue too. Not a finding.
+- **The light-blue specks were the bake's sheen: true, and gone.** Water-blue or white on the face beside the fall, from rim + 2 to foot - 2 and 42 texels either side: woodland_kit 44 → 0, kitlab_tiers 2 → 0. Outside the fall boxes, the bakes changed in 12 and 13 texels (the specks); kitlab and kitlab_widths are unchanged, so the moss kept its draw.
+- **The occlusion change: true as described, sound against people, with two holes.** See "The occlusion change" below.
+- **"Tests brought to the shared design": four relaxations and two report-only rules.** Judged one by one below. Two are justified, one partly, and three are not.
+
+### The relaxations, judged
+
+1. **Flat columns 25 % → 42 %: partly justified.** The sibling over its full height (120 rows) does hold 16 of 42 ribbon columns flat, 38 %. But flat columns depend on the window's height, and the pieces are shorter. Over a 92-row window, the tall pieces' height, the sibling holds 0.26 to 0.36; over 44 rows, 0 to 0.17. The tall pieces measure 0.22 to 0.45 across the loop, and `_4_tall` exceeds even 0.42 in frames 2, 4 and 7 (0.43, 0.45, 0.44), as does `_3_tall` in frame 6 (0.43). The test samples only frames 0 and 3. Frame 0, the still and the bake, is within the sibling's range on every piece. This does not reopen W3: the columns are lit streaks and body tones of a five-tone streaked sheet, and the grain, value and five-tone checks still stand. Polish P8-2.
+2. **Whitest crest row 70 % → 80 %: not justified.** The sibling's crest measures 0.65 (`crest_foam`) to 0.67 (picture). The four-cell crest's 0.76 to 0.77 is above round 4's `_4` lid (0.73) and level with its `_1` lid (0.75), so this measure can no longer tell the crest from the lid. **It reopens the round-4 lid**: K8-1.
+3. **Crest gaps two → one: not justified.** The sibling has one gap on 49 texels. `crest_breaks` keeps one or two gaps of 3 to 5 texels at any width, so the runs grow with the width: 36, 48 and 64 texels at two, three and four cells. Count the run length, not the gaps: K8-1.
+4. **Run ends 1 → 1 or 2: justified.** `crest_breaks` rounds its runs, and the round-4 drips were long icicles under a straight row. A run that ends two deep is not a drip. One tiny run on `_4` (depth 1, 3, 1 at x 2 to 4) reads as a single drip at 8x. It is too small to count.
+5. **The middle third's lit share (≥ 0.35) reported only: justified.** The sibling's ribbon has 0.40 to 0.48. The one-cell pieces have 0.23 to 0.32, because their middle third is about seven columns and a few streak lanes. The new floors on spread (sd ≥ 48) and whitest runs (≥ 0.28 over 230 L) guard what K6-1 was about, the dark curtain, and the one-cell pieces pass them (0.38 to 0.42 over 230 L). Noted as polish on `_1` and `_1_tall`.
+6. **The 250-texel flat-area cap reported only: justified on the ribbon, not as done.** The sibling's own ribbon has a 573-texel area of snow 4 in this auditor's box (the painter's box: 419), so a 250 cap fails the approved design. But the same commit also cut `fall_value` to s < 0.85, so no check now sees the navy band. That band is a fixed share of the width. On the whole sheet the sibling's largest area is its 8 to 9 texel navy band, 915 texels over 124 rows. On `_4` and `_4_tall` it is 15 to 17 texels wide, 542 and 1,259 texels. That is K6-1's flat navy slab, back in a place the gate no longer looks: K8-2.
+
+### Matt's ruling on spreading, checked
+
+- **Matt's words** (2 Nov, quoted in commit 859e1c53 and ground-rules.md 2): *"the waterfall overlaps in an unrealistic way on the top bit. make sure there are no logic or detail errors"*.
+- **The rule written from them** (ground-rules.md 2, unchanged at ddc50a0b): "The fall is centred on the channel that feeds it and is as wide as that channel … The sheet starts on the rim and falls down the face, in front of the face only: nothing of it (no ledge stone, no crest) stands above the rim over the banks or the stream, it never spreads over the stones either side, and spray and foam are only where it lands, on the pool". 5.3b adds "Spray flies up beside the foot over the water only, never on the face (Matt, 2 Nov)". "Never spreads over the stones either side" is Claude A's reading. Matt's own words are only about the top.
+- **What the sheets do now:**
+  - At the rim each sheet is exactly the lip's columns: in both bakes, `a[y0]` equals the channel's width (the rim test asserts it).
+  - In woodland_kit the sheet stays within the lip's columns for 3 rows, then 1 texel over by rows 6 to 9. It is 3 to 4 west and 2 to 4 east over its lower third. kitlab_tiers is the same, 2 west and 4 east at the foot.
+  - Nothing lies above the rim. The lip stones on the upper tier are untouched.
+  - What the widening covers, read from f9ef6366's bakes: in woodland_kit, 183 texels of earth clods, 71 of crag, 11 of moss and a 6-texel pebble at the wet foot (rows 91 to 95). In kitlab_tiers, 85 of earth and 39 of crag. So the widening covers face material, in front of the face, from the upper third down.
+  - The approved sibling does the same: its sheet runs 445 texels past its lip's columns, over its grey rock face.
+- **Judgement:** the top bit, what Matt objected to, is clean. No sheet or bake stands above the rim, overlaps the rim's stones or banks, or sprays on the face. Read literally, ground-rules 2's "as wide as that channel" and "never spreads over the stones either side" forbid the lower widening, and 5.3b now requires it. The two vision docs disagree. This is not graded as a fault, because the sibling Matt saw and the reviews passed does exactly this. **D8-1:** Claude A should bring ground-rules 2 into line with 5.3b, for example: "the lip's width at the rim, widening at most 4 to 5 texels a side further down, in front of the face, as the woodland's does". If there is doubt, ask Matt.
+
+### The occlusion change
+
+- **Sound for people.** In Godot 4, z_index orders canvas items before y-sort does, so a sprite at z -5 never sorts against the people at z 0. Its y-sort point cannot misplace anyone.
+- **What it hides today.** Run on all seven zones, the skip removes three findings: kitlab_tiers `waterfall_2.png` (gap -19), kitlab_widths `stepping_stones_2.png` (+34) and woodland_kit `waterfall_3_tall.png` (-20). All three are z -5 ground pieces that the bake hides (`visible` false). No z < 0 sprite overlaps another piece's z < 0 sprite; each overlaps only its own loop strip. So nothing real is hidden now.
+- **Where it could hide a fault (lead L8-1):**
+  - Ground-layer sprites still y-sort among themselves. Two overlapping ground pieces, such as a fall's foam and a footbridge, could draw in the wrong order, and this check no longer looks.
+  - The kit path compares the effective z (`e['z']`, parent included), but the non-kit path still reads the sprite's own `z_index` (scene.py, the `Sprite(...)` for non-kit nodes). A sprite with `z_index -1` under a parent at +2 would be skipped while it draws above people.
+  - A standing thing put on a ground layer by mistake, so that people walk over it, was never this check's to catch. Now nothing looks near it.
+  - A narrower rule: skip a sprite when its effective z is below every actor's and no other piece's ground-layer sprite overlaps it. Or skip sprites the bake hides, which is what the round-7 lead was.
+
+### New findings
+
+Coordinates are texels in the kit picture, or in the bake named. The crops are local, in the auditor's scratchpad.
+
+**K8-1. Fault (kit, `_2`, `_2_tall`, `_3`, `_3_tall`, `_4`, `_4_tall`): the crest is the round-4 lid again.**
+- Location: rows 12 to 20 across the lip. Crops: `crests_6x.png` (the sibling, then `_2` and `_4` at rounds 4, 7 and 8), `wf4_lip_8x.png`, and `kt_r7_r8_6x.png` (kitlab_tiers' `_2` in the bake).
+- What is wrong:
+
+  | | Runs (texels) | Gaps | Longest run | Whitest row |
+  | --- | --- | --- | --- | --- |
+  | Woodland sheet (49) | 23, 16 | 5 | 0.47 of the lip | 0.65 to 0.67 |
+  | `_1` (24) | 7, 9 | 3 | 0.38 | 0.62 |
+  | `_2` (48) | 36, 5 | 4 | 0.75, depth 2 over 30 columns | 0.67 |
+  | `_3` (72) | 9, 2, 48 | 3, 5 | 0.67, depth 3 over about 25 columns | 0.69 to 0.71 |
+  | `_4` (96) | 3, 64, 15 | 5, 4 | 0.67, 2.7 cells | 0.76 to 0.77 |
+  | Round 4's lids (3e19c29e) | | 0 to one of 2 | | 0.73 to 0.96 |
+
+  - `crest_breaks` scales its runs with the width but keeps one or two gaps of 3 to 5 texels. At two to four cells, one run is a white bar 1.5 to 2.7 cells long, nearly constant in depth, over a straight row of its water-2 shade.
+  - The bow (1 to 2 texels) is the only thing that bends it.
+  - At 6x and in the kitlab_tiers bake it reads as round 4's lid without the drips. Round 7's crests broke into two to five runs at staggered heights, so this is a regression.
+  - The relaxed test (whitest row ≤ 0.80, one gap) lets it pass.
+- Fix:
+  - In `rocks.crest_breaks`, after the existing draws, split any run longer than 24 texels with a gap of 3 to 5 texels, drawing a fresh generator from the seed so that the fall's other draws keep their order. The sibling's longest run is 23, so the woodland stays byte-identical, and `test_the_kits_sheet_is_the_woodlands` will show it. Vary each new run's depth profile as now.
+  - Put the test back to a whitest row of at most 0.70 and two gaps from two cells up, and add a longest run of at most 24 texels.
+
+**K8-2. Fault (kit, `_4`, `_4_tall`; polish on `_3`, `_3_tall`): the navy east band is a flat slab at four cells, and no check sees it.**
+- Location: the east 15 to 17 texels of the sheet, rows 12 to the foot. Crops: the 4x view in `artifacts/review/assets/kit__waterfall_4_tall.png` and the painter's round-8 sheet.
+- What is wrong:
+  - `rocks.sheet` paints water 1 with no streaks for s ≥ 0.85, and in the last quarter also for s 0.6 to 0.85. So the band is a share of the width.
+  - The east navy run per row is 8 to 9 texels on the sibling (up to 14 at the foot), 4 to 6 on `_1`, 7 to 10 on `_2`, 11 to 16 on `_3` and 15 to 17 on `_4`.
+  - The largest single-colour areas on the whole sheet: the sibling 915 texels over 124 rows, `_3_tall` 985, `_4` 542, `_4_tall` 1,259.
+  - At four cells it is a flat dark-blue slab a fifth of a character wide, beside the lit streaks: round 6's "flat navy slabs" (K6-1) back again. At the sibling's width the same band reads as its shaded edge. The design does not hold at this scale.
+  - `fall_value` and `assets.fall_grain` now measure only s < 0.85, and `test_a_kit_sheet_is_not_flat_slabs` counts only the ribbon, so the band is never checked.
+- Fix:
+  - In `rocks.sheet`, make the navy band `xr - X <= min(0.15 (xr - xl), 9)` texels and let the s 0.6 to 0.85 ribbon (water 2 with its streaks) run on east of it. At the woodland's width the 0.15 share is 7.4 to 8.7, so the woodland is unchanged.
+  - Add a whole-sheet check: an east band of at most 9 texels in the upper three quarters, and no water-1 area over the sibling's per-row share.
+
+**P8-2. Polish (kit, the tall pieces): flat columns measured against a window of another height, and on two frames only.**
+- What is wrong: relaxation 1, above. `_4_tall` reaches 0.45 and `_3_tall` 0.43 in frames the test does not sample. At the pieces' height the sibling holds at most 0.36.
+- Fix: compare against the sibling over a window of the piece's own height (about 0.38 for the tall pieces and 0.20 for the short), on every frame. If the pieces then fail, shorten the longest streak gaps for sheets under 100 rows.
+
+**D8-1. Docs.** ground-rules.md 2 ("as wide as that channel", "never spreads over the stones either side") and 5.3b ("its widening and wobbling edges") disagree about the lower sheet. See the ruling above.
+
+**L8-1. Lead (tooling).** The occlusion skip's two holes: ground-layer sprites sorting among themselves, and the non-kit path's z. See above.
+
+### Round 7's findings, checked
+
+- **K7-1:** fixed (above).
+- **P7-2:** fixed (above).
+- **P7-3:** fixed (above).
+- **The lead on spray on the face:** fixed (above).
+- **The lead on `logic.occlusion` on `waterfall_3_tall`:** closed by the skip, judged above.
+
+### Per-part notes (kit pieces)
+
+- **Tongue:** pass on all eight. The two tones meet staggered.
+- **Crest:** pass on `_1` and `_1_tall`. Fail on the other six (K8-1).
+- **Sheet streaks and grain:** pass. Ratio 6.9 to 11.3, median run 7 to 17, over every frame on the ribbon.
+- **Sheet value:** pass. It is the sibling's, on the ribbon and on the whole sheet.
+- **East band:** pass on `_1`, `_1_tall`, `_2` and `_2_tall`. Polish on `_3` and `_3_tall`, fault on `_4` and `_4_tall` (K8-2).
+- **Edges:** they widen and wobble as the sibling's do. The top is the lip's width.
+- **Foam, shade band, spray, arcs:** pass. The foot is covered in every frame.
+- **Light:** lit west, shaded east. Pass.
+- **Picture = bake:** pass. In the woodland_kit bake the sheet is the piece's frame 0.
+- **Scale:** 1 to 4 cells, beside Bramble on the asset sheets and in Godot. Pass.
+
+### Tile log
+
+- The woodland's three pictures are unchanged since f9ef6366 (0 texels), so round 6's tile log stands.
+- **woodland_kit bake:** 7,038 texels changed, 7,026 of them in the fall's box (x 144-264, y 700-880). The other 12 (x 126-281, y 777-839) are the removed specks.
+- **kitlab_tiers bake:** 2,676 texels changed, 2,663 in the fall's box (x 600-700, y 250-370). The other 13 are specks.
+- **kitlab and kitlab_widths:** 0 texels changed.
+
+### False positives
+
+- **Kit pieces: all 16 findings rejected.**
+  - 8 `detail.bar` (polish, 0.73 to 0.88): the fall band rewards fragmentation (round 6).
+  - 8 `detail.outline` (polish): water takes no outline.
+- The detectors missed K8-1 and K8-2, because the relaxed tests and the s < 0.85 cut stand between them and these faults. Leads are in the fixes.
+
+### Not checked
+
+- **Motion on a device:** frames were measured and the Godot shots were stills on a desktop. There was no phone or native check.
+- **Night tint:** not checked.
+- **Reduced motion:** judged from frame 0, which is the bake. It holds K8-1 and K8-2.
+- **The four-cell pieces in a composed zone:** no baked zone places `waterfall_4` or `_4_tall`. They were judged on their asset sheets and composited frames.
+- **An Eastward falling sheet:** none exists in the local official shots.
