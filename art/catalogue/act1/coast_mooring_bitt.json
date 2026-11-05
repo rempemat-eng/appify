@@ -61,7 +61,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset. The detail.cluster_noise fault is the flaked coil's ring seams: three rings with two-tone seams are structure, as the detail audit ruled in round 4 (R4-3: \"if cluster noise rises over 0.40 from the seams, reject that finding\"), so it is recorded here as rejected, not designed around."
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 5 (v6) of docs/reviews/2026-11-04-act1-props.md (a1473069): the detail.cluster_noise fault (55 %) is rejected as structure: the rings and eye add the 6 blocks that took it from 43 % (v5) to 55 %; the bitt's own 11 noisy blocks (cap bolt, post planes, rope turns) are unchanged since v5. The status field stays the detector's fail. Polish R5-11: the turns round the bitt are 1-row stripes."
  }
 }

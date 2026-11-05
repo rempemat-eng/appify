@@ -51,7 +51,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 5 (v6) of docs/reviews/2026-11-04-act1-props.md (a1473069): the coil is the bitt's three-ring template and reads as a coil at 1x; the creel as pots a (R5-8)."
  }
 }

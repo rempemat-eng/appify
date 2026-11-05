@@ -63,7 +63,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 5 (v6) of docs/reviews/2026-11-04-act1-props.md (a1473069): masses now sit at or under the lawn (west crown p50 137 against the lawn's 146), the dark-dash field is gone and the bar is 0.57, accepted by eye against Eastward 17; fails on a new stray 1 px grey frame round the portal's lintel (R5-2). Polish: the mound is clipped by the canvas for 12 rows at x 325 (R5-3)."
  }
 }
