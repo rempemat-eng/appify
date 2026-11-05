@@ -124,7 +124,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "ruin (a fold 4 to 5 cells across, walls to 34 at the back; size-guide drystone wall 14 world px)",
+  "size_class": "unsized (a ruined sheep fold, a ring of drystone walls 4 to 5 cells across: no fold or ruin kind in the guide; walls to 34 at the back, size-guide drystone wall 14 world px)",
   "eastward_ref": "12 (the drystone and boulder walls by the thatched hut), 17 (the farm fence and gate, 40 E = 0.75 A)",
   "painter": {
    "module": "scripts.art.kit.sets.brackens",

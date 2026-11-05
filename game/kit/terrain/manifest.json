@@ -509,6 +509,40 @@
    ],
    "face": null,
    "hash": "ecc54243ef3c9420"
+  },
+  {
+   "id": "shingle",
+   "material_id": 11,
+   "priority": 17,
+   "fill": "fill_shingle.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "14c612baa815ff18"
+  },
+  {
+   "id": "quay",
+   "material_id": 12,
+   "priority": 21,
+   "fill": "fill_quay.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "4f07b378622a626f"
   }
  ],
  "transitions": [
@@ -702,6 +736,32 @@
    "hash": "0c55ce2c10e2b23d"
   },
   {
+   "id": "lawn_over_quay",
+   "upper": "lawn",
+   "lower": "quay",
+   "png": "over_lawn_over_quay.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.5,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "tuft_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "641bab98b87d2bdc"
+  },
+  {
    "id": "lawn_over_scree",
    "upper": "lawn",
    "lower": "scree",
@@ -730,6 +790,32 @@
    },
    "approval": "candidate",
    "hash": "1930f4fcaa87b7e8"
+  },
+  {
+   "id": "lawn_over_shingle",
+   "upper": "lawn",
+   "lower": "shingle",
+   "png": "over_lawn_over_shingle.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.5,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "tuft_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "e31728d98f798357"
   },
   {
    "id": "lawn_over_water",
@@ -828,6 +914,16 @@
    "hash": "256efcf93480f5db"
   },
   {
+   "id": "path_over_quay",
+   "upper": "path",
+   "lower": "quay",
+   "png": "over_path_over_quay.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "d9199434eb6cc96a"
+  },
+  {
    "id": "path_over_water",
    "upper": "path",
    "lower": "water",
@@ -849,6 +945,62 @@
    },
    "approval": "candidate",
    "hash": "f6d9427f828335c9"
+  },
+  {
+   "id": "quay_over_water",
+   "upper": "quay",
+   "lower": "water",
+   "png": "over_quay_over_water.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.4,
+    "south": [
+     "pebble_0",
+     "pebble_2"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_3"
+    ],
+    "side": [
+     "pebble_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "7c519fd13c2b2a0d"
+  },
+  {
+   "id": "shingle_over_quay",
+   "upper": "shingle",
+   "lower": "quay",
+   "png": "over_shingle_over_quay.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "061c4d84c4629f89"
+  },
+  {
+   "id": "shingle_over_water",
+   "upper": "shingle",
+   "lower": "water",
+   "png": "over_shingle_over_water.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.4,
+    "south": [
+     "pebble_0",
+     "pebble_2"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_3"
+    ],
+    "side": [
+     "pebble_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "a179c988f29e95cb"
   },
   {
    "id": "water_over_earth_face",

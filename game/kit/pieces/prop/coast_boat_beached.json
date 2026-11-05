@@ -1,0 +1,138 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "coast_boat_beached",
+ "name": "Beached boat",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/coast_boat_beached.png",
+   "foot": [
+    67,
+    53
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A 3 m clinker rowing boat drawn up on the shingle, dry, built from the gunwale outward: the gunwale the widest line, a stem post and a transom; under the white sheer strake the south side's lapped strakes, blue, then red below the waterline with weed along it; frames, floor boards, two thwarts and an oar inside; a stone chocked under the forefoot."
+ },
+ "geometry": {
+  "size_px": [
+   141,
+   71
+  ],
+  "size_cells": [
+   6,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 71,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -20.0,
+    -8.0,
+    40,
+    8
+   ]
+  },
+  "foot": [
+   67,
+   53
+  ],
+  "footprint": [
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "boat",
+  "composition": "free",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "water",
+    "cells": 4,
+    "note": "drawn up the beach above the tide line"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    42,
+    6
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "rowing_boat (a 3 m clinker boat, 1.3 m in the beam, 0.6 m to its gunwale, its stern turned a little to us, the transom raked; art px: 62 to 76 tall, 124 to 146 wide)",
+  "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "coast_boat_beached",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

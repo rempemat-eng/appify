@@ -1098,6 +1098,7 @@ class ToneAndNoise(unittest.TestCase):
 
 # the prop sets' own tests (scripts/art/kit/sets/), run with the kit's
 from scripts.art.kit.sets.test_brackens import BrackensSet  # noqa: E402,F401
+from scripts.art.kit.sets.test_act1 import Act1Set  # noqa: E402,F401
 
 
 if __name__ == '__main__':

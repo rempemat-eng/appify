@@ -1,0 +1,54 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "quay_over_water",
+ "name": "Quay over water",
+ "kind": "transition",
+ "biomes": [
+  "coast"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; Driftwood Harbour's brief (world-atlas.md)",
+  "note": "The quay's edge over the water."
+ },
+ "transition": {
+  "upper": "quay",
+  "lower": "water",
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "bank",
+   "args": {
+    "side_w": 3
+   }
+  },
+  "variants": 1,
+  "shape": "lower",
+  "dressing": {
+   "density": 0.4,
+   "south": [
+    "pebble_0",
+    "pebble_2"
+   ],
+   "north": [
+    "pebble_1",
+    "pebble_3"
+   ],
+   "side": [
+    "pebble_2"
+   ]
+  }
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "bank",
+   "args": {
+    "side_w": 3
+   }
+  },
+  "eastward_ref": "Eastward 12 (the stream's edge), crops 10-grass-dirt"
+ }
+}

@@ -24,6 +24,8 @@ The game now draws at **density 3**: 960 x 540 art px on screen, shown 2x at 108
 
 **The data.** `scripts/review/sizes.json` holds every class (height and width in art px and in A, its real size, the Eastward measurement, the chunky note, how it is measured and the names that map to it), the ground grain, path widths and the cast. `python3 -m scripts.review.scale --markdown` prints the table below from it; change the JSON and reprint. `scripts/art/size_guide.json` (world px, section 10) stays for the old world px checks.
 
+**A kit piece names its kind.** The first word of a piece's `size_class` is its kind, looked up in `sizes.json` and then in `size_guide.json`, and `scale.check_spec` measures the drawn piece against that kind as well as against the piece's own "art px:" ranges. A first word that is no kind in either table is a fault, not a silent skip. A piece no kind fits starts with `unsized (` and says why, so the gap stays visible and a new kind can be ruled on (round 5 of the Act 1 detail audit, Claude A's ruling on 5 Nov, which added `creel_stack` and `platform_lamp`). `unsized` is only for a piece no kind fits: `logic.size_unsized` faults an `unsized` reason that shares a word with a kind's name (or with a description only one or two kinds carry) when that kind holds the drawn box or the spec's own range, as the v7 bitt (the guide's `bollard`) and semaphore (its `pole`, a signal mast) did; a ruling that a piece is not a kind it resembles goes in `sizes.json`'s `unsized_rulings` (the churn stand is not `churns`, a sluice is not a `gate`). The asset gate (`npm run review:asset`) reads a kit picture's spec from its piece and runs these checks, so the reviewer's sheet shows them (round 6, R6-3 and R6-12).
+
 Art px at density 3. A = 74 art px = 1.7 m, so 43.5 art px a metre; Eastward's adult is 54 E px, so an Eastward length times 1.37 is ours.
 
 | Class | Height (art px) | Width (art px) | Height (A) | Real size | Eastward at the same character height | Chunky on purpose |
@@ -44,8 +46,11 @@ Art px at density 3. A = 74 art px = 1.7 m, so 43.5 art px a metre; Eastward's a
 | table | 30 to 52 | 52 to 111 | 0.40 to 0.70 | 0.75 m high, 1 to 1.6 m long | stall counters 0.45 to 0.6 A (04) |  |
 | bed | 37 to 67 | 56 to 81 | 0.50 to 0.90 | 2 m x 0.9 to 1.4 m, 0.5 m high | none in the shots; from real size seen from above |  |
 | barrel | 31 to 46 | 24 to 37 | 0.42 to 0.62 | 0.9 m tall, 0.6 m across (0.53 x 0.35 A) | tubs and pots 0.3 to 0.4 A (04); milk cans 0.73 A (17) | up to 0.62 A: a touch over real for readability, never as tall as a hip-high crate stack |
+| churns | 30 to 56 | 13 to 111 | 0.40 to 0.75 | a milk churn 0.7 to 0.75 m, 0.3 to 0.33 m across; a group of two to four | milk cans 0.73 A tall, 30 to 37 art px across at our height (17) | as Eastward: chunky churns 14 to 37 art px across so the shoulder, neck and lid read |
+| kerb stone | 16 to 30 | 13 to 24 | 0.22 to 0.41 | a kerb stone of a barrow ring or a forecourt, 0.3 to 0.55 m, set on edge in the turf | the small boulder in 13 (325,247,350,268): 19 x 23 E (0.35 x 0.42 A) | a touch over real so the lit top plane, the shaded side and the turf at its foot read at phone size |
 | crate | 22 to 41 | 26 to 44 | 0.30 to 0.55 | 0.5 m cube | fruit crates 26 x 20 E (0.48 x 0.37 A) in 04 | a touch big |
 | crate stack | 41 to 85 | 26 to 59 | 0.55 to 1.15 | two or three crates | 04: stacks to 1 A |  |
+| creel stack | 18 to 50 | 24 to 60 | 0.24 to 0.68 | a stack of 1 to 3 lobster creels: one creel about 0.6 m long, 0.45 m wide and 0.4 m tall | no creel in the local Eastward shots; its crates in 04 stack to 1 A |  |
 | sack | 22 to 44 | 22 to 59 | 0.30 to 0.60 | a sack 0.6 to 0.8 m | sacks at the stalls 0.35 to 0.5 A (04) |  |
 | bucket | 13 to 24 | 13 to 22 | 0.18 to 0.32 | 0.3 m | pails 12 to 16 E (0.22 to 0.3 A) (13, 17) | a touch big |
 | well | 89 to 141 | 70 to 118 | 1.20 to 1.90 | a well with its roof 2.2 to 2.6 m, ring 1.2 m across | the bell frame in 13: 58 x 60 E (1.07 x 1.1 A) | the roof may stand over a person's head (1.2 to 1.9 A) |
@@ -53,6 +58,7 @@ Art px at density 3. A = 74 art px = 1.7 m, so 43.5 art px a metre; Eastward's a
 | pump | 66 to 84 | 42 to 54 | 0.90 to 1.15 | a hand pump: the column 1.2 to 1.4 m, its handle raised over it | none in the shots; from real size (Claude A's review of #430, 3 Nov) | the stone basin under the spout stays within its width |
 | trough | 26 to 44 | 59 to 104 | 0.35 to 0.60 | 0.6 m high, 1.5 m long | none; from real size (stall counters 0.45 to 0.6 A in 04) | a touch big |
 | lamp | 107 to 178 | 15 to 52 | 1.45 to 2.40 | a street lamp 2.5 to 4 m | lamp posts 88 to 100 E (1.6 to 1.85 A) in 13 and 17 | up to 2.4 A where it lights a square |
+| platform lamp | 117 to 139 | 13 to 30 | 1.58 to 1.88 | a railway platform lamp, about 2.7 to 3.2 m to the lantern's top | lamp posts 88 to 100 E (1.6 to 1.85 A) in 13 and 17 |  |
 | post lantern | 44 to 81 | 15 to 118 | 0.60 to 1.10 | a lantern on a short post or a wall torch | post lanterns 44 to 45 E (0.8 A) in 12 and 38 |  |
 | fence | 41 to 67 | 37 to 296 | 0.55 to 0.90 | a garden fence 1 to 1.2 m | farm gate 40 E, palisade 40 to 45 E (0.75 to 0.83 A) in 17, 12 and 38 |  |
 | post | 41 to 74 | 4 to 15 | 0.55 to 1.00 | a post 1 to 1.4 m | fence posts 0.8 to 0.95 A (17) |  |

@@ -89,10 +89,12 @@ def class_of(name: str, kind: str | None = None) -> str | None:
         for cid, c in CLASSES.items():
             if cand in c['names']:
                 return cid
+    # a class name inside the name counts only where it starts a word (haystack is hay, but churn is
+    # not an urn and timetable is not a table: the detail audit of 4 Nov sized the churn stand as a barrel)
     best = None
     for cid, c in CLASSES.items():
         for n in c['names']:
-            if n in b and (best is None or len(n) > len(best[1])):
+            if ('_' + n) in ('_' + b) and (best is None or len(n) > len(best[1])):
                 best = (cid, n)
     return best[0] if best else None
 
@@ -684,6 +686,267 @@ def plan_paving(zone: str, density: float = 3.0):
     art = json.load(open(p)).get('art') or {}
     r = lambda rs: [[x * density, y * density, (x + w) * density, (y + h) * density] for x, y, w, h in rs or []]
     return r(art.get('paving')), r(art.get('setts'))
+
+
+_SPEC = re.compile(r'(\d+(?:\.\d+)?)\s*to\s*(\d+(?:\.\d+)?)\s*(tall|wide)\b')
+_SPEC_AT = re.compile(r'art px:\s*([^)]*)')
+
+
+def spec_ranges(text: str | None) -> dict:
+    """A kit piece's own size spec, from its `audit.size_class`: the ranges after "art px:" (its
+    opaque box at density 3), e.g. "shelter (eave 2.7 m; art px: 150 to 180 tall, 120 to 160 wide)"
+    gives {'tall': (150, 180), 'wide': (120, 160)}. Prose without "art px:" (a size-guide range in
+    world px, a gate's opening) gives {}: nothing to check."""
+    out = {}
+    for seg in _SPEC_AT.findall(text or ''):
+        for lo, hi, ax in _SPEC.findall(seg):
+            out[ax] = (float(lo), float(hi))
+    return out
+
+
+_GUIDE = None
+
+
+UNSIZED = 'unsized'      # a spec's head word for a piece no kind fits: it must say why in its parentheses
+GROUND = 'ground'        # a piece of ground (terrain, a surface): measured by its grain, not a box
+
+
+def _guide():
+    global _GUIDE
+    if _GUIDE is None:
+        with open(os.path.join(REPO, 'scripts', 'art', 'size_guide.json'), encoding='utf-8') as fh:
+            _GUIDE = json.load(fh)
+    return _GUIDE
+
+
+def kind_ranges(name: str):
+    """A kind's height and width in art px at density 3 with its tolerance: sizes.json's bbox
+    classes first (art px, `tol`), then the size guide's kinds (world px x 3, its own tolerance).
+    None when the name is no measurable kind."""
+    def ok(r):
+        return isinstance(r, (list, tuple)) and len(r) == 2 and r[0] is not None and r[1] is not None
+    c = CLASSES.get(name)
+    if c and c.get('measure') == 'bbox':
+        out = {}
+        for ax, key in (('tall', 'h'), ('wide', 'w')):
+            r = c.get(key)
+            out[ax] = (r[0] - tol(r[0]), r[1] + tol(r[1])) if ok(r) else (0.0, float('inf'))
+        return out
+    k = _guide()['kinds'].get(name)
+    if not k:
+        return None
+    d = 3.0                                                          # art px a world px at density 3
+    t = float(_guide().get('tolerance', 2)) * d
+    return {ax: ((k[key][0] * d - t, k[key][1] * d + t) if ok(k.get(key)) else (0.0, float('inf')))
+            for ax, key in (('tall', 'h'), ('wide', 'w'))}
+
+
+def guide_kind(size_class: str | None):
+    """The kind a piece's size spec names as its head word ("water_mill (...)"), with its height and
+    width in art px at density 3 and the tolerance (`kind_ranges`). Returns (head, ranges), (head,
+    None) for the explicit `unsized` (no kind fits; the spec says why) and for `ground`, or (head,
+    False) when the head word names no kind at all, which check_spec reports loudly rather than
+    skipping (round 5 of the Act 1 detail audit, Claude A's ruling)."""
+    head = (size_class or '').split('(')[0].strip().split(' ')[0] if size_class else ''
+    if not head:
+        return None
+    if head in (UNSIZED, GROUND):
+        return head, None
+    r = kind_ranges(head)
+    return (head, r) if r else (head, False)
+
+
+# words that say nothing about what a thing is, left out when an `unsized` spec's reason is matched
+# against the kinds' names and descriptions
+_STOP = set("""a an and are as at be beside but by for from has in into is it its of on or out over the
+their them then there this to under up with without no not one two three any every each own than that
+what which who whose where when only alone kind kinds guide size sizes sized spec art px tall wide high
+long deep across about cell cells piece pieces object objects thing things drawn draw ground run here
+more most less least make made person world set""".split())
+
+
+def _norm(w: str) -> str:
+    w = w.lower().strip("'")
+    if w.endswith("'s"):
+        w = w[:-2]
+    if len(w) > 4 and w.endswith('s') and not w.endswith('ss'):
+        w = w[:-1]
+    return w
+
+
+def _words(text: str) -> set:
+    out = set()
+    for w in re.findall(r"[a-z][a-z']+", (text or '').lower().replace('_', ' ')):
+        w = _norm(w)
+        if len(w) > 2 and w not in _STOP:
+            out.add(w)
+    return out
+
+
+def _kinds():
+    seen = []
+    for n in list(CLASSES) + list(_guide()['kinds']):
+        if n not in seen and kind_ranges(n):
+            seen.append(n)
+    return seen
+
+
+def _kind_ident(name: str) -> set:
+    c = CLASSES.get(name)
+    extra = (c.get('names') or []) if (c and c.get('measure') == 'bbox') else []
+    return _words(' '.join([name] + list(extra)))
+
+
+def _kind_desc(name: str) -> set:
+    c = CLASSES.get(name)
+    if c and c.get('measure') == 'bbox':
+        return _words(c.get('real') or '')
+    return _words((_guide()['kinds'].get(name) or {}).get('reason') or '')
+
+
+_DESC_DF = None
+
+
+def unsized_fits(size_class: str | None, got: dict | None = None) -> list:
+    """The guide kinds an `unsized (why ...)` spec could have named. A kind is a lead when the spec's
+    reason shares a word with the kind's name (a "bollard" it names) or a word that describes at
+    most two kinds (a "signal" mast), and the kind's size range holds the drawn box or overlaps the
+    spec's own art px ranges; unless a ruling in sizes.json's `unsized_rulings` says the piece is not
+    that kind (the churn stand is not churns). Round 6 of the Act 1 detail audit (R6-3, R6-12):
+    `unsized` is only for a piece no kind fits, and the v7 bitt (the guide's bollard) and semaphore
+    (its pole, a signal mast) had kinds. Returns [(kind, shared words)]."""
+    global _DESC_DF
+    gk = guide_kind(size_class)
+    if not gk or gk[0] != UNSIZED:
+        return []
+    if _DESC_DF is None:
+        _DESC_DF = {}
+        for n in _kinds():
+            for w in _kind_desc(n):
+                _DESC_DF[w] = _DESC_DF.get(w, 0) + 1
+    reason = (size_class or '').split('(', 1)[-1].split('art px:')[0]
+    low = reason.lower()
+    sw = _words(reason)
+    own = spec_ranges(size_class)
+    rulings = SIZES.get('unsized_rulings') or []
+    out = []
+    for name in _kinds():
+        if any(r.get('kind') == name and r.get('not', '').lower() in low for r in rulings):
+            continue
+        shared = (sw & _kind_ident(name)) | {w for w in sw & _kind_desc(name) if _DESC_DF.get(w, 0) <= 2}
+        if not shared:
+            continue
+        r = kind_ranges(name)
+        holds = got is not None and all(r[ax][0] <= got[ax] <= r[ax][1] for ax in ('tall', 'wide'))
+        overlaps = bool(own) and all(ax in own and own[ax][0] <= r[ax][1] and own[ax][1] >= r[ax][0]
+                                     for ax in ('tall', 'wide'))
+        if holds or overlaps:
+            out.append((name, sorted(shared)))
+    return out
+
+
+_KIT_SPECS = None
+
+
+def kit_spec(path: str):
+    """The size spec (`audit.size_class`) of the kit piece one of whose variant pictures is `path`
+    (game/kit/props/index.json maps each variant to its PNG), or None for a picture no kit piece
+    paints. The asset gate measures a kit picture against it (R6-12)."""
+    global _KIT_SPECS
+    if _KIT_SPECS is None:
+        _KIT_SPECS = {}
+        idx = os.path.join(GAME, 'kit', 'props', 'index.json')
+        if os.path.exists(idx):
+            with open(idx, encoding='utf-8') as fh:
+                index = json.load(fh)
+            specs, runs = {}, {}
+            for pp in glob.glob(os.path.join(GAME, 'kit', 'pieces', '*', '*.json')):
+                with open(pp, encoding='utf-8') as fh:
+                    d = json.load(fh)
+                specs[d.get('id')] = (d.get('audit') or {}).get('size_class')
+                bd = (d.get('placement') or {}).get('boundary')
+                if bd:
+                    runs[d.get('id')] = {'joins': sorted(bd.get('joins') or []), 'span_cells': bd.get('span_cells', 1),
+                                         'role': (d.get('placement') or {}).get('role')}
+            for pid, e in index.items():
+                if not isinstance(e, dict):
+                    continue
+                for vid, v in (e.get('variants') or {}).items():
+                    png = (v or {}).get('png') or ''
+                    if png.startswith('res://'):
+                        run = dict(runs[pid], variant=vid) if pid in runs else None
+                        _KIT_SPECS[os.path.normpath(os.path.join(GAME, png[len('res://'):]))] = (specs.get(pid), run)
+    return (_KIT_SPECS.get(os.path.normpath(os.path.abspath(path))) or (None, None))[0]
+
+
+def kit_run(path: str):
+    """The run a kit picture is a cell of ({'joins', 'span_cells', 'role'} from its piece's
+    placement.boundary: a fence, a drystone wall, a gate in one), or None for a whole object (round 7
+    of the Act 1 detail audit, R7-2)."""
+    kit_spec(path)
+    return (_KIT_SPECS.get(os.path.normpath(os.path.abspath(path))) or (None, None))[1]
+
+
+def check_spec(rgba: np.ndarray, size_class: str | None, subject: str, run: dict | None = None) -> list[Finding]:
+    """logic.size_spec: the drawn picture's opaque box against the piece's own size spec (the detail
+    audit of 4 Nov: the shelter drawn at a third of its 2.2 m, the millstones at 0.74 m of their 1.2 m,
+    the barrow's portal at a third of its own size). Every picture of a piece is measured. The spec's
+    head word names its kind ("water_mill (...)"), and the picture is measured against that kind's
+    range too (logic.size_guide), so a spec cannot drift from the guide unseen (round 5 of the Act 1
+    detail audit, R5-13: the v6 mill met its own 160 to 190 and was half the guide's water mill). A
+    head word that names no kind is a fault, never a silent skip; `unsized (why ...)` says outright
+    that no kind fits.
+
+    `run` (kit_run) marks a cell of a run: a fence or wall cell is not a whole fence, so it is measured
+    by its height only, and only where its height is the run's (a straight east-west cell; a cell
+    running north-south or turning a corner draws the run's length down the screen). Round 7, R7-2: a
+    run cell measured as a whole fence raised 93 false faults."""
+    rng = spec_ranges(size_class)
+    alpha = rgba[..., 3] > 128
+    if not alpha.any():
+        return []
+    ys, xs = np.nonzero(alpha)
+    got = {'tall': ys.max() - ys.min() + 1, 'wide': xs.max() - xs.min() + 1}
+    axes = ('tall', 'wide')
+    if run is not None:
+        # a gate swung open draws its leaf down the screen, as a north-south cell does
+        axes = ('tall',) if run.get('joins') == ['e', 'w'] and run.get('variant') != 'open' else ()
+    out = []
+    gk = guide_kind(size_class)
+    if gk and gk[1] is False:
+        out.append(Finding('logic.size_guide', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
+                           f'{subject}: its size spec names "{gk[0]}", which is no kind in sizes.json or the size guide, so it '
+                           'cannot be measured against one', 'name the kind it is as the spec\'s head word, rule a new kind into '
+                           f'sizes.json and size-guide.md, or say "{UNSIZED} (why no kind fits; ...)"', subject=subject))
+    elif gk and gk[0] == UNSIZED:
+        for kind, shared in (unsized_fits(size_class, got) if run is None else []):
+            out.append(Finding('logic.size_unsized', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
+                               f'{subject}: its spec says no kind fits, but the guide\'s {kind} shares "{", ".join(shared)}" '
+                               'with its reason and holds its size', f'head the spec "{kind} (...)" and measure it there, or rule '
+                               'a new kind into sizes.json and size-guide.md (R6-3: unsized is only for a piece no kind fits)',
+                               subject=subject))
+    elif gk and gk[1]:
+        kind, grng = gk
+        for ax, (lo, hi) in grng.items():
+            if ax not in axes:
+                continue
+            v = float(got[ax])
+            if v < lo or v > hi:
+                out.append(Finding('logic.size_guide', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
+                                   f'{subject}: drawn {v:.0f} art px {ax}, the kind {kind} is {lo:.0f} to {hi:.0f} '
+                                   f'(with its tolerance)',
+                                   'redraw it to the guide in the generator (prop-logic rule 9), or rule a new kind into the '
+                                   'size guide first', score=v, threshold=lo if v < lo else hi, subject=subject))
+    for ax, (lo, hi) in rng.items():
+        if ax not in axes:
+            continue
+        v = float(got[ax])
+        if v < lo or v > hi:
+            out.append(Finding('logic.size_spec', 'fault', (int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1),
+                               f'{subject}: drawn {v:.0f} art px {ax}, its own spec says {lo:.0f} to {hi:.0f} ({size_class})',
+                               'redraw it to its spec in the generator (prop-logic rule 9: never stretch a bitmap), or correct '
+                               'the spec if the spec is wrong', score=v, threshold=lo if v < lo else hi, subject=subject))
+    return out
 
 
 def check_asset(rgba: np.ndarray, subject: str, kind: str | None = None, H: float = GAME_H, density: float = 3.0,

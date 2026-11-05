@@ -331,10 +331,17 @@ def biome_form(rgb, alpha, H, subject, biome):
     return []
 
 
+NET_WORD = re.compile(r'(^|_)nets?(_|$)')     # a net, a net rack, nets: not foliage
+
+
 def crown_holes(rgb, alpha, H, subject):
     """A crown drawn as outlined blobs with the ground showing between them (contour mesh)."""
     if subject.endswith('_damage'):
         return []        # a storm-damage overlay (a tarp, a roof hole's dark loft): no crown in it
+    if NET_WORD.search(subject.split('/')[-1]):
+        # a net hung to dry is green twine and mostly air: round 6 of the Act 1 detail audit (R6-12)
+        # rejected this check on the net rack, whose holes are what a net is (R3-6 asked for them)
+        return []
     fam = D.family_map(rgb)
     fol = alpha & np.isin(fam, (0, 1))
     if (alpha & (fam == 1)).sum() < 0.3 * H * H:

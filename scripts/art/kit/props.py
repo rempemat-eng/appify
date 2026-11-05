@@ -55,6 +55,40 @@ def crown_shadow(png_res: str, foot, out_name: str):
     return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
 
+# the bake's one projection for a thing's cast shadow (scripts/art/biomes/*.json, shadow.project; the
+# same in the meadow and the woodland): each texel at height h above the foot thrown kx*h east, ky*h down
+PROJECT = (0.46, 0.22)
+
+
+def silhouette_shadow(png_res: str, foot, out_name: str):
+    """A building's cast shadow from its own silhouette (round 7 of the Act 1 detail audit, R7-1): the
+    projection the study bake uses (compose._shadow_mask: every opaque texel thrown east and down by
+    PROJECT of its height, closed, filled and opened by 2.5 world px), so the zone draws the same shape
+    as the study, its far edge stepping with the roof, the chimney and the vent. Written as an R8 mask
+    (2 the core, 1 its rim of one world px) with its offset from the foot, as crown_shadow's."""
+    from PIL import Image
+    from scipy import ndimage as ndi
+    a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
+    fx, fy = foot
+    ys, xs = np.nonzero(a)
+    hgt = np.maximum(0, fy - ys)
+    gx = xs + PROJECT[0] * hgt
+    gy = fy + PROJECT[1] * hgt - np.maximum(0, ys - fy)
+    k = max(2, int(round(2.5 * D)))
+    X = np.round(gx - fx).astype(int)
+    Y = np.round(gy - fy).astype(int)
+    x0, y0 = X.min() - k - 2, Y.min() - k - 2
+    m = np.zeros((Y.max() - y0 + k + 3, X.max() - x0 + k + 3), bool)
+    m[Y - y0, X - x0] = True
+    m = ndi.binary_dilation(m, iterations=k)
+    m = ndi.binary_fill_holes(m)
+    m = ndi.binary_erosion(m, iterations=k)
+    core = ndi.binary_erosion(m, iterations=D)
+    out = np.where(core, 2, np.where(m, 1, 0)).astype(np.uint8)
+    Image.fromarray(out, 'L').save(os.path.join(OUT, 'art', out_name))
+    return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
+
+
 def _anim(rendering: dict, foot) -> dict | None:
     """The piece's looping strip (rendering.animations with a strip): where it is, its frames and
     rate, and its offset from the foot (a fall's frames cover its sheet; an animal's its whole
@@ -78,6 +112,9 @@ def entry(p: dict) -> dict:
     shadow = None
     if cs.get('shape') == 'ellipse' and cs.get('size'):
         shadow = {'size': [int(round(v * D)) for v in cs['size']], 'dir': [int(round(v * D)) for v in cs.get('dir', [0, 0])]}
+    if cs.get('shape') == 'sprite' and p.get('variants'):
+        v0 = p['variants'][0]
+        shadow = {'mask': silhouette_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
     if p.get('placement', {}).get('role') == 'tree' and p.get('variants'):
         v0 = p['variants'][0]
         shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
