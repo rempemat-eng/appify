@@ -21,8 +21,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "date": "2026-11-04",
-  "note": "re-rendered after round 5 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 76241d98: ground, flow and flow_rill pass): P5-1, the stray waterline chip and slot in the face's foot at x 478-490 are gone (no river inside the face above its foot) and the shore runs flat there; the moss tufts and wet pebbles along the face reshuffled with it. Not yet reviewed by an independent detail-auditor (the painter may not audit it)."
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 6 (5725cf90). File unchanged since f1d30e58 (sha256 04830edb). Re-checked against the re-rendered ground: in all eight frames no moving texel lies over a texel that changed this round, and the texels lifted off the water family are the same 0 to 85 foam-box texels (x 204-272, y 887-898) as in round 5. Round 5's pass stands."
  }
 }
