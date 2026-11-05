@@ -258,25 +258,48 @@ def crest_bow(w: int, seed: int = 0) -> np.ndarray:
     return bow
 
 
+# the sheet's lane palettes (woodland review, round 6, K6-1: the woodland's value ladder): per lane
+# parity, per zone across the sheet (west to s 0.45, middle to 0.7, east to the navy edge), the
+# tone of the body (0), the paler second run (1), the lit run (2) and a glint (3). The first palette
+# is the auditor's ladder (lit runs snow 5, snow 4, water 5 over a water 4 then water 3 body); the
+# second, a step off it, shares no body or run tone with the first in a zone (a rare glint aside),
+# so neighbouring lanes do not merge into flat areas.
+FALL_LANE_TONES = (
+    ((('water', 4), ('snow', 3), ('snow', 5), ('snow', 5)),
+     (('water', 3), ('snow', 4), ('snow', 4), ('snow', 5)),
+     (('water', 3), ('water', 5), ('water', 5), ('water', 5))),
+    ((('water', 5), ('snow', 2), ('snow', 4), ('snow', 4)),
+     (('water', 4), ('snow', 3), ('snow', 3), ('snow', 5)),
+     (('water', 4), ('snow', 2), ('snow', 2), ('snow', 3))),
+)
+
+
 def sheet_outline(x0: int, w: int, y0: int, y1: int, seed: int) -> np.ndarray:
     """The sheet's columns per row (texels; rows y0 .. y1 - 1, each (xl, xr)): exactly the channel's
-    width at the lip and through the crest; below it each edge wanders a texel in and out of line
-    (review round 5, K5-1: the west edge was ruler-straight), and over the last third both edges
+    width at the lip and through the crest; below it each edge steps a texel in or back out every 4
+    to 8 rows (review rounds 5 and 6, K5-1 and P6-1: the edges were ruler-straight), and over the last third both edges
     swell outward by one, then two texels as the sheet spreads toward the pool, as the woodland's
     does. Above the last third it never leaves x0 .. x0 + w (Matt, 2 Nov: the sheet never spreads
     over the stones either side)."""
     rng = np.random.default_rng(seed * 131 + w)
-    pl, pr = rng.uniform(0.0, 2.0 * math.pi, 2)
-    out = np.zeros((max(0, y1 - y0), 2), np.int32)
     n = max(1, y1 - y0)
-    for k, Y in enumerate(range(y0, y1)):
-        dy = Y - y0
-        f = dy / n
-        il = ir = 0
-        if dy >= 8:
-            il = int(0.5 * math.sin(dy / 4.3 + pl) + 0.35 * math.sin(dy / 2.1 + 2.0 * pl) > 0.3)
-            ir = int(0.5 * math.sin(dy / 3.7 + pr) + 0.35 * math.sin(dy / 1.9 + 2.0 * pr) > 0.25)
+    out = np.zeros((n, 2), np.int32)
+    walk = []
+    for _side in range(2):
+        # each edge steps in or back out a texel every 4 to 8 rows (review round 6, P6-1)
+        ins = np.zeros(n, np.int32)
+        k = 8
+        cur = int(rng.integers(0, 2))
+        while k < n:
+            L = int(rng.integers(4, 9))
+            ins[k:k + L] = cur
+            cur = 1 - cur
+            k += L
+        walk.append(ins)
+    for k in range(n):
+        f = k / n
         sw = 0 if f < 2.0 / 3.0 else (1 if f < 0.88 else 2)
+        il, ir = int(walk[0][k]), int(walk[1][k])
         if sw:
             il, ir = il - sw, ir - sw                         # the swell takes over the wander
         out[k] = (x0 + il, x0 + w - ir)
@@ -359,10 +382,18 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
             elif (k == 2 and (X + Y) % 2 == 0) or (k == 3 and (X + 2 * Y) % 4 == 0):
                 cv[Y, X] = C('water', 3)                                         # fading up the channel
     outline = sheet_outline(x0, w, y0, y1, seed)
+    # the navy east edge 2 or 3 texels wide, changing every few rows (P6-1)
+    erng = np.random.default_rng(seed * 59 + w)
+    edge_w = np.zeros(max(1, y1 - y0), np.int32)
+    k_ = 0
+    while k_ < len(edge_w):
+        L_ = int(erng.integers(4, 9))
+        edge_w[k_:k_ + L_] = 1 if erng.random() < 0.75 else 2    # xr - X <= 1 or 2: 2, now and then 3 texels
+        k_ += L_
     lane_of = {}
     for n_, (lx, lw, ph, pat, jog) in enumerate(_lanes(x0, w, seed)):
         for j in range(lw):
-            # every other lane's water a step deeper, so the lanes read as strands side by side
+            # every other lane's water a step off its neighbour's, so the lanes read as strands
             lane_of[lx + j] = (ph, pat, jog if (j == lw - 1 and lw > 1) else 0, n_ % 2)
     shift = t * FALL_PERIOD // FALL_FRAMES
     for k, Y in enumerate(range(y0, y1)):
@@ -377,34 +408,38 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: 
             i = min(w - 1, max(0, X - x0))
             dy = Y - y0 - int(bow[i])
             d_ = int(foam[i]) if x0 <= X < x0 + w else 0
-            tt = 4 if s < 0.2 else (3 if s < 0.6 else (2 if s < 0.85 else 1))
-            if f > 0.78 + 0.05 * math.sin((X - x0) * 1.7 + seed) + 0.03 * math.sin((X - x0) * 0.61):
-                tt = max(1, tt - 1)                                 # thinner and darker near the foot
+            # the value ladder of the woodland's sheet (review round 6, K6-1: the kit's went dark from
+            # s 0.6 and read as a blue curtain): the lit water up to s 0.45, the mid water to 0.88,
+            # and the dark tones only in the last 2 to 3 texels, the navy east edge (P6-1)
+            east = xr - X <= edge_w[k]
+            tt = 4 if s < 0.45 else 3
             if Y - y0 < 2 or dy < 2:
-                c = C('water', 4) if s < 0.65 else C('water', 3)    # the glassy tongue over the edge
+                # the glassy tongue over the edge, its two tones meeting in a checker, no seam
+                c = C('water', 4) if (s < 0.55 or (s < 0.78 and (X + Y) % 2 == 0)) else C('water', 3)
             elif dy == 2:
-                c = (C('water', 5) if s < 0.7 else C('water', 4)) if d_ else C('water', 3)   # the bend
+                lit_ = s < 0.6 or (s < 0.8 and (X + Y) % 2 == 0)
+                c = (C('water', 5 if lit_ else 4)) if d_ else C('water', 3)   # the bend
             elif d_ and dy < 3 + d_:
                 c = C('snow', 5) if s < 0.62 else C('snow', 4)      # the white water breaking under it
             elif d_ and dy < 4 + d_:
-                c = C('water', 2)                                   # its shade
+                c = C('water', 2) if east else C('water', 3)        # its shade
             elif not d_ and dy < 6:
-                c = C('water', 3) if s < 0.45 else C('water', 2)    # a gap: the darker sheet going on
+                c = C('water', 3) if not east else C('water', 2)    # a gap: the darker sheet going on
             else:
-                ph, pat, jog, deep = lane_of.get(X, (0, np.zeros(FALL_PERIOD, np.int32), 0, 0))
+                ph, pat, jog, alt = lane_of.get(X, (0, np.zeros(FALL_PERIOD, np.int32), 0, 0))
                 v = int(pat[(Y - y0 - jog - shift + ph) % FALL_PERIOD]) if dy > 6 else 0
-                if s >= 0.85:
-                    # the shaded east edge: broken dark streaks on the darkest body
-                    c = C('water', 2) if v >= 2 else C('water', tt)
-                elif v == 3:
-                    c = C('snow', 5) if s < 0.6 else C('water', 5)  # a glint
-                elif v == 2:
-                    # a lit run: white on the lit west, pale blue-white in the middle, pale blue east
-                    c = C('snow', 5) if s < 0.3 else (C('snow', 4) if s < 0.5 else (C('water', 5) if s < 0.7 else C('water', 4)))
-                elif v == 1:
-                    c = C('water', 5) if s < 0.55 else C('water', 4)
+                if east:
+                    # the navy east edge, broken by darker streaks
+                    c = C('water', 1) if v >= 2 else C('water', 2)
+                elif X == xl:
+                    c = C('water', 4)                               # the pale water film on the west
                 else:
-                    c = C('water', max(1, tt - deep))
+                    # the lane's tone from its palette (FALL_LANE_TONES): neighbouring lanes take the
+                    # two disjoint palettes in turn, so lanes never merge side by side into one flat
+                    # area (round 6, K6-1: navy slabs of 300 to 800 texels)
+                    zone = 0 if s < 0.45 else (1 if s < 0.7 else 2)
+                    fam_, tone_ = FALL_LANE_TONES[alt][zone][min(v, 3)]
+                    c = C(fam_, tone_)
             cv[Y, X] = c
     # where it lands (rocks.plunge, shared with the woodland's fall; the woodland review, 4 Nov):
     # broken clumps of churning white in 4 to 5 tones within the foot plus a few texels, flecks
@@ -429,7 +464,9 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
     for pool in (CC('water', 2), CC('water', 1)):
         cv = np.full((H, W), -1, np.int32)
         cv[12 + face:, :] = pool
-        fall_sheet(cv, 24, wpx, 12, 12 + face, seed=65 + cells_w)
+        # the bake's seed (rendering.paint.args.seed, fall_frames): the picture is frame 0 of what a
+        # baked zone shows (review round 6, L6-1: it was painted with 65 + c, its own lanes and edges)
+        fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + cells_w)
         runs.append(cv)
     cv = np.where(runs[0] == runs[1], runs[0], -1)
     os.makedirs(ART, exist_ok=True)
@@ -455,7 +492,7 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
                       'animations': [{'clip': 'fall', 'loop': True, 'reduced_motion': 'hold:0', 'on_screen_only': True}]},
         'function': {}, 'story': {'owner': None},
         'gameplay': {'blocks_move': True, 'blocks_shots': False},
-        'audit': {'painter': {'module': 'scripts.art.kit.structures', 'fn': 'fall_sheet', 'args': {'seed': 65 + cells_w}},
+        'audit': {'painter': {'module': 'scripts.art.kit.structures', 'fn': 'fall_sheet', 'args': {'seed': 9 + cells_w}},
                   'seeded_from': 'scripts/art/kit/structures.py', 'todo': ['the falling animation (the woodland flow strip)']},
     }, force)
 

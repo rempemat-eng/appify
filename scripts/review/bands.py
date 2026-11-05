@@ -146,6 +146,41 @@ def fall_grain(rgb: np.ndarray, mask: np.ndarray, step: float = 8.0) -> dict:
                 passed=bool(h / max(v, 1e-6) >= GRAIN_RATIO and (np.median(runs) if runs else 0) >= GRAIN_RUN))
 
 
+VALUE_MEAN = 160.0        # a falling sheet as light as its sibling (round 6, K6-1): mean lightness
+VALUE_EAST = 140.0        # its east half
+VALUE_DARK = 0.10         # at most this share under 90 L
+VALUE_LIT_MID = 0.35      # its middle third at least this share over 200 L
+VALUE_AREA = 250          # no single-colour area larger than this (texels)
+
+
+def fall_value(rgb: np.ndarray, mask: np.ndarray) -> dict:
+    """The value of a falling sheet against its sibling, the woodland's (woodland review, round 6,
+    K6-1: the kit's read a third darker, a blue curtain): the mean lightness of the sheet, of its east
+    half and the share under 90 L; the middle third's share over 200 L; and the largest connected
+    area of one colour. `mask` is the sheet; its columns set west, middle and east."""
+    from .core import lum
+    L = lum(rgb[..., :3]).astype(float)
+    cols = np.nonzero(mask.any(0))[0]
+    if not len(cols):
+        return dict(passed=False)
+    a, b = int(cols[0]), int(cols[-1]) + 1
+    wdt = b - a
+    xs = np.arange(rgb.shape[1])[None, :]
+    east = mask & (xs >= a + wdt / 2.0)
+    mid = mask & (xs >= a + wdt / 3.0) & (xs < a + 2.0 * wdt / 3.0)
+    key = (rgb[..., 0].astype(np.int64) << 16) | (rgb[..., 1].astype(np.int64) << 8) | rgb[..., 2]
+    big = 0
+    for val in np.unique(key[mask]):
+        lab, n = ndi.label((key == val) & mask)
+        if n:
+            big = max(big, int(np.bincount(lab.ravel())[1:].max()))
+    r = dict(mean=round(float(L[mask].mean()), 1), east=round(float(L[east].mean()), 1),
+             dark=round(float((L[mask] < 90).mean()), 3), lit_mid=round(float((L[mid] > 200).mean()), 3), area=big)
+    r['passed'] = bool(r['mean'] >= VALUE_MEAN and r['east'] >= VALUE_EAST and r['dark'] <= VALUE_DARK and
+                       r['lit_mid'] >= VALUE_LIT_MID and r['area'] <= VALUE_AREA)
+    return r
+
+
 def contrast(rgb: np.ndarray, mask: np.ndarray, H: float) -> float:
     """The contrast between the pieces of a plane (flag against flag, patch against patch), in L
     units: the spread of the luminance after a median over 0.12 H, less the light's gradient (its

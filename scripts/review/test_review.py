@@ -86,6 +86,12 @@ class Water(unittest.TestCase):
         m = np.ones((60, 30), bool)
         self.assertTrue(B.fall_grain(streaks, m)['passed'])
         self.assertFalse(B.fall_grain(chips, m)['passed'])
+        # (round 6, K6-1) and its value: a lit sheet of varied streaks passes, the same sheet a third
+        # darker (a blue curtain) fails
+        lit = np.repeat(np.repeat(rng.integers(150, 250, (1, 30)), 60, 0)[..., None], 3, 2).astype(np.uint8)
+        lit[::20] = 255
+        self.assertTrue(B.fall_value(lit, m)['passed'], B.fall_value(lit, m))
+        self.assertFalse(B.fall_value((lit * 0.66).astype(np.uint8), m)['passed'])
 
     def test_staircase_bank(self):
         a = lawn()

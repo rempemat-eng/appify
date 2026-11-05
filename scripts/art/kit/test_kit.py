@@ -688,9 +688,44 @@ class WaterBanks(unittest.TestCase):
                     g = B.fall_grain(body, np.ones(body.shape[:2], bool))
                     self.assertGreaterEqual(g['ratio'], B.GRAIN_RATIO, 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, g))
                     self.assertGreaterEqual(g['median_run'], B.GRAIN_RUN, 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, g))
-                outl = ST.sheet_outline(24, wpx, 12, 12 + face, 9 + c)
-                self.assertGreater(len({tuple(r) for r in outl.tolist()}), 2, 'a rectangle (%d, %d)' % (c, drop))
-                self.assertEqual(tuple(outl[0]), (24, 24 + wpx))
+                    # (round 6, K6-1) as light as its sibling, the woodland's sheet: mean lightness
+                    # at least 160, the east half 140, at most 10 % under 90 L, the middle third at
+                    # least 35 % over 200 L, and no flat area of one colour over 250 texels
+                    m = ST.sheet_mask(cv.shape, 24, wpx, 12, 12 + face, 9 + c)
+                    m[:20] = False
+                    m[12 + face - 4:] = False
+                    val = B.fall_value(LUT[cv][..., :3].astype(np.uint8), m)
+                    self.assertTrue(val['passed'], 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, val))
+
+    def test_a_falls_picture_is_its_baked_frame_0(self):
+        # (round 6, L6-1) the catalogued picture is painted with the bake's seed: its sheet is
+        # sheet_mask(9 + c) texel for texel, and over it in an unbaked preview no texel of the loop
+        # lies over the face beside the sheet
+        from PIL import Image
+        from scripts.art.kit import structures as ST
+        from scripts.art.kit.schema import ROOT
+        for c in (1, 2, 3, 4):
+            for tall in ('', '_tall'):
+                pc = json.load(open(os.path.join(ROOT, 'game', 'kit', 'pieces', 'structure', 'waterfall_%d%s.json' % (c, tall))))
+                face = 48 * (2 if tall else 1)
+                self.assertEqual(pc['rendering']['paint']['args']['seed'], 9 + c)
+                img = np.asarray(Image.open(os.path.join(ROOT, 'game', pc['variants'][0]['png'][len('res://'):])).convert('RGBA'))
+                a = img[..., 3] > 0
+                m = ST.sheet_mask(a.shape, 24, 24 * c, 12, 12 + face, 9 + c)
+                np.testing.assert_array_equal(a[:12 + face], m[:12 + face], pc['id'])
+                an = pc['rendering']['animations'][0]
+                x0, y0, w_, h_ = an['region_px']
+                st = np.asarray(Image.open(os.path.join(ROOT, 'game', an['strip'][len('res://'):])).convert('RGBA'))
+                for k in range(an['frames']):
+                    on = st[:, k * w_:(k + 1) * w_, 3] > 0
+                    ys, xs = np.nonzero(on)
+                    above = ys + y0 < 12 + face
+                    over_face = ~a[ys[above] + y0, xs[above] + x0]
+                    self.assertEqual(int(over_face.sum()), 0, '%s frame %d: loop texels over the face' % (pc['id'], k))
+                # its outline is not a rectangle, and the lip is the channel's width
+                outl = ST.sheet_outline(24, 24 * c, 12, 12 + face, 9 + c)
+                self.assertGreater(len({tuple(r) for r in outl.tolist()}), 2, 'a rectangle (%d, %s)' % (c, tall))
+                self.assertEqual(tuple(outl[0]), (24, 24 + 24 * c))
 
     def test_moving_water_lies_only_on_water(self):
         # (review round 4, F4-1) no texel of a moving-water strip, in any frame (frame 0, the still

@@ -163,9 +163,21 @@ def fall_grain(rgb, alpha, subject) -> list:
         return []
     x0, y0, x1, y1 = box
     g = B.fall_grain(rgb[y0:y1, x0:x1], alpha[y0:y1, x0:x1])
+    out = []
+    v = B.fall_value(rgb[y0:y1, x0:x1], alpha[y0:y1, x0:x1])
+    if not v.get('passed'):
+        # (round 6, K6-1) as light as its sibling, the woodland's sheet
+        out.append(Finding('detail.fall_value', 'fault', box,
+                           f'{subject}: the sheet reads darker than its sibling: mean {v.get("mean")} L (at least '
+                           f'{B.VALUE_MEAN:.0f}), east half {v.get("east")} (at least {B.VALUE_EAST:.0f}), {v.get("dark")} under '
+                           f'90 L (at most {B.VALUE_DARK}), middle third {v.get("lit_mid")} over 200 L (at least '
+                           f'{B.VALUE_LIT_MID}), largest flat area {v.get("area")} texels (at most {B.VALUE_AREA})',
+                           'take the woodland sheet\'s value ladder: lit runs snow 5, snow 4, water 5 over a water 4 then '
+                           'water 3 body, the dark tones only in a navy east edge of 2 to 3 texels (eastward-edges 5.3b)',
+                           score=v.get('mean', 0.0), threshold=B.VALUE_MEAN, subject=subject))
     if g['passed']:
-        return []
-    return [Finding('detail.fall_grain', 'fault', box,
+        return out
+    return out + [Finding('detail.fall_grain', 'fault', box,
                     f'{subject}: the sheet does not fall: lightness changes {g["ratio"]:.1f} x as often across as down '
                     f'(at least {B.GRAIN_RATIO:.0f}) and the median vertical run is {g["median_run"]:.0f} texels '
                     f'(at least {B.GRAIN_RUN})',
