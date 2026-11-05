@@ -27,6 +27,11 @@ from PIL import Image
 from scripts.art.kit.schema import ROOT
 
 CELL = 24
+# The valley's bank is one low earth step (eastward-edges.md 2.1: the low ledge, ours 12 to 16), not
+# the shared tier's 48 px face: the study bakes with its own copy of the earth face's height, so the
+# shared tier painters stay as they are (round 3 of the detail audit, R3-11).
+LOW_FACE_PX = 14
+EDGE_RUN = 'acbdcadbcbdac'
 
 
 def coast() -> dict:
@@ -42,7 +47,7 @@ def coast() -> dict:
         {'id': 'light', 'piece': 'coast_harbour_light', 'at': [29 * CELL, 14 * CELL]},
         {'id': 'bitt_1', 'piece': 'coast_mooring_bitt', 'at': [20 * CELL + 12, 9 * CELL]},
         {'id': 'bitt_2', 'piece': 'coast_mooring_bitt', 'at': [24 * CELL + 12, 9 * CELL]},
-        {'id': 'bitt_3', 'piece': 'coast_mooring_bitt', 'at': [26 * CELL + 12, 12 * CELL]},
+        {'id': 'bitt_3', 'piece': 'coast_mooring_bitt', 'at': [31 * CELL + 12, 12 * CELL]},   # its coil on the jetty, not over the water
         {'id': 'net', 'piece': 'coast_net_rack', 'at': [22 * CELL, 6 * CELL]},
         {'id': 'pots_1', 'piece': 'coast_lobster_pots', 'at': [27 * CELL, 8 * CELL], 'variant': 'a'},
         {'id': 'pots_2', 'piece': 'coast_lobster_pots', 'at': [31 * CELL, 9 * CELL], 'variant': 'b'},
@@ -65,14 +70,15 @@ def valley() -> dict:
     g[0:16, 26:29] = '~'                                    # the leat (the Millrace), from its sluice
     g[14:16, 26:40] = '~'                                   # turning east into the mill's race
     tiers = np.zeros((H, W), int)
-    tiers[0:10, 20:26] = 1                                  # the hillside the slip came down from, between halt and leat
+    tiers[0:12, 20:26] = 1                                  # a low earth bank between halt and leat (one step, LOW_FACE_PX)
     g[19:30, 30:32] = '#'                                   # the yard's track to the south
     g[15:29, 2:4] = '#'                                     # the field path from the lane to the barrow
     g[28:30, 2:13] = '#'
     g[27:28, 11:13] = '#'                                   # the trod straight out of the barrow's portal
     pieces = [
         # the halt
-        *[{'id': 'edge_%d' % c, 'piece': 'halt_platform_edge', 'at': [c * CELL + 12, 11 * CELL], 'variant': 'a' if c % 3 else 'b'}
+        # four edge cells shuffled, never the same twice running, so nothing repeats under 100 px
+        *[{'id': 'edge_%d' % c, 'piece': 'halt_platform_edge', 'at': [c * CELL + 12, 11 * CELL], 'variant': EDGE_RUN[c - 5]}
           for c in range(5, 18)],
         {'id': 'shelter', 'piece': 'halt_waiting_shelter', 'at': [11 * CELL, 9 * CELL]},
         {'id': 'lamp_1', 'piece': 'halt_platform_lamp', 'at': [6 * CELL + 12, 9 * CELL]},
@@ -83,9 +89,9 @@ def valley() -> dict:
         # the Millrace
         {'id': 'sluice', 'piece': 'mill_sluice', 'at': [27 * CELL + 12, 4 * CELL]},
         {'id': 'wheel', 'piece': 'mill_wheel', 'at': [34 * CELL, 15 * CELL]},
-        {'id': 'slip', 'piece': 'mill_landslip', 'at': [22 * CELL + 12, 14 * CELL]},
+        {'id': 'slip', 'piece': 'mill_landslip', 'at': [22 * CELL + 12, 14 * CELL]},   # its torn lip at the bank's rim
         {'id': 'fence', 'piece': 'mill_fence_broken', 'at': [16 * CELL, 17 * CELL]},
-        {'id': 'stones', 'piece': 'mill_millstones', 'at': [33 * CELL, 19 * CELL]},
+        {'id': 'stones', 'piece': 'mill_millstones', 'at': [35 * CELL + 12, 19 * CELL]},   # in the yard beside the track's end
         # the hives by the lane
         {'id': 'hive', 'piece': 'hive_wbc', 'at': [10 * CELL + 12, 17 * CELL]},
         {'id': 'skep', 'piece': 'hive_skep', 'at': [12 * CELL + 12, 17 * CELL]},
@@ -125,10 +131,29 @@ def render(p) -> Image.Image:
     from scripts.art.kit import bake as BK
     from scripts.art.kit import compose as CO
     from scripts.art.kit.sets import coast as CS
-    ground, _ = BK.bake(p)
+    lib = None
+    if p.get('tiers'):
+        import copy
+        lib = copy.deepcopy(BK._pieces_lib())
+        lib['earth_face']['terrain']['paint']['args']['face_px'] = LOW_FACE_PX
+    ground, _ = BK.bake(p, lib)
+    if p.get('tiers'):
+        # the bank's top is the lawn it rose from, not a calmer sibling (round 3 of the detail audit,
+        # R3-11): inside the bank's own shape, 3 px in from its rim, the plan's lawn without the tier
+        flat, _ = BK.bake(dict(p, tiers=None), lib)
+        tiers = np.array([[int(c) for c in r] for r in p['tiers']])
+        R_, C_ = tiers.shape
+        ea = lib['earth_face']['terrain']['paint']['args']
+        tm = BK._shape(tiers >= 1, R_ * CELL, C_ * CELL, dict(seed=ea.get('seed', 301) + 1, r_out=ea.get('r_out', 0.65),
+                                                              r_in=ea.get('r_in', 0.4), amp=ea.get('amp', BK.SG.AMP)))
+        from scipy import ndimage as ndi
+        inner = ndi.binary_erosion(tm, iterations=3, border_value=1)
+        g = np.asarray(ground.convert('RGBA')).copy()
+        g[inner] = np.asarray(flat.convert('RGBA'))[inner]
+        ground = Image.fromarray(g, 'RGBA')
     img = ground.convert('RGBA')
     if any('q' in r or 's' in r for r in p['rows']) and 'quay' in p['legend'].values():
-        plain, _ = BK.bake(dict(p, pieces=[]))
+        plain, _ = BK.bake(dict(p, pieces=[]), lib)
         img = CS.dress(p, ground, plain).convert('RGBA')
     idx = CO.piece_index()
     for pc in sorted(p['pieces'], key=lambda q: (q['at'][1], q['at'][0])):

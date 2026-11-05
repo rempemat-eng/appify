@@ -9,6 +9,14 @@ opaque texel. Windows along a single diagonal line (a stroke, a mesh's twine) to
 corners; a dithered patch is a block of checker windows side by side. The finding is the largest
 4-connected block of checker windows, against `MIN_WINDOWS`.
 
+**The threshold** rests on our own art alone: the Eastward references are JPEG, so an exact-colour
+checker never occurs in them (their largest block is 5). In the sweep of round 3 of the Act 1 detail
+audit (2,770 sprites) the highest non-exempt picture outside the known fault scored 6
+(`waterfall_3`, `waterfall_3_tall`, Ashe's `primary_W` sheet) and the v4 net 5, while the v3 net's
+foot scored 9; 7 keeps a margin on both sides. `crossroads/square_puddles` scores 58: its damp
+margins are a 1-texel checker on a ground-overlay sprite, a true positive left flagged for its own
+fix.
+
     python3 -m scripts.review.checker_dither PNG [PNG ...]
 """
 from __future__ import annotations
@@ -23,7 +31,7 @@ from scipy import ndimage as ndi
 
 from .core import Finding
 
-MIN_WINDOWS = 9      # a block of 9 checker windows (about 4 x 4 texels of dither) is a dithered patch
+MIN_WINDOWS = 7      # a block of 7 checker windows (about 3 x 5 texels of dither) is a dithered patch
 EFFECTS = ('flow', 'smoke', 'mist', 'spray', '_shadow', '/fx')   # effects and shadows may fade in a checker
 
 

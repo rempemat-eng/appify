@@ -1,7 +1,7 @@
 {
  "id": "act1/coast_net_rack",
  "file": "game/kit/props/art/act1/coast_net_rack.png",
- "sha256": "1b4528374c1769a6685053dd237c8f545aed2b79dc2700100558445c8fcc5472",
+ "sha256": "b40fb52318b02a760a10460df07ec8804effaf7a78d759549bff80826ce5f7f6",
  "kind": "coast_net_rack",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 5
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 8,
-   "tones": 25.375,
-   "shapes": 37.0
+   "patches": 5,
+   "tones": 31.0,
+   "shapes": 30.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.735,
-  "tones_ratio": 0.94,
-  "shapes_ratio": 0.735,
+  "ratio": 0.596,
+  "tones_ratio": 1.148,
+  "shapes_ratio": 0.596,
   "passed": false,
   "group": "prop"
  },
@@ -44,31 +44,7 @@
     86,
     54
    ],
-   "message": "act1/coast_net_rack: the wood is lit from the right (luminance rises 29 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    42,
-    7,
-    71,
-    45
-   ],
-   "message": "act1/coast_net_rack: the foliage is lit from the right (luminance rises 29 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    8,
-    7,
-    37,
-    47
-   ],
-   "message": "act1/coast_net_rack: the foliage is lit from the right (luminance rises 22 L per H to the east)",
+   "message": "act1/coast_net_rack: the wood is lit from the right (luminance rises 22 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -80,27 +56,14 @@
     87,
     55
    ],
-   "message": "act1/coast_net_rack: detail bar 0.73 of Eastward's prop band (25.4 tones, 37.0 shapes a patch against 27.0, 50.36)",
+   "message": "act1/coast_net_rack: detail bar 0.60 of Eastward's prop band (31.0 tones, 30.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    0,
-    0,
-    87,
-    55
-   ],
-   "message": "act1/coast_net_rack: only 29% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-05",
-  "note": "Round 3 (v4): the checker is gone (dither 5), but the net is 79 % opaque green with a regular grid of plus-shaped holes: a printed curtain, not twine; the coil reads as a basket (R3-6, R3-4)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

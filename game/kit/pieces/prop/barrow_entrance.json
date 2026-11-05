@@ -15,8 +15,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/act1/barrow_entrance.png",
    "foot": [
-    161,
-    157
+    163,
+    158
    ]
   }
  ],
@@ -29,15 +29,15 @@
  },
  "geometry": {
   "size_px": [
-   322,
-   176
+   326,
+   177
   ],
   "size_cells": [
    14,
    4
   ],
   "z_sort": "foot",
-  "height_px": 176,
+  "height_px": 177,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -48,8 +48,8 @@
    ]
   },
   "foot": [
-   161,
-   157
+   163,
+   158
   ],
   "footprint": [
    [

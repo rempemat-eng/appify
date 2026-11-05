@@ -11,6 +11,13 @@ house style turns in four or five steps of 20 to 45 L: house-style.md 3, 5). A p
 cylinder where such columns run on, side by side at the same rows (within a texel), for at least
 `LONG` texels: a strip, not a highlight on one stone.
 
+**Scope.** Prop and scenery pictures only. It reads pale round parts (a lit band of at least
+`MIN_L`), so a dark flat bar (the Undercroft's root bar, its broken pillars) scores 0 here and stays
+`detail.volume`'s to catch. Character sheets are left out: in a sweep of every sprite in the repo
+(round 3 of the Act 1 detail audit) a golem's lumpy shoulder (`characters/cairn/sheets/
+fidget_knuckles_N`) scored 41 and about twenty of Bramble's S sheets 38, against a threshold of 40,
+so a subject under `characters/` or named as a sheet is not measured.
+
     python3 -m scripts.review.flat_cylinder PNG [PNG ...]
 """
 from __future__ import annotations
@@ -29,6 +36,14 @@ SPREAD = 36.0    # L: the band's own spread (243, 233, 211 is 32)
 DROP = 100.0     # L: the hard step out of it into the shade
 LONG = 40        # texels: how long the strip must run to be a log or a pipe, not a board or a glint
 MIN_L = 150.0    # the band is a lit band
+
+
+CHARACTERS = ('characters/', '/sheets/', '_sheet')
+
+
+def is_character(subject: str) -> bool:
+    """A character or boss sheet, which this detector does not measure (see Scope)."""
+    return subject.startswith('characters/') or any(c in subject for c in CHARACTERS)
 
 
 MAXBAND = 9     # texels: a round part's lit band; a longer flat field is a panel, not a cylinder
@@ -96,7 +111,10 @@ def measure(rgb: np.ndarray, alpha: np.ndarray):
 
 
 def check(rgb: np.ndarray, alpha: np.ndarray, H: float, subject: str) -> list[Finding]:
-    """The asset gate's flat-cylinder finding on one object picture (alpha marks the object)."""
+    """The asset gate's flat-cylinder finding on one object picture (alpha marks the object); props
+    and scenery only (see Scope)."""
+    if is_character(subject):
+        return []
     n, box, how = measure(rgb, alpha)
     if n < LONG:
         return []

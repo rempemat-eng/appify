@@ -24,7 +24,7 @@
    "weight": 0.6,
    "png": "res://kit/props/art/act1/barrow_kerb_b.png",
    "foot": [
-    13,
+    10,
     18
    ]
   },
@@ -47,7 +47,7 @@
  },
  "geometry": {
   "size_px": [
-   28,
+   22,
    28
   ],
   "size_cells": [

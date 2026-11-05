@@ -10,8 +10,8 @@
   ],
   "deck": null,
   "foot": [
-   161,
-   157
+   163,
+   158
   ],
   "footprint": [
    [
@@ -262,8 +262,8 @@
   "variants": {
    "still": {
     "foot": [
-     161,
-     157
+     163,
+     158
     ],
     "png": "res://kit/props/art/act1/barrow_entrance.png"
    }
@@ -341,7 +341,7 @@
    },
    "b": {
     "foot": [
-     13,
+     10,
      18
     ],
     "png": "res://kit/props/art/act1/barrow_kerb_b.png"
@@ -1603,8 +1603,8 @@
    },
    "b": {
     "foot": [
-     24,
-     19
+     32,
+     20
     ],
     "png": "res://kit/props/art/act1/coast_lobster_pots_b.png"
    }
@@ -13613,7 +13613,7 @@
   "deck": null,
   "foot": [
    33,
-   65
+   64
   ],
   "footprint": [
    [
@@ -13674,7 +13674,7 @@
    "still": {
     "foot": [
      33,
-     65
+     64
     ],
     "png": "res://kit/props/art/act1/halt_churn_stand.png"
    }
@@ -13738,6 +13738,20 @@
      37
     ],
     "png": "res://kit/props/art/act1/halt_platform_edge_b.png"
+   },
+   "c": {
+    "foot": [
+     12,
+     37
+    ],
+    "png": "res://kit/props/art/act1/halt_platform_edge_c.png"
+   },
+   "d": {
+    "foot": [
+     12,
+     37
+    ],
+    "png": "res://kit/props/art/act1/halt_platform_edge_d.png"
    }
   },
   "z_sort": "foot"
@@ -14456,8 +14470,8 @@
   ],
   "deck": null,
   "foot": [
-   67,
-   59
+   64,
+   48
   ],
   "footprint": [
    [
@@ -14538,8 +14552,8 @@
   "variants": {
    "still": {
     "foot": [
-     67,
-     59
+     64,
+     48
     ],
     "png": "res://kit/props/art/act1/mill_landslip.png"
    }
@@ -14558,7 +14572,7 @@
   "deck": null,
   "foot": [
    58,
-   56
+   55
   ],
   "footprint": [
    [
@@ -14627,7 +14641,7 @@
    "still": {
     "foot": [
      58,
-     56
+     55
     ],
     "png": "res://kit/props/art/act1/mill_millstones.png"
    }

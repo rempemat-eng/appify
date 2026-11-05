@@ -16,7 +16,7 @@
    "png": "res://kit/props/art/act1/mill_millstones.png",
    "foot": [
     58,
-    56
+    55
    ]
   }
  ],
@@ -30,14 +30,14 @@
  "geometry": {
   "size_px": [
    122,
-   66
+   65
   ],
   "size_cells": [
    5,
    2
   ],
   "z_sort": "foot",
-  "height_px": 66,
+  "height_px": 65,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -49,7 +49,7 @@
   },
   "foot": [
    58,
-   56
+   55
   ],
   "footprint": [
    [

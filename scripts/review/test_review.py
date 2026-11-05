@@ -1065,7 +1065,13 @@ class FlatCylinder(unittest.TestCase):
             s[8 + j, 5:75, :3] = v
         self.assertTrue(FC.check(s[..., :3], s[..., 3] > 0, H, 'x/log'))
 
-    def test_the_v4_birch_passes(self):
+    def test_character_sheets_are_not_measured(self):
+        """Props and scenery only: the v3 birch's strip under a character subject gives nothing."""
+        from scripts.review import flat_cylinder as FC
+        a = _png(os.path.join(FIX_V3, 'mill_landslip.png'))
+        self.assertEqual(FC.check(a[..., :3], a[..., 3] > 128, H, 'characters/fidget_knuckles_N'), [])
+
+    def test_the_current_birch_passes(self):
         from scripts.review import flat_cylinder as FC
         p = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'mill_landslip.png')
         a = _png(p)
@@ -1090,7 +1096,19 @@ class CheckerDither(unittest.TestCase):
         s[chk] = (140, 140, 140, 255)
         self.assertTrue(CD.check(s, H, 'x/patch'))
 
-    def test_the_v4_net_passes(self):
+    def test_a_small_checker_patch_trips_and_a_smaller_one_passes(self):
+        """The second fixture: a stone whose shade is a 3 x 5 texel checker (8 windows, under the
+        old threshold of 9) trips; the same patch cut to 3 x 4 (6 windows, the highest clean sprite
+        in the repo sweep) passes."""
+        from scripts.review import checker_dither as CD
+        im = _png(os.path.join(os.path.dirname(FIX_V3), 'dither', 'stone_small_checker.png'))
+        f = CD.check(im, H, 'x/stone')
+        self.assertTrue(f and f[0].detector == 'detail.dither' and f[0].score == 8.0)
+        cut = im.copy()
+        cut[11:14, 15] = cut[11:14, 16]
+        self.assertEqual(CD.check(cut, H, 'x/stone'), [])
+
+    def test_the_current_net_passes(self):
         from scripts.review import checker_dither as CD
         p = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'coast_net_rack.png')
         self.assertEqual(CD.check(_png(p), H, 'act1/coast_net_rack'), [])

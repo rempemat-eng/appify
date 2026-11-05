@@ -132,17 +132,28 @@ def setts(cv, m, seed=1505, w=12, h=8, joint_t=2.0, irregular=False):
             ww[rows] = exa[k + 1] - exa[k]
         last_x, last_y = ux == ww - 1, uy == hh - 1
     else:
-        course = Yg // h
+        # courses that wander a texel up or down every 8 to 16 texels, so no joint runs ruler-straight
+        # (round 3 of the detail audit, R3-12), and setts of their own length (w - 1 to w + 1)
+        wander = np.round(1.2 * (K.vhash(Xg // 11, Yg // h, seed + 7) - 0.5) * 2).astype(int)
+        yy = Yg + np.clip(wander, -1, 1)
+        course = yy // h
         off = (course % 2) * (w // 2) + (K.vhash(course, 0, seed) * 3).astype(int)
-        sx = (Xg + off) // w
-        ux = (Xg + off) % w
-        uy = Yg % h
-        last_x, last_y = ux == w - 1, uy == h - 1
+        xx = Xg + off
+        sx = xx // w
+        ux = xx % w
+        ww = w - 1 + (K.vhash(sx, course, seed + 8) * 3).astype(int)
+        last_x = ux >= ww - 1
+        uy = yy % h
+        last_y = uy == h - 1
     own = np.where(K.vhash(sx, course, seed) > 0.95, 1.0, np.where(K.vhash(sx, course, seed + 1) < 0.04, -1.0, 0.0))
     t = 3.0 + own
     lit = ((uy == 0) & (ux > 0) & (ux < 4)) | ((ux == 0) & (uy > 0) & (uy < 3))
     t = np.where(lit, t + 1.0, t)
     t = np.where(last_y | last_x, joint_t, t)
+    if not irregular:
+        # worn patches where feet go: the joints filled and the setts polished a step smoother
+        worn = K.noise((H, W), np.random.default_rng(seed + 9), 14.0) > 0.7
+        t = np.where(worn & (last_y | last_x), joint_t + 0.6, np.where(worn & ~(last_y | last_x), np.minimum(t, 3.4), t))
     K.rpaint(cv, m, [('slate_cool', 'stone', 'stone_warm'), ('stone_cool', 'stone_cool', 'stone')], t,
              np.clip(K.vhash(sx, course, seed + 2) * 0.999, 0, 0.999))
 
@@ -158,6 +169,23 @@ def shingle(cv, m, seed=1506):
     ys, xs = np.nonzero(m)
     if not len(ys):
         return
+    # the sand wet and darker towards the water, its edge lumpy (round 3 of the detail audit, R3-12)
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    toward = ndi.distance_transform_edt(~ndi.binary_dilation(~m, iterations=1) | (Yg < ys.min() + 14))
+    lump = 7.0 + 7.0 * K.noise((H, W), np.random.default_rng(seed + 5), 4.0)
+    wet = m & (toward < lump) & (Yg >= ys.min() + 14)
+    K.rpaint(cv, wet, [('earth_cool', 'sand_cool', 'sand_cool'), ('earth_cool', 'sand_cool', 'sand')], 2.0,
+             np.clip(K.noise((H, W), np.random.default_rng(seed + 6), 6.0) * 0.999, 0, 0.999))
+    wedge = wet & ~ndi.binary_erosion(wet) & (toward >= lump - 1.5)
+    cv[wedge] = cv[wedge] + 1                                            # the wet line's drying rim, a step up
+    # ripple marks left by the tide: short broken crests every 4 to 5 rows, wandering, a lit crest
+    # row over a shaded trough row (drawn, not blotched; calm: one tone each way)
+    phase = Yg + np.round(1.6 * np.sin(Xg * 0.21 + Yg * 0.05) + 1.2 * np.sin(Xg * 0.07 + 2.0)).astype(int)
+    rip = (phase % np.where(wet, 4, 5) == 0) & (K.noise((H, W), np.random.default_rng(seed + 7), 2.5) > 0.32) & m & (Yg >= ys.min() + 14)
+    up_ = np.zeros_like(rip)
+    up_[:-1] = rip[1:]
+    K.rpaint(cv, rip, [('earth_cool', 'sand_cool', 'sand')], np.where(wet, 1.4, 2.0), 0.0)
+    K.rpaint(cv, up_ & m & ~rip & ~wet & (Yg >= ys.min() + 14), [('earth_cool', 'sand', 'sand_warm')], 4.0, 0.0)
     y0, y1 = ys.min(), ys.max()
     drift = K.noise((H, W), np.random.default_rng(seed + 1), 6.0)
     fams = [('slate_cool', 'stone', 'stone_warm'), ('earth_cool', 'sand_cool', 'sand'), ('slate_cool', 'slate', 'slate_warm'),
@@ -175,8 +203,49 @@ def shingle(cv, m, seed=1506):
             r = 1.4 + 1.6 * up * K.hsh(x, y, seed + 3) + 0.4
             pm = (((Xg - x) / r) ** 2 + ((Yg - y) / (r * 0.75)) ** 2 <= 1.0) & m
             u, v = (Xg - x) / r, (Yg - y) / (r * 0.75)
-            t = 3.0 + 1.0 * ((u + v) < -0.6) - 1.0 * ((u + v) > 0.7)
-            K.rpaint(cv, pm, [fams[int(K.hsh(x, y, seed + 4) * len(fams)) % len(fams)]], t, 0.0)
+            t = 3.0 + 1.0 * ((u + v) < -0.6) * (r > 2.2) - 1.0 * ((u + v) > 0.7)
+            K.rpaint(cv, pm & ~wet, [fams[int(K.hsh(x, y, seed + 4) * len(fams)) % len(fams)]], t, 0.0)
+
+
+def quay_wall(cv, beach_cells, quay_cells, face=11, seed=1507):
+    """The quay's wall face where the quay stands over the beach (round 3 of the detail audit): under
+    the quay's edge a lit coping row, then rubble blocks 6 to 10 texels across in courses of 4 to 5,
+    each lit at its top-west and dark at its foot, dark joints; a dark foot band on the sand with a
+    few pebbles. Drawn on the beach's top `face` rows wherever the quay is directly north of it."""
+    from scripts.art.kit.sets import _common as K
+    H, W = cv.shape
+    Yg, Xg = np.mgrid[0:H, 0:W]
+    north_q = np.zeros_like(quay_cells)
+    north_q[1:] = quay_cells[:-1]
+    top_edge = beach_cells & north_q
+    ys, xs = np.nonzero(top_edge)
+    if not len(ys):
+        return
+    y0 = int(ys.min())
+    cols = np.zeros(W, bool)
+    cols[xs] = True
+    wall = np.zeros((H, W), bool)
+    wall[y0 - 3:y0 + face, :] = cols[None, :]
+    wall &= beach_cells | quay_cells
+    r = Yg - y0
+    course = np.where(r < 5, 0, 1)
+    off = course * 4 + 2
+    bx = (Xg + off) % 8
+    jx = (bx == 0) & (K.vhash((Xg + off) // 8, course, seed + 3) > 0.15)
+    cr = np.where(course == 0, r, r - 5)
+    t = np.full((H, W), 2.6)
+    t = np.where(cr == 0, 3.4, t)                                        # each block's lit top
+    t = np.where((bx == 1) & (cr > 0), 3.0, t)                           # and its lit west end
+    t = np.where(cr >= 3, 2.0, t)                                        # its foot turning under
+    t = np.where(jx | (r == 4), 1.0, t)                                  # the joints
+    t = np.where(r == -3, 4.0, t)                                        # the coping: its lit edge,
+    t = np.where(r == -2, 3.4, t)                                        # its front,
+    t = np.where(r == -1, 1.0, t)                                        # its shadow line on the face
+    t = np.where(r >= face - 1, 1.0, t)                                  # the dark foot on the sand
+    K.rpaint(cv, wall, [('stone_cool', 'stone', 'stone_warm'), ('stone_cool', 'stone_cool', 'stone')], t,
+             np.clip(K.vhash((Xg + off) // 8, course, seed + 1) * 0.999, 0, 0.999))
+    foot = beach_cells & (r >= face) & (r < face + 2) & cols[None, :]
+    K.rpaint(cv, foot & (K.vhash(Xg // 3, Yg, seed + 2) > 0.3), [('earth_cool', 'sand_cool', 'sand')], 1.0, 0.0)
 
 
 def dress(plan, img_with, img_without):
@@ -200,8 +269,9 @@ def dress(plan, img_with, img_without):
     if (plan.get('dress') or {}).get('quay') == 'flags':
         setts(cv, quay, w=26, h=14, irregular=True)     # a platform's flags, laid irregularly
     else:
-        setts(cv, quay)
+        setts(cv, quay, w=9, h=7)                       # squarer setts (R3-12)
     shingle(cv, beach)
+    quay_wall(cv, mp == 'shingle', mp == 'quay')
     rgba = to_rgba(cv)
     m = (cv >= 0) & ~shadow
     base[m] = rgba[m]

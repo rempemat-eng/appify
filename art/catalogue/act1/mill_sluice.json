@@ -1,26 +1,26 @@
 {
  "id": "act1/mill_sluice",
  "file": "game/kit/props/art/act1/mill_sluice.png",
- "sha256": "9253ba6bb99170811284ca13f05698384e35354c74a4124698e3d4e5f1eccf2c",
+ "sha256": "2a3b5717a901c82ae3d3438c832c59758f576f0285555266eeee8a15ace53190",
  "kind": "mill_sluice",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   52,
-  72
+  69
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 6,
-   "tones": 29.0,
-   "shapes": 47.166666666666664
+   "patches": 5,
+   "tones": 31.0,
+   "shapes": 49.2
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.937,
-  "tones_ratio": 1.074,
-  "shapes_ratio": 0.937,
+  "ratio": 0.977,
+  "tones_ratio": 1.148,
+  "shapes_ratio": 0.977,
   "passed": true,
   "group": "prop"
  },
@@ -46,25 +46,12 @@
    ],
    "message": "act1/mill_sluice: the stone is lit from the right (luminance rises 113 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.cluster_noise",
-   "severity": "polish",
-   "box": [
-    0,
-    0,
-    52,
-    72
-   ],
-   "message": "act1/mill_sluice: 40% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-05",
-  "note": "Round 3 (v4): the gear passes (toothed, lit hub, rack bar). The outflow is still a hard-edged rectangle of pale water 28 x 22 px with one white bone-shaped foam blob (R3-9)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
