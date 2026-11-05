@@ -452,6 +452,19 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
         land = (yy >= sfoot) & (yy < waterline) & (xs_ >= sx0 - P(1, 0)) & (xs_ < sx1 + P(1, 0))
         # its top corners rounded into the face (eastward-edges 1.6), not a square notch
         land &= (np.minimum(xs_ - (sx0 - P(1, 0)), (sx1 + P(1, 0) - 1) - xs_) + (yy - sfoot)) >= 3
+        # its sides lumpy where the face's rock meets the grass (up to five texels in and out, never
+        # a ruler-straight vertical; eastward-edges 1.4 and 3.3)
+        ly_ = np.arange(h)
+        wl_ = np.round(2.4 + 2.2 * np.sin(ly_ / 3.4 + 0.7) + 0.8 * np.sin(ly_ / 1.6 + 2.3)).clip(0, 5).astype(int)
+        wr_ = np.round(2.4 + 2.2 * np.sin(ly_ / 3.0 + 2.9) + 0.8 * np.sin(ly_ / 1.8 + 0.4)).clip(0, 5).astype(int)
+        rect_ = land.copy()
+        land &= (xs_ >= sx0 - P(1, 0) + wl_[:, None]) & (xs_ < sx1 + P(1, 0) - wr_[:, None])
+        # what the lumps take back is the face's rock, mirrored from beside the landing
+        xa_, xb_ = sx0 - P(1, 0), sx1 + P(1, 0)
+        for y_, x_ in zip(*np.nonzero(rect_ & ~land)):
+            xm_ = 2 * xa_ - x_ - 1 if x_ - xa_ < xb_ - x_ else 2 * xb_ - x_ - 1
+            if 0 <= xm_ < w:
+                cv[y_, x_] = cv[y_, xm_]
         cv[land] = under[land]
         lys, lxs = np.nonzero(land)
         waters_ = [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI]
@@ -461,6 +474,17 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
                 cv[y_, x_] = src_
             elif cv[y_, x_] < 0 or cv[y_, x_] // 8 in waters_:
                 cv[y_, x_] = C(ec, 1)
+        # where the face's side meets the landing: its darkest line, broken (3.3), and the grass
+        # beside it a step into shade
+        side_ = land & ~(np.roll(land, 1, 1) & np.roll(land, -1, 1))
+        for y_, x_ in zip(*np.nonzero(side_)):
+            if y_ - sfoot < 2:
+                continue
+            xo_ = x_ - 1 if not land[y_, x_ - 1] else x_ + 1
+            if 0 <= xo_ < w and not land[y_, xo_] and (y_ + x_) % 7 != 0:
+                cv[y_, xo_] = C(ec, 0)
+            if is_fam(np.array(cv[y_, x_]), 'grass') or is_fam(np.array(cv[y_, x_]), 'leaf'):
+                cv[y_, x_] = cv[y_, x_] - 1 if cv[y_, x_] % 8 > 1 else cv[y_, x_]
         GD.log_steps(cv, sx0, sx1, rim - 2, sfoot, st.get('n', 5), np.random.default_rng(tr.get('seed', 461) + 1))
         items = [it for it in items if not (sx0 - P(4, 0) <= it[2][0] <= sx1 + P(4, 0))]
     return items, waterline

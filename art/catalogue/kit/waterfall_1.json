@@ -1,7 +1,7 @@
 {
  "id": "kit/waterfall_1",
  "file": "game/kit/props/art/waterfall_1.png",
- "sha256": "4c8f2080226032d5b45af899b07a219aaba95c3c7731deee865a6c410606b359",
+ "sha256": "1bfaf3a45173e94b436540ca97a4dee33f5ad394f0935b26ccce5c1190965e5a",
  "kind": "waterfall",
  "biome": "woodland",
  "H": 74.0,
@@ -10,17 +10,17 @@
   72,
   94
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 1
+  "fault": 0,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 23.166666666666668,
-   "shapes": 30.0
+   "tones": 27.5,
+   "shapes": 37.5
   },
   "band": {
    "tones": 26.93,
@@ -29,23 +29,23 @@
    "patches": 102,
    "about": "Eastward 37's white water (the falls' mist), for falls: their sheet, crest and foam"
   },
-  "ratio": 0.435,
-  "tones_ratio": 0.86,
-  "shapes_ratio": 0.435,
+  "ratio": 0.544,
+  "tones_ratio": 1.021,
+  "shapes_ratio": 0.544,
   "passed": false,
   "group": "water"
  },
  "findings": [
   {
    "detector": "detail.bar",
-   "severity": "fault",
+   "severity": "polish",
    "box": [
     14,
     12,
     60,
     77
    ],
-   "message": "kit/waterfall_1: detail bar 0.43 of Eastward's water band (23.2 tones, 30.0 shapes a patch against 26.93, 68.92)",
+   "message": "kit/waterfall_1: detail bar 0.54 of Eastward's water band (27.5 tones, 37.5 shapes a patch against 26.93, 68.92)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -57,7 +57,7 @@
     60,
     77
    ],
-   "message": "kit/waterfall_1: only 33% of the silhouette is drawn in an edge tone",
+   "message": "kit/waterfall_1: only 30% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
@@ -66,6 +66,6 @@
   "agent": "detail-auditor",
   "verdict": "pending",
   "date": "2026-11-04",
-  "note": "redrawn after round 4 of the independent audit (K4-1 to K4-3): structures.fall_sheet draws the sheet as the woodland's rocks.fall does (broken streak runs in 4 to 5 tones over the whole width, a broken dark east edge, edges wandering a texel and swelling at the foot), crest_foam breaks the white into 2 or 3 runs under a bowed bend, the foam's under-band is a soft shade and the spray a fan of specks; its frames are waterfall_1_flow.png. Scored against Eastward 37's white water (groups.water). Not yet reviewed by an independent detail-auditor."
+  "note": "redrawn after round 4 of the independent audit (K4-1 to K4-3): structures.fall_sheet draws the sheet as the woodland's rocks.fall does (broken streak runs in 4 to 5 tones over the whole width, a broken dark east edge, edges wandering a texel and swelling at the foot), crest_foam breaks the white into 2 or 3 runs under a bowed bend, the foam's under-band is a soft shade and the spray a fan of specks; its frames are waterfall_1_flow.png. Scored against Eastward 37's white water; a one-cell sheet adds a fleck family, a glassy band under the crest and a broken mid seam (groups.water). Not yet reviewed by an independent detail-auditor."
  }
 }

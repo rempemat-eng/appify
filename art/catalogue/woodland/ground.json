@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "686bcdea1db5f69c4a72da617f1d9d3f50963fb63a0aea16c90b1e4ae7c9b0f9",
+ "sha256": "c85e180946fbf631e7a44084415dd28c09529d726a41a5db8ae86835e1881ebc",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -23,6 +23,6 @@
   "agent": "detail-auditor",
   "verdict": "pending",
   "date": "2026-11-04",
-  "note": "re-rendered after round 4 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 3e19c29e: ground fail on L4-1, flow fail on F4-1, flow_rill pass): the moving water lifts only water, sheet and foam texels in every frame; the bridge is painted after the terrace on the final waterline, its north abutment 10 art px north of the water, the landing 25 art px (8.3 world px) of open path, the steps on a 15 art px (5 world px) pitch; the larger face boulders and the stones fallen to the foot are calm masses; the rill's bank stones keep to the outer third; the foam's under-band is a soft shade and its spray a fan. Not yet reviewed by an independent detail-auditor (the painter may not audit it)."
+  "note": "re-rendered after round 4 of the independent audit (docs/reviews/2026-11-04-woodland-water.md, 3e19c29e: ground fail on L4-1, flow fail on F4-1, flow_rill pass): the moving water lifts only water, sheet and foam texels in every frame; the bridge is painted after the terrace on the final waterline, its north abutment 10 art px north of the water, the landing 25 art px (8.3 world px) of open path, the steps on a 15 art px (5 world px) pitch; the larger face boulders and the stones fallen to the foot are calm masses; the rill's bank stones keep to the outer third; the foam's under-band is a soft shade and its spray a fan. Not yet reviewed by an independent detail-auditor (the painter may not audit it). Round 5 (coordinator): the landing's sides lumpy against the rock face."
  }
 }
