@@ -63,7 +63,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): the birch passes (capped at 233, cylinder ramp, glints, patches, lichen, curls; polish R4-12: lenticels 40 to 58 L). Fails on R4-1: a 5 to 8 row turf band runs across the whole head, so the slip keeps its own bank and does not come out of a break in the study's bank."
  }
 }

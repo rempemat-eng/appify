@@ -87,7 +87,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): 3 px shrouds lit upper-west, sixteen floats, 3 px spokes, a 7 px hub, cut at the waterline with white water; loop wraps evenly. Polish R4-8: 23 of 68 px under water (dip only the floats). The race water against the study's leat is the study's fault R4-5."
  }
 }

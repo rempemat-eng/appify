@@ -51,7 +51,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): R4-4: the creels read as golden kegs: square-cornered blocks, pale vertical hoops across horizontal bands (staves), the D end a painted end cap with a slot, no weave. Round the east end into a D of radius half the height, one continuous arch of shade, a weave between the hoops."
  }
 }

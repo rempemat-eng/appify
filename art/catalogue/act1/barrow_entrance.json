@@ -63,7 +63,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 4 (v5) of docs/reviews/2026-11-04-act1-props.md (068cc974): R4-2: masses read on the west, but the mound is 30 to 40 L brighter than the lawn (Eastward 17 grass sits about 24 L under its lawn), the east and lower third is a near-black dash field, the outline a smooth ellipse fringed with lit single pixels; bar 0.52 against 0.6."
  }
 }
