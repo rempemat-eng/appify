@@ -51,7 +51,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): R5-9 done: 12 x 5 lids overhanging the neck, a ring line and a lit far rim. Bar 0.67 accepted (polish)."
  }
 }

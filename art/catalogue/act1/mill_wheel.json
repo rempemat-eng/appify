@@ -147,7 +147,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): R5-1 fixed (334 x 376, eaves 76 world px, wheel 132 art px, the guide's water_mill). Fault R6-1: the wheel stands about 20 px proud of the wall and throws no shadow on it and has no bearing, so at 1x it reads as a decal on the wall. Polish R6-6: the hoist beam is a flat square on the fascia and its rope ends in the air; moss as green stickers mid-slate again (R3-13); four identical windows; one unbroken roof field. Rejected: the 7 detail.light polish boxes (the wheel's spokes and foam over the wall) and cluster_noise 47 % (slates and courses are structure; seeds +0 to +11 all score 47.1 to 49.5 %, so the seed hides no structural fault)."
  }
 }

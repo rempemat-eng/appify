@@ -51,7 +51,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-05",
+  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): Redrawn to rowing_boat (51 x 130). Fault R6-2: the hull's outer planking shows beyond the gunwale at both ends, flaring to a flat wedge about 25 art px (0.6 m) past the stem and the transom, so the boat reads as a boat sitting in a blue saucer or shoe. The gunwale must be the widest line, the hull showing only on the near (south) side and meeting the gunwale at the stem and transom. Present since v3; the larger redraw makes it read at 1x. Polish: the bare-wood and weed marks are square stickers. detail.light (red) rejected: 7 L/H on the bottom paint band."
  }
 }

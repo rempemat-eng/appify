@@ -87,7 +87,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset. Producer's note (v7, not a verdict): detail.mesh is construct.crown_holes, a tree-crown check; the v7 net was already 51 % holes and passed only under its 0.3 H^2 green floor, and this net, redrawn at the guide's net_rack, has the same mesh at 50 % (round 3 asked for a net that is mostly air, R3-6). The reviewer decides whether the finding stands."
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): Redrawn to net_rack (88 x 139). The detail.mesh fault (construct.crown_holes, 50 % holes) is rejected: it is a tree-crown check that reads the green twine as foliage; a drying net must be mostly air, and round 3 asked for at least 60 % holes (R3-6). The status field stays the detector's fail. Both detail.light polish findings rejected (the floats and the coil at the east end; the posts are lit west). Bar 0.70 accepted (polish)."
  }
 }

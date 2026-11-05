@@ -63,7 +63,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): R5-2 fixed (no frame round the lintel); R5-3 clip fixed (the scene has room, the ends turn). Bar 0.60. Polish R6-8: the silhouette is smoother than v6 (3 steps of 2 px or more across the top against 28) and the dark Us do not read (texels under 80 L fell from 4.4 to 2.9 %)."
  }
 }

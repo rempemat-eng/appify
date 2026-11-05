@@ -61,7 +61,8 @@
  "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset. The detail.cluster_noise fault is the flaked coil's ring seams and the rope's turns round the bitt: structure, as the detail audit ruled in rounds 4 and 5 (R4-3: \"if cluster noise rises over 0.40 from the seams, reject that finding\"; round 5 accepted the rejection), so it is recorded here as rejected, not designed around. v7 redrew the turns as two 2-row turns with a seam (R5-11)."
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 6 (v7) of docs/reviews/2026-11-04-act1-props.md (d444d4ec): R5-11 done: two 2-row turns with a seam. The detail.cluster_noise fault (57 %) is rejected as structure, as in rounds 4 and 5: the noisy blocks fell from 22 to 21 (the coil's 11 unchanged, the bitt and turns 11 to 10); the share rose only because the interior shrank from 40 to 37 blocks. The status field stays the detector's fail. detail.light (wood) rejected: the pale standing part runs east. Spec note R6-3: its size head word should be bollard, not unsized."
  }
 }
