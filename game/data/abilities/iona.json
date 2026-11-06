@@ -1,0 +1,126 @@
+{
+  "id": "iona",
+  "name": "Iona",
+  "catalogue_prose": {
+    "role": "Grassland storm-lancer · reach and commitment",
+    "primary": "Spearpoint — thrust along a narrow lane.",
+    "secondary": "Wind lunge — commit to a forward surge and spear strike.",
+    "block": "Gust guard — brace the spear in a frontal wind screen.",
+    "special": "Storm Mantle — spear impacts arc to one nearby foe; lunges leave a gust wake."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 0.48
+      },
+      "secondary": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.24700000000000003,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": []
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 0.48
+      },
+      "secondary": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.24700000000000003,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "primary": {
+      "kind": "forward_segment",
+      "reach": 48,
+      "half_width": 7,
+      "damage": 23,
+      "pierces": true
+    },
+    "secondary": {
+      "kind": "forward_segment",
+      "reach": 49,
+      "half_width": 9,
+      "damage": 29,
+      "pierces": true,
+      "move_forward": 34,
+      "movement_stops_before_enemy_radius_plus_player_radius_plus": 2,
+      "hit_knockback": 10
+    }
+  },
+  "executed_rules": {
+    "secondary_lunge": {
+      "kind": "forward_segment",
+      "reach": 49,
+      "half_width": 9,
+      "damage": 29,
+      "pierces": true,
+      "move_forward": 34,
+      "movement_stops_before_enemy_radius_plus_player_radius_plus": 2,
+      "hit_knockback": 10
+    },
+    "powered_hit_arc": {
+      "to_one_nearest_other_living_enemy": true,
+      "max_distance_strictly_less_than": 55,
+      "damage": 12,
+      "does_not_recursively_trigger_another_arc": true
+    },
+    "powered_secondary_wake": {
+      "kind": "gust",
+      "centred_between_start_and_end_of_lunge": true,
+      "radius": 25,
+      "lifetime_seconds": 1.5,
+      "damage_per_tick": 8,
+      "initial_tick_seconds": 0.2,
+      "tick_interval_seconds": 0.6
+    },
+    "source_functions": [
+      "q",
+      "B",
+      "_"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}

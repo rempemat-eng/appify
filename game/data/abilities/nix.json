@@ -1,0 +1,128 @@
+{
+  "id": "nix",
+  "name": "Nix",
+  "catalogue_prose": {
+    "role": "Neon Harbour cyborg · laser arm, heat and misdirection",
+    "primary": "Laser arm — emit a narrow, aimable pulse; sustained use builds heat and the arm cools passively.",
+    "secondary": "Afterimage — leave one stationary hologram at the activation origin while moving freely; it attracts enemy attacks and breaks at the first hit or after three seconds.",
+    "block": "Arm shield — hold a compact energy guard.",
+    "special": "Limit Release — arm casing opens; narrow beams pierce multiple targets until the finite form ends."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.21,
+        "release_seconds": 0.0798,
+        "cooldown_seconds": 0.21
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.05,
+        "cooldown_seconds": 6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": []
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.21,
+        "release_seconds": 0.0798,
+        "cooldown_seconds": 0.21
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.05,
+        "cooldown_seconds": 6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [],
+    "duration_seconds": 7,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "primary": {
+      "kind": "forward_segment",
+      "reach": 155,
+      "half_width": 3,
+      "damage": 12,
+      "pierces": false
+    },
+    "powered_primary": {
+      "kind": "forward_segment",
+      "reach": 175,
+      "half_width": 4.5,
+      "damage": 15,
+      "pierces": true
+    }
+  },
+  "executed_rules": {
+    "heat": {
+      "maximum": 100,
+      "block_primary_when_at_least": 92,
+      "primary_adds": 19,
+      "powered_primary_adds": 12,
+      "cooling_per_second_during_primary": 4,
+      "cooling_per_second_other_powered_actions": 7,
+      "cooling_per_second_other_ordinary_actions": 15
+    },
+    "secondary_afterimage": {
+      "kind": "hologram",
+      "at_action_commitment_origin": true,
+      "stationary": true,
+      "radius": 7,
+      "lifetime_seconds": 3,
+      "maximum_active": 1,
+      "damage": 0,
+      "destroyed_by_one_enemy_projectile_or_melee_hit": true,
+      "attracts_live_enemies": true,
+      "direct_release_heat_change": 0,
+      "normal_per_tick_cooling_continues": true,
+      "guarantees_projectile_interception": false
+    },
+    "activation": {
+      "cap_existing_heat_at": 45
+    },
+    "source_functions": [
+      "E",
+      "q",
+      "M",
+      "v",
+      "Y",
+      "F",
+      "L"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "id": "mirra",
+  "name": "Mirra",
+  "catalogue_prose": {
+    "role": "Oasis water diviner · shaped currents",
+    "primary": "Water bolt — an aimed current; firing through a spring seal widens it.",
+    "secondary": "Spring seal — place a finite pool at the aimed point, within reach.",
+    "block": "Water curtain — hold a frontal flowing shield.",
+    "special": "Oasis Unbound — seals connect in damaging currents; new seals redirect the network."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.43,
+        "release_seconds": 0.1634,
+        "cooldown_seconds": 0.43
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.05
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "water",
+        "speed": 170,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 4,
+        "lifetime_seconds": 1.05,
+        "damage": 21,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      }
+    ]
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.43,
+        "release_seconds": 0.1634,
+        "cooldown_seconds": 0.43
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.05
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "water",
+        "speed": 170,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 4,
+        "lifetime_seconds": 1.05,
+        "damage": 21,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "secondary": {
+      "kind": "aimed_disc",
+      "max_placement_distance": 112,
+      "radius": 18,
+      "damage": 10,
+      "slow_seconds": 1.5
+    }
+  },
+  "executed_rules": {
+    "primary_through_seal": {
+      "only_if_seal_crossing_precedes_or_ties_first_enemy_collision": true,
+      "once_per_projectile": true,
+      "damage_after_amplification": 28,
+      "radius_after_amplification": 6,
+      "pierce_budget_after_amplification": 1,
+      "maximum_distinct_targets": 2
+    },
+    "secondary_seal": {
+      "max_aimed_distance": 112,
+      "radius": 18,
+      "lifetime_seconds": 6,
+      "powered_lifetime_seconds": 8,
+      "replacement_threshold": 3,
+      "powered_replacement_threshold": 5,
+      "insertion_removes_exactly_one_oldest_if_count_at_least_threshold": true,
+      "form_expiry_does_not_shrink_existing_five_seals_to_three": true,
+      "hit_damage": 10,
+      "hit_slow_seconds": 1.5
+    },
+    "activation_seal": {
+      "forward_placement": 30,
+      "radius": 16,
+      "lifetime_seconds": 8
+    },
+    "powered_current_network": {
+      "interval_seconds": 0.35,
+      "initial_clock": 0,
+      "ordered_segments": "player to oldest seal, then each previous seal to next seal",
+      "half_width": 6,
+      "damage": 10,
+      "slow_seconds": 0.5,
+      "once_per_enemy_per_network_tick": true,
+      "stops_when_form_expires": true
+    },
+    "source_functions": [
+      "E",
+      "q",
+      "M",
+      "Y",
+      "F",
+      "_"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}
