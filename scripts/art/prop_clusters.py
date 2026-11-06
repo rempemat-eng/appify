@@ -99,6 +99,9 @@ DRESSING = {
     'shore': ['marram', 'sea_pinks'],
     'woodland': ['fern_small', 'tuft_shade', 'bluebells'],
     'town': ['joint_weeds', 'moss_joint'],
+    # Claude H's biome ids (scripts/art/biomes/coal_hills.json and mill_town.json, #201)
+    'mill_town': ['joint_weeds', 'moss_joint'],
+    'coal_hills': ['bilberry', 'bracken', 'coltsfoot'],
     'steppe': ['feather_grass', 'dry_tuft'],
     'moor': ['heather', 'bilberry', 'tuft'],
     # Claude C's biome plants (scripts/art/biomes/coast.json and city.json, #196)
@@ -253,7 +256,7 @@ RECIPES = {
         'lights': [{'kind': 'sun_patch', 'at': [5.5, 4.5], 'r': 24, 'live': False}],
     },
     'town_square_corner': {
-        'biomes': ['town', 'village', 'city', 'valley'],
+        'biomes': ['town', 'mill_town', 'village', 'city', 'valley'],
         'dressing': 'town',
         'why': 'a corner of a square against a wall: a lamp at the corner, a bench along the wall '
                'facing out, a planter at its end, a noticeboard with its front clear, a cat\'s saucer '
@@ -312,7 +315,7 @@ RECIPES = {
     },
     # --- asked for by lane H (h-to-b-1240): the wharf and the lock -----------------------
     'canal_side': {
-        'biomes': ['town', 'city', 'coal-hills', 'canal', 'valley'],
+        'biomes': ['town', 'mill_town', 'city', 'coal_hills', 'canal', 'valley'],
         'dressing': 'canal',
         'owner': 'the lock-keeper and the boat people',
         'why': 'the coping of a canal or lock beside the towpath: bollards at the edge to tie up to, '
@@ -472,7 +475,7 @@ RECIPES = {
         'lights': [{'kind': 'shade_pool', 'at': [3.5, 2.5], 'r': 28, 'live': False}],
     },
     'frontier_street_corner': {
-        'biomes': ['frontier', 'desert', 'canyon', 'town'],
+        'biomes': ['frontier', 'desert', 'canyon', 'town', 'mill_town'],
         'dressing': 'desert',
         'owner': 'the store on the corner',
         'why': 'a corner of the street in front of a false front: a lantern on a post at the corner, barrels '
@@ -548,7 +551,7 @@ RECIPES = {
         'clear': [{'why': 'the picking walk under the trees', 'rect': [0, 3, 10, 2], 'front': True}],
     },
     'platform_yard': {
-        'biomes': ['canyon', 'frontier', 'town', 'coal-hills'],
+        'biomes': ['canyon', 'frontier', 'town', 'mill_town', 'coal_hills'],
         'dressing': 'desert',
         'owner': 'the stationmaster',
         'why': 'the end of the line: a water crane for the engine, the buffer stop, crates waiting for the '
@@ -569,8 +572,9 @@ RECIPES = {
         'clear': [{'why': 'the platform\'s edge', 'rect': [0, 3, 10, 1], 'front': True}],
     },
     'mine_yard': {
-        'biomes': ['canyon', 'highland', 'coal-hills'],
+        'biomes': ['canyon', 'highland', 'coal_hills'],
         'dressing': 'desert',
+        'dressing_by': {'coal_hills': 'coal_hills'},   # H's coal hills: bilberry, bracken, coltsfoot
         'owner': 'the prospector',
         'why': 'the yard at a mine mouth: a rail stub with two ore tubs on it, pit props stacked for the '
                'tunnel, a lamp at the mouth, spoil at the stub\'s end, a pick leaning on the props (the '
@@ -667,7 +671,7 @@ RECIPES = {
         'lights': [{'kind': 'steam_glow', 'at': [4, 1], 'r': 24, 'live': False}],
     },
     'forge_yard': {
-        'biomes': ['ash', 'castle', 'town', 'coal-hills'],
+        'biomes': ['ash', 'castle', 'town', 'mill_town', 'coal_hills'],
         'dressing': 'ash',
         'owner': 'the smith',
         'why': 'the yard of a forge (prop-logic 3: hearth, anvil and quench within 2 cells): the coal heap on the '
@@ -690,8 +694,32 @@ RECIPES = {
         'clear': [{'why': 'in front of the anvil', 'rect': [3, 2, 4, 2], 'front': True}],
         'lights': [{'kind': 'forge_glow', 'at': [5, 0], 'r': 48, 'live': True}],
     },
+    'forge_yard_lip': {
+        'biomes': ['ash', 'castle', 'town', 'mill_town', 'coal_hills', 'canyon'],
+        'dressing': 'ash',
+        'owner': 'the smith',
+        'why': 'a forge yard on a narrow shelf (asked by lane D, d-to-b-clusters-3: the Ember forge\'s terrace is '
+               'shallow under its lip): one row against the lip, the coal heap at the far end, the anvil in front '
+               'of the forge door, the quench trough beside it, the smith\'s apron on its end (the personal '
+               'object), a bench for whoever waits; the forge\'s glow',
+        'size': [15, 3],
+        'against': 'the forge building or the lip\'s face to the north',
+        'members': [
+            m('coal', 'pile', ['coal_heap'], (0, 0), (3, 1), job='fuel for the hearth', reason=['by:dwelling:64']),
+            m('anvil', 'furniture_low', ['anvil'], (4, 0), (2, 1), tap=True, stand=[(4, 1), (5, 1)],
+              job='where the smith works', dress=False),
+            m('quench', 'trough', ['quench_trough', 'trough'], (7, 0), (3, 1), job='cools the iron', dress=False),
+            m('apron', 'furniture_low', ['smith_apron'], (10, 0), (1, 1), blocks=False, dress=False, story=True,
+              job='the smith\'s apron'),
+            m('bench', 'bench', ['bench', 'stone_bench'], (11, 0), (4, 1), tap=True, stand=[(12, 1), (13, 1)],
+              turn=BENCH_TURN, job='for whoever waits', reason=['faces:path|view']),
+        ],
+        'clear': [{'why': 'in front of the anvil', 'rect': [3, 1, 4, 2], 'front': True},
+                  {'why': 'the bench\'s front', 'rect': [11, 1, 4, 2]}],
+        'lights': [{'kind': 'forge_glow', 'at': [5, 0], 'r': 48, 'live': True}],
+    },
     'castle_street': {
-        'biomes': ['castle', 'town', 'ash'],
+        'biomes': ['castle', 'town', 'mill_town', 'ash'],
         'dressing': 'town',
         'owner': 'the market row\'s traders',
         'why': 'a stretch of the market row: a stall with its customer band clear, barrels against it, a '
@@ -699,7 +727,9 @@ RECIPES = {
         'size': [13, 4],
         'members': [
             m('stall', 'stall', ['market_stall', 'stall'], (0, 0), (6, 2), tap=True, stand=[(2, 2), (3, 2)],
-              fixed=True, dress=False, job='sells to the street', reason=['near:path:32']),
+              turn={'e': {'props': ['market_stall_side'], 'kind': 'stall'},
+                    'w': {'props': ['market_stall_side'], 'kind': 'stall'}},
+              dress=False, job='sells to the street', reason=['near:path:32']),
             m('barrel', 'barrel', ['barrel', 'keg'], (6, 1), (1, 1), against='stall', dress=False, job='stock'),
             m('banner', 'pole', ['banner_pole'], (7, 0), (1, 1), job='the trader\'s colours'),
             m('glove', 'furniture_low', ['glove'], (7, 2), (1, 1), blocks=False, dress=False, story=True,
@@ -928,8 +958,9 @@ def check_recipes() -> list:
         roles = {mm['role']: mm for mm in r['members']}
         if len(roles) != len(r['members']):
             out.append(f'{name}: two members share a role')
-        if r['dressing'] not in DRESSING:
-            out.append(f'{name}: unknown dressing {r["dressing"]}')
+        for dz in [r['dressing'], *r.get('dressing_by', {}).values()]:
+            if dz not in DRESSING:
+                out.append(f'{name}: unknown dressing {dz}')
         for mm in r['members']:
             x, y = mm['at']
             w, h = mm['foot']
@@ -1043,9 +1074,16 @@ def allowed(r, orient) -> bool:
     return True
 
 
-def expand(recipe_name: str, at, orient='s', mirror=False, seed=0, kinds=None, grades=None) -> dict:
+def dressing_of(r, biome=None) -> str:
+    """The dressing a recipe takes in a biome: its own 'dressing', or the biome's entry in
+    'dressing_by' (mine_yard in H's coal hills)."""
+    return r.get('dressing_by', {}).get(biome, r['dressing'])
+
+
+def expand(recipe_name: str, at, orient='s', mirror=False, seed=0, kinds=None, grades=None, biome=None) -> dict:
     """A placement made concrete in world px: each member's prop, foot rect, hit box and
-    stands; clear zones; crossing; lights; decals; and the dressing clumps (seeded)."""
+    stands; clear zones; crossing; lights; decals; and the dressing clumps (seeded; in the
+    plan's biome when the recipe has a 'dressing_by' entry for it)."""
     r = RECIPES[recipe_name]
     W, H = r['size']
     ox, oy = at
@@ -1100,17 +1138,18 @@ def expand(recipe_name: str, at, orient='s', mirror=False, seed=0, kinds=None, g
            'members': members, 'clear': clear, 'lights': lights, 'decals': decals}
     if crossing:
         out['crossing'] = crossing
-    out['dressing'] = dress(r, members, clear, crossing, seed)
+    out['dressing'] = dress(r, members, clear, crossing, seed, dressing_of(r, biome))
     return out
 
 
-def dress(r, members, clear, crossing, seed) -> list:
+def dress(r, members, clear, crossing, seed, which=None) -> list:
     """Plant dressing at the bases of the members that ask for it: walk each foot's south,
     west and east edges (the base you see; the north edge is hidden behind the prop) and
     drop a clump every 16 to 32 px, seeded; never in a clear zone, on a stand, on a
     crossing or under another blocking foot. Each clump is 2 or 3 pieces of one kind."""
-    rnd = random.Random(f'{r["dressing"]}:{seed}')
-    kinds = DRESSING[r['dressing']]
+    which = which or r['dressing']
+    rnd = random.Random(f'{which}:{seed}')
+    kinds = DRESSING[which]
     keep = [c['rect'] for c in clear] + ([crossing] if crossing else [])
     for mm in members:
         for sx, sy in mm.get('stand', []):
@@ -1468,6 +1507,20 @@ def touch_css() -> float:
     return HIT * PHONE_CSS / ART_ACROSS
 
 
+def prune_dressing(G: 'Ground', pl: dict) -> dict:
+    """Drop the dressing clumps that land on a way, a stair or water in this plan: dressing is
+    optional by nature, so a clump the plan's paths cover is left out rather than failing the
+    cluster (the painter reads the placement's dressing after this)."""
+    keep = []
+    for dd in pl['dressing']:
+        rc = G.cell(*dd['at'])
+        if G.inside(*rc) and (G.band[rc] or G.stair[rc] or G.wet[rc]):
+            continue
+        keep.append(dd)
+    pl['dressing'] = keep
+    return pl
+
+
 def check_placement(plan: dict, pl: dict, others=(), area=None, G: Ground | None = None, skip=(),
                     base=None, fast: bool = False) -> list:
     """Every rule a placed cluster must keep in its plan (see the module's docstring)."""
@@ -1708,7 +1761,7 @@ def place(plan: dict, recipe: str, area=None, near=None, seed: int = 0, others=(
     base = reach(G, blocked_by(G, list(others), plan_points(plan, skip)))
     best = None
     for orient, mirror, x, y in cands[:2000]:
-        pl = expand(recipe, [x, y], orient, mirror, seed, grades=grades)
+        pl = prune_dressing(G, expand(recipe, [x, y], orient, mirror, seed, grades=grades, biome=plan.get('biome')))
         faults = check_placement(plan, pl, others, area=area, G=G, skip=skip, base=base, fast=True)
         if not faults:
             return pl, None
@@ -1756,7 +1809,8 @@ def check_plans() -> list:
             if plan.get('biome') not in RECIPES[e['recipe']]['biomes'] and not e.get('any_biome'):
                 out.append(f'{plan["id"]}: {e["recipe"]} belongs in {RECIPES[e["recipe"]]["biomes"]}, '
                            f'not {plan.get("biome")} (set any_biome on the entry to place it anyway)')
-            pl = expand(e['recipe'], e['at'], e.get('orient', 's'), e.get('mirror', False), e.get('seed', 0), grades=grades)
+            pl = prune_dressing(G, expand(e['recipe'], e['at'], e.get('orient', 's'), e.get('mirror', False),
+                                          e.get('seed', 0), grades=grades, biome=plan.get('biome')))
             skip = {tuple(e['replaces'])} if e.get('replaces') else set()
             out += check_placement(plan, pl, placed, G=G, skip=skip)
             placed.append(pl)
