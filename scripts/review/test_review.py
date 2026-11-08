@@ -914,5 +914,9 @@ class GodotAcquisition(unittest.TestCase):
             command.assert_not_called()
 
 
+# the Undercroft's craft guards (8 Nov audit): run with check:review
+from .test_undercroft_craft import SpeckScatter, StepsByFlag, SceneUnmoved  # noqa: E402,F401
+
+
 if __name__ == '__main__':
     unittest.main()

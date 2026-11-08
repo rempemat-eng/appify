@@ -1,7 +1,7 @@
 {
  "id": "undercroft/rubble_seal",
  "file": "game/zones/undercroft/art/rubble_seal.png",
- "sha256": "7e7e03608a15ae76a66406b3f9666a7fdf96a4224fdddccfc9b9b2bd0587c27b",
+ "sha256": "aacf17f7c8ad4ea916d020e116ced6e0da8a3ecf147b4f1a615ead66e5a9e6fc",
  "kind": "rubble_seal",
  "biome": "cellar",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 24.5,
-   "shapes": 33.0
+   "tones": 26.5,
+   "shapes": 29.5
   },
   "band": {
    "tones": 27.0,
@@ -28,43 +28,30 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.655,
-  "tones_ratio": 0.907,
-  "shapes_ratio": 0.655,
+  "ratio": 0.586,
+  "tones_ratio": 0.981,
+  "shapes_ratio": 0.586,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    6,
-    18,
-    65,
-    40
-   ],
-   "message": "undercroft/rubble_seal: the stone is lit from the right (luminance rises 19 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    6,
+    9,
     18,
-    71,
-    42
+    55,
+    43
    ],
-   "message": "undercroft/rubble_seal: detail bar 0.66 of Eastward's prop band (24.5 tones, 33.0 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/rubble_seal: detail bar 0.59 of Eastward's prop band (26.5 tones, 29.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings R-1 to R-3 (see rubble_chamber). detail.light (6,18,65,40) folded into R-1. Bar 0.66."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

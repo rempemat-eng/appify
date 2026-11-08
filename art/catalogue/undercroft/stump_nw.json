@@ -1,7 +1,7 @@
 {
  "id": "undercroft/stump_nw",
  "file": "game/zones/undercroft/art/stump_nw.png",
- "sha256": "f184214ebbd16a2e507987d8181558e7e5f270ea2f905433baaeea3dcd2e0c05",
+ "sha256": "3e2313648efea2a4f95e4ded8f1547ea40471bad66cf66e12cfa0765a79cb5c8",
  "kind": "stump_nw",
  "biome": "cellar",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 6,
-   "tones": 12.5,
-   "shapes": 26.333333333333332
+   "patches": 4,
+   "tones": 17.75,
+   "shapes": 38.75
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.463,
-  "tones_ratio": 0.463,
-  "shapes_ratio": 0.523,
+  "ratio": 0.657,
+  "tones_ratio": 0.657,
+  "shapes_ratio": 0.769,
   "passed": false,
   "group": "prop"
  },
@@ -39,20 +39,19 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    19,
-    17,
-    78,
+    20,
+    22,
+    75,
     100
    ],
-   "message": "undercroft/stump_nw: detail bar 0.46 of Eastward's prop band (12.5 tones, 26.3 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/stump_nw: detail bar 0.66 of Eastward's prop band (17.8 tones, 38.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings ST-1 to ST-3. Better than U4 (the shaft now has cylinder shading and flutes). ST-1 fault: the break has no fracture surface, only a jagged silhouette with no top plane; Eastward's pillars (shot 06, box 230,205,370,290) show their top face. Fix: a rough top plane in the column's ellipse, lit facets north-west, pits and a dark rim south-east. ST-2 fault: the plinth is two flat tones with no chips, edge light or occlusion where the shaft meets it. ST-3 polish: stump_nw and stump_se are nearly the same drawing. Bar 0.46."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

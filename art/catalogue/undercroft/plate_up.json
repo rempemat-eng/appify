@@ -1,7 +1,7 @@
 {
  "id": "undercroft/plate_up",
  "file": "game/zones/undercroft/art/plate_up.png",
- "sha256": "f5abf5dbac268b67b7e1d7ede50aac8e076d8fa2bdff4b2a115e01c561623c54",
+ "sha256": "1dc41771623aab7cae05127ca2e960ff7721442c893545be8136c746159efc74",
  "kind": "plate_up",
  "biome": "cellar",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 9,
-   "tones": 18.77777777777778,
-   "shapes": 30.77777777777778
+   "tones": 16.11111111111111,
+   "shapes": 25.333333333333332
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.611,
-  "tones_ratio": 0.695,
-  "shapes_ratio": 0.611,
+  "ratio": 0.503,
+  "tones_ratio": 0.597,
+  "shapes_ratio": 0.503,
   "passed": false,
   "group": "prop"
  },
@@ -44,15 +44,14 @@
     64,
     70
    ],
-   "message": "undercroft/plate_up: detail bar 0.61 of Eastward's prop band (18.8 tones, 30.8 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/plate_up: detail bar 0.50 of Eastward's prop band (16.1 tones, 25.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings P-1 to P-3. The pair reads right: up shows the slab proud with its front face, down shows the north lip's shadow in the recess. P-1 fault: the inner panel's cross is a flat one-tone plus sign (Matt's U7 flat target); carve it as a groove with a dark north and west wall and a lit south and east lip. P-2 fault: the frame is a terrazzo of evenly scattered tan 2x2 specks with 1 px crack strokes; use sibling clusters, two or three cracks that start at chips, and chipped corners. P-3 polish: moss is single-tone dark green dashes in a row; give clumps a lit cap and keep them to the low joints. Bar 0.61."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

@@ -1,7 +1,7 @@
 {
  "id": "undercroft/channel_lit",
  "file": "game/zones/undercroft/art/channel_lit.png",
- "sha256": "ed0dc8a334a06aed10dec0e8c1087b2c783653a5bb7f2ad0159ae0485d24ad9a",
+ "sha256": "d192677023d5bfb2ff9049a371267fd85401bcc8571beb99756b5f8d11749deb",
  "kind": "channel",
  "biome": "cellar",
  "H": 74.0,
@@ -36,8 +36,7 @@
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md finding C-1 (fault): still a flat line (Matt's U6): a 10 px bar of one pastel violet with a lighter streak, cut into 9 equal segments by brass dividers, no glow structure and no light on the groove's lips. Fix: draw it as a glow: deep violet at the groove walls rising to a near-white core streak broken into uneven lengths, the groove's south lip and one row of floor either side a tone up, the brass dividers shaded (lit top, dark east side). Too thin for the detail bar."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

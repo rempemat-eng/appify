@@ -183,6 +183,70 @@ FLOOR_LADDER_COOL = {3: (('slate', 2), ('slate_cool', 2)), 4: (('slate', 3), ('s
 FLOOR_LADDER_WARM = {3: (('stone_warm', 1), ('ash', 2)), 4: (('stone_warm', 2), ('ashlar', 2)),
                      5: (('ashlar', 3), ('sand', 2)), 6: (('sand', 3), ('ashlar', 4))}
 FLOOR_AMBIENT = 1                # far from every light the floor sits on rung 1, in shade, as Eastward's
+# round 5 (8 Nov, G-1): a pool climbs at most three rungs over the ambient, flag by flag (whole flags, or a
+# flag split once by a straight line into halves a rung apart), never in ragged contour bands
+POOL_STEPS = 3
+POOL_HEART, POOL_SPILL = 3.0, 1.2
+
+
+def flag_rungs(level, slab, nflags, rng, split=None, lo=0, hi=FLOOR_AMBIENT + POOL_STEPS):
+    """The floor's light stepped by its flags: each flag takes one rung from the mean light over it (give
+    or take a little, so the odd stone sits a rung off); where `split` holds (in a pool) and the light
+    crosses a rung boundary well inside a flag, the flag is cut once by a straight line across the
+    light's gradient into two halves a rung apart. Returns rungs per texel (0 off the flags)."""
+    H, W = slab.shape
+    idx = np.arange(1, nflags + 1)
+    Y, X = np.mgrid[0:H, 0:W].astype(float)
+    on = slab > 0
+    with np.errstate(invalid='ignore', divide='ignore'):
+        cnt = np.maximum(ndi.sum(on, labels=slab, index=idx), 1)
+        mx = ndi.sum(X, labels=slab, index=idx) / cnt
+        my = ndi.sum(Y, labels=slab, index=idx) / cnt
+        ml = np.nan_to_num(ndi.sum(level, labels=slab, index=idx) / cnt, nan=float(FLOOR_AMBIENT))
+        vx = ndi.sum(X * X, labels=slab, index=idx) / cnt - mx * mx
+        vy = ndi.sum(Y * Y, labels=slab, index=idx) / cnt - my * my
+        gx = (ndi.sum(X * level, labels=slab, index=idx) / cnt - mx * ml) / (vx + 1e-6)
+        gy = (ndi.sum(Y * level, labels=slab, index=idx) / cnt - my * ml) / (vy + 1e-6)
+    jit = rng.uniform(-0.15, 0.15, nflags)
+    r0 = np.clip(np.floor(ml + jit + 0.5).astype(int), lo, hi)
+    pad = lambda v: np.concatenate([[0], v])
+    R0, MX, MY, ML, GX, GY = (pad(v) for v in (r0, mx, my, ml, gx, gy))
+    out = np.zeros((H, W), int)
+    out[on] = R0[slab[on]]
+    if split is None:
+        return out
+    plane = np.zeros((H, W))
+    f = slab[on]
+    # the cut runs straight across the flag, east-west or north-south (whichever crosses the light's
+    # gradient best), so a flag splits into two halves like a cracked stone, never a wedge
+    horiz = np.abs(GY[f]) >= np.abs(GX[f])
+    plane[on] = ML[f] + np.where(horiz, GY[f] * (Y[on] - MY[f]), GX[f] * (X[on] - MX[f]))
+    up = on & (plane > out + 0.5)
+    dn = on & (plane < out - 0.5)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        fu = pad(ndi.sum(up, labels=slab, index=idx) / cnt)
+        fd = pad(ndi.sum(dn, labels=slab, index=idx) / cnt)
+    ok = on & split
+    half_u = ok & up & (fu[slab] >= 0.25) & (fu[slab] <= 0.75) & (fu[slab] >= fd[slab])
+    half_d = ok & dn & (fd[slab] >= 0.25) & (fd[slab] <= 0.75) & (fd[slab] > fu[slab])
+    out[half_u] += 1
+    out[half_d] -= 1
+    return np.clip(out, lo, hi) * on
+
+
+def flag_lips(slab, rng, gap=0.16):
+    """Each flag's lips: its north and west edge texels (lit, broken here and there where the arris is
+    worn) and its south and east edge texels (in shade), as masks."""
+    on = slab > 0
+    up = np.roll(slab, 1, 0) != slab
+    lf = np.roll(slab, 1, 1) != slab
+    dn = np.roll(slab, -1, 0) != slab
+    rt = np.roll(slab, -1, 1) != slab
+    H, W = slab.shape
+    gaps = np.kron(rng.random(((H + 3) // 4, (W + 3) // 4)) < gap, np.ones((4, 4), bool))[:H, :W]
+    nw = on & (up | lf) & ~gaps
+    se = on & (dn | rt) & ~(up | lf)
+    return nw, se
 
 
 def floor_layout(shape, where, rng, cell):
@@ -240,7 +304,7 @@ def floor_layout(shape, where, rng, cell):
     mat[dirt] = 1
     # inside the flags: chipped arrises, a few pits, sparse cracks (the only marks; no bevels, no stripes)
     n = int(ids.max())
-    for _ in range(int(n * 0.9)):
+    for _ in range(int(n * 0.5)):                                  # chips: corners knocked off at the joints
         ys, xs = np.nonzero(joint)
         if not len(ys):
             break
@@ -250,11 +314,6 @@ def floor_layout(shape, where, rng, cell):
         sel = np.zeros(shape, bool)
         sel[max(0, y - 1):y - 1 + h_, max(0, x - 1):x - 1 + w_] = True
         off[sel & where] = -1
-    for _ in range(int(n * 1.6)):                                  # pits and scuffs, in two-texel clusters
-        y, x = int(rng.integers(2, H - 3)), int(rng.integers(2, W - 4))
-        w_ = int(rng.integers(2, 4))
-        if ids[y, x] and not joint[y:y + 2, x:x + w_].any():
-            off[y:y + 2, x:x + w_] = -1
     for f in range(1, n + 1):
         if rng.random() > 0.08:
             continue
@@ -267,22 +326,6 @@ def floor_layout(shape, where, rng, cell):
             pts.append((pts[-1][0] + int(rng.integers(-3, 4)), pts[-1][1] + int(rng.integers(3, 6))))
         lm = line_mask(shape, pts, 0.55) & (ids == f)
         off[lm] = -1
-    # no large flag is left a bare field: a pit or two (a tone down, two to three texels) in its body,
-    # as Eastward's flags carry a few marks each
-    objs = ndi.find_objects(ids)
-    for f, sl in enumerate(objs, start=1):
-        if sl is None:
-            continue
-        m = ids[sl] == f
-        a_ = int(m.sum())
-        if a_ < 450:
-            continue
-        inner = ndi.binary_erosion(m, iterations=4)
-        ys, xs = np.nonzero(inner)
-        for _ in range(min(len(ys), a_ // 240)):
-            k = int(rng.integers(0, len(ys)))
-            y, x = ys[k] + sl[0].start, xs[k] + sl[1].start
-            off[y:y + 2, x:x + int(rng.integers(2, 4))] = -1
     return ids, joint, off, mat
 
 
@@ -307,6 +350,8 @@ def floor_codes(level, off, mat, var, cool, warm=None):
     out[dirt] = _FI['earth_cool'] * 8 + np.clip(lv[dirt] - 1, 1, 3)
     drift = mat == 3                                  # grey grit drifted over the flags, a step under them
     out[drift] = _FI['ash'] * 8 + np.clip(lv[drift] - 1 + (lv[drift] >= 4), 1, 4)   # in a pool the grit is lit too
+    dc = drift & cool                                 # under the skylight the grit takes the cool light too
+    out[dc] = _FI['slate_cool'] * 8 + np.clip(lv[dc] - 1, 1, 4)
     moss = mat == 2
     out[moss] = _FI['leaf_cool'] * 8 + np.clip(lv[moss] - 1, 0, 3)
     out[(raw < 0) & ~moss] = _FI['void'] * 8 + 1
@@ -382,6 +427,182 @@ def weather(a, mask, rng, amount=1.0, moss=True, lichen=True):
             a[sel & mask] = f * 8 + min(5, t + 1)
 
 
+# ------------------------------------------------------------------------------------------------
+# round 5 (8 Nov review, docs/reviews/2026-11-08-undercroft-woodland-placed.md): the craft helpers.
+# No even scatter of pale 2 x 2 specks anywhere (Matt's "terrazzo of specks", U1): stone is textured
+# with sibling clusters gathered in drifts, aged with a few chipped corners and the cracks that run
+# from them, and mossed only in its low joints with a lit cap.
+# ------------------------------------------------------------------------------------------------
+_CLUSTERS = (((0, 0), (0, 1)), ((0, 0), (1, 0)), ((0, 0), (0, 1), (1, 0)), ((0, 0), (0, 1), (1, 1)),
+             ((0, 0), (0, 1), (1, 0), (1, 1)), ((0, 0), (0, 1), (0, 2)), ((0, 0), (1, 0), (1, 1)))
+
+
+def tex(a, mask, rng, share=0.2, up=0.0, down=0.05, drift=2.6):
+    """Material texture as clusters of two to four texels (dominoes, L shapes, 2 x 2): most only swap
+    to a sibling ramp at the same tone (shape without value noise), a few step a tone down (and, only
+    when asked, a tone up on the lit north-west half); they gather in drifts by a slow noise, so they
+    never lie as an even scatter, and no pale dot sits alone in a calm field (scripts/review/specks.py)."""
+    from .palette import sib, FAMS as FAMS_
+    H, W = a.shape
+    ok = mask & (a >= 0) & (a % 8 <= 5)
+    ys, xs = np.nonzero(ok)
+    if len(ys) < 12:
+        return
+    y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    dn = ndi.gaussian_filter(rng.random((H, W)), drift)
+    dn = (dn - dn[ok].mean()) / (dn[ok].std() + 1e-9)
+    side = 'warm' if rng.random() < 0.5 else 'cool'
+    for _ in range(int(len(ys) * share / 2.6)):
+        k = int(rng.integers(0, len(ys)))
+        y, x = int(ys[k]), int(xs[k])
+        if dn[y, x] < rng.normal(0.2, 0.7):
+            continue
+        c = int(a[y, x])
+        pts = [(y + dy, x + dx) for dy, dx in _CLUSTERS[int(rng.integers(0, len(_CLUSTERS)))]
+               if 0 <= y + dy < H and 0 <= x + dx < W and ok[y + dy, x + dx] and a[y + dy, x + dx] == c]
+        if len(pts) < 2:
+            continue
+        u = ((x - x0) / max(1, x1 - x0) + (y - y0) / max(1, y1 - y0)) / 2
+        r, t = rng.random(), c % 8
+        if r < up and u < 0.5 and t <= 3:
+            nc = c + 1
+        elif r < up + down and t >= 2:
+            nc = c - 1
+        else:
+            # the sibling nearest in value: a cool stone swaps to its body ramp, never straight to the warm
+            # one (a cool-to-warm swap is a pale dot), a warm stone to its body, the body to either
+            fn = FAMS_[c // 8]
+            which = 'body' if (fn.endswith('_cool') or fn.endswith('_warm')) else side
+            nc = int(sib(np.array([c]), which)[0])
+        for p_ in pts:
+            a[p_] = nc
+
+
+def patches(a, mask, rng, sigma=2.2, sib_share=0.2, down=0.06):
+    """Broad soft patches inside a surface: large blots on a sibling ramp at the same tone, and a few
+    a tone down (worn hollows); never a tone up, so they add no pale dots (unlike mottle)."""
+    from .palette import sib
+    H, W = a.shape
+    ok = mask & (a >= 0) & (a % 8 >= 1) & (a % 8 <= 5)
+    if ok.sum() < 20:
+        return
+    n1 = ndi.gaussian_filter(rng.random((H, W)), sigma)
+    n1 = (n1 - n1[ok].mean()) / (n1[ok].std() + 1e-9)
+    n2 = ndi.gaussian_filter(rng.random((H, W)), sigma * 1.6)
+    n2 = (n2 - n2[ok].mean()) / (n2[ok].std() + 1e-9)
+    dn = ok & (n1 < np.quantile(n1[ok], down))
+    dn = ndi.binary_opening(dn, structure=np.ones((2, 2), bool))
+    a[dn] = a[dn] - 1
+    sw = ok & (n2 > np.quantile(n2[ok], 1 - sib_share)) & ~dn
+    a[sw] = sib(a[sw], 'warm' if rng.random() < 0.5 else 'cool')
+
+
+def chip(a, x, y, corner, mortar, depth=2):
+    """A corner knocked off a block (corner 'nw', 'ne', 'sw' or 'se' at x, y): an L of texels down to
+    the mortar, and the fracture it leaves a tone up where it faces the light (north and west) or a
+    tone down where it faces away."""
+    H, W = a.shape
+    sx = 1 if corner[1] == 'w' else -1
+    sy = 1 if corner[0] == 'n' else -1
+    gone = [(y, x), (y, x + sx), (y + sy, x)] + ([(y, x + 2 * sx)] if depth > 2 else [])
+    lips = [(y + sy, x + sx), (y + 2 * sy, x), (y, x + (depth) * sx), (y + sy, x + 2 * sx)]
+    for (yy, xx) in gone:
+        if 0 <= yy < H and 0 <= xx < W and a[yy, xx] >= 0:
+            a[yy, xx] = mortar
+    d = 1 if corner[0] == 'n' else -1
+    for (yy, xx) in lips:
+        if 0 <= yy < H and 0 <= xx < W and a[yy, xx] >= 0 and a[yy, xx] != mortar and a[yy, xx] % 8 <= 5:
+            a[yy, xx] = a[yy, xx] // 8 * 8 + int(np.clip(a[yy, xx] % 8 + d, 0, 4))
+
+
+def crack(a, x, y, rng, length, mask, dx=None):
+    """A crack running from a chip into the stone: a dark line a tone or two down, wandering, with its
+    lower lip lit for part of its length (the far wall of the split catches the light)."""
+    pts = [(x, y)]
+    ang = rng.uniform(0.6, 2.5) if dx is None else (0.5 if dx > 0 else 2.6)
+    n = max(2, int(length / 3))
+    for _ in range(n):
+        ang += rng.uniform(-0.6, 0.6)
+        pts.append((pts[-1][0] + 3 * math.cos(ang), pts[-1][1] + 3 * abs(math.sin(ang)) * 0.9 + 0.4))
+    m = line_mask(a.shape, pts, 0.5) & mask & (a >= 0) & (a % 8 <= 5)
+    lip = np.roll(m, 1, 0) & ~m & mask & (a >= 0) & (a % 8 <= 5)
+    lip &= (np.mgrid[0:a.shape[0], 0:a.shape[1]][1] < x + length * 0.5)
+    a[lip] = a[lip] // 8 * 8 + np.minimum(4, a[lip] % 8 + 1)
+    a[m] = a[m] // 8 * 8 + np.maximum(0, a[m] % 8 - 2)
+
+
+def moss_clump(a, x, y, w, mask=None):
+    """Moss in a low joint: a clump w texels wide, two rows of body (leaf_cool 2), a lit cap (leaf 3,
+    one texel brighter at its west end) and a dark underside where it meets the stone."""
+    V = _v()
+    code = V.code
+    H, W = a.shape
+    for i in range(w):
+        xx = x + i
+        if not (0 <= xx < W):
+            continue
+        hgt = 2 + (1 if 0 < i < w - 1 and (i * 7 + x) % 3 == 0 else 0)
+        for j in range(hgt):
+            yy = y - j
+            if 0 <= yy < H and a[yy, xx] >= 0 and (mask is None or mask[yy, xx]):
+                a[yy, xx] = code('leaf_cool', 1 if j == 0 else 2)
+        yy = y - hgt
+        if 0 <= yy < H and a[yy, xx] >= 0 and (mask is None or mask[yy, xx]):
+            a[yy, xx] = code('leaf', 4 if i < max(2, w // 3) else 3)
+
+
+def age_block(a, x0, y0, x1, y1, rng, mortar, chips=2, cracks=1, mask=None):
+    """Age on one dressed block: a corner or two knocked off and a crack that starts at one of them."""
+    m = np.zeros(a.shape, bool)
+    m[y0:y1, x0:x1] = True
+    if mask is not None:
+        m &= mask
+    corners = [('nw', x0, y0), ('ne', x1 - 1, y0), ('sw', x0, y1 - 1), ('se', x1 - 1, y1 - 1)]
+    order = rng.permutation(4)
+    done = []
+    for k in order[:chips]:
+        c, x, y = corners[int(k)]
+        chip(a, x, y, c, mortar, depth=2 + int(rng.random() < 0.4))
+        done.append((c, x, y))
+    for c, x, y in done[:cracks]:
+        crack(a, x + (2 if c[1] == 'w' else -2), y + (2 if c[0] == 'n' else -3), rng,
+              rng.uniform(0.35, 0.6) * (x1 - x0), m, dx=1 if c[1] == 'w' else -1)
+
+
+def carve(a, m, lit, fam='stone_warm', t=3):
+    """A glyph cut into stone. Dark (spent): the groove's floor in shade, its north and west walls
+    darkest (tone 0), its south and east walls catching the light, and the stone's lip just outside
+    its south and east edges a tone up. Charged: the groove holds the shard's light, deep violet at
+    its walls rising through the dusk ramp to a near-white core, with one tone of spill on the stone
+    round it and its south and east lips lit."""
+    V = _v()
+    code = V.code
+    T, L, B, R = V.edges(m)
+    south = np.roll(m, 1, 0) & ~m & (a >= 0)
+    east = np.roll(m, 1, 1) & ~m & (a >= 0)
+    north = np.roll(m, -1, 0) & ~m & (a >= 0)
+    west = np.roll(m, -1, 1) & ~m & (a >= 0)
+    if not lit:
+        a[m] = code(fam, max(0, t - 2))
+        a[(B | R) & ~T & ~L] = code(fam, max(0, t - 1))
+        a[T | L] = code(fam, 0)
+        a[(south | east) & ~north & ~west] = code(fam, min(4, t + 1))
+        return m
+    d = ndi.distance_transform_edt(np.pad(m, 1))[1:-1, 1:-1]
+    ramp = {1: ('dusk', 2), 2: ('dusk', 4), 3: ('dusk', 5)}
+    for k, (f, tt) in ramp.items():
+        a[m & (d >= k) & (d < k + 1)] = code(f, tt)
+    a[m & (d >= 4)] = code('snow', 4)
+    a[m & (T | L)] = code('dusk', 1)                      # the north and west walls stay in the groove's shade
+    # the spill: one tone of the glow on the stone round the groove, a cool sibling a step up, broken
+    spill = ndi.binary_dilation(m, iterations=2) & ~m & (a >= 0) & (a % 8 <= 4)
+    br = ((np.mgrid[0:a.shape[0], 0:a.shape[1]].sum(0) // 3) % 4 == 0) & ~ndi.binary_dilation(m, iterations=1)
+    spill &= ~br
+    a[spill] = V.FI['stone_cool'] * 8 + np.minimum(4, a[spill] % 8 + 1)
+    a[(south | east) & ~north & ~west & (a % 8 <= 4)] = code(fam, min(4, t + 1)) + 0
+    return m
+
+
 def cut_block(a, x0, y0, x1, y1, top, fam, t, rng=None, bevel=1, grain=True):
     """A dressed stone block seen like everything in the world (3/4 from above, light upper left):
     a top face `top` texels deep a tone lighter with a lit back arris, a bevel catching the light
@@ -401,7 +622,7 @@ def cut_block(a, x0, y0, x1, y1, top, fam, t, rng=None, bevel=1, grain=True):
     if grain and rng is not None and (x1 - x0) * (y1 - y0) > 60:
         m = np.zeros(a.shape, bool)
         m[y0 + 2:y1 - 2, x0 + 2:x1 - 2] = True
-        mottle(a, m, rng, sigma=1.3, sib_share=0.1)
+        patches(a, m, rng, sigma=1.6, sib_share=0.1)
 
 
 def masonry(cv, x0, y0, x1, y1, rng, where, base=2, course=5.0, length=(8, 14), east_dark=True):
@@ -457,15 +678,34 @@ def root(cv, pts, r0, r1, where, rng, fam='earth_warm', base=2, lets=4):
         along[sel] = (acc + t * L)[sel]
         acc += L
     m = (best < 1e9) & where
-    for _ in range(lets):
-        i = int(rng.integers(0, len(pts)))
+    # rootlets (8 Nov, RT-1): few and uneven, each tapering from about three texels to one, bending as
+    # it goes, its upper side lit, its tip running in under the floor (a crumb of soil over its end)
+    for k in range(lets):
+        i = int(rng.integers(1, len(pts)))
         x, y = pts[i]
-        side = 1 if rng.random() < 0.5 else -1
-        Lr = V.q(rng.uniform(4, 9))
-        tip = (x + side * Lr, y + V.q(rng.uniform(2, 6)))
-        mid = ((x + tip[0]) / 2, y + V.q(1) * side * 0.3)
-        lm = line_mask(cv.shape, [(x, y), mid, tip], 0.7) & where & ~m
-        cv[lm] = V.code(fam, max(0, base - 1))
+        side = 1 if (k + int(rng.integers(0, 2))) % 2 else -1
+        Lr = V.q(rng.uniform(3, 10))
+        drop = V.q(rng.uniform(1.5, 4))
+        bend = V.q(rng.uniform(0.8, 2.2)) * (1 if rng.random() < 0.5 else -1)
+        n_ = 9
+        chain = []
+        for j in range(n_ + 1):
+            t = j / n_
+            chain.append((x + side * Lr * t, y + drop * t * t + bend * math.sin(t * math.pi)))
+        lm = np.zeros((H, W), bool)
+        lit_side = np.zeros((H, W), bool)
+        for j, ((a0, b0), (c0, d0)) in enumerate(zip(chain, chain[1:])):
+            r_ = 1.5 * (1 - j / n_) + 0.5
+            seg = V.seg_mask(cv.shape, a0, b0, c0, d0, r_)
+            lm |= seg
+            lit_side |= V.seg_mask(cv.shape, a0, b0 - r_ * 0.6, c0, d0 - r_ * 0.6, max(0.5, r_ * 0.5))
+        lm &= where & ~m
+        cv[lm] = V.code(fam, base)
+        cv[lm & lit_side & ~np.roll(lm, 1, 0)] = V.code(fam, min(5, base + 1))
+        cv[lm & ~np.roll(lm, -1, 0)] = V.code(fam, max(0, base - 1))
+        tx, ty = int(chain[-1][0]), int(chain[-1][1])
+        if 1 <= ty < H - 1 and 1 <= tx < W - 2:                 # the tip runs in under the floor: the hole's dark
+            cv[ty:ty + 2, tx - 1:tx + 1][where[ty:ty + 2, tx - 1:tx + 1]] = V.code('earth_cool', 0)
     tone = np.full((H, W), base)
     tone[u > 0.35] = base + 1
     tone[u > 0.7] = base + 2
@@ -516,8 +756,6 @@ def wall_face(cv, x0, y0, x1, y1, rng, where, roots=(), arcade=True):
             pm[y0 + corn:y1 - plin, px0:px1] = True
             pm &= where
             masonry(cv, px0, y0 + corn, px1, y1 - plin, rng, pm, base=3, course=4.5, length=(8, 8.1), east_dark=False)
-            cv[y0 + corn:y1 - plin, px0:px0 + 1][pm[y0 + corn:y1 - plin, px0:px0 + 1]] = code('stone', 4)
-            cv[y0 + corn:y1 - plin, px1 - 1:px1][pm[y0 + corn:y1 - plin, px1 - 1:px1]] = code('stone_cool', 1)
             # the recess under the arch
             rx0, rx1 = px1 + q(2), bx1 - q(2) if i < n - 1 else bx1 - pil - q(2)
             if rx1 - rx0 < q(10):
@@ -558,7 +796,7 @@ def wall_face(cv, x0, y0, x1, y1, rng, where, roots=(), arcade=True):
     for _ in range((x1 - x0) // q(9)):
         mx = int(rng.integers(x0, x1))
         V.fill(cv, mx, y1 - plin - 2, mx + int(rng.integers(3, 8)), y1 - plin, code('leaf_cool', int(rng.integers(1, 3))), where)
-    mottle(cv, where & ndi.binary_erosion(where, iterations=1), rng, sigma=1.8, sib_share=0.1)
+    patches(cv, where & ndi.binary_erosion(where, iterations=1), rng, sigma=1.8, sib_share=0.1)
     for rx in roots:
         split_root(cv, rx, y0, y1, rng, where)
 
@@ -571,9 +809,10 @@ def split_root(cv, x, y0, y1, rng, where):
     q, code = V.q, V.code
     pts = [(x, y0 + q(1))]
     y = y0 + q(1)
-    while y < y1 + q(6):
-        y += q(6)
-        pts.append((pts[-1][0] + int(rng.integers(-q(2.5), q(2.5) + 1)), y))
+    ph = rng.uniform(0, 6.3)
+    while y < y1 + q(6):                                  # it hangs in a slow sway, not a zigzag (8 Nov, G-5)
+        y += q(5)
+        pts.append((x + q(1.6) * math.sin(ph + (y - y0) / q(11)), y))
     hole = V.ellipse_mask(cv.shape, x, y0 + q(2.5), q(5), q(3)) & where
     ring = ndi.binary_dilation(hole, iterations=q(1.5)) & ~hole & where
     cv[ring] = code('stone', 4)
@@ -594,64 +833,192 @@ def split_root(cv, x, y0, y1, rng, where):
     V.fill(cv, bx + 1, by + q(5), bx + q(9), by + q(6), code('stone_cool', 0), where)
     allm = where.copy()
     allm[y1:y1 + q(8)] = True
-    root(cv, pts, q(4.2), q(1.8), allm, rng, base=2, lets=6)
+    rm = root(cv, pts, q(4.4), q(2.0), allm, rng, base=2, lets=2)
+    # a thinner strand over it and down the face beside it, the main root in its shadow where it passes
+    pts2 = [(px + q(3.5) * math.sin(ph * 1.7 + k_ * 0.9) + q(2.5), py) for k_, (px, py) in enumerate(pts[1:-1])]
+    r2 = np.zeros(cv.shape, bool)
+    if len(pts2) > 2:
+        r2 = root(cv, pts2, q(1.6), q(0.9), allm, rng, base=2, lets=0)
+        sh2 = np.roll(r2, 1, 0) & rm & ~r2
+        cv[sh2 | (np.roll(sh2, 1, 1) & rm & ~r2)] = code('earth_warm', 0)
+
+
+def stone_box(a, g, base, w, d, hgt, ang, fam, t, rng, rough=None, tilt=0.0, occl=None):
+    """One fallen block, 3/4 from above (8 Nov, R-1): its footprint a w x d rectangle turned by `ang`
+    about its foot point `base` (x, y on the canvas), lifted `hgt` texels (its corners raised by `tilt`
+    along its length, so it can lie askew). Its top plane is tone t+1, a side facing west or south-west
+    t (to t+1), a side facing south t, a side facing east t-2 (to t-1). One visible side (`rough`, an
+    index) is a fracture face: a jagged top edge, pits and lit grains; the others are dressed (a lit
+    arris, a tool line). Anything it lands on gets a dark contact line under it (R-2). Returns its mask."""
+    V = _v()
+    code = V.code
+    H, W = a.shape
+    c, s_ = math.cos(ang), math.sin(ang)
+    hw, hd = w / 2, d / 2
+    loc = [(-hw, -hd), (hw, -hd), (hw, hd), (-hw, hd)]
+    foot = [(base[0] + x * c - y * s_, base[1] + x * s_ + y * c) for x, y in loc]
+    lift = [hgt + tilt * (x / max(hw, 1)) for x, _ in loc]
+    topp = [(fx, fy - l) for (fx, fy), l in zip(foot, lift)]
+    before = a >= 0
+    mask = np.zeros((H, W), bool)
+    faces = []
+    for i in range(4):
+        j = (i + 1) % 4
+        ex, ey = foot[j][0] - foot[i][0], foot[j][1] - foot[i][1]
+        nx, ny = ey, -ex                                           # outward normal (the footprint runs clockwise)
+        L = math.hypot(nx, ny) or 1
+        nx, ny = nx / L, ny / L
+        if ny <= 0.05:
+            continue
+        quad = [foot[i], foot[j], topp[j], topp[i]]
+        m = g.poly(quad)
+        if nx < -0.35:
+            tt = t                                                 # a west face, towards the light
+        elif nx > 0.35:
+            tt = max(0, t - 2)                                     # an east face, in shade
+        else:
+            tt = max(0, t - 1)                                     # a south face
+        faces.append((i, m, tt, quad))
+    for i, m, tt, quad in faces:
+        a[m] = code(fam, tt)
+        mask |= m
+        if rough is not None and i == faces[min(rough, len(faces) - 1)][0]:
+            fac = ndi.gaussian_filter(rng.random((H, W)), 0.9)
+            fac = (fac - fac[m].mean()) / (fac[m].std() + 1e-9) if m.any() else fac
+            a[m & (fac < -1.3)] = code(fam, max(0, tt - 1))        # pits in the broken face
+            a[m & (fac > 1.2) & ~(np.roll(m, -1, 0) & ~m)] = code(fam, min(4, tt + 1))   # lit grains
+        else:
+            bot = m & ~np.roll(m, -1, 0)
+            a[bot] = code(fam, max(0, tt - 1))                     # the dressed face darkens to its foot
+            if m.sum() > 24:                                       # the mason's drafted margin, a sibling line
+                ys_ = np.nonzero(m.any(1))[0]
+                yl = int((ys_.min() + ys_.max()) / 2)
+                ln = m & (np.arange(H)[:, None] == yl) & ~bot
+                ln &= (np.arange(W)[None, :] + yl) % 5 != 0
+                a[ln] = V.FI[fam + '_cool' if fam == 'stone' else 'stone'] * 8 + a[ln] % 8
+        tex(a, m, rng, share=0.3, up=0.0)
+    topm = g.poly(topp)
+    a[topm] = code(fam, min(4, t + 1))
+    mask |= topm
+    ta = topm & ~np.roll(topm, 1, 0)
+    tl = topm & ~np.roll(topm, 1, 1)
+    a[(ta | tl) & topm] = code(fam, min(5, t + 2))                 # the top's back and west arris, lit
+    front = topm & ~np.roll(topm, -1, 0)
+    a[front] = code(fam, min(5, t + 2))                            # the arris where top meets the front, lit
+    if rough is not None:                                          # the top's edge over the broken face, jagged
+        jag = front & (rng.random((H, W)) < 0.45)
+        a[jag] = code(fam, t)
+    tex(a, topm & ~ta & ~tl & ~front, rng, share=0.3, up=0.0)
+    ys_, xs_ = np.nonzero(topm)
+    if len(ys_) > 30:                                              # a corner of the top knocked off, a crack from it
+        k = int(np.argmin(xs_ + ys_ * 0.3))
+        chip(a, int(xs_[k]), int(ys_[k]), 'nw', code(fam, 6))
+        if rng.random() < 0.6:
+            crack(a, int(xs_[k]) + 2, int(ys_[k]) + 1, rng, 0.5 * w, topm, dx=1)
+    # contact: where it lies on something drawn before, a dark line under its lowest edge
+    under = np.roll(mask, 1, 0) & ~mask & before
+    under |= np.roll(under, 1, 1) & before & ~mask
+    if occl is not None:
+        under &= occl
+    a[under] = a[under] // 8 * 8 + np.where(a[under] % 8 <= 5, 0, a[under] % 8)
+    return mask
 
 
 def p_rubble(w, h, seed):
-    """Fallen vault stones: dressed blocks of several sizes, each with its top, bevel and front,
-    piled back to front (the big ones at the foot, a split block leaning on them), chips and grit
-    round the heap."""
+    """Fallen vault stones (8 Nov, R-1 to R-4): cut blocks of many sizes (6 to 20 texels), each with a
+    top plane, a lit west face, a south face and a dark east face, one face of each a rough fracture;
+    the big ones on the floor, smaller ones lying on them askew or on edge, every upper block seated
+    with a contact line on what it lies on; pebbles in three tones round the heap."""
     V = _v()
-    q = V.q
+    q, code = V.q, V.code
+    from scripts.art.native.raster import Grid
     rng = np.random.default_rng(seed)
     p = V._pic(w, h, up=h * 1.1, side=3)
     a, cx, yb = p.a, p.ax, p.ay
-    items = []
-    n = max(4, int(w * h / 40))
-    for k in range(n):
-        fx = rng.uniform(-0.5, 0.5)
-        fy = rng.random() ** 0.6
-        items.append((fy, fx))
-    items.sort()
-    for fy, fx in items:
-        bw = q(rng.uniform(4, 8.5) * (0.7 + 0.5 * fy))
-        bh = q(rng.uniform(2.6, 4.2) * (0.7 + 0.4 * fy))
-        top = max(3, int(bh * rng.uniform(0.35, 0.55)))
-        hump = (1 - (2 * fx) ** 2) * q(h * 0.6)
-        x = int(cx + fx * q(w) - bw / 2)
-        y = int(yb - q(h) * (1 - fy) * 0.55 - hump * (1 - fy) - bh)
-        cut_block(a, x, y, x + bw, y + bh, top, str(rng.choice(['stone', 'stone_warm', 'stone_cool'])),
-                  int(rng.choice([2, 3, 3])), rng)
-    for _ in range(int(w / 2)):
-        x = cx + int(rng.integers(-q(w / 2) - q(3), q(w / 2) + q(3)))
-        y = yb - int(rng.integers(0, q(2.5)))
-        V.blk(a, x, y - 2, x + int(rng.integers(3, 6)), y + 1, 'stone', int(rng.choice([2, 3])), cut=0)
+    g = Grid(a.shape[1], a.shape[0], 1.0, 0, 0)
+    fams = ('stone', 'stone_warm', 'stone_cool')
+    span, depth = q(w) * 0.5, q(h) * 0.5
+    blocks = []
+    # the floor layer: three to five big blocks across the footprint, back to front
+    n0 = 3 + int(w >= 20) + int(w >= 26)
+    sizes = [20, 14, 11, 9, 16, 8][:n0]
+    rng.shuffle(sizes)
+    for k in range(n0):
+        fx = -span * 0.62 + 1.24 * span * (k + rng.uniform(0.3, 0.7)) / n0
+        fy = rng.uniform(-depth * 0.35, depth * 0.4)
+        bw = sizes[k] * (0.8 + 0.2 * (w / 28)) * rng.uniform(0.9, 1.1)
+        blocks.append(dict(x=cx + fx, y=yb - depth * 0.6 + fy, w=bw, d=bw * rng.uniform(0.55, 0.8), h=rng.uniform(4.5, 7),
+                           ang=rng.choice([-1, 1]) * rng.uniform(0.15, 0.75), lvl=0))
+    # the upper layer: smaller blocks resting on the floor layer, some askew, one on edge
+    n1 = 1 + int(w >= 20) + int(w >= 26)
+    for k in range(n1):
+        b = blocks[int(rng.integers(0, n0))]
+        on_edge = k == 0 and w >= 20
+        blocks.append(dict(x=b['x'] + rng.uniform(-3, 3), y=b['y'] - rng.uniform(0, 2), w=rng.uniform(7, 10) if not on_edge else 7,
+                           d=rng.uniform(5, 7) if not on_edge else 3.5, h=rng.uniform(3.5, 5) if not on_edge else 8,
+                           ang=rng.uniform(-0.7, 0.7), lvl=b['h'] - 1, tilt=0.0))
+    blocks.sort(key=lambda b: (b['lvl'] > 0, b['y']))
+    for b in blocks:
+        base = (b['x'], b['y'] - b['lvl'])
+        stone_box(a, g, base, b['w'], b['d'], b['h'], b['ang'], str(rng.choice(fams)), 3,
+                  rng, rough=int(rng.integers(0, 3)), tilt=b.get('tilt', 0.0))
+    # pebbles and chips round the heap, each in three tones: a lit crown, a body, a dark foot
+    for _ in range(int(w / 1.6)):
+        x = int(cx + rng.uniform(-span - q(2), span + q(2)))
+        y = int(yb - rng.uniform(0, depth * 0.8))
+        if not (2 <= x < a.shape[1] - 5 and 3 <= y < a.shape[0] - 2) or (a[y - 2:y + 2, x - 1:x + 5] >= 0).any():
+            continue
+        f = str(rng.choice(fams))
+        ww = int(rng.integers(3, 6))
+        lift = int(rng.integers(0, 2))
+        a[y - 1 - lift, x + int(rng.integers(0, 2)):x + ww - 1] = code(f, 4)
+        if lift:
+            a[y - 1, x:x + ww] = code(f, 3)
+        a[y, x:x + ww] = code(f, 3 if rng.random() < 0.6 else 2)
+        a[y, x + ww - 1] = code(f, 2)
+        a[y + 1, x + 1:x + ww - int(rng.integers(0, 2))] = code(f, 1)
     return V.finish(p)
 
 
 def p_roots(w, h, seed):
-    """Roots come down through the vault and lie over the floor: thick runners from one knot,
-    sinuous and tapering, over clods of spilled soil and a few fallen stones."""
+    """Roots come down through the vault and lie over the floor: thick runners from one knot, sinuous
+    and tapering, overlapping with occlusion. Round 5 (8 Nov, RT-1 to RT-3): few, uneven rootlets that
+    taper and bend, lit on top, their tips running in under the floor; fallen stones with a top plane,
+    faces and a contact line; a dark contact line on the floor under every strand."""
     V = _v()
-    q = V.q
+    q, code = V.q, V.code
+    from scripts.art.native.raster import Grid
     rng = np.random.default_rng(seed)
     p = V._pic(w, h, up=6, side=10)
     a, cx, yb = p.a, p.ax, p.ay
-    for _ in range(int(w / 6)):
-        sx = cx + q(rng.uniform(-w / 2.4, w / 2.4))
-        sy = yb - q(rng.uniform(0.5, h * 0.7))
-        V.blk(a, sx, sy, sx + q(rng.uniform(2, 3.4)), sy + q(rng.uniform(1.4, 2.2)), 'stone_cool', int(rng.choice([2, 3])), cut=1)
+    g = Grid(a.shape[1], a.shape[0], 1.0, 0, 0)
     allm = np.ones(a.shape, bool)
-    knot = (cx + q(rng.uniform(-2, 2)), yb - q(h * 0.75))
-    for k in range(4):
-        ang = (-0.15, 0.25, 0.85, 1.15)[k] * math.pi + rng.uniform(-0.15, 0.15)
+    knot = (cx + q(rng.uniform(-2, 2)), yb - q(h * 0.6))
+    for k in (1, 2, 0, 3):                          # the short runners first: the long ones lie over them
+        ang = (-0.12, -0.62, 0.93, 1.12)[k] * math.pi + rng.uniform(-0.08, 0.08)
         pts = [knot]
-        L = w * (0.55 if k in (0, 3) else 0.35)
+        L = w * (0.55 if k in (0, 3) else (0.16 if k == 1 else 0.34))
         for i in range(1, 6):
             t = i / 5
             wob = math.sin(t * 5 + k) * q(1.6)
             pts.append((knot[0] + math.cos(ang) * q(L) * t, knot[1] + math.sin(ang) * q(h * 0.5) * t + wob))
-        root(a, pts, q(3.0 if k in (0, 3) else 2.3), q(1.0), allm, rng, base=2, lets=3)
+        rm = root(a, pts, q(3.0 if k in (0, 3) else 2.0), q(1.0), allm, rng, base=2, lets=(1, 0, 0, 1)[k] + int(w > 27))
+        if k in (1, 2):                             # occlusion where a long runner will lie over it
+            a[ndi.binary_dilation(rm, iterations=1) & ~rm & (a >= 0) & (a // 8 == V.FI['earth_warm'])] = code('earth_warm', 0)
+        tx, ty = pts[-1]                            # its tip goes in under the floor: the dark of the hole it went into
+        a[int(ty):int(ty) + 2, int(tx) - 1:int(tx) + 2] = code('earth_cool', 0)
+    # contact: a dark line on the floor under every strand
+    low = np.zeros(a.shape, bool)
+    low[int(yb - q(h) * 0.7):, :] = True
+    rt = a >= 0
+    under = np.roll(rt, 1, 0) & ~rt & low
+    a[under | (np.roll(under, 1, 1) & ~rt & low)] = code('earth_cool', 0)
+    # a fallen stone or two beside them (RT-2)
+    for k in range(1 + int(w > 26)):
+        sx = cx + (q(w) * (0.28 if k == 0 else -0.3)) + q(rng.uniform(-1, 1))
+        sy = yb - q(rng.uniform(0.2, 0.8))
+        sz = rng.uniform(6, 8)
+        stone_box(a, g, (sx, sy), sz, sz * 0.7, rng.uniform(3, 4.5), rng.uniform(-0.6, 0.6), 'stone_cool', 2, rng, rough=0)
     return V.finish(p)
 
 
@@ -667,12 +1034,11 @@ def p_urn(w, h, seed):
     g = sp.g
     sp.add('body', g.ellipse(0, -18, 15, 17) | g.rrect(-7, -38, 7, -28, 2), 'clay', base=2, z=0, flat=True)
     sp.add('rim', g.ellipse(0, -39, 9.5, 3.6), 'clay', base=4, z=1, k=0.8)
-    sp.add('mouth', g.ellipse(0, -39.5, 6.5, 2.0), 'soot', base=1, z=2, fixed=1, outline=False)
+    sp.add('mouth', g.ellipse(0, -39.3, 6.6, 2.2), 'clay', base=1, z=2, fixed=1, outline=False)
     for sx in (-1, 1):
         sp.add('lug%d' % sx, g.capsule(sx * 9, -33, sx * 14, -28, 2.4, 2.0), 'clay', base=3, z=-0.5, k=0.8)
     band = (g.ellipse(0, -18, 15.2, 17.2) & (g.Y > -24) & (g.Y < -20.5))
-    sp.add('band', band, 'clay_cool', base=2, z=0.5, k=0.8)
-    sp.add('chip', g.poly([(5, -30), (10, -27), (7, -24)]), 'sand', base=4, z=0.6, k=0.6)
+    sp.add('band', band, 'clay_cool', base=2, z=0.5, k=0.8, flat=True, lo=0, hi=4)
     sp.add('foot', g.ellipse(0, -1.5, 9, 2.5), 'clay_cool', base=2, z=-0.2)
     body = sp.part('body')
     body.lo, body.hi = 0, 5
@@ -691,6 +1057,12 @@ def p_urn(w, h, seed):
     sp.mark('body', (uu > 0.86) & (uu < 0.95), -1)
     sp.mark('body', g.Y < -30, 1)                            # the shoulder turns up to the light
     sp.mark('body', g.ellipse(-6, -24, 3, 4), 1)              # the glaze catches the light
+    ub = (g.X + 15.2) / 30.4                                 # the band is turned as the body is (UR-3)
+    sp.mark('band', (ub > 0.12) & (ub < 0.42), 2)
+    sp.mark('band', (ub <= 0.12) | ((ub >= 0.42) & (ub < 0.62)), 1)
+    sp.mark('band', ub > 0.8, -1)
+    sp.mark('band', g.Y < -23.3, 1)                          # its upper edge catches the light, its lower in shade
+    sp.mark('band', g.Y > -21.2, -1)
     img = sp.render()
     p = V.Pic(W, H, W // 2, H - int(round(4 * s)) - 1)
     from .palette import code_of, FI
@@ -701,59 +1073,204 @@ def p_urn(w, h, seed):
             p.a[y, x] = FI['soot'] * 8 + 0
         elif e is not None:
             p.a[y, x] = FI[e[0]] * 8 + int(e[1])
-    weather(p.a, p.a >= 0, np.random.default_rng(seed), 1.0, moss=False)
+    a = p.a
+    Y, X = np.mgrid[0:H, 0:W]
+    rng = np.random.default_rng(seed)
+    # the lit break (house-style.md): where the outline closes the lit west side, it is the clay's tone 1
+    ink = a == V.FI['soot'] * 8
+    westlit = ink & (np.roll(a, -1, 1) >= 0) & (np.roll(a, -1, 1) // 8 != V.FI['soot']) & (np.roll(a, -1, 1) % 8 >= 3)
+    westlit &= X < W * 0.5
+    a[westlit] = V.code('clay', 1)
+    for y_ in range(H):                                       # the west side is the lit side: no shade just inside it
+        xs_ = np.nonzero(a[y_] >= 0)[0]
+        if len(xs_) > 4:
+            x_ = xs_[0] + 1
+            if a[y_, x_] // 8 == V.FI['clay'] and a[y_, x_] % 8 <= 1:
+                a[y_, x_] = V.code('clay', 2)
+    cxp, my = W / 2, H - 4 * s - 39.3 * s
+    # the mouth (UR-1): an ellipse, the far inner wall lit, the near inner wall in shade, dark at the bottom
+    mo = ((X + 0.5 - cxp) / (6.8 * s)) ** 2 + ((Y + 0.5 - my) / (2.6 * s)) ** 2 <= 1
+    yy = (Y + 0.5 - my) / (2.6 * s)                          # -1 at the far lip, +1 at the near lip
+    a[mo] = V.code('clay', 1)
+    a[mo & (yy < -0.2)] = V.code('clay', 3)                  # the far inner wall, lit
+    a[mo & (yy < -0.2) & (X + 0.5 < cxp - 1 * s)] = V.code('clay', 4)
+    deep = ((X + 0.5 - cxp) / (4.2 * s)) ** 2 + ((Y + 0.5 - my - 0.7 * s) / (1.2 * s)) ** 2 <= 1
+    a[mo & deep] = V.code('clay', 0)                         # the dark below, under the near lip
+    a[mo & deep & (np.abs(X + 0.5 - cxp) < 2.6 * s) & (yy > 0.3)] = V.code('soot', 0)
+    tex(a, (a // 8 == V.FI['clay']) & (a % 8 <= 5) & ~mo, rng, share=0.3, up=0.0, down=0.06)
+    # the glint on the shoulder at the upper left (UR-2): a lit pair over its tone-4 halo
+    gx, gy = int(cxp - 7 * s), int(H - 4 * s - 32 * s)
+    a[gy:gy + 2, gx:gx + 2][a[gy:gy + 2, gx:gx + 2] >= 0] = V.code('sand', 5)
+    a[gy, gx + 2] = V.code('sand', 4)
+    # chips knocked out of the body (UR-4): the paler clay inside, a dark north lip over it
+    for (dx, dy, w_) in ((-12, -12, 4), (7, -8, 3)):
+        x0, y0 = int(cxp + dx * s), int(H - 4 * s + dy * s)
+        sel = np.zeros(a.shape, bool)
+        sel[y0:y0 + 2, x0:x0 + w_] = True
+        sel[y0 + 2, x0 + 1:x0 + w_ - 1] = True
+        sel &= a >= 0
+        a[sel] = V.code('sand', 3 if dx < 0 else 2)
+        lip = np.roll(sel, -1, 0) & ~sel & (a >= 0)
+        a[lip] = V.code('clay', 1)
+        a[np.roll(sel, 1, 0) & ~sel & (a >= 0)] = V.code('clay', 2)
     return p
 
 
+# the two broken pillars differ (8 Nov, ST-3): where the break falls, how high, and what lies at the foot
+_PILLARS = {0: dict(top=62, teeth=(3, 9, 5, 7, 1), lean=0.25, debris='drum'),
+            1: dict(top=48, teeth=(1, 4, 11, 6, 2), lean=-0.2, debris='chips')}
+
+
 def p_stump(w, h, seed):
-    """A broken pillar of the old vault on its square plinth: a fluted drum shaded as a cylinder (lit
-    left, shade and core shadow right), its jagged break a lit top plane with the flutes' ends showing,
-    a fallen drum piece and chips at its base."""
-    from scripts.art.native import raster as R
+    """A broken pillar of the old vault on its square plinth (8 Nov, ST-1 to ST-3). The fluted drum is
+    shaded as a cylinder (a lit band left of centre, the core shadow right); where it broke, a rough
+    top plane inside the column's ellipse: lit facets to the north-west, pits, and a dark rim to the
+    south-east, with the teeth of the far side standing above it, their fracture faces turned to us.
+    The plinth has a lit top and arris, chipped corners and the shaft's occlusion where it stands on
+    it. One pillar keeps a fallen drum at its foot, the other a scatter of chips and a broken slab."""
     V = _v()
+    code = V.code
     rng = np.random.default_rng(seed)
     s = ctx.D / 3.0
     W, H = int(round(84 * s)), int(round(104 * s))
-    sp = R.Sprite(W, H, s, W / 2, H - 6 * s)
-    g = sp.g
-    r = w * 3 / 2 - 3
-    sp.add('plinth_top', g.rect(-r - 6, -16, r + 6, -9), 'stone', base=3, z=0, flat=True, lo=0, hi=5)
-    sp.add('plinth', g.rect(-r - 6, -9, r + 6, 0), 'stone', base=2, z=0.1, flat=True, lo=0, hi=5)
-    up_ = (g.X + r + 6) / (2 * r + 12)
-    for nm in ('plinth_top', 'plinth'):                     # the plinth lit from the left too
-        sp.mark(nm, (up_ > 0.08) & (up_ < 0.4), 1)
-        sp.mark(nm, up_ > 0.8, -1)
-    xs = np.linspace(-r, r, 9)
-    brk = [(x, -70 + 9 * math.sin(x * 0.35 + seed) + x * 0.35) for x in xs]
-    shaft = g.poly([(-r, -12)] + brk + [(r, -12)])
-    sp.add('shaft', shaft, 'stone', base=1, z=1, flat=True, lo=0, hi=5)
-    sp.mark('shaft', (g.X + r) / (2 * r) < 0.66, 1)
-    u = (g.X + r) / (2 * r)                                  # across the drum, light from the left
-    sp.mark('shaft', (u > 0.1) & (u < 0.42), 2)
-    sp.mark('shaft', ((u <= 0.1) | ((u >= 0.42) & (u < 0.66))), 1)
-    sp.mark('shaft', u > 0.88, -1)
-    for fx in np.linspace(-r + 4, r - 4, 6):                 # flutes: a shadowed groove, its far edge lit
-        sp.mark('shaft', g.rect(fx - 0.9, -80, fx + 0.4, -14), -1)
-        sp.mark('shaft', g.rect(fx + 0.4, -80, fx + 1.3, -14), 1)
-    top = np.zeros_like(shaft)
-    for (xa, ya), (xb, yb) in zip(brk, brk[1:]):
-        top |= g.poly([(xa, ya), (xb, yb), (xb, yb + 5), (xa, ya + 5)])
-    sp.add('break', top & shaft, 'stone_warm', base=3, z=1.5, mode='top')
-    for k in range(3):
-        cx = r + 9 + k * 4 + rng.uniform(-1, 1)
-        sp.add('chip%d' % k, g.ellipse(cx, -2 - (k % 2) * 2, 2.4, 1.8), 'stone_cool', base=1, z=2.2)
-    pic = _sprite_pic(sp.render(), W, H, int(round(H - 6 * s)))
-    left = np.zeros(pic.a.shape, bool)
-    left[:, :pic.a.shape[1] // 2] = True                   # age on the lit side only: the shade side stays dark
-    weather(pic.a, (pic.a >= 0) & left, rng, 1.4, moss=True)
-    return V.finish(pic)
+    ay = int(round(H - 6 * s))
+    p = V.Pic(W, H, W // 2, ay)
+    a = p.a
+    cfg = _PILLARS[seed % 2]
+    Y, X = np.mgrid[0:H, 0:W] + 0.5
+    cx, by = W / 2, ay + 0.5                       # by: the plinth's foot
+    r = (w * 3 / 2 - 3) * s                        # the drum's radius (texels)
+    pr = r + 6 * s
+    mortar = code('stone_cool', 0)
+    # --- the plinth: a top plane (7 rows), a front face (9 rows), lit west, dark east -----------------
+    pt0, pf0 = by - 16 * s, by - 9 * s
+    top = (X >= cx - pr) & (X < cx + pr) & (Y >= pt0) & (Y < pf0)
+    front = (X >= cx - pr) & (X < cx + pr) & (Y >= pf0) & (Y < by)
+    a[top] = code('stone', 4)
+    a[front] = code('stone', 3)
+    u = (X - (cx - pr)) / (2 * pr)
+    a[front & (u > 0.78)] = code('stone', 2)
+    a[front & (u > 0.92)] = code('stone', 1)
+    a[front & (u < 0.06)] = code('stone', 4)
+    a[top & (u > 0.86)] = code('stone', 3)
+    a[(Y >= pf0) & (Y < pf0 + 1) & (X >= cx - pr + 1) & (X < cx + pr - 2)] = code('stone', 5)   # the lit arris
+    for k in range(int(cx - pr + 7), int(cx + pr - 4), 10):
+        a[int(pf0), k:k + 2] = code('stone', 4)                               # worn in places
+    a[(Y >= by - 2) & front] = code('stone', 1)                               # the foot
+    tex(a, front & (Y < by - 2) & (u < 0.9), rng, share=0.4)
+    tex(a, top, rng, share=0.35)
+    chip(a, int(cx - pr), int(pt0), 'nw', mortar)
+    chip(a, int(cx + pr) - 1, int(by) - 1, 'se', mortar)
+    chip(a, int(cx + pr) - 1, int(pf0) + 1, 'ne', mortar)
+    crack(a, int(cx + pr) - 4, int(pf0) + 3, rng, 7, front, dx=-1)
+    # --- the shaft --------------------------------------------------------------------------------
+    ytop = by - cfg['top'] * s
+    ery = r * 0.38                                  # the column's ellipse, seen from above at 3/4
+    base_y = pt0 + 3.5 * s
+    shaft = (np.abs(X - cx) <= r) & (Y <= base_y + ery * np.sqrt(np.clip(1 - ((X - cx) / r) ** 2, 0, 1))) & \
+            (Y >= ytop + ery * np.sqrt(np.clip(1 - ((X - cx) / r) ** 2, 0, 1)))
+    uc = (X - cx + r) / (2 * r)
+    tt = np.select([uc < 0.1, uc < 0.42, uc < 0.62, uc < 0.84], [3, 4, 3, 2], 1)
+    a[shaft] = (V.FI['stone'] * 8 + tt)[shaft]
+    a[shaft & (uc > 0.17) & (uc < 0.3)] = code('stone', 5)                    # the highlight's heart
+    for fx in np.linspace(-r + 4 * s, r - 4 * s, 6):                          # flutes: a shaded groove, its far edge lit
+        g_ = shaft & (X >= cx + fx - 0.5) & (X < cx + fx + 0.5)
+        a[g_] = a[g_] // 8 * 8 + np.maximum(0, a[g_] % 8 - 1)
+        l_ = shaft & (X >= cx + fx + 0.5) & (X < cx + fx + 1.5) & (uc < 0.8)
+        a[l_] = a[l_] // 8 * 8 + np.minimum(5, a[l_] % 8 + 1)
+    # the drums' joints, a course apart, dark with a lit lip under them
+    for jy in np.arange(base_y - 22 * s, ytop + 4 * s, -22 * s):
+        jm = shaft & (np.abs(Y - (jy + ery * np.sqrt(np.clip(1 - ((X - cx) / r) ** 2, 0, 1)))) < 0.6)
+        a[jm] = a[jm] // 8 * 8 + np.maximum(0, a[jm] % 8 - 2)
+        a[np.roll(jm, 1, 0) & shaft & ~jm] = code('stone', 4)
+    # occlusion where the shaft stands on the plinth: a dark band round its foot, deepest east
+    occ = top & ~shaft & (((X - cx) / (r + 2.5)) ** 2 + ((Y - base_y) / (ery + 2)) ** 2 <= 1) & (Y > base_y - 1)
+    a[occ] = code('stone', 2)
+    a[occ & (X > cx)] = code('stone', 1)
+    footm = shaft & (Y > base_y + ery * np.sqrt(np.clip(1 - ((X - cx) / r) ** 2, 0, 1)) - 2.5)
+    a[footm] = a[footm] // 8 * 8 + np.maximum(0, a[footm] % 8 - 1)
+    tex(a, shaft & (uc < 0.86), rng, share=0.25)
+    # --- the break: teeth of the far side, then the top plane ----------------------------------------
+    plane = (((X - cx) / r) ** 2 + ((Y - ytop) / ery) ** 2 <= 1)
+    teeth = np.zeros((H, W), bool)
+    xs = np.linspace(-r, r, len(cfg['teeth']) + 1)
+    for k, th in enumerate(cfg['teeth']):
+        xa, xb = xs[k], xs[k + 1]
+        xm = (xa + xb) / 2 + cfg['lean'] * th
+        ya = ytop - ery * np.sqrt(max(0, 1 - (xa / r) ** 2))
+        yb = ytop - ery * np.sqrt(max(0, 1 - (xb / r) ** 2))
+        wd = xb - xa
+        tri = [(cx + xa, ya + 0.6), (cx + xm - 0.22 * wd, ytop - ery - th * s), (cx + xm + 0.12 * wd, ytop - ery - th * s * 0.7),
+               (cx + xb, yb + 0.6)]
+        from scripts.art.native.raster import Grid
+        teeth |= Grid(W, H, 1.0, 0, 0).poly(tri)
+    teeth &= ~plane
+    a[teeth] = code('stone_warm', 3)                                         # the fracture faces, turned to us
+    tu = (X - cx + r) / (2 * r)
+    a[teeth & (tu > 0.62)] = code('stone_warm', 2)
+    a[teeth & (tu > 0.85)] = code('stone_warm', 1)
+    tedge = teeth & ~np.roll(teeth, 1, 0)
+    a[tedge & (tu < 0.6)] = code('stone_warm', 5)                            # their lit crests
+    a[tedge & (tu >= 0.6)] = code('stone_warm', 3)
+    tex(a, teeth, rng, share=0.35, up=0.0)
+    # the top plane: rough, lit facets to the north-west, pits, a dark rim to the south-east
+    pu = (X - cx) / r + (Y - ytop) / ery
+    a[plane] = code('stone_warm', 3)
+    fac = ndi.gaussian_filter(rng.random((H, W)), 1.1)
+    fac = (fac - fac[plane].mean()) / (fac[plane].std() + 1e-9)
+    a[plane & (pu < -0.3) & (fac > -0.3)] = code('stone_warm', 4)
+    a[plane & ndi.binary_opening((pu < -0.75) & (fac > 0.5), structure=np.ones((2, 3), bool))] = code('stone_warm', 5)
+    a[plane & (pu > 0.35) & (fac < 0.3)] = code('stone_warm', 2)
+    rimm = plane & ~ndi.binary_erosion(plane, iterations=1)
+    a[rimm & (pu > 0.1)] = code('stone_warm', 1)                              # the south-east rim in shade
+    a[rimm & (pu <= 0.1) & (Y > ytop)] = code('stone', 5)                    # the near lip lit where it faces the light
+    pits = plane & ~rimm & (fac < -1.25)
+    a[pits] = code('stone_warm', 1)
+    a[np.roll(pits, 1, 0) & plane & ~pits & ~rimm] = code('stone_warm', 4)
+    # --- what lies at the foot ----------------------------------------------------------------------
+    if cfg['debris'] == 'drum':
+        # a fallen drum on its side, east of the plinth: its end face an ellipse with the flutes' notches
+        dx0, dy0 = cx + pr + 2 * s, by - 5 * s
+        body = (X >= dx0) & (X < dx0 + 9 * s) & (np.abs(Y - dy0) <= 5 * s)
+        endf = ((X - dx0) / (2.6 * s)) ** 2 + ((Y - dy0) / (5.2 * s)) ** 2 <= 1
+        vv = (Y - dy0) / (5 * s)
+        a[body] = np.where(vv[body] < -0.4, code('stone', 4), np.where(vv[body] < 0.3, code('stone', 3), code('stone', 2)))
+        a[body & (vv > 0.75)] = code('stone', 1)
+        a[endf] = code('stone_warm', 3)
+        a[endf & ((X - dx0) + (Y - dy0) * 0.5 < -1.5)] = code('stone_warm', 4)
+        a[endf & ~ndi.binary_erosion(endf) & (Y > dy0)] = code('stone_warm', 1)
+        for ny in (-3, 0, 3):
+            a[int(dy0 + ny * s), int(dx0 + 3):int(dx0 + 9 * s)] = code('stone', 2)
+        tex(a, body & ~endf, rng, share=0.3)
+    else:
+        # a broken slab leaning on the plinth's east side, in its shade, and chips round it
+        sx0 = cx + pr - 1
+        slab = [(sx0, by - 1), (sx0 + 1 * s, by - 9 * s), (sx0 + 7 * s, by - 11 * s), (sx0 + 9 * s, by - 1)]
+        from scripts.art.native.raster import Grid
+        sm = Grid(W, H, 1.0, 0, 0).poly(slab) & (a < 0)
+        a[sm] = code('stone_cool', 2)
+        su = (X - sx0) / (10 * s)
+        a[sm & (su < 0.3)] = code('stone_cool', 3)
+        a[sm & (su > 0.75)] = code('stone_cool', 1)
+        a[sm & (Y > by - 3 * s)] = code('stone_cool', 1)
+        a[sm & ~np.roll(sm, 1, 0) & (su < 0.6)] = code('stone_cool', 4)
+        tex(a, sm, rng, share=0.3)
+        for (ox, oy, ww) in ((-pr - 5, -2, 4), (-pr - 10, -4, 3), (pr + 11, -1, 3)):
+            x0, y0 = int(cx + ox * s), int(by + oy * s)
+            if 0 <= x0 < W - ww and 0 < y0 < H - 2:
+                a[y0 - 1, x0:x0 + ww - 1] = code('stone', 4)
+                a[y0, x0:x0 + ww] = code('stone', 3)
+                a[y0 + 1, x0 + 1:x0 + ww] = code('stone', 1)
+    return V.finish(p)
 
 
 def p_shard(w, h, seed):
-    """The woodland's great shard: a long crystal of the moon driven into the floor at a slant. Six
-    facets each catch the upper-left light differently (the lit face, two mid faces, the shadow side),
-    fine fractures run along its length, and broken flags heave up round its foot; a light source,
-    so no outline on the crystal itself."""
+    """The woodland's great shard: a long crystal of the moon driven into the floor at a slant (8 Nov,
+    SH-1). Its faces catch the upper-left light each in its own tone (the lit face, a mid face, the
+    shadow face), the ridges between them lit where they face the light, two or three facet lines
+    inside the faces, cap facets meeting in its point (a tone-4 plane with tone-5 edges towards the
+    light), sparkles in pairs and a one-texel outline in the crystal's edge tone. The heaved flags
+    round its foot are drawn in the ground."""
     V = _v()
     q, code = V.q, V.code
     from scripts.art.native.raster import Grid
@@ -761,109 +1278,257 @@ def p_shard(w, h, seed):
     p = V._pic(w, h, up=32, side=8)
     a, cx, yb = p.a, p.ax, p.ay
     g = Grid(a.shape[1], a.shape[0], 1.0, 0, 0)
-    tip = (cx + q(7), yb - q(31))
-    L, R = (cx - q(5), yb - q(2)), (cx + q(4), yb)
-    ml, mr = (cx - q(3.5), yb - q(18)), (cx + q(6), yb - q(15))
-    mid = (cx + q(0.5), yb - q(5))
-    facets = [([L, ml, tip, mid], 3), ([mid, tip, mr, R], 1), ([L, mid, R], 2),
-              ([ml, (cx - q(1), yb - q(25)), tip], 4), ([mr, tip, (cx + q(7.5), yb - q(22))], 0)]
-    for poly, t in facets:
-        a[g.poly(poly)] = code('dusk', t)
-    for k in range(3):                                         # fractures along the length
-        f0 = (cx - q(2) + k * q(2), yb - q(4))
-        f1 = (cx + q(1) + k * q(2), yb - q(20) - k * q(2))
-        m = line_mask(a.shape, [f0, f1], 0.6) & (a >= 0)
-        a[m] = code('dusk', 1 if k != 1 else 5)
-    a[g.poly([(cx - q(1.5), yb - q(6)), (cx, yb - q(22)), (cx + q(1.5), yb - q(6))])] = code('dusk', 4)
-    lit = a == code('dusk', 3)
     Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
-    for k in range(6):                                         # step facets across the long lit face
-        band = lit & (Y > yb - q(6 + 5 * k)) & (Y < yb - q(3 + 5 * k)) & ((X + Y // 3) % 7 < 4)
-        a[band] = code('dusk', 2 + (k % 2) * 2)
-    tipm = (a >= 0) & (Y < yb - q(20))
-    for k in range(3):                                         # fractures near the tip
-        f0 = (tip[0] - q(2 + k), tip[1] + q(4 + 2 * k))
-        f1 = (tip[0] - q(4 + k), tip[1] + q(10 + 2 * k))
-        a[line_mask(a.shape, [f0, f1], 0.6) & tipm] = code('dusk', 1 + 3 * (k % 2))
-    for _ in range(14):                                        # bright inclusions, in pairs
-        k = int(rng.integers(0, max(1, int((a >= 0).sum()))))
-        ys, xs = np.nonzero(a >= 0)
-        y, x = ys[k], xs[k]
-        a[y:y + 2, x:x + 2] = np.where(a[y:y + 2, x:x + 2] >= 0, code('dusk', 4), a[y:y + 2, x:x + 2])
-    V.tidy(a)
+    # the crystal's axis leans east; its section is a hexagon, three faces towards us
+    foot_l, foot_m, foot_r = (cx - q(5), yb - q(1.5)), (cx + q(0.5), yb + 0), (cx + q(4.5), yb - q(1))
+    top_l, top_m, top_r = (cx + q(1.2), yb - q(27)), (cx + q(5.2), yb - q(26)), (cx + q(8.4), yb - q(28))
+    apex = (cx + q(4.4), yb - q(34))                 # the point: the cap facets meet in it
+    lit = g.poly([foot_l, top_l, top_m, foot_m])
+    mid = g.poly([foot_m, top_m, top_r, foot_r])
+    a[lit] = code('dusk', 3)
+    a[mid] = code('dusk', 2)
+    a[mid & (X > cx + q(3.2))] = code('dusk', 1)     # the shadow side, turning away
+    cap_l = g.poly([top_l, apex, top_m])
+    cap_r = g.poly([top_m, apex, top_r])
+    cap_b = g.poly([top_l, (cx + q(3.0), yb - q(30)), apex])
+    a[cap_b] = code('dusk', 4)
+    a[cap_l] = code('dusk', 4)                       # the cap facet towards the light
+    a[cap_r] = code('dusk', 2)
+    cap = cap_l | cap_r | cap_b
+    # inside the lit face: a broad paler band (a second facet) and the facet lines
+    band = g.poly([(cx - q(3.2), yb - q(1.8)), (cx + q(2.2), yb - q(26.6)), (cx + q(3.4), yb - q(26.4)), (cx - q(1.4), yb - q(1.2))])
+    a[band & lit] = code('dusk', 4)
+    for k, (f0, f1, t) in enumerate((((cx - q(1.0), yb - q(4)), (cx + q(2.8), yb - q(20)), 2),
+                                      ((cx + q(2.2), yb - q(3)), (cx + q(6.2), yb - q(18)), 3),
+                                      ((cx - q(3.6), yb - q(8)), (cx - q(0.6), yb - q(19)), 5))):
+        m = line_mask(a.shape, [f0, f1], 0.55) & (lit | mid) & ~cap
+        a[m] = code('dusk', t if not (k == 1) else 3)
+    # the ridges: lit where they face the light, the cap's edge brightest
+    ridge = line_mask(a.shape, [foot_m, top_m], 0.7) & (lit | mid)
+    a[ridge] = code('dusk', 5)
+    a[line_mask(a.shape, [top_l, apex], 0.7) & cap] = code('dusk', 5)    # the cap's lit edges
+    a[line_mask(a.shape, [top_m, apex], 0.6) & cap] = code('dusk', 5)
+    ledge = line_mask(a.shape, [foot_l, top_l], 0.7) & lit
+    a[ledge & (Y < yb - q(10))] = code('dusk', 4)
+    # sparkles in pairs, on the lit face and the cap
+    for (sx, sy) in ((cx - q(1.5), yb - q(15)), (cx + q(1.2), yb - q(23)), (cx + q(3.2), yb - q(29.0))):
+        sx, sy = int(sx), int(sy)
+        a[sy, sx:sx + 2] = code('snow', 4)
+        a[sy - 1, sx] = code('snow', 5)
+    # growth steps across the faces: short facets a sibling over (shape without value noise), the inner
+    # planes a tone apart, inclusions in pairs, and the light coming back through the crystal along
+    # its shadowed east edge
+    body = (lit | mid) & ~cap & (a % 8 <= 5)
+    for k in range(7):
+        yy = yb - q(3 + 3.6 * k)
+        stepm = body & (Y > yy - q(1.2)) & (Y < yy) & (((X - Y // 2) // q(2.2)) % 3 == k % 3)
+        a[stepm] = V.FI['dusk_cool'] * 8 + a[stepm] % 8
+    inner = mid & ~cap & (X > cx + q(4.6)) & (Y < yb - q(6)) & (Y > yb - q(24))
+    a[inner & (a == code('dusk', 1))] = code('dusk_cool', 2)
+    back = mid & ~ndi.binary_erosion(mid, iterations=2) & (X > cx + q(5)) & ~np.roll(mid, -2, 1)
+    a[back & (Y < yb - q(4)) & (Y > yb - q(25))] = code('dusk', 3)             # light back through the crystal
+    for (ix, iy, t) in ((-2.4, 9, 4), (0.4, 13, 4), (-0.6, 19, 2), (2.8, 9.5, 3), (4.4, 15, 3), (5.6, 21, 2), (1.6, 6, 5)):
+        x_, y_ = int(cx + q(ix)), int(yb - q(iy))
+        if body[y_, x_]:
+            a[y_, x_:x_ + 2] = code('dusk_cool', t)
+    # fractures near the foot, where it went in
+    for k in range(2):
+        f0 = (cx - q(3.5) + k * q(5), yb - q(1))
+        f1 = (f0[0] + q(1.2), yb - q(6))
+        m = line_mask(a.shape, [f0, f1], 0.55) & (lit | mid)
+        a[m] = code('dusk', 1)
+    V.tidy(a, keep=(a == code('snow', 4)) | (a == code('snow', 5)))
+    V.outline(a)
     return p
 
+
+# the flame's tongues per frame: (x offset of the tongue's foot, its lean, its height, its foot radius),
+# texels at density 3. They part and rejoin over the four frames: frame 1 splits a west tongue off the
+# main one, frame 2 lifts the main tongue and draws the east one in, frame 3 parts the east tongue.
+_TONGUES = (
+    ((0.0, 0.6, 29, 4.4), (-2.4, -2.0, 18, 2.4), (2.2, 1.2, 14, 2.0)),
+    ((0.4, -1.4, 26, 4.2), (-3.0, -4.2, 21, 2.2), (2.4, 1.8, 12, 1.8)),
+    ((-0.2, 1.6, 32, 4.2), (-2.0, -1.0, 13, 2.0), (1.8, 3.6, 20, 2.2)),
+    ((0.2, -0.4, 28, 4.4), (-2.6, -2.6, 16, 2.2), (2.8, 4.6, 19, 2.0)),
+)
+_CORE = ((-0.6, 0), (0.8, -1), (-1.0, 1), (0.6, 0))          # the white core's offset frame by frame (x, lift)
+_EMBERS = (((5, -38),), ((-6, -36), (4, -42)), ((-3, -44),), ((7, -34), (-5, -41)))
+
+
 def p_torch(frame, seed):
-    """A wall torch: an iron bracket on the face, a cup of pitch and its flame. Four drawings of the
-    flame (it leans and lifts) for a finite flicker; the bracket never moves. The canvas's foot is
-    the cup; the flame is a light source (no outline)."""
+    """A wall torch (8 Nov, T-1, T-2): an iron wall plate with two rivets, an arm out from it, a cup
+    with a lit elliptical rim, its inside dark and a wad of pitch-soaked rag in it, and the flame: two
+    or three tongues that part and rejoin over four frames (a finite flicker; the plate and cup never
+    move), deep red-orange at their foot, the white core moving from frame to frame, embers rising
+    in pairs. The canvas's foot is the cup; the flame is a light source (no outline)."""
     V = _v()
     q, code = V.q, V.code
     W, H = q(10), q(22)
     p = V.Pic(W, H, W // 2, H - q(6))
     a, cx, cy = p.a, p.ax, p.ay
-    V.blk(a, cx - q(1.8), cy + q(2.2), cx + q(1.8), cy + q(6.4), 'iron', 2, cut=1)    # the plate on the wall
-    for ry in (2.9, 5.2):
-        V.fill(a, cx - q(1.1), cy + q(ry), cx - q(1.1) + 2, cy + q(ry) + 2, code('iron', 4))   # rivets into the joint
-        V.fill(a, cx + q(0.6), cy + q(ry), cx + q(0.6) + 2, cy + q(ry) + 2, code('iron', 4))
-    V.bar(a, cx, cy + q(3.6), cx, cy + q(0.6), q(0.6), 'iron', 3)                      # the arm out from the wall
-    V.bar(a, cx, cy + q(3.0), cx + q(1.2), cy + q(1.2), q(0.45), 'iron', 2)            # its strut
-    cup = V.ellipse_mask(a.shape, cx, cy - q(0.4), q(2.4), q(1.6)) & (np.mgrid[0:a.shape[0], 0:a.shape[1]][0] >= cy - q(1.4))
-    V.blob(a, cup, 'iron', 3)
-    for bx in (-1.4, 0.6):                                                              # the basket's straps
-        V.fill(a, cx + q(bx), cy - q(1.3), cx + q(bx) + 2, cy + q(0.9), code('iron', 1))
-    V.fill(a, cx - q(2.4), cy - q(1.4), cx + q(2.4), cy - q(1.4) + 2, code('iron', 4))  # the lit rim
-    a[V.ellipse_mask(a.shape, cx, cy - q(1.9), q(1.9), q(0.6))] = code('soot', 1)       # pitch in the cup
+    Y, X = np.mgrid[0:H, 0:W] + 0.5
+    # the wall plate: a sheen to the upper left, lit top edge, dark foot and east edge, two rivets
+    px0, px1, py0, py1 = cx - 4, cx + 4, cy + 7, cy + 18
+    pl = (X >= px0) & (X < px1) & (Y >= py0) & (Y < py1)
+    dg = (X - px0) / 8 + (Y - py0) / 11
+    a[pl] = np.where(dg[pl] < 0.6, code('iron', 3), np.where(dg[pl] < 1.3, code('iron', 2), code('iron', 1)))
+    a[pl & (Y < py0 + 1)] = code('iron', 4)
+    a[pl & (X < px0 + 1) & (Y >= py0 + 1)] = code('iron', 3)
+    a[pl & (Y >= py1 - 1)] = code('iron', 0)
+    a[pl & (X >= px1 - 1)] = code('iron', 1)
+    for ry in (py0 + 2, py1 - 4):
+        a[ry, cx - 1:cx + 1] = code('iron', 5) if ry < py0 + 5 else code('iron', 4)
+        a[ry + 1, cx - 1:cx + 1] = code('iron', 0)
+    # the arm: out from the plate and up to the cup, a curl to the east (a forged bracket)
+    arm = V.seg_mask(a.shape, cx - 0.5, cy + 8, cx - 0.5, cy + 2, 1.3)
+    a[arm] = code('iron', 2)
+    a[arm & (X < cx)] = code('iron', 4)
+    a[arm & (X >= cx + 1)] = code('iron', 1)
+    curl = V.seg_mask(a.shape, cx + 1, cy + 7, cx + 5, cy + 5, 0.8) | V.seg_mask(a.shape, cx + 5, cy + 5, cx + 5, cy + 3, 0.8)
+    curl &= ~arm
+    a[curl] = code('iron', 2)
+    a[curl & (np.roll(curl, 1, 0) == 0)] = code('iron', 3)
+    # the cup: an iron bowl, round in section (lit west, core shadow east), its rim an ellipse
+    bowl = V.ellipse_mask(a.shape, cx, cy - 1, 6.2, 3.8) & (Y >= cy - 1)
+    u = (X - (cx - 6.2)) / 12.4
+    tt = np.where(u < 0.18, 3, np.where(u < 0.45, 4, np.where(u < 0.7, 2, 1)))
+    a[bowl] = (V.FI['iron'] * 8 + tt)[bowl]
+    a[bowl & (Y >= cy + 2)] = np.minimum(a[bowl & (Y >= cy + 2)], code('iron', 2))
+    for bx in (-3, 2):                                     # the bowl's straps, forged on
+        st = (X >= cx + bx) & (X < cx + bx + 1) & bowl & (Y > cy)
+        a[st] = code('iron', 1)
+    rim = V.ellipse_mask(a.shape, cx, cy - 1, 6.6, 2.2)
+    inside = V.ellipse_mask(a.shape, cx, cy - 1.2, 4.8, 1.2)
+    a[rim] = code('iron', 3)
+    a[rim & (X < cx - 1)] = code('iron', 4)
+    a[rim & (Y < cy - 1.5) & (X < cx + 2)] = code('iron', 5)                 # the far rim catches the light
+    a[rim & (Y > cy - 0.5) & (X > cx + 1)] = code('iron', 2)
+    a[inside] = code('soot', 0)
+    # the rag: a wad of pitch-soaked cloth in the cup, its folds lit by the flame
+    rag = V.ellipse_mask(a.shape, cx - 0.3, cy - 3.0, 3.8, 1.9) & ~(Y > cy - 0.8)
+    a[rag] = code('soot', 2)
+    a[rag & (X < cx)] = code('soot', 3)
+    a[rag & (Y < cy - 3.6)] = code('earth_cool', 2)
+    a[rag & (Y < cy - 3.6) & (X > cx + 1)] = code('earth_cool', 1)
     V.outline(a)
-    lean = (0, 1, 0, -1)[frame % 4]
-    hgt = (9.0, 10.5, 8.0, 10.0)[frame % 4]
-    base_y = cy - q(2)
-    outer = np.zeros(a.shape, bool)
-    mid = np.zeros(a.shape, bool)
-    inner = np.zeros(a.shape, bool)
-    for i in range(10):
-        t = i / 9
-        r = q(2.6) * (1 - t) ** 0.8 + 0.6
-        x = cx + lean * q(1.4) * t * t
-        y = base_y - q(hgt) * t
-        outer |= V.ellipse_mask(a.shape, x, y, r, r)
-        if t < 0.7:
-            mid |= V.ellipse_mask(a.shape, x, y, r * 0.66, r * 0.66)
-        if t < 0.4:
-            inner |= V.ellipse_mask(a.shape, x, y, r * 0.38, r * 0.5)
-    a[outer] = code('lava', 3)
-    a[mid] = code('lamp', 4)
-    a[inner] = code('lamp', 5)
-    if frame % 2 == 0:
-        sx = cx + (q(2) if frame == 0 else -q(2))
-        V.fill(a, sx, base_y - q(hgt) - q(2), sx + 2, base_y - q(hgt) - q(2) + 2, code('lamp', 5))
-    V.tidy(a)
+    # the flame
+    base_y = cy - 5
+    tongues = _TONGUES[frame % 4]
+    body = np.zeros(a.shape, bool)
+    heart = np.zeros(a.shape, bool)
+    for k, (fx, lean, hgt, r0) in enumerate(tongues):
+        for i in range(24):
+            t = i / 23
+            r = r0 * (1 - t) ** 0.85 + 0.35
+            x = cx + fx + lean * t * t + (0.8 * math.sin(t * 5 + frame + k) * t if k else 0)
+            y = base_y - hgt * t
+            e = ((X - x) / r) ** 2 + ((Y - y) / (r * 1.25)) ** 2 <= 1
+            body |= e
+            if k == 0 and t < 0.62:
+                heart |= ((X - x) / (r * 0.62)) ** 2 + ((Y - y) / (r * 0.8)) ** 2 <= 1
+    body &= Y < cy - 4.3
+    hgt0 = tongues[0][2]
+    lift = (base_y - Y) / hgt0                                           # 0 at the foot, 1 at the main tip
+    a[body] = code('lava', 3)
+    inner = ndi.binary_erosion(body, iterations=2)
+    a[inner] = code('lamp', 3)
+    rim_f = body & ~ndi.binary_erosion(body, iterations=1)
+    a[rim_f & (lift < 0.3)] = code('lava', 2)                            # deep red-orange round the foot
+    a[body & (lift < 0.05)] = code('lava', 2)
+    a[rim_f & (lift < 0.12)] = code('lava', 1)
+    a[heart & (lift > 0.08)] = code('lamp', 4)
+    ox, ol = _CORE[frame % 4]
+    core = ((X - cx - ox) / 1.7) ** 2 + ((Y - (base_y - 8 + ol)) / 3.6) ** 2 <= 1
+    a[core & body] = code('lamp', 5)
+    edge = body & ~ndi.binary_erosion(body)
+    a[edge & (lift > 0.55)] = code('lava', 4)                            # the tips thin to pale orange
+    for ex, ey in _EMBERS[frame % 4]:
+        ex_, ey_ = cx + ex, cy + ey
+        if 0 <= ey_ < H - 1 and 0 <= ex_ < W - 1:
+            a[ey_:ey_ + 2, ex_] = code('lamp', 4)                         # an ember: a pair
+    V.tidy(a, keep=(a // 8 == V.FI['lamp']) & (Y < base_y - hgt0))
     return p
 
 
-def sigil(a, cx, cy, r, lit):
-    """The starfall sigil carved in stone: a ring and a four-pointed star; glowing while it holds."""
+def slab_top(a, x0, y0, x1, y1, fam, t, rng, mortar, lip=2, chips=2, cracks=1, texture=0.5):
+    """A flag or slab seen from above (8 Nov, SE-1, G-3): calm, one tone of its stone with sibling
+    clusters, a lit north and west lip a tone up (broken where it is worn), a south and east lip a
+    tone down, its corners chipped and a crack from one of them. Never a glossy stripe: flags do not
+    shine. Returns the slab's mask."""
     V = _v()
-    q, code = V.q, V.code
-    ring = V.ellipse_mask(a.shape, cx, cy, r, r * 0.8) & ~V.ellipse_mask(a.shape, cx, cy, r - 2, r * 0.8 - 2)
-    star = line_mask(a.shape, [(cx, cy - r * 0.7), (cx, cy + r * 0.7)], 0.7) | \
-        line_mask(a.shape, [(cx - r * 0.7, cy), (cx + r * 0.7, cy)], 0.7)
-    star |= V.ellipse_mask(a.shape, cx, cy, q(1.2), q(1.0))
-    m = ring | star
-    if lit:
-        a[m] = code('dusk', 4)
-        a[m & (np.mgrid[0:a.shape[0], 0:a.shape[1]][0] < cy)] = code('dusk', 5)
-    else:
-        a[m] = code('stone_cool', 1)
-        lip = np.roll(m, 1, 0) & ~m & (a >= 0)
-        a[lip] = code('stone', 4)
+    code = V.code
+    x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
+    w, h = x1 - x0, y1 - y0
+    if w < 3 or h < 3:
+        return np.zeros(a.shape, bool)
+    m = np.zeros(a.shape, bool)
+    m[y0:y1, x0:x1] = V.chamfer(h, w, 1)
+    a[m] = code(fam, t)
+    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+    gaps = np.kron(rng.random(((a.shape[0] + 3) // 4, (a.shape[1] + 3) // 4)) < 0.16, np.ones((4, 4), bool))
+    gaps = gaps[:a.shape[0], :a.shape[1]]
+    nw = m & ((Y < y0 + lip) | (X < x0 + lip))
+    se = m & ((Y >= y1 - lip) | (X >= x1 - lip)) & ~nw
+    a[nw & ~gaps] = code(fam, min(4, t + 1))
+    a[se] = code(fam, max(0, t - 1))
+    a[m & ((Y == y1 - 1) | (X == x1 - 1)) & ~nw] = code(fam, max(0, t - 2))     # the arris in shade
+    body = m & ~nw & ~se
+    patches(a, body, rng, sigma=2.0, sib_share=0.22)                         # broad soft patches of its siblings
+    tex(a, body, rng, share=texture)
+    age_block(a, x0, y0, x1, y1, rng, mortar, chips=chips, cracks=cracks, mask=m)
     return m
+
+
+def age_courses(a, mask, rng, mortar, moss_rows=None, chip_p=0.5, crack_p=0.2, moss_p=0.3):
+    """Age on a face of courses already laid (masonry): each block found by its joints gets sibling
+    clusters, perhaps a chipped corner and a crack from it, and the lowest joints a moss clump."""
+    lab, n = ndi.label(mask & (a >= 0) & (a != mortar))
+    for i, sl in enumerate(ndi.find_objects(lab), start=1):
+        if sl is None:
+            continue
+        y0, y1, x0, x1 = sl[0].start, sl[0].stop, sl[1].start, sl[1].stop
+        bm = lab == i
+        if (y1 - y0) < 4 or (x1 - x0) < 6:
+            continue
+        tex(a, bm, rng, share=0.2)
+        if rng.random() < chip_p:
+            c = ('nw', 'ne', 'sw', 'se')[int(rng.integers(0, 4))]
+            cx = x0 if c[1] == 'w' else x1 - 1
+            cy = y0 if c[0] == 'n' else y1 - 1
+            if bm[cy, cx] or bm[min(y1 - 1, cy + (1 if c[0] == 'n' else -1)), cx]:
+                chip(a, cx, cy, c, mortar)
+                if rng.random() < crack_p / chip_p:
+                    crack(a, cx + (2 if c[1] == 'w' else -2), cy + (2 if c[0] == 'n' else -3), rng,
+                          0.5 * (x1 - x0), bm, dx=1 if c[1] == 'w' else -1)
+        if moss_rows is not None and y1 >= moss_rows and rng.random() < moss_p:
+            mx = int(rng.integers(x0, max(x0 + 1, x1 - 6)))
+            moss_clump(a, mx, y1 - 1, int(rng.integers(3, 7)), mask)
+
+
+def star_mask(shape, cx, cy, R, w, ry=1.0):
+    """A four-pointed star: two rhombi crossed, w texels half-wide at the heart, tapering to a point
+    R texels out (its arms grow thin, so a glow in it runs from a bright heart to deep tips)."""
+    Y, X = np.mgrid[0:shape[0], 0:shape[1]] + 0.5
+    dx, dy = np.abs(X - cx), np.abs(Y - cy) / ry
+    return ((dx / R + dy / w) <= 1) | ((dx / w + dy / R) <= 1)
+
+
+def sigil(a, cx, cy, r, lit, fam='stone', t=3):
+    """The starfall sigil carved in stone: a ring and a four-pointed star, cut as grooves (8 Nov, SE-3);
+    glowing while it holds."""
+    V = _v()
+    ring = V.ellipse_mask(a.shape, cx, cy, r, r * 0.86) & ~V.ellipse_mask(a.shape, cx, cy, r - 4, r * 0.86 - 4)
+    star = star_mask(a.shape, cx, cy, r * 0.78, 4.2, ry=0.9)
+    m = (ring | star) & (a >= 0)
+    return carve(a, m, lit, fam, t)
 
 
 def p_seal(w, h, height, sealed=True):
     """The sealed slab: a block of dressed stone plugging the passage, `height` world px tall, seen
-    like every wall: its top (the sigil carved in it, glowing while it holds, a lit lip at its south
-    edge) and its south face (two courses and a plinth with a dark foot)."""
+    like every wall: its top (three slabs end to end, the middle one with the sigil carved in it,
+    glowing while it holds, a lit arris at its south edge) and its south face (courses on a plinth
+    with a dark foot). Round 5: calm slab tops with lit north-west and dark south-east lips, sibling
+    clusters, chipped corners; no gloss, no specks."""
     V = _v()
     q, code = V.q, V.code
     rng = np.random.default_rng(5)
@@ -872,54 +1537,64 @@ def p_seal(w, h, height, sealed=True):
     a = p.a
     x0, x1 = 3, W - 3
     ytop, yface, yb = 3, 3 + q(h), H - 3
-    # the top: three long slabs end to end, the middle one with the sigil
-    for k, (s0, s1) in enumerate(((ytop, ytop + (yface - ytop) // 3), (ytop + (yface - ytop) // 3, ytop + 2 * (yface - ytop) // 3),
-                                  (ytop + 2 * (yface - ytop) // 3, yface))):
-        cut_block(a, x0, s0, x1, s1 - 1, (s1 - s0) - q(2), 'stone_warm' if k != 1 else 'stone', 1, rng, grain=False)
-        sm = np.zeros(a.shape, bool)
-        sm[s0 + 2:s1 - 3, x0 + 2:x1 - 2] = True
-        wear(a, sm & (a >= 0), 'stone_warm' if k != 1 else 'stone', 2, rng)
-    V.fill(a, x0, ytop, x1, yface, code('stone_cool', 0), a < 0)
-    sigil(a, (x0 + x1) / 2, (ytop + yface) / 2, q(5.5), sealed)
-    weather(a, (a >= 0), rng, 0.8)
-    V.fill(a, x0, yface - 2, x1, yface, code('stone', 4))                 # the lit lip
+    mortar = code('stone_cool', 0)
+    a[ytop:yface, x0:x1] = mortar
+    cuts = [ytop, ytop + (yface - ytop) // 3, ytop + 2 * (yface - ytop) // 3, yface]
+    for k in range(3):
+        fam = 'stone' if k == 1 else ('stone_warm' if k == 0 else 'stone_cool')
+        slab_top(a, x0, cuts[k], x1, cuts[k + 1] - 1, fam, 3, rng, mortar, lip=2, chips=2, cracks=1 if k != 1 else 0)
+    sigil(a, (x0 + x1) / 2, (cuts[1] + cuts[2]) / 2, q(5.5), sealed, 'stone', 3)
+    # the south arris: lit, broken where it is chipped
+    V.fill(a, x0, yface - 2, x1, yface - 1, code('stone', 4))
+    for k in range(x0 + 4, x1 - 4, 11):
+        a[yface - 2, k:k + 2] = code('stone', 2)
     m = np.zeros(a.shape, bool)
     m[yface:yb, x0:x1] = True
-    masonry(a, x0, yface, x1, yb, rng, m, base=1, course=6, length=(7, 9), east_dark=False)
-    V.fill(a, x0, yface, x1, yface + 1, code('stone_cool', 0))
+    masonry(a, x0, yface, x1, yb, rng, m, base=2, course=6, length=(7, 9), east_dark=False)
+    V.fill(a, x0, yface, x1, yface + 2, code('stone_cool', 0))                  # the shadow under the top's arris
     V.fill(a, x0, yb - q(5), x1, yb - q(5) + 1, code('stone', 3))
     V.fill(a, x0, yb - 2, x1, yb, code('stone_cool', 0))
     V.fill(a, x1 - 2, yface, x1, yb, code('stone_cool', 1))
     fm = np.zeros(a.shape, bool)
     fm[yface + 2:yb - 2, x0:x1 - 2] = True
-    weather(a, fm & (a >= 0), rng, 0.8)
+    age_courses(a, fm, rng, code('stone_cool', 0), moss_rows=yb - q(8))
     V.finish(p)
-    break_runs(a, a >= 0, rng, longest=40)                 # the outline too: no ruler-straight edge
     return p
 
 
 def p_seal_sunk(w, h):
-    """The slab sunk flush with the floor: its top only, the sigil gone dark."""
+    """The slab sunk flush with the floor: its three slabs' tops only, the sigil gone dark."""
     V = _v()
-    q = V.q
+    q, code = V.q, V.code
+    rng = np.random.default_rng(23)
     W, H = q(w) + 4, q(h) + 4
     p = V.Pic(W, H, W // 2, H - 2)
     a = p.a
+    mortar = code('stone_cool', 0)
+    a[2:H - 2, 2:W - 2] = mortar
+    cuts = [2 + k * (H - 4) // 3 for k in range(4)]
     for k in range(3):
-        cut_block(a, 2, 2 + k * (H - 4) // 3, W - 2, 2 + (k + 1) * (H - 4) // 3 - 1, (H - 4) // 3 - 3,
-                  'stone_warm' if k != 1 else 'stone', 2, np.random.default_rng(k), grain=False)
-        sm = np.zeros(a.shape, bool)
-        sm[4 + k * (H - 4) // 3:(k + 1) * (H - 4) // 3 - 2, 4:W - 4] = True
-        wear(a, sm & (a >= 0), 'stone_warm' if k != 1 else 'stone', 3, np.random.default_rng(k + 5))
-    weather(a, a >= 0, np.random.default_rng(23), 1.5)
-    sigil(a, W / 2, H / 2, q(5.5), False)
+        fam = 'stone' if k == 1 else ('stone_warm' if k == 0 else 'stone_cool')
+        slab_top(a, 2, cuts[k], W - 2, cuts[k + 1] - 1, fam, 3, rng, mortar, lip=2, chips=2, cracks=1 if k != 1 else 0)
+    # sunk to the floor, it has taken the floor's damp: worn hollows a tone down, a cool sibling in
+    # patches, a hairline crack or two
+    tops = (a >= 0) & (a != mortar) & (a % 8 <= 5)
+    patches(a, tops, rng, sigma=1.5, sib_share=0.3, down=0.12)
+    tex(a, tops, rng, share=0.35, down=0.1)
+    for (cx_, cy_) in ((W * 0.7, cuts[0] + 8), (W * 0.25, cuts[2] + 14)):
+        crack(a, int(cx_), int(cy_), rng, 12, tops)
+    sigil(a, W / 2, (cuts[1] + cuts[2]) / 2, q(5.5), False, 'stone', 3)
+    for k in (0, 2):                                    # damp in the sunk slab's low joints
+        moss_clump(a, int(rng.integers(6, W - 14)), cuts[k + 1] - 1, int(rng.integers(3, 6)))
     return V.finish(p)
 
 
 def p_plate(w, h, pressed):
-    """The pressure plate: a square slab set in a frame of narrow stones, the sigil carved in a sunk
-    panel. Raised two world px it shows a bevel and its front; pressed, it sits flush, its edge in
-    the frame's shadow, and the sigil glows."""
+    """The pressure plate: a square slab set in a frame of narrow stones, the starfall star carved in
+    it (8 Nov, P-1 to P-3). Raised two world px it shows its top and its front, and throws a shadow on
+    the frame's south and east stones; pressed, it sits in the frame with the north stones' shadow
+    across its edge, and the star holds the shard's light (a glow ramp from deep violet tips to a
+    near-white heart)."""
     V = _v()
     q, code = V.q, V.code
     rng = np.random.default_rng(13)
@@ -928,35 +1603,99 @@ def p_plate(w, h, pressed):
     p = V.Pic(W, H, W // 2, H - 3)
     a = p.a
     x0, y0, x1, y1 = 3, 3 + q(up), W - 3, H - 3
-    for (fx0, fy0, fx1, fy1) in ((x0, y0, x1, y0 + q(2)), (x0, y1 - q(2), x1, y1), (x0, y0, x0 + q(2), y1), (x1 - q(2), y0, x1, y1)):
-        V.blk(a, fx0, fy0, fx1, fy1, 'stone_cool', 2, cut=1)
-    ix0, iy0, ix1, iy1 = x0 + q(2), y0 + q(2), x1 - q(2), y1 - q(2)
+    fw = q(2)
+    mortar = code('stone_cool', 0)
+    a[y0:y1, x0:x1] = mortar
+    # the frame: narrow stones, two to a side, each its own slab with lips, chips and clusters
+    sx = int(rng.integers(x0 + 16, x1 - 16))
+    sy = int(rng.integers(y0 + 16, y1 - 16))
+    pieces = [(x0, y0, sx, y0 + fw), (sx + 1, y0, x1, y0 + fw), (x0, y1 - fw, sx + 6, y1), (sx + 7, y1 - fw, x1, y1),
+              (x0, y0 + fw + 1, x0 + fw, sy), (x0, sy + 1, x0 + fw, y1 - fw - 1),
+              (x1 - fw, y0 + fw + 1, x1, sy - 5), (x1 - fw, sy - 4, x1, y1 - fw - 1)]
+    for k, (a0, b0, a1, b1) in enumerate(pieces):
+        fam = ('stone_cool', 'stone', 'stone_cool', 'stone_warm')[k % 4]
+        slab_top(a, a0, b0, a1, b1 - 1 if b1 < y1 else b1, fam, 3, rng, mortar, lip=1, chips=1 + (k % 2),
+                 cracks=1 if k in (1, 4) else 0, texture=0.18)
+    ix0, iy0, ix1, iy1 = x0 + fw + 1, y0 + fw + 1, x1 - fw - 1, y1 - fw - 1
+    a[iy0 - 1:iy1 + 1, ix0 - 1:ix1 + 1] = code('soot', 1)                    # the gap round the slab
     if pressed:
-        V.fill(a, ix0, iy0, ix1, iy0 + 2, code('soot', 1))
-        cut_block(a, ix0, iy0 + 2, ix1, iy1, iy1 - iy0 - 3, 'stone_warm', 1, rng, bevel=0, grain=False)
+        top = slab_top(a, ix0, iy0, ix1, iy1, 'stone_warm', 3, rng, mortar, lip=2, chips=2, cracks=1)
+        # the frame's north and west stones throw their shadow across the sunk slab's edge
+        a[iy0:iy0 + 3, ix0:ix1][top[iy0:iy0 + 3, ix0:ix1]] = code('stone_warm', 1)
+        a[iy0:iy1, ix0:ix0 + 2][top[iy0:iy1, ix0:ix0 + 2]] = code('stone_warm', 1)
+        a[iy0, ix0:ix1] = code('stone_warm', 0)
+        cx, cy = (ix0 + ix1) / 2, (iy0 + iy1) / 2 + 1
     else:
-        cut_block(a, ix0, iy0 - q(up), ix1, iy1, iy1 - iy0 - q(up) + q(0.5), 'stone_warm', 1, rng, grain=False)
-    cx, cy = (ix0 + ix1) / 2, (iy0 + iy1) / 2 - (0 if pressed else q(up))
-    pan = np.zeros(a.shape, bool)
-    pan[int(cy - q(4)):int(cy + q(4)), int(cx - q(4)):int(cx + q(4))] = True
-    a[pan] = code('stone_warm', 1)
-    # the sunk panel: its top and west walls in shade, its bottom and east walls catching the light
-    py0, py1, px0, px1 = int(cy - q(4)), int(cy + q(4)), int(cx - q(4)), int(cx + q(4))
-    a[py0:py0 + 3, px0:px1] = code('stone_warm', 0)
-    a[py0:py1, px0:px0 + 3] = code('stone_warm', 0)
-    a[py1 - 2:py1, px0 + 3:px1] = code('stone_warm', 3)
-    a[py0 + 3:py1, px1 - 2:px1] = code('stone_warm', 3)
-    star = line_mask(a.shape, [(cx, cy - q(3.4)), (cx, cy + q(3.4))], 0.7) | line_mask(a.shape, [(cx - q(3.4), cy), (cx + q(3.4), cy)], 0.7)
-    star |= V.ellipse_mask(a.shape, cx, cy, q(1.2), q(1.2))
-    a[star & pan] = code('dusk', 4) if pressed else code('soot', 1)
-    weather(a, (a >= 0) & ~pan, rng, 2.0, moss=True)
+        lift = q(up)
+        ty0, ty1 = iy0 - lift, iy1 - lift
+        top = slab_top(a, ix0, ty0, ix1, ty1, 'stone_warm', 3, rng, mortar, lip=2, chips=2, cracks=1)
+        # its front face: a lit arris, the face, its foot in shade, its east end a tone down
+        a[ty1:iy1 + 1, ix0:ix1] = code('stone_warm', 2)
+        a[ty1, ix0 + 1:ix1 - 1] = code('stone_warm', 4)
+        a[iy1, ix0:ix1] = code('stone_warm', 1)
+        a[ty1 + 1:iy1 + 1, ix1 - 3:ix1] = code('stone_warm', 1)
+        for k in range(ix0 + 5, ix1 - 6, 13):                               # tool marks on the dressed front
+            a[ty1 + 2:ty1 + 4, k:k + 2] = code('stone', 2)
+        # its shadow on the frame: the south stones' top rows and the east stones' west columns sink
+        sh = np.zeros(a.shape, bool)
+        sh[iy1 + 1:iy1 + 3, ix0 + 3:ix1 + 2] = True
+        sh[ty0 + 3:iy1 + 3, ix1 + 1:ix1 + 3] = True
+        sh &= (a >= 0) & (a != mortar) & (a % 8 <= 5) & (a // 8 != V.FI['soot'])
+        a[sh] = a[sh] // 8 * 8 + np.maximum(0, a[sh] % 8 - 2)
+        cx, cy = (ix0 + ix1) / 2, (ty0 + ty1) / 2
+    star = star_mask(a.shape, cx, cy, q(5.2), 4.4, ry=0.92) & top
+    carve(a, star, pressed, 'stone_warm', 3)
+    if not pressed:                                                          # a pit at the star's heart, its drain
+        a[int(cy) - 1:int(cy) + 1, int(cx) - 1:int(cx) + 1] = code('stone_warm', 0)
+    # moss only in the low joints: the south frame's joint and the slab's south-west gap
+    moss_clump(a, sx + 2, y1 - fw - 1, 4)
+    moss_clump(a, x0 + 1, y1 - fw - 1, 3)
     return V.finish(p)
 
 
+def grip(a, x0, y0, x1, y1, r, fam='timber'):
+    """A turned wooden grip from (x0, y0) to (x1, y1), r texels in radius: round in section, its
+    highlight band on the side towards the light (left of centre), the far side dark, an end cap
+    (an ellipse, lit if it faces up) at (x1, y1) and an iron ferrule at (x0, y0) (8 Nov, L-1)."""
+    V = _v()
+    code = V.code
+    H, W = a.shape
+    Y, X = np.mgrid[0:H, 0:W] + 0.5
+    dx, dy = x1 - x0, y1 - y0
+    L = math.hypot(dx, dy) or 1e-6
+    ux, uy = dx / L, dy / L
+    nx, ny = -uy, ux
+    if nx * -0.6 + ny * -0.8 < 0:                                           # the normal points to the light
+        nx, ny = -nx, -ny
+    s = (X - x0) * ux + (Y - y0) * uy
+    v = -((X - x0) * nx + (Y - y0) * ny) / r                                # -1 on the lit side
+    m = (s >= 0) & (s <= L) & (np.abs(v) <= 1)
+    tt = np.full((H, W), 3)
+    tt[v < -0.2] = 4
+    tt[(v > -0.62) & (v < -0.3)] = 5
+    tt[v < -0.75] = 3
+    tt[v > 0.3] = 2
+    tt[v > 0.72] = 1
+    a[m] = (V.FI[fam] * 8 + tt)[m]
+    grain = m & (np.abs(v - 0.12) < 0.14) & ((s // 3) % 3 != 0) & (s > 3)
+    a[grain] = code(fam + '_cool' if fam + '_cool' in V.FI else fam, 2)
+    fer = m & (s < 2.6)
+    ft = np.where(v < -0.3, 4, np.where(v > 0.45, 1, 2))
+    a[fer] = (V.FI['brass'] * 8 + ft)[fer]
+    cap = ((X - x1) * ux + (Y - y1) * uy) ** 2 / 1.6 ** 2 + ((X - x1) * nx + (Y - y1) * ny) ** 2 / r ** 2 <= 1
+    cap &= ((X - x1) * ux + (Y - y1) * uy) > -0.6
+    lit_cap = uy < -0.3
+    a[cap] = code(fam, 4 if lit_cap else 2)
+    rim = cap & ~ndi.binary_erosion(cap)
+    a[rim & (((X - x1) * nx + (Y - y1) * ny) > 0)] = code(fam, 2 if lit_cap else 1)
+    return m | cap
+
+
 def p_lever(pulled):
-    """The lever: a dressed stone post (top, bevel, front, a carved slot in its top), an iron pivot
-    plate bolted to its face with four rivets, an iron arm through the slot and a wooden grip bound
-    with two iron bands; pulled, the arm lies down to the east."""
+    """The lever: a dressed stone post (its top, a lit arris, its front; a carved slot in its top), an
+    iron pivot plate bolted to its face, an iron rod through the slot and a turned wooden grip with an
+    iron ferrule; pulled, the rod lies down to the east. Round 5 (8 Nov, L-1 to L-3): the plate has a
+    sheen and lit-head rivets, the grip is turned, the post is aged by chips and clusters, not specks."""
     V = _v()
     q, code = V.q, V.code
     rng = np.random.default_rng(11)
@@ -964,64 +1703,114 @@ def p_lever(pulled):
     p = V.Pic(W, H, W // 2, H - 3)
     a, cx, yb = p.a, p.ax, p.ay
     x0, x1 = cx - q(4), cx + q(4)
-    cut_block(a, x0, yb - q(12), x1, yb, q(3.5), 'stone', 3, rng)
-    pm = np.zeros(a.shape, bool)
-    pm[yb - q(12) + 2:yb - 1, x0 + 1:x1 - 1] = True
-    weather(a, pm & (a >= 0), rng, 2.0)
-    V.fill(a, cx - q(0.8), yb - q(11.2), cx + q(0.8), yb - q(9.4), code('soot', 0))       # the slot
-    V.fill(a, cx - q(0.8), yb - q(9.4), cx + q(0.8), yb - q(9.4) + 1, code('stone', 4))
-    V.blk(a, cx - q(2.4), yb - q(8), cx + q(2.4), yb - q(3.6), 'iron', 2, cut=1)          # the pivot plate
-    for dx in (-1.6, 1.2):
-        for dy in (7.2, 4.6):
-            V.fill(a, cx + q(dx), yb - q(dy), cx + q(dx) + 2, yb - q(dy) + 2, code('iron', 4))
-    if pulled:
-        arm = (cx, yb - q(10.4), cx + q(7), yb - q(6.5))
-    else:
-        arm = (cx, yb - q(10.4), cx - q(2.6), yb - q(19))
-    V.bar(a, arm[0], arm[1], arm[2], arm[3], q(0.8), 'iron', 3)
-    gx, gy = arm[2], arm[3]
-    dx, dy = (gx - arm[0]), (gy - arm[1])
+    yt, yf = yb - q(12), yb - q(12) + q(3.5)
+    mortar = code('stone_cool', 0)
+    slab_top(a, x0, yt, x1, yf, 'stone', 4, rng, mortar, lip=2, chips=1, cracks=0, texture=0.16)
+    a[yf:yb, x0:x1] = code('stone', 3)                                       # the front face
+    a[yf, x0 + 1:x1 - 1] = code('stone', 5)                                  # its lit arris
+    a[yf + 1, x0:x1] = code('stone', 4)
+    a[yf + 1:yb, x0:x0 + 2] = code('stone', 4)                               # the west edge turns to the light
+    a[yf + 2:yb, x1 - 4:x1] = code('stone', 2)                               # the east end in shade
+    a[yb - 2:yb, x0:x1] = code('stone', 1)                                   # its foot
+    for k in range(x0 + 6, x1 - 4, 9):
+        a[yf, k:k + 2] = code('stone', 3)                                    # the arris worn here and there
+    face = np.zeros(a.shape, bool)
+    face[yf + 2:yb - 2, x0 + 2:x1 - 4] = True
+    patches(a, face, rng, sigma=1.8, sib_share=0.18)
+    tex(a, face, rng, share=0.4)
+    for k in range(x0 + 4, x1 - 6, 4):                                       # the mason's dressing: short tool strokes
+        yy = int(rng.integers(yf + 4, yb - 8))
+        a[yy:yy + 3, k] = code('stone_cool', 3)
+    chip(a, x0, yb - 1, 'sw', mortar)
+    chip(a, x1 - 1, yf + 2, 'ne', mortar)
+    crack(a, x1 - 3, yf + 4, rng, 9, face | (np.roll(face, 2, 1)), dx=-1)
+    moss_clump(a, x0, yb - 1, 5)
+    # the slot in the top, its south lip lit
+    V.fill(a, cx - q(0.8), yt + 2, cx + q(0.8), yt + q(1.8), code('soot', 0))
+    V.fill(a, cx - q(0.8), yt + q(1.8), cx + q(0.8), yt + q(1.8) + 1, code('stone', 5))
+    # the pivot plate: a sheen lighter to the upper left, a lit top edge, a dark lower edge
+    px0, py0, px1, py1 = cx - q(2.4), yb - q(8), cx + q(2.4), yb - q(3.6)
+    Y, X = np.mgrid[0:H, 0:W]
+    pl = (X >= px0) & (X < px1) & (Y >= py0) & (Y < py1)
+    dg = (X - px0) / (px1 - px0) + (Y - py0) / (py1 - py0)
+    a[pl] = np.where(dg[pl] < 0.55, code('iron', 3), np.where(dg[pl] < 1.25, code('iron', 2), code('iron', 1)))
+    a[pl & (Y == py0)] = code('iron', 4)
+    a[pl & (X == px0) & (Y > py0)] = code('iron', 4)
+    a[pl & (Y == py1 - 1)] = code('iron', 1)
+    a[pl & (X == px1 - 1) & (Y > py0)] = code('iron', 1)
+    a[(Y == py1) & (X >= px0 + 1) & (X <= px1)] = code('stone', 1)           # its shadow on the post
+    a[(X == px1) & (Y > py0) & (Y <= py1)] = code('stone', 1)
+    for rx in (px0 + 2, px1 - 4):
+        for ry in (py0 + 2, py1 - 4):
+            a[ry, rx:rx + 2] = code('iron', 5)                               # a rivet: its lit head
+            a[ry + 1, rx:rx + 2] = code('iron', 0)                           # over its dark side
+    # the rod and the grip
+    pv = (cx, yb - q(10.4))
+    end = (cx + q(7), yb - q(6.5)) if pulled else (cx - q(2.6), yb - q(19))
+    dx, dy = end[0] - pv[0], end[1] - pv[1]
     L = math.hypot(dx, dy)
     ux, uy = dx / L, dy / L
-    gm = V.bar(a, gx - ux * q(1), gy - uy * q(1), gx + ux * q(2.6), gy + uy * q(2.6), q(1.3), 'timber', 3)
-    gl = line_mask(a.shape, [(gx - ux * q(0.8) - uy * 1.5, gy - uy * q(0.8) + ux * 1.5), (gx + ux * q(2.4) - uy * 1.5, gy + uy * q(2.4) + ux * 1.5)], 0.6) & gm
-    a[gl] = code('timber', 4)
-    gd = line_mask(a.shape, [(gx - ux * q(0.8) + uy * 2, gy - uy * q(0.8) - ux * 2), (gx + ux * q(2.4) + uy * 2, gy + uy * q(2.4) - ux * 2)], 1.1) & gm
-    a[gd] = code('timber', 2)
-    for t_ in (0.0, 1.6):
-        bx, by = gx + ux * q(t_), gy + uy * q(t_)
-        V.bar(a, bx - uy * q(1.3), by + ux * q(1.3), bx + uy * q(1.3), by - ux * q(1.3), 0.8, 'iron', 2)
+    rod_end = (end[0] - ux * q(2.2), end[1] - uy * q(2.2))
+    V.bar(a, pv[0], pv[1], rod_end[0], rod_end[1], q(0.62), 'iron', 3)
+    grip(a, rod_end[0], rod_end[1], end[0] + ux * q(1.6), end[1] + uy * q(1.6), q(0.95))
+    a[int(pv[1]) - 1:int(pv[1]) + 2, int(pv[0]) - 1:int(pv[0]) + 2] = code('iron', 1)   # the pivot pin
+    a[int(pv[1]) - 1, int(pv[0]) - 1] = code('iron', 4)
     return V.finish(p)
 
 
 def p_channel(pts, lit):
-    """The channel's inlay once the plate is down: the brass strip in the carved groove glows with the
-    shard's light. Rounded in section (a pale core, its lower side a tone down, a dark lip at each
-    edge) and pulsing along its length between the rivets, brightest near the plate."""
+    """The channel's inlay once the plate is down (8 Nov, C-1): the brass strip in the carved groove
+    holds the shard's light. In section, deep violet at the groove's walls rising through the dusk
+    ramp to a near-white core streak, broken into uneven lengths (longer near the plate, where the
+    charge comes from); the groove's floor on either side of the inlay lit a tone up in violet; the
+    brass dividers shaded (a lit top, a dark east side and foot). The picture is the inlay's 10 rows
+    only (its size is the scene's), so the lips beyond it keep the ground's tones."""
     V = _v()
     q, code = V.q, V.code
+    rng = np.random.default_rng(17)
     (x0, y0), (x1, y1) = pts[0], pts[-1]
     W, H = q(x1 - x0) + 2, 10
     p = V.Pic(W, H, 1, H // 2)
     a = p.a
     c = H // 2
-    for x in range(1, W - 1):
+    rows = {c - 4: ('dusk_cool', 1), c - 3: ('dusk', 2), c - 2: ('dusk', 4),
+            c - 1: ('dusk', 5), c: ('dusk', 5), c + 1: ('dusk', 4), c + 2: ('dusk', 2), c + 3: ('dusk_cool', 2)}
+    X = np.arange(W)
+    far = X > W * 0.62                                   # the charge fades away from the plate: a tone down there
+    for y, (f, t) in rows.items():
+        a[y, 1:W - 1] = code(f, t)
+        a[y, 1:W - 1][far[1:W - 1]] = code(f, max(1, t - 1))
+    # the core streak: near-white lengths with short breaks, longer and closer near the plate
+    x = 2
+    while x < W - 2:
         u = x / W
-        seg = (x % q(8)) / q(8)
-        if seg < 0.12:                                     # a rivet: the brass shows dark between pulses
-            a[c - 2:c + 2, x] = code('brass', 2)
-            continue
-        hot = 0.5 + 0.5 * math.sin(seg * math.pi) - 0.35 * u
-        a[c - 3, x] = code('dusk', 2)
-        a[c - 2, x] = code('dusk', 4)
-        a[c - 1:c + 1, x] = code('dusk', 5 if hot > 0.45 else 4)
-        a[c + 1, x] = code('dusk', 3)
-        a[c + 2, x] = code('dusk', 2 if hot < 0.6 else 3)
+        L = int(rng.integers(5, 15) * (1.3 - 0.6 * u))
+        if u < 0.75:
+            a[c - 1:c + 1, x:min(W - 1, x + L)] = code('snow', 4) if u < 0.5 else code('dusk', 5)
+            a[c - 1, x:min(W - 1, x + max(2, L // 2))] = code('snow', 5) if u < 0.3 else code('snow', 4)
+        x += L + int(rng.integers(2, 5) + 4 * u)
+    # the floor of the groove beside the inlay, lit unevenly (the glow pulses)
+    for k in range(1, W - 1, 7):
+        if rng.random() < 0.45 and k < W * 0.62:
+            a[c + 3, k:k + int(rng.integers(2, 5))] = code('dusk_cool', 3)
+    for k in range(q(8), W - 2, q(8)):                   # the brass dividers, over the ground's rivets
+        xk = k + 1
+        a[c - 3:c + 3, xk:xk + 2] = code('brass', 3)
+        a[c - 3, xk:xk + 2] = code('brass', 5)
+        a[c - 2:c + 3, xk + 1] = code('brass', 1)
+        a[c + 2, xk:xk + 2] = code('brass', 1)
+        a[c - 2:c + 2, xk - 1] = code('dusk', 2)         # the glow dips in the divider's shadow
     return p
 
+
 def p_cairn_alcove(seed):
-    """Cairn asleep in the wall: his slumped drawing (the cast's last defeat frame) brought onto the
-    house ramps a step into shade, half sunk behind the masonry and earth that grew over his legs."""
+    """Cairn asleep in the wall (8 Nov, CA-1 to CA-5): his slumped drawing (the cast's last defeat
+    frame) brought onto the house ramps, its stones re-lit by the rock recipe (a lit crown to the
+    upper left, the body, a dark underside, cluster texture), the moss taken off his shoulders and
+    left only in the creases between his stones, a sprout growing from one; the loose pebbles of the
+    cast frame dropped. He is half sunk behind squared courses (chipped corners, lit top edges) and a
+    bank of damp earth with moss in it (no grass: no daylight reaches the alcove). The canvas is
+    the scene's (108 x 100 at density 3, foot at its bottom centre)."""
     V = _v()
     q, code = V.q, V.code
     from scripts.art.native import palette as PAL
@@ -1029,53 +1818,127 @@ def p_cairn_alcove(seed):
     src = np.asarray(Image.open(CAIRN).convert('RGBA'))[:, -160:]
     ys, xs = np.nonzero(src[..., 3] > 0)
     src = src[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
-    fam_for = {}
-    names = ['stone', 'stone_cool', 'leaf', 'leaf_cool', 'lamp', 'brass', 'void', 'soot']
-    pal = [(f, t, np.array(PAL.rgb(f, t), float)) for f in names for t in range(6)]
+    # the cast frame's loose pebbles (they float over him) are dropped: keep his body only
+    lab, n = ndi.label(src[..., 3] > 0)
+    if n > 1:
+        sizes = ndi.sum(np.ones(lab.shape), lab, index=np.arange(1, n + 1))
+        keep = 1 + int(np.argmax(sizes))
+        src = src * (lab == keep)[..., None]
+        ys, xs = np.nonzero(src[..., 3] > 0)
+        src = src[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
     h, w = src.shape[:2]
     scale = ctx.D / 3.0
     sh, sw = max(1, int(round(h * scale))), max(1, int(round(w * scale)))
     if (sh, sw) != (h, w):
         src = np.asarray(Image.fromarray(src, 'RGBA').resize((sw, sh), Image.NEAREST))
-    pad = q(4)
-    W, H = sw + 2 * pad, sh + pad
+    W, H = int(round(108 * scale)), int(round(100 * scale))
     p = V.Pic(W, H, W // 2, H - 1)
     a = p.a
-    for y in range(sh):
-        for x in range(sw):
-            px = src[y, x]
-            if px[3] == 0:
-                continue
-            key = tuple(int(v) for v in px[:3])
-            if key not in fam_for:
-                c = np.array(key, float)
-                f, t, _ = min(pal, key=lambda e: ((e[2] - c) ** 2).sum())
-                fam_for[key] = V.code(f, max(0, t - 2) if f not in ('lamp', 'brass') else 1)
-            a[y, x + pad] = fam_for[key]
-    # his moss in clumps: soft clusters a tone up and down, lit on top
-    lf = (a // 8 == V.FI['leaf']) | (a // 8 == V.FI['leaf_cool'])
-    nz = ndi.gaussian_filter(rng.random(a.shape), 1.3)
-    nz = (nz - nz[lf].mean()) / (nz[lf].std() + 1e-9) if lf.any() else nz
-    up_ = lf & (nz > 0.6)
-    dn_ = lf & (nz < -0.6)
-    a[up_] = np.minimum(a[up_] + 1, (a[up_] // 8) * 8 + 5)
-    a[dn_] = np.maximum(a[dn_] - 1, (a[dn_] // 8) * 8)
-    # half sunk: masonry and earth over his lower third
+    ox, oy = (W - sw) // 2, H - sh
+    rgb = src[..., :3].astype(int)
+    al = src[..., 3] > 0
+    r_, g_, b_ = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    L = (r_ + g_ + b_) / 3
+    eye = al & (r_ > g_ + 40) & (b_ < g_)
+    moss = al & (g_ > r_ + 15) & (g_ > b_ + 5) & ~eye
+    line = al & (L < 70) & ~eye & ~moss
+    stone = al & ~eye & ~moss & ~line
+    body = np.zeros(a.shape, bool)
+    body[oy:oy + sh, ox:ox + sw] = al
+    sub = lambda m: np.pad(m, ((oy, H - oy - sh), (ox, W - ox - sw)))
+    stone_m, line_m, eye_m, moss_m = sub(stone), sub(line), sub(eye), sub(moss)
+    # the cast frame's sprout is thin: an opening of his silhouette drops it with the moss (one is grown below)
+    thin = body & ~ndi.binary_opening(body, structure=np.ones((4, 4), bool))
+    drop = thin & (moss_m | line_m)
+    drop = ndi.binary_dilation(drop, iterations=1) & (moss_m | line_m) & thin
+    for m_ in (stone_m, line_m, moss_m):
+        m_ &= ~drop
+    body &= ~drop
+    lab2, n2 = ndi.label(body)
+    if n2 > 1:
+        big = 1 + int(np.argmax(ndi.sum(np.ones(lab2.shape), lab2, index=np.arange(1, n2 + 1))))
+        for m_ in (stone_m, line_m, moss_m, eye_m, body):
+            m_ &= lab2 == big
+    a[line_m] = code('stone_cool', 0)
+    a[eye_m] = code('lamp', 2)
+    # the moss hats go: their texels become stone, lit as the crown of the stone under them
+    stone_m |= moss_m
+    # each stone of him, found between the drawn lines, lit by the rock recipe
+    labs, nst = ndi.label(stone_m)
+    Y, X = np.mgrid[0:H, 0:W]
+    for i, sl in enumerate(ndi.find_objects(labs), start=1):
+        if sl is None:
+            continue
+        m = labs == i
+        y0, y1, x0, x1 = sl[0].start, sl[0].stop, sl[1].start, sl[1].stop
+        fam = ('stone', 'stone_warm', 'stone_cool')[i % 3]
+        # a pillow: flat in the middle, its rim turning to the light at the upper left and away at the lower right
+        dist = ndi.distance_transform_edt(m)
+        bm = ndi.gaussian_filter(m.astype(float), 3.0)
+        gy, gx = np.gradient(bm)
+        nrm = np.hypot(gx, gy) + 1e-6
+        lit = -(gx * -0.6 + gy * -0.8) / nrm                            # +1: the rim faces the light
+        rimw = np.clip(1.2 - dist / 6.0, 0, 1)                          # the rim, about six texels in
+        shd = lit * rimw
+        uu = (X - x0) / max(1, x1 - x0) + (Y - y0) / max(1, y1 - y0)
+        tt = np.full((H, W), 3)
+        tt[(shd < -0.18) | (uu > 1.55)] = 2
+        tt[shd < -0.5] = 1
+        tt[(shd > 0.2) | (uu < 0.45)] = 4
+        tt[(shd > 0.55) & (uu < 1.0)] = 5
+        a[m] = (V.FI[fam] * 8 + tt)[m]
+        bot = m & ~np.roll(m, -1, 0)
+        a[bot] = code(fam, 1)
+        a[m & np.roll(bot, -1, 0) & ~bot] = code(fam, 2)               # the underside turning away
+        if m.sum() > 20:
+            tex(a, m & ~bot, rng, share=0.3, up=0.0)
+    # moss only in the creases: clumps sitting in the lower joints between his stones
+    crease = line_m & np.roll(stone_m, -1, 0) & np.roll(stone_m, 1, 0) & (Y > oy + sh * 0.35)
+    cy_, cx_ = np.nonzero(crease)
+    order = rng.permutation(len(cy_))[:4]
+    for k in order:
+        moss_clump(a, int(cx_[k]) - 1, int(cy_[k]), int(rng.integers(3, 5)), mask=body)
+    # a sprout from the crease at his east shoulder
+    top_rows = np.nonzero(body.any(1))[0]
+    sx = ox + int(sw * 0.72)
+    col = np.nonzero(body[:, sx])[0]
+    if len(col):
+        sy = int(col.min()) + 2
+        moss_clump(a, sx - 2, sy, 4, mask=body)
+        for k in range(1, 5):
+            a[sy - 2 - k, sx] = code('leaf_cool', 2)
+        a[sy - 7, sx - 2:sx] = code('leaf', 4)
+        a[sy - 8, sx - 3:sx - 1] = code('leaf', 3)
+        a[sy - 7, sx + 1:sx + 3] = code('leaf_cool', 3)
+        a[sy - 8, sx + 2:sx + 4] = code('leaf_cool', 2)
+    # half sunk: squared courses and a bank of earth over his lower third
     cover = int(sh * 0.36)
     yb = H - 1
     m = np.zeros(a.shape, bool)
     m[yb - cover:yb + 1, :] = True
-    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
-    m &= (Y >= yb - cover + (np.sin(X / q(3)) * q(1.5)).astype(int))
-    V.rubble(a, 0, yb - cover - q(2), W, yb + 1, rng, fams=STONES, base=2, course=(2.6, 3.6), length=(4, 8), moss=0.5,
-             east_dark=True, where=m, mortar=('earth_cool', 1))
-    turf = m & ~np.roll(m, q(2.5), 0)
-    a[turf] = code('leaf_cool', 2)
-    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
-    blades = turf & ((X // 2) % 3 == 0)                      # tufts: blades a tone up and down in clusters
-    a[blades] = code('leaf_cool', 3)
-    a[turf & ((X // 2) % 5 == 2)] = code('leaf_cool', 1)
-    a[turf & ~np.roll(turf, 1, 0)] = code('leaf', 3)          # the lit tips
+    m &= (Y >= yb - cover + (np.sin(X / q(3)) * q(1.0)).astype(int))
+    m &= np.abs(X + 0.5 - W / 2) <= q(14) + 1                          # inside the alcove's jambs only
+    bank = m & ~np.roll(m, q(2.5), 0)
+    wall = m & ~bank
+    wy0 = int(np.nonzero(wall.any(1))[0].min())
+    masonry(a, 0, wy0, W, yb + 1, rng, wall, base=2, course=4.0, length=(6, 10), east_dark=True)
+    age_courses(a, wall, rng, code('stone_cool', 0), moss_rows=yb - q(4), chip_p=0.6, crack_p=0.15, moss_p=0.35)
+    topy = np.where(bank.any(0), np.argmax(bank, axis=0), 0).astype(float)
+    slope = np.gradient(ndi.gaussian_filter1d(topy, 2.0))                # > 0: the crest falls to the east, faces west
+    dcr = Y - topy[None, :]                                               # rows below the bank's crest
+    tb = np.select([dcr <= 0, dcr <= 2, dcr <= 4], [4, 3, 2], 1)          # a rounded bank: crest, shoulder, body, foot
+    tb = tb + np.where(slope[None, :] < -0.12, 0, np.where(slope[None, :] > 0.12, -1, 0))
+    a[bank] = (V.FI['earth_cool'] * 8 + np.clip(tb, 0, 4))[bank]
+    crest = bank & ~np.roll(bank, 1, 0)
+    a[crest] = code('earth_cool', 3)
+    a[crest & (slope[None, :] < 0.05)] = code('earth_cool', 4)            # the crest lit
+    a[bank & ~np.roll(bank, -1, 0)] = code('earth_cool', 0)              # its foot on the courses, in shade
+    tex(a, bank, rng, share=0.35, up=0.0)
+    for k in range(4):                                                   # moss in the damp bank, clumps with lit caps
+        bx = int(rng.integers(2, W - 8))
+        col = np.nonzero(bank[:, bx])[0]
+        if len(col):
+            moss_clump(a, bx, int(col.max()), int(rng.integers(4, 7)), mask=bank | body)
     return V.finish(p)
 
 
@@ -1206,13 +2069,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     # its outer edge drops into the dark in a shadowed lip: the coping's thickness, a form shadow
     lip = band & ~far & ~jnt & (dist > q(3.2) + (seg % 2) - 2)
     cv[lip] = fam_b[lip] * 8 + 0
-    weather(cv, band & ~far & ~jnt, rng, 1.3, moss=False, lichen=True)     # worn coping: pits, chips, lichen
+    tex(cv, band & ~far & ~jnt, rng, share=0.45, up=0.0, down=0.1)      # worn coping: sibling clusters (no specks)
     cv[jnt & (dist > 2) & ~far] = code('void', 1)
     # the south wall's outer face below its coping: the wall's thickness, seen as Eastward cuts it away
-    souter = cap & (WY >= by + bh - 9)
-    masonry(cv, 0, q(by + bh - 9), W, H, rng, souter, base=2, course=3.0, length=(6, 10), east_dark=False)
-    cv[souter & (WY < by + bh - 9 + 1 / D * 2)] = code('stone_cool', 0)
-    cv[souter & (WY >= by + bh - 1.2)] = code('void', 0)
+    # (round 5: the strip of courses that ran along the picture's south edge belonged to no room; the void
+    # beyond the south wall's coping now runs to the edge, as round every other wall)
     walls_m = cap | face
     outer = ndi.binary_dilation(walls_m, iterations=1) & ~walls_m & ~stair
     seg_o = (XX // q(8) + YY // q(8)) % 3
@@ -1264,9 +2125,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     patch &= ~(ndi.binary_dilation(patch, iterations=2) & ~ndi.binary_erosion(patch, iterations=2) & edge_n)
     fmat[patch] = 3
     foff[patch] = 0                                                  # the grit lies over the joints
-    grit = floor & (rng.random((H, W)) < 0.0012 + 0.004 * (dfl <= q(12))) & (fmat != 2)
-    grit = ndi.binary_dilation(grit, structure=np.ones((2, 2)))
-    foff[grit & (fmat == 0)] = 1                                     # small lit stones: a rung up
+    # (round 5: no scatter of small lit stones over the flags: that was the terrazzo of specks, G-2)
     east_edge = walls_m & ~np.roll(walls_m, -1, 1)
     east_sh = np.zeros((H, W), bool)
     for k in range(1, q(4) + 1):
@@ -1338,7 +2197,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         warm |= d < 1.1
         dt = np.hypot((WX - tx) / 46, (WY - ty - 22) / 38) + nz * 0.15
         # the pool's heart (up to rung 4 to 5) and its wide spill (a rung over the room's shade)
-        lt = 5.0 * np.clip(1 - dt, 0, 1) ** 1.6 + 1.1 * np.clip(1 - dt / 2.2, 0, 1) ** 0.9
+        lt = POOL_HEART * np.clip(1 - dt, 0, 1) ** 1.3 + POOL_SPILL * np.clip(1 - dt / 2.2, 0, 1) ** 0.9
         lf = np.maximum(lf, lt)
         lf_warm = np.maximum(lf_warm, lt)
     sk = plan.get('skylight')
@@ -1354,7 +2213,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         lightv[beam] = np.maximum(lightv[beam], 1)
         cool |= (d < 1.0) | beam
         ds = np.hypot((WX - sx) / (sk['rx'] * 1.1), (WY - sy) / (sk['ry'] * 1.1)) + nz * 0.15
-        lf_cool = 3.4 * np.clip(1 - ds, 0, 1) ** 1.4 + 1.1 * np.clip(1 - ds / 2.2, 0, 1) ** 0.9
+        lf_cool = POOL_HEART * np.clip(1 - ds, 0, 1) ** 1.3 + POOL_SPILL * np.clip(1 - ds / 2.2, 0, 1) ** 0.9
     if plan.get('stair'):
         sx, sy, sw, sh = plan['stair']['rect']
         d = np.hypot((WX - sx - sw) / 40, (WY - sy - sh / 2) / 24)
@@ -1362,6 +2221,14 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         lf = np.maximum(lf, 2.2 * np.clip(1 - (d / 1.6 + nz * 0.3), 0, 1))
     lightv[stair] = 0
     lightv = np.clip(ndi.median_filter(lightv, size=5), -1, 2)
+    # on the faces the light falls off block by block along the courses, never a disc laid over the
+    # masonry (8 Nov, G-4): each block takes the mean of the light over it, in whole steps
+    blocks = face & (cv != code('stone_cool', 0)) & (cv >= 0) & (cv % 8 < 6)
+    blab, nbl = ndi.label(blocks)
+    if nbl:
+        bmean = ndi.mean(lightv.astype(float), labels=blab, index=np.arange(1, nbl + 1))
+        snapped = np.concatenate([[0], np.floor(bmean + 0.5).astype(int)])
+        lightv[blocks] = snapped[blab[blocks]]
     # the walls' faces keep their own values in the ambient (they are lit stone, brighter than the floor)
     # and climb where a pool reaches them
     lightv[face] = np.maximum(lightv[face], 0)                       # faces keep their own values between the torches
@@ -1461,37 +2328,27 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     # reaches it and darker on its far side, its contours wobbling with a slow noise (no dither, no
     # flag-sized squares), so the pool reads round, as Eastward's 06; the joints stay dark.
     level = FLOOR_AMBIENT + lf - fshade
-    level -= 0.6 * np.clip(1 - lf / 0.9, 0, 1)            # far from every light the floor sinks towards the dark
-    wob = ndi.gaussian_filter(np.random.default_rng(91).random((H, W)), q(1.6))
-    wob = (wob - wob.mean()) / (wob.std() + 1e-9)
-    rung = np.clip(np.floor(level + 0.5 + 0.22 * wob).astype(int), 0, 6)
+    level -= 0.9 * np.clip(1 - lf / 0.9, 0, 1)            # far from every light the floor sinks towards the dark
+    rung = np.clip(np.floor(level + 0.5).astype(int), 0, FLOOR_AMBIENT + POOL_STEPS)
     if nflags:
-        with np.errstate(invalid="ignore"):
-            fl = np.nan_to_num(ndi.mean(level, labels=slab, index=np.arange(1, nflags + 1)), nan=1.0)
-        fj = np.random.default_rng(93).uniform(-0.15, 0.15, nflags)
-        fr = np.concatenate([[0], np.clip(np.floor(fl + fj + 0.5).astype(int), 0, 6)])
-        shade_f = (slab > 0) & (lf < 0.7)
-        rung[shade_f] = fr[slab[shade_f]]
-        # in a pool a flag keeps to its own value give or take one step: the stones still read as stones
-        inpool = (slab > 0) & (lf >= 0.7)
-        rung[inpool] = np.clip(rung[inpool], fr[slab[inpool]] - 1, fr[slab[inpool]] + 1)
+        fr = flag_rungs(level, slab, nflags, np.random.default_rng(93), split=lf >= 0.7)
+        rung[slab > 0] = fr[slab > 0]
     jl = FLOOR_AMBIENT + 0.45 * lf - fshade - 0.6 * np.clip(1 - lf / 0.9, 0, 1)
     jr = np.clip(np.floor(jl + 0.5).astype(int), 0, 4)
     nb = ndi.grey_erosion(np.where(slab > 0, rung, 9), size=(3, 3))      # the darkest flag beside the joint
     jt = (slab == 0) & floor
     rung[jt] = np.minimum(jr[jt], np.maximum(0, nb[jt] - 1)) + 1          # +1: floor_codes takes the joint's -1
-    # arrises catch the light only inside a pool: a flag's top and west edge a rung up, here and there
-    top_l = (slab > 0) & (np.roll(fjoint, 1, 0) | np.roll(fjoint, 1, 1)) & (foff == 0)
-    arris = top_l & (rung >= 4) & (np.random.default_rng(92).random((H, W)) < 0.35)
-    off = foff + arris.astype(int)
-    # a lit flag shows its wear: worn patches on its sibling stone and a few more pits, so a pool's
-    # flags are lit stone, not flat tiles
+    # every flag has its own lips (8 Nov, G-3, as each hex flag in Eastward's 06): its north and west
+    # lip a rung up, broken where it is worn, its south and east lip a rung down
+    nwl, sel_ = flag_lips(slab, np.random.default_rng(92))
+    # a lit flag shows its wear: worn patches on its sibling stone (no pits), so a pool's flags are lit
+    # stone, not flat tiles
     lit_f = (slab > 0) & (rung >= 3)
     wl = ndi.gaussian_filter(np.random.default_rng(94).random((H, W)), q(1.1))
     fvar = np.where(lit_f & (wl > np.quantile(wl, 0.55)), 1 - fvar, fvar)
-    pit = lit_f & (np.random.default_rng(95).random((H, W)) < 0.006) & (foff == 0)
-    pit = ndi.binary_dilation(pit, structure=np.ones((2, 2))) & lit_f
-    off[pit] = -1
+    off = foff.copy()
+    off[nwl & (foff == 0)] += 1
+    off[sel_ & (foff == 0)] -= 1
     paint = floor & ~outer & ~fixed
     fc = floor_codes(rung, off, fmat, fvar, fcool, fwarm)
     cv[paint] = fc[paint]
