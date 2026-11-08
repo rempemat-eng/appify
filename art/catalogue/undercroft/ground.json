@@ -1,7 +1,7 @@
 {
  "id": "undercroft/ground",
  "file": "game/zones/undercroft/art/ground.png",
- "sha256": "96cf0d1ae102a286f8de4440dbdcde8315c22f096cf9cbd448bc2b3b1aad3f74",
+ "sha256": "54b0e98f6ffa5a9c9c43b379a73123f0eacba287d324b551a9fcc092a6dea719",
  "kind": "ground",
  "biome": "cellar",
  "H": 74.0,
@@ -21,8 +21,7 @@
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 2 (redraw), PR #440 at 08dee79e. G-2 (terrazzo) fixed: 0.68 to 0.95 pale specks per 1000 px against 3.0 to 4.2 before; G-3 lips, G-4, G-5, G-6 fixed. Fails on G-1r: the pools step in whole and half flags and read as pale rectangles and rugs, not torchlight (start r2c4, seal r2c1, arena r2c3); inside a pool the piece contrast is 12.5 to 13.0 L, over the calm limit, against 4.0 L on Eastward 06 (160,190,240,250); the warm hue is gone. G-7: the warm and cool hue masks are per texel (undercroft.py fcool/fwarm), so ellipse arcs cut across flags (e.g. 1788-1830, 427-467). G-8: the unlit channel groove is unchanged, a flat two-tone brass strip (rows 405-410, x 1440-1650): Matt U6 survives in the unlit state. G-9 polish: dark knots at joint crossings, red-brown dirt joints. G-10: floor contrast 8.1 to 10.6 L, 2 to 2.7x Eastward 06. G-11: the alcove arch is plain and sits about 35 px west of its bay. Detectors pass (calm and drawn at room scale)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

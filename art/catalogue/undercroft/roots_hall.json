@@ -1,7 +1,7 @@
 {
  "id": "undercroft/roots_hall",
  "file": "game/zones/undercroft/art/roots_hall.png",
- "sha256": "6722ce292be2e7a7d8f9691dd8055df7133d49acf7a0902ce59d92c3492478ec",
+ "sha256": "d93b6c83ea29cb9729fc8767c6c7ee34fc12a6ade267aab649cc639862327718",
  "kind": "roots_hall",
  "biome": "cellar",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 5,
-   "tones": 16.4,
-   "shapes": 34.4
+   "patches": 2,
+   "tones": 15.0,
+   "shapes": 30.5
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.607,
-  "tones_ratio": 0.607,
-  "shapes_ratio": 0.683,
+  "ratio": 0.556,
+  "tones_ratio": 0.556,
+  "shapes_ratio": 0.606,
   "passed": false,
   "group": "prop"
  },
@@ -39,20 +39,19 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    25,
-    12,
-    127,
-    53
+    20,
+    0,
+    115,
+    51
    ],
-   "message": "undercroft/roots_hall: detail bar 0.61 of Eastward's prop band (16.4 tones, 34.4 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/roots_hall: detail bar 0.56 of Eastward's prop band (15.0 tones, 30.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 2 (redraw), PR #440 at 08dee79e. As roots_corridor (RT-4): body-and-head read, the east end is a bulb with a dark knot like an eye. specks 2.53 rejected (lit bark streaks)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

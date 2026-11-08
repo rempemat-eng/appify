@@ -1,17 +1,22 @@
-"""Pale speck scatter: Matt's "terrazzo of specks" (U1, 25 Oct; the 8 Nov Undercroft audit, G-2, P-2,
-SE-2, L-3). Texture drawn as an even scatter of tiny pale dots (two to six pixels, each lighter than
-the stone round it) reads as terrazzo, not as stone. Stone texture is sibling clusters at the same
-value, a few a tone up only on the lit side, gathered in drifts (house-style.md, "Clusters").
+"""Pale speck scatter: a regression pin for Matt's "terrazzo of specks" (U1, 25 Oct; the 8 Nov
+Undercroft audit, G-2, P-2, SE-2, L-3) on the Undercroft's six flat stone pieces (plate_up,
+plate_down, lever_up, lever_down, seal_slab, seal_sunk) and its floor. It is not a general detector:
+it is not calibrated on approved art and must not be wired into the asset gate. Round 2 of the
+audit ran it on the 45 reviewer-passed assets and it failed 9 of them (the willow, sacks, boulder,
+barrels, anvil, fences), and on other redrawn Undercroft pieces it counts structure (flute
+highlights, lit facets, lit bark streaks) as specks.
 
     speck_scatter(rgba)  ->  pale specks per 1000 opaque pixels
 
 A speck is a 4-connected run of one colour, 2 to 6 pixels, at least two pixels inside the
-silhouette, whose mean luminance is at least `lift` above the median of the opaque pixels in the
-9 x 9 window round it, and which sits in a calm field (three quarters of the pixels round it are one
-colour): a dot on a flat ground, not a lit arris, a rivet head or a pebble's crown at an edge. A dot
-of another material in a calm field (tan lichen on grey stone, a moss dash) counts too; light (the
-glow in a carved glyph, a flame, a crystal) does not. The Undercroft's pieces before the 8 Nov redraw scored 4 to 14 (the plates, seals and
-levers), after it under 1.5.
+silhouette, sitting in a calm field (three quarters of the pixels round it are one colour), which
+is either at least `lift` lighter than the median of the 9 x 9 window round it, or of another
+material than that field (tan lichen on grey stone, a moss dash). Light does not count: the dusk,
+lamp and lava ramps, and the snow ramp only where it is the white core of a dusk glow (snow drawn as
+a material counts).
+
+What it measured (8 Nov): the six stone pieces 3.1 to 4.0 and the floor 3.0 to 4.2 before the
+redraw; after it the six pieces 0 to 1.64 and the floor under 1.0, against the limit of 2.0.
 """
 from __future__ import annotations
 
@@ -21,7 +26,7 @@ import numpy as np
 from scipy import ndimage as ndi
 
 LIMIT = 2.0          # specks per 1000 opaque pixels
-GLOWS = {'dusk', 'snow', 'lamp', 'lava'}   # light in a glyph, a flame, a crystal: not texture
+GLOWS = {'dusk', 'lamp', 'lava'}          # light in a glyph, a flame, a crystal: not texture
 
 
 def _lum(rgb: np.ndarray) -> np.ndarray:
@@ -81,6 +86,8 @@ def speck_scatter(rgba: np.ndarray, lift: float = 16.0, sizes=(2, 6)) -> float:
             if fam_k in GLOWS:
                 continue
             fr = _family(int(v[np.argmax(cnt_)]))
+            if fam_k == 'snow' and fr == 'dusk':          # the white core of a glow, not snow on stone
+                continue
             foreign = fam_k not in ('', 'ink') and fr not in (None, 'ink') and fr != fam_k
             if lift_ >= lift or foreign:                    # a pale dot, or a dot of another material (lichen,
                 n += 1                                      # moss dashes): the terrazzo's mark

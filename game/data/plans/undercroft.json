@@ -40,17 +40,18 @@
     { "id": "rubble_hall", "kind": "rubble", "at": [44, 192], "size": [28, 12], "solid": true },
     { "id": "roots_hall", "kind": "roots", "at": [120, 72], "size": [28, 10], "solid": true, "why": "the oak's roots came through the vault and spread on the floor" },
     { "id": "rubble_corridor", "kind": "rubble", "at": [344, 118], "size": [20, 10], "solid": true, "why": "a block fallen where the roots split the vault" },
-    { "id": "roots_corridor", "kind": "roots", "at": [272, 164], "size": [26, 8], "solid": true },
-    { "id": "urn_seal", "kind": "urn", "at": [430, 74], "size": [10, 6], "solid": true },
+    { "id": "roots_corridor", "kind": "roots", "at": [272, 160], "size": [26, 8], "solid": true },
+    { "id": "urn_seal", "kind": "urn", "at": [432, 72], "size": [10, 6], "solid": true },
     { "id": "rubble_seal", "kind": "rubble", "at": [432, 194], "size": [16, 6], "solid": true },
-    { "id": "stump_nw", "kind": "stump", "at": [592, 76], "size": [12, 8], "solid": true, "why": "a broken pillar of the old vault" },
-    { "id": "stump_se", "kind": "stump", "at": [736, 194], "size": [12, 8], "solid": true },
+    { "id": "stump_nw", "kind": "stump", "at": [592, 80], "size": [12, 8], "solid": true, "why": "a broken pillar of the old vault" },
+    { "id": "stump_se", "kind": "stump", "at": [736, 192], "size": [12, 8], "solid": true },
     { "id": "rubble_chamber", "kind": "rubble", "at": [734, 78], "size": [20, 10], "solid": true, "seed": 7 },
     { "id": "shard", "kind": "shard", "at": [700, 128], "size": [12, 8], "solid": false, "if": { "not_flags": ["shard_taken:woodland"] }, "why": "the woodland's great shard" }
   ],
   "puzzle": {
     "plate": { "id": "seal_plate", "at": [472, 128], "size": [16, 16], "flag": "undercroft_plate" },
-    "channel": [[480, 136], [552, 136]],
+    "channel": [[480, 136], [560, 136]],
+    "channel_branch": [[548, 136], [548, 98]],
     "lever": { "id": "seal_lever", "at": [548, 96], "flag": "undercroft_seal_open" },
     "seal": { "id": "seal_slab", "rect": [560, 112, 16, 48], "height": 40 },
     "why": "two steps: the plate charges the channel, the lever sinks the slab; both persist in the save"

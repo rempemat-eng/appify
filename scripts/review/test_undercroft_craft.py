@@ -1,8 +1,9 @@
 """Guards for the fault classes the 8 Nov detail audit found in the Undercroft
-(docs/reviews/2026-11-08-undercroft-woodland-placed.md): a terrazzo of pale specks on stone (G-2,
-P-2, SE-2, L-3), floor light pools drawn as posterised contour bands (G-1), and a picture whose size
-or foot drifts from the scene's (the scene, game/zones/undercroft/undercroft.tscn, is written from
-kit.json and must not move under a redraw).
+(docs/reviews/2026-11-08-undercroft-woodland-placed.md): a terrazzo of pale specks on the six flat
+stone pieces and the floor (G-2, P-2, SE-2, L-3; specks.py is a pin for these, not a detector), the
+floor's light drawn as contour bands or rugs (G-1, G-1r), its hue cutting across the flags in arcs
+(G-7, checked on the real floor painted from the plan), and a picture whose size or foot drifts from
+the scene's (game/zones/undercroft/undercroft.tscn is written from kit.json).
 
     python3 -m unittest scripts.review.test_undercroft_craft
 """
@@ -35,16 +36,35 @@ class SpeckScatter(unittest.TestCase):
                 a[y:y + 2, x:x + 3, :3] = (190, 160, 110)
         self.assertGreater(speck_scatter(a), LIMIT)
 
-    def test_clusters_in_drifts_pass(self):
-        # sibling clusters at the same value gathered in one drift are texture, not terrazzo
-        a = np.zeros((60, 60, 4), np.uint8)
+    def test_sparse_terrazzo_just_over_the_limit_is_caught(self):
+        # pale 2 x 2 specks every 20 px: about 2.5 a 1000 px, just over the limit
+        a = np.zeros((100, 100, 4), np.uint8)
         a[..., :3] = (142, 135, 130)
         a[..., 3] = 255
-        rng = np.random.default_rng(1)
-        for _ in range(30):
-            y, x = rng.integers(8, 24, 2)
-            a[y:y + 2, x:x + 2, :3] = (135, 125, 120)
+        for y in range(6, 96, 20):
+            for x in range(6, 96, 20):
+                a[y:y + 2, x:x + 2, :3] = (171, 161, 148)
+        self.assertGreater(speck_scatter(a), LIMIT)
+
+    def test_a_few_pale_clusters_in_a_drift_pass(self):
+        # pale clusters (a tone up, so they could count) gathered in one drift touch each other: texture
+        a = np.zeros((100, 100, 4), np.uint8)
+        a[..., :3] = (142, 135, 130)
+        a[..., 3] = 255
+        a[20:30, 20:34, :3] = (171, 161, 148)
+        for y, x in ((22, 24), (25, 29), (27, 22)):
+            a[y:y + 2, x:x + 2, :3] = (142, 135, 130)
         self.assertLessEqual(speck_scatter(a), LIMIT)
+
+    def test_snow_specks_on_stone_count(self):
+        # snow is a material: pale snow dots on stone are terrazzo, not glow
+        a = np.zeros((100, 100, 4), np.uint8)
+        a[..., :3] = (142, 135, 130)
+        a[..., 3] = 255
+        for y in range(6, 96, 14):
+            for x in range(6, 96, 14):
+                a[y:y + 2, x:x + 2, :3] = (230, 234, 236)
+        self.assertGreater(speck_scatter(a), LIMIT)
 
     def test_undercroft_stone_pieces_carry_no_terrazzo(self):
         for name in STONE_PIECES:
@@ -53,7 +73,7 @@ class SpeckScatter(unittest.TestCase):
 
     def test_undercroft_floor_carries_no_terrazzo(self):
         g = _rgba('ground')
-        self.assertLessEqual(speck_scatter(g[160:440]), LIMIT)
+        self.assertLessEqual(speck_scatter(g[160:600]), LIMIT)       # the whole floor, rooms' north to south
 
 
 class StepsByFlag(unittest.TestCase):
@@ -103,10 +123,54 @@ class StepsByFlag(unittest.TestCase):
         self.assertGreater(near, far)
 
 
+class RealFloorTint(unittest.TestCase):
+    """G-7 on the real floor: paint the Undercroft from its plan (in memory, into a scratch folder) and
+    check that no flag carries both warm and cool light in its body (an arc of another hue across it)."""
+
+    @classmethod
+    def setUpClass(cls):
+        import tempfile
+        from scripts.art.native import ctx
+        plan_path = os.path.join(ROOT, 'game', 'data', 'plans', 'undercroft.json')
+        plan = json.load(open(plan_path))
+        ctx.configure(3.0, {}, plan)
+        from scripts.art.native import undercroft as U
+        plan['_inputs'] = U.input_hash(plan_path, 3.0)
+        cls.f = {}
+        with tempfile.TemporaryDirectory() as d:
+            U.build(plan, os.path.join(d, 'art'), fields=cls.f)
+            cls.painted = np.asarray(Image.open(os.path.join(d, 'art', 'ground.png')).convert('RGB'))
+
+    def test_it_is_the_committed_floor(self):
+        self.assertTrue(np.array_equal(self.painted, _rgba('ground')[..., :3]),
+                        'the committed ground.png is not what the painter draws from the plan')
+
+    def test_no_flag_holds_warm_and_cool(self):
+        from scipy import ndimage as ndi
+        slab, paint = self.f['slab'], self.f['paint']
+        rgb = self.painted.astype(int)
+        warm = (rgb[..., 0] - rgb[..., 2]) > 14                 # amber, earth, sand light
+        cool = ((rgb[..., 2] - rgb[..., 0]) > 18) & (rgb[..., 2] > rgb[..., 1] + 10)   # the skylight's blue (not moss)
+        bad = []
+        for f, sl in enumerate(ndi.find_objects(slab), start=1):
+            if sl is None:
+                continue
+            m = (slab[sl] == f) & paint[sl]
+            m = ndi.binary_erosion(m, iterations=2)             # the body, not its lips and joints
+            n = int(m.sum())
+            if n < 40:
+                continue
+            w, c = int(warm[sl][m].sum()), int(cool[sl][m].sum())
+            if w > 0.04 * n and c > 0.04 * n:
+                bad.append((f, w, c, n))
+        self.assertFalse(bad, f'{len(bad)} flags carry both warm and cool light (arcs across them): {bad[:5]}')
+
+
 class SceneUnmoved(unittest.TestCase):
     def test_pictures_keep_the_scenes_sizes_and_feet(self):
-        # the sizes the scene was written for (undercroft.tscn offsets = -anchor from kit.json)
-        sizes = {'cairn_alcove': (108, 100), 'channel_lit': (218, 10), 'lever_down': (54, 72), 'lever_up': (54, 72),
+        # the sizes the scene was written for (undercroft.tscn offsets = -anchor from kit.json); round 3 changed
+        # only channel_lit, with its offset, in the scene
+        sizes = {'cairn_alcove': (108, 100), 'channel_lit': (260, 134), 'lever_down': (54, 72), 'lever_up': (54, 72),
                  'plate_down': (66, 66), 'plate_up': (66, 72), 'roots_corridor': (144, 48), 'roots_hall': (150, 54),
                  'rubble_chamber': (84, 69), 'rubble_corridor': (84, 69), 'rubble_hall': (108, 82), 'rubble_seal': (72, 44),
                  'seal_slab': (54, 270), 'seal_sunk': (52, 148), 'shard': (90, 126), 'stump_nw': (84, 104),
@@ -117,7 +181,7 @@ class SceneUnmoved(unittest.TestCase):
         kit = json.load(open(os.path.join(ROOT, 'game', 'zones', 'undercroft', 'kit.json')))
         offs = {o['id']: tuple(o['offset']) for o in kit['objects']}
         self.assertEqual(offs['cairn_alcove'], (-54, -99))
-        self.assertEqual(offs['channel_lit'], (-1, -5))
+        self.assertEqual(offs['channel_lit'], (-10, -124))         # round 3: the overlay lights the lips (scene changed)
 
 
 if __name__ == '__main__':
