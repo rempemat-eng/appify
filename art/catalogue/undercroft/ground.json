@@ -21,7 +21,8 @@
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 4, PR #440 at a8185aca. G-15, G-16, G-17, G-18 and the T junction fixed. Fails on G-19: every pool (torches, stair, skylight) is a set of nested ellipses, a 2 x 2 checker band at each step and ragged sawtooth edges between the inner steps, with a blue slate_cool 2 ring between the warm heart and the shade; it reads as a target, not light. G-20: the pool boxes are not calm by the ground band (room 1 pool 15.4 L, its heart 20.8, skylight 11.9 and its heart 14.3, limit 11.9; Eastward 06 floor 3.7 to 8.7). G-21: the shade floor is L 0.274 against Eastward 06 0.36 to 0.37 and only 0.057 over the void. G-22: clustered 1 px dark vertical strokes on shade flags read as tufts of grass. Polish G-12r, G-23. The ground detectors pass (no findings)."
  }
 }
