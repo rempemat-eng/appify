@@ -709,6 +709,68 @@ print(json.dumps([m for m,p in sorted(paint.items(),key=lambda item:item[1].get(
         self.assertEqual([m for m,p in sorted(paint.items(),key=lambda item:item[1].get('order',0))], ['path', 'worn'])
 
 
+class CrownMaskConsumers(unittest.TestCase):
+    """Only a tree's crown mask reaches the crown consumers: the bake's variant context, its
+    drawing pass and the detail bar's crown-shadow region. A non-tree mask (the mill wheel's
+    silhouette, a house's volume) reaches none of them."""
+
+    TREE = 'woodland_oak'
+
+    @classmethod
+    def setUpClass(cls):
+        cls.idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        # every masked prop that is not a tree: the mill wheel's silhouette (Act 1), the houses'
+        # volumes (house shadows); the mill when it is there, else the first of them
+        cls.others = sorted(k for k, e in cls.idx.items()
+                            if 'mask' in (e.get('shadow') or {}) and e.get('role') != 'tree')
+        cls.OTHER = 'mill_wheel' if 'mill_wheel' in cls.others else (cls.others or [None])[0]
+
+    def _plan(self, *pieces):
+        at = {self.TREE: [456, 264]}
+        return {'legend': {'.': 'lawn'}, 'rows': ['.' * 24] * 16,
+                'pieces': [{'id': p, 'piece': p, 'at': at.get(p, [192, 300])} for p in pieces]}
+
+    def test_the_role_names_trees_not_masks(self):
+        from scripts.art.kit import bake as BK
+        self.assertTrue(self.others)
+        for k in self.others:
+            self.assertFalse(BK.is_crown_mask(self.idx[k]), k)
+        trees = [k for k, e in self.idx.items() if e.get('role') == 'tree']
+        self.assertIn(self.TREE, trees)
+        for k in trees:
+            self.assertTrue(BK.is_crown_mask(self.idx[k]), k)
+        # a house's volume mask is not a crown wherever it appears, nor a tree without a mask
+        house = {'role': 'house', 'shadow': {'kind': 'volume', 'mask': {'png': 'res://x.png', 'offset': [0, 0]}}}
+        self.assertFalse(BK.is_crown_mask(house))
+        self.assertFalse(BK.is_crown_mask({'role': 'tree', 'shadow': {}}))
+        self.assertFalse(BK.is_crown_mask(None))
+
+    def test_a_non_tree_mask_gives_no_tree_variant_context_and_a_tree_still_does(self):
+        from scripts.art.kit import bake as BK
+        for k in self.others:
+            self.assertFalse(BK.crown_cells(self._plan(k)['pieces'], self.idx, 16, 24).any(), k)
+        c = BK.crown_cells(self._plan(self.OTHER, self.TREE)['pieces'], self.idx, 16, 24)
+        self.assertEqual([tuple(int(v) for v in p) for p in zip(*np.nonzero(c))], [(263 // 24, 456 // 24)])
+        # and bake itself takes its tree context from that test (spied through a real bake)
+        seen, orig = [], BK.crown_cells
+        try:
+            BK.crown_cells = lambda *a: seen.append(orig(*a)) or seen[-1]
+            BK.bake(self._plan(self.OTHER, self.TREE))
+        finally:
+            BK.crown_cells = orig
+        self.assertEqual(len(seen), 1)
+        self.assertTrue((seen[0] == c).all())
+
+    def test_a_non_tree_mask_gives_no_crown_shadow_review_and_a_tree_still_does(self):
+        from scripts.art.kit import detail_bar as DB
+        H, W = 16 * 24, 24 * 24
+        for k in self.others:
+            self.assertFalse(DB.regions(self._plan(k), H, W)['shadow'].any(), k)
+        tree = DB.regions(self._plan(self.TREE), H, W)['shadow']
+        self.assertTrue(tree.any())
+        self.assertTrue((DB.regions(self._plan(self.OTHER, self.TREE), H, W)['shadow'] == tree).all())
+
+
 class FencesAndFarm(unittest.TestCase):
     """The fence cells close loops, the farmyard pieces carry what the enclosure rules read, the
     farm study built from kit pieces passes every check, and the pictures are what the painters
