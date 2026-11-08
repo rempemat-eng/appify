@@ -48,7 +48,6 @@
         "stones": 0.7,
         "reeds": 0.25,
         "rush_clumps": 3,
-        "side_w": 8,
         "shape": {
           "seed": 402,
           "r_out": 1.3,

@@ -63,8 +63,8 @@ class RealSource(unittest.TestCase):
         entry = json.loads((ROOT / 'game/kit/props/index.json').read_text())['woodland_boulder']['variants']['b4']
         expected = np.asarray(Image.open(SN.res_path(entry['png'])).convert('RGBA'))
         np.testing.assert_array_equal(sp.rgba, expected)
-        self.assertEqual(sp.origin, (860, 96))
-        self.assertEqual(sp.box[:2], tuple(np.floor(np.array([860, 96]) - entry['foot'] + 0.5).astype(int)))
+        self.assertEqual(sp.origin, (836, 96))
+        self.assertEqual(sp.box[:2], tuple(np.floor(np.array([836, 96]) - entry['foot'] + 0.5).astype(int)))
         self.assertTrue(sp.ysort)
 
     def test_actual_painted_structures_are_hidden_not_pasted_twice(self):
@@ -87,7 +87,7 @@ class RealSource(unittest.TestCase):
 
     def test_legacy_woodland_and_crossroads_are_byte_unchanged(self):
         expected = {
-            'woodland': 'df4bade2c300319709c35a1b491ed3922e61502761312e10b045d3c68ca07934',
+            'woodland': '645dcc93e2e5518d3c2eee44f4fe8f13c11afd49ab4240d97f7b1623d5143f26',
             'crossroads': 'b108c2826ae8093fad5084b14e66150f08e14d4c6b43d4ba3c27db5f51f631a1',
         }
         for name, digest in expected.items():

@@ -14245,7 +14245,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -18.0,
+    -19.0,
     -40.0
    ],
    "reduced_motion": "hold:0",
@@ -14320,7 +14320,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -18.0,
+    -19.0,
     -88.0
    ],
    "reduced_motion": "hold:0",
@@ -14585,7 +14585,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -42.0,
+    -43.0,
     -40.0
    ],
    "reduced_motion": "hold:0",
@@ -14676,7 +14676,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -42.0,
+    -43.0,
     -88.0
    ],
    "reduced_motion": "hold:0",
@@ -14791,7 +14791,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -54.0,
+    -55.0,
     -40.0
    ],
    "reduced_motion": "hold:0",
@@ -14890,7 +14890,7 @@
    "fps": 10.0,
    "frames": 8,
    "offset": [
-    -54.0,
+    -55.0,
     -88.0
    ],
    "reduced_motion": "hold:0",

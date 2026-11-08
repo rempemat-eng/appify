@@ -6,7 +6,8 @@
     python3 game/tools/gen_zone.py woodland
 
 A kit zone is three things, all kept in game/zones/<zone>/ so the scene can be rebuilt without the kit:
-    art/*.png    ground.png, one picture per object kind, flow.png (the moving water's frames), at density 3
+    art/*.png    ground.png, one picture per object kind, flow.png (the moving water's frames) and any
+                 flow_<name>.png (further strips, kit.json flows, each cropped to its own water), at density 3
     kit.json     the kit's export (scripts/art/native/zone.py): density, each object's [id, kind, x, y, w, h]
                  in world px, and the flow box and its column count
     walk.txt     the walk mask, one row per 4 world px cell row, '.' walkable and '#' blocked
@@ -107,6 +108,8 @@ def write_scene(zone: str, out: str) -> dict:
     if kit.get('flow'):
         ext.append(f'[ext_resource type="Texture2D" path="{res}/art/flow.png" id="flow"]')
         ext.append('[ext_resource type="Script" path="res://world/flow_anim.gd" id="flow_anim"]')
+    for name in sorted(kit.get('flows', {})):
+        ext.append(f'[ext_resource type="Texture2D" path="{res}/art/flow_{name}.png" id="flow_{name}"]')
     kinds = sorted({o[1] for o in kit['objects']})
     for k in kinds:
         ext.append(f'[ext_resource type="Texture2D" path="{res}/art/{k}.png" id="t_{k}"]')
@@ -119,6 +122,15 @@ def write_scene(zone: str, out: str) -> dict:
         vframes = max(1, round(fh / (bh * D)))
         nodes.append(f'[node name="Water" type="Sprite2D" parent="."]\nz_index = -9\nposition = Vector2({num(bx * D)}, {num(by * D)})\n'
                      f'texture = ExtResource("flow")\ncentered = false\nhframes = {cols}\nvframes = {vframes}\nscript = ExtResource("flow_anim")')
+    # further strips (the rill's, kit.json flows): the same animator, each cropped to its own water
+    for name, fl in sorted(kit.get('flows', {}).items()):
+        bx, by, bw, bh = fl['rect']
+        cols = int(fl['cols'])
+        fw, fh = png_size(os.path.join(out, 'art', f'flow_{name}.png'))
+        vframes = max(1, round(fh / (bh * D)))
+        nodes.append(f'[node name="Water{name.capitalize()}" type="Sprite2D" parent="."]\nz_index = -9\n'
+                     f'position = Vector2({num(bx * D)}, {num(by * D)})\ntexture = ExtResource("flow_{name}")\ncentered = false\n'
+                     f'hframes = {cols}\nvframes = {vframes}\nscript = ExtResource("flow_anim")')
     nodes.append('[node name="Objects" type="Node2D" parent="."]\ny_sort_enabled = true')
     for oid, kind, x, y, w, h in kit['objects']:
         fx, fy = round((x + w / 2) * D), round((y + h) * D)

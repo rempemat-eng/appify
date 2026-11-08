@@ -156,14 +156,14 @@
     "fps": 10,
     "strip": "res://kit/props/art/waterfall_4_tall_flow.png",
     "frame_px": [
-     108,
-     98
+     110,
+     101
     ],
     "region_px": [
-     18,
+     17,
      20,
-     108,
-     98
+     110,
+     101
     ],
     "reduced_motion": "hold:0",
     "on_screen_only": true
@@ -183,7 +183,7 @@
    "module": "scripts.art.kit.structures",
    "fn": "fall_sheet",
    "args": {
-    "seed": 69
+    "seed": 13
    }
   },
   "seeded_from": "scripts/art/kit/structures.py",

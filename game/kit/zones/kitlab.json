@@ -61,7 +61,7 @@
    "id": "rock-1",
    "piece": "woodland_boulder",
    "at": [
-    860,
+    836,
     96
    ],
    "variant": "b4"
@@ -70,8 +70,8 @@
    "id": "rock-2",
    "piece": "woodland_boulder",
    "at": [
-    884,
-    112
+    858,
+    116
    ],
    "variant": "b1"
   },

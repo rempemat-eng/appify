@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "907fff6186e61cc63148fa5a7e13723490888aaee7ff5a3f276553e7c136656c",
+ "sha256": "88302378b2402398b8d68fcc657a51b1639871456d7c3b4bf9a326d99e280e98",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -18,10 +18,11 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-10-27",
+ "reviewed": "2026-11-05",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 6 (5725cf90). P5-1 fixed, measured: no water tone above the shore at x 476-492 (the 4 x 2 chip at 483-486, 860-861 and the near-black slot under it are gone; the joint is rock, the wet foot runs on with a pebble at 483-485, 867-868), the light waterline runs at y 872 through x 480-491 with one-texel wobbles at 478-479 and 488-489 (871), the dark band under it. The rest of the face re-checked against round 5 (2371 texels changed, all in y 782-881): moss tufts and wet pebbles reshuffled in kind (green blobs of 3+ px 164 to 170, of 15+ px 29 to 26), and the two water tongues that climbed into the face beside the plunge pool (x 192-209, y 851-863; x 280-289, y 850-861) are rock now, the same cause as P5-1. No stray water texel left above any shore (water-coloured components outside the sheet: none). Stays in the seeded fix queue for its own logic.scale item."
  }
 }

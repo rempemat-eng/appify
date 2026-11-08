@@ -120,9 +120,10 @@ GLADE_END = (128, 150, 18, 13)   # the trodden ground where the north path opens
 # pieces of the base scene moved off what they must not stand on (texels): a bush off the face,
 # the willow (it stood far from water with its trunk on a path) to the river's south bank, the east stone of the ring clear of the north-south path
 # and, with the woodland pieces' solid boxes restored (2 Nov), a holly inside the zone's edge and a
-# bramble clear of the oak beside it
+# bramble clear of the oak beside it; the oak west of the fall a cell west, so its crown keeps off
+# the channel and the sheet's columns (review round 6, L6-3: the fall seemed to step out halfway)
 MOVED = {'bush-2': (96, 768), 'willow': (816, 1008), 'stone-7': (324, 1209), 'wood-15': (56, 744),
-         'wood-42': (504, 1632), 'pine-1': (144, 192)}
+         'wood-42': (504, 1632), 'pine-1': (144, 192), 'tree-3': (60, 864)}
 
 
 def tiers_of(grid) -> list:

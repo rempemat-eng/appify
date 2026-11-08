@@ -283,6 +283,54 @@ def check_falls(native, H) -> list[Finding]:
 
 
 # ------------------------------------------------------------------------------------------
+FOAM_MIN_AREA = 0.2          # a white plate covers at least 0.2 H^2 in one piece ...
+FOAM_MIN_W = 0.6             # ... and is at least 0.6 H wide and FOAM_ASPECT times wider than tall
+FOAM_ASPECT = 1.6
+FOAM_FILL = 0.55             # solid: it fills most of its box (broken clumps with water between do not)
+FOAM_TOP2 = 0.75             # flat: two tones cover this much of it (16-level colour keys)
+
+
+def check_foam(native, H) -> list[Finding]:
+    """White water lying on water as one wide flat plate: the woodland's plunge pool foam (the
+    woodland review, 4 Nov: a 118 x 19 plate in two tones with a hard seam, twice the sheet's
+    width; calibration W3 on its side). check_falls only measures bands taller than wide, so a
+    plate lying across the pool needs its own test: wide, solid, two tones, beside water."""
+    fs = []
+    h, s, v = hsv(native)
+    pale = (v >= 0.82) & (s <= 0.18)
+    # keep what lies across: the fall's falling streaks (a few px wide) drop out, so a plate at the
+    # sheet's foot is measured on its own and not as the foot of a tall band
+    pale = ndi.binary_opening(pale, structure=np.ones((3, max(5, int(0.2 * H))), bool))
+    lab, regs = regions(pale, min_area=int(FOAM_MIN_AREA * H * H))
+    water = water_mask(native)
+    k = keys(native, 16)
+    for lid, sl, area in regs:
+        x0, y0, x1, y1 = slice_box(sl)
+        w, hgt = x1 - x0, y1 - y0
+        if w < FOAM_MIN_W * H or w < FOAM_ASPECT * hgt:
+            continue
+        comp = lab == lid
+        fill = float(comp[y0:y1, x0:x1].mean())
+        ring = ndi.binary_dilation(comp, iterations=3) & ~comp
+        wet = float((water & ring).sum() / max(1, ring.sum()))
+        if fill < FOAM_FILL or wet < 0.25:
+            continue
+        vals, cnt = np.unique(k[comp], return_counts=True)
+        top2 = float(np.sort(cnt)[::-1][:2].sum() / cnt.sum())
+        if top2 < FOAM_TOP2:
+            continue
+        fs.append(Finding('detail.foam_flat', 'fault', (x0, y0, x1, y1),
+                          f'the foam is a flat plate: {w} x {hgt} px, {fill:.0%} solid, the two main tones '
+                          f'cover {top2:.0%}',
+                          'build the white water from broken clumps in 4 to 5 tones (a lit cap on each, a pale '
+                          'blue-grey body, the pool showing between them, a darker band under the downstream '
+                          'edge), within the sheet\'s foot plus a few px, its edge breaking into flecks, spray '
+                          'and ripple arcs (art-style.md: a fall has a lip, volume, streaks, foam, spray and rings)',
+                          score=top2, threshold=FOAM_TOP2, subject='waterfall'))
+    return fs
+
+
+# ------------------------------------------------------------------------------------------
 def check_bridges(native, H) -> list[Finding]:
     """A crossing shows as one water body cut in two by a band that is not water: the bridge.
     Its deck (the colours found where the water would be) must carry on past both banks by
