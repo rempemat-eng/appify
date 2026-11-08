@@ -34,7 +34,8 @@
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset. Painter's note for the auditor (round 7, not a verdict): detail.ragged_edge no longer fires on any torch pool. detail.no_falloff (0.31) is the whole-picture measure that round 6's auditor rejected on this asset as a false positive (the void and the wall tops set it)."
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 7, PR #440 at 80159712. G-32 (fault): the eight torch pools read as patches of brown flagstone, not light. The heart is 8 % of a pool (0.12 to 0.39 H2) at C 0.043, against Eastward 06's fire floor at C 0.07 to 0.08. The colour is flat over 3.2 to 4.4 H2 a pool (C 0.036, lamplit 57 to 67 % at every distance in the warm band), the outer 49 % sits at +0.024 L over the shade, and the area doubled since round 6. The pools almost vanish in OKLab L alone. G-33 (fault): the wall's light is a same-tone hue swap staged as a 2 x 2 checker on the blocks, at most +0.025 L by the cup. G-34 (polish): the pale-speck pin's 1.97 is an average; inside the pools it is 4.96 a 1000 px, all hem dither; the hem was held at shade value to stay under it. G-31 fixed: 0 joint 2 x 2 blocks, against round 6's 243. detail.no_falloff 0.312 rejected as a false positive again: with the floor flattened the picture still scores 0.276, so the void and the walls set it."
  }
 }
