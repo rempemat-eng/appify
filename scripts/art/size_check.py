@@ -31,6 +31,7 @@ import re
 import sys
 
 from PIL import Image
+from texel import native_image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -46,11 +47,14 @@ def load_guide(path: str = GUIDE) -> dict:
 
 def measure(path: str, scale: int) -> tuple[float, float]:
     """(height, width) in zone px of the sprite's pixels that are at least half opaque."""
-    alpha = Image.open(path).convert('RGBA').getchannel('A').point(lambda v: 255 if v >= 128 else 0)
+    with Image.open(path) as exported:
+        image, density = native_image(exported, scale)
+    alpha = image.getchannel('A').point(lambda v: 255 if v >= 128 else 0)
     box = alpha.getbbox()
     if box is None:
         return 0.0, 0.0
-    return (box[3] - box[1]) / scale, (box[2] - box[0]) / scale
+    # The guide is in WORLD pixels, while the measured image is in art texels.
+    return (box[3] - box[1]) / density, (box[2] - box[0]) / density
 
 
 def judge(value: float, rng: list | None, tol: float) -> int:

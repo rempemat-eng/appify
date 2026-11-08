@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Headless check of the Godot project (npm run check:godot). Three steps, each failing on any
+# Headless check of the Godot project (npm run check:godot). Four steps, each failing on any
 # "SCRIPT ERROR" or engine "ERROR:" line, because Godot keeps running and exits 0 after script errors:
 #   1. import the project (fresh .godot cache on CI)
 #   2. run the main scene for $FRAMES frames with a fresh save (-- --fresh)
-#   3. run the GdUnit4 suites in game/test (reports in game/reports, git-ignored)
+#   3. run --camp --quit to actual completion in a private profile (30s + 5s kill cap)
+#   4. run the GdUnit4 suites in game/test (reports in game/reports, git-ignored)
 # GODOT must point at a Godot 4.7.2 binary (docs/godot.md); user data and editor settings go to a
 # private executable-only copy with fresh per-child roots, including version probing.
 set -uo pipefail
@@ -74,6 +75,16 @@ scan "import" "$TMP/import.log" $?
 
 run_engine --headless --audio-driver Dummy --path "$GAME" --quit-after "$FRAMES" -- --fresh >"$TMP/run.log" 2>&1
 scan "run main scene for $FRAMES frames" "$TMP/run.log" $?
+
+# Exercise the real quit boundary; --quit-after would hide a nonterminating command.
+# Reuse executable/profile containment, with the timeout owning the whole child group.
+(
+  export -f run_engine isolation_error
+  export TMP GODOT
+  timeout --signal=TERM --kill-after=5s 30s bash -c \
+    'run_engine --headless --audio-driver Dummy --path "$1" -- --fresh --camp --quit' _ "$GAME"
+) >"$TMP/camp-quit.log" 2>&1
+scan "camp --quit actual completion" "$TMP/camp-quit.log" $?
 
 # no -d: with the debugger on, a parse error drops into Godot's interactive "debug>" prompt and hangs
 run_engine --headless --audio-driver Dummy --path "$GAME" -s \

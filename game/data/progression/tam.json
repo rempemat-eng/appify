@@ -1,35 +1,39 @@
 {
-  "schema_version": 1,
-  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "schema_version": 2,
+  "status": "proposal (claude-a/progression-2, 26 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "id": "tam",
   "name": "Tam",
-  "identity": "mature Frostline ice monk in ochre and saffron robes; cool grey-blue wraps on both forearms, palms and shins; one mala round the neck; no weapon, the wraps are his",
+  "identity": "mature Frostline warrior monk, bald, in saffron and ochre robes (the castwork redesign); cool grey-blue wraps on both forearms, palms and shins; one mala round the neck; no weapon, the wraps are his",
   "home_region": "frostline",
-  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "home_region_note": "see docs/vision/world-and-cast.md (26 Oct); it sets the tier material",
   "abilities": {
-    "kit": "game/data/abilities/tam.json (Codex, #261); base and powered form unchanged",
+    "kit": "game/data/abilities/tam.json (Codex, #261); base and powered form unchanged; every node is a modifier over it",
     "base": {
       "primary": "Frost palms",
       "secondary": "Ice ridge",
       "block": "Ice guard",
       "special": "Glacier Form"
     },
+    "loadout_kind": {
+      "label": "stance",
+      "rule": "one loaded at a time, chosen outside fights; the base kind is free"
+    },
     "skill_tree": {
       "branches": [
         {
-          "id": "palm",
-          "name": "Palm",
+          "id": "stances",
+          "name": "Stances",
           "covers": [
             "primary"
           ],
           "nodes": [
             {
-              "id": "quick_palms",
-              "kind": "passive",
-              "name": "Quick Palms",
-              "effect": "Frost palms recover 5 % faster.",
+              "id": "crane",
+              "kind": "kind",
+              "name": "Crane",
+              "effect": "Takes crane stance: palms reach 3 further.",
               "numbers": {
-                "primary_cooldown_pct": -5
+                "reach": 3
               },
               "level": 2,
               "cost": 1,
@@ -37,66 +41,52 @@
               "touches_canonical": false
             },
             {
-              "id": "cold_breath",
-              "name": "Cold Breath",
-              "binding": "hold Ice guard for 1 s",
-              "effect": "The held breath steadies him: the next palm applies two frost instead of one.",
+              "id": "ox",
+              "kind": "kind",
+              "name": "Ox",
+              "effect": "Takes ox stance: palms stagger light foes.",
               "numbers": {
-                "hold_seconds": 1.0,
-                "frost": 2
+                "stagger_seconds": 0.4
               },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "breath frost (3 drawings, finite)"
-                ],
-                "reuses": [
-                  "guard 4"
-                ]
-              },
-              "touches_canonical": false,
-              "kind": "technique",
               "level": 3,
               "cost": 2,
               "requires": [
-                "quick_palms"
-              ]
-            },
-            {
-              "id": "deep_cold",
-              "kind": "passive",
-              "name": "Deep Cold",
-              "effect": "Frost on foes lasts 20 % longer.",
-              "numbers": {
-                "frost_duration_pct": 20
-              },
-              "level": 6,
-              "cost": 1,
-              "requires": [
-                "cold_breath"
+                "crane"
               ],
               "touches_canonical": false
             },
             {
-              "id": "cold_breath_2",
-              "kind": "technique upgrade",
-              "name": "Cold Breath II",
-              "effect": "The steadied palm also slows the foe.",
+              "id": "breath",
+              "kind": "minor",
+              "name": "Breath",
+              "effect": "Changing stance at a waystone is free and instant.",
+              "numbers": {},
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "ox"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "glacier",
+              "kind": "kind",
+              "name": "Glacier",
+              "effect": "Takes glacier stance: every palm adds frost.",
               "numbers": {
-                "slow_pct": 20,
-                "slow_seconds": 2
+                "frost": 1
               },
               "level": 12,
               "cost": 3,
               "requires": [
-                "deep_cold"
+                "breath"
               ],
               "touches_canonical": false
             },
             {
               "id": "hundred_palms",
               "kind": "keystone",
-              "name": "Hundred Palms",
+              "name": "Hundred palms",
               "effect": "Every fifth palm in a row strikes twice.",
               "numbers": {
                 "every": 5
@@ -104,7 +94,7 @@
               "level": 22,
               "cost": 4,
               "requires": [
-                "cold_breath_2"
+                "glacier"
               ],
               "touches_canonical": false
             }
@@ -120,8 +110,8 @@
           "nodes": [
             {
               "id": "long_ridge",
-              "kind": "passive",
-              "name": "Long Ridge",
+              "kind": "minor",
+              "name": "Long ridge",
               "effect": "Ice ridge travels 10 % further.",
               "numbers": {
                 "range_pct": 10
@@ -132,52 +122,44 @@
               "touches_canonical": false
             },
             {
-              "id": "ridge_wall",
-              "name": "Ridge Wall",
-              "binding": "passive on Ice ridge",
-              "effect": "The ridge ends in a low ice wall that stops projectiles for a moment.",
-              "numbers": {
-                "wall_seconds": 2,
-                "width_tiles": 1
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "ice wall (rise 3, hold 1, crumble 3)"
-                ],
-                "reuses": []
-              },
-              "touches_canonical": false,
+              "id": "twin_ridge",
               "kind": "technique",
+              "name": "Twin ridge",
+              "effect": "Ice ridge splits into two lanes.",
+              "numbers": {
+                "lanes": 2,
+                "angle_degrees": 20
+              },
               "level": 9,
               "cost": 2,
               "requires": [
                 "long_ridge"
-              ]
+              ],
+              "touches_canonical": false
             },
             {
               "id": "glacier_step",
-              "kind": "passive",
-              "name": "Glacier Step",
+              "kind": "minor",
+              "name": "Glacier step",
               "effect": "Glacier Form's glide +10 % speed.",
               "numbers": {
                 "glide_pct": 10
               },
-              "touches_canonical": true,
-              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
               "level": 11,
               "cost": 1,
               "requires": [
-                "ridge_wall"
-              ]
+                "twin_ridge"
+              ],
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
             },
             {
-              "id": "ridge_wall_2",
-              "kind": "technique upgrade",
-              "name": "Ridge Wall II",
-              "effect": "A wall that is hit shatters and chills foes beside it.",
+              "id": "three_ridges",
+              "kind": "upgrade",
+              "name": "Three ridges",
+              "effect": "Three lanes in a narrow fan.",
               "numbers": {
-                "chill_seconds": 1.5
+                "lanes": 3
               },
               "level": 20,
               "cost": 3,
@@ -187,17 +169,17 @@
               "touches_canonical": false
             },
             {
-              "id": "avalanche",
+              "id": "ridge_wall",
               "kind": "keystone",
-              "name": "Avalanche",
-              "effect": "A ridge that hits three foes leaves an ice field.",
+              "name": "Ridge wall",
+              "effect": "Each ridge ends in a low ice wall that stops shots for 2 s.",
               "numbers": {
-                "min_foes": 3
+                "wall_seconds": 2
               },
               "level": 24,
               "cost": 4,
               "requires": [
-                "ridge_wall_2"
+                "three_ridges"
               ],
               "touches_canonical": false
             }
@@ -212,8 +194,8 @@
           "nodes": [
             {
               "id": "calm_guard",
-              "kind": "passive",
-              "name": "Calm Guard",
+              "kind": "minor",
+              "name": "Calm guard",
               "effect": "Ice guard drain -10 %.",
               "numbers": {
                 "guard_drain_pct": -10
@@ -224,58 +206,49 @@
               "touches_canonical": false
             },
             {
-              "id": "still_water",
-              "name": "Still Water Step",
-              "binding": "a perfect dodge",
-              "effect": "A frost patch is left where he rolled; foes on it slow.",
-              "numbers": {
-                "slow_pct": 30,
-                "patch_seconds": 2
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "frost patch"
-                ],
-                "reuses": [
-                  "dodge"
-                ]
-              },
-              "touches_canonical": false,
+              "id": "cold_breath",
               "kind": "technique",
+              "name": "Cold breath",
+              "effect": "Holding guard 1 s makes the next palm add two frost.",
+              "numbers": {
+                "hold_seconds": 1,
+                "frost": 2
+              },
               "level": 16,
               "cost": 2,
               "requires": [
                 "calm_guard"
-              ]
-            },
-            {
-              "id": "bothy_warmth",
-              "kind": "passive",
-              "name": "Bothy Warmth",
-              "effect": "Chill on you wears off 20 % sooner.",
-              "numbers": {
-                "chill_duration_pct": -20
-              },
-              "level": 18,
-              "cost": 1,
-              "requires": [
-                "still_water"
               ],
               "touches_canonical": false
             },
             {
-              "id": "still_water_2",
-              "kind": "technique upgrade",
-              "name": "Still Water Step II",
-              "effect": "Palms on a foe standing on the patch add one more frost.",
+              "id": "still_water",
+              "kind": "minor",
+              "name": "Still water",
+              "effect": "A perfect dodge leaves a frost patch that slows.",
               "numbers": {
-                "extra_frost": 1
+                "slow_pct": 30,
+                "seconds": 2
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "cold_breath"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "cold_breath_ii",
+              "kind": "upgrade",
+              "name": "Cold breath II",
+              "effect": "The steadied palm also slows.",
+              "numbers": {
+                "slow_pct": 20
               },
               "level": 26,
               "cost": 3,
               "requires": [
-                "bothy_warmth"
+                "still_water"
               ],
               "touches_canonical": false
             },
@@ -283,14 +256,14 @@
               "id": "unmoved",
               "kind": "keystone",
               "name": "Unmoved",
-              "effect": "Holding guard for 2 s makes the next block cost nothing.",
+              "effect": "Holding guard 2 s makes the next block cost nothing.",
               "numbers": {
                 "hold_seconds": 2
               },
               "level": 28,
               "cost": 4,
               "requires": [
-                "still_water_2"
+                "cold_breath_ii"
               ],
               "touches_canonical": false
             }
@@ -304,47 +277,42 @@
   "weapon": {
     "item": "wraps",
     "equipment_tag": "wraps",
+    "line": "Plain wraps > Iron wraps > Frost gauntlets > Moonbead gauntlets",
     "tiers": [
       {
         "tier": 1,
         "name": "Plain wraps",
-        "art": {
-          "silhouette": "today's drawing: grey-blue cloth wraps on forearms, palms and shins",
-          "materials": [
-            "wrap (grey-blue)"
-          ],
-          "glow": "none",
-          "size": "as drawn",
-          "read_check": "the current drawing"
-        },
-        "mechanics": {},
+        "form": "wraps",
+        "level": 1,
         "requires": {
           "level": 1
         },
-        "sockets": 1
+        "sockets": 1,
+        "art": {
+          "description": "the tier-1 drawing: grey-blue wraps on forearms, palms and shins",
+          "read_check": "the current drawing"
+        },
+        "rig": "as drawn",
+        "mechanics": {}
       },
       {
         "tier": 2,
-        "name": "Frost-stitched wraps",
-        "art": {
-          "silhouette": "white zigzag stitching (1 px) along the wraps and a second wind at the wrists; three ice-blue beads added to the mala",
-          "materials": [
-            "wrap",
-            "fletch (stitch)",
-            "storm (beads)"
-          ],
-          "glow": "none",
-          "size": "wrists +1 px",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "ridge_speed_pct": 10
-        },
+        "name": "Iron wraps",
+        "form": "weighted wraps",
+        "level": 8,
         "requires": {
           "level": 8,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "dark iron rings sewn into the wraps at wrist and shin; a heavier mala",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts",
+        "mechanics": {
+          "knockback_pct": 15
+        },
         "cost": {
           "glint": 60,
           "scrap": 5,
@@ -356,25 +324,23 @@
       },
       {
         "tier": 3,
-        "name": "Hoarfrost guards",
-        "art": {
-          "silhouette": "pale ice plates (3 px) on the backs of both hands and the shins, tied over the wraps",
-          "materials": [
-            "wrap",
-            "ice (new)"
-          ],
-          "glow": "none",
-          "size": "hands +1 px",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "guard_drain_pct": -10
-        },
+        "name": "Frost gauntlets",
+        "form": "ice gauntlets",
+        "level": 16,
         "requires": {
           "level": 16,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "ice grows into fitted gauntlets over both hands with three short ice ridges on the knuckles (+2 px proud); shin guards of ice",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: ice gauntlet part over the hands (palm strikes stay palms: the ridges sit on the backs)",
+        "mechanics": {
+          "frost_per_hit": 1,
+          "note": "every palm adds frost in the base form"
+        },
         "cost": {
           "glint": 150,
           "scrap": 10,
@@ -386,26 +352,23 @@
       },
       {
         "tier": 4,
-        "name": "Moonbead wraps",
-        "art": {
-          "silhouette": "the ice plates turn to clear starglass lit from inside; the guru bead becomes a small glowing moon (2 x 2 px)",
-          "materials": [
-            "ice (new)",
-            "starlight (new)"
-          ],
-          "glow": "the plates and bead glow one tone; brighter in Glacier Form",
-          "size": "as tier 3",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "named": "Moonbead: a frost shatter also chills foes beside the target",
-          "chill_seconds": 1
-        },
+        "name": "Moonbead gauntlets",
+        "form": "ice gauntlets",
+        "level": 24,
         "requires": {
           "level": 24,
           "great_forge": true
         },
         "sockets": 3,
+        "art": {
+          "description": "the ice clears to starglass lit from inside; the guru bead a small glowing moon",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: ramp swap on tier 3",
+        "mechanics": {
+          "named": "Moonbead: a frost shatter chills foes beside the target",
+          "chill_seconds": 1
+        },
         "cost": {
           "glint": 300,
           "scrap": 20,
