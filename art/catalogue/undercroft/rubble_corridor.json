@@ -63,7 +63,8 @@
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 3, PR #440 at b50caa14. R-5 fixed: pebbles are three-tone 4 to 5 px ovals with a lit pair, body and dark lower row; no plus shapes or stacked discs. detail.light upheld as polish (some east block ends lighter), as in round 2. Polish R-7. detail.bar 0.53 accepted."
  }
 }
