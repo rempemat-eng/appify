@@ -379,49 +379,35 @@ def lone_share(img: Image.Image) -> float:
     return float(lone[er].mean()) if er.any() else 0.0
 
 
-def _house_codes(key):
-    """House palette codes (family * 8 + tone) for packed RGB keys, -1 where a colour is not a house tone."""
-    from . import palette as PAL
-    if not hasattr(_house_codes, 'lut'):
-        lut = {}
-        for f, i in PAL.FI.items():
-            for t in range(6):
-                r, g, b = PAL.rgb(f, t)
-                lut.setdefault(r * 65536 + g * 256 + b, i * 8 + t)
-        _house_codes.lut = lut
-    lut = _house_codes.lut
-    u, inv = np.unique(key, return_inverse=True)
-    return np.array([lut.get(int(k), -1) for k in u], np.int64)[inv].reshape(key.shape)
-
-
-def lone_split(img: Image.Image, ground: Image.Image, x0: int, y0: int, lift: int = 0) -> tuple:
-    """A floor overlay's lone pixels in two parts (Claude A's C-8 rulings, rounds 9 and 10): the shares of its
-    interior that are lone and copied from the ground (identical to the ground at the same place, or the ground's
-    own code on the same ramp `lift` tones up), judged by the ground's limit, and lone and its own, judged by a drawn
-    picture's limit. (x0, y0) is the overlay's top left on the ground."""
+def lone_split(img: Image.Image, ground: Image.Image, x0: int, y0: int) -> tuple:
+    """A floor overlay's lone pixels in two parts (Claude A's C-8 rulings; round 10's C-10): the shares of its
+    interior that are lone where the ground under it is itself lone at the same place (the floor's own marks carried
+    into the overlay, whatever family the overlay recolours them to), judged by the ground's limit, and lone over a
+    ground that is not (loneness the overlay made), judged by a drawn picture's limit. (x0, y0) is the overlay's top
+    left on the ground."""
     a = np.asarray(img.convert('RGBA')).astype(np.int64)
     key = a[..., 0] * 65536 + a[..., 1] * 256 + a[..., 2]
     key[a[..., 3] == 0] = -1
-    P = np.pad(key, 1, constant_values=-2)
-    c = P[1:-1, 1:-1]
-    lone = (c != P[:-2, 1:-1]) & (c != P[2:, 1:-1]) & (c != P[1:-1, :-2]) & (c != P[1:-1, 2:])
     er = ndi.binary_erosion(a[..., 3] > 0)
     if not er.any():
         return 0.0, 0.0
-    g = np.full(key.shape, -3, np.int64)
     ga = np.asarray(ground.convert('RGBA')).astype(np.int64)
+    gk = ga[..., 0] * 65536 + ga[..., 1] * 256 + ga[..., 2]
+    gk[ga[..., 3] == 0] = -1
     h, w = key.shape
-    ys, xs = max(0, y0), max(0, x0)
-    ye, xe = min(ga.shape[0], y0 + h), min(ga.shape[1], x0 + w)
+    g = np.full((h + 2, w + 2), -3, np.int64)                   # the ground under the overlay and a texel round it
+    ys, xs = max(0, y0 - 1), max(0, x0 - 1)
+    ye, xe = min(gk.shape[0], y0 + h + 1), min(gk.shape[1], x0 + w + 1)
     if ye > ys and xe > xs:
-        sub = ga[ys:ye, xs:xe]
-        g[ys - y0:ye - y0, xs - x0:xe - x0] = sub[..., 0] * 65536 + sub[..., 1] * 256 + sub[..., 2]
-    same = key == g
-    if lift:
-        co, cg = _house_codes(key), _house_codes(g)
-        same |= (co >= 0) & (cg >= 0) & (co // 8 == cg // 8) & (co % 8 == cg % 8 + lift) & (cg % 8 + lift <= 5)
+        g[ys - y0 + 1:ye - y0 + 1, xs - x0 + 1:xe - x0 + 1] = gk[ys:ye, xs:xe]
+
+    def lone_of(P):
+        c = P[1:-1, 1:-1]
+        return (c != P[:-2, 1:-1]) & (c != P[2:, 1:-1]) & (c != P[1:-1, :-2]) & (c != P[1:-1, 2:]) & (c >= 0)
+    lone = lone_of(np.pad(key, 1, constant_values=-2))
+    copied = lone_of(g)
     n = float(er.sum())
-    return float((lone & er & ~same).sum() / n), float((lone & er & same).sum() / n)
+    return float((lone & er & ~copied).sum() / n), float((lone & er & copied).sum() / n)
 
 
 def zoom(img: Image.Image, k: int) -> Image.Image:

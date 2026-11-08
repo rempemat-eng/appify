@@ -95,8 +95,7 @@ class SpeckScatter(unittest.TestCase):
     def test_undercroft_floor_carries_no_dark_grit(self):
         g = _rgba('ground')
         self.assertLessEqual(dark_speck_scatter(g[160:600]), LIMIT)
-        self.assertLessEqual(dark_speck_scatter(g[150:273, 60:211]), LIMIT)   # room 1's pool, the fixture's box (round 9:
-        #                                                                      no mask; the pool's body is solid steps)
+        # (the pool boxes, the round 3 fixture's box at every torch, are counted off the rim's one dithered band: RealFloorTint)
 
     def test_a_dither_checker_is_not_terrazzo(self):
         # a 2 x 2 checker band (a light fade) touches at its corners: one run, not specks
@@ -376,6 +375,51 @@ class RealFloorTint(unittest.TestCase):
         a, fl, cx, foot = _r8_torch1()
         C, _ = _middle_band(a, fl, cx, foot)
         self.assertLess(C, 0.030, C)
+
+    def _rim_band(self):
+        """The rim's one dithered band as drawn (round 9, G-37): texels within RIM_FADE / 2 + 1 of the light's reach."""
+        from scipy import ndimage as ndi
+        from scripts.art.native import undercroft as U
+        inside = self.f['light'] >= U.FLOOR_AMBIENT + 0.5
+        sd = ndi.distance_transform_edt(inside) - ndi.distance_transform_edt(~inside)
+        return np.abs(sd) <= U.RIM_FADE / 2 + 1
+
+    def _pool_box(self, cx, foot, g=None, band=None):
+        """The round 3 fixture's box (151 x 123, room 1's at (60, 150)) at a torch, with the rim band left out."""
+        g = (_rgba('ground') if g is None else g).copy()
+        band = self._rim_band() if band is None else band
+        g[band, 3] = 0
+        return g[foot - 18:foot + 105, cx - 108:cx + 43]
+
+    def test_no_grit_in_the_pools_off_the_rim_fade(self):
+        # G-16 and G-34 in every torch's pool box, leaving out only the rim's one dithered band (Claude A's round 10
+        # ruling: every pale speck the pin counted there, 1.62 to 2.58 a 1000 px with the box's position, was a 2 x 2
+        # block of that staged fade, which Eastward 15 draws at its pit edges)
+        band = self._rim_band()
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                box = self._pool_box(cx, foot, band=band)
+                self.assertLessEqual(speck_scatter(box), LIMIT)
+                self.assertLessEqual(dark_speck_scatter(box), LIMIT)
+
+    def test_grit_inside_the_solid_steps_is_still_caught(self):
+        # the guard still sees grit: 2 x 2 dots, dark (void 2) and pale (stone 5), scattered over room 1's solid steps
+        # (the warm band and the heart, off the rim band) fail it
+        from scipy import ndimage as ndi
+        from scripts.art.native import palette as PAL
+        band = self._rim_band()
+        solid = ndi.binary_erosion(self.f['paint'] & (self.f['rung'] >= 4) & ~band, iterations=3)
+        cx, foot = 168, 168
+        Y, X = np.mgrid[0:solid.shape[0], 0:solid.shape[1]]
+        spots = solid & (Y % 6 == 0) & (X % 6 == 0) & (Y >= foot - 18) & (Y < foot + 103) & (X >= cx - 108) & (X < cx + 41)
+        ys, xs = np.nonzero(spots)
+        self.assertGreater(len(ys), 45)
+        for colour, count in ((PAL.rgb('void', 2), dark_speck_scatter), (PAL.rgb('stone', 5), speck_scatter)):
+            with self.subTest(grit=colour):
+                g = _rgba('ground').copy()
+                for y, x in zip(ys, xs):
+                    g[y:y + 2, x:x + 2, :3] = colour
+                self.assertGreater(count(self._pool_box(cx, foot, g=g, band=band)), LIMIT)
 
     def _torches(self):
         plan = json.load(open(os.path.join(ROOT, 'game', 'data', 'plans', 'undercroft.json')))
@@ -806,70 +850,63 @@ class LightColourAndDrawing(unittest.TestCase):
 
 
 class OverlayLoneSplit(unittest.TestCase):
-    """Claude A's C-8 ruling (round 9): a floor overlay that copies the ground is judged in two parts, its texels
-    identical to the ground at the same place against the ground's 2 %, its own against the drawn pictures' 1 %."""
+    """Claude A's C-8 and C-10 rulings: a floor overlay that copies the ground is judged in two parts. A lone overlay
+    texel over a ground texel that is itself lone (the floor's own mark carried into the overlay, in any family: the
+    lit spill moves slate to dusk) counts against the ground's 2 %; every other lone texel is the overlay's own and
+    counts against the drawn pictures' 1 %."""
 
-    def _pics(self, own, copied):
-        rng = np.random.default_rng(3)
-        g = np.zeros((60, 60, 4), np.uint8)
-        g[..., :3] = (60, 60, 90)
-        g[..., 3] = 255
-        o = g.copy()
-        o[..., :3] = (90, 70, 120)
+    N = 56 * 56                                       # the interior of the 60 x 60 pictures below
+
+    def _cells(self, k):
         cells = [(y, x) for y in range(4, 56, 3) for x in range(4, 56, 3)]
-        idx = rng.permutation(len(cells))
-        n = 56 * 56
-        k_own, k_copy = int(round(own * n)), int(round(copied * n))
-        for y, x in [cells[i] for i in idx[:k_own]]:
-            o[y, x, :3] = (200, 180, 150)
-        for y, x in [cells[i] for i in idx[k_own:k_own + k_copy]]:
-            g[y, x, :3] = (30, 30, 40)
-            o[y, x, :3] = (30, 30, 40)
-        return Image.fromarray(o, 'RGBA'), Image.fromarray(g, 'RGBA')
+        return [cells[i] for i in np.random.default_rng(3).permutation(len(cells))[:k]]
+
+    def _flat(self, fam, t):
+        from scripts.art.native import palette as PAL
+        a = np.zeros((60, 60, 4), np.uint8)
+        a[..., :3] = PAL.rgb(fam, t)
+        a[..., 3] = 255
+        return a
 
     def test_a_prop_with_its_own_lone_pixels_still_fails(self):
         from scripts.art.native import raster
-        o, g = self._pics(0.015, 0.0)
-        own, same = raster.lone_split(o, g, 0, 0)
+        g, o = self._flat('slate', 1), self._flat('dusk', 2)
+        for y, x in self._cells(round(0.015 * self.N)):
+            o[y, x, :3] = (200, 180, 150)
+        own, same = raster.lone_split(Image.fromarray(o, 'RGBA'), Image.fromarray(g, 'RGBA'), 0, 0)
         self.assertGreater(own, 0.01)
 
-    def _lifted(self, fam_o, tone_shift, n_lone=60):
-        """A ground of slate 1 with lone slate 2 marks, and an overlay of the ground lifted a tone (slate 2, marks slate 3)
-        whose marks are drawn on `fam_o` `tone_shift` tones over the ground's."""
-        from scripts.art.native import palette as PAL
-        g = np.zeros((60, 60, 4), np.uint8)
-        g[..., :3] = PAL.rgb('slate', 1)
-        g[..., 3] = 255
-        o = g.copy()
-        o[..., :3] = PAL.rgb('slate', 2)
-        cells = [(y, x) for y in range(4, 56, 3) for x in range(4, 56, 3)][:n_lone]
-        for y, x in cells:
-            g[y, x, :3] = PAL.rgb('slate', 2)
-            o[y, x, :3] = PAL.rgb(fam_o, 2 + tone_shift)
-        return Image.fromarray(o, 'RGBA'), Image.fromarray(g, 'RGBA')
-
-    def test_the_grounds_marks_lifted_a_rung_count_as_copied(self):
-        from scripts.art.native import raster
-        o, g = self._lifted('slate', 1)
-        own, same = raster.lone_split(o, g, 0, 0, lift=1)
-        self.assertLessEqual(own, 0.01)
-        self.assertGreater(same, 0.01)
-
-    def test_marks_of_another_family_or_lift_are_the_overlays_own(self):
-        from scripts.art.native import raster
-        for fam, shift in (('dusk', 1), ('slate', 2)):
-            with self.subTest(family=fam, shift=shift):
-                o, g = self._lifted(fam, shift)
-                own, same = raster.lone_split(o, g, 0, 0, lift=1)
-                self.assertGreater(own, 0.01)
-
     def test_the_grounds_own_marks_count_against_the_ground(self):
+        # the ground's lone marks, carried into the overlay a rung up on another family (slate to dusk), are copied
         from scripts.art.native import raster
-        o, g = self._pics(0.004, 0.012)
-        own, same = raster.lone_split(o, g, 0, 0)
+        from scripts.art.native import palette as PAL
+        g, o = self._flat('slate', 1), self._flat('dusk', 2)
+        for y, x in self._cells(round(0.015 * self.N)):
+            g[y, x, :3] = PAL.rgb('slate', 3)
+            o[y, x, :3] = PAL.rgb('dusk', 4)
+        own, same = raster.lone_split(Image.fromarray(o, 'RGBA'), Image.fromarray(g, 'RGBA'), 0, 0)
         self.assertLessEqual(own, 0.01)
         self.assertTrue(0.01 < same <= 0.02, same)
-        self.assertGreater(raster.lone_share(o), 0.01)              # (judged whole, it would fail)
+
+    def test_noise_over_a_flat_ground_is_the_overlays_own(self):
+        # the round 10 auditor's laundering fixtures (C-10), each 2.38 % lone over a flat ground: an overlay two tones
+        # up with scattered texels one tone up, and an overlay recoloured to dusk with scattered texels left as the
+        # ground. Round 10's ground_lift rule called both copied (own 0 %); they are the overlay's own
+        from scripts.art.native import raster
+        from scripts.art.native import palette as PAL
+        k = round(0.0238 * self.N)
+        g = self._flat('slate', 1)
+        a = self._flat('slate', 3)
+        for y, x in self._cells(k):
+            a[y, x, :3] = PAL.rgb('slate', 2)
+        b = self._flat('dusk', 2)
+        for y, x in self._cells(k):
+            b[y, x, :3] = PAL.rgb('slate', 1)
+        for name, o in (('one tone up', a), ('left as the ground', b)):
+            with self.subTest(fixture=name):
+                own, same = raster.lone_split(Image.fromarray(o, 'RGBA'), Image.fromarray(g, 'RGBA'), 0, 0)
+                self.assertGreater(own, 0.01)
+                self.assertEqual(same, 0.0)
 
 
 class SceneUnmoved(unittest.TestCase):

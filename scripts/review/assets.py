@@ -335,8 +335,6 @@ def record(report: dict, reviewer: dict | None = None) -> str:
             old_ = json.load(fh)
             if old_.get('copies_ground'):
                 rec['copies_ground'] = True
-                if 'ground_lift' in old_:
-                    rec['ground_lift'] = old_['ground_lift']
     except (OSError, ValueError):
         pass
     rec['findings'] = [{k: f[k] for k in ('detector', 'severity', 'box', 'message', 'fix')} for f in report['findings']]

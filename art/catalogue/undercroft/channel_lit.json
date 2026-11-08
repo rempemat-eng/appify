@@ -67,6 +67,5 @@
   "date": "2026-11-08",
   "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 10, PR #440 at 017c1986. Picture: 3 texels changed since round 8, the moss sprig it copies from the ground (identical to the ground's new sprig); composed in state 1 it reads as round 8's lit spill. Pass as a drawn picture. C-10 (fault in the check, not the picture, for Claude A): raster.lone_split's ground_lift rule reclassifies exactly 2 of its lone texels, both brass 3 divider-cap texels over ground brass 2 that are not lone in the ground, i.e. the overlay's own drawing; that alone takes 'own' from 90 (1.02 %) to 88 (0.99 %). The floor's real copied marks (73 of the 88, lone in the ground at the same place) are moved slate to dusk and are not seen by the rule. Two fixtures show the rule launders: an overlay's own lone texels over a flat ground count as copied (own 0, copied 2.38 %). Fix: count a lone texel as copied only when the ground is lone at the same place; then own is 17 (0.19 %). detail.bar 0.593 and detail.outline 0.12 accepted as polish."
  },
- "copies_ground": true,
- "ground_lift": 1
+ "copies_ground": true
 }
