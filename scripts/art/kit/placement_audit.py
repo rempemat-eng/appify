@@ -238,6 +238,26 @@ LOGIC = {
                                                   'crossroads_notice_board', 'crossroads_stall')},
 }
 
+
+def _set_rows():
+    """The prop sets' pieces (scripts/art/kit/sets/): each set module's AUDIT rows."""
+    from scripts.art.kit import sets
+    return sets.audit_rows()
+
+
+_SETS_LOADED = False
+
+
+def _load_sets():
+    """Add the sets' rows to TABLE on first use. The set modules paint with numpy and scipy, and
+    check_plan (which never reads TABLE) runs in the world editor's validator with the standard
+    library only (game/addons/world_editor/rules_adapter.gd, CI's Godot job), so importing this
+    module must not import them."""
+    global _SETS_LOADED
+    if not _SETS_LOADED:
+        TABLE.update(_set_rows())
+        _SETS_LOADED = True
+
 PURPOSES = ('contain', 'exclude', 'mark', 'rest', 'light', 'store', 'feed', 'cross', 'guide', 'work',
             'live', 'grow', 'climb', 'flow', 'care', 'water', 'aftermath')
 
@@ -383,6 +403,7 @@ def _files():
 
 
 def apply(piece: dict) -> dict:
+    _load_sets()
     purpose, role, req, forb, _v, _n = TABLE[piece['id']]
     pl = piece.setdefault('placement', {})
     pl.update(LOGIC.get(piece['id'], {}))
@@ -403,6 +424,7 @@ def apply(piece: dict) -> dict:
 
 
 def write_doc():
+    _load_sets()
     counts = {}
     rows = []
     for pid in sorted(TABLE):
@@ -487,6 +509,7 @@ line and a gate onto the path crossing its run.
 
 
 def main(argv=None) -> int:
+    _load_sets()
     check = '--check' in (argv if argv is not None else sys.argv[1:])
     files = _files()
     bad = [k for k in files if k not in TABLE] + [k for k in TABLE if k not in files]
