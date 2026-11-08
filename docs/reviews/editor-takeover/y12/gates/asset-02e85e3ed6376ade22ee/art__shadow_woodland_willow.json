@@ -1,0 +1,44 @@
+{
+ "id": "art/shadow_woodland_willow",
+ "file": "game/kit/props/art/shadow_woodland_willow.png",
+ "sha256": "17e5737c04bf4f1047eb256548d909955a1a384a569ae3c403f4e5f377927ae8",
+ "kind": "shadow_woodland_willow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  237,
+  90
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.void",
+   "severity": "blocker",
+   "box": [
+    0,
+    0,
+    237,
+    90
+   ],
+   "message": "the screen shows 100% empty black outside the world",
+   "fix": "clamp the camera to the zone bounds from the first frame (snap it to the spawn before damping) and draw the world past every edge the camera can reach",
+   "score": 1.0,
+   "threshold": 0.05,
+   "subject": "camera",
+   "extra": {},
+   "box_source": [
+    0,
+    0,
+    237,
+    90
+   ]
+  }
+ ]
+}

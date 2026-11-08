@@ -1,0 +1,102 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_lava_run",
+  "name": "Active lava channel and cooling margin",
+  "kind": "water",
+  "biomes": [
+    "fire_country"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "fissure",
+      "note": "1–2-cell source slit with spatter confined to its lip."
+    },
+    {
+      "id": "channel",
+      "note": "3–4-cell directed run with dark margins."
+    },
+    {
+      "id": "broad_flow",
+      "note": "5+ cells, slow crust rafts and no tiled bright checker."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "flow",
+    "ground": {
+      "allow": [
+        "rock"
+      ],
+      "deny": [
+        "turf",
+        "wood"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "near",
+        "what": "lava_source",
+        "note": "Trace the flow from the authored flank fissure or old breach to its terminal area; these are proposed validator roles, not existing runtime IDs."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "structure_footprint"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Represent the old/young flow geography with one continuous active-flow class and explicit stable margins."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Represent the old/young flow geography with one continuous active-flow class and explicit stable margins.",
+      "Visual brief: Dark crust rafts with a narrow orange-white hot core; banks rise visibly above the fluid. Keep glow local so it does not turn the whole scene orange.",
+      "Widths and size: 1/2/3/4/5+ cell width classes; a fall or drop matches the channel width and tier difference.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Check proposed rules.lava_continuity and rules.lava_crossing; hazard damage and movement policy remain with the mechanics owner.",
+      "Sizing basis: material/edge extent is specified in 24-art-px logical cells; no opaque-object scale class is assigned. Review grain, width class and derived face height instead.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

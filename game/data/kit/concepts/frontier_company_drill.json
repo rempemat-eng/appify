@@ -1,0 +1,105 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_company_drill",
+  "name": "Halcyon’s shard-drill assembly",
+  "kind": "structure",
+  "biomes": [
+    "halcyon"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "working",
+      "note": "Contained local activity and readable attached service lines."
+    },
+    {
+      "id": "stopped",
+      "note": "Same silhouette, inactive core and safely settled moving parts."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      16,
+      10
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "story_machine",
+    "ground": {
+      "allow": [
+        "paving",
+        "rock"
+      ],
+      "deny": [
+        "water",
+        "turf",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "drill_mount"
+      },
+      {
+        "rel": "adjacent",
+        "what": "service_route",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "stages": [
+      "working",
+      "stopped"
+    ],
+    "composition": "axis",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Keep the Company’s drilling platform and its story machinery recognisable as one custom assembly."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P3",
+      "Purpose: Keep the Company’s drilling platform and its story machinery recognisable as one custom assembly.",
+      "Visual brief: An anchored industrial frame with load-bearing collars, service walkway and a clear drill-axis silhouette. The drill’s luminous core uses the shared shard-glass motif, surrounded by practical metal rather than neon on every edge.",
+      "Widths and size: Authored machinery envelope, provisionally 16×10 cells; keep crew walkway at least 3 cells clear and all terminal controls reachable.",
+      "Source: docs/vision/world-and-cast.md on claude-a/progression-2 (blob 7d35d094), §§2–4; docs/vision/world-plan.md §§8.6,8.7,9; docs/vision/coherence-plan.md M1",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "The drilling-platform identity is a proposal in world-and-cast. Keep location/story decision with Claude; no boss trigger or resource extraction values.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

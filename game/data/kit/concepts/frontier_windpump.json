@@ -1,0 +1,96 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_windpump",
+  "name": "Windpump at well or trough",
+  "kind": "prop",
+  "biomes": [
+    "sunstone_basin",
+    "sunstone_steppe"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "timber",
+      "note": "Weathered trestle with a repaired fan blade."
+    },
+    {
+      "id": "iron",
+      "note": "Slim iron frame and restrained brass hub."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      3,
+      3
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "water_supply",
+    "ground": {
+      "allow": [
+        "earth",
+        "sand",
+        "stone"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "well",
+        "cells": 2
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Repeat the brief’s two windpumps as working context for the dry country."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Repeat the brief’s two windpumps as working context for the dry country.",
+      "Visual brief: Narrow timber or iron tower, a readable fan plane and a downpipe that terminates at the well; warm upper-left light on the nearer leg, dark foot fixings.",
+      "Widths and size: Proposed tower height 3–4 A (222–296 art px), footprint 3×3 cells; no existing density-3 windpump class, so scale approval required.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Connect the drawn pipe to its receiving well/trough; no autonomous pumping reward or resource system.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

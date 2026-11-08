@@ -1,0 +1,100 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_island_pier",
+  "name": "Pier and landing modules",
+  "kind": "structure",
+  "biomes": [
+    "coast",
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "short_jetty",
+      "note": "Straight short plank jetty on visible piles and stringers, with paired mooring posts and a narrow water-shadow gap beneath."
+    },
+    {
+      "id": "working_pier",
+      "note": "Wider working deck with strengthened framing, worn boards and clear loading space; equipment stays outside the walk corridor."
+    },
+    {
+      "id": "ferry_landing",
+      "note": "Broad ferry head joined to the approach deck, with substantial mooring posts and a visible boarding edge aligned to the existing ferry contract."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      144,
+      96
+    ]
+  },
+  "placement": {
+    "role": "deck",
+    "ground": {
+      "allow": [
+        "water",
+        "stone"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "shore",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      },
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "unanchored_span"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "axis",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Support several jetties, short docks and the ferry landing using shared deck engineering."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P2.",
+      "Purpose: Support several jetties, short docks and the ferry landing using shared deck engineering.",
+      "Visual brief: Broad weathered planks on visible piles and stringers, a dark water gap below, paired mooring posts and an upper-left-lit deck edge; no floating one-pixel jetty.",
+      "Source: docs/vision/regions/tidebloom-isles.md; docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Walked deck 2-3 cells; wider working or ferry head 4+; piles and rails stay outside the clear deck.",
+      "Deck collision and water override are author-supplied after review; no proposed rectangle is silently treated as safe.",
+      "Ferry destination/spawn uses the existing route owner contract; no new W4 eligibility from placing art.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_palm_spring_head",
+  "name": "Palm Spring’s resurfacing springhead",
+  "kind": "prop",
+  "biomes": [
+    "palm_spring"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "stopped",
+      "note": "Exposed gravel and low damp stain, no false stream animation."
+    },
+    {
+      "id": "flowing",
+      "note": "A small upwelling feeds the visible orchard outlet."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      5,
+      4
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "spring_source",
+    "ground": {
+      "allow": [
+        "sand",
+        "stone"
+      ],
+      "deny": [
+        "route",
+        "lava"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "water",
+        "cells": 1,
+        "note": "The flowing stage joins the source pool, and that pool joins the irrigation plan."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [
+      "stopped",
+      "flowing"
+    ],
+    "composition": "centre",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "look",
+      "triggers": []
+    }
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Mirra’s home spring is stopped by the Company’s drill in the world-and-cast proposal. The state is story-driven, not a player-maintained water meter."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "well_ring",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P2",
+      "Purpose: Give Mirra’s home one recognisable source point while orchard channels and palms remain shared.",
+      "Visual brief: A pale gravel bowl where water wells from beneath a low stone lip; a compact old marker and worn approach distinguish it from generic pools without a monumental fountain.",
+      "Widths and size: Springhead marker/rim 70–118 art px wide, 41–78 high; larger pool is water cells, not a solid prop footprint.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5; docs/vision/world-and-cast.md on claude-a/progression-2 (blob 7d35d094), §§2–4",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting.",
+      "Scale proxy: well_ring constrains the low springhead rim/marker, not the pool plan or underground water source."
+    ]
+  }
+}

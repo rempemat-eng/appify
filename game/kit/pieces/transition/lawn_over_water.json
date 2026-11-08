@@ -1,0 +1,62 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "lawn_over_water",
+  "name": "Turf bank over water",
+  "kind": "transition",
+  "biomes": [
+    "valley",
+    "woodland",
+    "village"
+  ],
+  "version": 1,
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "eastward-edges.md 5.3 (bank face, light waterline, shade under a north bank, lit shallows), Matt 26 Oct 19:42 (side walls)",
+    "note": "softground.water's banks on the dual grid"
+  },
+  "transition": {
+    "upper": "lawn",
+    "lower": "water",
+    "painter": {
+      "module": "scripts.art.kit.edges",
+      "fn": "bank",
+      "args": {
+        "side_w": 3
+      }
+    },
+    "variants": 1,
+    "shape": "lower",
+    "dressing": {
+      "density": 0.5,
+      "south": [
+        "rushes_0",
+        "rushes_1",
+        "rushes_2",
+        "tuft_0",
+        "tuft_3"
+      ],
+      "north": [
+        "bankstone_0",
+        "bankstone_1",
+        "bankstone_2",
+        "pebble_2",
+        "tuft_1"
+      ],
+      "side": [
+        "tuft_1",
+        "rushes_1",
+        "tuft_0"
+      ]
+    }
+  },
+  "audit": {
+    "painter": {
+      "module": "scripts.art.native.softground",
+      "fn": "water",
+      "args": {}
+    },
+    "eastward_ref": "Eastward 13, crop 12-bank; 37, crop 13-pond"
+  }
+}

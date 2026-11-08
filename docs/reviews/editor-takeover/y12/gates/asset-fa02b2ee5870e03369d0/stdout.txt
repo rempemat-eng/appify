@@ -1,0 +1,3 @@
+FAIL art/shadow_woodland_birch                {'blocker': 1, 'fault': 0, 'polish': 0}  logic.void
+
+1 assets, 1 fail, 0 pass. Reports and sheets in /workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/y12/gates/asset-fa02b2ee5870e03369d0

@@ -1,0 +1,36 @@
+{
+ "id": "art/stepping_stones_1",
+ "file": "game/kit/props/art/stepping_stones_1.png",
+ "sha256": "fe87b96610217ddfa166c95c5cbf4517ffa21d29700696d122e83b0ce4c4d6a8",
+ "kind": "stepping_stones",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  30,
+  72
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": []
+}

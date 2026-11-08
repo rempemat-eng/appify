@@ -1,0 +1,88 @@
+{
+ "id": "kitlab_widths/ground_baked",
+ "file": "game/zones/kitlab_widths/ground_baked.png",
+ "sha256": "fa8081e501f235bde1622c948d87ddadcb49156f21e0a2eb74c10ab616a59489",
+ "kind": "ground_baked",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  960,
+  552
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 3,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    280,
+    77,
+    315,
+    147
+   ],
+   "message": "water bank steps in a staircase of 7 teeth (3 px risers, 2 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth",
+   "score": 7.0,
+   "threshold": 4,
+   "subject": "water bank",
+   "extra": {},
+   "box_source": [
+    280,
+    77,
+    315,
+    147
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    674,
+    531,
+    699,
+    552
+   ],
+   "message": "a thing drawn flat: 2 tones, two cover 99% (0.07 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.9892183288409704,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    674,
+    531,
+    699,
+    552
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    342,
+    0,
+    377,
+    41
+   ],
+   "message": "a flat wood area of one tone, 784 px (0.14 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.14317019722425128,
+   "threshold": 0.14,
+   "subject": "wood",
+   "extra": {},
+   "box_source": [
+    342,
+    0,
+    377,
+    41
+   ]
+  }
+ ]
+}

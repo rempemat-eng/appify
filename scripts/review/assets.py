@@ -38,7 +38,8 @@ ZONE_BIOME = {'woodland': 'woodland', 'crossroads': 'valley', 'undercroft': 'cel
 BIOME_GROUND = {'woodland': (150, 166, 92), 'valley': (150, 166, 92), 'meadow': (150, 166, 92),
                 'desert': (214, 178, 120), 'cellar': (96, 88, 84)}
 NEUTRAL = (128, 128, 128)
-GROUND_ASSETS = {'ground', 'flow'}
+# ground pictures and ground-level overlays (square_puddles: the broken square's puddles, town.py)
+GROUND_ASSETS = {'ground', 'flow', 'square_puddles'}
 FAIL_SEVERITIES = {'blocker', 'fault'}
 
 

@@ -1,0 +1,110 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_ember_forge",
+  "name": "The Ember forge at the caldera lip",
+  "kind": "structure",
+  "biomes": [
+    "fire_country"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "cold",
+      "note": "Closed or quiet presentation when the approved story stage requires it."
+    },
+    {
+      "id": "working",
+      "note": "Forge mouth lit, tools in use and smoke only from its drawn flue."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      14,
+      9
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "forge",
+    "ground": {
+      "allow": [
+        "rock",
+        "stone",
+        "paving"
+      ],
+      "deny": [
+        "lava",
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 2
+      },
+      {
+        "rel": "on_anchor",
+        "what": "forge_site"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "stages": [
+      "cold",
+      "working"
+    ],
+    "composition": "centre",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "forge",
+      "triggers": []
+    }
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "The caldera forge and the Company’s pressure on it connect Ashe’s region to the wider story. Weapon lines and prices remain proposals in #290."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "civic",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P2",
+      "Purpose: Keep the named forge a unique destination while its walls, steps and work props reuse the castle/forge kit.",
+      "Visual brief: A stone furnace anchored into cooled basalt, a visibly open hot mouth and chimney, stacked working levels reached by the Forge Stair; silhouette sits below the crater rather than mimicking a second volcano.",
+      "Widths and size: Civic building body 222–407 art px wide, 200–370 high; larger terrace/platform is composed from kit, not included as an oversized prop.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5; docs/vision/world-and-cast.md on claude-a/progression-2 (blob 7d35d094), §§2–4",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "No new forging costs, tier unlocks or rewards; scene/gameplay owners attach approved service data.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting.",
+      "Scale proxy: civic constrains the central building body, with terrace, chimney and external cliff composed and reviewed separately."
+    ]
+  }
+}
