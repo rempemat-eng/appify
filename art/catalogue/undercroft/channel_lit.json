@@ -1,7 +1,7 @@
 {
  "id": "undercroft/channel_lit",
  "file": "game/zones/undercroft/art/channel_lit.png",
- "sha256": "dadd2ca7e235b7194ce5276c763ccd077ad73977cebdc76f156f1e17c98ed87c",
+ "sha256": "5245a92230a6542b0b3eea716dc22ef164ab581c43c86b6369bab6f017901f7c",
  "kind": "channel",
  "biome": "cellar",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 39,
-   "tones": 16.128205128205128,
-   "shapes": 31.692307692307693
+   "tones": 16.0,
+   "shapes": 31.256410256410255
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.597,
-  "tones_ratio": 0.597,
-  "shapes_ratio": 0.629,
+  "ratio": 0.593,
+  "tones_ratio": 0.593,
+  "shapes_ratio": 0.621,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     260,
     154
    ],
-   "message": "undercroft/channel_lit: detail bar 0.60 of Eastward's prop band (16.1 tones, 31.7 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/channel_lit: detail bar 0.59 of Eastward's prop band (16.0 tones, 31.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -56,15 +56,14 @@
     260,
     154
    ],
-   "message": "undercroft/channel_lit: only 11% of the silhouette is drawn in an edge tone",
+   "message": "undercroft/channel_lit: only 12% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 7, PR #440 at 80159712. C-7 holds: spill 100 / 81 / 38-50 / 8-17 / 0 % in bands d 1-6 / 7-14 / 15-18 / 19-24 / 25-30 on all four sides, drawn as the floor's own flags a rung up on a violet sibling. C-8 (polish): the new lone-pixel loop changes 198 texels, 134 of them crack steps and joint corners the unlit floor itself carries (overlay lone share 1.93 % to 0.25 %). Remove it and judge the spill by the ground limit when G-32 repaints the floor. detail.bar 0.597 and detail.outline 0.109 accepted as polish: the overlay is mostly lit floor."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset. Painter's note (round 8, C-8, not a verdict): the lone-pixel cleanup is removed, so the spill keeps the floor's own marks; check:kit now counts 1.02 % lone pixels against the drawn pictures' 1 % limit (the floor it copies is a ground, near 2 %). Left for Claude A to rule on scoping that limit."
  }
 }

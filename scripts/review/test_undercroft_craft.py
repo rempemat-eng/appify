@@ -87,7 +87,7 @@ class SpeckScatter(unittest.TestCase):
     def test_undercroft_floor_carries_no_dark_grit(self):
         g = _rgba('ground')
         self.assertLessEqual(dark_speck_scatter(g[160:600]), LIMIT)
-        self.assertLessEqual(dark_speck_scatter(g[150:273, 60:211]), LIMIT)   # room 1's pool, the fixture's box
+        # (room 1's pool, the fixture's box, is checked off the light's staged fades: RealFloorTint, round 8)
 
     def test_a_dither_checker_is_not_terrazzo(self):
         # a 2 x 2 checker band (a light fade) touches at its corners: one run, not specks
@@ -233,8 +233,9 @@ class RealFloorTint(unittest.TestCase):
 
     def test_the_torchlight_falls_off_through_the_stone(self):
         # G-29: lamplit on 25 to 55 % of a torch pool, never against the slate shade; the darkest 15 % violet;
-        # at least 20 % in-between texels (hue 320 to 35) in the band 8 texels either side of its edge; the
-        # light reaching about 1.5 to 1.9 H from the wall's foot
+        # at least 20 % in-between texels (hue 320 to 35) in the band 8 texels either side of its edge. G-32
+        # (round 8): the light reaching 1.1 to 1.4 H below the wall's foot, as Eastward 06's fire bowls (round 7's
+        # 1.4 to 2.0 H came from 05's six-bulb lamp post; its pool reached 1.78 H)
         from scipy import ndimage as ndi
         from scripts.art.native.palette import FI
         from scripts.art.native import undercroft as U
@@ -256,7 +257,9 @@ class RealFloorTint(unittest.TestCase):
         self.assertGreaterEqual(between[hem].mean(), 0.20)
         col = f['rung'][168:600, 160:176].max(1)                  # below torch 1
         reach = int(np.nonzero(col > A)[0].max())
-        self.assertTrue(1.4 * 74 <= reach <= 2.0 * 74, reach)
+        self.assertTrue(1.1 * 74 <= reach <= 1.4 * 74, reach)
+        a, fl, cx, foot = _r7_torch1()                            # round 7's torch 1, by the picture: 1.45 H
+        self.assertFalse(1.1 <= _torch_light(a, fl, cx, foot)['reach'] <= 1.4)
 
     def test_a_pool_climbs_three_rungs_at_most(self):
         # G-19, G-29: the in-between band, the warm band and the heart over the ambient, no more
@@ -301,6 +304,159 @@ class RealFloorTint(unittest.TestCase):
             if w > 0.04 * n and c > 0.04 * n:
                 bad.append((fl, w, c, n))
         self.assertFalse(bad, f'{len(bad)} flags carry both warm and cool light: {bad[:5]}')
+
+    def test_no_dark_grit_off_the_lights_fades(self):
+        # G-16 in room 1's pool (the round 3 fixture's box), off the light's staged fades (texels within two of a
+        # rung change). G-34 (round 8): the fades use all three stages, and their lone 2 x 2 blocks are the light's
+        # dither (eastward-edges 5.4), not grit; the pin counts them in the box (2.5 a 1000 px), left to the auditor
+        from scipy import ndimage as ndi
+        r = self.f['rung']
+        fade = ndi.maximum_filter(r, size=5) != ndi.minimum_filter(r, size=5)
+        g = _rgba('ground').copy()
+        g[fade, 3] = 0
+        self.assertLessEqual(dark_speck_scatter(g[150:273, 60:211]), LIMIT)
+
+    def _torches(self):
+        plan = json.load(open(os.path.join(ROOT, 'game', 'data', 'plans', 'undercroft.json')))
+        return [(3 * tx, 3 * ty) for tx, ty in plan['torches']]           # the cup's x and the wall's foot, texels
+
+    def test_each_torch_has_a_glowing_heart(self):
+        # G-32 (round 8): under each cup a heart of 0.5 to 0.8 H2 at Eastward 06's floor by a fire bowl: median OKLCH
+        # C 0.06 to 0.08, hue 55 to 75 (of its mean colour), blurred L 0.50 to 0.56. Round 7's torch 1 had none
+        # (0.004 H2 over L 0.50, C 0.043 at the kerb)
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                t = _torch_light(self.painted, self.f['paint'], cx, foot)
+                self.assertTrue(0.45 <= t['heart_area'] <= 0.85, t)
+                self.assertTrue(0.06 <= t['heart_C'] <= 0.08, t)
+                self.assertTrue(55 <= t['heart_hue'] <= 75, t)
+                self.assertTrue(0.50 <= t['heart_L'] <= 0.56, t)
+        a, fl, cx, foot = _r7_torch1()
+        t = _torch_light(a, fl, cx, foot)
+        self.assertFalse(0.45 <= t['heart_area'] <= 0.85 and 0.06 <= t['heart_C'] <= 0.08, t)
+
+    def test_the_light_falls_with_no_shelf_and_stays_small(self):
+        # G-32 (round 8): from the heart (its blurred L 0.52 and over) to the rim the blurred value falls at least
+        # 0.01 in every 0.15 H step; the lift (0.02 L over the shade) reaches 1.1 to 1.4 H below the wall's foot,
+        # each pool at most 2.5 H2, its colour-only band (lift under 0.03 L) at most 25 %. Round 7's torch 1 sat on a
+        # shelf (0.434, 0.432, 0.433) over 3.0 H2
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                t = _torch_light(self.painted, self.f['paint'], cx, foot)
+                self.assertGreaterEqual(t['shelf'], 0.01, t)
+                self.assertTrue(1.1 <= t['reach'] <= 1.4, t)
+                self.assertLessEqual(t['area'], 2.5, t)
+                self.assertLessEqual(t['colour_only'], 0.25, t)
+        a, fl, cx, foot = _r7_torch1()
+        t = _torch_light(a, fl, cx, foot)
+        self.assertLess(t['shelf'], 0.01, t)
+        self.assertGreater(t['area'], 2.5, t)
+        self.assertGreater(t['reach'], 1.4, t)
+
+    def test_the_lamp_colour_thins_with_distance(self):
+        # G-32 (round 8): lamplit by each texel's own distance from the cup's foot: at least 70 % of the floor within
+        # 0.4 H, at most 15 % at 0.8 to 1.1 H and none beyond, and its median chroma falling band by band
+        from scripts.art.native.palette import FI
+        f = self.f
+        L, C, h = _oklch(self.painted)
+        lamp = np.isin(f['codes'] // 8, [FI['lamplit'], FI['lamplit_warm'], FI['lamplit_cool']])
+        Y, X = np.mgrid[0:lamp.shape[0], 0:lamp.shape[1]]
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                d = np.hypot(X - cx, Y - foot) / 74
+                share, chroma = [], []
+                for a0, a1 in ((0, 0.4), (0.4, 0.8), (0.8, 1.1), (1.1, 1.6)):
+                    m = f['paint'] & (Y >= foot) & (d >= a0) & (d < a1)
+                    share.append(float(lamp[m].mean()))
+                    chroma.append(float(np.median(C[m & (f['rung'] > 2)])) if (m & (f['rung'] > 2)).any() else 0.0)
+                self.assertGreaterEqual(share[0], 0.70, share)
+                self.assertLess(share[1], share[0], share)
+                self.assertLessEqual(share[2], 0.15, share)
+                self.assertEqual(share[3], 0.0, share)
+                self.assertTrue(chroma[0] >= 0.06 and chroma[0] >= chroma[1] >= chroma[2], chroma)
+
+    def test_the_torches_light_their_wall_block_by_block(self):
+        # G-33 (round 8): against the wall as drawn before the torches light it (the painter's own), the face within
+        # 0.3 H of a cup rises 0.045 L or more on the mean, less over 0.3 to 0.6 H, and nothing past 0.8 H
+        from scripts.art.native.palette import LUT
+        f = self.f
+        L, _, _ = _oklch(self.painted)
+        w0 = f['wall0']
+        L0, _, _ = _oklch(np.where((w0 >= 0)[..., None], LUT[np.maximum(w0, 0)], 0).astype(np.uint8))
+        Y, X = np.mgrid[0:L.shape[0], 0:L.shape[1]]
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                d = np.hypot(X - cx, Y - (foot - 48)) / 74
+                wall = ~f['paint'] & (Y < foot - 1) & (w0 >= 0)
+                lift = [float(np.mean((L - L0)[wall & (d >= a0) & (d < a1)])) for a0, a1 in ((0, 0.3), (0.3, 0.6), (0.8, 1.2))]
+                self.assertGreaterEqual(lift[0], 0.045, lift)
+                self.assertTrue(0 < lift[1] < lift[0], lift)
+                self.assertLess(abs(lift[2]), 0.01, lift)
+
+
+def _blur_on(L, m, k=19):
+    """OKLab L box-blurred over `m` only (0.25 H at 74 texels a character), as a pool reads at 1x."""
+    from scipy import ndimage as ndi
+    w = ndi.uniform_filter(m.astype(float), k)
+    return np.where(m, ndi.uniform_filter(np.where(m, L, 0.0), k) / np.maximum(w, 1e-6), 0.0)
+
+
+def _torch_light(rgb, floor, cx, foot, shade=0.355):
+    """G-32's measures of one torch's pool in a picture, from the cup's x and the wall's foot (texels), on the floor
+    texels `floor`: the pool (blurred L 0.02 over Eastward 06's shade, the part joined to the wall under the cup,
+    opened by 7 x 7) as reach and width in H, area in H2 and its colour-only share (lift under 0.03); the heart
+    (blurred L 0.50 and over, joined to the kerb under the cup) as area, median C, the hue of its mean colour and
+    median blurred L; and the shelf, the least fall of the blurred median per 0.15 H step (within 55 degrees of
+    straight down from the flame, 63 texels over the foot) from the heart to the rim."""
+    from scipy import ndimage as ndi
+    L, C, h = _oklch(rgb)
+    Lb = _blur_on(L, floor)
+    Y, X = np.mgrid[0:L.shape[0], 0:L.shape[1]]
+    rf = np.hypot(X - cx, Y - foot) / 74
+    lab, _ = ndi.label(floor & (Lb >= shade + 0.02) & (rf < 2.0))
+    pool = ndi.binary_opening(lab == lab[foot + 10, cx], structure=np.ones((7, 7), bool))
+    ys, xs = np.nonzero(pool)
+    out = dict(reach=(ys.max() - foot) / 74, width=(xs.max() - xs.min() + 1) / 74, area=pool.sum() / 74 ** 2,
+               colour_only=float((pool & (Lb < shade + 0.03)).sum() / pool.sum()))
+    lab, _ = ndi.label(floor & (Lb >= 0.50) & (rf < 1.3))
+    ids = np.unique(lab[foot + 1:foot + 20, cx - 10:cx + 10])
+    heart = np.isin(lab, ids[ids > 0])
+    a_, b_ = C * np.cos(np.radians(h)), C * np.sin(np.radians(h))
+    out.update(heart_area=heart.sum() / 74 ** 2, heart_C=float(np.median(C[heart])) if heart.any() else 0.0,
+               heart_hue=float(np.degrees(np.arctan2(b_[heart].mean(), a_[heart].mean())) % 360) if heart.any() else 0.0,
+               heart_L=float(np.median(Lb[heart])) if heart.any() else 0.0)
+    fy = foot - 63
+    d = np.hypot(X - cx, Y - fy) / 74
+    cone = floor & (Y > fy) & (np.degrees(np.arctan2(np.abs(X - cx), np.maximum(Y - fy, 1e-6))) <= 55)
+    st = np.array([np.median(Lb[cone & (np.abs(d - c0) < 0.075)]) for c0 in np.arange(0.925, 2.6, 0.15)])
+    rim = np.nonzero(st < shade + 0.02)[0]
+    end = int(rim[0]) if len(rim) else len(st) - 1
+    top = np.nonzero(st[:end + 1] >= 0.52)[0]
+    start = int(top[-1]) if len(top) else int(np.argmax(st[:end + 1]))
+    out['shelf'] = float((st[start:end] - st[start + 1:end + 1]).min()) if end > start else -1.0
+    out['steps'] = [round(float(v), 3) for v in st[:end + 1]]
+    return out
+
+
+def _r7_torch1():
+    """Round 7's torch 1 (80159712, the ground's 40..420 x 60..330): the picture, its floor, the cup's x, the foot."""
+    a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r7_torch1.png')).convert('RGB'))
+    fl = np.zeros(a.shape[:2], bool)
+    fl[109:, 12:] = True
+    return a, fl, 128, 108
+
+
+def _wall_light(rgb, cx, cy):
+    """G-33's picture measures round a torch's cup: the mean OKLCH C within 0.3 H, and the 2 x 2 checkers of
+    lamp-coloured blocks (hue 35 to 100, C over 0.03) within 0.6 H, as round 7's staged wall light drew them."""
+    L, C, h = _oklch(rgb)
+    Y, X = np.mgrid[0:L.shape[0], 0:L.shape[1]]
+    d = np.hypot(X - cx, Y - cy) / 74
+    lamp = (h >= 35) & (h <= 100) & (C > 0.03) & (d < 0.6)
+    H2, W2 = L.shape[0] // 2 * 2, L.shape[1] // 2 * 2
+    B = lamp[:H2, :W2].reshape(H2 // 2, 2, W2 // 2, 2).all((1, 3))
+    chk = (B[:-1, :-1] & ~B[:-1, 1:] & ~B[1:, :-1] & B[1:, 1:]) | (~B[:-1, :-1] & B[:-1, 1:] & B[1:, :-1] & ~B[1:, 1:])
+    return float(np.mean(C[d < 0.3])), int(chk.sum())
 
 
 def _strokes(rgb, where):
@@ -375,18 +531,12 @@ def _spill(floor, overlay, foot=(10, 124), t_col=214, end_col=250, reach=30):
 
 
 def _pool_character(rgb):
-    """G-29's measure of a torch pool in a picture: the median OKLCH chroma of its texels (all but the slate
-    shade round it) and the share of its darkest 15 % that stay violet (hue 290 to 350)."""
+    """G-29's measure of a torch pool in a picture: the median and 90th percentile OKLCH chroma of its texels (all
+    but the slate shade round it) and the share of its darkest 15 % that stay violet (hue 290 to 350)."""
     L, C, h = _oklch(rgb)
     lit = (L >= 0.25) & ~((h >= 250) & (h <= 300))
     d = lit & (L <= np.quantile(L[lit], 0.15))
-    return float(np.median(C[lit])), float(np.mean((h[d] >= 290) & (h[d] <= 350)))
-
-
-def _wall_warmth(rgb):
-    """G-30: the share of a wall crop's texels in the lamp's colour (hue 35 to 100, chroma over 0.03)."""
-    L, C, h = _oklch(rgb)
-    return float(np.mean((h >= 35) & (h <= 100) & (C > 0.03)))
+    return float(np.median(C[lit])), float(np.quantile(C[lit], 0.9)), float(np.mean((h[d] >= 290) & (h[d] <= 350)))
 
 
 def _knots(rgb):
@@ -443,28 +593,38 @@ class LightColourAndDrawing(unittest.TestCase):
     SHADE_BOXES = ((200, 430, 310, 512), (250, 380, 387, 490), (300, 360, 520, 520), (1290, 450, 1440, 570))
 
     def test_the_torchlight_is_light_on_stone(self):
-        # G-29 (Claude A's round 7 ruling): Eastward 06's warm floor is OKLab L 0.43, OKLCH C 0.035, hue 47, its
-        # darkest texels violet. Round 5's pools were grey (C 0.018); round 6's an ochre rug (C 0.063, the
-        # darkest texels ochre): both fail
+        # G-29 (Claude A's round 7 ruling): light on stone, its darkest texels violet, never a rug: the pool's median
+        # OKLCH C at most 0.05. G-32 (round 8): its heart glows at Eastward 06's floor by a fire bowl (C 0.07 to 0.08),
+        # so its top tenth reaches C 0.055. Round 5's pools were grey (C 0.018 throughout); round 6's an ochre rug
+        # (median C 0.063, the darkest texels ochre): both fail
         g = _rgba('ground')[..., :3]
         for (x0, y0, x1, y1) in ((60, 168, 300, 300), (640, 312, 850, 420), (1760, 168, 1950, 300)):
             with self.subTest(box=(x0, y0, x1, y1)):
-                C, violet = _pool_character(g[y0:y1, x0:x1])
-                self.assertTrue(0.025 <= C <= 0.05, C)
+                C, p90, violet = _pool_character(g[y0:y1, x0:x1])
+                self.assertLessEqual(C, 0.05, C)
+                self.assertGreaterEqual(p90, 0.055, p90)
                 self.assertGreaterEqual(violet, 0.8)
         for name in ('undercroft_r5_pool.png', 'undercroft_r6_pool.png'):
             a = np.asarray(Image.open(os.path.join(FIXTURES, name)).convert('RGB'))
-            C, violet = _pool_character(a)
-            self.assertFalse(0.025 <= C <= 0.05 and violet >= 0.8, name)
+            C, p90, violet = _pool_character(a)
+            self.assertFalse(C <= 0.05 and p90 >= 0.055 and violet >= 0.8, name)
 
-    def test_the_torches_light_their_wall(self):
-        # G-30: round 6's faces and kerbs round the cups held no warm texel
+    def test_the_wall_light_is_whole_blocks(self):
+        # G-33 (round 8): the face round each cup carries the lamp's colour in whole blocks (mean OKLCH C 0.035 or
+        # more within 0.3 H), never a 2 x 2 checker. Round 7's staged wall light drew 194 checkers by torch 1 at
+        # C 0.014; round 6's wall held no warm texel
         g = _rgba('ground')[..., :3]
-        for (x0, y0, x1, y1) in ((120, 90, 220, 168), (696, 234, 796, 312)):
-            self.assertGreater(_wall_warmth(g[y0:y1, x0:x1]), 0.10)
-        self.assertLess(_wall_warmth(g[90:168, 290:370]), 0.05)            # the face between two torches stays grey
+        plan = json.load(open(os.path.join(ROOT, 'game', 'data', 'plans', 'undercroft.json')))
+        for tx, ty in plan['torches']:
+            with self.subTest(torch=tx):
+                c, chk = _wall_light(g, 3 * tx, 3 * (ty - 16))
+                self.assertGreaterEqual(c, 0.035)
+                self.assertLessEqual(chk, 4)
+        a, _, cx, foot = _r7_torch1()
+        c, chk = _wall_light(a, cx, foot - 48)
+        self.assertFalse(c >= 0.035 and chk <= 4, (c, chk))
         a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r6_wall.png')).convert('RGB'))
-        self.assertLess(_wall_warmth(a), 0.05)
+        self.assertLess(_wall_light(a, 48, 30)[0], 0.035)
 
     def test_no_knots_at_the_junctions(self):
         # G-31: round 6's shade held a dark 2 x 2 knot at most of its junctions

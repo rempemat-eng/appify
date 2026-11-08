@@ -160,9 +160,19 @@ def break_runs(cv, mask, rng, longest=48):
 
 
 FLOOR_AMBIENT = 2                # round 6: rung 2 is the shade near a light (Eastward 06's 0.36); 1 the far shade, 0 the walls' feet
-WALL_LIGHT = 60                  # round 7 (G-30): texels round a torch's cup its light warms the wall over
+WALL_HOT = 23                    # round 8 (G-33): blocks centred within about 0.3 H of a torch's cup step a tone up on the lamp's colour,
+WALL_NEAR = 34                   # ... those within about 0.45 H a tone up on the warm sibling (so the face within 0.3 H is mostly lit),
+WALL_FAR = 56                    # ... and blocks out to about 0.75 H take the warm sibling
 FAR_MIN = 290                    # round 6 (G-27): the far shade starts no nearer than this (texels) to any light
 POOL_STEPS = 3                   # round 7 (G-29): the in-between band, the warm band and the heart
+# round 8 (G-32): a torch's pool by Eastward 06's fire bowls, as (half-width, depth) in H from the wall's foot
+# under the cup: the heart, the warm band's outer edge and the light's reach (1.1 to 1.4 H, at most 2.5 H2)
+TORCH_HEART = (0.95, 0.52)
+TORCH_WARM = (1.12, 0.9)
+TORCH_REACH = (1.3, 1.12)
+LAMPLIT_ALL = 0.42               # lamplit on every lit texel's top within this of the cup's foot (H) ...
+LAMPLIT_TOPS = 0.8               # ... worn tops under the lips, shallower outwards, to here ...
+LAMPLIT_LIPS = 1.05              # ... the lips alone to here, and none beyond
 
 
 def flag_tint(slab, nflags, lf_cool, lf_warm, lifted):
@@ -365,21 +375,17 @@ def floor_layout6(shape, where, rng, cell):
     return ids, joint, off, mat, chip, face
 
 
-def staged(sm, k, width, Y, X, whole=None, slab=None, from_half=False):
+def staged(sm, k, width, Y, X, whole=None, slab=None):
     """Texels at or over level `k` of a smooth field, its boundary drawn as a staged dither of 2 x 2 blocks
     `width` texels wide (a quarter, a half, three quarters of the blocks: eastward-edges 5.4) centred on
     the field's own curve, so the boundary crosses the flags. Where `whole` holds a flag the boundary crosses
-    is in or out whole, by the share of it over `k` (the edge stops at its joint). With `from_half` the fade
-    starts at the half (the checker) and skips the quarter, whose lone blocks of a much lighter tone stand
-    as pale specks (round 7: the heart's and the warm band's edges)."""
+    is in or out whole, by the share of it over `k` (the edge stops at its joint)."""
     inside = sm >= k
     if not inside.any():
         return inside
     sd = ndi.distance_transform_edt(inside) - ndi.distance_transform_edt(~inside)
     c = np.clip(0.5 + sd / width, 0, 1)
     tb = (BAYER2[(Y // 2) % 2, (X // 2) % 2] + 0.5) / 4
-    if from_half:
-        c = np.where(c < 0.375, 0.0, c)
     out = tb < c
     if whole is not None and slab is not None:
         idx = np.arange(1, int(slab.max()) + 1)
@@ -408,21 +414,21 @@ SHADE_LIP = {0: (('void', 3),) * 3, 1: (('slate_warm', 1), ('slate_cool', 2), ('
 SHADE_WORN = {0: (('void', 3),) * 3, 1: (('slate', 1), ('slate_warm', 1), ('slate_cool', 1)),
               2: (('slate_warm', 1), ('slate_cool', 2), ('void', 4))}      # a lip worn down, half its catch-light
 SHADE_SE = {0: (('void', 1),) * 3, 1: (('void', 3), ('void', 3), ('void', 3)), 2: (('void', 3), ('slate', 1), ('void', 3))}
-# under a torch (round 7, G-29): the light lifts the stone a rung and warms it through its own mauve
-# siblings, band by band from the shade outwards (rung 3 stone_cool / stone, the in-between band; rung 4
-# stone_warm; rung 5 the heart, stone_warm 2 / stone 2), and the stone's darks stay violet in the light (joints
-# stone_cool 0, soot 2, stone_cool 1; arrises a sibling under). The lamp's light on stone (lamplit, a glow
-# sibling of lamp, its tone 1 Eastward 06's warm floor: OKLab L 0.43, OKLCH C 0.036, hue 47) lies where the
-# light catches: the lit north-west lips, chip faces and the crests under them, then clusters on the flags'
-# tops densest by the torch, never on a joint or an arris and never against the slate shade.
-WARM = {3: (('stone', 1), ('stone_cool', 1), ('stone', 1)),
-        4: (('stone_warm', 1), ('stone', 1), ('stone_warm', 1)),
+# under a torch (round 8, G-32): the light lifts the stone a rung a band and warms it, band by band from the
+# shade inwards: rung 3 the in-between band (stone 1 and its siblings, OKLab L 0.41 to 0.44), rung 4 the warm band
+# (stone_cool 2 / stone_warm 1, 0.44 to 0.49, its lips and the crests under them a tone up), rung 5 the heart
+# (stone_warm 2 / stone 2, 0.52 to 0.55, its lips tone 3). The stone's darks stay violet in the light (joints
+# stone_cool 0, soot 2, stone_cool 1; arrises a sibling under). These are the stone's own codes; the lamp's
+# colour (lamplit, a glow sibling of lamp at the same tone, a touch lighter) is laid over them afterwards by
+# each texel's distance from the cup (LAMPLIT_ALL, LAMPLIT_TOPS, LAMPLIT_LIPS), never on a joint or an arris and
+# never against the slate shade.
+WARM = {3: (('stone', 1), ('stone_warm', 1), ('stone_cool', 1)),
+        4: (('stone_cool', 2), ('stone_warm', 1), ('stone_cool', 2)),
         5: (('stone_warm', 2), ('stone', 2), ('stone_warm', 2))}
 WARM_LIP = {3: (('stone_cool', 2), ('stone_cool', 2), ('stone_warm', 1)),
-            4: (('lamplit', 2), ('lamplit_cool', 2), ('lamplit', 2)),
-            5: (('lamplit', 3), ('lamplit_cool', 3), ('lamplit', 3))}
-WARM_CREST = {4: (('lamplit_cool', 2), ('lamplit', 2), ('lamplit_cool', 2)),
-              5: (('lamplit', 2), ('lamplit_cool', 2), ('lamplit', 2))}
+            4: (('stone_warm', 2), ('stone', 2), ('stone_warm', 2)),
+            5: (('stone_warm', 3), ('stone', 3), ('stone_warm', 3))}
+WARM_CREST = {4: (('stone', 2), ('stone_cool', 2), ('stone', 2)), 5: (('stone_warm', 3), ('stone', 3), ('stone_warm', 3))}
 WARM_SE = {3: (('soot', 2), ('stone_cool', 1), ('soot', 2)), 4: (('stone_cool', 1), ('soot', 2), ('stone_cool', 1)),
            5: (('stone_cool', 2), ('stone', 1), ('stone_cool', 2))}
 WARM_JOINT = {3: ('stone_cool', 0), 4: ('soot', 2), 5: ('stone_cool', 1)}
@@ -2393,14 +2399,6 @@ def p_channel(pz, lit=True, floor=None):
         tb = (BAYER2[(Yg // 2) % 2, (Xg // 2) % 2] + 0.5) / 4
         sp = smask & ~lips_ & (dist >= 1) & (tb < cov) & (a < 0) & (Xg + X0 >= fx)
         a[sp] = spill_code(sub[sp])
-        # (round 7: a spill texel unlike all four neighbours takes its left or upper neighbour's code, so the
-        # overlay stays within the drawn pictures' lone-pixel limit; the floor's finest marks read the same)
-        for _ in range(2):
-            Pp = np.pad(a, 1, constant_values=-2)
-            c0 = Pp[1:-1, 1:-1]
-            lone = sp & (c0 != Pp[:-2, 1:-1]) & (c0 != Pp[2:, 1:-1]) & (c0 != Pp[1:-1, :-2]) & (c0 != Pp[1:-1, 2:])
-            left, up = Pp[1:-1, :-2], Pp[:-2, 1:-1]
-            a[lone] = np.where(left[lone] >= 0, left[lone], np.where(up[lone] >= 0, up[lone], a[lone]))
     # the brass dividers stand dark in the glow, lit on top, their east side in shade
     for k in range(q(8), span, q(8)):
         dv = groove & (d >= -2) & (d <= 2) & (along >= k) & (along < k + 2)
@@ -2411,14 +2409,17 @@ def p_channel(pz, lit=True, floor=None):
     return p
 
 
-def p_cairn_alcove(seed):
+def p_cairn_alcove(seed, light=None):
     """Cairn asleep in the wall (8 Nov, CA-1 to CA-5): his slumped drawing (the cast's last defeat
     frame) brought onto the house ramps, its stones re-lit by the rock recipe (a lit crown to the
     upper left, the body, a dark underside, cluster texture), the moss taken off his shoulders and
     left only in the creases between his stones, a sprout growing from one; the loose pebbles of the
     cast frame dropped. He is half sunk behind squared courses (chipped corners, lit top edges) and a
     bank of damp earth with moss in it (no grass: no daylight reaches the alcove). The canvas is
-    the scene's (108 x 100 at density 3, foot at its bottom centre)."""
+    the scene's (108 x 100 at density 3, foot at its bottom centre).
+    Round 8 (Claude A's ruling on torch 8): with `light`, the flame of the torch beside the alcove in the
+    canvas's texels, the faces of his stones turned towards it take its warm catch-light, a tone up on the lamp's
+    colour nearest the flame and its own tone farther off, falling to nothing by about 1 H."""
     V = _v()
     q, code = V.q, V.code
     from scripts.art.native import palette as PAL
@@ -2474,6 +2475,7 @@ def p_cairn_alcove(seed):
     # each stone of him, found between the drawn lines, lit by the rock recipe
     labs, nst = ndi.label(stone_m)
     Y, X = np.mgrid[0:H, 0:W]
+    fac = np.zeros((H, W))                                              # how squarely each rim texel faces the torch
     for i, sl in enumerate(ndi.find_objects(labs), start=1):
         if sl is None:
             continue
@@ -2488,6 +2490,9 @@ def p_cairn_alcove(seed):
         lit = -(gx * -0.6 + gy * -0.8) / nrm                            # +1: the rim faces the light
         rimw = np.clip(1.2 - dist / 6.0, 0, 1)                          # the rim, about six texels in
         shd = lit * rimw
+        if light is not None:
+            tdx, tdy = light[0] - X, light[1] - Y
+            fac[m] = ((-(gx * tdx + gy * tdy) / nrm / (np.hypot(tdx, tdy) + 1e-6)) * np.clip(1.5 - dist / 5.0, 0, 1))[m]
         uu = (X - x0) / max(1, x1 - x0) + (Y - y0) / max(1, y1 - y0)
         tt = np.full((H, W), 3)
         tt[(shd < -0.18) | (uu > 1.55)] = 2
@@ -2501,6 +2506,16 @@ def p_cairn_alcove(seed):
         a[m & np.roll(bot, -1, 0) & ~bot] = code(fam, 2)               # the underside turning away
         if m.sum() > 20:
             tex(a, m & ~bot, rng, share=0.3, up=0.0)
+    if light is not None:
+        # the torch's catch-light on the faces turned to it, by distance from its flame (in H)
+        fall = np.clip(1 - (np.hypot(X - light[0], Y - light[1]) / (74 * ctx.D / 3) - 0.2) / 0.8, 0, 1)
+        s_ = fac * fall
+        t_ = a % 8
+        ok_ = stone_m & (a >= 0) & (t_ < 6) & np.isin(a // 8, [V.FI[f_] for f_ in STONES])
+        hot = ok_ & (s_ > 0.33)
+        glow = ok_ & (s_ > 0.12) & ~hot
+        a[glow] = V.FI['lamplit'] * 8 + t_[glow]
+        a[hot] = V.FI['lamplit_warm'] * 8 + np.minimum(5, t_[hot] + 1)
     # moss only in the creases: clumps sitting in the lower joints between his stones
     crease = line_m & np.roll(stone_m, -1, 0) & np.roll(stone_m, 1, 0) & (Y > oy + sh * 0.35)
     cy_, cx_ = np.nonzero(crease)
@@ -2921,6 +2936,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     # The floor's light is a smooth field in rungs over the ambient (lf), falling off softly from each
     # source; the faces and the stair take theirs in whole tones (lightv), as before.
     lightv = np.full((H, W), -1, int)
+    pre_light = cv.copy()                                          # the masonry before the light: its blocks and mortar
     nz = (ndi.gaussian_filter(rng.random((H, W)), q(2.5)) - 0.5) * 0.5
     warm = np.zeros((H, W), bool)
     cool = np.zeros((H, W), bool)
@@ -2929,6 +2945,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     lf_warm = np.zeros((H, W))
     wob = ndi.gaussian_filter(np.random.default_rng(117).random((H, W)), q(2.5))
     wob = (wob - wob.mean()) / (wob.std() + 1e-9)                  # a slow noise, about one unit
+    HW = 74.0 / 3                                                    # the character's height, H, in world px
+    dlamp = np.full((H, W), 99.0)
+    drad = np.full((H, W), 99.0)
     for tx, ty in plan.get('torches', []):
         dfl = np.hypot((WX - tx) / 40, (WY - ty - 12) / 26)        # the floor below
         dfa = np.hypot((WX - tx) / 18, (WY - ty + TORCH_LIFT + 2) / 16)    # the face round the bracket
@@ -2940,14 +2959,26 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
         trng = np.random.default_rng(int(tx * 7 + ty))
         rx, ry = 25 * trng.uniform(0.9, 1.25), 19 * trng.uniform(0.85, 1.2)
         lean = trng.uniform(-4, 4)
-        rx = ry * 1.05                                            # round 7: a round pool reaching about 1.7 H
-        dt = np.hypot((WX - tx - lean * np.clip((WY - ty) / ry, 0, 1)) / rx, (WY - ty - 1) / ry)
-        dt = dt + wob * 0.14                                     # round 6 (G-24): its curves wobble, never a ruled ellipse
-        # round 7 (G-29): the light falls off over about 1.7 H from the wall's foot: the heart to about 0.5 H,
-        # the warm band to about 1 H, the in-between band to the reach (lt 2.5, 1.5, 0.5 over the ambient)
-        lt = np.interp(dt, [0.0, 0.7, 1.6, 2.2, 2.8], [3.3, 2.5, 1.5, 0.5, 0.0])
+        # round 8 (G-32): a torch matches Eastward 06's fire bowls, not 05's six-bulb lamp post. Its light falls
+        # off along each ray from the wall's foot under the cup through three nested half-ellipses (half-width,
+        # depth, in H): the heart (0.68, 0.48), the warm band's edge (1.0, 0.82) and the reach (1.25, 1.18),
+        # lt 2.5, 1.5 and 0.5 over the ambient on them, so a pool is about 2.4 H2 and its heart about 0.5 H2
+        sc = trng.uniform(0.95, 1.02)
+        ux = (WX - tx - lean * 0.4 * np.clip((WY - ty) / ry, 0, 1)) / HW
+        uy = np.maximum(WY - ty, 0) / HW
+        ur = np.hypot(ux, uy) + 1e-6
+        cs, sn = ux / ur, uy / ur
+        ur = ur + wob * 0.06                                    # round 6 (G-24): its curves wobble, never a ruled ellipse
+        rad = lambda a_, b_: sc / np.sqrt((cs / a_) ** 2 + (sn / b_) ** 2)
+        r5_, r4_, r3_ = rad(*TORCH_HEART), rad(*TORCH_WARM), rad(*TORCH_REACH)
+        lt = np.where(ur < r5_, 3.4 - 0.9 * ur / r5_,
+                      np.where(ur < r4_, 2.5 - (ur - r5_) / (r4_ - r5_),
+                               np.where(ur < r3_, 1.5 - (ur - r4_) / (r3_ - r4_), np.clip(0.5 - (ur - r3_) / 0.7, 0, 0.5))))
         lf = np.maximum(lf, lt)
         lf_warm = np.maximum(lf_warm, lt)
+        drad = np.minimum(drad, np.hypot(ux, uy))
+        dlamp = np.minimum(dlamp, np.hypot(ux * 0.8, uy))        # each texel's own distance from the cup's foot (H; the
+        #                                                          heart is wider than deep, so along the wall it counts 4/5)
     sk = plan.get('skylight')
     if sk:
         sx, sy = sk['at']
@@ -2997,27 +3028,65 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     cv[sel] = swap_fam(cv[sel], {'stone': 'stone_warm', 'stone_warm': 'stone'})
     sel = cool & ~edge_tone & np.isin(cv // 8, [FI[s] for s in STONES]) & ~floor
     cv[sel] = swap_fam(cv[sel], {'stone': 'stone_cool', 'stone_cool': 'stone'})
-    # round 7 (G-30): each torch lights its own wall. Round its cup, over about an arch's width, the face's lit
-    # block tops, arch reveals and the kerb's lit edge take the lamp's colour (lamplit at the same tone) and
-    # its mid tones the warm sibling, staged in 2 x 2 blocks and falling off from the flame, so the light
-    # on the wall runs down into the floor's pool
-    tb_w = (BAYER2[(YY // 2) % 2, (XX // 2) % 2] + 0.5) / 4
+    # round 8 (G-33): each torch lights its own wall block by block, never in a checker (house-style 4: dither is
+    # for ground fades, not a wall's parts). A block (the stone between its mortar) nearer the cup than WALL_HOT
+    # on its mean steps a tone up on the lamp's colour (lamplit and its siblings), so its lit top rows reach tone
+    # 4 to 5 by the flame; one out to WALL_NEAR a tone up on the warm sibling; one out to WALL_FAR takes the warm
+    # sibling at its own tone; the wall beyond is as it was. The kerb's lit edge under the cup goes up to lamplit 4
+    wall0 = cv.copy()
     stone_f = [FI['stone'], FI['stone_warm'], FI['stone_cool']]
     to_lamp = {FI['stone']: FI['lamplit'], FI['stone_warm']: FI['lamplit_warm'], FI['stone_cool']: FI['lamplit_cool']}
+    lamp_of = np.arange(int(cv.max()) // 8 + 8)
+    for k_, v_ in to_lamp.items():
+        lamp_of[k_] = v_
+    wb = ~floor & (cv >= 0) & ~edge_tone & np.isin(cv // 8, stone_f) & (pre_light % 8 >= 1) & (pre_light % 8 < 6) & \
+        np.isin(pre_light // 8, stone_f)
+    wlab, nwb = ndi.label(wb)
+    # the voussoirs, the cornice and the plinth's lit top row join their blocks into one run: inside a run bigger
+    # than a block, the tone-1 joints part it too, and what is still bigger is cut every 16 texels along
+    big = np.bincount(wlab.ravel()) > 500
+    big[0] = False
+    bm = big[wlab]
+    sub, nsub = ndi.label(bm & (pre_light % 8 >= 2))
+    wlab = np.where(bm, np.where(sub > 0, sub + nwb, 0), wlab)
+    big = np.bincount(wlab.ravel()) > 500
+    big[0] = False
+    bm = big[wlab]
+    _, wlab = np.unique(np.where(bm, (wlab.astype(np.int64) + 1) * 4096 + XX // 16, wlab), return_inverse=True)
+    wlab = wlab.reshape(H, W).astype(np.int32)
+    wlab[~wb] = 0
+    _, wlab = np.unique(wlab, return_inverse=True)
+    wlab = wlab.reshape(H, W).astype(np.int32)
+    nwb = int(wlab.max())
+    kerb = (ndi.distance_transform_edt(~floor) <= q(6)) & ~floor
     for tx, ty in plan.get('torches', []):
         cx_, cy_ = q(tx), q(ty - TORCH_LIFT - 2)
-        dd = np.hypot(XX - cx_, (YY - cy_) * 0.8)
-        c_ = np.clip((WALL_LIGHT - dd) / (WALL_LIGHT * 0.75), 0, 1)
-        on_ = (c_ > 0) & ~floor & (cv >= 0) & ~edge_tone & np.isin(cv // 8, stone_f)
-        t_ = cv % 8
-        kerb = ndi.distance_transform_edt(~floor) <= q(5)          # the kerb above the floor: its lit edge too
-        hi = on_ & ((t_ >= 3) | (kerb & (t_ >= 2))) & (tb_w < c_ * 0.85)
-        mid = on_ & (t_ >= 1) & (t_ <= 2) & (tb_w < c_)
-        cv[mid] = FI['stone_warm'] * 8 + t_[mid]
-        fam_ = cv[hi] // 8
-        cv[hi] = np.vectorize(lambda f_: to_lamp.get(int(f_), int(f_)))(fam_) * 8 + t_[hi]
+        dd = np.hypot(XX - cx_, YY - cy_)
+        box = (dd < WALL_FAR * 2) & wb
+        ids = np.unique(wlab[box])
+        ids = ids[ids > 0]
+        if not len(ids):
+            continue
+        md = ndi.mean(dd, labels=wlab, index=ids)
+        hot_ = np.zeros(nwb + 1, bool)
+        near_ = np.zeros(nwb + 1, bool)
+        mid_ = np.zeros(nwb + 1, bool)
+        hot_[ids[md < WALL_HOT]] = True
+        near_[ids[(md >= WALL_HOT) & (md < WALL_NEAR)]] = True
+        mid_[ids[(md >= WALL_NEAR) & (md < WALL_FAR)]] = True
+        m_ = hot_[wlab] & wb
+        t_ = np.minimum(cv[m_] % 8 + 1, 5)
+        cv[m_] = lamp_of[cv[m_] // 8] * 8 + t_
+        m_ = near_[wlab] & wb & np.isin(cv // 8, stone_f)
+        cv[m_] = FI['stone_warm'] * 8 + np.minimum(cv[m_] % 8 + 1, 5)
+        m_ = mid_[wlab] & wb & np.isin(cv // 8, [FI['stone'], FI['stone_cool']])
+        cv[m_] = FI['stone_warm'] * 8 + cv[m_] % 8
+        ke = kerb & (np.abs(XX - cx_) < WALL_NEAR) & (cv >= 0) & ~edge_tone & (cv % 8 >= 3) & \
+            np.isin(cv // 8, stone_f + list(to_lamp.values()))
+        cv[ke] = FI['lamplit'] * 8 + 4
     lf = np.maximum(lf, lf_cool)
     fshade *= 1 - 0.85 * np.clip(lf / 2.0, 0, 1)                   # a pool reaches into the walls' feet
+    fshade *= 1 - np.clip(lf_warm - 1.5, 0, 1)                      # (round 8: a torch's heart lies on the wall's foot)
 
     # --- objects ---------------------------------------------------------------------------------
     lift_jobs = []
@@ -3043,7 +3112,12 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     for wl in plan['walls']:
         if wl.get('alcove'):
             x, y, w, h = wl['rect']
-            pic = p_cairn_alcove(9)
+            ax_, ay_ = q(wl['alcove']), q(y + h)
+            tch = [(q(tx), q(ty - TORCH_LIFT - 7)) for tx, ty in plan.get('torches', [])]
+            tch = min(tch, key=lambda t_: abs(t_[0] - ax_)) if tch else None
+            cw_, ch_ = int(round(108 * D / 3)), int(round(100 * D / 3))       # the alcove's canvas, foot at its bottom centre
+            lt_ = (tch[0] - (ax_ - cw_ // 2), tch[1] - (ay_ - (ch_ - 1))) if tch else None
+            pic = p_cairn_alcove(9, light=lt_)
             objects.append(dict(id='cairn_alcove', kind='cairn', png=add_pic('cairn_alcove', pic.rgba()),
                                 foot=(q(wl['alcove']), q(y + h)), anchor=(pic.ax, pic.ay), alpha=None, cond=None,
                                 solid=None))
@@ -3122,7 +3196,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
         if m_.any():
             T = max(float(np.quantile(gl[m_], 0.5)), FAR_MIN)
             far[m_] = np.clip((gl[m_] - T) / q(8) + 0.5, 0, 1)
-    far = np.maximum(far, wet * 1.0)
+    far = np.maximum(far, wet * (1 - np.clip(lf_warm - 1.5, 0, 1)))   # (round 8: not on a torch's heart at the wall's foot)
     v = A + lf - fshade - far
     sm = ndi.gaussian_filter(v, 1.5)
     stop = np.concatenate([[False], np.random.default_rng(113).random(nflags) < 0.35])
@@ -3130,9 +3204,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
             + staged(sm, 1.5, 14, YY, XX, whole=stop, slab=slab).astype(int))
     # round 7 (G-29): three bands under a torch (in-between, warm, heart), each boundary a staged dither 12 to 20
     # texels wide on the light's own curve; daylight uses the first two
-    up3 = staged(sm, A + 0.5, 22, YY, XX)                # the light's reach: the in-between band, a 16-texel fade
-    up4 = staged(sm, A + 1.5, 20, YY, XX, from_half=True) & up3          # the warm band
-    up5 = staged(sm, A + 2.5, 16, YY, XX, from_half=True) & up4          # the heart
+    # round 8 (G-32, G-34): each fade as wide as the band inside it, so the value falls the whole way from the heart
+    # to the reach with no shelf, and every fade uses all three stages (the heart's too: eastward-edges 5.4)
+    up3 = staged(sm, A + 0.5, 22, YY, XX)                # the light's reach: the in-between band
+    up4 = staged(sm, A + 1.5, 26, YY, XX) & up3          # the warm band
+    up5 = staged(sm, A + 2.5, 32, YY, XX) & up4          # the heart
     rung = np.where(up3, A + 1 + up4 + up5, np.minimum(rung, A))
     rung = np.where(floor, rung, 0)
     lifted = rung > A
@@ -3165,7 +3241,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     nwl, _se = flag_lips(np.where(fjoint, 0, slab), np.random.default_rng(105), gap=0.3)
     nwl0, _ = flag_lips(np.where(fjoint, 0, slab), np.random.default_rng(105), gap=0.0)
     nwl = np.where(lifted, nwl0, nwl)                       # under a torch the light catches the whole arris (no grit)
-    lip = (nwl & (foff == 0) & ~fjoint) | (fface & ~lifted)  # (a chip's lit face in the shade; in the light it stood as a pale speck)
+    lip = (nwl & (foff == 0) & ~fjoint) | fface                # a chip's lit face too, in the shade and in the light (round 8)
     se = paint_se = (slab > 0) & ~fjoint & (np.roll(fjoint, -1, 0) | np.roll(fjoint, -1, 1)) & ~lip & (foff == 0) & ~fchip
     # the arris worn away here and there, in runs of four texels as the lip's breaks are
     agap = np.kron(np.random.default_rng(114).random(((H + 3) // 4, (W + 3) // 4)) < 0.3, np.ones((4, 4), bool))[:H, :W]
@@ -3182,7 +3258,17 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
             o |= (np.roll(m, i, 0) & same(i, 0)) | (np.roll(m, i, 1) & same(0, i))
         return o
     lip_ok = lip & ~fjoint
-    crest = ((under(lip_ok, 1) & (rung == A + 2)) | (under(lip_ok, 3) & (rung >= A + 3))) & ~mark & fwarm
+    depth = np.full((H, W), 99, np.int32)                    # texels down / right of the flag's lit lip
+    depth[lip_ok] = 0
+    reached = lip_ok.copy()
+    for i in range(1, 9):
+        step_ = ((np.roll(reached, 1, 0) & same(1, 0)) | (np.roll(reached, 1, 1) & same(0, 1))) & ~reached
+        depth[step_] = i
+        reached |= step_
+    # round 8 (G-32): in the heart the crest under a lit lip is deepest by the flame (four texels) and thins to
+    # nothing at the heart's edge, so the heart itself falls off from the flame
+    kc = np.clip(np.round(2 * (1 - dlamp / 0.45)), 0, 1)
+    crest = ((under(lip_ok, 1) & (rung == A + 2)) | ((depth >= 1) & (depth <= kc) & (rung == A + 3))) & ~mark & fwarm
     var = fvar.copy()
     odd = np.random.default_rng(115).random(nflags + 1)[slab] < 0.08              # the odd flag a tone off (worn lower)
     rung_c = np.where(odd & (rung == A) & ~damp & (fvar != 2), A - 1, rung)   # (never the cool sibling: no black holes)
@@ -3192,36 +3278,21 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     # a lip worn down here and there, in runs of four texels (G-26)
     lworn = np.kron(np.random.default_rng(116).random(((H + 3) // 4, (W + 3) // 4)) < 0.35, np.ones((4, 4), bool))[:H, :W]
     fc = floor_paint(rung_c, var, mark, lip & ~mark, se & ~mark, fmat, fwarm, fcool, worn=lworn & nwl, crest=crest)
-    # the lamp's colour on the stone (round 7, G-29): on the catch-lights first, then on the flags' tops in
-    # clusters, densest nearest the torch and thinning outwards (a staged 2 x 2 dither on the light's own
-    # value), never on a joint or an arris and never within three texels of the slate shade
-    # (round 7: decided flag by flag, each chosen flag lit as a worn top under its lip, deeper by the torch;
-    # never a scatter of lone blocks, which reads as grit)
-    reach_ = np.clip((sm - (A + 0.3)) / 1.1, 0, 1)
+    # the lamp's colour on the stone (round 8, G-32), by each texel's own distance from the cup's foot (dlamp, in
+    # H), so the warmth gathers at the flame and thins with the light: every lit top within LAMPLIT_ALL; beyond it
+    # worn tops under the lit lips, the shallower the farther out (each flag a texel deeper or shallower), to
+    # LAMPLIT_TOPS; the lips and the crests under them alone to LAMPLIT_LIPS; none beyond. Never on a joint or an
+    # arris, and never within three texels of the slate shade
     away = ndi.distance_transform_edt(rung > A) > 3
-    idx_ = np.arange(1, nflags + 1)
-    with np.errstate(invalid='ignore'):
-        pf = np.nan_to_num(ndi.mean(reach_ * fwarm, labels=slab, index=idx_))
-    pick = np.concatenate([[False], np.random.default_rng(118).random(nflags) < pf * 1.4])
-    depth = np.full((H, W), 99, np.int32)                    # texels down / right of the flag's lit lip
-    depth[lip_ok] = 0
-    reached = lip_ok.copy()
-    for i in range(1, 9):
-        step_ = ((np.roll(reached, 1, 0) & same(1, 0)) | (np.roll(reached, 1, 1) & same(0, 1))) & ~reached
-        depth[step_] = i
-        reached |= step_
-    kf = np.concatenate([[0], np.round(3 + 7 * pf)]).astype(np.int32)
-    lampy = fwarm & lifted & ~mark & ~se & away & pick[slab] & (depth <= kf[slab])
-    # the outer half of the in-between band stays on the cool sibling, a step from the shade's value, so the
-    # fade's lone blocks at its rim never stand out as pale specks
-    outer_ = fwarm & (rung == A + 1) & (sm < A + 1.0) & (fc == FI['stone'] * 8 + 1)
-    fc[outer_] = FI['stone_cool'] * 8 + 1
+    jit = np.concatenate([[0], np.random.default_rng(118).integers(-1, 2, nflags)])[slab]
+    kd = np.round(8 * (LAMPLIT_TOPS - dlamp) / (LAMPLIT_TOPS - LAMPLIT_ALL)) + jit
+    tops = ~mark & ~se & ((dlamp < LAMPLIT_ALL) | (depth <= kd))
+    lips_l = (lip | crest) & ~mark & (np.maximum(dlamp, drad) < LAMPLIT_LIPS)
+    lampy = fwarm & lifted & away & (tops | lips_l)
     fam_l = fc // 8
     for src_, dst_ in (('stone', 'lamplit'), ('stone_warm', 'lamplit_warm'), ('stone_cool', 'lamplit_cool')):
         m_ = lampy & (fam_l == FI[src_])
         fc[m_] = FI[dst_] * 8 + fc[m_] % 8
-        back = ~away & (fam_l == FI[dst_])                  # (a lip or crest by the shade stays stone)
-        fc[back] = FI[src_] * 8 + fc[back] % 8
     cv[paint] = fc[paint]
     shade_px = ~lifted
     floor_moss(cv, fjoint, fjoint & paint & moss_near, rung > FLOOR_AMBIENT, fwarm, np.random.default_rng(107))
@@ -3245,7 +3316,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     ground = Image.fromarray(to_rgba(cv), 'RGBA').convert('RGB')
     if fields is not None:                              # for the tests: the floor's flags and where it was painted
         fields.update(slab=slab, paint=paint, joint=fjoint, codes=cv.copy(), tint_cool=tint_masks[0], tint_warm=tint_masks[1],
-                      off=foff.copy(), rung=rung.copy(), lifted=lifted, rim=rim_px, damp=damp, dfl=dfl, var=fvar.copy(), light=sm)
+                      off=foff.copy(), rung=rung.copy(), lifted=lifted, rim=rim_px, damp=damp, dfl=dfl, var=fvar.copy(), light=sm, wall0=wall0, dlamp=dlamp)
 
     # --- write ---------------------------------------------------------------------------------
     os.makedirs(out_dir, exist_ok=True)

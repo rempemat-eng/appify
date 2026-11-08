@@ -95,7 +95,7 @@ BASES = {
     'lava':      ('glow', '#F27222'),
     'glowflora': ('glow', '#36D0B0'),
     # a glow's light on a surface: drawn by the surface rule (it lights stone, it is not a light), named only
-    'lamplit':   ('sibling:lamp', '#A08C6D'),       # the lamp's light on stone: the Undercroft's torchlit floor and walls (Claude A, round 7)
+    'lamplit':   ('sibling:lamp', '#AA8A5C'),       # the lamp's light on stone: the Undercroft's torchlit floor and walls (Claude A, round 7; round 8: C 0.074, so its tone 2 is Eastward 06's floor at a fire, C 0.066 to 0.075)
 }
 
 # A cast shadow steps the ground this many tones down its own ramp, so it stays on the
