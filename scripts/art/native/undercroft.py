@@ -2139,7 +2139,7 @@ def carve_channel(cv, segs, rng):
     tarn = ndi.gaussian_filter(rng.random((H, W)), 1.2)
     tarn = (tarn - tarn.mean()) / (tarn.std() + 1e-9)
     # streaks down the shaded wall at uneven spacings (6 to 15 texels, round 4 G-18), not a comb
-    marks = np.cumsum(np.random.default_rng(45).integers(6, 16, 200))
+    marks = np.cumsum(np.random.default_rng(45).integers(6, 16, size=200))
     streak = np.isin(along, marks) | np.isin(along, marks + 1) * (np.random.default_rng(46).random((H, W)) < 0.5)
     prof = {-7: code('stone_cool', 1), -6: code('stone_cool', 0), -5: code('stone_cool', 1), -4: code('stone_cool', 1),
             -3: code('stone_cool', 1), -2: code('void', 2), -1: code('void', 2), 0: code('void', 2), 1: code('void', 2),
