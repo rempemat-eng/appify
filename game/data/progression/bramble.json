@@ -1,36 +1,40 @@
 {
-  "schema_version": 1,
-  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "schema_version": 2,
+  "status": "proposal (claude-a/progression-2, 26 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "id": "bramble",
   "name": "Bramble",
   "identity": "older grassland ranger; left-handed archer: bow in the RIGHT hand, quiver over the LEFT shoulder, billhook at the RIGHT hip, folding buckler on the RIGHT forearm",
   "home_region": "valley",
-  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "home_region_note": "see docs/vision/world-and-cast.md (26 Oct); it sets the tier material",
   "abilities": {
-    "kit": "game/data/abilities/bramble.json (Codex, #261); base and powered form unchanged",
+    "kit": "game/data/abilities/bramble.json (Codex, #261); base and powered form unchanged; every node is a modifier over it",
     "base": {
       "primary": "Quickdraw",
       "secondary": "Billhook",
       "block": "Briar buckler",
       "special": "Briarshot"
     },
+    "loadout_kind": {
+      "label": "bolt or arrow head",
+      "rule": "one loaded at a time, chosen outside fights; the base kind is free"
+    },
     "skill_tree": {
       "branches": [
         {
-          "id": "bow",
-          "name": "Bow",
+          "id": "bolts",
+          "name": "Bolts",
           "covers": [
-            "primary",
-            "special"
+            "primary"
           ],
           "nodes": [
             {
-              "id": "fletcher",
-              "kind": "passive",
-              "name": "Fletcher",
-              "effect": "Arrows fly 6 % faster.",
+              "id": "barbed_heads",
+              "kind": "kind",
+              "name": "Barbed heads",
+              "effect": "Loads barbed bolts: they slow what they hit.",
               "numbers": {
-                "arrow_speed_pct": 6
+                "slow_pct": 20,
+                "seconds": 2
               },
               "level": 2,
               "cost": 1,
@@ -38,57 +42,130 @@
               "touches_canonical": false
             },
             {
-              "id": "steady_aim",
-              "name": "Steady Aim",
-              "binding": "passive: stand still without firing",
-              "effect": "Standing still and not firing builds Aim pips; the next arrow spends them for extra power.",
+              "id": "fire_heads",
+              "kind": "kind",
+              "name": "Fire heads",
+              "effect": "Loads fire bolts: they set burn.",
               "numbers": {
-                "pip_seconds": 0.5,
-                "max_pips": 3,
-                "power_per_pip_pct": 15
+                "burn_seconds": 2
               },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "aim pips over the bow hand"
-                ],
-                "reuses": [
-                  "idle"
-                ]
-              },
-              "touches_canonical": false,
-              "kind": "technique",
               "level": 3,
               "cost": 2,
               "requires": [
-                "fletcher"
-              ]
-            },
-            {
-              "id": "long_eye",
-              "kind": "passive",
-              "name": "Long Eye",
-              "effect": "Aim pips are kept while walking slowly for 0.5 s.",
-              "numbers": {
-                "keep_seconds": 0.5
-              },
-              "level": 6,
-              "cost": 1,
-              "requires": [
-                "steady_aim"
+                "barbed_heads"
               ],
               "touches_canonical": false
             },
             {
-              "id": "steady_aim_2",
-              "kind": "technique upgrade",
-              "name": "Steady Aim II",
-              "effect": "Pips build faster, and a full three-pip arrow pierces one foe.",
+              "id": "fletcher",
+              "kind": "minor",
+              "name": "Fletcher",
+              "effect": "The loaded kind's effect lasts 20 % longer.",
               "numbers": {
-                "pip_seconds": 0.35,
-                "full_pip_pierce": 1
+                "kind_duration_pct": 20
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "fire_heads"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "shard_heads",
+              "kind": "kind",
+              "name": "Shard heads",
+              "effect": "Loads shard bolts: they pierce one more foe and show a weak point.",
+              "numbers": {
+                "pierce": 1,
+                "weak_point_seconds": 1.5
               },
               "level": 12,
+              "cost": 3,
+              "requires": [
+                "fletcher"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "net_heads",
+              "kind": "keystone",
+              "name": "Net heads",
+              "effect": "Loads net bolts: they root a light foe; a tank is slowed instead.",
+              "numbers": {
+                "root_seconds": 1.2
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "shard_heads"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "volley",
+          "name": "Volley",
+          "covers": [
+            "primary",
+            "special"
+          ],
+          "nodes": [
+            {
+              "id": "steady_hands",
+              "kind": "minor",
+              "name": "Steady hands",
+              "effect": "Shots recover 6 % faster.",
+              "numbers": {
+                "fire_interval_pct": -6
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "twin_shot",
+              "kind": "technique",
+              "name": "Twin shot",
+              "effect": "Every third shot looses two bolts side by side.",
+              "numbers": {
+                "every": 3,
+                "bolts": 2
+              },
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "steady_hands"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "long_eye",
+              "kind": "minor",
+              "name": "Long eye",
+              "effect": "Bolts fly 8 % further.",
+              "numbers": {
+                "range_pct": 8
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "twin_shot"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "three_bolt_spread",
+              "kind": "upgrade",
+              "name": "Three-bolt spread",
+              "effect": "Twin shot becomes three bolts in a narrow fan.",
+              "numbers": {
+                "bolts": 3,
+                "spread_degrees": 12
+              },
+              "level": 20,
               "cost": 3,
               "requires": [
                 "long_eye"
@@ -98,112 +175,18 @@
             {
               "id": "briar_volley",
               "kind": "keystone",
-              "name": "Briar Volley",
-              "effect": "Briarshot's first arrow splits into two.",
+              "name": "Briar volley",
+              "effect": "Briarshot's powered shots are three-bolt spreads.",
               "numbers": {
-                "split": 2
-              },
-              "touches_canonical": true,
-              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
-              "level": 22,
-              "cost": 4,
-              "requires": [
-                "steady_aim_2"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "blade",
-          "name": "Blade",
-          "covers": [
-            "secondary"
-          ],
-          "nodes": [
-            {
-              "id": "keen_hook",
-              "kind": "passive",
-              "name": "Keen Hook",
-              "effect": "Billhook cooldown -8 %.",
-              "numbers": {
-                "secondary_cooldown_pct": -8
-              },
-              "level": 2,
-              "cost": 1,
-              "requires": [],
-              "touches_canonical": false
-            },
-            {
-              "id": "hook_and_loose",
-              "name": "Hook and Loose",
-              "binding": "primary within 0.4 s after the billhook sweep",
-              "effect": "A point-blank arrow follows the sweep and knocks the nearest foe back.",
-              "numbers": {
-                "window_seconds": 0.4,
-                "knockback": 18
-              },
-              "art": {
-                "new_clips": [
-                  "secondary_loose (8 drawings: the sweep's settle into a quick draw)"
-                ],
-                "fx": [],
-                "reuses": [
-                  "secondary",
-                  "primary"
-                ]
-              },
-              "touches_canonical": false,
-              "kind": "technique",
-              "level": 9,
-              "cost": 2,
-              "requires": [
-                "keen_hook"
-              ]
-            },
-            {
-              "id": "wide_sweep",
-              "kind": "passive",
-              "name": "Wide Sweep",
-              "effect": "Billhook arc +10 degrees.",
-              "numbers": {
-                "arc_degrees": 10
-              },
-              "level": 11,
-              "cost": 1,
-              "requires": [
-                "hook_and_loose"
-              ],
-              "touches_canonical": false
-            },
-            {
-              "id": "hook_and_loose_2",
-              "kind": "technique upgrade",
-              "name": "Hook and Loose II",
-              "effect": "The sweep also staggers light foes, so the arrow lands.",
-              "numbers": {
-                "stagger_seconds": 0.5
-              },
-              "level": 20,
-              "cost": 3,
-              "requires": [
-                "wide_sweep"
-              ],
-              "touches_canonical": false
-            },
-            {
-              "id": "hedger",
-              "kind": "keystone",
-              "name": "Hedger",
-              "effect": "A billhook sweep that hits three foes refunds a dodge charge.",
-              "numbers": {
-                "min_foes": 3
+                "bolts": 3
               },
               "level": 24,
               "cost": 4,
               "requires": [
-                "hook_and_loose_2"
+                "three_bolt_spread"
               ],
-              "touches_canonical": false
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
             }
           ]
         },
@@ -211,16 +194,17 @@
           "id": "woodcraft",
           "name": "Woodcraft",
           "covers": [
+            "secondary",
             "block"
           ],
           "nodes": [
             {
-              "id": "bracer_hide",
-              "kind": "passive",
-              "name": "Bracer Hide",
-              "effect": "Buckler guard cost -8 %.",
+              "id": "keen_hook",
+              "kind": "minor",
+              "name": "Keen hook",
+              "effect": "Billhook cooldown -8 %.",
               "numbers": {
-                "guard_cost_pct": -8
+                "secondary_cooldown_pct": -8
               },
               "level": 4,
               "cost": 1,
@@ -229,39 +213,27 @@
             },
             {
               "id": "briar_snare",
-              "name": "Briar Snare",
-              "binding": "lower the buckler within 0.5 s after it blocks a hit",
-              "effect": "A briar snare drops at your feet and roots the next ground foe that steps on it.",
+              "kind": "technique",
+              "name": "Briar snare",
+              "effect": "Lowering the buckler just after a block drops a snare that roots the next foe on it.",
               "numbers": {
                 "window_seconds": 0.5,
-                "root_seconds": 1.2,
-                "max_snares": 1,
-                "snare_lifetime_seconds": 6
+                "root_seconds": 1.2
               },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "snare (3 drawings: drop, set, spring)"
-                ],
-                "reuses": [
-                  "guard 5 to 7"
-                ]
-              },
-              "touches_canonical": false,
-              "kind": "technique",
               "level": 16,
               "cost": 2,
               "requires": [
-                "bracer_hide"
-              ]
+                "keen_hook"
+              ],
+              "touches_canonical": false
             },
             {
-              "id": "forager",
-              "kind": "passive",
-              "name": "Forager",
-              "effect": "Freed woodland foes drop seeds a little more often.",
+              "id": "bracer_hide",
+              "kind": "minor",
+              "name": "Bracer hide",
+              "effect": "Buckler guard cost -8 %.",
               "numbers": {
-                "seed_drop_pct": 10
+                "guard_cost_pct": -8
               },
               "level": 18,
               "cost": 1,
@@ -271,32 +243,33 @@
               "touches_canonical": false
             },
             {
-              "id": "briar_snare_2",
-              "kind": "technique upgrade",
-              "name": "Briar Snare II",
-              "effect": "Two snares at once; a foe rooted by Briarshot springs the nearest snare too.",
+              "id": "briar_snare_ii",
+              "kind": "upgrade",
+              "name": "Briar snare II",
+              "effect": "Two snares at once.",
               "numbers": {
                 "max_snares": 2
               },
               "level": 26,
               "cost": 3,
               "requires": [
-                "forager"
+                "bracer_hide"
               ],
               "touches_canonical": false
             },
             {
-              "id": "old_ranger",
+              "id": "hook_and_loose",
               "kind": "keystone",
-              "name": "Old Ranger",
-              "effect": "Snares and roots last 25 % longer.",
+              "name": "Hook and loose",
+              "effect": "A shot right after the billhook sweep fires point-blank with knockback.",
               "numbers": {
-                "root_pct": 25
+                "window_seconds": 0.4,
+                "knockback": 18
               },
               "level": 28,
               "cost": 4,
               "requires": [
-                "briar_snare_2"
+                "briar_snare_ii"
               ],
               "touches_canonical": false
             }
@@ -310,49 +283,45 @@
   "weapon": {
     "item": "bow",
     "equipment_tag": "bow",
+    "line": "Yew bow > Hedge crossbow > Repeating crossbow > Starfall repeater",
     "tiers": [
       {
         "tier": 1,
         "name": "Yew bow",
-        "art": {
-          "silhouette": "the tier-1 drawing (being redrawn larger in cast v2): a plain shallow recurve with a leather grip wrap",
-          "materials": [
-            "bow",
-            "leather",
-            "string"
-          ],
-          "glow": "none",
-          "size": "as drawn",
-          "read_check": "the current drawing"
-        },
-        "mechanics": {},
+        "form": "bow",
+        "level": 1,
         "requires": {
           "level": 1
         },
-        "sockets": 1
+        "sockets": 1,
+        "art": {
+          "description": "the tier-1 drawing: a shallow recurve held in the right hand, quiver over the left shoulder",
+          "read_check": "the current drawing"
+        },
+        "rig": "as drawn",
+        "mechanics": {}
       },
       {
         "tier": 2,
-        "name": "Carved recurve",
-        "art": {
-          "silhouette": "the limb tips curl back +3 px each into a clear recurve; the grip is wrapped in green cord over the whole grip",
-          "materials": [
-            "bow",
-            "mantle (grip cord)",
-            "string"
-          ],
-          "glow": "none",
-          "size": "+2 px per limb over tier 1",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "arrow_speed_pct": 8
-        },
+        "name": "Hedge crossbow",
+        "form": "crossbow",
+        "level": 8,
         "requires": {
           "level": 8,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "a short ash-wood crossbow with a steel prod (bow arms) as wide as the shoulders, a walnut stock to the shoulder and a goat's-foot lever on the right side; bolts in the same quiver; slung across the back when the billhook is out",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts + clips: new crossbow part; primary, powered_primary and guard (stow) redrawn as shoulder-and-loose; a lever reload clip (8 drawings)",
+        "mechanics": {
+          "fire_interval_pct": 35,
+          "projectile_speed_pct": 25,
+          "pierce": 1,
+          "note": "slower, harder-hitting bolts; damage per second held equal by gear level"
+        },
         "cost": {
           "glint": 60,
           "scrap": 5,
@@ -364,27 +333,24 @@
       },
       {
         "tier": 3,
-        "name": "Horn-tipped bow",
-        "art": {
-          "silhouette": "pale horn caps (3 px) on both tips; a 2 x 3 px shard set into the riser in a gold bezel",
-          "materials": [
-            "bow",
-            "cream (horn)",
-            "gold",
-            "storm (shard)"
-          ],
-          "glow": "the shard's light tone only; no animation",
-          "size": "as tier 2",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "primary_cooldown_pct": -6
-        },
+        "name": "Repeating crossbow",
+        "form": "repeater",
+        "level": 16,
         "requires": {
           "level": 16,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "the crossbow gains a box magazine of 6 bolts on top of the stock and a cocking lever along the right side; the prod +2 px each end over tier 2",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: magazine and lever on the tier-2 crossbow; the lever pump is a 2-drawing overlay on the existing primary",
+        "mechanics": {
+          "magazine": 6,
+          "fire_interval_pct": -30,
+          "reload_seconds": 1.2
+        },
         "cost": {
           "glint": 150,
           "scrap": 10,
@@ -396,27 +362,23 @@
       },
       {
         "tier": 4,
-        "name": "Starfall bow",
-        "art": {
-          "silhouette": "limbs of dark moonwood that flare into crescent tips (+2 px each end over tier 3); gold riser; the string is drawn in starlight",
-          "materials": [
-            "moonwood (new)",
-            "gold",
-            "starlight (new)"
-          ],
-          "glow": "the string's base and light tones glow while drawn; a 2 px sparkle at each tip on release (2 drawings, off under reduced motion)",
-          "size": "+4 px per limb over tier 1; must stay inside the cell",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "named": "Starlit: a three-pip arrow also shows the foe's weak point for 2 s",
-          "weak_point_seconds": 2
-        },
+        "name": "Starfall repeater",
+        "form": "repeater",
+        "level": 24,
         "requires": {
           "level": 24,
           "great_forge": true
         },
         "sockets": 3,
+        "art": {
+          "description": "moonwood stock and prod with crescent tips; the string drawn in starlight; the loaded bolt's head glows",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: ramp and tip swap on the tier-3 repeater",
+        "mechanics": {
+          "named": "Starlit: the loaded kind's effect is 25 % stronger",
+          "kind_strength_pct": 25
+        },
         "cost": {
           "glint": 300,
           "scrap": 20,
