@@ -1,0 +1,27 @@
+{
+ "id": "crossroads/fern_bundles_shadow",
+ "file": "game/zones/crossroads/art/fern_bundles_shadow.png",
+ "sha256": "6fa2b56e72710e168547088635cee97831113f9fbc541e2c5b2268c706b739b5",
+ "kind": "fern_bundles_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  51,
+  14
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-03",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

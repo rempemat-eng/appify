@@ -152,6 +152,35 @@ TABLE = {
 }
 
 
+def _placed_rows():
+    """Pieces seeded from one placement each in the Crossroads zone (seed_props: an id with its own
+    picture, #421's slice fixes and Eastward pass, 3 and 4 Nov): each answers as the kind it is."""
+    kinds = {
+        'barrel': ('drop_se_barrel', 'herb_corner_barrel', 'planters_sw_butt', 'stock_ne_barrel'),
+        'crates': ('drop_se_crates', 'stall_crates_b'),
+        'sacks': ('drop_se_sacks', 'fern_bundles', 'stall_sacks', 'stock_ne_sacks'),
+        'flower_tub': ('east_seat_flower_tub', 'herb_window_flower_tub_a', 'herb_window_flower_tub_b', 'planters_sw_tub_a',
+                       'planters_sw_tub_b', 'tub_board', 'tub_fern', 'west_seat_flower_tub'),
+        'handcart': ('fern_cart', 'hired_handcart'),
+        'kit_lantern': ('lamp_square_e', 'lamp_square_s', 'lamp_square_w'),
+        'woodpile': ('oven_gable_woodpile',),
+        'oak': ('square_oak',),
+    }
+    rows = {}
+    for kind, ids in kinds.items():
+        purpose, role, req, forb, _v, _n = TABLE['crossroads_' + kind]
+        for i in ids:
+            rows['crossroads_' + i] = (purpose, role, req, forb, 'fine', 'As the %s: one placement in the zone.' % kind.replace('_', ' '))
+    rows['crossroads_well_spoil_rubble'] = TABLE['crossroads_fern_rubble'][:4] + (
+        'fine', 'The rubble hauled out of the well (story stage well_restored); carted off at well_clear.')
+    rows['crossroads_well_pail'] = ('water', None, None, None, 'fine', 'The first full pail, on the well\'s kerb (story stage well_clear).')
+    rows['crossroads_grain_scale'] = ('work', None, None, None, 'fine', 'Moss\'s scale: a workbench at her stall.')
+    return rows
+
+
+TABLE.update(_placed_rows())
+
+
 def _farm_rows():
     """The modular fences and the farmyard (scripts/art/kit/fences.py, farm.py): their purpose,
     role, requires and forbids are written by those painters (None keeps them)."""

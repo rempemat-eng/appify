@@ -1,7 +1,7 @@
 {
  "id": "crossroads/hut",
  "file": "game/zones/crossroads/art/hut.png",
- "sha256": "d8b5a9de8b7ae069155930f603ce61699bdec7d6634c5b7d6c2a6f46d8b6802a",
+ "sha256": "87ee2e06a3db2ed84eddf265ce2e7a7d7b1009fdbd79c30bba8480d423678900",
  "kind": "hut",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 4
  },
  "detail_bar": {
   "ours": {
    "patches": 118,
-   "tones": 23.415254237288135,
-   "shapes": 44.26271186440678
+   "tones": 23.38135593220339,
+   "shapes": 44.32203389830509
   },
   "band": {
    "tones": 27.0,
@@ -28,13 +28,37 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.867,
-  "tones_ratio": 0.867,
-  "shapes_ratio": 0.879,
+  "ratio": 0.866,
+  "tones_ratio": 0.866,
+  "shapes_ratio": 0.88,
   "passed": false,
   "group": "prop"
  },
  "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    174,
+    100,
+    191,
+    139
+   ],
+   "message": "crossroads/hut: the stone is lit from the right (luminance rises 194 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    30,
+    100,
+    47,
+    139
+   ],
+   "message": "crossroads/hut: the stone is lit from the right (luminance rises 187 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
   {
    "detector": "detail.light",
    "severity": "polish",
@@ -60,11 +84,10 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-03",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-10-26",
-  "note": "#298 review at 2e554c05: roof planes lit with thickness, fascia, gutter and stepped eave shadow; recessed openings; wall form and proud plinth; trade details read. Detail bar 0.86 to 0.94 (above the 0.8 gate, below the 1.0 in art-style)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

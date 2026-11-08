@@ -1,0 +1,44 @@
+{
+ "id": "crossroads/planters_sw_butt",
+ "file": "game/zones/crossroads/art/planters_sw_butt.png",
+ "sha256": "8cc30f08e01f5818ac731aff57db3d2ab55c9eac0faa34c7c640a44473288664",
+ "kind": "planters_sw_butt",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  48,
+  75
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 2,
+   "tones": 29.5,
+   "shapes": 53.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 1.052,
+  "tones_ratio": 1.093,
+  "shapes_ratio": 1.052,
+  "passed": true,
+  "group": "prop"
+ },
+ "findings": [],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

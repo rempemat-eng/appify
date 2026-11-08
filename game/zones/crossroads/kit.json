@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "edbd64879eaeddcf2eb2983554237e5e7e4696ecb014ccb0350695deca7a641f",
+ "inputs": "f2d161f674d5663d21d35d5fa26e03e9ba611da54adf0a4eca97a6b4eb942a4a",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -26,12 +26,18 @@
   "debris_b.png",
   "debris_c.png",
   "debris_d.png",
+  "drop_se_barrel.png",
+  "drop_se_crates.png",
+  "drop_se_sacks.png",
+  "east_seat_flower_tub.png",
   "fence_0.png",
   "fence_1.png",
   "fence_2.png",
   "fence_3.png",
   "fence_4.png",
   "fence_5.png",
+  "fern_bundles.png",
+  "fern_cart.png",
   "fern_cottage.png",
   "fern_cottage_damage.png",
   "fern_rubble.png",
@@ -47,8 +53,12 @@
   "handcart.png",
   "hay_19.png",
   "hay_20.png",
+  "herb_corner_barrel.png",
+  "herb_window_flower_tub_a.png",
+  "herb_window_flower_tub_b.png",
   "herbalist.png",
   "herbalist_damage.png",
+  "hired_handcart.png",
   "hut.png",
   "lantern_dark.png",
   "lantern_lit.png",
@@ -57,6 +67,10 @@
   "north_cottages.png",
   "north_cottages_damage.png",
   "notice_board.png",
+  "oven_gable_woodpile.png",
+  "planters_sw_butt.png",
+  "planters_sw_tub_a.png",
+  "planters_sw_tub_b.png",
   "sacks_12.png",
   "smithy.png",
   "smithy_damage.png",
@@ -64,10 +78,19 @@
   "square_rubble_a.png",
   "square_rubble_b.png",
   "stall.png",
+  "stall_crates_b.png",
+  "stall_sacks.png",
+  "stock_ne_barrel.png",
+  "stock_ne_sacks.png",
   "trough_35.png",
+  "tub_board.png",
+  "tub_fern.png",
   "waystone.png",
   "well.png",
   "well_choked.png",
+  "well_pail.png",
+  "well_spoil_rubble.png",
+  "west_seat_flower_tub.png",
   "woodpile_11.png",
   "woodpile_33.png"
  ],
@@ -329,8 +352,8 @@
     -80
    ],
    "cond": {
-    "not_flags": [
-     "shard_home:woodland"
+    "not_restored": [
+     "well"
     ]
    },
    "solid": [
@@ -353,8 +376,8 @@
     -170
    ],
    "cond": {
-    "flags": [
-     "shard_home:woodland"
+    "restored": [
+     "well"
     ]
    },
    "solid": [
@@ -425,11 +448,11 @@
    "kind": "anvil",
    "png": "anvil.png",
    "foot": [
-    1488,
+    1380,
     912
    ],
    "offset": [
-    -45,
+    -48,
     -77
    ],
    "cond": {
@@ -438,9 +461,9 @@
     ]
    },
    "solid": [
-    489,
+    452,
     296,
-    14,
+    16,
     8
    ]
   },
@@ -474,16 +497,20 @@
    "png": "square_rubble_b.png",
    "foot": [
     1227,
-    690
+    696
    ],
    "offset": [
     -48,
     -93
    ],
-   "cond": null,
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
    "solid": [
     396,
-    214,
+    216,
     26,
     16
    ]
@@ -648,6 +675,133 @@
     240,
     36,
     16
+   ]
+  },
+  {
+   "id": "well_spoil_rubble",
+   "kind": "rubble",
+   "png": "well_spoil_rubble.png",
+   "foot": [
+    792,
+    960
+   ],
+   "offset": [
+    -36,
+    -70
+   ],
+   "cond": {
+    "restored": [
+     "well"
+    ],
+    "not_flags": [
+     "well_clear"
+    ]
+   },
+   "solid": [
+    255,
+    308,
+    18,
+    12
+   ]
+  },
+  {
+   "id": "hired_handcart",
+   "kind": "cart",
+   "png": "hired_handcart.png",
+   "foot": [
+    708,
+    984
+   ],
+   "offset": [
+    -57,
+    -80
+   ],
+   "cond": {
+    "restored": [
+     "well"
+    ],
+    "not_flags": [
+     "well_clear"
+    ]
+   },
+   "solid": [
+    225,
+    320,
+    22,
+    8
+   ]
+  },
+  {
+   "id": "well_pail",
+   "kind": "pail",
+   "png": "well_pail.png",
+   "foot": [
+    900,
+    960
+   ],
+   "offset": [
+    -18,
+    -44
+   ],
+   "cond": {
+    "flags": [
+     "well_clear"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "fern_cart",
+   "kind": "cart",
+   "png": "fern_cart.png",
+   "foot": [
+    1056,
+    1032
+   ],
+   "offset": [
+    -57,
+    -80
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ],
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": [
+    341,
+    336,
+    22,
+    8
+   ]
+  },
+  {
+   "id": "fern_bundles",
+   "kind": "sacks",
+   "png": "fern_bundles.png",
+   "foot": [
+    972,
+    1032
+   ],
+   "offset": [
+    -30,
+    -62
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ],
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": [
+    317,
+    336,
+    14,
+    8
    ]
   },
   {
@@ -1110,7 +1264,7 @@
    "kind": "kit_lantern",
    "png": "kit_lantern_25.png",
    "foot": [
-    1056,
+    1032,
     600
    ],
    "offset": [
@@ -1119,7 +1273,7 @@
    ],
    "cond": null,
    "solid": [
-    350,
+    342,
     198,
     4,
     3
@@ -1650,8 +1804,8 @@
    "kind": "boulder",
    "png": "boulder_52.png",
    "foot": [
-    1056,
-    1296
+    1200,
+    1272
    ],
    "offset": [
     -41,
@@ -1659,8 +1813,8 @@
    ],
    "cond": null,
    "solid": [
-    346,
-    428,
+    394,
+    420,
     12,
     5
    ]
@@ -1822,6 +1976,446 @@
    ]
   },
   {
+   "id": "lamp_square_w",
+   "kind": "kit_lantern",
+   "png": "lamp_square_w.png",
+   "foot": [
+    624,
+    816
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    206,
+    270,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "lamp_square_e",
+   "kind": "kit_lantern",
+   "png": "lamp_square_e.png",
+   "foot": [
+    1296,
+    864
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    430,
+    286,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "lamp_square_s",
+   "kind": "kit_lantern",
+   "png": "lamp_square_s.png",
+   "foot": [
+    912,
+    1128
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    302,
+    374,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "square_oak",
+   "kind": "oak",
+   "png": "square_oak.png",
+   "foot": [
+    744,
+    1344
+   ],
+   "offset": [
+    -105,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    244,
+    445,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "stall_sacks",
+   "kind": "sacks",
+   "png": "stall_sacks.png",
+   "foot": [
+    1032,
+    768
+   ],
+   "offset": [
+    -30,
+    -62
+   ],
+   "cond": null,
+   "solid": [
+    337.0,
+    248,
+    14,
+    8
+   ]
+  },
+  {
+   "id": "stall_crates_b",
+   "kind": "crates",
+   "png": "stall_crates_b.png",
+   "foot": [
+    1284,
+    768
+   ],
+   "offset": [
+    -27,
+    -110
+   ],
+   "cond": null,
+   "solid": [
+    422.0,
+    246,
+    12,
+    10
+   ]
+  },
+  {
+   "id": "west_seat_flower_tub",
+   "kind": "flower_tub",
+   "png": "west_seat_flower_tub.png",
+   "foot": [
+    756,
+    1104
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    246.0,
+    362,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "east_seat_flower_tub",
+   "kind": "flower_tub",
+   "png": "east_seat_flower_tub.png",
+   "foot": [
+    1116,
+    1104
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    366.0,
+    362,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "tub_board",
+   "kind": "flower_tub",
+   "png": "tub_board.png",
+   "foot": [
+    660,
+    672
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    214.0,
+    218,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "herb_window_flower_tub_a",
+   "kind": "flower_tub",
+   "png": "herb_window_flower_tub_a.png",
+   "foot": [
+    396,
+    1176
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    126.0,
+    386,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "herb_window_flower_tub_b",
+   "kind": "flower_tub",
+   "png": "herb_window_flower_tub_b.png",
+   "foot": [
+    456,
+    1176
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    146.0,
+    386,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "herb_corner_barrel",
+   "kind": "barrel",
+   "png": "herb_corner_barrel.png",
+   "foot": [
+    324,
+    1152
+   ],
+   "offset": [
+    -24,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    103.0,
+    376,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "oven_gable_woodpile",
+   "kind": "woodpile",
+   "png": "oven_gable_woodpile.png",
+   "foot": [
+    300,
+    840
+   ],
+   "offset": [
+    -30,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    92.0,
+    272,
+    16,
+    8
+   ]
+  },
+  {
+   "id": "tub_fern",
+   "kind": "flower_tub",
+   "png": "tub_fern.png",
+   "foot": [
+    1512,
+    1272
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    498.0,
+    418,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "stock_ne_barrel",
+   "kind": "barrel",
+   "png": "stock_ne_barrel.png",
+   "foot": [
+    1296,
+    696
+   ],
+   "offset": [
+    -24,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    427.0,
+    224,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "stock_ne_sacks",
+   "kind": "sacks",
+   "png": "stock_ne_sacks.png",
+   "foot": [
+    1248,
+    720
+   ],
+   "offset": [
+    -30,
+    -62
+   ],
+   "cond": null,
+   "solid": [
+    409.0,
+    232,
+    14,
+    8
+   ]
+  },
+  {
+   "id": "planters_sw_butt",
+   "kind": "barrel",
+   "png": "planters_sw_butt.png",
+   "foot": [
+    696,
+    1128
+   ],
+   "offset": [
+    -24,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    227.0,
+    368,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "planters_sw_tub_a",
+   "kind": "flower_tub",
+   "png": "planters_sw_tub_a.png",
+   "foot": [
+    672,
+    1104
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    218.0,
+    362,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "planters_sw_tub_b",
+   "kind": "flower_tub",
+   "png": "planters_sw_tub_b.png",
+   "foot": [
+    636,
+    1128
+   ],
+   "offset": [
+    -33,
+    -59
+   ],
+   "cond": null,
+   "solid": [
+    204.0,
+    368,
+    16,
+    8
+   ]
+  },
+  {
+   "id": "drop_se_crates",
+   "kind": "crates",
+   "png": "drop_se_crates.png",
+   "foot": [
+    1176,
+    1080
+   ],
+   "offset": [
+    -27,
+    -110
+   ],
+   "cond": null,
+   "solid": [
+    386.0,
+    350,
+    12,
+    10
+   ]
+  },
+  {
+   "id": "drop_se_barrel",
+   "kind": "barrel",
+   "png": "drop_se_barrel.png",
+   "foot": [
+    1140,
+    1056
+   ],
+   "offset": [
+    -24,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    375.0,
+    344,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "drop_se_sacks",
+   "kind": "sacks",
+   "png": "drop_se_sacks.png",
+   "foot": [
+    1200,
+    1128
+   ],
+   "offset": [
+    -30,
+    -62
+   ],
+   "cond": null,
+   "solid": [
+    393.0,
+    368,
+    14,
+    8
+   ]
+  },
+  {
    "id": "well_choked_shadow",
    "kind": "shadow",
    "png": "well_choked_shadow.png",
@@ -1834,8 +2428,8 @@
     0
    ],
    "cond": {
-    "not_flags": [
-     "shard_home:woodland"
+    "not_restored": [
+     "well"
     ]
    },
    "solid": null,
@@ -1854,8 +2448,8 @@
     0
    ],
    "cond": {
-    "flags": [
-     "shard_home:woodland"
+    "restored": [
+     "well"
     ]
    },
    "solid": null,
@@ -1886,7 +2480,7 @@
    "kind": "shadow",
    "png": "anvil_shadow.png",
    "foot": [
-    1461,
+    1353,
     908
    ],
    "offset": [
@@ -1920,6 +2514,26 @@
    },
    "solid": null,
    "of": "square_rubble_a"
+  },
+  {
+   "id": "square_rubble_b_shadow",
+   "kind": "shadow",
+   "png": "square_rubble_b_shadow.png",
+   "foot": [
+    1181,
+    692
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "square_rubble_b"
   },
   {
    "id": "fern_rubble_shadow",
@@ -2020,6 +2634,118 @@
    },
    "solid": null,
    "of": "beds_dug"
+  },
+  {
+   "id": "well_spoil_rubble_shadow",
+   "kind": "shadow",
+   "png": "well_spoil_rubble_shadow.png",
+   "foot": [
+    757,
+    956
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "restored": [
+     "well"
+    ],
+    "not_flags": [
+     "well_clear"
+    ]
+   },
+   "solid": null,
+   "of": "well_spoil_rubble"
+  },
+  {
+   "id": "hired_handcart_shadow",
+   "kind": "shadow",
+   "png": "hired_handcart_shadow.png",
+   "foot": [
+    656,
+    980
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "restored": [
+     "well"
+    ],
+    "not_flags": [
+     "well_clear"
+    ]
+   },
+   "solid": null,
+   "of": "hired_handcart"
+  },
+  {
+   "id": "well_pail_shadow",
+   "kind": "shadow",
+   "png": "well_pail_shadow.png",
+   "foot": [
+    890,
+    956
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "well_clear"
+    ]
+   },
+   "solid": null,
+   "of": "well_pail"
+  },
+  {
+   "id": "fern_cart_shadow",
+   "kind": "shadow",
+   "png": "fern_cart_shadow.png",
+   "foot": [
+    1004,
+    1028
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ],
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": null,
+   "of": "fern_cart"
+  },
+  {
+   "id": "fern_bundles_shadow",
+   "kind": "shadow",
+   "png": "fern_bundles_shadow.png",
+   "foot": [
+    950,
+    1028
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ],
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": null,
+   "of": "fern_bundles"
   },
   {
    "id": "square_puddles",

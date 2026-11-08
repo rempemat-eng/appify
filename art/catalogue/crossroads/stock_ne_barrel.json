@@ -1,0 +1,44 @@
+{
+ "id": "crossroads/stock_ne_barrel",
+ "file": "game/zones/crossroads/art/stock_ne_barrel.png",
+ "sha256": "6ed0353f93cd1cd9fa036b9cd01799ce63ea2856de78bcebf35f5a1eac32cf70",
+ "kind": "stock_ne_barrel",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  48,
+  75
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 2,
+   "tones": 29.5,
+   "shapes": 60.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 1.093,
+  "tones_ratio": 1.093,
+  "shapes_ratio": 1.191,
+  "passed": true,
+  "group": "prop"
+ },
+ "findings": [],
+ "reviewed": "2026-11-04",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

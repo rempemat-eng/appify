@@ -37,6 +37,37 @@
         ]
       },
       "why": "the woodland's great shard in the lantern; the first household comes home"
+    },
+    {
+      "id": "well_restored",
+      "if": {
+        "restored": [
+          "forge",
+          "fern_cottage",
+          "well"
+        ],
+        "flags": [
+          "shard_home:woodland",
+          "fern_home"
+        ]
+      },
+      "why": "a1_the_choked_well's restore: the rubble hauled out of the well and heaped beside it with the hired barrow; the windlass and hood back on"
+    },
+    {
+      "id": "well_clear",
+      "if": {
+        "restored": [
+          "forge",
+          "fern_cottage",
+          "well"
+        ],
+        "flags": [
+          "shard_home:woodland",
+          "fern_home",
+          "well_clear"
+        ]
+      },
+      "why": "the quest's end (well_clear): the spoil carted off, a full pail on the kerb"
     }
   ],
   "restores": [
@@ -60,6 +91,19 @@
         ]
       },
       "why": "the first household home (the homecoming quest); cost is a placeholder"
+    },
+    {
+      "id": "well",
+      "name": "The well on the square",
+      "cost": {
+        "glint": 20
+      },
+      "if": {
+        "active": [
+          "a1_the_choked_well"
+        ]
+      },
+      "why": "a1_the_choked_well's step 'well' (restore:well); the cost is the one the restore_well lines already name (data/dialogue/a1_valley.json)"
     }
   ],
   "tiers": [
@@ -259,6 +303,26 @@
           152
         ]
       ]
+    },
+    {
+      "id": "fern_path",
+      "kind": "path",
+      "width": 24,
+      "points": [
+        [
+          472,
+          424
+        ],
+        [
+          472,
+          448
+        ],
+        [
+          320,
+          448
+        ]
+      ],
+      "why": "the Ferns' door path: centred on the door's opening (x 472, on the half-cell grid since #430), it leaves a cell below the sill and runs straight south three cells before it bends west to the green lane (thresholds door_path: straight out at least a cell, then bend)"
     }
   ],
   "stairs": [
@@ -463,11 +527,11 @@
       "solid": true,
       "colour": "#5b5249",
       "if": {
-        "not_flags": [
-          "shard_home:woodland"
+        "not_restored": [
+          "well"
         ]
       },
-      "why": "the well choked with rubble"
+      "why": "the well choked with rubble until a1_the_choked_well's restore"
     },
     {
       "id": "well",
@@ -481,10 +545,11 @@
       "solid": true,
       "colour": "#55708a",
       "if": {
-        "flags": [
-          "shard_home:woodland"
+        "restored": [
+          "well"
         ]
-      }
+      },
+      "why": "the well cleared and its windlass and hood back on (restore:well)"
     },
     {
       "id": "smithy_rubble",
@@ -541,9 +606,9 @@
       "id": "anvil",
       "kind": "anvil",
       "rect": [
-        489,
+        452,
         296,
-        14,
+        16,
         8
       ],
       "solid": true,
@@ -552,7 +617,8 @@
         "restored": [
           "forge"
         ]
-      }
+      },
+      "why": "beside the forge's open front, west of it, clear of the threshold (thresholds audit, 4 Nov)"
     },
     {
       "id": "square_rubble_a",
@@ -576,12 +642,18 @@
       "kind": "rubble",
       "rect": [
         396,
-        214,
+        216,
         26,
         16
       ],
       "solid": true,
-      "colour": "#5b5249"
+      "colour": "#5b5249",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "fallen slates by the stall, cleared for the homecoming; clear of the north cottages' east door's threshold"
     },
     {
       "id": "fern_boards",
@@ -714,6 +786,108 @@
       "solid": true,
       "colour": "#b08a4a",
       "why": "Moss's stall, the one thing open"
+    },
+    {
+      "id": "well_spoil_rubble",
+      "kind": "rubble",
+      "rect": [
+        255,
+        308,
+        18,
+        12
+      ],
+      "solid": true,
+      "colour": "#5b5249",
+      "if": {
+        "restored": [
+          "well"
+        ],
+        "not_flags": [
+          "well_clear"
+        ]
+      },
+      "why": "the rubble hauled out of the well, heaped on the setts until it is carted off"
+    },
+    {
+      "id": "hired_handcart",
+      "kind": "cart",
+      "rect": [
+        225,
+        320,
+        22,
+        8
+      ],
+      "solid": true,
+      "colour": "#7a5a3a",
+      "if": {
+        "restored": [
+          "well"
+        ],
+        "not_flags": [
+          "well_clear"
+        ]
+      },
+      "why": "the hired barrow the restore_well lines pay for, beside the spoil"
+    },
+    {
+      "id": "well_pail",
+      "kind": "pail",
+      "rect": [
+        297,
+        314,
+        6,
+        6
+      ],
+      "solid": false,
+      "colour": "#7a5a3a",
+      "if": {
+        "flags": [
+          "well_clear"
+        ]
+      },
+      "why": "the first full pail drawn, set on the kerb"
+    },
+    {
+      "id": "fern_cart",
+      "kind": "cart",
+      "rect": [
+        341,
+        336,
+        22,
+        8
+      ],
+      "solid": true,
+      "colour": "#7a5a3a",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "the Ferns' handcart, loaded at the halt farm, stopped on the square by the lit lantern"
+    },
+    {
+      "id": "fern_bundles",
+      "kind": "sacks",
+      "rect": [
+        317,
+        336,
+        14,
+        8
+      ],
+      "solid": true,
+      "colour": "#b0a080",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "their bundles, lifted down beside the cart"
     }
   ],
   "people": [
@@ -727,7 +901,50 @@
         384,
         262
       ],
-      "colour": "#c9a050"
+      "colour": "#c9a050",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      }
+    },
+    {
+      "id": "moss_homecoming",
+      "face": "W",
+      "speaker": "moss",
+      "name": "Moss",
+      "at": [
+        392,
+        324
+      ],
+      "colour": "#c9a050",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "Moss has left her stall to meet the Ferns by the lantern"
+    },
+    {
+      "id": "moss_after",
+      "face": "S",
+      "work": true,
+      "speaker": "moss",
+      "name": "Moss",
+      "at": [
+        384,
+        262
+      ],
+      "colour": "#c9a050",
+      "if": {
+        "restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "back at her stall once the Ferns are in"
     },
     {
       "id": "hale_square",
@@ -748,18 +965,62 @@
     },
     {
       "id": "hale_forge",
-      "face": "W",
+      "face": "E",
       "work": true,
       "speaker": "hale",
       "name": "Hale",
       "at": [
-        510,
-        298
+        444,
+        300
       ],
       "colour": "#a05040",
       "if": {
         "restored": [
           "forge"
+        ],
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      }
+    },
+    {
+      "id": "hale_homecoming",
+      "face": "W",
+      "speaker": "hale",
+      "name": "Hale",
+      "at": [
+        444,
+        320
+      ],
+      "colour": "#a05040",
+      "if": {
+        "restored": [
+          "forge"
+        ],
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "out from the anvil to the edge of the square, looking across at the Ferns"
+    },
+    {
+      "id": "hale_forge_after",
+      "face": "E",
+      "work": true,
+      "speaker": "hale",
+      "name": "Hale",
+      "at": [
+        444,
+        300
+      ],
+      "colour": "#a05040",
+      "if": {
+        "restored": [
+          "forge",
+          "fern_cottage"
         ]
       }
     },
@@ -776,6 +1037,26 @@
       "why": "the alchemist outside his torn herbalist's (cast: Codex's fourteen); joins in act 1"
     },
     {
+      "id": "ada_homecoming",
+      "face": "E",
+      "speaker": "ada_fern",
+      "name": "Ada Fern",
+      "at": [
+        368,
+        330
+      ],
+      "colour": "#7aa0c0",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      },
+      "why": "the first household home: Ada with the family's cart on the square, waiting for her roof"
+    },
+    {
       "id": "ada",
       "face": "S",
       "work": true,
@@ -787,11 +1068,11 @@
       ],
       "colour": "#7aa0c0",
       "if": {
-        "flags": [
-          "shard_home:woodland"
+        "restored": [
+          "fern_cottage"
         ]
       },
-      "why": "placeholder villager: the first household home"
+      "why": "home: at her own door once the cottage is mended"
     }
   ],
   "things": [
@@ -864,6 +1145,22 @@
         ],
         "not_restored": [
           "fern_cottage"
+        ]
+      }
+    },
+    {
+      "id": "well_site",
+      "restore": "well",
+      "at": [
+        288,
+        328
+      ],
+      "if": {
+        "active": [
+          "a1_the_choked_well"
+        ],
+        "not_restored": [
+          "well"
         ]
       }
     }
@@ -1620,9 +1917,10 @@
       {
         "kind": "kit_lantern",
         "at": [
-          352,
+          344,
           200
-        ]
+        ],
+        "why": "beside the north cottages' west door, clear of its threshold (thresholds audit, 4 Nov)"
       },
       {
         "kind": "flower_tub",
@@ -1872,9 +2170,10 @@
       {
         "kind": "boulder",
         "at": [
-          352,
-          432
-        ]
+          400,
+          424
+        ],
+        "why": "moved off the Ferns' path"
       },
       {
         "kind": "debris",
@@ -1994,6 +2293,269 @@
           12,
           6
         ]
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          208,
+          272
+        ],
+        "id": "lamp_square_w",
+        "why": "the halt road's mouth onto the square (placement-logic: lamps at junctions)"
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          432,
+          288
+        ],
+        "id": "lamp_square_e",
+        "why": "the harbour road's mouth onto the square"
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          304,
+          376
+        ],
+        "id": "lamp_square_s",
+        "why": "the green lane's mouth"
+      },
+      {
+        "kind": "oak",
+        "at": [
+          248,
+          448
+        ],
+        "id": "square_oak",
+        "why": "the square's old tree, on the grass below its south-west corner (review of #421, 4 Nov: not out of the paving): its crown clear of the well, the walkway and Morel's corner, inside the green lane's bend"
+      },
+      {
+        "kind": "sacks",
+        "at": [
+          344,
+          256
+        ],
+        "size": [
+          14,
+          8
+        ],
+        "id": "stall_sacks",
+        "why": "Moss's stock: meal and potatoes beside the stall"
+      },
+      {
+        "kind": "crates",
+        "at": [
+          428,
+          256
+        ],
+        "size": [
+          12,
+          10
+        ],
+        "id": "stall_crates_b",
+        "why": "Moss's stock: a second stack of crates"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          252,
+          368
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "west_seat_flower_tub",
+        "why": "planters at the bench ends: care for the square"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          372,
+          368
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "east_seat_flower_tub"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          220,
+          224
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "tub_board",
+        "why": "a planter by the notice board"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          132,
+          392
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "herb_window_flower_tub_a",
+        "why": "the herbalist's window boxes"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          152,
+          392
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "herb_window_flower_tub_b"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          108,
+          384
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "id": "herb_corner_barrel",
+        "why": "the herbalist's rain barrel at the corner"
+      },
+      {
+        "kind": "woodpile",
+        "at": [
+          100,
+          280
+        ],
+        "size": [
+          16,
+          8
+        ],
+        "id": "oven_gable_woodpile",
+        "why": "fuel for the bakery's oven, against its west gable under the chimney"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          504,
+          424
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "tub_fern",
+        "why": "the Ferns' window box"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          432,
+          232
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "id": "stock_ne_barrel",
+        "why": "Moss's back stock in the square's north-east corner, against the cottages' end wall"
+      },
+      {
+        "kind": "sacks",
+        "at": [
+          416,
+          240
+        ],
+        "size": [
+          14,
+          8
+        ],
+        "id": "stock_ne_sacks"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          232,
+          376
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "id": "planters_sw_butt",
+        "why": "a water butt and the planters it feeds, gathered on the kerb in the square's south-west corner (clear of Morel at the herbalist's corner)"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          224,
+          368
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "id": "planters_sw_tub_a"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          212,
+          376
+        ],
+        "size": [
+          16,
+          8
+        ],
+        "id": "planters_sw_tub_b"
+      },
+      {
+        "kind": "crates",
+        "at": [
+          392,
+          360
+        ],
+        "size": [
+          12,
+          10
+        ],
+        "id": "drop_se_crates",
+        "why": "goods carried up the harbour road and set down in the square's south-east corner"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          380,
+          352
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "id": "drop_se_barrel"
+      },
+      {
+        "kind": "sacks",
+        "at": [
+          400,
+          376
+        ],
+        "size": [
+          14,
+          8
+        ],
+        "id": "drop_se_sacks"
       }
     ],
     "setts": [

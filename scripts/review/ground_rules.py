@@ -15,6 +15,17 @@ These checks read a zone's plan (world px) and say where it breaks a rule:
     rules.route_ends        each route end meets a destination: a zone edge, a stand, a bridge,
                             a door, a place, or another route
     rules.route_clear       nothing stands on a route (only bridges and signposts by design)
+    rules.building_overlap  no two buildings overlap: their footprints with the eaves stand at
+                            least a cell apart, and their drawn bodies (walls and roofs) never
+                            cover each other
+    rules.fences            fence runs go along x or y and form closed enclosures: every end
+                            meets another run or a gate, or stands against a building's wall;
+                            a gate sits between two runs and opens onto a route; no run
+                            stands on a route
+    rules.enclosures        an enclosure holds what it is for, visibly (animals in a pen, crops in
+                            a kitchen garden, flowers in a front garden), with what that needs (a
+                            coop for hens, a trough for sheep), at a size that fits (a chicken
+                            run 3 to 4 cells a side, a sheep fold 6 to 10): placement-logic.md
     rules.seating           a bench stands beside a route (its edge within 2 cells), not on it,
                             facing it (the route in front of the bench's face)
     rules.rock_overlap      rocks rest on the ground side by side; two never overlap unless the
@@ -278,6 +289,9 @@ def _destinations(plan):
     for st in plan.get('stairs', []):
         if 'at' in st:
             d.append(tuple(st['at']))
+    for fe in plan.get('fences', []):
+        if fe.get('kind') == 'gate':
+            d.append(((fe['a'][0] + fe['b'][0]) / 2.0, (fe['a'][1] + fe['b'][1]) / 2.0))
     return d
 
 
@@ -362,8 +376,130 @@ def seating(plan):
 
 
 # ------------------------------------------------------------------------------------------------
+# 5. structures
+# ------------------------------------------------------------------------------------------------
+def _building_boxes(plan, b):
+    """(footprint with the eaves, drawn body) of a building as (x0, y0, x1, y1) world px. The body
+    is what the 3/4 view draws above the floor's front edge: the eaves' width, the wall and the
+    roof's height (its look; a plan without looks has only the footprint)."""
+    x, y, w, h = b['rect']
+    look = dict((plan.get('art') or {}).get('looks', {}).get(b['id'], {}), **(b.get('look') or {}))
+    eave = float(look.get('overhang', 3))
+    foot = (x - eave, y - eave, x + w + eave, y + h + eave)
+    tall = float(look.get('wall_h', 0)) + float(look.get('roof_h', 0))
+    body = (x - eave, y + h - tall, x + w + eave, y + h) if tall else None
+    return foot, body
+
+
+def _overlap(a, b, gap=0.0):
+    return min(a[2], b[2]) + gap - max(a[0], b[0]) > 0 and min(a[3], b[3]) + gap - max(a[1], b[1]) > 0
+
+
+def building_overlap(plan):
+    """Claude A's Crossroads review (1 Nov): one cottage's roof covered its neighbour's wall and door.
+    Footprints with their eaves keep a cell of ground between them; drawn bodies never overlap."""
+    out = []
+    bl = [b for b in plan.get('buildings', []) if 'rect' in b]
+    for i, a in enumerate(bl):
+        fa, ba = _building_boxes(plan, a)
+        for b in bl[i + 1:]:
+            fb, bb = _building_boxes(plan, b)
+            if _overlap(fa, fb, CELL):
+                out.append(_f('rules.building_overlap', f'{a["id"]} and {b["id"]}: their footprints with the eaves are '
+                              'less than a cell apart: move one a cell or more away', a['rect'][:2]))
+            elif ba and bb and _overlap(ba, bb):
+                out.append(_f('rules.building_overlap', f'{a["id"]} and {b["id"]}: one\'s roof or wall covers the '
+                              'other\'s: move them apart', a['rect'][:2]))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------
 # 6. props by role and 7. clutter
 # ------------------------------------------------------------------------------------------------
+def _on_wall(p, plan, tol=1.5):
+    """On the outline of a building's footprint (a fence run ends against its wall)."""
+    for b in plan.get('buildings', []):
+        if 'rect' not in b:
+            continue
+        x, y, w, h = b['rect']
+        inside = x - tol <= p[0] <= x + w + tol and y - tol <= p[1] <= y + h + tol
+        deep = x + tol < p[0] < x + w - tol and y + tol < p[1] < y + h - tol
+        if inside and not deep:
+            return True
+    return False
+
+
+def fences(plan):
+    """Matt, 2 Nov, on the Crossroads cottages: "what is the point of fences if they don't enclose
+    anything?" A fence encloses something: its runs join end to end (a gate counts as a run) into a
+    closed loop, or end against a building's wall. A gate stands between two runs and opens onto a
+    route; no run stands on a route."""
+    out = []
+    fl = plan.get('fences', [])
+    ends = {}
+    for fe in fl:
+        a, b = tuple(fe['a']), tuple(fe['b'])
+        if a[0] != b[0] and a[1] != b[1]:
+            out.append(_f('rules.fences', f'{fe["id"]}: a slanting run {a} to {b}; fences run along x or y', a))
+        for e in (a, b):
+            ends.setdefault((round(e[0] * 2) / 2, round(e[1] * 2) / 2), []).append(fe)
+    for e, runs in ends.items():
+        if len(runs) < 2 and not _on_wall(e, plan):
+            out.append(_f('rules.fences', f'{runs[0]["id"]}: its end at {e} is loose: join it to another run or a '
+                          'gate, or end it against a wall, so the fence encloses something', e))
+    for fe in fl:
+        a, b = fe['a'], fe['b']
+        mid = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)
+        if fe.get('kind') == 'gate':
+            if not _on_route(mid, plan):
+                out.append(_f('rules.fences', f'{fe["id"]}: the gate at {mid} opens onto no route: lead a path through it',
+                              mid))
+            continue
+        L = max(1, int(math.hypot(b[0] - a[0], b[1] - a[1]) / 2))
+        for j in range(L + 1):
+            pt = (a[0] + (b[0] - a[0]) * j / L, a[1] + (b[1] - a[1]) * j / L)
+            if _on_route(pt, plan):
+                out.append(_f('rules.fences', f'{fe["id"]}: the fence crosses a route at {pt}: give it a gate there', pt))
+                break
+    return out
+
+
+ENCLOSE = {    # holds: (the object kind it must show, what it needs beside, side in cells min, max)
+    'chickens': ('chicken', ('coop',), 3, 4),
+    'sheep': ('sheep', ('trough',), 6, 10),
+    'horses': ('horse', ('trough',), 10, 99),
+    'crops': ('bed', (), 0, 99),
+    'flowers': ('flowers', (), 0, 99),
+}
+
+
+def enclosures(plan):
+    """Matt, 2 Nov: "think deeply about parts of the game like fences. where would they be? what
+    would they fence in?" (docs/vision/placement-logic.md, rules 3 and 4). An empty pen is a story
+    beat: the plan marks it "empty"."""
+    out = []
+    objs = list(_objects(plan))
+    for e in plan.get('enclosures', []):
+        x0, y0, x1, y1 = e['rect']
+        spec = ENCLOSE.get(e.get('holds'))
+        if spec is None:
+            out.append(_f('rules.enclosures', f'{e["id"]}: holds {e.get("holds")!r}, not a known purpose', (x0, y0)))
+            continue
+        kind, needs, lo, hi = spec
+        inside = {k for _id, k, (fx, fy), _s in objs if x0 < fx < x1 and y0 < fy < y1}
+        if kind not in inside and not e.get('empty'):
+            out.append(_f('rules.enclosures', f'{e["id"]}: holds {e["holds"]} but shows no {kind} inside', (x0, y0)))
+        for n in needs:
+            if n not in inside:
+                out.append(_f('rules.enclosures', f'{e["id"]}: {e["holds"]} need a {n} inside', (x0, y0)))
+        for side in ((x1 - x0) / CELL, (y1 - y0) / CELL):
+            if not lo <= side <= hi:
+                out.append(_f('rules.enclosures', f'{e["id"]}: a side of {side:g} cells; {e["holds"]} take {lo} to {hi}',
+                              (x0, y0)))
+                break
+    return out
+
+
 def _rock_box(b):
     x, y = b['at']
     w, h = b['size']
@@ -410,8 +546,8 @@ def stage_debris(kit, plan=None):
     return out
 
 
-CHECKS = (water_source, water_end, water_fall, ground_water, route_grid, route_ends, route_clear, seating,
-          rock_overlap, clutter)
+CHECKS = (water_source, water_end, water_fall, ground_water, route_grid, route_ends, route_clear,
+          building_overlap, fences, enclosures, seating, rock_overlap, clutter)
 
 
 def check_plan(plan) -> list[dict]:
@@ -431,6 +567,9 @@ def plans():
         if f.endswith('.json'):
             kit = os.path.join(ROOT, 'game', 'zones', f[:-5], 'kit.json')
             yield f[:-5], os.path.join(zdir, f), kit if os.path.exists(kit) else None
+    # review studies whose plans are code (strict: they declare "ground_rules")
+    from scripts.art.kit import crossroads_slice
+    yield 'crossroads_slice', crossroads_slice.plan(), None
 
 
 def main(argv=None) -> int:
@@ -439,7 +578,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     bad = 0
     for name, path, kit in plans():
-        plan = json.load(open(path))
+        plan = path if isinstance(path, dict) else json.load(open(path))
         fs = check_plan(plan)
         if kit:
             fs += stage_debris(json.load(open(kit)), plan)

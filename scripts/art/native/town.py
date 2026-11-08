@@ -66,7 +66,8 @@ def stage_states(plan) -> dict:
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
 INPUTS = ('village.py', 'houses.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
-          'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png')
+          'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png', 'softground.py',
+          '../kit/crossroads_slice.py')
 
 
 def input_hash(plan_path: str, density: float) -> str:
@@ -162,7 +163,10 @@ def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise, soft=False):
         # the soft grid's lawn already carries its field, mottle and tufts: only the clumps at the
         # feet of things and along the edges below
         slow = noise(30.0, 301)
-        return _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D)
+        # (Eastward pass, 4 Nov: the open lawn between places read as one flat green) the soft
+        # lawn also gets the loose drifts of tufts and small flowers in the open, steered by the
+        # slow field, so no stretch the size of a house is bare
+        return _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D, drifts=True)
     # soft hue patches where the field is calm
     win = int(round(5 * D))
     calm = lawn & (ndi.maximum_filter(cv, size=win) == ndi.minimum_filter(cv, size=win))
@@ -194,6 +198,54 @@ def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise, soft=False):
                 cv[yy, xx] = step(cv[yy, xx], -1)
                 drawn[yy, xx] = True
     return _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D, drifts=True)
+
+
+def lawn_light(cv, turf, trodden, shade, feet, doors, noise, D):
+    """The lawn's patches where light, shade and wear put them (Lane R, 3 Nov: the Crossroads grass
+    "blotchy", pale and dark patches with hard edges bigger than a person, tied to nothing). The field
+    is drawn without random blotches (softground.lawn(blotch=False)); here the turf turns to its warm
+    sibling where feet dry and flatten it (a band along the paths and the square that wanders a
+    little, wider at doors and junctions) and to its cool sibling where it stays damp and long (in the
+    cast shade of buildings, trees and walls and at their feet, out of the sun), at the same tone, so
+    the value hardly moves. Each patch fades into the field through a 2 x 2 checker and a sparser
+    one beyond it (Eastward: dither belongs to light and shade, eastward-edges.md 5.4); the open lawn
+    keeps its one field tone and its mottle, drawn a size larger (softground.lawn(mottle=5)) so its
+    dark marks stay at Eastward's scale without the blotches that broke them up (scale.check_grain). `trodden` is where people walk (paths, paving), `shade` the
+    cast shadows, `feet` the footprints of walls and buildings, `doors` door points in texels."""
+    from scripts.art.native.palette import FI, sib
+    H, W = cv.shape
+    yy, xx = np.mgrid[0:H, 0:W]
+    chk = ((xx // 2 + yy // 2) % 2) == 0                    # a 2 x 2 checker
+    sparse = chk & ((yy // 2) % 2 == 0) & ((xx // 4 + yy // 4) % 2 == 0)  # one cell in four
+    wob = noise(4.0, 611) * 0.5 + noise(1.6, 613) * 0.25    # a lumpy edge, never an offset contour
+    # wear: within a few world px of where people walk, widest where they turn in (doors, junctions)
+    d_walk = ndi.distance_transform_edt(~trodden) / D
+    reach = 4.5 + 2.5 * noise(9.0, 617)
+    for (dx, dy) in doors:
+        reach = np.maximum(reach, 13.0 - np.hypot(xx - dx, yy - dy) / D * 0.9)
+    worn = (d_walk > 0) & (d_walk < reach + wob * 2.0)
+    # damp: in the cast shade (eroded a little, so the patch sits inside the shadow) and at the foot
+    # of walls and buildings, where neither feet nor sun reach
+    d_feet = ndi.distance_transform_edt(~feet) / D
+    damp = ndi.binary_erosion(shade, iterations=max(1, int(round(D)))) | ((d_feet > 0) & (d_feet < 3.0 + wob * 2.0))
+    damp = ndi.gaussian_filter(damp.astype(float), 1.2 * D) > 0.5
+    worn = ndi.gaussian_filter(worn.astype(float), 1.0 * D) > 0.5
+    worn &= ~ndi.binary_dilation(damp, iterations=int(round(2 * D)))
+    out = cv.copy()
+    for m, to in ((worn, 'warm'), (damp, 'cool')):
+        m = m & turf
+        band = ndi.binary_dilation(m, iterations=int(round(1.0 * D))) & ~m & turf
+        band2 = ndi.binary_dilation(m, iterations=int(round(2.0 * D))) & ~m & ~band & turf
+        sel = m | (band & chk) | (band2 & sparse)
+        base = (cv // 8 == FI['grass']) & sel
+        mott = (cv // 8 == FI['grass_cool' if to == 'warm' else 'grass_warm']) & sel
+        out[base] = sib(cv[base], to)
+        if to == 'warm':
+            out[mott] = sib(cv[mott], 'body')      # the mottle keeps its contrast: cool turns to the body
+        else:
+            out[(cv // 8 == FI['grass_cool']) & sel] = sib(cv[(cv // 8 == FI['grass_cool']) & sel], 'body')
+    cv[:] = out
+    return worn, damp
 
 
 def _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D, drifts=False):
@@ -289,13 +341,14 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         # right"): a calm field of two sibling hues, a low mottle, loose clumps of tufts; its fine
         # marks are kept by the lone-pixel tidy
         from scripts.art.native import softground as GD
-        cv = GD.lawn(H, W, plan.get('lawn_seed', 3) + 900).astype(np.int32)
+        cv = GD.lawn(H, W, plan.get('lawn_seed', 3) + 900, blotch=False, mottle=5.0).astype(np.int32)
         keep_marks |= is_turf_codes(cv)
     else:
         cv = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3), tufts=not hd).astype(np.int32)
     up = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3) + 1, base_tone=2, density=1.3,
                               tufts=not hd).astype(np.int32)
     art = plan.get('art', {})
+    packed_paths = art.get('packed_paths', False)
     upland = np.zeros((H, W), bool)
     for r in art.get('uplands', []):
         upland |= rect_m(r)
@@ -363,7 +416,15 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             net |= SG.curve_texels(r['points'], n, H, W, r['bend'], plan.get('seed', 7) + 61 + k_)
         road_zone = SG.texels(cells_road, H, W)
         turf0 = is_turf(cv) & ~net
-        GD.dirt(cv, net, plan.get('seed', 7) + 43, fam='path', ruts=19, rut_mask=road_zone, crown=True)
+        if packed_paths:
+            # The editor path/yard material, at world phase even for a cropped town diagnostic.
+            # Geometry, wheel tracks, turf contacts and object shadows remain the town's own.
+            origin = plan.get('origin_on_canvas', (0, 0))
+            GD.dirt(cv, net, **GD.PACKED_PATH_ARGS, ruts=19, rut_mask=road_zone, crown=True,
+                    origin=(int(round(origin[0] * ctx.D)), int(round(origin[1] * ctx.D))))
+        else:
+            GD.dirt(cv, net, plan.get('seed', 7) + 43, fam='path', ruts=19,
+                    rut_mask=road_zone, crown=True)
         GD.sunken_edge(cv, net, turf0, np.random.default_rng(plan.get('seed', 7) + 45))
         keep_marks |= net | ndi.binary_dilation(net, iterations=6)
         pathm |= net
@@ -411,7 +472,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             x = -int(rng.integers(0, q(4)))
             while x < W:
                 sw = q(rng.uniform(3.0, 5.6))
-                fam = ('stone_warm', 'stone_warm', 'stone_warm', 'stone_cool')[int(rng.integers(0, 4))]
+                fam = ('stone_warm', 'stone_warm', 'stone', 'stone_cool')[int(rng.integers(0, 4))]
                 t = int(rng.choice([4, 4, 4, 4, 4, 3, 5]))
                 jx = int(rng.integers(0, 2))         # irregular joints: some setts butt tight
                 # density 3: some setts sit a texel lower
@@ -528,6 +589,26 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             worn = SE.soft(worn) & (out_d > 0) & ~pathm
         cv[worn] = C('path_warm', 4)
         cv[worn & (out_d > 2.5)] = C('grass_warm', 3)
+        if hd:
+            # (Eastward pass, 4 Nov: the square ended in one ruled line) the turf takes the
+            # square back along its quiet edges: within a few world px of the kerb, away from
+            # the roads, moss and grass grow in the joints and a few setts are lost under turf,
+            # thinning inward (eastward-edges.md 5.1: the edge frays, never a ruled line)
+            quiet = pave & ~kerb & ~ndi.binary_dilation(pathm, iterations=q(6))
+            reach_ = 4.0 + 7.0 * np.clip(noise(5.0, 811) * 0.5 + 0.6, 0, 1)
+            near = quiet & (edge_d < reach_)
+            stone_ = np.isin(cv // 8, [FI['stone'], FI['stone_warm'], FI['stone_cool']])
+            # moss in the joints and on the low, dark setts, thinning inward
+            mossy = near & stone_ & (cv % 8 <= 3) & (noise(0.9, 813) > -0.3 + 0.25 * (edge_d - 3.4))
+            cv[mossy] = C('grass_cool', 2)
+            cv[mossy & (noise(0.7, 814) > 0.5)] = C('grass', 3)
+            # setts lost under the turf in a few rounded patches against the kerb
+            lost = near & (edge_d < reach_ - 1.0) & (noise(1.6, 815) > 0.55)
+            lost = ndi.binary_opening(lost, iterations=2) & quiet
+            cv[lost] = C('grass', 3)
+            cv[lost & (noise(0.8, 817) > 0.3)] = C('grass_cool', 3)
+            cv[lost & (noise(0.6, 819) > 1.1)] = C('grass', 4)
+            keep_marks |= mossy | lost
 
     # puddles left by the storm: at density 3 they are drawn later, in the broken stage only, as
     # shallow water lying in sunken setts (Matt, 26 Oct 23:09: "random holes with water")
@@ -674,6 +755,22 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             V.blk(cv, cx0 - 1, top - q(3.5), cx1 + 1, top - q(1.5), 'stone_warm', 4, cut=1)
         # the path meets the stair head and foot
         pathm |= rect_m([sx - sw / 2 + 3, y0w - 6, sw - 6, y1w - y0w + 12])
+
+    # --- doorsteps ------------------------------------------------------------------------------------
+    # (Eastward pass, 4 Nov: doors opened straight onto the turf) a stone slab at the foot of every
+    # door that stands on turf (not on the paving or a road), the trodden turf round it
+    if hd:
+        from scripts.art.kit.crossroads_slice import doorstep
+        for b in plan.get('buildings', []):
+            if 'door' not in b:
+                continue
+            dx_, dy_ = b['door']
+            X_, Y_ = q(dx_), min(H - 1, q(dy_ + 2))
+            if pave[Y_, X_] or pathm[Y_, X_]:
+                continue
+            doorstep(cv, b['door'])
+            slab = rect_m([dx_ - 8, dy_, 16, 5])
+            pathm |= slab
 
     # --- objects ---------------------------------------------------------------------------------------
     objects = []      # dicts: id, png, foot (texels), anchor, if, solid (world rect), sort, kind, layer
@@ -839,6 +936,24 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             objs_old.append(o)
         shade_old, foots_old, near_old = lawn_inputs(objs_old)
         shade, foots, near_new = lawn_inputs(objects)
+        # the lawn's light, shade and wear (lawn_light): the turf outside every drawn ground feature
+        feet_m = np.zeros((H, W), bool)
+        for b in plan.get('buildings', []):
+            feet_m |= rect_m(b['rect'])
+        for f in art.get('walls', []):
+            feet_m |= rect_m(f)
+        for o in objects:
+            if o.get('static') and o.get('solid') and o['kind'] not in ('building',) + NOSHADE:
+                feet_m |= rect_m(o['solid'])
+        features = pathm | pave | feet_m
+        for pl in plan.get('places', []):
+            if pl['kind'] in ('crater',):
+                features |= rect_m(pl['rect'], grow=6)
+        for lot in plan.get('lots', []):
+            features |= rect_m(lot['rect'], grow=2)
+        lawn_turf = is_turf(cv) & ~ndi.binary_dilation(features, iterations=1)
+        doors = [(q(b['door'][0]), q(b['door'][1])) for b in plan.get('buildings', []) if 'door' in b]
+        lawn_light(cv, lawn_turf, pathm | pave, shade, feet_m, doors, noise, D)
         for k in [k for k in pics if k.startswith('__legacy_')]:
             del pics[k]
         rng_new = np.random.default_rng()
@@ -846,9 +961,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv_new = cv.copy()
         drawn = lawn_detail_hd(cv, pathm | pave, shade_old, foots_old, rng, noise, soft=True)
         # in shade the trodden earth shows its clods closer (the shade keeps them, two tones down)
-        SE.soil_marks(cv, pathm & ndi.binary_erosion(shade_old, iterations=2), rng, drawn, spacing=0.7, p=0.9)
+        if not packed_paths:
+            SE.soil_marks(cv, pathm & ndi.binary_erosion(shade_old, iterations=2), rng, drawn, spacing=0.7, p=0.9)
         drawn_new = lawn_detail_hd(cv_new, pathm | pave, shade, foots, rng_new, noise, soft=True)
-        SE.soil_marks(cv_new, pathm & ndi.binary_erosion(shade, iterations=2), rng_new, drawn_new, spacing=0.7, p=0.9)
+        if not packed_paths:
+            SE.soil_marks(cv_new, pathm & ndi.binary_erosion(shade, iterations=2), rng_new, drawn_new, spacing=0.7, p=0.9)
         local = ndi.binary_dilation(near_old | near_new, iterations=q(2))
         cv[local] = cv_new[local]
         drawn = np.where(local, drawn_new, drawn)
@@ -957,3 +1074,4 @@ def main(argv=None) -> int:
 
 if __name__ == '__main__':
     sys.exit(main())
+

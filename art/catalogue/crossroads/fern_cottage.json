@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_cottage",
  "file": "game/zones/crossroads/art/fern_cottage.png",
- "sha256": "20fec6439b21579b86dd66fb53822e3fced609585c472a155d5f46ce65805e90",
+ "sha256": "48d120c63a2860b28ae25bcd27f2f6dec9be249b1cefad16c8078013cb52c96b",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 144,
-   "tones": 26.694444444444443,
-   "shapes": 44.673611111111114
+   "tones": 26.36111111111111,
+   "shapes": 44.31944444444444
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.887,
-  "tones_ratio": 0.989,
-  "shapes_ratio": 0.887,
+  "ratio": 0.88,
+  "tones_ratio": 0.976,
+  "shapes_ratio": 0.88,
   "passed": false,
   "group": "prop"
  },
@@ -68,7 +68,7 @@
     238,
     262
    ],
-   "message": "crossroads/fern_cottage: detail bar 0.89 of Eastward's prop band (26.7 tones, 44.7 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage: detail bar 0.88 of Eastward's prop band (26.4 tones, 44.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

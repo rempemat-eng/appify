@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy_damage",
  "file": "game/zones/crossroads/art/smithy_damage.png",
- "sha256": "61bad21cb3f2c19137ed812899d0c2eea6b9fac01ba75efd7858863b27571fa6",
+ "sha256": "28ce4ce6b3b691e8ba97dca0f8c5402ce90e5bb9f52b5a2d6e86757f013a48ea",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 61,
-   "tones": 19.098360655737704,
-   "shapes": 32.47540983606557
+   "patches": 68,
+   "tones": 19.86764705882353,
+   "shapes": 34.30882352941177
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.645,
-  "tones_ratio": 0.707,
-  "shapes_ratio": 0.645,
+  "ratio": 0.681,
+  "tones_ratio": 0.736,
+  "shapes_ratio": 0.681,
   "passed": false,
   "group": "prop"
  },
@@ -39,24 +39,24 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    138,
+    130,
     73,
-    187,
+    174,
     79
    ],
-   "message": "crossroads/smithy_damage: the red is lit from the right (luminance rises 7 L per H to the east)",
+   "message": "crossroads/smithy_damage: the red is lit from the right (luminance rises 26 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    28,
+    14,
     73,
     276,
     327
    ],
-   "message": "crossroads/smithy_damage: detail bar 0.65 of Eastward's prop band (19.1 tones, 32.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy_damage: detail bar 0.68 of Eastward's prop band (19.9 tones, 34.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

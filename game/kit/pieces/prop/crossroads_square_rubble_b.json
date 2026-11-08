@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "square_rubble_b",
@@ -102,7 +102,14 @@
  },
  "function": {},
  "story": {
-  "owner": null
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   }
+  }
  },
  "gameplay": {
   "blocks_move": true,
@@ -117,13 +124,28 @@
     "zone": "crossroads",
     "object": "square_rubble_b",
     "part": "body",
-    "condition": null
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "square_rubble_b_shadow",
+    "part": "shadow",
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
    }
   ],
   "todo": [
    "composition role and clearance",
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow square_rubble_b_shadow from source scene with its own condition and offset; not a standalone random variant",
    "review size-guide class and Eastward comparison before the library gate"
   ]
  }

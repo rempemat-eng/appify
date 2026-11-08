@@ -13,7 +13,7 @@ Verdicts: **fine** (fits), **fixed** (its data or a placement was corrected in t
 (the drawing does not fit its purpose: the art queue), **missing** (cannot be placed sensibly until a
 companion piece exists).
 
-Totals: 150 fine, 28 fixed.
+Totals: 178 fine, 28 fixed.
 
 ## Placements fixed in the kit zones
 
@@ -97,33 +97,61 @@ line and a gate onto the path crossing its run.
 | `crossroads_debris_b` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_debris_c` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_debris_d` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
+| `crossroads_drop_se_barrel` | store | store | within house 2 | on route | **fine** | As the barrel: one placement in the zone. |
+| `crossroads_drop_se_crates` | store | store | within house 2 | on route | **fine** | As the crates: one placement in the zone. |
+| `crossroads_drop_se_sacks` | store | store | within house 2 | on route | **fine** | As the sacks: one placement in the zone. |
+| `crossroads_east_seat_flower_tub` | care | planter | within house 1 | on route | **fine** | As the flower tub: one placement in the zone. |
 | `crossroads_fence` | contain | boundary | - | on route; on water | **fixed** | Retired (3 Nov): one straight post-and-rail segment could not close an enclosure. Replaced by the modular fence cells `fence_wattle_*` and `fence_picket_*` (scripts/art/kit/fences.py): straights, corners, Ts, a cross, end posts and a gate three cells wide, which close loops (enclosures.py). |
+| `crossroads_fern_bundles` | store | store | within house 2 | on route | **fine** | As the sacks: one placement in the zone. |
+| `crossroads_fern_cart` | store | cart | at_edge route | on route | **fine** | As the handcart: one placement in the zone. |
 | `crossroads_fern_cottage` | live | house | - | on route; on water | **fine** | A cottage on a lane. |
 | `crossroads_fern_rubble` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_flower_tub` | care | planter | within house 1 | on route | **fine** | By a door. |
+| `crossroads_grain_scale` | work | workbench | - | on water; on route | **fine** | Moss's scale: a workbench at her stall. |
 | `crossroads_grindstone` | work | workplace | near forge 3 | on route | **fine** | In the smithy's yard. |
 | `crossroads_handcart` | store | cart | at_edge route | on route | **fine** | At a road's edge by a shop or the market. |
 | `crossroads_hay` | feed | feed | near stock 6 | on route | **fixed** | Redrawn (3 Nov): three tied bales stacked, and a heap forked out loose; placed by the animals it feeds. |
+| `crossroads_herb_corner_barrel` | store | store | within house 2 | on route | **fine** | As the barrel: one placement in the zone. |
+| `crossroads_herb_window_flower_tub_a` | care | planter | within house 1 | on route | **fine** | As the flower tub: one placement in the zone. |
+| `crossroads_herb_window_flower_tub_b` | care | planter | within house 1 | on route | **fine** | As the flower tub: one placement in the zone. |
 | `crossroads_herbalist` | live | house | - | on route; on water | **fine** | A shop-home. |
+| `crossroads_hired_handcart` | store | cart | at_edge route | on route | **fine** | As the handcart: one placement in the zone. |
 | `crossroads_hut` | live | house | - | on route; on water | **fine** | The companion's hut. |
 | `crossroads_kit_lantern` | light | light | at_edge route 1 | on route; not_near centrepiece | **fixed** | Along streets, at junctions and gates. Props sweep (3 Nov): never on a well. |
+| `crossroads_lamp_square_e` | light | light | at_edge route 1 | on route; not_near centrepiece | **fine** | As the kit lantern: one placement in the zone. |
+| `crossroads_lamp_square_s` | light | light | at_edge route 1 | on route; not_near centrepiece | **fine** | As the kit lantern: one placement in the zone. |
+| `crossroads_lamp_square_w` | light | light | at_edge route 1 | on route; not_near centrepiece | **fine** | As the kit lantern: one placement in the zone. |
 | `crossroads_lantern_dark` | light | light | at_edge route 1 | on route; not_near centrepiece | **fixed** | As the lantern, unlit (story). |
 | `crossroads_lantern_lit` | light | light | at_edge route 1 | on route; not_near centrepiece | **fixed** | As the lantern; its solid box is the plinth (was 22 world px deep up the post). |
 | `crossroads_library` | live | house | - | on route; on water | **fine** | A public building on the square. |
 | `crossroads_north_cottages` | live | house | - | on route; on water | **fine** | A terrace on the north lane. |
 | `crossroads_notice_board` | guide | marker | at_edge route 1 | on route | **fine** | On the square, at a route's edge. |
 | `crossroads_oak` | grow | tree | - | on route; on water | **fine** | The square's tree. |
+| `crossroads_oven_gable_woodpile` | store | store | within house 2 | on route | **fine** | As the woodpile: one placement in the zone. |
+| `crossroads_planters_sw_butt` | store | store | within house 2 | on route | **fine** | As the barrel: one placement in the zone. |
+| `crossroads_planters_sw_tub_a` | care | planter | within house 1 | on route | **fine** | As the flower tub: one placement in the zone. |
+| `crossroads_planters_sw_tub_b` | care | planter | within house 1 | on route | **fine** | As the flower tub: one placement in the zone. |
 | `crossroads_sacks` | store | store | within house 2 | on route | **fine** | As the barrel. |
 | `crossroads_smithy` | work | forge | - | on route; on water | **fine** | The forge: the hearth anvil, coal and grindstone gather round. |
 | `crossroads_smithy_rubble` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
+| `crossroads_square_oak` | grow | tree | - | on route; on water | **fine** | As the oak: one placement in the zone. |
 | `crossroads_square_puddles` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_square_rubble_a` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_square_rubble_b` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_stall` | work | stall | at_edge route | on route | **fine** | In rows on the square with aisles; its front to the route. |
+| `crossroads_stall_crates_b` | store | store | within house 2 | on route | **fine** | As the crates: one placement in the zone. |
+| `crossroads_stall_sacks` | store | store | within house 2 | on route | **fine** | As the sacks: one placement in the zone. |
+| `crossroads_stock_ne_barrel` | store | store | within house 2 | on route | **fine** | As the barrel: one placement in the zone. |
+| `crossroads_stock_ne_sacks` | store | store | within house 2 | on route | **fine** | As the sacks: one placement in the zone. |
 | `crossroads_trough` | feed | trough | near stock 4; within boundary 4 | on route | **fixed** | The kit now has animals (`farm_sheep*`, `farm_hen_*`, role stock) and pens (the fence cells): it stands inside a fold with its flock (placement.enclosure: what sheep and horses need). |
+| `crossroads_tub_board` | care | planter | within house 1 | on route | **fine** | As the flower tub: one placement in the zone. |
+| `crossroads_tub_fern` | care | planter | within house 1 | on route | **fine** | As the flower tub: one placement in the zone. |
 | `crossroads_waystone` | guide | marker | at_corner route 2 | - | **fixed** | At a junction, pointing down real routes. Props sweep (3 Nov): at_corner route (was at_edge, which a straight path also met). |
 | `crossroads_well` | water | centrepiece | near house 8 | on route; not_near water | **fixed** | Central to the square. Props sweep (3 Nov): requires homes within 8 cells, forbids a river within 6. |
 | `crossroads_well_choked` | water | centrepiece | - | on route | **fine** | The storm-broken well (story stage). |
+| `crossroads_well_pail` | water | - | - | - | **fine** | The first full pail, on the well's kerb (story stage well_clear). |
+| `crossroads_well_spoil_rubble` | aftermath | clutter | - | on water | **fine** | The rubble hauled out of the well (story stage well_restored); carted off at well_clear. |
+| `crossroads_west_seat_flower_tub` | care | planter | within house 1 | on route | **fine** | As the flower tub: one placement in the zone. |
 | `crossroads_woodpile` | store | store | within house 2 | on route | **fine** | Against a gable wall or under the eaves; never away from a hearth. |
 | `farm_calf` | live | stock | within trough 14; within boundary 5 | on route; on water | **fine** | As the cow, near her. |
 | `farm_churns` | store | churns | near gate 3 | on route; on water | **fine** | By a yard or paddock gate, where the cart stops. |

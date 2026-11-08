@@ -1124,14 +1124,14 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.0,
    -24.0,
-   42,
+   -24.0,
+   48,
    24
   ],
   "deck": null,
   "foot": [
-   45,
+   48,
    77
   ],
   "footprint": [
@@ -1186,7 +1186,7 @@
   "variants": {
    "anvil": {
     "foot": [
-     45,
+     48,
      77
     ],
     "png": "res://zones/crossroads/art/anvil.png"
@@ -2421,6 +2421,264 @@
   },
   "z_sort": "foot"
  },
+ "crossroads_drop_se_barrel": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drop se barrel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "drop_se_barrel": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://zones/crossroads/art/drop_se_barrel.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_drop_se_crates": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -30.0,
+   36,
+   30
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   110
+  ],
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drop se crates",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "drop_se_crates": {
+    "foot": [
+     27,
+     110
+    ],
+    "png": "res://zones/crossroads/art/drop_se_crates.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_drop_se_sacks": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Drop se sacks",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "drop_se_sacks": {
+    "foot": [
+     30,
+     62
+    ],
+    "png": "res://zones/crossroads/art/drop_se_sacks.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_east_seat_flower_tub": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "East seat flower tub",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "east_seat_flower_tub": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/east_seat_flower_tub.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "crossroads_fence": {
   "approval": "retired",
   "blocks_move": false,
@@ -2498,6 +2756,157 @@
      59
     ],
     "png": "res://zones/crossroads/art/fence_5.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_fern_bundles": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fern bundles",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "flags": [
+      "shard_home:woodland"
+     ],
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "fern_bundles": {
+    "foot": [
+     30,
+     62
+    ],
+    "png": "res://zones/crossroads/art/fern_bundles.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_fern_cart": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -33.0,
+   -24.0,
+   66,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   57,
+   80
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Fern cart",
+  "painted": false,
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "cart",
+  "shadow": null,
+  "size_cells": [
+   5,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "flags": [
+      "shard_home:woodland"
+     ],
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "fern_cart": {
+    "foot": [
+     57,
+     80
+    ],
+    "png": "res://zones/crossroads/art/fern_cart.png"
    }
   },
   "z_sort": "foot"
@@ -3006,6 +3415,94 @@
   },
   "z_sort": "foot"
  },
+ "crossroads_grain_scale": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -48,
+   -24,
+   96,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   84,
+   132
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   },
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Grain-weighing station",
+  "painted": false,
+  "requires": [],
+  "role": "workbench",
+  "shadow": {
+   "dir": [
+    6,
+    3
+   ],
+   "size": [
+    48,
+    9
+   ]
+  },
+  "size_cells": [
+   7,
+   6
+  ],
+  "snap": "cell",
+  "story": {
+   "lore": "Ordinary market and mill-yard work equipment proposed for a service-court edge. Its illustrated grain and measures introduce no game service or economy."
+  },
+  "variants": {
+   "loaded": {
+    "foot": [
+     84,
+     132
+    ],
+    "png": "res://kit/props/art/crossroads_grain_scale_loaded.png"
+   },
+   "ready": {
+    "foot": [
+     84,
+     132
+    ],
+    "png": "res://kit/props/art/crossroads_grain_scale_ready.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "crossroads_grindstone": {
   "approval": "candidate",
   "blocks_move": true,
@@ -3189,6 +3686,195 @@
      31
     ],
     "png": "res://kit/props/art/farm/hay_heap.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_herb_corner_barrel": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Herb corner barrel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "herb_corner_barrel": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://zones/crossroads/art/herb_corner_barrel.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_herb_window_flower_tub_a": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Herb window flower tub a",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "herb_window_flower_tub_a": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/herb_window_flower_tub_a.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_herb_window_flower_tub_b": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Herb window flower tub b",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "herb_window_flower_tub_b": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/herb_window_flower_tub_b.png"
    }
   },
   "z_sort": "foot"
@@ -3481,6 +4167,85 @@
      227
     ],
     "png": "res://zones/crossroads/art/herbalist.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_hired_handcart": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -33.0,
+   -24.0,
+   66,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   57,
+   80
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Hired handcart",
+  "painted": false,
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "cart",
+  "shadow": null,
+  "size_cells": [
+   5,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "well_clear"
+     ],
+     "restored": [
+      "well"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "hired_handcart": {
+    "foot": [
+     57,
+     80
+    ],
+    "png": "res://zones/crossroads/art/hired_handcart.png"
    }
   },
   "z_sort": "foot"
@@ -3829,6 +4594,234 @@
      118
     ],
     "png": "res://zones/crossroads/art/kit_lantern_25.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_lamp_square_e": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -6.0,
+   12,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   118
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Lamp square e",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "light",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "lamp_square_e": {
+    "foot": [
+     12,
+     118
+    ],
+    "png": "res://zones/crossroads/art/lamp_square_e.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_lamp_square_s": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -6.0,
+   12,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   118
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Lamp square s",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "light",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "lamp_square_s": {
+    "foot": [
+     12,
+     118
+    ],
+    "png": "res://zones/crossroads/art/lamp_square_s.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_lamp_square_w": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -6.0,
+   12,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   12,
+   118
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "cells": 1,
+    "note": "never on a well",
+    "rel": "not_near",
+    "what": "centrepiece"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Lamp square w",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "rel": "at_edge",
+    "what": "route"
+   }
+  ],
+  "role": "light",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "lamp_square_w": {
+    "foot": [
+     12,
+     118
+    ],
+    "png": "res://zones/crossroads/art/lamp_square_w.png"
    }
   },
   "z_sort": "foot"
@@ -4822,6 +5815,258 @@
   },
   "z_sort": "foot"
  },
+ "crossroads_oven_gable_woodpile": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -24.0,
+   48,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Oven gable woodpile",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "fuel against the gable wall of a house with a chimney",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "oven_gable_woodpile": {
+    "foot": [
+     30,
+     71
+    ],
+    "png": "res://zones/crossroads/art/oven_gable_woodpile.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_planters_sw_butt": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Planters sw butt",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "planters_sw_butt": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://zones/crossroads/art/planters_sw_butt.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_planters_sw_tub_a": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Planters sw tub a",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "planters_sw_tub_a": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/planters_sw_tub_a.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_planters_sw_tub_b": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -24.0,
+   48,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   33,
+   59
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Planters sw tub b",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "planters_sw_tub_b": {
+    "foot": [
+     33,
+     59
+    ],
+    "png": "res://zones/crossroads/art/planters_sw_tub_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "crossroads_sacks": {
   "approval": "candidate",
   "blocks_move": true,
@@ -5395,6 +6640,82 @@
   },
   "z_sort": "foot"
  },
+ "crossroads_square_oak": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -12.0,
+   -9.0,
+   24,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   105,
+   243
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Square oak",
+  "painted": false,
+  "requires": [],
+  "role": "tree",
+  "shadow": {
+   "mask": {
+    "offset": [
+     -78,
+     -72
+    ],
+    "png": "res://kit/props/art/shadow_crossroads_square_oak.png"
+   }
+  },
+  "size_cells": [
+   9,
+   11
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "square_oak": {
+    "foot": [
+     105,
+     243
+    ],
+    "png": "res://zones/crossroads/art/square_oak.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "crossroads_square_puddles": {
   "approval": "candidate",
   "blocks_move": false,
@@ -5614,6 +6935,13 @@
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
@@ -5728,6 +7056,263 @@
   },
   "z_sort": "foot"
  },
+ "crossroads_stall_crates_b": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -30.0,
+   36,
+   30
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   110
+  ],
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Stall crates b",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stall_crates_b": {
+    "foot": [
+     27,
+     110
+    ],
+    "png": "res://zones/crossroads/art/stall_crates_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_stall_sacks": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Stall sacks",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stall_sacks": {
+    "foot": [
+     30,
+     62
+    ],
+    "png": "res://zones/crossroads/art/stall_sacks.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_stock_ne_barrel": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Stock ne barrel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "goods kept by a house, shop or stall",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stock_ne_barrel": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://zones/crossroads/art/stock_ne_barrel.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_stock_ne_sacks": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   30,
+   62
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Stock ne sacks",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "stock_ne_sacks": {
+    "foot": [
+     30,
+     62
+    ],
+    "png": "res://zones/crossroads/art/stock_ne_sacks.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "crossroads_trough": {
   "approval": "candidate",
   "blocks_move": true,
@@ -5801,6 +7386,132 @@
      37
     ],
     "png": "res://kit/props/art/farm/trough.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_tub_board": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Tub board",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "tub_board": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/tub_board.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_tub_fern": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Tub fern",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "tub_fern": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/tub_fern.png"
    }
   },
   "z_sort": "foot"
@@ -5968,6 +7679,9 @@
     "if": {
      "flags": [
       "shard_home:woodland"
+     ],
+     "restored": [
+      "well"
      ]
     }
    },
@@ -6060,6 +7774,9 @@
     "if": {
      "not_flags": [
       "shard_home:woodland"
+     ],
+     "not_restored": [
+      "well"
      ]
     }
    },
@@ -6072,6 +7789,203 @@
      80
     ],
     "png": "res://zones/crossroads/art/well_choked.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_well_pail": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   18,
+   44
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Well pail",
+  "painted": false,
+  "requires": [],
+  "role": null,
+  "shadow": null,
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "flags": [
+      "well_clear"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "well_pail": {
+    "foot": [
+     18,
+     44
+    ],
+    "png": "res://zones/crossroads/art/well_pail.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_well_spoil_rubble": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -36.0,
+   54,
+   36
+  ],
+  "deck": null,
+  "foot": [
+   36,
+   70
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Well spoil rubble",
+  "painted": false,
+  "requires": [],
+  "role": "clutter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "well_clear"
+     ],
+     "restored": [
+      "well"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "well_spoil_rubble": {
+    "foot": [
+     36,
+     70
+    ],
+    "png": "res://zones/crossroads/art/well_spoil_rubble.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "crossroads_west_seat_flower_tub": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -18.0,
+   -18.0,
+   36,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   27,
+   53
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "West seat flower tub",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 1,
+    "note": "by a door or under a window",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "planter",
+  "shadow": null,
+  "size_cells": [
+   3,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "west_seat_flower_tub": {
+    "foot": [
+     27,
+     53
+    ],
+    "png": "res://zones/crossroads/art/west_seat_flower_tub.png"
    }
   },
   "z_sort": "foot"

@@ -985,3 +985,36 @@ class GroundRules(unittest.TestCase):
         n = self.names(p)
         self.assertIn('rules.route_ends', n)
         self.assertIn('rules.clutter', n)
+
+    def test_buildings_overlapping(self):
+        # PR #416's q6 pair: the blue-door cottage's roof covered the yellow-door cottage's wall
+        look = {'overhang': 3, 'wall_h': 44, 'roof_h': 40}
+        p = {'box': [0, 0, 320, 336], 'art': {'looks': {'yellow': look, 'blue': look}},
+             'buildings': [{'id': 'yellow', 'rect': [176, 112, 64, 72]}, {'id': 'blue', 'rect': [232, 224, 64, 40]}]}
+        self.assertIn('rules.building_overlap', self.names(p))
+        p['buildings'][0]['rect'] = [176, 144, 64, 72]       # bodies clear, footprints 2 px apart
+        p['buildings'][1]['rect'] = [248, 224, 64, 40]
+        self.assertIn('rules.building_overlap', self.names(p))
+        p['buildings'][1]['rect'] = [256, 312, 64, 40]       # a cell beyond the eaves and the roofs clear
+        self.assertNotIn('rules.building_overlap', self.names(p))
+
+    def test_crossroads_slice_keeps_the_rules(self):
+        from scripts.art.kit import crossroads_slice as CS
+        p = CS.plan()
+        self.assertTrue(p['ground_rules'])
+        self.assertEqual(self.names(p), set())
+        # the road keeps its three-cell width class, every spur is a two-cell lane leaving its door
+        from scripts.art.kit import build  # noqa: F401  (configures the density)
+        from scripts.art.kit import surface as SF
+        import numpy as np
+        k = CS.kit_plan(p)
+        cells = np.array([[c == '#' for c in r] for r in k['rows']])
+        cls = SF.path_class(SF.widths(cells))
+        self.assertTrue((cls[:, 18:21] == 3).all())
+        for b in p['buildings']:
+            x, y = b['door']
+            self.assertTrue(cells[y // 8, x // 8 - 1:x // 8 + 1].all())
+            self.assertFalse(cells[y // 8, x // 8 - 2] or cells[y // 8, x // 8 + 1])
+            self.assertEqual(int(cls[y // 8, x // 8]), 2)
+        # Matt, 2 Nov: every fence encloses something, one gate per enclosure, on a path
+        self.assertEqual(len([f for f in p['fences'] if f['kind'] == 'gate']), len(p['buildings']))

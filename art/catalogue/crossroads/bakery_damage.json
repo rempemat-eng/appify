@@ -1,7 +1,7 @@
 {
  "id": "crossroads/bakery_damage",
  "file": "game/zones/crossroads/art/bakery_damage.png",
- "sha256": "b1287282261a5ecb931466599fd993df985eaedcdb669686b2da35a1f057c85d",
+ "sha256": "6e0eb8f2fe39aa9f3c1222ce777bf144b56b37430bbcc084fe6bd94b1c06204a",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 30,
-   "tones": 19.666666666666668,
-   "shapes": 34.766666666666666
+   "patches": 25,
+   "tones": 19.2,
+   "shapes": 35.24
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.69,
-  "tones_ratio": 0.728,
-  "shapes_ratio": 0.69,
+  "ratio": 0.7,
+  "tones_ratio": 0.711,
+  "shapes_ratio": 0.7,
   "passed": false,
   "group": "prop"
  },
@@ -41,18 +41,17 @@
    "box": [
     14,
     55,
-    214,
+    207,
     300
    ],
-   "message": "crossroads/bakery_damage: detail bar 0.69 of Eastward's prop band (19.7 tones, 34.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery_damage: detail bar 0.70 of Eastward's prop band (19.2 tones, 35.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-03",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-10-26",
-  "note": "#298 review at 2e554c05: holes torn course by course with snapped rafters and hanging slates (thatch: straw fringe); no barred-window shapes."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

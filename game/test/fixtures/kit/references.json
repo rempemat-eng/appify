@@ -64,7 +64,7 @@
  "source_sha256": {
   "art/house-palette.json": "7fd8e8cfd481bc627b4ca6e8425ec3001f80103ae2309f6bc7249ef6326b03dd",
   "game/kit/props/art/shadow_woodland_oak.png": "46bc86fb8e2020a4a46ffec5ce53d5457733fb76045b57444b16f4c5c1779607",
-  "game/kit/props/index.json": "c215502a48db1173903bb37c0158cb25cec06df8f3abbb4f8b2348a69a97c7c2",
+  "game/kit/props/index.json": "0ee65259ae15245594ec7cf9c199af071ae817764fde64ec6d72d4eae2f97c4c",
   "game/kit/terrain/decal_bankstone_0.png": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
   "game/kit/terrain/decal_bankstone_1.png": "ff6e6e4534c777c8d97798f24621fc0d84997f2a871006fdd5c82c35cf6facb8",
   "game/kit/terrain/decal_bankstone_2.png": "e7c654f3980aeb16378897d9cc92e1274e784642a9bcf4da60db845da68ade6d",
@@ -92,7 +92,7 @@
   "game/kit/terrain/fill_water.png": "159cacfd2b93669beab4c09b99df90b74d5eb1964f4f20ac7ef969eca9621a8e",
   "game/kit/terrain/fill_worn.png": "5135bbe8cc18991ba7a1cc5eac811726bcfb4efcc22f2f4300a294702ea86650",
   "game/kit/terrain/lut.png": "344679d392a978b080e5ec1960060a4f66cac656d0605898adbc3a74d3c36a4f",
-  "game/kit/terrain/manifest.json": "b2489d1f6414f74bb1d64f3c14d25712aae263b13a46e79a2a11b6658ee133f1",
+  "game/kit/terrain/manifest.json": "4f0b3bf1dee4e966796d554d03fce39aa2dedfccb971a4e3efc636e90936a1d1",
   "game/kit/terrain/noise.png": "84b514c82e834b2cfb1a2d4a9305e403d28550b7216323045dfb91f970ab1a0f",
   "game/kit/terrain/over_earth_face_over_any.png": "ecce94c839017fa221f4b6c0209474e7b795ebc13ba4947b752785d1f1e38cc8",
   "game/kit/terrain/over_lawn_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",

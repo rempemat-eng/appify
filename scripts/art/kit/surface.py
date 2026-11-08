@@ -152,8 +152,38 @@ def tone_field(cv: np.ndarray, m: np.ndarray, seed: int, scale: float = 200.0) -
 # ------------------------------------------------------------------------------------------------
 # paths
 # ------------------------------------------------------------------------------------------------
-def path_widths(cv: np.ndarray, net: np.ndarray, cls_t: np.ndarray, seed: int, fam: str = 'path') -> None:
-    """The centre treatment of each path class (cls_t: the class per texel)."""
+def _packed_road(cv: np.ndarray, net: np.ndarray, three: np.ndarray, seed: int,
+                 fam: str, rng, wob: np.ndarray) -> None:
+    """Two longitudinal tracks on clear cardinal road runs, never an inset perimeter contour.
+
+    End caps, class changes and ambiguous junctions/bends are natural breaks. The same tapered
+    valid run controls rails, crown and tuft anchors; a crown cannot survive as a closed box.
+    """
+    H, W = net.shape
+    horizontal, vertical, across, fade = GD.longitudinal_runs(net, three)
+    flow = (horizontal | vertical) & (fade > 0)
+    rut = flow & (np.abs(across - 17 + wob) < 2.4 * fade)
+    rut &= GD.nz(H, W, 30.0, seed + 9) > 0.3 + 0.45 * (1 - fade)
+    cv[rut] = C(fam + '_cool', 2)
+    cv[rut & (GD.nz(H, W, 9.0, seed + 10) > 0.62)] = C(fam + '_cool', 1)
+    lip = (GD.down(rut & horizontal, 1) | GD.right(rut & vertical, 1)) & ~rut & flow
+    lip &= GD.nz(H, W, 5.0, seed + 11) > 0.5
+    cv[lip] = C(fam + '_warm', 4)
+    crown = flow & (across > 23)
+    gp = crown & (GD.nz(H, W, 6.0, seed + 31) > 0.62 + 0.3 * (1 - fade))
+    gp &= GD.nz(H, W, 2.5, seed + 32) > 0.35
+    cv[gp] = C('grass_warm', 2)
+    cy, cx = np.nonzero(crown & (fade > 0.65))
+    for k in rng.permutation(len(cy))[: len(cy) // 140]:
+        GD.stamp(cv, int(cy[k]), int(cx[k]), GD.tuft_shape(rng, rng.uniform(0.8, 1.3)),
+                 C('grass_warm', 2), crown)
+
+
+def path_widths(cv: np.ndarray, net: np.ndarray, cls_t: np.ndarray, seed: int, fam: str = 'path',
+                packed: bool = False) -> None:
+    """The centre treatment of each path class (cls_t: the class per texel).
+    Packed soil uses longitudinal road tracks and its existing recipe stones; legacy defaults
+    retain their original EDT tracks and additive wide-approach pebbles."""
     H, W = cv.shape
     rng = np.random.default_rng(seed)
     dist = ndi.distance_transform_edt(net)
@@ -166,12 +196,20 @@ def path_widths(cv: np.ndarray, net: np.ndarray, cls_t: np.ndarray, seed: int, f
         cv[body] = sib(cv[body], 'warm')
     # 3: a road, two wheel ruts and a grassy crown between them
     three = net & (cls_t == 3)
-    if three.any():
-        rut = three & (np.abs(dist - 17 + wob) < 2.4) & (GD.nz(H, W, 30.0, seed + 9) > 0.3)
-        cv[rut] = C(fam + '_cool', 2)
-        cv[rut & (GD.nz(H, W, 9.0, seed + 10) > 0.62)] = C(fam + '_cool', 1)
-        lip = GD.down(rut, 1) & ~rut & three & (GD.nz(H, W, 5.0, seed + 11) > 0.5)
-        cv[lip] = C(fam + '_warm', 4)
+    if three.any() and packed:
+        _packed_road(cv, net, three, seed, fam, rng, wob)
+    elif three.any():
+        # Claude A's Crossroads review (1 Nov): the ruts read as cracks. They follow the road's
+        # straight runs (never its outline's lumps or a junction's corner), a narrow worn band one
+        # tone down in the earth's own hue, broken where the wheels lifted, without dark speckle
+        horizontal, vertical, across, fade = GD.longitudinal_runs(net, three)
+        flow = (horizontal | vertical) & (fade > 0)
+        rut = flow & (np.abs(across - 17 + wob * 0.4) < 1.6 * fade) & (GD.nz(H, W, 30.0, seed + 9) > 0.38)
+        rut &= (cv >= 0) & (cv % 8 > 1)
+        cv[rut] = cv[rut] - 1
+        lip = (GD.down(rut & horizontal, 1) | GD.right(rut & vertical, 1)) & ~rut & flow & (cv >= 0) & (cv % 8 < 5)
+        lip &= GD.nz(H, W, 5.0, seed + 11) > 0.62
+        cv[lip] = cv[lip] + 1
         crown = three & (dist > 23)
         gp = crown & (GD.nz(H, W, 6.0, seed + 31) > 0.62) & (GD.nz(H, W, 2.5, seed + 32) > 0.35)
         cv[gp] = C('grass_warm', 2)
@@ -183,10 +221,13 @@ def path_widths(cv: np.ndarray, net: np.ndarray, cls_t: np.ndarray, seed: int, f
     if four.any():
         gap = four & (cv % 8 == 2) & is_fam(cv, fam) & (GD.nz(H, W, 4.0, seed + 12) > 0.7)
         cv[gap] = cv[gap] + 1
-        iy, ix = np.nonzero(four & ndi.binary_erosion(four, iterations=5))
-        for _ in range(len(iy) // 900):
-            k = int(rng.integers(0, len(iy)))
-            GD.pebble(cv, int(iy[k]), int(ix[k]), rng, big=rng.random() < 0.3, ok=net)
+        if not packed:
+            # The packed body already supplies recipe-controlled clusters. Width alone does
+            # not add another blanket of stones; automatic/authored stony variants stay intact.
+            iy, ix = np.nonzero(four & ndi.binary_erosion(four, iterations=5))
+            for _ in range(len(iy) // 900):
+                k = int(rng.integers(0, len(iy)))
+                GD.pebble(cv, int(iy[k]), int(ix[k]), rng, big=rng.random() < 0.3, ok=net)
 
 
 def path_variants(cv: np.ndarray, net: np.ndarray, var: np.ndarray, seed: int, fam: str = 'path') -> None:
