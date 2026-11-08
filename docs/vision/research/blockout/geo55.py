@@ -35,7 +35,13 @@ import towns55
 from geo5 import chaikin, densify
 
 DATA, HERE, ROOT = V.DATA, V.HERE, V.ROOT
-SUF = '-v55'
+REVISION = os.environ.get('MYGAME_MAP_REVISION', 'v55')
+if REVISION not in ('v55', 'v56'):
+    raise ValueError('MYGAME_MAP_REVISION must be v55 or v56')
+SUF = '-' + REVISION
+PLAN_DIRECTORY = 'towns-v56' if REVISION == 'v56' else 'towns'
+# v56 is a new prospective run, not a reconstruction of the lost v55 process seed.
+PROSPECTIVE_SEED = 'crc32-utf8/355; explicit town seeds retained'
 NEW_KINDS = {'lane': '#CDB894', 'fence': '#5A4E44', 'rockfall': '#8A8078', 'closedroad': '#B7A88A', 'pad': '#C9C6C0'}
 g.COL.update(NEW_KINDS)
 g.WALK |= {'lane', 'quay', 'boulevard', 'apron', 'pad', 'arcade'}
@@ -261,6 +267,26 @@ def warp_tables():
     V54.INSET = Pbox(V54.INSET)
     for nm in list(V.NEW_ROUTES):
         pts, kind, feats = V.NEW_ROUTES[nm]; V.NEW_ROUTES[nm] = (PL(pts), kind, feats)
+    if REVISION == 'v56':
+        rails_v56()
+
+
+RAILS_V56 = {   # v56 (art director, 4 Nov: "nothing may stand on rails"): each line's bends, in v55 world px, round the towns' houses
+    'valley train': [(5850, 4300), (5880, 4420), (6600, 4420), (6700, 4380), (7440, 3800), (7770, 3000), (7840, 2600)],
+    'desert line (Rift viaduct)': [(4870, 3900), (4211, 3700), (3436, 3100), (3000, 3000), (2992, 2600)],
+    'maglev (Narrows Viaduct)': [(8400, 2900), (8700, 2900), (9208, 2330), (10390, 3300), (11179, 4125), (11400, 4150), (11700, 4150),
+                                 (11716, 4200), (11716, 4480), (11700, 4528), (11600, 4528)],   # round the city's north edge, down its east lane
+    'mine cart (S1)': [(2900, 1720), (3000, 1800), (3060, 2100), (3060, 2520), (2695, 2900), (2581, 3900), (2240, 4880), (2520, 5040),
+                       (2560, 5300)],   # past Ember forge's ore store on the lip, down the rock's warm east flank to Hearthold's forges
+}
+STATIONS_V56 = {'Dust Gulch platform': (2992, 2336),   # the depot at Front Street's east end, not the middle of the street
+                'the forge cart bay': (2560, 5416)}    # Hearthold's ore yard at the head of Smiths' Row (round 10 brief)
+
+
+def rails_v56():
+    """The v56 rail and cart lines: the same stations and ways, bent round the towns so no building stands on a line."""
+    g.STATIONS.update(STATIONS_V56)
+    g.SHORTCUTS[:] = [(a, b, c, d, e, list(RAILS_V56.get(a, via))) for a, b, c, d, e, via in g.SHORTCUTS]
 
 
 # ------------------------------------------------------------------------------------------ stage 3a: the east coast and Launch Cape
@@ -674,6 +700,188 @@ def gap_obstacles(T, obs):
     return out
 
 
+# ------------------------------------------------------------------------------------------ v56: fit ground to the authored places
+# Complete retained303 plan inventory, including small/empty first-town proposals.
+EXPECTED_TOWN_PLANS = frozenset(('charcoal-hollow', 'cinder-springs', 'cinderwick',
+    'cogsworth', 'crossroads', 'driftwood', 'dust-gulch', 'ember-forge', 'fernhollow',
+    'gullwick', 'halcyon-row', 'hearthold', 'highgarth', 'lagoon-landing', 'launch-cape', 'lullford',
+    'neon-harbour', 'palm-spring', 'the-lode'))
+CROSSROADS_RIVER_BOX = (6120, 3096, 6736, 3968)
+CROSSROADS_RIVER = [(6256, 3120), (6400, 3176), (6656, 3216), (6680, 3376),
+                    (6680, 3760), (6616, 3864), (6384, 3928)]
+
+
+def feedback_river(T, points, zone_box, *, corridor=CROSSROADS_RIVER_BOX):
+    """Divert the macro Sleepwater around the existing dry gameplay zone.
+
+    The actual channel, its source polyline and barrier masks move together.
+    This does not paint a building over water or erase a river from the picture.
+    The same source and downstream mill reach remain connected.
+    """
+    K = T['K']; x0, y0, x1, y1 = corridor
+    win = (g.PX >= x0) & (g.PX < x1) & (g.PY >= y0) & (g.PY < y1)
+    old_line = list(map(tuple, T['river_px']['the Sleepwater']))
+    inside = [i for i, (x, y) in enumerate(old_line) if x0 <= x < x1 and y0 <= y < y1]
+    if not inside:
+        raise ValueError('v56 Sleepwater corridor has no inherited river to join')
+    i0, i1 = inside[0], inside[-1]
+    segment = ([old_line[i0 - 1]] if i0 else []) + list(points) + ([old_line[i1 + 1]] if i1 + 1 < len(old_line) else [])
+    segment = chaikin(segment, 2)
+    channel = G._orig_line_mask(segment, 24) & win & T['land']
+    old = T['river_masks']['the Sleepwater'] & win
+    zx0, zy0, zx1, zy1 = zone_box
+    zone = (g.PX >= zx0) & (g.PX < zx1) & (g.PY >= zy0) & (g.PY < zy1)
+    # The existing zone has no water; small drainage creeks cannot remain under it.
+    retired = (old | zone) & np.isin(K, ['river', 'rapids', 'creek', 'bridge']) & ~channel
+    K[retired] = 'meadow'
+    crossed_routes = channel & np.isin(K, ['road', 'path', 'trail', 'bridge'])
+    K[channel] = 'river'; K[crossed_routes] = 'bridge'
+    T['river_masks']['the Sleepwater'] = (T['river_masks']['the Sleepwater'] & ~win) | channel
+    T['river_px']['the Sleepwater'] = old_line[:i0] + list(map(tuple, segment)) + old_line[i1 + 1:]
+    for key, mask in T['barriers'].items():
+        if mask.shape == K.shape:
+            mask[retired] = False
+    if 'water' in T:
+        T['water'][retired] = False; T['water'][channel] = True
+    if (channel & zone).any():
+        raise ValueError('v56 Sleepwater still crosses the existing Crossroads zone')
+    return {'retired_channel_cells': int(retired.sum()), 'new_channel_cells': int(channel.sum()),
+            'source': 'the Sleepwater', 'joins': 'same upstream source and downstream mill reach',
+            'zone_water_cells': int(np.isin(K[zone], ['river', 'creek', 'rapids']).sum())}
+
+
+def feedback_ground(T):
+    """Local terrain revision before placement; sea, rivers and story sites stay authoritative."""
+    zp = json.load(open(os.path.join(ROOT, 'game', 'data', 'plans', 'crossroads.json')))
+    ox, oy = zp['origin_on_canvas']; _, _, zw, zh = zp['box']
+    rec = feedback_river(T, CROSSROADS_RIVER, (ox, oy, ox + zw, oy + zh))
+    K = T['K']
+    # Urban ground is terraced dry land, never a rectangular paving overwrite of water.
+    dry = T['land'] & ~np.isin(K, ['river', 'rapids', 'creek', 'canal', 'sea', 'surf', 'falls',
+                                  'pool', 'crater', 'shardglass', 'craterrim', 'scorch'])
+    east = dry & (g.PX >= 10520) & (g.PX < 12384) & (g.PY >= 4224) & (g.PY < 5600)
+    west = dry & (g.PX >= 9776) & (g.PX < 10416) & (g.PY >= 4704) & (g.PY < 5728)
+    # A city built on successive waterfront terraces, with the Heights descending to a park.
+    shelf = np.where(g.PY < 4480, 7, np.where(g.PY < 4928, 6, 5))
+    height = np.where(g.PY < 4928, 9, np.maximum(5, 8 - (g.PY - 4928) // 192))
+    for mask, tiers in ((east, shelf), (west, height)):
+        T['h'][mask] = (tiers[mask] + 0.5) / 30.0
+        K[mask & np.isin(K, ['cliff', 'crag', 'tor', 'boulders', 'scree', 'wild', 'ancient', 'thicket', 'conifer'])] = 'meadow'
+    # Existing Crossroads floor/terrace identity is retained at macro scale too.
+    zone = (g.PX >= ox) & (g.PX < ox + zw) & (g.PY >= oy) & (g.PY < oy + zh)
+    clear = zone & np.isin(K, ['meadow', 'watermeadow', 'broadleaf', 'conifer', 'creek', 'field', 'field2', 'hedge', 'yard', 'garden'])
+    K[clear] = 'meadow'
+    return rec
+
+
+def retained_count(pid, P):
+    """The counted buildings from the retained inventory (Neon Harbour: its 81 records b001-b081, 72 counted; the city's new
+    buildings, b101 on, are counted on top within its guide)."""
+    import re
+    if pid != 'neon-harbour' or not any('counts_as' in b for b in P['buildings']):
+        return P['buildings_counted']
+    return sum(b.get('counts_as', 0) for b in P['buildings']
+               if re.fullmatch(r'neon-harbour-b0[0-9][0-9]', b['id']) and int(b['id'][-3:]) <= 81)
+
+
+def feedback_checks(T, plans):
+    """Fail closed on literal final ground, including inherited zone buildings."""
+    import town_plans as TP
+    K = T['K']
+    for pid in ('crossroads', 'neon-harbour'):
+        P = plans[pid]
+        expected = towns55.RETAINED[pid]
+        # fill buildings deferred by the fitter leave the retained count; each is listed with its reason
+        expected -= sum(d.get('counts_as', 0) for d in P.get('deferred_buildings', []) if d.get('kind') == 'fill row building')
+        if retained_count(pid, P) != expected:
+            raise ValueError(f"v56 {pid}: {retained_count(pid, P)} counted buildings from the inventory, expected retained {expected}")
+        occupied = np.zeros(K.shape, bool)
+        for b in P['buildings']:
+            c, r, w, h = b['footprint_cells']
+            if occupied[r:r + h, c:c + w].any():
+                raise ValueError(f"v56 {b['id']}: footprint overlaps another building")
+            occupied[r:r + h, c:c + w] = True
+            if np.isin(K[r:r + h, c:c + w], TP.WATER_K + TP.BARRIER_K).any():
+                raise ValueError(f"v56 {b['id']}: footprint intersects final water/barrier ground")
+
+
+def standing_lines(T):
+    """What a building may never stand on, as cell masks: each rail and cart line and each road or path, three cells wide as
+    drawn, and each river's own line. Water is read from the final ground itself."""
+    rails = {}
+    for nm, a, b, _, way, via in g.SHORTCUTS:
+        if 'ferry' in nm or 'steamer' in nm:
+            continue
+        rails[f'the rail line ({nm})'] = g.line_mask(g.chaikin([g.pt(a)] + list(via) + [g.pt(b)], 3), 24)
+    for nm, pts in (T.get('route_px') or {}).items():
+        if len(pts) >= 2:
+            rails[f'the road ({nm})'] = g.line_mask(pts, 8)
+    for nm, pts in (T.get('river_px') or {}).items():
+        if len(pts) >= 2:
+            rails[f'the river ({nm})'] = g.line_mask(pts, 8)
+    return rails
+
+
+def standing_failures(K, P, lines):
+    """v56 (art director, 4 Nov): nothing stands on a rail line, a road, a river or water. One finding per building."""
+    import town_plans as TP
+    out = []
+    for b in P['buildings']:
+        bc, br, bw, bh = b['footprint_cells']
+        sl = (slice(max(0, br), br + bh), slice(max(0, bc), bc + bw))
+        on = [nm for nm, m in lines.items() if m[sl].any()]
+        on += [f'{k} water' for k in sorted(set(np.unique(K[sl]).tolist()) & set(TP.WATER_K))]
+        if on:
+            out.append(f"standing: {b['id']} ({b.get('form', 'building')}) stands on " + ', '.join(on))
+    return out
+
+
+def feedback_plan_checks(T, plans):
+    """Retain every final town finding, not only the revised towns' count checks.
+
+    Failed proposals can still be pictured for review; the v56 command exits 1
+    after writing the complete report and requested pictures. No finding is
+    demoted, and neither a picture nor a count becomes an acceptance pass.
+    """
+    import town_plans as TP
+    checker = TP.TW._review()
+    blockout = {'routes': {rn: {'polyline': pts} for rn, pts in T['route_px'].items()}, 'stations': g.STATIONS}
+    reports = {}
+    stand_lines = standing_lines(T)
+    for pid, P in plans.items():
+        c, r, w, h = P['terrain']['box_cells']
+        P['terrain']['rows'] = TP.terrain_rows(T['K'][r:r + h, c:c + w])
+        failures, notes, metrics = checker.check_plan(P, blockout)
+        failures = list(failures)
+        if pid not in EXPECTED_TOWN_PLANS:
+            failures.append(f'unexpected_plan: {pid} is not in the retained303 town inventory')
+        occupied = np.zeros(T['K'].shape, bool)
+        for b in P['buildings']:
+            bc, br, bw, bh = b['footprint_cells']
+            if bc < 0 or br < 0 or bc + bw > T['K'].shape[1] or br + bh > T['K'].shape[0]:
+                failures.append(f"bounds: {b['id']} leaves final terrain")
+                continue
+            footprint = T['K'][br:br + bh, bc:bc + bw]
+            if np.isin(footprint, TP.WATER_K + TP.BARRIER_K).any():
+                failures.append(f"final_ground: {b['id']} intersects literal water/barrier ground")
+            if occupied[br:br + bh, bc:bc + bw].any():
+                failures.append(f"final_ground: {b['id']} overlaps another footprint")
+            occupied[br:br + bh, bc:bc + bw] = True
+        failures += standing_failures(T['K'], P, stand_lines)
+        expected = towns55.RETAINED.get(pid)
+        if expected is not None and retained_count(pid, P) != expected:
+            failures.append(f"retained_count: {retained_count(pid, P)} != {expected}")
+        reports[pid] = {'pass': not failures, 'failures': failures, 'notes': notes,
+                        'metrics': metrics, 'actual_count': P['buildings_counted'], 'retained_count': expected}
+        print(('PASS' if not failures else 'FAIL'), 'v56 town', pid, json.dumps(reports[pid]))
+    for pid in sorted(EXPECTED_TOWN_PLANS - set(plans)):
+        reports[pid] = {'pass': False, 'failures': [f'missing_plan: {pid} has no exported town plan'],
+                        'notes': [], 'metrics': None, 'actual_count': None,
+                        'retained_count': towns55.RETAINED.get(pid)}
+        print('FAIL v56 town', pid, json.dumps(reports[pid]))
+    return reports
+
+
 # ------------------------------------------------------------------------------------------ stage 3: everything on the v55 canvas
 def v55_paint(T):
     import towns55 as TW
@@ -699,11 +907,44 @@ def v55_paint(T):
     T['FRAME'] |= beyond & ~T['closed_mask']; g.FRAME = T['FRAME']   # the borders' fade may not open it again
     if os.environ.get('DEV_PRE'):                                    # a development cache: the ground just before the towns
         pickle.dump({'T': T}, open(os.environ['DEV_PRE'], 'wb'), protocol=4); sys.exit(0)
+    if REVISION == 'v56':
+        rec['feedback_ground'] = feedback_ground(T)
     TW.prepare(T, keepout_boxes=[V.BUILT['the woodland']],
                keepout_discs=[(6296, 3088, 150), (6816, 3648, 110), (6484, 3712, 90), (V.CIRCLE[0], V.CIRCLE[1], 120)])
-    towns = TW.lay_all(T, sys.modules[__name__])
-    towns.update(TW.launch_cape(T, sys.modules[__name__]))
+    if os.environ.get('TOWN_FIT_ONLY'):
+        T['_town_fit'] = []
+    if REVISION == 'v56':
+        # These source-pinned proposals already live in the producer; select
+        # them deliberately so Town.adopt checks their actual final terrain.
+        authored = {pid: TW.PROPOSED_ADOPTIONS[pid] for pid in ('cinderwick', 'hearthold')}
+        towns = TW.lay_feedback(T, sys.modules[__name__], authored=authored)
+        towns.update(TW.launch_cape(T, sys.modules[__name__],
+                                   authored={'launch-cape': TW.PROPOSED_ADOPTIONS['launch-cape']}))
+    else:
+        towns = TW.lay_all(T, sys.modules[__name__])
+        towns.update(TW.launch_cape(T, sys.modules[__name__]))
     towns.update(TW.charcoal_hollow(T, sys.modules[__name__]))
+    if '_town_fit' in T:
+        # This diagnostic stops before plan finishing, acceptance, exports or render.
+        import town_plans as TP
+        observed = {TP.slug('Neon Harbour' if nm.startswith('Neon Harbour') else nm) for nm in towns}
+        report = {'mode': 'town-fit-only', 'revision': REVISION, 'acceptance': False,
+                  'towns': sorted(towns), 'instances': T.get('_town_fit_towns', []),
+                  'active_instances': {nm: t._fit_instance for nm, t in towns.items()},
+                  'expected_plan_ids': sorted(EXPECTED_TOWN_PLANS),
+                  'observed_plan_ids': sorted(observed), 'missing_plan_ids': sorted(EXPECTED_TOWN_PLANS - observed),
+                  'records': T['_town_fit'], 'rejected_search_probes': T.get('_town_fit_rejected', {}),
+                  'unplaced_authored_ids': T.get('_town_fit_unplaced', []),
+                  'incomplete': T.get('_town_fit_incomplete', []),
+                  'qualification': 'Raw pre-placement observations. Authored packets are observed but unplaced; '
+                                   'later occupancy is conditional. Filter replaced town instances using active_instances. '
+                                   'Rejected search probes are not final buildings. '
+                                   'No access/plan finishing, corrected production, terrain or art acceptance.'}
+        path = os.path.abspath(os.environ['TOWN_FIT_ONLY'])
+        with open(path, 'x') as f:
+            json.dump(report, f, indent=1)
+        print('TOWN_FIT_ONLY diagnostic written:', path)
+        raise SystemExit(2)  # diagnostic completion is never a producer PASS
     for t in towns.values():                                         # no impassable deep forest inside a town: open woods
         if t.buildings:
             x0, y0, x1, y1 = t.record()['footprint_box']
@@ -831,7 +1072,17 @@ def data_stage():
     warp_tables(); set_dims(NEW_W, NEW_H)
     g.FRAME = T['FRAME']
     u_warp = usable(T)
-    rec = v55_paint(T)
+    try:
+        rec = v55_paint(T)
+    except Exception:
+        # Keep the actual failed ground in the existing development output; never cache it as OLD_CACHE.
+        if os.environ.get('DEV_PKL'):
+            try:
+                with open(os.environ['DEV_PKL'], 'wb') as failed:
+                    pickle.dump({'T': T}, failed, protocol=4)
+            except Exception as retention_error:
+                print('DEV_PKL failure context could not be retained:', retention_error, file=sys.stderr)
+        raise
     towns = rec['towns']
     update_tables(T, towns)
     K = T['K']
@@ -897,7 +1148,12 @@ def data_stage():
                               'cells_s': round(speed / g.CELL, 3), 'screen_1080p_s': round(320 / speed, 1),
                               'note': 'home_to and routes_s keep the plan speed of 40 px a second for comparison; home_to_at_hero_speed uses the manifest'},
                      'home_to_at_hero_speed': hero},
-             'v55': v55}
+             REVISION: v55}
+    if REVISION == 'v56':
+        v55['revision'] = {'id': REVISION, 'base': '303@4984438d + 355@7afe9efd',
+                           'seed_contract': PROSPECTIVE_SEED, 'historical_equivalence': False,
+                           'feedback_ground': rec['feedback_ground'],
+                           'counts': dict(towns55.RETAINED, neon_size_approved=False)}
     bres = G.bench(T, pois, marks, pocks, obs, steps, gates); stats['benchmark'] = bres; stats['biome_detail'] = T['biome_detail']
     for b_ in bres:
         print(('PASS' if b_['pass'] else 'FAIL'), b_['n'], b_['check'], '|', b_['measured'])
@@ -915,14 +1171,19 @@ def write_data(S):
     """The three JSON files and the map state."""
     T, stats, gates, t, steps, vstats, town_rec = S['T'], S['stats'], S['gates'], S['t'], S['steps'], S['vstats'], S['town_rec']
     import map55
+    if REVISION == 'v56':
+        S['stats'][REVISION]['physical_checks'] = feedback_plan_checks(T, S['plans'])
     state = map_state(S)
     F = map55.features(state, sys.modules[__name__])
     stats['v54'] = V54.v54_block(F)
     json.dump(stats, open(os.path.join(DATA, f'stats{SUF}.json'), 'w'), indent=1)
     json.dump(gates, open(os.path.join(DATA, f'gates{SUF}.json'), 'w'), indent=1)
-    G.export_blockout(T, t, steps, vstats, gates, f'blockout{SUF}.json')
+    if REVISION == 'v56':
+        json.dump(stats[REVISION]['physical_checks'], open(os.path.join(DATA, 'town-checks-v56.json'), 'w'), indent=1)
+    G.export_blockout(T, t, steps, vstats, gates, os.path.join(DATA, f'blockout{SUF}.json'))
     bj = json.load(open(os.path.join(DATA, f'blockout{SUF}.json')))
-    bj['version'] = 'v5.3 block-out, v55 (world plan v5.3; the continent with room for its towns, 27 Oct)'
+    bj['version'] = (REVISION + ' prospective city-coherence revision (29 Oct)' if REVISION == 'v56' else
+                     'v5.3 block-out, v55 (world plan v5.3; the continent with room for its towns, 27 Oct)')
     bj['v53'] = {'circle': list(V.CIRCLE), 'crossroads': list(V.CROSSROADS),
                  'craters': {nm: {k: v for k, v in c.items() if k in ('x', 'y', 'radius_px', 'region', 'scorch_tip', 'scorch_heading_deg', 'trail_to')}
                              for nm, c in T['craters'].items()},
@@ -930,13 +1191,19 @@ def write_data(S):
                  'waystones': {nm: [x, y, s] for nm, (x, y, s) in V.WAYSTONES.items()}, 'built': {nm: list(b) for nm, b in V.BUILT.items()},
                  'act1': [[nm, list(p), what] for nm, p, what in V.ACT1]}
     bj['v54'] = stats['v54']
-    v55 = dict(stats['v55'])
+    v55 = dict(stats[REVISION])
     v55['settlement_footprints'] = {nm: {'buildings': r['buildings'], 'streets': r['streets'], 'squares': r['squares'], 'outskirts': r['outskirts'],
                                          'size': r['size'], 'buildings_counted': r['buildings_counted']} for nm, r in town_rec.items()}
     v55['closed_routes'] = {'the Northway (closed)': {'polyline': [[int(round(x)), int(round(y))] for x, y in T['route_px']['the Northway (closed)']],
                                                       'closed': True, 'closed_for': ['movement', 'navigation', 'travel'], 'way': 'C1'}}
     v55['old_forest'] = T.get('forest')
-    bj['v55'] = v55
+    if REVISION == 'v56':                                            # the drawn frame past the world (grow56): one offset at projection
+        import grow56
+        v55['map_frame'] = {'world_px': [g.WPX, g.HPX], 'canvas_px': list(grow56.frame_dims(g.WPX, g.HPX)),
+                            'world_origin_in_canvas_px': [0, grow56.DY], 'grown_px': {'north': grow56.DY, 'east': grow56.EX},
+                            'note': 'the map is drawn on the canvas; every world coordinate here is unchanged and lands at (x, y + 576) on it. '
+                                    'The bands past the world carry no town, road, rail, ferry or label (the haze audit in the render log).'}
+    bj[REVISION] = v55
     with open(os.path.join(DATA, f'blockout{SUF}.json'), 'w') as f:
         json.dump(bj, f, separators=(',', ':'))
     write_plans(S)
@@ -948,7 +1215,7 @@ def write_plans(S):
     """towns/<id>.json: each plan, its terrain grid taken from the finished ground (so the checker sees what the map shows)."""
     import town_plans as TP
     T = S['T']; K = T['K']
-    d = os.path.join(DATA, 'towns'); os.makedirs(d, exist_ok=True)
+    d = os.path.join(DATA, PLAN_DIRECTORY); os.makedirs(d, exist_ok=True)
     for f in os.listdir(d):
         if f.endswith('.json'):
             os.remove(os.path.join(d, f))
@@ -969,9 +1236,11 @@ def map_state(S):
             'closed_px': T['route_px']['the Northway (closed)'], 'delta': T['delta'], 'real': real,
             'routes': {nm: (kind, feats) for nm, (pts, kind, feats) in g.ROUTES.items()}, 'crater_mask': T['crater_mask'],
             'craters': T['craters'], 'stats_home': S['res'], 'hero': S['stats']['v53']['hero'], 'towns': S['town_rec'],
-            'farms': S['stats']['v55']['farms'], 'closed': CLOSED, 'dims': (NEW_W, NEW_H), 'plans': S['plans'],
+            'farms': S['stats'][REVISION]['farms'], 'closed': CLOSED, 'dims': (NEW_W, NEW_H), 'plans': S['plans'],
             'mat': T.get('mat'), 'materials': __import__('town_plans').MATERIALS,
             'forest': T.get('forest'),
+            'revision': REVISION, 'plan_directory': PLAN_DIRECTORY,
+            'physical_checks': S['stats'][REVISION].get('physical_checks') if REVISION == 'v56' else None,
             'tables': {'SETTLE': dict(g.SETTLE), 'STATIONS': dict(g.STATIONS), 'SHORTCUTS': list(g.SHORTCUTS), 'BRIDGES': dict(g.BRIDGES),
                        'CIRCLE': V.CIRCLE, 'CROSSROADS': V.CROSSROADS, 'CRATERS': dict(V.CRATERS), 'POI53': dict(V.POI53),
                        'WAYSTONES': dict(V.WAYSTONES), 'BUILT': dict(V.BUILT), 'ACT1': list(V.ACT1), 'PEAK_NAMES': list(V54.PEAK_NAMES),
@@ -1009,6 +1278,8 @@ def sync_names():
 
 
 if __name__ == '__main__':
+    if os.environ.get('TOWN_FIT_ONLY') and (REVISION != 'v56' or any(os.environ.get(k) for k in ('RENDER_ONLY', 'DEV_PRE'))):
+        raise ValueError('TOWN_FIT_ONLY requires v56 normal data entry, without RENDER_ONLY or DEV_PRE')
     if os.environ.get('RENDER_ONLY'):
         state = pickle.load(open(os.path.join(HERE, f'state{SUF}.pkl'), 'rb'))
         restore_tables(state)
@@ -1020,3 +1291,8 @@ if __name__ == '__main__':
     if os.environ.get('QUICK') != 'data':
         import map55
         map55.render_all(state, sys.modules[__name__])
+    if REVISION == 'v56':
+        checks = state.get('physical_checks') or {}
+        if set(checks) != EXPECTED_TOWN_PLANS or any(not q['pass'] for q in checks.values()):
+            print('FAIL v56: physical checks incomplete or failing; see town-checks-v56.json')
+            sys.exit(1)

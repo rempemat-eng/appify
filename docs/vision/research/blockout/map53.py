@@ -111,7 +111,7 @@ def class_grid(S, R):
     if rm.any():
         _, (iy, ix) = ndi.distance_transform_edt(rm, return_indices=True); cg = cg[iy, ix]
     # soft-grid blocks: a majority filter on the open natural classes only, so speckle merges into readable biome blocks
-    sm_ids = [cid[n] for n in SMOOTH]
+    sm_ids = [cid[n] for n in names if n in SMOOTH]   # in the classes' own order: a set's order follows the string hash, which changed the ties run to run
     natural = np.isin(cg, sm_ids)
     votes = np.stack([ndi.uniform_filter((cg == i).astype(np.float32), 5) for i in sm_ids])
     best = np.array(sm_ids, np.int16)[np.argmax(votes, axis=0)]
@@ -339,6 +339,7 @@ class Placer:
 
     def __init__(self, d, Wc, Hc):
         self.d = d; self.boxes = []; self.Wc = Wc; self.Hc = Hc; self.missed = []
+        self.leader_block = []                                       # boxes a leader line may not cross (v56: the buildings)
 
     def free(self, b, pad=0):
         if b[0] < 4 or b[1] < 4 or b[2] > self.Wc - 4 or b[3] > self.Hc - 4:
@@ -374,17 +375,33 @@ class Placer:
             if self.free(b, pad):
                 self.draw_text(p, text, font, fill, stroke_fill, anc, stroke, spacing); self.reserve(b); return b
         if leader:
-            for r in leader:
+            radii = list(leader) + ([leader[-1] * f for f in (1.4, 1.8, 2.4)] if self.leader_block else [])   # room round the houses
+            for r in radii:
                 for a in np.linspace(0, 2 * math.pi, 24, endpoint=False):
                     p = (xy[0] + r * math.cos(a), xy[1] + r * math.sin(a))
                     b = self.text_box(p, text, font, 'mm', stroke, spacing)
                     if self.free(b, pad):
                         ex, ey = min(max(xy[0], b[0]), b[2]), min(max(xy[1], b[1]), b[3])
+                        if any(seg_hits_box(xy, (ex, ey), o) for o in self.leader_block              # (a building under the icon
+                               if not (o[0] <= xy[0] <= o[2] and o[1] <= xy[1] <= o[3])):  # itself is the icon's, not crossed)
+                            continue
                         self.d.line([xy, (ex, ey)], fill=stroke_fill, width=2); self.d.line([xy, (ex, ey)], fill=fill, width=1)
                         self.draw_text(p, text, font, fill, stroke_fill, 'mm', stroke, spacing); self.reserve(b); return b
         if name is not False:
             self.missed.append(name or text)
         return None
+
+
+def seg_hits_box(a, b, box):
+    """Whether the segment a-b passes through the box (x0, y0, x1, y1): sampled finely enough for a leader line."""
+    if max(a[0], b[0]) < box[0] or min(a[0], b[0]) > box[2] or max(a[1], b[1]) < box[1] or min(a[1], b[1]) > box[3]:
+        return False
+    n = max(2, int(math.hypot(b[0] - a[0], b[1] - a[1]) / 0.5))
+    for t in np.linspace(0, 1, n):
+        x, y = a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])
+        if box[0] <= x <= box[2] and box[1] <= y <= box[3]:
+            return True
+    return False
 
 
 def around(r, s):

@@ -13,6 +13,7 @@ and props, and the journey checks) are a plan in README.md, "v55", for the lanes
 
 Called by geo55.py (lay_all); not run on its own."""
 import math
+import os
 import numpy as np
 from scipy import ndimage as ndi
 import geo5 as g
@@ -128,13 +129,65 @@ def C(x, y):
 class Town:
     """One settlement: its streets, squares, buildings, yards and working outskirts."""
 
-    def __init__(self, T, name, centre, size, target, purpose, setting, neighbourhoods=(), gathering=(), seed=0):
+    def __init__(self, T, name, centre, size, target, purpose, setting, neighbourhoods=(), gathering=(), seed=None):
         self.T = T; self.name = name; self.centre = centre; self.size = size; self.target = target
         self.purpose = purpose; self.setting = setting; self.neighbourhoods = list(neighbourhoods); self.gathering = list(gathering)
         self.buildings = []; self.streets = []; self.spaces = []; self.outskirts = []
-        self.rng = np.random.default_rng(seed or abs(hash(name)) % 2 ** 31)
+        self.rng = np.random.default_rng(g.stable_name_seed(name, 2 ** 31) if seed is None else seed)
         self.level = 1; self.slope_max = 0.016
         self.cap = target[1] if isinstance(target, (tuple, list)) else target
+        if '_town_fit' in T:
+            self._fit_instance = len(T.setdefault('_town_fit_towns', []))
+            T['_town_fit_towns'].append(name)
+
+    def _fit_record(self, cells, part, *, ident=None, kinds=None, uniform=False, check_tiers=True,
+                    extra=None, accepted=None, candidate=False):
+        """Observe raw cells before mutation; never replace the normal placement decision."""
+        if '_town_fit' not in self.T:
+            return
+        c, r, w, h = cells
+        T = self.T
+        kinds = BUILDABLE if kinds is None else kinds
+        blocked, tiers = [], []
+        for rr in range(r, r + h):
+            for cc in range(c, c + w):
+                reasons = []
+                if not (0 <= rr < H and 0 <= cc < W):
+                    reasons.append('bounds')
+                else:
+                    if T['K'][rr, cc] not in kinds:
+                        reasons.append('kind:' + str(T['K'][rr, cc]))
+                    reasons += [key for key in ('taken', 'street', 'barrier', 'keepout') if T[key][rr, cc]]
+                    reasons += [key for key, mask in (extra or {}).items() if mask[rr, cc]]
+                    if part == 'base footprint' and not getattr(self, '_hand', False) and T['slope'][rr, cc] > self.slope_max:
+                        reasons.append('slope')
+                    tiers.append(int(T['tiers_pre'][rr, cc]))
+                if reasons:
+                    blocked.append({'cell': [cc, rr], 'reasons': reasons})
+        if part == 'base footprint' and not getattr(self, '_hand', False):
+            for rr in range(max(0, r - 1), min(H, r + h + 1)):
+                for cc in range(max(0, c - 1), min(W, c + w + 1)):
+                    if T['taken'][rr, cc] and not (r <= rr < r + h and c <= cc < c + w):
+                        blocked.append({'cell': [cc, rr], 'reasons': ['taken-clearance']})
+        tier_range = [min(tiers), max(tiers)] if tiers else None
+        tier_failure = bool(check_tiers and tiers and (max(tiers) != min(tiers) if uniform else max(tiers) - min(tiers) > self.level))
+        rec = {'town': self.name, 'instance': self._fit_instance, 'id': ident, 'part': part, 'cells': list(cells),
+               'blocked': blocked, 'tier_range': tier_range, 'tier_failure': tier_failure,
+               'normal_free_accepted': accepted,
+               'normal_bounds_failure': part == 'base footprint' and (r < 1 or c < 1 or r + h >= H - 1 or c + w >= W - 1)}
+        if candidate and accepted is False:
+            # Rejected search probes are not buildings. Keep their cell union and
+            # attempt count separately instead of flooding the footprint records.
+            out = T.setdefault('_town_fit_rejected', {}).setdefault(str(self._fit_instance), {'town': self.name, 'attempts': 0, 'cells': {}})
+            out['attempts'] += 1
+            for item in blocked:
+                key = ','.join(map(str, item['cell']))
+                out['cells'][key] = sorted(set(out['cells'].get(key, [])) | set(item['reasons']))
+            if tier_failure:
+                out.setdefault('tier_ranges', {})[str(tier_range)] = True
+        else:
+            T['_town_fit'].append(rec)
+        return rec
 
     # -------------------------------------------------------------------------------------- the masks
     def free(self, a, b, c, d, kinds=BUILDABLE):
@@ -402,6 +455,16 @@ class Town:
         x0 = int(round(x0 / CELL)) * CELL; y0 = int(round(y0 / CELL)) * CELL
         w = max(CELL, int(round(w / CELL)) * CELL); d = max(CELL, int(round(d / CELL)) * CELL)
         a, b = C(x0, y0); c, e = a + d // CELL, b + w // CELL
+        if '_town_fit' in self.T:
+            ok = self.free(a, b, c, e)
+            self._fit_record((b, a, e - b, c - a), 'base footprint',
+                             ident='base-' + str(len(self.buildings) + 1), accepted=ok, candidate=not getattr(self, '_hand', False))
+            if behind and ok:
+                dx, dy, dep, kind = behind
+                plot = (b, c if dy > 0 else a - dep // CELL, e - b, dep // CELL) if dy else \
+                    (e if dx > 0 else b - dep // CELL, a, dep // CELL, c - a)
+                self._fit_record(plot, 'requested base yard', check_tiers=False, kinds=BUILDABLE -
+                                 {'building', 'warehouse', 'tower', 'keep', 'hangar', 'terminal'} - ROUTE)
         if not self.free(a, b, c, e):
             return False
         T = self.T; K = T['K']
@@ -429,6 +492,7 @@ class Town:
             if ok.any():
                 rr, cc = np.nonzero(ok)
                 self.buildings[-1]['plot'] = [int(xa + cc.min()), int(ya + rr.min()), int(cc.max() - cc.min() + 1), int(rr.max() - rr.min() + 1), kind]
+                T.setdefault('authored_protected_cells', []).append(self.buildings[-1]['plot'][:4])
         return True
 
     def place(self, cx, cy, use, w=None, d=None, r=96, plot=None, counted=True, within=None):
@@ -463,6 +527,138 @@ class Town:
         if not ok:
             self.T.setdefault('hand_fail', []).append((self.name, form, x, y, w, d))
         return ok
+
+    def adopt(self, packet):
+        """Append source-authored proposals using the existing placement forms.
+
+        Metadata travels explicitly to town_plans; no generated JSON is read.
+        Fit-refused proposals remain deferred; retained placement/access/identity failures stop regeneration.
+        """
+        import copy
+        import town_plans
+        town_plans.validate_authored_packet(packet, town_plans.slug(self.name))
+        if hasattr(self, 'authored_plan'):
+            raise ValueError(f'{self.name}: duplicate authored packet')
+        protected = np.zeros(self.T['K'].shape, dtype=bool)
+        uses = list(self.T.get('authored_protected_cells', []))
+        uses += [b['plot'][:4] for b in self.buildings if b.get('plot')]
+        uses += [[o['box'][0] // CELL, o['box'][1] // CELL,
+                  (o['box'][2] - o['box'][0]) // CELL, (o['box'][3] - o['box'][1]) // CELL]
+                 for o in self.outskirts]
+        for c, r, w, h in uses:
+            protected[max(0, r):r + h, max(0, c):c + w] = True
+        reserved = np.zeros(self.T['K'].shape, dtype=bool)
+        wc, wr, ww, wh = packet['terrain_box_cells']
+        if '_town_fit' in self.T:
+            # Observe every proposal without placing any of them. This is not a
+            # substitute production layout: downstream occupancy is conditional.
+            for rec in packet['buildings']:
+                for part, cells, kinds in [('authored footprint', rec['footprint_cells'], BUILDABLE)] + \
+                        ([('authored yard', rec['plot_cells'], BUILDABLE - ROUTE)] if 'plot_cells' in rec else []):
+                    self._fit_record(cells, part, ident=rec['id'], kinds=kinds, uniform=part == 'authored footprint',
+                                     check_tiers=part == 'authored footprint',
+                                     extra={'reserved': reserved, 'protected': protected})
+                    c, r, w, h = cells
+                    reserved[max(0, r):min(H, r + h), max(0, c):min(W, c + w)] = True
+                    if not (wc <= c and wr <= r and c + w <= wc + ww and r + h <= wr + wh):
+                        self.T['_town_fit'][-1]['window_failure'] = True
+            self.T.setdefault('_town_fit_unplaced', []).extend(rec['id'] for rec in packet['buildings'])
+            return
+        retained = []
+        self.deferred_buildings = []
+        for rec in packet['buildings']:
+            candidate_reserved = reserved.copy()
+            try:
+                c, r, w, h = rec['footprint_cells']
+                if r + h > H or c + w > W:
+                    raise ValueError(f"{rec['id']}: authored footprint leaves the real terrain")
+                if not (wc <= c and wr <= r and c + w <= wc + ww and r + h <= wr + wh):
+                    raise ValueError(f"{rec['id']}: authored footprint leaves its terrain window")
+                sl = (slice(r, r + h), slice(c, c + w))
+                if not np.isin(self.T['K'][sl], list(BUILDABLE)).all() or any(
+                        self.T[key][sl].any() for key in ('taken', 'street', 'barrier', 'keepout')) or candidate_reserved[sl].any() or protected[sl].any():
+                    raise ValueError(f"{rec['id']}: authored footprint overlaps blocked ground or another use")
+                tiers = self.T['tiers_pre'][sl]
+                if tiers.max() != tiers.min():
+                    raise ValueError(f"{rec['id']}: authored footprint needs an unapproved terrain-tier change")
+                candidate_reserved[sl] = True
+                if 'plot_cells' in rec:
+                    pc, pr, pw, ph = rec['plot_cells']
+                    ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+                    if not (wc <= pc and wr <= pr and pc + pw <= wc + ww and pr + ph <= wr + wh):
+                        raise ValueError(f"{rec['id']}: authored plot leaves its terrain window")
+                    if pr + ph > H or pc + pw > W or not np.isin(self.T['K'][ps], list(BUILDABLE - ROUTE)).all() or any(
+                            self.T[key][ps].any() for key in ('taken', 'street', 'barrier', 'keepout')) or candidate_reserved[ps].any() or protected[ps].any():
+                        raise ValueError(f"{rec['id']}: authored plot is clipped or overlaps another use")
+                    candidate_reserved[ps] = True
+            except ValueError as error:
+                # Only our explicit fit refusals become proposals for later repair.
+                # Schema/programming failures and all retained placement checks still fail closed.
+                if str(error) not in (
+                        f"{rec['id']}: authored footprint leaves the real terrain",
+                        f"{rec['id']}: authored footprint leaves its terrain window",
+                        f"{rec['id']}: authored footprint overlaps blocked ground or another use",
+                        f"{rec['id']}: authored footprint needs an unapproved terrain-tier change",
+                        f"{rec['id']}: authored plot leaves its terrain window",
+                        f"{rec['id']}: authored plot is clipped or overlaps another use"):
+                    raise
+                self.deferred_buildings.append({'id': rec['id'], 'status': 'deferred',
+                                                'reason': str(error), 'proposal': copy.deepcopy(rec),
+                                                'source': copy.deepcopy(packet['source']),
+                                                'baseline': copy.deepcopy(packet['baseline'])})
+                continue
+            reserved = candidate_reserved
+            retained.append(rec)
+        # The existing JSON convention excludes landmarks and groups joined fronts.
+        # put() predates that convention and caps raw records instead; retain its
+        # geometry checks while checking authored capacity by the actual convention.
+        def contribution(raw):
+            if not raw['counted'] or raw.get('form') in town_plans.LANDMARK_FORMS or raw['use'] in town_plans.LANDMARK_TYPES:
+                return 0
+            n = len(raw.get('bays', [])) or 1
+            return (n + 4) // 5 if n >= 3 else 1
+        if sum(contribution(b) for b in self.buildings) + sum(b['counts_as'] for b in retained) > self.cap:
+            raise ValueError(f'{self.name}: authored buildings exceed the existing count guide')
+        self.authored_plan = copy.deepcopy(packet)
+        def defer(rec, why):
+            self.deferred_buildings.append({'id': rec['id'], 'status': 'deferred', 'reason': f"{rec['id']}: authored {why}",
+                                            'proposal': copy.deepcopy(rec), 'source': copy.deepcopy(packet['source']),
+                                            'baseline': copy.deepcopy(packet['baseline'])})
+        for rec in retained:
+            x, y, w, h = rec['rect_px']
+            a, b = C(x, y); c, d = a + h // CELL, b + w // CELL
+            tiers = self.T['tiers_pre'][a:c, b:d]
+            if tiers.size != w * h // (CELL * CELL) or tiers.max() != tiers.min():
+                defer(rec, 'footprint needs an unapproved terrain-tier change'); continue
+            if self.T['barrier'][a:c, b:d].any():
+                defer(rec, 'footprint intersects a barrier'); continue
+            behind = None
+            if 'plot_cells' in rec:
+                pc, pr, pw, ph = rec['plot_cells']
+                if pc + pw == x // CELL and pr == y // CELL and ph == h // CELL:
+                    behind = (-1, 0, pw * CELL, rec['plot'])
+                elif pc == (x + w) // CELL and pr == y // CELL and ph == h // CELL:
+                    behind = (1, 0, pw * CELL, rec['plot'])
+                elif pr + ph == y // CELL and pc == x // CELL and pw == w // CELL:
+                    behind = (0, -1, ph * CELL, rec['plot'])
+                elif pr == (y + h) // CELL and pc == x // CELL and pw == w // CELL:
+                    behind = (0, 1, ph * CELL, rec['plot'])
+                else:
+                    raise ValueError(f"{rec['id']}: plot is not an existing rectangular rear-plot form")
+            cap = self.cap
+            self.cap = max(cap, self.count() + int(rec['counted']))
+            try:
+                placed = self.hand(x, y, w, h, rec['form'], plot=behind, counted=rec['counted'])
+            finally:
+                self.cap = cap
+            if not placed:
+                defer(rec, 'placement failed the terrain or occupancy fit'); continue
+            raw = self.buildings[-1]
+            if 'plot_cells' in rec and raw.get('plot') != rec['plot_cells'] + [rec['plot']]:
+                raise ValueError(f"{rec['id']}: authored plot was clipped")
+            raw['authored_id'] = rec['id']
+            raw['door'] = list(rec['door_cells'])
+            raw['faces'] = rec['faces']
 
     def row(self, pts, uses, gap=(8, 24), setback=None, sides=(1, -1), plot=(40, 'garden'), counted=True, limit=None, jitter=8, start=20, reach=88):
         """Buildings along a street, on its sides, each fronting it (axis-aligned, as the game's buildings are)."""
@@ -558,6 +754,8 @@ class Town:
             self.buildings.append({'x': x0, 'y': y0, 'w': w, 'h': d, 'use': u, 'counted': True, 'plan': True})
             if door is not None:
                 self.buildings[-1]['zone_door'] = door
+            if '_town_fit' in self.T:
+                self._fit_record((x0 // CELL, y0 // CELL, w // CELL, d // CELL), 'fixed zone footprint', check_tiers=False)
             a, b = C(x0, y0); self.T['taken'][a:a + d // CELL, b:b + w // CELL] = True
             sub = self.T['K'][a:a + d // CELL, b:b + w // CELL]; sub[~np.isin(sub, list(ROUTE) + ['river', 'creek'])] = 'building'
 
@@ -588,15 +786,19 @@ class Town:
             y += rh
         if n:
             self.outskirts.append({'kind': kinds[0], 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'plots': n, 'why': why})
+            self.T.setdefault('authored_protected_cells', []).append([int(x0 // CELL), int(y0 // CELL), int((x1 - x0) // CELL), int((y1 - y0) // CELL)])
         return n
 
     def yard(self, x0, y0, x1, y1, kind='yard', name=None, why=None):
         T = self.T; K = T['K']
         a, b = C(x0, y0); c, e = C(x1, y1)
+        if '_town_fit' in T:
+            self._fit_record((b, a, e - b, c - a), 'requested working yard', ident=name, check_tiers=False)
         sub = K[a:c, b:e]
         ok = np.isin(sub, list(BUILDABLE)) & ~T['taken'][a:c, b:e] & ~T['street'][a:c, b:e] & ~T['barrier'][a:c, b:e] & ~T['keepout'][a:c, b:e]
         sub[ok & ~np.isin(sub, list(ROUTE))] = kind; T['used'][a:c, b:e] |= ok
         self.outskirts.append({'kind': kind, 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'why': why})
+        self.T.setdefault('authored_protected_cells', []).append([int(x0 // CELL), int(y0 // CELL), int((x1 - x0) // CELL), int((y1 - y0) // CELL)])
 
     # -------------------------------------------------------------------------------------- the record
     def count(self):
@@ -618,6 +820,174 @@ class Town:
                 'centre': [int(self.centre[0]), int(self.centre[1])], 'footprint_box': box, 'purpose': self.purpose, 'setting': self.setting,
                 'neighbourhoods': self.neighbourhoods, 'gathering_places': self.gathering, 'squares': self.spaces, 'outskirts': self.outskirts,
                 'streets': self.streets, 'buildings': [[b['x'], b['y'], b['w'], b['h'], b['use'], int(b['counted'])] for b in bs]}
+
+
+def scan_place(t, box, forms, n, near=5, counted=True, plot=None, step=16, shore=0, margin=1):
+    """Up to n buildings on free, buildable ground in box (x0, y0, x1, y1), each within `near` cells of a street or route
+    (so it has a way to its door) and, with shore > 0, at least that many cells from water (quay edges kept clear for
+    boats). forms cycles through (form, w, d). Returns how many were placed; nothing is forced."""
+    T = t.T; K = T['K']
+    rband = route_band(T)
+    way = np.zeros(K.shape, bool)                                   # this town's own streets (its doors face them)
+    for s_ in t.streets:
+        way |= _lm(s_['pts'], s_['width_px'])
+    nearm = ndi.binary_dilation(way, iterations=near)
+    wet = np.isin(K, ['sea', 'river', 'canal', 'surf', 'lagoon', 'shallows', 'channel', 'creek', 'falls', 'rapids'])
+    wetn = ndi.binary_dilation(wet, iterations=shore) if shore else np.zeros_like(wet)
+    x0, y0, x1, y1 = box; got = 0
+    for hy in range(int(y0), int(y1), step):
+        for hx in range(int(x0), int(x1), step):
+            if got >= n:
+                return got
+            for k_ in range(len(forms)):                                # the preferred form first, then the smaller ones
+                f, w_, d_ = forms[(got + k_) % len(forms)]
+                a_, b_ = C(hx, hy); c_, e_ = a_ + d_ // CELL, b_ + w_ // CELL
+                if a_ - margin < 0 or b_ - margin < 0 or c_ + margin > H or e_ + margin > W:
+                    continue
+                win = (slice(a_ - margin, c_ + margin), slice(b_ - margin, e_ + margin))
+                if not nearm[a_:c_, b_:e_].any() or T['taken'][win].any() or T['street'][win].any() or T['barrier'][win].any() or rband[win].any() \
+                        or T['keepout'][win].any() or wetn[a_:c_, b_:e_].any() or not np.isin(K[win], list(BUILDABLE - ROUTE)).all():
+                    continue
+                if t.hand(hx, hy, w_, d_, f, plot=plot, counted=counted):
+                    got += 1
+                    break
+    return got
+
+
+def route_band(T):
+    """The regional routes' planned bands (the plans draw an arrival 5 cells wide round its line): nothing new stands on them."""
+    m = np.zeros(T['K'].shape, bool)
+    for rn, v in T['route_px'].items():
+        if len(v) >= 2 and 'closed' not in rn:
+            m |= _lm(v, 48 if (g.ROUTES.get(rn) or (None, 'path'))[1] in ('road', 'bridge') else 32)
+    return m
+
+
+def _street_bridges(t):
+    """Every street over the canal or the Glint's channels: a bridge for its whole width (Neon's streets cross them)."""
+    K = t.T['K']
+    for s_ in t.streets:
+        if s_.get('route'):
+            continue
+        band = ndi.binary_dilation(_lm(s_['pts'], s_['width_px']), iterations=1) & np.isin(K, ['river', 'canal', 'rapids', 'falls', 'creek']) & (PX > 9400) & (PX < 11300) & (PY > 4400) & (PY < 5300)
+        K[band] = 'bridge'
+
+
+def close_front_gaps(t, form='row_house'):
+    """Every gap wider than one cell between two fronts on a continuous street: filled wall to wall by a row block of exactly
+    its width (fronts of 3 to 6 cells), or, where nothing can stand, crossed by a one-cell alley so it is a way through."""
+    T = t.T; filled = alleys = 0
+    rband = route_band(T)
+    for s_ in t.streets:
+        if s_.get('frontage') != 'continuous':
+            continue
+        hw = s_['width_px'] / 2
+        P_ = s_['pts']
+        for (ax, ay), (bx, by) in zip(P_, P_[1:]):
+            if abs(by - ay) <= 0.36 * abs(bx - ax):
+                axis, a0, a1, c = 'x', min(ax, bx), max(ax, bx), (ay + by) / 2
+            elif abs(bx - ax) <= 0.36 * abs(by - ay):
+                axis, a0, a1, c = 'y', min(ay, by), max(ay, by), (ax + bx) / 2
+            else:
+                continue
+            for side in (1, -1):
+                edge = math.ceil((c + hw) / CELL) * CELL if side > 0 else math.floor((c - hw) / CELL) * CELL
+                rc = int(edge // CELL) if side > 0 else int(edge // CELL) - 1
+                lo, hi = int(a0 // CELL), int(a1 // CELL)
+                line = T['taken'][rc, lo:hi] if axis == 'x' else T['taken'][lo:hi, rc]
+                idx = np.nonzero(line)[0]
+                if len(idx) < 2:
+                    continue
+                i = int(idx[0])
+                while i < idx[-1]:
+                    if line[i]:
+                        i += 1; continue
+                    j = i
+                    while j < len(line) and not line[j]:
+                        j += 1
+                    n = int(j - i)
+                    on_st = False                                       # (a set-back front is brought forward even across an alley)
+                    if n >= 2 and j <= idx[-1]:
+                        g0 = (lo + i) * CELL; ok = False
+                        # a front set back one cell from the street: brought forward to the street's edge
+                        back = rc + side
+                        seg_b = (T['taken'][back, lo + i:lo + j] if axis == 'x' else T['taken'][lo + i:lo + j, back])
+                        seg_f = (T['street'][rc, lo + i:lo + j] | T['barrier'][rc, lo + i:lo + j]) if axis == 'x' else \
+                            (T['street'][lo + i:lo + j, rc] | T['barrier'][lo + i:lo + j, rc])
+                        if seg_b.any():
+                            for b in t.buildings:
+                                bx0, by0, bx1, by1 = b['x'] // CELL, b['y'] // CELL, (b['x'] + b['w']) // CELL, (b['y'] + b['h']) // CELL
+                                fr_ok = lambda a_, b_: not (T['barrier'][rc, a_:b_] | T['taken'][rc, a_:b_]).any() if axis == 'x' \
+                                    else not (T['barrier'][a_:b_, rc] | T['taken'][a_:b_, rc]).any()
+                                if axis == 'x' and ((side < 0 and by1 == rc) or (side > 0 and by0 == rc + 1)) and bx0 < lo + j and bx1 > lo + i \
+                                        and fr_ok(bx0, bx1):
+                                    if side < 0:
+                                        b['h'] += CELL
+                                    else:
+                                        b['y'] -= CELL; b['h'] += CELL
+                                    T['taken'][rc, max(bx0, 0):bx1] = True; T['K'][rc, bx0:bx1] = T['K'][rc + side, bx0:bx1]
+                                elif axis == 'y' and ((side < 0 and bx1 == rc) or (side > 0 and bx0 == rc + 1)) and by0 < lo + j and by1 > lo + i \
+                                        and fr_ok(by0, by1):
+                                    if side < 0:
+                                        b['w'] += CELL
+                                    else:
+                                        b['x'] -= CELL; b['w'] += CELL
+                                    T['taken'][by0:by1, rc] = True; T['K'][by0:by1, rc] = T['K'][by0:by1, rc + side]
+                            ok = bool((T['taken'][rc, lo + i:lo + j] if axis == 'x' else T['taken'][lo + i:lo + j, rc]).all())
+                            if ok:
+                                filled += 1
+                        on_st = (T['street'][rc, lo + i:lo + j] if axis == 'x' else T['street'][lo + i:lo + j, rc]).any()
+                        ok = ok or on_st and bool(((T['taken'] | T['street'])[rc, lo + i:lo + j] if axis == 'x' else
+                                                   (T['taken'] | T['street'])[lo + i:lo + j, rc]).all())
+                        if n == 2 and not ok:                              # two cells: the front before it widened by one
+                            for b in t.buildings:
+                                bx0, by0, bx1, by1 = b['x'] // CELL, b['y'] // CELL, (b['x'] + b['w']) // CELL, (b['y'] + b['h']) // CELL
+                                hit = (axis == 'x' and bx1 == lo + i and by0 <= rc < by1) or (axis == 'y' and by1 == lo + i and bx0 <= rc < bx1)
+                                if not hit:
+                                    continue
+                                sl_ = (slice(by0, by1), slice(bx1, bx1 + 1)) if axis == 'x' else (slice(by1, by1 + 1), slice(bx0, bx1))
+                                if not (T['taken'][sl_] | T['street'][sl_] | T['barrier'][sl_]).any():
+                                    if axis == 'x':
+                                        b['w'] += CELL
+                                    else:
+                                        b['h'] += CELL
+                                    T['taken'][sl_] = True; T['K'][sl_] = T['K'][by0, bx0]
+                                    if b.get('bays'):
+                                        b['bays'][-1]['w_cells'] += 1
+                                    ok = True
+                                break
+                        if n > 24 and not ok:                              # a long gap: filled in blocks of at most 20 fronts' cells
+                            k_ = math.ceil(n / 20); sz = [n // k_ + (1 if q < n % k_ else 0) for q in range(k_)]; at = g0
+                            for sz_ in sz:
+                                for dd in (40, 32, 24):
+                                    xx, yy, ww, hh = ((at, edge if side > 0 else edge - dd, sz_ * CELL, dd) if axis == 'x' else
+                                                      (edge if side > 0 else edge - dd, at, dd, sz_ * CELL))
+                                    if not rband[yy // CELL:(yy + hh) // CELL, xx // CELL:(xx + ww) // CELL].any() and t.hand(xx, yy, ww, hh, form):
+                                        t.buildings[-1]['bays'] = [{'w_cells': sz_ // 2, 'storeys': 3, 'roof': 'flat'},
+                                                                   {'w_cells': sz_ - sz_ // 2, 'storeys': 2, 'roof': 'tin'}]
+                                        filled += 1
+                                        break
+                                at += sz_ * CELL
+                            ok = bool((T['taken'][rc, lo + i:lo + j] if axis == 'x' else T['taken'][lo + i:lo + j, rc]).all())
+                        if 3 <= n <= 24 and not ok:
+                            for dd in (40, 32, 24):
+                                xx, yy, ww, hh = ((g0, edge if side > 0 else edge - dd, n * CELL, dd) if axis == 'x' else
+                                                  (edge if side > 0 else edge - dd, g0, dd, n * CELL))
+                                if not rband[yy // CELL:(yy + hh) // CELL, xx // CELL:(xx + ww) // CELL].any() and t.hand(xx, yy, ww, hh, form):
+                                    b = t.buildings[-1]; k_, ws = n, []
+                                    while k_ > 0:
+                                        w_ = min(k_, (3, 5, 4, 6)[len(ws) % 4]) if k_ - min(k_, (3, 5, 4, 6)[len(ws) % 4]) != 1 else k_
+                                        ws.append(w_); k_ -= w_
+                                    b['bays'] = [{'w_cells': w_, 'storeys': 2 + q % 3, 'roof': ('flat', 'tin', 'tile')[q % 3]} for q, w_ in enumerate(ws)]
+                                    filled += 1; ok = True
+                                    break
+                        if not ok and not on_st:                           # a way through: an alley across the gap
+                            m = g0 + (n * CELL) // 2
+                            pts = ([(m, edge - side * 4), (m, edge + side * 40)] if axis == 'x' else [(edge - side * 4, m), (edge + side * 40, m)])
+                            t.street(pts, 'close', name=None)
+                            t.streets[-1]['alley'] = True; alleys += 1
+                    i = j
+    return filled, alleys
 
 
 def _lm(pts, width):
@@ -724,9 +1094,36 @@ def crossroads_plan(root):
              (ox + b['door'][0], oy + b['door'][1]) if b.get('door') else None) for b in p['buildings']], (ox, oy, ox + p['box'][2], oy + p['box'][3])
 
 
-def lay_all(T, X):
+def _authored_inputs(authored, allowed):
+    """Check deliberate caller input; defaults never consult proposed authoring data."""
+    if authored is None:
+        return {}
+    if not isinstance(authored, dict) or set(authored) - allowed:
+        raise ValueError('unknown authored town key for this producer entrypoint')
+    if not authored:
+        return authored
+    import town_plans
+    for pid, packet in authored.items():
+        town_plans.validate_authored_packet(packet, pid)
+    return authored
+
+
+def _adopt_requested(town, authored, pid):
+    """Dispatch only a selected packet; Town.adopt verifies its actual target and ground."""
+    if not authored:
+        return
+    import town_plans
+    if town_plans.slug(town.name) != pid:
+        raise ValueError('authored dispatch target town mismatch')
+    if pid in authored:
+        town.adopt(authored[pid])
+
+
+def lay_all(T, X, *, authored=None):
     """Every settlement's footprint, in the order of Matt's allocation, then the smaller places. X: the geo55 module."""
+    authored = _authored_inputs(authored, {'cinderwick', 'hearthold'})
     towns = {}
+    V56 = getattr(X, 'REVISION', 'v55') == 'v56'                      # Matt's 2 Nov pass: the v56 map only (v55 stays as it was)
     rng = np.random.default_rng(55)
 
     # ---------------------------------------------------------------- Crossroads (large): the market town at the routes' hub
@@ -836,6 +1233,10 @@ def lay_all(T, X):
     t.yard(2600, 2120, 2700, 2210, name='the ore yard', why="the Lode's ore, down the mule track, waiting for the train")
     t.fields(2330, 2600, 2580, 2780, ('orchard', 'field2'), name='the river gardens', why='irrigated from the Amber: vegetables, figs, fodder', dry=True, size=(64, 128))
     t.fill(38, 260, ('adobe', 'adobe', 'workshop', 'adobe', 'house'))
+    if V56:                                                          # liveliness (Matt, 2 Nov; a western main street)
+        t.cap = 45
+        scan_place(t, (2168, 2096, 2912, 2800), [('adobe', 48, 40), ('house', 80, 48), ('adobe', 40, 32)], 5, plot=(0, 1, 24, 'yard'), near=3)
+        t.yard(2400, 2480, 2480, 2520, name='the trading post yard', why='wagons unloading hides, flour and ore; the Saturday market on the boards')
     towns['Dust Gulch'] = t
 
     # ---------------------------------------------------------------- Palm Spring (medium): the oasis
@@ -867,6 +1268,10 @@ def lay_all(T, X):
     t.fields(3080, 2880, 3480, 3080, ('orchard', 'field2', 'orchard'), name='the date gardens', why='date palms, figs and vegetables on the channels', dry=True, size=(64, 128))
     t.fields(3150, 2560, 3420, 2640, ('orchard',), name='the north grove', why='palms along the Willow Run', dry=True, size=(64, 112), hedge=False)
     t.fill(18, 170, ('adobe', 'house', 'adobe'), plot=(24, 'yard'))
+    if V56:                                                          # liveliness (an oasis town round its pool)
+        t.cap = 22
+        scan_place(t, (3024, 2552, 3648, 3072), [('adobe', 48, 40), ('adobe', 40, 32)], 2, plot=(0, 1, 16, 'yard'), near=3)
+        t.yard(3320, 2800, 3400, 2832, kind='plaza', name='the palm market', why='dates, water jars and cloth under the palms beside the pool')
     towns['Palm Spring'] = t
 
     # ---------------------------------------------------------------- Fernhollow (medium): the timber town in the Fern hills
@@ -930,9 +1335,20 @@ def lay_all(T, X):
     t.yard(8300, 2770, 8470, 2860, name='the railway yard', why='the terminus sidings, the engine shed and the coal stage')
     t.fields(8360, 2430, 8520, 2560, ('field2',), name='the allotments', why="the terraces' vegetable plots", size=(48, 80))
     t.fill(26, 260, ('terrace', 'workshop', 'townhouse', 'house'), box=(7900, 2250, 8560, 2900))
+    for nm in (('Pit Row', 'Terrace Lane', 'Engine Lane', 'Station Lane') if V56 else ()):   # liveliness (a railway works town)
+        t.cap = 45
+        q = next((s_['pts'] for s_ in t.streets if s_['name'] == nm), None)
+        if q:
+            t.frontage(q, sides=(-1, 1), form='row_house', block=(96, 160), depth=(32, 40), alley=(0, 8), limit=3,
+                       why="the works' brick terraces: the workers' houses wall to wall by the works, as in a railway town",
+                       props=('chimney pots', 'coal bunker', 'washing line', 'bicycle'), roofs=('slate', 'slate', 'tile'))
+    if V56:
+        scan_place(t, (7880, 2272, 8300, 2872), [('workshop', 96, 56), ('house', 80, 48)], 3, plot=(0, 1, 16, 'yard'), near=3)   # not into Charcoal Hollow's clearing
     towns['Cogsworth'] = t
 
-    towns['Hearthold'] = hearthold(T, X)
+    towns['Hearthold'] = hearthold(T, X, authored={k: v for k, v in authored.items() if k == 'hearthold'})
+    if V56:
+        hearthold_v56(T, towns['Hearthold'])
 
     # ---------------------------------------------------------------- Cinderwick (medium): the black-sand cove
     clear_paint(T, 2250, 5700, 2750, 5960)
@@ -949,7 +1365,7 @@ def lay_all(T, X):
     T['keepout'] |= north
     t.street([(2290, 5872), (2450, 5868), (2610, 5878)], 'side', name='the Strand')
     t.street([(2370, 5790), (2500, 5798), (2620, 5806)], 24, name='Kiln Lane')
-    t.street([(2440, 5800), (2450, 5860)], 24, name='Quay Lane')
+    t.street([(2440, 5800), (2450, 5860), (2496, 5860), (2496, 6000)], 24, name='Quay Lane')
     t.street([(2270, 5800), (2330, 5760), (2400, 5730)], 24, name='Back Lane')
     t.street([(2420, 5752), (2530, 5745), (2640, 5758)], 24, name='Kiln Row')
     t.street([(2624, 5760), (2624, 5880)], 'lane', name='Kiln Steps')
@@ -957,11 +1373,15 @@ def lay_all(T, X):
     t.row(t.streets[1]['pts'], ['workshop', 'townhouse', 'cottage'], limit=7, plot=None, gap=(2, 8))
     t.row(route_part(T, 'Ember Way', (2200, 5700, 2420, 5860)), ['cottage', 'house'], limit=3, start=10)
     t.yard(2620, 5760, 2720, 5840, name='the kilns', why='charcoal from the dead forest; black-sand glass')
+    if V56:
+        t.square(2552, 5892, 40, 14, name='the harbour square')
+        t.yard(2496, 5880, 2624, 5912, kind='quay', name='the stone quay', why="the fishing boats tie up here; nets dry on the quay's edge")
     t.row(t.streets[3]['pts'], ['cottage', 'house'], limit=4)
     t.row(t.streets[4]['pts'], ['cottage', 'house', 'workshop'], limit=4)
     t.row(route_part(T, 'Ash Coast', (2480, 5760, 2760, 5900)), ['cottage', 'house'], limit=3, start=10)
     t.fill(17, 380, ('cottage', 'boathouse', 'townhouse', 'workshop'), box=(1990, 5725, 2880, 6040), reach=260, plot=None)
     T['keepout'] &= ~north
+    _adopt_requested(t, authored, 'cinderwick')
     towns['Cinderwick'] = t
 
     # ---------------------------------------------------------------- Lagoon Landing (medium): the isles' town on its lagoon
@@ -998,6 +1418,11 @@ def lay_all(T, X):
     towns['Highgarth'] = highgarth(T, X)
     towns.update(neon(T, X, rng))
     towns.update(smaller(T, X))
+    if V56:                                                          # Matt, 4 Nov: each small town's shape from why it is there
+        if os.environ.get('HAND_SNAP'):                              # a development cache: the ground just before the hand towns
+            import pickle
+            pickle.dump((T, towns), open(os.environ['HAND_SNAP'], 'wb'), protocol=4)
+        hand_towns_v56(T, towns)
     return towns
 
 
@@ -1006,10 +1431,11 @@ HEARTHOLD_GATE = (2296, 2328)                                      # the main ga
 HEARTHOLD_POSTERN = (5224, 5240)                                   # the postern in the west wall (y): walled up, opens later
 
 
-def hearthold(T, X):
+def hearthold(T, X, *, authored=None):
     """Hearthold, authored by hand: the walled town on the rock between the lava flows, its gate, Gate Street down to the gate
     market, Smiths' Row against the cooled lava, and the home streets as terraces stepping down the slope (Matt's brief; Claude
     A's review of 28 Oct). Every coordinate is in world px on the soft grid."""
+    authored = _authored_inputs(authored, {'hearthold'})
     K = T['K']
     clear_paint(T, 1900, 5000, 2700, 5760, kinds=('building', 'yard', 'garden', 'plaza', 'lane', 'retain', 'stall', 'hut'))
     old = np.isin(K, ['castlewall', 'keep']) & (PX > 1850) & (PX < 2500) & (PY > 4950) & (PY < 5500)
@@ -1093,6 +1519,265 @@ def hearthold(T, X):
     # the edges: the vines on the cooled ash east of the wall, the lower fields between the town and Cinderwick
     t.fields(2480, 5120, 2620, 5400, ('orchard',), name='the vines', why="vines on the cooled ash of the rock's warm east side", size=(64, 112), hedge=False)
     t.fields(2140, 5744, 2600, 5800, ('field', 'field2'), name='the lower fields', why='barley and beans between the town and the cove', size=(80, 144))
+    _adopt_requested(t, authored, 'hearthold')
+    return t
+
+
+def _clear_v56(T, t, keep=lambda b: False):
+    """Take a town's generated buildings (and their plots) off the ground, keeping the authored ones and any keep(b)."""
+    K = T['K']; out = []
+    for b in t.buildings:
+        if b.get('authored_id') or keep(b):
+            out.append(b); continue
+        a, c_ = C(b['x'], b['y']); sl = (slice(a, a + b['h'] // CELL), slice(c_, c_ + b['w'] // CELL))
+        K[sl] = T['K0'][sl]; T['taken'][sl] = False
+        if b.get('plot'):
+            pc, pr, pw, ph = b['plot'][:4]; ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+            K[ps] = T['K0'][ps]
+    t.buildings[:] = out
+
+
+def _strip_v56(T, t, keep_kinds=('field', 'field2', 'orchard', 'fallow')):
+    """Lift a town's own layout off the ground (its generated buildings and their plots, its streets, squares and yards), so
+    it can be laid again by hand; its fields stay. Only cells this town painted are restored (other paint in the box stays)."""
+    K = T['K']; K0 = T['K0']
+    keep_m = np.zeros(K.shape, bool)                                   # the routes through the town stay as they are, bridges and all
+    for st in t.streets:
+        if st.get('route') and len(st['pts']) >= 2:
+            keep_m |= band_mask(st['pts'], st['width_cells'], st['metric'])
+
+    def restore(m):
+        m = m & ~keep_m
+        nat = np.where(np.isin(K0, ['wild', 'ancient', 'thicket', 'felltree']), 'broadleaf', K0)
+        nat = np.where(np.isin(nat, ['road', 'path', 'stair']), 'meadow', nat)
+        K[m] = nat[m]; T['street'][m] = False; T['used'][m] = False
+    _clear_v56(T, t)
+    for st in t.streets:
+        if st.get('route') or len(st['pts']) < 2:
+            continue
+        m = band_mask(st['pts'], st['width_cells'], st['metric'])
+        restore(m & (np.isin(K, [st['kind'], 'lane']) | ((K == 'bridge') & np.isin(K0, ['creek', 'river', 'channel', 'canal']))))
+        T['street'][m & ~np.isin(K, list(ROUTE))] = False
+    for sp in t.spaces:
+        x0, y0, w, h = sp['cells']; m = np.zeros_like(T['taken']); m[y0:y0 + h, x0:x0 + w] = True
+        restore(m & np.isin(K, ['plaza', 'garden', 'yard', 'lane']))
+    keep = []
+    for o in t.outskirts:
+        if o['kind'] in keep_kinds:
+            keep.append(o); continue
+        x0, y0, x1, y1 = o['box']; m = np.zeros_like(T['taken']); m[int(y0 // CELL):int(y1 // CELL), int(x0 // CELL):int(x1 // CELL)] = True
+        restore(m & (K == o['kind']))
+    t.streets[:] = [st for st in t.streets if st.get('route')]
+    t.spaces[:] = []; t.outskirts[:] = keep
+
+
+def _beach_back(T, x0, y0, x1, y1, keep):
+    """The back of a beach a town stands on: sand farther than keep px from the sea goes back to grass (the town is built
+    behind the strand, never on it)."""
+    K = T['K']
+    a, b, c, d = int(y0 // CELL), int(x0 // CELL), int(y1 // CELL), int(x1 // CELL)
+    sub = K[a:c, b:d]
+    wet = np.isin(sub, ['sea', 'surf', 'river', 'creek', 'pool'])
+    far = ndi.distance_transform_edt(~wet) * CELL > keep
+    m = (sub == 'sand') & far & ~T['taken'][a:c, b:d]
+    sub[m] = 'meadow'
+    return int(m.sum())
+
+
+def _dry_ok(T, x, y, w, d, clear=16):
+    """A hand footprint on dry land only: no beach, water, route or its verge, building, street, barrier or keep-out."""
+    a, b = C(x, y); c, e = a + int(round(d / CELL)), b + int(round(w / CELL))
+    if a < 2 or b < 2 or c >= H - 2 or e >= W - 2:
+        return False
+    K = T['K']
+    if not np.isin(K[a:c, b:e], list(BUILDABLE - {'sand', 'blacksand', 'building', 'lane', 'plaza', 'yard'})).all():
+        return False
+    if T['taken'][a:c, b:e].any() or T['street'][a:c, b:e].any() or T['barrier'][a:c, b:e].any() or T['keepout'][a:c, b:e].any():
+        return False
+    if '_lines' in T and T['_lines'][a:c, b:e].any():                 # never on a rail line or a river's line (geo55.standing_lines)
+        return False
+    r = clear // CELL
+    win = K[max(0, a - r):c + r, max(0, b - r):e + r]
+    return not np.isin(win, list(ROUTE) + ['sea', 'surf', 'river', 'creek', 'pool', 'canal', 'channel']).any()
+
+
+def _hand_ok(t, x, y, w, d, form, clear=16, plot=None):
+    x = int(round(x / CELL)) * CELL; y = int(round(y / CELL)) * CELL
+    if _dry_ok(t.T, x, y, w, d, clear):
+        return t.hand(x, y, w, d, form, plot=plot)
+    return False
+
+
+def _street_row(t, x0, x1, yfun, kinds, sides=(-1, 1), gap=4, half=12, n=99, clear=8):
+    """Fronts shoulder to shoulder along a street running east-west (yfun(x) its centre line), on its north (-1) and south
+    (+1) sides, each set back half the street's width; a front that will not fit slides along a little."""
+    placed = 0
+    for side in sides:
+        x = x0; i = 0
+        while x < x1 and placed < n:
+            form, w, d = kinds[i % len(kinds)]
+            yc = yfun(x + w / 2)
+            if yc is None:
+                x += 8; continue
+            y = yc - half - d if side < 0 else yc + half
+            ok = False
+            for dy in (0, -8 * side * -1, 8 * side, 16 * side):
+                if _hand_ok(t, x, y + dy, w, d, form, clear):
+                    ok = True; break
+            if ok:
+                placed += 1; i += 1; x += w + gap
+            else:
+                x += 8
+    return placed
+
+
+def _hug(t, x0, x1, y0, y1, kinds, gap=4, n=99, up=False):
+    """A row snug against an edge (a road's verge or the back of a beach): going along x, each front at the first dry spot
+    searched from y0 toward y1 (up: from y1 back toward y0), so the row follows the edge it faces."""
+    placed = 0; x = x0; i = 0
+    while x < x1 and placed < n:
+        form, w, d = kinds[i % len(kinds)]
+        ys = range(int(y0), int(y1) - d + 1, CELL)                 # y1: the lowest the row's backs (or fronts) may reach
+        for y in (reversed(ys) if up else ys):
+            if _dry_ok(t.T, x, y, w, d, 0):
+                t.hand(x, y, w, d, form); placed += 1; i += 1; x += w + gap; break
+        else:
+            x += CELL
+    return placed
+
+
+def hand_towns_v56(T, towns):
+    """v56, Matt 4 Nov ("really think about the shape ... of the cities"), hand-authored as Highgarth was: each town's
+    footprint drawn from why it is there. Gullwick: a crescent of fishers' houses inside the coast trail's curve behind the
+    beach, the Strand along that curve, a slipway down to the water. Driftwood: a strand row behind the beach either side of
+    the Sleepwater's mouth, the quay at the river. Lullford: one row both sides of the Lull Road where it runs down to the
+    bridge over the leat, the mill on the leat. Dust Gulch: one long main street of false fronts, the depot at its east end
+    by the goods yard, the corrals at its west end. Palm Spring: a ring round the spring pool, the caravanserai on the
+    Drover's Road."""
+    cot, house, boat = ('cottage', 64, 40), ('house', 80, 48), ('boathouse', 72, 56)
+    lines = np.zeros(T['K'].shape, bool)
+    for nm, a, b, _, way, via in g.SHORTCUTS:                         # the rail and cart lines, their beds three cells wide
+        if 'ferry' not in nm and 'steamer' not in nm:
+            lines |= g.line_mask(g.chaikin([g.pt(a)] + list(via) + [g.pt(b)], 3), 24)
+    for nm, pts in (T.get('river_px') or {}).items():
+        if len(pts) >= 2:
+            lines |= g.line_mask(pts, 8)
+    T['_lines'] = lines
+    t = towns.get('Gullwick')
+    if t is not None:
+        _strip_v56(T, t)
+        _beach_back(T, 7760, 5150, 8460, 5360, 56)                    # the strand is the cove's own: the town stands behind it
+        t.cap = 10                                                     # the crescent inside the Coast Path's curve behind the strand
+        row = [cot, ('cottage', 56, 40), house, cot, boat, cot, house]
+        n = _hug(t, 8040, 8280, 5170, 5288, row, gap=6, up=True)       # its foot: each house as near the strand as dry land allows
+        for y in (5136, 5184):                                         # its east horn, up the inside of the curve
+            for x in range(8296, 8180, -CELL):
+                if _dry_ok(T, x, y, 56, 40, 0):
+                    t.hand(x, y, 56, 40, 'cottage'); break
+        for y in (5176, 5232):                                         # and two on the outside of the curve, on the cove's east shore
+            for x in range(8392, 8424, CELL):
+                if _dry_ok(T, x, y, 64, 40, 0):
+                    t.hand(x, y, 64, 40, 'cottage'); break
+        t.street([(7992, 5300), (8344, 5300), (8344, 5040)], 'lane', name='the Strand')   # on the coast trail's own curve
+        t.yard(8064, 5304, 8104, 5344, kind='quay', name='the slipway', why='the boats are hauled up the beach on rollers')
+    t = towns.get('Driftwood')
+    if t is not None:
+        _strip_v56(T, t)
+        _beach_back(T, 6150, 5030, 6720, 5140, 24)
+        t.cap = 12
+        t.street([(6168, 5112), (6664, 5112)], 'lane', name='the Strand')    # the strand lane along the back of the beach
+        n = _hug(t, 6160, 6700, 4984, 5100, [cot, house, boat, cot, ('cottage', 56, 40), house, cot, boat], gap=4, n=11, up=True)
+        if n < 8:                                                      # a few behind the strand row where it is short
+            _hug(t, 6160, 6400, 4920, 5040, [cot, ('cottage', 56, 40), house], gap=8, n=8 - n, up=True)
+        # 7 is what the strand holds: the creek, the Sleepwater (and its line) and the Valley lane south cut it into three short
+        # runs, and a house set further back stands 14 to 15 cells up a close, past the village rule (8)
+        t.yard(6448, 5124, 6504, 5148, kind='quay', name='the quay', why="the ferry's landing and the boats, at the Sleepwater's mouth")
+    t = towns.get('Lullford')
+    if t is not None:
+        _strip_v56(T, t)
+        t.cap = 16                                                     # one row on the Lull Road down to the bridge over the leat
+        fr = [('shop', 64, 48), ('townhouse', 48, 48), ('inn', 112, 64), ('townhouse', 48, 56), ('cottage', 64, 40), ('house', 80, 48),
+              ('townhouse', 48, 48), ('shop', 72, 48)]
+        n = _hug(t, 8296, 8760, 4040, 4250, fr, gap=2, n=8, up=True)    # the north side, backs to the fields
+        _hug(t, 8296, 8760, 4140, 4360, fr[3:] + fr[:3], gap=2, n=14 - n)   # the south side, down to the bridge
+        for (x, y) in ((8792, 4424), (8800, 4432), (8792, 4440), (8608, 4392)):   # the mill on the leat (the creek to the Lull)
+            if _hand_ok(t, x, y, 80, 56, 'mill', clear=0):
+                break
+    t = towns.get('Dust Gulch')
+    if t is not None:
+        _strip_v56(T, t)
+        dry_out(T, 2000, 2050, 3100, 2850)
+        t.cap = 45
+        clear_paint(T, 2000, 2050, 3100, 2700, kinds=('yard', 'garden', 'plaza', 'lane'))   # the generated town's yards and lanes
+        t.street([(2136, 2336), (2896, 2336)], 'main', name='Front Street')   # the one long main street, packed earth (map55.EARTH_STREETS)
+        t.street([(2136, 2240), (2896, 2240)], 'lane', name='Back Lane')      # behind the north row
+        t.street([(2136, 2240), (2136, 2336)], 'lane', name='Corral Lane')
+        t.street([(2896, 2240), (2896, 2336)], 'lane', name='Depot Lane')
+        t.street([(2136, 2336), (2136, 2496)], 'lane', name='Corral Lane (to the trail)')
+        t.street([(2896, 2336), (2896, 2600)], 'lane', name='Depot Road')    # down to the Drover's Road, past the water tower
+        _hand_ok(t, 2920, 2248, 56, 176, 'depot', clear=0)             # the depot at the east end, beside the desert line's platform
+        fronts = [('frontshop', 80, 48), ('townhouse', 40, 48), ('saloon', 104, 64), ('townhouse', 48, 48), ('frontshop', 80, 56), ('townhouse', 40, 48),
+                  ('public', 88, 56), ('townhouse', 48, 48)]
+        _street_row(t, 2152, 2880, lambda x: 2336, fronts, sides=(-1,), gap=2, half=24, n=14, clear=0)   # false fronts both sides
+        _street_row(t, 2152, 2880, lambda x: 2336, fronts[3:] + fronts[:3], sides=(1,), gap=2, half=24, n=14, clear=0)
+        homes = [('adobe', 48, 40), ('cottage', 64, 40), ('adobe', 40, 40), ('house', 80, 48)]
+        _street_row(t, 2152, 2880, lambda x: 2240, homes, sides=(-1,), gap=8, half=12, n=12, clear=0)   # the homes behind, on the back lane
+        _hand_ok(t, 2760, 2168, 80, 56, 'chapel', clear=0)
+        _hug(t, 2160, 2440, 2416, 2488, [('adobe', 48, 40), ('adobe', 40, 40), ('cottage', 56, 40)], gap=12, n=5)   # adobes on the trail behind
+        for (x, y) in ((2008, 2392), (2008, 2200), (2008, 2464)):
+            _hand_ok(t, x, y, 112, 64, 'barn', clear=0)
+        t.yard(2040, 2280, 2120, 2384, name='the corrals', why='pens for the caravans and the mule trains, at the west end of Front Street')
+        t.yard(2920, 2440, 2976, 2488, name='the water tower yard', why="the depot's tank, filled from the Amber")
+        t.yard(3016, 2240, 3088, 2440, name='the goods yard', why="the desert line's sidings and the ore bins, across the line from the depot")
+    t = towns.get('Palm Spring')
+    if t is not None:
+        _strip_v56(T, t)
+        dry_out(T, 2950, 2500, 3650, 3150, keep=48)
+        t.cap = 22                                                     # the ring round the spring pool, every house facing the water
+        t.street([(3064, 2592), (3400, 2592)], 'lane', name='Spring Ring')     # its north side, over the stream on a footbridge
+        t.street([(3400, 2592), (3400, 2816)], 'lane', name='Spring Ring (east)')
+        t.street([(3064, 2592), (3064, 2696)], 'lane', name='Spring Ring (west)')
+        t.to_route(3400, 2816, "Drover's Road", name='the east gate')
+        t.to_route(3064, 2696, "Drover's Road", name='the west gate')
+        ring = [(3080, 2612, 48, 40, 'adobe'), (3136, 2620, 48, 40, 'adobe'), (3192, 2620, 40, 40, 'adobe'),                 # north, facing south
+                (3352, 2612, 32, 48, 'adobe'), (3352, 2664, 32, 48, 'adobe'), (3352, 2716, 32, 48, 'adobe'), (3352, 2768, 32, 48, 'adobe'),   # east
+                (3040, 2752, 48, 40, 'adobe'), (3056, 2796, 48, 40, 'adobe'),                                                    # across the road
+                (3248, 2912, 64, 48, 'shop'), (3320, 2912, 48, 40, 'adobe'),
+                (3424, 2744, 112, 64, 'inn'), (3424, 2664, 112, 64, 'barn'), (3424, 2600, 64, 48, 'shop')]     # the caravanserai on the road
+        for (x, y, w, d, f) in ring:
+            _hand_ok(t, x, y, w, d, f, clear=0)
+        t.yard(3200, 2560, 3240, 2600, kind='garden', name='the palm garden', why='date palms watered from the spring')
+    T.pop('_lines', None)
+
+
+def hearthold_v56(T, t):
+    """Hearthold in the v56 map (Matt, 2 Nov): the houses Potters' Lane put on the cove's upper street go (that street is
+    Cinderwick's), the lower town's free ground gets detached homes with yards, the gate market its stalls."""
+    K = T['K']
+    keep = []
+    for b in t.buildings:
+        if b['y'] >= 5724 and not b.get('authored_id'):
+            a, c_ = C(b['x'], b['y']); sl = (slice(a, a + b['h'] // CELL), slice(c_, c_ + b['w'] // CELL))
+            K[sl] = T['K0'][sl]; T['taken'][sl] = False
+            if b.get('plot'):
+                pc, pr, pw, ph = b['plot'][:4]; ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+                K[ps] = T['K0'][ps]
+        else:
+            keep.append(b)
+    t.buildings[:] = keep
+    t.cap = max(t.cap, 45)
+    scan_place(t, (2000, 5360, 2800, 5690), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 48), ('workshop', 88, 56)], 6,
+               plot=(0, 1, 16, 'yard'), near=3)                    # the lower town's detached homes and yards where there is room
+    scan_place(t, (2000, 5096, 2824, 5400), [('townhouse', 48, 48), ('shop', 64, 48)], 3, plot=(0, 1, 16, 'yard'), near=2)
+    t.yard(2280, 5460, 2360, 5500, kind='plaza', name='the market stalls', why="the walled town's market: bread, ash-grown wine, iron goods from the smiths")
+    # round 10 (Matt, 8 Nov: "put some more thought into it"; the brief is in docs/codex/map-feedback-v56.md): the ore comes down
+    # the cart line to the ore yard at the head of Smiths' Row on the heat side, the forges quench from tanks beside it, the iron
+    # goes out of the gate and down Gate Street to the coast road; the walled terraces step down the spur, retaining walls drawn
+    t.yard(2520, 5392, 2592, 5432, name='the ore yard', why="the Lode's ore off the mine cart, at the head of Smiths' Row")
+    t.yard(2600, 5392, 2664, 5432, kind='pool', name='the quench tanks', why='the forges quench here: rain off the rock and water carted up from the spring line')
+    t.to_route(2312, 5716, 'Ember Way', 'main', name='Gate Street (down to the coast road)')
+    t.terrace_walls = [[[2192, 5184], [2448, 5184]], [[2192, 5296], [2448, 5296]],     # the keep's, the hall's and the barracks' terraces
+                       [[2124, 5582], [2604, 5582]], [[2124, 5702], [2760, 5702]]]     # the lower town's: Ash Lane, then Potters' Lane
     return t
 
 
@@ -1562,9 +2247,10 @@ def charcoal_hollow(T, X):
     return {'Charcoal Hollow': t}
 
 
-def launch_cape(T, X):
+def launch_cape(T, X, *, authored=None):
     """Launch Cape's facility: the pad at the headland's tip with its service apron, the assembly hall, workshops and stores
     near the cape's middle, a heath buffer round the pad, the road down the cape."""
+    authored = _authored_inputs(authored, {'launch-cape'})
     K = T['K']
     t = Town(T, 'Launch Cape', X.PAD, 'facility', (4, 8),
              "the Company's launch site: rockets go up over open sea, away from people (W8); the assembly hall, the workshops and the "
@@ -1582,6 +2268,7 @@ def launch_cape(T, X):
     t.spaces.append({'kind': 'pad', 'name': 'the pad', 'x': X.PAD[0], 'y': X.PAD[1], 'rx': 72, 'ry': 60})
     t.cluster(12060, 6090, 170, ['hangar', 'workshop', 'warehouse', 'workshop', 'public', 'warehouse'], 6, plot=(16, 'yard'))
     t.yard(11960, 5960, 12250, 6000, name='the works yard', why='carts and the transporter road to the pad')
+    _adopt_requested(t, authored, 'launch-cape')
     return {'Launch Cape': t}
 
 
@@ -1625,3 +2312,1201 @@ def smaller(T, X):
         t.fill(n, 160, ('cottage', 'house', 'workshop'), reach=160 if size in ('town', 'facility') else 48, box=(box[0] - 60, box[1] - 60, box[2] + 60, box[3] + 60), plot=pl)
         out[nm] = t
     return out
+
+
+# Exact, UNAPPROVED Y15 inputs. These source pins identify the separately reviewed proposals;
+# regeneration never reads its generated JSON as authoring input. Matt must approve placement.
+# ------------------------------------------------------------------------------------------ v56: coherent authored street blocks
+# Inventory is pinned to303@4984438d; source forms/bays retain40/72 counted units.
+# Positions below are new. No generated JSON is read by this production path.
+RETAINED = {'crossroads': 25, 'neon-harbour': 72}   # counted buildings from the retained inventories (round 10: Crossroads retires 15, the cross thins out)
+FEEDBACK_BUILDINGS = {'crossroads': [(1, 'cottage', 80, 40, []),
+                (2, 'public', 96, 40, []),
+                (3, 'house', 96, 40, []),
+                (4, 'shop', 72, 48, []),
+                (5, 'shop', 72, 48, []),
+                (6, 'workshop', 88, 56, []),
+                (7, 'cottage', 72, 48, []),
+                (8,
+                 'row_house',
+                 80,
+                 24,
+                 [{'w_cells': 6, 'storeys': 2, 'roof': 'tile'}, {'w_cells': 4, 'storeys': 2, 'roof': 'thatch'}]),
+                (9,
+                 'row_house',
+                 112,
+                 48,
+                 [{'w_cells': 8, 'storeys': 1, 'roof': 'thatch'}, {'w_cells': 6, 'storeys': 1, 'roof': 'tile'}]),
+                (10, 'cottage', 48, 72, []),
+                (11, 'house', 56, 88, []),
+                (13, 'shop', 48, 88, []),
+                (23, 'cottage', 72, 40, []),
+                (24, 'cottage', 40, 72, []),
+                (25, 'house', 56, 96, []),
+                (26, 'cottage', 40, 56, []),
+                (27, 'cottage', 40, 64, []),
+                (31, 'inn', 128, 72, []),
+                (32, 'house', 48, 88, []),
+                (33, 'house', 96, 56, []),
+                (35, 'shop', 64, 56, []),
+                (37, 'shop', 48, 64, []),
+                (38, 'cottage', 56, 48, []),
+                (39, 'cottage', 64, 48, []),
+                (40, 'cottage', 56, 40, [])],
+ 'neon-harbour': [(1,
+                   'row_house',
+                   88,
+                   40,
+                   [{'w_cells': 3, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 5, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 3, 'storeys': 3, 'roof': 'flat'}]),
+                  (2,
+                   'row_house',
+                   112,
+                   32,
+                   [{'w_cells': 6, 'storeys': 3, 'roof': 'tile'}, {'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (3,
+                   'row_house',
+                   88,
+                   32,
+                   [{'w_cells': 6, 'storeys': 3, 'roof': 'tin'}, {'w_cells': 5, 'storeys': 2, 'roof': 'tin'}]),
+                  (4,
+                   'row_house',
+                   104,
+                   32,
+                   [{'w_cells': 4, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 5, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 4, 'storeys': 3, 'roof': 'tile'}]),
+                  (5,
+                   'row_house',
+                   80,
+                   40,
+                   [{'w_cells': 6, 'storeys': 2, 'roof': 'flat'}, {'w_cells': 4, 'storeys': 2, 'roof': 'flat'}]),
+                  (6, 'row_house', 24, 32, [{'w_cells': 3, 'storeys': 1, 'roof': 'tin'}]),
+                  (7,
+                   'row_house',
+                   88,
+                   40,
+                   [{'w_cells': 5, 'storeys': 1, 'roof': 'flat'}, {'w_cells': 6, 'storeys': 1, 'roof': 'flat'}]),
+                  (8, 'row_house', 32, 24, [{'w_cells': 4, 'storeys': 3, 'roof': 'flat'}]),
+                  (9, 'row_house', 40, 40, [{'w_cells': 5, 'storeys': 3, 'roof': 'tile'}]),
+                  (10,
+                   'row_house',
+                   104,
+                   40,
+                   [{'w_cells': 5, 'storeys': 1, 'roof': 'tile'}, {'w_cells': 8, 'storeys': 2, 'roof': 'tin'}]),
+                  (11, 'row_house', 40, 40, [{'w_cells': 5, 'storeys': 1, 'roof': 'tile'}]),
+                  (12,
+                   'row_house',
+                   104,
+                   40,
+                   [{'w_cells': 7, 'storeys': 1, 'roof': 'flat'}, {'w_cells': 6, 'storeys': 3, 'roof': 'flat'}]),
+                  (13,
+                   'row_house',
+                   104,
+                   32,
+                   [{'w_cells': 4, 'storeys': 2, 'roof': 'tile'},
+                    {'w_cells': 6, 'storeys': 1, 'roof': 'tin'},
+                    {'w_cells': 3, 'storeys': 1, 'roof': 'tin'}]),
+                  (14, 'row_house', 48, 32, [{'w_cells': 6, 'storeys': 1, 'roof': 'tin'}]),
+                  (15,
+                   'row_house',
+                   80,
+                   48,
+                   [{'w_cells': 5, 'storeys': 1, 'roof': 'tile'}, {'w_cells': 7, 'storeys': 3, 'roof': 'tile'}]),
+                  (16, 'row_house', 48, 40, [{'w_cells': 6, 'storeys': 1, 'roof': 'flat'}]),
+                  (17, 'row_house', 72, 40, [{'w_cells': 9, 'storeys': 2, 'roof': 'tile'}]),
+                  (18, 'row_house', 32, 40, [{'w_cells': 4, 'storeys': 2, 'roof': 'tile'}]),
+                  (19,
+                   'row_house',
+                   80,
+                   32,
+                   [{'w_cells': 6, 'storeys': 2, 'roof': 'flat'}, {'w_cells': 4, 'storeys': 2, 'roof': 'flat'}]),
+                  (20, 'row_house', 24, 24, [{'w_cells': 3, 'storeys': 2, 'roof': 'tile'}]),
+                  (21, 'row_house', 32, 24, [{'w_cells': 4, 'storeys': 2, 'roof': 'tile'}]),
+                  (22, 'row_house', 48, 40, [{'w_cells': 6, 'storeys': 3, 'roof': 'tin'}]),
+                  (23, 'row_house', 48, 32, [{'w_cells': 6, 'storeys': 2, 'roof': 'flat'}]),
+                  (24, 'row_house', 56, 32, [{'w_cells': 7, 'storeys': 1, 'roof': 'flat'}]),
+                  (25, 'row_house', 64, 32, [{'w_cells': 8, 'storeys': 2, 'roof': 'flat'}]),
+                  (26, 'row_house', 32, 32, [{'w_cells': 4, 'storeys': 1, 'roof': 'tile'}]),
+                  (27,
+                   'row_tenement',
+                   112,
+                   40,
+                   [{'w_cells': 8, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 1, 'roof': 'flat'}]),
+                  (28,
+                   'row_tenement',
+                   120,
+                   40,
+                   [{'w_cells': 8, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 3, 'roof': 'flat'},
+                    {'w_cells': 4, 'storeys': 2, 'roof': 'flat'}]),
+                  (29,
+                   'row_tenement',
+                   112,
+                   32,
+                   [{'w_cells': 4, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 7, 'storeys': 1, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 2, 'roof': 'flat'}]),
+                  (30,
+                   'row_tenement',
+                   120,
+                   40,
+                   [{'w_cells': 4, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 5, 'storeys': 3, 'roof': 'flat'},
+                    {'w_cells': 6, 'storeys': 3, 'roof': 'flat'}]),
+                  (31,
+                   'row_tenement',
+                   112,
+                   32,
+                   [{'w_cells': 6, 'storeys': 3, 'roof': 'flat'}, {'w_cells': 8, 'storeys': 3, 'roof': 'flat'}]),
+                  (32, 'row_tenement', 40, 32, [{'w_cells': 5, 'storeys': 1, 'roof': 'flat'}]),
+                  (33,
+                   'row_tenement',
+                   112,
+                   32,
+                   [{'w_cells': 6, 'storeys': 1, 'roof': 'flat'}, {'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (34,
+                   'row_tenement',
+                   112,
+                   40,
+                   [{'w_cells': 5, 'storeys': 3, 'roof': 'tin'},
+                    {'w_cells': 3, 'storeys': 3, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 3, 'storeys': 1, 'roof': 'tin'}]),
+                  (35,
+                   'row_tenement',
+                   96,
+                   32,
+                   [{'w_cells': 3, 'storeys': 1, 'roof': 'tin'},
+                    {'w_cells': 4, 'storeys': 2, 'roof': 'flat'},
+                    {'w_cells': 5, 'storeys': 2, 'roof': 'flat'}]),
+                  (36,
+                   'row_tenement',
+                   112,
+                   40,
+                   [{'w_cells': 8, 'storeys': 3, 'roof': 'flat'}, {'w_cells': 6, 'storeys': 1, 'roof': 'flat'}]),
+                  (37, 'terrace', 32, 152, []),
+                  (38, 'aptrow', 40, 104, []),
+                  (39, 'terrace', 40, 120, []),
+                  (40, 'terrace', 40, 144, []),
+                  (41, 'terrace', 104, 32, []),
+                  (42, 'terrace', 104, 40, []),
+                  (43, 'terrace', 128, 32, []),
+                  (44, 'terrace', 104, 40, []),
+                  (45, 'aptrow', 104, 40, []),
+                  (46, 'longwarehouse', 224, 80, []),
+                  (47, 'longwarehouse', 224, 64, []),
+                  (48, 'longwarehouse', 184, 72, []),
+                  (49, 'workshop', 120, 64, []),
+                  (50, 'warehouse', 120, 88, []),
+                  (51, 'longwarehouse', 192, 80, []),
+                  (52, 'workshop', 104, 64, []),
+                  (53, 'warehouse', 128, 72, []),
+                  (54, 'slab', 168, 88, []),
+                  (55, 'bigtower', 104, 112, []),
+                  (56, 'slab', 168, 104, []),
+                  (57, 'slab', 160, 112, []),
+                  (58, 'slab', 96, 152, []),
+                  (59, 'slab', 120, 184, []),
+                  (60, 'slab', 112, 144, []),
+                  (61, 'slab', 168, 88, []),
+                  (62, 'bigtower', 104, 104, []),
+                  (63, 'slab', 176, 104, []),
+                  (64, 'skyport', 208, 96, []),
+                  (65, 'row_house', 64, 40, [{'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (66, 'row_house', 64, 24, [{'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (67,
+                   'row_house',
+                   80,
+                   32,
+                   [{'w_cells': 4, 'storeys': 1, 'roof': 'tile'}, {'w_cells': 6, 'storeys': 3, 'roof': 'tin'}]),
+                  (68, 'row_house', 64, 40, [{'w_cells': 8, 'storeys': 3, 'roof': 'tile'}]),
+                  (69, 'row_house', 56, 32, [{'w_cells': 7, 'storeys': 3, 'roof': 'tile'}]),
+                  (70, 'row_house', 24, 24, [{'w_cells': 3, 'storeys': 2, 'roof': 'tin'}]),
+                  (71, 'row_house', 32, 40, [{'w_cells': 4, 'storeys': 2, 'roof': 'tile'}]),
+                  (72, 'row_house', 40, 40, [{'w_cells': 5, 'storeys': 2, 'roof': 'flat'}]),
+                  (73,
+                   'row_house',
+                   64,
+                   40,
+                   [{'w_cells': 5, 'storeys': 2, 'roof': 'tin'}, {'w_cells': 3, 'storeys': 1, 'roof': 'flat'}]),
+                  (74, 'row_house', 56, 40, [{'w_cells': 7, 'storeys': 2, 'roof': 'tile'}]),
+                  (75,
+                   'row_house',
+                   96,
+                   32,
+                   [{'w_cells': 7, 'storeys': 2, 'roof': 'tile'}, {'w_cells': 5, 'storeys': 3, 'roof': 'tin'}]),
+                  (76, 'row_house', 24, 32, [{'w_cells': 3, 'storeys': 1, 'roof': 'tile'}]),
+                  (77, 'row_house', 64, 32, [{'w_cells': 8, 'storeys': 2, 'roof': 'tile'}]),
+                  (78, 'row_house', 64, 32, [{'w_cells': 8, 'storeys': 1, 'roof': 'flat'}]),
+                  (79,
+                   'row_house',
+                   96,
+                   32,
+                   [{'w_cells': 5, 'storeys': 1, 'roof': 'tin'},
+                    {'w_cells': 3, 'storeys': 1, 'roof': 'tile'},
+                    {'w_cells': 4, 'storeys': 3, 'roof': 'flat'}]),
+                  (80,
+                   'row_house',
+                   88,
+                   40,
+                   [{'w_cells': 3, 'storeys': 1, 'roof': 'tile'},
+                    {'w_cells': 3, 'storeys': 2, 'roof': 'tin'},
+                    {'w_cells': 5, 'storeys': 3, 'roof': 'flat'}]),
+                  (81, 'row_house', 32, 32, [{'w_cells': 4, 'storeys': 1, 'roof': 'tile'}])]}
+
+
+def _widen(form, ow, od, bays, fill, seed=0):
+    """A row block widened toward a full street front (Matt's Eastward street): more fronts sharing walls, still one row of at
+    most 5 fronts (counted 1 under Matt's rule) and within its form's width range; None if it cannot widen."""
+    if not bays or not fill or form not in ('row_house', 'row_tenement', 'row_shop'):
+        return None
+    hi = BLD[form][0][1]
+    target = min(hi, int(round(ow * fill / CELL)) * CELL)
+    nb = [dict(q) for q in bays]
+    if nb[0]['w_cells'] >= 7 and len(nb) < 5:                        # a long front split: a narrow shop beside a wider house
+        w0 = nb[0]['w_cells']
+        nb[0:1] = [dict(nb[0], w_cells=3 + seed % 2), dict(nb[0], w_cells=w0 - 3 - seed % 2, storeys=nb[0].get('storeys', 2) + 1)]
+    k = 0
+    while sum(q['w_cells'] for q in nb) * CELL < target and len(nb) < 5:
+        room = target // CELL - sum(q['w_cells'] for q in nb)
+        used = {q['w_cells'] for q in nb}
+        cyc = [(4, 6, 3, 5, 7)[(len(nb) + k + ow // 8 + seed + q) % 5] for q in range(5)]
+        w = next((c_ for c_ in cyc if c_ <= room and c_ not in used), None) or next((c_ for c_ in cyc if c_ <= room), 0)
+        if w < 3:
+            break
+        nb.append({'w_cells': w, 'storeys': 2 + len(nb) % 2, 'roof': nb[len(nb) % len(bays)].get('roof', 'flat')}); k += 1
+    along = sum(q['w_cells'] for q in nb) * CELL
+    return (along, nb) if along > ow else None
+
+
+def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'potted plants', 'water butt'), fill=None, gap=None):
+    """Lay the pinned buildings along deliberately authored street edges.
+
+    A row is (axis, fixed coordinate, start, end, side, street name). Gaps are
+    actual side streets/water/door clearances, never random radial infill.
+    Overflow rows receive only records the original rows could not place. Their
+    extra capacity must not redistribute the already-laid original frontages.
+    Failed placement remains a failure; no footprint is painted over water.
+    """
+    import copy
+    queue = list(records)
+    placed = []
+    primary_count = len(rows)
+    rows = list(rows) + list(overflow_rows)
+    for row_index, (axis, fixed, lo, hi, side, name) in enumerate(rows):
+        if not queue:
+            break
+        pts = [(lo, fixed), (hi, fixed)] if axis == 'x' else [(fixed, lo), (fixed, hi)]
+        covering = []
+        for old in town.streets:
+            for a, b in zip(old['pts'], old['pts'][1:]):
+                if ((axis == 'x' and a[1] == b[1] == fixed and min(a[0], b[0]) < hi and max(a[0], b[0]) > lo) or
+                        (axis == 'y' and a[0] == b[0] == fixed and min(a[1], b[1]) < hi and max(a[1], b[1]) > lo)):
+                    covering.append(old)
+        if covering:
+            street = max(covering, key=lambda q: q['width_px'])
+        else:
+            town.street(pts, 'lane', name=name)
+            street = town.streets[-1]
+        street['frontage'] = 'continuous' if town.name.startswith('Neon Harbour') and 'docks' not in town.name and 'Company' not in town.name else 'detached'
+        if street['frontage'] == 'continuous':
+            street['max_gap_cells'] = 1
+            street['frontage_reason'] = 'street-facing blocks with shared courts; alleys and water remain open'
+            street['frontage_props'] = []
+        edge = int(fixed + side * street['width_px'] / 2)
+        edge = (math.ceil(edge / CELL) if side > 0 else math.floor(edge / CELL)) * CELL   # on the cell line: fronts flush with the street
+        pos = int(lo)
+        row_start = len(placed)
+        rows_left = (primary_count if row_index < primary_count else len(rows)) - row_index
+        row_target = math.ceil(len(queue) / rows_left)
+        fails_here = 0
+        row_fill = fill
+        if fill:                                                     # widen this row's share to fill its street edge
+            share = queue[:row_target]
+            orig = sum((r_[2] if r_[4] else max(r_[2], r_[3])) + 8 for r_ in share)
+            row_fill = max(1.0, min(fill, (hi - lo) * 0.92 / max(1, orig)))
+        while queue and pos < hi and len(placed) - row_start < row_target:
+            ident, form, ow, od, bays = queue[0]
+            along, depth = (ow, od) if bays else (max(ow, od), min(ow, od))
+            wide = _widen(form, ow, od, bays, row_fill, ident) if street['frontage'] == 'continuous' else None
+            if pos + along > hi:
+                break
+            ok_ = False
+            split = None
+            if street['frontage'] == 'continuous' and bays and len(bays) == 1 and bays[0]['w_cells'] >= 7:
+                wc_ = bays[0]['w_cells']                               # one long front read as two of different widths
+                split = (along, [dict(bays[0], w_cells=3), dict(bays[0], w_cells=wc_ - 3, storeys=bays[0].get('storeys', 2) + 1)])
+            for along_, bays_ in ([wide] if wide and pos + wide[0] <= hi else []) + [split or (along, bays)]:
+                x, y, w, h = ((pos, edge if side > 0 else edge - depth, along_, depth) if axis == 'x' else
+                              (edge if side > 0 else edge - depth, pos, depth, along_))
+                if town.hand(x, y, w, h, form, plot=None):
+                    ok_ = True; along, bays = along_, bays_
+                    break
+            if ok_:
+                b = town.buildings[-1]
+                b['layout_id'] = ('neon-harbour' if town.name.startswith('Neon Harbour') else 'crossroads') + f'-b{ident:03d}'
+                if bays:
+                    b['bays'] = copy.deepcopy(bays)
+                    b['frontage'] = name
+                if street['frontage'] == 'continuous':
+                    for i, kind in enumerate(props[:2]):
+                        at = [pos + min(along - 4, 8 + 16 * i), edge + side * 4] if axis == 'x' else [edge + side * 4, pos + min(along - 4, 8 + 16 * i)]
+                        street['frontage_props'].append({'kind': kind, 'at_px': at})
+                queue.pop(0); placed.append(b['layout_id'])
+                # A side alley every fourth building, detached yards otherwise.
+                pos += along + (gap if gap is not None else (8 if street['frontage'] == 'continuous' else 24))
+                if len(placed) % 4 == 0:
+                    mid = pos + 8
+                    alley = ([(mid, edge - side * 4), (mid, edge + side * (depth + 16))] if axis == 'x' else
+                             [(edge - side * 4, mid), (edge + side * (depth + 16), mid)])
+                    town.street(alley, 'close', name=None)
+                    town.streets[-1]['alley'] = True
+                    pos += 16
+            else:
+                # Search only along this street edge, preserving the intended block.
+                pos += CELL; fails_here += 1
+        if os.environ.get('ROWS_DEBUG'):
+            print('ROW', town.name.split(': ')[-1], name, side, (lo, hi), 'placed', len(placed) - row_start, 'refused', fails_here, 'left', len(queue))
+        # Metadata does not claim a continuous street where no fronts were placed.
+        if not street.get('frontage_props') and street['frontage'] == 'continuous':
+            street['frontage'] = 'detached'; street.pop('max_gap_cells', None)
+    if queue:
+        if '_town_fit' in town.T:
+            town.T.setdefault('_town_fit_incomplete', []).append({'town': town.name, 'instance': town._fit_instance, 'unplaced_street_blocks': [r[0] for r in queue]})
+        else:
+            # A fill building no row edge can take (terrain or occupancy refused every position) is deferred, logged with
+            # its proposal and reason; the placed ones keep every check (Claude A, 2 Nov: one pass, never relaxed).
+            pre = 'neon-harbour' if town.name.startswith('Neon Harbour') else 'crossroads'
+            for ident, form, ow, od, bays in queue:
+                bid = f'{pre}-b{ident:03d}'
+                town.__dict__.setdefault('deferred_fill', []).append({
+                    'id': bid, 'status': 'deferred', 'kind': 'fill row building', 'town': town.name,
+                    'reason': f'{bid}: no position on its authored rows passes the terrain and occupancy fit',
+                    'proposal': {'form': form, 'size_px': [ow, od], 'bays': copy.deepcopy(bays) if bays else None},
+                    'counts_as': (0 if form in ('keep', 'watchkeep', 'temple_hall', 'pagoda', 'tower', 'bigtower', 'station', 'depot',
+                                                'skyport', 'warehouse', 'longwarehouse', 'hall', 'hangar', 'barracks', 'chapel')
+                                  else ((len(bays) + 4) // 5 if bays and len(bays) >= 3 else 1))})
+    return placed
+
+
+def _thin_rows(town, records, rows, gaps):
+    """A road thinning out (Crossroads, round 10): its houses laid from the near end outward, alternating sides, each one
+    the next gap farther from the last on its side; a house its side refuses tries the other side from there on."""
+    nxt = [r[2] for r in rows]                                        # where each side's next house may start
+    done = [0] * len(rows)
+    for k, rec in enumerate(records):
+        first = min(range(len(rows)), key=lambda j: (nxt[j] - rows[j][2], (j - k) % len(rows)))   # the side least far out
+        order = [first] + [j for j in range(len(rows)) if j != first]
+        prim = order[0]; ax, fx, lo, hi, sd, nm = rows[prim]
+        over = [(rows[j][0], rows[j][1], nxt[j], rows[j][3], rows[j][4], rows[j][5]) for j in order[1:]]
+        n0 = len(town.buildings)
+        if not _feedback_rows(town, [rec], [(ax, fx, nxt[prim], hi, sd, nm)], overflow_rows=over, gap=0):
+            continue
+        b = town.buildings[n0]
+        j = next(j for j in order if (b['y' if rows[j][0] == 'x' else 'x'] < rows[j][1]) == (rows[j][4] < 0))
+        end = b['x'] + b['w'] if rows[j][0] == 'x' else b['y'] + b['h']
+        nxt[j] = end + gaps[min(done[j], len(gaps) - 1)]; done[j] += 1
+
+
+def _feedback_snapshot(T, boxes):
+    windows = [(slice(y0 // CELL, y1 // CELL), slice(x0 // CELL, x1 // CELL)) for x0, y0, x1, y1 in boxes]
+    arrays = {k: [v[sl].copy() for sl in windows] for k, v in T.items()
+              if isinstance(v, np.ndarray) and v.shape == T['K'].shape}
+    routes = {nm: list(T['route_px'][nm]) for nm in ('Quay Street', 'Old Bridges', 'Cape Road', 'Lull Road', 'Delta Road', 'Valley lane south')}
+    return windows, arrays, routes
+
+
+def _feedback_restore(T, saved, boxes):
+    windows, arrays, routes = saved
+    for key, pieces in arrays.items():
+        for sl, value in zip(windows, pieces):
+            T[key][sl] = value
+    T['route_px'].update(routes)
+    for key in ('levelled', 'authored_protected_cells'):
+        if key in T:
+            # Retain records outside the two re-authored regions.
+            scale = CELL if key == 'authored_protected_cells' else 1
+            T[key] = [q for q in T[key] if not any(x0 <= q[0] * scale < x1 and y0 <= q[1] * scale < y1
+                                                   for x0, y0, x1, y1 in boxes)]
+    T['hand_fail'] = [q for q in T.get('hand_fail', []) if not (q[0] == 'Crossroads' or q[0].startswith('Neon Harbour'))]
+
+
+def _feedback_crossroads(T, X):
+    plan, _ = crossroads_plan(X.ROOT)
+    t = Town(T, 'Crossroads', (6296, 3536), 'large', (30, 45),
+             'the valley market, mill and halt: a compact civic core, mixed street fronts, courts and garden edges',
+             'the dry terrace west of the Sleepwater bend, with the mill reach below the existing square',
+             neighbourhoods=[('the square (built)', 'existing square, well, bakery, library and trades', 6296, 3536),
+                             ('Mill End', 'millers, cottages and granary courts on the lower river terrace', 6400, 4056),
+                             ('Halt Road', 'homes with rear gardens beside the goods road', 5968, 4024),
+                             ('Eastgate', 'inns, shops and homes at the eastern road', 6960, 3416),
+                             ('West Lane', "foresters' cottages at the woodland edge", 5944, 3600)],
+             gathering=[('the square', 6296, 3536), ('the mill green', 6400, 3880), ('the halt yard', 5968, 4304)], seed=101)
+    t.cap = RETAINED['crossroads']
+    t.fixed(plan)
+    for i, b in enumerate(t.buildings, 1):
+        b['layout_id'] = f'crossroads-b{i:03d}'
+    import json, os
+    zone = json.load(open(os.path.join(X.ROOT, 'game/data/plans/crossroads.json')))
+    zx, zy = zone['origin_on_canvas']
+    for r in zone['routes']:
+        t.street([(zx + a, zy + b) for a, b in r['points']], 'side' if r['kind'] == 'road' else 'lane',
+                 name=r['id'].replace('_', ' '), route='the Crossroads zone plan')
+    for q in zone['places']:
+        if q['kind'] in ('square', 'green'):
+            x, y, w, h = q['rect']
+            t.square(zx + x + w / 2, zy + y + h / 2, w / 2, h / 2,
+                     kind='plaza' if q['kind'] == 'square' else 'garden', name=f"the {q['id']} (the zone as built)")
+    # Main routes join the existing zone at its boundary; the river goes round it.
+    set_route(T, 'Valley lane south', (6100, 3780, 6500, 4416), [(6256, 3808), (6256, 4384)], 24, 'path')
+    # v56 (Matt, 8 Nov: the building lists may change): the north and west valley lanes leave the square by the zone's own
+    # streets, not through its houses (b001 and b005 stood on them): north up the garden walk, round the bakery's corner, on
+    # to the circle; west out along the halt road and down West Lane to the halt.
+    if 'Valley lane north' in T['route_px']:
+        set_route(T, 'Valley lane north', (6150, 2900, 6400, 3460),
+                  [(6296, 3448), (6296, 3320), (6232, 3320), (6224, 3160), (6256, 3040), (6280, 2960)], 24, 'path')
+    if 'Valley lane east' in T['route_px']:                           # and east out along the harbour road to Market Lane
+        set_route(T, 'Valley lane east', (6280, 3360, 6800, 3600),
+                  [(6296, 3536), (6416, 3576), (6616, 3576), (6616, 3416), (6760, 3416)], 24, 'path')
+    if 'Valley lane west' in T['route_px']:
+        set_route(T, 'Valley lane west', (5780, 3400, 6320, 4120),
+                  [(6296, 3448), (6176, 3552), (5984, 3552), (5984, 3808), (5968, 3816), (5968, 4064), (5840, 4072), (5800, 4100)], 24, 'path')
+    t.street([(6256, 3808), (6256, 4384)], 'main', name='Mill Street')    # the south arm
+    t.street([(5968, 3808), (5968, 4320)], 'side', name='Halt Road')       # the west arm, down to the halt
+    t.street([(5808, 3936), (6256, 3936)], 'side', name='the halt link')
+    t.street([(5984, 3440), (5984, 3808)], 'lane', name='West Lane')
+    t.street([(6608, 3416), (7232, 3416)], 'side', name='Market Lane')     # the east arm
+    t.street([(6616, 3416), (6616, 3576)], 'lane', name='the market steps')
+    t.to_route(6992, 3416, 'Foothill Road', 'side', name='the east road')
+    # A market cross (Matt, 4 Nov: "really think about the shape of the cities"): the houses packed round the square, then
+    # thinning out along the four roads, each run farther apart than the last, into the fields between the arms. Each run is
+    # (inventory indices, rows, gap between houses in px).
+    inv = {r_[0]: r_ for r_ in FEEDBACK_BUILDINGS['crossroads']}
+    arms = [   # (ids from the square outward, the row(s) along the road, the gaps between houses from the square outward)
+        ([11, 10, 13], [('y', 6256, 3832, 4384, -1, 'Mill Street west')], (8, 16, 32)),   # south: the river is its east side
+        ([31, 35, 32, 37, 8, 9, 33], [('x', 3416, 6632, 7224, -1, 'Market Lane north'),
+                                                         ('x', 3416, 6632, 7224, 1, 'Market Lane south')], (8, 8, 16, 32, 48, 64)),
+        ([38, 39, 40, 23], [('y', 5984, 3568, 3808, -1, 'West Lane gardens'), ('y', 5984, 3568, 3808, 1, 'West Lane east')], (8, 8, 16)),
+        ([24, 25, 27, 26], [('y', 5968, 3824, 4320, -1, 'Halt Road west'), ('y', 5968, 3824, 4320, 1, 'Halt Road east')], (40, 96, 160))]
+    for ids, rows, gaps in arms:
+        _thin_rows(t, [inv[i] for i in ids], rows, gaps)
+    t.buildings.sort(key=lambda b_: b_.get('layout_id', ''))
+    t.square(6400, 3864, 48, 32, kind='garden', name='the mill green')
+    t.yard(5840, 4304, 6080, 4368, name='the halt yard', why='loading carts, animal tethering and the water tank beside the halt approach')
+    t.fields(5736, 3896, 5840, 4336, ('field', 'orchard'), name='the halt gardens', why='rear gardens taper to working fields')
+    t.fields(6008, 3968, 6224, 4400, ('field', 'orchard'), name='the south-west plots', why='between the west and south arms: plots where the houses give out')
+    t.fields(6296, 3896, 6880, 4400, ('field', 'orchard'), name='the mill farms', why='grain and orchard plots between the south and east arms, beyond the last homes')
+    t.fields(6640, 3464, 7200, 3880, ('field', 'field2'), name='the east pastures', why='the east road runs out between fields')
+    return t
+
+
+BASIN = {'centre_x': 10700, 'centre': (10700, 5600), 'radius': 420, 'reclaim': (10200, 4520, 11240, 5600),
+         'moles': {'west': [(10292, 5560), (10292, 5736)], 'east': [(11108, 5560), (11108, 5736)]},
+         'islands': {'Chapel Islet': (10700, 5336, 72), 'the shard-light platform': (10700, 5540, 64)},
+         'canal_y': 4600, 'canal_x': (9440, 10680), 'falls_x': (10680, 10872), 'east_coast': (4240, 5660, 12424)}
+
+
+def _orth(pts):
+    """A polyline put on the soft grid: each step split into an x run and a y run (a terraced curve)."""
+    out = [(int(round(pts[0][0] / CELL)) * CELL + 4, int(round(pts[0][1] / CELL)) * CELL + 4)]
+    for x, y in pts[1:]:
+        x, y = int(round(x / CELL)) * CELL + 4, int(round(y / CELL)) * CELL + 4
+        px, py = out[-1]
+        if x != px and y != py:
+            out.append((x, py))
+        if (x, y) != out[-1]:
+            out.append((x, y))
+    return out
+
+
+def neon_basin(T):
+    """Neon Harbour's harbour (Matt, 2 Nov: "more like a half moon"): a crescent bay open wide to the sea on the south, its curved
+    north shore wrapped by the city, symmetrical about x 10700. Its two horns end in breakwater moles, the lighthouse on the east
+    one (the docks' horn), the Company's beacon on the west one; the opening between them is well over half the bay's width.
+    Chapel Islet (the chapel-fort and the floating market) and the shard-light platform stand inside the crescent. Quays and the
+    promenade follow the curve and piers fan out from it like spokes. The old enclosed basin's ground is land for the city.
+    Canalside's canal runs straight along y 4600 into the Glint's channel; the east coast gets a natural shoreline. Every array the
+    layout and the checks read is updated."""
+    K, K0 = T['K'], T['K0']
+    B = BASIN; (cx, cy_), Rb = B['centre'], B['radius']
+    rx0, ry0, rx1, ry1 = B['reclaim']
+    R = (PX >= rx0) & (PX < rx1) & (PY >= ry0) & (PY < ry1)
+    bay = (np.hypot(PX - cx, PY - cy_) <= Rb) & (PY < ry1)
+    # the moles: breakwaters curving in from the horns, with a square head for the lighthouse and the beacon
+    moles = np.zeros_like(R); heads = {}
+    for side, ((ax, ay), (bx, by)) in B['moles'].items():
+        L = math.hypot(bx - ax, by - ay); tx, ty = (bx - ax) / L, (by - ay) / L
+        t_ = np.clip((PX - ax) * tx + (PY - ay) * ty, 0, L)
+        moles |= np.hypot(PX - (ax + t_ * tx), PY - (ay + t_ * ty)) <= 24
+        moles |= (np.abs(PX - bx) <= 64) & (np.abs(PY - by) <= 64)
+        heads[side] = (int(bx), int(by))
+    keep = np.isin(K, ['falls', 'river', 'rapids'])
+    oldcanal = (K == 'canal')
+    cx0, cx1 = B['canal_x']; cy = B['canal_y']
+    canal = (PX >= cx0) & (PX < cx1) & (PY >= cy - 12) & (PY < cy + 12)
+    falls = np.zeros_like(canal)
+    for fx in B['falls_x']:                                            # the Glint's falls run on to the bay in stone channels
+        falls |= (PX >= fx) & (PX < fx + 24) & (PY >= 4496) & (PY < cy_ - Rb + 80)
+    island = np.zeros_like(R)
+    for nm, (ix, iy, ir) in B['islands'].items():
+        island |= np.hypot(PX - ix, PY - iy) <= ir
+    water = ((R & bay) | canal | (falls & ~keep)) & ~island & ~moles
+    land = ((R & ~bay & ~keep) | moles | island | (oldcanal & ~canal)) & ~water
+    # the east coast: a natural shoreline of coves and headlands instead of the grid's straight edge (never west of x 12408)
+    ey0, ey1, ex = B['east_coast']
+    yy_ = PY[:, 0]
+    wob = 14 * np.sin(yy_ / 61.0 + 1.3) + 7 * np.sin(yy_ / 23.0 + 0.4)
+    # two headlands running out to the world's edge (the map draws them on past it) and coves between them
+    import grow56                                                      # one profile for the world and the map past it
+    shape_ = grow56.east_shore_profile(yy_)
+    coast_x = np.clip(12470 + wob + shape_, 12440, 12560)[:, None]
+    band_ = (PY >= ey0) & (PY < ey1) & (PX >= 12380)
+    land |= band_ & (PX < coast_x) & ~T['land']
+    water |= band_ & (PX >= coast_x) & T['land'] & ~T['taken'] & ~T['street']
+    land &= ~water
+    was_land = T['land'].copy()
+    _, (lr, lc) = ndi.distance_transform_edt(~(was_land & ~R), return_indices=True)
+    seaz = float(np.median(T['h'][T['sea']])) if T['sea'].any() else 0.0
+    T['h'][land & ~was_land] = T['h'][lr, lc][land & ~was_land]
+    T['h'][water] = seaz
+    if 'tiers_pre' in T:
+        T['tiers_pre'][land] = T['tiers_pre'][lr, lc][land]
+    T['land'][land] = True; T['land'][water] = False
+    T['sea'][water & ~canal] = True; T['sea'][land] = False
+    if 'sea' in T['barriers']:
+        T['barriers']['sea'][water & ~canal] = True; T['barriers']['sea'][land] = False
+    T['FRAME'][land | water] = False
+    for key in ('slope', 'dv'):
+        if key in T and isinstance(T[key], np.ndarray):
+            T[key][land] = 0
+    shore = ndi.binary_dilation(water & ~canal, iterations=3)
+    newk = np.where(shore, np.where(PX > 12380, 'sand', 'quay'), 'meadow')
+    newk = np.where(shore & (PX >= 12504) & band_, 'boulders', newk)       # rocks on the headlands' points, sand in the coves
+    K[land] = newk[land]; K0[land] = newk[land]
+    K[water] = 'sea'; K0[water] = 'sea'
+    K[canal] = 'canal'; K0[canal] = 'canal'
+    K[falls & ~keep] = 'river'; K0[falls & ~keep] = 'river'
+    K[moles & ~water] = 'quay'; K0[moles & ~water] = 'quay'
+    for nm, (ix, iy, ir) in B['islands'].items():                     # the islands' paved rims
+        rim = (np.hypot(PX - ix, PY - iy) <= ir) & (np.hypot(PX - ix, PY - iy) > ir - 16)
+        K[rim] = 'quay'; K0[rim] = 'quay'
+    # the islet bridge: a deck from the promenade to Chapel Islet
+    ix, iy, ir = B['islands']['Chapel Islet']
+    deck = (np.abs(PX - cx) <= 12) & (PY >= cy_ - Rb - 16) & (PY <= iy - ir + 12) & water
+    K[deck] = 'bridge'; K0[deck] = 'bridge'
+    # piers fanning out from the curved quay like spokes toward the bay's centre (walkable decks, three cells wide)
+    piers = []
+    for k_, deg in enumerate((18, 38, 58, 122, 142, 162)):
+        a_ = math.radians(deg)
+        sx, sy = cx + (Rb + 8) * math.cos(a_), cy_ - (Rb + 8) * math.sin(a_)
+        ex_, ey_ = cx + (Rb - 72) * math.cos(a_), cy_ - (Rb - 72) * math.sin(a_)
+        L = math.hypot(ex_ - sx, ey_ - sy); tx, ty = (ex_ - sx) / L, (ey_ - sy) / L
+        t_ = np.clip((PX - sx) * tx + (PY - sy) * ty, 0, L)
+        m = (np.hypot(PX - (sx + t_ * tx), PY - (sy + t_ * ty)) <= 12) & water
+        K[m] = 'bridge'; K0[m] = 'bridge'
+        piers.append({'name': ('the east ferry pier', 'the cargo pier', 'the long quay pier', 'the Heights slip', 'the market pier',
+                               'the west ferry pier')[k_], 'from_px': [int(sx), int(sy)], 'to_px': [int(ex_), int(ey_)]})
+    # the busy water: boats at every pier, ferries at the ferry piers, barges on the canal, sampans round Chapel Islet, pilot boats
+    boats = []
+    for q in piers:
+        (sx, sy), (ex_, ey_) = q['from_px'], q['to_px']
+        nx_, ny_ = -(ey_ - sy), ex_ - sx; nl = math.hypot(nx_, ny_) or 1; nx_, ny_ = nx_ / nl, ny_ / nl
+        along = 'x' if abs(ex_ - sx) > abs(ey_ - sy) else 'y'
+        for k_, f in enumerate((0.4, 0.8)):
+            px, py = sx + (ex_ - sx) * f, sy + (ey_ - sy) * f
+            big = 'ferry' in q['name'] and k_ == 1
+            sgn = 1 if k_ == 0 else -1
+            boats.append({'kind': 'ferry' if big else 'boat', 'xy_px': [int(px + sgn * 22 * nx_), int(py + sgn * 22 * ny_)],
+                          'len_px': 48 if big else 24, 'along': along, 'at': q['name']})
+    ix, iy, ir = B['islands']['Chapel Islet']
+    for k_ in range(10):
+        a_ = math.pi * (0.15 + 0.7 * k_ / 9)
+        boats.append({'kind': 'sampan', 'xy_px': [int(ix + (ir + 14) * math.cos(a_)), int(iy + (ir + 14) * math.sin(a_))], 'len_px': 16,
+                      'along': 'x' if abs(math.sin(a_)) > 0.7 else 'y', 'at': 'the floating market'})
+    for k_, x_ in enumerate(range(int(cx0) + 120, int(cx1) - 80, 180)):
+        boats.append({'kind': 'barge', 'xy_px': [x_, cy - 2 + (4 if k_ % 2 else -4)], 'len_px': 40, 'along': 'x', 'at': 'the canal'})
+    for x_ in (cx - 120, cx + 140):
+        boats.append({'kind': 'pilot boat', 'xy_px': [x_, cy_ + 60], 'len_px': 24, 'along': 'y', 'at': 'the opening'})
+    lh, bc = heads['east'], heads['west']
+    for w_, lst in g.BEHIND.items():                                   # Beacon Isle went under the city: its reach target is the lighthouse
+        g.BEHIND[w_] = [(lh if isinstance(q, tuple) and rx0 - 100 <= q[0] <= rx1 and ry0 <= q[1] <= ry1 + 240 else q) for q in lst]
+    wf = [q for q in piers if q['name'] == 'the west ferry pier'][0]       # the coastal steamer berths at the west ferry pier's head
+    if 'Neon steamer pier' in g.STATIONS:                              # (its old berth went under the city with the old waterfront)
+        g.STATIONS['Neon steamer pier'] = (float(wf['to_px'][0]), float(wf['to_px'][1]))
+    T['neon_basin'] = {'shape': 'half moon', 'piers': piers, 'boats': boats, 'lighthouse': list(lh), 'beacon': list(bc),
+                       'islands': {k: list(v) for k, v in B['islands'].items()}, 'bay_centre_px': [cx, cy_], 'bay_radius_px': Rb,
+                       'opening_px': [heads['west'][0] + 40, heads['east'][0] - 40], 'canal_px': [[cx0, cy], [cx1, cy]],
+                       'basin_px': [cx - Rb, cy_ - Rb, cx + Rb, cy_], 'channel_px': [cx - 48, iy, cx + 48, cy_ + 200]}
+    ix, iy, ir = B['islands']['the shard-light platform']
+    T['route_px']['Beacon Causeway'] = [(11258.0, 5497.0), (11180.0, float(iy)), (float(ix + ir - 8), float(iy))]
+    for rn in ('Harbour Bridge', 'Beacon Causeway'):
+        band = _lm(T['route_px'][rn], 24) & ((PX >= rx0 - 120) & (PX < rx1 + 60) & (PY >= ry0) & (PY < ry1))
+        K[band & (K == 'sea')] = 'bridge'
+        K[band & T['land'] & ~np.isin(K, ['bridge', 'river', 'canal', 'falls'])] = 'road'
+    for rn, v in T['route_px'].items():                               # every road over the canal or the falls channels: a bridge
+        band = _lm(v, 24)
+        K[band & ((K == 'canal') | ((K == 'river') & falls))] = 'bridge'
+    bar = np.zeros_like(R)
+    for m in T['barriers'].values():
+        bar |= m
+    bar |= np.isin(K, ['river', 'rapids', 'creek', 'canal', 'oxbow', 'tarn', 'mere', 'sea', 'surf', 'lava', 'aa', 'fissure', 'crater', 'falls',
+                       'channel', 'pool', 'cliff', 'crag', 'wall', 'castlewall', 'shardglass', 'craterrim', 'scorch', 'circle', 'spoil', 'rockfall',
+                       'closedroad', 'viaduct', 'viapier', 'mud', 'sandbar'])
+    T['barrier'] = ndi.binary_dilation(bar, iterations=1)
+    return T['neon_basin']
+
+
+FILL = {'the old waterfront': 2.0, 'the Lanes and the East Shore': 2.0, 'the Heights and the Skyport': 2.2}   # widen rows toward full fronts
+
+
+def _feedback_neon(T, X):
+    """The city round its harbour basin (Matt, 2 Nov): the 81-record inventory (72 counted) kept whole in its districts, the
+    basin reshaped, Canalside and the Glintside mills taken into the city as the canal quarter, every street then built up
+    wall to wall where a city would, the Company core vertical."""
+    out = {}
+    old = FEEDBACK_BUILDINGS['neon-harbour']
+    neon_basin(T)
+    # the regional roads through the city are its planned streets again (the restore took v55's straightening back): straight
+    # x and y runs the districts hang off, bending only at the water (the plan check's 75 %)
+    T.setdefault('straightened', {})
+    for rn, bx in (('Quay Street', (10950, 4380, 11600, 5600)), ('Old Bridges', (10450, 4300, 11150, 4520)), ('Cape Road', (11400, 5000, 12300, 5800)),
+                   ('Lull Road', (9650, 4250, 10560, 4580)), ('Delta Road', (9780, 4380, 10400, 5700))):
+        T['straightened'][rn] = straighten(T, rn, bx, 40 if g.ROUTES[rn][1] == 'road' else 24, g.ROUTES[rn][1] if g.ROUTES[rn][1] in ('road', 'path') else 'road')
+    for rn, v in T['route_px'].items():                               # roads over the canal and the falls channels: bridges
+        band = _lm(v, 24)
+        T['K'][band & np.isin(T['K'], ['canal']) & (g.PX > 9400) & (g.PX < 10700)] = 'bridge'
+    # the old route lines the straightening left behind become ground again, except where a street or a route still runs
+    K = T['K']; live = np.zeros(K.shape, bool)
+    for rn, v in T['route_px'].items():
+        live |= _lm(v, 48)
+    stray = np.isin(K, ['road', 'path', 'trail']) & ~T['street'] & ~live & (g.PX > 9400) & (g.PX < 12544) & (g.PY > 3904) & (g.PY < 5888)
+    K[stray] = 'meadow'
+    props = ('sign', 'awning', 'potted plants', 'pipes', 'AC unit')
+    specs = [
+        ('the old waterfront', (10912, 4464), 201, old[:26],
+         [('x', 4288, 10576, 10912, -1, 'Falls Row'), ('x', 4288, 10576, 10912, 1, 'Falls Row'),
+          ('x', 4432, 10576, 10912, -1, 'Old Quay Lane'), ('x', 4432, 10576, 10912, 1, 'Old Quay Lane'),
+          ('x', 4560, 10576, 10912, -1, 'Quayside Row'), ('x', 4560, 10576, 10912, 1, 'Quayside Row'),
+          ('x', 4288, 11024, 11264, -1, 'Bridgefoot Row'), ('x', 4432, 11024, 11264, -1, 'Bridgefoot Lane'),
+          ('x', 4560, 11024, 11264, -1, 'Old Bridges frontage')]),
+        ('the Lanes and the East Shore', (11632, 4752), 203, old[26:45],
+         [('x', 4352, 11296, 11696, -1, 'Laundry Lane'), ('x', 4496, 11296, 11696, -1, 'Courtyard Lane'),
+          ('x', 4640, 11296, 11696, -1, 'Arcade Lane'), ('x', 4352, 11296, 11696, 1, 'School Court frontage'),
+          ('x', 5040, 11808, 12256, -1, 'East Shore Terrace'), ('x', 5184, 11808, 12256, -1, 'Lido Lane'),
+          ('x', 5328, 11808, 12256, -1, 'Sea Garden Lane'), ('x', 5472, 11808, 12256, -1, 'Shore End')]),
+        ('the docks', (11408, 5136), 202, old[45:53],
+         [('x', 4848, 11072, 11616, -1, 'North Cargo Quay'), ('x', 5040, 11168, 11616, -1, 'Warehouse Quay'),
+          ('x', 5232, 11200, 11616, -1, 'Repair Quay'), ('x', 5456, 11264, 11616, -1, 'South Cargo Quay'),
+          ('x', 5632, 11328, 11616, -1, 'Slipway Lane')]),
+        ('the Company district', (12000, 4608), 204, old[53:63],
+         [('x', 4384, 11744, 12384, -1, 'Terminus North'), ('x', 4528, 11744, 12384, -1, 'Neon Row'),
+          ('x', 4736, 11744, 12384, -1, 'Works Avenue'), ('x', 4912, 11744, 12384, -1, 'Company South')]),
+        ('the Heights and the Skyport', (10080, 5232), 205, old[63:],
+         [('x', 4848, 9824, 10400, -1, 'Skyport Approach'), ('x', 5040, 9824, 10400, -1, 'Upper Terrace'),
+          ('x', 5184, 9824, 10400, -1, 'Middle Terrace'), ('x', 5328, 9824, 10400, -1, 'Lower Terrace'),
+          ('x', 5472, 9872, 10368, -1, 'Belvedere Terrace'), ('x', 5616, 9920, 10336, -1, 'Headland Gardens')]),
+    ]
+    # A connected spine and service loop precede buildings, with readable district entrances.
+    for label, centre, seed, records, rows in specs:
+        t = Town(T, 'Neon Harbour: ' + label, centre, 'city district', (12, 26),
+                 'street-facing homes and trades with shared courts and useful working edges',
+                 "terraced dry ground fitted round the ria, the Glint, the east shore and the city's approaches", seed=seed,
+                 neighbourhoods=([('the Lanes', 'mixed homes, corner shops and shared courts', 11488, 4544),
+                                  ('the East Shore', 'sea-facing terraces and garden squares', 12032, 5272)] if label == 'the Lanes and the East Shore' else []),
+                 gathering=[('Bridgefoot' if label == 'the old waterfront' else ('Terminus Square' if label == 'the Company district' else 'the district court'), centre[0], centre[1])])
+        t.cap = len(records)
+        # Cross streets join each parallel frontage and continue into the neighbouring district.
+        if label == 'the Heights and the Skyport':
+            for x in (9800, 10108, 10408):                            # stairs between every terrace level (lifts where they are steep)
+                t.street([(x, 4816), (x, 5664)], 'lane', kind='stair', name='the terrace steps')
+            t.street([(9800, 5664), (10208, 5664), (10408, 5520)], 'lane', name='the headland walk')
+            t.square(10112, 5720, 96, 40, kind='garden', name='the belvedere gardens')
+        elif label == 'the old waterfront':
+            for x in (10552, 10936, 11272):
+                t.street([(x, 4256), (x, 4704)], 'side', name='the waterfront cross lane')
+            t.street([(10440, 4704), (11272, 4704)], 'side', name='the old quays')
+        elif label == 'the Lanes and the East Shore':
+            for x, top, bottom in ((11272, 4256, 4816), (11720, 4256, 5520), (12280, 4960, 5520)):
+                t.street([(x, top), (x, bottom)], 'side', name='the neighbourhood link')
+            t.street([(11720, 5520), (12280, 5520)], 'side', name='the sea-front link')
+            t.square(12016, 5568, 112, 40, kind='garden', name='the sea-front gardens')
+        elif label == 'the docks':
+            t.street([(11648, 4704), (11648, 5664)], 'main', name='Quay Street service spine')
+            for y in (4848, 5040, 5232, 5456, 5632):
+                t.street([(11120, y), (11720, y)], 'side', name='the cargo cross lane')
+            t.yard(11248, 5504, 11584, 5600, name='the repair and cargo yard', why='turning room, net repairs and cargo handling beside the slip')
+        else:
+            for x in (11720, 12000, 12408):
+                t.street([(x, 4256), (x, 5040)], 'side', kind='boulevard', name='the Company cross avenue')
+            t.street([(11272, 4552), (12408, 4552)], 'main', kind='boulevard', name='the connected city spine')
+            t.square(11664, 4552, 48, 40, name='Terminus Square')
+        _street_bridges(t)
+        if label == 'the Lanes and the East Shore':
+            _feedback_rows(t, records[:10], rows[:4], props=props, fill=FILL.get(label),
+                           overflow_rows=[('x', 4500, 11296, 11696, 1, 'Courtyard Lane'), ('x', 4644, 11296, 11696, 1, 'Arcade Lane')])
+            _feedback_rows(t, records[10:], rows[4:], props=props, fill=FILL.get(label),
+                           overflow_rows=[('x', 5044, 11808, 12256, 1, 'East Shore Terrace'), ('x', 5188, 11808, 12256, 1, 'Lido Lane')])
+        else:
+            _feedback_rows(t, records, rows, props=props, fill=FILL.get(label), overflow_rows={
+                'the old waterfront': [('x', 4500, 11296, 11696, 1, 'Courtyard Lane'), ('x', 4644, 11296, 11696, 1, 'Arcade Lane'),
+                                       ('x', 4704, 10576, 11264, -1, 'the old quays north'),
+                                       ('y', 10552, 4176, 4288, -1, 'the falls steps'), ('y', 11272, 4176, 4288, -1, 'the waterfront cross lane'),
+
+                                       ('y', 10936, 4288, 4704, -1, 'the waterfront cross lane'),
+                                       ('y', 11272, 4288, 4704, -1, 'the waterfront cross lane'),
+                                       ('x', 5332, 11808, 12256, 1, 'Sea Garden Lane'), ('x', 5476, 11808, 12256, 1, 'Shore End')],
+                'the docks': [('x', 5040, 11320, 11640, 1, 'Warehouse Quay'), ('x', 5232, 11320, 11640, 1, 'Repair Quay'),
+                              ('x', 5456, 11320, 11640, 1, 'South Cargo Quay'), ('y', 11648, 4752, 5664, -1, 'Quay Street service spine')],
+                'the Company district': [('x', 4740, 12176, 12400, -1, 'Works Avenue'), ('x', 5232, 11300, 11640, -1, 'Repair Quay'),
+                                         ('x', 5044, 12080, 12280, 1, 'East Shore Terrace'), ('x', 4848, 11320, 11640, 1, 'North Cargo Quay'),
+                                         ('y', 12000, 4288, 5024, 1, 'the Company cross avenue')],
+                'the Heights and the Skyport': [('x', 5188, 9824, 10240, 1, 'Middle Terrace'), ('x', 5332, 9824, 10240, 1, 'Lower Terrace'),
+                                                ('x', 5476, 9872, 10240, 1, 'Belvedere Terrace')],
+            }.get(label, ()))
+        out[t.name] = t
+    # The river/dock coast is a working edge, with purposeful open land rather than blank city paint.
+    docks = out['Neon Harbour: the docks']
+    docks.yard(11280, 5664, 11648, 5744, name='the southern working quay', why="boat storage and the slip approach at the city's water edge")
+    # the working docks filled (Claude A, 2 Nov): bonded warehouses and cargo sheds on the apron (landmarks and outbuildings,
+    # not homes: they add nothing to the 72 counted), stacked cargo yards and the crane berths between them; the quay edges
+    # (3 cells from the water) stay clear for boats
+    docks.cap = 10 ** 6
+    scan_place(docks, (11300, 4860, 11640, 5440), [('warehouse', 120, 72), ('shed', 40, 32), ('shed', 32, 32)], 9, counted=False, shore=3)
+    scan_place(docks, (11180, 4700, 11720, 5640), [('shed', 40, 32), ('shed', 32, 24)], 10, counted=False, shore=3)
+    for (a0, b0, a1, b1, nm, why) in ((11320, 4872, 11480, 4936, 'the container stacks', 'cargo stacked three high between the warehouses'),
+                                      (11480, 5248, 11640, 5312, 'the crane berth', 'gantry cranes over the long quay, the lighters below'),
+                                      (11320, 5472, 11480, 5528, 'the timber and coal stacks', 'bulk cargo for the city and the line')):
+        docks.yard(a0, b0, a1, b1, name=nm, why=why)
+    # the harbour's islands and the lighthouse: landmarks (they add nothing to the count)
+    B = T['neon_basin']
+    cx_, cy_, cr_ = B['islands']['Chapel Islet']
+    docks.hand(cx_ - 40, cy_ - 56, 80, 48, 'chapel')                  # the old chapel-fort on Chapel Islet (north of the bridge)
+    docks.yard(cx_ - 56, cy_ + 32, cx_ + 56, cy_ + 64, name='the floating market', why='boats moored round Chapel Islet sell fish, noodles and salvage by night')
+    sx_, sy_, sr_ = B['islands']['the shard-light platform']
+    docks.hand(sx_ - 32, sy_ - 32, 64, 64, 'tower')                   # the Company's shard-light, the brightest point in the city
+    lx, ly = B['lighthouse']
+    docks.hand(lx - 32, ly - 32, 64, 64, 'tower')                      # the lighthouse on the east horn's mole
+    wx_, wy_ = B['beacon']
+    docks.hand(wx_ - 32, wy_ - 32, 64, 64, 'tower')                    # the Company's beacon on the west horn's mole
+    for (mx_, nm_) in ((wx_, 'the west mole'), (lx, 'the east mole')):
+        docks.street([(mx_ + 4, 5548), (mx_ + 4, wy_ - 40)], 'lane', name=nm_)
+    # Canalside, taken into the city (Matt, 2 Nov: "remove this village and extend Neon Harbour"): the canal quarter on both
+    # banks of the straightened canal, the Glintside mills by the Glint, the night market at the canal's mouth
+    t = Town(T, 'Neon Harbour: Canalside, the canal quarter', (9960, 4540), 'city district', (14, 30),
+             "the city's canal quarter: houses and workshops wall to wall on both banks, barges, lock-keepers and the night market",
+             'the old canal cut straightened through the market gardens into the basin', seed=206,
+             neighbourhoods=[('Canalside', 'the canal quarter: rows on both banks, workshops, the lock', 9960, 4560),
+                             ('the Glintside mills', 'the old mills by the Glint, now workshops and studios', 10380, 4330)],
+             gathering=[('the canal-mouth night market', 10360, 4672)])
+    t.cap = 10 ** 6
+    cy = B['canal_px'][0][1]
+    for (y_, nm) in ((cy - 88, 'Lock Street'), (cy - 24, 'Canal Street'), (cy + 32, 'Canal Walk')):
+        t.street([(9456, y_), (10424 if nm != 'Canal Walk' else 10392, y_)], 'lane', name=nm)
+    for x_ in (9520, 9696, 9872, 10048, 10224):
+        t.street([(x_, cy - 136), (x_, cy + 88)], 'lane', name='the canal bridges')
+    t.street([(10320, 4248), (10320, cy - 88)], 'lane', name='Mill Path')
+    _street_bridges(t)
+    t.yard(10600, 4624, 10672, 4688, kind='plaza', name='the canal-mouth night market', why="stalls on the quay where the canal meets the Glint's channel, open late")
+    cw = 'Canalside, taken into the city: wall-to-wall houses and workshops on both banks of the canal, as on a city canal'
+    for nm in ('Canal Street', 'Canal Walk', 'Lock Street'):
+        t.frontage(t.S(nm), sides=(-1, 1), form='row_house', block=(96, 176), depth=(32, 40), alley=(0, 8), why=cw,
+                   props=('sign', 'awning', 'potted plants', 'washing line', 'bicycle rack'), roofs=('tile', 'flat', 'tin'), limit=10)
+    scan_place(t, (10336, 4240, 10560, 4400), [('workshop', 88, 56), ('mill', 88, 56)], 2, plot=(0, 1, 16, 'yard'), near=3)
+    # the delta's wet ground reaching into the city by the Delta Road's gate, and the canal's garden at its head (the mixing band)
+    t.yard(9700, 4840, 9800, 4900, kind='watermeadow', name='the gate meadow', why="the delta's wet meadow reaching up to the Heights' gate")
+    t.yard(9700, 4900, 9800, 4964, kind='carr', name='the willow carr', why='willows on the wet ground below the Heights, cut for baskets')
+    t.yard(9440, 4496, 9520, 4544, kind='garden', name="the lock-keeper's garden", why='vegetables and a bench by the lock at the head of the canal')
+    out[t.name] = t
+    # the Crescent: the ground the old enclosed basin gave back, wrapped round the bay's curved north shore (Matt, 2 Nov: "more
+    # like a half moon ... still lacking houses"): two streets across, lanes down to the water, the curved promenade on the quay
+    bc_x, bc_y = B['bay_centre_px']; Rb = B['bay_radius_px']
+    t = Town(T, 'Neon Harbour: the Crescent', (10700, 4960), 'city district', (20, 60),
+             "the city's new waterfront round the half-moon bay: houses, cafes and chandlers wall to wall, the promenade on the curved quay",
+             "the ground the old enclosed basin gave back, sloping gently to the bay's curved north shore", seed=207,
+             gathering=[('the promenade', 10700, 5150)])
+    t.cap = 10 ** 6
+    for y_, nm in ((4848, 'Crescent Street'), (4992, 'Bay Street')):
+        t.street([(10436, y_), (11084, y_)], 'lane', name=nm)
+    for x_ in (10548, 10780, 10964):
+        dy_ = math.sqrt(max(0.0, (Rb + 36) ** 2 - (x_ - bc_x) ** 2))
+        t.street([(x_, 4716), (x_, int(bc_y - dy_))], 'lane', name='the bay steps' if x_ != 10780 else 'Ferry Lane')
+    arc = [(bc_x + (Rb + 36) * math.cos(math.radians(a_)), bc_y - (Rb + 36) * math.sin(math.radians(a_))) for a_ in range(24, 157, 12)]
+    t.street(_orth(arc), 'lane', name='the promenade')
+    _street_bridges(t)
+    t.street([(10700, 5156), (10700, B['islands']['Chapel Islet'][1] - B['islands']['Chapel Islet'][2] + 4)], 'lane', name='the islet bridge')
+    cwh = "the new waterfront round the bay: wall-to-wall fronts on every street, cafes and chandlers on the promenade"
+    for nm in ('Crescent Street', 'Bay Street', 'the promenade', 'the bay steps', 'Ferry Lane'):
+        for s_ in [q for q in t.streets if q['name'] == nm]:
+            t.frontage(s_['pts'], sides=(-1, 1), form='row_house', block=(128, 192), depth=(40, 56), alley=(0, 8), why=cwh, limit=8,
+                       props=('cafe sign', 'awning', 'street stall', 'neon sign', 'potted plants', 'chandler sign'), roofs=('tile', 'flat', 'tin'))
+    out[t.name] = t
+    # every street built up (Matt, 2 Nov: "more buildings/houses ... bustling"): continuous fronts wherever a street still has room
+    fill = {'the old waterfront': ('row_house', 3), 'the Lanes and the East Shore': ('row_tenement', 3),
+            'the Heights and the Skyport': ('row_house', 3), 'Canalside, the canal quarter': ('row_house', 2)}
+    co = out['Neon Harbour: the Company district']
+    co.cap = 10 ** 6
+    # the Company core varied (Neon pass 2): one landmark spire, a megablock, smaller towers (landmarks: no count), then shop
+    # rows and arcades at street level round the tower bases, with stalls, neon and vending
+    scan_place(co, (11720, 4560, 12400, 4720), [('tower', 80, 80)], 1, near=2)
+    if co.buildings and co.buildings[-1]['form'] == 'tower':
+        co.buildings[-1]['spire'] = True
+    scan_place(co, (11720, 4240, 12420, 5040), [('slab', 208, 120), ('slab', 176, 112)], 1, near=2)
+    scan_place(co, (11720, 4240, 12420, 5040), [('tower', 64, 64), ('bigtower', 96, 96)], 4, near=2)
+    # street level round the tower bases: a covered arcade (walkable) along every free street side of a tower, the night stalls
+    K = T['K']
+    for b in co.buildings:
+        if b['form'] in ('slab', 'bigtower', 'tower'):
+            a_, c_ = C(b['x'], b['y']); h_, w_ = b['h'] // CELL, b['w'] // CELL
+            ring = np.zeros(K.shape, bool); ring[a_ - 1:a_ + h_ + 1, c_ - 1:c_ + w_ + 1] = True; ring[a_:a_ + h_, c_:c_ + w_] = False
+            ring &= np.isin(K, list(BUILDABLE - ROUTE)) & ~T['taken'] & ~T['street'] & ndi.binary_dilation(T['street'], iterations=2)
+            K[ring] = 'arcade'
+            b['street_level'] = ['shop arcade', 'noodle stalls', 'vending machines', 'neon signs']
+    co.yard(11600, 4576, 11720, 4624, kind='plaza', name='the tower-foot night stalls', why='noodle and parts stalls under the towers, open all night')
+    scan_place(docks, (11060, 4700, 11720, 5640), [('longwarehouse', 176, 64), ('warehouse', 112, 64), ('shed', 40, 32)], 12,
+               counted=False, shore=3)
+    # Neon pass 2: every terrace and lane street packed wall to wall on both sides (lim: blocks per street), deeper fronts so
+    # no paved band is left between the rows, shop fronts and stalls along them
+    for label, (form, lim) in fill.items():
+        d = out['Neon Harbour: ' + label]
+        d.cap = 10 ** 6
+        for s_ in list(d.streets):
+            if s_.get('route') or not s_.get('name') or s_['width_px'] < 24 or s_.get('kind') == 'stair':
+                continue
+            for sd_ in (-1, 1):
+                d.frontage(s_['pts'], sides=(sd_,), form=form, block=(144, 192), depth=(40, 56), alley=(0, 8), limit=lim,
+                           why='the dense city: wall-to-wall fronts on every street, alleys between',
+                           props=('shop sign', 'awning', 'street stall', 'AC unit', 'pipes', 'neon sign', 'vending machine'), roofs=('flat', 'tin', 'flat'))
+    for t_ in out.values():
+        _street_bridges(t_)
+    rb = route_band(T)
+    for t_ in out.values():                                            # nothing new on a regional route's band (the plan's arrival)
+        keep_ = []
+        for b in t_.buildings:
+            sl_ = (slice(b['y'] // CELL, (b['y'] + b['h']) // CELL), slice(b['x'] // CELL, (b['x'] + b['w']) // CELL))
+            if 'layout_id' not in b and rb[sl_].any():
+                T['K'][sl_] = T['K0'][sl_]; T['taken'][sl_] = False
+                if T['K0'][sl_[0].start, sl_[1].start] in ('sea', 'canal', 'river'):
+                    T['K'][sl_] = 'meadow'
+            else:
+                keep_.append(b)
+        t_.buildings[:] = keep_
+    for label in ('the old waterfront', 'the Lanes and the East Shore', 'the Heights and the Skyport', 'Canalside, the canal quarter',
+                  'the Company district', 'the Crescent'):
+        d = out['Neon Harbour: ' + label]
+        d.cap = 10 ** 6
+        for _ in range(3):                                             # again: a block placed for one street can open a gap on another
+            if close_front_gaps(d, 'row_tenement' if 'Lanes' in label else ('row_shop' if 'Company' in label else 'row_house')) == (0, 0):
+                break
+    # the city's edges softened (Neon pass 2): allotments and a park where the grid meets the northern woods, a beach park
+    # on the east shore
+    la = out['Neon Harbour: the Lanes and the East Shore']
+    la.yard(11280, 4176, 11700, 4232, kind='garden', name='the north allotments', why="the Lanes' allotments on the forest edge: vegetables, hens, sheds")
+    co.yard(11760, 4176, 12180, 4232, kind='garden', name='the Company park', why='a planted park between the towers and the northern woods')
+    la.yard(12296, 5040, 12400, 5520, kind='garden', name='the east beach park', why='palms and a promenade along the east shore')
+    # lifts where the terrace steps climb from one level to the next
+    he = out['Neon Harbour: the Heights and the Skyport']
+    lifts = []
+    for x in (9800, 10108, 10408):
+        for y in (4852, 5044, 5188, 5332, 5476):
+            a_, c_ = C(x, y)
+            if 0 <= a_ < H and 0 <= c_ < W and T['street'][a_, c_]:
+                lifts.append({'xy_px': [x, y], 'serves': 'the terrace steps', 'kind': 'public lift'})
+    T['neon_lifts'] = lifts
+    for t_ in out.values():                                            # fronts of one width re-split into varied fronts (same block)
+        for b in t_.buildings:
+            q = b.get('bays')
+            if q and len(q) >= 2 and len({z['w_cells'] for z in q}) == 1:
+                rem = sum(z['w_cells'] for z in q); ws = [rem] if rem <= 8 else []
+                rem = 0 if rem <= 8 else rem
+                while rem > 0:
+                    c_ = next((c for c in (5, 3, 6, 4, 7, 8) if c <= rem and (rem - c == 0 or rem - c >= 3) and c not in ws), None)
+                    c_ = c_ or rem
+                    ws.append(c_); rem -= c_
+                b['bays'] = [dict(q[k % len(q)], w_cells=w_, storeys=2 + k % 3) for k, w_ in enumerate(ws)]
+    n = 101
+    for t_ in out.values():                                            # everything outside the 81-record inventory gets its own id
+        for b in t_.buildings:
+            if 'layout_id' not in b:
+                b['layout_id'] = f'neon-harbour-b{n:03d}'; n += 1
+    # the city at night (round 10 brief, docs/codex/map-feedback-v56.md): neon belongs on the strip and a few named arteries,
+    # the plain streets stay dark so those read from above
+    for t_ in out.values():
+        for st in t_.streets:
+            for (district, name, x_, light) in NEON_LIGHTING:
+                if t_.name.endswith(district) and st['name'] == name and (x_ is None or (st['pts'] and st['pts'][0][0] == x_)):
+                    st['lighting'] = dict(light)
+    return out
+
+
+NEON_LIGHTING = [   # (district, street, its x if several share the name, the light)
+    ('the old waterfront', 'the waterfront cross lane', 11272, {'kind': 'strip', 'name': 'the Lantern Mile', 'light': 'neon'}),
+    ('the Lanes and the East Shore', 'the neighbourhood link', 11272, {'kind': 'strip', 'name': 'the Lantern Mile', 'light': 'neon'}),
+    ('the Company district', 'the connected city spine', None, {'kind': 'artery', 'name': 'the Spine', 'light': 'company'}),
+    ('the docks', 'Quay Street service spine', None, {'kind': 'artery', 'name': 'Quay Street', 'light': 'sodium'}),
+    ('the old waterfront', 'the old quays', None, {'kind': 'artery', 'name': 'the old quays', 'light': 'lantern'}),
+    ('the Crescent', 'the promenade', None, {'kind': 'artery', 'name': 'the bay promenade', 'light': 'lantern'})]
+
+
+def lay_feedback(T, X, *, authored=None):
+    """Reuse the unchanged factories for other settlements, then author the two feedback sites.
+
+    Explicit authored packets use the same checked adoption path as lay_all.
+    The default v55 path and default-OFF packet interface remain untouched.
+    Only target-region arrays are restored before new source placement, so no
+    invisible legacy building/yard/street survives beneath the new layout.
+    """
+    boxes = [(5680, 3120, 7248, 4384), (9400, 3904, 12544, 5888)]
+    saved = _feedback_snapshot(T, boxes)
+    towns = lay_all(T, X, authored=authored)
+    # Keep the existing Company's fenced shard yard, a story landmark rather
+    # than abandoned city paint. Its footprint remains excluded from new fronts.
+    company_fence = (T['K'] == 'fence').copy()
+    _feedback_restore(T, saved, boxes)
+    T['K'][company_fence] = 'fence'
+    for nm in list(towns):
+        if nm == 'Crossroads' or nm.startswith('Neon Harbour') or nm in ('Canalside', 'Glintside', 'Halcyon Row'):   # (Canalside, Glintside: the city now)
+            del towns[nm]
+    if os.environ.get('FEEDBACK_SNAP'):                              # a development cache: the ground just before the two sites
+        import pickle
+        pickle.dump(T, open(os.environ['FEEDBACK_SNAP'], 'wb'), protocol=4)
+    revised = {'Crossroads': _feedback_crossroads(T, X)}
+    revised.update(_feedback_neon(T, X))
+    # These approach settlements retain their own scale; they form the inhabited fringe.
+    for nm, centre, seed, target, route, box in (
+            ('Halcyon Row', (12020, 5590), 208, (8, 14), 'Cape Road', (11700, 5300, 12300, 5800)),):
+        t = Town(T, nm, centre, 'outskirts' if nm != 'Glintside' else 'hamlet', target,
+                 'homes and small trades on the city approach, with gardens beyond the last frontage',
+                 'dry ground between the route, its working gardens and the shore', seed=seed)
+        line = route_part(T, route, box)
+        if len(line) < 2:
+            if '_town_fit' in T:
+                T.setdefault('_town_fit_incomplete', []).append({'town': nm, 'missing_joined_regional_route': True})
+                continue
+            raise ValueError(f'{nm}: city approach has no joined regional route')
+        t.street(line, 'side', name=nm + ' road', route=route)
+        t.level, t.slope_max = 2, 0.03
+        t.row(line, ['house', 'cottage', 'shop', 'house'], limit={'Canalside': 10, 'Glintside': 5, 'Halcyon Row': 8}[nm],
+              plot=(32, 'garden'), gap=(8, 16), reach=32)
+        if nm == 'Canalside':
+            t.fields(9728, 4512, 10400, 4680, ('field', 'orchard'), name='the market gardens', why='gardens and allotments between the canal and the city edge')
+        if nm == 'Glintside':                                         # the hamlet by the Glint's mill path, off the Lull Road
+            t.street([(10440, 4416), (10440, 4248)], 'lane', name='Mill Path')
+            scan_place(t, (10296, 4240, 10560, 4400), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 40)], 4,
+                       plot=(0, 1, 16, 'garden'), near=3)
+            scan_place(t, (10400, 4456, 10560, 4640), [('cottage', 56, 40)], 2, plot=(0, 1, 16, 'garden'), near=3)
+        if nm == 'Halcyon Row':                                       # its canteen by the way in, then homes with gardens on its road
+            t.cap = 14
+            scan_place(t, (11700, 5352, 11830, 5528), [('public', 88, 56)], 1, near=3)
+            if t.buildings and t.buildings[-1]['form'] == 'public':
+                b = t.buildings[-1]
+                t.named_landmarks = [('the canteen by the Cape Road, the first building on the way in', (b['x'] + b['w'] // 2, b['y'] + b['h'] // 2))]
+            # the city's edge stepping down to the country (Matt, 2 Nov: "improve the transition"): terraces where the city
+            # ends, then houses with gardens, then the market gardens, then the heath toward the cape
+            if not t.frontage(t.streets[0]['pts'], sides=(-1, 1), form='row_house', block=(96, 144), depth=(32, 40), alley=(0, 8), limit=3,
+                              why='the suburban terraces where the city ends: short rows before the houses with gardens',
+                              props=('potted plants', 'bicycle rack', 'washing line'), roofs=('tile', 'tile', 'flat')):
+                pass
+            t.streets[0]['frontage'] = 'detached'; t.streets[0].pop('max_gap_cells', None)   # a few terraces on a country road, not a street wall
+            scan_place(t, (11700, 5352, 12300, 5800), [('house', 80, 48), ('cottage', 56, 40), ('cottage', 64, 48)],
+                       max(0, 11 - t.count()), plot=(0, 1, 16, 'garden'), near=5)
+            t.fields(11720, 5720, 12280, 5808, ('field', 'orchard', 'field2'), name='the market gardens',
+                     why="the city's vegetables and fruit, grown on its edge where the houses thin out")
+            t.yard(11720, 5808, 11912, 5968, kind='heath', name='the cape heath', why='open heath between the last gardens and the launch site')
+        revised[nm] = t
+    revised.update(towns)
+    T['feedback_layout'] = {'id': 'v56', 'source_inventory': '303@4984438d', 'counted': dict(RETAINED)}
+    return revised
+
+
+PROPOSED_ADOPTIONS = {'cinderwick': {'status': 'proposal',
+                'source': {'commit': '4669140421d7d8c69482fc90b78fea0a50d1d4bc',
+                           'blob': '9cacbd0833c090c5365d3a9afea84a15ac9c5977',
+                           'path': 'docs/vision/research/blockout/towns/cinderwick.json'},
+                'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                             'blob': 'b1a6b82b71ba055bf6dc351f81a58766775bf1c4',
+                             'path': 'docs/vision/research/blockout/towns/cinderwick.json'},
+                'terrain_box_cells': [232, 701, 144, 70],
+                'buildings': [{'id': 'cinderwick-b014',
+                               'type': 'cottage',
+                               'form': 'cottage',
+                               'footprint_cells': [242, 709, 7, 5],
+                               'rect_px': [1936, 5672, 56, 40],
+                               'faces': 'cinderwick-a1',
+                               'door_cells': [242, 714],
+                               'purpose': "a detached fisher's cottage on the Ember Way above the west beach (re-authored 2 Nov: the cove front is full)",
+                               'occupants': "a fisher's household",
+                               'district': 'cinderwick-d-the-strand',
+                               'counted': True,
+                               'counts_as': 1,
+                               'plot_cells': [242, 707, 7, 2],
+                               'plot': 'yard'},
+                              {'id': 'cinderwick-b015',
+                               'type': 'cottage',
+                               'form': 'cottage',
+                               'footprint_cells': [238, 721, 7, 5],
+                               'rect_px': [1904, 5768, 56, 40],
+                               'faces': 'cinderwick-a1',
+                               'door_cells': [242, 720],
+                               'purpose': "a detached fisher's cottage on the Ember Way above the west beach (re-authored 2 Nov: the cove front is full)",
+                               'occupants': "a fisher's household",
+                               'district': 'cinderwick-d-the-strand',
+                               'counted': True,
+                               'counts_as': 1,
+                               'plot_cells': [238, 726, 7, 2],
+                               'plot': 'yard'},
+                              {'id': 'cinderwick-b016',
+                               'type': 'barn',
+                               'form': 'shed',
+                               'footprint_cells': [300, 736, 4, 3],
+                               'rect_px': [2400, 5888, 32, 24],
+                               'faces': 'cinderwick-s01',
+                               'door_cells': [302, 735],
+                               'purpose': 'a net shed by the boatyard',
+                               'occupants': 'work storage only; resident roles deferred to X3',
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': False,
+                               'counts_as': 0},
+                              {'id': 'cinderwick-b017',
+                               'type': 'barn',
+                               'form': 'shed',
+                               'footprint_cells': [306, 736, 4, 3],
+                               'rect_px': [2448, 5888, 32, 24],
+                               'faces': 'cinderwick-s01',
+                               'door_cells': [308, 735],
+                               'purpose': 'a net shed by the boatyard',
+                               'occupants': 'work storage only; resident roles deferred to X3',
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': False,
+                               'counts_as': 0}],
+                'districts': [],
+                'district_descriptions': {'cinderwick-d-the-quay': {'declared': 'the existing stone quay with '
+                                                                                'detached fishing cottages, net '
+                                                                                'sheds and a working boatyard',
+                                                                    'function': 'docks and transport with homes'}},
+                'open_uses': [{'id': 'cinderwick-o01',
+                               'name': 'the boatyard work apron',
+                               'kind': 'yard',
+                               'cells': [294, 736, 6, 5]},
+                              {'id': 'cinderwick-o02',
+                               'name': 'the boatyard net-shed frontage',
+                               'kind': 'yard',
+                               'cells': [300, 736, 11, 3]}],
+                'site_authored': 'existing generated layout with Y15 Cinderwick-only authored additions (issue149 '
+                                 'comment6471345306)'},
+ 'hearthold': {'status': 'proposal',
+               'source': {'commit': '59f3722d1b39050cc81709fa5933d4c9c093ee98',
+                          'blob': '51fad9db44e2a9be22d2bbb5b007249ae9ecebce',
+                          'path': 'docs/vision/research/blockout/towns/hearthold.json'},
+               'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                            'blob': 'f19a9108cf07a3b8140ba136c04149a8c0ddd31d',
+                            'path': 'docs/vision/research/blockout/towns/hearthold.json'},
+               'terrain_box_cells': [234, 622, 129, 119],
+               'buildings': [{'id': 'hearthold-b033',
+                              'type': 'house',
+                              'form': 'house',
+                              'footprint_cells': [253, 706, 10, 6],
+                              'rect_px': [2024, 5648, 80, 48],
+                              'faces': 'hearthold-s09',
+                              'door_cells': [263, 708],
+                              'purpose': 'a detached lower-town house',
+                              'occupants': 'household; individual residents and routines not yet authored',
+                              'district': 'hearthold-d-ash-lane',
+                              'counted': True,
+                              'plot_cells': [251, 706, 2, 6],
+                              'plot': 'yard',
+                              'counts_as': 1},
+                             {'id': 'hearthold-b034',
+                              'type': 'cottage',
+                              'form': 'cottage',
+                              'footprint_cells': [254, 699, 9, 6],
+                              'rect_px': [2032, 5592, 72, 48],
+                              'faces': 'hearthold-s09',
+                              'door_cells': [263, 701],
+                              'purpose': 'a detached lower-town cottage',
+                              'occupants': 'household; individual residents and routines not yet authored',
+                              'district': 'hearthold-d-ash-lane',
+                              'counted': True,
+                              'plot_cells': [252, 699, 2, 6],
+                              'plot': 'yard',
+                              'counts_as': 1},
+                             {'id': 'hearthold-b035',
+                              'type': 'workshop',
+                              'form': 'workshop',
+                              'footprint_cells': [342, 690, 11, 7],
+                              'rect_px': [2736, 5520, 88, 56],
+                              'faces': 'hearthold-s06',
+                              'door_cells': [344, 689],
+                              'purpose': 'a craft workshop; specific trade not yet authored',
+                              'occupants': 'craft workers; individual workers and routines not yet authored',
+                              'district': 'hearthold-d-smiths-row',
+                              'counted': True,
+                              'plot_cells': [342, 697, 11, 2],
+                              'plot': 'yard',
+                              'counts_as': 1}],
+               'districts': [],
+               'district_descriptions': {},
+               'open_uses': [],
+               'site_authored': 'Y15 source identities retained; b034 and its rear yard moved 8 px south to the existing middle terrace, still subject to real terrain-fit and access checks'},
+ 'launch-cape': {'status': 'proposal',
+                 'source': {'commit': '9276174000e47858e92a25803e606fb9dea1fc87',
+                            'blob': '9aab428f54a898b2c19049857bc092fe39d6e009',
+                            'path': 'docs/vision/research/blockout/towns/launch-cape.json'},
+                 'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                              'blob': '06faf55d311d78016966c977bedcc7598348b817',
+                              'path': 'docs/vision/research/blockout/towns/launch-cape.json'},
+                 'terrain_box_cells': [1467, 726, 79, 104],
+                 'buildings': [{'id': 'launch-cape-b007',
+                                'type': 'cottage',
+                                'form': 'cottage',
+                                'footprint_cells': [1494, 727, 8, 6],
+                                'rect_px': [11952, 5816, 64, 48],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1502, 729],
+                                'purpose': 'a detached staff cottage',
+                                'occupants': 'staff; individual residents and routines not yet authored',
+                                'district': 'launch-cape-d-staff-homes',
+                                'counted': True,
+                                'plot_cells': [1492, 727, 2, 6],
+                                'plot': 'garden',
+                                'counts_as': 1},
+                               {'id': 'launch-cape-b008',
+                                'type': 'cottage',
+                                'form': 'cottage',
+                                'footprint_cells': [1510, 729, 8, 6],
+                                'rect_px': [12080, 5832, 64, 48],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1509, 731],
+                                'purpose': 'a detached staff cottage',
+                                'occupants': 'staff; individual residents and routines not yet authored',
+                                'district': 'launch-cape-d-staff-homes',
+                                'counted': True,
+                                'plot_cells': [1518, 729, 2, 6],
+                                'plot': 'garden',
+                                'counts_as': 1},
+                               {'id': 'launch-cape-b009',
+                                'type': 'workshop',
+                                'form': 'workshop',
+                                'footprint_cells': [1509, 737, 13, 7],
+                                'rect_px': [12072, 5896, 104, 56],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1508, 739],
+                                'purpose': 'a staff settlement workshop',
+                                'occupants': 'staff; individual workers and routines not yet authored',
+                                'district': 'launch-cape-d-the-works',
+                                'counted': True,
+                                'plot_cells': [1522, 737, 2, 7],
+                                'plot': 'yard',
+                                'counts_as': 1}],
+                 'districts': [{'id': 'launch-cape-d-staff-homes',
+                                'name': 'the staff homes',
+                                'centre_px': [12048, 5848],
+                                'declared': 'two detached staff cottages with gardens at the northern entrance, '
+                                            'away from the pad',
+                                'town': 'Launch Cape',
+                                'function': 'homes'}],
+                 'district_descriptions': {'launch-cape-d-the-works': {'function': 'docks and transport'}},
+                 'open_uses': []}}

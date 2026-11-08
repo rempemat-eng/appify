@@ -1,0 +1,1617 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "cinderwick",
+ "name": "Cinderwick",
+ "size": "medium",
+ "size_note": "medium",
+ "target": [
+  14,
+  22
+ ],
+ "buildings_counted": 17,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the prospective v56 continent (blockout-v56.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the fire country's harbour: fishing boats and the coaster that calls for Hearthold's goods; charcoal kilns and a black-sand glassworks; the quay is the region's way to the sea",
+  "terrain": "a black-sand cove between the flows, the young flow steaming to the east; the Ash Coast path and the Ember Way meet here",
+  "fit": "on the cove's slope above the black sand: the Strand on the beach, Kiln Lane above it, terraced",
+  "dry": false,
+  "fortified": false,
+  "authored": "existing generated layout with Y15 Cinderwick-only authored additions (issue149 comment6471345306)",
+  "tiers": [
+   -1,
+   6
+  ],
+  "levelled_footprints": 0
+ },
+ "footprint_px": [
+  1904,
+  5672,
+  2864,
+  6064
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "cinderwick-arr1",
+   "kind": "path",
+   "route": "Ember Way",
+   "street": "cinderwick-a1",
+   "entries_px": [
+    [
+     1867,
+     5660
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "cinderwick-arr2",
+   "kind": "path",
+   "route": "Ash Coast",
+   "street": "cinderwick-a2",
+   "entries_px": [
+    [
+     2994,
+     5779
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "cinderwick-s01",
+   "name": "the Strand",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     2288.0,
+     5872.0
+    ],
+    [
+     2608.0,
+     5872.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-a2",
+    "cinderwick-q01",
+    "cinderwick-s03",
+    "cinderwick-s06"
+   ]
+  },
+  {
+   "id": "cinderwick-s02",
+   "name": "Kiln Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2372.0,
+     5788.0
+    ],
+    [
+     2620.0,
+     5788.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-s03",
+    "cinderwick-s04",
+    "cinderwick-s06"
+   ]
+  },
+  {
+   "id": "cinderwick-s03",
+   "name": "Quay Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2436.0,
+     5796.0
+    ],
+    [
+     2436.0,
+     5860.0
+    ],
+    [
+     2500.0,
+     5860.0
+    ],
+    [
+     2500.0,
+     5876.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-a1",
+    "cinderwick-a2",
+    "cinderwick-s01",
+    "cinderwick-s02"
+   ]
+  },
+  {
+   "id": "cinderwick-s04",
+   "name": "Back Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2268.0,
+     5796.0
+    ],
+    [
+     2300.0,
+     5796.0
+    ],
+    [
+     2300.0,
+     5764.0
+    ],
+    [
+     2372.0,
+     5764.0
+    ],
+    [
+     2372.0,
+     5732.0
+    ],
+    [
+     2404.0,
+     5732.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-a1",
+    "cinderwick-s02",
+    "cinderwick-s05"
+   ]
+  },
+  {
+   "id": "cinderwick-s05",
+   "name": "Kiln Row",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2420.0,
+     5748.0
+    ],
+    [
+     2644.0,
+     5748.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-s04",
+    "cinderwick-s06"
+   ]
+  },
+  {
+   "id": "cinderwick-s06",
+   "name": "Kiln Steps",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2628.0,
+     5764.0
+    ],
+    [
+     2628.0,
+     5876.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-a2",
+    "cinderwick-s01",
+    "cinderwick-s02",
+    "cinderwick-s05"
+   ]
+  },
+  {
+   "id": "cinderwick-a1",
+   "name": "Ember Way",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     1867.3,
+     5660.1
+    ],
+    [
+     1894.9,
+     5697.6
+    ],
+    [
+     1929.4,
+     5727.1
+    ],
+    [
+     1969.3,
+     5750.0
+    ],
+    [
+     2015.4,
+     5767.7
+    ],
+    [
+     2064.7,
+     5775.4
+    ],
+    [
+     2153.1,
+     5778.2
+    ],
+    [
+     2196.4,
+     5783.3
+    ],
+    [
+     2322.6,
+     5823.4
+    ],
+    [
+     2368.9,
+     5831.5
+    ],
+    [
+     2410.0,
+     5834.8
+    ]
+   ],
+   "follows_route": "Ember Way",
+   "connects": [
+    "cinderwick-c01",
+    "cinderwick-c02",
+    "cinderwick-s03",
+    "cinderwick-s04"
+   ]
+  },
+  {
+   "id": "cinderwick-a2",
+   "name": "Ash Coast",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2994.0,
+     5778.7
+    ],
+    [
+     2916.1,
+     5824.7
+    ],
+    [
+     2854.2,
+     5846.3
+    ],
+    [
+     2811.1,
+     5850.8
+    ],
+    [
+     2766.3,
+     5847.7
+    ],
+    [
+     2649.3,
+     5822.2
+    ],
+    [
+     2625.9,
+     5821.1
+    ],
+    [
+     2544.1,
+     5855.5
+    ],
+    [
+     2501.2,
+     5868.5
+    ]
+   ],
+   "follows_route": "Ash Coast",
+   "connects": [
+    "cinderwick-s01",
+    "cinderwick-s03",
+    "cinderwick-s06"
+   ]
+  },
+  {
+   "id": "cinderwick-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2120.0,
+     5848.0
+    ],
+    [
+     2120.0,
+     5792.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-a1",
+    "cinderwick-c03"
+   ]
+  },
+  {
+   "id": "cinderwick-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     1992.0,
+     5872.0
+    ],
+    [
+     1992.0,
+     5776.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-a1"
+   ]
+  },
+  {
+   "id": "cinderwick-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2112.0,
+     5976.0
+    ],
+    [
+     2112.0,
+     5856.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-c01",
+    "cinderwick-c04",
+    "cinderwick-c05"
+   ]
+  },
+  {
+   "id": "cinderwick-c04",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2240.0,
+     5984.0
+    ],
+    [
+     2240.0,
+     5968.0
+    ],
+    [
+     2120.0,
+     5968.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-c03"
+   ]
+  },
+  {
+   "id": "cinderwick-c05",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2112.0,
+     6008.0
+    ],
+    [
+     2112.0,
+     5984.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cinderwick-c03"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "cinderwick-q01",
+   "name": "the harbour square",
+   "type": "square",
+   "cells": [
+    314,
+    735,
+    10,
+    3
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "the Strand",
+   "centre_px": [
+    2450,
+    5885
+   ],
+   "declared": "fishers' houses and net lofts along the beach",
+   "town": "Cinderwick",
+   "id": "cinderwick-d-the-strand",
+   "buildings": [
+    "cinderwick-b001",
+    "cinderwick-b002",
+    "cinderwick-b006",
+    "cinderwick-b008",
+    "cinderwick-b009",
+    "cinderwick-b012",
+    "cinderwick-b013",
+    "cinderwick-b018",
+    "cinderwick-b019",
+    "cinderwick-b014",
+    "cinderwick-b015"
+   ],
+   "mix": {
+    "cottage": 6,
+    "boathouse": 2,
+    "workshop": 2,
+    "townhouse": 1
+   },
+   "function": "crafts and work with homes"
+  },
+  {
+   "name": "Kiln Lane",
+   "centre_px": [
+    2520,
+    5795
+   ],
+   "declared": "the kilns, the glassworks and the coopers",
+   "town": "Cinderwick",
+   "id": "cinderwick-d-kiln-lane",
+   "buildings": [
+    "cinderwick-b003",
+    "cinderwick-b004",
+    "cinderwick-b005",
+    "cinderwick-b010",
+    "cinderwick-b011"
+   ],
+   "mix": {
+    "cottage": 3,
+    "boathouse": 1,
+    "townhouse": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "the Quay",
+   "centre_px": [
+    2470,
+    5920
+   ],
+   "declared": "the existing stone quay with detached fishing cottages, net sheds and a working boatyard",
+   "town": "Cinderwick",
+   "id": "cinderwick-d-the-quay",
+   "buildings": [
+    "cinderwick-b007",
+    "cinderwick-b016",
+    "cinderwick-b017"
+   ],
+   "mix": {
+    "townhouse": 1,
+    "barn": 0
+   },
+   "function": "docks and transport with homes"
+  },
+  {
+   "id": "cinderwick-d-the-kilns",
+   "name": "the kilns",
+   "function": "docks and works yards",
+   "declared": "charcoal from the dead forest; black-sand glass",
+   "box_px": [
+    2620,
+    5760,
+    2720,
+    5840
+   ],
+   "buildings": [],
+   "town": "Cinderwick"
+  },
+  {
+   "id": "cinderwick-d-the-stone-quay",
+   "name": "the stone quay",
+   "function": "docks and works yards",
+   "declared": "the fishing boats tie up here; nets dry on the quay's edge",
+   "box_px": [
+    2496,
+    5880,
+    2624,
+    5912
+   ],
+   "buildings": [],
+   "town": "Cinderwick"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the quay",
+   "xy_px": [
+    2470,
+    5915
+   ]
+  },
+  {
+   "name": "the kiln yard",
+   "xy_px": [
+    2640,
+    5795
+   ]
+  }
+ ],
+ "size_table_px": {
+  "boathouse": [
+   [
+    72,
+    104
+   ],
+   [
+    56,
+    64
+   ]
+  ],
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "shed": [
+   [
+    32,
+    48
+   ],
+   [
+    24,
+    40
+   ]
+  ],
+  "townhouse": [
+   [
+    40,
+    56
+   ],
+   [
+    48,
+    56
+   ]
+  ],
+  "workshop": [
+   [
+    88,
+    120
+   ],
+   [
+    56,
+    72
+   ]
+  ]
+ },
+ "fronts": 19,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "cinderwick-b001",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    285,
+    737,
+    8,
+    6
+   ],
+   "rect_px": [
+    2280,
+    5896,
+    64,
+    48
+   ],
+   "faces": "cinderwick-s01",
+   "door_cells": [
+    289,
+    736
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fisher's household",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b002",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    273,
+    728,
+    9,
+    5
+   ],
+   "rect_px": [
+    2184,
+    5824,
+    72,
+    40
+   ],
+   "faces": "cinderwick-a1",
+   "door_cells": [
+    281,
+    727
+   ],
+   "purpose": "a cottage",
+   "occupants": "a glassblower's household",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "plot_cells": [
+    273,
+    733,
+    9,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b003",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    338,
+    722,
+    8,
+    5
+   ],
+   "rect_px": [
+    2704,
+    5776,
+    64,
+    40
+   ],
+   "faces": "cinderwick-a2",
+   "door_cells": [
+    341,
+    727
+   ],
+   "purpose": "a cottage",
+   "occupants": "a kiln worker's household",
+   "district": "cinderwick-d-kiln-lane",
+   "counted": true,
+   "plot_cells": [
+    338,
+    717,
+    8,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b004",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    336,
+    733,
+    8,
+    5
+   ],
+   "rect_px": [
+    2688,
+    5864,
+    64,
+    40
+   ],
+   "faces": "cinderwick-a2",
+   "door_cells": [
+    341,
+    732
+   ],
+   "purpose": "a cottage",
+   "occupants": "a boatman's household",
+   "district": "cinderwick-d-kiln-lane",
+   "counted": true,
+   "plot_cells": [
+    336,
+    738,
+    8,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b005",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    306,
+    725,
+    8,
+    5
+   ],
+   "rect_px": [
+    2448,
+    5800,
+    64,
+    40
+   ],
+   "faces": "cinderwick-s02",
+   "door_cells": [
+    310,
+    724
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fisher's household",
+   "district": "cinderwick-d-kiln-lane",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b006",
+   "type": "boathouse",
+   "form": "boathouse",
+   "footprint_cells": [
+    275,
+    737,
+    9,
+    8
+   ],
+   "rect_px": [
+    2200,
+    5896,
+    72,
+    64
+   ],
+   "faces": "cinderwick-s01",
+   "door_cells": [
+    283,
+    736
+   ],
+   "purpose": "a boathouse",
+   "occupants": "a boat owner",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b007",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    280,
+    749,
+    6,
+    7
+   ],
+   "rect_px": [
+    2240,
+    5992,
+    48,
+    56
+   ],
+   "faces": "cinderwick-c04",
+   "door_cells": [
+    280,
+    748
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a glassblower's household",
+   "district": "cinderwick-d-the-quay",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b008",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    265,
+    747,
+    14,
+    7
+   ],
+   "rect_px": [
+    2120,
+    5976,
+    112,
+    56
+   ],
+   "faces": "cinderwick-c03",
+   "door_cells": [
+    264,
+    747
+   ],
+   "purpose": "the glassworks",
+   "occupants": "the master and apprentices",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b009",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    265,
+    732,
+    7,
+    6
+   ],
+   "rect_px": [
+    2120,
+    5856,
+    56,
+    48
+   ],
+   "faces": "cinderwick-c01",
+   "door_cells": [
+    265,
+    731
+   ],
+   "purpose": "a cottage",
+   "occupants": "a kiln worker's household",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b010",
+   "type": "boathouse",
+   "form": "boathouse",
+   "footprint_cells": [
+    348,
+    734,
+    10,
+    7
+   ],
+   "rect_px": [
+    2784,
+    5872,
+    80,
+    56
+   ],
+   "faces": "cinderwick-a2",
+   "door_cells": [
+    353,
+    733
+   ],
+   "purpose": "a boathouse",
+   "occupants": "a boat owner",
+   "district": "cinderwick-d-kiln-lane",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b011",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    350,
+    719,
+    6,
+    7
+   ],
+   "rect_px": [
+    2800,
+    5752,
+    48,
+    56
+   ],
+   "faces": "cinderwick-a2",
+   "door_cells": [
+    355,
+    726
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a boatman's household",
+   "district": "cinderwick-d-kiln-lane",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b012",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    252,
+    726,
+    11,
+    8
+   ],
+   "rect_px": [
+    2016,
+    5808,
+    88,
+    64
+   ],
+   "faces": "cinderwick-a1",
+   "door_cells": [
+    260,
+    725
+   ],
+   "purpose": "the cooperage",
+   "occupants": "the master and apprentices",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b013",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    253,
+    743,
+    10,
+    6
+   ],
+   "rect_px": [
+    2024,
+    5944,
+    80,
+    48
+   ],
+   "faces": "cinderwick-c03",
+   "door_cells": [
+    263,
+    746
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fisher's household",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b018",
+   "type": "boathouse",
+   "form": "boathouse",
+   "footprint_cells": [
+    251,
+    751,
+    12,
+    7
+   ],
+   "rect_px": [
+    2008,
+    6008,
+    96,
+    56
+   ],
+   "faces": "cinderwick-c05",
+   "door_cells": [
+    263,
+    751
+   ],
+   "purpose": "a boathouse",
+   "occupants": "a boat owner",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b019",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    249,
+    735,
+    5,
+    6
+   ],
+   "rect_px": [
+    1992,
+    5880,
+    40,
+    48
+   ],
+   "faces": "cinderwick-c02",
+   "door_cells": [
+    249,
+    734
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a glassblower's household",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b014",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    242,
+    709,
+    7,
+    5
+   ],
+   "rect_px": [
+    1936,
+    5672,
+    56,
+    40
+   ],
+   "faces": "cinderwick-a1",
+   "door_cells": [
+    242,
+    714
+   ],
+   "purpose": "a detached fisher's cottage on the Ember Way above the west beach (re-authored 2 Nov: the cove front is full)",
+   "occupants": "a fisher's household",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "plot_cells": [
+    242,
+    707,
+    7,
+    2
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b015",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    238,
+    721,
+    7,
+    5
+   ],
+   "rect_px": [
+    1904,
+    5768,
+    56,
+    40
+   ],
+   "faces": "cinderwick-a1",
+   "door_cells": [
+    242,
+    720
+   ],
+   "purpose": "a detached fisher's cottage on the Ember Way above the west beach (re-authored 2 Nov: the cove front is full)",
+   "occupants": "a fisher's household",
+   "district": "cinderwick-d-the-strand",
+   "counted": true,
+   "plot_cells": [
+    238,
+    726,
+    7,
+    2
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cinderwick-b016",
+   "type": "barn",
+   "form": "shed",
+   "footprint_cells": [
+    300,
+    736,
+    4,
+    3
+   ],
+   "rect_px": [
+    2400,
+    5888,
+    32,
+    24
+   ],
+   "faces": "cinderwick-s01",
+   "door_cells": [
+    302,
+    735
+   ],
+   "purpose": "a net shed by the boatyard",
+   "occupants": "work storage only; resident roles deferred to X3",
+   "district": "cinderwick-d-the-quay",
+   "counted": false,
+   "counts_as": 0
+  },
+  {
+   "id": "cinderwick-b017",
+   "type": "barn",
+   "form": "shed",
+   "footprint_cells": [
+    306,
+    736,
+    4,
+    3
+   ],
+   "rect_px": [
+    2448,
+    5888,
+    32,
+    24
+   ],
+   "faces": "cinderwick-s01",
+   "door_cells": [
+    308,
+    735
+   ],
+   "purpose": "a net shed by the boatyard",
+   "occupants": "work storage only; resident roles deferred to X3",
+   "district": "cinderwick-d-the-quay",
+   "counted": false,
+   "counts_as": 0
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the kilns",
+   "box": [
+    2620,
+    5760,
+    2720,
+    5840
+   ],
+   "why": "charcoal from the dead forest; black-sand glass"
+  },
+  {
+   "kind": "quay",
+   "name": "the stone quay",
+   "box": [
+    2496,
+    5880,
+    2624,
+    5912
+   ],
+   "why": "the fishing boats tie up here; nets dry on the quay's edge"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Ember Way",
+  "first_view": "over the roofs to the black-sand cove: the stone quay, boats on the beach, steam from the young flow to the east",
+  "landmarks": [
+   {
+    "name": "the stone quay",
+    "xy": [
+     2470,
+     5915
+    ]
+   },
+   {
+    "name": "the kilns and their smoke",
+    "xy": [
+     2660,
+     5800
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the beach path under the kilns to the Ash Coast",
+    "xy": [
+     2680,
+     5880
+    ],
+    "opens": "at low tide"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "the net lofts at the Strand's west end, past the busy quay",
+    "xy": [
+     2310,
+     5872
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    213,
+    696,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   3.0,
+   2.2
+  ]
+ },
+ "ground": {
+  "centre": "basalt quay, cinder lanes",
+  "yards": "black sand and ash",
+  "edges": "the black-sand beach",
+  "materials_cells": {
+   "basalt setts": 1583,
+   "ash yards": 1220
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   232,
+   701,
+   144,
+   70
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "r8.4g22.19g66.g4.19#",
+   "r8.4g22.g13.5g69.2g.18#",
+   "r8.4g22.g13.5g67.g4.18#",
+   "3r6.4g22.g13.5g72.18#",
+   "3r6.4g22.g13.5g72.18#",
+   "4r31.g13.5g72.18#",
+   "5r30.g13.5g72.18#",
+   "5r30.g13.5g72.18#",
+   "5r30.g13.5g66.g6.17#",
+   "6r29.19g66.g6.17#",
+   ".6r28.19g72.18#",
+   "3.5r27.19g.10g.11g.5g8.10g.2g21.19#",
+   "4.5r41.56g3.2g11.g2.19#",
+   "4.8r41.58g3.4g.g5.19#",
+   "5.8r36.3g.10g7.24g.16g3.11g19#",
+   "7.8r27.5g.15g7.16g.4g3.g.3g2.10g3.3g.7g.18#",
+   "7.8r27.8g2.11g37.17g.7g.18#",
+   "6.g.13r20.22g3.3g31.19g.g.4g18#",
+   "5.g.g3.18r19.2g3.g12.3g31.18g6.2g16#2b",
+   "13.25r10.4g.g12.29g11.12g6.2g13#5b",
+   "5.g7.32r2.2g.4g12.29g11.9g2.g6.2g12#6b",
+   "5.g7.3r.32r3g.g3.6g51.4g7.2g9#8b",
+   "6g7.3r3.37r.6g51.4g6.4g6#10b",
+   "6g7.3r3.3g.g.13r.g2.15r6g51.4g6.4g3#13b",
+   "6g7.3r4.g3.2g2.g7.g2.2g5.18r7g11.9g14r9.4g7.2g.g14b#",
+   "6g7.3r20.g2.2g5.18r7g11.9g14r9.9g2.2g.g14b#",
+   "5g8.3r15.g6.8g.2g22r11.7g21rg.5g.g.7g3r10b4#",
+   ".5g.6g3r15.g2.2g4.g9.22r10.5g28r2.2g.g.8r8b6#",
+   "6g.4g2.3r2.g15.4g.2g9.3g19r10.g48r6b7#",
+   "13g3r2.2g11.g4.5g9.6g16r2.6g51r4b9#",
+   "13g3r2.2g14.7g9.12g9r8.16r3.4g29r2b11#",
+   "8g.3g4r24.g37.15r5.3g.4g23rg.13#",
+   "9g3.4r3.g20.10g28.11r9.6g8.g12r8g11#",
+   "8g4.3rg2.5g.7g9.10g28.9r25.4g10.2g.4g11#",
+   "8g4.3r2g5.g.7g9.10g28.9r25.4g10.2g.4g11#",
+   "7g.g2.4r2g6.3g2.3g9.10g2.9g18.4r30.3g10.4g.2g.10#",
+   "11g4r.g5.9g9.3g9.g61.2g10.8g10#",
+   "9g5rg.g6.g.6g2.10g9.g26.7~10.g7.8g14.7g11#",
+   "8g6r.g7.8g2.10g9.g25.10~16.8g14.7g11#",
+   "7g6r.3g5.9g2.10g9.g17.g3.16~20.2g.g17.13#",
+   "6g6r.3g.14g2.10g9.g10.31~5.11~.g19.13#",
+   "5g7r2g.16g2.10g9.g9.33~2.14~8.g13.11#",
+   "3g8r10g12.10g19.51~8.g.2g8.11#",
+   "3g8r10g12.10g19.51~8.g.2g8.11#",
+   "5g3r13g28.g11.57~2.g12.11#",
+   "6gr14g28.g10.62~11.3#8~",
+   "21g36.87~",
+   "21g35.88~",
+   "31g16.g8.88~",
+   "31g16.g8.88~",
+   "12g5.2g28.g7.89~",
+   "7g24.2g22.89~",
+   "7g24.2g22.89~",
+   "6g25.16g8.89~",
+   "5g28.14g8.89~",
+   "56.88~",
+   "56.88~",
+   "57.87~",
+   "8~5.12~33.86~",
+   "28~29.87~",
+   "31~25.88~",
+   "31~25.88~",
+   "45~7.92~",
+   "144~",
+   "144~",
+   "144~",
+   "144~",
+   "144~",
+   "144~",
+   "144~"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the stone quay",
+   "xy_px": [
+    2470,
+    5915
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the kilns and their smoke",
+   "xy_px": [
+    2660,
+    5800
+   ],
+   "screen": [
+    2,
+    0
+   ]
+  },
+  {
+   "kind": "secret",
+   "what": "the net lofts at the Strand's west end, past the busy quay",
+   "xy_px": [
+    2310,
+    5872
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "shortcut",
+   "what": "the beach path under the kilns to the Ash Coast",
+   "xy_px": [
+    2680,
+    5880
+   ],
+   "screen": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the quay",
+   "xy_px": [
+    2470,
+    5915
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "people meet at the kiln yard",
+   "xy_px": [
+    2640,
+    5795
+   ],
+   "screen": [
+    2,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the kilns: charcoal from the dead forest; black-sand glass",
+   "xy_px": [
+    2670,
+    5800
+   ],
+   "screen": [
+    2,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the stone quay: the fishing boats tie up here; nets dry on the quay's edge",
+   "xy_px": [
+    2560,
+    5896
+   ],
+   "screen": [
+    2,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the cooperage: the master and apprentices about their day",
+   "building": "cinderwick-b012",
+   "xy_px": [
+    2060,
+    5840
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the glassworks: the master and apprentices about their day",
+   "building": "cinderwick-b008",
+   "xy_px": [
+    2176,
+    6004
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a boathouse: a boat owner about their day",
+   "building": "cinderwick-b018",
+   "xy_px": [
+    2056,
+    6036
+   ],
+   "screen": [
+    0,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a fisher's household about their day",
+   "building": "cinderwick-b005",
+   "xy_px": [
+    2480,
+    5820
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  }
+ ],
+ "open_uses": [
+  {
+   "id": "cinderwick-o03",
+   "name": "allotments",
+   "kind": "garden",
+   "cells": [
+    298,
+    718,
+    29,
+    4
+   ],
+   "block_cells": 64
+  },
+  {
+   "id": "cinderwick-o04",
+   "name": "allotments",
+   "kind": "garden",
+   "cells": [
+    298,
+    718,
+    29,
+    4
+   ],
+   "block_cells": 64
+  },
+  {
+   "id": "cinderwick-o01",
+   "name": "the boatyard work apron",
+   "kind": "yard",
+   "cells": [
+    294,
+    736,
+    6,
+    5
+   ]
+  },
+  {
+   "id": "cinderwick-o02",
+   "name": "the boatyard net-shed frontage",
+   "kind": "yard",
+   "cells": [
+    300,
+    736,
+    11,
+    3
+   ]
+  }
+ ],
+ "theme": {
+  "tech": "older-made: kilns, sail and the coaster",
+  "waystone": {
+   "xy_px": [
+    2532,
+    5892
+   ],
+   "at": "on the harbour square",
+   "table_name": "Cinderwick",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    2751,
+    5741
+   ],
+   "to_px": [
+    2874,
+    5639
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -40
+  },
+  "crater": {
+   "name": "the Ember crater",
+   "xy_px": [
+    3550,
+    4991
+   ],
+   "distance_px": 1459,
+   "effect": "the young flow the shard set loose steams at the cove; the kilns burn its dead forest",
+   "road": "Ash Coast",
+   "road_leaves_at_px": [
+    2994,
+    5779
+   ]
+  },
+  "moss": {
+   "where": "the quay",
+   "xy_px": [
+    2470,
+    5915
+   ]
+  },
+  "company": {
+   "foothold": "an agent at the harbour office",
+   "building": null,
+   "xy_px": null
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

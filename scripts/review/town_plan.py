@@ -13,6 +13,8 @@ What it checks, per plan (ground-rules.md 4 and 5, size-guide.md 0, Matt's brief
   off_streets no building on a street, square or arrival
   off_water   no building on water or a barrier; a street crosses water only on a bridge
   reach       every building has a door within three cells of the street it faces (a close two cells wide if it is set back)
+  discovery   at least one point of interest (secret, resident activity, shortcut, landmark view) on every screen with a building
+  lighting    a v56 city: one named neon strip (300 px or more), every lit street named, 15 to 40 % of main and side streets lit
   count       the counted buildings (a row of 3 to 5 joined houses 1, any house 1, landmarks apart, each with a reason)
               within the town's range: a little outside warns, beyond 25 % fails
   arrivals    every arrival lies on its regional route (blockout-v55.json) or at its station (a ferry)
@@ -164,6 +166,29 @@ def _dist_to_poly(x, y, pts):
     return best
 
 
+def lighting_failures(P):
+    """A city at night (v56, round 10): neon on one strip and a few named arteries, the plain streets dark. The strip is one
+    named street run at least 300 px long; every lit street is named; the lit share of the main and side streets' length is
+    between 15 % and 40 % (lit everywhere reads as lit nowhere)."""
+    fails = []
+    length = lambda st: sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(st['vertices_px'], st['vertices_px'][1:]))
+    lit = [st for st in P['streets'] if st.get('lighting')]
+    strips = {st['lighting'].get('name') for st in lit if st['lighting'].get('kind') == 'strip'}
+    if len(strips) != 1:
+        fails.append(f'lighting: {len(strips)} neon strips (one is the rule)')
+    elif sum(length(st) for st in lit if st['lighting'].get('kind') == 'strip') < 300:
+        fails.append('lighting: the strip is shorter than 300 px')
+    for st in lit:
+        if not st['lighting'].get('name'):
+            fails.append(f"lighting: {st['id']} is lit but unnamed")
+    base = [st for st in P['streets'] if st['class'] in ('main', 'side')]
+    tot = sum(length(st) for st in base) or 1
+    share = sum(length(st) for st in base if st.get('lighting')) / tot
+    if not 0.15 <= share <= 0.40:
+        fails.append(f'lighting: {100 * share:.0f}% of the main and side streets are lit (15 to 40)')
+    return fails
+
+
 def check_plan(P, blockout):
     from scipy import ndimage as ndi
     fails, notes = [], []
@@ -211,18 +236,26 @@ def check_plan(P, blockout):
     counted = 0
     zone = sum(1 for b in P['buildings'] if b.get('from_zone_plan'))
     if zone:
-        notes.append(f'{zone} buildings from the built zone\'s own plan (checked there)')
+        notes.append(f'{zone} buildings from the built zone\'s own plan (street/door/form checks delegated)')
+    building_masks = []
     for b in P['buildings']:
         c, r, cw, ch = b['footprint_cells']
+        counted += b.get('counts_as', 1 if b['counted'] else 0)
+        # Literal terrain and mutual occupancy apply to every footprint, including
+        # inherited ones. Never let NumPy clipping hide a missing part of it.
         if any(int(v) != v for v in (c, r, cw, ch)):
             fails.append(f"cells: building {b['id']} not on whole cells")
-        m = rect_mask(c, r, cw, ch)
-        if b.get('from_zone_plan'):                # the zone as built: its plan and rules (rules.route_clear) are the authority
-            occ |= m; counted += b.get('counts_as', 1 if b['counted'] else 0)
+            building_masks.append(np.zeros((h, w), bool))
             continue
-        if (m & net).any():
-            hit = [sid for sid, bm in bands.items() if (bm & m).any()]
-            fails.append(f"off_streets: building {b['id']} ({b['type']}) stands on {', '.join(hit[:3])}")
+        c, r, cw, ch = map(int, (c, r, cw, ch))
+        if cw <= 0 or ch <= 0:
+            fails.append(f"cells: building {b['id']} has a non-positive footprint")
+            building_masks.append(np.zeros((h, w), bool))
+            continue
+        if c < c0 or r < r0 or c + cw > c0 + w or r + ch > r0 + h:
+            fails.append(f"cells: building {b['id']} footprint is outside terrain bounds")
+        m = rect_mask(c, r, cw, ch)
+        building_masks.append(m)
         tt = ter[m]
         if np.isin(tt, list(WATER)).any():
             fails.append(f"off_water: building {b['id']} stands on water")
@@ -231,7 +264,11 @@ def check_plan(P, blockout):
         if (occ & m).any():
             fails.append(f"cells: building {b['id']} overlaps another building")
         occ |= m
-        counted += b.get('counts_as', 1 if b['counted'] else 0)
+        if b.get('from_zone_plan'):  # retain zone-owned street/door authority; form checks below also stay delegated
+            continue
+        if (m & net).any():
+            hit = [sid for sid, bm in bands.items() if (bm & m).any()]
+            fails.append(f"off_streets: building {b['id']} ({b['type']}) stands on {', '.join(hit[:3])}")
         # reach: the door within 3 cells of the faced street's band (a close's end: 1)
         dc, dr = b['door_cells']
         fm = bands.get(b['faces'])
@@ -317,6 +354,18 @@ def check_plan(P, blockout):
             fails.append(f"districts: {len(P['districts'])} districts, functions {sorted(fn)}")
         if len(P['gathering_places']) < 2:
             fails.append('districts: fewer than two gathering places')
+    # discovery (docs/vision/pillars.md): at least one point of interest on every screen of the town that holds a building
+    if 'discovery' in P:
+        fx0, fy0 = P['footprint_px'][0], P['footprint_px'][1]
+        tl = lambda x, y: (int((x - fx0) // (40 * CELL)), int((y - fy0) // (22.5 * CELL)))
+        need = {tl(b['rect_px'][0] + b['rect_px'][2] / 2, b['rect_px'][1] + b['rect_px'][3] / 2) for b in P['buildings']}
+        got = {tl(*i['xy_px']) for i in P['discovery'] if i.get('kind') in ('secret', 'resident activity', 'shortcut', 'landmark view') and i.get('what')}
+        if need - got:
+            fails.append(f'discovery: {len(need - got)} of {len(need)} screens with buildings have nothing to discover')
+    elif 'v56' in str((P.get('grid') or {}).get('origin', '')):       # the v56 plans carry one (the v55 exports predate the rule)
+        fails.append('discovery: the plan has no discovery list')
+    if P['size'] == 'city' and 'v56' in str((P.get('grid') or {}).get('origin', '')):
+        fails += lighting_failures(P)
     # layout: a landmark within two screens of every entry; a loop
     GL = P['game_layout']
     lms = GL['landmarks']
@@ -332,8 +381,8 @@ def check_plan(P, blockout):
         fails.append('layout: no loop (no street block)')
     # no empty blocks: each block between the streets at least half plots or a named open use
     cov = np.zeros((h, w), bool)
-    for b in P['buildings']:
-        cov |= rect_mask(*b['footprint_cells'])
+    for b, m in zip(P['buildings'], building_masks):
+        cov |= m
         if b.get('plot_cells'):
             cov |= rect_mask(*b['plot_cells'])
     for q in P['squares'] + P.get('open_uses', []):
@@ -456,7 +505,8 @@ def check_plan(P, blockout):
                 for i_ in range(idx[0], idx[-1] + 1):
                     if ln_occ[i_] or ln_ok[i_]:
                         if run > mg and left_b and ln_occ[i_]:
-                            fails.append(f"frontage: {st['id']} ({st.get('name') or 'a street'}) has a gap of {run} cells between two fronts (continuous allows {mg})")
+                            at_ = ((max(0, ca) + i_ + c0) * CELL, int(fr)) if axis == 'x' else (int(fr), (max(0, ra) + i_ + r0) * CELL)
+                            fails.append(f"frontage: {st['id']} ({st.get('name') or 'a street'}) has a gap of {run} cells between two fronts, ending at {list(at_)} (continuous allows {mg})")
                         if run == 0:
                             left_b = bool(ln_occ[i_])
                         elif ln_occ[i_]:

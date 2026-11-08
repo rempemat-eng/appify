@@ -1,0 +1,992 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "lullford",
+ "name": "Lullford",
+ "size": "town",
+ "size_note": "town",
+ "target": [
+  10,
+  16
+ ],
+ "buildings_counted": 11,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the prospective v56 continent (blockout-v56.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the lowest bridging place of the Lull: the swing bridge, the toll house, bargees' inns and the mill on the island",
+  "terrain": "gravel terraces either side of the river",
+  "fit": "",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   2,
+   3
+  ],
+  "levelled_footprints": 0
+ },
+ "footprint_px": [
+  8296,
+  4040,
+  8872,
+  4480
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "lullford-arr1",
+   "kind": "path",
+   "route": "Towpath",
+   "street": "lullford-a1",
+   "entries_px": [
+    [
+     8616,
+     3921
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "lullford-arr2",
+   "kind": "road",
+   "route": "Lull Road",
+   "street": "lullford-a2",
+   "entries_px": [
+    [
+     8187,
+     4033
+    ],
+    [
+     8978,
+     4309
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "lullford-arr3",
+   "kind": "path",
+   "route": "Coast Path",
+   "street": "lullford-a3",
+   "entries_px": [
+    [
+     8637,
+     4597
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "lullford-a1",
+   "name": "Towpath",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8615.9,
+     3920.8
+    ],
+    [
+     8599.5,
+     3969.6
+    ],
+    [
+     8595.6,
+     3996.7
+    ],
+    [
+     8595.0,
+     4022.2
+    ],
+    [
+     8599.8,
+     4046.2
+    ],
+    [
+     8609.3,
+     4071.2
+    ],
+    [
+     8638.2,
+     4109.5
+    ],
+    [
+     8728.3,
+     4179.2
+    ],
+    [
+     8784.3,
+     4242.7
+    ],
+    [
+     8805.0,
+     4260.0
+    ]
+   ],
+   "follows_route": "Towpath",
+   "connects": []
+  },
+  {
+   "id": "lullford-a2",
+   "name": "Lull Road",
+   "class": "arrival",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     8187.0,
+     4032.7
+    ],
+    [
+     8230.8,
+     4057.6
+    ],
+    [
+     8328.2,
+     4148.7
+    ],
+    [
+     8368.2,
+     4178.8
+    ],
+    [
+     8389.4,
+     4190.3
+    ],
+    [
+     8432.1,
+     4204.7
+    ],
+    [
+     8576.4,
+     4223.1
+    ],
+    [
+     8623.6,
+     4232.9
+    ],
+    [
+     8645.3,
+     4240.5
+    ],
+    [
+     8684.1,
+     4264.0
+    ],
+    [
+     8753.5,
+     4331.2
+    ],
+    [
+     8788.7,
+     4351.1
+    ],
+    [
+     8809.8,
+     4356.3
+    ],
+    [
+     8849.9,
+     4355.4
+    ],
+    [
+     8934.9,
+     4321.8
+    ],
+    [
+     8978.2,
+     4309.4
+    ]
+   ],
+   "follows_route": "Lull Road",
+   "connects": [
+    "lullford-a3",
+    "lullford-c01",
+    "lullford-c02",
+    "lullford-c03"
+   ]
+  },
+  {
+   "id": "lullford-a3",
+   "name": "Coast Path",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8637.2,
+     4597.0
+    ],
+    [
+     8669.6,
+     4569.8
+    ],
+    [
+     8695.1,
+     4538.3
+    ],
+    [
+     8718.7,
+     4500.5
+    ],
+    [
+     8747.1,
+     4442.0
+    ],
+    [
+     8794.4,
+     4383.7
+    ]
+   ],
+   "follows_route": "Coast Path",
+   "connects": [
+    "lullford-a2"
+   ]
+  },
+  {
+   "id": "lullford-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8400.0,
+     4248.0
+    ],
+    [
+     8400.0,
+     4216.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "lullford-a2"
+   ]
+  },
+  {
+   "id": "lullford-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8600.0,
+     4296.0
+    ],
+    [
+     8600.0,
+     4248.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "lullford-a2"
+   ]
+  },
+  {
+   "id": "lullford-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8288.0,
+     4256.0
+    ],
+    [
+     8288.0,
+     4136.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "lullford-a2"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Lullford",
+   "centre_px": [
+    8860,
+    4350
+   ],
+   "declared": "the lowest bridging place of the Lull: the swing bridge, the toll house, bargees' inns and the mill on the island",
+   "town": "Lullford",
+   "id": "lullford-d-lullford",
+   "buildings": [
+    "lullford-b001",
+    "lullford-b002",
+    "lullford-b003",
+    "lullford-b004",
+    "lullford-b005",
+    "lullford-b006",
+    "lullford-b007",
+    "lullford-b008",
+    "lullford-b009",
+    "lullford-b010",
+    "lullford-b011"
+   ],
+   "mix": {
+    "shop": 2,
+    "townhouse": 4,
+    "inn": 1,
+    "cottage": 2,
+    "house": 1,
+    "mill": 1
+   },
+   "function": "market and civic with homes"
+  }
+ ],
+ "gathering_places": [],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ],
+  "inn": [
+   [
+    112,
+    144
+   ],
+   [
+    64,
+    80
+   ]
+  ],
+  "mill": [
+   [
+    80,
+    104
+   ],
+   [
+    56,
+    72
+   ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
+  ],
+  "townhouse": [
+   [
+    40,
+    56
+   ],
+   [
+    48,
+    56
+   ]
+  ]
+ },
+ "fronts": 11,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "lullford-b001",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1037,
+    525,
+    8,
+    6
+   ],
+   "rect_px": [
+    8296,
+    4200,
+    64,
+    48
+   ],
+   "faces": "lullford-a2",
+   "door_cells": [
+    1044,
+    524
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b002",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    1045,
+    512,
+    6,
+    6
+   ],
+   "rect_px": [
+    8360,
+    4096,
+    48,
+    48
+   ],
+   "faces": "lullford-a2",
+   "door_cells": [
+    1045,
+    518
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a farming household",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b003",
+   "type": "inn",
+   "form": "inn",
+   "footprint_cells": [
+    1052,
+    512,
+    14,
+    8
+   ],
+   "rect_px": [
+    8416,
+    4096,
+    112,
+    64
+   ],
+   "faces": "lullford-a2",
+   "door_cells": [
+    1052,
+    520
+   ],
+   "purpose": "the inn",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b004",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    1066,
+    505,
+    6,
+    7
+   ],
+   "rect_px": [
+    8528,
+    4040,
+    48,
+    56
+   ],
+   "faces": "lullford-a1",
+   "door_cells": [
+    1072,
+    505
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a fishing household",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b005",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1080,
+    506,
+    8,
+    5
+   ],
+   "rect_px": [
+    8640,
+    4048,
+    64,
+    40
+   ],
+   "faces": "lullford-a1",
+   "door_cells": [
+    1080,
+    511
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b006",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    1037,
+    532,
+    6,
+    7
+   ],
+   "rect_px": [
+    8296,
+    4256,
+    48,
+    56
+   ],
+   "faces": "lullford-c03",
+   "door_cells": [
+    1036,
+    532
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a craft household",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b007",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1043,
+    532,
+    8,
+    5
+   ],
+   "rect_px": [
+    8344,
+    4256,
+    64,
+    40
+   ],
+   "faces": "lullford-c01",
+   "door_cells": [
+    1049,
+    531
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b008",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1060,
+    532,
+    10,
+    6
+   ],
+   "rect_px": [
+    8480,
+    4256,
+    80,
+    48
+   ],
+   "faces": "lullford-a2",
+   "door_cells": [
+    1069,
+    531
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b009",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    1070,
+    538,
+    6,
+    6
+   ],
+   "rect_px": [
+    8560,
+    4304,
+    48,
+    48
+   ],
+   "faces": "lullford-c02",
+   "door_cells": [
+    1074,
+    537
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a carting household",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b010",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1076,
+    536,
+    9,
+    6
+   ],
+   "rect_px": [
+    8608,
+    4288,
+    72,
+    48
+   ],
+   "faces": "lullford-a2",
+   "door_cells": [
+    1084,
+    535
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  },
+  {
+   "id": "lullford-b011",
+   "type": "mill",
+   "form": "mill",
+   "footprint_cells": [
+    1099,
+    553,
+    10,
+    7
+   ],
+   "rect_px": [
+    8792,
+    4424,
+    80,
+    56
+   ],
+   "faces": "lullford-a3",
+   "door_cells": [
+    1098,
+    553
+   ],
+   "purpose": "the mill",
+   "occupants": "the miller and family",
+   "district": "lullford-d-lullford",
+   "counted": true,
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Towpath",
+  "first_view": "Lullford from the Towpath: the inn, Lullford's largest building ahead",
+  "landmarks": [
+   {
+    "name": "the inn, Lullford's largest building",
+    "xy": [
+     8472,
+     4128
+    ]
+   },
+   {
+    "name": "the mill at the edge, seen first from the Coast Path",
+    "xy": [
+     8832,
+     4452
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    1057,
+    479,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.8,
+   2.4
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields",
+  "materials_cells": {
+   "worn paving": 1194,
+   "packed earth": 43
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   1022,
+   490,
+   103,
+   86
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "53grb2r46g",
+   "27g.24g3rb47g",
+   "27g.24g3rb47g",
+   "20g8.24g3rb~46g",
+   "19g15.2g.14g5r2~45g",
+   "23g2.g16.2g.5g6r2g~44g",
+   "26g.5g17.g6r2g2~43g",
+   "33g.6g8.2g6r3g2~42g",
+   "44g.5g5r5g2~41g",
+   "50g5r6g3~39g",
+   "r49g5r7g3~38g",
+   "r49g5r7g3~38g",
+   "5r45g5r9g2~37g",
+   "7r43g5r10g2~36g",
+   "8r42g6r10g2~35g",
+   "10r34g6.6r11g2~34g",
+   "11r33g6.6r2g8.2g~34g",
+   "g11r32g6.g6rg8.3g~33g",
+   "4g10r25g2.3g6.g7r8.4g~32g",
+   "5g10r23g3.3g6.g7r8.4g2~31g",
+   "5g10r23g3.3g6.g7r8.4g2~31g",
+   "7g9r23g2.3g6.2g7r12g2~30g",
+   "8g9r6g6.g14.9g7r12g~30g",
+   "9g9r5g6.g14.10g8r11g~29g",
+   "10g9r4g6.g14.11g9r9g2~28g",
+   "11g9r3g6.g14.11g10r9g~28g",
+   "12g9r2g6.g14.12g11r8g~27g",
+   "13g.9r6.g14.10g2~2g11r6g2~26g",
+   "13g2.10r5g14.12g2~g11r6g~26g",
+   "13g2.10r5g14.12g2~g11r6g~26g",
+   "13g2.g17r6g.18g2~11r5g9.18g",
+   "13g2.2g22r21g2~10r4g9.18g",
+   "13g2.4g30r13g2~b8r3g9.18g",
+   "13g2.5g30r15g~2b6r2g9.18g",
+   "13g2.7g29r16g3b5rg4.3g2.18g",
+   "13g10.32r13g2r3b3r4.3g2.18g",
+   "13g10.36r10g3r4br3.2~g2.18g",
+   "6.7g10.2g36r9g5r3b2g2~21g",
+   "6.7g10.2g36r9g5r3b2g2~21g",
+   "6.7g10.3g38r7g7rb3~21g",
+   "6.7g10.4g.37r7g8r4~19g",
+   "6.7g2.12g2.2g18r3g.14r6g9r~g~18g",
+   "6.7g16.g.5r2g10.4g2.2g12r6g8r2~19g",
+   "6.9g17.4r2g10.4g2.4g11r6g7rg~19g",
+   "6.9g17.5rg10.4g2.6g10r13g2~13g5r",
+   "15g16.g5rg10.4g2.8g9r13g~9g9r",
+   "15g17.5rg10.4g11.g8r12g2~6g10rb",
+   "15g6.8g3.5rg10.4g11.g8r12g2~6g10rb",
+   "15g6.7g4.g4r11g15.2g8r12g2~2g13rb",
+   "28g3.2g4r11g15.3g8r12g~g13rbr",
+   "28g3.2g4r11g15.4g9r10g~b12r2br",
+   "28g2.3g4r11g15.5g11r4g4rb10r3b2r",
+   "27g3.2g5r11g6.15g19rb8r3b2r.",
+   "27g3.2g5r11g6.11g5.18r2b6rb~2g3.",
+   "27g4.g4r29g5.2g17r2b3rg2~6g",
+   "31g5r29g5.4g16r2b2g2~7g",
+   "31g5r29g5.4g16r2b2g2~7g",
+   "31g5r29g5.4g12r7.g~8g",
+   "30g4r39g7r6g7.~9g",
+   "29g5r38g8r6g7.~8g~",
+   "28g5r38g8r7g7.9g~",
+   "28g5r37g8r8g7.7g2~g",
+   "29g3r38g7r11g5.5g3~2g",
+   "30gr38g7r11.2g4.3g4~3g",
+   "68g7r12.4g~11g",
+   "68g7r12.4g~11g",
+   "68g6r13.4g~11g",
+   "67g7r13.4g~11g",
+   "67g6rg13.4g~11g",
+   "51g.14g6r2g13.4g~11g",
+   "50g3.13g6r18g~12g",
+   "51g3.11g6r19g~12g",
+   "51g4.10g6r18g2~12g",
+   "51g6.7g7r18g~13g",
+   "51g6.7g7r18g~13g",
+   "53g4.5g8r18g2~13g",
+   "11g.42g3.5g7r19g~14g",
+   "11g.43g3.3g8r18g2~14g",
+   "11g.44g2.2g8r18g2~15g",
+   "11g.45g.g8r19g~16g",
+   "11g.45g9r19g~17g",
+   "11g.44g10r18g2~17g",
+   "11g.4g16.23g10r19g~18g",
+   "16g16.23g10r19g~18g",
+   "16g16.21g9r22g~18g",
+   "16g16.18g11r22g2~18g"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "discovery": [
+  {
+   "kind": "landmark view",
+   "what": "the inn, Lullford's largest building",
+   "xy_px": [
+    8472,
+    4128
+   ],
+   "screen": [
+    0,
+    0
+   ]
+  },
+  {
+   "kind": "landmark view",
+   "what": "the mill at the edge, seen first from the Coast Path",
+   "xy_px": [
+    8832,
+    4452
+   ],
+   "screen": [
+    1,
+    2
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the shop: the shopkeeper, living above about their day",
+   "building": "lullford-b001",
+   "xy_px": [
+    8328,
+    4224
+   ],
+   "screen": [
+    0,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "a cottage: a carting household about their day",
+   "building": "lullford-b005",
+   "xy_px": [
+    8672,
+    4068
+   ],
+   "screen": [
+    1,
+    0
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the shop: the shopkeeper, living above about their day",
+   "building": "lullford-b010",
+   "xy_px": [
+    8644,
+    4312
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  }
+ ],
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    8596,
+    4252
+   ],
+   "at": "in the town",
+   "table_name": "Lullford",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    8321,
+    4169
+   ],
+   "to_px": [
+    8175,
+    4103
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -156
+  },
+  "crater": {
+   "name": "the Lull crater",
+   "xy_px": [
+    8265,
+    3560
+   ],
+   "distance_px": 769,
+   "effect": "the Lull crater lies 700 px away; its scorch points to the valley",
+   "road": "Towpath",
+   "road_leaves_at_px": [
+    8616,
+    3921
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    8596,
+    4252
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

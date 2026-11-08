@@ -1063,7 +1063,7 @@
   {
    "building": "highgarth-b003",
    "form": "watchkeep",
-   "reason": "the water's edge: seen from the water and the quays"
+   "reason": "on its stone base behind the tarn: the lord's watch faces the sealed north pass"
   }
  ],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
@@ -1089,7 +1089,7 @@
     1002,
     124
    ],
-   "purpose": "the chapel hall",
+   "purpose": "the temple hall",
    "occupants": "staff by day",
    "district": "highgarth-d-the-temple",
    "counted": true,
@@ -1117,8 +1117,8 @@
     1011,
     127
    ],
-   "purpose": "a tower",
-   "occupants": "offices and the Company",
+   "purpose": "the five-storey pagoda",
+   "occupants": "unassigned; X3 roles and routines deferred",
    "district": "highgarth-d-the-temple",
    "counted": true,
    "landmark": true,
@@ -1620,7 +1620,7 @@
     975,
     157
    ],
-   "purpose": "the school",
+   "purpose": "the hot spring bathhouse",
    "occupants": "staff by day",
    "district": "highgarth-d-mill-lane",
    "counted": true,
