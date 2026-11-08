@@ -1,7 +1,7 @@
 {
  "id": "undercroft/ground",
  "file": "game/zones/undercroft/art/ground.png",
- "sha256": "ddd71d999f5499211250fa067c81d43c68b54f3e3f8336e5b3e7685dd67f250a",
+ "sha256": "0a7b1de481ece2579bc8a032adeeeb76d033e2a59712fb363744a0577aa0be85",
  "kind": "ground",
  "biome": "cellar",
  "H": 74.0,
@@ -35,6 +35,6 @@
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset. Painter's note for the auditor (round 9, not a verdict): detail.no_falloff (0.32) is the whole-picture measure rejected as a false positive in rounds 6 to 8. Two counts wait on Claude A: the calm guard reads 12.4 in room 1's pool box (limit 11.9; 9 of it the falloff itself) with the pool body in solid steps, and G-38's middle band stays at median C 0.018 to 0.020 until a mid-chroma warm tone is ruled."
+  "note": "detectors only; the agent checklist has not been run on this asset. Painter's note for the auditor (round 10, not a verdict): detail.no_falloff (0.32) is the whole-picture measure rejected as a false positive in rounds 6 to 8. The calm guard still reads 12.5 in room 1's pool box (limit 11.9): Claude A's residual measure was not adopted because round 4 to 6's fixtures pass it (see the PR). The middle band is lamplit_dusk (G-38)."
  }
 }

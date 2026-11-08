@@ -169,9 +169,9 @@ RIM_FADE = 16                    # round 9 (G-37): the one dithered band of a to
 STEP_LIP = 0.5                   # ... and how much longer a flag's top under its lit lip holds the light (rungs)
 # round 8 (G-32): a torch's pool by Eastward 06's fire bowls, as (half-width, depth) in H from the wall's foot
 # under the cup: the heart, the warm band's outer edge and the light's reach (1.1 to 1.4 H, at most 2.5 H2)
-TORCH_HEART = (0.97, 0.56)
+TORCH_HEART = (0.96, 0.555)
 TORCH_WARM = (1.12, 0.9)
-TORCH_REACH = (1.3, 1.16)
+TORCH_REACH = (1.3, 1.12)
 LAMPLIT_ALL = 0.47               # lamplit on every lit texel's top within this of the cup's foot (H) ...
 LAMPLIT_TOPS = 0.8               # ... worn tops under the lips, shallower outwards, to here ...
 LAMPLIT_LIPS = 0.95              # ... the lips alone to here, and none beyond
@@ -430,6 +430,9 @@ SHADE_LIP = {0: (('void', 3),) * 3, 1: (('slate_warm', 1), ('slate_cool', 2), ('
 SHADE_WORN = {0: (('void', 3),) * 3, 1: (('slate', 1), ('slate_warm', 1), ('slate_cool', 1)),
               2: (('slate_warm', 1), ('slate_cool', 2), ('void', 4))}      # a lip worn down, half its catch-light
 SHADE_SE = {0: (('void', 1),) * 3, 1: (('void', 3), ('void', 3), ('void', 3)), 2: (('void', 3), ('slate', 1), ('void', 3))}
+# round 10 (G-38, Claude A's ruling): the middle band's bodies and arrises take lamplit_dusk, the lamp's dim light on
+# stone (#654B4B, OKLCH 0.441 / 0.035 / 19, one named-only tone of lamplit's), so the pool walks from gold through a
+# warm mauve to the violet shade, never through a neutral grey.
 # under a torch (round 8, G-32): the light lifts the stone a rung a band and warms it, band by band from the
 # shade inwards: rung 3 the in-between band (stone 1 and its siblings, OKLab L 0.41 to 0.44), rung 4 the warm band
 # (stone_cool 2 / stone_warm 1, 0.44 to 0.49, its lips and the crests under them a tone up), rung 5 the heart
@@ -438,14 +441,14 @@ SHADE_SE = {0: (('void', 1),) * 3, 1: (('void', 3), ('void', 3), ('void', 3)), 2
 # colour (lamplit, a glow sibling of lamp at the same tone, a touch lighter) is laid over them afterwards by
 # each texel's distance from the cup (LAMPLIT_ALL, LAMPLIT_TOPS, LAMPLIT_LIPS), never on a joint or an arris and
 # never against the slate shade.
-WARM = {3: (('stone', 1), ('stone_warm', 1), ('stone_cool', 1)),
-        4: (('stone_cool', 2), ('stone_warm', 1), ('stone_cool', 2)),
+WARM = {3: (('lamplit_dusk', 3), ('lamplit_dusk', 3), ('lamplit_dusk', 3)),
+        4: (('stone_cool', 2), ('lamplit_dusk', 3), ('stone_cool', 2)),
         5: (('stone_warm', 2), ('stone', 2), ('stone_warm', 2))}
 WARM_LIP = {3: (('stone_cool', 2), ('stone_cool', 2), ('stone_warm', 1)),
             4: (('stone_warm', 2), ('stone', 2), ('stone_warm', 2)),
             5: (('stone_warm', 3), ('stone', 3), ('stone_warm', 3))}
 WARM_CREST = {4: (('stone', 2), ('stone_cool', 2), ('stone', 2)), 5: (('stone_warm', 3), ('stone', 3), ('stone_warm', 3))}
-WARM_SE = {3: (('soot', 2), ('stone_cool', 1), ('soot', 2)), 4: (('stone_cool', 1), ('soot', 2), ('stone_cool', 1)),
+WARM_SE = {3: (('soot', 2), ('stone_cool', 1), ('soot', 2)), 4: (('lamplit_dusk', 3), ('soot', 2), ('lamplit_dusk', 3)),
            5: (('stone_cool', 2), ('stone', 1), ('stone_cool', 2))}
 WARM_JOINT = {3: ('stone_cool', 0), 4: ('soot', 2), 5: ('stone_cool', 1)}
 # under the skylight and at the hatch: daylight on the slate ramps
@@ -3104,17 +3107,18 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
         m_ = mid_[wlab] & wb & np.isin(cv // 8, [FI['stone'], FI['stone_cool']])
         cv[m_] = warmer[cv[m_] // 8] * 8 + cv[m_] % 8
         # round 9 (G-35, G-36): only the torch's own kerb, and only its lit top edge (the plinth's top row, drawn at
-        # tone 4), in steps falling off from the flame and gone by 0.8 H: lamplit 4 under the cup, then its
-        # cool sibling, then the warm stone; the kerb's blocks below take the light as the wall's blocks do
+        # tone 4), in steps falling off from the flame and gone by 0.8 H: lamplit 4's warm sibling under the cup, then
+        # lamplit 4, then its cool sibling, then the kerb's own tone (round 10: no one code over 35 % of the edge)
         fy_ = q(ty - TORCH_LIFT - 7)
         dfl_ = np.hypot(XX - cx_, YY - fy_)
         ke = kerb & (YY >= q(ty) - q(5) - 1) & (YY <= q(ty) - q(5) + 1) & (pre_light % 8 >= 4) & (pre_light % 8 < 6) & \
             np.isin(pre_light // 8, stone_f) & (cv >= 0) & ~edge_tone & (dfl_ < 0.8 * 74 * D / 3)
         adx = np.abs(XX - cx_)
-        k1, k2, k3 = ke & (adx < WALL_HOT / 2), ke & (adx >= WALL_HOT / 2) & (adx < WALL_HOT), ke & (adx >= WALL_HOT) & (adx < WALL_NEAR)
-        cv[k1] = FI['lamplit'] * 8 + 4
-        cv[k2] = FI['lamplit_cool'] * 8 + 4
-        cv[k3] = FI['stone_warm'] * 8 + np.maximum(cv[k3] % 8, 4)
+        e1, e2, e3 = 7 * D / 3, 14 * D / 3, 23 * D / 3                 # (texels at density 3)
+        k1, k2, k3 = ke & (adx < e1), ke & (adx >= e1) & (adx < e2), ke & (adx >= e2) & (adx < e3)
+        cv[k1] = FI['lamplit_warm'] * 8 + 4
+        cv[k2] = FI['lamplit'] * 8 + 4
+        cv[k3] = FI['lamplit_cool'] * 8 + 4
         # the kerb's face under its lit edge, texel by texel by its distance from the flame, each texel a sibling
         # warmer (a tone up nearest), so the kerb's grain, chips and joints keep their steps
         kb = kerb_rows & (YY >= q(ty) - q(5)) & ~ke & np.isin(wall_k // 8, stone_f) & (wall_k % 8 >= 1) & (wall_k % 8 < 6)

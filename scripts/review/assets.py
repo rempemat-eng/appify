@@ -332,8 +332,11 @@ def record(report: dict, reviewer: dict | None = None) -> str:
     rec['reviewer'] = reviewer or kept_reviewer(p, report['sha256']) or dict(PENDING)
     try:                                # a floor overlay's declaration that it copies the ground (C-8) is kept
         with open(p) as fh:
-            if json.load(fh).get('copies_ground'):
+            old_ = json.load(fh)
+            if old_.get('copies_ground'):
                 rec['copies_ground'] = True
+                if 'ground_lift' in old_:
+                    rec['ground_lift'] = old_['ground_lift']
     except (OSError, ValueError):
         pass
     rec['findings'] = [{k: f[k] for k in ('detector', 'severity', 'box', 'message', 'fix')} for f in report['findings']]

@@ -339,32 +339,35 @@ class RealFloorTint(unittest.TestCase):
             (self.assertEqual if name == 'r9' else self.assertGreater)(n, 0, name)
 
     def test_the_lit_kerb_keeps_its_marks(self):
-        # G-36 (round 9): under each cup the kerb is lit in steps that keep its own marks, never one flat code: its
-        # commonest colour at most 45 % of the strip (round 7, unlit: 22 to 43 %) and the lamp's colour on at most 35 %.
-        # Round 8's kerb by torch 8 was one tan code over 93 % of it
+        # G-36 (round 9; Claude A's round 10 ruling): the kerb's lit top edge under each cup (the plinth's top row, 67
+        # texels) steps from the flame and keeps its marks: no colour over 35 % of it. (The plinth's face below keeps the
+        # painter's own drawing, which unlit already holds 34 to 58 % in one code.) Round 8's edge by torch 8 was one tan
+        # code over all of it
         for cx, foot in self._torches():
             with self.subTest(torch=cx):
-                top, lampy = _kerb_strip(self.painted[foot - 15:foot - 2, cx - 33:cx + 34])
-                self.assertLessEqual(top, 0.45)
-                self.assertLessEqual(lampy, 0.35)
+                self.assertLessEqual(_kerb_strip(self.painted[foot - 15:foot - 14, cx - 33:cx + 34])[0], 0.35)
         a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r8_kerb_t8.png')).convert('RGB'))
-        top, lampy = _kerb_strip(a[13:26, 7:74])
-        self.assertFalse(top <= 0.45 and lampy <= 0.35, (top, lampy))
+        self.assertGreater(_kerb_strip(a[13:14, 7:74])[0], 0.35)
 
-    def test_the_middle_band_guard_sees_round8(self):
-        # G-38: the pool's middle band (0.65 to 1.05 H below the wall's foot) at median OKLCH C 0.030 to 0.045. Round 8's
-        # was grey stone (C 0.018 to 0.022) and fails. The committed floor's check waits on Claude A's ruling on a
-        # mid-chroma warm tone (test_the_middle_band_is_warm_stone, skipped)
+    def test_the_middle_band_is_warm_stone(self):
+        # G-38 (Claude A's round 10 ruling): the pool's middle band (0.65 to 1.05 H below the wall's foot) at median OKLCH C
+        # 0.030 to 0.045, on lamplit_dusk; band by band (0.1 H) from the heart out to the shade its per-texel median C
+        # stays at 0.025 or more and the hue of its mean colour walks the short way, down through about 20 and 346,
+        # never by a neutral grey. Round 8's middle band was grey stone (C 0.018) and fails
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                C, _ = _middle_band(self.painted, self.f['paint'], cx, foot)
+                self.assertTrue(0.030 <= C <= 0.045, C)
+                walk = _hue_walk(self.painted, self.f['paint'], cx, foot)
+                self.assertGreaterEqual(min(c for _, c, _ in walk), 0.025, walk)
+                hs = [hh for _, _, hh in walk]
+                steps = [((a - b + 180) % 360) - 180 for a, b in zip(hs, hs[1:])]
+                self.assertTrue(all(-5 < st_ < 90 for st_ in steps), walk)   # down the hue circle, the short way
+                warm = [i for i, hh in enumerate(hs) if 5 <= hh <= 40]
+                self.assertTrue(warm and any(hh >= 300 for hh in hs[warm[0]:]), walk)   # through about 20, then 346
         a, fl, cx, foot = _r8_torch1()
         C, _ = _middle_band(a, fl, cx, foot)
         self.assertLess(C, 0.030, C)
-
-    @unittest.skip('G-38 waits on Claude A\'s ruling on a named-only mid-chroma warm tone (round 9)')
-    def test_the_middle_band_is_warm_stone(self):
-        for cx, foot in self._torches():
-            with self.subTest(torch=cx):
-                C, hue = _middle_band(self.painted, self.f['paint'], cx, foot)
-                self.assertTrue(0.030 <= C <= 0.045, (C, hue))
 
     def _torches(self):
         plan = json.load(open(os.path.join(ROOT, 'game', 'data', 'plans', 'undercroft.json')))
@@ -521,6 +524,20 @@ def _middle_band(rgb, floor, cx, foot):
     m = floor & (Y >= foot) & (d >= 0.65) & (d < 1.05)
     a_, b_ = C * np.cos(np.radians(h)), C * np.sin(np.radians(h))
     return float(np.median(C[m])), float(np.degrees(np.arctan2(b_[m].mean(), a_[m].mean())) % 360)
+
+
+def _hue_walk(rgb, floor, cx, foot):
+    """(distance, per-texel median C, hue of the mean colour) for 0.1 H bands of floor from 0.55 to 1.15 H below the
+    wall's foot under the cup (G-38's walk from the heart to the shade)."""
+    L, C, h = _oklch(rgb)
+    Y, X = np.mgrid[0:L.shape[0], 0:L.shape[1]]
+    d = np.hypot(X - cx, Y - foot) / 74
+    a_, b_ = C * np.cos(np.radians(h)), C * np.sin(np.radians(h))
+    out = []
+    for c0 in np.arange(0.55, 1.16, 0.1):
+        m = floor & (Y >= foot) & (np.abs(d - c0) < 0.05)
+        out.append((round(float(c0), 2), float(np.median(C[m])), float(np.degrees(np.arctan2(b_[m].mean(), a_[m].mean())) % 360)))
+    return out
 
 
 def _kerb_strip(rgb):
@@ -802,6 +819,36 @@ class OverlayLoneSplit(unittest.TestCase):
         o, g = self._pics(0.015, 0.0)
         own, same = raster.lone_split(o, g, 0, 0)
         self.assertGreater(own, 0.01)
+
+    def _lifted(self, fam_o, tone_shift, n_lone=60):
+        """A ground of slate 1 with lone slate 2 marks, and an overlay of the ground lifted a tone (slate 2, marks slate 3)
+        whose marks are drawn on `fam_o` `tone_shift` tones over the ground's."""
+        from scripts.art.native import palette as PAL
+        g = np.zeros((60, 60, 4), np.uint8)
+        g[..., :3] = PAL.rgb('slate', 1)
+        g[..., 3] = 255
+        o = g.copy()
+        o[..., :3] = PAL.rgb('slate', 2)
+        cells = [(y, x) for y in range(4, 56, 3) for x in range(4, 56, 3)][:n_lone]
+        for y, x in cells:
+            g[y, x, :3] = PAL.rgb('slate', 2)
+            o[y, x, :3] = PAL.rgb(fam_o, 2 + tone_shift)
+        return Image.fromarray(o, 'RGBA'), Image.fromarray(g, 'RGBA')
+
+    def test_the_grounds_marks_lifted_a_rung_count_as_copied(self):
+        from scripts.art.native import raster
+        o, g = self._lifted('slate', 1)
+        own, same = raster.lone_split(o, g, 0, 0, lift=1)
+        self.assertLessEqual(own, 0.01)
+        self.assertGreater(same, 0.01)
+
+    def test_marks_of_another_family_or_lift_are_the_overlays_own(self):
+        from scripts.art.native import raster
+        for fam, shift in (('dusk', 1), ('slate', 2)):
+            with self.subTest(family=fam, shift=shift):
+                o, g = self._lifted(fam, shift)
+                own, same = raster.lone_split(o, g, 0, 0, lift=1)
+                self.assertGreater(own, 0.01)
 
     def test_the_grounds_own_marks_count_against_the_ground(self):
         from scripts.art.native import raster

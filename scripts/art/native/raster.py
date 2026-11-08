@@ -379,11 +379,26 @@ def lone_share(img: Image.Image) -> float:
     return float(lone[er].mean()) if er.any() else 0.0
 
 
-def lone_split(img: Image.Image, ground: Image.Image, x0: int, y0: int) -> tuple:
-    """A floor overlay's lone pixels in two parts (Claude A's C-8 ruling, round 9): the shares of its interior
-    that are lone and identical to the ground at the same place (the floor's own marks, judged by the ground's
-    limit), and lone and its own (judged by a drawn picture's limit). (x0, y0) is the overlay's top left on the
-    ground."""
+def _house_codes(key):
+    """House palette codes (family * 8 + tone) for packed RGB keys, -1 where a colour is not a house tone."""
+    from . import palette as PAL
+    if not hasattr(_house_codes, 'lut'):
+        lut = {}
+        for f, i in PAL.FI.items():
+            for t in range(6):
+                r, g, b = PAL.rgb(f, t)
+                lut.setdefault(r * 65536 + g * 256 + b, i * 8 + t)
+        _house_codes.lut = lut
+    lut = _house_codes.lut
+    u, inv = np.unique(key, return_inverse=True)
+    return np.array([lut.get(int(k), -1) for k in u], np.int64)[inv].reshape(key.shape)
+
+
+def lone_split(img: Image.Image, ground: Image.Image, x0: int, y0: int, lift: int = 0) -> tuple:
+    """A floor overlay's lone pixels in two parts (Claude A's C-8 rulings, rounds 9 and 10): the shares of its
+    interior that are lone and copied from the ground (identical to the ground at the same place, or the ground's
+    own code on the same ramp `lift` tones up), judged by the ground's limit, and lone and its own, judged by a drawn
+    picture's limit. (x0, y0) is the overlay's top left on the ground."""
     a = np.asarray(img.convert('RGBA')).astype(np.int64)
     key = a[..., 0] * 65536 + a[..., 1] * 256 + a[..., 2]
     key[a[..., 3] == 0] = -1
@@ -402,6 +417,9 @@ def lone_split(img: Image.Image, ground: Image.Image, x0: int, y0: int) -> tuple
         sub = ga[ys:ye, xs:xe]
         g[ys - y0:ye - y0, xs - x0:xe - x0] = sub[..., 0] * 65536 + sub[..., 1] * 256 + sub[..., 2]
     same = key == g
+    if lift:
+        co, cg = _house_codes(key), _house_codes(g)
+        same |= (co >= 0) & (cg >= 0) & (co // 8 == cg // 8) & (co % 8 == cg % 8 + lift) & (cg % 8 + lift <= 5)
     n = float(er.sum())
     return float((lone & er & ~same).sum() / n), float((lone & er & same).sum() / n)
 
