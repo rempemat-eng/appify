@@ -1771,16 +1771,9 @@ def _moss_cushions(a, rm, y_r, y_eave, seed, n=4, rh=None):
                 a[jy + 1, x] = C('leaf_cool', 1)                            # its shade on the slate below
 
 
-# The water mill at the size guide's `water_mill` (round 5 of the detail audit, R5-1): 104 world px
-# wide (14 x 7 cells), two storeys and a loft, 76 to the eaves, built by the house builder
-# (houses.building) like the Crossroads houses, whose eaves are 40: a loading door 32 x 22 on the
-# yard side with a hoist door and its beam above, the wheel 44 across on the water side.
-MILL_SPEC = dict(w=104, depth=56, wall_h=76, roof_h=40, wall='stone', roof='slate', paint='timber', doors=[[18, 'timber']],
-                 door_w=22, door_h=32, windows=[44], win_w=12, win_h=12, win_top=34, shutters=False,
-                 # round 6 of the detail audit (R6-5, R6-6): a calm slate draw with the lowest third a tone
-                 # darker, no moss stuck mid-slate (the mill lays its own cushions in the joints), a deep
-                 # eave shadow, and a stove chimney to break the roof's field
-                 slate_calm=True, eave_dark=True, roof_moss=0, roof_lichen=0, eave_shadow=8.0, chimney=[88], chimney_w=7, chimney_h=12)
+# The water mill's look (the size guide's `water_mill`, rounds 5 and 6 of the detail audit) lives in
+# sets/looks.py, which the kit index reads for the mill's volume shadow without painting the set.
+from scripts.art.kit.sets.looks import MILL_SPEC  # noqa: E402
 MILL_WHEEL_R = 66.0            # art px: a wheel 44 world px (132 art px) across
 MILL_DIP = 14                  # art px: the race's surface below the wall's foot, where the wheel stands in it
 _MILL = {}
@@ -3890,7 +3883,7 @@ def prop_jobs():
         note='A printed sheet behind glass (a header with a train and a clock, rows of print, a notice pinned askew) under a gabled hood.')
     # the Millrace
     add('mill_wheel', [('still', lambda: mill_wheel())], name='Water mill and wheel', purpose='work', role='wheel', cells=(14, 7),
-        fp=_fp(14, 7), collision={'shape': 'rect', 'rect': [-52.0, -48.0, 104, 48]}, shadow='sprite', composition='edge',
+        fp=_fp(14, 7), collision={'shape': 'rect', 'rect': [-52.0, -48.0, 104, 48]}, shadow='volume', composition='edge',
         requires=[_rel('near', 'water', 2, 'the wheel sits in the race that drives it')], forbids=[OFF_ROUTE],
         extra={'provides': ['feature', 'water', 'view']},
         size_class='water_mill (the size guide\'s water mill: 104 world px wide, two storeys and a loft, 76 to the eaves; the wheel 44 across on the water side, its race the zone\'s water; art px: 310 to 432 tall, 288 to 384 wide)',
@@ -3960,14 +3953,15 @@ def jobs():
 
 
 def _piece(pid, name, variants, size, cells, purpose, role, **kw):
-    sil = kw.get('shadow') == 'sprite'
-    if sil:
+    vol = kw.get('shadow') == 'volume'
+    if vol:
         kw = dict(kw, shadow=None)
     p = B._piece(pid, name, variants, size, cells, purpose, role, **kw)
-    if sil:
-        # a building's cast shadow is its silhouette thrown down and east, in the zone as in the study
-        # (round 7 of the detail audit, R7-1; scripts/art/kit/props.py, silhouette_shadow)
-        p['rendering']['cast_shadow'] = {'shape': 'sprite'}
+    if vol:
+        # a building's cast shadow is its volume's (round 7 of the detail audit, R7-1, now the house
+        # builder's one system: scripts/art/kit/props.py volume_shadow from sets/looks.py, laid by the
+        # bake's VOL.bake_cast), baked as the Crossroads houses' are
+        p['rendering']['cast_shadow'] = {'shape': 'baked'}
     p['variants'] = [{'id': vid, 'weight': w, 'png': RES + png, 'foot': list(foot)} for (vid, w, png, foot) in variants]
     p['biomes'] = ['coast', 'valley', 'brackens']
     p['audit']['painter'] = {'module': 'scripts.art.kit.sets.act1', 'fn': kw.get('fn') or pid, 'args': {}}

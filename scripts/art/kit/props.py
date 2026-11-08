@@ -55,38 +55,47 @@ def crown_shadow(png_res: str, foot, out_name: str):
     return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
 
-# the bake's one projection for a thing's cast shadow (scripts/art/biomes/*.json, shadow.project; the
-# same in the meadow and the woodland): each texel at height h above the foot thrown kx*h east, ky*h down
-PROJECT = (0.46, 0.22)
+def _set_looks() -> dict:
+    """{piece id: look} for the prop sets' buildings (scripts/art/kit/sets/looks.py)."""
+    from scripts.art.kit.sets import looks as LK
+    return LK.VOLUME_LOOKS
 
 
-def silhouette_shadow(png_res: str, foot, out_name: str):
-    """A building's cast shadow from its own silhouette (round 7 of the Act 1 detail audit, R7-1): the
-    projection the study bake uses (compose._shadow_mask: every opaque texel thrown east and down by
-    PROJECT of its height, closed, filled and opened by 2.5 world px), so the zone draws the same shape
-    as the study, its far edge stepping with the roof, the chimney and the vent. Written as an R8 mask
-    (2 the core, 1 its rim of one world px) with its offset from the foot, as crown_shadow's."""
+def volume_look(p: dict) -> dict | None:
+    """The look a piece's body was drawn from by the house builder (houses.building), or None: a
+    zone plan's building (the piece's audit source, part body) or a prop set's building
+    (sets/looks.VOLUME_LOOKS, the Act 1 mill). Every such piece casts its volume's shadow
+    (volume_shadow, bake's VOL.bake_cast) and no other: no structure draws two shadows."""
+    looks = _set_looks()
+    if p['id'] in looks:
+        return dict(looks[p['id']])
+    src = next((s for s in (p.get('audit') or {}).get('sources') or [] if s.get('part') == 'body'), None)
+    plan_path = os.path.join(ROOT, 'game', 'data', 'plans', '%s.json' % (src or {}).get('zone'))
+    if not src or not os.path.exists(plan_path):
+        return None
+    plan = json.load(open(plan_path))
+    b = next((b for b in plan.get('buildings', []) if b['id'] == src.get('object')), None)
+    if b is None:
+        return None
+    look = dict(plan.get('art', {}).get('looks', {}).get(b['id'], {}))
+    look.setdefault('w', b['rect'][2])
+    look.setdefault('depth', b['rect'][3])
+    return look
+
+
+def volume_shadow(p: dict, out_name: str) -> dict | None:
+    """A house's cast shadow from its volume (scripts/art/native/volume.py, eastward-edges 11.6): a
+    column east of it shaped by its roof and stacks, from the look its body was drawn from (the
+    piece's audit source in the zone plan, or a set's look in scripts/art/kit/sets/looks.py). Written
+    as an R8 mask like a crown's (2 the core, 1 the rim) with its offset from the foot."""
     from PIL import Image
-    from scipy import ndimage as ndi
-    a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
-    fx, fy = foot
-    ys, xs = np.nonzero(a)
-    hgt = np.maximum(0, fy - ys)
-    gx = xs + PROJECT[0] * hgt
-    gy = fy + PROJECT[1] * hgt - np.maximum(0, ys - fy)
-    k = max(2, int(round(2.5 * D)))
-    X = np.round(gx - fx).astype(int)
-    Y = np.round(gy - fy).astype(int)
-    x0, y0 = X.min() - k - 2, Y.min() - k - 2
-    m = np.zeros((Y.max() - y0 + k + 3, X.max() - x0 + k + 3), bool)
-    m[Y - y0, X - x0] = True
-    m = ndi.binary_dilation(m, iterations=k)
-    m = ndi.binary_fill_holes(m)
-    m = ndi.binary_erosion(m, iterations=k)
-    core = ndi.binary_erosion(m, iterations=D)
-    out = np.where(core, 2, np.where(m, 1, 0)).astype(np.uint8)
-    Image.fromarray(out, 'L').save(os.path.join(OUT, 'art', out_name))
-    return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
+    from scripts.art.native import volume as VOL
+    look = volume_look(p)
+    if look is None:
+        return None
+    lv, ox, oy = VOL.house_cast(look, D)
+    Image.fromarray(lv, 'L').save(os.path.join(OUT, 'art', out_name))
+    return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(ox), int(oy)]}
 
 
 def _anim(rendering: dict, foot) -> dict | None:
@@ -112,9 +121,11 @@ def entry(p: dict) -> dict:
     shadow = None
     if cs.get('shape') == 'ellipse' and cs.get('size'):
         shadow = {'size': [int(round(v * D)) for v in cs['size']], 'dir': [int(round(v * D)) for v in cs.get('dir', [0, 0])]}
-    if cs.get('shape') == 'sprite' and p.get('variants'):
-        v0 = p['variants'][0]
-        shadow = {'mask': silhouette_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
+    if (p['kind'] == 'structure' or p['id'] in _set_looks()) and p.get('variants'):
+        # a building drawn by the house builder (houses.py), from a zone plan's look or a set's:
+        # its volume's shadow, and only that one
+        mk = volume_shadow(p, 'shadow_%s.png' % p['id'])
+        shadow = {'mask': mk, 'kind': 'volume'} if mk else shadow
     if p.get('placement', {}).get('role') == 'tree' and p.get('variants'):
         v0 = p['variants'][0]
         shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}

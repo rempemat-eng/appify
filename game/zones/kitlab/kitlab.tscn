@@ -43,13 +43,13 @@ piece_id = "woodland_oak"
 variant = "oak"
 
 [node name="rock-1" type="Node2D" parent="Props" unique_id=971318260 instance=ExtResource("8_ys4bc")]
-position = Vector2(860, 96)
+position = Vector2(836, 96)
 script = ExtResource("6_vncco")
 piece_id = "woodland_boulder"
 variant = "b4"
 
 [node name="rock-2" type="Node2D" parent="Props" unique_id=1276918932 instance=ExtResource("8_ys4bc")]
-position = Vector2(884, 112)
+position = Vector2(858, 116)
 script = ExtResource("6_vncco")
 piece_id = "woodland_boulder"
 variant = "b1"

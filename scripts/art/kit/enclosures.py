@@ -23,10 +23,11 @@ import json
 import os
 import sys
 
-import numpy as np
-from scipy import ndimage as ndi
-
 from scripts.art.kit.schema import ROOT
+
+# numpy and scipy are imported where a plan has fences (check_zone, _walls): the world editor's
+# validator (game/addons/world_editor/rules_adapter.gd) runs this module with the standard library
+# only on CI's Godot job, and a plan without fences needs neither.
 
 CELL = 24
 HALF = 12
@@ -81,6 +82,7 @@ def segments(plan, lib):
 
 def _walls(plan, lib, shape):
     """The buildings' solid boxes as walls (a front garden uses the house's front as its fourth side)."""
+    import numpy as np
     m = np.zeros(shape, bool)
     for pc in plan.get('pieces', []):
         p = lib.get(pc['piece']) or {}
@@ -102,6 +104,8 @@ def check_zone(plan, lib=None) -> list:
     segs = segments(plan, lib)
     if not segs:
         return []
+    import numpy as np
+    from scipy import ndimage as ndi
     fs = []
     walls = _walls(plan, lib, (H + 1, W + 1))
     # 1. every arm's end meets another piece's arm end (or a gate's end, or a wall)

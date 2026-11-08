@@ -283,6 +283,50 @@ def lawn_variants(cv: np.ndarray, turf: np.ndarray, var: np.ndarray, seed: int) 
 # ------------------------------------------------------------------------------------------------
 # water
 # ------------------------------------------------------------------------------------------------
+RUN_IN = CELL          # texels of straight bank above a fall's lip, at the sheet's exact width
+RUN_EASE = CELL        # texels above that over which the channel's own banks ease into the run-in
+RUN_MARGIN = 12        # texels either side of the sheet the run-in may move a bank
+
+
+def run_in_zone(h: int, w: int, x0: int, sw: int, rim: int) -> np.ndarray:
+    """The texels of a fall's run-in and its ease (where no tongue, reed or stone may stand, so
+    the channel's banks run straight into the lip)."""
+    z = np.zeros((h, w), bool)
+    z[max(0, rim - RUN_IN - RUN_EASE):max(0, rim), max(0, x0 - RUN_MARGIN - 4):min(w, x0 + sw + RUN_MARGIN + 4)] = True
+    return z
+
+
+def fall_run_in(wm: np.ndarray, x0: int, sw: int, rim: int, foot: int | None = None) -> np.ndarray:
+    """The channel feeding a fall made the fall's width at its lip (Matt, 4 Nov: "the waterfall
+    still has weird overlap with the water on the top"). For RUN_IN rows above the rim the water is
+    exactly the sheet's columns x0 .. x0 + sw and one texel more either side, the rim's wet earth
+    (softground.shore_rim), so the open water, waterline included, is the sheet's columns and its
+    banks run straight down into the lip; over the RUN_EASE rows above, the channel's own lumped
+    banks ease into it (a smoothstep), so there is no notch. Down the face (rim .. foot) the water
+    keeps that width too, so no bank of the narrower channel over the face draws a rim across the
+    lip (the bake paints the sheet and the face beside it there)."""
+    out = wm.copy()
+    H, W = wm.shape
+    lo, hi = max(0, x0 - RUN_MARGIN), min(W, x0 + sw + RUN_MARGIN)
+    top = rim - RUN_IN - RUN_EASE
+    for y in range(max(0, top), min(H, rim if foot is None else foot)):
+        row = wm[y, lo:hi]
+        if not row.any():
+            if y < rim:
+                continue
+            L, Rr = x0 - 1, x0 + sw + 1
+        else:
+            xs = np.nonzero(row)[0] + lo
+            L, Rr = int(xs.min()), int(xs.max()) + 1
+        a = 1.0 if y >= rim - RUN_IN else (y - top + 0.5) / RUN_EASE
+        a = a * a * (3 - 2 * a)
+        nl = int(round(L + (x0 - 1 - L) * a))
+        nr = int(round(Rr + (x0 + sw + 1 - Rr) * a))
+        out[y, lo:hi] = False
+        out[y, nl:nr] = True
+    return out
+
+
 def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.ndarray, seed: int, avoid=None) -> list:
     """Stones standing in a stream; shingle on the inside of a river's bends and a scoured deep
     channel on the outside; broad shallows and swell lines along a wide river's or lake's shore.
@@ -312,12 +356,8 @@ def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.nda
         if 0 <= cy < H and 0 <= cx < W and wm[cy, cx]:
             w_ = rng.uniform(4.0, 6.5)
             img, anc, _a = P4.boulder4(D, w_, w_ * 0.6, seed=int(rng.integers(0, 10 ** 6)), moss='top' if rng.random() < 0.5 else None)
-            y0, y1, x0, x1 = max(0, cy - 12), min(H, cy + 12), max(0, cx - 24), min(W, cx + 24)
-            ly, lx = np.mgrid[y0:y1, x0:x1]
-            ring = ((lx - cx) / (w_ * D * 0.7)) ** 2 + ((ly - cy) / (w_ * D * 0.3)) ** 2
-            rs = wm[y0:y1, x0:x1] & (ring <= 1.0) & (ring > 0.55)
-            sub = cv[y0:y1, x0:x1]
-            sub[rs] = step(sub[rs], 1)
+            # its wet contact (the shade, the ripple, the wet foot) comes when it is laid:
+            # softground.seat_stone, the one treatment for every stone in the water
             items.append((img, anc, (cx, cy)))
     # 3 to 5: bends. A land cell with water on two adjacent sides and the diagonal between them
     # is the inside of a bend: shingle there; the far side of the bend scours a deep channel

@@ -473,7 +473,7 @@
  },
  "rendering": {
   "cast_shadow": {
-   "shape": "sprite"
+   "shape": "baked"
   },
   "contact_ao": true,
   "animations": [

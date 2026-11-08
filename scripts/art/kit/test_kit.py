@@ -183,9 +183,12 @@ class Rules(unittest.TestCase):
                 self.assertEqual(pc['geometry']['foot'][1], y1)
                 a = np.asarray(Image.open(os.path.join(ROOT, 'game', pc['variants'][0]['png'][len('res://'):])))[..., 3] > 0
                 self.assertFalse(a[:y0].any(), pc['id'])
-                above = a[:y1 - 5].copy()
-                above[:, x0:x1] = False
-                self.assertFalse(above.any(), pc['id'])
+                # above the pool the picture is the sheet and nothing else: the woodland's sheet
+                # (rocks.sheet_mask), the lip the channel's width, widening as it falls (round 7)
+                from scripts.art.kit import structures as ST
+                m = ST.sheet_mask(a.shape, x0, x1 - x0, y0, y1)
+                self.assertFalse((a[:y1 - 5] & ~m[:y1 - 5]).any(), pc['id'])
+                self.assertEqual(int(a[y0].sum()), x1 - x0, pc['id'])
                 self.assertTrue(a[y0, x0:x1].all(), pc['id'])
 
 
@@ -237,6 +240,743 @@ class Surface(unittest.TestCase):
             self.assertTrue(res[name]['pass'], (name, res[name]))
 
 
+
+
+class WaterBanks(unittest.TestCase):
+    """Matt, 4 Nov ("some stone borders of the water are not entirely clean", "the waterfall still
+    has weird overlap with the water on the top"): the water's banks follow the projection (only a
+    bank with land to its north shows a face), carry one rim round every other shore, a stone in the
+    water has a wet contact, and a fall's channel runs into its lip at the sheet's exact width."""
+
+    @staticmethod
+    def _paint(m, seed=402, **kw):
+        from scripts.art.native import softground as GD
+        cv = GD.lawn(m.shape[0], m.shape[1], 977)
+        GD.water(cv, m, seed, bank_h=10, flow='auto', stones=0.0, **kw)
+        return cv
+
+    @staticmethod
+    def _fam(cv, names):
+        from scripts.art.native.palette import FI
+        return np.isin(cv // 8, [FI[n] for n in names if n in FI]) & (cv >= 0)
+
+    EARTH = ('earth', 'earth_cool', 'earth_warm')
+    WATER = ('water', 'water_warm', 'water_cool')
+
+    def test_only_a_north_bank_shows_a_face(self):
+        # a channel running north-south: its west and east shores carry no face (at most the
+        # one-texel rim of wet earth in any row); one running east-west: the north shore a face
+        # several texels deep, the south shore only the rim
+        H, W = 160, 120
+        m = np.zeros((H, W), bool)
+        m[:, 40:80] = True
+        face = self._face(self._paint(m), m)
+        self.assertEqual(int(face[10:H - 10].sum()), 0, 'a face on a west or east shore')
+        m = np.zeros((H, W), bool)
+        m[40:100, :] = True
+        face = self._face(self._paint(m), m)
+        self.assertGreaterEqual(int(np.median(face[40:70].sum(0)[10:-10])), 3, 'the north bank keeps its face')
+        self.assertEqual(int(face[70:100, 10:-10].sum()), 0, 'a face on a south shore')
+
+    def _face(self, cv, m):
+        """Earth in the water's outline deeper than the rim: texels not beside the land (turf
+        tongues count as land)."""
+        from scipy import ndimage as ndi
+        earth = self._fam(cv, self.EARTH) & m
+        land = ~self._fam(cv, self.EARTH + self.WATER) | ~m
+        return earth & ~ndi.binary_dilation(land, structure=np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool))
+
+    def test_the_dual_grid_bank_follows_the_projection(self):
+        # the editor's live tiles (edges.bank): a west or east shore and a south shore have at most
+        # the one-texel rim of absolute (earth) texels per row or column; a north shore its face
+        from scripts.art.native.palette import C
+        fu = np.full((E.N, E.N), C('grass', 3))
+        fl = np.full((E.N, E.N), C('water', 2))
+        for k, side in ((5, 'west'), (10, 'east'), (12, 'south'), (3, 'north')):
+            t = E.bank(k, fu, fl)
+            ab = t[..., 0] == E.OP_ABS
+            earth = ab & (t[..., 1] // 8 != C('water', 0) // 8)
+            from scipy import ndimage as ndi
+            land = t[..., 0] == E.OP_UPPER
+            face = earth & ~ndi.binary_dilation(land, structure=np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool))
+            if side == 'north':
+                self.assertGreaterEqual(int(np.median(face.sum(0))), 4, side)
+            else:
+                self.assertEqual(int(face.sum()), 0, side)
+
+    def test_current_marks_run_with_the_flow(self):
+        # the woodland review (4 Nov): on a wide east-flowing stream the moving water drew vertical
+        # marks drifting south, and the ground a four-armed cross sparkle. Marks lie along the flow
+        # and move downstream; glints are pairs
+        from scripts.art.native import animate as AN
+        from scripts.art.native import softground as GD
+        from scripts.art.native.palette import C
+        from scipy import ndimage as ndi
+        H_, W_ = 220, 640
+        m = np.zeros((H_, W_), bool)
+        m[50:170] = True                                   # 120 texels wide, running east-west
+        codes = np.where(m, C('water', 2), C('grass', 3)).astype(np.int32)
+        frames = AN.water(codes, m, np.zeros_like(m), 3.0, thin=True)
+        inner = np.zeros_like(m)
+        inner[60:160, 40:600] = True
+        for f in frames:
+            on = (f[..., 3] > 0) & inner
+            horiz = int((on[:, 1:] & on[:, :-1]).sum())
+            vert = int((on[1:] & on[:-1]).sum())
+            self.assertGreater(horiz, 5 * max(1, vert), 'marks lie east-west on an east-west stream')
+            allon = f[..., 3] > 0
+            lone = allon.copy()
+            for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+                lone &= ~np.roll(np.roll(allon, dy, 0), dx, 1)
+            self.assertEqual(int((lone & inner).sum()), 0, 'no lone lifted texel (review round 2, R2-5)')
+        a = (frames[0][..., 3] > 0) & inner
+        b = (frames[1][..., 3] > 0) & inner
+        shift = int(round(4 * 3.0))
+        self.assertGreater(int((a[:, :-shift] & b[:, shift:]).sum()), 0.8 * a[:, :-shift].sum(), 'they drift east')
+        bend = np.zeros((H_, W_), bool)
+        yy_, xx_ = np.mgrid[0:H_, 0:W_]
+        bend |= (np.abs(yy_ - (110 + 40 * np.sin(xx_ / 90.0))) < 45)       # a meandering stream
+        cb = np.where(bend, C('water', 2), C('grass', 3)).astype(np.int32)
+        fb = AN.water(cb, bend, np.zeros_like(bend), 3.0, thin=True)
+        for f in fb:
+            allon = f[..., 3] > 0
+            lone = allon.copy()
+            for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+                lone &= ~np.roll(np.roll(allon, dy, 0), dx, 1)
+            self.assertLessEqual(int((lone & ndi.binary_erosion(bend, iterations=6)).sum()), 2,
+                                 'specks where the current turns')
+        cv = self._paint(m)
+        w5 = cv == C('water', 5)
+        light = (cv == C('water', 5)) | (cv == C('water', 4))
+        cross = w5.copy()
+        for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0)):
+            cross &= np.roll(np.roll(light, dy, 0), dx, 1)
+        self.assertEqual(int(cross[60:160].sum()), 0, 'no four-armed glint')
+
+    def test_the_plunge_churns_every_frame(self):
+        # the woodland review (4 Nov): the foam stood still in 5 of 8 frames. rocks.fall's foot
+        # (the woodland) and fall_sheet's (the kit's pieces) both churn in every frame but the still
+        from scripts.art.native import rocks as RK
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C
+        cv = np.full((190, 220), C('grass', 3), np.int32)
+        cv[60:130, 40:180] = C('stone', 2)
+        cv[0:64, 87:133] = C('water', 2)
+        cv[128:, 10:210] = C('water', 2)
+        under = cv.copy()
+        info = RK.fall(cv, 32.0, 16.0, 64 / 3.0 + 1.5, 128 / 3.0, seed=65)
+        self.assertEqual((info['xl'] - 87 <= 0, info['xr'] - 133 >= 0), (True, True))
+        ov = RK.plunge_frames(cv, info)
+        self.assertEqual(len(ov), RK.PLUNGE_FRAMES)
+        self.assertEqual(int((ov[0] >= 0).sum()), 0, 'frame 0 is the still')
+        for t in range(1, RK.PLUNGE_FRAMES):
+            self.assertGreater(int((ov[t] >= 0).sum()), 20, 'frame %d churns' % t)
+        # the lip is the channel's width: nothing above the bend outside the channel's columns
+        top = int(round((64 / 3.0 + 1.5 - 1.5) * 3))
+        self.assertTrue((cv[top:top + 3, :87] == under[top:top + 3, :87]).all())
+        self.assertTrue((cv[top:top + 3, 133:] == under[top:top + 3, 133:]).all())
+        strip, (x0, y0, w, h) = ST.fall_frames(2, 1)
+        f0 = strip[:, :w]
+        for t in range(1, ST.FALL_FRAMES):
+            ft = strip[:, t * w:(t + 1) * w]
+            self.assertGreater(int((ft[-14:] != f0[-14:]).sum()), 20, 'kit fall frame %d churns' % t)
+
+    def test_one_rim_round_every_shore(self):
+        # an irregular pool and channel: every water texel beside land is the rim's wet earth (or
+        # the north face, or a turf tongue), never bare water; and inside the rim the waterline
+        from scripts.art.native import softgrid as SG
+        from scripts.art.native.palette import C
+        cells = np.zeros((10, 12), bool)
+        cells[0:6, 7:9] = True
+        cells[5:9, 2:10] = True
+        m = SG.shape(cells, 240, 288, 41)
+        cv = self._paint(m)
+        CROSS = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+        from scipy import ndimage as ndi
+        edge = m & ndi.binary_dilation(~m, structure=CROSS)
+        water = self._fam(cv, self.WATER)
+        self.assertEqual(int((edge & water).sum()), 0, 'bare water beside the land')
+        from scripts.art.native import softground as GD
+        rim = edge & (cv == GD.rim_earth())
+        self.assertGreater(int(rim.sum()), 200)
+        inner = m & ~edge & ndi.binary_dilation(rim, structure=CROSS) & water
+        self.assertTrue((cv[inner] == C('water', GD.RIM_LINE)).all(), 'the mid tone inside the rim')
+
+    def test_a_stone_in_the_water_has_a_wet_contact(self):
+        from scripts.art.native import ctx
+        from scripts.art.native import props as P4
+        from scripts.art.native import screen as SN
+        from scripts.art.native import softground as GD
+        from scripts.art.native.palette import C
+        img, anc, _a = P4.boulder4(ctx.D, 7.0, 4.5, seed=5)
+        dec = SN.to_codes(img)
+        hh, ww = dec.shape
+        H, W = 80, 80
+        m = np.zeros((H, W), bool)
+        m[40:, :] = True
+        cv = self._paint(m)
+        X, Y = 40 - ww // 2, 62 - hh
+        lay = lambda c, d, x, y: SN.DC.paste(c, d, x, y)    # noqa: E731
+        before = cv.copy()
+        self.assertTrue(GD.seat_stone(cv, m, dec, X, Y, lay))
+        st = np.zeros((H, W), bool)
+        st[Y:Y + hh, X:X + ww] = dec >= 0
+        foot = st & ~GD.down(st, -1)
+        below = GD.down(foot, 1) & m & ~st
+        self.assertGreaterEqual(int((cv[below] == C('water', 5)).sum()), 3, 'a ripple line at its foot')
+        bottom = st & ~GD.down(st, -2) & m
+        plain = before.copy()
+        SN.DC.paste(plain, dec, X, Y)
+        self.assertTrue((cv[bottom] <= plain[bottom]).all() and (cv[bottom] < plain[bottom]).any(), 'its wet foot darker')
+        # one on land is laid as it is
+        cv2 = self._paint(m)
+        ref = cv2.copy()
+        self.assertFalse(GD.seat_stone(cv2, m, dec, X, 4, lay))
+        SN.DC.paste(ref, dec, X, 4)
+        np.testing.assert_array_equal(cv2, ref)
+
+    def test_a_bank_stone_decal_stands_on_the_face(self):
+        # the editor's bank stones sit on a north bank's face (rows 1 to 6 under the outline, the
+        # waterline at 7), never across the waterline, and only a north bank carries them
+        from scripts.art.kit import dressing as DR
+        for i, w_ in enumerate((5.0, 6.5, 8.0)):
+            dc, (_ax, ay) = DR.bank_stone(1100 + i, w_)
+            rows = np.nonzero((dc >= 0).any(1))[0]
+            self.assertLessEqual(int(rows.max()) - ay, 6, 'bankstone_%d' % i)
+        for name in ('lawn_over_water', 'path_over_water'):
+            pc = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'pieces', 'transition', name + '.json')))
+            dr = pc['transition'].get('dressing') or {}
+            for side in ('south', 'side'):
+                self.assertFalse([d for d in dr.get(side, []) if d.startswith('bankstone')], (name, side))
+
+    @staticmethod
+    def _codes(png):
+        from PIL import Image
+        from scripts.art.native.palette import LUT
+        a = np.asarray(Image.open(png).convert('RGB')).astype(np.int64)
+        key = (a[..., 0] << 16) | (a[..., 1] << 8) | a[..., 2]
+        lut = {(int(c[0]) << 16) | (int(c[1]) << 8) | int(c[2]): i for i, c in enumerate(LUT)}
+        out = np.full(key.shape, -1, np.int64)
+        for k in np.unique(key):
+            out[key == k] = lut.get(int(k), -1)
+        return out
+
+    def _baked(self):
+        from scripts.art.kit import bake as BK
+        for f in sorted(os.listdir(BK.ZONES)):
+            plan = json.load(open(os.path.join(BK.ZONES, f)))
+            if plan.get('bake') and os.path.exists(BK.out_path(f[:-5])):
+                yield f[:-5], plan, self._codes(BK.out_path(f[:-5]))
+
+    def test_baked_stones_in_the_water_have_a_wet_contact(self):
+        # in every baked ground: a stone whose foot stands on water has the light ripple under it
+        # (a footbridge's abutments are the bridge's own painter and are left out)
+        from scipy import ndimage as ndi
+        from scripts.art.kit import bake as BK
+        from scripts.art.native.palette import C
+        lib = BK._pieces_lib()
+        for zone, plan, cv in self._baked():
+            crossing = np.zeros(cv.shape, bool)
+            for pc in plan.get('pieces', []):
+                rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+                if rp.get('fn') == 'footbridge':
+                    pw, ph = lib[pc['piece']]['geometry']['size_px']
+                    x, y = pc['at']
+                    crossing[max(0, int(y - ph)):int(y) + 4, max(0, int(x - pw / 2)):int(x + pw / 2)] = True
+            stone = self._fam(cv, ('stone', 'stone_warm', 'stone_cool')) & ~crossing
+            water = self._fam(cv, self.WATER)
+            lab, n = ndi.label(stone)
+            for i in range(1, n + 1):
+                st = lab == i
+                if st.sum() < 12:
+                    continue
+                ys, xs = np.nonzero(st)
+                foot = st & ~np.roll(st, -1, 0)
+                under = np.roll(foot, 1, 0) & ~st
+                wet = under & water
+                if wet.sum() < max(3, 0.5 * under.sum()):
+                    continue                                 # it stands on land
+                rip = ndi.binary_dilation(foot, iterations=2) & (cv == C('water', 5))
+                self.assertGreaterEqual(int(rip.sum()), 1, '%s: a stone at %d,%d stands in the water with no wet contact' % (zone, xs.mean(), ys.max()))
+
+    def test_rocks_placed_as_props_stand_on_land(self):
+        # a rock the plan places (a Godot sprite over the baked ground) never sits across the water
+        from PIL import Image
+        idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        for zone, plan, cv in self._baked():
+            water = self._fam(cv, self.WATER)
+            for pc in plan.get('pieces', []):
+                e = idx.get(pc['piece']) or {}
+                if e.get('role') != 'rock' or e.get('painted'):
+                    continue
+                v = e['variants'].get(pc.get('variant')) or next(iter(e['variants'].values()))
+                a = np.asarray(Image.open(os.path.join(S.ROOT, 'game', v['png'][len('res://'):])))[..., 3] > 0
+                x0, y0 = int(pc['at'][0] - v['foot'][0]), int(pc['at'][1] - v['foot'][1])
+                ys, xs = np.nonzero(a)
+                over = 0
+                for y, x in zip(ys + y0, xs + x0):
+                    if 0 <= y < cv.shape[0] and 0 <= x < cv.shape[1] and water[y, x]:
+                        over += 1
+                self.assertEqual(over, 0, '%s: %s stands %d texels over the water' % (zone, pc['id'], over))
+
+    def test_a_falls_channel_runs_into_its_lip_at_its_width(self):
+        # above every fall's rim, the channel's open water is exactly the sheet's columns and its
+        # banks (the rim's wet earth) stand straight either side of it
+        from scripts.art.kit import bake as BK
+        from scripts.art.kit import surface as SF
+        from scripts.art.native.palette import C
+        from scripts.art.native import softground as GD
+        lib = BK._pieces_lib()
+        seen = 0
+        for zone, plan, cv in self._baked():
+            fh = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
+            for pc in plan.get('pieces', []):
+                rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+                if rp.get('fn') != 'fall':
+                    continue
+                g = lib[pc['piece']]['geometry']
+                sw = g['size_cells'][0] * 24
+                x0 = int(round(pc['at'][0] - sw / 2))
+                rim = int(round(pc['at'][1] - rp.get('args', {}).get('face_px', fh)))
+                x1 = x0 + sw
+                # the piece's sheet is the same span
+                self.assertEqual(g['sheet_px'][1] - g['sheet_px'][0], sw)
+                water = self._fam(cv, self.WATER)
+                for y in range(rim - SF.RUN_IN, rim):
+                    cols = np.nonzero(water[y, x0 - SF.RUN_MARGIN:x1 + SF.RUN_MARGIN])[0] + x0 - SF.RUN_MARGIN
+                    self.assertEqual((int(cols.min()), int(cols.max()) + 1), (x0, x1), '%s row %d' % (zone, y))
+                    self.assertEqual(int(cv[y, x0 - 1]), GD.rim_earth(), '%s row %d west bank' % (zone, y))
+                    self.assertEqual(int(cv[y, x1]), GD.rim_earth(), '%s row %d east bank' % (zone, y))
+                seen += 1
+        self.assertGreater(seen, 0)
+
+    def test_a_fall_lands_in_its_pool(self):
+        # (review round 3, K3-1) under every baked fall the rows from the sheet's foot down are the
+        # pool's water or its foam, never the pool's grass lip or earth, and the inlet's top
+        # corners are rounded, not square
+        from scripts.art.kit import bake as BK
+        from scripts.art.native import rocks as RK
+        lib = BK._pieces_lib()
+        seen = 0
+        for zone, plan, cv in self._baked():
+            fh = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
+            for pc in plan.get('pieces', []):
+                rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+                if rp.get('fn') != 'fall':
+                    continue
+                sw = lib[pc['piece']]['geometry']['size_cells'][0] * 24
+                x0 = int(round(pc['at'][0] - sw / 2))
+                foot = int(round(pc['at'][1]))
+                wet = self._fam(cv, self.WATER + ('snow',))
+                for y in range(foot, foot + 4):
+                    dry = np.nonzero(~wet[y, x0:x0 + sw])[0]
+                    self.assertEqual(len(dry), 0, '%s row %d under the fall: %s' % (zone, y, (dry + x0)[:8]))
+                self.assertFalse(wet[foot, x0 - RK.PLUNGE_PAD], '%s: a square inlet corner west' % zone)
+                self.assertFalse(wet[foot, x0 + sw + RK.PLUNGE_PAD - 1], '%s: a square inlet corner east' % zone)
+                seen += 1
+        self.assertGreater(seen, 0)
+
+    def test_nothing_stands_over_the_woodlands_channel_above_its_lip(self):
+        # (review round 3, R3-1) no stone or rock prop over the open water of the channel in the 24
+        # rows above the fall's rim: the channel runs clear to the lip
+        import json
+        from PIL import Image
+        from scripts.art.native.palette import LUT, FI
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        plan = json.load(open(os.path.join(root, 'art', 'scenes', 'woodland.json')))
+        f = plan['water']['fall']
+        g = np.asarray(Image.open(os.path.join(root, 'game', 'zones', 'woodland', 'art', 'ground.png')).convert('RGB'))
+        stone_rgb = {tuple(LUT[FI[n] * 8 + t]) for n in ('stone', 'stone_warm', 'stone_cool') for t in range(6)}
+        water_rgb = {tuple(LUT[FI[n] * 8 + t]) for n in self.WATER for t in range(6)}
+        rim = int(round((f['y0'] - 1.5) * 3))
+        row = [tuple(p) in water_rgb for p in g[rim - 30]]
+        xs = [x for x in range(int(f['x0'] * 3) - 30, int((f['x0'] + f['w']) * 3) + 30) if row[x]]
+        self.assertGreater(len(xs), 30)
+        # (the banks wobble up to 3 texels either way; the round-3 stone covered x 243 to 266 of 216 to 266)
+        bad = [(x, y) for y in range(rim - 24, rim) for x in range(min(xs) + 3, max(xs) - 2) if tuple(g[y, x]) in stone_rgb]
+        self.assertEqual(bad[:6], [], 'stone over the channel above the lip')
+
+    def test_flow_strips_keep_to_the_phone_budget(self):
+        # (review round 3, R3-6; docs/godot.md "Moving water's budget") every moving-water strip
+        # decodes to at most 6 MB and a zone's strips to at most 9 MB together
+        import glob
+        from PIL import Image
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        zones = {}
+        for p in glob.glob(os.path.join(root, 'game', 'zones', '*', 'art', 'flow*.png')):
+            w_, h_ = Image.open(p).size
+            mb = w_ * h_ * 4 / 1e6
+            self.assertLessEqual(mb, 6.0, '%s decodes to %.1f MB' % (os.path.relpath(p, root), mb))
+            z = p.split(os.sep)[-3]
+            zones[z] = zones.get(z, 0.0) + mb
+        for z, mb in zones.items():
+            self.assertLessEqual(mb, 9.0, '%s: its flow strips decode to %.1f MB' % (z, mb))
+        self.assertIn('woodland', zones)
+
+    def test_a_falls_lip_is_not_stamped(self):
+        # one bend line across the sheet, the foam under it broken irregularly: gaps, several
+        # depths, and no repeat with a short period
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.rocks import CREST_RUN_MAX as ST_RUN_MAX
+        for c in (1, 2, 3, 4):
+            for seed in (9 + c, 11, 65 + c):
+                f = ST.crest_foam(24 * c, seed)
+                self.assertLessEqual(int(f.max()), ST.CREST_MAX)
+                self.assertGreaterEqual(len(set(f.tolist())), 3, (c, seed))
+                if c >= 2:
+                    self.assertIn(0, f.tolist(), (c, seed))
+                for p in range(2, 13):
+                    self.assertFalse((f[p:] == f[:-p]).all(), 'period %d (%d, %d)' % (p, c, seed))
+                # (review round 4, K4-2) the white row itself: two or three runs of white, never one
+                # straight row (at most 70 % of the sheet's width white in any one row under the
+                # bend), gaps of 3 to 5 texels between the runs (two of them from two cells up), the
+                # edges glassy, every run rounded off at its ends (no icicle drips)
+                bow = ST.crest_bow(24 * c, seed)
+                rows = np.zeros((ST.CREST_MAX + int(bow.max()) + 1, 24 * c), bool)
+                for x in range(24 * c):
+                    rows[bow[x]:bow[x] + f[x], x] = True
+                self.assertLessEqual(float(rows.mean(1).max()), 0.70, 'a straight white row (%d, %d)' % (c, seed))
+                d = np.diff(np.concatenate([[0], (f > 0).astype(np.int8), [0]]))
+                starts, stops = np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]
+                # two or three runs on a lip up to two cells, a few more on a wider one (no run over a cell)
+                self.assertTrue(2 <= len(starts) <= 2 + c, (c, seed, len(starts)))
+                inner = [int(a - b) for a, b in zip(starts[1:], stops[:-1])]
+                self.assertTrue(all(3 <= g <= 5 for g in inner), (c, seed, inner))
+                if c >= 2:
+                    self.assertGreaterEqual(len(inner), 2, (c, seed))
+                # (review round 8, K8-1) no white run longer than a cell: a longer one is the lid
+                self.assertLessEqual(int(max(b - a for a, b in zip(starts, stops))), ST_RUN_MAX, (c, seed))
+                self.assertEqual(int(f[0]), 0, (c, seed))
+                self.assertEqual(int(f[-1]), 0, (c, seed))
+                for a, b in zip(starts, stops):
+                    # rounded at its ends (the woodland's crest_breaks: 1 or 2 deep there, never its deepest)
+                    self.assertLessEqual(max(int(f[a]), int(f[b - 1])), 2, 'a run ends in a drip (%d, %d)' % (c, seed))
+
+    def test_a_kit_sheet_is_not_flat_slabs(self):
+        # (review round 4, K4-1; round 8, P8-2) the kit's sheet falls in broken streaks across its
+        # whole width, in every frame of its loop: the share of its ribbon's columns that hold one
+        # tone over 40 rows is no more than the woodland sibling's worst window of the same height
+        # (measured here on the sibling's ribbon, rows 772-884 of its ground, columns 216-258: 0 to
+        # 0.17 over 44 rows, 0.26 to 0.36 over 92 when this was written). Its outline is not a
+        # rectangle. This guards against slabs only: a streak on these short sheets runs at most 39
+        # texels (13 world px), one under the 40-row window, so a streaked column never counts as
+        # flat here; test_a_kit_sheet_falls_in_streaks guards the streaks' character (round 9, T9-1)
+        from PIL import Image
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C
+
+        def flat_share(body):
+            n = 0
+            for x in range(body.shape[1]):
+                col = body[:, x]
+                ch = np.nonzero(np.diff(col) != 0)[0]
+                runs = np.diff(np.concatenate([[-1], ch, [len(col) - 1]]))
+                n += int(runs.max() >= 40)
+            return n / body.shape[1]
+
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        g = np.asarray(Image.open(os.path.join(root, 'game', 'zones', 'woodland', 'art', 'ground.png')).convert('RGB')).astype(np.int64)
+        sib = ((g[..., 0] << 16) | (g[..., 1] << 8) | g[..., 2])[772:884, 216:258]
+        limit = {}
+        for drop in (1, 2):
+            h = 48 * drop - 4
+            limit[h] = max(flat_share(sib[y:y + h]) for y in range(0, sib.shape[0] - h + 1))
+        for c in (1, 2, 3, 4):
+            for drop in (1, 2):
+                wpx, face = 24 * c, 48 * drop
+                for t in range(ST.FALL_FRAMES):
+                    cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+                    ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
+                    # the ribbon west of the navy east band (s < 0.85 of the lip), as the sibling's
+                    # columns were counted (round 4)
+                    rib = int(round(0.85 * wpx))
+                    body = cv[16:12 + face, 24:24 + rib]
+                    share = flat_share(body)
+                    self.assertLessEqual(share, limit[face - 4] + 1e-9, 'waterfall_%d drop %d frame %d: %.2f of its columns flat, the sibling at %d rows %.2f' % (c, drop, t, share, face - 4, limit[face - 4]))
+                    tones = set(np.unique(body).tolist())
+                    self.assertGreaterEqual(len(tones), 5, (c, drop))
+        # (round 8, K8-2; round 9, T9-1) no navy slab over the whole sheet, lip to foot: in its upper
+        # three quarters the east band of water 1 is in every row at most the painter's own cap,
+        # ceil(min(0.15 of the row's width, 9)) + 1 texels (9 is the sibling's widest; the 1 is the
+        # edge texel the wobble can add), so at one and two cells it cannot drift back toward a
+        # share-of-width slab while staying under 9; and
+        # no one patch of water 1 holds more than 9 texels a row of the sheet's height (the sibling:
+        # 988 texels over 124 rows, 7.97 a row; 9 a row is the band's own cap, so a patch can only be
+        # the band, never a slab across the ribbon)
+        import math
+        from scipy import ndimage as ndi
+        from scripts.art.native import rocks as RK
+        w1 = C('water', 1)
+        for c in (1, 2, 3, 4):
+            for drop in (1, 2):
+                wpx, face = 24 * c, 48 * drop
+                for t in range(ST.FALL_FRAMES):
+                    cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+                    ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
+                    m = ST.sheet_mask(cv.shape, 24, wpx, 12, 12 + face, 9 + c)
+                    edges = {Y: (xl, xr) for (Y, xl, xr) in RK.sheet_rows(24, 24 + wpx, 12, 12 + face, phase_y=12)}
+                    for Y in range(12, 12 + int(0.75 * face)):
+                        xs = np.nonzero(m[Y])[0]
+                        band = 0
+                        for X in xs[::-1]:
+                            if cv[Y, X] != w1:
+                                break
+                            band += 1
+                        xl, xr = edges[Y]
+                        cap = math.ceil(min(0.15 * (xr - xl), 9.0)) + 1
+                        self.assertLessEqual(band, cap, 'waterfall_%d drop %d frame %d row %d: a navy band of %d, cap %d' % (c, drop, t, Y, band, cap))
+                    lab, k = ndi.label((cv == w1) & m)
+                    big = int(np.bincount(lab.ravel())[1:].max()) if k else 0
+                    self.assertLessEqual(big / face, 9.0, 'waterfall_%d drop %d frame %d: a navy patch of %d texels' % (c, drop, t, big))
+
+    def test_a_kit_sheet_falls_in_streaks(self):
+        # (review round 5, K5-1; round 9, T9-1: the guard of the streaks' character, which the flat
+        # test above cannot fail on) the sheet falls in streaks, not a mosaic of chips: across its
+        # body the lightness changes at least 4 times as often across as down (the woodland's sheet:
+        # 10), and the median vertical run of one colour is at least 6 texels (the woodland's: 15),
+        # for every piece and every frame of the loop
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C
+        from scripts.review import bands as B
+        from scripts.art.native.palette import LUT
+        for c in (1, 2, 3, 4):
+            for drop in (1, 2):
+                wpx, face = 24 * c, 48 * drop
+                for t in range(ST.FALL_FRAMES):
+                    cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+                    ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
+                    body = LUT[cv[20:12 + face - 4, 25:24 + wpx - 1]][..., :3].astype(np.uint8)
+                    g = B.fall_grain(body, np.ones(body.shape[:2], bool))
+                    self.assertGreaterEqual(g['ratio'], B.GRAIN_RATIO, 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, g))
+                    self.assertGreaterEqual(g['median_run'], B.GRAIN_RUN, 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, g))
+                    # (rounds 6 and 7, K6-1 and K7-1) the sibling's value: mean lightness at least 160,
+                    # the east half 140, at most 10 % under 90 L, a spread of at least 48, the east
+                    # third at least 15 % under 100 L, at least 28 % over 230 L, no snow 0 to 3
+                    m = ST.sheet_mask(cv.shape, 24, wpx, 12, 12 + face, 9 + c)
+                    m[:20] = False
+                    m[12 + face - 4:] = False
+                    m[:, 24 + int(round(0.85 * wpx)):] = False       # the ribbon, as the sibling is measured
+                    val = B.fall_value(LUT[cv][..., :3].astype(np.uint8), m)
+                    self.assertTrue(val['passed'], 'waterfall_%d drop %d frame %d: %s' % (c, drop, t, val))
+
+    def test_a_falls_picture_is_its_baked_frame_0(self):
+        # (round 6, L6-1) the catalogued picture is painted with the bake's seed: its sheet is
+        # sheet_mask(9 + c) texel for texel, and over it in an unbaked preview no texel of the loop
+        # lies over the face beside the sheet
+        from PIL import Image
+        from scripts.art.kit import structures as ST
+        from scripts.art.kit.schema import ROOT
+        for c in (1, 2, 3, 4):
+            for tall in ('', '_tall'):
+                pc = json.load(open(os.path.join(ROOT, 'game', 'kit', 'pieces', 'structure', 'waterfall_%d%s.json' % (c, tall))))
+                face = 48 * (2 if tall else 1)
+                self.assertEqual(pc['rendering']['paint']['args']['seed'], 9 + c)
+                img = np.asarray(Image.open(os.path.join(ROOT, 'game', pc['variants'][0]['png'][len('res://'):])).convert('RGBA'))
+                a = img[..., 3] > 0
+                m = ST.sheet_mask(a.shape, 24, 24 * c, 12, 12 + face, 9 + c)
+                np.testing.assert_array_equal(a[:12 + face], m[:12 + face], pc['id'])
+                an = pc['rendering']['animations'][0]
+                x0, y0, w_, h_ = an['region_px']
+                st = np.asarray(Image.open(os.path.join(ROOT, 'game', an['strip'][len('res://'):])).convert('RGBA'))
+                for k in range(an['frames']):
+                    on = st[:, k * w_:(k + 1) * w_, 3] > 0
+                    ys, xs = np.nonzero(on)
+                    above = ys + y0 < 12 + face
+                    over_face = ~a[ys[above] + y0, xs[above] + x0]
+                    self.assertEqual(int(over_face.sum()), 0, '%s frame %d: loop texels over the face' % (pc['id'], k))
+                # its outline is not a rectangle, and the lip is the channel's width
+                outl = ST.sheet_outline(24, 24 * c, 12, 12 + face, 9 + c)
+                self.assertGreater(len({tuple(r) for r in outl.tolist()}), 2, 'a rectangle (%d, %s)' % (c, tall))
+                self.assertEqual(tuple(outl[0]), (24, 24 + 24 * c))
+
+    def test_the_kits_sheet_is_the_woodlands(self):
+        # (review round 7) one painter for every falling sheet: the woodland's sheet in its ground
+        # is exactly what rocks.sheet paints for the woodland's fall, so the kit's pieces, which call
+        # rocks.sheet too, are the approved design by construction. Re-painted over the committed
+        # ground (the channel above the lip is read from it), the sheet's rows from the lip to above
+        # the foam come out byte for byte the same
+        from PIL import Image
+        from scripts.art.native import ctx, load_biome
+        from scripts.art.native import rocks as RK
+        from scripts.art.native.screen import to_codes
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        plan = json.load(open(os.path.join(root, 'art', 'scenes', 'woodland.json')))
+        D0 = ctx.D
+        ctx.configure(3.0, load_biome(plan['biome']), plan)
+        try:
+            g = Image.open(os.path.join(root, 'game', 'zones', 'woodland', 'art', 'ground.png')).convert('RGBA')
+            f = plan['water']['fall']
+            Y0, Y1 = int(round((f['y0'] - 1.5) * 3)), int(round(f['y1'] * 3))
+            box = (150, Y0 - 30, 330, Y1 + 2)
+            cv = to_codes(g.crop(box)).astype(np.int32)
+            before = cv.copy()
+            # rocks.fall's channel search, on the crop (its x shifted by box[0], its y by box[1])
+            water = np.isin(cv // 8, [RK.FI[n] for n in RK.WATERS]) & (cv >= 0)
+            cx = (f['x0'] + f['w'] / 2.0) * 3 - box[0]
+            y0c = Y0 - box[1]
+            cl = cr = None
+            for yy_ in range(y0c - 1, max(0, y0c - 6), -1):
+                runs = [(a, b) for a, b in RK._runs(water[yy_]) if b - a >= 3]
+                if runs:
+                    a, b = min(runs, key=lambda r: abs((r[0] + r[1]) / 2.0 - cx))
+                    cl, cr = int(a), int(b)
+                    break
+            self.assertIsNotNone(cl)
+            rng = np.random.default_rng(f.get('seed', 11))
+            # the wobble's phase is the ground's own rows (phase_y 0, shifted by the crop)
+            RK.sheet(cv, cl, cr, y0c, Y1 - box[1], f['y0'] - box[1] / 3.0, rng, f.get('seed', 11), water, phase_y=-box[1])
+            m = RK.sheet_mask(cv.shape, cl, cr, y0c, Y1 - box[1] - 6, phase_y=-box[1])
+            diff = (cv != before) & m
+            self.assertGreater(int(m.sum()), 2000)
+            self.assertEqual(int(diff.sum()), 0, 'the woodland sheet differs from rocks.sheet at %d texels' % int(diff.sum()))
+        finally:
+            ctx.D = D0
+
+    def test_a_falls_foot_lands_in_its_foam(self):
+        # (review round 7, P7-2) in every frame of every piece, the foam reaches every stretch of 4
+        # or more of the sheet's foot columns in the foot's first three rows: no ruler line on the water
+        from scripts.art.kit import structures as ST
+        from scripts.art.native.palette import C, FI
+        for c in (1, 2, 3, 4):
+            for drop in (1, 2):
+                wpx, face = 24 * c, 48 * drop
+                for t in range(ST.FALL_FRAMES):
+                    cv = np.full((12 + face + 34, wpx + 48), C('water', 2), np.int32)
+                    ST.fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + c, t=t, rings=False)
+                    xs = np.nonzero(ST.sheet_mask(cv.shape, 24, wpx, 12, 12 + face)[12 + face - 1])[0]
+                    cover = np.isin(cv[12 + face:12 + face + 3, xs.min():xs.max() + 1] // 8, [FI['snow']]).any(0)
+                    run = best = 0
+                    for b in ~cover:
+                        run = run + 1 if b else 0
+                        best = max(best, run)
+                    self.assertLess(best, 4, 'waterfall_%d drop %d frame %d: %d foot columns bare' % (c, drop, t, best))
+
+    def test_no_spray_on_the_face_beside_a_baked_fall(self):
+        # (review round 7; Matt, 2 Nov: spray only over the water, never on the face) beside every
+        # baked fall, from its rim to its foot and 14 texels either side of its sheet, no texel of
+        # the face is water-blue or white
+        from scripts.art.kit import bake as BK
+        from scripts.art.kit import structures as ST
+        from scripts.art.native import animate as AN
+        lib = BK._pieces_lib()
+        seen = 0
+        for zone, plan, cv in self._baked():
+            fh = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
+            for pc in plan.get('pieces', []):
+                rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+                if rp.get('fn') != 'fall':
+                    continue
+                sw = lib[pc['piece']]['geometry']['size_cells'][0] * 24
+                x0 = int(round(pc['at'][0] - sw / 2))
+                r1 = int(round(pc['at'][1]))
+                r0 = r1 - int(rp.get('args', {}).get('face_px', fh))
+                side = np.zeros(cv.shape, bool)
+                side[r0 + 2:r1 - 2, max(0, x0 - 42):x0 + sw + 42] = True
+                side &= ~ST.sheet_mask(cv.shape, x0, sw, r0, r1)
+                wet = AN.wet_codes(cv) & side
+                ys, xs = np.nonzero(wet)
+                self.assertEqual(int(wet.sum()), 0, '%s: water-blue or white on the face beside the fall at %s' % (
+                    zone, list(zip(xs[:4].tolist(), ys[:4].tolist()))))
+                seen += 1
+        self.assertGreater(seen, 0)
+
+    def test_moving_water_lies_only_on_water(self):
+        # (review round 4, F4-1) no texel of a moving-water strip, in any frame (frame 0, the still
+        # reduced motion shows, included), lies over a ground texel that is not open water, a
+        # fall's sheet or its foam: not a bridge's deck, timber, the wet rock foot, reeds, stones or
+        # faces. The woodland's strips over its ground, and every kit fall's loop over each bake
+        import glob
+        from PIL import Image
+        from scripts.art.kit import bake as BK
+        from scripts.art.native import animate as AN
+        from scripts.art.native.palette import LUT
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        wet_rgb = {tuple(int(v) for v in LUT[i][:3]) for i in range(len(LUT)) if AN.wet_codes(np.array([i]))[0]}
+        zdir = os.path.join(root, 'game', 'zones', 'woodland')
+        g = np.asarray(Image.open(os.path.join(zdir, 'art', 'ground.png')).convert('RGB'))
+        kit = json.load(open(os.path.join(zdir, 'kit.json')))
+        strips = [('flow', kit['flow'])] + [('flow_' + k, v) for k, v in sorted(kit.get('flows', {}).items())]
+        D = 3
+        checked = 0
+        for name, meta in strips:
+            fl = np.asarray(Image.open(os.path.join(zdir, 'art', name + '.png')).convert('RGBA'))
+            bx, by, bw, bh = [int(round(v * D)) for v in meta['rect']]
+            cols = meta['cols']
+            for i in range(8):
+                r, c_ = divmod(i, cols)
+                fr = fl[r * bh:(r + 1) * bh, c_ * bw:(c_ + 1) * bw]
+                ys, xs = np.nonzero(fr[..., 3] > 0)
+                under = g[ys + by, xs + bx]
+                bad = [(int(x + bx), int(y + by)) for (x, y, u) in zip(xs, ys, under) if tuple(int(v) for v in u) not in wet_rgb]
+                self.assertEqual(bad[:6], [], 'woodland %s frame %d: %d moving texels over dry ground' % (name, i, len(bad)))
+                checked += len(ys)
+        self.assertGreater(checked, 1000)
+        idx = json.load(open(os.path.join(root, 'game', 'kit', 'props', 'index.json')))
+        seen = 0
+        for zone, plan, cv in self._baked():
+            wet = AN.wet_codes(cv)
+            for pc in plan.get('pieces', []):
+                an = (idx.get(pc['piece']) or {}).get('anim')
+                if not an or not pc['piece'].startswith('waterfall'):
+                    continue
+                st = np.asarray(Image.open(os.path.join(root, 'game', an['strip'][len('res://'):])).convert('RGBA'))
+                fw = st.shape[1] // an['frames']
+                ox, oy = int(round(pc['at'][0] + an['offset'][0])), int(round(pc['at'][1] + an['offset'][1]))
+                foot = int(round(pc['at'][1]))
+                for i in range(an['frames']):
+                    ys, xs = np.nonzero(st[:, i * fw:(i + 1) * fw, 3] > 0)
+                    if i == 0:
+                        # frame 0 is the still the bake draws: over the sheet they agree texel for texel
+                        sh_ = ys + oy < foot - 4
+                        rgb = st[ys[sh_], xs[sh_], :3].astype(int)
+                        self.assertTrue((LUT[cv[ys[sh_] + oy, xs[sh_] + ox]][:, :3].astype(int) == rgb).all(),
+                                        '%s %s: frame 0 is not the baked sheet' % (zone, pc['piece']))
+                    dry = ~wet[ys + oy, xs + ox]
+                    self.assertEqual(int(dry.sum()), 0, '%s %s frame %d over dry ground at %s' % (
+                        zone, pc['piece'], i, list(zip((xs + ox)[dry][:4].tolist(), (ys + oy)[dry][:4].tolist()))))
+                seen += 1
+        self.assertGreater(seen, 0)
+
+    def test_the_woodlands_landing_is_a_cell_of_open_path(self):
+        # (review round 4, L4-1; eastward-edges 5.3b, 6.1) measured on the rendered ground, art px
+        # at density 3 (1 world px = 3 art px): the log steps rise 5 to 6 world px a step (15 to 18
+        # art px), and between the stair's last riser and the bridge's north abutment lies at least
+        # one cell (8 world px = 24 art px) of open ground, no timber, stone or water; the abutment
+        # starts within 4 world px of the water's edge
+        from PIL import Image
+        from scripts.art.native.palette import LUT, FAMS
+        root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        plan = json.load(open(os.path.join(root, 'art', 'scenes', 'woodland.json')))
+        g = np.asarray(Image.open(os.path.join(root, 'game', 'zones', 'woodland', 'art', 'ground.png')).convert('RGB'))
+        fam = {}
+        for i in range(len(LUT)):
+            fam.setdefault(tuple(int(v) for v in LUT[i][:3]), FAMS[i // 8])
+        D = 3
+        br = plan['places']['bridge']
+        tr = plan['terrace']
+        rim, foot = tr['y'] * D, (tr['y'] + tr['face']) * D
+        x0, x1 = br['x0'] * D, (br['x0'] + br['w']) * D
+        for x in range(x0 + 4, x1 - 4, 6):
+            col = [fam.get(tuple(int(v) for v in g[y, x]), '?') for y in range(rim - 4, foot + 30)]
+            ys = list(range(rim - 4, foot + 30))
+            ab = next(y for y, f in zip(ys, col) if y > rim + 30 and f.split('_')[0] in ('ashlar', 'stone'))   # (ashlar and stone share colours)
+            # the treads' top rows: where timber starts below a riser or the rim
+            treads = [y for k, (y, f) in enumerate(zip(ys, col)) if k and f.startswith('timber') and not col[k - 1].startswith('timber') and y < ab]
+            self.assertEqual(len(treads), tr['steps']['n'], (x, treads))
+            pitch = np.diff(treads)
+            self.assertTrue(((pitch >= 15) & (pitch <= 18)).all(), (x, pitch.tolist()))
+            # the stair's foot: down through the last tread's log, then its riser
+            k = ys.index(treads[-1])
+            while col[k].startswith('timber'):
+                k += 1
+            while col[k].startswith('earth'):
+                k += 1
+            last = ys[k] - 1
+            open_ = [f for y, f in zip(ys, col) if last < y < ab]
+            self.assertGreaterEqual(len(open_), 24, 'column %d: %d art px of landing' % (x, len(open_)))
+            self.assertFalse([f for f in open_ if f.split('_')[0] in ('timber', 'ashlar', 'stone', 'water')], x)
+            wl = next(y for y in range(ab, foot + 60) if fam.get(tuple(int(v) for v in g[y, x1 + 12]), '').startswith('water'))
+            self.assertLessEqual(wl - ab, 12, 'the abutment starts %d art px north of the water' % (wl - ab))
 
 
 class SchemaMigrationTooling(unittest.TestCase):
@@ -709,18 +1449,66 @@ print(json.dumps([m for m,p in sorted(paint.items(),key=lambda item:item[1].get(
         self.assertEqual([m for m,p in sorted(paint.items(),key=lambda item:item[1].get('order',0))], ['path', 'worn'])
 
 
+class OneShadowPerBuilding(unittest.TestCase):
+    """No structure draws two shadows (Claude A, 8 Nov, on #435 and #436): every piece the house
+    builder draws (a zone plan's building or a set's, the Act 1 mill) casts its volume's shadow and
+    nothing else, in the index (no ellipse beside the mask), in the piece (cast_shadow baked or
+    none, never a sprite silhouette) and in the bake (VOL.bake_cast takes it, so no other cast is
+    laid)."""
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.kit import props as PR
+        cls.PR = PR
+        cls.idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        cls.lib = {}
+        for kind in ('prop', 'structure'):
+            d = os.path.join(S.ROOT, 'game', 'kit', 'pieces', kind)
+            for f in sorted(os.listdir(d)):
+                if f.endswith('.json'):
+                    p = json.load(open(os.path.join(d, f)))
+                    cls.lib[p['id']] = p
+        cls.buildings = sorted(k for k, p in cls.lib.items() if p.get('variants') and cls.PR.volume_look(p) is not None)
+
+    def test_the_mill_and_the_houses_are_buildings(self):
+        self.assertIn('mill_wheel', self.buildings)
+        self.assertIn('crossroads_bakery', self.buildings)
+
+    def test_each_building_has_its_volume_shadow_and_no_other(self):
+        from scripts.art.native import volume as VOL
+        for k in self.buildings:
+            sh = self.idx[k].get('shadow') or {}
+            self.assertEqual(sh.get('kind'), 'volume', k)
+            self.assertIn('mask', sh, k)
+            self.assertNotIn('size', sh, k)                 # no ellipse beside it
+            cs = (self.lib[k].get('rendering') or {}).get('cast_shadow') or {}
+            self.assertIn(cs.get('shape'), ('baked', 'none', None), k)
+            self.assertTrue(VOL.bake_cast(np.zeros((8, 8), np.uint8), self.idx[k], (4, 4), 8, 8), k)
+
+    def test_no_piece_asks_for_a_sprite_silhouette(self):
+        # the silhouette shadow was the mill's alone and the mill is a building now: a piece that
+        # asked for one would get no shadow at all
+        for k, p in self.lib.items():
+            cs = (p.get('rendering') or {}).get('cast_shadow') or {}
+            self.assertNotEqual(cs.get('shape'), 'sprite', k)
+
+    def test_only_buildings_carry_volume_shadows(self):
+        vol = sorted(k for k, e in self.idx.items() if (e.get('shadow') or {}).get('kind') == 'volume')
+        self.assertEqual(vol, [k for k in self.buildings if k in self.idx])
+
+
 class CrownMaskConsumers(unittest.TestCase):
     """Only a tree's crown mask reaches the crown consumers: the bake's variant context, its
-    drawing pass and the detail bar's crown-shadow region. A non-tree mask (the mill wheel's
-    silhouette, a house's volume) reaches none of them."""
+    drawing pass and the detail bar's crown-shadow region. A non-tree mask (a house's volume, the
+    Act 1 mill's among them) reaches none of them."""
 
     TREE = 'woodland_oak'
 
     @classmethod
     def setUpClass(cls):
         cls.idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
-        # every masked prop that is not a tree: the mill wheel's silhouette (Act 1), the houses'
-        # volumes (house shadows); the mill when it is there, else the first of them
+        # every masked prop that is not a tree: the houses' volumes (house shadows, the Act 1 mill's
+        # among them); the mill when it is there, else the first of them
         cls.others = sorted(k for k, e in cls.idx.items()
                             if 'mask' in (e.get('shadow') or {}) and e.get('role') != 'tree')
         cls.OTHER = 'mill_wheel' if 'mill_wheel' in cls.others else (cls.others or [None])[0]
@@ -1156,6 +1944,223 @@ class ToneAndNoise(unittest.TestCase):
             self.assertLessEqual(r['isolated'], TA.ISOLATED_MAX, name)
             if ('commons' in p or name.startswith(('farm_cow', 'farm_calf', 'farm_horse', 'farm_pig', 'farm_goat', 'farm_sheep'))):
                 self.assertLessEqual(r['specks'], TA.SPECKS_MAX, name)
+
+
+class HouseVolume(unittest.TestCase):
+    """Houses read as volumes (Matt, 4 Nov 11:45; eastward-edges 11, scripts/art/native/volume.py),
+    at the measured depth: every crossroads house's eave band is 28 to 65 % darker than its wall
+    (deep under thatch), its openings are set in (a dark head and west reveal, a lit east sliver),
+    its east corner and foot are darker than its body, its cast shadow lies east, follows a gable's
+    verges, never falls before the front, carries a three-step core, stays on the palette in the
+    zone, the kit bake lays it with the same three steps as the zone painter and the runtime, and
+    no picture is speckled."""
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.native import houses as HS
+        with open(os.path.join(S.ROOT, 'game', 'data', 'plans', 'crossroads.json')) as f:
+            cls.plan = json.load(f)
+        cls.looks, cls.built = {}, {}
+        for b in cls.plan['buildings']:
+            look = dict(cls.plan['art']['looks'].get(b['id'], {}))
+            look.setdefault('w', b['rect'][2])
+            look.setdefault('depth', b['rect'][3])
+            look.pop('lawn_as', None)
+            cls.looks[b['id']] = look
+            cls.built[b['id']] = HS.building(look, seed=look.get('seed', sum(map(ord, b['id']))))
+
+    def _lum(self, bl, y0, y1, x0=None, x1=None):
+        """Mean luminance of the wall's own surface in rows y0..y1 (what stands off it, the openings
+        and timber left out, unless a front is all timber)."""
+        from scripts.art.native import village as V, volume as VO
+        a, info = bl.base.a, bl.info
+        L, R = info['L'], info['R']
+        x0 = L + V.q(3) if x0 is None else x0
+        x1 = R - V.q(3) if x1 is None else x1
+        away = info['stood'].copy()
+        for (ox0, oy0, ox1, oy1) in info['openings']:
+            away[oy0 - V.q(2):oy1 + V.q(3), ox0 - V.q(2):ox1 + V.q(2)] = True
+        if 'mouth' in info:
+            cx, B, w, h = info['mouth']
+            away[B - h - V.q(3):B, cx - w // 2 - V.q(2):cx + w // 2 + V.q(2)] = True
+        t = a[y0:y1, x0:x1]
+        ok = (t >= 0) & ~away[y0:y1, x0:x1]
+        wall = ok & ~VO._form(t)
+        ok = wall if wall.sum() > ok.sum() * 0.3 else ok
+        return float(VO.lum()[t[ok]].mean())
+
+    def test_every_house_has_its_eave_band_at_the_measured_depth(self):
+        from scripts.art.native import village as V, volume as VO
+        for hid, bl in self.built.items():
+            info = bl.info
+            roof = self.looks[hid].get('roof', 'slate')
+            e = VO.EAVE[roof]
+            y = info['eave_top'] + VO.SOFFIT
+            core = self._lum(bl, y, y + V.q(e['core']))
+            ref = self._lum(bl, y + V.q(e['core'] + e['fade'] + 2), y + V.q(e['core'] + e['fade'] + 7))
+            drop = 1 - core / ref
+            self.assertGreaterEqual(drop, 0.28, (hid, round(drop, 2)))
+            self.assertLessEqual(drop, 0.68, (hid, round(drop, 2)))
+            if roof == 'thatch':
+                # deep under the fringe: E 10 to 15 px, still darker at 4.6 world px down
+                fade = self._lum(bl, y + V.q(e['core']), y + V.q(4.6))
+                self.assertLess(fade, ref * 0.95, hid)
+
+    def test_openings_are_recesses(self):
+        from scripts.art.native import village as V, volume as VO
+        Lm = VO.lum()
+        n = 0
+        for hid, bl in self.built.items():
+            a = bl.base.a
+            for m in bl.info['opening_shapes']:
+                # the head follows the opening's top (round under an arch), the west reveal its side
+                head = m & ~VO._shift(m, V.q(VO.RECESS[0]), 0)
+                west = m & ~VO._shift(m, 0, V.q(VO.RECESS[1])) & ~head
+                east = m & ~VO._shift(m, 0, -1) & ~head
+                ys = np.nonzero(m.any(1))[0]
+                low = m & (np.arange(m.shape[0])[:, None] >= (ys.min() + ys.max()) // 2)
+                self.assertLess(Lm[a[head]].mean(), 0.8 * Lm[a[low]].mean(), hid)
+                self.assertLess(Lm[a[west]].mean(), Lm[a[east]].mean(), hid)
+                n += 1
+        self.assertGreaterEqual(n, 12)
+
+    def test_corners_and_foot_are_darker_than_the_body(self):
+        from scripts.art.native import village as V, volume as VO
+        for hid, bl in self.built.items():
+            L, R, y_e, y_p = bl.info['wall']
+            y0, y1 = bl.info['eave_top'] + V.q(9), y_p - V.q(VO.FOOT_AO)
+            body = self._lum(bl, y0, y1, L + V.q(6), R - V.q(6))
+            east = self._lum(bl, y0, y1, R - V.q(VO.CORNER_E), R)
+            west = self._lum(bl, y0, y1, L, L + VO.ARRIS)
+            footb = self._lum(bl, y_p - V.q(VO.FOOT_AO), y_p, L + V.q(6), R - V.q(6))
+            self.assertLess(east, 0.9 * body, hid)
+            self.assertGreater(west, east, hid)
+            self.assertLess(footb, 0.92 * body, hid)
+
+    def test_cast_shadow_lies_east_follows_the_roof_and_never_before_the_front(self):
+        from scripts.art.native import volume as VO
+        for hid, look in self.looks.items():
+            lv, ox, oy = VO.house_cast(look, 3.0)
+            h, w = lv.shape
+            X = np.arange(w)[None, :] + ox
+            Y = np.arange(h)[:, None] + oy
+            self.assertEqual(set(np.unique(lv)), {0, 1, 2, 3}, hid)
+            self.assertFalse((lv > 0)[np.broadcast_to(Y >= 0, lv.shape)].any(), hid)
+            half = look['w'] * 3.0 / 2
+            self.assertFalse(((lv > 0) & (X < -half - 3 * 6)).any(), hid)
+            east = (lv > 0) & (X > half)
+            cols = np.nonzero(east.any(0))[0]
+            self.assertGreaterEqual(int(X[0, cols.max()] - half), int(0.25 * 25 * 3), hid)
+            if not look.get('hip'):
+                # a gable's verges: the outline reaches furthest east at the ridge's line
+                reach = [int(X[0, np.nonzero(r)[0].max()]) if r.any() else None for r in east]
+                rows = [r for r in reach if r is not None]
+                self.assertGreaterEqual(max(rows) - rows[len(rows) // 8], 6, hid)
+        # a stack beyond the roof's shadow shows as its own notch
+        look = dict(self.looks['fern_cottage'], chimney=[70], chimney_h=30)
+        lv, ox, oy = VO.house_cast(look, 3.0)
+        base, _x, _y = VO.house_cast(dict(look, chimney=[]), 3.0)
+        self.assertGreater(int((lv > 0).sum()), int((base > 0).sum()), 'notch')
+
+    def test_cast_shadow_is_on_the_palette_in_the_zone(self):
+        from PIL import Image
+        from scripts.art.native import volume as VO
+        from scripts.art.native.palette import to_rgba
+        from scripts.art.native.palette import FAMS
+        codes = np.array([[f * 8 + t for t in range(7)] for f in range(len(FAMS))]).reshape(1, -1)
+        pal = {tuple(c) for c in to_rgba(codes)[0, :, :3]}
+        with open(os.path.join(S.ROOT, 'game', 'zones', 'crossroads', 'kit.json')) as f:
+            kit = json.load(f)
+        g = np.asarray(Image.open(os.path.join(S.ROOT, 'game', 'zones', 'crossroads', 'art', 'ground.png')).convert('RGB'))
+        for o in kit['objects']:
+            if o['kind'] != 'building':
+                continue
+            lv, ox, oy = VO.house_cast(self.looks[o['id']], 3.0)
+            m = VO.cast_at(lv, ox, oy, o['foot'], g.shape[1], g.shape[0]) > 0
+            px = {tuple(c) for c in g[m]}
+            self.assertTrue(px <= pal, (o['id'], sorted(px - pal)[:3]))
+
+    def test_kit_index_lays_the_volume_shadow(self):
+        from PIL import Image
+        with open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')) as f:
+            idx = json.load(f)
+        houses = ['crossroads_' + b['id'] for b in self.plan['buildings']]
+        self.assertEqual(len(houses), 7)
+        for k in houses:
+            sh = idx[k]['shadow']
+            self.assertEqual(sh.get('kind'), 'volume', k)
+            m = np.asarray(Image.open(os.path.join(S.ROOT, 'game', sh['mask']['png'][len('res://'):])))
+            self.assertTrue(set(np.unique(m)) <= {0, 1, 2, 3} and (m == 3).any(), k)
+            # nothing on the foot line or south of it, before the lit front
+            self.assertFalse(m[max(0, -sh['mask']['offset'][1]):].any(), k)
+
+    def test_kit_bake_lays_the_volume_shadow_with_its_levels(self):
+        """A house placed in a small kit plan and baked: its ground shadow per texel is the ground
+        stepped down by the cast's level (1, 2, 3), as town.py paints it (one step per band,
+        town.py's shade_masks and its third step) and as the kit's runtime path (compose.shadows,
+        terrain_ground.gd) lays the index mask, on the same ground. Not a rim and a core."""
+        import copy
+        from scripts.art.kit import bake as BK
+        from scripts.art.kit import compose as CK
+        from scripts.art.native import compose as CO
+        from scripts.art.native import volume as VO
+        from scripts.art.native.palette import step
+        at = [200, 240]
+        plan = {'legend': {'.': 'lawn'}, 'rows': ['.' * 24] * 12,
+                'pieces': [{'id': 'hut', 'piece': 'crossroads_hut', 'at': at}]}
+        H, W = 12 * 24, 24 * 24
+        seen = {}
+        g0, c0 = CO.ground_from_codes, CO.cast_shadows
+
+        def ground(codes, d):
+            seen['G'] = g0(codes, d)
+            return seen['G']
+
+        def casts(G, cs, ts, things, d):
+            seen['before'] = G.tone.copy()
+            # the contact lines alone (under the foot, where the sprite stands), on a copy
+            Gc = copy.copy(G)
+            Gc.tone = G.tone.copy()
+            c0(Gc, [], [], things, d)
+            seen['contact'] = Gc.tone != G.tone
+            c0(G, cs, ts, things, d)
+        try:
+            CO.ground_from_codes, CO.cast_shadows = ground, casts
+            BK.bake(plan)
+        finally:
+            CO.ground_from_codes, CO.cast_shadows = g0, c0
+        G, before, contact = seen['G'], seen['before'], seen['contact']
+        fam = G.fam.astype(np.int64)
+        codes0 = fam * 8 + before
+        baked = fam * 8 + G.tone
+        # town.py: the house's cast from its look (houses.building, the zone painter's own call)
+        lv = VO.cast_at(*self.built['hut'].info['cast'], at, W, H).astype(np.int64)
+        town = codes0.copy()
+        for k in (0, 1, 2):
+            town[lv > k] = step(town[lv > k], -1)
+        # the runtime: the kit index's mask through compose.shadows, on the same ground
+        sh = CK.shadows(plan['pieces'], H, W)
+        self.assertTrue((sh == lv).all())
+        runtime = np.where(sh > 0, step(codes0, -sh), codes0)
+        # every cast texel but the contact line under the foot (which the sprite stands on)
+        cmp_ = (lv > 0) & ~contact
+        self.assertGreater(cmp_.sum(), 0.95 * (lv > 0).sum())
+        self.assertEqual(set(np.unique(lv[cmp_])), {1, 2, 3})
+        self.assertTrue((baked[cmp_] == town[cmp_]).all(), int((baked[cmp_] != town[cmp_]).sum()))
+        self.assertTrue((baked[cmp_] == runtime[cmp_]).all(), int((baked[cmp_] != runtime[cmp_]).sum()))
+        # the bands read: each level a further tone down, and nothing spills outside the cast
+        drop = [float((before - G.tone)[cmp_ & (lv == k)].mean()) for k in (1, 2, 3)]
+        self.assertLess(drop[0], drop[1])
+        self.assertLess(drop[1], drop[2])
+        out_ = (lv == 0) & ~contact
+        self.assertTrue((G.tone[out_] == before[out_]).all())
+
+    def test_no_new_speckle(self):
+        from scripts.art.kit import tone_audit as TA
+        for hid, bl in self.built.items():
+            iso, _cl, specks = TA.noise(np.asarray(bl.base.rgba()))
+            self.assertLessEqual(iso, TA.ISOLATED_MAX, hid)
+            self.assertLessEqual(specks, TA.SPECKS_MAX, hid)
 
 
 # the prop sets' own tests (scripts/art/kit/sets/), run with the kit's

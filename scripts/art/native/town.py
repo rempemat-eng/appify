@@ -65,7 +65,7 @@ def stage_states(plan) -> dict:
 
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
-INPUTS = ('village.py', 'houses.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
+INPUTS = ('village.py', 'houses.py', 'volume.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
           'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png')
 
 
@@ -253,6 +253,7 @@ def _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D, drifts=False)
 def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     from scripts.art.native import compose as CO
     from scripts.art.native import village as V
+    from scripts.art.native import volume as VO
     from scripts.art.native.palette import C, FI, step, to_rgba
     from scripts.art.native.terrain import sheets
 
@@ -696,7 +697,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         foot = (q(x + w / 2), q(y + h))
         objects.append(dict(id=b['id'], kind='building', png=add_pic(b['id'], built.base.rgba()),
                             foot=foot, anchor=(built.base.ax, built.base.ay), alpha=built.base.alpha(),
-                            solid=[x, y, w, h], cond=None, static=True))
+                            solid=[x, y, w, h], cond=None, static=True, cast=built.info.get('cast')))
         if built.damage is not None:
             dcond = {'not_restored': [b['restore']]} if b.get('restore') else None
             objects.append(dict(id=b['id'] + '_damage', kind='damage', png=add_pic(b['id'] + '_damage', built.damage.rgba()),
@@ -774,6 +775,12 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     kx, ky = CO.SHADOW
     rim = max(2, q(2))
     def shade_masks(o):
+        if o.get('cast') is not None:
+            # a house: its volume's shadow (volume.house_cast, eastward-edges 11.6), a column east
+            # of it shaped by its roof and stacks, at the measured depth: its outer band one tone,
+            # then two, its core three (the third step is laid by the loop below)
+            lv = VO.cast_at(*o['cast'], o['foot'], W, H)
+            return lv > 0, lv > 1, CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
         if hd and o['kind'] == 'oak':
             # density 3: a crown's shade lies under the crown as the woodland's does (scalloped, sun
             # flecks), from the trunk's foot east, not the sprite's long silhouette thrown on the lawn
@@ -835,7 +842,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 pic = olds[o['id']]
                 key = '__legacy_' + o['id']
                 pics[key] = pic.rgba()
-                o = dict(o, png=key, alpha=pic.alpha(), anchor=(pic.ax, pic.ay))
+                o = dict(o, png=key, alpha=pic.alpha(), anchor=(pic.ax, pic.ay), cast=None)
             objs_old.append(o)
         shade_old, foots_old, near_old = lawn_inputs(objs_old)
         shade, foots, near_new = lawn_inputs(objects)
@@ -861,6 +868,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv[m] = step(cv[m], -1)
         cv[core] = step(cv[core], -1)
         cv[contact] = step(cv[contact], -1)
+        if o.get('cast') is not None:
+            deep = VO.cast_at(*o['cast'], o['foot'], W, H) > 2
+            cv[deep] = step(cv[deep], -1)
     lone_fix(cv, keep=(cv % 8 >= 6) | drawn | keep_marks)        # (the blade marks are diagonal: they stay)
     # an object that comes and goes carries its cast and contact shadow in a picture of its own: the
     # ground under it stepped down, laid just above the ground in the same condition

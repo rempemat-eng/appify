@@ -354,7 +354,7 @@ def race_shade(before, after, p):
     """A building's cast shadow over the race (round 7 of the detail audit, R7-1): the bake shades
     only walkable ground, so the race's water and its copings and crossing (painted by race_coping)
     are stepped a tone down wherever the building's own shadow mask falls (the mask the zone draws,
-    props.silhouette_shadow), and the shadow runs as one shape from the wall's foot across the race
+    props.volume_shadow), and the shadow runs as one shape from the wall's foot across the race
     onto the lawn."""
     from scripts.art.kit import compose as CO
     from scripts.art.native.palette import LUT, FI

@@ -1,7 +1,7 @@
 /**
  * Sprite outline check (npm run check:sprites), coherence plan step 2.
  *
- * Reads the committed sprite PNGs (generated at 6x) and measures, on each side of
+ * Reads the committed sprite PNGs on their measured texel grid and measures, on each side of
  * every silhouette, the share of edge pixels that are outlined: very dark, or
  * clearly darker than the pixel just inside them (outlines are tinted by material).
  * Tiny detached specks (spray, petals) are exempt, as in the generator. Every side
@@ -12,16 +12,26 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
+const ts = require('typescript');
 const { PNG } = require('pngjs');
 
 const root = path.join(__dirname, '..');
 // Export scale per folder: the garden is exported at 4x since step 6, the rest at 6x.
-const SCALE_OF = {
+const EXPORT_SCALE_OF = {
   'assets/garden': 4,
   'assets/garden/growth': 4,
   'assets/garden/hut': 4,
   'assets/worlds/props': 4,
 };
+const densityModule = { exports: {} };
+vm.runInNewContext(
+  ts.transpileModule(fs.readFileSync(path.join(root, 'lib/art-density.ts'), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText,
+  { module: densityModule, exports: densityModule.exports, require },
+);
+const { measureDensity } = densityModule.exports;
 const MIN_COVERAGE = 0.95;
 const folders = [
   'assets/garden',
@@ -33,11 +43,14 @@ const folders = [
 // ground layers (the hut path's flagstones lie flat on the earth path) carry no outline
 const skip = /^(ground|water|path|sky|backdrop|platform)/;
 
-function nativePixels(file, SCALE) {
+function nativePixels(file, exportScale) {
   const png = PNG.sync.read(fs.readFileSync(file));
+  const density = measureDensity(png.data, png.width, png.height, exportScale);
+  assert.notEqual(density, null, `${file} is on a supported whole texel grid`);
+  const SCALE = exportScale / density;
   const w = png.width / SCALE;
   const h = png.height / SCALE;
-  assert.ok(Number.isInteger(w) && Number.isInteger(h), `${file} is a whole 6x sprite`);
+  assert.ok(Number.isInteger(w) && Number.isInteger(h), `${file} is a whole texel sprite`);
   const at = (x, y) => {
     const i = (y * SCALE * png.width + x * SCALE) * 4;
     return png.data.slice(i, i + 4);
@@ -97,7 +110,9 @@ let sprites = 0;
 for (const folder of folders)
   for (const name of fs.readdirSync(path.join(root, folder)).sort()) {
     if (!name.endsWith('.png') || skip.test(name)) continue;
-    const sides = coverage(nativePixels(path.join(root, folder, name), SCALE_OF[folder] ?? 6));
+    const sides = coverage(
+      nativePixels(path.join(root, folder, name), EXPORT_SCALE_OF[folder] ?? 6),
+    );
     for (const [side, share] of Object.entries(sides))
       assert.ok(
         share >= MIN_COVERAGE,

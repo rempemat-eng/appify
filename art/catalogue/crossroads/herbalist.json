@@ -1,7 +1,7 @@
 {
  "id": "crossroads/herbalist",
  "file": "game/zones/crossroads/art/herbalist.png",
- "sha256": "c3000d1a0b6b6ed46ad0a50e85de238c224f38d33f4684fb48a177bb190e455c",
+ "sha256": "95fd7075bb910865bc4196a12d18858c731e7fabb8f5a5a231b3e6e2a678b0b8",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 7
  },
  "detail_bar": {
   "ours": {
    "patches": 133,
-   "tones": 25.30827067669173,
-   "shapes": 47.19548872180451
+   "tones": 24.902255639097746,
+   "shapes": 46.1578947368421
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.937,
-  "tones_ratio": 0.937,
-  "shapes_ratio": 0.937,
+  "ratio": 0.917,
+  "tones_ratio": 0.922,
+  "shapes_ratio": 0.917,
   "passed": true,
   "group": "prop"
  },
@@ -40,11 +40,71 @@
    "severity": "polish",
    "box": [
     52,
-    140,
+    141,
     58,
     171
    ],
-   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 48 L per H to the east)",
+   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 337 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    50,
+    131,
+    82,
+    176
+   ],
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 151 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    116,
+    138,
+    148,
+    174
+   ],
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 103 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    118,
+    141,
+    124,
+    171
+   ],
+   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 60 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    168,
+    167,
+    215,
+    206
+   ],
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 15 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    168,
+    149,
+    216,
+    164
+   ],
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 13 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -60,11 +120,10 @@
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-10-26",
-  "note": "#298 review at 2e554c05: roof planes lit with thickness, fascia, gutter and stepped eave shadow; recessed openings; wall form and proud plinth; trade details read. Detail bar 0.86 to 0.94 (above the 0.8 gate, below the 1.0 in art-style)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_cottage_damage",
  "file": "game/zones/crossroads/art/fern_cottage_damage.png",
- "sha256": "f2551dc297889cfdd1abfd6ddac018e358a5a47173f6ba12735807e435789321",
+ "sha256": "22616281132d6a1bfa818f72d6759a48af528778cb3513bb195bbfd537ae9fef",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 43,
-   "tones": 18.86046511627907,
-   "shapes": 28.53488372093023
+   "patches": 39,
+   "tones": 18.28205128205128,
+   "shapes": 29.641025641025642
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.567,
-  "tones_ratio": 0.699,
-  "shapes_ratio": 0.567,
+  "ratio": 0.589,
+  "tones_ratio": 0.677,
+  "shapes_ratio": 0.589,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    24,
+    25,
     60,
-    185,
-    256
+    183,
+    264
    ],
-   "message": "crossroads/fern_cottage_damage: detail bar 0.57 of Eastward's prop band (18.9 tones, 28.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage_damage: detail bar 0.59 of Eastward's prop band (18.3 tones, 29.6 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
