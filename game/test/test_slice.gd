@@ -201,3 +201,114 @@ func test_every_door_leads_somewhere_built() -> void:
 			assert_bool(probe.has_node("Spawns/" + door.target_spawn)).override_failure_message(
 				"%s -> %s:%s" % [door.name, door.target_zone, door.target_spawn]).is_true()
 			probe.free()
+
+## One scene-consumer run of the reachable slice. It uses the authored interactables, doors,
+## Camp damage/death path and restore sites, without granting flags, Glint or quest records.
+## The pilot supplies lethal hits and area-entry signals; this is not movement/combat balance,
+## UI, visual or phone acceptance. The absent shard routes still gate the full circle waking.
+func test_reachable_slice_through_home_again_uses_scene_consumers() -> void:
+	assert_bool(Dialogue.opened.get_connections().is_empty()).is_true()
+	var player := _attach()
+	assert_bool(Zones.go_to("woodland", "start")).is_true()
+	for q in CHAIN:
+		assert_str(Quests.state(q)).is_equal("none")
+	assert_int(SaveGame.data.glint).is_equal(0)
+	assert_bool((Zones.current.get_node("Doors/ToUndercroft") as Door).is_open()).is_false()
+
+	await _slice_talk("Actors/StoneSign")
+	assert_str(_step("woodland_stones")).is_equal("clear_camp")
+	await _slice_free_camp("Actors/MeadowCamp", 3)
+	await _slice_talk("Actors/StoneSign")
+	assert_str(Quests.state("woodland_stones")).is_equal("done")
+	assert_int(SaveGame.data.glint).is_equal(40)
+	await _slice_talk("Actors/HaleOnThePath/Hale")
+	assert_str(_step("road_to_crossroads")).is_equal("go")
+	await _slice_door("Doors/ToCrossroads", player, "crossroads")
+
+	await _slice_talk("Actors/Moss")
+	assert_str(Quests.state("road_to_crossroads")).is_equal("done")
+	assert_int(SaveGame.data.glint).is_equal(50)
+	await _slice_talk("Actors/If_hale_square/HaleSquare")
+	assert_str(_step("cold_forge")).is_equal("restore")
+	await _slice_talk("Actors/If_smithy_site/SmithySite")
+	assert_bool(Village.is_restored("forge")).is_true()
+	assert_int(SaveGame.data.glint).is_equal(20)
+	await _slice_talk("Actors/If_hale_forge/HaleForge")
+	assert_str(Quests.state("cold_forge")).is_equal("done")
+	assert_str(_step("under_the_stones")).is_equal("descend")
+	await _slice_door("Doors/ToWoodland", player, "woodland")
+	await _slice_door("Doors/ToUndercroft", player, "undercroft")
+	assert_str(_step("under_the_stones")).is_equal("rooms")
+
+	# The real plate and lever consumers open the existing seal; the pilot does not write flags.
+	var lever := Zones.current.get_node("Actors/SealLever") as SealLever
+	await _slice_talk("Actors/SealLever")
+	assert_bool(SaveGame.has_flag("undercroft_seal_open")).is_false()
+	var plate := Zones.current.get_node("Actors/SealPlate") as PressurePlate
+	plate.body_entered.emit(player)
+	assert_bool(plate.is_pressed()).is_true()
+	await _slice_talk("Actors/SealLever")
+	assert_bool(SaveGame.has_flag(lever.flag)).is_true()
+	await _slice_free_camp("Actors/UndercroftRoomsCamp", 5)
+	assert_str(_step("under_the_stones")).is_equal("thornback")
+	await _slice_free_camp("Actors/ThornbackCamp", 1)
+	assert_str(_step("under_the_stones")).is_equal("shard")
+	assert_bool((Zones.current.get_node("Actors/If_circle_shard") as Conditional).visible).is_true()
+	await _slice_talk("Actors/If_circle_shard/CircleShard")
+	assert_bool(SaveGame.has_flag("shard_taken:woodland")).is_true()
+	assert_str(Dialogue.lines_for("cairn_statue")[0]).contains("glow")
+	await _slice_talk("Actors/CairnStatue")
+	assert_bool(SaveGame.has_flag("folk:cairn")).is_false()
+	await _slice_door("Doors/ToWoodland", player, "woodland")
+	await _slice_door("Doors/ToCrossroads", player, "crossroads")
+
+	await _slice_talk("Actors/ShardLantern")
+	assert_str(Quests.state("under_the_stones")).is_equal("done")
+	assert_bool(SaveGame.has_flag("shard_home:woodland")).is_true()
+	assert_str(Village.stage("crossroads")).is_equal("homecoming")
+	await _slice_talk("Actors/Moss")
+	assert_str(_step("home_again")).is_equal("clear")
+	await _slice_talk("Actors/If_fern_site/FernSite")
+	assert_bool(Village.is_restored("fern_cottage")).is_true()
+	await _slice_talk("Actors/If_ada/Ada")
+	for q in CHAIN:
+		assert_str(Quests.state(q)).is_equal("done")
+	assert_int(SaveGame.data.glint).is_equal(85)
+	assert_bool(SaveGame.has_flag("seeds:valley")).is_true()
+	assert_bool(SaveGame.has_flag("shard_home:frostline")).is_false()
+	assert_bool(SaveGame.has_flag("shard_home:brackens")).is_false()
+	assert_str(Quests.state("a1_the_circle_wakes")).is_equal("none")
+	assert_bool(SaveGame.has_flag("circle_awake")).is_false()
+
+func _slice_talk(path: String) -> void:
+	var target := Zones.current.get_node(path) as Interactable
+	assert_bool(target.is_visible_in_tree()).is_true()
+	assert_bool(Dialogue.busy).is_false()
+	target.interact()
+	await get_tree().process_frame
+	assert_bool(Dialogue.busy).is_false()
+
+func _slice_door(path: String, player: Player, destination: String) -> void:
+	var door := Zones.current.get_node(path) as Door
+	assert_bool(door.is_open()).is_true()
+	assert_str(door.target_zone).is_equal(destination)
+	await get_tree().create_timer(0.41).timeout
+	door.body_entered.emit(player)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	assert_str(SaveGame.data.zone).is_equal(destination)
+	assert_str(Zones.current.zone_id).is_equal(destination)
+
+func _slice_free_camp(path: String, expected_enemies: int) -> void:
+	var camp := Zones.current.get_node(path) as Camp
+	var enemies: Array[Node] = []
+	for child in camp.get_children():
+		if child.has_method("take_hit") and child.has_signal("died"):
+			enemies.append(child)
+	assert_int(enemies.size()).is_equal(expected_enemies)
+	assert_bool(camp.is_cleared()).is_false()
+	for enemy in enemies:
+		# Twice current strength covers the existing shield reduction; no quest/flag shortcut.
+		enemy.call("take_hit", int(enemy.get("hp")) * 2, Vector2.RIGHT, 0.0)
+	await get_tree().create_timer(0.3).timeout
+	assert_bool(camp.is_cleared()).is_true()
