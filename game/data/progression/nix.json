@@ -1,35 +1,39 @@
 {
-  "schema_version": 1,
-  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "schema_version": 2,
+  "status": "proposal (claude-a/progression-2, 26 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "id": "nix",
   "name": "Nix",
   "identity": "Neon Harbour cyborg; the laser arm is his anatomical LEFT arm in every view (steel-blue casing, cyan lens); the RIGHT arm natural with a black wrist wrap; teal jacket with orange lining",
   "home_region": "neon",
-  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "home_region_note": "see docs/vision/world-and-cast.md (26 Oct); it sets the tier material",
   "abilities": {
-    "kit": "game/data/abilities/nix.json (Codex, #261); base and powered form unchanged",
+    "kit": "game/data/abilities/nix.json (Codex, #261); base and powered form unchanged; every node is a modifier over it",
     "base": {
       "primary": "Laser arm",
       "secondary": "Afterimage",
       "block": "Arm shield",
       "special": "Limit Release"
     },
+    "loadout_kind": {
+      "label": "pulse",
+      "rule": "one loaded at a time, chosen outside fights; the base kind is free"
+    },
     "skill_tree": {
       "branches": [
         {
-          "id": "laser",
-          "name": "Laser",
+          "id": "pulses",
+          "name": "Pulses",
           "covers": [
             "primary"
           ],
           "nodes": [
             {
-              "id": "heat_spread",
-              "kind": "passive",
-              "name": "Heat Spread",
-              "effect": "Laser pulses add 8 % less heat.",
+              "id": "needle",
+              "kind": "kind",
+              "name": "Needle",
+              "effect": "Sets needle pulses: thin, fast, pierce one.",
               "numbers": {
-                "heat_pct": -8
+                "pierce": 1
               },
               "level": 2,
               "cost": 1,
@@ -37,73 +41,62 @@
               "touches_canonical": false
             },
             {
-              "id": "heat_sink",
-              "name": "Heat Sink",
-              "binding": "a perfect dodge",
-              "effect": "The arm vents part of its heat.",
+              "id": "arc",
+              "kind": "kind",
+              "name": "Arc",
+              "effect": "Sets arc pulses: shock that chains to one foe.",
               "numbers": {
-                "heat_vented_pct": 40
+                "chain": 1
               },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "steam vent from the casing (3 drawings)"
-                ],
-                "reuses": [
-                  "dodge"
-                ]
-              },
-              "touches_canonical": false,
-              "kind": "technique",
               "level": 3,
               "cost": 2,
               "requires": [
-                "heat_spread"
-              ]
+                "needle"
+              ],
+              "touches_canonical": false
             },
             {
-              "id": "fine_focus",
-              "kind": "passive",
-              "name": "Fine Focus",
-              "effect": "Pulses fly 8 % faster.",
+              "id": "heat_spread",
+              "kind": "minor",
+              "name": "Heat spread",
+              "effect": "Pulses add 8 % less heat.",
               "numbers": {
-                "pulse_speed_pct": 8
+                "heat_pct": -8
               },
               "level": 6,
               "cost": 1,
               "requires": [
-                "heat_sink"
+                "arc"
               ],
               "touches_canonical": false
             },
             {
-              "id": "heat_sink_2",
-              "kind": "technique upgrade",
-              "name": "Heat Sink II",
-              "effect": "The vent releases a small shock ring.",
+              "id": "scatter",
+              "kind": "kind",
+              "name": "Scatter",
+              "effect": "Sets scatter pulses: short range, a wide spray.",
               "numbers": {
-                "ring_damage": 8,
-                "ring_radius": 24
+                "pellets": 5
               },
               "level": 12,
               "cost": 3,
               "requires": [
-                "fine_focus"
+                "heat_spread"
               ],
               "touches_canonical": false
             },
             {
-              "id": "overdrive",
+              "id": "redline",
               "kind": "keystone",
-              "name": "Overdrive",
-              "effect": "At over 80 % heat, pulses knock back.",
+              "name": "Redline",
+              "effect": "Above 80 % heat, every pulse chains.",
               "numbers": {
-                "knockback": 10
+                "chain": 1
               },
               "level": 22,
               "cost": 4,
               "requires": [
-                "heat_sink_2"
+                "scatter"
               ],
               "touches_canonical": false
             }
@@ -118,8 +111,8 @@
           "nodes": [
             {
               "id": "quick_image",
-              "kind": "passive",
-              "name": "Quick Image",
+              "kind": "minor",
+              "name": "Quick image",
               "effect": "Afterimage cooldown -8 %.",
               "numbers": {
                 "secondary_cooldown_pct": -8
@@ -131,33 +124,24 @@
             },
             {
               "id": "flashbreak",
-              "name": "Flashbreak",
-              "binding": "passive when the Afterimage breaks",
-              "effect": "The hologram breaks in a flash that blinds foes beside it.",
-              "numbers": {
-                "blind_seconds": 1.0,
-                "radius": 28
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "flash (2 drawings)"
-                ],
-                "reuses": []
-              },
-              "touches_canonical": false,
               "kind": "technique",
+              "name": "Flashbreak",
+              "effect": "The hologram breaks in a blinding flash.",
+              "numbers": {
+                "blind_seconds": 1
+              },
               "level": 9,
               "cost": 2,
               "requires": [
                 "quick_image"
-              ]
+              ],
+              "touches_canonical": false
             },
             {
               "id": "loud_ghost",
-              "kind": "passive",
-              "name": "Loud Ghost",
-              "effect": "The hologram draws foes from 20 % further.",
+              "kind": "minor",
+              "name": "Loud ghost",
+              "effect": "The hologram draws foes 20 % further.",
               "numbers": {
                 "draw_range_pct": 20
               },
@@ -169,10 +153,10 @@
               "touches_canonical": false
             },
             {
-              "id": "flashbreak_2",
-              "kind": "technique upgrade",
+              "id": "flashbreak_ii",
+              "kind": "upgrade",
               "name": "Flashbreak II",
-              "effect": "The flash also shows elites' weak points for 3 s.",
+              "effect": "The flash shows elites' weak points.",
               "numbers": {
                 "weak_point_seconds": 3
               },
@@ -186,7 +170,7 @@
             {
               "id": "double_exposure",
               "kind": "keystone",
-              "name": "Double Exposure",
+              "name": "Double exposure",
               "effect": "Breaking a hologram cools the arm by 20 %.",
               "numbers": {
                 "cool_pct": 20
@@ -194,7 +178,7 @@
               "level": 24,
               "cost": 4,
               "requires": [
-                "flashbreak_2"
+                "flashbreak_ii"
               ],
               "touches_canonical": false
             }
@@ -210,7 +194,7 @@
           "nodes": [
             {
               "id": "capacitor",
-              "kind": "passive",
+              "kind": "minor",
               "name": "Capacitor",
               "effect": "Arm shield cost -8 %.",
               "numbers": {
@@ -222,32 +206,23 @@
               "touches_canonical": false
             },
             {
-              "id": "redline",
-              "name": "Redline",
-              "binding": "passive above 80 % heat",
-              "effect": "Pulses chain to one nearby foe.",
-              "numbers": {
-                "heat_threshold_pct": 80,
-                "chain_damage_pct": 40
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "chain arc"
-                ],
-                "reuses": []
-              },
-              "touches_canonical": false,
+              "id": "heat_sink",
               "kind": "technique",
+              "name": "Heat sink",
+              "effect": "A perfect dodge vents heat.",
+              "numbers": {
+                "heat_vented_pct": 40
+              },
               "level": 16,
               "cost": 2,
               "requires": [
                 "capacitor"
-              ]
+              ],
+              "touches_canonical": false
             },
             {
               "id": "grounded",
-              "kind": "passive",
+              "kind": "minor",
               "name": "Grounded",
               "effect": "Shock on you wears off 20 % sooner.",
               "numbers": {
@@ -256,17 +231,17 @@
               "level": 18,
               "cost": 1,
               "requires": [
-                "redline"
+                "heat_sink"
               ],
               "touches_canonical": false
             },
             {
-              "id": "redline_2",
-              "kind": "technique upgrade",
-              "name": "Redline II",
-              "effect": "Blocking with the arm shield above 80 % heat turns part of the blocked damage into cooling.",
+              "id": "heat_sink_ii",
+              "kind": "upgrade",
+              "name": "Heat sink II",
+              "effect": "The vent releases a small shock ring.",
               "numbers": {
-                "cooling_per_block": 10
+                "ring_radius": 24
               },
               "level": 26,
               "cost": 3,
@@ -279,17 +254,17 @@
               "id": "limitless",
               "kind": "keystone",
               "name": "Limitless",
-              "effect": "Limit Release's beams pierce one more foe.",
+              "effect": "Limit Release's beams pierce one more.",
               "numbers": {
                 "pierce": 1
               },
-              "touches_canonical": true,
-              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
               "level": 28,
               "cost": 4,
               "requires": [
-                "redline_2"
-              ]
+                "heat_sink_ii"
+              ],
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
             }
           ]
         }
@@ -301,48 +276,42 @@
   "weapon": {
     "item": "laser arm",
     "equipment_tag": "laser",
+    "line": "Courier arm > Finned arm > Split-lens arm > Pearl arm",
     "tiers": [
       {
         "tier": 1,
         "name": "Courier arm",
-        "art": {
-          "silhouette": "today's drawing: steel-blue casing from the pauldron to a heavy forearm emitter with a cyan lens",
-          "materials": [
-            "steel blue",
-            "cyan"
-          ],
-          "glow": "the lens as drawn",
-          "size": "as drawn",
-          "read_check": "the current drawing"
-        },
-        "mechanics": {},
+        "form": "laser arm",
+        "level": 1,
         "requires": {
           "level": 1
         },
-        "sockets": 1
+        "sockets": 1,
+        "art": {
+          "description": "the tier-1 drawing: steel-blue casing on the LEFT arm, cyan lens",
+          "read_check": "the current drawing"
+        },
+        "rig": "as drawn",
+        "mechanics": {}
       },
       {
         "tier": 2,
         "name": "Finned arm",
-        "art": {
-          "silhouette": "three heat fins (2 px) along the forearm; an orange ring round the lens",
-          "materials": [
-            "steel blue",
-            "orange",
-            "cyan"
-          ],
-          "glow": "none",
-          "size": "forearm +1 px",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "cooling_pct": 10
-        },
+        "form": "laser arm",
+        "level": 8,
         "requires": {
           "level": 8,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "three heat fins along the forearm; an orange lens ring",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts",
+        "mechanics": {
+          "cooling_pct": 15
+        },
         "cost": {
           "glint": 60,
           "scrap": 5,
@@ -354,25 +323,24 @@
       },
       {
         "tier": 3,
-        "name": "Focus arm",
-        "art": {
-          "silhouette": "the lens pushed 2 px forward in a short barrel; cyan circuit traces along the casing",
-          "materials": [
-            "steel blue",
-            "cyan"
-          ],
-          "glow": "the traces glow one tone",
-          "size": "+2 px at the lens",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "afterimage_cooldown_pct": -8
-        },
+        "name": "Split-lens arm",
+        "form": "split laser",
+        "level": 16,
         "requires": {
           "level": 16,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "the emitter widens into a three-lens head (+3 px wide), the lenses in a short row; the casing gains cyan traces",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: emitter part swap (existing clips)",
+        "mechanics": {
+          "beams": 3,
+          "spread_degrees": 10,
+          "heat_per_shot_pct": 20
+        },
         "cost": {
           "glint": 150,
           "scrap": 10,
@@ -385,26 +353,22 @@
       {
         "tier": 4,
         "name": "Pearl arm",
-        "art": {
-          "silhouette": "pearl-white casing with gold seams; a pale violet-white lens",
-          "materials": [
-            "pearl (new)",
-            "gold",
-            "starlight (new)"
-          ],
-          "glow": "the seams brighten in two steps with heat, so heat reads on the body",
-          "size": "as tier 3",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "named": "Pearl core: the heat lockout ends 20 % sooner",
-          "lockout_pct": -20
-        },
+        "form": "split laser",
+        "level": 24,
         "requires": {
           "level": 24,
           "great_forge": true
         },
         "sockets": 3,
+        "art": {
+          "description": "pearl-white casing with gold seams that brighten with heat; violet-white lenses",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: ramp swap on tier 3",
+        "mechanics": {
+          "named": "Pearl core: the heat lockout ends 20 % sooner",
+          "lockout_pct": -20
+        },
         "cost": {
           "glint": 300,
           "scrap": 20,

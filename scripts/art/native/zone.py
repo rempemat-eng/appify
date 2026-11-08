@@ -66,10 +66,16 @@ def main(argv=None) -> int:
         sheet, (bx, by, bw, bh), cols = z.flow
         save(sheet, os.path.join(out, 'flow.png'), 1)
         flow = dict(rect=[bx / a.density, by / a.density, bw / a.density, bh / a.density], cols=cols)
+    flows = {}
+    for name, (sheet, (bx, by, bw, bh), cols) in sorted(getattr(z, 'flows', {}).items()):
+        save(sheet, os.path.join(out, f'flow_{name}.png'), 1)
+        flows[name] = dict(rect=[bx / a.density, by / a.density, bw / a.density, bh / a.density], cols=cols)
     if a.preview:
         screen.preview(z).save(a.preview)
     doc = dict(zone=plan['zone'], density=a.density, restricted=moved, kinds=sorted(sprites),
                objects=[[oid, kind, *[round(v, 2) for v in box]] for (oid, kind, box) in z.objects], flow=flow)
+    if flows:
+        doc['flows'] = flows
     print(json.dumps(doc))
     return 0
 

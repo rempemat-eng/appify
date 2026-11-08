@@ -11,11 +11,14 @@ var _nodes: Dictionary = {}
 var _state: Dictionary = {"progression": {"level": 1}, "folk": {}}
 var _maximum_level := 1
 
-## Configure atomically from catalogue.json and the corresponding folk documents.
+## Configure atomically from matching schema-1 or schema-2 catalogue and folk documents.
 func configure(catalogue: Variant, documents: Variant) -> Error:
 	if not catalogue is Dictionary or not documents is Array:
 		return ERR_INVALID_DATA
-	if not _whole(catalogue.get("schema_version")) or catalogue.schema_version != 1:
+	if not _whole(catalogue.get("schema_version")):
+		return ERR_INVALID_DATA
+	# JSON numbers are floats; Array membership distinguishes them from integer literals.
+	if catalogue.schema_version != 1 and catalogue.schema_version != 2:
 		return ERR_INVALID_DATA
 	if not catalogue.get("status") is String or not catalogue.get("levels") is Dictionary:
 		return ERR_INVALID_DATA
@@ -35,7 +38,7 @@ func configure(catalogue: Variant, documents: Variant) -> Error:
 	for doc in documents:
 		if not doc is Dictionary or not doc.get("id") is String or not ids.has(doc.id) or definitions.has(doc.id):
 			return ERR_INVALID_DATA
-		if not _whole(doc.get("schema_version")) or doc.schema_version != 1:
+		if not _whole(doc.get("schema_version")) or doc.schema_version != catalogue.schema_version:
 			return ERR_INVALID_DATA
 		if not doc.get("abilities") is Dictionary or not doc.abilities.get("skill_tree") is Dictionary:
 			return ERR_INVALID_DATA

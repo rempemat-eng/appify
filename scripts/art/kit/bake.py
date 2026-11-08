@@ -58,6 +58,11 @@ SOURCES = ['scripts/art/kit/bake.py', 'scripts/art/kit/surface.py', 'scripts/art
            'scripts/art/native/softground.py', 'scripts/art/native/volume.py']
 
 
+def _lay(cv, dec, x, y):
+    """A stone laid into the ground with its shadow (the water's stones, softground.seat_stone)."""
+    SN.DC.paste(cv, dec, x, y, shadow=True, shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
+
+
 def _pieces_lib() -> dict:
     out = {}
     base = os.path.join(ROOT, 'game', 'kit', 'pieces')
@@ -339,6 +344,24 @@ def bake(plan: dict, lib: dict | None = None):
             GD.log_steps(cv, x - half, x + half, y - face_h - 1, y + 2, rp.get('args', {}).get('n', 4), np.random.default_rng(5))
     # water (the ground before it, so a fall's face beside its sheet keeps the cliff's own texture)
     pre_water = cv.copy()
+    # each fall's sheet (texels: x0, width, rim row, foot row), known before the water is painted:
+    # the channel feeding it runs straight into its lip at exactly its width (SF.fall_run_in)
+    falls = []
+    for pc in pieces:
+        rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+        if rp.get('fn') == 'fall':
+            cw = lib[pc['piece']]['geometry']['size_cells'][0] * CELL / D
+            cx, foot = pc['at'][0] / D, pc['at'][1] / D
+            rim = foot - rp.get('args', {}).get('face_px', face_h) / D
+            falls.append((int(round((cx - cw / 2) * D)), int(round(cw * D)), int(round(rim * D)), int(round(foot * D)),
+                          rp.get('args', {}).get('seed', 11)))
+    clear = np.zeros((h, w), bool)
+    from scripts.art.native import rocks as RK_
+    for (fx0, fw, fr0, fr1, _s) in falls:
+        clear |= SF.run_in_zone(h, w, fx0, fw, fr0)
+        # and the pool's inlet under the sheet: no bank stone, tongue or reed where it lands
+        # (review round 3, K3-1: a seated stone stood as a pillar in the plunge)
+        clear[max(0, fr1 - 2):min(h, fr1 + SN.P(10)), max(0, fx0 - RK_.PLUNGE_PAD - 4):min(w, fx0 + fw + RK_.PLUNGE_PAD + 4)] = True
     wm = np.zeros((h, w), bool)
     for m, p in paint.items():
         if p.get('fn') != 'water':
@@ -347,23 +370,18 @@ def bake(plan: dict, lib: dict | None = None):
         wcells = mat == m
         wcls = SF.water_class(SF.widths(wcells))
         wm |= SF.taper(_shape(wcells, h, w, a.get('shape', {})), wcells, wcls)
-        before = cv.copy()
+        for (fx0, fw, fr0, fr1, _s) in falls:
+            wm = SF.fall_run_in(wm, fx0, fw, fr0, fr1)
+        # (Matt, 4 Nov) one painter for every width: only a north bank shows a face, the other
+        # shores one rim (softground.water), so a rill, a stream and a river share their banks
         items = GD.water(cv, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=a.get('stones', 0.0),
-                         reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('side_w', 5))
+                         reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), clear=clear)
         # a running channel (north-south, the rill) has no bank stones from the painter (they read
         # as debris, Claude A 2 Nov; surface.water_widths sets at most two); river and pool shores keep theirs
         lab_v = ndi.label(wcells, structure=[[0, 1, 0], [0, 1, 0], [0, 1, 0]])[0]
         lab_h = ndi.label(wcells, structure=[[0, 0, 0], [1, 1, 1], [0, 0, 0]])[0]
         vlen, hlen = np.bincount(lab_v.ravel())[lab_v], np.bincount(lab_h.ravel())[lab_h]
         chan = ndi.binary_dilation(wcells & (vlen > 2 * hlen) & (vlen >= 6), iterations=1)
-        if chan.any():
-            # the channel's water painted again without the painter's stones (their shade rings
-            # would stay behind as notches in the bank)
-            ns = before.copy()
-            GD.water(ns, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=0.0,
-                     reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('side_w', 5))
-            zc = SF.texels(chan & ~ndi.binary_dilation(wcells & ~chan, iterations=1))[:h, :w]
-            cv[zc] = ns[zc]
         kept = []
         for it in sorted(items, key=lambda it: (it[2][1], it[2][0])):
             cy_, cx_ = int(it[2][1] // CELL), int(it[2][0] // CELL)
@@ -371,15 +389,6 @@ def bake(plan: dict, lib: dict | None = None):
                 continue
             kept.append(it)
         items = kept
-        narrow = (wcls >= 1) & (wcls <= 2)
-        if narrow.any():
-            # a rill's or a stream's banks: the narrow walls of the woodland's rill (side_w 3), not the
-            # river's wide ones, which would eat a channel one or two cells across
-            nb = before.copy()
-            GD.water(nb, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=0.0,
-                     reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('narrow_side_w', 3))
-            zone = SF.texels(ndi.binary_dilation(narrow, iterations=1) & ~ndi.binary_dilation(wcls >= 3, iterations=1))[:h, :w]
-            cv[zone] = nb[zone]
         nearw = ndi.binary_dilation(wm, iterations=SN.P(3)) & ~wm
         grassy_ = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 <= 2) & nearw
         cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
@@ -414,9 +423,13 @@ def bake(plan: dict, lib: dict | None = None):
             sub_ = cv[seg]
             ok_ = inner_[seg] & (sub_ % 8 < 5)
             sub_[ok_] = sub_[ok_] + 1
-        for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1]):
-            SN.DC.paste(cv, SN.to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True,
-                        shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
+        # no stone where a fall runs in or lands (its run-in and its pool's inlet, `clear`): the
+        # inlet turns the bank under the sheet to water after these are laid (review round 3, K3-1)
+        near_fall = ndi.binary_dilation(clear, iterations=SN.P(3))
+        items = [it for it in items if not (0 <= int(it[2][1]) < h and 0 <= int(it[2][0]) < w and near_fall[int(it[2][1]), int(it[2][0])])]
+        # stones at the water: each one that stands in it gets its wet contact (softground.seat_stone)
+        GD.seat_stones(cv, wm, [(SN.to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
+                                for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])], _lay)
     # crossings: footbridges on abutments in the banks, stepping stones over a rill or a stream
     for pc in pieces:
         rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
@@ -455,8 +468,9 @@ def bake(plan: dict, lib: dict | None = None):
             # water's mask ran down the face (no flat slabs, no water beside the sheet)
             span = np.zeros((h, w), bool)
             span[r0:r1, max(0, sx0 - SN.P(14)):sx0 + sw + SN.P(14)] = True
-            sheet = np.zeros((h, w), bool)
-            sheet[r0:r1, sx0:sx0 + sw] = True
+            # the sheet's own outline (structures.sheet_outline: its edges wander a texel in and swell
+            # at the foot; review round 4, K4-1), the face showing where it wanders in
+            sheet = ST.sheet_mask((h, w), sx0, sw, r0, r1, seed)
             cv[span & ~sheet] = pre_water[span & ~sheet]
             # wet rock near the sheet: darker, a ragged edge (no seam), sheen on the lit stone tops
             # and moss in the joints; spray darkening the foot of the face either side
@@ -470,20 +484,75 @@ def bake(plan: dict, lib: dict | None = None):
             for m_ in (wet, spray, wet & (dx_ < SN.P(3) + 2 * nz)):
                 sel = m_ & (cv % 8 > 0) & (cv % 8 < 6)
                 cv[sel] = cv[sel] - 1
-            # sheen: short wet glints running down the lit stone tops nearest the sheet
-            seeds_ = wet & (dx_ < SN.P(4)) & (pre_water % 8 >= 3) & (frng.random((h, w)) < 0.012)
-            glint = seeds_ | GD.down(seeds_, 1) | GD.down(seeds_, 2)
-            cv[glint & wet] = C('water', 4)
-            cv[seeds_] = C('snow', 4)
+            # (no sheen of water-blue and white glints on the stone beside the sheet: they read as spray
+            # on the face, against Matt's 2 Nov ruling; review round 7. The wet stone is its darker
+            # tones and the moss.) The random field keeps its draw so the moss below is unchanged.
+            frng.random((h, w))
             moss = (wet | spray) & (pre_water % 8 <= 1) & (nz > 0.6) & (frng.random((h, w)) < 0.5)
             cv[moss] = np.where(frng.random(moss.sum()) < 0.5, C('leaf', 2), C('leaf_cool', 2))
             # the sheet and its plume, rings and ripples on the pool
             above = np.zeros_like(wm)
             above[:r0] = True
+            # the pool runs up to the sheet's foot (review round 3, K3-1): from the sheet's foot row,
+            # under the sheet and the foam's reach, the pool's own north bank (its grass lip, rim and
+            # earth face) gives way to water in its shade down to the open pool, the inlet's top
+            # corners rounded 2 to 3 texels and the 5.3a rim (wet earth, the mid tone) down both
+            # sides, so the white water lands on the pool and on nothing else
+            from scripts.art.native import rocks as RK_
+            waters_ = [GD.FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in GD.FI]
+            ix0, ix1 = max(0, sx0 - RK_.PLUNGE_PAD), min(w, sx0 + sw + RK_.PLUNGE_PAD)
+            inlet = np.zeros((h, w), bool)
+            for X in range(ix0, ix1):
+                seg = np.isin(cv[r1:min(h, r1 + SN.P(10)), X] // 8, waters_) & wm[r1:min(h, r1 + SN.P(10)), X]
+                if not seg.any():
+                    continue
+                # down to where the pool's own water runs on (four rows of it), so a sliver of bank
+                # under a texel of water is not left standing as a pillar in the inlet
+                run4 = np.array([seg[i_:i_ + 4].all() for i_ in range(len(seg))])
+                stop = r1 + (int(np.argmax(run4)) if run4.any() else int(np.argmax(seg)))
+                d_edge = min(X - ix0, ix1 - 1 - X)
+                start = r1 + max(0, 3 - d_edge) if d_edge < 3 else r1      # rounded top corners
+                inlet[start:stop, X] = True
+            cv[inlet] = C('water', 1)
+            # beside the sheet the face's foot meets the inlet as a north bank does: the light
+            # waterline under it (5.3), the face's foot pebbles standing in it
+            top_ = inlet & ~GD.down(inlet, 1)
+            top_[:, sx0:sx0 + sw] = False
+            cv[top_] = C('water', 5)
+            wm = wm | inlet
+            iys = np.nonzero(inlet.any(1))[0]
+            for Y in iys:
+                xs_ = np.nonzero(inlet[Y])[0]
+                if len(xs_) < 4:
+                    continue
+                # its sides take the rim only where land lies beyond them (where the pool's own water
+                # already runs on beside the inlet, a rim would stand as a pillar of earth in it)
+                for (xe, xi, xo) in ((xs_[0], xs_[0] + 1, xs_[0] - 1), (xs_[-1], xs_[-1] - 1, xs_[-1] + 1)):
+                    if 0 <= xo < w and cv[Y, xo] >= 0 and cv[Y, xo] // 8 in waters_:
+                        continue
+                    cv[Y, xe] = GD.rim_earth()
+                    cv[Y, xi] = C('water', GD.RIM_LINE)
+            # the inlet is part of the pool (review round 4, K4-4: the pool's north waterline and its
+            # dark band ran on straight across the inlet's mouth, a sill under a basin a step up):
+            # inside the inlet's sides they give way to the inlet's deep water, which runs on into
+            # the pool's body; the waterline and the band end at the inlet's sides
+            for X in range(ix0 + 1, ix1 - 1):
+                col_ = np.nonzero(inlet[:, X])[0]
+                if not len(col_):
+                    continue
+                Y = int(col_.max()) + 1
+                for _k in range(6):
+                    if not (Y < h and wm[Y, X] and cv[Y, X] >= 0 and cv[Y, X] // 8 in waters_ and cv[Y, X] % 8 in (0, 3, 4, 5)):
+                        break
+                    cv[Y, X] = C('water', 1)
+                    Y += 1
             tmp = cv.copy()
             ST.fall_sheet(tmp, sx0, sw, r0, r1, seed=seed)
             ok = ndi.binary_erosion(wm, iterations=2) & ~above & ~span
             ok |= sheet
+            # the channel's last rows fading into the glassy tongue above the rim, and the lit
+            # streaks converging on the lip (rocks.sheet draws them on the channel's water; 5.3b)
+            ok[max(0, r0 - 24):r0, sx0:sx0 + sw] |= wm[max(0, r0 - 24):r0, sx0:sx0 + sw]
             ok[r1:r1 + SN.P(14)] |= ndi.binary_erosion(wm, iterations=2)[r1:r1 + SN.P(14)]
             cv[ok] = tmp[ok]
             # lip stones on the rim beside the sheet, never over it: they sit on the top tier's

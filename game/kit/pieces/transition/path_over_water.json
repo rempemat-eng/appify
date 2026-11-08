@@ -13,7 +13,7 @@
     "state": "candidate",
     "by": null,
     "at": null,
-    "standard": "eastward-edges.md 5.3 (bank face, light waterline, shade under a north bank, lit shallows), Matt 26 Oct 19:42 (side walls)",
+    "standard": "eastward-edges.md 5.3 (bank face, light waterline, shade under a north bank, lit shallows), 5.3a (Matt, 4 Nov: a face only on a north bank, one rim round every other shore)",
     "note": "the bank painter under packed earth (a ford or a path ending at a bank needs it; ground-rules: a route meets water only at a bridge or a ford)"
   },
   "transition": {
@@ -22,9 +22,7 @@
     "painter": {
       "module": "scripts.art.kit.edges",
       "fn": "bank",
-      "args": {
-        "side_w": 3
-      }
+      "args": {}
     },
     "variants": 1,
     "shape": "lower",

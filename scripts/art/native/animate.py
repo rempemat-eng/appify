@@ -44,12 +44,32 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
     along the flow in one lane in three, drifting downstream by 4 world px a frame (a loop of
     32 world px); still water (a pool): glints that come and go in pairs; banks: foam that
     laps along the edge; falls: light ribbons sliding down the sheet. thin (density 3 and up):
-    a streak is one texel across its lane (a ripple line, not a block). Returns n RGBA arrays."""
+    a streak is one texel across its lane (a ripple line, not a block). Returns n RGBA arrays.
+
+    Only a texel whose final code is water, the sheet or its foam (the water and snow families,
+    `wet_codes`) is ever lifted, in any frame (review round 4, F4-1: the lanes come from the water
+    mask, which still runs under what was painted over it afterwards, so the stream's marks slid
+    over the bridge's deck and the terrace's wet rock foot, frame 0 included). The lanes' geometry
+    still comes from the whole mask, so a lane keeps its line where it passes under a deck."""
     H, W = mask.shape
     F = np.where(codes >= 0, codes // 8, 0)
     T = np.where(codes >= 0, codes % 8, 0)
+    wet = wet_codes(codes)
     ys, xs = np.mgrid[0:H, 0:W]
     fx, fy, coh = water_flow._flow(mask)
+    if thin:
+        # at density 3 a channel is too wide for _flow's fixed blur, whose middle reads south (the
+        # woodland review, 4 Nov: marks drifting south across an east-flowing stream): the current
+        # the ground's ripples follow (water.flow_dir), on the same 1/256 grid
+        from .water import flow_dir
+        ffx, ffy = flow_dir(mask)
+        # snapped to the nearest of eight directions, so the lane coordinates below are whole
+        # texels: where the direction turned by a 1/256 step the lanes ran north-south through a
+        # lobe and broke into single specks drifting across the current (review round 2, R2-5)
+        sec = np.round(np.arctan2(ffy, ffx) / (np.pi / 4)).astype(np.int64) % 8
+        sx = np.array([1, 1, 0, -1, -1, -1, 0, 1])[sec]
+        sy = np.array([0, 1, 1, 1, 0, -1, -1, -1])[sec]
+        fx, fy = sx * 256, sy * 256
     depth = water_flow._depth(mask)
     run = mask & ~still & (depth >= 1)
     shift = int(round(4 * s))
@@ -61,19 +81,40 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
     lh = _h(lane, np.zeros_like(lane) + 3)
     lane_on = (lh % 3) == 0
     phase = ((lh >> np.uint32(4)) % np.uint32(period)).astype(np.int64)
+    if thin:
+        # each lane its own phase from a second hash, so neighbouring lanes never run in step
+        # (review round 3: the rill's dashes ran in six columns at one period, together)
+        lh2 = _h(lane * 7919 + 101, np.zeros_like(lane) + 29)
+        phase = ((lh2 >> np.uint32(7)) % np.uint32(period)).astype(np.int64)
     length = (2 + (lh >> np.uint32(9)) % 4).astype(np.int64) * max(1, int(round(s)))
     gh = _h(xs // (3 * max(1, int(s))), ys // (2 * max(1, int(s))), np.zeros_like(xs) + 11)
     glint = still & (depth >= 2) & ((gh % 23) == 0) & (xs % 2 == 0)
+    if thin:
+        # one pair a cell (g and its east neighbour below), never the cell's whole block lit
+        si = max(1, int(s))
+        glint &= (xs % (3 * si) == 0) & (ys % (2 * si) == 0)
     g_phase = ((gh >> np.uint32(6)) % np.uint32(n)).astype(np.int64)
     shore = mask & (depth == 0)
+    if thin:
+        # lap on the water's own texels only: the rim's wet earth stays still
+        from .palette import FI
+        shore &= np.isin(F, [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI])
     out = []
     for f in range(n):
         dT = np.zeros((H, W), np.int32)
         fam = F.copy()
         pos = (u + phase - f * shift) % period
-        streak = run & lane_on & (pos < length)
+        streak = run & lane_on & (pos < length) & wet
         if thin:
             streak &= (v % lane_w) == 0
+            # no lone texel: each lifted texel has a lifted neighbour along the flow
+            ax, ay = fx // 256, fy // 256
+            nb = np.zeros_like(streak)
+            for sgn in (1, -1):
+                yy_ = np.clip(ys + sgn * ay, 0, H - 1)
+                xx_ = np.clip(xs + sgn * ax, 0, W - 1)
+                nb |= streak[yy_, xx_]
+            streak &= nb
         head = streak & (pos == 0)
         dT[streak] = 1
         dT[head] = 2
@@ -93,12 +134,33 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
             dark = box & (fp >= period // 4) & (fp < period // 4 + 2 * s) & (T > 2)
             dT[light] = 1
             dT[dark] = -1
-        sel = dT != 0
+        sel = (dT != 0) & wet
         tt = np.clip(T + dT, 0, 5)
         rgb = LUT[fam * 8 + tt]
         fr = np.zeros((H, W, 4), np.uint8)
         fr[sel, :3] = rgb[sel]
         fr[sel, 3] = 255
+        out.append(fr)
+    return out
+
+
+WET_FAMILIES = ('water', 'water_warm', 'water_cool', 'snow', 'snow_warm', 'snow_cool')
+
+
+def wet_codes(codes) -> np.ndarray:
+    """Where a code is open water, a fall's sheet or its foam (the water and snow families): the
+    only texels the moving water may lift (review round 4, F4-1)."""
+    from .palette import FI
+    codes = np.asarray(codes)
+    return (codes >= 0) & np.isin(np.where(codes >= 0, codes // 8, -1), [FI[n_] for n_ in WET_FAMILIES if n_ in FI])
+
+
+def keep_to(frames, allowed) -> list:
+    """The frames with every lifted texel outside `allowed` cleared (alpha 0)."""
+    out = []
+    for fr in frames:
+        fr = fr.copy()
+        fr[~allowed] = 0
         out.append(fr)
     return out
 
