@@ -1059,3 +1059,219 @@ The scene gate was not re-run (no plan or scene change). I visited every region 
 - In the game by hand, at phone scale and under the night tint.
 - The lit channel and the open seal in Godot: I saw them only in composites from `kit.json`.
 - Whether the proposed accent family fits the house palette's rule: that is a palette decision for Claude A, not a measurement I made.
+
+## Round 6
+
+Draft PR #440 at `05cffe7b` answered round 5 and changed three assets: ground, channel_lit and roots_corridor. It also added one named-only accent family, `lamplit`, which Claude A approved. A fresh detail-auditor reviewed it. That auditor drew none of the art and took no part in rounds 1 to 5.
+
+**Result: 2 pass, 1 fail.** channel_lit and roots_corridor pass. The ground fails. Across the zone that makes 19 pass and 1 fail.
+
+Every round 5 finding that was a number is met. But at 1x and at 3x the eight torch pools now read as ochre rugs or patches of brown dirt laid on violet stone, not as light falling on it (G-29). The torches also light nothing on the wall they hang on (G-30). Part of G-29 comes from round 5's own target, which was measured on a box that held the glowing gate (below).
+
+### What was reviewed
+
+- **Head:** `05cffe7b`. `git diff 45040f4d 05cffe7b` changes exactly three PNGs and their records. It also changes the painter, the palette files (`art/house-palette.json`, `scripts/art/house_palette.py`, `scripts/art/native/{palette,compose,screen}.py`), the craft test and four new fixtures, the golden manifest's hash, `kit.json`'s inputs hash and one import line of `test_review.py`.
+- **The other 17:** cairn_alcove and the other 16 have the same git blob ids as at `45040f4d`. Their sha256 matches their records, and their catalogue records are untouched, so their passes stand.
+- **The palette change moved no other picture.** I extracted the head into a private copy and checked:
+  - `gen_village.py crossroads` rewrote all 101 crossroads pictures and `gen_zone.py woodland --render .` all 22 woodland pictures. `git status` shows no PNG changed. Only crossroads' `kit.json` changed, in its `inputs` hash.
+  - `python3 -m scripts.art.native.check --no-cache` rebuilt the pilot golden pixel for pixel. It reported "crossroads: the kit or the plan changed since it was drawn".
+  - `npm run check:art-repro` passes.
+  - **Crossroads' `kit.json` input hash is now stale** (committed `2e01a94f…`, today's `6d6d297a…`). Its pictures are identical. That file belongs to another lane, so I report it and leave it.
+- **Calibration first:** `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <Eastward folder> --out <private>` gives recall 38 of 38. The false positives are 5 on 6 clean screens and 29 on 22 clean props, the same as round 5. `calibration_results.json` is unchanged.
+- **The painter's floor, rebuilt:** I ran `undercroft.build` from the plan into a private folder with its `fields`. All 20 pictures come out byte for byte the same as the committed ones. Every number below comes from those masks and the committed pixels, not from the PR.
+- **Asset gate:** I ran `npm run review:asset` and `--record` on the three. `--record` left the records byte for byte as the painter wrote them. Then I set the verdicts. The detectors:
+  - fail ground: `detail.ragged_edge` x6 at 0.064 to 0.136 (limit 0.06) on torch pools 1, 2, 3 and 5 to 8, and `detail.no_falloff` 0.306;
+  - pass channel_lit, with `detail.bar` 0.60 and `detail.outline` 0.13 as polish;
+  - pass roots_corridor, with `detail.bar` 0.61 as polish.
+
+  I opened every sheet.
+- **Composites:**
+  - I composed channel_lit over the ground at its `kit.json` foot and offset, and diffed that against the ground alone.
+  - I opened the painter's `rooms_1x_state1-r6.png` room by room.
+  - I made zooms at 3x to 8x. They are local in the scratchpad (`audit6/`) and not committed: `channel_unlit_vs_lit_3x`, `state1_channel_3x`, `roots_corridor_r5_vs_r6_8x`, `roots_corridor_6x`, `room1_sw_3x`, `shade_6x`, `wallfoot_4x` and `damp_overlay_room1`.
+- **Scene gate:** not re-run. No plan or scene change in this round.
+- **Eastward at x1.37 nearest neighbour** (local only, never committed). Shots 06 and 05 were brought to their art grids by `core.to_native` (06 at scale 3.6, 532 x 299; 05 at 2.0, 639 x 359). The side by side is `audit6/undercroft_r6_vs_eastward_sbs.png`, every crop at 3x:
+  - torch 1 and its pool (60,80,300,300) beside 06's fire columns, gate and warm floor (140,0,315,160);
+  - the skylight (1790,290,2060,500) beside 06's lit corridor round the player (150,95,347,248);
+  - torch 3's pool (640,230,850,420) beside 05's camp lamp pool (175,95,328,234).
+
+  Number boxes in 06 (native px):
+  - warm floor above the gate (165,25,300,45);
+  - the gate's glow on the floor below it (160,100,240,125);
+  - right of the player (290,100,312,140);
+  - shade (140,200,200,260);
+  - round 5's warm box (150,40,250,80);
+  - a vertical profile at x 140 to 225 in 10-row bands.
+
+  In 05: a radial profile from the lamp at (240,170) over the open ground to its east.
+
+### The painter's claims, measured
+
+All values are OKLab L, OKLCH chroma C and hue in degrees, or `bands.contrast` in L at H 74.
+
+| Claim | Measured | Holds? |
+| --- | --- | --- |
+| Torch pool body 0.452 / 0.064 / 63, heart 0.536 / 0.064 / 69 | Body (warm texels at rung 3, joints out) 0.452 / 0.064 / 63. Heart (rung 4, joints out) 0.509 / 0.060 / 66. Its two body colours are `lamplit_cool 2` (0.509) at 35 % and `lamplit 2` (0.536) at 34 %, so 0.536 is the lighter of the two, not the heart's median. | Body yes. Heart lower than quoted. |
+| Heart outline in straight runs of 10 px or more: 2 % / 19 % torch, 1 % / 14 % skylight | Texels 2 %, the light's curve 19 % (torch); 1 % and 14 % (skylight). Closed to how it reads at 1x (a 5 px majority), 26 % and 20 %. | Yes |
+| Shade L 0.359 in the audit boxes; near / far / walls' feet 0.359 / 0.328 / 0.274 | Both boxes 0.359. Rungs 2, 1, 0 (flag bodies) 0.359, 0.328, 0.274. The floor's median by distance from the nearest light, more than 20 px off the walls: 0.509 at 0 to 40 px, 0.439 at 40 to 80, 0.359 from 80 to 290, 0.328 beyond 290 (0.25 H blur: 0.479, 0.423, 0.360, 0.348 to 0.346, 0.325, 0.316). | Yes |
+| Far share of the shade, rooms 1 to 4: 21 / 14 / 33 / 14 % | 22 / 15 / 35 / 15 % | Yes |
+| Commonest colour of the shade's flag bodies 32 % | 35.5 % (flag interiors, one texel in from every edge); 33 to 37 % of each shade box | Yes, within my masking |
+| Shade boxes drawn (tones 9.7 to 10.6, shapes 21.8 to 23.5), contrast 4.6 to 5.6 | (200,430,310,512) 10.1 / 23.4, 4.6; (250,380,387,490) 10.5 / 22.7, 4.7; (300,360,520,520) 10.6 / 23.5, 5.1; (1290,450,1440,570) 9.7 / 21.8, 5.6. All drawn and calm. Eastward 06 shade 11.9 to 18.0 tones and 22.8 to 23.7 shapes. | Yes |
+| Room 1 pool / heart 10.5 / 11.6; skylight / heart 10.8 / 7.3; stair 9.5; all drawn | 10.5 / 11.6, 10.8 / 7.3, 9.5; all drawn and calm. The skylight heart only just: 20.9 shapes a patch against the drawn limit of 20.7. | Yes |
+| Spill past the lips 100 / 81 / 38-50 / 8-17 / 0 % on all four sides | Composite diff. North of the main run: d 2 to 10 at 100 %, d 11 to 18 at 51 to 100 %, d 19 to 24 at 4 to 52 %, d 25 to 30 at 4 to 6 %. South: 99 to 100 %, 49 to 100 %, 0 to 49 %, 0 %. The branch's west and east sides alike, with 11 % beyond d 21. | Yes |
+| `detail.no_falloff` 0.306, dominated by the void and the walls | 0.306 on the picture. With the whole floor flattened to its mean it is still 0.275, so the floor adds 0.031. Eastward 06's whole screen is 0.388. | Yes. Rejected as a false positive (below). |
+| The 6 `detail.ragged_edge` faults are false positives: brown hue read as dirt | The detector picks the brown family (`edges.GROUND_FAMS`), so it reads the lamplit texels as ground. The cool skylight, drawn with the same staged dither, is not flagged. The mechanism is a hue read. But the eye reads the pools the same way (G-29). | Mechanism yes; not rejected (below) |
+| Palette: no other picture changes | Woodland 22 and crossroads 101 regenerate byte-identical. The pilot golden rebuilds pixel-identical with no cache. `check:art-repro` passes. | Yes |
+
+### Round 5 findings, measured again
+
+- **G-24, light colour and ruled hearts.** The numbers asked for are met: C 0.064 at hue 63, no ruled hearts, joints and lips kept in the light. But the result reads as a material, not as light (G-29).
+- **G-25, stains.** Fixed. No partial damp flag: 0 of 802 damp flags are only partly damp. Every damp texel lies within 18 px of a wall. Damp is drawn as the shade's cool sibling (`slate_cool 1`, 0.328), so at 1x it reads as a darker wall foot. Neighbouring groups merge into bands 1 to 3 flags deep along the walls (24.6 % of the floor), which is fine for a vault.
+- **G-26, under-drawn shade.** Fixed (table above). At 3x and 6x the shade reads as laid stone: three siblings, chipped corners knocked to the joint, cracks with a lit east bank, worn lips and the odd flag a tone lower, with no hatching (`shade_6x`, `room1_sw_3x`).
+- **G-27, falloff.** Fixed for the room scale (profile above). The far step is a staged dither that stops at joints in places. Below 1.1 H from a light the falloff is two plateaus; that part belongs to G-29.
+- **G-28, knots and stripes.** The stripe is fixed: the walls'-foot fade staggers by flag (`wallfoot_4x`). The knots are part fixed: 247 junctions still hold a fully dark 2 x 2 block in the joint colours, against round 5's 286 (1.8 an H² of floor, against 2.0). The PR's "no knots" does not hold (G-31).
+- **C-6, the spill.** Fixed (C-7).
+- **RT-8, the tilt.** Fixed (RT-9).
+
+### Round 5's warm target was wrong
+
+Round 5's G-24 set the torchlight at "Eastward 06: 0.46, 0.062, 65" and asked for C 0.045 to 0.065 at hue 55 to 80. The painter met that, and `test_the_torchlight_is_gold` now pins it. But the box it came from, (150,40,250,80), is 32 % glowing pixels: the gate's six yellow columns and the fire cups (C 0.10 or more, or L 0.7 or more). With those left out it measures 0.426 / 0.035 / 47.
+
+Eastward's lit floor, measured clean:
+
+| Box | L | C | Hue |
+| --- | --- | --- | --- |
+| Between the fires, above the gate | 0.384 | 0.025 | 18 |
+| Below the gate, in its glow | 0.418 | 0.038 | 344 |
+| Right of the player | 0.439 | 0.044 | 328 |
+| Shade, for comparison | 0.361 | 0.081 | 288 |
+
+So Eastward's light lifts the stone's value and pulls its violet towards a warm mauve grey. It does not paint the stone ochre. The ochre lives in a minority of texels: the lightest 30 % sit at hue 63 to 85 and C 0.03 to 0.05, and in the moss flecks. The darkest 15 % stay violet (hue 302 to 312, C 0.04 to 0.046). Round 5's number was an auditor's error, and round 6 carried it out faithfully. G-29's fix replaces it.
+
+### Per-asset verdicts
+
+| Asset          | Detectors       | Bar  | Verdict  | Findings                          |
+| -------------- | --------------- | ---- | -------- | --------------------------------- |
+| ground         | fail, 7 faults  | n/a  | fail     | G-29, G-30 fault; G-31 polish     |
+| channel_lit    | pass, 2 polish  | 0.60 | **pass** | C-7 (C-6 fixed)                   |
+| roots_corridor | pass, 1 polish  | 0.61 | **pass** | RT-9 (RT-8 fixed)                 |
+
+The other 17 are byte-identical to round 5 and keep their pass: cairn_alcove, lever_up, lever_down, plate_up, plate_down, seal_slab, seal_sunk, shard, stump_nw, stump_se, torch, urn_seal, roots_hall and the four rubble piles.
+
+### Findings, ranked
+
+1. **G-29, ground, the torch pools read as an ochre rug or a dirt patch, not light on stone (fault).**
+
+   Where: all eight torch pools, at 1x in `rooms_1x_state1-r6.png` and at 3x in `undercroft_r6_vs_eastward_sbs.png` rows 1 and 3. The skylight, drawn the same way in the slate family, reads as light. Measured:
+
+   - **One material, end to end.** 98 % of the lit torch texels (78,981) are ochre (hue 35 to 100, C over 0.04), at a median C 0.063. The joints inside the light are `lamplit_warm 0` (hue 50, C 0.052, L 0.338), so the dark structure turns brown with the tops. Eastward 06's lit floor keeps its darks violet (hue 302 to 312) and is ochre on 27 to 37 % of its texels. Eastward 05's lamp pool is ochre on 42 to 60 % in its middle falloff.
+   - **A hue switch, not a blend.** In the band 8 texels either side of every torch pool's edge, 51 % of texels are ochre, 48 % are violet and **0 %** are in between (hue 320 to 35) or neutral. In Eastward 06's transition below the gate (rows 60 to 140), 32 % are in between and 4 % neutral. Its hue walks 79, 49, 23, 0, 348, 319, 308, 295, 285 down the rows.
+     - Eastward turns from warm to shade over about 90 native px, 123 of ours (1.7 H).
+     - Ours turns in the 9-texel hem (rung 3 share 1.00 at row 216, 0.64 at 228, 0.05 at 240 below torch 1).
+     - A checker of ochre against blue-violet is exactly what a rug's fringe or a dirt edge looks like at 1x.
+   - **Flat inside, then cut off.** Chroma does not fall with distance. It is 0.062 to 0.064 from the heart to the hem, so the edge is a colour edge. In Eastward 05, C falls with L from 0.118 at the lamp to 0.033 at 0.85 to 1.0 of its reach, and the ochre share fades from 100 % to 42 %. Ours has two value plateaus (0.509, then 0.426 to 0.452) and reaches about 67 px (0.9 H) from the wall's foot. Eastward 05's falloff runs about 137 px (1.85 H) at our scale.
+   - **The detector agrees with the eye.** `detail.ragged_edge` finds a brown region with a frayed outline on six of the eight pools. That is how they read.
+
+   Fix (in `scripts/art/native/undercroft.py`: `WARM*`, `floor_paint` and the pool rungs; and in `test_undercroft_craft.py`):
+
+   - **Keep the stone's own darks in the light.** Joints, chips, cracks and the south-east arrises under a torch stay in the shade's violet families one step up: for example `void 3` (0.30 / 0.043 / 280), `soot 2` (0.34 / 0.020 / 316) or `stone_cool 0` (0.27 / 0.031 / 322). Never `lamplit_warm 0`. Target: the darkest 15 % of a pool's texels at hue 290 to 350.
+   - **Light lifts the stone; it does not repaint it.** Make the pool's flag bodies the stone's own mauve siblings a rung up: `stone_cool 1` (0.38 / 0.022 / 335), `stone 1` (0.41 / 0.018 / 329), `stone_warm 1` (0.44 / 0.018 / 346), and `stone 2` or `stone_warm 2` (0.52 to 0.55, hue 355 to 24) in the heart. Lay `lamplit` only where light catches:
+     - the lit north-west lips;
+     - worn tops;
+     - clusters on the flags nearest the cup;
+     - the heart's crests.
+
+     Target: lamplit on 25 to 55 % of the pool's texels, more near the torch and fewer at the edge. The pool's median should land near L 0.42 to 0.46, C 0.03 to 0.045, hue 345 to 50.
+   - **Grade the hue through the in-between families.** Order the bands slate (shade, hue 285) > `stone_cool` / `stone` (violet grey to mauve, 322 to 335) > `stone_warm` (mauve warm) > lamplit on the tops. Each is a staged band 12 to 20 px wide, so the warm reach runs about 1.5 to 1.9 H from the wall's foot. Value and chroma fall together outward. No lamplit texel touches a slate shade texel. Target: at least 20 % of the hem band in between (hue 320 to 35).
+   - **Keep what round 6 got right:** the light crossing the flags by its own curve, the staged dither (light fades may dither, eastward-edges 5.4), the per-flag sibling, the calm and drawn tests and the heart at the wall's foot.
+   - **Re-pin the guard.** Replace `test_the_torchlight_is_gold`'s C ≥ 0.045 and hue 55 to 80 with the targets above (median C 0.03 to 0.05; dark texels violet; lamplit share 25 to 55 %; in-between share in the hem ≥ 20 %). Keep round 5's grey pool as one failing fixture, and add round 6's ochre pool (a crop of torch 1's pool from `ground.png` at `05cffe7b`) as the other.
+   - Do not answer it by smoothing the hem into a hard edge or by adding grain. If `detail.ragged_edge` still reads a fixed pool's lamplit crests as brown ground, a reviewer may reject it then, with these numbers.
+
+2. **G-30, ground, the torches light nothing on their own wall (fault).**
+
+   No texel of the wall face or the kerb around any torch is warm: 0 % ochre in (138,100,198,150) beside torch 1's cup, in the kerb under it (130,152,206,166) and on torch 3's face (714,250,774,294). The face by torch 1 is 0.523 / 0.013 / 6, the same grey as a face between torches (0.493 / 0.014 / 5). So each pool begins below an unlit pale kerb, cut off from its flame, and looks laid on the floor rather than thrown by the torch (row 1 of the side by side). Eastward 06's fire columns warm the ledge and the stone round their cups.
+
+   Fix: within about 0.4 H of each cup, lift the face's blocks and the kerb's lit top a rung on their warm siblings (`stone_warm`, with `lamplit` only on the block tops and the kerb's lit edge nearest the cup), staged by block as on the floor. Then the pool starts at the kerb's foot already lit. Round 5's fix allowed this ("the faces' lit blocks under a torch"). The walls kept their bytes this round, so it was not done.
+3. **G-31, ground, the junction knots remain (polish; G-28 part fixed).** 247 junctions still hold a fully dark 2 x 2 block in the joint colours (37,35,64), (44,36,51) and (32,25,59), 1.8 an H² of floor. Round 5 had 286. At 3x and 6x they read as small rivets where the joints meet. Fix: let a junction widen by at most one texel. Where three joints meet, keep the 2 x 2 at most one texel darker than the joints.
+4. **C-7, channel_lit, the spill reads as light (C-6 fixed).**
+   - The lit floor runs 100 % to d 10, then staged to about d 24, on both sides of the main run and the branch (table above).
+   - It is drawn as the floor's own flags a rung up on a violet sibling, with joints and lips kept.
+   - It is the same hue family as the shade, so unlike the torch pools it blends (`channel_unlit_vs_lit_3x`, `state1_channel_3x`).
+   - Its band is parallel and of constant width, which is right for a line source.
+   - Its square ends sit under the plate and the seal.
+
+   `detail.bar` fell from 0.81 to 0.60 and `detail.outline` reads 0.13 because most of the overlay is now lit floor, a ground plane, not a prop. Both are accepted as polish.
+5. **RT-9, roots_corridor, the lifted flag reads (RT-8 fixed).**
+   - The flag under the root's end is one stone with its neighbour.
+   - A 1 to 2 px dark gap runs along its raised west edge north of the root, and the moss sits in that gap (`roots_corridor_r5_vs_r6_8x`).
+   - At 1x it reads as a heaved joint the root is pushing up, which is logical.
+
+   No action.
+
+### Accent families (for Claude A's ruling)
+
+house-style 1 and 9 allow "at most three" accent families a setting, plus its glows. I matched every opaque colour of the 20 Undercroft pictures to its palette family (no colour was unmatched) and summed by base family:
+
+| Family | Kind | Share of opaque px | Where |
+| --- | --- | --- | --- |
+| `void` | accent:station,moon | 33.6 % | ground (35 %), roots_corridor (12.7 %), roots_hall (4.4 %) |
+| `lamplit` | accent:undercroft | 4.95 % | ground (5.2 %) |
+| `soot` | accent:cogsworth | 1.49 % | ground, torch, plates, lever_down, urn_seal |
+| `ashlar` | accent:castle | 0.21 % | seal_slab (24.3 % of it) |
+
+Glows used: `lava` and `lamp` (the torch). The violet seal and the channel are `dusk` and `dusk_cool`, a core family, so they do not count.
+
+So the Undercroft uses **four** accent families, and `lamplit` is the fourth. If accents borrowed from other settings count towards the cap, lamplit breaks it. If only the setting's own accents count, the Undercroft has one (lamplit). The G-29 fix above leans on `stone` and its siblings and uses lamplit only on the catch-lights, so it does not need a fifth. If Claude A rules lamplit out, the catch-lights could be `stone_warm 3` and `4` (0.65 / 0.018 / 65, 0.74 / 0.028 / 75) with `brass` crests. I have not measured whether that reaches the light.
+
+house-style 1 still says "38 families: … 16 setting accents". It is 39 and 17 with lamplit.
+
+### False positives
+
+- **`detail.no_falloff` 0.306 (threshold 0.33): rejected on this asset.**
+  - The whole-picture measure is set by the void and the wall tops. 49 % of the picture is not floor, and flattening the entire floor to one value moves it only from 0.306 to 0.275.
+  - The floor itself now falls off: 0.48 at a light, 0.42 at 0.5 to 1.1 H, 0.36 to 0.35 from 1.1 to 3.9 H, then 0.325 to 0.316. Its walls' feet are at 0.33 (blurred 0.25 H).
+  - That is Eastward 06's range: its floor falls from 0.48 at the gate's glow to 0.32 about 80 native px away, then holds 0.35 to 0.37 in the shade.
+  - Raising the void to pass the detector would be wrong. The scene gate's screen measure, which sees the props' light, is the place to hold this.
+- **`detail.ragged_edge` x6: upheld, as evidence of G-29.** Each fault's mechanism is the detector reading lamplit as brown ground. Its frayed outline is the staged dither, which is allowed for a light. But the read is right: at 1x the pools look like brown ground with a frayed edge. Fix them by G-29, never by hardening the hem.
+- **`detail.bar` and `detail.outline` on channel_lit (0.60, 0.13) and `detail.bar` on roots_corridor (0.61):** accepted as polish.
+
+Count: 1 rejected of 7 faults; 3 polish accepted.
+
+### Grid log
+
+The scene gate was not re-run (no plan or scene change). I visited every region of the painter's state 1 composite at 1x, with my own zooms:
+
+- **Room 1 (start):**
+  - torch 1 and torch 2: ochre patches with fringed hems under unlit faces and kerbs (G-29, G-30).
+  - roots_hall: unchanged, pass.
+  - the stair's cool pool: reads as daylight from the mouth.
+  - the shade: drawn stone with a darker south and the walls' feet staggered (G-26, G-27, G-28 fixed); knots at the junctions (G-31).
+  - rubble_hall; moss along the feet.
+- **Room 2 (corridor):**
+  - torch 3's pool, with the wall root standing in it, and torch 4's pool: ochre patches (G-29, G-30).
+  - rubble_corridor.
+  - roots_corridor and its lifted flag (RT-9).
+  - the south foot.
+- **Room 3 (seal):**
+  - the urn standing on torch 5's ochre patch (G-29).
+  - torch 6's pool with the wall root.
+  - plate_down, the lit channel and its violet spill (C-7); lever_up; seal_slab.
+  - rubble_seal; the south foot and its far step.
+- **Room 4 (chamber):**
+  - torch 7's pool with stump_nw's base in it, and torch 8's pool beside Cairn's alcove (G-29, G-30).
+  - the skylight: a cool disc with a dithered rim and the flags drawn through it. It reads as light.
+  - the shard, still lighting no floor (round 5's note stands).
+  - rubble_chamber, stump_se, the south foot.
+
+### For other reviewers (not part of the verdicts)
+
+- Crossroads' `kit.json` input hash is stale after the palette change (pictures identical). `python3 game/tools/gen_village.py crossroads` writes only that hash, but needs that lane's passing records to write the scene.
+- `test_the_torchlight_is_gold` pins round 5's contaminated target. It must change with G-29.
+- The skylight heart's drawn test passes by 0.2 shapes a patch (20.9 against 20.7). If the floor is repainted, keep its joints and lips at the shade's contrast.
+
+### Not checked
+
+- The scene gate's Godot renders and grid cells: not re-run, because the plan and the scene are unchanged.
+- In the game by hand, at phone scale and under the night tint.
+- The lit channel and the plate in Godot: I saw them only in composites from `kit.json`.
+- Whether `stone_warm` and `brass` catch-lights alone (without lamplit) would read as torchlight: proposed, not measured.
