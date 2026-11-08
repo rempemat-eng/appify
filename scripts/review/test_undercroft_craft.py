@@ -20,7 +20,15 @@ from PIL import Image
 from scripts.review.specks import speck_scatter, dark_speck_scatter, LIMIT
 from scripts.review.bands import contrast
 
-CALM = 11.9          # the ground band's calm limit, 1.15 x 10.34 L (bands.ground_plane)
+CALM = 11.9          # the ground band's calm limit, 1.15 x 10.34 L (bands.ground_plane), for unlit ground
+# Claude A's round 10 ruling: a torch pool is judged against Eastward's own lit floor, not the unlit ground band.
+# Eastward 06's fire floor (its upper floor between the fire bowls, round 8's region x 133..338, y 12..70 on its
+# 532 x 299 art grid; x 182..463, y 16..96 at x1.37, H 74; the glow and 3 px round it left out) scores raw 13.12 by
+# bands.contrast, above the unlit band's 11.9, so 11.9 was never valid for a torch pool. Its residual (the picture
+# minus its own 0.25 H box blur) is 6.05, but no must-fail fixture scored above it (round 4's rings 4.91, hatching
+# 1.02, round 5's pool 4.09, round 6's rug 3.72), so the residual was dropped and the raw measure kept. No margin
+# is added: round 4's rings (15.37) still fail clearly
+CALM_POOL = 13.12
 
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
@@ -684,18 +692,23 @@ class PoolsAndShade(unittest.TestCase):
 
     BOXES = {'room 1 pool': (60, 150, 211, 273), 'room 1 heart': (110, 170, 230, 215),
              'skylight': (1900, 300, 2051, 423), 'skylight heart': (1870, 360, 1960, 425), 'stair': (40, 320, 200, 480)}
+    TORCH_BOXES = ('room 1 pool', 'room 1 heart')     # judged by Eastward 06's fire floor (CALM_POOL); the rest by CALM
 
     def test_the_pools_are_calm(self):
+        # round 10: room 1's torch pool 12.5 and its heart 10.6 pass CALM_POOL; the skylight and the stair pass CALM
         g = _rgba('ground')[..., :3]
         for name, (x0, y0, x1, y1) in self.BOXES.items():
             with self.subTest(box=name):
                 c = g[y0:y1, x0:x1]
-                self.assertLess(contrast(c, np.ones(c.shape[:2], bool), 74), CALM, name)
+                lim = CALM_POOL if name in self.TORCH_BOXES else CALM
+                self.assertLess(contrast(c, np.ones(c.shape[:2], bool), 74), lim, name)
 
     def test_the_round4_pool_was_not_calm(self):
-        # the guard sees the fault: round 4's room 1 pool (a8185aca), whose steps were hard rings (15.4 L)
+        # the guard sees the fault: round 4's room 1 pool (a8185aca), whose steps were hard rings (15.4 L), fails both
+        # the unlit ground's limit and the torch pool's
         a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r4_pool.png')).convert('RGB'))
         self.assertGreater(contrast(a, np.ones(a.shape[:2], bool), 74), CALM)
+        self.assertGreater(contrast(a, np.ones(a.shape[:2], bool), 74), CALM_POOL)
 
     def test_the_shade_floor_sits_at_eastwards_value(self):
         # G-21: Eastward 06's shade floor is OKLab L 0.36 to 0.37; round 4's was 0.274, near the void (0.21)
