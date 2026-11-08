@@ -1,14 +1,17 @@
-"""The placement gate: no asset reaches a zone without a review record.
+"""The placement gate: only reviewed art reaches a zone.
 
 Matt, 25 Oct 19:19: review art "after the props or background is first drawn ... before it
-gets placed and left in the world". Every picture a zone scene places from
-game/zones/<zone>/art/ needs a catalogue entry, art/catalogue/<zone>/<name>.json, written by
-`npm run review:asset -- <zone>/<name> --record`, whose sha256 matches the file:
+gets placed and left in the world"; and 8 Nov 00:05, asked "should only reviewed art be
+placeable?": "6. yes". Every picture a zone scene places from game/zones/<zone>/art/ needs a
+catalogue entry, art/catalogue/<zone>/<name>.json, written by
+`npm run review:asset -- <zone>/<name> --record`, whose sha256 matches the file, and then:
 
-  - status pass: placeable;
-  - status fail: placeable only if the asset's id is in art/catalogue/fix-queue.json, the
-    queue seeded on 25 Oct from the art already in the world (it may be redrawn and
-    re-recorded while it climbs out of the queue; a new asset must pass);
+  - reviewer verdict "pass" (set by an independent detail-auditor, docs/review-agents.md):
+    placeable. The detectors' `status` does not decide: a reviewer may reject a detector
+    finding as a false positive, and the record keeps the detectors' fail as evidence;
+  - in art/catalogue/fix-queue.json, the queue seeded on 25 Oct from the art already in the
+    world: placeable while it is redrawn and re-recorded and climbs out of the queue;
+  - reviewer verdict "pending", "fail" or anything else, or no reviewer block: refused;
   - no entry, or a stale sha: refused.
 
     python3 -m scripts.review.gate --check            # every zone in game/data/zones.json (npm run check:kit)
@@ -43,6 +46,25 @@ def queue() -> set:
     return {e['id'] for e in json.load(open(QUEUE)).get('queue', [])}
 
 
+HOW = ('have a detail-auditor that did not draw it run its checklist and set the record\'s reviewer '
+       'verdict (docs/review-agents.md, "The required step")')
+
+
+def why_not(rid: str, verdict, rec: dict, reviewer: dict) -> str:
+    """Why a recorded, current asset that is not in the fix queue may not be placed."""
+    found = sorted({f['detector'] for f in rec.get('findings', []) if f.get('severity') != 'polish'})
+    leads = f'; detector leads: {", ".join(found)}' if found else ''
+    if verdict is None:
+        return f'no reviewer verdict in its record{leads}: {HOW}'
+    if verdict == 'pending':
+        return f'not independently reviewed (reviewer verdict pending){leads}: {HOW}'
+    if verdict == 'fail':
+        who = reviewer.get('agent') or 'the reviewer'
+        return (f'failed independent review ({who}: fail{leads}): fix it, re-record it '
+                f'(npm run review:asset -- {rid} --record) and have it reviewed again')
+    return f'reviewer verdict {verdict!r} is not "pass"{leads}: {HOW}'
+
+
 def refusals(zone: str, names: list[str] | None = None, text: str | None = None) -> list[str]:
     """Why each placed asset may not be placed (empty when all may). `names` are art names
     (without .png) under game/zones/<zone>/art; `text` a scene's text to read them from."""
@@ -64,20 +86,21 @@ def refusals(zone: str, names: list[str] | None = None, text: str | None = None)
         rid = f'{zone}/{n}'
         rp = record_path(zone, n)
         if not os.path.exists(rp):
-            bad.append(f'{rid}: no review record (npm run review:asset -- {rid} --record)')
+            bad.append(f'{rid}: no review record (npm run review:asset -- {rid} --record, then have it reviewed)')
             continue
         rec = json.load(open(rp))
         sha = hashlib.sha256(open(png, 'rb').read()).hexdigest()
         if rec.get('sha256') != sha:
-            bad.append(f'{rid}: changed since its review (npm run review:asset -- {rid} --record)')
-            continue
-        verdict = (rec.get('reviewer') or {}).get('verdict')
-        if rec.get('status') == 'pass' and verdict != 'fail':
+            bad.append(f'{rid}: changed since its record (npm run review:asset -- {rid} --record, '
+                       'which resets its reviewer verdict to pending; then have it reviewed again)')
             continue
         if rid in q:
             continue
-        bad.append(f'{rid}: failed review ({", ".join(sorted({f["detector"] for f in rec.get("findings", []) if f["severity"] != "polish"}))}) '
-                   'and is not in the seeded fix queue: fix it before placing it')
+        reviewer = rec.get('reviewer') or {}
+        verdict = reviewer.get('verdict')
+        if verdict == 'pass':
+            continue
+        bad.append(f'{rid}: {why_not(rid, verdict, rec, reviewer)}')
     return bad
 
 
