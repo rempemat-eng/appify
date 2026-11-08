@@ -14,7 +14,9 @@ import unittest
 import numpy as np
 from PIL import Image
 
-from scripts.review.specks import speck_scatter, LIMIT
+from scripts.review.specks import speck_scatter, dark_speck_scatter, LIMIT
+
+FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ART = os.path.join(ROOT, 'game', 'zones', 'undercroft', 'art')
@@ -70,6 +72,26 @@ class SpeckScatter(unittest.TestCase):
         for name in STONE_PIECES:
             with self.subTest(name=name):
                 self.assertLessEqual(speck_scatter(_rgba(name)), LIMIT, name)
+
+    def test_round3_pools_earth_grit_is_caught(self):
+        # the round 3 floor (b50caa14): room 1's warm pool, its heart full of earth grit a tone under it (G-16)
+        a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r3_pool.png')).convert('RGBA'))
+        self.assertGreater(dark_speck_scatter(a), LIMIT)
+
+    def test_undercroft_floor_carries_no_dark_grit(self):
+        g = _rgba('ground')
+        self.assertLessEqual(dark_speck_scatter(g[160:600]), LIMIT)
+        self.assertLessEqual(dark_speck_scatter(g[150:273, 60:211]), LIMIT)   # room 1's pool, the fixture's box
+
+    def test_a_dither_checker_is_not_terrazzo(self):
+        # a 2 x 2 checker band (a light fade) touches at its corners: one run, not specks
+        a = np.zeros((60, 60, 4), np.uint8)
+        a[..., :3] = (51, 48, 81)
+        a[..., 3] = 255
+        Y, X = np.mgrid[0:60, 0:60]
+        band = (Y > 20) & (Y < 30) & (((X // 2 + Y // 2) % 2) == 0)
+        a[band, :3] = (37, 35, 64)
+        self.assertLessEqual(dark_speck_scatter(a), LIMIT)
 
     def test_undercroft_floor_carries_no_terrazzo(self):
         g = _rgba('ground')
@@ -145,12 +167,29 @@ class RealFloorTint(unittest.TestCase):
         self.assertTrue(np.array_equal(self.painted, _rgba('ground')[..., :3]),
                         'the committed ground.png is not what the painter draws from the plan')
 
+    def test_the_tint_is_decided_per_flag(self):
+        # G-7: the warm and cool tint masks the painter paints with are whole flags, never arcs across one
+        from scipy import ndimage as ndi
+        slab = self.f['slab']
+        for name in ('tint_warm', 'tint_cool'):
+            t = self.f[name]
+            split = []
+            for f, sl in enumerate(ndi.find_objects(slab), start=1):
+                if sl is None:
+                    continue
+                v = t[sl][slab[sl] == f]
+                if v.any() and not v.all():
+                    split.append(f)
+            self.assertFalse(split, f'{name}: {len(split)} flags are split by the tint: {split[:5]}')
+
     def test_no_flag_holds_warm_and_cool(self):
         from scipy import ndimage as ndi
         slab, paint = self.f['slab'], self.f['paint']
         rgb = self.painted.astype(int)
         warm = (rgb[..., 0] - rgb[..., 2]) > 14                 # amber, earth, sand light
-        cool = ((rgb[..., 2] - rgb[..., 0]) > 18) & (rgb[..., 2] > rgb[..., 1] + 10)   # the skylight's blue (not moss)
+        lum = 0.299 * rgb[..., 0] + 0.587 * rgb[..., 1] + 0.114 * rgb[..., 2]
+        # the skylight's lit blue (not moss, and not the shade's own blue-violet, which a pool falls off into)
+        cool = ((rgb[..., 2] - rgb[..., 0]) > 18) & (rgb[..., 2] > rgb[..., 1] + 10) & (lum >= 72)
         bad = []
         for f, sl in enumerate(ndi.find_objects(slab), start=1):
             if sl is None:

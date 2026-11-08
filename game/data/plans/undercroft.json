@@ -34,7 +34,7 @@
     { "id": "sep3_s", "rect": [560, 160, 16, 40], "face": 0 }
   ],
   "stair": { "rect": [0, 120, 16, 32], "why": "the hatch stair up to the woodland, lit from above" },
-  "torches": [[56, 56], [160, 56], [248, 104], [376, 104], [440, 56], [536, 56], [608, 56], [704, 56]],
+  "torches": [[56, 56], [160, 56], [248, 104], [376, 104], [440, 56], [536, 56], [608, 56], [700, 56]],
   "skylight": { "at": [640, 132], "rx": 40, "ry": 30, "why": "a crack in the vault under the circle lets a shaft of daylight in" },
   "props": [
     { "id": "rubble_hall", "kind": "rubble", "at": [44, 192], "size": [28, 12], "solid": true },

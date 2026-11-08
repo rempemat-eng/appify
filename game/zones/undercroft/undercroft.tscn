@@ -420,7 +420,7 @@ hframes = 4
 script = ExtResource("torch")
 
 [node name="Torch8" type="Sprite2D" parent="WallFx"]
-position = Vector2(2112, 168)
+position = Vector2(2100, 168)
 texture = ExtResource("t5")
 centered = false
 offset = Vector2(-15, -90)

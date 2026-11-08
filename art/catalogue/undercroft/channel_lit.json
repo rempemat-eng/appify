@@ -1,7 +1,7 @@
 {
  "id": "undercroft/channel_lit",
  "file": "game/zones/undercroft/art/channel_lit.png",
- "sha256": "84721170d165f0bc095ffc8794811322ede5a138bb56e5bdd6084e17d3ea2c91",
+ "sha256": "363fddcf298bb729159baf7f89574efc21eac604629d0912c5bc934c1e8637ae",
  "kind": "channel",
  "biome": "cellar",
  "H": 74.0,
@@ -14,12 +14,12 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 29.0,
+   "tones": 23.0,
    "shapes": 39.0
   },
   "band": {
@@ -29,24 +29,12 @@
    "patches": 83
   },
   "ratio": 0.774,
-  "tones_ratio": 1.074,
+  "tones_ratio": 0.852,
   "shapes_ratio": 0.774,
   "passed": false,
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    208,
-    10,
-    220,
-    115
-   ],
-   "message": "undercroft/channel_lit: the violet is lit from the right (luminance rises 411 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",
@@ -54,29 +42,16 @@
     3,
     10,
     251,
-    132
+    127
    ],
-   "message": "undercroft/channel_lit: detail bar 0.77 of Eastward's prop band (29.0 tones, 39.0 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/channel_lit: detail bar 0.77 of Eastward's prop band (23.0 tones, 39.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    3,
-    10,
-    251,
-    132
-   ],
-   "message": "undercroft/channel_lit: only 31% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 3, PR #440 at b50caa14. C-3: the lit state is still Matt's U6 flat line: a symmetric tube of 8 straight bands, each one colour over 96 % of 250 px (rows 402-413; review:scene detail.flat_line x2 upheld), a regular dashed core and dividers every 24 px; the 'floor spill' is a dashed violet row separated from the groove by an unlit row, and the south lip's stone and brass are overpainted violet. The branch's light stops 3 px short of the main groove. Rejected: detail.light (a glow) and detail.outline (glows carry no outline). detail.bar 0.77 accepted as polish."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

@@ -173,7 +173,7 @@ def break_runs(cv, mask, rng, longest=48):
 #   4     108  stone 2            stone_warm 2      a pool
 #   5     140  stone 3            stone_warm 3      a pool's heart under the flame
 #   6     166  stone_warm 4       stone 4           (lit arrises only)
-FLOOR_LADDER = [(('soot', 1), ('void', 2)), (('soot', 2), ('slate_cool', 1)), (('stone_cool', 1), ('stone', 1)),
+FLOOR_LADDER = [(('void', 2), ('void', 2)), (('slate_cool', 1), ('slate', 1)), (('stone_cool', 1), ('stone', 1)),
                 (('stone_warm', 1), ('ash', 2)), (('stone', 2), ('stone_warm', 2)), (('stone', 3), ('stone_warm', 3)),
                 (('stone_warm', 4), ('stone', 4))]
 # under the skylight the same rungs on the cool ramps (daylight from above is blue against the torches)
@@ -181,13 +181,16 @@ FLOOR_LADDER_COOL = {1: (('slate_cool', 1), ('slate_cool', 1)), 2: (('slate_cool
                      5: (('slate', 4), ('slate_cool', 4)), 6: (('slate', 5), ('slate_cool', 5))}
 # under a torch the pool's rungs lean warm (pitch-light on stone: the warm grey and the sand ramp)
 # round 3 (8 Nov, G-1r): the warmth back in the torches' pools, amber over the grey: the earth and path ramps
-FLOOR_LADDER_WARM = {1: (('soot', 2), ('soot', 2)), 2: (('stone_warm', 1), ('stone', 1)), 3: (('earth_warm', 3), ('earth', 3)),
-                     4: (('path_warm', 2), ('sand_cool', 1)), 5: (('sand', 1), ('path_warm', 3)), 6: (('sand', 2), ('ashlar', 4))}
+# round 4 (8 Nov, G-14): a torch lights the floor's own stone on its warm siblings, never another material:
+# stone_warm 1 for the spill, stone_warm 2 to 3 and ashlar 3 to 4 in the heart (house-style 1)
+FLOOR_LADDER_WARM = {1: (('slate_cool', 1), ('slate', 1)), 2: (('stone_warm', 1), ('stone_warm', 1)),
+                     3: (('stone_warm', 2), ('ashlar', 2)), 4: (('stone_warm', 3), ('ashlar', 3)),
+                     5: (('ashlar', 4), ('stone_warm', 4)), 6: (('ashlar', 4), ('stone_warm', 4))}
 FLOOR_AMBIENT = 1                # far from every light the floor sits on rung 1, in shade, as Eastward's
 # round 5 (8 Nov, G-1): a pool climbs at most three rungs over the ambient, flag by flag (whole flags, or a
 # flag split once by a straight line into halves a rung apart), never in ragged contour bands
-POOL_STEPS = 2
-POOL_HEART, POOL_SPILL = 2.2, 2.0
+POOL_STEPS = 3
+POOL_HEART, POOL_SPILL = 3.0, 1.0
 
 
 def flag_rungs(level, slab, nflags, rng, split=None, lo=0, hi=FLOOR_AMBIENT + POOL_STEPS):
@@ -235,7 +238,7 @@ def flag_rungs(level, slab, nflags, rng, split=None, lo=0, hi=FLOOR_AMBIENT + PO
     return np.clip(out, lo, hi) * on
 
 
-def flag_texture(cv, mask, rng, share=0.9):
+def flag_texture(cv, mask, rng, share=0.35):
     """A flag's face (8 Nov round 3, G-10): clusters of two to four texels on its two sibling ramps at
     the same tone and, now and then, a tone down (a worn hollow), gathered in drifts: many small shapes
     and tones in a patch, but no contrast between the flags."""
@@ -264,9 +267,7 @@ def flag_texture(cv, mask, rng, share=0.9):
         fn = FAMS_[c // 8]
         r = rng.random()
         shade_f = fn in ('soot', 'void')                         # in the shade only a rare hollow (logic.scale)
-        if (r < 0.12 and c % 8 >= 2 and not shade_f) or (shade_f and r < 0.07 and c % 8 >= 2 and len(pts) >= 3):
-            nc = c - 1
-        elif shade_f:
+        if shade_f:                                               # round 4 (G-16): no tone-down grit anywhere
             continue
         else:
             par = parent(fn)
@@ -301,7 +302,7 @@ def pool_rungs(level, slab, nflags, inpool, lo=0, hi=FLOOR_AMBIENT + POOL_STEPS)
     """The floor's rungs from its light (8 Nov round 3, G-1r): in the shade one rung a flag, from the mean
     light over it, with no jitter (calm); in a pool a smooth falloff texel by texel in palette ramp steps,
     whose edges follow the light's own curve (a joint only where one happens to lie on it), softened by a
-    narrow band of 4 x 4 blocks one rung apart, scattered, on each step (Eastward's marks are 4 to 15 px) (the light fade eastward-edges 5.4 allows on
+    narrow 2 x 2 checker band one rung apart on each inner step (style.dither_dark, eastward-edges 5.4) (the light fade eastward-edges 5.4 allows on
     ground). Never more than POOL_STEPS rungs over the ambient."""
     H, W = level.shape
     idx = np.arange(1, max(1, nflags) + 1)
@@ -311,17 +312,16 @@ def pool_rungs(level, slab, nflags, inpool, lo=0, hi=FLOOR_AMBIENT + POOL_STEPS)
     sm = ndi.gaussian_filter(level, 2.0)
     r = np.floor(sm + 0.5)
     frac = sm + 0.5 - r                                   # 0 just over a step, 1 just under the next
-    # the fade: 4 x 4 blocks of the next rung scattered by a fixed noise, densest at the step (a checker
-    # in a band reads as a dotted line)
-    nz = np.kron(np.random.default_rng(97).random(((H + 3) // 4, (W + 3) // 4)), np.ones((4, 4)))[:H, :W]
-    chk_lo = nz < (0.22 - frac) / 0.22 * 0.6
-    chk_hi = nz < (frac - 0.78) / 0.22 * 0.6
+    Y, X = np.mgrid[0:H, 0:W]
+    chk = ((X // 2 + Y // 2) % 2) == 0                    # round 4 (G-14): a 2 x 2 checker band, not torn blocks
+    chk_lo = chk & (frac < 0.12)
+    chk_hi = chk & (frac > 0.88)
     # fade only the pool's inner steps; its rim against the shade stays one clean curve
-    r = r - ((frac < 0.22) & chk_lo & (r >= FLOOR_AMBIENT + 2)) + ((frac > 0.78) & chk_hi & (r >= FLOOR_AMBIENT + 1))
+    r = r - chk_lo + chk_hi
     r = np.clip(r.astype(int), lo, hi)
-    out = np.where(slab > 0, per_flag[slab], r)
-    out[(slab > 0) & inpool] = r[(slab > 0) & inpool]
-    return out
+    # round 4 (G-15): the shade falls off on the light's own curves too, so no flag-sized skyline forms
+    # where the floor sinks into the dark; a flag stays whole wherever the light is level over it
+    return r
 
 
 def flag_lips(slab, rng, gap=0.16):
@@ -1117,6 +1117,94 @@ def lifted_flag(a, g, x, y, w, rng, side=1):
     return m
 
 
+def flat_lifted_flag(a, g, x, y, w, side=1):
+    """A flag the root has lifted, drawn in the floor's own stone (8 Nov round 4, RT-5): a slab tilted
+    up, its top plane three or four texels in the shade floor's tones, its arris one rung up, and a dark
+    gap of a texel only along its lower edge, where the root goes under it."""
+    V = _v()
+    code = V.code
+    pts = [(x - w / 2, y - 2), (x + w / 2, y - 2 - side * 2.5), (x + w / 2, y + 2 - side * 2.5), (x - w / 2, y + 2)]
+    m = g.poly(pts)
+    a[m] = code('slate_cool', 1)
+    a[m & ~np.roll(m, 1, 0)] = code('stone_warm', 1)                 # its arris, a rung up
+    low = np.roll(m, -1, 0) & ~m & (a < 0)
+    a[np.roll(low, 1, 0) & m] = code('slate_cool', 1)
+    a[low] = code('void', 0)                                         # the gap under its lower edge only
+    return m
+
+
+def roots_from_floor(w, h, seed):
+    """roots_corridor (8 Nov round 4, RT-5): roots that come up out of the floor (each strand from the dark
+    of its own hole at a joint, the flag beside it lying flat) and go down again under a flag they have
+    lifted. Three strands, uneven: each its own
+    thickness, its own start and end, its own wobble, twisting loosely over one another; their bark in
+    long fissures; two short rootlets above them, no longer than half the bundle is wide."""
+    V = _v()
+    q, code = V.q, V.code
+    from scripts.art.native.raster import Grid
+    rng = np.random.default_rng(seed)
+    p = V._pic(w, h, up=6, side=10)
+    a, cx, yb = p.a, p.ax, p.ay
+    H, W = a.shape
+    g = Grid(W, H, 1.0, 0, 0)
+    allm = np.ones(a.shape, bool)
+    span = q(w) / 2
+    base_y = yb - q(h) * 0.45
+    strands = []
+    specs = ((-0.9, 0.62, 4.0, 1.2, q(1.6), 0.4), (-0.78, 0.8, 2.6, 0.8, q(2.4), 2.3), (-0.6, 0.45, 1.6, 0.5, q(1.2), 4.4))
+    for k, (s0, s1, r0, r1, amp, ph) in enumerate(specs):
+        n = 16
+        pts = []
+        for i in range(n + 1):
+            t = i / n
+            x = cx + span * (s0 + (s1 - s0) * t)
+            arch = -math.sin(t * math.pi) * q(1.8 + 0.5 * k)
+            wob = amp * math.sin(t * math.pi * (1.6 + 0.4 * k) + ph) + rng.uniform(-1.2, 1.2)
+            pts.append((x, base_y + arch + wob + (k - 1) * 2.5))
+        strands.append((pts, r0, r1))
+    # where they come up out of the floor: the dark of the hole each strand rises from (drawn under them)
+    for pts, r0, r1 in strands:
+        hx, hy = pts[0]
+        hole = V.ellipse_mask(a.shape, hx - r0 * 0.4, hy + r0 * 0.5, r0 + 2.2, r0 * 0.75 + 1)
+        a[hole] = code('void', 0)
+        a[hole & ~np.roll(hole, -1, 0)] = code('slate_cool', 1)            # the floor's lip over it
+    done = np.zeros(a.shape, bool)
+    for pts, r0, r1 in sorted(strands, key=lambda s_: s_[1]):          # thin first: the thick lie over them
+        m = root(a, pts, r0, r1, allm, rng, base=2, lets=0)
+        over = done & ndi.binary_dilation(m, iterations=1) & ~m
+        a[over] = code('earth_warm', 0)
+        done |= m
+    # each strand's start goes down into its hole: its rounded end is lost in the dark there
+    Xs = np.mgrid[0:H, 0:W][1]
+    for pts, r0, r1 in strands:
+        hx, hy = pts[0]
+        inhole = done & V.ellipse_mask(a.shape, hx - r0 * 0.4, hy + r0 * 0.5, r0 + 2.2, r0 * 0.75 + 2) & (Xs < hx + 1.5)
+        a[inhole] = code('earth_warm', 0)
+        a[inhole & (Xs < hx - 1)] = code('void', 0)
+    # where they dive: a flag lifted on its edge, in the floor's own stone
+    ex = max(p_[0][-1][0] for p_ in strands)
+    ey = np.mean([p_[0][-1][1] for p_ in strands])
+    flat_lifted_flag(a, g, ex + q(0.6), ey + q(0.4), q(5.0), side=1)
+    # two short rootlets above the strands, tapering into the floor's joints
+    for k, t in enumerate((0.35, 0.62)):
+        pts, r0, r1 = strands[1]
+        i = int(t * (len(pts) - 1))
+        bx, by = pts[i]
+        L_ = q(2.2 + k)
+        rl = [(bx, by - r0 * 0.6), (bx + L_ * 0.5, by - q(1.2)), (bx + L_, by - q(1.6) - k)]
+        mm = line_mask(a.shape, rl, 0.6) & (a < 0)
+        a[mm] = code('earth_warm', 2)
+        a[mm & ~np.roll(mm, 1, 0)] = code('earth_warm', 3)
+    rt = done
+    low = np.zeros(a.shape, bool)
+    low[int(yb - q(h) * 0.8):, :] = True
+    under = np.roll(rt, 1, 0) & (a < 0) & low
+    a[under | (np.roll(under, 1, 1) & (a < 0) & low)] = code('earth_cool', 0)
+    V.finish(p)
+    V.tidy(p.a, passes=2)
+    return p
+
+
 def p_roots(w, h, seed):
     """The oak's roots over the floor (8 Nov round 3, RT-4): roots, not a body. They come out of somewhere
     and go somewhere: out of the wall's foot (the hall) or from under a flag they have lifted (the corridor),
@@ -1134,6 +1222,8 @@ def p_roots(w, h, seed):
     g = Grid(W, H, 1.0, 0, 0)
     allm = np.ones(a.shape, bool)
     from_wall = h >= 10                            # roots_hall (28 x 10) stands at the north wall's foot
+    if not from_wall:                              # roots_corridor: up from the floor (round 4, RT-5)
+        return roots_from_floor(w, h, seed)
     span = q(w) / 2
     if from_wall:
         S = (cx + span * 0.7, 2.0)                 # out of the wall's foot, at the picture's top edge
@@ -2006,23 +2096,29 @@ def channel_segments(pz):
 def channel_field(shape, segs, ox=0, oy=0):
     """Per texel: the signed offset d across the nearest run (negative to the north or west, the side whose
     inner wall is in shade), the distance along it, and whether it lies on the main run. Off the
-    channel d is a large number."""
+    channel d is a large number. At the T the branch opens through the main run's north wall, so the
+    two grooves meet (round 3 logic 1)."""
     H, W = shape
     Y, X = np.mgrid[0:H, 0:W]
     X, Y = X + ox, Y + oy
     d = np.full((H, W), 99, int)
     along = np.zeros((H, W), int)
     main = np.zeros((H, W), bool)
-    for k, (x0, y0, x1, y1) in enumerate(reversed(segs)):           # the main run last: it wins at the joint
+    fields = []
+    for (x0, y0, x1, y1) in segs:
         if y0 == y1:
             m = (X >= x0 - CH_HALF) & (X <= x1) & (np.abs(Y - y0) <= CH_HALF + 2)
-            d[m], along[m] = (Y - y0)[m], (X - x0)[m]
+            fields.append((m, Y - y0, X - x0))
         else:
             m = (Y >= y0) & (Y <= y1 + CH_HALF) & (np.abs(X - x0) <= CH_HALF + 2)
-            m &= ~((np.abs(d) <= CH_HALF) & main)
-            d[m], along[m] = (X - x0)[m], (y1 - Y)[m]
-        if k == len(segs) - 1:
-            main |= m
+            fields.append((m, X - x0, y1 - Y))
+    for m, dd, aa in reversed(fields[1:]):                            # the branches
+        d[m], along[m] = dd[m], aa[m]
+    m0, d0, a0 = fields[0]                                            # the main run wins, except ...
+    d[m0], along[m0], main[m0] = d0[m0], a0[m0], True
+    for m, dd, aa in fields[1:]:                                       # ... where a branch opens into it
+        jn = m & m0 & (np.abs(dd) <= 3) & (d0 < -2)
+        d[jn], along[jn], main[jn] = dd[jn], aa[jn], False
     return d, along, main
 
 
@@ -2042,7 +2138,9 @@ def carve_channel(cv, segs, rng):
     grime = (grime - grime.mean()) / (grime.std() + 1e-9)
     tarn = ndi.gaussian_filter(rng.random((H, W)), 1.2)
     tarn = (tarn - tarn.mean()) / (tarn.std() + 1e-9)
-    streak = ((along * 7) % 11 < 2)
+    # streaks down the shaded wall at uneven spacings (6 to 15 texels, round 4 G-18), not a comb
+    marks = np.cumsum(np.random.default_rng(45).integers(6, 16, 200))
+    streak = np.isin(along, marks) | np.isin(along, marks + 1) * (np.random.default_rng(46).random((H, W)) < 0.5)
     prof = {-7: code('stone_cool', 1), -6: code('stone_cool', 0), -5: code('stone_cool', 1), -4: code('stone_cool', 1),
             -3: code('stone_cool', 1), -2: code('void', 2), -1: code('void', 2), 0: code('void', 2), 1: code('void', 2),
             2: code('brass', 3), 3: code('stone', 2), 4: code('stone', 3), 5: code('stone_cool', 2), 6: code('stone_cool', 1)}
@@ -2052,6 +2150,9 @@ def carve_channel(cv, segs, rng):
     sheen = on & (d == -1) & ((along // 5 + (along // 13)) % 3 == 0)
     cv[sheen] = code('slate_cool', 2)                                                # the wet floor's sheen, broken
     cv[on & (d == 0) & (grime > 0.9)] = code('void', 1)
+    wet = on & (d >= -2) & (d <= 1) & (grime < -1.1)                                 # a wet patch or two on its floor
+    cv[wet] = code('slate_cool', 1)
+    cv[on & (d >= -5) & (d <= -4) & (tarn > 1.3)] = code('stone_cool', 2)          # damp catching a glint on the wall
     lip = on & (d == 2)
     cv[lip & (tarn > 0.8)] = code('leaf_cool', 2)                                    # verdigris on the brass
     cv[lip & (tarn < -0.9)] = code('earth_cool', 2)                                  # and brown tarnish
@@ -2073,12 +2174,14 @@ def carve_channel(cv, segs, rng):
 
 
 def p_channel(pz, lit=True):
-    """The channel once the plate is down (8 Nov, C-1, C-2): the shard's light runs along the groove from the
-    plate to the seal and up the branch to the lever. In the groove a glow ramp (deep violet at its walls, a
-    near-white core in uneven lengths, thinning to a single texel towards the far ends); the shaded inner
-    wall and the far wall take the violet light, the lit lip a rung up in violet, and one row of floor on
-    either side a broken violet spill. The brass dividers stand dark against it. The picture covers the
-    whole channel with a margin for the spill; its foot is the plate's end of the main run."""
+    """The channel once the plate is down (8 Nov round 4, C-3): a lit groove seen from three-quarter view,
+    not a tube. The far (north, or west) inner wall takes the shard's light in two or three violet tones;
+    the groove's floor is the core, near-white, swelling near the plate and at the T and thinning towards
+    the ends; the near inner wall stays hidden under the lip, which keeps its stone with only its inner
+    edge a rung up in violet. Every band runs in uneven lengths. The spill lies on the floor right against
+    the groove beyond its lit far wall, a 2 x 2 checker of the floor's cool sibling a rung up, fading over four
+    rows, each piece standing on the row nearer the groove. The brass
+    dividers stand dark in it. The picture's foot is the plate's end of the main run."""
     V = _v()
     q, code = V.q, V.code
     rng = np.random.default_rng(17)
@@ -2093,34 +2196,62 @@ def p_channel(pz, lit=True):
     p = V.Pic(W, H, fx - X0, fy - Y0)
     a = p.a
     d, along, main = channel_field(a.shape, segs, X0, Y0)
+    Yg, Xg = np.mgrid[0:H, 0:W]
     span = max(1, int(along[np.abs(d) <= CH_HALF].max()))
-    u = along / span                                           # 0 at the plate's end, 1 at the far end
-    on = (np.abs(d) <= CH_HALF) & (d <= CH_HALF - 1)
-    prof = {-6: ('dusk_cool', 0), -5: ('dusk_cool', 1), -4: ('dusk_cool', 1), -3: ('dusk', 1),
-            -2: ('dusk', 2), -1: ('dusk', 4), 0: ('dusk', 5), 1: ('dusk', 4), 2: ('dusk', 2), 3: ('dusk_cool', 2),
-            4: ('dusk_cool', 3), 5: ('dusk_cool', 2)}
-    for dd, (f, t) in prof.items():
-        a[on & (d == dd)] = code(f, t)
-    far = on & (u > 0.6) & (np.abs(d) <= 3)
-    a[far] = a[far] - 1 * ((a[far] % 8) > 2)                  # the charge thins away from the plate
-    # the shaded wall takes the glow in streaks where the light catches its tool marks
-    a[on & (d >= -5) & (d <= -4) & ((along * 7) % 11 < 2)] = code('dusk_cool', 2)
-    # the core: near-white lengths with short breaks, two texels wide near the plate, one at the far ends
+    u = along / span
+    # where the branch leaves the main run (the T), measured along the main run
+    tx = None
+    if len(segs) > 1:
+        tx = segs[1][0] - segs[0][0]
+    near_t = main & (np.abs(along - (tx if tx is not None else -999)) < q(4))
+    swell = (u < 0.12) | near_t                                    # the charge is strongest at the plate and the T
+
+    def broken(mask, t_hi, t_lo, fam, lmin=3, lmax=12):
+        """A band in uneven lengths: runs of t_hi broken by shorter runs of t_lo."""
+        a[mask] = code(fam, t_hi)
+        x = int(rng.integers(0, 5))
+        while x < span + 2:
+            L_ = int(rng.integers(lmin, lmax))
+            x += L_
+            g = int(rng.integers(2, 5))
+            a[mask & (along >= x) & (along < x + g)] = code(fam, t_lo)
+            x += g
+
+    groove = np.abs(d) <= CH_HALF
+    # the far inner wall, lit in two or three tones (its top in shade, brighter towards the floor)
+    broken(groove & (d == -6), 1, 2, 'dusk')
+    broken(groove & (d == -5), 2, 3, 'dusk')
+    broken(groove & (d == -4), 3, 2, 'dusk')
+    broken(groove & (d == -3), 4, 3, 'dusk')
+    # the floor of the groove: the core
+    fl = groove & (d >= -2) & (d <= 1)
+    broken(fl & ((d == -2) | (d == 1)), 4, 5, 'dusk', 4, 14)
+    broken(fl & ((d == -1) | (d == 0)), 5, 4, 'dusk', 5, 16)
+    core = fl & (d == 0) & (u < 0.92)
     x = 0
     while x < span:
-        uu = x / span
-        L_ = int(rng.integers(5, 15) * (1.3 - 0.6 * uu))
-        seg = on & (along >= x) & (along < x + L_)
-        a[seg & (d == 0)] = code('snow', 4) if uu < 0.55 else code('snow', 3)
-        if uu < 0.45:
-            a[seg & (d == -1)] = code('snow', 4) if uu < 0.2 else code('dusk', 5)
-        x += L_ + int(rng.integers(2, 5) + 4 * uu)
-    # the floor either side: a broken violet spill, one row
-    spill = ((d == -8) | (d == CH_HALF)) & (np.abs(d) <= CH_HALF + 1) & (((along // 3) + (along // 7)) % 3 != 0) & (u < 0.85)
-    a[spill] = code('dusk_cool', 2)
+        L_ = int(rng.integers(4, 15))
+        a[core & (along >= x) & (along < x + L_)] = code('snow', 4)
+        x += L_ + int(rng.integers(1, 4))
+    a[fl & swell & ((d == -1) | (d == 0))] = code('snow', 4)
+    a[fl & swell & (d == -1) & (u < 0.06)] = code('snow', 5)
+    a[fl & (u > 0.8) & (d != 0)] = code('dusk', 3)               # it thins towards the far ends
+    # the near wall under the lip: only the lip's inner edge, a rung up in violet, broken
+    broken(groove & (d == 2), 3, 2, 'dusk_cool', 4, 10)
+    # the spill on the floor against the groove: a 2 x 2 checker a rung up, fading over four rows
+    # (each row's pieces stand on the row nearer the groove, so the light reads as one spill, not loose dots)
+    chk = ((Xg // 2 + Yg // 2) % 2) == 0
+    prev = groove & (a >= 0)
+    for k, dens in enumerate((0.9, 0.6, 0.35, 0.18)):
+        rowsN = d == -(CH_HALF + k)                    # the floor beyond the lit far wall (the near side is the lip)
+        thin = np.random.default_rng(60 + k).random((H, W)) < dens
+        touch = ndi.binary_dilation(prev, structure=np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool))
+        sp = rowsN & chk & thin & touch & (u < 0.95) & (a < 0)
+        a[sp] = code('slate_cool', 2)
+        prev = sp
     # the brass dividers stand dark in the glow, lit on top, their east side in shade
     for k in range(q(8), span, q(8)):
-        dv = on & (np.abs(d) <= 2) & (along >= k) & (along < k + 2)
+        dv = groove & (d >= -2) & (d <= 2) & (along >= k) & (along < k + 2)
         a[dv] = code('brass', 2)
         a[dv & (d == -2)] = code('brass', 4)
         a[dv & (along == k + 1)] = code('brass', 1)
@@ -2241,46 +2372,66 @@ def p_cairn_alcove(seed):
     yb = H - 1
     m = np.zeros(a.shape, bool)
     m[yb - cover:yb + 1, :] = True
-    m &= (Y >= yb - cover + (np.sin(X / q(3)) * q(1.0)).astype(int))
+    # the bank's lip (round 4, CA-8): a slow swell, and a step of a texel up or down every 4 to 8 texels
+    lip = np.zeros(W)
+    xk, v = 0, 0
+    lrng = np.random.default_rng(seed + 31)
+    while xk < W:
+        L_ = int(lrng.integers(4, 9))
+        v = int(np.clip(v + lrng.choice([-1, 1]), -2, 2))
+        lip[xk:xk + L_] = v
+        xk += L_
+    crest_y = (yb - cover + np.sin(np.arange(W) / q(3)) * q(0.8) + lip).astype(int)
+    m &= Y >= crest_y[None, :]
     m &= np.abs(X + 0.5 - W / 2) <= q(14) + 1                          # inside the alcove's jambs only
     bank = m & ~np.roll(m, q(2.5), 0)
     wall = m & ~bank
     wy0 = int(np.nonzero(wall.any(1))[0].min())
     masonry(a, 0, wy0, W, yb + 1, rng, wall, base=2, course=4.0, length=(6, 10), east_dark=True)
     age_courses(a, wall, rng, code('stone_cool', 0), moss_rows=yb - q(4), chip_p=0.6, crack_p=0.15, moss_p=0.35)
-    # the bank (8 Nov round 3, CA-6): an earth lip that wobbles a texel, a dark under-lip, then the earth
-    # body with clods and pebbles in drifts; moss in two or three clumps only where it meets his stones
+    # the bank (8 Nov round 4, CA-8): earth heaped in clods, not rows. Dark earth between them, clods of
+    # three to six texels on the earth ramps, each with a lit pair at its upper left and a dark pixel at its
+    # foot, laid back to front; pebbles in two drifts; moss in two or three clumps where it meets his stones
+    a[bank] = code('earth_cool', 1)
     crest = bank & ~np.roll(bank, 1, 0)
-    under = np.roll(crest, 1, 0) & bank
-    body_b = bank & ~crest & ~under
-    a[body_b] = code('earth_cool', 2)
-    lowb = body_b & (Y > yb - cover + q(1.6))
-    a[lowb] = code('earth_cool', 1)                                      # the body turning under to its foot
-    a[bank & ~np.roll(bank, -1, 0)] = code('earth_cool', 0)              # its foot on the courses
-    wob = (np.sin(X / 2.3) + np.sin(X / 5.1 + 1)) > 0.4
-    a[crest] = np.where(wob[crest], code('earth_cool', 4), code('earth_cool', 3))
-    a[under] = code('earth_cool', 0)
-    a[np.roll(crest, -1, 0) & ~bank & (a < 0) & wob] = code('earth_cool', 3)   # the lip rides a texel up here and there
-    dr = ndi.gaussian_filter(rng.random(a.shape), 3.0)
-    for _ in range(int(body_b.sum() / 14)):
-        ys_, xs_ = np.nonzero(body_b)
-        k = int(rng.integers(0, len(ys_)))
-        y_, x_ = int(ys_[k]), int(xs_[k])
-        if dr[y_, x_] < np.quantile(dr[body_b], 0.45):
+    a[crest] = code('earth', 2)
+    crng = np.random.default_rng(seed + 37)
+    ys_, xs_ = np.nonzero(bank)
+    clods = []
+    for _ in range(int(bank.sum() / 9)):
+        k = int(crng.integers(0, len(ys_)))
+        clods.append((int(ys_[k]), int(xs_[k]), crng.uniform(1.5, 3.0), crng.uniform(1.0, 1.8),
+                      ('earth', 'earth_warm', 'earth_cool')[int(crng.integers(0, 3))], int(crng.choice([2, 2, 3]))))
+    for cy, cx, rx, ry, fam, t in sorted(clods):
+        c = V.ellipse_mask(a.shape, cx + 0.5, cy + 0.5, rx, ry) & bank
+        if not c.any():
             continue
-        if rng.random() < 0.6:                                          # a clod: a lit top, a dark foot
-            a[y_, x_:x_ + 3][body_b[y_, x_:x_ + 3]] = code('earth_cool', 3)
-            a[y_ + 1, x_ + 1:x_ + 4][body_b[y_ + 1, x_ + 1:x_ + 4]] = code('earth_cool', 1)
-        else:                                                           # a pebble in the earth
-            a[y_, x_:x_ + 2][body_b[y_, x_:x_ + 2]] = code('stone', 4)
-            a[y_, x_ + 2:x_ + 4][body_b[y_, x_ + 2:x_ + 4]] = code('stone', 2)
-            a[y_ + 1, x_ + 1:x_ + 4][body_b[y_ + 1, x_ + 1:x_ + 4]] = code('stone_cool', 1)
+        a[c] = code(fam, t)
+        cys, cxs = np.nonzero(c)
+        top = c & (Y <= cys.min()) & (X <= cxs.min() + 1)
+        a[c & (Y == cys.min()) & (X < cxs.min() + 2)] = code(fam, min(4, t + 1))     # its lit pair
+        a[c & (Y == cys.max()) & (X >= cxs.max() - 1)] = code(fam, 1)                # its foot in shade
+    a[bank & ~np.roll(bank, -1, 0)] = code('earth_cool', 0)              # its foot on the courses
+    for dx0 in (-0.45, 0.3):                                             # pebbles in two drifts
+        for _ in range(3):
+            px_ = int(W / 2 + dx0 * q(28) + crng.integers(-q(2), q(2)))
+            col = np.nonzero(bank[:, min(W - 4, max(0, px_))])[0]
+            if len(col) < 3:
+                continue
+            py_ = int(crng.integers(col.min() + 1, col.max()))
+            ww = int(crng.integers(3, 5))
+            for xx in range(ww):
+                if 0 <= px_ + xx < W and bank[py_, px_ + xx]:
+                    a[py_, px_ + xx] = code('stone', 3 if xx < ww - 1 else 2)
+            if bank[py_ - 1, px_]:
+                a[py_ - 1, px_:px_ + 2] = code('stone', 4)
+            a[py_ + 1, px_ + 1:px_ + ww] = np.where(bank[py_ + 1, px_ + 1:px_ + ww], code('stone_cool', 1), a[py_ + 1, px_ + 1:px_ + ww])
     meet = crest & np.roll(body, -2, 0)                                 # where the bank meets his stones
-    xs_ = np.nonzero(meet.any(0))[0]
-    for w_ in (3, 6, 4)[:3 if len(xs_) > 30 else 2]:
-        if not len(xs_):
+    xs_m = np.nonzero(meet.any(0))[0]
+    for w_ in (3, 6, 4)[:3 if len(xs_m) > 30 else 2]:
+        if not len(xs_m):
             break
-        x_ = int(xs_[int(rng.integers(0, len(xs_)))])
+        x_ = int(xs_m[int(crng.integers(0, len(xs_m)))])
         col = np.nonzero(crest[:, x_])[0]
         if len(col):
             moss_clump(a, x_, int(col[0]), w_)
@@ -2437,7 +2588,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     dfl = ndi.distance_transform_edt(~walls_m)
     near_face = ndi.distance_transform_edt(~face) <= q(14)
     fshade = np.clip(1.0 - (dfl - q(1.5)) / q(9), 0, 1) * 1.0 + near_face * np.clip(1.0 - dfl / q(16), 0, 1) * 0.6
-    fshade += np.clip(-(vn - 0.5) * 1.2, -0.25, 0.25)                 # the soft blotches of damp and dust
+    # (round 4, G-15: no noise blotches in the shade: they split the flags into a quilt of two values)
     corner = ndi.uniform_filter(walls_m.astype(float), size=q(18)) > 0.42
     wet = floor & corner & (dfl <= q(14))
     fcool = np.zeros((H, W), bool)
@@ -2454,8 +2605,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     patch = ndi.binary_opening(patch, structure=np.ones((3, 3)))
     edge_n = ndi.gaussian_filter(rng.random((H, W)), 0.8) > 0.5
     patch &= ~(ndi.binary_dilation(patch, iterations=2) & ~ndi.binary_erosion(patch, iterations=2) & edge_n)
-    fmat[patch] = 3
-    foff[patch] = 0                                                  # the grit lies over the joints
+    # round 4 (G-16, G-17): no drifts of grit or stain blotches over the open floor
     # (round 5: no scatter of small lit stones over the flags: that was the terrazzo of specks, G-2)
     east_edge = walls_m & ~np.roll(walls_m, -1, 1)
     east_sh = np.zeros((H, W), bool)
@@ -2507,9 +2657,13 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
         d = np.minimum(dfl, dfa) + nz
         lightv = np.maximum(lightv, np.where((dfa < 0.5) | (d < 0.5), 2, np.where(d < 0.95, 1, np.where(d < 1.4, 0, -1))))
         warm |= d < 1.1
-        dt = np.hypot((WX - tx) / 46, (WY - ty - 22) / 38) + nz * 0.15
-        # the pool's heart (up to rung 4 to 5) and its wide spill (a rung over the room's shade)
-        lt = POOL_HEART * np.clip(1 - dt, 0, 1) ** 1.3 + POOL_SPILL * np.clip(1 - dt / 2.2, 0, 1) ** 0.9
+        # round 4 (G-14): a pool about 1 to 1.3 H across its radius, brightest at the wall's foot under the
+        # flame, and no two alike (the torch's own seed sets its reach, its depth and a lean)
+        trng = np.random.default_rng(int(tx * 7 + ty))
+        rx, ry = 25 * trng.uniform(0.9, 1.25), 19 * trng.uniform(0.85, 1.2)
+        lean = trng.uniform(-4, 4)
+        dt = np.hypot((WX - tx - lean * np.clip((WY - ty) / ry, 0, 1)) / rx, (WY - ty - 1) / ry)
+        lt = POOL_HEART * np.clip(1 - dt, 0, 1) ** 1.1 + POOL_SPILL * np.clip(1 - dt / 1.7, 0, 1) ** 1.0
         lf = np.maximum(lf, lt)
         lf_warm = np.maximum(lf_warm, lt)
     sk = plan.get('skylight')
@@ -2525,7 +2679,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
         lightv[beam] = np.maximum(lightv[beam], 1)
         cool |= (d < 1.0) | beam
         ds = np.hypot((WX - sx) / (sk['rx'] * 1.1), (WY - sy) / (sk['ry'] * 1.1)) + nz * 0.15
-        lf_cool = POOL_HEART * np.clip(1 - ds, 0, 1) ** 1.3 + POOL_SPILL * np.clip(1 - ds / 2.2, 0, 1) ** 0.9
+        lf_cool = 2.2 * np.clip(1 - ds, 0, 1) ** 1.3 + 1.2 * np.clip(1 - ds / 2.0, 0, 1) ** 0.9   # daylight from above, soft
     if plan.get('stair'):
         sx, sy, sw, sh = plan['stair']['rect']
         d = np.hypot((WX - sx - sw) / 40, (WY - sy - sh / 2) / 24)
@@ -2559,6 +2713,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     # the hue of the light is decided flag by flag (8 Nov, G-7), from its means over the flag, so no arc
     # of another colour cuts across a stone
     fcool, fwarm = flag_tint(slab, nflags, lf_cool, lf_torch, lf_warm)
+    tint_masks = (fcool.copy(), fwarm.copy())
     fshade *= 1 - 0.45 * np.clip(lf / 3, 0, 1)                    # a pool reaches into the walls' feet
 
     # --- objects ---------------------------------------------------------------------------------
@@ -2642,13 +2797,18 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     # reaches it and darker on its far side, its contours wobbling with a slow noise (no dither, no
     # flag-sized squares), so the pool reads round, as Eastward's 06; the joints stay dark.
     level = FLOOR_AMBIENT + lf - fshade
-    level -= 0.9 * np.clip(1 - lf / 0.9, 0, 1)            # far from every light the floor sinks towards the dark
+    level -= 0.75 * np.clip(1 - lf / 0.9, 0, 1)            # far from every light the floor sinks a little (the walls and corners do the rest)
     rung = pool_rungs(level, slab, nflags, lf >= 0.7)
     jl = FLOOR_AMBIENT + 0.45 * lf - fshade - 0.6 * np.clip(1 - lf / 0.9, 0, 1)
     jr = np.clip(np.floor(jl + 0.5).astype(int), 0, 4)
     nb = ndi.grey_erosion(np.where(slab > 0, rung, 9), size=(3, 3))      # the darkest flag beside the joint
     jt = (slab == 0) & floor
     rung[jt] = np.minimum(jr[jt], np.maximum(0, nb[jt] - 1)) + 1          # +1: floor_codes takes the joint's -1
+    # in a pool the joints are lit too, a rung under the lit flag on its warm sibling (round 4, G-14)
+    pj = jt & (nb >= FLOOR_AMBIENT + 1) & (nb < 9)
+    rung[pj] = nb[pj]
+    fwarm = fwarm | (ndi.binary_dilation(fwarm, iterations=1) & jt)
+    fcool = fcool | (ndi.binary_dilation(fcool, iterations=1) & jt & ~fwarm)
     # every flag has its own lips (8 Nov, G-3, as each hex flag in Eastward's 06): its north and west
     # lip a rung up, broken where it is worn, its south and east lip a rung down
     nwl, sel_ = flag_lips(slab, np.random.default_rng(105))
@@ -2667,7 +2827,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     V.tidy(cv, passes=2, keep=(cv % 8 >= 6))
     ground = Image.fromarray(to_rgba(cv), 'RGBA').convert('RGB')
     if fields is not None:                              # for the tests: the floor's flags and where it was painted
-        fields.update(slab=slab, paint=paint, joint=fjoint, codes=cv.copy())
+        fields.update(slab=slab, paint=paint, joint=fjoint, codes=cv.copy(), tint_cool=tint_masks[0], tint_warm=tint_masks[1])
 
     # --- write ---------------------------------------------------------------------------------
     os.makedirs(out_dir, exist_ok=True)

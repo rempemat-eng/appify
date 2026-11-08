@@ -6,7 +6,7 @@
   2304,
   648
  ],
- "inputs": "326e4f3dc622618d650ab5f92e7bce8170e6a8b4611e9b8ddc9104193f918958",
+ "inputs": "a31023fd0f5d43125ffffac15a2f79768b6ff340ecffaaa13e91b09c68cd835a",
  "kit_drawn": [
   "cairn_alcove.png",
   "channel_lit.png",
@@ -345,7 +345,7 @@
    "kind": "torch",
    "png": "torch.png",
    "foot": [
-    2112,
+    2100,
     168
    ],
    "offset": [
