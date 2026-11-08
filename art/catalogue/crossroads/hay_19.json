@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. The bale front and east side are flat single-tone fills with a few lone light specks (large one-tone area); the top is a terrazzo of 1-texel-tall dashes; the twine runs straight over top and front without turning at the edge; square hard corners; loose straw on the ground is two flat 1-texel bars. Fix (Eastward 17 bale at x1.37): front in horizontal straw bands of 3-4 tones in 2-3 px clusters, a lit top-front edge, corners knocked off one step, twine pressed in (a dark line with a lit lip) turning over the edge, straw tufts in clusters at the foot."
  }
 }

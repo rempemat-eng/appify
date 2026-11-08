@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. The bin front is a flat single-tone tan rectangle split by three dark lines: no lit lip, grain, nails or dark last row (wood recipe). The heap is brown-grey (reads as stone, not coal) in horizontal stripes, and it overhangs the bin on both sides with nothing under it. Fix: boards 4-5 px with lip and joints, a lit top rim with an inner wall; coal as near-black lumps (slate 0-2) with blue-violet glints in pairs, heaped inside the rim, a few lumps spilled at the foot."
  }
 }

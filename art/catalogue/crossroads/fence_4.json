@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Posts with a lit cap plane, lit west and dark east; rails with a lit top, body and dark last row, grain streaks; nails as dark heads with a lit pixel and rust streaks; occlusion where rails cross posts. Compared with Eastward 17 fence at x1.37 (open structure judged by eye on its solid parts, house-style 7); bar 0.71-0.76. Polish: knots are a \"+\" glyph (an oval knot 3x2 with a lit lower rim); every nail drips the same 1-texel streak (vary length, some none)."
  }
 }

@@ -2,7 +2,7 @@
  "id": "crossroads/square_rubble_b",
  "file": "game/zones/crossroads/art/square_rubble_b.png",
  "sha256": "e15ee91b2a1e0df14267de76b0a674911603b722ff95765bb589fb25637b5607",
- "kind": "square",
+ "kind": "pile",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
@@ -60,10 +60,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Same stone build as fern_rubble. Same fix. Rejected detector finding: detail.light (slate on the east)."
  }
 }

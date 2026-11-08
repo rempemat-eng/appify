@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. The tub body is undrawn material: random dark-red worm blotches over two flat bands, no staves, boards or clay features; no rim lip or inner wall (the soil shows only as two brown corners); the planting is a blocky rounded slab of rectangles with no clumps or under-shade where it hangs over the rim. Fix: a planked trough (3 boards 4-5 px, lit lip, joints, nail heads, iron corner straps) or terracotta with a rolled rim (lit top lip tone 4-5, dark under-rim band, lime bloom drips under it); a 2 px soil band with the inner wall lit on the far side; foliage as 3-5 leaf clumps with light caps and a dark U, a 1-2 px shade on the rim under them; flowers as 2-3 texel clusters with a lit and a dark texel. Compared with Eastward 13 pot at x1.37; bar 0.60-0.79 across the seven tubs."
  }
 }
