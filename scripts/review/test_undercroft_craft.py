@@ -87,7 +87,8 @@ class SpeckScatter(unittest.TestCase):
     def test_undercroft_floor_carries_no_dark_grit(self):
         g = _rgba('ground')
         self.assertLessEqual(dark_speck_scatter(g[160:600]), LIMIT)
-        # (room 1's pool, the fixture's box, is checked off the light's staged fades: RealFloorTint, round 8)
+        self.assertLessEqual(dark_speck_scatter(g[150:273, 60:211]), LIMIT)   # room 1's pool, the fixture's box (round 9:
+        #                                                                      no mask; the pool's body is solid steps)
 
     def test_a_dither_checker_is_not_terrazzo(self):
         # a 2 x 2 checker band (a light fade) touches at its corners: one run, not specks
@@ -305,16 +306,65 @@ class RealFloorTint(unittest.TestCase):
                 bad.append((fl, w, c, n))
         self.assertFalse(bad, f'{len(bad)} flags carry both warm and cool light: {bad[:5]}')
 
-    def test_no_dark_grit_off_the_lights_fades(self):
-        # G-16 in room 1's pool (the round 3 fixture's box), off the light's staged fades (texels within two of a
-        # rung change). G-34 (round 8): the fades use all three stages, and their lone 2 x 2 blocks are the light's
-        # dither (eastward-edges 5.4), not grit; the pin counts them in the box (2.5 a 1000 px), left to the auditor
+    def test_the_pools_are_solid_steps(self):
+        # G-37 (round 9): a torch pool's body is solid tone steps following the flags, with one narrow dither band at its
+        # rim; at most 25 % of its lit texels stand in a 2 x 2 halftone (a block lighter or darker than all four
+        # neighbours). Round 8's abutting fades put 30 % of its pools' lit texels in one
+        f = self.f
+        Y, X = np.mgrid[0:f['rung'].shape[0], 0:f['rung'].shape[1]]
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                lit = f['paint'] & (f['rung'] > 2) & f['tint_warm'] & (np.hypot(X - cx, Y - foot) < 1.5 * 74)
+                self.assertLessEqual(_halftone(self.painted, lit), 0.25)
+        a, fl, cx, foot = _r8_torch1()
+        self.assertGreater(_halftone(a, _pool_body(a, fl, cx, foot)), 0.25)
+
+    def test_the_torches_light_only_their_own_kerb(self):
+        # G-35 (round 9): no lamplit texel on a kerb (off the floor, within 18 texels of it) farther than 0.8 H from a
+        # flame. Round 8 lit every south kerb under a torch, 3.45 to 6.69 H from the flame
         from scipy import ndimage as ndi
-        r = self.f['rung']
-        fade = ndi.maximum_filter(r, size=5) != ndi.minimum_filter(r, size=5)
-        g = _rgba('ground').copy()
-        g[fade, 3] = 0
-        self.assertLessEqual(dark_speck_scatter(g[150:273, 60:211]), LIMIT)
+        from scripts.art.native.palette import FI
+        f = self.f
+        kerb = (ndi.distance_transform_edt(~f['paint']) <= 18) & ~f['paint']
+        lamp = np.isin(f['codes'] // 8, [FI['lamplit'], FI['lamplit_warm'], FI['lamplit_cool']])
+        Y, X = np.mgrid[0:lamp.shape[0], 0:lamp.shape[1]]
+        near = np.zeros(lamp.shape, bool)
+        for cx, foot in self._torches():
+            near |= np.hypot(X - cx, Y - (foot - 63)) <= 0.8 * 74
+        self.assertEqual(int((kerb & lamp & ~near).sum()), 0)
+        for g, name in ((self.painted[560:615, 100:560], 'r9'),
+                        (np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r8_south_kerb.png')).convert('RGB')), 'r8')):
+            L, C, h = _oklch(g[40:])                                   # room 1's south kerb, under torches 1 and 2
+            n = int(((h >= 35) & (h <= 100) & (C > 0.045)).sum())      # (the lamp's colour, not stone 5's lit edge)
+            (self.assertEqual if name == 'r9' else self.assertGreater)(n, 0, name)
+
+    def test_the_lit_kerb_keeps_its_marks(self):
+        # G-36 (round 9): under each cup the kerb is lit in steps that keep its own marks, never one flat code: its
+        # commonest colour at most 45 % of the strip (round 7, unlit: 22 to 43 %) and the lamp's colour on at most 35 %.
+        # Round 8's kerb by torch 8 was one tan code over 93 % of it
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                top, lampy = _kerb_strip(self.painted[foot - 15:foot - 2, cx - 33:cx + 34])
+                self.assertLessEqual(top, 0.45)
+                self.assertLessEqual(lampy, 0.35)
+        a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r8_kerb_t8.png')).convert('RGB'))
+        top, lampy = _kerb_strip(a[13:26, 7:74])
+        self.assertFalse(top <= 0.45 and lampy <= 0.35, (top, lampy))
+
+    def test_the_middle_band_guard_sees_round8(self):
+        # G-38: the pool's middle band (0.65 to 1.05 H below the wall's foot) at median OKLCH C 0.030 to 0.045. Round 8's
+        # was grey stone (C 0.018 to 0.022) and fails. The committed floor's check waits on Claude A's ruling on a
+        # mid-chroma warm tone (test_the_middle_band_is_warm_stone, skipped)
+        a, fl, cx, foot = _r8_torch1()
+        C, _ = _middle_band(a, fl, cx, foot)
+        self.assertLess(C, 0.030, C)
+
+    @unittest.skip('G-38 waits on Claude A\'s ruling on a named-only mid-chroma warm tone (round 9)')
+    def test_the_middle_band_is_warm_stone(self):
+        for cx, foot in self._torches():
+            with self.subTest(torch=cx):
+                C, hue = _middle_band(self.painted, self.f['paint'], cx, foot)
+                self.assertTrue(0.030 <= C <= 0.045, (C, hue))
 
     def _torches(self):
         plan = json.load(open(os.path.join(ROOT, 'game', 'data', 'plans', 'undercroft.json')))
@@ -436,6 +486,58 @@ def _torch_light(rgb, floor, cx, foot, shade=0.355):
     out['shelf'] = float((st[start:end] - st[start + 1:end + 1]).min()) if end > start else -1.0
     out['steps'] = [round(float(v), 3) for v in st[:end + 1]]
     return out
+
+
+def _halftone(rgb, region, step=0.03):
+    """G-37's measure: the share of `region`'s texels in 2 x 2 blocks (on any of the four alignments) whose mean OKLab L
+    stands 0.03 or more above or below all four neighbouring blocks: a dither's dots and checkers."""
+    L = _oklch(rgb)[0]
+    hit = np.zeros(L.shape, bool)
+    for oy in (0, 1):
+        for ox in (0, 1):
+            l_ = L[oy:, ox:]
+            Hh, Ww = l_.shape[0] // 2 * 2, l_.shape[1] // 2 * 2
+            B = l_[:Hh, :Ww].reshape(Hh // 2, 2, Ww // 2, 2).mean((1, 3))
+            P = np.pad(B, 1, mode='edge')
+            nb = np.stack([P[:-2, 1:-1], P[2:, 1:-1], P[1:-1, :-2], P[1:-1, 2:]])
+            dot = ((B - nb) >= step).all(0) | ((nb - B) >= step).all(0)
+            hit[oy:oy + Hh, ox:ox + Ww] |= np.kron(dot, np.ones((2, 2), bool))
+    return float(hit[region].mean()) if region.any() else 0.0
+
+
+def _pool_body(rgb, floor, cx, foot, shade=0.355):
+    """A torch pool's lit texels in a picture: blurred L 0.02 over the shade, within 1.5 H of the wall's foot."""
+    L = _oklch(rgb)[0]
+    Y, X = np.mgrid[0:L.shape[0], 0:L.shape[1]]
+    return floor & (_blur_on(L, floor) >= shade + 0.02) & (np.hypot(X - cx, Y - foot) < 1.5 * 74)
+
+
+def _middle_band(rgb, floor, cx, foot):
+    """G-38's measure: the median OKLCH C and the hue of the mean colour of the floor 0.65 to 1.05 H from the wall's foot
+    under the cup (the lower half-disc)."""
+    L, C, h = _oklch(rgb)
+    Y, X = np.mgrid[0:L.shape[0], 0:L.shape[1]]
+    d = np.hypot(X - cx, Y - foot) / 74
+    m = floor & (Y >= foot) & (d >= 0.65) & (d < 1.05)
+    a_, b_ = C * np.cos(np.radians(h)), C * np.sin(np.radians(h))
+    return float(np.median(C[m])), float(np.degrees(np.arctan2(b_[m].mean(), a_[m].mean())) % 360)
+
+
+def _kerb_strip(rgb):
+    """G-36's measures of a kerb strip: the share of its commonest colour and of the lamp's colour (hue 35 to 100, C
+    over 0.045, so stone's own lit edges do not count)."""
+    key = (rgb[..., 0].astype(np.int64) << 16) | (rgb[..., 1].astype(np.int64) << 8) | rgb[..., 2]
+    _, n = np.unique(key, return_counts=True)
+    L, C, h = _oklch(rgb)
+    return float(n.max() / n.sum()), float(np.mean((h >= 35) & (h <= 100) & (C > 0.045)))
+
+
+def _r8_torch1():
+    """Round 8's torch 1 (41d62d92, the ground's 40..420 x 60..330): the picture, its floor, the cup's x, the foot."""
+    a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r8_torch1.png')).convert('RGB'))
+    fl = np.zeros(a.shape[:2], bool)
+    fl[109:, 12:] = True
+    return a, fl, 128, 108
 
 
 def _r7_torch1():
@@ -671,6 +773,43 @@ class LightColourAndDrawing(unittest.TestCase):
         a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r5_shade.png')).convert('RGB'))
         _, cnt = np.unique(a.reshape(-1, 3), axis=0, return_counts=True)
         self.assertGreater(cnt.max() / cnt.sum(), 0.40)               # round 5's: one fill a flag
+
+
+class OverlayLoneSplit(unittest.TestCase):
+    """Claude A's C-8 ruling (round 9): a floor overlay that copies the ground is judged in two parts, its texels
+    identical to the ground at the same place against the ground's 2 %, its own against the drawn pictures' 1 %."""
+
+    def _pics(self, own, copied):
+        rng = np.random.default_rng(3)
+        g = np.zeros((60, 60, 4), np.uint8)
+        g[..., :3] = (60, 60, 90)
+        g[..., 3] = 255
+        o = g.copy()
+        o[..., :3] = (90, 70, 120)
+        cells = [(y, x) for y in range(4, 56, 3) for x in range(4, 56, 3)]
+        idx = rng.permutation(len(cells))
+        n = 56 * 56
+        k_own, k_copy = int(round(own * n)), int(round(copied * n))
+        for y, x in [cells[i] for i in idx[:k_own]]:
+            o[y, x, :3] = (200, 180, 150)
+        for y, x in [cells[i] for i in idx[k_own:k_own + k_copy]]:
+            g[y, x, :3] = (30, 30, 40)
+            o[y, x, :3] = (30, 30, 40)
+        return Image.fromarray(o, 'RGBA'), Image.fromarray(g, 'RGBA')
+
+    def test_a_prop_with_its_own_lone_pixels_still_fails(self):
+        from scripts.art.native import raster
+        o, g = self._pics(0.015, 0.0)
+        own, same = raster.lone_split(o, g, 0, 0)
+        self.assertGreater(own, 0.01)
+
+    def test_the_grounds_own_marks_count_against_the_ground(self):
+        from scripts.art.native import raster
+        o, g = self._pics(0.004, 0.012)
+        own, same = raster.lone_split(o, g, 0, 0)
+        self.assertLessEqual(own, 0.01)
+        self.assertTrue(0.01 < same <= 0.02, same)
+        self.assertGreater(raster.lone_share(o), 0.01)              # (judged whole, it would fail)
 
 
 class SceneUnmoved(unittest.TestCase):

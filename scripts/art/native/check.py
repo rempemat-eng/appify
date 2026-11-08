@@ -154,11 +154,42 @@ def villages() -> list:
             if off:
                 bad.append(f'{plan["id"]}/{name}: {len(off)} colour(s) off the house palette')
             lim = LONE_GROUND if name == 'ground.png' else (LONE_MAX if name in drawn else None)
-            if lim is not None:
+            over = overlay_on_ground(plan['id'], name, kit, zdir) if lim == LONE_MAX else None
+            if over is not None:
+                # a floor overlay whose record declares it copies the ground (Claude A's C-8 ruling, round 9): its
+                # texels identical to the ground at the same place count against the ground's limit, its own
+                # texels against the drawn pictures' limit
+                own, same = raster.lone_split(img, *over)
+                if own > LONE_MAX:
+                    bad.append(f'{plan["id"]}/{name}: {100 * own:.2f} % lone pixels of its own (at most {100 * LONE_MAX:.0f} %; '
+                               f'{100 * same:.2f} % more are the ground\'s own)')
+                if same > LONE_GROUND:
+                    bad.append(f'{plan["id"]}/{name}: {100 * same:.2f} % lone pixels copied from the ground (at most '
+                               f'{100 * LONE_GROUND:.0f} %)')
+            elif lim is not None:
                 ls = raster.lone_share(img)
                 if ls > lim:
                     bad.append(f'{plan["id"]}/{name}: {100 * ls:.2f} % lone pixels (at most {100 * lim:.0f} %)')
     return bad, notes
+
+
+def overlay_on_ground(zone: str, name: str, kit: dict, zdir: str):
+    """(ground image, x0, y0) for a zone picture whose catalogue record declares `"copies_ground": true` (a floor
+    overlay drawn from the ground's own texels) and whose kit.json object places it; else None."""
+    from PIL import Image
+    rec = os.path.join(ROOT, 'art', 'catalogue', zone, name[:-4] + '.json')
+    try:
+        with open(rec) as fh:
+            if not json.load(fh).get('copies_ground'):
+                return None
+    except (OSError, ValueError):
+        return None
+    obj = [o for o in kit.get('objects', []) if o.get('png') == name]
+    gp = os.path.join(zdir, 'art', 'ground.png')
+    if not obj or not os.path.exists(gp):
+        return None
+    o = obj[0]
+    return Image.open(gp), int(o['foot'][0] + o['offset'][0]), int(o['foot'][1] + o['offset'][1])
 
 
 def crowns() -> list:
