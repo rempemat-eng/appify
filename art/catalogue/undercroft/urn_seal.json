@@ -51,7 +51,8 @@
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 2 (redraw), PR #440 at 08dee79e. UR-1 to UR-4 fixed: elliptical mouth, glint at the upper left, shaded band, chips with a dark north lip; cylinder banding (lit left of centre, dark east). detail.bar 0.72 accepted as polish (re-recorded after the tidy commit; the PR body says 0.80)."
  }
 }
