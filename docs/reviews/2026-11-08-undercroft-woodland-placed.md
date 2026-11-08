@@ -1820,3 +1820,216 @@ Run on `41d62d92` with Node 24.19.0 and a private TMPDIR, deleted afterwards:
 - The scene gate's Godot renders and grid cells: not re-run, because the plan and the scene are unchanged.
 - In the game by hand, at phone scale and under the night tint.
 - The lit channel, the plate and Cairn's catch-light in Godot: seen only in composites from `kit.json`, with torch frame 0. The other three flame frames were not compared against the catch-light.
+
+## Round 10
+
+Draft PR #440 at `017c1986` answers round 8 in three commits (`8a16d225`, `2571ad6e`, `017c1986`) under Claude A's rulings on G-38 (a named-only tone `lamplit_dusk`), C-8 (the lone-pixel split), the north kerb (the 35 % cap on the lit top edge only) and the calm guard (torch pools judged by Eastward 06's lit floor, 13.12). It changes the ground, channel_lit (3 texels) and roots_corridor (17 texels), the painter, the palette files, `check.villages`, `raster.lone_split`, `assets.record`, the craft test and three new fixtures. A fresh detail-auditor reviewed it. That auditor drew none of the art and took no part in rounds 1 to 9.
+
+**Result: 3 pass.** ground, channel_lit and roots_corridor pass. Across the zone that makes 20 pass. Round 8's four ground findings are fixed. One polish finding is new on the ground (G-39). channel_lit's picture passes, but the check that lets it through `check:kit` launders two of its own texels (C-10, a fault in the check for Claude A, not in the picture).
+
+### What was reviewed
+
+- **Head:** `017c1986`, fetched and confirmed before starting. `git diff c3563dbd 017c1986` touches the three pictures and their records, `kit.json`'s `inputs`, the pilot golden's and the Thornback's manifest `inputs` hashes, `art/house-palette.json`, `scripts/art/house_palette.py`, `scripts/art/native/{palette,check,raster,undercroft}.py`, `scripts/review/{assets,test_review,test_undercroft_craft}.py`, `docs/vision/house-style.md` and three fixtures.
+- **The other 17** (cairn_alcove, lever_up, lever_down, plate_up, plate_down, seal_slab, seal_sunk, shard, stump_nw, stump_se, torch, urn_seal, roots_hall and the four rubble piles) have the same git blob ids as at `c3563dbd`, every sha256 matches its record, and their records are untouched, all `pass`. They were not re-audited.
+- **The painter's floor, rebuilt:** I ran `undercroft.build` from the plan with its `fields`, at `017c1986` and at `c3563dbd`, into private folders. All 20 pictures come out byte-identical to the committed ones at both commits. The fields are used only as masks (floor, rung, flag ids, codes); every number below is measured on the rendered pixels with my own code (`audit10/tools/` in the scratchpad), not the painter's tools.
+- **Calibration first:** `python3 -m scripts.review.calibrate` gives recall 38 of 38; false positives 5 on 6 clean screens and 29 on 22 clean props, as in round 8.
+- **Asset gate:** `npm run review:asset -- undercroft/<name> --record` on the three. `--record` left the records byte for byte as the painter wrote them (and kept channel_lit's `copies_ground` declaration). I opened every sheet. Detectors: ground fail, `detail.no_falloff` 0.324 (rejected, below); channel_lit pass, `detail.bar` 0.593 and `detail.outline` 0.12 polish; roots_corridor pass, `detail.bar` 0.61 polish.
+- **Composites:** the four rooms from `kit.json` (floor overlays first, then by foot y, torch frame 0) in state 0 and state 1.
+- **Scene gate:** not re-run, because the plan and the scene are unchanged.
+- **Eastward 06 at x1.37 nearest neighbour** (local only, never committed; 532 x 299 art grid, H 54, so 729 x 410 at H 74). Fire bowls at native (150, 47) and (322, 49). Profiles from round 8's table.
+- **Renders** (scratchpad `audit10/uc/`, not committed):
+  - `undercroft_r10_vs_eastward06_sbs_3x.png` and `_1x.png`: torch 1 and torch 8 in round 8 and round 10 beside 06's right and left fire bowls, each in colour and in OKLab L alone, with the flame at the same place and the same H;
+  - `torch1_vs_ew06_floor_4x.png`: torch 1's pool beside 06's floor under its bowls, colour and L;
+  - `torch1_pool_r8_r10_4x.png`, `kerb_t1_t8_r8_r10_5x.png`, `southkerb_room1_r8_r10_3x.png`;
+  - `rooms12_r8_r10_1x.png`, `rooms34_r8_r10_1x.png`, `room12_r10_vs_ew06_1x_colour_L.png`, `rooms_state0_r10_1x.png`, `rooms34_state1_r10_1x.png`, `channel_state1_r10_3x.png`;
+  - `specks_room1_box_r10_5x.png`, `specks_torch8_box_r10_5x.png` (every counted speck boxed);
+  - `diff_r8_r10_map_1x.png`, `channel_lit_r8_r10_4x.png`, `roots_corridor_r8_r10_4x.png`, `ew06_calm_region_3x.png`.
+
+### The side by side
+
+**At 1x**, each pool is a gold heart at the wall's foot under the cup that falls through a rust-mauve collar into the violet shade, about 2.2 to 2.5 H wide and 1.2 to 1.3 H deep. Round 8's dotted collar is gone: the collar is now a solid warm mauve with only a thin softened edge at the rim. The tan dashes on the south kerbs are gone. In OKLab L alone, each pool is a soft light fan, as 06's fire light on its hex floor is, with no ring and no dot texture. The collar reads as the light dimming (warm, then mauve, then violet), not as a band of grey stone and not as a rug. 06's fire light is more diffuse at its outer edge than ours, whose rim is a narrow fade over 11 to 14 px.
+
+**At 3x and 4x**, the heart's flags are gold on their lips and worn tops with grey and mauve centres, as round 8 accepted. The middle band is flag bodies of one mauve tone (`lamplit_dusk` 3) with gold or warm lips and dark joints, so the light reads as falling across stone: step edges cross flag bodies, and 43 to 52 flags in each pool hold two rungs. Where 06's lit hex tiles carry two or three tones of fleck in each tile, our middle-band flags are flat-bodied and nearly all the same colour (G-39). The one dithered band sits at the rim, a staged 2 x 2 fade into the slate, as Eastward 15 dithers its pit edges. The kerb's lit top edge is a thin warm line stepping out from under the cup, and the plinth face below it is warmed texel by texel with its chips kept, so neither reads as a tan bar.
+
+### Measurements
+
+All distances in H (74 art px) from the wall's foot under the cup (pools) or from frame 0's flame core 57 px above the foot (kerb). Blurred L is a 19-texel (0.25 H) box blur on the floor.
+
+**G-37, the halftone (fixed).**
+
+| Measure, per pool (8 torches) | Round 10 | Round 8 |
+| --- | --- | --- |
+| Lit texels in rung islands under 12 texels | 3.4 to 4.0 % | 37 to 41 % |
+| Where those islands lie (distance inside the rim, p95 / max) | 1.0 to 1.4 / 7 px | 30 to 34 / 34 to 39 px |
+| Lit texels in a strict 2 x 2 checker (block 0.03 L off all four neighbours, two diagonals agreeing) | 1.4 to 2.7 % | 8.7 to 11.8 % |
+| Lit texels within two of a rung change (steps and fade together) | 46 to 56 % | 79 to 86 % |
+| The rim's fade band along rays from the foot (p10 / p50 / p90) | 9.5 to 12.2 / 11.2 to 14.0 / 13.0 to 17.1 px | 14.0 to 16.7 / 16.8 to 18.5 / 18.4 to 22.2 px, abutting a 3/4 fade 19 to 22 px wide |
+| The warm band to middle band step (rungs 4/3) along rays (median span) | 3.0 to 9.5 px, a solid step | 19 to 22 px of dither |
+| Step edges on flag joints | 34 to 43 % | (no steps) |
+| Flags in a pool holding two rungs / one | 43 to 52 / 7 to 16 | |
+
+The painter's own measure (block off all four neighbours) gives 10 to 12 % (target ≤ 25 %). The rim band is a little narrower than the 14 to 20 px asked for, because the staged fade's sparse ends barely show; at 4x it reads as one narrow staged fade.
+
+**G-38, the middle band (fixed).**
+
+| | Round 10 | Round 8 | Eastward 06 |
+| --- | --- | --- | --- |
+| Median C per texel, 0.65 to 1.05 H | 0.035 at all 8 | 0.018 to 0.020 | 0.034 to 0.044 |
+| C of the band's mean colour, hue | 0.027 to 0.029, 31 to 37 | 0.019 to 0.022, 18 to 34 | 0.021 to 0.030 |
+| Texels under C 0.025 | 32 to 42 % | 69 to 71 % | |
+| Per 0.1 H band, median C / C of the mean | 0.031 to 0.035 / 0.025 to 0.040 | 0.018 to 0.022 / 0.017 to 0.034 | |
+
+The hue of the band means below torch 1, at 0.55 to 1.35 H: 61 → 53 → 43 → 37 → 21 → 350 → 318 → 293 → 286. It goes down the hue circle the short way, through about 20 and 350, and no band's mean falls below C 0.025 (the lowest are 0.025 at 0.95 and 1.05 H by torch 3). Eastward's right fire walks 78 → 72 → 66 → 54 → 38 → 25 → 359 → 344. Ours turns red about 0.2 H sooner, and ends at our shade's 285 where Eastward's floor ends at 344. At 1x it reads as falloff.
+
+**G-35 and G-36, the kerb (fixed).**
+- lamplit off the floor: 8,734 texels, the farthest 0.70 H from a flame (round 8: 6.72 H). Lamplit kerb texels (within 18 px of the floor) beyond 0.8 H: **0** (round 8: 1,889). By colour (hue 35 to 100, C over 0.045), 892 kerb texels beyond 0.8 H are warm, and every one is a root (`earth_warm`, 535) or the channel's brass (357).
+- The lit top edge (67 px under each cup): commonest colour 27 to 33 %, 4 to 10 colours, lamplit on 63 to 67 % of it in three steps (`lamplit_warm` 4, lamplit 4, `lamplit_cool` 4), with joints and chips left in the kerb's own tones (round 8: 73 to 90 %, 2 to 7 colours).
+- The 67 x 13 strip by the cup: commonest colour 19 to 42 %, 13 to 17 colours (round 8: 35 to 93 %, 6 to 12). That also meets round 8's 45 % target for the whole strip.
+- `lamplit_dusk` lies on 30,003 floor texels and 2 off the floor (at the wall roots' holes in rooms 2 and 3), and only its tone 3 is used.
+
+**Round 8's passes, measured again.**
+
+| | Round 10 | Target |
+| --- | --- | --- |
+| Heart (blurred L ≥ 0.50 joined to the cup) | 0.51 to 0.81 H² (torch 7 0.81) | 0.5 to 0.8 |
+| Heart median C; hue of mean; blurred L | 0.066; 66.0 to 68.5; 0.531 to 0.539 | 0.06 to 0.08; 55 to 75; 0.50 to 0.56 |
+| Reach (round 8's method: L 0.379, 7 x 7 opening) | 1.14 to 1.31 H (round 8: 1.07 to 1.32) | 1.1 to 1.4 |
+| Pool area (same method) | 1.95 to 2.26 H² | ≤ 2.5 |
+| Shelf | none: after the heart's 0.35 to 0.45 H hold, each 0.1 H band falls 0.014 to 0.027 L to the shade at 1.3 H | none |
+| Colour-only (warm texels with no L lift over the shade) | 1 to 2 % by my definition; painter 5 to 7 % | ≤ 25 % |
+| Wall against its unlit drawing (`wall0`) | +0.052 to +0.068 L within 0.3 H of the cup, +0.026 to +0.033 at 0.3 to 0.6, at most +0.006 at 0.6 to 0.8; 2 x 2 checker on 0 to 0.2 % of the wall | about +0.05 near the cup, block by block, no checker |
+
+Torch 7's heart is 0.81 H², 55 texels over 0.8. That is within the threshold's own noise (the test pins 0.45 to 0.85), and I accept it. With my local-shade method the areas read 2.12 to 2.68 H², with torches 2 and 8 over 2.5 by their tendrils, but round 8 read 2.57 and 2.52 there by the same method, so nothing grew.
+
+**What else moved in the ground.** Away from the lights, 65,543 void texels swap `void` 0 and 1 (its 0 share is 0.536 in both rounds) and about 880 floor texels change where moss sprigs moved. The painter's random stream shifted, and the PR does not mention it. The statistics are the same and nothing reads differently.
+
+### The rulings asked for
+
+**Item 2: G-38 and `lamplit_dusk`.** Justified.
+- No stone, slate or lamplit sibling has a tone at L 0.40 to 0.50 with C 0.028 to 0.048 and a warm-to-violet hue. The only tones there are earth, sand, plaster and bleached (another material: earth grit was G-16).
+- `#654B4B` (OKLCH 0.441 / 0.035 / 19) sits between `stone_warm` 1 and `lamplit_cool` 1 and is the hue Eastward's band passes through.
+- It is named only (`NAMED_ONLY`, not pickable), only `undercroft.py` names it, and the painter uses only its tone 3.
+- No other picture moved. In a private copy of the head, `python3 -m scripts.art.native.check --no-cache` rebuilt the pilot golden and left `git status` clean, so only its manifest's `inputs` hash changed. `python3 -m scripts.art.native.thornback --out game/bosses/thornback/art` wrote every Thornback picture byte-identical, again with `git status` clean. `check:art-repro` passes.
+- One reservation, polish: `house-palette.json` lists a full six-tone ramp for a "tone, not a family". Only tone 3 is used. If the other five are not meant for use, say so beside it.
+- The way it is used is G-39.
+
+**Item 5: room 1's pale specks (1.99 against 2.0).** Honest drawing, not values placed under the pin.
+- I boxed every counted speck. All 37 in room 1's box, and all 48 in the same box at torch 8, are isolated 2 x 2 blocks of the rim's staged fade at its sparse stage: `lamplit_dusk` 3 on slate and slate on dusk, on a 4 px lattice along the rim, plus one void block. None lies in the pool's body (`specks_room1_box_r10_5x.png`).
+- The same box at the other torches reads 1.62 to 2.58: torch 5 2.10 and torch 8 2.58 are over 2.0. Shifting room 1's box by up to 6 px gives 1.94 to 2.32, with 40 % of shifts over 2.0.
+- So the count sits at the pin by chance of where the box cuts the rim, and measures Eastward's own dither craft, not terrazzo.
+- Dark specks: 1.18 in the box, 0.75 to 1.94 at the other torches. Whole floor: pale 1.14, dark 0.70.
+- Recommendation for the guard, not the art: leave the declared rim band out of the box count (at most RIM_FADE + 2 px from the rim), as round 8 suggested. As it stands, the pin will flicker with any small change to the rim.
+
+**Item 6: the guards and the lone split.**
+- **Fixtures.** The three new fixtures are byte-identical crops of `c3563dbd`'s ground: `undercroft_r8_torch1.png` at (40, 60), `undercroft_r8_south_kerb.png` at (100, 560) and `undercroft_r8_kerb_t8.png` at (2060, 140). Each fails its new test inside `check:review`, which passes all 221:
+  - the halftone test: the painter's measure gives 0.30 against 0.25, and my rung-island measure on round 8's picture 37 %;
+  - the kerb bound: lamp-coloured texels on the south kerb;
+  - the kerb marks: torch 8's edge;
+  - the middle band: C 0.018 against 0.030.
+- **`test_the_pools_are_solid_steps`, `test_the_torches_light_only_their_own_kerb`, the restored unmasked dark-grit box:** legitimate.
+- **`test_the_lit_kerb_keeps_its_marks`** (one row, 35 %): legitimate. It follows Claude A's ruling, and the whole strip also meets 45 % now.
+- **`test_the_middle_band_is_warm_stone`:** legitimate as a chroma and hue guard. But its median C of 0.035 is exactly `lamplit_dusk`'s own chroma, because that one tone is the band's commonest colour. So it would also pass a band flooded with that one tone. Add a variety cap with G-39: the band's commonest colour no higher than the heart's, about 45 %.
+- **The calm guard (CALM_POOL 13.12).** Legitimate as a ruling, with a caution.
+  - Judging a lit floor against Eastward's lit floor is right. The unlit ground band's 11.9 was never measured on light.
+  - My reproduction of round 8's region (x 182 to 463, y 16 to 96 at x1.37, glow and 3 px left out) gives 12.45, not 13.12. Boxes of our pool box's size beside 06's two bowls give 10.75 to 17.91, depending on how much glow they mask.
+  - Room 1's pool box is 12.48 (round 8: 11.65; it rose because the 9-texel median now follows solid steps where it used to smooth the dither), and its heart 10.76. So our pool sits at Eastward's own lit floor by my measure, not under it.
+  - Round 4's rings (15.37) fail it. Round 5's grey pool (10.00) and round 6's rug (9.11) passed 11.9 already and are caught by other tests.
+  - The guard now says only "no busier than Eastward's lit floor". At a 0.6 margin it is a weak gate, and the pictures carry the judgement.
+- **The lone split (`raster.lone_split`, `check.villages`, `assets.record`): not legitimate as written (C-10).**
+  - `assets.record` keeping the declaration is fine.
+  - channel_lit: 93 lone texels, 1.05 % of 8,863 interior texels. The split calls 88 its own (0.99 %) and 5 copied (0.06 %):
+    - three are moss texels identical to the ground and lone there too, which is right;
+    - two are brass 3 over ground brass 2: the divider caps, not lone in the ground. They are channel_lit's own drawing.
+  - Without the `ground_lift` rule the split reads own 90 (1.02 %). So the lift rule's whole effect on this picture is to move two of its own texels under the limit.
+  - The floor's real copied marks, 73 of the 88 "own" texels, are lone in the ground at the same place. The spill moves them from slate to dusk, so the same-family rule never sees them.
+  - Two fixtures of my own show the rule launders an overlay's own noise:
+    - an overlay with a body two tones up and scattered texels one tone up, over a flat ground: own 0, copied 2.38 %;
+    - an overlay recoloured to dusk with scattered texels left as the ground: own 0, copied 2.38 %.
+  - The committed tests include neither case.
+  - It was declared ("the margin is thin"), so I do not call it a deliberate dodge. But it passes the picture on the wrong grounds.
+
+### Per-asset verdicts
+
+| Asset | Detectors | Bar | Verdict | Findings |
+| --- | --- | --- | --- | --- |
+| ground | fail, 1 fault (rejected) | n/a | **pass** | G-35, G-36, G-37, G-38 fixed; G-39 polish |
+| channel_lit | pass, 2 polish | 0.593 | **pass** | C-10 (fault in the check, not the picture) |
+| roots_corridor | pass, 1 polish | 0.61 | **pass** | RT-12 |
+
+### Findings, ranked
+
+1. **C-10, `raster.lone_split` and channel_lit's declaration: the ground_lift rule launders an overlay's own lone texels (fault in the check, for Claude A).**
+   - Where: `scripts/art/native/raster.py` `lone_split`, `check.villages`, and `art/catalogue/undercroft/channel_lit.json` (`copies_ground`, `ground_lift: 1`).
+   - What is wrong: a lone texel counts as copied when its code equals the ground's code at that place, or that code lifted, whether or not the ground is lone there. So loneness that the overlay creates is charged to the ground's 2 %.
+     - On channel_lit, the rule moves exactly two brass cap texels, (100, 212) and (122, 34), from own to copied, taking own from 1.02 % to 0.99 %.
+     - The floor's actual marks (73 texels, lone in the ground) stay "own", because the spill changes their family.
+   - Fix:
+     - count a lone overlay texel as copied only when the ground is lone at the same place (any family, or the declared spill map slate → dusk). On channel_lit that gives own 17 (0.19 %: 15 off the floor's marks plus the 2 caps) and copied 76;
+     - add the two laundering fixtures above as must-fail tests;
+     - then drop or keep `ground_lift` as the new rule needs.
+   - The picture itself passes. Its own marks are the floor's crack and lip ends a rung up, and the caps.
+2. **G-39, ground: the middle band's flags share one flat body colour (polish).**
+   - Where: every pool, 0.65 to 1.05 H, for example below torch 1 at (100..250, 215..250) (`torch1_pool_r8_r10_4x.png`, lower half).
+   - What is wrong:
+     - `WARM[3]` gives all three per-flag variants `lamplit_dusk` 3, and `WARM[4]`'s middle variant is the same tone. So the band loses the per-flag sibling variety the house style asks for.
+     - 56 % of its 169 flags have that one body colour (round 8: 28 %; the shade 35 %; the heart 47 %), its commonest colour covers 28 to 43 % of the band (round 8: 16 to 29 %), and it holds 21 to 28 colours (round 8: 26 to 31).
+     - Eastward 06's lit tiles carry two or three tones of fleck in each tile.
+   - At 1x it reads as falloff. At 4x it is a run of identical mauve flags with drawn lips.
+   - Fix:
+     - give the three variants different bodies around the dusk tone, for example `lamplit_dusk` 3 on one, `stone_warm` 1 with `lamplit_cool` 1 flecks on another, and `lamplit_cool` 1 on the third, keeping the median C between 0.030 and 0.045;
+     - or ask Claude A to admit `lamplit_dusk` 2 and 4 as tones, for worn tops and flecks;
+     - then cap the band's commonest colour at about 45 % in `test_the_middle_band_is_warm_stone`.
+3. **RT-12, roots_corridor: unchanged in substance.** 17 texels changed in the heaved flag (39..42, 103..114), alpha unchanged. 16 follow the ground's change two rows lower, a moss sprig moved by the painter's shifted random stream, because the flag copies the floor lifted 2 px. The root, the heaved flag and its moss gap read as in round 8. No action.
+
+### Round 8 findings, measured again
+
+- **G-35: fixed.** No lamplit texel lies beyond 0.70 H of a flame, and no south kerb is lit (`southkerb_room1_r8_r10_3x.png`).
+- **G-36: fixed.** The lit edge steps in three warm tones and keeps its joints and chips. Torch 8's kerb is grey stone warmed by the flame, not a tan bar (`kerb_t1_t8_r8_r10_5x.png`).
+- **G-37: fixed.** The body is solid steps that cross flags. Only a narrow staged fade is left at the rim, and the halftone is gone at 1x and 4x.
+- **G-38: fixed** (median C 0.035, mean hue walking 61 → 293 with no grey band). What it leaves is G-39.
+- **C-9:** the picture is unchanged except 3 moss texels. The check that clears it is C-10. **RT-11:** holds (RT-12). **CA-10:** cairn_alcove is byte-identical.
+
+### False positives
+
+- **`detail.no_falloff` 0.324 (threshold 0.33): rejected again on the ground.** With the floor flattened to its mean the picture scores 0.283, so the floor adds 0.041. The void and the wall tops set the measure.
+- **The pale speck count in room 1's box (1.99):** the rim's staged dither, not terrazzo (item 5).
+- **Polish accepted:** channel_lit `detail.bar` 0.593 and `detail.outline` 0.12; roots_corridor `detail.bar` 0.61.
+
+Count: 1 rejected of 1 fault; 3 polish accepted.
+
+### Grid log
+
+The scene gate was not re-run, because the plan and the scene are unchanged. I visited every room of my state 0 and state 1 composites at 1x, and in zooms:
+
+- **Room 1:**
+  - torches 1 and 2: gold hearts falling through a rust-mauve collar to the violet shade by 1.2 to 1.3 H, solid bodies with a narrow rim fade (G-37 fixed); the middle band's flat dusk bodies (G-39);
+  - the kerb's lit edge under each cup; the south kerb plain (G-35 fixed);
+  - roots_hall, rubble_hall and the stair's daylight: unchanged.
+- **Room 2:** torch 3's pool with the wall root standing in it, and torch 4's; roots_corridor and its heaved flag (RT-12); rubble_corridor; the south kerb plain.
+- **Room 3:** the urn in torch 5's pool; torch 6's pool with the wall root, cut by the east wall; plate_down, the lit channel and its violet spill in state 1 (C-10 is the check only); lever, seal, rubble_seal.
+- **Room 4:** torch 7's pool with stump_nw's base; torch 8's pool, its grey kerb warmed by the flame, and Cairn lit on his west faces; the skylight; the shard; rubble_chamber; stump_se.
+
+### Checks
+
+Run on `017c1986` with Node 24.19.0 and a private TMPDIR, deleted afterwards:
+
+- **`npm run check:review`:** 221 tests OK.
+- **`npm run check:godot`:** passed, 220 GdUnit cases, with `GODOT` set to the cached Godot 4.7.2.
+- **`npm run check:art-repro`:** PASS.
+- **`npm run check:kit`:** the kit gates pass, including drawn villages: channel_lit clears them only through C-10. The review gate then refused 80 before my verdicts:
+  - 60 crossroads assets and 17 woodland assets, the known refusals elsewhere (failed or pending reviews in other lanes);
+  - the 3 pending Undercroft records.
+
+  After my verdicts, `gate --check` refuses 77, none of them Undercroft. `grid_snap --check`: ok. The crossroads `kit.json` note (stale hash, another lane) remains.
+
+### For other reviewers (not part of the verdicts)
+
+- C-10 needs Claude A's fix in `raster.lone_split` before channel_lit's `check:kit` pass means what it says.
+- The calm guard is now a weak gate (12.48 against 13.12; my Eastward reproduction 12.45). The speck pin in room 1's box counts the rim dither (item 5).
+- The painter's random stream shifted (void noise and moss sprigs), which the PR does not mention.
+
+### Not checked
+
+- The scene gate's Godot renders and grid cells: not re-run, because the plan and the scene are unchanged.
+- In the game by hand, at phone scale and under the night tint.
+- The torch's other three flame frames against the floor and kerb light: only frame 0 composed.
