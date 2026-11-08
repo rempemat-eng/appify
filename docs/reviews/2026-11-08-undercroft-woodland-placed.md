@@ -882,3 +882,180 @@ Godot renders at 1920 x 1080, 6 x 4 cells of 480 x 405, opened at 1:1. The zone 
 - In the game by hand, at phone scale and under the night tint. The renders are by day at 1920 x 1080.
 - The torch as playback (bytes unchanged since round 2).
 - Whether G-22's strokes come from `break_runs`: I traced the likely pass in the painter but did not re-run it.
+
+## Round 5
+
+Draft PR #440 at `8c6ade9e` answered round 4 in the painter and changed four assets: ground, channel_lit, roots_corridor and cairn_alcove. A fresh detail-auditor reviewed it. That auditor drew none of the art and took no part in rounds 1 to 4.
+
+**Result: 2 pass, 2 fail.** roots_corridor and Cairn's alcove pass. The ground and the lit channel fail. Across the zone that makes 18 pass and 2 fail. Every round 4 finding that was a number is met: the rings are gone, the pools are calm, the shade sits at Eastward 06's value, the hatching is gone. But at 1x the torch pools now read as rectangles of grey-brown paving laid under the walls, not as light (G-24). The shade carries ghost-shaped stains (G-25). Beyond 20 px from the walls the floor is one value in every room (G-27). The lit channel's spill reaches only two floor rows (C-6).
+
+### What was reviewed
+
+- **Head:** `8c6ade9e`. `git diff dc472ed2 8c6ade9e` changes exactly the four PNGs and their records, the painter, the craft test and two new fixtures, the golden manifest's hash, `kit.json`'s inputs hash and one line of `test_review.py`. The other 16 assets have the same git blob ids as at `dc472ed2`, and their sha256 matches their records, so their passes stand.
+- **Calibration first:** `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <Eastward folder>` gives recall 38 of 38. False positives are unchanged: 5 on 6 clean screens and 29 on 22 clean props. Nothing was written to the repository.
+- **Asset gate:** I rendered `kit/bench`, `kit/log` and `kit/lantern` first, then ran `npm run review:asset` and `--record` on the four. `--record` left the records byte for byte as the painter wrote them. The detectors fail ground (`detail.flat` x6, `detail.no_falloff`) and pass the other three with one `detail.bar` polish each (channel_lit 0.81, roots_corridor 0.52, cairn_alcove 0.89). I opened every sheet.
+- **The painter's floor, rebuilt:** I ran `undercroft.build` from the plan into a private folder with its `fields` (slab, joint, rung, lifted, rim, tint masks). It reproduces the committed `ground.png` byte for byte. Every pool, rung and tint number below comes from those masks and the committed pixels, not from the PR.
+- **Composites:** I composed the lit channel and roots_corridor over the ground at their `kit.json` feet and offsets, and diffed the plate-pressed composite against nothing-pressed. I opened the painter's `rooms_1x_state1-r5.png` and `rooms_2x_state1-r5.png` room by room, and made zooms at 3x to 8x. All of it is local in the scratchpad and was not committed: `torchpool1_5x`, `skylight_3x`, `stairpool_4x`, `blotch_room1_4x`, `hatch_r4_6x`, `hatch_r5_6x`, `southfoot_4x`, `channel_T_unlit_vs_lit_6x`, `roots_flag_r4_vs_r5_8x`, `cairn_5x`.
+- **Scene gate:** not re-run. No plan or scene change in this round.
+- **Eastward at x1.37 nearest neighbour** (local only, never committed). Shot 06 was brought to its art grid by `core.to_native` (scale 3.6, 532 x 299):
+  - room 1 (40,140,440,440) beside Eastward (100,20,392,239), with the fire-column floor, the lit corridor and the shade, as `sbs_ew06_room1_r5`;
+  - torch 1's pool (70,150,262,287) beside the warm floor under the fire columns (120,30,260,130), as `sbs_warm_r5_3x`;
+  - room 1's shade (250,380,387,490) beside the shade floor (135,185,235,265), as `sbs_shade_r5_3x`;
+  - the skylight (1780,290,2060,500) beside the lit corridor round the player (140,90,345,243), as `sbs_skylight_r5_2x`;
+  - number boxes: shade (140,200,200,260); warm floor (150,40,250,80); lit corridor (165,90,250,130); the dark floor by the west crystal (120,95,160,140).
+
+### The painter's claims, measured
+
+All values are OKLab L, OKLCH chroma C and hue in degrees, or `bands.contrast` in L at H 74.
+
+| Claim | Measured | Holds? |
+| --- | --- | --- |
+| Shade median L 0.359 on round 4's boxes (target about 0.36) | (200,430,310,512) 0.359; (250,380,387,490) 0.359; all ambient flag bodies 0.359 (p10 0.328). Eastward 06 shade 0.361 (and 0.359 on the wider box). Joints 0.274, void 0.210, so the room stands 0.149 over the void. | Yes |
+| In-pool contrast: room 1 pool 10.0, heart 9.3, skylight 10.2, heart 3.6, stair 8.7, all under 11.9 | 10.0, 9.28, 10.24, 3.58, 8.73. Per torch pool, masked to its lifted region: 5.3 to 8.9. | Yes. But `ground_plane` finds the skylight box under-drawn (7.25 tones and 20.2 shapes a patch, against a band least of 7.5 and 23) and its heart much more so (4.8 and 10.2). The PR quoted contrast only (G-24). |
+| Skylight lit zone 224 x 181 px with the rim's fade (plan 240 x 180) | 225 x 174 from the lifted and rim masks (x 1808 to 2032, y 308 to 481), 208 x 161 lifted only, 218 x 171 measured from the image (median-5 L over the ambient's p90 + 0.02). All inside the plan's ellipse (x 1800 to 2040, y 306 to 486). | Yes (about 7 px shorter than claimed) |
+| At most two rungs; one staged 2 x 2 dither, at the rim only; no blue ring; heart toward the wall's foot | Rungs {2, 3} over ambient 1 in every torch pool and the skylight, {2} at the stair. All 67,992 lifted texels in the torch zones carry the warm tint and none the cool. The 4 px band outside the pools is the pool body (90,78,84) 47 % and the shade (56,57,90) 34 %, with no `slate_cool 2` ring. Every torch pool's lifted box starts at the wall's foot (y 168 or 312). The heart's edge carries no dither on any texel of its outline. | Yes. The hard heart edge is part of G-24. |
+| No dark 1 px hatching on flag bodies | `_strokes` on all flag bodies: 0 (round 4's picture under the same masks: 12). The joint colour (32,25,59) covers 0.0 % of (400,420,440,445), against 26.1 % in round 4. At 6x the flag bodies are clean. Run over a whole box, `_strokes` counts the joints' jogs (179 in (200,380,600,600)); they are joints, not hatching. | Yes |
+| Channel spill reaches d -7..-10: main 82/47/47/19 %, branch 86/50/50/18 % | Composite diff: main 83/49/49/17 %, branch west 86/50/50/17 %. But rows d -7 and -8 (y 401, 400) are the groove's north lip, with no floor paint. Only d -9 and -10 (y 399, 398) are floor, at 49 % and 17 %. Rows 397 and 396 hold 5 and 4 %. Nothing changes south of the main run (y 411 and on) or east of the branch. | Numbers yes. The floor reach is two rows, not four (C-6). |
+| `detail.flat` x6 on calm warm rim flags, and `detail.no_falloff` 0.31 (threshold 0.33): proposed false positives | Detectors confirmed: flat 0.16 to 0.205 against 0.14, on 878 to 1123 px one-tone areas in torch pools 2, 3, 6, 7 and 8 (twice); no_falloff 0.307. | Both upheld (see False positives) |
+
+### Round 4 findings, measured again
+
+- **G-19, target rings.** Fixed as named: two rungs, one rim dither, no checker on inner steps, no blue ring, hearts at the source, the skylight inside its plan. But the fix produced G-24.
+- **G-20, pools not calm.** Fixed (numbers above).
+- **G-21, shade too dark.** The value is fixed (0.359 against 0.36). The flatness the round 4 audit also measured is not: the shade still fails `ground_plane`'s drawn test (G-26). The blotches added for it read as stains (G-25).
+- **G-22, hatching.** Fixed.
+- **G-12r, wall-foot moss.** Fixed. 79 clumps in the shade, median 5 x 2 px (largest 7 x 3), with a dark underside, a body and a lit cap, sparse along the feet.
+- **G-23, moss in the pools.** Fixed. 19 clumps, largest 4 x 3 px, on the yellow-greens (43,81,32) and (75,113,47) rather than the shade's teal (2,67,44).
+- **C-4, the spill.** Part fixed. The floor now changes, but only over two rows (C-6).
+- **C-5, the dividers.** Fixed. The core breaks at each divider and runs unbroken between them (`channel_T_unlit_vs_lit_6x`). The even spacing is allowed for a built thing.
+- **RT-7, roots_corridor's flag.** Fixed. The flag under the root's east end is now the floor's own flag (slab x 841 to 876, y 455 to 479), with its own joints. It is tilted, and a joint is cut across it in the floor (`roots_flag_r4_vs_r5_8x`).
+- **CA-9, Cairn's bank foot.** Fixed. Row 81's commonest earth tone falls from 52 % to 23 %, and rows 78 and 79 from 48 and 44 % to 30 and 28 %. The under-lip steps, and clods hang over the foot (`cairn_5x`).
+
+### Matt's two questions
+
+1. **The large soft dark blotches on the shaded floor: natural variation, or stains and ghost shapes?** Stains and ghost shapes. They are hard-edged, one rung down, and painted across the masonry (G-25).
+2. **The torch pools: light, or blocky rectangles of lifted flags?** Blocky rectangles, and grey ones. Their hard straight edges follow the flags, and they are less coloured than the shade they sit in (G-24). The skylight's heart is the same: a pale square inside a dithered halo.
+
+### Per-asset verdicts
+
+| Asset          | Detectors      | Bar  | Verdict  | Findings                                   |
+| -------------- | -------------- | ---- | -------- | ------------------------------------------ |
+| ground         | fail, 7 faults | n/a  | fail     | G-24, G-25, G-26, G-27 fault; G-28 polish  |
+| channel_lit    | pass, 1 polish | 0.81 | fail     | C-6 fault                                  |
+| roots_corridor | pass, 1 polish | 0.52 | **pass** | RT-8 polish                                |
+| cairn_alcove   | pass, 1 polish | 0.89 | **pass** | none                                       |
+
+The other 16 (lever_up, lever_down, plate_up, plate_down, seal_slab, seal_sunk, shard, stump_nw, stump_se, torch, urn_seal, roots_hall and the four rubble piles) are byte-identical to round 4 and keep their pass.
+
+### Findings, ranked
+
+1. **G-24, ground, the light pools read as grey paving, not light (fault).** Seen under all eight torches and at the skylight, in the composites (`torchpool1_5x`, `skylight_3x`, `sbs_warm_r5_3x`, `sbs_ew06_room1_r5`). Measured:
+   - **No light colour.** The torch pools' bodies (rung 2) are L 0.438 at C 0.018, hue 346; their hearts (rung 3) are L 0.509 at C 0.018, hue 8. That is greige mauve, and it is *less* coloured than the shade around it (C 0.057, hue 282). Eastward 06's floor under the fire columns is L 0.460 at C 0.062, hue 65 (gold), and its lit corridor L 0.437 at C 0.054. In ours the light drains colour, so a pool reads as dust or a different paving. The cause is the ramp. `stone_warm` 1 and 2 (#5A4E54, #796E6D) sit at C 0.014 to 0.018 with hues of 346 to 24, because the house rule turns stone's mid-darks to violet. Two rungs over L 0.36 cannot reach a warm stone tone on this ramp.
+   - **Hard rectangles.** No texel of a heart's edge is dithered, and the step is 0.07 L. Of the torch hearts' outline, 64 % lies in straight horizontal or vertical runs of 10 px or more; of the skylight heart's, 80 %. Where the body stops at a joint, it does so with a hard straight edge across a whole flag (torch 1: a 38 px straight cut at x 157 to 195, y 228). With the rim's dither only on the curved parts, each pool reads as a block of lighter flags, cut off flat by the wall, with a fuzzy hem.
+   - **A light's falloff that stops at the flags.** One-tone flags of 0.16 to 0.21 H² sit inside the falloff (the six `detail.flat` boxes). In Eastward 06 the light runs across the tiles: the hex pattern keeps showing, lit, and each tile changes value within itself as the light falls off.
+   - **The skylight's heart is under-drawn.** Its heart box has 4.8 tones and 10.2 shapes a patch against a band least of 7.5 and 23, because the heart's joints and lips fade nearly into the flag.
+
+   This finding overrules part of round 4's fix list for G-19 ("step the inside by whole and half flags"). That fixed the rings, but it is the cause of the blocks.
+
+   Fix (in `scripts/art/native/undercroft.py`, `flag_rungs`, `pool_rungs` and `floor_codes`):
+   - **Give the torchlight its colour.** The pool's rungs must read as candle light on stone: rung 2 about L 0.43 to 0.45 and rung 3 about 0.50 to 0.53, both at C 0.045 to 0.065 and hue 55 to 80 (Eastward 06: 0.46, 0.062, 65). The stone ramps cannot give that, and there must be no mixing outside the palette. So add one accent family by the house rule (a line in `BASES`, for example a lamplit stone with its body near OKLCH 0.50 / 0.06 / 70, made into a ramp like every other). Use it only for the floor's lifted texels and the faces' lit blocks under a torch. This is a palette change, so Claude A must approve it (house-style 1: a region gets at most three accents). Do not use earth, path or sand (round 3's G-14).
+   - **Let the light cross the flags.** Decide each pool's boundaries by the light's own curve (the smooth `lt` field), not by flag edges. Draw both boundaries (shade to body, body to heart) as the same wide staged 2 x 2 dither as the rim: a quarter, then a half, then three quarters coverage over 6 to 10 px. With only two of them, wide and soft, they will not ring. A flag that a boundary crosses then holds two values, as Eastward's tiles do. Keep the per-flag tint (G-7): the hue is decided per flag, the value per texel.
+   - **Keep the floor drawn under the light.** Joints, lips, arrises and cracks keep running through the pool in that light's tones (joint a rung under the flag, lip a rung over), at the same contrast as in the shade. In the skylight's heart they now fade nearly away.
+   - **Re-measure:** each pool box must stay calm (contrast under 11.9) and drawn (`ground_plane` drawn = True), with C at least 0.045 on the torch pools' bodies. No heart outline more than 25 % in straight runs of 10 px or more, and no hard step anywhere on it.
+2. **G-25, ground, the shade's blotches read as stains or ghost shapes (fault).** These are the "two or three large soft blotches a room". There are six, each 1.1 to 3.9 H² (start (254,367,361,544), 107 x 177 px; corridor (929,347,1177,484); seal (1268,440,1571,580) and (1571,417,1662,577); and others), on `slate_cool 1` (51,48,81), one rung (0.031 L) under the shade body (56,57,90).
+   - Their edges are hard, one texel, and run as smooth curves across 15 to 47 flags and their joints. That is round 3's G-7 fault class: a tint in arcs across the flags.
+   - Some hold a lighter hole, which makes a ring. Room 1's has a head-and-shoulders outline, so at 1x it reads as a figure (`blotch_room1_4x`, and in the room views of the composite).
+   - They lie in the open middle of the rooms, where nothing would make stone damp.
+   - Eastward 06's shade varies at the scale of its tiles and in small ochre moss flecks, never in a crisp silhouette over the floor (`sbs_shade_r5_3x`).
+
+   Fix:
+   - Make variation per flag. A damp patch is a group of whole flags (three to eight) taking `slate_cool` 1 or `slate` 1, with its edge on joints. Where a softer edge is wanted, the staged 2 x 2 dither may cross one flag, as at a pool's rim.
+   - Put the damp groups where water would gather: along the walls' feet, in the corners and under the roots. Nothing in a room's open middle.
+   - No holes, and no outline over 1 H across that reads as a shape.
+3. **G-26, ground, the shade is still under-drawn (fault; the part of round 4's G-21 that remains).**
+   - `ground_plane` gives drawn = False on every shade box: (200,430,310,512) 6.4 tones and 10.7 shapes a patch; (250,380,387,490) 7.7 and 13.9; (300,360,520,520) 6.1 and 9.9; (1290,450,1440,570) 7.7 and 15.3. The band's least is 7.5 and 23. Eastward 06 measures 11.9 to 18.0 tones and 22.8 to 23.7 shapes on its shade.
+   - 77.7 % of all ambient flag-body texels are one colour, (56,57,90). Each flag body is a single fill.
+   - House-style rule 1: a surface made of parts gives each part one of the family's three siblings. The flags do not take siblings.
+
+   Fix:
+   - Each flag takes `slate`, `slate_cool` or `slate_warm` at its rung (siblings, so no value noise), and the odd flag is a tone off.
+   - Give flags a chipped corner knocked to joint, and a worn lip here and there.
+   - Let the G-25 damp groups supply the rest.
+
+   That is structure that makes sense for laid stone, not grain. Re-measure drawn = True on the four boxes, with the contrast still under 11.9.
+4. **G-27, ground, no falloff across the rooms (fault; `detail.no_falloff` 0.307 upheld).** In every room the floor's median L is 0.274 within 20 px of the walls (the occlusion band). It is then 0.359 everywhere from 20 px on, at 20 to 40, 40 to 80 and over 80 px alike, and the same in the north and south halves of every room. So outside the pools a room is one flat value from wall to wall. Eastward 06's floor runs from 0.27 (beside the west crystal) through 0.36 (shade) to 0.46 (by the fire): it falls off continuously away from its lights. The checklist asks for falloff into corners. Fix:
+   - Grade the ambient by distance from the nearest light. Keep rung 1 (0.36) within about 1.5 H of a torch, the stair or the skylight. Let it step down one rung (about 0.30 to 0.33, `slate_cool 1` and `slate 1`) in the far half of each room and its corners, through one wide staged 2 x 2 dither that stops at joints in places.
+   - Keep the void at 0.21 and the joints a rung under, so the darkest floor still stands at least 0.08 over the void.
+   - Re-run `review:asset`: `detail.no_falloff` must clear 0.33 without raising the pools.
+5. **C-6, channel_lit, the spill reaches only two floor rows (fault; C-4 part fixed).** The composite diff shows the changes listed in the claims table above. North of the main run, the lip rows d -7 and -8 change at 83 and 49 %. The floor rows d -9 and -10 change at 49 and 17 %, and then 5 and 4 %. West of the branch: two floor columns, at 50 and 17 %. Nothing changes south of the main run or east of the branch. The spill is drawn as ragged 2 x 2 blocks in the glow's own violets, so on grey and at 3x it reads as a violet fringe or moss along one bank (`channel_T_unlit_vs_lit_6x`, the asset sheet). A near-white core in a dark room throws no light past 2 px of floor. Round 4 asked for 3 to 4 floor rows along the whole run and round the branch. Fix:
+   - Light about 0.25 to 0.35 H of floor (18 to 26 px) on both sides of the main run and the branch, fading by the same staged 2 x 2 dither as the pools.
+   - Draw it as the floor's own flags lifted a rung on a violet sibling (joints and lips kept), not as blocks in the glow's colour.
+   - Let the overlay's `reach` cover it.
+   - Pin it with the composite diff in the test (floor rows north of the lip, not overlay alpha rows that include the lip).
+6. **G-28, ground, knots and stripes (polish).**
+   - 286 dark 2 x 2 knots in the joint colours (37,35,64) and (32,25,59) sit at the joints' junctions, 2.0 an H² of floor. At 3x they read as rivets or nail heads, which laid stone does not have (`blotch_room1_4x`, `hatch_r5_6x`).
+   - The wall-foot fade along room 1's west wall is a straight two-column checker strip that reads as a dotted stripe (`southfoot_4x`).
+
+   Fix:
+   - Let a junction be where the joints meet, at most a one-texel widening.
+   - Stagger the fade's dither depth along the wall by flag, as at the rims.
+7. **RT-8, roots_corridor, the tilt reads weakly (polish).** The lifted flag is the right flag now. But at 1x its tilt reads as the root's diagonal cast shadow over a darker flag, and the dark face under its raised west edge is hidden by the root. A moss clump sits on the tilted face. Fix: show 1 to 2 px of the dark face or gap at the flag's west edge, north of the root, and move the moss into the gap.
+
+### False positives
+
+None of the 7 detector findings on the four assets is rejected:
+
+- **`detail.flat` x6 on ground** ((468,205,503,233), (767,347,801,381), (1537,193,1572,229), (1848,193,1886,225), (2051,205,2086,238), (2137,194,2164,240)): upheld, not as a call for grain but as evidence of G-24. Each box is a single-tone flag of 0.16 to 0.21 H² *inside a light's falloff*. A calm flag in the shade's ground plane is right, as round 4 said, and the detector skips those. A flag that the light's curve crosses but that holds one value is the light stopping at the joints, which is what makes the pools read as tiles. Eastward's lit tiles change value within themselves. Fix it by G-24 (the light crosses the flags, and the flag's own joints and lips show in the light), never by adding grain.
+- **`detail.no_falloff` 0.307 (threshold 0.33)**: upheld (G-27). The painter argues that the pools, walls' feet and corners still fall off. Measured, the corners do not: from 20 px off the walls the floor is 0.359 in every distance band, in every room, north and south.
+- **`detail.bar`** on channel_lit (0.81), roots_corridor (0.52, round 4 0.61; the asset now carries a calm floor flag) and cairn_alcove (0.89): accepted as polish, as in round 4.
+
+Count: 0 rejected of 7 faults; 3 polish accepted.
+
+### Grid log
+
+The scene gate was not re-run (no plan or scene change). I visited every region of the painter's composites in state 1 (plate pressed) at 1x and 2x, plus my own zooms:
+
+- **Room 1 (start):**
+  - west wall and stair: the cool stair pool, one step with a dithered rim stopped at joints in places. It reads as daylight from the mouth.
+  - torch 1 and torch 2 pools: grey-brown blocks with hard straight edges (G-24).
+  - roots_hall: unchanged, pass.
+  - centre-left: a figure-like blotch (G-25).
+  - centre and south: one flat shade value, knots at the junctions (G-26, G-27, G-28).
+  - south-west: rubble_hall, the moss clumps along the foot (G-12r fixed).
+  - east door: the return.
+- **Room 2 (corridor):**
+  - the torch pool, a grey slab (G-24).
+  - the two wall roots diving at dark gaps.
+  - rubble_corridor.
+  - a 3.4 H² blotch east of the second root (G-25).
+  - roots_corridor and its lifted flag (RT-7 fixed, RT-8).
+  - south foot moss.
+- **Room 3 (seal):**
+  - the urn standing in torch 5's grey pool.
+  - torch 6's pool with the wall root.
+  - plate_up, lever_up and the lit channel: the core broken at the dividers (C-5 fixed); the violet fringe 2 px into the floor (C-6).
+  - a 3.9 H² blotch below the channel (G-25).
+  - rubble_seal, the south foot.
+- **Room 4 (chamber):**
+  - torch 7's and torch 8's grey pools (G-24).
+  - stump_nw and its shadow.
+  - the skylight: a pale square heart in a dithered halo, inside the plan (G-24 for its heart).
+  - the shard, throwing no light on the floor (note below).
+  - stump_se.
+  - Cairn's alcove (CA-9 fixed).
+  - the south foot.
+
+### For other reviewers (not part of the verdicts)
+
+- **The shard** (pass, unchanged) glows violet but lights no floor round it. Eastward's crystals light theirs. If the floor is repainted for G-24, a small cool pool at its foot would agree with it.
+- **The painter's guards:**
+  - `test_the_pools_are_calm` and `test_the_shade_floor_sits_at_eastwards_value` are sound pins for G-20 and G-21's value, and `test_no_dark_hatching_on_the_flags` is sound for G-22.
+  - `ChannelSpill` counts overlay alpha rows that include the lip, so it passes a spill of two floor rows. Pin C-6 by a composite diff on floor rows only.
+  - A chroma floor on the torch pools and a `ground_plane` drawn test on the shade and the skylight would pin G-24 and G-26.
+
+### Not checked
+
+- The scene gate's Godot renders and grid cells: not re-run, because the plan and the scene are unchanged since round 4.
+- In the game by hand, at phone scale and under the night tint.
+- The lit channel and the open seal in Godot: I saw them only in composites from `kit.json`.
+- Whether the proposed accent family fits the house palette's rule: that is a palette decision for Claude A, not a measurement I made.

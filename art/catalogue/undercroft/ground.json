@@ -106,7 +106,8 @@
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset. Painter's note for the auditor (round 5, not a verdict): the six detail.flat faults fall on the torch pools' rim flags (stone_warm 1 with stone 1 sibling clusters and their lips), calm lit flags as Eastward 06 draws them, so they are proposed for rejection and no grain was added (round 4 instruction). detail.no_falloff (0.31; round 4 0.36) measures the whole picture's large-scale spread, which fell when the shade floor rose to Eastward 06's OKLab L 0.36 (G-21); the pools, the walls' feet and the corners still fall off, so it is proposed for rejection too."
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 5, PR #440 at 8c6ade9e. Round 4's numbers are met (verified): pools two rungs, rim dither only, no blue ring; contrast 10.0/9.3/10.2/3.6/8.7 under 11.9; shade L 0.359 (Eastward 06 0.361); no hatching (0 strokes on flag bodies). Fails: G-24 the pools read as grey paving, not light (torch pools C 0.018 hue 346 to 8, less coloured than the shade's C 0.057; Eastward 06 lit floor C 0.062 hue 65; hard undithered heart edges, 64 % torch and 80 % skylight of heart outline in straight runs of 10 px or more; skylight box and heart under-drawn); G-25 six hard-edged blotches of 1.1 to 3.9 H^2 drawn across 15 to 47 flags read as stains or ghost shapes; G-26 the shade is under-drawn (ground_plane drawn False: 6.1 to 7.7 tones and 9.9 to 15.3 shapes a patch, against a band least of 7.5 and 23; 77.7 % of flag bodies one colour, no per-flag siblings); G-27 no falloff (L 0.359 in every distance band from 20 px off the walls, in every room). Polish G-28 (junction knots, the checker stripe at the wall's foot). Detector findings: detail.flat x6 and detail.no_falloff upheld, none rejected; detail.flat marks one-tone flags inside a light's falloff (G-24), to be fixed by the light crossing the flags, never by grain."
  }
 }
