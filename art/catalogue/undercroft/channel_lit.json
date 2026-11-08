@@ -63,7 +63,8 @@
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset. Painter's note (round 8, C-8, not a verdict): the lone-pixel cleanup is removed, so the spill keeps the floor's own marks; check:kit now counts 1.02 % lone pixels against the drawn pictures' 1 % limit (the floor it copies is a ground, near 2 %). Left for Claude A to rule on scoping that limit."
+  "verdict": "pass",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 8, PR #440 at 41d62d92. C-8 fixed: the cleanup loop is gone. C-9: of its 90 lone pixels (1.02 % of 8,863 interior texels), 73 are lone in the unlit ground at the same place (the floor's own crack ends, lip ends and flecks lifted a rung) and 17 are the divider caps, as in round 7 (18). The ground under the same footprint is 1.03 % lone. They are drawn marks, not noise. check:kit's 1 % limit is for prop drawings; recommended to Claude A: judge a floor overlay's copied floor texels by LONE_GROUND (2 %), not to raise LONE_MAX. Until then check:kit fails on this picture. detail.bar 0.593 and detail.outline 0.12 accepted as polish (mostly lit floor)."
  }
 }
