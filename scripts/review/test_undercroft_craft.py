@@ -188,9 +188,9 @@ class RealFloorTint(unittest.TestCase):
         from scripts.art.native import undercroft as U
         f = self.f
         keep = ndi.binary_erosion(f['paint'], iterations=2)            # its own edge, not the wall it meets
-        for tint in ('tint_warm', 'tint_cool'):
-            heart = (f['rung'] >= U.FLOOR_AMBIENT + 2) & f['paint'] & f[tint]       # its texels (a staged dither)
-            curve = (f['light'] >= U.FLOOR_AMBIENT + 1.5) & f['paint'] & f[tint]    # the light's curve it follows
+        for tint, top in (('tint_warm', 3), ('tint_cool', 2)):                       # a torch's heart is its third band
+            heart = (f['rung'] >= U.FLOOR_AMBIENT + top) & f['paint'] & f[tint]     # its texels (a staged dither)
+            curve = (f['light'] >= U.FLOOR_AMBIENT + top - 0.5) & f['paint'] & f[tint]   # the light's curve
             self.assertTrue(heart.any())
             self.assertLess(_straight_share(heart, keep), 0.30, tint)
             self.assertLess(_straight_share(curve, keep), 0.30, tint)
@@ -231,8 +231,35 @@ class RealFloorTint(unittest.TestCase):
         _, cnt = np.unique(f['codes'][body], return_counts=True)
         self.assertLessEqual(cnt.max() / cnt.sum(), 0.5)
 
-    def test_a_pool_climbs_two_rungs_at_most(self):
-        # G-19: the heart and one rim over the ambient, no more
+    def test_the_torchlight_falls_off_through_the_stone(self):
+        # G-29: lamplit on 25 to 55 % of a torch pool, never against the slate shade; the darkest 15 % violet;
+        # at least 20 % in-between texels (hue 320 to 35) in the band 8 texels either side of its edge; the
+        # light reaching about 1.5 to 1.9 H from the wall's foot
+        from scipy import ndimage as ndi
+        from scripts.art.native.palette import FI
+        from scripts.art.native import undercroft as U
+        f = self.f
+        A = U.FLOOR_AMBIENT
+        L, C, h = _oklch(self.painted)
+        pool = f['tint_warm'] & f['paint'] & (f['rung'] > A)
+        lamp = np.isin(f['codes'] // 8, [FI['lamplit'], FI['lamplit_warm'], FI['lamplit_cool']])
+        self.assertTrue(0.25 <= lamp[pool].mean() <= 0.55, lamp[pool].mean())
+        shade = f['paint'] & (f['rung'] <= A)
+        self.assertEqual(int((lamp & f['paint'] & ndi.binary_dilation(shade)).sum()), 0)
+        d = pool & (L <= np.quantile(L[pool], 0.15))
+        self.assertGreaterEqual(np.mean((h[d] >= 290) & (h[d] <= 350)), 0.8)
+        lit = f['paint'] & (f['rung'] > A)
+        hem = f['paint'] & ndi.binary_dilation(pool, iterations=10) & ~f['tint_cool'] & (
+            ((ndi.distance_transform_edt(lit) > 0) & (ndi.distance_transform_edt(lit) <= 8)) |
+            ((ndi.distance_transform_edt(~lit) > 0) & (ndi.distance_transform_edt(~lit) <= 8)))
+        between = (h >= 320) | (h <= 35)
+        self.assertGreaterEqual(between[hem].mean(), 0.20)
+        col = f['rung'][168:600, 160:176].max(1)                  # below torch 1
+        reach = int(np.nonzero(col > A)[0].max())
+        self.assertTrue(1.4 * 74 <= reach <= 2.0 * 74, reach)
+
+    def test_a_pool_climbs_three_rungs_at_most(self):
+        # G-19, G-29: the in-between band, the warm band and the heart over the ambient, no more
         from scripts.art.native import undercroft as U
         r = self.f['rung'][self.f['paint'] & (self.f['slab'] > 0)]
         self.assertLessEqual(int(r.max()), U.FLOOR_AMBIENT + U.POOL_STEPS)
@@ -347,6 +374,32 @@ def _spill(floor, overlay, foot=(10, 124), t_col=214, end_col=250, reach=30):
     return out
 
 
+def _pool_character(rgb):
+    """G-29's measure of a torch pool in a picture: the median OKLCH chroma of its texels (all but the slate
+    shade round it) and the share of its darkest 15 % that stay violet (hue 290 to 350)."""
+    L, C, h = _oklch(rgb)
+    lit = (L >= 0.25) & ~((h >= 250) & (h <= 300))
+    d = lit & (L <= np.quantile(L[lit], 0.15))
+    return float(np.median(C[lit])), float(np.mean((h[d] >= 290) & (h[d] <= 350)))
+
+
+def _wall_warmth(rgb):
+    """G-30: the share of a wall crop's texels in the lamp's colour (hue 35 to 100, chroma over 0.03)."""
+    L, C, h = _oklch(rgb)
+    return float(np.mean((h >= 35) & (h <= 100) & (C > 0.03)))
+
+
+def _knots(rgb):
+    """G-31: small fully dark 2 x 2 blocks in the joint colours, alone (not part of a dark area)."""
+    from scipy import ndimage as ndi
+    c = rgb[..., :3].astype(int)
+    dark = np.zeros(c.shape[:2], bool)
+    for cc in ((37, 35, 64), (44, 36, 51), (32, 25, 59)):
+        dark |= (np.abs(c - np.array(cc)).sum(2) == 0)
+    b = dark[:-1, :-1] & dark[1:, :-1] & dark[:-1, 1:] & dark[1:, 1:]
+    return int(ndi.label(b & (ndi.uniform_filter(dark.astype(float), 6)[:-1, :-1] < 0.4))[1])
+
+
 def _oklab_L(rgb):
     c = rgb[..., :3].astype(float) / 255
     c = np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
@@ -389,14 +442,36 @@ class LightColourAndDrawing(unittest.TestCase):
 
     SHADE_BOXES = ((200, 430, 310, 512), (250, 380, 387, 490), (300, 360, 520, 520), (1290, 450, 1440, 570))
 
-    def test_the_torchlight_is_gold(self):
-        # Eastward 06's floor by the fire: OKLCH C 0.062 at hue 65; round 5's pools were C 0.018 (greige)
-        g = _rgba('ground')
-        for (x0, y0, x1, y1) in ((60, 150, 211, 273), (700, 312, 851, 400), (1800, 168, 1950, 260)):
-            C, h, n = _warm_light(g[y0:y1, x0:x1])
-            self.assertGreater(n, 500)
-            self.assertGreaterEqual(C, 0.045)
-            self.assertTrue(55 <= h <= 80, h)
+    def test_the_torchlight_is_light_on_stone(self):
+        # G-29 (Claude A's round 7 ruling): Eastward 06's warm floor is OKLab L 0.43, OKLCH C 0.035, hue 47, its
+        # darkest texels violet. Round 5's pools were grey (C 0.018); round 6's an ochre rug (C 0.063, the
+        # darkest texels ochre): both fail
+        g = _rgba('ground')[..., :3]
+        for (x0, y0, x1, y1) in ((60, 168, 300, 300), (640, 312, 850, 420), (1760, 168, 1950, 300)):
+            with self.subTest(box=(x0, y0, x1, y1)):
+                C, violet = _pool_character(g[y0:y1, x0:x1])
+                self.assertTrue(0.025 <= C <= 0.05, C)
+                self.assertGreaterEqual(violet, 0.8)
+        for name in ('undercroft_r5_pool.png', 'undercroft_r6_pool.png'):
+            a = np.asarray(Image.open(os.path.join(FIXTURES, name)).convert('RGB'))
+            C, violet = _pool_character(a)
+            self.assertFalse(0.025 <= C <= 0.05 and violet >= 0.8, name)
+
+    def test_the_torches_light_their_wall(self):
+        # G-30: round 6's faces and kerbs round the cups held no warm texel
+        g = _rgba('ground')[..., :3]
+        for (x0, y0, x1, y1) in ((120, 90, 220, 168), (696, 234, 796, 312)):
+            self.assertGreater(_wall_warmth(g[y0:y1, x0:x1]), 0.10)
+        self.assertLess(_wall_warmth(g[90:168, 290:370]), 0.05)            # the face between two torches stays grey
+        a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r6_wall.png')).convert('RGB'))
+        self.assertLess(_wall_warmth(a), 0.05)
+
+    def test_no_knots_at_the_junctions(self):
+        # G-31: round 6's shade held a dark 2 x 2 knot at most of its junctions
+        g = _rgba('ground')[..., :3]
+        self.assertLess(_knots(g[380:490, 250:387]), 10)
+        a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r6_shade.png')).convert('RGB'))
+        self.assertGreater(_knots(a), 40)
 
     def test_the_round5_pool_was_grey(self):
         a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r5_pool.png')).convert('RGB'))

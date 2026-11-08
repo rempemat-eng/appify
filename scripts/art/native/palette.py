@@ -82,8 +82,8 @@ FAMS = ['crag', 'crag_warm', 'crag_cool', 'grass', 'grass_warm', 'grass_cool', '
         # appended for the Undercroft's torchlit floor (round 6, G-24): existing codes keep their numbers
         'lamplit', 'lamplit_warm', 'lamplit_cool']
 FI = {n: i for i, n in enumerate(FAMS)}
-# accents a painter names on purpose and nearest-colour mapping never picks (round 6: the Undercroft's
-# torchlit floor), so adding them moves no other picture's colours
+# families a painter names on purpose and nearest-colour mapping never picks (lamplit, the lamp's light on
+# stone: the Undercroft's torchlit floor and walls), so adding them moves no other picture's colours
 NAMED_ONLY = ('lamplit', 'lamplit_warm', 'lamplit_cool')
 PICKABLE = np.array([n not in NAMED_ONLY for n in FAMS for _ in range(8)])
 

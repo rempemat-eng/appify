@@ -88,13 +88,14 @@ BASES = {
     'regolith':  ('accent:moon', '#8E877E'),        # grey to brown-grey (Matt, 20 Oct)
     'void':      ('accent:station,moon', '#2A2C44'),  # space seen through glass, the sky past the moon
     'crag':      ('accent:highland', '#8A5546'),    # warm dark highland rock (cliff_core.py, from the cliff bake-off)
-    'lamplit':   ('accent:undercroft', '#A4885A'),  # stone under torchlight, floor texels in a torch's pool only (Claude A, round 6 G-24)
     # glows: light sources, a deep colour up to a near-white core
     'lamp':      ('glow', '#F0B050'),
     'neon_pink': ('glow', '#F04A9E'),
     'neon_cyan': ('glow', '#2CC0D8'),
     'lava':      ('glow', '#F27222'),
     'glowflora': ('glow', '#36D0B0'),
+    # a glow's light on a surface: drawn by the surface rule (it lights stone, it is not a light), named only
+    'lamplit':   ('sibling:lamp', '#A08C6D'),       # the lamp's light on stone: the Undercroft's torchlit floor and walls (Claude A, round 7)
 }
 
 # A cast shadow steps the ground this many tones down its own ramp, so it stays on the

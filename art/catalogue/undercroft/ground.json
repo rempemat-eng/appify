@@ -1,7 +1,7 @@
 {
  "id": "undercroft/ground",
  "file": "game/zones/undercroft/art/ground.png",
- "sha256": "938dc4f88f62cfea67df28ed9cb136e0a1cb45c1f425de0b6cb04b53af87a46f",
+ "sha256": "66bfd82a8593b221eb5b5d6a5545449587b80cdda703750626c8555716fd3bf7",
  "kind": "ground",
  "biome": "cellar",
  "H": 74.0,
@@ -13,7 +13,7 @@
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 7,
+  "fault": 1,
   "polish": 0
  },
  "detail_bar": null,
@@ -29,85 +29,12 @@
    ],
    "message": "the interior is lit evenly: large-scale light varies only 0.31 of its mean (Eastward's interiors 0.39 to 0.56)",
    "fix": "light the room from its sources: pools under lamps and openings, falloff into corners, a dark occlusion band along every wall base and under objects, warm light against cool shade (art-style.md, Eastward: light as a material)"
-  },
-  {
-   "detector": "detail.ragged_edge",
-   "severity": "fault",
-   "box": [
-    1992,
-    166,
-    2189,
-    269
-   ],
-   "message": "undercroft/ground (dirt): a ragged edge: 14% of its outline is one-texel spurs and bites, 2% of its steps are spikes or notches (soft grid: at most 6% and 5%)",
-   "fix": "draw the edge on the soft grid (eastward-edges.md 1.4 to 1.6, 5.1): smooth runs that step one texel at a time and lengthen or shorten slowly round a curve, a darker rim on the shadow side and a lit lip on the other, bites and tufts only as rounded shapes a few texels across"
-  },
-  {
-   "detector": "detail.ragged_edge",
-   "severity": "fault",
-   "box": [
-    91,
-    166,
-    258,
-    245
-   ],
-   "message": "undercroft/ground (dirt): a ragged edge: 10% of its outline is one-texel spurs and bites, 1% of its steps are spikes or notches (soft grid: at most 6% and 5%)",
-   "fix": "draw the edge on the soft grid (eastward-edges.md 1.4 to 1.6, 5.1): smooth runs that step one texel at a time and lengthen or shorten slowly round a curve, a darker rim on the shadow side and a lit lip on the other, bites and tufts only as rounded shapes a few texels across"
-  },
-  {
-   "detector": "detail.ragged_edge",
-   "severity": "fault",
-   "box": [
-    1746,
-    166,
-    1918,
-    260
-   ],
-   "message": "undercroft/ground (dirt): a ragged edge: 10% of its outline is one-texel spurs and bites, 3% of its steps are spikes or notches (soft grid: at most 6% and 5%)",
-   "fix": "draw the edge on the soft grid (eastward-edges.md 1.4 to 1.6, 5.1): smooth runs that step one texel at a time and lengthen or shorten slowly round a curve, a darker rim on the shadow side and a lit lip on the other, bites and tufts only as rounded shapes a few texels across"
-  },
-  {
-   "detector": "detail.ragged_edge",
-   "severity": "fault",
-   "box": [
-    377,
-    166,
-    568,
-    252
-   ],
-   "message": "undercroft/ground (dirt): a ragged edge: 8% of its outline is one-texel spurs and bites, 4% of its steps are spikes or notches (soft grid: at most 6% and 5%)",
-   "fix": "draw the edge on the soft grid (eastward-edges.md 1.4 to 1.6, 5.1): smooth runs that step one texel at a time and lengthen or shorten slowly round a curve, a darker rim on the shadow side and a lit lip on the other, bites and tufts only as rounded shapes a few texels across"
-  },
-  {
-   "detector": "detail.ragged_edge",
-   "severity": "fault",
-   "box": [
-    1246,
-    166,
-    1430,
-    259
-   ],
-   "message": "undercroft/ground (dirt): a ragged edge: 7% of its outline is one-texel spurs and bites, 1% of its steps are spikes or notches (soft grid: at most 6% and 5%)",
-   "fix": "draw the edge on the soft grid (eastward-edges.md 1.4 to 1.6, 5.1): smooth runs that step one texel at a time and lengthen or shorten slowly round a curve, a darker rim on the shadow side and a lit lip on the other, bites and tufts only as rounded shapes a few texels across"
-  },
-  {
-   "detector": "detail.ragged_edge",
-   "severity": "fault",
-   "box": [
-    1052,
-    310,
-    1182,
-    391
-   ],
-   "message": "undercroft/ground (dirt): a ragged edge: 6% of its outline is one-texel spurs and bites, 3% of its steps are spikes or notches (soft grid: at most 6% and 5%)",
-   "fix": "draw the edge on the soft grid (eastward-edges.md 1.4 to 1.6, 5.1): smooth runs that step one texel at a time and lengthen or shorten slowly round a curve, a darker rim on the shadow side and a lit lip on the other, bites and tufts only as rounded shapes a few texels across"
   }
  ],
  "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 6, PR #440 at 05cffe7b. Fails on G-29 (the torch pools read as an ochre material laid on the floor, not light: 98 % of lit torch texels are ochre at C 0.063 including the joints (darkest 15 % hue 50), and the hem band holds 0 % in-between hues against Eastward 06's 32 %; Eastward's lit floor keeps violet darks, hue 302-312, at C 0.035) and G-30 (no warm texel on the wall face or kerb round any torch). G-25, G-26, G-27 fixed; G-28 part fixed (247 junction knots, polish G-31). Detector findings: detail.no_falloff 0.306 rejected as a false positive on this asset (flattening the whole floor moves it only to 0.275: the void and walls set it; the floor itself falls 0.48 > 0.42 > 0.36 > 0.325 from the lights, as Eastward 06's does). detail.ragged_edge x6 on the torch-pool hems upheld as evidence of G-29, not as a call to smooth the dither: the detector reads the pools as brown ground, and so does the eye at 1x."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset. Painter's note for the auditor (round 7, not a verdict): detail.ragged_edge no longer fires on any torch pool. detail.no_falloff (0.31) is the whole-picture measure that round 6's auditor rejected on this asset as a false positive (the void and the wall tops set it)."
  }
 }
