@@ -152,3 +152,138 @@ func test_failed_reconfiguration_emits_nothing_and_retains_pause() -> void:
 	assert_bool(clock.snapshot().active).is_false()
 	assert_bool(clock.advance(40)).is_true()
 	assert_float(clock.snapshot().time).is_equal(0.0)
+
+
+# LOOP-PHASE controls use synthetic metadata and only the in-memory preference key.
+const LOOP_FX = preload("res://world/loop_fx.gd")
+var _loop_roots: Array[Node2D] = []
+var _loop_had_reduced_motion := false
+var _loop_reduced_motion: Variant
+
+func before_test() -> void:
+	_loop_had_reduced_motion = SaveGame.data.settings.has("reduced_motion")
+	_loop_reduced_motion = SaveGame.data.settings.get("reduced_motion")
+	SaveGame.data.settings["reduced_motion"] = false
+
+func after_test() -> void:
+	for root in _loop_roots:
+		if is_instance_valid(root):
+			root.free()
+	_loop_roots.clear()
+	if _loop_had_reduced_motion:
+		SaveGame.data.settings["reduced_motion"] = _loop_reduced_motion
+	else:
+		SaveGame.data.settings.erase("reduced_motion")
+
+func _loop(entry: Variant, frames: int = 8, zone: Variant = "loop_test") -> LoopFx:
+	var root := Node2D.new()
+	root.name = "SyntheticZone"
+	if zone != null:
+		root.set_meta("kit_zone_plan", {"zone": zone})
+	var placement := Node2D.new()
+	placement.name = "PlacedProp"
+	if entry != null:
+		placement.set_meta("kit_zone_entry", entry)
+	root.add_child(placement)
+	var effect := LOOP_FX.new()
+	effect.name = "Smoke"
+	effect.hframes = frames
+	effect.set_process(false)
+	placement.add_child(effect)
+	_loop_roots.append(root)
+	add_child(root)
+	return effect
+
+func _phased_loop() -> LoopFx:
+	for i in 16:
+		var effect := _loop({"id": "placement-%d" % i})
+		if effect._phase > 0:
+			return effect
+	return _loop({"id": "fallback"})
+
+func test_loop_phase_survives_reload_and_parent_rename() -> void:
+	var first := _loop({"id": "hearth-fire"})
+	var phase: int = first._phase
+	assert_int(first.frame).is_equal(phase)
+	first.get_parent().get_parent().free()
+	var reloaded := _loop({"id": "hearth-fire"})
+	reloaded.get_parent().name = "RenamedRuntimeNode"
+	assert_int(reloaded._phase).is_equal(phase)
+	assert_int(reloaded._placement_phase()).is_equal(phase)
+	assert_int(reloaded.frame).is_equal(phase)
+	# A missing zone is also deterministic, without inventing a new seed field.
+	assert_int(_loop({"id": "hearth-fire"}, 8, null)._phase).is_equal(
+		_loop({"id": "hearth-fire"}, 8, null)._phase)
+
+func test_loop_phase_varies_across_authored_placements() -> void:
+	var phases := {}
+	for i in 32:
+		var effect := _loop({"id": "placement-%d" % i})
+		assert_int(effect._phase).is_greater_equal(0)
+		assert_int(effect._phase).is_less(8)
+		phases[effect._phase] = true
+	assert_int(phases.size()).is_greater(1) # Eight frames allow collisions.
+
+func test_loop_missing_or_invalid_identity_keeps_legacy_zero() -> void:
+	for entry in [null, {}, {"id": ""}, {"id": " "}, {"id": 3}, {"id": false}, "placement"]:
+		var effect := _loop(entry)
+		assert_int(effect._phase).is_equal(0)
+		assert_int(effect.frame).is_equal(0)
+		effect._on_screen = true
+		effect._process(0.125)
+		assert_int(effect.frame).is_equal(1)
+	var single := _loop({"id": "hearth-fire"}, 1)
+	assert_int(single._phase).is_equal(0)
+	single._on_screen = true
+	single._process(0.125)
+	assert_int(single.frame).is_equal(0)
+
+func test_loop_phase_preserves_offscreen_and_hidden_freeze() -> void:
+	var effect := _phased_loop()
+	assert_int(effect._phase).is_greater(0)
+	effect._on_screen = true
+	effect._process(0.25)
+	var frozen_t: float = effect._t
+	var frozen_frame: int = effect.frame
+	effect._on_screen = false
+	effect._process(100.0)
+	assert_float(effect._t).is_equal(frozen_t)
+	assert_int(effect.frame).is_equal(frozen_frame)
+	effect._on_screen = true
+	effect.hide()
+	effect._process(100.0)
+	assert_float(effect._t).is_equal(frozen_t)
+	assert_int(effect.frame).is_equal(frozen_frame)
+	effect.show()
+	effect._process(0.125)
+	assert_float(effect._t).is_equal(frozen_t + 0.125)
+	assert_int(effect.frame).is_equal((frozen_frame + 1) % effect.hframes)
+
+func test_loop_reduced_motion_holds_zero_without_catch_up() -> void:
+	var effect := _phased_loop()
+	assert_int(effect._phase).is_greater(0)
+	effect._on_screen = true
+	effect._process(0.25)
+	var frozen_t: float = effect._t
+	var resume_frame: int = effect.frame
+	SaveGame.data.settings["reduced_motion"] = true
+	effect._process(100.0)
+	effect._process(100.0)
+	assert_int(effect.frame).is_equal(0)
+	assert_float(effect._t).is_equal(frozen_t)
+	SaveGame.data.settings["reduced_motion"] = false
+	effect._process(0.0)
+	assert_int(effect.frame).is_equal(resume_frame)
+	assert_float(effect._t).is_equal(frozen_t)
+
+func test_loop_ready_under_reduced_motion_keeps_its_saved_phase() -> void:
+	SaveGame.data.settings["reduced_motion"] = true
+	var effect := _phased_loop()
+	assert_int(effect._phase).is_greater(0)
+	assert_int(effect.frame).is_equal(0)
+	assert_float(effect._t).is_equal(0.0)
+	SaveGame.data.settings["reduced_motion"] = false
+	effect._on_screen = true
+	effect._process(0.0)
+	assert_int(effect.frame).is_equal(effect._phase)
+	assert_float(effect._t).is_equal(0.0)
