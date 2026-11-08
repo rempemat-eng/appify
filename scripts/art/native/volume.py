@@ -372,10 +372,11 @@ def _hull(p):
     return np.array(lo[:-1] + up[:-1])
 
 
-def bake_cast(casts: list, entry: dict, at, W: int, H: int) -> bool:
+def bake_cast(levels: np.ndarray, entry: dict, at, W: int, H: int) -> bool:
     """For the kit's bake: a house's volume shadow (its index entry carries the mask the kit index
-    wrote from house_cast) added to casts. True when the piece was a house (the caller skips the
-    other shadow kinds), False otherwise."""
+    wrote from house_cast), its steps (1 the outer band, 2, 3 the core) kept per texel in levels,
+    the deepest where two houses meet (as kit compose.shadows and terrain_ground.gd take them).
+    True when the piece was a house (the caller skips the other shadow kinds), False otherwise."""
     sh = (entry or {}).get('shadow') or {}
     if sh.get('kind') != 'volume':
         return False
@@ -383,6 +384,18 @@ def bake_cast(casts: list, entry: dict, at, W: int, H: int) -> bool:
     import os
     from scripts.art.kit.schema import ROOT
     mk = sh['mask']
-    arr = np.asarray(Image.open(os.path.join(ROOT, 'game', mk['png'][len('res://'):])))
-    casts.append(cast_at(arr, mk['offset'][0], mk['offset'][1], at, W, H) > 0)
+    arr = np.asarray(Image.open(os.path.join(ROOT, 'game', mk['png'][len('res://'):])).convert('L'))
+    np.maximum(levels, cast_at(arr, mk['offset'][0], mk['offset'][1], at, W, H), out=levels)
     return True
+
+
+def lay_levels(G, before: np.ndarray, levels: np.ndarray) -> None:
+    """Lay the houses' volume shadows on a bake's ground canvas with their authored levels: each
+    texel steps `levels` tones down its own ramp from the ground it had before any shadow
+    (`before`, G.tone then), as the zone painter (town.py, one step per band) and the runtime
+    (kit compose.shadows, terrain_ground.gd) lay them, never collapsed to a rim and a core. Where
+    another shadow already lies the darker of the two stays (the runtime's deepest step wins)."""
+    sel = (levels > 0) & (before < 6)
+    if sel.any():
+        lv = levels.astype(np.int16)
+        G.tone[sel] = np.minimum(G.tone[sel], np.clip(before[sel] - lv[sel], 0, 5))

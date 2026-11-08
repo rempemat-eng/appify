@@ -1164,7 +1164,8 @@ class HouseVolume(unittest.TestCase):
     (deep under thatch), its openings are set in (a dark head and west reveal, a lit east sliver),
     its east corner and foot are darker than its body, its cast shadow lies east, follows a gable's
     verges, never falls before the front, carries a three-step core, stays on the palette in the
-    zone, and no picture is speckled."""
+    zone, the kit bake lays it with the same three steps as the zone painter and the runtime, and
+    no picture is speckled."""
 
     @classmethod
     def setUpClass(cls):
@@ -1304,6 +1305,67 @@ class HouseVolume(unittest.TestCase):
             self.assertTrue(set(np.unique(m)) <= {0, 1, 2, 3} and (m == 3).any(), k)
             # nothing on the foot line or south of it, before the lit front
             self.assertFalse(m[max(0, -sh['mask']['offset'][1]):].any(), k)
+
+    def test_kit_bake_lays_the_volume_shadow_with_its_levels(self):
+        """A house placed in a small kit plan and baked: its ground shadow per texel is the ground
+        stepped down by the cast's level (1, 2, 3), as town.py paints it (one step per band,
+        town.py's shade_masks and its third step) and as the kit's runtime path (compose.shadows,
+        terrain_ground.gd) lays the index mask, on the same ground. Not a rim and a core."""
+        import copy
+        from scripts.art.kit import bake as BK
+        from scripts.art.kit import compose as CK
+        from scripts.art.native import compose as CO
+        from scripts.art.native import volume as VO
+        from scripts.art.native.palette import step
+        at = [200, 240]
+        plan = {'legend': {'.': 'lawn'}, 'rows': ['.' * 24] * 12,
+                'pieces': [{'id': 'hut', 'piece': 'crossroads_hut', 'at': at}]}
+        H, W = 12 * 24, 24 * 24
+        seen = {}
+        g0, c0 = CO.ground_from_codes, CO.cast_shadows
+
+        def ground(codes, d):
+            seen['G'] = g0(codes, d)
+            return seen['G']
+
+        def casts(G, cs, ts, things, d):
+            seen['before'] = G.tone.copy()
+            # the contact lines alone (under the foot, where the sprite stands), on a copy
+            Gc = copy.copy(G)
+            Gc.tone = G.tone.copy()
+            c0(Gc, [], [], things, d)
+            seen['contact'] = Gc.tone != G.tone
+            c0(G, cs, ts, things, d)
+        try:
+            CO.ground_from_codes, CO.cast_shadows = ground, casts
+            BK.bake(plan)
+        finally:
+            CO.ground_from_codes, CO.cast_shadows = g0, c0
+        G, before, contact = seen['G'], seen['before'], seen['contact']
+        fam = G.fam.astype(np.int64)
+        codes0 = fam * 8 + before
+        baked = fam * 8 + G.tone
+        # town.py: the house's cast from its look (houses.building, the zone painter's own call)
+        lv = VO.cast_at(*self.built['hut'].info['cast'], at, W, H).astype(np.int64)
+        town = codes0.copy()
+        for k in (0, 1, 2):
+            town[lv > k] = step(town[lv > k], -1)
+        # the runtime: the kit index's mask through compose.shadows, on the same ground
+        sh = CK.shadows(plan['pieces'], H, W)
+        self.assertTrue((sh == lv).all())
+        runtime = np.where(sh > 0, step(codes0, -sh), codes0)
+        # every cast texel but the contact line under the foot (which the sprite stands on)
+        cmp_ = (lv > 0) & ~contact
+        self.assertGreater(cmp_.sum(), 0.95 * (lv > 0).sum())
+        self.assertEqual(set(np.unique(lv[cmp_])), {1, 2, 3})
+        self.assertTrue((baked[cmp_] == town[cmp_]).all(), int((baked[cmp_] != town[cmp_]).sum()))
+        self.assertTrue((baked[cmp_] == runtime[cmp_]).all(), int((baked[cmp_] != runtime[cmp_]).sum()))
+        # the bands read: each level a further tone down, and nothing spills outside the cast
+        drop = [float((before - G.tone)[cmp_ & (lv == k)].mean()) for k in (1, 2, 3)]
+        self.assertLess(drop[0], drop[1])
+        self.assertLess(drop[1], drop[2])
+        out_ = (lv == 0) & ~contact
+        self.assertTrue((G.tone[out_] == before[out_]).all())
 
     def test_no_new_speckle(self):
         from scripts.art.kit import tone_audit as TA

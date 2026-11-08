@@ -497,6 +497,7 @@ def bake(plan: dict, lib: dict | None = None):
                             shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
     # shadows and the lawn's detail (screen.build's order)
     casts, things, trees, objects = [], [], [], []
+    vol = np.zeros((h, w), np.uint8)        # the houses' volume shadows, their steps 1/2/3
     for pc in pieces:
         e = idx.get(pc['piece'])
         if not e or ((lib.get(pc['piece'], {}).get('rendering') or {}).get('paint')):
@@ -509,7 +510,7 @@ def bake(plan: dict, lib: dict | None = None):
         objects.append((pc['id'], pc['piece'].split('_', 1)[-1], fx - (x1 - x0) / D / 2, fy - (y1 - y0) / D, (x1 - x0) / D, (y1 - y0) / D))
         things.append((fy, img, anc, at))
         sh = e.get('shadow') or {}
-        if VOL.bake_cast(casts, e, at, w, h):
+        if VOL.bake_cast(vol, e, at, w, h):
             continue
         if is_crown_mask(e):
             ex, kind = _tree_ex(pc['piece'], img)
@@ -539,7 +540,7 @@ def bake(plan: dict, lib: dict | None = None):
             limg = CO.fallen_leaf(D, lrng)
             low.append((at[1] / D - 30, limg, (limg.width / 2, limg.height), at, False))
     low += SN.lawn_dressing_hd(cv, pl, h, w)
-    shade = np.zeros((h, w), bool)
+    shade = vol > 0
     for m in casts:
         shade |= m
     SN.ground_detail_hd(cv, pl, trees, h, w, shade, soft=True)
@@ -551,7 +552,10 @@ def bake(plan: dict, lib: dict | None = None):
     for j in srng.permutation(len(sy))[: len(sy) // 140]:
         GD.stamp(cv, int(sy[j]), int(sx[j]), GD.tuft_shape(srng, srng.uniform(0.8, 1.4)), C('grass_cool', 2), turf_s)
     G = CO.ground_from_codes(cv, D)
+    before = G.tone.copy()
     CO.cast_shadows(G, casts, [], things + [(l[0], l[1], l[2], l[3]) for l in low if l[4]], D)
+    # a house's shadow keeps its authored bands (town.py, kit compose.shadows, terrain_ground.gd)
+    VOL.lay_levels(G, before, vol)
     ground = G.rgba()
     for (_y, im, an, at_, _c) in sorted(low, key=lambda t: t[0]):
         CO.paste(ground, im, an, at_)

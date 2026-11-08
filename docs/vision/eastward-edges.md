@@ -311,7 +311,7 @@ Where it is drawn:
 
 - Crossroads: `town.py`, from `Built.info['cast']`.
 - Kit zones: the kit index carries it as the piece's shadow mask (kind `volume`, steps 1 to 3). The editor, the game's ground (`terrain.gdshader` steps a texel by the mask's value) and `compose` lay it like a tree's.
-- The bake lays it with `volume.bake_cast`, at the bake's two-step core for now. The bake's variant context and `detail_bar` do not count a volume mask as a tree. No committed kit zone has a house yet.
+- The bake keeps the mask's steps with `volume.bake_cast` and lays them with `volume.lay_levels`: each texel one, two or three tones down from the ground it had, the same as `town.py` and the runtime (`test_kit` HouseVolume compares a baked house per texel with both). The bake's variant context and `detail_bar` count only a tree's mask as a crown (`bake.is_crown_mask`). No committed kit zone has a house yet.
 
 **11.7 Roof against wall.**
 
