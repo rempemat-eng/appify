@@ -78,8 +78,14 @@ FAMS = ['crag', 'crag_warm', 'crag_cool', 'grass', 'grass_warm', 'grass_cool', '
         # appended for the village kit (village.py): existing codes keep their numbers
         'timber_warm', 'timber_cool', 'plaster_warm', 'slate', 'slate_warm', 'slate_cool', 'sand', 'sand_warm',
         'sand_cool', 'clay', 'clay_cool', 'iron', 'lamp', 'soot', 'ash', 'void', 'lava', 'fox', 'ashlar',
-        'ashlar_warm', 'berry_cool', 'sky_cool', 'brass_warm', 'dusk_cool']
+        'ashlar_warm', 'berry_cool', 'sky_cool', 'brass_warm', 'dusk_cool',
+        # appended for the Undercroft's torchlit floor (round 6, G-24): existing codes keep their numbers
+        'lamplit', 'lamplit_warm', 'lamplit_cool']
 FI = {n: i for i, n in enumerate(FAMS)}
+# accents a painter names on purpose and nearest-colour mapping never picks (round 6: the Undercroft's
+# torchlit floor), so adding them moves no other picture's colours
+NAMED_ONLY = ('lamplit', 'lamplit_warm', 'lamplit_cool')
+PICKABLE = np.array([n not in NAMED_ONLY for n in FAMS for _ in range(8)])
 
 LUT = np.zeros((len(FAMS) * 8, 3), np.uint8)
 for _n, _i in FI.items():

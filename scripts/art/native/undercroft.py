@@ -11,7 +11,7 @@ foot. The oak's roots split some bays (cracks, a displaced block, rootlets) and 
 floor. The floor (round 4, after Eastward's dungeon in shot 06) is the calmest, darkest lit surface:
 irregular flags on a 4 px sub-grid with warped joints, worn corners, dirt and moss in the joints,
 pits and sparse cracks, no bevels, painted last from the light on one short value ladder
-(FLOOR_LADDER: violet shade, warm pools that fall off softly, flag by flag into the dark corners).
+(violet shade, warm pools that fall off softly, into the dark corners).
 The walls, coping and props carry the contrast and the 3D read.
 
     python3 -m scripts.art.native.undercroft --plan game/data/plans/undercroft.json --density 3 \\
@@ -159,126 +159,11 @@ def break_runs(cv, mask, rng, longest=48):
                 x = max(e, x + 1)
 
 
-# The floor's value ladder (round 5, matched to Eastward's dungeon, shot 06, at the same character
-# height, G-21): the floor in shade sits at OKLab L 0.36 (slate 1, Eastward's 06 shade is 0.36 to 0.37),
-# well over the void (L 0.21), with a few large soft blotches on its cool sibling; the joints and the
-# walls' feet a rung under it. Only the light pools climb, two rungs at most, on their light's sibling.
-#   rung  OKLab L      body / variant
-#   0     0.27         void 2 / void 2             a joint, the walls' feet, the far corners
-#   1     0.36 / 0.33  slate 1 / slate_cool 1      the floor in shade (variant: damp corners, soft blotches)
-#   2     0.44 / 0.38  slate_cool 2 / slate_warm 1 a shade flag's lit north-west lip
-#   3+                 (marks only: moss and drifts take their tones from these)
-FLOOR_LADDER = [(('void', 2), ('void', 2)), (('slate', 1), ('slate_cool', 1)), (('slate_cool', 2), ('slate_warm', 1)),
-                (('stone_warm', 1), ('ash', 2)), (('stone', 2), ('stone_warm', 2)), (('stone', 3), ('stone_warm', 3)),
-                (('stone_warm', 4), ('stone', 4))]
-# under the skylight and at the hatch the pool's rungs on the cool ramps (daylight from above is blue
-# against the torches): its rim slate_cool 2 / slate 2, its heart slate 3 / slate_cool 3; a joint or a
-# flag's south-east lip in it a rung under, slate_cool 1
-FLOOR_LADDER_COOL = {1: (('slate_cool', 1), ('slate_cool', 1)), 2: (('slate_cool', 2), ('slate', 2)), 3: (('slate_cool', 3), ('slate_cool', 3)),
-                     4: (('slate', 4), ('slate_cool', 4)), 5: (('slate', 4), ('slate_cool', 4)), 6: (('slate', 5), ('slate_cool', 5))}
-# under a torch the pool lights the floor's own stone on its warm siblings, never another material
-# (round 4, G-14), and every flag it lifts is warm (round 5, G-19: no blue ring between the heart and the
-# shade): stone_warm 1 at its rim, stone_warm 2 and stone 2 in its heart; a joint or south-east lip in it
-# a rung under, stone_cool 1 (warm grey, not the shade's violet)
-FLOOR_LADDER_WARM = {1: (('stone_cool', 1), ('stone_cool', 1)), 2: (('stone_warm', 1), ('stone_warm', 1)),
-                     3: (('ashlar', 1), ('stone', 2)), 4: (('stone_warm', 3), ('ashlar', 3)),
-                     5: (('ashlar', 4), ('stone_warm', 4)), 6: (('ashlar', 4), ('stone_warm', 4))}
-FLOOR_AMBIENT = 1                # far from every light the floor sits on rung 1, in shade, as Eastward's
-# round 5 (8 Nov, G-19): a pool climbs at most two rungs over the ambient (its rim and its heart), flag by
-# flag (whole flags, or a flag split once by a straight line into halves a rung apart), never in contour bands
+FLOOR_AMBIENT = 2                # round 6: rung 2 is the shade near a light (Eastward 06's 0.36); 1 the far shade, 0 the walls' feet
+FAR_MIN = 290                    # round 6 (G-27): the far shade starts no nearer than this (texels) to any light
+# a pool climbs at most two rungs over the ambient, its body and its heart (round 5, G-19)
 POOL_STEPS = 2
 POOL_HEART, POOL_SPILL = 2.6, 1.3
-
-
-def flag_rungs(level, slab, nflags, rng, split=None, lo=0, hi=FLOOR_AMBIENT + POOL_STEPS):
-    """The floor's light stepped by its flags: each flag takes one rung from the mean light over it (give
-    or take a little, so the odd stone sits a rung off); where `split` holds (in a pool) and the light
-    crosses a rung boundary well inside a flag, the flag is cut once by a straight line across the
-    light's gradient into two halves a rung apart. Returns rungs per texel (0 off the flags)."""
-    H, W = slab.shape
-    idx = np.arange(1, nflags + 1)
-    Y, X = np.mgrid[0:H, 0:W].astype(float)
-    on = slab > 0
-    with np.errstate(invalid='ignore', divide='ignore'):
-        cnt = np.maximum(ndi.sum(on, labels=slab, index=idx), 1)
-        mx = ndi.sum(X, labels=slab, index=idx) / cnt
-        my = ndi.sum(Y, labels=slab, index=idx) / cnt
-        ml = np.nan_to_num(ndi.sum(level, labels=slab, index=idx) / cnt, nan=float(FLOOR_AMBIENT))
-        vx = ndi.sum(X * X, labels=slab, index=idx) / cnt - mx * mx
-        vy = ndi.sum(Y * Y, labels=slab, index=idx) / cnt - my * my
-        gx = (ndi.sum(X * level, labels=slab, index=idx) / cnt - mx * ml) / (vx + 1e-6)
-        gy = (ndi.sum(Y * level, labels=slab, index=idx) / cnt - my * ml) / (vy + 1e-6)
-    jit = rng.uniform(-0.15, 0.15, nflags)
-    r0 = np.clip(np.floor(ml + jit + 0.5).astype(int), lo, hi)
-    pad = lambda v: np.concatenate([[0], v])
-    R0, MX, MY, ML, GX, GY = (pad(v) for v in (r0, mx, my, ml, gx, gy))
-    out = np.zeros((H, W), int)
-    out[on] = R0[slab[on]]
-    if split is None:
-        return out
-    plane = np.zeros((H, W))
-    f = slab[on]
-    # the cut runs straight across the flag, east-west or north-south (whichever crosses the light's
-    # gradient best), so a flag splits into two halves like a cracked stone, never a wedge
-    horiz = np.abs(GY[f]) >= np.abs(GX[f])
-    plane[on] = ML[f] + np.where(horiz, GY[f] * (Y[on] - MY[f]), GX[f] * (X[on] - MX[f]))
-    up = on & (plane > out + 0.5)
-    dn = on & (plane < out - 0.5)
-    with np.errstate(invalid='ignore', divide='ignore'):
-        fu = pad(ndi.sum(up, labels=slab, index=idx) / cnt)
-        fd = pad(ndi.sum(dn, labels=slab, index=idx) / cnt)
-    ok = on & split
-    half_u = ok & up & (fu[slab] >= 0.25) & (fu[slab] <= 0.75) & (fu[slab] >= fd[slab])
-    half_d = ok & dn & (fd[slab] >= 0.25) & (fd[slab] <= 0.75) & (fd[slab] > fu[slab])
-    out[half_u] += 1
-    out[half_d] -= 1
-    return np.clip(out, lo, hi) * on
-
-
-def flag_texture(cv, mask, rng, share=0.35):
-    """A flag's face (8 Nov round 3, G-10): clusters of two to four texels on its two sibling ramps at
-    the same tone and, now and then, a tone down (a worn hollow), gathered in drifts: many small shapes
-    and tones in a patch, but no contrast between the flags."""
-    from .palette import FAMS as FAMS_, parent, FI, LUT
-
-    def _L(code_):
-        r_, g_, b_ = (int(v) for v in LUT[code_])
-        return 0.299 * r_ + 0.587 * g_ + 0.114 * b_
-    H, W = cv.shape
-    ok = mask & (cv >= 0) & (cv % 8 <= 5)
-    ys, xs = np.nonzero(ok)
-    if not len(ys):
-        return
-    dn = ndi.gaussian_filter(rng.random((H, W)), 3.0)
-    dn = (dn - dn[ok].mean()) / (dn[ok].std() + 1e-9)
-    for _ in range(int(len(ys) * share / 2.8)):
-        k = int(rng.integers(0, len(ys)))
-        y, x = int(ys[k]), int(xs[k])
-        if dn[y, x] < rng.normal(-1.2, 0.8):                   # a light drift: every flag gets its share
-            continue
-        c = int(cv[y, x])
-        pts = [(y + dy, x + dx) for dy, dx in _CLUSTERS[int(rng.integers(0, len(_CLUSTERS)))]
-               if 0 <= y + dy < H and 0 <= x + dx < W and ok[y + dy, x + dx] and cv[y + dy, x + dx] == c]
-        if len(pts) < 2:
-            continue
-        fn = FAMS_[c // 8]
-        r = rng.random()
-        shade_f = fn in ('soot', 'void')                         # in the shade only a rare hollow (logic.scale)
-        if shade_f:                                               # round 4 (G-16): no tone-down grit anywhere
-            continue
-        else:
-            par = parent(fn)
-            other = [n for n in (par + '_warm', par + '_cool') if n in FI and n != fn]
-            if fn != par:                                         # mostly its body ramp, now and then the other sibling
-                opts = [par] if (rng.random() < 0.65 or not other) else other
-            else:
-                opts = other
-            opts = [n for n in opts if n in FI and n != fn and abs(_L(FI[n] * 8 + c % 8) - _L(c)) <= 8]
-            if not opts:                                          # only siblings close in value: no dark specks
-                continue
-            nc = FI[opts[int(rng.integers(0, len(opts)))]] * 8 + c % 8
-        for p_ in pts:
-            cv[p_] = nc
 
 
 def flag_tint(slab, nflags, lf_cool, lf_warm, lifted):
@@ -298,47 +183,6 @@ def flag_tint(slab, nflags, lf_cool, lf_warm, lifted):
 
 
 BAYER2 = np.array([[0, 2], [3, 1]])          # the order 2 x 2 blocks are laid in a staged dither
-
-
-def pool_rungs(level, slab, nflags, rng, lo=0, hi=FLOOR_AMBIENT + POOL_STEPS, rim=(3, 6, 9), stop=0.35):
-    """The floor's rungs from its light (8 Nov round 5, G-19 and G-20). Returns (rungs, rim, lifted).
-    In the shade, texel by texel on the light's own curves, never over the ambient: the walls' feet and
-    the far corners sink a rung, with a 2 x 2 checker where they fade (style.dither_dark). A pool climbs
-    two rungs at most. Its body (a rung up) is bounded by the light's own curve, and its heart (two rungs
-    up) is lit stones, whole and half flags (flag_rungs with a split), so there is no contour inside it.
-    The only fade is at the body's edge: a wide staged dither of 2 x 2 blocks a rung up (three quarters,
-    a half, then a quarter of the blocks over `rim` texels, eastward-edges 5.4). On about `stop` of the
-    flags the edge stops at the joints instead (the flag is in the pool or out of it whole, with no
-    dither), so the rim follows a flag's edge in places and never runs as one smooth ring."""
-    A = FLOOR_AMBIENT
-    H, W = level.shape
-    on = slab > 0
-    idx = np.arange(1, max(1, nflags) + 1)
-    sm = ndi.gaussian_filter(level, 2.0)
-    Y, X = np.mgrid[0:H, 0:W]
-    # the fade from rung to rung a staged dither of 2 x 2 blocks (a quarter, a half, three quarters), only
-    # where the shade fades gently; on a steep edge (a contact shadow's rim) it would only tear the curve into
-    # teeth, so that edge stays one clean curve. (Round 5: a checker of one phase each side of the step made
-    # a comb of bars along the walls' feet.)
-    gentle = np.hypot(ndi.sobel(sm, 0), ndi.sobel(sm, 1)) / 8 < 0.08
-    tb = (BAYER2[(Y // 2) % 2, (X // 2) % 2] + 0.5) / 4
-    r = np.floor(sm + 0.5 + (tb - 0.5) * 0.4 * gentle)
-    r = np.clip(r.astype(int), lo, A)
-    with np.errstate(invalid='ignore'):
-        fm = np.nan_to_num(ndi.mean(sm, labels=slab, index=idx), nan=float(A))
-    stopf = np.concatenate([[False], rng.random(len(idx)) < stop])
-    whole = np.concatenate([[False], fm >= A + 0.5])
-    body = on & np.where(stopf[slab], whole[slab], sm >= A + 0.5)
-    fr = flag_rungs(level, slab, nflags, rng, split=on, lo=A, hi=hi)
-    r[body] = A + 1
-    heart = body & (fr >= A + 2)
-    r[heart] = fr[heart]
-    dist = ndi.distance_transform_edt(~body)
-    blk = BAYER2[(Y // 2) % 2, (X // 2) % 2]
-    cov = np.where(dist <= rim[0], 3, np.where(dist <= rim[1], 2, np.where(dist <= rim[2], 1, 0)))
-    rim_m = on & ~body & ~stopf[slab] & (blk < cov) & (r == A)
-    r[rim_m] = A + 1
-    return r, rim_m, body
 
 
 def flag_lips(slab, rng, gap=0.16):
@@ -436,6 +280,175 @@ def floor_layout(shape, where, rng, cell):
     return ids, joint, off, mat
 
 
+def floor_layout6(shape, where, rng, cell):
+    """The floor's flags (8 Nov round 6): irregular squares and oblongs of two to four `cell` texels (at
+    q(3) about 0.36 H a side, Eastward 06's tile at our scale), their joints warped by a slow noise. Where
+    joints meet they only meet (G-28: no knots). Marks you could name: a corner knocked off a flag down to
+    the joint (a chip, a small triangle at one of its corners), sparse cracks, dirt packed in the joints.
+    Returns (ids, joint, off, mat, chip, face): the flag id of each texel (joints keep the id of the flag they
+    close), the joint mask, -1 under joints, chips and cracks, the material (1 dirt), the chip mask and the
+    lit faces chips and cracks leave."""
+    H, W = shape
+    ny, nx = (H + cell - 1) // cell, (W + cell - 1) // cell
+    grid = np.zeros((ny, nx), np.int32)
+    opts = [(3, 3)] * 3 + [(3, 2)] * 3 + [(2, 3)] * 2 + [(4, 3), (3, 4), (2, 2), (4, 2), (2, 4)]
+    sid = 0
+    for j in range(ny):
+        for i in range(nx):
+            if grid[j, i]:
+                continue
+            cw, chh = opts[int(rng.integers(0, len(opts)))]
+            while cw > 1 and (i + cw > nx or grid[j, i:i + cw].any()):
+                cw -= 1
+            while chh > 1 and (j + chh > ny or grid[j:j + chh, i:i + cw].any()):
+                chh -= 1
+            sid += 1
+            grid[j:j + chh, i:i + cw] = sid
+    Y, X = np.mgrid[0:H, 0:W]
+    amp = cell * 0.13
+    wx = ndi.gaussian_filter(rng.random((H, W)), cell * 1.4)
+    wy = ndi.gaussian_filter(rng.random((H, W)), cell * 1.4)
+    wx = (wx - wx.mean()) / (wx.std() + 1e-9) * amp
+    wy = (wy - wy.mean()) / (wy.std() + 1e-9) * amp
+    gy = np.clip(((Y + wy) // cell).astype(int), 0, ny - 1)
+    gx = np.clip(((X + wx) // cell).astype(int), 0, nx - 1)
+    ids = grid[gy, gx]
+    ids[~where] = 0
+    joint = np.zeros(shape, bool)
+    joint[:-1, :] |= ids[:-1, :] != ids[1:, :]
+    joint[:, :-1] |= ids[:, :-1] != ids[:, 1:]
+    joint &= where
+    off = np.zeros(shape, np.int32)
+    off[joint] = -1
+    mat = np.zeros(shape, np.int8)
+    dn = ndi.gaussian_filter(rng.random(shape), cell * 0.9)
+    dn = (dn - dn.mean()) / (dn.std() + 1e-9)
+    mat[joint & (dn > 0.55)] = 1                                   # dirt packed in the joints, in soft runs
+    n = int(ids.max())
+    chip = np.zeros(shape, bool)
+    body = where & ~joint
+    for f, sl in enumerate(ndi.find_objects(np.where(body, ids, 0)), start=1):
+        if sl is None:
+            continue
+        r_ = rng.random()
+        k = int(rng.integers(2, 4))
+        corners = [int(rng.integers(0, 4))] + ([int(rng.integers(0, 4))] if rng.random() < 0.3 else [])
+        if r_ > 0.85:
+            continue
+        m = (ids[sl] == f) & body[sl]
+        ys, xs = np.nonzero(m)
+        if len(ys) < 60:
+            continue
+        for corner in corners:
+            cy = ys.min() if corner < 2 else ys.max()
+            cx = xs.min() if corner % 2 == 0 else xs.max()
+            tri = m & ((np.abs(Y[sl] - sl[0].start - cy) + np.abs(X[sl] - sl[1].start - cx)) < k)
+            chip[sl] |= tri
+    off[chip] = -1
+    for f in range(1, n + 1):                                      # sparse cracks across a few big flags
+        if rng.random() > 0.3:
+            continue
+        ys, xs = np.nonzero(ids == f)
+        if len(ys) < 200:
+            continue
+        cx = int(rng.integers(xs.min() + 3, max(xs.min() + 4, xs.max() - 3)))
+        pts = [(cx, ys.min() + 1)]
+        while pts[-1][1] < ys.max() - 2:
+            pts.append((pts[-1][0] + int(rng.integers(-3, 4)), pts[-1][1] + int(rng.integers(3, 6))))
+        off[line_mask(shape, pts, 0.55) & (ids == f)] = -1
+    # the faces a chip or a crack leaves: the stone just inside a chip, and on a crack's east side (facing
+    # the light from the upper left), catch the light as a lip does
+    marks = (off < 0) & ~joint
+    face = body & ~marks & (np.roll(marks, 1, 1) | (np.roll(chip, 1, 0)) | np.roll(chip, -1, 0) | np.roll(chip, -1, 1))
+    return ids, joint, off, mat, chip, face
+
+
+def staged(sm, k, width, Y, X, whole=None, slab=None):
+    """Texels at or over level `k` of a smooth field, its boundary drawn as a staged dither of 2 x 2 blocks
+    `width` texels wide (a quarter, a half, three quarters of the blocks: eastward-edges 5.4) centred on
+    the field's own curve, so the boundary crosses the flags. Where `whole` holds a flag the boundary crosses
+    is in or out whole, by the share of it over `k` (the edge stops at its joint)."""
+    inside = sm >= k
+    if not inside.any():
+        return inside
+    sd = ndi.distance_transform_edt(inside) - ndi.distance_transform_edt(~inside)
+    c = np.clip(0.5 + sd / width, 0, 1)
+    tb = (BAYER2[(Y // 2) % 2, (X // 2) % 2] + 0.5) / 4
+    out = tb < c
+    if whole is not None and slab is not None:
+        idx = np.arange(1, int(slab.max()) + 1)
+        with np.errstate(invalid='ignore'):
+            share = np.nan_to_num(ndi.mean(inside.astype(float), labels=slab, index=idx))
+        band = (c > 0) & (c < 1)
+        crossed = np.concatenate([[False], np.nan_to_num(ndi.maximum(band.astype(np.int8), labels=slab, index=idx)) > 0])
+        sel = whole[slab] & crossed[slab] & (slab > 0)
+        decide = np.concatenate([[False], share >= 0.5])
+        out = np.where(sel, decide[slab], out)
+    return out
+
+
+# Round 6 (G-24, G-26, G-27): the floor's codes, rung by rung and sibling by sibling. A rung is a value
+# step: 0 the walls' feet, 1 the far shade, 2 the shade near a light (Eastward 06's 0.36), 3 a pool's body,
+# 4 its heart. Each flag takes one of three sibling ramps (house-style 1): var 0 the body ramp, 1 its warm
+# sibling, 2 its cool one. Joints, lips and arrises follow the texel's rung in the same light.
+#   rung  shade (var 0 / 1 / 2)                  OKLab L
+#   0     void 2                                 0.27
+#   1     slate_cool 1 / slate 1 / void 3        0.33 / 0.36 / 0.30   (one sibling down from rung 2)
+#   2     slate 1 / slate_warm 1 / slate_cool 1  0.36 / 0.38 / 0.33
+SHADE = {0: (('void', 2),) * 3, 1: (('slate_cool', 1), ('slate', 1), ('void', 3)),
+         2: (('slate', 1), ('slate_warm', 1), ('slate_cool', 1))}
+SHADE_LIP = {0: (('void', 3),) * 3, 1: (('slate_warm', 1), ('slate_cool', 2), ('slate', 1)),
+             2: (('slate_cool', 2), ('slate', 2), ('slate_warm', 1))}
+SHADE_WORN = {0: (('void', 3),) * 3, 1: (('slate', 1), ('slate_warm', 1), ('slate_cool', 1)),
+              2: (('slate_warm', 1), ('slate_cool', 2), ('void', 4))}      # a lip worn down, half its catch-light
+SHADE_SE = {0: (('void', 1),) * 3, 1: (('void', 3), ('void', 3), ('void', 2)), 2: (('void', 3), ('slate', 1), ('void', 3))}
+# under a torch the new lamplit accent (Claude A, round 6): body L 0.43 / 0.45 / 0.40, heart 0.54 / 0.56 /
+# 0.51, all at OKLCH C 0.055 to 0.065 and hue 47 to 74 (Eastward 06's floor by the fire: 0.46, 0.062, 65)
+WARM = {3: (('lamplit_warm', 1), ('lamplit', 1), ('lamplit_warm', 1)),
+        4: (('lamplit_cool', 2), ('lamplit', 2), ('lamplit_cool', 2))}
+WARM_LIP = {3: (('lamplit', 2), ('lamplit_cool', 2), ('lamplit', 2)), 4: (('lamplit_cool', 3), ('lamplit', 3), ('lamplit_cool', 3))}
+WARM_SE = {3: (('lamplit', 1), ('lamplit_cool', 1), ('lamplit', 1)), 4: (('lamplit', 1), ('lamplit_cool', 2), ('lamplit', 1))}
+WARM_JOINT = {3: ('lamplit_warm', 0), 4: ('lamplit', 1)}
+# under the skylight and at the hatch: daylight on the slate ramps
+COOL = {3: (('slate_cool', 2), ('slate', 2), ('slate_cool', 2)), 4: (('slate_cool', 3), ('slate', 3), ('slate_cool', 3))}
+COOL_LIP = {3: (('slate', 3), ('slate_cool', 3), ('slate', 3)), 4: (('slate_cool', 4), ('slate', 4), ('slate_cool', 4))}
+COOL_SE = {3: (('slate_warm', 1), ('slate_cool', 2), ('slate_warm', 1)), 4: (('slate', 2), ('slate_cool', 3), ('slate', 2))}
+COOL_JOINT = {3: ('slate_warm', 1), 4: ('slate', 2)}
+
+
+def floor_paint(r, var, joint, lip, se, mat, warm, cool, worn=None):
+    """The floor's codes (round 6): `r` the rung of each texel, `var` its flag's sibling (0, 1, 2), `joint`
+    the joints, chips and cracks, `lip` a flag's lit north-west lip, `se` its shaded south-east arris,
+    `warm` / `cool` the flag's light where the texel is lit (rung 3 or 4)."""
+    from .palette import FI as _FI
+    out = np.zeros(r.shape, np.int32)
+    cd = lambda ft: _FI[ft[0]] * 8 + ft[1]
+    lit = r >= 3
+    body = ~joint & ~lip & ~se
+    for rr in (0, 1, 2):
+        at = (r == rr) | (lit & ~warm & ~cool & (rr == 2))       # an untinted lit texel (none expected) as shade
+        for v in (0, 1, 2):
+            m = at & (var == v)
+            out[m & body] = cd(SHADE[rr][v])
+            out[m & lip] = cd(SHADE_LIP[rr][v])
+            if worn is not None:
+                out[m & lip & worn] = cd(SHADE_WORN[rr][v])
+            out[m & se] = cd(SHADE_SE[rr][v])
+        out[at & joint] = cd(('void', 2)) if rr >= 2 else cd(('void', 1))      # a rung under the flags it closes
+        dirt = at & joint & (mat == 1)
+        out[dirt] = cd(('soot', 1))
+    for tint, BODY, LIP, SE, JOINT in ((warm, WARM, WARM_LIP, WARM_SE, WARM_JOINT), (cool & ~warm, COOL, COOL_LIP, COOL_SE, COOL_JOINT)):
+        for rr in (3, 4):
+            at = lit & tint & (np.minimum(r, 4) == rr)
+            for v in (0, 1, 2):
+                m = at & (var == v)
+                out[m & body] = cd(BODY[rr][v])
+                out[m & lip] = cd(LIP[rr][v])
+                out[m & se] = cd(SE[rr][v])
+            out[at & joint] = cd(JOINT[rr])
+    return out
+
+
 def floor_moss(cv, joint, where, lit, warm, rng, spacing=36):
     """Moss on the floor (8 Nov round 5, G-12r and G-23), drawn as the kit's moss is (moss_clump): small
     clumps sitting in the low joints along the walls' feet and in the damp corners, each a dark underside in
@@ -475,38 +488,6 @@ def floor_moss(cv, joint, where, lit, warm, rng, spacing=36):
             yy = y - hgt - 1
             if yy >= 0 and not joint[yy, xx]:
                 cv[yy, xx] = cap_w if i < max(1, w // 3) else cap
-
-
-def floor_codes(level, off, mat, var, cool, warm=None):
-    """The floor's codes from its light (a rung per texel), its marks (offsets) and materials."""
-    from .palette import FI as _FI
-    raw = level + off
-    lv = np.clip(raw, 0, len(FLOOR_LADDER) - 1)
-    out = np.zeros(lv.shape, np.int32)
-    for r, pair in enumerate(FLOOR_LADDER):
-        for v in (0, 1):
-            fam, t = pair[v]
-            m = (lv == r) & (var == v)
-            out[m] = _FI[fam] * 8 + t
-            if r in FLOOR_LADDER_COOL:
-                cf, ct = FLOOR_LADDER_COOL[r][v]
-                out[m & cool] = _FI[cf] * 8 + ct
-            if warm is not None and r in FLOOR_LADDER_WARM:
-                wf, wt = FLOOR_LADDER_WARM[r][v]
-                out[m & warm & ~cool] = _FI[wf] * 8 + wt
-    dirt = mat == 1                                   # earth packed in a joint, a rung under the stone
-    out[dirt] = _FI['soot'] * 8 + np.clip(lv[dirt], 1, 3)                 # grime in the joint (G-9), not red wire
-    drift = mat == 3                                  # grey grit drifted over the flags, a step under them
-    out[drift] = _FI['ash'] * 8 + np.clip(lv[drift] - 1 + (lv[drift] >= 4), 1, 4)   # in a pool the grit is lit too
-    if warm is not None:                              # in a torch's pool the grit is warm earth
-        dw = drift & warm & ~cool
-        out[dw] = _FI['earth'] * 8 + np.clip(lv[dw], 1, 3)
-    dc = drift & cool                                 # under the skylight the grit takes the cool light too
-    out[dc] = _FI['slate_cool'] * 8 + np.clip(lv[dc] - 1, 1, 4)
-    moss = mat == 2
-    out[moss] = _FI['leaf_cool'] * 8 + np.clip(lv[moss] - 1, 0, 3)
-    out[(raw < 0) & ~moss] = _FI['void'] * 8 + 1
-    return out
 
 
 def mottle(cv, mask, rng, sigma=2.4, sib_share=0.12):
@@ -1159,38 +1140,6 @@ def p_rubble(w, h, seed):
     return V.finish(p)
 
 
-def lifted_flag(a, g, x, y, w, rng, side=1):
-    """A flag the root has lifted on its edge: a thin slab tilted up (its lit top edge, its face, a dark
-    underside), and the black gap under it where the root goes into the ground."""
-    V = _v()
-    code = V.code
-    gap = V.ellipse_mask(a.shape, x, y + 1, w * 0.55, 2.2)
-    a[gap] = code('void', 0)
-    a[gap & ~np.roll(gap, -1, 0)] = code('earth_cool', 0)
-    pts = [(x - w / 2, y - 1), (x + w / 2, y - 1 - side * 3), (x + w / 2, y + 2 - side * 3), (x - w / 2, y + 2)]
-    m = g.poly(pts)
-    a[m] = code('stone_cool', 1)
-    a[m & ~np.roll(m, 1, 0)] = code('stone_cool', 3)                  # its lifted edge catches the light
-    a[m & ~np.roll(m, -1, 0)] = code('stone_cool', 0)
-    return m
-
-
-def flat_lifted_flag(a, g, x, y, w, side=1):
-    """A flag the root has lifted, drawn in the floor's own stone (8 Nov round 4, RT-5): a slab tilted
-    up, its top plane three or four texels in the shade floor's tones, its arris one rung up, and a dark
-    gap of a texel only along its lower edge, where the root goes under it."""
-    V = _v()
-    code = V.code
-    pts = [(x - w / 2, y - 2), (x + w / 2, y - 2 - side * 2.5), (x + w / 2, y + 2 - side * 2.5), (x - w / 2, y + 2)]
-    m = g.poly(pts)
-    a[m] = code('slate_cool', 1)
-    a[m & ~np.roll(m, 1, 0)] = code('stone_warm', 1)                 # its arris, a rung up
-    low = np.roll(m, -1, 0) & ~m & (a < 0)
-    a[np.roll(low, 1, 0) & m] = code('slate_cool', 1)
-    a[low] = code('void', 0)                                         # the gap under its lower edge only
-    return m
-
-
 def lift_floor_flag(p, cv, slab, joint, foot, rise=3):
     """roots_corridor's lifted flag (8 Nov round 5, RT-7): the floor flag that actually lies under the roots'
     east end, with its own joints and lips as the floor painted them, tilted up on its west edge where
@@ -1220,6 +1169,11 @@ def lift_floor_flag(p, cv, slab, joint, foot, rise=3):
     lift = np.zeros(W, int)
     for x in range(xa, xb + 1):
         lift[x] = int(round(rise * (xb - x) / max(1, xb - xa)))
+    # round 6 (RT-8): no moss on the tilted face (it moves into the gap); the face keeps its stone
+    leafs = [V.code(f_, t_) for f_ in ('leaf', 'leaf_cool', 'leaf_warm') for t_ in range(6)]
+    fb = src[F & ~np.isin(src, leafs)]
+    body_c = int(np.bincount(fb[fb >= 0]).argmax()) if (fb >= 0).any() else code('slate', 1)
+    src = np.where(F & np.isin(src, leafs), body_c, src)
     out = a.copy()
     for x in range(xa, xb + 1):
         col = np.nonzero(F[:, x])[0]
@@ -1230,7 +1184,37 @@ def lift_floor_flag(p, cv, slab, joint, foot, rise=3):
         out[top - r:bot - r + 1, x] = src[top:bot + 1, x]                      # the flag, raised
         out[bot - r + 1, x] = code('void', 2)                                 # its raised edge in shade
         out[bot - r + 2:bot + 1, x] = code('void', 0)                         # the gap under it
+    # round 6 (RT-8): the gap along its raised west edge, north of the roots that go under it: two texels
+    # wide where it stands highest, one lower down, and the moss in its foot
+    col = np.nonzero(F[:, xa])[0]
+    if len(col) and xa >= 2:
+        top, bot = int(col.min()) - lift[xa], int(col.max()) - lift[xa]
+        rows = [y for y in range(top, bot + 1) if a[y, xa - 1] < 0]       # where no root lies
+        for i, y in enumerate(rows):
+            out[y, xa - 1] = code('void', 0)
+            if i < len(rows) * 0.6:
+                out[y, xa - 2] = code('void', 1)
+        if len(rows) >= 4:
+            yb = rows[-1]
+            out[yb, xa - 2:xa] = code('leaf_cool', 1)
+            out[yb - 1, xa - 1] = code('leaf', 2)
     p.a[:] = out
+
+
+def lifted_flag(a, g, x, y, w, rng, side=1):
+    """A flag the root has lifted on its edge: a thin slab tilted up (its lit top edge, its face, a dark
+    underside), and the black gap under it where the root goes into the ground."""
+    V = _v()
+    code = V.code
+    gap = V.ellipse_mask(a.shape, x, y + 1, w * 0.55, 2.2)
+    a[gap] = code('void', 0)
+    a[gap & ~np.roll(gap, -1, 0)] = code('earth_cool', 0)
+    pts = [(x - w / 2, y - 1), (x + w / 2, y - 1 - side * 3), (x + w / 2, y + 2 - side * 3), (x - w / 2, y + 2)]
+    m = g.poly(pts)
+    a[m] = code('stone_cool', 1)
+    a[m & ~np.roll(m, 1, 0)] = code('stone_cool', 3)                  # its lifted edge catches the light
+    a[m & ~np.roll(m, -1, 0)] = code('stone_cool', 0)
+    return m
 
 
 def roots_from_floor(w, h, seed):
@@ -2278,7 +2262,26 @@ def carve_channel(cv, segs, rng):
     return on | (np.abs(d) <= CH_HALF + 1)
 
 
-def p_channel(pz, lit=True):
+CH_SPILL = 24       # round 6 (C-6): texels of floor the lit channel lights beyond its lips, about 0.32 H
+
+
+def spill_code(c):
+    """A floor texel lit by the channel's glow (round 6, C-6): the floor's own code a rung up on its violet
+    sibling (slate and its warm sibling on dusk, the cool sibling on dusk_cool; the joints' void on dusk_cool
+    a rung under the flags), so its flags, joints and lips stay drawn in the light. Moss keeps its code."""
+    from .palette import FAMS as FAMS_, FI as FI_
+    c = np.asarray(c)
+    out = c.copy()
+    fam = np.array(FAMS_)[np.clip(c // 8, 0, len(FAMS_) - 1)]
+    t = c % 8
+    for src, dst, dt in (('slate', 'dusk', 1), ('slate_warm', 'dusk', 1), ('slate_cool', 'dusk_cool', 1),
+                         ('void', 'dusk_cool', -1), ('soot', 'dusk_cool', 0)):
+        m = (fam == src) & (t <= 5) & (c >= 0)
+        out[m] = FI_[dst] * 8 + np.clip(t[m] + dt, 0, 5)
+    return out
+
+
+def p_channel(pz, lit=True, floor=None):
     """The channel once the plate is down (8 Nov round 4, C-3): a lit groove seen from three-quarter view,
     not a tube. The far (north, or west) inner wall takes the shard's light in two or three violet tones;
     the groove's floor is the core, near-white, swelling near the plate and at the T and thinning towards
@@ -2286,7 +2289,11 @@ def p_channel(pz, lit=True):
     edge a rung up in violet. Every band runs in uneven lengths. The spill lies on the floor right against
     the groove beyond its lit far wall, a 2 x 2 checker of the floor's cool sibling a rung up, fading over four
     rows, each piece standing on the row nearer the groove. The brass
-    dividers stand dark in it. The picture's foot is the plate's end of the main run."""
+    dividers stand dark in it. The picture's foot is the plate's end of the main run.
+    Round 6 (C-6): with `floor` (the painted floor's codes and paint mask, as (codes, mask) on the zone's
+    texels) the glow lights CH_SPILL texels of real floor on both sides of the main run and of the branch:
+    the floor's own flags a rung up on their violet sibling (spill_code), full near the groove and fading
+    through a staged 2 x 2 dither over the outer two thirds."""
     V = _v()
     q, code = V.q, V.code
     rng = np.random.default_rng(17)
@@ -2295,7 +2302,7 @@ def p_channel(pz, lit=True):
     X0 = min(s[0] for s in segs) - m_
     Y0 = min(s[1] for s in segs) - m_
     X1 = max(s[2] for s in segs) + m_
-    Y1 = max(s[3] for s in segs) + m_
+    Y1 = max(s[3] for s in segs) + CH_HALF + CH_SPILL      # round 6: room for the spill south of the main run
     W, H = X1 - X0, Y1 - Y0
     fx, fy = q(pz['channel'][0][0]), q(pz['channel'][0][1])
     p = V.Pic(W, H, fx - X0, fy - Y0)
@@ -2346,27 +2353,25 @@ def p_channel(pz, lit=True):
     a[fl & (u > 0.8) & (d != 0)] = code('dusk', 3)               # it thins towards the far ends
     # the near wall under the lip: only the lip's inner edge, a rung up in violet, broken
     broken(groove & (d == 2), 3, 2, 'dusk_cool', 4, 10)
-    # the spill on the floor against the groove (round 5, C-4), fading over four rows past the lit far wall
-    # along the whole lit run and round the branch: the lip row (d -7) catches the glow in violet, broken here
-    # and there; the next two rows (d -8/-9) take 2 x 2 blocks in about half the places, each standing on the
-    # lit lip; the last row (d -10) a block's top in about one place in three of those, each standing on a
-    # block. Fewer towards the far ends, where the charge is weak.
+    # the lip row past the lit far wall (d -7) catches the glow in violet, broken here and there (round 5)
     nb_ = int(np.maximum(along, 0).max()) + 4
-    blk = np.maximum(along, 0) // 2                     # blocks along the run
-    r1 = np.random.default_rng(60).random(nb_)
-    r2 = np.random.default_rng(61).random(nb_)
     lipgap = np.zeros(nb_, bool)
     x = int(rng.integers(3, 9))
-    while x < nb_:                                      # the lip's light broken in uneven lengths
+    while x < nb_:
         lipgap[x:x + int(rng.integers(1, 3))] = True
         x += int(rng.integers(6, 15))
-    weak = 1.0 - 0.45 * u
     lip7 = (d == -CH_HALF) & ~lipgap[np.maximum(along, 0)] & (u < 0.97)
-    pair = ((d == -CH_HALF - 1) | (d == -CH_HALF - 2)) & (r1[blk] < 0.55 * weak + 0.25 * swell) & (u < 0.93)
-    top = (d == -CH_HALF - 3) & (r1[blk] < 0.55 * weak + 0.25 * swell) & (r2[blk] < 0.36) & (u < 0.85)
-    free = a < 0
-    a[lip7 & free] = code('dusk', 2)
-    a[(pair | top) & free] = code('dusk_cool', 2)
+    a[lip7 & (a < 0)] = code('dusk', 2)
+    if floor is not None:                               # round 6 (C-6): the real floor round it, lit
+        fcodes, fmask = floor
+        sub = fcodes[Y0:Y0 + H, X0:X0 + W]
+        smask = fmask[Y0:Y0 + H, X0:X0 + W]
+        lips_ = np.abs(d) <= CH_HALF
+        dist = ndi.distance_transform_edt(~lips_)
+        cov = np.clip((CH_SPILL + 0.5 - dist) / (CH_SPILL * 2 / 3), 0, 1)
+        tb = (BAYER2[(Yg // 2) % 2, (Xg // 2) % 2] + 0.5) / 4
+        sp = smask & ~lips_ & (dist >= 1) & (tb < cov) & (a < 0) & (Xg + X0 >= fx)
+        a[sp] = spill_code(sub[sp])
     # the brass dividers stand dark in the glow, lit on top, their east side in shade
     for k in range(q(8), span, q(8)):
         dv = groove & (d >= -2) & (d <= 2) & (along >= k) & (along < k + 2)
@@ -2636,13 +2641,18 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
 
     # --- the floor ---------------------------------------------------------------------------
     # round 4: the floor is laid out first (flags, joints, marks) and painted last, from the light, on
-    # one short value ladder (FLOOR_LADDER): calm, dark, low in contrast, as Eastward's dungeon floors
-    slab, fjoint, foff, fmat = floor_layout((H, W), floor, rng, q(4))
+    # its own ladders (SHADE, WARM, COOL, floor_paint), as Eastward's dungeon floors
+    # round 6: the earlier layout is still drawn here only to keep the shared random stream where the walls
+    # expect it (their bytes stay); the floor is laid out by floor_layout6 on its own stream
+    _legacy = floor_layout((H, W), floor, rng, q(4))
+    rng.random(int(_legacy[0].max()) + 1)
+    del _legacy
+    frng = np.random.default_rng(110)
+    slab, fjoint, foff, fmat, fchip, fface = floor_layout6((H, W), floor, frng, 7)
     nflags = int(slab.max())
-    fvar = (rng.random(nflags + 1) < 0.35).astype(np.int8)[slab]          # the quiet variant, flag by flag
-    # round 3 (8 Nov, G-10): flag to flag only a sibling swap at the same tone; no worn patches mottling
-    # the flags (Eastward 06's floor holds about 4 L between its pieces)
-    fvar[fjoint] = 0
+    # each flag one of the three sibling ramps (round 6, G-26, house-style 1): the body ramp, its warm and its
+    # cool sibling, about 4 : 4 : 2, so no colour holds half the floor
+    fvar = np.concatenate([[0], frng.choice(3, size=nflags, p=[0.4, 0.4, 0.2])]).astype(np.int8)[slab]
     # roots_corridor lifts the floor's own flag under its east end (round 5, RT-7): where that flag runs out of
     # the picture, a joint is cut across it, so the flag it lifts lies wholly inside the picture
     for k, pr in enumerate(plan.get('props', [])):
@@ -2654,6 +2664,48 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
             continue
         ox, oy = q(pr['at'][0]) - pic.ax, q(pr['at'][1]) - pic.ay
         fid = int(slab[oy + pic.dive[1], ox + pic.dive[0]])
+        for y_cut, below in ((oy + pic.a.shape[0] - 5, True), (oy + 4, False)):
+            m = slab == fid
+            rows = np.nonzero(m.any(1))[0]
+            if fid <= 0 or not len(rows) or (below and rows.max() < y_cut) or (not below and rows.min() > y_cut):
+                continue
+            nflags += 1
+            part = m & ((np.arange(H)[:, None] > y_cut) if below else (np.arange(H)[:, None] < y_cut))
+            slab[part] = nflags
+            cut = m & (np.arange(H)[:, None] == y_cut)
+            fjoint[cut] = True
+            foff[cut] = -1
+            fvar[cut] = 0
+        # (after the cuts) round 6: a flag big enough to read as lifted: a small one is laid as one stone with its neighbour
+        # (the joint between them taken out)
+        for _ in range(2):
+            m = slab == fid
+            if fid <= 0 or m.sum() >= 300:
+                break
+            ring = ndi.binary_dilation(m, iterations=2) & ~m & (slab > 0)
+            nbs, cnts = np.unique(slab[ring], return_counts=True)
+            yy_, xx_ = np.nonzero(m)
+            cen = [np.nonzero(slab == n_) for n_ in nbs]
+            # the neighbour east of it on the same course (a wider stone), else the one north of it (inside the picture)
+            east = np.array([abs(c_[0].mean() - yy_.mean()) <= 6 and c_[1].mean() > xx_.mean() for c_ in cen], bool)
+            north = np.array([c_[0].mean() <= yy_.mean() + 1 for c_ in cen], bool)
+            pick = east if east.any() else north
+            if not pick.any():
+                break
+            nb = int(nbs[pick][cnts[pick].argmax()])
+            slab[slab == nb] = fid
+            ys_, xs_ = np.nonzero(slab == fid)
+            sl = (slice(max(0, ys_.min() - 1), ys_.max() + 2), slice(max(0, xs_.min() - 1), xs_.max() + 2))
+            ids_ = slab[sl]
+            jn = np.zeros(ids_.shape, bool)
+            jn[:-1, :] |= ids_[:-1, :] != ids_[1:, :]
+            jn[:, :-1] |= ids_[:, :-1] != ids_[:, 1:]
+            jn &= floor[sl]
+            gone = fjoint[sl] & ~jn
+            fjoint[sl] = jn
+            foff[sl][gone] = 0
+            fmat[sl][gone] = 0
+        # (and cut again, so the stone it became still lies inside the picture)
         for y_cut, below in ((oy + pic.a.shape[0] - 5, True), (oy + 4, False)):
             m = slab == fid
             rows = np.nonzero(m.any(1))[0]
@@ -2755,23 +2807,42 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     dfl = ndi.distance_transform_edt(~walls_m)
     near_face = ndi.distance_transform_edt(~face) <= q(14)
     fshade = np.clip(1.0 - (dfl - q(1.5)) / q(9), 0, 1) * 1.0 + near_face * np.clip(1.0 - dfl / q(16), 0, 1) * 0.6
+    # round 6 (G-28): the walls'-foot fade staggers by flag, so its dither runs deeper on one flag than the next
+    fjit = np.concatenate([[0.0], np.random.default_rng(111).uniform(-0.25, 0.25, nflags)])[slab]
+    fshade += fjit * np.clip(fshade * 3, 0, 1)
     # (round 4, G-15: no noise blotches in the shade: they split the flags into a quilt of two values)
     corner = ndi.uniform_filter(walls_m.astype(float), size=q(18)) > 0.42
     wet = floor & corner & (dfl <= q(14))
-    fcool = np.zeros((H, W), bool)
-    fvar[wet & ~fjoint] = 1                                          # damp stone, on its colder sibling
-    wet_v = wet & ~fjoint
-    # two or three large soft blotches a room, one sibling apart (round 5, G-21; Eastward's 06 shade)
-    brng = np.random.default_rng(108)
-    bn = ndi.gaussian_filter(brng.random((H, W)), q(15))
-    bn = (bn - bn[floor].mean()) / (bn[floor].std() + 1e-9)
-    bm = ndi.gaussian_filter(brng.random((H, W)), q(3))              # an irregular edge, never a disc
-    bm = (bm - bm[floor].mean()) / (bm[floor].std() + 1e-9)
-    blotch = floor & (bn + 0.3 * bm > 1.15)
-    blab, nbl = ndi.label(blotch)                                     # large ones only: no stains
-    if nbl:
-        bsz = ndi.sum(blotch, blab, np.arange(1, nbl + 1))
-        blotch = np.concatenate([[False], bsz >= q(30) ** 2 * 0.5])[blab]
+    # damp (round 6, G-25): groups of three to eight whole flags along the walls' feet and in the corners,
+    # their edges on the joints, on the shade's cool sibling; nothing out in a room's open middle
+    idx_ = np.arange(1, nflags + 1)
+    with np.errstate(invalid='ignore'):
+        fd = np.nan_to_num(ndi.mean(dfl, labels=slab, index=idx_), nan=999.0)
+        fwet = np.nan_to_num(ndi.mean(wet.astype(float), labels=slab, index=idx_)) > 0.3
+    near_wall = fd <= q(10)
+    adj = {}
+    sh_ = [(0, 1), (1, 0)]
+    for dy, dx in sh_:
+        a_ = slab[:H - dy, :W - dx]
+        b_ = slab[dy:, dx:]
+        m_ = (a_ != b_) & (a_ > 0) & (b_ > 0)
+        for u, v in set(zip(a_[m_].tolist(), b_[m_].tolist())):
+            adj.setdefault(u, set()).add(v)
+            adj.setdefault(v, set()).add(u)
+    drng = np.random.default_rng(112)
+    damp_f = np.zeros(nflags + 1, bool)
+    for f in drng.permutation(idx_):
+        if damp_f[f] or not (fwet[f - 1] or (near_wall[f - 1] and drng.random() < 0.06)):
+            continue
+        group, want = [int(f)], int(drng.integers(3, 9))
+        while len(group) < want:
+            nxt = [g for u in group for g in adj.get(u, ()) if g not in group and fd[g - 1] <= q(16) and not damp_f[g]]
+            if not nxt:
+                break
+            group.append(nxt[int(drng.integers(0, len(nxt)))])
+        if len(group) >= 3:
+            damp_f[group] = True
+    damp = damp_f[slab] & (slab > 0)
     # (round 5, G-12r: the moss is drawn last, as clumps in the low joints; see floor_moss)
     moss_near = floor & ((dfl <= q(12)) | wet) & (dfl > q(1))
     # packed dirt and grit drifted against the walls and into the corners, in a few soft patches
@@ -2827,6 +2898,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     lf = np.zeros((H, W))
     lf_cool = np.zeros((H, W))
     lf_warm = np.zeros((H, W))
+    wob = ndi.gaussian_filter(np.random.default_rng(117).random((H, W)), q(2.5))
+    wob = (wob - wob.mean()) / (wob.std() + 1e-9)                  # a slow noise, about one unit
     for tx, ty in plan.get('torches', []):
         dfl = np.hypot((WX - tx) / 40, (WY - ty - 12) / 26)        # the floor below
         dfa = np.hypot((WX - tx) / 18, (WY - ty + TORCH_LIFT + 2) / 16)    # the face round the bracket
@@ -2839,6 +2912,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
         rx, ry = 25 * trng.uniform(0.9, 1.25), 19 * trng.uniform(0.85, 1.2)
         lean = trng.uniform(-4, 4)
         dt = np.hypot((WX - tx - lean * np.clip((WY - ty) / ry, 0, 1)) / rx, (WY - ty - 1) / ry)
+        dt = dt + wob * 0.07                                     # round 6 (G-24): its curves wobble, never a ruled ellipse
         lt = POOL_HEART * np.clip(1 - dt, 0, 1) ** 1.1 + POOL_SPILL * np.clip(1 - dt / 2.0, 0, 1) ** 0.8
         lf = np.maximum(lf, lt)
         lf_warm = np.maximum(lf_warm, lt)
@@ -2976,59 +3050,76 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     # Round 5 (G-19 to G-21): the shade one calm colour at Eastward 06's value, sinking a rung at the walls'
     # feet and in the corners; a pool a body a rung up bounded by its light's curve (stopping at the joints
     # in places) with one staged dither at its rim, and a heart of lit flags a rung over that (pool_rungs).
-    level = FLOOR_AMBIENT + lf - fshade
-    level -= 0.25 * np.clip(1 - lf / 0.9, 0, 1)            # round 5 (G-21): the open shade stays on rung 1; the walls' feet and corners sink
-    rung, rim_px, lifted = pool_rungs(level, slab, nflags, np.random.default_rng(106))
-    # the hue of the light is decided flag by flag (8 Nov, G-7; round 5, G-19): every flag a pool lifts takes
-    # its light's sibling; the rim's dither takes the hue of the lifted flag nearest it
+    A = FLOOR_AMBIENT
+    # falloff across the rooms (round 6, G-27): rung 2 near a light; one rung down, through one wide staged
+    # dither that stops at the joints in places, in each room's far part (its far half by distance from its
+    # torches, the stair and the skylight, but never nearer than FAR_MIN to a light) and its corners
+    lights = [(q(tx), q(ty)) for tx, ty in plan.get('torches', [])]
+    if plan.get('stair'):
+        sx_, sy_, sw_, sh_ = plan['stair']['rect']
+        lights.append((q(sx_ + sw_), q(sy_ + sh_ / 2)))
+    if sk:
+        lights.append((q(sk['at'][0]), q(sk['at'][1])))
+    gl = np.full((H, W), 1e9)
+    for lx, ly in lights:
+        gl = np.minimum(gl, np.hypot(XX - lx, YY - ly))
+    seps = sorted(q(w_['rect'][0] + w_['rect'][2] / 2) for w_ in plan['walls'] if w_['id'].startswith('sep') and w_['id'].endswith('_n'))
+    room = np.searchsorted(np.array(seps), XX)
+    far = np.zeros((H, W))
+    for ri in range(len(seps) + 1):
+        m_ = floor & (room == ri)
+        if m_.any():
+            T = max(float(np.quantile(gl[m_], 0.5)), FAR_MIN)
+            far[m_] = np.clip((gl[m_] - T) / q(8) + 0.5, 0, 1)
+    far = np.maximum(far, wet * 1.0)
+    v = A + lf - fshade - far
+    sm = ndi.gaussian_filter(v, 1.5)
+    stop = np.concatenate([[False], np.random.default_rng(113).random(nflags) < 0.35])
+    rung = (staged(sm, 0.5, 6, YY, XX).astype(int)
+            + staged(sm, 1.5, 14, YY, XX, whole=stop, slab=slab).astype(int))
+    up3 = staged(sm, A + 0.5, 12, YY, XX)                # a pool's body: the light's own curve, a staged dither 9 texels wide
+    up4 = staged(sm, A + 1.5, 12, YY, XX) & up3          # its heart, the same
+    rung = np.where(up3, A + 1 + up4, np.minimum(rung, A))
+    rung = np.where(floor, rung, 0)
+    lifted = rung > A
+    rim_px = up3 & ~staged(sm, A + 0.5, 1, YY, XX)       # the body's dithered fringe (for the tests)
+    # the hue of the light is decided flag by flag (G-7): a flag the light reaches takes that light's ramp,
+    # warm under a torch, cool under the skylight or at the hatch; the value is the texel's own
     fcool, fwarm = flag_tint(slab, nflags, lf_cool, lf_warm, lifted)
     tint_masks = (fcool.copy(), fwarm.copy())
-    if lifted.any():
-        iy, ix = ndi.distance_transform_edt(~lifted, return_distances=False, return_indices=True)
-        fcool = fcool | (rim_px & fcool[iy, ix])
-        fwarm = fwarm | (rim_px & fwarm[iy, ix])
-    jl = FLOOR_AMBIENT + 0.45 * lf - fshade - 0.25 * np.clip(1 - lf / 0.9, 0, 1)
-    jr = np.clip(np.floor(jl + 0.5).astype(int), 0, 4)
-    nb = ndi.grey_erosion(np.where(slab > 0, rung, 9), size=(3, 3))      # the darkest flag beside the joint
-    jt = (slab == 0) & floor
-    rung[jt] = np.minimum(jr[jt], np.maximum(0, nb[jt] - 1)) + 1          # +1: floor_codes takes the joint's -1
-    # in a pool the joints are lit too, a rung under the lit flag on its warm sibling (round 4, G-14)
-    pj = jt & (nb >= FLOOR_AMBIENT + 1) & (nb < 9)
-    rung[pj] = nb[pj]
-    fwarm = fwarm | (ndi.binary_dilation(fwarm, iterations=1) & jt)
-    fcool = fcool | (ndi.binary_dilation(fcool, iterations=1) & jt & ~fwarm)
-    fwarm &= rung > FLOOR_AMBIENT                          # the part of a flag the pool's edge leaves in shade stays shade
-    fcool &= rung > FLOOR_AMBIENT
-    # every flag has its own lips (8 Nov, G-3, as each hex flag in Eastward's 06): its north and west
-    # lip a rung up, broken where it is worn, its south and east lip a rung down
-    nwl, sel_ = flag_lips(slab, np.random.default_rng(105))
-    off = foff.copy()
-    lit_lip = nwl & (foff == 0)
-    off[lit_lip & (rung <= FLOOR_AMBIENT)] += 1            # in the shade the north-west lip is a rung up;
-    fvar = np.where(lit_lip & (rung > FLOOR_AMBIENT), 1 - fvar, fvar)   # in a pool its sibling (no bright seams)
-    off[sel_ & (foff == 0)] -= 1
+    fwarm &= lifted
+    fcool &= lifted
+    # each flag's lips (G-3): its north-west lip a rung up, broken where it is worn; its south-east arris a
+    # sibling under, inside its joint
+    nwl, _se = flag_lips(np.where(fjoint, 0, slab), np.random.default_rng(105), gap=0.3)
+    lip = (nwl & (foff == 0) & ~fjoint) | fface
+    se = paint_se = (slab > 0) & ~fjoint & (np.roll(fjoint, -1, 0) | np.roll(fjoint, -1, 1)) & ~lip & (foff == 0)
+    # the arris worn away here and there, in runs of four texels as the lip's breaks are
+    agap = np.kron(np.random.default_rng(114).random(((H + 3) // 4, (W + 3) // 4)) < 0.3, np.ones((4, 4), bool))[:H, :W]
+    se &= ~agap
+    mark = fjoint | (foff < 0)
+    var = fvar.copy()
+    odd = np.random.default_rng(115).random(nflags + 1)[slab] < 0.08              # the odd flag a tone off (worn lower)
+    rung_c = np.where(odd & (rung == A) & ~damp & (fvar != 2), A - 1, rung)   # (never the cool sibling: no black holes)
+    var = np.where(damp & (rung == A), 2, var)            # damp flags on the cool sibling (slate_cool 1)
+    var = np.where(damp & (rung == A - 1), 0, var)
     paint = floor & ~outer & ~fixed
-    # in the shade the floor is one colour with a few large soft blotches on its cool sibling (round 5,
-    # G-21, house-style 7), and its damp corners; the flags' own variants show only in the light
-    shade_px = (rung <= FLOOR_AMBIENT) & ~fcool & ~fwarm
-    fvar = np.where(shade_px & (slab > 0), (blotch | wet_v).astype(np.int8), fvar)
-    fc = floor_codes(rung, off, fmat, fvar, fcool, fwarm)
+    # a lip worn down here and there, in runs of four texels (G-26)
+    lworn = np.kron(np.random.default_rng(116).random(((H + 3) // 4, (W + 3) // 4)) < 0.35, np.ones((4, 4), bool))[:H, :W]
+    fc = floor_paint(rung_c, var, mark, lip & ~mark, se & ~mark, fmat, fwarm, fcool, worn=lworn & nwl)
     cv[paint] = fc[paint]
-    # each flag's face: sibling clusters at the same tone (shape, not contrast: house-style 8, G-10)
-    blue = np.isin(cv // 8, [FI['slate'], FI['slate_cool']])
-    # (in the shade none: one colour and its blotches, round 5 G-21; the sibling clusters stood as a stipple)
-    flag_texture(cv, paint & (slab > 0) & ~nwl & ~sel_ & (foff == 0) & ~shade_px, np.random.default_rng(105))
-    # in the shade each flag's south and east arris, the texel inside its joint, a sibling under its body, so
-    # a flag reads as a dressed stone with a lit north-west lip and a shaded south-east lip (round 5, G-21)
-    se_in = paint & (slab > 0) & ~fjoint & (np.roll(fjoint, -1, 0) | np.roll(fjoint, -1, 1)) & ~nwl & shade_px & (foff == 0)
-    se_in &= np.random.default_rng(109).random((H, W)) < 0.9
-    cv[se_in & (cv == code('slate', 1))] = code('slate_cool', 1)
-    cv[se_in & (cv == code('slate_cool', 1)) & (fvar == 1)] = code('void', 3)
+    shade_px = ~lifted
     floor_moss(cv, fjoint, fjoint & paint & moss_near, rung > FLOOR_AMBIENT, fwarm, np.random.default_rng(107))
     # round 5 (G-22): the floor's flags are left out of the run breaker, whose nicks in the joint colour
     # stood on the calm shade flags as dark hatching; a calm flag in a floor plane is what Eastward draws
     break_runs(cv, (cv >= 0) & ~(paint & (slab > 0)), np.random.default_rng(105))
     V.tidy(cv, passes=2, keep=(cv % 8 >= 6))
+    if pz and pz.get('channel'):                         # round 6 (C-6): the lit channel lights the floor round it
+        pic = p_channel(pz, True, floor=(cv, paint))
+        pics['channel_lit'] = pic.rgba()
+        for o in objects:
+            if o['id'] == 'channel_lit':
+                o['alpha'] = pic.alpha()
     for pid, pic, foot in lift_jobs:
         lift_floor_flag(pic, cv, slab, fjoint, foot)
         pics[pid] = pic.rgba()
@@ -3038,7 +3129,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     ground = Image.fromarray(to_rgba(cv), 'RGBA').convert('RGB')
     if fields is not None:                              # for the tests: the floor's flags and where it was painted
         fields.update(slab=slab, paint=paint, joint=fjoint, codes=cv.copy(), tint_cool=tint_masks[0], tint_warm=tint_masks[1],
-                      off=foff.copy(), rung=rung.copy(), lifted=lifted, rim=rim_px)
+                      off=foff.copy(), rung=rung.copy(), lifted=lifted, rim=rim_px, damp=damp, dfl=dfl, var=fvar.copy(), light=sm)
 
     # --- write ---------------------------------------------------------------------------------
     os.makedirs(out_dir, exist_ok=True)

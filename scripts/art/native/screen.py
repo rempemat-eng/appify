@@ -233,13 +233,13 @@ HD = 2.5
 
 def to_codes(img) -> np.ndarray:
     """An RGBA picture drawn on the house palette as a decal in palette codes (-1 clear)."""
-    from .palette import LUT
+    from .palette import LUT, PICKABLE
     a = np.asarray(img)
     out = np.full(a.shape[:2], -1, np.int32)
     m = a[..., 3] > 0
     cols = a[m][:, :3].astype(int)
     uniq, inv = np.unique(cols, axis=0, return_inverse=True)
-    L = LUT.astype(int)
+    L = np.where(PICKABLE[:, None], LUT.astype(int), 10 ** 6)       # never a named-only accent
     codes = np.array([int(((L - c) ** 2).sum(1).argmin()) for c in uniq])
     out[m] = codes[inv.ravel()]
     return out

@@ -104,51 +104,44 @@ class SpeckScatter(unittest.TestCase):
         self.assertLessEqual(speck_scatter(g[160:600]), LIMIT)       # the whole floor, rooms' north to south
 
 
-class StepsByFlag(unittest.TestCase):
+class StagedBoundaries(unittest.TestCase):
+    """Round 6 (G-24): a pool's boundaries follow its light's own curve as a wide staged 2 x 2 dither, so the
+    light crosses the flags; round 4's flag-by-flag steps made blocks of lit paving."""
+
     def setUp(self):
         from scripts.art.native import ctx
         if not ctx._configured:
             ctx.configure(3.0, {}, {})
         from scripts.art.native import undercroft as U
         self.U = U
-        # a 10 x 8 grid of 12 x 12 flags with one-texel joints, lit by one pool at the top left
-        H, W = 96, 120
-        slab = np.zeros((H, W), np.int32)
-        k = 0
-        for j in range(0, H, 12):
-            for i in range(0, W, 12):
-                k += 1
-                slab[j:j + 11, i:i + 11] = k
-        self.slab, self.n = slab, k
-        Y, X = np.mgrid[0:H, 0:W]
-        d = np.hypot(X - 20, Y - 16) / 70
-        self.level = U.FLOOR_AMBIENT + U.POOL_HEART * np.clip(1 - d, 0, 1) ** 1.3 + U.POOL_SPILL * np.clip(1 - d / 2.2, 0, 1)
+        H, W = 80, 160
+        self.Y, self.X = np.mgrid[0:H, 0:W]
+        self.field = 4.0 - self.X / 40.0                        # light falling off from the west, a rung every 40 texels
 
-    def test_a_pool_climbs_at_most_two_rungs(self):
-        r = self.U.flag_rungs(self.level + 3, self.slab, self.n, np.random.default_rng(0), split=np.ones(self.slab.shape, bool))
-        self.assertLessEqual(r[self.slab > 0].max(), self.U.FLOOR_AMBIENT + self.U.POOL_STEPS)
+    def test_a_boundary_is_a_staged_dither_six_texels_wide_or_more(self):
+        up = self.U.staged(self.field, 2.5, 12, self.Y, self.X)
+        col = up.mean(axis=0)
+        share = np.convolve(col, np.ones(4) / 4, mode='same')       # coverage over a 4-texel window (a Bayer cell)
+        mixed = np.nonzero((share > 0.1) & (share < 0.9))[0]
+        self.assertGreaterEqual(len(mixed), 6, 'the boundary is a hard step')
+        self.assertLessEqual(len(mixed), 14)
+        stages = sorted(set(np.round(share[mixed] * 4).astype(int)))
+        self.assertTrue({1, 2, 3} <= set(stages), stages)       # a quarter, a half, three quarters
 
-    def test_each_flag_is_one_rung_or_two_straight_halves(self):
-        r = self.U.flag_rungs(self.level, self.slab, self.n, np.random.default_rng(0), split=np.ones(self.slab.shape, bool))
-        for f in range(1, self.n + 1):
-            m = self.slab == f
-            vals = np.unique(r[m])
-            self.assertLessEqual(len(vals), 2, f'flag {f} has {len(vals)} rungs (a contour band runs through it)')
-            if len(vals) == 2:
-                sub = r[m].reshape(11, 11)
-                rows_one = all(len(np.unique(row)) == 1 for row in sub)
-                cols_one = all(len(np.unique(col)) == 1 for col in sub.T)
-                self.assertTrue(rows_one or cols_one, f'flag {f} is split along a ragged or slanted line')
+    def test_a_boundary_crosses_a_flag(self):
+        slab = np.zeros(self.field.shape, np.int32)
+        slab[:, 40:100] = 1                                      # one wide flag the boundary (x 60) crosses
+        up = self.U.staged(self.field, 2.5, 12, self.Y, self.X)
+        v = up[slab == 1]
+        self.assertTrue(v.any() and not v.all(), 'the light stops at the flag')
 
-    def test_shade_flags_are_whole(self):
-        r = self.U.flag_rungs(self.level, self.slab, self.n, np.random.default_rng(0), split=None)
-        for f in range(1, self.n + 1):
-            self.assertEqual(len(np.unique(r[self.slab == f])), 1)
-
-    def test_light_falls_off_from_the_source(self):
-        r = self.U.flag_rungs(self.level, self.slab, self.n, np.random.default_rng(0))
-        near, far = r[16, 20], r[90, 110]
-        self.assertGreater(near, far)
+    def test_whole_flags_stop_the_edge_at_their_joint(self):
+        slab = np.zeros(self.field.shape, np.int32)
+        slab[:, 40:100] = 1
+        whole = np.array([False, True])
+        up = self.U.staged(self.field, 2.5, 12, self.Y, self.X, whole=whole, slab=slab)
+        v = up[slab == 1]
+        self.assertTrue(v.all() or not v.any())
 
 
 class RealFloorTint(unittest.TestCase):
@@ -188,6 +181,56 @@ class RealFloorTint(unittest.TestCase):
                     split.append(f)
             self.assertFalse(split, f'{name}: {len(split)} flags are split by the tint: {split[:5]}')
 
+    def test_the_heart_outline_is_not_ruled(self):
+        # G-24: round 5's hearts were whole flags, 64 % of their outline in straight runs of 10 px or more
+        # (the round 5 pool, picture: test_the_round5_heart_was_ruled); the heart's own texel edge now
+        from scipy import ndimage as ndi
+        from scripts.art.native import undercroft as U
+        f = self.f
+        keep = ndi.binary_erosion(f['paint'], iterations=2)            # its own edge, not the wall it meets
+        for tint in ('tint_warm', 'tint_cool'):
+            heart = (f['rung'] >= U.FLOOR_AMBIENT + 2) & f['paint'] & f[tint]       # its texels (a staged dither)
+            curve = (f['light'] >= U.FLOOR_AMBIENT + 1.5) & f['paint'] & f[tint]    # the light's curve it follows
+            self.assertTrue(heart.any())
+            self.assertLess(_straight_share(heart, keep), 0.30, tint)
+            self.assertLess(_straight_share(curve, keep), 0.30, tint)
+
+    def test_damp_is_whole_flags_by_the_walls(self):
+        # G-25: round 5's blotches were curves across 15 to 47 flags out in the rooms' middles
+        from scipy import ndimage as ndi
+        f = self.f
+        damp, slab = f['damp'], f['slab']
+        self.assertTrue(damp.any())
+        for fl, sl in enumerate(ndi.find_objects(slab), start=1):
+            if sl is None:
+                continue
+            v = damp[sl][slab[sl] == fl]
+            if v.any():
+                self.assertTrue(v.all(), f'flag {fl} is only partly damp')
+                self.assertLessEqual(float(np.mean(f['dfl'][sl][slab[sl] == fl])), 48, f'damp flag {fl} in the open')
+
+    def test_the_far_shade_steps_down(self):
+        # G-27: round 5's floor was 0.359 from 20 px off the walls to the far corners in every room
+        from scripts.art.native import undercroft as U
+        f = self.f
+        L = _oklab_L(self.painted)
+        body = f['paint'] & (f['slab'] > 0) & ~f['joint'] & (f['off'] == 0)
+        A = U.FLOOR_AMBIENT
+        near, far = float(np.median(L[body & (f['rung'] == A)])), float(np.median(L[body & (f['rung'] == A - 1)]))
+        self.assertTrue(0.33 <= near <= 0.40, near)
+        self.assertTrue(0.30 <= far <= 0.33, far)
+        for x0, x1 in ((48, 600), (648, 1200), (1248, 1680), (1728, 2256)):
+            m = body & (np.arange(body.shape[1])[None, :] >= x0) & (np.arange(body.shape[1])[None, :] < x1)
+            self.assertGreater((m & (f['rung'] == A - 1)).sum() / max(1, (m & (f['rung'] <= A)).sum()), 0.08)
+
+    def test_no_colour_holds_half_the_flags(self):
+        # G-26: round 5's shade flags were 77.7 % one colour
+        f = self.f
+        from scripts.art.native import undercroft as U
+        body = f['paint'] & (f['slab'] > 0) & ~f['joint'] & (f['off'] == 0) & (f['rung'] <= U.FLOOR_AMBIENT)
+        _, cnt = np.unique(f['codes'][body], return_counts=True)
+        self.assertLessEqual(cnt.max() / cnt.sum(), 0.5)
+
     def test_a_pool_climbs_two_rungs_at_most(self):
         # G-19: the heart and one rim over the ambient, no more
         from scripts.art.native import undercroft as U
@@ -209,26 +252,28 @@ class RealFloorTint(unittest.TestCase):
         self.assertGreater(_strokes(a, np.ones(a.shape[:2], bool)), 10)
 
     def test_no_flag_holds_warm_and_cool(self):
+        # G-7: no flag's lit body holds both torchlight (the lamplit ramps) and daylight (the slate ramps lit
+        # by the skylight or the hatch); a flag's hue is decided once
         from scipy import ndimage as ndi
-        slab, paint = self.f['slab'], self.f['paint']
-        rgb = self.painted.astype(int)
-        warm = (rgb[..., 0] - rgb[..., 2]) > 14                 # amber, earth, sand light
-        lum = 0.299 * rgb[..., 0] + 0.587 * rgb[..., 1] + 0.114 * rgb[..., 2]
-        # the skylight's lit blue (not moss, and not the shade's own blue-violet, which a pool falls off into)
-        cool = ((rgb[..., 2] - rgb[..., 0]) > 18) & (rgb[..., 2] > rgb[..., 1] + 10) & (lum >= 72)
+        from scripts.art.native.palette import FI
+        from scripts.art.native import undercroft as U
+        f = self.f
+        slab, paint, codes = f['slab'], f['paint'], f['codes']
+        lit = f['rung'] > U.FLOOR_AMBIENT
+        warm = np.isin(codes // 8, [FI['lamplit'], FI['lamplit_warm'], FI['lamplit_cool']]) & lit
+        cool = np.isin(codes // 8, [FI['slate'], FI['slate_warm'], FI['slate_cool']]) & (codes % 8 >= 2) & lit
         bad = []
-        for f, sl in enumerate(ndi.find_objects(slab), start=1):
+        for fl, sl in enumerate(ndi.find_objects(slab), start=1):
             if sl is None:
                 continue
-            m = (slab[sl] == f) & paint[sl]
-            m = ndi.binary_erosion(m, iterations=2)             # the body, not its lips and joints
+            m = (slab[sl] == fl) & paint[sl]
             n = int(m.sum())
             if n < 40:
                 continue
             w, c = int(warm[sl][m].sum()), int(cool[sl][m].sum())
             if w > 0.04 * n and c > 0.04 * n:
-                bad.append((f, w, c, n))
-        self.assertFalse(bad, f'{len(bad)} flags carry both warm and cool light (arcs across them): {bad[:5]}')
+                bad.append((fl, w, c, n))
+        self.assertFalse(bad, f'{len(bad)} flags carry both warm and cool light: {bad[:5]}')
 
 
 def _strokes(rgb, where):
@@ -245,6 +290,61 @@ def _strokes(rgb, where):
         if sl is not None and 3 <= sl[0].stop - sl[0].start <= 12:
             k += 1
     return k
+
+
+def _straight_share(mask, keep):
+    """The share of a region's outline (inside `keep`) lying in straight horizontal or vertical runs of 10 px
+    or more (G-24's measure of a ruled edge)."""
+    from scipy import ndimage as ndi
+    o = mask & ~ndi.binary_erosion(mask) & keep
+    run = np.zeros_like(o)
+    for st in (np.array([[0, 0, 0], [1, 1, 1], [0, 0, 0]]), np.array([[0, 1, 0], [0, 1, 0], [0, 1, 0]])):
+        lab, n = ndi.label(o, structure=st)
+        if n:
+            sz = ndi.sum(o, lab, range(1, n + 1))
+            run |= np.concatenate([[False], sz >= 10])[lab]
+    return run.sum() / max(1, o.sum())
+
+
+def _oklch(rgb):
+    c = rgb[..., :3].astype(float) / 255
+    c = np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+    l_ = np.cbrt(0.4122214708 * c[..., 0] + 0.5363325363 * c[..., 1] + 0.0514459929 * c[..., 2])
+    m_ = np.cbrt(0.2119034982 * c[..., 0] + 0.6806995451 * c[..., 1] + 0.1073969566 * c[..., 2])
+    s_ = np.cbrt(0.0883024619 * c[..., 0] + 0.2817188376 * c[..., 1] + 0.6299787005 * c[..., 2])
+    L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720342 * s_
+    a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_
+    b = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_
+    return L, np.hypot(a, b), np.degrees(np.arctan2(b, a)) % 360
+
+
+def _warm_light(rgb):
+    """The median OKLCH chroma and hue of a picture's lit warm texels (R over B, L 0.40 and up)."""
+    L, C, h = _oklch(rgb)
+    c = rgb[..., :3].astype(int)
+    m = (c[..., 0] > c[..., 2] + 4) & (L >= 0.40)
+    return float(np.median(C[m])), float(np.median(h[m])), int(m.sum())
+
+
+def _spill(floor, overlay, foot=(10, 124), t_col=214, end_col=250, reach=30):
+    """C-6's measure: the share of floor texels the lit overlay changes, by distance past the groove's carved
+    lips, on each side of the main run and of the branch. `floor` is the floor under the overlay's canvas
+    (same origin), `overlay` the picture; the plate, the lever and the T are left out."""
+    H, W = overlay.shape[:2]
+    comp = floor[:H, :W, :3].copy()
+    on = overlay[..., 3] > 0
+    comp[on] = overlay[on][:, :3]
+    ch = np.abs(comp.astype(int) - floor[:H, :W, :3].astype(int)).sum(2) > 0
+    ch = np.pad(ch, ((0, max(0, floor.shape[0] - H)), (0, 0)))
+    fx, gy = foot
+    cols = np.arange(fx + 14, t_col - 36)                    # the main run, clear of the plate and the branch's own light
+    rows_b = np.arange(30, gy - 40)                          # the branch, clear of the lever and the main run's light
+    out = {}                                                  # the carved groove and its lips reach d -8 .. +8: floor from 9 on
+    out['north'] = [float(ch[gy - 9 - k, cols].mean()) for k in range(reach)]
+    out['south'] = [float(ch[gy + 9 + k, cols].mean()) if gy + 9 + k < ch.shape[0] else 0.0 for k in range(reach)]
+    out['west'] = [float(ch[rows_b, t_col - 9 - k].mean()) for k in range(reach)]
+    out['east'] = [float(ch[rows_b, t_col + 9 + k].mean()) for k in range(reach)]
+    return out
 
 
 def _oklab_L(rgb):
@@ -284,11 +384,65 @@ class PoolsAndShade(unittest.TestCase):
             self.assertLessEqual(L, 0.40)
 
 
+class LightColourAndDrawing(unittest.TestCase):
+    """Round 5's audit (G-24, G-26) on the committed floor, each with round 5's picture as the failing fixture."""
+
+    SHADE_BOXES = ((200, 430, 310, 512), (250, 380, 387, 490), (300, 360, 520, 520), (1290, 450, 1440, 570))
+
+    def test_the_torchlight_is_gold(self):
+        # Eastward 06's floor by the fire: OKLCH C 0.062 at hue 65; round 5's pools were C 0.018 (greige)
+        g = _rgba('ground')
+        for (x0, y0, x1, y1) in ((60, 150, 211, 273), (700, 312, 851, 400), (1800, 168, 1950, 260)):
+            C, h, n = _warm_light(g[y0:y1, x0:x1])
+            self.assertGreater(n, 500)
+            self.assertGreaterEqual(C, 0.045)
+            self.assertTrue(55 <= h <= 80, h)
+
+    def test_the_round5_pool_was_grey(self):
+        a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r5_pool.png')).convert('RGB'))
+        self.assertLess(_warm_light(a)[0], 0.045)
+
+    def test_the_round5_heart_was_ruled(self):
+        # round 5's hearts: whole lit flags, L 0.51, cut on the joints
+        from scipy import ndimage as ndi
+        a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r5_pool.png')).convert('RGB'))
+        L = _oklab_L(a)
+        heart = ndi.binary_opening((L >= 0.48) & (a[..., 0].astype(int) > a[..., 2]), np.ones((3, 3)))
+        keep = np.zeros(heart.shape, bool)
+        keep[22:-2, 2:-2] = True                                 # off the wall's foot and the box's edge
+        self.assertGreater(_straight_share(heart, keep), 0.30)
+
+    def test_the_shade_is_drawn(self):
+        # G-26: the ground band's drawn test (tones and shapes a patch) on the audit's four shade boxes, and the skylight's
+        from scripts.review.bands import ground_plane
+        g = _rgba('ground')
+        for (x0, y0, x1, y1) in self.SHADE_BOXES + ((1900, 300, 2051, 423),):
+            with self.subTest(box=(x0, y0, x1, y1)):
+                c = g[y0:y1, x0:x1]
+                r = ground_plane(c, np.ones(c.shape[:2], bool), 74)
+                self.assertTrue(r['drawn'], r['ours'])
+                self.assertTrue(r['calm'], r['contrast'])
+
+    def test_the_round5_shade_was_not_drawn(self):
+        from scripts.review.bands import ground_plane
+        a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r5_shade.png')).convert('RGBA'))
+        self.assertFalse(ground_plane(a, np.ones(a.shape[:2], bool), 74)['drawn'])
+
+    def test_no_colour_holds_half_a_shade_box(self):
+        g = _rgba('ground')[..., :3]
+        for (x0, y0, x1, y1) in self.SHADE_BOXES:
+            _, cnt = np.unique(g[y0:y1, x0:x1].reshape(-1, 3), axis=0, return_counts=True)
+            self.assertLessEqual(cnt.max() / cnt.sum(), 0.40)
+        a = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r5_shade.png')).convert('RGB'))
+        _, cnt = np.unique(a.reshape(-1, 3), axis=0, return_counts=True)
+        self.assertGreater(cnt.max() / cnt.sum(), 0.40)               # round 5's: one fill a flag
+
+
 class SceneUnmoved(unittest.TestCase):
     def test_pictures_keep_the_scenes_sizes_and_feet(self):
         # the sizes the scene was written for (undercroft.tscn offsets = -anchor from kit.json); round 3 changed
         # only channel_lit, with its offset, in the scene
-        sizes = {'cairn_alcove': (108, 100), 'channel_lit': (260, 134), 'lever_down': (54, 72), 'lever_up': (54, 72),
+        sizes = {'cairn_alcove': (108, 100), 'channel_lit': (260, 155), 'lever_down': (54, 72), 'lever_up': (54, 72),
                  'plate_down': (66, 66), 'plate_up': (66, 72), 'roots_corridor': (144, 48), 'roots_hall': (150, 54),
                  'rubble_chamber': (84, 69), 'rubble_corridor': (84, 69), 'rubble_hall': (108, 82), 'rubble_seal': (72, 44),
                  'seal_slab': (54, 270), 'seal_sunk': (52, 148), 'shard': (90, 126), 'stump_nw': (84, 104),
@@ -299,24 +453,34 @@ class SceneUnmoved(unittest.TestCase):
         kit = json.load(open(os.path.join(ROOT, 'game', 'zones', 'undercroft', 'kit.json')))
         offs = {o['id']: tuple(o['offset']) for o in kit['objects']}
         self.assertEqual(offs['cairn_alcove'], (-54, -99))
-        self.assertEqual(offs['channel_lit'], (-10, -124))         # round 3: the overlay lights the lips (scene changed)
+        self.assertEqual(offs['channel_lit'], (-10, -124))         # round 3: the overlay lights the lips; round 6 grows it south only
 
 
 class ChannelSpill(unittest.TestCase):
-    def test_the_lit_channel_lights_the_floor_beyond_its_far_wall(self):
-        # C-4: round 4's spill never reached the floor (its checker flipped phase every two rows and each row
-        # had to 4-touch the last). The overlay's rows past the lit far wall (the groove's middle is its foot
-        # row, 124; its far lip is 7 rows north) must carry light over four rows, fading, along the main run
-        a = _rgba('channel_lit')[..., 3] > 0
-        foot = 124
-        run = a[foot - 2, :].nonzero()[0]                           # the main run's columns (its groove floor)
-        x0, x1 = int(run.min()), int(run.max())
-        share = [float(a[foot - 7 - k, x0:x1].mean()) for k in range(4)]
-        self.assertGreater(share[0], 0.6, share)
-        self.assertGreater(share[1], 0.25, share)
-        self.assertGreater(share[2], 0.25, share)
-        self.assertGreater(share[3], 0.05, share)
-        self.assertTrue(share[0] > share[1] >= share[3] * 0.9, share)
+    """C-6: the lit channel lights 0.25 to 0.35 H (18 to 26 texels) of real floor on both sides of the main run
+    and of the branch, measured by a composite diff on floor texels only, past the groove's lips."""
+
+    def _check(self, sp):
+        for side in ('north', 'south', 'west', 'east'):
+            v = sp[side]
+            with self.subTest(side=side):
+                self.assertGreater(np.mean(v[0:6]), 0.8, v)            # 18 to 26 texels (0.25 to 0.35 H) of floor
+                self.assertGreater(np.mean(v[6:14]), 0.35, v)
+                self.assertGreater(np.mean(v[14:18]), 0.05, v)
+                self.assertLess(np.mean(v[24:30]), 0.05, v)          # and no further
+                self.assertGreater(np.mean(v[0:6]), np.mean(v[14:18]))
+
+    def test_the_lit_channel_lights_the_floor_round_it(self):
+        g = _rgba('ground')
+        floor = g[284:284 + 155, 1430:1430 + 260]                   # under the overlay (its offset in kit.json)
+        self._check(_spill(floor, _rgba('channel_lit')))
+
+    def test_the_round5_spill_reached_two_rows(self):
+        floor = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r5_channel_floor.png')).convert('RGBA'))
+        ov = np.asarray(Image.open(os.path.join(FIXTURES, 'undercroft_r5_channel_lit.png')).convert('RGBA'))
+        sp = _spill(floor, ov)
+        self.assertLess(np.mean(sp['north'][2:10]), 0.05, sp['north'])
+        self.assertLess(np.mean(sp['south'][0:8]), 0.05, sp['south'])
 
 
 if __name__ == '__main__':
