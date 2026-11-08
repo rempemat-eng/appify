@@ -88,7 +88,7 @@ class RealSource(unittest.TestCase):
     def test_legacy_woodland_and_crossroads_are_byte_unchanged(self):
         expected = {
             'woodland': '645dcc93e2e5518d3c2eee44f4fe8f13c11afd49ab4240d97f7b1623d5143f26',
-            'crossroads': 'b108c2826ae8093fad5084b14e66150f08e14d4c6b43d4ba3c27db5f51f631a1',
+            'crossroads': 'b62bfd9508f373582ac3ab349e805e1d652414abf8fefcaca54b86d17506e1ef',
         }
         for name, digest in expected.items():
             self.assertEqual(hashlib.sha256(SN.composite(SN.load_zone(name)).tobytes()).hexdigest(), digest)
@@ -106,7 +106,8 @@ class IntakeFixture(unittest.TestCase):
         for path in ('data', 'world/terrain', 'kit/terrain', 'kit/zones', 'kit/props', 'kit/pieces/material', 'zones/example'):
             (self.game / path).mkdir(parents=True, exist_ok=True)
         for source in ('scripts/art/kit/bake.py', 'scripts/art/kit/surface.py',
-                       'scripts/art/kit/structures.py', 'scripts/art/native/softground.py'):
+                       'scripts/art/kit/structures.py', 'scripts/art/native/softground.py',
+                       'scripts/art/native/volume.py'):
             target = self.root / source
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / source, target)
@@ -200,7 +201,7 @@ position = Vector2(36, 24)
     def test_stale_stamp_or_changed_bake_source_is_rejected(self):
         self.write('zones/example/ground_baked.json', {'zone': 'example', 'hash': 'old'})
         self.fails('stale baked-ground input hash')
-        for source in ('scripts/art/kit/surface.py', 'scripts/art/native/softground.py'):
+        for source in ('scripts/art/kit/surface.py', 'scripts/art/native/softground.py', 'scripts/art/native/volume.py'):
             with self.subTest(source=source):
                 self.flush()
                 with (self.root / source).open('a') as f:

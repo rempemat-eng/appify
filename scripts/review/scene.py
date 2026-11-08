@@ -245,7 +245,8 @@ def _bake_hash(plan: dict, lib: dict) -> str:
     root = os.path.dirname(GAME)
     h = hashlib.sha256()
     for source in ('scripts/art/kit/bake.py', 'scripts/art/kit/surface.py',
-                   'scripts/art/kit/structures.py', 'scripts/art/native/softground.py'):
+                   'scripts/art/kit/structures.py', 'scripts/art/native/softground.py',
+                   'scripts/art/native/volume.py'):
         with open(os.path.join(root, source), 'rb') as f:
             h.update(f.read())
     keep = {k: plan.get(k) for k in ('legend', 'rows', 'tiers', 'pieces', 'variants', 'spawns', 'decor')}

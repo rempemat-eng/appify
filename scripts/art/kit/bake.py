@@ -46,6 +46,7 @@ from scripts.art.native import rocks as RK
 from scripts.art.native import screen as SN
 from scripts.art.native import softgrid as SG
 from scripts.art.native import softground as GD
+from scripts.art.native import volume as VOL
 from scripts.art.native.palette import C, FI, is_fam
 
 D = ctx.D
@@ -54,7 +55,7 @@ ZONES = os.path.join(ROOT, 'game', 'kit', 'zones')
 # The shared soil body is a direct baked-material dependency: changing it must invalidate a bake,
 # just as a recipe change does. Other native painters retain their existing next-bake behaviour.
 SOURCES = ['scripts/art/kit/bake.py', 'scripts/art/kit/surface.py', 'scripts/art/kit/structures.py',
-           'scripts/art/native/softground.py']
+           'scripts/art/native/softground.py', 'scripts/art/native/volume.py']
 
 
 def _lay(cv, dec, x, y):
@@ -139,6 +140,28 @@ def _tree_ex(pid: str, img: Image.Image):
     return dict(w=a.any(0).sum() / D, tw=6), kind
 
 
+def is_crown_mask(entry: dict) -> bool:
+    """True when a prop's shadow mask is a tree's crown: a mask on a piece whose role is tree.
+
+    The one test for every crown consumer (the variants' tree context, the drawing pass, the
+    detail bar's crown-shadow region). It names trees rather than excluding the other masked
+    roles, so a new masked prop (the mill wheel's silhouette, a house's volume) stays out until
+    it is a tree."""
+    return (entry or {}).get('role') == 'tree' and 'mask' in ((entry or {}).get('shadow') or {})
+
+
+def crown_cells(pieces: list, idx: dict, R: int, Cc: int) -> np.ndarray:
+    """The cells holding a tree's foot (is_crown_mask), which the variants read as tree context."""
+    out = np.zeros((R, Cc), bool)
+    for pc in pieces:
+        if not is_crown_mask(idx.get(pc['piece'])):
+            continue
+        cx_, cy_ = int(pc['at'][0] // CELL), int((pc['at'][1] - 1) // CELL)
+        if 0 <= cy_ < R and 0 <= cx_ < Cc:
+            out[cy_, cx_] = True
+    return out
+
+
 def material_paints(materials, lib: dict) -> dict:
     """Canonical default/tie order, independent of Python's randomized string hashes.
 
@@ -182,14 +205,12 @@ def bake(plan: dict, lib: dict | None = None):
         band |= below & ~tm
     # context per cell for the variants: trees, water, doors, routes
     pieces = plan.get('pieces', [])
-    tree_c = np.zeros((R, Cc), bool)
+    tree_c = crown_cells(pieces, idx, R, Cc)
     door_c = np.zeros((R, Cc), bool)
     for pc in pieces:
         e = idx.get(pc['piece']) or {}
         cx_, cy_ = int(pc['at'][0] // CELL), int((pc['at'][1] - 1) // CELL)
         if 0 <= cy_ < R and 0 <= cx_ < Cc:
-            if 'mask' in (e.get('shadow') or {}):
-                tree_c[cy_, cx_] = True
             if e.get('role') in ('door', 'gate', 'house'):
                 door_c[cy_, cx_] = True
     for at in (plan.get('spawns') or {}).values():
@@ -545,6 +566,7 @@ def bake(plan: dict, lib: dict | None = None):
                             shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
     # shadows and the lawn's detail (screen.build's order)
     casts, things, trees, objects = [], [], [], []
+    vol = np.zeros((h, w), np.uint8)        # the houses' volume shadows, their steps 1/2/3
     for pc in pieces:
         e = idx.get(pc['piece'])
         if not e or ((lib.get(pc['piece'], {}).get('rendering') or {}).get('paint')):
@@ -557,7 +579,9 @@ def bake(plan: dict, lib: dict | None = None):
         objects.append((pc['id'], pc['piece'].split('_', 1)[-1], fx - (x1 - x0) / D / 2, fy - (y1 - y0) / D, (x1 - x0) / D, (y1 - y0) / D))
         things.append((fy, img, anc, at))
         sh = e.get('shadow') or {}
-        if 'mask' in sh:
+        if VOL.bake_cast(vol, e, at, w, h):
+            continue
+        if is_crown_mask(e):
             ex, kind = _tree_ex(pc['piece'], img)
             casts.append(SN.tree_shadow_hd(fx, fy, ex, w, h))
             trees.append((fx, fy, ex['w'], kind))
@@ -585,7 +609,7 @@ def bake(plan: dict, lib: dict | None = None):
             limg = CO.fallen_leaf(D, lrng)
             low.append((at[1] / D - 30, limg, (limg.width / 2, limg.height), at, False))
     low += SN.lawn_dressing_hd(cv, pl, h, w)
-    shade = np.zeros((h, w), bool)
+    shade = vol > 0
     for m in casts:
         shade |= m
     SN.ground_detail_hd(cv, pl, trees, h, w, shade, soft=True)
@@ -597,7 +621,10 @@ def bake(plan: dict, lib: dict | None = None):
     for j in srng.permutation(len(sy))[: len(sy) // 140]:
         GD.stamp(cv, int(sy[j]), int(sx[j]), GD.tuft_shape(srng, srng.uniform(0.8, 1.4)), C('grass_cool', 2), turf_s)
     G = CO.ground_from_codes(cv, D)
+    before = G.tone.copy()
     CO.cast_shadows(G, casts, [], things + [(l[0], l[1], l[2], l[3]) for l in low if l[4]], D)
+    # a house's shadow keeps its authored bands (town.py, kit compose.shadows, terrain_ground.gd)
+    VOL.lay_levels(G, before, vol)
     ground = G.rgba()
     for (_y, im, an, at_, _c) in sorted(low, key=lambda t: t[0]):
         CO.paste(ground, im, an, at_)
