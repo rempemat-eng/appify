@@ -1,0 +1,137 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "fence_picket_gate_ew",
+ "name": "Picket fence, gate along x",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "open",
+   "weight": 1.0,
+   "png": "res://kit/props/art/fence/fence_picket_gate_ew_open.png",
+   "foot": [
+    35,
+    96
+   ]
+  },
+  {
+   "id": "shut",
+   "weight": 0.5,
+   "png": "res://kit/props/art/fence/fence_picket_gate_ew_shut.png",
+   "foot": [
+    35,
+    62
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Modular fence cell (scripts/art/kit/fences.py): closes loops with its neighbours, gates on the path."
+ },
+ "geometry": {
+  "size_px": [
+   70,
+   100
+  ],
+  "size_cells": [
+   3,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 54,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   35,
+   96
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "gate",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "on",
+    "what": "route",
+    "note": "a gate stands where the path its owner walks crosses the fence (placement-logic rule 2); the trodden way runs through it"
+   }
+  ],
+  "boundary": {
+   "style": "picket",
+   "joins": [
+    "e",
+    "w"
+   ],
+   "gate": true,
+   "span_cells": 3,
+   "encloses": [
+    "flowers",
+    "crops"
+   ]
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    22,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {
+  "interact": {
+   "verb": "open",
+   "triggers": []
+  }
+ },
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "fence",
+  "eastward_ref": "17 (the farm: rail fence and gate, 40 E = 0.75 A), 12 and 38 (palisades)",
+  "painter": {
+   "module": "scripts.art.kit.fences",
+   "fn": "render_piece",
+   "args": {
+    "style": "picket"
+   }
+  },
+  "seeded_from": "scripts/art/kit/fences.py",
+  "todo": []
+ }
+}

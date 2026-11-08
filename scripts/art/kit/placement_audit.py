@@ -107,28 +107,39 @@ TABLE = {
     'crossroads_handcart': ('store', 'cart', [R('at_edge', 'route')], [OFF_ROUTE], 'fine', 'At a road\'s edge by a shop or the market.'),
     'crossroads_stall': ('work', 'stall', [R('at_edge', 'route')], [OFF_ROUTE], 'fine', 'In rows on the square with aisles; its front to the route.'),
     'crossroads_flower_tub': ('care', 'planter', [R('within', HOUSE_ROLE, 1, 'by a door or under a window')], [OFF_ROUTE], 'fine', 'By a door.'),
-    'crossroads_well': ('water', 'centrepiece', [], [OFF_ROUTE], 'fine', 'Central to the square.'),
+    'crossroads_well': ('water', 'centrepiece', [R('near', HOUSE_ROLE, 8, 'water for homes: a square or a farmyard')],
+                        [OFF_ROUTE, R('not_near', 'water', 6, 'never beside a river that is easier to draw from')], 'fixed',
+                        'Central to the square. Props sweep (3 Nov): requires homes within 8 cells, forbids a river within 6.'),
     'crossroads_well_choked': ('water', 'centrepiece', [], [OFF_ROUTE], 'fine', 'The storm-broken well (story stage).'),
     # ---- light and guidance --------------------------------------------------------------------
-    'crossroads_kit_lantern': ('light', 'light', None, None, 'fine', 'Along streets, at junctions and gates.'),
-    'crossroads_lantern_lit': ('light', 'light', None, None, 'fine', 'As the lantern.'),
-    'crossroads_lantern_dark': ('light', 'light', None, None, 'fine', 'As the lantern, unlit (story).'),
+    'crossroads_kit_lantern': ('light', 'light', [R('at_edge', 'route', 1)], [OFF_ROUTE, R('not_near', 'centrepiece', 1, 'never on a well')],
+                               'fixed', 'Along streets, at junctions and gates. Props sweep (3 Nov): never on a well.'),
+    'crossroads_lantern_lit': ('light', 'light', [R('at_edge', 'route', 1)], [OFF_ROUTE, R('not_near', 'centrepiece', 1, 'never on a well')],
+                               'fixed', 'As the lantern; its solid box is the plinth (was 22 world px deep up the post).'),
+    'crossroads_lantern_dark': ('light', 'light', [R('at_edge', 'route', 1)], [OFF_ROUTE, R('not_near', 'centrepiece', 1, 'never on a well')],
+                                'fixed', 'As the lantern, unlit (story).'),
     'crossroads_notice_board': ('guide', 'marker', None, None, 'fine', 'On the square, at a route\'s edge.'),
-    'crossroads_waystone': ('guide', 'marker', None, None, 'fine', 'At a junction; points down real routes.'),
+    'crossroads_waystone': ('guide', 'marker', [R('at_corner', 'route', 2, 'at a junction: routes on two sides at right angles')], [], 'fixed',
+                            'At a junction, pointing down real routes. Props sweep (3 Nov): at_corner route (was at_edge, which a straight path also met).'),
     'crossroads_bench': ('rest', 'seat', None, None, 'fine', 'Beside a route, facing it.'),
     # ---- gardens, animals, boundaries ----------------------------------------------------------
-    'crossroads_fence': ('contain', 'boundary', [], [OFF_ROUTE, OFF_WATER], 'redraw',
-                         'One straight post-and-rail segment with no corner post, side run or gate, so it cannot close an enclosure '
-                         '(rules.fences). Redraw as runs along x and y with corner posts and a gate, in the styles placement-logic '
-                         'gives (wattle, hurdle, picket, rail); the Crossroads slice\'s painters are the model.'),
-    'crossroads_beds_dug': ('grow', 'garden', [], [OFF_ROUTE, OFF_WATER], 'redraw',
-                            'Four boarded boxes on bare earth that read as crates (Matt\'s Crossroads review); redraw as soil beds '
-                            'with crops in a dug patch, inside a garden boundary.'),
-    'crossroads_beds_scorched': ('grow', 'garden', [], [OFF_ROUTE, OFF_WATER], 'redraw', 'The burnt stage of the beds: redraw with them.'),
-    'crossroads_trough': ('feed', 'trough', [R('within', 'pen', 0, 'inside a pen or paddock with its animals')], [OFF_ROUTE], 'missing',
-                          'A trough needs animals and a pen; the kit has neither yet (no animal pieces, no pen boundary).'),
-    'crossroads_hay': ('feed', 'feed', [R('within', 'pen', 1, 'in a paddock, a barn or a cart')], [OFF_ROUTE], 'redraw',
-                       'Reads as pale slabs, not loose or baled hay; and like the trough it needs a pen. Redraw (the slice\'s hay heap is the model).'),
+    'crossroads_fence': ('contain', 'boundary', [], [OFF_ROUTE, OFF_WATER], 'fixed',
+                         'Retired (3 Nov): one straight post-and-rail segment could not close an enclosure. Replaced by the '
+                         'modular fence cells `fence_wattle_*` and `fence_picket_*` (scripts/art/kit/fences.py): straights, '
+                         'corners, Ts, a cross, end posts and a gate three cells wide, which close loops (enclosures.py).'),
+    'crossroads_beds_dug': ('grow', 'garden', [], [OFF_ROUTE, OFF_WATER], 'fixed',
+                            'Redrawn (3 Nov, scripts/art/kit/farm.py): three soil ridges with a crop on each (cabbage, leek, lettuce; '
+                            'carrot, cabbage, beans) in a dug patch with a rough spade edge, no boards. Holds crops for a kitchen '
+                            "garden's wattle (placement.enclosure)."),
+    'crossroads_beds_scorched': ('grow', 'garden', [], [OFF_ROUTE, OFF_WATER], 'fixed',
+                                 'Redrawn with the beds (3 Nov): the same ridges burnt, crops black stubs in ash, green coming back.'),
+    'crossroads_trough': ('feed', 'trough', [R('near', 'stock', 4, 'its animals drink from it'),
+                                             R('within', 'boundary', 4, 'inside their pen or paddock')], [OFF_ROUTE], 'fixed',
+                          'The kit now has animals (`farm_sheep*`, `farm_hen_*`, role stock) and pens (the fence cells): it stands '
+                          'inside a fold with its flock (placement.enclosure: what sheep and horses need).'),
+    'crossroads_hay': ('feed', 'feed', [R('near', 'stock', 6, 'feed forked out for the stock, in a paddock, a fold or a barn')],
+                       [OFF_ROUTE], 'fixed',
+                       'Redrawn (3 Nov): three tied bales stacked, and a heap forked out loose; placed by the animals it feeds.'),
     'crossroads_bush': ('grow', 'shrub', [], NATURE, 'fine', 'Hedges and garden shrubs.'),
     'crossroads_bush_nonblocking': ('grow', 'shrub', [], NATURE, 'fine', 'Low shrubs the companion walks through.'),
     'crossroads_oak': ('grow', 'tree', [], NATURE, 'fine', 'The square\'s tree.'),
@@ -140,8 +151,225 @@ TABLE = {
                  'crossroads_smithy_rubble', 'crossroads_fern_rubble', 'crossroads_crater_smoke')},
 }
 
+
+def _farm_rows():
+    """The modular fences and the farmyard (scripts/art/kit/fences.py, farm.py): their purpose,
+    role, requires and forbids are written by those painters (None keeps them)."""
+    rows = {}
+    for style, purpose in (('wattle', 'contain'), ('picket', 'mark'), ('rail', 'contain')):
+        for mask in range(1, 16):
+            jn = ''.join(c for i, c in enumerate('nesw') if mask & (1 << i))
+            rows['fence_%s_%s' % (style, jn)] = (purpose, 'boundary', None, None, 'fine',
+                                                 'A %s fence cell (arms %s): closes a loop with its neighbours (enclosures.py).' % (style, jn))
+        for ax in ('ew', 'ns'):
+            rows['fence_%s_gate_%s' % (style, ax)] = (purpose, 'gate', None, None, 'fine',
+                                                       'A %s gate three cells wide, on the path its owner walks (requires on route).' % style)
+    rows.update({
+        'farm_hen_white': ('live', 'stock', None, None, 'fine', 'In a chicken run of 3 to 4 cells, near its coop.'),
+        'farm_hen_brown': ('live', 'stock', None, None, 'fine', 'As the white hen.'),
+        'farm_hen_speckled': ('live', 'stock', None, None, 'fine', 'As the white hen.'),
+        'farm_sheep': ('live', 'stock', None, None, 'fine', 'In a fold of 6 to 10 cells with its trough and shelter.'),
+        'farm_sheep_graze': ('live', 'stock', None, None, 'fine', 'As the sheep.'),
+        'farm_sheep_lie': ('live', 'stock', None, None, 'fine', 'As the sheep.'),
+        'farm_coop': ('live', 'coop', None, None, 'fine', 'In the run\'s back corner against its fence; the hens about it.'),
+        'farm_shelter': ('live', 'shelter', None, None, 'fine', 'Its back to the fold\'s hurdles, its open side away from the weather.'),
+        'garden_flower_border': ('care', 'planter', None, None, 'fine', 'In a front garden, beside the door path.'),
+        'fence_rail_stile_ew': ('contain', 'stile', None, None, 'fine', 'Where a footpath crosses a paddock\'s rails: people over, stock in.'),
+        'fence_rail_stile_ns': ('contain', 'stile', None, None, 'fine', 'As the stile along x.'),
+        'farm_cow': ('live', 'stock', None, None, 'fine', 'In a paddock of 10 cells or more with water and a field shelter.'),
+        'farm_calf': ('live', 'stock', None, None, 'fine', 'As the cow, near her.'),
+        'farm_horse': ('live', 'stock', None, None, 'fine', 'In a paddock of 10 cells or more with water and a field shelter.'),
+        'farm_pig': ('live', 'stock', None, None, 'fine', 'In the run before its sty, with a wallow and a trough.'),
+        'farm_goat': ('live', 'stock', None, None, 'fine', 'In a pen of 4 to 8 cells with a shelter and water.'),
+        'farm_goat_b': ('live', 'stock', None, None, 'fine', 'As the goat.'),
+        'farm_sty': ('live', 'sty', None, None, 'fine', 'The north wall of its pigs\' run, its door and trough facing into it.'),
+        'farm_wallow': ('live', 'wallow', None, None, 'fine', 'In the pigs\' run, off the trodden way.'),
+        'farm_churns': ('store', 'churns', None, None, 'fine', 'By a yard or paddock gate, where the cart stops.'),
+        'farm_water_butt': ('water', 'water_butt', None, None, 'fine', 'Against a building, under its downpipe.'),
+        'farm_wheelbarrow': ('work', 'barrow', None, None, 'fine', 'By the muck heap or the beds it serves.'),
+        'farm_scarecrow': ('grow', 'scarecrow', None, None, 'fine', 'In the crops, never on the path.'),
+        'farm_feed_sacks': ('store', 'sacks', None, None, 'fine', 'By the stock they feed, at a shelter or coop.'),
+        'farm_muck_heap': ('store', 'muck_heap', None, None, 'fine', 'Beside the pens it is mucked out of, away from the house door.'),
+    })
+    return rows
+
+
+TABLE.update(_farm_rows())
+
+
+def _commons_rows():
+    """The village commons (scripts/art/kit/commons.py): written by that painter (None keeps)."""
+    rows = {
+        'commons_washing_line': ('work', 'washing_line', 'In a house\'s back yard (needs home 4, yard side); never in wild woods.'),
+        'commons_chopping_block': ('work', 'chopping_block', 'Near a hearth (needs hearth 6), by the woodpile.'),
+        'commons_woodpile': ('store', 'store', 'Against a house with a chimney (needs hearth 4).'),
+        'commons_bench': ('rest', 'seat', 'Facing a feature, a view, water or the land falling away (faces, 6 cells).'),
+        'commons_notice_board': ('guide', 'marker', 'At a route\'s edge where people pass; never in wild woods.'),
+        'commons_pump': ('water', 'centrepiece', 'On a green near homes; a feature benches face.'),
+        'commons_stall_produce': ('work', 'stall', 'At a route\'s edge on the green or square, beside its pair.'),
+        'commons_stall_cloth': ('work', 'stall', 'As the produce stall.'),
+        'commons_cart': ('store', 'cart', 'At a road\'s edge, off the way.'),
+        'commons_shrine': ('mark', 'marker', 'At the wayside; a feature to face.'),
+    }
+    out = {pid: (pu, ro, None, None, 'fine', note) for pid, (pu, ro, note) in rows.items()}
+    for pts in ('nes', 'esw', 'nsw', 'new', 'nesw'):
+        out['commons_fingerpost_' + pts] = ('guide', 'signpost', None, None, 'fine',
+                                            'At a junction whose routes leave %s (points).' % '-'.join(pts.upper()))
+    return out
+
+
+TABLE.update(_commons_rows())
+
+# What the existing pieces offer the placement logic (provides) and where they never stand (avoid):
+# check_plan reads them; apply() writes them.
+LOGIC = {
+    **{pid: {'provides': ['home', 'hearth']} for pid in ('crossroads_bakery', 'crossroads_fern_cottage', 'crossroads_herbalist',
+                                                         'crossroads_hut', 'crossroads_north_cottages')},
+    'crossroads_library': {'provides': ['hearth']},
+    'crossroads_smithy': {'provides': ['hearth']},
+    'crossroads_well': {'provides': ['feature', 'water']},
+    'crossroads_well_choked': {'provides': ['feature']},
+    **{pid: {'provides': ['feature', 'view']} for pid in ('woodland_standing_stone', 'woodland_standing_stone_b', 'woodland_standing_stone_broken',
+                                                          'woodland_standing_stone_lean', 'woodland_standing_stone_low',
+                                                          'woodland_standing_stone_runes')},
+    **{pid: {'provides': ['view', 'water']} for pid in ('waterfall_1', 'waterfall_1_tall', 'waterfall_2', 'waterfall_2_tall', 'waterfall_3',
+                                                        'waterfall_3_tall', 'waterfall_4', 'waterfall_4_tall')},
+    **{pid: {'avoid': ['wild_woods']} for pid in ('crossroads_kit_lantern', 'crossroads_lantern_lit', 'crossroads_lantern_dark',
+                                                  'crossroads_notice_board', 'crossroads_stall')},
+}
+
 PURPOSES = ('contain', 'exclude', 'mark', 'rest', 'light', 'store', 'feed', 'cross', 'guide', 'work',
             'live', 'grow', 'climb', 'flow', 'care', 'water', 'aftermath')
+
+
+# ------------------------------------------------------------------------------------------------
+# the placement logic relations cannot say (round 3, 3 Nov): what a piece needs near it, what it
+# faces, where it never stands and where a signpost's arms point
+# ------------------------------------------------------------------------------------------------
+DIRS = {'n': (0, -1), 'e': (1, 0), 's': (0, 1), 'w': (-1, 0)}
+
+
+def _plan_logic_context(plan, lib, mats):
+    from scripts.art.kit import relations as RL
+    ctx = RL._context(plan, mats)
+    if ctx is None:
+        return None
+    grid, tiers, width, height = ctx
+    route = {c for c, m in grid.items() if RL._matches_material('route', m, mats)}
+    water = {c for c, m in grid.items() if RL._matches_material('water', m, mats)}
+    placed = []
+    for i, e in enumerate(plan.get('pieces', [])):
+        piece = lib.get(e.get('piece'))
+        if piece is None or RL._position(e, plan) is None:
+            continue
+        placed.append((i, e, piece, RL._occupied(e, piece, plan), RL._position(e, plan)))
+    return RL, grid, tiers, route, water, placed
+
+
+def _dist(a, b):
+    return min((max(abs(x - X), abs(y - Y)) for x, y in a for X, Y in b), default=10 ** 6)
+
+
+def check_plan(plan, lib=None, mats=None) -> list:
+    """rules.needs, rules.faces, rules.avoid and rules.points on a kit plan (see the schema's
+    placement.needs, faces, avoid and points), then thresholds.py's rules.door_path, door_clear,
+    gate_path, path_through_fence and fence_wall."""
+    from scripts.art.kit import relations as RL
+    lib = lib if lib is not None else RL.default_library()
+    mats = mats if mats is not None else RL.default_materials()
+    c = _plan_logic_context(plan, lib, mats)
+    if c is None:
+        return []
+    RL, grid, tiers, route, water, placed = c
+    out = []
+
+    def f(check, eid, msg, at):
+        out.append({'check': check, 'message': '%s: %s' % (eid, msg), 'at': at, 'severity': 'fault'})
+    providers = {}
+    for i, e, piece, occ, pos in placed:
+        for tag in (piece.get('placement') or {}).get('provides', []):
+            providers.setdefault(tag, []).append((i, e, piece, occ, pos))
+    trees = [pos for i, e, piece, occ, pos in placed if (piece.get('placement') or {}).get('role') == 'tree']
+    for i, e, piece, occ, pos in placed:
+        pl = piece.get('placement') or {}
+        eid = str(e.get('id', e.get('piece')))
+        at = e.get('at')
+        for need in pl.get('needs', []):
+            ok = False
+            for j, e2, p2, occ2, pos2 in providers.get(need['what'], []):
+                if j == i or _dist(occ, occ2) > need['cells']:
+                    continue
+                if need.get('side') == 'yard' and pos[1] > pos2[1] + 1e-6:
+                    continue                                # in front of the house: not its yard
+                ok = True
+                break
+            if not ok:
+                f('rules.needs', eid, 'needs a %s within %g cells%s%s' % (need['what'], need['cells'], ' (in its yard)' if need.get('side') == 'yard' else '',
+                                                                       ': ' + need['note'] if need.get('note') else ''), at)
+        if pl.get('faces'):
+            fc = pl['faces']
+            facing = str(e.get('facing', 's')).lower()
+            dx, dy = DIRS.get(facing, (0, 1))
+            targets = set()
+            for tag in fc['what']:
+                if tag == 'water':
+                    targets |= water
+                elif tag == 'lower':
+                    targets |= {cc for cc, t in tiers.items() if any(tiers.get(o, t) > t for o in occ)}
+                for j, e2, p2, occ2, pos2 in providers.get(tag, []):
+                    if j != i:
+                        targets |= occ2
+            seen = False
+            for x, y in targets:
+                rx, ry = x + 0.5 - pos[0], y + 0.5 - pos[1]
+                dot, cross = rx * dx + ry * dy, rx * dy - ry * dx
+                if 0 < dot <= fc['cells'] + 0.5 and abs(cross) <= dot + 1e-7:
+                    seen = True
+                    break
+            if not seen:
+                f('rules.faces', eid, 'faces %s and sees no %s within %g cells%s' % (facing, ' or '.join(fc['what']), fc['cells'],
+                                                                                  ': ' + fc['note'] if fc.get('note') else ''), at)
+        if 'wild_woods' in pl.get('avoid', []):
+            near_trees = sum(1 for t in trees if max(abs(t[0] - pos[0]), abs(t[1] - pos[1])) <= 4)
+            homes = [occ2 for j, e2, p2, occ2, pos2 in providers.get('home', [])]
+            if near_trees >= 3 and not any(_dist(occ, o) <= 8 for o in homes):
+                f('rules.avoid', eid, 'stands in wild woods (%d trees within 4 cells, no home within 8)' % near_trees, at)
+        if pl.get('points'):
+            # the ways out of the junction: for each side, a route crossing the band 3 to 5 cells
+            # out from the post (2 either side of its line), so a two-cell lane counts once
+            fx, fy = int(pos[0]), int(pos[1] - 1e-7)
+            dirs = set()
+            for d, (ux, uy) in DIRS.items():
+                for k in range(3, 6):
+                    for w in range(-2, 3):
+                        cx_, cy_ = fx + ux * k + uy * w, fy + uy * k + ux * w
+                        if (cx_, cy_) in route:
+                            dirs.add(d)
+            if len(dirs) < 3:
+                f('rules.points', eid, 'a signpost stands at no junction (routes leave its corner %s: three or more ways make one)'
+                  % (''.join(d for d in 'nesw' if d in dirs) or 'nowhere'), at)
+            elif set(pl['points']) != dirs:
+                f('rules.points', eid, 'its arms point %s but the routes leave the junction %s' % (''.join(d for d in 'nesw' if d in pl['points']),
+                                                                                                   ''.join(d for d in 'nesw' if d in dirs)), at)
+    # doors, door paths, gates on paths and where fences meet buildings (thresholds.py)
+    from scripts.art.kit import thresholds as TH
+    return out + TH.check_plan(plan, lib, mats)
+
+
+def check_zones() -> list:
+    """check_plan over every kit zone: (zone, finding)."""
+    out = []
+    zdir = os.path.join(ROOT, 'game', 'kit', 'zones')
+    for fn in sorted(os.listdir(zdir)):
+        if fn.endswith('.json'):
+            plan = json.load(open(os.path.join(zdir, fn)))
+            out += [(fn[:-5], x) for x in check_plan(plan)]
+    # the review studies built from kit pieces (farm_study, village_study)
+    from scripts.art.kit import build as _B  # noqa: F401  (configures the density)
+    from scripts.art.kit import farm_study, village_study
+    for name, mod in (('farm_study', farm_study), ('village_study', village_study)):
+        out += [(name, x) for x in check_plan(mod.plan())]
+    return out
 
 
 def _files():
@@ -157,6 +385,7 @@ def _files():
 def apply(piece: dict) -> dict:
     purpose, role, req, forb, _v, _n = TABLE[piece['id']]
     pl = piece.setdefault('placement', {})
+    pl.update(LOGIC.get(piece['id'], {}))
     pl['purpose'] = purpose
     if role:
         pl['role'] = role
@@ -215,11 +444,38 @@ Totals: %s.
 
 ## Missing pieces
 
-- **Animals** (hens, sheep, a cow or a horse) and **pen boundaries** (hurdles, a chicken run, a
-  paddock rail with a gate): without them a trough or hay has nothing to serve. The Crossroads
-  slice's painters (#421) are the starting point.
-- **Fence corners and gates**, and a **front-garden picket**: see `crossroads_fence`.
-- **A signpost for junctions** (a waystone stands in for now) and **a coop / field shelter**.
+- ~~Animals and pen boundaries~~ (3 Nov): hens, sheep, a hen ark, a field shelter and fence cells in
+  wattle and picket that close loops (`scripts/art/kit/farm.py`, `fences.py`; the loops and what they
+  hold are checked by `enclosures.py`). Still missing: a cow, a horse and a paddock rail.
+- ~~A signpost for junctions~~ (3 Nov): fingerposts, one per set of arms (`commons_fingerpost_*`);
+  their arms must point along the routes that leave the junction (`placement.points`): the routes crossing a band 3 to 5 cells out from the post on each side.
+
+## Placement logic beyond relations (3 Nov)
+
+`placement_audit.check_plan` (in `--check`, over every kit zone and the village-green study) reads
+four fields relations cannot express: **needs** (a tag some piece `provides` within N cells, e.g. a
+woodpile needs a hearth; `side: yard` means behind the provider, so washing never hangs before the
+front door), **faces** (from the piece's `facing`, a cone N cells deep must hold a feature, a view,
+water or lower ground), **avoid** (`wild_woods`: three or more trees within 4 cells and no home
+within 8) and **points** (a signpost's arms equal the sides on which routes leave it, read 3 to 5 cells
+out, so a two-cell lane counts once; three ways or more make a junction).
+
+## Doors, paths, gates and where fences meet buildings (4 Nov)
+
+Matt's review of the farm study ("the placement of the fence, doors and pathways does not align"):
+`thresholds.py`, run by `check_plan`, so the editor's live overlay and Validate read it too. Doors
+are each building's `geometry.doors` (the opening between the frame posts, texels from the foot).
+**door_path**: a path leaving a door starts centred on the opening (within a texel) and runs
+straight out a cell before it bends; a door whose centre is off the half-cell grid can never have a
+path of whole cells centred on it, so `houses.building` draws every door and the forge's mouth on
+that grid (`houses.doors_on_grid`; the fern cottage's door and the smithy's mouth moved 2 world px
+east, their frame post and boards with them). **door_clear**: nothing stands in a door's threshold and swing. **gate_path**: a gate
+or a stile is centred on the path through it (a north-south run's cells centre on row lines, so its
+path is an even number of cells wide). **path_through_fence**: a path crosses a boundary only at a
+gate or a stile. **fence_wall**: a boundary meets a building at a front corner or along its wall
+foot, its end post beside the wall, never drawn in front of the façade; a front garden is enclosed
+from the house's front corners. The editor snaps a path painted from a door onto the door's centre
+line and a gate onto the path crossing its run.
 
 ## Table
 
@@ -252,7 +508,12 @@ def main(argv=None) -> int:
         if stale:
             print('placement audit: pieces differ from the table: %s (run python3 -m scripts.art.kit.placement_audit)' % ', '.join(stale))
             return 1
-        print('placement audit: %d pieces, each with a purpose' % len(files))
+        zf = check_zones()
+        if zf:
+            for z, x in zf:
+                print('placement audit: %s %s %s' % (z, x['check'], x['message']))
+            return 1
+        print('placement audit: %d pieces, each with a purpose; kit zones and the studies meet needs, faces, avoid and points' % len(files))
         return 0
     counts = write_doc()
     print('placement audit: %d pieces; %s' % (len(files), counts))

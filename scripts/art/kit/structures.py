@@ -9,6 +9,7 @@ exist, so their reviewed data is never overwritten; --force rewrites them).
 from __future__ import annotations
 
 import json
+import math
 import os
 import sys
 
@@ -197,7 +198,11 @@ def log_steps(force: bool, cells: int = 2) -> None:
     }, force)
 
 
-def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int) -> None:
+FALL_FRAMES, FALL_PERIOD, FALL_FPS = 8, 24, 10      # the fall's loop: 8 frames, the streaks 3 texels a frame
+
+
+def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: int = 0, rings: bool = True,
+               keep=None) -> None:
     """A fall drawn from the rim down (texels): the stream's own water bends over the face's top
     edge at row y0 and falls as one sheet exactly the channel's width (x0 .. x0 + w), in front of
     the face and behind nothing. Matt, 2 Nov: "the waterfall overlaps in an unrealistic way on the
@@ -205,7 +210,12 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int) -> 
     above, the sheet never spreads over the stones either side, and the white water is only where
     the sheet lands: the plume and the foam rings lie on the pool (rows y1 and below), no spray on
     the face. Across the ribbon: lit west, a body, shade east; falling streaks in broken runs; the
-    glassy tongue where it leaves the rim, then the crest's white curl and its shade."""
+    glassy tongue where it leaves the rim, then the crest's white curl and its shade.
+
+    `t` is the frame of the fall's loop (FALL_FRAMES frames): the streaks have one period
+    (FALL_PERIOD texels) and fall FALL_PERIOD / FALL_FRAMES texels a frame, so the loop closes; the
+    plume churns inside the outline it has at frame 0 (`keep`, the pixels frame 0 drew), so a frame
+    laid over the baked ground never uncovers the pool. Frame 0 is the still the bake draws."""
     from scripts.art.native.palette import C, FI
     H, W = cv.shape
     rng = np.random.default_rng(seed)
@@ -220,9 +230,10 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int) -> 
                 cols[key] = (rng.uniform(0, 60), rng.uniform(6, 18), rng.uniform(4, 16), rng.random() < 0.42)
             ph, run, gap, on_ = cols[key]
             dy = Y - y0
-            if on_ and ((dy + ph) % (run + gap)) < run and 0.06 < s < 0.86 and dy > 6:
+            fall = dy - t * FALL_PERIOD // FALL_FRAMES
+            if on_ and ((fall + ph) % FALL_PERIOD) < run and 0.06 < s < 0.86 and dy > 6:
                 c = C('snow', 4) if s < 0.45 else (C('water', 4) if s < 0.7 else C('snow', 2))   # a falling streak
-            elif ((dy + ph * 0.5) % (run + gap)) < 2 and on_ and dy > 8:
+            elif ((fall + ph * 0.5) % FALL_PERIOD) < 2 and on_ and dy > 8:
                 c = C('water', max(1, tt - 1))                     # the trough behind a streak
             wob = int(round(1.2 * np.sin(X * 0.9)))
             if dy < 2:
@@ -236,9 +247,17 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int) -> 
     # the plume where it lands: churning white on the pool, no higher than a few texels up the sheet
     parts = [(cx + rng.uniform(-0.45, 0.45) * w, y1 + rng.uniform(-0.2, 1.0) * 6, w * rng.uniform(0.4, 0.62),
               7 * rng.uniform(0.6, 0.9)) for _ in range(6)]
+    if t:
+        a_ = 2 * math.pi * t / FALL_FRAMES
+        parts = [(px + 1.6 * math.sin(a_ + 1.7 * i), py + 1.1 * math.cos(a_ + 2.3 * i), pw * (1 + 0.08 * math.sin(a_ + i)), ph)
+                 for i, (px, py, pw, ph) in enumerate(parts)]
     for Y in range(y1 - 5, min(H, y1 + 12)):
         for X in range(max(0, int(cx - w * 1.2)), min(W, int(cx + w * 1.2) + 1)):
             r = min(((X - px) / pw) ** 2 + ((Y - py) / ph) ** 2 for (px, py, pw, ph) in parts)
+            if keep is not None:
+                if not keep[Y, X]:
+                    continue
+                r = min(r, 0.99)                               # inside frame 0's outline: foam, churned
             if r > 1.0 or (Y < y1 and not (x0 <= X < x0 + w)):
                 continue                                       # above the pool only over the sheet
             lit = (X - cx) < 0.3 * w
@@ -250,6 +269,8 @@ def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int) -> 
             else:
                 c = C('snow', 2) if (X + Y) % 2 else C('water', 4)
             cv[Y, X] = c
+    if not rings:
+        return
     waters = [FI[n] for n in ('water', 'water_warm', 'water_cool')]
     for k, (rx, ry) in enumerate(((w * 0.8, 7), (w * 1.1, 10), (w * 1.45, 13))):   # rings and ripples spreading on the pool
         for Y in range(y1, min(H, y1 + int(ry) + 8)):
@@ -308,6 +329,57 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
     }, force)
 
 
+def fall_frames(cells_w: int, drop: int = 1):
+    """The fall's loop for a piece: FALL_FRAMES frames of its sheet and plume (the bake's seed, so
+    frame 0 is what the baked ground shows), side by side, cut to the pixels the fall owns; and
+    where they lie on the piece's picture (x, y, w, h texels)."""
+    from scripts.art.native.palette import C as CC
+    wpx, face = cells_w * 24, 48 * drop
+    W, H = wpx + 48, 12 + face + 34
+    seed = 9 + cells_w
+    base = np.full((H, W), CC('water', 2), np.int32)
+    f0 = base.copy()
+    fall_sheet(f0, 24, wpx, 12, 12 + face, seed=seed, rings=False)
+    own = f0 != base
+    own[12:12 + face, 24:24 + wpx] = True
+    # only what surely lies over the fall's own pixels in any zone: not the crest (the rim's lip
+    # stones cast their shade on it in the bake, and it does not move), and the plume only over
+    # the pool straight under the sheet (the bake keeps foam off the banks beside it)
+    own[:12 + 8] = False
+    own[:, :24 - 6] = False
+    own[:, 24 + wpx + 6:] = False
+    own[12 + face + 10:] = False
+    ys, xs = np.nonzero(own)
+    x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
+    frames = []
+    for t in range(FALL_FRAMES):
+        f = base.copy()
+        fall_sheet(f, 24, wpx, 12, 12 + face, seed=seed, t=t, rings=False, keep=own if t else None)
+        f[~own] = -1
+        frames.append(f[y0:y1, x0:x1])
+    return np.concatenate(frames, axis=1), [x0, y0, x1 - x0, y1 - y0]
+
+
+def falls_animated() -> None:
+    """Write every fall's loop and its animation entry (rendering.animations) into its piece."""
+    for c in (1, 2, 3, 4):
+        for drop in (1, 2):
+            name = 'waterfall_%d' % c + ('' if drop == 1 else '_tall')
+            strip, region = fall_frames(c, drop)
+            Image.fromarray(to_rgba(strip), 'RGBA').save(os.path.join(ART, name + '_flow.png'), optimize=True)
+            path = os.path.join(PIECES, 'structure', name + '.json')
+            pc = json.load(open(path))
+            before = json.dumps(pc, sort_keys=True)
+            pc['rendering']['animations'] = [{
+                'clip': 'fall', 'loop': True, 'frames': FALL_FRAMES, 'fps': FALL_FPS,
+                'strip': 'res://kit/props/art/%s_flow.png' % name, 'frame_px': [region[2], region[3]], 'region_px': region,
+                'reduced_motion': 'hold:0', 'on_screen_only': True}]
+            pc['audit']['todo'] = [t for t in pc['audit'].get('todo', []) if 'animation' not in t]
+            if json.dumps(pc, sort_keys=True) != before:
+                json.dump(pc, open(path, 'w'), indent=1)
+                open(path, 'a').write('\n')
+
+
 def main(argv=None) -> int:
     force = '--force' in (argv or sys.argv[1:])
     for c in (2, 3, 4):
@@ -320,6 +392,7 @@ def main(argv=None) -> int:
     for c in (1, 2, 3, 4):
         waterfall(force, c)
         waterfall(force, c, drop=2)
+    falls_animated()
     print('structures: footbridges (2, 3, 4), stepping stones (1, 2), boulders, log steps (1, 2, 3), waterfalls (1 to 4, one and two tiers)')
     return 0
 

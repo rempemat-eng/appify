@@ -19,6 +19,61 @@ and prop index supply the preview swatches and scenes.
   refused everywhere, including direct non-UI calls and validation of existing
   scene content. This tool never changes approval records.
 
+Building places from the kit (round 3, 3 Nov):
+
+- **Search and category.** Above the pieces list, a search box (every word must
+  appear in the piece's id, name, role or purpose) and a category (fences, farm,
+  commons, village, woodland, water) narrow the 178-piece palette; filtering does
+  not reload the library.
+- **Fence runs.** Select any fence cell piece (`fence_<style>_*`) and drag along the
+  run: each cell's piece is chosen by its neighbours (straights, corners, Ts, ends),
+  the run's ends join a gate's ends, and existing cells of that style it meets are
+  re-joined (an end becomes a corner or a T). One undo action; a refused cell refuses
+  the run. Gates and stiles are still placed one at a time on their path.
+  While you drag, the canvas draws the arms of the piece each cell will get.
+- **Group copy and paste.** Select placed pieces (a pen, its gate and what it holds)
+  and press Copy selected pieces; Paste group, then click: the group lands with its
+  top-left cell under the pointer, every piece at its place relative to the others
+  (fences stay on their lines, contents inside them). Each piece is checked by the
+  shared relation engine against the zone with the rest of the group in it; all are
+  placed in one undo action, or none.
+- **Gates and stiles on runs** (round 7). With a gate or a stile selected, click a
+  run: the piece replaces the straight cells it spans (a gate three, a stile one),
+  snapping to the nearest straight span within two cells of the click; the cells
+  either side keep their joins, now to the gate's or stile's ends. A stile goes only
+  on a drystone or post-and-rail run, and its relation keeps it on a path. When no
+  span fits, the status says why. One undo action.
+- **Live fault overlay** (round 7). While a piece is placed, the ghost is green,
+  amber (advice) or red (fault), with the failing rule's short name beside it. The
+  relation engine answers at once; the full validator (kit_rules, relations,
+  enclosures, check_plan, as Validate) runs on a worker thread on a crop of the zone
+  8 cells round the ghost, keeping only the findings about the ghost. Crops and
+  verdicts are cached and cleared whenever the scene changes.
+- **Variants and the scatter brush** (round 7). V or Next variant cycles the
+  selected piece's variants (sprites are never mirrored: a flip is a variant drawn
+  for it). With Scatter brush on and a small piece selected (two cells or less, not
+  a fence), drag over the ground: each cell decides by its own seed (the zone's name)
+  whether it takes a piece and which variant, keeps a cell of clearance from every
+  other piece, and is checked by the relation engine with the stroke's earlier
+  pieces in place, so forbids hold. One undo a stroke; the same stroke repainted
+  lands the same pieces.
+- **Validate zone** now also runs `scripts/art/kit/enclosures.py` (closed loops,
+  what each pen holds and needs, every stretch keeping its stock) and
+  `placement_audit.check_plan` (needs a hearth or home, faces a feature, avoids wild
+  woods, a fingerpost's arms along its junction), and lists every finding by its
+  check.
+- **Doors, paths and gates** (4 Nov, Matt's review of the farm study). Validate and
+  the live overlay also run `scripts/art/kit/thresholds.py` through `check_plan`: a
+  door's path is centred on its opening and straight for a cell (`door_path`), its
+  threshold and swing stay clear (`door_clear`), a gate is centred on the path
+  through it (`gate_path`), a path crosses a fence only at a gate or a stile
+  (`path_through_fence`), and a fence meets a building at a front corner or along
+  its wall foot, never in front of the façade (`fence_wall`). Doors are each
+  building's `geometry.doors`. Painting a route from a door snaps the stroke's
+  first two rows onto the door's centre line (one cell wider when the door's centre
+  needs the other parity), and a gate clicked onto a run takes the span centred on
+  the path crossing it. Both stay one undo.
+
 Terrain and placement transactions preserve cell/variant/baked state, node
 ownership, ordinary gameplay nodes and W2's plan metadata. Undo remains bound to
 the original scene after selection changes. Accepted edits refresh W4's derived
