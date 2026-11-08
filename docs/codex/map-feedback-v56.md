@@ -277,3 +277,84 @@ From now on, a v55 render can be compared byte for byte, before and after a chan
 - **v55 is byte-identical.** The v55 data stage at 7c37b74f (with the same hash-order fix) and at this round gives the same 24 data files and the same state. Rendered from that state, all 12 v55 pictures are the same, byte for byte.
 - **The renders are deterministic.** Two v56 renders of this round, under hash seeds 1 and 2, are the same in all 13 pictures.
 - **The crops are fair.** The before pictures for the round 9 crops are 7c37b74f rendered with the hash-order fix, so the before and after differ only where this round changed something.
+
+### Round 10 (8 Nov, Claude A): Matt's answers on Crossroads, Hearthold and Neon
+
+Matt, 8 Nov 00:05: the building lists may change ("yes"); Hearthold "looks decent but maybe put some more thought into it"; Neon: "think critically what a cool city would be".
+
+#### Crossroads: a market cross that thins out along its four roads
+
+The square is the cross: the game's built zone, its seven buildings fixed. Four roads leave it:
+- north to the stone circle, up the zone's garden walk;
+- east along the zone's harbour road and Market Lane to Eastgate and the Foothill Road;
+- south down Mill Street to the mill reach;
+- west along the halt road and down West Lane to the halt.
+
+Along each road the houses stand close near the square and farther apart further out, and the last few stand alone among the fields. Each road's houses are laid from the square outward, alternating sides, each one the next gap farther from the last on its side (`towns55._thin_rows`, `arms`).
+- **Spacing:** 8 px between the first houses, then 16 to 40, then 56 to 160 px.
+- **No overflow:** a house that does not fit its road is retired rather than packed in elsewhere. Packing them in elsewhere had undone the thinning in a first try.
+- **Quadrants:** the ground between the arms is fields and orchards: the halt gardens, the south-west plots, the mill farms and the east pastures.
+- **Streets:** the generator's grid between the arms is gone (Orchard Lane, Weir Lane, Granary Row), so the four roads read as the shape. A short lane, the market steps, joins the square's east road to Market Lane.
+- **The arms differ with the ground:** the south arm has houses on one side only, because the Sleepwater runs along Mill Street's east side, and the north arm's houses are the zone's own (the bakery and the library) before the circle.
+
+**Lanes off the houses.** The Valley lanes no longer run through the zone's houses:
+- north leaves up the garden walk and round the bakery's corner;
+- west leaves along the halt road, then down West Lane and the halt link;
+- east leaves along the harbour road and Market Lane.
+
+b001 and b005 now stand clear. The known notes are gone, and the standing check passes with no exceptions.
+
+**The inventory, with a reason for each change:**
+- `FEEDBACK_BUILDINGS['crossroads']` keeps 25 of the 40 records (ids and forms unchanged), and `towns55.RETAINED` holds the counts.
+- 25 counted is a warning against the 30 to 45 band, not a failure. It is what a cross of four short roads that thin into fields holds round a fixed square.
+- **Retired, with reasons:**
+  - b012, b014, b015, b016, b017, b018 and b019: they stood on Mill Street's east side and on Orchard Lane. The Sleepwater runs along the street's east side, the creek and the mill take its lower west side, and Orchard Lane is now the mill farms.
+  - b020, b021, b022, b030, b034 and b036: they stood on Granary Row and at Market Lane's far end. The Sleepwater takes the lane's north side near the square, and the east arm runs out into the pastures.
+  - b028 and b029: they stood at the halt road's lower end, which is now the halt yard and its gardens.
+- The tests read the retired set (`test_actual_crossroads_defect_and_retained_count_inventory`) and the inventory (the two authoring tests).
+
+#### Hearthold: the brief
+
+- **Why here.** The basalt spur is the one stable rock between two lava flows below the cracked caldera. The flow on its east side still runs warm, and that heat is free fuel. A forge town grew on the rock because the heat, the ore and a defensible site are all in one place.
+- **Ore in, iron out.** Ore comes from the Lode on the mine cart. The cart line passes Ember forge's ore store on the caldera lip and runs down the rock's warm east flank to the ore yard at the head of Smiths' Row; the cart bay moves there from the lip. Iron and arms go out of the gate, down Gate Street to the coast road (Ember Way), and on to Cinderwick's quay and the coaster. Gate Street now reaches the coast road.
+- **Masters and workers.** The masters (the knights, the master smiths and the chapel) live inside the wall on the upper terraces. The workers live in the lower town below the gate: detached houses with yards on Ash Lane and Potters' Lane, as Matt asked on 28 Oct.
+- **Water.** There is no stream on the rock. The forges quench from the quench tanks beside the ore yard, filled with rain off the rock and water carted up from the spring line at Well Lane. The hot springs below (Cinder Springs) are why the lower town reaches west.
+- **Defence.** The wall rings the rock's rim. The one gate faces south, down the spur to the coast road, with the gate market outside it. The pass is the Forge Stair up to the caldera, behind the rock. The west postern toward it stays walled up until the knights accept you.
+- **The shape.** The walled terraces step down the spur: the keep's, then the hall's, then the barracks' terrace above the gate. Outside the wall, the lower town steps down again, Ash Lane then Potters' Lane. Each terrace's retaining wall is drawn (`features.terrace_walls_px`). The forge quarter is the east end of Smiths' Row on the heat side, with the ore yard and the quench tanks. The market is at the gate.
+- **What stays.** The wall, its towers, its gate and the wall checks are unchanged; the brief needed none of them changed. No adoption packet changed either: the v56 map does not use them. Everything above is v56 only (`towns55.hearthold_v56`, `geo55.RAILS_V56`, `STATIONS_V56`).
+
+#### Neon Harbour: the brief
+
+**What makes a harbour city memorable from above.**
+- **Districts you can tell apart by their roofs and grain:**
+  - the old waterfront, Canalside and the Crescent: mixed tile roofs, crooked rows round the bay;
+  - the Company district: a strict grid of flat roofs and towers, glowing;
+  - the docks: long sheds, cranes and stacks;
+  - the Heights and the Skyport: terraces climbing to the masts;
+  - the East Shore: houses and the lido.
+- **Landmarks big enough to see at map scale:** the Company tower, the shard-light in the bay, the chapel-fort and floating market on Chapel Islet, the cranes, the Skyport masts, and the elevated maglev into its terminus.
+- **A waterfront silhouette:** the half-moon bay with its curved promenade, and the two moles with a lighthouse and a beacon.
+- **Light as a hierarchy:** a city at night reads by contrast, a few bright lines against dark streets.
+
+**Where neon belongs.** Neon belongs on one nightlife strip and the commercial arteries, not on every street. Until now, every main and side street carried a cyan and a magenta kerb line. That is why the pink and cyan lines read as noise: a grid lit everywhere has no strip, and nothing stands out.
+
+**The lit streets now** (`towns55.NEON_LIGHTING`; plan streets carry `lighting`):
+- **The Lantern Mile is the strip.** It runs north–south where the old harbour meets the new city (the waterfront cross lane and the neighbourhood link at x 11272), the seam between the tile-roofed old quarter and the grid. It is the only street with neon on both kerbs, signs down its fronts, and a glow.
+- **Four arteries carry one light each:**
+  - the Spine, the Company's avenue to the maglev terminus, in the Company's cold cyan;
+  - Quay Street, the docks' working spine, in sodium orange;
+  - the old quays, in warm lanterns;
+  - the bay promenade, in warm lanterns.
+- **Every other street is dark.** It keeps its paving and no light lines, so the strip and the arteries are what you see.
+
+**The check.** It is in the town checks (`town_plan.lighting_failures`, every v56 city):
+- exactly one named strip, at least 300 px long;
+- every lit street named;
+- between 15 and 40 % of the main and side streets lit.
+
+Tests: `test_map_feedback_v56.CityLighting`.
+
+**Checks.**
+- All 19 plans pass, including the standing check (no exceptions now) and the new lighting check. The benchmark is 21/21, and the gates are unchanged.
+- v55 is byte-identical: the v55 data stage at 3e6dc029 and at this round gives the same 24 data files and the same state, and all 12 v55 pictures rendered from it match byte for byte.
+- The crops' before pictures are 3e6dc029's renders. Rendering is deterministic, so the before and after differ only where this round changed something.

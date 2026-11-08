@@ -37,10 +37,12 @@ class MapFeedbackV56(unittest.TestCase):
             n=sum(rows[yy-r][xx-c]=='~' for yy in range(y,y+bh) for xx in range(x,x+bw))
             if n:wet[b['id']]=n
         self.assertEqual(wet,{'crossroads-b001':5,'crossroads-b003':16,'crossroads-b007':6})
-        for pid,expected in [('crossroads',40),('neon-harbour',72)]:
+        retired={'crossroads':{12,14,15,16,17,18,19,20,21,22,28,29,30,34,36},'neon-harbour':set()}   # round 10 (Matt, 8 Nov): the cross thins out
+        for pid,expected in towns.RETAINED.items():
             P=json.loads((BLOCKOUT/f'towns/{pid}.json').read_text())
             inventory=towns.FEEDBACK_BUILDINGS[pid]
-            self.assertEqual(inventory,[(int(b['id'].rsplit('-b',1)[1]),b['form'],*b['rect_px'][2:],b.get('bays',[])) for b in P['buildings']])
+            source=[(int(b['id'].rsplit('-b',1)[1]),b['form'],*b['rect_px'][2:],b.get('bays',[])) for b in P['buildings']]
+            self.assertEqual(inventory,[r for r in source if r[0] not in retired[pid]])
             count=sum(0 if f in plans.LANDMARK_FORMS or towns.TYPE_OF.get(f,f) in plans.LANDMARK_TYPES else max(1,(len(b)+4)//5) for _,f,_,_,b in inventory)
             self.assertEqual(count,expected)
 
@@ -53,8 +55,8 @@ class MapFeedbackV56(unittest.TestCase):
         fixed,_=towns.crossroads_plan(str(ROOT))
         with patch.multiple(g,H=shape[0],W=shape[1]), patch.multiple(towns,H=shape[0],W=shape[1]):
             town=towns._feedback_crossroads(T,SimpleNamespace(ROOT=str(ROOT)))
-        self.assertEqual(len(town.buildings),40)
-        self.assertEqual({b['layout_id'] for b in town.buildings},{f'crossroads-b{i:03d}' for i in range(1,41)})
+        self.assertEqual(len(town.buildings),towns.RETAINED['crossroads'])
+        self.assertEqual({b['layout_id'] for b in town.buildings},{f'crossroads-b{r[0]:03d}' for r in towns.FEEDBACK_BUILDINGS['crossroads']})
         self.assertEqual([(b['x'],b['y'],b['w'],b['h']) for b in town.buildings[:7]],
                          [tuple(b[:4]) for b in fixed])
         occupied=np.zeros(shape,bool)
@@ -86,8 +88,8 @@ class MapFeedbackV56(unittest.TestCase):
             self.assertEqual(ndi.label(T['river_masks']['the Sleepwater'])[1],1)
             town=towns._feedback_crossroads(T,SimpleNamespace(ROOT=str(ROOT)))
         self.assertEqual(rec['zone_water_cells'],0)
-        self.assertEqual(len(town.buildings),40)
-        self.assertEqual({b['layout_id'] for b in town.buildings},{f'crossroads-b{i:03d}' for i in range(1,41)})
+        self.assertEqual(len(town.buildings),towns.RETAINED['crossroads'])
+        self.assertEqual({b['layout_id'] for b in town.buildings},{f'crossroads-b{r[0]:03d}' for r in towns.FEEDBACK_BUILDINGS['crossroads']})
         self.assertEqual(ndi.label(T['river_masks']['the Sleepwater'])[1],1)
         occupied=np.zeros(shape,bool)
         for b in town.buildings:
@@ -170,7 +172,7 @@ class MapFeedbackV56(unittest.TestCase):
 
     def test_final_ground_checks_inherited_footprints_and_counts(self):
         T=terrain();b={'id':'crossroads-b001','from_zone_plan':True,'footprint_cells':[8,8,3,3]}
-        P={'crossroads':{'buildings_counted':40,'buildings':[b]},'neon-harbour':{'buildings_counted':72,'buildings':[]}}
+        P={'crossroads':{'buildings_counted':towns.RETAINED['crossroads'],'buildings':[b]},'neon-harbour':{'buildings_counted':72,'buildings':[]}}
         world.feedback_checks(T,P)
         for kind in ('river','cliff'):
             T['K'][8,8]=kind
@@ -184,10 +186,10 @@ class MapFeedbackV56(unittest.TestCase):
         T=terrain((8,8));T['route_px']={}
         P={pid:{'terrain':{'box_cells':[0,0,8,8],'rows':[]},'buildings_counted':count,
                 'buildings':[{'id':pid+'-b001','footprint_cells':[1,1,2,2]}]}
-           for pid,count in [('crossroads',40),('neon-harbour',71),('other-town',3)]}
+           for pid,count in [('crossroads',towns.RETAINED['crossroads']),('neon-harbour',71),('other-town',3)]}
         T['K'][1,1]='river'
         checker=plans.TW._review()
-        with patch.object(checker,'check_plan',side_effect=[(['original-one'],[],40),(['original-two'],[],71),(['original-three'],[],3)]), patch('builtins.print'):
+        with patch.object(checker,'check_plan',side_effect=[(['original-one'],[],towns.RETAINED['crossroads']),(['original-two'],[],71),(['original-three'],[],3)]), patch('builtins.print'):
             out=world.feedback_plan_checks(T,P)
         self.assertTrue(set(P).issubset(out))
         self.assertTrue(all(not q['pass'] for q in out.values()))
@@ -205,7 +207,7 @@ class MapFeedbackV56(unittest.TestCase):
             with self.subTest(missing=sorted(missing)):
                 T=terrain((8,8));T['route_px']={}
                 provided={pid:{'terrain':{'box_cells':[0,0,8,8],'rows':[]},
-                           'buildings_counted':{'crossroads':40,'neon-harbour':72}.get(pid,3),'buildings':[]}
+                           'buildings_counted':dict(towns.RETAINED).get(pid,3),'buildings':[]}
                           for pid in all_ids-missing}
                 with patch.object(checker,'check_plan',return_value=([],[],3)),patch('builtins.print'):
                     out=world.feedback_plan_checks(T,provided)
@@ -283,20 +285,11 @@ class Standing(unittest.TestCase):
         self.assertIn('x-b001 (house) stands on the rail line (test)', out[0])
         self.assertIn('x-b002 (house) stands on creek water', out[1])
 
-    def test_known_crossroads_lane_is_only_that_lane(self):
-        shape = (40, 60); K = np.full(shape, 'meadow', dtype=object)
-        lane = np.zeros(shape, bool); lane[:, 5] = True; rail = np.zeros(shape, bool); rail[6, :] = True
-        P = {'buildings': [{'id': 'crossroads-b001', 'form': 'cottage', 'footprint_cells': [4, 4, 4, 4]}]}
-        self.assertEqual(world.standing_failures(K, P, {'the road (Valley lane north)': lane}), [])
-        out = world.standing_failures(K, P, {'the road (Valley lane north)': lane, 'the rail line (valley train)': rail})
-        self.assertEqual(out, ['standing: crossroads-b001 (cottage) stands on the rail line (valley train)'])
-
     def test_actual_towns_stand_clear(self):
         report = json.loads((BLOCKOUT / 'town-checks-v56.json').read_text())
         self.assertEqual(set(report), world.EXPECTED_TOWN_PLANS)
         for pid, r in report.items():
             self.assertEqual([f for f in r['failures'] if f.startswith('standing')], [], pid)
-        self.assertTrue(any(n.startswith('standing (known') for n in report['crossroads']['notes']))
 
 
 class LeaderLines(unittest.TestCase):
@@ -316,6 +309,32 @@ class LeaderLines(unittest.TestCase):
         self.assertFalse(map53.seg_hits_box((200, 200), (ex, ey), house))
         self.assertTrue(map53.seg_hits_box((200, 200), (260, 200), house))
         self.assertFalse(map53.seg_hits_box((200, 200), (140, 200), house))
+
+
+class CityLighting(unittest.TestCase):
+    """Round 10 (Matt, 8 Nov: "think critically what a cool city would be"): neon on one strip and a few named arteries."""
+    def plan(self, lit):
+        sts = [{'id': f's{i}', 'class': 'side', 'vertices_px': [[0, i * 100], [1000, i * 100]]} for i in range(10)]
+        for i, L in lit.items():
+            sts[i]['lighting'] = L
+        return {'streets': sts}
+
+    def test_lighting_rules(self):
+        sys.path.insert(0, str(ROOT / 'scripts/review'))
+        import town_plan
+        strip = {'kind': 'strip', 'name': 'the Lantern Mile'}; art = {'kind': 'artery', 'name': 'the Spine'}
+        self.assertEqual(town_plan.lighting_failures(self.plan({0: strip, 1: art, 2: art})), [])
+        self.assertTrue(any('neon strips' in f for f in town_plan.lighting_failures(self.plan({1: art, 2: art}))))
+        self.assertTrue(any('are lit' in f for f in town_plan.lighting_failures(self.plan({i: art for i in range(1, 8)} | {0: strip}))))
+        self.assertTrue(any('unnamed' in f for f in town_plan.lighting_failures(self.plan({0: strip, 1: {'kind': 'artery'}, 2: art}))))
+
+    def test_actual_neon_is_lit_on_the_strip_and_arteries(self):
+        P = json.loads((BLOCKOUT / 'towns-v56/neon-harbour.json').read_text())
+        kinds = {st['lighting']['kind'] for st in P['streets'] if st.get('lighting')}
+        self.assertEqual(kinds, {'strip', 'artery'})
+        sys.path.insert(0, str(ROOT / 'scripts/review'))
+        import town_plan
+        self.assertEqual(town_plan.lighting_failures(P), [])
 
 
 class ReliefBands(unittest.TestCase):

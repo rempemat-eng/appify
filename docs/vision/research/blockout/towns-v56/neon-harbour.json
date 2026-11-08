@@ -1120,6 +1120,11 @@
     }
    ],
    "frontage_reason": "the dense city: wall-to-wall fronts on every street, alleys between",
+   "lighting": {
+    "kind": "strip",
+    "name": "the Lantern Mile",
+    "light": "neon"
+   },
    "connects": [
     "neon-harbour-a5",
     "neon-harbour-s08",
@@ -1253,6 +1258,11 @@
     }
    ],
    "frontage_reason": "the dense city: wall-to-wall fronts on every street, alleys between",
+   "lighting": {
+    "kind": "artery",
+    "name": "the old quays",
+    "light": "lantern"
+   },
    "connects": [
     "neon-harbour-s01",
     "neon-harbour-s116"
@@ -1274,6 +1284,11 @@
     ]
    ],
    "frontage": "detached",
+   "lighting": {
+    "kind": "artery",
+    "name": "the old quays",
+    "light": "lantern"
+   },
    "connects": [
     "neon-harbour-s117"
    ]
@@ -1305,6 +1320,11 @@
     }
    ],
    "frontage_reason": "the dense city: wall-to-wall fronts on every street, alleys between",
+   "lighting": {
+    "kind": "artery",
+    "name": "the old quays",
+    "light": "lantern"
+   },
    "connects": [
     "neon-harbour-a5",
     "neon-harbour-s04",
@@ -2340,6 +2360,11 @@
     ]
    ],
    "frontage": "detached",
+   "lighting": {
+    "kind": "strip",
+    "name": "the Lantern Mile",
+    "light": "neon"
+   },
    "connects": [
     "neon-harbour-a5",
     "neon-harbour-s05",
@@ -3179,6 +3204,11 @@
     ]
    ],
    "frontage": "detached",
+   "lighting": {
+    "kind": "artery",
+    "name": "Quay Street",
+    "light": "sodium"
+   },
    "connects": [
     "neon-harbour-a7",
     "neon-harbour-s59",
@@ -3476,6 +3506,11 @@
     ]
    ],
    "frontage": "detached",
+   "lighting": {
+    "kind": "artery",
+    "name": "the Spine",
+    "light": "company"
+   },
    "connects": [
     "neon-harbour-q02",
     "neon-harbour-s40",
@@ -3499,6 +3534,11 @@
     ]
    ],
    "frontage": "detached",
+   "lighting": {
+    "kind": "artery",
+    "name": "the Spine",
+    "light": "company"
+   },
    "connects": [
     "neon-harbour-s69",
     "neon-harbour-s70",
@@ -5849,6 +5889,11 @@
     ]
    ],
    "frontage": "detached",
+   "lighting": {
+    "kind": "artery",
+    "name": "the bay promenade",
+    "light": "lantern"
+   },
    "connects": [
     "neon-harbour-s137"
    ]
@@ -5873,6 +5918,11 @@
     ]
    ],
    "frontage": "detached",
+   "lighting": {
+    "kind": "artery",
+    "name": "the bay promenade",
+    "light": "lantern"
+   },
    "connects": [
     "neon-harbour-s138"
    ]
@@ -6007,6 +6057,11 @@
     }
    ],
    "frontage_reason": "the new waterfront round the bay: wall-to-wall fronts on every street, cafes and chandlers on the promenade",
+   "lighting": {
+    "kind": "artery",
+    "name": "the bay promenade",
+    "light": "lantern"
+   },
    "connects": [
     "neon-harbour-a3",
     "neon-harbour-s116",

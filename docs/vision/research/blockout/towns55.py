@@ -1770,6 +1770,14 @@ def hearthold_v56(T, t):
                plot=(0, 1, 16, 'yard'), near=3)                    # the lower town's detached homes and yards where there is room
     scan_place(t, (2000, 5096, 2824, 5400), [('townhouse', 48, 48), ('shop', 64, 48)], 3, plot=(0, 1, 16, 'yard'), near=2)
     t.yard(2280, 5460, 2360, 5500, kind='plaza', name='the market stalls', why="the walled town's market: bread, ash-grown wine, iron goods from the smiths")
+    # round 10 (Matt, 8 Nov: "put some more thought into it"; the brief is in docs/codex/map-feedback-v56.md): the ore comes down
+    # the cart line to the ore yard at the head of Smiths' Row on the heat side, the forges quench from tanks beside it, the iron
+    # goes out of the gate and down Gate Street to the coast road; the walled terraces step down the spur, retaining walls drawn
+    t.yard(2520, 5392, 2592, 5432, name='the ore yard', why="the Lode's ore off the mine cart, at the head of Smiths' Row")
+    t.yard(2600, 5392, 2664, 5432, kind='pool', name='the quench tanks', why='the forges quench here: rain off the rock and water carted up from the spring line')
+    t.to_route(2312, 5716, 'Ember Way', 'main', name='Gate Street (down to the coast road)')
+    t.terrace_walls = [[[2192, 5184], [2448, 5184]], [[2192, 5296], [2448, 5296]],     # the keep's, the hall's and the barracks' terraces
+                       [[2124, 5582], [2604, 5582]], [[2124, 5702], [2760, 5702]]]     # the lower town's: Ash Lane, then Potters' Lane
     return t
 
 
@@ -2311,6 +2319,7 @@ def smaller(T, X):
 # ------------------------------------------------------------------------------------------ v56: coherent authored street blocks
 # Inventory is pinned to303@4984438d; source forms/bays retain40/72 counted units.
 # Positions below are new. No generated JSON is read by this production path.
+RETAINED = {'crossroads': 25, 'neon-harbour': 72}   # counted buildings from the retained inventories (round 10: Crossroads retires 15, the cross thins out)
 FEEDBACK_BUILDINGS = {'crossroads': [(1, 'cottage', 80, 40, []),
                 (2, 'public', 96, 40, []),
                 (3, 'house', 96, 40, []),
@@ -2330,31 +2339,16 @@ FEEDBACK_BUILDINGS = {'crossroads': [(1, 'cottage', 80, 40, []),
                  [{'w_cells': 8, 'storeys': 1, 'roof': 'thatch'}, {'w_cells': 6, 'storeys': 1, 'roof': 'tile'}]),
                 (10, 'cottage', 48, 72, []),
                 (11, 'house', 56, 88, []),
-                (12, 'cottage', 48, 64, []),
                 (13, 'shop', 48, 88, []),
-                (14, 'cottage', 40, 72, []),
-                (15, 'house', 64, 96, []),
-                (16, 'cottage', 48, 56, []),
-                (17, 'house', 56, 88, []),
-                (18, 'cottage', 40, 64, []),
-                (19, 'cottage', 64, 40, []),
-                (20, 'cottage', 64, 48, []),
-                (21, 'cottage', 64, 40, []),
-                (22, 'house', 88, 48, []),
                 (23, 'cottage', 72, 40, []),
                 (24, 'cottage', 40, 72, []),
                 (25, 'house', 56, 96, []),
                 (26, 'cottage', 40, 56, []),
                 (27, 'cottage', 40, 64, []),
-                (28, 'house', 56, 96, []),
-                (29, 'cottage', 48, 72, []),
-                (30, 'inn', 72, 128, []),
                 (31, 'inn', 128, 72, []),
                 (32, 'house', 48, 88, []),
                 (33, 'house', 96, 56, []),
-                (34, 'cottage', 72, 48, []),
                 (35, 'shop', 64, 56, []),
-                (36, 'cottage', 80, 48, []),
                 (37, 'shop', 48, 64, []),
                 (38, 'cottage', 56, 48, []),
                 (39, 'cottage', 64, 48, []),
@@ -2699,6 +2693,25 @@ def _feedback_rows(town, records, rows, *, overflow_rows=(), props=('sign', 'pot
     return placed
 
 
+def _thin_rows(town, records, rows, gaps):
+    """A road thinning out (Crossroads, round 10): its houses laid from the near end outward, alternating sides, each one
+    the next gap farther from the last on its side; a house its side refuses tries the other side from there on."""
+    nxt = [r[2] for r in rows]                                        # where each side's next house may start
+    done = [0] * len(rows)
+    for k, rec in enumerate(records):
+        first = min(range(len(rows)), key=lambda j: (nxt[j] - rows[j][2], (j - k) % len(rows)))   # the side least far out
+        order = [first] + [j for j in range(len(rows)) if j != first]
+        prim = order[0]; ax, fx, lo, hi, sd, nm = rows[prim]
+        over = [(rows[j][0], rows[j][1], nxt[j], rows[j][3], rows[j][4], rows[j][5]) for j in order[1:]]
+        n0 = len(town.buildings)
+        if not _feedback_rows(town, [rec], [(ax, fx, nxt[prim], hi, sd, nm)], overflow_rows=over, gap=0):
+            continue
+        b = town.buildings[n0]
+        j = next(j for j in order if (b['y' if rows[j][0] == 'x' else 'x'] < rows[j][1]) == (rows[j][4] < 0))
+        end = b['x'] + b['w'] if rows[j][0] == 'x' else b['y'] + b['h']
+        nxt[j] = end + gaps[min(done[j], len(gaps) - 1)]; done[j] += 1
+
+
 def _feedback_snapshot(T, boxes):
     windows = [(slice(y0 // CELL, y1 // CELL), slice(x0 // CELL, x1 // CELL)) for x0, y0, x1, y1 in boxes]
     arrays = {k: [v[sl].copy() for sl in windows] for k, v in T.items()
@@ -2733,7 +2746,7 @@ def _feedback_crossroads(T, X):
                              ('Eastgate', 'inns, shops and homes at the eastern road', 6960, 3416),
                              ('West Lane', "foresters' cottages at the woodland edge", 5944, 3600)],
              gathering=[('the square', 6296, 3536), ('the mill green', 6400, 3880), ('the halt yard', 5968, 4304)], seed=101)
-    t.cap = 40
+    t.cap = RETAINED['crossroads']
     t.fixed(plan)
     for i, b in enumerate(t.buildings, 1):
         b['layout_id'] = f'crossroads-b{i:03d}'
@@ -2750,34 +2763,44 @@ def _feedback_crossroads(T, X):
                      kind='plaza' if q['kind'] == 'square' else 'garden', name=f"the {q['id']} (the zone as built)")
     # Main routes join the existing zone at its boundary; the river goes round it.
     set_route(T, 'Valley lane south', (6100, 3780, 6500, 4416), [(6256, 3808), (6256, 4384)], 24, 'path')
-    t.street([(6256, 3808), (6256, 4384)], 'main', name='Mill Street')
-    t.street([(5968, 3808), (5968, 4320)], 'side', name='Halt Road')
+    # v56 (Matt, 8 Nov: the building lists may change): the north and west valley lanes leave the square by the zone's own
+    # streets, not through its houses (b001 and b005 stood on them): north up the garden walk, round the bakery's corner, on
+    # to the circle; west out along the halt road and down West Lane to the halt.
+    if 'Valley lane north' in T['route_px']:
+        set_route(T, 'Valley lane north', (6150, 2900, 6400, 3460),
+                  [(6296, 3448), (6296, 3320), (6232, 3320), (6224, 3160), (6256, 3040), (6280, 2960)], 24, 'path')
+    if 'Valley lane east' in T['route_px']:                           # and east out along the harbour road to Market Lane
+        set_route(T, 'Valley lane east', (6280, 3360, 6800, 3600),
+                  [(6296, 3536), (6416, 3576), (6616, 3576), (6616, 3416), (6760, 3416)], 24, 'path')
+    if 'Valley lane west' in T['route_px']:
+        set_route(T, 'Valley lane west', (5780, 3400, 6320, 4120),
+                  [(6296, 3448), (6176, 3552), (5984, 3552), (5984, 3808), (5968, 3816), (5968, 4064), (5840, 4072), (5800, 4100)], 24, 'path')
+    t.street([(6256, 3808), (6256, 4384)], 'main', name='Mill Street')    # the south arm
+    t.street([(5968, 3808), (5968, 4320)], 'side', name='Halt Road')       # the west arm, down to the halt
     t.street([(5808, 3936), (6256, 3936)], 'side', name='the halt link')
-    t.street([(6120, 3936), (7008, 3936)], 'side', name='Granary Row')
-    t.street([(6120, 4160), (6768, 4160)], 'lane', name='Weir Lane')
-    t.street([(6528, 3832), (6528, 4384)], 'side', name='Orchard Lane')
     t.street([(5984, 3440), (5984, 3808)], 'lane', name='West Lane')
-    t.street([(6608, 3416), (7232, 3416)], 'side', name='Market Lane')
+    t.street([(6608, 3416), (7232, 3416)], 'side', name='Market Lane')     # the east arm
+    t.street([(6616, 3416), (6616, 3576)], 'lane', name='the market steps')
     t.to_route(6992, 3416, 'Foothill Road', 'side', name='the east road')
-    # Join the halt to Granary Row instead of bisecting a second short block;
-    # the mill/orchard fronts reach the same lower junction with enough room
-    # for the retained long row houses between the real crossing streets.
-    inventory = FEEDBACK_BUILDINGS['crossroads']
-    _feedback_rows(t, inventory[7:23], [('y', 6256, 3832, 4384, -1, 'Mill Street west'),
-                                      ('y', 6256, 3832, 4384, 1, 'Mill Street east'),
-                                      ('y', 6528, 3832, 4384, 1, 'Orchard Lane east'),
-                                      ('y', 6528, 3832, 4384, -1, 'Orchard Lane west')],
-                   overflow_rows=[('x', 3936, 6608, 7008, 1, 'Granary Row south')])
-    _feedback_rows(t, inventory[23:29], [('y', 5968, 3832, 4288, -1, 'Halt Road west'),
-                                       ('y', 5968, 3832, 4288, 1, 'Halt Road east')])
-    _feedback_rows(t, inventory[29:37], [('x', 3416, 6608, 7232, -1, 'Market Lane north'),
-                                       ('x', 3416, 6608, 7232, 1, 'Market Lane south')],
-                   overflow_rows=[('x', 3936, 6608, 7008, -1, 'Granary Row north')])
-    _feedback_rows(t, inventory[37:], [('y', 5984, 3440, 3808, -1, 'West Lane gardens')])
+    # A market cross (Matt, 4 Nov: "really think about the shape of the cities"): the houses packed round the square, then
+    # thinning out along the four roads, each run farther apart than the last, into the fields between the arms. Each run is
+    # (inventory indices, rows, gap between houses in px).
+    inv = {r_[0]: r_ for r_ in FEEDBACK_BUILDINGS['crossroads']}
+    arms = [   # (ids from the square outward, the row(s) along the road, the gaps between houses from the square outward)
+        ([11, 10, 13], [('y', 6256, 3832, 4384, -1, 'Mill Street west')], (8, 16, 32)),   # south: the river is its east side
+        ([31, 35, 32, 37, 8, 9, 33], [('x', 3416, 6632, 7224, -1, 'Market Lane north'),
+                                                         ('x', 3416, 6632, 7224, 1, 'Market Lane south')], (8, 8, 16, 32, 48, 64)),
+        ([38, 39, 40, 23], [('y', 5984, 3568, 3808, -1, 'West Lane gardens'), ('y', 5984, 3568, 3808, 1, 'West Lane east')], (8, 8, 16)),
+        ([24, 25, 27, 26], [('y', 5968, 3824, 4320, -1, 'Halt Road west'), ('y', 5968, 3824, 4320, 1, 'Halt Road east')], (40, 96, 160))]
+    for ids, rows, gaps in arms:
+        _thin_rows(t, [inv[i] for i in ids], rows, gaps)
+    t.buildings.sort(key=lambda b_: b_.get('layout_id', ''))
     t.square(6400, 3864, 48, 32, kind='garden', name='the mill green')
     t.yard(5840, 4304, 6080, 4368, name='the halt yard', why='loading carts, animal tethering and the water tank beside the halt approach')
     t.fields(5736, 3896, 5840, 4336, ('field', 'orchard'), name='the halt gardens', why='rear gardens taper to working fields')
-    t.fields(6624, 3992, 6880, 4352, ('field', 'orchard'), name='the mill farms', why='grain and orchard plots beyond the last homes')
+    t.fields(6008, 3968, 6224, 4400, ('field', 'orchard'), name='the south-west plots', why='between the west and south arms: plots where the houses give out')
+    t.fields(6296, 3896, 6880, 4400, ('field', 'orchard'), name='the mill farms', why='grain and orchard plots between the south and east arms, beyond the last homes')
+    t.fields(6640, 3464, 7200, 3880, ('field', 'field2'), name='the east pastures', why='the east road runs out between fields')
     return t
 
 
@@ -3209,7 +3232,23 @@ def _feedback_neon(T, X):
         for b in t_.buildings:
             if 'layout_id' not in b:
                 b['layout_id'] = f'neon-harbour-b{n:03d}'; n += 1
+    # the city at night (round 10 brief, docs/codex/map-feedback-v56.md): neon belongs on the strip and a few named arteries,
+    # the plain streets stay dark so those read from above
+    for t_ in out.values():
+        for st in t_.streets:
+            for (district, name, x_, light) in NEON_LIGHTING:
+                if t_.name.endswith(district) and st['name'] == name and (x_ is None or (st['pts'] and st['pts'][0][0] == x_)):
+                    st['lighting'] = dict(light)
     return out
+
+
+NEON_LIGHTING = [   # (district, street, its x if several share the name, the light)
+    ('the old waterfront', 'the waterfront cross lane', 11272, {'kind': 'strip', 'name': 'the Lantern Mile', 'light': 'neon'}),
+    ('the Lanes and the East Shore', 'the neighbourhood link', 11272, {'kind': 'strip', 'name': 'the Lantern Mile', 'light': 'neon'}),
+    ('the Company district', 'the connected city spine', None, {'kind': 'artery', 'name': 'the Spine', 'light': 'company'}),
+    ('the docks', 'Quay Street service spine', None, {'kind': 'artery', 'name': 'Quay Street', 'light': 'sodium'}),
+    ('the old waterfront', 'the old quays', None, {'kind': 'artery', 'name': 'the old quays', 'light': 'lantern'}),
+    ('the Crescent', 'the promenade', None, {'kind': 'artery', 'name': 'the bay promenade', 'light': 'lantern'})]
 
 
 def lay_feedback(T, X, *, authored=None):
@@ -3231,6 +3270,9 @@ def lay_feedback(T, X, *, authored=None):
     for nm in list(towns):
         if nm == 'Crossroads' or nm.startswith('Neon Harbour') or nm in ('Canalside', 'Glintside', 'Halcyon Row'):   # (Canalside, Glintside: the city now)
             del towns[nm]
+    if os.environ.get('FEEDBACK_SNAP'):                              # a development cache: the ground just before the two sites
+        import pickle
+        pickle.dump(T, open(os.environ['FEEDBACK_SNAP'], 'wb'), protocol=4)
     revised = {'Crossroads': _feedback_crossroads(T, X)}
     revised.update(_feedback_neon(T, X))
     # These approach settlements retain their own scale; they form the inhabited fringe.
@@ -3276,7 +3318,7 @@ def lay_feedback(T, X, *, authored=None):
             t.yard(11720, 5808, 11912, 5968, kind='heath', name='the cape heath', why='open heath between the last gardens and the launch site')
         revised[nm] = t
     revised.update(towns)
-    T['feedback_layout'] = {'id': 'v56', 'source_inventory': '303@4984438d', 'counted': {'crossroads': 40, 'neon-harbour': 72}}
+    T['feedback_layout'] = {'id': 'v56', 'source_inventory': '303@4984438d', 'counted': dict(RETAINED)}
     return revised
 
 

@@ -3,7 +3,7 @@
   12544,
   7168
  ],
- "walkable_zone_areas": 182.6,
+ "walkable_zone_areas": 182.8,
  "routes_s": {
   "Col Path": 27.5,
   "High Fells": 51.2,
@@ -40,8 +40,8 @@
    "with_shortcuts_s": 1.6
   },
   "Driftwood": {
-   "on_foot_s": 43.4,
-   "with_shortcuts_s": 43.4
+   "on_foot_s": 43.9,
+   "with_shortcuts_s": 43.9
   },
   "Fernhollow": {
    "on_foot_s": 26.0,
@@ -56,8 +56,8 @@
    "with_shortcuts_s": 73.6
   },
   "Gullwick": {
-   "on_foot_s": 66.5,
-   "with_shortcuts_s": 66.5
+   "on_foot_s": 65.9,
+   "with_shortcuts_s": 65.9
   },
   "Neon Harbour": {
    "on_foot_s": 136.6,
@@ -68,36 +68,36 @@
    "with_shortcuts_s": 95.0
   },
   "Palm Spring": {
-   "on_foot_s": 82.7,
+   "on_foot_s": 82.4,
    "with_shortcuts_s": 39.8
   },
   "Dust Gulch": {
-   "on_foot_s": 108.0,
+   "on_foot_s": 107.7,
    "with_shortcuts_s": 41.2
   },
   "the Lode": {
-   "on_foot_s": 111.7,
+   "on_foot_s": 111.3,
    "with_shortcuts_s": 43.3
   },
   "Hearthold": {
    "on_foot_s": 136.8,
-   "with_shortcuts_s": 52.2
+   "with_shortcuts_s": 61.6
   },
   "Ember forge": {
    "on_foot_s": 142.5,
-   "with_shortcuts_s": 46.6
+   "with_shortcuts_s": 65.0
   },
   "Cinder Springs": {
    "on_foot_s": 138.6,
-   "with_shortcuts_s": 63.7
+   "with_shortcuts_s": 66.2
   },
   "Cinderwick": {
    "on_foot_s": 121.2,
-   "with_shortcuts_s": 71.0
+   "with_shortcuts_s": 58.8
   },
   "Lagoon Landing": {
-   "on_foot_s": 87.6,
-   "with_shortcuts_s": 51.4
+   "on_foot_s": 88.1,
+   "with_shortcuts_s": 52.3
   },
   "the Frostline": {
    "on_foot_s": 39.9,
@@ -2203,8 +2203,8 @@
   {
    "route": "Foothill Road",
    "obstacle": "a building of Crossroads",
-   "x": 6776,
-   "y": 3468,
+   "x": 6720,
+   "y": 3460,
    "side_path": false,
    "v55": true
   },
@@ -2371,7 +2371,7 @@
   {
    "route": "Fern Lane",
    "obstacle": "a building of Crossroads",
-   "x": 7148,
+   "x": 7104,
    "y": 3456,
    "side_path": false,
    "v55": true
@@ -8502,8 +8502,8 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "the Lull plain",
-   "x": 7257,
-   "y": 3434,
+   "x": 7180,
+   "y": 3454,
    "route": "Fern Lane",
    "along": 328
   },
@@ -9454,208 +9454,37 @@
   },
   {
    "type": "interactable",
-   "name": "resident",
+   "name": "door",
    "biome": "the home valley",
-   "x": 6192,
+   "x": 6416,
    "y": 3896,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "interactable",
-   "name": "noticeboard",
+   "name": "signpost",
    "biome": "the home valley",
-   "x": 5992,
+   "x": 6088,
    "y": 3296,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "interactable",
-   "name": "water trough",
+   "name": "door",
    "biome": "the home valley",
-   "x": 6048,
+   "x": 6064,
    "y": 3480,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "interactable",
-   "name": "water trough",
+   "name": "bench",
    "biome": "the home valley",
-   "x": 6168,
+   "x": 6576,
    "y": 3888,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the home valley",
-   "x": 6016,
-   "y": 3208,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the home valley",
-   "x": 6520,
-   "y": 3624,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the home valley",
-   "x": 6304,
-   "y": 3368,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "the home valley",
-   "x": 5784,
-   "y": 3496,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the home valley",
-   "x": 6216,
-   "y": 3256,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 6096,
-   "y": 3712,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "the home valley",
-   "x": 6232,
-   "y": 3800,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 5800,
-   "y": 3304,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "the home valley",
-   "x": 6512,
-   "y": 3848,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 5952,
-   "y": 3248,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the home valley",
-   "x": 5904,
-   "y": 3712,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "the home valley",
-   "x": 6136,
-   "y": 3920,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 6504,
-   "y": 3128,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the home valley",
-   "x": 6496,
-   "y": 3064,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 5848,
-   "y": 3368,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "biome": "the home valley",
-   "x": 6080,
-   "y": 3312,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "biome": "the home valley",
-   "x": 6144,
-   "y": 2992,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "the home valley",
-   "x": 5984,
-   "y": 3296,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 6264,
-   "y": 3720,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9663,8 +9492,35 @@
    "type": "interactable",
    "name": "noticeboard",
    "biome": "the home valley",
-   "x": 6264,
-   "y": 3176,
+   "x": 6088,
+   "y": 3208,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6552,
+   "y": 3624,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6432,
+   "y": 3368,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6656,
+   "y": 3488,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9672,8 +9528,152 @@
    "type": "interactable",
    "name": "door",
    "biome": "the home valley",
-   "x": 6632,
-   "y": 3768,
+   "x": 6296,
+   "y": 3256,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6288,
+   "y": 3712,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6728,
+   "y": 3800,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the home valley",
+   "x": 5896,
+   "y": 3304,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6240,
+   "y": 3856,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6032,
+   "y": 3248,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6088,
+   "y": 3712,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6096,
+   "y": 3920,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6552,
+   "y": 3128,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6528,
+   "y": 3064,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 5968,
+   "y": 3368,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the home valley",
+   "x": 6176,
+   "y": 3312,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6152,
+   "y": 2992,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6080,
+   "y": 3296,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6496,
+   "y": 3720,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6328,
+   "y": 3176,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the home valley",
+   "x": 6176,
+   "y": 3776,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9688,28 +9688,19 @@
   },
   {
    "type": "interactable",
-   "name": "gate",
+   "name": "signpost",
    "biome": "the home valley",
-   "x": 6592,
+   "x": 6216,
    "y": 3544,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "interactable",
-   "name": "noticeboard",
+   "name": "signpost",
    "biome": "the home valley",
-   "x": 6752,
-   "y": 3424,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "biome": "the home valley",
-   "x": 5880,
-   "y": 3304,
+   "x": 5792,
+   "y": 3432,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9717,7 +9708,16 @@
    "type": "interactable",
    "name": "gate",
    "biome": "the home valley",
-   "x": 6288,
+   "x": 5984,
+   "y": 3304,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6392,
    "y": 3448,
    "route": null,
    "settlement": "Home valley"
@@ -9726,16 +9726,16 @@
    "type": "interactable",
    "name": "door",
    "biome": "the home valley",
-   "x": 5760,
-   "y": 3496,
+   "x": 6632,
+   "y": 3488,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "interactable",
-   "name": "noticeboard",
+   "name": "bench",
    "biome": "the home valley",
-   "x": 6512,
+   "x": 6544,
    "y": 3056,
    "route": null,
    "settlement": "Home valley"
@@ -9744,44 +9744,17 @@
    "type": "interactable",
    "name": "signpost",
    "biome": "the home valley",
-   "x": 6656,
-   "y": 3160,
+   "x": 5832,
+   "y": 3168,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "interactable",
-   "name": "signpost",
+   "name": "bench",
    "biome": "the home valley",
-   "x": 6480,
+   "x": 6528,
    "y": 3112,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "biome": "the home valley",
-   "x": 6760,
-   "y": 3664,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "biome": "the home valley",
-   "x": 6440,
-   "y": 3216,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "biome": "the home valley",
-   "x": 5880,
-   "y": 3776,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9789,62 +9762,35 @@
    "type": "interactable",
    "name": "gate",
    "biome": "the home valley",
-   "x": 6520,
-   "y": 3576,
+   "x": 5848,
+   "y": 3672,
    "route": null,
    "settlement": "Home valley"
   },
   {
-   "type": "story",
-   "name": "old boot",
+   "type": "interactable",
+   "name": "door",
    "biome": "the home valley",
-   "x": 6584,
-   "y": 3568,
+   "x": 6512,
+   "y": 3216,
    "route": null,
    "settlement": "Home valley"
   },
   {
-   "type": "story",
-   "name": "cairn",
+   "type": "interactable",
+   "name": "resident",
    "biome": "the home valley",
-   "x": 5784,
-   "y": 3400,
+   "x": 6344,
+   "y": 3776,
    "route": null,
    "settlement": "Home valley"
   },
   {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the home valley",
-   "x": 6304,
-   "y": 3480,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
+   "type": "interactable",
+   "name": "resident",
    "biome": "the home valley",
    "x": 6248,
-   "y": 3264,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the home valley",
-   "x": 6504,
-   "y": 3808,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the home valley",
-   "x": 6496,
-   "y": 3336,
+   "y": 3576,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9852,8 +9798,26 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "the home valley",
-   "x": 6448,
-   "y": 2968,
+   "x": 6272,
+   "y": 3568,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 5920,
+   "y": 3400,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6320,
+   "y": 3480,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9861,26 +9825,44 @@
    "type": "story",
    "name": "cairn",
    "biome": "the home valley",
-   "x": 6072,
+   "x": 6336,
+   "y": 3264,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6096,
+   "y": 3816,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6608,
+   "y": 3336,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6456,
+   "y": 2968,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 6184,
    "y": 3320,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the home valley",
-   "x": 6368,
-   "y": 3488,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the home valley",
-   "x": 5984,
-   "y": 3520,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9888,8 +9870,116 @@
    "type": "story",
    "name": "old boot",
    "biome": "the home valley",
-   "x": 5768,
-   "y": 3616,
+   "x": 6280,
+   "y": 3488,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the home valley",
+   "x": 6752,
+   "y": 3512,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6792,
+   "y": 3608,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 6352,
+   "y": 3464,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 6632,
+   "y": 3664,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 5912,
+   "y": 3224,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 6344,
+   "y": 3808,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 6280,
+   "y": 3784,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6520,
+   "y": 3128,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6008,
+   "y": 3320,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the home valley",
+   "x": 5888,
+   "y": 3488,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the home valley",
+   "x": 6312,
+   "y": 3696,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the home valley",
+   "x": 6072,
+   "y": 3328,
    "route": null,
    "settlement": "Home valley"
   },
@@ -9897,133 +9987,43 @@
    "type": "story",
    "name": "mended fence",
    "biome": "the home valley",
-   "x": 6288,
-   "y": 3464,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the home valley",
-   "x": 6504,
-   "y": 3664,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the home valley",
-   "x": 5840,
-   "y": 3224,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the home valley",
-   "x": 5888,
-   "y": 3808,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the home valley",
-   "x": 6760,
-   "y": 3776,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the home valley",
-   "x": 6472,
-   "y": 3128,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the home valley",
-   "x": 5904,
-   "y": 3320,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the home valley",
-   "x": 5976,
-   "y": 3488,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "biome": "the home valley",
-   "x": 6216,
-   "y": 3696,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "biome": "the home valley",
-   "x": 5960,
-   "y": 3328,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the home valley",
-   "x": 6552,
+   "x": 6640,
    "y": 3272,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "story",
-   "name": "marker stone",
+   "name": "lost hat",
    "biome": "the home valley",
-   "x": 6472,
+   "x": 6304,
    "y": 3592,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "story",
-   "name": "marker stone",
+   "name": "mended fence",
    "biome": "the home valley",
-   "x": 6536,
+   "x": 6640,
    "y": 3304,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "story",
-   "name": "cairn",
+   "name": "marker stone",
    "biome": "the home valley",
-   "x": 6352,
-   "y": 3880,
+   "x": 6016,
+   "y": 3888,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "story",
-   "name": "marker stone",
+   "name": "old boot",
    "biome": "the home valley",
-   "x": 6352,
+   "x": 6552,
    "y": 3904,
    "route": null,
    "settlement": "Home valley"
@@ -10032,7 +10032,7 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the home valley",
-   "x": 6040,
+   "x": 6168,
    "y": 3376,
    "route": null,
    "settlement": "Home valley"
@@ -10041,71 +10041,26 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the home valley",
-   "x": 6368,
+   "x": 6496,
    "y": 3984,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "story",
-   "name": "tracks",
+   "name": "mended fence",
    "biome": "the home valley",
-   "x": 6152,
+   "x": 6160,
    "y": 3000,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "story",
-   "name": "cart with a broken wheel",
+   "name": "marker stone",
    "biome": "the home valley",
-   "x": 6552,
+   "x": 6600,
    "y": 3144,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "biome": "the home valley",
-   "x": 6624,
-   "y": 3496,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the home valley",
-   "x": 6000,
-   "y": 3448,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the home valley",
-   "x": 6304,
-   "y": 3408,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "biome": "the home valley",
-   "x": 6304,
-   "y": 3456,
-   "route": null,
-   "settlement": "Home valley"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "biome": "the home valley",
-   "x": 5992,
-   "y": 3168,
    "route": null,
    "settlement": "Home valley"
   },
@@ -10113,17 +10068,35 @@
    "type": "story",
    "name": "cold fire ring",
    "biome": "the home valley",
-   "x": 6792,
-   "y": 3640,
+   "x": 6320,
+   "y": 3496,
    "route": null,
    "settlement": "Home valley"
   },
   {
    "type": "story",
-   "name": "tracks",
+   "name": "marker stone",
    "biome": "the home valley",
-   "x": 6136,
-   "y": 3704,
+   "x": 6104,
+   "y": 3448,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6584,
+   "y": 3408,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 6392,
+   "y": 3456,
    "route": null,
    "settlement": "Home valley"
   },
@@ -10131,8 +10104,35 @@
    "type": "story",
    "name": "cart with a broken wheel",
    "biome": "the home valley",
-   "x": 6304,
-   "y": 3952,
+   "x": 6048,
+   "y": 3168,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 5848,
+   "y": 3648,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 6280,
+   "y": 3704,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 6160,
+   "y": 3960,
    "route": null,
    "settlement": "Home valley"
   },
@@ -10282,54 +10282,54 @@
   },
   {
    "type": "interactable",
-   "name": "water trough",
+   "name": "noticeboard",
    "biome": "the Lull plain",
-   "x": 7120,
+   "x": 7104,
    "y": 3120,
    "route": null,
    "settlement": "Fernhollow"
   },
   {
    "type": "interactable",
-   "name": "noticeboard",
+   "name": "bench",
    "biome": "the Lull plain",
-   "x": 7416,
+   "x": 7392,
    "y": 3152,
    "route": null,
    "settlement": "Fernhollow"
   },
   {
    "type": "interactable",
-   "name": "door",
+   "name": "noticeboard",
    "biome": "the coal hills",
-   "x": 7032,
+   "x": 7024,
    "y": 2880,
    "route": null,
    "settlement": "Fernhollow"
   },
   {
    "type": "interactable",
-   "name": "bench",
+   "name": "water trough",
    "biome": "the coal hills",
-   "x": 7288,
+   "x": 7272,
    "y": 3064,
    "route": null,
    "settlement": "Fernhollow"
   },
   {
    "type": "interactable",
-   "name": "bench",
+   "name": "door",
    "biome": "the Lull plain",
-   "x": 7024,
+   "x": 7000,
    "y": 3200,
    "route": null,
    "settlement": "Fernhollow"
   },
   {
    "type": "interactable",
-   "name": "bench",
+   "name": "water trough",
    "biome": "the coal hills",
-   "x": 7368,
+   "x": 7352,
    "y": 3032,
    "route": null,
    "settlement": "Fernhollow"
@@ -10345,64 +10345,28 @@
   },
   {
    "type": "interactable",
-   "name": "bench",
-   "biome": "the Lull plain",
-   "x": 7000,
-   "y": 3128,
-   "route": null,
-   "settlement": "Fernhollow"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "the Lull plain",
-   "x": 7160,
-   "y": 3128,
-   "route": null,
-   "settlement": "Fernhollow"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "biome": "the coal hills",
-   "x": 7248,
-   "y": 2856,
-   "route": null,
-   "settlement": "Fernhollow"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "biome": "the coal hills",
-   "x": 7320,
-   "y": 2936,
-   "route": null,
-   "settlement": "Fernhollow"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
+   "name": "door",
    "biome": "the home valley",
    "x": 6976,
-   "y": 3064,
+   "y": 3128,
    "route": null,
    "settlement": "Fernhollow"
   },
   {
    "type": "story",
-   "name": "lost hat",
+   "name": "mended fence",
    "biome": "the Lull plain",
-   "x": 7200,
-   "y": 3232,
+   "x": 7144,
+   "y": 3128,
    "route": null,
    "settlement": "Fernhollow"
   },
   {
    "type": "story",
    "name": "old boot",
-   "biome": "the home valley",
-   "x": 6952,
-   "y": 2944,
+   "biome": "the coal hills",
+   "x": 7240,
+   "y": 2856,
    "route": null,
    "settlement": "Fernhollow"
   },
@@ -10410,16 +10374,52 @@
    "type": "story",
    "name": "mended fence",
    "biome": "the coal hills",
-   "x": 7232,
+   "x": 7312,
+   "y": 2936,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6960,
+   "y": 3064,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Lull plain",
+   "x": 7168,
+   "y": 3232,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6944,
+   "y": 2944,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coal hills",
+   "x": 7224,
    "y": 3040,
    "route": null,
    "settlement": "Fernhollow"
   },
   {
    "type": "story",
-   "name": "cart with a broken wheel",
+   "name": "lost hat",
    "biome": "the coal hills",
-   "x": 7232,
+   "x": 7224,
    "y": 2912,
    "route": null,
    "settlement": "Fernhollow"
@@ -14856,7 +14856,7 @@
  "settlement_density": [
   {
    "settlement": "Home valley",
-   "screens": 4.76,
+   "screens": 4.77,
    "per_screen_each": 8.0
   },
   {
@@ -15685,8 +15685,8 @@
     "with_shortcuts_s": 2.5
    },
    "Driftwood": {
-    "on_foot_s": 66.7,
-    "with_shortcuts_s": 66.7
+    "on_foot_s": 67.5,
+    "with_shortcuts_s": 67.5
    },
    "Fernhollow": {
     "on_foot_s": 39.9,
@@ -15701,8 +15701,8 @@
     "with_shortcuts_s": 113.1
    },
    "Gullwick": {
-    "on_foot_s": 102.2,
-    "with_shortcuts_s": 102.2
+    "on_foot_s": 101.3,
+    "with_shortcuts_s": 101.3
    },
    "Neon Harbour": {
     "on_foot_s": 209.9,
@@ -15713,36 +15713,36 @@
     "with_shortcuts_s": 146.0
    },
    "Palm Spring": {
-    "on_foot_s": 127.1,
+    "on_foot_s": 126.6,
     "with_shortcuts_s": 61.2
    },
    "Dust Gulch": {
-    "on_foot_s": 165.9,
+    "on_foot_s": 165.5,
     "with_shortcuts_s": 63.3
    },
    "the Lode": {
-    "on_foot_s": 171.6,
+    "on_foot_s": 171.0,
     "with_shortcuts_s": 66.5
    },
    "Hearthold": {
     "on_foot_s": 210.2,
-    "with_shortcuts_s": 80.2
+    "with_shortcuts_s": 94.6
    },
    "Ember forge": {
     "on_foot_s": 219.0,
-    "with_shortcuts_s": 71.6
+    "with_shortcuts_s": 99.9
    },
    "Cinder Springs": {
     "on_foot_s": 213.0,
-    "with_shortcuts_s": 97.9
+    "with_shortcuts_s": 101.7
    },
    "Cinderwick": {
     "on_foot_s": 186.2,
-    "with_shortcuts_s": 109.1
+    "with_shortcuts_s": 90.3
    },
    "Lagoon Landing": {
-    "on_foot_s": 134.6,
-    "with_shortcuts_s": 79.0
+    "on_foot_s": 135.4,
+    "with_shortcuts_s": 80.4
    },
    "the Frostline": {
     "on_foot_s": 61.3,
@@ -15863,8 +15863,8 @@
    "definition": "land cells outside the frame that are walkable or built on (8 px cells)",
    "v54_cells": 436837,
    "after_warp_cells": 529123,
-   "v55_cells": 560323,
-   "increase_pct": 28.3
+   "v55_cells": 560207,
+   "increase_pct": 28.2
   },
   "settlements": {
    "Crossroads": {
@@ -15873,26 +15873,26 @@
      30,
      45
     ],
-    "buildings_counted": 40,
+    "buildings_counted": 25,
     "by_use": {
-     "cottage": 20,
+     "cottage": 10,
      "public": 1,
-     "house": 9,
+     "house": 5,
      "shop": 5,
      "workshop": 1,
      "townhouse": 2,
-     "inn": 2
+     "inn": 1
     },
-    "homes": 31,
+    "homes": 17,
     "centre": [
      6296,
      3536
     ],
     "footprint_box": [
-     5896,
+     5912,
      3272,
-     7184,
-     4384
+     7176,
+     4304
     ],
     "purpose": "the valley market, mill and halt: a compact civic core, mixed street fronts, courts and garden edges",
     "setting": "the dry terrace west of the Sleepwater bend, with the mill reach below the existing square",
@@ -16003,15 +16003,39 @@
      },
      {
       "kind": "field",
+      "name": "the halt gardens",
+      "box": [
+       5736,
+       3896,
+       5840,
+       4336
+      ],
+      "plots": 1,
+      "why": "rear gardens taper to working fields"
+     },
+     {
+      "kind": "field",
       "name": "the mill farms",
       "box": [
-       6624,
-       3992,
+       6296,
+       3896,
        6880,
-       4352
+       4400
       ],
-      "plots": 6,
-      "why": "grain and orchard plots beyond the last homes"
+      "plots": 14,
+      "why": "grain and orchard plots between the south and east arms, beyond the last homes"
+     },
+     {
+      "kind": "field",
+      "name": "the east pastures",
+      "box": [
+       6640,
+       3464,
+       7200,
+       3880
+      ],
+      "plots": 4,
+      "why": "the east road runs out between fields"
      }
     ]
    },
@@ -17097,6 +17121,28 @@
        5500
       ],
       "why": "the walled town's market: bread, ash-grown wine, iron goods from the smiths"
+     },
+     {
+      "kind": "yard",
+      "name": "the ore yard",
+      "box": [
+       2520,
+       5392,
+       2592,
+       5432
+      ],
+      "why": "the Lode's ore off the mine cart, at the head of Smiths' Row"
+     },
+     {
+      "kind": "pool",
+      "name": "the quench tanks",
+      "box": [
+       2600,
+       5392,
+       2664,
+       5432
+      ],
+      "why": "the forges quench here: rain off the rock and water carted up from the spring line"
      }
     ]
    },
@@ -17762,7 +17808,7 @@
    }
   },
   "building_counts": {
-   "Crossroads": 40,
+   "Crossroads": 25,
    "Neon Harbour: the old waterfront": 70,
    "Neon Harbour: the Lanes and the East Shore": 45,
    "Neon Harbour: the docks": 12,
@@ -18335,7 +18381,7 @@
    "region (the insets)": "every settlement, gate, crater, peak, biome, water and route in the inset",
    "reference (map55-reference)": "every name on the continent, at 3x"
   },
-  "levelled_footprints": 156,
+  "levelled_footprints": 148,
   "journeys": [
    {
     "journey": "Crossroads - Fernhollow - Cogsworth",
@@ -18454,7 +18500,7 @@
     "zone_water_cells": 0
    },
    "counts": {
-    "crossroads": 40,
+    "crossroads": 25,
     "neon-harbour": 72,
     "neon_size_approved": false
    }
@@ -18465,13 +18511,12 @@
     "failures": [],
     "notes": [
      "7 buildings from the built zone's own plan (street/door/form checks delegated)",
-     "4 blocks, 9 dead ends, 4.5 x 6.3 screens",
-     "standing (known, a Crossroads change for Matt): crossroads-b001 on the road (Valley lane north)",
-     "standing (known, a Crossroads change for Matt): crossroads-b005 on the road (Valley lane west)"
+     "count (warning): 25 counted buildings, a little outside 30 to 45",
+     "2 blocks, 6 dead ends, 4.5 x 5.8 screens"
     ],
-    "metrics": 40,
-    "actual_count": 40,
-    "retained_count": 40
+    "metrics": 25,
+    "actual_count": 25,
+    "retained_count": 25
    },
    "neon-harbour": {
     "pass": true,
@@ -18541,7 +18586,7 @@
     "notes": [
      "count (warning): 27 counted buildings, a little outside 30 to 45",
      "walled: 1 gate, 8 towers",
-     "4 blocks, 2 dead ends, 2.6 x 3.4 screens"
+     "4 blocks, 5 dead ends, 2.6 x 4.0 screens"
     ],
     "metrics": 27,
     "actual_count": 27,

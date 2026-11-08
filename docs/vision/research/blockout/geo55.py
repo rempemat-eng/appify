@@ -276,9 +276,11 @@ RAILS_V56 = {   # v56 (art director, 4 Nov: "nothing may stand on rails"): each 
     'desert line (Rift viaduct)': [(4870, 3900), (4211, 3700), (3436, 3100), (3000, 3000), (2992, 2600)],
     'maglev (Narrows Viaduct)': [(8400, 2900), (8700, 2900), (9208, 2330), (10390, 3300), (11179, 4125), (11400, 4150), (11700, 4150),
                                  (11716, 4200), (11716, 4480), (11700, 4528), (11600, 4528)],   # round the city's north edge, down its east lane
-    'mine cart (S1)': [(2900, 1720), (3000, 1800), (3060, 2100), (3060, 2520), (2695, 2900), (2581, 3900), (2300, 5000)],
+    'mine cart (S1)': [(2900, 1720), (3000, 1800), (3060, 2100), (3060, 2520), (2695, 2900), (2581, 3900), (2240, 4880), (2520, 5040),
+                       (2560, 5300)],   # past Ember forge's ore store on the lip, down the rock's warm east flank to Hearthold's forges
 }
-STATIONS_V56 = {'Dust Gulch platform': (2992, 2336)}   # the depot at Front Street's east end, not the middle of the street
+STATIONS_V56 = {'Dust Gulch platform': (2992, 2336),   # the depot at Front Street's east end, not the middle of the street
+                'the forge cart bay': (2560, 5416)}    # Hearthold's ore yard at the head of Smiths' Row (round 10 brief)
 
 
 def rails_v56():
@@ -788,7 +790,7 @@ def feedback_checks(T, plans):
     K = T['K']
     for pid in ('crossroads', 'neon-harbour'):
         P = plans[pid]
-        expected = {'crossroads': 40, 'neon-harbour': 72}[pid]
+        expected = towns55.RETAINED[pid]
         # fill buildings deferred by the fitter leave the retained count; each is listed with its reason
         expected -= sum(d.get('counts_as', 0) for d in P.get('deferred_buildings', []) if d.get('kind') == 'fill row building')
         if retained_count(pid, P) != expected:
@@ -820,11 +822,6 @@ def standing_lines(T):
     return rails
 
 
-STANDING_KNOWN = {   # the built zone's own buildings (the game's Crossroads, held by its retained inventory) with a valley lane through them:
-    # the lanes are to be re-laid round them with the built zone's own streets, a Crossroads change left to Matt (4 Nov)
-    'crossroads-b001': 'the road (Valley lane north)', 'crossroads-b005': 'the road (Valley lane west)'}
-
-
 def standing_failures(K, P, lines):
     """v56 (art director, 4 Nov): nothing stands on a rail line, a road, a river or water. One finding per building."""
     import town_plans as TP
@@ -834,7 +831,6 @@ def standing_failures(K, P, lines):
         sl = (slice(max(0, br), br + bh), slice(max(0, bc), bc + bw))
         on = [nm for nm, m in lines.items() if m[sl].any()]
         on += [f'{k} water' for k in sorted(set(np.unique(K[sl]).tolist()) & set(TP.WATER_K))]
-        on = [o for o in on if STANDING_KNOWN.get(b['id']) != o]
         if on:
             out.append(f"standing: {b['id']} ({b.get('form', 'building')}) stands on " + ', '.join(on))
     return out
@@ -872,9 +868,7 @@ def feedback_plan_checks(T, plans):
                 failures.append(f"final_ground: {b['id']} overlaps another footprint")
             occupied[br:br + bh, bc:bc + bw] = True
         failures += standing_failures(T['K'], P, stand_lines)
-        notes = list(notes) + [f'standing (known, a Crossroads change for Matt): {b} on {w}' for b, w in STANDING_KNOWN.items()
-                               if b.rsplit('-b', 1)[0] == pid]
-        expected = {'crossroads': 40, 'neon-harbour': 72}.get(pid)
+        expected = towns55.RETAINED.get(pid)
         if expected is not None and retained_count(pid, P) != expected:
             failures.append(f"retained_count: {retained_count(pid, P)} != {expected}")
         reports[pid] = {'pass': not failures, 'failures': failures, 'notes': notes,
@@ -883,7 +877,7 @@ def feedback_plan_checks(T, plans):
     for pid in sorted(EXPECTED_TOWN_PLANS - set(plans)):
         reports[pid] = {'pass': False, 'failures': [f'missing_plan: {pid} has no exported town plan'],
                         'notes': [], 'metrics': None, 'actual_count': None,
-                        'retained_count': {'crossroads': 40, 'neon-harbour': 72}.get(pid)}
+                        'retained_count': towns55.RETAINED.get(pid)}
         print('FAIL v56 town', pid, json.dumps(reports[pid]))
     return reports
 
@@ -1159,7 +1153,7 @@ def data_stage():
         v55['revision'] = {'id': REVISION, 'base': '303@4984438d + 355@7afe9efd',
                            'seed_contract': PROSPECTIVE_SEED, 'historical_equivalence': False,
                            'feedback_ground': rec['feedback_ground'],
-                           'counts': {'crossroads': 40, 'neon-harbour': 72, 'neon_size_approved': False}}
+                           'counts': dict(towns55.RETAINED, neon_size_approved=False)}
     bres = G.bench(T, pois, marks, pocks, obs, steps, gates); stats['benchmark'] = bres; stats['biome_detail'] = T['biome_detail']
     for b_ in bres:
         print(('PASS' if b_['pass'] else 'FAIL'), b_['n'], b_['check'], '|', b_['measured'])

@@ -1326,8 +1326,8 @@
   "yards": "wood yards and gardens",
   "edges": "the clearing's fields, the woods",
   "materials_cells": {
-   "worn paving": 419,
-   "packed earth": 1292
+   "worn paving": 380,
+   "packed earth": 1286
   }
  },
  "terrain": {
@@ -1420,21 +1420,21 @@
    "r8.5g12r14g8r44g",
    "5g20.r14g8r44g",
    "5g20.2r13g7r45g",
-   "5g20.2r13g6r46g",
-   "5g20.3r11g7r46g",
-   "5g20.2r11g8r46g",
-   "5g20.2r10g9r46g",
-   "5g20.5r5g11r46g",
-   "5g20.21r46g",
-   "5g20.21r46g",
+   "5g20.r12.2g6r46g",
+   "5g20.r12.g7r46g",
+   "5g20.r12.8r46g",
+   "5g20.r12.8r46g",
+   "5g20.r12.8r46g",
+   "5g20.r12.8r46g",
+   "5g20.r12.8r46g",
    "27.10r3.6r.45g",
    "40.6r.45g",
    "40.6r.45g",
    "40.6r.45g",
-   "10.3g12.3g11.g6r46g",
-   "10.3g12.3g11.g7r45g",
-   "10.3g12.3g11.g7r45g",
-   "10.3g12.3g11.2g6r45g"
+   "6.2g10.4g14.4g6r46g",
+   "6.2g10.4g14.4g7r45g",
+   "6.2g10.4g14.4g7r45g",
+   "6.16g14.5g6r45g"
   ]
  },
  "residents": [],

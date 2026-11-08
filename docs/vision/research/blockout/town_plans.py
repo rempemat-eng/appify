@@ -568,6 +568,8 @@ def plan_one(T, name, ts, X, tp):
                 el = {'id': sid, 'kind': 'street', 'name': nmx, 'class': s['cls'], 'width_cells': s['width_cells'], 'vertices_px': [list(v) for v in line],
                       'follows_route': s['route'], 'district_town': t.name, 'frontage': s.get('frontage', 'detached'),
                       'max_gap_cells': s.get('max_gap_cells'), 'alley': bool(s.get('alley')), 'frontage_reason': s.get('frontage_reason')}
+                if s.get('lighting'):                                    # v56 Neon: lit at night (an artery or the strip)
+                    el['lighting'] = s['lighting']
                 if s.get('frontage_props'):                              # the props along this piece of the street
                     xs_ = [v[0] for v in line]; ys_ = [v[1] for v in line]
                     el['frontage_props'] = [q for q in s['frontage_props'] if min(xs_) - 64 <= q['at_px'][0] <= max(xs_) + 64
@@ -1403,6 +1405,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                 s['follows_route'] = el['follows_route']
             if el.get('link'):
                 s['link'] = True
+            if el.get('lighting'):
+                s['lighting'] = el['lighting']
             streets.append(s)
     # what each street connects
     lab = net.ids
@@ -1489,7 +1493,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         'style': next((t.style for t in ts if getattr(t, 'style', None)), None),
         'features': {k_: v_ for k_, v_ in (('shrine_gates_px', next((t.gates_on_path for t in ts if getattr(t, 'gates_on_path', None)), None)),
                                            ('shrine_path_px', next((t.shrine_path for t in ts if getattr(t, 'shrine_path', None)), None)),
-                                           ('footbridge', next((t.footbridge for t in ts if getattr(t, 'footbridge', None)), None))) if v_},
+                                           ('footbridge', next((t.footbridge for t in ts if getattr(t, 'footbridge', None)), None)),
+                                           ('terrace_walls_px', next((t.terrace_walls for t in ts if getattr(t, 'terrace_walls', None)), None))) if v_},
         'arrivals': arrivals, 'streets': streets, 'squares': squares, 'districts': dists, 'gathering_places': gathering,
         'size_table_px': {f: [list(TW.BLD[f][0]), list(TW.BLD[f][1])] for f in sorted({b['form'] for b in bl if not b.get('from_zone_plan')})},
         'fronts': sum(b.get('fronts', 1) for b in bl),

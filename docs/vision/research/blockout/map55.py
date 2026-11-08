@@ -543,6 +543,11 @@ def draw_shrines(d, S, R, ink, P, k, s, plans=None):
     lintels; a footbridge where a plan has one."""
     for P_ in (plans or (S.get('plans') or {}).values()):
         fe = P_.get('features') or {}
+        for wl in fe.get('terrace_walls_px', []):                       # v56: a town's retaining walls, the terraces stepping down
+            (ax, ay), (bx, by) = wl[0], wl[-1]
+            polyline(d, [(ax, ay + 7), (bx, by + 7)], P, ink + (90,), max(1.5, 14 * k))     # the drop's shadow below the wall
+            polyline(d, wl, P, R['stone'][1] + (255,), max(1.5, 10 * k))
+            polyline(d, [(ax, ay - 3), (bx, by - 3)], P, R['stone'][5] + (230,), max(1.0, 3 * k))   # its lit coping
         pts = fe.get('shrine_path_px')
         if pts:
             polyline(d, pts, P, R['stone'][4] + (255,), max(2.0, 14 * k))
@@ -1943,6 +1948,7 @@ def sea_tints(sea_rgb, S, R=None):
 
 
 NEON_CYAN, NEON_MAGENTA = (64, 232, 240), (236, 72, 196)
+LIGHT_COL = {'company': (120, 236, 255), 'sodium': (255, 184, 84), 'lantern': (255, 222, 150), 'neon': NEON_MAGENTA}
 
 
 def neon_glow(canvas, S, P, s, k, M):
@@ -1957,6 +1963,13 @@ def neon_glow(canvas, S, P, s, k, M):
         if dt.get(b['district'], '').endswith('the Company district'):
             x, y, w, h_ = b['rect_px']; X0, Y0 = P(x - 16, y - 16); X1, Y1 = P(x + w + 16, y + h_ + 16)
             dg.rectangle([X0, Y0, X1, Y1], fill=(170, 250, 255, 150 if b['type'] == 'tower' else 95))
+    for st in plan['streets']:                                       # v56: the strip and the arteries glow; the plain streets stay dark
+        L_ = st.get('lighting')
+        if not L_:
+            continue
+        col = NEON_MAGENTA if L_['kind'] == 'strip' else LIGHT_COL[L_.get('light', 'lantern')]
+        w_ = max(2, int(round((st['width_cells'] * CELL + (24 if L_['kind'] == 'strip' else 8)) * k)))
+        dg.line([P(*q) for q in st['vertices_px']], fill=col + (150 if L_['kind'] == 'strip' else 90,), width=w_)
     cx, cy = M.V.CRATERS['the Company crater'][:2] if hasattr(M, 'V') else (11780, 4159)
     X, Y = P(cx, cy); r_ = 110 * k
     dg.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(220, 160, 255, 140))
@@ -1972,7 +1985,34 @@ def neon_accents(d, S, P, s, k, lines=()):
     if not plan:
         return
     wpx = max(1, int(round(0.6 * s)))
-    for st in plan['streets']:
+    lit = [st for st in plan['streets'] if st.get('lighting')]
+    if lit:                                                          # v56: neon on the strip, one light down each artery, the rest dark
+        for st in lit:
+            v = st['vertices_px']; L_ = st['lighting']
+            if L_['kind'] == 'strip':
+                hw = st['width_cells'] * CELL / 2 - 2
+                for (ax, ay), (bx, by) in zip(v, v[1:]):
+                    L = math.hypot(bx - ax, by - ay)
+                    if L < 8:
+                        continue
+                    nx, ny = -(by - ay) / L, (bx - ax) / L
+                    if nx + ny > 0:
+                        nx, ny = -nx, -ny
+                    for sgn, col in ((1, NEON_CYAN), (-1, NEON_MAGENTA)):
+                        d.line([P(ax + sgn * nx * hw, ay + sgn * ny * hw), P(bx + sgn * nx * hw, by + sgn * ny * hw)], fill=col + (240,), width=wpx + 1)
+                    for i in range(int(L // 24)):                      # the signs, every other front, alternating sides
+                        f = (i + 0.5) * 24 / L; sx, sy = ax + (bx - ax) * f, ay + (by - ay) * f; sgn = 1 if i % 2 else -1
+                        X, Y = P(sx + sgn * nx * (hw + 4), sy + sgn * ny * (hw + 4)); r_ = max(1.0, 0.9 * s)
+                        d.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(NEON_MAGENTA if i % 4 < 2 else NEON_CYAN) + (255,))
+            else:
+                col = LIGHT_COL[L_.get('light', 'lantern')]
+                d.line([P(*q) for q in v], fill=col + (235,), width=wpx)
+                for (ax, ay), (bx, by) in zip(v, v[1:]):               # the lamps along it
+                    L = math.hypot(bx - ax, by - ay)
+                    for i in range(int(L // 32)):
+                        f = (i + 0.5) * 32 / L; X, Y = P(ax + (bx - ax) * f, ay + (by - ay) * f); r_ = max(0.8, 0.7 * s)
+                        d.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=col + (255,))
+    for st in plan['streets'] if not lit else ():
         if st['class'] not in ('main', 'side'):
             continue
         hw = st['width_cells'] * CELL / 2 - 2

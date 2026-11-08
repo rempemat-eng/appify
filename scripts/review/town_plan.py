@@ -14,6 +14,7 @@ What it checks, per plan (ground-rules.md 4 and 5, size-guide.md 0, Matt's brief
   off_water   no building on water or a barrier; a street crosses water only on a bridge
   reach       every building has a door within three cells of the street it faces (a close two cells wide if it is set back)
   discovery   at least one point of interest (secret, resident activity, shortcut, landmark view) on every screen with a building
+  lighting    a v56 city: one named neon strip (300 px or more), every lit street named, 15 to 40 % of main and side streets lit
   count       the counted buildings (a row of 3 to 5 joined houses 1, any house 1, landmarks apart, each with a reason)
               within the town's range: a little outside warns, beyond 25 % fails
   arrivals    every arrival lies on its regional route (blockout-v55.json) or at its station (a ferry)
@@ -163,6 +164,29 @@ def _dist_to_poly(x, y, pts):
         t = max(0.0, min(1.0, ((x - ax) * vx + (y - ay) * vy) / L2))
         best = min(best, math.hypot(x - ax - t * vx, y - ay - t * vy))
     return best
+
+
+def lighting_failures(P):
+    """A city at night (v56, round 10): neon on one strip and a few named arteries, the plain streets dark. The strip is one
+    named street run at least 300 px long; every lit street is named; the lit share of the main and side streets' length is
+    between 15 % and 40 % (lit everywhere reads as lit nowhere)."""
+    fails = []
+    length = lambda st: sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(st['vertices_px'], st['vertices_px'][1:]))
+    lit = [st for st in P['streets'] if st.get('lighting')]
+    strips = {st['lighting'].get('name') for st in lit if st['lighting'].get('kind') == 'strip'}
+    if len(strips) != 1:
+        fails.append(f'lighting: {len(strips)} neon strips (one is the rule)')
+    elif sum(length(st) for st in lit if st['lighting'].get('kind') == 'strip') < 300:
+        fails.append('lighting: the strip is shorter than 300 px')
+    for st in lit:
+        if not st['lighting'].get('name'):
+            fails.append(f"lighting: {st['id']} is lit but unnamed")
+    base = [st for st in P['streets'] if st['class'] in ('main', 'side')]
+    tot = sum(length(st) for st in base) or 1
+    share = sum(length(st) for st in base if st.get('lighting')) / tot
+    if not 0.15 <= share <= 0.40:
+        fails.append(f'lighting: {100 * share:.0f}% of the main and side streets are lit (15 to 40)')
+    return fails
 
 
 def check_plan(P, blockout):
@@ -340,6 +364,8 @@ def check_plan(P, blockout):
             fails.append(f'discovery: {len(need - got)} of {len(need)} screens with buildings have nothing to discover')
     elif 'v56' in str((P.get('grid') or {}).get('origin', '')):       # the v56 plans carry one (the v55 exports predate the rule)
         fails.append('discovery: the plan has no discovery list')
+    if P['size'] == 'city' and 'v56' in str((P.get('grid') or {}).get('origin', '')):
+        fails += lighting_failures(P)
     # layout: a landmark within two screens of every entry; a loop
     GL = P['game_layout']
     lms = GL['landmarks']

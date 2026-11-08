@@ -4,13 +4,12 @@
   "failures": [],
   "notes": [
    "7 buildings from the built zone's own plan (street/door/form checks delegated)",
-   "4 blocks, 9 dead ends, 4.5 x 6.3 screens",
-   "standing (known, a Crossroads change for Matt): crossroads-b001 on the road (Valley lane north)",
-   "standing (known, a Crossroads change for Matt): crossroads-b005 on the road (Valley lane west)"
+   "count (warning): 25 counted buildings, a little outside 30 to 45",
+   "2 blocks, 6 dead ends, 4.5 x 5.8 screens"
   ],
-  "metrics": 40,
-  "actual_count": 40,
-  "retained_count": 40
+  "metrics": 25,
+  "actual_count": 25,
+  "retained_count": 25
  },
  "neon-harbour": {
   "pass": true,
@@ -80,7 +79,7 @@
   "notes": [
    "count (warning): 27 counted buildings, a little outside 30 to 45",
    "walled: 1 gate, 8 towers",
-   "4 blocks, 2 dead ends, 2.6 x 3.4 screens"
+   "4 blocks, 5 dead ends, 2.6 x 4.0 screens"
   ],
   "metrics": 27,
   "actual_count": 27,

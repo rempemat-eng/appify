@@ -41,7 +41,7 @@
   1996,
   5096,
   2824,
-  5716
+  5808
  ],
  "fortification": {
   "wall_px": [
@@ -132,7 +132,50 @@
   }
  },
  "style": null,
- "features": {},
+ "features": {
+  "terrace_walls_px": [
+   [
+    [
+     2192,
+     5184
+    ],
+    [
+     2448,
+     5184
+    ]
+   ],
+   [
+    [
+     2192,
+     5296
+    ],
+    [
+     2448,
+     5296
+    ]
+   ],
+   [
+    [
+     2124,
+     5582
+    ],
+    [
+     2604,
+     5582
+    ]
+   ],
+   [
+    [
+     2124,
+     5702
+    ],
+    [
+     2760,
+     5702
+    ]
+   ]
+  ]
+ },
  "arrivals": [
   {
    "id": "hearthold-arr1",
@@ -141,9 +184,86 @@
    "street": "hearthold-a1",
    "entries_px": [],
    "route_kind": "path"
+  },
+  {
+   "id": "hearthold-arr2",
+   "kind": "path",
+   "route": "Ember Way",
+   "street": "hearthold-a2",
+   "entries_px": [
+    [
+     1880,
+     5680
+    ]
+   ],
+   "route_kind": "path"
   }
  ],
  "streets": [
+  {
+   "id": "hearthold-s01",
+   "name": "Castle Street",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     2312.0,
+     5328.0
+    ],
+    [
+     2312.0,
+     5232.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "hearthold-c02",
+    "hearthold-s02",
+    "hearthold-s16",
+    "hearthold-s17"
+   ]
+  },
+  {
+   "id": "hearthold-s02",
+   "name": "Chapel Row (1)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2212.0,
+     5284.0
+    ],
+    [
+     2316.0,
+     5284.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "hearthold-s01",
+    "hearthold-s17"
+   ]
+  },
+  {
+   "id": "hearthold-s03",
+   "name": "Chapel Row (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2388.0,
+     5284.0
+    ],
+    [
+     2420.0,
+     5284.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "hearthold-s17"
+   ]
+  },
   {
    "id": "hearthold-s04",
    "name": "Gate Street",
@@ -164,7 +284,8 @@
     "hearthold-q02",
     "hearthold-s07",
     "hearthold-s08",
-    "hearthold-s15"
+    "hearthold-s11",
+    "hearthold-s16"
    ]
   },
   {
@@ -185,8 +306,7 @@
    "frontage": "detached",
    "connects": [
     "hearthold-q02",
-    "hearthold-s09",
-    "hearthold-s14"
+    "hearthold-s09"
    ]
   },
   {
@@ -299,6 +419,36 @@
    ]
   },
   {
+   "id": "hearthold-s11",
+   "name": "Gate Street (down to the coast road)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     2312.0,
+     5712.0
+    ],
+    [
+     2312.0,
+     5760.0
+    ],
+    [
+     2280.0,
+     5760.0
+    ],
+    [
+     2280.0,
+     5808.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "hearthold-a2",
+    "hearthold-s04",
+    "hearthold-s08"
+   ]
+  },
+  {
    "id": "hearthold-a1",
    "name": "Forge Stair",
    "class": "arrival",
@@ -314,38 +464,111 @@
     ]
    ],
    "follows_route": "Forge Stair",
+   "connects": []
+  },
+  {
+   "id": "hearthold-a2",
+   "name": "Ember Way",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     1880.3,
+     5679.8
+    ],
+    [
+     1911.4,
+     5713.7
+    ],
+    [
+     1929.4,
+     5727.1
+    ],
+    [
+     1969.3,
+     5750.0
+    ],
+    [
+     2015.4,
+     5767.7
+    ],
+    [
+     2064.7,
+     5775.4
+    ],
+    [
+     2153.1,
+     5778.2
+    ],
+    [
+     2196.4,
+     5783.3
+    ],
+    [
+     2322.6,
+     5823.4
+    ],
+    [
+     2368.9,
+     5831.5
+    ],
+    [
+     2410.0,
+     5834.8
+    ]
+   ],
+   "follows_route": "Ember Way",
    "connects": [
-    "hearthold-s14"
+    "hearthold-s11"
    ]
   },
   {
-   "id": "hearthold-s14",
+   "id": "hearthold-s16",
    "name": null,
    "class": "lane",
    "width_cells": 3,
    "vertices_px": [
     [
-     2004.0,
-     5484.0
+     2308.0,
+     5332.0
     ],
     [
-     2004.0,
-     5196.0
-    ],
-    [
-     2132.0,
-     5196.0
+     2308.0,
+     5444.0
     ]
    ],
    "frontage": "detached",
    "link": true,
    "connects": [
-    "hearthold-a1",
-    "hearthold-s05"
+    "hearthold-s01",
+    "hearthold-s04"
    ]
   },
   {
-   "id": "hearthold-s15",
+   "id": "hearthold-s17",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2380.0,
+     5276.0
+    ],
+    [
+     2332.0,
+     5276.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "hearthold-s01",
+    "hearthold-s03",
+    "hearthold-s18"
+   ]
+  },
+  {
+   "id": "hearthold-s18",
    "name": null,
    "class": "lane",
    "width_cells": 3,
@@ -355,20 +578,16 @@
      5252.0
     ],
     [
-     2316.0,
-     5252.0
-    ],
-    [
-     2316.0,
-     5444.0
+     2372.0,
+     5260.0
     ]
    ],
    "frontage": "detached",
    "link": true,
    "connects": [
-    "hearthold-c03",
     "hearthold-q01",
-    "hearthold-s04"
+    "hearthold-s03",
+    "hearthold-s17"
    ]
   },
   {
@@ -392,7 +611,6 @@
    ],
    "frontage": "detached",
    "connects": [
-    "hearthold-c02",
     "hearthold-q01"
    ]
   },
@@ -407,34 +625,17 @@
      5184.0
     ],
     [
-     2376.0,
+     2304.0,
      5184.0
-    ]
-   ],
-   "frontage": "detached",
-   "connects": [
-    "hearthold-c01",
-    "hearthold-q01"
-   ]
-  },
-  {
-   "id": "hearthold-c03",
-   "name": null,
-   "class": "close",
-   "width_cells": 2,
-   "vertices_px": [
-    [
-     2256.0,
-     5296.0
     ],
     [
      2304.0,
-     5296.0
+     5216.0
     ]
    ],
    "frontage": "detached",
    "connects": [
-    "hearthold-s15"
+    "hearthold-s01"
    ]
   }
  ],
@@ -624,6 +825,34 @@
    ],
    "buildings": [],
    "town": "Hearthold"
+  },
+  {
+   "id": "hearthold-d-the-ore-yard",
+   "name": "the ore yard",
+   "function": "docks and works yards",
+   "declared": "the Lode's ore off the mine cart, at the head of Smiths' Row",
+   "box_px": [
+    2520,
+    5392,
+    2592,
+    5432
+   ],
+   "buildings": [],
+   "town": "Hearthold"
+  },
+  {
+   "id": "hearthold-d-the-quench-tanks",
+   "name": "the quench tanks",
+   "function": "edge: yards and pens",
+   "declared": "the forges quench here: rain off the rock and water carted up from the spring line",
+   "box_px": [
+    2600,
+    5392,
+    2664,
+    5432
+   ],
+   "buildings": [],
+   "town": "Hearthold"
   }
  ],
  "gathering_places": [
@@ -786,12 +1015,12 @@
   {
    "building": "hearthold-b003",
    "form": "chapel",
-   "reason": "on the axis of hearthold-c03: closing the view along it"
+   "reason": "on the axis of hearthold-s02: closing the view along it"
   },
   {
    "building": "hearthold-b004",
    "form": "barracks",
-   "reason": "on the axis of hearthold-s15: closing the view along it"
+   "reason": "on the axis of hearthold-s03: closing the view along it"
   }
  ],
  "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
@@ -840,10 +1069,10 @@
     104,
     56
    ],
-   "faces": "hearthold-s15",
+   "faces": "hearthold-s01",
    "door_cells": [
     287,
-    655
+    652
    ],
    "purpose": "the knights' hall",
    "occupants": "its order or guild",
@@ -868,9 +1097,9 @@
     64,
     56
    ],
-   "faces": "hearthold-c03",
+   "faces": "hearthold-s02",
    "door_cells": [
-    281,
+    278,
     662
    ],
    "purpose": "the chapel",
@@ -896,10 +1125,10 @@
     104,
     48
    ],
-   "faces": "hearthold-s15",
+   "faces": "hearthold-s03",
    "door_cells": [
-    291,
-    666
+    298,
+    662
    ],
    "purpose": "the guildhall",
    "occupants": "staff by day",
@@ -1032,7 +1261,7 @@
     40,
     48
    ],
-   "faces": "hearthold-s15",
+   "faces": "hearthold-s01",
    "door_cells": [
     287,
     666
@@ -1059,7 +1288,7 @@
     40,
     48
    ],
-   "faces": "hearthold-s15",
+   "faces": "hearthold-s16",
    "door_cells": [
     287,
     673
@@ -1776,6 +2005,28 @@
     5500
    ],
    "why": "the walled town's market: bread, ash-grown wine, iron goods from the smiths"
+  },
+  {
+   "kind": "yard",
+   "name": "the ore yard",
+   "box": [
+    2520,
+    5392,
+    2592,
+    5432
+   ],
+   "why": "the Lode's ore off the mine cart, at the head of Smiths' Row"
+  },
+  {
+   "kind": "pool",
+   "name": "the quench tanks",
+   "box": [
+    2600,
+    5392,
+    2664,
+    5432
+   ],
+   "why": "the forges quench here: rain off the rock and water carted up from the spring line"
   }
  ],
  "game_layout": {
@@ -1845,9 +2096,17 @@
     ]
    }
   ],
+  "first_screen_cells": [
+   [
+    215,
+    699,
+    40,
+    22.5
+   ]
+  ],
   "screens": [
    2.6,
-   3.4
+   4.0
   ]
  },
  "ground": {
@@ -1855,8 +2114,8 @@
   "yards": "ash and basalt yards",
   "edges": "vines and barley on the old flow's weathered ash",
   "materials_cells": {
-   "basalt setts": 3509,
-   "ash yards": 3206
+   "basalt setts": 3499,
+   "ash yards": 3496
   }
  },
  "terrain": {
@@ -1913,8 +2172,8 @@
    "31.5r2.2#32.2#4.g24.26#",
    "30.7r.2#32.2#3.g5.g19.2g24#",
    "29.8r.2#32.2#4.2g3.g19.4g22#",
-   "28.9r.2#2.g2.2g25.2#2.g.g.g2.g17.7g21#",
-   "27.9r2.2#5.g26.2#.g.g24.5g2.20#",
+   "28.9r.2#32.2#2.g.g.g2.g17.7g21#",
+   "27.9r2.2#32.2#.g.g24.5g2.20#",
    "24.11r3.2#32.2#3.g.g20.5g4.20#",
    "24.11r3.2#32.2#3.g.g20.5g4.20#",
    "23.11r4.2#32.2#6.g8.4g2.2g2.6g4.g19#",
@@ -1927,11 +2186,11 @@
    "12.10r16.2#32.2#2.18g.4g5.9g2.14#",
    "12.10r16.2#32.2#2.8g2.8g.4g5.9g2.14#",
    "12.8r18.2#32.2#2.8g.3g3.6g7.11g14#",
-   "11.8r19.2#32.2#2.10g2.g2.g.3g11.3g.4g14#",
-   "10.8r20.2#22.g9.2#7.2g.g.8g.g.2g6.3g.6g14#",
-   "9.8r19.17#4.19#4.5g.10g7.g.10g14#",
-   "9.8r19.17#4.19#3.g.14g9.g2.8g.13#",
-   "7.8r21.4#5.g3.4#4.4#11.4#13.7g11.4g.g5.11#",
+   "11.8r19.2#32.2#2.5g10.8~8.3g.4g14#",
+   "10.8r20.2#22.g9.2#16.g8~6.3g.6g14#",
+   "9.8r19.17#4.19#4.g9.g8~4.g.10g14#",
+   "9.8r19.17#4.19#3.g10.g8~5.g2.8g.13#",
+   "7.8r21.4#5.g3.4#4.4#11.4#14.g8~8.4g.g5.11#",
    "6.8r22.4#9.4#4.4#11.4#13.6g13.5g5.11#",
    "5.10r33.2g.g38.4g14.3g2.2g3.11#",
    "5.10r33.2g.g38.4g14.3g2.2g3.11#",
@@ -2182,6 +2441,30 @@
   },
   {
    "kind": "resident activity",
+   "what": "the ore yard: the Lode's ore off the mine cart, at the head of Smiths' Row",
+   "xy_px": [
+    2556,
+    5412
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
+   "what": "the quench tanks: the forges quench here: rain off the rock and water carted up from the spring line",
+   "xy_px": [
+    2632,
+    5412
+   ],
+   "screen": [
+    1,
+    1
+   ]
+  },
+  {
+   "kind": "resident activity",
    "what": "a family house: a farmer's household about their day",
    "building": "hearthold-b021",
    "xy_px": [
@@ -2273,16 +2556,16 @@
   "sightline": {
    "kind": "viewpoint",
    "from_px": [
-    2747,
-    5226
+    2745,
+    5243
    ],
    "to_px": [
-    2878,
-    5133
+    2875,
+    5149
    ],
    "toward": "the stone circle (the beam over the valley)",
    "off_by_deg": 0,
-   "bearing_deg": -35
+   "bearing_deg": -36
   },
   "crater": {
    "name": "the Ember crater",
@@ -2290,10 +2573,13 @@
     3550,
     4991
    ],
-   "distance_px": 1213,
+   "distance_px": 1229,
    "effect": "the shard's fall cracked the caldera; the forges took its heat",
-   "road": null,
-   "road_leaves_at_px": null
+   "road": "Ember Way",
+   "road_leaves_at_px": [
+    1880,
+    5680
+   ]
   },
   "moss": {
    "where": "the gate market",
