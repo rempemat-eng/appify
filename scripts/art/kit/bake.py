@@ -134,6 +134,28 @@ def _tree_ex(pid: str, img: Image.Image):
     return dict(w=a.any(0).sum() / D, tw=6), kind
 
 
+def is_crown_mask(entry: dict) -> bool:
+    """True when a prop's shadow mask is a tree's crown: a mask on a piece whose role is tree.
+
+    The one test for every crown consumer (the variants' tree context, the drawing pass, the
+    detail bar's crown-shadow region). It names trees rather than excluding the other masked
+    roles, so a new masked prop (the mill wheel's silhouette, a house's volume) stays out until
+    it is a tree."""
+    return (entry or {}).get('role') == 'tree' and 'mask' in ((entry or {}).get('shadow') or {})
+
+
+def crown_cells(pieces: list, idx: dict, R: int, Cc: int) -> np.ndarray:
+    """The cells holding a tree's foot (is_crown_mask), which the variants read as tree context."""
+    out = np.zeros((R, Cc), bool)
+    for pc in pieces:
+        if not is_crown_mask(idx.get(pc['piece'])):
+            continue
+        cx_, cy_ = int(pc['at'][0] // CELL), int((pc['at'][1] - 1) // CELL)
+        if 0 <= cy_ < R and 0 <= cx_ < Cc:
+            out[cy_, cx_] = True
+    return out
+
+
 def material_paints(materials, lib: dict) -> dict:
     """Canonical default/tie order, independent of Python's randomized string hashes.
 
@@ -177,14 +199,12 @@ def bake(plan: dict, lib: dict | None = None):
         band |= below & ~tm
     # context per cell for the variants: trees, water, doors, routes
     pieces = plan.get('pieces', [])
-    tree_c = np.zeros((R, Cc), bool)
+    tree_c = crown_cells(pieces, idx, R, Cc)
     door_c = np.zeros((R, Cc), bool)
     for pc in pieces:
         e = idx.get(pc['piece']) or {}
         cx_, cy_ = int(pc['at'][0] // CELL), int((pc['at'][1] - 1) // CELL)
         if 0 <= cy_ < R and 0 <= cx_ < Cc:
-            if 'mask' in (e.get('shadow') or {}):
-                tree_c[cy_, cx_] = True
             if e.get('role') in ('door', 'gate', 'house'):
                 door_c[cy_, cx_] = True
     for at in (plan.get('spawns') or {}).values():
@@ -488,7 +508,7 @@ def bake(plan: dict, lib: dict | None = None):
         objects.append((pc['id'], pc['piece'].split('_', 1)[-1], fx - (x1 - x0) / D / 2, fy - (y1 - y0) / D, (x1 - x0) / D, (y1 - y0) / D))
         things.append((fy, img, anc, at))
         sh = e.get('shadow') or {}
-        if 'mask' in sh and e.get('role') == 'tree':
+        if is_crown_mask(e):
             ex, kind = _tree_ex(pc['piece'], img)
             casts.append(SN.tree_shadow_hd(fx, fy, ex, w, h))
             trees.append((fx, fy, ex['w'], kind))
