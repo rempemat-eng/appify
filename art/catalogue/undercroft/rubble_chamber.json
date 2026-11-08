@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings R-1 to R-3. R-1 fault: the blocks are rounded pillow rectangles of nearly one size, each in three tones (lit top band, body, dark bottom line), stamped across the pile, with no fracture faces, east faces or chips. Fix: cut blocks with one dressed face and one rough fracture face, a top plane, a west face (3 to 4) and an east face (1 to 2), sizes 6 to 20 px, some tilted or on edge. R-2 fault: no occlusion where one block lies on another; a tone 0 to 1 contact line under each upper block. R-3 polish: pebbles are two-tone dots. Bar 0.52."
  }
 }

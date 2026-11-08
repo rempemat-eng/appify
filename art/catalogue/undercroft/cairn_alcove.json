@@ -60,10 +60,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings CA-1 to CA-5. CA-1 fault, one of Matt's calibration patterns: the guardian's body is flat boulders with moss hats: large single-tone grey areas defined by dark contour lines, with moss caps and drips sat on top. Fix: the rock recipe (lit crown, body, dark underside, cluster texture), moss in creases and low joints, not as hats. CA-2 fault: the wall below is rounded pill stones in two tones on dark mortar; squared courses with chipped corners and lit top edges. CA-3 fault: the grass strip is a band of vertical stripes; tufts with lit tips over a calm base, and a reason for grass underground (a shaft of light). CA-4 fault: two grey pebbles float above the figure with no support. CA-5 polish: amber lines on the boulders' west edges read as stray outline; the east moss hat is lit from the right (detail.light 65,2,93,27, upheld). Bar 0.72."
  }
 }

@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings SE-1 to SE-3. The pair reads right: the raised tops sit 120 px above the sunk ones with the front face in courses below, the glyph glows raised and is dark sunk, the same three-slab layout. SE-1 fault: every slab top carries a glossy diagonal light stripe, the round 3 answer that review-agents.md 'Ground planes' rules wrong; calm the tops and give each slab a lit north-west lip and dark south-east lip. SE-2 fault: tan 2x2 terrazzo specks on every slab and course. SE-3 fault: the ring-and-cross glyph is one flat tone (Matt's U7 flat target); carve it, and give the lit state a glow ramp. Bar 0.55."
  }
 }

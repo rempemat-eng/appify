@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings ST-1 to ST-3. Better than U4 (the shaft now has cylinder shading and flutes). ST-1 fault: the break has no fracture surface, only a jagged silhouette with no top plane; Eastward's pillars (shot 06, box 230,205,370,290) show their top face. Fix: a rough top plane in the column's ellipse, lit facets north-west, pits and a dark rim south-east. ST-2 fault: the plinth is two flat tones with no chips, edge light or occlusion where the shaft meets it. ST-3 polish: stump_nw and stump_se are nearly the same drawing. Bar 0.46."
  }
 }

@@ -60,10 +60,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings T-1 and T-2. T-1 fault: the sconce is a 6 px iron cup in three tones with no rim, no fuel and no bracket; in the scene it hangs in front of the arch's brick with nothing holding it. Fix: a wall plate with two rivets and an arm, a cup with a lit elliptical rim and dark inside, pitch or rag in the cup. T-2 fault: each frame's flame is a nested teardrop of three flat bands with smooth stepped sides, a sticker; Eastward's fire columns (shot 06) break into tongues. Fix: 2 or 3 tongues that part and rejoin over the 4 frames, the core offset frame to frame, deep red-orange at the base, embers as 2 px pairs. detail.light (96,13,114,51) rejected: it is frame 4's flame, a light source. Bar 0.46."
  }
 }

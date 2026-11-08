@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings P-1 to P-3. The pair reads right: up shows the slab proud with its front face, down shows the north lip's shadow in the recess. P-1 fault: the inner panel's cross is a flat one-tone plus sign (Matt's U7 flat target); carve it as a groove with a dark north and west wall and a lit south and east lip. P-2 fault: the frame is a terrazzo of evenly scattered tan 2x2 specks with 1 px crack strokes; use sibling clusters, two or three cracks that start at chips, and chipped corners. P-3 polish: moss is single-tone dark green dashes in a row; give clumps a lit cap and keep them to the low joints. Bar 0.61."
  }
 }

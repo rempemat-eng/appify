@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings RT-1 to RT-3. Better than U5: the strands have volume and overlap with occlusion. RT-1 fault: rootlets are straight 1 to 2 px dark sticks splayed like legs, so the roots read as insects; taper them from 3 to 1 px, bend them, light their top side, make them fewer and uneven, tips under the floor. RT-2 fault: the stones are flat two-tone squares; three tones, a top plane and a contact line. RT-3 polish: no dark contact line where the strands meet the floor. Bar 0.60."
  }
 }

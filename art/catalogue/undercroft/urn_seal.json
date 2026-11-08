@@ -10,10 +10,10 @@
   48,
   60
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
+  "fault": 1,
   "polish": 1
  },
  "detail_bar": {
@@ -36,6 +36,18 @@
  },
  "findings": [
   {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    8,
+    13,
+    40,
+    56
+   ],
+   "message": "undercroft/urn_seal: no cylinder shading across the shaft (luminance spread 93 L, brightest at 39% of its width, darkest at 0%)",
+   "fix": "shade it as a cylinder lit from the upper left: a highlight band left of centre, the body, a core shadow toward the right edge with a little reflected light at the rim, an elliptical top face and occlusion where it meets the floor"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
@@ -48,10 +60,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings UR-1 to UR-4. UR-1 fault: the mouth is a flat dark 12 x 3 rectangle; draw an ellipse with the inner wall lit on the far side and shaded on the near side. UR-2 fault: the cream glint sits right of centre on the shoulder (x 30-32 of 48), against upper-left light; move it upper left. UR-3 polish: the raised band (row 32) is one flat tone across the whole width; shade it as the body. UR-4 polish: chips are flat pale rectangles; give each a dark north lip. detail.volume is partly a false positive (row 40 is lit at 25-40 % of the width and dark at the east; 'darkest at 0 %' is the outline), but UR-1 to UR-3 stand. Bar 0.85."
  }
 }

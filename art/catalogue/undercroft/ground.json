@@ -18,10 +18,11 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md findings G-1 to G-6. Compared at x1.37 with Eastward's dungeon floor (shot 06, boxes 160,190,240,250 and 330,0,420,60). G-1 fault: the eight floor light pools are posterised contour blotches of 5 to 6 hard-edged bands with ragged edges and the joints running through them (e.g. room 1, 130-300 x 190-300); Eastward's fall off smoothly. Fix: one radial falloff per pool in at most 3 soft steps that follow the flags. G-2 fault: every flag carries evenly scattered 2x2 pale specks (a terrazzo of specks); texture flags with 2 to 4 px sibling clusters and the odd corner chip instead. G-3 fault: flags are flat fields cut by 1 px red-brown joints, with no lit upper-left lip or dark lower lip; give each flag a tone-4 north and west lip and a tone-2 south and east lip, joints at the stone's tone 1. G-4 to G-6 polish: hard-edged translucent light discs on the arcade round each torch, zigzag two-tone wall roots, 1 px pale seams through the masonry at bay joints (x 186, 324, 462). The detectors' pass (calm and drawn) stands; these are the faults they do not measure. Kept: occlusion at the north wall base, falloff to the south, the arcade's voussoirs and brick infill."
  }
 }

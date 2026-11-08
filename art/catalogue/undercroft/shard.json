@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md finding SH-1 (fault): a two-face prism with no cap facet, no edge highlights and single-pixel white sparkles; compared with Eastward's crystal pillars (shot 06, boxes 230,205,370,290 and 160,85,215,175) at x1.37. Fix: a cap facet (tone 5 edge, tone 4 plane), lit edges on the faces towards the light, 2 or 3 inner facet lines, sparkles in pairs, a 1 px edge-tone outline and a faint glow at its foot. Bar 0.49."
  }
 }
