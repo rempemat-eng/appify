@@ -1113,6 +1113,13 @@ def p_urn(w, h, seed):
         lip = np.roll(sel, -1, 0) & ~sel & (a >= 0)
         a[lip] = V.code('clay', 1)
         a[np.roll(sel, 1, 0) & ~sel & (a >= 0)] = V.code('clay', 2)
+    V.tidy(a, passes=2)                                      # no lone pixels (the kit's rule: at most 1 %)
+    for y_ in range(H):                                       # (after the tidy) no shade just inside the lit west side
+        xs_ = np.nonzero(a[y_] >= 0)[0]
+        if len(xs_) > 4:
+            x_ = xs_[0] + 1
+            if a[y_, x_] // 8 == V.FI['clay'] and a[y_, x_] % 8 <= 1:
+                a[y_, x_] = V.code('clay', 2)
     return p
 
 

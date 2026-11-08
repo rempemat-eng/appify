@@ -1,7 +1,7 @@
 {
  "id": "undercroft/urn_seal",
  "file": "game/zones/undercroft/art/urn_seal.png",
- "sha256": "04aae0f3b45637fe792b17a2e023dee6700084595ed5de6d6403f2510a045915",
+ "sha256": "d805b7b1639c229316ca7887a41b0fe26d6a3605cddbe782fa7bcb8ec50b8374",
  "kind": "urn_seal",
  "biome": "cellar",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 21.5,
-   "shapes": 46.0
+   "tones": 19.5,
+   "shapes": 48.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.796,
-  "tones_ratio": 0.796,
-  "shapes_ratio": 0.913,
+  "ratio": 0.722,
+  "tones_ratio": 0.722,
+  "shapes_ratio": 0.953,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     41,
     58
    ],
-   "message": "undercroft/urn_seal: detail bar 0.80 of Eastward's prop band (21.5 tones, 46.0 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/urn_seal: detail bar 0.72 of Eastward's prop band (19.5 tones, 48.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
