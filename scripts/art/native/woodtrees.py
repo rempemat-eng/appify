@@ -1216,7 +1216,7 @@ def tree2(kind: str, master_arr: np.ndarray, d: float, seed: int, look: dict, tw
     S0, foot, _ = master_crown(master_arr, d, size=scale)
     T = tw * d
     cfg = {
-        'oak': dict(n=5, squat=1.0, wide=0.9, low=0.22, top=0.6, foot=1.05, lean=11, twist=5, roots=3, limbs=2,
+        'oak': dict(n=5, squat=1.0, wide=0.82, low=0.22, top=0.6, foot=1.05, lean=11, twist=5, roots=3, limbs=2,
                     bark='oak', gaps=2),
         'beech': dict(n=4, squat=1.0, wide=0.9, low=0.2, top=0.68, foot=1.25, lean=-4, twist=1.5, roots=3, limbs=2,
                       bark='beech', gaps=1),

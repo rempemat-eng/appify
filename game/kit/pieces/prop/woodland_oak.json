@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 5,
+ "version": 6,
  "variants": [
   {
    "id": "oak",
@@ -27,11 +27,11 @@
  },
  "geometry": {
   "size_px": [
-   238,
-   250
+   216,
+   248
   ],
   "size_cells": [
-   10,
+   9,
    11
   ],
   "z_sort": "foot",

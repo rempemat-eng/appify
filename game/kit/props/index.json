@@ -18510,14 +18510,14 @@
   "shadow": {
    "mask": {
     "offset": [
-     -47,
+     -52,
      -72
     ],
     "png": "res://kit/props/art/shadow_woodland_oak.png"
    }
   },
   "size_cells": [
-   10,
+   9,
    11
   ],
   "snap": "cell",
