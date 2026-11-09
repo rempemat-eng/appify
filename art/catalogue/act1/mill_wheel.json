@@ -123,7 +123,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 10 (5372f4e1) of docs/reviews/2026-11-04-act1-props.md. The eave is the slate's own band (P9-1, Claude A): soffit row 182 (45 L), core rows 183 to 188 (51 to 67 L, 41 to 51 % darker than the lit wall's 113 to 136), fade to about row 201 (97 to 113 L, 14 to 29 %), about 20 rows (E 15) against round 9's 26; it ends above the upper sills and reads beside B1 (01) at 1.37x as the same shade under a slab. 1,543 texels changed, all in (9,188,314,212). The loop: frame 0 the still, steps 9,972 to 10,264, wrap 10,090, every frame's change equal to the still's outside the wheel's box. No wheel ground shadow (C9-1, one sun). Bar 0.86 and noise 44 % accepted as polish; five detail.light findings rejected as in rounds 8 and 9."
  }
 }
