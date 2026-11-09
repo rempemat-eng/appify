@@ -6,7 +6,7 @@
   2304,
   648
  ],
- "inputs": "d6829ac8e11a96cfff016c18f8f49895b22696f5e9cc642e98fff798cb5a492c",
+ "inputs": "768240fd359869e7ed6f6539fb9ea89908deeaf99ad63f354438b3f8d8044582",
  "kit_drawn": [
   "cairn_alcove.png",
   "channel_lit.png",
@@ -95,7 +95,7 @@
    "png": "roots_corridor.png",
    "foot": [
     816,
-    492
+    480
    ],
    "offset": [
     -72,
@@ -104,7 +104,7 @@
    "cond": null,
    "solid": [
     259.0,
-    156,
+    152,
     26,
     8
    ]
@@ -114,8 +114,8 @@
    "kind": "urn",
    "png": "urn_seal.png",
    "foot": [
-    1290,
-    222
+    1296,
+    216
    ],
    "offset": [
     -24,
@@ -123,8 +123,8 @@
    ],
    "cond": null,
    "solid": [
-    425.0,
-    68,
+    427.0,
+    66,
     10,
     6
    ]
@@ -155,7 +155,7 @@
    "png": "stump_nw.png",
    "foot": [
     1776,
-    228
+    240
    ],
    "offset": [
     -42,
@@ -164,7 +164,7 @@
    "cond": null,
    "solid": [
     586.0,
-    68,
+    72,
     12,
     8
    ]
@@ -175,7 +175,7 @@
    "png": "stump_se.png",
    "foot": [
     2208,
-    582
+    576
    ],
    "offset": [
     -42,
@@ -184,7 +184,7 @@
    "cond": null,
    "solid": [
     730.0,
-    186,
+    184,
     12,
     8
    ]
@@ -345,7 +345,7 @@
    "kind": "torch",
    "png": "torch.png",
    "foot": [
-    2112,
+    2100,
     168
    ],
    "offset": [
@@ -362,7 +362,7 @@
    "png": "cairn_alcove.png",
    "foot": [
     2160,
-    165
+    168
    ],
    "offset": [
     -54,
@@ -418,8 +418,8 @@
     408
    ],
    "offset": [
-    -1,
-    -5
+    -10,
+    -124
    ],
    "cond": {
     "flags": [

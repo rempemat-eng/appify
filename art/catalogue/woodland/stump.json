@@ -35,10 +35,11 @@
   "group": "prop"
  },
  "findings": [],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md. An elliptical cut top with a lit rim, cracks, a lit west half and shaded east half; bark furrows; flared roots; moss at the foot; bar 0.91, no detector findings. Open polish: S-1, the cream rim runs round the whole ellipse, including the near south-east lip that sits in shade; drop it to the timber's tone 3 there."
  }
 }

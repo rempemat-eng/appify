@@ -179,6 +179,14 @@
     "crag": {
       "kind": "accent:highland",
       "body": "#8A5546"
+    },
+    "lamplit": {
+      "kind": "sibling:lamp",
+      "body": "#AA8A5C"
+    },
+    "lamplit_dusk": {
+      "kind": "sibling-tone:lamplit",
+      "body": "#654B4B"
     }
   },
   "ramps": {
@@ -285,7 +293,11 @@
     "glowflora": ["#015243", "#077F69", "#21AA8F", "#36D0B0", "#9FE6CC", "#E6FEF2"],
     "crag": ["#300516", "#501F26", "#6E3936", "#8A5546", "#A46F54", "#B78967"],
     "crag_warm": ["#32040F", "#54201E", "#753E2F", "#945C41", "#AE7650", "#BF9166"],
-    "crag_cool": ["#30051A", "#4C1C29", "#683337", "#814C45", "#9B6553", "#AE7F63"]
+    "crag_cool": ["#30051A", "#4C1C29", "#683337", "#814C45", "#9B6553", "#AE7F63"],
+    "lamplit": ["#492A21", "#6B4932", "#8B6946", "#AA8A5C", "#C4A56F", "#DABE8A"],
+    "lamplit_warm": ["#513120", "#725130", "#937244", "#B1935A", "#CEAD6F", "#E5C58C"],
+    "lamplit_cool": ["#43211D", "#653F2E", "#855F42", "#A47F57", "#BE9A69", "#D2B382"],
+    "lamplit_dusk": ["#250F22", "#3B2230", "#51363E", "#654B4B", "#80635A", "#967A68"]
   },
   "edges": {
     "grass": "#242924",
@@ -320,7 +332,8 @@
     "panel": "#231E2E",
     "regolith": "#1A1518",
     "void": "#1E1729",
-    "crag": "#28141D"
+    "crag": "#28141D",
+    "lamplit": "#302022"
   },
   "kinds": {
     "grass": "core",
@@ -426,7 +439,11 @@
     "glowflora": "glow",
     "crag": "accent:highland",
     "crag_warm": "sibling:crag",
-    "crag_cool": "sibling:crag"
+    "crag_cool": "sibling:crag",
+    "lamplit": "sibling:lamp",
+    "lamplit_warm": "sibling:lamplit",
+    "lamplit_cool": "sibling:lamplit",
+    "lamplit_dusk": "sibling-tone:lamplit"
   },
   "from_materials": {
     "grass": {

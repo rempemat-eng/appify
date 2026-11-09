@@ -60,10 +60,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. The produce in all four crates is one chevron scale pattern recoloured (reads as scales, not fruit); a hard-edged darker rectangle sits across the awning's middle like an overlay; the awning is a front-on flat sheet with no top plane or fold bands; the menu board is a navy block with three cream bars (a UI glyph); the sack is a two-tone cream disc. Counter boards, nails with rust and the posts pass. Fix: produce as individual round items (lit cap, dark underside, a glint) heaped above the crate rims; folds on the awning as vertical bands (4, 3, 2, 1) with the shade under the valance drawn as a ramp step, a top plane rising back; chalk lettering as broken 1-2 px strokes in a framed board; a sack with a tied neck and fold bands. Rejected detector finding: detail.light on the red stripes. Bar 0.64."
  }
 }

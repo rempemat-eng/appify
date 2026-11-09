@@ -1,7 +1,7 @@
 {
  "id": "undercroft/stump_se",
  "file": "game/zones/undercroft/art/stump_se.png",
- "sha256": "99c41847b3318eaaf5cf175b18820a01609a50d181e919ffc0f01da105c27aa3",
+ "sha256": "52e7178aa99cdf79f7a370eb2bc15f38fa5324d3171f68afc33b484156132f3d",
  "kind": "stump_se",
  "biome": "cellar",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 6,
-   "tones": 12.333333333333334,
-   "shapes": 29.166666666666668
+   "patches": 4,
+   "tones": 16.25,
+   "shapes": 34.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.457,
-  "tones_ratio": 0.457,
-  "shapes_ratio": 0.579,
+  "ratio": 0.602,
+  "tones_ratio": 0.602,
+  "shapes_ratio": 0.675,
   "passed": false,
   "group": "prop"
  },
@@ -39,19 +39,20 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    19,
-    17,
+    10,
+    34,
     78,
     100
    ],
-   "message": "undercroft/stump_se: detail bar 0.46 of Eastward's prop band (12.3 tones, 29.2 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/stump_se: detail bar 0.60 of Eastward's prop band (16.2 tones, 34.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 2 (redraw), PR #440 at 08dee79e. As stump_nw: break, plinth and shading fixed, lower break and a leaning slab; the loose pebble (73-77, 95-99) sits on the foot line. detail.bar 0.60 accepted as polish. Polish as stump_nw. specks 2.76 rejected: flute highlights and lit facets."
  }
 }

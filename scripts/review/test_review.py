@@ -7,6 +7,7 @@ that loses a calibration fault, or starts flagging clean art, fails here first.
 """
 from __future__ import annotations
 
+import datetime
 import json
 import hashlib
 import os
@@ -390,27 +391,218 @@ class Scene(unittest.TestCase):
 
 
 class Gate(unittest.TestCase):
-    def test_refusals(self):
-        old_cat, old_queue = gate.CATALOGUE, gate.QUEUE
-        d = tempfile.mkdtemp()
-        try:
-            gate.CATALOGUE = d
-            gate.QUEUE = os.path.join(d, 'fix-queue.json')
-            zone = 'woodland'
-            name = 'stump'
-            png = os.path.join(gate.GAME, 'zones', zone, 'art', name + '.png')
-            self.assertTrue(gate.refusals(zone, [name]))                 # no record
-            os.makedirs(os.path.join(d, zone))
-            sha = A.sha256(png)
-            json.dump({'sha256': sha, 'status': 'fail', 'findings': []}, open(os.path.join(d, zone, name + '.json'), 'w'))
-            self.assertTrue(gate.refusals(zone, [name]))                 # failing and not queued
-            json.dump({'queue': [{'id': f'{zone}/{name}'}]}, open(gate.QUEUE, 'w'))
-            self.assertFalse(gate.refusals(zone, [name]))                # queued
-            json.dump({'sha256': 'x', 'status': 'pass'}, open(os.path.join(d, zone, name + '.json'), 'w'))
-            self.assertTrue(gate.refusals(zone, [name]))                 # stale
-        finally:
-            gate.CATALOGUE, gate.QUEUE = old_cat, old_queue
+    """The placement gate (Matt, 8 Nov 00:05: only reviewed art is placeable): a reviewer pass places,
+    the seeded fix queue places, everything else is refused; the detectors' status never decides."""
+    ZONE, NAME = 'woodland', 'stump'
 
+    def setUp(self):
+        self.old = gate.CATALOGUE, gate.QUEUE
+        self.real_queue = gate.QUEUE
+        gate.TODAY = datetime.date(2026, 11, 9)
+        self.d = tempfile.mkdtemp()
+        gate.CATALOGUE = self.d
+        gate.QUEUE = os.path.join(self.d, 'fix-queue.json')
+        self.png = os.path.join(gate.GAME, 'zones', self.ZONE, 'art', self.NAME + '.png')
+        self.sha = A.sha256(self.png)
+        os.makedirs(os.path.join(self.d, self.ZONE))
+
+    def tearDown(self):
+        gate.CATALOGUE, gate.QUEUE = self.old
+        gate.TODAY = None
+        import shutil
+        shutil.rmtree(self.d, ignore_errors=True)
+
+    def put(self, status='pass', reviewer=None, sha=None, findings=()):
+        rec = {'id': f'{self.ZONE}/{self.NAME}', 'sha256': sha or self.sha, 'status': status,
+               'findings': list(findings)}
+        if reviewer is not None:
+            rec['reviewer'] = reviewer
+        Path(os.path.join(self.d, self.ZONE, self.NAME + '.json')).write_text(json.dumps(rec))
+
+    def refused(self):
+        return gate.refusals(self.ZONE, [self.NAME])
+
+    def queue_it(self, **over):
+        """A complete queue entry for the asset (Claude A, 9 Nov), with fields overridden or (None) dropped."""
+        e = {'id': f'{self.ZONE}/{self.NAME}', 'sha256': self.sha, 'queued': '2026-11-09',
+             'reason': 'placed before the 25 Oct seed', 'clears_when': 'redrawn and passed', 'review_by': '2026-11-30'}
+        e.update(over)
+        e = {k: v for k, v in e.items() if v is not None}
+        Path(gate.QUEUE).write_text(json.dumps({'queue': [e]}))
+
+    def test_no_record_refused(self):
+        self.assertIn('no review record', self.refused()[0])
+
+    def test_pass_places(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
+        self.assertEqual(self.refused(), [])
+
+    def test_pending_refused(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        bad = self.refused()
+        self.assertEqual(len(bad), 1)
+        self.assertIn(f'{self.ZONE}/{self.NAME}', bad[0])
+        self.assertIn('pending', bad[0])
+        self.assertIn('detail-auditor', bad[0])
+
+    def test_missing_reviewer_refused(self):
+        self.put(reviewer=None)
+        self.assertIn('no reviewer verdict', self.refused()[0])
+        self.put(reviewer={'agent': 'detail-auditor'})
+        self.assertIn('no reviewer verdict', self.refused()[0])
+
+    def test_fail_refused(self):
+        # a reviewer fail refuses even when every detector passed
+        self.put(status='pass', reviewer={'agent': 'detail-auditor', 'verdict': 'fail'})
+        self.assertIn('failed independent review', self.refused()[0])
+
+    def test_unknown_verdict_refused(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pass with fixes'})
+        self.assertIn('is not "pass"', self.refused()[0])
+
+    def test_fix_queue_places(self):
+        self.put(status='fail', reviewer={'agent': 'detail-auditor', 'verdict': 'pending'},
+                 findings=[{'detector': 'logic.scale', 'severity': 'fault'}])
+        self.assertTrue(self.refused())
+        self.queue_it()
+        self.assertEqual(self.refused(), [])
+        self.put(reviewer=None)                                       # queued, no reviewer at all
+        self.assertEqual(self.refused(), [])
+
+    def test_rejected_detector_finding_with_reviewer_pass_places(self):
+        # the Act 1 bitt and net: the detectors' fail stays in `status`, the reviewer rejected the finding
+        self.put(status='fail', findings=[{'detector': 'detail.cluster_noise', 'severity': 'fault'}],
+                 reviewer={'agent': 'detail-auditor', 'verdict': 'pass',
+                           'note': 'the detail.cluster_noise fault is rejected as structure'})
+        self.assertEqual(self.refused(), [])
+
+    def test_detector_pass_alone_refused(self):
+        self.put(status='pass', reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.assertTrue(self.refused())
+
+    def test_stale_refused_even_when_passed_or_queued(self):
+        self.put(sha='x', reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
+        self.assertIn('changed since its record', self.refused()[0])
+        self.queue_it()
+        self.assertIn('changed since its record', self.refused()[0])
+
+    # the queue's own rules (Claude A, 9 Nov): an entry places its asset only while it holds
+
+    def test_queued_picture_that_changed_is_refused(self):
+        # the record is current but the queue entry holds other bytes: a queue entry never covers a new picture
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it(sha256='0' * 64)
+        self.assertIn('changed since it was queued', self.refused()[0])
+
+    def test_queue_entry_missing_a_field_is_refused(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        for field in ('queued', 'reason', 'clears_when', 'review_by', 'sha256'):
+            with self.subTest(field=field):
+                self.queue_it(**{field: None})
+                bad = self.refused()
+                self.assertEqual(len(bad), 1)
+                self.assertIn('lacks', bad[0])
+                self.assertIn(field, bad[0])
+
+    def test_expired_queue_entry_is_refused(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it(review_by='2026-11-30')
+        self.assertEqual(self.refused(), [])
+        gate.TODAY = datetime.date(2026, 11, 30)                      # the due date itself still holds
+        self.assertEqual(self.refused(), [])
+        gate.TODAY = datetime.date(2026, 12, 1)
+        self.assertIn('expired on 2026-11-30', self.refused()[0])
+        self.queue_it(review_by='end of November')
+        self.assertIn('not a date', self.refused()[0])
+
+    def test_failed_asset_is_queued_only_with_its_fix_list(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'fail', 'note': 'the tub body is undrawn'})
+        self.queue_it()
+        self.assertIn('fix_list', self.refused()[0])
+        self.queue_it(fix_list=[])
+        self.assertIn('fix_list', self.refused()[0])
+        self.queue_it(fix_list=['the tub body is undrawn: draw its staves'])
+        self.assertEqual(self.refused(), [])
+
+    def test_queued_asset_that_passes_is_advised_out(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it()
+        self.assertEqual(gate.advisories(), [])
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
+        self.assertEqual(self.refused(), [])
+        adv = gate.advisories()
+        self.assertEqual(len(adv), 1)
+        self.assertIn(f'{self.ZONE}/{self.NAME}', adv[0])
+        self.assertIn('remove it from', adv[0])
+
+    def test_the_real_queue_entries_are_complete(self):
+        # every entry in art/catalogue/fix-queue.json states what the gate requires
+        entries = json.load(open(self.real_queue)).get('queue', [])
+        self.assertTrue(entries)
+        for e in entries:
+            with self.subTest(id=e.get('id')):
+                for k in gate.REQUIRED:
+                    self.assertTrue(e.get(k), k)
+                datetime.date.fromisoformat(e['queued'])
+                datetime.date.fromisoformat(e['review_by'])
+
+
+class Record(unittest.TestCase):
+    """review:asset --record keeps an independent verdict while the bytes are unchanged."""
+
+    def setUp(self):
+        self.old = A.CATALOGUE
+        self.d = tempfile.mkdtemp()
+        A.CATALOGUE = self.d
+        self.path = os.path.join(self.d, 'woodland', 'stump.json')
+
+    def tearDown(self):
+        A.CATALOGUE = self.old
+        import shutil
+        shutil.rmtree(self.d, ignore_errors=True)
+
+    def report(self, sha, status='fail'):
+        return {'id': 'woodland/stump', 'sha256': sha, 'status': status,
+                'findings': [{'detector': 'detail.cluster_noise', 'severity': 'fault', 'box': [0, 0, 4, 4],
+                              'message': 'm', 'fix': 'f', 'score': 0.6}]}
+
+    def verdict(self):
+        return json.loads(Path(self.path).read_text())['reviewer']
+
+    def test_first_record_is_pending(self):
+        A.record(self.report('a' * 64))
+        self.assertEqual(self.verdict()['verdict'], 'pending')
+
+    def test_unchanged_bytes_keep_the_pass(self):
+        A.record(self.report('a' * 64))
+        rec = json.loads(Path(self.path).read_text())
+        passed = {'agent': 'detail-auditor', 'verdict': 'pass', 'date': '2026-11-08', 'note': 'round 1'}
+        rec['reviewer'] = passed
+        Path(self.path).write_text(json.dumps(rec))
+        A.record(self.report('a' * 64))
+        self.assertEqual(self.verdict(), passed)
+        self.assertEqual(json.loads(Path(self.path).read_text())['status'], 'fail')  # the detectors' result is kept as is
+
+    def test_unchanged_bytes_keep_a_fail(self):
+        A.record(self.report('a' * 64))
+        rec = json.loads(Path(self.path).read_text())
+        rec['reviewer'] = {'agent': 'detail-auditor', 'verdict': 'fail'}
+        Path(self.path).write_text(json.dumps(rec))
+        A.record(self.report('a' * 64))
+        self.assertEqual(self.verdict()['verdict'], 'fail')
+
+    def test_changed_bytes_reset_to_pending(self):
+        A.record(self.report('a' * 64))
+        rec = json.loads(Path(self.path).read_text())
+        rec['reviewer'] = {'agent': 'detail-auditor', 'verdict': 'pass', 'note': 'round 1'}
+        Path(self.path).write_text(json.dumps(rec))
+        A.record(self.report('b' * 64))
+        self.assertEqual(self.verdict()['verdict'], 'pending')
+
+    def test_explicit_reviewer_wins(self):
+        A.record(self.report('a' * 64))
+        A.record(self.report('a' * 64), reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
+        self.assertEqual(self.verdict()['verdict'], 'pass')
 
 
 def dungeon_floor(kind: str, seed: int = 3) -> np.ndarray:
@@ -1119,6 +1311,10 @@ class GodotAcquisition(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'Godot'):
                 R.godot_bin()
             command.assert_not_called()
+
+
+# the Undercroft's craft guards (8 Nov audit): run with check:review
+from .test_undercroft_craft import SpeckScatter, StagedBoundaries, RealFloorTint, SceneUnmoved, PoolsAndShade, ChannelSpill, LightColourAndDrawing, OverlayLoneSplit  # noqa: E402,F401
 
 
 if __name__ == '__main__':

@@ -379,5 +379,36 @@ def lone_share(img: Image.Image) -> float:
     return float(lone[er].mean()) if er.any() else 0.0
 
 
+def lone_split(img: Image.Image, ground: Image.Image, x0: int, y0: int) -> tuple:
+    """A floor overlay's lone pixels in two parts (Claude A's C-8 rulings; round 10's C-10): the shares of its
+    interior that are lone where the ground under it is itself lone at the same place (the floor's own marks carried
+    into the overlay, whatever family the overlay recolours them to), judged by the ground's limit, and lone over a
+    ground that is not (loneness the overlay made), judged by a drawn picture's limit. (x0, y0) is the overlay's top
+    left on the ground."""
+    a = np.asarray(img.convert('RGBA')).astype(np.int64)
+    key = a[..., 0] * 65536 + a[..., 1] * 256 + a[..., 2]
+    key[a[..., 3] == 0] = -1
+    er = ndi.binary_erosion(a[..., 3] > 0)
+    if not er.any():
+        return 0.0, 0.0
+    ga = np.asarray(ground.convert('RGBA')).astype(np.int64)
+    gk = ga[..., 0] * 65536 + ga[..., 1] * 256 + ga[..., 2]
+    gk[ga[..., 3] == 0] = -1
+    h, w = key.shape
+    g = np.full((h + 2, w + 2), -3, np.int64)                   # the ground under the overlay and a texel round it
+    ys, xs = max(0, y0 - 1), max(0, x0 - 1)
+    ye, xe = min(gk.shape[0], y0 + h + 1), min(gk.shape[1], x0 + w + 1)
+    if ye > ys and xe > xs:
+        g[ys - y0 + 1:ye - y0 + 1, xs - x0 + 1:xe - x0 + 1] = gk[ys:ye, xs:xe]
+
+    def lone_of(P):
+        c = P[1:-1, 1:-1]
+        return (c != P[:-2, 1:-1]) & (c != P[2:, 1:-1]) & (c != P[1:-1, :-2]) & (c != P[1:-1, 2:]) & (c >= 0)
+    lone = lone_of(np.pad(key, 1, constant_values=-2))
+    copied = lone_of(g)
+    n = float(er.sum())
+    return float((lone & er & ~copied).sum() / n), float((lone & er & copied).sum() / n)
+
+
 def zoom(img: Image.Image, k: int) -> Image.Image:
     return img.resize((img.width * k, img.height * k), Image.NEAREST)

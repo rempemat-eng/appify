@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md (main's bytes acf4e5ea). Checklist run part by part: cast-iron end posts read as cylinders (lit west column, dark east), a collar and a foot; four boards with a lit lip, grain in 2 to 4 px streaks, butt joints as sibling changes and bolt heads; outline closed in the timber's edge tone. Compared at x1.37 with Eastward's yard bench (shot 17, box 410,15,472,55): ours 18.6 tones and 30.7 shapes a patch against that bench's 17.9 and 33.6, and it matches the kit/bench anchor. detail.bar 0.61 accepted as polish: the band mean is raised by the lamp, the pot and the bench2 box with two people seated on it. Open polish: B-1, bolt heads are 1x2 dark slots with no lit pixel above (wood recipe); B-2, the 3 to 4 rows under the seat are one flat tone across 90 px."
  }
 }

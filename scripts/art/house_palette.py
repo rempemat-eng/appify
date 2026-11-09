@@ -94,6 +94,11 @@ BASES = {
     'neon_cyan': ('glow', '#2CC0D8'),
     'lava':      ('glow', '#F27222'),
     'glowflora': ('glow', '#36D0B0'),
+    # a glow's light on a surface: drawn by the surface rule (it lights stone, it is not a light), named only
+    'lamplit':   ('sibling:lamp', '#AA8A5C'),       # the lamp's light on stone: the Undercroft's torchlit floor and walls (Claude A, round 7; round 8: C 0.074, so its tone 2 is Eastward 06's floor at a fire, C 0.066 to 0.075)
+    # the lamp's dim light on stone where the pool fades (Claude A's G-38 ruling, round 9): one named-only tone of
+    # lamplit's, between stone_warm 1 and lamplit_cool 1, for the Undercroft's middle band; a tone, not a family
+    'lamplit_dusk': ('sibling-tone:lamplit', '#654B4B'),
 }
 
 # A cast shadow steps the ground this many tones down its own ramp, so it stays on the
@@ -232,6 +237,10 @@ def build() -> dict:
     for name, (kind, body) in BASES.items():
         if kind == 'glow':
             ramps[name] = glow_ramp(body)
+            kinds[name] = kind
+            continue
+        if kind.startswith('sibling-tone:'):      # one named tone (tone 3 of its rule ramp): no edge, no siblings
+            ramps[name] = ramp(body)
             kinds[name] = kind
             continue
         airless = kind == 'accent:moon'

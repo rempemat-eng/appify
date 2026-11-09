@@ -2,7 +2,7 @@
  "id": "crossroads/fern_rubble",
  "file": "game/zones/crossroads/art/fern_rubble.png",
  "sha256": "d0a2c64f8b2a3cdde28977b5267bc1c7a3f9b2b791abc5c31e0cf5e896c3e829",
- "kind": "fern",
+ "kind": "pile",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Every stone is the same chamfered octagonal block in three flat planes (top, front, east), repeated at several sizes: no chips, cracks, cluster texture or mortar remnant, parts in three tones (checklist: flatness, repetition). Slates are flat blue bars with no lit edge or thickness. Fix: rubble from the cottage's own stone recipe: irregular lumps with a lit crown, body and dark underside in 4-5 tones and sibling clusters, broken faces showing mortar (stone_cool 0-1), a chipped corner each; slates with a lit top edge, a 1-2 px dark edge face and a break line. Compared with Eastward 17 rocks at x1.37; bar 0.79."
  }
 }
