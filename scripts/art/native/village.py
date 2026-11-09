@@ -4602,24 +4602,105 @@ def p_hay_hd(w, h, seed):
     return finish(p)
 
 
+def grained_front_board(a, m, fam, t, rng):
+    """XR4-S2: a board standing on end in the stall's counter front, grained in three tones of its ramp: a
+    lit west arris column (t + 1), the body (t) with grain lines (t - 1) that wander down it, break and
+    end, a lit ridge (t + 1) beside part of some of them, now and then a knot the grain bends round, the
+    foot darkened by splash in a ragged edge, and the dark joint (t - 2) down its east side. Draws over
+    mask m (the board's own mask) and returns the mask of its body (no arris, no joint)."""
+    ys, xs = np.nonzero(m)
+    if not len(ys):
+        return m
+    bx0, bx1, by0, by1 = int(xs.min()), int(xs.max()) + 1, int(ys.min()), int(ys.max()) + 1
+    Wb, Hb = bx1 - bx0, by1 - by0
+    tt = np.full((Hb, Wb), float(t))
+    knot = None
+    if Wb >= 7 and rng.random() < 0.55:
+        knot = (rng.uniform(Hb * 0.3, Hb * 0.7), rng.uniform(2.6, Wb - 3.6))
+    nl = max(2, (Wb - 2) // 3)
+    for k in range(nl):
+        xc = 1.4 + (k + rng.uniform(0.3, 0.7)) * (Wb - 2.8) / nl
+        r0 = int(rng.integers(0, max(1, Hb // 4)))
+        r1 = min(Hb, r0 + int(rng.integers(Hb // 2, Hb + 1)))
+        ph, amp, per = rng.uniform(0, 2 * np.pi), rng.uniform(0.5, 1.3), rng.uniform(10, 18)
+        rid0 = int(rng.uniform(r0, r1))                                  # the lit ridge along part of it
+        rid1 = rid0 + int(rng.integers(4, 10)) if rng.random() < 0.7 else rid0
+        on, r = True, r0
+        while r < r1:
+            run = int(rng.integers(5, 13)) if on else int(rng.integers(2, 4))
+            for rr in range(r, min(r1, r + run)):
+                if not on:
+                    continue
+                x = xc + amp * np.sin(2 * np.pi * rr / per + ph)
+                if knot is not None:                                     # the grain parts round the knot
+                    dy, dx = rr - knot[0], x - knot[1]
+                    if abs(dy) < 4.5:
+                        x += (1 if dx >= 0 else -1) * max(0.0, 2.4 - abs(dx)) * (1 - abs(dy) / 4.5)
+                xi = int(round(x))
+                if 1 <= xi < Wb - 1:
+                    tt[rr, xi] = t - 1
+                    if rid0 <= rr < rid1 and xi - 1 >= 1 and tt[rr, xi - 1] == t:
+                        tt[rr, xi - 1] = t + 1
+            r += run
+            on = not on
+    if knot is not None:
+        ky, kx = knot
+        Yl, Xl = np.mgrid[0:Hb, 0:Wb] + 0.5
+        dk = ((Xl - kx) / 1.7) ** 2 + ((Yl - ky) / 1.3) ** 2
+        tt = np.where(dk <= 1.0, t - 1, tt)
+        tt = np.where(dk <= 0.3, t - 2, tt)
+        tt = np.where((dk > 1.0) & (dk <= 2.0) & (Xl > kx) & (Yl > ky), t + 1, tt)   # its lip catching light
+    for c in range(1, Wb - 1):                                           # splash at the foot, a ragged edge
+        dep = int(rng.integers(2, 5)) if c == 1 or rng.random() < 0.45 else dep
+        tt[Hb - dep:, c] = np.minimum(tt[Hb - dep:, c], t - 1)
+    tt[:, 0] = t + 1
+    tt[:, Wb - 1] = t - 2
+    ff = np.full((Hb, Wb), FI[fam])
+    ff[:, Wb - 1] = FI['timber_cool']                                    # the joint in the cool shade
+    sub = m[by0:by1, bx0:bx1]
+    blk_ = a[by0:by1, bx0:bx1]
+    blk_[sub] = (ff * 8 + np.clip(tt, 0, 5).astype(int))[sub]
+    body = np.zeros(a.shape, bool)
+    body[by0:by1, bx0 + 1:bx1 - 1] = sub[:, 1:-1]
+    return body
+
+
 def p_stall_hd(w, h, seed, hd=False):
     """Moss's stall at density 3: the counter of sawn boards on trestles and the posts as before; the
     produce as single round items heaped above the crate rims (each lit on its cap, dark under, a glint);
     the awning a canvas with a top plane rising back and its valance in folds (each panel 4, 3, 2, 1
-    across), its shade on what lies under it a ramp step; a framed board with chalk strokes; a sack
-    with a tied neck and fold bands."""
+    across, folding and creased, XR4-S4), its shade on what lies under it a ramp step; the counter-front
+    boards and the posts grained (XR4-S2); a framed slate with a chalk plum and its price (XR4-S1); a
+    burlap sack slumped at the foot, tied with twine (XR4-S3)."""
     rng = np.random.default_rng(seed)
     p = _pic(w, h, up=36, side=4)
     a, cx, yb = p.a, p.ax, p.ay
     Y, X = grid(a)
     x0, x1 = cx - q(w / 2), cx + q(w / 2)
+    grng = np.random.default_rng(seed + 47)                                   # XR4-S2's own draw: the rest keep theirs
     for xx, t in ((x0, 3), (x1 - q(2.2), 2)):
         beam(a, xx, yb - q(38), xx + q(2.2), yb, rng, 'timber', t, hd=hd)
+        # XR4-S2: the post's face grained as the boards are: lines a tone down that wander and break,
+        # a lit ridge beside part of one
+        k_ = max(1, int(round(q(2.2) * 0.3)))
+        yy_ = int(yb - q(38) + grng.integers(2, 8))
+        while yy_ < yb - 2:
+            ln = int(grng.integers(6, 13))
+            gx_ = xx + k_ + int(grng.integers(0, 2))                         # in the face, clear of the shaded side
+            seg = (X >= gx_) & (X < gx_ + 1) & (Y >= yy_) & (Y < min(yb - 2, yy_ + ln)) & (a == code('timber', t))
+            a[seg] = code('timber', t - 1)
+            if grng.random() < 0.4:
+                rid = np.roll(seg, -1, axis=1) & (a == code('timber', t))
+                a[rid] = code('timber', t + 1)
+            yy_ += ln + int(grng.integers(3, 7))
     xx = x0 + q(2.2)
+    fronts = []
     while xx < x1 - q(2.2):
         bw = q(rng.uniform(3, 4.2))
-        board(a, xx, yb - q(1), q(12), bw - 1, -90, ('timber', 'timber_warm', 'timber_cool')[int(rng.integers(0, 3))],
-              int(rng.choice([2, 3, 3])), rng)
+        bfam = ('timber', 'timber_warm', 'timber_cool')[int(rng.integers(0, 3))]
+        bt = int(rng.choice([2, 3, 3]))
+        bm = board(a.copy(), xx, yb - q(1), q(12), bw - 1, -90, bfam, bt, rng)  # its outline (the draw kept)
+        fronts.append((grained_front_board(a, bm, bfam, bt, grng), bfam))
         # XR2-S3: nail heads (a lit texel each) at the joint, into the rails behind, the rust varied
         for ny_ in (yb - q(11), yb - q(3.2)):
             rust_ = int(rng.integers(0, 4))
@@ -4681,7 +4762,27 @@ def p_stall_hd(w, h, seed, hd=False):
     m = am | hem
     stripe = ((X - x0 + q(2)) // q(4)).astype(int) % 2
     us = ((X - x0 + q(2)) % q(4)) / q(4)
-    fold = np.select([us < 0.25, us < 0.5, us < 0.75], [4, 3, 2], 1).astype(float)
+    # XR4-S4: the hanging faces fold: the meeting of the panels inside each stripe wanders a texel down the
+    # drop (the stripe's own edges stay straight), the gathered top of each fold catches the light under
+    # the rib, a fold shade runs down one side of each stripe, opening wider towards the hem, the lit face
+    # turns under at its foot and the deep fold takes light bounced up at its foot
+    sid = ((X - x0 + q(2)) // q(4)).astype(int)
+    dv = np.clip((Y - tp) / max(1, ay1 + q(2.4) - tp), 0, 1)
+    wand = np.round(0.6 * np.sin((Y - tp) / 4.6 + sid * 1.9))
+    usw = np.clip(us + wand / q(4), 0.0, 0.999)
+    usw = np.where(us < 1.0 / q(4), us, usw)                                           # the lit edge column stays
+    usw = np.where(us >= 1 - 1.0 / q(4), us, usw)                                     # and the dark one
+    fold = np.select([usw < 0.25, usw < 0.5, usw < 0.75], [4, 3, 2], 1).astype(float)
+    gath = tp + 3 + ((X.astype(int) + sid) % 3 == 0)                                  # its lower edge in gathers
+    fold = np.where((Y >= tp + 1) & (Y < gath) & (usw < 0.75), np.minimum(5, fold + 1), fold)
+    fside = (usw >= 0.5 - 0.17 * np.clip((dv - 0.35) / 0.65, 0, 1)) & (usw < 0.5) & (dv > 0.35 + 0.1 * np.sin(sid * 2.3))
+    fold = np.where(fside, fold - 1, fold)
+    crease = (usw >= 0.5 - 1.0 / q(4)) & (usw < 0.5) & (dv > 0.2 + 0.1 * np.sin(sid * 2.3))
+    fold = np.where(crease, np.minimum(fold, 1), fold)                                  # the crease at its core
+    foot = dv > 0.55 + 0.08 * np.sin(sid * 0.9)                                     # at the hem the fold opens:
+    fold = np.where((usw >= 0.5) & (usw < 0.75) & foot, fold - 1, fold)              # its shade moves west
+    fold = np.where((usw >= 0.75) & foot, fold + 1, fold)                             # and light bounces in east
+    fold = np.where((usw < 0.25) & (usw >= 0.25 - 1.0 / q(4)) & (dv > 0.62 + 0.1 * np.sin(sid * 1.1)), fold - 1, fold)
     # XR2-S2: the top plane in 2 to 3 tones: each stripe's canvas folds over its rib (lit on the west,
     # shading east), the plane rising back a tone darker at its far edge, lit at its front
     ftop = np.select([us < 0.3, us < 0.78], [5.0, 4.0], 3.0)
@@ -4703,26 +4804,36 @@ def p_stall_hd(w, h, seed, hd=False):
     _codes(a, inb, 'slate', 1)
     a[inb & (Y < by0 + q(1) + 2)] = code('slate', 0)
     a[inb & (X < bx0 + 3)] = code('slate', 0)
-    # XR3-S2: the board written in chalk: a word in fresh chalk, a second in the older, dimmer chalk, and
-    # a price underlined, each letter its own shape (a hand's capitals, 3 or 2 texels wide and 4 tall,
-    # the digits 5 tall) in strokes a texel wide, broken here and there; over part of the slate, the haze
-    # of a wiped line in the dimmer tone, in smears of 2 to 6 texels
+    # XR4-S1: the board reads at 1x as a plum and its price: the slate is 15 texels across, too narrow for
+    # a word with a true N and a four-column M, so the fruit is drawn in coloured chalk (a round plum lit
+    # on its upper left, its cleft and its dark east side, a chalk glint, the stalk and a leaf), and under
+    # it the price in fresh chalk, digits 3 wide and 5 tall, underlined in the dimmer chalk; a texel's
+    # margin to the frame all round. Over the slate's gaps, the haze of a wiped line in smears.
     crng = np.random.default_rng(seed + 31)
-    ix0 = bx0 + 3
+    ix0, ix1 = bx0 + 3, bx1 - q(1) - 1                                       # the slate's inner columns
     iy0 = by0 + q(1) + 3
-    GL = {'N': ('##.', '#.#', '#.#', '#.#'), 'E': ('###', '#..', '##.', '###'), 'W': ('#.#', '#.#', '###', '.#.'),
-          'P': ('###', '#.#', '###', '#..'), 'L': ('#.', '#.', '#.', '##'), 'U': ('#.#', '#.#', '#.#', '###'),
-          'M': ('#.#', '###', '#.#', '#.#'), '3': ('###', '..#', '.##', '..#', '###'),
-          'd': ('..#', '..#', '###', '#.#', '###')}
-    # the haze lies in the gaps between the lines and beside the price, where a line was wiped
-    haze = inb & (X >= ix0 + 1) & ((((Y >= iy0 + 5) & (Y < iy0 + 7)) | ((Y >= iy0 + 11) & (Y < iy0 + 13)))
-                                   | ((Y >= iy0 + 13) & (Y < iy0 + 19) & (X >= ix0 + 11)))
-    for _ in range(int(crng.integers(6, 9))):                         # smeared along the line
-        hx, hy = int(crng.uniform(ix0, bx1 - q(1) - 4)), int(crng.uniform(iy0 + 5, iy0 + 19))
+    GL = {'3': ('###', '..#', '.##', '..#', '###'), 'd': ('..#', '..#', '###', '#.#', '###')}
+    pcx, pcy = (ix0 + ix1) / 2 - 0.5, iy0 + 4.6                              # the plum
+    haze = inb & (X >= ix0) & (X < ix1) & (((Y >= iy0 + 10) & (Y < iy0 + 12)) | ((Y >= iy0 + 18) & (Y < iy0 + 20)))
+    for _ in range(int(crng.integers(4, 7))):                         # smeared along the gaps
+        hx, hy = int(crng.uniform(ix0, ix1 - 3)), int(crng.choice([iy0 + 10, iy0 + 18]))
         hm = haze & (np.floor(Y) == hy) & (X >= hx) & (X < hx + int(crng.integers(3, 7)))
         hm |= haze & (np.floor(Y) == hy + 1) & (X >= hx + 1) & (X < hx + int(crng.integers(3, 6)))
         a[hm] = code('slate', 2)
-    def write(word, x, y, tone, drop=0.06):
+    pr = ((X - pcx) / 3.7) ** 2 + ((Y - pcy) / 3.5) ** 2
+    plum = inb & (pr <= 1.0)
+    pnx, pny = (X - pcx) / 3.7, (Y - pcy) / 3.5
+    pt = 2.2 + 1.6 * lam(pnx, pny, np.sqrt(np.clip(1 - pr, 0, 1)))
+    paint(a, plum, ('berry_cool', 'berry', 'berry'), pt, 1, 4)              # as the crate's plums
+    cleft = plum & (np.abs(X - pcx - 0.9 - (Y - pcy) * 0.25) < 0.5) & (Y < pcy + 2.4)
+    a[cleft] = code('berry', 1)
+    a[plum & (np.abs(X - (pcx - 1.4)) < 1.0) & (np.abs(Y - (pcy - 1.6)) < 0.5)] = code('plaster', 5)  # the glint
+    a[inb & (np.abs(X - pcx - 0.5) < 0.5) & (Y >= pcy - 5.5) & (Y < pcy - 3.4)] = code('timber', 4)   # the stalk
+    leaf_ = inb & (((X - pcx - 2.6) / 1.9) ** 2 + ((Y - pcy + 4.6) / 1.0) ** 2 <= 1.0) & ~plum
+    a[leaf_] = code('leaf', 4)
+    a[leaf_ & (X > pcx + 3.0)] = code('leaf', 3)
+
+    def write(word, x, y, tone, drop=0.0):
         for ch in word:
             g = GL[ch]
             for dy, row in enumerate(g):
@@ -4730,37 +4841,106 @@ def p_stall_hd(w, h, seed, hd=False):
                     if c == '#' and crng.random() >= drop and inb[y + dy, x + dx]:
                         a[y + dy, x + dx] = code('plaster', tone)
             x += len(g[0]) + 1
-    write('NEW', ix0 + 1 + int(crng.integers(0, 3)), iy0, 5)
-    write('PLUM', ix0, iy0 + 7, 3)
-    py_ = iy0 + 13
-    write('3d', ix0 + 2 + int(crng.integers(0, 2)), py_, 5)
-    ul = inb & (Y >= py_ + 6) & (Y < py_ + 7) & (X >= ix0 + 1) & (X < ix0 + 11) & (((X.astype(int) - ix0) % 5) != 3)
+    py_ = iy0 + 12
+    px_ = int(round((ix0 + ix1) / 2 - 3.5))
+    write('3d', px_, py_, 5)
+    ul = inb & (Y >= py_ + 7) & (Y < py_ + 8) & (X >= px_ - 1) & (X < px_ + 8) & (((X.astype(int) - px_) % 5) != 3)
     a[ul] = code('plaster', 3)
     # the slate itself not one flat field: patches on its cool sibling at the same tone, the chalk dust
     # settled unevenly
     field = inb & (a == code('slate', 1))
     sibling_cells(a, field, crng, int(by0), int(by1), int(bx0), int(bx1), ('slate', 'slate_cool'), share=0.4,
                   step=(4, 4), maxrun=40, keep=inb)
-    # the sack: a body with fold bands, a gathered neck tied with cord, a frill above
-    sx, sy, rx, ry = x0 + q(3), yb - q(3.6), q(3.4), q(3.4)
-    d = ((X - sx) / rx) ** 2 + ((Y - sy) / ry) ** 2
-    sm = (d <= 1) & (Y > sy - ry * 0.75)
-    nx_, ny_ = (X - sx) / rx, (Y - sy) / ry
-    t = 3.0 + 1.8 * lam(nx_, ny_, np.sqrt(np.clip(1 - d, 0, 1)))
-    for fx_ in (-0.45, 0.1, 0.55):                                             # fold bands from the neck
-        t = np.where(np.abs(nx_ - fx_ * (1 + ny_ * 0.4)) < 0.09, t - 1.2, t)
-    paint(a, sm, ('plaster', 'plaster', 'plaster_warm'), t)
-    neck = (np.abs(X - sx) < q(1.4) - (sy - ry * 0.75 - Y) * 0.0) & (Y >= sy - ry - q(0.8)) & (Y < sy - ry * 0.7)
-    paint(a, neck, ('plaster', 'plaster', 'plaster_warm'), np.where(X < sx, 4, 2))
-    frill = (np.abs(X - sx) < q(1.9)) & (Y >= sy - ry - q(1.8)) & (Y < sy - ry - q(0.8))
-    frill &= ((X.astype(int) // 2) % 2 == 0) | (Y >= sy - ry - q(1.4))
-    paint(a, frill, ('plaster', 'plaster', 'plaster_warm'), np.where(X < sx, 5, 3))
-    cord = (np.abs(X - sx) < q(1.6)) & (np.abs(Y - (sy - ry - q(0.6))) < 1)
-    a[cord] = code('timber_warm', 2)
-    a[cord & (X < sx - 1)] = code('timber_warm', 4)
+    # XR4-S3: the sack in burlap: a mid tan (sand, its lit cap no higher than tone 3, well under the
+    # awning's cream), slumped on the ground (narrow shoulders, its belly wide and low, leaning a little
+    # east, a flat base), the weave in staggered 2-texel dashes that wrap with the form, two folds running
+    # down from the gathered neck, the neck tied with twine (two turns, a knot and a hanging end), the
+    # gathered ears above it, and a contact shadow under its base
+    sx, ytop, ybase = x0 + q(3), yb - q(6.0), yb - 1
+    # it keeps the old sack's outline where nothing stood behind it, so the stall's silhouette, and with it
+    # the ground's shadow and contact shade, stay as they are
+    sy0, r0 = yb - q(3.6), q(3.4)
+    env = (((X - sx) / r0) ** 2 + ((Y - sy0) / r0) ** 2 <= 1) & (Y > sy0 - r0 * 0.75)
+    env |= (np.abs(X - sx) < q(1.4)) & (Y >= sy0 - r0 - q(0.8)) & (Y < sy0 - r0 * 0.7)
+    env |= (np.abs(X - sx) < q(1.9)) & (Y >= sy0 - r0 - q(1.8)) & (Y < sy0 - r0 - q(0.8)) & \
+        (((X.astype(int) // 2) % 2 == 0) | (Y >= sy0 - r0 - q(1.4)))
+    env |= (np.abs(X - sx) < q(1.6)) & (np.abs(Y - (sy0 - r0 - q(0.6))) < 1)
+    a_before_sack = a.copy()
+    Hs = ybase - ytop
+    fy = np.clip((Y - ytop) / Hs, 0, 1)
+    hw = np.where(fy < 0.72, 4.6 + 5.6 * np.sin(np.clip(fy / 0.72, 0, 1) * np.pi / 2),
+                  10.2 - 3.2 * np.clip((fy - 0.86) / 0.14, 0, 1) ** 2)
+    scx = sx + 0.9 * fy
+    sm = (Y >= ytop) & (Y < ybase) & (np.abs(X - scx) <= hw)
+    snx = (X - scx) / np.maximum(hw, 1)
+    sny = fy * 1.6 - 0.9
+    snz = np.sqrt(np.clip(1 - snx ** 2, 0, 1))
+    st = 1.5 + 1.6 * lam(snx, sny, snz)
+    st = np.where(fy > 0.82, st - 0.7 * (fy - 0.82) / 0.18, st)                     # turning under at the slump
+    weave = (((X.astype(int) // 2) + (Y.astype(int) // 2)) % 2 == 0) & (Y.astype(int) % 2 == 0)
+    st = np.where(weave & (st > 1.5), st - 1.0, st)
+    for fx_ in (-0.35, 0.3):                                                        # folds from the neck
+        fold = (np.abs(snx - fx_ * (0.4 + 0.6 * fy)) < 0.1) & (fy < 0.75)
+        st = np.where(fold, st - 1.0, st)
+    stc = np.clip(np.round(st), 0, 3).astype(int)
+    sfam = np.where(stc >= 3, FI['sand_warm'], np.where(stc <= 1, FI['sand_cool'], FI['sand']))
+    a[sm] = (sfam * 8 + stc)[sm]
+    a[sm & (Y >= ybase - 1)] = code('sand_cool', 0)                                 # its base on the ground
+    sack_body = sm & (Y < ybase - 1)
+    _, _, _, sR = edges(sm)
+    a[sR & (X > scx) & (Y < ybase - 1)] = code('sand_cool', 0)                    # its east flank parts it from the boards
+    # the contact shadow: under the base and spreading east over the foot of the boards
+    cs = (Y >= ybase - 2) & (Y < ybase + 1) & (X >= sx - 6) & (X < sx + 14) & ~sm & (a >= 0)
+    _step_down(a, cs, 2)
+    under = (Y >= ybase) & (Y < ybase + 1) & (np.abs(X - sx - 1.5) < 7.5) & (a < 0)       # the foot row keeps its line
+    a[under] = code('earth_cool', 1)
+    # the neck, gathered: narrow, lit on the west, its gathers as dark dashes
+    nk = (Y >= ytop - 3) & (Y < ytop) & (np.abs(X - sx) < 3.4)
+    nkt = np.where(X < sx - 0.5, 3, 2) - ((X.astype(int) % 2 == 1) & (Y.astype(int) % 2 == 0))
+    a[nk] = (np.where(nkt >= 3, FI['sand_warm'], np.where(nkt <= 1, FI['sand_cool'], FI['sand'])) * 8 + nkt)[nk]
+    # the ears above the tie, splayed and ragged
+    ear = (Y >= ytop - 6) & (Y < ytop - 3) & (np.abs(X - sx) < 2.8 + (ytop - 3 - Y) * 0.6)
+    ear &= ~((Y < ytop - 4) & (np.abs(X - sx) < 1.0 + (ytop - 4 - Y)))           # a dip between two ears
+    eart = np.where(X < sx - 0.5, 3, 2) - (np.abs(X - sx) < 1.6)
+    a[ear] = (np.where(eart >= 3, FI['sand_warm'], np.where(eart <= 1, FI['sand_cool'], FI['sand'])) * 8 + eart)[ear]
+    # the twine: two turns round the neck, a knot on the east and its end hanging down the body
+    for ty_ in (ytop - 3, ytop - 2):
+        tw_ = (np.floor(Y) == ty_) & (np.abs(X - sx) < 3.6)
+        a[tw_] = code('timber_warm', 2)
+        a[tw_ & (X < sx - 0.5)] = code('timber_warm', 4)
+    kn_ = (Y >= ytop - 4) & (Y < ytop - 1) & (X >= sx + 3) & (X < sx + 5)
+    a[kn_] = code('timber_warm', 3)
+    a[kn_ & (X >= sx + 4) & (Y >= ytop - 3)] = code('timber_warm', 1)
+    end_ = (X >= sx + 4) & (X < sx + 5) & (Y >= ytop - 1) & (Y < ytop + 3)
+    a[end_] = code('timber_warm', 2)
+    allowed = (a_before_sack >= 0) | env
+    a[~allowed] = a_before_sack[~allowed]
+    left = env & (a < 0)                                                   # what the old outline held and the sack does not
+    a[left & (Y >= ybase - 3)] = code('earth_cool', 1)                    # the contact shadow
+    a[left & (Y < ybase - 3) & (X < sx)] = code('sand_warm', 3)
+    a[left & (Y < ybase - 3) & (X >= sx)] = code('sand', 2)
+    sack_body &= a != code('earth_cool', 1)
+    # XR4-S2: each front board's body in streaks on its own ramp and one sibling at the same tone (heart
+    # and sap wood), long along the grain, until no one-tone run in it is over 50 texels as finish()
+    # leaves the picture
+    keep = nail_lights(a) | inb
+    # the burlap's colour varies in patches (sand and its siblings at the same tone), as the slate's does
+    for fams_, tone_ in ((('sand', 'sand_cool'), 2), (('sand_warm', 'sand'), 3)):
+        face = sack_body & (tone_of(a) == tone_) & np.isin(fam_of(a), [FI[f] for f in fams_])
+        if face.any():
+            sibling_cells(a, face, grng, int(ytop), int(ybase), int(sx - 12), int(sx + 13), fams_, share=0.4,
+                          step=(4, 4), maxrun=50, keep=keep)
+    SIB = {'timber': ('timber_cool', 'timber_warm'), 'timber_warm': ('timber', 'timber_cool'),
+           'timber_cool': ('timber', 'timber_warm')}
+    for body, bfam in fronts:
+        face = body & np.isin(fam_of(a), [FI[bfam]]) & (a >= 0)
+        if face.any():
+            ys_, xs_ = np.nonzero(face)
+            sibling_cells(a, face, grng, int(ys_.min()), int(ys_.max()) + 1, int(xs_.min()), int(xs_.max()) + 1,
+                          (bfam,) + SIB[bfam], share=0.3, step=(8, 3), squash=2.4, maxrun=50, keep=keep)
     # XR3-S1: the nail heads keep their lit texel; XR3-S2: the chalk keeps its strokes (the tidy would
     # fill a letter's one-texel counter and take a stroke's lone end)
-    return finish(p, keep=nail_lights(a) | inb)
+    return finish(p, keep=keep)
 
 
 PROPS_HD = {
