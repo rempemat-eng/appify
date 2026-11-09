@@ -21,7 +21,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 3 review at 8c212777 (PR #450), docs/reviews/2026-11-08-crossroads-placed.md, round 3. 5 texels changed, at the plinth's west foot (x 1-4, y 3-4), following the new plinth outline; still thrown east and down, two tones down with a one-tone rim."
  }
 }

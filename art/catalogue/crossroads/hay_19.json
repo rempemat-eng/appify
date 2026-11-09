@@ -51,7 +51,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 3 review at 8c212777 (PR #450), docs/reviews/2026-11-08-crossroads-placed.md, round 3. XR2-H1 to H4 answered: a pillowed straw bale in the straw ramp, 19 tones (was 14), largest one-tone region 127 texels (was 378); lit arris band over the top-front edge, corners knocked off, straw as 2-3 texel strand clumps with strands breaking the silhouette, a darker cut east end with stalk tufts, twines pressed in with a lit lip. Cluster noise 39.5 % (under the 40 % polish line). Bar 0.75 (round 1) -> 0.53 (round 2) -> 0.88. Compared with the Eastward 17 bale at x1.37: it now reads as a bale of the same kind. Polish XR3-H1: on the top the clumps read as mottle more than strands running along the bale."
  }
 }
