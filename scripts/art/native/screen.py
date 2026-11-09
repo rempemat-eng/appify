@@ -1238,7 +1238,7 @@ def sprite(kind: str, recipe: dict, seed: int):
             ex.update(look)
             if recipe.get('trunk_w'):
                 ex['tw'] = recipe['trunk_w']
-            codes, anc = WT.tree(kind, arr, D, seed, recipe['crown'], ex['tw'], scale=recipe.get('scale'))
+            codes, anc = WT.tree2(kind, arr, D, seed, recipe["crown"], ex["tw"], scale=recipe.get("scale"))
         else:
             ex = None
             codes, anc = WT.shrub(kind, arr, D, seed, recipe['crown'], scale=recipe.get('scale'))

@@ -1,14 +1,14 @@
 {
  "id": "woodland/birch",
  "file": "game/zones/woodland/art/birch.png",
- "sha256": "5c620cf156ccb1bf7609f581da0565a525485f0f8fe269a26e2b154d93a59855",
+ "sha256": "b950bf8c4cd7b1696326b979ee711f2fa1b276d7bc87c4e2738e7d8f21e38f77",
  "kind": "birch",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  90,
-  193
+  104,
+  205
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 23,
-   "tones": 35.21739130434783,
-   "shapes": 50.52173913043478
+   "patches": 22,
+   "tones": 29.636363636363637,
+   "shapes": 51.40909090909091
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.798,
-  "tones_ratio": 1.271,
-  "shapes_ratio": 0.798,
+  "ratio": 0.812,
+  "tones_ratio": 1.07,
+  "shapes_ratio": 0.812,
   "passed": false,
   "group": "foliage"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    1,
+    12,
     0,
-    90,
-    193
+    104,
+    205
    ],
-   "message": "woodland/birch: detail bar 0.80 of Eastward's foliage band (35.2 tones, 50.5 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/birch: detail bar 0.81 of Eastward's foliage band (29.6 tones, 51.4 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

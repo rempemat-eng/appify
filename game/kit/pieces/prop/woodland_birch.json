@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 4,
+ "version": 5,
  "variants": [
   {
    "id": "birch",
@@ -27,11 +27,11 @@
  },
  "geometry": {
   "size_px": [
-   90,
-   193
+   104,
+   205
   ],
   "size_cells": [
-   4,
+   5,
    9
   ],
   "z_sort": "foot",

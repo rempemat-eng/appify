@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 4,
+ "version": 5,
  "variants": [
   {
    "id": "beech",
@@ -27,12 +27,12 @@
  },
  "geometry": {
   "size_px": [
-   158,
-   245
+   202,
+   267
   ],
   "size_cells": [
-   7,
-   11
+   9,
+   12
   ],
   "z_sort": "foot",
   "collision": {

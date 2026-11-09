@@ -1,26 +1,26 @@
 {
  "id": "woodland/pine",
  "file": "game/zones/woodland/art/pine.png",
- "sha256": "c4a8001920b88e84b1a4578d84ab620cc89d067f935b668a87b1f748f0836500",
+ "sha256": "85adfc5f4531df38691431523cbdacb56ab65f9d19a945b52e2d412ba4b27486",
  "kind": "conifer",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  112,
-  234
+  111,
+  232
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 33,
-   "tones": 30.12121212121212,
-   "shapes": 47.96969696969697
+   "patches": 30,
+   "tones": 31.533333333333335,
+   "shapes": 47.03333333333333
   },
   "band": {
    "tones": 27.71,
@@ -28,35 +28,23 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.758,
-  "tones_ratio": 1.087,
-  "shapes_ratio": 0.758,
+  "ratio": 0.743,
+  "tones_ratio": 1.138,
+  "shapes_ratio": 0.743,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    40,
-    191,
-    52,
-    233
-   ],
-   "message": "woodland/pine: the red is lit from the right (luminance rises 140 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    7,
+    5,
     0,
-    112,
-    234
+    110,
+    232
    ],
-   "message": "woodland/pine: detail bar 0.76 of Eastward's foliage band (30.1 tones, 48.0 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/pine: detail bar 0.74 of Eastward's foliage band (31.5 tones, 47.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

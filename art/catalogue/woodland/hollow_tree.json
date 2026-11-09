@@ -1,26 +1,26 @@
 {
  "id": "woodland/hollow_tree",
  "file": "game/zones/woodland/art/hollow_tree.png",
- "sha256": "ca812dc53f406d0ef952aaf331c45b6535a2e2477a992c557b68c83aacff87d1",
+ "sha256": "818744b729aa245f6b50fc45e6f201fbf573ac253681ad01f4a9d46a91594de5",
  "kind": "veteran_tree",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  228,
-  234
+  251,
+  212
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 77,
-   "tones": 28.545454545454547,
-   "shapes": 53.35064935064935
+   "patches": 82,
+   "tones": 25.024390243902438,
+   "shapes": 48.13414634146341
   },
   "band": {
    "tones": 27.71,
@@ -28,23 +28,35 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.843,
-  "tones_ratio": 1.03,
-  "shapes_ratio": 0.843,
+  "ratio": 0.76,
+  "tones_ratio": 0.903,
+  "shapes_ratio": 0.76,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    38,
+    0,
+    250,
+    212
+   ],
+   "message": "woodland/hollow_tree: tall 212 art px (2.86 A) is too small for a veteran tree: the size table gives 222 to 340 (3.00 to 4.59 A); Eastward at the same character height: the forest trees of 08",
+   "fix": "redraw it 222 to 340 art px tall (target about 281), checked beside Bramble (74 art px) in the asset sheet"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
+    38,
     0,
-    0,
-    223,
-    234
+    250,
+    212
    ],
-   "message": "woodland/hollow_tree: detail bar 0.84 of Eastward's foliage band (28.5 tones, 53.4 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/hollow_tree: detail bar 0.76 of Eastward's foliage band (25.0 tones, 48.1 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

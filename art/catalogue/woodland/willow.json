@@ -1,14 +1,14 @@
 {
  "id": "woodland/willow",
  "file": "game/zones/woodland/art/willow.png",
- "sha256": "9b742b5c29bb14aa679da75d725998b44ad37f79a00f53e060a4836eb82d622e",
+ "sha256": "29743aad1bde208cc20df5e62b59fbaf1e0ffe5ba79f66aeab92022ca07b4bff",
  "kind": "willow",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  192,
-  287
+  264,
+  202
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 113,
-   "tones": 26.0,
-   "shapes": 51.876106194690266
+   "patches": 88,
+   "tones": 29.295454545454547,
+   "shapes": 53.125
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.819,
-  "tones_ratio": 0.938,
-  "shapes_ratio": 0.819,
+  "ratio": 0.839,
+  "tones_ratio": 1.057,
+  "shapes_ratio": 0.839,
   "passed": false,
   "group": "foliage"
  },
@@ -39,24 +39,24 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    80,
-    183,
-    92,
-    286
+    139,
+    105,
+    163,
+    138
    ],
-   "message": "woodland/willow: the red is lit from the right (luminance rises 70 L per H to the east)",
+   "message": "woodland/willow: the red is lit from the right (luminance rises 49 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    1,
     0,
-    192,
-    287
+    0,
+    260,
+    202
    ],
-   "message": "woodland/willow: detail bar 0.82 of Eastward's foliage band (26.0 tones, 51.9 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/willow: detail bar 0.84 of Eastward's foliage band (29.3 tones, 53.1 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
