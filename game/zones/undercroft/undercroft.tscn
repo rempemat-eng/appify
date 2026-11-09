@@ -655,7 +655,7 @@ position = Vector2(696, 408)
 position = Vector2(1344, 480)
 
 [node name="arena" type="Marker2D" parent="Spawns"]
-position = Vector2(1800, 480)
+position = Vector2(1746, 408)
 
 [node name="Doors" type="Node2D" parent="."]
 

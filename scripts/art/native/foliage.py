@@ -625,12 +625,20 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
         out_t[Y, X] = t
         out_k[Y, X] = sid
         out_f[Y, X] = 1 if rng.random() < lk['hue'] else 0      # a leaf on the sibling green now and then
+        # (Lane R, 3 Nov: crown interiors read as flat, two tones over a whole clump: the lit top
+        # only held tones 3 and 4, the under-shade only 1 and 2.) A leaf in full sun now and then
+        # catches the light on its edge (tone 5), and a leaf deep in the shade shows the dark gap
+        # at its tip (tone 0); chosen by the leaf's cell, so no other leaf moves
+        cell_h = (xc * 7 + yc * 13) % 10
+        sun = 5 if (t == 4 and cell_h < 3) else 4
         if rng.random() < lk['lit_marks'] and t <= 4:
-            marks.append((yc - lh // 2 + 1, xc - 1, -(min(4, t + 1)) - 10, sid))   # a lit leaf edge, 2 px
+            marks.append((yc - lh // 2 + 1, xc - 1, -(min(sun, t + 1)) - 10, sid))   # a lit leaf edge, 2 px
         if 2 <= t <= 4 and rr_ < lk['marks']:
             marks.append((yc + lh // 2 - 1, xc, t, sid))       # a leaf mark at its tip
         elif t <= 2 and rr_ < lk['marks'] * 0.8:
             marks.append((yc - lh // 2 + 1, xc, -(t + 1), sid))  # a shaded leaf's lit edge
+        if t <= 2 and cell_h >= 7:
+            marks.append((yc + lh // 2 - 1, xc, t, sid))       # the dark gap at a shaded leaf's tip
         if t == 4 and s[yc, xc] > 0.9 and rr_ > 1 - lk['glint']:
             marks.append((yc - lh // 2 + 1, xc - 1, 5, sid))    # a glint on the lit top
         sid += 1

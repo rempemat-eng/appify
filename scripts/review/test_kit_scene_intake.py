@@ -87,7 +87,7 @@ class RealSource(unittest.TestCase):
 
     def test_legacy_woodland_and_crossroads_are_byte_unchanged(self):
         expected = {
-            'woodland': '645dcc93e2e5518d3c2eee44f4fe8f13c11afd49ab4240d97f7b1623d5143f26',
+            'woodland': 'cf526bb090ea2241bb5d4f073ca63e49e0b251d2ae3ffb5cc5273e42927ca3af',
             'crossroads': 'b62bfd9508f373582ac3ab349e805e1d652414abf8fefcaca54b86d17506e1ef',
         }
         for name, digest in expected.items():
