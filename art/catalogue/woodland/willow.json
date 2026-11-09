@@ -60,10 +60,11 @@
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-11-03",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T7 (blocker): an oak dome with straight vertical sides (52-58 rows within 1 px), strands 1-3 px straight vertical lines in a comb, no arching branches; bar 0.65, outline 18 %. Fixes in the review."
  }
 }
