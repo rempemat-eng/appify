@@ -1,0 +1,44 @@
+{
+ "id": "art/shadow_woodland_pine",
+ "file": "game/kit/props/art/shadow_woodland_pine.png",
+ "sha256": "22b4b0198a37374c611cc3d45c086068d4a9b88c05aaed0cd047a927247a0637",
+ "kind": "shadow_woodland_pine",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  112,
+  74
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.void",
+   "severity": "blocker",
+   "box": [
+    0,
+    0,
+    112,
+    74
+   ],
+   "message": "the screen shows 100% empty black outside the world",
+   "fix": "clamp the camera to the zone bounds from the first frame (snap it to the spawn before damping) and draw the world past every edge the camera can reach",
+   "score": 1.0,
+   "threshold": 0.05,
+   "subject": "camera",
+   "extra": {},
+   "box_source": [
+    0,
+    0,
+    112,
+    74
+   ]
+  }
+ ]
+}

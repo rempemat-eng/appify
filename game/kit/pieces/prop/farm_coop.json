@@ -1,0 +1,156 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_coop",
+ "name": "Hen house",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_coop",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_coop.png",
+   "foot": [
+    50,
+    119
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "The hens' house in their run."
+ },
+ "geometry": {
+  "size_px": [
+   103,
+   123
+  ],
+  "size_cells": [
+   4,
+   5
+  ],
+  "z_sort": "foot",
+  "height_px": 119,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -12.5,
+    -6.0,
+    25,
+    6
+   ]
+  },
+  "foot": [
+   50,
+   119
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "live",
+  "role": "coop",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "boundary",
+    "cells": 2,
+    "note": "against the run's fence, in its back corner"
+   },
+   {
+    "rel": "near",
+    "what": "stock",
+    "cells": 4,
+    "note": "its hens about it"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "enclosure": {
+   "holds": [
+    "chickens"
+   ],
+   "as": "needs"
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    30,
+    5
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "shed",
+  "eastward_ref": "17: the barn's boarded walls, knots and nail heads",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_coop",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}

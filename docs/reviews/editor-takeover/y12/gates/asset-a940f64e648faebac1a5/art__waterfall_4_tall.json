@@ -1,0 +1,116 @@
+{
+ "id": "art/waterfall_4_tall",
+ "file": "game/kit/props/art/waterfall_4_tall.png",
+ "sha256": "4f7daed1ce520a18b3304b9a13b62cdaafcfb0fafce5f27bc92bb00d100a8f82",
+ "kind": "waterfall_4_tall",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  144,
+  142
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 2,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 38,
+   "tones": 8.526315789473685,
+   "shapes": 13.605263157894736
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.27,
+  "tones_ratio": 0.316,
+  "shapes_ratio": 0.27,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.water_flat",
+   "severity": "fault",
+   "box": [
+    21,
+    4,
+    123,
+    12
+   ],
+   "message": "art/waterfall_4_tall: the water is flat: 2 tones, one smooth patch covers 28%",
+   "fix": "give water depth: a dark band under the near rim, the inner wall lit or shaded as the opening curves, a 1 px light waterline and a few short highlights (eastward-edges.md 5.3)",
+   "score": 0.27548209366391185,
+   "threshold": 0.5,
+   "subject": "art/waterfall_4_tall",
+   "extra": {
+    "area": 726,
+    "area_h": 0.13257852447041638,
+    "flat": 0.27548209366391185,
+    "flat_h": 0.036523009495982466,
+    "tones": 2,
+    "planes": 2,
+    "lrange": 27.301002502441406,
+    "gx": 2.797021184138922e-15,
+    "gy": -407.7300772026713,
+    "edges": 0.38372093023255816
+   },
+   "box_source": [
+    21,
+    4,
+    123,
+    12
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    0,
+    4,
+    144,
+    123
+   ],
+   "message": "art/waterfall_4_tall: detail bar 0.27 of Eastward's prop band (8.5 tones, 13.6 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.27,
+   "threshold": 0.9,
+   "subject": "art/waterfall_4_tall",
+   "extra": {},
+   "box_source": [
+    0,
+    4,
+    144,
+    123
+   ]
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    0,
+    4,
+    144,
+    123
+   ],
+   "message": "art/waterfall_4_tall: only 12% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)",
+   "score": 0.11678832116788321,
+   "threshold": 0.4,
+   "subject": "art/waterfall_4_tall",
+   "extra": {},
+   "box_source": [
+    0,
+    4,
+    144,
+    123
+   ]
+  }
+ ]
+}

@@ -1,0 +1,99 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_sawpit",
+  "name": "Fernhollow sawpit assembly",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "fernhollow",
+    "coal_hills"
+  ],
+  "variants": [
+    {
+      "id": "working",
+      "note": "One log on trestles, no animated worker implied."
+    },
+    {
+      "id": "cleared",
+      "note": "Empty supported pit, stored blade and spare blocks."
+    }
+  ],
+  "placement": {
+    "role": "workplace",
+    "ground": {
+      "allow": [
+        "earth",
+        "turf"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "near",
+        "what": "woodpile",
+        "cells": 3
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "axis"
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {
+    "interact": {
+      "verb": "look",
+      "triggers": []
+    }
+  },
+  "story": {
+    "lore": "Use a reusable woodcutting worksite family for Fernhollow and its timber camps, with the local composition authored."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Use a reusable woodcutting worksite family for Fernhollow and its timber camps, with the local composition authored.",
+      "Visual brief: A long timber over a supported pit, paired trestles and a large two-person saw; fresh cut end rings, sawdust beneath and log supports show how the work happens.",
+      "Source: docs/vision/regions/cogsworth-plan.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Geometry: proposed authoring envelope 8x4 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "Function: proposed look affordance; bind only existing owner-approved data refs, never infer a quest, fee, reward or transport unlock from this concept.",
+      "Reuse candidate: crossroads_woodpile and woodland_mossy_log only after latest art gate; working timber should be clean-cut variants, not mossy props reused blindly.",
+      "Rule proposal: pit opening is an explicit blocker, never a painted floor that the player can cross."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      8,
+      4
+    ],
+    "z_sort": "foot"
+  }
+}

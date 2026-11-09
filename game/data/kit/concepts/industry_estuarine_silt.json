@@ -1,0 +1,82 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_estuarine_silt",
+  "name": "Estuarine silt and exposed mudflat",
+  "kind": "terrain",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "delta",
+    "lull",
+    "gullwick"
+  ],
+  "variants": [
+    {
+      "id": "wet",
+      "note": "Adjacent to the channel, waterlogged."
+    },
+    {
+      "id": "drying",
+      "note": "Cracked only in broad inland patches."
+    },
+    {
+      "id": "shell",
+      "note": "Sparse clustered shell grit."
+    }
+  ],
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "near",
+        "what": "water",
+        "cells": 3,
+        "note": "Mudflat classification requires a mapped channel or shore."
+      }
+    ],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": false,
+    "cast_shadow": {
+      "shape": "none"
+    }
+  },
+  "function": {},
+  "story": {
+    "lore": "Connect reed shelves, sandbars and brackish channels without treating the entire delta as a uniformly dry lawn."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": "Eastward 15, grid-aligned swamp shelves; does not establish a tidal mechanic.",
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Connect reed shelves, sandbars and brackish channels without treating the entire delta as a uniformly dry lawn.",
+      "Visual brief: Cool wet silt near the water, warmer drying plates inland, embedded shell flecks in grouped patches. Gentle planar reflections remain lower contrast than props.",
+      "Source: docs/vision/regions/neon-harbour-delta.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Widths: Cell-union shelves of 1-6 cells at the margins; wider point bars follow the authored channel geometry.",
+      "Schema/runtime intake: concept state is not yet in the base schema. Material IDs, render priorities and painters are deliberately unallocated; terrain/transition runtime blocks await the schema owner and art review.",
+      "No tide mechanic is approved here: wet/dry appearances are art variants; passability remains explicit plan data.",
+      "Cross-region reuse: share the wet-earth palette family with the fen catalogue; do not duplicate a material merely for a biome name."
+    ]
+  }
+}

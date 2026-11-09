@@ -1,0 +1,147 @@
+{
+ "id": "terrain/decal_bankstone_2",
+ "file": "game/kit/terrain/decal_bankstone_2.png",
+ "sha256": "e7c654f3980aeb16378897d9cc92e1274e784642a9bcf4da60db845da68ade6d",
+ "kind": "decal_bankstone",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  48,
+  30
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 3,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    7,
+    10,
+    42,
+    28
+   ],
+   "message": "terrain/decal_bankstone_2: the red reads 2D: 1 light planes, luminance spread 5",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts",
+   "score": 1.0,
+   "threshold": 3,
+   "subject": "terrain/decal_bankstone_2",
+   "extra": {
+    "area": 334,
+    "area_h": 0.06099342585829072,
+    "flat": 0.6467065868263473,
+    "flat_h": 0.039444850255661065,
+    "tones": 2,
+    "planes": 1,
+    "lrange": 5.3820037841796875,
+    "gx": 2.0703443242308133,
+    "gy": -9.62595657259031,
+    "edges": 0.3359683794466403
+   },
+   "box_source": [
+    7,
+    10,
+    42,
+    28
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    7,
+    10,
+    42,
+    28
+   ],
+   "message": "terrain/decal_bankstone_2: a flat red area: one smooth patch covers 65% (0.039 H^2), 2 tones",
+   "fix": "draw the red as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp",
+   "score": 0.6467065868263473,
+   "threshold": 0.4,
+   "subject": "terrain/decal_bankstone_2",
+   "extra": {
+    "area": 334,
+    "area_h": 0.06099342585829072,
+    "flat": 0.6467065868263473,
+    "flat_h": 0.039444850255661065,
+    "tones": 2,
+    "planes": 1,
+    "lrange": 5.3820037841796875,
+    "gx": 2.0703443242308133,
+    "gy": -9.62595657259031,
+    "edges": 0.3359683794466403
+   },
+   "box_source": [
+    7,
+    10,
+    42,
+    28
+   ]
+  },
+  {
+   "detector": "detail.glyph",
+   "severity": "fault",
+   "box": [
+    7,
+    10,
+    42,
+    28
+   ],
+   "message": "terrain/decal_bankstone_2: a flat red mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
+   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light",
+   "score": 0.6467065868263473,
+   "threshold": 0.45,
+   "subject": "terrain/decal_bankstone_2",
+   "extra": {},
+   "box_source": [
+    7,
+    10,
+    42,
+    28
+   ]
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    7,
+    10,
+    42,
+    28
+   ],
+   "message": "terrain/decal_bankstone_2: only 0% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)",
+   "score": 0.0,
+   "threshold": 0.4,
+   "subject": "terrain/decal_bankstone_2",
+   "extra": {},
+   "box_source": [
+    7,
+    10,
+    42,
+    28
+   ]
+  }
+ ]
+}

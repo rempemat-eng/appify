@@ -1,0 +1,85 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_tidal_pool",
+  "name": "Tidal pools and shallow sea pockets",
+  "kind": "water",
+  "biomes": [
+    "coast",
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "sand_pool",
+      "note": "Shallow reflective sand pocket with pale wet margins, a darker north bank and a few submerged rounded pebbles."
+    },
+    {
+      "id": "rock_pool",
+      "note": "Irregular pool between flat rock shelves, with a shaded north rim, lit wet lip and quiet reflected sky."
+    },
+    {
+      "id": "black_rock_pool",
+      "note": "Small reflective pocket in charcoal basalt, with cream wet glints and dark submerged stones that remain distinct from the dry shelf."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "water",
+    "ground": {
+      "allow": [
+        "water"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "shore",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "cluster",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Give the Shell Bar and coast small inspectable water pockets within safe rock or sand shelves."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": "docs/vision/eastward-edges.md, reference 37 (rounded stone-lined pond); coastal palette is a new concept",
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P2.",
+      "Purpose: Give the Shell Bar and coast small inspectable water pockets within safe rock or sand shelves.",
+      "Visual brief: Irregular shallow reflective pockets with a dark north rock rim, pale wet lip and a few submerged pebbles; starfish and shells are contained dressing, with no item glint.",
+      "Source: docs/vision/regions/tidebloom-isles.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Pool plan 1-4 cells across; the safe main crossing remains 2-3 cells or its plan-authored width.",
+      "Potential look interaction only; no collection chore, tide timer or reward.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

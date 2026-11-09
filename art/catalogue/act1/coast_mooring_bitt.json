@@ -1,0 +1,56 @@
+{
+ "id": "act1/coast_mooring_bitt",
+ "file": "game/kit/props/art/act1/coast_mooring_bitt.png",
+ "sha256": "3b552fea62fd0ff7fe2bcf2a66c7842677aebd1dd2a4118eed12c0b531a74732",
+ "kind": "coast_mooring_bitt",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  42,
+  21
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "fault",
+   "box": [
+    0,
+    0,
+    42,
+    21
+   ],
+   "message": "act1/coast_mooring_bitt: 60% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+  }
+ ],
+ "reviewed": "2026-11-05",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 7 (v8) of docs/reviews/2026-11-04-act1-props.md (ba774db4): R6-3 done: headed bollard, 42 wide. The detail.cluster_noise fault (59.5 %) is rejected as structure, as in rounds 4 to 6. The pixels are v7's: the bitt is moved 1 texel west and the coil 1 east (the standing part is 2 shorter), and the coil's west outline column is added. Padding v8 by one column gives v7's 56.8 % exactly, so the rise comes from the 2 x 2 grid falling a texel differently on unchanged parts. The 4 extra noisy blocks are 3 on the coil's ring seams and 1 on the post's plane edge, and none is grain. The status field stays the detector's fail."
+ }
+}

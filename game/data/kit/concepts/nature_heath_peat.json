@@ -1,0 +1,75 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_heath_peat",
+  "name": "Heath and peat floor",
+  "kind": "terrain",
+  "biomes": [
+    "brackens",
+    "frostline"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "dry_heath",
+      "note": "Dun-green dry hummocks and low plum heather flecks over a calm earthy floor; use broad low-contrast patches."
+    },
+    {
+      "id": "peat_cut",
+      "note": "Exposed dark peat cut with a visible earth edge and clods at its foot; its physical height must come from the authored terrain."
+    },
+    {
+      "id": "damp_heath",
+      "note": "Darker damp hummocks with dull reflective hollows and wet grass bases; avoid open-water ripples on the soil."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "earth",
+        "turf"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Carry the Brackens moor into the lower Frostline without a palette-swap lawn."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Carry the Brackens moor into the lower Frostline without a palette-swap lawn.",
+      "Visual brief: Low dun-green hummocks, plum heather flecks and dark exposed peat hollows; keep a calm traversable floor between gorse masses. Wet peat has dull reflected patches, not open-water ripples.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Area fill and 1-2-cell peat banks; walked trods use a separate 2-3-cell path.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "No movement penalty or sinking mechanic is added by this visual family.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

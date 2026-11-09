@@ -1,0 +1,44 @@
+{
+ "id": "terrain/over_lawn_over_scree",
+ "file": "game/kit/terrain/over_lawn_over_scree.png",
+ "sha256": "2ebf7282b2723f6097fb16cde95c5a35e4b329b97fd771c3a6da2c14c2d5616f",
+ "kind": "over_lawn_over_scree",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  1536,
+  264
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.void",
+   "severity": "blocker",
+   "box": [
+    0,
+    0,
+    1536,
+    72
+   ],
+   "message": "the screen shows 10% empty black outside the world",
+   "fix": "clamp the camera to the zone bounds from the first frame (snap it to the spawn before damping) and draw the world past every edge the camera can reach",
+   "score": 0.10277580492424243,
+   "threshold": 0.05,
+   "subject": "camera",
+   "extra": {},
+   "box_source": [
+    0,
+    0,
+    1536,
+    72
+   ]
+  }
+ ]
+}

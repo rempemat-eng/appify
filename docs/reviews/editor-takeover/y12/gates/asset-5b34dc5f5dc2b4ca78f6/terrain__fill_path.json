@@ -1,0 +1,47 @@
+{
+ "id": "terrain/fill_path",
+ "file": "game/kit/terrain/fill_path.png",
+ "sha256": "5135bbe8cc18991ba7a1cc5eac811726bcfb4efcc22f2f4300a294702ea86650",
+ "kind": "fill_path",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  768,
+  768
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    148,
+    148
+   ],
+   "message": "terrain/fill_path: the bare fill's blotches are 12 art px (0.16 H) across; Eastward's are 0.35 to 0.77 H",
+   "fix": "paint blotches 26 to 57 art px across",
+   "score": 0.16216216216216217,
+   "threshold": 0.25,
+   "subject": "terrain/fill_path",
+   "extra": {
+    "class": "grain",
+    "measure": "blotch"
+   },
+   "box_source": [
+    0,
+    0,
+    148,
+    148
+   ]
+  }
+ ]
+}

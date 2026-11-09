@@ -33,6 +33,7 @@ import numpy as np
 from scipy import ndimage as ndi
 
 from . import village as V
+from . import volume as VO
 from .palette import FI
 
 q, code, fill, put, edges, chamfer = V.q, V.code, V.fill, V.put, V.edges, V.chamfer
@@ -397,13 +398,11 @@ def quoins(a, L, R, B, y_e, rng, top=4):
 
 
 def wall_light(a, L, R, B, y_e, fh):
-    """The front as one lit plane with depth round it: the west arris catching the light, the
-    east corner turning away, the foot darker in the damp and the angle of the plinth."""
-    Y, X = grid(a)
-    inwall = (X >= L) & (X < R) & (Y >= y_e) & (Y < B - fh)
-    step(a, inwall & (X < L + 2) & (Y > y_e + q(4)), +1)
-    step(a, inwall & (X >= R - q(1.2)), -1)
-    step(a, inwall & (Y >= B - fh - q(1.4)), -1)
+    """The front as one lit plane with depth round it (volume.py; eastward-edges 11.3 and 11.4):
+    the west arris catching the light, the east corner turning away in a band and a seam, the
+    foot a tone down over the plinth."""
+    VO.corners(a, L, R, y_e, B - fh)
+    VO.foot(a, L, R, B - fh)
 
 
 def plinth(a, L, R, B, rng, fh):
@@ -446,11 +445,16 @@ def foot_weeds(a, L, R, B, busy, rng):
 # roofs
 # ------------------------------------------------------------------------------------------------
 def slate_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=0, row=3.2, width=(3.4, 5.2), fams=('slate', 'slate', 'slate_cool'),
-               moss=0.07, lichen=0.06, top=3):
+               moss=0.07, lichen=0.06, top=3, calm=False, eave_dark=False):
     """Slates in overlapping courses: each slate a pillow the other way up (its head in the shade of
     the course above, its butt lit), its own sibling and tone by its place on the plane (lighter
     towards the ridge and the west, the hips turned to and from the light), riven grain, lichen
-    and moss on a few; dark joints between."""
+    and moss on a few; dark joints between.
+
+    `calm` (a large plain roof, the Act 1 water mill: round 6 of the detail audit, R6-5) keeps the
+    slates in siblings at one tone with at most one in 40 a full tone off, one fleck a slate and fewer
+    replaced slates; `eave_dark` darkens the lowest third of the plane a tone towards the eave. Both
+    default off, so the Crossroads roofs keep their bytes."""
     fill(a, rx0, y_r, rx1, y_eave, code('slate_cool', 0), rm)
     rh = max(6, q(row))
     span = max(1, rx1 - rx0)
@@ -467,13 +471,18 @@ def slate_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=0, row=3.2, width=(3.4, 5.
             f_ = np.clip((y_eave - (yt + y) / 2) / max(1, y_eave - y_r), 0, 1)
             # the plane in the light: brightest under the ridge on the west, falling off down the
             # slope and to the east, each slate stepping on its own (never a hard band)
-            v = 0.95 * fy + 0.75 * fx + 0.55 * (hsh(k, x, 1) - 0.5)
+            v = 0.95 * fy + 0.75 * fx + (0.2 if calm else 0.55) * (hsh(k, x, 1) - 0.5)
             t = top + (0 if hip else 1) if v < 0.35 else (top if v < 0.9 else (top - 1 if v < 1.35 else top - 2))
             r = hsh(k, x, 3)
-            if r < 0.08:
+            if r < (0.0125 if calm else 0.08):
                 t += 1
-            elif r < 0.16:
+            elif r < (0.025 if calm else 0.16):
                 t -= 1
+            if eave_dark and fy > 0.67:
+                t -= 1                                           # the lowest third, a tone down to the eave
+            if calm:
+                t = min(t, top)                                  # headroom for each slate's lit butt (t + 2), so a run
+                #                                                  of calm slates never clips flat at the palette's top
             if hip:
                 if cxs < rx0 + hip * f_:
                     t = 4 + (r < 0.3)                            # the west hip, turned to the light
@@ -481,10 +490,11 @@ def slate_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=0, row=3.2, width=(3.4, 5.
                     t = 1 + (r < 0.4)                            # the east hip, turned away
             t = int(np.clip(t, 1, 4))
             f = fams[int(rng.integers(0, len(fams)))]
-            if rng.random() < 0.05:
+            if rng.random() < (0.02 if calm else 0.05):
                 f = 'slate_warm'                                 # a slate replaced since
             m = V.chamfer(rh - 1, w - 1, 1)
-            tt = pillow(m, t, rng, flecks=2 + int(rng.random() < 0.6), slate=True)
+            nfl = 2 + int(rng.random() < 0.6)
+            tt = pillow(m, t, rng, flecks=1 if calm else nfl, slate=True)
             put(a, x, yt, m, f, tt, rm)
             if lichen and rng.random() < lichen:
                 # a lichen rosette on the slate's face: a soft grey-green patch, its rim a tone up
@@ -698,26 +708,17 @@ def fascia_gutter(a, rx0, rx1, y_e, rng, gutter=True):
     return gy + gh
 
 
-def eave_shadow(a, L, R, y_top, depth, rng, course_break=True):
-    """The shadow the eave throws on the wall below it: two steps down under the eave, one step
-    below that, its lower edge broken where the stones and boards stand proud of it."""
-    Y, X = grid(a)
-    inw = (X >= L) & (X < R)
-    d1 = q(2.0)
-    # (the deep part steps only what is still light, so nothing in the shade collapses to one tone)
-    step(a, inw & (Y >= y_top) & (Y < y_top + d1) & (a % 8 >= 3), -1)
-    edge = np.zeros(a.shape[1], int) + y_top + depth
-    if course_break:
-        k = 0
-        x = L
-        while x < R:
-            w = int(rng.integers(4, 12))
-            edge[x:x + w] = y_top + depth + int(rng.integers(-2, 3))
-            x += w
-            k += 1
-    # the shadow leans down to the east (the light from the upper left)
-    edge = edge + ((np.arange(a.shape[1]) - L) / max(1, R - L) * q(1.2)).astype(int)
-    step(a, inw & (Y >= y_top) & (Y < edge[None, :]) & (a % 8 >= 1), -1, lo=0)
+def eave_shadow(a, L, R, y_top, rng, roof='slate'):
+    """The shadow the eave throws on the wall below it (volume.eave_band, eastward-edges 11.1): a
+    soffit row, a core two tones down, a softer band one tone down with a broken edge leaning down
+    to the east, at the roof's own depth. Its breaks draw from their own generator; the house's
+    draws the same numbers as before, so everything painted after the band (stacks, signs, weeds)
+    stays as it was."""
+    x = L
+    while x < R:
+        x += int(rng.integers(4, 12))
+        rng.integers(-2, 3)
+    return VO.eave_band(a, L, R, y_top, roof, np.random.default_rng((L * 7919 + R * 104729 + y_top) & 0xffffffff))
 
 
 def chimney(a, rm, x0, x1, y_top, y_bot, rng, wide=False, soot=1.0, fam=STONES):
@@ -1268,7 +1269,7 @@ def sack(a, cx, B, rng):
 
 def downpipe(a, x, top, B, rng):
     """An iron downpipe from the gutter to a shoe over a splash stone: lit west side, dark east,
-    clips into the wall, its shade beside it."""
+    clips into the wall (its shade beside it is volume.protrusion's, laid by building)."""
     Y, X = grid(a)
     pw = q(1.6)
     pm = (X >= x) & (X < x + pw) & (Y >= top) & (Y < B - q(1.4))
@@ -1278,7 +1279,6 @@ def downpipe(a, x, top, B, rng):
     for cy in range(top + q(6), B - q(4), q(9)):
         fill(a, x - 1, cy, x + pw + 1, cy + 2, code('iron', 1))
         fill(a, x - 1, cy, x + pw + 1, cy + 1, code('iron', 3))
-    step(a, (X >= x + pw) & (X < x + pw + 2) & (Y >= top) & (Y < B - q(1.4)), -1)
     fill(a, x - 2, B - q(1.4) - 1, x + pw + 3, B - q(1.4) + 2, code('iron', 2))
     fill(a, x - 2, B - q(1.4) - 1, x + pw + 3, B - q(1.4), code('iron', 4))
     V.prism(a, x - q(1.2), B - q(1.2), x + pw + q(1.6), B + 1, 1, 'stone_warm', 3, side=1)
@@ -1291,7 +1291,70 @@ TRADE = {'bread': 'bakery', 'leaf': 'herbalist', 'book': 'library', 'hammer': 's
 INSIDE = {'bakery': 'bread', 'herbalist': 'jars', 'library': 'books'}
 
 
+HALF_CELL = 4.0          # world px: half a cell of the soft grid (8 world px)
+
+
+def on_half_grid(x: float, w: float) -> float:
+    """A door's centre (x from the west end, world px) on the half-cell grid: the nearest line a
+    whole number of half cells from the front's middle (the foot, which sits on the soft grid), a
+    tie going towards the middle. A path of whole cells centres only on a cell's middle or edge
+    (scripts/art/kit/thresholds.py rules.door_path; Matt, 4 Nov: the doors are redesigned, not the
+    houses swapped)."""
+    r = (x - w / 2.0) / HALF_CELL
+    k = math.floor(abs(r) + 0.5 - 1e-9)
+    return w / 2.0 + math.copysign(k, r) * HALF_CELL
+
+
+def doors_on_grid(spec: dict) -> dict:
+    """The look with every door (and the forge's mouth) on the half-cell grid. What is drawn about a
+    door moves with it, so the front keeps its composition: the frame post that stands beside the
+    door on the side it moves towards (within 8 world px of its edge, so the gap between them stays
+    as drawn), and the storm's boards nailed over the opening. A window between the posts is
+    centred between them again. Everything else (the windows, the roof, the chimney, the sign)
+    keeps its place."""
+    s = dict(spec)
+    w = s['w']
+    width = s.get('mouth_w', 30) if s.get('kind') == 'forge' else s.get('door_w', 16)
+    moves = {}
+    if isinstance(s.get('door'), (int, float)):
+        moves[s['door']] = on_half_grid(s['door'], w)
+        s['door'] = moves[s['door']]
+    if s.get('doors'):
+        out = []
+        for dx, paint in s['doors']:
+            moves[dx] = on_half_grid(dx, w)
+            out.append([moves[dx], paint])
+        s['doors'] = out
+    posts = list(s.get('posts', []))
+    moved = set()
+    damage = [list(d) if isinstance(d, (list, tuple)) else d for d in s.get('damage', [])]
+    for old, new in moves.items():
+        delta = new - old
+        if not delta:
+            continue
+        edge = old + math.copysign(width / 2.0, delta)
+        for i, p in enumerate(posts):
+            if 0 < (p - edge) * math.copysign(1, delta) < 8:
+                posts[i] = p + delta
+                moved.add(posts[i])
+        damage = [[d[0], d[1] + delta] + d[2:] if d and d[0] == 'boards' and d[1] == old else d for d in damage]
+    if moved:
+        s['posts'] = posts
+        # a window in a bay whose post moved sits in the middle of that bay again
+        bays = sorted(set([0] + posts + [w]))
+        wins = []
+        for wx in s.get('windows', []):
+            bay = next(((a, b) for a, b in zip(bays, bays[1:]) if a < wx < b), None)
+            ok = bay and (bay[0] in moved or bay[1] in moved) and not any(bay[0] <= m <= bay[1] for m in moves.values())
+            wins.append((bay[0] + bay[1]) / 2.0 if ok else wx)
+        s['windows'] = wins
+    if 'damage' in s:
+        s['damage'] = damage
+    return s
+
+
 def building(spec: dict, seed: int = 0) -> 'V.Built':
+    spec = doors_on_grid(spec)
     rng = np.random.default_rng(seed)
     w, dep = spec['w'], spec['depth']
     wall_h = spec.get('wall_h', 40)
@@ -1334,6 +1397,9 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
     paint = spec.get('paint', 'sky')
     units = spec.get('units') or [[0, w, paint]]
     busy = []
+    openings = []
+    shapes = []                                # each opening's own shape (an arch's round head)
+    stood = np.zeros(a.shape, bool)            # what stands off the wall (11.5), for the tests
     inside = INSIDE.get(trade, 'home')
     for (ux0, ux1, upaint) in units:
         for wx in spec.get('windows', []):
@@ -1341,6 +1407,15 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
                 busy += window(a, L + q(wx), B - q(spec.get('win_top', 31)), spec.get('win_w', 13), spec.get('win_h', 13),
                                upaint, rng, wall=wall, shutters=spec.get('shutters', True), box=spec.get('box', False),
                                lit=spec.get('lit', False), inside=inside)
+                # the frame and glass set into the wall (eastward-edges 11.2), inside the reveals
+                cx_, yt_, ww_, hh_ = L + q(wx), B - q(spec.get('win_top', 31)), q(spec.get('win_w', 13)), q(spec.get('win_h', 13))
+                box_ = (int(cx_ - ww_ / 2) + q(1.2), int(yt_) + q(1.2), int(cx_ + ww_ / 2) - q(1.2) + 1, int(yt_ + hh_))
+                shapes.append(VO.recess(a, box_))
+                openings.append(box_)
+                # its sill stands proud: a lit top, its drip on the wall (a planter throws its own)
+                sx0_, sx1_ = int(cx_ - ww_ / 2) - q(1.4), int(cx_ + ww_ / 2) + q(1.4)
+                if not spec.get('box', False):
+                    VO.sill(a, sx0_, sx1_, int(yt_ + hh_), int(yt_ + hh_) + q(1.8))
     doors = spec.get('doors', [[spec['door'], paint]] if 'door' in spec else [])
     if spec.get('kind') == 'forge':
         busy.append(forge_mouth(a, L + q(spec['door']), B, spec.get('mouth_w', 30), spec.get('mouth_h', 27), rng))
@@ -1349,6 +1424,13 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         for (dx, dpaint) in doors:
             busy.append(door(a, L + q(dx), B, spec.get('door_w', 16), spec.get('door_h', 26), dpaint, rng, wall=wall,
                              arch=spec.get('arch', False)))
+            # the leaf set back in its frame (eastward-edges 11.2), above the threshold step
+            w2_ = q(spec.get('door_w', 16))
+            box_ = (int(L + q(dx) - w2_ / 2), B - q(spec.get('door_h', 26)), int(L + q(dx) + w2_ / 2), B - q(2.0))
+            shapes.append(VO.recess(a, box_, arch=spec.get('arch', False)))
+            openings.append(box_)
+    # each opening's centre in texels from the foot: on the half-cell grid (a multiple of 12)
+    info['doors'] = [L + q(dx) - p.ax for (dx, _paint) in doors] if spec.get('kind') != 'forge' else [L + q(spec['door']) - p.ax]
 
     # the trade's own things on the front
     if trade == 'bakery' and doors:
@@ -1372,9 +1454,13 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         if doors:
             px = L + q(doors[0][0]) + q(spec.get('door_w', 16) / 2) + q(4.0)
             m = chamfer(q(3.4), q(4.6), 1)
+            before = a.copy()
             put(a, px, B - q(19), m, 'brass', pillow(m, 3, rng, flecks=0))
             for k in range(3):
                 fill(a, px + 3, B - q(19) + 3 + k * 3, px + q(4.6) - 3, B - q(19) + 4 + k * 3, code('brass', 1))
+            made = (a != before) & (a >= 0)
+            stood |= made
+            VO.protrusion(a, made, (before >= 0) & ~made, standoff=0.5)       # a plate stands off a little
 
     # the roof ------------------------------------------------------------------------------------
     hip = q(spec.get('hip', 0))
@@ -1388,33 +1474,51 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         thatch_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=hip)
         thatch_ridge(a, rm, rx0 + hip, rx1 - hip, y_r, rng)
         thatch_eave(a, rm, rx0, rx1, y_eave, rng)
-        eave_shadow(a, L, R, y_eave, q(4.4), rng)
+        eave_shadow(a, L, R, y_eave, rng, roof='thatch')
+        info['eave_top'] = y_eave
         if trade == 'herbalist':
+            before = a.copy()
             herb_bundles(a, L + q(4), R - q(26), y_eave + q(0.6), rng)
+            made = (a != before) & (a >= 0)
+            stood |= made
+            VO.protrusion(a, made, (before >= 0) & ~made)
     else:
         y_eave = y_e + q(0.5)
         rm = V.roof_mask(a.shape, rx0, rx1, y_r, y_eave, hip=hip)
         a[rm] = -1
         fams = ('timber_warm', 'timber', 'timber_cool') if roof == 'shingle' else ('slate', 'slate', 'slate_cool')
         slate_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=hip, fams=fams,
-                   row=2.8 if roof == 'shingle' else 3.2, width=(3.0, 4.6) if roof == 'shingle' else (3.4, 5.2))
+                   row=2.8 if roof == 'shingle' else 3.2, width=(3.0, 4.6) if roof == 'shingle' else (3.4, 5.2),
+                   moss=spec.get('roof_moss', 0.07), lichen=spec.get('roof_lichen', 0.06), calm=spec.get('slate_calm', False),
+                   eave_dark=spec.get('eave_dark', False))
         ridge_tiles(a, rm, rx0 + hip, rx1 - hip, y_r, rng)
         if hip:
             hip_lines(a, rm, rx0, rx1, y_r, y_eave, hip)
         else:
             verges(a, rx0, rx1, y_r, y_eave, rng)
         gb = fascia_gutter(a, rx0, rx1, y_eave, rng, gutter=True)
-        eave_shadow(a, L, R, gb, q(4.4), rng)
+        eave_shadow(a, L, R, gb, rng, roof=roof)
+        info['eave_top'] = gb
         # a downpipe on the end of the front with the most clear wall
         cands = [(L + q(1.2), min([abs(L + q(1.2) - (b0 + b1) / 2) - (b1 - b0) / 2 for (b0, b1) in busy] or [99])),
                  (R - q(3.0), min([abs(R - q(3.0) - (b0 + b1) / 2) - (b1 - b0) / 2 for (b0, b1) in busy] or [99]))]
         px, clear = max(cands, key=lambda c: c[1])
         if clear > q(2):
+            before = a.copy()
             downpipe(a, int(px), gb - 1, B, rng)
+            made = (a != before) & (a >= 0)
+            stood |= made
+            VO.protrusion(a, made, (before >= 0) & ~made)
             busy.append((px - q(2), px + q(3)))
     info['roof'] = rm
     info['rx'] = (rx0, rx1)
     info['y_eave'] = y_eave
+    info['openings'] = openings
+    info['opening_shapes'] = shapes
+    info['stood'] = stood
+    info['wall'] = (L, R, y_e, B - fh)
+    # its shadow on the ground (eastward-edges 11.6), laid by the zone painter and the kit index
+    info['cast'] = VO.house_cast(spec, V.D)
     for cx in spec.get('chimney', []) or []:
         cw = q(spec.get('chimney_w', 9))
         x0 = L + q(cx) - cw // 2
@@ -1423,7 +1527,11 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
                 soot=1.8 if trade in ('bakery', 'smithy') else 1.0)
     if spec.get('sign'):
         sx, kind = spec['sign']
+        before = a.copy()
         hanging_sign(a, L + q(sx), y_eave + q(4.5), kind, rng)
+        made = (a != before) & (a >= 0)
+        stood |= made
+        VO.protrusion(a, made, (before >= 0) & ~made, standoff=1.5)       # a board on its bracket
     foot_weeds(a, L, R, B, busy, rng)
     break_runs(a, rng, q(14))
     V.finish(p)

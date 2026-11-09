@@ -1,0 +1,100 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_crossroads_apothecary",
+  "name": "Morel's apothecary facade",
+  "kind": "structure",
+  "biomes": [
+    "crossroads"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "storm_torn",
+      "note": "Torn weathered timber-and-plaster facade with damaged shop framing and displaced equipment, leaving the existing entrance legible."
+    },
+    {
+      "id": "reopened",
+      "note": "Repaired work window, orderly labelled jars and copper still in the side bay; herbs hang on a functional drying rail, with no fungal ornament."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      264,
+      276
+    ]
+  },
+  "placement": {
+    "role": "structure",
+    "ground": {
+      "allow": [
+        "paving",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "other_footprint"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "composition": "edge",
+    "stages": [
+      "broken",
+      "restored"
+    ],
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "enter",
+      "triggers": []
+    }
+  },
+  "story": {
+    "lore": "Morel foreshadows the reopened apothecary in act 1. The restoration quest ID is not assigned here."
+  },
+  "audit": {
+    "size_class": "civic",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom. One authored site composition; repeated construction components remain shared.",
+      "Priority: P1.",
+      "Purpose: Give the act-1 service a distinct chemist identity without changing Morel into a mushroom figure.",
+      "Visual brief: Weathered timber and plaster facade, large work window, neatly stacked labelled jars and a copper still in the side bay. A hanging herb rail is plausible shop equipment; no giant mushroom roof, fungal growth or wizard tower.",
+      "Source: game/data/plans/crossroads.json; docs/vision/vertical-slice.md; game/kit/pieces/structure/crossroads_herbalist.json",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Reuse crossroads_herbalist seed and retain its location/door. New service menu/quest integration waits for the story owner.",
+      "Per-zone maximum: 1. The later progression weapon lines remain proposals and do not enlarge this shop.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

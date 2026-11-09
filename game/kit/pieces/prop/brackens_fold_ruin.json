@@ -1,0 +1,137 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "brackens_fold_ruin",
+ "name": "Broken sheepfold",
+ "kind": "prop",
+ "biomes": [
+  "brackens",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/brackens/brackens_fold_ruin.png",
+   "foot": [
+    52,
+    116
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A round fold tumbled to a horseshoe: the back stands, the front is footings and spilled stones."
+ },
+ "geometry": {
+  "size_px": [
+   106,
+   120
+  ],
+  "size_cells": [
+   5,
+   4
+  ],
+  "z_sort": "foot",
+  "height_px": 120,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -12.0,
+    -29.0,
+    24,
+    5
+   ]
+  },
+  "foot": [
+   52,
+   116
+  ],
+  "footprint": [
+   [
+    -2,
+    -4
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    2,
+    -4
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "ruin",
+  "provides": [
+   "feature",
+   "view"
+  ],
+  "composition": "free",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 4,
+    "note": "a fold stood by the drove road; its ruin still does"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    28,
+    4
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "unsized (a ruined sheep fold, a ring of drystone walls 4 to 5 cells across: no fold or ruin kind in the guide; walls to 34 at the back, size-guide drystone wall 14 world px)",
+  "eastward_ref": "12 (the drystone and boulder walls by the thatched hut), 17 (the farm fence and gate, 40 E = 0.75 A)",
+  "painter": {
+   "module": "scripts.art.kit.sets.brackens",
+   "fn": "brackens_fold_ruin",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/brackens.py",
+  "todo": []
+ }
+}

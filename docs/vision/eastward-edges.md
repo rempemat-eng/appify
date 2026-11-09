@@ -42,6 +42,8 @@ Crop `01-adult` (`eastward_study.py crops`): The adult, native and 4x.
 
 **1.5 Diagonals are 45 degree chamfers of single steps; curves are pixel circles.** The farm ledge's east end in 13 turns down to the south in a chamfer 11 px long made of 1 x 1 steps with a 2 px dark edge (04-diagonal). The cliff in 12 has no long diagonals: its plan steps in rectangles. Rounded corners are pixel circles: the sand plateau's outer corner in 39 steps 2, 1, 1, 1 (radius 5); its inner (concave) corner is a 2 to 3 px chamfer. Ours: chamfers in single steps, outer radius 2 to 3, inner chamfer 1 to 2; long diagonals only as a staircase of whole cells (world-rules 2.3).
 
+**1.5a The soft grid, as Matt drew the line (26 Oct 15:36).** With an Eastward forest screenshot (raised grass plateaus with earth ledges, a dirt path, wooden steps): "this is what i mean with soft grid. edges and paths are a bit block like but they are not sharp like minecraft. think about how this could be implemented and do it". What it governs, what it does not, and the measured rules are in "What the soft grid governs" (after section 8). The module is `scripts/art/native/softgrid.py`, the swatch sheet `scripts/art/softgrid_swatches.py`; no zone uses it until Matt approves the swatches.
+
 **1.6 Outlines follow the grid: straight runs, rounded corners, turns at cell lines** (Matt, 21 Oct 11:44, on the first pilot cliff: "i like the rocks on the cliff face here. but remember the grid shape like in eastward"). Every rim, foot, ledge end, side and pool surround is drawn on the 8 px cell (16 art px at 2x). A run goes straight along x or y and wobbles at most 1 px (the lip's wobble, 1.4 and 3.1, not the plan's). It changes direction only at a cell line, so a curve or a diagonal in the plan becomes a staircase of whole cells. A side face is vertical. Corners are rounded pixel circles, about 2 to 3 world px in radius (4 to 6 art px at 2x). This replaces the "organic rim" rule the cliff core used on the morning of 21 Oct (lobes, no straight run over 48 to 64 px), which Matt overruled. Inside the outline the texture has no grid (1.3): the rounded rocks, the lawn's patches and the snow's drifts keep their own shapes. The cliff core snaps every tier to the grid by cell majority (`World._snap`), re-rounds the corners at each density, and `--check` requires at least 70 % of every render's rim columns to lie on a cell line (`rim_steps`, `RIM_ON_GRID`).
 
 Crop `03-ledge` (`eastward_study.py crops`): Rim of the farm ledge.
@@ -98,6 +100,12 @@ Crop `08-side` (`eastward_study.py crops`): Side of the cliff in 12.
 **5.2 Grass to cobbles or paving: the same frayed grass edge over a laid surface.** The cobble path in 13 is round cobbles 8 to 10 px in two close tones; grass breaks over its edge as in 5.1. Built paving (16) meets the street with a kerb: slabs 34 px long, a lit top row and a 2 to 3 px dark front, a low face of its own.
 
 **5.3 Ground to still water: a small bank and a light line.** The canal bank in 13 (x 60 and 150): the grass lip, a 1 px rim line, an earth face E 4 to 5 px (ours 2), then **a 1 px very light waterline** (L 212) and the water. Under a north bank the water is darker in a band **E 5 to 17 px (ours 2 to 8)** that steps back to the water's body in 3 to 4 steps (pond in 37). Banks of stones (the pond in 37) are stones E 8 to 12 px (ours 4 to 6), each outlined, the waterline light only in the gaps. No foam on still water; white spray only where water falls.
+
+**5.3a Banks follow the projection; one rim round every other shore** (Matt, 4 Nov, on the kit lab: "some stone borders of the water are not entirely clean": a brown plank-like strip down an east bank, the rim changing from dark to light to brown along one bank, stones half across the waterline, corners that did not join). In this top-down 3/4 view only a bank with land to its north turns a face to the camera. A bank with land to its east or west is seen edge-on and one with land to its south from behind, so neither shows any face, only the rim: a texel of wet earth at the land's edge and the water's mid tone inside it, running on into the lit shallows, the same on every such shore, turf tongues included. The rim is a tone softer than the north face (Claude A, 4 Nov, against 15, whose channel sides step from the mud through a mid band into the body with no light line and no near-black edge): its wet earth is `earth_cool` 1, not the face foot's near-black `earth_cool` 0, and it has no light waterline; the north bank keeps its light waterline (13). `softground.RIM_EARTH` and `RIM_LINE` hold the two tones for both painters. Where a bank's edge steps so that land lies a texel north of the water for a short run (a lump on a side shore, a rounded corner), the face is left out: a face row runs at least `bank_h + 3` texels. The face's end beside open water is its wet foot, so the rim runs on unbroken round inside and outside bends, a step lighter where it leaves the face. A stone standing in the water has a wet contact: its foot a tone darker, a light ripple line on the water hugging it and the water round it a tone darker; a stone or rock placed as a prop stands wholly on land. Eastward's channels (15) and canal (13) show the same: faces only on the north banks, the side shores a plain line. `softground.water`, `edges.bank` and `softground.seat_stones` draw it; `test_kit.WaterBanks` checks the painters per orientation and every baked ground.
+
+**5.3b A fall's lip and its plunge** (the woodland review, 4 Nov, docs/reviews/2026-11-04-woodland-water.md). The lip is exactly the width of the channel that feeds it, and at the rim so is the sheet, with nothing above the rim or over the lip stones either side; below the rim the sheet may widen a few texels as it falls, as the woodland's approved sheet does, never with spray on its face (Matt, 2 Nov, about the top: commit 859e1c53; ground-rules 2; review round 8, D8-1): the channel's last 3 to 4 rows lighten into a glassy tongue, the bend line bows a texel or two downstream, and the white water breaks under it in two or three runs of different lengths with gaps where the darker sheet goes on (`rocks.fall`, `rocks.crest_breaks`; the kit's `structures.crest_foam`). Where the sheet lands, the foam keeps to the foot plus 8 px each side and about 10 px down. It is a heap of broken clumps, never a plate: a white cap on the upper left of each, a pale blue-grey body, the pool's mid blue between them, a darker band under the downstream edge, the outline fraying into flecks that dissolve into the pool (Eastward 37's mist). Spray flies up beside the foot over the water only, never on the face (Matt, 2 Nov), and ripple arcs spread downstream. The foam churns in every frame (clumps swell, drift and break, flecks pop, the arcs travel), and frame 0 is the still. `rocks.plunge` draws it for the woodland and the kit's pieces alike. `detail.foam_flat` fails a wide, solid, two-tone plate (calibration W15). A fall drops only where the land does (review round 2, L1 to L4): the woodland's whole upper lawn is a tier up behind a rock face 32 px tall in the fall's own grey stone (`screen.terrace`, `softground.ledge` kind `rock`, 2.3: a clean lip with no hanging blades (3.1), the under-lip shade in horizontal slabs, lit boulders with the odd larger one of 30 to 40 px, moss in the dark joints and on shaded undersides rather than caps on the crowns, vines from the lip, ferns crossing the rim, fallen stones at the foot), running from the west edge behind the oak grove to the east edge. A face that tall is rock, never an earth ledge (2.1, 2.2: an earth face is about half a character tall). Its foot runs on one line: on the lower lawn, or where the river runs under it as wet rock with wet pebbles down to the light waterline, with no turf lip, weeds or old bank. Log steps (5 world px a step, 6.1) bring the path down to a landing one cell deep of open path (at least 24 art px at density 3, measured on the rendered ground); the bridge, painted after the terrace on its final waterline, starts its north abutment at the water's edge (review round 4, L4-1). Nothing stands over the channel in its last stretch above the lip (the run-in is `clear` to the water painter). The moving water covers the rill and the channel above the fall as well as the pool and the stream, in one strip a stretch of water (the rill's and the stream's, docs/godot.md's budget), and its lanes run in whole texels along the nearest of eight directions, each lane on its own phase, so no lone speck drifts across the current. It lifts only texels whose final ground is water, the sheet or its foam, never a deck, timber, the wet rock foot, reeds, stones or a face, in any frame (round 4, F4-1); the kit's fall loops own only the sheet and the inlet the bake lays under every fall. The kit's pieces draw their sheet with the woodland's own painter (`rocks.sheet`, which `rocks.fall` paints the woodland's fall with), parameterised only by the width, the height and the seed, so they are the approved design by construction (round 8: rounds 5 to 7 kept re-deriving a second design that drifted): its streak lanes, its value ladder (a lit west mass of white and pale streaks, the body, a shaded east side with a navy edge), its widening and wobbling edges and its crest (no white run of the crest is longer than 24 texels, a cell: a longer one is split by a gap of 3 to 5 texels, round 8, K8-1; the woodland's longest is 23, so its sheet is unchanged); the navy east band is at most 15 % of the lip and never over 9 texels, the sibling's widest (K8-2); on a sheet under 100 texels tall a streak runs at most 13 world px, so a short piece is as broken as the same height of its sibling (P8-2); each streak falls a step of its own period a frame, so the loop closes; a piece's wobble and phase run from its rim row, so its picture is its bake's frame 0; the tongue's two tones meet a texel earlier or later row by row. `test_kit` re-paints the woodland's sheet through that path and compares it byte for byte with its ground. A sheet's marks change at least four times as often across as down, with a median vertical run of six texels or more (`bands.fall_grain`; the woodland's: 10 and 15). Measured on its ribbon west of the navy band (s < 0.85, as the sibling is measured), it is as light as its sibling and as wide in range: mean lightness at least 160, the east half 140, at most a tenth under 90 L, a spread of at least 48, the east third at least 15 % under 100 L, at least 28 % over 230 L, and no lilac snow 0 to 3 (`bands.fall_value`; rounds 6 and 7). In every frame no larger share of its ribbon's columns holds one tone over 40 rows than in the sibling's worst window of the same height, and over the whole sheet no patch of water 1 holds more than 9 texels a row of its height (the sibling: 7.97; round 8, P8-2 and K8-2). In each row of its upper three quarters the navy band is at most ceil(min(0.15 of the row's width, 9)) + 1 texels (round 9, T9-1). The flat test guards against slabs only: a short sheet's streak (39 texels) is one under its 40-row window, so `bands.fall_grain`, asserted for every piece and frame, is what guards the streaks (T9-1). A seated clump covers any stretch of four or more foot columns the foam would miss, and nothing water-blue or white lies on the face beside a baked fall. Under the foam a soft shade follows the clumps' lobes, and the spray is a loose fan of one- and two-texel specks thinning outward (K4-3). No official Eastward shot shows a falling sheet (the Steam store's base game and Octopia shots, the press images checked, 5 Nov), so a fall's detail bar is its house sibling, the woodland's sheet (`eastward_bands.json` groups.fall), never 37's mist over a lawn (groups.mist; round 5, W5-1). Open polish, backlog (round 9, P9-1, not yet fixed): `rocks.split_long_runs` draws its cuts uniformly, so on the wider lips (`waterfall_3`, `_4` and their tall pieces) a long run can split into neighbours within a texel or two of each other (9, 8, 9), which reads at 6x to 10x as evenly spaced teeth, though as broken water at play scale; the fix is to redraw a cut that leaves a run within 2 texels of its neighbour, or to draw cuts from a skewed range, keeping the full-depth gaps.
+
+**5.3c A shore is the land's own material** (Claude A on the Act 1 props' detail audit, round 9, F9-1 and F9-2, 9 Nov). The turf bank of 5.2 and 5.3a belongs to grass (13's canal). A quay ends in a quay wall: on the land a coping, its lit edge (stone 4) over its front (3); on the water a shadow line, two courses of dressed blocks (lit tops, lit west ends, joints at tone 1, the lower course a tone down), a dark wet foot with weed in clusters of 2 to 4 texels, then the light waterline and the bank's shade; its outline runs straight on the soft grid with rounded corners (the water's lumps fade out within a cell of it). On a quay's other shores only the coping's lit edge and 5.3a's rim in wet stone. A beach has no face on any shore (it shelves): its last 6 to 9 rows a tone darker (wet shingle, a few lit tops kept), a swash 1 to 2 texels wide that wobbles on the soft grid, then lit shallows and no shade under it. Neither grows a turf lip, turf tongues, bank stones, reeds or lilies. A bend's spit of shingle grows only off a beach's corner, never a lawn's or a quay's, its outline smooth on the soft grid (`softedge.soft`) with a texel of wet shingle round it and lit shallows 2 to 3 texels wide outside; a river bend's scour lies only where an outer bank stands beyond it and fades out at both ends. Which shore a land material has is its `<material>_over_water` transition's painter (`edges.bank`, `edges.quay_wall`, `edges.beach`), read by the bake (`bake.shore_kinds`) so the editor's tiles and the baked ground agree; `softground.water(quay=, beach=)` and `surface.water_widths(spit_ok=)` draw them, and `test_kit.WaterBanks` checks both.
 
 **5.4 Dither belongs to light, never to a boundary.** Checker dither appears only where light or shade fades: sun patches on the paths in 12 and 13, the fade round the pits in 15, the edge of the forest. No material boundary in the studied crops dithers. (This is already the house rule: `house-style.md` 4.)
 
@@ -168,9 +176,222 @@ E is Eastward's native px at an adult of 54; ours is at an adult of 25 (k = 0.46
 | 6.3 | Ramps                    | none                                                                                                                               | none                                                   |
 | 7   | Cast shadows             | east, about 0.6 x height, 43 % darker, soft 4 to 10 (39)                                                                           | east and down, core two tones, rim one tone 2 px       |
 | 8   | Plants over edges        | one per 34 to 68 of rim, overlap 4 to 12 (13)                                                                                      | one per 16 to 32, overlap 2 to 6                       |
+| 11.1 | Eave band               | soffit line 1 to 2 (L 33 to 79); core 2 to 5, 28 to 60 % darker; softer band 3 to 8, broken edge; 3 to 4 under a gable verge, 10 to 15 under a slab, a sign box or thatch (B1, B5, B7, B8) | soffit 62 %; core 45 to 50 %, flat; fade 18 %; 16 art px under slate, 21 under thatch, broken, leaning east |
+| 11.2 | Recesses                | head 2, west reveal 1 to 2 dark, east lit; sill 3 lit over a 2 to 3 drip (B1, B7)                                                  | head 1 (55 %, round under an arch), west 0.7 (40 %), east sliver lit; sill lit, drip 1 (40 %) |
+| 11.3 | Corners                 | quoins a step lit; wall a step darker over the last 5; dark seam, lit arris; no side wall (B3, B1, B6, B5)                          | west arris lit; east 3 at 22 %, seam 42 %              |
+| 11.4 | Foot                    | a step darker over 4 to 14, a 1 to 2 near-black contact line, ground lit below (B1, B5, B6, B7)                                    | 3 at 28 % over the plinth, darks kept; contact row tone 0 |
+| 11.5 | Protrusions             | an L of shade east and under, 1 to 3 (B1, B7, B3)                                                                                  | 0.8 east, 1.2 under, 20 %                              |
+| 11.6 | Ground cast shadow      | a column east from the back to the foot line, following the silhouette; 0.2 to 0.4 A wide; core 45 to 63 % darker, edge 3 to 10; level or a little north, never before the front (B2, B3, B4) | solids (45 degree roof, stacks) projected 0.19 east, 0.10 north a px of height (0.30 A at a 40 wall); one, two, three tones in from the edge (rim 3, then 2.6) |
 
 ## 10. What this changes
 
 - **Sea of Stars, CrossCode and Chained Echoes are no longer references for edges or the soft grid.** Older notes that compare an edge, a face, a corner or a cliff with them are history. The detail bar's numbers (`detail_bar.py`) are not edge rules and stay as they are; its stream baselines include three Sea of Stars reaches, which Claude A may want to replace with Eastward canals.
 - **Already in line:** the 8 px cell (1.1), rounded corners and staircase diagonals (world-rules 2.3), the 12 and 16 low step and the 32 tier (world-rules 3.2), dither only for fades.
 - **To change in the generators:** faces with vertical bands or columns (2.4); grass lips with hanging teeth (3.1); a lit line at a foot (3.2); outlines between ground types on one level (4.1); hard straight path edges (5.1); stairs that do not reach the upper floor or the path (6.1).
+
+## 11. Building volume and shadows
+
+Matt, 4 Nov 11:45: "one thing i really want you to perfect are the shadows so that 2d houses at least look a little 3d. here is an example from eastward (you should probably look up more)". His example is a building's corner: a quoin column lit on its face, a deep recessed band under the fascia, the wall darker towards the corner, a hard dark contact line at the foot, and a shadow column on the street to the east with a signal pole casting into it.
+
+**Sources and yardstick.** Eight buildings in official shots, read on native frames at the same character height (John 54 E px; ours 74 art px at density 3, so an E length times 1.37 is ours in art px and times 0.46 in world px):
+
+- B1, the shop with the GO door in 01 (native 186 to 288, 96 to 164).
+- B2, the shop with the balcony west of the stair in 01 (60 to 175, 40 to 180).
+- B3, Matt's crop (his phone screenshot, about 5 screen px a native px).
+- B4, the shops on Matt's street screenshot of 28 Oct (2.6 screen px a native px).
+- B5, the farmhouse in 17.
+- B6, the railway halt in 08.
+- B7, the MEM shop in the 2018 press still 002 (Chucklefish's announcement, lossless 1280 x 720, from the Gematsu gallery of 26 Apr 2018).
+- B8, the thatched cottage at night in 38.
+
+The Steam store screenshots of both games and the 2023 Octopia press gallery turned out to be the frames the team already had. 4Gamer's 12 Aug 2021 set added night scenes (a station, a city street), used for 11.8. No crop goes into the repository. Pixpil's notes on making Eastward say its scenes are "a 3D game with a 2D perspective": roofs and walls are separate layers rebuilt in 3D and hand-painted bump maps light them. So its building shadows come from the building's volume, not from its sprite, and ours are drawn the same way (11.6).
+
+The values below are L, luminance from 0 to 255, read as runs down and across columns (`eastward_study.py strip`). The module is `scripts/art/native/volume.py`; `houses.building` applies it to every house, and its tests are in `test_kit` (HouseVolume).
+
+**Building volume uses the measured depth** (Claude A's review of the first pass, 4 Nov: the house rule's two steps left the fronts nearly unchanged). Every shadow that carries a building's volume is a measured luminance drop: the eave band, the corners, the foot, the recesses, the sills and the ground column. It is reached by the fewest steps down the texel's own ramp, one to three (`volume.darken`). So it stays on the palette and turns cool by the ramp's own lean towards dusk violet; it never mixes colours or dithers.
+
+| Part | Drop | Steps it takes |
+| ---- | ---- | -------------- |
+| Soffit row | 62 % | three |
+| Eave core | 45 to 50 % | three on stone and plaster, two on timber and paint |
+| Eave fade | 18 % | one, two on plaster |
+| East corner | 22 % | one or two |
+| Corner seam | 42 % | two, three on plaster |
+| Foot | 28 % | two |
+| Opening head | 55 % | two or three |
+| West reveal | 40 % | two, three on plaster |
+| Sill drip | 40 % | two, three on plaster |
+| Ground column | one, two and three tones from its outer edge in | one, two, three |
+
+On grass two steps are 43 % darker and three are 63 %, so the column's core sits in Eastward's 45 to 63 %. house-style 6's two steps still hold for props.
+
+**11.1 The eave throws a band: a soffit line, a core and a softer band with a broken edge.**
+
+- Under the fascia, the slab or the thatch's edge comes a 1 to 2 px line that is the front's darkest value outside its openings: L 75 to 79 (B1, B2), 36 to 38 (B5), 33 to 42 (B7).
+- Then a core of 2 to 5 px. B1 has 4 px at L 79 against the wall's 111 (29 % darker). B7 is 48 % darker; at night B8 has 5 px at L 48 against 120.
+- Then a softer band of 3 to 8 px one step down (B1: 6 px at L 97 to 103). Its lower edge is broken by bumps 2 to 3 px deep every 10 to 15 px (B1).
+- The whole depth follows the overhang: 3 to 4 px under a gable's eave in full sun (B5: the line, then L 100, 110, 113 back to the boards), 10 to 12 under a balcony slab or a sign box (B1, B7), 13 to 15 under thatch (B8).
+- In the band the wall's highlights are gone: its joints still show, its lit tops do not.
+
+Ours:
+
+- **Depth by roof.** Our fronts are eave sides. Slate and shingle overhang them with a fascia and a gutter, as B1's slab, B6's eave and B7's sign box overhang theirs. So under slate and shingle the band is E 10 to 12 px: a soffit row, a core of 1.8 world px (5 art px) and a fade of 3.3 world px, 16 art px in all. B5's 3 to 4 px belongs to a gable verge, which our front view never shows. Under thatch it is E 15: a core of 2.3 world px and a fade of 4.4, 21 art px.
+- **Values.** The soffit row is 62 % darker. The core is 45 % darker under slate and 50 % under thatch, a flat field with no tone above 1. The fade is 18 % darker with no tone above 2. Stone and plaster lose their own lit tops in the band and keep their joints (B1: the core one run at L 79).
+- **Edge.** Under slate the lower edge is broken by bumps of up to 0.6 world px every 3 to 5 world px. Under thatch the fringe of straw breaks it, 1.3 world px every 1.6 to 3. It drops 1.2 world px from west to east (house-style 6: "a row deeper towards the east").
+- timber (posts, lintels, plates and boards) is stepped down with the band but keeps its own modelling, since a beam under the eave still shows its lit arris and dark underside. `review:asset`'s volume check flagged a flattened lintel and the lowest board of the hut.
+
+**11.2 Openings are recesses.**
+
+- The window in B1 has a 2 px dark head inside its frame, a dark west reveal of 1 to 2 px and a lighter east one. Its sill is a 3 px lit slab 1 to 2 px wider than the opening on each side, with a 2 to 3 px dark drip under it.
+- The doors in B1 and B7 have a 1 to 2 px dark head and a 1 px dark west reveal.
+
+Ours:
+
+- the head: 1 world px, 55 % darker and no lighter than tone 1. It follows the opening's top, so under the library's arch it is an arc;
+- the west reveal: 0.7 world px, 40 % darker and no lighter than tone 2;
+- the east reveal's last art px a tone up;
+- the sill's top row a tone up, with its drip 1 world px deep and 40 % darker on the wall under it. Where a planter hangs, the planter throws its own shade instead;
+- `window` and `door` draw the reveals, the lintel and the sill; `volume.recess` and `volume.sill` deepen them on every opening, so a redrawn door keeps them.
+
+**11.3 Corners turn: lit quoins, the wall darker towards the east corner, no side wall.**
+
+- In B3 the quoins are a step lighter than the wall (L 161 to 173 against 142 to 147).
+- The wall is a step darker over its last 5 px or so before the corner (L 122).
+- Then come a 1 px dark seam, a 1 to 3 px lit sliver at the arris, and the outline.
+- No front-on shot shows a side wall (B1, B2, B5, B6, B7, B8): Eastward's buildings are fronts and roofs, and the corner does the turning.
+
+Ours:
+
+- the west arris 2 art px a tone up;
+- the east end, 3 world px (9 art px) including its quoins, 22 % darker;
+- its last 2 art px 42 % darker (the seam);
+- the quoins and corner posts as drawn (west lit, east turned away).
+
+**11.4 The foot is darker and ends in a contact line.** The wall is a step darker over the 4 to 14 px above the ground:
+
+| Shot | Band | Its value | The wall above |
+| ---- | ---- | --------- | -------------- |
+| B1   | 9 px | L 82 to 100 | 111 |
+| B2   | 4 px | L 83 to 93 | 119 |
+| B5   | 14 px | L 84 to 102 | 130 |
+| B6   | 6 px | | |
+
+It ends in a 1 to 2 px near-black contact line (B6 L 41, B7 L 38 to 47), and the ground begins lit in the next row. Ours: the wall 3 world px (9 art px) over the plinth, 28 % darker. Its darks (tones 0 and 1, the joints) stay as they are, so the lowest board or course keeps its depth. The plinth keeps its lit ledge, its darker foot and its tone 0 contact row.
+
+**11.5 What stands off the wall throws an L of shade.**
+
+- B1's downpipe (3 px) has a 1 px shade east of it.
+- Its wall boxes have 2 to 3 px under them and 1 to 2 east.
+- B7's sign box throws its whole band (11.1).
+- In B3 the signal pole stands in the building's ground column and casts into it.
+
+Ours: a sign, a downpipe, a plate or a bundle on the wall throws a shade 20 % darker on the wall, 0.8 world px east and 1.2 under, scaled by how far it stands off (`volume.protrusion`). Sills, window boxes, shutters and stacks keep the shade they already draw.
+
+**11.6 The building's cast shadow is a column east of it, shaped by its volume.**
+
+- B2, B3 and B4 lay a column on the ground beside the east wall. It runs from the back of the footprint down to the front's foot line and never falls before a lit front.
+- Its outer edge follows the silhouette: it bulges where B2's balcony stands out, and it is widest where the roof is highest.
+- It is 0.2 to 0.4 A wide: B2 about 12 px, B3 16 (a 6 px core and 10 px of fade), B4 22.
+- Its core is 45 to 63 % darker than the lit ground (B4 L 86 against 161 to 186; B3 L 55 to 72 against 184 to 190), and its edge fades over 3 to 10 px.
+- It lies level or leans a little north, narrowing towards the foot corner (B3). The street's sun differs by scene (7.1), but in every studied shot the column ends at the front's foot line.
+
+Ours (`volume.house_cast`):
+
+- The house is solids: its walls, its roof with its real profile, and its stacks.
+  - The roof is the eave's rectangle and the ridge at a cottage pitch of 45 degrees (half the depth over the eave), shortened by the hips.
+  - Each stack is its own solid, rising its height over the ridge.
+- Each solid is projected 0.19 east and 0.10 north per world px of height and filled as its hull. At a 40 px wall that is 7.6 world px (0.30 A) at the eave, more at the ridge and the stacks.
+  - A gable's column ends in its slanted verges, reaching furthest east at the ridge's line.
+  - A hip ends in its slope.
+  - A stack that stands beyond the roof's shadow shows as its own notch. On the seven Crossroads houses every stack stands west of the east gable, so its shadow falls inside the roof's; its shadow down the slates is drawn on the roof (`houses.chimney`).
+- Nothing is drawn south of the foot line.
+- The steps follow B3's soft edge and dark core, counted from the column's outline inward:
+  - the outer 3 world px (9 art px, E 6.6) one tone;
+  - the next 2.6 world px two tones;
+  - deeper in, three.
+
+  The ground keeps its own texture under it, its tufts and patches stepped down, never replaced.
+- **One sun is Matt's call (open).** Props keep the biome's east-and-down projection (7.2). A house's shadow leans a little north, as Eastward's does, because a lean south would lay a band across its own lit front and doorstep, which no Eastward shot shows.
+
+Where it is drawn:
+
+- Crossroads: `town.py`, from `Built.info['cast']`.
+- Kit zones: the kit index carries it as the piece's shadow mask (kind `volume`, steps 1 to 3). The editor, the game's ground (`terrain.gdshader` steps a texel by the mask's value) and `compose` lay it like a tree's.
+- The bake keeps the mask's steps with `volume.bake_cast` and lays them with `volume.lay_levels`: each texel one, two or three tones down from the ground it had, the same as `town.py` and the runtime (`test_kit` HouseVolume compares a baked house per texel with both). The bake's variant context and `detail_bar` count only a tree's mask as a crown (`bake.is_crown_mask`). No committed kit zone has a house yet.
+
+**11.7 Roof against wall.**
+
+- In B5 the lit roof plane (L 119) sits a step under the lit wall (130 to 155), and the shaded plane 2 to 3 steps under it (L 35 to 50).
+- B6's tiles carry a dark line under every course.
+- The soffit is the darkest band of the front (11.1).
+
+Ours: the slate roof's lit plane, its courses and the hips turned away already follow (`houses.slate_roof`, `hip_lines`). This pass does not change them.
+
+**11.8 Night and inside light.**
+
+- At night in B8 the eave band stays the front's darkest (L 48 against 120) while the wall's middle keeps the moonlight, and there is no sun column.
+- Lit openings in 16 and 4Gamer's night station throw a pool of their own light on the ground, as wide as the opening and about its height deep. A lantern adds a warm pool (B8).
+
+Ours: at night cast shadows are one tone (house-style 6). Pools of light from lit openings are proposed, not built in this pass.
+
+The evidence is a local reference sheet of the eight buildings' crops with these readings (made with `eastward_study.py native` and `strip`); like every reference, it is never committed.
+
+## What the soft grid governs (26 Oct)
+
+Matt, 26 Oct 17:46: "make sure to really refine the soft grid before you implement it everywhere. which parts stay as before and which parts needs to adhere to the softgrid (remember that wells for example should still be round ...). most props should probably stay as before (detailled of course) but the ground and the placement of the props changes. consider what natural terrain looks like under these constraints". 17:48: "eastward is really the example the soft grid should follow, of course adapted to my pixel density etc."
+
+**Conversion.** At the same character height (Eastward's adult 54 native px, ours 74 art px at density 3) k = 74 / 54 = 1.37, so Eastward's 17 px tile is 23.3 of our art px: **our cell, 8 world px = 24 art px, is Eastward's tile** (1.1). Every number below is given as Eastward native px (E), in tiles, and ours in cells or art px. Measured on the local references (`eastward_study.py native`, scale 3 or 3.3), on `refs-matt/eastward-forest-ledges.png` ("Strange Forest", 1.8 screen px a native px, from John's height of 97 screen px) and on Matt's 26 Oct screenshot. Corner radii come from `edges.corners` run on colour masks of the frames; the rest are column and row traces or visual measures on 4x crops with the 17 px grid laid over them.
+
+### Governed: plans of whole cells, rounded corners, lumpy edges
+
+- **Boundaries between ground materials** (grass, dirt, sand, paving, snow). In 39 the sand plateau is a union of rectangles with corners of radius 2.4 E (0.14 tile); the grass patch on it is irregular and not on the grid (texture, below).
+- **Paths, roads and plazas, at constant width.**
+  - In 13 the dirt paths are 3 tiles wide all along (rows across the horizontal path: 48 to 54 E with the grass breaking in). Their T-junction and turns round off at 6.4 E (0.38 tile). Their edges stray 1.6 to 1.8 px (sd) in 1 px steps, with grass tufts over them (5.1).
+  - Ours: a main path or road 3 cells; a lane or side path 2 cells. That is a proposal: the local refs have no 2-tile path. Turns round off at 0.4 cell outer and 0.25 inner (`R_TURN_OUT`, `R_TURN_IN`). A route runs in long straight runs: a slant becomes a few runs of about five cells, never a one-cell staircase.
+- **Raised ground: plateaus, ledges, cliffs, steps cut into them.**
+  - The low earth ledge is E 23 to 30 px, ours 12 world (2.1, 13). Strange Forest's ledges are taller (68 E, 4 tiles) with outer corners of about 11 E (0.65 tile), a knobbly face of rounded clods and a lumpy lip. Ours: low ledges round at 0.65 cell outer, 0.4 inner.
+  - Rock cliffs are at least 70 E, ours 32 world (2.3, 12). Their plan is stacked rectangles with tight corners (12); ours round them at 0.25 cell.
+  - Steps follow Strange Forest and Matt's 26 Oct screenshot: four log treads on a 14 E pitch, set into the face with earth cheeks either side. The farm stair in 13 is four steps on a 12 E pitch (6.1). Ours: a flight 3 cells wide, four treads.
+- **Water plans: ponds, pools, lake shores, coast, river courses.**
+  - In 37 the pond is a large rounded shape lined with stones. Ours: a union of cells rounded at 1.4 cells outer, 0.8 inner. Banks follow 5.3.
+  - In 15 the swamp's channels and shelves are unions of rectangles of several sizes (1 to 6 tiles) with corners of 2.4 E (0.14 tile).
+  - **The local refs have no river bend.** The closest analogues are those channels (15) and the canal's straight edge (13). Proposal: a river's plan in cells, 3 to 4 cells wide (changing in whole cells), bends rounded at 1 cell outer and 0.6 inner, banks lumpy as a ledge's lip.
+- **Garden beds and fields.** In 12 and 13 a bed is a frame with a raised soil rim and rounded plots one tile each, corners tight. Ours: the frame in cells, rounded at 0.15 cell, one mound per cell.
+- **Footprints of built things** (buildings, walls, fences, docks, bridges, platforms). They are whole tiles with up to 2 E of slack (1.2). Paving meets the street with a kerb of 34 E slabs (16, 5.2). Ours: whole cells, with built corners at 0.15 cell (Eastward 0.14).
+
+### Placement on the grid
+
+Every prop's foot anchor lies on a cell: x on the cell's centre or its half (4 world px), y on the cell line (8). Eastward's lamps, posts and benches stand on tile lines (13, 12). Rows and clusters align: beds, fence posts, stalls. Small clutter is placed freely: pebbles, flowers, tufts, leaves and debris (13's stones and flowers lie anywhere). `grid_snap --check` and `logic.off_grid` hold the anchors.
+
+### Not governed: they keep their own organic shapes
+
+- **Props' own shapes.** Wells stay round, as do barrels, carts, lamps, benches, rocks and boulders, stumps and logs (Matt, 17:46: "wells for example should still be round").
+- **Trees and bushes.** Trunks stand on cells and crowns are organic (02, 22: huge trunks, crowns and undergrowth free).
+- **Plants, characters and creatures.**
+- **Texture inside fills:** cobbles, mottle, clods and the lawn's blotches. Blotches are low contrast, one hue family, soft and irregular (37's lawn, 5.5).
+- **Shadows:** they follow their casters.
+- **Light pools** (02's sun flecks), **water surfaces and ripples**, and **effects**.
+
+### Natural terrain under the constraints
+
+- **Landforms are unions of rectangles at several sizes.** Use 1, 2 and 3 or more cells, never a uniform staircase or repeated identical blocks. Seen in the cliff in 12, the shelves in 15 and the sand plateau in 39.
+- **Notches and spurs are whole cells** (15, 39).
+- **Long straight runs are broken.**
+  - Lumps 8 to 20 art px long and 1 to 3 px deep (Strange Forest's lips; the path edges in 13, sd 1.6 to 1.8).
+  - Overhangs of turf, and breakers on 10 to 20 % of the edge: roots, tufts, rocks straddling the rim, plants spilling over (12, 13, Strange Forest).
+- **Corner radius follows the material.**
+  - Earth ledges and ponds are round: 0.65 cell (Strange Forest) to 1.4 cells (37).
+  - Paths turn at 0.4 cell (13).
+  - Built edges, sand and swamp shelves are tight: 0.14 tile in 39 and 15, ours 0.15.
+- **Rivers:** see the proposal above.
+- **Lakes and ponds** are rounded unions (37).
+- **Forest floors:** trunks on cells, free undergrowth (02, 22).
+- **Transitions between ground types** are soft-edged and low contrast. There is no outline between grass and dirt (5.1). Patches inside a surface are its own sibling hues, frayed, never a geometric disc (37, 13).
+
+### The painters (26 Oct, second pass)
+
+The plans come from `softgrid.py`; what fills them and what happens where they meet is painted by `scripts/art/native/softground.py`, at Eastward's level of detail rather than as flat fills: the lawn (a calm field, damp patches of long dark tufts and dry warm ones fading through a checker, clumped tufts with dark roots and lit tips, flowers in groups), packed earth (rounded clods 10 to 15 px with soft joints, ruts, pebble clusters, dry blades, crumbs), a sunken edge (turf lobes over the dirt, a shadow under the north lip, the south lip lit, tufts leaning out, stones straddling), raised ground (a lit band and an overhanging grass lip with hanging tufts, the under-lip shade, a face of rounded clods or of boulders under a layer of flat stones with moss caps, roots or vines, a dark foot with pebbles and fallen rocks, weeds, a cast shadow on the lower ground), log steps, water (an earth bank under the north lip, a light waterline, a depth band under the bank and a deeper middle, lit shallows, ripples, stones, rushes and lilies off the shore), sand with ripple drifts and a wet band and swash at the sea, a raised bed frame with a plot and a crop per cell, flags with a kerb and its low face, and the forest floor (canopy shade with dapples, litter, roots, bare earth at the trunks). `scripts/art/softgrid_swatches.py` shows each, and every swatch passes `review:asset` (as ground) and `review:scene` with no findings. Ripples on water shores stay off the bank outline (the soft-grid gate counts plant blades over the waterline as teeth), so rushes stand in the shallows.
+
+**Second round (Matt, 26 Oct 19:35 and 19:42).** Raised ground shows its side walls wherever it ends west or east (a narrow band seen almost edge-on, lit when it faces west, in shade when it faces east, the darkest broken line on its outer edge; the lip turns down the side; at an inner corner the wall stands over the lower part's face), and every tier has one level (`logic.tiers`). The north bank keeps its earth face and the south bank only the grass lip (the east and west banks' narrow earth walls of this round were withdrawn on 4 Nov, 5.3a); shores carry turf tongues over the water, reed clumps, stones and rushes in the shallows. A footbridge spans bank to bank on two abutments with posts and rails on both sides, its thickness and its shade on the water. Structures with props are composed round them (`logic.composition`). The lawn is calm: an even field of two sibling hues with a low mottle, sparse lit blades and loose clumps of larger tufts. Props keep the kit's own house style; trees are only seated (a scalloped, shaded crown base, its shade on the trunk, a flared foot, roots and a contact shadow).
+
+`detail.corner_radius` follows these numbers. A sharp corner is under 0.12 cell, below Eastward's tightest ground corners at 0.14 tile. A pure square corner measures under 0.08.

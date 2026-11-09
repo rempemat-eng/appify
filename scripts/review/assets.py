@@ -40,7 +40,8 @@ ZONE_BIOME = {'woodland': 'woodland', 'crossroads': 'valley', 'undercroft': 'cel
 BIOME_GROUND = {'woodland': (150, 166, 92), 'valley': (150, 166, 92), 'meadow': (150, 166, 92),
                 'desert': (214, 178, 120), 'cellar': (96, 88, 84)}
 NEUTRAL = (128, 128, 128)
-GROUND_ASSETS = {'ground', 'flow'}
+# ground pictures and ground-level overlays (square_puddles: the broken square's puddles, town.py)
+GROUND_ASSETS = {'ground', 'flow', 'square_puddles'}
 FAIL_SEVERITIES = {'blocker', 'fault'}
 
 
@@ -130,7 +131,62 @@ def group_of(kind: str, rgb, alpha) -> str:
         return 'foliage'
     if kind in ('boulder', 'standing_stone', 'rock', 'crag', 'cairn'):
         return 'stone'
+    if kind in ('waterfall', 'fall') and 'fall' in B.load_bands().get('groups', {}):
+        return 'fall'           # a fall against its house sibling, the woodland sheet (bands.py, W5-1), not the props
     return 'prop'
+
+
+def fall_sheet_box(alpha):
+    """(x0, y0, x1, y1) of a fall picture's sheet body: the columns opaque a few rows under its top,
+    from there down to where the foam widens the picture, inset a texel each side."""
+    rows = np.nonzero(alpha.any(1))[0]
+    if not len(rows):
+        return None
+    top = int(rows[0]) + 8
+    if top >= alpha.shape[0]:
+        return None
+    cols = np.nonzero(alpha[top])[0]
+    if len(cols) < 4:
+        return None
+    x0, x1 = int(cols[0]), int(cols[-1]) + 1
+    y = top
+    while y < alpha.shape[0] and alpha[y].sum() <= (x1 - x0) + 4 and alpha[y, x0 + 1:x1 - 1].all():
+        y += 1
+    y1 = y - 4
+    return (x0 + 1, top, x1 - 1, y1) if y1 - top >= 12 else None
+
+
+def fall_grain(rgb, alpha, subject) -> list:
+    """A fall's sheet must fall in streaks (woodland review, round 5, K5-1): its lightness changing
+    at least bands.GRAIN_RATIO times as often across as down, with a median vertical run of one
+    colour of at least bands.GRAIN_RUN texels. A chip mosaic is about 1."""
+    box = fall_sheet_box(alpha)
+    if box is None:
+        return []
+    x0, y0, x1, y1 = box
+    g = B.fall_grain(rgb[y0:y1, x0:x1], alpha[y0:y1, x0:x1])
+    out = []
+    xv = x0 + int(round(0.85 * (x1 - x0)))                 # the ribbon west of the navy band, as the sibling was measured
+    v = B.fall_value(rgb[y0:y1, x0:xv], alpha[y0:y1, x0:xv])
+    if not v.get('passed'):
+        # (round 6, K6-1) as light as its sibling, the woodland's sheet
+        out.append(Finding('detail.fall_value', 'fault', box,
+                           f'{subject}: the sheet reads darker than its sibling: mean {v.get("mean")} L (at least '
+                           f'{B.VALUE_MEAN:.0f}), east half {v.get("east")} (at least {B.VALUE_EAST:.0f}), {v.get("dark")} under '
+                           f'90 L (at most {B.VALUE_DARK}), middle third {v.get("lit_mid")} over 200 L (at least '
+                           f'{B.VALUE_LIT_MID}), largest flat area {v.get("area")} texels (at most {B.VALUE_AREA})',
+                           'take the woodland sheet\'s value ladder: lit runs snow 5, snow 4, water 5 over a water 4 then '
+                           'water 3 body, the dark tones only in a navy east edge of 2 to 3 texels (eastward-edges 5.3b)',
+                           score=v.get('mean', 0.0), threshold=B.VALUE_MEAN, subject=subject))
+    if g['passed']:
+        return out
+    return out + [Finding('detail.fall_grain', 'fault', box,
+                    f'{subject}: the sheet does not fall: lightness changes {g["ratio"]:.1f} x as often across as down '
+                    f'(at least {B.GRAIN_RATIO:.0f}) and the median vertical run is {g["median_run"]:.0f} texels '
+                    f'(at least {B.GRAIN_RUN})',
+                    'draw the sheet in streak lanes 1 to 3 texels wide whose runs fall 8 to 30 texels, broken and '
+                    'offset lane to lane, as rocks.fall draws the woodland\'s (eastward-edges 5.3b)',
+                    score=g['ratio'], threshold=B.GRAIN_RATIO, subject=subject)]
 
 
 def review(path: str, zone: str, name: str, kind: str | None = None, biome: str | None = None,
@@ -140,7 +196,11 @@ def review(path: str, zone: str, name: str, kind: str | None = None, biome: str 
     base = os.path.basename(name)
     kind = kind or C.kind_of(base)
     biome = biome or ZONE_BIOME.get(zone, 'valley')
-    findings, score = review_rgba(rgba, f'{zone}/{name}', kind, biome, H, density, ground=base in GROUND_ASSETS)
+    # a kit piece's picture is measured against its own size spec and the kind it names (R6-12);
+    # (a zone's further moving-water strips, flow_<name>, are ground overlays like flow)
+    findings, score = review_rgba(rgba, f'{zone}/{name}', kind, biome, H, density,
+                                  ground=base in GROUND_ASSETS or base.startswith('flow_'),
+                                  size_class=S.kit_spec(path), run=S.kit_run(path))
     sev = [f.severity for f in findings]
     status = 'fail' if any(s in FAIL_SEVERITIES for s in sev) else 'pass'
     return dict(id=f'{zone}/{name}', file=os.path.relpath(path, REPO), sha256=sha256(path), kind=kind, biome=biome,
@@ -150,8 +210,11 @@ def review(path: str, zone: str, name: str, kind: str | None = None, biome: str 
 
 
 def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float = GAME_H, density: float = 3.0,
-                ground: bool = False):
-    """Every asset check on one RGBA picture (alpha marks the object). Returns (findings, detail bar)."""
+                ground: bool = False, size_class: str | None = None, run: dict | None = None):
+    """Every asset check on one RGBA picture (alpha marks the object). Returns (findings, detail bar).
+    `size_class` is a kit piece's own size spec (its `audit.size_class`): a sprite is measured against
+    it and against the kind it names (scale.check_spec: logic.size_spec, logic.size_guide,
+    logic.size_unsized), so the reviewer's sheet shows it (round 6 of the Act 1 detail audit, R6-12)."""
     alpha = rgba[..., 3] > 128
     findings: list[Finding] = []
     score = None
@@ -179,6 +242,8 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += C.dotted(rgb_n, alpha, H, subject)
         # size against a person (scripts/review/sizes.json; doors, storey and roof for kit buildings)
         findings += S.check_asset(rgba, subject, kind, H, density)
+        if size_class:
+            findings += S.check_spec(rgba, size_class, subject, run=run)
         findings += C.mushrooms(rgb_n, alpha, H, subject, density)
         findings += C.biome_form(rgb_n, alpha, H, subject, biome)
         findings += C.crown_holes(rgb_n, alpha, H, subject)
@@ -188,6 +253,9 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += C.glyphs(rgb_n, alpha, H, subject)
         findings += C.construction(rgb_n, alpha, H, subject, kind)
         findings += C.cylinder(rgb_n, alpha, H, subject)
+        findings += __import__('scripts.review.cluster_noise', fromlist=['check']).check(rgba[..., :3], alpha, H, subject)
+        findings += __import__('scripts.review.flat_cylinder', fromlist=['check']).check(rgb_n, alpha, H, subject)
+        findings += __import__('scripts.review.checker_dither', fromlist=['check']).check(rgba, H, subject)
         from . import edges as E
         if any(k in subject.split('/')[-1] for k in E.ORGANIC_SPRITES):
             # a laid-out piece of ground drawn as a sprite (beds, a pond): its outline on the soft grid
@@ -200,6 +268,8 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
                                     'close the silhouette in the material\'s own dark edge tone (the house outline), '
                                     'broken only where the light hits (art-style.md 1)', score=ol, threshold=0.4,
                                     subject=subject))
+        if kind in ('waterfall', 'fall'):
+            findings += fall_grain(rgb_n, alpha, subject)
         grp = group_of(kind, rgb_n, alpha)
         score = B.score(rgb_n, alpha, H, grp)
         score['group'] = grp

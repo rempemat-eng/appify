@@ -1,0 +1,97 @@
+{
+  "subject_head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+  "subject_tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+  "files": [
+    {
+      "path": "docs/vision/art-style.md",
+      "git_blob": "9e62a481ada60441f1314e7b7cc299df55d12d9c",
+      "sha256": "122c83d0a8693526d5e8fcf9e26f8ebc019ace80ee27f4270de16c8241d52d01"
+    },
+    {
+      "path": "docs/vision/eastward-edges.md",
+      "git_blob": "2f4a9fd4ea60526a38c8aaba71d596e394ee2cb7",
+      "sha256": "d1ce5b67a83ed20536cf695e6ce25a59f6022b9aa0a1a7bf5f95e3c1df1b4507"
+    },
+    {
+      "path": "docs/vision/ground-rules.md",
+      "git_blob": "0e5961477a77321c93d883a1f4ff1327a6dcbcf7",
+      "sha256": "714eb92cb6df16425b85f0ec7131fa10134d77a909dee318aa8978eff60465ca"
+    },
+    {
+      "path": "docs/vision/size-guide.md",
+      "git_blob": "71886a3597f9fa434b73cddc698578bed01ee7ae",
+      "sha256": "54a36c7155365a4d109bf190cd1596564b23535557c6fa2f7273496b9978b3a0"
+    },
+    {
+      "path": "docs/world-editor.md",
+      "git_blob": "8df624099fbae4461935274bcc1399380090b663",
+      "sha256": "66a110597131d2c70cf85491bfa14d75eb7b09da6bb66a530aa2a142be6a96a1"
+    },
+    {
+      "path": "scripts/art/kit/detail_bar.py",
+      "git_blob": "0620521db849cdcb65009d5250c3a70bdcd1528d",
+      "sha256": "168e6df856729ce8b85b95f2da8e691588fa16bcc466029ec320cd46392cbe8a"
+    },
+    {
+      "path": "scripts/art/kit/approval.py",
+      "git_blob": "3f1151acf1aa109051e0191795272fd89c45207c",
+      "sha256": "3130d4e298c7198a2967858cdfa0c785f14c58b481a143ed37a0b40e39b50c2f"
+    },
+    {
+      "path": "scripts/art/kit/render_zone.py",
+      "git_blob": "16da219083adad0bcdd869739e5b3e338933beda",
+      "sha256": "35c7ba349301dcb812cdd736e44a7d54af4a05ed14fb7cb13568d6181e2b6e12"
+    },
+    {
+      "path": "scripts/review/assets.py",
+      "git_blob": "e3814eb14c96ef2f9fba34a05e8566ca120fb3a4",
+      "sha256": "6279c513ab9886be14bf08e7617cc690102ceeebd1dc451123a00ae2630ba399"
+    },
+    {
+      "path": "scripts/review/eastward_bands.json",
+      "git_blob": "e612e0b75936d2b610d6a89504e33676656d31ec",
+      "sha256": "8360bdc6f0036f1067ae409d0779c0aa2ec649c0f7d6056552f6119db86d0cfa"
+    },
+    {
+      "path": "scripts/review/scene.py",
+      "git_blob": "0d7df7891f733585af5fa4cb1f3177dfb8a153ec",
+      "sha256": "a8fc8f43d7d77f39331fa6d7b01ece7dd8a3ddeb5cb1eb60667cf61aec89ef4d"
+    },
+    {
+      "path": "scripts/review/run.py",
+      "git_blob": "216c40b63a404d32e0e2b49b2b93674e48c6502c",
+      "sha256": "d89fe7095921b6bc21373ea98935d288d23f0b56a1630d0bd8b5f53d16346d8f"
+    },
+    {
+      "path": "game/kit/terrain/manifest.json",
+      "git_blob": "eaa4e0381bb1fba2ebf62657f7e42a7d1e6d21da",
+      "sha256": "b2489d1f6414f74bb1d64f3c14d25712aae263b13a46e79a2a11b6658ee133f1"
+    },
+    {
+      "path": "game/kit/zones/woodland_kit.json",
+      "git_blob": "cdb2de6e1961d95b525eb8bf15db1a840917e34f",
+      "sha256": "695976fa34fedc9bf4a73577c2981a10ac29d455b35673d4af2c20a03d2cca0d"
+    },
+    {
+      "path": "game/zones/woodland/art/ground.png",
+      "git_blob": "c80233410014d5b3520c907a6d2db54f46a32e4f",
+      "sha256": "907fff6186e61cc63148fa5a7e13723490888aaee7ff5a3f276553e7c136656c"
+    },
+    {
+      "path": "game/zones/woodland_kit/ground_baked.png",
+      "git_blob": "faf853f267bf56fb159f0adb536aeba8b254cd64",
+      "sha256": "5d92199546fa0cc79e3ec5e2bfe772fc18c9aabcd21eb098295e50507bc2cbaf"
+    }
+  ],
+  "wrapper": {
+    "commit": "d572d85b8450d451eccb0d6d35435c00e6e95412",
+    "path": "scripts/review/pr_sheet.py",
+    "sha256": "0c539a9ca206f625dcc617a51496ead4cb5bc1e95e642493e6b7ad4b452d3da3",
+    "committed_copy": "docs/reviews/editor-takeover/tool/pr_sheet_d572.py"
+  },
+  "direction": {
+    "main": "d7352886989d0d6e53ea59b63039de23d719e4fc",
+    "issue149": "6475874904",
+    "art_merge_approval": "Matt only"
+  }
+}

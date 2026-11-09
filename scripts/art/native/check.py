@@ -11,6 +11,7 @@
 4. The drawn villages (village.py, town.py) and the Undercroft (undercroft.py): house colours only, few lone pixels, and a note when a
    zone's pictures are older than the kit or its plan.
 5. Every trunk shows its crown in the zones gen_zone writes (crowns()).
+6. No road under a building in the drawn villages (roads_clear()).
 
     python3 -m scripts.art.native.check            all gates
     python3 -m scripts.art.native.check --no-cache rebuild even if verified
@@ -269,6 +270,54 @@ def crowns() -> list:
     return bad
 
 
+def roads_clear() -> list:
+    """6. No road under a building (Matt, 27 Oct): in each drawn village a route's cells (its plan on
+    the soft grid, softgrid.cells_route or curve_texels, as town.py lays it) may not overlap any
+    building's picture (its walls and roof as drawn, from kit.json), except the foot row where a
+    road meets a door. Roads go round buildings, meet them at their doors or end at a yard."""
+    import glob
+    import numpy as np
+    from PIL import Image
+    from scripts.art.native import ctx, load_biome
+    ctx.configure(3.0, load_biome('woodland'), json.load(open(os.path.join(ROOT, 'art', 'scenes', 'woodland.json'))))
+    from scripts.art.native import softgrid as SG
+    bad = []
+    for plan_path in sorted(glob.glob(os.path.join(ROOT, 'game', 'data', 'plans', '*.json'))):
+        plan = json.load(open(plan_path))
+        zdir = os.path.join(ROOT, 'game', 'zones', plan['id'])
+        kp = os.path.join(zdir, 'kit.json')
+        if 'art' not in plan or not plan.get('routes') or not os.path.exists(kp):
+            continue
+        kit = json.load(open(kp))
+        D = kit['density']
+        H, W = int(round(plan['box'][3] * D)), int(round(plan['box'][2] * D))
+        blds = []
+        for o in kit['objects']:
+            if o['kind'] != 'building':
+                continue
+            a = np.asarray(Image.open(os.path.join(zdir, 'art', o['png'] + ('' if o['png'].endswith('.png') else '.png'))).convert('RGBA'))[..., 3] > 0
+            a[-int(round(2 * D)):] = False                       # the foot row: a road may meet the door
+            m = np.zeros((H, W), bool)
+            x0, y0 = o['foot'][0] + o['offset'][0], o['foot'][1] + o['offset'][1]
+            ys, xs = np.nonzero(a)
+            ys, xs = ys + y0, xs + x0
+            ok = (ys >= 0) & (ys < H) & (xs >= 0) & (xs < W)
+            m[ys[ok], xs[ok]] = True
+            blds.append((o['id'], m))
+        for r in plan['routes']:
+            n = max(1, int(round((r.get('width', 24) - 8) / 8.0)))
+            if r.get('bend'):
+                road = SG.curve_texels(r['points'], n, H, W, r['bend'], 0)
+            else:
+                road = SG.texels(SG.cells_route(r['points'], n, H, W), H, W)
+            for bid, m in blds:
+                k = int((road & m).sum())
+                if k:
+                    bad.append(f'{plan["id"]}: route {r["id"]} runs under {bid} ({k / D / D:.0f} world px^2; '
+                               f'route it round, to the door, or end it at a yard)')
+    return bad
+
+
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     use_cache = '--no-cache' not in argv
@@ -304,6 +353,9 @@ def main(argv=None) -> int:
     for n in vnotes:
         print('[kit] note:', n)
     fails += vbad
+    rbad = roads_clear()
+    print(f'[kit] no road under a building (drawn villages): {"ok" if not rbad else str(len(rbad)) + " finding(s)"}')
+    fails += rbad
     for f in fails:
         print('FAIL:', f)
     if not fails:

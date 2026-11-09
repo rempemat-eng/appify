@@ -1,0 +1,96 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_alpine_conifers",
+  "name": "Highland conifers and wind-cut trees",
+  "kind": "prop",
+  "biomes": [
+    "frostline",
+    "massif",
+    "brackens"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "fir_tall",
+      "note": "Full-height fir with three broad tiers of boughs, exposed lower trunk and a flared root seat; keep small gaps between foliage masses."
+    },
+    {
+      "id": "fir_young",
+      "note": "Young fir with fewer bough tiers, a slim taper and a visible trunk, redrawn at its smaller size rather than scaled from the tall tree."
+    },
+    {
+      "id": "wind_cut",
+      "note": "Asymmetric fir with the upper branches swept to one side and a broken top; retain a rooted base and a dark lee-side mass."
+    },
+    {
+      "id": "snow_cap",
+      "note": "Fir boughs carrying broad warm-lit snow caps over cool green undersides; the snow changes the drawn state, not the solid footprint."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      108,
+      216
+    ]
+  },
+  "placement": {
+    "role": "tree",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth",
+        "rock"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "cluster",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Build the highland treeline and bothy shelter from a family that can taper with altitude."
+  },
+  "audit": {
+    "size_class": "conifer",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Build the highland treeline and bothy shelter from a family that can taper with altitude.",
+      "Visual brief: Layered fir boughs with exposed trunks, broad upper-left snow caps where present, asymmetric wind-cut tops and a dark root flare; small and tall silhouettes remain related without scaling one bitmap.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Size: conifer 96-311 art px high, 59-148 wide; snow caps are a state overlay and must not enlarge collision.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

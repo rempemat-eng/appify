@@ -1,0 +1,2444 @@
+[gd_scene format=4]
+
+[ext_resource type="Script" path="res://world/zone.gd" id="1_b0jbf"]
+[ext_resource type="Script" path="res://world/terrain/terrain_ground.gd" id="2_12ls7"]
+[ext_resource type="Texture2D" path="res://zones/woodland_kit/ground_baked.png" id="3_p1ibo"]
+[ext_resource type="TileSet" path="res://kit/terrain/materials.tres" id="4_d3qyf"]
+[ext_resource type="TileSet" path="res://kit/terrain/tiers.tres" id="5_8mny6"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_standing_stone_lean.tscn" id="6_gqkl8"]
+[ext_resource type="Script" path="res://world/terrain/kit_piece.gd" id="7_7fhji"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_standing_stone_low.tscn" id="8_hrr57"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_standing_stone_runes.tscn" id="9_g8gml"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_standing_stone_broken.tscn" id="10_fy1pr"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_standing_stone_b.tscn" id="11_bv1h2"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_standing_stone.tscn" id="12_fpl6j"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_lintel.tscn" id="13_s388d"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_stone_top.tscn" id="14_3s3od"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_stump.tscn" id="15_jmbit"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_pine.tscn" id="16_fxaj8"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_bush_c.tscn" id="17_jtc30"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_bush_b.tscn" id="18_jq4tv"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_oak.tscn" id="19_rrndd"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_birch.tscn" id="20_iwiqr"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_hollow_tree.tscn" id="21_blpmi"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_mossy_log.tscn" id="22_m42je"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_forest_bench.tscn" id="23_ctdq2"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_willow.tscn" id="24_pj7gu"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_bush.tscn" id="25_0a85g"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_sapling.tscn" id="26_mx67m"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_holly.tscn" id="27_0w35h"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_beech.tscn" id="28_2wcp8"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_holly_b.tscn" id="29_vy632"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_bramble.tscn" id="30_c1y1t"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_bramble_b.tscn" id="31_75dp5"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_boulder.tscn" id="32_0tsmi"]
+[ext_resource type="PackedScene" path="res://kit/props/waterfall_3_tall.tscn" id="33_2uuod"]
+[ext_resource type="PackedScene" path="res://kit/props/woodland_footbridge.tscn" id="34_hcy46"]
+[ext_resource type="Script" path="res://world/interactable.gd" id="35_wkemj"]
+[ext_resource type="Texture2D" path="res://art/placeholder/sign.png" id="36_u5kdr"]
+[ext_resource type="Script" path="res://world/camp.gd" id="37_pqgea"]
+[ext_resource type="PackedScene" path="res://actors/enemy.tscn" id="38_1ne76"]
+[ext_resource type="Script" path="res://actors/enemy.gd" id="39_f656l"]
+[ext_resource type="Script" path="res://world/conditional.gd" id="40_k5raf"]
+[ext_resource type="Script" path="res://world/villager.gd" id="41_ocr2f"]
+[ext_resource type="Script" path="res://world/door.gd" id="42_joj48"]
+
+[sub_resource type="CircleShape2D" id="talk"]
+radius = 30.0
+
+[sub_resource type="CircleShape2D" id="post"]
+radius = 5.0
+
+[sub_resource type="RectangleShape2D" id="hatch"]
+size = Vector2(30, 24)
+
+[sub_resource type="RectangleShape2D" id="edge"]
+size = Vector2(18, 72)
+
+[node name="WoodlandKit" type="Node2D" unique_id=210541614]
+y_sort_enabled = true
+script = ExtResource("1_b0jbf")
+zone_id = "woodland_kit"
+bounds = Rect2(0, 0, 960, 1728)
+metadata/kit_zone_plan = {
+"bake": true,
+"decor": [{
+"at": [513.0, 102.0],
+"kind": "fern",
+"seed": 1619.0,
+"size": 0.9
+}, {
+"at": [789.0, 78.0],
+"kind": "fern",
+"seed": 1620.0,
+"size": 0.9
+}, {
+"at": [132.0, 816.0],
+"kind": "fern",
+"seed": 580.0,
+"size": 1.65
+}, {
+"at": [540.0, 1056.0],
+"kind": "foxglove",
+"seed": 1612.0,
+"size": 1.5
+}, {
+"at": [786.0, 1236.0],
+"kind": "fern",
+"seed": 2246.0,
+"size": 1.65
+}, {
+"at": [90.0, 1410.0],
+"kind": "fern",
+"seed": 680.0,
+"size": 1.8
+}, {
+"at": [684.0, 798.0],
+"kind": "fern",
+"seed": 1862.0,
+"size": 1.275
+}, {
+"at": [60.0, 990.0],
+"kind": "foxglove",
+"seed": 470.0,
+"size": 1.5
+}, {
+"at": [618.0, 1560.0],
+"kind": "fern",
+"seed": 1962.0,
+"size": 1.5
+}, {
+"at": [870.0, 1050.0],
+"kind": "fern",
+"seed": 2380.0,
+"size": 1.35
+}, {
+"at": [60.0, 1680.0],
+"kind": "fern",
+"seed": 700.0,
+"size": 1.65
+}, {
+"at": [330.0, 1572.0],
+"kind": "foxglove",
+"seed": 1294.0,
+"size": 1.35
+}, {
+"at": [810.0, 708.0],
+"kind": "fern",
+"seed": 2126.0,
+"size": 1.35
+}, {
+"at": [612.0, 528.0],
+"kind": "fern",
+"seed": 1604.0,
+"size": 1.2
+}, {
+"at": [48.0, 1212.0],
+"kind": "fern",
+"seed": 516.0,
+"size": 1.5
+}, {
+"at": [876.0, 1680.0],
+"kind": "foxglove",
+"seed": 2604.0,
+"size": 1.5
+}, {
+"at": [132.0, 816.0],
+"kind": "fern",
+"seed": 3103.0,
+"size": 1.0
+}, {
+"at": [72.0, 852.0],
+"kind": "fern",
+"seed": 3101.0,
+"size": 1.2
+}, {
+"at": [120.0, 906.0],
+"kind": "fern",
+"seed": 3102.0,
+"size": 1.1
+}, {
+"at": [195.0, 1082.0],
+"kind": "mushrooms",
+"seed": 610.0,
+"tint": "brown"
+}, {
+"at": [748.0, 746.0],
+"kind": "mushrooms",
+"seed": 630.0,
+"tint": "brown"
+}, {
+"at": [99.0, 1082.0],
+"kind": "mushrooms",
+"seed": 654.0,
+"tint": "brown"
+}, {
+"at": [447.0, 1394.0],
+"kind": "mushrooms",
+"seed": 666.0,
+"tint": "brown"
+}, {
+"at": [261.0, 1610.0],
+"kind": "mushrooms",
+"seed": 672.0,
+"tint": "red"
+}, {
+"at": [627.0, 423.0],
+"kind": "leaf"
+}, {
+"at": [213.0, 1491.0],
+"kind": "leaf"
+}, {
+"at": [681.0, 1563.0],
+"kind": "leaf"
+}, {
+"at": [147.0, 627.0],
+"kind": "leaf"
+}, {
+"at": [702.0, 978.0],
+"kind": "leaf"
+}, {
+"at": [600.0, 450.0],
+"kind": "leaf"
+}, {
+"at": [222.0, 1539.0],
+"kind": "leaf"
+}, {
+"at": [690.0, 1557.0],
+"kind": "leaf"
+}, {
+"at": [93.0, 660.0],
+"kind": "leaf"
+}, {
+"at": [732.0, 1062.0],
+"kind": "leaf"
+}, {
+"at": [600.0, 417.0],
+"kind": "leaf"
+}, {
+"at": [201.0, 1512.0],
+"kind": "leaf"
+}, {
+"at": [822.0, 1524.0],
+"kind": "leaf"
+}, {
+"at": [90.0, 696.0],
+"kind": "leaf"
+}, {
+"at": [636.0, 1017.0],
+"kind": "leaf"
+}, {
+"at": [537.0, 417.0],
+"kind": "leaf"
+}, {
+"at": [189.0, 1458.0],
+"kind": "leaf"
+}, {
+"at": [726.0, 1557.0],
+"kind": "leaf"
+}, {
+"at": [81.0, 696.0],
+"kind": "leaf"
+}, {
+"at": [630.0, 978.0],
+"kind": "leaf"
+}, {
+"at": [591.0, 477.0],
+"kind": "leaf"
+}, {
+"at": [198.0, 1482.0],
+"kind": "leaf"
+}, {
+"at": [702.0, 1569.0],
+"kind": "leaf"
+}, {
+"at": [78.0, 672.0],
+"kind": "leaf"
+}, {
+"at": [690.0, 1002.0],
+"kind": "leaf"
+}, {
+"at": [567.0, 477.0],
+"kind": "leaf"
+}, {
+"at": [186.0, 1464.0],
+"kind": "leaf"
+}, {
+"at": [783.0, 1521.0],
+"kind": "leaf"
+}, {
+"at": [66.0, 636.0],
+"kind": "leaf"
+}, {
+"at": [624.0, 1047.0],
+"kind": "leaf"
+}, {
+"at": [645.0, 480.0],
+"kind": "leaf"
+}, {
+"at": [126.0, 1542.0],
+"kind": "leaf"
+}, {
+"at": [804.0, 1587.0],
+"kind": "leaf"
+}, {
+"at": [105.0, 684.0],
+"kind": "leaf"
+}, {
+"at": [681.0, 978.0],
+"kind": "leaf"
+}, {
+"at": [666.0, 426.0],
+"kind": "leaf"
+}, {
+"at": [144.0, 1476.0],
+"kind": "leaf"
+}, {
+"at": [702.0, 1518.0],
+"kind": "leaf"
+}, {
+"at": [69.0, 666.0],
+"kind": "leaf"
+}, {
+"at": [645.0, 978.0],
+"kind": "leaf"
+}, {
+"at": [657.0, 450.0],
+"kind": "leaf"
+}, {
+"at": [108.0, 1470.0],
+"kind": "leaf"
+}, {
+"at": [681.0, 1536.0],
+"kind": "leaf"
+}, {
+"at": [30.0, 663.0],
+"kind": "leaf"
+}, {
+"at": [711.0, 1011.0],
+"kind": "leaf"
+}, {
+"at": [669.0, 417.0],
+"kind": "leaf"
+}, {
+"at": [174.0, 1539.0],
+"kind": "leaf"
+}, {
+"at": [744.0, 1590.0],
+"kind": "leaf"
+}, {
+"at": [105.0, 693.0],
+"kind": "leaf"
+}, {
+"at": [744.0, 1020.0],
+"kind": "leaf"
+}, {
+"at": [603.0, 456.0],
+"kind": "leaf"
+}, {
+"at": [159.0, 1527.0],
+"kind": "leaf"
+}, {
+"at": [696.0, 1572.0],
+"kind": "leaf"
+}, {
+"at": [129.0, 675.0],
+"kind": "leaf"
+}, {
+"at": [696.0, 1041.0],
+"kind": "leaf"
+}, {
+"at": [603.0, 486.0],
+"kind": "leaf"
+}, {
+"at": [147.0, 1479.0],
+"kind": "leaf"
+}, {
+"at": [711.0, 1548.0],
+"kind": "leaf"
+}, {
+"at": [105.0, 627.0],
+"kind": "leaf"
+}, {
+"at": [702.0, 1041.0],
+"kind": "leaf"
+}, {
+"at": [591.0, 468.0],
+"kind": "leaf"
+}, {
+"at": [249.0, 1536.0],
+"kind": "leaf"
+}, {
+"at": [819.0, 1560.0],
+"kind": "leaf"
+}, {
+"at": [60.0, 645.0],
+"kind": "leaf"
+}, {
+"at": [753.0, 993.0],
+"kind": "leaf"
+}, {
+"at": [639.0, 462.0],
+"kind": "leaf"
+}, {
+"at": [207.0, 1464.0],
+"kind": "leaf"
+}, {
+"at": [708.0, 1542.0],
+"kind": "leaf"
+}, {
+"at": [84.0, 627.0],
+"kind": "leaf"
+}, {
+"at": [756.0, 1020.0],
+"kind": "leaf"
+}],
+"gameplay_from": "res://zones/woodland/woodland.tscn",
+"lab": true,
+"legend": {
+"#": "path",
+".": "lawn",
+"s": "scree",
+"w": "worn",
+"~": "water"
+},
+"note": "The woodland rebuilt with the kit (scripts/art/kit/woodland_kit.py): its plan as cells and pieces, its gameplay from zones/woodland/woodland.tscn. Regenerate, do not edit by hand; or paint the scene and export it back (game/tools/kit_zone.gd --export).",
+"pieces": [{
+"at": [336.0, 1305.0],
+"id": "stone-1",
+"piece": "woodland_standing_stone_lean",
+"variant": "standing_stone_lean"
+}, {
+"at": [240.0, 1329.0],
+"id": "stone-2",
+"piece": "woodland_standing_stone_low",
+"variant": "standing_stone_low"
+}, {
+"at": [144.0, 1305.0],
+"id": "stone-3",
+"piece": "woodland_standing_stone_runes",
+"variant": "standing_stone_runes"
+}, {
+"at": [108.0, 1257.0],
+"id": "stone-4",
+"piece": "woodland_standing_stone_broken",
+"variant": "standing_stone_broken"
+}, {
+"at": [144.0, 1209.0],
+"id": "stone-5",
+"piece": "woodland_standing_stone_b",
+"variant": "standing_stone_b"
+}, {
+"at": [240.0, 1185.0],
+"id": "stone-6",
+"piece": "woodland_standing_stone",
+"variant": "standing_stone"
+}, {
+"at": [324.0, 1209.0],
+"id": "stone-7",
+"piece": "woodland_standing_stone_low",
+"variant": "standing_stone_low"
+}, {
+"at": [180.0, 1278.0],
+"id": "lintel-1",
+"piece": "woodland_lintel",
+"variant": "lintel"
+}, {
+"at": [72.0, 1326.0],
+"id": "stone-top",
+"piece": "woodland_stone_top",
+"variant": "stone_top"
+}, {
+"at": [528.0, 744.0],
+"id": "stump-1",
+"piece": "woodland_stump",
+"variant": "stump"
+}, {
+"at": [156.0, 1080.0],
+"id": "stump-2",
+"piece": "woodland_stump",
+"variant": "stump"
+}, {
+"at": [744.0, 408.0],
+"id": "stump-3",
+"piece": "woodland_stump",
+"variant": "stump"
+}, {
+"at": [60.0, 552.0],
+"id": "pine-6",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [384.0, 192.0],
+"id": "pine-7",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [60.0, 1344.0],
+"id": "tree-8",
+"piece": "woodland_bush_c",
+"variant": "bush_c"
+}, {
+"at": [96.0, 768.0],
+"id": "bush-2",
+"piece": "woodland_bush_b",
+"variant": "bush_b"
+}, {
+"at": [528.0, 192.0],
+"id": "bush-3",
+"piece": "woodland_bush_c",
+"variant": "bush_c"
+}, {
+"at": [84.0, 192.0],
+"id": "tree-1",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [144.0, 192.0],
+"id": "pine-1",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [696.0, 192.0],
+"id": "tree-2",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [804.0, 168.0],
+"id": "pine-2",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [60.0, 864.0],
+"id": "tree-3",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [60.0, 1224.0],
+"id": "pine-3",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [780.0, 744.0],
+"id": "tree-4",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [660.0, 1128.0],
+"id": "tree-5",
+"piece": "woodland_birch",
+"variant": "birch"
+}, {
+"at": [120.0, 1632.0],
+"id": "pine-4",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [276.0, 1704.0],
+"id": "tree-6",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [504.0, 1704.0],
+"id": "pine-5",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [816.0, 1704.0],
+"id": "tree-7",
+"piece": "woodland_birch",
+"variant": "birch"
+}, {
+"at": [324.0, 384.0],
+"id": "oak",
+"piece": "woodland_hollow_tree",
+"variant": "hollow_tree"
+}, {
+"at": [660.0, 744.0],
+"id": "log-1",
+"piece": "woodland_mossy_log",
+"variant": "mossy_log"
+}, {
+"at": [468.0, 1464.0],
+"id": "log-2",
+"piece": "woodland_mossy_log",
+"variant": "mossy_log"
+}, {
+"at": [504.0, 1224.0],
+"id": "bench",
+"piece": "woodland_forest_bench",
+"variant": "forest_bench"
+}, {
+"at": [816.0, 1008.0],
+"id": "willow",
+"piece": "woodland_willow",
+"variant": "willow"
+}, {
+"at": [912.0, 1200.0],
+"id": "bush-1",
+"piece": "woodland_bush",
+"variant": "bush"
+}, {
+"at": [24.0, 216.0],
+"id": "wood-1",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}, {
+"at": [24.0, 288.0],
+"id": "wood-2",
+"piece": "woodland_birch",
+"variant": "birch"
+}, {
+"at": [96.0, 288.0],
+"id": "wood-3",
+"piece": "woodland_holly",
+"variant": "holly"
+}, {
+"at": [624.0, 288.0],
+"id": "wood-4",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [504.0, 336.0],
+"id": "wood-5",
+"piece": "woodland_birch",
+"variant": "birch"
+}, {
+"at": [48.0, 360.0],
+"id": "wood-6",
+"piece": "woodland_beech",
+"variant": "beech"
+}, {
+"at": [24.0, 432.0],
+"id": "wood-7",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [60.0, 480.0],
+"id": "wood-8",
+"piece": "woodland_holly_b",
+"variant": "holly_b"
+}, {
+"at": [96.0, 576.0],
+"id": "wood-9",
+"piece": "woodland_bramble",
+"variant": "bramble"
+}, {
+"at": [36.0, 624.0],
+"id": "wood-10",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [108.0, 648.0],
+"id": "wood-11",
+"piece": "woodland_holly_b",
+"variant": "holly_b"
+}, {
+"at": [792.0, 648.0],
+"id": "wood-12",
+"piece": "woodland_holly",
+"variant": "holly"
+}, {
+"at": [852.0, 648.0],
+"id": "wood-13",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [924.0, 696.0],
+"id": "wood-14",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}, {
+"at": [56.0, 744.0],
+"id": "wood-15",
+"piece": "woodland_holly_b",
+"variant": "holly_b"
+}, {
+"at": [36.0, 840.0],
+"id": "wood-16",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [36.0, 936.0],
+"id": "wood-17",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [108.0, 984.0],
+"id": "wood-18",
+"piece": "woodland_bramble_b",
+"variant": "bramble_b"
+}, {
+"at": [48.0, 1008.0],
+"id": "wood-19",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [60.0, 1080.0],
+"id": "wood-20",
+"piece": "woodland_stump",
+"variant": "stump"
+}, {
+"at": [564.0, 1080.0],
+"id": "wood-21",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}, {
+"at": [36.0, 1152.0],
+"id": "wood-22",
+"piece": "woodland_beech",
+"variant": "beech"
+}, {
+"at": [108.0, 1152.0],
+"id": "wood-23",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [732.0, 1152.0],
+"id": "wood-24",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [612.0, 1224.0],
+"id": "wood-26",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [24.0, 1296.0],
+"id": "wood-27",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [420.0, 1344.0],
+"id": "wood-28",
+"piece": "woodland_bramble",
+"variant": "bramble"
+}, {
+"at": [324.0, 1368.0],
+"id": "wood-29",
+"piece": "woodland_bramble_b",
+"variant": "bramble_b"
+}, {
+"at": [456.0, 1368.0],
+"id": "wood-30",
+"piece": "woodland_bramble",
+"variant": "bramble"
+}, {
+"at": [36.0, 1416.0],
+"id": "wood-31",
+"piece": "woodland_birch",
+"variant": "birch"
+}, {
+"at": [96.0, 1416.0],
+"id": "wood-32",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}, {
+"at": [408.0, 1392.0],
+"id": "wood-33",
+"piece": "woodland_stump",
+"variant": "stump"
+}, {
+"at": [24.0, 1464.0],
+"id": "wood-34",
+"piece": "woodland_pine",
+"variant": "pine"
+}, {
+"at": [360.0, 1560.0],
+"id": "wood-35",
+"piece": "woodland_bramble_b",
+"variant": "bramble_b"
+}, {
+"at": [468.0, 1560.0],
+"id": "wood-36",
+"piece": "woodland_birch",
+"variant": "birch"
+}, {
+"at": [564.0, 1560.0],
+"id": "wood-37",
+"piece": "woodland_holly",
+"variant": "holly"
+}, {
+"at": [636.0, 1584.0],
+"id": "wood-38",
+"piece": "woodland_bramble",
+"variant": "bramble"
+}, {
+"at": [300.0, 1608.0],
+"id": "wood-40",
+"piece": "woodland_stump",
+"variant": "stump"
+}, {
+"at": [444.0, 1632.0],
+"id": "wood-41",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [504.0, 1632.0],
+"id": "wood-42",
+"piece": "woodland_bramble_b",
+"variant": "bramble_b"
+}, {
+"at": [756.0, 1632.0],
+"id": "wood-43",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}, {
+"at": [240.0, 1656.0],
+"id": "wood-44",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [360.0, 1656.0],
+"id": "wood-45",
+"piece": "woodland_oak",
+"variant": "oak"
+}, {
+"at": [588.0, 1656.0],
+"id": "wood-46",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}, {
+"at": [732.0, 1656.0],
+"id": "wood-47",
+"piece": "woodland_holly_b",
+"variant": "holly_b"
+}, {
+"at": [27.0, 135.0],
+"id": "boulder-1",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [51.0, 162.0],
+"id": "boulder-2",
+"piece": "woodland_boulder",
+"variant": "b1"
+}, {
+"at": [87.0, 132.0],
+"id": "boulder-3",
+"piece": "woodland_boulder",
+"variant": "b3"
+}, {
+"at": [114.0, 135.0],
+"id": "boulder-4",
+"piece": "woodland_boulder",
+"variant": "b1"
+}, {
+"at": [294.0, 144.0],
+"id": "boulder-8",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [324.0, 162.0],
+"id": "boulder-9",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [345.0, 126.0],
+"id": "boulder-10",
+"piece": "woodland_boulder",
+"variant": "b1"
+}, {
+"at": [372.0, 120.0],
+"id": "boulder-11",
+"piece": "woodland_boulder",
+"variant": "b4"
+}, {
+"at": [402.0, 123.0],
+"id": "boulder-12",
+"piece": "woodland_boulder",
+"variant": "b2"
+}, {
+"at": [444.0, 159.0],
+"id": "boulder-13",
+"piece": "woodland_boulder",
+"variant": "b2"
+}, {
+"at": [468.0, 138.0],
+"id": "boulder-14",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [501.0, 162.0],
+"id": "boulder-15",
+"piece": "woodland_boulder",
+"variant": "b2"
+}, {
+"at": [528.0, 141.0],
+"id": "boulder-16",
+"piece": "woodland_boulder",
+"variant": "b2"
+}, {
+"at": [555.0, 120.0],
+"id": "boulder-17",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [597.0, 165.0],
+"id": "boulder-18",
+"piece": "woodland_boulder",
+"variant": "b1"
+}, {
+"at": [621.0, 159.0],
+"id": "boulder-19",
+"piece": "woodland_boulder",
+"variant": "b1"
+}, {
+"at": [645.0, 165.0],
+"id": "boulder-20",
+"piece": "woodland_boulder",
+"variant": "b2"
+}, {
+"at": [687.0, 135.0],
+"id": "boulder-21",
+"piece": "woodland_boulder",
+"variant": "b3"
+}, {
+"at": [717.0, 159.0],
+"id": "boulder-22",
+"piece": "woodland_boulder",
+"variant": "b2"
+}, {
+"at": [747.0, 150.0],
+"id": "boulder-23",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [768.0, 126.0],
+"id": "boulder-24",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [795.0, 147.0],
+"id": "boulder-25",
+"piece": "woodland_boulder",
+"variant": "b4"
+}, {
+"at": [837.0, 138.0],
+"id": "boulder-26",
+"piece": "woodland_boulder",
+"variant": "b4"
+}, {
+"at": [867.0, 135.0],
+"id": "boulder-27",
+"piece": "woodland_boulder",
+"variant": "b2"
+}, {
+"at": [894.0, 123.0],
+"id": "boulder-28",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [927.0, 150.0],
+"id": "boulder-29",
+"piece": "woodland_boulder",
+"variant": "b0"
+}, {
+"at": [324.0, 798.0],
+"id": "boulder-33",
+"piece": "woodland_boulder",
+"variant": "b5"
+}, {
+"at": [204.0, 840.0],
+"id": "waterfall",
+"piece": "waterfall_3_tall",
+"variant": "w3"
+}, {
+"at": [384.0, 948.0],
+"id": "footbridge",
+"piece": "woodland_footbridge",
+"variant": "river3"
+}],
+"rows": ["sssssss~~~ssssssssssssssssssssssssssssss", "sssssss~~~ssssssssssssssssssssssssssssss", "sssssss~~~ssssssssssssssssssssssssssssss", "sssssss~~~ssssssssssssssssssssssssssssss", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~..............................", ".......~~~.....ww.......................", ".......~~~....wwww......................", ".......~~~....w##w......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".......~~~.....##.......................", ".....~~~~~~~~~.##...~~~~~~..............", ".....~~~~~~~~~~~~~~~~~~~~~~~~~........~~", ".......~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", ".......~~~~~~~~~~~~~......~~~~~~~~~~~~~~", "...............##.............~~~~~~~~..", "...............##.......................", "...............##.......................", "...............##.......................", "...............##.......................", "...............##.......................", "...............##.......................", "...............##.......................", "...............##.......................", "...............##.......................", "......wwwwwwww.##.......................", ".....ww......ww##.......................", ".....w........###.......................", ".....ww......ww#######################..", "......www..www.#######################..", "....................................##..", "....................................##..", "....................................####", "....................................####", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................", "........................................"],
+"spawns": {
+"clearing": [330.0, 480.0],
+"garden": [912.0, 1368.0],
+"spring": [384.0, 996.0],
+"start": [384.0, 996.0],
+"stones": [234.0, 1242.0]
+},
+"tiers": ["2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "2222222222220000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000", "0000000000000000000000000000000000000000"],
+"zone": "woodland_kit"
+}
+metadata/kit_zone_gameplay_ids = {
+"Doors": ["ToUndercroft", "ToCrossroads"],
+"Spawns": ["start", "crossroads", "undercroft"]
+}
+
+[node name="Ground" type="Node2D" parent="." unique_id=84457209]
+z_index = -10
+script = ExtResource("2_12ls7")
+grid_size = Vector2i(40, 72)
+baked = ExtResource("3_p1ibo")
+variant_rows = PackedStringArray()
+lab = true
+
+[node name="Cells" type="TileMapLayer" parent="Ground" unique_id=1703392525]
+tile_map_data = PackedByteArray("AAAAAAAAAAAEAAAAAAABAAAAAAAEAAAAAAACAAAAAAAEAAAAAAADAAAAAAAEAAAAAAAEAAAAAAAEAAAAAAAFAAAAAAAEAAAAAAAGAAAAAAAEAAAAAAAHAAAAAAADAAAAAAAIAAAAAAADAAAAAAAJAAAAAAADAAAAAAAKAAAAAAAEAAAAAAALAAAAAAAEAAAAAAAMAAAAAAAEAAAAAAANAAAAAAAEAAAAAAAOAAAAAAAEAAAAAAAPAAAAAAAEAAAAAAAQAAAAAAAEAAAAAAARAAAAAAAEAAAAAAASAAAAAAAEAAAAAAATAAAAAAAEAAAAAAAUAAAAAAAEAAAAAAAVAAAAAAAEAAAAAAAWAAAAAAAEAAAAAAAXAAAAAAAEAAAAAAAYAAAAAAAEAAAAAAAZAAAAAAAEAAAAAAAaAAAAAAAEAAAAAAAbAAAAAAAEAAAAAAAcAAAAAAAEAAAAAAAdAAAAAAAEAAAAAAAeAAAAAAAEAAAAAAAfAAAAAAAEAAAAAAAgAAAAAAAEAAAAAAAhAAAAAAAEAAAAAAAiAAAAAAAEAAAAAAAjAAAAAAAEAAAAAAAkAAAAAAAEAAAAAAAlAAAAAAAEAAAAAAAmAAAAAAAEAAAAAAAnAAAAAAAEAAAAAAAAAAEAAAAEAAAAAAABAAEAAAAEAAAAAAACAAEAAAAEAAAAAAADAAEAAAAEAAAAAAAEAAEAAAAEAAAAAAAFAAEAAAAEAAAAAAAGAAEAAAAEAAAAAAAHAAEAAAADAAAAAAAIAAEAAAADAAAAAAAJAAEAAAADAAAAAAAKAAEAAAAEAAAAAAALAAEAAAAEAAAAAAAMAAEAAAAEAAAAAAANAAEAAAAEAAAAAAAOAAEAAAAEAAAAAAAPAAEAAAAEAAAAAAAQAAEAAAAEAAAAAAARAAEAAAAEAAAAAAASAAEAAAAEAAAAAAATAAEAAAAEAAAAAAAUAAEAAAAEAAAAAAAVAAEAAAAEAAAAAAAWAAEAAAAEAAAAAAAXAAEAAAAEAAAAAAAYAAEAAAAEAAAAAAAZAAEAAAAEAAAAAAAaAAEAAAAEAAAAAAAbAAEAAAAEAAAAAAAcAAEAAAAEAAAAAAAdAAEAAAAEAAAAAAAeAAEAAAAEAAAAAAAfAAEAAAAEAAAAAAAgAAEAAAAEAAAAAAAhAAEAAAAEAAAAAAAiAAEAAAAEAAAAAAAjAAEAAAAEAAAAAAAkAAEAAAAEAAAAAAAlAAEAAAAEAAAAAAAmAAEAAAAEAAAAAAAnAAEAAAAEAAAAAAAAAAIAAAAEAAAAAAABAAIAAAAEAAAAAAACAAIAAAAEAAAAAAADAAIAAAAEAAAAAAAEAAIAAAAEAAAAAAAFAAIAAAAEAAAAAAAGAAIAAAAEAAAAAAAHAAIAAAADAAAAAAAIAAIAAAADAAAAAAAJAAIAAAADAAAAAAAKAAIAAAAEAAAAAAALAAIAAAAEAAAAAAAMAAIAAAAEAAAAAAANAAIAAAAEAAAAAAAOAAIAAAAEAAAAAAAPAAIAAAAEAAAAAAAQAAIAAAAEAAAAAAARAAIAAAAEAAAAAAASAAIAAAAEAAAAAAATAAIAAAAEAAAAAAAUAAIAAAAEAAAAAAAVAAIAAAAEAAAAAAAWAAIAAAAEAAAAAAAXAAIAAAAEAAAAAAAYAAIAAAAEAAAAAAAZAAIAAAAEAAAAAAAaAAIAAAAEAAAAAAAbAAIAAAAEAAAAAAAcAAIAAAAEAAAAAAAdAAIAAAAEAAAAAAAeAAIAAAAEAAAAAAAfAAIAAAAEAAAAAAAgAAIAAAAEAAAAAAAhAAIAAAAEAAAAAAAiAAIAAAAEAAAAAAAjAAIAAAAEAAAAAAAkAAIAAAAEAAAAAAAlAAIAAAAEAAAAAAAmAAIAAAAEAAAAAAAnAAIAAAAEAAAAAAAAAAMAAAAEAAAAAAABAAMAAAAEAAAAAAACAAMAAAAEAAAAAAADAAMAAAAEAAAAAAAEAAMAAAAEAAAAAAAFAAMAAAAEAAAAAAAGAAMAAAAEAAAAAAAHAAMAAAADAAAAAAAIAAMAAAADAAAAAAAJAAMAAAADAAAAAAAKAAMAAAAEAAAAAAALAAMAAAAEAAAAAAAMAAMAAAAEAAAAAAANAAMAAAAEAAAAAAAOAAMAAAAEAAAAAAAPAAMAAAAEAAAAAAAQAAMAAAAEAAAAAAARAAMAAAAEAAAAAAASAAMAAAAEAAAAAAATAAMAAAAEAAAAAAAUAAMAAAAEAAAAAAAVAAMAAAAEAAAAAAAWAAMAAAAEAAAAAAAXAAMAAAAEAAAAAAAYAAMAAAAEAAAAAAAZAAMAAAAEAAAAAAAaAAMAAAAEAAAAAAAbAAMAAAAEAAAAAAAcAAMAAAAEAAAAAAAdAAMAAAAEAAAAAAAeAAMAAAAEAAAAAAAfAAMAAAAEAAAAAAAgAAMAAAAEAAAAAAAhAAMAAAAEAAAAAAAiAAMAAAAEAAAAAAAjAAMAAAAEAAAAAAAkAAMAAAAEAAAAAAAlAAMAAAAEAAAAAAAmAAMAAAAEAAAAAAAnAAMAAAAEAAAAAAAAAAQAAAAAAAAAAAABAAQAAAAAAAAAAAACAAQAAAAAAAAAAAADAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAAFAAQAAAAAAAAAAAAGAAQAAAAAAAAAAAAHAAQAAAADAAAAAAAIAAQAAAADAAAAAAAJAAQAAAADAAAAAAAKAAQAAAAAAAAAAAALAAQAAAAAAAAAAAAMAAQAAAAAAAAAAAANAAQAAAAAAAAAAAAOAAQAAAAAAAAAAAAPAAQAAAAAAAAAAAAQAAQAAAAAAAAAAAARAAQAAAAAAAAAAAASAAQAAAAAAAAAAAATAAQAAAAAAAAAAAAUAAQAAAAAAAAAAAAVAAQAAAAAAAAAAAAWAAQAAAAAAAAAAAAXAAQAAAAAAAAAAAAYAAQAAAAAAAAAAAAZAAQAAAAAAAAAAAAaAAQAAAAAAAAAAAAbAAQAAAAAAAAAAAAcAAQAAAAAAAAAAAAdAAQAAAAAAAAAAAAeAAQAAAAAAAAAAAAfAAQAAAAAAAAAAAAgAAQAAAAAAAAAAAAhAAQAAAAAAAAAAAAiAAQAAAAAAAAAAAAjAAQAAAAAAAAAAAAkAAQAAAAAAAAAAAAlAAQAAAAAAAAAAAAmAAQAAAAAAAAAAAAnAAQAAAAAAAAAAAAAAAUAAAAAAAAAAAABAAUAAAAAAAAAAAACAAUAAAAAAAAAAAADAAUAAAAAAAAAAAAEAAUAAAAAAAAAAAAFAAUAAAAAAAAAAAAGAAUAAAAAAAAAAAAHAAUAAAADAAAAAAAIAAUAAAADAAAAAAAJAAUAAAADAAAAAAAKAAUAAAAAAAAAAAALAAUAAAAAAAAAAAAMAAUAAAAAAAAAAAANAAUAAAAAAAAAAAAOAAUAAAAAAAAAAAAPAAUAAAAAAAAAAAAQAAUAAAAAAAAAAAARAAUAAAAAAAAAAAASAAUAAAAAAAAAAAATAAUAAAAAAAAAAAAUAAUAAAAAAAAAAAAVAAUAAAAAAAAAAAAWAAUAAAAAAAAAAAAXAAUAAAAAAAAAAAAYAAUAAAAAAAAAAAAZAAUAAAAAAAAAAAAaAAUAAAAAAAAAAAAbAAUAAAAAAAAAAAAcAAUAAAAAAAAAAAAdAAUAAAAAAAAAAAAeAAUAAAAAAAAAAAAfAAUAAAAAAAAAAAAgAAUAAAAAAAAAAAAhAAUAAAAAAAAAAAAiAAUAAAAAAAAAAAAjAAUAAAAAAAAAAAAkAAUAAAAAAAAAAAAlAAUAAAAAAAAAAAAmAAUAAAAAAAAAAAAnAAUAAAAAAAAAAAAAAAYAAAAAAAAAAAABAAYAAAAAAAAAAAACAAYAAAAAAAAAAAADAAYAAAAAAAAAAAAEAAYAAAAAAAAAAAAFAAYAAAAAAAAAAAAGAAYAAAAAAAAAAAAHAAYAAAADAAAAAAAIAAYAAAADAAAAAAAJAAYAAAADAAAAAAAKAAYAAAAAAAAAAAALAAYAAAAAAAAAAAAMAAYAAAAAAAAAAAANAAYAAAAAAAAAAAAOAAYAAAAAAAAAAAAPAAYAAAAAAAAAAAAQAAYAAAAAAAAAAAARAAYAAAAAAAAAAAASAAYAAAAAAAAAAAATAAYAAAAAAAAAAAAUAAYAAAAAAAAAAAAVAAYAAAAAAAAAAAAWAAYAAAAAAAAAAAAXAAYAAAAAAAAAAAAYAAYAAAAAAAAAAAAZAAYAAAAAAAAAAAAaAAYAAAAAAAAAAAAbAAYAAAAAAAAAAAAcAAYAAAAAAAAAAAAdAAYAAAAAAAAAAAAeAAYAAAAAAAAAAAAfAAYAAAAAAAAAAAAgAAYAAAAAAAAAAAAhAAYAAAAAAAAAAAAiAAYAAAAAAAAAAAAjAAYAAAAAAAAAAAAkAAYAAAAAAAAAAAAlAAYAAAAAAAAAAAAmAAYAAAAAAAAAAAAnAAYAAAAAAAAAAAAAAAcAAAAAAAAAAAABAAcAAAAAAAAAAAACAAcAAAAAAAAAAAADAAcAAAAAAAAAAAAEAAcAAAAAAAAAAAAFAAcAAAAAAAAAAAAGAAcAAAAAAAAAAAAHAAcAAAADAAAAAAAIAAcAAAADAAAAAAAJAAcAAAADAAAAAAAKAAcAAAAAAAAAAAALAAcAAAAAAAAAAAAMAAcAAAAAAAAAAAANAAcAAAAAAAAAAAAOAAcAAAAAAAAAAAAPAAcAAAAAAAAAAAAQAAcAAAAAAAAAAAARAAcAAAAAAAAAAAASAAcAAAAAAAAAAAATAAcAAAAAAAAAAAAUAAcAAAAAAAAAAAAVAAcAAAAAAAAAAAAWAAcAAAAAAAAAAAAXAAcAAAAAAAAAAAAYAAcAAAAAAAAAAAAZAAcAAAAAAAAAAAAaAAcAAAAAAAAAAAAbAAcAAAAAAAAAAAAcAAcAAAAAAAAAAAAdAAcAAAAAAAAAAAAeAAcAAAAAAAAAAAAfAAcAAAAAAAAAAAAgAAcAAAAAAAAAAAAhAAcAAAAAAAAAAAAiAAcAAAAAAAAAAAAjAAcAAAAAAAAAAAAkAAcAAAAAAAAAAAAlAAcAAAAAAAAAAAAmAAcAAAAAAAAAAAAnAAcAAAAAAAAAAAAAAAgAAAAAAAAAAAABAAgAAAAAAAAAAAACAAgAAAAAAAAAAAADAAgAAAAAAAAAAAAEAAgAAAAAAAAAAAAFAAgAAAAAAAAAAAAGAAgAAAAAAAAAAAAHAAgAAAADAAAAAAAIAAgAAAADAAAAAAAJAAgAAAADAAAAAAAKAAgAAAAAAAAAAAALAAgAAAAAAAAAAAAMAAgAAAAAAAAAAAANAAgAAAAAAAAAAAAOAAgAAAAAAAAAAAAPAAgAAAAAAAAAAAAQAAgAAAAAAAAAAAARAAgAAAAAAAAAAAASAAgAAAAAAAAAAAATAAgAAAAAAAAAAAAUAAgAAAAAAAAAAAAVAAgAAAAAAAAAAAAWAAgAAAAAAAAAAAAXAAgAAAAAAAAAAAAYAAgAAAAAAAAAAAAZAAgAAAAAAAAAAAAaAAgAAAAAAAAAAAAbAAgAAAAAAAAAAAAcAAgAAAAAAAAAAAAdAAgAAAAAAAAAAAAeAAgAAAAAAAAAAAAfAAgAAAAAAAAAAAAgAAgAAAAAAAAAAAAhAAgAAAAAAAAAAAAiAAgAAAAAAAAAAAAjAAgAAAAAAAAAAAAkAAgAAAAAAAAAAAAlAAgAAAAAAAAAAAAmAAgAAAAAAAAAAAAnAAgAAAAAAAAAAAAAAAkAAAAAAAAAAAABAAkAAAAAAAAAAAACAAkAAAAAAAAAAAADAAkAAAAAAAAAAAAEAAkAAAAAAAAAAAAFAAkAAAAAAAAAAAAGAAkAAAAAAAAAAAAHAAkAAAADAAAAAAAIAAkAAAADAAAAAAAJAAkAAAADAAAAAAAKAAkAAAAAAAAAAAALAAkAAAAAAAAAAAAMAAkAAAAAAAAAAAANAAkAAAAAAAAAAAAOAAkAAAAAAAAAAAAPAAkAAAAAAAAAAAAQAAkAAAAAAAAAAAARAAkAAAAAAAAAAAASAAkAAAAAAAAAAAATAAkAAAAAAAAAAAAUAAkAAAAAAAAAAAAVAAkAAAAAAAAAAAAWAAkAAAAAAAAAAAAXAAkAAAAAAAAAAAAYAAkAAAAAAAAAAAAZAAkAAAAAAAAAAAAaAAkAAAAAAAAAAAAbAAkAAAAAAAAAAAAcAAkAAAAAAAAAAAAdAAkAAAAAAAAAAAAeAAkAAAAAAAAAAAAfAAkAAAAAAAAAAAAgAAkAAAAAAAAAAAAhAAkAAAAAAAAAAAAiAAkAAAAAAAAAAAAjAAkAAAAAAAAAAAAkAAkAAAAAAAAAAAAlAAkAAAAAAAAAAAAmAAkAAAAAAAAAAAAnAAkAAAAAAAAAAAAAAAoAAAAAAAAAAAABAAoAAAAAAAAAAAACAAoAAAAAAAAAAAADAAoAAAAAAAAAAAAEAAoAAAAAAAAAAAAFAAoAAAAAAAAAAAAGAAoAAAAAAAAAAAAHAAoAAAADAAAAAAAIAAoAAAADAAAAAAAJAAoAAAADAAAAAAAKAAoAAAAAAAAAAAALAAoAAAAAAAAAAAAMAAoAAAAAAAAAAAANAAoAAAAAAAAAAAAOAAoAAAAAAAAAAAAPAAoAAAAAAAAAAAAQAAoAAAAAAAAAAAARAAoAAAAAAAAAAAASAAoAAAAAAAAAAAATAAoAAAAAAAAAAAAUAAoAAAAAAAAAAAAVAAoAAAAAAAAAAAAWAAoAAAAAAAAAAAAXAAoAAAAAAAAAAAAYAAoAAAAAAAAAAAAZAAoAAAAAAAAAAAAaAAoAAAAAAAAAAAAbAAoAAAAAAAAAAAAcAAoAAAAAAAAAAAAdAAoAAAAAAAAAAAAeAAoAAAAAAAAAAAAfAAoAAAAAAAAAAAAgAAoAAAAAAAAAAAAhAAoAAAAAAAAAAAAiAAoAAAAAAAAAAAAjAAoAAAAAAAAAAAAkAAoAAAAAAAAAAAAlAAoAAAAAAAAAAAAmAAoAAAAAAAAAAAAnAAoAAAAAAAAAAAAAAAsAAAAAAAAAAAABAAsAAAAAAAAAAAACAAsAAAAAAAAAAAADAAsAAAAAAAAAAAAEAAsAAAAAAAAAAAAFAAsAAAAAAAAAAAAGAAsAAAAAAAAAAAAHAAsAAAADAAAAAAAIAAsAAAADAAAAAAAJAAsAAAADAAAA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AAAjABAAAAAAAAAAAAAkABAAAAAAAAAAAAAlABAAAAAAAAAAAAAmABAAAAAAAAAAAAAnABAAAAAAAAAAAAAAABEAAAAAAAAAAAABABEAAAAAAAAAAAACABEAAAAAAAAAAAADABEAAAAAAAAAAAAEABEAAAAAAAAAAAAFABEAAAAAAAAAAAAGABEAAAAAAAAAAAAHABEAAAADAAAAAAAIABEAAAADAAAAAAAJABEAAAADAAAAAAAKABEAAAAAAAAAAAALABEAAAAAAAAAAAAMABEAAAAAAAAAAAANABEAAAAAAAAAAAAOABEAAAAAAAAAAAAPABEAAAAFAAAAAAAQABEAAAAFAAAAAAARABEAAAAAAAAAAAASABEAAAAAAAAAAAATABEAAAAAAAAAAAAUABEAAAAAAAAAAAAVABEAAAAAAAAAAAAWABEAAAAAAAAAAAAXABEAAAAAAAAAAAAYABEAAAAAAAAAAAAZABEAAAAAAAAAAAAaABEAAAAAAAAAAAAbABEAAAAAAAAAAAAcABEAAAAAAAAAAAAdABEAAAAAAAAAAAAeABEAAAAAAAAAAAAfABEAAAAAAAAAAAAgABEAAAAAAAAAAAAhABEAAAAAAAAAAAAiABEAAAAAAAAAAAAjABEAAAAAAAAAAAAkABEAAAAAAAAAAAAlABEAAAAAAAAAAAAmABEAAAAAAAAAAAAnABEAAAAAAAAAAAAAABIAAAAAAAAAAAABABIAAAAAAAAAAAACABIAAAAAAAAAAAADABIAAAAAAAAAAAAEABIAAAAAAAAAAAAFABIAAAAAAAAAAAAGABIAAAAAAAAAAAAHABIAAAADAAAAAAAIABIAAAADAAAAAAAJABIAAAADAAAAAAAKABIAAAAAAAAAAAALABIAAAAAAAAAAAAMABIAAAAAAAAAAAANABIAAAAAAAAAAAAOABIAAAAFAAAAAAAPABIAAAAFAAAAAAAQABIAAAAFAAAAAAARABIAAAAFAAAAAAASABIAAAAAAAAAAAATABIAAAAAAAAAAAAUABIAAAAAAAAAAAAVABIAAAAAAAAAAAAWABIAAAAAAAAAAAAXABIAAAAAAAAAAAAYABIAAAAAAAAAAAAZABIAAAAAAAAAAAAaABIAAAAAAAAAAAAbABIAAAAAAAAAAAAcABIAAAAAAAAAAAAdABIAAAAAAAAAAAAeABIAAAAAAAAAAAAfABIAAAAAAAAAAAAgABIAAAAAAAAAAAAhABIAAAAAAAAAAAAiABIAAAAAAAAAAAAjABIAAAAAAAAAAAAkABIAAAAAAAAAAAAlABIAAAAAAAAAAAAmABIAAAAAAAAAAAAnABIAAAAAAAAAAAAAABMAAAAAAAAAAAABABMAAAAAAAAAAAACABMAAAAAAAAAAAADABMAAAAAAAAAAAAEABMAAAAAAAAAAAAFABMAAAAAAAAAAAAGABMAAAAAAAAAAAAHABMAAAADAAAAAAAIABMAAAADAAAAAAAJABMAAAADAAAAAAAKABMAAAAAAAAAAAALABMAAAAAAAAAAAAMABMAAAAAAAAAAAANABMAAAAAAAAAAAAOABMAAAAFAAAAAAAPABMAAAABAAAAAAAQABMAAAABAAAAAAARABMAAAAFAAAAAAASABMAAAAAAAAAAAATABMAAAAAAAAAAAAUABMAAAAAAAAAAAAVABMAAAAAAAAAAAAWABMAAAAAAAAAAAAXABMAAAAAAAAAAAAYABMAAAAAAAAAAAAZABMAAAAAAAAAAAAaABMAAAAAAAAAAAAbABMAAAAAAAAAAAAcABMAAAAAAAAAAAAdABMAAAAAAAAAAAAeABMAAAAAAAAAAAAfABMAAAAAAAAAAAAgABMAAAAAAAAAAAAhABMAAAAAAAAAAAAiABMAAAAAAAAAAAAjABMAAAAAAAAAAAAkABMAAAAAAAAAAAAlABMAAAAAAAAAAAAmABMAAAAAAAAAAAAnABMAAAAAAAAAAAAAABQAAAAAAAAAAAABABQAAAAAAAAAAAACABQAAAAAAAAAAAADABQAAAAAAAAAAAAEABQAAAAAAAAAAAAFABQAAAAAAAAAAAAGABQAAAAAAAAAAAAHABQAAAADAAAAAAAIABQAAAADAAAAAAAJABQAAAADAAAAAAAKABQAAAAAAAAAAAALABQAAAAAAAAAAAAMABQAAAAAAAAAAAANABQAAAAAAAAAAAAOABQAAAAAAAAAAAAPABQAAAABAAAAAAAQABQAAAABAAAAAAARABQAAAAAAAAAAAASABQAAAAAAAAAAAATABQAAAAAAAAAAAAUABQAAAAAAAAAAAAVABQAAAAAAAAAAAAWABQAAAAAAAAAAAAXABQAAAAAAAAAAAAYABQAAAAAAAAAAAAZABQAAAAAAAAAAAAaABQAAAAAAAAAAAAbABQAAAAAAAAAAAAcABQAAAAAAAAAAAAdABQAAAAAAAAAAAAeABQAAAAAAAAAAAAfABQAAAAAAAAAAAAgABQAAAAAAAAAAAAhABQAAAAAAAAAAAAiABQAAAAAAAAAAAAjABQAAAAAAAAAAAAkABQAAAAAAAAAAAAlABQAAAAAAAAAAAAmABQAAAAAAAAAAAAnABQAAAAAAAAAAAAAABUAAAAAAAAAAAABABUAAAAAAAAAAAACABUAAAAAAAAAAAADABUAAAAAAAAAAAAEABUAAAAAAAAAAAAFABUAAAAAAAAAAAAGABUAAAAAAAAAAAAHABUAAAADAAAAAAAIABUAAAADAAAAAAAJABUAAAADAAAAAAAKABUAAAAAAAAAAAALABUAAAAAAAAAAAAMABUAAAAAAAAAAAANABUAAAAAAAAAAAAOABUAAAAAAAAAAAAPABUAAAABAAAAAAAQABUAAAABAAAAAAARABUAAAAAAAAAAAASABUAAAAAAAAAAAATABUAAAAAAAAAAAAUABUAAAAAAAAAAAAVABUAAAAAAAAAAAAWABUAAAAAAAAAAAAXABUAAAAAAAAAAAAYABUAAAAAAAAAAAAZABUAAAAAAAAAAAAaABUAAAAAAAAAAAAbABUAAAAAAAAAAAAcABUAAAAAAAAAAAAdABUAAAAAAAAAAAAeABUAAAAAAAAAAAAfABUAAAAAAAAAAAAgABUAAAAAAAAAAAAhABUAAAAAAAAAAAAiABUAAAAAAAAAAAAjABUAAAAAAAAAAAAkABUAAAAAAAAAAAAlABUAAAAAAAAAAAAmABUAAAAAAAAAAAAnABUAAAAAAAAAAAAAABYAAAAAAAAAAAABABYAAAAAAAAAAAACABYAAAAAAAAAAAADABYAAAAAAAAAAAAEABYAAAAAAAAAAAAFABYAAAAAAAAAAAAGABYAAAAAAAAAAAAHABYAAAADAAAAAAAIABYAAAADAAAAAAAJABYAAAADAAAAAAAKABYAAAAAAAAAAAALABYAAAAAAAAAAAAMABYAAAAAAAAAAAANABYAAAAAAAAAAAAOABYAAAAAAAAAAAAPABYAAAABAAAAAAAQABYAAAABAAAAAAARABYAAAAAAAAAAAASABYAAAAAAAAAAAATABYAAAAAAAAAAAAUABYAAAAAAAAAAAAVABYAAAAAAAAAAAAWABYAAAAAAAAAAAAXABYAAAAAAAAAAAAYABYAAAAAAAAAAAAZABYAAAAAAAAAAAAaABYAAAAAAAAAAAAbABYAAAAAAAAAAAAcABYAAAAAAAAAAAAdABYAAAAAAAAAAAAeABYAAAAAAAAAAAAfABYAAAAAAAAAAAAgABYAAAAAAAAAAAAhABYAAAAAAAAAAAAiABYAAAAAAAAAAAAjABYAAAAAAAAAAAAkABYAAAAAAAAAAAAlABYAAAAAAAAAAAAmABYAAAAAAAAAAAAnABYAAAAAAAAAAAAAABcAAAAAAAAAAAABABcAAAAAAAAAAAACABcAAAAAAAAAAAADABcAAAAAAAAAAAAEABcAAAAAAAAAAAAFABcAAAAAAAAAAAAGABcAAAAAAAAAAAAHABcAAAADAAAAAAAIABcAAAADAAAAAAAJABcAAAADAAAAAAAKABcAAAAAAAAAAAALABcAAAAAAAAAAAAMABcAAAAAAAAAAAANABcAAAAAAAAAAAAOABcAAAAAAAAAAAAPABcAAAABAAAAAAAQABcAAAABAAAAAAARABcAAAAAAAAAAAASABcAAAAAAAAAAAATABcAAAAAAAAAAAAUABcAAAAAAAAAAAAVABcAAAAAAAAAAAAWABcAAAAAAAAAAAAXABcAAAAAAAAAAAAYABcAAAAAAAAAAAAZABcAAAAAAAAAAAAaABcAAAAAAAAAAAAbABcAAAAAAAAAAAAcABcAAAAAAAAAAAAdABcAAAAAAAAAAAAeABcAAAAAAAAAAAAfABcAAAAAAAAAAAAgABcAAAAAAAAAAAAhABcAAAAAAAAAAAAiABcAAAAAAAAAAAAjABcAAAAAAAAAAAAkABcAAAAAAAAAAAAlABcAAAAAAAAAAAAmABcAAAAAAAAAAAAnABcAAAAAAAAAAAAAABgAAAAAAAAAAAABABgAAAAAAAAAAAACABgAAAAAAAAAAAADABgAAAAAAAAAAAAEABgAAAAAAAAAAAAFABgAAAAAAAAAAAAGABgAAAAAAAAAAAAHABgAAAADAAAAAAAIABgAAAADAAAAAAAJABgAAAADAAAAAAAKABgAAAAAAAAAAAALABgAAAAAAAAAAAAMABgAAAAAAAAAAAANABgAAAAAAAAAAAAOABgAAAAAAAAAAAAPABgAAAABAAAAAAAQABgAAAABAAAAAAARABgAAAAAAAAAAAASABgAAAAAAAAAAAATABgAAAAAAAAAAAAUABgAAAAAAAAAAAAVABgAAAAAAAAAAAAWABgAAAAAAAAAAAAXABgAAAAAAAAAAAAYABgAAAAAAAAAAAAZABgAAAAAAAAAAAAaABgAAAAAAAAAAAAbABgAAAAAAAAAAAAcABgAAAAAAAAAAAAdABgAAAAAAAAAAAAeABgAAAAAAAAAAAAfABgAAAAAAAAAAAAgABgAAAAAAAAAAAAhABgAAAAAAAAAAAAiABgAAAAAAAAAAAAjABgAAAAAAAAAAAAkABgAAAAAAAAAAAAlABgAAAAAAAAAAAAmABgAAAAAAAAAAAAnABgAAAAAAAAAAAAAABkAAAAAAAAAAAABABkAAAAAAAAAAAACABkAAAAAAAAAAAADABkAAAAAAAAAAAAEABkAAAAAAAAAAAAFABkAAAAAAAAAAAAGABkAAAAAAAAAAAAHABkAAAADAAAAAAAIABkAAAADAAAAAAAJABkAAAADAAAAAAAKABkAAAAAAAAAAAALABkAAAAAAAAAAAAMABkAAAAAAAAAAAANABkAAAAAAAAAAAAOABkAAAAAAAAAAAAPABkAAAABAAAAAAAQABkAAAABAAAAAAARABkAAAAAAAAAAAASABkAAAAAAAAAAAATABkAAAAAAAAAAAAUABkAAAAAAAAAAAAVABkAAAAAAAAAAAAWABkAAAAAAAAAAAAXABkAAAAAAAAAAAAYABkAAAAAAAAAAAAZABkAAAAAAAAAAAAaABkAAAAAAAAAAAAbABkAAAAAAAAAAAAcABkAAAAAAAAAAAAdABkAAAAAAAAAAAAeABkAAAAAAAAAAAAfABkAAAAAAAAAAAAgABkAAAAAAAAAAAAhABkAAAAAAAAAAAAiABkAAAAAAAAAAAAjABkAAAAAAAAAAAAkABkAAAAAAAAAAAAlABkAAAAAAAAAAAAmABkAAAAAAAAAAAAnABkAAAAAAAAAAAAAABoAAAAAAAAAAAABABoAAAAAAAAAAAACABoAAAAAAAAAAAADABoAAAAAAAAAAAAEABoAAAAAAAAAAAAFABoAAAAAAAAAAAAGABoAAAAAAAAAAAAHABoAAAADAAAAAAAIABoAAAADAAAAAAAJABoAAAADAAAAAAAKABoAAAAAAAAAAAALABoAAAAAAAAAAAAMABoAAAAAAAAAAAANABoAAAAAAAAAAAAOABoAAAAAAAAAAAAPABoAAAABAAAAAAAQABoAAAABAAAAAAARABoAAAAAAAAAAAASABoAAAAAAAAAAAATABoAAAAAAAAAAAAUABoAAAAAAAAAAAAVABoAAAAAAAAAAAAWABoAAAAAAAAAAAAXABoAAAAAAAAAAAAYABoAAAAAAAAAAAAZABoAAAAAAAAAAAAaABoAAAAAAAAAAAAbABoAAAAAAAAAAAAcABoAAAAAAAAAAAAdABoAAAAAAAAAAAAeABoAAAAAAAAAAAAfABoAAAAAAAAAAAAgABoAAAAAAAAAAAAhABoAAAAAAAAAAAAiABoAAAAAAAAAAAAjABoAAAAAAAAAAAAkABoAAAAAAAAAAAAlABoAAAAAAAAAAAAmABoAAAAAAAAAAAAnABoAAAAAAAAAAAAAABsAAAAAAAAAAAABABsAAAAAAAAAAAACABsAAAAAAAAAAAADABsAAAAAAAAAAAAEABsAAAAAAAAAAAAFABsAAAAAAAAAAAAGABsAAAAAAAAAAAAHABsAAAADAAAAAAAIABsAAAADAAAAAAAJABsAAAADAAAAAAAKABsAAAAAAAAAAAALABsAAAAAAAAAAAAMABsAAAAAAAAAAAANABsAAAAAAAAAAAAOABsAAAAAAAAAAAAPABsAAAABAAAAAAAQABsAAAABAAAAAAARABsAAAAAAAAAAAASABsAAAAAAAAAAAATABsAAAAAAAAAAAAUABsAAAAAAAAAAAAVABsAAAAAAAAAAAAWABsAAAAAAAAAAAAXABsAAAAAAAAAAAAYABsAAAAAAAAAAAAZABsAAAAAAAAAAAAaABsAAAAAAAAAAAAbABsAAAAAAAAAAAAcABsAAAAAAAAAAAAdABsAAAAAAAAAAAAeABsAAAAAAAAAAAAfABsAAAAAAAAAAAAgABsAAAAAAAAAAAAhABsAAAAAAAAAAAAiABsAAAAAAAAAAAAjABsAAAAAAAAAAAAkABsAAAAAAAAAAAAlABsAAAAAAAAAAAAmABsAAAAAAAAAAAAnABsAAAAAAAAAAAAAABwAAAAAAAAAAAABABwAAAAAAAAAAAACABwAAAAAAAAAAAADABwAAAAAAAAAAAAEABwAAAAAAAAAAAAFABwAAAAAAAAAAAAGABwAAAAAAAAAAAAHABwAAAADAAAAAAAIABwAAAADAAAAAAAJABwAAAADAAAAAAAKABwAAAAAAAAAAAALABwAAAAAAAAAAAAMABwAAAAAAAAAAAANABwAAAAAAAAAAAAOABwAAAAAAAAAAAAPABwAAAABAAAAAAAQABwAAAABAAAAAAARABwAAAAAAAAAAAASABwAAAAAAAAAAAATABwAAAAAAAAAAAAUABwAAAAAAAAAAAAVABwAAAAAAAAAAAAWABwAAAAAAAAAAAAXABwAAAAAAAAAAAAYABwAAAAAAAAAAAAZABwAAAAAAAAAAAAaABwAAAAAAAAAAAAbABwAAAAAAAAAAAAcABwAAAAAAAAAAAAdABwAAAAAAAAAAAAeABwAAAAAAAAAAAAfABwAAAAAAAAAAAAgABwAAAAAAAAAAAAhABwAAAAAAAAAAAAiABwAAAAAAAAAAAAjABwAAAAAAAAAAAAkABwAAAAAAAAAAAAlABwAAAAAAAAAAAAmABwAAAAAAAAAAAAnABwAAAAAAAAAAAAAAB0AAAAAAAAAAAABAB0AAAAAAAAAAAACAB0AAAAAAAAAAAADAB0AAAAAAAAAAAAEAB0AAAAAAAAAAAAFAB0AAAAAAAAAAAAGAB0AAAAAAAAAAAAHAB0AAAADAAAAAAAIAB0AAAADAAAAAAAJAB0AAAADAAAAAAAKAB0AAAAAAAAAAAALAB0AAAAAAAAAAAAMAB0AAAAAAAAAAAANAB0AAAAAAAAAAAAOAB0AAAAAAAAAAAAPAB0AAAABAAAAAAAQAB0AAAABAAAAAAARAB0AAAAAAAAAAAASAB0AAAAAAAAAAAATAB0AAAAAAAAAAAAUAB0AAAAAAAAAAAAVAB0AAAAAAAAAAAAWAB0AAAAAAAAAAAAXAB0AAAAAAAAAAAAYAB0AAAAAAAAAAAAZAB0AAAAAAAAAAAAaAB0AAAAAAAAAAAAbAB0AAAAAAAAAAAAcAB0AAAAAAAAAAAAdAB0AAAAAAAAAAAAeAB0AAAAAAAAAAAAfAB0AAAAAAAAAAAAgAB0AAAAAAAAAAAAhAB0AAAAAAAAAAAAiAB0AAAAAAAAAAAAjAB0AAAAAAAAAAAAkAB0AAAAAAAAAAAAlAB0AAAAAAAAAAAAmAB0AAAAAAAAAAAAnAB0AAAAAAAAAAAAAAB4AAAAAAAAAAAABAB4AAAAAAAAAAAACAB4AAAAAAAAAAAADAB4AAAAAAAAAAAAEAB4AAAAAAAAAAAAFAB4AAAAAAAAAAAAGAB4AAAAAAAAAAAAHAB4AAAADAAAAAAAIAB4AAAADAAAAAAAJAB4AAAADAAAAAAAKAB4AAAAAAAAAAAALAB4AAAAAAAAAAAAMAB4AAAAAAAAAAAANAB4AAAAAAAAAAAAOAB4AAAAAAAAAAAAPAB4AAAABAAAAAAAQAB4AAAABAAAAAAARAB4AAAAAAAAAAAASAB4AAAAAAAAAAAATAB4AAAAAAAAAAAAUAB4AAAAAAAAAAAAVAB4AAAAAAAAAAAAWAB4AAAAAAAAAAAAXAB4AAAAAAAAAAAAYAB4AAAAAAAAAAAAZAB4AAAAAAAAAAAAaAB4AAAAAAAAAAAAbAB4AAAAAAAAAAAAcAB4AAAAAAAAAAAAdAB4AAAAAAAAAAAAeAB4AAAAAAAAAAAAfAB4AAAAAAAAAAAAgAB4AAAAAAAAAAAAhAB4AAAAAAAAAAAAiAB4AAAAAAAAAAAAjAB4AAAAAAAAAAAAkAB4AAAAAAAAAAAAlAB4AAAAAAAAAAAAmAB4AAAAAAAAAAAAnAB4AAAAAAAAAAAAAAB8AAAAAAAAAAAABAB8AAAAAAAAAAAACAB8AAAAAAAAAAAADAB8AAAAAAAAAAAAEAB8AAAAAAAAAAAAFAB8AAAAAAAAAAAAGAB8AAAAAAAAAAAAHAB8AAAADAAAAAAAIAB8AAAADAAAAAAAJAB8AAAADAAAAAAAKAB8AAAAAAAAAAAALAB8AAAAAAAAAAAAMAB8AAAAAAAAAAAANAB8AAAAAAAAAAAAOAB8AAAAAAAAAAAAPAB8AAAABAAAAAAAQAB8AAAABAAAAAAARAB8AAAAAAAAAAAASAB8AAAAAAAAAAAATAB8AAAAAAAAAAAAUAB8AAAAAAAAAAAAVAB8AAAAAAAAAAAAWAB8AAAAAAAAAAAAXAB8AAAAAAAAAAAAYAB8AAAAAAAAAAAAZAB8AAAAAAAAAAAAaAB8AAAAAAAAAAAAbAB8AAAAAAAAAAAAcAB8AAAAAAAAAAAAdAB8AAAAAAAAAAAAeAB8AAAAAAAAAAAAfAB8AAAAAAAAAAAAgAB8AAAAAAAAAAAAhAB8AAAAAAAAAAAAiAB8AAAAAAAAAAAAjAB8AAAAAAAAAAAAkAB8AAAAAAAAAAAAlAB8AAAAAAAAAAAAmAB8AAAAAAAAAAAAnAB8AAAAAAAAAAAAAACAAAAAAAAAAAAABACAAAAAAAAAAAAACACAAAAAAAAAAAAADACAAAAAAAAAAAAAEACAAAAAAAAAAAAAFACAAAAAAAAAAAAAGACAAAAAAAAAAAAAHACAAAAADAAAAAAAIACAAAAADAAAAAAAJACAAAAADAAAAAAAKACAAAAAAAAAAAAALACAAAAAAAAAAAAAMACAAAAAAAAAAAAANACAAAAAAAAAAAAAOACAAAAAAAAAAAAAPACAAAAABAAAAAAAQACAAAAABAAAAAAARACAAAAAAAAAAAAASACAAAAAAAAAAAAATACAAAAAAAAAAAAAUACAAAAAAAAAAAAAVACAAAAAAAAAAAAAWACAAAAAAAAAAAAAXACAAAAAAAAAAAAAYACAAAAAAAAAAAAAZACAAAAAAAAAAAAAaACAAAAAAAAAAAAAbACAAAAAAAAAAAAAcACAAAAAAAAAAAAAdACAAAAAAAAAAAAAeACAAAAAAAAAAAAAfACAAAAAAAAAAAAAgACAAAAAAAAAAAAAhACAAAAAAAAAAAAAiACAAAAAAAAAAAAAjACAAAAAAAAAAAAAkACAAAAAAAAAAAAAlACAAAAAAAAAAAAAmACAAAAAAAAAAAAAnACAAAAAAAAAAAAAAACEAAAAAAAAAAAABACEAAAAAAAAAAAACACEAAAAAAAAAAAADACEAAAAAAAAAAAAEACEAAAAAAAAAAAAFACEAAAAAAAAAAAAGACEAAAAAAAAAAAAHACEAAAADAAAAAAAIACEAAAADAAAAAAAJACEAAAADAAAAAAAKACEAAAAAAAAAAAALACEAAAAAAAAAAAAMACEAAAAAAAAAAAANACEAAAAAAAAAAAAOACEAAAAAAAAAAAAPACEAAAABAAAAAAAQACEAAAABAAAAAAARACEAAAAAAAAAAAASACEAAAAAAAAAAAATACEAAAAAAAAAAAAUACEAAAAAAAAAAAAVACEAAAAAAAAAAAAWACEAAAAAAAAAAAAXACEAAAAAAAAAAAAYACEAAAAAAAAAAAAZACEAAAAAAAAAAAAaACEAAAAAAAAAAAAbACEAAAAAAAAAAAAcACEAAAAAAAAAAAAdACEAAAAAAAAAAAAeACEAAAAAAAAAAAAfACEAAAAAAAAAAAAgACEAAAAAAAAAAAAhACEAAAAAAAAAAAAiACEAAAAAAAAAAAAjACEAAAAAAAAAAAAkACEAAAAAAAAAAAAlACEAAAAAAAAAAAAmACEAAAAAAAAAAAAnACEAAAAAAAAAAAAAACIAAAAAAAAAAAABACIAAAAAAAAAAAACACIAAAAAAAAAAAADACIAAAAAAAAAAAAEACIAAAAAAAAAAAAFACIAAAAAAAAAAAAGACIAAAAAAAAAAAAHACIAAAADAAAAAAAIACIAAAADAAAAAAAJACIAAAADAAAAAAAKACIAAAAAAAAAAAALACIAAAAAAAAAAAAMACIAAAAAAAAAAAANACIAAAAAAAAAAAAOACIAAAAAAAAAAAAPACIAAAABAAAAAAAQACIAAAABAAAAAAARACIAAAAAAAAAAAASACIAAAAAAAAAAAATACIAAAAAAAAAAAAUACIAAAAAAAAAAAAVACIAAAAAAAAAAAAWACIAAAAAAAAAAAAXACIAAAAAAAAAAAAYACIAAAAAAAAAAAAZACIAAAAAAAAAAAAaACIAAAAAAAAAAAAbACIAAAAAAAAAAAAcACIAAAAAAAAAAAAdACIAAAAAAAAAAAAeACIAAAAAAAAAAAAfACIAAAAAAAAAAAAgACIAAAAAAAAAAAAhACIAAAAAAAAAAAAiACIAAAAAAAAAAAAjACIAAAAAAAAAAAAkACIAAAAAAAAAAAAlACIAAAAAAAAAAAAmACIAAAAAAAAAAAAnACIAAAAAAAAAAAAAACMAAAAAAAAAAAABACMAAAAAAAAAAAACACMAAAAAAAAAAAADACMAAAAAAAAAAAAEACMAAAAAAAAAAAAFACMAAAADAAAAAAAGACMAAAADAAAAAAAHACMAAAADAAAAAAAIACMAAAADAAAAAAAJACMAAAADAAAAAAAKACMAAAADAAAAAAALACMAAAADAAAAAAAMACMAAAADAAAAAAANACMAAAADAAAAAAAOACMAAAAAAAAAAAAPACMAAAABAAAAAAAQACMAAAABAAAAAAARACMAAAAAAAAAAAASACMAAAAAAAAAAAATACMAAAAAAAAAAAAUACMAAAADAAAAAAAVACMAAAADAAAAAAAWACMAAAADAAAAAAAXACMAAAADAAAAAAAYACMAAAADAAAAAAAZACMAAAADAAAAAAAaACMAAAAAAAAAAAAbACMAAAAAAAAAAAAcACMAAAAAAAAAAAAdACMAAAAAAAAAAAAeACMAAAAAAAAAAAAfACMAAAAAAAAAAAAgACMAAAAAAAAAAAAhACMAAAAAAAAAAAAiACMAAAAAAAAAAAAjACMAAAAAAAAAAAAkACMAAAAAAAAAAAAlACMAAAAAAAAAAAAmACMAAAAAAAAAAAAnACMAAAAAAAAAAAAAACQAAAAAAAAAAAABACQAAAAAAAAAAAACACQAAAAAAAAAAAADACQAAAAAAAAAAAAEACQAAAAAAAAAAAAFACQAAAADAAAAAAAGACQAAAADAAAAAAAHACQAAAADAAAAAAAIACQAAAADAAAAAAAJACQAAAADAAAAAAAKACQAAAADAAAAAAALACQAAAADAAAAAAAMACQAAAADAAAAAAANACQAAAADAAAAAAAOACQAAAADAAAAAAAPACQAAAADAAAAAAAQACQAAAADAAAAAAARACQAAAADAAAAAAASACQAAAADAAAAAAATACQAAAADAAAAAAAUACQAAAADAAAAAAAVACQAAAADAAAAAAAWACQAAAADAAAAAAAXACQAAAADAAAAAAAYACQAAAADAAAAAAAZACQAAAADAAAAAAAaACQAAAADAAAAAAAbACQAAAADAAAAAAAcACQAAAADAAAAAAAdACQAAAADAAAAAAAeACQAAAAAAAAAAAAfACQAAAAAAAAAAAAgACQAAAAAAAAAAAAhACQAAAAAAAAAAAAiACQAAAAAAAAAAAAjACQAAAAAAAAAAAAkACQAAAAAAAAAAAAlACQAAAAAAAAAAAAmACQAAAADAAAAAAAnACQAAAADAAAAAAAAACUAAAAAAAAAAAABACUAAAAAAAAAAAACACUAAAAAAAAAAAADACUAAAAAAAAAAAAEACUAAAAAAAAAAAAFACUAAAAAAAAAAAAGACUAAAAAAAAAAAAHACUAAAADAAAAAAAIACUAAAADAAAAAAAJACUAAAADAAAAAAAKACUAAAADAAAAAAALACUAAAADAAAAAAAMACUAAAADAAAAAAANACUAAAADAAAAAAAOACUAAAADAAAAAAAPACUAAAADAAAAAAAQACUAAAADAAAAAAARACUAAAADAAAAAAASACUAAAADAAAAAAATACUAAAADAAAAAAAUACUAAAADAAAAAAAVACUAAAADAAAAAAAWACUAAAADAAAAAAAXACUAAAADAAAAAAAYACUAAAADAAAAAAAZACUAAAADAAAAAAAaACUAAAADAAAAAAAbACUAAAADAAAAAAAcACUAAAADAAAAAAAdACUAAAADAAAAAAAeACUAAAADAAAAAAAfACUAAAADAAAAAAAgACUAAAADAAAAAAAhACUAAAADAAAAAAAiACUAAAADAAAAAAAjACUAAAADAAAAAAAkACUAAAADAAAAAAAlACUAAAADAAAAAAAmACUAAAADAAAAAAAnACUAAAADAAAAAAAAACYAAAAAAAAAAAABACYAAAAAAAAAAAACACYAAAAAAAAAAAADACYAAAAAAAAAAAAEACYAAAAAAAAAAAAFACYAAAAAAAAAAAAGACYAAAAAAAAAAAAHACYAAAADAAAAAAAIACYAAAADAAAAAAAJACYAAAADAAAAAAAKACYAAAADAAAAAAALACYAAAADAAAAAAAMACYAAAADAAAAAAANACYAAAADAAAAAAAOACYAAAADAAAAAAAPACYAAAADAAAAAAAQACYAAAADAAAAAAARACYAAAADAAAAAAASACYAAAADAAAAAAATACYAAAADAAAAAAAUACYAAAAAAAAAAAAVACYAAAAAAAAAAAAWACYAAAAAAAAAAAAXACYAAAAAAAAAAAAYACYAAAAAAAAAAAAZACYAAAAAAAAAAAAaACYAAAADAAAAAAAbACYAAAADAAAAAAAcACYAAAADAAAAAAAdACYAAAADAAAAAAAeACYAAAADAAAAAAAfACYAAAADAAAAAAAgACYAAAADAAAAAAAhACYAAAADAAAAAAAiACYAAAADAAAAAAAjACYAAAADAAAAAAAkACYAAAADAAAAAAAlACYAAAADAAAAAAAmACYAAAADAAAAAAAnACYAAAADAAAAAAAAACcAAAAAAAAAAAABACcAAAAAAAAAAAACACcAAAAAAAAAAAADACcAAAAAAAAAAAAEACcAAAAAAAAAAAAFACcAAAAAAAAAAAAGACcAAAAAAAAAAAAHACcAAAAAAAAAAAAIACcAAAAAAAAAAAAJACcAAAAAAAAAAAAKACcAAAAAAAAAAAALACcAAAAAAAAAAAAMACcAAAAAAAAAAAANACcAAAAAAAAAAAAOACcAAAAAAAAAAAAPACcAAAABAAAAAAAQACcAAAABAAAAAAARACcAAAAAAAAAAAASACcAAAAAAAAAAAATACcAAAAAAAAAAAAUACcAAAAAAAAAAAAVACcAAAAAAAAAAAAWACcAAAAAAAAAAAAXACcAAAAAAAAAAAAYACcAAAAAAAAAAAAZACcAAAAAAAAAAAAaACcAAAAAAAAAAAAbACcAAAAAAAAAAAAcACcAAAAAAAAAAAAdACcAAAAAAAAAAAAeACcAAAADAAAAAAAfACcAAAADAAAAAAAgACcAAAADAAAAAAAhACcAAAADAAAAAAAiACcAAAADAAAAAAAjACcAAAADAAAAAAAkACcAAAADAAAAAAAlACcAAAADAAAAAAAmACcAAAAAAAAAAAAnACcAAAAAAAAAAAAAACgAAAAAAAAAAAABACgAAAAAAAAAAAACACgAAAAAAAAAAAADACgAAAAAAAAAAAAEACgAAAAAAAAAAAAFACgAAAAAAAAAAAAGACgAAAAAAAAAAAAHACgAAAAAAAAAAAAIACgAAAAAAAAAAAAJACgAAAAAAAAAAAAKACgAAAAAAAAAAAALACgAAAAAAAAAAAAMACgAAAAAAAAAAAANACgAAAAAAAAAAAAOACgAAAAAAAAAAAAPACgAAAABAAAAAAAQACgAAAABAAAAAAARACgAAAAAAAAAAAASACgAAAAAAAAAAAATACgAAAAAAAAAAAAUACgAAAAAAAAAAAAVACgAAAAAAAAAAAAWACgAAAAAAAAAAAAXACgAAAAAAAAAAAAYACgAAAAAAAAAAAAZACgAAAAAAAAAAAAaACgAAAAAAAAAAAAbACgAAAAAAAAAAAAcACgAAAAAAAAAAAAdACgAAAAAAAAAAAAeACgAAAAAAAAAAAAfACgAAAAAAAAAAAAgACgAAAAAAAAAAAAhACgAAAAAAAAAAAAiACgAAAAAAAAAAAAjACgAAAAAAAAAAAAkACgAAAAAAAAAAAAlACgAAAAAAAAAAAAmACgAAAAAAAAAAAAnACgAAAAAAAAAAAAAACkAAAAAAAAAAAABACkAAAAAAAAAAAACACkAAAAAAAAAAAADACkAAAAAAAAAAAAEACkAAAAAAAAAAAAFACkAAAAAAAAAAAAGACkAAAAAAAAAAAAHACkAAAAAAAAAAAAIACkAAAAAAAAAAAAJACkAAAAAAAAAAAAKACkAAAAAAAAAAAALACkAAAAAAAAAAAAMACkAAAAAAAAAAAANACkAAAAAAAAAAAAOACkAAAAAAAAAAAAPACkAAAABAAAAAAAQACkAAAABAAAAAAARACkAAAAAAAAAAAASACkAAAAAAAAAAAATACkAAAAAAAAAAAAUACkAAAAAAAAAAAAVACkAAAAAAAAAAAAWACkAAAAAAAAAAAAXACkAAAAAAAAAAAAYACkAAAAAAAAAAAAZACkAAAAAAAAAAAAaACkAAAAAAAAAAAAbACkAAAAAAAAAAAAcACkAAAAAAAAAAAAdACkAAAAAAAAAAAAeACkAAAAAAAAAAAAfACkAAAAAAAAAAAAgACkAAAAAAAAAAAAhACkAAAAAAAAAAAAiACkAAAAAAAAAAAAjACkAAAAAAAAAAAAkACkAAAAAAAAAAAAlACkAAAAAAAAAAAAmACkAAAAAAAAAAAAnACkAAAAAAAAAAAAAACoAAAAAAAAAAAABACoAAAAAAAAAAAACACoAAAAAAAAAAAADACoAAAAAAAAAAAAEACoAAAAAAAAAAAAFACoAAAAAAAAAAAAGACoAAAAAAAAAAAAHACoAAAAAAAAAAAAIACoAAAAAAAAAAAAJACoAAAAAAAAAAAAKACoAAAAAAAAAAAALACoAAAAAAAAAAAAMACoAAAAAAAAAAAANACoAAAAAAAAAAAAOACoAAAAAAAAAAAAPACoAAAABAAAAAAAQACoAAAABAAAAAAARACoAAAAAAAAAAAASACoAAAAAAAAAAAATACoAAAAAAAAAAAAUACoAAAAAAAAAAAAVACoAAAAAAAAAAAAWACoAAAAAAAAAAAAXACoAAAAAAAAAAAAYACoAAAAAAAAAAAAZACoAAAAAAAAAAAAaACoAAAAAAAAAAAAbACoAAAAAAAAAAAAcACoAAAAAAAAAAAAdACoAAAAAAAAAAAAeACoAAAAAAAAAAAAfACoAAAAAAAAAAAAgACoAAAAAAAAAAAAhACoAAAAAAAAAAAAiACoAAAAAAAAAAAAjACoAAAAAAAAAAAAkACoAAAAAAAAAAAAlACoAAAAAAAAAAAAmACoAAAAAAAAAAAAnACoAAAAAAAAAAAAAACsAAAAAAAAAAAABACsAAAAAAAAAAAACACsAAAAAAAAAAAADACsAAAAAAAAAAAAEACsAAAAAAAAAAAAFACsAAAAAAAAAAAAGACsAAAAAAAAAAAAHACsAAAAAAAAAAAAIACsAAAAAAAAAAAAJACsAAAAAAAAAAAAKACsAAAAAAAAAAAALACsAAAAAAAAAAAAMACsAAAAAAAAAAAANACsAAAAAAAAAAAAOACsAAAAAAAAAAAAPACsAAAABAAAAAAAQACsAAAABAAAAAAARACsAAAAAAAAAAAASACsAAAAAAAAAAAATACsAAAAAAAAAAAAUACsAAAAAAAAAAAAVACsAAAAAAAAAAAAWACsAAAAAAAAAAAAXACsAAAAAAAAAAAAYACsAAAAAAAAAAAAZACsAAAAAAAAAAAAaACsAAAAAAAAAAAAbACsAAAAAAAAAAAAcACsAAAAAAAAAAAAdACsAAAAAAAAAAAAeACsAAAAAAAAAAAAfACsAAAAAAAAAAAAgACsAAAAAAAAAAAAhACsAAAAAAAAAAAAiACsAAAAAAAAAAAAjACsAAAAAAAAAAAAkACsAAAAAAAAAAAAlACsAAAAAAAAAAAAmACsAAAAAAAAAAAAnACsAAAAAAAAAAAAAACwAAAAAAAAAAAABACwAAAAAAAAAAAACACwAAAAAAAAAAAADACwAAAAAAAAAAAAEACwAAAAAAAAAAAAFACwAAAAAAAAAAAAGACwAAAAAAAAAAAAHACwAAAAAAAAAAAAIACwAAAAAAAAAAAAJACwAAAAAAAAAAAAKACwAAAAAAAAAAAALACwAAAAAAAAAAAAMACwAAAAAAAAAAAANACwAAAAAAAAAAAAOACwAAAAAAAAAAAAPACwAAAABAAAAAAAQACwAAAABAAAAAAARACwAAAAAAAAAAAASACwAAAAAAAAAAAATACwAAAAAAAAAAAAUACwAAAAAAAAAAAAVACwAAAAAAAAAAAAWACwAAAAAAAAAAAAXACwAAAAAAAAAAAAYACwAAAAAAAAAAAAZACwAAAAAAAAAAAAaACwAAAAAAAAAAAAbACwAAAAAAAAAAAAcACwAAAAAAAAAAAAdACwAAAAAAAAAAAAeACwAAAAAAAAAAAAfACwAAAAAAAAAAAAgACwAAAAAAAAAAAAhACwAAAAAAAAAAAAiACwAAAAAAAAAAAAjACwAAAAAAAAAAAAkACwAAAAAAAAAAAAlACwAAAAAAAAAAAAmACwAAAAAAAAAAAAnACwAAAAAAAAA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AAAeADAAAAAAAAAAAAAfADAAAAAAAAAAAAAgADAAAAAAAAAAAAAhADAAAAAAAAAAAAAiADAAAAAAAAAAAAAjADAAAAAAAAAAAAAkADAAAAAAAAAAAAAlADAAAAAAAAAAAAAmADAAAAAAAAAAAAAnADAAAAAAAAAAAAAAADEAAAAAAAAAAAABADEAAAAAAAAAAAACADEAAAAAAAAAAAADADEAAAAAAAAAAAAEADEAAAAAAAAAAAAFADEAAAAAAAAAAAAGADEAAAAFAAAAAAAHADEAAAAFAAAAAAAIADEAAAAFAAAAAAAJADEAAAAFAAAAAAAKADEAAAAFAAAAAAALADEAAAAFAAAAAAAMADEAAAAFAAAAAAANADEAAAAFAAAAAAAOADEAAAAAAAAAAAAPADEAAAABAAAAAAAQADEAAAABAAAAAAARADEAAAAAAAAAAAASADEAAAAAAAAAAAATADEAAAAAAAAAAAAUADEAAAAAAAAAAAAVADEAAAAAAAAAAAAWADEAAAAAAAAAAAAXADEAAAAAAAAAAAAYADEAAAAAAAAAAAAZADEAAAAAAAAAAAAaADEAAAAAAAAAAAAbADEAAAAAAAAAAAAcADEAAAAAAAAAAAAdADEAAAAAAAAAAAAeADEAAAAAAAAAAAAfADEAAAAAAAAAAAAgADEAAAAAAAAAAAAhADEAAAAAAAAAAAAiADEAAAAAAAAAAAAjADEAAAAAAAAAAAAkADEAAAAAAAAAAAAlADEAAAAAAAAAAAAmADEAAAAAAAAAAAAnADEAAAAAAAAAAAAAADIAAAAAAAAAAAABADIAAAAAAAAAAAACADIAAAAAAAAAAAADADIAAAAAAAAAAAAEADIAAAAAAAAAAAAFADIAAAAFAAAAAAAGADIAAAAFAAAAAAAHADIAAAAAAAAAAAAIADIAAAAAAAAAAAAJADIAAAAAAAAAAAAKADIAAAAAAAAAAAALADIAAAAAAAAAAAAMADIAAAAAAAAAAAANADIAAAAFAAAAAAAOADIAAAAFAAAAAAAPADIAAAABAAAAAAAQADIAAAABAAAAAAARADIAAAAAAAAAAAASADIAAAAAAAAAAAATADIAAAAAAAAAAAAUADIAAAAAAAAAAAAVADIAAAAAAAAAAAAWADIAAAAAAAAAAAAXADIAAAAAAAAAAAAYADIAAAAAAAAAAAAZADIAAAAAAAAAAAAaADIAAAAAAAAAAAAbADIAAAAAAAAAAAAcADIAAAAAAAAAAAAdADIAAAAAAAAAAAAeADIAAAAAAAAAAAAfADIAAAAAAAAAAAAgADIAAAAAAAAAAAAhADIAAAAAAAAAAAAiADIAAAAAAAAAAAAjADIAAAAAAAAAAAAkADIAAAAAAAAAAAAlADIAAAAAAAAAAAAmADIAAAAAAAAAAAAnADIAAAAAAAAAAAAAADMAAAAAAAAAAAABADMAAAAAAAAAAAACADMAAAAAAAAAAAADADMAAAAAAAAAAAAEADMAAAAAAAAAAAAFADMAAAAFAAAAAAAGADMAAAAAAAAAAAAHADMAAAAAAAAAAAAIADMAAAAAAAAAAAAJADMAAAAAAAAAAAAKADMAAAAAAAAAAAALADMAAAAAAAAAAAAMADMAAAAAAAAAAAANADMAAAAAAAAAAAAOADMAAAABAAAAAAAPADMAAAABAAAAAAAQADMAAAABAAAAAAARADMAAAAAAAAAAAASADMAAAAAAAAAAAATADMAAAAAAAAAAAAUADMAAAAAAAAAAAAVADMAAAAAAAAAAAAWADMAAAAAAAAAAAAXADMAAAAAAAAAAAAYADMAAAAAAAAAAAAZADMAAAAAAAAAAAAaADMAAAAAAAAAAAAbADMAAAAAAAAAAAAcADMAAAAAAAAAAAAdADMAAAAAAAAAAAAeADMAAAAAAAAAAAAfADMAAAAAAAAAAAAgADMAAAAAAAAAAAAhADMAAAAAAAAAAAAiADMAAAAAAAAAAAAjADMAAAAAAAAAAAAkADMAAAAAAAAAAAAlADMAAAAAAAAAAAAmADMAAAAAAAAAAAAnADMAAAAAAAAAAAAAADQAAAAAAAAAAAABADQAAAAAAAAAAAACADQAAAAAAAAAAAADADQAAAAAAAAAAAAEADQAAAAAAAAAAAAFADQAAAAFAAAAAAAGADQAAAAFAAAAAAAHADQAAAAAAAAAAAAIADQAAAAAAAAAAAAJADQAAAAAAAAAAAAKADQAAAAAAAAAAAALADQAAAAAAAAAAAAMADQAAAAAAAAAAAANADQAAAAFAAAAAAAOADQAAAAFAAAAAAAPADQAAAABAAAAAAAQADQAAAABAAAAAAARADQAAAABAAAAAAASADQAAAABAAAAAAATADQAAAABAAAAAAAUADQAAAABAAAAAAAVADQAAAABAAAAAAAWADQAAAABAAAAAAAXADQAAAABAAAAAAAYADQAAAABAAAAAAAZADQAAAABAAAAAAAaADQAAAABAAAAAAAbADQAAAABAAAAAAAcADQAAAABAAAAAAAdADQAAAABAAAAAAAeADQAAAABAAAAAAAfADQAAAABAAAAAAAgADQAAAABAAAAAAAhADQAAAABAAAAAAAiADQAAAABAAAAAAAjADQAAAABAAAAAAAkADQAAAABAAAAAAAlADQAAAABAAAAAAAmADQAAAAAAAAAAAAnADQAAAAAAAAAAAAAADUAAAAAAAAAAAABADUAAAAAAAAAAAACADUAAAAAAAAAAAADADUAAAAAAAAAAAAEADUAAAAAAAAAAAAFADUAAAAAAAAAAAAGADUAAAAFAAAAAAAHADUAAAAFAAAAAAAIADUAAAAFAAAAAAAJADUAAAAAAAAAAAAKADUAAAAAAAAAAAALADUAAAAFAAAAAAAMADUAAAAFAAAAAAANADUAAAAFAAAAAAAOADUAAAAAAAAAAAAPADUAAAABAAAAAAAQADUAAAABAAAAAAARADUAAAABAAAAAAASADUAAAABAAAAAAATADUAAAABAAAAAAAUADUAAAABAAAAAAAVADUAAAABAAAAAAAWADUAAAABAAAAAAAXADUAAAABAAAAAAAYADUAAAABAAAAAAAZADUAAAABAAAAAAAaADUAAAABAAAAAAAbADUAAAABAAAAAAAcADUAAAABAAAAAAAdADUAAAABAAAAAAAeADUAAAABAAAAAAAfADUAAAABAAAAAAAgADUAAAABAAAAAAAhADUAAAABAAAAAAAiADUAAAABAAAAAAAjADUAAAABAAAAAAAkADUAAAABAAAAAAAlADUAAAABAAAAAAAmADUAAAAAAAAAAAAnADUAAAAAAAAAAAAAADYAAAAAAAAAAAABADYAAAAAAAAAAAACADYAAAAAAAAAAAADADYAAAAAAAAAAAAEADYAAAAAAAAAAAAFADYAAAAAAAAAAAAGADYAAAAAAAAAAAAHADYAAAAAAAAAAAAIADYAAAAAAAAAAAAJADYAAAAAAAAAAAAKADYAAAAAAAAAAAALADYAAAAAAAAAAAAMADYAAAAAAAAAAAANADYAAAAAAAAAAAAOADYAAAAAAAAAAAAPADYAAAAAAAAAAAAQADYAAAAAAAAAAAARADYAAAAAAAAAAAASADYAAAAAAAAAAAATADYAAAAAAAAAAAAUADYAAAAAAAAAAAAVADYAAAAAAAAAAAAWADYAAAAAAAAAAAAXADYAAAAAAAAAAAAYADYAAAAAAAAAAAAZADYAAAAAAAAAAAAaADYAAAAAAAAAAAAbADYAAAAAAAAAAAAcADYAAAAAAAAAAAAdADYAAAAAAAAAAAAeADYAAAAAAAAAAAAfADYAAAAAAAAAAAAgADYAAAAAAAAAAAAhADYAAAAAAAAAAAAiADYAAAAAAAAAAAAjADYAAAAAAAAAAAAkADYAAAABAAAAAAAlADYAAAABAAAAAAAmADYAAAAAAAAAAAAnADYAAAAAAAAAAAAAADcAAAAAAAAAAAABADcAAAAAAAAAAAACADcAAAAAAAAAAAADADcAAAAAAAAAAAAEADcAAAAAAAAAAAAFADcAAAAAAAAAAAAGADcAAAAAAAAAAAAHADcAAAAAAAAAAAAIADcAAAAAAAAAAAAJADcAAAAAAAAAAAAKADcAAAAAAAAAAAALADcAAAAAAAAAAAAMADcAAAAAAAAAAAANADcAAAAAAAAAAAAOADcAAAAAAAAAAAAPADcAAAAAAAAAAAAQADcAAAAAAAAAAAARADcAAAAAAAAAAAASADcAAAAAAAAAAAATADcAAAAAAAAAAAAUADcAAAAAAAAAAAAVADcAAAAAAAAAAAAWADcAAAAAAAAAAAAXADcAAAAAAAAAAAAYADcAAAAAAAAAAAAZADcAAAAAAAAAAAAaADcAAAAAAAAAAAAbADcAAAAAAAAAAAAcADcAAAAAAAAAAAAdADcAAAAAAAAAAAAeADcAAAAAAAAAAAAfADcAAAAAAAAAAAAgADcAAAAAAAAAAAAhADcAAAAAAAAAAAAiADcAAAAAAAAAAAAjADcAAAAAAAAAAAAkADcAAAABAAAAAAAlADcAAAABAAAAAAAmADcAAAAAAAAAAAAnADcAAAAAAAAAAAAAADgAAAAAAAAAAAABADgAAAAAAAAAAAACADgAAAAAAAAAAAADADgAAAAAAAAAAAAEADgAAAAAAAAAAAAFADgAAAAAAAAAAAAGADgAAAAAAAAAAAAHADgAAAAAAAAAAAAIADgAAAAAAAAAAAAJADgAAAAAAAAAAAAKADgAAAAAAAAAAAALADgAAAAAAAAAAAAMADgAAAAAAAAAAAANADgAAAAAAAAAAAAOADgAAAAAAAAAAAAPADgAAAAAAAAAAAAQADgAAAAAAAAAAAARADgAAAAAAAAAAAASADgAAAAAAAAAAAATADgAAAAAAAAAAAAUADgAAAAAAAAAAAAVADgAAAAAAAAAAAAWADgAAAAAAAAAAAAXADgAAAAAAAAAAAAYADgAAAAAAAAAAAAZADgAAAAAAAAAAAAaADgAAAAAAAAAAAAbADgAAAAAAAAAAAAcADgAAAAAAAAAAAAdADgAAAAAAAAAAAAeADgAAAAAAAAAAAAfADgAAAAAAAAAAAAgADgAAAAAAAAAAAAhADgAAAAAAAAAAAAiADgAAAAAAAAAAAAjADgAAAAAAAAAAAAkADgAAAABAAAAAAAlADgAAAABAAAAAAAmADgAAAABAAAAAAAnADgAAAABAAAAAAAAADkAAAAAAAAAAAABADkAAAAAAAAAAAACADkAAAAAAAAAAAADADkAAAAAAAAAAAAEADkAAAAAAAAAAAAFADkAAAAAAAAAAAAGADkAAAAAAAAAAAAHADkAAAAAAAAAAAAIADkAAAAAAAAAAAAJADkAAAAAAAAAAAAKADkAAAAAAAAAAAALADkAAAAAAAAAAAAMADkAAAAAAAAAAAANADkAAAAAAAAAAAAOADkAAAAAAAAAAAAPADkAAAAAAAAAAAAQADkAAAAAAAAAAAARADkAAAAAAAAAAAASADkAAAAAAAAAAAATADkAAAAAAAAAAAAUADkAAAAAAAAAAAAVADkAAAAAAAAAAAAWADkAAAAAAAAAAAAXADkAAAAAAAAAAAAYADkAAAAAAAAAAAAZADkAAAAAAAAAAAAaADkAAAAAAAAAAAAbADkAAAAAAAAAAAAcADkAAAAAAAAAAAAdADkAAAAAAAAAAAAeADkAAAAAAAAAAAAfADkAAAAAAAAAAAAgADkAAAAAAAAAAAAhADkAAAAAAAAAAAAiADkAAAAAAAAAAAAjADkAAAAAAAAAAAAkADkAAAABAAAAAAAlADkAAAABAAAAAAAmADkAAAABAAAAAAAnADkAAAABAAAAAAAAADoAAAAAAAAAAAABADoAAAAAAAAAAAACADoAAAAAAAAAAAADADoAAAAAAAAAAAAEADoAAAAAAAAAAAAFADoAAAAAAAAAAAAGADoAAAAAAAAAAAAHADoAAAAAAAAAAAAIADoAAAAAAAAAAAAJADoAAAAAAAAAAAAKADoAAAAAAAAAAAALADoAAAAAAAAAAAAMADoAAAAAAAAAAAANADoAAAAAAAAAAAAOADoAAAAAAAAAAAAPADoAAAAAAAAAAAAQADoAAAAAAAAAAAARADoAAAAAAAAAAAASADoAAAAAAAAAAAATADoAAAAAAAAAAAAUADoAAAAAAAAAAAAVADoAAAAAAAAAAAAWADoAAAAAAAAAAAAXADoAAAAAAAAAAAAYADoAAAAAAAAAAAAZADoAAAAAAAAAAAAaADoAAAAAAAAAAAAbADoAAAAAAAAAAAAcADoAAAAAAAAAAAAdADoAAAAAAAAAAAAeADoAAAAAAAAAAAAfADoAAAAAAAAAAAAgADoAAAAAAAAAAAAhADoAAAAAAAAAAAAiADoAAAAAAAAAAAAjADoAAAAAAAAAAAAkADoAAAAAAAAAAAAlADoAAAAAAAAAAAAmADoAAAAAAAAAAAAnADoAAAAAAAAAAAAAADsAAAAAAAAAAAABADsAAAAAAAAAAAACADsAAAAAAAAAAAADADsAAAAAAAAAAAAEADsAAAAAAAAAAAAFADsAAAAAAAAAAAAGADsAAAAAAAAAAAAHADsAAAAAAAAAAAAIADsAAAAAAAAAAAAJADsAAAAAAAAAAAAKADsAAAAAAAAAAAALADsAAAAAAAAAAAAMADsAAAAAAAAAAAANADsAAAAAAAAAAAAOADsAAAAAAAAAAAAPADsAAAAAAAAAAAAQADsAAAAAAAAAAAARADsAAAAAAAAAAAASADsAAAAAAAAAAAATADsAAAAAAAAAAAAUADsAAAAAAAAAAAAVADsAAAAAAAAAAAAWADsAAAAAAAAAAAAXADsAAAAAAAAAAAAYADsAAAAAAAAAAAAZADsAAAAAAAAAAAAaADsAAAAAAAAAAAAbADsAAAAAAAAAAAAcADsAAAAAAAAAAAAdADsAAAAAAAAAAAAeADsAAAAAAAAAAAAfADsAAAAAAAAAAAAgADsAAAAAAAAAAAAhADsAAAAAAAAAAAAiADsAAAAAAAAAAAAjADsAAAAAAAAAAAAkADsAAAAAAAAAAAAlADsAAAAAAAAAAAAmADsAAAAAAAAAAAAnADsAAAAAAAAA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AAAZAEEAAAAAAAAAAAAaAEEAAAAAAAAAAAAbAEEAAAAAAAAAAAAcAEEAAAAAAAAAAAAdAEEAAAAAAAAAAAAeAEEAAAAAAAAAAAAfAEEAAAAAAAAAAAAgAEEAAAAAAAAAAAAhAEEAAAAAAAAAAAAiAEEAAAAAAAAAAAAjAEEAAAAAAAAAAAAkAEEAAAAAAAAAAAAlAEEAAAAAAAAAAAAmAEEAAAAAAAAAAAAnAEEAAAAAAAAAAAAAAEIAAAAAAAAAAAABAEIAAAAAAAAAAAACAEIAAAAAAAAAAAADAEIAAAAAAAAAAAAEAEIAAAAAAAAAAAAFAEIAAAAAAAAAAAAGAEIAAAAAAAAAAAAHAEIAAAAAAAAAAAAIAEIAAAAAAAAAAAAJAEIAAAAAAAAAAAAKAEIAAAAAAAAAAAALAEIAAAAAAAAAAAAMAEIAAAAAAAAAAAANAEIAAAAAAAAAAAAOAEIAAAAAAAAAAAAPAEIAAAAAAAAAAAAQAEIAAAAAAAAAAAARAEIAAAAAAAAAAAASAEIAAAAAAAAAAAATAEIAAAAAAAAAAAAUAEIAAAAAAAAAAAAVAEIAAAAAAAAAAAAWAEIAAAAAAAAAAAAXAEIAAAAAAAAAAAAYAEIAAAAAAAAAAAAZAEIAAAAAAAAAAAAaAEIAAAAAAAAAAAAbAEIAAAAAAAAAAAAcAEIAAAAAAAAAAAAdAEIAAAAAAAAAAAAeAEIAAAAAAAAAAAAfAEIAAAAAAAAAAAAgAEIAAAAAAAAAAAAhAEIAAAAAAAAAAAAiAEIAAAAAAAAAAAAjAEIAAAAAAAAAAAAkAEIAAAAAAAAAAAAlAEIAAAAAAAAAAAAmAEIAAAAAAAAAAAAnAEIAAAAAAAAAAAAAAEMAAAAAAAAAAAABAEMAAAAAAAAAAAACAEMAAAAAAAAAAAADAEMAAAAAAAAAAAAEAEMAAAAAAAAAAAAFAEMAAAAAAAAAAAAGAEMAAAAAAAAAAAAHAEMAAAAAAAAAAAAIAEMAAAAAAAAAAAAJAEMAAAAAAAAAAAAKAEMAAAAAAAAAAAALAEMAAAAAAAAAAAAMAEMAAAAAAAAAAAANAEMAAAAAAAAAAAAOAEMAAAAAAAAAAAAPAEMAAAAAAAAAAAAQAEMAAAAAAAAAAAARAEMAAAAAAAAAAAASAEMAAAAAAAAAAAATAEMAAAAAAAAAAAAUAEMAAAAAAAAAAAAVAEMAAAAAAAAAAAAWAEMAAAAAAAAAAAAXAEMAAAAAAAAAAAAYAEMAAAAAAAAAAAAZAEMAAAAAAAAAAAAaAEMAAAAAAAAAAAAbAEMAAAAAAAAAAAAcAEMAAAAAAAAAAAAdAEMAAAAAAAAAAAAeAEMAAAAAAAAAAAAfAEMAAAAAAAAAAAAgAEMAAAAAAAAAAAAhAEMAAAAAAAAAAAAiAEMAAAAAAAAAAAAjAEMAAAAAAAAAAAAkAEMAAAAAAAAAAAAlAEMAAAAAAAAAAAAmAEMAAAAAAAAAAAAnAEMAAAAAAAAAAAAAAEQAAAAAAAAAAAABAEQAAAAAAAAAAAACAEQAAAAAAAAAAAADAEQAAAAAAAAAAAAEAEQAAAAAAAAAAAAFAEQAAAAAAAAAAAAGAEQAAAAAAAAAAAAHAEQAAAAAAAAAAAAIAEQAAAAAAAAAAAAJAEQAAAAAAAAAAAAKAEQAAAAAAAAAAAALAEQAAAAAAAAAAAAMAEQAAAAAAAAAAAANAEQAAAAAAAAAAAAOAEQAAAAAAAAAAAAPAEQAAAAAAAAAAAAQAEQAAAAAAAAAAAARAEQAAAAAAAAAAAASAEQAAAAAAAAAAAATAEQAAAAAAAAAAAAUAEQAAAAAAAAAAAAVAEQAAAAAAAAAAAAWAEQAAAAAAAAAAAAXAEQAAAAAAAAAAAAYAEQAAAAAAAAAAAAZAEQAAAAAAAAAAAAaAEQAAAAAAAAAAAAbAEQAAAAAAAAAAAAcAEQAAAAAAAAAAAAdAEQAAAAAAAAAAAAeAEQAAAAAAAAAAAAfAEQAAAAAAAAAAAAgAEQAAAAAAAAAAAAhAEQAAAAAAAAAAAAiAEQAAAAAAAAAAAAjAEQAAAAAAAAAAAAkAEQAAAAAAAAAAAAlAEQAAAAAAAAAAAAmAEQAAAAAAAAAAAAnAEQAAAAAAAAAAAAAAEUAAAAAAAAAAAABAEUAAAAAAAAAAAACAEUAAAAAAAAAAAADAEUAAAAAAAAAAAAEAEUAAAAAAAAAAAAFAEUAAAAAAAAAAAAGAEUAAAAAAAAAAAAHAEUAAAAAAAAAAAAIAEUAAAAAAAAAAAAJAEUAAAAAAAAAAAAKAEUAAAAAAAAAAAALAEUAAAAAAAAAAAAMAEUAAAAAAAAAAAANAEUAAAAAAAAAAAAOAEUAAAAAAAAAAAAPAEUAAAAAAAAAAAAQAEUAAAAAAAAAAAARAEUAAAAAAAAAAAASAEUAAAAAAAAAAAATAEUAAAAAAAAAAAAUAEUAAAAAAAAAAAAVAEUAAAAAAAAAAAAWAEUAAAAAAAAAAAAXAEUAAAAAAAAAAAAYAEUAAAAAAAAAAAAZAEUAAAAAAAAAAAAaAEUAAAAAAAAAAAAbAEUAAAAAAAAAAAAcAEUAAAAAAAAAAAAdAEUAAAAAAAAAAAAeAEUAAAAAAAAAAAAfAEUAAAAAAAAAAAAgAEUAAAAAAAAAAAAhAEUAAAAAAAAAAAAiAEUAAAAAAAAAAAAjAEUAAAAAAAAAAAAkAEUAAAAAAAAAAAAlAEUAAAAAAAAAAAAmAEUAAAAAAAAAAAAnAEUAAAAAAAAAAAAAAEYAAAAAAAAAAAABAEYAAAAAAAAAAAACAEYAAAAAAAAAAAADAEYAAAAAAAAAAAAEAEYAAAAAAAAAAAAFAEYAAAAAAAAAAAAGAEYAAAAAAAAAAAAHAEYAAAAAAAAAAAAIAEYAAAAAAAAAAAAJAEYAAAAAAAAAAAAKAEYAAAAAAAAAAAALAEYAAAAAAAAAAAAMAEYAAAAAAAAAAAANAEYAAAAAAAAAAAAOAEYAAAAAAAAAAAAPAEYAAAAAAAAAAAAQAEYAAAAAAAAAAAARAEYAAAAAAAAAAAASAEYAAAAAAAAAAAATAEYAAAAAAAAAAAAUAEYAAAAAAAAAAAAVAEYAAAAAAAAAAAAWAEYAAAAAAAAAAAAXAEYAAAAAAAAAAAAYAEYAAAAAAAAAAAAZAEYAAAAAAAAAAAAaAEYAAAAAAAAAAAAbAEYAAAAAAAAAAAAcAEYAAAAAAAAAAAAdAEYAAAAAAAAAAAAeAEYAAAAAAAAAAAAfAEYAAAAAAAAAAAAgAEYAAAAAAAAAAAAhAEYAAAAAAAAAAAAiAEYAAAAAAAAAAAAjAEYAAAAAAAAAAAAkAEYAAAAAAAAAAAAlAEYAAAAAAAAAAAAmAEYAAAAAAAAAAAAnAEYAAAAAAAAAAAAAAEcAAAAAAAAAAAABAEcAAAAAAAAAAAACAEcAAAAAAAAAAAADAEcAAAAAAAAAAAAEAEcAAAAAAAAAAAAFAEcAAAAAAAAAAAAGAEcAAAAAAAAAAAAHAEcAAAAAAAAAAAAIAEcAAAAAAAAAAAAJAEcAAAAAAAAAAAAKAEcAAAAAAAAAAAALAEcAAAAAAAAAAAAMAEcAAAAAAAAAAAANAEcAAAAAAAAAAAAOAEcAAAAAAAAAAAAPAEcAAAAAAAAAAAAQAEcAAAAAAAAAAAARAEcAAAAAAAAAAAASAEcAAAAAAAAAAAATAEcAAAAAAAAAAAAUAEcAAAAAAAAAAAAVAEcAAAAAAAAAAAAWAEcAAAAAAAAAAAAXAEcAAAAAAAAAAAAYAEcAAAAAAAAAAAAZAEcAAAAAAAAAAAAaAEcAAAAAAAAAAAAbAEcAAAAAAAAAAAAcAEcAAAAAAAAAAAAdAEcAAAAAAAAAAAAeAEcAAAAAAAAAAAAfAEcAAAAAAAAAAAAgAEcAAAAAAAAAAAAhAEcAAAAAAAAAAAAiAEcAAAAAAAAAAAAjAEcAAAAAAAAAAAAkAEcAAAAAAAAAAAAlAEcAAAAAAAAAAAAmAEcAAAAAAAAAAAAnAEcAAAAAAAAAAAA=")
+tile_set = ExtResource("4_d3qyf")
+
+[node name="Tiers" type="TileMapLayer" parent="Ground" unique_id=709482589]
+tile_map_data = PackedByteArray("AAAAAAAAAAACAAAAAAABAAAAAAACAAAAAAACAAAAAAACAAAAAAADAAAAAAACAAAAAAAEAAAAAAACAAAAAAAFAAAAAAACAAAAAAAGAAAAAAACAAAAAAAHAAAAAAACAAAAAAAIAAAAAAACAAAAAAAJAAAAAAACAAAAAAAKAAAAAAACAAAAAAALAAAAAAACAAAAAAAAAAEAAAACAAAAAAABAAEAAAACAAAAAAACAAEAAAACAAAAAAADAAEAAAACAAAAAAAEAAEAAAACAAAAAAAFAAEAAAACAAAAAAAGAAEAAAACAAAAAAAHAAEAAAACAAAAAAAIAAEAAAACAAAAAAAJAAEAAAACAAAAAAAKAAEAAAACAAAAAAALAAEAAAACAAAAAAAAAAIAAAACAAAAAAABAAIAAAACAAAAAAACAAIAAAACAAAAAAADAAIAAAACAAAAAAAEAAIAAAACAAAAAAAFAAIAAAACAAAAAAAGAAIAAAACAAAAAAAHAAIAAAACAAAAAAAIAAIAAAACAAAAAAAJAAIAAAACAAAAAAAKAAIAAAACAAAAAAALAAIAAAACAAAAAAAAAAMAAAACAAAAAAABAAMAAAACAAAAAAACAAMAAAACAAAAAAADAAMAAAACAAAAAAAEAAMAAAACAAAAAAAFAAMAAAACAAAAAAAGAAMAAAACAAAAAAAHAAMAAAACAAAAAAAIAAMAAAACAAAAAAAJAAMAAAACAAAAAAAKAAMAAAACAAAAAAALAAMAAAACAAAAAAAAAAQAAAACAAAAAAABAAQAAAACAAAAAAACAAQAAAACAAAAAAADAAQAAAACAAAAAAAEAAQAAAACAAAAAAAFAAQAAAACAAAAAAAGAAQAAAACAAAAAAAHAAQAAAACAAAAAAAIAAQAAAACAAAAAAAJAAQAAAACAAAAAAAKAAQAAAACAAAAAAALAAQAAAACAAAAAAAAAAUAAAACAAAAAAABAAUAAAACAAAAAAACAAUAAAACAAAAAAADAAUAAAACAAAAAAAEAAUAAAACAAAAAAAFAAUAAAACAAAAAAAGAAUAAAACAAAAAAAHAAUAAAACAAAAAAAIAAUAAAACAAAAAAAJAAUAAAACAAAAAAAKAAUAAAACAAAAAAALAAUAAAACAAAAAAAAAAYAAAACAAAAAAABAAYAAAACAAAAAAACAAYAAAACAAAAAAADAAYAAAACAAAAAAAEAAYAAAACAAAAAAAFAAYAAAACAAAAAAAGAAYAAAACAAAAAAAHAAYAAAACAAAAAAAIAAYAAAACAAAAAAAJAAYAAAACAAAAAAAKAAYAAAACAAAAAAALAAYAAAACAAAAAAAAAAcAAAACAAAAAAABAAcAAAACAAAAAAACAAcAAAACAAAAAAADAAcAAAACAAAAAAAEAAcAAAACAAAAAAAFAAcAAAACAAAAAAAGAAcAAAACAAAAAAAHAAcAAAACAAAAAAAIAAcAAAACAAAAAAAJAAcAAAACAAAAAAAKAAcAAAACAAAAAAALAAcAAAACAAAAAAAAAAgAAAACAAAAAAABAAgAAAACAAAAAAACAAgAAAACAAAAAAADAAgAAAACAAAAAAAEAAgAAAACAAAAAAAFAAgAAAACAAAAAAAGAAgAAAACAAAAAAAHAAgAAAACAAAAAAAIAAgAAAACAAAAAAAJAAgAAAACAAAAAAAKAAgAAAACAAAAAAALAAgAAAACAAAAAAAAAAkAAAACAAAAAAABAAkAAAACAAAAAAACAAkAAAACAAAAAAADAAkAAAACAAAAAAAEAAkAAAACAAAAAAAFAAkAAAACAAAAAAAGAAkAAAACAAAAAAAHAAkAAAACAAAAAAAIAAkAAAACAAAAAAAJAAkAAAACAAAAAAAKAAkAAAACAAAAAAALAAkAAAACAAAAAAAAAAoAAAACAAAAAAABAAoAAAACAAAAAAACAAoAAAACAAAAAAADAAoAAAACAAAAAAAEAAoAAAACAAAAAAAFAAoAAAACAAAAAAAGAAoAAAACAAAAAAAHAAoAAAACAAAAAAAIAAoAAAACAAAAAAAJAAoAAAACAAAAAAAKAAoAAAACAAAAAAALAAoAAAACAAAAAAAAAAsAAAACAAAAAAABAAsAAAACAAAAAAACAAsAAAACAAAAAAADAAsAAAACAAAAAAAEAAsAAAACAAAAAAAFAAsAAAACAAAAAAAGAAsAAAACAAAAAAAHAAsAAAACAAAAAAAIAAsAAAACAAAAAAAJAAsAAAACAAAAAAAKAAsAAAACAAAAAAALAAsAAAACAAAAAAAAAAwAAAACAAAAAAABAAwAAAACAAAAAAACAAwAAAACAAAAAAADAAwAAAACAAAAAAAEAAwAAAACAAAAAAAFAAwAAAACAAAAAAAGAAwAAAACAAAAAAAHAAwAAAACAAAAAAAIAAwAAAACAAAAAAAJAAwAAAACAAAAAAAKAAwAAAACAAAAAAALAAwAAAACAAAAAAAAAA0AAAACAAAAAAABAA0AAAACAAAAAAACAA0AAAACAAAAAAADAA0AAAACAAAAAAAEAA0AAAACAAAAAAAFAA0AAAACAAAAAAAGAA0AAAACAAAAAAAHAA0AAAACAAAAAAAIAA0AAAACAAAAAAAJAA0AAAACAAAAAAAKAA0AAAACAAAAAAALAA0AAAACAAAAAAAAAA4AAAACAAAAAAABAA4AAAACAAAAAAACAA4AAAACAAAAAAADAA4AAAACAAAAAAAEAA4AAAACAAAAAAAFAA4AAAACAAAAAAAGAA4AAAACAAAAAAAHAA4AAAACAAAAAAAIAA4AAAACAAAAAAAJAA4AAAACAAAAAAAKAA4AAAACAAAAAAALAA4AAAACAAAAAAAAAA8AAAACAAAAAAABAA8AAAACAAAAAAACAA8AAAACAAAAAAADAA8AAAACAAAAAAAEAA8AAAACAAAAAAAFAA8AAAACAAAAAAAGAA8AAAACAAAAAAAHAA8AAAACAAAAAAAIAA8AAAACAAAAAAAJAA8AAAACAAAAAAAKAA8AAAACAAAAAAALAA8AAAACAAAAAAAAABAAAAACAAAAAAABABAAAAACAAAAAAACABAAAAACAAAAAAADABAAAAACAAAAAAAEABAAAAACAAAAAAAFABAAAAACAAAAAAAGABAAAAACAAAAAAAHABAAAAACAAAAAAAIABAAAAACAAAAAAAJABAAAAACAAAAAAAKABAAAAACAAAAAAALABAAAAACAAAAAAAAABEAAAACAAAAAAABABEAAAACAAAAAAACABEAAAACAAAAAAADABEAAAACAAAAAAAEABEAAAACAAAAAAAFABEAAAACAAAAAAAGABEAAAACAAAAAAAHABEAAAACAAAAAAAIABEAAAACAAAAAAAJABEAAAACAAAAAAAKABEAAAACAAAAAAALABEAAAACAAAAAAAAABIAAAACAAAAAAABABIAAAACAAAAAAACABIAAAACAAAAAAADABIAAAACAAAAAAAEABIAAAACAAAAAAAFABIAAAACAAAAAAAGABIAAAACAAAAAAAHABIAAAACAAAAAAAIABIAAAACAAAAAAAJABIAAAACAAAAAAAKABIAAAACAAAAAAALABIAAAACAAAAAAAAABMAAAACAAAAAAABABMAAAACAAAAAAACABMAAAACAAAAAAADABMAAAACAAAAAAAEABMAAAACAAAAAAAFABMAAAACAAAAAAAGABMAAAACAAAAAAAHABMAAAACAAAAAAAIABMAAAACAAAAAAAJABMAAAACAAAAAAAKABMAAAACAAAAAAALABMAAAACAAAAAAAAABQAAAACAAAAAAABABQAAAACAAAAAAACABQAAAACAAAAAAADABQAAAACAAAAAAAEABQAAAACAAAAAAAFABQAAAACAAAAAAAGABQAAAACAAAAAAAHABQAAAACAAAAAAAIABQAAAACAAAAAAAJABQAAAACAAAAAAAKABQAAAACAAAAAAALABQAAAACAAAAAAAAABUAAAACAAAAAAABABUAAAACAAAAAAACABUAAAACAAAAAAADABUAAAACAAAAAAAEABUAAAACAAAAAAAFABUAAAACAAAAAAAGABUAAAACAAAAAAAHABUAAAACAAAAAAAIABUAAAACAAAAAAAJABUAAAACAAAAAAAKABUAAAACAAAAAAALABUAAAACAAAAAAAAABYAAAACAAAAAAABABYAAAACAAAAAAACABYAAAACAAAAAAADABYAAAACAAAAAAAEABYAAAACAAAAAAAFABYAAAACAAAAAAAGABYAAAACAAAAAAAHABYAAAACAAAAAAAIABYAAAACAAAAAAAJABYAAAACAAAAAAAKABYAAAACAAAAAAALABYAAAACAAAAAAAAABcAAAACAAAAAAABABcAAAACAAAAAAACABcAAAACAAAAAAADABcAAAACAAAAAAAEABcAAAACAAAAAAAFABcAAAACAAAAAAAGABcAAAACAAAAAAAHABcAAAACAAAAAAAIABcAAAACAAAAAAAJABcAAAACAAAAAAAKABcAAAACAAAAAAALABcAAAACAAAAAAAAABgAAAACAAAAAAABABgAAAACAAAAAAACABgAAAACAAAAAAADABgAAAACAAAAAAAEABgAAAACAAAAAAAFABgAAAACAAAAAAAGABgAAAACAAAAAAAHABgAAAACAAAAAAAIABgAAAACAAAAAAAJABgAAAACAAAAAAAKABgAAAACAAAAAAALABgAAAACAAAAAAAAABkAAAACAAAAAAABABkAAAACAAAAAAACABkAAAACAAAAAAADABkAAAACAAAAAAAEABkAAAACAAAAAAAFABkAAAACAAAAAAAGABkAAAACAAAAAAAHABkAAAACAAAAAAAIABkAAAACAAAAAAAJABkAAAACAAAAAAAKABkAAAACAAAAAAALABkAAAACAAAAAAAAABoAAAACAAAAAAABABoAAAACAAAAAAACABoAAAACAAAAAAADABoAAAACAAAAAAAEABoAAAACAAAAAAAFABoAAAACAAAAAAAGABoAAAACAAAAAAAHABoAAAACAAAAAAAIABoAAAACAAAAAAAJABoAAAACAAAAAAAKABoAAAACAAAAAAALABoAAAACAAAAAAAAABsAAAACAAAAAAABABsAAAACAAAAAAACABsAAAACAAAAAAADABsAAAACAAAAAAAEABsAAAACAAAAAAAFABsAAAACAAAAAAAGABsAAAACAAAAAAAHABsAAAACAAAAAAAIABsAAAACAAAAAAAJABsAAAACAAAAAAAKABsAAAACAAAAAAALABsAAAACAAAAAAAAABwAAAACAAAAAAABABwAAAACAAAAAAACABwAAAACAAAAAAADABwAAAACAAAAAAAEABwAAAACAAAAAAAFABwAAAACAAAAAAAGABwAAAACAAAAAAAHABwAAAACAAAAAAAIABwAAAACAAAAAAAJABwAAAACAAAAAAAKABwAAAACAAAAAAALABwAAAACAAAAAAAAAB0AAAACAAAAAAABAB0AAAACAAAAAAACAB0AAAACAAAAAAADAB0AAAACAAAAAAAEAB0AAAACAAAAAAAFAB0AAAACAAAAAAAGAB0AAAACAAAAAAAHAB0AAAACAAAAAAAIAB0AAAACAAAAAAAJAB0AAAACAAAAAAAKAB0AAAACAAAAAAALAB0AAAACAAAAAAAAAB4AAAACAAAAAAABAB4AAAACAAAAAAACAB4AAAACAAAAAAADAB4AAAACAAAAAAAEAB4AAAACAAAAAAAFAB4AAAACAAAAAAAGAB4AAAACAAAAAAAHAB4AAAACAAAAAAAIAB4AAAACAAAAAAAJAB4AAAACAAAAAAAKAB4AAAACAAAAAAALAB4AAAACAAAAAAA=")
+tile_set = ExtResource("5_8mny6")
+
+[node name="Props" type="Node2D" parent="." unique_id=2022438397]
+y_sort_enabled = true
+
+[node name="stone-1" type="Node2D" parent="Props" unique_id=859866686 instance=ExtResource("6_gqkl8")]
+position = Vector2(336, 1305)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_standing_stone_lean"
+variant = "standing_stone_lean"
+metadata/kit_zone_entry = {
+"at": [336.0, 1305.0],
+"id": "stone-1",
+"piece": "woodland_standing_stone_lean",
+"variant": "standing_stone_lean"
+}
+
+[node name="stone-2" type="Node2D" parent="Props" unique_id=1457710318 instance=ExtResource("8_hrr57")]
+position = Vector2(240, 1329)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_standing_stone_low"
+variant = "standing_stone_low"
+metadata/kit_zone_entry = {
+"at": [240.0, 1329.0],
+"id": "stone-2",
+"piece": "woodland_standing_stone_low",
+"variant": "standing_stone_low"
+}
+
+[node name="stone-3" type="Node2D" parent="Props" unique_id=1070482621 instance=ExtResource("9_g8gml")]
+position = Vector2(144, 1305)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_standing_stone_runes"
+variant = "standing_stone_runes"
+metadata/kit_zone_entry = {
+"at": [144.0, 1305.0],
+"id": "stone-3",
+"piece": "woodland_standing_stone_runes",
+"variant": "standing_stone_runes"
+}
+
+[node name="stone-4" type="Node2D" parent="Props" unique_id=1399562486 instance=ExtResource("10_fy1pr")]
+position = Vector2(108, 1257)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_standing_stone_broken"
+variant = "standing_stone_broken"
+metadata/kit_zone_entry = {
+"at": [108.0, 1257.0],
+"id": "stone-4",
+"piece": "woodland_standing_stone_broken",
+"variant": "standing_stone_broken"
+}
+
+[node name="stone-5" type="Node2D" parent="Props" unique_id=32130394 instance=ExtResource("11_bv1h2")]
+position = Vector2(144, 1209)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_standing_stone_b"
+variant = "standing_stone_b"
+metadata/kit_zone_entry = {
+"at": [144.0, 1209.0],
+"id": "stone-5",
+"piece": "woodland_standing_stone_b",
+"variant": "standing_stone_b"
+}
+
+[node name="stone-6" type="Node2D" parent="Props" unique_id=577551518 instance=ExtResource("12_fpl6j")]
+position = Vector2(240, 1185)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_standing_stone"
+variant = "standing_stone"
+metadata/kit_zone_entry = {
+"at": [240.0, 1185.0],
+"id": "stone-6",
+"piece": "woodland_standing_stone",
+"variant": "standing_stone"
+}
+
+[node name="stone-7" type="Node2D" parent="Props" unique_id=1755440439 instance=ExtResource("8_hrr57")]
+position = Vector2(324, 1209)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_standing_stone_low"
+variant = "standing_stone_low"
+metadata/kit_zone_entry = {
+"at": [324.0, 1209.0],
+"id": "stone-7",
+"piece": "woodland_standing_stone_low",
+"variant": "standing_stone_low"
+}
+
+[node name="lintel-1" type="Node2D" parent="Props" unique_id=635727809 instance=ExtResource("13_s388d")]
+position = Vector2(180, 1278)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_lintel"
+variant = "lintel"
+metadata/kit_zone_entry = {
+"at": [180.0, 1278.0],
+"id": "lintel-1",
+"piece": "woodland_lintel",
+"variant": "lintel"
+}
+
+[node name="stone-top" type="Node2D" parent="Props" unique_id=739581322 instance=ExtResource("14_3s3od")]
+position = Vector2(72, 1326)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_stone_top"
+variant = "stone_top"
+metadata/kit_zone_entry = {
+"at": [72.0, 1326.0],
+"id": "stone-top",
+"piece": "woodland_stone_top",
+"variant": "stone_top"
+}
+
+[node name="stump-1" type="Node2D" parent="Props" unique_id=40665156 instance=ExtResource("15_jmbit")]
+position = Vector2(528, 744)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_stump"
+variant = "stump"
+metadata/kit_zone_entry = {
+"at": [528.0, 744.0],
+"id": "stump-1",
+"piece": "woodland_stump",
+"variant": "stump"
+}
+
+[node name="stump-2" type="Node2D" parent="Props" unique_id=1350953282 instance=ExtResource("15_jmbit")]
+position = Vector2(156, 1080)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_stump"
+variant = "stump"
+metadata/kit_zone_entry = {
+"at": [156.0, 1080.0],
+"id": "stump-2",
+"piece": "woodland_stump",
+"variant": "stump"
+}
+
+[node name="stump-3" type="Node2D" parent="Props" unique_id=1301312706 instance=ExtResource("15_jmbit")]
+position = Vector2(744, 408)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_stump"
+variant = "stump"
+metadata/kit_zone_entry = {
+"at": [744.0, 408.0],
+"id": "stump-3",
+"piece": "woodland_stump",
+"variant": "stump"
+}
+
+[node name="pine-6" type="Node2D" parent="Props" unique_id=1265654230 instance=ExtResource("16_fxaj8")]
+position = Vector2(60, 552)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [60.0, 552.0],
+"id": "pine-6",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="pine-7" type="Node2D" parent="Props" unique_id=2008235874 instance=ExtResource("16_fxaj8")]
+position = Vector2(384, 192)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [384.0, 192.0],
+"id": "pine-7",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="tree-8" type="Node2D" parent="Props" unique_id=1260200136 instance=ExtResource("17_jtc30")]
+position = Vector2(60, 1344)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bush_c"
+variant = "bush_c"
+metadata/kit_zone_entry = {
+"at": [60.0, 1344.0],
+"id": "tree-8",
+"piece": "woodland_bush_c",
+"variant": "bush_c"
+}
+
+[node name="bush-2" type="Node2D" parent="Props" unique_id=2064474997 instance=ExtResource("18_jq4tv")]
+position = Vector2(96, 768)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bush_b"
+variant = "bush_b"
+metadata/kit_zone_entry = {
+"at": [96.0, 768.0],
+"id": "bush-2",
+"piece": "woodland_bush_b",
+"variant": "bush_b"
+}
+
+[node name="bush-3" type="Node2D" parent="Props" unique_id=542616193 instance=ExtResource("17_jtc30")]
+position = Vector2(528, 192)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bush_c"
+variant = "bush_c"
+metadata/kit_zone_entry = {
+"at": [528.0, 192.0],
+"id": "bush-3",
+"piece": "woodland_bush_c",
+"variant": "bush_c"
+}
+
+[node name="tree-1" type="Node2D" parent="Props" unique_id=1273543651 instance=ExtResource("19_rrndd")]
+position = Vector2(84, 192)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [84.0, 192.0],
+"id": "tree-1",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="pine-1" type="Node2D" parent="Props" unique_id=1307523332 instance=ExtResource("16_fxaj8")]
+position = Vector2(144, 192)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [144.0, 192.0],
+"id": "pine-1",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="tree-2" type="Node2D" parent="Props" unique_id=1048467189 instance=ExtResource("19_rrndd")]
+position = Vector2(696, 192)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [696.0, 192.0],
+"id": "tree-2",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="pine-2" type="Node2D" parent="Props" unique_id=1880682719 instance=ExtResource("16_fxaj8")]
+position = Vector2(804, 168)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [804.0, 168.0],
+"id": "pine-2",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="tree-3" type="Node2D" parent="Props" unique_id=1030696469 instance=ExtResource("19_rrndd")]
+position = Vector2(60, 864)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [60.0, 864.0],
+"id": "tree-3",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="pine-3" type="Node2D" parent="Props" unique_id=1464538825 instance=ExtResource("16_fxaj8")]
+position = Vector2(60, 1224)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [60.0, 1224.0],
+"id": "pine-3",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="tree-4" type="Node2D" parent="Props" unique_id=67216482 instance=ExtResource("19_rrndd")]
+position = Vector2(780, 744)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [780.0, 744.0],
+"id": "tree-4",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="tree-5" type="Node2D" parent="Props" unique_id=1918454500 instance=ExtResource("20_iwiqr")]
+position = Vector2(660, 1128)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_birch"
+variant = "birch"
+metadata/kit_zone_entry = {
+"at": [660.0, 1128.0],
+"id": "tree-5",
+"piece": "woodland_birch",
+"variant": "birch"
+}
+
+[node name="pine-4" type="Node2D" parent="Props" unique_id=2003187432 instance=ExtResource("16_fxaj8")]
+position = Vector2(120, 1632)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [120.0, 1632.0],
+"id": "pine-4",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="tree-6" type="Node2D" parent="Props" unique_id=1328595271 instance=ExtResource("19_rrndd")]
+position = Vector2(276, 1704)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [276.0, 1704.0],
+"id": "tree-6",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="pine-5" type="Node2D" parent="Props" unique_id=2005305245 instance=ExtResource("16_fxaj8")]
+position = Vector2(504, 1704)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [504.0, 1704.0],
+"id": "pine-5",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="tree-7" type="Node2D" parent="Props" unique_id=1768511917 instance=ExtResource("20_iwiqr")]
+position = Vector2(816, 1704)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_birch"
+variant = "birch"
+metadata/kit_zone_entry = {
+"at": [816.0, 1704.0],
+"id": "tree-7",
+"piece": "woodland_birch",
+"variant": "birch"
+}
+
+[node name="oak" type="Node2D" parent="Props" unique_id=913825805 instance=ExtResource("21_blpmi")]
+position = Vector2(324, 384)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_hollow_tree"
+variant = "hollow_tree"
+metadata/kit_zone_entry = {
+"at": [324.0, 384.0],
+"id": "oak",
+"piece": "woodland_hollow_tree",
+"variant": "hollow_tree"
+}
+
+[node name="log-1" type="Node2D" parent="Props" unique_id=307239602 instance=ExtResource("22_m42je")]
+position = Vector2(660, 744)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_mossy_log"
+variant = "mossy_log"
+metadata/kit_zone_entry = {
+"at": [660.0, 744.0],
+"id": "log-1",
+"piece": "woodland_mossy_log",
+"variant": "mossy_log"
+}
+
+[node name="log-2" type="Node2D" parent="Props" unique_id=1214839240 instance=ExtResource("22_m42je")]
+position = Vector2(468, 1464)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_mossy_log"
+variant = "mossy_log"
+metadata/kit_zone_entry = {
+"at": [468.0, 1464.0],
+"id": "log-2",
+"piece": "woodland_mossy_log",
+"variant": "mossy_log"
+}
+
+[node name="bench" type="Node2D" parent="Props" unique_id=1235554954 instance=ExtResource("23_ctdq2")]
+position = Vector2(504, 1224)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_forest_bench"
+variant = "forest_bench"
+metadata/kit_zone_entry = {
+"at": [504.0, 1224.0],
+"id": "bench",
+"piece": "woodland_forest_bench",
+"variant": "forest_bench"
+}
+
+[node name="willow" type="Node2D" parent="Props" unique_id=1445869872 instance=ExtResource("24_pj7gu")]
+position = Vector2(816, 1008)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_willow"
+variant = "willow"
+metadata/kit_zone_entry = {
+"at": [816.0, 1008.0],
+"id": "willow",
+"piece": "woodland_willow",
+"variant": "willow"
+}
+
+[node name="bush-1" type="Node2D" parent="Props" unique_id=305981080 instance=ExtResource("25_0a85g")]
+position = Vector2(912, 1200)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bush"
+variant = "bush"
+metadata/kit_zone_entry = {
+"at": [912.0, 1200.0],
+"id": "bush-1",
+"piece": "woodland_bush",
+"variant": "bush"
+}
+
+[node name="wood-1" type="Node2D" parent="Props" unique_id=1128446544 instance=ExtResource("26_mx67m")]
+position = Vector2(24, 216)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_sapling"
+variant = "sapling"
+metadata/kit_zone_entry = {
+"at": [24.0, 216.0],
+"id": "wood-1",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}
+
+[node name="wood-2" type="Node2D" parent="Props" unique_id=2077666296 instance=ExtResource("20_iwiqr")]
+position = Vector2(24, 288)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_birch"
+variant = "birch"
+metadata/kit_zone_entry = {
+"at": [24.0, 288.0],
+"id": "wood-2",
+"piece": "woodland_birch",
+"variant": "birch"
+}
+
+[node name="wood-3" type="Node2D" parent="Props" unique_id=447997380 instance=ExtResource("27_0w35h")]
+position = Vector2(96, 288)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_holly"
+variant = "holly"
+metadata/kit_zone_entry = {
+"at": [96.0, 288.0],
+"id": "wood-3",
+"piece": "woodland_holly",
+"variant": "holly"
+}
+
+[node name="wood-4" type="Node2D" parent="Props" unique_id=1521388382 instance=ExtResource("19_rrndd")]
+position = Vector2(624, 288)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [624.0, 288.0],
+"id": "wood-4",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-5" type="Node2D" parent="Props" unique_id=1956320627 instance=ExtResource("20_iwiqr")]
+position = Vector2(504, 336)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_birch"
+variant = "birch"
+metadata/kit_zone_entry = {
+"at": [504.0, 336.0],
+"id": "wood-5",
+"piece": "woodland_birch",
+"variant": "birch"
+}
+
+[node name="wood-6" type="Node2D" parent="Props" unique_id=1328562285 instance=ExtResource("28_2wcp8")]
+position = Vector2(48, 360)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_beech"
+variant = "beech"
+metadata/kit_zone_entry = {
+"at": [48.0, 360.0],
+"id": "wood-6",
+"piece": "woodland_beech",
+"variant": "beech"
+}
+
+[node name="wood-7" type="Node2D" parent="Props" unique_id=759959794 instance=ExtResource("16_fxaj8")]
+position = Vector2(24, 432)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [24.0, 432.0],
+"id": "wood-7",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="wood-8" type="Node2D" parent="Props" unique_id=1694033958 instance=ExtResource("29_vy632")]
+position = Vector2(60, 480)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_holly_b"
+variant = "holly_b"
+metadata/kit_zone_entry = {
+"at": [60.0, 480.0],
+"id": "wood-8",
+"piece": "woodland_holly_b",
+"variant": "holly_b"
+}
+
+[node name="wood-9" type="Node2D" parent="Props" unique_id=2139597871 instance=ExtResource("30_c1y1t")]
+position = Vector2(96, 576)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bramble"
+variant = "bramble"
+metadata/kit_zone_entry = {
+"at": [96.0, 576.0],
+"id": "wood-9",
+"piece": "woodland_bramble",
+"variant": "bramble"
+}
+
+[node name="wood-10" type="Node2D" parent="Props" unique_id=1813600804 instance=ExtResource("19_rrndd")]
+position = Vector2(36, 624)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [36.0, 624.0],
+"id": "wood-10",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-11" type="Node2D" parent="Props" unique_id=1339068015 instance=ExtResource("29_vy632")]
+position = Vector2(108, 648)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_holly_b"
+variant = "holly_b"
+metadata/kit_zone_entry = {
+"at": [108.0, 648.0],
+"id": "wood-11",
+"piece": "woodland_holly_b",
+"variant": "holly_b"
+}
+
+[node name="wood-12" type="Node2D" parent="Props" unique_id=2012147960 instance=ExtResource("27_0w35h")]
+position = Vector2(792, 648)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_holly"
+variant = "holly"
+metadata/kit_zone_entry = {
+"at": [792.0, 648.0],
+"id": "wood-12",
+"piece": "woodland_holly",
+"variant": "holly"
+}
+
+[node name="wood-13" type="Node2D" parent="Props" unique_id=900855935 instance=ExtResource("19_rrndd")]
+position = Vector2(852, 648)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [852.0, 648.0],
+"id": "wood-13",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-14" type="Node2D" parent="Props" unique_id=1797408909 instance=ExtResource("26_mx67m")]
+position = Vector2(924, 696)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_sapling"
+variant = "sapling"
+metadata/kit_zone_entry = {
+"at": [924.0, 696.0],
+"id": "wood-14",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}
+
+[node name="wood-15" type="Node2D" parent="Props" unique_id=1174133623 instance=ExtResource("29_vy632")]
+position = Vector2(56, 744)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_holly_b"
+variant = "holly_b"
+metadata/kit_zone_entry = {
+"at": [56.0, 744.0],
+"id": "wood-15",
+"piece": "woodland_holly_b",
+"variant": "holly_b"
+}
+
+[node name="wood-16" type="Node2D" parent="Props" unique_id=1135499596 instance=ExtResource("19_rrndd")]
+position = Vector2(36, 840)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [36.0, 840.0],
+"id": "wood-16",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-17" type="Node2D" parent="Props" unique_id=2079933099 instance=ExtResource("16_fxaj8")]
+position = Vector2(36, 936)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [36.0, 936.0],
+"id": "wood-17",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="wood-18" type="Node2D" parent="Props" unique_id=436154482 instance=ExtResource("31_75dp5")]
+position = Vector2(108, 984)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bramble_b"
+variant = "bramble_b"
+metadata/kit_zone_entry = {
+"at": [108.0, 984.0],
+"id": "wood-18",
+"piece": "woodland_bramble_b",
+"variant": "bramble_b"
+}
+
+[node name="wood-19" type="Node2D" parent="Props" unique_id=1344121283 instance=ExtResource("19_rrndd")]
+position = Vector2(48, 1008)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [48.0, 1008.0],
+"id": "wood-19",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-20" type="Node2D" parent="Props" unique_id=1197038725 instance=ExtResource("15_jmbit")]
+position = Vector2(60, 1080)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_stump"
+variant = "stump"
+metadata/kit_zone_entry = {
+"at": [60.0, 1080.0],
+"id": "wood-20",
+"piece": "woodland_stump",
+"variant": "stump"
+}
+
+[node name="wood-21" type="Node2D" parent="Props" unique_id=910726179 instance=ExtResource("26_mx67m")]
+position = Vector2(564, 1080)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_sapling"
+variant = "sapling"
+metadata/kit_zone_entry = {
+"at": [564.0, 1080.0],
+"id": "wood-21",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}
+
+[node name="wood-22" type="Node2D" parent="Props" unique_id=888965549 instance=ExtResource("28_2wcp8")]
+position = Vector2(36, 1152)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_beech"
+variant = "beech"
+metadata/kit_zone_entry = {
+"at": [36.0, 1152.0],
+"id": "wood-22",
+"piece": "woodland_beech",
+"variant": "beech"
+}
+
+[node name="wood-23" type="Node2D" parent="Props" unique_id=449860336 instance=ExtResource("16_fxaj8")]
+position = Vector2(108, 1152)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [108.0, 1152.0],
+"id": "wood-23",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="wood-24" type="Node2D" parent="Props" unique_id=1208292519 instance=ExtResource("19_rrndd")]
+position = Vector2(732, 1152)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [732.0, 1152.0],
+"id": "wood-24",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-26" type="Node2D" parent="Props" unique_id=1798712763 instance=ExtResource("19_rrndd")]
+position = Vector2(612, 1224)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [612.0, 1224.0],
+"id": "wood-26",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-27" type="Node2D" parent="Props" unique_id=533127843 instance=ExtResource("16_fxaj8")]
+position = Vector2(24, 1296)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [24.0, 1296.0],
+"id": "wood-27",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="wood-28" type="Node2D" parent="Props" unique_id=979240096 instance=ExtResource("30_c1y1t")]
+position = Vector2(420, 1344)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bramble"
+variant = "bramble"
+metadata/kit_zone_entry = {
+"at": [420.0, 1344.0],
+"id": "wood-28",
+"piece": "woodland_bramble",
+"variant": "bramble"
+}
+
+[node name="wood-29" type="Node2D" parent="Props" unique_id=1087598082 instance=ExtResource("31_75dp5")]
+position = Vector2(324, 1368)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bramble_b"
+variant = "bramble_b"
+metadata/kit_zone_entry = {
+"at": [324.0, 1368.0],
+"id": "wood-29",
+"piece": "woodland_bramble_b",
+"variant": "bramble_b"
+}
+
+[node name="wood-30" type="Node2D" parent="Props" unique_id=1350843710 instance=ExtResource("30_c1y1t")]
+position = Vector2(456, 1368)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bramble"
+variant = "bramble"
+metadata/kit_zone_entry = {
+"at": [456.0, 1368.0],
+"id": "wood-30",
+"piece": "woodland_bramble",
+"variant": "bramble"
+}
+
+[node name="wood-31" type="Node2D" parent="Props" unique_id=174167600 instance=ExtResource("20_iwiqr")]
+position = Vector2(36, 1416)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_birch"
+variant = "birch"
+metadata/kit_zone_entry = {
+"at": [36.0, 1416.0],
+"id": "wood-31",
+"piece": "woodland_birch",
+"variant": "birch"
+}
+
+[node name="wood-32" type="Node2D" parent="Props" unique_id=2037455964 instance=ExtResource("26_mx67m")]
+position = Vector2(96, 1416)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_sapling"
+variant = "sapling"
+metadata/kit_zone_entry = {
+"at": [96.0, 1416.0],
+"id": "wood-32",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}
+
+[node name="wood-33" type="Node2D" parent="Props" unique_id=1441044723 instance=ExtResource("15_jmbit")]
+position = Vector2(408, 1392)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_stump"
+variant = "stump"
+metadata/kit_zone_entry = {
+"at": [408.0, 1392.0],
+"id": "wood-33",
+"piece": "woodland_stump",
+"variant": "stump"
+}
+
+[node name="wood-34" type="Node2D" parent="Props" unique_id=197628599 instance=ExtResource("16_fxaj8")]
+position = Vector2(24, 1464)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_pine"
+variant = "pine"
+metadata/kit_zone_entry = {
+"at": [24.0, 1464.0],
+"id": "wood-34",
+"piece": "woodland_pine",
+"variant": "pine"
+}
+
+[node name="wood-35" type="Node2D" parent="Props" unique_id=603887106 instance=ExtResource("31_75dp5")]
+position = Vector2(360, 1560)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bramble_b"
+variant = "bramble_b"
+metadata/kit_zone_entry = {
+"at": [360.0, 1560.0],
+"id": "wood-35",
+"piece": "woodland_bramble_b",
+"variant": "bramble_b"
+}
+
+[node name="wood-36" type="Node2D" parent="Props" unique_id=565069847 instance=ExtResource("20_iwiqr")]
+position = Vector2(468, 1560)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_birch"
+variant = "birch"
+metadata/kit_zone_entry = {
+"at": [468.0, 1560.0],
+"id": "wood-36",
+"piece": "woodland_birch",
+"variant": "birch"
+}
+
+[node name="wood-37" type="Node2D" parent="Props" unique_id=2039932505 instance=ExtResource("27_0w35h")]
+position = Vector2(564, 1560)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_holly"
+variant = "holly"
+metadata/kit_zone_entry = {
+"at": [564.0, 1560.0],
+"id": "wood-37",
+"piece": "woodland_holly",
+"variant": "holly"
+}
+
+[node name="wood-38" type="Node2D" parent="Props" unique_id=663435697 instance=ExtResource("30_c1y1t")]
+position = Vector2(636, 1584)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bramble"
+variant = "bramble"
+metadata/kit_zone_entry = {
+"at": [636.0, 1584.0],
+"id": "wood-38",
+"piece": "woodland_bramble",
+"variant": "bramble"
+}
+
+[node name="wood-40" type="Node2D" parent="Props" unique_id=1989074541 instance=ExtResource("15_jmbit")]
+position = Vector2(300, 1608)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_stump"
+variant = "stump"
+metadata/kit_zone_entry = {
+"at": [300.0, 1608.0],
+"id": "wood-40",
+"piece": "woodland_stump",
+"variant": "stump"
+}
+
+[node name="wood-41" type="Node2D" parent="Props" unique_id=2087895407 instance=ExtResource("19_rrndd")]
+position = Vector2(444, 1632)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [444.0, 1632.0],
+"id": "wood-41",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-42" type="Node2D" parent="Props" unique_id=952838665 instance=ExtResource("31_75dp5")]
+position = Vector2(504, 1632)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_bramble_b"
+variant = "bramble_b"
+metadata/kit_zone_entry = {
+"at": [504.0, 1632.0],
+"id": "wood-42",
+"piece": "woodland_bramble_b",
+"variant": "bramble_b"
+}
+
+[node name="wood-43" type="Node2D" parent="Props" unique_id=1510182642 instance=ExtResource("26_mx67m")]
+position = Vector2(756, 1632)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_sapling"
+variant = "sapling"
+metadata/kit_zone_entry = {
+"at": [756.0, 1632.0],
+"id": "wood-43",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}
+
+[node name="wood-44" type="Node2D" parent="Props" unique_id=44688892 instance=ExtResource("19_rrndd")]
+position = Vector2(240, 1656)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [240.0, 1656.0],
+"id": "wood-44",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-45" type="Node2D" parent="Props" unique_id=1481417745 instance=ExtResource("19_rrndd")]
+position = Vector2(360, 1656)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_oak"
+variant = "oak"
+metadata/kit_zone_entry = {
+"at": [360.0, 1656.0],
+"id": "wood-45",
+"piece": "woodland_oak",
+"variant": "oak"
+}
+
+[node name="wood-46" type="Node2D" parent="Props" unique_id=232253612 instance=ExtResource("26_mx67m")]
+position = Vector2(588, 1656)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_sapling"
+variant = "sapling"
+metadata/kit_zone_entry = {
+"at": [588.0, 1656.0],
+"id": "wood-46",
+"piece": "woodland_sapling",
+"variant": "sapling"
+}
+
+[node name="wood-47" type="Node2D" parent="Props" unique_id=1527842073 instance=ExtResource("29_vy632")]
+position = Vector2(732, 1656)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_holly_b"
+variant = "holly_b"
+metadata/kit_zone_entry = {
+"at": [732.0, 1656.0],
+"id": "wood-47",
+"piece": "woodland_holly_b",
+"variant": "holly_b"
+}
+
+[node name="boulder-1" type="Node2D" parent="Props" unique_id=52464141 instance=ExtResource("32_0tsmi")]
+position = Vector2(27, 135)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [27.0, 135.0],
+"id": "boulder-1",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-2" type="Node2D" parent="Props" unique_id=1476442120 instance=ExtResource("32_0tsmi")]
+position = Vector2(51, 162)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b1"
+metadata/kit_zone_entry = {
+"at": [51.0, 162.0],
+"id": "boulder-2",
+"piece": "woodland_boulder",
+"variant": "b1"
+}
+
+[node name="boulder-3" type="Node2D" parent="Props" unique_id=2045507144 instance=ExtResource("32_0tsmi")]
+position = Vector2(87, 132)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b3"
+metadata/kit_zone_entry = {
+"at": [87.0, 132.0],
+"id": "boulder-3",
+"piece": "woodland_boulder",
+"variant": "b3"
+}
+
+[node name="boulder-4" type="Node2D" parent="Props" unique_id=1633505111 instance=ExtResource("32_0tsmi")]
+position = Vector2(114, 135)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b1"
+metadata/kit_zone_entry = {
+"at": [114.0, 135.0],
+"id": "boulder-4",
+"piece": "woodland_boulder",
+"variant": "b1"
+}
+
+[node name="boulder-8" type="Node2D" parent="Props" unique_id=1491401817 instance=ExtResource("32_0tsmi")]
+position = Vector2(294, 144)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [294.0, 144.0],
+"id": "boulder-8",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-9" type="Node2D" parent="Props" unique_id=183006817 instance=ExtResource("32_0tsmi")]
+position = Vector2(324, 162)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [324.0, 162.0],
+"id": "boulder-9",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-10" type="Node2D" parent="Props" unique_id=905376931 instance=ExtResource("32_0tsmi")]
+position = Vector2(345, 126)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b1"
+metadata/kit_zone_entry = {
+"at": [345.0, 126.0],
+"id": "boulder-10",
+"piece": "woodland_boulder",
+"variant": "b1"
+}
+
+[node name="boulder-11" type="Node2D" parent="Props" unique_id=1638345147 instance=ExtResource("32_0tsmi")]
+position = Vector2(372, 120)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b4"
+metadata/kit_zone_entry = {
+"at": [372.0, 120.0],
+"id": "boulder-11",
+"piece": "woodland_boulder",
+"variant": "b4"
+}
+
+[node name="boulder-12" type="Node2D" parent="Props" unique_id=148376295 instance=ExtResource("32_0tsmi")]
+position = Vector2(402, 123)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b2"
+metadata/kit_zone_entry = {
+"at": [402.0, 123.0],
+"id": "boulder-12",
+"piece": "woodland_boulder",
+"variant": "b2"
+}
+
+[node name="boulder-13" type="Node2D" parent="Props" unique_id=1902282014 instance=ExtResource("32_0tsmi")]
+position = Vector2(444, 159)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b2"
+metadata/kit_zone_entry = {
+"at": [444.0, 159.0],
+"id": "boulder-13",
+"piece": "woodland_boulder",
+"variant": "b2"
+}
+
+[node name="boulder-14" type="Node2D" parent="Props" unique_id=1074817763 instance=ExtResource("32_0tsmi")]
+position = Vector2(468, 138)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [468.0, 138.0],
+"id": "boulder-14",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-15" type="Node2D" parent="Props" unique_id=1293520253 instance=ExtResource("32_0tsmi")]
+position = Vector2(501, 162)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b2"
+metadata/kit_zone_entry = {
+"at": [501.0, 162.0],
+"id": "boulder-15",
+"piece": "woodland_boulder",
+"variant": "b2"
+}
+
+[node name="boulder-16" type="Node2D" parent="Props" unique_id=2091355202 instance=ExtResource("32_0tsmi")]
+position = Vector2(528, 141)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b2"
+metadata/kit_zone_entry = {
+"at": [528.0, 141.0],
+"id": "boulder-16",
+"piece": "woodland_boulder",
+"variant": "b2"
+}
+
+[node name="boulder-17" type="Node2D" parent="Props" unique_id=494760553 instance=ExtResource("32_0tsmi")]
+position = Vector2(555, 120)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [555.0, 120.0],
+"id": "boulder-17",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-18" type="Node2D" parent="Props" unique_id=2042595270 instance=ExtResource("32_0tsmi")]
+position = Vector2(597, 165)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b1"
+metadata/kit_zone_entry = {
+"at": [597.0, 165.0],
+"id": "boulder-18",
+"piece": "woodland_boulder",
+"variant": "b1"
+}
+
+[node name="boulder-19" type="Node2D" parent="Props" unique_id=769613684 instance=ExtResource("32_0tsmi")]
+position = Vector2(621, 159)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b1"
+metadata/kit_zone_entry = {
+"at": [621.0, 159.0],
+"id": "boulder-19",
+"piece": "woodland_boulder",
+"variant": "b1"
+}
+
+[node name="boulder-20" type="Node2D" parent="Props" unique_id=1481741981 instance=ExtResource("32_0tsmi")]
+position = Vector2(645, 165)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b2"
+metadata/kit_zone_entry = {
+"at": [645.0, 165.0],
+"id": "boulder-20",
+"piece": "woodland_boulder",
+"variant": "b2"
+}
+
+[node name="boulder-21" type="Node2D" parent="Props" unique_id=1983550106 instance=ExtResource("32_0tsmi")]
+position = Vector2(687, 135)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b3"
+metadata/kit_zone_entry = {
+"at": [687.0, 135.0],
+"id": "boulder-21",
+"piece": "woodland_boulder",
+"variant": "b3"
+}
+
+[node name="boulder-22" type="Node2D" parent="Props" unique_id=1854916278 instance=ExtResource("32_0tsmi")]
+position = Vector2(717, 159)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b2"
+metadata/kit_zone_entry = {
+"at": [717.0, 159.0],
+"id": "boulder-22",
+"piece": "woodland_boulder",
+"variant": "b2"
+}
+
+[node name="boulder-23" type="Node2D" parent="Props" unique_id=1565267961 instance=ExtResource("32_0tsmi")]
+position = Vector2(747, 150)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [747.0, 150.0],
+"id": "boulder-23",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-24" type="Node2D" parent="Props" unique_id=961068750 instance=ExtResource("32_0tsmi")]
+position = Vector2(768, 126)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [768.0, 126.0],
+"id": "boulder-24",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-25" type="Node2D" parent="Props" unique_id=87580433 instance=ExtResource("32_0tsmi")]
+position = Vector2(795, 147)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b4"
+metadata/kit_zone_entry = {
+"at": [795.0, 147.0],
+"id": "boulder-25",
+"piece": "woodland_boulder",
+"variant": "b4"
+}
+
+[node name="boulder-26" type="Node2D" parent="Props" unique_id=818508301 instance=ExtResource("32_0tsmi")]
+position = Vector2(837, 138)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b4"
+metadata/kit_zone_entry = {
+"at": [837.0, 138.0],
+"id": "boulder-26",
+"piece": "woodland_boulder",
+"variant": "b4"
+}
+
+[node name="boulder-27" type="Node2D" parent="Props" unique_id=1062873230 instance=ExtResource("32_0tsmi")]
+position = Vector2(867, 135)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b2"
+metadata/kit_zone_entry = {
+"at": [867.0, 135.0],
+"id": "boulder-27",
+"piece": "woodland_boulder",
+"variant": "b2"
+}
+
+[node name="boulder-28" type="Node2D" parent="Props" unique_id=1282558068 instance=ExtResource("32_0tsmi")]
+position = Vector2(894, 123)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [894.0, 123.0],
+"id": "boulder-28",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-29" type="Node2D" parent="Props" unique_id=502101867 instance=ExtResource("32_0tsmi")]
+position = Vector2(927, 150)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b0"
+metadata/kit_zone_entry = {
+"at": [927.0, 150.0],
+"id": "boulder-29",
+"piece": "woodland_boulder",
+"variant": "b0"
+}
+
+[node name="boulder-33" type="Node2D" parent="Props" unique_id=383438473 instance=ExtResource("32_0tsmi")]
+position = Vector2(324, 798)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_boulder"
+variant = "b5"
+metadata/kit_zone_entry = {
+"at": [324.0, 798.0],
+"id": "boulder-33",
+"piece": "woodland_boulder",
+"variant": "b5"
+}
+
+[node name="waterfall" type="Node2D" parent="Props" unique_id=542595428 instance=ExtResource("33_2uuod")]
+z_index = -5
+position = Vector2(204, 840)
+script = ExtResource("7_7fhji")
+piece_id = "waterfall_3_tall"
+variant = "w3"
+metadata/kit_zone_entry = {
+"at": [204.0, 840.0],
+"id": "waterfall",
+"piece": "waterfall_3_tall",
+"variant": "w3"
+}
+
+[node name="footbridge" type="Node2D" parent="Props" unique_id=1869826677 instance=ExtResource("34_hcy46")]
+z_index = -5
+position = Vector2(384, 948)
+script = ExtResource("7_7fhji")
+piece_id = "woodland_footbridge"
+variant = "river3"
+metadata/kit_zone_entry = {
+"at": [384.0, 948.0],
+"id": "footbridge",
+"piece": "woodland_footbridge",
+"variant": "river3"
+}
+
+[node name="Actors" type="Node2D" parent="." unique_id=439875508]
+y_sort_enabled = true
+
+[node name="StoneSign" type="Area2D" parent="Actors" unique_id=1676561005]
+position = Vector2(372, 1104)
+script = ExtResource("35_wkemj")
+speaker_id = "stone_sign"
+verb = "Read"
+marker_height = 44.0
+metadata/kit_zone_explicit = false
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/StoneSign" unique_id=770936869]
+shape = SubResource("talk")
+
+[node name="Sprite" type="Sprite2D" parent="Actors/StoneSign" unique_id=1807992893]
+texture = ExtResource("36_u5kdr")
+centered = false
+offset = Vector2(-16, -40)
+
+[node name="Post" type="StaticBody2D" parent="Actors/StoneSign" unique_id=2138177035]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/StoneSign/Post" unique_id=913583423]
+shape = SubResource("post")
+
+[node name="MeadowCamp" type="Node2D" parent="Actors" unique_id=1993174523]
+script = ExtResource("37_pqgea")
+camp_id = "meadow"
+metadata/kit_zone_explicit = false
+
+[node name="Mossling1" type="CharacterBody2D" parent="Actors/MeadowCamp" unique_id=784094594 groups=["enemy"] instance=ExtResource("38_1ne76")]
+position = Vector2(570, 1095)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("39_f656l")
+
+[node name="Mossling2" type="CharacterBody2D" parent="Actors/MeadowCamp" unique_id=270817697 groups=["enemy"] instance=ExtResource("38_1ne76")]
+position = Vector2(612, 1150)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("39_f656l")
+
+[node name="Mossling3" type="CharacterBody2D" parent="Actors/MeadowCamp" unique_id=1733120229 groups=["enemy"] instance=ExtResource("38_1ne76")]
+position = Vector2(560, 1185)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("39_f656l")
+
+[node name="HaleOnThePath" type="Node2D" parent="Actors" unique_id=1075125205]
+script = ExtResource("40_k5raf")
+only_if = "{\"not_started\":[\"road_to_crossroads\"]}"
+metadata/kit_zone_explicit = false
+
+[node name="Hale" type="Area2D" parent="Actors/HaleOnThePath" unique_id=1662998526]
+position = Vector2(800, 1330)
+script = ExtResource("35_wkemj")
+speaker_id = "hale"
+marker_height = 86.0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/HaleOnThePath/Hale" unique_id=2056541867]
+shape = SubResource("talk")
+
+[node name="Body" type="AnimatedSprite2D" parent="Actors/HaleOnThePath/Hale" unique_id=123068344]
+centered = false
+offset = Vector2(-80, -136)
+script = ExtResource("41_ocr2f")
+character = "hale"
+facing_at_rest = "W"
+
+[node name="Post" type="StaticBody2D" parent="Actors/HaleOnThePath/Hale" unique_id=1448652435]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/HaleOnThePath/Hale/Post" unique_id=1540448988]
+shape = SubResource("post")
+
+[node name="Spawns" type="Node2D" parent="." unique_id=287921770]
+
+[node name="start" type="Marker2D" parent="Spawns" unique_id=5988829]
+position = Vector2(384, 996)
+metadata/kit_zone_explicit = true
+metadata/kit_zone_inherited = Vector2(405, 750)
+metadata/kit_zone_id = "start"
+
+[node name="crossroads" type="Marker2D" parent="Spawns" unique_id=1712723741]
+position = Vector2(880, 1340)
+metadata/kit_zone_explicit = false
+metadata/kit_zone_inherited = Vector2(880, 1340)
+
+[node name="undercroft" type="Marker2D" parent="Spawns" unique_id=1381351042]
+position = Vector2(330, 1080)
+metadata/kit_zone_explicit = false
+metadata/kit_zone_inherited = Vector2(330, 1080)
+
+[node name="clearing" type="Marker2D" parent="Spawns" unique_id=1632713912]
+position = Vector2(330, 480)
+metadata/kit_zone_id = "clearing"
+metadata/kit_zone_explicit = true
+
+[node name="garden" type="Marker2D" parent="Spawns" unique_id=438344909]
+position = Vector2(912, 1368)
+metadata/kit_zone_id = "garden"
+metadata/kit_zone_explicit = true
+
+[node name="spring" type="Marker2D" parent="Spawns" unique_id=281813705]
+position = Vector2(384, 996)
+metadata/kit_zone_id = "spring"
+metadata/kit_zone_explicit = true
+
+[node name="stones" type="Marker2D" parent="Spawns" unique_id=1308377603]
+position = Vector2(234, 1242)
+metadata/kit_zone_id = "stones"
+metadata/kit_zone_explicit = true
+
+[node name="Doors" type="Node2D" parent="." unique_id=335366556]
+
+[node name="ToUndercroft" type="Area2D" parent="Doors" unique_id=1303261712]
+position = Vector2(330, 1030)
+script = ExtResource("42_joj48")
+target_zone = "undercroft"
+only_if = "{\"flags\":[\"undercroft_open\"]}"
+metadata/kit_zone_explicit = false
+metadata/kit_zone_inherited = {
+"id": "ToUndercroft",
+"if": {
+"flags": ["undercroft_open"]
+},
+"rect": [13.125, 42.416666666666664, 1.25, 1.0],
+"to": "undercroft"
+}
+
+[node name="Shape" type="CollisionShape2D" parent="Doors/ToUndercroft" unique_id=1495055470]
+shape = SubResource("hatch")
+
+[node name="ToCrossroads" type="Area2D" parent="Doors" unique_id=506216046]
+position = Vector2(951, 1356)
+script = ExtResource("42_joj48")
+target_zone = "crossroads"
+target_spawn = "woodland"
+metadata/kit_zone_explicit = false
+metadata/kit_zone_inherited = {
+"id": "ToCrossroads",
+"rect": [39.25, 55.0, 0.75, 3.0],
+"spawn": "woodland",
+"to": "crossroads"
+}
+
+[node name="Shape" type="CollisionShape2D" parent="Doors/ToCrossroads" unique_id=1626858126]
+shape = SubResource("edge")

@@ -1,0 +1,98 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_solar_array",
+  "name": "Solar-array rack",
+  "kind": "prop",
+  "biomes": [
+    "lumen",
+    "halcyon"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "short",
+      "note": "One ground rack beside the lunar habitat."
+    },
+    {
+      "id": "wing_bay",
+      "note": "Repeatable panel section, attached to an authored station wing rather than floating alone."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      7,
+      3
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "power",
+    "ground": {
+      "allow": [
+        "rock",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "turf",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "power_mount"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Repeat power hardware on Lumen’s exterior and Halcyon’s hull while named wing layouts stay custom."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P3",
+      "Purpose: Repeat power hardware on Lumen’s exterior and Halcyon’s hull while named wing layouts stay custom.",
+      "Visual brief: Rigid blue-black panels on visible angled struts; a thin lit upper rim, darker side edge and a seated foot make the panel a volume. Cell pattern is quiet enough to avoid moiré.",
+      "Widths and size: Proposed 168–288 art px wide, 45–89 high per ground rack; no matching density-3 class, review at 74-art-px adult scale.",
+      "Source: docs/vision/world-plan.md §§8.6,8.7,9; docs/vision/coherence-plan.md M1",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Wings and ground racks have distinct anchor/collision rules; generating power is scenery here, not a new energy economy.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

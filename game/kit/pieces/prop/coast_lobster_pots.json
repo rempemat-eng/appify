@@ -1,0 +1,127 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "coast_lobster_pots",
+ "name": "Lobster pots",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "a",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/coast_lobster_pots_a.png",
+   "foot": [
+    24,
+    38
+   ]
+  },
+  {
+   "id": "b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/act1/coast_lobster_pots_b.png",
+   "foot": [
+    32,
+    20
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Woven withy creels on timber bases, half-cylinders in three-quarter view (a lit back, hooped south face, a D-shaped east end with its funnel mouth): three stacked (a), or one with its rope coil and float (b)."
+ },
+ "geometry": {
+  "size_px": [
+   56,
+   42
+  ],
+  "size_cells": [
+   2,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 42,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -7.0,
+    -3.0,
+    14,
+    4
+   ]
+  },
+  "foot": [
+   24,
+   38
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "store",
+  "composition": "cluster",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "water",
+    "cells": 3,
+    "note": "creels stacked on the quay between trips"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    16,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "creel_stack (a creel 0.5 m long, 0.3 m high; three stacked 0.6 m; art px: 18 to 48 tall, 40 to 56 wide)",
+  "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "coast_lobster_pots",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

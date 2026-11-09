@@ -246,22 +246,19 @@
    }
   },
   "standing_stone": {
-   "paint": "boulder",
-   "size": [16, 29],
-   "fam": "stone",
-   "moss": "lichen"
+   "paint": "standing",
+   "size": [9, 32],
+   "lean": 0.25
   },
   "standing_stone_b": {
-   "paint": "boulder",
-   "size": [17, 29],
-   "fam": "stone",
-   "moss": "lichen"
+   "paint": "standing",
+   "size": [12, 24],
+   "carved": "spiral"
   },
   "standing_stone_low": {
-   "paint": "boulder",
-   "size": [15, 21],
-   "fam": "stone",
-   "moss": "lichen"
+   "paint": "standing",
+   "size": [20, 20],
+   "squat": true
   },
   "stump": {
    "paint": "stump"
@@ -322,6 +319,40 @@
    },
    "scale": [0.85, 1.0],
    "seed": 814
+  },
+  "standing_stone_lean": {
+   "paint": "standing",
+   "size": [11, 26],
+   "lean": -0.2,
+   "seed": 933,
+   "own_seed": true
+  },
+  "standing_stone_runes": {
+   "paint": "standing",
+   "size": [11, 23],
+   "carved": "runes",
+   "lean": 0.08,
+   "seed": 934,
+   "own_seed": true
+  },
+  "standing_stone_broken": {
+   "paint": "standing",
+   "size": [12, 21],
+   "broken": true,
+   "seed": 932,
+   "own_seed": true
+  },
+  "lintel": {
+   "paint": "lintel",
+   "size": [26, 9],
+   "seed": 931,
+   "own_seed": true
+  },
+  "stone_top": {
+   "paint": "lintel",
+   "size": [12, 7],
+   "seed": 935,
+   "own_seed": true
   }
  },
  "lawn": {
