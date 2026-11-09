@@ -1,26 +1,26 @@
 {
  "id": "woodland/hatch_closed",
  "file": "game/zones/woodland/art/hatch_closed.png",
- "sha256": "6e5b0d1fe91fbbf156aadf98c002a45f391e41cdb0ac1af68fbb8aa5e884d054",
+ "sha256": "2b5fa60d85941d7aca0b8d360394beebaca39f266d5176b79c8b5e9048f1b6bd",
  "kind": "hatch_closed",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  44,
-  66
+  46,
+  68
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 1
+  "fault": 0,
+  "polish": 4
  },
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 39.0,
-   "shapes": 53.5
+   "tones": 24.0,
+   "shapes": 51.0
   },
   "band": {
    "tones": 27.0,
@@ -28,33 +28,57 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 1.062,
-  "tones_ratio": 1.444,
-  "shapes_ratio": 1.062,
-  "passed": true,
+  "ratio": 0.889,
+  "tones_ratio": 0.889,
+  "shapes_ratio": 1.013,
+  "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.cluster_noise",
-   "severity": "fault",
+   "detector": "detail.light",
+   "severity": "polish",
    "box": [
-    0,
-    26,
-    44,
-    66
+    2,
+    27,
+    45,
+    67
    ],
-   "message": "woodland/hatch_closed: 61% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 61% to 70%, for information: the verdict is on this grid)",
+   "message": "woodland/hatch_closed: the wood is lit from the right (luminance rises 35 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    2,
+    27,
+    45,
+    67
+   ],
+   "message": "woodland/hatch_closed: detail bar 0.89 of Eastward's prop band (24.0 tones, 51.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    2,
+    27,
+    45,
+    67
+   ],
+   "message": "woodland/hatch_closed: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 45% to 55%, for information: the verdict is on this grid)",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   },
   {
    "detector": "detail.outline",
    "severity": "polish",
    "box": [
-    0,
-    26,
-    44,
-    66
+    2,
+    27,
+    45,
+    67
    ],
    "message": "woodland/hatch_closed: only 0% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"

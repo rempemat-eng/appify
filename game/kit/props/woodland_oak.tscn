@@ -13,7 +13,7 @@ piece_id = "woodland_oak"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-106, -243)
+offset = Vector2(-99, -234)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0

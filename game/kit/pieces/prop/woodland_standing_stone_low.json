@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 3,
+ "version": 4,
  "variants": [
   {
    "id": "standing_stone_low",
    "weight": 1.0,
    "png": "res://zones/woodland/art/standing_stone_low.png",
    "foot": [
-    40.0,
-    78.0
+    37.0,
+    66.0
    ]
   }
  ],
@@ -27,12 +27,12 @@
  },
  "geometry": {
   "size_px": [
-   80,
-   78
+   74,
+   66
   ],
   "size_cells": [
    4,
-   4
+   3
   ],
   "z_sort": "foot",
   "collision": {
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   40.0,
-   78.0
+   37.0,
+   66.0
   ],
   "footprint": [
    [

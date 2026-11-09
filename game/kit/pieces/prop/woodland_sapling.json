@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "sapling",
    "weight": 1.0,
    "png": "res://zones/woodland/art/sapling.png",
    "foot": [
-    37.0,
-    90.0
+    30.0,
+    83.0
    ]
   }
  ],
@@ -27,18 +27,18 @@
  },
  "geometry": {
   "size_px": [
-   75,
-   90
+   60,
+   83
   ],
   "size_cells": [
-   4,
+   3,
    4
   ],
   "z_sort": "foot",
   "collision": null,
   "foot": [
-   37.0,
-   90.0
+   30.0,
+   83.0
   ],
   "footprint": []
  },

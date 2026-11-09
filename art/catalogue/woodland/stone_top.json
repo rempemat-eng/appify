@@ -1,14 +1,14 @@
 {
  "id": "woodland/stone_top",
  "file": "game/zones/woodland/art/stone_top.png",
- "sha256": "bf5b7ce4f83a36da9b2c1fb6cbe01bd62a158ff395ecac333041626ccfaafbfd",
+ "sha256": "b8a3b88236e3658899e85eb9eab94cb515de22fefaeebda4eadd8bc1a6098b39",
  "kind": "stone_top",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   48,
-  33
+  22
  ],
  "status": "pass",
  "counts": {
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 19.0,
-   "shapes": 28.0
+   "tones": 30.0,
+   "shapes": 39.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.556,
-  "tones_ratio": 0.704,
-  "shapes_ratio": 0.556,
+  "ratio": 0.774,
+  "tones_ratio": 1.111,
+  "shapes_ratio": 0.774,
   "passed": false,
   "group": "prop"
  },
@@ -40,11 +40,11 @@
    "severity": "polish",
    "box": [
     6,
-    6,
-    43,
-    28
+    2,
+    42,
+    22
    ],
-   "message": "woodland/stone_top: detail bar 0.56 of Eastward's prop band (19.0 tones, 28.0 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/stone_top: detail bar 0.77 of Eastward's prop band (30.0 tones, 39.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

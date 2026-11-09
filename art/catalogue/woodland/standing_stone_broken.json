@@ -1,26 +1,26 @@
 {
  "id": "woodland/standing_stone_broken",
  "file": "game/zones/woodland/art/standing_stone_broken.png",
- "sha256": "e44959508ef6af1ba9f6de4b537a96679a4c68d6f95a8186b553a06aa1a09976",
+ "sha256": "e0a521c6671847cb4b144a2c72fa345abd5c7d5bdf9bc96abc2e113a2b12fbf3",
  "kind": "standing_stone_broken",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  56,
-  81
+  50,
+  69
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 3,
-   "tones": 29.666666666666668,
-   "shapes": 39.333333333333336
+   "patches": 2,
+   "tones": 30.0,
+   "shapes": 44.5
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.781,
-  "tones_ratio": 1.099,
-  "shapes_ratio": 0.781,
+  "ratio": 0.884,
+  "tones_ratio": 1.111,
+  "shapes_ratio": 0.884,
   "passed": false,
   "group": "prop"
  },
@@ -39,10 +39,10 @@
    "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    7,
-    17,
-    50,
-    73
+    8,
+    13,
+    43,
+    69
    ],
    "message": "woodland/standing_stone_broken: tall 56 art px (0.76 A) is too small for a standing stone: the size table gives 59 to 126 (0.80 to 1.70 A); Eastward at the same character height: none; scaled from real stones",
    "fix": "redraw it 59 to 126 art px tall (target about 92), checked beside Bramble (74 art px) in the asset sheet"
@@ -51,25 +51,13 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    7,
-    17,
-    50,
-    73
+    8,
+    13,
+    43,
+    69
    ],
-   "message": "woodland/standing_stone_broken: detail bar 0.78 of Eastward's prop band (29.7 tones, 39.3 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/standing_stone_broken: detail bar 0.88 of Eastward's prop band (30.0 tones, 44.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    7,
-    17,
-    50,
-    73
-   ],
-   "message": "woodland/standing_stone_broken: only 36% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-09",

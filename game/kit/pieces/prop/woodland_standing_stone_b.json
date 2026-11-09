@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 3,
+ "version": 4,
  "variants": [
   {
    "id": "standing_stone_b",
    "weight": 1.0,
    "png": "res://zones/woodland/art/standing_stone_b.png",
    "foot": [
-    28.0,
-    90.0
+    25.0,
+    78.0
    ]
   }
  ],
@@ -27,8 +27,8 @@
  },
  "geometry": {
   "size_px": [
-   56,
-   90
+   50,
+   78
   ],
   "size_cells": [
    3,
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   28.0,
-   90.0
+   25.0,
+   78.0
   ],
   "footprint": [
    [

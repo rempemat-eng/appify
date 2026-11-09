@@ -1,14 +1,14 @@
 {
  "id": "woodland/willow",
  "file": "game/zones/woodland/art/willow.png",
- "sha256": "a3fe1e4e8731b7f2c7f7caa7deb6a584cd19c8913ff23a44b77613b659f167c1",
+ "sha256": "9b742b5c29bb14aa679da75d725998b44ad37f79a00f53e060a4836eb82d622e",
  "kind": "willow",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  222,
-  294
+  192,
+  287
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 117,
-   "tones": 20.76923076923077,
-   "shapes": 41.21367521367522
+   "patches": 113,
+   "tones": 26.0,
+   "shapes": 51.876106194690266
   },
   "band": {
    "tones": 27.71,
@@ -28,36 +28,36 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.651,
-  "tones_ratio": 0.75,
-  "shapes_ratio": 0.651,
+  "ratio": 0.819,
+  "tones_ratio": 0.938,
+  "shapes_ratio": 0.819,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    80,
+    183,
+    92,
+    286
+   ],
+   "message": "woodland/willow: the red is lit from the right (luminance rises 70 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    10,
-    10,
-    212,
-    294
+    1,
+    0,
+    192,
+    287
    ],
-   "message": "woodland/willow: detail bar 0.65 of Eastward's foliage band (20.8 tones, 41.2 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/willow: detail bar 0.82 of Eastward's foliage band (26.0 tones, 51.9 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    10,
-    10,
-    212,
-    294
-   ],
-   "message": "woodland/willow: only 18% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-09",

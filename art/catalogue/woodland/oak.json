@@ -1,26 +1,26 @@
 {
  "id": "woodland/oak",
  "file": "game/zones/woodland/art/oak.png",
- "sha256": "dc021b0496b96ccc9cdae871f4e737f92f1f01de882835b372a456af4ec787ea",
+ "sha256": "f446856489d31a028e34187dc13eae8ba97f966e61e567cf655e6f49b8fceb59",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  212,
-  243
+  198,
+  234
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 78,
-   "tones": 18.94871794871795,
-   "shapes": 35.43589743589744
+   "patches": 77,
+   "tones": 29.545454545454547,
+   "shapes": 52.532467532467535
   },
   "band": {
    "tones": 27.71,
@@ -28,23 +28,35 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.56,
-  "tones_ratio": 0.684,
-  "shapes_ratio": 0.56,
+  "ratio": 0.83,
+  "tones_ratio": 1.066,
+  "shapes_ratio": 0.83,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    78,
+    149,
+    91,
+    233
+   ],
+   "message": "woodland/oak: the red is lit from the right (luminance rises 32 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    9,
-    10,
-    203,
-    243
+    1,
+    0,
+    198,
+    234
    ],
-   "message": "woodland/oak: detail bar 0.56 of Eastward's foliage band (18.9 tones, 35.4 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/oak: detail bar 0.83 of Eastward's foliage band (29.5 tones, 52.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

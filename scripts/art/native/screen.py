@@ -1228,6 +1228,21 @@ def sprite(kind: str, recipe: dict, seed: int):
     paint = recipe['paint']
     look = dict(crown=recipe.get('crown'), bark=recipe.get('bark', 'oak'), scale=recipe.get('scale'))
     seed = recipe.get('seed', seed)
+    if paint in ('tree', 'foliage') and D >= HD and recipe.get('crown'):
+        # the woodland's trees and shrubs (woodtrees.py: the 9 Nov detail audit, W-T1 to W-B3)
+        from . import woodtrees as WT
+        from .palette import to_rgba
+        arr = np.asarray(CO.old_sprite(_master(recipe['master']), raw=True)[0])
+        if paint == 'tree':
+            ex = tree_dims(recipe['master'])
+            ex.update(look)
+            if recipe.get('trunk_w'):
+                ex['tw'] = recipe['trunk_w']
+            codes, anc = WT.tree(kind, arr, D, seed, recipe['crown'], ex['tw'], scale=recipe.get('scale'))
+        else:
+            ex = None
+            codes, anc = WT.shrub(kind, arr, D, seed, recipe['crown'], scale=recipe.get('scale'))
+        return Image.fromarray(to_rgba(codes), 'RGBA'), anc, codes >= 0, ex
     if paint == 'tree':
         ex = tree_dims(recipe['master'])
         ex.update(look)
@@ -1247,7 +1262,7 @@ def sprite(kind: str, recipe: dict, seed: int):
         return img, anc, a, None
     elif paint in ('standing', 'lintel'):
         # the moon circle's ancient stones and its fallen capstone (rocks.py, Matt 27 Oct 11:08)
-        from . import rocks as RK
+        from . import woodstones as RK          # the 9 Nov detail audit (W-S1 to W-S5): planes, not speckle
         from .palette import to_rgba
         if paint == 'standing':
             codes, anc = RK.standing_stone(recipe['size'][0], recipe['size'][1], seed, lean=recipe.get('lean', 0.0),
