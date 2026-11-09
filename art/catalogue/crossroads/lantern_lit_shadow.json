@@ -1,7 +1,7 @@
 {
  "id": "crossroads/lantern_lit_shadow",
  "file": "game/zones/crossroads/art/lantern_lit_shadow.png",
- "sha256": "290e4a33228adf780ccff4443b5cdc77bec3754a1c16aaab15a682bfa5a4536a",
+ "sha256": "d52220677c1f49311f5e201745a73ccf639a7358cce69112cff7708d143d2a71",
  "kind": "lantern_lit_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -23,6 +23,6 @@
   "agent": "detail-auditor",
   "verdict": "pass",
   "date": "2026-11-09",
-  "note": "Round 3 review at 8c212777 (PR #450), docs/reviews/2026-11-08-crossroads-placed.md, round 3. 7 texels changed, at the plinth's foot (x 43-47, y 3 and 9), following the new plinth outline; as lantern_dark_shadow."
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. Pass. 39 texels changed, all within x 1-59, y 3-24 at the plinth's foot (1 texel gained, 12 dropped), following the new stepped plinth outline; still thrown east and down in two tones with a one-tone rim; in the composite the plinth sits on it with no gap. All composite changes of this PR fall inside the 12 redrawn and shadow boxes."
  }
 }

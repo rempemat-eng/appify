@@ -1,7 +1,7 @@
 {
  "id": "crossroads/stall",
  "file": "game/zones/crossroads/art/stall.png",
- "sha256": "6f8174d2de629e1eef8e836863d27a779a7187b8e50290060361c8a026ba753d",
+ "sha256": "5957f50a54021ed2960c79fa2c15e168ee7993addd2905384323ae0e97ec8161",
  "kind": "stall",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 36,
-   "tones": 22.22222222222222,
-   "shapes": 31.61111111111111
+   "tones": 22.75,
+   "shapes": 32.47222222222222
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.628,
-  "tones_ratio": 0.823,
-  "shapes_ratio": 0.628,
+  "ratio": 0.645,
+  "tones_ratio": 0.843,
+  "shapes_ratio": 0.645,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     130,
     159
    ],
-   "message": "crossroads/stall: detail bar 0.63 of Eastward's prop band (22.2 tones, 31.6 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/stall: detail bar 0.65 of Eastward's prop band (22.8 tones, 32.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
@@ -53,10 +53,12 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "Round 3 review at 8c212777 (PR #450), docs/reviews/2026-11-08-crossroads-placed.md, round 3. XR2-S2 fixed (each stripe's top plane in 3-4 tones with a lit row) and XR2-S4 fixed (the counter top is sawn boards with grain, joints and a dark under-lip row; the 416-texel band is gone). XR2-S1 partly: the board now holds three rows of broken strokes, one row in a second tone, but they are blocky repeated L shapes on a one-tone navy field of 281 texels (#38395a [102,133,116,156]), not words and a price. XR2-S3 not fixed and regressed: all 17 nail heads are one-tone 2x2 #2e2943 squares with no lit texel (dot nails, calibration C1); round 2's nails had a lit texel. village.nail_head sets the lit texel, but finish() -> tidy() removes it as a lone pixel. Bar 0.58 -> 0.63. Fix list: XR3-S1, XR3-S2.",
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. XR3-S1 fixed: all 16 nail heads in the output bytes are 2x2 #2e2943 with one lit #737078 texel (the 17th, behind the sack, is no longer drawn); done through finish(keep=...), whose default leaves every other picture unchanged (only the 12 audited PNGs differ from HEAD~1). XR3-S2 partly fixed: the navy field is now sibling patches with a chalk haze (the 281-texel run is gone) and the strokes are two chalk tones, but the words do not read: the N of NEW is broken into dots and reads as A or a glyph, the M of PLUM is 3 columns wide and reads as H (PLUH), and the PLUM line touches the frame on both sides; only 3d reads cleanly. Newly raised (present since round 1, unflagged before): the counter-front boards are one tone each over 135-226 texels (largest #8e6242 [68,120,78,154], 226 texels; 6 boards at 135-226), drawn as a flat fill with a few long dark streaks, no lit edge, and they are now the stall's largest flat areas; the sack is the brightest value on the stall, a cream bulb with no burlap weave or slump, and reads as a jar or a lamp globe. Bar 0.63 -> 0.65; noise 38.2 -> 39.8 %. Compared with the Eastward 17 churns at x1.37. Fix list: XR4-S1 to XR4-S3; polish XR4-S4.",
   "fix_list": [
-   "XR3-S1: nail heads that keep their lit texel: tidy() strips a lone lit texel, so draw the light as 2 texels (the head's top row, or an L), or pass the nail heads to tidy() as `keep`; check the output bytes, not the painter",
-   "XR3-S2: the chalk board as words and a price: broken 1-2 px strokes of varying letter shapes (not repeated L glyphs) in two chalk tones, with a faint chalk haze of the second tone smudged over part of the navy field so it is not one tone over 281 texels"
+   "XR4-S1 (fault): make the board read at 1x: draw N with a full diagonal (not dots), give M 4-5 columns or use a 2-line layout (PLUMS / 3d) with 1 px margin to the frame, or replace the word with a drawn plum and the price; check it at 1x and 2x in the composite",
+   "XR4-S2 (fault): give each counter-front board grain in 3 tones with a lit west edge column and a dark east joint, grain streaks that wander and end, and no one-tone run over 60 texels (now 6 boards at 135-226, largest #8e6242 [68,120,78,154])",
+   "XR4-S3 (fault): redraw the sack as burlap: a mid tan below the awning's cream, weave in 2-texel clusters, a slumped base with a contact shadow, the neck tied with twine; it must not be the brightest value on the stall",
+   "XR4-S4 (polish): the awning's hanging stripe faces are one tone over 79-82 texels each (y 43-66): add a fold shade down one side of each stripe"
   ]
  }
 }

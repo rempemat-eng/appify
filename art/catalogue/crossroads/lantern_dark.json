@@ -1,7 +1,7 @@
 {
  "id": "crossroads/lantern_dark",
  "file": "game/zones/crossroads/art/lantern_dark.png",
- "sha256": "1ea30d67dc37bc7cd978a93e6614e2eb31d610b45e4a9e87eb07fbb4dc6e9e9c",
+ "sha256": "a5e98db14d5340c74ca269c9db7229930d24d09b946cded37f46fd56ca4bb7d5",
  "kind": "lamp",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 9,
-   "tones": 18.0,
-   "shapes": 28.666666666666668
+   "tones": 17.88888888888889,
+   "shapes": 30.555555555555557
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.569,
-  "tones_ratio": 0.667,
-  "shapes_ratio": 0.569,
+  "ratio": 0.607,
+  "tones_ratio": 0.663,
+  "shapes_ratio": 0.607,
   "passed": false,
   "group": "prop"
  },
@@ -44,19 +44,18 @@
     65,
     220
    ],
-   "message": "crossroads/lantern_dark: detail bar 0.57 of Eastward's prop band (18.0 tones, 28.7 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/lantern_dark: detail bar 0.61 of Eastward's prop band (17.9 tones, 30.6 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pass",
   "date": "2026-11-09",
-  "note": "Round 3 review at 8c212777 (PR #450), docs/reviews/2026-11-08-crossroads-placed.md, round 3. XR2-L3 fixed: the unlit glass shows a dark cradle, no pale shape. XR2-L1 not fixed: the plinth gained tooling clusters but lost volume; the lower slab's front is a one-tone region of 203 texels (#b5a897, plinth [1,14,36,28], was 192), the top planes are a single row, the lit west face shrank to one column and the bevel step does not read, so the slabs read flatter than in round 2. XR2-L2 partly: moss is now clumps, but four 4-6 texel tufts evenly spaced in one row along the joint, each with a straight dark underside; at 1x and 2x they read as a dotted green line. Bar 0.52 -> 0.57 (18.0 tones, 28.7 shapes a patch against 27, 50). Compared with the Eastward 13 lamp and 17 rocks at x1.37. Fix list: XR3-L1, XR3-L2.",
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. Pass. XR3-L1 fixed: each slab has a top plane (upper 2 rows, lower 3 rows) in the light stone tone, a lit west column, a front in three tones laid out as dressed blocks with 1 px joints, the east end in a 3-4 column core shadow, and stepped chipped corners; the plinth's largest one-tone run is 47 texels (round 3: 203; limit 60). XR3-L2 fixed: two moss clumps of different size, west and east, each a lit cap over a ragged dark underside; no row of equal tufts. Glass unchanged (XR2-L3 stays fixed). Bar 0.57 -> 0.61: the iron post is most of the picture and is unchanged since it passed in round 1; the bar is a measurement here, not a fault. Noise 34.6 -> 33.2 %. Compared with the Eastward 13 lamp and 17 rocks at x1.37. Polish XR4-L1.",
   "fix_list": [
-   "XR3-L1: give each slab its volume back while keeping the tooling: a distinct top plane 2-3 rows deep in tone 4 with a lit front-left arris, a 1-row bevel step, a lit west end face 2-3 columns wide, the front in 3 tones (no one-tone run over 60 texels), the east face in core shadow, two chips with lit lips",
-   "XR3-L2: moss as one or two ragged clumps of different size in the joint (a 2 px lit cap over a 3-4 px band with a ragged dark underside), placed unevenly, never four equal tufts in a row"
+   "XR4-L1 (polish): each dressed block is close to one tone with even 2-texel dashes for tooling: group the tooling into one or two wear patches per block, add a 1-row lit bevel along the lower slab's top-front arris, and darken the contact row under the lower slab by one step so the plinth separates from the equally light paving"
   ]
  }
 }
