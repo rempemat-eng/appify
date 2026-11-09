@@ -226,28 +226,25 @@ def _bank_marks(prof: int) -> np.ndarray:
     return out
 
 
-def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side_w: int = 3) -> np.ndarray:
+def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side_w: int = 0) -> np.ndarray:
     """Turf (upper) over water (lower), softground.water's banks on the dual grid. Under a north
-    lip: an earth face 3 px (lit top row, clods along it from the cell edge's profile, a dark wet
-    bottom row), the 1 px very light waterline, then two rows of shade on the water. On a south
-    shore: the turf's lip lit and the shallows lit, 2 tones at the edge and 1 for two more. On a
-    west or east shore of a north-south run: a narrow earth wall seen edge-on (in shade facing east,
-    lit facing west) with the waterline at its foot. All within 7 texels of the outline, so the
-    tile below never needs to know."""
+    lip (the only bank that turns a face to the camera): an earth face 6 px (lit top row, clods
+    along it from the cell edge's profile, a dark wet bottom row), the 1 px very light waterline,
+    then two rows of shade on the water. On every other shore (south, west, east; Matt, 4 Nov) one
+    rim and no face: the turf's lip lit, a texel of wet earth, the water's mid tone, lit shallows.
+    All within 9 texels of the outline, so the tile below never needs to know. `side_w` is kept for
+    old piece files and ignored (the walls seen edge-on it sized are gone)."""
     m2 = soft_lower(k, prof)                      # the water
     land = ~m2
     ops = Ops(land, fill_u, fill_l)
     rt = GD.runs_from_top(m2)                     # 1 on the water's first row under land
     # which bank each texel may carry is read from the cells, not the texels (so a corner's bulge
     # never turns into a bank that a neighbour would not draw): a north bank under a horizontal cell
-    # edge with land north and water south; a wall beside a vertical one
+    # edge with land north and water south
     q = [bool((k >> b) & 1) for b in range(4)]    # nw, ne, sw, se (True = land)
     xs_ = np.arange(N) + 0.5
     left = (xs_ < MID)[None, :]
-    top = (xs_ < MID)[:, None]
     nb_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
-    westwall_cfg = np.where(top, q[0] and not q[1], q[2] and not q[3]).astype(bool)     # land west, water east
-    eastwall_cfg = np.where(top, q[1] and not q[0], q[3] and not q[2]).astype(bool)     # land east, water west
     top_of_run = m2 & GD.down(land, 1)
     col_bank = np.zeros_like(m2)
     for d in range(0, 6):
@@ -284,33 +281,166 @@ def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side
     # the turf's last row over the bank a tone down (its underside)
     ops.shift(land & GD.down(m2, -1), -1)
     nb = col_bank
-    # east and west shores of north-south runs: a narrow wall seen edge-on
-    westl = np.zeros_like(m2)
-    eastl = np.zeros_like(m2)
-    for kk in range(1, side_w + 1):
-        westl |= GD.right(land, kk)
-        eastl |= GD.right(land, -kk)
-    vert = m2 & (westl ^ eastl) & ~nb & (np.abs(xs_[None, :] - MID) < side_w + 4)     # only beside the vertical cell line
-    wb, eb = vert & westl & westwall_cfg, vert & eastl & eastwall_cfg
-    vert = wb | eb
-    ops.own[wb] = 2
-    ops.ab[wb] = C('earth', 2)
-    ops.ab[wb & GD.right(land, 1)] = C('earth', 1)
-    ops.own[eb] = 2
-    ops.ab[eb] = C('earth_warm', 3)
-    ops.ab[eb & GD.right(land, -1)] = C('earth_warm', 4)
-    for b_, d_ in ((wb, 1), (eb, -1)):
-        wl_ = m2 & ~vert & ~nb & GD.right(b_, d_)
-        ops.own[wl_] = 2
-        ops.ab[wl_] = C('water', 5)
-    # south (and remaining) shores: the turf's lip lit, the shallows lit
-    walls = wb | eb | nb
+    # every other shore (Matt, 4 Nov): only a bank with land to its north shows a face in this
+    # top-down 3/4 view; east, west and south shores show one rim, wet earth at the land's edge and
+    # the water's mid tone inside it (softground.RIM_EARTH, RIM_LINE), with no wall seen edge-on.
+    # Where the north face ends beside open water its edge column is the face's wet foot, so the rim
+    # runs on round inside and outside bends.
+    # (what hangs on the face's end is kept off the CALM border strips, which must depend only on
+    # the border's own cells and profile: test_kit.test_tiles_canonical_at_borders)
+    yy2, xx2 = np.mgrid[0:N, 0:N]
+    away = ((yy2 >= T0 + CALM + 1) & (yy2 < T1 - CALM - 1) & (xx2 >= T0 + CALM + 1) & (xx2 < T1 - CALM - 1))
+    face = nb & (rt <= 6)
+    face_end = face & (GD.right(m2 & ~nb, 1) | GD.right(m2 & ~nb, -1)) & away
+    ops.own[face_end] = 2
+    ops.ab[face_end] = C('earth_cool', 0)
+    rim, _w = GD.shore_rim(m2, face)
+    rim &= ~nb
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    wline = m2 & ~nb & ~rim & (ndi.binary_dilation(rim, structure=cross) |
+                               (ndi.binary_dilation(face, structure=cross) & away))
+    ops.own[rim] = 2
+    ops.ab[rim] = GD.rim_earth()
+    ops.own[wline] = 2
+    ops.ab[wline] = C('water', GD.RIM_LINE)
+    # the shallows inside the rim lit a tone (within 3.5 texels of the land: the bands' reach the
+    # corners leave canonical at the borders)
     dist = ndi.distance_transform_edt(m2)
-    shal = m2 & ~walls & ~ndi.binary_dilation(walls, iterations=1) & (ops.own == 1)
-    ops.shift(shal & (dist <= 1.5), 2)
-    ops.shift(shal & (dist > 1.5) & (dist <= 3.5), 1)
+    shal = m2 & ~nb & ~rim & ~wline & (ops.own == 1)
+    ops.shift(shal & (dist <= 3.5), 1)
     s_lip = land & GD.down(m2, 1)
     ops.shift(s_lip, 1)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def _shore_geometry(k: int, prof):
+    """What bank, quay_wall and beach share: the water's soft outline, the land, each water texel's
+    rows from the land above it (`rt`), and the north shore's columns (land north of the cell line)."""
+    m2 = soft_lower(k, prof)
+    land = ~m2
+    rt = GD.runs_from_top(m2)
+    q = [bool((k >> b) & 1) for b in range(4)]    # nw, ne, sw, se (True = land)
+    xs_ = np.arange(N) + 0.5
+    left = (xs_ < MID)[None, :]
+    nb_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
+    yy_ = np.arange(N)[:, None] + 0.5
+    return m2, land, rt, nb_cfg, yy_
+
+
+def _course_joints(prof: int, salt: int) -> np.ndarray:
+    """A quay course's blocks along one cell edge, a function of its profile only (so the two tiles
+    sharing the cell edge agree): per texel t (0 .. 23), 0 on a joint, 1 on a block's lit west end,
+    2 inside; and the block's stone sibling (0 to 2) in the next axis."""
+    rng = np.random.default_rng(4300 + 16 * prof + salt)
+    kind = np.full(CELL, 2, np.int32)
+    fam = np.zeros(CELL, np.int32)
+    x = int(rng.integers(0, 6)) - 6
+    while x < CELL:
+        L = int(rng.integers(6, 11))
+        f = int(rng.integers(0, 3))
+        for j in range(max(0, x), min(CELL, x + L)):
+            kind[j] = 0 if j == x else (1 if j == x + 1 else 2)
+            fam[j] = f
+        x += L
+    return np.stack([kind, fam])
+
+
+QUAY_FAMS = ('stone', 'stone_warm', 'stone_cool')
+
+
+def quay_wall(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side_w: int = 0) -> np.ndarray:
+    """A quay (upper) over water (lower): a dressed wall, not a turf bank (review round 9 of the Act 1
+    props, F9-1; sets/coast.quay_wall's recipe and softground.quay_face's, fitted to the tile's 9
+    rows under the outline). Under a quay to the north: on the land the coping, its lit edge (stone
+    4) over its front (3); on the water a shadow line, a course of blocks (lit top, body, foot, the
+    lit west end and the joints from the cell edge's profile), a bed joint, a lower course a tone
+    down, a dark wet foot with weed in clusters, then the light waterline. On every other shore the
+    coping's lit edge and 5.3a's rim in wet stone, the water's mid tone inside it and lit shallows.
+    `side_w` is kept for old piece files and ignored."""
+    m2, land, rt, nb_cfg, yy_ = _shore_geometry(k, prof)
+    ops = Ops(land, fill_u, fill_l)
+    top_of_run = m2 & GD.down(land, 1)
+    col = np.zeros_like(m2)
+    for d in range(0, 8):
+        col |= GD.down(top_of_run, d) & m2
+    col &= (rt <= 8) & nb_cfg & (yy_ > MID - 5) & (yy_ < MID + 10)
+    xs = np.arange(N) + 0.5
+    t = np.clip(np.where(xs < MID, xs - T0, xs - T1).astype(int) + HALF, 0, CELL - 1)
+    fams = np.array([FI[f] * 8 for f in QUAY_FAMS])
+    for course, rows, tones in ((0, (2, 3, 4), (4, 3, 2)), (1, (6, 7), (3, 2))):
+        jw, je = _course_joints(prof[3], course), _course_joints(prof[1], course)
+        kind = np.where(xs < MID, jw[0][t], je[0][t])[None, :].repeat(N, 0)
+        fam = np.where(xs < MID, jw[1][t], je[1][t])[None, :].repeat(N, 0)
+        for j, r_ in enumerate(rows):
+            sel = col & (rt == r_)
+            tone = np.minimum(tones[j] + ((kind == 1) & (j > 0)).astype(int), 4)
+            code = np.where(kind == 0, C('stone_cool', 1), fams[fam] + tone)
+            ops.own[sel] = 2
+            ops.ab[sel] = code[sel]
+    for r_, code in ((1, C('stone_cool', 1)), (5, C('stone_cool', 1))):
+        sel = col & (rt == r_)
+        ops.own[sel] = 2
+        ops.ab[sel] = code
+    # the wet foot, its weed in clusters of 2 to 4 texels (where the cell edge's joints fall)
+    foot_ = col & (rt == 8)
+    jw, je = _course_joints(prof[3], 7), _course_joints(prof[1], 7)
+    weed = np.where(xs < MID, (jw[0][t] <= 1) & (jw[1][t] == 0), (je[0][t] <= 1) & (je[1][t] == 0))[None, :].repeat(N, 0)
+    ops.own[foot_] = 2
+    ops.ab[foot_] = np.where(weed, C('leaf_cool', 1), C('stone_cool', 0))[foot_]
+    wline = col & (rt == 9)
+    ops.own[wline] = 2
+    ops.ab[wline] = C('water', 5)
+    # the coping on the land over the wall
+    front = land & GD.down(col & (rt == 1), -1)
+    lit = land & GD.down(col & (rt == 1), -2) & ~front
+    for sel, code in ((front, C('stone', 3)), (lit, C('stone', 4))):
+        ops.own[sel] = 2
+        ops.ab[sel] = code
+    # every other shore: the coping's lit edge, a rim of wet stone, the mid tone, lit shallows
+    yy2, xx2 = np.mgrid[0:N, 0:N]
+    away = ((yy2 >= T0 + CALM + 1) & (yy2 < T1 - CALM - 1) & (xx2 >= T0 + CALM + 1) & (xx2 < T1 - CALM - 1))
+    face = col & (rt <= 8)
+    face_end = face & (GD.right(m2 & ~col, 1) | GD.right(m2 & ~col, -1)) & away
+    ops.own[face_end] = 2
+    ops.ab[face_end] = C('stone_cool', 0)
+    rim, _w = GD.shore_rim(m2, face)
+    rim &= ~col
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    wl2 = m2 & ~col & ~rim & (ndi.binary_dilation(rim, structure=cross) |
+                              (ndi.binary_dilation(face, structure=cross) & away))
+    ops.own[rim] = 2
+    ops.ab[rim] = C('stone_cool', 1)
+    ops.own[wl2] = 2
+    ops.ab[wl2] = C('water', GD.RIM_LINE)
+    dist = ndi.distance_transform_edt(m2)
+    shal = m2 & ~col & ~rim & ~wl2 & (ops.own == 1)
+    ops.shift(shal & (dist <= 3.5), 1)
+    edge = land & ndi.binary_dilation(m2 & ~col, structure=cross) & ~front & ~lit
+    ops.own[edge] = 2
+    ops.ab[edge] = C('stone', 4)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def beach(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side_w: int = 0) -> np.ndarray:
+    """Shingle (upper) running into water (lower): no face on any shore, a beach shelves (review
+    round 9 of the Act 1 props, F9-1). The shingle's last 6 texels before the water a tone down (wet
+    shingle: as deep as the tile's border strips allow, test_kit.test_tiles_canonical_at_borders), a swash line on the water's edge 1 texel wide and 2 where the cell edge's lump bulges
+    (so it wobbles with the soft grid's outline), then lit shallows. `side_w` is kept for old piece
+    files and ignored."""
+    m2, land, rt, nb_cfg, yy_ = _shore_geometry(k, prof)
+    ops = Ops(land, fill_u, fill_l)
+    wet = np.zeros_like(m2)
+    for d in range(1, 7):
+        wet |= GD.down(m2, -d) | GD.down(m2, d) | GD.right(m2, d) | GD.right(m2, -d)
+    ops.shift(land & wet, -1)
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    rim = m2 & ndi.binary_dilation(land, structure=cross)
+    second = m2 & ~rim & ndi.binary_dilation(rim, structure=cross) & (displacement(k, prof) > 0.8)
+    sw = rim | second
+    ops.own[sw] = 2
+    ops.ab[sw] = C('water', 5)
+    dist = ndi.distance_transform_edt(m2)
+    ops.shift(m2 & ~sw & (dist <= 3.5), 1)
     return ops.encode((slice(T0, T1), slice(T0, T1)))
 
 
@@ -459,4 +589,5 @@ def tier_side(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0),
     return ops.encode((slice(T0, T1), slice(T0, T1)))
 
 
-PAINTERS = {'sunken': sunken, 'bank': bank, 'plain': plain, 'lip': lip, 'foot': foot, 'tier_side': tier_side}
+PAINTERS = {'sunken': sunken, 'bank': bank, 'quay_wall': quay_wall, 'beach': beach, 'plain': plain, 'lip': lip, 'foot': foot,
+            'tier_side': tier_side}

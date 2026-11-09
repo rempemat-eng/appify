@@ -1,0 +1,124 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_muck_heap",
+ "name": "Muck heap",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_muck_heap",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_muck_heap.png",
+   "foot": [
+    31,
+    42
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Straw and dung forked out of the pens, steaming."
+ },
+ "geometry": {
+  "size_px": [
+   62,
+   43
+  ],
+  "size_cells": [
+   3,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 42,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -10.0,
+    -4.0,
+    20,
+    4
+   ]
+  },
+  "foot": [
+   31,
+   42
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "muck_heap",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "stock",
+    "cells": 10,
+    "note": "mucked out of the pens beside it"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    26,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "pile",
+  "eastward_ref": "17: the farm's heaps of straw and dung, a fork in one",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_muck_heap",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}

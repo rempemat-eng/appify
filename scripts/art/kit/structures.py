@@ -9,6 +9,7 @@ exist, so their reviewed data is never overwritten; --force rewrites them).
 from __future__ import annotations
 
 import json
+import math
 import os
 import sys
 
@@ -119,19 +120,17 @@ def stones_into(cv: np.ndarray, water: np.ndarray, x: int, rng) -> None:
     ys = np.nonzero(water[:, max(0, min(W - 1, x))])[0]
     if not len(ys):
         return
+    from scripts.art.native import softground as GD
     y = int(ys.min()) + 6
+    stones = []
     while y < ys.max() - 1:
         w_ = rng.uniform(5.5, 7.0)
         img, anc, _a = P4.boulder4(D, w_, w_ * 0.45, seed=int(rng.integers(0, 10 ** 6)), moss='top' if rng.random() < 0.4 else None)
-        dec = SN.to_codes(img)
         ox = x + int(rng.integers(-2, 3))
-        ring = np.zeros_like(water)
-        ring[max(0, y - 2):y + 3, max(0, ox - int(w_ * D * 0.6)):ox + int(w_ * D * 0.6)] = True
-        ring &= water
-        from scripts.art.native.palette import step
-        cv[ring & (cv >= 0)] = step(cv[ring & (cv >= 0)], 1)
-        SN.DC.paste(cv, dec, int(round(ox - anc[0])), int(round(y - anc[1])), shadow=True, shadow_dx=2, shadow_dy=1)
+        stones.append((SN.to_codes(img), int(round(ox - anc[0])), int(round(y - anc[1]))))
         y += int(rng.integers(9, 12))
+    # each with the one wet contact every stone in the water has (eastward-edges.md 5.3a)
+    GD.seat_stones(cv, water, stones, lambda c, d, x_, y_: SN.DC.paste(c, d, x_, y_, shadow=True, shadow_dx=2, shadow_dy=1))
 
 
 BOULDERS = [(10, 7, 1615, True), (11, 7, 1616, False), (13, 8, 1617, True), (15, 9, 1618, False),
@@ -197,68 +196,72 @@ def log_steps(force: bool, cells: int = 2) -> None:
     }, force)
 
 
-def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int) -> None:
-    """A fall drawn from the rim down (texels): the stream's own water bends over the face's top
-    edge at row y0 and falls as one sheet exactly the channel's width (x0 .. x0 + w), in front of
-    the face and behind nothing. Matt, 2 Nov: "the waterfall overlaps in an unrealistic way on the
-    top bit": so no ledge stone or crest stands proud of the rim over the banks or the stream
-    above, the sheet never spreads over the stones either side, and the white water is only where
-    the sheet lands: the plume and the foam rings lie on the pool (rows y1 and below), no spray on
-    the face. Across the ribbon: lit west, a body, shade east; falling streaks in broken runs; the
-    glassy tongue where it leaves the rim, then the crest's white curl and its shade."""
-    from scripts.art.native.palette import C, FI
-    H, W = cv.shape
+FALL_FRAMES, FALL_FPS = 8, 10      # the fall's loop: 8 frames, each streak a step of its own period a frame
+
+
+CREST_MAX = 3      # the deepest the white water under the lip breaks (texels below the bend)
+
+
+def crest_foam(w: int, seed: int) -> np.ndarray:
+    """How far the white water breaks under the lip of a sheet `w` texels wide painted with `seed`,
+    per column: rocks.crest_breaks, drawn from the fall's generator in the order rocks.sheet draws
+    it (after its two or three converging streaks), so this is the crest the piece shows."""
+    from scripts.art.native import rocks as RK
     rng = np.random.default_rng(seed)
-    cols = {}
-    for Y in range(y0, y1):
-        for X in range(x0, x0 + w):
-            s = (X + 0.5 - x0) / w                              # 0 west .. 1 east across the ribbon
-            tt = 4 if s < 0.18 else (3 if s < 0.62 else (2 if s < 0.88 else 1))
-            c = C('water', tt)
-            key = X - x0
-            if key not in cols:                                 # a streak per column, thin and broken
-                cols[key] = (rng.uniform(0, 60), rng.uniform(6, 18), rng.uniform(4, 16), rng.random() < 0.42)
-            ph, run, gap, on_ = cols[key]
-            dy = Y - y0
-            if on_ and ((dy + ph) % (run + gap)) < run and 0.06 < s < 0.86 and dy > 6:
-                c = C('snow', 4) if s < 0.45 else (C('water', 4) if s < 0.7 else C('snow', 2))   # a falling streak
-            elif ((dy + ph * 0.5) % (run + gap)) < 2 and on_ and dy > 8:
-                c = C('water', max(1, tt - 1))                     # the trough behind a streak
-            wob = int(round(1.2 * np.sin(X * 0.9)))
-            if dy < 2:
-                c = C('water', 4) if s < 0.7 else C('water', 3)  # the glassy tongue leaving the rim
-            elif dy < 5 + wob:
-                c = C('snow', 5) if s < 0.7 else C('snow', 4)    # the crest curling over
-            elif dy < 6 + wob:
-                c = C('water', 2)                                # its shade under the curl
-            cv[Y, X] = c
-    cx = x0 + w / 2.0
-    # the plume where it lands: churning white on the pool, no higher than a few texels up the sheet
-    parts = [(cx + rng.uniform(-0.45, 0.45) * w, y1 + rng.uniform(-0.2, 1.0) * 6, w * rng.uniform(0.4, 0.62),
-              7 * rng.uniform(0.6, 0.9)) for _ in range(6)]
-    for Y in range(y1 - 5, min(H, y1 + 12)):
-        for X in range(max(0, int(cx - w * 1.2)), min(W, int(cx + w * 1.2) + 1)):
-            r = min(((X - px) / pw) ** 2 + ((Y - py) / ph) ** 2 for (px, py, pw, ph) in parts)
-            if r > 1.0 or (Y < y1 and not (x0 <= X < x0 + w)):
-                continue                                       # above the pool only over the sheet
-            lit = (X - cx) < 0.3 * w
-            # churning white lit on its upper left, greying into the pool at its rim (dithered)
-            if r < 0.45 and Y < y1 + 4:
-                c = C('snow', 5) if lit else C('snow', 4)
-            elif r < 0.75:
-                c = C('snow', 4) if ((X + Y) % 3) or Y < y1 + 2 else C('snow', 2)
-            else:
-                c = C('snow', 2) if (X + Y) % 2 else C('water', 4)
-            cv[Y, X] = c
-    waters = [FI[n] for n in ('water', 'water_warm', 'water_cool')]
-    for k, (rx, ry) in enumerate(((w * 0.8, 7), (w * 1.1, 10), (w * 1.45, 13))):   # rings and ripples spreading on the pool
-        for Y in range(y1, min(H, y1 + int(ry) + 8)):
-            for X in range(max(0, int(cx - rx - 3)), min(W, int(cx + rx + 3))):
-                if (cv[Y, X] // 8) not in waters:
-                    continue
-                q = ((X - cx) / rx) ** 2 + ((Y - (y1 + 4)) / ry) ** 2
-                if abs(q - 1.0) < 0.09 - 0.02 * k and ((X // (6 + 2 * k)) + k) % 3:
-                    cv[Y, X] = C('snow', 2) if k == 0 else C('water', 4)
+    nst = int(rng.integers(2, 4))
+    for _ in range(nst):
+        rng.uniform(0.2, 0.8)
+        rng.integers(9, 16)
+    return RK.crest_breaks(w, rng, seed=seed)
+
+
+def crest_bow(w: int, seed: int = 0) -> np.ndarray:
+    """How many texels the bend line bows downstream, per column (rocks.sheet's bow)."""
+    u = (np.arange(w) + 0.5) / w
+    return np.round(1.6 * (1.0 - (2.0 * np.clip(u, 0.0, 1.0) - 1.0) ** 2)).astype(int)
+
+
+def sheet_mask(shape, x0: int, w: int, y0: int, y1: int, seed: int = 0) -> np.ndarray:
+    """The texels a piece's sheet covers (rows y0 .. y1 - 1), on a canvas of `shape`: rocks.sheet's
+    own outline (rocks.sheet_mask), its wobble phased from the rim row, so a piece's picture and its
+    bake are one sheet. `seed` is unused (the outline does not depend on it)."""
+    from scripts.art.native import rocks as RK
+    return RK.sheet_mask(shape, x0, x0 + w, y0, y1, phase_y=y0)
+
+
+def sheet_outline(x0: int, w: int, y0: int, y1: int, seed: int = 0) -> np.ndarray:
+    """The sheet's first and past-last column per row (rows y0 .. y1 - 1), from sheet_mask."""
+    m = sheet_mask((y1 + 1, x0 + w + 4 * 24), x0, w, y0, y1)
+    out = np.zeros((max(0, y1 - y0), 2), np.int32)
+    for k, Y in enumerate(range(y0, y1)):
+        xs = np.nonzero(m[Y])[0]
+        out[k] = (int(xs.min()), int(xs.max()) + 1) if len(xs) else (x0, x0 + w)
+    return out
+
+
+def fall_sheet(cv: np.ndarray, x0: int, w: int, y0: int, y1: int, seed: int, t: int = 0, rings: bool = True,
+               keep=None) -> None:
+    """A fall drawn from the rim down (texels): the stream's own water bends over the face's top
+    edge at row y0 and falls as one sheet exactly the channel's width (x0 .. x0 + w) at the lip, in
+    front of the face and behind nothing, the white water only where it lands (no spray on the
+    face, Matt, 2 Nov).
+
+    The sheet is the woodland's own (review round 7: rounds 5 to 7 kept re-deriving a second design
+    that drifted from the approved one): rocks.sheet paints it, the same code rocks.fall paints the
+    woodland's fall with, parameterised only by the width, the height and the seed. Its wobble and
+    its streaks' phase run from the rim row, so the piece's picture and its bake are one sheet, and
+    the tongue's two tones meet a texel earlier or later row by row (round 7, P7-3). At its foot
+    rocks.plunge churns, a clump seated under any stretch of the foot no clump reaches (P7-2).
+
+    `t` is the frame of the loop (FALL_FRAMES frames): each streak falls a step of its own period a
+    frame, so the loop closes; frame 0 is the still the bake draws. `keep` is unused (kept for old
+    callers)."""
+    from scripts.art.native import ctx
+    from scripts.art.native import rocks as RK
+    rng = np.random.default_rng(seed)
+    t = t % FALL_FRAMES
+    foot = RK.sheet(cv, x0, x0 + w, y0, y1, y0 / ctx.D, rng, seed, t=t, n=FALL_FRAMES, phase_y=y0, stagger=True)
+    RK.plunge(cv, foot[0], foot[1], y1, seed, t=t, n=FALL_FRAMES, rings=rings, seat_gaps=True)
 
 
 def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
@@ -277,7 +280,9 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
     for pool in (CC('water', 2), CC('water', 1)):
         cv = np.full((H, W), -1, np.int32)
         cv[12 + face:, :] = pool
-        fall_sheet(cv, 24, wpx, 12, 12 + face, seed=65 + cells_w)
+        # the bake's seed (rendering.paint.args.seed, fall_frames): the picture is frame 0 of what a
+        # baked zone shows (review round 6, L6-1: it was painted with 65 + c, its own lanes and edges)
+        fall_sheet(cv, 24, wpx, 12, 12 + face, seed=9 + cells_w)
         runs.append(cv)
     cv = np.where(runs[0] == runs[1], runs[0], -1)
     os.makedirs(ART, exist_ok=True)
@@ -303,9 +308,77 @@ def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
                       'animations': [{'clip': 'fall', 'loop': True, 'reduced_motion': 'hold:0', 'on_screen_only': True}]},
         'function': {}, 'story': {'owner': None},
         'gameplay': {'blocks_move': True, 'blocks_shots': False},
-        'audit': {'painter': {'module': 'scripts.art.kit.structures', 'fn': 'fall_sheet', 'args': {'seed': 65 + cells_w}},
+        'audit': {'painter': {'module': 'scripts.art.kit.structures', 'fn': 'fall_sheet', 'args': {'seed': 9 + cells_w}},
                   'seeded_from': 'scripts/art/kit/structures.py', 'todo': ['the falling animation (the woodland flow strip)']},
     }, force)
+
+
+def fall_frames(cells_w: int, drop: int = 1):
+    """The fall's loop for a piece: FALL_FRAMES frames of its sheet and plume (the bake's seed, so
+    frame 0 is what the baked ground shows), side by side, cut to the pixels the fall owns; and
+    where they lie on the piece's picture (x, y, w, h texels)."""
+    from scripts.art.native.palette import C as CC
+    wpx, face = cells_w * 24, 48 * drop
+    W, H = wpx + 48, 12 + face + 34
+    seed = 9 + cells_w
+    base = np.full((H, W), CC('water', 2), np.int32)
+    drawn = []
+    for t in range(FALL_FRAMES):
+        f = base.copy()
+        fall_sheet(f, 24, wpx, 12, 12 + face, seed=seed, t=t, rings=False)
+        drawn.append(f)
+    own = np.zeros((H, W), bool)
+    for f in drawn:
+        own |= f != base                 # every pixel some frame draws: where the foam leaves, the pool
+    sheet = sheet_mask((H, W), 24, wpx, 12, 12 + face, seed)
+    own |= sheet
+    # only what surely lies over the fall's own pixels in any zone (review round 4, F4-1: nothing
+    # that moves may lie over what is not water): not the crest (the rim's lip stones cast their
+    # shade on it in the bake, and it does not move); beside the sheet above its foot, nothing (the
+    # face); below the foot, only the inlet the bake lays under every fall (bake.py: the sheet plus
+    # rocks.PLUNGE_PAD each side, its two outer columns its rim's wet earth and rim line, its top
+    # corners rounded) for 14 rows
+    own[:12 + 8] = False
+    from scripts.art.native import rocks as RK
+    y1 = 12 + face
+    own[:y1] &= sheet[:y1]
+    ix0, ix1 = 24 - RK.PLUNGE_PAD, 24 + wpx + RK.PLUNGE_PAD
+    for k in range(14):
+        # the inlet's row k under the foot starts max(0, 3 - k) in from each side (its rounded
+        # corners), its outermost texel there the rim's wet earth
+        cut = max(0, 3 - k) + 1
+        if y1 + k < H:
+            own[y1 + k, :ix0 + cut] = False
+            own[y1 + k, ix1 - cut:] = False
+    own[y1 + 14:] = False
+    ys, xs = np.nonzero(own)
+    x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()) + 1, int(ys.max()) + 1
+    frames = []
+    for f in drawn:
+        f = f.copy()
+        f[~own] = -1
+        frames.append(f[y0:y1, x0:x1])
+    return np.concatenate(frames, axis=1), [x0, y0, x1 - x0, y1 - y0]
+
+
+def falls_animated() -> None:
+    """Write every fall's loop and its animation entry (rendering.animations) into its piece."""
+    for c in (1, 2, 3, 4):
+        for drop in (1, 2):
+            name = 'waterfall_%d' % c + ('' if drop == 1 else '_tall')
+            strip, region = fall_frames(c, drop)
+            Image.fromarray(to_rgba(strip), 'RGBA').save(os.path.join(ART, name + '_flow.png'), optimize=True)
+            path = os.path.join(PIECES, 'structure', name + '.json')
+            pc = json.load(open(path))
+            before = json.dumps(pc, sort_keys=True)
+            pc['rendering']['animations'] = [{
+                'clip': 'fall', 'loop': True, 'frames': FALL_FRAMES, 'fps': FALL_FPS,
+                'strip': 'res://kit/props/art/%s_flow.png' % name, 'frame_px': [region[2], region[3]], 'region_px': region,
+                'reduced_motion': 'hold:0', 'on_screen_only': True}]
+            pc['audit']['todo'] = [t for t in pc['audit'].get('todo', []) if 'animation' not in t]
+            if json.dumps(pc, sort_keys=True) != before:
+                json.dump(pc, open(path, 'w'), indent=1)
+                open(path, 'a').write('\n')
 
 
 def main(argv=None) -> int:
@@ -320,6 +393,7 @@ def main(argv=None) -> int:
     for c in (1, 2, 3, 4):
         waterfall(force, c)
         waterfall(force, c, drop=2)
+    falls_animated()
     print('structures: footbridges (2, 3, 4), stepping stones (1, 2), boulders, log steps (1, 2, 3), waterfalls (1 to 4, one and two tiers)')
     return 0
 

@@ -6,24 +6,24 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 6,
  "variants": [
   {
-   "id": "hay_19",
+   "id": "hay_bales",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/hay_19.png",
+   "png": "res://kit/props/art/farm/hay_bales.png",
    "foot": [
-    33,
-    62
+    39,
+    53
    ]
   },
   {
-   "id": "hay_20",
+   "id": "hay_heap",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/hay_20.png",
+   "png": "res://kit/props/art/farm/hay_heap.png",
    "foot": [
-    33,
-    62
+    32,
+    31
    ]
   }
  ],
@@ -36,11 +36,11 @@
  },
  "geometry": {
   "size_px": [
-   66,
-   66
+   73,
+   54
   ],
   "size_cells": [
-   3,
+   4,
    3
   ],
   "z_sort": "foot",
@@ -48,8 +48,8 @@
    "shape": "none"
   },
   "foot": [
-   33,
-   62
+   39,
+   53
   ],
   "footprint": []
  },
@@ -59,10 +59,10 @@
   "role": "feed",
   "requires": [
    {
-    "rel": "within",
-    "what": "pen",
-    "cells": 1,
-    "note": "in a paddock, a barn or a cart"
+    "rel": "near",
+    "what": "stock",
+    "cells": 6,
+    "note": "feed forked out for the stock, in a paddock, a fold or a barn"
    }
   ],
   "forbids": [
@@ -108,6 +108,9 @@
    "composition role and clearance",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "variants"
   ]
  }
 }

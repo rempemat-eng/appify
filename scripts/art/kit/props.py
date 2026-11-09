@@ -55,6 +55,62 @@ def crown_shadow(png_res: str, foot, out_name: str):
     return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
 
+def _set_looks() -> dict:
+    """{piece id: look} for the prop sets' buildings (scripts/art/kit/sets/looks.py)."""
+    from scripts.art.kit.sets import looks as LK
+    return LK.VOLUME_LOOKS
+
+
+def volume_look(p: dict) -> dict | None:
+    """The look a piece's body was drawn from by the house builder (houses.building), or None: a
+    zone plan's building (the piece's audit source, part body) or a prop set's building
+    (sets/looks.VOLUME_LOOKS, the Act 1 mill). Every such piece casts its volume's shadow
+    (volume_shadow, bake's VOL.bake_cast) and no other: no structure draws two shadows."""
+    looks = _set_looks()
+    if p['id'] in looks:
+        return dict(looks[p['id']])
+    src = next((s for s in (p.get('audit') or {}).get('sources') or [] if s.get('part') == 'body'), None)
+    plan_path = os.path.join(ROOT, 'game', 'data', 'plans', '%s.json' % (src or {}).get('zone'))
+    if not src or not os.path.exists(plan_path):
+        return None
+    plan = json.load(open(plan_path))
+    b = next((b for b in plan.get('buildings', []) if b['id'] == src.get('object')), None)
+    if b is None:
+        return None
+    look = dict(plan.get('art', {}).get('looks', {}).get(b['id'], {}))
+    look.setdefault('w', b['rect'][2])
+    look.setdefault('depth', b['rect'][3])
+    return look
+
+
+def volume_shadow(p: dict, out_name: str) -> dict | None:
+    """A house's cast shadow from its volume (scripts/art/native/volume.py, eastward-edges 11.6): a
+    column east of it shaped by its roof and stacks, from the look its body was drawn from (the
+    piece's audit source in the zone plan, or a set's look in scripts/art/kit/sets/looks.py). Written
+    as an R8 mask like a crown's (2 the core, 1 the rim) with its offset from the foot."""
+    from PIL import Image
+    from scripts.art.native import volume as VOL
+    look = volume_look(p)
+    if look is None:
+        return None
+    lv, ox, oy = VOL.house_cast(look, D)
+    Image.fromarray(lv, 'L').save(os.path.join(OUT, 'art', out_name))
+    return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(ox), int(oy)]}
+
+
+def _anim(rendering: dict, foot) -> dict | None:
+    """The piece's looping strip (rendering.animations with a strip): where it is, its frames and
+    rate, and its offset from the foot (a fall's frames cover its sheet; an animal's its whole
+    picture, frame 0 being the still)."""
+    for a in rendering.get('animations') or []:
+        if a.get('strip') and a.get('frames', 0) > 1:
+            region = a.get('region_px') or [0, 0] + list(a.get('frame_px') or [0, 0])
+            return {'clip': a['clip'], 'strip': a['strip'], 'frames': int(a['frames']), 'fps': float(a.get('fps', 8)),
+                    'offset': [region[0] - foot[0], region[1] - foot[1]], 'cover': not a.get('region_px'),
+                    'reduced_motion': a.get('reduced_motion', 'hold:0')}
+    return None
+
+
 def entry(p: dict) -> dict:
     g = p.get('geometry', {})
     r = p.get('rendering', {})
@@ -65,6 +121,11 @@ def entry(p: dict) -> dict:
     shadow = None
     if cs.get('shape') == 'ellipse' and cs.get('size'):
         shadow = {'size': [int(round(v * D)) for v in cs['size']], 'dir': [int(round(v * D)) for v in cs.get('dir', [0, 0])]}
+    if (p['kind'] == 'structure' or p['id'] in _set_looks()) and p.get('variants'):
+        # a building drawn by the house builder (houses.py), from a zone plan's look or a set's:
+        # its volume's shadow, and only that one
+        mk = volume_shadow(p, 'shadow_%s.png' % p['id'])
+        shadow = {'mask': mk, 'kind': 'volume'} if mk else shadow
     if p.get('placement', {}).get('role') == 'tree' and p.get('variants'):
         v0 = p['variants'][0]
         shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
@@ -77,6 +138,7 @@ def entry(p: dict) -> dict:
             'role': p.get('placement', {}).get('role'), 'snap': p.get('placement', {}).get('snap', 'cell'),
             'approval': p['approval']['state'], 'painted': bool(r.get('paint')),
             **({'sheet_px': g['sheet_px']} if g.get('sheet_px') else {}),
+            **({'anim': _anim(r, foot)} if _anim(r, foot) else {}),
             'variants': {v['id']: {'png': v['png'], 'foot': v.get('foot', foot)} for v in p.get('variants', [])}}
 
 
@@ -92,6 +154,19 @@ def scene(pid: str, e: dict) -> str:
               'script = ExtResource("1")', 'piece_id = "%s"' % pid, '',
               '[node name="Sprite" type="Sprite2D" parent="."]', 'texture = ExtResource("2")', 'centered = false',
               'offset = Vector2(%g, %g)' % (-v0['foot'][0], -v0['foot'][1]), '']
+    an = e.get('anim')
+    if an:
+        # the loop (world/loop_fx.gd: only on screen and while the screen is active, frame 0 under
+        # reduced motion). An animal's loop replaces its still (the still stays for the variant
+        # picker, the bake and the shadow); a fall's lies over the sheet the bake drew.
+        lines[3:3] = ['[ext_resource type="Script" path="res://world/loop_fx.gd" id="3"]',
+                      '[ext_resource type="Texture2D" path="%s" id="4"]' % an['strip']]
+        if an['cover']:
+            i = lines.index('centered = false')
+            lines[i:i] = ['visible = false']
+        lines += ['[node name="%s" type="Sprite2D" parent="."]' % ('Idle' if an['cover'] else 'Flow'),
+                  'script = ExtResource("3")', 'texture = ExtResource("4")', 'centered = false',
+                  'offset = Vector2(%g, %g)' % tuple(an['offset']), 'hframes = %d' % an['frames'], 'fps = %g' % an['fps'], '']
     if e['collision']:
         x, y, w, h = e['collision']
         lines += ['[node name="Solid" type="StaticBody2D" parent="."]', 'collision_mask = 0', '',

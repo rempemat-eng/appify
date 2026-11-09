@@ -1,0 +1,130 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "coast_net_rack",
+ "name": "Net rack",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/coast_net_rack.png",
+   "foot": [
+    62,
+    84
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "Three oak posts and a rail with a net hung to dry: mostly air, twine in diamonds lit to the upper left, folds where the mesh closes, an uneven weighted foot; corks, two glass floats, its tail in a flat coil."
+ },
+ "geometry": {
+  "size_px": [
+   139,
+   88
+  ],
+  "size_cells": [
+   5,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 88,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -20.0,
+    -1.0,
+    40,
+    2
+   ]
+  },
+  "foot": [
+   62,
+   84
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "rack",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "water",
+    "cells": 4,
+    "note": "nets are hung to dry on the quay, by the boats that set them"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    44,
+    4
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "net_rack (nets drying at head height: the rail 1.8 m up, 2.6 m between the end posts; art px: 80 to 96 tall, 120 to 150 wide)",
+  "eastward_ref": "17 (the churns and the farm props for painted metal and rope), 12 (the post box for a painted iron body); no harbour in the local refs",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "coast_net_rack",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

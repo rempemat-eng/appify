@@ -188,8 +188,7 @@ The bands follow the shore's shape and wander off it by up to 7 texels with a sm
 `bank` draws the shores, as the woodland's painted river had them:
 
 - **Under a north bank:** an earth face 6 rows tall (a lit top, two courses of clods hashed from the cell edge, a wet dark foot), the light waterline, and two rows of shade on the water.
-- **On a south shore:** the grass lip over the water, lit, and the shallows lit.
-- **Beside a north-south run:** a narrow earth wall seen edge-on, lit facing west and in shade facing east, with the waterline at its foot.
+- **On a south, east or west shore:** no face (eastward-edges.md 5.3a). The grass lip over the water, lit, then the rim: a texel of wet earth (`earth_cool` 1) and the water's mid tone running on into the lit shallows.
 
 `path_over_water` uses the same painter.
 
@@ -197,7 +196,7 @@ The dressing adds clumps of rushes standing in the shallows off a south shore an
 
 **Crossings.** A route crosses water only on a deck: `woodland_footbridge` is `softground.footbridge` as a structure (`rules.route_water`, `rules.deck`).
 
-**Falls.** Where water crosses a south rim, the face under it must be covered by a fall piece (`rules.water_fall`). `waterfall_2` and `waterfall_3` are the woodland's painted fall (`water.fall_hd`): the stone lip, the falling sheet with streaks, the plume and foam rings. Each covers a channel two or three cells wide over the two-cell face. Below a fall, `water_over_earth_face` carries the water down the face.
+**Falls.** Where water crosses a south rim, the face under it must be covered by a fall piece (`rules.water_fall`). `waterfall_2` and `waterfall_3` are the woodland's painted fall (`structures.fall_sheet`): the glassy tongue and the bend line at the rim, the falling sheet with streaks, and where it lands `rocks.plunge`, the same foam the woodland's fall draws (broken clumps in 4 to 5 tones within the foot plus 8 px, flecks, spray on the water, ripple arcs, a churn in every frame). Each covers a channel two or three cells wide over the two-cell face. Below a fall, `water_over_earth_face` carries the water down the face.
 
 **Not yet:**
 
@@ -236,7 +235,7 @@ Matt, 27 Oct 17:00, on the woodland before and after: "i prefer the water, paths
 
 The bake writes `zones/<zone>/ground_baked.png` and a hash of its inputs (`bake --check` in `check:kit`). `TerrainGround.baked` shows it until a cell or tier is painted. From then on, the live tiles show until the zone is baked again.
 
-A narrow channel keeps its own, smaller rounding and gaussian easing (the woodland rill's) and narrow bank walls (`side_w` 3). A wide body keeps the river's. Raised ground reads on every side: the plateau swatch's calmer, lighter top, `ledge`'s lip, face and side walls, and a back rim (a lit last row with a dark row of earth beyond it). Side bands along the top's west and east edges keep 4 px all the way back. A top two tiers over the ground beside it shows a face four cells high. Worn tracks and paths ease their cell staircases into curves (`shape.smooth`).
+A narrow channel keeps its own, smaller rounding and gaussian easing (the woodland rill's). A wide body keeps the river's. Every width shares one bank rule (eastward-edges.md 5.3a): a face only on a north bank, one rim of wet earth and the water's mid tone round every other shore, no walls on the east and west shores. A fall's channel runs straight into its lip at exactly the sheet's width for a cell above the rim, easing into its own banks over the cell above that (`surface.fall_run_in`); no tongue, reed or stone stands there. Stones in the water are laid with their wet contact (`softground.seat_stones`). Raised ground reads on every side: the plateau swatch's calmer, lighter top, `ledge`'s lip, face and side walls, and a back rim (a lit last row with a dark row of earth beyond it). Side bands along the top's west and east edges keep 4 px all the way back. A top two tiers over the ground beside it shows a face four cells high. Worn tracks and paths ease their cell staircases into curves (`shape.smooth`).
 
 ### Feature pieces, painted where they stand
 

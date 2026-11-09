@@ -1,0 +1,28 @@
+{
+ "id": "woodland/flow_rill",
+ "file": "game/zones/woodland/art/flow_rill.png",
+ "sha256": "accb3febca0ec12a9279724aa57d8677aa8293237d84a5c79fae8ebba1823e6d",
+ "kind": "flow_rill",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  172,
+  2984
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-05",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "docs/reviews/2026-11-04-woodland-water.md, round 6 (5725cf90). File unchanged since f1d30e58 (sha256 accb3feb); its rect (y 10-756) lies wholly above this round's ground changes (y 782-881). Round 5's pass stands."
+ }
+}

@@ -1,0 +1,174 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "brackens_drove_well",
+ "name": "Drove well",
+ "kind": "prop",
+ "biomes": [
+  "brackens",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/brackens/brackens_drove_well.png",
+   "foot": [
+    37,
+    78
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A spring-house over the well and a trough in front; the trickle and rings loop (8 frames)."
+ },
+ "geometry": {
+  "size_px": [
+   90,
+   92
+  ],
+  "size_cells": [
+   5,
+   3
+  ],
+  "z_sort": "foot",
+  "height_px": 92,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -12.0,
+    -13.0,
+    24,
+    16
+   ]
+  },
+  "foot": [
+   37,
+   78
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "water",
+  "role": "well",
+  "provides": [
+   "feature",
+   "water"
+  ],
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 2,
+    "note": "beside the drove road, where the flocks are watered on the way"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "not_near",
+    "what": "water",
+    "cells": 4,
+    "note": "a spring is walled where there is no stream to drink from"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    26,
+    5
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true,
+  "animations": [
+   {
+    "clip": "trickle",
+    "loop": true,
+    "frames": 8,
+    "fps": 8.0,
+    "strip": "res://kit/props/art/brackens/brackens_drove_well_loop.png",
+    "frame_px": [
+     90,
+     92
+    ],
+    "reduced_motion": "hold:0",
+    "on_screen_only": true
+   }
+  ]
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "well (89 to 141 tall, 70 to 118 wide)",
+  "eastward_ref": "12 (the thatched hut, its bench, lantern post and stepping stones), 17 (the farm: cart, barrels, fence); 13 (the bell frame, 1.1 A)",
+  "painter": {
+   "module": "scripts.art.kit.sets.brackens",
+   "fn": "brackens_drove_well",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/brackens.py",
+  "todo": []
+ }
+}

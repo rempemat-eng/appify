@@ -64,11 +64,11 @@
   }
  ],
  "approval": {
-  "state": "candidate",
+  "state": "retired",
   "by": null,
   "at": null,
   "standard": null,
-  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+  "note": "Retired 3 Nov: a straight post-and-rail segment cannot close an enclosure. Use the fence cells fence_wattle_* and fence_picket_* (scripts/art/kit/fences.py)."
  },
  "geometry": {
   "size_px": [
@@ -164,6 +164,9 @@
    "composition role and clearance",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "approval"
   ]
  }
 }

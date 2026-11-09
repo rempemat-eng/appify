@@ -18,6 +18,9 @@ var route_select: OptionButton
 var facing_select: OptionButton
 var piece_variant_select: OptionButton
 var stage_select: OptionButton
+var search: LineEdit
+var category_select: OptionButton
+var _catalog_pieces: Array = []
 var zone_label: Label
 var approval_label: Label
 var validate_button: Button
@@ -94,7 +97,20 @@ func _ready() -> void:
 	variants.item_selected.connect(_surface_selected)
 	_content.add_child(variants)
 
-	_content.add_child(_label("Pieces: place the foot on the soft grid"))
+	_content.add_child(_label("Pieces: place the foot on the soft grid; drag a fence cell to lay a run"))
+	search = LineEdit.new()
+	search.name = "PieceSearch"
+	search.placeholder_text = "Search pieces (name, id, role, purpose)"
+	search.clear_button_enabled = true
+	search.text_changed.connect(func(_text: String) -> void: _filter_changed())
+	_content.add_child(search)
+	category_select = OptionButton.new()
+	category_select.name = "PieceCategory"
+	for category in Tools.CATEGORIES:
+		category_select.add_item(_text(category).capitalize())
+		category_select.set_item_metadata(category_select.item_count - 1, category)
+	category_select.item_selected.connect(func(_index: int) -> void: _filter_changed())
+	_content.add_child(_row("Category", category_select))
 	pieces = _list("Pieces", 240, Vector2i(40, 40))
 	pieces.item_selected.connect(_piece_selected)
 	pieces.gui_input.connect(func(event: InputEvent) -> void: _palette_hover(event, pieces, "piece"))
@@ -123,6 +139,37 @@ func _ready() -> void:
 	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	card.text = "Select or hover a swatch to inspect its definition."
 	_content.add_child(card)
+	var variant_button := Button.new()
+	variant_button.name = "NextVariant"
+	variant_button.text = "Next variant (V)"
+	variant_button.tooltip_text = "Cycle the selected piece's variants. Sprites are never mirrored: a flip is a variant drawn for it."
+	variant_button.pressed.connect(cycle_variant)
+	var scatter_check := CheckBox.new()
+	scatter_check.name = "ScatterBrush"
+	scatter_check.text = "Scatter brush"
+	scatter_check.tooltip_text = "Drag to scatter small dressing: a deterministic choice per cell, forbids and a cell of clearance respected, one undo a stroke."
+	scatter_check.toggled.connect(func(on: bool) -> void:
+		if is_instance_valid(plugin):
+			plugin.set("scatter", on)
+		say("Scatter brush on: drag over the ground with a small piece selected." if on else "Scatter brush off."))
+	var vrow := HBoxContainer.new()
+	vrow.add_child(variant_button)
+	vrow.add_child(scatter_check)
+	_content.add_child(vrow)
+	var copy_button := Button.new()
+	copy_button.name = "CopyGroup"
+	copy_button.text = "Copy selected pieces"
+	copy_button.tooltip_text = "Copy the pieces selected in the scene (a pen, its gate and what it holds) as a group."
+	copy_button.pressed.connect(_copy_group)
+	var paste_button := Button.new()
+	paste_button.name = "PasteGroup"
+	paste_button.text = "Paste group"
+	paste_button.tooltip_text = "Click the canvas to paste the copied group, its pieces at their places relative to each other (one undo)."
+	paste_button.pressed.connect(_paste_group)
+	var group_row := HBoxContainer.new()
+	group_row.add_child(copy_button)
+	group_row.add_child(paste_button)
+	_content.add_child(group_row)
 	validate_button = Button.new()
 	validate_button.text = "Validate zone"
 	validate_button.pressed.connect(_validate)
@@ -241,16 +288,8 @@ func refresh_palette() -> void:
 		var index := mats.add_item(_entry_label(entry), _material_swatch(entry))
 		mats.set_item_metadata(index, id)
 		mats.set_item_tooltip(index, _entry_label(entry))
-	for entry in result.get("pieces", []):
-		if not (entry is Dictionary) or not _allowed(entry):
-			continue
-		var id := _text(entry.get("id", ""))
-		if id == "":
-			continue
-		_pieces[id] = entry
-		var index := pieces.add_item(_entry_label(entry), _piece_swatch(entry))
-		pieces.set_item_metadata(index, id)
-		pieces.set_item_tooltip(index, _entry_label(entry))
+	_catalog_pieces = result.get("pieces", [])
+	var hidden := _fill_pieces()
 	_fill_surface_variants()
 	var restored := false
 	if previous.begins_with("material:"):
@@ -269,11 +308,44 @@ func refresh_palette() -> void:
 	if mats.item_count == 0 and pieces.item_count == 0:
 		say("No eligible pieces in this zone. Every current piece still awaits approval; use an explicit lab to review candidates.")
 	else:
-		say("%d terrain materials; %d pieces. %s" % [mats.item_count, pieces.item_count, "Lab review only." if _last_lab else "Approved library only."])
+		say("%d terrain materials; %d pieces%s. %s" % [mats.item_count, pieces.item_count, " (%d hidden by the search)" % hidden if hidden > 0 else "",
+			"Lab review only." if _last_lab else "Approved library only."])
 	_building = false
 
 func _fill() -> void:
 	refresh_palette()
+
+## The pieces list from the last catalog, through the search and the category (no library reload).
+func _fill_pieces() -> int:
+	pieces.clear()
+	_pieces.clear()
+	var query := search.text if search != null else ""
+	var category := _text(category_select.get_selected_metadata()) if category_select != null and category_select.selected >= 0 else "all"
+	var hidden := 0
+	for entry in _catalog_pieces:
+		if not (entry is Dictionary) or not _allowed(entry):
+			continue
+		var id := _text(entry.get("id", ""))
+		if id == "":
+			continue
+		var raw: Variant = entry.get("definition", {})
+		if not Tools.palette_matches(id, _text(entry.get("name", id)), raw if raw is Dictionary else {}, query, category):
+			hidden += 1
+			continue
+		_pieces[id] = entry
+		var index := pieces.add_item(_entry_label(entry), _piece_swatch(entry))
+		pieces.set_item_metadata(index, id)
+		pieces.set_item_tooltip(index, _entry_label(entry))
+	return hidden
+
+func _filter_changed() -> void:
+	if pieces == null or _building:
+		return
+	var hidden := _fill_pieces()
+	var current := _text(plugin.get("brush")) if is_instance_valid(plugin) else ""
+	if current.begins_with("piece:"):
+		_select_list(pieces, current.substr(6))
+	say("%d pieces shown%s." % [pieces.item_count, ", %d hidden by the search" % hidden if hidden > 0 else ""])
 
 func _entry_label(entry: Dictionary) -> String:
 	var approval: Variant = entry.get("approval", "")
@@ -450,7 +522,10 @@ func _piece_selected(index: int) -> void:
 	var id := _text(pieces.get_item_metadata(index))
 	plugin.set("brush", "piece:" + id)
 	show_piece(id)
-	say("Piece: %s. Move over the zone to preview placement." % id)
+	if plugin.has_method("fence_style") and _text(plugin.call("fence_style", id)) != "":
+		say("Fence: %s. Drag along the run; each cell's piece is chosen by its neighbours, and the run joins the fence it meets." % id)
+	else:
+		say("Piece: %s. Move over the zone to preview placement." % id)
 	_refresh_overlay()
 
 func _refresh_overlay() -> void:
@@ -587,7 +662,7 @@ func _message(result: Variant, fallback: String) -> String:
 	var lines: PackedStringArray = []
 	for diagnostic in result.get("diagnostics", []):
 		if diagnostic is Dictionary:
-			var rule := _text(diagnostic.get("rule", diagnostic.get("code", "")))
+			var rule := _text(diagnostic.get("rule", diagnostic.get("code", diagnostic.get("check", ""))))
 			var detail := _text(diagnostic.get("message", ""))
 			if detail != "":
 				lines.append((rule + ": " if rule != "" else "") + detail)
@@ -615,6 +690,39 @@ func _bake() -> void:
 		result["message"] = "Bake completed."
 	say(_message(result, "Bake failed; no output was accepted."))
 	bake_button.disabled = not is_instance_valid(zone)
+
+## The next of the selected piece's variants (the V key and the Next variant button).
+func cycle_variant() -> void:
+	if piece_variant_select == null or piece_variant_select.item_count < 2:
+		say("This piece has one variant.")
+		return
+	var ids: Array = []
+	for i in piece_variant_select.item_count:
+		ids.append(_text(piece_variant_select.get_item_metadata(i)))
+	var current := _text(piece_variant_select.get_item_metadata(maxi(0, piece_variant_select.selected)))
+	var next := Tools.next_variant(ids, current)
+	var index := ids.find(next)
+	piece_variant_select.select(index)
+	_piece_variant_selected(index)
+	say("Variant: %s" % (next if next != "" else "auto"))
+
+func _copy_group() -> void:
+	if not is_instance_valid(plugin) or not plugin.has_method("copy_selection"):
+		return
+	say(_message(plugin.call("copy_selection"), "Select placed pieces to copy."))
+
+func _paste_group() -> void:
+	if not is_instance_valid(plugin):
+		return
+	if (plugin.get("clipboard") as Array).is_empty():
+		say("Copy a group of pieces first.")
+		return
+	mats.deselect_all()
+	variants.deselect_all()
+	pieces.deselect_all()
+	plugin.set("brush", "group:")
+	say("Paste: click where the group's top-left cell goes. Every piece is checked with the rest of the group; one undo.")
+	_refresh_overlay()
 
 func _validate() -> void:
 	if not is_instance_valid(zone):

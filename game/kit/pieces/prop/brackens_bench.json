@@ -1,0 +1,139 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "brackens_bench",
+ "name": "Drovers' seat",
+ "kind": "prop",
+ "biomes": [
+  "brackens",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/brackens/brackens_bench.png",
+   "foot": [
+    47,
+    46
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A gritstone slab on two uprights, two back slabs set in the ground behind it."
+ },
+ "geometry": {
+  "size_px": [
+   94,
+   67
+  ],
+  "size_cells": [
+   4,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 67,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -15.0,
+    -4.0,
+    30,
+    4
+   ]
+  },
+  "foot": [
+   47,
+   46
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "rest",
+  "role": "seat",
+  "faces": {
+   "what": [
+    "feature",
+    "view",
+    "water",
+    "lower"
+   ],
+   "cells": 6,
+   "note": "a seat looks at something: across the road to a cairn, a ruin or a well"
+  },
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 2,
+    "note": "beside the road, facing it and the view (size-guide: a bench faces a view or a feature)"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    30,
+    4
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "bench (37 to 68 tall, 70 to 107 wide)",
+  "eastward_ref": "12 and 38 (the bench, 1.2 x 0.87 A)",
+  "painter": {
+   "module": "scripts.art.kit.sets.brackens",
+   "fn": "brackens_bench",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/brackens.py",
+  "todo": []
+ }
+}

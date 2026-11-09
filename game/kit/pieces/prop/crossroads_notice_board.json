@@ -89,7 +89,10 @@
     "what": "route"
    }
   ],
-  "purpose": "guide"
+  "purpose": "guide",
+  "avoid": [
+   "wild_woods"
+  ]
  },
  "rendering": {
   "cast_shadow": {

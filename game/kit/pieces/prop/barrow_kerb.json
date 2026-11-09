@@ -1,0 +1,136 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "barrow_kerb",
+ "name": "Kerb stone",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "a",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/barrow_kerb_a.png",
+   "foot": [
+    9,
+    22
+   ]
+  },
+  {
+   "id": "b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/act1/barrow_kerb_b.png",
+   "foot": [
+    10,
+    18
+   ]
+  },
+  {
+   "id": "c",
+   "weight": 0.6,
+   "png": "res://kit/props/art/act1/barrow_kerb_c.png",
+   "foot": [
+    8,
+    23
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A stone seated in the turf, carried in planes (a lit top, a shaded side), with a crack, lichen and its contact shadow: a dressed slab, a low boulder, a pillar."
+ },
+ "geometry": {
+  "size_px": [
+   22,
+   28
+  ],
+  "size_cells": [
+   1,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 28,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -3.0,
+    -1.5,
+    6,
+    3
+   ]
+  },
+  "foot": [
+   9,
+   22
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "marker",
+  "composition": "cluster",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "barrow_entrance",
+    "cells": 4,
+    "note": "a stone of the ring round the barrow's foot"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    8,
+    2
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "kerb_stone (0.35 to 0.45 m set on edge; art px: 16 to 28 tall, 14 to 30 wide)",
+  "eastward_ref": "12 (the thatched hut, the boulder wall), 13 (the rocks 325,247,350,268), 17 (the rockfall for stones carried in planes)",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "barrow_kerb",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}
