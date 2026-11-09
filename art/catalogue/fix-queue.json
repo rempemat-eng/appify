@@ -1,5 +1,5 @@
 {
- "_about": "The fix queue: art that was already placed in the world when the placement gate was seeded on 25 Oct 2026 (commit 14944c89), and only that. A new asset is never added here: it must pass independent review (scripts/review/gate.py, docs/review-agents.md). A queued asset may stay placed while it is redrawn, re-recorded and reviewed, and only while its entry holds: sha256 is the picture's current bytes (a queued picture that changes is refused until it is reviewed), the entry names when it was queued, why, what clears it and review_by, the date after which it is refused, and an asset an auditor failed carries the auditor's fix_list. Remove an entry when its asset passes (the gate prints an ADVISORY). 26 Oct: the scale gate added assets out of range (docs/reviews/2026-10-26-scale.md). 9 Nov (Claude A, the #439 triage): 48 Crossroads assets placed before the seed and never reviewed, which #421 or the front-gable roof build redraws, and 23 Crossroads props placed before the seed that failed the 8 Nov detail audit, each with its fix list; crossroads/ground renewed at its current bytes; woodland/ground removed (it passes). 9 Nov, after the woodland audit (#444, Claude A): the 13 woodland assets placed before the seed that failed it, each with its fix codes and fix_list (review_by 2026-11-30). The placed-before-seed rule stands. One dated exception, approved by Claude A on 2026-11-09 (the #439 triage): woodland/bramble_b, bush_b, bush_c, holly_b, lintel, standing_stone_broken, standing_stone_lean, standing_stone_runes, stone_top, hatch_closed and hatch_open (failed the 9 Nov audit, with their W- fix codes) and crossroads/square_puddles (cleared by #421's redraw), all review_by 2026-11-30: each was already on main and in its scene, and #439 is the first gate that would refuse it, so queuing it lets no new art in. Each such entry carries an \"exception\" field. Any further exception needs Matt or Claude A, by name, in the entry. 9 Nov, after the round-2 audit of #447 (docs/reviews/2026-11-08-crossroads-placed.md, round 2; Claude A): the 17 Crossroads assets that passed are removed; the 14 that failed (13 props and crossroads/ground) are re-queued at their #447 bytes with the auditor's XR2 fix lists, each keeping its review_by. 9 Nov, after the round-3 audit of #450 (docs/reviews/2026-11-08-crossroads-placed.md, round 3; Claude A): hay_19, hay_20 and waystone passed and are removed; the 11 that failed (seven flower tubs, both lanterns, the stall and crossroads/ground) are re-queued at their #450 bytes with the auditor's XR3 fix lists (ground keeps XR2-G1 and XR2-G2 and adds XR3-G1), each keeping its review_by.",
+ "_about": "The fix queue: art that was already placed in the world when the placement gate was seeded on 25 Oct 2026 (commit 14944c89), and only that. A new asset is never added here: it must pass independent review (scripts/review/gate.py, docs/review-agents.md). A queued asset may stay placed while it is redrawn, re-recorded and reviewed, and only while its entry holds: sha256 is the picture's current bytes (a queued picture that changes is refused until it is reviewed), the entry names when it was queued, why, what clears it and review_by, the date after which it is refused, and an asset an auditor failed carries the auditor's fix_list. Remove an entry when its asset passes (the gate prints an ADVISORY). 26 Oct: the scale gate added assets out of range (docs/reviews/2026-10-26-scale.md). 9 Nov (Claude A, the #439 triage): 48 Crossroads assets placed before the seed and never reviewed, which #421 or the front-gable roof build redraws, and 23 Crossroads props placed before the seed that failed the 8 Nov detail audit, each with its fix list; crossroads/ground renewed at its current bytes; woodland/ground removed (it passes). 9 Nov, after the woodland audit (#444, Claude A): the 13 woodland assets placed before the seed that failed it, each with its fix codes and fix_list (review_by 2026-11-30). The placed-before-seed rule stands. One dated exception, approved by Claude A on 2026-11-09 (the #439 triage): woodland/bramble_b, bush_b, bush_c, holly_b, lintel, standing_stone_broken, standing_stone_lean, standing_stone_runes, stone_top, hatch_closed and hatch_open (failed the 9 Nov audit, with their W- fix codes) and crossroads/square_puddles (cleared by #421's redraw), all review_by 2026-11-30: each was already on main and in its scene, and #439 is the first gate that would refuse it, so queuing it lets no new art in. Each such entry carries an \"exception\" field. Any further exception needs Matt or Claude A, by name, in the entry. 9 Nov, after the round-2 audit of #447 (docs/reviews/2026-11-08-crossroads-placed.md, round 2; Claude A): the 17 Crossroads assets that passed are removed; the 14 that failed (13 props and crossroads/ground) are re-queued at their #447 bytes with the auditor's XR2 fix lists, each keeping its review_by. 9 Nov, after the round-3 audit of #450 (docs/reviews/2026-11-08-crossroads-placed.md, round 3; Claude A): hay_19, hay_20 and waystone passed and are removed; the 11 that failed (seven flower tubs, both lanterns, the stall and crossroads/ground) are re-queued at their #450 bytes with the auditor's XR3 fix lists (ground keeps XR2-G1 and XR2-G2 and adds XR3-G1), each keeping its review_by. 9 Nov, after the round-4 audit of #453 (docs/reviews/2026-11-08-crossroads-placed.md, round 4; Claude A): the seven flower tubs and both lanterns passed and are removed, the stall failed and is re-queued at its #453 bytes with the auditor's XR4 fix list (review_by unchanged), and crossroads/ground now clears on XR2-G1 and XR2-G2 alone, with XR3-G1 a non-blocking follow-up.",
  "seeded": "2026-10-25",
  "commit": "14944c89",
  "queue": [
@@ -8,7 +8,7 @@
    "sha256": "95859777abd021a5e0e044f51f14b7f05c247aad3a66cc53f53dfbf940189024",
    "queued": "2026-11-09",
    "reason": "regenerated in #450 under the redrawn props (the 362 ground-edit texels at prop feet, the bakery lip and 912,468; that delta is correct and the 177 distant lawn-scatter texels were ruled acceptable); the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3) keeps it failed on XR2-G1 and XR2-G2 (#421) and adds XR3-G1: re-queued at the #450 bytes with the auditor's fix list (Claude A, 9 Nov); earlier: its contact and cast shadows redrawn in #447 under the redrawn props (that delta passes); failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov); earlier: queued at the 25 Oct seed (logic.scale; the #288 second review's S5 and S6); its picture has since been redrawn (#436), so the entry is renewed at today's bytes; #421 redraws it again. re-queued after the #288 second review: S5 (ruts, dark discs, even stipple) and S6 (straight seam on the SW road) go to the next fix-queue PR",
-   "clears_when": "reviewer pass on the XR3 fixes",
+   "clears_when": "reviewer pass on XR2-G1..G2 (the #421 house and burnt-lot redraw); XR3-G1 is a non-blocking follow-up",
    "review_by": "2026-11-30",
    "faults": [
     "logic.scale"
@@ -348,137 +348,17 @@
    "review_by": "2026-11-30"
   },
   {
-   "id": "crossroads/flower_tub_10",
-   "sha256": "d215806a0dbbe39a10c71fcde57689c68ec2fdaf4585730ff5584b14549580b6",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
-    "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
-    "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
-    "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
-   ]
-  },
-  {
-   "id": "crossroads/flower_tub_26",
-   "sha256": "957ffac7cecbf7edb3838f9e9ef653b2f76d5de07f445372bad318680e3d6ff4",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
-    "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
-    "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
-    "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
-   ]
-  },
-  {
-   "id": "crossroads/flower_tub_27",
-   "sha256": "807c3b35ff720362932c11f43a818bdff9da53ce46b24fe73fd1a78f9bc6bf74",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
-    "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
-    "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
-    "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
-   ]
-  },
-  {
-   "id": "crossroads/flower_tub_38",
-   "sha256": "4c56bdcaa9286ae799626a007f53cf6844d53e6de83dd641d24ba2dc619c882d",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
-    "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
-    "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
-    "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
-   ]
-  },
-  {
-   "id": "crossroads/flower_tub_59",
-   "sha256": "8e35816baf35417dd01fde17e97265e6879ef8bacf91cb5eaed5162458deb4c0",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
-    "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
-    "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
-    "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
-   ]
-  },
-  {
-   "id": "crossroads/flower_tub_60",
-   "sha256": "6d639925cdfb0507d9c5d2c0334bc22aa3674dbf6a5a96b59259c0d03fd2105f",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
-    "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
-    "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
-    "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
-   ]
-  },
-  {
-   "id": "crossroads/flower_tub_9",
-   "sha256": "7d864c7a653f348fc8caa79a1598d35cd97f27c2e6979aa4fbaf7805f603370c",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
-    "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
-    "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
-    "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
-   ]
-  },
-  {
-   "id": "crossroads/lantern_dark",
-   "sha256": "1ea30d67dc37bc7cd978a93e6614e2eb31d610b45e4a9e87eb07fbb4dc6e9e9c",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-L1: give each slab its volume back while keeping the tooling: a distinct top plane 2-3 rows deep in tone 4 with a lit front-left arris, a 1-row bevel step, a lit west end face 2-3 columns wide, the front in 3 tones (no one-tone run over 60 texels), the east face in core shadow, two chips with lit lips",
-    "XR3-L2: moss as one or two ragged clumps of different size in the joint (a 2 px lit cap over a 3-4 px band with a ragged dark underside), placed unevenly, never four equal tufts in a row"
-   ]
-  },
-  {
-   "id": "crossroads/lantern_lit",
-   "sha256": "dc9cd9632b4ed75b17998c96240497911e0c8063e832ea69260b6245e97555cb",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR3-L1: give each slab its volume back while keeping the tooling: a distinct top plane 2-3 rows deep in tone 4 with a lit front-left arris, a 1-row bevel step, a lit west end face 2-3 columns wide, the front in 3 tones (no one-tone run over 60 texels), the east face in core shadow, two chips with lit lips",
-    "XR3-L2: moss as one or two ragged clumps of different size in the joint (a 2 px lit cap over a 3-4 px band with a ragged dark underside), placed unevenly, never four equal tufts in a row"
-   ]
-  },
-  {
    "id": "crossroads/stall",
-   "sha256": "6f8174d2de629e1eef8e836863d27a779a7187b8e50290060361c8a026ba753d",
+   "sha256": "5957f50a54021ed2960c79fa2c15e168ee7993addd2905384323ae0e97ec8161",
    "queued": "2026-11-09",
-   "reason": "redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR3 fixes",
+   "reason": "redrawn in #453 to its XR3 fix list; failed the 2026-11-09 round-4 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 4): re-queued at the #453 bytes with the auditor's XR4 fix list (Claude A, 9 Nov); earlier: redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
+   "clears_when": "reviewer pass on the XR4 fixes",
    "review_by": "2026-11-23",
    "fix_list": [
-    "XR3-S1: nail heads that keep their lit texel: tidy() strips a lone lit texel, so draw the light as 2 texels (the head's top row, or an L), or pass the nail heads to tidy() as `keep`; check the output bytes, not the painter",
-    "XR3-S2: the chalk board as words and a price: broken 1-2 px strokes of varying letter shapes (not repeated L glyphs) in two chalk tones, with a faint chalk haze of the second tone smudged over part of the navy field so it is not one tone over 281 texels"
+    "XR4-S1 (fault): make the board read at 1x: draw N with a full diagonal (not dots), give M 4-5 columns or use a 2-line layout (PLUMS / 3d) with 1 px margin to the frame, or replace the word with a drawn plum and the price; check it at 1x and 2x in the composite",
+    "XR4-S2 (fault): give each counter-front board grain in 3 tones with a lit west edge column and a dark east joint, grain streaks that wander and end, and no one-tone run over 60 texels (now 6 boards at 135-226, largest #8e6242 [68,120,78,154])",
+    "XR4-S3 (fault): redraw the sack as burlap: a mid tan below the awning's cream, weave in 2-texel clusters, a slumped base with a contact shadow, the neck tied with twine; it must not be the brightest value on the stall",
+    "XR4-S4 (polish): the awning's hanging stripe faces are one tone over 79-82 texels each (y 43-66): add a fold shade down one side of each stripe"
    ]
   },
   {
