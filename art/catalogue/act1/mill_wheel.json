@@ -1,7 +1,7 @@
 {
  "id": "act1/mill_wheel",
  "file": "game/kit/props/art/act1/mill_wheel.png",
- "sha256": "368c85043a86ff703caab1cdf53db1ccfee9840ca4c2f989ebb30fad9998beec",
+ "sha256": "973c56683939b5699dbc04135215976a87606520fff35e823d212db4daaf65c0",
  "kind": "mill_wheel",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 9
+  "polish": 7
  },
  "detail_bar": {
   "ours": {
    "patches": 340,
-   "tones": 24.94705882352941,
-   "shapes": 43.98823529411764
+   "tones": 24.76764705882353,
+   "shapes": 43.44117647058823
   },
   "band": {
    "tones": 27.0,
@@ -28,25 +28,13 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.873,
-  "tones_ratio": 0.924,
-  "shapes_ratio": 0.873,
+  "ratio": 0.863,
+  "tones_ratio": 0.917,
+  "shapes_ratio": 0.863,
   "passed": false,
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    214,
-    364,
-    237,
-    384
-   ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 42 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
   {
    "detector": "detail.light",
    "severity": "polish",
@@ -56,7 +44,7 @@
     296,
     383
    ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 32 L per H to the east)",
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 55 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -65,34 +53,22 @@
    "box": [
     187,
     314,
-    234,
+    233,
     350
    ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 29 L per H to the east)",
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 31 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    38,
+    40,
     302,
     139,
     398
    ],
-   "message": "act1/mill_wheel: the wood is lit from the right (luminance rises 17 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    188,
-    355,
-    231,
-    384
-   ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 14 L per H to the east)",
+   "message": "act1/mill_wheel: the wood is lit from the right (luminance rises 16 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -111,12 +87,12 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    207,
-    385,
-    234,
-    398
+    188,
+    355,
+    231,
+    382
    ],
-   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 10 L per H to the east)",
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 8 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -128,7 +104,7 @@
     334,
     419
    ],
-   "message": "act1/mill_wheel: detail bar 0.87 of Eastward's prop band (24.9 tones, 44.0 shapes a patch against 27.0, 50.36)",
+   "message": "act1/mill_wheel: detail bar 0.86 of Eastward's prop band (24.8 tones, 43.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -140,15 +116,15 @@
     334,
     419
    ],
-   "message": "act1/mill_wheel: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 45% to 46%, for information: the verdict is on this grid)",
+   "message": "act1/mill_wheel: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 44%, for information: the verdict is on this grid)",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
- "reviewed": "2026-11-05",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 8 (v9) of docs/reviews/2026-11-04-act1-props.md (e85285a8): R7-1 fixed: the piece's cast shadow is its own sprite (shadow_mill_wheel.png, the bake's 0.46 / 0.22 projection; identical texel for texel to compose.shadow_mask of the still, 28,290 texels), and the valley study steps the race, the copings and the crossing a tone down under it (the race 86 L outside, 64 L inside), so the shadow runs from the wall's foot across the race to the lawn (75 L core, a one-tone 3-row rim, against 136 to 146 L). R7-5 fixed: two slumped hessian sacks (wider at the foot, a fold, a tied ear, the east third in shade, one leaning on the other), the hoist door's 2-row head reveal and 3 px west reveal in shade, a weatherboarded lucam with doors and a slated cap, and the 9 px shaft showing 3 px either side of the frame-0 spoke for 6 rows between the plate and the boss, the plate at the wheel's 14 px stand-off. The loop: 8 frames, frame 0 the still, every change inside (167,270,327,420), the wrap 10,048 texels against 9,994 to 10,280. Seven detail.light findings rejected (five stone boxes are the wheel's pale timber and the white water; the wood boxes are the hoist door's lit east reveal and the cream sacks east of the dark loading door). Bar 0.87 and noise 45 % (phases 45 to 46 %) accepted (polish). Open polish: R8-1, the lucam's weatherboards are regular two-tone stripes and its cap reads as a flat stack; R8-2, the sacks have no outline and no hessian texture."
+  "date": "2026-11-09",
+  "note": "Round 9 (the merge of main into #435, 8e650355) of docs/reviews/2026-11-04-act1-props.md. Changed by #436's per-roof eave band at the look's depth 8.0 and its house volume pass (3,674 px): soffit row 182 (45 L), a flat core of 8 rows (183 to 190; stone faces 67 L against the lit wall's 113 to 136, 41 to 51 % darker), a fade to row 205 to 209 (97 L, 14 to 29 %) with a broken edge, about 25 art px (8.3 world px) in all; timber keeps its modelling; the foot band (rows 378 to 385) and the east corner turned per 11.3 and 11.4. Bar 0.86 (0.87 before) and noise 44 % (phases reported) accepted as polish. Five detail.light findings rejected as in round 8 (the wheel's pale timber and white water over stone; the hoist door's lit east reveal; the sacks; the box at (251,360,296,383) is the wheel's own shade on the wall behind its west spokes plus the new foot band). The loop: frame 0 is the still, the wrap 10,090 against 9,972 to 10,264, and outside the wheel's box every frame changed exactly as the still. Open polish P9-1: the band is about 26 art px (E 19) deep, beyond Eastward's deepest eave (thatch, E 13 to 15); Claude A's call whether the mill keeps depth 8.0."
  }
 }
