@@ -1,5 +1,5 @@
 {
- "_about": "The fix queue: art that was already placed in the world when the placement gate was seeded on 25 Oct 2026 (commit 14944c89), and only that. A new asset is never added here: it must pass independent review (scripts/review/gate.py, docs/review-agents.md). A queued asset may stay placed while it is redrawn, re-recorded and reviewed, and only while its entry holds: sha256 is the picture's current bytes (a queued picture that changes is refused until it is reviewed), the entry names when it was queued, why, what clears it and review_by, the date after which it is refused, and an asset an auditor failed carries the auditor's fix_list. Remove an entry when its asset passes (the gate prints an ADVISORY). 26 Oct: the scale gate added assets out of range (docs/reviews/2026-10-26-scale.md). 9 Nov (Claude A, the #439 triage): 48 Crossroads assets placed before the seed and never reviewed, which #421 or the front-gable roof build redraws, and 23 Crossroads props placed before the seed that failed the 8 Nov detail audit, each with its fix list; crossroads/ground renewed at its current bytes; woodland/ground removed (it passes). crossroads/square_puddles is not queued: it was first placed on 27 Oct, after the seed, so it needs a review like any new asset.",
+ "_about": "The fix queue: art that was already placed in the world when the placement gate was seeded on 25 Oct 2026 (commit 14944c89), and only that. A new asset is never added here: it must pass independent review (scripts/review/gate.py, docs/review-agents.md). A queued asset may stay placed while it is redrawn, re-recorded and reviewed, and only while its entry holds: sha256 is the picture's current bytes (a queued picture that changes is refused until it is reviewed), the entry names when it was queued, why, what clears it and review_by, the date after which it is refused, and an asset an auditor failed carries the auditor's fix_list. Remove an entry when its asset passes (the gate prints an ADVISORY). 26 Oct: the scale gate added assets out of range (docs/reviews/2026-10-26-scale.md). 9 Nov (Claude A, the #439 triage): 48 Crossroads assets placed before the seed and never reviewed, which #421 or the front-gable roof build redraws, and 23 Crossroads props placed before the seed that failed the 8 Nov detail audit, each with its fix list; crossroads/ground renewed at its current bytes; woodland/ground removed (it passes). 9 Nov, after the woodland audit (#444, Claude A): the 13 woodland assets placed before the seed that failed it, each with its fix codes and fix_list (review_by 2026-11-30). The placed-before-seed rule stands. One dated exception, approved by Claude A on 2026-11-09 (the #439 triage): woodland/bramble_b, bush_b, bush_c, holly_b, lintel, standing_stone_broken, standing_stone_lean, standing_stone_runes, stone_top, hatch_closed and hatch_open (failed the 9 Nov audit, with their W- fix codes) and crossroads/square_puddles (cleared by #421's redraw), all review_by 2026-11-30: each was already on main and in its scene, and #439 is the first gate that would refuse it, so queuing it lets no new art in. Each such entry carries an \"exception\" field. Any further exception needs Matt or Claude A, by name, in the entry.",
  "seeded": "2026-10-25",
  "commit": "14944c89",
  "queue": [
@@ -650,6 +650,290 @@
    "fix_list": [
     "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. As woodpile_11 (same stamp and gaps). Sweep cluster-noise rejected as noise, as for woodpile_11. Bar 0.67."
    ]
+  },
+  {
+   "id": "woodland/beech",
+   "sha256": "7a76b51c67bb310b4abed03e24d321a70c6d6b7ae1c493569b5df4293c28ef0d",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-T1, W-T3",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T3: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.61; trunk a three-band grey pipe with two straight rings and a telescoping step, no bark mottle, no flare. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/birch",
+   "sha256": "1bc0db283db263d112868dcb734341982d519889e1065865bd4e351abdf7b840",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-T1, W-T4",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T4: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.67; trunk a 14 px straight cylinder for 53 rows, no flare, no dark fissured base, no crown shade. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/bramble",
+   "sha256": "f2f9c1b9c8e9480d704afed7bf34d1636a6edd91f3bd08ad5f1f33cc5cc6143e",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-B1, W-B2",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-B1, W-B2: a bush with berries as identical 2x1 red pairs (3 copies, read as eyes); no arching canes, thorns or drupelet clusters; bar 0.68. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/bush",
+   "sha256": "fba10c786270146050a880e60acd488b33688cb185ac8ea7595f7deed9ec6f60",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-B1",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-B1: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.64. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/hollow_tree",
+   "sha256": "fc9de68b9efa88b0e4ea23cde1c5f2a21d0f77bd1584d0e0aa52cbb3adaf0177",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-T1, W-T6",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T6: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.57; a veteran tree drawn as a tall straight pole (trunk 93 rows straight); the hollow is a flat dark oval sticker with two eye pixels, no rim thickness or inner wall. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/holly",
+   "sha256": "19dd3eac50dc48befa8391e31b73463688d30d0992ad38e43aff679437f749fa",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-B1, W-B3",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-B1, W-B3: no spiky glossy leaves, round soft silhouette, berries single 2x2 red squares evenly spaced with no highlight; bar 0.62. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/oak",
+   "sha256": "dc021b0496b96ccc9cdae871f4e737f92f1f01de882835b372a456af4ec787ea",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-T1, W-T2",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T2: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.56; trunk a straight 40 px column of 1 px vertical dashes, flare only in the last 12 rows, no roots, no crown shade on the trunk top. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/pine",
+   "sha256": "0dc00f66173809209ca7af8d96fd3a62eb168daaa853f06a8daf6563a80d56b1",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-T1, W-T5",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T5: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips (tiers read but carry the same ticks, no needle tips); bar 0.62; trunk as the oak. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/sapling",
+   "sha256": "740a55702f8c9664d16601c9fafb741106bdf217d0bdc2ee681281c381b75833",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-T1, W-T8",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T8: crown passable; stem an 8 px straight three-tone rod with a pencil-point foot, no root flare or ground contact; bar 0.53. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/standing_stone",
+   "sha256": "9ba1f4dce7449a67359480fbc877ca169ea58bc385628c4367e3ae66c617b2a5",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-S1, W-S2",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2: single-texel speckle over every face (lone texels 9.2 %, house limit 6 %), lichen as identical round tan coins, moss flecks mid-face, a baked grass skirt with a straight bottom edge; bar 0.61. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/standing_stone_b",
+   "sha256": "ea3fe03c51dbae63fa68bc7470e67e423be1c1c172fc6cc2d79ec9ab0cd80597",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-S1, W-S2, W-S3",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2, W-S3: as standing_stone (lone 10.5 %) plus a flat two-tone pale blue spiral glyph painted on, not carved; bar 0.77. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/standing_stone_low",
+   "sha256": "bc02332470da81fc37567daa8a599518bae97eac5fc45a05ebbb33546612c454",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-S1, W-S2",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2: lone 9.8 %; bar 0.78. logic.scale (56 px) rejected: low by design. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/willow",
+   "sha256": "a3fe1e4e8731b7f2c7f7caa7deb6a584cd19c8913ff23a44b77613b659f167c1",
+   "queued": "2026-11-09",
+   "reason": "placed in the world before the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-T1, W-T7 (blocker)",
+   "clears_when": "redrawn to its fix_list, re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T7 (blocker): an oak dome with straight vertical sides (52-58 rows within 1 px), strands 1-3 px straight vertical lines in a comb, no arching branches; bar 0.65, outline 18 %. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/bramble_b",
+   "sha256": "c893730dfc12566b9104a94820adf37e046492373a408cb6a47712cc856cfbe6",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-B1, W-B2",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-B1, W-B2: as bramble; bar 0.63. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/bush_b",
+   "sha256": "fd9d0ac7336bd63514c81c731e897d395404245449699f59d9be2b87ff197ee2",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-B1",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-B1: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.57. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/bush_c",
+   "sha256": "75a5a9805c1ab2647e3c28d6af2a763742dbb014148fb4c499643a076939da5b",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-B1",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-B1: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.63. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/holly_b",
+   "sha256": "6d7b9ce7a4fe83f6244585563d2458bde0927501418f5969cee3830a448e3963",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-B1, W-B3",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-B1, W-B3: as holly; bar 0.74. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/lintel",
+   "sha256": "31b38aa500d817194e7f692f2b433351a2617a94ccd333cc671a43cfc52f7a1f",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-S4",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-S4: top plane a speckle terrazzo (lone 6.4 %), front and end planes right but no chipped arrises or bedding; bar 0.57. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/standing_stone_broken",
+   "sha256": "e44959508ef6af1ba9f6de4b537a96679a4c68d6f95a8186b553a06aa1a09976",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-S1, W-S2",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2: lone 11.4 %, no broken top plane (the break needs a lit fracture face); bar 0.78. logic.scale (56 px) rejected: a broken stone is short by design. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/standing_stone_lean",
+   "sha256": "bc173d7d89755b6d2d04c882933b8b13792fedb5274a9c6c86f90f84f59d1754",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-S1, W-S2",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2: lone 9.8 %; bar 0.75. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/standing_stone_runes",
+   "sha256": "c60a3de768170c7c5ea65c7e8f677ead6d0039a5f3b97e06a2399d78f200eed2",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-S1, W-S2, W-S3",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2, W-S3: lone 11.7 %; runes are 1 px vertical scratches with pale blue specks, not cut grooves; cluster noise 45 %; bar 0.85. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/stone_top",
+   "sha256": "bf5b7ce4f83a36da9b2c1fb6cbe01bd62a158ff395ecac333041626ccfaafbfd",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-S4",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-S4: as lintel (lone 6.5 %); bar 0.56. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/hatch_closed",
+   "sha256": "6e5b0d1fe91fbbf156aadf98c002a45f391e41cdb0ac1af68fbb8aa5e884d054",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-H1",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-H1: frame lit evenly (west minus east +1.2 L, no light direction), door grain as random 2x2 value noise (cluster noise 60.6 %, fault), iron straps flat two-tone bars, ring a black U glyph, hard rectangular tan apron with no frayed turf edge; bar 1.06. Fixes in the review."
+   ]
+  },
+  {
+   "id": "woodland/hatch_open",
+   "sha256": "a9c5eddae91383eb606bcda0e3ba96fe795bcf7caa397608728013c9ea5bbe55",
+   "queued": "2026-11-09",
+   "reason": "first placed after the 25 Oct seed; failed the independent detail audit of 9 Nov (docs/reviews/2026-11-09-woodland-assets.md, #444): W-H1, W-H2",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "redrawn to its fix_list (the woodland redraw in progress), re-recorded and passed by an independent detail-auditor",
+   "review_by": "2026-11-30",
+   "fix_list": [
+    "docs/reviews/2026-11-09-woodland-assets.md: W-H1, W-H2: frame as hatch_closed; lid floats on two 1 px rods with no thickness and no cast shadow; the shaft is three flat grey stripes under a row of blue squares, no treads, risers or falloff; cluster noise 47.2 %. Fixes in the review."
+   ]
+  },
+  {
+   "id": "crossroads/square_puddles",
+   "sha256": "1c748b70abd6817cd3196930027b2e5fe28b6e838c09a98789da1b935237b35f",
+   "queued": "2026-11-09",
+   "reason": "first placed on 27 Oct, after the 25 Oct seed, and never independently reviewed; #421 redraws it, so it is not audited in its present form",
+   "exception": "exception to the placed-before-seed rule, approved by Claude A on 2026-11-09: already on main and in the scenes, and #439 is the first gate that would refuse it, so queuing it lets no new art in",
+   "clears_when": "#421 (the Crossroads slice) redraws it and an independent detail-auditor passes the new picture",
+   "review_by": "2026-11-30"
   }
  ]
 }
