@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-B1 partly. Leaf-shaped dark pockets and lit clumps now read, light upper-left (+25.6 L), lone 1.2 %; bar 0.78 (49.2 shapes of 63.32), clumps still mottled inside (W2-B1)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-B1 partly: bar 0.858 (54.3 shapes); the clumps are 1-row dashes (H/V 1.41, contrast 32.1 L) with near-black pockets sprinkled evenly (7 of 15 not in shade) (W3-F1, F2, B1)."
  }
 }

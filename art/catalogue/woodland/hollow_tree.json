@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T1 partly, W-T6 partly. crown (W2-F1/F2/F3): masses split by drawn dark seam bands 4 to 11 px thick, fine 1-2 texel mottle inside the masses instead of leaf clumps, enclosed sky holes ringed in a dark outline; bar 0.76; the bole is now short and wide (52-88 px, 0.7 H bare) with roots (fixed), but the hollow is an ellipse with a tan rim lit evenly all round over a flat near-black disc with two eye texels, no inner wall (W2-T6); a flat olive patch at crown centre. logic.scale stands: 212 px against the veteran class 222-340."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-T6 partly: 231 px tall (logic.scale cleared), lip lit only low and west (L 132 to 139, upper lip 46 to 99), crown centre filled; but the hollow is still a flat one-tone L 24 disc of about 200 texels (the largest one-colour region, 219) with two eye texels and an inner wall of only 1 to 2 rows (W3-T2). Bar 0.884 (tones 0.884, shapes 0.901) meets the ramp-built rule. W2-F2 not fixed: crown (W3-F1/F2): the seam bands are gone (W2-F1 fixed) but the masses are filled with 1-row horizontal dashes (same-tone runs H/V 1.57 against Eastward 1.08 to 1.30), clump contrast 23.2 L in 12 px windows against Eastward 41 to 49, and near-black pockets stand as solid 4 to 13 texel blobs in mid and lit leaf (17 of 35 not in shade) instead of 1-texel accents inside shade."
  }
 }

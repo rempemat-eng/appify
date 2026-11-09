@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-B1 partly, W-B2 partly. As bramble; bar 0.71; two parallel arcs read as a rainbow (W2-B2)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-B2 partly, as bramble: the two west canes are concentric circular arcs (R 25.5 and 15.1, centres 8 px apart), still a rainbow; base row 105 of 106 texels including under the arch (W3-B2, W3-G1); bar 0.711 (45.0 shapes); 38 one-texel spurs."
  }
 }

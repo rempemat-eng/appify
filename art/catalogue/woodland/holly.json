@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-B1 partly, W-B3 partly. Bar 0.74; the spines are 18 single texels touching the mass only at a corner (fuzz, not leaf points), the berries 5 clusters from 3 identical 3-berry stamps, the base a straight dark plinth wider than the foot, no glossy glints on leaves; lone 5.9 % (W2-B3)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-B3 partly: corner-only spines gone (0, from 18), varied berry clusters, no plinth (fixed); but the leaves are the shared dash texture and do not read as holly, the spines are 28 one-texel spurs (9.8 % of the silhouette ring) not 2-texel points, and the 15 glints are lone single specks spread evenly (3.8 per 1000 texels) that read as sprinkle (W3-B3); bar 0.83; lone 2.7 %."
  }
 }

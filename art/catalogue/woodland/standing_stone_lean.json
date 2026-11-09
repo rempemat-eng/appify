@@ -40,6 +40,6 @@
   "agent": "detail-auditor",
   "verdict": "pass",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-S1 fixed: three planes (lit west column, mid face, dark east flank; +49.8 L west to east), lone 1.5 %, cluster noise 19.4 %, outline closed in the stone edge tone with the lit break on the west, a contact line under the foot and no skirt. Bar 0.94 (25.3 tones, 60.3 shapes) against the stone band; compared at x1.37 with the rocks in Eastward 17 (460,165,550,250) and 12 (497,205,555,235). Open polish (W2-S2, shared stone painter): lichen as 2-3 texel tan dots, the SE foot moss a flat two-tone patch, two dark 1x2 dashes on the lit west rim read as stray marks rather than chips."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): Unchanged since round 2 (sha256 1ecd239b, byte-identical, woodstones.KEEP_PASS2); the round 2 pass stands: bar 0.938 (25.3 tones, 60.3 shapes), three planes (+49.8 L), lone 1.5 %, cluster noise 19.4 %. Open polish W2-S2 (lichen dots, the SE moss patch, two rim dashes)."
  }
 }

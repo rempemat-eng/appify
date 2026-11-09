@@ -51,8 +51,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pass",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-S1 fixed (lone 1.1 %, three planes, +40.6 L west to east), W-S2 partly (skirt gone; lichen as 2-3 texel tan dots, moss a flat two-tone patch at the SE foot). Fails on the bar: 0.72 (24.2 tones, 44.2 shapes of the stone band) (W2-S1). logic.scale (30 px wide against 33) accepted as polish: a slim menhir."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-S1 met: bar 0.934 of the stone band (30.2 tones, 57.0 shapes); three planes (+42.2 L west to east), lit rim, a crack with its lip, a contact line, lone 1.3 %, cluster noise 19.1 %. Compared at x1.37 with the rocks in Eastward 17 (460,165,550,250) and 12 (497,205,555,235): busier than their calm domes but at their tone and shape count. Open polish (W3-S4): lichen as tan bars with a lit top row (3 solid rectangles), the moss tuft motif shared with _b, _broken and _runes, an even 3-texel patch field on lit and shaded planes alike. logic.scale (30 px wide) accepted as polish: a slim menhir."
  }
 }

@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T1 partly, W-T5 partly. Bar 0.74; needle tips and dark tier undersides added, but 13 tiers at 13.7 +/- 0.7 px (cv 0.05) on a straight cone (edge rms 3.1-3.7 px off a line) read as stamped rungs; cluster noise 38.7 %; trunk saturated orange and splits into two leg-like roots (W2-T5)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): Structure reads (clump contrast 47.4 L, Eastward pines in 12: 43.9): W2-T5 partly fixed (tiers varied, branch clumps past the cone, tilted top, oak plate bark), but a detached 28-texel clump floats east of the cone at (101,160) (W3-T1), the foot is a symmetric skirt, and the bar is 0.739 (shapes 46.8 of 63.32) (W3-F4)."
  }
 }

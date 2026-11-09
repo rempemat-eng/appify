@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-B1 partly. As bush; bar 0.84 (53.1 shapes); the nearest of the set to passing (W2-B1)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-B1 partly: bar 0.858 (54.3 shapes), the closest shrub; texture as W3-F1 (H/V 1.31, contrast 35.0 L); its 1-texel leaf-tip spurs read as a dotted contour round it in the zone (W3-F3)."
  }
 }

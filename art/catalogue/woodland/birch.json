@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T1 partly, W-T4 partly. crown (W2-F1/F2/F3): masses split by drawn dark seam bands 4 to 11 px thick, fine 1-2 texel mottle inside the masses instead of leaf clumps, enclosed sky holes ringed in a dark outline; bar 0.81; dark base and varied lenticels added, but the base is a hard rectangle with a straight top edge, no flare (13 px at the foot, 12-13 above), a width step mid-trunk, and the crown is the oak's dense mass with only a few 1-2 texel drips (W2-T4)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-F1, F3 fixed (pinholes of 2 and 1 texels, polish); W2-F4 met (bar 0.902); W2-T4 partly: fissured base and smooth 10 to 13 px taper fixed, but the flare happens in the last 4 rows (13 to 21 px) and the crown is still one dense mass with drips; W2-F2 not fixed: crown (W3-F1/F2): the seam bands are gone (W2-F1 fixed) but the masses are filled with 1-row horizontal dashes (same-tone runs H/V 1.49 against Eastward 1.08 to 1.30), clump contrast 31.9 L in 12 px windows against Eastward 41 to 49, and near-black pockets stand as solid 4 to 13 texel blobs in mid and lit leaf (5 of 10 not in shade) instead of 1-texel accents inside shade. detail.light (50,121,60,203) rejected: the trunk is lit west, its column means falling from L 217 at the west edge to 72 at the east."
  }
 }

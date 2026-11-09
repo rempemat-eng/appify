@@ -65,6 +65,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-B1 partly, W-B2 partly. Bar 0.71; drupelet clusters added (6 distinct), but the canes are concentric circular arcs 2 texels wide in one flat magenta tone with no lit edge or thorns, laid over the mass like a handle; the silhouette has a notch at the base centre; light weak (+14.5 L) (W2-B2)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-B2 partly: canes now 4-tone with a lit top and thorn hooks and they reach the ground, but every cane is a circular arc (rms 0.9 to 1.0 px off a circle) and the two east canes share a centre; the base is a straight row 121 of 122 texels wide, which also draws a ruler line in its cast shadow on the ground (W3-B2, W3-G1); bar 0.79; lone 3.7 %; 30 one-texel spurs on the silhouette. logic.scale (122 px) accepted as polish: a bramble patch."
  }
 }

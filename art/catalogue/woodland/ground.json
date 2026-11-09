@@ -21,8 +21,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
+  "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): Changed this PR only by the cast shadows of the redrawn trees and stones (21,387 texels; the willow's at 690-880, 1288-1390 the largest). Each is the house shadow (core two tones, one-tone scalloped rim, sun flecks) at the plan's foot, east and a little south, and meets the cliff and path correctly. The shadows sit where the plan puts the feet; the scene file does not yet (W2-L1, a woodland_base.tscn fault, not the ground's). The earlier pass (2026-11-04 water review, round 6) stands for everything else."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): The cast shadows changed in pass 3 (3,563 texels from the round 2 bytes). The house shadow is kept, but 7 shadows now carry a ruler-straight one-row dark edge 64 to 122 px long (x 360 to 481 at y 1344; 396 to 517 and 272 to 377 at y 1368; 576 to 698 at y 1584; 329 to 413 at y 1560; 81 to 157 at y 576; 97 to 161 at y 984), each the projection of a shrub's flat base row (W3-G1); in the zone, under the brambles, it doubles the sprite's own straight contact line and reads as a shelf. Process (W3-P1): pass 3 kept the round 2 pass on these new bytes; that pass covered sha 13c60f8b, not a228894b."
  }
 }

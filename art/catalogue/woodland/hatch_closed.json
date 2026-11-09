@@ -77,6 +77,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-H1 partly: copings now lit from the upper left (north 146, west 126, south 111, east 98 L) and the plank grain is in streaks (cluster noise 44.5 %, under the 48 % fault line), but the straps are flat two-tone bars with no nail heads, the ring a 3x3 grey smudge, the apron a 1 px tan line with an even comb of 1x2 tufts on all sides, and no contact shade round the frame; bar 0.89 (W2-H1). detail.light (whole box, wood lit from the right) rejected: the planks measure L 110, 106, 100 west to east."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-H1 partly: the ring has a lit arc (L 135) and a shade (L 45), the edge is a frayed worn-earth band with bites and tufts of different sizes, and there is a contact shade (fixed); the bar meets the ramp-built rule (tones 0.889, shapes 1.013); but the straps are still two flat rows (lit L 113, dark L 67) across all three boards with no nail heads, and the inner south lip is a solid 30-texel L 193 line (W3-H1). Cluster noise 44.7 % (polish, under 48). detail.outline (0 % edge tone) rejected: a hatch set flush in the ground meets the earth, not an outline."
  }
 }

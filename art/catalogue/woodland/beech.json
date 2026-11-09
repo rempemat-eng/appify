@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T1 partly, W-T3 partly. crown (W2-F1/F2/F3): masses split by drawn dark seam bands 4 to 11 px thick, fine 1-2 texel mottle inside the masses instead of leaf clumps, enclosed sky holes ringed in a dark outline; bar 0.74 (46.5 shapes); rings and telescoping step gone and the foot flares 17 to 41 px, but the trunk is a flat grey column (one-colour region 337 px in the lower trunk, mean vertical run 7.5 px), no eye scars, roots four thin symmetric claws (W2-T3)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-F1 fixed; W2-T3 fixed (mottled warm and cool grey, two 2x1 eye scars, buttress foot 21 to 42 px; polish: the algae is a saturated stripe of square blocks along the east outline); W2-F4 not met: bar 0.864 (shapes 55.5 of 63.32, 0.877); W2-F2 not fixed: crown (W3-F1/F2): the seam bands are gone (W2-F1 fixed) but the masses are filled with 1-row horizontal dashes (same-tone runs H/V 1.48 against Eastward 1.08 to 1.30), clump contrast 21.8 (pass 2: 29.5) L in 12 px windows against Eastward 41 to 49, and near-black pockets stand as solid 4 to 13 texel blobs in mid and lit leaf (23 of 44 not in shade) instead of 1-texel accents inside shade."
  }
 }

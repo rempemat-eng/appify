@@ -65,6 +65,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-S1 fixed (lone 0.6 %), W-S2 partly; bar 0.75 (19.6 tones of 26.25: the face is held to 3 greys); logic.scale (56 px) rejected again: low by design (W2-S1)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-S1 not met: bar 0.875 (shapes 53.4 of 61.0; tones 27.0, fixed from 19.6); the silhouette is a box with vertical sides (west 31, east 34 of 56 rows within 1 px) and chamfered top corners, so it reads as a tombstone, twice in the circle (W3-S1). logic.scale (56 px) rejected again: low by design."
  }
 }

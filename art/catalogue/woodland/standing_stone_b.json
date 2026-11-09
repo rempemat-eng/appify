@@ -38,8 +38,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pass",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-S1 fixed (lone 0.8 %), W-S2 partly, W-S3 partly: the spiral is now on the stone ramp but a one-tone dark 2 px line with no lit lower lip, so it reads painted, not cut; bar 0.83 (W2-S1, W2-S3)."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-S1 met: bar 0.967 (32.7 tones, 59.0 shapes); W2-S3 fixed: the spiral is a groove (L 67) with a lit lip (L 162) against a face of 136 to 143, on the stone ramp. Open polish (W3-S4): the groove is one texel wide in places, lichen bars, the shared moss motif."
  }
 }
