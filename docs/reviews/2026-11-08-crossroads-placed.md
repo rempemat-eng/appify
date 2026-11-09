@@ -468,3 +468,136 @@ This round edits no queue entry. Claude A decides whether to:
 - The scene gate (the 24-cell grid), night tint and the 1x phone view in the app.
 - The ground outside the 698 changed texels and their surroundings.
 - Whether the redrawn props sit correctly on their shadows at every spawn. Only the composite was compared.
+
+## Round 4 (PR #453, 9 Nov)
+
+Draft #453 (`claude-a/crossroads-props-xr3` at 74d275b0) redraws the 10 props that failed round 3 and the two lamp shadows that follow the new plinth. This round audits those 12 pictures. The auditor drew none of them.
+
+**Result: 11 pass, 1 fail.** The seven tubs and the two lamp plinths answer their XR3 codes and pass, with polish. The two shadows pass. The stall fixes its nails, but its board still does not read as words, and two faults that earlier rounds missed (flat counter-front boards and the sack) are now its largest problems.
+
+### What was reviewed and how (round 4)
+
+- Commit 74d275b0, in a fresh worktree. All 12 PNGs' sha256 matched their records. `ground.png`, `kit.json` and `crossroads.tscn` are byte-identical to HEAD~1. Of the PNGs, only these 12 differ.
+- Calibration first: `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <Eastward folder>`. Recall was 39 of 39. False positives were 5 on 6 clean screens and 21 on 22 clean props. `calibration_results.json` was reverted afterwards.
+- Asset gate: `python3 -m scripts.review.assets <12 refs> --record`. The detectors found 0 blockers and 0 faults (polish: `detail.bar` on 8). The records came back byte-identical. A second `--record` after the verdicts kept them.
+- Detail bars match the painter's numbers:
+  - tubs 9, 10, 26, 27, 38, 59, 60: 0.82, 0.93, 0.86, 0.83, 0.96, 0.80, 0.76 (round 3: 0.77, 0.86, 0.78, 0.74, 0.86, 0.71, 0.85; tub 60 falls 0.85 → 0.76);
+  - lanterns 0.61 and 0.64;
+  - stall 0.65.
+- Cluster noise (`python3 -m scripts.review.cluster_noise`), from round 3 to round 4:
+  - tubs 9, 10, 26, 27, 38, 59, 60: 45.0, 43.9, 42.7, 47.1, 39.9, 41.9, 41.0 % → 32.9, 38.3, 36.2, 29.4, 35.6, 29.5, 31.1 %. The painter's "29 to 38 %" is right;
+  - lantern_dark 34.6 → 33.2 %, lantern_lit 27.5 → 30.9 %, stall 38.2 → 39.8 %.
+- Largest one-tone 4-connected run, per asset:
+  - tubs: clay at most 40 texels (tub 59 #ae5a42; the others 37 to 39). The larger runs are leaves (73, 62, 45, 42, 40 texels) in the planting, whose bytes are those of round 3, where it passed (XR2-T5). The painter's claim holds;
+  - plinths (y ≥ 190): 47 texels on lantern_dark (was 203) and 46 on lantern_lit (was 104);
+  - stall: 226 texels, #8e6242 [68,120,78,154], a counter-front board. Before this PR it was the second-largest run, at the same 226 texels.
+- Nail heads: from the output bytes, every navy 2 x 2 head with its colours. There are 16 nail heads, and every one is #2e2943 with one lit #737078 texel (the other two navy clusters the scan found are chalk on the board). The 17th nail, behind the sack, is no longer drawn. `finish(p, line=True, keep=None)`: with the default, `tidy` runs as before, and no other picture's bytes changed.
+- Verdicts come from the checklist, worked part by part on 5x to 14x nearest-neighbour crops on neutral grey, with the old bytes (HEAD~1) beside the new. On the plinths I also read a luminance map row by row (y 188–219).
+- Eastward comparison: official shots, kept local, brought to the native grid and scaled ×1.37 with nearest neighbour (54 to 74 px a character). Boxes:
+  - shot 17: churns [135,47,162,112] and rocks [460,165,550,250];
+  - shot 13: lamp [375,20,415,125] and bell [410,155,470,220].
+
+  I also used the painter's comparison sheet (`xr3-eastward-compare-4x.png`).
+- Placed: `scene.composite(load_zone('crossroads'))` was built at HEAD~1 and at HEAD. I compared a crop at 1x (x 650–1250, y 520–990), the tubs and stall at 2x, and the lamp foot with its shadow at 5x.
+- Art director's read, checked against my own crops:
+  - Agreed: the tubs read as bellied clay vessels; the dark ruled line is gone; the plinths are dressed slabs with moss in clumps; the lantern bar is held down by the iron post; the bodies are slightly blotchy (polish).
+  - Not agreed: "the board is legible". At 1x and 2x, NEW reads as ".EV" or "AEV", and PLUM as "PLUH". Only "3d" reads. The ruled line has also partly come back as a light taupe soil band (polish).
+  - The sack and the counter boards: I agree they are unchanged, and I rule both as faults.
+
+### Verdicts (round 4)
+
+| Asset | Verdict | Bar round 3 → 4 | Measured | Reason |
+| --- | --- | --- | --- | --- |
+| flower_tub_9, 10, 26, 27, 38, 59, 60 | pass (7) | 0.71–0.86 → 0.76–0.96 | 29–34 tones; largest clay run 37–40 texels (was 63–118); noise 29.4–38.3 % (was 39.9–47.1 %) | a bellied clay vessel with lit west, belly and dark east on stepped curves; bloom clusters; no corner block; polish XR4-T1, T2 |
+| lantern_dark | pass | 0.57 → 0.61 | largest plinth run 47 texels (was 203); top planes 2 and 3 rows; east core shadow 3–4 columns | dressed slabs with joints, chipped stepped corners, two unequal moss clumps; polish XR4-L1 |
+| lantern_lit | pass | 0.61 → 0.64 | largest plinth run 46 texels (was 104) | as lantern_dark; the lit glass passes; polish XR4-L1 |
+| lantern_dark_shadow | pass | n/a | 37 texels changed, all in x 1–59, y 3–24 | follows the new plinth foot; east and down, 2 tones |
+| lantern_lit_shadow | pass | n/a | 39 texels changed, all in x 9–59, y 3–24 | as lantern_dark_shadow |
+| stall | **fail** | 0.63 → 0.65 | 54 tones; 16 of 16 nails lit; board navy run gone; 6 front boards one tone over 135–226 texels | the board does not read as words; flat counter-front boards; the sack reads as a jar or a lamp globe |
+
+### Status of the XR3 codes
+
+| Code | Status | Evidence |
+| --- | --- | --- |
+| XR3-T1 | fixed | The ruled dark line under the rim is gone. Lit west, body and shade meet on curves that step down 2–3 texels; the belly turns under, deeper east. Clay runs ≤ 40 texels. Noise ≤ 38.3 %. |
+| XR3-T2 | fixed | The bloom is in ragged 2–4 texel pale clusters under the rim and down one side, different on each tub. There is no bar with drips. Polish: the clusters are grey rather than chalky (XR4-T2). |
+| XR3-T3 | fixed | No near-black block. The largest blob with L < 40 in the lower-right quadrant falls from 31 texels to 13, and that is the outline. The base row is a 2-tone reflected light. |
+| XR3-T4 | partly fixed | A 2-row soil band (rows 31–32) with lit clods sits under a lit far wall (row 30). But it runs straight across the full width in light taupe (#8d715a, #73584a, #7a6250), and at 4x–5x it reads as a thin grey rule under the rim. Polish severity: the structure is right, the tone is not (XR4-T1). |
+| XR3-L1 | fixed | Top planes are 2 rows (upper slab) and 3 rows (lower slab) in the light tone. There is a lit west column, the front is in 3 tones as dressed blocks with 1 px joints, the east end is a 3–4 column core shadow, and the corners are chipped and stepped. Largest run 47 texels (limit 60). The bevel is weak (XR4-L1). |
+| XR3-L2 | fixed | One larger clump west and one smaller one east, each a lit cap over a ragged dark underside, placed unevenly. |
+| XR3-S1 | fixed | 16 of 16 heads carry a lit #737078 texel in the output bytes, through `finish(keep=...)`. The nails of `beds_dug` and `coal_34` (XR2-B1, polish) are not in this PR and remain one-tone. |
+| XR3-S2 | partly fixed | The field is in sibling patches with a chalk haze (no 281-texel run), and the strokes use two chalk tones. But the N is broken into dots, the 3-column M reads as H ("PLUH"), and the PLUM line touches the frame on both sides. Only "3d" reads at 1x (XR4-S1). |
+
+### The counter-front boards (not in the fix list)
+
+The painter asked for a ruling on the 226-texel run. It is a fault. The run is not new: at HEAD~1 the same board was one tone over the same 226 texels, behind the 281-texel board field. Rounds 1 to 3 missed it.
+
+- Six boards are one tone over 135 to 226 texels each: #8e6242 226 and 170, #865840 191 and 135, #774a29 180, and #966a3d 151. The west post is one tone over 96 (#8e6242 [17,71,20,108]).
+- Each is a flat fill with a few long dark streaks. There is no lit edge and no grain in a second or third tone.
+- The plinths are held to a limit of 60 texels and the tubs to 40. These boards are 3 to 5 times that.
+
+### Fix lists (round 4)
+
+Each list is also in the asset's `reviewer.fix_list`.
+
+**Stall** (`stall`). Fault.
+
+- **XR4-S1:** make the board read at 1x.
+  - Draw the N with a full diagonal, not dots.
+  - Give the M 4 to 5 columns, or use a two-line layout (PLUMS / 3d) with a 1 px margin to the frame. Alternatively, replace the word with a drawn plum and the price.
+  - Check it at 1x and 2x in the composite.
+- **XR4-S2:** grain each counter-front board.
+  - 3 tones, with a lit west edge column and a dark east joint.
+  - Grain streaks that wander and end.
+  - No one-tone run over 60 texels (now 6 boards at 135–226; the largest is #8e6242 [68,120,78,154]).
+- **XR4-S3:** redraw the sack as burlap.
+  - A mid tan, below the awning's cream.
+  - Weave in 2-texel clusters.
+  - A slumped base with a contact shadow, and the neck tied with twine.
+  - It must not be the brightest value on the stall. Today it reads as a jar or a lamp globe.
+- **XR4-S4** (polish): the awning's hanging stripe faces are each one tone over 79 to 82 texels (y 43–66). Add a fold shade down one side of each stripe.
+
+**Polish on the passes**
+
+- **XR4-T1** (the 7 tubs): the soil band reads as a straight grey rule.
+  - Darken it to a warm earth in the clay shade's hue (#5b3f3a, with #73584a only for the clods).
+  - Break its lower edge where leaves hang over the near rim.
+  - Let its depth vary between 1 and 2 rows along the tub.
+- **XR4-T2** (the 7 tubs):
+  - Merge the body's sibling cells into fewer, larger patches that follow the belly (3 to 4 across, not 6 to 8). At 6x and above they read as blotchy.
+  - Make the lime bloom chalkier, lighter than the clay's lit tone, so it does not read as grey smudges.
+- **XR4-L1** (`lantern_dark`, `lantern_lit`):
+  - Each dressed block is close to one tone, with even 2-texel dashes for tooling. Group the tooling into one or two wear patches a block.
+  - Add a 1-row lit bevel along the lower slab's top-front arris.
+  - Darken the contact row under the lower slab by one step. Placed, the plinth's blocks are as light as the paving and partly merge with it.
+- The lantern bar (0.61 and 0.64) is low because the iron post, unchanged since it passed in round 1, is most of the picture. That is a measurement, not a fault. I compared the post with the Eastward 13 lamp: it has a lit stripe, a dark side, mouldings and a collar, and it reads.
+
+### The composite pin
+
+- `sha256(scene.composite(load_zone('crossroads')))`:
+  - with the 12 pictures at HEAD~1: c9ae22f8e33aafd1491791800c3c5ceaf01d4d454ef8c736103231fc27c5ceca;
+  - at 74d275b0: 233832ce7f4e8ef805d5c071d72f70f0767c8f85bb4f1b8aa2df156afa72d7b0.
+- 4,233 composite texels change, all 4,233 inside the boxes of the 12 sprites (the 10 redrawn props and the 2 shadows). None change elsewhere. This confirms the painter's numbers.
+- The ground does not change, so XR3-G1 is not exercised.
+- `scripts/review/test_kit_scene_intake.py` still pins c9ae22f8…. Moving the pin to 233832ce… when the art is accepted is Claude A's call.
+
+### False positives (round 4)
+
+None were rejected. The detectors raised only `detail.bar` (polish) on tubs 9, 26, 27, 59 and 60, both lanterns and the stall, and I kept each as a measurement. Round 2's rejection of `detail.light` on `lantern_lit`'s glass is carried over in its note.
+
+### Gate (round 4)
+
+`python3 -m scripts.review.gate --check` refuses 1 asset (exit 1): `stall`. It is failed, and its queue entry holds the pre-#453 bytes.
+
+It prints 9 `ADVISORY` lines: the seven tubs and the two lanterns now pass and can leave the fix queue. The two lamp shadows pass and are not queued.
+
+This round edits no queue entry. Claude A decides whether to:
+
+- re-queue the stall at the #453 bytes with XR4-S1 to S4, or
+- hold #453 until the stall is redrawn.
+
+### Not checked (round 4)
+
+- The scene gate (the 24-cell grid), the night tint and the 1x phone view in the app.
+- Whether the plinth sits on its shadow at every spawn. Only the composite was compared.
+- `beds_dug` and `coal_34`: their one-tone nails (XR2-B1) are outside this PR.

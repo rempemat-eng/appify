@@ -51,7 +51,12 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. Pass. XR3-T1 fixed: the full-width ruled dark line under the rim is gone; lit west, body and shade meet along curves that step down the face, and the belly turns under deeper east, so the body reads as a bellied clay vessel at 1x and 2x placed. Largest clay one-tone run 39 texels (round 3: up to 118; limit 40); the planting's largest run is 36 texels, unchanged bytes from round 3 where it passed (XR2-T5). Cluster noise 41.0 % -> 31.1 % (limit 40 %). XR3-T2 fixed: bloom as ragged 2-4 texel pale clusters under the rim and down one side, different per tub. XR3-T3 fixed: no near-black corner block (largest L<40 blob in the lower-right quadrant 31 -> 13 texels, the outline itself); the base row is a 2-tone reflected light. XR3-T4 partly fixed: there is a 2-row soil band with lit clods under a lit far wall, but it runs straight across the whole width in light taupe (#8d715a, #73584a, #7a6250), and at 4x-5x it reads as a thin grey rule under the rim (polish XR4-T1). The body's sibling cells read slightly blotchy at 6x+ (polish XR4-T2). Bar 0.85 -> 0.76 (detector polish only). Compared with the Eastward 17 churns and 13 bell at x1.37 nearest neighbour.",
+  "fix_list": [
+   "XR4-T1 (polish): the soil band reads as a straight grey rule: darken it into a warm earth (the clay shade's hue, e.g. #5b3f3a with #73584a clods only), break its lower edge where leaves hang over the near rim, and let it vary in depth 1-2 rows along the tub",
+   "XR4-T2 (polish): merge the body's sibling cells into fewer, larger patches that follow the belly's curve (3-4 cells across, not 6-8), and make the lime bloom chalkier (whiter than the clay's lit tone) so it does not read as grey smudges"
+  ]
  }
 }

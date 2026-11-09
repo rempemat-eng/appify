@@ -21,7 +21,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. Pass. 39 texels changed, all within x 1-59, y 3-24 at the plinth's foot (1 texel gained, 12 dropped), following the new stepped plinth outline; still thrown east and down in two tones with a one-tone rim; in the composite the plinth sits on it with no gap. All composite changes of this PR fall inside the 12 redrawn and shadow boxes."
  }
 }

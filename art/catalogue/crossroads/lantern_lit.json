@@ -51,7 +51,11 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. Pass. Same plinth build as lantern_dark (largest plinth run 46 texels, round 3: 104); XR3-L1 and XR3-L2 fixed as there. The warm lit glass still passes; round 2's rejection of detail.light on the glass (the light source) is carried over. Bar 0.61 -> 0.64, noise 27.5 -> 30.9 %. Polish XR4-L1.",
+  "fix_list": [
+   "XR4-L1 (polish): each dressed block is close to one tone with even 2-texel dashes for tooling: group the tooling into one or two wear patches per block, add a 1-row lit bevel along the lower slab's top-front arris, and darken the contact row under the lower slab by one step so the plinth separates from the equally light paving"
+  ]
  }
 }

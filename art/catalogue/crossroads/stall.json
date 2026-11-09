@@ -51,7 +51,14 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. XR3-S1 fixed: all 16 nail heads in the output bytes are 2x2 #2e2943 with one lit #737078 texel (the 17th, behind the sack, is no longer drawn); done through finish(keep=...), whose default leaves every other picture unchanged (only the 12 audited PNGs differ from HEAD~1). XR3-S2 partly fixed: the navy field is now sibling patches with a chalk haze (the 281-texel run is gone) and the strokes are two chalk tones, but the words do not read: the N of NEW is broken into dots and reads as A or a glyph, the M of PLUM is 3 columns wide and reads as H (PLUH), and the PLUM line touches the frame on both sides; only 3d reads cleanly. Newly raised (present since round 1, unflagged before): the counter-front boards are one tone each over 135-226 texels (largest #8e6242 [68,120,78,154], 226 texels; 6 boards at 135-226), drawn as a flat fill with a few long dark streaks, no lit edge, and they are now the stall's largest flat areas; the sack is the brightest value on the stall, a cream bulb with no burlap weave or slump, and reads as a jar or a lamp globe. Bar 0.63 -> 0.65; noise 38.2 -> 39.8 %. Compared with the Eastward 17 churns at x1.37. Fix list: XR4-S1 to XR4-S3; polish XR4-S4.",
+  "fix_list": [
+   "XR4-S1 (fault): make the board read at 1x: draw N with a full diagonal (not dots), give M 4-5 columns or use a 2-line layout (PLUMS / 3d) with 1 px margin to the frame, or replace the word with a drawn plum and the price; check it at 1x and 2x in the composite",
+   "XR4-S2 (fault): give each counter-front board grain in 3 tones with a lit west edge column and a dark east joint, grain streaks that wander and end, and no one-tone run over 60 texels (now 6 boards at 135-226, largest #8e6242 [68,120,78,154])",
+   "XR4-S3 (fault): redraw the sack as burlap: a mid tan below the awning's cream, weave in 2-texel clusters, a slumped base with a contact shadow, the neck tied with twine; it must not be the brightest value on the stall",
+   "XR4-S4 (polish): the awning's hanging stripe faces are one tone over 79-82 texels each (y 43-66): add a fold shade down one side of each stripe"
+  ]
  }
 }
