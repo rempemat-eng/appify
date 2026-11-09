@@ -7,6 +7,7 @@ that loses a calibration fault, or starts flagging clean art, fails here first.
 """
 from __future__ import annotations
 
+import datetime
 import json
 import hashlib
 import os
@@ -396,6 +397,8 @@ class Gate(unittest.TestCase):
 
     def setUp(self):
         self.old = gate.CATALOGUE, gate.QUEUE
+        self.real_queue = gate.QUEUE
+        gate.TODAY = datetime.date(2026, 11, 9)
         self.d = tempfile.mkdtemp()
         gate.CATALOGUE = self.d
         gate.QUEUE = os.path.join(self.d, 'fix-queue.json')
@@ -405,6 +408,7 @@ class Gate(unittest.TestCase):
 
     def tearDown(self):
         gate.CATALOGUE, gate.QUEUE = self.old
+        gate.TODAY = None
         import shutil
         shutil.rmtree(self.d, ignore_errors=True)
 
@@ -417,6 +421,14 @@ class Gate(unittest.TestCase):
 
     def refused(self):
         return gate.refusals(self.ZONE, [self.NAME])
+
+    def queue_it(self, **over):
+        """A complete queue entry for the asset (Claude A, 9 Nov), with fields overridden or (None) dropped."""
+        e = {'id': f'{self.ZONE}/{self.NAME}', 'sha256': self.sha, 'queued': '2026-11-09',
+             'reason': 'placed before the 25 Oct seed', 'clears_when': 'redrawn and passed', 'review_by': '2026-11-30'}
+        e.update(over)
+        e = {k: v for k, v in e.items() if v is not None}
+        Path(gate.QUEUE).write_text(json.dumps({'queue': [e]}))
 
     def test_no_record_refused(self):
         self.assertIn('no review record', self.refused()[0])
@@ -452,7 +464,7 @@ class Gate(unittest.TestCase):
         self.put(status='fail', reviewer={'agent': 'detail-auditor', 'verdict': 'pending'},
                  findings=[{'detector': 'logic.scale', 'severity': 'fault'}])
         self.assertTrue(self.refused())
-        Path(gate.QUEUE).write_text(json.dumps({'queue': [{'id': f'{self.ZONE}/{self.NAME}'}]}))
+        self.queue_it()
         self.assertEqual(self.refused(), [])
         self.put(reviewer=None)                                       # queued, no reviewer at all
         self.assertEqual(self.refused(), [])
@@ -471,8 +483,68 @@ class Gate(unittest.TestCase):
     def test_stale_refused_even_when_passed_or_queued(self):
         self.put(sha='x', reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
         self.assertIn('changed since its record', self.refused()[0])
-        Path(gate.QUEUE).write_text(json.dumps({'queue': [{'id': f'{self.ZONE}/{self.NAME}'}]}))
+        self.queue_it()
         self.assertIn('changed since its record', self.refused()[0])
+
+    # the queue's own rules (Claude A, 9 Nov): an entry places its asset only while it holds
+
+    def test_queued_picture_that_changed_is_refused(self):
+        # the record is current but the queue entry holds other bytes: a queue entry never covers a new picture
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it(sha256='0' * 64)
+        self.assertIn('changed since it was queued', self.refused()[0])
+
+    def test_queue_entry_missing_a_field_is_refused(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        for field in ('queued', 'reason', 'clears_when', 'review_by', 'sha256'):
+            with self.subTest(field=field):
+                self.queue_it(**{field: None})
+                bad = self.refused()
+                self.assertEqual(len(bad), 1)
+                self.assertIn('lacks', bad[0])
+                self.assertIn(field, bad[0])
+
+    def test_expired_queue_entry_is_refused(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it(review_by='2026-11-30')
+        self.assertEqual(self.refused(), [])
+        gate.TODAY = datetime.date(2026, 11, 30)                      # the due date itself still holds
+        self.assertEqual(self.refused(), [])
+        gate.TODAY = datetime.date(2026, 12, 1)
+        self.assertIn('expired on 2026-11-30', self.refused()[0])
+        self.queue_it(review_by='end of November')
+        self.assertIn('not a date', self.refused()[0])
+
+    def test_failed_asset_is_queued_only_with_its_fix_list(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'fail', 'note': 'the tub body is undrawn'})
+        self.queue_it()
+        self.assertIn('fix_list', self.refused()[0])
+        self.queue_it(fix_list=[])
+        self.assertIn('fix_list', self.refused()[0])
+        self.queue_it(fix_list=['the tub body is undrawn: draw its staves'])
+        self.assertEqual(self.refused(), [])
+
+    def test_queued_asset_that_passes_is_advised_out(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it()
+        self.assertEqual(gate.advisories(), [])
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
+        self.assertEqual(self.refused(), [])
+        adv = gate.advisories()
+        self.assertEqual(len(adv), 1)
+        self.assertIn(f'{self.ZONE}/{self.NAME}', adv[0])
+        self.assertIn('remove it from', adv[0])
+
+    def test_the_real_queue_entries_are_complete(self):
+        # every entry in art/catalogue/fix-queue.json states what the gate requires
+        entries = json.load(open(self.real_queue)).get('queue', [])
+        self.assertTrue(entries)
+        for e in entries:
+            with self.subTest(id=e.get('id')):
+                for k in gate.REQUIRED:
+                    self.assertTrue(e.get(k), k)
+                datetime.date.fromisoformat(e['queued'])
+                datetime.date.fromisoformat(e['review_by'])
 
 
 class Record(unittest.TestCase):
