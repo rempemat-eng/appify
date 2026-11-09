@@ -601,3 +601,112 @@ This round edits no queue entry. Claude A decides whether to:
 - The scene gate (the 24-cell grid), the night tint and the 1x phone view in the app.
 - Whether the plinth sits on its shadow at every spawn. Only the composite was compared.
 - `beds_dug` and `coal_34`: their one-tone nails (XR2-B1) are outside this PR.
+
+## Round 5 (PR #456, 9 Nov)
+
+Draft #456 (`claude-a/crossroads-stall-xr4` at 83d6f686, base main 8273a156) redraws the stall for XR4-S1 to S4. This round audits that one picture. The auditor drew none of it.
+
+**Result: the stall fails.** The board, the counter-front boards and the sack answer XR4-S1, S2 and S3 and pass. The awning's valance (XR4-S4) does not: its new fold shading is a low-chroma grey-taupe laid as stepped blobs, with the light inverted at the east edge of every stripe, and at 2x the cream stripes read as stained.
+
+### What was reviewed and how (round 5)
+
+- Commit 83d6f686, in a fresh worktree. `stall.png` matches its record (93b88d76…). Only four files differ from main: `stall.png`, its catalogue entry, `village.py` (hunks in `p_stall_hd` and new helpers above it) and the pilot manifest's `inputs` hash. `ground.png`, `kit.json` and `crossroads.tscn` are byte-identical to main.
+- Asset gate: `python3 -m scripts.review.assets crossroads/stall --no-sheet` (no `--record`). 0 blockers, 0 faults, 2 polish: `detail.bar` 0.798 (25.6 tones, 40.2 shapes a patch against 27.0 and 50.36), and a new `detail.light` on [36,120,77,156], "the red is lit from the right". Bar 0.645 → 0.798 confirms the painter.
+- Cluster noise (`python3 -m scripts.review.cluster_noise`): 39.8 → 38.6 %.
+- Measured from the bytes: per-board one-tone 4-connected runs, column-mean luma (Rec. 709 Y) across the counter front, the slate and sack texel maps, every nail head, the alpha mask, and per-stripe tone counts and deep-tone components on the valance (y 43–63). Colours were compared in CIELAB (D65): L, chroma C, hue angle h.
+- Crops: old (main) and new at 4x, 6x and 8x on neutral grey; the zone composite at 1x and 2x.
+- Eastward: shot 04 (the fish market) brought to the native grid with `core.to_native` (scale 3.0) and scaled ×1.37 with nearest neighbour. Boxes: the lower stall's canopy [345,220,475,262] and the upper-right canopy [475,75,565,115]. Shot 17 and 13 were not needed: they hold no cloth.
+- Placed: `scene.composite(load_zone('crossroads'))` at main and at 83d6f686.
+
+### Verdicts (round 5)
+
+| Asset | Verdict | Bar round 4 → 5 | Measured | Reason |
+| --- | --- | --- | --- | --- |
+| stall | **fail** | 0.645 → 0.798 | 60 tones (was 54); largest board run 48 (was 226); sack max Y 191 (was 243); 16 of 16 nails lit; alpha unchanged | board, boards and sack fixed; valance folds read as stains, with inverted light |
+
+### Status of the XR4 codes
+
+| Code | Ruling | Evidence |
+| --- | --- | --- |
+| XR4-S1 | **PASS** | The words are gone; the slate is a drawn plum over "3d". Field x 102–115, y 133–155 (14 x 23) inside a 1-column dark rim (#1f1a3c, x 101 and y 132) and the wood frame. The plum is x 105–111, y 135–141, lit on its west (#ce6364), with a dark cleft at x 108 and a 4-texel leaf and stem (x 109–112, y 133–134). "3" (x 106–108) and "d" (x 110–112) are 3 x 5 glyphs in #fef2dc on y 146–150 with a 1-column gap, over a broken 2-dash underline at y 153. Margins to the dark rim: plum 3 texels west, leaf 1 texel east of the field edge (x 113 field, x 114–115 field, rim x 116); glyphs 4 texels west and 3 east. Every mark keeps at least 1 texel of field to the frame. At 1x in the composite it reads as a red fruit over "3d"; at 2x as a plum and "3d". |
+| XR4-S2 | **PASS** | Six board faces between 2-column #4d2220 joints at x 42–43, 53–54, 65–66, 78–79, 90–91. Largest one-tone run a board: 43, 36, 43, 48, 46, 44 texels (was 226, 191, 151, 170, 180, 135). The largest is #865840 [56,137,64,150], 48 texels, as the painter says. Each board has 10–12 tones (was 6–9). Each has a lit west column (column-mean Y 118, 138, 130, 130, 112, 121 against a board body of 63–100) and the dark joint on its east. The grain streaks wander 1 column at a time, break, and end at knots; at 6x they read as sawn planks, not stripes or noise. The `#4d2220` runs of 71–81 texels are the joints joined by the bottom row (y 155), not board faces. The `detail.light` polish on [36,120,77,156] is the board bodies brightening slightly to the east inside the lit edge (board x 68–77: Y 84 → 98–100); kept as evidence, not ruled a fault. |
+| XR4-S3 | **PASS** | A burlap sack in five tans (#dbbd87 Y 191, #d4b488 184, #b49271 151, #ae866c 141, #8c6556 108), hue about 35°, in 2-texel weave clusters, with a twine band (#af854f, y 137–138) at the neck and a #684441 contact row at y 156. Its brightest texel is Y 191, under every awning cream (#e0cca6 206, #f7dfb3 225, #fef2dc 243); the brightest values on the stall are the awning and the chalk. The alpha mask is identical to main (0 texels differ), so the silhouette is unchanged. It reads as a sack, not a jar. |
+| XR4-S4 | **FAIL** | See below. |
+
+### The valance (XR4-S4)
+
+The art director's concern holds. Measured on the hanging faces, y 43–63, all five cream stripes (x 10–21, 34–45, 58–69, 82–93, 106–117) and all five red ones.
+
+**1. The patch colour is a stain colour, not a fold colour.** The new patches use the cream ramp's deepest tone, #9e8675, which round 4 used only as a 3-column east edge band. In the cream ramp, the shade keeps losing chroma and turning away in hue:
+
+| Tone | L | C | h |
+| --- | --- | --- | --- |
+| #f7dfb3 (lit) | 89.8 | 24.7 | 86° |
+| #e0cca6 (body) | 82.8 | 21.5 | 87° |
+| #c0a98d (mid fold) | 70.5 | 18.0 | 77° |
+| #9e8675 (deep fold) | 57.7 | 14.1 | 63° |
+
+- From body to deep fold: ΔL −25, chroma × 0.66, hue −24°. It is not objectively blue (b* +12.5), but it is the least chromatic colour on the awning apart from the outline. Beside the crimson stripes (C 41–47), simultaneous contrast pushes it to grey-blue.
+- Placed, #9e8675 is ΔE 7.3–7.9 from the stone wall behind the stall (#a49689, #988e85), and #c0a98d is ΔE about 7 from #b5a897. At 2x the shaded cream reads like wall showing through, or dirt.
+- The red ramp's folds do read as cloth, because that ramp keeps its chroma: #b2465a → #8e2348 → #630735 is C 47.0 → 47.2 → 41.2.
+- Eastward's market canopy (shot 04): fold strokes go from the base (L 58.9, C 44.7, h 49°) to the fold (L 50.3, C 39.5, h 34°): ΔL −9, chroma × 0.88. Its low-chroma patches (L 59, C 13.5) are deliberate weathering stains. Our deep cream (C 14.1) sits in Eastward's stain class, not its fold class. The valley is "clean, cared-for, bright" (art-style.md), so stains are wrong here even where Eastward draws them.
+
+**2. The shading breaks the upper-left light.**
+
+- In every one of the 10 stripes, the east edge turns lighter than the fold beside it for the bottom 5–9 rows (rows 53–61): #c0a98d east of #9e8675 on the cream stripes, and #8e2348 east of #630735 on the red ones. Round 4 had the deep tone on the east edge for the full height, which was correct.
+- Each fold is two stacked blobs, not one fold. The deep tone forms an upper block on the east (for example x 17–20, y 43–54, 41 texels) and a lower block 3–5 columns further west (x 14–18, y 52–63, 37 texels), joined on only 2–3 rows. The same shape repeats on every stripe (components 29–45 texels). A hanging cloth fold runs vertically from the hem line to a scallop point, so a 3–5 column step reads as a patch, not a fold.
+- The deep tone now covers 78–83 of 252 texels on each cream face (31–33 %, was 29 %), now in the middle of the face with lighter tones on both sides.
+
+**3. Ruling: FAIL, at fault severity.** XR4-S4 was polish: it asked only for a fold shade down one side of each stripe. The redraw broke the light rule and made the cloth read as dirty at 2x, which is worse than round 4's flat faces.
+
+### Other observations
+
+- **Composite.** The composite pin matches: 233832ce… → a9dbc0579feccdb0e20cd9199f8268255a2ba5d1af93c26097402dee2fe93cfa. 3,445 texels change, all at x 1092–1211, y 653–767, inside the stall's sprite box x 1083–1220, y 610–771 (Stall at (1152, 768), offset (−69, −158)). None change elsewhere. The stall's cast shadow is drawn in `ground.png`, which is unchanged, so its shadow texels are unchanged. Of the stall's texels, 929 changed on the awning, 2,070 on the counter front, 392 on the slate and 6 west of the post.
+- **Nails.** 16 of 16 heads keep their lit #737078 texel. No lit texel was lost.
+- **Stray pixels.** Lone texels (no same-colour 4-neighbour) are 30 → 32. No new stray clusters.
+- **Palette drift (polish).** Two new tones nearly duplicate existing ones:
+  - #2f0912 (63 texels, the board joints at x 30 and x 90) vs #2e0a0d, ΔE ≈ 2;
+  - #3d2d30 (12 texels, the sack's contact shadow, y 155–157) vs #413438, ΔE ≈ 3.
+  - The other new tones (#b49271, #d4b488, #dbbd87, #ae866c, #8c6556, #684441, #9a775a) are the sack's burlap and the boards' grain, all warm browns in the wood and burlap hues. Dropped: #fee2b0, #fff2db, #aa8c76 (the old sack).
+
+### Fix list (round 5)
+
+**Stall** (`stall`). Fault. Only the valance; the slate, boards and sack are accepted as drawn.
+
+- **XR5-S1** (fault): give the cream folds a fold colour, not a stain colour.
+  - On the hanging cream faces (y 43–63), replace #9e8675 with a warm deep cream that keeps the ramp's chroma: L 58–62, C ≥ 21 (at least 0.85 × the body's 21.5), hue 74–80°. For example #a98b65 (L 59.7, C 25.3, h 76°) or #ae8f66 (L 61.3, C 26.9, h 77°).
+  - Keep #c0a98d as the mid fold step.
+  - Check that the deep fold tone stays at least ΔE 15 from the wall stones #a49689 and #988e85.
+  - The top plane and the outline column keep their tones.
+- **XR5-S2** (fault): draw each fold as one vertical fold, not stacked blobs.
+  - Give each stripe 1 to 2 folds that run unbroken from the hem line (y 43) to a scallop point at the bottom (y 63).
+  - A fold may drift at most 1 column per 4 rows and may widen by at most 1 column toward the hem. No step of 3–5 columns.
+  - Order across a fold, west to east: a 1-column lit ridge (#f7dfb3 or #fef2dc on the cream; #dd8472 or #ce6364 on the red), then 1 column of mid tone, then 1–2 columns of the deep tone.
+  - The deep tone is one continuous vertical strip a fold, never a closed patch with lighter tones on all sides.
+  - Do the same on the red stripes, which repeat the stepped blob.
+- **XR5-S3** (fault): keep the east edge darkest.
+  - The last 2–3 columns of each stripe stay the darkest step of its ramp for the full height, y 43–63: the new deep cream on the cream stripes, #630735 on the red ones.
+  - Today rows 53–61 turn lighter (#c0a98d or #8e2348) east of the deep tone on all 10 stripes.
+  - Vary fold positions between stripes, so the five cream stripes are not one stamp.
+- **XR5-S4** (polish): merge the near-duplicate tones: #2f0912 into #2e0a0d (board joints) and #3d2d30 into #413438 (sack contact row).
+
+Check after the fix:
+
+- No #9e8675 texel left in the cream faces at y 43–63.
+- Per stripe, no row where the east 2 columns are lighter than any column west of them in the same ramp.
+- At 2x in the composite, the cream must read as clean cloth against the wall.
+
+Compare with Eastward 04's fold strokes: they are long and continuous, they hold chroma, and the step is ΔL about 9.
+
+### False positives (round 5)
+
+None were rejected. `detail.bar` (polish) is kept as a measurement. The new `detail.light` (polish) on the counter front is a true reading of a slight eastward brightening inside each board, which the lit west columns outweigh. It is kept as evidence, not ruled.
+
+### Gate (round 5)
+
+`python3 -m scripts.review.gate --check` refuses 1 asset: `crossroads/stall`. The asset changed since it was queued, and its catalogue entry is `pending`, since this round records nothing. This round edits no queue entry and no catalogue record. Claude A decides whether to re-record the stall at the #456 bytes with XR5-S1 to S4, or to hold #456 until the valance is redrawn.
+
+### Not checked (round 5)
+
+- `npm run check:art-repro`: whether the `village.py` change regenerates only the stall. The diff touches only `p_stall_hd` and the helpers above it, and no other PNG changed in the PR. CI covers the rest.
+- The scene gate (the 24-cell grid), the night tint and the 1x phone view in the app.
