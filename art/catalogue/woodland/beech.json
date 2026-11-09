@@ -1,13 +1,13 @@
 {
  "id": "woodland/beech",
  "file": "game/zones/woodland/art/beech.png",
- "sha256": "6f3f7ba97df1ae0cf21fedfa91f2298863f1f6e1acfc16dc9e3a90675cbb465b",
+ "sha256": "9d7670063062a5c6d52f1c7ace3de951d4515a050c1fe83f5b96e9f68127d001",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  195,
+  193,
   264
  ],
  "status": "pass",
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 58,
-   "tones": 30.74137931034483,
-   "shapes": 57.89655172413793
+   "patches": 59,
+   "tones": 23.593220338983052,
+   "shapes": 60.33898305084746
   },
   "band": {
    "tones": 27.71,
@@ -28,24 +28,24 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.914,
-  "tones_ratio": 1.109,
-  "shapes_ratio": 0.914,
-  "passed": true,
+  "ratio": 0.851,
+  "tones_ratio": 0.851,
+  "shapes_ratio": 0.953,
+  "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.cluster_noise",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
     25,
     0,
-    195,
+    193,
     264
    ],
-   "message": "woodland/beech: 41% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 41% to 42%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+   "message": "woodland/beech: detail bar 0.85 of Eastward's foliage band (23.6 tones, 60.3 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-09",

@@ -1,14 +1,14 @@
 {
  "id": "woodland/hollow_tree",
  "file": "game/zones/woodland/art/hollow_tree.png",
- "sha256": "8d49cb4530628f326449f3a0d3d9230dc5e6b8c35edd6de5fe7e510650c4b28a",
+ "sha256": "f67d1631830d97eac03174631390d20359cec1eb27656d155fcdac92d6f70094",
  "kind": "veteran_tree",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  246,
-  226
+  244,
+  227
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 90,
-   "tones": 32.24444444444445,
-   "shapes": 57.3
+   "patches": 89,
+   "tones": 23.93258426966292,
+   "shapes": 58.168539325842694
   },
   "band": {
    "tones": 27.71,
@@ -28,24 +28,24 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.905,
-  "tones_ratio": 1.164,
-  "shapes_ratio": 0.905,
-  "passed": true,
+  "ratio": 0.864,
+  "tones_ratio": 0.864,
+  "shapes_ratio": 0.919,
+  "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.cluster_noise",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    38,
+    36,
     0,
-    246,
-    226
+    243,
+    227
    ],
-   "message": "woodland/hollow_tree: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 45%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+   "message": "woodland/hollow_tree: detail bar 0.86 of Eastward's foliage band (23.9 tones, 58.2 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-09",

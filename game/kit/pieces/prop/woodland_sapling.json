@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 6,
+ "version": 7,
  "variants": [
   {
    "id": "sapling",
@@ -27,7 +27,7 @@
  },
  "geometry": {
   "size_px": [
-   56,
+   60,
    82
   ],
   "size_cells": [

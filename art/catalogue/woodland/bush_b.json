@@ -1,14 +1,14 @@
 {
  "id": "woodland/bush_b",
  "file": "game/zones/woodland/art/bush_b.png",
- "sha256": "04cde4493a9e82c88df17f933c2303cb73c6804272165bf72504e77a04030ff2",
+ "sha256": "a6ad39481881e4c20ff09dd53daff3cbaba7cd153e8f9a028979824dfdb85745",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   75,
-  55
+  54
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 8,
-   "tones": 34.375,
-   "shapes": 57.0
+   "patches": 9,
+   "tones": 23.22222222222222,
+   "shapes": 54.111111111111114
   },
   "band": {
    "tones": 27.71,
@@ -28,24 +28,24 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.9,
-  "tones_ratio": 1.241,
-  "shapes_ratio": 0.9,
-  "passed": true,
+  "ratio": 0.838,
+  "tones_ratio": 0.838,
+  "shapes_ratio": 0.855,
+  "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.cluster_noise",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
     0,
     0,
     75,
-    55
+    54
    ],
-   "message": "woodland/bush_b: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 42% to 46%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+   "message": "woodland/bush_b: detail bar 0.84 of Eastward's foliage band (23.2 tones, 54.1 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-09",

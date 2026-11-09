@@ -1,26 +1,26 @@
 {
  "id": "woodland/bush",
  "file": "game/zones/woodland/art/bush.png",
- "sha256": "d8952adc36cd761b794928429eb2c9bd7a382c8b2c09404caff3edb432c5558c",
+ "sha256": "e6f521302e6cb56f9abf260a88db3639530acb1ab824c4c2980173621ff02728",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   92,
-  62
+  61
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 13,
-   "tones": 34.92307692307692,
-   "shapes": 56.0
+   "tones": 23.692307692307693,
+   "shapes": 55.69230769230769
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.884,
-  "tones_ratio": 1.26,
-  "shapes_ratio": 0.884,
+  "ratio": 0.855,
+  "tones_ratio": 0.855,
+  "shapes_ratio": 0.88,
   "passed": false,
   "group": "foliage"
  },
@@ -42,22 +42,10 @@
     0,
     0,
     92,
-    62
+    61
    ],
-   "message": "woodland/bush: detail bar 0.88 of Eastward's foliage band (34.9 tones, 56.0 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bush: detail bar 0.85 of Eastward's foliage band (23.7 tones, 55.7 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.cluster_noise",
-   "severity": "polish",
-   "box": [
-    0,
-    0,
-    92,
-    62
-   ],
-   "message": "woodland/bush: 48% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 46% to 51%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-09",

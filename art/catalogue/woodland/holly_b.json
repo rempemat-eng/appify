@@ -1,26 +1,26 @@
 {
  "id": "woodland/holly_b",
  "file": "game/zones/woodland/art/holly_b.png",
- "sha256": "69dc9dfb2900367a7c8edab0a8005476741580049637b43e2593c7ca0f6fdec4",
+ "sha256": "2bd0dc6d0d9e3990ca7f1d04715abd7e88aa595a3d65cf8fbc99462139ffe000",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  76,
+  78,
   78
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 11,
-   "tones": 34.54545454545455,
-   "shapes": 53.27272727272727
+   "tones": 28.272727272727273,
+   "shapes": 50.27272727272727
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.841,
-  "tones_ratio": 1.247,
-  "shapes_ratio": 0.841,
+  "ratio": 0.794,
+  "tones_ratio": 1.02,
+  "shapes_ratio": 0.794,
   "passed": false,
   "group": "foliage"
  },
@@ -41,23 +41,11 @@
    "box": [
     0,
     0,
-    76,
+    78,
     78
    ],
-   "message": "woodland/holly_b: detail bar 0.84 of Eastward's foliage band (34.5 tones, 53.3 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/holly_b: detail bar 0.79 of Eastward's foliage band (28.3 tones, 50.3 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.cluster_noise",
-   "severity": "polish",
-   "box": [
-    0,
-    0,
-    76,
-    78
-   ],
-   "message": "woodland/holly_b: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 46%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-09",

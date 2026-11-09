@@ -1,14 +1,14 @@
 {
  "id": "woodland/bramble_b",
  "file": "game/zones/woodland/art/bramble_b.png",
- "sha256": "4a1acf2fc77dc6f0a4f8af8789cd542d7af589f6ee6db2e909c5e63b72f9abae",
+ "sha256": "0c498356eab1c7efc434617ad9da8f75132ccfc8bca578f84cc69a15e6e1038a",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  93,
-  48
+  110,
+  47
  ],
  "status": "pass",
  "counts": {
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 35.333333333333336,
-   "shapes": 51.166666666666664
+   "tones": 26.5,
+   "shapes": 51.5
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.808,
-  "tones_ratio": 1.275,
-  "shapes_ratio": 0.808,
+  "ratio": 0.813,
+  "tones_ratio": 0.956,
+  "shapes_ratio": 0.813,
   "passed": false,
   "group": "foliage"
  },
@@ -41,10 +41,10 @@
    "box": [
     0,
     0,
-    93,
-    48
+    110,
+    47
    ],
-   "message": "woodland/bramble_b: detail bar 0.81 of Eastward's foliage band (35.3 tones, 51.2 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bramble_b: detail bar 0.81 of Eastward's foliage band (26.5 tones, 51.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -53,10 +53,10 @@
    "box": [
     0,
     0,
-    93,
-    48
+    110,
+    47
    ],
-   "message": "woodland/bramble_b: only 28% of the silhouette is drawn in an edge tone",
+   "message": "woodland/bramble_b: only 30% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],

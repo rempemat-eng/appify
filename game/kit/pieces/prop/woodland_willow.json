@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 8,
+ "version": 9,
  "variants": [
   {
    "id": "willow",
@@ -27,7 +27,7 @@
  },
  "geometry": {
   "size_px": [
-   250,
+   246,
    200
   ],
   "size_cells": [

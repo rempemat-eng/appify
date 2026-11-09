@@ -1,26 +1,26 @@
 {
  "id": "woodland/bush_c",
  "file": "game/zones/woodland/art/bush_c.png",
- "sha256": "84637112a0f18dd1ba513b8e496362ca8a4c899a653f990da8ccf2c3d23916f3",
+ "sha256": "27cb6a187faf9322af0cfabc742d2173968811d48612c4e35607299c2b499a0b",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   109,
-  56
+  57
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 15,
-   "tones": 31.333333333333332,
-   "shapes": 54.6
+   "patches": 14,
+   "tones": 23.428571428571427,
+   "shapes": 54.5
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.862,
-  "tones_ratio": 1.131,
-  "shapes_ratio": 0.862,
+  "ratio": 0.845,
+  "tones_ratio": 0.845,
+  "shapes_ratio": 0.861,
   "passed": false,
   "group": "foliage"
  },
@@ -42,22 +42,10 @@
     0,
     0,
     109,
-    56
+    57
    ],
-   "message": "woodland/bush_c: detail bar 0.86 of Eastward's foliage band (31.3 tones, 54.6 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bush_c: detail bar 0.84 of Eastward's foliage band (23.4 tones, 54.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.cluster_noise",
-   "severity": "polish",
-   "box": [
-    0,
-    0,
-    109,
-    56
-   ],
-   "message": "woodland/bush_c: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 41% to 42%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-09",
