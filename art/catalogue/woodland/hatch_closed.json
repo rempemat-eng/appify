@@ -10,10 +10,10 @@
   44,
   66
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
+  "fault": 1,
   "polish": 1
  },
  "detail_bar": {
@@ -36,6 +36,18 @@
  },
  "findings": [
   {
+   "detector": "detail.cluster_noise",
+   "severity": "fault",
+   "box": [
+    0,
+    26,
+    44,
+    66
+   ],
+   "message": "woodland/hatch_closed: 61% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 61% to 70%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+  },
+  {
    "detector": "detail.outline",
    "severity": "polish",
    "box": [
@@ -48,10 +60,11 @@
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-H1: frame lit evenly (west minus east +1.2 L, no light direction), door grain as random 2x2 value noise (cluster noise 60.6 %, fault), iron straps flat two-tone bars, ring a black U glyph, hard rectangular tan apron with no frayed turf edge; bar 1.06. Fixes in the review."
  }
 }
