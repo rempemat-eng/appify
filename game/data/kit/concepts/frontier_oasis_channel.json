@@ -1,0 +1,94 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_oasis_channel",
+  "name": "Oasis spring pool and irrigation channel",
+  "kind": "water",
+  "biomes": [
+    "palm_spring",
+    "sunstone_basin"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "spring_pool",
+      "note": "Rounded pool with its actual inflow/outflow."
+    },
+    {
+      "id": "irrigation",
+      "note": "1–2-cell built channels that branch at authored junctions."
+    },
+    {
+      "id": "dry",
+      "note": "Same channel geometry with no water, only when the story stage calls for it."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "water",
+    "ground": {
+      "allow": [
+        "sand",
+        "stone"
+      ],
+      "deny": [
+        "lava"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "near",
+        "what": "spring_source",
+        "note": "An existing source, pool, or border continuation supplies each channel."
+      }
+    ],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Reuse the stream-water base for Palm Spring’s resurfacing water and its orchard channels."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Reuse the stream-water base for Palm Spring’s resurfacing water and its orchard channels.",
+      "Visual brief: Clear shallow water over pale gravel; built channels have a seated stone lip, the pool a softer rounded earth bank. Palms frame the water instead of standing in it.",
+      "Widths and size: Pool at least 4 cells across; channels 1/2 cells, widened only at basin or junction; water state never changes the route graph by itself.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5; docs/vision/world-and-cast.md on claude-a/progression-2 (blob 7d35d094), §§2–4",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Reuse existing water/bank algorithms; dry/flowing forms are a proposed story presentation for the stopped spring, not a new timed water simulation.",
+      "Sizing basis: material/edge extent is specified in 24-art-px logical cells; no opaque-object scale class is assigned. Review grain, width class and derived face height instead.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

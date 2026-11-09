@@ -1,0 +1,235 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_quay_railing",
+  "name": "Quay railing and access opening",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "cogsworth",
+    "neon_harbour",
+    "lullford"
+  ],
+  "variants": [
+    {
+      "id": "straight",
+      "note": "Connected rail module."
+    },
+    {
+      "id": "end",
+      "note": "Reinforced end at a stair or loading opening."
+    },
+    {
+      "id": "corner",
+      "note": "Relit corner, not mirrored."
+    }
+  ],
+  "placement": {
+    "role": "railing",
+    "ground": {
+      "allow": [
+        "paving",
+        "stone",
+        "wood"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "rim"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "edge"
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {},
+  "story": {
+    "lore": "Guard exposed drops while leaving explicit stairs, loading openings and moorings reachable."
+  },
+  "audit": {
+    "size_class": "fence",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Guard exposed drops while leaving explicit stairs, loading openings and moorings reachable.",
+      "Visual brief: Iron uprights and two rails with readable gaps, heavy ends at openings and down-right shadows; no opaque fence sheet hides the water.",
+      "Source: docs/vision/regions/neon-harbour-delta.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Scale: density3 class fence; height [41, 67] art px, width [37, 296] art px; 74 art px adult. The class range is the target, not a measured drawing.",
+      "Geometry: proposed authoring envelope 4x1 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "R",
+      "u",
+      "l",
+      "e",
+      " ",
+      "p",
+      "r",
+      "o",
+      "p",
+      "o",
+      "s",
+      "a",
+      "l",
+      ":",
+      " ",
+      "r",
+      "a",
+      "i",
+      "l",
+      "i",
+      "n",
+      "g",
+      " ",
+      "c",
+      "o",
+      "l",
+      "l",
+      "i",
+      "d",
+      "e",
+      "r",
+      "s",
+      " ",
+      "e",
+      "n",
+      "d",
+      " ",
+      "a",
+      "t",
+      " ",
+      "t",
+      "h",
+      "e",
+      " ",
+      "e",
+      "x",
+      "a",
+      "c",
+      "t",
+      " ",
+      "s",
+      "t",
+      "a",
+      "i",
+      "r",
+      "/",
+      "d",
+      "o",
+      "o",
+      "r",
+      " ",
+      "o",
+      "p",
+      "e",
+      "n",
+      "i",
+      "n",
+      "g",
+      ";",
+      " ",
+      "a",
+      "p",
+      "p",
+      "e",
+      "a",
+      "r",
+      "a",
+      "n",
+      "c",
+      "e",
+      " ",
+      "c",
+      "a",
+      "n",
+      "n",
+      "o",
+      "t",
+      " ",
+      "i",
+      "m",
+      "p",
+      "l",
+      "y",
+      " ",
+      "a",
+      " ",
+      "s",
+      "a",
+      "f",
+      "e",
+      " ",
+      "w",
+      "a",
+      "l",
+      "k",
+      "a",
+      "b",
+      "l",
+      "e",
+      " ",
+      "g",
+      "a",
+      "p",
+      " ",
+      "w",
+      "h",
+      "e",
+      "r",
+      "e",
+      " ",
+      "c",
+      "o",
+      "l",
+      "l",
+      "i",
+      "s",
+      "i",
+      "o",
+      "n",
+      " ",
+      "r",
+      "e",
+      "m",
+      "a",
+      "i",
+      "n",
+      "s",
+      "."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      4,
+      1
+    ],
+    "z_sort": "foot"
+  }
+}

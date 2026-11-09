@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy_damage",
  "file": "game/zones/crossroads/art/smithy_damage.png",
- "sha256": "453891c4243c77cd234458dc745236bb368ab443eaa2f5b4165ea8e352494ec3",
+ "sha256": "5066ab2a5b779f0ffb6a1d7121d9036751e32c474fa22f111bd7a1f3a63d52fa",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 60,
-   "tones": 17.583333333333332,
-   "shapes": 31.416666666666668
+   "tones": 19.983333333333334,
+   "shapes": 33.2
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.624,
-  "tones_ratio": 0.651,
-  "shapes_ratio": 0.624,
+  "ratio": 0.659,
+  "tones_ratio": 0.74,
+  "shapes_ratio": 0.659,
   "passed": false,
   "group": "prop"
  },
@@ -39,31 +39,43 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
+    69,
+    302,
     166,
-    100,
-    194,
-    170
+    314
    ],
-   "message": "crossroads/smithy_damage: the wood is lit from the right (luminance rises 24 L per H to the east)",
+   "message": "crossroads/smithy_damage: the red is lit from the right (luminance rises 11 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    50,
+    258,
+    119,
+    274
+   ],
+   "message": "crossroads/smithy_damage: the red is lit from the right (luminance rises 11 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    42,
+    49,
     73,
     276,
     327
    ],
-   "message": "crossroads/smithy_damage: detail bar 0.62 of Eastward's prop band (17.6 tones, 31.4 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy_damage: detail bar 0.66 of Eastward's prop band (20.0 tones, 33.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",
-  "note": "redrawn after the #298 review (flue: the stack now rises over the forge hood); the agent checklist has not been run on this version"
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

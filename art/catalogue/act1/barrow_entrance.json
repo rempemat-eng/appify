@@ -1,0 +1,70 @@
+{
+ "id": "act1/barrow_entrance",
+ "file": "game/kit/props/art/act1/barrow_entrance.png",
+ "sha256": "8292a9a904726fc22b6ecc3c4d75a21a4a858eb7418e828a235340a4e5df3f8d",
+ "kind": "barrow_entrance",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  323,
+  180
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 127,
+   "tones": 23.89763779527559,
+   "shapes": 38.79527559055118
+  },
+  "band": {
+   "tones": 27.71,
+   "shapes": 63.32,
+   "boxes": 4,
+   "patches": 107
+  },
+  "ratio": 0.613,
+  "tones_ratio": 0.862,
+  "shapes_ratio": 0.613,
+  "passed": false,
+  "group": "foliage"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    323,
+    180
+   ],
+   "message": "act1/barrow_entrance: detail bar 0.61 of Eastward's foliage band (23.9 tones, 38.8 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    323,
+    180
+   ],
+   "message": "act1/barrow_entrance: only 16% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
+  }
+ ],
+ "reviewed": "2026-11-05",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pass",
+  "date": "2026-11-05",
+  "note": "Round 7 (v8) of docs/reviews/2026-11-04-act1-props.md (ba774db4): R6-8 fixed: the skyline is the edge masses' own tops, with 17 steps of 2 px or more across the middle 261 columns (v7: 3) and a residual of 1.21 px against a smooth fit (v7: 0.70), and a dark U under most masses. Bar 0.61 and detail.outline (16 %) accepted (polish), as in rounds 5 and 6."
+ }
+}

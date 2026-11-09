@@ -1,0 +1,128 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "commons_cart",
+ "name": "Farm cart",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "cart",
+   "weight": 1.0,
+   "png": "res://kit/props/art/commons/cart.png",
+   "foot": [
+    45,
+    54
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A cart left at the road's edge."
+ },
+ "geometry": {
+  "size_px": [
+   97,
+   55
+  ],
+  "size_cells": [
+   4,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 54,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -14.0,
+    -4.0,
+    30,
+    4
+   ]
+  },
+  "foot": [
+   45,
+   54
+  ],
+  "footprint": [
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "cart",
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route",
+    "cells": 1,
+    "note": "beside the way people walk"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    36,
+    4
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "handcart",
+  "eastward_ref": "17: the farm cart, its big wheel",
+  "painter": {
+   "module": "scripts.art.kit.commons",
+   "fn": "commons_cart",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/commons.py",
+  "todo": []
+ }
+}

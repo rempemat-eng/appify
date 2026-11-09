@@ -1,0 +1,148 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "farm_sheep_lie",
+ "name": "Sheep, lying",
+ "kind": "prop",
+ "biomes": [
+  "village",
+  "valley"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "farm_sheep_lie",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/farm_sheep_lie.png",
+   "foot": [
+    27,
+    29
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A ewe in her fold; 8 idle frames at 3 fps."
+ },
+ "geometry": {
+  "size_px": [
+   55,
+   30
+  ],
+  "size_cells": [
+   2,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 29,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -9.0,
+    -3.0,
+    18,
+    3
+   ]
+  },
+  "foot": [
+   27,
+   29
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "live",
+  "role": "stock",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "trough",
+    "cells": 9,
+    "note": "a fold holds its trough (placement-logic: keep animals in)"
+   },
+   {
+    "rel": "within",
+    "what": "boundary",
+    "cells": 5,
+    "note": "inside the fold's hurdles"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "enclosure": {
+   "holds": [
+    "sheep"
+   ],
+   "as": "contents"
+  }
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    18,
+    4
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true,
+  "animations": [
+   {
+    "clip": "idle",
+    "loop": true,
+    "frames": 8,
+    "fps": 3.0,
+    "strip": "res://kit/props/art/farm/farm_sheep_lie_idle.png",
+    "frame_px": [
+     55,
+     30
+    ],
+    "reduced_motion": "hold:0",
+    "on_screen_only": true,
+    "phase": "placement"
+   }
+  ]
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "sheep",
+  "eastward_ref": "17: cows 0.9 A and pigs 0.55 A, chunky with a dark outline",
+  "painter": {
+   "module": "scripts.art.kit.farm",
+   "fn": "farm_sheep_lie",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/farm.py",
+  "todo": []
+ }
+}

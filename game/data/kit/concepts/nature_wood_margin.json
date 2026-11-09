@@ -1,0 +1,95 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_wood_margin",
+  "name": "Woodland floor to meadow margin",
+  "kind": "transition",
+  "biomes": [
+    "woodland",
+    "valley"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "beech_margin",
+      "note": "Beech litter thinning from smooth exposed roots into meadow grass, with sparse ochre leaf clusters beyond the tree shade."
+    },
+    {
+      "id": "oak_margin",
+      "note": "Oak leaves and rough root flares breaking the meadow edge, with broader shaded pockets on the woodland side."
+    },
+    {
+      "id": "wet_margin",
+      "note": "Damp roots and dark compressed litter beside a wet turf margin, with mossy patches and restrained reflected light."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground_edge",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "forest_floor",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      },
+      {
+        "rel": "adjacent",
+        "what": "meadow_sward",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_centre"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Let canopy shade and litter thin into the same meadow rather than place a dark ring around the wood."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": "docs/vision/eastward-edges.md, references 12 and 13 (beds, paths and fields)",
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P0.",
+      "Purpose: Let canopy shade and litter thin into the same meadow rather than place a dark ring around the wood.",
+      "Visual brief: Sparse roots and frayed litter at the trunk side, scattered leaves toward the meadow; use upper-left-lit root flares and broad shade, with no wall-like vertical lip on level ground.",
+      "Source: docs/world-editor.md; docs/vision/eastward-edges.md; docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: 1-cell transition footprint with free small litter dressing outside the route centre.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

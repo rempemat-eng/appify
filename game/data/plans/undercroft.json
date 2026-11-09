@@ -70,7 +70,7 @@
     { "id": "start", "at": [32, 136] },
     { "id": "corridor", "at": [232, 136], "why": "screenshots" },
     { "id": "seal", "at": [448, 160], "why": "screenshots" },
-    { "id": "arena", "at": [600, 160], "why": "screenshots and the fight demo" }
+    { "id": "arena", "at": [582, 136], "why": "screenshots and the fight demo: the chamber's west door, just outside the arena so the Thornback still sleeps until the player steps in (at 600, 160 the player stood inside it and the boss closed before the shot; Lane R, 3 Nov)" }
   ],
   "doors": [
     { "id": "to_woodland", "rect": [0, 120, 8, 32], "to": "woodland", "spawn": "undercroft" }

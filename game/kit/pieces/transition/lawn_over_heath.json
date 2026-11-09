@@ -1,0 +1,37 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "lawn_over_heath",
+ "name": "Lawn over heath",
+ "kind": "transition",
+ "biomes": [
+  "brackens"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Brackens brief (heather, peat, gritstone)",
+  "note": "Grazed grass (a fold's floor) meeting the heath."
+ },
+ "transition": {
+  "upper": "lawn",
+  "lower": "heath",
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "plain",
+   "args": {}
+  },
+  "variants": 1,
+  "shape": "lower",
+  "dressing": null
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.sets.moor",
+   "fn": "dress",
+   "args": {}
+  },
+  "eastward_ref": "Eastward 12 and 13, crops 10-grass-dirt"
+ }
+}

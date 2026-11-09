@@ -1,0 +1,98 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_basalt_heat_rim",
+  "name": "Basalt–lava heat rim",
+  "kind": "transition",
+  "biomes": [
+    "fire_country"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "cool_bank",
+      "note": "Wide dark lip over active fluid."
+    },
+    {
+      "id": "fractured_bank",
+      "note": "Few separated fissures stop before a route."
+    },
+    {
+      "id": "drop_lip",
+      "note": "Hot core falls only where the plan records a height drop."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "edge",
+    "ground": {
+      "allow": [
+        "rock"
+      ],
+      "deny": [
+        "wood",
+        "turf"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "lava"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Show the bank separating stable rock from active lava and make crossings legible."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Show the bank separating stable rock from active lava and make crossings legible.",
+      "Visual brief: A raised dark stone lip with a narrow reflected warm edge facing the fluid; south-facing rock still carries upper-left form. No fake bridge made from glow.",
+      "Widths and size: Pair-edge strip on 24-art-px cell outlines; bank thickness is art, not a second walkable cell.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "The lava edge is a collision boundary until an explicitly approved bridge deck crosses it.",
+      "Implement after review: the schema owner supplies the runtime material/pair block and stable ID only after the design is accepted; no executable painter is asserted here.",
+      "Sizing basis: material/edge extent is specified in 24-art-px logical cells; no opaque-object scale class is assigned. Review grain, width class and derived face height instead.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

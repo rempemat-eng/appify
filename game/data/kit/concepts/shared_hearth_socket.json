@@ -1,0 +1,104 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_hearth_socket",
+  "name": "Hearth and fire socket",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "village",
+    "woodland",
+    "frostline",
+    "hearthold",
+    "cogsworth"
+  ],
+  "variants": [
+    {
+      "id": "campfire",
+      "note": "Low stone ring and finite embers."
+    },
+    {
+      "id": "forge",
+      "note": "Recessed fire bed under the forge hood."
+    },
+    {
+      "id": "stove",
+      "note": "Iron firebox with flue connection."
+    }
+  ],
+  "geometry": {
+    "z_sort": "foot",
+    "size_cells": [
+      3,
+      2
+    ]
+  },
+  "placement": {
+    "role": "hearth",
+    "ground": {
+      "allow": [
+        "stone",
+        "paving",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "snow",
+        "route"
+      ]
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "near",
+        "what": "flammable_clutter",
+        "cells": 1
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P0",
+      "Purpose: Provide a physical source for every reusable fire and smoke effect.",
+      "Visual brief: A stone or iron surround with an inset fire bed, charred inner wall and clean outer plane; flame sits in the cavity, not over a painted floor.",
+      "Size: Firepit reference: 14–28 world px wide; domestic forge uses the documented anvil/civic context, not a scaled-up campfire.",
+      "Source: ground-rules.md Props by role; crossroads forge_fire",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Scale: firepit width is from size-guide world-px appendix; no exact production dimensions allocated.",
+      "Effect placement requires on_anchor hearth; a chimney requires a connected flue before smoke is legal."
+    ]
+  }
+}

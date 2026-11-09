@@ -1,0 +1,84 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_circle_beam_sky",
+  "name": "Distant circle-beam sky layer",
+  "kind": "effect",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "frostline",
+    "brackens",
+    "sunstone",
+    "fire_country",
+    "tidebloom",
+    "cogsworth",
+    "lull",
+    "neon"
+  ],
+  "variants": [
+    {
+      "id": "faint",
+      "note": "First proposed waking state."
+    },
+    {
+      "id": "middle",
+      "note": "Same bearing and profile; restrained brighter centre."
+    },
+    {
+      "id": "strong",
+      "note": "Final proposed strength, still behind terrain."
+    }
+  ],
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "sky_layer",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "free",
+    "stages": [
+      "night"
+    ],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P1",
+      "Purpose: Show the valley as a shared centre from the surrounding regions.",
+      "Visual brief: A narrow pale column behind the horizon, its base occluded by real land silhouettes. Night visibility is restrained; no infinite flashing or screen-space pointer.",
+      "Size: Sky layer; world-bearing and horizon anchor must be authored for each view, with three proposed strengths.",
+      "Source: world-and-cast.md The device in full",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Proposal: exact visibility and story-event mapping remain with Claude/story owner.",
+      "No beam is shown from locations whose horizon cannot see the valley; sky anchors must be checked, never guessed from screen centre."
+    ]
+  }
+}

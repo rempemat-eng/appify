@@ -1,0 +1,105 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_regolith_habitat",
+  "name": "Regolith-covered habitat shell",
+  "kind": "structure",
+  "biomes": [
+    "lumen"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "single",
+      "note": "One room-length module."
+    },
+    {
+      "id": "linked",
+      "note": "A second end collar joins a pressure tube."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      12,
+      7
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "structure",
+    "ground": {
+      "allow": [
+        "earth",
+        "rock"
+      ],
+      "deny": [
+        "water",
+        "turf",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 2
+      },
+      {
+        "rel": "adjacent",
+        "what": "airlock",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "enter",
+      "triggers": []
+    }
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Share the small buried habitat form while keeping Lumen’s observatory unique."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "hut",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P3",
+      "Purpose: Share the small buried habitat form while keeping Lumen’s observatory unique.",
+      "Visual brief: A low pressure module covered by seated regolith berms, with an exposed hatch collar, vent and small glazed end. The berm rests on ground and cannot hide the door apron.",
+      "Widths and size: Habitat body 178–296 art px wide, 148–252 high; berm extends outside the solid shell envelope and needs its own mask.",
+      "Source: docs/vision/world-plan.md §§8.6,8.7,9; docs/vision/coherence-plan.md M1",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "No sleeping or real-world rest mechanic returns through habitat furniture; attach only approved indoor use.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

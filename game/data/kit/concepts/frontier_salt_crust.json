@@ -1,0 +1,91 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_salt_crust",
+  "name": "Salt-lake crust",
+  "kind": "terrain",
+  "biomes": [
+    "sunstone_basin"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "dry",
+      "note": "Closed pale crust, sparse shallow joints."
+    },
+    {
+      "id": "damp_margin",
+      "note": "Darker damp plates approaching water, without marking them walkable by colour alone."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "sand",
+        "earth",
+        "stone"
+      ],
+      "deny": [
+        "lava"
+      ]
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route",
+        "note": "A crossing needs its own stable route surface, never an implied strip of safe salt."
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Give the named white salt lake a reusable dry-flat material distinct from sand."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Give the named white salt lake a reusable dry-flat material distinct from sand.",
+      "Visual brief: Off-white polygon plates join softly; lavender seams gather near the damp edge. Keep a broad unmarked field so the far salt lake reads as one landform.",
+      "Widths and size: Whole 24-art-px cells; wet margin 1–2 cells, widened only at a shallow shore.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Salt crust does not grant a walking connection across a lake; source water/depth and collision remain authoritative.",
+      "Implement after review: the schema owner supplies the runtime material/pair block and stable ID only after the design is accepted; no executable painter is asserted here.",
+      "Sizing basis: material/edge extent is specified in 24-art-px logical cells; no opaque-object scale class is assigned. Review grain, width class and derived face height instead.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

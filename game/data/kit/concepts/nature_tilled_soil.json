@@ -1,0 +1,90 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_tilled_soil",
+  "name": "Field and bed soil",
+  "kind": "terrain",
+  "biomes": [
+    "valley",
+    "crossroads",
+    "coast"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "fresh_dug",
+      "note": "Dark newly turned soil mounds with broad clods and lit upper-left rims, contained within a timber or stone frame."
+    },
+    {
+      "id": "planted_rows",
+      "note": "The same framed soil with ordered crop groups following the authored rows and an intact access aisle."
+    },
+    {
+      "id": "harvested",
+      "note": "Exposed row mounds with cut stalks and a few dry clods; crop state follows existing authored stages or outings."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "row",
+    "stages": [
+      "broken",
+      "homecoming"
+    ]
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Support the hut beds and later working fields with one framed-soil family."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": "docs/vision/eastward-edges.md, references 12 and 13 (beds, paths and fields)",
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P0.",
+      "Purpose: Support the hut beds and later working fields with one framed-soil family.",
+      "Visual brief: Raised dark soil mounds with lit upper-left edges and broad clods; a timber or stone frame sits above the soil, with a visible rim and foot shadow. A field is not enlarged garden furniture.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md; game/data/plans/crossroads.json",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Beds 1-cell modules inside a frame; agricultural strips 2-4+ cells with a separately validated access aisle.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Existing beds_scorched/beds_dug state conditions remain from crossroads.json; crop growth does not become a real-time timer.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

@@ -1,0 +1,130 @@
+{
+ "id": "act1/mill_wheel",
+ "file": "game/kit/props/art/act1/mill_wheel.png",
+ "sha256": "4a12f6fd84ee340f047c369a9095c3645c7029343e5f30047af4576f304d8f78",
+ "kind": "mill_wheel",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  334,
+  420
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 7
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 340,
+   "tones": 24.735294117647058,
+   "shapes": 43.48529411764706
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.863,
+  "tones_ratio": 0.916,
+  "shapes_ratio": 0.863,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    251,
+    360,
+    296,
+    383
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 55 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    187,
+    314,
+    233,
+    350
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 31 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    40,
+    302,
+    139,
+    398
+   ],
+   "message": "act1/mill_wheel: the wood is lit from the right (luminance rises 16 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    41,
+    190,
+    99,
+    266
+   ],
+   "message": "act1/mill_wheel: the wood is lit from the right (luminance rises 11 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    188,
+    355,
+    231,
+    382
+   ],
+   "message": "act1/mill_wheel: the stone is lit from the right (luminance rises 8 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    334,
+    419
+   ],
+   "message": "act1/mill_wheel: detail bar 0.86 of Eastward's prop band (24.7 tones, 43.5 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    334,
+    419
+   ],
+   "message": "act1/mill_wheel: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 45%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+  }
+ ],
+ "reviewed": "2026-11-09",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 10 (5372f4e1) of docs/reviews/2026-11-04-act1-props.md. The eave is the slate's own band (P9-1, Claude A): soffit row 182 (45 L), core rows 183 to 188 (51 to 67 L, 41 to 51 % darker than the lit wall's 113 to 136), fade to about row 201 (97 to 113 L, 14 to 29 %), about 20 rows (E 15) against round 9's 26; it ends above the upper sills and reads beside B1 (01) at 1.37x as the same shade under a slab. 1,543 texels changed, all in (9,188,314,212). The loop: frame 0 the still, steps 9,972 to 10,264, wrap 10,090, every frame's change equal to the still's outside the wheel's box. No wheel ground shadow (C9-1, one sun). Bar 0.86 and noise 44 % accepted as polish; five detail.light findings rejected as in rounds 8 and 9."
+ }
+}

@@ -1,0 +1,61 @@
+{
+ "id": "terrain/decal_rushes_0",
+ "file": "game/kit/terrain/decal_rushes_0.png",
+ "sha256": "84a6dcc29f06bd4a15c0937d1e998bf830809e82eae0eefbc9fa10d0bce2c32c",
+ "kind": "decal_rushes",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  20,
+  26
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "logic.floating_part",
+   "severity": "blocker",
+   "box": [
+    7,
+    10,
+    15,
+    16
+   ],
+   "message": "terrain/decal_rushes_0: the upper 20% of the sprite hovers 2 px above the rest: nothing joins it to what should hold it up",
+   "fix": "join it to its support: a crown sits on its trunk and covers the trunk top, a roof on its posts, a bucket on a rope (world-rules.md 6.9)",
+   "score": 2.0,
+   "threshold": 2,
+   "subject": "terrain/decal_rushes_0",
+   "extra": {
+    "needs_alpha": true
+   },
+   "box_source": [
+    7,
+    10,
+    15,
+    16
+   ]
+  }
+ ]
+}

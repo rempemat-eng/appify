@@ -1,0 +1,44 @@
+{
+ "id": "terrain/lut",
+ "file": "game/kit/terrain/lut.png",
+ "sha256": "344679d392a978b080e5ec1960060a4f66cac656d0605898adbc3a74d3c36a4f",
+ "kind": "lut",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  512,
+  1
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.void",
+   "severity": "blocker",
+   "box": [
+    432,
+    0,
+    512,
+    1
+   ],
+   "message": "the screen shows 16% empty black outside the world",
+   "fix": "clamp the camera to the zone bounds from the first frame (snap it to the spawn before damping) and draw the world past every edge the camera can reach",
+   "score": 0.15625,
+   "threshold": 0.05,
+   "subject": "camera",
+   "extra": {},
+   "box_source": [
+    432,
+    0,
+    512,
+    1
+   ]
+  }
+ ]
+}

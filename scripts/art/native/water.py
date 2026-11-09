@@ -53,6 +53,29 @@ def flow_field(mask: np.ndarray):
     return fx / n, fy / n
 
 
+def flow_dir(mask: np.ndarray):
+    """The current's direction per texel (unit fx, fy, quantised to 1/256) along a channel of any
+    width (the woodland review, 4 Nov: marks ran across an east-flowing stream). The structure
+    tensor of the smoothed distance to the banks, blurred over about the water's half width so
+    the middle of a wide stream takes its banks' direction (a fixed small blur leaves it with no
+    direction, read as south); the flow is at right angles to the strongest gradient and runs
+    downhill: south, or east where the channel runs level."""
+    H, W = mask.shape
+    if not mask.any():
+        return np.ones((H, W)), np.zeros((H, W))
+    d = ndi.distance_transform_edt(mask)
+    sig = max(6.0, 0.6 * float(np.percentile(d[mask], 99)))
+    gy, gx = np.gradient(ndi.gaussian_filter(d, 2.0))
+    jxx = ndi.gaussian_filter(gx * gx, sig)
+    jxy = ndi.gaussian_filter(gx * gy, sig)
+    jyy = ndi.gaussian_filter(gy * gy, sig)
+    theta = 0.5 * np.arctan2(2 * jxy, jxx - jyy)
+    fx, fy = -np.sin(theta), np.cos(theta)
+    flip = np.where(np.abs(fy) > np.abs(fx), fy < 0, fx < 0)
+    fx, fy = np.where(flip, -fx, fx), np.where(flip, -fy, fy)
+    return np.round(fx * 256) / 256.0, np.round(fy * 256) / 256.0
+
+
 def paint(cv: np.ndarray, mask: np.ndarray, seed: int = 23) -> None:
     """Water on the footprint `mask` (texels) of the code canvas `cv`, with its banks."""
     H, W = cv.shape

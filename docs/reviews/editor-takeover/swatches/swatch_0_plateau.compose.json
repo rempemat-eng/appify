@@ -1,0 +1,36 @@
+{
+ "structures": [],
+ "density": 3,
+ "cell": 8,
+ "tiers": [
+  {
+   "id": "plateau",
+   "level": 16,
+   "below": 0,
+   "face_px": 48,
+   "rects": [
+    [
+     0,
+     0,
+     160,
+     40
+    ],
+    [
+     104,
+     40,
+     40,
+     16
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "tier": "plateau",
+   "x0": 120,
+   "x1": 192,
+   "y_top": 119,
+   "y_foot": 170
+  }
+ ]
+}

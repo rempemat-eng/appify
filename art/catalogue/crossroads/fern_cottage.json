@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_cottage",
  "file": "game/zones/crossroads/art/fern_cottage.png",
- "sha256": "1b2df1137dc67fb6a086caad80363bad0dc32019bacb63398786c1244b945639",
+ "sha256": "4aba1b48ce7e54afd32ff716362fe97ec5f82a5651572ee7e742c48d05bf5fe7",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 144,
-   "tones": 27.104166666666668,
-   "shapes": 44.09722222222222
+   "tones": 26.34722222222222,
+   "shapes": 43.52777777777778
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.876,
-  "tones_ratio": 1.004,
-  "shapes_ratio": 0.876,
+  "ratio": 0.864,
+  "tones_ratio": 0.976,
+  "shapes_ratio": 0.864,
   "passed": false,
   "group": "prop"
  },
@@ -44,16 +44,16 @@
     231,
     62
    ],
-   "message": "crossroads/fern_cottage: the red is lit from the right (luminance rises 67 L per H to the east)",
+   "message": "crossroads/fern_cottage: the red is lit from the right (luminance rises 62 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    30,
+    36,
     182,
-    77,
+    83,
     261
    ],
    "message": "crossroads/fern_cottage door latch: across 8 art px (0.11 A) is too big for a door handle: the size table gives 3 to 7 (0.04 to 0.09 A); Eastward at the same character height: knob or latch 3 to 4 E (0.06 to 0.07 A) at 0.5 to 0.6 of the leaf (17, 12)",
@@ -68,15 +68,14 @@
     238,
     262
    ],
-   "message": "crossroads/fern_cottage: detail bar 0.88 of Eastward's prop band (27.1 tones, 44.1 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage: detail bar 0.86 of Eastward's prop band (26.3 tones, 43.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-10-26",
-  "note": "#298 review at 2e554c05: roof planes lit with thickness, fascia, gutter and stepped eave shadow; recessed openings; wall form and proud plinth; trade details read. Detail bar 0.86 to 0.94 (above the 0.8 gate, below the 1.0 in art-style)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

@@ -1,0 +1,116 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_hay",
+ "name": "Hay",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 6,
+ "variants": [
+  {
+   "id": "hay_bales",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/hay_bales.png",
+   "foot": [
+    39,
+    53
+   ]
+  },
+  {
+   "id": "hay_heap",
+   "weight": 1.0,
+   "png": "res://kit/props/art/farm/hay_heap.png",
+   "foot": [
+    32,
+    31
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   73,
+   54
+  ],
+  "size_cells": [
+   4,
+   3
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   39,
+   53
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "feed",
+  "role": "feed",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "stock",
+    "cells": 6,
+    "note": "feed forked out for the stock, in a paddock, a fold or a barn"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "hay_19",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "hay_20",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "variants"
+  ]
+ }
+}

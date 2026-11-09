@@ -1,0 +1,116 @@
+{
+ "id": "art/footbridge_4",
+ "file": "game/kit/props/art/footbridge_4.png",
+ "sha256": "aab389a52284f1f4aa64ce6d49debc86d9e168c9bef6f70ef6109d0de353248b",
+ "kind": "footbridge",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  100,
+  144
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 20,
+   "tones": 12.55,
+   "shapes": 24.85
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.465,
+  "tones_ratio": 0.465,
+  "shapes_ratio": 0.493,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    18,
+    8,
+    82,
+    130
+   ],
+   "message": "art/footbridge_4: the red reads 2D: 2 light planes, luminance spread 3",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts",
+   "score": 2.0,
+   "threshold": 3,
+   "subject": "art/footbridge_4",
+   "extra": {
+    "area": 513,
+    "area_h": 0.09368151935719503,
+    "flat": 0.11306042884990253,
+    "flat_h": 0.010591672753834916,
+    "tones": 4,
+    "planes": 2,
+    "lrange": 2.903003692626953,
+    "gx": -8.405536738417334,
+    "gy": -2.6316578010639065,
+    "edges": 0.14556962025316456
+   },
+   "box_source": [
+    18,
+    8,
+    82,
+    130
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    11,
+    6,
+    89,
+    132
+   ],
+   "message": "art/footbridge_4: detail bar 0.47 of Eastward's prop band (12.6 tones, 24.9 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.465,
+   "threshold": 0.9,
+   "subject": "art/footbridge_4",
+   "extra": {},
+   "box_source": [
+    11,
+    6,
+    89,
+    132
+   ]
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    11,
+    6,
+    89,
+    132
+   ],
+   "message": "art/footbridge_4: only 21% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)",
+   "score": 0.2088167053364269,
+   "threshold": 0.4,
+   "subject": "art/footbridge_4",
+   "extra": {},
+   "box_source": [
+    11,
+    6,
+    89,
+    132
+   ]
+  }
+ ]
+}

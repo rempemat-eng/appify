@@ -51,6 +51,7 @@ class Zone:
     night: object
     layers: dict = field(default_factory=dict)
     codes: np.ndarray | None = None
+    flows: dict = field(default_factory=dict)      # further strips by name ('rill': (sheet, box, cols))
 
 
 def mask_rle(rows, w, h) -> np.ndarray:
@@ -88,14 +89,25 @@ def blob(cx, cy, rx, ry, seed=0, rough=0.18, w=None, h=None) -> np.ndarray:
 # ------------------------------------------------------------------------------------------------
 # light: sun pools on the lawn
 # ------------------------------------------------------------------------------------------------
-def sun(cv: np.ndarray, m: np.ndarray, heart: float = 10.0, fade: float = 4.0) -> None:
+def sun(cv: np.ndarray, m: np.ndarray, heart: float = 10.0, fade: float = 4.0, soft: bool = False) -> None:
     """A sun pool: the lawn's warm sibling at its own tone, the heart (`heart` texels in) a tone
-    up, a 2 x 2 checker `fade` texels wide at the edge (the one place dither is used: light)."""
+    up, a 2 x 2 checker `fade` texels wide at the edge (the one place dither is used: light).
+    `soft` (the soft grid's two-hue lawn): every hue moves one step warmer (cool to body, body to
+    warm, warm a tone up), so the lawn's blobs and mottle still show in the sun."""
     lawn = m & (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6)
     dist = ndi.distance_transform_edt(np.pad(m, 1))[1:-1, 1:-1]
     yy, xx = np.mgrid[0:cv.shape[0], 0:cv.shape[1]]
     chk = ((xx // 2 + yy // 2) % 2) == 0
     sel = lawn & ((dist > fade) | chk)
+    if soft:
+        from .palette import FI
+        cool = np.isin(cv // 8, [i for n, i in FI.items() if n in ('grass_cool', 'leaf_cool')])
+        warm = np.isin(cv // 8, [i for n, i in FI.items() if n in ('grass_warm', 'leaf_warm')])
+        a, b, c = sel & cool, sel & warm, sel & ~cool & ~warm
+        cv[a] = sib(cv[a], 'body')
+        cv[b] = np.minimum(cv[b] + 1, cv[b] - cv[b] % 8 + 5)
+        cv[c] = sib(cv[c], 'warm')
+        return
     cv[sel] = sib(cv[sel], 'warm')
     up = lawn & (dist > heart)
     cv[up] = step(cv[up], 1)
@@ -242,6 +254,279 @@ def to_codes(img) -> np.ndarray:
     L = np.where(PICKABLE[:, None], LUT.astype(int), 10 ** 6)       # never a named-only accent
     codes = np.array([int(((L - c) ** 2).sum(1).argmin()) for c in uniq])
     out[m] = codes[inv.ravel()]
+    return out
+
+
+def water_mask_soft(plan: dict, W: int, H: int) -> np.ndarray:
+    """The woodland's water on the soft grid (Matt, 27 Oct: "is there any water in eastward that you
+    can use as inspiration"; Eastward 13's canal, 37's pond): the river a channel of whole cells
+    and steady width, the fall's pool a rounded union of cells under the lip, both one outline with
+    rounded corners (softgrid.shape); the rill a narrow channel of steady width coming down from
+    the top edge in long rounded bends (softgrid.curve_texels) to the fall's lip. Texels."""
+    from . import softgrid as SG
+    sw = plan['water']['soft']
+    h, w = int(H * D), int(W * D)
+    cells = np.zeros(SG.grid_shape(h, w), bool)
+    r = sw['river']
+    cells |= SG.cells_route(r['points'], r['cells'], h, w)
+    cells |= SG.cells_rects(sw['pool'], h, w)
+    # (Matt, 27 Oct: "not a ruler") a few rounded cell-steps: the river widens and narrows by a
+    # cell and bends gently; the banks lumped 2 to 5 px over 10 to 26 px as natural water is
+    cells |= SG.cells_rects(r.get('add', []), h, w)
+    cells &= ~SG.cells_rects(r.get('cut', []), h, w)
+    lump = dict(amp=tuple(sw.get('amp', SG.AMP)), lump=tuple(sw.get('lump', SG.LUMP)))
+    m = SG.shape(cells, h, w, sw.get('seed', 402), r_out=1.3, r_in=0.6, **lump)
+    rl = sw['rill']
+    if rl.get('cells_plan'):
+        # (Matt, 27 Oct) the rill as the river at a smaller scale: one cell wide on cells, a few
+        # gentle one-cell offsets for its bends, rounded and lumped like the river's banks
+        rc = SG.cells_route(rl['points'], rl['cells_plan'], h, w)
+        mr = SG.shape(rc, h, w, sw.get('seed', 402) + 1, r_out=rl.get('r_out', 0.45), r_in=rl.get('r_in', 0.45), amp=tuple(rl.get('amp', SG.AMP)),
+                      lump=tuple(rl.get('lump', sw.get('lump', SG.LUMP))))
+        # a narrow channel's lumps step a few texels at a time, never a one-texel spur on its bank
+        mr = ndi.gaussian_filter(np.pad(mr, 8, mode='edge').astype(float), 2.2)[8:-8, 8:-8] > 0.5
+        # each bank wanders on its own by up to rl['wobble'] texels over 20 to 40 rows (the woodland
+        # review, 4 Nov: two parallel ruler-straight banks through the rubble read as a cut canal)
+        if rl.get('wobble'):
+            mr = wobble_banks(mr, rl['wobble'], sw.get('seed', 402) + 5)
+        m |= mr
+    else:
+        m |= SG.curve_texels(rl['points'], rl['cells'], h, w, rl['bend'], sw.get('seed', 402) + 1, rl.get('share', 0.95),
+                             rl.get('breathe', 0.0), amp=tuple(rl.get('amp', (0.0, 0.0))))
+    if rl.get('mouth'):
+        # wider where it meets the fall's lip
+        m |= SG.shape(SG.cells_rects([rl['mouth']], h, w), h, w, sw.get('seed', 402) + 2, r_out=1.0, r_in=0.6, **lump)
+    return m
+
+
+def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
+    """The ground the fall drops from (the woodland reviews, 4 Nov, after ground-rules.md: a
+    waterfall happens only at a tier edge or a rock face): plan['terrace'] raises the whole ground
+    north of its rim row, across the zone, by a rock face `face` world px tall (eastward-edges 2.3,
+    as the cliff core's swatch draws it: softground.ledge kind 'rock', the under-lip shade, the
+    streak band, lit boulders with moss in their joints, vines and tufts hanging from the lip,
+    fallen stones at the foot). The upper lawn keeps its own field (ledge's lighter sibling over a
+    whole lawn flattened its sun patches); the lip hangs in its own green. Where the face meets
+    the river its foot is wet rock down to the water's light waterline (no turf lip, no old bank).
+    `crevices` (world px column spans) are joints of a masonry stack laid over the face: dark
+    crevice stone with moss. Log steps carry the path down the face to a landing one cell deep,
+    the ground under it kept as it was (the bridge's north abutment). Returns the fallen stones
+    (img, anchor, foot) for the caller to seat."""
+    tr = plan.get('terrace')
+    if not tr:
+        return []
+    from . import softground as GD
+    from .palette import sib, is_fam
+    h, w = cv.shape
+    rim, fh = P(tr['y'], 0), P(tr['face'], 0)
+    top = np.zeros((h, w), bool)
+    top[:rim, :] = True
+    under = cv.copy()
+    rng = np.random.default_rng(tr.get('seed', 461))
+    # a clean lip with no hanging blades (eastward-edges 3.1; review round 3, R3-3), and moss caps on
+    # few crowns (R3-2: the moss goes into the joints below)
+    face, items, lip = GD.ledge(cv, top, fh, rng, seed=tr.get('seed', 461), kind=tr.get('kind', 'rock'),
+                                earth=tr.get('earth', 'crag'), roots=tr.get('vines', 1.0), tufts=0.0, shadow_px=P(5, 0),
+                                moss=tr.get('moss_caps', 0.04))
+    cv[:rim] = under[:rim]
+    # the stones fallen to the foot, each one calm mass with a dark underside like the face's odd
+    # larger boulder (review round 4, G4-1: pasted props.boulder4 read as cracked heaps)
+    from .palette import to_rgba as _rgba
+    calm = []
+    for k_, (img_, anc_, at_) in enumerate(items):
+        bw0, bh0 = img_.size
+        cw_ = int(np.clip(bw0 - 24, 16, 34))          # the stone itself, without boulder4's margin
+        dec_, anc2_ = GD.calm_boulder(cw_, max(9, int(cw_ * 0.64)), tr.get('seed', 461) * 7 + k_,
+                                      stone=tr.get('earth', 'crag'))
+        calm.append((Image.fromarray(_rgba(dec_), 'RGBA'), anc2_, at_))
+    items = calm
+    lw = lip & (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & np.isin(cv // 8, [FI.get('grass_warm', -1), FI.get('leaf_warm', -1)])
+    cv[lw] = sib(cv[lw], 'body')
+    # the river at the foot: open water as it was; between the face's foot and the water, wet rock
+    water_open = wm & np.isin(under // 8, [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI])
+    yy = np.arange(h)[:, None]
+    foot = np.where(face.any(0), h - 1 - np.argmax(face[::-1], 0), rim + fh)
+    # none of the river shows inside the face, above its foot (review round 5, P5-1: a lump of the
+    # river's mask left a chip of waterline in a rock joint, a slot under it and a tent in the shore)
+    water_open &= ~((yy >= rim) & (yy <= foot[None, :]))
+    first_w = np.where(water_open[rim:].any(0), np.argmax(water_open[rim:], 0) + rim, h)
+    # and the shore under the face runs on one line: where a column's water climbs above its
+    # neighbours' (a spike of the mask), the water starts at their row
+    has_w = first_w < h
+    ref_w = ndi.median_filter(np.where(has_w, first_w, h), size=P(9, 0), mode='nearest')
+    spike = has_w & (ref_w < h) & (first_w < ref_w - 1) & (first_w - foot <= P(6, 0))
+    for x_ in np.nonzero(spike)[0]:
+        water_open[first_w[x_]:ref_w[x_], x_] = False
+    first_w = np.where(spike, ref_w, first_w)
+    cv[water_open] = under[water_open]
+    gap = (yy > foot[None, :]) & (yy < first_w[None, :]) & (first_w[None, :] - foot[None, :] <= P(6, 0))
+    e_ = tr.get('earth', 'crag')
+    ec = e_ + '_cool' if e_ + '_cool' in FI else e_
+    cv[gap] = C(ec, 1)
+    cv[gap & (yy >= first_w[None, :] - 2)] = C(ec, 0)
+    # the spiked columns take the waterline and dark band of the nearest column that was not cut
+    for x_ in np.nonzero(spike)[0]:
+        for d_ in range(1, P(10, 0)):
+            xr_ = next((c_ for c_ in (x_ - d_, x_ + d_) if 0 <= c_ < w and not spike[c_] and first_w[c_] == first_w[x_]), None)
+            if xr_ is not None:
+                cv[first_w[x_]:first_w[x_] + 6, x_] = cv[first_w[xr_]:first_w[xr_] + 6, xr_]
+                break
+    # wet pebbles and the odd stone along the wet foot, each lit on its top (eastward-edges 3.2;
+    # review round 3, R3-4: the band was flat)
+    gys, gxs = np.nonzero(gap & (yy < first_w[None, :] - 1))
+    prng = np.random.default_rng(tr.get('seed', 461) + 7)
+    taken_x = []
+    for k_ in prng.permutation(len(gys)):
+        y_, x_ = int(gys[k_]), int(gxs[k_])
+        if any(abs(x_ - a_) < 9 for a_ in taken_x):
+            continue
+        taken_x.append(x_)
+        pw = int(prng.integers(2, 5))
+        for dx_ in range(pw):
+            X_ = x_ + dx_
+            if 0 <= X_ < w and gap[y_, X_]:
+                cv[y_, X_] = C(e_, 3 if dx_ < pw - 1 else 2)              # its lit top
+                if y_ + 1 < h and gap[y_ + 1, X_]:
+                    cv[y_ + 1, X_] = C(ec, 2)                             # its wet side
+    # the shade under the lip in horizontal slabs (eastward-edges 2.3's streak band): a few lit
+    # top edges and dark cracks, so the band is rock in shade, not one flat tone
+    r_ = np.random.default_rng(tr.get('seed', 461) + 11)
+    fld = ndi.gaussian_filter(r_.random((h, w // 5 + 1)), (0.7, 1.4))
+    fld = np.repeat((fld - fld.min()) / max(1e-6, fld.max() - fld.min()), 5, axis=1)[:, :w]
+    band = face & (yy >= rim) & (yy < rim + P(6, 0)) & np.isin(cv, [C(ec, 0), C(ec, 1)])
+    slab = band & (fld > 0.6)
+    cv[slab] = C(ec, 2)
+    cv[slab & ~GD.down(slab, 1)] = C(e_, 3)
+    cv[band & (fld < 0.22)] = C(ec, 0)
+    # moss in the dark joints and on the shaded undersides, in small tufts of different shapes
+    # (review round 3, R3-2; the leaf_cool ramp)
+    mrng = np.random.default_rng(tr.get('seed', 461) + 13)
+    dark = face & (yy > rim + P(5, 0)) & np.isin(cv, [C(ec, 0), C(e_, 0), C(ec, 1)])
+    dys, dxs = np.nonzero(dark)
+    placed_m = []
+    for k_ in mrng.permutation(len(dys))[: len(dys)]:
+        y_, x_ = int(dys[k_]), int(dxs[k_])
+        if any(abs(x_ - a_) < 22 and abs(y_ - b_) < 14 for a_, b_ in placed_m):
+            continue
+        placed_m.append((x_, y_))
+        tw, th_ = int(mrng.integers(3, 7)), int(mrng.integers(1, 3))
+        for j_ in range(th_ + 1):
+            for i_ in range(-(tw // 2) + (j_ % 2), tw - tw // 2 - (j_ % 2)):
+                Y_, X_ = y_ - j_, x_ + i_
+                if 0 <= Y_ < h and 0 <= X_ < w and face[Y_, X_] and cv[Y_, X_] % 8 <= 1:
+                    cv[Y_, X_] = C('leaf_cool', 2 if j_ == th_ else 1)
+        if len(placed_m) > len(dys) // 60:
+            break
+    # the odd larger boulder (30 to 40 px) every 150 to 250 px (2.3)
+    from . import props as P4_
+    brng = np.random.default_rng(tr.get('seed', 461) + 17)
+    keep_out = [(P(a_, 0), P(b_, 0)) for (a_, b_) in tr.get('keep_out', [])]
+    xb_ = int(brng.integers(40, 140))
+    while xb_ < w - 30:
+        if not any(a_ - 30 <= xb_ <= b_ + 30 for (a_, b_) in keep_out):
+            bw_ = brng.uniform(10.0, 13.3)
+            # one calm mass with a dark underside, not a cracked heap (review round 4, G4-1)
+            dec_, anc_ = GD.calm_boulder(P(bw_, 0), P(bw_ * brng.uniform(0.62, 0.75), 0), int(brng.integers(0, 10 ** 6)),
+                                         stone=e_)
+            fy_ = rim + fh - P(brng.uniform(3.0, 8.0), 0)
+            Xp, Yp = int(round(xb_ - anc_[0])), int(round(fy_ - anc_[1]))
+            hh_, ww_ = dec_.shape
+            sub_ = face[max(0, Yp):Yp + hh_, max(0, Xp):Xp + ww_]
+            d2 = dec_[max(0, -Yp):max(0, -Yp) + sub_.shape[0], max(0, -Xp):max(0, -Xp) + sub_.shape[1]]
+            d2[~sub_] = -1                                              # only on the face
+            DC.paste(cv, dec_, Xp, Yp)
+        xb_ += int(brng.integers(150, 251))
+    # ferns crossing the rim (8.1), where the plan names them
+    for (fx_, seed_) in tr.get('rim_plants', []):
+        img_, anc_, _a_ = P4_.fern4(D, seed=seed_)
+        DC.paste(cv, to_codes(img_), int(round(P(fx_, 0) - anc_[0])), int(round(rim + P(3, 0) - anc_[1])))
+    # the masonry stack's joints
+    fz = (yy >= rim) & (yy < rim + fh)
+    for (c0, c1) in tr.get('crevices', []):
+        jm = fz & (np.arange(w)[None, :] >= P(c0, 0)) & (np.arange(w)[None, :] < P(c1, 0))
+        cv[jm] = C('stone_cool', 0)
+        mo = jm & (GD.nz(h, w, 2.5, tr.get('seed', 461) + 9) > 0.62)
+        cv[mo] = C('leaf_cool', 1)
+        cv[mo & (GD.nz(h, w, 1.5, tr.get('seed', 461) + 10) > 0.6)] = C('leaf', 2)
+    st = tr.get('steps')
+    waterline = None
+    if st:
+        sx0, sx1 = P(st['x0'], 0), P(st['x1'], 0)
+        if st.get('pitch'):
+            # the foot set by the steps' pitch (eastward-edges 6.1: a short flight 5 to 6 world px a
+            # step; review round 4, L4-1: moving the foot up had tightened it to 4.3)
+            sfoot = rim - 2 + st.get('n', 5) * P(st['pitch'], 0)
+        else:
+            sfoot = P(tr['y'] + tr['face'] - st.get('landing', 8), 0)
+        # the waterline the landing runs down to: the river's first open row just east of the
+        # crossing, where the terrace's wet foot meets the water (the river's mask bulges north
+        # under the crossing; there it is landing, not water)
+        ecol = slice(min(w - 1, sx1 + P(2, 0)), min(w, sx1 + P(10, 0)))
+        waterline = int(np.median(first_w[ecol])) if (first_w[ecol] < h).any() else rim + fh + P(2, 0)
+        # the landing (review round 4, L4-1): open path from the steps' foot down to the waterline,
+        # where the bridge (painted after the terrace) sets its north abutment; the path takes its
+        # own texture from the rows above the rim, any other ground under it is the wet rock foot
+        xs_ = np.arange(w)[None, :]
+        land = (yy >= sfoot) & (yy < waterline) & (xs_ >= sx0 - P(1, 0)) & (xs_ < sx1 + P(1, 0))
+        # its top corners rounded into the face (eastward-edges 1.6), not a square notch
+        land &= (np.minimum(xs_ - (sx0 - P(1, 0)), (sx1 + P(1, 0) - 1) - xs_) + (yy - sfoot)) >= 3
+        # its sides lumpy where the face's rock meets the grass (up to five texels in and out, never
+        # a ruler-straight vertical; eastward-edges 1.4 and 3.3)
+        ly_ = np.arange(h)
+        wl_ = np.round(2.4 + 2.2 * np.sin(ly_ / 3.4 + 0.7) + 0.8 * np.sin(ly_ / 1.6 + 2.3)).clip(0, 5).astype(int)
+        wr_ = np.round(2.4 + 2.2 * np.sin(ly_ / 3.0 + 2.9) + 0.8 * np.sin(ly_ / 1.8 + 0.4)).clip(0, 5).astype(int)
+        rect_ = land.copy()
+        land &= (xs_ >= sx0 - P(1, 0) + wl_[:, None]) & (xs_ < sx1 + P(1, 0) - wr_[:, None])
+        # what the lumps take back is the face's rock, mirrored from beside the landing
+        xa_, xb_ = sx0 - P(1, 0), sx1 + P(1, 0)
+        for y_, x_ in zip(*np.nonzero(rect_ & ~land)):
+            xm_ = 2 * xa_ - x_ - 1 if x_ - xa_ < xb_ - x_ else 2 * xb_ - x_ - 1
+            if 0 <= xm_ < w:
+                cv[y_, x_] = cv[y_, xm_]
+        cv[land] = under[land]
+        lys, lxs = np.nonzero(land)
+        waters_ = [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI]
+        for y_, x_ in zip(lys, lxs):
+            src_ = under[rim - 3 - ((y_ - sfoot) % P(8, 0)), x_]
+            if src_ >= 0 and is_fam(np.array(src_), 'path'):
+                cv[y_, x_] = src_
+            elif cv[y_, x_] < 0 or cv[y_, x_] // 8 in waters_:
+                cv[y_, x_] = C(ec, 1)
+        # where the face's side meets the landing: its darkest line, broken (3.3), and the grass
+        # beside it a step into shade
+        side_ = land & ~(np.roll(land, 1, 1) & np.roll(land, -1, 1))
+        for y_, x_ in zip(*np.nonzero(side_)):
+            if y_ - sfoot < 2:
+                continue
+            xo_ = x_ - 1 if not land[y_, x_ - 1] else x_ + 1
+            if 0 <= xo_ < w and not land[y_, xo_] and (y_ + x_) % 7 != 0:
+                cv[y_, xo_] = C(ec, 0)
+            if is_fam(np.array(cv[y_, x_]), 'grass') or is_fam(np.array(cv[y_, x_]), 'leaf'):
+                cv[y_, x_] = cv[y_, x_] - 1 if cv[y_, x_] % 8 > 1 else cv[y_, x_]
+        GD.log_steps(cv, sx0, sx1, rim - 2, sfoot, st.get('n', 5), np.random.default_rng(tr.get('seed', 461) + 1))
+        items = [it for it in items if not (sx0 - P(4, 0) <= it[2][0] <= sx1 + P(4, 0))]
+    return items, waterline
+
+
+def wobble_banks(m: np.ndarray, amp: float, seed: int) -> np.ndarray:
+    """A mostly north-south channel with its west and east banks each moved by a smooth wander of
+    up to `amp` texels (two incommensurate waves a bank), so its sides never run ruler-straight."""
+    rng = np.random.default_rng(seed)
+    h, w = m.shape
+    yy = np.arange(h, dtype=float)
+    def wave():
+        p1, p2 = rng.uniform(20, 40), rng.uniform(11, 19)
+        a1, a2 = rng.uniform(0, 6.3), rng.uniform(0, 6.3)
+        return np.round(amp * (0.7 * np.sin(yy / p1 * 2 * np.pi + a1) + 0.3 * np.sin(yy / p2 * 2 * np.pi + a2))).astype(int)
+    dl, dr = wave(), wave()
+    out = np.zeros_like(m)
+    for y in range(h):
+        for a, b in zip(*[np.nonzero(np.diff(np.concatenate([[0], m[y].astype(np.int8), [0]])) == k)[0] for k in (1, -1)]):
+            a2, b2 = max(0, a + dl[y]), min(w, b + dr[y])
+            if b2 - a2 >= max(4, (b - a) // 2):
+                out[y, a2:b2] = True
+            else:
+                out[y, a:b] = True
     return out
 
 
@@ -628,7 +913,7 @@ def _wnoise(h, w, scale, seed):
     return z[:h, :w]
 
 
-def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, shade: np.ndarray) -> None:
+def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, shade: np.ndarray, soft: bool = False) -> None:
     """The lawn's ground detail at density 3 and up, drawn into the codes before the shadows so
     shade falls over it (26 Oct, fix queue: the scene gate found large flat stretches of lawn, the
     glade one tone and every crown's shadow a rug). Clustered where it would gather, calm between,
@@ -660,6 +945,8 @@ def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, sh
     cmin = ndi.minimum_filter(cv, size=win)
     calm = lawn & (cmax == cmin) & (same > 0.9)
     calm = ndi.binary_dilation(calm, iterations=P(2)) & lawn
+    if soft:
+        calm[:] = False            # the soft grid's lawn (softground.lawn) carries its own field and marks
     nA = _wnoise(h, w, 7.0, 41)
     nB = _wnoise(h, w, 30.0, 47)
     gather = nB + 1.2 * thin
@@ -695,6 +982,8 @@ def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, sh
     grid = [(gy, gx) for gy in range(0, h, sp_y) for gx in range((gy // sp_y) % 2 * (sp_x // 2), w, sp_x)]
     grid += [(gy, gx) for gy in range(sp_y // 2, h, sp_y) for gx in range(((gy // sp_y) % 2 * (sp_x // 2) + sp_x // 4), w, sp_x)
              if shade[gy, min(w - 1, gx)]]
+    if soft:
+        grid = []
     for (gy, gx) in grid:
         y0 = gy + int(rng.integers(-1, 2))
         x0 = gx + int(rng.integers(-2, 3))
@@ -820,6 +1109,120 @@ def tree_dims(master: str) -> dict:
     return dict(w=W1, h=H1, tw=int(np.clip(tw - 2, 3, W1 * 0.2)), ch=int(ch * 0.9))
 
 
+def monolith(w: float, h: float, seed: int, fam: str = 'stone'):
+    """One standing stone (Matt, 27 Oct: the ring "looks a bit odd"): a single upright slab w x h world
+    px, its crown worn round and leaning a touch, seen from the front a little above: the top a
+    narrow lit cap, the front face lit on the west and falling into shade to the east, the east
+    edge dark, a base band at the foot; weathering in flakes and one crack, lichen in a few small
+    patches on the lit side, moss at the foot. Returns (picture, anchor at the foot, alpha)."""
+    rng = np.random.default_rng(seed)
+    pad = P(2)
+    Wt, Ht = P(w) + 2 * pad, P(h) + 2 * pad
+    a = np.full((Ht, Wt), -1, np.int32)
+    yy, xx = np.mgrid[0:Ht, 0:Wt].astype(float)
+    x0, x1 = pad, pad + P(w)
+    yb, yt = Ht - pad, pad
+    cw = (x1 - x0) / 2.0
+    lean = rng.uniform(-0.12, 0.12) * cw
+    t = (yb - yy) / max(1.0, yb - yt)                                 # 0 at the foot, 1 at the crown
+    cx = (x0 + x1) / 2.0 + lean * t
+    half = cw * (1.0 - 0.10 * t) + (TN_noise(Ht, seed) - 0.5) * 1.4   # a slight taper, a worn edge
+    crown_r = cw * 0.95
+    u = (xx - cx) / np.maximum(half, 1)                               # -1 west .. 1 east
+    # a rough slab's top, not a headstone's arch: sloping one way, its shoulders broken off
+    sl = rng.choice([-1.0, 1.0]) * rng.uniform(0.25, 0.5)
+    top_y = yt + crown_r * (0.55 + sl * u * 0.6) + crown_r * 0.55 * np.clip(np.abs(u) - 0.45, 0, 1) ** 1.5 * 2.2
+    top_y += (TN_noise2(Ht, Wt, seed + 7)[0][None, :] - 0.5) * 2.0
+    body = (np.abs(xx - cx) <= half) & (yy <= yb) & (yy >= top_y)
+    # the face's planes: the light falls off to the east, broken into weathered plates (a slow
+    # blotch field), so the stone reads as rough rock, not a turned column
+    blot = TN_noise2(Ht, Wt, seed + 2)
+    lv = 3.2 - 1.5 * u + (blot - 0.5) * 1.6 + 0.4 * t
+    tone = np.clip(np.round(lv), 1, 4).astype(int)
+    tone = np.where(u > 0.78, 1, tone)
+    # the cap: the worn top seen from above, lit on the west, its east rim a dark arris
+    capm = body & (yy < top_y + crown_r * 0.55)
+    ct = np.clip(np.round(4.5 - 1.3 * u + (TN_noise2(Ht, Wt, seed + 3) - 0.5) * 1.8), 3, 5).astype(int)
+    tone = np.where(capm, ct, tone)
+    rim = capm & ~np.roll(capm, -1, 0) & (u > -0.1)
+    tone = np.where(rim, 2, tone)
+    tone = np.where(body & (yy >= yb - P(1.2)), np.maximum(1, tone - 1), tone)  # the base, a tone down
+    fams = np.where(tone >= 4, FI[fam + '_warm'], np.where(tone <= 1, FI[fam + '_cool'], FI[fam]))
+    a[body] = (fams * 8 + tone)[body]
+    # flakes: small lit or dark plates down the face, a crack with its lit lip
+    # flakes: plates of 2 to 4 texels a tone down with a lit upper edge (where a flake has come
+    # away), pits, and grain specks, over the face and the cap
+    for _ in range(int(P(w) * P(h) / 26)):
+        fy, fx = int(rng.uniform(yt + 2, yb - P(2))), int(rng.uniform(x0 + 1, x1 - 3))
+        L = int(rng.integers(2, 5))
+        if not (1 <= fy < Ht - 2 and 0 <= fx < Wt - L - 1) or not body[fy, fx:fx + L].all():
+            continue
+        r_ = rng.random()
+        if r_ < 0.55:
+            a[fy, fx:fx + L] = step(a[fy, fx:fx + L], -1)
+            if body[fy - 1, fx:fx + L].all():
+                a[fy - 1, fx:fx + L] = step(a[fy - 1, fx:fx + L], 1)
+        elif r_ < 0.8:
+            a[fy:fy + 2, fx:fx + 2] = step(a[fy:fy + 2, fx:fx + 2], -1)
+            a[fy, fx] = step(a[fy, fx], -1)
+        else:
+            a[fy, fx:fx + L] = step(a[fy, fx:fx + L], 1)
+    ky = int(rng.uniform(yt + crown_r * 1.2, yb - P(4)))
+    kx = int(cx[ky, 0] + rng.uniform(-0.2, 0.3) * cw) if ky < Ht else x0 + 2
+    for j in range(int(P(5))):
+        y_, x_ = ky + j, kx + (j // 3) * (1 if seed % 2 else -1)
+        if 0 <= y_ < Ht and 0 <= x_ < Wt - 1 and body[y_, x_]:
+            a[y_, x_] = C(fam + '_cool', 0)
+            if body[y_, x_ - 1]:
+                a[y_, x_ - 1] = C(fam + '_warm', 4)
+    # the lit planes are the most weathered: their grain shows as short dashes a tone down and the
+    # odd bright grain, so no lit plane is one smooth patch (and it keeps a top and a front plane)
+    lit_ = body & (a % 8 >= 4) & ((a // 8) != FI['leaf'])
+    ly_, lx_ = np.nonzero(lit_)
+    for kk in rng.permutation(len(ly_))[: len(ly_) // 7]:
+        y_, x_ = int(ly_[kk]), int(lx_[kk])
+        if x_ + 1 < Wt and lit_[y_, x_ + 1]:
+            d_ = -1 if rng.random() < 0.7 else 1
+            a[y_, x_:x_ + 2] = step(a[y_, x_:x_ + 2], d_)
+    # lichen on the lit side, moss at the foot
+    for _ in range(3):
+        ly, lx = rng.uniform(yt + crown_r, yb - P(4)), rng.uniform(x0, cx.mean())
+        lm = body & (((xx - lx) / P(1.6)) ** 2 + ((yy - ly) / P(1.0)) ** 2 <= 1) & (rng.random((Ht, Wt)) < 0.8)
+        a[lm] = np.where(yy[lm] < ly, C('lichen' if 'lichen' in FI else 'leaf_warm', 4), C('lichen' if 'lichen' in FI else 'leaf_warm', 3))
+    mm = body & (yy >= yb - P(2.2) - 3 * TN_noise2(Ht, Wt, seed + 5)) & (TN_noise2(Ht, Wt, seed) > 0.58)
+    a[mm] = np.where(yy[mm] < yb - P(1.2), C('leaf', 4), C('leaf', 3))
+    # the outline: dark on the east and the foot, the west edge a lit rim
+    ed = body & ~ndi.binary_erosion(body)
+    east = ed & (u > 0)
+    a[east] = C(fam + '_cool', 0)
+    a[ed & (yy >= yb - 1)] = C(fam + '_cool', 0)
+    west = ed & (u <= 0) & (yy < yb - 1)
+    a[west] = C(fam + '_warm', 5) if (fam + '_warm') in FI else C(fam, 5)
+    from .palette import to_rgba
+    img = Image.fromarray(to_rgba(a), 'RGBA')
+    alpha = a >= 0
+    return img, ((x0 + x1) / 2.0, yb - 1), alpha
+
+
+def _wn(h: int, w: int, sigma: float, seed: int) -> np.ndarray:
+    v = ndi.gaussian_filter(np.random.default_rng(seed).random((h, w)), sigma)
+    return (v - v.min()) / max(1e-6, v.max() - v.min())
+
+
+def TN_noise(H: int, seed: int) -> np.ndarray:
+    """A slow wander per row (0..1), the same for every column: the stone's worn outline."""
+    rng = np.random.default_rng(seed + 9)
+    v = ndi.gaussian_filter1d(rng.random(H), 2.0)
+    v = (v - v.min()) / max(1e-6, v.max() - v.min())
+    return v[:, None]
+
+
+def TN_noise2(H: int, W: int, seed: int) -> np.ndarray:
+    rng = np.random.default_rng(seed + 13)
+    v = ndi.gaussian_filter(rng.random((H, W)), 1.2)
+    return (v - v.min()) / max(1e-6, v.max() - v.min())
+
+
 def sprite(kind: str, recipe: dict, seed: int):
     """(picture, anchor (texels: the foot), alpha, shadow extra) for one kind."""
     paint = recipe['paint']
@@ -839,6 +1242,20 @@ def sprite(kind: str, recipe: dict, seed: int):
     if paint == 'boulder':
         img, anc, a = P4.boulder4(D, recipe['size'][0], recipe['size'][1], seed=seed, fam=recipe.get('fam', 'stone'),
                                   moss=recipe.get('moss', 'top'))
+    elif paint == 'monolith':
+        img, anc, a = monolith(recipe['size'][0], recipe['size'][1], seed, fam=recipe.get('fam', 'stone'))
+        return img, anc, a, None
+    elif paint in ('standing', 'lintel'):
+        # the moon circle's ancient stones and its fallen capstone (rocks.py, Matt 27 Oct 11:08)
+        from . import rocks as RK
+        from .palette import to_rgba
+        if paint == 'standing':
+            codes, anc = RK.standing_stone(recipe['size'][0], recipe['size'][1], seed, lean=recipe.get('lean', 0.0),
+                                           broken=recipe.get('broken', False), carved=recipe.get('carved'),
+                                           squat=recipe.get('squat', False))
+        else:
+            codes, anc = RK.lintel(recipe['size'][0], recipe['size'][1], seed)
+        return Image.fromarray(to_rgba(codes), 'RGBA'), anc, codes >= 0, None
     elif paint == 'stump':
         img, anc, a = P4.stump4(D, seed=seed)
     elif paint == 'log':
@@ -858,32 +1275,73 @@ def terrain(plan: dict, layers: dict) -> tuple:
     w, h = int(W * D), int(H * D)
     cv, _hp, _occ = SC.render()
     cv = cv[:h, :w].copy()
+    soft_lawn = np.zeros(cv.shape, bool)
+    if D >= HD:
+        # the soft grid's lawn (softground.lawn, 26 Oct): a calm field of two sibling hues, a low
+        # mottle and loose clumps of tufts in place of the tiles' lawn, wherever the tiles laid turf
+        from . import softground as GD
+        lawn_ = GD.lawn(h, w, 977)
+        soft_lawn = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6)
+        cv[soft_lawn] = lawn_[soft_lawn]
     layers['lawn'] = cv.copy()
     pl = plan['places']
     g = pl['glade']
-    sun(cv, blob(*g['at'], *g['r'], seed=g['seed'], rough=g['rough'], w=w, h=h), heart=10 ** 6, fade=P(3))
+    sun(cv, blob(*g['at'], *g['r'], seed=g['seed'], rough=g['rough'], w=w, h=h), heart=10 ** 6, fade=P(3), soft=D >= HD)
     s = pl['sun']
-    sun(cv, blob(*s['at'], *s['r'], seed=s['seed'], rough=s['rough'], w=w, h=h), heart=P(4), fade=P(2))
+    sun(cv, blob(*s['at'], *s['r'], seed=s['seed'], rough=s['rough'], w=w, h=h), heart=P(4), fade=P(2), soft=D >= HD)
     for (lx, ly, rx, ry) in pl['light_pools']:
-        sun(cv, blob(lx, ly, rx, ry, seed=int(lx * 7 + ly), rough=0.3, w=w, h=h), heart=P(5), fade=P(2))
+        sun(cv, blob(lx, ly, rx, ry, seed=int(lx * 7 + ly), rough=0.3, w=w, h=h), heart=P(5), fade=P(2), soft=D >= HD)
     paths_m = np.zeros(cv.shape, bool)
-    for k, p in enumerate(plan['paths']):
+    if D >= HD:
+        # the path network on the soft grid (Matt, 26 Oct): each path's plan in whole cells (two
+        # for a path, one for a narrow spur), long straight runs, one rounded and lumped outline for
+        # the network, packed earth inside (softground.dirt), the turf fraying over its edge
+        from . import softgrid as SG
+        cells_ = np.zeros(SG.grid_shape(h, w), bool)
+        for p in plan['paths']:
+            if not p.get('bend'):
+                cells_ |= SG.cells_route(p['points'], max(1, int(round(2 * p['radius'] / 8.0))), h, w)
+        net = SG.shape(cells_, h, w, 41, r_out=SG.R_TURN_OUT, r_in=SG.R_TURN_IN)
+        # desire lines (Matt, 27 Oct): straight runs, turns and offsets as wide rounded bends
+        for k_, p in enumerate(plan['paths']):
+            if p.get('bend'):
+                net |= SG.curve_texels(p['points'], max(1, int(round(2 * p['radius'] / 8.0))), h, w, p['bend'], 47 + k_)
+        net &= is_fam(cv, 'grass') | is_fam(cv, 'leaf')
+        turf0 = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~net
+        GD.dirt(cv, net, 43, fam='path', cell=12)
+        GD.sunken_edge(cv, net, turf0, np.random.default_rng(45))
+        soft_lawn |= ndi.binary_dilation(net, iterations=6)
+        paths_m |= net
+    for k, p in enumerate(plan['paths'] if D < HD else []):
         if D >= HD:
             paths_m |= path_hd(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0, seed=k, spur=p.get('spur', False))
         else:
             SC.worn2(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0)
-    if D >= HD and paths_m.any():
-        # the network's edge, once round its union: dark under the turf's north and west lip, the
-        # turf south of it lit (no rim line left inside where two pieces join)
-        from . import softedge as SE
-        SE.rim(cv, paths_m, (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~paths_m)
+
     co, ci = pl['circle_out'], pl['circle_in']
     ring = blob(*co['at'], *co['r'], seed=co['seed'], rough=co['rough'], w=w, h=h) & \
         ~blob(*ci['at'], *ci['r'], seed=ci['seed'], rough=ci['rough'], w=w, h=h)
-    trodden(cv, ring)
+    if D >= HD and co.get('worn'):
+        # (Matt, 27 Oct 11:08: the dirt ring "doesn't fit the path") the ring worn into the grass
+        # just inside the stones, the path's own packed earth and stones, its width uneven, grass
+        # growing back over it in places, meeting the spur from the path at the entrance
+        from . import softground as GD
+        turf_r = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~ring
+        lawn0 = layers['lawn']
+        GD.dirt(cv, ring, 451, fam='path', cell=11, stones=0.6)
+        Yg, Xg = np.mgrid[0:h, 0:w]
+        regrow = ring & (_wn(h, w, 9.0, 452) > 0.66) & ((Xg / D) < co['at'][0] + co['r'][0] * 0.6)
+        cv[regrow] = lawn0[regrow]
+        GD.sunken_edge(cv, ring & ~regrow, turf_r | regrow, np.random.default_rng(453))
+    else:
+        trodden(cv, ring)
     layers['places'] = cv.copy()
     hd = D >= HD
-    wm = water_mask_hd(plan, W, H) if hd else texels(mask_rle(plan['water']['water_rle'], W, H))
+    soft_w = hd and 'soft' in plan['water']
+    if soft_w:
+        wm = water_mask_soft(plan, W, H)
+    else:
+        wm = water_mask_hd(plan, W, H) if hd else texels(mask_rle(plan['water']['water_rle'], W, H))
     rock = texels(mask_rle(plan['rock']['rock_rle'], W, H))
     scree(cv, plan['rock']['talus']['depth'], wm)
     for b in sorted(plan['rock']['talus']['boulders'], key=lambda b: b['at'][1]):
@@ -891,24 +1349,87 @@ def terrain(plan: dict, layers: dict) -> tuple:
     f = plan['water']['fall']
     br = pl['bridge']
     if hd:
-        WA.paint_hd(cv, wm)            # (no reeds at density 3: their stalks bit stairs into the bank)
-        footbridge_hd(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)
+        if soft_w:
+            # the soft grid's water (softground.water, the swatch's river): the far bank's earth
+            # face under the grass lip, the light waterline, the depth band, calm water with
+            # sparse ripples along the flow, reeds and rushes at the edges; the footbridge spans
+            # the river bank to bank at a straight crossing, on an abutment in each bank
+            from . import softground as GD
+            # the fall's run-in stays clear: no stone, tongue, reed or rush in the channel's last
+            # stretch above the lip or on its banks (review round 3, R3-1: a bank stone sat over the
+            # channel's east third just above the lip)
+            ff = plan['water']['fall']
+            run_in = np.zeros_like(wm)
+            run_in[P(ff['y0'] - 14, 0):P(ff['y0'], 0) + 2, P(ff['x0'] - 6, 0):P(ff['x0'] + ff['w'] + 6, 0)] = True
+            items = GD.water(cv, wm, 402, bank_h=P(3.4, 0), flow='auto', stones=plan['water']['soft'].get('stones', 0.0),
+                             reeds=plan['water']['soft'].get('reeds', 0.8), rush_clumps=plan['water']['soft'].get('rush_clumps'),
+                             clear=run_in)
+            # a few of the rubble band's stones on the rill's rims (the woodland review, 4 Nov), laid
+            # with the bank stones so each one standing in the water gets its wet contact
+            from . import props as P4_
+            for (sx_, sy_, sw_, sd_) in plan['water']['soft'].get('rim_stones', []):
+                img_, anc_, _a = P4_.boulder4(D, sw_, sw_ * 0.62, seed=sd_, moss='top' if sd_ % 2 else None)
+                items.append((img_, anc_, (sx_ * D, sy_ * D)))
+            # the turf at the water's edge is short and even (no dark blades standing on the bank's
+            # line, which would fray it into spurs)
+            nearw = ndi.binary_dilation(wm, iterations=P(3)) & ~wm
+            grassy_ = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 <= 2) & nearw
+            cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
+            GD.tidy_bank(cv, wm)
+            # stones breaking the banks, laid into the ground with their shade; one standing in the
+            # water gets its wet contact (softground.seat_stones, eastward-edges.md 5.3a); on the
+            # rill each keeps to the outer third of the channel on its own bank, and never faces a
+            # stone on the other bank within a cell (review round 4, L4-2: they read as a weir)
+            GD.seat_stones(cv, wm, GD.keep_to_banks([(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
+                                                     for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1])], wm),
+                           lambda c, d, x, y: DC.paste(c, d, x, y, shadow=True, shadow_dx=P(1), shadow_dy=P(0.5)))
+            fallen, waterline = terrace(cv, plan, wm)
+            # the bridge after the terrace, on the final waterline (review round 4, L4-1; round 3's
+            # R3-5 painted it first, and the terrace's landing put its old north end back): its north
+            # abutment starts at the water's edge, 10 texels (3.3 world px) onto the land, its deck 8
+            # (2.7 world px, logic.bridge_span asks 0.1 H), so the landing above it is a cell of path
+            wopen = wm & np.isin(cv // 8, [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI])
+            if waterline is not None:
+                wopen[:waterline] = False
+            GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wopen, np.random.default_rng(12),
+                          north=tuple(br.get('north', (14, 10))))
+            if fallen:
+                GD.seat_stones(cv, wm, [(to_codes(img_), int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])))
+                                        for (img_, anc_, (fx_, fy_)) in sorted(fallen, key=lambda it: it[2][1])],
+                               lambda c, d, x, y: DC.paste(c, d, x, y, shadow=True, shadow_dx=P(1), shadow_dy=P(0.5)))
+        else:
+            WA.paint_hd(cv, wm)            # (no reeds at density 3: their stalks bit stairs into the bank)
+            footbridge_hd(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)
         # the spring's heap: the pilot's boulders (props.boulder4), back to front, the lip stone
         # first; moss grows in from their tops
         # the rill's channel between the stones stays open water down to the lip
         chan = wm.copy()
         chan[P(f['y0'], 0):] = False
         chan[:P(f['y0'] - 40, 0)] = False
+        if soft_w and f.get('face'):
+            from . import rocks as RK
+            RK.face(cv, *f['face'], seed=f.get('seed', 11) + 3)
         for b in sorted(plan['rock']['heap'], key=lambda b: b['at'][1]):
-            img, anc, _a = P4.boulder4(D, b['size'][0], b['size'][1], seed=b['seed'])
-            dec = to_codes(img)
+            if 'shape' in b:
+                # the cascade's rocks (rocks.py): slabs stepping down beside the fall, rounded
+                # boulders of different sizes at its edges and foot
+                from . import rocks as RK
+                dec, anc = RK.rock(b['size'][0], b['size'][1], b['seed'], flat=b['shape'] == 'slab',
+                                   moss=0.6 if b.get('moss') else 0.0)
+            else:
+                img, anc, _a = P4.boulder4(D, b['size'][0], b['size'][1], seed=b['seed'])
+                dec = to_codes(img)
             X, Y = int(round(b['at'][0] * D - anc[0])), int(round(b['at'][1] * D - anc[1]))
             hh, ww = dec.shape
             sub = chan[max(0, Y):Y + hh, max(0, X):X + ww]
             dec[max(0, -Y):max(0, -Y) + sub.shape[0], max(0, -X):max(0, -X) + sub.shape[1]][sub] = -1
             DC.paste(cv, dec, X, Y, shadow=True, shadow_dx=P(2), shadow_dy=P(1))
         WA.wet_rock(cv, f['x0'], f['w'], f['y0'] - 2, f['y1'])
-        WA.fall_hd(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
+        if soft_w:
+            from . import rocks as RK
+            layers['plunge'] = RK.fall(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
+        else:
+            WA.fall_hd(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
     else:
         WA.paint(cv, wm)
         footbridge(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)
@@ -919,7 +1440,7 @@ def terrain(plan: dict, layers: dict) -> tuple:
         SC.reeds(cv)
     layers['water'] = cv.copy()
     # no speckle: a lone pixel takes its most common neighbour (outlines and water excepted)
-    keep = (cv % 8 >= 6) | np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']])
+    keep = (cv % 8 >= 6) | np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']]) | soft_lawn
     for _ in range(2):
         Pd = np.pad(cv, 1, mode='edge')
         nb = np.stack([Pd[:-2, 1:-1], Pd[2:, 1:-1], Pd[1:-1, :-2], Pd[1:-1, 2:]])
@@ -957,6 +1478,11 @@ def foot_at_bottom_centre(img, anc, a, ex):
     return out, (ax + left, ay + top), na, ex
 
 
+def RK_PLUNGE_FRAMES() -> int:
+    from . import rocks as RK
+    return RK.PLUNGE_FRAMES
+
+
 def build() -> Zone:
     plan, biome = ctx.PLAN, ctx.BIOME
     layers = {}
@@ -964,8 +1490,13 @@ def build() -> Zone:
     h, w = cv.shape
     recipes = biome['recipes']
     sprites, objects, things, casts, tcasts = {}, [], [], [], []
-    for k, kind in enumerate(sorted({o[1] for o in plan['objects']})):
+    # (a kind whose recipe is marked own_seed does not take a place in the count, so adding one
+    # never reshuffles the others' drawings)
+    k = 0
+    for kind in sorted({o[1] for o in plan['objects']}):
         sprites[kind] = sprite(kind, recipes[kind], 700 + k)
+        if not recipes[kind].get('own_seed'):
+            k += 1
         if D >= HD:
             sprites[kind] = foot_at_bottom_centre(*sprites[kind])
     for (oid, kind, x, y, ow, oh) in plan['objects']:
@@ -1050,7 +1581,7 @@ def build() -> Zone:
         shade = np.zeros((h, w), bool)
         for m in casts:
             shade |= m
-        ground_detail_hd(cv, plan, trees, h, w, shade)
+        ground_detail_hd(cv, plan, trees, h, w, shade, soft=True)
     G = CO.ground_from_codes(cv, D)
     CO.cast_shadows(G, casts, tcasts, things + [(l[0], l[1], l[2], l[3]) for l in low if l[4]], D)
     ground = G.rgba()
@@ -1069,8 +1600,42 @@ def build() -> Zone:
         box[P(y0, 0):P(y1, 0), P(x0, 0):P(x1, 0)] = True
         moving &= box
     frames = animate.water(codes, moving, still & moving, D, thin=D >= HD)
-    flow = animate.pack(frames)
-    return Zone(ground=ground, objects=objects, sprites={k: v[0] for k, v in sprites.items()}, flow=flow, night=None,
+    if layers.get('plunge') and len(frames) == RK_PLUNGE_FRAMES():
+        # the fall's foam churns (the woodland review, 4 Nov: it stood still in 5 of 8 frames):
+        # rocks.plunge redrawn each frame over what lies under it, only what moved, frame 0 empty
+        from . import rocks as RK
+        from .palette import LUT
+        info = layers['plunge']
+        bx0, by0, bx1, by1 = info['box']
+        for fr, ov in zip(frames, RK.plunge_frames(codes, info, len(frames))):
+            sel = ov >= 0
+            region = fr[by0:by1, bx0:bx1]
+            region[sel, :3] = LUT[ov[sel]][:, :3]
+            region[sel, 3] = 255
+    # nothing moves over what is not water in the final ground (review round 4, F4-1): not a
+    # bridge's deck, timber, the wet rock foot, reeds, stones or faces (their codes), and not
+    # a decal pasted onto the water after the codes were taken (where the picture is not its code)
+    from .palette import LUT as LUT_
+    painted = (np.asarray(ground)[..., :3].astype(np.int16) != LUT_[np.where(codes >= 0, codes, 0)][..., :3].astype(np.int16)).any(-1)
+    frames = animate.keep_to(frames, animate.wet_codes(codes) & ~painted)
+    # one strip per stretch of water, each cropped to what moves in it (review round 3, R3-6: one
+    # strip over the rill and the stream was 1576 x 3736, about 24 MB decoded on a phone for about
+    # a thousand moving texels a frame): plan water.strips names the extra ones by box (world px),
+    # the main strip keeps the rest
+    flows = {}
+    rest = [f.copy() for f in frames]
+    for name, (sx0, sy0, sx1, sy1) in sorted(plan['water'].get('strips', {}).items()):
+        part = []
+        for f_ in rest:
+            fr_ = np.zeros_like(f_)
+            fr_[P(sy0, 0):P(sy1, 0), P(sx0, 0):P(sx1, 0)] = f_[P(sy0, 0):P(sy1, 0), P(sx0, 0):P(sx1, 0)]
+            f_[P(sy0, 0):P(sy1, 0), P(sx0, 0):P(sx1, 0)] = 0
+            part.append(fr_)
+        pk = animate.pack(part)
+        if pk:
+            flows[name] = pk
+    flow = animate.pack(rest)
+    return Zone(ground=ground, objects=objects, sprites={k: v[0] for k, v in sprites.items()}, flow=flow, night=None, flows=flows,
                 layers=layers, codes=codes)
 
 

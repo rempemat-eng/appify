@@ -7,6 +7,7 @@ that loses a calibration fault, or starts flagging clean art, fails here first.
 """
 from __future__ import annotations
 
+import datetime
 import json
 import hashlib
 import os
@@ -58,7 +59,107 @@ class Scale(unittest.TestCase):
         self.assertEqual(core.estimate_scale(art)[0], 1.0)
 
 
+class Occlusion(unittest.TestCase):
+    def test_a_ground_layer_piece_is_not_sorted_against_people(self):
+        # (woodland review, round 7) a sprite whose y-sort point is far from its drawn feet is a
+        # fault, unless it lies on a layer under the people (z_index below 0: a fall's loop, a bridge)
+        a = np.zeros((60, 20, 4), np.uint8)
+        a[:, :, 3] = 255
+        from scripts.review import scene as SC
+        z = SC.Zone('t', (100, 100), None)
+        z.sprites = [SC.Sprite('fall', 'kit/props/art/waterfall_3_tall_flow.png', (50, 30), (40, 0, 60, 60), -5, True, a, 'Props'),
+                     SC.Sprite('tree', 'zones/woodland/art/oak.png', (50, 30), (40, 0, 60, 60), 0, True, a, 'Props')]
+        names = [f.subject for f in SC.check_occlusion(z)]
+        self.assertEqual(names, ['tree'])
+
+    def test_a_scene_sprite_takes_its_parents_z(self):
+        # (round 8, L8-1) outside the kit too, a sprite's z is its effective z: a floor plate under
+        # a Node2D at z_index -9 is on the ground layer, as Godot draws it, including through an
+        # instanced scene, unless a node sets z_as_relative false
+        import tempfile
+        from scripts.review import scene as SC
+        with tempfile.TemporaryDirectory() as d:
+            png = os.path.join(d, 'plate.png')
+            Image.fromarray(np.full((8, 8, 4), 255, np.uint8)).save(png)
+            sub = os.path.join(d, 'piece.tscn')
+            with open(sub, 'w') as f:
+                f.write('[gd_scene format=3]\n\n[ext_resource type="Texture2D" path="%s" id="t"]\n\n'
+                        '[node name="Piece" type="Node2D"]\nz_index = 1\n\n'
+                        '[node name="Deck" type="Sprite2D" parent="."]\ntexture = ExtResource("t")\n\n'
+                        '[node name="Top" type="Sprite2D" parent="."]\ntexture = ExtResource("t")\n'
+                        'z_index = 4\nz_as_relative = false\n' % png)
+            top = os.path.join(d, 'zone.tscn')
+            with open(top, 'w') as f:
+                f.write('[gd_scene format=3]\n\n[ext_resource type="PackedScene" path="%s" id="p"]\n\n'
+                        '[node name="Zone" type="Node2D"]\n\n'
+                        '[node name="Floor" type="Node2D" parent="."]\nz_index = -9\n\n'
+                        '[node name="If_up" type="Node2D" parent="Floor"]\n\n'
+                        '[node name="Plate" type="Sprite2D" parent="Floor/If_up"]\nz_index = 2\n\n'
+                        '[node name="Bridge" parent="Floor" instance=ExtResource("p")]\n' % sub)
+            nodes = {e['key']: e['z'] for e in SC._walk_nodes(SC.parse_tscn(top), '')}
+        self.assertEqual(nodes['Floor/If_up/Plate'], -7)
+        self.assertEqual(nodes['Floor/Bridge'], -8)        # the instance's root keeps its own z_index 1
+        self.assertEqual(nodes['Floor/Bridge/Deck'], -8)
+        self.assertEqual(nodes['Floor/Bridge/Top'], 4)
+
+    def test_overlapping_ground_layer_pieces_sort_sensibly(self):
+        # (round 8, L8-1) two ground-layer pieces that overlap: the one drawn over the other must not
+        # stand behind it. A deck whose y-sort point is far below its feet draws over a foam patch that
+        # lies in front of it, a fault; with its point on its foot line it sorts under the foam, clean.
+        # One piece's own parts (one y-sort point) and two states of one thing are not compared
+        from scripts.review import scene as SC
+        a = np.zeros((40, 40, 4), np.uint8)
+        a[..., 3] = 255
+        z = SC.Zone('t', (200, 200), None)
+        deck = SC.Sprite('deck', 'kit/props/art/footbridge.png', (60, 150), (40, 20, 80, 60), -5, True, a, 'Props/deck/Sprite')
+        foam = SC.Sprite('foam', 'kit/props/art/waterfall_3_flow.png', (60, 100), (40, 60 - 10, 80, 90), -5, True, a, 'Props/fall/Flow')
+        z.sprites = [deck, foam]
+        self.assertEqual([f.detector for f in SC.check_ground_layer(z)], ['logic.ground_order'])
+        deck.origin = (60, 60)
+        self.assertEqual(SC.check_ground_layer(z), [])
+        deck.origin = (60, 150)
+        foam.z = -6                                        # meant to lie under: a lower z, clean
+        self.assertEqual(SC.check_ground_layer(z), [])
+        foam.z, foam.origin = -5, (60, 150)                # one piece's parts keep their scene order
+        self.assertEqual(SC.check_ground_layer(z), [])
+
+
 class Water(unittest.TestCase):
+    def test_a_fall_is_scored_against_its_house_sibling(self):
+        # (woodland water review, round 5, W5-1) no official Eastward shot shows a falling sheet, and
+        # 37's box is mist over a lawn: a fall is scored against the woodland's sheet (groups.fall),
+        # and the mist is not a water band; other kinds keep theirs
+        from scripts.review import bands as B
+        groups = B.load_bands()['groups']
+        self.assertNotIn('water', groups)
+        self.assertIn('mist', groups)
+        self.assertEqual((groups['fall']['tones'], groups['fall']['shapes']), (17.0, 39.5))
+        rgb = np.zeros((40, 40, 3), np.uint8)
+        alpha = np.ones((40, 40), bool)
+        self.assertEqual(A.group_of('waterfall', rgb, alpha), 'fall')
+        self.assertEqual(A.group_of('bench', rgb, alpha), 'prop')
+        self.assertEqual(A.group_of('boulder', rgb, alpha), 'stone')
+
+    def test_a_falls_grain_runs_down(self):
+        # (round 5, K5-1) streaks falling pass the direction check; a chip mosaic fails it
+        from scripts.review import bands as B
+        rng = np.random.default_rng(3)
+        lanes = rng.integers(60, 200, (1, 30))
+        streaks = np.repeat(np.repeat(lanes, 60, 0)[..., None], 3, 2).astype(np.uint8)
+        streaks[::20] = 255
+        chips = np.repeat(np.repeat(rng.integers(60, 200, (30, 15)), 2, 0), 2, 1)
+        chips = np.repeat(chips[..., None], 3, 2).astype(np.uint8)
+        m = np.ones((60, 30), bool)
+        self.assertTrue(B.fall_grain(streaks, m)['passed'])
+        self.assertFalse(B.fall_grain(chips, m)['passed'])
+        # (round 6, K6-1) and its value: a lit sheet of varied streaks passes, the same sheet a third
+        # darker (a blue curtain) fails
+        # (round 7, K7-1: and wide in range, with dark streaks through its east third)
+        cols = [(250, 150, 245, 130, 240)[x % 5] if x < 20 else (60, 245, 240, 200, 250)[x % 5] for x in range(30)]
+        lit = np.repeat(np.repeat(np.array([cols]), 60, 0)[..., None], 3, 2).astype(np.uint8)
+        self.assertTrue(B.fall_value(lit, m)['passed'], B.fall_value(lit, m))
+        self.assertFalse(B.fall_value((lit * 0.66).astype(np.uint8), m)['passed'])
+
     def test_staircase_bank(self):
         a = lawn()
         for y in range(300):
@@ -89,6 +190,35 @@ class Water(unittest.TestCase):
         b[80:120, :, :3] = BLUE
         b[60:140, 180:210, :3] = (120, 80, 40)       # lands 20 px on each bank
         self.assertFalse(any(f.detector == 'logic.bridge_span' for f in water.check_bridges(b, H)))
+
+    def test_flat_foam_plate_is_caught(self):
+        # the woodland's plunge foam the auditor failed on 4 Nov (calibration W15): a 118 x 19 plate in
+        # two tones at the foot of a streaked sheet, which check_falls (tall bands only) never saw
+        p = Path(core.REPO) / 'scripts' / 'review' / 'calibration' / 'woodland_plunge_foam_4881fee7.png'
+        a = np.asarray(Image.open(p).convert('RGBA'))
+        fs = [f for f in water.check_foam(a, 74) if f.detector == 'detail.foam_flat']
+        self.assertEqual(len(fs), 1)
+        x0, y0, x1, y1 = fs[0].box
+        self.assertGreaterEqual(x1 - x0, 100)
+        self.assertLessEqual(y1 - y0, 24)
+
+    def test_broken_plunge_foam_passes(self):
+        # rocks.plunge: broken clumps in 4 to 5 tones with the pool between them, within the foot
+        from scripts.art.native import ctx, load_biome
+        ctx.configure(3.0, load_biome('woodland'), {})
+        from scripts.art.native import rocks as RK
+        from scripts.art.native.palette import C as CC, LUT
+        cv = np.full((120, 200), CC('water', 2), np.int32)
+        cv[:40, 70:132] = CC('water', 3)                  # the sheet's foot
+        foam = RK.plunge(cv, 70, 132, 40, seed=65)
+        rgb = LUT[cv]
+        a = np.dstack([rgb, np.full(cv.shape, 255, np.uint8)])
+        self.assertFalse(any(f.detector == 'detail.foam_flat' for f in water.check_foam(a, 74)))
+        ys, xs = np.nonzero(foam)
+        self.assertGreaterEqual(int(xs.min()), 70 - RK.PLUNGE_PAD)
+        self.assertLess(int(xs.max()), 132 + RK.PLUNGE_PAD)
+        self.assertLessEqual(int(ys.max()), 40 + 10)
+        self.assertGreaterEqual(len(np.unique(cv[foam])), 4, 'four or more tones in the foam')
 
 
 class Screen(unittest.TestCase):
@@ -267,6 +397,8 @@ class Gate(unittest.TestCase):
 
     def setUp(self):
         self.old = gate.CATALOGUE, gate.QUEUE
+        self.real_queue = gate.QUEUE
+        gate.TODAY = datetime.date(2026, 11, 9)
         self.d = tempfile.mkdtemp()
         gate.CATALOGUE = self.d
         gate.QUEUE = os.path.join(self.d, 'fix-queue.json')
@@ -276,6 +408,7 @@ class Gate(unittest.TestCase):
 
     def tearDown(self):
         gate.CATALOGUE, gate.QUEUE = self.old
+        gate.TODAY = None
         import shutil
         shutil.rmtree(self.d, ignore_errors=True)
 
@@ -288,6 +421,14 @@ class Gate(unittest.TestCase):
 
     def refused(self):
         return gate.refusals(self.ZONE, [self.NAME])
+
+    def queue_it(self, **over):
+        """A complete queue entry for the asset (Claude A, 9 Nov), with fields overridden or (None) dropped."""
+        e = {'id': f'{self.ZONE}/{self.NAME}', 'sha256': self.sha, 'queued': '2026-11-09',
+             'reason': 'placed before the 25 Oct seed', 'clears_when': 'redrawn and passed', 'review_by': '2026-11-30'}
+        e.update(over)
+        e = {k: v for k, v in e.items() if v is not None}
+        Path(gate.QUEUE).write_text(json.dumps({'queue': [e]}))
 
     def test_no_record_refused(self):
         self.assertIn('no review record', self.refused()[0])
@@ -323,7 +464,7 @@ class Gate(unittest.TestCase):
         self.put(status='fail', reviewer={'agent': 'detail-auditor', 'verdict': 'pending'},
                  findings=[{'detector': 'logic.scale', 'severity': 'fault'}])
         self.assertTrue(self.refused())
-        Path(gate.QUEUE).write_text(json.dumps({'queue': [{'id': f'{self.ZONE}/{self.NAME}'}]}))
+        self.queue_it()
         self.assertEqual(self.refused(), [])
         self.put(reviewer=None)                                       # queued, no reviewer at all
         self.assertEqual(self.refused(), [])
@@ -342,8 +483,68 @@ class Gate(unittest.TestCase):
     def test_stale_refused_even_when_passed_or_queued(self):
         self.put(sha='x', reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
         self.assertIn('changed since its record', self.refused()[0])
-        Path(gate.QUEUE).write_text(json.dumps({'queue': [{'id': f'{self.ZONE}/{self.NAME}'}]}))
+        self.queue_it()
         self.assertIn('changed since its record', self.refused()[0])
+
+    # the queue's own rules (Claude A, 9 Nov): an entry places its asset only while it holds
+
+    def test_queued_picture_that_changed_is_refused(self):
+        # the record is current but the queue entry holds other bytes: a queue entry never covers a new picture
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it(sha256='0' * 64)
+        self.assertIn('changed since it was queued', self.refused()[0])
+
+    def test_queue_entry_missing_a_field_is_refused(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        for field in ('queued', 'reason', 'clears_when', 'review_by', 'sha256'):
+            with self.subTest(field=field):
+                self.queue_it(**{field: None})
+                bad = self.refused()
+                self.assertEqual(len(bad), 1)
+                self.assertIn('lacks', bad[0])
+                self.assertIn(field, bad[0])
+
+    def test_expired_queue_entry_is_refused(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it(review_by='2026-11-30')
+        self.assertEqual(self.refused(), [])
+        gate.TODAY = datetime.date(2026, 11, 30)                      # the due date itself still holds
+        self.assertEqual(self.refused(), [])
+        gate.TODAY = datetime.date(2026, 12, 1)
+        self.assertIn('expired on 2026-11-30', self.refused()[0])
+        self.queue_it(review_by='end of November')
+        self.assertIn('not a date', self.refused()[0])
+
+    def test_failed_asset_is_queued_only_with_its_fix_list(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'fail', 'note': 'the tub body is undrawn'})
+        self.queue_it()
+        self.assertIn('fix_list', self.refused()[0])
+        self.queue_it(fix_list=[])
+        self.assertIn('fix_list', self.refused()[0])
+        self.queue_it(fix_list=['the tub body is undrawn: draw its staves'])
+        self.assertEqual(self.refused(), [])
+
+    def test_queued_asset_that_passes_is_advised_out(self):
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pending'})
+        self.queue_it()
+        self.assertEqual(gate.advisories(), [])
+        self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
+        self.assertEqual(self.refused(), [])
+        adv = gate.advisories()
+        self.assertEqual(len(adv), 1)
+        self.assertIn(f'{self.ZONE}/{self.NAME}', adv[0])
+        self.assertIn('remove it from', adv[0])
+
+    def test_the_real_queue_entries_are_complete(self):
+        # every entry in art/catalogue/fix-queue.json states what the gate requires
+        entries = json.load(open(self.real_queue)).get('queue', [])
+        self.assertTrue(entries)
+        for e in entries:
+            with self.subTest(id=e.get('id')):
+                for k in gate.REQUIRED:
+                    self.assertTrue(e.get(k), k)
+                datetime.date.fromisoformat(e['queued'])
+                datetime.date.fromisoformat(e['review_by'])
 
 
 class Record(unittest.TestCase):
@@ -549,6 +750,38 @@ class RaggedEdge(unittest.TestCase):
         self.assertEqual(E.ragged(al, H, 'bench', min_area=0.02, sprite=True), [])
 
 
+class CornerRadius(unittest.TestCase):
+    # Matt, 26 Oct 15:36: blocky plans, "not sharp like minecraft": a plan of whole cells drawn with
+    # square corners trips; the same plan rounded (outer 0.4, inner 0.25 of a cell) and lumped
+    # passes, as does an organic outline with no plan corners
+    def _plan(self):
+        c = 24
+        m = np.zeros((360, 480), bool)
+        for (x, y, w, h) in ((2, 2, 11, 5), (13, 2, 6, 3), (3, 7, 5, 3), (5, 10, 15, 2)):
+            m[y * c:(y + h) * c, x * c:(x + w) * c] = True
+        return m
+
+    def test_square_corners_trip(self):
+        self.assertTrue(E.corner_radius(self._plan(), H, 'x/ground (dirt)'))
+
+    def test_rounded_corners_pass(self):
+        m = self._plan()
+        p = 12
+        mp = np.pad(m, p)
+        dil = lambda a, r: ndi.distance_transform_edt(~a) <= r
+        ero = lambda a, r: ndi.distance_transform_edt(a) > r
+        mp = ero(dil(mp, 6), 6)
+        mp = dil(ero(mp, 9.6), 9.6)
+        self.assertFalse(E.corner_radius(mp[p:-p, p:-p], H, 'x/ground (dirt)'))
+
+    def test_organic_outline_passes(self):
+        yy, xx = np.mgrid[0:360, 0:480]
+        ang = np.arctan2(yy - 180, xx - 240)
+        r = 140 + 12 * np.sin(5 * ang) + 5 * np.sin(13 * ang)
+        m = np.hypot((xx - 240), (yy - 180) * 1.5) < r
+        self.assertFalse(E.corner_radius(m, H, 'x/ground (dirt)'))
+
+
 class OnGrid(unittest.TestCase):
     """logic.off_grid: props and structures stand on the soft grid (8 world px, 24 texels at density
     3); clutter may sit anywhere in a cell."""
@@ -577,6 +810,141 @@ class SizeTable(unittest.TestCase):
         self.assertEqual(SZ.class_of('undercroft/stump_nw'), 'pillar_stump')
         self.assertIsNone(SZ.class_of('woodland/flow'))
         self.assertIsNone(SZ.class_of('crossroads/bakery_damage'))
+
+    def test_a_piece_is_measured_against_its_own_spec(self):
+        self.assertEqual(SZ.spec_ranges('shelter (eave 2.7 m; art px: 150 to 180 tall, 120 to 160 wide)'),
+                         {'tall': (150.0, 180.0), 'wide': (120.0, 160.0)})
+        self.assertEqual(SZ.spec_ranges('cairn (size-guide: 12 to 28 tall in world px)'), {})
+        s = sprite(60, 200)
+        s[150:198, 10:50, 3] = 255                     # 48 tall: a third of the shelter it claims to be
+        f = SZ.check_spec(s, 'shelter (art px: 150 to 180 tall, 30 to 50 wide)', 'x/shelter')
+        self.assertIn('logic.size_spec', [x.detector for x in f])
+        s[20:198, 10:50, 3] = 255
+        self.assertNotIn('logic.size_spec', [x.detector for x in SZ.check_spec(s, 'shelter (art px: 150 to 180 tall, 30 to 50 wide)', 'x/shelter')])
+
+    def test_a_piece_is_measured_against_the_size_guide_kind_it_names(self):
+        """Round 5 of the Act 1 detail audit (R5-13): the v6 mill met its own spec (160 to 190 tall)
+        and was half the size guide's water mill; a spec naming the guide's kind is measured there too."""
+        v6 = _png(os.path.join(os.path.dirname(FIX_V3), 'act1_v6', 'mill_wheel.png'))
+        spec = 'water_mill (the mill; art px: 160 to 190 tall, 115 to 135 wide)'
+        f = SZ.check_spec(v6, spec, 'act1/mill_wheel')
+        self.assertIn('logic.size_guide', [x.detector for x in f])
+        self.assertNotIn('logic.size_spec', [x.detector for x in f])
+        s = sprite(340, 380)
+        s[4:380, 4:330, 3] = 255                        # 376 x 326: inside the guide's 312 to 432 x 288 to 384
+        self.assertEqual(SZ.check_spec(s, 'water_mill (art px: 310 to 432 tall, 288 to 384 wide)', 'x/mill'), [])
+        self.assertEqual(SZ.guide_kind('shelter (art px: 150 to 180 tall)')[0], 'shelter')
+
+    def test_a_size_spec_naming_no_kind_fails_loudly(self):
+        """Claude A's ruling on 5 Nov: a head word that is no kind in sizes.json or the size guide is a
+        fault, not a silent skip; a piece no kind fits says so with 'unsized (why ...)'."""
+        s = sprite(60, 60)
+        s[20:58, 10:50, 3] = 255                        # 38 x 40: inside its own spec
+        self.assertEqual(SZ.guide_kind('platform (art px: 30 to 44 tall)'), ('platform', False))
+        f = SZ.check_spec(s, 'platform (art px: 30 to 44 tall, 36 to 44 wide)', 'x/platform')
+        self.assertEqual([x.detector for x in f], ['logic.size_guide'])
+        self.assertEqual(f[0].severity, 'fault')
+        self.assertIn('"platform"', f[0].message)
+        self.assertEqual(SZ.guide_kind('unsized (a cell of a run; art px: 30 to 44 tall)'), ('unsized', None))
+        self.assertEqual(SZ.check_spec(s, 'unsized (a cell of a run; art px: 30 to 44 tall, 36 to 44 wide)', 'x/edge'), [])
+        self.assertIsNone(SZ.guide_kind(''))
+
+    def test_the_creel_stack_and_platform_lamp_are_kinds(self):
+        # Claude A's ruling on 5 Nov: both pieces are right-sized for what they are, so the guide gains them
+        self.assertEqual(SZ.guide_kind('creel_stack (art px: 40 to 50 tall)')[1],
+                         {'tall': (14, 55.0), 'wide': (20, 66.0)})
+        self.assertEqual(SZ.guide_kind('platform_lamp (art px: 130 to 140 tall)')[1],
+                         {'tall': (105.3, 152.9), 'wide': (9, 34)})
+        lamp = sprite(30, 145)
+        lamp[4:142, 5:25, 3] = 255                      # 138 x 20, as drawn
+        self.assertEqual(SZ.check_spec(lamp, 'platform_lamp (art px: 130 to 145 tall, 14 to 24 wide)', 'x/lamp'), [])
+        lamp[4:20, :, 3] = 0
+        lamp[100:142, 5:25, 3] = 255
+        lamp[:100, :, 3] = 0                            # 42 tall: a bollard, not a platform lamp
+        self.assertIn('logic.size_guide', [x.detector for x in SZ.check_spec(lamp, 'platform_lamp (a lamp)', 'x/lamp')])
+
+    def test_an_unsized_spec_with_a_kind_that_fits_is_caught(self):
+        """Round 6 of the Act 1 detail audit (R6-3, R6-12): the v7 bitt said unsized but was the guide's
+        bollard, and the v7 semaphore said unsized but was its pole (a signal mast); a justified
+        unsized spec (the churn stand, ruled in sizes.json) is left alone."""
+        fx = os.path.join(os.path.dirname(FIX_V3), 'act1_v7')
+        bitt = ("unsized (a mooring bitt with its hawser's coil on the quay: the guide's bollard is the post alone; "
+                "0.45 m, its line coiled beside it; art px: 16 to 26 tall, 32 to 50 wide)")
+        f = SZ.check_spec(_png(os.path.join(fx, 'coast_mooring_bitt.png')), bitt, 'act1/coast_mooring_bitt')
+        self.assertEqual([x.detector for x in f], ['logic.size_unsized'])
+        self.assertIn('bollard', f[0].message)
+        sema = 'unsized (a semaphore signal: no kind in the guide; a semaphore post 3 m; art px: 125 to 160 tall, 30 to 50 wide)'
+        f = SZ.check_spec(_png(os.path.join(fx, 'halt_semaphore.png')), sema, 'act1/halt_semaphore')
+        self.assertIn('pole', [m for x in f for m in [x.message.split("guide's ")[1].split(' ')[0]]])
+        self.assertTrue(all(x.detector == 'logic.size_unsized' for x in f))
+        stand = ("unsized (a churn stand with its churns: the churns kind is the churns alone; deck 0.65 m; "
+                 "art px: 60 to 80 tall, 56 to 80 wide)")
+        self.assertEqual(SZ.unsized_fits(stand, {'tall': 68, 'wide': 66}), [])
+        self.assertEqual(SZ.unsized_fits('unsized (a chambered barrow, a landmark; art px: 160 to 190 tall)',
+                                         {'tall': 177, 'wide': 326}), [])
+        self.assertEqual(SZ.unsized_fits('bollard (art px: 16 to 26 tall)', {'tall': 21, 'wide': 42}), [])
+
+    def test_the_asset_gate_measures_a_kit_piece_against_its_spec(self):
+        """R6-12: logic.size_spec and logic.size_guide ran only in test_act1; the asset gate now reads a
+        kit picture's audit.size_class and runs check_spec, so the reviewer's sheet shows it."""
+        lamp = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'halt_platform_lamp.png')
+        self.assertTrue(SZ.kit_spec(lamp).startswith('platform_lamp ('))
+        self.assertIsNone(SZ.kit_spec(os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'coast_buoy_loop.png')))
+        s = sprite(60, 60)
+        s[10:58, 10:50, 3] = 255                                   # 48 x 40: a third of a water mill
+        f, _ = A.review_rgba(s, 'x/mill', 'mill', 'valley', size_class='water_mill (art px: 300 to 400 tall)')
+        got = [x.detector for x in f]
+        self.assertIn('logic.size_guide', got)
+        self.assertIn('logic.size_spec', got)
+        f, _ = A.review_rgba(s, 'x/mill', 'mill', 'valley')
+        self.assertNotIn('logic.size_guide', [x.detector for x in f])
+
+    def test_a_drying_net_is_not_read_as_a_crown(self):
+        """R6-12: construct.crown_holes read the v7 net rack's green twine as a see-through crown; a net
+        is mostly air (R3-6), so a piece named as a net is skipped. A bush with the same pixels still trips."""
+        im = _png(os.path.join(os.path.dirname(FIX_V3), 'act1_v7', 'coast_net_rack.png'))
+        rgb, alpha = A.on_ground(im, A.NEUTRAL), im[..., 3] > 128
+        self.assertEqual(C.crown_holes(rgb, alpha, 74, 'act1/coast_net_rack'), [])
+        self.assertEqual(C.crown_holes(rgb, alpha, 74, 'x/fishing_net'), [])
+        self.assertEqual([x.detector for x in C.crown_holes(rgb, alpha, 74, 'x/bush')], ['detail.mesh'])
+        self.assertEqual([x.detector for x in C.crown_holes(rgb, alpha, 74, 'x/nettle_bed')], ['detail.mesh'])
+
+    def test_every_kit_picture_meets_its_spec(self):
+        """Round 7 of the Act 1 detail audit (R7-2): the asset gate's check_spec raised 93 false faults
+        on fence and drystone-wall cells measured as whole fences. Every kit picture is swept through
+        check_spec as the gate runs it (its piece's spec and, for a cell of a run, its run), and none may
+        fault outside KNOWN (empty: the Brackens fire rings and fold were re-headed)."""
+        KNOWN = set()
+        idx = json.load(open(os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'index.json')))
+        faults, n, runs = [], 0, 0
+        for pid, e in sorted(idx.items()):
+            for vid, v in (e.get('variants') or {}).items():
+                p = os.path.join(REPO_ROOT, 'game', v['png'][len('res://'):])
+                spec = SZ.kit_spec(p)
+                if not spec or not os.path.exists(p):
+                    continue
+                n += 1
+                run = SZ.kit_run(p)
+                runs += run is not None
+                for f in SZ.check_spec(_png(p), spec, 'kit/%s/%s' % (pid, vid), run=run):
+                    if '%s/%s' % (pid, vid) not in KNOWN:
+                        faults.append(f.message)
+        self.assertGreater(n, 150)
+        self.assertGreater(runs, 80)
+        self.assertEqual(faults, [])
+        # a north-south fence cell is the run's length down the screen, not a fence's height
+        ns = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'fence', 'fence_rail_ns_plain.png')
+        if os.path.exists(ns):
+            self.assertIn('logic.size_guide', [f.detector for f in SZ.check_spec(_png(ns), 'fence (a rail fence)', 'x/ns')])
+            self.assertEqual(SZ.check_spec(_png(ns), 'fence (a rail fence)', 'x/ns', run=SZ.kit_run(ns)), [])
+
+    def test_a_class_name_counts_only_where_a_word_starts(self):
+        # the detail audit of 4 Nov: "urn" inside "churn" sized the churn stand as a barrel
+        self.assertNotEqual(SZ.class_of('kit/halt_churn_stand'), 'barrel')
+        self.assertNotEqual(SZ.class_of('kit/halt_timetable_board'), 'table')
+        self.assertEqual(SZ.class_of('kit/farm_churns'), 'churns')
+        self.assertEqual(SZ.class_of('kit/fingerpost_nesw'), 'sign')
+        self.assertEqual(SZ.class_of('x/haystack'), 'haystack')
 
     def test_barrel_too_tall_trips_and_true_size_passes(self):
         s = sprite(48, 80)
@@ -838,14 +1206,45 @@ class RenderHarness(unittest.TestCase):
         self.assert_user_cleanup()
 
     def test_prior_success_report_is_invalidated_before_producer_failure(self):
-        for producer, name in ((R.SN, 'load_zone'), (R.json, 'load')):
-            with self.subTest(producer=name):
-                report = Path(self.out, 'report.json')
-                report.write_text('{"counts":{"blocker":0,"fault":0,"polish":0}}')
-                with patch.object(producer, name, side_effect=ValueError('source unavailable')):
-                    with self.assertRaisesRegex(ValueError, 'source unavailable'):
-                        R.main(['woodland', '--out', self.out])
-                self.assertFalse(report.exists())
+        report = Path(self.out, 'report.json')
+        report.write_text('{"counts":{"blocker":0,"fault":0,"polish":0}}')
+        with patch.object(R.SN, 'load_zone', side_effect=ValueError('source unavailable')):
+            with self.assertRaisesRegex(ValueError, 'source unavailable'):
+                R.main(['woodland', '--out', self.out])
+        self.assertFalse(report.exists())
+
+    def test_registry_failure_replaces_prior_success_with_incomplete_report(self):
+        subject = Path(self.out, 'subject')
+        registry = subject / 'game' / 'data' / 'zones.json'
+        registry.parent.mkdir(parents=True)
+        output = Path(self.out, 'registry-report')
+        output.mkdir()
+        report = output / 'report.json'
+        real_load = json.load
+        for name, content in (('missing', None), ('malformed', '{invalid'), ('nonobject', '[]')):
+            with self.subTest(registry=name):
+                if registry.exists():
+                    registry.unlink()
+                if content is not None:
+                    registry.write_text(content)
+                report.write_text('{"complete":true,"counts":{"blocker":0,"fault":0,"polish":0}}')
+
+                def load_current_registry(handle):
+                    self.assertFalse(report.exists())
+                    return real_load(handle)
+
+                with patch.object(R, 'REPO', str(subject)), \
+                        patch.object(R.json, 'load', side_effect=load_current_registry) as load:
+                    self.assertEqual(R.main(['woodland', '--out', str(output)]), 1)
+                self.assertEqual(load.call_count, 0 if content is None else 1)
+                current = json.loads(report.read_text())
+                self.assertFalse(current['complete'])
+                self.assertFalse(current['scene']['complete'])
+                self.assertIn('cannot read zone registry', current['scene']['error'])
+                self.assertEqual(current['pictures'], [])
+                self.assertNotIn('counts', current)
+                self.process.assert_not_called()
+                self.godot.assert_not_called()
 
     def test_cli_keeps_findings_but_reports_incomplete_on_render_failure(self):
         finding = core.Finding('test.scene', 'fault', (1, 1, 3, 3), 'fault remains', 'fix')
@@ -920,3 +1319,257 @@ from .test_undercroft_craft import SpeckScatter, StagedBoundaries, RealFloorTint
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Composition(unittest.TestCase):
+    """logic.composition (Matt, 26 Oct 19:35: "the square needs better centring with the objects on
+    top of it")."""
+
+    def square(self, well_x=240, bench2=True, x1=384):
+        props = [dict(kind='well', x=well_x, y=170, w=54), dict(kind='bench', x=132, y=110, w=66)]
+        if bench2:
+            props.append(dict(kind='bench', x=348, y=110, w=66))
+        return dict(id='square', rect=[96, 48, x1, 264], props=props, entries=[dict(x=240, w=72)])
+
+    def test_composed_square_passes(self):
+        from scripts.review import composition as CP
+        self.assertEqual(CP.check([self.square()]), [])
+
+    def test_off_centre_well_trips(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(well_x=252)])
+        self.assertTrue(any('centrepiece' in f.message for f in fs))
+
+    def test_lone_bench_trips(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(bench2=False)])
+        self.assertTrue(any('twin' in f.message for f in fs))
+
+    def test_uneven_margins_trip(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(x1=432)])
+        self.assertTrue(any('margins' in f.message or 'centrepiece' in f.message for f in fs))
+
+
+class Tiers(unittest.TestCase):
+    """logic.tiers (Matt, 26 Oct 19:42: "make sure the logic is correct")."""
+
+    def plan(self, face=48, y_top=120, y_foot=168, x0=120, x1=192, below=0):
+        return dict(density=3, cell=8, tiers=[dict(id='plateau', level=16, below=below, face_px=face,
+                                                   rects=[[0, 0, 160, 40], [104, 40, 40, 16]])],
+                    stairs=[dict(tier='plateau', x0=x0, x1=x1, y_top=y_top, y_foot=y_foot)])
+
+    def test_consistent_plan_passes(self):
+        from scripts.review import tiers as TI
+        self.assertEqual(TI.check(self.plan()), [])
+
+    def test_face_of_another_height_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(TI.check(self.plan(face=36)))
+
+    def test_stair_head_off_the_rim_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(any('head' in f.message for f in TI.check(self.plan(y_top=100, y_foot=148))))
+
+    def test_stair_across_a_turn_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(any('straddles' in f.message for f in TI.check(self.plan(x0=288, x1=336))))
+
+
+class GroundRules(unittest.TestCase):
+    """docs/vision/ground-rules.md: each rule has a plan that passes and one that trips it."""
+
+    def plan(self):
+        return {
+            'screen': {'w': 320, 'h': 320},
+            'stands': {'glade': [160, 40]},
+            'places': {'bridge': {'x0': 152, 'w': 16, 'y0': 184, 'y1': 216}},
+            'paths': [{'points': [[160, 320], [160, 40]], 'radius': 8}],
+            'water': {'fall': {'x0': 72, 'w': 16, 'y0': 96, 'y1': 136, 'face': [60, 96, 100, 132]},
+                      'soft': {'river': {'points': [[80, 200], [336, 200]], 'cells': 3},
+                               'pool': [[56, 128, 48, 80]],
+                               'rill': {'points': [[80, -8], [80, 96]], 'cells_plan': 2}}},
+            'rock': {'heap': [{'at': [50, 120], 'size': [16, 12]}, {'at': [110, 120], 'size': [16, 12]}]},
+            'objects': [['bench', 'forest_bench', 112, 157, 32, 11]],
+            'dressing': {'ferns': [[200, 100, 1, 1.0]]},
+        }
+
+    def names(self, p):
+        from scripts.review import ground_rules as GR
+        return {f['check'] for f in GR.check_plan(p)}
+
+    def test_good_plan_passes(self):
+        self.assertEqual(self.names(self.plan()), set())
+
+    def test_fall_off_centre_and_not_flush(self):
+        p = self.plan()
+        p['water']['fall']['x0'] = 76
+        p['water']['soft']['rill']['points'][-1] = [80, 104]
+        self.assertIn('rules.water_fall', self.names(p))
+
+    def test_dead_end_water(self):
+        p = self.plan()
+        p['water']['soft']['river']['points'] = [[80, 200], [240, 200]]
+        self.assertIn('rules.water_end', self.names(p))
+
+    def test_slanting_path_and_stair_steps(self):
+        p = self.plan()
+        p['paths'][0]['points'] = [[160, 320], [160, 240], [168, 240], [168, 40]]
+        self.assertIn('rules.route_grid', self.names(p))
+        p['paths'][0]['points'] = [[160, 320], [176, 40]]
+        self.assertIn('rules.route_grid', self.names(p))
+
+    def test_path_under_water_off_the_bridge(self):
+        p = self.plan()
+        p['places']['bridge']['x0'] = 200
+        self.assertIn('rules.ground_water', self.names(p))
+
+    def test_bench_on_the_path(self):
+        p = self.plan()
+        p['objects'][0] = ['bench', 'forest_bench', 144, 157, 32, 11]
+        n = self.names(p)
+        self.assertIn('rules.route_clear', n)
+        self.assertIn('rules.seating', n)
+
+    def test_rocks_overlapping(self):
+        p = self.plan()
+        p['rock']['heap'][1]['at'] = [58, 124]
+        self.assertIn('rules.rock_overlap', self.names(p))
+        p['rock']['heap'][1]['stacked'] = True
+        self.assertNotIn('rules.rock_overlap', self.names(p))
+
+    def test_route_to_nowhere_and_clutter_on_route(self):
+        p = self.plan()
+        p['paths'].append({'points': [[160, 240], [240, 240]], 'radius': 8})
+        p['dressing']['ferns'].append([160, 260, 2, 1.0])
+        n = self.names(p)
+        self.assertIn('rules.route_ends', n)
+        self.assertIn('rules.clutter', n)
+
+
+class ClusterNoise(unittest.TestCase):
+    """detail.cluster_noise (cluster_noise.py): random value grain in 2 x 2 clusters, against a calm
+    form lit across its face (the detail audit of the Act 1 props, 4 Nov, finding 4)."""
+
+    def test_calm_form_passes_and_terrazzo_trips(self):
+        from scripts.review import cluster_noise as CN
+        s = sprite(64, 64)
+        s[4:60, 4:60, 3] = 255
+        x = np.arange(64)[None, :] + np.zeros((64, 1))
+        base = (190 - 1.6 * x).astype(np.uint8)                     # lit west, shaded east, in steps
+        s[..., 0] = s[..., 1] = s[..., 2] = (base // 12) * 12
+        self.assertLess(CN.share(s[..., :3], s[..., 3] > 0)[0], CN.CALM)
+        self.assertEqual(CN.check(s[..., :3], s[..., 3] > 0, H, 'x/slab'), [])
+        rng = np.random.default_rng(1)
+        g = rng.random((32, 32))
+        step = np.where(g > 0.72, 24, np.where(g < 0.28, -24, 0)).repeat(2, 0).repeat(2, 1)   # 56 % of cells step
+        n = np.clip(s[..., :3].astype(int) + step[..., None], 0, 255).astype(np.uint8)
+        s[..., :3] = n
+        f = CN.check(s[..., :3], s[..., 3] > 0, H, 'x/slab')
+        self.assertTrue(f and f[0].detector == 'detail.cluster_noise' and f[0].severity == 'fault')
+
+    def test_the_grid_phase_spread_is_reported(self):
+        """Round 7 of the Act 1 detail audit (R7-6), a documented instability: the verdict is on the grid
+        at the picture's corner, so the same pixels one texel over can score differently (the v7 bitt
+        48.9 to 59.5 %). The finding reports the four phases' spread, for information; it does not
+        average them (Claude A's ruling: averaging diluted the terrazzo above into polish)."""
+        from scripts.review import cluster_noise as CN
+        im = _png(os.path.join(os.path.dirname(FIX_V3), 'act1_v7', 'coast_mooring_bitt.png'))
+        ph = CN.phases(im[..., :3], im[..., 3] > 128)
+        self.assertEqual(len(ph), 4)
+        self.assertAlmostEqual(ph[0], CN.share(im[..., :3], im[..., 3] > 128)[0], places=9)
+        self.assertGreater(max(ph) - min(ph), 0.05)                    # the instability, documented
+        shifted = np.pad(im, ((0, 0), (1, 0), (0, 0)))
+        self.assertAlmostEqual(CN.phases(shifted[..., :3], shifted[..., 3] > 128)[1], ph[0], places=9)
+        for sub in (im, shifted):
+            f = CN.check(sub[..., :3], sub[..., 3] > 128, H, 'x/bitt')
+            self.assertTrue(f)
+            self.assertEqual(len(f[0].extra['phases']), 4)
+            self.assertIn('four phases give', f[0].message)
+            self.assertAlmostEqual(f[0].score, CN.share(sub[..., :3], sub[..., 3] > 128)[0], places=9)
+
+    def test_the_outline_is_not_material(self):
+        from scripts.review import cluster_noise as CN
+        s = sprite(40, 40)
+        s[4:36, 4:36] = (150, 150, 150, 255)
+        s[4, 4:36] = s[35, 4:36] = (20, 20, 20, 255)
+        s[4:36, 4] = s[4:36, 35] = (20, 20, 20, 255)
+        self.assertLess(CN.share(s[..., :3], s[..., 3] > 0)[0], 0.05)          # only where a corner's outline outvotes the fill
+
+
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+FIX_V3 = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures', 'act1_v3')
+
+
+def _png(path):
+    from PIL import Image
+    return np.asarray(Image.open(path).convert('RGBA'))
+
+
+class FlatCylinder(unittest.TestCase):
+    """detail.flat_cylinder (flat_cylinder.py): a log or pipe painted as a strip, a flat lit band that
+    drops hard into its shadow (the detail audit of the Act 1 props, round 2, R2-1: the v3 birch)."""
+
+    def test_the_v3_birch_trips_and_a_shaded_cylinder_passes(self):
+        from scripts.review import flat_cylinder as FC
+        a = _png(os.path.join(FIX_V3, 'mill_landslip.png'))
+        f = FC.check(a[..., :3], a[..., 3] > 128, H, 'act1/mill_landslip')
+        self.assertTrue(f and f[0].detector == 'detail.flat_cylinder' and f[0].severity == 'fault')
+        s = sprite(80, 30)
+        s[8:20, 5:75, 3] = 255
+        ramp = [243, 233, 233, 212, 212, 188, 143, 143, 118, 88, 70, 59]     # five steps, no hard drop
+        for j, v in enumerate(ramp):
+            s[8 + j, 5:75, :3] = v
+        self.assertEqual(FC.check(s[..., :3], s[..., 3] > 0, H, 'x/log'), [])
+        flat = [243, 233, 233, 233, 211, 211, 211, 87, 87, 57, 57, 57]           # the v3 profile
+        for j, v in enumerate(flat):
+            s[8 + j, 5:75, :3] = v
+        self.assertTrue(FC.check(s[..., :3], s[..., 3] > 0, H, 'x/log'))
+
+    def test_character_sheets_are_not_measured(self):
+        """Props and scenery only: the v3 birch's strip under a character subject gives nothing."""
+        from scripts.review import flat_cylinder as FC
+        a = _png(os.path.join(FIX_V3, 'mill_landslip.png'))
+        self.assertEqual(FC.check(a[..., :3], a[..., 3] > 128, H, 'characters/fidget_knuckles_N'), [])
+
+    def test_the_current_birch_passes(self):
+        from scripts.review import flat_cylinder as FC
+        p = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'mill_landslip.png')
+        a = _png(p)
+        self.assertEqual(FC.check(a[..., :3], a[..., 3] > 128, H, 'act1/mill_landslip'), [])
+
+
+class CheckerDither(unittest.TestCase):
+    """detail.dither (checker_dither.py): a 1-texel checker on a sprite (the detail audit of the Act 1
+    props, round 2, R2-6: the v3 net rack's foot)."""
+
+    def test_the_v3_net_trips_and_a_mesh_of_diamonds_passes(self):
+        from scripts.review import checker_dither as CD
+        f = CD.check(_png(os.path.join(FIX_V3, 'coast_net_rack.png')), H, 'act1/coast_net_rack')
+        self.assertTrue(f and f[0].detector == 'detail.dither')
+        s = sprite(40, 40)
+        y, x = np.mgrid[0:40, 0:40]
+        line = (((x + y) % 4) == 0) | (((x - y) % 4) == 0)                       # twine in diamonds, holes between
+        s[line] = (60, 120, 60, 255)
+        self.assertEqual(CD.check(s, H, 'x/net'), [])
+        chk = ((x + y) % 2 == 0) & (x > 10) & (x < 26) & (y > 10) & (y < 26)
+        s[(x > 10) & (x < 26) & (y > 10) & (y < 26)] = (90, 90, 90, 255)
+        s[chk] = (140, 140, 140, 255)
+        self.assertTrue(CD.check(s, H, 'x/patch'))
+
+    def test_a_small_checker_patch_trips_and_a_smaller_one_passes(self):
+        """The second fixture: a stone whose shade is a 3 x 5 texel checker (8 windows, under the
+        old threshold of 9) trips; the same patch cut to 3 x 4 (6 windows, the highest clean sprite
+        in the repo sweep) passes."""
+        from scripts.review import checker_dither as CD
+        im = _png(os.path.join(os.path.dirname(FIX_V3), 'dither', 'stone_small_checker.png'))
+        f = CD.check(im, H, 'x/stone')
+        self.assertTrue(f and f[0].detector == 'detail.dither' and f[0].score == 8.0)
+        cut = im.copy()
+        cut[11:14, 15] = cut[11:14, 16]
+        self.assertEqual(CD.check(cut, H, 'x/stone'), [])
+
+    def test_the_current_net_passes(self):
+        from scripts.review import checker_dither as CD
+        p = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'coast_net_rack.png')
+        self.assertEqual(CD.check(_png(p), H, 'act1/coast_net_rack'), [])

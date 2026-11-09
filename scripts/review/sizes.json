@@ -436,6 +436,63 @@
    "chunky": "up to 0.62 A: a touch over real for readability, never as tall as a hip-high crate stack",
    "measure": "bbox"
   },
+  "churns": {
+   "group": "prop",
+   "names": [
+    "churns",
+    "milk_churns"
+   ],
+   "h": [
+    30,
+    56
+   ],
+   "w": [
+    13,
+    111
+   ],
+   "h_A": [
+    0.4,
+    0.75
+   ],
+   "w_A": [
+    0.18,
+    1.5
+   ],
+   "real": "a milk churn 0.7 to 0.75 m, 0.3 to 0.33 m across; a group of two to four",
+   "eastward": "milk cans 0.73 A tall, 30 to 37 art px across at our height (17)",
+   "chunky": "as Eastward: chunky churns 14 to 37 art px across so the shoulder, neck and lid read",
+   "measure": "bbox",
+   "note": "a churn stand is not a churn: the stand and its churns are sized by the piece's own spec"
+  },
+  "kerb_stone": {
+   "group": "stone",
+   "names": [
+    "kerb_stone",
+    "barrow_kerb",
+    "kerbstone"
+   ],
+   "h": [
+    16,
+    30
+   ],
+   "w": [
+    13,
+    24
+   ],
+   "h_A": [
+    0.22,
+    0.41
+   ],
+   "w_A": [
+    0.18,
+    0.32
+   ],
+   "real": "a kerb stone of a barrow ring or a forecourt, 0.3 to 0.55 m, set on edge in the turf",
+   "eastward": "the small boulder in 13 (325,247,350,268): 19 x 23 E (0.35 x 0.42 A)",
+   "chunky": "a touch over real so the lit top plane, the shaded side and the turf at its foot read at phone size",
+   "measure": "bbox",
+   "note": "a stone set on edge, not a boulder: boulders are 30 to 96 wide (the detail audit of 4 Nov, round 2)"
+  },
   "crate": {
    "group": "prop",
    "names": [
@@ -487,6 +544,35 @@
    "eastward": "04: stacks to 1 A",
    "chunky": null,
    "measure": "bbox"
+  },
+  "creel_stack": {
+   "group": "prop",
+   "names": [
+    "creel_stack",
+    "creels",
+    "lobster_pots"
+   ],
+   "h": [
+    18,
+    50
+   ],
+   "w": [
+    24,
+    60
+   ],
+   "h_A": [
+    0.24,
+    0.68
+   ],
+   "w_A": [
+    0.32,
+    0.81
+   ],
+   "real": "a stack of 1 to 3 lobster creels: one creel about 0.6 m long, 0.45 m wide and 0.4 m tall",
+   "eastward": "no creel in the local Eastward shots; its crates in 04 stack to 1 A",
+   "chunky": null,
+   "measure": "bbox",
+   "note": "Claude A's ruling on 5 Nov (round 5 of the Act 1 detail audit): a creel is smaller than the crate in crate_stack, so the stack has its own kind"
   },
   "sack": {
    "group": "prop",
@@ -651,6 +737,33 @@
    "chunky": "up to 2.4 A where it lights a square",
    "measure": "bbox"
   },
+  "platform_lamp": {
+   "group": "prop",
+   "names": [
+    "platform_lamp"
+   ],
+   "h": [
+    117,
+    139
+   ],
+   "w": [
+    13,
+    30
+   ],
+   "h_A": [
+    1.58,
+    1.88
+   ],
+   "w_A": [
+    0.18,
+    0.41
+   ],
+   "real": "a railway platform lamp, about 2.7 to 3.2 m to the lantern's top",
+   "eastward": "lamp posts 88 to 100 E (1.6 to 1.85 A) in 13 and 17",
+   "chunky": null,
+   "measure": "bbox",
+   "note": "Claude A's ruling on 5 Nov (round 5 of the Act 1 detail audit): lower than the street lamp in lamp, so it has its own kind"
+  },
   "post_lantern": {
    "group": "prop",
    "names": [
@@ -737,6 +850,7 @@
   "sign": {
    "group": "prop",
    "names": [
+    "fingerpost",
     "signpost",
     "sign"
    ],
@@ -1854,5 +1968,11 @@
   "default": "adult",
   "hero": "bramble",
   "_about": "body height excludes thin equipment (a spear, a staff) and floating parts: only rows at least 6 art px wide in the body's connected mass count"
- }
+ },
+ "unsized_rulings": [
+  {"kind": "churns", "not": "churn stand", "why": "sizes.json's churns note: a churn stand is not a churn; the stand and its churns are sized by the piece's own spec", "ruled": "round 6 of the Act 1 detail audit (docs/reviews/2026-11-04-act1-props.md), justified"},
+  {"kind": "fence", "not": "sluice", "why": "a sluice gate between its piers is not a run of fence with a gate in it", "ruled": "round 6 of the Act 1 detail audit; confirmed in round 7 for this reason (fence lists gate among its names, but a sluice is not a field fence)"},
+  {"kind": "gate", "not": "sluice", "why": "a sluice gate is a timber shutter between masonry piers, not a field or garden gate", "ruled": "round 6 of the Act 1 detail audit; corrected in round 7 (R7-7): gate is a size-guide kind (a field or garden gate, 12 to 22 x 12 to 48 world px), and the ruling stands for the reason in its why, not for a missing kind"},
+  {"kind": "kerb_stone", "not": "platform's edge", "why": "one cell of a platform's edge is a piece of a run, not a stone set on edge in the turf", "ruled": "round 6 of the Act 1 detail audit, justified"}
+ ]
 }

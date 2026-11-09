@@ -1,0 +1,96 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_field_border",
+  "name": "Farm border and gate modules",
+  "kind": "structure",
+  "biomes": [
+    "valley",
+    "brackens",
+    "coast"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "split_rail",
+      "note": "Timber posts supporting two uneven split rails, with visible joints, weathered tops and grass seated around the post feet."
+    },
+    {
+      "id": "drystone",
+      "note": "Low dry-stone wall with broad interlocking courses, a thick lit coping and an irregular but grounded top."
+    },
+    {
+      "id": "hedgerow_gate",
+      "note": "Heavy timber gate between thicker posts in a laid hedge; show hinge, latch and an openable gap aligned to the authored crossing."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      144,
+      54
+    ]
+  },
+  "placement": {
+    "role": "boundary",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth",
+        "stone"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_without_gate"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      }
+    ],
+    "clearance": 0.5,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "row",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Connect fields and sheepfolds using repeatable fence/wall runs with deliberately placed gates."
+  },
+  "audit": {
+    "size_class": "fence",
+    "eastward_ref": "docs/vision/eastward-edges.md, references 12 and 13 (beds, paths and fields)",
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Connect fields and sheepfolds using repeatable fence/wall runs with deliberately placed gates.",
+      "Visual brief: Stone and timber modules show thickness, upright posts and an upper-left lit top; turf seats their foot. A gate has hinges and a latch on the post, and the ground continues through its opening.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Size: fence 41-67 art px high and 37-296 wide per visual module; modules join at shared socket cells, not by overlapping random posts.",
+      "A decorative gate must not grant a route; the Headland stile remains a unique W1 threshold with its owner-defined state.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

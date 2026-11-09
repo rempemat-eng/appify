@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy",
  "file": "game/zones/crossroads/art/smithy.png",
- "sha256": "9f3123f7b4318370da6dd34609d892150bf98f2a6ae6c770f57f5b95bc5dc98f",
+ "sha256": "7afbd400b5c0461be1ff31c827c03b7dc8a7550b540da8f1e995b969f973d077",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 220,
-   "tones": 25.21818181818182,
-   "shapes": 43.77272727272727
+   "tones": 24.454545454545453,
+   "shapes": 43.36363636363637
   },
   "band": {
    "tones": 27.0,
@@ -28,13 +28,25 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.869,
-  "tones_ratio": 0.934,
-  "shapes_ratio": 0.869,
+  "ratio": 0.861,
+  "tones_ratio": 0.906,
+  "shapes_ratio": 0.861,
   "passed": false,
   "group": "prop"
  },
  "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    92,
+    251,
+    139,
+    292
+   ],
+   "message": "crossroads/smithy: the stone is lit from the right (luminance rises 18 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
   {
    "detector": "detail.light",
    "severity": "polish",
@@ -56,14 +68,14 @@
     286,
     325
    ],
-   "message": "crossroads/smithy: detail bar 0.87 of Eastward's prop band (25.2 tones, 43.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy: detail bar 0.86 of Eastward's prop band (24.5 tones, 43.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-04",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",
-  "note": "redrawn after the #298 review (flue: the stack now rises over the forge hood); the agent checklist has not been run on this version"
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

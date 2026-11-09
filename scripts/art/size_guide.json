@@ -91,6 +91,7 @@
     "pole": {"group": "street furniture and vehicles", "h": [32, 96], "w": [6, 40], "foot": "1 x 1", "reason": "a pennant, flag, banner, windsock or signal mast"},
     "vending": {"group": "street furniture and vehicles", "h": [28, 33], "w": [16, 24], "foot": "2 x 1", "reason": "a vending machine 30, in pairs against a wall (scale table)"},
     "well": {"group": "street furniture and vehicles", "h": [30, 44], "w": [24, 34], "foot": "3 x 3", "reason": "a well: a wall 10 to 14 high, a roof or winch on posts"},
+    "pump": {"group": "street furniture and vehicles", "h": [22, 28], "w": [14, 18], "foot": "2 x 1", "reason": "a village hand pump: the column to a person's chest, its handle raised above, a stone basin under the spout within its width (Claude A's review, 3 Nov)"},
     "fountain": {"group": "street furniture and vehicles", "h": [32, 64], "w": [40, 80], "foot": "6 x 6", "reason": "a basin 40 to 80 across, rim 6 to 8, a centre piece 24 to 40"},
     "stall": {"group": "street furniture and vehicles", "h": [38, 46], "w": [44, 58], "foot": "6 x 2", "reason": "counter 13, canopy top 40, width 48 (scale table)"},
     "food_stall": {"group": "street furniture and vehicles", "h": [36, 48], "w": [40, 72], "foot": "7 x 3", "reason": "a noodle stall or kiosk counter 13, stools in front, canopy at 40"},

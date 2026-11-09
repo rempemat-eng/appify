@@ -467,6 +467,7 @@ def review_screen(native: np.ndarray, H: float, biome: str = '', subject: str = 
     fs = []
     fs += W.check_banks(native, H)
     fs += W.check_falls(native, H)
+    fs += W.check_foam(native, H)
     fs += W.check_bridges(native, H)
     fs += void(native, H, ignore)
     fs += artefacts(native, H, ignore)

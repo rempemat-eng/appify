@@ -1,0 +1,118 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "halt_semaphore",
+ "name": "Semaphore signal",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/halt_semaphore.png",
+   "foot": [
+    11,
+    137
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A three-tone post with cap and finial, the red arm at danger, its spectacle cast with it, a ladder beside."
+ },
+ "geometry": {
+  "size_px": [
+   41,
+   144
+  ],
+  "size_cells": [
+   2,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 144,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -2.0,
+    -2.0,
+    4,
+    4
+   ]
+  },
+  "foot": [
+   11,
+   137
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "guide",
+  "role": "signal",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 3,
+    "note": "at the platform's end, where the driver sees it"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    8,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "pole (a semaphore home signal 3 m, its arm and lamp on a lattice post with a ladder; art px: 125 to 160 tall, 30 to 50 wide)",
+  "eastward_ref": "13 (the lamp post 375,20,415,125), 17 (the churns 135,47,162,112 and the bench), the anchors kit/lantern and kit/bench",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "halt_semaphore",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

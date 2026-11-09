@@ -1,0 +1,37 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "shingle_over_quay",
+ "name": "Shingle over quay",
+ "kind": "transition",
+ "biomes": [
+  "coast"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; Driftwood Harbour's brief (world-atlas.md)",
+  "note": "Shingle washed against the quay's foot."
+ },
+ "transition": {
+  "upper": "shingle",
+  "lower": "quay",
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "plain",
+   "args": {}
+  },
+  "variants": 1,
+  "shape": "lower",
+  "dressing": null
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "plain",
+   "args": {}
+  },
+  "eastward_ref": "Eastward 12 (the stream's edge), crops 10-grass-dirt"
+ }
+}

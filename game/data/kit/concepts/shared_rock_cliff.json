@@ -1,0 +1,103 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_rock_cliff",
+  "name": "Rock cliff face family",
+  "kind": "tier",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "coast",
+    "fire_country",
+    "frostline",
+    "massif",
+    "rift",
+    "sunstone",
+    "sunstone_basin",
+    "tidebloom"
+  ],
+  "variants": [
+    {
+      "id": "granite",
+      "note": "Massive jointed blocks, cool recessed seams."
+    },
+    {
+      "id": "sandstone",
+      "note": "Horizontal beds, sparse flaking caps."
+    },
+    {
+      "id": "basalt",
+      "note": "Vertical broken columns beneath a coherent lip."
+    },
+    {
+      "id": "weathered_foot",
+      "note": "Eroded sandstone or basalt foot with supported talus, retaining the parent geology."
+    }
+  ],
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "tier_face",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "on",
+        "what": "tier_edge",
+        "note": "Face rise, stair head and stair foot use one explicit elevation contract."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P1",
+      "Purpose: Reuse cliff construction while keeping geology specific.",
+      "Visual brief: Broad strata with visible top thickness, supporting scree at the foot and narrow lit west end; granite, sandstone and basalt use different fracture silhouettes, not just hue swaps.",
+      "Size: At least 32 world px = 96 art px face; 32/64 world px rise families, not interchangeable with earth ledges.",
+      "Source: docs/vision/eastward-edges.md 2.3; docs/vision/regions/",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Widths: cell-length runs; explicit inside/outside corners, terminal ends and 2/3-cell stair apertures.",
+      "No general ramp is added: use the approved regional stair, quay slipway or other specifically authored connection.",
+      "Regional refinement: Sunstone canyon/mesa faces and fire-country terraces use this same cliff family; sandstone follows beds, basalt may be columnar at a column joint or blocky at a flow front. Claude selects the documented local geology; arbitrary vertical striping is not texture.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md \u00a7\u00a72,4,5; former frontier_banded_rock_face brief consolidated here.",
+      "Widths and rise: 32/64/96+ world px follow authored section data, never fixed-height pictures stretched or blindly stacked."
+    ]
+  }
+}

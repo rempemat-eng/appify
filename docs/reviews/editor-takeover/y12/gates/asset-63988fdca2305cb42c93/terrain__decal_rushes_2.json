@@ -1,0 +1,36 @@
+{
+ "id": "terrain/decal_rushes_2",
+ "file": "game/kit/terrain/decal_rushes_2.png",
+ "sha256": "b93958af88d95d46d3b2814d9c63652c1f53e7572e19e922b4ae2239f572e0f7",
+ "kind": "decal_rushes",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  20,
+  26
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": []
+}
