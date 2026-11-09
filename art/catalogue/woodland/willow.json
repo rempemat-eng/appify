@@ -1,7 +1,7 @@
 {
  "id": "woodland/willow",
  "file": "game/zones/woodland/art/willow.png",
- "sha256": "397d2334111bc7b03c9f36729c2618ac04dd73ac3466bbc20747bf5fe8f5f7a9",
+ "sha256": "a732914cedaf6d5bf98155eff0543cc4e6a23b040e509af1177c0eb383e1bcf4",
  "kind": "willow",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 76,
-   "tones": 27.789473684210527,
-   "shapes": 56.21052631578947
+   "tones": 27.61842105263158,
+   "shapes": 53.85526315789474
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.888,
-  "tones_ratio": 1.003,
-  "shapes_ratio": 0.888,
+  "ratio": 0.851,
+  "tones_ratio": 0.997,
+  "shapes_ratio": 0.851,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     237,
     200
    ],
-   "message": "woodland/willow: detail bar 0.89 of Eastward's foliage band (27.8 tones, 56.2 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/willow: detail bar 0.85 of Eastward's foliage band (27.6 tones, 53.9 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 4 (PR #446 head dbd1841b): crown (W4-F1): the two-scale structure reads (mass contrast 79.0 L against Eastward 51 to 54; lit field to pocket 103.1 L against 94 to 96; H/V 0.89; near-black 3 of 3 in shade), but the lit fields are soft mottle with no leaf-scale contrast: 28.6 L in 12 px windows inside the lit fields against Eastward 41 to 46 (required 38). Bar 0.888 (27.8 tones, 56.2 shapes a patch; shapes 0.888 of the band, under 0.9) (W4-F2). W3-T3 fixed: the lower curtain is 5.3 runs a row, median 17 texels wide (from 9.1 and 7), outlined only on the curtains' outer edges. New fault W4-T1: a detached 2 x 2 texel speck at x 158 to 159, y 143 to 144 (a second opaque component). The limb tip above the cap is gone (71 texels of silhouette changed). Scene: W2-L1 stands (y-sort +87 px)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

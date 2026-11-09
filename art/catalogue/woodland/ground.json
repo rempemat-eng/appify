@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "9df024763b6d6e83e682d321ca241e10f3dd9fa40a47ea3633303d6c410ec19a",
+ "sha256": "5e3e8a7c709c83ff779e840bd015fd21b8c7def5fa7621745a38fbd922f4f1a2",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -21,8 +21,7 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 4 (PR #446 head dbd1841b): Changed 414 texels from pass 5 (6,239 from round 3's bytes), all in cast shadows. W3-G1 fixed: no shrub shadow carries a straight edge row now (the only straight rows left are the footbridge planks, x 357 to 411, y 873 to 943). New fault W4-G1: the shadows' rims were drawn as a separate one-texel wavy line 3 to 6 px above the shadow body, with grass on both sides of it: 19 such hairlines 12 to 42 px long (x 425 y 1338, 42 px; 641,1578, 42; 282,1362, 38; 471,1362, 32; 331,1554, 25; 127,978, 21 ...), each at least 20 L darker than the grass 1 to 3 rows above and below. In the composed zone they show as dark squiggles floating between the brambles' and holly's bases and their shadows. W3-P1 held: the record was pending on these bytes."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

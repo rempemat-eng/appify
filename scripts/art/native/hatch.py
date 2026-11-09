@@ -29,6 +29,8 @@ import argparse
 import os
 import sys
 
+import math
+
 import numpy as np
 from PIL import Image
 
@@ -387,6 +389,32 @@ def opened(seed=7):
     tgt = thrown & ~lid & (a >= 0)
     tgt[Y0:Y0 + OH, X0:X0 + OW] = False
     a[tgt] = step(a[tgt], -2)
+    # (pass 7, W4-H1) its own stream, so the closed hatch keeps its bytes
+    r7 = np.random.default_rng(seed + 707)
+    # the lid's shadow on the turf east of it: the lawn two tones down (grass 1 to 2), its outer
+    # edge scalloped, reaching from the lid's far end down to the coping
+    for y in range(ly + 2, Y0 - K + 2):
+        reach = 2 + int(round(1.2 * math.sin(y * 0.9 + 1.3) + r7.uniform(0, 1.2)))
+        for x in range(X0 + OW, min(W, X0 + OW + reach)):
+            if a[y, x] < 0:
+                a[y, x] = C('grass', 1) if (x + y) % 3 else C('grass_cool', 1)
+            elif not lid[y, x]:
+                a[y, x] = step(np.array([a[y, x]]), -2)[0]
+    # nail heads on the battens (the lid's straps): a dark texel with a lit one above, one a board
+    bnds = [X0, X0 + OW // 3, X0 + 2 * OW // 3 + (1 if OW % 3 == 2 else 0), X0 + OW]
+    for by in (ly + 4, ly + OH - 7):
+        for k in range(3):
+            nx = (bnds[k] + bnds[k + 1]) // 2 + int(r7.integers(-1, 2))
+            a[by + 1, nx] = C('iron', 1)
+            a[by, nx] = C('iron', 4)
+    # grain breaks on the boards between the battens: checks 2 to 3 texels a tone down, at random
+    for _ in range(4):
+        gx = int(r7.integers(X0 + 2, X0 + OW - 3))
+        gy = int(r7.integers(ly + 8, ly + OH - 8))
+        if ly + 4 <= gy <= ly + 7 or ly + OH - 7 <= gy <= ly + OH - 4:
+            continue
+        L_ = int(r7.integers(2, 4))
+        a[gy:gy + L_, gx] = step(a[gy:gy + L_, gx], -1)
     return a
 
 

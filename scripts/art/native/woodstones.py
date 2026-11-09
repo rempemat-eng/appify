@@ -700,6 +700,52 @@ def lintel(w: float, h: float, seed: int):
     for (y, x, c_) in chips:                                         # the chips and sockets stay cut
         if body[y, x]:
             code[y, x] = c_
+    if w < 20:
+        # the stone top (pass 7, W4-S1; its own stream, so the lintel keeps its bytes): calm lit
+        # patches of 4 to 8 texels on the top in place of the tan bars, a crack with a step on the
+        # front, and 1 to 2 chips knocked out of the base, a shade texel over each
+        r7 = np.random.default_rng(seed + 707)
+        topz = top & ~arris & ndi.binary_erosion(body)
+        ty_, tx_ = np.nonzero(topz)
+        if len(ty_):
+            seeds_ = np.zeros(code.shape, int)
+            for i_, j_ in enumerate(r7.permutation(len(ty_))[: max(3, len(ty_) // 5)]):
+                seeds_[ty_[j_], tx_[j_]] = i_ + 1
+            idx_ = ndi.distance_transform_edt(seeds_ == 0, return_distances=False, return_indices=True)
+            lab_ = seeds_[idx_[0], idx_[1]]
+            tones_ = [C('stone', 4), C('stone_warm', 4), C('ashlar_warm', 4), C('ashlar', 4), C('stone_warm', 3)]
+            got = {}
+            for i_ in np.unique(lab_[topz]):
+                sel_ = topz & (lab_ == i_)
+                ring_ = ndi.binary_dilation(sel_) & ~sel_ & topz
+                ban_ = {got.get(int(q)) for q in np.unique(lab_[ring_])}
+                ch_ = [q for q in range(4) if q not in ban_] or [4]
+                got[int(i_)] = int(r7.choice(ch_))
+                code[sel_] = tones_[got[int(i_)]]
+        fz = front & ndi.binary_erosion(body)
+        fy_, fx_ = np.nonzero(fz)
+        if len(fy_):
+            x = int(np.clip(np.median(fx_) + r7.integers(-6, 7), fx_.min() + 2, fx_.max() - 2))
+            y = int(fy_.min())
+            for j_ in range(int(r7.integers(3, 5))):
+                if fz[y, x]:
+                    code[y, x] = C('stone_cool', 0)
+                    if x + 1 < Wt and fz[y, x + 1]:
+                        code[y, x + 1] = C('stone', 3)                # the crack's lit far lip
+                y += 1
+                if j_ == 1:
+                    x += 1 if r7.random() < 0.5 else -1              # a step
+        bot = body & ~np.pad(body, 1)[2:, 1:-1]
+        bx_ = sorted(int(x) for x in np.nonzero(bot.any(0))[0] if x0 + 4 < x < x1 - 5)
+        for x in r7.choice(bx_, size=min(2, len(bx_)), replace=False) if bx_ else []:
+            for dx in range(int(r7.integers(2, 4))):
+                col = np.nonzero(body[:, x + dx])[0]
+                if not len(col):
+                    continue
+                yb_ = int(col.max())
+                body[yb_, x + dx] = False
+                code[yb_, x + dx] = -1
+                code[yb_ - 1, x + dx] = C('stone_cool', 1)
     edge = body & ~ndi.binary_erosion(body)
     P = np.pad(body, 1)
     lit_ = edge & ~P[:-2, 1:-1] & (u < 0.75)                          # the lit top edge shows

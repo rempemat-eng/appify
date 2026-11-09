@@ -18578,7 +18578,7 @@
   "shadow": {
    "mask": {
     "offset": [
-     -36,
+     -40,
      -72
     ],
     "png": "res://kit/props/art/shadow_woodland_pine.png"
