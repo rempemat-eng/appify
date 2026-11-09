@@ -1,7 +1,7 @@
 {
  "id": "crossroads/flower_tub_10",
  "file": "game/zones/crossroads/art/flower_tub_10.png",
- "sha256": "d215806a0dbbe39a10c71fcde57689c68ec2fdaf4585730ff5584b14549580b6",
+ "sha256": "317e9003032e4de804b33392b631ff252f401ff74b6b0db0b5f91922d02d989d",
  "kind": "tub",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 0
  },
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 35.0,
-   "shapes": 43.5
+   "tones": 33.5,
+   "shapes": 47.0
   },
   "band": {
    "tones": 27.0,
@@ -28,49 +28,17 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.864,
-  "tones_ratio": 1.296,
-  "shapes_ratio": 0.864,
-  "passed": false,
+  "ratio": 0.933,
+  "tones_ratio": 1.241,
+  "shapes_ratio": 0.933,
+  "passed": true,
   "group": "prop"
  },
- "findings": [
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    8,
-    18,
-    48,
-    54
-   ],
-   "message": "crossroads/flower_tub_10: detail bar 0.86 of Eastward's prop band (35.0 tones, 43.5 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.cluster_noise",
-   "severity": "polish",
-   "box": [
-    8,
-    18,
-    48,
-    54
-   ],
-   "message": "crossroads/flower_tub_10: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 49%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
-  }
- ],
+ "findings": [],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "Round 3 review at 8c212777 (PR #450), docs/reviews/2026-11-08-crossroads-placed.md, round 3. Answered: each tub has its own planting (geranium, daisy, lavender, marigold, ivy, herbs) in scalloped clumps with dark pockets (XR2-T5 fixed); the body now has a lit west, body and dark east, a hairline crack with a lit lip and a few pits. Still failing: the body is three or four straight vertical bands under a full-width ruled dark line, a box planter rather than a vessel, with one-tone runs of 65 texels (XR2-T1 asks none over 40); the lime bloom is still mostly a 2-row bar with drips under the rim (XR2-T2 partly); the lower-right corner is still a distinct near-black block (XR2-T3 partly); the soil shows as a dark 1-row slot under the rim, not a 2 px soil band under a lit inner wall (XR2-T4 partly). Cluster noise rose to 43.9 % (was 37.7 %; Eastward's props median 29 %, fault line 48 %): part of the bar's rise is grain, not structure. Bar 0.64 -> 0.86. Compared with the Eastward 13 bell and 17 churns at x1.37. Fix list: XR3-T1 to XR3-T4.",
-  "fix_list": [
-   "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
-   "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
-   "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
-   "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

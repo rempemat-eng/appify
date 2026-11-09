@@ -260,12 +260,23 @@ def tidy(a, passes=2, keep=None):
     return a
 
 
-def finish(p: Pic, line=True) -> Pic:
-    tidy(p.a)
+def finish(p: Pic, line=True, keep=None) -> Pic:
+    """Tidy the lone pixels, outline the silhouette and tidy once more; `keep` masks texels the tidy
+    must leave alone (a nail head's lit texel, XR3-S1)."""
+    tidy(p.a, keep=keep)
     if line:
         outline(p.a)
-        tidy(p.a, passes=1)
+        tidy(p.a, passes=1, keep=keep)
     return p
+
+
+def nail_lights(a):
+    """The lit texel of every nail head nail_head() drew (iron 4 over a dark 2 x 2 head), as a mask for
+    finish(keep=...): one texel unlike its four neighbours, which the tidy would otherwise take."""
+    lit, dk = code('iron', 4), code('iron', 1)
+    m = np.zeros(a.shape, bool)
+    m[:-1, :-1] = (a[:-1, :-1] == lit) & (a[:-1, 1:] == dk) & (a[1:, :-1] == dk) & (a[1:, 1:] == dk)
+    return m
 
 
 # ------------------------------------------------------------------------------------------------
@@ -1713,7 +1724,7 @@ def p_lantern(w, h, seed, lit=False, hd=False):
     p = _pic(w, h, up=50, side=8)
     a, cx, yb = p.a, p.ax, p.ay
     if hd:
-        plinth_hd(a, cx, yb, np.random.default_rng(seed + 11))
+        lamp_plinth_hd(a, cx, yb, np.random.default_rng(seed + 11))
     else:
         prism(a, cx - q(7.5), yb - q(5), cx + q(7.5), yb + 1, q(2.6), 'stone_warm', 3, side=q(2.6))
         prism(a, cx - q(5.2), yb - q(9), cx + q(5.2), yb - q(5), q(2.0), 'stone_warm', 3, side=q(2.0))
@@ -3455,6 +3466,180 @@ def plinth_hd(a, cx, yb, rng, slabs=((7.5, 5, 2.6), (5.2, 4, 2.0)), fam='stone_w
     return tops[-1][2]
 
 
+def sibling_cells(a, face, rng, y0, y1, x0, x1, fams, share=0.5, step=(4, 5), squash=0.9, maxrun=40, iters=400,
+                  keep=None):
+    """Break a surface into clusters on sibling ramps at the same tone (XR3-T1, L1): a patchwork of cells
+    about step[0] x step[1] texels, each on one of `fams` (shape, no value noise), and then any one-tone
+    run over `maxrun` texels, judged as finish() will leave the picture (tidied and outlined), loses one
+    of its cells to the next sibling until none is left. `face` is the mask it may recolour; `keep` is
+    what finish() will be told to keep."""
+    Y, X = grid(a)
+    sy_, sx_ = np.mgrid[y0:y1:step[0], x0:x1:step[1]]
+    seeds = np.stack([sy_.ravel() + rng.uniform(0, step[0], sy_.size), sx_.ravel() + rng.uniform(0, step[1], sx_.size)], 1)
+    d2 = ((Y[..., None] - seeds[:, 0]) / squash) ** 2 + (X[..., None] - seeds[:, 1]) ** 2
+    cell = np.argmin(d2, axis=2)
+    pick = (rng.random(len(seeds)) < share).astype(int)
+    fa = np.array([FI[f] for f in fams])
+    for _ in range(iters):
+        a[face] = (fa[pick[cell]] * 8 + tone_of(a))[face]
+        t_ = tidy(a.copy(), keep=keep)
+        a[face] = t_[face]
+        outline(t_)
+        tidy(t_, passes=1, keep=keep)
+        seen = np.isin(fam_of(t_), fa) & (t_ >= 0)
+        big = []
+        for v in np.unique(t_[seen]):
+            lab, k = ndi.label((t_ == v) & seen)
+            n_ = np.bincount(lab.ravel())
+            n_[0] = 0
+            big += [(lab == i) & face for i in np.nonzero(n_ > maxrun)[0]]
+        big = [rm for rm in big if rm.any()]
+        if not big:
+            break
+        for rm in big:
+            cs = np.bincount(cell[rm], minlength=len(seeds))
+            c = int(rng.choice(len(seeds), p=cs / cs.sum()))
+            pick[c] = (pick[c] + 1) % len(fams)
+    return cell
+
+
+def moss_clumps(a, jy, spans, rng):
+    """Moss in the joint at row jy (XR3-L2): one clump per (x0, x1) span, each its own size: a lit cap
+    2 texels deep (leaf 4 and 5 on the west, a lit tip), over a band of 3 to 4 texels whose lower edge is
+    ragged (the band's depth changes every one to three columns) and dark; a tuft or two standing proud of
+    the cap. Only over what is drawn."""
+    H, W = a.shape
+    for (xa, xb) in spans:
+        xa, xb = int(xa), int(xb)
+        n = xb - xa
+        crest = [0] * n
+        for i in range(n):                                                # the cap's crest, rising to the middle
+            e = min(i, n - 1 - i)
+            crest[i] = 0 if e == 0 else (1 if e < 2 else 2) + (1 if (e >= 3 and rng.random() < 0.35) else 0)
+        depth, i = [], 0
+        while len(depth) < n:                                             # the ragged underside
+            run = int(rng.integers(1, 4))
+            depth += [int(rng.integers(3, 6))] * run
+        for i in range(n):
+            x = xa + i
+            if not 0 <= x < W:
+                continue
+            edge_ = i == 0 or i == n - 1
+            top = jy - crest[i]
+            bot = jy + depth[i] - (1 if edge_ else 0)
+            for y in range(top, bot):
+                if not (0 <= y < H and (a[y, x] >= 0 or y < jy)):           # the cap may stand proud of the stone
+                    continue
+                k = y - top
+                if k == 0:
+                    t, f = (5, 'leaf_warm') if i < n * 0.45 else (4, 'leaf')
+                elif k == 1:
+                    t, f = (4, 'leaf_warm') if i < n * 0.6 else (3, 'leaf')
+                elif y == bot - 1:
+                    t, f = 1, 'leaf_cool'
+                elif y == bot - 2:
+                    t, f = 2, 'leaf_cool'
+                else:
+                    t, f = 3, ('leaf' if (x // 2) % 2 else 'leaf_cool')
+                a[y, x] = code(f, t)
+
+
+def lamp_plinth_hd(a, cx, yb, rng, slabs=((7.5, 5, 2.6), (5.2, 4, 2.0))):
+    """The lamp's plinth of dressed stone slabs, lowest first (half-width, height in world px; the third
+    figure is kept for the call's shape), each drawn with its volume (XR3-L1): a top plane three rows deep
+    in tone 4 on sibling ramps, its back row receding a tone and its front-left arris lit; a one-row bevel
+    step under the arris; a lit west end two or three columns wide; the front in three tones (lit west,
+    body, shaded east), its blocks parted by joints and tooled in sibling clusters so no one-tone run is
+    over 60 texels, its lowest rows turning under; the east end in core shadow; two chips with lit lips;
+    a dark contact row. Moss grows in one or two clumps of different sizes in the joint under the upper
+    slab, placed unevenly (XR3-L2). Returns the top of the plinth (texels)."""
+    Y, X = grid(a)
+    y_bot = yb + 1
+    tops = []
+    cum = 0.0
+    for i, (hw, ht, _td) in enumerate(slabs):
+        x0, x1 = cx - q(hw), cx + q(hw)
+        cum += ht
+        y0 = yb - q(cum)
+        tdp = 3                                                           # the top plane's depth
+        wl = 3 if i == 0 else 2                                           # the lit west end
+        side = 4 if i == 0 else 3                                         # the east end, in shadow
+        m = (X >= x0) & (X < x1) & (Y >= y0) & (Y < y_bot)
+        # two chips knocked off the top corners, each a step cut of 3 to 6 texels, one bigger than the other
+        chip1 = m & ((X - x0) + (Y - y0) < 1.5 + rng.uniform(0.5, 1.5) + (i == 0))
+        chip2 = m & ((x1 - 1 - X) + (Y - y0) < 1.5 + rng.uniform(0.5, 1.5) + (i == 1))
+        m &= ~chip1 & ~chip2
+        topm = m & (Y < y0 + tdp)
+        bev = m & (Y == y0 + tdp)
+        west = m & ~topm & ~bev & (X < x0 + wl)
+        east = m & ~topm & (X >= x1 - side)
+        front = m & ~topm & ~bev & ~west & ~east
+        u = (X - x0 - wl) / max(1, x1 - side - x0 - wl)
+        fy = (Y - y0 - tdp - 1) / max(1, y_bot - 1 - y0 - tdp - 1)
+        # the top plane: tone 4, its back row a tone down, the front arris lit on the west, the east end
+        # of the plane turning away
+        _codes(a, topm, 'stone_warm', 4)
+        a[topm & (Y < y0 + 1)] = code('stone_warm', 3)
+        a[topm & (Y == y0 + tdp - 1) & (X < x0 + (x1 - x0) * 0.6)] = code('stone_warm', 5)
+        a[topm & (X < x0 + 1) & (Y > y0)] = code('stone_warm', 5)
+        a[topm & (X >= x1 - side)] = code('stone_warm', 3)
+        a[topm & (X >= x1 - side) & (Y == y0 + tdp - 1)] = code('stone_warm', 4)
+        # the bevel step: a row in half shade under the arris, darker over the east end
+        _codes(a, bev, 'stone_warm', np.where(X < x1 - side, 3, 2))
+        a[bev & (X < x0 + wl)] = code('stone_warm', 4)
+        # the lit west end
+        _codes(a, west, 'stone_warm', np.where(X < x0 + 1, 5, 4) - (fy > 0.8))
+        # the front in three tones, the boundaries stepping by a texel or two from course to course
+        jit = (rng.random(a.shape[0]) * 0.08)[:, None]
+        tf = np.select([u + jit < 0.34, u + jit < 0.7], [4, 3], 2) - (fy > 0.78)
+        _codes(a, front, 'stone_warm', tf)
+        # the blocks: a joint or two, the next block's west edge lit
+        nb = 2 if (x1 - side - x0) > q(10) else 1
+        for k in range(nb):
+            jx = int(x0 + wl + (x1 - side - x0 - wl) * (k + 1) / (nb + 1) + rng.uniform(-3, 3))
+            jm = front & (X >= jx) & (X < jx + 1) & (Y > y0 + tdp + 1)
+            a[jm] = code('stone_cool', 1)
+            lit_ = front & (X >= jx + 1) & (X < jx + 2) & (Y > y0 + tdp + 1) & (Y < y_bot - 1)
+            a[lit_] = FI['stone_warm'] * 8 + np.minimum(5, tone_of(a[lit_]) + 1)
+        # pocks: a dark pair with its lower lip lit, on the lit half
+        for _ in range(int(rng.integers(1, 3))):
+            px, py = int(rng.uniform(x0 + wl + 2, x0 + (x1 - x0) * 0.55)), int(rng.uniform(y0 + tdp + 3, y_bot - 3))
+            pk = front & (np.floor(Y) == py) & (X >= px) & (X < px + 2)
+            if pk.sum() == 2:
+                t0 = int(tone_of(a[py, px]))
+                a[pk] = code('stone_warm', max(1, t0 - 2))
+                a[np.roll(pk, 1, axis=0) & front] = code('stone_warm', min(5, t0 + 1))
+        # the east end: a lit arris column, the core shadow, a reflected rim at the far edge
+        ex = (X - (x1 - side)) / max(1, side)
+        _codes(a, east, 'stone_cool', np.where(ex < 0.25, 3, np.where(ex < 0.75, 1, 2)) - 0 * fy)
+        a[east & (Y == y0 + tdp)] = code('stone_cool', 2)
+        # tooling: the front, the top and the west end on sibling ramps at the same tone
+        sibling_cells(a, (front | topm | west) & (fam_of(a) == FI['stone_warm']), rng, y0, y_bot, x0, x1,
+                      ('stone_warm', 'stone'), share=0.45, step=(3, 6), maxrun=50)
+        # the chips' fresh faces: lit where they face up and west, a dark texel where they face east
+        for ch in (chip1, chip2):
+            faces_up_w = m & (np.roll(ch, 1, axis=0) | np.roll(ch, 1, axis=1))
+            faces_e = m & np.roll(ch, -1, axis=1) & ~faces_up_w
+            a[faces_up_w] = code('stone_warm', 5)
+            a[faces_e] = code('stone_cool', 2)
+        a[m & (Y == y_bot - 1)] = code('stone_warm', 1)
+        a[m & (Y == y_bot - 1) & (X >= x1 - side)] = code('stone_cool', 1)
+        tops.append((x0, x1, y0, tdp))
+        y_bot = y0
+    if len(tops) > 1:
+        # moss in the joint under the upper slab: one larger clump and maybe a smaller one, uneven
+        ux0, ux1, uy0, _ = tops[1]
+        jy = tops[0][2] + 1
+        n1 = int(rng.integers(8, 12))
+        s1 = int(ux0 - 4 + rng.uniform(0, 5))
+        spans = [(s1, s1 + n1)]
+        if rng.random() < 0.8:
+            n2 = int(rng.integers(4, 7))
+            s2 = int(ux1 - n2 + rng.uniform(-2, 4))
+            spans.append((s2, s2 + n2))
+        moss_clumps(a, jy, spans, rng)
+    return tops[-1][2]
+
 def lamp_glass(a, cx, yb):
     """Lantern glass lit from inside (house-style 5, Glass): the lamp ramp, lamp 1 along the frame's
     shadow and the top, brightening towards the bottom middle where the shard burns."""
@@ -4036,65 +4221,126 @@ def p_flower_tub_hd(w, h, seed):
     top = body & (Y < yf)
     front = body & ~top
     u = (X - x0) / max(1, x1 - x0)
-    # the vessel (XR2-T1): lit west, body, the core shade on the east, a reflected rim at the last column;
-    # vessel light across the face (a highlight band left of centre, the core shade right, a reflected
-    # rim), the bands running straight down the thrown body
-    uu = u
     fy = (Y - yf) / max(1, yb - yf)
-    t = np.select([uu < 0.03, uu < 0.3, uu < 0.6, uu < 0.8], [3.6, 4.0, 3.0, 2.0], 1.0)
-    t = np.where((uu >= 0.6) & (fy > 0.68), t - 1.0, t)               # the belly turning under, in shade
-    paint(a, front, clay, t)
-    a[front & (uu >= 0.8) & (fy <= 0.68)] = code('clay', 1)            # the core shade, warm; the belly under it cool
-    # the clay fired unevenly: clusters of 3 to 10 texels on the cool sibling at the same tone (shape, no
-    # value noise), so no one-tone run on the lit side or the body is longer than a hand
-    sib = (ndi.gaussian_filter(np.random.default_rng(seed + 101).random(a.shape), 1.3) > 0.53) & front & (uu > 0.04) & (uu < 0.6) & (fy > 0.12)
-    sib &= (fam_of(a) == FI['clay'])
-    a[sib] = FI['clay_cool'] * 8 + tone_of(a[sib])
+    crng = np.random.default_rng(seed + 101)                            # the clay's own draws (the planting keeps rng's)
+    # XR3-T1: the body as a fired-clay vessel. The light falls across a bellied form: the lit west, the
+    # body tone and the shade on the east meet along curves that bow out at the belly, so each boundary
+    # steps two or three texels at a time down the face (never a straight vertical edge); a soft lit
+    # patch sits on the upper west of the belly; the belly turns under at the foot in a band that
+    # deepens towards the east; no tone 0 anywhere on the body (XR3-T3)
+    bow = 0.17 * np.clip(1.0 - ((fy - 0.42) * 1.9) ** 2, -0.4, 1.0)
+    uc = u - bow
+    t = np.select([uc < 0.27, uc < 0.52, uc < 0.78], [4, 3, 2], 1).astype(float)
+    t = np.where((uc >= 0.95) & (fy > 0.15) & (fy < 0.8), 2, t)          # the reflected rim
+    hl = ((u - 0.15) / 0.075) ** 2 + ((fy - 0.40) / 0.26) ** 2 <= 1.0
+    t = np.where(hl, 5, t)                                                # the soft lit patch on the belly
+    turn = (yb - 1 - Y) < (1.6 + 2.6 * u)                                 # the belly turning under, deeper east
+    t = np.where(turn & (Y < yb - 1), np.maximum(1, t - 1), t)
+    t = np.where(Y >= yb - 1, np.where(u < 0.42, 3, 1), t)              # the base row: a reflected light fading in 2 tones
+    # XR3-T1: the shade under the rolled rim, three rows deep on the east thinning to one on the west
+    # (in 2 to 3 texel steps), a tone down on the west and two on the east: no ruled line
+    sd = np.where(u < 0.22, 0, np.where(u < 0.5, 2, 4)) + (crng.random(a.shape[1]) < 0.3)[None, :] * (u > 0.5)
+    shade = (Y >= yf + 1) & ((Y - yf - 1) < sd)
+    t = np.where(shade, np.maximum(1, t - np.where((u > 0.5) & (Y < yf + 2), 2, 1)), t)
+    t = np.where(shade & (u < 0.12), np.maximum(t, 3), t)
+    t = np.where(Y < yf + 1, np.where(u < 0.8, 5, 4), t)                 # the roll's lower face, still in the light
+    _codes(a, front, 'clay', t)
+    a[front & (Y >= yb - 1)] = FI['clay_cool'] * 8 + t[front & (Y >= yb - 1)].astype(int)
     # the rim seen from above: the back rim's top lit, the far inner wall lit over the soil, the front lip
     paint(a, top, clay, 4.0 - 0.9 * u)
     a[top & (Y < ytop + 1)] = code('clay', 5)
     a[top & (Y < ytop + 1) & (u > 0.75)] = code('clay', 4)
     wall = top & (Y >= ytop + 1) & (Y < ytop + 3) & (X >= x0 + 2) & (X < x1 - 2)
-    paint(a, wall, clay, 4.0 - 1.0 * (u > 0.7))                                 # the far inner wall, lit
+    _codes(a, wall, 'clay', np.where(u > 0.72, 3, np.where(Y < ytop + 2, 5, 4)))   # XR3-T4: the far inner wall, lit
+    # XR3-T4: the soil, a band two texels deep (its top row lit a step) with clods lit on top
     soil = top & (Y >= ytop + 3) & (Y < ytop + 5) & (X >= x0 + 2) & (X < x1 - 2)
-    _codes(a, soil, 'earth_cool', np.where(Y < ytop + 4, 1, 0))
+    _codes(a, soil, 'earth_cool', np.where(Y < ytop + 4, 4, 3) - (u > 0.7))
     for _ in range(int(rng.integers(4, 7))):                                     # clods, lit on top
         cx_ = int(rng.uniform(x0 + 3, x1 - 5))
         cm = soil & (X >= cx_) & (X < cx_ + int(rng.integers(2, 4)))
-        a[cm & (Y < ytop + 4)] = code('earth', 3)
-        a[cm & (Y >= ytop + 4)] = code('earth', 2)
+        a[cm & (Y < ytop + 4)] = code('earth', 4)
+        a[cm & (Y >= ytop + 4)] = code('earth', 3)
+    a[soil & (np.roll(soil, -1, axis=1) == 0)] = code('earth_cool', 1)          # the soil's shade at the east wall
     lip = top & (Y >= ytop + 5)
-    paint(a, lip, clay, np.where(Y < ytop + 7, 5.0, 3.6) - 1.2 * (u > 0.78))
+    paint(a, lip, clay, 5.0 - 1.2 * (u > 0.78))
     a[lip & (X < x0 + 1)] = code('clay', 4)
-    under = front & (Y < yf + 2)
-    paint(a, under, clay, 1)                                                      # the dark band under the roll
-    # the foot: a dark row, the belly a tone down over it (no corner block)
-    a[front & (Y >= yb - 1)] = code('clay_cool', 1)
-    a[front & (Y >= yb - 2) & (Y < yb - 1) & (u > 0.3) & (u < 0.6)] = code('clay', 2)
+    # the clay fired unevenly (XR3-T1): a patchwork of clusters of 12 to 30 texels, each on the clay or its
+    # cool sibling at the same tone (shape, no value noise); then any one-tone run still over 40 texels is
+    # broken by turning one of its clusters to the sibling
+    # (the lip and the far wall too: the rolled rim is fired clay as well)
+    face = (front | lip | wall) & np.isin(fam_of(a), [FI['clay'], FI['clay_cool']])
+    sy_, sx_ = np.mgrid[ytop:yb:4, x0:x1:5]
+    seeds = np.stack([sy_.ravel() + crng.uniform(0, 4, sy_.size), sx_.ravel() + crng.uniform(0, 5, sx_.size)], 1)
+    d2 = ((Y[..., None] - seeds[:, 0]) / 0.9) ** 2 + (X[..., None] - seeds[:, 1]) ** 2
+    cell = np.argmin(d2, axis=2)
+    cool = crng.random(len(seeds)) < 0.6
+    def sib_of(c):
+        return cool[c]
+    def break_runs(face):
+        for _ in range(400):
+            a[face] = (np.where(sib_of(cell), FI['clay_cool'], FI['clay']) * 8 + tone_of(a))[face]
+            t_ = tidy(a.copy())                                           # judged as finish() will leave it
+            a[face] = t_[face]
+            outline(t_)
+            tidy(t_, passes=1)
+            seen = np.isin(fam_of(t_), [FI['clay'], FI['clay_cool']]) & (t_ >= 0)
+            big = []
+            for v in np.unique(t_[seen]):
+                lab, k = ndi.label((t_ == v) & seen)
+                n_ = np.bincount(lab.ravel())
+                n_[0] = 0
+                big += [(lab == i) & face for i in np.nonzero(n_ > 40)[0]]
+            big = [rm for rm in big if rm.any()]
+            if not big:
+                return
+            for rm in big:                                                # turn one of each long run's clusters
+                cs = np.bincount(cell[rm], minlength=len(seeds))
+                c = int(crng.choice(len(seeds), p=cs / cs.sum()))
+                cool[c] = ~cool[c]
+    break_runs(face)
+    plain = a.copy()
     # clay pits: a dark pocket of two texels, its lower lip lit
     for _ in range(int(rng.integers(2, 4))):
         px, py = int(rng.uniform(x0 + 3, x0 + (x1 - x0) * 0.6)), int(rng.uniform(yf + 3, yb - 3))
         pm_ = front & (np.floor(Y) == py) & (X >= px) & (X < px + 2)
-        if pm_.sum() == 2:
-            t0 = int(tone_of(a[py, px]))
-            a[pm_] = code('clay_cool', max(0, t0 - 2))
+        t0 = int(tone_of(a[py, px]))
+        if pm_.sum() == 2 and t0 >= 3:                    # on the lit half only
+            a[pm_] = code('clay_cool', t0 - 1)
             a[np.roll(pm_, 1, axis=0) & front] = code('clay', min(5, t0 + 1))
     # a hairline crack from the rim down, its west lip lit
     cxk = int(rng.uniform(x0 + (x1 - x0) * 0.25, x0 + (x1 - x0) * 0.8))
     cr = _wander(a, cxk, yf + 1, int(rng.integers(6, 11)), rng, front)
     lipk = np.roll(cr, -1, axis=1) & front & ~cr
     a[lipk] = np.minimum(a[lipk] + 1, (a[lipk] // 8) * 8 + 5)
-    a[cr] = code('clay_cool', 0)
-    # lime bloom (XR2-T2): a pale crust hanging from the under-rim band, its lower edge ragged in steps
-    # of two columns, its own spread on every tub; lit where it catches the light
-    for _ in range(int(rng.integers(1, 3))):
+    a[cr] = code('clay_cool', 1)
+    # XR3-T2: lime bloom as ragged pale clusters of 2 to 4 texels, wandering along under the rim and down
+    # one side, each tub its own: where the water wept over the lip. No bar, no drips.
+    nb = int(rng.integers(1, 3))
+    side_ = 'w' if crng.random() < 0.5 else 'e'
+    shapes = (((0, 0), (1, 0)), ((0, 0), (0, 1)), ((0, 0), (1, 0), (0, 1)), ((0, 0), (1, 0), (1, 1)),
+              ((0, 0), (1, 0), (2, 0)), ((0, 0), (1, 0), (0, 1), (1, 1)), ((0, 0), (1, 0), (2, 0), (1, 1)))
+    spots = []
+    for _ in range(nb):
         bx_ = int(rng.uniform(x0 + 2, x1 - 12))
         bw_ = int(rng.integers(5, 11))
+        x = bx_
         for k in range(0, bw_, 2):
             dep = int(rng.integers(1, 4)) if 0 < k < bw_ - 2 else 1
-            cm = front & (X >= bx_ + k) & (X < bx_ + k + 2) & (Y >= yf + 1) & (Y < yf + 2 + dep)
-            a[cm] = code('plaster', 1)
-            a[cm & (Y < yf + 2)] = code('plaster', 2)
+            if crng.random() < 0.55:
+                spots.append((x, yf + 1 + dep + int(crng.integers(0, 2))))
+            x += int(crng.integers(2, 5))
+    sx0 = x0 + 1 if side_ == 'w' else x1 - 4
+    yy = yf + 3
+    while yy < yb - 4 and crng.random() < 0.82:                             # down one side, thinning
+        spots.append((sx0 + int(crng.integers(0, 3)), yy))
+        yy += int(crng.integers(2, 5))
+    for (bx, by) in spots:
+        for (dx, dy) in shapes[int(crng.integers(0, len(shapes)))]:
+            if 0 <= by + dy < a.shape[0] and front[by + dy, bx + dx]:
+                t0 = int(tone_of(a[by + dy, bx + dx]))
+                if t0 >= 2:                                                 # pale crust, near the clay's own value
+                    a[by + dy, bx + dx] = code('plaster', 1 if t0 >= 4 else 0)
+    break_runs(face & (a == plain))                                      # again, round the pits, crack and bloom
     # the planting (XR2-T5): its own kind on every tub
     kind = PLANTINGS[(seed + seed // 6 + seed // 50) % len(PLANTINGS)]
     greens = {'geranium': ('leaf_cool', 'leaf', 'leaf_warm'), 'daisy': ('leaf_cool', 'leaf', 'leaf'),
@@ -4376,7 +4622,10 @@ def p_stall_hd(w, h, seed, hd=False):
               int(rng.choice([2, 3, 3])), rng)
         # XR2-S3: nail heads (a lit texel each) at the joint, into the rails behind, the rust varied
         for ny_ in (yb - q(11), yb - q(3.2)):
-            nail_head(a, xx + 1, ny_, rust=int(rng.integers(0, 4)))
+            rust_ = int(rng.integers(0, 4))
+            behind_sack = xx + 1 < x0 + q(3) + q(3.4) + 1 and ny_ > yb - q(3.6) - q(3.4) - q(1.8)
+            if not behind_sack:                                           # XR3-S1: none half hidden, its light lost
+                nail_head(a, xx + 1, ny_, rust=rust_)
         xx += bw
     cy0, cy1, ctop = yb - q(16.5), yb - q(13), q(1.8)
     prism(a, x0, cy0, x1, cy1, ctop, 'timber_warm', 3, side=q(1))
@@ -4454,35 +4703,44 @@ def p_stall_hd(w, h, seed, hd=False):
     _codes(a, inb, 'slate', 1)
     a[inb & (Y < by0 + q(1) + 2)] = code('slate', 0)
     a[inb & (X < bx0 + 3)] = code('slate', 0)
-    # XR2-S1: chalk lettering in broken strokes of 1 to 2 texels, two tones (fresh chalk and the smudge of
-    # what was wiped): two short words and a price, written by hand, each letter its own stroke shape
+    # XR3-S2: the board written in chalk: a word in fresh chalk, a second in the older, dimmer chalk, and
+    # a price underlined, each letter its own shape (a hand's capitals, 3 or 2 texels wide and 4 tall,
+    # the digits 5 tall) in strokes a texel wide, broken here and there; over part of the slate, the haze
+    # of a wiped line in the dimmer tone, in smears of 2 to 6 texels
     crng = np.random.default_rng(seed + 31)
-    ix0, ix1 = bx0 + 4, bx1 - q(1) - 3
+    ix0 = bx0 + 3
     iy0 = by0 + q(1) + 3
-    sm_ = inb & (Y >= iy0 + 4) & (Y < iy0 + 7) & (X >= ix0 + 2) & (X < ix1 - 2)
-    a[sm_ & (crng.random(a.shape) < 0.5)] = code('slate', 2)          # an old line half wiped
-    def letter(x, y, kind):
-        pts = {0: [(0, 0), (0, 1), (0, 2), (1, 2)], 1: [(0, 2), (1, 1), (1, 0), (2, 2)], 2: [(0, 0), (1, 0), (1, 1), (1, 2)],
-               3: [(0, 1), (1, 0), (1, 1), (1, 2), (0, 2)], 4: [(0, 0), (0, 1), (1, 1), (1, 2)]}[kind]
-        for (dx, dy) in pts:
-            if crng.random() < 0.88:
-                a[y + dy, x + dx] = code('plaster', 5 if crng.random() < 0.75 else 3)
-    rows = [(iy0, 2 + int(crng.integers(0, 2))), (iy0 + 8, 2)]
-    for (ry, nw) in rows:
-        x = ix0 + int(crng.integers(0, 2))
-        for _ in range(nw):
-            for _ in range(int(crng.integers(2, 4))):
-                if x + 2 < ix1:
-                    letter(x, ry + int(crng.integers(0, 2)), int(crng.integers(0, 5)))
-                x += 3
-            x += 2
-    # the price: a numeral and a tick, underlined in a broken stroke
-    py_ = by1 - 7
-    if py_ > iy0 + 11:
-        letter(ix0 + 1, py_, 3)
-        letter(ix0 + 4, py_, 1)
-        ul = inb & (Y >= py_ + 3) & (Y < py_ + 4) & (X >= ix0) & (X < ix0 + 8) & (((X.astype(int)) % 4) != 3)
-        a[ul] = code('plaster', 3)
+    GL = {'N': ('##.', '#.#', '#.#', '#.#'), 'E': ('###', '#..', '##.', '###'), 'W': ('#.#', '#.#', '###', '.#.'),
+          'P': ('###', '#.#', '###', '#..'), 'L': ('#.', '#.', '#.', '##'), 'U': ('#.#', '#.#', '#.#', '###'),
+          'M': ('#.#', '###', '#.#', '#.#'), '3': ('###', '..#', '.##', '..#', '###'),
+          'd': ('..#', '..#', '###', '#.#', '###')}
+    # the haze lies in the gaps between the lines and beside the price, where a line was wiped
+    haze = inb & (X >= ix0 + 1) & ((((Y >= iy0 + 5) & (Y < iy0 + 7)) | ((Y >= iy0 + 11) & (Y < iy0 + 13)))
+                                   | ((Y >= iy0 + 13) & (Y < iy0 + 19) & (X >= ix0 + 11)))
+    for _ in range(int(crng.integers(6, 9))):                         # smeared along the line
+        hx, hy = int(crng.uniform(ix0, bx1 - q(1) - 4)), int(crng.uniform(iy0 + 5, iy0 + 19))
+        hm = haze & (np.floor(Y) == hy) & (X >= hx) & (X < hx + int(crng.integers(3, 7)))
+        hm |= haze & (np.floor(Y) == hy + 1) & (X >= hx + 1) & (X < hx + int(crng.integers(3, 6)))
+        a[hm] = code('slate', 2)
+    def write(word, x, y, tone, drop=0.06):
+        for ch in word:
+            g = GL[ch]
+            for dy, row in enumerate(g):
+                for dx, c in enumerate(row):
+                    if c == '#' and crng.random() >= drop and inb[y + dy, x + dx]:
+                        a[y + dy, x + dx] = code('plaster', tone)
+            x += len(g[0]) + 1
+    write('NEW', ix0 + 1 + int(crng.integers(0, 3)), iy0, 5)
+    write('PLUM', ix0, iy0 + 7, 3)
+    py_ = iy0 + 13
+    write('3d', ix0 + 2 + int(crng.integers(0, 2)), py_, 5)
+    ul = inb & (Y >= py_ + 6) & (Y < py_ + 7) & (X >= ix0 + 1) & (X < ix0 + 11) & (((X.astype(int) - ix0) % 5) != 3)
+    a[ul] = code('plaster', 3)
+    # the slate itself not one flat field: patches on its cool sibling at the same tone, the chalk dust
+    # settled unevenly
+    field = inb & (a == code('slate', 1))
+    sibling_cells(a, field, crng, int(by0), int(by1), int(bx0), int(bx1), ('slate', 'slate_cool'), share=0.4,
+                  step=(4, 4), maxrun=40, keep=inb)
     # the sack: a body with fold bands, a gathered neck tied with cord, a frill above
     sx, sy, rx, ry = x0 + q(3), yb - q(3.6), q(3.4), q(3.4)
     d = ((X - sx) / rx) ** 2 + ((Y - sy) / ry) ** 2
@@ -4500,7 +4758,9 @@ def p_stall_hd(w, h, seed, hd=False):
     cord = (np.abs(X - sx) < q(1.6)) & (np.abs(Y - (sy - ry - q(0.6))) < 1)
     a[cord] = code('timber_warm', 2)
     a[cord & (X < sx - 1)] = code('timber_warm', 4)
-    return finish(p)
+    # XR3-S1: the nail heads keep their lit texel; XR3-S2: the chalk keeps its strokes (the tidy would
+    # fill a letter's one-texel counter and take a stroke's lone end)
+    return finish(p, keep=nail_lights(a) | inb)
 
 
 PROPS_HD = {
