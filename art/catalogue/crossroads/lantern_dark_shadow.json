@@ -1,7 +1,7 @@
 {
  "id": "crossroads/lantern_dark_shadow",
  "file": "game/zones/crossroads/art/lantern_dark_shadow.png",
- "sha256": "1adf40f1b2fd3ec023e57babced9e8a7c917f6f0fd88909027a5d849152411ac",
+ "sha256": "f67fd2fa086d01a891294779b51b011e7b81b5190c224f7d3292a54fbf167f85",
  "kind": "lantern_dark_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -21,8 +21,7 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-09",
-  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. Long post shadow thrown east and down from the plinth, two tones down with a one-tone rim; base matches the new plinth width."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

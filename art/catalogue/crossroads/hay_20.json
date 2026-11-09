@@ -1,7 +1,7 @@
 {
  "id": "crossroads/hay_20",
  "file": "game/zones/crossroads/art/hay_20.png",
- "sha256": "e4a9df688242592171d7283e9f0af88e973a1342e4b3ccee8f1d6d4bc83a5aab",
+ "sha256": "949684365e11bb73c3c907a7d2e63efc379469290ce3095489790b737e182d55",
  "kind": "haystack",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 8,
-   "tones": 14.875,
-   "shapes": 30.5
+   "patches": 7,
+   "tones": 20.428571428571427,
+   "shapes": 39.285714285714285
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.551,
-  "tones_ratio": 0.551,
-  "shapes_ratio": 0.606,
+  "ratio": 0.757,
+  "tones_ratio": 0.757,
+  "shapes_ratio": 0.78,
   "passed": false,
   "group": "prop"
  },
@@ -39,26 +39,19 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
+    0,
     5,
-    7,
-    61,
+    64,
     64
    ],
-   "message": "crossroads/hay_20: detail bar 0.55 of Eastward's prop band (14.9 tones, 30.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/hay_20: detail bar 0.76 of Eastward's prop band (20.4 tones, 39.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. As hay_19 (same build): 14 tones, one-tone top region 336 texels, ruled 1-texel straw, flat east end; bar 0.75 -> 0.55. Fix list: XR2-H1 to XR2-H4.",
-  "fix_list": [
-   "XR2-H1: give the bale volume: round the top-front and top-east edges over 2-3 rows (a lit band of tone 5 at the top-front arris, falling to tone 3 on the front), and knock each corner off 2 steps, as the Eastward 17 bale",
-   "XR2-H2: straw as strand clusters, not ruled 1-texel dashes: 2-3 texel tufts in 3-4 tones of the straw ramp, running along the bale on the top and across the cut ends, with a few strands breaking the silhouette",
-   "XR2-H3: the east end as a cut face with its own texture (dark tufts, a core shadow) instead of a flat mauve rectangle, and the front in horizontal bands of 3-4 tones in 2-3 px clusters",
-   "XR2-H4: twine pressed in: a dark line with a lit lip 1 texel off it, sinking into the straw and turning over the top-front edge"
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
