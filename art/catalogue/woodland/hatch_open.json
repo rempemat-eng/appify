@@ -75,7 +75,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 4 (PR #446 head dbd1841b): W3-H2 partly: the tread marks vary; but the lid still casts no shadow on the coping or the turf east of it, its two straps have no nail heads, and the bar is 0.886 on shapes (44.6 of 50.36) (W4-H1). detail.cluster_noise 45.8 % polish; detail.outline polish stands for the lid."
  }
 }

@@ -51,7 +51,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 4 (PR #446 head dbd1841b): crown (W4-F1): the two-scale structure reads (mass contrast 88.7 L against Eastward 51 to 54; lit field to pocket 97.2 L against 94 to 96; H/V 1.09; near-black 3 of 4 in shade), but the lit fields are soft mottle with no leaf-scale contrast: 31.9 L in 12 px windows inside the lit fields against Eastward 41 to 46 (required 38). Bar 0.858 (24.2 tones, 54.3 shapes a patch; shapes 0.858 of the band, under 0.9) (W4-F2)."
  }
 }

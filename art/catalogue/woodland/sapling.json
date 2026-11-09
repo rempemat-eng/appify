@@ -51,7 +51,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 4 (PR #446 head dbd1841b): W3-T6 fixed (no enclosed hole). Lit fields meet the leaf-scale bar (58.0 L, only 3 windows) and the crown reads; bar 0.858 (shapes 54.3 of 63.32) (W4-F2)."
  }
 }

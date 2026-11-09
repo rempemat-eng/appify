@@ -51,7 +51,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 4 (PR #446 head dbd1841b): W3-S3 partly: the ochre mark is gone into lichen tones and the corners are chipped, but the bar is 0.834 on shapes (42.0 of 50.36) and the base runs straight for 32 of 36 columns (W4-S1)."
  }
 }

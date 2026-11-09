@@ -51,7 +51,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 4 (PR #446 head dbd1841b): W3-S2 met: bar 0.877 on the prop band (tones 0.877, over the 0.85 floor for ramp-built stone; shapes 0.907); three chips cut into the front bottom edge, the top-left end rounded, a notch on the top-right corner, lone 1.3 %, cluster noise 29.9 %. Open polish (W4-S2): the two mortises are still near-black 3 x 3 squares with one lit texel, not a lit far wall over a stone-2 floor; the lit top carries tan lichen bars (W3-S4)."
  }
 }

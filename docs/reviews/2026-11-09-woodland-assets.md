@@ -797,3 +797,242 @@ Accepted as polish, not rejected: `logic.scale` on `standing_stone` (30 px wide,
 - **Kit pieces and props.** The kit pieces, prop shadows (`game/kit/props/art/shadow_woodland_*.png`), kit grounds and `kitlab` regenerated in pass 3 were not reviewed.
 - **Eastward measures from JPEG.** The run, clump-contrast and pocket measures on Eastward were taken on its 3x JPEG brought to native with a box filter; JPEG softening lowers its contrast and lengthens its runs a little, so the gaps above are if anything understated.
 - **No fixes.** Nothing was repainted.
+
+## Round 4: pass 6 of the redraw (9 Nov 2026)
+
+The asset gate on draft PR #446 (`claude-a/woodland-redraw`, head **dbd1841b**, "Woodland, pass 6"). Since round 3 (96b992e6), pass 4 changed the pine, both hatches, `standing_stone_low`, the lintel and the stone top; passes 5 and 6 changed the 13 broadleaf and shrub pictures and `woodland/ground`. Pass 6 follows Claude A's redirection toward Eastward's two-scale crown (big masses with merged lit fields, dark pockets between them, a ragged mid band, lit greens a step lower and less yellow, shade a step higher and warmer). Reviewed by a detail-auditor that drew none of it.
+
+**Result: 8 of 25 pass** (the five stones of round 3, unchanged, plus `standing_stone_low`, `lintel` and `hatch_closed`). **17 fail, none on a blocker:** all 13 broadleaf and shrub crowns, the pine, `stone_top`, `hatch_open` and `woodland/ground`. Pass 6 is the first pass whose crowns read as trees at 1x, and I agree with Claude A's read: the mass structure is right and its pockets are as deep as Eastward's. What still fails is one scale down. The lit fields are a soft felt of three close greens with no leaf clusters cut into them, and every crown misses the detail bar on shapes.
+
+### What was reviewed and how
+
+- **Calibration first.** `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <refs-games/eastward>` gave recall **39 of 39**. False positives were 5 on 6 clean screens and 21 on 22 clean props, the same as rounds 1 to 3. `calibration_results.json` was reverted afterwards.
+- **Asset gate.** `npm run review:asset -- woodland/<name> --record` for all 25. No record changed: every sha256 already matched. Detector result: **25 pass**, no blocker or fault. Polish findings:
+  - `detail.bar` on all 13 crowns, the pine, the lintel, the stone top and `hatch_open`;
+  - `detail.outline` on the birch, both brambles and both hatches;
+  - `detail.cluster_noise` on both hatches (45.3 and 45.8 %);
+  - `logic.scale` on `standing_stone`, `_broken`, `_low` and the bramble;
+  - `detail.light` on the bramble.
+- **Scene gate.** `npm run review:scene -- woodland --no-render` reaches its report: 88 blockers, all `logic.wiring` on quests whose zones are not built yet; 14 faults; 16 polish. The faults are 3 `logic.occlusion`, 3 `detail.flat`, 1 `detail.repetition`, 1 `logic.reach` and 1 `logic.shadow_orphan`. The willow's y-sort point is +87 px off its feet (W2-L1 stands). The orphan shadow at (766,1315,858,1378) is unchanged since round 3 (1 texel differs) and is left to the logic-auditor. I cropped the composite's shrub shadows at 3x (`m/scene_shadows_3x.png`). The scene's grid cells were not visited one by one.
+- **The painter's sheets** in `wr6/`: `ew_cmp_crowns_p6.png`, `zone_p6_1x.png`, `cluster_p5_p6_1x.png`, `crops_p5_p6_4x.png`, `contact_trees_4x.png` and `contact_shrubs_4x.png`.
+- **My own crops** (auditor scratchpad `audit446r4/m/`):
+  - `litfield_ew_vs_p6_6x.png`: a 64 x 48 window of the red tree's lit field beside the oak, the beech and the bush, at 6x;
+  - `oaklit6.png`, `willow3.png`, `hollow6.png` and `pine4.png`;
+  - `holly6.png` and `bramble5.png`;
+  - `stones8.png` and `hatch8.png`;
+  - `ground_r3_vs_p6_3x.png`.
+- **Measurements.**
+  - Round 3's `crownm.py` and `pepper.py`, unchanged.
+  - `cluster_noise.share_png` and lone texels.
+  - Silhouette components, enclosed holes, the bottom row's width, and one-texel spurs as a share of the silhouette ring.
+  - The willow's lower-curtain runs.
+  - Trunk and silhouette diffs against pass 5 (55aeae4e).
+  - The ground diff against pass 5 and against round 3's bytes, plus a scan for straight and detached one-row lines.
+  - New this round, `two_scale.py` (below).
+  - Every Eastward crop went through the same pipe: native 640 x 360 by box filter from the 1920 x 1080 JPEG, then x1.37 nearest neighbour, so windows are in our art px.
+- **Eastward at the same character height.**
+  - Trees: the red tree in 12 (462,105,598,190, crown mask by hue; lit field 480,110,530,150) and the two trees in 13 (342,163,397,224 and 508,145,565,214).
+  - Pine: the pines in 12 (175,65,245,165).
+  - Stones: the rocks in 17 (460,165,550,250) and 12 (497,205,555,235).
+  - Hatches: the post box in 12.
+
+### Checking the painter's numbers
+
+All confirmed:
+
+- **Foliage bars** are 0.768 (holly) to 0.888 (willow). The pine is 0.749. Tones a patch are 21.3 to 30.9 against 24.9 needed (0.9 x 27.71); the pine's 30.9 is the highest.
+- **Cluster noise** on the 13 pass 6 pictures is 17.8 to 28.5 %; the pine is 30.9 %. H/V is 0.89 to 1.13.
+- **Clump contrast** in 12 x 12 windows is 28.2 to 43.7 L. My run of `crownm.py` matches the painter's table to the decimal.
+- **Near-black** sits in shade on every crown except the bramble (2 of 7 in shade, median 1 texel).
+- **Trunks are byte-identical to pass 5.** For the oak, beech, birch, hollow tree and willow, no texel of the trunk's connected non-green component changed. The 6 to 56 other non-green texels that changed are glints, plus the willow's removed limb tip.
+- **Silhouettes are locked to pass 5** on 11 of 13. The exceptions:
+  - the willow: 71 texels, the limb tip;
+  - the holly: 112 texels;
+  - holly_b: its canvas grew from 78 x 78 to 79 x 81 (the spines).
+- **Ground** changed 414 texels from pass 5, all in the holly and willow shadows. That is 6,239 from round 3's bytes, across passes 4 to 6.
+- **The five round 3 stone passes** (`standing_stone`, `_b`, `_broken`, `_lean`, `_runes`) are byte-identical: e1059a04, 12fbece5, 4f859dc7, 1ecd239b and 32118c14. Their reviewer blocks are untouched.
+
+**W3-P1 held.** At every pass commit (ba57a156, 55aeae4e, dbd1841b), every record whose sha256 differs from round 3's reads `pending`, and no reviewer block on unchanged bytes was edited. No verdict was carried onto new bytes.
+
+### Ruling on the contrast measure
+
+**The measure was wrong, not the art. It is replaced by two measures, and the one that matters still fails.**
+
+Round 3's clump contrast (p90 minus p10 of a 3 x 3 blur in 12 x 12 windows anywhere in the crown) mixes two scales. It was written against pass 3's crowns, which had no mass structure, so it stood in for leaf clusters. On a two-scale crown it is mostly the luck of where a window falls: a window across a mass boundary scores high, and a window inside a lit field or a pocket scores low. Measured on Eastward through the same pipe, it gives 39.0 to 44.3 L (round 3 quoted 41 to 49 from a different crop and mask). The ≥ 40 L line therefore sits inside Eastward's own spread, and pass 6's 28 to 44 cannot be read either way. I drop it as a requirement.
+
+What the eye uses, and what Eastward does, splits cleanly in `two_scale.py` (all in our art px):
+
+- **Mass scale.**
+  - *Mass*: p90 minus p10 of the crown's L after a masked Gaussian (σ 3 px).
+  - *Lit to pocket*: the median L of the brightest quarter of that blur minus the crown's 5th percentile.
+- **Leaf scale.**
+  - *Lit-field c12*: the round 3 window measure, kept only in windows whose centre lies in the top 35 % of the mass blur, so it measures what is inside a lit field.
+
+| | Mass (L) | Lit to pocket (L) | Lit-field c12 (L) | Whole-crown c12 (L) |
+| --- | --- | --- | --- | --- |
+| Eastward red tree, 12 | 51.4 | 96.1 | 40.9 | 39.0 |
+| Eastward trees, 13 (west, east) | 54.3, 51.7 | 94.9, 93.9 | 46.0, 42.9 | 43.6, 44.3 |
+| Eastward pines, 12 | 73.0 | 93.5 | 38.0 | 40.0 |
+| oak p5 → p6 | 106.6 → 86.4 | 119.7 → 97.7 | 34.5 → 33.6 | 38.2 → 32.4 |
+| beech | 108.1 → 89.0 | 114.8 → 97.2 | 33.7 → 29.3 | 33.4 → 28.6 |
+| birch | 95.9 → 83.3 | 120.0 → 108.1 | 38.1 → 37.9 | 45.2 → 38.2 |
+| hollow_tree | 108.8 → 87.9 | 114.8 → 97.2 | 26.9 → 28.5 | 36.4 → 31.2 |
+| willow | 97.3 → 79.0 | 117.7 → 103.1 | 28.9 → 28.6 | 34.8 → 33.7 |
+| sapling | 88.4 → 77.8 | 120.0 → 108.1 | 81.7 → 58.0 (3 windows) | 59.8 → 45.3 |
+| bush | 110.0 → 88.7 | 110.2 → 97.2 | 32.0 → 31.9 | 44.9 → 35.6 |
+| bush_b | 111.2 → 91.5 | 122.0 → 105.2 | 28.2 → 34.3 | 49.5 → 42.4 |
+| bush_c | 109.1 → 92.2 | 110.2 → 97.2 | 29.3 → 20.0 | 46.7 → 34.1 |
+| bramble | 90.3 → 56.4 | 97.2 → 70.5 | 48.6 → 47.1 | 53.8 → 39.0 |
+| bramble_b | 90.9 → 63.2 | 97.2 → 70.5 | 43.4 → 47.8 | 45.5 → 34.6 |
+| holly | 69.1 → 49.4 | 70.5 → 61.2 | 33.8 → 32.4 | 34.1 → 24.8 |
+| holly_b | 68.5 → 44.5 | 70.5 → 52.9 | 39.3 → 36.8 | 38.6 → 30.3 |
+| pine (unchanged) | 57.9 | 80.5 | 47.2 | 47.4 |
+
+Read across, Claude A's redirection did what it meant to:
+
+- **Pockets.** Pass 6's broadleaf pockets now sit where Eastward's do: lit to pocket is 97 to 108 L against 94 to 96. Pass 5's 115 to 122 was too hard.
+- **Masses.** The mass step is still larger than Eastward's (79 to 92 against 51 to 54). That is a stronger whole-crown light than Eastward's evenly lit trees, not a fault.
+- **Whole-crown contrast fell because the large-scale step got smaller.** That is the intended trade.
+- **The lit fields were never fixed.** Inside them the leaf-scale contrast is 28.5 to 34.3 L on the big crowns and the bushes, and 20.0 on bush_c. Eastward's lit fields measure 38.0 to 46.0. Pass 6 left this where pass 5 had it (26.9 to 34.5) and lowered bush_c.
+
+**Why the leaf scale matters visually** (`litfield_ew_vs_p6_6x.png`). In Eastward's lit field, every leaf cluster is a lit shape with a mid-dark notch cut under and right of it, so the field reads as many leaves catching light even at 1x. Ours is a camouflage of 2 to 4 texel patches in three greens within about 30 L, with a dark notch only every 15 to 20 texels. At 1x in the zone, the lit fields read as moss or felt laid over a tree-shaped form. On a phone at 2 device px a texel, sub-30 L mottle averages to one flat tone. That is the "big flat lit pad" Matt flags.
+
+**The rule from this round** (replacing W3-F1's check 4):
+
+- mass ≥ 50 L;
+- lit to pocket ≥ 85 L;
+- lit-field c12 ≥ 38 L (Eastward's least, 38.0; its mean is 43).
+
+All three are measured with `two_scale.py` (Eastward through the JPEG pipe, which if anything understates its contrast). H/V ≤ 1.3 and near-black in shade stay as round 3 set them. The script is in the auditor's scratchpad and is not committed (detectors unchanged); its definition is the paragraph above.
+
+### Verdicts
+
+Bar is `detail.bar` (house-style 7: 0.9, or 0.85 on tones for ramp-built art). Lit is lit-field c12 (≥ 38 L). L-P is lit to pocket. Noise is `cluster_noise` (a fault at 48 % or more). Spurs are one-texel spurs as a share of the silhouette ring.
+
+| Asset | Opaque (art px) | Bar (tones / shapes a patch) | Lit (L) | L-P (L) | H/V | Lone | Noise | Spurs | Verdict | Codes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| oak | 189 x 247 | 0.870 (24.1 / 56.1) | 33.6 | 97.7 | 1.02 | 0.3 % | 25.9 % | 0.1 % | fail | W4-F1, F2 |
+| beech | 168 x 264 | 0.831 (23.0 / 56.2) | 29.3 | 97.2 | 1.02 | 0.3 % | 26.1 % | 0 | fail | W4-F1, F2; W3-T5 polish open |
+| birch | 87 x 203 | 0.877 (27.4 / 55.5) | 37.9 | 108.1 | 1.00 | 1.4 % | 27.2 % | 0.8 % | fail | W4-F1, F2 |
+| pine | 98 x 237 | 0.749 (30.9 / 47.4) | 47.2 | 80.5 | 1.30 | 0.3 % | 30.9 % | 0 | fail | W4-F2, T2 |
+| hollow_tree | 207 x 227 | 0.868 (24.0 / 56.3) | 28.5 | 97.2 | 1.01 | 0.3 % | 24.0 % | 0 | fail | W4-F1, F2 |
+| willow | 237 x 200 | 0.888 (27.8 / 56.2) | 28.6 | 103.1 | 0.89 | 0.6 % | 25.7 % | 0.1 % | fail | W4-F1, F2, T1 |
+| sapling | 52 x 82 | 0.858 (30.3 / 54.3) | 58.0 | 108.1 | 1.11 | 0.6 % | 28.4 % | 3.4 % | fail | W4-F2 |
+| bush | 92 x 61 | 0.858 (24.2 / 54.3) | 31.9 | 97.2 | 1.09 | 0.1 % | 24.7 % | 0 | fail | W4-F1, F2 |
+| bush_b | 75 x 54 | 0.818 (25.6 / 51.8) | 34.3 | 105.2 | 1.08 | 0.6 % | 23.4 % | 0 | fail | W4-F1, F2 |
+| bush_c | 109 x 57 | 0.784 (23.4 / 49.6) | 20.0 | 97.2 | 1.07 | 0.2 % | 19.4 % | 0 | fail | W4-F1, F2 |
+| bramble | 126 x 48 | 0.842 (29.1 / 53.3) | 47.1 | 70.5 | 1.08 | 3.4 % | 28.5 % | 3.7 % | fail | W4-F2, B1 |
+| bramble_b | 110 x 47 | 0.879 (27.7 / 55.7) | 47.8 | 70.5 | 1.11 | 2.3 % | 27.6 % | 4.0 % | fail | W4-F2, B1 |
+| holly | 81 x 73 | 0.768 (21.3 / 51.5) | 32.4 | 61.2 | 1.13 | 2.1 % | 17.8 % | 9.0 % | fail | W4-F1, F2, F3 |
+| holly_b | 81 x 79 | 0.826 (24.7 / 52.3) | 36.8 | 52.9 | 1.11 | 2.8 % | 24.9 % | 9.3 % | fail | W4-F1, F2, F3 |
+| standing_stone | 30 x 89 | 0.934 stone (30.2 / 57.0) | | | | | | | **pass** (unchanged) | W3-S4 polish |
+| standing_stone_b | 37 x 67 | 0.967 stone (32.7 / 59.0) | | | | | | | **pass** (unchanged) | W3-S4 polish |
+| standing_stone_broken | 35 x 56 | 0.963 prop (33.5 / 48.5) | | | | | | | **pass** (unchanged) | W3-S4 polish |
+| standing_stone_lean | 36 x 73 | 0.938 prop (25.3 / 60.3) | | | | | | | **pass** (unchanged) | W2-S2 polish |
+| standing_stone_low | 61 x 56 | **0.990** stone (26.0 / 62.8) | | | | 1.2 % | 22.6 % | 0.5 % | **pass** | W3-S1 fixed; W3-S4 polish |
+| standing_stone_runes | 33 x 64 | 1.271 prop (36.3 / 64.0) | | | | | | | **pass** (unchanged) | W3-S4 polish |
+| lintel | 78 x 28 | **0.877** prop (23.7 / 45.7), meets | | | | 1.3 % | 29.9 % | 0 | **pass** | W3-S2 met; W4-S2 polish |
+| stone_top | 36 x 21 | 0.834 prop (36.0 / 42.0) | | | | 3.7 % | 21.2 % | 0 | fail | W4-S1 |
+| hatch_closed | 45 x 41 | **1.013** prop (27.5 / 51.0) | | | | 1.6 % | 45.3 % | | **pass** | W3-H1 fixed |
+| hatch_open | 45 x 65 | 0.886 prop (26.0 / 44.6) | | | | 0.6 % | 45.8 % | | fail | W4-H1 |
+| ground | 960 x 1728 | n/a | | | | | | | fail | W4-G1 |
+
+### Status of the round 3 codes
+
+| Code | Status | Evidence |
+| --- | --- | --- |
+| W3-F1 (horizontal dash speckle) | **fixed**, superseded by W4-F1 | The dashes are gone: H/V is 0.89 to 1.13 (from 1.31 to 1.57), and 85 to 92 % of the crown's area lies in clumps of at least 2 x 2 (median 6 texels). Its check 4 (12 x 12 contrast ≥ 40 L) is retired by the ruling above. |
+| W3-F2 (black pepper) | **fixed** (bramble polish) | Near-black components are 1 to 12 a crown, median 1 to 3 texels, in shade on every crown. The exception is the bramble, at 2 of 7 (median 1). |
+| W3-F3 (dark hair spurs) | **fixed** on the trees and bushes; **partly** on the brambles; **not fixed** on the hollies | Trees 0 to 0.8 % (sapling 3.4 %), bushes 0. Brambles 3.7 and 4.0 % of the ring, from 6.8 and 8.0. Hollies 9.0 and 9.3 % (W4-F3). |
+| W3-F4 (bar) | **not fixed** | 0.768 to 0.888 on the 13 crowns and 0.749 on the pine; all short on shapes (W4-F2). |
+| W3-T1 (pine floating clump, foot) | **partly** | One opaque component now (fixed). The foot is still a smooth symmetric skirt, west out 4 px and east 5 px over 13 rows (W4-T2, polish). |
+| W3-T2 (hollow disc) | **fixed** | A graded far inner wall under the upper lip, a lit lower-west lip, an interior falling to near-black, the eyes in the dark (`hollow6.png`). |
+| W3-T3 (willow ropes) | **fixed** | The lower curtain is 5.3 runs a row, median 17 texels wide (from 9.1 and 7). The outline sits on the curtains' outer edges. New speck: W4-T1. |
+| W3-T4 (birch flare) | **fixed** | The width runs 13, 13, 13, 14, 15, 16, 18, 19, 19, 21, 21, 22, 22 over the last 13 rows. |
+| W3-T5 (beech algae) | **open** (polish) | Still square green blocks near the east outline of the trunk. The trunk is pass 5's, unchanged. |
+| W3-T6 (sapling hole) | **fixed** | No enclosed hole. |
+| W3-B1 (shrub bar) | **not fixed** | Folded into W4-F2. |
+| W3-B2 (bramble canes, base) | **partly** | Base fixed: the bottom row is 1 and 2 texels, and the mass ends in its own underside with notches under the arches. Canes not fixed (W4-B1). |
+| W3-B3 (holly) | **not fixed** | Glints are fewer and only in the light (fixed). There are still no holly-leaf shapes, and the spines are one-texel spurs (W4-F3). |
+| W3-S1 (low stone tombstone) | **fixed** | Irregular profile, bar 0.990: pass. |
+| W3-S2 (lintel box) | **met** | Chips on the front bottom edge, a rounded end, bar met for ramp-built stone. The mortises are polish (W4-S2). |
+| W3-S3 (stone top) | **partly** | The ochre mark has gone into the lichen tones and the corners are chipped. Bar 0.834 on shapes and a straight base (W4-S1). |
+| W3-S4 (stone texture, lichen, moss) | **open** (polish) | On the passing stones: lichen as tan bars, the shared moss motif. |
+| W3-H1 (closed hatch straps) | **fixed** | Nail heads at the board joints on both straps; the south lip broken into tones. Pass. |
+| W3-H2 (open hatch) | **partly** | Tread marks vary. No lid shadow, no nails on the lid's straps, bar 0.886 on shapes (W4-H1). |
+| W3-G1 (ruler lines) | **fixed**, replaced by W4-G1 | The only straight edge rows left are the footbridge planks (x 357 to 411, y 873 to 943), which are structure. |
+| W3-P1 (verdict carried onto new bytes) | **held** | All changed records were `pending` at ba57a156, 55aeae4e and dbd1841b. |
+
+### Findings and fixes (round 4)
+
+**W4-F1. The lit fields have no leaf-scale contrast** (fault). Applies to the oak, beech, birch, hollow tree, willow, bush, bush_b, bush_c, holly and holly_b; not to the sapling, the brambles or the pine. Crops: `litfield_ew_vs_p6_6x.png`, `oaklit6.png`, `wr6/ew_cmp_crowns_p6.png` (bottom row).
+- **What is wrong.** Lit-field c12 is 28.5 to 37.9 L (bush_c 20.0) against Eastward's 38.0 to 46.0. Each lit field is 2 to 4 texel patches of three yellow-greens within about 30 L, with one darker notch every 15 to 20 texels. In Eastward every lit cluster (5 to 8 texels across) has a mid-dark notch 1 to 2 texels deep under and right of it, so the field is made of leaves.
+- **Fix.** Keep pass 6's mass layout, values and pockets: they meet Eastward (L-P 97 to 108).
+  1. Inside each lit field, cut leaf clusters 5 to 8 texels across. Give about one in two a notch of leaf 2 (about 35 to 45 L under the cap tone), 1 to 2 texels deep, along its lower-right edge. The notches are scallop-shaped and point down.
+  2. Do not brighten the caps. The contrast comes from the notches, so the field's mean stays a step lower and less yellow, as Claude A asked.
+  3. Keep 2 tones at most inside a cluster.
+  4. Check: lit-field c12 ≥ 38 L, mass ≥ 50 L and L-P ≥ 85 L with `two_scale.py`; H/V ≤ 1.3; near-black in shade.
+
+**W4-F2. Detail bar on shapes** (fault). Applies to all 13 crowns and the pine. Shapes a patch are 49.6 (bush_c) to 56.3 against 57.0 needed (0.9 x 63.32). Every crown is short on shapes, not tones, except the oak, beech, hollow tree and holly, which are also short on tones (0.87, 0.83, 0.87 and 0.77 against 0.85). W4-F1's notched clusters add distinct shapes; that is the way there, never grain. Pine (47.4 shapes): break each tier's lower edge into 3 to 5 hanging clumps of different lengths, and add a second, darker branch layer in the gaps between tiers.
+
+**W4-F3. Holly still does not read as holly** (fault; holly, holly_b). Crop: `holly6.png`. The crown is the shared mottle, with no leaf shapes. Its silhouette carries 25 and 26 one-texel spurs (9.0 and 9.3 % of the ring). Fix as W3-B3:
+- leaves as distinct spiky ovals 5 to 7 texels long, in cool leaf 1 to 3, with a lit midrib on the lit side;
+- spines 2 texels, grown from the leaf edges on the silhouette;
+- no one-texel spurs.
+
+**W4-B1. Bramble canes are still circular arcs** (fault; bramble, bramble_b). Crop: `bramble5.png`. The east canes of both brambles are a fan of 3 to 4 concentric arcs from one root (a rainbow), and each west cane is a single circular arc. Fix as W3-B2:
+- each cane a curve whose bend changes along it, with a kink at a node every 6 to 10 texels and a droop at its tip;
+- no two canes from one centre;
+- at least one cane crossing another or crossing the mass.
+
+**W4-T1. A detached speck by the willow** (fault). A 2 x 2 opaque component at x 158 to 159, y 143 to 144, clear of the curtain (the willow's second component). `logic.floating_part` did not fire. Fix: join it to its swag as a tip, or remove it.
+
+**W4-T2. The pine's foot** (polish). A smooth symmetric skirt, west out 4 px and east 5 px over the last 13 rows. Fix: 2 or 3 uneven root flares, longer on the west, as W2-T5.
+
+**W4-S1. The stone top misses the bar** (fault). Crop: `stones8.png`. 0.834 on shapes (42.0 of 50.36), and the base runs straight for 32 of 36 columns. Fix:
+- 1 to 2 chips along the base, with a shade texel under each;
+- calm lit-top patches of 4 to 8 texels instead of tan bars;
+- a crack or a step on the front face.
+
+**W4-S2. The lintel's mortises** (polish). Each mortise is still a near-black 3 x 3 square with one lit texel. Fix as W3-S2: a 4 x 3 socket with a dark near wall (stone 0 to 1), a stone-2 floor and a lit far (north) wall one row high. The lit top's tan lichen bars are W3-S4.
+
+**W4-H1. The open hatch** (fault). Crop: `hatch8.png`. The bar is 0.886 on shapes (44.6 of 50.36). The lid casts no shadow on the coping or the turf east of it. Its two straps have no nail heads. Fix:
+- the lid's shadow two tones down onto the coping and the turf east and below it;
+- nails on the lid straps as on the closed hatch;
+- grain breaks and an end-grain row on the lid for shapes.
+
+**W4-G1. The shrub shadows' rims are detached hairlines** (fault, `woodland/ground`). Crops: `ground_r3_vs_p6_3x.png`, `scene_shadows_3x.png`.
+- **What is wrong.** The straight rows are gone, but the rim was drawn as a separate one-texel wavy line 3 to 6 px above the shadow body, with grass on both sides. There are 19 such lines 12 to 42 px long, each at least 20 L darker than the grass 1 to 3 rows above and below: (425,1338) 42 px; (641,1578) 42; (282,1362) 38; (471,1362) 32; (331,1554) 25; (127,978) 21; (124,570) 19; (879,1194) 19; (374,1339) 19; (379,1555) 19; (590,1579) 19; (343,1362) 21; and others. In the composed zone they show as dark squiggles floating between the brambles' and holly's bases and their shadow bodies, like a pencil contour on the lawn.
+- **Fix.** The scallop belongs on the shadow body's own leading edge: every rim texel has shadow directly under it, and no dark texel has grass on both sides vertically. Cast the body from the sprite's silhouette, starting at its base, so there is no strip of lit grass between the sprite and its shadow.
+
+### Gate result at this branch
+
+`python3 -m scripts.review.gate --check` **refuses 17 woodland pictures**, the 17 fails above:
+
+- 16 because they changed since their fix-queue entry was written;
+- `ground` because it failed independent review.
+
+It prints **8 advisories**, to remove `hatch_closed`, `lintel`, `standing_stone`, `standing_stone_b`, `_broken`, `_lean`, `_low` and `_runes` from `art/catalogue/fix-queue.json`. The fix queue was not edited here; that is Claude A's call.
+
+### False positives
+
+3 rejected:
+
+- **`detail.outline` on hatch_closed**: a hatch flush in the ground meets the worn earth, not an outline, as in round 3.
+- **`logic.scale` on `standing_stone_broken`**: short by design (rounds 1 to 3).
+- **`logic.scale` on `standing_stone_low`**: low by design (rounds 1 to 3).
+
+Accepted as polish, not rejected:
+
+- `logic.scale` on `standing_stone` (a slim menhir) and the bramble (a patch);
+- `detail.outline` on the birch, both brambles and hatch_open;
+- `detail.light` on the bramble;
+- `detail.cluster_noise` on both hatches (45.3 and 45.8 %, under 48).
+
+### Not checked
+
+- **No in-game render.** The zone was composed from data (`--no-render`). Day and night, the night tint and a phone were not checked.
+- **Scene grid cells.** Not visited one by one. The shadows and the painter's 1x cluster were looked at.
+- **Kit pieces, prop shadows and kit grounds** regenerated by these passes (`woodland_kit/ground_baked.png`) were not reviewed.
+- **Eastward from JPEG.** `two_scale.py`'s Eastward figures come from the 3x JPEG, box-filtered to native. Softening lowers its contrast, so the leaf-scale gap is if anything understated.
+- **No fixes.** Nothing was repainted. `fix-queue.json`, `scripts/review`, `.github` and the detectors are untouched.
