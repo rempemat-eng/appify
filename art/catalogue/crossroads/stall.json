@@ -1,7 +1,7 @@
 {
  "id": "crossroads/stall",
  "file": "game/zones/crossroads/art/stall.png",
- "sha256": "93b88d76aa104f90dabf1a9f865a59025843beec60a4574a52ef0dc7dd04dab5",
+ "sha256": "587a55b017fc62aeaf194d40e495a40379a641ef51d5b23dd959319a1f6da5f4",
  "kind": "stall",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 36,
-   "tones": 25.583333333333332,
-   "shapes": 40.19444444444444
+   "tones": 24.47222222222222,
+   "shapes": 39.22222222222222
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.798,
-  "tones_ratio": 0.948,
-  "shapes_ratio": 0.798,
+  "ratio": 0.779,
+  "tones_ratio": 0.906,
+  "shapes_ratio": 0.779,
   "passed": false,
   "group": "prop"
  },
@@ -56,7 +56,7 @@
     130,
     159
    ],
-   "message": "crossroads/stall: detail bar 0.80 of Eastward's prop band (25.6 tones, 40.2 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/stall: detail bar 0.78 of Eastward's prop band (24.5 tones, 39.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

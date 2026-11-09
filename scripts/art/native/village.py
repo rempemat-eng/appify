@@ -4656,7 +4656,8 @@ def grained_front_board(a, m, fam, t, rng):
     tt[:, 0] = t + 1
     tt[:, Wb - 1] = t - 2
     ff = np.full((Hb, Wb), FI[fam])
-    ff[:, Wb - 1] = FI['timber_cool']                                    # the joint in the cool shade
+    ff[:, Wb - 1] = FI['timber_cool'] if t - 2 > 0 else FI['timber']    # the joint in the cool shade (XR5-S4:
+    #                                                                  its deepest step is timber's, one tone)
     sub = m[by0:by1, bx0:bx1]
     blk_ = a[by0:by1, bx0:bx1]
     blk_[sub] = (ff * 8 + np.clip(tt, 0, 5).astype(int))[sub]
@@ -4762,27 +4763,41 @@ def p_stall_hd(w, h, seed, hd=False):
     m = am | hem
     stripe = ((X - x0 + q(2)) // q(4)).astype(int) % 2
     us = ((X - x0 + q(2)) % q(4)) / q(4)
-    # XR4-S4: the hanging faces fold: the meeting of the panels inside each stripe wanders a texel down the
-    # drop (the stripe's own edges stay straight), the gathered top of each fold catches the light under
-    # the rib, a fold shade runs down one side of each stripe, opening wider towards the hem, the lit face
-    # turns under at its foot and the deep fold takes light bounced up at its foot
-    sid = ((X - x0 + q(2)) // q(4)).astype(int)
-    dv = np.clip((Y - tp) / max(1, ay1 + q(2.4) - tp), 0, 1)
-    wand = np.round(0.6 * np.sin((Y - tp) / 4.6 + sid * 1.9))
-    usw = np.clip(us + wand / q(4), 0.0, 0.999)
-    usw = np.where(us < 1.0 / q(4), us, usw)                                           # the lit edge column stays
-    usw = np.where(us >= 1 - 1.0 / q(4), us, usw)                                     # and the dark one
-    fold = np.select([usw < 0.25, usw < 0.5, usw < 0.75], [4, 3, 2], 1).astype(float)
-    gath = tp + 3 + ((X.astype(int) + sid) % 3 == 0)                                  # its lower edge in gathers
-    fold = np.where((Y >= tp + 1) & (Y < gath) & (usw < 0.75), np.minimum(5, fold + 1), fold)
-    fside = (usw >= 0.5 - 0.17 * np.clip((dv - 0.35) / 0.65, 0, 1)) & (usw < 0.5) & (dv > 0.35 + 0.1 * np.sin(sid * 2.3))
-    fold = np.where(fside, fold - 1, fold)
-    crease = (usw >= 0.5 - 1.0 / q(4)) & (usw < 0.5) & (dv > 0.2 + 0.1 * np.sin(sid * 2.3))
-    fold = np.where(crease, np.minimum(fold, 1), fold)                                  # the crease at its core
-    foot = dv > 0.55 + 0.08 * np.sin(sid * 0.9)                                     # at the hem the fold opens:
-    fold = np.where((usw >= 0.5) & (usw < 0.75) & foot, fold - 1, fold)              # its shade moves west
-    fold = np.where((usw >= 0.75) & foot, fold + 1, fold)                             # and light bounces in east
-    fold = np.where((usw < 0.25) & (usw >= 0.25 - 1.0 / q(4)) & (dv > 0.62 + 0.1 * np.sin(sid * 1.1)), fold - 1, fold)
+    # XR5-S2, S3: each stripe's hanging face is cloth hung in a long fold. Across the fold, west to east: a
+    # lit ridge, one column of mid tone, then the deep tone, one column wide, on some stripes two toward the
+    # hem; it runs unbroken from under the lit fold-over to the scallop and steps at most a column, once.
+    # The stripe's west column is lit and its last 3 columns are the darkest step of its ramp for the full
+    # drop. The folds differ stripe to stripe (where they stand, step and widen), and stand where the 2 x 2
+    # art grid keeps each part whole (a ridge and its mid column in one cell, the deep strip clear of the
+    # east band by a column of body). Per stripe: (east band width, folds), each fold (ridge column at the
+    # top, [(row, step)], the row it widens from or None).
+    FOLDS = {0: (3, [(5, [], None)]), 1: (3, [(5, [], None)]), 2: (3, [(5, [(9, -1)], 14)]),
+             3: (3, [(4, [(8, 1)], None)]), 4: (3, [(4, [(6, 1)], None)]), 5: (3, [(5, [(13, -1)], None)]),
+             6: (3, [(5, [(14, -1)], 17)]), 7: (3, [(5, [], None)]), 8: (3, [(4, [(11, 1)], None)]),
+             9: (3, [(5, [(10, -1)], 16)])}
+    W4 = q(4)
+    sid = ((X - x0 + q(2)) // W4).astype(int)
+    col = ((X - x0 + q(2)) % W4).astype(int)
+    kk = (Y - (tp + 1)).astype(int)
+    fold = np.full(a.shape, 3.0)                                                   # the cloth's body
+    deep = np.zeros(a.shape, bool)
+    for s_, (eb, folds) in FOLDS.items():
+        on = sid == s_
+        fold[on & (col == 0)] = 4.0                                                # its west edge, lit
+        fold[on & (col >= W4 - eb)] = 1.0                                          # the east band, darkest
+        deep |= on & (col >= W4 - eb)
+        for r0, drifts, wrow in folds:
+            rk = r0 + sum(np.where(kk >= dk, dd, 0) for dk, dd in drifts)          # the ridge column by row
+            rp = r0 + sum(np.where(kk - 1 >= dk, dd, 0) for dk, dd in drifts)      # and on the row above
+            wide = (kk >= wrow) if wrow is not None else np.zeros(a.shape, bool)
+            fold[on & (col == rk)] = 4.0
+            fold[on & (col == rk + 1)] = 2.0
+            # the deep strip, and where the fold steps a column, both columns for that row, so it never breaks
+            dm = on & (((col >= np.minimum(rk, rp) + 2) & (col <= np.maximum(rk, rp) + 2)) | (wide & (col == rk + 3)))
+            fold[dm] = 1.0
+            deep |= dm
+    gath = tp + 3 + ((X.astype(int) + sid) % 3 == 0)                                  # the gathered top, lit
+    fold = np.where((Y >= tp + 1) & (Y < gath) & ~deep, np.minimum(5, fold + 1), fold)
     # XR2-S2: the top plane in 2 to 3 tones: each stripe's canvas folds over its rib (lit on the west,
     # shading east), the plane rising back a tone darker at its far edge, lit at its front
     ftop = np.select([us < 0.3, us < 0.78], [5.0, 4.0], 3.0)
@@ -4791,9 +4806,14 @@ def p_stall_hd(w, h, seed, hd=False):
     tt = np.where(Y < ay0 + 1, 3.0, tt)                                         # its far edge, rising back
     tt = np.where((Y >= tp) & (Y < tp + 1), 5.0, tt)                            # the fold-over at the front edge
     hem_d = (((X - x0) % q(4)) - q(2)) ** 2 / q(2) ** 2 + ((Y - ay1) / q(2.4)) ** 2
-    tt = np.where(m & (Y >= ay1) & (hem_d > 0.55), tt - 1, tt)                                                    # the hem's turned edge
+    rim = m & (Y >= ay1) & (hem_d > 0.55)
+    tt = np.where(rim & (tt > 2), tt - 1, tt)                                    # the hem's turned edge (a fold's mid
+    #                                                                            and deep columns keep their steps)
     tt = np.clip(tt, 1, 5)
     a[m & (stripe == 0)] = FI['plaster'] * 8 + tt[m & (stripe == 0)].astype(int)
+    # XR5-S1: the cream's deep fold keeps the ramp's warmth and chroma (lamplit 3, #aa8a5c: L 59, C 30,
+    # h 78), never the grey-taupe plaster 1, which read as a stain and as the wall behind
+    a[m & (stripe == 0) & (Y >= tp + 1) & (tt <= 1)] = code('lamplit', 3)
     a[m & (stripe == 1)] = FI['berry'] * 8 + tt[m & (stripe == 1)].astype(int)
     under = _rect(a.shape, x0, ay1 + q(2.4), x1, ay1 + q(4)) & (a >= 0)
     _step_down(a, under, 1)
@@ -4940,7 +4960,15 @@ def p_stall_hd(w, h, seed, hd=False):
                           (bfam,) + SIB[bfam], share=0.3, step=(8, 3), squash=2.4, maxrun=50, keep=keep)
     # XR3-S1: the nail heads keep their lit texel; XR3-S2: the chalk keeps its strokes (the tidy would
     # fill a letter's one-texel counter and take a stroke's lone end)
-    return finish(p, keep=keep)
+    finish(p, keep=keep)
+    # XR5-S4: one outline tone where the sack and the deep cream meet the air: the sand ramps' edge tone
+    # (#3d2d30) and lamplit's are drawn in plaster's (#413438), which the stall's cloth already uses
+    a = p.a
+    edge_fams = [FI[f] for f in ('sand', 'sand_warm', 'sand_cool', 'lamplit')]
+    a[(a >= 0) & (a % 8 >= 6) & np.isin(a // 8, edge_fams)] = code('plaster', 6)
+    # XR5-S1: and no plaster 1 left inside the hanging faces (a lit outline texel in a scallop's notch)
+    a[(Y >= tp + 1) & (Y < ay1 + q(1.6)) & (X >= x0 - q(2)) & (a == code('plaster', 1))] = code('plaster', 6)
+    return p
 
 
 PROPS_HD = {
