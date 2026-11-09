@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 8,
+ "version": 10,
  "variants": [
   {
    "id": "hollow_tree",

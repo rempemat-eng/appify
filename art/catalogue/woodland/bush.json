@@ -1,7 +1,7 @@
 {
  "id": "woodland/bush",
  "file": "game/zones/woodland/art/bush.png",
- "sha256": "e6f521302e6cb56f9abf260a88db3639530acb1ab824c4c2980173621ff02728",
+ "sha256": "9f8314d3491561ea19676e3386a8217595aad9fd1f35ad0d4c7e5498dbdb3671",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 13,
-   "tones": 23.692307692307693,
-   "shapes": 55.69230769230769
+   "tones": 24.23076923076923,
+   "shapes": 54.30769230769231
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.855,
-  "tones_ratio": 0.855,
-  "shapes_ratio": 0.88,
+  "ratio": 0.858,
+  "tones_ratio": 0.874,
+  "shapes_ratio": 0.858,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     92,
     61
    ],
-   "message": "woodland/bush: detail bar 0.85 of Eastward's foliage band (23.7 tones, 55.7 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bush: detail bar 0.86 of Eastward's foliage band (24.2 tones, 54.3 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

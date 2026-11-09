@@ -1,7 +1,7 @@
 {
  "id": "woodland/beech",
  "file": "game/zones/woodland/art/beech.png",
- "sha256": "9d7670063062a5c6d52f1c7ace3de951d4515a050c1fe83f5b96e9f68127d001",
+ "sha256": "e92fa36cbcd98fefd049642191e92000af866b83dc7815e1d8a4fcb379f1c78c",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 59,
-   "tones": 23.593220338983052,
-   "shapes": 60.33898305084746
+   "tones": 23.033898305084747,
+   "shapes": 56.20338983050848
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.851,
-  "tones_ratio": 0.851,
-  "shapes_ratio": 0.953,
+  "ratio": 0.831,
+  "tones_ratio": 0.831,
+  "shapes_ratio": 0.888,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     193,
     264
    ],
-   "message": "woodland/beech: detail bar 0.85 of Eastward's foliage band (23.6 tones, 60.3 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/beech: detail bar 0.83 of Eastward's foliage band (23.0 tones, 56.2 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

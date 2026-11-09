@@ -737,8 +737,10 @@ def _clump_crown_p3(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: f
 
 
 NB_FLOOR = 51.0        # near-black (L 50 and under) only at the deepest point of a gap (W3-F2)
-TUNE = dict(sep=0.95, a_lit=0.45, a_mid=0.15, big=(7, 11), capy=0.2, lo=0.5, d_mid=34.0, d_sh=70.0,
-            sh_cap=8.0, litmarks=0.6, hl=0.8, nsib=5, lit_cap=20.0, pk_r=(3.0, 4.4), deep=0.42, sib=12, shrub_px=2000.0, mw_tree=1.0, mw_shrub=0.45)
+TUNE = dict(sep=0.95, a_lit=0.5, a_mid=0.1, big=(7, 11), capy=0.2, lo=0.5, d_mid=34.0, d_sh=58.0,
+            sh_cap=8.0, litmarks=0.6, hl=0.8, nsib=5, lit_cap=10.0, pk_r=(3.0, 4.4), deep=0.42, sib=12, shrub_px=2000.0, mw_tree=1.0, mw_shrub=0.45,
+            zn=0.22, zn_s=2.2, mixmid=0.2, hi_drop=12.0, hl_d=8.0, lit_excl=('grass_warm',),
+            sh_excl=('leaf_cool',), glint=400, h_leaf_v=0.62, h_rib=10.0)
 
 
 def _leaf_blob(rx, ry, rng):
@@ -853,6 +855,352 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
       shaded sides and open on the lit upper west; sky gaps open to the outside.
     Returns (codes, mask, value)."""
     T_ = TUNE
+    Hp, Wp = S.shape
+    yy, xx = np.mgrid[0:Hp, 0:Wp]
+    S = ndi.binary_fill_holes(S)
+    gapm = np.zeros((Hp, Wp), bool)
+    for (gx, gy, grx, gry) in gaps:
+        ang = np.arctan2(yy - gy, xx - gx)
+        wob = 1 + 0.16 * np.sin(5 * ang + gx) + 0.08 * np.sin(9 * ang + gy)
+        gapm |= ((xx - gx) / grx) ** 2 + ((yy - gy) / gry) ** 2 <= wob * wob
+    S = S & ~gapm
+    ys0, xs0 = np.nonzero(S)
+    gx0, gy0 = (xs0.min() + xs0.max()) / 2, (ys0.min() + ys0.max()) / 2
+    grx, gry = (xs0.max() - xs0.min()) / 2 + 1, (ys0.max() - ys0.min()) / 2 + 1
+    Lv = np.array([-0.58, -0.66, 0.48])
+    Lv = Lv / np.linalg.norm(Lv)
+
+    def lamb(U, V):
+        U, V = np.clip(U, -1, 1), np.clip(V, -1, 1)
+        return U * Lv[0] + V * Lv[1] + np.sqrt(np.clip(1 - U * U - V * V, 0, 1)) * Lv[2]
+
+    # the masses: the upper ones in front; each texel's mass and its light on that mass
+    ms = sorted(_mass_fit(S, masses, rng), key=lambda m: -m[1])
+    mown = np.full((Hp, Wp), -1)
+    for k, (cx, cy, rx, ry) in enumerate(ms):
+        ang = np.arctan2(yy - cy, xx - cx)
+        wob = 1 + 0.07 * np.sin(3 * ang + k) + 0.05 * np.sin(5 * ang + 2 * k)
+        mown[(((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2 <= wob * wob * 1.1) & ndi.binary_dilation(S, iterations=3)] = k
+    miss = ndi.binary_dilation(S, iterations=3) & (mown < 0)
+    if miss.any() and (mown >= 0).any():
+        idx = ndi.distance_transform_edt(mown < 0, return_distances=False, return_indices=True)
+        mown[miss] = mown[idx[0][miss], idx[1][miss]]
+    M = np.array(ms, float)
+    mo = np.clip(mown, 0, None)
+    Um, Vm = (xx - M[mo, 0]) / M[mo, 2], (yy - M[mo, 1]) / M[mo, 3]
+    rr = np.sqrt(Um * Um + Vm * Vm)
+    lamg = lamb((xx - gx0) / grx, (yy - gy0) / gry)
+    # -1 .. 1: the mass's own dome, with the crown's over it (a shrub's few masses lean on the crown's)
+    mw = T_['mw_tree'] if (masses and len(masses) <= 6) else T_['mw_shrub']
+    lam = mw * lamb(Um, Vm) + (1 - mw) * lamg
+    glob = np.clip(0.5 + 0.5 * lamg + lift, 0, 1)                      # the crown's own dome
+    if low_band:
+        bh = max(4.0, low_band * (ys0.max() - ys0.min()))
+        glob = glob * (1 - 0.55 * np.clip((yy - (ys0.max() - bh)) / bh, 0, 1))
+    # the value: lit cap / mid / core shade / reflected rim on the mass, the crown's dome over it
+    # the zones from the light with a ragged edge (pass 6): lit and shade interlock over 6 to 10
+    # texels instead of meeting along one value edge
+    zn = ndi.gaussian_filter(rng.standard_normal((Hp, Wp)), T_['zn_s'])
+    zn = zn / max(1e-6, np.abs(zn).max())
+    lamz = lam + T_['zn'] * zn
+    zone = np.where(lamz > T_['a_lit'], 3, np.where(lamz > T_['a_mid'], 2, 1))
+    rim = (zone == 1) & (rr > 0.78) & (Um > 0.1) & (Vm > 0.1)
+    zone = np.where(rim, 0, zone)                                      # 0: the reflected rim
+    v = np.clip(0.35 * (0.5 + 0.5 * lam) + 0.65 * glob, 0, 1)
+    # the clumps: larger in the light (7 to 11), smaller toward the shade and the silhouette (4 to 6)
+    small, big = (size or (4, 6)), T_['big']
+    if shapes is not None and shapes is not CLUMPS and shapes is not CLUMPS_S:
+        big = (max(5, big[0] - 2), big[1] - 3)                         # shrubs: a size down
+    inner = ndi.binary_erosion(S, iterations=2)
+    if inner.sum() < 6:
+        inner = S
+    edist = ndi.distance_transform_edt(S)
+    iy, ix = np.nonzero(inner)
+    cand = rng.permutation(len(iy))
+    cand = cand[np.argsort(iy[cand] // 3, kind='stable')]
+    cl = []
+    grid = {}
+    for c_ in cand:
+        yc, xc = iy[c_] + rng.uniform(-0.5, 0.5), ix[c_] + rng.uniform(-0.5, 0.5)
+        f = float(np.clip((lam[iy[c_], ix[c_]] - T_['a_mid']) / max(0.05, T_['a_lit'] - T_['a_mid']), 0, 1))
+        f *= float(np.clip(edist[iy[c_], ix[c_]] / 7.0, 0.35, 1))
+        d = (small[0] + (big[0] - small[0]) * f) + rng.uniform(0, (small[1] - small[0]) + ((big[1] - big[0]) - (small[1] - small[0])) * f + 0.99)
+        r = d / 2.0
+        gk = (int(yc // 6), int(xc // 6))
+        ok = True
+        for gy_ in range(gk[0] - 2, gk[0] + 3):
+            for gx_ in range(gk[1] - 2, gk[1] + 3):
+                for j in grid.get((gy_, gx_), ()):
+                    q = cl[j]
+                    if math.hypot(q[0] - xc, (q[1] - yc) * 1.1) < (q[2] + r) * T_['sep']:
+                        ok = False
+                        break
+                if not ok:
+                    break
+            if not ok:
+                break
+        if not ok:
+            continue
+        grid.setdefault(gk, []).append(len(cl))
+        cl.append([xc, yc, r * rng.uniform(0.98, 1.12), r * rng.uniform(0.88, 1.02)])
+    order = sorted(range(len(cl)), key=lambda k: (-cl[k][1], rng.uniform()))
+    own = np.full((Hp, Wp), -1)
+    reach = ndi.binary_dilation(S, iterations=1) & ~gapm
+    for k in order:
+        xc, yc, rx, ry = cl[k][:4]
+        m = _leaf_blob(rx, ry, rng)
+        h, w = m.shape
+        y0, x0 = int(round(yc)) - h // 2, int(round(xc)) - w // 2
+        Y, X = np.nonzero(m)
+        Y, X = Y + y0, X + x0
+        ok = (Y >= 0) & (Y < Hp) & (X >= 0) & (X < Wp)
+        Y, X = Y[ok], X[ok]
+        ok = reach[Y, X]
+        own[Y[ok], X[ok]] = k
+    for k in range(len(cl)):
+        mk = own == k
+        if mk.any() and (mk.sum() < 6 or not ndi.binary_erosion(mk).any()):
+            own[mk] = -1
+    mask = _spurs(ndi.binary_fill_holes((own >= 0) | inner))
+    own[~mask] = -1
+    isc = own >= 0
+    o = np.clip(own, 0, None)
+    A = np.array([c[:4] for c in cl] or [[0.0, 0.0, 1.0, 1.0]])
+    ccx, ccy, cry = A[o, 0], A[o, 1], A[o, 3]
+    # each clump's zone and mass at its centre
+    cz = np.array([int(zone[int(np.clip(round(c[1]), 0, Hp - 1)), int(np.clip(round(c[0]), 0, Wp - 1))]) for c in cl] or [1])
+    cm = np.array([int(mo[int(np.clip(round(c[1]), 0, Hp - 1)), int(np.clip(round(c[0]), 0, Wp - 1))]) for c in cl] or [0])
+    cg = np.array([float(glob[int(np.clip(round(c[1]), 0, Hp - 1)), int(np.clip(round(c[0]), 0, Wp - 1))]) for c in cl] or [0.5])
+    # inside a lit field 15 to 25 % of the clumps a step down (mid, with their dark undersides), so
+    # the field stays leafy
+    if len(cl):
+        mix = (cz == 3) & (rng.random(len(cl)) < T_['mixmid'])
+        cz = np.where(mix, 2, cz)
+    P = np.pad(own, 3, constant_values=-2)
+
+    def sh(dy, dx):
+        return P[3 + dy:3 + dy + Hp, 3 + dx:3 + dx + Wp]
+
+    # the edge between two clumps: a gap row on the one behind, under the front one's edge
+    ovl = np.zeros((Hp, Wp), bool)
+    for dy, dx in ((-1, 0), (-1, -1), (-1, 1), (0, -1)):
+        nb = sh(dy, dx)
+        ovl |= isc & (nb >= 0) & (nb != own) & (A[np.clip(nb, 0, None), 1] < ccy - 0.5)
+    # ... merged away inside a lit field: only a few short marks stay (every third lit clump, 3 to 5
+    # texels under its front neighbour)
+    zc = cz[o]
+    lit_c = isc & (zc == 3)
+    keep_mark = np.zeros(len(cl), bool)
+    keep_mark[rng.random(len(cl)) < T_['litmarks']] = True
+    ovl_lit = ovl & lit_c
+    if ovl_lit.any():
+        lab_, n_ = ndi.label(ovl_lit)
+        for i, sl in enumerate(ndi.find_objects(lab_)):
+            comp = lab_[sl] == i + 1
+            k_ = int(np.bincount(o[sl][comp]).argmax())
+            if not keep_mark[k_]:
+                ovl[sl][comp] = False
+            else:
+                ys_, xs_ = np.nonzero(comp)
+                far = np.abs(xs_ - xs_.mean()) > rng.uniform(1.5, 2.6)
+                ovl[sl][ys_[far], xs_[far]] = False
+    up = (yy - ccy) < T_['capy'] * cry
+    capm = np.zeros((Hp, Wp), bool)
+    for dy, dx in ((-1, 0), (0, -1), (-2, 0), (-1, -1), (-3, 0), (-2, -1), (-1, -2)):
+        capm |= sh(dy, dx) != own
+    capm1 = np.zeros((Hp, Wp), bool)
+    for dy, dx in ((-1, 0), (0, -1), (-2, 0), (-1, -1)):
+        capm1 |= sh(dy, dx) != own
+    # a lit-field clump keeps its shape by a lit crescent (a tone up), not by a gap round it
+    cap = isc & up & ((capm & (zc == 2)) | (capm1 & (zc == 3)))
+    cap &= ~ovl
+    # a mid clump's dark U: its lower rim where the clump below or the gap begins
+    lowp = (yy - ccy) > -0.2 * cry
+    urim = isc & (zc == 2) & lowp & ((sh(1, 0) != own) | (sh(1, 1) != own) | (sh(1, -1) != own)) & ~cap
+    # the U two texels deep under the clump's middle, one at its sides
+    mid_x = np.abs(xx - ccx) < 0.45 * A[o, 2]
+    urim |= isc & (zc == 2) & lowp & mid_x & ((sh(2, 0) != own) & (sh(2, 0) >= -1)) & ~cap
+    ovl |= urim
+    body = isc & ~cap & ~ovl
+
+    # the values, per mass: L_hi lit field, the mid, the core shade, the rim, the pocket
+    def levels(g):
+        Lh = lo + T_['lo'] * (hi - lo) + (hi - lo) * (1 - T_['lo']) * g - T_['hi_drop']
+        return dict(hi=Lh, mid=Lh - T_['d_mid'], sh=max(NB_FLOOR + 16, Lh - T_['d_sh']),
+                    rim=max(NB_FLOOR + 24, Lh - T_['d_sh'] + 12), pk=max(NB_FLOOR + 3, Lh - T_['d_sh'] - 22))
+
+    def sibs(c0, n, spread, excl=frozenset()):
+        L0 = _lum(c0)
+        keys_ = {_key(c0)}
+        out = [c0]
+        cand_ = sorted(((abs(it[0] - L0) + rng.uniform(0, 2.5), it[1]) for it in lad.items
+                        if abs(it[0] - L0) <= spread and (it[0] > NB_FLOOR or _lum(c0) <= NB_FLOOR)
+                        and it[1] not in excl),
+                       key=lambda q: q[0])
+        for _, c_ in cand_:
+            if len(out) > n:
+                break
+            if _key(c_) not in keys_:
+                keys_.add(_key(c_))
+                out.append(c_)
+        base_ = list(out)
+        while len(out) < n + 1:
+            out.append(base_[len(out) % len(base_)])
+        return out
+
+    pal = {}
+
+    # the hues (pass 6): the lit field in the house leaf greens, not the yellow-greens (no lime at
+    # 1x); the shade a touch warm, not the blue-greens
+    warm_y = frozenset(C(f, tt) for f in T_['lit_excl'] for tt in range(6))
+    cool_b = frozenset(C(f, tt) for f in T_['sh_excl'] for tt in range(6))
+
+    def palette(L, role='mid'):
+        q = (int(round(L / 3.0)), role)
+        if q not in pal:
+            ex = warm_y if role == 'lit' else (cool_b if role == 'shade' else frozenset())
+            c0 = lad.pick(q[0] * 3.0, rng, 3, avoid=tuple(ex))
+            pal[q] = sibs(c0, T_['nsib'] - 1, T_['sib'], ex)
+        return pal[q]
+
+    # the clumps' values: a lit-field clump takes its mass's lit value (so neighbours merge); a
+    # mid clump a lit cap over a mid body; a shade clump a low cap over the core shade; a rim clump
+    # the reflected rim
+    cval = []
+    crole = []
+    for k in range(len(cl)):
+        Lv_ = levels(cg[k])
+        z = cz[k]
+        if z == 3:
+            cval.append((Lv_['hi'] + T_['lit_cap'], Lv_['hi'], Lv_['mid'] - 6))
+            crole.append(('lit', 'lit', 'mid'))
+        elif z == 2:
+            cval.append((Lv_['hi'] - 4, Lv_['mid'], Lv_['sh']))
+            crole.append(('lit', 'mid', 'shade'))
+        elif z == 1:
+            cval.append((Lv_['sh'] + T_['sh_cap'], Lv_['sh'], Lv_['sh'] - 12))
+            crole.append(('shade', 'shade', 'shade'))
+        else:
+            cval.append((Lv_['rim'] + 6, Lv_['rim'], Lv_['sh'] - 6))
+            crole.append(('shade', 'shade', 'shade'))
+    # the leaves: 2 x 2 marks in offset rows, each a sibling unlike the marks round it
+    gr_ = yy // 2
+    gc_ = (xx + (gr_ % 2)) // 2
+    nr_, nc_ = gr_.max() + 2, gc_.max() + 2
+    g4 = np.zeros((nr_, nc_), int)
+    for i in range(nr_):
+        for j in range(nc_):
+            ab = (j, j + 1) if i % 2 else (j - 1, j)
+            ban = {g4[i, j - 1] if j else -1} | {g4[i - 1, q] if i and 0 <= q < nc_ else -1 for q in ab}
+            g4[i, j] = int(rng.choice([q for q in range(T_['nsib']) if q not in ban]))
+    mk_ = g4[gr_, gc_]
+    code = np.full((Hp, Wp), -1, np.int64)
+    # the lit fields: one value per mass (rounded), so the clumps merge
+    for k in range(len(cl)):
+        sel = own == k
+        if not sel.any():
+            continue
+        cv, bv, gv = cval[k]
+        rc, rb, rg = crole[k]
+        pc, pb, pg = palette(cv, rc), palette(bv, rb), palette(gv, rg)
+        s_cap, s_body, s_ovl = sel & cap, sel & body, sel & ovl
+        code[s_cap] = np.array(pc)[mk_[s_cap]]
+        code[s_body] = np.array(pb)[mk_[s_body]]
+        code[s_ovl] = np.array(pg)[mk_[s_ovl] % 2]
+    # the lit field's brightest clumps: a few at the top west of each mass get a crescent a tone up
+    for k in range(len(cl)):
+        if cz[k] != 3 or rng.random() > T_['hl']:
+            continue
+        sel = (own == k) & capm & (lam > T_['a_lit'] + 0.12)
+        if sel.sum() >= 4:
+            code[sel] = np.array(palette(cval[k][0] + T_['hl_d'], 'lit'))[mk_[sel]]
+    # between clumps: the mid in the light, the shade elsewhere
+    bare = mask & ~isc
+    if bare.any():
+        for y, x in zip(*np.nonzero(bare)):
+            Lv_ = levels(float(glob[y, x]))
+            z_ = zone[y, x]
+            L_ = Lv_['hi'] if z_ == 3 else (Lv_['mid'] - 8 if z_ == 2 else Lv_['sh'] - 14)
+            code[y, x] = palette(max(NB_FLOOR + 3, L_), 'lit' if z_ == 3 else ('mid' if z_ == 2 else 'shade'))[mk_[y, x]]
+    # the pockets: between masses and under each overhang one large irregular dark pocket, set
+    # where a mass in front meets the one behind it, in the shade of the one behind
+    inner3 = ndi.binary_erosion(mask, iterations=3)
+    pk_all = np.zeros((Hp, Wp), bool)
+    for k in range(len(ms)):
+        front = (mown == k) & mask
+        behind = mask & (mown >= 0) & (mown < k)
+        if not front.any() or not behind.any():
+            continue
+        band = behind & ndi.binary_dilation(front, iterations=3) & (lam < T_['a_lit'])
+        ys_, xs_ = np.nonzero(band & inner3)
+        if not len(ys_):
+            continue
+        npk = int(np.clip(round(len(ys_) / 90.0), 1, 3))
+        taken = []
+        for j in rng.permutation(len(ys_)):
+            if len(taken) >= npk:
+                break
+            y, x = int(ys_[j]), int(xs_[j])
+            if any(abs(x - tx) < 14 for (ty, tx) in taken):
+                continue
+            taken.append((y, x))
+            ar = rng.uniform(*T_['pk_r'])
+            ang = np.arctan2(yy - y, xx - x)
+            wob = 1 + 0.28 * np.sin(3 * ang + rng.uniform(0, 6.3)) + 0.16 * np.sin(5 * ang + rng.uniform(0, 6.3))
+            blob = (((xx - x) / (ar * 1.35)) ** 2 + ((yy - y) / ar) ** 2 <= wob * wob) & mask & ~front
+            blob |= ndi.binary_dilation(blob, iterations=1) & front & ~ndi.binary_erosion(front, iterations=1) & (yy >= y - 1)
+            pk_all |= blob & ndi.binary_erosion(mask, iterations=2)
+    if pk_all.any():
+        dist = ndi.distance_transform_edt(pk_all)
+        for y, x in zip(*np.nonzero(pk_all)):
+            Lv_ = levels(float(glob[y, x]))
+            code[y, x] = palette(max(NB_FLOOR + 3, Lv_['pk'] - (8 if dist[y, x] >= 2 else 0)), 'shade')[mk_[y, x] % 2]
+        lab_, n_ = ndi.label(pk_all)
+        for i, sl in enumerate(ndi.find_objects(lab_)):
+            dd = np.where(lab_[sl] == i + 1, dist[sl], 0)
+            if dd.max() < 2:
+                continue
+            y, x = np.unravel_index(int(np.argmax(dd)), dd.shape)
+            y, x = y + sl[0].start, x + sl[1].start
+            if glob[y, x] < T_['deep'] and inner3[y, x]:
+                bc = C('leaf_cool', 0) if rng.random() < 0.5 else C('leaf', 0)
+                code[y, x] = bc
+                if dd.max() >= 2.5 and x + 1 < Wp and dist[y, x + 1] >= 2:
+                    code[y, x + 1] = bc
+    # glints: a yellow-green pair on a few lit-field texels of the upper west
+    litf = isc & (zc == 3) & (xx < gx0) & (yy < gy0) & ndi.binary_erosion(mask, iterations=2)
+    ys_, xs_ = np.nonzero(litf)
+    for k in rng.permutation(len(ys_))[: max(1, int(len(ys_) / T_['glint']))]:
+        y, x = int(ys_[k]), int(xs_[k])
+        if x + 1 < Wp and litf[y, x + 1]:
+            code[y, x] = code[y, x + 1] = C(glint_fam, 5)
+    code[~mask] = -1
+    # the outline: the leaf edge tone on the shaded sides, open on the lit upper west
+    edge = mask & ~ndi.binary_erosion(mask)
+    Pm = np.pad(mask, 1)
+    open_ul = (~Pm[:-2, 1:-1] | ~Pm[1:-1, :-2])
+    lit_side = edge & open_ul & (zone >= 2)
+    gap_rim = edge & ndi.binary_dilation(gapm, iterations=2)
+    sel = edge & ~lit_side & ~gap_rim
+    run = ndi.zoom(rng.integers(0, 2, (Hp // 3 + 2, Wp // 3 + 2)), 3, order=0)[:Hp, :Wp]
+    code[sel] = np.where(run[sel] > 0, C(edge_fam, 1), C('leaf', 1))
+    code[sel & (glob < 0.3)] = C(edge_fam, 0)
+    code[gap_rim & ~lit_side] = C('leaf', 1)
+    _clean(code, mask, 2)
+    return code, mask, v
+
+
+TUNE_P5 = dict(sep=0.95, a_lit=0.45, a_mid=0.15, big=(7, 11), capy=0.2, lo=0.5, d_mid=34.0, d_sh=70.0,
+            sh_cap=8.0, litmarks=0.6, hl=0.8, nsib=5, lit_cap=20.0, pk_r=(3.0, 4.4), deep=0.42, sib=12, shrub_px=2000.0, mw_tree=1.0, mw_shrub=0.45)
+
+
+def _clump_crown_p5(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float, shapes=None, gaps=(),
+                low_band: float = 0.0, lift: float = 0.0, edge_fam: str = 'leaf_cool', glint_fam: str = 'grass_warm',
+                density: float = 0.85, tips: bool = True, size=None, deep: float = 0.34, cap_l=None, **_old):
+    """Pass 5's crown painter, frozen: run on the drawing's random stream only to advance it as pass 5
+    did, so the trunks, the willow's swags and the twigs stay byte for byte (pass 6 paints the crown
+    with a copy of the stream). Returns (codes, mask, value)."""
+    T_ = TUNE_P5
     Hp, Wp = S.shape
     yy, xx = np.mgrid[0:Hp, 0:Wp]
     S = ndi.binary_fill_holes(S)
@@ -1154,6 +1502,30 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
     code[gap_rim & ~lit_side] = C('leaf', 1)
     _clean(code, mask, 2)
     return code, mask, v
+
+
+def _crown_pair(S, masses, lad, rng, **kw):
+    """(pass 6 crown, pass 5 crown, the crown's own stream): pass 5's crown advances the drawing's
+    stream exactly as before and gives the mask the trunk is fitted to; pass 6's crown is painted
+    with a copy of the stream taken before it."""
+    st = rng.bit_generator.state
+    p5 = _clump_crown_p5(S, masses, lad, rng, **kw)
+    rc = np.random.default_rng()
+    rc.bit_generator.state = st
+    code, mask, v = clump_crown(S, masses, lad, rc, **kw)
+    # the silhouette stays pass 5's (so the cast shadows and the ground do too): pass 6's colours
+    # fill it, and its shaded outline keeps pass 5's edge tones
+    code5, mask5, _v5 = p5
+    idx = ndi.distance_transform_edt(~mask, return_distances=False, return_indices=True)
+    out = code[idx[0], idx[1]]
+    out[~mask5] = -1
+    edge5 = mask5 & ~ndi.binary_erosion(mask5)
+    L5 = np.zeros(code5.shape)
+    ok = code5 >= 0
+    L5[ok] = np.array([_lum(int(c)) for c in code5[ok]])
+    dk = edge5 & (L5 < 75)
+    out[dk] = code5[dk]
+    return (out, mask5.copy(), v), p5, rc
 
 
 # ------------------------------------------------------------------------------------------------
@@ -1635,7 +2007,7 @@ def shrub(kind: str, master_arr: np.ndarray, d: float, seed: int, look: dict, sc
     if base_kind == 'holly':
         code, mask, v = holly(S, clumps, lad, rng, lo, hi, kind)
     else:
-        code, mask, v = clump_crown(S, clumps, lad, rng, lo=lo, hi=hi, fams=fams, fam_w=wts,
+        (code, mask, v), _p5, _rc = _crown_pair(S, clumps, lad, rng, lo=lo, hi=hi, fams=fams, fam_w=wts,
                                     low_band=0.22, lift=0.1 if base_kind != 'bramble' else 0.18,
                                     edge_fam='leaf' if base_kind == 'bramble' else 'leaf_cool',
                                     **{'shapes': CLUMPS_S, **SHRUB_KW.get(kind, {})})
@@ -1678,7 +2050,7 @@ def holly(S, clumps, lad, rng, lo, hi, kind):
     grown edge-on from a leaf's edge every 3 to 5 texels round the silhouette; one leaf in four with a
     hard glint (tone 5) on its upper-left lobe; berries in clusters of 3 to 5, each arranged its own
     way, each berry with a glint, at the leaf axils; the foot the mass's own dark underside."""
-    code, mask, v = clump_crown(S, clumps, lad, rng, lo=lo, hi=hi, tips=False, fams=('leaf_cool', 'leaf'),
+    (code, mask, v), _p5, _rc = _crown_pair(S, clumps, lad, rng, lo=lo, hi=hi, tips=False, fams=('leaf_cool', 'leaf'),
                                 fam_w={'leaf_cool': 2.0}, glint_fam='leaf_cool', edge_fam='leaf_cool', ufloor=lo + 6,
                                 lift=0.12, low_band=0.2, **{'shapes': HOLLY, **HOLLY_KW.get(kind, {})})
     Hp, Wp = mask.shape
@@ -1686,6 +2058,8 @@ def holly(S, clumps, lad, rng, lo, hi, kind):
     # midrib, a darker lower edge and a point at each end; more of them in the light
     inner_l = ndi.binary_erosion(mask, iterations=3)
     yy_l, xx_l = np.mgrid[0:Hp, 0:Wp]
+    warm_h = tuple(C(f, tt) for f in ('grass_warm', 'leaf_warm') for tt in range(6))   # no yellow midribs
+    T_H = dict(leaf_v=TUNE.get('h_leaf_v', 0.7), rib=TUNE.get('h_rib', 12.0))
     ys, xs = np.nonzero(inner_l)
     placed = []
     want = int(inner_l.sum() / 75)
@@ -1693,7 +2067,7 @@ def holly(S, clumps, lad, rng, lo, hi, kind):
         if len(placed) >= want:
             break
         y, x = int(ys[k]), int(xs[k])
-        if v[y, x] < 0.4 or rng.random() > 0.2 + 0.8 * float(v[y, x]):
+        if v[y, x] < T_H['leaf_v'] or rng.random() > 0.2 + 0.8 * float(v[y, x]):
             continue
         if any(abs(y - py) < 7 and abs(x - px) < 8 for (py, px) in placed):
             continue
@@ -1702,9 +2076,9 @@ def holly(S, clumps, lad, rng, lo, hi, kind):
         a_ = float(rng.choice((0.0, 0.46, -0.46)))
         ca, sa = math.cos(a_), math.sin(a_)
         Lc = _lum(int(code[y, x])) if code[y, x] >= 0 else lo + 30
-        body_c = lad.pick(max(NB_FLOOR + 14, Lc), rng, 4)
-        dark_c = lad.pick(max(NB_FLOOR + 3, Lc - 20), rng, 5)
-        rib_c = lad.pick(Lc + 16, rng, 5)
+        body_c = lad.pick(max(NB_FLOOR + 14, Lc), rng, 4, avoid=warm_h)
+        dark_c = lad.pick(max(NB_FLOOR + 3, Lc - 20), rng, 5, avoid=warm_h)
+        rib_c = lad.pick(Lc + T_H['rib'], rng, 5, avoid=warm_h)
         for dy in range(-4, 5):
             for dx in range(-4, 5):
                 Y, X = y + dy, x + dx
@@ -1762,11 +2136,11 @@ def holly(S, clumps, lad, rng, lo, hi, kind):
     okc = code >= 0
     Lm[okc] = np.array([_lum(int(c)) for c in code[okc]])
     P_ = np.pad(Lm, 1, constant_values=255)
-    rim_lit = mask & (v > 0.45) & ndi.binary_erosion(mask, iterations=2) & (Lm >= 85) & \
+    rim_lit = mask & (v > 0.7) & ndi.binary_erosion(mask, iterations=2) & (Lm >= 85) & \
         ((P_[:-2, 1:-1] < Lm - 15) | (P_[1:-1, :-2] < Lm - 15))
     ys, xs = np.nonzero(rim_lit)
     placed = []
-    want = max(3, int(mask.sum() / (4 * 32)))
+    want = max(3, int(mask.sum() / (4 * 90)))
     for k in rng.permutation(len(ys)):
         if len(placed) >= want:
             break
@@ -2359,27 +2733,35 @@ def tree2(kind: str, master_arr: np.ndarray, d: float, seed: int, look: dict, tw
             row = np.nonzero(S[yr])[0]
             if len(row):
                 gaps.append((row.min() if ex_ < 0 else row.max(), yr, rng.uniform(5, 7), rng.uniform(5, 7)))
-        code, mask, v = clump_crown(S, masses, lad, rng, lo=lo, hi=hi, gaps=gaps, low_band=cfg['low'],
-                                    fams=fams, fam_w=wts, lift=0.12, **{'shapes': CLUMPS_S, **TREE_KW.get(kind, {})},
-                                    edge_fam='leaf_cool' if kind in ('beech', 'hollow_tree') else 'leaf')
+        (code, mask, v), (code5, mask5, _v5), rc = _crown_pair(
+            S, masses, lad, rng, lo=lo, hi=hi, gaps=gaps, low_band=cfg['low'],
+            fams=fams, fam_w=wts, lift=0.12, **{'shapes': CLUMPS_S, **TREE_KW.get(kind, {})},
+            edge_fam='leaf_cool' if kind in ('beech', 'hollow_tree') else 'leaf')
         if kind == 'birch':
-            _twig_hangs(code, mask, lad, rng, lo, hi)
+            c0_, m0_ = code5.copy(), mask5.copy()
+            _twig_hangs(code5, mask5, lad, rng, lo, hi)
+            tw_ = (code5 != c0_) | (mask5 & ~m0_)                 # pass 5's twigs, as drawn
+            code[tw_] = code5[tw_]
+            mask |= tw_
+    if kind == 'pine':
+        mask5 = mask
+    # the trunk is fitted to pass 5's crown mask on pass 5's stream, so it stays byte for byte
     H, W = mask.shape
     # the trunk: from the foot up into the crown, its limbs reaching into the lowest masses
     cols = int(round(foot[0]))
     half_t = max(2, int(T / 2))
-    band = mask[:, max(0, cols - half_t):cols + half_t + 1]
+    band = mask5[:, max(0, cols - half_t):cols + half_t + 1]
     bots = [np.nonzero(band[:, j])[0].max() for j in range(band.shape[1]) if band[:, j].any()]
     cb = min(bots) if bots else foot[1] - 10 * d
     if kind == 'hollow_tree':
         # a squat veteran: a bare bole about 0.6 H below the crown's lowest leaves
-        foot = (foot[0], np.nonzero(mask.any(1))[0].max() + 0.6 * 74)
+        foot = (foot[0], np.nonzero(mask5.any(1))[0].max() + 0.6 * 74)
     if kind == 'sapling':
         tr = sapling_stem(int(foot[1] - cb + 8), rng)
         out, ft = _compose(tr, code, mask, foot)
         return _crop(out, ft)
     length = int(foot[1] - cb + 10)
-    ys_c = np.nonzero(mask.any(1))[0]
+    ys_c = np.nonzero(mask5.any(1))[0]
     rise = (foot[1] - length) - (ys_c.min() + (ys_c.max() - ys_c.min()) * 0.45)
     tw2 = T * (1.25 if kind == 'beech' else 1.0) * (1.6 if kind == 'hollow_tree' else 1.0)
     tc, tm, (tfx, tfy), ty = trunk2(cfg['bark'] if cfg['bark'] != 'hollow' else 'oak', length, tw2 * cfg['top'],
@@ -2546,8 +2928,9 @@ def willow2(master_arr, d, rng):
         ang = np.arctan2(yy - my, xx - mx)
         wob = 1 + 0.06 * np.sin(4 * ang + k)
         capS |= ((xx - mx) / rx) ** 2 + ((yy - my) / ry) ** 2 <= wob * wob
-    ccode, cmask, v = clump_crown(capS, cap, lad, rng, lo=lo + 12, hi=hi, low_band=0.3, edge_fam='leaf', fams=fams,
-                                  fam_w=wts, lift=0.12, shapes=CLUMPS_S, **WILLOW_KW)
+    (ccode, cmask, v), (_c5, cmask5, _v5), _rc = _crown_pair(capS, cap, lad, rng, lo=lo + 12, hi=hi, low_band=0.3,
+                                                             edge_fam='leaf', fams=fams, fam_w=wts, lift=0.12,
+                                                             shapes=CLUMPS_S, **WILLOW_KW)
     # the swags' springing points: along the cap's underside and its shoulders
     springs = []
     # the swags gathered into 4 curtains, each 15 to 30 texels wide, with the dark interior and the
@@ -2562,7 +2945,7 @@ def willow2(master_arr, d, rng):
         fl += [fc - wc / 2 + wc * (j + rng.uniform(0.2, 0.8)) / nk for j in range(nk)]
     for f in fl:
         x = cx + f * W * 0.45
-        col = np.nonzero(cmask[:, int(np.clip(x, 0, Wp - 1))])[0]
+        col = np.nonzero(cmask5[:, int(np.clip(x, 0, Wp - 1))])[0]
         # a front swag springs from high in the cap and hangs over its lower half (no hard hem to the
         # cap); the outer ones from its shoulders, so they carry the dome's outline down
         y = (col.min() + (col.max() - col.min()) * rng.uniform(0.3, 0.65)) if len(col) else top + Hc * 0.3
@@ -2628,10 +3011,13 @@ def willow2(master_arr, d, rng):
                     ok[ok] = free[Y[ok], X[ok]]
                     code[Y[ok], X[ok]] = c_
     mask |= region
-    # the trunk and limbs over the interior
+    # the trunk and limbs over the interior; a limb tip that would stand out above the cap is left
+    # off (pass 6: the stray tip at the cap's top west)
     for y, x in zip(*np.nonzero(tm)):
         Y, X = y + oy, x + ox
         if 0 <= Y < Hp and 0 <= X < Wp:
+            if Y < top + Hc * 0.5 and not cmask[Y, X] and not mask[Y, X]:
+                continue
             code[Y, X] = tc[y, x]
             mask[Y, X] = True
     code[cmask] = ccode[cmask]
