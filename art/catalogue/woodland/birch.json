@@ -1,14 +1,14 @@
 {
  "id": "woodland/birch",
  "file": "game/zones/woodland/art/birch.png",
- "sha256": "b950bf8c4cd7b1696326b979ee711f2fa1b276d7bc87c4e2738e7d8f21e38f77",
+ "sha256": "678276d6c38882f3b5903d14991c0598a3b0452cec6ef685c8cd4502887677a5",
  "kind": "birch",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  104,
-  205
+  107,
+  204
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 22,
-   "tones": 29.636363636363637,
-   "shapes": 51.40909090909091
+   "patches": 21,
+   "tones": 27.428571428571427,
+   "shapes": 57.142857142857146
   },
   "band": {
    "tones": 27.71,
@@ -28,24 +28,24 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.812,
-  "tones_ratio": 1.07,
-  "shapes_ratio": 0.812,
-  "passed": false,
+  "ratio": 0.902,
+  "tones_ratio": 0.99,
+  "shapes_ratio": 0.902,
+  "passed": true,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.bar",
+   "detector": "detail.light",
    "severity": "polish",
    "box": [
-    12,
-    0,
-    104,
-    205
+    50,
+    121,
+    60,
+    203
    ],
-   "message": "woodland/birch: detail bar 0.81 of Eastward's foliage band (29.6 tones, 51.4 shapes a patch against 27.71, 63.32)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+   "message": "woodland/birch: the stone is lit from the right (luminance rises 7 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   }
  ],
  "reviewed": "2026-11-09",

@@ -1,14 +1,14 @@
 {
  "id": "woodland/lintel",
  "file": "game/zones/woodland/art/lintel.png",
- "sha256": "2ed3760f66313388f0a52afc12b2e341f4deaf5a4d71b98c53cabd6b6f84dcd5",
+ "sha256": "92a17183d6e7d866ef613981f753d24a0f37644783a4e0c47a4717ade45a67a5",
  "kind": "lintel",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   90,
-  28
+  29
  ],
  "status": "pass",
  "counts": {
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 24.333333333333332,
-   "shapes": 44.0
+   "tones": 26.333333333333332,
+   "shapes": 42.333333333333336
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.874,
-  "tones_ratio": 0.901,
-  "shapes_ratio": 0.874,
+  "ratio": 0.841,
+  "tones_ratio": 0.975,
+  "shapes_ratio": 0.841,
   "passed": false,
   "group": "prop"
  },
@@ -42,9 +42,9 @@
     6,
     2,
     84,
-    28
+    29
    ],
-   "message": "woodland/lintel: detail bar 0.87 of Eastward's prop band (24.3 tones, 44.0 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/lintel: detail bar 0.84 of Eastward's prop band (26.3 tones, 42.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

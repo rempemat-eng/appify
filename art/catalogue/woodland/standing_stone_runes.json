@@ -1,7 +1,7 @@
 {
  "id": "woodland/standing_stone_runes",
  "file": "game/zones/woodland/art/standing_stone_runes.png",
- "sha256": "e873b6d23540cc2c133b80e6965cd669d7f8f8a7e0ea4845f2b25ea42fb02eaf",
+ "sha256": "32118c14d1bb26de6bd0d28772791a312412b66815320bd9a3a65210f55c7626",
  "kind": "standing_stone_runes",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 26.333333333333332,
-   "shapes": 50.333333333333336
+   "tones": 36.333333333333336,
+   "shapes": 64.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.975,
-  "tones_ratio": 0.975,
-  "shapes_ratio": 0.999,
+  "ratio": 1.271,
+  "tones_ratio": 1.346,
+  "shapes_ratio": 1.271,
   "passed": true,
   "group": "prop"
  },

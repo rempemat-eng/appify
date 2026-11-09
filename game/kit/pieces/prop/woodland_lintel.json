@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 3,
+ "version": 4,
  "variants": [
   {
    "id": "lintel",
@@ -28,7 +28,7 @@
  "geometry": {
   "size_px": [
    90,
-   28
+   29
   ],
   "size_cells": [
    4,

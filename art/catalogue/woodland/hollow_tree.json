@@ -1,26 +1,26 @@
 {
  "id": "woodland/hollow_tree",
  "file": "game/zones/woodland/art/hollow_tree.png",
- "sha256": "818744b729aa245f6b50fc45e6f201fbf573ac253681ad01f4a9d46a91594de5",
+ "sha256": "c02c696d68661034ed127324041e87664023f12b1856e9a4c4e4bd105ac8cbff",
  "kind": "veteran_tree",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  251,
-  212
+  257,
+  231
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 82,
-   "tones": 25.024390243902438,
-   "shapes": 48.13414634146341
+   "patches": 92,
+   "tones": 24.5,
+   "shapes": 57.04347826086956
   },
   "band": {
    "tones": 27.71,
@@ -28,35 +28,23 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.76,
-  "tones_ratio": 0.903,
-  "shapes_ratio": 0.76,
+  "ratio": 0.884,
+  "tones_ratio": 0.884,
+  "shapes_ratio": 0.901,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    38,
-    0,
-    250,
-    212
-   ],
-   "message": "woodland/hollow_tree: tall 212 art px (2.86 A) is too small for a veteran tree: the size table gives 222 to 340 (3.00 to 4.59 A); Eastward at the same character height: the forest trees of 08",
-   "fix": "redraw it 222 to 340 art px tall (target about 281), checked beside Bramble (74 art px) in the asset sheet"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    38,
+    42,
     0,
-    250,
-    212
+    257,
+    231
    ],
-   "message": "woodland/hollow_tree: detail bar 0.76 of Eastward's foliage band (25.0 tones, 48.1 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/hollow_tree: detail bar 0.88 of Eastward's foliage band (24.5 tones, 57.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

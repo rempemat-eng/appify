@@ -17,6 +17,13 @@ A stone is 3 to 5 calm planes, each a few tones, not speckle:
   4-texel band;
 - carving cut as grooves 2 texels wide, stone 1 on the upper (shaded) edge and stone 4 on the lower
   lip, weathered and broken in places; a broken stone ends in a lit, jagged fracture plane.
+
+Third pass (round 2, W2-S1 to W2-S5): texture by plane (calm patches on the lit crown, smaller blocks
+on the cool shaded flank), a damp band at the foot, lobed lichen crusts, moss as clumps placed
+differently on each stone, a whole lit rim, grooves cut with a shaded wall and a lit lip, runes as
+branching glyphs, the broken stone's fracture as its own stepped plane, and a lintel with a sagging
+top, rounded and chipped corners and its lit top edge showing. The stone round 2 passed
+(standing_stone_lean, seed 933) keeps the second pass byte for byte (KEEP_PASS2).
 """
 from __future__ import annotations
 
@@ -189,19 +196,169 @@ def _chips(code, body, lad, rng, edge_pts, n):
                     code[y + 1, x + dx] = C('stone_cool', 1)      # the shade under the notch
 
 
-def _outline(code, body, u):
+def _outline(code, body, u, v3=False):
     edge = body & ~ndi.binary_erosion(body)
     P = np.pad(body, 1)
     west_top = edge & (~P[1:-1, :-2] | ~P[:-2, 1:-1]) & P[2:, 1:-1] & (u < 0.15)
     code[edge & ~west_top] = C('stone_cool', 0)
+    if v3:
+        # the lit rim whole (no dark dashes on it, W2-S2): stone warm 5 in runs, stone 4 between
+        yy = np.arange(code.shape[0])[:, None]
+        run = ((yy // 3) % 3 == 2)
+        code[west_top] = np.where(run[np.nonzero(west_top)[0], 0], C('stone', 4), C('stone_warm', 5))
+        return
     lit = west_top & (code % 8 >= 3)
     code[lit] = C('stone_warm', 5)
+
+
+
+# ------------------------------------------------------------------------------------------------
+# third pass (round 2 of the detail audit, W2-S1 to W2-S5)
+# ------------------------------------------------------------------------------------------------
+KEEP_PASS2 = {933}       # seeds of the stones round 2 passed (standing_stone_lean): kept byte for byte
+WARM = Ladder(('stone_warm', 'ashlar_warm', 'stone', 'sand_cool'), {'stone_warm': 2.0, 'sand_cool': 0.4})
+LIT = Ladder(STONES + ('sand_cool',), {'stone_warm': 1.6, 'stone': 1.4, 'sand_cool': 0.4})
+COOL = Ladder(('stone_cool', 'stone', 'slate_cool', 'ashlar'), {'stone_cool': 2.0, 'slate_cool': 0.3})
+
+
+def _planes3(code, body, val, west, east, capm, rng, cells=(8.0, 5.0, 3.4)):
+    """W2-S1: texture by plane. The lit crown in calm patches of 5 to 10 texels, the west face in
+    blocks of 4 to 6 on the warm siblings, the shaded flank in smaller ones (2 to 4) on the cool
+    siblings, as weathered rock: the light planes calm, the shade busier."""
+    lad = Ladder(STONES, {'stone': 2.0})
+    for zone, cell, facet, ld in ((capm, cells[0], 5.0, LIT), (west, cells[1], 7.0, WARM), (east, cells[2], 6.0, COOL)):
+        z = body & zone
+        if not z.any():
+            continue
+        tmp = np.full(code.shape, -1, np.int64)
+        _planes(tmp, z, val, ld if ld is not None else lad, rng, cell=cell, facet=facet)
+        code[z] = tmp[z]
+
+
+def _moss3(code, body, spots, rng):
+    """W2-S2: moss as clumps, each a 2-texel cap (leaf 3) over a band about 4 texels deep (leaf 2,
+    its lowest row leaf cool 1), 3 to 6 texels wide, its lower edge ragged; spots [(y, x)]."""
+    H, W = code.shape
+    for (y, x) in spots:
+        w = int(rng.integers(3, 7))
+        d = int(rng.integers(3, 6))
+        for i in range(w):
+            dd = d - abs(i - w // 2) // 2 - int(rng.integers(0, 2))
+            for j in range(max(2, dd)):
+                Y, X = y + j, x + i - w // 2
+                if 0 <= Y < H and 0 <= X < W and body[Y, X]:
+                    code[Y, X] = C('leaf', 3) if j < 2 and 0 < i < w - 1 else (C('leaf', 2) if j < dd - 1 else C('leaf_cool', 1))
+        # a drip into the joint below
+        if rng.random() < 0.5:
+            X = x + int(rng.integers(-w // 2 + 1, w // 2))
+            for j in range(d, d + int(rng.integers(2, 4))):
+                if 0 <= y + j < H and 0 <= X < W and body[y + j, X]:
+                    code[y + j, X] = C('leaf_cool', 1)
+
+
+def _lichen3(code, body, zone, rng, n):
+    """W2-S2: crusts 3 to 10 texels across, each its own lobed shape, in 2 or 3 sibling tones: a lit
+    upper rim, a body, a darker core or lower edge."""
+    H, W = code.shape
+    ys, xs = np.nonzero(zone)
+    if not len(ys):
+        return
+    placed = []
+    for k in rng.permutation(len(ys)):
+        if len(placed) >= n:
+            break
+        y, x = int(ys[k]), int(xs[k])
+        if any(abs(y - py) < 6 and abs(x - px) < 6 for (py, px) in placed):
+            continue
+        size = rng.uniform(3, 10)
+        m = np.zeros((H, W), bool)
+        for _ in range(int(rng.integers(2, 5))):                      # lobes
+            cy_ = y + rng.uniform(-size / 4, size / 4)
+            cx_ = x + rng.uniform(-size / 3, size / 3)
+            r_ = rng.uniform(1.2, max(1.6, size / 3))
+            yy, xx = np.ogrid[0:H, 0:W]
+            m |= ((xx - cx_) / r_) ** 2 + ((yy - cy_) / (r_ * 0.75)) ** 2 <= 1
+        m &= zone
+        if m.sum() < 4:
+            continue
+        placed.append((y, x))
+        fam = LICHEN[int(rng.integers(0, len(LICHEN)))]
+        code[m] = C(fam, 3)
+        P = np.pad(m, 1)
+        code[m & ~P[:-2, 1:-1]] = C(fam, 4)
+        core = ndi.binary_erosion(m) & ~np.pad(m, ((2, 0), (0, 0)))[:-2] | (m & ~P[2:, 1:-1] & P[:-2, 1:-1])
+        code[core & m] = C(fam, 2)
+
+
+def _groove3(code, body, pts, rng, breaks=1):
+    """W2-S3: a groove cut 2 texels wide: its upper and west wall in shade (stone 1), its lower and
+    east lip catching the light (stone 4), worn through in `breaks` places."""
+    H, W = code.shape
+    n = len(pts)
+    gaps = set()
+    for _ in range(breaks):
+        if n > 6:
+            g = int(rng.integers(2, n - 3))
+            gaps.update(range(g, g + 2))
+    dark, lit = set(), set()
+    for i, (py, px) in enumerate(pts):
+        if i in gaps:
+            continue
+        Y, X = int(round(py)), int(round(px))
+        dark.add((Y, X))
+    for (Y, X) in dark:
+        for (dy, dx) in ((1, 0), (0, 1), (1, 1)):
+            if (Y + dy, X + dx) not in dark:
+                lit.add((Y + dy, X + dx))
+    for (Y, X) in dark:
+        if 0 <= Y < H and 0 <= X < W and body[Y, X]:
+            code[Y, X] = C('stone_cool', 1)
+    for (Y, X) in lit:
+        if 0 <= Y < H and 0 <= X < W and body[Y, X]:
+            code[Y, X] = C('stone', 4)
+
+
+# runes: angular strokes in a 4 x 7 box (x, y), each glyph a stem with its own branches
+RUNES = [
+    [((0, 0), (0, 7)), ((0, 1), (3, 0)), ((0, 3), (3, 2))],            # fehu
+    [((0, 0), (0, 7)), ((0, 0), (3, 2)), ((3, 2), (0, 4)), ((0, 4), (3, 7))],   # raido
+    [((2, 0), (2, 7)), ((2, 2), (0, 0)), ((2, 2), (4, 0))],            # algiz
+    [((2, 0), (2, 7)), ((2, 0), (0, 2)), ((2, 0), (4, 2))],            # tiwaz
+    [((0, 0), (0, 7)), ((4, 0), (4, 7)), ((0, 0), (4, 4)), ((4, 0), (0, 4))],   # mannaz
+    [((0, 0), (0, 7)), ((0, 2), (3, 4)), ((3, 4), (0, 6))],            # thurisaz
+]
+
+
+def _rune(code, body, x0, y0, glyph, rng, sc=1.0):
+    for (a, b) in glyph:
+        (xa, ya), (xb, yb) = a, b
+        L = int(max(abs(xb - xa), abs(yb - ya)) * sc) + 1
+        pts = [(y0 + (ya + (yb - ya) * t) * sc, x0 + (xa + (xb - xa) * t) * sc) for t in np.linspace(0, 1, L)]
+        _groove3(code, body, pts, rng, breaks=0)
+
+
+def _damp(code, body, yb, rng, P_):
+    """W2-S1: a damp band at the foot, stone 1 to 2, with moss in its joints."""
+    H, W = code.shape
+    band = body & (np.arange(H)[:, None] >= yb - P_ - 1) & (np.arange(H)[:, None] < yb - 1)
+    wav = (ndi.gaussian_filter1d(rng.random(W), 1.5) * 3).astype(int)
+    band &= np.arange(H)[:, None] >= (yb - P_ - 1 + wav[None, :])
+    f = ndi.zoom(rng.random((H // 2 + 2, W // 3 + 2)), (2, 3), order=0)[:H, :W]
+    code[band] = np.where(f[band] > 0.5, C('stone_cool', 2), C('stone', 1))
+    code[band & (f > 0.85)] = C('slate_cool', 2) if True else C('stone', 2)
+    ys, xs = np.nonzero(band)
+    for k in rng.permutation(len(ys))[: max(2, int(band.sum() / 18))]:
+        y, x = int(ys[k]), int(xs[k])
+        if x + 1 < W and band[y, x + 1]:
+            code[y, x] = code[y, x + 1] = C('leaf', 2) if rng.random() < 0.6 else C('leaf_cool', 2)
+
 
 
 def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: bool = False,
                    carved: str | None = None, squat: bool = False):
     """An ancient standing stone, w x h world px. Returns (codes, (ax, ay) the foot's centre)."""
     rng = np.random.default_rng(seed)
+    v3 = seed not in KEEP_PASS2
     lad = Ladder(STONES, {'stone': 2.0})
     pad = _P(2)
     Wt = _P(w) + 2 * pad + int(abs(lean) * _P(w)) + 2
@@ -239,7 +396,7 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
         sizes = ndi.sum(body, lab, range(1, n + 1))
         body = lab == (1 + int(np.argmax(sizes)))
     # the planes: the crown (lit), the west face, the east flank past a wandering arris, the foot
-    capd = _P(1.4) if not broken else _P(1.8)
+    capd = _P(1.4) if not broken else (_P(2.4) if v3 else _P(1.8))
     capm = body & (yy < crown + capd)
     ridge = 0.15 + (ndi.gaussian_filter1d(rng.random(Ht), 4) - 0.5)[:, None] * 0.6
     west = body & ~capm & (u < ridge)
@@ -250,9 +407,30 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
     val[capm] = 160 + 6 * (-u[capm])                                 # stone 4
     foot = body & (yy >= yb - _P(1.6))
     val[foot] = np.minimum(val[foot], 92) - 14
-    _planes(code, body, val, lad, rng)
+    if v3:
+        _planes3(code, body, val, west, east, capm, rng)
+    else:
+        _planes(code, body, val, lad, rng)
     # the fracture plane on a broken stone: lit, in steps
-    if broken:
+    if broken and v3:
+        # W2-S5: its own plane, lit (stone 4 to 5) with 1 to 2 texel steps along the break, its far
+        # (upper) edge dark; the crown never runs over it
+        code[capm] = C('stone', 4)
+        xs_c = np.nonzero(capm.any(0))[0]
+        x = xs_c.min() + int(rng.integers(2, 4))
+        tone = 0
+        while x <= xs_c.max():
+            w_ = int(rng.integers(3, 6))
+            sub = capm & (xx >= x) & (xx < x + w_)
+            code[sub] = (C('stone_warm', 5), C('stone', 4), C('ashlar_warm', 4))[tone % 3]
+            P = np.pad(sub, 1)
+            code[sub & ~P[1:-1, :-2]] = C('stone', 3)                  # the riser of the step, 1 texel
+            tone += 1
+            x += w_
+        P = np.pad(capm, 1)
+        code[capm & ~P[:-2, 1:-1]] = C('stone_cool', 1)               # the far edge, dark
+        code[capm & ~P[2:, 1:-1]] = C('stone', 3)                     # the near arris under it
+    elif broken:
         for y, x in zip(*np.nonzero(capm)):
             code[y, x] = C('stone_warm', 5) if (x // 3 + y) % 4 == 0 else C('stone', 4)
         P = np.pad(capm, 1)
@@ -271,26 +449,54 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
         code[lip] = np.array([lad.pick(_lum(int(c)) + 12, rng, 5) for c in code[lip]])
     _flakes(code, body & ~capm & ~foot, lad, rng, int(body.sum() / 22))
     # cracks
-    for k in range(2 + int(broken)):
+    starts = []
+    for k in range((1 if v3 else 2) + int(broken)):
         sx = base_cx + rng.uniform(-0.5, 0.4) * half0
         sy = yt + (yb - yt) * rng.uniform(0.25, 0.6)
+        starts.append((int(sy), int(sx)))
         _crack(code, body, sx, sy, int(rng.integers(_P(2), _P(5))), lad, rng)
-    # lichen on the lit and upper faces, moss low on the shaded side
-    _lichen(code, body, body & (west | capm) & ~foot & (yy < yb - _P(3)), rng, 3 + int(w * h / 90))
-    _moss(code, body, body & ((east & (yy > yb - _P(5))) | (foot & (u > -0.2))), rng)
+    if v3:
+        _damp(code, body, int(yb), rng, _P(1.4))
+        _lichen3(code, body, body & (west | capm) & ~foot & (yy < yb - _P(3)), rng, 2 + int(w * h / 110))
+        # moss: one or two clumps, each stone its own place (in a crack one time in three)
+        spots = []
+        if rng.random() < 0.34 and starts:
+            spots.append((starts[0][0] + 2, starts[0][1]))
+        zone_m = body & ~capm & (yy > yt + (yb - yt) * rng.uniform(0.3, 0.7)) & (yy < yb - _P(2))
+        zone_m &= (u > 0.1) if rng.random() < 0.6 else (u < -0.3)
+        ys_m, xs_m = np.nonzero(zone_m)
+        if len(ys_m):
+            k = int(rng.integers(0, len(ys_m)))
+            spots.append((int(ys_m[k]), int(xs_m[k])))
+        _moss3(code, body, spots[:2], rng)
+    else:
+        _lichen(code, body, body & (west | capm) & ~foot & (yy < yb - _P(3)), rng, 3 + int(w * h / 90))
+        _moss(code, body, body & ((east & (yy > yb - _P(5))) | (foot & (u > -0.2))), rng)
     # carving
     if carved:
         ccx = base_cx - half0 * 0.08 + lean * _P(w) * 0.5
         ccy = yt + (yb - yt) * 0.4
         if carved == 'spiral':
             pts = []
-            for k in range(140):
-                th = k * 0.11
-                r = 0.8 + th * 0.95
-                if r > half0 * 0.62:
+            for k in range(160):
+                th = k * 0.1
+                r = 0.8 + th * (1.1 if v3 else 0.95)
+                if r > half0 * (0.68 if v3 else 0.62):
                     break
                 pts.append((ccy + r * math.sin(th) * 0.95, ccx + r * math.cos(th)))
-            _groove(code, body, pts, lad, rng, breaks=2)
+            if v3:
+                _groove3(code, body, pts, rng, breaks=2)
+            else:
+                _groove(code, body, pts, lad, rng, breaks=2)
+        elif v3:
+            # W2-S3: 3 to 5 runes in a column, 7 texels tall, each its own glyph
+            order = rng.permutation(len(RUNES))
+            ng = int(np.clip((yb - yt - _P(6)) // 10, 3, 5))
+            gy = yt + _P(3.5)
+            for i in range(ng):
+                gx = ccx - 2 + (1 if i % 2 else -1) * rng.uniform(0, 1.2)
+                _rune(code, body, int(round(gx)), int(round(gy)), RUNES[int(order[i % len(order)])], rng)
+                gy += 10
         else:
             for k_ in range(3):
                 X0 = ccx - _P(3.2) + k_ * _P(3.2)
@@ -306,7 +512,7 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
     pts = [(int(y), int(x)) for y, x in zip(*np.nonzero(edge & (yy < yb - _P(3))))]
     _chips(code, body, lad, rng, pts, int(rng.integers(2, 4)))
     _clean(code, body, 2)
-    _outline(code, body, u)
+    _outline(code, body, u, v3=v3)
     # the contact line: one texel under the foot
     fy = int(yb)
     row = body[fy - 1]
@@ -316,69 +522,91 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
 
 
 def lintel(w: float, h: float, seed: int):
-    """A fallen dressed capstone lying in the grass: a long slab, its top one calm lit plane with
-    broad sibling patches and lichen crusts, two mortise sockets cut in its top (lit on their far
-    wall), a front face in shade with a weathered tooling band, a dark east end, chipped front
-    arrises, sunk a little at one end with moss along its foot."""
+    """A fallen dressed capstone lying in the grass (W2-S4): a long slab whose top line sags a texel
+    over its length, its corners rounded and its arrises chipped (2 to 4 notches an arris, each with a
+    shade texel under it, the lit arris line broken where they fall); the top one calm lit plane with
+    broad sibling patches and lichen crusts, two mortise sockets cut in it; a front face in shade with
+    a weathered tooling band; a dark east end; its lit top edge shows (no outline on it); moss in one
+    or two clumps with a drip into a joint, never in a row."""
     rng = np.random.default_rng(seed)
     lad = Ladder(STONES, {'stone': 2.0})
     pad = _P(2)
-    Wt, Ht = _P(w) + 2 * pad, _P(h) + pad + 1
+    Wt, Ht = _P(w) + 2 * pad, _P(h) + pad + 2
     code = np.full((Ht, Wt), -1, np.int64)
     yy, xx = np.mgrid[0:Ht, 0:Wt].astype(float)
     x0, x1 = pad, Wt - pad
     yb = Ht - pad
-    yt = 0
+    yt = 1
     sink = rng.uniform(1.0, 2.5) * (1 if seed % 2 else -1)
     tilt = sink * (xx - x0) / max(1, x1 - x0)                          # one end sunk a little
+    u = (xx - (x0 + x1) / 2) / ((x1 - x0) / 2)
+    sag = np.round(1.0 - u * u).astype(int)                            # the top line sags a texel
     top_d = int(round((yb - yt) * 0.55))
     end_w = max(4, int(_P(w) * 0.07))
-    body = (xx >= x0) & (xx < x1) & (yy >= yt + 1 + np.clip(tilt, 0, None)) & (yy < yb)
-    # rounded worn corners
-    corner = ((xx - x0) < 2) & ((yy - yt) < 2) | ((x1 - 1 - xx) < 2) & ((yy - yt) < 2)
-    body &= ~corner
-    top = body & (yy < yt + top_d + tilt * 0.4)
+    ytop = yt + np.clip(tilt, 0, None) + sag
+    body = (xx >= x0) & (xx < x1) & (yy >= ytop) & (yy < yb)
+    # rounded, worn corners (radius 2 to 3)
+    for (sx, sy) in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
+        r_ = rng.uniform(3.0, 4.2) if sy < 0 else 2.2
+        cx_ = (x0 + r_ - 0.5) if sx < 0 else (x1 - r_ - 0.5)
+        cy_ = (yt + r_ - 0.5) if sy < 0 else (yb - r_ - 0.5)
+        out = ((xx - cx_) * sx > 0) & ((yy - cy_) * sy > 0) & ((xx - cx_) ** 2 + (yy - cy_) ** 2 > r_ * r_)
+        body &= ~out
+    top = body & (yy < yt + top_d + tilt * 0.4 + sag)
     endf = body & ~top & (xx >= x1 - end_w)
     front = body & ~top & ~endf
     val = np.zeros((Ht, Wt))
-    u = (xx - (x0 + x1) / 2) / ((x1 - x0) / 2)
     val[top] = 158 - 8 * u[top]
     val[front] = 96 - 10 * u[front]
     val[endf] = 66
-    _planes(code, body, val, lad, rng)
-    # broad sibling patches on the top (3 or 4, calm)
+    _planes(code, body, val, lad, rng, cell=3.6)
     ys, xs = np.nonzero(top)
-    for k in rng.permutation(len(ys))[:4]:
+    for k in rng.permutation(len(ys))[:2]:
         y, x = int(ys[k]), int(xs[k])
         m = top & (((xx - x) / rng.uniform(4, 8)) ** 2 + ((yy - y) / rng.uniform(1.5, 3)) ** 2 <= 1)
-        code[m] = lad.pick(158 + rng.uniform(-6, 4), rng, 5)
-    # the arris between the top and the front: lit, chipped
+        code[m] = WARM.pick(158 + rng.uniform(-6, 4), rng, 5)
+    # the arris between the top and the front: lit, broken by chips
     P = np.pad(top, 1)
     arris = top & ~P[2:, 1:-1]
     code[arris] = C('stone_warm', 5)
-    ap = [(int(y), int(x)) for y, x in zip(*np.nonzero(arris))]
-    for k in rng.permutation(len(ap))[: int(rng.integers(2, 5))]:
-        y, x = ap[k]
+    ap = sorted((int(x), int(y)) for y, x in zip(*np.nonzero(arris)))
+    nch = int(rng.integers(2, 5))
+    xs_ch = sorted(rng.choice(np.arange(len(ap)), size=min(nch, len(ap)), replace=False))
+    for k in xs_ch:
+        x, y = ap[k]
         for dx in range(int(rng.integers(2, 4))):
-            if body[y, x + dx] if x + dx < Wt else False:
-                code[y, x + dx] = lad.pick(106, rng, 5)
+            if x + dx < Wt and body[y, x + dx]:
+                code[y, x + dx] = C('stone_cool', 1) if dx == 0 else C('stone', 2)
                 if y + 1 < Ht and body[y + 1, x + dx]:
                     code[y + 1, x + dx] = C('stone_cool', 1)
-    # a tooling band along the front: short diagonal strokes a sibling down, in a row
+    # chips knocked off the top edge too (notches in the silhouette, a shade texel under each)
+    edge_top = body & ~np.pad(body, 1)[:-2, 1:-1]
+    et = sorted((int(x), int(y)) for y, x in zip(*np.nonzero(edge_top)) if x0 + 3 < x < x1 - 4)
+    for k in rng.choice(np.arange(len(et)), size=min(int(rng.integers(2, 4)), len(et)), replace=False):
+        x, y = et[k]
+        for dx in range(int(rng.integers(1, 3))):
+            if body[y, x + dx]:
+                body[y, x + dx] = False
+                code[y, x + dx] = -1
+                if body[y + 1, x + dx]:
+                    code[y + 1, x + dx] = C('stone', 3)
+                    if body[y + 2, x + dx]:
+                        code[y + 2, x + dx] = C('stone_cool', 2)
+    # a tooling band along the front: short diagonal strokes a sibling down, unevenly worn
     fy = int(np.nonzero(front.any(1))[0].min() + 2) if front.any() else yb - 3
+    fy = int(np.nonzero(front.any(1))[0].min() + 1) if front.any() else yb - 3
     for x in range(x0 + 2, x1 - end_w - 2, 3):
-        if rng.random() < 0.8:
+        if rng.random() < 0.65:
+            c_ = COOL.pick(88 + rng.uniform(-6, 6), rng, 6)
             for j in range(2):
                 y_, x_ = fy + j, x + j
                 if 0 <= y_ < Ht and x_ < Wt and front[y_, x_]:
-                    code[y_, x_] = lad.pick(92, rng, 5)
-    # the mortise sockets: two recesses (4 x 3 world-px scaled) on the top, lit on the far (north)
-    # wall... seen from the front, the far wall is the socket's lower half, lit; the near wall dark
+                    code[y_, x_] = c_
     if w >= 20:
         mw, mh = _P(8 / 3), _P(4 / 3)
         for fx in (0.28, 0.66):
             sx = int(x0 + (x1 - x0) * fx)
-            sy = int(yt + top_d * 0.35 + tilt[0, min(Wt - 1, sx)] * 0.4)
+            sy = int(yt + top_d * 0.35 + tilt[0, min(Wt - 1, sx)] * 0.4 + 1)
             for j in range(mh):
                 for i in range(mw):
                     y_, x_ = sy + j, sx + i
@@ -387,15 +615,22 @@ def lintel(w: float, h: float, seed: int):
             if top[sy - 1, sx:sx + mw].all():
                 code[sy - 1, sx:sx + mw] = C('stone_warm', 5)
     _flakes(code, top & ~arris, lad, rng, int(top.sum() / 30))
-    _flakes(code, front, lad, rng, int(front.sum() / 30))
-    # lichen crusts on the top; moss along the foot on the shaded side
-    _lichen(code, body, top & ~arris, rng, 2 + int(w / 9))
-    _moss(code, body, body & (yy >= yb - _P(1.3)) & (u > -0.4), rng)
+    _flakes(code, front, COOL, rng, int(front.sum() / 26))
+    _lichen3(code, body, top & ~arris, rng, 2 + int(w / 6))
+    # moss: one or two clumps at the foot on the shaded side, a drip into a joint
+    zone_m = front & (yy > yb - _P(2.2)) & (u > -0.3)
+    ys_m, xs_m = np.nonzero(zone_m)
+    spots = []
+    for k in rng.permutation(len(ys_m))[: int(rng.integers(1, 3))]:
+        spots.append((int(ys_m[k]) - 1, int(xs_m[k])))
+    _moss3(code, body, spots, rng)
+    _damp(code, body, int(yb), rng, 1)
     _clean(code, body, 2)
     edge = body & ~ndi.binary_erosion(body)
     P = np.pad(body, 1)
-    lit_ = edge & ~P[:-2, 1:-1] & (u < 0.4)
+    lit_ = edge & ~P[:-2, 1:-1] & (u < 0.75)                          # the lit top edge shows
     code[edge & ~lit_] = C('stone_cool', 0)
-    code[lit_] = C('stone_warm', 5)
+    code[lit_] = np.where(u[lit_] < 0.2, C('stone_warm', 5), C('stone', 4))
+    code[lit_ & (np.arange(Wt)[None, :] % 7 == 3)] = C('stone', 4)
     code[~body] = -1
     return code, ((x0 + x1) / 2.0, yb)

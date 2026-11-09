@@ -1,14 +1,14 @@
 {
  "id": "woodland/holly",
  "file": "game/zones/woodland/art/holly.png",
- "sha256": "4482e89433671bfa3cfcc8114559227d21c93379caaeeb65da3ff45e995afb77",
+ "sha256": "711d4697690dbad4a241e125365530712b8585000a4089d503a45a10aa18f5b8",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   85,
-  75
+  74
  ],
  "status": "pass",
  "counts": {
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 11,
-   "tones": 31.272727272727273,
-   "shapes": 46.90909090909091
+   "tones": 30.636363636363637,
+   "shapes": 52.54545454545455
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.741,
-  "tones_ratio": 1.129,
-  "shapes_ratio": 0.741,
+  "ratio": 0.83,
+  "tones_ratio": 1.106,
+  "shapes_ratio": 0.83,
   "passed": false,
   "group": "foliage"
  },
@@ -42,9 +42,9 @@
     0,
     0,
     85,
-    75
+    74
    ],
-   "message": "woodland/holly: detail bar 0.74 of Eastward's foliage band (31.3 tones, 46.9 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/holly: detail bar 0.83 of Eastward's foliage band (30.6 tones, 52.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

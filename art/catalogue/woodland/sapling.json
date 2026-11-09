@@ -1,14 +1,14 @@
 {
  "id": "woodland/sapling",
  "file": "game/zones/woodland/art/sapling.png",
- "sha256": "174d140811e0b79a374050a604e6f4a017eb206ef95e67eadba9792fc81b8edf",
+ "sha256": "9c8792b0a77745e6a671b817c900be57cd82fc7ce5357bada9f939e9182cfa29",
  "kind": "sapling",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   60,
-  85
+  84
  ],
  "status": "pass",
  "counts": {
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 4,
-   "tones": 31.25,
-   "shapes": 49.25
+   "tones": 26.5,
+   "shapes": 51.5
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.778,
-  "tones_ratio": 1.128,
-  "shapes_ratio": 0.778,
+  "ratio": 0.813,
+  "tones_ratio": 0.956,
+  "shapes_ratio": 0.813,
   "passed": false,
   "group": "foliage"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    3,
+    5,
     0,
     60,
-    85
+    84
    ],
-   "message": "woodland/sapling: detail bar 0.78 of Eastward's foliage band (31.2 tones, 49.2 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/sapling: detail bar 0.81 of Eastward's foliage band (26.5 tones, 51.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

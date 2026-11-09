@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 4,
+ "version": 5,
  "variants": [
   {
    "id": "bush_c",
@@ -27,8 +27,8 @@
  },
  "geometry": {
   "size_px": [
-   114,
-   60
+   116,
+   59
   ],
   "size_cells": [
    5,

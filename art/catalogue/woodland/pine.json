@@ -1,14 +1,14 @@
 {
  "id": "woodland/pine",
  "file": "game/zones/woodland/art/pine.png",
- "sha256": "85adfc5f4531df38691431523cbdacb56ab65f9d19a945b52e2d412ba4b27486",
+ "sha256": "07aeed1706c9f89eabda6cb459fc4c3e4a71bd3b598bfeddc375f8219c88f2cc",
  "kind": "conifer",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  111,
-  232
+  107,
+  237
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 30,
-   "tones": 31.533333333333335,
-   "shapes": 47.03333333333333
+   "patches": 28,
+   "tones": 30.75,
+   "shapes": 46.82142857142857
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.743,
-  "tones_ratio": 1.138,
-  "shapes_ratio": 0.743,
+  "ratio": 0.739,
+  "tones_ratio": 1.11,
+  "shapes_ratio": 0.739,
   "passed": false,
   "group": "foliage"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    5,
+    8,
     0,
-    110,
-    232
+    106,
+    237
    ],
-   "message": "woodland/pine: detail bar 0.74 of Eastward's foliage band (31.5 tones, 47.0 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/pine: detail bar 0.74 of Eastward's foliage band (30.8 tones, 46.8 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

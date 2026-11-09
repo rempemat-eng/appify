@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 5,
+ "version": 6,
  "variants": [
   {
    "id": "hollow_tree",
@@ -27,12 +27,12 @@
  },
  "geometry": {
   "size_px": [
-   251,
-   212
+   257,
+   231
   ],
   "size_cells": [
    11,
-   9
+   10
   ],
   "z_sort": "foot",
   "collision": {

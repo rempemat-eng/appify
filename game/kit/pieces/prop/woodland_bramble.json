@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 4,
+ "version": 5,
  "variants": [
   {
    "id": "bramble",
@@ -27,11 +27,11 @@
  },
  "geometry": {
   "size_px": [
-   115,
-   52
+   122,
+   50
   ],
   "size_cells": [
-   5,
+   6,
    3
   ],
   "z_sort": "foot",

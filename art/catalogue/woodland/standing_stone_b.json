@@ -1,7 +1,7 @@
 {
  "id": "woodland/standing_stone_b",
  "file": "game/zones/woodland/art/standing_stone_b.png",
- "sha256": "4cced29cfb2a59b8d83b03d64ef44186e20e76e055a27c97cdbd180ef340a720",
+ "sha256": "12fbece5e549deb0fc530fcd329468189680ec954d8c9679b2108ba653662768",
  "kind": "standing_stone",
  "biome": "woodland",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 0
  },
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 26.0,
-   "shapes": 50.666666666666664
+   "tones": 32.666666666666664,
+   "shapes": 59.0
   },
   "band": {
    "tones": 26.25,
@@ -28,26 +28,13 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": 0.831,
-  "tones_ratio": 0.99,
-  "shapes_ratio": 0.831,
-  "passed": false,
+  "ratio": 0.967,
+  "tones_ratio": 1.244,
+  "shapes_ratio": 0.967,
+  "passed": true,
   "group": "stone"
  },
- "findings": [
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    7,
-    11,
-    44,
-    78
-   ],
-   "message": "woodland/standing_stone_b: detail bar 0.83 of Eastward's stone band (26.0 tones, 50.7 shapes a patch against 26.25, 61.0)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  }
- ],
+ "findings": [],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",

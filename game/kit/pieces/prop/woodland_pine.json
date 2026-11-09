@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 5,
+ "version": 6,
  "variants": [
   {
    "id": "pine",
@@ -27,8 +27,8 @@
  },
  "geometry": {
   "size_px": [
-   111,
-   232
+   107,
+   237
   ],
   "size_cells": [
    5,

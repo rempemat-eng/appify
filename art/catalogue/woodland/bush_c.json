@@ -1,26 +1,26 @@
 {
  "id": "woodland/bush_c",
  "file": "game/zones/woodland/art/bush_c.png",
- "sha256": "687b90ba9b36d3b1e7b22601c35de4b61a116d9d33a045f63ce8405253bcf7c2",
+ "sha256": "b9171319bbc74b60852a6729bf267bdb42906ee3ad5ca5460b04e67e0302af75",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  114,
-  60
+  116,
+  59
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 16,
-   "tones": 31.3125,
-   "shapes": 47.0625
+   "patches": 14,
+   "tones": 29.214285714285715,
+   "shapes": 53.285714285714285
   },
   "band": {
    "tones": 27.71,
@@ -28,23 +28,35 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.743,
-  "tones_ratio": 1.13,
-  "shapes_ratio": 0.743,
+  "ratio": 0.842,
+  "tones_ratio": 1.054,
+  "shapes_ratio": 0.842,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    116,
+    59
+   ],
+   "message": "woodland/bush_c: wide 116 art px (1.57 A) is too big for a bush: the size table gives 44 to 115 (0.59 to 1.55 A); Eastward at the same character height: bushes 38 to 50 E tall (0.7 to 0.93 A), 35 to 60 E wide (12, 38)",
+   "fix": "redraw it 44 to 115 art px wide (target about 80), checked beside Bramble (74 art px) in the asset sheet"
+  },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
     0,
     0,
-    114,
-    60
+    116,
+    59
    ],
-   "message": "woodland/bush_c: detail bar 0.74 of Eastward's foliage band (31.3 tones, 47.1 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bush_c: detail bar 0.84 of Eastward's foliage band (29.2 tones, 53.3 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

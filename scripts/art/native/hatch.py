@@ -152,11 +152,13 @@ def _outline(a):
 
 
 def _ground(a, seed):
-    """Where the kerb meets the turf (9 Nov audit, W-H1; eastward-edges 5.1): worn earth 2 to 3
-    texels wide round the kerb, its outer edge the turf's frayed edge (bites of earth into the turf
-    and tufts of turf over the earth, never a straight side), damper in the kerb's shade on the north
-    and west; a contact line where the stones meet it. Painted only outside what is drawn, so the
-    kerb, the lid and the opening (the collision) stay put; no outline on ground."""
+    """Where the kerb meets the turf (W2-H1; eastward-edges 5.1): worn earth 2 to 3 texels wide round
+    the kerb whose outer edge is the turf's frayed edge, wandering in 1-texel steps, with a few bites
+    of earth 3 to 5 texels deep into the turf; damper in the kerb's shade on the north and west; a
+    contact shade one tone down along the south and east of the frame; 2 to 4 tufts of turf of
+    different sizes over the earth and the kerb's foot (no ruled line, no even comb). Painted only
+    outside what is drawn, so the kerb, the lid and the opening (the collision) stay put."""
+    from scipy import ndimage as ndi
     from scripts.art.native.village import tidy
     rng = np.random.default_rng(seed + 101)
     drawn = a >= 0
@@ -165,36 +167,54 @@ def _ground(a, seed):
     dx = np.maximum(np.maximum(kx0 - xx, xx - (kx1 - 1)), 0)
     dy = np.maximum(np.maximum(ky0 - yy, yy - (ky1 - 1)), 0)
     d = np.hypot(dx, dy)
-    from scipy import ndimage as ndi
-    fray = ndi.gaussian_filter(rng.random((H, W)), 1.2)
-    fray = (fray - fray.min()) / max(1e-6, fray.max() - fray.min())
-    reach = 1.2 + 2.2 * fray                                    # 1 to 3 texels, wandering
+    # the reach: 2 to 3 texels, wandering in 1-texel steps along the edge, and 3 bites 3 to 5 deep
+    ang = np.arctan2(yy - (ky0 + ky1) / 2.0, xx - (kx0 + kx1) / 2.0)
+    wander = ndi.gaussian_filter1d(rng.random(720), 6, mode='wrap')
+    wander = (wander - wander.min()) / max(1e-6, wander.max() - wander.min())
+    idx = ((ang + np.pi) / (2 * np.pi) * 719).astype(int)
+    reach = np.round(1.6 + 1.6 * wander[idx])
+    for _ in range(3):
+        c = rng.uniform(-np.pi, np.pi)
+        wdt = rng.uniform(0.12, 0.22)
+        dang = np.abs((ang - c + np.pi) % (2 * np.pi) - np.pi)
+        reach = np.maximum(reach, np.round(rng.uniform(3, 5) * np.clip(1 - dang / wdt, 0, 1)))
     ring = (d > 0) & (d <= reach) & ~drawn
     ring &= ~((yy < ky0) & (xx > X0) & (xx < X0 + OW) & (yy < Y0 - K - 3))   # not under the open lid
     shade = (yy < ky0 + 2) | (xx < kx0 + 2)
-    a[ring] = C('path', 3)
-    a[ring & shade] = C('earth', 3)
-    # bites and tufts on the outer edge: turf over the earth in tufts of 2 to 3 texels
+    f = ndi.zoom(rng.random((H // 2 + 2, W // 3 + 2)), (2, 3), order=0)[:H, :W]
+    a[ring] = np.where(f[ring] > 0.45, C('path', 3), C('path_warm', 3))
+    a[ring & shade] = np.where(f[ring & shade] > 0.5, C('earth', 3), C('earth_warm', 3))
+    # crumbs of the earth's darkest tone along the outer edge (1 to 2 texels)
     outer = ring & (d > reach - 1.0)
-    for y, x in zip(*np.nonzero(outer)):
-        if (x * 7 + y * 3) % 5 < 2:
-            a[y, x] = C('grass', 2) if (x + y) % 3 else C('grass', 3)
-    # the contact line: the texel against the stones a step darker
-    contact = ring & (d <= 1.0) & ~((yy < ky0) & (xx >= kx0) & (xx < kx1) & False)
-    a[contact & shade] = C('earth', 2)
-    a[contact & ~shade] = C('path', 2)
+    ys, xs = np.nonzero(outer)
+    for k in rng.permutation(len(ys))[: max(4, len(ys) // 9)]:
+        a[ys[k], xs[k]] = C('earth', 2)
+        if xs[k] + 1 < W and outer[ys[k], xs[k] + 1]:
+            a[ys[k], xs[k] + 1] = C('earth', 2)
+    # the contact shade: one tone down along the south and the east of the frame
+    se = ring & (d <= 1.5) & ((yy >= ky1) | (xx >= kx1))
+    a[se] = C('earth', 2)
+    a[ring & (d <= 1.0) & ~se & ~shade] = C('path', 2)
     # two loose stones, lit on the upper left
-    for (sy, sx) in ((ky1, kx1 - 9), (ky0 + 9, kx1)):
+    for (sy, sx) in ((ky1 + 1, kx1 - 11), (ky0 + 11, kx1 + 1)):
         if sy + 2 <= H and sx + 3 <= W:
             a[sy:sy + 2, sx:sx + 3] = C('stone', 3)
             a[sy, sx:sx + 2] = C('stone', 4)
             a[sy + 1, sx + 2] = C('stone', 2)
-    # grass blades over the kerb's south and east edges: two or three texels tall, a lit tip
-    for _ in range(6):
-        bx = int(rng.integers(kx0 + 2, kx1 - 2))
-        h = int(rng.integers(2, 4))
-        a[ky1 - h:ky1, bx] = C('grass', 3)
-        a[ky1 - h, bx] = C('grass', 4)
+    # tufts: 2 to 4, each its own size (2 to 5 blades), over the earth and the kerb's foot
+    spots = [(ky1 - 1, int(rng.integers(kx0 + 3, kx0 + 12))), (ky1, int(rng.integers(kx1 - 14, kx1 - 4))),
+             (int(rng.integers(ky0 + 6, ky1 - 6)), kx1), (int(rng.integers(ky0 + 4, ky1 - 8)), kx0 - 1)]
+    for (ty, tx) in [spots[i] for i in sorted(rng.choice(4, size=int(rng.integers(2, 5)), replace=False))]:
+        nbl = int(rng.integers(2, 6))
+        for j in range(nbl):
+            bx = tx + j - nbl // 2
+            h = int(rng.integers(2, 5)) - (1 if j in (0, nbl - 1) else 0)
+            for q in range(max(1, h)):
+                Y = ty - q
+                if 0 <= Y < H and 0 <= bx < W:
+                    a[Y, bx] = C('grass', 4) if q == max(1, h) - 1 else (C('grass', 3) if j % 2 else C('grass_cool', 3))
+            if 0 <= ty + 1 < H and 0 <= bx < W and a[ty + 1, bx] >= 0 and not drawn[ty + 1, bx]:
+                a[ty + 1, bx] = C('grass_cool', 2)                     # its root in shade
     tidy(a, passes=1, keep=drawn & ~ring)
 
 
@@ -210,29 +230,39 @@ def closed(seed=7):
     a[Y0:Y0 + 2, X0:X0 + OW] = step(a[Y0:Y0 + 2, X0:X0 + OW], -1)
     a[Y0, X0:X0 + OW] = C('timber_cool', 1)
     a[Y0:Y0 + OH, X0] = C('timber_cool', 1)
-    # two iron straps: a lit top row, a dark bottom row, a nail head on each board (a dark texel
-    # with a lit texel above it)
-    bx = [X0 + 4, X0 + OW // 2, X0 + OW - 5]
+    # two iron straps (W2-H1): a lit top row, a body, a dark bottom row, ends rounded; a nail head on
+    # each board (a dark texel with a lit texel above it); a little rust where the strap meets a joint
+    bnds = [X0, X0 + OW // 3, X0 + 2 * OW // 3 + (1 if OW % 3 == 2 else 0), X0 + OW]
     for sy in (Y0 + STRAPS[0], Y0 + OH - STRAPS[1]):
-        for j, t in enumerate(STRAP_T):
-            a[sy + j, X0 + 1:X0 + OW - 1] = C('iron', t)
-        for nx in bx:
-            a[sy + 2, nx] = C('iron', 1)
-            a[sy + 1, nx] = C('iron', 5)
-    # the ring pull: a plate, the ring lit on its upper-left arc, its shade on the boards under it
-    cx, cy = X0 + OW // 2, Y0 + OH - 4
-    yy, xx = np.mgrid[0:H, 0:W]
-    e = ((xx - cx + 0.5) / 3.6) ** 2 + ((yy - cy) / 2.4) ** 2
-    ringm = (e <= 1.0) & (e >= 0.35)
-    shade = np.roll(np.roll(ringm, 1, 0), 1, 1) & ~ringm & (e > 0.35)
-    a[shade] = step(a[shade], -2)
-    a[ringm] = C('iron', 2)
-    a[ringm & (xx < cx + 1) & (yy <= cy)] = C('iron', 4)
-    a[ringm & (xx < cx - 1) & (yy < cy - 1)] = C('iron', 5)
-    a[ringm & (xx >= cx) & (yy > cy)] = C('iron', 1)
-    a[cy - 3:cy - 1, cx - 1:cx + 1] = C('iron', 3)            # the plate the ring hangs from
-    a[cy - 3, cx - 1] = C('iron', 4)
-    _tidy(a)
+        a[sy, X0 + 2:X0 + OW - 2] = C('iron', 4)
+        a[sy + 1, X0 + 1:X0 + OW - 1] = C('iron', 2)
+        a[sy, X0 + 1] = C('iron', 3)                                  # the strap's rounded end
+        for k in range(3):
+            nx = (bnds[k] + bnds[k + 1]) // 2
+            a[sy + 1, nx] = C('iron', 0)
+            a[sy, nx] = C('iron', 5)
+    # the ring pull: a plate, a ring 6 x 5 lit on its upper-left arc and dark on its lower right, the
+    # boards showing through it, its shade on the boards under it
+    cx, cy = X0 + OW // 2 - 3, Y0 + OH - STRAPS[1] + 2
+    RING = ["..LL..",
+            ".L..M.",
+            "L....D",
+            ".M..D.",
+            "..DD.."]
+    for j, row in enumerate(RING):
+        for i, ch in enumerate(row):
+            if ch != '.':
+                y_, x_ = cy + j + 1, cx + i + 1
+                a[y_, x_] = step(np.array([a[y_, x_]]), -2)[0]        # the shade, a texel down-right
+    keep = np.zeros(a.shape, bool)
+    for j, row in enumerate(RING):
+        for i, ch in enumerate(row):
+            if ch != '.':
+                a[cy + j, cx + i] = {'L': C('iron', 5), 'M': C('iron', 3), 'D': C('iron', 1)}[ch]
+                keep[cy + j, cx + i] = True                           # a ring is a thin line: tidy leaves it
+    a[cy - 2:cy, cx + 2:cx + 4] = C('iron', 2)                         # the plate it hangs from
+    a[cy - 2, cx + 2] = C('iron', 4)
+    _tidy(a, keep=keep)
     _outline(a)
     _ground(a, seed)
     return a
@@ -265,10 +295,29 @@ def opened(seed=7):
         a[y, xa:xb] = C(f, min(5, t + 1)) if k < 3 else C(f, t)      # the lit nosing
         if k == 0:
             a[y, xa:xb] = C('stone', 4)
+        # W2-H2: the nosing worn, with 1 or 2 chips (a notch a tone down, a shade texel under it)
+        for _ in range(int(rng.integers(1, 3))):
+            cx_ = int(rng.integers(xa + 2, xb - 4))
+            cw = int(rng.integers(2, 4))
+            a[y, cx_:cx_ + cw] = C(f, t)
+            a[y + 1, cx_:cx_ + cw] = C('stone_cool', max(0, t - 1))
+        # grit at the back of the tread (its darker rear rows), in clusters
+        if th >= 4 and k < 3:
+            gy = y + th - 3
+            for gx in range(xa + int(rng.integers(1, 4)), xb - 2, int(rng.integers(4, 7))):
+                a[gy, gx:gx + 2] = C('earth', max(1, 3 - k))
         a[y + th - 2:y + th, xa:xb] = C('stone_cool', max(0, 1 - k // 2))   # the riser below it, dark
         a[y + th - 1, xa:xb] = C('stone_cool', 0)
+        # riser joints, every 5 to 8 texels
+        jx = xa + int(rng.integers(4, 8))
+        while jx < xb - 3:
+            a[y + th - 2, jx] = C('stone_cool', 0)
+            jx += int(rng.integers(5, 9))
         a[y:y + th, xb - 1] = C('stone_cool', 0)                     # the east end in shade
         a[y + 1:y + th - 2, xa] = C(f, min(5, t + 1)) if k < 2 else a[y + 1:y + th - 2, xa]
+        # the ends meet the shaft wall with a shade texel
+        a[y + 1:y + th - 1, xa - 1] = C('stone_cool', 0) if xa - 1 >= X0 + 2 else a[y + 1:y + th - 1, xa - 1]
+        a[y, xb] = C('stone_cool', 0)
     # the bottom beyond the last step: near-black
     a[Y0 + face:y, X0 + 2:X0 + OW - 2] = C('void', 0)
     # the lid: thrown back over the north hinge, lying upside down on the turf, its south edge
@@ -295,11 +344,13 @@ def opened(seed=7):
     # and a band of shade on the turf along its east side
     cop = (slice(Y0 - K, Y0 - K + 2), slice(X0 + OW - 4, X0 + OW + K))
     a[cop] = step(a[cop], -2)
-    for yy_ in range(ly + 3, eg + 1):
-        wdt = 2 if (yy_ // 3) % 3 else 1
-        for xx_ in range(X0 + OW, X0 + OW + wdt):
-            if a[yy_, xx_] < 0:
-                a[yy_, xx_] = C('grass_cool', 1)
+    # W2-H2: the lid's far (top) edge as two rows of end grain, lit on top; its east side a texel of
+    # thickness in shade (no strip of turf drawn beside it)
+    a[ly, X0:X0 + OW] = C('timber_warm', 4)
+    a[ly + 1, X0:X0 + OW] = C('timber', 2)
+    for gx in range(X0 + 2, X0 + OW - 1, 5):
+        a[ly + 1, gx:gx + 2] = C('timber_warm', 2)
+    a[ly + 2:eg, X0 + OW - 1] = C('timber_cool', 1)
     _tidy(a)
     _outline(a)
     _ground(a, seed)
