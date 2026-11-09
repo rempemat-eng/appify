@@ -1095,6 +1095,7 @@
       },
       "library": {
         "kind": "library",
+        "gable": "front",
         "wall": "ashlar",
         "roof": "slate",
         "hip": 14,
@@ -1131,6 +1132,7 @@
       },
       "north_cottages": {
         "kind": "terrace",
+        "gable": "front",
         "wall": "frame",
         "roof": "slate",
         "posts": [
@@ -1191,6 +1193,7 @@
       },
       "bakery": {
         "kind": "cottage",
+        "gable": "front",
         "wall": "stone",
         "roof": "slate",
         "paint": "berry",
@@ -1276,6 +1279,7 @@
       },
       "smithy": {
         "kind": "forge",
+        "gable": "front",
         "wall": "stone",
         "roof": "slate",
         "door": 30,
@@ -1328,6 +1332,8 @@
       },
       "fern_cottage": {
         "kind": "cottage",
+        "gable": "front",
+        "roof_depth": 22,
         "wall": "frame",
         "roof": "slate",
         "paint": "brass",

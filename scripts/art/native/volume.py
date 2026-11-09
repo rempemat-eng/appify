@@ -261,11 +261,71 @@ def protrusion(a, made, wall, standoff=1.0):
 
 
 # ------------------------------------------------------------------------------------------------
+# the front gable (Matt, 9 Nov: the C7 roofs approved)
+# ------------------------------------------------------------------------------------------------
+# A front-gable roof: the ridge runs front to back over the middle of the house, the front wall rises
+# into a gable, the left slope lies in the light and the right in shade, and the roof's depth shows
+# above the apex as the two slopes running back. Its geometry is data here, so the house painter, the
+# cast shadow and the kit index read one shape.
+RAKE_RUN, RAKE_RISE = 3, 2   # a rake rises 2 texels every 3 across, one texel at a time (runs of 2, 1, 2, 1):
+#                              0.667, the nearest clean rhythm to C7's 0.70, whose floor(0.7 x) steps wandered
+GABLE_PITCH = RAKE_RISE / RAKE_RUN
+GABLE_DEPTH = 0.50       # the roof's depth on screen above the apex, as a share of the house's depth
+GABLE_DEPTH_ADD = 5.0    # world px added to it (the overhang at the back)
+GABLE_BAND = ((2, 0.45), (3, 0.18))   # texels and drop of the band the bargeboards throw on the gable
+#                          wall, line then fade (B5: the line, then L 100, 110, 113 against 130; 11.1)
+# where a stack stands on the shaded slope: its middle as a share of the way from the ridge to the
+# right eave, its front face's depth as a share of the roof's depth, and how far it rises (world px)
+# over the highest point of its foot. Never on the ridge (Matt, 9 Nov).
+STACK_PLACES = {'high': (0.30, 0.46, 13.0), 'low': (0.60, 0.30, 10.0)}
+STACK_MARGIN = 1.5       # world px a stack's west side stays clear of the ridge strip
+
+
+def front_gable(spec: dict, seed: int = 0) -> dict:
+    """The look of a front-gable house (`gable: front`), with what its roof needs worked out:
+    `gable_rise` (the gable's height over the eave) and `gable_depth` (the roof's depth on screen,
+    world px), `roof_h` tall enough for both, no hip, and each stack moved onto the shaded slope.
+    Its placement (`stack`: 'high', near the ridge, or 'low', further down and shorter) comes from
+    the look or from the house's seed, so a street alternates, and its depth varies a little by the
+    seed. A look already worked out comes back as it is."""
+    if spec.get('gable') != 'front' or spec.get('gable_rise') is not None:
+        return spec
+    import zlib
+    s = dict(spec)
+    s.pop('hip', None)
+    thatch = s.get('roof') == 'thatch'
+    ov = s.get('overhang', 3) + (1.5 if thatch else 0.0)
+    W = s['w'] + 2 * ov
+    G = GABLE_PITCH * W / 2
+    # the roof's depth on screen; a look may set it shorter (`roof_depth`, world px) where a road
+    # runs close behind the house, so the roof's back never stands over it (check.roads_clear)
+    D = s.get('roof_depth', GABLE_DEPTH * s['depth'] + GABLE_DEPTH_ADD)
+    s['gable_rise'] = round(G, 3)
+    s['gable_depth'] = round(D, 3)
+    s['roof_h'] = round(G + D + 2)
+    if s.get('chimney'):
+        h = zlib.crc32(int(seed).to_bytes(4, 'little'))
+        place = s.get('stack') or ('low', 'high')[h & 1]
+        xf, df, rise = STACK_PLACES[place]
+        cw = s.get('chimney_w', 9)
+        x = max(xf * W / 2, cw / 2 + STACK_MARGIN + 2.0)
+        s['stack'] = place
+        s['stack_depth'] = round(df + 0.06 * (((h >> 8) & 0xff) / 255.0 - 0.5), 3)
+        s['stack_rise'] = rise
+        s['chimney'] = [s['w'] / 2 + x]
+        s['chimney_h'] = 1          # the canvas needs nothing over the roof's back for a stack in the slope
+    return s
+
+
+# ------------------------------------------------------------------------------------------------
 # on the ground
 # ------------------------------------------------------------------------------------------------
 def volume_of(spec: dict) -> dict:
     """The house as solids in world px, from its look (the same defaults as houses.building):
-    x from the west wall, g the ground line (0 the front foot, -depth the back), h the height."""
+    x from the west wall, g the ground line (0 the front foot, -depth the back), h the height. A
+    front-gable look is worked out first (front_gable, by its `seed`: the house painter's seed, the
+    sum of the house id's character codes by the zone painter's rule)."""
+    spec = front_gable(spec, spec.get('seed', 0))
     w, dep = spec['w'], spec['depth']
     wall_h = spec.get('wall_h', 40)
     roof_h = spec.get('roof_h', round(dep * 0.55 + 10))
@@ -287,6 +347,19 @@ def volume_of(spec: dict) -> dict:
     ]
     chim = spec.get('chimney_h', 14)
     cw = spec.get('chimney_w', 9)
+    if spec.get('gable_rise') is not None:
+        # a front gable: the eave's rectangle and a ridge running front to back over the middle at
+        # the gable's height; each stack stands in the shaded slope and rises stack_rise over it
+        G = spec['gable_rise']
+        h_ridge = h_eave + G
+        parts[1] = ([(x, g, h_eave) for x in (-ext, w + ext) for g in (-dep - 1, 1.5 if thatch else 0.5)]
+                    + [(w / 2, g, h_ridge) for g in (-dep - 1, 1.5 if thatch else 0.5)])
+        for cx in spec.get('chimney') or []:
+            h_on = h_eave + G * max(0.0, 1 - abs(cx - w / 2) / (w / 2 + ext))
+            g0 = -dep * spec.get('stack_depth', 0.4)
+            parts.append([(x, g, h) for x in (cx - cw / 2, cx + cw / 2) for g in (g0 - cw / 1.5, g0)
+                          for h in (h_eave, h_on + spec.get('stack_rise', 12.0))])
+        return {'w': w, 'depth': dep, 'parts': parts}
     for cx in spec.get('chimney') or []:
         # a stack: its own solid from the roof up to its pots, chim over the ridge
         top = h_ridge + chim

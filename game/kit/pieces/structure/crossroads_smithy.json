@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "smithy",
@@ -14,7 +14,7 @@
    "png": "res://zones/crossroads/art/smithy.png",
    "foot": [
     144,
-    323
+    341
    ]
   }
  ],
@@ -28,11 +28,11 @@
  "geometry": {
   "size_px": [
    288,
-   327
+   345
   ],
   "size_cells": [
    12,
-   14
+   15
   ],
   "z_sort": "foot",
   "collision": {
@@ -46,7 +46,7 @@
   },
   "foot": [
    144,
-   323
+   341
   ],
   "footprint": [
    [

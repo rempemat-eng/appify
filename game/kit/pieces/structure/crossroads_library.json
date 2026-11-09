@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "library",
@@ -14,7 +14,7 @@
    "png": "res://zones/crossroads/art/library.png",
    "foot": [
     156,
-    230
+    317
    ]
   }
  ],
@@ -28,11 +28,11 @@
  "geometry": {
   "size_px": [
    312,
-   234
+   321
   ],
   "size_cells": [
    13,
-   10
+   14
   ],
   "z_sort": "foot",
   "collision": {
@@ -46,7 +46,7 @@
   },
   "foot": [
    156,
-   230
+   317
   ],
   "footprint": [
    [

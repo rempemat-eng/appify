@@ -1,26 +1,26 @@
 {
  "id": "crossroads/bakery",
  "file": "game/zones/crossroads/art/bakery.png",
- "sha256": "ee19085162e076231e225d4373bf04955edaee1f274334d17def66e166cec9f1",
+ "sha256": "f02bc816d367e4ecde3a61d92fa48dfc627e5786a63b2510efa6bc162a6465a3",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   240,
-  300
+  324
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 4
+  "polish": 8
  },
  "detail_bar": {
   "ours": {
-   "patches": 169,
-   "tones": 25.153846153846153,
-   "shapes": 44.30769230769231
+   "patches": 182,
+   "tones": 23.923076923076923,
+   "shapes": 43.23076923076923
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.88,
-  "tones_ratio": 0.932,
-  "shapes_ratio": 0.88,
+  "ratio": 0.858,
+  "tones_ratio": 0.886,
+  "shapes_ratio": 0.858,
   "passed": false,
   "group": "prop"
  },
@@ -39,10 +39,34 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
+    22,
+    60,
+    73,
+    96
+   ],
+   "message": "crossroads/bakery: the stone is lit from the right (luminance rises 280 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    124,
+    116,
+    239,
+    197
+   ],
+   "message": "crossroads/bakery: the wood is lit from the right (luminance rises 153 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
     38,
-    207,
+    231,
     70,
-    242
+    266
    ],
    "message": "crossroads/bakery: the red is lit from the right (luminance rises 64 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
@@ -52,9 +76,9 @@
    "severity": "polish",
    "box": [
     104,
-    207,
+    231,
     136,
-    242
+    266
    ],
    "message": "crossroads/bakery: the red is lit from the right (luminance rises 61 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
@@ -63,28 +87,52 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    8,
-    51,
-    30,
-    163
+    183,
+    246,
+    223,
+    317
    ],
-   "message": "crossroads/bakery: the red is lit from the right (luminance rises 34 L per H to the east)",
+   "message": "crossroads/bakery: the pale is lit from the right (luminance rises 22 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    134,
+    36,
+    176,
+    104
+   ],
+   "message": "crossroads/bakery: the stone is lit from the right (luminance rises 16 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    2,
     0,
-    238,
-    298
+    21,
+    240,
+    322
    ],
-   "message": "crossroads/bakery: detail bar 0.88 of Eastward's prop band (25.2 tones, 44.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery: detail bar 0.86 of Eastward's prop band (23.9 tones, 43.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    0,
+    21,
+    240,
+    322
+   ],
+   "message": "crossroads/bakery: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 42% to 43%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

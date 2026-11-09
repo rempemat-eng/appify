@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 4,
  "variants": [
   {
    "id": "fern_cottage",
@@ -14,7 +14,7 @@
    "png": "res://zones/crossroads/art/fern_cottage.png",
    "foot": [
     120,
-    260
+    287
    ]
   }
  ],
@@ -28,11 +28,11 @@
  "geometry": {
   "size_px": [
    240,
-   264
+   291
   ],
   "size_cells": [
    10,
-   11
+   13
   ],
   "z_sort": "foot",
   "collision": {
@@ -46,7 +46,7 @@
   },
   "foot": [
    120,
-   260
+   287
   ],
   "footprint": [
    [

@@ -1,14 +1,14 @@
 {
  "id": "crossroads/library_damage",
  "file": "game/zones/crossroads/art/library_damage.png",
- "sha256": "c8ffb7c640d72015c8f4a16604c08cbf8796560686972e5d5dd7e3e10f2439c3",
+ "sha256": "8a8860b2be561d23a9a3a88de689d1b8f60864260c0a799c32cf530cea8fc658",
  "kind": "library",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   312,
-  234
+  321
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 53,
-   "tones": 16.20754716981132,
-   "shapes": 28.132075471698112
+   "patches": 43,
+   "tones": 19.41860465116279,
+   "shapes": 33.25581395348837
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.559,
-  "tones_ratio": 0.6,
-  "shapes_ratio": 0.559,
+  "ratio": 0.66,
+  "tones_ratio": 0.719,
+  "shapes_ratio": 0.66,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    65,
-    13,
-    135,
-    20
+    64,
+    104,
+    113,
+    143
    ],
-   "message": "crossroads/library_damage: the red is lit from the right (luminance rises 16 L per H to the east)",
+   "message": "crossroads/library_damage: the red is lit from the right (luminance rises 10 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -52,15 +52,15 @@
    "severity": "polish",
    "box": [
     18,
-    13,
-    295,
-    233
+    23,
+    290,
+    321
    ],
-   "message": "crossroads/library_damage: detail bar 0.56 of Eastward's prop band (16.2 tones, 28.1 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/library_damage: detail bar 0.66 of Eastward's prop band (19.4 tones, 33.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

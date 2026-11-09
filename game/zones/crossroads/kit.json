@@ -102,7 +102,7 @@
    ],
    "offset": [
     -156,
-    -230
+    -317
    ],
    "cond": null,
    "solid": [
@@ -122,7 +122,7 @@
    ],
    "offset": [
     -156,
-    -231
+    -318
    ],
    "cond": null,
    "solid": null,
@@ -138,7 +138,7 @@
    ],
    "offset": [
     -156,
-    -272
+    -320
    ],
    "cond": null,
    "solid": [
@@ -146,6 +146,12 @@
     160,
     96,
     40
+   ],
+   "pots": [
+    [
+     248.5,
+     81
+    ]
    ]
   },
   {
@@ -158,7 +164,7 @@
    ],
    "offset": [
     -156,
-    -273
+    -321
    ],
    "cond": null,
    "solid": null,
@@ -174,7 +180,7 @@
    ],
    "offset": [
     -120,
-    -296
+    -320
    ],
    "cond": null,
    "solid": [
@@ -182,6 +188,12 @@
     240,
     72,
     48
+   ],
+   "pots": [
+    [
+     155.0,
+     22
+    ]
    ]
   },
   {
@@ -194,7 +206,7 @@
    ],
    "offset": [
     -120,
-    -297
+    -321
    ],
    "cond": null,
    "solid": null,
@@ -246,7 +258,7 @@
    ],
    "offset": [
     -144,
-    -323
+    -341
    ],
    "cond": null,
    "solid": [
@@ -254,6 +266,12 @@
     224,
     88,
     56
+   ],
+   "pots": [
+    [
+     186.0,
+     32
+    ]
    ]
   },
   {
@@ -266,7 +284,7 @@
    ],
    "offset": [
     -144,
-    -324
+    -342
    ],
    "cond": {
     "not_restored": [
@@ -286,7 +304,7 @@
    ],
    "offset": [
     -120,
-    -260
+    -287
    ],
    "cond": null,
    "solid": [
@@ -294,6 +312,12 @@
     368,
     72,
     48
+   ],
+   "pots": [
+    [
+     190.5,
+     63
+    ]
    ]
   },
   {
@@ -306,7 +330,7 @@
    ],
    "offset": [
     -120,
-    -261
+    -288
    ],
    "cond": {
     "not_restored": [
@@ -1866,7 +1890,7 @@
    "kind": "shadow",
    "png": "smithy_rubble_shadow.png",
    "foot": [
-    1347,
+    1355,
     890
    ],
    "offset": [
@@ -1906,7 +1930,7 @@
    "kind": "shadow",
    "png": "square_rubble_a_shadow.png",
    "foot": [
-    651,
+    658,
     1070
    ],
    "offset": [
@@ -1926,7 +1950,7 @@
    "kind": "shadow",
    "png": "fern_rubble_shadow.png",
    "foot": [
-    1366,
+    1370,
     1286
    ],
    "offset": [
@@ -1986,7 +2010,7 @@
    "kind": "shadow",
    "png": "beds_scorched_shadow.png",
    "foot": [
-    1148,
+    1150,
     356
    ],
    "offset": [
@@ -2006,7 +2030,7 @@
    "kind": "shadow",
    "png": "beds_dug_shadow.png",
    "foot": [
-    1148,
+    1150,
     356
    ],
    "offset": [
