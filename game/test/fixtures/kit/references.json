@@ -62,7 +62,7 @@
  "scale": 1,
  "schema": "napattack.kit-render-fixtures/1",
  "source_sha256": {
-  "art/house-palette.json": "7fd8e8cfd481bc627b4ca6e8425ec3001f80103ae2309f6bc7249ef6326b03dd",
+  "art/house-palette.json": "dfb08a0df18b438db428d299400f1625b9d3574aeac21a7ca3350b9a6a80e325",
   "game/kit/props/art/shadow_woodland_oak.png": "46bc86fb8e2020a4a46ffec5ce53d5457733fb76045b57444b16f4c5c1779607",
   "game/kit/props/index.json": "ec0a5e7c93f93aecc68dd40253f758386a5ffcfa0becf14a57fa82e1b372b750",
   "game/kit/terrain/decal_bankstone_0.png": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
@@ -96,8 +96,8 @@
   "game/kit/terrain/fill_shingle.png": "3f5a9d0cacba8d19223bd41a9122ac20213c56f13d750b56177b8df2909c7cdd",
   "game/kit/terrain/fill_water.png": "159cacfd2b93669beab4c09b99df90b74d5eb1964f4f20ac7ef969eca9621a8e",
   "game/kit/terrain/fill_worn.png": "5135bbe8cc18991ba7a1cc5eac811726bcfb4efcc22f2f4300a294702ea86650",
-  "game/kit/terrain/lut.png": "344679d392a978b080e5ec1960060a4f66cac656d0605898adbc3a74d3c36a4f",
-  "game/kit/terrain/manifest.json": "661ac3a5cb4b4806f971cb3739ecdcb1f0e0d84afb6bed55000604351f2b8bb6",
+  "game/kit/terrain/lut.png": "e19a2e2a78cb5c0cd1b33acba84a8e62b02d8d5a5ebd5eee1528e1067d2510ef",
+  "game/kit/terrain/manifest.json": "c49fda28653d3e447adc472fb4415fa64e090ea2a10d110d86eb9a8e7a4f19c4",
   "game/kit/terrain/noise.png": "84b514c82e834b2cfb1a2d4a9305e403d28550b7216323045dfb91f970ab1a0f",
   "game/kit/terrain/over_earth_face_over_any.png": "ecce94c839017fa221f4b6c0209474e7b795ebc13ba4947b752785d1f1e38cc8",
   "game/kit/terrain/over_heath_over_drove.png": "2ebf7282b2723f6097fb16cde95c5a35e4b329b97fd771c3a6da2c14c2d5616f",
@@ -126,12 +126,12 @@
   "game/kit/terrain/over_worn_over_path.png": "8c7e1e7248cb22ee0dd22ca728df3a2cae5eab834080d789b371545a8cf55473",
   "game/kit/terrain/palette.png": "72146f1ab0023d9fc70669932958c317347b4f01a0a4519810c48d2e43b5e07a",
   "game/test/fixtures/kit/generate.py": "06d57a3e5d1a18961611f86b6a4bfa4bf7e1e3c6105358dc79b18e77bb349a25",
-  "scripts/art/house_palette.py": "2b64312392fcdeda1c4164c881aa1e35c6c167a5cfaafd704b3a5abc707103ba",
+  "scripts/art/house_palette.py": "778938c16d5ad36c899ce525f56783fa62864e450662a9230b808510aced014c",
   "scripts/art/kit/build.py": "617fd76854e4bb4787dbd3142458d3bd0bf9077e1ec6527b4e65b18fab89419a",
   "scripts/art/kit/compose.py": "bb23f57830a10e59049c87f7d7f07e5bc02c10dc7ebc99bfa3cc18a9f5be0997",
   "scripts/art/kit/dressing.py": "2c3d80e0f06df646480803f92123512a239d629ba5737194de77c66251fffd3d",
   "scripts/art/kit/edges.py": "d21a95c0a07449fdb0df5bff52aa6c6630cebfc7bf0f7ecf6acc59f4cb5838d1",
   "scripts/art/native/accents.json": "4116ad6d7e32ef62efba5789a93b694d15b00db7dc8f23cf61b6f00c48a25b09",
-  "scripts/art/native/palette.py": "ad8155d9b4d7f0c9afefc373e43f806ec502b7991b621b01453cc7697309d0b9"
+  "scripts/art/native/palette.py": "4a717aad1807c11569bcf7d3abebb52a3452715caa188292b3e59061969912fd"
  }
 }

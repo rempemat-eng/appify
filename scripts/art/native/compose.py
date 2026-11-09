@@ -17,6 +17,7 @@ from scipy import ndimage as ndi
 
 from . import ctx
 from . import raster as pk
+from .palette import NAMED_ONLY
 from . import props as P4
 from . import chars
 from . import ground as GR
@@ -49,6 +50,8 @@ def _palette():
     if _PAL is None:
         cols = set()
         for f in pk.RAMPS:
+            if f in NAMED_ONLY:
+                continue
             for t in range(7):
                 cols.add(pk.rgb(f, t))
         cols.add(pk.ink())

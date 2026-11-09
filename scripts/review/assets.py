@@ -13,7 +13,9 @@ For each asset: a sheet (alone at 1x and 4x, on neutral and on its biome's groun
 Bramble for scale and beside its approved siblings), the detail and construction detectors,
 the per-object detail bar against Eastward, and a JSON report. `--record` writes its
 catalogue entry, art/catalogue/<zone>/<name>.json, which the placement gate (gate.py, run by
-`npm run check:kit`) requires before the asset may stand in a zone.
+`npm run check:kit`) requires before the asset may stand in a zone. The entry's reviewer verdict
+starts `pending`; only an independent detail-auditor's `pass` lets the asset be placed (Matt,
+8 Nov). Re-recording unchanged bytes keeps the existing verdict; changed bytes reset it to pending.
 """
 from __future__ import annotations
 
@@ -371,13 +373,40 @@ def sheet(path: str, report: dict, out: str) -> None:
     canvas.convert('RGB').save(out)
 
 
+PENDING = {'agent': 'detail-auditor', 'verdict': 'pending',
+           'note': 'detectors only; the agent checklist has not been run on this asset'}
+
+
+def kept_reviewer(path: str, sha: str) -> dict | None:
+    """The reviewer block of the existing record at `path`, when its sha256 is `sha` and it holds a
+    verdict: re-recording unchanged bytes keeps an independent review (gate.py places only a
+    reviewer pass); a byte change returns None, so the verdict goes back to pending."""
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path) as fh:
+            old = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    rev = old.get('reviewer')
+    if old.get('sha256') == sha and isinstance(rev, dict) and rev.get('verdict'):
+        return rev
+    return None
+
+
 def record(report: dict, reviewer: dict | None = None) -> str:
     zone, name = report['id'].split('/', 1)
     p = os.path.join(CATALOGUE, zone, name.replace('/', '__') + '.json')
     rec = dict(report)
     rec['reviewed'] = datetime.date.today().isoformat()
-    rec['reviewer'] = reviewer or {'agent': 'detail-auditor', 'verdict': 'pending',
-                                   'note': 'detectors only; the agent checklist has not been run on this asset'}
+    rec['reviewer'] = reviewer or kept_reviewer(p, report['sha256']) or dict(PENDING)
+    try:                                # a floor overlay's declaration that it copies the ground (C-8) is kept
+        with open(p) as fh:
+            old_ = json.load(fh)
+            if old_.get('copies_ground'):
+                rec['copies_ground'] = True
+    except (OSError, ValueError):
+        pass
     rec['findings'] = [{k: f[k] for k in ('detector', 'severity', 'box', 'message', 'fix')} for f in report['findings']]
     write_json(p, rec)
     return p
@@ -391,7 +420,7 @@ def main(argv=None):
     ap.add_argument('--kind')
     ap.add_argument('--biome')
     ap.add_argument('--out', default=os.path.join(REPO, 'artifacts', 'review', 'assets'))
-    ap.add_argument('--record', action='store_true', help='write the catalogue entry (art/catalogue)')
+    ap.add_argument('--record', action='store_true', help='write the catalogue entry (art/catalogue); keeps the reviewer verdict while the sha256 is unchanged')
     ap.add_argument('--no-sheet', action='store_true')
     a = ap.parse_args(argv)
     items = all_assets() if a.all else [asset_path(r) for r in a.asset]

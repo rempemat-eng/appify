@@ -60,10 +60,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-08",
+  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md. A cylinder lit along its top and on its west cut end (end grain with rings and a check), bark furrows in clusters, a knot hole, a moss cap with a lit top, dark underside and drips, a splintered east end with lit splinters; bar 0.83. detail.light (box 50,37,96,53, 'red lit from the right') rejected as a false positive: it is bark plates in the shaded lower half whose lighter sibling plates fall east; the log's light is upper left. Open polish: M-1, the two pale bark-loss patches at the lower west are two-tone stickers; give them a dark north lip."
  }
 }

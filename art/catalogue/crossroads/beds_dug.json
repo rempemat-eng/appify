@@ -35,10 +35,11 @@
   "group": "prop"
  },
  "findings": [],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Bed frames: the top rails carry a stamped diagonal tick every ~4.5 texels that reads as twisted rope, not grain; the lower rails carry flat grey 2x2 dot nails on the dark seam with no lit pixel or rust (calibration C1 \"dot nails\"); no butt joints on 130-texel boards. Fix: grain as irregular 2-4 px streaks along each board, butt joints every 14-30 px with a nail head (dark, lit pixel above, sitting in the board) beside each, one of three sibling ramps per board. Seedlings are one 5x3 stamp in an exact 4x10 grid: three variants, +/-1 texel jitter. The dirt pad round the beds is closed by a straight dark outline (ground meeting ground is never outlined, eastward-edges 4.1, 5.1): drop the outline and fray the pad edge 2-3 px. Soil furrows, clods and the occlusion under the north rails pass."
  }
 }

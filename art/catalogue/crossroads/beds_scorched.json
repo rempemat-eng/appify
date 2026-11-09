@@ -48,10 +48,11 @@
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   }
  ],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Bed frames: the top rails carry a stamped diagonal tick every ~4.5 texels that reads as twisted rope, not grain; the lower rails carry flat grey 2x2 dot nails on the dark seam with no lit pixel or rust (calibration C1 \"dot nails\"); no butt joints on 130-texel boards. Fix: grain as irregular 2-4 px streaks along each board, butt joints every 14-30 px with a nail head (dark, lit pixel above, sitting in the board) beside each, one of three sibling ramps per board. Char marks are flat one-tone slate pills laid over unchanged grain (stickers), and the frames are otherwise untouched by a fire that burned the beds: char the rail tops and ends in clusters (timber tones 0-1 with a lit crack line), blister and split the boards nearest the ash. Burnt stalks are 1-texel dark lines with no lit side: 2-texel stalks with a lit west edge. Rejected detector finding: detail.light on the ash rows (random ash clusters, no light reading)."
  }
 }

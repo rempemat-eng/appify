@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. All eleven log ends are one stamp (concentric target shading lit at the centre, not the upper left) in a 4-3-4 lattice, and the gaps between them are transparent, so the ground shows through the stack. Sweep cluster-noise rejected as noise: the texture is clean; the fault is repetition and see-through. Fix: three or four log sizes and split halves (flat split face lit, bark arc dark), end grain lit upper left with one ring arc and a radial check, a dark bark rim, the stack packed with a dark back wall (timber 0-1) behind the gaps. Bar 0.69."
  }
 }

@@ -2,7 +2,7 @@
  "id": "crossroads/square_rubble_a",
  "file": "game/zones/crossroads/art/square_rubble_a.png",
  "sha256": "f7621b932c360880e460cba249ea89b181f7dbdb2eca9520de0c95961d2c04db",
- "kind": "square",
+ "kind": "pile",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-08",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-08",
+  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Same stone build as fern_rubble. Beams are cut by the picture's left, right and bottom edges (7, 7 and 6 opaque texels on the border). Same fix; keep every piece inside the frame."
  }
 }
