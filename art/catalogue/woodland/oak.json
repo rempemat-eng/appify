@@ -1,26 +1,26 @@
 {
  "id": "woodland/oak",
  "file": "game/zones/woodland/art/oak.png",
- "sha256": "ebd3bcfaf1363dacf26be0fe5d2a287a790e7e4468d271105a7510f1649919ef",
+ "sha256": "2a1b021f66f2fa4bba6a8688fe4246fb2e5d865d42c60acab55893823e234cae",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  221,
-  249
+  212,
+  247
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 0
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 74,
-   "tones": 25.216216216216218,
-   "shapes": 57.148648648648646
+   "patches": 69,
+   "tones": 32.94202898550725,
+   "shapes": 56.72463768115942
   },
   "band": {
    "tones": 27.71,
@@ -28,18 +28,42 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.903,
-  "tones_ratio": 0.91,
-  "shapes_ratio": 0.903,
-  "passed": true,
+  "ratio": 0.896,
+  "tones_ratio": 1.189,
+  "shapes_ratio": 0.896,
+  "passed": false,
   "group": "foliage"
  },
- "findings": [],
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    22,
+    0,
+    212,
+    247
+   ],
+   "message": "woodland/oak: detail bar 0.90 of Eastward's foliage band (32.9 tones, 56.7 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    22,
+    0,
+    212,
+    247
+   ],
+   "message": "woodland/oak: 46% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 46%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+  }
+ ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-F1 fixed, W2-F3 fixed (two pinholes of 4 and 1 texels left, polish), W2-F4 met (bar 0.903: 25.2 tones, 57.1 shapes), W2-T2 fixed (vertical plates, lit west, cracks lighter on the lit third), W2-F2 not fixed: crown (W3-F1/F2): the seam bands are gone (W2-F1 fixed) but the masses are filled with 1-row horizontal dashes (same-tone runs H/V 1.57 against Eastward 1.08 to 1.30), clump contrast 26.5 (pass 2: 31.2) L in 12 px windows against Eastward 41 to 49, and near-black pockets stand as solid 4 to 13 texel blobs in mid and lit leaf (9 of 21 not in shade) instead of 1-texel accents inside shade. Compared at x1.37 with the red tree in Eastward 12 (465,110,590,230): its clumps are 4 to 8 texel shapes with mid-dark between them; ours read as soft speckle at 1x to 5x."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

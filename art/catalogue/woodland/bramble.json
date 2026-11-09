@@ -1,26 +1,26 @@
 {
  "id": "woodland/bramble",
  "file": "game/zones/woodland/art/bramble.png",
- "sha256": "652d554f85bb23cf62ab1eb1c239856712f22a8e3dbbf84c7fb5dbdec1154440",
+ "sha256": "21e49eb6928ba63979d600233ab89a9d7cef5b6abdb73d77ab328a3b3fd29939",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  122,
-  50
+  121,
+  48
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 4
  },
  "detail_bar": {
   "ours": {
    "patches": 7,
-   "tones": 34.0,
-   "shapes": 50.0
+   "tones": 34.142857142857146,
+   "shapes": 52.285714285714285
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.79,
-  "tones_ratio": 1.227,
-  "shapes_ratio": 0.79,
+  "ratio": 0.826,
+  "tones_ratio": 1.232,
+  "shapes_ratio": 0.826,
   "passed": false,
   "group": "foliage"
  },
@@ -41,10 +41,10 @@
    "box": [
     0,
     0,
-    122,
-    50
+    121,
+    48
    ],
-   "message": "woodland/bramble: wide 122 art px (1.65 A) is too big for a bush: the size table gives 44 to 115 (0.59 to 1.55 A); Eastward at the same character height: bushes 38 to 50 E tall (0.7 to 0.93 A), 35 to 60 E wide (12, 38)",
+   "message": "woodland/bramble: wide 121 art px (1.64 A) is too big for a bush: the size table gives 44 to 115 (0.59 to 1.55 A); Eastward at the same character height: bushes 38 to 50 E tall (0.7 to 0.93 A), 35 to 60 E wide (12, 38)",
    "fix": "redraw it 44 to 115 art px wide (target about 80), checked beside Bramble (74 art px) in the asset sheet"
   },
   {
@@ -53,18 +53,41 @@
    "box": [
     0,
     0,
-    122,
-    50
+    121,
+    48
    ],
-   "message": "woodland/bramble: detail bar 0.79 of Eastward's foliage band (34.0 tones, 50.0 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bramble: detail bar 0.83 of Eastward's foliage band (34.1 tones, 52.3 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    121,
+    48
+   ],
+   "message": "woodland/bramble: 40% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 40% to 47%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    121,
+    48
+   ],
+   "message": "woodland/bramble: only 27% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-B2 partly: canes now 4-tone with a lit top and thorn hooks and they reach the ground, but every cane is a circular arc (rms 0.9 to 1.0 px off a circle) and the two east canes share a centre; the base is a straight row 121 of 122 texels wide, which also draws a ruler line in its cast shadow on the ground (W3-B2, W3-G1); bar 0.79; lone 3.7 %; 30 one-texel spurs on the silhouette. logic.scale (122 px) accepted as polish: a bramble patch."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

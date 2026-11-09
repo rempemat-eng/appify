@@ -1,14 +1,14 @@
 {
  "id": "woodland/holly",
  "file": "game/zones/woodland/art/holly.png",
- "sha256": "711d4697690dbad4a241e125365530712b8585000a4089d503a45a10aa18f5b8",
+ "sha256": "d32f90ae28a775e323df92ea26bd7e2b21b43ac5787146047e4654145734c40c",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  85,
-  74
+  83,
+  71
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 11,
-   "tones": 30.636363636363637,
-   "shapes": 52.54545454545455
+   "patches": 8,
+   "tones": 35.375,
+   "shapes": 58.125
   },
   "band": {
    "tones": 27.71,
@@ -28,31 +28,30 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.83,
-  "tones_ratio": 1.106,
-  "shapes_ratio": 0.83,
-  "passed": false,
+  "ratio": 0.918,
+  "tones_ratio": 1.277,
+  "shapes_ratio": 0.918,
+  "passed": true,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.bar",
+   "detector": "detail.cluster_noise",
    "severity": "polish",
    "box": [
     0,
     0,
-    85,
-    74
+    83,
+    71
    ],
-   "message": "woodland/holly: detail bar 0.83 of Eastward's foliage band (30.6 tones, 52.5 shapes a patch against 27.71, 63.32)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+   "message": "woodland/holly: 46% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 47%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-B3 partly: corner-only spines gone (0, from 18), varied berry clusters, no plinth (fixed); but the leaves are the shared dash texture and do not read as holly, the spines are 28 one-texel spurs (9.8 % of the silhouette ring) not 2-texel points, and the 15 glints are lone single specks spread evenly (3.8 per 1000 texels) that read as sprinkle (W3-B3); bar 0.83; lone 2.7 %."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

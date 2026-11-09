@@ -256,7 +256,7 @@ def _moss3(code, body, spots, rng):
                     code[y + j, X] = C('leaf_cool', 1)
 
 
-def _lichen3(code, body, zone, rng, n):
+def _lichen3(code, body, zone, rng, n, fams=LICHEN):
     """W2-S2: crusts 3 to 10 texels across, each its own lobed shape, in 2 or 3 sibling tones: a lit
     upper rim, a body, a darker core or lower edge."""
     H, W = code.shape
@@ -282,7 +282,7 @@ def _lichen3(code, body, zone, rng, n):
         if m.sum() < 4:
             continue
         placed.append((y, x))
-        fam = LICHEN[int(rng.integers(0, len(LICHEN)))]
+        fam = fams[int(rng.integers(0, len(fams)))]
         code[m] = C(fam, 3)
         P = np.pad(m, 1)
         code[m & ~P[:-2, 1:-1]] = C(fam, 4)
@@ -374,9 +374,21 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
     wob = (ndi.gaussian_filter1d(rng.random(Ht), 2.5) - 0.5)[:, None] * 2.4
     half = half0 * (1.0 - taper * t) + wob
     u = (xx - cx) / np.maximum(half, 1)
+    if squat:
+        # W3-S1: no tombstone: the west side leans in toward the top, the east bulges 2 to 4 texels
+        # about mid-height, so neither side runs straight
+        r2 = np.random.default_rng(seed + 313)
+        lean_w = r2.uniform(2.0, 3.5) * t
+        bulge_e = r2.uniform(2.5, 4.0) * np.sin(np.pi * np.clip(t * 1.15, 0, 1)) ** 1.3
+        wx = (xx - cx) / np.maximum(half - lean_w, 1)
+        ex_ = (xx - cx) / np.maximum(half + bulge_e, 1)
+        u = np.where(xx < cx, wx, ex_)
     body = (np.abs(u) <= 1.0) & (yy < yb)
     sl = (1 if seed % 2 else -1) * rng.uniform(0.15, 0.35)
     crown = yt + _P(h) * 0.07 * (1 + sl * u) + _P(w) * 0.33 * np.clip(np.abs(u) - 0.35, 0, 1) ** 1.4 * 2.0
+    if squat:
+        # one shoulder lower than the other
+        crown = crown + _P(h) * 0.13 * np.clip(u * (1 if seed % 2 else -1), 0, 1)
     if broken:
         # a fracture: a jagged top in 1 to 2 texel steps, falling to the east
         steps = np.cumsum(rng.integers(0, 3, Wt)) * 0 + 0
@@ -407,7 +419,9 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
     val[capm] = 160 + 6 * (-u[capm])                                 # stone 4
     foot = body & (yy >= yb - _P(1.6))
     val[foot] = np.minimum(val[foot], 92) - 14
-    if v3:
+    if v3 and squat:
+        _planes3(code, body, val, west, east, capm, rng, cells=(11.0, 6.0, 3.4))   # calmer lit crown (W3-S1)
+    elif v3:
         _planes3(code, body, val, west, east, capm, rng)
     else:
         _planes(code, body, val, lad, rng)
@@ -513,6 +527,30 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
     _chips(code, body, lad, rng, pts, int(rng.integers(2, 4)))
     _clean(code, body, 2)
     _outline(code, body, u, v3=v3)
+    if squat:
+        # W3-S1: a chip on each shoulder, a notch out of the silhouette with a shade texel under it
+        r3 = np.random.default_rng(seed + 717)
+        for sd in (-1, 1):
+            cols_ = np.nonzero(body.any(0))[0]
+            xs_ = [x for x in cols_ if (x - base_cx) * sd > half0 * 0.45 and (x - base_cx) * sd < half0 * 0.85]
+            if not xs_:
+                continue
+            x = int(xs_[int(r3.integers(0, len(xs_)))])
+            for dx in range(int(r3.integers(2, 4))):
+                X = x + dx * sd
+                col = np.nonzero(body[:, X])[0] if 0 <= X < Wt else []
+                if not len(col):
+                    continue
+                y = int(col.min())
+                body[y, X] = False
+                code[y, X] = -1
+                if dx == 0 and body[y + 1, X]:
+                    body[y + 1, X] = False
+                    code[y + 1, X] = -1
+                    y += 1
+                code[y + 1, X] = C('stone_cool', 1)
+                if body[y + 2, X]:
+                    code[y + 2, X] = C('stone', 2)
     # the contact line: one texel under the foot
     fy = int(yb)
     row = body[fy - 1]
@@ -552,6 +590,26 @@ def lintel(w: float, h: float, seed: int):
         cy_ = (yt + r_ - 0.5) if sy < 0 else (yb - r_ - 0.5)
         out = ((xx - cx_) * sx > 0) & ((yy - cy_) * sy > 0) & ((xx - cx_) ** 2 + (yy - cy_) ** 2 > r_ * r_)
         body &= ~out
+    # W3-S2: rounded ends (each row set in by up to 2 to 3 texels toward the top and the foot, the
+    # two ends unlike) and a bottom with a lip a texel up or down here and there, not a ruled line
+    r4 = np.random.default_rng(seed + 401)
+    tv = np.clip((yy - yt) / max(1, yb - 1 - yt), 0, 1)
+    for sx, amp in ((-1, r4.uniform(2.0, 3.0)), (1, r4.uniform(2.4, 3.4))):
+        inset = np.round(amp * np.abs(2 * tv - 1.1) ** 2.2)
+        if sx < 0:
+            body &= xx >= x0 + inset
+        else:
+            body &= xx < x1 - inset
+    x = x0
+    while x < x1:
+        n_ = int(r4.integers(5, 13))
+        dy = int(r4.choice((-1, 0, 0, 1)))
+        if dy < 0:
+            body[int(yb) - 1, x:x + n_] = False
+        elif dy > 0:
+            seg = body[int(yb) - 1, x:x + n_].copy()
+            body[int(yb), x:x + n_] = seg
+        x += n_
     top = body & (yy < yt + top_d + tilt * 0.4 + sag)
     endf = body & ~top & (xx >= x1 - end_w)
     front = body & ~top & ~endf
@@ -572,13 +630,16 @@ def lintel(w: float, h: float, seed: int):
     ap = sorted((int(x), int(y)) for y, x in zip(*np.nonzero(arris)))
     nch = int(rng.integers(2, 5))
     xs_ch = sorted(rng.choice(np.arange(len(ap)), size=min(nch, len(ap)), replace=False))
+    chips = []
     for k in xs_ch:
         x, y = ap[k]
         for dx in range(int(rng.integers(2, 4))):
             if x + dx < Wt and body[y, x + dx]:
                 code[y, x + dx] = C('stone_cool', 1) if dx == 0 else C('stone', 2)
+                chips.append((y, x + dx, int(code[y, x + dx])))
                 if y + 1 < Ht and body[y + 1, x + dx]:
                     code[y + 1, x + dx] = C('stone_cool', 1)
+                    chips.append((y + 1, x + dx, C('stone_cool', 1)))
     # chips knocked off the top edge too (notches in the silhouette, a shade texel under each)
     edge_top = body & ~np.pad(body, 1)[:-2, 1:-1]
     et = sorted((int(x), int(y)) for y, x in zip(*np.nonzero(edge_top)) if x0 + 3 < x < x1 - 4)
@@ -607,16 +668,26 @@ def lintel(w: float, h: float, seed: int):
         for fx in (0.28, 0.66):
             sx = int(x0 + (x1 - x0) * fx)
             sy = int(yt + top_d * 0.35 + tilt[0, min(Wt - 1, sx)] * 0.4 + 1)
+            # W3-S2: a 4 x 3 socket seen from above and the south: its far (north) wall lit one row
+            # (stone 4), its floor stone 2, its near wall dark (stone 0 to 1); a rectangle, not a glyph
+            mw, mh = 4, 3
             for j in range(mh):
                 for i in range(mw):
                     y_, x_ = sy + j, sx + i
                     if top[y_, x_]:
-                        code[y_, x_] = C('stone_cool', 0) if j == 0 else (C('stone', 3) if j == mh - 1 else C('stone_cool', 1))
-            if top[sy - 1, sx:sx + mw].all():
-                code[sy - 1, sx:sx + mw] = C('stone_warm', 5)
-    _flakes(code, top & ~arris, lad, rng, int(top.sum() / 30))
-    _flakes(code, front, COOL, rng, int(front.sum() / 26))
-    _lichen3(code, body, top & ~arris, rng, 2 + int(w / 6))
+                        code[y_, x_] = (C('stone', 4), C('stone', 2), C('stone_cool', 1))[j]
+                        chips.append((y_, x_, int(code[y_, x_])))
+            if top[sy + mh, sx:sx + mw].all():
+                code[sy + mh, sx:sx + mw] = C('stone_cool', 0)
+                chips += [(sy + mh, sx + i, C('stone_cool', 0)) for i in range(mw)]
+            code[sy:sy + mh, sx] = np.where(top[sy:sy + mh, sx], C('stone_cool', 0), code[sy:sy + mh, sx])
+            chips += [(sy + j, sx, C('stone_cool', 0)) for j in range(mh) if top[sy + j, sx]]
+    mort = np.zeros(code.shape, bool)
+    for (y, x, c_) in chips:
+        mort[max(0, y - 1):y + 2, max(0, x - 1):x + 2] = True
+    _flakes(code, top & ~arris & ~mort, lad, rng, int(top.sum() / 16))
+    _flakes(code, front, COOL, rng, int(front.sum() / 14))
+    _lichen3(code, body, top & ~arris, rng, 3 + int(w / 4), fams=('sand_warm', 'sand', 'sand_cool'))   # no ochre (W3-S3)
     # moss: one or two clumps at the foot on the shaded side, a drip into a joint
     zone_m = front & (yy > yb - _P(2.2)) & (u > -0.3)
     ys_m, xs_m = np.nonzero(zone_m)
@@ -626,6 +697,9 @@ def lintel(w: float, h: float, seed: int):
     _moss3(code, body, spots, rng)
     _damp(code, body, int(yb), rng, 1)
     _clean(code, body, 2)
+    for (y, x, c_) in chips:                                         # the chips and sockets stay cut
+        if body[y, x]:
+            code[y, x] = c_
     edge = body & ~ndi.binary_erosion(body)
     P = np.pad(body, 1)
     lit_ = edge & ~P[:-2, 1:-1] & (u < 0.75)                          # the lit top edge shows

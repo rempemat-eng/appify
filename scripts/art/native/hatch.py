@@ -100,7 +100,18 @@ def _kerb(a, rng):
             a[jy, jx] = C('leaf', 3)
             a[jy, jx + 1] = C('leaf', 3)
     # the opening's south lip, facing the light, is lit along its inner edge
-    a[Y0 + OH, X0:X0 + OW] = C('stone_warm', 5)
+    # (W3-H1) in runs of two or three tones, with a chip
+    x = X0
+    tones = (C('stone_warm', 5), C('stone', 4), C('stone_warm', 4))
+    j = int(rng.integers(0, 3))
+    while x < X0 + OW:
+        n = int(rng.integers(4, 10))
+        a[Y0 + OH, x:min(X0 + OW, x + n)] = tones[j % 3]
+        j += 1 + int(rng.integers(0, 2))
+        x += n
+    cx_ = int(rng.integers(X0 + 6, X0 + OW - 8))
+    a[Y0 + OH, cx_:cx_ + 2] = C('stone_cool', 2)
+    a[Y0 + OH + 1, cx_] = C('stone_cool', 1)
     # the kerb's front: the south course stands two texels proud of the turf
     a[Y0 + OH + K:Y0 + OH + K + 2, X0 - K:X0 + OW + K] = C('stone_cool', 2)
     a[Y0 + OH + K + 1, X0 - K:X0 + OW + K] = C('stone_cool', 1)
@@ -233,14 +244,18 @@ def closed(seed=7):
     # two iron straps (W2-H1): a lit top row, a body, a dark bottom row, ends rounded; a nail head on
     # each board (a dark texel with a lit texel above it); a little rust where the strap meets a joint
     bnds = [X0, X0 + OW // 3, X0 + 2 * OW // 3 + (1 if OW % 3 == 2 else 0), X0 + OW]
+    nails = []
     for sy in (Y0 + STRAPS[0], Y0 + OH - STRAPS[1]):
         a[sy, X0 + 2:X0 + OW - 2] = C('iron', 4)
         a[sy + 1, X0 + 1:X0 + OW - 1] = C('iron', 2)
         a[sy, X0 + 1] = C('iron', 3)                                  # the strap's rounded end
         for k in range(3):
-            nx = (bnds[k] + bnds[k + 1]) // 2
+            # a nail head on each board (W3-H1): a dark texel with a lit texel above it, kept by tidy
+            nx = (bnds[k] + bnds[k + 1]) // 2 + int(rng.integers(-1, 2))
             a[sy + 1, nx] = C('iron', 0)
             a[sy, nx] = C('iron', 5)
+            nails.append((sy, nx))
+            nails.append((sy + 1, nx))
     # the ring pull: a plate, a ring 6 x 5 lit on its upper-left arc and dark on its lower right, the
     # boards showing through it, its shade on the boards under it
     cx, cy = X0 + OW // 2 - 3, Y0 + OH - STRAPS[1] + 2
@@ -262,6 +277,8 @@ def closed(seed=7):
                 keep[cy + j, cx + i] = True                           # a ring is a thin line: tidy leaves it
     a[cy - 2:cy, cx + 2:cx + 4] = C('iron', 2)                         # the plate it hangs from
     a[cy - 2, cx + 2] = C('iron', 4)
+    for (ny, nx) in nails:
+        keep[ny, nx] = True
     _tidy(a, keep=keep)
     _outline(a)
     _ground(a, seed)
@@ -302,10 +319,16 @@ def opened(seed=7):
             a[y, cx_:cx_ + cw] = C(f, t)
             a[y + 1, cx_:cx_ + cw] = C('stone_cool', max(0, t - 1))
         # grit at the back of the tread (its darker rear rows), in clusters
+        # grit at the back of the tread (W3-H2): 2 to 4 marks at random places, in two sizes
         if th >= 4 and k < 3:
             gy = y + th - 3
-            for gx in range(xa + int(rng.integers(1, 4)), xb - 2, int(rng.integers(4, 7))):
-                a[gy, gx:gx + 2] = C('earth', max(1, 3 - k))
+            for gx in sorted(rng.choice(np.arange(xa + 1, xb - 3), size=int(rng.integers(2, 5)), replace=False)):
+                if rng.random() < 0.5:
+                    a[gy, gx] = C('earth', max(1, 3 - k))
+                    a[gy - 1 if rng.random() < 0.5 else gy, gx + 1] = C('earth', max(1, 3 - k))
+                else:
+                    a[gy, gx:gx + 3] = C('earth', max(1, 3 - k))
+                    a[gy - 1, gx + 1] = C('earth_warm', max(1, 4 - k))
         a[y + th - 2:y + th, xa:xb] = C('stone_cool', max(0, 1 - k // 2))   # the riser below it, dark
         a[y + th - 1, xa:xb] = C('stone_cool', 0)
         # riser joints, every 5 to 8 texels
@@ -354,6 +377,16 @@ def opened(seed=7):
     _tidy(a)
     _outline(a)
     _ground(a, seed)
+    # the lid's shadow (W3-H2): its footprint thrown a few texels south-east by the light from the
+    # upper left, two tones down on the coping and the worn earth beside it (not on the lid, nor in
+    # the shaft)
+    lid = np.zeros(a.shape, bool)
+    lid[ly:eg + 3, X0:X0 + OW] = True
+    thrown = np.zeros(a.shape, bool)
+    thrown[ly + 2:eg + 5, X0 + 3:X0 + OW + 3] = True
+    tgt = thrown & ~lid & (a >= 0)
+    tgt[Y0:Y0 + OH, X0:X0 + OW] = False
+    a[tgt] = step(a[tgt], -2)
     return a
 
 

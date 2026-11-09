@@ -1,7 +1,7 @@
 {
  "id": "woodland/pine",
  "file": "game/zones/woodland/art/pine.png",
- "sha256": "07aeed1706c9f89eabda6cb459fc4c3e4a71bd3b598bfeddc375f8219c88f2cc",
+ "sha256": "3b6c0028575db861495cf49859d32221cbae3c932c191050ace66565b6906466",
  "kind": "conifer",
  "biome": "woodland",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 28,
-   "tones": 30.75,
-   "shapes": 46.82142857142857
+   "patches": 27,
+   "tones": 30.925925925925927,
+   "shapes": 47.44444444444444
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.739,
-  "tones_ratio": 1.11,
-  "shapes_ratio": 0.739,
+  "ratio": 0.749,
+  "tones_ratio": 1.116,
+  "shapes_ratio": 0.749,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     106,
     237
    ],
-   "message": "woodland/pine: detail bar 0.74 of Eastward's foliage band (30.8 tones, 46.8 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/pine: detail bar 0.75 of Eastward's foliage band (30.9 tones, 47.4 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): Structure reads (clump contrast 47.4 L, Eastward pines in 12: 43.9): W2-T5 partly fixed (tiers varied, branch clumps past the cone, tilted top, oak plate bark), but a detached 28-texel clump floats east of the cone at (101,160) (W3-T1), the foot is a symmetric skirt, and the bar is 0.739 (shapes 46.8 of 63.32) (W3-F4)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

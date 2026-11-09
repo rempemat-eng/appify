@@ -1,7 +1,7 @@
 {
  "id": "woodland/hatch_closed",
  "file": "game/zones/woodland/art/hatch_closed.png",
- "sha256": "c271711772e8153ee44f9c520293b706e6afff2405ece52e98a1d96130aabfe8",
+ "sha256": "650e96762f9ed5a8034b06d0665580d27d646728e54cb466e262f105d2794798",
  "kind": "hatch_closed",
  "biome": "woodland",
  "H": 74.0,
@@ -14,12 +14,12 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 24.0,
+   "tones": 27.5,
    "shapes": 51.0
   },
   "band": {
@@ -28,25 +28,13 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.889,
-  "tones_ratio": 0.889,
+  "ratio": 1.013,
+  "tones_ratio": 1.019,
   "shapes_ratio": 1.013,
-  "passed": false,
+  "passed": true,
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    1,
-    27,
-    46,
-    68
-   ],
-   "message": "woodland/hatch_closed: detail bar 0.89 of Eastward's prop band (24.0 tones, 51.0 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
   {
    "detector": "detail.cluster_noise",
    "severity": "polish",
@@ -56,7 +44,7 @@
     46,
     68
    ],
-   "message": "woodland/hatch_closed: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 45% to 51%, for information: the verdict is on this grid)",
+   "message": "woodland/hatch_closed: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 45% to 53%, for information: the verdict is on this grid)",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   },
   {
@@ -75,8 +63,7 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-H1 partly: the ring has a lit arc (L 135) and a shade (L 45), the edge is a frayed worn-earth band with bites and tufts of different sizes, and there is a contact shade (fixed); the bar meets the ramp-built rule (tones 0.889, shapes 1.013); but the straps are still two flat rows (lit L 113, dark L 67) across all three boards with no nail heads, and the inner south lip is a solid 30-texel L 193 line (W3-H1). Cluster noise 44.7 % (polish, under 48). detail.outline (0 % edge tone) rejected: a hatch set flush in the ground meets the earth, not an outline."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

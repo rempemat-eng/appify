@@ -17378,7 +17378,7 @@
   "shadow": {
    "mask": {
     "offset": [
-     -30,
+     -32,
      -75
     ],
     "png": "res://kit/props/art/shadow_woodland_beech.png"
@@ -17386,7 +17386,7 @@
   },
   "size_cells": [
    9,
-   12
+   11
   ],
   "snap": "cell",
   "story": {
@@ -17446,7 +17446,7 @@
   "shadow": {
    "mask": {
     "offset": [
-     -8,
+     -7,
      -60
     ],
     "png": "res://kit/props/art/shadow_woodland_birch.png"
@@ -17626,7 +17626,7 @@
   },
   "size_cells": [
    6,
-   3
+   2
   ],
   "snap": "cell",
   "story": {
@@ -17702,8 +17702,8 @@
    ]
   },
   "size_cells": [
-   5,
-   3
+   4,
+   2
   ],
   "snap": "cell",
   "story": {
@@ -17779,7 +17779,7 @@
    ]
   },
   "size_cells": [
-   5,
+   4,
    3
   ],
   "snap": "cell",
@@ -18137,7 +18137,7 @@
   "shadow": {
    "mask": {
     "offset": [
-     -49,
+     -53,
      -72
     ],
     "png": "res://kit/props/art/shadow_woodland_hollow_tree.png"
@@ -18222,7 +18222,7 @@
   },
   "size_cells": [
    4,
-   4
+   3
   ],
   "snap": "cell",
   "story": {
@@ -18510,14 +18510,14 @@
   "shadow": {
    "mask": {
     "offset": [
-     -48,
+     -50,
      -72
     ],
     "png": "res://kit/props/art/shadow_woodland_oak.png"
    }
   },
   "size_cells": [
-   10,
+   9,
    11
   ],
   "snap": "cell",
@@ -19349,7 +19349,7 @@
   "shadow": {
    "mask": {
     "offset": [
-     -58,
+     -53,
      -88
     ],
     "png": "res://kit/props/art/shadow_woodland_willow.png"

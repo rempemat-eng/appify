@@ -1,7 +1,7 @@
 {
  "id": "woodland/standing_stone_low",
  "file": "game/zones/woodland/art/standing_stone_low.png",
- "sha256": "b81877f638b8c86fed37b8262245b990986c0ad1144b283105b55548dc3345d5",
+ "sha256": "991c7386d3c84fed4705cdd506448a2805d972ed5b820ec56a3f1599ad5c1763",
  "kind": "standing_stone",
  "biome": "woodland",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 5,
-   "tones": 27.0,
-   "shapes": 53.4
+   "tones": 26.0,
+   "shapes": 62.8
   },
   "band": {
    "tones": 26.25,
@@ -28,10 +28,10 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": 0.875,
-  "tones_ratio": 1.029,
-  "shapes_ratio": 0.875,
-  "passed": false,
+  "ratio": 0.99,
+  "tones_ratio": 0.99,
+  "shapes_ratio": 1.03,
+  "passed": true,
   "group": "stone"
  },
  "findings": [
@@ -41,30 +41,17 @@
    "box": [
     8,
     10,
-    67,
+    69,
     66
    ],
    "message": "woodland/standing_stone_low: tall 56 art px (0.76 A) is too small for a standing stone: the size table gives 59 to 126 (0.80 to 1.70 A); Eastward at the same character height: none; scaled from real stones",
    "fix": "redraw it 59 to 126 art px tall (target about 92), checked beside Bramble (74 art px) in the asset sheet"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    8,
-    10,
-    67,
-    66
-   ],
-   "message": "woodland/standing_stone_low: detail bar 0.88 of Eastward's stone band (27.0 tones, 53.4 shapes a patch against 26.25, 61.0)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-S1 not met: bar 0.875 (shapes 53.4 of 61.0; tones 27.0, fixed from 19.6); the silhouette is a box with vertical sides (west 31, east 34 of 56 rows within 1 px) and chamfered top corners, so it reads as a tombstone, twice in the circle (W3-S1). logic.scale (56 px) rejected again: low by design."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

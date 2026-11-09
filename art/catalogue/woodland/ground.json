@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "a228894bef2c2acb29e3637ebf91efa18796088f31462bf4af7211bb7ccd220b",
+ "sha256": "73220117960ef5821b4558b5d7ad8e87766a1a19400b6bb30672fdd227d84c8b",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -21,8 +21,7 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): The cast shadows changed in pass 3 (3,563 texels from the round 2 bytes). The house shadow is kept, but 7 shadows now carry a ruler-straight one-row dark edge 64 to 122 px long (x 360 to 481 at y 1344; 396 to 517 and 272 to 377 at y 1368; 576 to 698 at y 1584; 329 to 413 at y 1560; 81 to 157 at y 576; 97 to 161 at y 984), each the projection of a shrub's flat base row (W3-G1); in the zone, under the brambles, it doubles the sprite's own straight contact line and reads as a shelf. Process (W3-P1): pass 3 kept the round 2 pass on these new bytes; that pass covered sha 13c60f8b, not a228894b."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

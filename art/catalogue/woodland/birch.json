@@ -1,26 +1,26 @@
 {
  "id": "woodland/birch",
  "file": "game/zones/woodland/art/birch.png",
- "sha256": "678276d6c38882f3b5903d14991c0598a3b0452cec6ef685c8cd4502887677a5",
+ "sha256": "7c0c958468de9beb36b05ab3a1411acc2bc3ba71637e284d0569cb43355f0182",
  "kind": "birch",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  107,
-  204
+  102,
+  202
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 21,
-   "tones": 27.428571428571427,
-   "shapes": 57.142857142857146
+   "patches": 20,
+   "tones": 36.5,
+   "shapes": 54.25
   },
   "band": {
    "tones": 27.71,
@@ -28,31 +28,42 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.902,
-  "tones_ratio": 0.99,
-  "shapes_ratio": 0.902,
-  "passed": true,
+  "ratio": 0.857,
+  "tones_ratio": 1.317,
+  "shapes_ratio": 0.857,
+  "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.light",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    50,
-    121,
-    60,
-    203
+    16,
+    0,
+    101,
+    202
    ],
-   "message": "woodland/birch: the stone is lit from the right (luminance rises 7 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+   "message": "woodland/birch: detail bar 0.86 of Eastward's foliage band (36.5 tones, 54.2 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    16,
+    0,
+    101,
+    202
+   ],
+   "message": "woodland/birch: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 43% to 44%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-F1, F3 fixed (pinholes of 2 and 1 texels, polish); W2-F4 met (bar 0.902); W2-T4 partly: fissured base and smooth 10 to 13 px taper fixed, but the flare happens in the last 4 rows (13 to 21 px) and the crown is still one dense mass with drips; W2-F2 not fixed: crown (W3-F1/F2): the seam bands are gone (W2-F1 fixed) but the masses are filled with 1-row horizontal dashes (same-tone runs H/V 1.49 against Eastward 1.08 to 1.30), clump contrast 31.9 L in 12 px windows against Eastward 41 to 49, and near-black pockets stand as solid 4 to 13 texel blobs in mid and lit leaf (5 of 10 not in shade) instead of 1-texel accents inside shade. detail.light (50,121,60,203) rejected: the trunk is lit west, its column means falling from L 217 at the west edge to 72 at the east."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
