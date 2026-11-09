@@ -1,7 +1,7 @@
 {
  "id": "act1/mill_millstones",
  "file": "game/kit/props/art/act1/mill_millstones.png",
- "sha256": "ad7813a4702c0b85ae00cc2e7252d918fce048887048edec6df0ffa0f3b46d6f",
+ "sha256": "6a337dd1e88d7e4f6158692db82e4788abcff027163348b359b0e79cd8236c50",
  "kind": "mill_millstones",
  "biome": "valley",
  "H": 74.0,
@@ -48,11 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-05",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pass",
-  "date": "2026-11-05",
-  "note": "Round 5 (v6) of docs/reviews/2026-11-04-act1-props.md (a1473069): the eyes are lit a tone up inside; otherwise as v5."
+  "date": "2026-11-09",
+  "note": "Round 11 of docs/reviews/2026-11-04-act1-props.md (d647b98b, PR #443's determinism fix): 3 texels change, two furrow ends now square; otherwise as round 5."
  }
 }
