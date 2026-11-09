@@ -63,7 +63,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. Same frames as beds_dug, now charred in about 230 small clusters with lit cracks; stalks are 2 texels, lit west (finding 4 answered). Bar 1.00. Polish XR2-B1 (nails as beds_dug) and XR2-B2: most rail length is still sound bright timber and the embers are flat one-tone 2x2 orange squares; char the inner top edge nearest the ash in a continuous band and give each ember a bright core texel. Rejected: detail.light [142,28,245,64] (ash and char clusters, not a light error); detail.cluster_noise [6,12,251,142] (soil rows)."
  }
 }

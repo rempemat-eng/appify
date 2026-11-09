@@ -51,7 +51,13 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. The three green squares are gone and the joints, chips and mottling are a start, but the plinth (finding 9) still reads as two smooth boxes: each slab front is one wide flat band, the top planes are one tone, the east faces flat; the moss is two smooth pill-shaped lozenges in two tones (a sticker), not clusters in the joint. Bar 0.47 -> 0.52 (17.8 tones, 26.2 shapes against 27, 50). Polish: the unlit glass carries a white flame-shaped oval. Compared with the Eastward 13 lamp and 17 rocks at x1.37. Fix list: XR2-L1, XR2-L2, XR2-L3.",
+  "fix_list": [
+   "XR2-L1: plinth slabs as dressed stone: a distinct top plane (tone 4, a lit 1 px arris at the front-left) above a front face in 3-4 tones with sibling clusters, a bevel step between top and front, the east face with a core shadow, chips with a lit lip at two corners",
+   "XR2-L2: moss as leaf 2-3 clusters in the joint under the upper slab (a 2 px lit cap over a ragged 3-4 px band, dark underside), not smooth pills",
+   "XR2-L3 (polish): drop the white flame-shaped oval from the unlit glass; a glint on the pane's upper left is enough"
+  ]
  }
 }

@@ -51,7 +51,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. Boards on three sibling ramps with streaked grain, butt joints 14-30 px apart, lit lip and dark last row; three seedling kinds jittered off the grid; the pad frays into the lawn with no outline (findings 1-3 answered). Compared with the Eastward 17 yard bed at x1.37; bar 0.99. Polish XR2-B1: each nail head is a one-tone 2x2 navy square (#2e2943) with no lit texel of its own; give it a lit top-left texel or make it 1x2 dark under a lit texel. Rejected: detail.cluster_noise [7,12,252,142] (tilled soil rows are ridge structure, not speckle)."
  }
 }

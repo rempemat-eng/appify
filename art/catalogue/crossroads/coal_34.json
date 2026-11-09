@@ -38,7 +38,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. Boards 4-5 px with joints and a lit lip, the back rim lit inside, coal heaped inside the rim as near-black lumps with blue-violet glints, spill at the foot (finding 5 answered). Bar 1.01. Polish: nail heads one-tone 2x2 navy (XR2-B1); the two spilled lumps are 3-tone blocks, give them a lit cap and a glint."
  }
 }

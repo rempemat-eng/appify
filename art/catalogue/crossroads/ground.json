@@ -21,7 +21,12 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. The PR's delta passes: 757 texels changed in 25 places, all contact and cast shadows at the redrawn props' feet, following their new outlines (largest at [1175,680,1283,710] and [1648,782,1726,808], checked before/after at 5x). The picture as a whole was never passed and still carries the faults its queue entry names: the burnt lots (for example [1500,1100,1820,1260]) are an even stipple of small dark discs with flat one-tone char blobs and one-tone dark beam sticks, and the scorch fringe is flat 2-3 tone blobs (the #288 S5). Its redraw belongs to #421. Fix list: XR2-G1, XR2-G2.",
+  "fix_list": [
+   "XR2-G1: burnt lots: replace the even stipple of dark discs with soil marks in drifts (clods, ash patches, cracks, softedge.soil_marks), char as clusters with lit edges, the fallen beams with a lit top edge and grain; fray the scorch fringe in 2-3 px clusters (the #288 S5)",
+   "XR2-G2: the rest of the picture is unreviewed by this round: the #421 redraw needs a full scene-gate pass (24 cells) before it may be placed"
+  ]
  }
 }

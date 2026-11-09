@@ -51,7 +51,14 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. Finding 14 not answered. The front face is one tone #8e8782 over a 1,357-texel region [39,31,64,120] with lone 2-3 texel specks sprinkled evenly (terrazzo), and the 'tooling' and 'cracks' are again diagonal 1-texel dark slashes; no lichen clusters; moss is smooth two-tone pills on the cap and the base; the base is a flat slab with one joint. Bar unchanged 0.48 (18.8 tones, 29.4 shapes against 26.3, 50). The form (lit west, mid front, dark east) and the rune still pass. Compared with the Eastward 17 rocks at x1.37. Fix list: XR2-W1 to XR2-W4.",
+  "fix_list": [
+   "XR2-W1: face texture as weathering and lichen clusters (3-6 texels, two lichen tones, sibling greys) unevenly spread, denser low and on the north-west; remove the evenly spaced lone specks",
+   "XR2-W2: no diagonal slashes: two or three real cracks that wander, each a dark line with a lit lip, one ending in a chip",
+   "XR2-W3: chipped arrises on the west edge and the cap, a lit lip on each chip",
+   "XR2-W4: moss as clumps (lit caps, dark undersides, ragged edge) in the base joint and on the cap; the base as dressed stone with a top plane, bevel and a chip (as XR2-L1)"
+  ]
  }
 }

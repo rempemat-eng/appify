@@ -63,7 +63,15 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. As flower_tub_9 (same body build, differing from it by at most 38 texels): flat two-band body, ruled lime-bloom stamp, flat corner square, no soil or inner wall, smooth disc clumps; bar 0.60 -> 0.70. Fix list: XR2-T1 to XR2-T5.",
+  "fix_list": [
+   "XR2-T1: body: shade the terracotta as a vessel, not two flat bands: a lit west third (tone 4), body (tone 3), dark east (tone 1-2), and break every one-tone run over 40 texels with clay texture (2-3 texel pits, a hairline crack with a lit lip)",
+   "XR2-T2: lime bloom as irregular pale clusters under the rim (2-4 texels, varied per tub), not a ruled 1-texel line with drips; vary it on every tub",
+   "XR2-T3: remove the flat dark 3x3 square in the lower-right corner (or make it a chip with a lit lip)",
+   "XR2-T4: show a 2 px soil band and the far inner wall lit, between the clumps",
+   "XR2-T5: leaf clumps with leaf-shaped scallops and dark pockets (3-4 tones of the leaf ramp), not smooth two-tone discs; each tub its own planting"
+  ]
  }
 }

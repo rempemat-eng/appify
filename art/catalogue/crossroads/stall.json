@@ -51,7 +51,14 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-09",
+  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. Answered: the overlay rectangle is gone, the produce is round items heaped above the rims, the sack has a tied neck. Still failing: the chalk board is a navy block holding a grid of cream 2x2 squares and dashes in rows (a UI glyph, not chalk strokes); each awning stripe's top plane is one flat tone about 12x10 texels; counter nails are one-tone 2x2 navy squares (dot nails, calibration C1); the counter's top front is a 104x4 one-tone band (#966a3d, 416 texels). Bar fell 0.64 -> 0.58 (21.8 tones, 29.1 shapes). Fix list: XR2-S1 to XR2-S4.",
+  "fix_list": [
+   "XR2-S1: chalk board: lettering as broken 1-2 px strokes in two chalk tones (words and a price), irregular, smudged, not a grid of cream squares",
+   "XR2-S2: awning top plane: each stripe 2-3 tones with fold shading rising back, not one flat tone",
+   "XR2-S3: nail heads with a lit texel, sat at the board joints (house-style 5 Wood); vary the rust",
+   "XR2-S4: counter top front: grain streaks and a dark under-lip row instead of a 104x4 one-tone band"
+  ]
  }
 }
