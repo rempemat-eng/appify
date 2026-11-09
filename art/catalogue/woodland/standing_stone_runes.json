@@ -40,6 +40,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2, W-S3: lone 11.7 %; runes are 1 px vertical scratches with pale blue specks, not cut grooves; cluster noise 45 %; bar 0.85. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-S1 fixed (lone 0.9 %), bar 0.98, but W-S3 not fixed: the runes are two vertical dark strokes and a diagonal in the same one-tone vocabulary as the cracks on the other five stones, no lit lower lip and no branching, so the stone does not read as carved (W2-S3)."
  }
 }

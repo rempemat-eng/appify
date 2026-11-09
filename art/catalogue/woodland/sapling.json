@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T8: crown passable; stem an 8 px straight three-tone rod with a pencil-point foot, no root flare or ground contact; bar 0.53. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T8 fixed: the stem tapers 5 to 3 px, a side twig, a small root flare with a contact line. Fails only on W-T1 partly: bar 0.78 (49.2 shapes) and the crown's seam band and mottle (W2-F1/F2)."
  }
 }

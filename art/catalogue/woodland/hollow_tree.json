@@ -65,6 +65,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T6: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.57; a veteran tree drawn as a tall straight pole (trunk 93 rows straight); the hollow is a flat dark oval sticker with two eye pixels, no rim thickness or inner wall. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T1 partly, W-T6 partly. crown (W2-F1/F2/F3): masses split by drawn dark seam bands 4 to 11 px thick, fine 1-2 texel mottle inside the masses instead of leaf clumps, enclosed sky holes ringed in a dark outline; bar 0.76; the bole is now short and wide (52-88 px, 0.7 H bare) with roots (fixed), but the hollow is an ellipse with a tan rim lit evenly all round over a flat near-black disc with two eye texels, no inner wall (W2-T6); a flat olive patch at crown centre. logic.scale stands: 212 px against the veteran class 222-340."
  }
 }

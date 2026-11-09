@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-B1, W-B2: a bush with berries as identical 2x1 red pairs (3 copies, read as eyes); no arching canes, thorns or drupelet clusters; bar 0.68. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-B1 partly, W-B2 partly. Bar 0.71; drupelet clusters added (6 distinct), but the canes are concentric circular arcs 2 texels wide in one flat magenta tone with no lit edge or thorns, laid over the mass like a handle; the silhouette has a notch at the base centre; light weak (+14.5 L) (W2-B2)."
  }
 }

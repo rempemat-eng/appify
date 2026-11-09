@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T4: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.67; trunk a 14 px straight cylinder for 53 rows, no flare, no dark fissured base, no crown shade. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T1 partly, W-T4 partly. crown (W2-F1/F2/F3): masses split by drawn dark seam bands 4 to 11 px thick, fine 1-2 texel mottle inside the masses instead of leaf clumps, enclosed sky holes ringed in a dark outline; bar 0.81; dark base and varied lenticels added, but the base is a hard rectangle with a straight top edge, no flare (13 px at the foot, 12-13 above), a width step mid-trunk, and the crown is the oak's dense mass with only a few 1-2 texel drips (W2-T4)."
  }
 }

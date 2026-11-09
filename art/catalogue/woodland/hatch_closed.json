@@ -89,6 +89,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-H1: frame lit evenly (west minus east +1.2 L, no light direction), door grain as random 2x2 value noise (cluster noise 60.6 %, fault), iron straps flat two-tone bars, ring a black U glyph, hard rectangular tan apron with no frayed turf edge; bar 1.06. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-H1 partly: copings now lit from the upper left (north 146, west 126, south 111, east 98 L) and the plank grain is in streaks (cluster noise 44.5 %, under the 48 % fault line), but the straps are flat two-tone bars with no nail heads, the ring a 3x3 grey smudge, the apron a 1 px tan line with an even comb of 1x2 tufts on all sides, and no contact shade round the frame; bar 0.89 (W2-H1). detail.light (whole box, wood lit from the right) rejected: the planks measure L 110, 106, 100 west to east."
  }
 }

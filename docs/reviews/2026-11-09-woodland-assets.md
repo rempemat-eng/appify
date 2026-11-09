@@ -274,3 +274,345 @@ Fix:
 - **Hatch states.** The hatch was seen pasted into the composite, not in its live state switch.
 - **Other woodland assets.** `forest_bench`, `mossy_log`, `stump` and `flow` were outside this list.
 - **No fixes.** Nothing was repainted.
+
+## Round 2: the redraw in #446 (9 Nov 2026)
+
+The asset gate on draft PR #446 (`claude-a/woodland-redraw`, head **487a1b91**), which redraws all 24 assets above and changes `woodland/ground` (the redrawn trees' and stones' cast shadows). Reviewed by a detail-auditor that drew none of it.
+
+**Result: 2 of 25 pass (`standing_stone_lean`, `ground`). 23 fail, none on a blocker.** The willow blocker (W-T7) is fixed. The stone painter's speckle (W-S1) is fixed on all eight stones. The trees and shrubs are much closer than in round 1 (bar 0.53 to 0.75 then, 0.71 to 0.84 now), but none reaches 0.9 on shapes. The crowns still read as cauliflower: masses cut apart by drawn seam bands, with fine mottle inside instead of leaf clumps.
+
+### What was reviewed and how
+
+- **Calibration first.** `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <refs-games/eastward>`: recall **39 of 39**. False positives: 5 on 6 clean screens and 21 on 22 clean props, the same as round 1. `calibration_results.json` was reverted afterwards.
+- **Asset gate.** `npm run review:asset -- woodland/<name>` for all 25, then `--record`. Detector result: **25 pass**, with no blocker or fault findings. Every foliage and stone sheet carries a `detail.bar` polish except `standing_stone_lean` and `standing_stone_runes`. The other polish findings are `detail.light` (oak, willow, hatch_closed), `detail.cluster_noise` and `detail.outline` (both hatches) and `logic.scale` (hollow tree, standing_stone, broken, low).
+- **Context.** `npm run review:scene -- woodland --no-render` **refuses** at this head, with `woodland_kit: incomplete scene intake: stale bake: scene/plan material differs at 20,35`. #446 changes the plan rows of `game/kit/zones/woodland_kit.json` (rows 47 to 51) without that zone's scene. I did not check whether main refuses as well. The zone was composed directly (`scene.composite(load_zone('woodland'))`), and from it I cropped the stone circle, the willow and path, and the north grove at 2x and 3x. The hatches were pasted at their node position (313, 974).
+- **Enlarged.** Every asset at 4x, and crowns, trunks, hollow, spines, berries, stones and hatches at 6x to 8x.
+- **Measurements.** These use round 1's `metrics.py` unchanged:
+  - lone texels;
+  - the largest single-colour region;
+  - west minus east L;
+  - the share of varied 3 x 3 windows that repeat four or more times;
+  - `cluster_noise.py`.
+  
+  Added this round:
+  - row profiles through the crown seams;
+  - trunk width per row and trunk L by fifths west to east;
+  - pine tier spacing and the cone edge's deviation from a straight line;
+  - enclosed sky holes and the L of their rim;
+  - holly spine texels joined only at a corner, and berry-cluster patterns;
+  - the scene's node offsets against each picture's opaque foot.
+- **Eastward at the same character height** (x1.37, nearest neighbour):
+  - the trees: the red tree in 12 (465,110,590,230) and the trees in 13 (345,150,395,235 and 510,150,565,230);
+  - the pine: the pines in 12 (175,65,245,165);
+  - the stones: the rocks in 17 (460,165,550,250) and 12 (497,205,555,235);
+  - the hatches: the post box in 12.
+  
+  A 90 x 90 window of the oak's and the beech's crowns was set at 5x beside the same window of the red tree. I also read the coordinator's sheets: `wr/ew_cmp_trees2.png`, `ew_cmp_trees2b.png`, `woodland_contact2_4x.png` and `trees_pass1_vs_pass2_2x.png`.
+
+### Verdicts
+
+Bar is `detail.bar` (house-style 7: 0.9, or 0.85 on tones for ramp-built art). Noise is `cluster_noise` (48 % or more is a fault). "Rep" is the share of varied 3 x 3 windows repeating four or more times (round 1: 32 to 40 % on the big crowns).
+
+| Asset | Opaque (art px, H) | Bar (tones / shapes) | Lone | Noise | Rep | W-E L | Verdict | Old codes | New codes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| oak | 194 x 248, 3.35 | 0.81 (24.3 / 51.0) | 0.9 % | 18.0 % | 2.2 % | +23.2 | fail | W-T1 partly, W-T2 partly | W2-F1, F2, F3, F4, W2-T2 |
+| beech | 175 x 267, 3.61 | 0.74 (23.1 / 46.5) | 0.7 % | 14.1 % | 0.7 % | +30.7 | fail | W-T1 partly, W-T3 partly | W2-F1, F2, F3, F4, W2-T3 |
+| birch | 92 x 205, 2.77 | 0.81 (29.6 / 51.4) | 1.8 % | 16.9 % | 0.4 % | +29.4 | fail | W-T1 partly, W-T4 partly | W2-F1, F2, F3, F4, W2-T4 |
+| pine | 105 x 232, 3.14 | 0.74 (31.5 / 47.0) | 0.8 % | 38.7 % | 0.9 % | +26.9 | fail | W-T1 partly, W-T5 partly | W2-F4, W2-T5 |
+| hollow_tree | 212 x 212, 2.86 | 0.76 (25.0 / 48.1) | 1.1 % | 19.0 % | 1.4 % | +15.1 | fail | W-T1 partly, W-T6 partly | W2-F1, F2, F4, W2-T6 |
+| willow | 260 x 202, 2.73 | 0.84 (29.3 / 53.1) | 0.3 % | 22.6 % | 3.5 % | +12.5 | fail (no longer a blocker) | W-T1 partly, **W-T7 fixed** | W2-F1, F4, W2-T7, W2-L1 |
+| sapling | 57 x 85, 1.15 | 0.78 (31.2 / 49.2) | 1.2 % | 18.7 % | 0.0 % | +22.2 | fail | W-T1 partly, **W-T8 fixed** | W2-F1, F2, F4 |
+| bush | 100 x 66, 0.89 | 0.78 (33.2 / 49.2) | 1.2 % | 24.5 % | 0.3 % | +25.6 | fail | W-B1 partly | W2-B1 |
+| bush_b | 81 x 56, 0.76 | 0.84 (34.5 / 53.1) | 1.4 % | 35.4 % | 0.0 % | +30.5 | fail | W-B1 partly | W2-B1 |
+| bush_c | 114 x 60, 0.81 | 0.74 (31.3 / 47.1) | 1.2 % | 27.2 % | 0.0 % | +23.7 | fail | W-B1 partly | W2-B1 |
+| bramble | 115 x 52, 0.70 | 0.71 (39.2 / 45.2) | 4.0 % | 31.7 % | 0.0 % | +14.5 | fail | W-B1 partly, W-B2 partly | W2-B1, W2-B2 |
+| bramble_b | 100 x 50, 0.68 | 0.71 (35.5 / 45.0) | 3.9 % | 30.3 % | 0.0 % | +10.6 | fail | W-B1 partly, W-B2 partly | W2-B1, W2-B2 |
+| holly | 85 x 75, 1.01 | 0.74 (31.3 / 46.9) | 5.9 % | 30.3 % | 0.1 % | +16.0 | fail | W-B1 partly, W-B3 partly | W2-B1, W2-B3 |
+| holly_b | 82 x 81, 1.09 | 0.75 (33.0 / 47.2) | 5.8 % | 31.0 % | 0.0 % | +15.7 | fail | W-B1 partly, W-B3 partly | W2-B1, W2-B3 |
+| standing_stone | 30 x 89, 1.20 | 0.72 (24.2 / 44.2) | 1.1 % | 18.9 % | 0.0 % | +40.6 | fail | **W-S1 fixed**, W-S2 partly | W2-S1, W2-S2 |
+| standing_stone_b | 37 x 67, 0.91 | 0.83 (26.0 / 50.7) | 0.8 % | 26.1 % | 0.0 % | +44.2 | fail | **W-S1 fixed**, W-S2 partly, W-S3 partly | W2-S1, W2-S2, W2-S3 |
+| standing_stone_broken | 35 x 56, 0.76 | 0.88 prop (30.0 / 44.5) | 0.7 % | 28.1 % | 0.0 % | +45.3 | fail | **W-S1 fixed**, W-S2 partly, W-S5 partly | W2-S1, W2-S2, W2-S5 |
+| standing_stone_lean | 36 x 73, 0.99 | **0.94** (25.3 / 60.3) | 1.5 % | 19.4 % | 0.0 % | +49.8 | **pass** | **W-S1 fixed**, W-S2 partly (polish) | W2-S2 (polish) |
+| standing_stone_low | 59 x 56, 0.76 | 0.75 (19.6 / 49.8) | 0.6 % | 19.8 % | 0.0 % | +46.9 | fail | **W-S1 fixed**, W-S2 partly | W2-S1, W2-S2 |
+| standing_stone_runes | 33 x 64, 0.86 | **0.98** (26.3 / 50.3) | 0.9 % | 27.7 % | 0.0 % | +41.4 | fail | **W-S1 fixed**, W-S2 partly, **W-S3 not fixed** | W2-S2, W2-S3 |
+| lintel | 78 x 26, 0.35 | 0.87 prop (24.3 / 44.0) | 0.8 % | 24.6 % | 0.0 % | +12.2 | fail | W-S4 partly | W2-S4 |
+| stone_top | 36 x 20, 0.27 | 0.77 prop (30.0 / 39.0) | 1.3 % | 26.8 % | 0.0 % | +10.6 | fail | W-S4 partly | W2-S4 |
+| hatch_closed | 43 x 40, 0.54 | 0.89 prop (24.0 / 51.0) | 1.4 % | 44.5 % | 12.7 % | +8.8 | fail | W-H1 partly | W2-H1 |
+| hatch_open | 43 x 64, 0.86 | 0.77 prop (23.8 / 38.8) | 0.9 % | 45.4 % | 34.8 % | +8.2 | fail | W-H1 partly, W-H2 partly | W2-H1, W2-H2 |
+| ground | 960 x 1728 | n/a | | | | | **pass** | (cast shadows only) | W2-L1 (scene, not ground) |
+
+**Checking the painter's numbers.**
+- **Confirmed.**
+  - Tree bars 0.735 to 0.839.
+  - Holly lone texels 5.9 and 5.8 %.
+  - Pine cluster noise 38.7 %.
+  - Hatch cluster noise 44.5 and 45.4 %.
+  - Hollow tree 212 px against the veteran class 222 to 340.
+- **Oak and beech tones.** These are 24.3 and 23.1 tones a patch: 0.88 and 0.83 of the band, so the beech is also under the 0.85 tones floor for ramp-built art.
+- **Shrub bars.** The foliage bars of 0.71 to 0.84 hold for the shrubs.
+
+### Status of the round 1 codes
+
+| Code | Status | Evidence |
+| --- | --- | --- |
+| W-T1 / W-B1 (crowns) | **partly** | Stamping is gone: repeated 3 x 3 windows are 0.4 to 3.5 %, against 32 to 40 %. The deep band no longer carries the tick, and the silhouettes are broken by leaf tips. Shrubs have leaf-shaped dark pockets. But no crown reaches 0.9 on shapes (0.71 to 0.84), and the crown structure is now W2-F1 to F3. |
+| W-T2 (oak trunk) | **partly** | Taper 34 to 25 px over 84 rows, 2 roots flaring to 55 px, lit west (trunk L by fifths 95, 90, 75, 58, 47), crown shade on the trunk top: fixed. The bark is W2-T2. |
+| W-T3 (beech trunk) | **partly** | The rings and the telescoping step are gone, and the foot flares from 17 to 41 px. The trunk is still flat and has no eye scars (W2-T3). |
+| W-T4 (birch) | **partly** | A dark base, varied lenticels, a 13 to 8 px taper. No flare, a sock-like base, and an oak-dense crown (W2-T4). |
+| W-T5 (pine) | **partly** | Needle tips and dark tier undersides: fixed. Regular tiers, a straight cone and leg roots (W2-T5). |
+| W-T6 (hollow tree) | **partly** | The bole is squat (0.7 H bare, 52 to 88 px wide) with roots: fixed. The hollow still reads as a ring sticker (W2-T6). |
+| W-T7 (willow, blocker) | **fixed** | A weeping dome 1.29 times as wide as tall, wider below, no straight sides. Swags taper and vary in length. A short leaning trunk forks into limbs, with the dark interior between swags. Outline closed (ring L 31.7 against 116.3 inside). |
+| W-T8 (sapling stem) | **fixed** | The stem tapers 5 to 3 px with a side twig and a small root flare with a contact line. |
+| W-B2 (brambles) | **partly** | Drupelet clusters in mixed ripeness, 6 distinct patterns: fixed. The canes are geometric (W2-B2). |
+| W-B3 (holly) | **partly** | The leaves are darker and cooler, and holly_b has a conical habit. The spines, berries and base are W2-B3. |
+| W-S1 (stone speckle) | **fixed** | Lone texels 0.6 to 1.5 % (from 9.2 to 11.7 %), with three planes on every stone (west minus east +40.6 to +49.8 L). |
+| W-S2 (lichen, moss, skirt) | **partly** | The baked skirt is gone and every stone ends in a contact line: fixed. Lichen and moss are still stamps (W2-S2). |
+| W-S3 (glyphs) | **partly** on _b, **not fixed** on _runes | The spiral is on the stone ramp but uncut. The runes read as cracks (W2-S3). |
+| W-S4 (lintel, stone top) | **partly** | Speckle gone and mortise recesses added. A box silhouette and no chips (W2-S4). |
+| W-S5 (broken stone) | **partly** | A slanted broken top, but no lit fracture plane. The `logic.scale` rejection stands. |
+| W-H1 (hatch frame) | **partly** | The copings are lit from the upper left (north 146, west 126, south 111, east 98 L). The planks are grained, and cluster noise is 44.5 % against 60.6 %. Straps, ring, apron and contact are W2-H1. |
+| W-H2 (open hatch) | **partly** | The lid is hinged on the north coping on iron leaves, and the blue squares are gone. The lid's thickness and shadow and the steps are W2-H2. |
+
+### Findings and fixes (round 2)
+
+#### Foliage painter (`woodtrees.py`: crown_masses, willow2, shrub)
+
+**W2-F1. Crowns are cut into masses by drawn seam bands (fault; oak, beech, birch, hollow tree, willow cap, sapling).** Crop: `oak_crown.png` (oak 40,20,90,90 and beech 40,40,90,90 at 5x beside the red tree in 12).
+- **What is wrong.** Between masses runs a band of one or two dark greens (L 40 to 60), 4 to 11 px thick and 30 to 150 px long. A row profile down x = 70 on the oak crosses lit body (L 160 or more), then a 4-row band at L 40 to 60, then the next mass's lit top. Down x = 90 on the beech the band is 11 rows.
+- **Why it matters.** The masses read as separate lobes outlined by a groove (cauliflower, brain). Eastward's red tree has no continuous seam. Its masses overlap: the front mass's lower rim is a row of scalloped leaf clusters with small dark pockets of 2 to 6 texels under some of them, and the mass behind shows its lit clump tops up to that rim.
+- **Fix.**
+  1. Delete the seam band (`under_gap` as a drawn band).
+  2. Where mass A overlaps mass B, draw A's lower edge as leaf scallops 4 to 8 texels wide with lit tips pointing down (leaf 3 to 4).
+  3. Under every second or third scallop, put a pocket of leaf 0 to 1, 2 to 4 texels deep. No pocket may join the next one into a line longer than about 10 texels.
+  4. Let B's lit clump caps (leaf 4 to 5) run up to the scallops.
+  5. Check: no dark component inside the crown, eroded by 3, longer than 16 px.
+
+**W2-F2. Inside each mass the texture is mottle, not leaf clumps (fault; every tree, softer on the shrubs).**
+- **What is wrong.** At 5x the masses are an even field of 1 to 2 texel flecks in 2 or 3 close tones. In the red tree (12) every 6 to 10 texels there is a readable leaf cluster: a lit cap, a body and a dark U-shaped underside in 3 or 4 tones, overlapping like scales. That is where its 63 shapes a patch come from. Ours: 46.5 to 53.1.
+- **Fix.**
+  1. Build each mass from leaf clumps 5 to 9 texels across. Each clump has:
+     - a lit crescent of 2 to 3 texels at its upper left (leaf 4 to 5);
+     - a body at leaf 3;
+     - a 1 to 2 texel dark U under it (leaf 1 to 2).
+  2. Overlap the clumps by a third, offset like scales, with sizes and orientations drawn at random.
+  3. Remove the single-texel mottle inside clumps: every same-tone patch at least 2 texels.
+  4. The deep band stays quiet: clumps there in leaf 0 to 2 only, no caps.
+  5. Target: bar at least 0.9 on shapes (57 a patch), lone texels 3 % or less, cluster noise 32 % or less. Raise shapes with more clumps, never with grain.
+
+**W2-F3. Sky gaps are cut-out holes (fault; oak, beech, birch, sapling).**
+- **What is wrong.** Each tree has 1 to 3 fully enclosed transparent holes (oak 21 x 18 and 11 x 13 px; beech 12 x 19 and 12 x 16; birch 8 x 21 and 11 x 17). Each is ringed by a 1 px dark outline (rim L 49 to 99), with a limb stick standing inside. They read as holes punched in a sticker.
+- **Fix.**
+  - **Where gaps open.** Open gaps only where a limb leaves the crown's under-band or at the crown's edge, so the gap is open to the outside, or drop the enclosed holes.
+  - **The gap's rim.** Edge every gap with the masses' own dark undersides (leaf 1) and with leaf tips hanging into it, never with an outline.
+  - **The limb.** The limb in it is lit on its west, darker where the crown shades it, and enters a mass at both ends.
+
+**W2-F4. Detail bar (fault).** Shapes are 0.71 to 0.84 of the foliage band on every tree and shrub, and beech tones are 0.83 (house floor 0.85). W2-F1 and F2 are the way to reach the bar.
+
+#### Trunks
+
+**W2-T2. Oak bark is a uniform crack mesh (fault; oak, also on the willow, hollow tree and pine).**
+- **What is wrong.** The bark is polygons 4 to 8 px across, each ringed on every side in near-black (timber 0). The polygons are equally dense on the lit and shaded sides, and are no taller than they are wide (horizontal runs 1.6, vertical 3.7 texels). It reads as crocodile skin.
+- **Fix.**
+  1. **Plates.** Vertical plates 3 to 5 px wide and 6 to 12 tall, in 2 to 3 sibling tones.
+  2. **Cracks.**
+     - Draw cracks only between plate columns and at about one plate end in three.
+     - On the lit west third, draw the cracks in timber 1, not 0.
+     - On the east third, merge the plates into a dark field with a few cracks.
+  3. **Lit edges.** A lit west edge (timber 4) on a plate one in three.
+
+**W2-T3. The beech trunk is a flat grey column (fault).**
+- **What is wrong.**
+  - **Flat.** In the lower trunk (80,190 to 130,250) the largest single-colour region is 337 px, and same-colour vertical runs average 7.5 texels. Its five-band cylinder ramp is drawn as straight vertical stripes.
+  - **No scars.** It has no eye scars.
+  - **Roots.** The roots are four thin symmetric claws.
+- **Fix.**
+  - **Mottle.** Keep the cylinder ramp, but break each band with sibling mottle patches of 3 to 6 texels in warm and cool greys. Add green algae (moss 1 to 2) on the east and north side.
+  - **Eye scars.** Draw 2 or 3 eye scars, each 3 x 2: a dark lens with a lit lower lip.
+  - **Roots.** Turn the claws into 2 or 3 broad buttress fins that merge into the trunk over 10 to 14 rows. Make them asymmetric, each lit on its west face.
+
+**W2-T4. The birch's foot and crown (fault).**
+- **What is wrong.**
+  - **Base.** The dark base is a rectangle with a straight top edge (a sock).
+  - **Flare.** The foot has no flare: 13 px at the foot, 12 to 13 px above.
+  - **Width step.** The trunk steps a texel in width at mid-height.
+  - **Crown.** The crown is the oak's dense mass with three 1 to 2 texel drips.
+- **Fix.**
+  - **Base.** Break the base's top edge into fissures that rise 4 to 10 px unevenly into the white.
+  - **Flare.** Flare the foot 4 to 6 px.
+  - **Taper.** Taper the trunk smoothly.
+  - **Crown.** Draw the crown as 4 or 5 smaller masses with open gaps at the edge (W2-F3). Give the lower edge a fringe of hanging twig clusters, 3 to 8 px long in leaf 2 to 3.
+
+**W2-T5. The pine is a stamped cone (fault).**
+- **What is wrong.**
+  - **Tiers.** 13 tier lines at 13.7 ± 0.7 px spacing (cv 0.05).
+  - **Silhouette.** The west and east silhouettes stay within an RMS of 3.7 and 3.1 px of a straight line: a perfect cone (art-faults 3).
+  - **Trunk.** The trunk is a saturated orange and splits into two leg-like roots, which read as a wishbone on stilts in the zone at 3x.
+- **Fix.**
+  - **Tiers.** Vary the tier spacing over 8 to 20 px. Let 3 or 4 tiers overlap, or break into two clumps.
+  - **Silhouette.** Push 2 to 4 branch clumps 6 to 12 px out past the cone line, and cut 1 or 2 notches.
+  - **Top.** Tilt the top a few texels.
+  - **Roots.** 2 or 3 short flares of 4 to 8 px that stay under the trunk, not legs.
+  - **Bark.** Move the bark to the oak's darker, less saturated ramp, with plates as in W2-T2.
+
+**W2-T6. The hollow tree's hollow and crown centre (fault).**
+- **What is wrong.**
+  - **Hollow.** The hollow is an ellipse with a tan rim lit evenly all round, over a flat near-black disc holding two eye texels. There is no inner wall, so it still reads as a ring sticker.
+  - **Crown centre.** A smooth flat olive patch sits at the crown's centre (about 95 to 175, 70 to 110).
+  - **Scale.** `logic.scale`: 212 px tall against the veteran class 222 to 340.
+- **Fix.**
+  - **Lip.** Light the lip only on its lower and west edges (timber 4). Make the upper and east lip dark (timber 1).
+  - **Inner wall.** Inside the top of the opening, draw the far inner wall as a band 2 to 3 px deep at timber 2 to 3, falling to near-black at the back. Keep the eyes inside the dark.
+  - **Crown centre.** Fill the olive patch with clumps (W2-F2).
+  - **Height.** Raise the crown by about 10 to 14 px so the tree reaches 222, and keep the bole.
+
+**W2-T7. Willow detail (fault).**
+- **What is wrong.**
+  - **Swags.** The swags are stacks of 1-texel vertical dashes.
+  - **Limbs.** The limbs stop in flat cut tops under the swags.
+  - **Cap.** The cap carries W2-F1 seam bands.
+- **Fix.**
+  - **Swags.** Draw each swag as overlapping hanging leaf clumps, 3 to 5 texels wide and 4 to 7 long. Light each on its west, with a dark east edge and leaf tips on its outline (not dashes).
+  - **Limbs.** Carry the limbs up into the cap so they vanish behind clumps, not at a cut line.
+  - **Cap.** As W2-F1.
+
+#### Shrubs
+
+**W2-B1. Shrub detail bar (fault; bushes, brambles, holly).**
+- **What is wrong.**
+  - **Bar.** Shapes are 45.0 to 53.1 against 63.32 (0.71 to 0.84). bush_b is closest.
+  - **Clump insides.** The clumps read now, but their insides are mottled as in W2-F2.
+  - **bush_c.** bush_c has a dark band 99 px long along its lower third.
+- **Fix.** As W2-F2, at shrub scale: clumps 4 to 7 texels. On bush_c, break the lower band into pockets.
+
+**W2-B2. Bramble canes are geometric (fault).**
+- **What is wrong.**
+  - **Arcs.** The canes are concentric circular arcs 2 texels wide in one flat magenta tone. They have no lit edge, no thorns and no leaves.
+  - **Over the mass.** They lie over the top of the mass like a handle. bramble_b's two parallel arcs read as a rainbow.
+  - **Notch.** The silhouette has a notch at the centre of its base.
+  - **Light.** West minus east is only +10.6 to +14.5 L.
+- **Fix.**
+  - **Canes.** Draw 3 to 5 canes of uneven curvature that leave the mass at different heights and droop back to the ground. Each is 2 texels wide in the berry or earth ramp, with a lit top texel, dark under, and 1-texel thorn hooks every 4 to 6 texels. Pass 1 or 2 of them behind leaf clumps.
+  - **Mass.** Fill the base notch. Strengthen the upper-left light on the mass.
+
+**W2-B3. Holly spines, berries and base (fault).**
+- **What is wrong.**
+  - **Spines.** They are single texels that touch the mass only at a corner (18 on holly, 31 on holly_b): fuzz, not leaf points.
+  - **Berries.** The berries are 5 to 6 clusters drawn from 3 identical 3-berry stamps.
+  - **Base.** The base is a straight dark plinth wider than the foot.
+  - **Leaves.** The leaves have no glossy glint.
+  - **Lone texels.** 5.9 %.
+- **Fix.**
+  - **Leaf points.** Draw each spine as a 2-texel point grown from a leaf's edge (edge-joined), every 3 to 5 texels along the silhouette.
+  - **Leaves.** Give 1 leaf in 4 a hard 1-texel glint at tone 5 on its upper-left lobe.
+  - **Berries.** Vary the clusters (3 to 5 berries, different arrangements, each with a glint), set at leaf axils.
+  - **Base.** End the base in the mass's own dark underside with a contact line, no plinth.
+  - **Lone texels.** Under 3 %.
+
+#### Stone painter (`woodstones.py`)
+
+**W2-S1. The stone bar (fault; standing_stone, _b, _broken, _low, stone_top, lintel).**
+- **What is wrong.** Bars are 0.72 to 0.88.
+  - **Tones.** _low has 19.6 tones against 26.25: its face is held to three greys.
+  - **Shapes.** The rest are short on shapes. The face texture is an even field of 2 to 5 texel blocks of similar size on every plane.
+- **Fix.**
+  - **Planes.** Vary the texture by plane: larger calm patches (5 to 10 texels) on the lit crown, and smaller ones on the shaded flank.
+  - **Story details.** Add the details below, which raise shapes the way Eastward's rocks do:
+    - 2 or 3 chips per stone at the arrises (W2-S2);
+    - a crack with its lit lower lip;
+    - lichen crusts;
+    - a damp band at the foot (stone 1 to 2 with moss in the joints).
+  - **_low tones.** Give _low a warm and a cool sibling plane.
+
+**W2-S2. Lichen, moss and rim marks (polish on _lean, part of the fail elsewhere).**
+- **What is wrong.**
+  - **Lichen.** Tan dots of 2 to 3 texels, the same size on every stone.
+  - **Moss.** The moss is a flat two-tone parallelogram at the south-east foot of 5 of the 6 standing stones, in the same place each time.
+  - **Rim dashes.** Dark 1 x 2 dashes on the lit west rim read as stray marks.
+- **Fix.**
+  - **Lichen.** Grow irregular crusts 3 to 10 texels across in 2 or 3 sibling tones.
+  - **Moss.** As a 2-texel cap over a 4-texel band in moss 1 to 3, placed differently on each stone, with one in three in a crack.
+  - **Chips.** Turn the rim dashes into chips: a notch in the lit rim with a shade texel under it.
+
+**W2-S3. Carving (fault; standing_stone_b, standing_stone_runes).**
+- **What is wrong.**
+  - **Spiral.** The spiral is a one-tone dark 2 px line. Without a lit lip it reads as painted on.
+  - **Runes.** The runes are two vertical strokes and a diagonal in the same vocabulary as the cracks on the other five stones, so the runestone does not read as carved.
+- **Fix.** Cut both as grooves:
+  - **Groove.** Each stroke 2 texels wide, stone 1 on its upper edge and stone 4 on its lower lip, worn through in 1 or 2 places.
+  - **Runes.** Make them branching angular strokes (3 to 5 glyphs, 5 to 8 px tall), clearly unlike the cracks.
+
+**W2-S4. Lintel and stone top are boxes (fault).**
+- **What is wrong.**
+  - **Silhouette.** A perfect rectangle with right-angle corners.
+  - **Arris.** A straight stone-5 line runs the full length of the arris.
+  - **Outline.** The near-black outline is closed on the lit top as well.
+  - **Moss.** On the lintel, four identical moss dashes sit evenly spaced along the front foot.
+- **Fix.**
+  - **Corners.** Round and chip the corners: 2 to 4 chips per arris, each a notch with a shade texel.
+  - **Arris.** Break the lit arris line where the chips fall, and let the lit top edge show (no outline there).
+  - **Sag.** Sag the top line by a texel over its length.
+  - **Moss.** Place moss unevenly: 1 or 2 clumps, with drips into a joint.
+
+**W2-S5. The broken stone's fracture (fault).** Draw the broken top as its own plane: lit (stone 4 to 5) with 1 to 2 texel steps along the break, its far edge dark, and the stone's own crown never continuing over it.
+
+#### Hatches (`hatch.py`)
+
+**W2-H1. Hatch hardware, apron and contact (fault; both).**
+- **What is wrong.**
+  - **Straps.** The straps are flat two-tone bars with no nail heads.
+  - **Ring.** The ring is a 3 x 3 grey smudge.
+  - **Apron.** The apron is a 1 px tan line with an even comb of 1 x 2 tufts along all four sides.
+  - **Contact.** The frame sits on the turf with no contact shade, and looks pasted at 4x in the zone.
+- **Fix.**
+  - **Straps.** A lit top row, a dark bottom row, and nail heads at each board (a dark texel with a lit texel above).
+  - **Ring.** A ring with a lit upper-left arc and a shade on the boards under it.
+  - **Edge.** Replace the line and the comb with the turf's frayed edge to worn earth (eastward-edges 5.1): 2 to 3 px of bites and 2 to 4 tufts of different sizes.
+  - **Contact.** A one-tone contact shade along the south and east of the frame.
+
+**W2-H2. The open hatch's lid and steps (fault).**
+- **What is wrong.**
+  - **Lid.** The lid shows no edge thickness and casts no shadow. A 2 px green strip runs down its east side.
+  - **Steps.** The steps are flat two-tone bars with straight square ends: 34.8 % of the varied 3 x 3 windows repeat, and the bar is 0.77.
+- **Fix.**
+  - **Lid.** Show the lid's top edge as 2 rows of end grain (lit top). Cast its shadow two tones down onto the coping and turf to the east, and remove the green strip.
+  - **Steps.** Each step needs:
+    - a worn nosing with 1 or 2 chips;
+    - grit at the back of each tread;
+    - riser joints;
+    - ends that meet the shaft wall with a shade texel.
+  - **Light.** Keep the falloff to near-black at the back.
+
+#### Scene (for the logic-auditor and Claude A)
+
+**W2-L1. woodland_base.tscn places the pass-2 pictures at the pass-1 offsets (fault).** Commit 7afbe76a says the scene write was refused by the placement gate, so the node offsets are stale. Here is where each picture's opaque foot falls against its node position (the plan foot):
+
+| Picture | Opaque foot against the plan foot | What it does in the scene |
+| --- | --- | --- |
+| willow | 85 px north | Offset (-96,-287) for a 202 px picture. Its trunk stands on the cobble path, and its ground shadow lies orphaned south of the path. |
+| hollow tree | 22 px north | |
+| beech | 22 px south | |
+| oak | 14 px south | |
+| birch | 12 px south | |
+| pine | within 2.5 px | |
+
+Fix: regenerate the scene from the plan (`gen_zone`) once the gate allows it, and then re-run the scene gate. At its plan foot (780, 1344) the willow stands on the lawn south of the path, which also clears round 1's logic note (trunk on the path).
+
+**W2-L2. The scene gate refuses woodland at this head** (`stale bake: scene/plan material differs at 20,35` for `woodland_kit`). #446 changes `game/kit/zones/woodland_kit.json`'s rows without that scene. Re-export the kit zone's scene, or confirm that main refuses the same way.
+
+### False positives
+
+5 rejected:
+
+- **`detail.light` on the oak** (88,161,118,247): this is the east root and fork, with lit tops facing west. By fifths west to east the trunk measures L 95, 90, 75, 58 and 47.
+- **`detail.light` on the willow** (139,105,163,138): this is the fork's east limb, lit on its own west face. By fifths the box measures 84, 83, 89 and 78.
+- **`detail.light` on hatch_closed** (whole box): the planks measure L 110, 106 and 100 west to east, and the copings are lit from the upper left.
+- **`logic.scale` on `standing_stone_broken` and `standing_stone_low`**: short by design, as in W-S5.
+
+`logic.scale` on `standing_stone` (30 px wide against 33) is accepted as polish, since it is a slim menhir. The hollow tree's `logic.scale` stands (W2-T6).
+
+### Not checked
+
+- **No in-game render.** The zone was composed from the scene data. The scene gate itself refuses (W2-L2), so its grid cells were not visited. Day and night, the night tint and a phone were not checked.
+- **Hatch states.** The hatches were pasted, not seen in their live state switch.
+- **Kit pieces and props.** The kit pieces and props regenerated by #446 (`game/kit/props/*`, the kit grounds and `kitlab`) were not reviewed. Only the zone pictures above were.
+- **No fixes.** Nothing was repainted.

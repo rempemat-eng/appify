@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-S4: as lintel (lone 6.5 %); bar 0.56. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-S4 partly: as lintel (perfect rectangle, straight lit arris, one moss dash); bar 0.77 (39.0 shapes of the prop band) (W2-S4)."
  }
 }

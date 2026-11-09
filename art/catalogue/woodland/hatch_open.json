@@ -77,6 +77,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-H1, W-H2: frame as hatch_closed; lid floats on two 1 px rods with no thickness and no cast shadow; the shaft is three flat grey stripes under a row of blue squares, no treads, risers or falloff; cluster noise 47.2 %. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-H2 partly: the lid now stands hinged on the north coping on two iron leaves and the blue squares are gone, but the lid has no edge thickness and casts no shadow (a 2 px green strip runs down its east side), the shaft steps are flat two-tone bars with straight ends (34.8 % of varied 3x3 windows repeat), bar 0.77 (38.8 shapes) (W2-H1, W2-H2)."
  }
 }

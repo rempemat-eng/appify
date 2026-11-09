@@ -21,7 +21,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): Changed this PR only by the cast shadows of the redrawn trees and stones (21,387 texels; the willow's at 690-880, 1288-1390 the largest). Each is the house shadow (core two tones, one-tone scalloped rim, sun flecks) at the plan's foot, east and a little south, and meets the cliff and path correctly. The shadows sit where the plan puts the feet; the scene file does not yet (W2-L1, a woodland_base.tscn fault, not the ground's). The earlier pass (2026-11-04 water review, round 6) stands for everything else."
  }
 }

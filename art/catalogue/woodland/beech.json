@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T3: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.61; trunk a three-band grey pipe with two straight rings and a telescoping step, no bark mottle, no flare. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T1 partly, W-T3 partly. crown (W2-F1/F2/F3): masses split by drawn dark seam bands 4 to 11 px thick, fine 1-2 texel mottle inside the masses instead of leaf clumps, enclosed sky holes ringed in a dark outline; bar 0.74 (46.5 shapes); rings and telescoping step gone and the foot flares 17 to 41 px, but the trunk is a flat grey column (one-colour region 337 px in the lower trunk, mean vertical run 7.5 px), no eye scars, roots four thin symmetric claws (W2-T3)."
  }
 }

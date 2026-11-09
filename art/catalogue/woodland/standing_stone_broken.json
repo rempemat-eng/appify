@@ -65,6 +65,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2: lone 11.4 %, no broken top plane (the break needs a lit fracture face); bar 0.78. logic.scale (56 px) rejected: a broken stone is short by design. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-S1 fixed (lone 0.7 %), W-S5 partly: a slanted broken top with a notch, but its fracture plane is not lit as a separate jagged plane; bar 0.88 of the prop band (44.5 shapes); logic.scale (56 px) rejected again: broken by design (W2-S1, W2-S5)."
  }
 }

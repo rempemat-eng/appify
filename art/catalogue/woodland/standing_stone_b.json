@@ -53,6 +53,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2, W-S3: as standing_stone (lone 10.5 %) plus a flat two-tone pale blue spiral glyph painted on, not carved; bar 0.77. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-S1 fixed (lone 0.8 %), W-S2 partly, W-S3 partly: the spiral is now on the stone ramp but a one-tone dark 2 px line with no lit lower lip, so it reads painted, not cut; bar 0.83 (W2-S1, W2-S3)."
  }
 }

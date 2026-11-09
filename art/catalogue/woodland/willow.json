@@ -65,6 +65,6 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T7 (blocker): an oak dome with straight vertical sides (52-58 rows within 1 px), strands 1-3 px straight vertical lines in a comb, no arching branches; bar 0.65, outline 18 %. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 2 (PR #446 head 487a1b91): W-T7 (the blocker) fixed: weeping dome 260 x 202, wider below, tapering swags of very different lengths, a short leaning trunk forking into limbs, outline closed. Still a fault: W-T1 partly (bar 0.84, 53.1 shapes); the swags are stacks of 1-texel vertical dashes, the cap carries the W2-F1 seam bands, and the limbs stop in flat cut tops under the swags (W2-T7). detail.light (139,105,163,138) rejected: the east limb of the fork, lit on its own west face. Scene: woodland_base.tscn still carries the pass-1 offset (-96,-287) for a 202 px picture, so the willow stands 85 px north of its foot, its trunk on the path and its ground shadow orphaned south of the path (W2-L1, logic-auditor)."
  }
 }
