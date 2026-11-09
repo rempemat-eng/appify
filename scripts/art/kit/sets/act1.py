@@ -2287,6 +2287,7 @@ def sluice(seed=143):
 
 
 SACK = [('earth_cool', 'sand_cool', 'sand'), ('earth_cool', 'sand_cool', 'sand_warm')]
+Q = 9                  # decimal places a transcendental result is rounded to before a threshold
 
 
 def _dressing(px, py, harps=9, pitch=4.4, R=26.0):
@@ -2295,13 +2296,16 @@ def _dressing(px, py, harps=9, pitch=4.4, R=26.0):
     from near the eye to the rim with three parallel furrows beside it, each starting further out
     (falling length), so the face reads as fans of parallels, not radial spokes; every furrow 2
     texels wide with a lit lip on its trailing side. Returns (furrow, lip)."""
-    th = np.arctan2(py, px) + math.pi
-    rho = np.hypot(px, py)
+    # numpy's transcendental functions differ by an ulp between CPUs (its AVX-512 and AVX2 paths),
+    # and a texel's centre can sit exactly on a furrow's edge, so every value is rounded (Q places)
+    # before it is compared: the same picture on every machine
+    th = np.round(np.arctan2(py, px) + math.pi, Q)
+    rho = np.round(np.hypot(px, py), Q)
     sec = 2 * math.pi / harps
-    j = np.floor(th / sec)
+    j = np.floor(np.round(th / sec, Q))
     lead = j * sec
-    d = rho * np.sin(th - lead)                                            # across the harp, from its master line
-    al = rho * np.cos(th - lead)                                           # along it
+    d = np.round(rho * np.sin(th - lead), Q)                               # across the harp, from its master line
+    al = np.round(rho * np.cos(th - lead), Q)                              # along it
     f = np.zeros(np.shape(px), bool)
     lip = np.zeros(np.shape(px), bool)
     for k in range(4):
