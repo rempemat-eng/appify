@@ -12,17 +12,15 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; Driftwood Harbour's brief (world-atlas.md)",
-  "note": "The beach running into the sea."
+  "note": "The beach running into the sea: wet shingle, swash, lit shallows; no face."
  },
  "transition": {
   "upper": "shingle",
   "lower": "water",
   "painter": {
    "module": "scripts.art.kit.edges",
-   "fn": "bank",
-   "args": {
-    "side_w": 3
-   }
+   "fn": "beach",
+   "args": {}
   },
   "variants": 1,
   "shape": "lower",
@@ -44,10 +42,8 @@
  "audit": {
   "painter": {
    "module": "scripts.art.kit.edges",
-   "fn": "bank",
-   "args": {
-    "side_w": 3
-   }
+   "fn": "beach",
+   "args": {}
   },
   "eastward_ref": "Eastward 12 (the stream's edge), crops 10-grass-dirt"
  }

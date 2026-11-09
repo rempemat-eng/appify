@@ -304,6 +304,76 @@ class WaterBanks(unittest.TestCase):
             else:
                 self.assertEqual(int(face.sum()), 0, side)
 
+    def test_a_quay_and_a_beach_are_their_own_shores(self):
+        # review round 9 of the Act 1 props (F9-1): the quay's and the shingle's edges over water were
+        # one picture, a turf bank. The quay ends in a dressed stone wall under its north edge, the
+        # beach shows no face anywhere and swashes at its rim; neither carries grass or earth codes
+        from scripts.art.native.palette import C, FI
+        fu = np.full((E.N, E.N), C('stone', 3))
+        fl = np.full((E.N, E.N), C('water', 2))
+        fams = lambda codes, names: np.isin(codes // 8, [FI[n] for n in names])  # noqa: E731
+        for k in (3, 5, 10, 12, 1, 14):
+            for fn in (E.quay_wall, E.beach):
+                t = fn(k, fu, fl)
+                ab = t[..., 1][t[..., 0] == E.OP_ABS]
+                self.assertFalse(fams(ab, ('grass', 'grass_cool', 'grass_warm', 'earth', 'earth_cool', 'earth_warm')).any(),
+                                 (fn.__name__, k))
+                if fn is E.beach:
+                    self.assertTrue(fams(ab, ('water',)).all(), ('a face on a beach', k))
+        t = E.quay_wall(3, fu, fl)
+        wall = (t[..., 0] == E.OP_ABS) & fams(t[..., 1], ('stone', 'stone_warm', 'stone_cool'))
+        self.assertGreaterEqual(int(np.median(wall.sum(0))), 7, 'the quay wall under a north edge')
+        a = B.load_ops(os.path.join(B.OUT, 'over_quay_over_water.png'))
+        b = B.load_ops(os.path.join(B.OUT, 'over_shingle_over_water.png'))
+        self.assertFalse(np.array_equal(a, b), 'the quay and the beach are one picture')
+        # the bake's painter: a quay to the north is a wall of stone, a beach no face, no turf on either
+        from scripts.art.native import softground as GD
+        H, W = 120, 192
+        m = np.zeros((H, W), bool)
+        m[48:, :] = True
+        cv = np.full((H, W), C('stone', 3))
+        cv[m] = C('water', 2)
+        quay = np.zeros((H, W), bool)
+        quay[:48, :96] = True
+        beach = np.zeros((H, W), bool)
+        beach[:48, 96:] = True
+        GD.water(cv, m, 402, bank_h=10, flow='auto', stones=0.0, quay=quay, beach=beach)
+        weed = np.zeros((H, W), bool)
+        weed[48 + GD.QUAY_H - 2:48 + GD.QUAY_H, :96] = True          # the wall's foot, its weed in clusters
+        self.assertFalse((fams(cv, ('grass', 'grass_cool', 'grass_warm', 'earth', 'earth_cool', 'earth_warm')) & ~weed).any(),
+                         'a turf bank on a quay or a beach')
+        face_q = fams(cv[48:48 + GD.QUAY_H, 8:88], ('stone', 'stone_warm', 'stone_cool', 'leaf_cool', 'grass_cool'))
+        self.assertTrue(face_q.all(), 'the quay wall')
+        self.assertTrue((cv[48, 104:184] == C('water', 5)).mean() > 0.9, 'the swash at the beach')
+        self.assertFalse(fams(cv[49:60, 104:184], ('stone', 'stone_warm', 'stone_cool')).any(), 'a face on the beach')
+
+    def test_spits_grow_only_off_a_beach(self):
+        # review round 9 (F9-2): a bend's spit of shingle grew off every corner, lawn and quay too,
+        # its outline stair-stepped; now only off a beach's corner, smooth on the soft grid
+        from scripts.art.kit import surface as SF
+        from scripts.art.native.palette import C, FI
+        cells = np.ones((8, 8), bool)
+        cells[0:4, 0:4] = False                     # land in the north-west quarter: a bend round its corner
+        wm = SF.texels(cells)
+        cls = np.where(cells, 6, 0)
+        sand = lambda cv: np.isin(cv // 8, [FI['sand'], FI['sand_cool']])  # noqa: E731
+        for ok in (None, np.zeros_like(cells)):
+            cv = np.where(wm, C('water', 2), C('grass', 3))
+            SF.water_widths(cv, wm, cells, cls, 7, spit_ok=ok)
+            self.assertFalse(sand(cv).any(), 'a spit off a corner that is not a beach')
+        ok = np.zeros_like(cells)
+        ok[3, 3] = True
+        cv = np.where(wm, C('water', 2), C('grass', 3))
+        SF.water_widths(cv, wm, cells, cls, 7, spit_ok=ok)
+        bar = sand(cv) | (np.isin(cv // 8, [FI['stone'], FI['stone_cool'], FI['stone_warm']]) & wm)
+        self.assertGreater(int(bar.sum()), 100, 'the beach grows its spit')
+        # its outline: no one-texel spur or bite (softedge.soft's opening and closing leave it as it is)
+        CROSS = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+        from scipy import ndimage as ndi
+        off = ndi.distance_transform_edt(wm) > 2                    # away from where the land cuts it
+        self.assertEqual(int((bar & ~ndi.binary_opening(bar, structure=CROSS) & off).sum()), 0)
+        self.assertEqual(int((ndi.binary_closing(bar, structure=CROSS) & ~bar & off).sum()), 0)
+
     def test_current_marks_run_with_the_flow(self):
         # the woodland review (4 Nov): on a wide east-flowing stream the moving water drew vertical
         # marks drifting south, and the ground a four-armed cross sparkle. Marks lie along the flow

@@ -348,7 +348,7 @@
     96
    ],
    "face": null,
-   "hash": "6107631697c776f4"
+   "hash": "09d0cace1a8f97e7"
   },
   {
    "id": "path",
@@ -365,7 +365,7 @@
     96
    ],
    "face": null,
-   "hash": "5f672bcd089da500"
+   "hash": "6f82b74eb876b77f"
   },
   {
    "id": "cobble_road",
@@ -382,7 +382,7 @@
     96
    ],
    "face": null,
-   "hash": "96e8f8138e550fbb"
+   "hash": "f2d285c9039c4aad"
   },
   {
    "id": "water",
@@ -403,7 +403,7 @@
     96
    ],
    "face": null,
-   "hash": "416fad28d1706500"
+   "hash": "f0bdb549ec060ad3"
   },
   {
    "id": "scree",
@@ -420,7 +420,7 @@
     96
    ],
    "face": null,
-   "hash": "61e1a908001a33a7"
+   "hash": "662832a21c71ace5"
   },
   {
    "id": "worn",
@@ -437,7 +437,7 @@
     96
    ],
    "face": null,
-   "hash": "d8ab3a29eb7db423"
+   "hash": "13fa86912bce3fe9"
   },
   {
    "id": "earth_face",
@@ -457,7 +457,7 @@
     "height_cells": 2,
     "strip_px": 48
    },
-   "hash": "ffeed5b1294ca68f"
+   "hash": "8972275190eee8b8"
   },
   {
    "id": "heath",
@@ -474,7 +474,7 @@
     96
    ],
    "face": null,
-   "hash": "38d3bd43aec4b323"
+   "hash": "d11c4f145b5d1cd4"
   },
   {
    "id": "peat",
@@ -491,7 +491,7 @@
     96
    ],
    "face": null,
-   "hash": "0ba321ee6cec55a0"
+   "hash": "619ea99d33c869c1"
   },
   {
    "id": "drove",
@@ -508,7 +508,7 @@
     96
    ],
    "face": null,
-   "hash": "f4ef94bfbeb07b92"
+   "hash": "ca7dccf95161dc6a"
   },
   {
    "id": "shingle",
@@ -525,7 +525,7 @@
     96
    ],
    "face": null,
-   "hash": "b07515467355bcad"
+   "hash": "5771a3a8018a1d4b"
   },
   {
    "id": "quay",
@@ -542,7 +542,7 @@
     96
    ],
    "face": null,
-   "hash": "976288059285a1d4"
+   "hash": "fa52f078a2556053"
   }
  ],
  "transitions": [
@@ -568,7 +568,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "f3406d062aafec39"
+   "hash": "f24e6801d4366057"
   },
   {
    "id": "heath_over_drove",
@@ -598,7 +598,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "15d496a00cffc8c3"
+   "hash": "4ed2bc248841b693"
   },
   {
    "id": "heath_over_path",
@@ -628,7 +628,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "49597545144e309b"
+   "hash": "5f8bfdd44c678e7c"
   },
   {
    "id": "heath_over_peat",
@@ -638,7 +638,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "06ac5a880fb920a2"
+   "hash": "29f9632ffb2cfd2e"
   },
   {
    "id": "heath_over_worn",
@@ -668,7 +668,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "e9227e26185e94d2"
+   "hash": "f3b007cb0166f372"
   },
   {
    "id": "lawn_over_earth_face",
@@ -678,7 +678,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "04251f616bfaf210"
+   "hash": "1ddc29892f48eea1"
   },
   {
    "id": "lawn_over_heath",
@@ -688,7 +688,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "49ba708e3a856e71"
+   "hash": "edef64da84e30cfc"
   },
   {
    "id": "lawn_over_lower_tier",
@@ -698,7 +698,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "3ab4805f29ab8b81"
+   "hash": "2024bda2bf61d11a"
   },
   {
    "id": "lawn_over_path",
@@ -733,7 +733,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "e9d645053b86e218"
+   "hash": "506d9ce7b0a3cc14"
   },
   {
    "id": "lawn_over_quay",
@@ -759,7 +759,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "fa005ddc83544ded"
+   "hash": "58f793c32e821a33"
   },
   {
    "id": "lawn_over_scree",
@@ -789,7 +789,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "6bf7b6d7e73b4b6c"
+   "hash": "e79fb61da3f7565c"
   },
   {
    "id": "lawn_over_shingle",
@@ -815,7 +815,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "378d1c0674532a3b"
+   "hash": "bcbc033759deafd7"
   },
   {
    "id": "lawn_over_water",
@@ -846,7 +846,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "9971ec069f20a399"
+   "hash": "90f1ab43ca63e626"
   },
   {
    "id": "lawn_over_worn",
@@ -881,7 +881,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "caf67a311d938dfd"
+   "hash": "b33f87d89a397373"
   },
   {
    "id": "path_over_drove",
@@ -891,7 +891,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "336313c8afa95ffd"
+   "hash": "865064bd6ac8bc69"
   },
   {
    "id": "path_over_earth_face",
@@ -901,7 +901,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "513b9da721516759"
+   "hash": "f3b1622ca76aba10"
   },
   {
    "id": "path_over_lower_tier",
@@ -911,7 +911,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "11756814a72f8d66"
+   "hash": "866d78a32b585a3f"
   },
   {
    "id": "path_over_quay",
@@ -921,7 +921,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "b57e3f66e9747dda"
+   "hash": "d414b560a7ebfbc7"
   },
   {
    "id": "path_over_water",
@@ -944,7 +944,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "0a6d54513410c11a"
+   "hash": "5ba8c4b5ac4a741b"
   },
   {
    "id": "quay_over_water",
@@ -952,22 +952,9 @@
    "lower": "water",
    "png": "over_quay_over_water.png",
    "variants": 1,
-   "dressing": {
-    "density": 0.4,
-    "south": [
-     "pebble_0",
-     "pebble_2"
-    ],
-    "north": [
-     "pebble_1",
-     "pebble_3"
-    ],
-    "side": [
-     "pebble_2"
-    ]
-   },
+   "dressing": null,
    "approval": "candidate",
-   "hash": "08901b1cf21829fe"
+   "hash": "d580c3ae7a584061"
   },
   {
    "id": "shingle_over_quay",
@@ -977,7 +964,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "21d6024e3084cbfa"
+   "hash": "3fd1c0ca37a2e129"
   },
   {
    "id": "shingle_over_water",
@@ -1000,7 +987,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "6efca077b159a2fd"
+   "hash": "869946ecca42e33d"
   },
   {
    "id": "water_over_earth_face",
@@ -1010,7 +997,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "34dc1663c2574707"
+   "hash": "545905c62545898d"
   },
   {
    "id": "worn_over_drove",
@@ -1020,7 +1007,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "a303caae99c85012"
+   "hash": "c767358a8b21513d"
   },
   {
    "id": "worn_over_path",
@@ -1030,7 +1017,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "6db1f0d924858bca"
+   "hash": "60fd7d0fdac152eb"
   }
  ]
 }

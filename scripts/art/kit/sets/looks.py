@@ -10,10 +10,11 @@ can cast each one's volume shadow (scripts/art/native/volume.house_cast) without
 MILL_SPEC = dict(w=104, depth=56, wall_h=76, roof_h=40, wall='stone', roof='slate', paint='timber', doors=[[18, 'timber']],
                  door_w=22, door_h=32, windows=[44], win_w=12, win_h=12, win_top=34, shutters=False,
                  # round 6 of the detail audit (R6-5, R6-6): a calm slate draw with the lowest third a tone
-                 # darker, no moss stuck mid-slate (the mill lays its own cushions in the joints), a deep
-                 # eave shadow (houses.eave_shadow's depth, 8 world px), and a stove chimney to break the
-                 # roof's field
-                 slate_calm=True, eave_dark=True, roof_moss=0, roof_lichen=0, eave_shadow=8.0, chimney=[88], chimney_w=7, chimney_h=12)
+                 # darker, no moss stuck mid-slate (the mill lays its own cushions in the joints) and a
+                 # stove chimney to break the roof's field. Its eave shadow is the slate's own band
+                 # (volume.eave_band, 16 art px; Claude A on round 9's P9-1: Eastward's slate eaves are
+                 # E 10 to 12, so the 8 world px band R6-6 asked for was the deepest front studied)
+                 slate_calm=True, eave_dark=True, roof_moss=0, roof_lichen=0, chimney=[88], chimney_w=7, chimney_h=12)
 
 # {piece id: look}: the piece's picture stands on the look's foot (the middle of its front foot line)
 VOLUME_LOOKS = {

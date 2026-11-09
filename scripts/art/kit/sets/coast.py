@@ -9,8 +9,9 @@ so no zone's bake hash moves and no post-pass is needed:
   hard-standing, not a route (kit_rules holds routes back from water unless a deck spans it, and a
   quay meets the water by design).
 
-Their transitions: lawn over shingle and over quay (the turf's lip), shingle and quay over water (a
-bank), path over quay and shingle over quay (plain).
+Their transitions: lawn over shingle and over quay (the turf's lip), shingle over water (a beach:
+edges.beach) and quay over water (a quay wall: edges.quay_wall), path over quay and shingle over
+quay (plain).
 
 **The dressing** (`dress`, as the moor's is: a post-pass over a bake, used by the Act 1 study; a real
 zone needs a bake hook, which moves every bake hash, so it waits for the next baked-zone regeneration):
@@ -87,8 +88,11 @@ def pieces():
     tr = [
         _transition('lawn', 'shingle', 'sunken', {'fray': True}, LIP, 'The turf\'s lip over the beach.'),
         _transition('lawn', 'quay', 'sunken', {'fray': True}, LIP, 'The turf meeting the quay\'s setts.'),
-        _transition('shingle', 'water', 'bank', {'side_w': 3}, WET, 'The beach running into the sea.'),
-        _transition('quay', 'water', 'bank', {'side_w': 3}, WET, 'The quay\'s edge over the water.'),
+        # (review round 9, F9-1) each shore its own material: the beach shelves into the sea with a
+        # wet band and swash, the quay ends in a dressed wall; never the lawn's turf bank
+        _transition('shingle', 'water', 'beach', None, WET, 'The beach running into the sea: wet shingle, swash, lit shallows; no face.'),
+        _transition('quay', 'water', 'quay_wall', None, None,
+                    'The quay\'s edge over the water: a dressed wall under a lit coping, a wet foot with weed.'),
         _transition('path', 'quay', 'plain', None, None, 'A path joining the quay.'),
         _transition('shingle', 'quay', 'plain', None, None, 'Shingle washed against the quay\'s foot.'),
     ]
@@ -313,10 +317,12 @@ def quay_wall(cv, beach_cells, quay_cells, face=11, seed=1507):
     K.rpaint(cv, foot & (K.vhash(Xg // 3, Yg, seed + 2) > 0.3), [('earth_cool', 'sand_cool', 'sand')], 1.0, 0.0)
 
 
-def dress(plan, img_with, img_without):
+def dress(plan, img_with, img_without, water=None):
     """The coast's ground over a baked plan (img_with: the bake; img_without: the bake with no pieces,
     whose difference is the pieces' shadows): setts on the quay, shingle on the beach, inside the
-    bake's lips; the shadows kept. Returns an RGBA image."""
+    bake's lips; the shadows kept. `water` is the bake's water outline (bake.water_outline): the
+    dressing keeps 2 texels off it, so the bake's shores (the quay's coping and wall, the beach's
+    wet edge and swash; review round 9, F9-1) stay as the bake drew them. Returns an RGBA image."""
     from scripts.art.native.palette import to_rgba
     from scripts.art.kit.sets import _common as K
     rows = plan['rows']
@@ -331,12 +337,16 @@ def dress(plan, img_with, img_without):
     cv = np.full((h, w), -1, np.int32)
     quay = ndi.binary_erosion(mp == 'quay', iterations=3)
     beach = ndi.binary_erosion(mp == 'shingle', iterations=3)
+    shore = np.zeros((h, w), bool) if water is None else ndi.binary_dilation(water[:h, :w], iterations=2)
+    quay &= ~shore
+    beach &= ~shore
     if (plan.get('dress') or {}).get('quay') == 'flags':
         setts(cv, quay, w=26, h=14, irregular=True)     # a platform's flags, laid irregularly
     else:
         setts(cv, quay, w=9, h=7)                       # squarer setts (R3-12)
     shingle(cv, beach)
     quay_wall(cv, mp == 'shingle', mp == 'quay')
+    cv[shore] = -1
     rgba = to_rgba(cv)
     m = (cv >= 0) & ~shadow
     base[m] = rgba[m]

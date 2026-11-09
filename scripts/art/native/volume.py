@@ -166,18 +166,13 @@ def _shift(m, dy, dx):
 # ------------------------------------------------------------------------------------------------
 # on the front
 # ------------------------------------------------------------------------------------------------
-def eave_band(a, L, R, y_top, roof, rng, depth=None):
+def eave_band(a, L, R, y_top, roof, rng):
     """11.1: the shadow the eave throws on the wall under it. y_top is the first wall row under the
     fascia, gutter or thatch. A soffit row, the core at the measured drop, then a fade to a lower
     edge broken by the courses (or by the thatch's fringe of straw) and leaning down to the east:
-    3 to 4 E px under a slate eave, 13 to 15 under thatch. depth (world px) scales the roof's core
-    and fade together to that total (a look that asks for a deeper eave: the Act 1 mill's 8); None
-    keeps the roof's own. Returns the band's mask."""
+    3 to 4 E px under a slate eave, 13 to 15 under thatch. Returns the band's mask."""
     q = _V().q
     e = EAVE.get(roof, EAVE['slate'])
-    if depth is not None:
-        k = depth / (e['core'] + e['fade'])
-        e = dict(e, core=e['core'] * k, fade=e['fade'] * k)
     Y, X = _grid(a)
     inw = (X >= L) & (X < R)
     core = q(e['core'])

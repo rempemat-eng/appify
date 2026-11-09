@@ -62,13 +62,15 @@ def coast() -> dict:
 
 
 def valley() -> dict:
-    W, H = 44, 30
+    # 47 cells wide: the mill's east wall stands at x 1055, and three cells east of it (72 art px)
+    # take its volume shadow's column, 53 to 67 art px wide (round 9 of the detail audit, C9-2)
+    W, H = 47, 30
     g = np.full((H, W), ',', '<U1')
     g[5:11, 2:19] = 'q'                                     # the platform's surface, stone (the coast's quay setts), its edge to its east end
     g[13:15, 0:25] = '#'                                    # the lane, ending short of the leat
     g[11:13, 3:5] = '#'                                     # the path up onto the platform
     g[0:20, 26:29] = '~'                                    # the leat (the Millrace), from its sluice
-    g[18:20, 26:44] = '~'                                   # turning east into the mill's race, out under the study's edge
+    g[18:20, 26:W] = '~'                                    # turning east into the mill's race, out under the study's edge
     tiers = np.zeros((H, W), int)
     tiers[0:12, 20:26] = 1                                  # a low earth bank between halt and leat (one step, LOW_FACE_PX)
     g[25:30, 30:32] = '#'                                   # the yard's track to the south
@@ -351,11 +353,15 @@ def race_coping(img, p, seed=341):
 
 
 def race_shade(before, after, p):
-    """A building's cast shadow over the race (round 7 of the detail audit, R7-1): the bake shades
-    only walkable ground, so the race's water and its copings and crossing (painted by race_coping)
-    are stepped a tone down wherever the building's own shadow mask falls (the mask the zone draws,
-    props.volume_shadow), and the shadow runs as one shape from the wall's foot across the race
-    onto the lawn."""
+    """A building's cast shadow over what the bake does not shade (round 7 of the detail audit, R7-1):
+    the bake shades only walkable ground, so wherever a building's own shadow mask (the mask the zone
+    draws, props.volume_shadow) falls on the race's water or on what race_coping painted (the
+    copings and the crossing), that texel is stepped a tone down. A volume mask runs east of the
+    building and ends at its foot line, never south of it (eastward-edges 11.6), so in the valley
+    study it reaches no race water and no lawn south of the race: it steps only the crossing's tops
+    and the north coping along the mill's foot (rows 426 to 431, 424 texels), all but 4 of them
+    under the mill's own picture (round 9's logic note). The lawn under the shadow's column is the
+    bake's own shading."""
     from scripts.art.kit import compose as CO
     from scripts.art.native.palette import LUT, FI
     idx = CO.piece_index()
@@ -429,7 +435,7 @@ def render(p) -> Image.Image:
     if any('q' in r or 's' in r for r in p['rows']) and 'quay' in p['legend'].values():
         plain, _ = BK.bake(dict(qw, pieces=[]), lib)
         plain = plain.crop((0, 0, Wpx, plain.height))
-        img = CS.dress(q, ground, plain).convert('RGBA')
+        img = CS.dress(q, ground, plain, water=BK.water_outline(qw)[:, :Wpx]).convert('RGBA')
     if tiers:
         img = low_bank(img, p)
     if p.get('race'):

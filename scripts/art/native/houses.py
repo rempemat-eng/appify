@@ -708,18 +708,17 @@ def fascia_gutter(a, rx0, rx1, y_e, rng, gutter=True):
     return gy + gh
 
 
-def eave_shadow(a, L, R, y_top, rng, roof='slate', depth=None):
+def eave_shadow(a, L, R, y_top, rng, roof='slate'):
     """The shadow the eave throws on the wall below it (volume.eave_band, eastward-edges 11.1): a
     soffit row, a core two tones down, a softer band one tone down with a broken edge leaning down
-    to the east. Its breaks draw from their own generator; the house's draws the same numbers as
-    before, so everything painted after the band (stacks, signs, weeds) stays as it was. depth
-    (world px, a look's `eave_shadow`) scales the band to that depth; None keeps the roof's own."""
+    to the east, at the roof's own depth. Its breaks draw from their own generator; the house's
+    draws the same numbers as before, so everything painted after the band (stacks, signs, weeds)
+    stays as it was."""
     x = L
     while x < R:
         x += int(rng.integers(4, 12))
         rng.integers(-2, 3)
-    return VO.eave_band(a, L, R, y_top, roof, np.random.default_rng((L * 7919 + R * 104729 + y_top) & 0xffffffff),
-                        depth=depth)
+    return VO.eave_band(a, L, R, y_top, roof, np.random.default_rng((L * 7919 + R * 104729 + y_top) & 0xffffffff))
 
 
 def chimney(a, rm, x0, x1, y_top, y_bot, rng, wide=False, soot=1.0, fam=STONES):
@@ -1498,7 +1497,7 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         else:
             verges(a, rx0, rx1, y_r, y_eave, rng)
         gb = fascia_gutter(a, rx0, rx1, y_eave, rng, gutter=True)
-        eave_shadow(a, L, R, gb, rng, roof=roof, depth=spec.get('eave_shadow'))
+        eave_shadow(a, L, R, gb, rng, roof=roof)
         info['eave_top'] = gb
         # a downpipe on the end of the front with the most clear wall
         cands = [(L + q(1.2), min([abs(L + q(1.2) - (b0 + b1) / 2) - (b1 - b0) / 2 for (b0, b1) in busy] or [99])),

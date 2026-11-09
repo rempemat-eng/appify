@@ -1,7 +1,7 @@
 {
  "id": "act1/mill_wheel",
  "file": "game/kit/props/art/act1/mill_wheel.png",
- "sha256": "973c56683939b5699dbc04135215976a87606520fff35e823d212db4daaf65c0",
+ "sha256": "4a12f6fd84ee340f047c369a9095c3645c7029343e5f30047af4576f304d8f78",
  "kind": "mill_wheel",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 340,
-   "tones": 24.76764705882353,
-   "shapes": 43.44117647058823
+   "tones": 24.735294117647058,
+   "shapes": 43.48529411764706
   },
   "band": {
    "tones": 27.0,
@@ -29,7 +29,7 @@
    "patches": 83
   },
   "ratio": 0.863,
-  "tones_ratio": 0.917,
+  "tones_ratio": 0.916,
   "shapes_ratio": 0.863,
   "passed": false,
   "group": "prop"
@@ -104,7 +104,7 @@
     334,
     419
    ],
-   "message": "act1/mill_wheel: detail bar 0.86 of Eastward's prop band (24.8 tones, 43.4 shapes a patch against 27.0, 50.36)",
+   "message": "act1/mill_wheel: detail bar 0.86 of Eastward's prop band (24.7 tones, 43.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -116,15 +116,14 @@
     334,
     419
    ],
-   "message": "act1/mill_wheel: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 44%, for information: the verdict is on this grid)",
+   "message": "act1/mill_wheel: 44% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 45%, for information: the verdict is on this grid)",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-09",
-  "note": "Round 9 (the merge of main into #435, 8e650355) of docs/reviews/2026-11-04-act1-props.md. Changed by #436's per-roof eave band at the look's depth 8.0 and its house volume pass (3,674 px): soffit row 182 (45 L), a flat core of 8 rows (183 to 190; stone faces 67 L against the lit wall's 113 to 136, 41 to 51 % darker), a fade to row 205 to 209 (97 L, 14 to 29 %) with a broken edge, about 25 art px (8.3 world px) in all; timber keeps its modelling; the foot band (rows 378 to 385) and the east corner turned per 11.3 and 11.4. Bar 0.86 (0.87 before) and noise 44 % (phases reported) accepted as polish. Five detail.light findings rejected as in round 8 (the wheel's pale timber and white water over stone; the hoist door's lit east reveal; the sacks; the box at (251,360,296,383) is the wheel's own shade on the wall behind its west spokes plus the new foot band). The loop: frame 0 is the still, the wrap 10,090 against 9,972 to 10,264, and outside the wheel's box every frame changed exactly as the still. Open polish P9-1: the band is about 26 art px (E 19) deep, beyond Eastward's deepest eave (thatch, E 13 to 15); Claude A's call whether the mill keeps depth 8.0."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
