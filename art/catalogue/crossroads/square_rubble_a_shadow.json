@@ -1,14 +1,14 @@
 {
  "id": "crossroads/square_rubble_a_shadow",
  "file": "game/zones/crossroads/art/square_rubble_a_shadow.png",
- "sha256": "c27c9229745ee04ed121466c2fd1c93bd3de1c3477d3c17727c1777701af0cf7",
+ "sha256": "379766bb667bdf944d798aa50eb96664b8b45672132bafdbbc76b93a4f44cc07",
  "kind": "square_rubble_a_shadow",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  113,
-  16
+  108,
+  15
  ],
  "status": "pass",
  "counts": {
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

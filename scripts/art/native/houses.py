@@ -1896,8 +1896,8 @@ def smoke_column(p, rng):
     thins as it climbs. Billows of round puffs grow to about twice their size towards the top and
     the upper third leans east on the air; each puff is lit on its upper west cap, with a darker
     sooty core and underside, dense and dark low in the column, paler higher up. Smoke has no ink
-    outline and is not opaque: its rims and its upper part let the ground through (alpha, and a
-    checker of gaps at the very edge and the top), and torn wisps trail off east and fade. A still
+    outline and is not opaque: its rims and its upper part let the ground through (partial alpha,
+    thinning in bands up the plume; no dither), and torn wisps trail off east and fade. A still
     picture: nothing in it moves, so there is nothing to stop for reduced motion."""
     s = SoftPic(p.W, p.H, p.ax, p.ay)
     a, cx, yb = s.a, s.ax, s.ay
@@ -1949,12 +1949,16 @@ def smoke_column(p, rng):
             op[wm] = 0.45 * (1 - i_ / 7)
     V.tidy(a)
     alive = a >= 0
-    # a checker of gaps at the very edge and through the top, so the ground shows through
+    # the ground shows through the rims and the top by real partial alpha, never a dither (house-style
+    # 4 allows a checker only on ground; the 8 Nov audit): the rim a step thinner, and the upper plume
+    # thinning on up in bands of a few texels, so each puff keeps its lit cap and shaded underside
     edge = alive & ~ndi.binary_erosion(alive, iterations=2)
-    top = alive & (Y < yb - q(2.2 + (n - 1) * 3.7 * 0.72))
-    chk = ((X.astype(int) + Y.astype(int)) % 2 == 0)
-    a[(edge | top) & chk & (op < 0.75)] = -1
-    alive = a >= 0
+    y_top = yb - q(2.2 + (n - 1) * 3.7 * 0.72)
+    y_end = yb - q(2.2 + (n - 1) * 3.7) - q(2.6 + 2.6)
+    fade = np.clip((Y - y_end) / max(1.0, y_top - y_end), 0.0, 1.0)
+    fade = np.floor(fade * 4) / 4.0                                         # in bands, not a smooth gradient
+    op = np.where(alive & (Y < y_top), op * (0.55 + 0.45 * fade), op)
+    op = np.where(edge & (op < 0.75), op * 0.8, op)
     s.op[:] = np.clip(op * 255, 0, 255).astype(np.uint8)
     s.op[alive & (s.op < 60)] = 60
     return s

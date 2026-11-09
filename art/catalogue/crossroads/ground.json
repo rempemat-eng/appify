@@ -1,7 +1,7 @@
 {
  "id": "crossroads/ground",
  "file": "game/zones/crossroads/art/ground.png",
- "sha256": "77d7d310ddedb08f7951e22e932c7d6db56421c5456ccc28c2c2a584c02f02b2",
+ "sha256": "5a5e418c19a22f6299ac582189be909168552bd62c62b92c8f1a625ab1e673e4",
  "kind": "ground",
  "biome": "valley",
  "H": 74.0,
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

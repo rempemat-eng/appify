@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy_rubble",
  "file": "game/zones/crossroads/art/smithy_rubble.png",
- "sha256": "73a1fbaf4b686b0b58a8791b574b877be26b19650aecaa256d189d2377e2d459",
+ "sha256": "97edfdb5d9f1630fd985de6b0021953a501b9081a84e4075bafe742c1d509caa",
  "kind": "pile",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 8,
-   "tones": 22.625,
-   "shapes": 29.625
+   "patches": 9,
+   "tones": 28.333333333333332,
+   "shapes": 41.55555555555556
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.588,
-  "tones_ratio": 0.838,
-  "shapes_ratio": 0.588,
+  "ratio": 0.825,
+  "tones_ratio": 1.049,
+  "shapes_ratio": 0.825,
   "passed": false,
   "group": "prop"
  },
@@ -39,32 +39,31 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    60,
-    39,
-    120,
-    91
+    58,
+    58,
+    121,
+    90
    ],
-   "message": "crossroads/smithy_rubble: the stone is lit from the right (luminance rises 8 L per H to the east)",
+   "message": "crossroads/smithy_rubble: the stone is lit from the right (luminance rises 10 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    0,
-    36,
+    6,
+    37,
     121,
     93
    ],
-   "message": "crossroads/smithy_rubble: detail bar 0.59 of Eastward's prop band (22.6 tones, 29.6 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy_rubble: detail bar 0.82 of Eastward's prop band (28.3 tones, 41.6 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-08",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Same stone build as fern_rubble (identical chamfered blocks in three flat planes, flat slate bars). Its lower-left beam and slate are cut by the picture's left edge (8 opaque texels on column 0). Same fix as fern_rubble; keep every piece inside the frame. Rejected detector finding: detail.light (the slate on the east)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

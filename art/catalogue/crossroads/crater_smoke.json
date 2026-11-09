@@ -1,7 +1,7 @@
 {
  "id": "crossroads/crater_smoke",
  "file": "game/zones/crossroads/art/crater_smoke.png",
- "sha256": "328545078f7b166eb454b68643c3cfdec73ae9aa619431caa81f6be64e97338f",
+ "sha256": "370603c812cf697b618e6d346d98fdce1ab45ef96d5c0c7894bd5d882e8a2318",
  "kind": "crater_smoke",
  "biome": "valley",
  "H": 74.0,
@@ -20,7 +20,7 @@
   "ours": {
    "patches": 5,
    "tones": 15.0,
-   "shapes": 34.8
+   "shapes": 36.8
   },
   "band": {
    "tones": 27.0,
@@ -30,7 +30,7 @@
   },
   "ratio": 0.556,
   "tones_ratio": 0.556,
-  "shapes_ratio": 0.691,
+  "shapes_ratio": 0.731,
   "passed": false,
   "group": "prop"
  },
@@ -40,11 +40,11 @@
    "severity": "polish",
    "box": [
     116,
-    101,
-    163,
+    112,
+    158,
     204
    ],
-   "message": "crossroads/crater_smoke: detail bar 0.56 of Eastward's prop band (15.0 tones, 34.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/crater_smoke: detail bar 0.56 of Eastward's prop band (15.0 tones, 36.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -52,19 +52,18 @@
    "severity": "polish",
    "box": [
     116,
-    101,
-    163,
+    112,
+    158,
     204
    ],
-   "message": "crossroads/crater_smoke: only 6% of the silhouette is drawn in an edge tone",
+   "message": "crossroads/crater_smoke: only 12% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-11-08",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. The upper half of the plume is a 1-texel alpha checker (1,615 of 2,804 opaque texels), the same dither as square_puddles; house-style 4 allows dither only on ground as the 2x2 checker, never on a sprite, and at 1x it turns to grey mush. Fix: fade with fewer, smaller, lighter detached puffs, or a real partial alpha on the whole upper plume. The lower puffs (lit caps, shaded lower right) pass. Rejected detector finding: detail.outline (smoke takes no outline, house-style 2)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

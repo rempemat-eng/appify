@@ -1,7 +1,7 @@
 {
  "id": "crossroads/hay_20",
  "file": "game/zones/crossroads/art/hay_20.png",
- "sha256": "9a888384ec7d1a7cac5d2d5328e3a08c982b844e34abc9e98bfb136b39a54499",
+ "sha256": "e4a9df688242592171d7283e9f0af88e973a1342e4b3ccee8f1d6d4bc83a5aab",
  "kind": "haystack",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 8,
-   "tones": 20.5,
-   "shapes": 38.25
+   "tones": 14.875,
+   "shapes": 30.5
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.759,
-  "tones_ratio": 0.759,
-  "shapes_ratio": 0.76,
+  "ratio": 0.551,
+  "tones_ratio": 0.551,
+  "shapes_ratio": 0.606,
   "passed": false,
   "group": "prop"
  },
@@ -41,18 +41,17 @@
    "box": [
     5,
     7,
-    66,
-    63
+    61,
+    64
    ],
-   "message": "crossroads/hay_20: detail bar 0.76 of Eastward's prop band (20.5 tones, 38.2 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/hay_20: detail bar 0.55 of Eastward's prop band (14.9 tones, 30.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-08",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. As hay_19 (same build)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
