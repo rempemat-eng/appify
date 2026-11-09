@@ -1,0 +1,133 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "halt_platform_lamp",
+ "name": "Platform lamp",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/halt_platform_lamp.png",
+   "foot": [
+    10,
+    135
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A green column on a fluted foot, a ladder bar, a lantern of two panes lit from inside (8 frames), a domed cap."
+ },
+ "geometry": {
+  "size_px": [
+   20,
+   138
+  ],
+  "size_cells": [
+   1,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 138,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -1.5,
+    -1.5,
+    3,
+    3
+   ]
+  },
+  "foot": [
+   10,
+   135
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "light",
+  "role": "lamp",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 5,
+    "note": "along the platform, lighting the way from the lane to the train"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    6,
+    2
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true,
+  "animations": [
+   {
+    "clip": "flicker",
+    "loop": true,
+    "frames": 8,
+    "fps": 6.0,
+    "strip": "res://kit/props/art/act1/halt_platform_lamp_loop.png",
+    "frame_px": [
+     20,
+     138
+    ],
+    "reduced_motion": "hold:0",
+    "on_screen_only": true
+   }
+  ]
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "platform_lamp (a platform lamp 2.9 m; art px: 107 to 178 tall, 15 to 28 wide)",
+  "eastward_ref": "13 (the lamp post 375,20,415,125), 17 (the churns 135,47,162,112 and the bench), the anchors kit/lantern and kit/bench",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "halt_platform_lamp",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

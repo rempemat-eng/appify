@@ -327,10 +327,20 @@ def fall_run_in(wm: np.ndarray, x0: int, sw: int, rim: int, foot: int | None = N
     return out
 
 
-def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.ndarray, seed: int, avoid=None) -> list:
+def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.ndarray, seed: int, avoid=None,
+                 spit_ok=None, stoneless=None) -> list:
     """Stones standing in a stream; shingle on the inside of a river's bends and a scoured deep
     channel on the outside; broad shallows and swell lines along a wide river's or lake's shore.
-    Returns sprites (stones) to lay into the ground."""
+    Returns sprites (stones) to lay into the ground. No stream stone stands against a land cell in
+    `stoneless` (a quay's: its wall runs clean into the water).
+
+    A bend's spit of shingle grows only off a land cell in `spit_ok` (cells: a beach's; review
+    round 9 of the Act 1 props, F9-2: a lawn's or a quay's corner grows none; None, none at all).
+    Its outline is a smooth curve on the soft grid (softedge.soft) with a texel of wet shingle round
+    it and a lit shallow band 2 to 3 texels wide in the water outside. The scour lies only where
+    water runs past the bend's far side within reach of a bank (a river's bend; a corner standing
+    in open water, a jetty's, scours nothing), and it fades out at both ends instead of stopping on
+    the quadrant's straight lines (the square of dither beside the coast study's buoys)."""
     from scripts.art.native import ctx
     from scripts.art.native import props as P4
     H, W = cv.shape
@@ -346,7 +356,8 @@ def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.nda
         for x in range(Cc):
             if cls[y, x] == 2:
                 for dx, f in ((-1, 0.3), (1, 0.7)):
-                    if 0 <= x + dx < Cc and not wcells[y, x + dx] and wcells[max(0, y - 2):y + 3, x].all():
+                    if 0 <= x + dx < Cc and not wcells[y, x + dx] and wcells[max(0, y - 2):y + 3, x].all() and \
+                            not (stoneless is not None and stoneless[y, x + dx]):
                         banks.append((y, x, f))
     if avoid is not None:
         banks = [b for b in banks if not avoid[max(0, b[0] - 1):b[0] + 4, b[1]].any()]
@@ -391,19 +402,34 @@ def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.nda
                 # the bend's inner corner at the shared vertex
                 vx, vy = (x + (dx > 0)) * CELL, (y + (dy > 0)) * CELL
                 d = np.hypot(xx - vx, yy - vy)
-                # a rounded bar lying along the inside of the bend, off its corner into the water
-                bx, by = vx + dx * 3, vy + dy * 3
-                e = ((xx - bx) * 0.7071 * (dx * dy) + (yy - by) * 0.7071) ** 2 / 7.0 ** 2 + \
-                    ((xx - bx) * 0.7071 - (yy - by) * 0.7071 * (dx * dy)) ** 2 / 19.0 ** 2
-                bar = wm & (e + (GD.nz(H, W, 5.0, seed + x * 7 + y) - 0.5) * 0.6 < 1.0)
-                cv[bar] = C('sand_cool', 3)
-                cv[bar & (GD.nz(H, W, 2.2, seed + 3) > 0.55)] = C('stone', 3)
-                cv[bar & (GD.nz(H, W, 2.2, seed + 5) > 0.7)] = C('stone_cool', 2)
-                cv[bar & (GD.nz(H, W, 2.2, seed + 4) > 0.75)] = C('stone_warm', 4)
-                edge = bar & ~ndi.binary_erosion(bar, iterations=1)
-                cv[edge] = C('water', 4)
-                far = wm & (d > 34) & (d < 58) & ((xx - vx) * dx > 0) & ((yy - vy) * dy > 0) & ~bar
-                sc = far & ((xx + yy) % 2 == 0) & (d > 40) & (d < 52)
+                bar = np.zeros((H, W), bool)
+                if spit_ok is not None and spit_ok[y, x]:
+                    # a rounded bar lying along the inside of the bend, off its corner into the
+                    # water: its outline smooth on the soft grid, one texel of wet shingle round it,
+                    # then lit shallows 2 to 3 texels wide
+                    from scripts.art.native import softedge as SE
+                    bx, by = vx + dx * 3, vy + dy * 3
+                    e = ((xx - bx) * 0.7071 * (dx * dy) + (yy - by) * 0.7071) ** 2 / 7.0 ** 2 + \
+                        ((xx - bx) * 0.7071 - (yy - by) * 0.7071 * (dx * dy)) ** 2 / 19.0 ** 2
+                    bar = SE.soft(e < 1.0, smooth=0.8) & wm
+                    cv[bar] = C('sand_cool', 3)
+                    cv[bar & (GD.nz(H, W, 2.2, seed + 3) > 0.55)] = C('stone', 3)
+                    cv[bar & (GD.nz(H, W, 2.2, seed + 5) > 0.7)] = C('stone_cool', 2)
+                    cv[bar & (GD.nz(H, W, 2.2, seed + 4) > 0.75)] = C('stone_warm', 4)
+                    edge = bar & ~ndi.binary_erosion(bar, structure=GD.CROSS)
+                    cv[edge] = C('sand_cool', 1)                                  # wet shingle
+                    db = ndi.distance_transform_edt(~bar)
+                    band = wm & ~bar & (db <= 2.0 + GD.nz(H, W, 8.0, seed + 6)) & (cv % 8 < 5) & \
+                        np.isin(cv // 8, [FI[f] for f in ('water', 'water_warm', 'water_cool')])
+                    cv[band] = step(cv[band], 1)
+                # the scour on the far side: only where a bank lies beyond it (a river's outer bank)
+                quad = ((xx - vx) * dx > 0) & ((yy - vy) * dy > 0)
+                if not (~wm & quad & (d > 52) & (d < 80)).any():
+                    continue
+                ang = np.arctan2((yy - vy) * dy, (xx - vx) * dx)                  # 0 .. pi/2 inside the quadrant
+                taper_ = np.sin(np.clip(ang, 0.0, np.pi / 2) * 2.0)                 # 0 at both ends, 1 at the diagonal
+                half = 6.0 * taper_
+                sc = wm & quad & ~bar & ((xx + yy) % 2 == 0) & (np.abs(d - 46) < half)
                 cv[sc & (cv % 8 > 0)] = step(cv[sc & (cv % 8 > 0)], -1)
     # 6+: a wide river or a lake: broad lit shallows and swell lines along the shore
     wide = texels(cls >= 6) & wm
@@ -417,7 +443,9 @@ def water_widths(cv: np.ndarray, wm: np.ndarray, wcells: np.ndarray, cls: np.nda
     return items
 
 
-def water_variants(cv: np.ndarray, wm: np.ndarray, var: np.ndarray, seed: int) -> None:
+def water_variants(cv: np.ndarray, wm: np.ndarray, var: np.ndarray, seed: int, sea=None) -> None:
+    """The water's variants over its cells. In `sea` (texels: the water off a quay or a beach; review
+    round 9 of the Act 1 props) no reeds or lilies grow."""
     H, W = cv.shape
     rng = np.random.default_rng(seed)
     inner = wm & ndi.binary_erosion(wm, iterations=4)
@@ -440,7 +468,7 @@ def water_variants(cv: np.ndarray, wm: np.ndarray, var: np.ndarray, seed: int) -
                             cv[y + 1, x + q] = step(cv[y + 1, x + q], -1)
         elif k == 'e':               # reedy: clumps of reeds in the shallows by the shore
             dshore = ndi.distance_transform_edt(wm)
-            sy, sx = np.nonzero(z & (dshore > 3) & (dshore < 8))
+            sy, sx = np.nonzero(z & (dshore > 3) & (dshore < 8) & (True if sea is None else ~sea))
             for _ in range(min(2, max(1, len(sy) // 400))):
                 if not len(sy):
                     break
@@ -450,7 +478,7 @@ def water_variants(cv: np.ndarray, wm: np.ndarray, var: np.ndarray, seed: int) -
             j0 = int(rng.integers(0, len(ys)))          # one raft of three to six pads
             for _ in range(int(rng.integers(3, 7))):
                 y_, x_ = int(ys[j0] + rng.normal(0, 4)), int(xs[j0] + rng.normal(0, 7))
-                if 0 <= y_ < H and 0 <= x_ < W and z[y_, x_]:
+                if 0 <= y_ < H and 0 <= x_ < W and z[y_, x_] and not (sea is not None and sea[y_, x_]):
                     GD.lily(cv, y_, x_, rng, z)
         elif k == 'o':               # shallow over stones: the stones showing through, lit tops
             for _ in range(len(ys) // 90):

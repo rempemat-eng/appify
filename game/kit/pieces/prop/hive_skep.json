@@ -1,0 +1,118 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "hive_skep",
+ "name": "Straw skep",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/hive_skep.png",
+   "foot": [
+    14,
+    50
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A bell of coiled straw sitting on its stone stool, bound coil to coil, its notch at the foot, under a straw hackle."
+ },
+ "geometry": {
+  "size_px": [
+   28,
+   52
+  ],
+  "size_cells": [
+   2,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 52,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -4.0,
+    -3.0,
+    8,
+    5
+   ]
+  },
+  "foot": [
+   14,
+   50
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "work",
+  "role": "hive",
+  "composition": "cluster",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 3,
+    "note": "on its stool by a cottage garden wall"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    10,
+    3
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "beehive (a skep 0.5 m on a 0.3 m stool, hip high; art px: 40 to 62 tall, 22 to 36 wide)",
+  "eastward_ref": "17 (the churns for a round object's squashed top), 12 (the post box)",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "hive_skep",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

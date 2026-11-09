@@ -445,11 +445,16 @@ def foot_weeds(a, L, R, B, busy, rng):
 # roofs
 # ------------------------------------------------------------------------------------------------
 def slate_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=0, row=3.2, width=(3.4, 5.2), fams=('slate', 'slate', 'slate_cool'),
-               moss=0.07, lichen=0.06, top=3):
+               moss=0.07, lichen=0.06, top=3, calm=False, eave_dark=False):
     """Slates in overlapping courses: each slate a pillow the other way up (its head in the shade of
     the course above, its butt lit), its own sibling and tone by its place on the plane (lighter
     towards the ridge and the west, the hips turned to and from the light), riven grain, lichen
-    and moss on a few; dark joints between."""
+    and moss on a few; dark joints between.
+
+    `calm` (a large plain roof, the Act 1 water mill: round 6 of the detail audit, R6-5) keeps the
+    slates in siblings at one tone with at most one in 40 a full tone off, one fleck a slate and fewer
+    replaced slates; `eave_dark` darkens the lowest third of the plane a tone towards the eave. Both
+    default off, so the Crossroads roofs keep their bytes."""
     fill(a, rx0, y_r, rx1, y_eave, code('slate_cool', 0), rm)
     rh = max(6, q(row))
     span = max(1, rx1 - rx0)
@@ -466,13 +471,18 @@ def slate_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=0, row=3.2, width=(3.4, 5.
             f_ = np.clip((y_eave - (yt + y) / 2) / max(1, y_eave - y_r), 0, 1)
             # the plane in the light: brightest under the ridge on the west, falling off down the
             # slope and to the east, each slate stepping on its own (never a hard band)
-            v = 0.95 * fy + 0.75 * fx + 0.55 * (hsh(k, x, 1) - 0.5)
+            v = 0.95 * fy + 0.75 * fx + (0.2 if calm else 0.55) * (hsh(k, x, 1) - 0.5)
             t = top + (0 if hip else 1) if v < 0.35 else (top if v < 0.9 else (top - 1 if v < 1.35 else top - 2))
             r = hsh(k, x, 3)
-            if r < 0.08:
+            if r < (0.0125 if calm else 0.08):
                 t += 1
-            elif r < 0.16:
+            elif r < (0.025 if calm else 0.16):
                 t -= 1
+            if eave_dark and fy > 0.67:
+                t -= 1                                           # the lowest third, a tone down to the eave
+            if calm:
+                t = min(t, top)                                  # headroom for each slate's lit butt (t + 2), so a run
+                #                                                  of calm slates never clips flat at the palette's top
             if hip:
                 if cxs < rx0 + hip * f_:
                     t = 4 + (r < 0.3)                            # the west hip, turned to the light
@@ -480,10 +490,11 @@ def slate_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=0, row=3.2, width=(3.4, 5.
                     t = 1 + (r < 0.4)                            # the east hip, turned away
             t = int(np.clip(t, 1, 4))
             f = fams[int(rng.integers(0, len(fams)))]
-            if rng.random() < 0.05:
+            if rng.random() < (0.02 if calm else 0.05):
                 f = 'slate_warm'                                 # a slate replaced since
             m = V.chamfer(rh - 1, w - 1, 1)
-            tt = pillow(m, t, rng, flecks=2 + int(rng.random() < 0.6), slate=True)
+            nfl = 2 + int(rng.random() < 0.6)
+            tt = pillow(m, t, rng, flecks=1 if calm else nfl, slate=True)
             put(a, x, yt, m, f, tt, rm)
             if lichen and rng.random() < lichen:
                 # a lichen rosette on the slate's face: a soft grey-green patch, its rim a tone up
@@ -700,8 +711,9 @@ def fascia_gutter(a, rx0, rx1, y_e, rng, gutter=True):
 def eave_shadow(a, L, R, y_top, rng, roof='slate'):
     """The shadow the eave throws on the wall below it (volume.eave_band, eastward-edges 11.1): a
     soffit row, a core two tones down, a softer band one tone down with a broken edge leaning down
-    to the east. Its breaks draw from their own generator; the house's draws the same numbers as
-    before, so everything painted after the band (stacks, signs, weeds) stays as it was."""
+    to the east, at the roof's own depth. Its breaks draw from their own generator; the house's
+    draws the same numbers as before, so everything painted after the band (stacks, signs, weeds)
+    stays as it was."""
     x = L
     while x < R:
         x += int(rng.integers(4, 12))
@@ -1476,7 +1488,9 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         a[rm] = -1
         fams = ('timber_warm', 'timber', 'timber_cool') if roof == 'shingle' else ('slate', 'slate', 'slate_cool')
         slate_roof(a, rm, rx0, rx1, y_r, y_eave, rng, hip=hip, fams=fams,
-                   row=2.8 if roof == 'shingle' else 3.2, width=(3.0, 4.6) if roof == 'shingle' else (3.4, 5.2))
+                   row=2.8 if roof == 'shingle' else 3.2, width=(3.0, 4.6) if roof == 'shingle' else (3.4, 5.2),
+                   moss=spec.get('roof_moss', 0.07), lichen=spec.get('roof_lichen', 0.06), calm=spec.get('slate_calm', False),
+                   eave_dark=spec.get('eave_dark', False))
         ridge_tiles(a, rm, rx0 + hip, rx1 - hip, y_r, rng)
         if hip:
             hip_lines(a, rm, rx0, rx1, y_r, y_eave, hip)

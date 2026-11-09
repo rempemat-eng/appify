@@ -91,7 +91,23 @@ def input_hash(plan: dict, lib: dict) -> str:
     return h.hexdigest()[:16]
 
 
-def _shape(cells: np.ndarray, h: int, w: int, a: dict) -> np.ndarray:
+def _soft(cells: np.ndarray, h: int, w: int, seed: int, calm: np.ndarray | None = None, **kw) -> np.ndarray:
+    """softgrid.shape, its lumps scaled by `calm` (0 to 1 a texel; None: softgrid.shape itself): 0
+    leaves the cells' outline straight with its rounded corners, as a quay's built edge is."""
+    if calm is None:
+        return SG.shape(cells, h, w, seed, **kw)
+    c = SG.cell_px()
+    amp, lump = kw.get('amp', SG.AMP), kw.get('lump', SG.LUMP)
+    m = SG.round_corners(SG.texels(cells, h, w), kw.get('r_out', SG.R_OUT) * c, kw.get('r_in', SG.R_IN) * c)
+    if amp[1] > 0:
+        p = 4
+        mp = np.pad(m, p, mode='edge')
+        sd = np.where(mp, ndi.distance_transform_edt(mp) - 0.5, 0.5 - ndi.distance_transform_edt(~mp))[p:-p, p:-p]
+        m = sd + SG.lumps(h, w, seed, amp, lump) * calm > 0
+    return SG.clean(m)
+
+
+def _shape(cells: np.ndarray, h: int, w: int, a: dict, calm: np.ndarray | None = None) -> np.ndarray:
     if not cells.any():
         return np.zeros((h, w), bool)
     kw = {}
@@ -101,14 +117,14 @@ def _shape(cells: np.ndarray, h: int, w: int, a: dict) -> np.ndarray:
         kw['lump'] = tuple(a['lump'])
     r_out = a.get('r_out', SG.R_TURN_OUT)
     r_in = a.get('r_in', SG.R_TURN_IN)
-    m = SG.shape(cells, h, w, a.get('seed', 41), r_out=r_out, r_in=r_in, **kw)
+    m = _soft(cells, h, w, a.get('seed', 41), calm, r_out=r_out, r_in=r_in, **kw)
     narrow_r = a.get('narrow_r', 0.45)
     if r_out > narrow_r:
         # width classes: a channel one or two cells wide keeps its own, smaller rounding (the
         # woodland's rill, r 0.45), where a wide body's rounding would close it
         narrow = cells & ~ndi.binary_opening(cells, structure=np.ones((3, 3), bool))
         if narrow.any():
-            small = SG.shape(cells, h, w, a.get('seed', 41) + 1, r_out=narrow_r, r_in=narrow_r, **kw)
+            small = _soft(cells, h, w, a.get('seed', 41) + 1, calm, r_out=narrow_r, r_in=narrow_r, **kw)
             zone = np.kron(ndi.binary_dilation(narrow, iterations=1), np.ones((CELL, CELL), bool))[:h, :w]
             # a narrow channel's lumps step a few texels at a time (the woodland's rill, gaussian 2.2)
             small = ndi.gaussian_filter(np.pad(small, 8, mode='edge').astype(float), 2.2)[8:-8, 8:-8] > 0.5
@@ -172,6 +188,83 @@ def material_paints(materials, lib: dict) -> dict:
     return {m: (lib[m]['terrain'].get('paint') or {}) for m in sorted(set(materials), reverse=True) if m in lib}
 
 
+def shore_kinds(lib: dict, materials) -> dict:
+    """{material: 'quay' | 'beach'} for each land material whose edge over water is not a turf bank
+    (review round 9 of the Act 1 props, F9-1): read from its `<material>_over_water` transition's
+    painter (edges.quay_wall, edges.beach), so the editor's tiles and the bake agree. Materials not
+    listed take the turf bank."""
+    out = {}
+    for m in sorted(set(materials)):
+        fn = (((lib.get('%s_over_water' % m) or {}).get('transition') or {}).get('painter') or {}).get('fn')
+        if fn in ('quay_wall', 'beach'):
+            out[m] = 'quay' if fn == 'quay_wall' else 'beach'
+    return out
+
+
+def _falls(pieces: list, lib: dict, face_h: int) -> list:
+    """Each fall's sheet (texels: x0, width, rim row, foot row, seed)."""
+    out = []
+    for pc in pieces:
+        rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
+        if rp.get('fn') == 'fall':
+            cw = lib[pc['piece']]['geometry']['size_cells'][0] * CELL / D
+            cx, foot = pc['at'][0] / D, pc['at'][1] / D
+            rim = foot - rp.get('args', {}).get('face_px', face_h) / D
+            out.append((int(round((cx - cw / 2) * D)), int(round(cw * D)), int(round(rim * D)), int(round(foot * D)),
+                        rp.get('args', {}).get('seed', 11)))
+    return out
+
+
+def quay_calm(mat: np.ndarray, kinds: dict, h: int, w: int) -> np.ndarray | None:
+    """How lumpy the water's outline may be a texel (bake._soft's `calm`): 0 within 4 texels of a
+    quay's cells (a built edge runs straight on the soft grid, rounded at its corners), rising to 1
+    over the next 16, so where a quay's shore turns into a beach's or a bank's the lumps grow in
+    smoothly. None when there is no quay."""
+    q = np.isin(mat, [m for m, v in kinds.items() if v == 'quay'])
+    if not q.any():
+        return None
+    dq = ndi.distance_transform_edt(~SG.texels(q, h, w))
+    return np.clip((dq - 4.0) / 16.0, 0.0, 1.0)
+
+
+def _water_outline(mat: np.ndarray, paint: dict, falls: list, h: int, w: int, calm=None) -> np.ndarray:
+    """The water's soft outline (texels): the water pass's own shape (bake() calls this)."""
+    wm = np.zeros((h, w), bool)
+    for m, p in paint.items():
+        if p.get('fn') != 'water':
+            continue
+        wcells = mat == m
+        wm |= SF.taper(_shape(wcells, h, w, p.get('args', {}).get('shape', {}), calm), wcells, SF.water_class(SF.widths(wcells)))
+        for (fx0, fw, fr0, fr1, _s) in falls:
+            wm = SF.fall_run_in(wm, fx0, fw, fr0, fr1)
+    return wm
+
+
+def water_outline(plan: dict, lib: dict | None = None) -> np.ndarray:
+    """The plan's water outline in texels, exactly as bake() shapes it (for post-passes that must
+    keep off the shore, such as sets/coast.dress)."""
+    lib = lib or _pieces_lib()
+    rows = plan['rows']
+    h, w = len(rows) * CELL, len(rows[0]) * CELL
+    mat = np.array([[plan['legend'].get(c, '') for c in r] for r in rows])
+    face_h = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
+    paint = material_paints(mat.ravel(), lib)
+    water_cells = np.isin(mat, [m for m, p in paint.items() if p.get('fn') == 'water'])
+    calm = quay_calm(mat, shore_kinds(lib, mat.ravel()), h, w) if water_cells.any() else None
+    return _water_outline(mat, paint, _falls(plan.get('pieces', []), lib, face_h), h, w, calm)
+
+
+def land_material(mat: np.ndarray, water_cells: np.ndarray, h: int, w: int) -> np.ndarray:
+    """Each texel's land material: its cell's, or in a water cell the nearest land cell's (so the
+    texels between a land cell and the water's soft outline belong to that land)."""
+    mp = np.repeat(np.repeat(mat, CELL, 0), CELL, 1)[:h, :w]
+    wt = np.repeat(np.repeat(water_cells, CELL, 0), CELL, 1)[:h, :w]
+    if wt.any() and (~wt).any():
+        _d, (iy, ix) = ndi.distance_transform_edt(wt, return_indices=True)
+        mp = mp[iy, ix]
+    return mp
+
+
 def bake(plan: dict, lib: dict | None = None):
     """(ground RGBA image, low items drawn) for a kit plan."""
     lib = lib or _pieces_lib()
@@ -218,6 +311,18 @@ def bake(plan: dict, lib: dict | None = None):
         if 0 <= cy_ < R and 0 <= cx_ < Cc:
             door_c[cy_, cx_] = True
     water_cells = np.isin(mat, [m for m, p in paint.items() if p.get('fn') == 'water'])
+    # a quay or a beach runs right to the water's edge (review round 9, F9-1: the lawn under them
+    # showed between their outline and the water's as a turf bank): their outlines take the texels
+    # between their cells and the water's soft outline
+    kinds = shore_kinds(lib, mat.ravel()) if water_cells.any() else {}
+    shore_ext, land_mp, wm_pre, calm = {}, None, None, None
+    if kinds:
+        calm = quay_calm(mat, kinds, h, w)
+        wm_pre = _water_outline(mat, paint, _falls(plan.get('pieces', []), lib, face_h), h, w, calm)
+        land_mp = land_material(mat, water_cells, h, w)
+        reach = ndi.binary_dilation(wm_pre, iterations=10) & ~wm_pre
+        for m_ in kinds:
+            shore_ext[m_] = reach & (land_mp == m_)
     route_cells = np.isin(mat, [m for m, p in paint.items() if p.get('fn') == 'dirt'])
     near = lambda c, n: ndi.binary_dilation(c, iterations=n) if c.any() else c  # noqa: E731
     ctx_ = {'tree': near(tree_c, 2), 'water': near(water_cells, 2), 'door': near(door_c, 1), 'route': near(route_cells, 1)}
@@ -230,6 +335,8 @@ def bake(plan: dict, lib: dict | None = None):
         if p.get('fn') != 'dirt':
             continue
         net = _shape(mat == m, h, w, a.get('shape', {}))
+        if m in shore_ext:
+            net |= shore_ext[m]
         net &= ~band
         if a.get('foot_pad'):
             pass
@@ -326,6 +433,8 @@ def bake(plan: dict, lib: dict | None = None):
             SN.DC.paste(cv, dec_, int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True, shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
     for k, (net, a) in enumerate(routes):
         turf = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~net & ~band
+        if wm_pre is not None:
+            turf &= ~wm_pre             # the lawn under the water-to-be is no turf to lip a quay or a beach
         GD.sunken_edge(cv, net, turf, np.random.default_rng(a.get('seed', 43) + 2), stones=a.get('edge_stones', 1.0))
     # the lawn's variants (clover, daisies, long grass, trampled beside routes)
     turf_v = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~band
@@ -342,19 +451,19 @@ def bake(plan: dict, lib: dict | None = None):
             half = lib[pc['piece']]['geometry']['size_cells'][0] * CELL // 2
             x, y = pc['at']
             GD.log_steps(cv, x - half, x + half, y - face_h - 1, y + 2, rp.get('args', {}).get('n', 4), np.random.default_rng(5))
+    if kinds:
+        # no grass grows on a quay's or a beach's last texels before the water (the dirt variants'
+        # grassy patches and the routes' turf lobes there read as a turf lip): each such texel takes its nearest stone's code
+        sb = ndi.binary_dilation(wm_pre, iterations=6) & ~wm_pre & np.isin(land_mp, list(kinds))
+        gr = sb & (is_fam(cv, 'grass') | is_fam(cv, 'leaf'))
+        if gr.any():
+            _d, (iy_, ix_) = ndi.distance_transform_edt(gr | ~sb, return_indices=True)
+            cv[gr] = cv[iy_[gr], ix_[gr]]
     # water (the ground before it, so a fall's face beside its sheet keeps the cliff's own texture)
     pre_water = cv.copy()
     # each fall's sheet (texels: x0, width, rim row, foot row), known before the water is painted:
     # the channel feeding it runs straight into its lip at exactly its width (SF.fall_run_in)
-    falls = []
-    for pc in pieces:
-        rp = (lib.get(pc['piece'], {}).get('rendering') or {}).get('paint') or {}
-        if rp.get('fn') == 'fall':
-            cw = lib[pc['piece']]['geometry']['size_cells'][0] * CELL / D
-            cx, foot = pc['at'][0] / D, pc['at'][1] / D
-            rim = foot - rp.get('args', {}).get('face_px', face_h) / D
-            falls.append((int(round((cx - cw / 2) * D)), int(round(cw * D)), int(round(rim * D)), int(round(foot * D)),
-                          rp.get('args', {}).get('seed', 11)))
+    falls = _falls(pieces, lib, face_h)
     clear = np.zeros((h, w), bool)
     from scripts.art.native import rocks as RK_
     for (fx0, fw, fr0, fr1, _s) in falls:
@@ -369,13 +478,16 @@ def bake(plan: dict, lib: dict | None = None):
         a = p.get('args', {})
         wcells = mat == m
         wcls = SF.water_class(SF.widths(wcells))
-        wm |= SF.taper(_shape(wcells, h, w, a.get('shape', {})), wcells, wcls)
+        wm |= SF.taper(_shape(wcells, h, w, a.get('shape', {}), calm), wcells, wcls)
         for (fx0, fw, fr0, fr1, _s) in falls:
             wm = SF.fall_run_in(wm, fx0, fw, fr0, fr1)
         # (Matt, 4 Nov) one painter for every width: only a north bank shows a face, the other
         # shores one rim (softground.water), so a rill, a stream and a river share their banks
+        shore_kw = {}
+        if kinds:
+            shore_kw = {k_: np.isin(land_mp, [m_ for m_, v in kinds.items() if v == k_]) & ~wm for k_ in ('quay', 'beach')}
         items = GD.water(cv, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=a.get('stones', 0.0),
-                         reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), clear=clear)
+                         reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), clear=clear, **shore_kw)
         # a running channel (north-south, the rill) has no bank stones from the painter (they read
         # as debris, Claude A 2 Nov; surface.water_widths sets at most two); river and pool shores keep theirs
         lab_v = ndi.label(wcells, structure=[[0, 1, 0], [0, 1, 0], [0, 1, 0]])[0]
@@ -395,13 +507,19 @@ def bake(plan: dict, lib: dict | None = None):
         GD.tidy_bank(cv, wm)
         # no stream stone at a fall's lip: keep them off the cells over and just above a face
         bandc = band.reshape(R, CELL, Cc, CELL).any(axis=(1, 3))
-        items += SF.water_widths(cv, wm, wcells, wcls, a.get('seed', 402) + 100, avoid=bandc)
+        # spits of shingle grow only off a beach's corners (review round 9, F9-2), never a lawn's or a quay's
+        spit_ok = np.isin(mat, [m_ for m_, v in kinds.items() if v == 'beach'])
+        quay_c = np.isin(mat, [m_ for m_, v in kinds.items() if v == 'quay'])
+        items += SF.water_widths(cv, wm, wcells, wcls, a.get('seed', 402) + 100, avoid=bandc, spit_ok=spit_ok,
+                                 stoneless=quay_c)
         if chan.any():
             # the running channel's own one or two stones at its banks
-            items += SF.water_widths(cv, wm, wcells, np.where(chan & wcells & (wcls >= 3), 2, 0), a.get('seed', 402) + 150, avoid=bandc)
+            items += SF.water_widths(cv, wm, wcells, np.where(chan & wcells & (wcls >= 3), 2, 0), a.get('seed', 402) + 150, avoid=bandc,
+                                     spit_ok=spit_ok, stoneless=quay_c)
         shore = ndi.binary_dilation(~wcells, iterations=1) & wcells
         wvar = SF.assign('water', wcells, given, dict(ctx_, cls=wcls, shore=shore), a.get('seed', 402) + 200)
-        SF.water_variants(cv, wm, wvar, a.get('seed', 402) + 300)
+        SF.water_variants(cv, wm, wvar, a.get('seed', 402) + 300,
+                          sea=ndi.binary_dilation(shore_kw['quay'] | shore_kw['beach'], iterations=40) if kinds else None)
         # running water: short broken glints along the flow (down a north-south channel, across an
         # east-west one), so a channel three cells wide or more is not a flat depth band
         frng_ = np.random.default_rng(a.get('seed', 402) + 400)

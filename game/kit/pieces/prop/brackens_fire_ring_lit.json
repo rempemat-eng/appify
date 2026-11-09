@@ -123,7 +123,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "fire ring with flames to 0.4 A",
+  "size_class": "campfire (a fire ring of stones with flames to 0.4 A)",
   "eastward_ref": "05 and 37 (the camp fires, their glow)",
   "painter": {
    "module": "scripts.art.kit.sets.brackens",

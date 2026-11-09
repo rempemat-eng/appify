@@ -1,0 +1,331 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "barrow_entrance",
+ "name": "Old Fang's barrow",
+ "kind": "prop",
+ "biomes": [
+  "coast",
+  "valley",
+  "brackens"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/act1/barrow_entrance.png",
+   "foot": [
+    161,
+    161
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "art-style.md (Eastward's level of detail), placement-logic.md",
+  "note": "A turf mound in soft masses of grass with a portal of jambs and a capstone, the passage receding in perspective, set stones either side."
+ },
+ "geometry": {
+  "size_px": [
+   323,
+   180
+  ],
+  "size_cells": [
+   14,
+   4
+  ],
+  "z_sort": "foot",
+  "height_px": 180,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -53.0,
+    -29.0,
+    106,
+    29
+   ]
+  },
+  "foot": [
+   161,
+   161
+  ],
+  "footprint": [
+   [
+    -6,
+    -4
+   ],
+   [
+    -5,
+    -4
+   ],
+   [
+    -4,
+    -4
+   ],
+   [
+    -3,
+    -4
+   ],
+   [
+    -2,
+    -4
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    2,
+    -4
+   ],
+   [
+    3,
+    -4
+   ],
+   [
+    4,
+    -4
+   ],
+   [
+    5,
+    -4
+   ],
+   [
+    6,
+    -4
+   ],
+   [
+    -6,
+    -3
+   ],
+   [
+    -5,
+    -3
+   ],
+   [
+    -4,
+    -3
+   ],
+   [
+    -3,
+    -3
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    2,
+    -3
+   ],
+   [
+    3,
+    -3
+   ],
+   [
+    4,
+    -3
+   ],
+   [
+    5,
+    -3
+   ],
+   [
+    6,
+    -3
+   ],
+   [
+    -6,
+    -2
+   ],
+   [
+    -5,
+    -2
+   ],
+   [
+    -4,
+    -2
+   ],
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    3,
+    -2
+   ],
+   [
+    4,
+    -2
+   ],
+   [
+    5,
+    -2
+   ],
+   [
+    6,
+    -2
+   ],
+   [
+    -6,
+    -1
+   ],
+   [
+    -5,
+    -1
+   ],
+   [
+    -4,
+    -1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ],
+   [
+    3,
+    -1
+   ],
+   [
+    4,
+    -1
+   ],
+   [
+    5,
+    -1
+   ],
+   [
+    6,
+    -1
+   ]
+  ],
+  "doors": [
+   {
+    "x": [
+     -21,
+     21
+    ],
+    "faces": "s"
+   }
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "tomb",
+  "provides": [
+   "feature",
+   "view"
+  ],
+  "composition": "free",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 5,
+    "note": "off the path on its own rise, reached by a short trod"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null,
+  "lore": "Old Fang's barrow (the map legend's Act 1 beat)",
+  "gating": {
+   "act": 1
+  }
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "unsized (a chambered barrow, a landmark: no kind in the guide; a mound 7.4 m long, 2 m high; its portal 0.95 m wide, 1.8 m high, so Bramble walks in; art px: 150 to 190 tall, 300 to 340 wide)",
+  "eastward_ref": "12 (the thatched hut, the boulder wall), 13 (the rocks 325,247,350,268), 17 (the rockfall for stones carried in planes)",
+  "painter": {
+   "module": "scripts.art.kit.sets.act1",
+   "fn": "barrow_entrance",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/act1.py",
+  "todo": []
+ }
+}

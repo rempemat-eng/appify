@@ -194,9 +194,11 @@ def review(path: str, zone: str, name: str, kind: str | None = None, biome: str 
     base = os.path.basename(name)
     kind = kind or C.kind_of(base)
     biome = biome or ZONE_BIOME.get(zone, 'valley')
+    # a kit piece's picture is measured against its own size spec and the kind it names (R6-12);
     # (a zone's further moving-water strips, flow_<name>, are ground overlays like flow)
     findings, score = review_rgba(rgba, f'{zone}/{name}', kind, biome, H, density,
-                                  ground=base in GROUND_ASSETS or base.startswith('flow_'))
+                                  ground=base in GROUND_ASSETS or base.startswith('flow_'),
+                                  size_class=S.kit_spec(path), run=S.kit_run(path))
     sev = [f.severity for f in findings]
     status = 'fail' if any(s in FAIL_SEVERITIES for s in sev) else 'pass'
     return dict(id=f'{zone}/{name}', file=os.path.relpath(path, REPO), sha256=sha256(path), kind=kind, biome=biome,
@@ -206,8 +208,11 @@ def review(path: str, zone: str, name: str, kind: str | None = None, biome: str 
 
 
 def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float = GAME_H, density: float = 3.0,
-                ground: bool = False):
-    """Every asset check on one RGBA picture (alpha marks the object). Returns (findings, detail bar)."""
+                ground: bool = False, size_class: str | None = None, run: dict | None = None):
+    """Every asset check on one RGBA picture (alpha marks the object). Returns (findings, detail bar).
+    `size_class` is a kit piece's own size spec (its `audit.size_class`): a sprite is measured against
+    it and against the kind it names (scale.check_spec: logic.size_spec, logic.size_guide,
+    logic.size_unsized), so the reviewer's sheet shows it (round 6 of the Act 1 detail audit, R6-12)."""
     alpha = rgba[..., 3] > 128
     findings: list[Finding] = []
     score = None
@@ -235,6 +240,8 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += C.dotted(rgb_n, alpha, H, subject)
         # size against a person (scripts/review/sizes.json; doors, storey and roof for kit buildings)
         findings += S.check_asset(rgba, subject, kind, H, density)
+        if size_class:
+            findings += S.check_spec(rgba, size_class, subject, run=run)
         findings += C.mushrooms(rgb_n, alpha, H, subject, density)
         findings += C.biome_form(rgb_n, alpha, H, subject, biome)
         findings += C.crown_holes(rgb_n, alpha, H, subject)
@@ -244,6 +251,9 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += C.glyphs(rgb_n, alpha, H, subject)
         findings += C.construction(rgb_n, alpha, H, subject, kind)
         findings += C.cylinder(rgb_n, alpha, H, subject)
+        findings += __import__('scripts.review.cluster_noise', fromlist=['check']).check(rgba[..., :3], alpha, H, subject)
+        findings += __import__('scripts.review.flat_cylinder', fromlist=['check']).check(rgb_n, alpha, H, subject)
+        findings += __import__('scripts.review.checker_dither', fromlist=['check']).check(rgba, H, subject)
         from . import edges as E
         if any(k in subject.split('/')[-1] for k in E.ORGANIC_SPRITES):
             # a laid-out piece of ground drawn as a sprite (beds, a pond): its outline on the soft grid
