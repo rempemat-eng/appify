@@ -1,7 +1,7 @@
 {
  "id": "crossroads/ground",
  "file": "game/zones/crossroads/art/ground.png",
- "sha256": "5a5e418c19a22f6299ac582189be909168552bd62c62b92c8f1a625ab1e673e4",
+ "sha256": "95859777abd021a5e0e044f51f14b7f05c247aad3a66cc53f53dfbf940189024",
  "kind": "ground",
  "biome": "valley",
  "H": 74.0,
@@ -23,10 +23,11 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. The PR's delta passes: 757 texels changed in 25 places, all contact and cast shadows at the redrawn props' feet, following their new outlines (largest at [1175,680,1283,710] and [1648,782,1726,808], checked before/after at 5x). The picture as a whole was never passed and still carries the faults its queue entry names: the burnt lots (for example [1500,1100,1820,1260]) are an even stipple of small dark discs with flat one-tone char blobs and one-tone dark beam sticks, and the scorch fringe is flat 2-3 tone blobs (the #288 S5). Its redraw belongs to #421. Fix list: XR2-G1, XR2-G2.",
+  "note": "Round 3 review at 8c212777 (PR #450), docs/reviews/2026-11-08-crossroads-placed.md, round 3. The PR's delta is correct: 698 texels changed. 521 are contact and cast shadow at the feet of hay_19, hay_20 and the seven tubs (14 places, each inside or beside its prop's box), checked before and after at 4x in the composite. 177 are lawn scatter reshuffled by the shade-steered random stream: 164 along the bakery's turf lip (x 342-560, y 856-874) and 13 at x 906-924, y 462-480; checked at 6x and 10x, the same kind and density of marks, no new fault (ruling in the review). The picture as a whole still fails on the burnt lots, which this PR does not touch: XR2-G1 and XR2-G2 stay open (owned by #421).",
   "fix_list": [
-   "XR2-G1: burnt lots: replace the even stipple of dark discs with soil marks in drifts (clods, ash patches, cracks, softedge.soil_marks), char as clusters with lit edges, the fallen beams with a lit top edge and grain; fray the scorch fringe in 2-3 px clusters (the #288 S5)",
-   "XR2-G2: the rest of the picture is unreviewed by this round: the #421 redraw needs a full scene-gate pass (24 cells) before it may be placed"
+   "XR2-G1 (open, #421): burnt lots: replace the even stipple of dark discs with soil marks in drifts (softedge.soil_marks), char as clusters with lit edges, the fallen beams with a lit top edge and grain; fray the scorch fringe in 2-3 px clusters (the #288 S5)",
+   "XR2-G2 (open, #421): the #421 redraw needs a full scene-gate pass (24 cells) before it may be placed",
+   "XR3-G1 (follow-up, not blocking): make the lawn scatter local, so a prop edit cannot move distant ground: draw it per cell from a seed of the cell, or extend the twice-drawn lawn (kept new only round changed objects) from buildings to every static prop"
   ]
  }
 }

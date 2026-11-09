@@ -1,7 +1,7 @@
 {
  "id": "crossroads/flower_tub_26",
  "file": "game/zones/crossroads/art/flower_tub_26.png",
- "sha256": "996f2f16d25ef58de8e04fb3a5a29586a629be6ee2317efd65f10ef1ab1f7576",
+ "sha256": "957ffac7cecbf7edb3838f9e9ef653b2f76d5de07f445372bad318680e3d6ff4",
  "kind": "tub",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 26.0,
-   "shapes": 35.0
+   "tones": 33.5,
+   "shapes": 39.5
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.695,
-  "tones_ratio": 0.963,
-  "shapes_ratio": 0.695,
+  "ratio": 0.784,
+  "tones_ratio": 1.241,
+  "shapes_ratio": 0.784,
   "passed": false,
   "group": "prop"
  },
@@ -40,24 +40,36 @@
    "severity": "polish",
    "box": [
     8,
-    29,
+    30,
     45,
     53
    ],
-   "message": "crossroads/flower_tub_26: the red is lit from the right (luminance rises 18 L per H to the east)",
+   "message": "crossroads/flower_tub_26: the red is lit from the right (luminance rises 17 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    8,
-    22,
-    46,
+    7,
+    20,
+    50,
     54
    ],
-   "message": "crossroads/flower_tub_26: detail bar 0.69 of Eastward's prop band (26.0 tones, 35.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/flower_tub_26: detail bar 0.78 of Eastward's prop band (33.5 tones, 39.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    7,
+    20,
+    50,
+    54
+   ],
+   "message": "crossroads/flower_tub_26: 43% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 43% to 49%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-09",
@@ -65,13 +77,12 @@
   "agent": "detail-auditor",
   "verdict": "fail",
   "date": "2026-11-09",
-  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. As flower_tub_9 (same body build, differing from it by at most 38 texels): flat two-band body, ruled lime-bloom stamp, flat corner square, no soil or inner wall, smooth disc clumps; bar 0.60 -> 0.70. Fix list: XR2-T1 to XR2-T5.",
+  "note": "Round 3 review at 8c212777 (PR #450), docs/reviews/2026-11-08-crossroads-placed.md, round 3. Answered: each tub has its own planting (geranium, daisy, lavender, marigold, ivy, herbs) in scalloped clumps with dark pockets (XR2-T5 fixed); the body now has a lit west, body and dark east, a hairline crack with a lit lip and a few pits. Still failing: the body is three or four straight vertical bands under a full-width ruled dark line, a box planter rather than a vessel, with one-tone runs of 118 texels (XR2-T1 asks none over 40); the lime bloom is still mostly a 2-row bar with drips under the rim (XR2-T2 partly); the lower-right corner is still a distinct near-black block (XR2-T3 partly); the soil shows as a dark 1-row slot under the rim, not a 2 px soil band under a lit inner wall (XR2-T4 partly). Cluster noise rose to 42.7 % (was 36.3 %; Eastward's props median 29 %, fault line 48 %): part of the bar's rise is grain, not structure. Bar 0.70 -> 0.78. Compared with the Eastward 13 bell and 17 churns at x1.37. Fix list: XR3-T1 to XR3-T4.",
   "fix_list": [
-   "XR2-T1: body: shade the terracotta as a vessel, not two flat bands: a lit west third (tone 4), body (tone 3), dark east (tone 1-2), and break every one-tone run over 40 texels with clay texture (2-3 texel pits, a hairline crack with a lit lip)",
-   "XR2-T2: lime bloom as irregular pale clusters under the rim (2-4 texels, varied per tub), not a ruled 1-texel line with drips; vary it on every tub",
-   "XR2-T3: remove the flat dark 3x3 square in the lower-right corner (or make it a chip with a lit lip)",
-   "XR2-T4: show a 2 px soil band and the far inner wall lit, between the clumps",
-   "XR2-T5: leaf clumps with leaf-shaped scallops and dark pockets (3-4 tones of the leaf ramp), not smooth two-tone discs; each tub its own planting"
+   "XR3-T1: draw the body as a fired-clay vessel, not banded boards: let the lit west, body and dark east meet in a soft stepped curve (2-3 texel steps, not straight vertical edges), drop the full-width ruled dark line under the rim to a shadow that thins toward the lit west, and break every one-tone run over 40 texels with sibling-tone clay clusters (not value grain: keep cluster noise at or under 40 %)",
+   "XR3-T2: lime bloom as ragged pale clusters of 2-4 texels that wander under the rim and down one side, different on every tub; no 2-row bar with drips",
+   "XR3-T3: no distinct near-black block in the lower-right corner: let the belly's shade fade along the base row in 2 tones, and if a chip is wanted, give it a lit lip",
+   "XR3-T4: show the soil as a 2 px band with clods between the clumps and the far inner wall lit 1-2 px above it (not a 1-row dark slot)"
   ]
  }
 }

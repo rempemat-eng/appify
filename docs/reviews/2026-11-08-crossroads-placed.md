@@ -309,3 +309,162 @@ The six tubs' `detail.light` findings were not ruled on and are kept as evidence
 - The composed zone (the scene gate), night tint and the 1x phone view.
 - The ground beyond the delta and the two 3x crops above: no 24-cell grid pass.
 - Whether the shadow layers line up with their props in `crossroads.tscn`. Only the pictures were compared.
+
+## Round 3 (PR #450, 9 Nov)
+
+Draft #450 (`claude-a/crossroads-props-xr2` at 8c212777) redraws the 13 props that failed round 2 and regenerates the three pictures derived from them (`lantern_dark_shadow`, `lantern_lit_shadow` and `ground`). This round audits those 16 pictures. The auditor drew none of them.
+
+**Result: 5 pass, 11 fail.** The hay bales and the waystone answer their XR2 codes and pass. The two shadow layers pass. The seven tubs, the two lamp plinths and the stall still fail. The ground's delta is correct, but the picture keeps its round 2 fail on the burnt lots (XR2-G1, XR2-G2), which this PR does not touch.
+
+### What was reviewed and how (round 3)
+
+- Commit 8c212777. All 16 PNGs' sha256 matched their records.
+- Calibration first: `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <Eastward folder>`. Recall was 39 of 39. False positives were 5 on 6 clean screens and 21 on 22 clean props. `calibration_results.json` was reverted afterwards.
+- Asset gate: `python3 -m scripts.review.assets <16 refs> --record`. The detectors found 0 blockers and 0 faults, and the records came back byte-identical. The detail bars match the painter's numbers: hay 0.88 and 0.76, tubs 0.70 to 0.86, lanterns 0.57 and 0.61, stall 0.63, waystone 0.58.
+- Cluster noise (`python3 -m scripts.review.cluster_noise`) on the old bytes (HEAD~1) and the new:
+  - tubs: from 30.6–40.6 % to 39.9–47.1 %, with tub 27 at 47.1 % (its four grid phases give 46 to 47 %), 0.9 points under the 48 % fault line. The painter's "40 to 47 %" is right, except that tub 38 is at 39.9 % and has no finding;
+  - hay 39.5 % and 32.3 %, stall 38.2 %, lanterns 34.6 % and 27.5 %, waystone 23.2 %.
+- Verdicts come from the checklist, worked part by part on 6x to 14x nearest-neighbour crops on neutral grey. Each crop shows the old bytes beside the new ones. Measured per asset: tones, the largest one-tone 4-connected region, and (on the stall) every nail head's texels.
+- Eastward comparison: official shots, kept local, brought to the native grid with `core.to_native` and scaled ×1.37 with nearest neighbour (54 to 74 px a character). Boxes:
+  - shot 17: bale [120,165,200,215], churns [135,47,162,112] and rocks [460,165,550,250];
+  - shot 13: lamp [375,20,415,125] and the hanging bell [410,155,470,220].
+- Placed: the zone composite (`scene.composite`) was built at HEAD~1 and at HEAD. Crops were compared at 2x to 4x round hay_19, tubs 26 and 27, and the lamp.
+- Ground: the old and new pictures were diffed. Each changed cluster was mapped to the sprite boxes from `crossroads.tscn`. The bakery lip was looked at 6x and the patch at 912,468 at 10x.
+- Art director's read: checked against my own crops.
+  - Agreed on the hay, the stall's board, counter and awning, the waystone, and the plinths.
+  - On the tubs I partly disagree. At 1x the planting is now clearly different on every tub, and the body has a lit west and a dark east. They still read as box planters with a ruled line, though, and that decides the verdict.
+
+### Verdicts (round 3)
+
+| Asset | Verdict | Bar round 2 → 3 | Measured | Reason |
+| --- | --- | --- | --- | --- |
+| hay_19 | pass | 0.53 → 0.88 | 19 tones; largest flat 127 texels (was 378); noise 39.5 % | a pillowed straw bale: lit arris band, straw in strand clumps, cut east end, twine pressed in; polish XR3-H1 |
+| hay_20 | pass | 0.55 → 0.76 | 17 tones; largest flat 200 texels (was 336); noise 32.3 % | as hay_19; polish XR3-H1 |
+| waystone | pass | 0.48 → 0.58 | 30 tones; largest flat 258 texels (was 1,357); noise 23.2 % | stains on sibling ramps, lichen clusters, cracks with lit lips, chipped arrises, moss clumps, dressed base; polish XR3-W1 |
+| lantern_dark_shadow | pass | n/a | 5 texels changed | follows the new plinth's west foot |
+| lantern_lit_shadow | pass | n/a | 7 texels changed | follows the new plinth's foot |
+| flower_tub_9, 10, 26, 27, 38, 59, 60 | **fail (7)** | 0.62–0.71 → 0.71–0.86 | 27–32 tones; largest flat 63–118 texels; noise 39.9–47.1 % | planting fixed; body still banded box, bloom bar, dark corner block, soil slot |
+| lantern_dark | **fail** | 0.52 → 0.57 | 26 plinth tones; plinth front one tone over 203 texels (was 192) | slabs flatter than round 2; moss as four equal tufts in a row |
+| lantern_lit | **fail** | 0.57 → 0.61 | plinth front one tone over 104 texels | the same plinth; the lit glass passes |
+| stall | **fail** | 0.58 → 0.63 | 52 tones; 17 of 17 nail heads one-tone 2 x 2 #2e2943; board field one tone over 281 texels | dot nails (regressed); chalk is glyphs, not words |
+| ground | **fail** | n/a | 698 texels changed: 521 at prop feet, 177 lawn scatter | the delta is correct; XR2-G1 and XR2-G2 stay open (#421) |
+
+### Status of the XR2 codes
+
+| Code | Status | Evidence |
+| --- | --- | --- |
+| XR2-H1 | fixed | a lit band over the top-front arris (3 rows); corners knocked off 3-2-1 |
+| XR2-H2 | fixed | strand clumps of 2 to 3 texels in 4 to 5 straw tones; strands break the top and east silhouette. Polish: on the top they read more as mottle than as strands running along the bale (XR3-H1) |
+| XR2-H3 | fixed | the east end is darker, with stalk-end tufts and a core shadow; the front is in horizontal courses |
+| XR2-H4 | fixed | each twine is a dark groove with a lit lip, breaking at the arris |
+| XR2-T1 | partly fixed | the body has a lit west, a body and a dark east, plus a hairline crack with a lit lip and a few pits. But it is drawn in 3 to 4 straight vertical bands under a full-width ruled dark line, and one-tone runs of 63 to 118 texels remain (the code asks for none over 40) |
+| XR2-T2 | partly fixed | the length varies from tub to tub, but on most tubs the bloom is still a 2-row bar with drips at rows 38 to 41 (6 to 18 texels a row) |
+| XR2-T3 | partly fixed | the 3 x 3 square is now the belly's darkest tone, but it is still a distinct near-black block (a one-tone region of 24 texels of #330216 on tubs 9, 38 and 59) |
+| XR2-T4 | partly fixed | a dark 1-row slot with a few clods sits under the rim. There is no 2 px soil band, and no lit far inner wall |
+| XR2-T5 | fixed | scalloped, lobed clumps with dark pockets in 3 to 4 tones. Each tub has its own planting |
+| XR2-L1 | not fixed | tooling clusters and pocks are in, but the volume is weaker than in round 2. The lower slab's front is one tone over 203 texels on lantern_dark (104 on lantern_lit), the top planes are one row, the lit west end is one column, and the bevel does not read |
+| XR2-L2 | partly fixed | the moss is clumps now, but four 4 to 6 texel tufts sit evenly spaced in one row, each with a straight dark underside. At 1x and 2x they read as a dotted green line |
+| XR2-L3 | fixed | the unlit glass has a dark cradle and no pale shape |
+| XR2-S1 | partly fixed | three rows of broken strokes, one row in a second tone. They are repeated blocky L glyphs on a navy field that is one tone over 281 texels, not words and a price |
+| XR2-S2 | fixed | each stripe's top plane is in 3 to 4 tones, with a lit row |
+| XR2-S3 | not fixed (regressed) | all 17 nail heads are one-tone 2 x 2 #2e2943 squares with no lit texel; round 2's nails had one (#737078). `village.nail_head` sets the lit texel, but `finish()` calls `tidy()`, which removes it as a lone pixel. These are the dot nails of calibration C1 |
+| XR2-S4 | fixed | the counter top is sawn boards with grain streaks, joints and a dark under-lip row. The 416-texel band is gone |
+| XR2-W1 | fixed | stains on sibling grey ramps, denser and darker low; grey-green and yellow lichen in clusters of 3 to 6 texels; no even specks on the face |
+| XR2-W2 | fixed | two cracks with lit lips replace the slashes. Polish: the east crack reads as a zipper (XR3-W1) |
+| XR2-W3 | fixed | the cap is notched and the west arris chipped, with lit lips |
+| XR2-W4 | fixed | moss clumps sit in the base joint and on the cap. The base has a lit top plane, a front, a chipped corner and a shaded east end |
+| XR2-G1, XR2-G2 | open | out of scope for #450 (owned by #421) |
+
+### Fix lists (round 3)
+
+Each list is also in the asset's `reviewer.fix_list`.
+
+**Flower tubs** (`flower_tub_9`, `10`, `26`, `27`, `38`, `59`, `60`). Fault.
+
+- **XR3-T1:** draw the body as a fired-clay vessel, not banded boards.
+  - Let the lit west, body and dark east meet in a soft stepped curve (steps of 2 to 3 texels), not along straight vertical edges.
+  - Turn the full-width ruled dark line under the rim into a shadow that thins towards the lit west.
+  - Break every one-tone run over 40 texels with sibling-tone clay clusters, not value grain: keep cluster noise at or under 40 %.
+- **XR3-T2:** draw the lime bloom as ragged pale clusters of 2 to 4 texels that wander under the rim and down one side, different on every tub. No 2-row bar with drips.
+- **XR3-T3:** no distinct near-black block in the lower-right corner. Fade the belly's shade along the base row in 2 tones, and give any chip a lit lip.
+- **XR3-T4:** show the soil as a 2 px band with clods between the clumps, with the far inner wall lit 1 to 2 px above it, not a 1-row dark slot.
+
+**Lamp plinths** (`lantern_dark`, `lantern_lit`). Fault.
+
+- **XR3-L1:** give each slab its volume back and keep the tooling:
+  - a distinct top plane, 2 to 3 rows deep, in tone 4, with a lit front-left arris;
+  - a 1-row bevel step;
+  - a lit west end face 2 to 3 columns wide;
+  - the front in 3 tones, with no one-tone run over 60 texels;
+  - the east face in core shadow;
+  - two chips with lit lips.
+
+  Compare with the round 2 plinth (HEAD~1), whose lit top plane and west end read better.
+- **XR3-L2:** draw the moss as one or two ragged clumps of different sizes in the joint: a 2 px lit cap over a 3 to 4 px band with a ragged dark underside, placed unevenly. Never four equal tufts in a row.
+
+**Stall** (`stall`). Fault.
+
+- **XR3-S1:** make the nail heads keep their lit texel. `tidy()` strips a lone lit texel, so either draw the light as 2 texels (the head's top row, or an L) or pass the nail heads to `tidy()` as `keep`. Check the output bytes, not the painter. The same function draws the beds' and coal bin's nails (round 2 polish XR2-B1), and their heads are one-tone 2 x 2 #2e2943 too (15 on beds_dug, 5 on coal_34).
+- **XR3-S2:** write the chalk board as words and a price:
+  - broken 1 to 2 px strokes in varied letter shapes (not repeated L glyphs), in two chalk tones;
+  - a faint haze of the second chalk tone smudged over part of the navy field, so the field is not one tone over 281 texels.
+
+**Polish on the passes**
+
+- **XR3-H1** (`hay_19`, `hay_20`): on the top, lay a few clumps end to end along the bale so the straw reads as strands rather than mottle. On hay_20, break the 200-texel lit run on the top's west (#daad54 [6,9,20,35]) with one or two strand clumps.
+- **XR3-W1** (`waystone`):
+  - The east crack is a straight run of alternating 1 x 2 dark and lit dashes and reads as a zipper. Let it wander and close up into a continuous line with a broken lip.
+  - The base front still has evenly spaced 2-texel dark dashes. Group them into two or three wear patches.
+  - The cap moss sits on a straight 8-texel dark underline. Make that underline ragged.
+
+### The two side effects
+
+**1. 177 ground texels away from any prop.**
+
+- Verified: 164 texels along the bakery's turf lip (three clusters, x 342–560, y 856–874; 67 of them visible in the composite) and 13 at x 906–924, y 462–480. All 13 are visible.
+- The cause is as the painter says. The lawn scatter's tufts and soil marks are drawn from one random stream, and the shade steers how many draws the soil marks take. The new hay and tub shadows change the shade, so every later draw in the stream shifts. `town.py` already draws the lawn twice to keep building edits local, but not prop edits.
+- At 6x and 10x the reshuffled texels are the same kind of marks at the same density: blade marks and the edge of a tuft on the bakery lip, and a few texels of the paving's shade at 912,468. There is no new fault, and at 1x the change cannot be seen.
+- **Ruling: acceptable for this PR. It does not block #450 and needs no regeneration.** Pixels that move unseen still cost something: they change the composite pin, they add noise to every scene-gate delta, and they hide real changes in the diff.
+- So **XR3-G1** (follow-up, not blocking, filed on `ground`'s record): make the scatter local, so that a prop edit cannot move distant ground. Either draw it per cell from a seed of that cell, or extend the twice-drawn lawn (keeping the new draw only round changed objects) from buildings to every static prop. Until then, every prop PR should list the far ground texels it moves, as this one did.
+
+**2. The composite pin.**
+
+- Confirmed: `sha256(scene.composite(load_zone('crossroads')))` is 7cfa360f10c56550125db7e31105a6e769fd3ac8b269d005c4fefc4d2bfe845d with the 16 pictures at HEAD~1, and c9ae22f8e33aafd1491791800c3c5ceaf01d4d454ef8c736103231fc27c5ceca at 8c212777.
+- 18,719 composite texels change:
+  - 18,354 inside the 13 redrawn props' sprite boxes;
+  - 3 inside the lamp shadows' boxes only;
+  - 362 elsewhere, all of them ground-delta texels: the hay and tub contact shadows below the boxes, the bakery lip and 912,468.
+
+  This is the painter's 18,357 + 362.
+- Of the ground's 698 changed texels, 206 fall inside prop boxes, 362 show elsewhere, and 130 are covered by other sprites.
+- Note: at 8c212777, `scripts/review/test_kit_scene_intake.py` still pins 7cfa360f…. This PR does not move the pin. The pin moves to c9ae22f8… when the art is accepted, and that is Claude A's call.
+
+### False positives (round 3)
+
+None were newly rejected. The detectors raised no blocker or fault on the 16 pictures, only polish:
+
+- `detail.bar` on the 13 props, kept as a measurement;
+- `detail.cluster_noise` on six tubs, kept as evidence and cited under XR3-T1;
+- `detail.light` on `flower_tub_26` (the red read as lit from the right): not ruled on, kept as evidence;
+- round 2's rejection of `detail.light` on `lantern_lit`'s glass is carried over in its note.
+
+### Gate (round 3)
+
+`python3 -m scripts.review.gate --check` refuses 11 assets (exit 1):
+
+- the 7 tubs, the 2 lanterns and the stall: failed, and their queue entries hold the pre-#450 bytes;
+- `ground`: failed, and its queue entry holds the old bytes.
+
+It prints 3 `ADVISORY` lines, for `hay_19`, `hay_20` and `waystone`: they now pass and can leave the fix queue. The two lamp shadows pass and are not queued.
+
+This round edits no queue entry. Claude A decides whether to:
+
+- re-queue the 11 failed pictures at the #450 bytes with their XR3 fix lists, or
+- hold #450 until they are redrawn, or
+- split the 5 passes off.
+
+### Not checked (round 3)
+
+- The scene gate (the 24-cell grid), night tint and the 1x phone view in the app.
+- The ground outside the 698 changed texels and their surroundings.
+- Whether the redrawn props sit correctly on their shadows at every spawn. Only the composite was compared.
