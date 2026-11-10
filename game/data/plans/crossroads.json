@@ -1091,7 +1091,18 @@
         ],
         "box": true,
         "wall_h": 34,
-        "roof_h": 24
+        "roof_h": 24,
+        "thatch": "combed",
+        "nails": "set",
+        "chimney": [
+          60
+        ],
+        "chimney_h": 0,
+        "stack_t": 0.42,
+        "stack_rise": 11,
+        "lawn_as": {
+          "chimney": null
+        }
       },
       "library": {
         "kind": "library",
@@ -1275,7 +1286,17 @@
         ],
         "wall_h": 40,
         "roof_h": 31,
-        "shutters": false
+        "shutters": false,
+        "thatch": "combed",
+        "chimney": [
+          57
+        ],
+        "chimney_h": 0,
+        "stack_t": 0.45,
+        "stack_rise": 10,
+        "lawn_as": {
+          "chimney": null
+        }
       },
       "smithy": {
         "kind": "forge",
@@ -2012,8 +2033,8 @@
     ],
     "puddles": [
       [
-        250,
-        250,
+        272,
+        246,
         10,
         4
       ],
