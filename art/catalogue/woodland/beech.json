@@ -51,7 +51,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 6 (PR #446 head 16b30d50): bar 27.8 tones / 51.5 shapes a patch (detector); through Eastward's own pipe 76.1 shapes (ruling 1: >= 57 there, the detector's 57 is withdrawn for native-res foliage). Mass 61.8 L, lit to pocket 89.9 L, lit-field c12 64.5 L, mass grain 14 px, pocket tones 22.2, noise 30.7 %. Hierarchy (ruling 2): leaf/mass 1.11 (Eastward trees 0.84 to 0.92), lit-shade8 48.4 L (45.6 to 54.6), lobe scale 8 px (13.5 to 17). Fails W6-F1. W3-T5 algae polish open."
  }
 }

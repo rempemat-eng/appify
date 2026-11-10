@@ -51,7 +51,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 6 (PR #446 head 16b30d50): W5-T1 fixed: no enclosed holes, one component, trunk byte-identical. Bar 30.0 tones / 48.5 shapes (detector); 68.7 shapes through Eastward's pipe (ruling 1). Fails W6-T2 (W5-T2 not met): the under-tier pockets hold 17.4 tones (under 18) and, through Eastward's pipe, 19.0 tones and 48.6 shapes a patch against Eastward's pine pockets 22.2 and 55.0 (0.86, 0.88). Mass 64.3, lit to pocket 89.9, lit-field c12 44.7. W4-T2 foot polish open."
  }
 }
