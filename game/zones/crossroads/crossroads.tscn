@@ -1465,7 +1465,7 @@ script = ExtResource("cond")
 only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SquarePuddles" type="Sprite2D" parent="Props/If_square_puddles"]
-position = Vector2(773, 718)
+position = Vector2(799, 738)
 texture = ExtResource("t102")
 centered = false
 offset = Vector2(0, 0)

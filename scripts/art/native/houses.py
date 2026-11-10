@@ -630,7 +630,7 @@ def thatch_ridge(a, rm, x0, x1, y_r, rng, fam='sand'):
 # combed hipped thatch (the hut and the herbalist, `thatch: combed` in the look): the two houses that
 # keep their hips (eastward-edges 11.9) drawn to stand beside the front-gable slate houses
 # ------------------------------------------------------------------------------------------------
-THATCH_COURSE = 4.2      # world px a course of straw shows (B8's course lines about every 12 E px, x1.37 / 3)
+THATCH_COURSE = 3.6      # world px a course of straw shows (B8's course lines about every 12 E px, x1.37 / 3)
 THATCH_EAVE = 2.8        # world px of the eave's cut face, seen edge on
 THATCH_CREST = 2.4       # world px of the rounded crest along each hip
 THATCH_RIDGE = 4.4       # world px of the ridge roll
@@ -649,134 +649,160 @@ def _bundles(n, lo, hi, rng):
     return list(zip(cuts, cuts[1:]))
 
 
-def combed_thatch(a, rm, rx0, rx1, y_r, y_eave, hip, rng, fam='sand'):
-    """Long straw combed down the roof in courses, as Eastward's thatched cottage (shot 38, B8) lays
-    its roof: calm planes with the courses' lines across them, never a barcode of strands.
+def _thatch_form(shape, rx0, rx1, y_r, y_eave, hip):
+    """The thatch as a rounded mass: per texel its height on the roof z (0 at the eave, 1 at the
+    ridge), the share of each plane (front, west hip, east hip) and the distance from each slanted edge.
+    The hips are the planes that rise from the slanted edges: z = soft-min(front, west, east), so the
+    courses (z's isolines) run level across the front and turn up round each hip in a smooth bend, as a
+    thick thatch rounds its corners (B8)."""
+    H, W = shape
+    Y, X = np.mgrid[0:H, 0:W] + 0.5
+    ph = max(1.0, y_eave - y_r)
+    f_e = np.clip((y_eave - Y) / ph, 0, 1)
+    dl = X - (rx0 + hip * f_e)
+    dr = (rx1 - hip * f_e) - X
+    S = max(6.0, hip * 1.25)
+    zf = np.clip((y_eave - Y) / ph, 0, 1)
+    zw, ze = np.clip(dl / S, 0, 2), np.clip(dr / S, 0, 2)
+    k = 9.0
+    e = np.exp(-k * zf) + np.exp(-k * zw) + np.exp(-k * ze)
+    z = -np.log(e) / k
+    wf, ww, we = np.exp(-k * zf) / e, np.exp(-k * zw) / e, np.exp(-k * ze) / e
+    return z, wf, ww, we, dl, dr
 
-    - The plane's light: lit (tone 4) high on the west, the body at 3, the east third turning away to 2.
-    - Courses THATCH_COURSE deep: each course's foot a lit lip a texel or two above a dark line (the
-      lip's shadow on the course below), the line wobbling a texel in runs of whole bundles (soft grid).
-    - Inside a course, bundles of straw 3 to 6 texels wide, each on one of the three sibling ramps at
-      the plane's tone (the odd one a tone off), with one or two combed streaks along it (a tone down,
-      or up on the lit side) and a groove between some bundles in the course's lower part.
-    - The hips: a rounded crest of straw along each slanted edge, lit on the west, in shade on the east,
-      a crease where it meets the plane.
-    Returns the per-texel plane tone (for the stack's contact shadow and the moss)."""
+
+def combed_thatch(a, rm, rx0, rx1, y_r, y_eave, hip, rng, fam='sand'):
+    """Long straw combed down a hipped roof, drawn as a thick rounded mass (Eastward's thatched
+    cottage, shot 38, B8; the art director's notes on #458):
+
+    - Form first: the front slope lighter from the ridge down towards the eave (it turns to the sun
+      as it rounds over), the west hip lit, the east hip one to two tones under the front and the
+      darkest plane; the tones step once at each turn, never dithered.
+    - Courses follow the roof's height: level across the front, bending up round each hip. Each course
+      ends in a row of rounded bundle tips (lit along the tip, its shade a lumpy line under it), so the
+      courses read as straw laid in bundles, not as rows of tiles.
+    - Inside a course the straw is calm: the course and the form carry the value; the combing is a few
+      long sibling streaks at the same tone, now and then one a tone down.
+    Returns the per-texel form tone."""
     H, W = a.shape
     Y, X = np.mgrid[0:H, 0:W]
-    span = max(1, rx1 - rx0)
     ph = max(1, y_eave - y_r)
-    fx = (X + 0.5 - rx0) / span
-    fy = (Y + 0.5 - y_r) / ph
-    plane = np.where((fx < 0.4) & (fy < 0.6), 4, 3) - (fx > 0.66) * 1
-    plane = np.where((fx < 0.16) & (fy < 0.9), 4, plane)
-    plane = np.where((fx > 0.86) & (fy > 0.2), 2, plane)
-    tt = plane.astype(int).copy()
-    ff = np.full(a.shape, FI[fam], int)
-    ch = q(THATCH_COURSE)
-    # course feet from the eave up, each a wobbling line in runs of whole bundles
-    y = y_eave - q(THATCH_EAVE)
-    feet = []
-    while y > y_r + q(2.0):
-        feet.append(y)
-        y -= ch
+    th = q(THATCH_EAVE)
+    z, wf, ww, we, dl, dr = _thatch_form(a.shape, rx0, rx1, y_r, y_eave - th, hip)
+    zf = np.clip((y_eave - th - (Y + 0.5)) / max(1, ph - th), 0, 1)
+    # the form tone: the front lighter towards the eave, the west hip lit, the east hip darkest
+    front = np.where(zf < 0.45, 3, 2)
+    tone = np.where(we > 0.5, np.where(we > 0.8, 0, 1), np.where(ww > 0.5, 3, front))
+    tone = np.where((we <= 0.5) & (ww <= 0.5) & (X + 0.5 > rx0 + (rx1 - rx0) * 0.8), np.minimum(tone, 2), tone)
+    # the turn between a hip and the front: a crease on the east, a lit arris on the west
+    tone = np.where((np.abs(we - 0.5) < 0.12), tone - 1, tone)
+    tone = np.where((np.abs(ww - 0.5) < 0.1) & (zf > 0.15), np.maximum(tone, 3) + 1, tone)
+    tone = np.clip(tone, 0, 5)
+    tt = tone.copy()
     sib = (FI[fam + '_cool'], FI[fam], FI[fam + '_warm'])
-    for k, yf in enumerate(feet):
-        yt = yf - ch
-        runs = _bundles(W, 3, 6, rng)
-        wob = 0
-        for (xa, xb) in runs:
-            wob = int(np.clip(wob + rng.choice([-1, 0, 0, 1]), -1, 1))
-            fi = sib[int(rng.choice([0, 1, 2], p=[0.2, 0.55, 0.25]))]
-            off = int(rng.choice([0, 0, 0, 0, 0, 0, 0, 1, -1]))
-            n = xb - xa
-            cols = np.arange(xa, xb)
-            # the bundle's tip: rounded, a texel lower in its middle than at its ends (a lumpy course
-            # line, B8, never a ruled board edge)
-            mid = (cols - xa >= 1) & (cols - xa < n - 1) if n >= 4 else np.zeros(n, bool)
-            for j, x in enumerate(cols):
-                foot = yf + wob + int(mid[j])
-                y0 = max(0, yt + wob)
-                if foot <= y0:
-                    continue
-                ff[y0:foot, x] = fi
-                tt[y0:foot, x] = plane[y0:foot, x] + off
-                # the lip: its last texel catching the light where the plane is lit
-                if 0 <= foot - 1 < H and (plane[foot - 1, x] >= 4 or (k + x // 5) % 3 == 0):
-                    tt[foot - 1, x] = plane[foot - 1, x] + off + 1
-                # under the tip, the course below in its shade: a texel two down, then one; deeper
-                # where two tips meet
-                if 0 <= foot < H:
-                    tt[foot, x] = plane[foot, x] - (2 if not mid[j] else 1)
-                if 0 <= foot + 1 < H and not mid[j]:
-                    tt[foot + 1, x] = min(tt[foot + 1, x], plane[foot + 1, x] - 1)
-            hh = yf - yt
-            # combed straw along the bundle: streaks on a sibling ramp at the same tone (shape without
-            # value noise), one in two a tone down; on the lit side now and then a tone up
-            for _ in range(2 + int(n >= 5) + int(rng.random() < 0.5)):
-                sx = xa + int(rng.integers(0, n))
-                sy = yt + wob + int(rng.integers(1, max(2, hh - 4)))
-                ln = int(rng.integers(3, 8))
-                ys_ = slice(max(0, sy), max(0, min(yf + wob - 1, sy + ln)))
-                r = rng.random()
-                if r < 0.5:
-                    ff[ys_, sx] = sib[(sib.index(fi) + int(rng.choice([1, 2]))) % 3]
-                elif r < 0.88 or plane[min(H - 1, max(0, sy)), sx] < 4:
-                    tt[ys_, sx] = plane[ys_, sx] + off - 1
-                else:
-                    tt[ys_, sx] = plane[ys_, sx] + off + 1
-    # the hips: a rounded crest of straw along each slanted edge
-    f_e = np.clip((y_eave - (Y + 0.5)) / ph, 0, 1)
-    dl = (X + 0.5) - (rx0 + hip * f_e)
-    dr = (rx1 - hip * f_e) - (X + 0.5)
-    cw = q(THATCH_CREST)
-    west = rm & (dl < cw)
-    east = rm & (dr < cw) & ~west
-    tt = np.where(west & (dl >= 1) & (dl < cw * 0.55), np.maximum(tt, 4) + (dl < 3) * 1, tt)
-    tt = np.where(west & (dl >= cw * 0.55), np.maximum(tt - 0, 3), tt)
-    tt = np.where(west & (dl >= cw - 1), tt - 1, tt)                  # the crease where it meets the plane
-    tt = np.where(east, np.minimum(tt, plane - 1) - (dr < 3) * 1, tt)
-    tt = np.where(east & (dr >= cw - 1), tt - 1, tt)
-    ff = np.where(west & (dl >= 1) & (dl < cw * 0.55), FI[fam + '_warm'], ff)
-    ff = np.where(east, FI[fam + '_cool'], ff)
-    # straw along the crests: dashes parallel to the edge, broken every few rows
-    for msk, d_, lit in ((west, dl, True), (east, dr, False)):
-        dash = msk & (np.abs(d_ - cw * 0.5) < 0.6) & (((Y // 3 + (X // 7)) % 3) != 0)
-        tt = np.where(dash, tt + (-1 if lit else -1), tt)
+    ff = np.where(tone >= 3, FI[fam + '_warm'], np.where(tone <= 1, FI[fam + '_cool'], FI[fam]))
+    # courses: isolines of the height in texels, bundle tips along each
+    hz = z * (ph - th)
+    ch = q(THATCH_COURSE)
+    u = np.where(wf >= np.maximum(ww, we), X, Y * 1.3 + (X > (rx0 + rx1) / 2) * 500)
+    bw = 8
+    bid = np.floor((u + 0.5) / bw).astype(int)
+    pos = ((u + 0.5) / bw) - bid
+    tipb = 1.8 * np.sin(np.pi * pos)                             # each bundle's tip a texel lower in its middle
+    jitter = ((bid * 2654435761) % 7) / 7.0 - 0.5
+    hh = hz + tipb + 0.6 * jitter
+    ci = np.floor(hh / ch).astype(int)
+    fr = hh - ci * ch                                           # 0 at a course's foot, ch at its head
+    inside = rm & (Y < y_eave - th)
+    # the tip's lit edge just above the foot, the next course's shade just under it
+    lit_tip = inside & (fr >= 1.0) & (fr < 2.0)
+    shade1 = inside & (fr < 1.0)
+    shade2 = inside & (fr >= ch - 1.0)
+    tt = np.where(lit_tip, np.minimum(tone + 1, 5), tt)
+    ff = np.where(lit_tip & (bid % 2 == 0), sib[2], ff)              # each tip its own straw
+    tt = np.where(shade1, tone - 2, tt)
+    tt = np.where(shade2 & ~shade1, tone - 1, tt)
+    # combing: a few long sibling streaks along the slope (same tone), one in four a tone down
+    streak = np.zeros(a.shape, bool)
+    for _ in range(int(rm.sum() / 24)):
+        sx, sy = int(rng.integers(0, W - 1)), int(rng.integers(0, H))
+        if not inside[sy, sx]:
+            continue
+        ln = int(rng.integers(4, 11))
+        ys_ = slice(sy, min(H, sy + ln))
+        for dx in range(2):
+            col = inside[ys_, sx + dx] & (fr[ys_, sx + dx] >= 2.0) & (fr[ys_, sx + dx] < ch - 1.0)
+            cur = ff[ys_, sx + dx]
+            alt = sib[2] if (sx // 2) % 2 else sib[0]
+            ff[ys_, sx + dx] = np.where(col, np.where(cur == sib[1], alt, sib[1]), cur)
+            streak[ys_, sx + dx] |= col
     tt = np.clip(tt, 0, 5)
     a[rm] = (ff * 8 + tt)[rm]
-    return plane
+    # the eave course pinned down by a pair of hazel liggers with spars between them (a thatcher's
+    # decoration along the lowest course, as on the ridge), following the course, lit along its top
+    yl = y_eave - th - q(2.4)
+    inner = ndi.binary_erosion(rm, iterations=3)
+    for k_, ly in enumerate((yl, yl - q(1.6))):
+        lm = inner & (Y == ly)
+        lt = tone[ly] if 0 <= ly < H else None
+        a[lm] = np.where(X[lm] < rx0 + (rx1 - rx0) * 0.7, code('timber_warm', 3), code('timber', 2))
+        dm = inner & (Y == ly + 1)
+        step(a, dm, -2, lo=0)
+    x = int(rx0 + q(4) + rng.integers(0, q(2)))
+    while x < rx1 - q(4):
+        for d in (0, 1):
+            pm = inner & (np.abs((X - x) - (Y - (yl - q(1.6))) * (1 if d else -1) * 0.8) < 0.7) & (Y > yl - q(1.6)) & (Y < yl)
+            a[pm] = code('timber_warm', 4 if not d else 2)
+        x += q(rng.uniform(3.4, 4.4))
+    # moss on the shaded lower slope (B8): two soft cushions with a lit cap and a few blades of grass,
+    # well inside the outline
+    deep = ndi.binary_erosion(rm, iterations=6) & (Y < yl - q(2.0)) & (Y > y_eave - th - q(9))
+    for k_ in range(3):
+        mx = rx0 + (rx1 - rx0) * (0.5 + 0.14 * k_) + rng.uniform(-q(2), q(2))
+        my = y_eave - th - q(4.5) - (k_ % 2) * q(2.4)
+        rx_, ry_ = q(3.0) - k_, q(1.3)
+        mm = deep & ((((X + 0.5 - mx) / rx_) ** 2 + ((Y + 0.5 - my) / ry_) ** 2) <= 1)
+        if mm.sum() < 8:
+            continue
+        a[mm] = code('leaf_cool', 2)
+        top = mm & ~np.roll(mm, 1, axis=0)
+        a[top] = code('leaf', 3)
+        a[top & (X + 0.5 < mx)] = code('leaf_warm', 4)
+        a[mm & ~np.roll(mm, -1, axis=0)] = code('leaf_cool', 1)
+        for bx in (int(mx) - 2, int(mx) + 1, int(mx) + 3):
+            for j in range(3 + (bx % 2)):
+                yy_ = int(my - ry_ - j)
+                if 0 <= yy_ < H and inner[yy_, bx]:
+                    a[yy_, bx] = code('grass', 3 if j < 2 else 4)
+    return tone
 
 
 def combed_ridge(a, rm, x0, x1, y_r, rng, fam='sand'):
-    """The ridge roll: a bolster of straw lit along its top, its body turning down to a dark
-    underside, two hazel liggers along it pinned by spars, its ends rounded down over the hips, and
-    its lower edge block-cut into points (lit on their west facets, shaded on the east) that throw a
-    zigzag of shade on the course under them."""
+    """The ridge roll as a raised cylinder of straw: a lit top edge, the body turning down to a
+    shaded lower edge, its ends rounded down over the hips, two hazel liggers along it pinned by spars;
+    its lower edge block-cut into short points, and its shade on both slopes under it."""
     H, W = a.shape
     Y, X = np.mgrid[0:H, 0:W]
     rr = q(THATCH_RIDGE)
     r_end = rr * 0.6
     cxm = (X + 0.5)
-    inside = (cxm >= x0 - r_end * 0.3) & (cxm < x1 + r_end * 0.3)
-    # rounded ends: an ellipse cap at each end
     endl = ((cxm - (x0 + r_end * 0.7)) / r_end) ** 2 + ((Y + 0.5 - (y_r + rr * 0.55)) / (rr * 0.6)) ** 2 <= 1
     endr = ((cxm - (x1 - r_end * 0.7)) / r_end) ** 2 + ((Y + 0.5 - (y_r + rr * 0.55)) / (rr * 0.6)) ** 2 <= 1
     core = (cxm >= x0 + r_end * 0.7) & (cxm < x1 - r_end * 0.7)
-    m = rm & (Y >= y_r) & (Y < y_r + rr) & inside & (core | endl | endr)
+    m = rm & (Y >= y_r) & (Y < y_r + rr) & (core | endl | endr)
     rel = Y - y_r
     fx = (cxm - x0) / max(1, x1 - x0)
-    tt = np.select([rel < 1, rel < 3, rel < rr - 3, rel < rr - 1], [4, 5, 3, 2], 1)
-    tt = np.where((rel >= 1) & (rel < 3) & (fx > 0.55), 4, tt)
-    tt = np.where(fx > 0.7, tt - 1, tt)
+    # a cylinder lit from above and the west: the top edge brightest, the lower edge turned under
+    tt = np.select([rel < 1, rel < 3, rel < 6, rel < rr - 3, rel < rr - 1], [4, 5, 4, 3, 2], 1)
+    tt = np.where(fx > 0.72, tt - 1, tt)
     tt = np.where(endr & ~core, tt - 1, tt)
-    fams = np.where(((X // 3 + Y // 4) % 4) == 0, FI[fam], FI[fam + '_warm'])
+    tt = np.where(endl & ~core & (rel < rr - 3), np.maximum(tt, 4), tt)
+    fams = np.where(tt >= 4, FI[fam + '_warm'], np.where(tt <= 1, FI[fam + '_cool'], FI[fam]))
     a[m] = (fams * 8 + np.clip(tt, 0, 5))[m]
-    # the liggers: hazel rods along the roll, lit on top, a dark texel under; spars pinning them
-    for ly in (y_r + q(1.3), y_r + rr - q(1.6)):
+    for k_, ly in enumerate((y_r + q(1.7), y_r + rr - q(1.8))):
         lm = m & (Y == ly) & core
-        a[lm] = code('timber_warm', 3)
-        a[lm & (fx < 0.5)] = code('timber_warm', 4)
+        a[lm] = code('timber_warm', 4 if k_ == 0 else 3)
+        a[lm & (fx < 0.5)] = code('timber_warm', 5 if k_ == 0 else 4)
         um = m & (Y == ly + 1) & core
         a[um] = np.where(fx[um] > 0.7, code('timber_cool', 1), code('timber', 1))
         x = int(x0 + r_end + q(rng.uniform(2.0, 4.0)))
@@ -784,60 +810,62 @@ def combed_ridge(a, rm, x0, x1, y_r, rng, fam='sand'):
             pm = m & (Y >= ly - 1) & (Y <= ly + 1) & (X >= x) & (X < x + 2)
             a[pm] = code('timber', 2)
             a[pm & (Y == ly - 1) & (X == x)] = code('timber_warm', 4)
-            x += q(rng.uniform(4.4, 5.8))
-    # the block-cut points under the roll
-    bw, bd = q(THATCH_BLOCK[0]), q(THATCH_BLOCK[1])
+            x += q(rng.uniform(5.0, 6.6))
+    bw, bd = q(THATCH_BLOCK[0]), q(1.2)
     yb = y_r + rr
     pts = np.zeros(a.shape, bool)
     x = int(x0 + r_end * 0.6)
     while x + bw <= x1 - r_end * 0.6:
         c = x + bw / 2.0
-        k = Y - yb
-        half = (bw / 2.0) * (1 - (k + 0.5) / bd)
-        pm = rm & (k >= 0) & (k < bd) & (np.abs(cxm - c) < half)
+        kk = Y - yb
+        half = (bw / 2.0) * (1 - (kk + 0.5) / bd)
+        pm = rm & (kk >= 0) & (kk < bd) & (np.abs(cxm - c) < half)
         pts |= pm
-        west_f = pm & (cxm < c)
-        tw = 3 if (c - x0) / max(1, x1 - x0) < 0.7 else 2
-        a[west_f] = code(fam + '_warm', tw)
-        a[pm & ~west_f] = code(fam, tw - 1)
+        tw = 2 if (c - x0) / max(1, x1 - x0) < 0.7 else 1
+        a[pm] = code(fam, tw)
+        a[pm & (cxm < c)] = code(fam, tw + 1)
         x += bw
-    # the points' shade on the straw under them: two texels following the zigzag, and the roll's own
-    # shade along its foot between the points
-    sh = (ndi.binary_dilation(pts, structure=np.array([[0, 0, 0], [0, 0, 0], [0, 1, 0]], bool), iterations=2) & ~pts & ~m) | \
-        (rm & ~pts & ~m & (Y >= yb) & (Y < yb + 2))
-    step(a, sh & rm, -2, lo=0)
+    # the roll's shade on both slopes under it: two tones for two rows, one for the next
+    under = rm & ~m & ~pts & (Y >= yb) & (Y < yb + q(1.4) + 2)
+    sh = ndi.binary_dilation(pts, structure=np.array([[0, 0, 0], [0, 0, 0], [0, 1, 0]], bool), iterations=2) & ~pts & ~m
+    step(a, (under & (Y < yb + 2)) | (sh & rm), -2, lo=0)
+    step(a, under & (Y >= yb + 2), -1, lo=0)
     return m | pts
 
 
 def combed_eave(a, rm, rx0, rx1, y_eave, rng, fam='sand'):
-    """The eave's cut face seen edge on: a lit crest where the straw rounds over, the butts' face in
-    combed clusters, a dark underside and a crisp straight lower edge on the soft grid (no fringe of
-    loose straw: the band on the wall below carries the shade). Returns its mask."""
+    """The thick eave lip: the straw rolling over the edge in rounded bundle tips five texels tall,
+    lit on their tops (the sun on the roll), turning down through the body, and a deep dark underside
+    band of three texels under them before the wall's line. Its lower edge is straight on the soft
+    grid (the tips round its upper face, never a fringe below). Returns its mask."""
     H, W = a.shape
     Y, X = np.mgrid[0:H, 0:W]
     th = q(THATCH_EAVE)
+    lip = 5
     em = rm & (Y >= y_eave - th)
     rel = Y - (y_eave - th)
     fx = (X + 0.5 - rx0) / max(1, rx1 - rx0)
-    tt = np.select([rel < 1, rel < 3, rel < th - 2, rel < th - 1], [4, 5, 3, 2], 1)
-    tt = np.where((rel >= 1) & (rel < 3) & (fx > 0.6), 4, tt)
-    tt = np.where(fx > 0.72, tt - 1, tt)
-    ff = np.full(a.shape, FI[fam + '_warm'], int)
-    # the butts: clusters of short dark ends across the face, never a regular comb
-    face = (rel >= 3) & (rel < th - 2)
-    for (xa, xb) in _bundles(W, 3, 6, rng):
-        # each bundle's crest a tone of its own, its butts in short dark ends at different depths
-        if rng.random() < 0.4:
-            tt = np.where((rel >= 1) & (rel < 3) & (X >= xa) & (X < xb), tt - 1, tt)
-        for _ in range(1 + int(rng.random() < 0.5)):
-            sx = xa + int(rng.integers(0, max(1, xb - xa)))
-            sy = int(rng.integers(3, max(4, th - 3)))
-            tt = np.where((X == sx) & (rel >= sy) & (rel < sy + 2) & em, tt - 1, tt)
-        r = rng.random()
-        if r < 0.3:
-            ff[:, xa:xb] = FI[fam]
-        elif r < 0.45:
-            ff[:, xa:xb] = FI[fam + '_cool']
+    tt = np.full(a.shape, 3, int)
+    ff = np.full(a.shape, FI[fam], int)
+    for (xa, xb) in _bundles(W, 4, 6, rng):
+        n = xb - xa
+        for x in range(xa, xb):
+            j = x - xa
+            # a rounded tip: its top a texel lower at its two edges than in its middle
+            top = 0 if 0 < j < n - 1 else 1
+            col = (X == x)
+            tt = np.where(col & (rel == top), 5, tt)
+            tt = np.where(col & (rel == top + 1), 4, tt)
+            tt = np.where(col & (rel >= top + 2) & (rel < lip - 1), 3, tt)
+            tt = np.where(col & (rel == lip - 1), 2, tt)
+            tt = np.where(col & (rel < top), 1, tt)                    # the gap between two tips
+        if rng.random() < 0.35:
+            ff[:, xa:xb] = FI[fam + '_warm']
+    under = rel >= lip
+    tt = np.where(under, np.where(rel >= th - 1, 0, 1), tt)
+    ff = np.where(under, FI[fam + '_cool'], ff)
+    tt = np.where((fx > 0.75) & ~under, tt - 1, tt)
+    ff = np.where((tt >= 4) & ~under, FI[fam + '_warm'], ff)
     tt = np.clip(tt, 0, 5)
     a[em] = (ff * 8 + tt)[em]
     return em
@@ -2181,6 +2209,7 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         combed_ridge(a, rm, rx0 + hip, rx1 - hip, y_r, rng)
         combed_eave(a, rm, rx0, rx1, y_eave, rng)
         info['keep'] = keep
+        info['calm'] = ndi.binary_dilation(rm, iterations=1)
         info['pots'] = []
         if spec.get('chimney') and spec.get('stack_t') is not None:
             cw = q(spec.get('chimney_w', 9))
@@ -2267,9 +2296,16 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         stood |= made
         VO.protrusion(a, made, (before >= 0) & ~made, standoff=1.5)       # a board on its bracket
     foot_weeds(a, L, R, B, busy, rng)
+    calm = info.get('calm')
+    held = a.copy() if calm is not None else None
     break_runs(a, rng, q(14))
+    if calm is not None:
+        a[calm] = held[calm]           # the combed thatch's calm planes keep their long runs (no joints in straw)
     V.finish(p, keep=info['gable']['keep'] if 'gable' in info else info.get('keep'))
+    held = a.copy() if calm is not None else None
     break_runs(a, rng, q(14))          # the outline's long rows too (the plinth's foot, a thatch's crown)
+    if calm is not None:
+        a[calm] = held[calm]
 
     # the damage ----------------------------------------------------------------------------------
     dmg = None

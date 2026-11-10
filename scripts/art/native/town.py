@@ -294,54 +294,84 @@ def prop_shadow(solids, foot, d, W, H, kx, ky):
 
 
 def setts_puddle(cv, cx, cy, rx, ry, seed=0):
-    """A puddle left by the storm in a slight hollow of the square's setts (texels; the fix queue: no
-    dithered margin, eastward-edges 5.3 and 5.4, house-style 5 Water):
+    """A puddle left by the storm on the square's setts (texels; the fix queue and the art director's
+    notes on #458: water lying on setts, never a lens or a hole):
 
-    - the hollow's setts damp and a tone darker in a band 2 to 4 texels wide round the water, its outer
-      edge soft and lobed on the soft grid (no checker, no one-texel teeth);
-    - at the water's edge the wet setts show through the shallows, two tones down, for 2 texels;
-    - the water reflects what stands over it: the sky's pale blue in its body, brightest in a broad
-      streak across its middle, and the dark of the setts' far edge along its north side (the near
-      bank's reflection, 5.3's dark band under a north bank);
-    - a lit rim of one texel where the meniscus catches the light on its upper-left (north-west) edge,
-      and a dark wet line along its south-east edge where the setts rise out of it.
+    - its outline follows the setts: a sett mostly inside the hollow is under water whole, so the edge
+      runs straight along a sett's side and steps where it meets the next; the water runs on into the
+      joints round them in short lobes;
+    - one or two setts near the middle stand proud of it as islands (damp, a tone down);
+    - the water is flat: the sky's grey-blue in one body tone, a short streak of the sky's light, its
+      north rim a tone darker where the setts' lip shades it; no gradient;
+    - the setts' lip on its south and east edge catches the light in a one-texel lit rim, and a damp
+      ring one to two texels wide darkens the setts round it.
     Returns the mask of texels it changed."""
-    from scripts.art.native import softedge as SE
     from scripts.art.native import softground as GD
     from scripts.art.native.palette import C, step
     H, W = cv.shape
     yy, xx = np.mgrid[0:H, 0:W] + 0.5
-    e = ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2 + (GD.nz(H, W, 14.0, seed) - 0.5) * 0.4
-    water = SE.soft(e < 1.0, smooth=0.6, min_area=2.0)
+    e = ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2 + (GD.nz(H, W, 12.0, seed) - 0.5) * 0.35
+    near = e < 2.2
+    from scripts.art.native.palette import FI
+    stone = np.isin(cv // 8, [FI['stone'], FI['stone_warm'], FI['stone_cool']])
+    joint = ~stone | (cv % 8 <= 3)
+    lab, n = ndi.label(near & ~joint)
+    water = np.zeros((H, W), bool)
+    setts = []
+    if n:
+        idx = np.arange(1, n + 1)
+        area = ndi.sum(np.ones((H, W)), lab, idx)
+        inn = ndi.sum((e < 1.0).astype(float), lab, idx)
+        for i, (ar, k) in enumerate(zip(area, inn)):
+            if 6 <= ar <= 260 and k / ar >= 0.45:
+                water |= lab == i + 1
+                setts.append(i + 1)
+    # into the joints between and round the drowned setts (short lobes), never past the hollow
+    water |= joint & (e < 1.25) & ndi.binary_dilation(water, iterations=2)
+    water = ndi.binary_opening(water, structure=np.ones((2, 2), bool)) | (water & ~joint)
+    lab2, n2 = ndi.label(water)
+    if n2 > 1:
+        sizes = ndi.sum(np.ones((H, W)), lab2, np.arange(1, n2 + 1))
+        water = lab2 == (1 + int(np.argmax(sizes)))
     if not water.any():
         return np.zeros((H, W), bool)
-    damp = SE.soft(e < 1.0 + 0.55 + (GD.nz(H, W, 9.0, seed + 3) - 0.5) * 0.5, smooth=0.6) & ~water
-    damp |= ndi.binary_dilation(water, iterations=2) & ~water
     before = cv.copy()
-    sel = damp & (cv % 8 < 6) & (cv >= 0)
+    # islands: one or two setts near the middle stand out of the water
+    island = np.zeros((H, W), bool)
+    rng = np.random.default_rng(seed)
+    cands = [i for i in setts if (water & (lab == i)).any()]
+    cands.sort(key=lambda i: float(e[lab == i].mean()))
+    want = int(rng.integers(1, 3))
+    for i in cands:
+        m = lab == i
+        ringm = ndi.binary_dilation(m, iterations=2) & ~m
+        if 6 <= m.sum() <= 90 and (ringm & water).sum() >= 0.8 * ringm.sum():
+            island |= m
+            want -= 1
+            if not want:
+                break
+    water &= ~island
+    # the damp ring on the setts round it, and the islands damp
+    ring = ndi.binary_dilation(water, iterations=2) & ~water
+    sel = (ring | island) & (cv >= 0) & (cv % 8 < 6)
     cv[sel] = step(cv[sel], -1)
-    d_in = ndi.distance_transform_edt(water)
-    under = before.copy()
-    # the body: the sky's grey-blue seen dimly in shallow water over dark setts (never a flat sticker
-    # of saturated blue); the sky's light in a broad soft streak across the middle, along its long axis
-    cv[water] = C('slate', 2)
-    body = water & (d_in > 4)
-    streak = body & (np.abs((yy - cy) + 0.18 * (xx - cx)) < max(1.6, ry * 0.32))
-    cv[streak] = C('slate_warm', 3)
-    cv[streak & (d_in > 6) & (xx < cx)] = C('sky', 4)
-    # the far edge's reflection along the north side: a dark band, its lower edge stepped
-    north = water & ~GD.down(water, 3) & (d_in <= 3)
-    cv[north] = C('slate_cool', 1)
-    cv[north & ~GD.down(water, 1)] = C('slate_cool', 0)
-    # the shallows: the wet setts showing through at the edge (south and east sides)
-    shallow = water & (d_in <= 4) & ~north
-    cv[shallow] = step(under[shallow], -2)
-    # the meniscus: lit on the upper-left edge, a dark wet line on the south-east
-    ring = water & ~ndi.binary_erosion(water)
-    nw = ring & ((xx - cx) / rx + (yy - cy) / ry < -0.35)
-    se = ring & ((xx - cx) / rx + (yy - cy) / ry > 0.45)
-    cv[nw] = C('sky', 5)
-    cv[se] = C('stone_cool', 1)
+    # the water, flat: one body tone, the north rim darker, a short streak of sky
+    cv[water] = C('slate', 3)
+    north = water & ~GD.down(water, 1)
+    north |= water & ~GD.down(water, 2) & (np.abs(xx - cx) < rx * 0.7)
+    cv[north] = C('slate_cool', 2)
+    sy = int(round(cy + ry * 0.05))
+    wy, wx = np.nonzero(water)
+    wcx = float(wx.mean())
+    sy = int(np.median(wy))
+    streak = water & (np.floor(yy) >= sy) & (np.floor(yy) < sy + 2) & (xx > wcx - rx * 0.5) & (xx < wcx + rx * 0.1) & ~north
+    streak &= ndi.binary_erosion(water, iterations=2)
+    cv[streak] = C('sky', 4)
+    # the lit lip on the south and east: the sett edge just outside the water catching the light
+    lip = (GD.down(water, 1) | GD.right(water, 1)) & ~water & ~island & (cv >= 0)
+    cv[lip] = C('stone_warm', 5)
+    # an island's own lip lit on its south, shaded on its north
+    cv[island & ~GD.down(island, -1)] = C('stone_warm', 4)
     return cv != before
 
 
@@ -1012,7 +1042,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         sc = cv.copy()
         changed = np.zeros((H, W), bool)
         for k_, (px, py, prx, pry) in enumerate(art['puddles'][:2]):
-            changed |= setts_puddle(sc, q(px), q(py), q(prx * 1.15), q(pry * 1.3), seed=120 + k_)
+            changed |= setts_puddle(sc, q(px), q(py), q(prx * 1.5), q(pry * 1.9), seed=120 + k_)
         if changed.any():
             ys, xs = np.nonzero(changed)
             bx0, by0, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1

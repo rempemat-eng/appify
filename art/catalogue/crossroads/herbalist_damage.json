@@ -1,7 +1,7 @@
 {
  "id": "crossroads/herbalist_damage",
  "file": "game/zones/crossroads/art/herbalist_damage.png",
- "sha256": "52c6713f30e42b5a24d7a64e6d2c21239d9ff874e022b594cbc6d30bef28e1eb",
+ "sha256": "213060415606f65a1b8b2c0d9b00534e98a889cc1e99a65c64710862ab166f18",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 11,
-   "tones": 23.727272727272727,
-   "shapes": 33.90909090909091
+   "patches": 13,
+   "tones": 25.384615384615383,
+   "shapes": 38.69230769230769
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.673,
-  "tones_ratio": 0.879,
-  "shapes_ratio": 0.673,
+  "ratio": 0.768,
+  "tones_ratio": 0.94,
+  "shapes_ratio": 0.768,
   "passed": false,
   "group": "prop"
  },
@@ -39,25 +39,13 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    28,
-    36,
+    29,
+    31,
     164,
     228
    ],
-   "message": "crossroads/herbalist_damage: detail bar 0.67 of Eastward's prop band (23.7 tones, 33.9 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist_damage: detail bar 0.77 of Eastward's prop band (25.4 tones, 38.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.cluster_noise",
-   "severity": "polish",
-   "box": [
-    28,
-    36,
-    164,
-    228
-   ],
-   "message": "crossroads/herbalist_damage: 40% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 39% to 43%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-10",

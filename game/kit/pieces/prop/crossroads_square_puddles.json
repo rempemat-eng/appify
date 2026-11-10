@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "square_puddles",
@@ -27,11 +27,11 @@
  },
  "geometry": {
   "size_px": [
-   473,
-   286
+   445,
+   273
   ],
   "size_cells": [
-   20,
+   19,
    12
   ],
   "z_sort": "ground",

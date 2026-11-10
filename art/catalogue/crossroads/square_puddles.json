@@ -1,14 +1,14 @@
 {
  "id": "crossroads/square_puddles",
  "file": "game/zones/crossroads/art/square_puddles.png",
- "sha256": "1d8c3131b993fe2ec12c852d30ac963002d1043f1f44810e457b59ffe157579f",
+ "sha256": "060b0015dce7c8d6fc7be1f46914550fd2bd1a8a6c781f18c8f8cd82b1ccc422",
  "kind": "square_puddles",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  473,
-  286
+  445,
+  273
  ],
  "status": "pass",
  "counts": {

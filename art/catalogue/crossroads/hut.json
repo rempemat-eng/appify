@@ -1,7 +1,7 @@
 {
  "id": "crossroads/hut",
  "file": "game/zones/crossroads/art/hut.png",
- "sha256": "3f12aa4fa7d22c210fe70fa79e6288a2089badbc6089954e0b1ed01b369e03ab",
+ "sha256": "595af8fbae3aaa41e72e9bee6fe28c7031f8f6265d5e7871478f063056e5d788",
  "kind": "hut",
  "biome": "valley",
  "H": 74.0,
@@ -13,14 +13,14 @@
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 2,
+  "fault": 1,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 118,
-   "tones": 23.610169491525422,
-   "shapes": 41.8728813559322
+   "tones": 23.95762711864407,
+   "shapes": 40.66101694915254
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.831,
-  "tones_ratio": 0.874,
-  "shapes_ratio": 0.831,
+  "ratio": 0.807,
+  "tones_ratio": 0.887,
+  "shapes_ratio": 0.807,
   "passed": false,
   "group": "prop"
  },
@@ -39,24 +39,12 @@
    "detector": "detail.volume",
    "severity": "fault",
    "box": [
-    11,
-    99,
-    101,
-    176
+    205,
+    20,
+    259,
+    83
    ],
-   "message": "crossroads/hut: the red reads 2D: 2 light planes, luminance spread 3",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    176,
-    42,
-    210,
-    76
-   ],
-   "message": "crossroads/hut: the red reads 2D: 1 light planes, luminance spread 0",
+   "message": "crossroads/hut: the red reads 2D: 2 light planes, luminance spread 33",
    "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
   },
   {
@@ -68,7 +56,7 @@
     264,
     190
    ],
-   "message": "crossroads/hut: detail bar 0.83 of Eastward's prop band (23.6 tones, 41.9 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/hut: detail bar 0.81 of Eastward's prop band (24.0 tones, 40.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
