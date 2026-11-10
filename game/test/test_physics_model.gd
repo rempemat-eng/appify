@@ -148,6 +148,16 @@ func test_the_woodland_is_split_into_walls_and_low_walls() -> void:
 		var hit := _blocked(zone, at)
 		assert_int(hit.size()).is_greater(0)
 		assert_object(hit[0].collider).is_same(walls)
+	# the fall's face inside the rock bank is cliff: only the stream above its lip and the pool below are low,
+	# so no arrow from the pool crosses the bank up the fall and on over the upper meadow
+	for x in [222.0, 240.0, 258.0]:
+		var face := _blocked(zone, Vector2(x, 820))
+		assert_int(face.size()).is_greater(0)
+		assert_object(face[0].collider).override_failure_message("the fall's face at x %d is low" % x).is_same(walls)
+		assert_bool(Arrow.walled_off(zone.get_world_2d().direct_space_state, Vector2(x, 950), Vector2(x, 740))) \
+			.override_failure_message("an arrow flies up the fall at x %d" % x).is_true()
+	# and the river is low from bank to bank: an arrow over it stops at nothing (one cell was left tall)
+	assert_bool(Arrow.walled_off(zone.get_world_2d().direct_space_state, Vector2(906, 950), Vector2(906, 900))).is_false()
 	# the bench, the stumps and the log are low; trunks and standing stones are walls
 	assert_object(low.get_node_or_null("s_bench")).is_not_null()
 	assert_object(low.get_node_or_null("s_stump-1")).is_not_null()
