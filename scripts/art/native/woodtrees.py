@@ -744,7 +744,8 @@ TUNE = dict(sep=0.95, a_lit=0.5, a_mid=0.1, big=(7, 11), capy=0.2, lo=0.5, d_mid
             notch=0.0, notch_lr=0.15, notch_d=46.0, notch_mid=0.55, gap2=1, gapn=0.0, lit_nsib=5, lit_sib=12,
             mid_excl=(), cl_on=0, cl_lit=(10, 16), cl_mid=(8, 12), cl_gap=36.0, cl_cap=12.0, cl_under=26.0, cl_ov=(2, 4), cl_ax=(1.15, 0.85),
             lb_on=1, lb_d=(12, 18), lb_sep=0.95, lb_w=0.3, lb_back=(4, 6), lb_area=60.0, lb_cl=(7, 12), lb_lift=0.3, lb_gap=24.0, lb_shcap=18.0, lb_leafy=(), lb_lfn=2, lb_sh=(3.4, 4.4), lb_shov=0.5, lb_q=16.0,
-            bl_on=0, bl_n=(4, 30), bl_d=(30, 45), bl_band=2, bl_step=18.0, bl_k=2.5, bl_cs=0.15, bl_ew=0.15, bl_wob=3.0)
+            bl_on=0, bl_n=(4, 30), bl_d=(30, 45), bl_band=2, bl_step=18.0, bl_k=2.5, bl_cs=0.15, bl_ew=0.15, bl_wob=3.0,
+            bl_v7=0, v7_pk=(5, 10), v7_per=25.0, v7_core=0.55, v7_cross=(10, 20), v7_jgap=3, v7_back=(3, 4), v7_mix=1)
 
 
 def _leaf_blob(rx, ry, rng):
@@ -1349,9 +1350,13 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
         # pockets lie only on the big lobes' boundaries; inside a big lobe a notch takes the body.
         SH = np.zeros((Hp, Wp))
         ipock = np.zeros((Hp, Wp), bool)
+        bline = np.zeros((Hp, Wp), bool)
+        pcore = np.zeros((Hp, Wp), bool)
         if T_.get('bl_on', 0):
             ys_, xs_ = np.nonzero(free_)
             P_ = np.stack([ys_, xs_], 1).astype(float)
+            for _ in range(int(T_.get('bl_seed', 0))):                # (pass 11) the variant drawn for this kind
+                rng.random()
             # as many big lobes as lobes 30 to 45 px across fill (the red tree's are about 41)
             dB = rng.uniform(*T_['bl_d'])
             nB = int(np.clip(round(free_.sum() / (math.pi * dB * dB / 4)), T_['bl_n'][0], T_['bl_n'][1]))
@@ -1382,12 +1387,83 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
             s_ = ((xx - bc[bo, 1]) + (yy - bc[bo, 0])) / (2 * Rk[bo])        # -1 upper left .. 1 lower right
             step = T_['bl_step']
             cs_ = ((bc[:, 1] - gx0) / grx + (bc[:, 0] - gy0) / gry) / 2      # the lobe's place in the crown
-            SH = np.where(free_, step * np.clip(-s_ * T_['bl_k'], -1, 1) - step * (cs_[bo] > T_['bl_cs']), 0.0)
+            SH = np.where(free_, step * np.clip(-s_ * T_['bl_k'], -1, 1) - T_.get('bl_cstep', step) * (cs_[bo] > T_['bl_cs']), 0.0)
             ub_, vb_ = (xx - bc[bo, 1]) / Rk[bo], (yy - bc[bo, 0]) / Rk[bo]
             e_ = e_ + T_['bl_ew'] * lamb(ub_, vb_)
-            ipock = pock & ~band_                                      # a notch inside a big lobe
-            lown[band_] = -1
-            pock = band_
+            if T_.get('bl_v7', 0):
+                # (pass 11, W7-F1) the boundaries broken and the dark gathered into pockets:
+                # - a pocket is an irregular blob 5 to 10 px across (4 to 7 on a small bush), 1 to 3
+                #   to a boundary, most at a three-lobe junction or under a lobe's lower edge: a
+                #   leaf-0 core ringed by leaf-1 back leaves;
+                # - between pockets the boundary is a leaf 1 to 2 line at most 2 px wide, ending
+                #   2 to 4 px short of a junction and broken every 10 to 20 px where the front
+                #   lobe's clusters cross it.
+                P4 = np.pad(bid, 1, constant_values=-1)
+                edge1 = free_ & (bid >= 0) & (((P4[:-2, 1:-1] != bid) & (P4[:-2, 1:-1] >= 0)) | ((P4[2:, 1:-1] != bid) & (P4[2:, 1:-1] >= 0))
+                                              | ((P4[1:-1, :-2] != bid) & (P4[1:-1, :-2] >= 0)) | ((P4[1:-1, 2:] != bid) & (P4[1:-1, 2:] >= 0)))
+                # three-lobe junctions: three big lobes within 5 x 5
+                nl_ = np.zeros((Hp, Wp), int)
+                for i in range(nB):
+                    nl_ += ndi.maximum_filter((bid == i).astype(int), size=5)
+                junc = free_ & (nl_ >= 3)
+                # the other lobe across each boundary texel
+                oth = np.full((Hp, Wp), -1)
+                for (dy, dx) in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                    nb_ = P4[1 + dy:1 + dy + Hp, 1 + dx:1 + dx + Wp]
+                    sel_ = edge1 & (nb_ >= 0) & (nb_ != bid) & (oth < 0)
+                    oth[sel_] = nb_[sel_]
+                pairs = {}
+                for y, x in zip(*np.nonzero(edge1)):
+                    pairs.setdefault((min(bid[y, x], oth[y, x]), max(bid[y, x], oth[y, x])), []).append((y, x))
+                PB = np.zeros((Hp, Wp), bool)
+                core = np.zeros((Hp, Wp), bool)
+                CR = np.zeros((Hp, Wp), bool)
+                pr0, pr1 = T_['v7_pk']
+                for key_, pts in sorted(pairs.items()):
+                    pts = np.array(pts)
+                    if len(pts) < 4:
+                        continue
+                    # the pocket sites: junction texels first, then the lower edge of the upper lobe
+                    lobe_up = key_[0] if bc[key_[0], 0] < bc[key_[1], 0] else key_[1]
+                    score = (junc[pts[:, 0], pts[:, 1]] * 2.0
+                             + (bid[pts[:, 0], pts[:, 1]] != lobe_up) * 1.0 + rng.random(len(pts)))
+                    npk = int(np.clip(round(len(pts) / T_['v7_per']), 1, 3))
+                    sites = []
+                    for j_ in np.argsort(-score):
+                        y, x = pts[j_]
+                        if any(abs(y - sy) + abs(x - sx) < 8 for (sy, sx) in sites):
+                            continue
+                        sites.append((int(y), int(x)))
+                        if len(sites) >= npk:
+                            break
+                    for (y, x) in sites:
+                        r_ = rng.uniform(pr0, pr1) / 2.0
+                        ang = np.arctan2(yy - y, xx - x)
+                        wob = 1 + 0.25 * np.sin(3 * ang + rng.uniform(0, 6.3)) + 0.15 * np.sin(5 * ang + rng.uniform(0, 6.3))
+                        bl_ = (np.hypot((xx - x) / 1.15, yy - y) <= r_ * wob) & free_
+                        PB |= bl_
+                        core |= bl_ & (np.hypot((xx - x) / 1.15, yy - y) <= max(1.6, r_ * T_['v7_core']) * wob)
+                    # the crossings, every 10 to 20 px along the boundary
+                    order_ = np.argsort(pts[:, 0] * 0.7 + pts[:, 1] + rng.uniform(-0.5, 0.5, len(pts)))
+                    acc, gap_ = 0.0, rng.uniform(*T_['v7_cross'])
+                    prev_ = None
+                    for j_ in order_:
+                        y, x = pts[j_]
+                        if prev_ is not None:
+                            acc += math.hypot(y - prev_[0], x - prev_[1])
+                        prev_ = (y, x)
+                        if acc >= gap_:
+                            acc, gap_ = 0.0, rng.uniform(*T_['v7_cross'])
+                            CR |= np.hypot(xx - x, yy - y) <= rng.uniform(2.5, 4.0)
+                bline = edge1 & ~PB & ~CR & ~ndi.binary_dilation(junc, iterations=T_['v7_jgap'])
+                ipock = pock & ~(PB | bline)
+                lown[PB | bline] = -1
+                pock = PB
+                pcore = core & PB
+            else:
+                ipock = pock & ~band_                                      # a notch inside a big lobe
+                lown[band_] = -1
+                pock = band_
         Lhi += SH
         Lmid += SH
         Lsh += SH
@@ -1405,13 +1481,19 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
             code[y, x] = pal9(max(NB_FLOOR + 3, Lpk[y, x]), 'shade')[mk_[y, x] % 2]
         for y, x in zip(*np.nonzero(ipock)):
             code[y, x] = pal9(max(NB_FLOOR + 6, Lmid[y, x]), 'mid')[mk_[y, x] % 2]
+        # (pass 11) the boundary line between pockets: leaf 1 to 2, no leaf 0; the pockets' leaf-0 cores
+        for y, x in zip(*np.nonzero(bline)):
+            code[y, x] = C('leaf', 1) if (mk_[y, x] % 2 or not T_['v7_mix']) else C('leaf', 2)
+        code[pcore] = np.where(mk_[pcore] % 3 == 0, C('leaf_cool', 0), C('leaf', 0))
         bk = ([C('leaf', 1), C('leaf', 2), C('leaf_cool', 2)] if not T_.get('bl_on', 0)
               else [C('leaf', 1), C('leaf_cool', 1), C('leaf', 2)])
-        pys, pxs = np.nonzero(pock)
+        if T_.get('bl_v7', 0):
+            bk = [C('leaf', 1), C('leaf_cool', 1)]
+        pys, pxs = np.nonzero(pock & ~pcore)
         bdone = []
         for j_ in rng.permutation(len(pys)):
             y, x = int(pys[j_]), int(pxs[j_])
-            r_ = rng.uniform(*T_['lb_back']) / 2.0
+            r_ = rng.uniform(*(T_['v7_back'] if T_.get('bl_v7', 0) else T_['lb_back'])) / 2.0
             if any(math.hypot(x - bx, y - by) < (r_ + br) * 0.8 for (by, bx, br) in bdone):
                 continue
             bdone.append((y, x, r_))
@@ -2500,17 +2582,25 @@ def sapling_stem(length, rng):
 # ------------------------------------------------------------------------------------------------
 # per kind, the clump size and spacing chosen side by side at 4x and by the detail bar (pass 3)
 SHRUB_KW = {
-    'bush': dict(shapes=CLUMPS_XS, lbk=dict(bl_on=1, bl_n=(2, 4), bl_d=(25, 35))), 'bush_b': dict(density=0.95, lbk=dict(bl_on=1, bl_n=(2, 4), bl_d=(25, 35))),
-    'bush_c': dict(density=0.8, sib_spread=7, lbk=dict(lb_sh=(4.0, 5.5), bl_on=1, bl_n=(2, 4), bl_d=(25, 35), bl_step=12.0, bl_band=3)),
+    'bush': dict(shapes=CLUMPS_XS, lbk=dict(bl_on=1, bl_n=(2, 4), bl_d=(25, 35), bl_v7=1, v7_per=45.0, bl_ew=0.3, bl_cstep=0.0, bl_step=22.0, bl_seed=0)),
+    'bush_b': dict(density=0.95, lbk=dict(bl_on=1, bl_n=(2, 4), bl_d=(25, 35), bl_v7=1, v7_per=12.0, bl_ew=0.3,
+                                         v7_pk=(6, 7), v7_mix=0, bl_seed=9)),
+    'bush_c': dict(density=0.8, sib_spread=7, lbk=dict(lb_sh=(4.0, 5.5), bl_on=1, bl_n=(2, 4), bl_d=(25, 35), bl_step=12.0, bl_band=3,
+                                                       bl_v7=1, v7_per=12.0, bl_ew=0.4, v7_pk=(6, 7), v7_mix=0, v7_cross=(10, 16),
+                                                       bl_cstep=6.0, bl_seed=0)),
     'bramble': dict(shapes=CLUMPS_XS, density=0.75, lb_hi=26.0),
     'bramble_b': dict(shapes=CLUMPS_XS, density=0.75, lb_hi=26.0),
 }
 HOLLY_KW = {'holly': dict(shapes=CLUMPS_XS, cap_l=(88.0, 136.0), core_drop=12.0, pk_scale=1.3, cl_gap=14.0, lb_hi=40.0),
             'holly_b': dict(cap_l=(88.0, 140.0), core_drop=24.0, pk_scale=1.3, cl_gap=14.0, lb_hi=40.0)}
-# (pass 10, W6-F1) big lobes on the oak, beech, birch, hollow tree and the bushes
-TREE_KW = {'oak': dict(lbk=dict(bl_on=1)), 'beech': dict(shapes=CLUMPS_S, lbk=dict(bl_on=1, lb_d=(14, 20))),
-           'birch': dict(sib_spread=7, lbk=dict(lb_d=(14, 20), lb_cl=(9, 14), bl_on=1, bl_n=(3, 12), bl_d=(25, 35))),
-           'hollow_tree': dict(pockets=1.0, lbk=dict(bl_on=1)),
+# (pass 10, W6-F1) big lobes on the oak, beech, birch, hollow tree and the bushes; (pass 11, W7-F1)
+# their boundaries broken and gathered into pockets (bl_v7), each kind's variant (bl_seed) chosen by
+# the round 7 measures
+TREE_KW = {'oak': dict(lbk=dict(bl_on=1, bl_v7=1, v7_per=45.0, bl_ew=0.3)),
+           'beech': dict(shapes=CLUMPS_S, lbk=dict(bl_on=1, lb_d=(16, 22), bl_v7=1, v7_per=45.0, bl_ew=0.3, bl_cstep=0.0, bl_step=22.0, bl_seed=2)),
+           'birch': dict(sib_spread=7, lbk=dict(lb_d=(14, 20), lb_cl=(9, 14), bl_on=1, bl_n=(3, 12), bl_d=(25, 35),
+                                              bl_v7=1, v7_per=45.0, bl_ew=0.3, bl_cstep=0.0, bl_step=22.0, bl_seed=3)),
+           'hollow_tree': dict(pockets=1.0, lbk=dict(bl_on=1, bl_v7=1, v7_per=45.0, bl_ew=0.3, bl_cstep=0.0, bl_step=22.0, bl_seed=3)),
            'sapling': dict(shapes=CLUMPS_XS, cl_n=3)}
 WILLOW_KW = dict(density=0.75)
 

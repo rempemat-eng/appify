@@ -1,7 +1,7 @@
 {
  "id": "woodland/bush",
  "file": "game/zones/woodland/art/bush.png",
- "sha256": "3c83df394e5fb98f1f35ba742dcbfc2a2e180a7702a4ad5e94c9d29c163fbb97",
+ "sha256": "8228464ab7ef159c8553dfb09481ae0c0742285d3064f3b5ecf3857da411e02d",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 13,
-   "tones": 30.53846153846154,
-   "shapes": 48.07692307692308
+   "tones": 30.923076923076923,
+   "shapes": 46.0
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.759,
-  "tones_ratio": 1.102,
-  "shapes_ratio": 0.759,
+  "ratio": 0.726,
+  "tones_ratio": 1.116,
+  "shapes_ratio": 0.726,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     92,
     61
    ],
-   "message": "woodland/bush: detail bar 0.76 of Eastward's foliage band (30.5 tones, 48.1 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bush: detail bar 0.73 of Eastward's foliage band (30.9 tones, 46.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 7 (PR #446 head 109e778a): W6 measures all met: leaf/mass 0.78 (0.75 to 1.0), lobe scale 18 px (>= 12), lit-shade8 61.6 L (>= 45), big lobes 2 of 3 (0.67), mass grain 14 px (<= 18), mass 77.0 L, lit to pocket 91.8 L, lit-field c12 49.0 L, pocket tones 18.3, EW-pipe shapes 69.1, noise 23.1 %, H/V 1.10. Fails W7-F1 (big-lobe boundaries drawn as one connected crack network, not pockets): the longest connected dark-ridge network runs 1.51 crown diameters (Eastward 0.35 to 0.76), blob-like pockets 2.8 px per 1000 crown px (Eastward 5.6 to 9.0, round shrub 15.1), lobe borders traced dark 89 % (Eastward 62 to 77). Compared at 2x beside the red tree in Eastward 12 and the trees in 13 (crops w7_network_*.png, *_ew_p9_p10_2x.png)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

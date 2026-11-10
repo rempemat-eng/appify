@@ -1,7 +1,7 @@
 {
  "id": "woodland/hollow_tree",
  "file": "game/zones/woodland/art/hollow_tree.png",
- "sha256": "40007e0db170f90f3d7143ce04d1765c30e43fe0378391a80eac0604e7dac295",
+ "sha256": "37e5cf0716f4d8a7236a42d096403c48517b598139dcdaccc1be6970795800e2",
  "kind": "veteran_tree",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 89,
-   "tones": 28.730337078651687,
-   "shapes": 48.19101123595506
+   "tones": 30.707865168539325,
+   "shapes": 50.82022471910113
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.761,
-  "tones_ratio": 1.037,
-  "shapes_ratio": 0.761,
+  "ratio": 0.803,
+  "tones_ratio": 1.108,
+  "shapes_ratio": 0.803,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     243,
     227
    ],
-   "message": "woodland/hollow_tree: detail bar 0.76 of Eastward's foliage band (28.7 tones, 48.2 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/hollow_tree: detail bar 0.80 of Eastward's foliage band (30.7 tones, 50.8 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 7 (PR #446 head 109e778a): W6 measures all met: leaf/mass 0.80 (0.75 to 1.0), lobe scale 14 px (>= 12), lit-shade8 55.4 L (>= 45), big lobes 10 of 14 (0.71), mass grain 17 px (<= 18), mass 69.3 L, lit to pocket 91.8 L, lit-field c12 49.3 L, pocket tones 18.6, EW-pipe shapes 71.4, noise 27.1 %, H/V 1.00. Fails W7-F1 (big-lobe boundaries drawn as one connected crack network, not pockets): the longest connected dark-ridge network runs 2.23 crown diameters (Eastward 0.35 to 0.76), blob-like pockets 3.2 px per 1000 crown px (Eastward 5.6 to 9.0, round shrub 15.1), lobe borders traced dark 78 % (Eastward 62 to 77). Compared at 2x beside the red tree in Eastward 12 and the trees in 13 (crops w7_network_*.png, *_ew_p9_p10_2x.png)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
