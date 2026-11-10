@@ -25,6 +25,12 @@ var zone_label: Label
 var approval_label: Label
 var validate_button: Button
 var bake_button: Button
+var export_button: Button
+var select_button: Button
+var gameplay_kind: OptionButton
+var gameplay_name: LineEdit
+var gameplay_detail: LineEdit
+var gameplay_button: Button
 var _materials := {}
 var _pieces := {}
 var _manifest := {}
@@ -61,6 +67,13 @@ func _ready() -> void:
 	refresh.text = "Refresh library"
 	refresh.pressed.connect(refresh_palette)
 	_content.add_child(refresh)
+
+	select_button = Button.new()
+	select_button.name = "SelectTool"
+	select_button.text = "Select / move (Esc)"
+	select_button.tooltip_text = "Put the brush down: clicks on the canvas go to Godot's own select, move and delete tools again. Escape does the same."
+	select_button.pressed.connect(select_tool)
+	_content.add_child(select_button)
 
 	tool_select = OptionButton.new()
 	tool_select.name = "ToolMode"
@@ -170,11 +183,41 @@ func _ready() -> void:
 	group_row.add_child(copy_button)
 	group_row.add_child(paste_button)
 	_content.add_child(group_row)
+	_content.add_child(_label("Gameplay: spawns, doors and actors (details in the inspector)"))
+	gameplay_kind = OptionButton.new()
+	gameplay_kind.name = "GameplayKind"
+	for choice in Tools.GAMEPLAY:
+		gameplay_kind.add_item(_text(choice[1]))
+		gameplay_kind.set_item_metadata(gameplay_kind.item_count - 1, choice[0])
+	gameplay_kind.item_selected.connect(func(_index: int) -> void: _gameplay_kind_changed())
+	_content.add_child(_row("Kind", gameplay_kind))
+	gameplay_name = LineEdit.new()
+	gameplay_name.name = "GameplayName"
+	gameplay_name.placeholder_text = "Name (optional)"
+	_content.add_child(_row("Name", gameplay_name))
+	gameplay_detail = LineEdit.new()
+	gameplay_detail.name = "GameplayDetail"
+	_content.add_child(_row("Detail", gameplay_detail))
+	gameplay_button = Button.new()
+	gameplay_button.name = "PlaceGameplay"
+	gameplay_button.text = "Place on the next click"
+	gameplay_button.tooltip_text = "Click the canvas once to place it (one undo). The new node is selected, so its details can be set in the inspector."
+	gameplay_button.pressed.connect(_gameplay_pressed)
+	_content.add_child(gameplay_button)
+	_gameplay_kind_changed()
 	validate_button = Button.new()
+	validate_button.name = "Validate"
 	validate_button.text = "Validate zone"
 	validate_button.pressed.connect(_validate)
 	_content.add_child(validate_button)
+	export_button = Button.new()
+	export_button.name = "ExportPlan"
+	export_button.text = "Save and export plan"
+	export_button.tooltip_text = "Save the scene and write game/kit/zones/<zone>.json, the plan the Python checks, the bake and reviewers read. Commit both together."
+	export_button.pressed.connect(_export)
+	_content.add_child(export_button)
 	bake_button = Button.new()
+	bake_button.name = "Bake"
 	bake_button.text = "Bake ground (the painters)"
 	bake_button.pressed.connect(_bake)
 	_content.add_child(bake_button)
@@ -265,6 +308,15 @@ func refresh_palette() -> void:
 	approval_label.text = "Lab: approved, candidate and gated pieces. Concepts are never placeable." if _last_lab else "Approved pieces only. Candidates and gated pieces are available in labs."
 	validate_button.disabled = not is_instance_valid(zone)
 	bake_button.disabled = not is_instance_valid(zone)
+	export_button.disabled = not is_instance_valid(zone)
+	gameplay_button.disabled = not is_instance_valid(zone)
+	if not is_instance_valid(zone):
+		# No zone is not the same as an empty library: say what to do.
+		_clear_selection()
+		card.text = "Select or hover a swatch to inspect its definition."
+		say("No kit zone is open. Open a zone scene (a scene with a Ground node) and select a node in it.")
+		_building = false
+		return
 	var backend := _ops()
 	if backend == null or not backend.has_method("catalog"):
 		_clear_selection()
@@ -306,7 +358,7 @@ func refresh_palette() -> void:
 		_clear_selection()
 		card.text = "Select or hover a swatch to inspect its definition."
 	if mats.item_count == 0 and pieces.item_count == 0:
-		say("No eligible pieces in this zone. Every current piece still awaits approval; use an explicit lab to review candidates.")
+		say("Nothing in the library is approved yet, so an ordinary zone has an empty palette. To author with candidate pieces, mark the zone a lab (select Ground and tick Lab in the inspector).")
 	else:
 		say("%d terrain materials; %d pieces%s. %s" % [mats.item_count, pieces.item_count, " (%d hidden by the search)" % hidden if hidden > 0 else "",
 			"Lab review only." if _last_lab else "Approved library only."])
@@ -528,6 +580,61 @@ func _piece_selected(index: int) -> void:
 		say("Piece: %s. Move over the zone to preview placement." % id)
 	_refresh_overlay()
 
+## Put the brush down (the Select button and Escape): nothing is selected in the palette and the
+## canvas takes Godot's own clicks again.
+func select_tool(note: String = "") -> void:
+	if mats == null:
+		return
+	mats.deselect_all()
+	pieces.deselect_all()
+	variants.deselect_all()
+	_clear_selection()
+	say(note if note != "" else "Select: clicks on the canvas go to Godot's own tools. Pick a swatch or a piece to paint or place again.")
+	_refresh_overlay()
+
+## What the Gameplay row asks for, as place_gameplay's options.
+func gameplay_options() -> Dictionary:
+	var options := {}
+	if gameplay_name != null and gameplay_name.text.strip_edges() != "":
+		options["id"] = gameplay_name.text.strip_edges()
+	var detail := gameplay_detail.text.strip_edges() if gameplay_detail != null else ""
+	if detail == "":
+		return options
+	match _gameplay_selected():
+		"door":
+			options["to"] = detail.get_slice("/", 0)
+			if detail.get_slice_count("/") > 1:
+				options["spawn"] = detail.get_slice("/", 1)
+		"interactable":
+			options["speaker"] = detail
+		"villager":
+			options["character"] = detail
+		"restore":
+			options["restore"] = detail
+		"camp":
+			options["camp"] = detail
+	return options
+
+func _gameplay_selected() -> String:
+	return _text(gameplay_kind.get_selected_metadata()) if gameplay_kind != null and gameplay_kind.selected >= 0 else "spawn"
+
+func _gameplay_kind_changed() -> void:
+	for choice in Tools.GAMEPLAY:
+		if choice[0] == _gameplay_selected():
+			gameplay_detail.placeholder_text = _text(choice[2])
+			gameplay_detail.editable = _text(choice[2]) != ""
+
+func _gameplay_pressed() -> void:
+	if not is_instance_valid(plugin):
+		return
+	mats.deselect_all()
+	pieces.deselect_all()
+	variants.deselect_all()
+	_clear_piece_options()
+	plugin.set("brush", "gameplay:" + _gameplay_selected())
+	say("Click the canvas to place the %s." % gameplay_kind.get_item_text(maxi(0, gameplay_kind.selected)).to_lower())
+	_refresh_overlay()
+
 func _refresh_overlay() -> void:
 	if not is_instance_valid(plugin):
 		return
@@ -659,17 +766,25 @@ func refusal(id: String, at: Vector2) -> String:
 func _message(result: Variant, fallback: String) -> String:
 	if not result is Dictionary:
 		return fallback
+	# Faults first: thirty lines of advice must not push the one fault off the panel.
 	var lines: PackedStringArray = []
+	var advice: PackedStringArray = []
 	for diagnostic in result.get("diagnostics", []):
 		if diagnostic is Dictionary:
 			var rule := _text(diagnostic.get("rule", diagnostic.get("code", diagnostic.get("check", ""))))
 			var detail := _text(diagnostic.get("message", ""))
 			if detail != "":
-				lines.append((rule + ": " if rule != "" else "") + detail)
+				if _text(diagnostic.get("severity", "fault")) == "fault":
+					lines.append((rule + ": " if rule != "" else "") + detail)
+				else:
+					advice.append((rule + ": " if rule != "" else "") + detail)
 		elif str(diagnostic) != "":
 			lines.append(str(diagnostic))
-	if not lines.is_empty():
-		return "\n".join(lines)
+	if not lines.is_empty() or not advice.is_empty():
+		var head := "%d fault%s, %d advice." % [lines.size(), "" if lines.size() == 1 else "s", advice.size()] if lines.size() + advice.size() > 1 else ""
+		var body := lines.duplicate()
+		body.append_array(advice)
+		return (head + "\n" if head != "" else "") + "\n".join(body)
 	var message := _text(result.get("message", ""))
 	if message != "":
 		return message
@@ -690,6 +805,15 @@ func _bake() -> void:
 		result["message"] = "Bake completed."
 	say(_message(result, "Bake failed; no output was accepted."))
 	bake_button.disabled = not is_instance_valid(zone)
+
+func _export() -> void:
+	if not is_instance_valid(zone):
+		say("Select a kit zone first.")
+		return
+	if not is_instance_valid(plugin) or not plugin.has_method("export_plan_file"):
+		say("Export unavailable: the editor backend is required.")
+		return
+	say(_message(plugin.call("export_plan_file"), "The plan was not written."))
 
 ## The next of the selected piece's variants (the V key and the Next variant button).
 func cycle_variant() -> void:

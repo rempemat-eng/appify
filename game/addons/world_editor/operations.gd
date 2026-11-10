@@ -8,6 +8,7 @@ signal changed
 
 const Tools := preload("res://addons/world_editor/tools.gd")
 const ZonePlan := preload("res://tools/kit_zone.gd")
+const Walk := preload("res://world/terrain/walk.gd")
 const PIECES := "res://kit/pieces"
 const INDEX := "res://kit/props/index.json"
 
@@ -31,6 +32,7 @@ func configure(zone: Node, ground: TerrainGround, history: Object, options: Dict
 	_ghost_plans.clear()
 	_ghost_verdicts.clear()
 	_ghost_snapshot = {}
+	_piece_signature = _pieces_now()
 	if options.has("library"):
 		if options.library is Dictionary:
 			_library = options.library.duplicate(true)
@@ -233,6 +235,9 @@ func preview_piece(piece_id: String, at: Vector2, options: Dictionary = {}) -> D
 	var snapped := Tools.snap(at, String(placement.get("snap", "cell")), _ground.kit.cell)
 	if snapped.x < 0 or snapped.y < 0 or snapped.x >= _ground.size_px().x or snapped.y >= _ground.size_px().y:
 		return _failure("rules.bounds", "The piece's foot lies outside the zone.")
+	var twin := _twin(piece_id, snapped)
+	if twin != "":
+		return _failure("rules.duplicate", "'%s' (%s) already stands exactly here; a second one would hide under it." % [twin, piece_id])
 	var facing := String(options.get("facing", "s")).to_lower()
 	if facing not in ["s", "w", "n", "e"]:
 		return _failure("rules.facing", "Facing must be s, w, n or e.")
@@ -527,6 +532,9 @@ func paste_group(group: Array, at: Vector2) -> Dictionary:
 		var foot: Vector2 = corner + Vector2(g.get("offset", Vector2.ZERO))
 		if foot.x < 0 or foot.y < 0 or foot.x >= _ground.size_px().x or foot.y >= _ground.size_px().y:
 			return _failure("rules.bounds", "The group does not fit in the zone here.")
+		var twin := _twin(id, foot)
+		if twin != "":
+			return _failure("rules.duplicate", "'%s' (%s) already stands exactly where the group would put one; paste it elsewhere." % [twin, id])
 		var instance: Dictionary = Dictionary(g.get("entry", {})).duplicate(true)
 		instance.merge({"piece": id, "at": [foot.x / unit, foot.y / unit], "facing": String(g.get("facing", "s")),
 			"id": _free_id(id, taken)}, true)
@@ -917,7 +925,13 @@ func validate() -> Dictionary:
 	var validator = _options.get("zone_validator", Callable())
 	if not validator is Callable or not validator.is_valid():
 		return _failure("rules.provider_missing", "Zone validation is unavailable until the shared validator is installed.")
-	return _provider_result(validator.call(snapshot.plan.duplicate(true), _library.duplicate(true)), "zone validator")
+	var result := _provider_result(validator.call(snapshot.plan.duplicate(true), _library.duplicate(true)), "zone validator")
+	# What the plan cannot hold is not a physical fault, but it is lost when the scene is rebuilt
+	# from its plan: say so beside the validator's own findings.
+	for lost in ZonePlan.unexported_actors(_zone):
+		result.diagnostics.append({"check": "plan.actor_unexported", "severity": "advice", "message":
+			"%s is not an actor kind the plan holds (interactable, villager, restore, camp or an actor scene); it stays in the scene only." % lost})
+	return result
 
 func _scene_approval_diagnostics() -> Array[Dictionary]:
 	var used := {}
@@ -939,6 +953,216 @@ func _scene_approval_diagnostics() -> Array[Dictionary]:
 				for diagnostic in gate.diagnostics:
 					diagnostics.append(diagnostic)
 	return diagnostics
+
+const GAMEPLAY_KINDS := ["spawn", "door", "interactable", "villager", "restore", "camp"]
+var _piece_signature: Array = []
+
+## The id of a placed piece of this kind whose foot is exactly here, or "": a second click on one
+## spot must not stack a twin under the first (the picture would not show it).
+func _twin(piece_id: String, foot: Vector2) -> String:
+	var props := _zone.get_node_or_null("Props") as Node2D
+	if props == null:
+		return ""
+	for child in props.get_children():
+		if child is KitPiece and child.piece_id == piece_id:
+			var at: Vector2 = _ground.to_local(props.to_global(child.position)) if props.is_inside_tree() else child.position
+			if at.distance_to(foot) < 0.5:
+				return String(child.name)
+	return ""
+
+func _pieces_now() -> Array:
+	var out: Array = []
+	var props := _zone.get_node_or_null("Props") if is_instance_valid(_zone) else null
+	if props != null:
+		for child in props.get_children():
+			if child is KitPiece:
+				out.append([child.get_instance_id(), child.piece_id, child.variant, child.position])
+	return out
+
+## What every change must bring up to date (the plugin calls this after each dock operation and
+## after any of Godot's own actions on the zone): the pieces' cast shadows and the walk mask (W4's
+## KitWalk, installed on first use and saved with the scene). KitWalk marks its ground with its
+## instance id while it runs; that id means nothing in another process (a fresh game loading the
+## saved scene logged an engine error looking it up), so it is never left on the ground to be saved.
+func refresh_derived(target: TerrainGround = null) -> bool:
+	if target == null:
+		target = _ground
+	if not is_instance_valid(target) or not target.is_inside_tree():
+		return false
+	target.rebuild_shadows()
+	var walk := target.get_node_or_null("KitWalk") as KitWalk
+	if walk == null:
+		walk = Walk.new()
+		walk.name = "KitWalk"
+		target.add_child(walk)
+		walk.owner = target.owner
+	var rebuilt := walk.rebuild(target)
+	if target.has_meta(Walk.OWNER_META):
+		target.remove_meta(Walk.OWNER_META)
+	return rebuilt
+
+## Godot's own tools (dragging a piece, the inspector, deleting or duplicating in the scene tree)
+## change the zone without the transactions above. When the placed pieces are no longer what the
+## last operation left, the baked ground no longer matches them (its shadows and painted pieces),
+## so the live tiles show, the caches of the live fault overlay are dropped and `changed` asks for
+## the derived data again. True when something had changed.
+func sync_native_edits() -> bool:
+	if not _context(false).ok:
+		return false
+	var now := _pieces_now()
+	if now == _piece_signature:
+		return false
+	_piece_signature = now
+	_ghost_plans.clear()
+	_ghost_verdicts.clear()
+	_ghost_snapshot = {}
+	if _ground.showing_baked():
+		_ground._baked_live = false
+		_ground._rebuild()
+	last_changed_ground = _ground
+	changed.emit()
+	return true
+
+## Spawns, doors and actors (10 Nov): one click places what a quest needs with sound defaults, as
+## one undo action; its details (the speaker, the target zone, a camp's id) are then set in Godot's
+## inspector, and the plan exports them from the nodes (kit_zone.gd, `actors`). Options: id, and per
+## kind `to`/`spawn`/`size` (a door, size in cells), `speaker`/`verb` (an interactable),
+## `speaker`/`character` (a villager), `restore`, `camp`/`count`/`scene`.
+func place_gameplay(kind: String, at: Vector2, options: Dictionary = {}) -> Dictionary:
+	var context := _context(true)
+	if not context.ok:
+		return context
+	if kind not in GAMEPLAY_KINDS:
+		return _failure("editor.gameplay_kind", "Gameplay kind must be one of %s." % ", ".join(GAMEPLAY_KINDS))
+	if not at.is_finite():
+		return _failure("rules.bounds", "The position must be finite.")
+	var size := _ground.kit.cell
+	var snapped := Tools.snap(at, "half", size)
+	if snapped.x < 0 or snapped.y < 0 or snapped.x > _ground.size_px().x or snapped.y > _ground.size_px().y:
+		return _failure("rules.bounds", "That point lies outside the zone.")
+	var container_name: String = {"spawn": "Spawns", "door": "Doors"}.get(kind, "Actors")
+	var container := _zone.get_node_or_null(container_name) as Node2D
+	if container == null:
+		return _failure("editor.container_missing", "The zone has no %s node to hold this." % container_name)
+	var cell := Vector2i(floori(minf(snapped.x, _ground.size_px().x - 1) / size), floori(minf(snapped.y, _ground.size_px().y - 1) / size))
+	if kind != "door":
+		var material: Dictionary = _ground.kit.by_material.get(_ground.ground_at(cell), {})
+		if not material.is_empty() and not bool(material.get("walkable", false)):
+			return _failure("rules.walk", "Nobody can stand on %s: place the %s on walkable ground." % [material.get("id", "this ground"), kind])
+	var used := {}
+	for child in container.get_children():
+		used[String(child.name)] = true
+		used[ZonePlan._logical_id(child)] = true
+		for inner in child.get_children():
+			used[String(inner.name)] = true
+	var wanted := String(options.get("id", ""))
+	if wanted == "":
+		wanted = {"spawn": "spawn", "door": "Door", "interactable": "Talk", "villager": "Villager", "restore": "Restore", "camp": "Camp"}[kind]
+	if wanted.validate_node_name() != wanted or wanted in [".", ".."]:
+		return _failure("rules.instance_id", "The name must be a valid node name.")
+	var id := wanted
+	var suffix := 2
+	while used.has(id) or used.has("If_" + id):
+		if options.has("id"):
+			return _failure("rules.instance_id", "'%s' already exists under %s." % [id, container_name])
+		id = "%s_%d" % [wanted, suffix]
+		suffix += 1
+	var unit := float(size) if String(_zone.get_meta(ZonePlan.PLAN_META, _options.get("plan", {})).get("coordinate_space", "texels")) == "cells" else 1.0
+	var node: Node2D
+	match kind:
+		"spawn":
+			var marker := Marker2D.new()
+			marker.set_meta(&"kit_zone_id", id)
+			marker.set_meta(ZonePlan.EXPLICIT_META, true)
+			marker.position = snapped
+			node = marker
+		"door":
+			var span: Array = options.get("size", [])
+			if span.size() != 2:
+				# an edge door lies along its edge, three cells wide; elsewhere one cell (a hatch)
+				span = [1, 3] if cell.x == 0 or cell.x == _ground.grid_size.x - 1 else ([3, 1] if cell.y == 0 or cell.y == _ground.grid_size.y - 1 else [1, 1])
+			var w := float(span[0])
+			var h := float(span[1])
+			if w <= 0 or h <= 0:
+				return _failure("rules.bounds", "A door needs a positive size in cells.")
+			var x0 := clampf(float(cell.x) - floorf((w - 1.0) / 2.0), 0.0, maxf(0.0, _ground.grid_size.x - w))
+			var y0 := clampf(float(cell.y) - floorf((h - 1.0) / 2.0), 0.0, maxf(0.0, _ground.grid_size.y - h))
+			var entry := {"id": id, "rect": [x0, y0, w, h], "to": String(options.get("to", ""))}
+			if String(options.get("spawn", "start")) != "start":
+				entry["spawn"] = String(options.spawn)
+			node = ZonePlan.door_node(entry, size)
+		_:
+			var entry := {"id": id, "kind": kind, "at": [snapped.x / unit, snapped.y / unit]}
+			match kind:
+				"interactable":
+					entry["speaker"] = String(options.get("speaker", id.to_snake_case()))
+					if String(options.get("verb", "")) != "":
+						entry["verb"] = String(options.verb)
+				"villager":
+					entry["character"] = String(options.get("character", ""))
+					entry["speaker"] = String(options.get("speaker", entry.character))
+				"restore":
+					entry["restore"] = String(options.get("restore", id.to_snake_case()))
+				"camp":
+					entry["camp"] = String(options.get("camp", id.to_snake_case()))
+					if String(options.get("scene", "")) != "":
+						entry["scene"] = String(options.scene)
+					# enemies stand in a loose ring round the camp's point, a cell and a half out
+					var count := clampi(int(options.get("count", 3)), 1, 12)
+					var spots := []
+					for i in count:
+						var spot := snapped + Vector2.from_angle(TAU * float(i) / float(count) - PI / 2.0) * size * 1.5
+						spots.append([roundf(spot.x) / unit, roundf(spot.y) / unit])
+					entry["enemies"] = spots
+			var problem := ZonePlan.actor_error(entry, unit)
+			if not problem.is_empty():
+				return _failure("plan.actor", "The %s%s." % [kind, problem])
+			node = ZonePlan.actor_node(entry, unit)
+			if node == null:
+				return _failure("plan.actor", "The %s's scene could not be instanced." % kind)
+	node.name = id
+	_begin("Place %s %s" % [kind, id])
+	_do(Callable(self, "_apply_gameplay").bind(_zone, container, node, true))
+	_undo(Callable(self, "_apply_gameplay").bind(_zone, container, node, false))
+	_history.add_do_reference(node)
+	_history.commit_action()
+	return {"ok": true, "diagnostics": [], "changed": true, "node": node, "id": id, "at": snapped,
+		"message": "Placed %s '%s'. Set its details in the inspector." % [kind, id]}
+
+func _apply_gameplay(zone: Node, container: Node2D, node: Node2D, attach: bool) -> void:
+	if not is_instance_valid(zone) or not is_instance_valid(container) or not is_instance_valid(node):
+		return
+	if attach:
+		if node.get_parent() == null:
+			container.add_child(node)
+			ZonePlan._own_new(node, zone)
+	elif node.get_parent() == container:
+		container.remove_child(node)
+	_ghost_plans.clear()
+	_ghost_verdicts.clear()
+	_ghost_snapshot = {}
+	if is_instance_valid(_ground):
+		last_changed_ground = _ground
+	changed.emit()
+
+## Write the zone's plan beside the others (game/kit/zones/<zone>.json): the compact form the
+## Python checks, the bake and reviewers read. The scene and its plan are one document in two
+## files; a guard test fails when a committed pair disagrees.
+func export_plan_file(path: String = "") -> Dictionary:
+	var snapshot := export_plan()
+	if not snapshot.ok:
+		return snapshot
+	var zone_id := String(_zone.get("zone_id"))
+	if path == "":
+		if zone_id == "" or zone_id.validate_filename() != zone_id or zone_id in [".", ".."]:
+			return _failure("plan.zone", "The zone needs an id before its plan can be written.")
+		path = "res://kit/zones/%s.json" % zone_id
+	var problem := ZonePlan.write_plan(snapshot.plan, path)
+	if not problem.is_empty():
+		return _failure("plan.export", "The plan was not written: %s." % problem)
+	var lost := ZonePlan.unexported_actors(_zone)
+	var note := "" if lost.is_empty() else " Not in the plan (scene only): %s." % ", ".join(lost)
+	return {"ok": true, "diagnostics": [], "path": path, "unexported": lost, "message": "Wrote %s.%s" % [path, note]}
 
 ## Export current authoring data, preserving the original plan's unknown fields. Gameplay
 ## ownership stays with its scene; no ordinary node is removed, replaced or reparented here.
@@ -1141,6 +1365,8 @@ func _restore_ground(target: TerrainGround, state: Dictionary) -> void:
 	_ghost_plans.clear()
 	_ghost_verdicts.clear()
 	_ghost_snapshot = {}
+	if target == _ground:
+		_piece_signature = _pieces_now()
 	changed.emit()
 
 func _begin(title: String) -> void:
