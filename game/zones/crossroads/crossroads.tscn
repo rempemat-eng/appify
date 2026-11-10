@@ -1008,19 +1008,19 @@ offset = Vector2(-78, -59)
 position = Vector2(552, 144)
 texture = ExtResource("t37")
 centered = false
-offset = Vector2(-105, -243)
+offset = Vector2(-106, -247)
 
 [node name="Bush7" type="Sprite2D" parent="Props"]
 position = Vector2(720, 360)
 texture = ExtResource("t38")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-46, -61)
 
 [node name="Bush8" type="Sprite2D" parent="Props"]
 position = Vector2(1440, 360)
 texture = ExtResource("t39")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-37, -54)
 
 [node name="FlowerTub9" type="Sprite2D" parent="Props"]
 position = Vector2(900, 216)
@@ -1050,37 +1050,37 @@ offset = Vector2(-30, -62)
 position = Vector2(120, 72)
 texture = ExtResource("t44")
 centered = false
-offset = Vector2(-105, -243)
+offset = Vector2(-96, -264)
 
 [node name="Bush14" type="Sprite2D" parent="Props"]
 position = Vector2(312, 72)
 texture = ExtResource("t45")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-46, -61)
 
 [node name="Bush15" type="Sprite2D" parent="Props"]
 position = Vector2(408, 72)
 texture = ExtResource("t46")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-37, -54)
 
 [node name="Bush16" type="Sprite2D" parent="Props"]
 position = Vector2(84, 408)
 texture = ExtResource("t47")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-46, -61)
 
 [node name="Bush17" type="Sprite2D" parent="Props"]
 position = Vector2(240, 384)
 texture = ExtResource("t48")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-37, -54)
 
 [node name="Bush18" type="Sprite2D" parent="Props"]
 position = Vector2(384, 408)
 texture = ExtResource("t49")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-54, -57)
 
 [node name="Hay19" type="Sprite2D" parent="Props"]
 position = Vector2(1620, 192)
@@ -1098,19 +1098,19 @@ offset = Vector2(-33, -62)
 position = Vector2(1848, 120)
 texture = ExtResource("t52")
 centered = false
-offset = Vector2(-106, -243)
+offset = Vector2(-106, -247)
 
 [node name="Bush22" type="Sprite2D" parent="Props"]
 position = Vector2(1560, 408)
 texture = ExtResource("t53")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-46, -61)
 
 [node name="Bush23" type="Sprite2D" parent="Props"]
 position = Vector2(1872, 408)
 texture = ExtResource("t54")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-37, -54)
 
 [node name="KitLantern24" type="Sprite2D" parent="Props"]
 position = Vector2(876, 600)
@@ -1212,73 +1212,73 @@ offset = Vector2(-24, -71)
 position = Vector2(1128, 1560)
 texture = ExtResource("t71")
 centered = false
-offset = Vector2(-106, -243)
+offset = Vector2(-96, -264)
 
 [node name="Oak41" type="Sprite2D" parent="Props"]
 position = Vector2(1176, 1632)
 texture = ExtResource("t72")
 centered = false
-offset = Vector2(-106, -243)
+offset = Vector2(-122, -227)
 
 [node name="Oak42" type="Sprite2D" parent="Props"]
 position = Vector2(1812, 1536)
 texture = ExtResource("t73")
 centered = false
-offset = Vector2(-106, -243)
+offset = Vector2(-106, -247)
 
 [node name="Oak43" type="Sprite2D" parent="Props"]
 position = Vector2(72, 1224)
 texture = ExtResource("t74")
 centered = false
-offset = Vector2(-105, -243)
+offset = Vector2(-96, -264)
 
 [node name="Oak44" type="Sprite2D" parent="Props"]
 position = Vector2(552, 1656)
 texture = ExtResource("t75")
 centered = false
-offset = Vector2(-105, -243)
+offset = Vector2(-106, -247)
 
 [node name="Oak45" type="Sprite2D" parent="Props"]
 position = Vector2(1836, 792)
 texture = ExtResource("t76")
 centered = false
-offset = Vector2(-106, -243)
+offset = Vector2(-96, -264)
 
 [node name="Oak46" type="Sprite2D" parent="Props"]
 position = Vector2(120, 744)
 texture = ExtResource("t77")
 centered = false
-offset = Vector2(-105, -243)
+offset = Vector2(-106, -247)
 
 [node name="Bush47" type="Sprite2D" parent="Props"]
 position = Vector2(756, 1584)
 texture = ExtResource("t78")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-37, -54)
 
 [node name="Bush48" type="Sprite2D" parent="Props"]
 position = Vector2(1344, 1440)
 texture = ExtResource("t79")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-54, -57)
 
 [node name="Bush49" type="Sprite2D" parent="Props"]
 position = Vector2(1716, 1344)
 texture = ExtResource("t80")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-46, -61)
 
 [node name="Bush50" type="Sprite2D" parent="Props"]
 position = Vector2(252, 696)
 texture = ExtResource("t81")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-46, -61)
 
 [node name="Bush51" type="Sprite2D" parent="Props"]
 position = Vector2(1812, 528)
 texture = ExtResource("t82")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-54, -57)
 
 [node name="Boulder52" type="Sprite2D" parent="Props"]
 position = Vector2(1056, 1296)

@@ -3630,8 +3630,8 @@
   ],
   "deck": null,
   "foot": [
-   57,
-   73
+   37,
+   54
   ],
   "footprint": [
    [
@@ -3670,7 +3670,7 @@
   "shadow": null,
   "size_cells": [
    5,
-   4
+   3
   ],
   "snap": "cell",
   "story": {
@@ -3679,50 +3679,50 @@
   "variants": {
    "bush_47": {
     "foot": [
-     57,
-     73
+     37,
+     54
     ],
     "png": "res://zones/crossroads/art/bush_47.png"
    },
    "bush_48": {
     "foot": [
-     57,
-     73
+     54,
+     57
     ],
     "png": "res://zones/crossroads/art/bush_48.png"
    },
    "bush_49": {
     "foot": [
-     57,
-     73
+     46,
+     61
     ],
     "png": "res://zones/crossroads/art/bush_49.png"
    },
    "bush_50": {
     "foot": [
-     57,
-     73
+     46,
+     61
     ],
     "png": "res://zones/crossroads/art/bush_50.png"
    },
    "bush_51": {
     "foot": [
-     57,
-     73
+     54,
+     57
     ],
     "png": "res://zones/crossroads/art/bush_51.png"
    },
    "bush_7": {
     "foot": [
-     57,
-     73
+     46,
+     61
     ],
     "png": "res://zones/crossroads/art/bush_7.png"
    },
    "bush_8": {
     "foot": [
-     57,
-     73
+     37,
+     54
     ],
     "png": "res://zones/crossroads/art/bush_8.png"
    }
@@ -3735,8 +3735,8 @@
   "collision": null,
   "deck": null,
   "foot": [
-   57,
-   73
+   46,
+   61
   ],
   "footprint": [],
   "forbids": [
@@ -3758,7 +3758,7 @@
   "shadow": null,
   "size_cells": [
    5,
-   4
+   3
   ],
   "snap": "cell",
   "story": {
@@ -3767,50 +3767,50 @@
   "variants": {
    "bush_14": {
     "foot": [
-     57,
-     73
+     46,
+     61
     ],
     "png": "res://zones/crossroads/art/bush_14.png"
    },
    "bush_15": {
     "foot": [
-     57,
-     73
+     37,
+     54
     ],
     "png": "res://zones/crossroads/art/bush_15.png"
    },
    "bush_16": {
     "foot": [
-     57,
-     73
+     46,
+     61
     ],
     "png": "res://zones/crossroads/art/bush_16.png"
    },
    "bush_17": {
     "foot": [
-     57,
-     73
+     37,
+     54
     ],
     "png": "res://zones/crossroads/art/bush_17.png"
    },
    "bush_18": {
     "foot": [
-     57,
-     73
+     54,
+     57
     ],
     "png": "res://zones/crossroads/art/bush_18.png"
    },
    "bush_22": {
     "foot": [
-     57,
-     73
+     46,
+     61
     ],
     "png": "res://zones/crossroads/art/bush_22.png"
    },
    "bush_23": {
     "foot": [
-     57,
-     73
+     37,
+     54
     ],
     "png": "res://zones/crossroads/art/bush_23.png"
    }
@@ -6520,8 +6520,8 @@
   ],
   "deck": null,
   "foot": [
-   105,
-   243
+   96,
+   264
   ],
   "footprint": [
    [
@@ -6560,14 +6560,14 @@
   "shadow": {
    "mask": {
     "offset": [
-     -78,
-     -72
+     -46,
+     -81
     ],
     "png": "res://kit/props/art/shadow_crossroads_oak.png"
    }
   },
   "size_cells": [
-   9,
+   11,
    11
   ],
   "snap": "cell",
@@ -6577,71 +6577,71 @@
   "variants": {
    "oak_13": {
     "foot": [
-     105,
-     243
+     96,
+     264
     ],
     "png": "res://zones/crossroads/art/oak_13.png"
    },
    "oak_21": {
     "foot": [
      106,
-     243
+     247
     ],
     "png": "res://zones/crossroads/art/oak_21.png"
    },
    "oak_40": {
     "foot": [
-     106,
-     243
+     96,
+     264
     ],
     "png": "res://zones/crossroads/art/oak_40.png"
    },
    "oak_41": {
     "foot": [
-     106,
-     243
+     122,
+     227
     ],
     "png": "res://zones/crossroads/art/oak_41.png"
    },
    "oak_42": {
     "foot": [
      106,
-     243
+     247
     ],
     "png": "res://zones/crossroads/art/oak_42.png"
    },
    "oak_43": {
     "foot": [
-     105,
-     243
+     96,
+     264
     ],
     "png": "res://zones/crossroads/art/oak_43.png"
    },
    "oak_44": {
     "foot": [
-     105,
-     243
+     106,
+     247
     ],
     "png": "res://zones/crossroads/art/oak_44.png"
    },
    "oak_45": {
     "foot": [
-     106,
-     243
+     96,
+     264
     ],
     "png": "res://zones/crossroads/art/oak_45.png"
    },
    "oak_46": {
     "foot": [
-     105,
-     243
+     106,
+     247
     ],
     "png": "res://zones/crossroads/art/oak_46.png"
    },
    "oak_6": {
     "foot": [
-     105,
-     243
+     106,
+     247
     ],
     "png": "res://zones/crossroads/art/oak_6.png"
    }

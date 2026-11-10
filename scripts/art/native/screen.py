@@ -1493,6 +1493,35 @@ def foot_at_bottom_centre(img, anc, a, ex):
     return out, (ax + left, ay + top), na, ex
 
 
+def shrub_cast(sm: np.ndarray, a, anc, at, w: int, h: int) -> np.ndarray:
+    """A shrub's cast shadow at density 3 and up (pass 7 of #446, W4-G1): `sm` (CO.shadow_mask of the
+    shrub's alpha `a` with anchor `anc`, placed at `at` texels on a w x h ground) with its body
+    starting at the sprite's own base, every column filled from its lowest texel down to the foot
+    row and a row past it, so the scallop and the contact line lie on the body (no strip of lit
+    grass, no detached rim line between the shrub and its shadow). The woodland's shrubs and the
+    village shrubs that place the woodland's pictures (town.py) take it."""
+    sm = sm.copy()
+    aa = ndi.binary_opening(np.asarray(a).astype(bool), iterations=2)   # the mass, not canes
+    ax_, ay_ = anc
+    bot = np.array([np.nonzero(aa[:, xc])[0].max() if aa[:, xc].any() else -1 for xc in range(aa.shape[1])])
+    ok_ = bot >= ay_ - 3 * D
+    if ok_.any():
+        xs_ = np.nonzero(ok_)[0]
+        # the body's top follows the mass's base smoothly (a running minimum over 7
+        # columns of the base, so no comb under notches or cane feet)
+        b_ = np.where(ok_, bot, 10 ** 6).astype(float)
+        b_ = ndi.minimum_filter1d(b_, 7)
+        for xc in range(xs_.min(), xs_.max() + 1):
+            X_ = int(round(at[0] - ax_ + xc))
+            y0_ = int(round(at[1] - ay_ + min(b_[xc], ay_)))
+            if 0 <= X_ < w:
+                # (pass 9, W5-G1) the body reaches a rim's width up under the sprite,
+                # so the rim lies under the mass and the contact line sits on the
+                # body: no light seam between a rim line and the body
+                sm[max(0, y0_ - int(round(D))):min(h, int(round(at[1])) + 2), X_] = True
+    return ndi.binary_closing(sm, iterations=2) | sm
+
+
 def RK_PLUNGE_FRAMES() -> int:
     from . import rocks as RK
     return RK.PLUNGE_FRAMES
@@ -1526,29 +1555,7 @@ def build() -> Zone:
         else:
             sm = CO.shadow_mask(a, anc, D, w, h, at, *CO.SHADOW)
             if D >= HD and plan.get('zone') == 'woodland' and kind.startswith(('bush', 'bramble', 'holly')):
-                # the woodland's shrubs (pass 7 of #446, W4-G1): the shadow body starts at the
-                # sprite's own base, every column filled from its lowest texel down to the foot row
-                # and a row past it, so the scallop and the contact line lie on the body (no strip
-                # of lit grass, no detached rim line between the shrub and its shadow)
-                aa = ndi.binary_opening(np.asarray(a).astype(bool), iterations=2)   # the mass, not canes
-                ax_, ay_ = anc
-                bot = np.array([np.nonzero(aa[:, xc])[0].max() if aa[:, xc].any() else -1 for xc in range(aa.shape[1])])
-                ok_ = bot >= ay_ - 3 * D
-                if ok_.any():
-                    xs_ = np.nonzero(ok_)[0]
-                    # the body's top follows the mass's base smoothly (a running minimum over 7
-                    # columns of the base, so no comb under notches or cane feet)
-                    b_ = np.where(ok_, bot, 10 ** 6).astype(float)
-                    b_ = ndi.minimum_filter1d(b_, 7)
-                    for xc in range(xs_.min(), xs_.max() + 1):
-                        X_ = int(round(at[0] - ax_ + xc))
-                        y0_ = int(round(at[1] - ay_ + min(b_[xc], ay_)))
-                        if 0 <= X_ < w:
-                            # (pass 9, W5-G1) the body reaches a rim's width up under the sprite,
-                            # so the rim lies under the mass and the contact line sits on the
-                            # body: no light seam between a rim line and the body
-                            sm[max(0, y0_ - int(round(D))):min(h, int(round(at[1])) + 2), X_] = True
-                sm = ndi.binary_closing(sm, iterations=2) | sm
+                sm = shrub_cast(sm, a, anc, at, w, h)
             casts.append(sm)
         if D >= HD and kind in ('forest_bench', 'stump', 'mossy_log'):
             # a firm contact shade under what lies or stands on the ground, a little east

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/beds_dug_shadow",
  "file": "game/zones/crossroads/art/beds_dug_shadow.png",
- "sha256": "ed97404f1b550516793ebd79aba16686d14265f647ca1de6bdd2a4d186181910",
+ "sha256": "532ed3061d4ff18e4698806d966782dc49eb643a0f9fe2588c0bbb1432b2656a",
  "kind": "beds_dug_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -18,11 +18,10 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-09",
-  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. Cast shadow thrown east and down, ground stepped two tones down its own ramp with a one-tone outer rim, follows the new bed silhouette (house-style 6, eastward-edges 7.2). Looked at before/after at 4x on the lawn."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

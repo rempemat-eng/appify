@@ -1,14 +1,14 @@
 {
  "id": "crossroads/bush_51",
  "file": "game/zones/crossroads/art/bush_51.png",
- "sha256": "7768e5c60320da72ee45026226942c3ea59a3bceff321458eb8ab0cc2f9746b9",
+ "sha256": "7421c4c64483d0e516a474ec90bee80a145a8b3c17e87c75b7946dc02d346f4f",
  "kind": "bush",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  112,
-  91
+  109,
+  57
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 13,
-   "tones": 19.76923076923077,
-   "shapes": 35.76923076923077
+   "patches": 14,
+   "tones": 27.642857142857142,
+   "shapes": 45.42857142857143
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.565,
-  "tones_ratio": 0.713,
-  "shapes_ratio": 0.565,
+  "ratio": 0.717,
+  "tones_ratio": 0.998,
+  "shapes_ratio": 0.717,
   "passed": false,
   "group": "foliage"
  },
@@ -39,16 +39,16 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    10,
-    10,
-    104,
-    73
+    0,
+    0,
+    109,
+    57
    ],
-   "message": "crossroads/bush_51: detail bar 0.56 of Eastward's foliage band (19.8 tones, 35.8 shapes a patch against 27.71, 63.32)",
+   "message": "crossroads/bush_51: detail bar 0.72 of Eastward's foliage band (27.6 tones, 45.4 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

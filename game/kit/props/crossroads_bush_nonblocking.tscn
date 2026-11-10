@@ -10,4 +10,4 @@ piece_id = "crossroads_bush_nonblocking"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-57, -73)
+offset = Vector2(-46, -61)

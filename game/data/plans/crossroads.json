@@ -1033,7 +1033,7 @@
     }
   ],
   "art": {
-    "_about": "The drawing (scripts/art/native/village.py and town.py, game/tools/gen_village.py; Claude A, 25 Oct): how each building looks (one design; its storm damage an overlay the restore removes), the dry-stone walls drawn on the faces, the paving, the uplands, the green's ring and the dressing with its reasons. Doors face south: the oblique view shows no east walls, so the bakery's and the herbalist's doors moved to their south fronts. The herbalist's moved 22 px south so its roof clears the three-cell halt road.",
+    "_about": "The drawing (scripts/art/native/village.py and town.py, game/tools/gen_village.py; Claude A, 25 Oct): how each building looks (one design; its storm damage an overlay the restore removes), the dry-stone walls drawn on the faces, the paving, the uplands, the green's ring and the dressing with its reasons. Doors face south: the oblique view shows no east walls, so the bakery's and the herbalist's doors moved to their south fronts. The herbalist's moved 22 px south so its roof clears the three-cell halt road. Trees and shrubs (Claude A, 10 Nov, the fix queue): each oak_N and bush_N names in `sprite` the woodland picture that passed the 9 Nov detail audit (round 9, PR #446) and places it as it is (town.APPROVED: copied byte for byte, its foot the middle of its bottom edge, the woodland's tree shade and shrub cast); the ids, feet and solids are unchanged. No two neighbouring trees or shrubs share a picture, and the one veteran (hollow_tree) stands in the park by the crater.",
     "biome": "meadow",
     "uplands": [],
     "walls": [
@@ -1475,21 +1475,24 @@
           184,
           48
         ],
-        "why": "the old oak on your terrace"
+        "why": "the old oak on your terrace",
+        "sprite": "woodland/oak"
       },
       {
         "kind": "bush",
         "at": [
           240,
           120
-        ]
+        ],
+        "sprite": "woodland/bush"
       },
       {
         "kind": "bush",
         "at": [
           480,
           120
-        ]
+        ],
+        "sprite": "woodland/bush_b"
       },
       {
         "kind": "flower_tub",
@@ -1544,7 +1547,8 @@
           24
         ],
         "solid": false,
-        "why": "the bank above the garden walk"
+        "why": "the bank above the garden walk",
+        "sprite": "woodland/beech"
       },
       {
         "kind": "bush",
@@ -1552,7 +1556,8 @@
           104,
           24
         ],
-        "solid": false
+        "solid": false,
+        "sprite": "woodland/bush"
       },
       {
         "kind": "bush",
@@ -1560,7 +1565,8 @@
           136,
           24
         ],
-        "solid": false
+        "solid": false,
+        "sprite": "woodland/bush_b"
       },
       {
         "kind": "bush",
@@ -1569,7 +1575,8 @@
           136
         ],
         "solid": false,
-        "why": "the planted bank under the walk"
+        "why": "the planted bank under the walk",
+        "sprite": "woodland/bush"
       },
       {
         "kind": "bush",
@@ -1577,7 +1584,8 @@
           80,
           128
         ],
-        "solid": false
+        "solid": false,
+        "sprite": "woodland/bush_b"
       },
       {
         "kind": "bush",
@@ -1585,7 +1593,8 @@
           128,
           136
         ],
-        "solid": false
+        "solid": false,
+        "sprite": "woodland/bush_c"
       },
       {
         "kind": "hay",
@@ -1618,7 +1627,8 @@
           616,
           40
         ],
-        "solid": false
+        "solid": false,
+        "sprite": "woodland/oak"
       },
       {
         "kind": "bush",
@@ -1626,7 +1636,8 @@
           520,
           136
         ],
-        "solid": false
+        "solid": false,
+        "sprite": "woodland/bush"
       },
       {
         "kind": "bush",
@@ -1634,7 +1645,8 @@
           624,
           136
         ],
-        "solid": false
+        "solid": false,
+        "sprite": "woodland/bush_b"
       },
       {
         "kind": "kit_lantern",
@@ -1817,84 +1829,96 @@
           376,
           520
         ],
-        "why": "the park round the crater (moved off the green lane's bend, 27 Oct)"
+        "why": "the park round the crater (moved off the green lane's bend, 27 Oct)",
+        "sprite": "woodland/beech"
       },
       {
         "kind": "oak",
         "at": [
           392,
           544
-        ]
+        ],
+        "sprite": "woodland/hollow_tree"
       },
       {
         "kind": "oak",
         "at": [
           604,
           512
-        ]
+        ],
+        "sprite": "woodland/oak"
       },
       {
         "kind": "oak",
         "at": [
           24,
           408
-        ]
+        ],
+        "sprite": "woodland/beech"
       },
       {
         "kind": "oak",
         "at": [
           184,
           552
-        ]
+        ],
+        "sprite": "woodland/oak"
       },
       {
         "kind": "oak",
         "at": [
           612,
           264
-        ]
+        ],
+        "sprite": "woodland/beech"
       },
       {
         "kind": "oak",
         "at": [
           40,
           248
-        ]
+        ],
+        "sprite": "woodland/oak"
       },
       {
         "kind": "bush",
         "at": [
           252,
           528
-        ]
+        ],
+        "sprite": "woodland/bush_b"
       },
       {
         "kind": "bush",
         "at": [
           448,
           480
-        ]
+        ],
+        "sprite": "woodland/bush_c"
       },
       {
         "kind": "bush",
         "at": [
           572,
           448
-        ]
+        ],
+        "sprite": "woodland/bush"
       },
       {
         "kind": "bush",
         "at": [
           84,
           232
-        ]
+        ],
+        "sprite": "woodland/bush"
       },
       {
         "kind": "bush",
         "at": [
           604,
           176
-        ]
+        ],
+        "sprite": "woodland/bush_c"
       },
       {
         "kind": "boulder",

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/beds_scorched_shadow",
  "file": "game/zones/crossroads/art/beds_scorched_shadow.png",
- "sha256": "701339d3cab2b7d17d62f147ca34426335eececefdce5870e5365f81f8b02504",
+ "sha256": "269d4b773466d3ec3c2c526a7192abf6081259948061a22bfd642581a663da00",
  "kind": "beds_scorched_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -18,11 +18,10 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-09",
-  "note": "Round 2 review at 99aff0a3 (PR #447), docs/reviews/2026-11-08-crossroads-placed.md, round 2. As beds_dug_shadow; follows the new frame silhouette."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
