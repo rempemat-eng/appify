@@ -1,26 +1,26 @@
 {
  "id": "crossroads/fern_cottage_damage",
  "file": "game/zones/crossroads/art/fern_cottage_damage.png",
- "sha256": "22616281132d6a1bfa818f72d6759a48af528778cb3513bb195bbfd537ae9fef",
+ "sha256": "e3a6b49d6f5ab05b289274f09082cd81df6a538325830d3ea86b0a2117d64b6e",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  240,
-  264
+  244,
+  291
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
+  "fault": 3,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 39,
-   "tones": 18.28205128205128,
-   "shapes": 29.641025641025642
+   "patches": 36,
+   "tones": 20.333333333333332,
+   "shapes": 31.47222222222222
   },
   "band": {
    "tones": 27.0,
@@ -28,30 +28,70 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.589,
-  "tones_ratio": 0.677,
-  "shapes_ratio": 0.589,
+  "ratio": 0.625,
+  "tones_ratio": 0.753,
+  "shapes_ratio": 0.625,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    130,
+    44,
+    146,
+    95
+   ],
+   "message": "crossroads/fern_cottage_damage: the red reads 2D: 2 light planes, luminance spread 0",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    146,
+    53,
+    164,
+    118
+   ],
+   "message": "crossroads/fern_cottage_damage: the red reads 2D: 1 light planes, luminance spread 0",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    25,
-    60,
-    183,
-    264
+    26,
+    33,
+    185,
+    289
    ],
-   "message": "crossroads/fern_cottage_damage: detail bar 0.59 of Eastward's prop band (18.3 tones, 29.6 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage_damage: detail bar 0.62 of Eastward's prop band (20.3 tones, 31.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    146,
+    53,
+    164,
+    118
+   ],
+   "message": "crossroads/fern_cottage_damage: a flat red area: one smooth patch covers 50% (0.051 H^2), 5 tones",
+   "fix": "draw the red as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (e3a6b49d...). Pass. GR1 fixed: the tarp over the ridge measures mean Y 177 west, 107 east (0.60); east cloth tones #ae866c / #8c6556 / #684441, nothing above sand_cool 2; a #ffebc8 lit fold column at x 121 and a #684441 crease at x 122 along the ridge; weights one step down east (#aba194 41 -> 3). The detectors' detail.flat [146,53,164,118] and detail.volume [130,44,146,95] / [146,53,164,118] are ruled a consequence of the correct shading, not a fault: the cloth still reads as draped (three value bands per fold, the ridge crease, the stain and the stitched seam at 1x and 2x, as Eastward's calm shaded planes), but the two-step map's floor clamp merged the lit tones 1 and 2 into one, which leaves a flat trough slab; polish GR2-3 restores it without lightening.",
+  "fix_list": [
+   "GR2-3 (polish): the cloth east of the ridge takes the two-step map with clamps at both ends, so the lit ramp's tones 1 and 2 (#926f5a, #b49271) both land on sand_cool 0 (#684441) and the fold trough at x 147-155, y 54-117 is one flat 9 x 64 texel slab (the detector's detail.flat box [146,53,164,118], 50 % one patch). Without lightening anything: where the lit cloth had tone 1 (the fold cores), draw a 1-texel crease in the tarp's outline dark #3d2d30 down the middle of each trough wider than 4 texels, broken by a sag every 10 to 12 rows (1 texel of #8c6556 on the crease's east side where it turns back to the light). Check: east/west mean stays at or below 0.6, no texel above tone 2 east of the ridge, the largest one-tone patch in the box under 35 %."
+  ]
  }
 }

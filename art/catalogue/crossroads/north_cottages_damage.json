@@ -1,14 +1,14 @@
 {
  "id": "crossroads/north_cottages_damage",
  "file": "game/zones/crossroads/art/north_cottages_damage.png",
- "sha256": "9e36e776fadd144bd18a14b0efd879cd80ed4ceffbe8af3db52c7788f1f6a465",
+ "sha256": "83be8a5fb0f9e05186d2c7bc6239ab9fe7b680744da08efa18871bebcefd3538",
  "kind": "north_cottages",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  312,
-  276
+  316,
+  324
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 40,
-   "tones": 15.375,
-   "shapes": 24.3
+   "patches": 32,
+   "tones": 17.15625,
+   "shapes": 26.90625
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.483,
-  "tones_ratio": 0.569,
-  "shapes_ratio": 0.483,
+  "ratio": 0.534,
+  "tones_ratio": 0.635,
+  "shapes_ratio": 0.534,
   "passed": false,
   "group": "prop"
  },
@@ -39,19 +39,20 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    23,
-    60,
-    271,
-    276
+    25,
+    48,
+    290,
+    324
    ],
-   "message": "crossroads/north_cottages_damage: detail bar 0.48 of Eastward's prop band (15.4 tones, 24.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/north_cottages_damage: detail bar 0.53 of Eastward's prop band (17.2 tones, 26.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (83be8a5f...). Pass. GR11: hole timber east of the ridge mean Y 45 (round 1: 59) against 100 west. The tarp still lies on the lit west slope; the overlay's tarp, east gap and boarded window re-rolled with the new draws (same recipe, all on the courses)."
  }
 }

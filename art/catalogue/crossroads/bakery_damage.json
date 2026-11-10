@@ -1,14 +1,14 @@
 {
  "id": "crossroads/bakery_damage",
  "file": "game/zones/crossroads/art/bakery_damage.png",
- "sha256": "d6f88623130278eba8c4423eecc92e99899e2d1f067e8d1b7e42f3103f20b1b0",
+ "sha256": "cab79f5206145d2312596e4f7857c5b06f84b7ae0de9074f9e3c6851e06545ad",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  240,
-  300
+  244,
+  324
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 27,
-   "tones": 18.62962962962963,
-   "shapes": 33.925925925925924
+   "patches": 20,
+   "tones": 17.05,
+   "shapes": 30.9
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.674,
-  "tones_ratio": 0.69,
-  "shapes_ratio": 0.674,
+  "ratio": 0.614,
+  "tones_ratio": 0.631,
+  "shapes_ratio": 0.614,
   "passed": false,
   "group": "prop"
  },
@@ -39,19 +39,20 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    14,
-    55,
-    217,
-    299
+    16,
+    35,
+    231,
+    324
    ],
-   "message": "crossroads/bakery_damage: detail bar 0.67 of Eastward's prop band (18.6 tones, 33.9 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery_damage: detail bar 0.61 of Eastward's prop band (17.1 tones, 30.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (cab79f52...). Pass. GR11: east-slope hole timber mean Y 47 (round 1: 71) against 82 on the scaffold side. GR12 left as Claude A decided."
  }
 }

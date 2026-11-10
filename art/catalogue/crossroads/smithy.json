@@ -1,26 +1,26 @@
 {
  "id": "crossroads/smithy",
  "file": "game/zones/crossroads/art/smithy.png",
- "sha256": "7afbd400b5c0461be1ff31c827c03b7dc8a7550b540da8f1e995b969f973d077",
+ "sha256": "0b81e6ce39c0c4041a70c980af79a0808761aa04d6dbf388f5489cfb2d1a94c8",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  288,
-  327
+  292,
+  345
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 4
  },
  "detail_bar": {
   "ours": {
-   "patches": 220,
-   "tones": 24.454545454545453,
-   "shapes": 43.36363636363637
+   "patches": 226,
+   "tones": 23.74778761061947,
+   "shapes": 42.3141592920354
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.861,
-  "tones_ratio": 0.906,
-  "shapes_ratio": 0.861,
+  "ratio": 0.84,
+  "tones_ratio": 0.88,
+  "shapes_ratio": 0.84,
   "passed": false,
   "group": "prop"
  },
@@ -39,43 +39,59 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    92,
-    251,
-    139,
-    292
+    59,
+    40,
+    134,
+    90
    ],
-   "message": "crossroads/smithy: the stone is lit from the right (luminance rises 18 L per H to the east)",
+   "message": "crossroads/smithy: the stone is lit from the right (luminance rises 190 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    8,
-    69,
-    87,
-    196
+    150,
+    127,
+    289,
+    224
    ],
-   "message": "crossroads/smithy: the red is lit from the right (luminance rises 14 L per H to the east)",
+   "message": "crossroads/smithy: the wood is lit from the right (luminance rises 153 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    2,
-    0,
-    286,
-    325
+    1,
+    24,
+    291,
+    343
    ],
-   "message": "crossroads/smithy: detail bar 0.86 of Eastward's prop band (24.5 tones, 43.4 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy: detail bar 0.84 of Eastward's prop band (23.7 tones, 42.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    1,
+    24,
+    291,
+    343
+   ],
+   "message": "crossroads/smithy: 41% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 40% to 42%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (0b81e6ce...). Pass. GR3 fault fixed: apron under all 42 foot columns, lit over dark on 40; course highlights 3-6 texels below the foot 120 -> 4. GR4: 1 stray texel at the foot of 486 line texels, line 63 % darker, fade 33 %. GR9 fixed: pots (181,34) and (195,32); the west pot spans canvas x 175-185 with its rim on row 33, and SmithySmoke moved to (1535,533) = 1500-146+181, 840-341+34, on it. GR5 as on the library. The forge hood's seams moved with the +2 canvas phase (no regression). Polish GR2-2. GR6 and GR10 left as Claude A decided.",
+  "fix_list": [
+   "GR2-2 (polish): the stack's soakers are 3 to 6 lit lead texels at the bottom of the west side only; the east side has none (its first column east of the face is the slope's unchanged course pattern). Draw a 1-texel soaker column the height of each side face above the apron (west slate_cool 4, east slate_cool 3). The contact shadow east of the stack is 2 columns (d=2,3: 0 to 7 highlight texels); from d=4 the course highlights now run as dense as the open slope (smithy 22 to 27 a column against 0 to 1 in round 1). Eastward's vents (shot 17) throw a contact shadow about 6 native px wide: keep the floor tone 4 columns east of the face, fading at 5 to 6."
+  ]
  }
 }

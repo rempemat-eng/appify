@@ -2977,8 +2977,8 @@
   ],
   "deck": null,
   "foot": [
-   120,
-   296
+   122,
+   320
   ],
   "footprint": [
    [
@@ -3243,14 +3243,14 @@
    "mask": {
     "offset": [
      -110,
-     -163
+     -170
     ],
     "png": "res://kit/props/art/shadow_crossroads_bakery.png"
    }
   },
   "size_cells": [
-   10,
-   13
+   11,
+   14
   ],
   "snap": "cell",
   "story": {
@@ -3259,8 +3259,8 @@
   "variants": {
    "bakery": {
     "foot": [
-     120,
-     296
+     122,
+     320
     ],
     "png": "res://zones/crossroads/art/bakery.png"
    }
@@ -4294,8 +4294,8 @@
   ],
   "deck": null,
   "foot": [
-   120,
-   260
+   122,
+   287
   ],
   "footprint": [
    [
@@ -4576,14 +4576,14 @@
    "mask": {
     "offset": [
      -110,
-     -161
+     -169
     ],
     "png": "res://kit/props/art/shadow_crossroads_fern_cottage.png"
    }
   },
   "size_cells": [
-   10,
-   11
+   11,
+   13
   ],
   "snap": "cell",
   "story": {
@@ -4596,8 +4596,8 @@
   "variants": {
    "fern_cottage": {
     "foot": [
-     120,
-     260
+     122,
+     287
     ],
     "png": "res://zones/crossroads/art/fern_cottage.png"
    }
@@ -5840,8 +5840,8 @@
   ],
   "deck": null,
   "foot": [
-   156,
-   230
+   158,
+   317
   ],
   "footprint": [
    [
@@ -6106,14 +6106,14 @@
    "mask": {
     "offset": [
      -146,
-     -137
+     -148
     ],
     "png": "res://kit/props/art/shadow_crossroads_library.png"
    }
   },
   "size_cells": [
-   13,
-   10
+   14,
+   14
   ],
   "snap": "cell",
   "story": {
@@ -6122,8 +6122,8 @@
   "variants": {
    "library": {
     "foot": [
-     156,
-     230
+     158,
+     317
     ],
     "png": "res://zones/crossroads/art/library.png"
    }
@@ -6141,8 +6141,8 @@
   ],
   "deck": null,
   "foot": [
-   156,
-   272
+   158,
+   320
   ],
   "footprint": [
    [
@@ -6407,14 +6407,14 @@
    "mask": {
     "offset": [
      -146,
-     -137
+     -148
     ],
     "png": "res://kit/props/art/shadow_crossroads_north_cottages.png"
    }
   },
   "size_cells": [
-   13,
-   12
+   14,
+   14
   ],
   "snap": "cell",
   "story": {
@@ -6423,8 +6423,8 @@
   "variants": {
    "north_cottages": {
     "foot": [
-     156,
-     272
+     158,
+     320
     ],
     "png": "res://zones/crossroads/art/north_cottages.png"
    }
@@ -6721,8 +6721,8 @@
   ],
   "deck": null,
   "foot": [
-   144,
-   323
+   146,
+   341
   ],
   "footprint": [
    [
@@ -7099,14 +7099,14 @@
    "mask": {
     "offset": [
      -134,
-     -186
+     -195
     ],
     "png": "res://kit/props/art/shadow_crossroads_smithy.png"
    }
   },
   "size_cells": [
-   12,
-   14
+   13,
+   15
   ],
   "snap": "cell",
   "story": {
@@ -7119,8 +7119,8 @@
   "variants": {
    "smithy": {
     "foot": [
-     144,
-     323
+     146,
+     341
     ],
     "png": "res://zones/crossroads/art/smithy.png"
    }

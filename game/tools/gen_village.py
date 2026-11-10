@@ -48,7 +48,12 @@ MARKER = {'people': 82.0, 'notice_board': 108.0, 'waystone': 108.0}
 
 
 def chimney_pot(zid: str, o: dict) -> tuple:
-    """The top centre of a building picture's chimney (its topmost opaque row), in texels."""
+    """The top centre of a building picture's chimney, in texels: its first stack's pots as the house
+    painter recorded them (kit.json `pots`; a front gable's stack stands in the slope, below the roof's
+    back), else the picture's topmost opaque row."""
+    if o.get('pots'):
+        px, py = o['pots'][0]
+        return o['foot'][0] + o['offset'][0] + px, o['foot'][1] + o['offset'][1] + py
     from PIL import Image
     import numpy as np
     a = np.array(Image.open(os.path.join(GAME, 'zones', zid, 'art', o['png'])).convert('RGBA'))[..., 3] > 0

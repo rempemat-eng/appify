@@ -6,15 +6,15 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 4,
  "variants": [
   {
    "id": "north_cottages",
    "weight": 1.0,
    "png": "res://zones/crossroads/art/north_cottages.png",
    "foot": [
-    156,
-    272
+    158,
+    320
    ]
   }
  ],
@@ -27,12 +27,12 @@
  },
  "geometry": {
   "size_px": [
-   312,
-   276
+   316,
+   324
   ],
   "size_cells": [
-   13,
-   12
+   14,
+   14
   ],
   "z_sort": "foot",
   "collision": {
@@ -45,8 +45,8 @@
    "shape": "rect"
   },
   "foot": [
-   156,
-   272
+   158,
+   320
   ],
   "footprint": [
    [

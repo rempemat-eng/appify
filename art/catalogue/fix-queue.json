@@ -4,40 +4,8 @@
  "commit": "14944c89",
  "queue": [
   {
-   "id": "crossroads/ground",
-   "sha256": "95859777abd021a5e0e044f51f14b7f05c247aad3a66cc53f53dfbf940189024",
-   "queued": "2026-11-09",
-   "reason": "regenerated in #450 under the redrawn props (the 362 ground-edit texels at prop feet, the bakery lip and 912,468; that delta is correct and the 177 distant lawn-scatter texels were ruled acceptable); the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3) keeps it failed on XR2-G1 and XR2-G2 (#421) and adds XR3-G1: re-queued at the #450 bytes with the auditor's fix list (Claude A, 9 Nov); earlier: its contact and cast shadows redrawn in #447 under the redrawn props (that delta passes); failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov); earlier: queued at the 25 Oct seed (logic.scale; the #288 second review's S5 and S6); its picture has since been redrawn (#436), so the entry is renewed at today's bytes; #421 redraws it again. re-queued after the #288 second review: S5 (ruts, dark discs, even stipple) and S6 (straight seam on the SW road) go to the next fix-queue PR",
-   "clears_when": "reviewer pass on XR2-G1..G2 (the #421 house and burnt-lot redraw); XR3-G1 is a non-blocking follow-up",
-   "review_by": "2026-11-30",
-   "faults": [
-    "logic.scale"
-   ],
-   "fix_list": [
-    "XR2-G1 (open, #421): burnt lots: replace the even stipple of dark discs with soil marks in drifts (softedge.soil_marks), char as clusters with lit edges, the fallen beams with a lit top edge and grain; fray the scorch fringe in 2-3 px clusters (the #288 S5)",
-    "XR2-G2 (open, #421): the #421 redraw needs a full scene-gate pass (24 cells) before it may be placed",
-    "XR3-G1 (follow-up, not blocking): make the lawn scatter local, so a prop edit cannot move distant ground: draw it per cell from a seed of the cell, or extend the twice-drawn lawn (kept new only round changed objects) from buildings to every static prop"
-   ]
-  },
-  {
    "id": "crossroads/anvil_shadow",
    "sha256": "fc17b33f318842a26c0ead9aaf6b9dfb0c50f715c1c5ac18d9507f11299b4147",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/bakery",
-   "sha256": "ee19085162e076231e225d4373bf04955edaee1f274334d17def66e166cec9f1",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/bakery_damage",
-   "sha256": "d6f88623130278eba8c4423eecc92e99899e2d1f067e8d1b7e42f3103f20b1b0",
    "queued": "2026-11-09",
    "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
    "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
@@ -156,22 +124,6 @@
    "review_by": "2026-11-30"
   },
   {
-   "id": "crossroads/fern_cottage",
-   "sha256": "4aba1b48ce7e54afd32ff716362fe97ec5f82a5651572ee7e742c48d05bf5fe7",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/fern_cottage_damage",
-   "sha256": "22616281132d6a1bfa818f72d6759a48af528778cb3513bb195bbfd537ae9fef",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
    "id": "crossroads/handcart",
    "sha256": "c79efcf10302f57de118c8da5db0c924951bdaa3d9506cd3591a6d405f32c94a",
    "queued": "2026-11-09",
@@ -198,38 +150,6 @@
   {
    "id": "crossroads/hut",
    "sha256": "3a2b51930b2cdeecf817ad1d1f560d688623452d695be4d91aebfbd449f10481",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/library",
-   "sha256": "3f679983ee19926eb99717d1ead52d7d1e14b47e36a0b1e8b08c032fea21b330",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/library_damage",
-   "sha256": "c8ffb7c640d72015c8f4a16604c08cbf8796560686972e5d5dd7e3e10f2439c3",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/north_cottages",
-   "sha256": "aa2f252f4591b5666b0486abb4ce0abeaa34b3e483469740448c936ec7ecdcec",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/north_cottages_damage",
-   "sha256": "9e36e776fadd144bd18a14b0efd879cd80ed4ceffbe8af3db52c7788f1f6a465",
    "queued": "2026-11-09",
    "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
    "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
@@ -310,22 +230,6 @@
   {
    "id": "crossroads/oak_6",
    "sha256": "79599c754df7c7db9473c649912823d2eafd299ddb7eb57eed65c841f7f79b94",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/smithy",
-   "sha256": "7afbd400b5c0461be1ff31c827c03b7dc8a7550b540da8f1e995b969f973d077",
-   "queued": "2026-11-09",
-   "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
-   "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
-   "review_by": "2026-11-30"
-  },
-  {
-   "id": "crossroads/smithy_damage",
-   "sha256": "5066ab2a5b779f0ffb6a1d7121d9036751e32c474fa22f111bd7a1f3a63d52fa",
    "queued": "2026-11-09",
    "reason": "placed in the world before the 25 Oct seed and never independently reviewed; #421 or the front-gable roof build redraws it, so it is not audited in its present form (Claude A, 9 Nov, #439 triage)",
    "clears_when": "#421 (the Crossroads slice) or the front-gable roof build redraws it (Matt's roof decision), and an independent detail-auditor passes the new picture",
