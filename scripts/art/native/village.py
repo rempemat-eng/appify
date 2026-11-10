@@ -4971,8 +4971,172 @@ def p_stall_hd(w, h, seed, hd=False):
     return p
 
 
+
+def p_cart_hd(w, h, seed, hd=False):
+    """The handcart left in the square at density 3 (the fix queue, never independently reviewed):
+    a bed of sawn boards seen from above the front (its floor's top plane lit, the side boards laid
+    end to end with butt joints and nails, the east end turned away), one iron-tyred wheel on the near
+    side (felloe in six jointed segments, six spokes lit on their upper west, an iron-banded hub), its
+    two shafts resting on the setts to the west with a crossbar at their tips, a burlap sack and a small
+    crate on the bed, each throwing its shade on what lies under it, and occlusion where the parts meet."""
+    rng = np.random.default_rng(seed)
+    p = _pic(w, h, up=18, side=7)
+    a, cx, yb = p.a, p.ax, p.ay
+    Y, X = grid(a)
+    x0, x1 = cx - q(w / 2), cx + q(w / 2)
+    # the shafts, far one first (higher, a tone down), resting on the ground west of the bed
+    for (ya, yb_, t, th) in ((yb - q(12.0), yb - q(4.2), 2, 3), (yb - q(10.0), yb - q(1.4), 3, 4)):
+        xa, xe = x0 + q(3), x0 - q(6.4)
+        sm = seg_mask(a.shape, xa, ya, xe, yb_, th / 2.0)
+        T_, Lf, B_, R_ = edges(sm)
+        _codes(a, sm, 'timber', t)
+        a[sm & T_] = code('timber_warm', t + 1)
+        a[sm & B_] = code('timber_cool', max(0, t - 2))
+        # the shaft's worn grip at its tip
+        tip = sm & (X < xe + q(1.6))
+        a[tip & ~B_] = code('timber_warm', t + (1 if t < 3 else 0))
+    # the crossbar between the tips
+    cb = seg_mask(a.shape, x0 - q(5.4), yb - q(4.6), x0 - q(5.0), yb - q(1.6), 1.5)
+    _codes(a, cb, 'timber', 2)
+    a[cb & edges(cb)[1]] = code('timber', 3)
+    # the bed: its floor's top plane over the side boards
+    top_y0, top_y1 = yb - q(16.5), yb - q(14.2)
+    side_y0, side_y1 = top_y1, yb - q(8.0)
+    fl = (X >= x0) & (X < x1) & (Y >= top_y0) & (Y < top_y1)
+    # floor boards running front to back, seen from above: each its sibling, the joints dark
+    bxs = _bundles_x(x0, x1, rng)
+    for i, (ba, bb) in enumerate(bxs):
+        m = fl & (X >= ba) & (X < bb)
+        fam = TIMBER[int(rng.integers(0, 3))]
+        _codes(a, m, fam, 4 - ((ba - x0) / max(1, x1 - x0) > 0.7))
+        a[m & (np.floor(X) == ba)] = code('timber', 1)
+    a[fl & (np.floor(Y) == top_y0)] = code('timber_warm', 5)                 # the back rail's lit top
+    a[fl & (np.floor(Y) == top_y1 - 1)] = code('timber', 2)                  # its front arris turning over
+    # the side boards: two courses laid end to end, butt joints and nails (plank_strip)
+    mid = (side_y0 + side_y1) // 2
+    plank_strip(a, x0, side_y0, x1 - q(1.4), mid, rng, base=3, joints=(16, 30))
+    plank_strip(a, x0, mid, x1 - q(1.4), side_y1, rng, base=3, joints=(14, 26), lit=0)
+    a[(X >= x0) & (X < x1 - q(1.4)) & (np.floor(Y) == mid)] = code('timber', 1)   # the lap between them
+    # the east end of the bed turned away from the light
+    ee = (X >= x1 - q(1.4)) & (X < x1) & (Y >= side_y0) & (Y < side_y1)
+    _codes(a, ee, 'timber_cool', 1)
+    a[ee & (np.floor(X) == x1 - q(1.4))] = code('timber_cool', 2)
+    # the frame's corner irons, a lit texel on each
+    for ix in (x0, x1 - q(1.4) - 4):
+        a[(X >= ix) & (X < ix + 4) & (Y >= side_y0 + 1) & (Y < side_y0 + 5)] = code('iron', 1)
+        a[(np.floor(X) == ix) & (np.floor(Y) == side_y0 + 1)] = code('iron', 4)
+    # the underside: the bed's shadow on the shafts and the ground under it
+    us = (X >= x0 + 2) & (X < x1) & (Y >= side_y1) & (Y < side_y1 + 2) & (a >= 0)
+    _step_down(a, us, 1)
+    # the load: a burlap sack lying on the bed (west) and a small crate (east)
+    scx, scy, rx, ry = x0 + q(w * 0.3), top_y0 - q(2.4), q(4.4), q(3.0)
+    nx_, ny_ = (X - scx) / rx, (Y - scy) / ry
+    d = nx_ * nx_ + ny_ * ny_
+    sm = (d <= 1) & (Y < top_y1 - 1)
+    weave = (((X.astype(int) // 2) + (Y.astype(int) // 2)) % 2 == 0) & (Y.astype(int) % 2 == 0)
+    st = 2.0 + 1.8 * lam(nx_, ny_ * 0.8, np.sqrt(np.clip(1 - d, 0, 1)))
+    st = np.where(np.abs(nx_ - 0.25 - ny_ * 0.3) < 0.09, st - 1.0, st)        # a fold
+    stc = np.clip(np.round(st), 0, 4).astype(int)
+    sfam = np.where(stc >= 3, FI['sand_warm'], np.where(stc <= 1, FI['sand_cool'], FI['sand']))
+    # the weave as a sibling a step cooler at the same tone (texture without speckle)
+    sfam = np.where(weave & (sfam == FI['sand_warm']), FI['sand'], np.where(weave & (sfam == FI['sand']), FI['sand_cool'], sfam))
+    a[sm] = (sfam * 8 + stc)[sm]
+    # its tied neck lying west, the twine turned twice
+    nk = (X >= scx - rx - q(2.0)) & (X < scx - rx + 2) & (np.abs(Y - scy - 1) < q(1.1))
+    _codes(a, nk & (a >= -1), 'sand', 2)
+    a[nk & (Y < scy)] = code('sand_warm', 3)
+    for tx in (scx - rx - 1, scx - rx + 1):
+        a[(np.floor(X) == int(tx)) & (np.abs(Y - scy - 1) < q(1.1))] = code('timber_warm', 2)
+    # its shade on the floor boards east and under it
+    sh = (VO_shift(sm, 2, 3) | VO_shift(sm, 3, 0)) & ~sm & fl
+    _step_down(a, sh, 1)
+    # the crate: boards on its front, its lid lit, its east side in shade, a corner iron
+    cx0, cx1 = x1 - q(9.5), x1 - q(2.4)
+    ctop, cbot = top_y0 - q(6.4), top_y1 - 1
+    top_m, front_m, east_m = box_hd(a, cx0, cx1, ctop, cbot, q(1.6), ('timber_cool', 'timber', 'timber_warm'), base=3.0)
+    for k, yy in enumerate(range(int(ctop + q(1.6)) + q(1.6), int(cbot), q(1.6))):
+        a[front_m & (np.floor(Y) == yy)] = code('timber', 1)
+        a[front_m & (np.floor(Y) == yy + 1) & (X < cx0 + (cx1 - cx0) * 0.6)] = code('timber_warm', 4)
+    a[top_m & (np.floor(X) == int((cx0 + cx1) / 2))] = code('timber', 2)    # the lid's two boards
+    a[top_m & (np.floor(X) == int((cx0 + cx1) / 2) + 1)] = code('timber_warm', 5)
+    for yy in range(int(ctop + q(1.6)) + 3, int(cbot) - 1, 4):                 # the east side's boards
+        a[east_m & (np.floor(Y) == yy)] = code('timber_cool', 0)
+        a[east_m & (np.floor(Y) == yy + 1)] = code('timber_cool', 2)
+    a[(np.floor(X) >= cx1 - q(1.4)) & (np.floor(X) < cx1) & (np.floor(Y) == int(ctop + q(1.6))) & east_m] = code('iron', 3)
+    nail_head(a, cx0 + 2, ctop + q(1.6) + 2)
+    nail_head(a, cx1 - q(1.4) - 4, ctop + q(1.6) + 2)
+    csh = (VO_shift(top_m | front_m | east_m, 2, 3)) & ~(top_m | front_m | east_m) & fl
+    _step_down(a, csh, 1)
+    # the wheel on the near side: iron tyre, felloe segments, spokes, the hub
+    wc = (cx + q(w * 0.14), yb - q(6.2))
+    R = q(6.2)
+    dx, dy = X - wc[0], Y - wc[1]
+    r = np.hypot(dx, dy)
+    ang = np.arctan2(dy, dx)
+    upl = (dx + dy) < 0                                                      # the upper-left half, lit
+    tyre = (r <= R) & (r > R - q(0.9))
+    fel = (r <= R - q(0.9)) & (r > R - q(2.3))
+    a[tyre] = code('iron', 2)
+    a[tyre & upl] = code('iron', 3)
+    a[tyre & ((dx + dy) < -R * 0.9) & (r > R - 1.5)] = code('iron', 5)
+    a[tyre & ((dx + dy) > R * 0.7)] = code('iron', 1)
+    a[fel] = code('timber', 3)
+    a[fel & upl & (r > R - q(1.4))] = code('timber_warm', 4)
+    a[fel & ~upl] = code('timber', 2)
+    a[fel & ((dx + dy) > R * 0.8)] = code('timber_cool', 1)
+    seg = np.floor((ang + math.pi) / (math.pi / 3)).astype(int)
+    a[fel & ~upl & (seg % 2 == 0)] = code('timber_cool', 2)                 # the segments, each its own piece
+    a[tyre & ((dx + dy) > R * 0.7) & (seg % 2 == 1)] = code('iron', 2)
+    for k in range(6):                                                       # the felloe's joints
+        aj = k * math.pi / 3 + math.pi / 6
+        a[fel & (np.abs(((ang - aj + math.pi) % (2 * math.pi)) - math.pi) < 0.5 / max(1.0, r.mean() * 0.0 + R - q(1.6)))] = code('timber_cool', 0)
+    inner = r <= R - q(2.3)
+    a[inner & (a >= 0) & ~tyre & ~fel] = -1
+    hub_r = q(1.7)
+    for k in range(6):
+        aa = k * math.pi / 3 + 0.25
+        ex, ey = wc[0] + math.cos(aa) * (R - q(2.0)), wc[1] + math.sin(aa) * (R - q(2.0))
+        spm = seg_mask(a.shape, wc[0], wc[1], ex, ey, 1.4) & inner
+        lit = math.cos(aa) * -0.6 + math.sin(aa) * -0.4
+        _codes(a, spm, 'timber', 3 if lit > 0.1 else 2)
+        T_, Lf, B_, R_ = edges(spm)
+        a[spm & (T_ | Lf)] = code('timber_warm', 4)
+        a[spm & (B_ | R_)] = code('timber_cool', 1)
+    # the ground seen between the spokes is left open; the spokes' meeting at the hub
+    hub = r <= hub_r
+    a[hub] = code('timber', 2)
+    a[hub & upl] = code('timber_warm', 3)
+    band = (r <= hub_r) & (r > hub_r - 1.5)
+    a[band] = code('iron', 2)
+    a[band & upl] = code('iron', 4)
+    a[r <= 1.6] = code('iron', 1)
+    a[(np.floor(X) == int(wc[0]) - 1) & (np.floor(Y) == int(wc[1]) - 1)] = code('iron', 5)
+    # the axle's shade on the bed behind the wheel's top
+    wsh = VO_shift(tyre | fel, 0, 2) & ~(tyre | fel | inner) & (Y >= side_y0) & (Y < side_y1) & (a >= 0)
+    _step_down(a, wsh, 1)
+    return finish(p, keep=nail_lights(a))
+
+
+def _bundles_x(x0, x1, rng):
+    out, x = [], int(x0)
+    while x < x1:
+        w_ = int(rng.integers(q(2.6), q(3.6) + 1))
+        out.append((x, min(int(x1), x + w_)))
+        x += w_
+    if len(out) > 1 and out[-1][1] - out[-1][0] < q(1.5):
+        out[-2] = (out[-2][0], out[-1][1])
+        out.pop()
+    return out
+
+
+def VO_shift(m, dy, dx):
+    from .volume import _shift
+    return _shift(m, dy, dx)
+
+
 PROPS_HD = {
     'barrel': p_barrel_hd,
+    'cart': p_cart_hd,
     'anvil': p_anvil_hd,
     'beds': lambda w, h, s: p_beds_hd(w, h, s, scorched=True),
     'beds_dug': lambda w, h, s: p_beds_hd(w, h, s, scorched=False),

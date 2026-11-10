@@ -363,6 +363,16 @@ def volume_of(spec: dict) -> dict:
             parts.append([(x, g, h) for x in (cx - cw / 2, cx + cw / 2) for g in (g0 - cw / 1.5, g0)
                           for h in (h_eave, h_on + spec.get('stack_rise', 12.0))])
         return {'w': w, 'depth': dep, 'parts': parts}
+    if spec.get('stack_t') is not None:
+        # a stack standing in a hipped roof's plane (the combed thatch: houses.thatch_stack): its front
+        # face a share stack_t of the way from the eave up to the ridge, rising stack_rise over its foot
+        t = spec['stack_t']
+        h_on = h_eave + t * (h_ridge - h_eave)
+        g0 = -dep / 2 * t
+        for cx in spec.get('chimney') or []:
+            parts.append([(x, g, h) for x in (cx - cw / 2, cx + cw / 2) for g in (g0 - cw / 1.5, g0)
+                          for h in (h_eave, h_on + spec.get('stack_rise', 11.0))])
+        return {'w': w, 'depth': dep, 'parts': parts}
     for cx in spec.get('chimney') or []:
         # a stack: its own solid from the roof up to its pots, chim over the ridge
         top = h_ridge + chim

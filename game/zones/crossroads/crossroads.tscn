@@ -1355,7 +1355,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="WellChokedShadow" type="Sprite2D" parent="Props/If_well_choked_shadow"]
-position = Vector2(832, 956)
+position = Vector2(834, 932)
 texture = ExtResource("t92")
 centered = false
 offset = Vector2(0, 0)
@@ -1366,7 +1366,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="WellShadow" type="Sprite2D" parent="Props/If_well_shadow"]
-position = Vector2(838, 956)
+position = Vector2(834, 932)
 texture = ExtResource("t93")
 centered = false
 offset = Vector2(0, 0)
@@ -1388,7 +1388,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="AnvilShadow" type="Sprite2D" parent="Props/If_anvil_shadow"]
-position = Vector2(1461, 908)
+position = Vector2(1461, 895)
 texture = ExtResource("t95")
 centered = false
 offset = Vector2(0, 0)
@@ -1465,7 +1465,7 @@ script = ExtResource("cond")
 only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SquarePuddles" type="Sprite2D" parent="Props/If_square_puddles"]
-position = Vector2(674, 718)
+position = Vector2(799, 738)
 texture = ExtResource("t102")
 centered = false
 offset = Vector2(0, 0)
