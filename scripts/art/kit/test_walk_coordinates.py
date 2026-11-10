@@ -92,6 +92,37 @@ class WalkCoordinates(unittest.TestCase):
         expected[2:4] = True
         np.testing.assert_array_equal(W.mask(plan), expected)
 
+    def test_a_tier_edge_between_walkable_cells_is_a_wall(self):
+        # A raised cell beside lower ground: the game stands a wall on the edge (KitWalk.derive,
+        # TerrainGround._build_blocked). The mask left it open before 10 Nov, so the review tools
+        # read a route up a side wall as walkable. The face cell under the south rim is blocked
+        # ground already, so no second wall is drawn there.
+        plan = self.plan()
+        plan.update(rows=['...', '...', '...'], tiers=['010', '000', '000'], pieces=[])
+        expected = np.zeros((6, 6), dtype=bool)
+        expected[2:4, 2:4] = True                     # the face under the south rim
+        expected[0:2, 1:3] = True                     # the west edge: the cell line and a walk cell each side
+        expected[0:2, 3:5] = True                     # the east edge
+        np.testing.assert_array_equal(W.mask(plan), expected)
+
+    def test_a_deck_joins_two_tiers_without_a_wall(self):
+        plan = self.plan(piece='deck', at=(1, 0))
+        plan.update(rows=['...', '...'], tiers=['011', '000'])
+        self.assertFalse(W.mask(plan)[0:2, 1:3].any(), 'the deck cell joins the lower cell west of it')
+        plan['pieces'] = []
+        self.assertTrue(W.mask(plan)[0:2, 1:3].all(), 'without the deck the edge is a wall')
+
+    def test_a_blocking_piece_without_a_box_blocks_its_footprint(self):
+        self.library['post'] = {'blocks_move': True, 'collision': None, 'footprint': [[-1, -1], [0, -1]]}
+        expected = np.zeros((4, 4), dtype=bool)
+        expected[0:2, 0:4] = True
+        np.testing.assert_array_equal(W.mask(self.plan(piece='post')), expected)
+
+    def test_a_box_wholly_outside_the_zone_blocks_nothing(self):
+        # A box ending one walk cell above the zone gave the slice [0:-1]: the old code blocked
+        # three cells of the first column for a piece that is not in the zone at all.
+        np.testing.assert_array_equal(W.mask(self.plan(piece='solid', at=(0, -1))), np.zeros((4, 4), dtype=bool))
+
     def test_nonblocking_and_unknown_pieces_remain_ignored(self):
         plan = self.plan(piece='decoration')
         plan['pieces'].append({'piece': 'unknown', 'at': [1, 1]})
@@ -125,6 +156,28 @@ class WalkCoordinates(unittest.TestCase):
                     W.mask(plan)
         with self.assertRaisesRegex(ValueError, 'finite'):
             W.mask(self.plan(at=(1e308, 1)))
+
+
+class WalkParity(unittest.TestCase):
+    """One mask, twice: the fixture's rows are what walk.py derives from its plan, and
+    game/test/test_world_editor_authoring.gd holds KitWalk.derive to the same rows."""
+
+    def test_the_parity_fixture_is_what_walk_py_derives(self):
+        fixture = json.loads((Path(W.KR.ROOT) / 'game/test/fixtures/kit/walk_parity.json').read_text())
+        rows = [''.join('#' if v else '.' for v in r) for r in W.mask(fixture['plan'])]
+        self.assertEqual(rows, fixture['rows'])
+
+    def test_committed_walk_masks_are_current(self):
+        # walk.txt is an export of the plan; nothing kept it current, and three had drifted.
+        zones = Path(W.KR.ROOT) / 'game/kit/zones'
+        for plan_path in sorted(zones.glob('*.json')):
+            walk_path = Path(W.KR.ROOT) / 'game/zones' / plan_path.stem / 'walk.txt'
+            if not walk_path.exists():
+                continue
+            rows = [''.join('#' if v else '.' for v in r) for r in W.mask(json.loads(plan_path.read_text()))]
+            with self.subTest(zone=plan_path.stem):
+                self.assertEqual(walk_path.read_text(), '\n'.join(rows) + '\n',
+                                 'run python3 -m scripts.art.kit.walk %s' % plan_path.stem)
 
 
 class WalkCommand(unittest.TestCase):

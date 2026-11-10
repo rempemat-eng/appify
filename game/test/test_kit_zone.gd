@@ -54,7 +54,7 @@ func test_literal_spawn_id_cannot_move_an_inherited_actor() -> void:
 	var path := _literal_gameplay_source("actor")
 	var plan := _input_plan()
 	plan["gameplay_from"] = path
-	plan["spawns"] = {"../Actors/ProtectedMarker": [123, 456]}
+	plan["spawns"] = {"../Actors/ProtectedMarker": [23, 45]}  # on the 2 by 2 cell ground: a plan's spawn lies inside it
 	var root := _scene(plan)
 	if root != null:
 		assert_that((root.get_node("Actors/ProtectedMarker") as Marker2D).position).is_equal(Vector2(10, 20))
@@ -67,6 +67,7 @@ func test_literal_spawn_id_cannot_move_an_inherited_actor() -> void:
 
 func test_distinct_logical_ids_survive_node_name_collisions_and_disk_round_trip() -> void:
 	var plan := _input_plan()
+	plan["rows"] = [".....", "....."]  # five cells across: a door lies inside the ground, one per id
 	plan["spawns"] = {}
 	plan["doors"] = []
 	var ids := ["a/b", "a_b", ".", "..", "start:position"]
@@ -93,7 +94,7 @@ func test_inherited_logical_ids_are_overridden_without_duplicate_children() -> v
 	var path := _literal_gameplay_source("override")
 	var plan := _input_plan()
 	plan["gameplay_from"] = path
-	plan["spawns"] = {"logical/spawn": [42, 84]}
+	plan["spawns"] = {"logical/spawn": [42, 44]}
 	plan["doors"] = [{"id": "logical/door", "rect": [1, 0, 1, 1], "to": "crossroads"}]
 	var root := _scene(plan)
 	if root != null:
@@ -347,7 +348,12 @@ func test_gameplay_from_is_persisted_and_explicit_spawn_override_wins() -> void:
 	_assert_plan(Tool.plan_from_scene(reloaded), original)
 
 func test_inherited_gameplay_edits_export_as_overrides() -> void:
-	var original := {"zone": "w2_inherited_edits", "legend": {".": "lawn"}, "rows": ["....", "...."], "gameplay_from": "res://zones/woodland/woodland.tscn"}
+	# The woodland's own size in cells, as woodland_kit has: an overridden door keeps the place it
+	# has in the source scene, and a plan's door must lie inside the plan's ground.
+	var rows := []
+	for y in 72:
+		rows.append(".".repeat(40))
+	var original := {"zone": "w2_inherited_edits", "legend": {".": "lawn"}, "rows": rows, "gameplay_from": "res://zones/woodland/woodland.tscn"}
 	var root := _scene(original)
 	if root == null:
 		return
