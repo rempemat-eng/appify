@@ -75,16 +75,22 @@ expect zone crossroads
 expect quest road_to_crossroads active moss
 expect glint 40
 
-step keys under the pause menu do not reach the game
+step the pause menu over an open line: E under the menu does not turn the page
 goto 1152 830 10
+expect line none
+key E
+expect line And Hale with you
 key Escape
 expect paused yes
+key E
 key E
 expect paused yes
 key Escape
 expect paused no
+expect line And Hale with you
 expect quest road_to_crossroads active moss
 talk Moss
+expect line none
 expect quest road_to_crossroads done
 expect glint 50
 end

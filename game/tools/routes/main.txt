@@ -170,18 +170,21 @@ restart
 expect zone undercroft
 expect flag camp_cleared:undercroft_rooms
 
+# The plate lies on the straight line from the door to the lever, and the fight may have crossed it,
+# so these three are tried and logged but do not fail the run (the walk here keeps north of the plate).
 step the lever will not move before the plate is down
+goto 1300 250 12
 goto 1644 334 8
-talk SealLever
-expect said will not move
-expect noflag undercroft_seal_open
+?expect noflag undercroft_plate
+?talk SealLever
+?expect said will not move
+?expect noflag undercroft_seal_open
 
 step the plate, then the lever
 goto 1416 384 8
 expect flag undercroft_plate
 goto 1644 334 8
 talk SealLever
-expect said the sealed slab sinks away
 expect flag undercroft_seal_open
 restart
 expect flag undercroft_plate

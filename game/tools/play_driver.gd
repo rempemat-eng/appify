@@ -17,8 +17,9 @@ extends Node
 ##   door x y <zone>         walk at a door until the zone changes to <zone>
 ##   talk [Node]             press E at the thing in reach and through its lines (fails with nothing
 ##                           in reach, or when the focus is not the named node)
-##   fight [secs]            aim with the mouse, shoot, roll out of wind-ups, until no enemy is near
-##   down [secs]             walk at the nearest enemy and stand still until downed, then get up
+##   fight [secs]            aim with the mouse, shoot, roll out of wind-ups, until no enemy that can be
+##                           walked to is left in the zone
+##   down [secs]             stand a few steps from the nearest enemy until downed, then get up
 ##   key <Name>              tap a key (Escape, E, Space, Enter, Down, ...)
 ##   hold <left|right|up|down|upleft|...> <secs>
 ##   aim x y, click, roll    the mouse at a world point, a left click, Space
@@ -29,6 +30,7 @@ extends Node
 ##       zone <id> | quest <id> <none|active|done> [step id] | flag <f> | noflag <f> | focus <Node|none>
 ##       prompt <verb|none> | hp <n> | glint <n> | restored <id> | notrestored <id> | enemies <n>
 ##       at x y <tol> | hud <text|none> | said <text> | banner <text|none> | paused <yes|no>
+##       line <text|none> (the line on the dialogue box now)
 ##   restart                 close the window as a player would; the runner starts the game again from the
 ##                           save and the route carries on at the next line
 ##   end                     pass (the end of the file passes too)
@@ -402,6 +404,12 @@ func expect(a: PackedStringArray) -> String:
 			return "" if all.contains(rest.to_lower()) else "the last lines were: %s" % (" | ".join(_said) if _said.size() > 0 else "(nothing)")
 		"paused":
 			return "" if get_tree().paused == (a[2] == "yes") else "paused is %s" % get_tree().paused
+		"line":
+			var box := get_tree().get_first_node_in_group("dialogue_box")
+			var line: String = box.shown_line() if box != null else ""
+			if rest == "none":
+				return "" if line == "" else "the dialogue box shows '%s'" % line
+			return "" if line.to_lower().contains(rest.to_lower()) else "the dialogue box shows '%s'" % line
 		_:
 			return "unknown expectation '%s'" % a[1]
 	return ""
@@ -538,7 +546,7 @@ func _threat(p: Node2D) -> Node2D:
 ## Fights whatever is near: aims the mouse at the nearest enemy and clicks, steps or rolls sideways out
 ## of the lane of a telegraphed attack, closes in when out of range or when a wall is in the way.
 ## Downed, it walks back to where the fight began and goes on (up to MAX_DOWNS times; the log counts
-## them). Ends when no enemy is within 700 texels, or after `limit` seconds (a failure).
+## them). Ends when no enemy that can be walked to is left in the zone, or after `limit` seconds (a failure).
 func fight(limit: float) -> String:
 	var p := player()
 	var start := now()
@@ -574,7 +582,7 @@ func fight(limit: float) -> String:
 		left = 0
 		for e: Node2D in enemies():
 			var d: float = e.global_position.distance_to(p.global_position)
-			if d > 700.0 or not ground.has(g.nearest_free(e.global_position, 40.0)):
+			if not ground.has(g.nearest_free(e.global_position, 40.0)):
 				continue
 			left += 1
 			if d < best:
@@ -627,11 +635,12 @@ func fight(limit: float) -> String:
 		return "%d enemies were still near after %.0fs" % [left, limit]
 	return ""
 
-## Walks at the nearest enemy and takes every hit, to see what being downed does.
+## Walks to within a few steps of the nearest enemy and takes every hit, to see what being downed does.
 func down(limit: float) -> String:
 	var p := player()
 	var start := now()
 	var downs0 := _downs
+	var noted := now()
 	var g := grid()
 	g.forget()
 	while now() - start < limit and _downs == downs0:
@@ -645,14 +654,26 @@ func down(limit: float) -> String:
 		if near == null:
 			hold(Vector2.ZERO)
 			return "no enemy is left to be downed by"
-		if best > 30.0 and p.is_inside_tree() and not p.is_defeated():
-			var plan := g.path(p.global_position, near.global_position, 24.0)
+		if now() - noted > 5.0:
+			noted = now()
+			out("  down: %s is %d texels away, %s; hp %d" % [near.name, int(best), near.get("state"), p.hp])
+		if not p.is_inside_tree() or p.is_defeated():
+			hold(Vector2.ZERO)
+		elif best > 170.0:
+			var plan := g.path(p.global_position, near.global_position, 130.0)
 			var want := near.global_position
 			for i in range(mini(plan.size(), 60) - 1, -1, -1):
 				if g.clear_line(p.global_position, plan[i]):
 					want = plan[i]
 					break
 			hold(want - p.global_position)
+		elif best < 105.0:
+			# a few steps off, not at its feet: within 83 texels the Thornback only throws thorns, and a
+			# player standing between their eight lines is never hit (found by this driver, 10 Nov)
+			var away := near.global_position.direction_to(p.global_position)
+			if not g.is_free(WalkGrid.cell_of(p.global_position + away * 30.0)):
+				away = away.orthogonal()
+			hold(away)
 		else:
 			hold(Vector2.ZERO)
 		await _sleep(0.1)

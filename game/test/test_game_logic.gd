@@ -11,6 +11,8 @@ func before_test() -> void:
 	SaveGame.path = SAVE
 
 func after_test() -> void:
+	get_tree().paused = false
+	Input.action_release("ui_advance")
 	SaveGame.path = SaveGame.DEFAULT_PATH
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE))
 	Zones.current = null
@@ -145,6 +147,32 @@ func test_the_hud_has_a_lead_between_quests() -> void:
 	assert_str(Quests.tracked_text()).contains("Hale the smith is missing")
 	SaveGame.data.quests["road_to_crossroads"] = {"state": "done", "step": 2}
 	assert_str(Quests.tracked_text()).contains("Talk to Hale by her smithy")
+
+# --- the dialogue box under the pause menu -------------------------------------------------------------
+func _press_advance() -> void:
+	Input.action_press("ui_advance")
+	await _frames(2)
+	Input.action_release("ui_advance")
+	await _frames(2)
+
+func test_the_pause_menu_owns_the_keys_over_an_open_line() -> void:
+	var box: PanelContainer = auto_free(preload("res://ui/dialogue_box.gd").new())
+	add_child(box)
+	SaveGame.data.settings.reduced_motion = true     # whole lines at once: one press is one page
+	Dialogue.talk("stone_sign")
+	await _frames(2)
+	assert_str(box.shown_line()).starts_with("TO WHOEVER READS THIS")
+	get_tree().paused = true
+	await _press_advance()
+	await _press_advance()
+	assert_str(box.shown_line()).starts_with("TO WHOEVER READS THIS")
+	get_tree().paused = false
+	await _frames(3)
+	await _press_advance()
+	assert_str(box.shown_line()).starts_with("Drive them off")
+	await _press_advance()
+	assert_str(box.shown_line()).is_equal("")
+	await get_tree().create_timer(0.3).timeout      # Dialogue stays busy a moment after the box closes
 
 # --- conditions -----------------------------------------------------------------------------------
 func test_started_past_and_zone_built_conditions() -> void:
