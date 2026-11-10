@@ -1,26 +1,26 @@
 {
  "id": "woodland/willow",
  "file": "game/zones/woodland/art/willow.png",
- "sha256": "a3fe1e4e8731b7f2c7f7caa7deb6a584cd19c8913ff23a44b77613b659f167c1",
+ "sha256": "f002f89d2523f18503263e58041cbedd83a285d777acc7b9f7ed74e20e2de05d",
  "kind": "willow",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  222,
-  294
+  246,
+  200
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 117,
-   "tones": 20.76923076923077,
-   "shapes": 41.21367521367522
+   "patches": 76,
+   "tones": 31.289473684210527,
+   "shapes": 51.60526315789474
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.651,
-  "tones_ratio": 0.75,
-  "shapes_ratio": 0.651,
+  "ratio": 0.815,
+  "tones_ratio": 1.129,
+  "shapes_ratio": 0.815,
   "passed": false,
   "group": "foliage"
  },
@@ -39,32 +39,20 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    10,
-    10,
-    212,
-    294
+    0,
+    0,
+    237,
+    200
    ],
-   "message": "woodland/willow: detail bar 0.65 of Eastward's foliage band (20.8 tones, 41.2 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/willow: detail bar 0.81 of Eastward's foliage band (31.3 tones, 51.6 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    10,
-    10,
-    212,
-    294
-   ],
-   "message": "woodland/willow: only 18% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T7 (blocker): an oak dome with straight vertical sides (52-58 rows within 1 px), strands 1-3 px straight vertical lines in a comb, no arching branches; bar 0.65, outline 18 %. Fixes in the review."
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 6 (PR #446 head 16b30d50): bar 31.3 tones / 51.6 shapes a patch (detector); through Eastward's own pipe 76.8 shapes (ruling 1: >= 57 there, the detector's 57 is withdrawn for native-res foliage). Mass 57.0 L, lit to pocket 90.3 L, lit-field c12 41.8 L, mass grain 12 px, pocket tones 26.5, noise 31.3 %. Hierarchy (ruling 2): leaf/mass 0.98 (Eastward trees 0.84 to 0.92), lit-shade8 46.9 L (45.6 to 54.6), lobe scale 13 px (13.5 to 17). W5-F1, W5-F2 met; the curtains carry the big masses. Polish W6-P1: 4 of 7 sigma-6 maxima stand 15 L over their saddle (0.57; Eastward 0.71 to 1.0). Compared at the same character height with the red tree in Eastward 12 and the two trees in 13. Scene: W2-L1 (y-sort +87 px) stands, a placement fix, not art."
  }
 }

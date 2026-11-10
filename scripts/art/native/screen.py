@@ -1228,6 +1228,21 @@ def sprite(kind: str, recipe: dict, seed: int):
     paint = recipe['paint']
     look = dict(crown=recipe.get('crown'), bark=recipe.get('bark', 'oak'), scale=recipe.get('scale'))
     seed = recipe.get('seed', seed)
+    if paint in ('tree', 'foliage') and D >= HD and recipe.get('crown'):
+        # the woodland's trees and shrubs (woodtrees.py: the 9 Nov detail audit, W-T1 to W-B3)
+        from . import woodtrees as WT
+        from .palette import to_rgba
+        arr = np.asarray(CO.old_sprite(_master(recipe['master']), raw=True)[0])
+        if paint == 'tree':
+            ex = tree_dims(recipe['master'])
+            ex.update(look)
+            if recipe.get('trunk_w'):
+                ex['tw'] = recipe['trunk_w']
+            codes, anc = WT.tree2(kind, arr, D, seed, recipe["crown"], ex["tw"], scale=recipe.get("scale"))
+        else:
+            ex = None
+            codes, anc = WT.shrub(kind, arr, D, seed, recipe['crown'], scale=recipe.get('scale'))
+        return Image.fromarray(to_rgba(codes), 'RGBA'), anc, codes >= 0, ex
     if paint == 'tree':
         ex = tree_dims(recipe['master'])
         ex.update(look)
@@ -1247,7 +1262,7 @@ def sprite(kind: str, recipe: dict, seed: int):
         return img, anc, a, None
     elif paint in ('standing', 'lintel'):
         # the moon circle's ancient stones and its fallen capstone (rocks.py, Matt 27 Oct 11:08)
-        from . import rocks as RK
+        from . import woodstones as RK          # the 9 Nov detail audit (W-S1 to W-S5): planes, not speckle
         from .palette import to_rgba
         if paint == 'standing':
             codes, anc = RK.standing_stone(recipe['size'][0], recipe['size'][1], seed, lean=recipe.get('lean', 0.0),
@@ -1509,7 +1524,32 @@ def build() -> Zone:
         elif ex is not None:
             tcasts.append(CO.tree_shadow(fx, fy, ex, D, w, h))
         else:
-            casts.append(CO.shadow_mask(a, anc, D, w, h, at, *CO.SHADOW))
+            sm = CO.shadow_mask(a, anc, D, w, h, at, *CO.SHADOW)
+            if D >= HD and plan.get('zone') == 'woodland' and kind.startswith(('bush', 'bramble', 'holly')):
+                # the woodland's shrubs (pass 7 of #446, W4-G1): the shadow body starts at the
+                # sprite's own base, every column filled from its lowest texel down to the foot row
+                # and a row past it, so the scallop and the contact line lie on the body (no strip
+                # of lit grass, no detached rim line between the shrub and its shadow)
+                aa = ndi.binary_opening(np.asarray(a).astype(bool), iterations=2)   # the mass, not canes
+                ax_, ay_ = anc
+                bot = np.array([np.nonzero(aa[:, xc])[0].max() if aa[:, xc].any() else -1 for xc in range(aa.shape[1])])
+                ok_ = bot >= ay_ - 3 * D
+                if ok_.any():
+                    xs_ = np.nonzero(ok_)[0]
+                    # the body's top follows the mass's base smoothly (a running minimum over 7
+                    # columns of the base, so no comb under notches or cane feet)
+                    b_ = np.where(ok_, bot, 10 ** 6).astype(float)
+                    b_ = ndi.minimum_filter1d(b_, 7)
+                    for xc in range(xs_.min(), xs_.max() + 1):
+                        X_ = int(round(at[0] - ax_ + xc))
+                        y0_ = int(round(at[1] - ay_ + min(b_[xc], ay_)))
+                        if 0 <= X_ < w:
+                            # (pass 9, W5-G1) the body reaches a rim's width up under the sprite,
+                            # so the rim lies under the mass and the contact line sits on the
+                            # body: no light seam between a rim line and the body
+                            sm[max(0, y0_ - int(round(D))):min(h, int(round(at[1])) + 2), X_] = True
+                sm = ndi.binary_closing(sm, iterations=2) | sm
+            casts.append(sm)
         if D >= HD and kind in ('forest_bench', 'stump', 'mossy_log'):
             # a firm contact shade under what lies or stands on the ground, a little east
             x0_, _y0, x1_, _y1 = CO._bbox(a)

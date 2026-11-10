@@ -1,26 +1,26 @@
 {
  "id": "woodland/standing_stone_runes",
  "file": "game/zones/woodland/art/standing_stone_runes.png",
- "sha256": "c60a3de768170c7c5ea65c7e8f677ead6d0039a5f3b97e06a2399d78f200eed2",
+ "sha256": "32118c14d1bb26de6bd0d28772791a312412b66815320bd9a3a65210f55c7626",
  "kind": "standing_stone_runes",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  59,
-  87
+  53,
+  75
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 0
  },
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 32.0,
-   "shapes": 42.666666666666664
+   "tones": 36.333333333333336,
+   "shapes": 64.0
   },
   "band": {
    "tones": 27.0,
@@ -28,43 +28,18 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.847,
-  "tones_ratio": 1.185,
-  "shapes_ratio": 0.847,
-  "passed": false,
+  "ratio": 1.271,
+  "tones_ratio": 1.346,
+  "shapes_ratio": 1.271,
+  "passed": true,
   "group": "prop"
  },
- "findings": [
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    9,
-    14,
-    48,
-    79
-   ],
-   "message": "woodland/standing_stone_runes: detail bar 0.85 of Eastward's prop band (32.0 tones, 42.7 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.cluster_noise",
-   "severity": "polish",
-   "box": [
-    9,
-    14,
-    48,
-    79
-   ],
-   "message": "woodland/standing_stone_runes: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 44% to 45%, for information: the verdict is on this grid)",
-   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
-  }
- ],
+ "findings": [],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pass",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2, W-S3: lone 11.7 %; runes are 1 px vertical scratches with pale blue specks, not cut grooves; cluster noise 45 %; bar 0.85. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-S3 fixed: branching angular glyphs cut as grooves (L 67) with a lit lip (L 162), clearly unlike the cracks; bar 1.271 of the prop band (36.3 tones, 64.0 shapes); lone 1.2 %. Open polish (W3-S4): the east flank runs straight for 55 of 64 rows; lichen bars; the shared moss motif."
  }
 }

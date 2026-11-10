@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 3,
+ "version": 11,
  "variants": [
   {
    "id": "hollow_tree",
    "weight": 1.0,
    "png": "res://zones/woodland/art/hollow_tree.png",
    "foot": [
-    115.0,
-    309.0
+    122.0,
+    227.0
    ]
   }
  ],
@@ -27,12 +27,12 @@
  },
  "geometry": {
   "size_px": [
-   231,
-   309
+   244,
+   227
   ],
   "size_cells": [
-   10,
-   13
+   11,
+   10
   ],
   "z_sort": "foot",
   "collision": {
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   115.0,
-   309.0
+   122.0,
+   227.0
   ],
   "footprint": [
    [

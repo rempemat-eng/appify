@@ -1746,7 +1746,7 @@
   ["log-1", "mossy_log", 193, 232, 54, 16],
   ["log-2", "mossy_log", 129, 472, 54, 16],
   ["bench", "forest_bench", 152, 397, 32, 11],
-  ["willow", "willow", 226, 345, 68, 95],
+  ["willow", "willow", 226, 353, 68, 95],
   ["bush-1", "bush", 288, 375, 32, 25],
   ["wood-1", "sapling", -1.5, 45, 19, 27],
   ["wood-2", "birch", -7, 31, 30, 65],

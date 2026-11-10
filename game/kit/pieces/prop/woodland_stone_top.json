@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 2,
+ "version": 5,
  "variants": [
   {
    "id": "stone_top",
@@ -14,7 +14,7 @@
    "png": "res://zones/woodland/art/stone_top.png",
    "foot": [
     24.0,
-    33.0
+    23.0
    ]
   }
  ],
@@ -28,17 +28,17 @@
  "geometry": {
   "size_px": [
    48,
-   33
+   23
   ],
   "size_cells": [
    2,
-   2
+   1
   ],
   "z_sort": "foot",
   "collision": null,
   "foot": [
    24.0,
-   33.0
+   23.0
   ],
   "footprint": []
  },

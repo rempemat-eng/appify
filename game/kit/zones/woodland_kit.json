@@ -162,7 +162,7 @@
    "piece": "woodland_standing_stone_lean",
    "at": [
     336,
-    1305
+    1296
    ],
    "variant": "standing_stone_lean"
   },
@@ -171,7 +171,7 @@
    "piece": "woodland_standing_stone_low",
    "at": [
     240,
-    1329
+    1320
    ],
    "variant": "standing_stone_low"
   },
@@ -180,7 +180,7 @@
    "piece": "woodland_standing_stone_runes",
    "at": [
     144,
-    1305
+    1296
    ],
    "variant": "standing_stone_runes"
   },
@@ -189,7 +189,7 @@
    "piece": "woodland_standing_stone_broken",
    "at": [
     108,
-    1257
+    1248
    ],
    "variant": "standing_stone_broken"
   },
@@ -198,7 +198,7 @@
    "piece": "woodland_standing_stone_b",
    "at": [
     144,
-    1209
+    1200
    ],
    "variant": "standing_stone_b"
   },
@@ -207,7 +207,7 @@
    "piece": "woodland_standing_stone",
    "at": [
     240,
-    1185
+    1176
    ],
    "variant": "standing_stone"
   },
@@ -234,7 +234,7 @@
    "piece": "woodland_stone_top",
    "at": [
     72,
-    1326
+    1320
    ],
    "variant": "stone_top"
   },
@@ -612,7 +612,7 @@
    "piece": "woodland_oak",
    "at": [
     36,
-    840
+    888
    ],
    "variant": "oak"
   },
@@ -1112,7 +1112,7 @@
    "variant": "b0"
   },
   {
-   "id": "boulder-33",
+   "id": "boulder-32",
    "piece": "woodland_boulder",
    "at": [
     324,

@@ -1,26 +1,26 @@
 {
  "id": "woodland/standing_stone_broken",
  "file": "game/zones/woodland/art/standing_stone_broken.png",
- "sha256": "e44959508ef6af1ba9f6de4b537a96679a4c68d6f95a8186b553a06aa1a09976",
+ "sha256": "4f859dc7a149c54654f27e526aa6f84b14aadf0c5a19ae832e87e0faaa348309",
  "kind": "standing_stone_broken",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  56,
-  81
+  50,
+  69
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 3,
-   "tones": 29.666666666666668,
-   "shapes": 39.333333333333336
+   "patches": 2,
+   "tones": 33.5,
+   "shapes": 48.5
   },
   "band": {
    "tones": 27.0,
@@ -28,10 +28,10 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.781,
-  "tones_ratio": 1.099,
-  "shapes_ratio": 0.781,
-  "passed": false,
+  "ratio": 0.963,
+  "tones_ratio": 1.241,
+  "shapes_ratio": 0.963,
+  "passed": true,
   "group": "prop"
  },
  "findings": [
@@ -39,44 +39,20 @@
    "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    7,
-    17,
-    50,
-    73
+    8,
+    13,
+    43,
+    69
    ],
    "message": "woodland/standing_stone_broken: tall 56 art px (0.76 A) is too small for a standing stone: the size table gives 59 to 126 (0.80 to 1.70 A); Eastward at the same character height: none; scaled from real stones",
    "fix": "redraw it 59 to 126 art px tall (target about 92), checked beside Bramble (74 art px) in the asset sheet"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    7,
-    17,
-    50,
-    73
-   ],
-   "message": "woodland/standing_stone_broken: detail bar 0.78 of Eastward's prop band (29.7 tones, 39.3 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    7,
-    17,
-    50,
-    73
-   ],
-   "message": "woodland/standing_stone_broken: only 36% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pass",
   "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-S1, W-S2: lone 11.4 %, no broken top plane (the break needs a lit fracture face); bar 0.78. logic.scale (56 px) rejected: a broken stone is short by design. Fixes in the review."
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 3 (PR #446 head 76fc00d6): W2-S5 fixed: the break is its own lit plane (stone 4 to 5) with 1 to 2 texel steps and a dark far edge; bar 0.963 of the prop band (33.5 tones, 48.5 shapes); lone 0.7 %. logic.scale (56 px) rejected again: broken by design. Open polish (W3-S4)."
  }
 }

@@ -1,14 +1,14 @@
 {
  "id": "woodland/hatch_open",
  "file": "game/zones/woodland/art/hatch_open.png",
- "sha256": "a9c5eddae91383eb606bcda0e3ba96fe795bcf7caa397608728013c9ea5bbe55",
+ "sha256": "e2417014a652aca4fd28111dcbf9b77bef9f3e449c7def074ce32e7762084592",
  "kind": "hatch_open",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  44,
-  66
+  46,
+  68
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 6,
-   "tones": 28.333333333333332,
-   "shapes": 46.0
+   "patches": 5,
+   "tones": 28.0,
+   "shapes": 47.4
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.913,
-  "tones_ratio": 1.049,
-  "shapes_ratio": 0.913,
+  "ratio": 0.941,
+  "tones_ratio": 1.037,
+  "shapes_ratio": 0.941,
   "passed": true,
   "group": "prop"
  },
@@ -39,32 +39,32 @@
    "detector": "detail.cluster_noise",
    "severity": "polish",
    "box": [
-    0,
-    0,
-    44,
-    66
+    1,
+    3,
+    46,
+    68
    ],
-   "message": "woodland/hatch_open: 47% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 43% to 55%, for information: the verdict is on this grid)",
+   "message": "woodland/hatch_open: 47% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 45% to 48%, for information: the verdict is on this grid)",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   },
   {
    "detector": "detail.outline",
    "severity": "polish",
    "box": [
-    0,
-    0,
-    44,
-    66
+    1,
+    3,
+    46,
+    68
    ],
-   "message": "woodland/hatch_open: only 29% of the silhouette is drawn in an edge tone",
+   "message": "woodland/hatch_open: only 12% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-H1, W-H2: frame as hatch_closed; lid floats on two 1 px rods with no thickness and no cast shadow; the shaft is three flat grey stripes under a row of blue squares, no treads, risers or falloff; cluster noise 47.2 %. Fixes in the review."
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): W4-H1 fixed: bar 0.941 of the prop band (28.0 tones, 47.4 shapes); nail heads on the lid battens, three a batten; grain checks; the lid shadow on the coping and a scalloped grass-1 shadow on the turf east of the lid. detail.cluster_noise 46.8 % stays polish (under 48); detail.outline rejected as for hatch_closed. Compared with the post box in Eastward 12."
  }
 }

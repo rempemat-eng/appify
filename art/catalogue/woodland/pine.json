@@ -1,14 +1,14 @@
 {
  "id": "woodland/pine",
  "file": "game/zones/woodland/art/pine.png",
- "sha256": "0dc00f66173809209ca7af8d96fd3a62eb168daaa853f06a8daf6563a80d56b1",
+ "sha256": "4f8f27bf22813da3640d448eab62dfd0742313ef565379852a59c059a16707ef",
  "kind": "conifer",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  125,
-  240
+  107,
+  237
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 35,
-   "tones": 17.057142857142857,
-   "shapes": 41.51428571428571
+   "patches": 30,
+   "tones": 31.266666666666666,
+   "shapes": 46.86666666666667
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.616,
-  "tones_ratio": 0.616,
-  "shapes_ratio": 0.656,
+  "ratio": 0.74,
+  "tones_ratio": 1.128,
+  "shapes_ratio": 0.74,
   "passed": false,
   "group": "foliage"
  },
@@ -39,20 +39,20 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    9,
-    11,
-    116,
-    240
+    8,
+    0,
+    106,
+    237
    ],
-   "message": "woodland/pine: detail bar 0.62 of Eastward's foliage band (17.1 tones, 41.5 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/pine: detail bar 0.74 of Eastward's foliage band (31.3 tones, 46.9 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-T1, W-T5: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips (tiers read but carry the same ticks, no needle tips); bar 0.62; trunk as the oak. Fixes in the review."
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 7 (PR #446 head 109e778a): W6-T2 met: under-tier pocket tones 18.0 a patch (detector, at the limit; >= 18), through Eastward's pipe 21.0 tones and 55.0 shapes (targets 20.0 and 49.5; Eastward pine pockets 22.2, 55.0). The third spray pair's grass_cool 1 is ruled on-palette and in the pine's own crown families (round 7 ruling 3). Mass 64.7, lit to pocket 89.9, lit-field c12 47.8, leaf/mass 0.89, lobe scale 14 px, dark network 0.74 diameters, pockets 5.2 per 1000 px (Eastward pines 0.47, 5.6), noise 31.9 %, H/V 1.15, no holes, trunk byte-identical. Compared with the pines in Eastward 12 (pine_p9_p10_ew_3x.png). W4-T2 foot polish open."
  }
 }

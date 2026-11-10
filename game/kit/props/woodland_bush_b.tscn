@@ -13,7 +13,7 @@ piece_id = "woodland_bush_b"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-47, -63)
+offset = Vector2(-37, -54)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0

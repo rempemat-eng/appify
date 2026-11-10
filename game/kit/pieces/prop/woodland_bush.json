@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 3,
+ "version": 10,
  "variants": [
   {
    "id": "bush",
    "weight": 1.0,
    "png": "res://zones/woodland/art/bush.png",
    "foot": [
-    57.0,
-    73.0
+    46.0,
+    61.0
    ]
   }
  ],
@@ -27,12 +27,12 @@
  },
  "geometry": {
   "size_px": [
-   114,
-   73
+   92,
+   61
   ],
   "size_cells": [
-   5,
-   4
+   4,
+   3
   ],
   "z_sort": "foot",
   "collision": {
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   57.0,
-   73.0
+   46.0,
+   61.0
   ],
   "footprint": [
    [

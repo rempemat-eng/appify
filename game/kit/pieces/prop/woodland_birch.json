@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 3,
+ "version": 9,
  "variants": [
   {
    "id": "birch",
    "weight": 1.0,
    "png": "res://zones/woodland/art/birch.png",
    "foot": [
-    53.0,
-    204.0
+    51.0,
+    203.0
    ]
   }
  ],
@@ -27,8 +27,8 @@
  },
  "geometry": {
   "size_px": [
-   106,
-   204
+   102,
+   203
   ],
   "size_cells": [
    5,
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   53.0,
-   204.0
+   51.0,
+   203.0
   ],
   "footprint": [
    [

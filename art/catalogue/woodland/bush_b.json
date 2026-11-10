@@ -1,14 +1,14 @@
 {
  "id": "woodland/bush_b",
  "file": "game/zones/woodland/art/bush_b.png",
- "sha256": "fd9d0ac7336bd63514c81c731e897d395404245449699f59d9be2b87ff197ee2",
+ "sha256": "cf7462e944546a74c839067c619d3dae5c2c8d3a41e7032c41b666864bab0a43",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  94,
-  63
+  75,
+  54
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 7,
-   "tones": 23.0,
-   "shapes": 36.42857142857143
+   "patches": 9,
+   "tones": 28.22222222222222,
+   "shapes": 46.111111111111114
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.575,
-  "tones_ratio": 0.83,
-  "shapes_ratio": 0.575,
+  "ratio": 0.728,
+  "tones_ratio": 1.018,
+  "shapes_ratio": 0.728,
   "passed": false,
   "group": "foliage"
  },
@@ -39,20 +39,20 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    9,
-    9,
-    85,
-    63
+    0,
+    0,
+    75,
+    54
    ],
-   "message": "woodland/bush_b: detail bar 0.57 of Eastward's foliage band (23.0 tones, 36.4 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bush_b: detail bar 0.73 of Eastward's foliage band (28.2 tones, 46.1 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-09",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md: W-B1: crown: uniform 2-3 texel leaf ticks stamped across every band incl. the deep shade, soft blotch domes with no leaf-shaped scallops or dark pockets, smooth silhouette with no leaf tips; bar 0.57. Fixes in the review."
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 9 (PR #446 head 1da15380): W8-F1 met: pockets drawn as gaps under a lobe edge, ring lift -0.01 (<= 0.07; Eastward -0.07 to +0.07), 29 % of pockets ringed (<= 35), pocket aspect 1.76 (>= 1.6). W7-F1 met: dark network 0.28 crown diameters (<= 0.8), pockets 12.33 per 1000 px (>= 5), borders traced 71.7 % (<= 77). W6 and round 5 met: leaf/mass 0.92, lobe scale 21.5 px, lit-shade8 60.9 L, big lobes 2 (share 0.67), mass grain 13.5 px, mass 75.1 L, lit to pocket 115.7 L, lit-field c12 50.8 L, pocket tones 18.0 (on the line, meets), EW-pipe shapes 70.7, noise 26.2 %, H/V 1.08. bl_seed 12, the only one of seeds 0 to 12 that meets every bar (W8-M1, reported and re-measured). Compared at 2x beside the red tree in Eastward 12 and at 6x (oak_ew_p12_2x.png, four_trees_p12_2x.png, pockets_ew_oak_hollow_p12_6x.png, shrubs_ew_p12_4x.png)"
  }
 }

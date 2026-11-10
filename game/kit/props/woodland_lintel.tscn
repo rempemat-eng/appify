@@ -10,4 +10,4 @@ piece_id = "woodland_lintel"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-45, -39)
+offset = Vector2(-45, -35)

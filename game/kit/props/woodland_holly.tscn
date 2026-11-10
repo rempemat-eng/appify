@@ -13,7 +13,7 @@ piece_id = "woodland_holly"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-48, -81)
+offset = Vector2(-40, -74)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0
