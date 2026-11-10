@@ -51,7 +51,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-10-crossroads-trees.md, round 1 (PR #460 head cba98f46). Identity check, not a new detail audit (woodland round 9, ruling 3): sha256 4e9687f4... equals woodland/hollow_tree, passed in docs/reviews/2026-11-09-woodland-assets.md round 9 (PR #446 head 1da15380); pixels equal and not mirrored (lit from the upper left as approved). Placed with its y-sort origin on the drawn foot (bottom row, dy 0). Moved to (184,56) world: on the soft grid, 4 world px above the garden walk edge, crown 74 % inside the zone (no crown_cut). Polish XT6: drawn trunk base 28 world px against an 8 x 4 solid."
  }
 }

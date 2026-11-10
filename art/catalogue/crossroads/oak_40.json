@@ -51,7 +51,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-10-crossroads-trees.md, round 1 (PR #460 head cba98f46). Identity check, not a new detail audit (woodland round 9, ruling 3): sha256 c8306100... equals woodland/oak, passed in docs/reviews/2026-11-09-woodland-assets.md round 9 (PR #446 head 1da15380); pixels equal and not mirrored (lit from the upper left as approved). Placed with its y-sort origin on the drawn foot (bottom row, dy 0). Moved (oak_21 to 616,104; oak_40 to 328,552): on the soft grid, off routes, doors, spawns and touch targets (0 % cover of any), crown readable, no crown_cut."
  }
 }
