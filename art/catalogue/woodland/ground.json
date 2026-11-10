@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "5e3e8a7c709c83ff779e840bd015fd21b8c7def5fa7621745a38fbd922f4f1a2",
+ "sha256": "2ad6a5abb627ca0069b0d22651391f137290d0ecb4bba5594fc3b66c3e2f0d53",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -18,11 +18,10 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): W4-G1 fixed at the 12 named hairlines (none found by the scan). New fault W5-G1: the new shrub shadow bodies start one row under a separate rim, leaving a one-row light seam (rim about 75 L, seam 105 L, body 75 to 82 L): 17 seams 6 to 13 texels, all new at pass 7, 11 visible in the composed zone, e.g. (393,1341) 13 px, (609,1581) 13, (915,1200) 12, (465,1365) 8, (645,1581) 8."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

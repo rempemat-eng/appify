@@ -1,7 +1,7 @@
 {
  "id": "woodland/bramble",
  "file": "game/zones/woodland/art/bramble.png",
- "sha256": "38bb27800d7ddba268f07b682d2affe7c5f2f8e10cb78d205c2c6e5adc419ba4",
+ "sha256": "f892e6c79ec842a79716dd1bee3413eb94a9c45985f0b5f3556217df948e9ff4",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 7,
-   "tones": 24.571428571428573,
-   "shapes": 46.57142857142857
+   "tones": 31.285714285714285,
+   "shapes": 45.0
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.735,
-  "tones_ratio": 0.887,
-  "shapes_ratio": 0.735,
+  "ratio": 0.711,
+  "tones_ratio": 1.129,
+  "shapes_ratio": 0.711,
   "passed": false,
   "group": "foliage"
  },
@@ -56,7 +56,7 @@
     122,
     47
    ],
-   "message": "woodland/bramble: detail bar 0.73 of Eastward's foliage band (24.6 tones, 46.6 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bramble: detail bar 0.71 of Eastward's foliage band (31.3 tones, 45.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -68,15 +68,14 @@
     122,
     47
    ],
-   "message": "woodland/bramble: only 29% of the silhouette is drawn in an edge tone",
+   "message": "woodland/bramble: only 33% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): pass 8 lit fields read as leaf clusters (lit-field c12 42.4 L; mass 53.3 L; lit to pocket 63.2 L); mass grain 19.5 px against Eastward 12 to 15. Bar 0.735 (24.6 tones, 46.6 shapes a patch): shapes under 57 (ruling 1: Eastward crowns 64.5 to 67.2 with the background out; the gap is large masses and flat pockets, not the lit fields) (W5-F1); lit to pocket under 85 (ruling 2: Eastward dense shrubs 100 to 107): the lit top is 117 L (W5-B2). W4-B1 canes fixed."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

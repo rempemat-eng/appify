@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 11,
+ "version": 12,
  "variants": [
   {
    "id": "holly_b",
@@ -27,8 +27,8 @@
  },
  "geometry": {
   "size_px": [
-   77,
-   78
+   81,
+   77
   ],
   "size_cells": [
    4,

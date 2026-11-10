@@ -1,14 +1,14 @@
 {
  "id": "woodland/holly_b",
  "file": "game/zones/woodland/art/holly_b.png",
- "sha256": "9888ae836a681f8eb0691eb981f9a8435250c01ec331e13b21dc77a22e95303b",
+ "sha256": "d5748007b95c0234ecb185c1f4913963c33f1b1b524b505d9a12afefdd72c049",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  77,
-  78
+  81,
+  77
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 12,
-   "tones": 23.416666666666668,
-   "shapes": 37.833333333333336
+   "patches": 10,
+   "tones": 32.1,
+   "shapes": 40.5
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.597,
-  "tones_ratio": 0.845,
-  "shapes_ratio": 0.597,
+  "ratio": 0.64,
+  "tones_ratio": 1.158,
+  "shapes_ratio": 0.64,
   "passed": false,
   "group": "foliage"
  },
@@ -41,18 +41,17 @@
    "box": [
     0,
     0,
-    77,
-    78
+    81,
+    77
    ],
-   "message": "woodland/holly_b: detail bar 0.60 of Eastward's foliage band (23.4 tones, 37.8 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/holly_b: detail bar 0.64 of Eastward's foliage band (32.1 tones, 40.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): pass 8 lit fields read as leaf clusters (lit-field c12 43.2 L; mass 47.1 L; lit to pocket 52.9 L); mass grain 26 px against Eastward 12 to 15. Bar 0.597 (23.4 tones, 37.8 shapes a patch): shapes under 57 (ruling 1: Eastward crowns 64.5 to 67.2 with the background out; the gap is large masses and flat pockets, not the lit fields) (W5-F1); mass under 50 and lit to pocket under 85, lit top 107 L (W5-F4); leaves read as streaks (W5-F3). Spurs fixed (0)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

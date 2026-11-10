@@ -1,7 +1,7 @@
 {
  "id": "woodland/hollow_tree",
  "file": "game/zones/woodland/art/hollow_tree.png",
- "sha256": "2cf575a420f872e4b609f9d7bbd94aeca8eb3f6afacfdb13cb11d515d2979cb4",
+ "sha256": "f6bbadb6c6099865363c8f9bbf4dc798a0a0cc61e29f479b5e6ad711a25fee68",
  "kind": "veteran_tree",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 89,
-   "tones": 22.707865168539325,
-   "shapes": 50.10112359550562
+   "tones": 29.191011235955056,
+   "shapes": 51.21348314606742
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.791,
-  "tones_ratio": 0.819,
-  "shapes_ratio": 0.791,
+  "ratio": 0.809,
+  "tones_ratio": 1.053,
+  "shapes_ratio": 0.809,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     243,
     227
    ],
-   "message": "woodland/hollow_tree: detail bar 0.79 of Eastward's foliage band (22.7 tones, 50.1 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/hollow_tree: detail bar 0.81 of Eastward's foliage band (29.2 tones, 51.2 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): pass 8 lit fields read as leaf clusters (lit-field c12 38.4 L; mass 75.3 L; lit to pocket 92.4 L); mass grain 35.5 px against Eastward 12 to 15. Bar 0.791 (22.7 tones, 50.1 shapes a patch): shapes under 57 (ruling 1: Eastward crowns 64.5 to 67.2 with the background out; the gap is large masses and flat pockets, not the lit fields) (W5-F1)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

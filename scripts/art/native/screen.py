@@ -1544,7 +1544,10 @@ def build() -> Zone:
                         X_ = int(round(at[0] - ax_ + xc))
                         y0_ = int(round(at[1] - ay_ + min(b_[xc], ay_)))
                         if 0 <= X_ < w:
-                            sm[max(0, y0_):min(h, int(round(at[1])) + 2), X_] = True
+                            # (pass 9, W5-G1) the body reaches a rim's width up under the sprite,
+                            # so the rim lies under the mass and the contact line sits on the
+                            # body: no light seam between a rim line and the body
+                            sm[max(0, y0_ - int(round(D))):min(h, int(round(at[1])) + 2), X_] = True
                 sm = ndi.binary_closing(sm, iterations=2) | sm
             casts.append(sm)
         if D >= HD and kind in ('forest_bench', 'stump', 'mossy_log'):

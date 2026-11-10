@@ -5,7 +5,7 @@
    "id": "kitlab",
    "plan": "game/kit/zones/kitlab.json",
    "plan_sha256": "6acb44fb54d7b2ccc6e85eb62cf283af1d31f58208d7e78b2cc2bd940f5d2513",
-   "rgba_sha256": "b14f365dc1e8703e5c9ec61b27d537cb3ba65fc3e65c1dd94fa573e12a21f5fc",
+   "rgba_sha256": "04fa73e0ef3be3e151ea96bdbe9bda3afb810066383b0be672baf252e2b17923",
    "size": [
     960,
     552
@@ -52,7 +52,7 @@
  "cell_texels": 24,
  "feature_pixels": {
   "dressing": 6390,
-  "shadows": 11269
+  "shadows": 10640
  },
  "negative": {
   "file": "three_materials_shifted_profile.png",
@@ -63,8 +63,8 @@
  "schema": "napattack.kit-render-fixtures/1",
  "source_sha256": {
   "art/house-palette.json": "e813dafe231c7b142a4dd4628f770e59d33a32b1345efb562c7b70325d93a607",
-  "game/kit/props/art/shadow_woodland_oak.png": "46bc86fb8e2020a4a46ffec5ce53d5457733fb76045b57444b16f4c5c1779607",
-  "game/kit/props/index.json": "ec0a5e7c93f93aecc68dd40253f758386a5ffcfa0becf14a57fa82e1b372b750",
+  "game/kit/props/art/shadow_woodland_oak.png": "b48a6a0625c452eb0918168e6f1fcdd18a9c8dae8a60c75c9064fbee15407675",
+  "game/kit/props/index.json": "9f25cf9c21a551506c88861e0ca31fc07f5a3c606d7ed3fb2468743f19446641",
   "game/kit/terrain/decal_bankstone_0.png": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
   "game/kit/terrain/decal_bankstone_1.png": "ff6e6e4534c777c8d97798f24621fc0d84997f2a871006fdd5c82c35cf6facb8",
   "game/kit/terrain/decal_bankstone_2.png": "e7c654f3980aeb16378897d9cc92e1274e784642a9bcf4da60db845da68ade6d",

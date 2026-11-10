@@ -1,7 +1,7 @@
 {
  "id": "woodland/beech",
  "file": "game/zones/woodland/art/beech.png",
- "sha256": "758c9b8b04c8ccce540afb446330ea797d4ed4786f61f30589e1583c6d2c50f0",
+ "sha256": "1f27ab094c2db6d76d9f19e6a1ccf2d35697ea9101d05fae48917df00de08782",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 59,
-   "tones": 21.864406779661017,
-   "shapes": 50.32203389830509
+   "tones": 27.83050847457627,
+   "shapes": 51.47457627118644
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.789,
-  "tones_ratio": 0.789,
-  "shapes_ratio": 0.795,
+  "ratio": 0.813,
+  "tones_ratio": 1.004,
+  "shapes_ratio": 0.813,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     193,
     264
    ],
-   "message": "woodland/beech: detail bar 0.79 of Eastward's foliage band (21.9 tones, 50.3 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/beech: detail bar 0.81 of Eastward's foliage band (27.8 tones, 51.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): pass 8 lit fields read as leaf clusters (lit-field c12 37.9 L; mass 76.5 L; lit to pocket 92.4 L); mass grain 32 px against Eastward 12 to 15. Bar 0.789 (21.9 tones, 50.3 shapes a patch): shapes under 57 (ruling 1: Eastward crowns 64.5 to 67.2 with the background out; the gap is large masses and flat pockets, not the lit fields) (W5-F1); lit-field c12 under 38 (W5-F2); W3-T5 algae polish open."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

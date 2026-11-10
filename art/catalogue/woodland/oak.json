@@ -1,7 +1,7 @@
 {
  "id": "woodland/oak",
  "file": "game/zones/woodland/art/oak.png",
- "sha256": "16412d45a9166405c6289ff0d701ed45fe11941c09e7780112b03390ed703618",
+ "sha256": "cdfb81d36a2989dbd673a5aa466b1ccf704d101447fb4ba36c7e2bf540d9d385",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 70,
-   "tones": 22.87142857142857,
-   "shapes": 50.77142857142857
+   "tones": 27.485714285714284,
+   "shapes": 49.885714285714286
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.802,
-  "tones_ratio": 0.825,
-  "shapes_ratio": 0.802,
+  "ratio": 0.788,
+  "tones_ratio": 0.992,
+  "shapes_ratio": 0.788,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     212,
     247
    ],
-   "message": "woodland/oak: detail bar 0.80 of Eastward's foliage band (22.9 tones, 50.8 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/oak: detail bar 0.79 of Eastward's foliage band (27.5 tones, 49.9 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): pass 8 lit fields read as leaf clusters (lit-field c12 41.6 L; mass 71.3 L; lit to pocket 95.2 L); mass grain 34 px against Eastward 12 to 15. Bar 0.802 (22.9 tones, 50.8 shapes a patch): shapes under 57 (ruling 1: Eastward crowns 64.5 to 67.2 with the background out; the gap is large masses and flat pockets, not the lit fields) (W5-F1)."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
