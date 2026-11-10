@@ -1,7 +1,7 @@
 extends SceneTree
 ## Lossless kit plan <-> scene authoring (W2, docs/world-editor.md).
 ## --plan=<json> [--out=<tscn>] or --export=<tscn> [--out=<json>], or
-## --new=<zone> [--size=40x23] [--ground=lawn] [--lab=1] for an empty plan and its scene.
+## --new=<zone> [--size=40x23] [--ground=lawn] [--lab=1] [--note=<text>] for an empty plan and its scene.
 ## Legacy piece `at` and spawns are Godot texels. Explicit coordinate_space="cells"
 ## uses logical terrain cells for those fields; no guessing from their magnitudes.
 ## Door `rect` is always in cells, with existing plan keys id/to/spawn/if.
@@ -256,6 +256,13 @@ static func plan_error(plan: Dictionary) -> String:
 				return "gameplay_removed.%s must contain nonempty string IDs" % field
 	return ""
 
+## An instance that stays an instance when the zone is saved. A plain instantiate() forgets which
+## values came from the instanced scene, so the zone file stored them all again as its own (an
+## enemy's script, layers and motion mode, a piece's script and id) and would keep those copies
+## when the instanced scene later changed.
+static func instance(packed: PackedScene) -> Node:
+	return packed.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+
 ## What is wrong with one `actors` entry ("" when sound), as a suffix for its path.
 static func actor_error(entry: Variant, unit: float = 1.0) -> String:
 	if not entry is Dictionary:
@@ -307,7 +314,7 @@ static func actor_node(entry: Dictionary, unit: float = 1.0) -> Node2D:
 			node.set("camp_id", entry.camp)
 			var count := 1
 			for spot in entry.enemies:
-				var enemy := packed.instantiate() as Node2D
+				var enemy := instance(packed) as Node2D
 				if enemy == null:
 					node.free()
 					return null
@@ -317,7 +324,7 @@ static func actor_node(entry: Dictionary, unit: float = 1.0) -> Node2D:
 				node.add_child(enemy)
 		"scene":
 			var packed := load(String(entry.scene)) as PackedScene
-			node = packed.instantiate() as Node2D if packed != null else null
+			node = instance(packed) as Node2D if packed != null else null
 			if node == null:
 				return null
 			var overrides: Dictionary = entry.get("set", {})
@@ -594,7 +601,7 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 		if ps == null:
 			root.free()
 			return null
-		var node := ps.instantiate()
+		var node := instance(ps)
 		if not node is KitPiece:
 			node.free()
 			root.free()
@@ -993,6 +1000,8 @@ func _new(args: Dictionary) -> int:
 	var plan := {"zone": zone, "legend": {".": ground}, "rows": rows}
 	if String(args.get("lab", "0")) in ["1", "true"]:
 		plan["lab"] = true
+	if args.has("note"):
+		plan["note"] = String(args.note)
 	var problem := write_plan(plan, plan_path)
 	if not problem.is_empty():
 		printerr("kit_zone: ", problem)

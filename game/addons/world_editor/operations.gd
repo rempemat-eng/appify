@@ -981,9 +981,7 @@ func _pieces_now() -> Array:
 
 ## What every change must bring up to date (the plugin calls this after each dock operation and
 ## after any of Godot's own actions on the zone): the pieces' cast shadows and the walk mask (W4's
-## KitWalk, installed on first use and saved with the scene). KitWalk marks its ground with its
-## instance id while it runs; that id means nothing in another process (a fresh game loading the
-## saved scene logged an engine error looking it up), so it is never left on the ground to be saved.
+## KitWalk, installed on first use and saved with the scene).
 func refresh_derived(target: TerrainGround = null) -> bool:
 	if target == null:
 		target = _ground
@@ -997,9 +995,18 @@ func refresh_derived(target: TerrainGround = null) -> bool:
 		target.add_child(walk)
 		walk.owner = target.owner
 	var rebuilt := walk.rebuild(target)
-	if target.has_meta(Walk.OWNER_META):
-		target.remove_meta(Walk.OWNER_META)
+	prepare_save(target)
 	return rebuilt
+
+## Before the scene is saved (the plugin's _apply_changes): KitWalk marks its ground with its own
+## instance id while it runs, and rebuilds on its own when cells change. That id means nothing in
+## another process: saved in the scene, it made every fresh game that loaded the zone log an
+## engine error ("slot >= slot_max") while looking it up. It is never left on the ground.
+func prepare_save(target: TerrainGround = null) -> void:
+	if target == null:
+		target = _ground
+	if is_instance_valid(target) and target.has_meta(Walk.OWNER_META):
+		target.remove_meta(Walk.OWNER_META)
 
 ## Godot's own tools (dragging a piece, the inspector, deleting or duplicating in the scene tree)
 ## change the zone without the transactions above. When the placed pieces are no longer what the
@@ -1346,7 +1353,7 @@ func _instantiate(piece_id: String) -> Dictionary:
 			return _failure("library.scene_missing", "The built scene for '%s' is missing." % piece_id)
 		var scene := load(scene_path) as PackedScene
 		if scene != null:
-			inst = scene.instantiate()
+			inst = ZonePlan.instance(scene)
 	if not inst is KitPiece or inst.get_parent() != null:
 		if is_instance_valid(inst) and inst.get_parent() == null:
 			inst.free()

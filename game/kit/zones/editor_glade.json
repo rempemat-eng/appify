@@ -1,0 +1,204 @@
+{
+ "actors": [
+  {
+   "at": [
+    492,
+    384
+   ],
+   "id": "Sign",
+   "kind": "interactable",
+   "speaker": "stone_sign",
+   "verb": "Read"
+  },
+  {
+   "at": [
+    744,
+    300
+   ],
+   "camp": "meadow",
+   "enemies": [
+    [
+     744,
+     264
+    ],
+    [
+     775,
+     318
+    ],
+    [
+     713,
+     318
+    ]
+   ],
+   "id": "MeadowCamp",
+   "kind": "camp"
+  }
+ ],
+ "doors": [
+  {
+   "id": "ToKitlab",
+   "rect": [
+    39,
+    17,
+    1,
+    3
+   ],
+   "to": "kitlab"
+  }
+ ],
+ "lab": true,
+ "legend": {
+  ".": "lawn",
+  "a": "water",
+  "b": "path"
+ },
+ "note": "A one-screen glade built in the world editor's dock on 10 Nov (ground, a path, a pond, props, two spawns, a door, a sign to read and a camp): the regression fixture for authoring a zone end to end. Not a playable zone: it is not in data/zones.json.",
+ "pieces": [
+  {
+   "at": [
+    156,
+    192
+   ],
+   "facing": "s",
+   "id": "woodland_oak",
+   "piece": "woodland_oak",
+   "variant": "oak"
+  },
+  {
+   "at": [
+    276,
+    480
+   ],
+   "facing": "s",
+   "id": "woodland_oak_2",
+   "piece": "woodland_oak",
+   "variant": "oak"
+  },
+  {
+   "at": [
+    876,
+    288
+   ],
+   "facing": "s",
+   "id": "woodland_pine",
+   "piece": "woodland_pine",
+   "variant": "pine"
+  },
+  {
+   "at": [
+    84,
+    432
+   ],
+   "facing": "s",
+   "id": "woodland_birch",
+   "piece": "woodland_birch",
+   "variant": "birch"
+  },
+  {
+   "at": [
+    612,
+    144
+   ],
+   "facing": "s",
+   "id": "woodland_willow",
+   "piece": "woodland_willow",
+   "variant": "willow"
+  },
+  {
+   "at": [
+    462,
+    248
+   ],
+   "facing": "s",
+   "id": "woodland_boulder",
+   "piece": "woodland_boulder",
+   "variant": "b0"
+  },
+  {
+   "at": [
+    324,
+    240
+   ],
+   "facing": "s",
+   "id": "woodland_bush",
+   "piece": "woodland_bush",
+   "variant": "bush"
+  },
+  {
+   "at": [
+    732,
+    504
+   ],
+   "facing": "s",
+   "id": "woodland_stump",
+   "piece": "woodland_stump",
+   "variant": "stump"
+  },
+  {
+   "at": [
+    204,
+    360
+   ],
+   "facing": "s",
+   "id": "woodland_mossy_log",
+   "piece": "woodland_mossy_log",
+   "variant": "mossy_log"
+  },
+  {
+   "at": [
+    228,
+    264
+   ],
+   "facing": "s",
+   "id": "woodland_forest_bench",
+   "piece": "woodland_forest_bench",
+   "variant": "forest_bench"
+  },
+  {
+   "at": [
+    492,
+    384
+   ],
+   "facing": "s",
+   "id": "woodland_stone_sign",
+   "piece": "woodland_stone_sign",
+   "variant": "sign"
+  }
+ ],
+ "rows": [
+  "........................................",
+  "........................................",
+  "........................................",
+  "...........................aaaaaaaa.....",
+  "...........................aaaaaaaa.....",
+  "...........................aaaaaaaa.....",
+  "...........................aaaaaaaa.....",
+  "...........................aaaaaaaa.....",
+  "........................................",
+  "......................bb................",
+  "......................bb................",
+  "......................bb................",
+  "bbbbbbbbbbbbbbbbbb....bb................",
+  "bbbbbbbbbbbbbbbbbb....bb................",
+  "................bb....bb................",
+  "................bb....bb................",
+  "................bb....bb................",
+  "................bbbbbbbbbbbbbbbbbbbbbbbb",
+  "................bbbbbbbbbbbbbbbbbbbbbbbb",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................"
+ ],
+ "spawns": {
+  "east": [
+   888,
+   432
+  ],
+  "start": [
+   48,
+   312
+  ]
+ },
+ "zone": "editor_glade"
+}

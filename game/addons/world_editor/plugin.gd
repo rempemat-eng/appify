@@ -35,6 +35,7 @@ var scatter := false
 var scatter_density := 0.35
 var _scatter_stroke := false
 var _ghost_busy := ""
+var _followed_history: UndoRedo
 
 func _enter_tree() -> void:
 	operations.changed.connect(_operations_changed)
@@ -71,6 +72,7 @@ func _exit_tree() -> void:
 	var manager := get_undo_redo()
 	if manager != null and manager.history_changed.is_connected(_history_changed):
 		manager.history_changed.disconnect(_history_changed)
+	_follow_history(null)
 	if is_instance_valid(dock):
 		remove_control_from_docks(dock)
 		dock.queue_free()
@@ -83,13 +85,21 @@ func _handles(object: Object) -> bool:
 
 func _edit(object: Object) -> void:
 	_cancel_stroke()
-	ground = _ground_of(object)
-	if ground == null and Engine.is_editor_hint():
+	var next := _ground_of(object)
+	if next == null and Engine.is_editor_hint():
 		# Deleting the selected piece (or clicking empty space) leaves nothing selected. The dock
 		# stays on the open zone, so its palette, Validate and Export keep working; the canvas
 		# takes clicks again as soon as anything in the zone is selected.
-		ground = _ground_of(EditorInterface.get_edited_scene_root())
+		next = _ground_of(EditorInterface.get_edited_scene_root())
+	if next != null and next == ground and is_instance_valid(zone) and zone == ground.get_parent():
+		# Another node of the same zone was selected: nothing to reload (re-reading the library's
+		# 264 files on every click made selection lag, and wiped the status line).
+		_revision += 1
+		_preview_key.clear()
+		return
+	ground = next
 	zone = ground.get_parent() if ground != null else null
+	_follow_history(zone)
 	operations.configure(zone, ground, get_undo_redo(), {
 		"relation_evaluator": Callable(Rules, "placement"),
 		"zone_validator": Callable(Rules, "validate_plan"),
@@ -98,6 +108,23 @@ func _edit(object: Object) -> void:
 	_preview_key.clear()
 	if is_instance_valid(dock):
 		dock.set_zone(zone, ground)
+
+## The zone's own undo history: its version changes on every commit, undo and redo, whoever made
+## them (the manager's history_changed does not fire for an undo run on the history itself).
+func _follow_history(target: Node) -> void:
+	if is_instance_valid(_followed_history) and _followed_history.version_changed.is_connected(_history_changed):
+		_followed_history.version_changed.disconnect(_history_changed)
+	_followed_history = null
+	var manager := get_undo_redo()
+	if target == null or manager == null or not target.is_inside_tree():
+		return
+	_followed_history = manager.get_history_undo_redo(manager.get_object_history_id(target))
+	if _followed_history != null and not _followed_history.version_changed.is_connected(_history_changed):
+		_followed_history.version_changed.connect(_history_changed)
+
+## Before a save or a tab switch: nothing of this process may reach the scene file.
+func _apply_changes() -> void:
+	operations.prepare_save(ground)
 
 func _make_visible(visible: bool) -> void:
 	if not visible:
