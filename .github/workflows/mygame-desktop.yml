@@ -102,7 +102,7 @@ jobs:
           ref: ${{ env.SOURCE_SHA }}
           persist-credentials: false
 
-      - name: Install debugger and record runner
+      - name: Install Xvfb and record runner
         run: |
           set -euo pipefail
           logs="$RUNNER_TEMP/mygame-diagnostic-logs"
@@ -111,8 +111,9 @@ jobs:
             cat /etc/os-release
             uname -m
             sudo apt-get update
-            sudo apt-get install -y --no-install-recommends gdb
-            gdb --version
+            sudo apt-get install -y --no-install-recommends xvfb xauth libgl1-mesa-dri libglx-mesa0
+            command -v Xvfb
+            command -v xvfb-run
           } 2>&1 | tee "$logs/setup.log"
 
       - name: Install verified Godot and Linux template
@@ -135,7 +136,7 @@ jobs:
           unzip -j "$archive" 'templates/linux_release.x86_64' -d "$templates"
           printf 'GODOT=%s\n' "$godot" >> "$GITHUB_ENV"
 
-      - name: Capture one Linux export under GDB
+      - name: Capture one Linux export under Xvfb
         run: |
           set -euo pipefail
           logs="$RUNNER_TEMP/mygame-diagnostic-logs"
@@ -144,36 +145,40 @@ jobs:
           bash game/tools/fetch_limboai_release.sh >"$logs/limboai.log" 2>&1
           "$GODOT" --headless --path game --import >"$logs/import.log" 2>&1
 
-          cat >"$stage/export.gdb" <<'GDB'
-          set pagination off
-          set disable-randomization off
-          handle SIGABRT stop print pass
-          run
-          if $_isvoid ($_exitcode) && $_isvoid ($_exitsignal)
-            info sharedlibrary
-            thread apply all backtrace
-            continue
-          end
-          if !$_isvoid ($_exitcode)
-            printf "inferior_exit=%d\n", $_exitcode
-            quit $_exitcode
-          end
-          if !$_isvoid ($_exitsignal)
-            printf "inferior_signal=%d\n", $_exitsignal
-            quit (128 + $_exitsignal)
-          end
-          echo No inferior exit or terminating signal captured.\n
-          quit 1
-          GDB
-
           status=0
-          timeout --kill-after=10s 10m gdb --batch --nx -x "$stage/export.gdb" \
-            --args "$GODOT" --headless --path game --export-release 'Linux x86_64' "$stage/MyGame" \
-            >"$logs/linux-gdb.log" 2>&1 || status=$?
-          printf 'diagnostic_status=%s\n' "$status" | tee "$logs/exit.txt"
+          LIBGL_ALWAYS_SOFTWARE=1 timeout --kill-after=10s 10m xvfb-run -a \
+            "$GODOT" --display-driver x11 --rendering-method gl_compatibility \
+            --audio-driver Dummy --path game --export-release 'Linux x86_64' "$stage/MyGame" \
+            >"$logs/linux-xvfb.log" 2>&1 || status=$?
+          printf 'export_status=%s\n' "$status" | tee "$logs/exit.txt"
           git diff --exit-code HEAD
           test -z "$(git status --porcelain)"
-          exit "$status"
+          if [ "$status" -ne 0 ]; then
+            exit "$status"
+          fi
+
+          python3 - "$stage" >"$logs/output-checks.log" <<'PY'
+          from pathlib import Path
+          import hashlib
+          import os
+          import sys
+
+          stage = Path(sys.argv[1])
+          executable = stage / "MyGame"
+          pack = stage / "MyGame.pck"
+          library = stage / "liblimboai.linux.template_release.x86_64.so"
+          source_library = Path("game/addons/limboai/bin") / library.name
+          with executable.open("rb") as stream:
+              assert stream.read(4) == b"\x7fELF"
+          assert os.access(executable, os.X_OK)
+          with pack.open("rb") as stream:
+              assert stream.read(4) == b"GDPC"
+          assert library.read_bytes() == source_library.read_bytes()
+          for path in (executable, pack, library):
+              assert path.stat().st_size > 0
+              print(path.name, path.stat().st_size, hashlib.sha256(path.read_bytes()).hexdigest())
+          print("ELF, PCK and LimboAI copy checks passed")
+          PY
 
       - name: Upload diagnostic logs only
         if: always()
