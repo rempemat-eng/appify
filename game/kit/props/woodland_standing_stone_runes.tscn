@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://zones/woodland/art/standing_stone_runes.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(41.31, 15)
+size = Vector2(32, 15)
 
 [node name="WoodlandStandingStoneRunes" type="Node2D"]
 script = ExtResource("1")
@@ -19,5 +19,5 @@ offset = Vector2(-26, -75)
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Solid"]
-position = Vector2(0.015, -7.5)
+position = Vector2(1, -7.5)
 shape = SubResource("solid")

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://zones/woodland/art/standing_stone_lean.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
-size = Vector2(46.2, 15)
+size = Vector2(34, 15)
 
 [node name="WoodlandStandingStoneLean" type="Node2D"]
 script = ExtResource("1")

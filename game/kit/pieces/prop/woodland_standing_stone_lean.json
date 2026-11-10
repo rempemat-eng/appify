@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 4,
+ "version": 5,
  "variants": [
   {
    "id": "standing_stone_lean",
@@ -38,9 +38,9 @@
   "collision": {
    "shape": "rect",
    "rect": [
-    -7.7,
+    -5.666666666666667,
     -5.0,
-    15.4,
+    11.333333333333334,
     5.0
    ]
   },

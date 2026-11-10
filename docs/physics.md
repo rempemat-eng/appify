@@ -26,18 +26,18 @@ Bits 1 to 4 are named in `game/project.godot`. Bit 5 is not named there yet (the
 | A dead enemy | | 0 | | | set to 0 on death, so nothing meets it |
 | Solid | StaticBody2D | 1 | 0 | rectangles (a post: circle r 5) | the zone generators |
 | Low solid | StaticBody2D | 17 | 0 | rectangles | the zone generators |
-| Talk or read area | Area2D (`Interactable`, `RestoreSite`, `SealLever`) | 8 | 2 | circle r 30 | `world/interactable.gd` |
+| Talk or read area | Area2D (`Interactable`, `RestoreSite`, `SealLever`) | 8 | 2 | circle r 30 (the shard lantern in Crossroads: r 22) | `world/interactable.gd` |
 | Door | Area2D (`Door`) | 0 | 2 | rectangle | `world/door.gd` |
 | Pressure plate | Area2D (`PressurePlate`) | 0 | 2 | rectangle | `world/pressure_plate.gd` |
 | Arrow | Area2D (`Arrow`) | 0 | 1 and 4 | circle r 4 | `actors/arrow.gd` |
 | Thorn (boss) | Area2D | 0 | 1 and 2 | circle r 9 | `bosses/thorn.gd` |
 | Camp creature's shot | a ray each step | | 1 and 2 | | `enemies/projectile.gd` |
 
-Nothing collides with the interact layer; it exists so a talk area is findable. Actors do not collide with each other: the player and enemies only mask walls. Enemies find the player through the group `player`, damage is dealt by distance checks in their own scripts.
+Nothing collides with the interact layer; it exists so a talk area is findable. Actors do not collide with each other: the player and enemies only mask walls. Enemies find the player through the group `player`. Damage: the mossling, the camp's rusher, shield and elite and the Thornback's charge and slam deal it by distance checks in their own scripts; the Thornback's thorn deals it when its area overlaps the player; the camp shooter's shot when its ray meets the player.
 
 ## Where solids come from
 
-A solid is never drawn by hand in a scene. Each zone's generator writes them, and `game/tools/gen_physics.py` holds what the generators share.
+The generators write the solids, with one exception: the 5 texel posts of the stone sign and of Hale in the hand-written `woodland.tscn`. Nothing else is drawn by hand, and `game/tools/gen_physics.py` holds what the generators share.
 
 | Zone | Generator | Terrain | Objects |
 | --- | --- | --- | --- |
@@ -49,7 +49,7 @@ A solid inside a `Conditional` (the choked well, the dark lantern, the sealed sl
 
 Two rules hold for every object solid:
 
-1. **It fits what is drawn.** Its width is the drawn base: for a tree the trunk above the root flare, for anything else the texels drawn in the rows the solid covers. More than 8 texels wider or narrower is a fault. Until 10 Nov the woodland's mask blocked each picture's whole width at its feet (180 texels under the willow's 30 texel trunk).
+1. **It is not wider than what is drawn.** A solid may not reach more than 8 texels past the texels drawn in the rows it covers, and may not be narrower than a third of them (`test_a_woodland_solid_is_no_wider_than_what_is_drawn`, every woodland object). An invisible block is the fault that rule is for: until 10 Nov the woodland's mask blocked each picture's whole width at its feet (180 texels under the willow's 30 texel trunk). Narrower is right where the drawing spreads at ground level and feet may step there: a trunk blocks its stem, not its root flare (oak 30 on a 41 texel stem and 64 of roots, stump 36 in 69), a bramble its mass and not its cane sprays (90 in 120), the handcart its bed and not its shafts (66 in 88), the choked well its ring (60 in 93). The test is the woodland's. Crossroads has pinned sizes for the boxes that changed (`test_crossroads_solids_follow_the_reviewed_boxes`); the Undercroft's boxes are its plan's and have no fit test (known: `roots_hall` reaches 34 texels past its roots on one side, the broken pillars block 36 of 55 and 68).
 2. **The same picture has the same solid everywhere.** The kit library is the one place a picture's box is written, so the playable zones and the kit zones cannot disagree.
 
 `walk.txt` is the terrain only: the ground nobody can stand on (water, cliff faces, the rock bank). Objects are not in it. The review tools (`scripts/review/scene.py`) read the same file as their walk mask.
@@ -112,7 +112,7 @@ A y-sorted picture's origin is on its drawn feet, its lowest opaque row, within 
 
 | Check | Holds |
 | --- | --- |
-| `game/test/test_physics_model.gd` | layers and masks of every body and area in the three zones; no villager hidden behind scenery; no way off a zone; woodland solids no wider than what is drawn; Crossroads' reviewed boxes; y-sort origins on drawn feet; flat things under people |
+| `game/test/test_physics_model.gd` | layers and masks of every body and area in the three zones; no villager hidden behind scenery; a solid 6 texels outside each edge at 40 points a side (a sample, not a proof: a gap between two points would pass); woodland solids no wider than what is drawn; Crossroads' reviewed boxes; y-sort origins on drawn feet; flat things under people |
 | `game/test/test_occlusion.gd` | the 40 % rule and its branches, the fade, reduced motion, the terrace road and the willow |
 | `game/test/test_arrow_physics.gd`, `test_arrow_walls.gd` | the start check, low solids, the archer |
 
