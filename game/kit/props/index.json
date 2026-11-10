@@ -18098,9 +18098,9 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
+   -33.0,
    -15.0,
-   -15.0,
-   30.0,
+   66.0,
    15.0
   ],
   "deck": null,
@@ -18110,11 +18110,19 @@
   ],
   "footprint": [
    [
+    -2,
+    -1
+   ],
+   [
     -1,
     -1
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ],
@@ -18661,9 +18669,9 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.36,
+   -12.0,
    -15.0,
-   42.69,
+   27.0,
    15.0
   ],
   "deck": null,
