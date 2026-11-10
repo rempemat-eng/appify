@@ -205,7 +205,7 @@ It also corrects the PR body (XT5). oak_13's bytes are unchanged. This round re-
 - Along the walk's centre line (y 72), a companion is hidden by 40 % or more (so the ghost shows) for x 79 to 136 world: about 57 px, a little over two seconds of walking. That stretch is 50 to 100 % hidden, and fully hidden at x 96 to 120.
 - **Why it is allowed.** Art-style rule 11 allows tall things in front of the companion, with the ghost at 42 %. AGENTS.md asks that paths, doors and the space round the companion stay open, and round 1 read that strictly for doors and arrival points (XT1). This stretch has no door, no spawn and no touch target, and the walk is open on both sides of it.
 - **Eastward.** Its trees overhang walkable ground the same way: in shot 13 the conifers stand at the path edge with their crowns over the path.
-- **Precedent.** Round 1 did not hold oak_6 for the 35 to 76 % cover it gives a companion standing just north of its foot, on the lawn beside the walk.
+- **Erratum (auditor, round 2):** the oak_6 precedent cited here was mis-measured (it ignored draw order), so it is withdrawn; ruling 2 stands without it.
 - **If it is moved later.** If Claude A would rather keep the walk fully open, the same spot moved one cell south (y 120) still leaves the crown over the walk. Clearing the walk would need y 160 or more, which puts the foot in the terrace face. So this is the best placement on this bank.
 
 ### The ground diff against round 1

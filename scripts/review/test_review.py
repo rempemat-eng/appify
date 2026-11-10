@@ -537,8 +537,11 @@ class Gate(unittest.TestCase):
 
     def test_the_real_queue_entries_are_complete(self):
         # every entry in art/catalogue/fix-queue.json states what the gate requires
-        entries = json.load(open(self.real_queue)).get('queue', [])
-        self.assertTrue(entries)
+        # (an empty queue is the end state the queue is for: every placed-before-seed asset reviewed;
+        # the file must still hold a queue list)
+        doc = json.load(open(self.real_queue))
+        self.assertIsInstance(doc.get('queue'), list)
+        entries = doc['queue']
         for e in entries:
             with self.subTest(id=e.get('id')):
                 for k in gate.REQUIRED:
