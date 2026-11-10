@@ -21,7 +21,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (18322af2...). Pass. sha256(composite) 233832ce -> 16bb4807 reproduced. 232,150 composite texels change: 220,954 inside the ten house boxes (old and new); 5,197 outside every sprite box, all of them ground.png changes within 12 texels of a house box (the casts and the lawn's re-scatter margin); 5,999 inside the boxes of six moved sprites (the five prop shadows at their corrected feet and the smithy's smoke). The painter's split (5,185 + 390 + 3,046 + 2,575) differs from mine only where the smoke box overlaps the smithy's cast (378 texels); the total and the 'nothing else' claim hold. The new casts follow the front-gable volume: the kit masks' north edge peaks 33-48 art px east of the ridge on the library (the ridge projected 0.19 east per world px of height), the east edge is now straight (no side verge). The five prop shadows: with the new feet each shadow's west edge meets its prop's base west edge exactly (1355, 658, 1370, 1150, 1150); on main they stood 2-8 px west of it."
  }
 }

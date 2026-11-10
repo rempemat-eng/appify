@@ -51,7 +51,12 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (da5582db...). Pass. Holes and slipped slates follow the courses, the stack stands, the scaffold and ladder carry the damaged state. Polish GR11, GR12.",
+  "fix_list": [
+   "GR11 (polish): battens and rafters inside the holes on the shaded slope keep lit timber values (smithy_damage east-slope hole timber mean Y 87 against 94 in the library's west-slope hole); step them one tone down east of the ridge.",
+   "GR12 (polish): the roof damage now sits mostly on the dark east slope, where it barely reads at 1x; the lit slope shows only a 1-2 texel notch. Move a hole or slipped slates onto the lit slope so the storm damage reads in the street."
+  ]
  }
 }

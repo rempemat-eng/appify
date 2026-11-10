@@ -87,7 +87,16 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (ee19e481...). Fail. Rakes, boards, ridge, finial and band pass (2,1,2,1, 0 breaks, board 9 texels sd 0.0); smoke starts at the pots' row. The stack's foot has no readable apron, soakers or contact shadow (GR3: 14 lead texels in all). detail.cluster_noise 41 % kept as polish (main 44.9 %). Polish GR4, GR5, GR6, GR9, GR10.",
+  "fix_list": [
+   "GR3 (fault): the stack's foot has no readable apron, soakers or contact shadow. Today 11-14 lead texels per house (#888697, #696e87): a 4-texel column on the west side and a 5-10 texel cluster at the downhill corner; along the rest of the foot the stack's stones meet the slope's course highlights (#333051, #4e4f6d) directly, and no slate below the foot is stepped down. Draw a lead apron along the whole foot, 2 texels deep, stepping with the courses: top row lit lead, lower row the lead's dark where it turns down the slope; one soaker texel column up each side (the east one a step darker); and the contact shadow as the course highlights removed (#333051/#4e4f6d to #1a1233) for 3-4 texels below the apron and 2 texels east of the east face. Check it at 1x and 2x in the street.",
+   "GR4 (polish): make the gable band's 2-texel line continuous. In 8-25 % of rake columns a texel at the wall's own body or lit tone sits in rows 1-2 under the board (library x 208: #a69c8e right under the board; x 53: #988e85), and on stone gables the fade (rows 3-5, 19-39 % darker) is nearly as dark as the line (36-49 %), so it reads as one 5-texel band. B5 has a continuous line about 72 % darker and a fade of 33 and 20 %. Rows 1-2: no texel above 0.55 of the gable wall's median; rows 3-5: about 18 %.",
+   "GR5 (polish): the west end grain at the left foot is the board's body tone (#8e6242, col 0), not lit; make it #a87c52 with a 2-texel ring arc. The feet now touch canvas columns 0 and W-1: keep 1 texel of transparent margin.",
+   "GR6 (polish): calm the slopes. Roof-only cluster noise 41.2-43.5 %; the shaded slope carries 13.5-18.8 tones and 25.6-31.3 shapes a 16x16 patch (through the reference pipeline) against 3.0 and 4.7 on B5's shaded plane. Keep the course lines on the shaded slope and drop most per-slate highlights (about 1 in 3 left).",
+   "GR9 (polish): kit.json pots [[186,32]] puts the smoke at zone (1542,531), in the 3-texel gap between the two pots (left x 1529-1539, right 1543-1554). Record each pot and start the smoke on one of them.",
+   "GR10 (polish, logic, Claude A's call): the stack stands 40-80 texels east of the forge hood (hood x 91-124, stack x 163-208). 11.9 puts every stack in the shaded slope; for a forge a flue that does not rise over the hearth reads oddly. Keep, or allow the forge a 'high' stack just east of the ridge over the hood."
+  ]
  }
 }

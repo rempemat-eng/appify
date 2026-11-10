@@ -51,7 +51,11 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (404c4067...). Pass. The tarp lies on the lit west slope, sheared along the rake with its weights stepping with it; the slipped slates and gaps on the east slope follow the courses; the stack stays standing. Polish GR11.",
+  "fix_list": [
+   "GR11 (polish): battens and rafters inside the holes on the shaded slope keep lit timber values (smithy_damage east-slope hole timber mean Y 87 against 94 in the library's west-slope hole); step them one tone down east of the ridge."
+  ]
  }
 }

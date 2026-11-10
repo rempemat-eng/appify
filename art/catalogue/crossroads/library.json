@@ -135,7 +135,13 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (f0992f9a...). Pass. Rakes: 2,1,2,1 on both rakes, 0 irregular steps (144 and 143 columns), pitch 0.669-0.671; board depth 9 texels on every column outside the feet, sd 0.0; lit top edge #a87c52 on the west board, #8e6242 on the east; underside 2 dark texels; finial outlined in timber dark; ridge lit west (#cea681, #bb8d6d), dark #5f3434 line to the shaded slope, back end rounded by one texel; back-edge silhouette 0 breaks; moss on outline 0. Slopes OKLab L 0.52 lit / 0.29 shaded (all slate texels, joints included). Gable wall against Eastward 17 B5 gable at x1.37 (reference pipeline): 19.3 tones, 35.1 shapes a patch against 16.2 and 33.3. Rejected as a false positive: detail.volume [99,164,124,173] ('the wood reads 2D'): it is one ashlar block of the gable (lit top arris #ddceb3, body #c3b6a1/#a69c8e, dark bed joint), the facade's own block recipe, misread as wood. detail.cluster_noise 43 % kept as polish (under the 48 % fault line; main 43.6 % by share()). detail.bar 0.83 and detail.light kept as measurements. Polish GR4, GR5, GR6.",
+  "fix_list": [
+   "GR4 (polish): make the gable band's 2-texel line continuous. In 8-25 % of rake columns a texel at the wall's own body or lit tone sits in rows 1-2 under the board (library x 208: #a69c8e right under the board; x 53: #988e85), and on stone gables the fade (rows 3-5, 19-39 % darker) is nearly as dark as the line (36-49 %), so it reads as one 5-texel band. B5 has a continuous line about 72 % darker and a fade of 33 and 20 %. Rows 1-2: no texel above 0.55 of the gable wall's median; rows 3-5: about 18 %.",
+   "GR5 (polish): the west end grain at the left foot is the board's body tone (#8e6242, col 0), not lit; make it #a87c52 with a 2-texel ring arc. The feet now touch canvas columns 0 and W-1: keep 1 texel of transparent margin.",
+   "GR6 (polish): calm the slopes. Roof-only cluster noise 41.2-43.5 %; the shaded slope carries 13.5-18.8 tones and 25.6-31.3 shapes a 16x16 patch (through the reference pipeline) against 3.0 and 4.7 on B5's shaded plane. Keep the course lines on the shaded slope and drop most per-slate highlights (about 1 in 3 left)."
+  ]
  }
 }
