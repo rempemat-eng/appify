@@ -136,7 +136,7 @@ jobs:
           unzip -j "$archive" 'templates/linux_release.x86_64' -d "$templates"
           printf 'GODOT=%s\n' "$godot" >> "$GITHUB_ENV"
 
-      - name: Capture one Linux export under Xvfb
+      - name: Compare export with only the GdUnit editor plugin disabled
         run: |
           set -euo pipefail
           logs="$RUNNER_TEMP/mygame-diagnostic-logs"
@@ -145,14 +145,54 @@ jobs:
           bash game/tools/fetch_limboai_release.sh >"$logs/limboai.log" 2>&1
           "$GODOT" --headless --path game --import >"$logs/import.log" 2>&1
 
+          backup="$stage/project.godot.before"
+          cp game/project.godot "$backup"
+          restore_source() {
+            result=$?
+            trap - EXIT
+            cp "$backup" game/project.godot
+            {
+              cmp "$backup" game/project.godot &&
+              git diff --exit-code HEAD &&
+              test -z "$(git status --porcelain)" &&
+              sha256sum game/project.godot &&
+              echo "Original source restored"
+            } >"$logs/source-restored.log" 2>&1 || result=1
+            exit "$result"
+          }
+          trap restore_source EXIT
+
+          python3 - >"$logs/project-delta.log" <<'PY'
+          from pathlib import Path
+          import difflib
+          import hashlib
+
+          path = Path("game/project.godot")
+          original = path.read_bytes()
+          text = original.decode()
+          start = text.index("[editor_plugins]\n")
+          end = text.index("\n[", start + 1)
+          section = text[start:end]
+          target = ', "res://addons/gdUnit4/plugin.cfg"'
+          assert section.count(target) == 1
+          revised_section = section.replace(target, "")
+          revised = (text[:start] + revised_section + text[end:]).encode()
+          assert revised.count(b"res://addons/gdUnit4/plugin.cfg") == 0
+          for preserved in (b"res://addons/phantom_camera/plugin.cfg", b"res://addons/world_editor/plugin.cfg"):
+              assert original.count(preserved) == revised.count(preserved) == 1
+          print("before_sha256=" + hashlib.sha256(original).hexdigest())
+          print("diagnostic_sha256=" + hashlib.sha256(revised).hexdigest())
+          print("".join(difflib.unified_diff(text.splitlines(True), revised.decode().splitlines(True),
+                                          fromfile="original/project.godot", tofile="diagnostic/project.godot")))
+          path.write_bytes(revised)
+          PY
+
           status=0
           LIBGL_ALWAYS_SOFTWARE=1 timeout --kill-after=10s 10m xvfb-run -a \
             "$GODOT" --display-driver x11 --rendering-method gl_compatibility \
             --audio-driver Dummy --path game --export-release 'Linux x86_64' "$stage/MyGame" \
             >"$logs/linux-xvfb.log" 2>&1 || status=$?
           printf 'export_status=%s\n' "$status" | tee "$logs/exit.txt"
-          git diff --exit-code HEAD
-          test -z "$(git status --porcelain)"
           if [ "$status" -ne 0 ]; then
             exit "$status"
           fi
