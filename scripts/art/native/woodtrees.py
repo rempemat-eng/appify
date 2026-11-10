@@ -737,12 +737,12 @@ def _clump_crown_p3(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: f
 
 
 NB_FLOOR = 51.0        # near-black (L 50 and under) only at the deepest point of a gap (W3-F2)
-TUNE = dict(sep=0.88, a_lit=0.5, a_mid=0.1, big=(5, 8), capy=0.2, lo=0.5, d_mid=34.0, d_sh=58.0,
+TUNE = dict(sep=0.95, a_lit=0.5, a_mid=0.1, big=(7, 11), capy=0.2, lo=0.5, d_mid=34.0, d_sh=58.0,
             sh_cap=8.0, litmarks=0.6, hl=0.8, nsib=5, lit_cap=10.0, pk_r=(3.0, 4.4), deep=0.42, sib=12, shrub_px=2000.0,
-            mw_tree=1.0, mw_shrub=0.45, zn=0.22, zn_s=2.2, mixmid=0.1, hi_drop=12.0, hl_d=8.0,
-            lit_excl=('grass_warm', 'leaf_warm'), sh_excl=('leaf_cool',), glint=400, h_leaf_v=0.62, h_rib=10.0,
-            notch=0.8, notch_lr=0.15, notch_d=46.0, notch_mid=0.55, gap2=1, gapn=0.9, lit_nsib=3, lit_sib=6,
-            mid_excl=('grass_warm', 'leaf_warm'))
+            mw_tree=1.0, mw_shrub=0.45, zn=0.22, zn_s=2.2, mixmid=0.2, hi_drop=12.0, hl_d=8.0,
+            lit_excl=('grass_warm',), sh_excl=('leaf_cool',), glint=400, h_leaf_v=0.62, h_rib=10.0,
+            notch=0.0, notch_lr=0.15, notch_d=46.0, notch_mid=0.55, gap2=1, gapn=0.0, lit_nsib=5, lit_sib=12,
+            mid_excl=(), cl_on=1, cl_lit=(10, 16), cl_mid=(8, 12), cl_gap=36.0, cl_cap=12.0, cl_under=26.0, cl_ov=(2, 4), cl_ax=(1.15, 0.85))
 
 
 def _leaf_blob(rx, ry, rng):
@@ -840,7 +840,8 @@ def _mass_fit(S, masses, rng):
 
 def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float, shapes=None, gaps=(),
                 low_band: float = 0.0, lift: float = 0.0, edge_fam: str = 'leaf_cool', glint_fam: str = 'grass_warm',
-                density: float = 0.85, tips: bool = True, size=None, deep: float = 0.34, cap_l=None, **_old):
+                density: float = 0.85, tips: bool = True, size=None, deep: float = 0.34, cap_l=None, core_drop: float = 0.0,
+                pk_scale: float = 1.0, cl_gap=None, cl_n=None, **_old):
     """Paint a crown S at two scales, as the red tree in Eastward 12 at the same character height
     (round 3 of the audit, W3-F1 to F3; the coordinator's read of pass 4):
 
@@ -1028,8 +1029,11 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
     # the values, per mass: L_hi lit field, the mid, the core shade, the rim, the pocket
     def levels(g):
         Lh = lo + T_['lo'] * (hi - lo) + (hi - lo) * (1 - T_['lo']) * g - T_['hi_drop']
-        return dict(hi=Lh, mid=Lh - T_['d_mid'], sh=max(NB_FLOOR + 16, Lh - T_['d_sh']),
-                    rim=max(NB_FLOOR + 24, Lh - T_['d_sh'] + 12), pk=max(NB_FLOOR + 3, Lh - T_['d_sh'] - 22))
+        # core_drop (pass 8): a shrub's shade core and pockets set deeper, so its mass reads
+        # without brightening its caps
+        return dict(hi=Lh, mid=Lh - T_['d_mid'], sh=max(NB_FLOOR + 16 - 0.6 * core_drop, Lh - T_['d_sh'] - core_drop),
+                    rim=max(NB_FLOOR + 24 - 0.6 * core_drop, Lh - T_['d_sh'] + 12 - core_drop),
+                    pk=max(NB_FLOOR + 3, Lh - T_['d_sh'] - 22 - core_drop))
 
     def sibs(c0, n, spread, excl=frozenset()):
         L0 = _lum(c0)
@@ -1183,7 +1187,7 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
             if any(abs(x - tx) < 14 for (ty, tx) in taken):
                 continue
             taken.append((y, x))
-            ar = rng.uniform(*T_['pk_r'])
+            ar = rng.uniform(*T_['pk_r']) * pk_scale
             ang = np.arctan2(yy - y, xx - x)
             wob = 1 + 0.28 * np.sin(3 * ang + rng.uniform(0, 6.3)) + 0.16 * np.sin(5 * ang + rng.uniform(0, 6.3))
             blob = (((xx - x) / (ar * 1.35)) ** 2 + ((yy - y) / ar) ** 2 <= wob * wob) & mask & ~front
@@ -1206,6 +1210,90 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
                 code[y, x] = bc
                 if dd.max() >= 2.5 and x + 1 < Wp and dist[y, x + 1] >= 2:
                     code[y, x + 1] = bc
+    # (pass 8) the lit field and the mid band as a handful of large leaf clusters, Eastward's scale:
+    # 10 to 16 texels in the light, 8 to 12 in the mid band, set by Poisson-disc spacing with
+    # jittered size and overlapping by 1 to 3 texels (the upper-left one on top). Each is a calm
+    # two-tone body, a cap a tone up on its upper-left arc, a dark under-edge a tone down (cool) on
+    # its lower-right arc, and 2 to 4 leaf-tip bites on its lower and outer outline. Where no cluster
+    # lies the field shows a real dark gap. The pockets stay as they are.
+    if T_['cl_on']:
+        free_ = mask & ~pk_all & ndi.binary_erosion(mask, iterations=1)
+        litz = free_ & (zone == 3)
+        midz = free_ & (zone == 2)
+        fieldz = litz | midz
+        # the gap under the clusters: the mass's lit value well down, cool
+        for y, x in zip(*np.nonzero(fieldz if cl_n is None else fieldz & False)):
+            Lv_ = levels(float(glob[y, x]))
+            Lg_ = (Lv_['hi'] if zone[y, x] == 3 else Lv_['mid']) - (T_['cl_gap'] if cl_gap is None else cl_gap)
+            code[y, x] = palette(max(NB_FLOOR + 6, Lg_), 'notch')[mk_[y, x] % 2]
+        cands = []
+        # a small crown (the sapling) takes only cl_n clusters, the largest, in the light
+        for zz, (d0, d1) in (((litz, T_['cl_lit']), (midz, T_['cl_mid'])) if cl_n is None
+                             else ((litz, (T_['cl_lit'][1] - 2, T_['cl_lit'][1])),)):
+            ys_, xs_ = np.nonzero(zz)
+            for j_ in rng.permutation(len(ys_)):
+                cands.append((int(ys_[j_]), int(xs_[j_]), d0, d1, zz is litz))
+        placed_ = []
+        for (y, x, d0, d1, is_lit) in cands:
+            r_ = rng.uniform(d0, d1) / 2.0
+            if any(math.hypot(x - px, y - py) < (r_ + pr) - rng.uniform(*T_['cl_ov']) for (py, px, pr, _l) in placed_):
+                continue
+            placed_.append((y, x, r_, is_lit))
+            if cl_n is not None and len(placed_) >= cl_n:
+                break
+        # paint from the lower right to the upper left, so the upper-left cluster lies on top
+        own2 = np.full((Hp, Wp), -1)
+        for k_, (y, x, r_, is_lit) in sorted(enumerate(placed_), key=lambda q: -(q[1][0] + q[1][1])):
+            m_ = _leaf_blob(r_ * T_['cl_ax'][0], r_ * T_['cl_ax'][1], rng)
+            h_, w_ = m_.shape
+            Y, X = np.nonzero(m_)
+            Y, X = Y + y - h_ // 2, X + x - w_ // 2
+            ok = (Y >= 0) & (Y < Hp) & (X >= 0) & (X < Wp)
+            Y, X = Y[ok], X[ok]
+            ok = fieldz[Y, X] | (mask[Y, X] & ~pk_all[Y, X] & (zone[Y, X] >= 2))
+            own2[Y[ok], X[ok]] = k_
+        P2 = np.pad(own2, 2, constant_values=-2)
+
+        def s2(dy, dx):
+            return P2[2 + dy:2 + dy + Hp, 2 + dx:2 + dx + Wp]
+
+        for k_, (y, x, r_, is_lit) in enumerate(placed_):
+            R_ = own2 == k_
+            if R_.sum() < 8:
+                own2[R_] = -1
+                continue
+            Lv_ = levels(float(glob[y, x]))
+            Lb_ = Lv_['hi'] if is_lit else Lv_['mid']
+            role_b = 'lit' if is_lit else 'mid'
+            body_ = palette(Lb_, role_b)
+            capc_ = palette(Lb_ + T_['cl_cap'], 'lit')
+            undc_ = palette(max(NB_FLOOR + 6, Lb_ - T_['cl_under']), 'notch')
+            # the body in two tones: its two siblings split across the cluster, not speckle
+            sp_ = ((xx - x) * 0.6 + (yy - y)) > rng.uniform(-1.5, 1.5)
+            code[R_ & ~sp_] = body_[0]
+            code[R_ & sp_] = body_[1 % len(body_)]
+            ul_ = ((xx - x) + (yy - y)) < -0.2 * r_                    # the upper-left arc
+            lr_ = ((xx - x) + (yy - y)) > 0.25 * r_                    # the lower-right arc
+            e1 = R_ & ((s2(-1, 0) != k_) | (s2(0, -1) != k_))
+            e2 = R_ & ((s2(-2, 0) != k_) | (s2(-1, -1) != k_) | (s2(0, -2) != k_))
+            cap_ = (e1 | e2) & ul_
+            code[cap_] = capc_[0]
+            u1 = R_ & ((s2(1, 0) != k_) | (s2(0, 1) != k_) | (s2(1, 1) != k_))
+            u2 = R_ & ((s2(2, 0) != k_) | (s2(1, 1) != k_))
+            und_ = (u1 | (u2 & (rng.random() < 0.6))) & lr_
+            code[und_] = undc_[0]
+            # leaf-tip bites: 2 to 4 notches of 1 to 2 texels on the lower and outer outline
+            ey_, ex_ = np.nonzero(u1 & ~ul_)
+            for j_ in rng.permutation(len(ey_))[: int(rng.integers(2, 5))]:
+                Y, X = int(ey_[j_]), int(ex_[j_])
+                gc_ = palette(max(NB_FLOOR + 6, Lb_ - T_['cl_gap'] - 6), 'notch')[0]
+                code[Y, X] = gc_
+                own2[Y, X] = -1
+                if rng.random() < 0.5:
+                    Y2, X2 = Y - 1 if (yy[Y, X] - y) > 0 else Y, X - 1 if (xx[Y, X] - x) > 0 else X
+                    if R_[Y2, X2]:
+                        code[Y2, X2] = gc_
+                        own2[Y2, X2] = -1
     # glints: a yellow-green pair on a few lit-field texels of the upper west
     litf = isc & (zc == 3) & (xx < gx0) & (yy < gy0) & ndi.binary_erosion(mask, iterations=2)
     ys_, xs_ = np.nonzero(litf)
@@ -2135,11 +2223,13 @@ def sapling_stem(length, rng):
 # per kind, the clump size and spacing chosen side by side at 4x and by the detail bar (pass 3)
 SHRUB_KW = {
     'bush': dict(shapes=CLUMPS_XS), 'bush_b': dict(density=0.95), 'bush_c': dict(density=0.8, sib_spread=7),
-    'bramble': dict(shapes=CLUMPS_XS, density=0.75), 'bramble_b': dict(shapes=CLUMPS_XS, density=0.75),
+    'bramble': dict(shapes=CLUMPS_XS, density=0.75),
+    'bramble_b': dict(shapes=CLUMPS_XS, density=0.75),
 }
-HOLLY_KW = {'holly': dict(shapes=CLUMPS_XS, cap_l=(88.0, 136.0)), 'holly_b': dict(cap_l=(88.0, 140.0))}
+HOLLY_KW = {'holly': dict(shapes=CLUMPS_XS, cap_l=(88.0, 136.0), core_drop=12.0, pk_scale=1.3, cl_gap=14.0),
+            'holly_b': dict(cap_l=(88.0, 140.0), core_drop=24.0, pk_scale=1.3, cl_gap=14.0)}
 TREE_KW = {'beech': dict(shapes=CLUMPS_S), 'birch': dict(sib_spread=7), 'hollow_tree': dict(pockets=1.0),
-           'sapling': dict(shapes=CLUMPS_XS)}
+           'sapling': dict(shapes=CLUMPS_XS, cl_n=3)}
 WILLOW_KW = dict(density=0.75)
 
 
@@ -2227,7 +2317,7 @@ def holly(S, clumps, lad, rng, lo, hi, kind):
     inner_l = ndi.binary_erosion(mask, iterations=3)
     yy_l, xx_l = np.mgrid[0:Hp, 0:Wp]
     warm_h = tuple(C(f, tt) for f in ('grass_warm', 'leaf_warm') for tt in range(6))   # no yellow midribs
-    T_H = dict(leaf_v=TUNE.get('h_leaf_v', 0.7), rib=TUNE.get('h_rib', 12.0))
+    T_H = dict(leaf_v=TUNE.get('h_leaf_v', 0.7), rib=TUNE.get('h_rib', 12.0), core=TUNE.get('h_core', 1), top_v=TUNE.get('h_top_v', 0.6))
     ys, xs = np.nonzero(inner_l)
     placed = []
     want = int(inner_l.sum() / 55)
@@ -2246,7 +2336,11 @@ def holly(S, clumps, lad, rng, lo, hi, kind):
         lit_ = v[y, x] >= T_H['leaf_v']
         Lc = _lum(int(code[y, x])) if code[y, x] >= 0 else lo + 30
         tb = int(np.argmin([abs(_lum(C('leaf_cool', q)) - Lc) for q in range(6)]))
+        if tb < 2 and T_H['core']:
+            continue                                                  # (pass 8) the dark core keeps its depth
         tb = int(np.clip(tb, 2, 4))                                   # the leaf takes the light where it sits
+        if v[y, x] >= T_H['top_v']:
+            tb = min(4, tb + 1)                                       # (pass 8) the lit field's leaves a tone up
         body_c = C('leaf_cool', tb)
         dark_c = C('leaf_cool', tb - 1) if tb > 2 else C('leaf', 1)
         rib_c = C('leaf_cool', tb + 1) if lit_ else body_c

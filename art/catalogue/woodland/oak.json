@@ -1,7 +1,7 @@
 {
  "id": "woodland/oak",
  "file": "game/zones/woodland/art/oak.png",
- "sha256": "ff097e93a97f8b6538986714121380377f7d6a1e86eb03b95963a556ef8d40fd",
+ "sha256": "16412d45a9166405c6289ff0d701ed45fe11941c09e7780112b03390ed703618",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 70,
-   "tones": 24.042857142857144,
-   "shapes": 53.457142857142856
+   "tones": 22.87142857142857,
+   "shapes": 50.77142857142857
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.844,
-  "tones_ratio": 0.868,
-  "shapes_ratio": 0.844,
+  "ratio": 0.802,
+  "tones_ratio": 0.825,
+  "shapes_ratio": 0.802,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     212,
     247
    ],
-   "message": "woodland/oak: detail bar 0.84 of Eastward's foliage band (24.0 tones, 53.5 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/oak: detail bar 0.80 of Eastward's foliage band (22.9 tones, 50.8 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -1,7 +1,7 @@
 {
  "id": "woodland/hollow_tree",
  "file": "game/zones/woodland/art/hollow_tree.png",
- "sha256": "f0d56757d58cd61b1de89d78a0608a242297b08218b0f027c37f78ecaf773f12",
+ "sha256": "2cf575a420f872e4b609f9d7bbd94aeca8eb3f6afacfdb13cb11d515d2979cb4",
  "kind": "veteran_tree",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 89,
-   "tones": 24.471910112359552,
-   "shapes": 55.47191011235955
+   "tones": 22.707865168539325,
+   "shapes": 50.10112359550562
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.876,
-  "tones_ratio": 0.883,
-  "shapes_ratio": 0.876,
+  "ratio": 0.791,
+  "tones_ratio": 0.819,
+  "shapes_ratio": 0.791,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     243,
     227
    ],
-   "message": "woodland/hollow_tree: detail bar 0.88 of Eastward's foliage band (24.5 tones, 55.5 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/hollow_tree: detail bar 0.79 of Eastward's foliage band (22.7 tones, 50.1 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

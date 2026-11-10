@@ -1,7 +1,7 @@
 {
  "id": "woodland/birch",
  "file": "game/zones/woodland/art/birch.png",
- "sha256": "1037e0d4fe19c6fe9ee56c56410081a3d4f762d31c523ecf0a724c9f9552c9fa",
+ "sha256": "bcc16478e505ca5f1d5221b557f0127e0ecd3cd242b5c32e0075013998124d1c",
  "kind": "birch",
  "biome": "woodland",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 20,
-   "tones": 27.6,
-   "shapes": 55.6
+   "tones": 28.6,
+   "shapes": 50.85
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.878,
-  "tones_ratio": 0.996,
-  "shapes_ratio": 0.878,
+  "ratio": 0.803,
+  "tones_ratio": 1.032,
+  "shapes_ratio": 0.803,
   "passed": false,
   "group": "foliage"
  },
@@ -44,20 +44,8 @@
     101,
     203
    ],
-   "message": "woodland/birch: detail bar 0.88 of Eastward's foliage band (27.6 tones, 55.6 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/birch: detail bar 0.80 of Eastward's foliage band (28.6 tones, 50.9 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    14,
-    0,
-    101,
-    203
-   ],
-   "message": "woodland/birch: only 33% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-09",

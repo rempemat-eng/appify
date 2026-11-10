@@ -1,7 +1,7 @@
 {
  "id": "woodland/willow",
  "file": "game/zones/woodland/art/willow.png",
- "sha256": "a732914cedaf6d5bf98155eff0543cc4e6a23b040e509af1177c0eb383e1bcf4",
+ "sha256": "efc50d98aa37dbb00b45a6e4120c71dacfd0fb3b1e5af25fd9d3bd0dd1c5fa7d",
  "kind": "willow",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 76,
-   "tones": 27.61842105263158,
-   "shapes": 53.85526315789474
+   "tones": 27.986842105263158,
+   "shapes": 52.38157894736842
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.851,
-  "tones_ratio": 0.997,
-  "shapes_ratio": 0.851,
+  "ratio": 0.827,
+  "tones_ratio": 1.01,
+  "shapes_ratio": 0.827,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     237,
     200
    ],
-   "message": "woodland/willow: detail bar 0.85 of Eastward's foliage band (27.6 tones, 53.9 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/willow: detail bar 0.83 of Eastward's foliage band (28.0 tones, 52.4 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
