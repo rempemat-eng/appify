@@ -710,3 +710,103 @@ None were rejected. `detail.bar` (polish) is kept as a measurement. The new `det
 
 - `npm run check:art-repro`: whether the `village.py` change regenerates only the stall. The diff touches only `p_stall_hd` and the helpers above it, and no other PNG changed in the PR. CI covers the rest.
 - The scene gate (the 24-cell grid), the night tint and the 1x phone view in the app.
+
+## Round 6 (PR #456, 10 Nov)
+
+Draft #456 (`claude-a/crossroads-stall-xr4` at 60ffc0c1, base main 8273a156) redraws the stall's valance for XR5-S1 to S3 and merges two tones for XR5-S4. This round audits that one picture. The auditor drew none of it and took no part in rounds 1 to 5.
+
+**Result: the stall passes.** All four XR5 codes pass. The deep cream is the right colour from the wrong family: the painter names `lamplit` 3, a named-only tone reserved for torchlight on the Undercroft's stone. That is a source fault (XR6-S1), not a picture fault: it can be fixed without changing a byte of `stall.png`, and it must be fixed before #456 merges.
+
+### What was reviewed and how (round 6)
+
+- Commit 60ffc0c1, in a fresh worktree. `stall.png` matches its record (587a55b0…). Since round 5 (5bd11716) only four files differ: `stall.png`, its catalogue entry, `village.py` (`p_stall_hd` and `grained_front_board`, whose only caller is the stall) and the pilot manifest's `inputs` hash. `ground.png`, `kit.json` and `crossroads.tscn` are byte-identical to main.
+- Asset gate: `python3 -m scripts.review.assets crossroads/stall --no-sheet`. It found 0 blockers, 0 faults and 2 polish: `detail.bar` 0.779 (24.5 tones and 39.2 shapes a patch, against 27.0 and 50.36) and `detail.light` on [36,120,77,156], unchanged from round 5. The bar moves from 0.798 to 0.779, which confirms the painter.
+- Cluster noise (`python3 -m scripts.review.cluster_noise`): main 39.8 %, round 5 38.6 %, round 6 38.7 %.
+- Measured from the bytes, with round 5's PNG beside them: the r5 → r6 texel diff, the tone list, every nail head, the alpha mask, one-tone 4-connected runs, and per stripe and per row on the hanging faces (y 43–63): the deep strip's columns, the east band and the ramp order. Colours are in CIELAB (D65).
+- Crops: the valance at 4x and 8x on neutral grey; the zone composite at 1x and 2x, main beside head.
+- Eastward: shot 04 brought to the native grid with `core.to_native` (scale 3.0), then scaled ×1.37 with nearest neighbour. Boxes: the lower canopy [345,220,475,262] and the upper-right canopy [475,75,565,115].
+- Placed: `scene.composite(load_zone('crossroads'))` at main, at round 5 and at head.
+
+### Verdicts (round 6)
+
+| Asset | Verdict | Bar round 5 → 6 | Measured | Reason |
+| --- | --- | --- | --- | --- |
+| stall | **pass** | 0.798 → 0.779 | 59 tones (was 60); 0 #9e8675 in the cream faces; east 3 columns darkest on 21 of 21 rows on 10 of 10 stripes; 16 of 16 nails lit; alpha unchanged; lone texels 32 → 32 | the valance reads as clean, folded cloth lit from the upper left; the slate, boards and sack are unchanged |
+
+### Status of the XR5 codes
+
+| Code | Ruling | Evidence |
+| --- | --- | --- |
+| XR5-S1 | **PASS** | No #9e8675 texel is left in the cream faces at y 43–63. The only ones left are the awning's west outline column (x 8) and the top plane's far row (y 31), both of which round 5 kept. The deep fold is #aa8a5c: L 59.4, C 29.8, h 78.4. That is within L 58–62, C ≥ 21 and h 74–80. Its ΔE76 to the wall stones #a49689 and #988e85 is 21.0 and 23.4 (at least 15 required). At 2x placed, the cream reads as clean cloth with tan folds against the grey wall, not as wall showing through or as dirt. The colour is right; its family is ruled on below (XR6-S1). |
+| XR5-S2 | **PASS** | Each of the 10 stripes has one fold, which is within "1 to 2". West to east: a 1-column lit ridge (#f7dfb3, or #ce6364 on the red), 1 column of mid (#c0a98d, #8e2348), then the deep strip. The deep strip is present on every row from y 43 down. It steps at most one column, once, on 7 stripes (sharing both columns for one row, so it never breaks), and widens by one column toward the hem on 3. There are no 3–5 column steps and no closed patches. On red stripe x 69–80, the strip meets the scallop notch's outline at y 62 and stops there (2 rows). Because the scallops are centred on the stripe joints, each fold runs into a notch rather than to a scallop point. That shape dates from round 1 and is not a fault. |
+| XR5-S3 | **PASS** | On all 10 stripes and all 21 rows (y 43–63), the east 3 columns (x 18–20, 30–32, …, 126–128) are the ramp's darkest step: #aa8a5c on the cream and #630735 on the red. No row has an east column lighter than any column west of it in the same ramp. The ridges stand at column 4 or 5 and step or widen on different rows, so stripes differ, but only slightly (polish XR6-S3). |
+| XR5-S4 | **PASS** | #2f0912 → #2e0a0d (63 texels, the board joints) and #3d2d30 → #413438 (12, the sack's contact row). Neither old tone is left. Below the valance (y > 67) these 75 texels are the only change. The slate, boards and sack (S1–S3 of round 5) are otherwise byte-identical, all 16 nail heads and their lit #737078 texels are identical, and the alpha mask is identical. |
+
+### Ruling 1: lamplit 3 for the deep cream
+
+**Not acceptable as drawn. It needs a new named tone, not a new family (XR6-S1).**
+
+- "Named only" (`palette.NAMED_ONLY`) means a painter names the tone on purpose, and nearest-colour mapping (`compose._palette`, `screen.PICKABLE`) never picks it. On its own it does not forbid naming the tone elsewhere. But `docs/vision/house-style.md` scopes this tone: lamplit "is named only … and lies only where a torch lights stone: the Undercroft's torchlit floor and walls (Claude A, round 7 …). It is light, not a material." The comment above `NAMED_ONLY` in `palette.py` says the same. Before this PR, only `undercroft.py` named it.
+- Using it on cloth breaks that rule and labels the valance as torchlight in the code:
+  - `specks.py` and the Undercroft craft tests count lamplit codes as light;
+  - lamplit has already been retuned once (body #A08C6D → #AA8A5C, round 7 of the Undercroft), and the next retune would silently recolour the stall;
+  - house-style.md no longer describes the code.
+- No pickable tone meets XR5-S1:
+  - earth_warm 4 #9C8261: L 56.0, ΔE 14.8 to #a49689;
+  - sand 2 #B49271: h 70.1, ΔE 14.5;
+  - timber 5 #BA9569: L 64.1.
+  So the colour has to be registered.
+- A family is not needed. The precedent is `lamplit_dusk`: one named-only tone, `sibling-tone:<family>`, appended to `FAMS` so no code moves, with a sentence in house-style.md and Claude A's ruling. With the same hex, `stall.png` keeps its bytes and this verdict stands.
+
+### Ruling 2: one fold a stripe and the full-height east bands
+
+**Both acceptable.**
+
+- **One fold a stripe** is inside XR5-S2's "1 to 2". I did not render the two-fold variant. The painter's 41–46 % for it is unverified, and the ruling does not depend on it.
+- **The east bands.** Each is one tone over 3 columns × 23 rows: 69 texels on the cream (#aa8a5c [18,43,20,65]) and 68 on the red (#630735 [30,43,32,65]). The cream body's largest run is 70 (#e0cca6 [82,45,85,63]) and the red body's 68.
+  - These runs follow from XR5-S3, which asked for the last 2–3 columns at the darkest step for the full height.
+  - The 60-texel limit of XR4-S2 and XR3-L1 was set for wood and stone, materials whose grain and tooling should break a face. Cloth in shadow is smooth.
+  - Eastward 04's canopy holds one-tone areas (ΔE ≤ 4 bins) of 188 texels at ×1.37 ([475,75,565,115]), with long fold strokes over flat ground.
+  - Round 4's flat faces were 79–82. The runs are smaller, and they are now shading, not flat fill.
+  - At 1x and 2x placed, each band reads as the stripe turning away from the light, not as a flat bar.
+
+### Other observations (round 6)
+
+- **Composite.** a9dbc057… (round 5) → 09d21a6940357ad662706a2e159f4c36a205376a62414f38812d79ffc9472b6c, which matches the painter.
+  - Against main (233832ce…), 4,078 texels change, at x 1092–1208, y 653–767.
+  - Against round 5, 1,730 change, at x 1093–1211, y 653–767.
+  - Both sets lie wholly inside the stall's sprite box (x 1083–1220, y 610–771); none change elsewhere.
+  - `test_kit_scene_intake.py` still pins 233832ce…. Moving the pin is Claude A's call.
+- **Sprite diff r5 → r6.** 1,730 texels change: 1,655 on the hanging faces (y 43–65; the top plane above y 43 is identical) and the 75 XR5-S4 texels. The mid tone #c0a98d (C 18.0) is now less chromatic than both the body (21.5) and the deep fold (29.8). Round 5 asked to keep it, and at 2x it does not read grey. Recorded, not ruled.
+- **Outline texels.** The source turns plaster 1 left inside the hanging faces into the outline tone #413438. That touches 2 texels, (63,63) and (63,111), both at the top of a scallop notch, where the outline belongs.
+- **Largest runs elsewhere** are unchanged since round 5. The 161-texel #572c18 [14,108,122,119] is the counter's long shadow line, not a board face.
+
+### Fix list (round 6)
+
+These are in the stall's `reviewer.fix_list`.
+
+- **XR6-S1** (fault, source only; blocks merging #456; no pixel change): stop naming `lamplit` for cloth.
+  - With Claude A's ruling, add one named-only tone of plaster at #AA8A5C (`sibling-tone:plaster`), appended to `FAMS` and listed in `NAMED_ONLY` and `house_palette.py`.
+  - Add a sentence in house-style.md, as for `lamplit_dusk`.
+  - In `p_stall_hd`, name the new tone in the fill and in the XR5-S4 edge merge.
+  - `stall.png` must stay 587a55b0…. If it changes, the record resets to pending and the stall is reviewed again.
+- **XR6-S2** (polish): row y 45 (the gathered top) alternates lit and body one texel at a time where the west edge, a gather and the ridge fall together (for example x 57–62: lit, body, lit, body, lit, body). Merge them into 2-texel gathers.
+- **XR6-S3** (polish): the five cream stripes put their ridge at column 4 or 5 and differ only in one step and one widening row. At 1x they read as one stamp. Spread the ridges over 3–4 columns.
+
+### False positives (round 6)
+
+None were rejected. `detail.bar` and `detail.light` (both polish) are kept as measurements, as in round 5.
+
+### Gate (round 6)
+
+- Before this round, `python3 -m scripts.review.gate --check` refused `crossroads/stall`: the queue entry holds other bytes, and the verdict was pending.
+- This round sets the stall's `reviewer` verdict to `pass` in `art/catalogue/crossroads/stall.json`, which is the only record changed. The block holds the date, the note and the fix list XR6-S1 to S3.
+- The gate now prints `ok`, with one `ADVISORY`: remove `crossroads/stall` from `art/catalogue/fix-queue.json`. This round does not edit the queue; that is Claude A's call.
+- A `--record` run keeps the verdict. Only the detectors' `reviewed` date would move, so the record is committed without it.
+- `python3 -m unittest scripts.review.test_review`: 178 tests OK.
+
+### Not checked (round 6)
+
+- `npm run check:art-repro` and CI: the draft's CI runs were skipped. The `grained_front_board` change has one caller, the stall, and only `stall.png` changed in the PR.
+- The two-fold variant's noise figure.
+- The scene gate (the 24-cell grid), the night tint and the 1x phone view in the app.
