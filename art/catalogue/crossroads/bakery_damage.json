@@ -51,7 +51,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (cab79f52...). Pass. GR11: east-slope hole timber mean Y 47 (round 1: 71) against 82 on the scaffold side. GR12 left as Claude A decided."
  }
 }

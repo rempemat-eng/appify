@@ -51,7 +51,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (563055ca...). Pass. GR1 fixed: the green tarp on the shaded slope measures mean Y 46.0 against 105.5 for the same tarp on main's lit roof (0.44; limit 0.6); tones #25633d / #02432c / #01211a, nothing above tone 2; its weights moved one step down (#aba194 100 -> 8 texels, #332937 0 -> 42). The lit-slope hole is unchanged."
  }
 }

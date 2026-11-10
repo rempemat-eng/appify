@@ -63,7 +63,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (3e93091b...). Pass. GR11: the east-slope hole's battens mean Y 43 (round 1: 69) against 60 in the lit-slope hole. GR12 left as Claude A decided."
  }
 }

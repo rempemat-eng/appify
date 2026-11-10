@@ -135,7 +135,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (702e5ea8...). Pass. GR4: the band's 2-texel line is continuous, 56 % darker than the gable wall on average; texels in rows 1-2 above 0.55 of the wall median: 0 of 534 along the rakes (round 1: 285); fade rows 3-5 26 % (B5 33/20 %). GR5: west end grain #a87c52 x 2 with a 2-texel #70432f ring arc at the next column, a 1-texel #50261d outline outside it, canvas columns 0 and W-1 transparent; the east end #50261d / #4d2220. Rakes 2,1,2,1 with 0 irregular steps, board 9 texels on every column (unchanged). detail.volume [101,164,126,173] rejected again as a false positive: the same ashlar block as round 1, moved 2 texels with the canvas (lit top arris #e8d6b7, body #cdbea3 with tooling #afa490, shaded lower row #908377, mortar #70625f). detail.bar 0.844 (round 1 0.83). The lit slope's per-slate highlights and the door's kick-plate hatch differ from round 1 because patterns keyed to canvas x moved with the +2 widening; same recipe, no regression. GR6 left as Claude A decided."
  }
 }

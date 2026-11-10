@@ -87,7 +87,11 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (0b81e6ce...). Pass. GR3 fault fixed: apron under all 42 foot columns, lit over dark on 40; course highlights 3-6 texels below the foot 120 -> 4. GR4: 1 stray texel at the foot of 486 line texels, line 63 % darker, fade 33 %. GR9 fixed: pots (181,34) and (195,32); the west pot spans canvas x 175-185 with its rim on row 33, and SmithySmoke moved to (1535,533) = 1500-146+181, 840-341+34, on it. GR5 as on the library. The forge hood's seams moved with the +2 canvas phase (no regression). Polish GR2-2. GR6 and GR10 left as Claude A decided.",
+  "fix_list": [
+   "GR2-2 (polish): the stack's soakers are 3 to 6 lit lead texels at the bottom of the west side only; the east side has none (its first column east of the face is the slope's unchanged course pattern). Draw a 1-texel soaker column the height of each side face above the apron (west slate_cool 4, east slate_cool 3). The contact shadow east of the stack is 2 columns (d=2,3: 0 to 7 highlight texels); from d=4 the course highlights now run as dense as the open slope (smithy 22 to 27 a column against 0 to 1 in round 1). Eastward's vents (shot 17) throw a contact shadow about 6 native px wide: keep the floor tone 4 columns east of the face, fading at 5 to 6."
+  ]
  }
 }

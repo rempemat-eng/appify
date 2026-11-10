@@ -123,7 +123,12 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (ce864ac7...). Pass. GR2 fault fixed: 25 forged heads, each with its lit #737078 texel at the upper left (round 1: 0 of 28), at 20 distinct x (round 1: 6), one of 7 boards bare. GR3 fault fixed: the lead apron runs under all 27 columns of the stack's foot, lit over dark on 25; course highlights 3 to 6 texels below the foot 24 -> 3. GR4: line texels above 0.55 of the wall median 0 of 348 clean-board columns (round 1: 92), mean drop 77 %. GR5 as on the library. Polish GR2-1 (the heads' dark under-right texel is tidied away), GR2-2 (soakers, the east contact shadow's width). GR6 and GR8 left as Claude A decided.",
+  "fix_list": [
+   "GR2-1 (polish): the forged nail heads lost their dark under-right texel: it is the board's own tone on 24 of 25 heads on the north cottages and 3 of 3 on the fern cottage (finish() tidies it away; only the lit texel is in keep=). Add the under-right texel (timber_cool 0) to the keep mask. On the fern cottage only 3 heads stand on 2 of the gable's 6 boards (the boards at y 113, 143, 152 and 163 are bare), against 'about one board in four' bare: draw the skip per board so no more than one board in three goes without, or reseed until it does.",
+   "GR2-2 (polish): the stack's soakers are 3 to 6 lit lead texels at the bottom of the west side only; the east side has none (its first column east of the face is the slope's unchanged course pattern). Draw a 1-texel soaker column the height of each side face above the apron (west slate_cool 4, east slate_cool 3). The contact shadow east of the stack is 2 columns (d=2,3: 0 to 7 highlight texels); from d=4 the course highlights now run as dense as the open slope (smithy 22 to 27 a column against 0 to 1 in round 1). Eastward's vents (shot 17) throw a contact shadow about 6 native px wide: keep the floor tone 4 columns east of the face, fading at 5 to 6."
+  ]
  }
 }

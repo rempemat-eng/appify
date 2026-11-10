@@ -132,3 +132,118 @@ Each list is also in the picture's `reviewer.fix_list`.
 - Thatch gables (built, not placed), the hut and the herbalist (unchanged bytes).
 - The halo claim around the stacks (36 against 38 to 43) beyond the crops, where none shows.
 - Crops and measuring scripts are in the auditor's scratch folder, not committed; the Eastward crops stay local.
+
+## Round 2 (PR #457 at 5b230ffb)
+
+Round 2 rebuilds the 10 house and damage pictures to fix GR1 to GR3 and the polish items GR4, GR5, GR7, GR9 and GR11. It also merges main 3f0e5a49 (#456, the stall) normally. Claude A decided to skip GR6, GR8, GR10 and GR12: Matt approved the shaded slope's look, and the smithy keeps its stack. `ground.png` is byte-identical to round 1, so its pass stands. This auditor did not paint any of the art and judged it from the bytes.
+
+**Result: 10 pass, 0 fail.** All three faults are fixed and measured. Three new polish codes remain (GR2-1 to GR2-3).
+
+### What was reviewed and how
+
+- Three worktrees: the PR head 5b230ffb, round 1's bytes from ff4e2bc1 and main from 3f0e5a49. The sha256 of every PNG matches its record.
+- Asset gate: `python3 -m scripts.review.assets <10 refs> --record` reproduces the painter's records byte for byte (no catalogue diff). The library fails on `detail.volume`, and fern_cottage_damage fails on `detail.flat` and `detail.volume` (x2). The other 8 pass with polish. Bars: library 0.844, north cottages 0.83, bakery 0.862, smithy 0.84, fern cottage 0.851. Every bar is at or above round 1.
+- All measurements come from my own scripts. They compare round 1 against round 2 with the canvas offset by 2. They cover hex runs at the stack feet, 2 columns to the east and 3 to 6 rows below; the band under the board column by column (wall median from rows 9 to 20 under the board; on the lapped gables, only columns where the board run is exactly 9); nail heads as 2 x 2 iron groups; tarp texels by hue; and timber texels in each hole.
+- By eye: 4x to 10x nearest crops on neutral grey with round 1 beside round 2, each house with its overlay at 2x, and the street at 1x and 2x from `scene.composite(load_zone('crossroads'))`.
+- Eastward: shot 17 brought to its native grid (`core.to_native`, scale 3.00). Box [150,0,350,140] (B5 and its roof vent) is scaled x1.37 nearest beside the smithy's stack and the fern cottage's tarp at 1x.
+- Not run: calibration (no detector changed), the scene gate and a device play-test.
+
+### Verdicts (round 2)
+
+| Picture | Verdict | Bar | Main reason |
+| --- | --- | --- | --- |
+| library | pass | 0.844 | GR4, GR5, GR7 hold; `detail.volume` is the same false positive (ashlar block) |
+| library_damage | pass | 0.553 | GR1: tarp Y 46 against 105.5 lit (0.44) |
+| north_cottages | pass | 0.83 | GR2 and GR3 fixed; polish GR2-1, GR2-2 |
+| north_cottages_damage | pass | 0.534 | GR11: east timber Y 45 (was 59) |
+| bakery | pass | 0.862 | GR3 and GR7 fixed; polish GR2-2 |
+| bakery_damage | pass | 0.614 | GR11: east timber Y 47 (was 71) |
+| smithy | pass | 0.84 | GR3 and GR9 fixed; polish GR2-2 |
+| smithy_damage | pass | 0.67 | GR11: east timber Y 43 (was 69) |
+| fern_cottage | pass | 0.851 | GR2 and GR3 fixed; polish GR2-1 (3 nails), GR2-2 |
+| fern_cottage_damage | pass | 0.625 | GR1: east/west 0.60; detector faults ruled a result of the clamp; polish GR2-3 |
+| ground | pass (round 1) | n/a | bytes unchanged (sha 18322af2) |
+
+### Round 1 codes, measured
+
+| Code | Asked | Measured at 5b230ffb | Ruling |
+| --- | --- | --- | --- |
+| GR1 library | east part at most 0.6 of lit; nothing above tone 2; weights one step down | tarp mean Y 46.0 against 105.5 on main's lit roof = 0.44; tones #25633d / #02432c / #01211a; weights #aba194 100 → 8 texels, #332937 0 → 42 | fixed |
+| GR1 fern | as above, plus a ridge crease and a lit fold | west 177, east 107 = 0.60; east tones sand_cool 2/1/0 only; #ffebc8 fold column x 121 over a #684441 crease x 122 along the whole ridge; weights #aba194 41 → 3 east | fixed (see the ruling on its detectors) |
+| GR2 | lit texel at upper left, dark texel under-right, jitter, about 1 board in 4 bare | north cottages: 25 heads, 25 lit (round 1: 0 of 28), 20 distinct x (was 6), 1 of 7 boards bare. Fern: 3 heads, 3 lit, on 2 of 6 boards. Under-right texel present on 1 of 25 and 0 of 3 | fault fixed; GR2-1 |
+| GR3 | 2-texel apron along the whole foot; soaker each side; shadow 3-4 below and 2 east | apron under every foot column on all four (NC 27/27, bakery 36/36, smithy 42/42, fern 27/27), lit over dark on 25, 34, 40, 25. Lit lead texels 37, 50, 54, 41 (round 1: 7 or 8). Course highlights 3 to 6 rows below the foot: 24 → 3, 37 → 12, 120 → 4, 93 → 10. East: d = 2 and 3 hold 0 to 7 highlight texels. Soakers: 3 to 6 lit texels low on the west side only; none on the east | fault fixed (reads at 1x and 2x); GR2-2 |
+| GR4 | rows 1-2 nothing above 0.55 of the wall median; fade about 18 % | above 0.55: library 0 of 534 (1 stray at the foot), bakery 0 of 390, smithy 0 of 486 (1 at the foot), NC 0 of 348, fern 0 of 264 (round 1: 285, 169, 187, 92, 45). Line drop 56 / 64 / 63 / 77 / 77 %; fade 26 / 34 / 33 / 35 / 33 % | fixed: the line now reads apart from the fade, as B5's 72 / 33 / 20 % does |
+| GR5 | west end #a87c52 with a 2-texel ring; 1 texel of transparent margin | all five: #a87c52 x 2 at the west cut, a #70432f arc of 2 at the next column, a 1-texel #50261d / #4d2220 outline outside each end; columns 0 and W−1 transparent | fixed |
+| GR7 | no moss on the bakery's outline | green within 6 rows of every slope's back edge: 0 on all five (bakery round 1: 11, smithy 10); (17,94) and (14 to 17,98) now #787e9c | fixed |
+| GR9 | record each pot; smoke on one | smithy pots (181,34) and (195,32); the west pot spans canvas x 175 to 185, with its rim on row 33; SmithySmoke (1542,531) → (1535,533) = 1500 − 146 + 181, 840 − 341 + 34 | fixed |
+| GR11 | hole timber east one step down | NC 59 → 45, bakery 71 → 47, smithy 69 → 43 (lit-side holes 100, 82, 60) | fixed |
+
+At 1x in the street, every stack now carries a pale line along its foot and reads as standing on the slope. At 2x, the smithy's smoke rises from the west pot.
+
+### Rulings on the detector findings and the painter's flags
+
+- **(a) Library `detail.volume` [101,164,126,173]: false positive, as in round 1.** It is the same block, moved 2 texels with the canvas: lit top arris row #e8d6b7 and west arris, body #cdbea3 tooled with #afa490, shaded lower row #908377, mortar #70625f. It is a modelled ashlar block, not wood.
+- **(b) fern_cottage_damage `detail.flat` [146,53,164,118] and `detail.volume` [130,44,146,95] / [146,53,164,118]: a result of the correct shading, not a fault.**
+  - The east half is darkened two steps and capped at tone 2, as GR1 asked. Both ends of the map clamp, so the lit ramp's tones 1 and 2 (#926f5a, #b49271; 219 + 651 texels in round 1) both land on sand_cool 0 #684441 (825 texels). The tones above them (#ffebc8, #efd09c) fold into sand_cool 2.
+  - The fold trough at x 147 to 155, y 54 to 117 is therefore a flat 9 x 64 slab. That slab is the detector's 50 % patch.
+  - The cloth still reads as draped cloth at 1x and 2x: three value bands across each fold, the ridge crease, the stain and the stitched seam. Like Eastward's shaded planes, it is calm without being shapeless.
+  - Polish GR2-3 restores the trough's lost value step with a dark crease, without lightening anything.
+- **Cluster noise and `detail.light` on the houses:** kept as measurements. Every bar rose slightly from round 1.
+
+### Logic and other changes
+
+- **GR5 widening.** Every canvas grew by 4 texels, 2 each side: library and north cottages 312 → 316, bakery and fern cottage 240 → 244, smithy 288 → 292. Heights are unchanged.
+  - kit.json moves each house and damage offset x by −2, and nothing else. Positions, y offsets and every other object are identical to round 1.
+  - The piece files change only `version`, the foot's x (+2, in canvas coordinates), `size_px` and `size_cells` x (+1, which `rules.scale` requires). Footprint and collision are unchanged; the `.tscn` offsets match.
+  - The doors stand in the same place. Below the eave, the only changes are the phase of patterns keyed to canvas x: the doors' kick-plate hatch, the smithy hood's seams, and the lit slopes' per-slate highlights. These are the same recipe, with no regression.
+  - On the lapped gables, the board grain and plaster dashes re-rolled. The painter's note that the house's other draws are unchanged does not hold for these two houses, though nothing got worse.
+  - The damage overlays' tarp and window boarding re-rolled with the new draws.
+- **Unlisted change at the stacks.** In round 1, the slope 4 to 8 columns east of each stack had almost no course highlights (smithy: 0 or 1 a column). Round 2 draws them at the open slope's density (22 to 27). The contact shadow is now the 2 columns that GR3 asked for, but it is narrower than the vent shadows in Eastward's shot 17 (about 6 native px). This is part of GR2-2.
+
+### The composite and the merge
+
+- `sha256(scene.composite(load_zone('crossroads')))` gives c0de8798… at 5b230ffb, 09d21a69… at main and 16bb4807… at ff4e2bc1. All three reproduce.
+- **The stall is main's new stall.** The stall box (1083,610)-(1221,772) has 0 changed texels against main and 4,078 against round 1. In the committed composite it is the chalk board with a plum and "3d", and the burlap sack. Round 1's composite shows the old lettered board and the white sack, which is probably what the earlier crop showed.
+- kit.json's stall and every other object match main. The sprite set is unchanged.
+- 233,508 texels change against main:
+  - 222,621 inside the ten house boxes (old and new);
+  - 3,046 inside the five prop-shadow boxes;
+  - 2,824 inside the smoke box, outside the house boxes;
+  - 5,017 elsewhere. All of these are `ground.png` changes (the casts), 1,359 of them within 6 texels of a house box.
+- The painter splits the last two items as 5,005 + 358 + 2,478 = 7,841, which equals my 2,824 + 5,017. The split differs only where the smoke's box overlaps the smithy's cast. Nothing else moved.
+
+### Eastward comparison (B5, shot 17, x1.37)
+
+- **Stack.** B5's roof vent stands on a dark outline with a contact shadow dithered about 6 native px to its east and below. The stack's foot now has its lit edge, and the clean floor tone under it matches that grammar. The east shadow is narrower than B5's (GR2-2).
+- **Tarp.** The shaded half of the tarp sits in the value range of B5's shaded wall. Its fold bands keep the cloth readable.
+- **Board edge and band.** The board and its band now match B5's crisp line under the verge.
+
+### Fix list (round 2, polish only)
+
+Each code is also in the picture's `reviewer.fix_list`.
+
+- **GR2-1** (`north_cottages`, `fern_cottage`): the dark under-right texel of each nail head is tidied away. It is the board's own tone on 24 of 25 heads and on 3 of 3; add it to finish()'s keep mask. On the fern cottage, only 3 heads stand on 2 of the gable's 6 boards (the boards at y 113, 143, 152 and 163 are bare). Make the skip per board so no more than about one board in three goes bare, or reseed until it does.
+- **GR2-2** (`north_cottages`, `bakery`, `smithy`, `fern_cottage`):
+  - Draw a 1-texel soaker column up each side face above the apron: west slate_cool 4, east slate_cool 3. Today the soakers are 3 to 6 texels low on the west side, and there is none on the east.
+  - Widen the east contact shadow to about 4 columns at the floor tone, fading by columns 5 and 6, as Eastward's vents do.
+- **GR2-3** (`fern_cottage_damage`): break the flat trough without lightening it.
+  - Where the lit cloth had tone 1 (the fold cores), draw a 1-texel crease of the tarp's outline dark #3d2d30 down the middle of each trough wider than 4 texels.
+  - Break each crease with a sag every 10 to 12 rows: 1 texel of #8c6556 on the crease's east side.
+  - Check: east/west mean at most 0.6, no texel above sand_cool 2 east of the ridge, and the box's largest one-tone patch under 35 %.
+
+Codes skipped by Claude A's decision stay open in round 1's list: GR6, GR8, GR10, GR12.
+
+### Gate (round 2)
+
+`python3 -m scripts.review.gate --check` passes. It prints `ADVISORY` for all 11 crossroads pictures in this PR: their records pass, so they can leave `art/catalogue/fix-queue.json`. This round edits no queue entry, art, detector, threshold or CI.
+
+### Files changed (round 2)
+
+- This file.
+- `art/catalogue/crossroads/*.json` for the 10 house and damage pictures: the `reviewer` block only, plus `fix_list` where there are codes. Detector fields are unchanged.
+
+### Not checked (round 2)
+
+- The scene gate, the night tint, the phone view and a device play-test.
+- `npm run verify` and the CI result: this audit changes only review files.
+- The crops and measuring scripts stay in the auditor's scratch folder. The Eastward crops stay local.
