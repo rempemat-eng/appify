@@ -505,6 +505,30 @@ static func unexported_actors(root: Node) -> Array:
 	_actor_entries(root, 1.0, skipped)
 	return skipped
 
+## The zone's edge: four walls just outside the ground, on the walls layer. Without them the
+## player walked off a kit zone into the empty space round it (played on 10 Nov: west, north and
+## south of the glade and of kitlab). A door at an edge lies inside the ground, so it still opens.
+const EDGE_THICKNESS := 48.0
+static func edge_walls(size_px: Vector2) -> StaticBody2D:
+	var body := StaticBody2D.new()
+	body.name = "Edge"
+	body.collision_layer = 1
+	body.collision_mask = 0
+	var t := EDGE_THICKNESS
+	var walls := {
+		"North": Rect2(-t, -t, size_px.x + 2.0 * t, t), "South": Rect2(-t, size_px.y, size_px.x + 2.0 * t, t),
+		"West": Rect2(-t, 0.0, t, size_px.y), "East": Rect2(size_px.x, 0.0, t, size_px.y)}
+	for side in walls:
+		var rect: Rect2 = walls[side]
+		var shape := CollisionShape2D.new()
+		shape.name = side
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = rect.size
+		shape.shape = rectangle
+		shape.position = rect.get_center()
+		body.add_child(shape)
+	return body
+
 ## A door from its plan entry (rect in cells), unattached.
 static func door_node(entry: Dictionary, cell: int) -> Area2D:
 	var door: Area2D = load("res://world/door.gd").new()
@@ -592,6 +616,8 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 		var flow := _flow_layer(plan.flow, kit.cell)
 		ground.add_child(flow)
 		flow.owner = root
+	root.add_child(edge_walls(Vector2(size * kit.cell)))
+	_own(root.get_node("Edge"), root)
 	var props := _container(root, "Props")
 	props.y_sort_enabled = true
 	var unit := _units(plan, kit.cell)

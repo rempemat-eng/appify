@@ -1,17 +1,83 @@
 # The world editor
 
-Status: prototype (Claude A, 27 Oct). It holds:
+## Status (10 November): what works, what does not, and the decision
 
-- the terrain kit (seven materials, twelve transitions, edge dressing, tiers with derived faces);
-- the piece library and its schema (98 pieces), with feature pieces per width (falls, steps, bridges, stepping stones);
-- props as scenes;
-- a JSON plan that turns into a zone scene and back;
-- a first dock in the editor;
-- the validator on kit zones;
-- the ground baked with the woodland's own painters (`bake.py`), with width classes and surface variants (`surface.py`), measured against the hand-painted woodland (`detail_bar.py`);
-- the woodland rebuilt with the kit (`--zone=woodland_kit`) beside the current one, and the labs `kitlab`, `kitlab_tiers` and `kitlab_widths`.
+This section was rewritten after driving the editor for real: the dock's own handlers and the plugin's canvas input were run inside a Godot editor process on an existing kit zone, and then used to build a new one-screen zone, which was loaded in the game and played with real key and mouse input. Each line says how it was checked.
 
-Every material and piece is still a `candidate`: none is approved, so none ships. Codex tasks W1 to W7 below take the mechanical parts to completion.
+**Can a zone be built in the editor end to end today? Yes, as a lab zone of one screen. Not yet as a zone that ships.**
+
+The proof is `editor_glade` (`game/kit/zones/editor_glade.json`, `game/zones/editor_glade/editor_glade.tscn`): lawn, a path with a bend and a spur, a pond, eleven props, two spawns, a door, a sign to read and a camp of three mosslings. It was built with the dock in about 20 actions, validated, saved and exported. In the game it plays the sample quest from start to finish (read the sign, clear the camp, read the sign again, 40 Glint) and the door leads to the next zone. It stays in the repo as a regression fixture and is not in `data/zones.json`.
+
+### What works today (checked)
+
+| What                                                                                                                            | How it was checked                                       |
+| ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Open a kit zone, the dock lists 12 materials and 226 pieces                                                                     | Editor run on `kitlab`                                   |
+| Paint ground with the brush, the rectangle and the route tool; one undo per gesture                                             | Editor run, canvas input; GdUnit                         |
+| Place a piece by clicking; the rules refuse a bench on a path and an oak in the pond, with the rule's message                   | Editor run on the new zone                               |
+| Undo and redo of every dock action                                                                                              | Editor run; GdUnit                                       |
+| Move and delete a placed piece with Godot's own tools, with the walk mask, shadows and previews following                       | Editor run before and after the fix; GdUnit              |
+| Spawns, doors, talk areas, villagers, restore sites and camps placed from the dock with one click, then edited in the inspector | Editor run; GdUnit                                       |
+| Save, reopen, export: the plan JSON round trip is lossless, including actors (plan to scene to plan gives the same bytes)       | Editor run, the command-line tool, GdUnit                |
+| Validate zone runs the full Python validator and lists faults before advice                                                     | Editor run                                               |
+| Bake ground paints the shipping ground with the woodland's painters: 19 seconds for one screen                                  | Editor run on the new zone                               |
+| The zone loads in the game; the pond, the props and the zone edge block; the path is open; the quest and the door work          | Played with real input under Xvfb, about 100 seconds     |
+| The walk mask is the same from Python (`walk.py`) and from Godot (`walk.gd`) on all five kit zones                              | Cell by cell comparison; a shared fixture now holds both |
+
+### What does not work, or is missing
+
+1. **Nothing in the library is approved.** All 263 usable pieces are `candidate` (one is retired), so in an ordinary zone the palette is empty and every paint or placement is refused. Only a zone marked `lab` can be authored. A zone that ships needs Matt's approval of every material and piece it uses. This is a decision, not a code fault.
+2. **Height has no tool.** Tiers work in the plan and in the game, but the dock cannot paint them. Today they are typed into the plan's `tiers` rows. Water flow has no tool either.
+3. **Pieces do not carry their function.** A sign piece is a picture and a solid. The talk area is a second click (the Gameplay row). The `function` block in the piece file is not wired, and a piece's `stage` (broken, restored) is stored but changes nothing in the game.
+4. **Some things under Actors cannot be held by a plan**: loose sprites, and anything that is not an interactable, villager, restore site, camp or actor scene. Validate now lists them as advice. They stay in the scene and are lost if the scene is rebuilt from its plan.
+5. **Five pieces collide differently depending on how the zone was made.** A zone saved from the dock uses the derived walk mask. A zone built by the command-line tool uses each piece's own solid box. They differ for three signs whose collision is a circle (no box is generated, so the mask blocks their whole 2 by 2 cell footprint) and for two pieces that have a box but are marked as not blocking. The fix is in the piece data.
+6. **The bake freezes the editor while it runs**, and a new zone starts as live tiles (the preview look) until it is baked.
+7. **No frame or resize tools.** The dock cannot change a zone's size, show screen boundaries or preview the camera. A new zone starts from `kit_zone.gd --new`.
+8. **Materials stop at the home valley.** There are 12 terrain materials (lawn, path, cobbled road, worn ground, scree, water, earth face, and the Brackens' and coast's five). There is one cliff material, earth, two cells high. No snow, ice, rock ground or rock cliff exists.
+
+### Faults found and fixed on 10 November
+
+Each has a test that fails on the old code (`game/test/test_world_editor_authoring.gd`, `scripts/art/kit/test_walk_coordinates.py`).
+
+- Once a brush was picked there was no way to put it down: every click placed another piece, so a placed piece could not be selected or moved on the canvas. The dock has a Select button and Escape does the same.
+- A second click on one spot stacked an identical piece under the first.
+- Moving or deleting a piece with Godot's own tools left the walk mask, the shadows and the baked preview stale.
+- A zone saved after a dock edit made every fresh game that loaded it log an engine error (a process id saved in the scene).
+- A zone's first bake was reported as failed although it had succeeded.
+- Actors could not be authored: anything added under Actors was dropped when the scene was rebuilt from its plan. The plan now has an `actors` list.
+- Placed pieces and enemies were saved as copies of their scene's values, not as instances.
+- Python's walk mask left out the walls on tier edges (204 cells in `kitlab_tiers`, 122 in `woodland_kit`), and three committed `walk.txt` files were out of date.
+- The player could walk off the edge of a kit zone into empty space. A zone built from a plan now has walls round it. The four older lab scenes get theirs when they are next rebuilt from their plans.
+- The status line sat below three lists, off the screen, so a refusal could not be read. It is now pinned at the top.
+- Deleting the selected piece emptied the dock and blamed the library.
+
+### Building the Frostline (about four screens) in the editor
+
+| Need                                     | Today                                                        | Missing                                                                                                                               |
+| ---------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Ground materials                         | None for the region: no piece carries the Frostline's biome  | Snow, ice, alpine turf, rock ground and their transitions: about 5 materials and 10 transitions, each through the library gate        |
+| Height                                   | One earth face, two cells per tier, derived under south rims | A rock cliff of 32 world px and more with its own face strip (the kit holds one face material), a tier brush in the dock, rock stairs |
+| Props and structures                     | The 17 Frostline records are concepts, none built            | Conifers, the bothy, the cave mouth, cairns, about 15 to 25 pieces                                                                    |
+| Placement rules                          | The relation engine and the validator are general            | Nothing new in code; the new pieces need their roles and relations                                                                    |
+| Doors, spawns, talk areas, camps         | Now in the dock and the plan                                 | Nothing                                                                                                                               |
+| The region's own verb (cold and shelter) | Any actor scene can be placed (`kind: scene`)                | The cold and shelter areas themselves, which are game code                                                                            |
+| Conditional states                       | `if` on a door and on an actor                               | A piece's `stage` does nothing yet                                                                                                    |
+| Size                                     | `woodland_kit` is 40 by 72 cells and works                   | Screen guides in the dock                                                                                                             |
+
+The editor code is a small part of that. Most of it is art (materials, the rock cliff, props) and approvals, and that art is needed whichever tool lays the zone out.
+
+### Recommendation for Matt's open decision
+
+**Keep the generators for the three zones that exist. Lay out M1's new zones in the editor, but only after two things are true, and decide zone by zone until they are.**
+
+1. The zone's materials and pieces exist and are approved. For the Brackens that is mostly an approval: 59 pieces and 3 materials are built as candidates. For the Frostline it is new art.
+2. The dock can paint tiers. That is the one missing tool a mountain zone cannot do without, and it is about a day of work.
+
+Why not adopt it for everything now: the editor has built one screen of flat valley ground, nothing approved exists, and the Frostline's ground does not exist in any tool. Why not shelve it: the layout, the rules, the wiring, the save format and the game runtime all held up when driven for real, and the faults that would have stopped a person were small and are fixed. One screen took 20 dock actions and a 19 second bake. The same screen from a generator is a Python file and a render for every change.
+
+The cheap test that settles it: build the Brackens' first screen in the editor from its candidate pieces, as a lab, and let Matt play it. If it reads as well as a generated zone, approve those pieces and carry on in the editor. If not, the Brackens go to a generator and the editor is shelved with nothing lost but that screen.
+
+The sections below describe the design (27 October onwards). Where they say "not yet", the list above is the current state.
 
 ## Why
 
@@ -74,12 +140,12 @@ The look is the approved woodland's, painted by the same recipes.
 
 A transition tile (`scripts/art/kit/edges.py`) does not store colours. Each texel is an operation on the palette codes under it:
 
-| Op | Meaning |
-| --- | --- |
-| keep | show what is below |
-| upper + delta | the upper material's fill, stepped along its own ramp |
-| delta | what is below, stepped (the shadow under the turf's north lip, a lit row) |
-| absolute | a palette code (kept for kerbs and banks) |
+| Op            | Meaning                                                                   |
+| ------------- | ------------------------------------------------------------------------- |
+| keep          | show what is below                                                        |
+| upper + delta | the upper material's fill, stepped along its own ramp                     |
+| delta         | what is below, stepped (the shadow under the turf's north lip, a lit row) |
+| absolute      | a palette code (kept for kerbs and banks)                                 |
 
 So one tile fits any position of the fills and any lower material of its class, and light and shade stay on the house ramps (`palette.step`).
 
@@ -152,11 +218,11 @@ Raised ground is painted as tier numbers per cell: the `Tiers` TileMapLayer (`ki
 
 **The transitions follow the lumped outline:**
 
-| Transition | What it draws |
-| --- | --- |
-| `lip` (turf over its face) | the turf's darker last row, a lit row behind it, the rim line and the under-lip line |
-| `foot` (a face over any ground, `*`) | the dark foot band, the ground's first row in shade, the side bands at the face's ends (lit facing west, in shade facing east, the darkest line broken on the outside) |
-| `tier_side` (turf over any lower tier, `^`) | the plateau's west and east walls seen edge-on, and its back rim |
+| Transition                                  | What it draws                                                                                                                                                          |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lip` (turf over its face)                  | the turf's darker last row, a lit row behind it, the rim line and the under-lip line                                                                                   |
+| `foot` (a face over any ground, `*`)        | the dark foot band, the ground's first row in shade, the side bands at the face's ends (lit facing west, in shade facing east, the darkest line broken on the outside) |
+| `tier_side` (turf over any lower tier, `^`) | the plateau's west and east walls seen edge-on, and its back rim                                                                                                       |
 
 Their bands are keyed to the cell configuration, never to stray texels, so the border strips stay canonical (test_kit).
 
@@ -241,12 +307,12 @@ A narrow channel keeps its own, smaller rounding and gaussian easing (the woodla
 
 Some pieces carry a `rendering.paint` block. The bake paints them into the ground, and their sprite is only the preview:
 
-| Piece | What the bake paints |
-| --- | --- |
+| Piece                                                                                           | What the bake paints                                                                                                                                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `waterfall_1` to `_4`, and `_tall` for a two-tier drop (a face four cells high, the woodland's) | The woodland's cascade: the rock face (`rocks.face`), the stepped slabs either side and the lip ledge (`rocks.rock`), the wet rock beside the sheet, the falling sheet with its streaks (`rocks.fall`), its foam and rings inside the pool. The validator requires one wherever water crosses a south rim (`rules.water_fall`). |
-| `log_steps_1`, `log_steps` (2), `log_steps_3` | `softground.log_steps`: the cheeks of earth either side, treads with depth and shade under each nose, the head flush with the rim. |
-| `footbridge_2`, `woodland_footbridge` (3), `footbridge_4` | `softground.footbridge` over the zone's own banks: an abutment in each bank, deck, kerbs, posts and rails. |
-| `stepping_stones_1`, `_2` | Flat stones a stride apart with their wet rings: a footpath's crossing of a rill or a stream. Its deck carries the route (`rules.route_water`, `rules.deck`). |
+| `log_steps_1`, `log_steps` (2), `log_steps_3`                                                   | `softground.log_steps`: the cheeks of earth either side, treads with depth and shade under each nose, the head flush with the rim.                                                                                                                                                                                              |
+| `footbridge_2`, `woodland_footbridge` (3), `footbridge_4`                                       | `softground.footbridge` over the zone's own banks: an abutment in each bank, deck, kerbs, posts and rails.                                                                                                                                                                                                                      |
+| `stepping_stones_1`, `_2`                                                                       | Flat stones a stride apart with their wet rings: a footpath's crossing of a rill or a stream. Its deck carries the route (`rules.route_water`, `rules.deck`).                                                                                                                                                                   |
 
 Bends, junctions, pool ends and widenings need no pieces of their own. Each is the painted outline of the whole body, eased where its width changes (`surface.taper`), so a stream widens into a river rather than stepping.
 
@@ -280,11 +346,11 @@ Bends, junctions, pool ends and widenings need no pieces of their own. Each is t
 
 The pick never repeats the variant of the cell to the west or north. The plain surface is exempt and may run on, which keeps the lawn as calm as the painted one (the `lawn` region below). Each variant is drawn as a soft blob round its cells, never their square. A slow tone field shifts the body hue over about 200 texels, so a long path never looks stamped.
 
-| Material | Variants |
-| --- | --- |
+| Material  | Variants                                                                            |
+| --------- | ----------------------------------------------------------------------------------- |
 | dirt path | plain, worn centre, grassy verge, stony, damp with a puddle, leaf litter, compacted |
-| lawn | calm field, clover, daisies, long grass, trampled |
-| water | still, rippled, reedy, lilies, shallow over stones |
+| lawn      | calm field, clover, daisies, long grass, trampled                                   |
+| water     | still, rippled, reedy, lilies, shallow over stones                                  |
 
 `kitlab_widths` shows them all:
 
@@ -312,13 +378,13 @@ The measures:
 
 A region passes when its edges and tones reach 95 % of the painted, its flat share is at most the painted's plus 0.02, and its outline stays within the painted's plus a small margin. `test_kit.Surface` holds it.
 
-| Region | Edges, painted / kit | Tones | Flat | Outline teeth / ruler | Result |
-| --- | --- | --- | --- | --- | --- |
-| water | 0.274 / 0.282 | 12.2 / 14.8 | 0.29 / 0.28 | 0.011 / 0.023, 0.13 / 0.06 | pass |
-| path | 0.306 / 0.310 | 14.3 / 14.9 | 0.062 / 0.080 | 0.096 / 0.096, 0.024 / 0.013 | pass |
-| tree shadows | 0.319 / 0.364 | 10.8 / 10.5 | 0.012 / 0.023 | | pass |
-| open lawn (held both ways: as calm, not busier) | 0.277 / 0.274 | 8.3 / 8.7 | 0.031 / 0.049 | | pass |
-| tier faces (vs the plateau swatch) | 0.334 / 0.335 | 13.6 / 17.4 | 0.006 / 0.008 | | pass |
+| Region                                          | Edges, painted / kit | Tones       | Flat          | Outline teeth / ruler        | Result |
+| ----------------------------------------------- | -------------------- | ----------- | ------------- | ---------------------------- | ------ |
+| water                                           | 0.274 / 0.282        | 12.2 / 14.8 | 0.29 / 0.28   | 0.011 / 0.023, 0.13 / 0.06   | pass   |
+| path                                            | 0.306 / 0.310        | 14.3 / 14.9 | 0.062 / 0.080 | 0.096 / 0.096, 0.024 / 0.013 | pass   |
+| tree shadows                                    | 0.319 / 0.364        | 10.8 / 10.5 | 0.012 / 0.023 |                              | pass   |
+| open lawn (held both ways: as calm, not busier) | 0.277 / 0.274        | 8.3 / 8.7   | 0.031 / 0.049 |                              | pass   |
+| tier faces (vs the plateau swatch)              | 0.334 / 0.335        | 13.6 / 17.4 | 0.006 / 0.008 |                              | pass   |
 
 **Not yet:**
 
@@ -356,18 +422,18 @@ The schema has semantic rules too:
 
 A breaking change bumps the version (`napattack.piece/2`), and the build migrates old pieces.
 
-| Block | What it holds |
-| --- | --- |
-| identity | `id`, `name`, `kind`, `biomes`, `variants` (id, weight, png), `version`, `approval` (state candidate, gated, approved, rejected or retired; who, when, against which standard, from which sheet) |
-| `terrain` | `material_id`, `priority`, `fill` painter and args, `walkable`, `surface`, `route`, `water` (body, depth, flow), palette swatch |
-| `transition` | `upper`, `lower` (or `*`), painter and args, `variants`, whose plan is softened, `dressing` (density, decals for south, north and side edges) |
-| `geometry` | size in cells and art px, foot anchor, footprint cells (solid), overhang cells (drawn over, walkable behind), height above ground, z-sort rule, collision shape, interaction points (with verb and radius), door cells |
-| `placement` | role (the ground-rules role), allowed and denied ground, tiers, `requires` and `forbids` relations (adjacent, within, on, facing, near, under, at_edge, at_corner, on_anchor, not_on, not_near, not_overlap, each with what, cells and facing), clearance, orientations, snap (cell, half, free), min and max per zone, stage tags (broken, restored, night, season:x, raid), composition role (centre, edge, corner, axis, row, cluster, free) |
-| `rendering` | lit picture, shadow picture, cast shadow (shape, direction, length), contact AO, light (radius, colour, flicker, when), animation clips (loop, frames, reduced-motion fallback, on-screen only), sound cues, day/night and weather variants |
-| `function` | interact (verb: enter, use, read, sit, open, talk, harvest, forge, rest, restore, look; triggers: scene, menu, quest, shop, dialogue, flag, restore with a data ref), state it saves, costs and yields as data refs, raid behaviour (destructible, defended, repairable) |
-| `story` | quests, dialogue ids, owner (Hale's anvil), lore note, gating (region, act, a quest condition), restoration milestone |
-| `gameplay` | blocks movement, blocks shots, cover, hazard, spawn, navigation cost |
-| `audit` | source painter and args, review records (gate, result, date, sha256), size-guide class, Eastward reference shot, what it was seeded from, open todos |
+| Block        | What it holds                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| identity     | `id`, `name`, `kind`, `biomes`, `variants` (id, weight, png), `version`, `approval` (state candidate, gated, approved, rejected or retired; who, when, against which standard, from which sheet)                                                                                                                                                                                                                                                |
+| `terrain`    | `material_id`, `priority`, `fill` painter and args, `walkable`, `surface`, `route`, `water` (body, depth, flow), palette swatch                                                                                                                                                                                                                                                                                                                 |
+| `transition` | `upper`, `lower` (or `*`), painter and args, `variants`, whose plan is softened, `dressing` (density, decals for south, north and side edges)                                                                                                                                                                                                                                                                                                   |
+| `geometry`   | size in cells and art px, foot anchor, footprint cells (solid), overhang cells (drawn over, walkable behind), height above ground, z-sort rule, collision shape, interaction points (with verb and radius), door cells                                                                                                                                                                                                                          |
+| `placement`  | role (the ground-rules role), allowed and denied ground, tiers, `requires` and `forbids` relations (adjacent, within, on, facing, near, under, at_edge, at_corner, on_anchor, not_on, not_near, not_overlap, each with what, cells and facing), clearance, orientations, snap (cell, half, free), min and max per zone, stage tags (broken, restored, night, season:x, raid), composition role (centre, edge, corner, axis, row, cluster, free) |
+| `rendering`  | lit picture, shadow picture, cast shadow (shape, direction, length), contact AO, light (radius, colour, flicker, when), animation clips (loop, frames, reduced-motion fallback, on-screen only), sound cues, day/night and weather variants                                                                                                                                                                                                     |
+| `function`   | interact (verb: enter, use, read, sit, open, talk, harvest, forge, rest, restore, look; triggers: scene, menu, quest, shop, dialogue, flag, restore with a data ref), state it saves, costs and yields as data refs, raid behaviour (destructible, defended, repairable)                                                                                                                                                                        |
+| `story`      | quests, dialogue ids, owner (Hale's anvil), lore note, gating (region, act, a quest condition), restoration milestone                                                                                                                                                                                                                                                                                                                           |
+| `gameplay`   | blocks movement, blocks shots, cover, hazard, spawn, navigation cost                                                                                                                                                                                                                                                                                                                                                                            |
+| `audit`      | source painter and args, review records (gate, result, date, sha256), size-guide class, Eastward reference shot, what it was seeded from, open todos                                                                                                                                                                                                                                                                                            |
 
 Relations name things the validator can find: a material id, a surface (`route`), a tier edge (`rim`), an anchor kind (`hearth`), a role (`seat`), or a piece id. Two examples from the ground rules:
 
@@ -429,24 +495,42 @@ Today `TerrainGround._build_blocked` makes the blocked cells (with decks subtrac
 
 A kit zone can also take its gameplay from a hand-made zone (`gameplay_from`: its Actors, Spawns and Doors are copied in). That is how `woodland_kit` keeps the woodland's sign, camp, Hale, doors and spawns exactly.
 
-**The dock** (`game/addons/world_editor/`, enabled in `project.godot`). The prototype already has:
+**Actors in the plan (10 Nov).** A plan's `actors` list holds what a quest needs in the zone. Each entry has an `id` (its node name under `Actors`), a `kind` and a position `at`:
 
-- the palette of materials and pieces with their swatches and approval states;
-- painting the selected material on a zone's `Cells`, with undo;
-- placing the selected piece snapped by its `snap`;
-- the hover card (size, foot, role, needs and nevers, use, owner, blocking, shadow);
-- refusals: a piece not through the library gate outside a lab zone, `on route`, `on water`, a route edge required within n cells;
-- a quick "Validate zone".
+| Kind           | Fields                                                                   | The node it becomes                                                        |
+| -------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| `interactable` | `speaker`, and optionally `verb`, `radius` (texels, 30), `marker_height` | An `Interactable` area with a round `Shape`                                |
+| `villager`     | `speaker`, `character`, and optionally `facing`, `work`                  | An `Interactable` with a cast `Body` (`Villager`) and a small solid `Post` |
+| `restore`      | `restore`, optionally `speaker`                                          | A `RestoreSite`                                                            |
+| `camp`         | `camp`, `enemies` (a list of positions), optionally `scene`              | A `Camp` with one enemy instance per position                              |
+| `scene`        | `scene`, optionally `set` (property values)                              | An instance of any actor scene                                             |
 
-The full dock (Codex W3) has:
+`"if": {...}` on an entry puts the actor inside a `Conditional` with that quest condition. Export reads the entries back from the nodes, so a value changed in Godot's inspector reaches the plan. A node under `Actors` that is none of these kinds stays in the scene only; `Validate zone` and the export list it. Actors copied in by `gameplay_from` stay with their source scene.
 
-- a palette of approved materials and pieces with their swatches;
-- terrain painting (brush, rectangle, route tool laying runs of 2 or 3 cells with rounded turns);
-- piece placement that snaps by the piece's `snap`;
-- hover cards with the piece's size, rules, function and story;
-- live relation hints (the bench shows where its route edge must be);
-- a refusal with the rule's message when a placement breaks a rule;
-- a "validate zone" button running the full checks.
+**A new zone** starts from the command line, then is authored in the dock:
+
+```sh
+$GODOT --headless --path game -s tools/kit_zone.gd -- --new=my_zone --size=40x23 --ground=lawn --lab=1
+```
+
+It writes `kit/zones/my_zone.json` and `zones/my_zone/my_zone.tscn` and refuses to replace either. A zone built from a plan has an `Edge` body: four walls just outside the ground.
+
+**The scene and the plan are one document in two files.** The scene is what Godot edits and the game loads. The plan is what the Python checks, the bake and reviewers read. The dock's **Save and export plan** writes both, and `test_world_editor_authoring.gd` fails when a committed pair disagrees.
+
+**The dock** (`game/addons/world_editor/`, enabled in `project.godot`; its own guide is `game/addons/world_editor/README.md`). Today it has:
+
+- the status line pinned at the top, where every refusal and result is shown;
+- **Select / move** (or Escape), which puts the brush down so Godot's own select, move and delete tools work on the canvas;
+- the palette of materials and pieces with their swatches and approval states, with a search and categories;
+- terrain painting: a brush of 1 to 3 cells, a rectangle and a route tool laying runs of 2 or 3 cells, one undo per gesture;
+- surface variants with their own brush;
+- piece placement snapped by the piece's `snap`, with facing, variant and stage, a live fault overlay, fence runs, gates and stiles on runs, group copy and paste, and a scatter brush;
+- the piece card (size, foot, role, needs and nevers, use, owner, blocking, shadow);
+- refusals with the rule's message: a piece not through the library gate outside a lab zone, a relation that fails, a second identical piece on one spot;
+- **Gameplay**: a spawn, a door, a talk area, a villager, a restore site or a camp placed with one click and then selected for the inspector;
+- **Validate zone**, **Save and export plan** and **Bake ground**.
+
+Still missing in the dock: a tier brush, a flow brush, zone size and screen guides.
 
 ## The validator
 
@@ -454,21 +538,21 @@ The full dock (Codex W3) has:
 
 **On kit zones today**, `scripts/review/kit_rules.py` (in `check:kit`) applies them to the plan's cells and the pieces' metadata. It reads data, never pixels, so a fault is caught where it is placed. Its checks:
 
-| Check | What it catches |
-| --- | --- |
-| `rules.unknown_piece` | a piece or material the library does not have |
-| `rules.unapproved` | an unapproved piece or material: advice in a lab, a fault where the plan says `ship` |
-| `rules.route_clear` | a blocking piece on a route cell; bridges and signposts are allowed |
-| `rules.route_water` | a route meeting water with no deck |
-| `rules.water_end` | water that reaches neither the zone edge nor a pool |
-| `rules.deck` | a bridge that does not span water from land to land |
-| `rules.overlap` | two solid footprints sharing a cell |
-| `rules.seating` | a seat with no route edge within two cells in front of it |
-| `rules.off_grid` | a foot off the 4 by 8 world px grid |
-| `rules.walk` | a spawn on a blocked cell |
-| `rules.stair` | a stair's flight not on a face, or its head and foot not flush |
-| `rules.tier_route` | a route that changes tier with no stair |
-| `rules.water_fall` | water crossing a south rim with no fall piece over the face below it, or a fall with no water above |
+| Check                 | What it catches                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| `rules.unknown_piece` | a piece or material the library does not have                                                       |
+| `rules.unapproved`    | an unapproved piece or material: advice in a lab, a fault where the plan says `ship`                |
+| `rules.route_clear`   | a blocking piece on a route cell; bridges and signposts are allowed                                 |
+| `rules.route_water`   | a route meeting water with no deck                                                                  |
+| `rules.water_end`     | water that reaches neither the zone edge nor a pool                                                 |
+| `rules.deck`          | a bridge that does not span water from land to land                                                 |
+| `rules.overlap`       | two solid footprints sharing a cell                                                                 |
+| `rules.seating`       | a seat with no route edge within two cells in front of it                                           |
+| `rules.off_grid`      | a foot off the 4 by 8 world px grid                                                                 |
+| `rules.walk`          | a spawn on a blocked cell                                                                           |
+| `rules.stair`         | a stair's flight not on a face, or its head and foot not flush                                      |
+| `rules.tier_route`    | a route that changes tier with no stair                                                             |
+| `rules.water_fall`    | water crossing a south rim with no fall piece over the face below it, or a fall with no water above |
 
 Faces are derived the way the game draws them. `test_kit.Rules` holds a plan that trips each rule and one that keeps it. It caught two faults while the prototype was built:
 
@@ -517,28 +601,28 @@ From then on every lane places it.
 
 From `docs/vision/regions/` (counts of mentions across the briefs) and the region plans. Each is one terrain piece plus its transitions. The classes (sunken, bank, kerb, ledge, shore) are shared painters.
 
-| Material | Regions | Transitions it needs | Painter today |
-| --- | --- | --- | --- |
-| lawn, meadow (lush and dry variants) | valley, isles, woodland | over path, sand, water bank, ledge | `softground.lawn` |
-| packed-earth path, worn ground | everywhere | under lawn, under heather | `softground.dirt` |
-| cobble road, wheel-rutted road | Crossroads, Cogsworth | under lawn (frayed), kerb to paving | `softground.dirt` with ruts, `town.py` |
-| paving and flags (with kerb) | Crossroads, Cogsworth, Neon Harbour, Hearthold | kerb over road, under lawn | `softground.paving` |
-| forest floor (litter, dapples) | woodland, the Brackens, old forest | under lawn, under path | `softground.forest_floor` |
-| sand, dunes | Sunstone, isles, Shell Bar, dune sea | under lawn, shore to sea | `softground.sand`, `shore` |
-| scree and gravel | the massif, coal hills, Frostline | under rock ground | new |
-| rock ground and highland stone | the massif, Sunstone | ledge faces (rock cliff) | `softground.ledge` (rock) |
-| snow, ice, glacier | Frostline, the massif | over rock, bank to ice | new (snow ramp exists) |
-| heather, moor | Frostline, the Brackens | over path | new |
-| fen, marsh, peat, mud | the fens, the delta | bank to still water | new |
-| tilled field, orchard rows, garden beds | valley, Cogsworth, isles | bed frame (kerb class) | `softground.bed` |
-| ash, basalt, obsidian, lava | fire country | glowing seam edges | new (ash and lava ramps exist) |
-| coal, slag, cinder | coal hills, Cogsworth | under path | new |
-| salt flats | Sunstone basin | under sand | new |
-| docks, boardwalk, decking | Neon Harbour, isles | over water (pier class) | `village.py` timber |
-| brick, concrete, rail beds | Cogsworth, Neon Harbour | kerb class | new |
-| water: still, stream, river, sea, shallows | everywhere | bank class, shore class, falls | `softground.water` |
-| earth ledge and rock cliff faces, stairs | everywhere | tier pieces | `softgrid.ledge`, `log_steps` |
-| regolith (moon) | Lumen | crater rims as tier pieces | new |
+| Material                                   | Regions                                        | Transitions it needs                | Painter today                          |
+| ------------------------------------------ | ---------------------------------------------- | ----------------------------------- | -------------------------------------- |
+| lawn, meadow (lush and dry variants)       | valley, isles, woodland                        | over path, sand, water bank, ledge  | `softground.lawn`                      |
+| packed-earth path, worn ground             | everywhere                                     | under lawn, under heather           | `softground.dirt`                      |
+| cobble road, wheel-rutted road             | Crossroads, Cogsworth                          | under lawn (frayed), kerb to paving | `softground.dirt` with ruts, `town.py` |
+| paving and flags (with kerb)               | Crossroads, Cogsworth, Neon Harbour, Hearthold | kerb over road, under lawn          | `softground.paving`                    |
+| forest floor (litter, dapples)             | woodland, the Brackens, old forest             | under lawn, under path              | `softground.forest_floor`              |
+| sand, dunes                                | Sunstone, isles, Shell Bar, dune sea           | under lawn, shore to sea            | `softground.sand`, `shore`             |
+| scree and gravel                           | the massif, coal hills, Frostline              | under rock ground                   | new                                    |
+| rock ground and highland stone             | the massif, Sunstone                           | ledge faces (rock cliff)            | `softground.ledge` (rock)              |
+| snow, ice, glacier                         | Frostline, the massif                          | over rock, bank to ice              | new (snow ramp exists)                 |
+| heather, moor                              | Frostline, the Brackens                        | over path                           | new                                    |
+| fen, marsh, peat, mud                      | the fens, the delta                            | bank to still water                 | new                                    |
+| tilled field, orchard rows, garden beds    | valley, Cogsworth, isles                       | bed frame (kerb class)              | `softground.bed`                       |
+| ash, basalt, obsidian, lava                | fire country                                   | glowing seam edges                  | new (ash and lava ramps exist)         |
+| coal, slag, cinder                         | coal hills, Cogsworth                          | under path                          | new                                    |
+| salt flats                                 | Sunstone basin                                 | under sand                          | new                                    |
+| docks, boardwalk, decking                  | Neon Harbour, isles                            | over water (pier class)             | `village.py` timber                    |
+| brick, concrete, rail beds                 | Cogsworth, Neon Harbour                        | kerb class                          | new                                    |
+| water: still, stream, river, sea, shallows | everywhere                                     | bank class, shore class, falls      | `softground.water`                     |
+| earth ledge and rock cliff faces, stairs   | everywhere                                     | tier pieces                         | `softgrid.ledge`, `log_steps`          |
+| regolith (moon)                            | Lumen                                          | crater rims as tier pieces          | new                                    |
 
 ## The work split: Codex and Claude
 
@@ -671,15 +755,6 @@ Matt, 13:43: "consider how chatgpt can help here to conserve claude tokens".
 
 ## Status of this stage
 
-**What exists:**
-
-- **Kit code** (`scripts/art/kit/`): `fills.py`, `edges.py`, `dressing.py`, `compose.py`, `build.py`, `bake.py`, `surface.py`, `detail_bar.py`, `sheet.py`, `approval.py`, `schema.py`, `seed_props.py`, `structures.py`, `props.py`, `woodland_kit.py`, `walk.py`, `render_zone.py` and `test_kit.py`.
-- **Validator:** `scripts/review/kit_rules.py`.
-- **Library and built kit** (`game/kit/`): the schema and invalid fixtures, 98 pieces, the built terrain and decals, 79 prop scenes, and zone plans for `kitlab`, `kitlab_tiers`, `kitlab_widths` and `woodland_kit`, each with its baked ground.
-- **Godot runtime** (`game/world/terrain/`): the shader, `TerrainKit`, `TerrainGround` (tiers, shadows, blocking), `TerrainDressing` and `KitPiece`.
-- **Tools:** `game/tools/kit_zone.gd` and the dock in `game/addons/world_editor/`.
-- **Zones:** `kitlab`, `kitlab_tiers`, `kitlab_widths` and `woodland_kit` in `data/zones.json`.
-
-**Not yet:** what each section above lists as not yet; W1 to W7; and any approvals.
+See "Status (10 November)" at the top of this file. In numbers: 264 pieces in the library (12 terrain, 25 transitions, 23 structures, 204 props; 263 candidates and one retired, none approved), 227 built prop scenes, five kit zones (`kitlab`, `kitlab_tiers`, `kitlab_widths`, `woodland_kit` and the editor-built fixture `editor_glade`), and W1 to W7 merged in #417.
 
 **Kept identical:** the pilot golden, the woodland, Crossroads and the Undercroft. No painter they use was changed.

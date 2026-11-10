@@ -442,6 +442,31 @@ func test_export_plan_file_writes_the_canonical_plan() -> void:
 	_scenes.append(rebuilt)
 	assert_str(ZonePlan.canonical(ZonePlan.plan_from_scene(rebuilt))).is_equal(text)
 
+# --- wrong output: the player walked off the edge of a kit zone
+
+func test_a_built_zone_is_walled_at_its_edge() -> void:
+	var f := await _fixture()
+	var edge := f.zone.get_node_or_null("Edge") as StaticBody2D
+	assert_object(edge).is_not_null()
+	assert_int(edge.collision_layer & 1).is_equal(1)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var space: PhysicsDirectSpaceState2D = f.zone.get_world_2d().direct_space_state
+	var probe := PhysicsShapeQueryParameters2D.new()
+	probe.shape = CircleShape2D.new()
+	(probe.shape as CircleShape2D).radius = 6.0
+	probe.collision_mask = 1
+	var size := Vector2(f.ground.size_px())
+	for outside in [Vector2(-10, 84), Vector2(size.x + 10, 84), Vector2(100, -10), Vector2(100, size.y + 10), Vector2(-10, -10)]:
+		probe.transform = Transform2D(0.0, outside)
+		assert_int(space.intersect_shape(probe).size()).override_failure_message("open at %s" % outside).is_greater(0)
+	# inside, along the edge and at an edge door, nothing is in the way
+	for inside in [Vector2(8, 84), Vector2(size.x - 8, 84), Vector2(100, 8)]:
+		probe.transform = Transform2D(0.0, inside)
+		assert_int(space.intersect_shape(probe).size()).override_failure_message("blocked at %s" % inside).is_equal(0)
+	# the edge is the zone's own, not authoring data: the plan does not change
+	assert_bool(f.operations.export_plan().plan.has("Edge")).is_false()
+
 # --- one walk mask, twice (scripts/art/kit/walk.py and world/terrain/walk.gd)
 
 func test_the_walk_mask_matches_the_python_export() -> void:
@@ -484,6 +509,7 @@ func test_the_editor_built_glade_is_a_whole_zone() -> void:
 	assert_str(ZonePlan.canonical(ZonePlan.plan_from_scene(rebuilt))).is_equal(ZonePlan.canonical(plan))
 	assert_that(ZonePlan.unexported_actors(root)).is_empty()
 	assert_bool(root.get_node("Ground").has_meta(&"kit_walk_owner")).is_false()
+	assert_object(root.get_node_or_null("Edge")).is_not_null()
 	# it is a fixture, not a place in the game
 	var zones: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/zones.json"))
 	assert_bool(zones.has("editor_glade")).is_false()

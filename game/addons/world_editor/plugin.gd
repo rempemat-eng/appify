@@ -569,7 +569,12 @@ func _bake_zone() -> Dictionary:
 	if code != 0:
 		return Rules.failure("editor.bake_failed", "Ground bake failed: %s" % "".join(output))
 	var png := "res://zones/%s/ground_baked.png" % zone_id
-	EditorInterface.get_resource_filesystem().reimport_files(PackedStringArray([png]))
+	# A zone's first bake writes a picture the editor has never seen: tell the file system about it
+	# before asking for the import, or the import fails with "Can't find file" and the bake that
+	# just succeeded is reported as having produced nothing.
+	var files := EditorInterface.get_resource_filesystem()
+	files.update_file(png)
+	files.reimport_files(PackedStringArray([png]))
 	if not ResourceLoader.exists(png):
 		return Rules.failure("editor.bake_missing", "The bake did not produce its ground image.")
 	ground.baked = ResourceLoader.load(png, "Texture2D", ResourceLoader.CACHE_MODE_REPLACE) as Texture2D

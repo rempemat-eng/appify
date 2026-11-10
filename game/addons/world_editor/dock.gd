@@ -47,6 +47,18 @@ static func snap(local: Vector2, how: String) -> Vector2:
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(320, 0)
+	# The status line stays above the scrolling controls: a refusal must be readable where the
+	# person is working, not below three lists (it sat at the very bottom, off the screen).
+	zone_label = _label("Select a kit zone")
+	zone_label.name = "ZoneLabel"
+	add_child(zone_label)
+	status = Label.new()
+	status.name = "Diagnostics"
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	status.max_lines_visible = 8
+	status.custom_minimum_size = Vector2(0, 46)
+	add_child(status)
+	add_child(HSeparator.new())
 	var scroll := ScrollContainer.new()
 	scroll.name = "ControlsScroll"
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -57,9 +69,6 @@ func _ready() -> void:
 	_content.name = "Controls"
 	_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(_content)
-	_content.add_child(_label("World editor: kit and library"))
-	zone_label = _label("Select a kit zone")
-	_content.add_child(zone_label)
 	approval_label = _label("")
 	approval_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_content.add_child(approval_label)
@@ -221,10 +230,6 @@ func _ready() -> void:
 	bake_button.text = "Bake ground (the painters)"
 	bake_button.pressed.connect(_bake)
 	_content.add_child(bake_button)
-	status = Label.new()
-	status.name = "Diagnostics"
-	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_content.add_child(status)
 	_sync_controls()
 	refresh_palette()
 	if Engine.is_editor_hint():
@@ -739,6 +744,7 @@ func set_zone(z: Node, g: TerrainGround) -> void:
 func say(text: String) -> void:
 	if status != null:
 		status.text = text
+		status.tooltip_text = text       # the whole message when it is longer than the pinned lines
 
 func hover(cell: Vector2i, local: Vector2) -> void:
 	if not is_instance_valid(ground):
