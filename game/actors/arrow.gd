@@ -19,6 +19,20 @@ func setup(at_ground: Vector2, lift: float, direction: Vector2) -> void:
 	global_position = at_ground
 	height = lift
 	dir = direction.normalized()
+	_stop_if_walled_off()
+
+## The arrow starts at the bow's tip, ahead of the archer. Standing against a thin wall, that point can
+## lie inside or beyond the wall, and the arrow would fly on from there. If a wall stands between the
+## archer's feet and the starting point, the arrow never leaves.
+func _stop_if_walled_off() -> void:
+	if not is_inside_tree():
+		return
+	var archer := get_tree().get_first_node_in_group("player") as Node2D
+	if archer == null:
+		return
+	var ray := PhysicsRayQueryParameters2D.create(archer.global_position, global_position, 1)
+	if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
+		queue_free()
 
 func _ready() -> void:
 	collision_layer = 0

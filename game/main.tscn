@@ -7,6 +7,7 @@
 script = ExtResource("1")
 
 [node name="Screen" type="SubViewportContainer" parent="."]
+process_mode = 3
 offset_right = 960.0
 offset_bottom = 540.0
 texture_filter = 1

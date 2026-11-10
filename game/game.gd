@@ -107,6 +107,10 @@ func _on_zone(zone: Zone) -> void:
 	pcam.limit_top = int(b.position.y)
 	pcam.limit_right = int(b.end.x)
 	pcam.limit_bottom = int(b.end.y)
+	# The player leaves the tree while zones swap, and the phantom camera stops following a target that
+	# exits the tree. Hand it the player again, or the camera stays where the last zone left it.
+	pcam.follow_target = null
+	pcam.follow_target = player
 	pcam.teleport_position()
 	snap_camera()
 	autosave()
@@ -160,8 +164,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				get_viewport().set_input_as_handled()
 				return
 	if event.is_action_pressed("menu"):
+		# the pause menu (ui/pause_menu.gd) shows itself while the tree is paused; no second label here
 		get_tree().paused = not get_tree().paused
-		paused_label.visible = get_tree().paused
 		get_viewport().set_input_as_handled()
 
 ## --stage=<id>: put the save in one of a zone plan's named stages (its restores and flags), to see
