@@ -1819,8 +1819,8 @@ The reviewer block of each of the 7 records is set to `pass` with these numbers.
 - **Fix, when the bush is next drawn** (not required for this pass):
   - break the symmetry: shorten the right gap to 10 to 14 px, or move one of the two 3 to 5 px up or down;
   - let one upper-lobe cluster hang 1 to 2 px into the longer gap, so it reads as two short gaps rather than one long cut;
-  - extend W8-F1 step 3 to mirrored pairs: no two gaps longer than 8 px within 30 px of each other at one height (|dy| < 4) with mirrored slants (within 25°).
-- **Check.** `pairs.py` (`audit446r9_tools/`) shows no mirrored pair, and every bar is still met.
+  - on the bushes, extend W8-F1 step 3 to mirrored pairs: no two gaps longer than 8 px within 30 px of each other at one height (|dy| < 4) with mirrored slants (within 25°). On the big crowns such a pair is a small part of the crown and is not asked for: the oak has one and the beech three, 18 to 23 px apart, and none of them reads.
+- **Check.** `pairs.py` (`audit446r9_tools/`) shows no mirrored pair on the bush, and every bar is still met. bush_b and bush_c have none now.
 
 **Advisory (no code): traced is the bar most draws miss.** If more variants are wanted later, for the Crossroads or elsewhere, raise the typical draw on traced and big-lobe share before searching seeds. Pass 12's own trials show the two pull against each other, because dimming the crossings raises share and counts as traced. One way out is to let 1 in 4 to 5 big-lobe boundaries go fully untraced: a lobe in front, with no dark at all. That would lower traced without dimming. W8-M1 stays the method: report the spread with any new pass.
 
@@ -1833,7 +1833,7 @@ The reviewer block of each of the 7 records is set to `pass` with these numbers.
 **Yes.** With this round's verdicts set, `python3 -m scripts.review.gate --check` prints `[review gate] 7 zones, fix queue 48 assets: ok` and refuses **no** woodland picture. Conditions:
 
 1. **W2-L1 must be fixed in that regeneration.** The willow's y-sort point is +87 px off its drawn feet (scene gate `logic.occlusion`, box 684,1057,930,1257). Move it onto the feet in the plan or kit placement. Check the two beeches' −19 px (wood-6, wood-22) while there; the logic-auditor has carried them since round 4.
-2. **The 25 woodland sprites must come out byte-identical.** Every passing record is bound to its sha256. A regeneration that moves any of them sets that picture back to `pending`, and the gate refuses it.
+2. **The 25 woodland pictures must come out byte-identical.** Every passing record is bound to its sha256. A regeneration that moves any of them sets that picture back to `pending`, and the gate refuses it.
 3. **Run `npm run review:scene -- woodland --no-render` after it** and confirm the occlusion fault is gone. The other scene faults (3 `detail.flat`, the ground tufts' `detail.repetition`, the bench's `logic.reach`, the orphan shadow) are the logic-auditor's, unchanged since round 4.
 
 The gate prints **24 advisories** to remove passing pictures from `art/catalogue/fix-queue.json`: round 8's seventeen (`bramble`, `bramble_b`, `hatch_closed`, `hatch_open`, `holly`, `holly_b`, `lintel`, `pine`, `sapling`, the six standing stones, `stone_top`, `willow`) plus `beech`, `birch`, `bush`, `bush_b`, `bush_c`, `hollow_tree` and `oak`. With these removed, no woodland entry is left in the queue. The queue is not edited here; that is Claude A's call.
