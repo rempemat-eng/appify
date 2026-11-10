@@ -10,19 +10,19 @@ The proof is `editor_glade` (`game/kit/zones/editor_glade.json`, `game/zones/edi
 
 ### What works today (checked)
 
-| What                                                                                                                            | How it was checked                                       |
-| ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Open a kit zone, the dock lists 12 materials and 226 pieces                                                                     | Editor run on `kitlab`                                   |
-| Paint ground with the brush, the rectangle and the route tool; one undo per gesture                                             | Editor run, canvas input; GdUnit                         |
-| Place a piece by clicking; the rules refuse a bench on a path and an oak in the pond, with the rule's message                   | Editor run on the new zone                               |
-| Undo and redo of every dock action                                                                                              | Editor run; GdUnit                                       |
-| Move and delete a placed piece with Godot's own tools, with the walk mask, shadows and previews following                       | Editor run before and after the fix; GdUnit              |
-| Spawns, doors, talk areas, villagers, restore sites and camps placed from the dock with one click, then edited in the inspector | Editor run; GdUnit                                       |
-| Save, reopen, export: the plan JSON round trip is lossless, including actors (plan to scene to plan gives the same bytes)       | Editor run, the command-line tool, GdUnit                |
-| Validate zone runs the full Python validator and lists faults before advice                                                     | Editor run                                               |
-| Bake ground paints the shipping ground with the woodland's painters: 19 seconds for one screen                                  | Editor run on the new zone                               |
-| The zone loads in the game; the pond, the props and the zone edge block; the path is open; the quest and the door work          | Played with real input under Xvfb, about 100 seconds     |
-| The walk mask is the same from Python (`walk.py`) and from Godot (`walk.gd`) on all five kit zones                              | Cell by cell comparison; a shared fixture now holds both |
+| What                                                                                                                                                                                                                                                                                  | How it was checked                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Open a kit zone, the dock lists 12 materials and 226 pieces                                                                                                                                                                                                                           | Editor run on `kitlab`                                   |
+| Paint ground with the brush, the rectangle and the route tool; one undo per gesture                                                                                                                                                                                                   | Editor run, canvas input; GdUnit                         |
+| Place a piece by clicking; the rules refuse a bench on a path and an oak in the pond, with the rule's message                                                                                                                                                                         | Editor run on the new zone                               |
+| Undo and redo of every dock action                                                                                                                                                                                                                                                    | Editor run; GdUnit                                       |
+| Move and delete a placed piece with Godot's own tools, with the walk mask, shadows and previews following                                                                                                                                                                             | Editor run before and after the fix; GdUnit              |
+| Spawns, doors, talk areas, villagers, restore sites and camps placed from the dock with one click, then edited in the inspector                                                                                                                                                       | Editor run; GdUnit                                       |
+| Save, reopen, export: the plan round trip loses nothing, actors included. For `editor_glade`, plan to scene to plan gives the same bytes. The four older plans come back equal in data with their keys in another order, so the first Save and export plan rewrites each of them once | Editor run, the command-line tool, GdUnit                |
+| Validate zone runs the full Python validator and lists faults before advice                                                                                                                                                                                                           | Editor run                                               |
+| Bake ground paints the shipping ground with the woodland's painters: 19 seconds for one screen                                                                                                                                                                                        | Editor run on the new zone                               |
+| The zone loads in the game; the pond, the props and the zone edge block; the path is open; the quest and the door work                                                                                                                                                                | Played with real input under Xvfb, about 100 seconds     |
+| The walk mask is the same from Python (`walk.py`) and from Godot (`walk.gd`) on all five kit zones                                                                                                                                                                                    | Cell by cell comparison; a shared fixture now holds both |
 
 ### What does not work, or is missing
 
@@ -35,9 +35,18 @@ The proof is `editor_glade` (`game/kit/zones/editor_glade.json`, `game/zones/edi
 7. **No frame or resize tools.** The dock cannot change a zone's size, show screen boundaries or preview the camera. A new zone starts from `kit_zone.gd --new`.
 8. **Materials stop at the home valley.** There are 12 terrain materials (lawn, path, cobbled road, worn ground, scree, water, earth face, and the Brackens' and coast's five). There is one cliff material, earth, two cells high. No snow, ice, rock ground or rock cliff exists.
 
+### Open faults (found on 10 November, not fixed)
+
+- **The first dock edit on an older lab scene changes how it collides.** The edit adds a `KitWalk` node to the scene and undo does not take it out. Saving then switches that zone from each piece's own solid to the derived walk mask (see point 5 above). Seen on `kitlab` in the editor, on the old code and the new.
+- **The committed `woodland_kit.tscn` is behind the woodland it copies its actors from.** Since #463 Hale stands at (600, 1296) in the woodland and still at (800, 1330) in the committed kit scene; a rebuild from the plan moves him. Copied actors are not in the plan, so the test that holds scene and plan together cannot see this.
+- **`kit_zone.gd --new --ground=water` is accepted**: a zone of water whose start spawn nobody can stand on.
+- **`kit/terrain/materials.tres` has no id of its own**, so the editor invents one and writes it into every zone it saves. In any other checkout each load of that zone then warns "invalid UID ... using text path instead". The id was taken out of the glade by hand; the lasting fix is an id in `materials.tres`, which the kit build writes.
+- **`walk.gd` still looks up a saved process id** if one reaches a scene (`_ground_owner`). The dock no longer saves one.
+- A stale baked ground shows again after a zone is reopened, because the "bake is current" flag is not saved (read from `terrain_ground.gd`, not reproduced).
+
 ### Faults found and fixed on 10 November
 
-Each has a test that fails on the old code (`game/test/test_world_editor_authoring.gd`, `scripts/art/kit/test_walk_coordinates.py`).
+Most have a test that fails on the old code (`game/test/test_world_editor_authoring.gd`, `scripts/art/kit/test_walk_coordinates.py`). Four could only be checked in a running editor, before and after, because they live in the editor plugin: the first bake, the dock keeping its zone after a delete, the pinned status line, and the abort at exit.
 
 - Once a brush was picked there was no way to put it down: every click placed another piece, so a placed piece could not be selected or moved on the canvas. The dock has a Select button and Escape does the same.
 - A second click on one spot stacked an identical piece under the first.
@@ -46,10 +55,11 @@ Each has a test that fails on the old code (`game/test/test_world_editor_authori
 - A zone's first bake was reported as failed although it had succeeded.
 - Actors could not be authored: anything added under Actors was dropped when the scene was rebuilt from its plan. The plan now has an `actors` list.
 - Placed pieces and enemies were saved as copies of their scene's values, not as instances.
-- Python's walk mask left out the walls on tier edges (204 cells in `kitlab_tiers`, 122 in `woodland_kit`), and three committed `walk.txt` files were out of date.
-- The player could walk off the edge of a kit zone into empty space. A zone built from a plan now has walls round it. The four older lab scenes get theirs when they are next rebuilt from their plans.
-- The status line sat below three lists, off the screen, so a refusal could not be read. It is now pinned at the top.
+- Python's walk mask left out the walls on tier edges (204 cells in `kitlab_tiers`, 122 in `woodland_kit`). Two committed `walk.txt` files were also out of date (`kitlab` by 10 cells, `woodland_kit` by 104); `kitlab_tiers` changed only through the new tier walls.
+- The player could walk off the edge of a kit zone into empty space. A zone built from a plan now has walls round it, and a plan whose door, spawn or actor lies outside the ground is refused, because the walls would shut it out. The four older lab scenes get their walls when they are next rebuilt from their plans.
+- The status line sat below three lists, off the screen, so a refusal could not be read. It is now pinned at the top, and a result (a saved plan, a bake) is no longer wiped by the palette refresh that its own files cause.
 - Deleting the selected piece emptied the dock and blamed the library.
+- The editor aborted when it closed (exit 134, "corrupted size vs. prev_size in fastbins") after any session in which a piece's ghost had been checked. The plugin started a worker task for the ghost's validator and never waited for it; even an empty task left like that corrupts the heap at shutdown. It is older than this work (it happens on the add-on as merged in #417). The plugin now waits for the task. Before: 4 of 4 runs aborted. After: 0 of 6.
 
 ### Building the Frostline (about four screens) in the editor
 
@@ -513,7 +523,7 @@ A kit zone can also take its gameplay from a hand-made zone (`gameplay_from`: it
 $GODOT --headless --path game -s tools/kit_zone.gd -- --new=my_zone --size=40x23 --ground=lawn --lab=1
 ```
 
-It writes `kit/zones/my_zone.json` and `zones/my_zone/my_zone.tscn` and refuses to replace either. A zone built from a plan has an `Edge` body: four walls just outside the ground.
+It writes `kit/zones/my_zone.json` and `zones/my_zone/my_zone.tscn` and refuses to replace either. A zone built from a plan has an `Edge` body: four walls just outside the ground. A plan whose door, spawn or actor lies outside the ground is refused for that reason: a door at an edge lies on the ground's last cells.
 
 **The scene and the plan are one document in two files.** The scene is what Godot edits and the game loads. The plan is what the Python checks, the bake and reviewers read. The dock's **Save and export plan** writes both, and `test_world_editor_authoring.gd` fails when a committed pair disagrees.
 
