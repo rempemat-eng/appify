@@ -63,7 +63,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 7 (PR #446 head 109e778a): W6-B2 met: cluster noise 33.4 % (was 35.9; < 35). Lit median 146.4 L, lit to pocket 102.3, lit-field c12 74.2, mass 58.5, pocket tones 20.0, EW-pipe shapes 68.5, H/V 1.13. Dense shrub: exempt from the tree hierarchy and W7-F1 ratios. The 48 enclosed texels are ground under the canes. Compared with the shrub in Eastward 12 and the clump and hedge in 13. Polish: detail.outline (cane tips)."
  }
 }
