@@ -5,7 +5,7 @@ extends CharacterBody2D
 ## Home, health and waking (Matt, 10 Nov; the same rules as the mossling, actors/enemy.gd):
 ##   - No healing on the walk home; HOME_HEAL_TIME after it is home again it is at full health.
 ##   - A hit wakes it when the archer is within WAKE of it and inside its leash, and its idle camp mates
-##     within ALERT of it with it. A hit on the walk home turns it round.
+##     within ALERT of it with it, if the archer is inside their leash. A hit on the walk home turns it round.
 ##   - It can only be hurt by someone it can come for (`can_come_for`). From anywhere else the arrow
 ##     glances off (enemies/glance.gd), so it is never a free target asleep or at its leash limit.
 ##   - It finds its way round solids (enemies/steer.gd) and gives up a walk home that takes too long.
@@ -242,9 +242,9 @@ func _wake(at: Vector2) -> void:
 		if mate != self and mate.has_method("hear_alert") and global_position.distance_to((mate as Node2D).global_position) <= ALERT:
 			mate.hear_alert(at)
 
-## A camp mate was hit: wake too, when idle and able to come for the archer.
+## A camp mate was hit: wake too, when idle and the archer is inside its leash.
 func hear_alert(at: Vector2) -> void:
-	if dead or state != "idle" or not can_come_for(at):
+	if dead or state != "idle" or home.distance_to(at) > LEASH:
 		return
 	_grace = 0.0
 	hsm.dispatch(&"approach")

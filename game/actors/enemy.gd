@@ -8,10 +8,14 @@ extends CharacterBody2D
 ## Home, health and waking (Matt, 10 Nov):
 ##   - It does not heal on the walk home. HOME_HEAL_TIME after it is home again it is at full health.
 ##   - A hit wakes it when the archer is within `wake_radius` (330), and its idle camp mates within its
-##     aggro radius with it: the camp answers a shot together. A hit on the walk home turns it round.
-##   - It can only be hurt by someone it can come for (`can_come_for`): within `wake_radius` of it and
-##     within reach of the ground it keeps to. From anywhere else the arrow glances off (enemies/glance.gd)
-##     and it does not react, so it never stands at its leash limit, or asleep, as a free target.
+##     aggro radius with it, if the archer stands on ground they keep to: the camp answers a shot together.
+##     A hit on the walk home turns it round. Woken by a shot (or a mate's), it keeps coming for
+##     PROVOKED_TIME even past its `lose_radius` (the arrow's knock pushed a mossling shot from 320 past
+##     330, where it gave up, went home and was shot again asleep).
+##   - It can only be hurt by someone it can come for (`can_come_for`): standing within reach of the
+##     ground it keeps to and, while it is asleep or walking home, within `wake_radius` of it. From anywhere
+##     else the arrow glances off (enemies/glance.gd) and it does not react, so it never stands at its
+##     leash limit, or asleep, as a free target.
 ##   - It finds its way round solids (enemies/steer.gd). If it still cannot get home in a fair time
 ##     (twice the straight walk plus LEASH_GIVE_UP) it gives up the walk and is put at home.
 ##   - For ARRIVAL_GRACE after a zone becomes ready (a load, a door, getting up after a defeat) it does not
@@ -29,6 +33,7 @@ const RECOVER_TIME := 0.55
 const HOME_HEAL_TIME := 3.0     ## full health this long after it is home again
 const LEASH_GIVE_UP := 3.0      ## seconds over twice the straight walk before it gives up walking home
 const ARRIVAL_GRACE := 2.5      ## no noticing by nearness this long after the zone becomes ready
+const PROVOKED_TIME := 3.0      ## after a hit it does not give the archer up for being far, this long
 const HOP_FADE := 0.3           ## it fades in at home after giving up the walk (not under reduced motion)
 
 @export var aggro_radius := 55.0 * DENSITY
@@ -57,6 +62,7 @@ var _home_t := 0.0
 var _leash_t := 0.0
 var _leash_budget := 0.0
 var _grace := 0.0
+var _provoked := 0.0
 var _fade := 0.0
 
 @onready var sprite: Sprite2D = $Sprite
@@ -113,6 +119,7 @@ func _physics_process(delta: float) -> void:
 	glance_t = maxf(glance_t - delta, 0.0)
 	_fade = maxf(_fade - delta, 0.0)
 	_grace = maxf(_grace - delta, 0.0)
+	_provoked = maxf(_provoked - delta, 0.0)
 	if _stagger > 0.0:
 		_stagger -= delta
 		velocity = velocity.move_toward(Vector2.ZERO, 1800.0 * delta)
@@ -127,12 +134,18 @@ func _target_dist() -> float:
 	return INF if target == null else global_position.distance_to(target.global_position)
 
 func _should_leash() -> bool:
-	return global_position.distance_to(home) > leash_radius or _target_dist() > lose_radius
+	return global_position.distance_to(home) > leash_radius or (_target_dist() > lose_radius and _provoked <= 0.0)
 
-## True when it can come for someone standing at `at`: near enough to notice a shot from, and standing
-## where its leash lets it get within striking distance.
+## True when `at` is on the ground it keeps to: its leash lets it get within striking distance of it.
+func on_its_ground(at: Vector2) -> bool:
+	return home.distance_to(at) <= leash_radius + attack_range
+
+## True when it can come for someone standing at `at`: on its ground and, while it is asleep or walking
+## home, near enough to notice a shot from.
 func can_come_for(at: Vector2) -> bool:
-	return global_position.distance_to(at) <= wake_radius and home.distance_to(at) <= leash_radius + attack_range
+	if not on_its_ground(at):
+		return false
+	return (state != &"idle" and state != &"leash") or global_position.distance_to(at) <= wake_radius
 
 func _idle_enter() -> void:
 	_home_t = 0.0
@@ -225,8 +238,10 @@ func take_hit(amount: int, dir: Vector2, knockback: float = 200.0) -> void:
 		return
 	hp -= amount
 	_flash = 0.12
-	if archer != null and hp > 0 and (state == &"idle" or state == &"leash"):
-		_wake(archer.global_position)
+	if archer != null:
+		_provoked = PROVOKED_TIME
+		if hp > 0 and (state == &"idle" or state == &"leash"):
+			_wake(archer.global_position)
 	if state != &"windup" and state != &"lunge":
 		_stagger = 0.14
 		velocity = dir * knockback
@@ -248,11 +263,12 @@ func _wake(at: Vector2) -> void:
 		if mate != self and mate.has_method("hear_alert") and global_position.distance_to((mate as Node2D).global_position) <= aggro_radius:
 			mate.hear_alert(at)
 
-## A camp mate was hit: wake too, when idle and able to come for the archer.
+## A camp mate was hit: wake too, when idle and the archer stands on ground it keeps to.
 func hear_alert(at: Vector2) -> void:
-	if dead or state != &"idle" or not can_come_for(at):
+	if dead or state != &"idle" or not on_its_ground(at):
 		return
 	_grace = 0.0
+	_provoked = PROVOKED_TIME
 	hsm.dispatch(&"aggro")
 
 func _die() -> void:

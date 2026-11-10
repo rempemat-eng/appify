@@ -89,6 +89,29 @@ func test_a_hit_wakes_an_idle_mossling_and_its_camp_mates_when_the_archer_is_wit
 	assert_str(String(b.state)).is_equal("chase")
 	assert_str(String(far.state)).is_equal("idle")
 
+## Played on 10 Nov: shot from 320, the arrow's knock pushed the mossling past its 330 lose radius; it
+## gave the archer up, walked the 20 px home and was shot again asleep, three times, without ever coming.
+func test_a_mossling_woken_by_a_shot_keeps_coming_when_the_arrow_knocks_it_past_330() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2.ZERO)
+	var mate := _mossling(host, Vector2(30, 0))          # 350 from the archer, in earshot, the archer on its ground
+	_archer.position = Vector2(-320, 0)
+	await _steps(2)
+	e.take_hit(1, Vector2.RIGHT, 270.0)                  # the arrow's own knockback
+	await _steps(9)                                      # the stagger (0.14 s) is just over
+	assert_float(e.global_position.distance_to(_archer.position)).is_greater(e.lose_radius)   # knocked past 330 ...
+	await _steps(21)
+	assert_str(String(e.state)).is_equal("chase")        # ... and it still comes
+	assert_float(e.global_position.x).is_less(0.0)
+	assert_str(String(mate.state)).is_equal("chase")
+	await _steps(120)
+	assert_float(e.global_position.distance_to(_archer.position)).is_less(200.0)
+	assert_float(mate.global_position.distance_to(_archer.position)).is_less(230.0)
+	# once it has not been hit for PROVOKED_TIME, an archer who has run off is given up as before
+	_archer.position = Vector2(-5000, 0)
+	await _steps(int(Enemy.PROVOKED_TIME * 60.0))
+	assert_str(String(e.state)).is_not_equal("chase")
+
 func test_an_arrow_from_beyond_330_glances_off_an_idle_mossling() -> void:
 	var host := _host()
 	var e := _mossling(host, Vector2.ZERO)
@@ -267,5 +290,56 @@ func test_a_creature_walks_home_round_a_solid_in_its_way() -> void:
 	e.global_position = Vector2(0, 0)
 	e.hsm.dispatch(&"leash")
 	await _steps(300)                                    # 5 s at 144 px a second
+	assert_str(e.state).is_equal("idle")
+	assert_vector(e.global_position).is_equal(e.home)
+
+# --- finite effects and reduced motion ------------------------------------------------------------------
+
+func test_giving_up_the_walk_fades_in_at_home_and_is_instant_under_reduced_motion() -> void:
+	var host := _host()
+	for reduced: bool in [false, true]:
+		SaveGame.data.settings.reduced_motion = reduced
+		var e := _mossling(host, Vector2(0, 300 if reduced else 0))
+		e.set_physics_process(false)
+		e.global_position += Vector2(200, 0)
+		e.hsm.dispatch(&"aggro")
+		e.hsm.update(0.016)                              # the target is far: it turns for home
+		assert_str(String(e.state)).is_equal("leash")
+		e._leash_t = e._leash_budget                     # the walk has taken as long as it may
+		e.hsm.update(0.016)
+		assert_str(String(e.state)).is_equal("idle")
+		assert_vector(e.global_position).is_equal(e.home)
+		if reduced:
+			assert_float(e._fade).is_equal(0.0)
+		else:
+			assert_float(e._fade).is_equal(Enemy.HOP_FADE)
+			for i in 30:
+				e._physics_process(0.02)                 # the fade is finite: over after HOP_FADE
+			assert_float(e._fade).is_equal(0.0)
+			assert_float(e.sprite.modulate.a).is_equal(1.0)
+	SaveGame.data.settings.reduced_motion = false
+
+func test_the_glance_mark_is_finite() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2.ZERO)
+	e.set_physics_process(false)
+	_archer.position = Vector2(-400, 0)
+	e.take_hit(1, Vector2.RIGHT)
+	assert_float(e.glance_t).is_equal(Glance.TIME)
+	for i in 20:
+		e._physics_process(0.02)
+	assert_float(e.glance_t).is_equal(0.0)
+
+func test_a_creature_that_cannot_get_home_gives_up_and_is_put_there() -> void:
+	var host := _host()
+	var e := _creature(host, Vector2.ZERO)
+	e.set_physics_process(false)
+	e.global_position = Vector2(300, 0)
+	e.hsm.dispatch(&"leash")
+	e.step(0.016)
+	assert_str(e.state).is_equal("leash")
+	e.step(SliceEnemy.LEASH_GIVE_UP + 2.0 * 300.0 / SliceEnemy.LEASH_SPEED - 0.1)   # it never moves here: physics is off
+	assert_str(e.state).is_equal("leash")
+	e.step(0.2)
 	assert_str(e.state).is_equal("idle")
 	assert_vector(e.global_position).is_equal(e.home)
