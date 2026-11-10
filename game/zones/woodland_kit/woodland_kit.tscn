@@ -441,7 +441,7 @@ metadata/kit_zone_plan = {
 "piece": "woodland_standing_stone_low",
 "variant": "standing_stone_low"
 }, {
-"at": [180.0, 1272.0],
+"at": [180.0, 1278.0],
 "id": "lintel-1",
 "piece": "woodland_lintel",
 "variant": "lintel"
@@ -1071,12 +1071,12 @@ metadata/kit_zone_entry = {
 }
 
 [node name="lintel-1" type="Node2D" parent="Props" unique_id=1544673756 instance=ExtResource("13_jmbit")]
-position = Vector2(180, 1272)
+position = Vector2(180, 1278)
 script = ExtResource("7_g8gml")
 piece_id = "woodland_lintel"
 variant = "lintel"
 metadata/kit_zone_entry = {
-"at": [180.0, 1272.0],
+"at": [180.0, 1278.0],
 "id": "lintel-1",
 "piece": "woodland_lintel",
 "variant": "lintel"
