@@ -63,7 +63,16 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 8 review at 7e7d310b (PR #458, round 2 of the Crossroads remainder), docs/reviews/2026-11-08-crossroads-placed.md, round 8. Pass for these bytes (0f4df072...). Ruling 1: walls 1.061 through Eastward's pipe (>= 0.82); roof (stack out) 12.13 tones / 33.0 shapes a patch (>= 11.9 / 27.9); roof noise 13.5 % raw (<= 15), 10.5 % through Eastward's pipe. Form: centre column crest 0.48-0.60 (rows 24-31), body 0.71 (rows 32-74), roll-off 0.68 then 0.57 (rows 75-89), tips 0.87 at the lip; west hip 0.79 with a lit arris, east hip 0.55 the darkest plane; ridge roll capped; eave corners rounded. XR7-T1 to T4 and T7 pass; no moss. detail.bar 0.699 (blocker) is superseded for thatch by ruling 1 and kept as a measurement; detail.volume [178,42,210,70] is the flat GR3 contact shade under the stack (ruling 2 of round 7), a false positive.",
+  "fix_list": [
+   "XR8-T1 (polish, recommended; Claude A's call): the straw is tan (roof median OKLab L 0.683, C 0.061, h 66) where the Crossroads' own hay bales are gold (hay_19 / hay_20: L 0.69-0.71, C 0.117, h 77-82) and shot 12's thatch C 0.137 (h 102). A golden straw needs no new tone: the kits already draw straw from brass, brass_warm and sand_warm (kit/farm.py STRAW, act1.py STRAW, commons.py); brass_warm 3 #ca9933 is L 0.71, C 0.128. Map the body and tips onto those ramps (shade stays on sand_cool), then re-measure ruling 1.",
+   "XR8-T2 (polish): the roll-off is short. On the centre column only the last 6-7 rows above the lip reach -0.08 L (0.571); the 8 rows before are a sibling step (0.683, -0.023). Grade 0.71 -> 0.65 -> 0.57 over 12-16 rows. The body's east-quarter step-down ends in a vertical seam (hut x 194-196 rows 76-88; herbalist x 175 rows 97-109) that reads as a darker rectangle at 3x; step the seam with the courses.",
+   "XR8-T3 (polish, robustness): the shipped seeds pass ruling 1, but the recipe sits on its lines. Re-drawn with seeds 1-24 through houses.building: 11 of 24 hut and 10 of 24 herbalist renders fail one number (raw noise median 14.4 / 14.2 %, max 17.4 / 15.9; tones median 12.08 / 12.23, min 11.36 / 11.84). Before the recipe changes again (XR8-T1) or ruling 1 becomes code, give it margin: raw noise <= 13.5 % and tones >= 12.3 at the shipped seed.",
+   "XR8-T4 (polish, XR7-T6 residue): the apron is now 2 rows, but the contact shade under it is still a ruler-straight 3-row band of #684441 (hut rows 65-67, x 178-208; herbalist rows 74-76, x 169-199); only its last row follows the tips.",
+   "XR8-T5 (polish): the ridge ligger is a 2-row bar cut into even dashes and reads as a dashed rule at 3x and up; give it a lit top row and uneven segment lengths.",
+   "XR8-T6 (polish): the east hip's outline has gaps on its stair: no dark edge texel on 30 of 62 rows on the hut and 20 of 82 on the herbalist, unchanged since round 2. With the hip now at L 0.55 (was 0.43), the gaps read as a dotted edge at 3x and up. Close it, or leave gaps only at the step corners."
+  ]
  }
 }
