@@ -671,203 +671,225 @@ def _thatch_form(shape, rx0, rx1, y_r, y_eave, hip):
     return z, wf, ww, we, dl, dr
 
 
-def combed_thatch(a, rm, rx0, rx1, y_r, y_eave, hip, rng, fam='sand'):
-    """Long straw combed down a hipped roof, drawn as a thick rounded mass (Eastward's thatched
-    cottage, shot 38, B8; the art director's notes on #458):
+_SAND_L = None
 
-    - Form first: the front slope lighter from the ridge down towards the eave (it turns to the sun
-      as it rounds over), the west hip lit, the east hip one to two tones under the front and the
-      darkest plane; the tones step once at each turn, never dithered.
-    - Courses follow the roof's height: level across the front, bending up round each hip. Each course
-      ends in a row of rounded bundle tips (lit along the tip, its shade a lumpy line under it), so the
-      courses read as straw laid in bundles, not as rows of tiles.
-    - Inside a course the straw is calm: the course and the form carry the value; the combing is a few
-      long sibling streaks at the same tone, now and then one a tone down.
-    Returns the per-texel form tone."""
+
+def sand_by_lightness():
+    """The straw's codes (sand and its two siblings, tones 0 to 5) sorted by OKLab lightness, so a
+    painted lightness field maps onto the ramps without new colours."""
+    global _SAND_L
+    if _SAND_L is None:
+        from .palette import to_rgba
+        # the straw's warm and base ramps (golden), the cool sibling only for its two darkest tones
+        codes = np.array([FI[f] * 8 + t for f in ('sand', 'sand_warm') for t in range(6)]
+                         + [FI['sand_cool'] * 8 + t for t in (0, 1)])
+        rgb = to_rgba(codes.reshape(1, -1))[0, :, :3].astype(float) / 255
+        c = np.where(rgb <= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055) ** 2.4)
+        l = 0.4122214708 * c[:, 0] + 0.5363325363 * c[:, 1] + 0.0514459929 * c[:, 2]
+        m = 0.2119034982 * c[:, 0] + 0.6806995451 * c[:, 1] + 0.1073969566 * c[:, 2]
+        s_ = 0.0883024619 * c[:, 0] + 0.2817188376 * c[:, 1] + 0.6299787005 * c[:, 2]
+        L = 0.2104542553 * np.cbrt(l) + 0.7936177850 * np.cbrt(m) - 0.0040720468 * np.cbrt(s_)
+        o = np.argsort(L)
+        _SAND_L = (L[o], codes[o])
+    return _SAND_L
+
+
+def straw_codes(Lmap):
+    """The nearest straw code to each lightness."""
+    L, codes = sand_by_lightness()
+    i = np.clip(np.searchsorted(L, Lmap), 1, len(L) - 1)
+    pick = np.where(np.abs(L[i - 1] - Lmap) <= np.abs(L[i] - Lmap), i - 1, i)
+    return codes[pick]
+
+
+def combed_thatch(a, rm, rx0, rx1, y_r, y_eave, hip, rng, fam='sand'):
+    """Long straw on a hipped roof drawn as one thick rounded mass (Eastward's daylight thatched
+    cottage, shot 12, T12; round 7 of the Crossroads audit, XR7-T1 to T4, T7). The value is painted as
+    an OKLab lightness field and mapped onto the straw's own three ramps (no new colours):
+
+    - the front slope: a darker crest under the ridge roll, a calm body at L 0.71 (lighter to the west,
+      a step down over its east quarter), and a roll-off a step and then two down over the 15 texels
+      above the eave's lip, so the mass turns under before the lip;
+    - the west hip lit (0.79) with a lit arris at its turn; the east hip the darkest plane (0.54);
+    - the courses follow the roof's height (level across the front, bending up round each hip), spaced
+      unevenly; every other course shows only as a soft one-sibling step, the others end in bundle tips
+      of uneven width (5 to 11 texels) and depth, lit along the tip with a shade under it, on the
+      east hip too;
+    - inside a course a few long sibling streaks at the same tone; no moss.
+    Returns the lightness field."""
     H, W = a.shape
     Y, X = np.mgrid[0:H, 0:W]
     ph = max(1, y_eave - y_r)
     th = q(THATCH_EAVE)
-    z, wf, ww, we, dl, dr = _thatch_form(a.shape, rx0, rx1, y_r, y_eave - th, hip)
-    zf = np.clip((y_eave - th - (Y + 0.5)) / max(1, ph - th), 0, 1)
-    # the form tone: the front lighter towards the eave, the west hip lit, the east hip darkest
-    front = np.where(zf < 0.45, 3, 2)
-    tone = np.where(we > 0.5, np.where(we > 0.8, 0, 1), np.where(ww > 0.5, 3, front))
-    tone = np.where((we <= 0.5) & (ww <= 0.5) & (X + 0.5 > rx0 + (rx1 - rx0) * 0.8), np.minimum(tone, 2), tone)
-    # the turn between a hip and the front: a crease on the east, a lit arris on the west
-    tone = np.where((np.abs(we - 0.5) < 0.12), tone - 1, tone)
-    tone = np.where((np.abs(ww - 0.5) < 0.1) & (zf > 0.15), np.maximum(tone, 3) + 1, tone)
-    tone = np.clip(tone, 0, 5)
-    tt = tone.copy()
-    sib = (FI[fam + '_cool'], FI[fam], FI[fam + '_warm'])
-    ff = np.where(tone >= 3, FI[fam + '_warm'], np.where(tone <= 1, FI[fam + '_cool'], FI[fam]))
-    # courses: isolines of the height in texels, bundle tips along each
-    hz = z * (ph - th)
-    ch = q(THATCH_COURSE)
-    u = np.where(wf >= np.maximum(ww, we), X, Y * 1.3 + (X > (rx0 + rx1) / 2) * 500)
-    bw = 8
-    bid = np.floor((u + 0.5) / bw).astype(int)
-    pos = ((u + 0.5) / bw) - bid
-    tipb = 1.8 * np.sin(np.pi * pos)                             # each bundle's tip a texel lower in its middle
-    jitter = ((bid * 2654435761) % 7) / 7.0 - 0.5
-    hh = hz + tipb + 0.6 * jitter
-    ci = np.floor(hh / ch).astype(int)
-    fr = hh - ci * ch                                           # 0 at a course's foot, ch at its head
-    inside = rm & (Y < y_eave - th)
-    # the tip's lit edge just above the foot, the next course's shade just under it
-    lit_tip = inside & (fr >= 1.0) & (fr < 2.0)
-    shade1 = inside & (fr < 1.0)
-    shade2 = inside & (fr >= ch - 1.0)
-    tt = np.where(lit_tip, np.minimum(tone + 1, 5), tt)
-    ff = np.where(lit_tip & (bid % 2 == 0), sib[2], ff)              # each tip its own straw
-    tt = np.where(shade1, tone - 2, tt)
-    tt = np.where(shade2 & ~shade1, tone - 1, tt)
-    # combing: a few long sibling streaks along the slope (same tone), one in four a tone down
-    streak = np.zeros(a.shape, bool)
-    for _ in range(int(rm.sum() / 24)):
+    lip = y_eave - th
+    z, wf, ww, we, dl, dr = _thatch_form(a.shape, rx0, rx1, y_r, lip, hip)
+    fx = (X + 0.5 - rx0) / max(1, rx1 - rx0)
+    rr = q(THATCH_RIDGE)
+    d_crest = Y - (y_r + rr)
+    e_roll = lip - 1 - Y
+    # the east quarter a step down, its edge stepping with the courses (never a ruled vertical)
+    ck = np.floor((y_eave - Y) / q(THATCH_COURSE)).astype(int)
+    edge = 0.74 + 0.05 * (((ck * 2654435761) % 5) / 4.0 - 0.5)
+    Lf = 0.71 - 0.05 * (fx > edge)
+    crest = np.where(d_crest < q(1.6), 0.11, np.where(d_crest < q(3.2), 0.05, 0.0))
+    roll = np.where(e_roll < 7, 0.13, np.where(e_roll < 15, 0.07, 0.0))
+    Lf = Lf - crest - roll
+    Lw = 0.79 - crest * 0.6 - roll * 0.6
+    Le = 0.54 - roll * 0.5
+    L = np.where(ww > 0.5, Lw, np.where(we > 0.5, Le, Lf))
+    L = np.where((np.abs(ww - 0.5) < 0.1) & (Y > y_r + rr + 2), 0.87 - roll * 0.5, L)        # the west hip's lit arris
+    L = np.where(np.abs(we - 0.5) < 0.12, Le - 0.05, L)                                     # the east turn's crease
+    inside = rm & (Y < lip)
+    hz = z * (lip - y_r)
+    # courses at uneven spacing, alternately tipped and soft
+    bounds = [0.0]
+    while bounds[-1] < ph + 20:
+        bounds.append(bounds[-1] + q(THATCH_COURSE) + float(rng.integers(-2, 3)))
+    bounds = np.array(bounds)
+    on_hip = np.maximum(ww, we) > wf
+    u = np.where(on_hip, Y * 1.3 + (X > (rx0 + rx1) / 2) * 500, X).astype(float)
+    tip_l = np.zeros(a.shape, bool)
+    tip2_l = np.zeros(a.shape, bool)
+    shade_l = np.zeros(a.shape, bool)
+    soft_l = np.zeros(a.shape, bool)
+    for k in range(1, len(bounds)):
+        # bundles of uneven width along this course, each tip its own depth
+        cuts = [-600.0]
+        while cuts[-1] < 1200:
+            cuts.append(cuts[-1] + float(rng.integers(5, 12)))
+        cuts = np.array(cuts)
+        amps = rng.uniform(0.6, 2.0, len(cuts))
+        bi = np.clip(np.searchsorted(cuts, u, side='right') - 1, 0, len(cuts) - 2)
+        pos = (u - cuts[bi]) / (cuts[bi + 1] - cuts[bi])
+        hh = hz + amps[bi] * np.sin(np.pi * pos)
+        fr = hh - bounds[k - 1]
+        band = inside & (hh >= bounds[k - 1]) & (hh < bounds[k])
+        if k % 2:
+            tip_l |= band & (fr >= 1.0) & (fr < 2.0) & (pos > 0.18) & (pos < 0.82)
+            tip2_l |= band & (fr >= 2.0) & (fr < 3.0) & (pos > 0.32) & (pos < 0.68)
+            shade_l |= band & (fr < 1.0)
+        else:
+            soft_l |= band & (fr < 1.0)
+    L = np.where(tip_l, L + 0.09, L)
+    L = np.where(tip2_l & ~tip_l, L + 0.04, L)                 # the tip's rounded top, half lit
+    L = np.where(shade_l, L - 0.09, L)
+    L = np.where(soft_l, L - 0.035, L)
+    code_ = straw_codes(L)
+    # combing: a few long streaks on a sibling ramp at the same tone, never across a course line
+    sibs = [FI[f] for f in SAND_SIBS]
+    for _ in range(int(rm.sum() / 90)):
         sx, sy = int(rng.integers(0, W - 1)), int(rng.integers(0, H))
         if not inside[sy, sx]:
             continue
-        ln = int(rng.integers(4, 11))
-        ys_ = slice(sy, min(H, sy + ln))
-        for dx in range(2):
-            col = inside[ys_, sx + dx] & (fr[ys_, sx + dx] >= 2.0) & (fr[ys_, sx + dx] < ch - 1.0)
-            cur = ff[ys_, sx + dx]
-            alt = sib[2] if (sx // 2) % 2 else sib[0]
-            ff[ys_, sx + dx] = np.where(col, np.where(cur == sib[1], alt, sib[1]), cur)
-            streak[ys_, sx + dx] |= col
-    tt = np.clip(tt, 0, 5)
-    a[rm] = (ff * 8 + tt)[rm]
-    # the eave course pinned down by a pair of hazel liggers with spars between them (a thatcher's
-    # decoration along the lowest course, as on the ridge), following the course, lit along its top
-    yl = y_eave - th - q(2.4)
-    inner = ndi.binary_erosion(rm, iterations=3)
-    for k_, ly in enumerate((yl, yl - q(1.6))):
-        lm = inner & (Y == ly)
-        lt = tone[ly] if 0 <= ly < H else None
-        a[lm] = np.where(X[lm] < rx0 + (rx1 - rx0) * 0.7, code('timber_warm', 3), code('timber', 2))
-        dm = inner & (Y == ly + 1)
-        step(a, dm, -2, lo=0)
-    x = int(rx0 + q(4) + rng.integers(0, q(2)))
-    while x < rx1 - q(4):
-        for d in (0, 1):
-            pm = inner & (np.abs((X - x) - (Y - (yl - q(1.6))) * (1 if d else -1) * 0.8) < 0.7) & (Y > yl - q(1.6)) & (Y < yl)
-            a[pm] = code('timber_warm', 4 if not d else 2)
-        x += q(rng.uniform(3.4, 4.4))
-    # moss on the shaded lower slope (B8): two soft cushions with a lit cap and a few blades of grass,
-    # well inside the outline
-    deep = ndi.binary_erosion(rm, iterations=6) & (Y < yl - q(2.0)) & (Y > y_eave - th - q(9))
-    for k_ in range(3):
-        mx = rx0 + (rx1 - rx0) * (0.5 + 0.14 * k_) + rng.uniform(-q(2), q(2))
-        my = y_eave - th - q(4.5) - (k_ % 2) * q(2.4)
-        rx_, ry_ = q(3.0) - k_, q(1.3)
-        mm = deep & ((((X + 0.5 - mx) / rx_) ** 2 + ((Y + 0.5 - my) / ry_) ** 2) <= 1)
-        if mm.sum() < 8:
-            continue
-        a[mm] = code('leaf_cool', 2)
-        top = mm & ~np.roll(mm, 1, axis=0)
-        a[top] = code('leaf', 3)
-        a[top & (X + 0.5 < mx)] = code('leaf_warm', 4)
-        a[mm & ~np.roll(mm, -1, axis=0)] = code('leaf_cool', 1)
-        for bx in (int(mx) - 2, int(mx) + 1, int(mx) + 3):
-            for j in range(3 + (bx % 2)):
-                yy_ = int(my - ry_ - j)
-                if 0 <= yy_ < H and inner[yy_, bx]:
-                    a[yy_, bx] = code('grass', 3 if j < 2 else 4)
-    return tone
+        ys_ = slice(sy, min(H, sy + int(rng.integers(5, 11))))
+        dark = rng.random() < 0.12
+        nfam = sibs[2] if rng.random() < 0.5 else sibs[0]
+        for dx in (0, 1):
+            col = inside[ys_, sx + dx] & ~tip_l[ys_, sx + dx] & ~tip2_l[ys_, sx + dx] & ~shade_l[ys_, sx + dx] & ~soft_l[ys_, sx + dx]
+            c0 = code_[ys_, sx + dx]
+            if dark:
+                # now and then a darker strand (a step down the lightness, the straw's own ramps)
+                code_[ys_, sx + dx] = np.where(col, straw_codes(L[ys_, sx + dx] - 0.06), c0)
+            else:
+                fi = c0 // 8
+                nf = np.where(fi == sibs[1], nfam, sibs[1])
+                code_[ys_, sx + dx] = np.where(col, nf * 8 + c0 % 8, c0)
+    a[rm] = code_[rm]
+    return L
 
 
 def combed_ridge(a, rm, x0, x1, y_r, rng, fam='sand'):
-    """The ridge roll as a raised cylinder of straw: a lit top edge, the body turning down to a
-    shaded lower edge, its ends rounded down over the hips, two hazel liggers along it pinned by spars;
-    its lower edge block-cut into short points, and its shade on both slopes under it."""
+    """The ridge roll as a raised cylinder of straw (XR7-T1, T2, T5): a lit top edge no brighter than
+    sand_warm 4, the body turning down to a shaded foot, its shade on the slopes under it; its ends
+    rounded caps (radius about half its depth) turned a step away at their rims; one hazel ligger along
+    it, half buried in the straw (broken where the straw lies over it), pinned by short crossing spars
+    at uneven spacing; short block-cut points under it."""
     H, W = a.shape
     Y, X = np.mgrid[0:H, 0:W]
     rr = q(THATCH_RIDGE)
-    r_end = rr * 0.6
-    cxm = (X + 0.5)
-    endl = ((cxm - (x0 + r_end * 0.7)) / r_end) ** 2 + ((Y + 0.5 - (y_r + rr * 0.55)) / (rr * 0.6)) ** 2 <= 1
-    endr = ((cxm - (x1 - r_end * 0.7)) / r_end) ** 2 + ((Y + 0.5 - (y_r + rr * 0.55)) / (rr * 0.6)) ** 2 <= 1
-    core = (cxm >= x0 + r_end * 0.7) & (cxm < x1 - r_end * 0.7)
-    m = rm & (Y >= y_r) & (Y < y_r + rr) & (core | endl | endr)
+    r = rr / 2.0
+    cy = y_r + r
+    cxm = X + 0.5
+    xa, xb = x0 + r + 1, x1 - r - 1
+    core = (cxm >= xa) & (cxm < xb) & (Y >= y_r) & (Y < y_r + rr)
+    capl = (cxm - xa) ** 2 + (Y + 0.5 - cy) ** 2 <= r * r
+    capr = (cxm - xb) ** 2 + (Y + 0.5 - cy) ** 2 <= r * r
+    m = rm & (core | capl | capr)
     rel = Y - y_r
     fx = (cxm - x0) / max(1, x1 - x0)
-    # a cylinder lit from above and the west: the top edge brightest, the lower edge turned under
-    tt = np.select([rel < 1, rel < 3, rel < 6, rel < rr - 3, rel < rr - 1], [4, 5, 4, 3, 2], 1)
-    tt = np.where(fx > 0.72, tt - 1, tt)
-    tt = np.where(endr & ~core, tt - 1, tt)
-    tt = np.where(endl & ~core & (rel < rr - 3), np.maximum(tt, 4), tt)
-    fams = np.where(tt >= 4, FI[fam + '_warm'], np.where(tt <= 1, FI[fam + '_cool'], FI[fam]))
-    a[m] = (fams * 8 + np.clip(tt, 0, 5))[m]
-    for k_, ly in enumerate((y_r + q(1.7), y_r + rr - q(1.8))):
-        lm = m & (Y == ly) & core
-        a[lm] = code('timber_warm', 4 if k_ == 0 else 3)
-        a[lm & (fx < 0.5)] = code('timber_warm', 5 if k_ == 0 else 4)
-        um = m & (Y == ly + 1) & core
-        a[um] = np.where(fx[um] > 0.7, code('timber_cool', 1), code('timber', 1))
-        x = int(x0 + r_end + q(rng.uniform(2.0, 4.0)))
-        while x < x1 - r_end - 2:
-            pm = m & (Y >= ly - 1) & (Y <= ly + 1) & (X >= x) & (X < x + 2)
-            a[pm] = code('timber', 2)
-            a[pm & (Y == ly - 1) & (X == x)] = code('timber_warm', 4)
-            x += q(rng.uniform(5.0, 6.6))
+    Lr = np.select([rel < 1, rel < 3, rel < 6, rel < rr - 3, rel < rr - 1], [0.84, 0.89, 0.81, 0.71, 0.62], 0.54)
+    Lr = Lr - 0.06 * (fx > 0.72)
+    rim = (capl & ~core & (np.hypot(cxm - xa, Y + 0.5 - cy) > r - 2)) | (capr & ~core & (np.hypot(cxm - xb, Y + 0.5 - cy) > r - 2))
+    Lr = np.where(rim, Lr - 0.08, Lr)
+    Lr = np.where(capr & ~core, Lr - 0.05, Lr)
+    code_ = straw_codes(Lr)
+    a[m] = code_[m]
+    # the ligger: segments of 8 to 20 texels with the straw lying over it between them
+    ly = y_r + rr - q(1.8)
+    x = int(xa) + int(rng.integers(0, 4))
+    while x < xb - 3:
+        ln = int(rng.integers(8, 21))
+        seg = m & (Y == ly) & (X >= x) & (X < min(xb, x + ln))
+        a[seg] = np.where(X[seg] < x0 + (x1 - x0) * 0.6, code('timber_warm', 4), code('timber_warm', 3))
+        und = m & (Y == ly + 1) & (X >= x) & (X < min(xb, x + ln))
+        a[und] = code('timber', 2)
+        # a pair of short crossing spars, now and then
+        if rng.random() < 0.6 and ln > 9:
+            sx = x + int(rng.integers(3, ln - 4))
+            for d in (-1, 1):
+                for j in range(3):
+                    yy_, xx_ = ly - 1 - j, sx + d * j
+                    if 0 <= yy_ < H and 0 <= xx_ < W and m[yy_, xx_]:
+                        a[yy_, xx_] = code('timber_warm', 3 if d < 0 else 2)
+        x += ln + int(rng.integers(2, 5))
     bw, bd = q(THATCH_BLOCK[0]), q(1.2)
     yb = y_r + rr
     pts = np.zeros(a.shape, bool)
-    x = int(x0 + r_end * 0.6)
-    while x + bw <= x1 - r_end * 0.6:
+    x = int(xa)
+    while x + bw <= xb:
         c = x + bw / 2.0
         kk = Y - yb
         half = (bw / 2.0) * (1 - (kk + 0.5) / bd)
         pm = rm & (kk >= 0) & (kk < bd) & (np.abs(cxm - c) < half)
         pts |= pm
-        tw = 2 if (c - x0) / max(1, x1 - x0) < 0.7 else 1
-        a[pm] = code(fam, tw)
-        a[pm & (cxm < c)] = code(fam, tw + 1)
-        x += bw
-    # the roll's shade on both slopes under it: two tones for two rows, one for the next
-    under = rm & ~m & ~pts & (Y >= yb) & (Y < yb + q(1.4) + 2)
-    sh = ndi.binary_dilation(pts, structure=np.array([[0, 0, 0], [0, 0, 0], [0, 1, 0]], bool), iterations=2) & ~pts & ~m
-    step(a, (under & (Y < yb + 2)) | (sh & rm), -2, lo=0)
-    step(a, under & (Y >= yb + 2), -1, lo=0)
+        a[pm] = straw_codes(np.where(cxm[pm] < c, 0.65, 0.60) - 0.05 * ((c - x0) / max(1, x1 - x0) > 0.72))
+        x += bw + int(rng.integers(0, 3))
+    under = rm & ~m & ~pts & (Y >= yb) & (Y < yb + 2)
+    sh = ndi.binary_dilation(pts, structure=np.array([[0, 0, 0], [0, 0, 0], [0, 1, 0]], bool)) & ~pts & ~m & rm
+    step(a, under | sh, -1, lo=0)
     return m | pts
 
 
 def combed_eave(a, rm, rx0, rx1, y_eave, rng, fam='sand'):
-    """The thick eave lip: the straw rolling over the edge in rounded bundle tips five texels tall,
-    lit on their tops (the sun on the roll), turning down through the body, and a deep dark underside
-    band of three texels under them before the wall's line. Its lower edge is straight on the soft
-    grid (the tips round its upper face, never a fringe below). Returns its mask."""
+    """The thick eave lip (XR7-T1, T2): rounded bundle tips of uneven width, their tops lit (the only
+    bright straw on the front with the course tips), the body under them, then a three-texel dark
+    underside before the wall's line; the east quarter a step down. Its lower edge is straight on the
+    soft grid; the roof's lower corners are rounded by the caller. Returns its mask."""
     H, W = a.shape
     Y, X = np.mgrid[0:H, 0:W]
     th = q(THATCH_EAVE)
-    lip = 5
+    lipn = 5
     em = rm & (Y >= y_eave - th)
     rel = Y - (y_eave - th)
     fx = (X + 0.5 - rx0) / max(1, rx1 - rx0)
-    tt = np.full(a.shape, 3, int)
-    ff = np.full(a.shape, FI[fam], int)
-    for (xa, xb) in _bundles(W, 4, 6, rng):
-        n = xb - xa
-        for x in range(xa, xb):
-            j = x - xa
-            # a rounded tip: its top a texel lower at its two edges than in its middle
+    Le = np.full(a.shape, 0.71)
+    x = 0
+    while x < W:
+        n = int(rng.integers(5, 10))
+        cols = np.arange(x, min(W, x + n))
+        for j, xx in enumerate(cols):
             top = 0 if 0 < j < n - 1 else 1
-            col = (X == x)
-            tt = np.where(col & (rel == top), 5, tt)
-            tt = np.where(col & (rel == top + 1), 4, tt)
-            tt = np.where(col & (rel >= top + 2) & (rel < lip - 1), 3, tt)
-            tt = np.where(col & (rel == lip - 1), 2, tt)
-            tt = np.where(col & (rel < top), 1, tt)                    # the gap between two tips
-        if rng.random() < 0.35:
-            ff[:, xa:xb] = FI[fam + '_warm']
-    under = rel >= lip
-    tt = np.where(under, np.where(rel >= th - 1, 0, 1), tt)
-    ff = np.where(under, FI[fam + '_cool'], ff)
-    tt = np.where((fx > 0.75) & ~under, tt - 1, tt)
-    ff = np.where((tt >= 4) & ~under, FI[fam + '_warm'], ff)
-    tt = np.clip(tt, 0, 5)
-    a[em] = (ff * 8 + tt)[em]
+            colm = X == xx
+            Le = np.where(colm & (rel < top), 0.68, Le)
+            Le = np.where(colm & (rel == top), 0.87 if top == 0 else 0.81, Le)
+            Le = np.where(colm & (rel == top + 1), 0.81, Le)
+            Le = np.where(colm & (rel >= top + 2) & (rel < lipn - 1), 0.71, Le)
+            Le = np.where(colm & (rel == lipn - 1), 0.62, Le)
+        x += n
+    Le = np.where(rel >= lipn, np.where(rel >= th - 1, 0.43, np.where(rel >= th - 2, 0.48, 0.54)), Le)
+    Le = np.where((fx > 0.75) & (rel < lipn), Le - 0.06, Le)
+    code_ = straw_codes(Le)
+    a[em] = code_[em]
     return em
 
 
@@ -908,6 +930,12 @@ def thatch_stack(a, rm, plane, xs, cw, y_foot, rise, rng, wide=False, soot=1.0, 
     above = Y < y_top
     restore = (a != before) & ~(st | above)
     a[restore] = before[restore]
+    # the stack's own flashing rows (chimney's lead band) become stone again: the apron below is the
+    # only lead (XR7-T6: 2 rows, not 6)
+    kf = q(1.4)
+    for j in range(kf + 1):
+        yy_ = y_foot - 1 - j
+        a[yy_, sx0:sx1] = a[yy_ - kf - 1, sx0:sx1]
     step(a, st & (X >= sx1 - 2), -1, lo=0)
     fl = (X >= sx0 - 1) & (X < sx1 + 1) & (Y >= y_foot) & (Y < y_foot + 2) & rm & ~st
     a[fl & (Y == y_foot)] = code('slate_cool', 4)
@@ -917,7 +945,8 @@ def thatch_stack(a, rm, plane, xs, cw, y_foot, rise, rng, wide=False, soot=1.0, 
         m = (X == xe) & (Y >= y_foot - q(1.4)) & (Y < y_foot) & rm & ~st
         a[m] = code('slate_cool', t)
         soak |= m
-    sh = rm & ~st & ~fl & ~soak & (((X >= sx0 - 1) & (X < sx1 + 1) & (Y >= y_foot + 2) & (Y < y_foot + 2 + 4 - (X >= sx0 + cw // 2)))
+    depth = 3 + np.round(1.2 * np.sin(np.pi * ((X - sx0) % 7) / 7.0)).astype(int) - (X >= sx0 + cw // 2)
+    sh = rm & ~st & ~fl & ~soak & (((X >= sx0 - 1) & (X < sx1 + 1) & (Y >= y_foot + 2) & (Y < y_foot + 2 + depth))
                                    | ((X >= sx1 + 1) & (X < sx1 + 3) & (Y >= y_top + q(4)) & (Y < y_foot + 5)))
     straw = sh & (a >= 0) & np.isin(a // 8, [FI[f] for f in SAND_SIBS])
     # (each straw texel three tones down, no lighter than 1: the floor in the core, the combing kept)
@@ -2204,11 +2233,18 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         rx0, rx1 = rx0 - q(1.5), rx1 + q(1.5)
         y_eave = y_e + q(4)
         rm = V.roof_mask(a.shape, rx0, rx1, y_r, y_eave, hip=hip, round_=q(5))
+        # the eave's lower corners rounded (XR7-T1: radius 7)
+        Yc, Xc = np.mgrid[0:a.shape[0], 0:a.shape[1]] + 0.5
+        rc = 7
+        for cxc in (rx0 + rc, rx1 - rc):
+            corner = (Yc > y_eave - rc) & (np.abs(Xc - cxc) > 0) & ((Xc < rx0 + rc) if cxc < (rx0 + rx1) / 2 else (Xc > rx1 - rc))
+            rm &= ~(corner & ((Xc - cxc) ** 2 + (Yc - (y_eave - rc)) ** 2 > rc * rc))
         a[rm] = -1
         plane = combed_thatch(a, rm, rx0, rx1, y_r, y_eave, hip, rng)
         combed_ridge(a, rm, rx0 + hip, rx1 - hip, y_r, rng)
         combed_eave(a, rm, rx0, rx1, y_eave, rng)
         info['keep'] = keep
+        info['combed'] = True
         info['calm'] = ndi.binary_dilation(rm, iterations=1)
         info['pots'] = []
         if spec.get('chimney') and spec.get('stack_t') is not None:
@@ -2295,7 +2331,14 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         made = (a != before) & (a >= 0)
         stood |= made
         VO.protrusion(a, made, (before >= 0) & ~made, standoff=1.5)       # a board on its bracket
+    before_w = a.copy()
     foot_weeds(a, L, R, B, busy, rng)
+    if info.get('combed'):
+        # the weeds keep within the plinth's ends, so the contact shade at the foot (and the lawn laid
+        # round it) stays as it was
+        Xw = np.arange(a.shape[1])[None, :]
+        out = (a != before_w) & ((Xw < L - 2) | (Xw >= R + 2))
+        a[out] = before_w[out]
     calm = info.get('calm')
     held = a.copy() if calm is not None else None
     break_runs(a, rng, q(14))
@@ -2687,7 +2730,42 @@ def thatch_hole(d, base, info, cxw, rw, rh, rng):
         if rng.random() < 0.6:
             L2 = int(rng.integers(2, 5))
             fill(d, x, col.max() - L2 + 1, x + 2, col.max() + 1, code('sand', t))
-    scorch(d, base, (xs.min() + xs.max()) / 2, (top + bot) / 2, (xs.max() - xs.min()) * 0.75, (bot - top) * 0.9, rng, rm & ~m)
+    if info.get('combed'):
+        slumped_bundles(d, base, m, rm, rng)
+    else:
+        scorch(d, base, (xs.min() + xs.max()) / 2, (top + bot) / 2, (xs.max() - xs.min()) * 0.75, (bot - top) * 0.9, rng, rm & ~m)
+
+
+def slumped_bundles(d, base, hole, rm, rng):
+    """The straw the storm tore loose round a hole in the combed thatch (XR7-D1): two bundles slumped
+    over its upper rim and one over its east side, each combed (strands two texels wide in close
+    tones, running down its fall), lit on its west edge, a row of tips along its lower edge, a shade
+    line under it on the roof; the hole's own rim sooted a texel deep."""
+    H, W = d.shape
+    Y, X = np.mgrid[0:H, 0:W] + 0.5
+    ys, xs = np.nonzero(hole)
+    top, bot, x0, x1 = ys.min(), ys.max(), xs.min(), xs.max()
+    lobes = [(x0 + (x1 - x0) * 0.25, top - 1, (x1 - x0) * 0.32, 5.0, 0.0),
+             (x0 + (x1 - x0) * 0.68, top + 1, (x1 - x0) * 0.26, 4.5, 0.15),
+             (x1 + 2, (top + bot) / 2, 4.0, (bot - top) * 0.45, 0.35)]
+    for (cx, cy, rx, ry, sag) in lobes:
+        u, v = (X - cx) / max(rx, 1), (Y - cy) / max(ry, 1)
+        m = (u * u + v * v <= 1) & rm & ~hole & (base >= 0)
+        if m.sum() < 12:
+            continue
+        L = 0.66 - 0.05 * (u > 0.35) + 0.05 * (u < -0.45) - sag * 0.2
+        strand = ((np.floor(X).astype(int) // 2) + int(rng.integers(0, 2))) % 3
+        L = L + np.where(strand == 0, -0.04, np.where(strand == 1, 0.02, 0.0))
+        T_, Lf, B_, R_ = edges(m)
+        tipcol = (np.floor(X).astype(int) % 4) < 2
+        L = np.where(B_, np.where(tipcol, 0.79 - 0.06 * (u > 0), 0.62), L)
+        L = np.where(T_, L - 0.05, L)
+        L = np.where(Lf & ~B_, L + 0.06, L)
+        d[m] = straw_codes(L)[m]
+        under = ndi.binary_dilation(m, structure=np.array([[0, 0, 0], [0, 0, 0], [0, 1, 0]], bool)) & ~m & rm & ~hole & (d < 0) & (base >= 0)
+        d[under] = (base[under] // 8) * 8 + np.maximum(base[under] % 8 - 2, 0)
+    rim = ndi.binary_dilation(hole) & ~hole & rm & (d < 0) & (base >= 0)
+    d[rim] = code('sand_cool', 0)
 
 
 def straw_heap(d, info, cx, rng):

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/herbalist_damage",
  "file": "game/zones/crossroads/art/herbalist_damage.png",
- "sha256": "213060415606f65a1b8b2c0d9b00534e98a889cc1e99a65c64710862ab166f18",
+ "sha256": "10cf76e175ed499c39a8088f6000701c702f6b017e366053b59aeca10d7ea58f",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 13,
-   "tones": 25.384615384615383,
-   "shapes": 38.69230769230769
+   "patches": 11,
+   "tones": 23.0,
+   "shapes": 33.45454545454545
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.768,
-  "tones_ratio": 0.94,
-  "shapes_ratio": 0.768,
+  "ratio": 0.664,
+  "tones_ratio": 0.852,
+  "shapes_ratio": 0.664,
   "passed": false,
   "group": "prop"
  },
@@ -39,23 +39,19 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    29,
-    31,
+    18,
+    44,
     164,
     228
    ],
-   "message": "crossroads/herbalist_damage: detail bar 0.77 of Eastward's prop band (25.4 tones, 38.7 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist_damage: detail bar 0.66 of Eastward's prop band (23.0 tones, 33.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "Round 7 review at d767e817 (PR #458, round 1 of the Crossroads remainder), docs/reviews/2026-11-08-crossroads-placed.md, round 7. Fail: the flaps round the hole (XR7-D1); it places with the herbalist, which fails.",
-  "fix_list": [
-   "XR7-D1 (fault): the straw pushed up round the hole is two flat one-tone lobes, #926f5a 123 texels [76,34,96,46] and #6f4e46 64 texels [118,48,132,60], which read as smooth leather flaps. Draw them as slumped bundles with combed streaks and a row of tips along their lower edge, lit on the west; regenerate after the herbalist's XR7-T1/T2."
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
