@@ -1684,3 +1684,164 @@ The gate prints the same **17 advisories** as in round 7, to remove passing pict
 - **The beech's spread** comes from the single-kind render, which does not reproduce the shipped beech (W8-A1). The other six kinds' shipped seeds reproduce exactly in the sweep.
 - **Kit pieces and the baked grounds** were not reviewed.
 - **No fixes.** Nothing was repainted. `fix-queue.json`, `scripts/review`, `.github`, the detectors and the generators are untouched.
+
+## Round 9: pass 12 of the redraw (10 Nov 2026)
+
+The asset gate on draft PR #446 (`claude-a/woodland-redraw`, head **1da15380**: pass 12 as 81ee5759, the merge of main d01d3ba6 as d8622880, and the regenerated files). Pass 12 answered W8-F1 on the same seven crowns (oak, beech, birch, hollow tree, bush, bush_b, bush_c): each pocket is now a gap under the upper lobe's lower edge, laid along the boundary, with no leaf-1 ring, and no two pockets form a matched pair. Each kind's variant was picked again by the bars, and the spread over seeds is reported (W8-M1). Nothing else in the zone changed. Reviewed by a detail-auditor that drew none of it. Claude A's read was weighed and checked: at 2x beside the Eastward red tree pass 12 is the best yet (no eyes, no cracks, lobes with dark gaps under their edges), but only 1 or 2 draws in 12 pass, which matters for the 24 queued Crossroads oaks and bushes.
+
+**Result: 25 of 25 pass.** The seven crowns pass: every W8, W7, W6 and round 5 bar is met on the shipped bytes, all three values on the line meet it, and by eye at 2x and 6x the pockets read as shade under the lobes, not as eyes or cracks. Claude A's read holds. The painter's numbers and the seed table are confirmed to the decimal, and the W8-A1 explanation is right: it was my tool, not the generator. The bush's short dark slits are not a fault by measure, because its gaps are deeper than Eastward's. One polish code is raised (W9-P1): the bush's two upper gaps mirror each other. **The woodland scene may now be regenerated, with W2-L1 fixed in that regeneration** (ruling 4). For the Crossroads, reuse the approved sprites unchanged, but **do not mirror them** (ruling 3).
+
+### What was reviewed and how
+
+- **Calibration first.** `python3 -m scripts.review.calibrate` on Matt's flagged folder and `refs-games/eastward`: recall **39 of 39**, false positives 5 on 6 clean screens and 21 on 22 clean props, as in rounds 1 to 8. `calibration_results.json` reverted.
+- **Asset gate.** `npm run review:asset -- woodland/<name> --record` on the 7 changed pictures. Every sha256 matched its record, and nothing in the records changed. Detectors: 7 pass, no blocker or fault; the only finding is `detail.bar` polish on each (the birch's `detail.outline` of rounds 1 to 8 is gone). The 18 other pictures are byte-identical to round 8. Between 6b3523fa and 1da15380 the only changes under `game/zones/woodland` are these 7 PNGs; the merge brought Crossroads files, kit fixtures and the baked grounds.
+- **W3-P1 held.** At 1da15380 the 7 changed pictures read `pending`.
+- **Reproduction.** `python3 -m scripts.art.native.zone --zone woodland --density 3` reproduces the zone's sprites byte for byte at 1da15380.
+- **The painter's numbers** ("Pass 12" in the PR body) were re-measured with round 8's `allm.py` and `ring.py`, run unchanged on the shipped bytes. All 7 rows match the PR table to the decimal.
+- **The seed table (W8-M1)** was re-run: `bl_seed` 0 to 12 for each kind (91 pictures), every bar on each (`bars9.py`). It matches the painter's table: the counts, the seeds that pass and the misses by bar.
+- **Scene gate.** `npm run review:scene -- woodland --no-render` ran to its report this time: 88 blockers (all `logic.wiring`, on quests whose zones are not built yet), 14 faults and 16 polish, the same as rounds 4 and 5. The willow's y-sort point is still +87 px off its feet (W2-L1), and the two placed beeches (wood-6, wood-22) are −19 px, as in round 4.
+- **New this round** (auditor scratchpad `audit446r9_tools/`, not committed; detectors, guards and thresholds unchanged):
+  - `gen9.py`: round 8's `gen.py` with W8-A1 fixed (below). It renders each of the 7 shipped crowns pixel for pixel.
+  - `bars9.py`: round 8's `bars.py` plus the W8-F1 ring bars, with seed 12 reported separately.
+  - `slit.py`: the length and depth of each pocket, whether a 3 × 3 block of the darkest class fits inside it, and the share of thin slits (ruling 2).
+  - `pairs.py`: each pocket's centre, size and orientation, with W8-F1 step 3 pairs and mirrored pairs flagged.
+  - `mirror.py`: which way each crown is lit, before and after a horizontal mirror (ruling 3).
+- **Eastward at the same character height** (× 1.37 nearest, as in rounds 4 to 8): the red tree in 12, the two trees in 13, the pines in 12 and the round shrub in 12.
+- **Crops** (auditor scratchpad `audit446r9_m/`):
+  - `oak_ew_p12_2x.png`, `beech_ew_p12_2x.png`, `birch_ew_p12_2x.png`, `hollow_tree_ew_p12_2x.png`: the red tree beside pass 12;
+  - `four_trees_p12_2x.png`, `oak_ew_p12_top_4x.png`;
+  - `pockets_ew_oak_hollow_p12_6x.png`: two windows of the red tree, two of the oak and two of the hollow tree;
+  - `shrubs_ew_p12_4x.png`, `bush_ew_p12_6x.png`, `bush_b_ew_p12_6x.png`, `bush_c_ew_p12_6x.png`;
+  - `oak_mirror_ew_2x.png` and `bush_mirror_4x.png`: the red tree, the oak and the oak mirrored; the bush and the bush mirrored.
+
+### Ruling 1: W8-A1 and the spread
+
+**The painter is right about W8-A1. It was my tool, not the generator.** The beech's settings in `woodtrees.TREE_KW` name the shared clump set (`shapes=CLUMPS_S`), and the generator picks the small-crown branch by identity (`if shapes is CLUMPS_S`, line 812). Round 8's `gen.py` reset the settings with `copy.deepcopy`, which also copied `CLUMPS_S`, so the identity test failed and the beech was drawn on the other branch, 198 px wide instead of 193. `gen9.py` copies each kind's dict and its `lbk` one level deep and keeps the clump sets shared. With it, all 7 shipped crowns, the beech included, come out **pixel-identical** to the shipped PNGs (the bytes differ only in PNG encoding); round 8's `gen.py` still gives the 198 px beech. Nothing in the generator needed changing. W8-A1 is closed, and round 8's beech spread (which was not the shipped beech) is replaced by this round's.
+
+**W8-M1 is met, and the spread is as the painter reports it** (seeds 0 to 11, every bar including the ring bars):
+
+| Kind | Draws meeting every bar | Shipped | W8-F1 ring met | W7-F1 met | W6 hierarchy met | Misses, most often | share min / med / max | traced min / med / max |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| oak | 1 (seed 1) | 1 | 9 | 2 | 4 | traced 10, share 8, grain 6 | 0.46 / 0.50 / 0.75 | 72 / 79 / 85 |
+| beech | 2 (2, 10) | 2 | 9 | 5 | 5 | grain 8, pock 5 | 0.50 / 0.64 / 0.71 | 61 / 73 / 81 |
+| birch | 1 (3) | 3 | 8 | 2 | 3 | traced 8, share 7, net 6 | 0.29 / 0.50 / 0.80 | 67 / 81 / 88 |
+| hollow_tree | 1 (4) | 4 | 10 | 2 | 6 | traced 9, share 5 | 0.44 / 0.63 / 0.81 | 70 / 79 / 84 |
+| bush | 1 (11) | 11 | 10 | 3 | 3 | traced 8, share 8 | 0.50 / 0.50 / 0.75 | 63 / 79 / 95 |
+| bush_b | **0**; seed 12 passes | 12 | 9 | 0 | 1 | traced 11, h15 10, share 8 | 0.33 / 0.50 / 1.00 | 73 / 81 / 88 |
+| bush_c | 2 (0, 11) | 0 | 11 | 2 | 7 | traced 9 | 0.33 / 0.67 / 1.00 | 59 / 79 / 98 |
+
+(Traced has no value on a draw with fewer than 2 big lobes; that counts as a miss. The bush_b and bush_c ranges are over the draws that have a value.)
+
+What this shows:
+
+1. **The W8-F1 drawing is robust.** The ring bars hold on 66 of 84 draws, and all 12 draws of every kind are inside or near Eastward's ring lift (−0.10 to +0.12). The gap is how pass 12 draws, not luck.
+2. **The passes are the best of the spread, as shown.** 8 of 84 draws meet every bar, and bush_b's shipped seed is the only passing draw of 13. Round 8 ruling 1 holds: the shipped bytes are what is judged, the measures are deterministic, and a chosen best draw is a legitimate pick once its spread is shown.
+3. **Traced is now the common miss.** W7-F1 as a group is met on only 16 of 84 draws. In round 8 its network and pocket parts held on 74 of 84, and they still mostly hold (network ≤ 0.8 on 70, pockets ≥ 5 on 61). Traced is a proxy set at Eastward's own maximum (77 %). Its median over the draws is 73 to 81 %, so it fails by a few points, not by a different look. The look carries the verdict on these seven, and the look is right.
+4. **The share and grain medians rose** (share 0.50 to 0.67, from 0.48 to 0.55 in round 8; the oak's grain median from 20.5 to 18.5), but not to the bars.
+
+### Ruling 2: are the gaps short dark slits?
+
+**No, not as a fault. The gaps are deeper and more solid than Eastward's. What reads as a slit at 4x is a hard, separate cut, and on the bush a long one.**
+
+Measured with `slit.py` (pockets as in `ring.py`; depth = area / length; a slit = no 3 × 3 block of the darkest class inside, and at least 6 px long):
+
+| | Pockets | Length, median (px) | Depth, median (px) | Has a 3 × 3 core | Slits (% of pockets / % of pocket px) | Ring 1 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Eastward red tree 12 | 39 | 5.3 | 1.55 | 26 % | 26 / 16 | 0.41 |
+| Eastward trees 13 (west, east) | 12, 18 | 6.5, 5.8 | 1.55, 1.34 | 17, 6 % | 42 / 40, 44 / 49 | 0.43, 0.52 |
+| Eastward pines 12, round shrub 12 | 28, 3 | 5.4, 9.6 | 1.55, 1.67 | 14, 33 % | 32 / 34, 67 / 41 | 0.48, 0.35 |
+| oak | 41 | 7.1 | 2.38 | 54 % | 15 / 10 | 0.52 |
+| beech | 31 | 7.2 | 2.11 | 48 % | 13 / 9 | 0.39 |
+| birch | 5 | 7.7 | 2.50 | 60 % | 20 / 8 | 0.55 |
+| hollow_tree | 42 | 6.0 | 2.19 | 50 % | 5 / 3 | 0.54 |
+| bush | 4 | 13.6 | 2.69 | 75 % | 0 / 0 | 0.59 |
+| bush_b | 7 | 8.2 | 2.97 | 71 % | 14 / 5 | 0.55 |
+| bush_c | 11 | 7.7 | 2.14 | 55 % | 18 / 13 | 0.43 |
+
+What this shows:
+
+1. **Ours are thicker than Eastward's, not thinner.** The median depth is 2.1 to 3.0 px against 1.3 to 1.7 px, half or more of our pockets hold a 3 × 3 core (Eastward 6 to 33 %), and thin slits are 0 to 20 % of our pockets against 26 to 67 %.
+2. **They read as separate marks for three reasons.**
+   - The cut is hard. One texel out, the surround is already 0.52 to 0.59 of the way to lit on five kinds; Eastward's ring 1 is 0.35 to 0.52. W8-F1 asked for the core to meet leaf 2 to 3 directly, so this is the fix as written, at the top of Eastward's range.
+   - There are fewer and larger gaps: 0.9 to 3.0 per 1000 crown px against Eastward's 3.5 to 4.8 (`pshape2.py`), with a median area of 12.5 to 36.5 px against 7 to 8.5 px.
+   - On the bush the longest gap is 25 px on a 92 px crown, along a diagonal boundary.
+3. **The side has improved.** In round 8 the oak's and hollow tree's pockets sat in lit faces (−0.44, −0.57). They are now −0.10 and −0.23 (Eastward −0.03 to +0.24): closer to shade under an edge, as asked. This is not a bar.
+4. **By eye.** At 2x the trees read as lobes with shade under their edges (`four_trees_p12_2x.png`), and at 6x as gaps under a serrated edge (`pockets_ew_oak_hollow_p12_6x.png`). The shrubs at 4x to 6x show the slits the painter names. On bush_b and bush_c they are single gaps at a boundary. On the bush they make a pattern (W9-P1).
+
+### Ruling 3: the Crossroads plan, and mirroring
+
+**Reusing the approved woodland sprites for the 24 queued Crossroads oaks and bushes is the right plan. Do not mirror them.**
+
+- **Why reuse.** On the current generator about 1 draw in 12 meets every bar (8 of 84), and the passing draws sit on several lines at once. Drawing 24 new seeds would mean about 290 renders and 24 audits, each likely to need its own search, and any later generator change would redraw them all again (round 8 ruling 1, point 4). A byte-identical picture is the reviewed picture, because the review is of bytes. The kit concept `nature_temperate_trees` already lists woodland, valley and crossroads for the oak, beech and birch. H (74) and density (3) are the same, and the oak is the same size (212 × 247 against the queued 211 × 250).
+- **What reuse still needs:**
+  1. **One source or a recorded copy.** The gate checks a record per id. A copied PNG under `game/zones/crossroads/art` needs its own record and a reviewer verdict. An auditor can set that verdict on proof that the sha256 equals an approved woodland record; that is an identity check, not a new detail audit. Pointing the Crossroads at the woodland sprites (shared variants, one record each) avoids the copy.
+  2. **The bushes are a different size.** The 14 queued Crossroads bushes are 112 × 91. The woodland bush, bush_b and bush_c are 92 × 61, 75 × 54 and 109 × 57: lower and flatter. Check the plan footprints, walk boxes and `logic.scale` in the Crossroads scene gate. Where a bigger shrub is needed, that is a new picture.
+  3. **Neighbours differ.** With at most four trees and three bushes for 24 sites, place them so no two neighbours are the same sprite. Use the hollow tree, which has its creature's hole, at most once per screen. The birch is its own size class. This follows house-style's "neighbours differ" for buildings. For trees it is advice, judged by eye in the scene.
+  4. **The ground under them.** The crowns were judged on the woodland ground. In the valley palette, check them by eye in the Crossroads composite at 1x and 2x.
+- **A mirrored sprite is a new picture, and it fails on light.** Mirroring flips the light (`mirror.py`, `oak_mirror_ew_2x.png`). The shipped crowns are lit from 114 to 136° (the upper left; Eastward's red tree 122°), with the west half 17 to 26 L brighter than the east. Mirrored, they are lit from 44 to 66° (the upper right), the east half 17 to 27 L brighter, and the trunk's lit side, the dome shift, the side the gaps hang under and the cast shadow all point the wrong way. That breaks the house rule that light always comes from the upper left (art-style 2, house-style "From the upper left, always").
+  - A mirrored PNG has new bytes, so the gate would need its own review, and that review would fail it.
+  - A runtime flip (`scale.x = -1` or `flip_h`) would put that same unreviewed, wrongly lit picture in the game without the gate seeing it. It must not be used on lit art.
+  - Variety beyond the approved variants needs new draws through the generator and the full audit. That makes W8-M1's advisory (raise the typical draw) the route to more variants.
+
+### Verdicts
+
+All of W8-F1 (ring lift ≤ 0.07, ringed ≤ 35 %, aspect ≥ 1.6), W7-F1 (network ≤ 0.8 diameters, pockets ≥ 5 / 1000, traced ≤ 77 %), the W6 hierarchy and the round 5 bars are met on all seven. Three values are on or near the line: the hollow tree's grain 18.0 (≤ 18), bush_b's pocket tones 18.0 (≥ 18) and the beech's aspect 1.62 (≥ 1.6). The bars are inclusive and the measures deterministic (round 7, ruling 2), so they **meet**.
+
+| Asset (seed) | Ring lift, ringed, aspect | Net, Pk, traced | Leaf/mass, lobe, lit-shade8, big lobes (share) | Grain | Mass, L-P, Lit | Pocket t, EW-pipe | Noise, H/V | Verdict | Codes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| oak (1) | +0.01, 10 %, 1.84 | 0.42, 5.08, 72 % | 0.85, 13, 55.8, 10 (0.71) | 17 | 71.1, 99.9, 52.4 | 19.2, 70.4 | 29.4 %, 0.90 | **pass** | W8-F1 fixed |
+| beech (2) | +0.05, 23 %, **1.62** | 0.44, 5.94, 74 % | 0.83, 13, 58.4, 10 (0.62) | 17 | 73.5, 99.0, 51.9 | 19.4, 72.9 | 23.8 %, 0.97 | **pass** | W8-F1 fixed; W3-T5 polish |
+| birch (3) | −0.05, 0 %, 2.13 | 0.36, 8.75, 72 % | 0.76, 15.5, 61.5, 4 (0.80) | 15 | 73.7, 103.1, 41.9 | 24.6, 68.1 | 26.0 %, 0.92 | **pass** | W8-F1 fixed |
+| hollow_tree (4) | −0.02, 2 %, 1.66 | 0.58, 5.98, 75 % | 0.83, 15, 55.3, 12 (0.71) | **18.0** | 69.4, 99.0, 49.2 | 19.8, 73.2 | 26.2 %, 0.96 | **pass** | W8-F1 fixed |
+| bush (11) | −0.04, 25 %, 2.47 | 0.64, 5.87, 63 % | 0.92, 14.5, 60.5, 2 (0.67) | 14 | 74.5, 99.0, 44.7 | 21.0, 68.5 | 24.9 %, 1.03 | **pass** | W8-F1 fixed; W9-P1 polish |
+| bush_b (12) | −0.01, 29 %, 1.76 | 0.28, 12.33, 72 % | 0.92, 21.5, 60.9, 2 (0.67) | 13.5 | 75.1, 115.7, 50.8 | **18.0**, 70.7 | 26.2 %, 1.08 | **pass** | W8-F1 fixed |
+| bush_c (0) | +0.02, 0 %, 1.81 | 0.55, 9.34, 59 % | 0.81, 26.5, 56.4, 2 (0.67) | 13.5 | 68.3, 96.3, 42.3 | 22.6, 69.0 | 24.3 %, 1.04 | **pass** | W8-F1 fixed |
+| willow, sapling, holly, holly_b, bramble, bramble_b, pine, ground, stone_top, hatch_open, hatch_closed, lintel, the six standing stones | unchanged bytes | | | | | | | **pass** (unchanged) | as round 8 |
+
+The reviewer block of each of the 7 records is set to `pass` with these numbers. No other field of the records changed.
+
+### Status of the round 8 codes
+
+| Code | Status | Evidence |
+| --- | --- | --- |
+| W8-F1 (ringed round eyes) | **fixed** on all seven | Ring lift −0.05 to +0.05 (was +0.09 to +0.19), ringed 0 to 29 % (was 38 to 91 %), aspect 1.62 to 2.47 (was 1.46 to 1.96). The bush's "face" pair is gone. W8-F1 step 3 finds no pair on any of the seven. |
+| W8-M1 (report the spread) | **met** | The painter's table is reproduced exactly with `gen9.py` and `bars9.py` (ruling 1). |
+| W8-A1 (beech outside state) | **closed: auditor tool artefact** | `deepcopy` broke the `shapes is CLUMPS_S` test. `gen9.py` renders the shipped beech pixel for pixel. No generator change needed. |
+| W7-P1 (willow network), W6-P1 | **open** (polish, deferred) | Willow byte-identical. |
+| W5-S1, W4-T2, W4-S2, W3-T5 | **open** (polish) | Unchanged bytes. |
+| W3-P1 | **held** | The 7 re-recorded pictures read `pending` at 1da15380. |
+| W2-L1 (willow y-sort +87 px) | **open** | Scene gate at 1da15380. To be fixed in the regeneration (ruling 4). |
+
+### Findings and fixes (round 9)
+
+**W9-P1. The bush's two upper gaps mirror each other** (polish; bush only; crops `bush_ew_p12_6x.png`, `shrubs_ew_p12_4x.png`).
+- **What it is.** The two largest gaps sit at one height (y 25 and 26), 25 px apart on either side of the centre lobe. They slant in mirror image (50° and 152°) and are long (17 and 25 px). At 4x they read as a "\ /" crease or a pair of brows over the bush. W8-F1 step 3 does not catch them: they are more than 12 px apart and differ in size (47 and 81 px). This is the painter's "short dark slits" at their most visible. It is not a fault: every bar is met and at 2x it reads as a cleft between three lobes. It is the same symmetry family as round 8's face.
+- **Fix, when the bush is next drawn** (not required for this pass):
+  - break the symmetry: shorten the right gap to 10 to 14 px, or move one of the two 3 to 5 px up or down;
+  - let one upper-lobe cluster hang 1 to 2 px into the longer gap, so it reads as two short gaps rather than one long cut;
+  - extend W8-F1 step 3 to mirrored pairs: no two gaps longer than 8 px within 30 px of each other at one height (|dy| < 4) with mirrored slants (within 25°).
+- **Check.** `pairs.py` (`audit446r9_tools/`) shows no mirrored pair, and every bar is still met.
+
+**Advisory (no code): traced is the bar most draws miss.** If more variants are wanted later, for the Crossroads or elsewhere, raise the typical draw on traced and big-lobe share before searching seeds. Pass 12's own trials show the two pull against each other, because dimming the crossings raises share and counts as traced. One way out is to let 1 in 4 to 5 big-lobe boundaries go fully untraced: a lobe in front, with no dark at all. That would lower traced without dimming. W8-M1 stays the method: report the spread with any new pass.
+
+### False positives
+
+- **`detail.bar` on the 7 crowns**: round 6's ruling 1; foliage is judged by the replacement measures.
+
+### Ruling 4: may the woodland scene be regenerated?
+
+**Yes.** With this round's verdicts set, `python3 -m scripts.review.gate --check` prints `[review gate] 7 zones, fix queue 48 assets: ok` and refuses **no** woodland picture. Conditions:
+
+1. **W2-L1 must be fixed in that regeneration.** The willow's y-sort point is +87 px off its drawn feet (scene gate `logic.occlusion`, box 684,1057,930,1257). Move it onto the feet in the plan or kit placement. Check the two beeches' −19 px (wood-6, wood-22) while there; the logic-auditor has carried them since round 4.
+2. **The 25 woodland sprites must come out byte-identical.** Every passing record is bound to its sha256. A regeneration that moves any of them sets that picture back to `pending`, and the gate refuses it.
+3. **Run `npm run review:scene -- woodland --no-render` after it** and confirm the occlusion fault is gone. The other scene faults (3 `detail.flat`, the ground tufts' `detail.repetition`, the bench's `logic.reach`, the orphan shadow) are the logic-auditor's, unchanged since round 4.
+
+The gate prints **24 advisories** to remove passing pictures from `art/catalogue/fix-queue.json`: round 8's seventeen (`bramble`, `bramble_b`, `hatch_closed`, `hatch_open`, `holly`, `holly_b`, `lintel`, `pine`, `sapling`, the six standing stones, `stone_top`, `willow`) plus `beech`, `birch`, `bush`, `bush_b`, `bush_c`, `hollow_tree` and `oak`. With these removed, no woodland entry is left in the queue. The queue is not edited here; that is Claude A's call.
+
+### Not checked
+
+- **No in-game render.** Day and night, the night tint and a phone were not checked. The scene gate ran, but its grid cells were not visited one by one.
+- **The Crossroads plan was judged from the records, the kit concept and the gate's rules.** No Crossroads scene with woodland sprites was built or viewed. The bush sizes, the valley ground and the neighbour pattern still need checking there.
+- **The slit measure is new.** It was set on 4 Eastward trees and 1 shrub. It agrees with the crops and points the other way from the painter's worry (ours are thicker). Its only verdict-relevant use is ruling 2.
+- **Kit pieces and the baked grounds** regenerated by the merge (`woodland_kit/ground_baked.json`, the kitlab grounds) were not reviewed.
+- **No fixes.** Nothing was repainted. `fix-queue.json`, `scripts/review`, `.github`, the detectors and the generators are untouched; only the 7 reviewer blocks were written.
