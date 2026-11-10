@@ -160,6 +160,12 @@ static func _numbers(value: Variant, count: int, unit: float = 1.0) -> bool:
 			return false
 	return true
 
+## Whether a point (plan units) lies on the ground, its edges included.
+static func _on_ground(point: Array, unit: float, cell: int, width: int, height: int) -> bool:
+	var x := float(point[0]) * unit
+	var y := float(point[1]) * unit
+	return x >= 0.0 and y >= 0.0 and x <= float(width * cell) and y <= float(height * cell)
+
 ## Structural errors are rejected before constructing any scene nodes. Unknown
 ## extension fields stay in the template; placement and approvals belong to W5/W6.
 static func plan_error(plan: Dictionary) -> String:
@@ -223,6 +229,10 @@ static func plan_error(plan: Dictionary) -> String:
 					return "%s.rect width and height must be positive" % path
 				if not _numbers([entry.rect[0] + entry.rect[2] / 2.0, entry.rect[1] + entry.rect[3] / 2.0], 2, kit.cell):
 					return "%s.rect centre must contain finite coordinates" % path
+				# The zone is walled just outside its ground (edge_walls), so a door past the edge
+				# could never be reached: it lies on the ground's last cells, not beyond them.
+				if entry.rect[0] < 0 or entry.rect[1] < 0 or entry.rect[0] + entry.rect[2] > width or entry.rect[1] + entry.rect[3] > rows.size():
+					return "%s.rect must lie inside the ground (%s by %s cells): the zone's edge is walled, so a door beyond it cannot be reached" % [path, width, rows.size()]
 				for key in ["to", "target_zone", "spawn", "target_spawn"]:
 					if entry.has(key) and not entry[key] is String:
 						return "%s.%s must be a string" % [path, key]
@@ -237,12 +247,19 @@ static func plan_error(plan: Dictionary) -> String:
 			return "actors[%s]%s" % [i, actor_problem]
 		if actor_ids.has(plan.actors[i].id):
 			return "actors[%s].id repeats '%s'" % [i, plan.actors[i].id]
+		var stands := [plan.actors[i].at]
+		stands.append_array(plan.actors[i].get("enemies", []))
+		for spot in stands:
+			if not _on_ground(spot, unit, kit.cell, width, rows.size()):
+				return "actors[%s] must stand inside the ground: %s is outside it" % [i, spot]
 		actor_ids[plan.actors[i].id] = true
 	if not plan.get("spawns", {}) is Dictionary:
 		return "spawns must be an object of coordinate pairs"
 	for id in plan.get("spawns", {}):
 		if not id is String or id.is_empty() or not _numbers(plan.spawns[id], 2, unit):
 			return "spawns must map nonempty string IDs to two finite coordinates"
+		if not _on_ground(plan.spawns[id], unit, kit.cell, width, rows.size()):
+			return "spawns.%s must lie inside the ground: %s is outside it" % [id, plan.spawns[id]]
 	if plan.has("gameplay_from") and not plan.gameplay_from is String:
 		return "gameplay_from must be a scene path string"
 	if not plan.get("gameplay_removed", {}) is Dictionary:

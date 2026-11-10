@@ -467,6 +467,35 @@ func test_a_built_zone_is_walled_at_its_edge() -> void:
 	# the edge is the zone's own, not authoring data: the plan does not change
 	assert_bool(f.operations.export_plan().plan.has("Edge")).is_false()
 
+func test_a_door_spawn_or_actor_outside_the_ground_is_refused() -> void:
+	# The edge walls made a door just past the ground unreachable (the audit of #465: a door at
+	# [20, 5, 1, 3] on a zone 20 cells wide was accepted and the player pushed at the wall for 22 s).
+	var base := {"zone": "outside_fixture", "lab": true, "legend": {".": "lawn"}, "rows": ["....", "....", "...."]}
+	var inside := base.duplicate(true)
+	inside.merge({"doors": [{"id": "East", "rect": [3, 0, 1, 3], "to": "kitlab"}], "spawns": {"start": [0, 0], "corner": [96, 72]},
+		"actors": [{"id": "Camp", "kind": "camp", "at": [48, 36], "camp": "c", "enemies": [[96, 72]]}]})
+	assert_str(ZonePlan.plan_error(inside)).is_equal("")
+	var cases := {
+		"doors[0].rect must lie inside the ground": {"doors": [{"id": "East", "rect": [4, 0, 1, 3], "to": "kitlab"}]},
+		"doors[0].rect must lie inside the ground (4 by 3 cells)": {"doors": [{"id": "South", "rect": [1, 2, 2, 2], "to": "kitlab"}]},
+		"doors[0].rect must lie": {"doors": [{"id": "West", "rect": [-1, 0, 1, 3], "to": "kitlab"}]},
+		"spawns.far must lie inside the ground": {"spawns": {"far": [97, 10]}},
+		"spawns.above must lie inside the ground": {"spawns": {"above": [10, -1]}},
+		"actors[0] must stand inside the ground": {"actors": [{"id": "Sign", "kind": "interactable", "at": [10, 80], "speaker": "s"}]},
+		"actors[0] must stand inside the ground: [120.0, 10.0]": {"actors": [{"id": "Camp", "kind": "camp", "at": [48, 36], "camp": "c", "enemies": [[120.0, 10.0]]}]},
+	}
+	for message in cases:
+		var plan := base.duplicate(true)
+		plan.merge(cases[message])
+		assert_str(ZonePlan.plan_error(plan)).override_failure_message("%s: got '%s'" % [message, ZonePlan.plan_error(plan)]).contains(message)
+		assert_object(ZonePlan.scene_from_plan(plan)).is_null()
+	# cells as the plan's unit: the same rule in cells
+	var cells := base.duplicate(true)
+	cells.merge({"coordinate_space": "cells", "spawns": {"start": [4, 3]}})
+	assert_str(ZonePlan.plan_error(cells)).is_equal("")
+	cells.spawns.start = [4.5, 3]
+	assert_str(ZonePlan.plan_error(cells)).contains("spawns.start must lie inside the ground")
+
 # --- one walk mask, twice (scripts/art/kit/walk.py and world/terrain/walk.gd)
 
 func test_the_walk_mask_matches_the_python_export() -> void:
