@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 5,
+ "version": 6,
  "variants": [
   {
    "id": "lintel",
@@ -14,7 +14,7 @@
    "png": "res://zones/woodland/art/lintel.png",
    "foot": [
     45.0,
-    28.0
+    35.0
    ]
   }
  ],
@@ -38,7 +38,7 @@
   "collision": null,
   "foot": [
    45.0,
-   28.0
+   35.0
   ],
   "footprint": []
  },

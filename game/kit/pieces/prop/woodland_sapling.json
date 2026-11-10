@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 9,
+ "version": 10,
  "variants": [
   {
    "id": "sapling",
@@ -14,7 +14,7 @@
    "png": "res://zones/woodland/art/sapling.png",
    "foot": [
     30.0,
-    83.0
+    82.0
    ]
   }
  ],
@@ -38,7 +38,7 @@
   "collision": null,
   "foot": [
    30.0,
-   83.0
+   82.0
   ],
   "footprint": []
  },

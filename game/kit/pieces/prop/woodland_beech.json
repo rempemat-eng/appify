@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 10,
+ "version": 11,
  "variants": [
   {
    "id": "beech",
    "weight": 1.0,
    "png": "res://zones/woodland/art/beech.png",
    "foot": [
-    79.0,
-    245.0
+    96.0,
+    264.0
    ]
   }
  ],
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   79.0,
-   245.0
+   96.0,
+   264.0
   ],
   "footprint": [
    [

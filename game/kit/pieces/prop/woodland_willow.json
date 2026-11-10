@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 11,
+ "version": 12,
  "variants": [
   {
    "id": "willow",
    "weight": 1.0,
    "png": "res://zones/woodland/art/willow.png",
    "foot": [
-    96.0,
-    287.0
+    123.0,
+    200.0
    ]
   }
  ],
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   96.0,
-   287.0
+   123.0,
+   200.0
   ],
   "footprint": [
    [

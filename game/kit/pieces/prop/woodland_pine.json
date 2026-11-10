@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 10,
+ "version": 11,
  "variants": [
   {
    "id": "pine",
    "weight": 1.0,
    "png": "res://zones/woodland/art/pine.png",
    "foot": [
-    56.0,
-    234.0
+    53.0,
+    237.0
    ]
   }
  ],
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   56.0,
-   234.0
+   53.0,
+   237.0
   ],
   "footprint": [
    [

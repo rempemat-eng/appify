@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 12,
+ "version": 13,
  "variants": [
   {
    "id": "holly",
    "weight": 1.0,
    "png": "res://zones/woodland/art/holly.png",
    "foot": [
-    42.0,
-    75.0
+    40.0,
+    74.0
    ]
   }
  ],
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   42.0,
-   75.0
+   40.0,
+   74.0
   ],
   "footprint": [
    [

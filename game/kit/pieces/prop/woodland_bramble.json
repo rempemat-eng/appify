@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 12,
+ "version": 13,
  "variants": [
   {
    "id": "bramble",
    "weight": 1.0,
    "png": "res://zones/woodland/art/bramble.png",
    "foot": [
-    57.0,
-    52.0
+    61.0,
+    47.0
    ]
   }
  ],
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   57.0,
-   52.0
+   61.0,
+   47.0
   ],
   "footprint": [
    [

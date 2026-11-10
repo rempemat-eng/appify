@@ -6,15 +6,15 @@
  "biomes": [
   "woodland"
  ],
- "version": 8,
+ "version": 9,
  "variants": [
   {
    "id": "oak",
    "weight": 1.0,
    "png": "res://zones/woodland/art/oak.png",
    "foot": [
-    99.0,
-    234.0
+    106.0,
+    247.0
    ]
   }
  ],
@@ -45,8 +45,8 @@
    ]
   },
   "foot": [
-   99.0,
-   234.0
+   106.0,
+   247.0
   ],
   "footprint": [
    [
