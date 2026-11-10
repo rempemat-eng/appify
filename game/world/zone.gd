@@ -5,14 +5,21 @@ extends Node2D
 ##   Actors   a y-sorted Node2D: the player, people, camps and enemies go here
 ##   Spawns   Marker2D nodes named for where doors and saves put the player (falls back to Base/Stands)
 ## The root and Base are y-sorted too, so actors sort against the base's trees and stones.
+## Every zone gets an Occlusion child (world/occlusion.gd): the faint copy that keeps the player and the
+## enemies readable behind tall scenery. docs/physics.md has the whole model.
 
 @export var zone_id := ""
 @export var bounds := Rect2()  ## camera limits in texels; empty means the Base ground's size
+
+var occlusion: Occlusion
 
 @onready var actors: Node2D = $Actors
 
 func _ready() -> void:
 	y_sort_enabled = true
+	occlusion = Occlusion.new()
+	occlusion.zone = self
+	add_child(occlusion)
 	if bounds.size == Vector2.ZERO:
 		var ground := get_node_or_null("Base/Ground") as Sprite2D
 		if ground != null and ground.texture != null:

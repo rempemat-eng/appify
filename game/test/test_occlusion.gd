@@ -1,0 +1,204 @@
+extends GdUnitTestSuite
+## An actor behind tall scenery stays readable (world/occlusion.gd; art-style.md rule 11): when one picture
+## drawn in front hides at least 40 % of its body, a faint copy shows through. Measured on a made-up stage
+## first (so every branch of the rule is pinned), then where it was found by playing: behind the oak on
+## Crossroads' terrace road and under the woodland's willow.
+
+var _table: Dictionary
+
+func before_test() -> void:
+	SaveGame.reset()
+	_table = Zones.table
+
+func after_test() -> void:
+	SaveGame.reset()
+	Zones.table = _table
+	Zones.current = null
+	Zones.root = null
+
+func _picture(w: int, h: int, opaque: Rect2i) -> ImageTexture:
+	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	img.fill_rect(opaque, Color(0.2, 0.5, 0.2, 1.0))
+	return ImageTexture.create_from_image(img)
+
+## A y-sorted stage with an Occlusion, as Zone._ready builds it.
+func _stage() -> Node2D:
+	var root: Node2D = auto_free(Node2D.new())
+	root.y_sort_enabled = true
+	add_child(root)
+	var occ := Occlusion.new()
+	occ.zone = root
+	root.add_child(occ)
+	return root
+
+func _occ(root: Node2D) -> Occlusion:
+	return root.get_node("Occlusion") as Occlusion
+
+## Scenery with its feet at `feet`: a picture w x h whose opaque part is `opaque` (all of it by default).
+func _scenery(root: Node2D, feet: Vector2, w: int, h: int, opaque := Rect2i()) -> Sprite2D:
+	var s := Sprite2D.new()
+	s.texture = _picture(w, h, opaque if opaque.size != Vector2i.ZERO else Rect2i(0, 0, w, h))
+	s.centered = false
+	s.offset = Vector2(-w / 2.0, -h)
+	s.position = feet
+	root.add_child(s)
+	return s
+
+## An actor 20 x 40 with its feet at `feet`, drawn by a Sprite2D child, in `group`.
+func _actor(root: Node2D, feet: Vector2, group := "player") -> Node2D:
+	var a := Node2D.new()
+	a.add_to_group(group)
+	a.position = feet
+	var s := Sprite2D.new()
+	s.name = "Sprite"
+	s.texture = _picture(40, 60, Rect2i(10, 20, 20, 40))   # a drawing with empty margins, as the cast's cells
+	s.centered = false
+	s.offset = Vector2(-20, -60)
+	a.add_child(s)
+	root.add_child(a)
+	return a
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().physics_frame
+	await get_tree().process_frame
+
+func test_a_tall_thing_in_front_ghosts_the_actor() -> void:
+	var root := _stage()
+	_scenery(root, Vector2(100, 200), 120, 160)            # a wall of leaves over x 40..160, y 40..200
+	var hero := _actor(root, Vector2(100, 150))            # feet behind the tree's feet: wholly hidden
+	assert_float(_occ(root).hidden_share(hero)).is_equal(1.0)
+	await _frames(30)
+	assert_bool(_occ(root).is_ghosted(hero)).is_true()
+	var ghost := _occ(root).ghost_of(hero)
+	assert_object(ghost).is_not_null()
+	assert_float(ghost.modulate.a).is_equal_approx(Occlusion.GHOST_ALPHA, 0.01)
+	assert_vector(ghost.global_position).is_equal(hero.global_position)
+	assert_object(ghost.texture).is_same((hero.get_node("Sprite") as Sprite2D).texture)
+	assert_int(ghost.z_index + _occ(root).z_index).is_greater(10)   # drawn over the scenery
+
+func test_in_front_of_it_nothing_shows() -> void:
+	var root := _stage()
+	_scenery(root, Vector2(100, 200), 120, 160)
+	var hero := _actor(root, Vector2(100, 210))            # feet in front of the tree's feet
+	assert_float(_occ(root).hidden_share(hero)).is_equal(0.0)
+	await _frames(30)
+	assert_bool(_occ(root).is_ghosted(hero)).is_false()
+	assert_object(_occ(root).ghost_of(hero)).is_null()
+
+func test_a_low_fence_across_the_feet_does_not_count() -> void:
+	var root := _stage()
+	_scenery(root, Vector2(100, 200), 120, 12)             # y 188..200: the lowest 12 of the body's 40
+	var hero := _actor(root, Vector2(100, 198))
+	var share := _occ(root).hidden_share(hero)
+	assert_float(share).is_greater(0.0)
+	assert_float(share).is_less(Occlusion.HIDDEN_SHARE)
+	await _frames(30)
+	assert_bool(_occ(root).is_ghosted(hero)).is_false()
+
+func test_only_what_is_drawn_hides() -> void:
+	# the picture's box covers the actor, but its texels there are clear (a crown's empty corner)
+	var root := _stage()
+	_scenery(root, Vector2(100, 200), 120, 160, Rect2i(0, 0, 120, 60))   # opaque only over y 40..100
+	var hero := _actor(root, Vector2(100, 190))            # body y 150..190: under the clear part
+	assert_float(_occ(root).hidden_share(hero)).is_equal(0.0)
+	hero.position = Vector2(100, 110)                      # body y 70..110: three quarters under the leaves
+	assert_float(_occ(root).hidden_share(hero)).is_between(0.6, 0.9)
+
+func test_the_ground_layer_and_hidden_things_never_hide() -> void:
+	var root := _stage()
+	var floor_plate := _scenery(root, Vector2(100, 200), 120, 160)
+	floor_plate.z_index = -9
+	var hero := _actor(root, Vector2(100, 150))
+	assert_float(_occ(root).hidden_share(hero)).is_equal(0.0)
+	var wall := _scenery(root, Vector2(100, 200), 120, 160)
+	assert_float(_occ(root).hidden_share(hero)).is_equal(1.0)
+	wall.visible = false                                   # a Conditional that does not hold
+	assert_float(_occ(root).hidden_share(hero)).is_equal(0.0)
+
+func test_enemies_are_ghosted_and_bystanders_are_not() -> void:
+	var root := _stage()
+	_scenery(root, Vector2(100, 200), 120, 160)
+	var foe := _actor(root, Vector2(80, 150), "enemy")
+	var bystander := _actor(root, Vector2(120, 150), "villager")
+	await _frames(30)
+	assert_bool(_occ(root).is_ghosted(foe)).is_true()
+	assert_bool(_occ(root).is_ghosted(bystander)).is_false()
+
+func test_the_ghost_fades_in_and_goes_when_the_actor_steps_out() -> void:
+	var root := _stage()
+	_scenery(root, Vector2(100, 200), 120, 160)
+	var hero := _actor(root, Vector2(100, 150))
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	var ghost := _occ(root).ghost_of(hero)
+	assert_object(ghost).is_not_null()
+	assert_float(ghost.modulate.a).is_less(Occlusion.GHOST_ALPHA)      # still fading in: never a pop
+	await _frames(30)
+	assert_float(_occ(root).ghost_of(hero).modulate.a).is_equal_approx(Occlusion.GHOST_ALPHA, 0.01)
+	hero.position = Vector2(100, 260)                      # out in front
+	await _frames(30)
+	assert_bool(_occ(root).is_ghosted(hero)).is_false()
+	assert_object(_occ(root).ghost_of(hero)).is_null()     # finite: nothing left drawn
+
+func test_reduced_motion_shows_it_at_once() -> void:
+	SaveGame.data.settings.reduced_motion = true
+	var root := _stage()
+	_scenery(root, Vector2(100, 200), 120, 160)
+	var hero := _actor(root, Vector2(100, 150))
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	var ghost := _occ(root).ghost_of(hero)
+	assert_object(ghost).is_not_null()
+	assert_float(ghost.modulate.a).is_equal_approx(Occlusion.GHOST_ALPHA, 0.001)
+
+func test_scenery_that_arrives_later_counts() -> void:
+	var root := _stage()
+	var hero := _actor(root, Vector2(100, 150))
+	await _frames(4)
+	assert_bool(_occ(root).is_ghosted(hero)).is_false()
+	_scenery(root, Vector2(100, 200), 120, 160)            # a camp's den set down after the zone was read
+	await _frames(40)
+	assert_bool(_occ(root).is_ghosted(hero)).is_true()
+
+# --- the places found by playing --------------------------------------------------------------
+func _enter(zone: String, at: Vector2) -> Player:
+	var holder: Node2D = auto_free(Node2D.new())
+	add_child(holder)
+	var player: Player = auto_free(load("res://actors/player.tscn").instantiate())
+	player.input_enabled = false
+	Zones.current = null
+	Zones.attach(holder, player)
+	assert_bool(Zones.go_to(zone, "start")).is_true()
+	player.global_position = at
+	return player
+
+func test_every_zone_has_one() -> void:
+	for zone in ["woodland", "crossroads", "undercroft"]:
+		_enter(zone, Vector2.ZERO)
+		assert_object(Zones.current.occlusion).is_not_null()
+		assert_object(Zones.current.get_node_or_null("Occlusion")).is_same(Zones.current.occlusion)
+
+func test_behind_the_oak_on_the_terrace_road_the_player_shows_through() -> void:
+	var player := _enter("crossroads", Vector2(330, 225))  # on the terrace road, under Oak13's crown
+	var occ: Occlusion = Zones.current.occlusion
+	assert_float(occ.hidden_share(player)).is_greater_equal(0.9)
+	await _frames(30)
+	assert_bool(occ.is_ghosted(player)).is_true()
+	assert_object(occ.ghost_of(player)).is_not_null()
+	player.global_position = Vector2(330, 420)             # the lawn south of the tree: in the open
+	await _frames(30)
+	assert_bool(occ.is_ghosted(player)).is_false()
+
+func test_under_the_willow_the_player_shows_through() -> void:
+	var player := _enter("woodland", Vector2(800, 1290))   # the path where it passes behind the willow
+	var occ: Occlusion = Zones.current.occlusion
+	assert_float(occ.hidden_share(player)).is_greater_equal(Occlusion.HIDDEN_SHARE)
+	await _frames(30)
+	assert_bool(occ.is_ghosted(player)).is_true()
+	player.global_position = Zones.current.spawn_position("start")   # the open meadow
+	await _frames(30)
+	assert_bool(occ.is_ghosted(player)).is_false()
