@@ -35,6 +35,7 @@ var scatter := false
 var scatter_density := 0.35
 var _scatter_stroke := false
 var _ghost_busy := ""
+var _ghost_task := -1
 var _followed_history: UndoRedo
 
 func _enter_tree() -> void:
@@ -67,6 +68,7 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	_cancel_stroke()
+	_reap_ghost_task()
 	if operations.changed.is_connected(_operations_changed):
 		operations.changed.disconnect(_operations_changed)
 	var manager := get_undo_redo()
@@ -320,12 +322,22 @@ func ghost_verdict(id: String, at: Vector2) -> Dictionary:
 		return cached
 	if _ghost_busy == "":
 		_ghost_busy = String(info.key)
-		WorkerThreadPool.add_task(func() -> void:
+		_ghost_task = WorkerThreadPool.add_task(func() -> void:
 			var verdict := operations.ghost_compute(info)
 			_ghost_done.call_deferred(String(info.key), verdict))
 	return {}
 
+## Every WorkerThreadPool task must be waited for, or the pool never releases it: a task left
+## unwaited (even an empty one) made the editor abort at exit with "corrupted size vs. prev_size in
+## fastbins", exit 134, after any session in which a piece's ghost had been checked (10 Nov: 4 of 4
+## runs before, none after; the same work on the main thread, or waited for, exits cleanly).
+func _reap_ghost_task() -> void:
+	if _ghost_task != -1:
+		WorkerThreadPool.wait_for_task_completion(_ghost_task)
+		_ghost_task = -1
+
 func _ghost_done(key: String, verdict: Dictionary) -> void:
+	_reap_ghost_task()
 	operations.ghost_store(key, verdict)
 	_ghost_busy = ""
 	update_overlays()
