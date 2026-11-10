@@ -215,6 +215,25 @@ func test_validation_lists_faults_before_advice() -> void:
 	assert_str(lines[0]).is_equal("1 fault, 30 advice.")
 	assert_str(lines[1]).is_equal("rules.route_water: route meets water without a deck")
 
+func test_a_result_survives_the_palette_refresh_its_own_files_cause() -> void:
+	# Save and export plan writes files; the editor then reports the file system changed and the
+	# dock rebuilt its palette, replacing "Wrote ..." (and its warning about actors a plan cannot
+	# hold) with the palette's count four frames later (the audit of #465).
+	var f := await _fixture()
+	var d := _dock(f)
+	var dock: Control = d.dock
+	var result := "Wrote res://kit/zones/x.json. Not in the plan (scene only): Actors/HatchPicture."
+	dock.say(result)
+	dock._files_changed()
+	assert_str(dock.status.text).is_equal(result)
+	assert_int(dock.pieces.item_count).is_greater(0)       # the palette was still rebuilt
+	# when the library itself changed, the palette says so
+	var library := _library()
+	library.erase("woodland_stump")
+	f.operations.configure(f.zone, f.ground, f.history, {"library": library, "relation_evaluator": Callable(Rules, "placement")})
+	dock._files_changed()
+	assert_str(dock.status.text).contains("terrain materials")
+
 func test_no_open_zone_is_not_reported_as_an_empty_library() -> void:
 	var f := await _fixture()
 	var d := _dock(f)

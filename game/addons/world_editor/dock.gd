@@ -234,8 +234,8 @@ func _ready() -> void:
 	refresh_palette()
 	if Engine.is_editor_hint():
 		var fs := EditorInterface.get_resource_filesystem()
-		if not fs.filesystem_changed.is_connected(refresh_palette):
-			fs.filesystem_changed.connect(refresh_palette)
+		if not fs.filesystem_changed.is_connected(_files_changed):
+			fs.filesystem_changed.connect(_files_changed)
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--we-show="):
 			show_piece(argument.substr(10))
@@ -243,8 +243,8 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if Engine.is_editor_hint():
 		var fs := EditorInterface.get_resource_filesystem()
-		if fs.filesystem_changed.is_connected(refresh_palette):
-			fs.filesystem_changed.disconnect(refresh_palette)
+		if fs.filesystem_changed.is_connected(_files_changed):
+			fs.filesystem_changed.disconnect(_files_changed)
 
 func _process(_delta: float) -> void:
 	# Inspector edits to lab status and keyboard facing changes must not leave stale controls.
@@ -293,6 +293,18 @@ func _allowed(entry: Dictionary) -> bool:
 	var approval: Variant = entry.get("approval", "")
 	var state := _text(approval.get("state", "")) if approval is Dictionary else _text(approval)
 	return state == "approved" or (_is_lab() and state in ["candidate", "gated"])
+
+## The project's files changed on disk. The palette is rebuilt in case a piece did, but the status
+## line keeps what it said when the palette comes out the same: saving, exporting a plan and baking
+## all write files, and their own result was wiped four frames after it appeared.
+func _files_changed() -> void:
+	if mats == null or status == null:
+		return
+	var kept := status.text
+	var before := [mats.item_count, pieces.item_count, _is_lab(), is_instance_valid(zone)]
+	refresh_palette()
+	if kept != "" and before == [mats.item_count, pieces.item_count, _is_lab(), is_instance_valid(zone)]:
+		say(kept)
 
 ## Always rebuild: a lab palette must never survive selection of an ordinary zone.
 func refresh_palette() -> void:
