@@ -1,26 +1,26 @@
 {
  "id": "crossroads/library_damage",
  "file": "game/zones/crossroads/art/library_damage.png",
- "sha256": "8a8860b2be561d23a9a3a88de689d1b8f60864260c0a799c32cf530cea8fc658",
+ "sha256": "563055ca473764f24c31e7f1d0f0dda0b17d6a494d2829f436e9b967dce455ec",
  "kind": "library",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  312,
+  316,
   321
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 43,
-   "tones": 19.41860465116279,
-   "shapes": 33.25581395348837
+   "tones": 17.441860465116278,
+   "shapes": 27.86046511627907
   },
   "band": {
    "tones": 27.0,
@@ -28,47 +28,30 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.66,
-  "tones_ratio": 0.719,
-  "shapes_ratio": 0.66,
+  "ratio": 0.553,
+  "tones_ratio": 0.646,
+  "shapes_ratio": 0.553,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    64,
-    104,
-    113,
-    143
-   ],
-   "message": "crossroads/library_damage: the red is lit from the right (luminance rises 10 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    18,
+    20,
     23,
-    290,
+    292,
     321
    ],
-   "message": "crossroads/library_damage: detail bar 0.66 of Eastward's prop band (19.4 tones, 33.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/library_damage: detail bar 0.55 of Eastward's prop band (17.4 tones, 27.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (8a8860b2...). Fail. The hole on the lit slope follows the courses and the stack-free ridge is intact, but the green tarp lies on the shaded east slope at lit values: mean Y 101 against 105.5 when it lay on main's lit flat roof (-4 %), while the slates under it drop from OKLab L 0.52 to 0.29. It is the brightest patch of the roof at 1x. Fix GR1; polish GR11.",
-  "fix_list": [
-   "GR1 (fault): the tarp keeps its lit values where it lies on the shaded (east) slope. Lay the part of the tarp east of the ridge two ramp steps down (about 40-45 % darker, nothing above tone 2, as the slates under it go from OKLab L 0.52 to 0.29), with a 1-texel dark crease where it bends over the ridge and a lit fold texel on its west side; the weights on the east slope one step down. Check: mean luminance of the east part at most 0.6 of the west part (or of the same tarp on a lit plane).",
-   "GR11 (polish): battens and rafters inside the holes on the shaded slope keep lit timber values (smithy_damage east-slope hole timber mean Y 87 against 94 in the library's west-slope hole); step them one tone down east of the ridge."
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

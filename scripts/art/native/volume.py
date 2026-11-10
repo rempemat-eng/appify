@@ -272,8 +272,11 @@ RAKE_RUN, RAKE_RISE = 3, 2   # a rake rises 2 texels every 3 across, one texel a
 GABLE_PITCH = RAKE_RISE / RAKE_RUN
 GABLE_DEPTH = 0.50       # the roof's depth on screen above the apex, as a share of the house's depth
 GABLE_DEPTH_ADD = 5.0    # world px added to it (the overhang at the back)
-GABLE_BAND = ((2, 0.45), (3, 0.18))   # texels and drop of the band the bargeboards throw on the gable
-#                          wall, line then fade (B5: the line, then L 100, 110, 113 against 130; 11.1)
+GABLE_BAND = ((2, 0.70), (3, 0.18))   # texels and drop of the band the bargeboards throw on the gable
+#                          wall, line then fade (B5: a continuous line about 72 % darker, then L 100, 110,
+#                          113 against 130; 11.1; round 2 of the audit, GR4)
+GABLE_LINE_MAX = 0.30    # no texel of the line above this share of the gable wall's median luminance (the audit's
+#                          limit is 0.55): boards reach B5's 70 % and more, stone stops at its ramp's floor (55 to 60 %)
 # where a stack stands on the shaded slope: its middle as a share of the way from the ridge to the
 # right eave, its front face's depth as a share of the roof's depth, and how far it rises (world px)
 # over the highest point of its foot. Never on the ridge (Matt, 9 Nov).

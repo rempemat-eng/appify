@@ -2079,8 +2079,12 @@ class HouseVolume(unittest.TestCase):
                 fade = wall & (Y >= yb + VO.GABLE_BAND[0][0]) & (Y < yb + sum(n for n, _ in VO.GABLE_BAND))
                 body = wall & (Y >= yb + V.q(3)) & (Y < yb + V.q(6))
                 drop = 1 - Lm[a[line]].mean() / Lm[a[body]].mean()
-                self.assertGreaterEqual(drop, 0.28, (hid, round(drop, 2)))
-                self.assertLessEqual(drop, 0.68, (hid, round(drop, 2)))
+                # B5's continuous line, about 72 % on boards; stone stops at its ramp's floor (54 to 60 %);
+                # no texel of the line above 0.55 of the wall's median (round 2 of the audit, GR4)
+                self.assertGreaterEqual(drop, 0.50, (hid, round(drop, 2)))
+                self.assertLessEqual(drop, 0.90, (hid, round(drop, 2)))
+                lt = line & ~g['finial'] & (a % 8 <= 5)
+                self.assertLessEqual(float(Lm[a[lt]].max()), 0.55 * float(np.median(Lm[a[body & (a % 8 <= 5)]])), hid)
                 self.assertLess(Lm[a[fade]].mean(), Lm[a[body]].mean() * 0.95, hid)
                 continue
             e = VO.EAVE[roof]

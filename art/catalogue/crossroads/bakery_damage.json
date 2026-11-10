@@ -1,13 +1,13 @@
 {
  "id": "crossroads/bakery_damage",
  "file": "game/zones/crossroads/art/bakery_damage.png",
- "sha256": "da5582db422ca3cb645d23e26d1289c465a97c13afed4550d712985c6cf7720f",
+ "sha256": "cab79f5206145d2312596e4f7857c5b06f84b7ae0de9074f9e3c6851e06545ad",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  240,
+  244,
   324
  ],
  "status": "pass",
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 20,
-   "tones": 18.0,
-   "shapes": 31.6
+   "tones": 17.05,
+   "shapes": 30.9
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.627,
-  "tones_ratio": 0.667,
-  "shapes_ratio": 0.627,
+  "ratio": 0.614,
+  "tones_ratio": 0.631,
+  "shapes_ratio": 0.614,
   "passed": false,
   "group": "prop"
  },
@@ -39,24 +39,19 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    14,
+    16,
     35,
-    229,
+    231,
     324
    ],
-   "message": "crossroads/bakery_damage: detail bar 0.63 of Eastward's prop band (18.0 tones, 31.6 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery_damage: detail bar 0.61 of Eastward's prop band (17.1 tones, 30.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-10",
-  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (da5582db...). Pass. Holes and slipped slates follow the courses, the stack stands, the scaffold and ladder carry the damaged state. Polish GR11, GR12.",
-  "fix_list": [
-   "GR11 (polish): battens and rafters inside the holes on the shaded slope keep lit timber values (smithy_damage east-slope hole timber mean Y 87 against 94 in the library's west-slope hole); step them one tone down east of the ridge.",
-   "GR12 (polish): the roof damage now sits mostly on the dark east slope, where it barely reads at 1x; the lit slope shows only a 1-2 texel notch. Move a hole or slipped slates onto the lit slope so the storm damage reads in the street."
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

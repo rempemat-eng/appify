@@ -2977,7 +2977,7 @@
   ],
   "deck": null,
   "foot": [
-   120,
+   122,
    320
   ],
   "footprint": [
@@ -3249,7 +3249,7 @@
    }
   },
   "size_cells": [
-   10,
+   11,
    14
   ],
   "snap": "cell",
@@ -3259,7 +3259,7 @@
   "variants": {
    "bakery": {
     "foot": [
-     120,
+     122,
      320
     ],
     "png": "res://zones/crossroads/art/bakery.png"
@@ -4294,7 +4294,7 @@
   ],
   "deck": null,
   "foot": [
-   120,
+   122,
    287
   ],
   "footprint": [
@@ -4582,7 +4582,7 @@
    }
   },
   "size_cells": [
-   10,
+   11,
    13
   ],
   "snap": "cell",
@@ -4596,7 +4596,7 @@
   "variants": {
    "fern_cottage": {
     "foot": [
-     120,
+     122,
      287
     ],
     "png": "res://zones/crossroads/art/fern_cottage.png"
@@ -5840,7 +5840,7 @@
   ],
   "deck": null,
   "foot": [
-   156,
+   158,
    317
   ],
   "footprint": [
@@ -6112,7 +6112,7 @@
    }
   },
   "size_cells": [
-   13,
+   14,
    14
   ],
   "snap": "cell",
@@ -6122,7 +6122,7 @@
   "variants": {
    "library": {
     "foot": [
-     156,
+     158,
      317
     ],
     "png": "res://zones/crossroads/art/library.png"
@@ -6141,7 +6141,7 @@
   ],
   "deck": null,
   "foot": [
-   156,
+   158,
    320
   ],
   "footprint": [
@@ -6413,7 +6413,7 @@
    }
   },
   "size_cells": [
-   13,
+   14,
    14
   ],
   "snap": "cell",
@@ -6423,7 +6423,7 @@
   "variants": {
    "north_cottages": {
     "foot": [
-     156,
+     158,
      320
     ],
     "png": "res://zones/crossroads/art/north_cottages.png"
@@ -6721,7 +6721,7 @@
   ],
   "deck": null,
   "foot": [
-   144,
+   146,
    341
   ],
   "footprint": [
@@ -7105,7 +7105,7 @@
    }
   },
   "size_cells": [
-   12,
+   13,
    15
   ],
   "snap": "cell",
@@ -7119,7 +7119,7 @@
   "variants": {
    "smithy": {
     "foot": [
-     144,
+     146,
      341
     ],
     "png": "res://zones/crossroads/art/smithy.png"

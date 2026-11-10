@@ -1,26 +1,26 @@
 {
  "id": "crossroads/fern_cottage_damage",
  "file": "game/zones/crossroads/art/fern_cottage_damage.png",
- "sha256": "de17e0f9c28efb8dfe7b25395f2e2e6e0a0593cf715a9b2e0c34ed3dd4efe007",
+ "sha256": "e3a6b49d6f5ab05b289274f09082cd81df6a538325830d3ea86b0a2117d64b6e",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  240,
+  244,
   291
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
+  "fault": 3,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 36,
-   "tones": 19.916666666666668,
-   "shapes": 33.138888888888886
+   "tones": 20.333333333333332,
+   "shapes": 31.47222222222222
   },
   "band": {
    "tones": 27.0,
@@ -28,34 +28,66 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.658,
-  "tones_ratio": 0.738,
-  "shapes_ratio": 0.658,
+  "ratio": 0.625,
+  "tones_ratio": 0.753,
+  "shapes_ratio": 0.625,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    130,
+    44,
+    146,
+    95
+   ],
+   "message": "crossroads/fern_cottage_damage: the red reads 2D: 2 light planes, luminance spread 0",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    146,
+    53,
+    164,
+    118
+   ],
+   "message": "crossroads/fern_cottage_damage: the red reads 2D: 1 light planes, luminance spread 0",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    24,
+    26,
     33,
-    182,
-    283
+    185,
+    289
    ],
-   "message": "crossroads/fern_cottage_damage: detail bar 0.66 of Eastward's prop band (19.9 tones, 33.1 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage_damage: detail bar 0.62 of Eastward's prop band (20.3 tones, 31.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    146,
+    53,
+    164,
+    118
+   ],
+   "message": "crossroads/fern_cottage_damage: a flat red area: one smooth patch covers 50% (0.051 H^2), 5 tones",
+   "fix": "draw the red as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (de17e0f9...). Fail. The tarp is thrown over the ridge, which is plausible, but both halves keep one value: mean Y 181 west of the ridge and 181 east of it, so the east half reads lit on the shaded slope. Fix GR1.",
-  "fix_list": [
-   "GR1 (fault): the tarp keeps its lit values where it lies on the shaded (east) slope. Lay the part of the tarp east of the ridge two ramp steps down (about 40-45 % darker, nothing above tone 2, as the slates under it go from OKLab L 0.52 to 0.29), with a 1-texel dark crease where it bends over the ridge and a lit fold texel on its west side; the weights on the east slope one step down. Check: mean luminance of the east part at most 0.6 of the west part (or of the same tarp on a lit plane)."
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

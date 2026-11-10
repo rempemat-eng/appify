@@ -247,7 +247,8 @@ def ashlar_wall(a, x0, y0, x1, y1, rng, course=3.6, length=(5.5, 9.0), where=Non
         k += 1
 
 
-def board_wall(a, x0, y0, x1, y1, rng, fams=('timber', 'timber_warm', 'timber_cool'), lap=3.2, span=None):
+def board_wall(a, x0, y0, x1, y1, rng, fams=('timber', 'timber_warm', 'timber_cool'), lap=3.2, span=None, nails=None,
+               nail_rng=None):
     """Lapped weatherboards: each board a tone by its place, in the shade of the board above at
     its head, its lower arris lit over the dark line of the lap; grain, knots, butt joints with
     nail heads on the studs."""
@@ -285,10 +286,27 @@ def board_wall(a, x0, y0, x1, y1, rng, fams=('timber', 'timber_warm', 'timber_co
                 tt[ky, kx] = t - 1
             put(a, a0, y, m, f, np.clip(tt, 0, 5))
             x = a1
-        for sx in studs:
-            if y + 2 < yb - 2:
-                fill(a, sx, y + 2, sx + 2, y + 4, code('iron', 1))
-                fill(a, sx, y + 2, sx + 1, y + 3, code('iron', 3))
+        if nails is None:
+            for sx in studs:
+                if y + 2 < yb - 2:
+                    fill(a, sx, y + 2, sx + 2, y + 4, code('iron', 1))
+                    fill(a, sx, y + 2, sx + 1, y + 3, code('iron', 3))
+        else:
+            # forged heads set into the board (round 2 of the front-gable audit, GR2; as XR3-S1): a
+            # 2 x 2 dark head, its upper-left texel lit (iron 4), a dark texel under-right where it
+            # sinks into the board; off the stud line by a texel or two, about one board in four
+            # without; `nails` collects the lit texels so finish() keeps them. Their own generator
+            # (`nail_rng`), so the house's draws, and everything painted after the wall, stay as they were
+            if y + 2 < yb - 3 and nail_rng.random() >= 0.25:
+                for sx in studs:
+                    nx = sx + int(nail_rng.integers(-2, 3))
+                    ny = y + 2 + int(nail_rng.integers(0, 2))
+                    if ny + 3 > yb - 1:
+                        continue
+                    fill(a, nx, ny, nx + 2, ny + 2, code('iron', 1))
+                    a[ny, nx] = code('iron', 4)
+                    a[ny + 2, nx + 2] = code('timber_cool', 0)
+                    nails[ny, nx] = True
         y = yb
 
 
@@ -854,9 +872,12 @@ def gable_wall_painter(a, spec, L, R, B, rng):
         elif wall == 'ashlar':
             ashlar_wall(t, L, y0, R, y1, rng, span=(L, R, y0, B))
         else:
-            board_wall(t, L, y0, R, y1, rng, span=(L, R, y0, B))
+            board_wall(t, L, y0, R, y1, rng, span=(L, R, y0, B), nails=nails,
+                       nail_rng=np.random.default_rng(7919 * int(L) + int(R) + int(y0)))
         VO.corners(t, L, R, y0, y1)
         a[gm] = t[gm]
+    nails = np.zeros(a.shape, bool)
+    paint.nails = nails
     return paint
 
 
@@ -901,7 +922,7 @@ def gable_roof(a, spec, L, R, B, y_e, rng, trade, info):
     # or the side eaves, where a green texel would read as a ragged edge
     green = (a >= 0) & np.isin(a // 8, [FI[f] for f in ('leaf', 'leaf_warm', 'leaf_cool', 'grass', 'grass_warm', 'grass_cool')])
     rw_ = q(3.0) if thatch else 5                      # (the straw's moss drifts lie along its lowest course)
-    rim = slope & ((Y < yr - D + 2) | (X < x0 + rw_) | (X >= x1 - rw_)) & green
+    rim = slope & ((Y < yr - D + 6) | (X < x0 + rw_) | (X >= x1 - rw_)) & green      # (round 2, GR7)
     a[rim] = code('sand', 2) if thatch else code('slate', 3)
     # the light: the left slope towards the sun, the right away from it, calmed so its value carries
     if thatch:
@@ -934,7 +955,9 @@ def gable_roof(a, spec, L, R, B, y_e, rng, trade, info):
 
     # the gable wall: the triangle under the bargeboards, in the wall's own material
     gm = inside & (Y >= yr + bt) & (Y < y_e) & (X >= L) & (X < R)
-    gable_wall_painter(a, spec, L, R, B, rng)(gm)
+    painter = gable_wall_painter(a, spec, L, R, B, rng)
+    painter(gm)
+    nail_lit = painter.nails & gm
 
     # the ridge running back from the apex: lit on its west third, turned away on the east, its
     # edges crisp against the two slopes and its back end rounded
@@ -982,8 +1005,11 @@ def gable_roof(a, spec, L, R, B, y_e, rng, trade, info):
         grain = bm & (rel == bt // 2 - 1) & (((X // VO.RAKE_RUN) % 5) == 2)
         step(a, grain, -1, lo=1)
         # the end grain at the feet: the cut face a step off the board, its lit or dark arris
-        for xe, d, t in ((x0 - GABLE_KICK, -1, 3), (x1 - 1 + GABLE_KICK, 1, 1)):
+        for xe, d, t in ((x0 - GABLE_KICK, -1, 4), (x1 - 1 + GABLE_KICK, 1, 1)):
             a[kick & (X == xe)] = code('timber', t)
+        # the west end's growth rings: a 2-texel arc a column in from the lit cut (round 2, GR5)
+        ring = kick & (X == x0 - GABLE_KICK + 1) & (Y >= y_eave + bt - 3) & (Y < y_eave + bt - 1)
+        a[ring] = code('timber', 2)
         for px in range(int(x0) + q(5), int(x1) - q(4), q(7)):
             pm = bm & (X == px) & (rel == bt // 2)
             a[pm] = code('iron', 2)
@@ -1029,11 +1055,21 @@ def gable_roof(a, spec, L, R, B, y_e, rng, trade, info):
     # top of the front wall under their kicked feet (B5's 3 to 4 px under a verge, eastward-edges 11.1)
     under = (X >= L) & (X < R) & (a >= 0) & ~bmk & ~fin
     y0b = yr + bt
-    depth = 0
-    for n, drop in VO.GABLE_BAND:
-        band = under & (Y >= y0b + depth) & (Y < y0b + depth + n)
-        VO.darken(a, band, drop, most=2)
-        depth += n
+    Lm = VO.lum()
+    body = gm & (Y >= y0b + q(3)) & (a >= 0) & (a % 8 <= 5)
+    wall_med = float(np.median(Lm[a[body]])) if body.any() else 1.0
+    (n_line, d_line), (n_fade, d_fade) = VO.GABLE_BAND
+    # the line (round 2, GR4): continuous, about 70 % darker, nothing in it above 0.55 of the gable
+    # wall's median, so it never merges with the fade under it
+    line = under & (Y >= y0b) & (Y < y0b + n_line)
+    VO.darken(a, line, d_line, most=3)
+    for _ in range(5):
+        hot = line & (a >= 0) & (a % 8 <= 5) & (a % 8 > 0) & (Lm[np.clip(a, 0, None)] > VO.GABLE_LINE_MAX * wall_med)
+        if not hot.any():
+            break
+        step(a, hot, -1, lo=0)
+    fade = under & (Y >= y0b + n_line) & (Y < y0b + n_line + n_fade)
+    VO.darken(a, fade, d_fade, most=1)
     # a round louvred vent high in the gable: a frame lit on its upper left and turned away on its
     # lower right, set into the wall's depth (a dark head inside the frame), its slats lit on top
     # over the dark of the loft behind (never a flat disc: a pane or a cross read as an icon)
@@ -1068,12 +1104,13 @@ def gable_roof(a, spec, L, R, B, y_e, rng, trade, info):
     for cx in spec.get('chimney', []) or []:
         pot = slope_stack(a, roofm, yr, D, L + q(cx), cw, spec.get('stack_depth', 0.4), spec.get('stack_rise', 12.0),
                           rng, wide, soot)
-        info['pots'].append(pot)
+        info['pots'] += pot
     info['gable'] = dict(x0=x0, x1=x1, xc=xc, y_eave=y_eave, y_apex=y_apex, D=D, off=off[0], board=bt,
                          slopes=(sl_l, sl_r), wall=gm, ridge=rr, boards=bmk, finial=fin, stacks=(a != before),
                          # the boards, their tuck and the first row of their band: the tidy leaves these
                          # alone, so a texel of slate or wall at a step is never swapped for timber
-                         keep=ndi.binary_dilation(bmk) & ~(a != before))
+                         keep=((ndi.binary_dilation(bmk) | line) & ~(a != before)) | (nail_lit & (a == code('iron', 4)))
+                         | ((a != before) & np.isin(a, [code('slate_cool', 4), code('slate_cool', 3)])))
     return roofm, y_eave
 
 
@@ -1082,7 +1119,7 @@ def slope_stack(a, rm, yr, D, xs, cw, depth, rise, rng, wide, soot):
     the slope's stepped diagonal; a lead apron round the foot stepping with the courses (lit on its top
     edge, dark where it turns down the slope), a texel of soaker up each side; its contact shadow down
     the slope to the east; the stack's own lit west face and dark east face, its cap and potted rims
-    (chimney). Returns the top middle of its pots in texels, where the smoke starts."""
+    (chimney). Returns the top middle of each of its pots in texels, where smoke starts."""
     H, W = a.shape
     Y, X = grid(a)
     yr0 = yr[0]
@@ -1102,25 +1139,35 @@ def slope_stack(a, rm, yr, D, xs, cw, depth, rise, rng, wide, soot):
     a[restore] = before[restore]
     # the east face turned further away: its last two columns a step darker again
     step(a, st & (X >= sx1 - 2) & (Y >= y_top), -1, lo=0)
-    # the lead apron: three texels under the foot line, a texel wider each side, stepping with it
-    fl = (X >= sx0 - 1) & (X < sx1 + 1) & (Y >= F - 1) & (Y < F + 2) & rm & ~st
-    rel = Y - (F - 1)
-    a[fl] = code('slate_cool', 2)
-    a[fl & (rel == 0)] = code('slate_cool', 4)
-    a[fl & (rel == 0) & (X >= sx0 + cw // 2)] = code('slate_cool', 3)
-    a[fl & (rel == 2)] = code('slate_cool', 1)
-    # a soaker up each side, one texel, lit on the west
-    for xe, t in ((sx0 - 1, 4), (sx1, 1)):
-        m = (X == xe) & (Y >= F - q(1.4)) & (Y < F - 1) & rm & ~st
+    # the lead apron (round 2, GR3): two texels along the whole foot, a texel wider each side,
+    # stepping with the courses: its top row lit lead, its lower row a step darker where it turns
+    # down the slope (still over the shaded slates' highlights, slate_cool 2, so it reads)
+    fl = (X >= sx0 - 1) & (X < sx1 + 1) & (Y >= F) & (Y < F + 2) & rm & ~st
+    a[fl & (Y == F)] = code('slate_cool', 4)
+    a[fl & (Y == F + 1)] = code('slate_cool', 3)
+    # a soaker column up each side where the slope meets the stack: lit lead on the west, the
+    # east one a step darker
+    soak = np.zeros(a.shape, bool)
+    for xe, t in ((sx0 - 1, 4), (sx1, 3)):
+        m = (X == xe) & (Y >= F - q(1.4)) & (Y < F) & rm & ~st
         a[m] = code('slate_cool', t)
-    # its contact shadow down the slope: a band off the east face, darker next to it
-    Lsh = q(4.0)
-    sh = rm & ~st & ~fl & (X >= sx1 + 1) & (X < sx1 + 1 + Lsh) & (Y >= y_top + q(5) + (X - sx1) * 0.6) & (Y < F + q(2.0))
-    step(a, sh, -1, lo=0)
-    step(a, sh & (X < sx1 + 1 + q(1.6)) & (Y < F), -1, lo=0)
-    made = (a != before) & (a >= 0) & (X >= sx0 - q(1.5)) & (X < sx1 + q(1.5)) & (Y < y_top)
-    ys_ = np.nonzero(made.any(1))[0]
-    return ((sx0 + sx1) / 2.0, int(ys_.min()) if len(ys_) else int(y_top))
+        soak |= m
+    # its contact shadow: the course highlights taken out of the slates for 3 to 4 texels under the
+    # apron and 2 texels east of the east face, down to the slope's floor (slate_cool 0)
+    sh = rm & ~st & ~fl & ~soak & (((X >= sx0 - 1) & (X < sx1 + 1) & (Y >= F + 2) & (Y < F + 2 + 4 - (X >= sx0 + cw // 2)))
+                                   | ((X >= sx1 + 1) & (X < sx1 + 3) & (Y >= y_top + q(4)) & (Y < F + 5)))
+    a[sh & (a >= 0)] = code('slate_cool', 0)
+    # each pot's top middle (chimney draws them at cw * (i + 1) / (n + 1)): the smoke starts on a pot,
+    # never in the gap between two (round 2, GR9)
+    made = (a != before) & (a >= 0) & (Y < y_top)
+    n = 2 if wide else 1
+    pots = []
+    for i in range(n):
+        pc = sx0 + cw * (i + 1) / (n + 1)
+        col = made & (X >= pc - q(1.5)) & (X < pc + q(1.5))
+        ys_ = np.nonzero(col.any(1))[0]
+        pots.append((round(pc, 1), int(ys_.min()) if len(ys_) else int(y_top)))
+    return pots
 
 
 # ------------------------------------------------------------------------------------------------
@@ -1714,10 +1761,13 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
     roof_h = spec.get('roof_h', round(dep * 0.55 + 10))
     ov = spec.get('overhang', 3)
     chim = max([spec.get('chimney_h', 14)] if spec.get('chimney') else [0])
+    # a front gable's bargeboard feet kick out past the eave: two more texels each side, so their
+    # outline stands a texel clear of the canvas edge (round 2, GR5)
     pad = 3
-    W = q(w + 2 * ov) + 2 * pad
+    padx = 5 if spec.get('gable_rise') is not None else pad
+    W = q(w + 2 * ov) + 2 * padx
     H = q(wall_h + roof_h + chim + 4) + 2 * pad
-    L = pad + q(ov)
+    L = padx + q(ov)
     R = L + q(w)
     B = H - pad - 1
     p = V.Pic(W, H, (L + R) // 2, B)
@@ -2144,7 +2194,8 @@ def damage(d, base, spec, info, rng):
                 on_roof(missing_slates, d, base, info, n, rng)
                 fallen_slates(d, info, rng, n=3)
         elif kind == 'tarp':
-            on_roof(lambda d_, b_, i_: V.damage(d_, b_, dict(spec, damage=[tok]), i_, rng, hd=True), d, base, info)
+            on_roof(lambda d_, b_, i_: V.damage(d_, b_, dict(spec, damage=[tok]), i_, rng, hd=True), d, base, info,
+                    cloth=args[2] if len(args) > 2 else 'sand')
         elif kind == 'boards':
             boards_over(d, info, *args, rng)
         elif kind == 'scaffold':
@@ -2168,7 +2219,7 @@ def damage(d, base, spec, info, rng):
             d[lip] = (v // 8) * 8 + np.clip(v % 8 + 1, 0, 5)
 
 
-def on_roof(fn, d, base, info, *args):
+def on_roof(fn, d, base, info, *args, cloth=None):
     """Draw the storm's damage to a roof: on a front gable it is drawn on the flat roof (the slopes
     sheared back, as their courses were painted) and laid along the rakes again, so torn courses,
     gaps and a tarp follow the slope's courses; on any other roof it is drawn where it is."""
@@ -2190,6 +2241,36 @@ def on_roof(fn, d, base, info, *args):
     fn(df, bf, fi, *args)
     lay = df[np.clip(ys, 0, H - 1), X]
     m = (lay >= 0) & (ys < H) & ~g['stacks']
+    # the shaded slope's light (round 2 of the front-gable audit): what lies east of the ridge is in
+    # the roof's shade too
+    east = m & (X + 0.5 >= g['xc'])
+    fam = np.where(lay >= 0, lay // 8, -1)
+    timber = np.isin(fam, [FI[f] for f in ('timber', 'timber_warm', 'timber_cool')])
+    if cloth is not None:
+        # GR1: a tarp's cloth east of the ridge two ramp steps down, nothing above tone 2; its weights
+        # and ropes one step; a dark crease where it bends over the ridge, a lit fold west of it
+        cm = np.isin(fam, [FI[f] for f in (cloth, cloth + '_warm', cloth + '_cool') if f in FI])
+        sel = east & cm & (lay % 8 <= 5)
+        lay[sel] = (lay[sel] // 8) * 8 + np.minimum(np.clip(lay[sel] % 8 - 2, 0, 5), 2)
+        # where the cloth lies on both slopes, its shaded half at most 0.6 of its lit half's luminance
+        Lm = VO.lum()
+        west = m & cm & ~east & (lay % 8 <= 5)
+        sel = east & cm & (lay % 8 <= 5)
+        if west.any() and sel.any() and Lm[lay[sel]].mean() > 0.58 * Lm[lay[west]].mean() and cloth + '_cool' in FI:
+            # a pale cloth (sand) still too light: its cool sibling, so the folds keep their tones
+            lay[sel] = FI[cloth + '_cool'] * 8 + lay[sel] % 8
+        sel = east & ~cm & (lay % 8 <= 5)
+        lay[sel] = (lay[sel] // 8) * 8 + np.clip(lay[sel] % 8 - 1, 0, 5)
+        xc = int(np.floor(g['xc']))
+        if (m & cm & (X == xc - 1)).any() and (m & cm & (X == xc)).any():
+            cr = m & cm & (X == xc)
+            lay[cr] = (lay[cr] // 8) * 8 + 0
+            fo = m & cm & (X == xc - 1) & (lay % 8 <= 4)
+            lay[fo] = lay[fo] + 1
+    else:
+        # GR11: battens and rafters in a hole on the shaded slope take shaded timber values
+        sel = east & timber & (lay % 8 <= 5)
+        lay[sel] = (lay[sel] // 8) * 8 + np.clip(lay[sel] % 8 - 1, 0, 5)
     d[m] = lay[m]
 
 

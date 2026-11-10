@@ -1,26 +1,26 @@
 {
  "id": "crossroads/fern_cottage",
  "file": "game/zones/crossroads/art/fern_cottage.png",
- "sha256": "fb52d472d4bd49d049f0f6a173ea131f7fa1e75f41469801d6e5a2e90cee853c",
+ "sha256": "929d47c6914a58ec355ae9eea1c49e020a535e5e756ca5be5fe47117e2191fa6",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  240,
+  244,
   291
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
-   "patches": 154,
-   "tones": 24.38961038961039,
-   "shapes": 42.15584415584416
+   "patches": 155,
+   "tones": 24.193548387096776,
+   "shapes": 42.84516129032258
   },
   "band": {
    "tones": 27.0,
@@ -28,20 +28,32 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.837,
-  "tones_ratio": 0.903,
-  "shapes_ratio": 0.837,
+  "ratio": 0.851,
+  "tones_ratio": 0.896,
+  "shapes_ratio": 0.851,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    126,
+    95,
+    241,
+    176
+   ],
+   "message": "crossroads/fern_cottage: the wood is lit from the right (luminance rises 153 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
    "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    36,
+    38,
     209,
-    83,
+    85,
     288
    ],
    "message": "crossroads/fern_cottage door latch: across 8 art px (0.11 A) is too big for a door handle: the size table gives 3 to 7 (0.04 to 0.09 A); Eastward at the same character height: knob or latch 3 to 4 E (0.06 to 0.07 A) at 0.5 to 0.6 of the leaf (17, 12)",
@@ -51,28 +63,19 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    0,
+    1,
     25,
-    240,
+    243,
     289
    ],
-   "message": "crossroads/fern_cottage: detail bar 0.84 of Eastward's prop band (24.4 tones, 42.2 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage: detail bar 0.85 of Eastward's prop band (24.2 tones, 42.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (fb52d472...). Fail. Rakes, boards, ridge and band pass (2,1,2,1, 0 breaks). roof_depth 22 world px: roads_clear() returns no overlap. Faults: 17 flat 2x2 #2e2943 nail heads on the lapped gable, none lit, on an exact 36-texel grid (GR2); the 'low' stack's foot has no readable apron, soakers or contact shadow (GR3). Polish GR4, GR5, GR6, GR8.",
-  "fix_list": [
-   "GR2 (fault): the lapped-board gable's nail heads are flat one-tone 2x2 #2e2943 squares with no lit texel, on an exact grid (x every 36 texels, one on every board). As XR3-S1: give each head one lit #737078 texel at its upper left and a dark texel under-right so it sits in the board, jitter positions by 1-2 texels, skip about one board in four, and keep the lit texel through tidy with finish(keep=).",
-   "GR3 (fault): the stack's foot has no readable apron, soakers or contact shadow. Today 11-14 lead texels per house (#888697, #696e87): a 4-texel column on the west side and a 5-10 texel cluster at the downhill corner; along the rest of the foot the stack's stones meet the slope's course highlights (#333051, #4e4f6d) directly, and no slate below the foot is stepped down. Draw a lead apron along the whole foot, 2 texels deep, stepping with the courses: top row lit lead, lower row the lead's dark where it turns down the slope; one soaker texel column up each side (the east one a step darker); and the contact shadow as the course highlights removed (#333051/#4e4f6d to #1a1233) for 3-4 texels below the apron and 2 texels east of the east face. Check it at 1x and 2x in the street.",
-   "GR4 (polish): make the gable band's 2-texel line continuous. In 8-25 % of rake columns a texel at the wall's own body or lit tone sits in rows 1-2 under the board (library x 208: #a69c8e right under the board; x 53: #988e85), and on stone gables the fade (rows 3-5, 19-39 % darker) is nearly as dark as the line (36-49 %), so it reads as one 5-texel band. B5 has a continuous line about 72 % darker and a fade of 33 and 20 %. Rows 1-2: no texel above 0.55 of the gable wall's median; rows 3-5: about 18 %.",
-   "GR5 (polish): the west end grain at the left foot is the board's body tone (#8e6242, col 0), not lit; make it #a87c52 with a 2-texel ring arc. The feet now touch canvas columns 0 and W-1: keep 1 texel of transparent margin.",
-   "GR6 (polish): calm the slopes. Roof-only cluster noise 41.2-43.5 %; the shaded slope carries 13.5-18.8 tones and 25.6-31.3 shapes a 16x16 patch (through the reference pipeline) against 3.0 and 4.7 on B5's shaded plane. Keep the course lines on the shaded slope and drop most per-slate highlights (about 1 in 3 left).",
-   "GR8 (polish): the lapped boards' grain is scattered 1-2 texel dark dashes over every board and reads as speckle at 2x; group it into 2-3 streaks a board that wander and end."
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

@@ -1,13 +1,13 @@
 {
  "id": "crossroads/smithy_damage",
  "file": "game/zones/crossroads/art/smithy_damage.png",
- "sha256": "fc780f5825adeb0fba6f3fe652b0a39272e80ab3152d28b2ed6d33b0a30d4e5d",
+ "sha256": "3e93091ba49694848c57c67cf5be54299979e74f668418d573debc8f6cc3fa11",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  288,
+  292,
   345
  ],
  "status": "pass",
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 49,
-   "tones": 19.632653061224488,
-   "shapes": 32.244897959183675
+   "patches": 45,
+   "tones": 19.22222222222222,
+   "shapes": 33.733333333333334
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.64,
-  "tones_ratio": 0.727,
-  "shapes_ratio": 0.64,
+  "ratio": 0.67,
+  "tones_ratio": 0.712,
+  "shapes_ratio": 0.67,
   "passed": false,
   "group": "prop"
  },
@@ -39,9 +39,9 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    73,
+    75,
     269,
-    142,
+    144,
     279
    ],
    "message": "crossroads/smithy_damage: the red is lit from the right (luminance rises 6 L per H to the east)",
@@ -51,24 +51,19 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
+    27,
     25,
-    25,
-    276,
+    278,
     345
    ],
-   "message": "crossroads/smithy_damage: detail bar 0.64 of Eastward's prop band (19.6 tones, 32.2 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy_damage: detail bar 0.67 of Eastward's prop band (19.2 tones, 33.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-10",
-  "note": "Round 1 review at 8ae80984 (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (fc780f58...). Pass. The hole runs along the ridge on the east slope and follows the courses; boarded forge, scaffold and ladder as on main. Polish GR11, GR12.",
-  "fix_list": [
-   "GR11 (polish): battens and rafters inside the holes on the shaded slope keep lit timber values (smithy_damage east-slope hole timber mean Y 87 against 94 in the library's west-slope hole); step them one tone down east of the ridge.",
-   "GR12 (polish): the roof damage now sits mostly on the dark east slope, where it barely reads at 1x; the lit slope shows only a 1-2 texel notch. Move a hole or slipped slates onto the lit slope so the storm damage reads in the street."
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
