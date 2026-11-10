@@ -12,7 +12,8 @@ false); terrain is low where a zone's low.txt says so (water, a drop).
 
 Y-sort: a sprite's origin is what the y-sort compares with an actor's feet, so it sits on the picture's
 drawn feet (its lowest opaque row): feet_drop() says how far a picture is drawn below or above the origin
-its zone gives it, and the generators move the origin there, keeping every texel where it was.
+its zone gives it, and where that is more than 2 texels the generators move the origin there, keeping
+every texel where it was.
 
 Boxes: a picture's solid is its piece's in the kit library (game/kit/pieces/prop/*.json,
 geometry.collision: a rectangle in world px from the foot). The woodland takes every object's box from
@@ -86,13 +87,31 @@ def feet_drop(png: str, foot_y: float, frames: int = 1) -> int:
     return 0 if bbox is None else int(round(bbox[3] - foot_y))
 
 
+SORT_SLACK = 2         # texels a y-sort origin may sit from the drawn feet
+
+
 def on_feet(png: str, foot, offset, frames: int = 1, most: int = 6):
-    """A sprite's origin moved onto its drawn feet: (foot, offset) with the same texels on screen. A drop
-    of more than `most` texels is left alone (a thing hung or lifted on purpose)."""
+    """A sprite's origin moved onto its drawn feet: (foot, offset) with the same texels on screen. An
+    origin within SORT_SLACK texels stays where the kit put it (so a sign still ties with its talk area and
+    draws under its own "!"), and a drop of more than `most` is left alone (a thing hung or lifted on
+    purpose)."""
     drop = feet_drop(png, -offset[1], frames)
-    if drop == 0 or abs(drop) > most:
+    if abs(drop) <= SORT_SLACK or abs(drop) > most:
         return tuple(foot), tuple(offset)
     return (foot[0], foot[1] + drop), (offset[0], offset[1] - drop)
+
+
+def drawn_base(png: str, foot, offset, depth: int = 12, density: int = 3):
+    """The box under a picture that has none of its own: the texels drawn in its lowest `depth` rows, as
+    [x, y, w, h] in world px (`foot` and `offset` in texels, as kit.json holds them)."""
+    from PIL import Image
+    a = Image.open(png).convert('RGBA').getchannel('A').point(lambda v: 255 if v >= 128 else 0)
+    bbox = a.getbbox()
+    if bbox is None:
+        return None
+    low = a.crop((0, bbox[3] - depth, a.width, bbox[3])).getbbox()
+    x0, y0 = foot[0] + offset[0] + low[0], foot[1] + offset[1] + bbox[3] - depth
+    return [x0 / density, y0 / density, (low[2] - low[0]) / density, depth / density]
 
 
 def is_low(stands: float, piece: dict | None = None) -> bool:

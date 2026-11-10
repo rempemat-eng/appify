@@ -59,9 +59,12 @@ func _actor(root: Node2D, feet: Vector2, group := "player") -> Node2D:
 	root.add_child(a)
 	return a
 
+## Waits `n` physics frames and then two drawn ones: `process_frame` fires before the nodes' own _process,
+## so only after the second has every node drawn what the last physics step decided.
 func _frames(n: int) -> void:
 	for i in n:
 		await get_tree().physics_frame
+	await get_tree().process_frame
 	await get_tree().process_frame
 
 func test_a_tall_thing_in_front_ghosts_the_actor() -> void:
@@ -127,33 +130,45 @@ func test_enemies_are_ghosted_and_bystanders_are_not() -> void:
 	assert_bool(_occ(root).is_ghosted(bystander)).is_false()
 
 func test_the_ghost_fades_in_and_goes_when_the_actor_steps_out() -> void:
+	# stepped by hand, so a slow frame on a busy machine cannot finish the fade before it is looked at
 	var root := _stage()
 	_scenery(root, Vector2(100, 200), 120, 160)
 	var hero := _actor(root, Vector2(100, 150))
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().process_frame
-	var ghost := _occ(root).ghost_of(hero)
+	var occ := _occ(root)
+	occ.set_physics_process(false)
+	occ.set_process(false)
+	occ._physics_process(1.0 / 60.0)
+	occ._process(Occlusion.FADE_IN / 3.0)
+	var ghost := occ.ghost_of(hero)
 	assert_object(ghost).is_not_null()
-	assert_float(ghost.modulate.a).is_less(Occlusion.GHOST_ALPHA)      # still fading in: never a pop
-	await _frames(30)
-	assert_float(_occ(root).ghost_of(hero).modulate.a).is_equal_approx(Occlusion.GHOST_ALPHA, 0.01)
+	assert_float(ghost.modulate.a).is_between(0.05, Occlusion.GHOST_ALPHA - 0.05)   # fading in: never a pop
+	occ._process(Occlusion.FADE_IN)
+	assert_float(occ.ghost_of(hero).modulate.a).is_equal_approx(Occlusion.GHOST_ALPHA, 0.001)
 	hero.position = Vector2(100, 260)                      # out in front
-	await _frames(30)
-	assert_bool(_occ(root).is_ghosted(hero)).is_false()
-	assert_object(_occ(root).ghost_of(hero)).is_null()     # finite: nothing left drawn
+	occ._physics_process(1.0 / 60.0)
+	assert_bool(occ.is_ghosted(hero)).is_false()
+	occ._process(Occlusion.FADE_OUT / 2.0)
+	assert_float(occ.ghost_of(hero).modulate.a).is_less(Occlusion.GHOST_ALPHA)
+	occ._process(Occlusion.FADE_OUT)
+	assert_object(occ.ghost_of(hero)).is_null()            # finite: nothing left drawn
 
 func test_reduced_motion_shows_it_at_once() -> void:
 	SaveGame.data.settings.reduced_motion = true
 	var root := _stage()
 	_scenery(root, Vector2(100, 200), 120, 160)
 	var hero := _actor(root, Vector2(100, 150))
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	await get_tree().process_frame
-	var ghost := _occ(root).ghost_of(hero)
+	var occ := _occ(root)
+	occ.set_physics_process(false)
+	occ.set_process(false)
+	occ._physics_process(1.0 / 60.0)
+	occ._process(0.001)                                    # one drawn frame, however short
+	var ghost := occ.ghost_of(hero)
 	assert_object(ghost).is_not_null()
 	assert_float(ghost.modulate.a).is_equal_approx(Occlusion.GHOST_ALPHA, 0.001)
+	hero.position = Vector2(100, 260)
+	occ._physics_process(1.0 / 60.0)
+	occ._process(0.001)
+	assert_object(occ.ghost_of(hero)).is_null()            # and gone at once
 
 func test_scenery_that_arrives_later_counts() -> void:
 	var root := _stage()

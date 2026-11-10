@@ -206,6 +206,11 @@ func test_crossroads_solids_follow_the_reviewed_boxes() -> void:
 	SaveGame.reset()
 	var lantern := (zone.get_node("Props/If_lantern_dark/LanternDarkBody/Shape") as CollisionShape2D).shape as RectangleShape2D
 	assert_vector(lantern.size).is_equal(Vector2(42, 15))
+	# the notice board and the waystone block their drawn base, not only the 5 px post of their talk area
+	var board := (zone.get_node("Walls/Solid_notice_board/Shape") as CollisionShape2D).shape as RectangleShape2D
+	assert_vector(board.size).is_equal(Vector2(63, 12))
+	var stone := (zone.get_node("Walls/Solid_waystone/Shape") as CollisionShape2D).shape as RectangleShape2D
+	assert_vector(stone.size).is_equal(Vector2(56, 12))
 	assert_int((zone.get_node("Walls/Solid_bench_28") as StaticBody2D).collision_layer).is_equal(WALLS | LOW)
 	assert_int((zone.get_node("Walls/Solid_oak_6") as StaticBody2D).collision_layer).is_equal(WALLS)
 

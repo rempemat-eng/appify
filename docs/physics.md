@@ -42,7 +42,7 @@ A solid is never drawn by hand in a scene. Each zone's generator writes them, an
 | Zone | Generator | Terrain | Objects |
 | --- | --- | --- | --- |
 | woodland | `gen_zone.py` writes `woodland_base.tscn` | `walk.txt`: 12 texel cells, `#` blocked, merged into rectangles (`Base/Walls/c<i>`). `low.txt` marks the blocked cells that are water (`Base/LowWalls/l<i>`). Four edge walls stand outside the picture (`edge_n`, `edge_s`, `edge_w`, `edge_e`). | one rectangle per object (`s_<id>`) from the kit library: `game/kit/pieces/prop/woodland_<kind>.json`, `geometry.collision`, world px from the foot |
-| Crossroads | `gen_village.py` writes `crossroads.tscn` | the plan's box edges, `faces` and building rectangles (`Walls/Edge*`, `Face_*`, `Building_*`) | the plan's box (`kit.json` `solid`), except where the kit library holds a box reviewed against the art or the object is an approved woodland picture: then the library's box stands |
+| Crossroads | `gen_village.py` writes `crossroads.tscn` | the plan's box edges, `faces` and building rectangles (`Walls/Edge*`, `Face_*`, `Building_*`) | the plan's box (`kit.json` `solid`), except where the kit library holds a box reviewed against the art or the object is an approved woodland picture: then the library's box stands. The notice board and the waystone get the texels drawn in their lowest 12 rows |
 | Undercroft | `gen_undercroft.py` writes `undercroft.tscn` | the plan's box edges and wall blocks (`Walls/Edge*`, `Wall_*`) | the plan's box (`kit.json` `solid`) |
 
 A solid inside a `Conditional` (the choked well, the dark lantern, the sealed slab) comes and goes with its picture, because a hidden Conditional disables its children.
@@ -54,7 +54,7 @@ Two rules hold for every object solid:
 
 `walk.txt` is the terrain only: the ground nobody can stand on (water, cliff faces, the rock bank). Objects are not in it. The review tools (`scripts/review/scene.py`) read the same file as their walk mask.
 
-Zones built by the world editor (`kitlab`, `woodland_kit`) derive one walls body from the same piece boxes in `world/terrain/walk.gd`. They do not know low solids yet.
+Zones built by the world editor (`kitlab`, `woodland_kit`) derive one walls body from the same piece boxes in `world/terrain/walk.gd`. They do not know low solids yet. A piece scene (`game/kit/props/*.tscn`, written by `scripts/art/kit/props.py`) carries a `Solid` only when its record says `gameplay.blocks_move`, so a zone built from the scenes blocks what the walk mask blocks.
 
 ## Low solids
 
@@ -83,7 +83,7 @@ Everything in a zone is one y-sort: the zone root, the base, `Objects` or `Props
 | 1 | chimney smoke, an enemy's tells |
 | 50 | the faint copy of a hidden actor (below) |
 
-A y-sorted picture's origin is on its drawn feet, its lowest opaque row, within 2 texels (`test_every_sorted_picture_sorts_by_its_drawn_feet`). The generators move the origin there and keep every texel in place (`gen_physics.on_feet`). A thing that lies flat and blocks nobody is not y-sorted at all: sorted by its far edge it would cover whoever walks over it.
+A y-sorted picture's origin is on its drawn feet, its lowest opaque row, within 2 texels (`test_every_sorted_picture_sorts_by_its_drawn_feet`). Where the kit's foot is further off than that, the generators move the origin there and keep every texel in place (`gen_physics.on_feet`). A thing that lies flat and blocks nobody is not y-sorted at all: sorted by its far edge it would cover whoever walks over it.
 
 ## Actors behind tall things
 

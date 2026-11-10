@@ -444,16 +444,16 @@ centered = false
 offset = Vector2(-54, -82)
 
 [node name="RootsHall" type="Sprite2D" parent="Props"]
-position = Vector2(360, 217)
+position = Vector2(360, 216)
 texture = ExtResource("t7")
 centered = false
-offset = Vector2(-75, -51)
+offset = Vector2(-75, -50)
 
 [node name="RubbleCorridor" type="Sprite2D" parent="Props"]
-position = Vector2(1032, 355)
+position = Vector2(1032, 354)
 texture = ExtResource("t8")
 centered = false
-offset = Vector2(-42, -66)
+offset = Vector2(-42, -65)
 
 [node name="RootsCorridor" type="Sprite2D" parent="Props"]
 position = Vector2(816, 480)
@@ -474,16 +474,16 @@ centered = false
 offset = Vector2(-36, -43)
 
 [node name="StumpNw" type="Sprite2D" parent="Props"]
-position = Vector2(1776, 242)
+position = Vector2(1776, 240)
 texture = ExtResource("t12")
 centered = false
-offset = Vector2(-42, -100)
+offset = Vector2(-42, -98)
 
 [node name="StumpSe" type="Sprite2D" parent="Props"]
-position = Vector2(2208, 578)
+position = Vector2(2208, 576)
 texture = ExtResource("t13")
 centered = false
-offset = Vector2(-42, -100)
+offset = Vector2(-42, -98)
 
 [node name="RubbleChamber" type="Sprite2D" parent="Props"]
 position = Vector2(2202, 238)
@@ -496,26 +496,26 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_taken:woodland\"]}"
 
 [node name="Shard" type="Sprite2D" parent="Props/If_shard"]
-position = Vector2(2100, 385)
+position = Vector2(2100, 384)
 texture = ExtResource("t15")
 centered = false
-offset = Vector2(-45, -123)
+offset = Vector2(-45, -122)
 
 [node name="CairnAlcove" type="Sprite2D" parent="Props"]
-position = Vector2(2160, 169)
+position = Vector2(2160, 168)
 texture = ExtResource("t16")
 centered = false
-offset = Vector2(-54, -100)
+offset = Vector2(-54, -99)
 
 [node name="If_lever_up" type="Node2D" parent="Props"]
 script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"undercroft_seal_open\"]}"
 
 [node name="LeverUp" type="Sprite2D" parent="Props/If_lever_up"]
-position = Vector2(1644, 289)
+position = Vector2(1644, 288)
 texture = ExtResource("t17")
 centered = false
-offset = Vector2(-27, -70)
+offset = Vector2(-27, -69)
 
 [node name="LeverUpBody" type="StaticBody2D" parent="Props/If_lever_up"]
 collision_mask = 0
@@ -529,10 +529,10 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"undercroft_seal_open\"]}"
 
 [node name="LeverDown" type="Sprite2D" parent="Props/If_lever_down"]
-position = Vector2(1644, 289)
+position = Vector2(1644, 288)
 texture = ExtResource("t18")
 centered = false
-offset = Vector2(-27, -70)
+offset = Vector2(-27, -69)
 
 [node name="LeverDownBody" type="StaticBody2D" parent="Props/If_lever_down"]
 collision_layer = 17
@@ -547,10 +547,10 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"undercroft_seal_open\"]}"
 
 [node name="SealSlab" type="Sprite2D" parent="Props/If_seal_slab"]
-position = Vector2(1704, 482)
+position = Vector2(1704, 480)
 texture = ExtResource("t19")
 centered = false
-offset = Vector2(-27, -268)
+offset = Vector2(-27, -266)
 
 [node name="SealSlabBody" type="StaticBody2D" parent="Props/If_seal_slab"]
 collision_mask = 0

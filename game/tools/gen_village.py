@@ -69,6 +69,8 @@ def chimney_pot(zid: str, o: dict) -> tuple:
 # kinds that lie flat on the ground and have no solid: people walk over them, so they are drawn on the
 # ground's side of everyone (over the cast shadows at -9) instead of being y-sorted by their far edge
 FLAT = {'beds', 'beds_dug', 'debris'}
+# things people read whose only solid was the 5 px post of their talk area, 50 px narrower than what is drawn
+THING_BASE = {'notice_board', 'waystone'}
 # kinds drawn as part of something else, which sort where the kit put them: a building's damage overlay one
 # texel in front of its building, the forge's fire in its mouth, a cast shadow and smoke on their own layers
 SORTS_WITH_OWNER = {'building', 'damage', 'glow', 'shadow', 'smoke'}
@@ -143,6 +145,9 @@ def build(plan: dict, kit: dict) -> str:
     for o in kit['objects']:
         if o['id'] in boxes and not o.get('cond'):
             s.solid('Solid_' + o['id'], 'Walls', *boxes[o['id']])
+        elif o['kind'] in THING_BASE and o.get('png') and not o.get('cond'):
+            # a board or a stone people read: its talk area's post (5 px) stands inside this, its drawn base
+            s.solid('Solid_' + o['id'], 'Walls', PH.drawn_base(os.path.join(GAME, 'zones', zid, 'art', o['png']), o['foot'], o['offset']))
 
     # every drawn thing, y-sorted with the actors by its feet
     s.node('Props', 'Node2D', '.', {'y_sort_enabled': 'true'})
