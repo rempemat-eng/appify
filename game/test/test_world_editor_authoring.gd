@@ -551,6 +551,13 @@ func test_the_editor_built_glade_is_a_whole_zone() -> void:
 	for actor in plan.actors:
 		kinds[actor.kind] = true
 	assert_that(kinds.keys()).contains(["interactable", "camp"])
+	# The sign can be read without hunting for the spot: its piece blocks a square 24 texels either
+	# way from its foot in a dock-saved zone and the body is 9 across, so a talk area of the
+	# default 30 left a band 2 world px deep (the audit of #465). 44 leaves 20 texels.
+	var sign: Area2D = root.get_node("Actors/Sign")
+	var reach: float = (sign.get_node("Shape") as CollisionShape2D).shape.radius
+	assert_float(reach).is_equal(44.0)
+	assert_float(reach + 9.0 - (24.0 + 9.0)).is_greater_equal(18.0)
 	# rebuilt from its plan it is the same zone: nothing lives only in the scene
 	var rebuilt := ZonePlan.scene_from_plan(plan)
 	_scenes.append(rebuilt)

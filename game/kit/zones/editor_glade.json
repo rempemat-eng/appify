@@ -7,6 +7,7 @@
    ],
    "id": "Sign",
    "kind": "interactable",
+   "radius": 44,
    "speaker": "stone_sign",
    "verb": "Read"
   },
