@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Fails the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md). K1 the stomp ring is a flat khaki hoop with a dark outline lying over the feet (reads as a rope ring; the calibration set's flat ring): draw broken dust instead, 5 to 7 unoutlined puffs in earth tones 3 and 4 spreading from the forefeet and thinning over the four drawings, with two or three pebbles, behind the legs on the far side and in front on the near side"
  }
 }

@@ -33,10 +33,11 @@
   "group": "foliage"
  },
  "findings": [],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Fails the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md). L1 the clump is a banded green mound in three tones with a flat V of twigs (10 to 13 colours, no leaf clusters): build it from 4 or 5 leaf clusters with lit caps and dark undersides, bramble canes with thorns arching out of it, and a contact shadow"
  }
 }

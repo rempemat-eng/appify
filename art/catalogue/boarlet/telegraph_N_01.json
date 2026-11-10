@@ -35,10 +35,11 @@
   "group": "prop"
  },
  "findings": [],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Fails the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md). B2 the spine in the north facing is a black stitched line with ticks (reads as a zip), not the bristle mane of the E and W facings: draw the mane from behind as a ridge of 5 to 7 dark tufts, 2 to 3 px wide, each with a lit left edge, running from the rump to the ears"
  }
 }

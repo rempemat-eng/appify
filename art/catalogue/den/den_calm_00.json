@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Fails the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md). D1 scale: the den's mouth is 22 x 17 px and the whole mound 42 px tall, while the creatures it houses are 26 to 40 px wide and 40 to 45 px tall, so none fits its door: make the mound about 120 x 70 px with a mouth at least 44 x 34 px, an inner wall lit on the far side and a dark band under the near lip | D2 the weave is rows of identical dashes (reads as brick courses): draw woven bramble canes, bands of 3 to 5 px crossing over and under with a lit top edge and a dark gap where they cross, thorns breaking the silhouette, leaves in clusters"
  }
 }

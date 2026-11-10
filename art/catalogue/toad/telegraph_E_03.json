@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Fails the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md). T2 the gathering glint is a flat one-colour orange plus sign at the lips (a UI crosshair, the calibration set's flat glyph): replace it with a 2 px lamp-toned glint on the wet lip that grows to a 4 px star with a pale core, or leave the tell to the swelling sac | T5 side view below Eastward's animals at the same character height (11.3 tones and 14.3 to 18.3 shapes a patch against 14.0 and 27.6 on the pigs and cow of shot 17) and no folded hind leg, so it reads as a blob with an eye: draw the thigh and shank folded against the flank with a dark crease and a lit knee, a webbed forefoot, a parotoid bump behind the eye and 6 to 8 warts of 2 to 4 px in two tones on the back"
  }
 }

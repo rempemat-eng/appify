@@ -10,10 +10,10 @@
   160,
   144
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
+  "fault": 1,
   "polish": 1
  },
  "detail_bar": {
@@ -46,12 +46,25 @@
    ],
    "message": "tortoise/telegraph_S_06: detail bar 0.89 of Eastward's prop band (29.0 tones, 45.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "fault",
+   "box": [
+    62,
+    93,
+    97,
+    133
+   ],
+   "message": "tortoise/telegraph_S_06: 49% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 43% to 49%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Fails the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md). N1 value grain: the gate's detail.cluster_noise is at fault level on this drawing (its finding gives the share of 2 x 2 blocks; other drawings of the same facing sit just under the line), not overturned by the auditor: calm the fur, scute and moss marks to sibling swaps at the same tone, with a tone step only on the lit plane's edge and in the shade line | Detector fault detail.cluster_noise stands as evidence."
  }
 }
