@@ -558,7 +558,9 @@ func test_the_editor_built_glade_is_a_whole_zone() -> void:
 	var reach: float = (sign.get_node("Shape") as CollisionShape2D).shape.radius
 	assert_float(reach).is_equal(44.0)
 	assert_float(reach + 9.0 - (24.0 + 9.0)).is_greater_equal(18.0)
-	# rebuilt from its plan it is the same zone: nothing lives only in the scene
+	# rebuilt from its plan it exports the same plan: no authored data lives only in the scene.
+	# (The scene files still differ: the dock-saved one holds a KitWalk node, the rebuilt one
+	# does not, so the stone sign collides differently. docs/world-editor.md lists that as open.)
 	var rebuilt := ZonePlan.scene_from_plan(plan)
 	_scenes.append(rebuilt)
 	assert_str(ZonePlan.canonical(ZonePlan.plan_from_scene(rebuilt))).is_equal(ZonePlan.canonical(plan))

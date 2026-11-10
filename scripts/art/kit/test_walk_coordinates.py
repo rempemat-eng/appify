@@ -119,8 +119,9 @@ class WalkCoordinates(unittest.TestCase):
         np.testing.assert_array_equal(W.mask(self.plan(piece='post')), expected)
 
     def test_a_box_wholly_outside_the_zone_blocks_nothing(self):
-        # A negative end used to wrap as a Python slice and block almost every row.
-        np.testing.assert_array_equal(W.mask(self.plan(piece='solid', at=(0, -3))), np.zeros((4, 4), dtype=bool))
+        # A box ending one walk cell above the zone gave the slice [0:-1]: the old code blocked
+        # three cells of the first column for a piece that is not in the zone at all.
+        np.testing.assert_array_equal(W.mask(self.plan(piece='solid', at=(0, -1))), np.zeros((4, 4), dtype=bool))
 
     def test_nonblocking_and_unknown_pieces_remain_ignored(self):
         plan = self.plan(piece='decoration')
@@ -159,7 +160,7 @@ class WalkCoordinates(unittest.TestCase):
 
 class WalkParity(unittest.TestCase):
     """One mask, twice: the fixture's rows are what walk.py derives from its plan, and
-    game/test/test_walk.gd holds KitWalk.derive to the same rows."""
+    game/test/test_world_editor_authoring.gd holds KitWalk.derive to the same rows."""
 
     def test_the_parity_fixture_is_what_walk_py_derives(self):
         fixture = json.loads((Path(W.KR.ROOT) / 'game/test/fixtures/kit/walk_parity.json').read_text())
