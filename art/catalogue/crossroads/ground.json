@@ -1,7 +1,7 @@
 {
  "id": "crossroads/ground",
  "file": "game/zones/crossroads/art/ground.png",
- "sha256": "0a6ec7cac8a55ba99036d94d06c02379170f8d012c73c442576ffdc6aa9cee81",
+ "sha256": "9d8928c26b54553765ece589efc7d5bc742047cb733aefac7fbb10b1634ecea8",
  "kind": "ground",
  "biome": "valley",
  "H": 74.0,
@@ -23,6 +23,9 @@
   "agent": "detail-auditor",
   "verdict": "pass",
   "date": "2026-11-10",
-  "note": "Round 7 review at d767e817 (PR #458, round 1 of the Crossroads remainder), docs/reviews/2026-11-08-crossroads-placed.md, round 7. Pass for these bytes (0a6ec7ca...). 169 texels change, all at the cart (x 653-766, y 788-808): its contact and cast; no lawn re-scatter."
+  "note": "docs/reviews/2026-11-10-crossroads-trees.md, round 2 (PR #460 head 6548ab0e). Against round 1 (cba98f46, passed there) 14,384 texels change, all in two clusters round oak_13's old foot (x 0-150, y 301-384) and new foot (x 247-416, y 301-382): 2,742 in the old box, 2,746 in the new, 8,896 just below the feet (y 336-377: lawn re-laid, cast and contact shade). No house-row or other distant texel moves this time. ground.png alone: detail.repetition 0.00. Asset gate 0/0/0. The round 1 findings stand (XT3 polish, XR3-G1 open).",
+  "fix_list": [
+   "XT3 (polish, XR3-G1 residue): make the lawn scatter local so a prop edit cannot reshuffle ground on distant house rows; until then list the far texels in each prop PR, as #460 did."
+  ]
  }
 }

@@ -6,15 +6,15 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "bush_14",
    "weight": 1.0,
    "png": "res://zones/crossroads/art/bush_14.png",
    "foot": [
-    57,
-    73
+    46,
+    61
    ]
   },
   {
@@ -22,8 +22,8 @@
    "weight": 1.0,
    "png": "res://zones/crossroads/art/bush_15.png",
    "foot": [
-    57,
-    73
+    37,
+    54
    ]
   },
   {
@@ -31,8 +31,8 @@
    "weight": 1.0,
    "png": "res://zones/crossroads/art/bush_16.png",
    "foot": [
-    57,
-    73
+    46,
+    61
    ]
   },
   {
@@ -40,8 +40,8 @@
    "weight": 1.0,
    "png": "res://zones/crossroads/art/bush_17.png",
    "foot": [
-    57,
-    73
+    37,
+    54
    ]
   },
   {
@@ -49,8 +49,8 @@
    "weight": 1.0,
    "png": "res://zones/crossroads/art/bush_18.png",
    "foot": [
-    57,
-    73
+    54,
+    57
    ]
   },
   {
@@ -58,8 +58,8 @@
    "weight": 1.0,
    "png": "res://zones/crossroads/art/bush_22.png",
    "foot": [
-    57,
-    73
+    46,
+    61
    ]
   },
   {
@@ -67,8 +67,8 @@
    "weight": 1.0,
    "png": "res://zones/crossroads/art/bush_23.png",
    "foot": [
-    57,
-    73
+    37,
+    54
    ]
   }
  ],
@@ -81,20 +81,20 @@
  },
  "geometry": {
   "size_px": [
-   112,
-   91
+   109,
+   61
   ],
   "size_cells": [
    5,
-   4
+   3
   ],
   "z_sort": "foot",
   "collision": {
    "shape": "none"
   },
   "foot": [
-   57,
-   73
+   46,
+   61
   ],
   "footprint": []
  },

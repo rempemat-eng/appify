@@ -1,14 +1,14 @@
 {
  "id": "crossroads/oak_43",
  "file": "game/zones/crossroads/art/oak_43.png",
- "sha256": "92ab732efcafc37ec0bfc82022ea1cd6a538f3edc6044c9a505d75c1051cd504",
+ "sha256": "c83061009fe9bb4e153dfc7cefd968b1758636156d6827cbd6b6deb99305e649",
  "kind": "broadleaf",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  211,
-  250
+  212,
+  247
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 78,
-   "tones": 16.94871794871795,
-   "shapes": 31.474358974358974
+   "patches": 70,
+   "tones": 28.6,
+   "shapes": 48.128571428571426
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.497,
-  "tones_ratio": 0.612,
-  "shapes_ratio": 0.497,
+  "ratio": 0.76,
+  "tones_ratio": 1.032,
+  "shapes_ratio": 0.76,
   "passed": false,
   "group": "foliage"
  },
@@ -39,19 +39,20 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    8,
-    10,
-    203,
-    243
+    23,
+    0,
+    212,
+    247
    ],
-   "message": "crossroads/oak_43: detail bar 0.50 of Eastward's foliage band (16.9 tones, 31.5 shapes a patch against 27.71, 63.32)",
+   "message": "crossroads/oak_43: detail bar 0.76 of Eastward's foliage band (28.6 tones, 48.1 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-10-crossroads-trees.md, round 1 (PR #460 head cba98f46). Identity check, not a new detail audit (woodland round 9, ruling 3): sha256 c8306100... equals woodland/oak, passed in docs/reviews/2026-11-09-woodland-assets.md round 9 (PR #446 head 1da15380); pixels equal and not mirrored (lit from the upper left as approved). Placed with its y-sort origin on the drawn foot (bottom row, dy 0)."
  }
 }

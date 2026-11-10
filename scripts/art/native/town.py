@@ -18,6 +18,7 @@ import argparse
 import json
 import math
 import os
+import shutil
 import sys
 
 import numpy as np
@@ -66,7 +67,22 @@ def stage_states(plan) -> dict:
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
 INPUTS = ('village.py', 'houses.py', 'volume.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
-          'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png')
+          'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png', 'screen.py')
+
+# Approved pictures of another zone that a plan's dressing may place as they are (`sprite`:
+# '<zone>/<name>'): the woodland's trees and shrubs that passed the 9 Nov detail audit (round 9 of
+# docs/reviews/2026-11-09-woodland-assets.md, PR #446). The picture is copied byte for byte, so its
+# copy is the approved picture (same sha256); its foot is the middle of its bottom edge, where the
+# woodland's generator puts it (screen.foot_at_bottom_centre). A tree's shade is the woodland's
+# (screen.tree_shadow_hd, as wide as its master), a shrub's the woodland's (screen.shrub_cast).
+APPROVED = {'woodland/oak': 'zones_props_oak.png', 'woodland/beech': 'zones_props_beech.png',
+            'woodland/birch': 'zones_props_birch.png', 'woodland/hollow_tree': 'zones_props_hollow_tree.png',
+            'woodland/bush': None, 'woodland/bush_b': None, 'woodland/bush_c': None}
+
+
+def approved_path(ref: str) -> str:
+    zone, name = ref.split('/', 1)
+    return os.path.join(ROOT, 'game', 'zones', zone, 'art', name + '.png')
 
 
 def input_hash(plan_path: str, density: float) -> str:
@@ -76,6 +92,7 @@ def input_hash(plan_path: str, density: float) -> str:
                                                        os.path.join(ROOT, 'scripts', 'art', 'house_palette.py')]
     plan = json.load(open(plan_path))
     files.append(os.path.join(ROOT, 'scripts', 'art', 'biomes', plan.get('art', {}).get('biome', 'meadow') + '.json'))
+    files += [approved_path(r) for r in sorted({d['sprite'] for d in plan.get('art', {}).get('dressing', []) if d.get('sprite')})]
     for f in files:
         h.update(os.path.relpath(f, ROOT).encode() + b'\0')
         h.update(open(f, 'rb').read())
@@ -878,10 +895,30 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         kind = dr['kind']
         x, y = dr['at']
         seed = dr.get('seed', 100 + k)
+        extra = {}
         if kind in ('oak', 'bush'):
             master = 'zones_props_oak.png' if kind == 'oak' else 'zones_props_bush.png'
             img, anc, a = CO.sprite_for(kind, master, D, seed, tree_ex.get(kind, {}))
             solid = [x - 4, y - 3, 8, 4] if kind == 'oak' else ([x - 8, y - 5, 16, 6] if dr.get('solid', True) else None)
+            if dr.get('sprite'):
+                # (the fix queue, 10 Nov) the approved woodland picture in place of the kit's old
+                # foliage, copied as it is; the old picture stays only as what the lawn was laid
+                # with, so the lawn's scatter is re-laid round the swap alone (as for a redrawn house;
+                # a tree that moved, `lawn_at`, round where it stood and where it stands)
+                if dr['sprite'] not in APPROVED:
+                    raise KeyError(f"{dr['sprite']}: not an approved picture (town.APPROVED)")
+                src = approved_path(dr['sprite'])
+                new = Image.open(src).convert('RGBA')
+                na = np.asarray(new)[..., 3] > 0
+                extra = dict(legacy=(img, anc, a), copy_from=src)
+                if dr.get('lawn_at'):
+                    # a tree moved with its swap (10 Nov): the lawn was laid with it where it stood
+                    extra['legacy_foot'] = (q(dr['lawn_at'][0]), q(dr['lawn_at'][1]))
+                if APPROVED[dr['sprite']]:
+                    extra['tree_ex'] = dict(w=Image.open(os.path.join(ROOT, 'art', 'masters', APPROVED[dr['sprite']])).width)
+                else:
+                    extra['shrub'] = True
+                img, anc, a = new, (new.width / 2.0, float(new.height)), na
         elif kind == 'kit_lantern':
             img, anc, a = CO.sprite_for('lantern', None, D, seed, {})
             solid = [x - 2, y - 2, 4, 3]
@@ -895,7 +932,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             solid = [x - w / 2, y - h, w, h] if dr.get('solid', True) else None
         did = dr.get('id', f'{kind}_{k}')
         objects.append(dict(id=did, kind=kind, png=add_pic(did, img), foot=(q(x), q(y)), anchor=anc, alpha=a,
-                            cond=dr.get('if'), solid=solid, static=not dr.get('if')))
+                            cond=dr.get('if'), solid=solid, static=not dr.get('if'), **extra))
         if hd and kind in LAWN_AS_BEFORE:
             # the lawn's scatter is laid with the prop as it stood before its redraw, so redrawing it
             # moves no ground away from it (XR3-G1): its own cast is laid from the new picture
@@ -924,7 +961,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             # density 3: a crown's shade lies under the crown as the woodland's does (scalloped, sun
             # flecks), from the trunk's foot east, not the sprite's long silhouette thrown on the lawn
             from scripts.art.native import screen as SN
-            m = SN.tree_shadow_hd(o['foot'][0] / D, o['foot'][1] / D, tree_ex['oak'], W, H)
+            m = SN.tree_shadow_hd(o['foot'][0] / D, o['foot'][1] / D, o.get('tree_ex', tree_ex['oak']), W, H)
         elif hd and o['kind'] == 'waystone':
             # (Matt, 26 Oct 23:09: the waystone's shadow a hard diagonal wedge) a short soft shade
             # thrown east and a little down from its foot, an ellipse as wide as the stone
@@ -933,6 +970,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             m = ((XX - fx_ - wd_ * 0.45) / (wd_ * 0.9)) ** 2 + ((YY - fy_ + 2) / (wd_ * 0.32)) ** 2 <= 1.0
         else:
             m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
+            if hd and o.get('shrub'):
+                # a woodland shrub's cast as the woodland lays it: its body under the mass's base
+                from scripts.art.native import screen as SN
+                m = SN.shrub_cast(m, o['alpha'], o['anchor'], o['foot'], W, H)
         contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
         return m, ndi.binary_erosion(m, iterations=rim), contact
 
@@ -972,7 +1013,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 m, _core, contact = shade_masks(o, lawn=True)
                 sh |= m | contact
                 ft.append((o['foot'][0] / D, o['foot'][1] / D, o['kind']))
-                if o['kind'] == 'building':
+                if o['kind'] == 'building' or o.get('swap'):
                     near |= m | contact
                     ah, aw = o['alpha'].shape
                     X0, Y0 = int(o['foot'][0] - o['anchor'][0]), int(o['foot'][1] - o['anchor'][1])
@@ -986,9 +1027,16 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 key = '__legacy_' + o['id']
                 pics[key] = pic.rgba()
                 o = dict(o, png=key, alpha=pic.alpha(), anchor=(pic.ax, pic.ay), cast=None)
+            elif o.get('legacy') is not None:
+                # a dressing swapped for an approved picture: the lawn as its old foliage laid it
+                img_, anc_, al_ = o['legacy']
+                key = '__legacy_' + o['id']
+                pics[key] = img_
+                o = {k_: v_ for k_, v_ in o.items() if k_ not in ('tree_ex', 'shrub')}
+                o.update(png=key, alpha=al_, anchor=anc_, swap=True, foot=o.get('legacy_foot') or o['foot'])
             objs_old.append(o)
         shade_old, foots_old, near_old = lawn_inputs(objs_old)
-        shade, foots, near_new = lawn_inputs(objects)
+        shade, foots, near_new = lawn_inputs([dict(o, swap=True) if o.get('legacy') is not None else o for o in objects])
         for k in [k for k in pics if k.startswith('__legacy_') or k == '__lawn_as']:
             del pics[k]
         rng_new = np.random.default_rng()
@@ -1059,7 +1107,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         if f.endswith('.png') and f != 'ground.png' and f[:-4] not in pics:
             os.remove(os.path.join(out_dir, f))
     ground.save(os.path.join(out_dir, 'ground.png'), optimize=True)
+    copies = {o['png']: o['copy_from'] for o in objects if o.get('copy_from')}
     for name, img in pics.items():
+        if name in copies:
+            shutil.copyfile(copies[name], os.path.join(out_dir, name + '.png'))
+            continue
         img.save(os.path.join(out_dir, name + '.png'), optimize=True)
     doc = dict(zone=plan['id'], density=D, size=[W, H], inputs=plan.get('_inputs'),
                kit_drawn=sorted({o['png'] + '.png' for o in objects if o.get('png') and o['kind'] not in KIT_SPRITES + ('shadow',)}),
