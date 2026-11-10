@@ -151,7 +151,7 @@ func test_no_card_and_no_lead_for_pictures() -> void:
 	assert_str(hud.shown_text().quest_title).is_equal("The morning after")
 
 func test_the_closing_card_waits_for_the_last_quest() -> void:
-	for q: String in ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again", "a1_the_choked_well"]:
+	for q: String in ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again"]:
 		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
 	SaveGame.data.quests["a1_the_torn_roof"] = {"state": "active", "step": 1}
 	SaveGame.set_flag("seen:opening")
@@ -266,7 +266,8 @@ func test_a_mark_only_stands_where_talking_moves_a_quest() -> void:
 	for q: String in ["road_to_crossroads", "cold_forge", "under_the_stones", "home_again"]:
 		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
 	assert_bool((zone.get_node("Actors/Morel") as Interactable).wants_talk()).is_true()
-	assert_bool((zone.get_node("Actors/Moss") as Interactable).wants_talk()).is_true()
+	# Moss's loaf waits for the Frostline to be built, and her well for the loaf: no mark over her
+	assert_bool((zone.get_node("Actors/Moss") as Interactable).wants_talk()).is_false()
 
 func test_overlapping_talk_areas_share_the_prompt_by_rule() -> void:
 	# Home again, the Ferns' door still to clear: the restore mark (1440, 1308) and Ada (1500, 1296)
@@ -290,14 +291,15 @@ func test_overlapping_talk_areas_share_the_prompt_by_rule() -> void:
 	assert_str(String(player.focus.name) if player.focus != null else "none").is_equal("Ada")
 	# walking away lets go
 	assert_str(await _stand(player, Vector2(1480, 1480))).is_equal("none")
-	# with no quest on either, the nearer of two overlapping areas has it: the lantern (936, 960) and
-	# Hale's old spot are far apart, so use the lantern and the well's mark once Moss has asked
-	Quests.notify("talk:ada_fern")
-	Quests.notify("talk:moss")
-	assert_str(Quests.current_step("a1_the_choked_well").get("id", "")).is_equal("well")
-	await _ticks(3)
-	assert_str(await _stand(player, Vector2(905, 1010))).is_equal("WellSite")
-	SaveGame.data.glint = 80
-	await (zone.get_node("Actors/If_well_site/WellSite") as RestoreSite).interact()
-	await _ticks(3)
-	assert_str(String(player.focus.name) if player.focus != null else "none").is_equal("ShardLantern")
+
+func test_of_two_plain_neighbours_the_nearer_has_the_prompt() -> void:
+	# Hale on the square (1290, 900) and the smithy's mark (1410, 912), neither with a quest waiting
+	# (The road home is at "find Moss"): their areas overlap between them
+	SaveGame.set_flag("hale_walked_home")
+	SaveGame.set_flag("visited:crossroads")
+	SaveGame.data.quests["road_to_crossroads"] = {"state": "active", "step": 1}
+	var made := await _zone_with_player("crossroads")
+	var player: Player = made[1]
+	assert_str(await _stand(player, Vector2(1345, 925))).is_equal("HaleSquare")
+	assert_str(await _stand(player, Vector2(1352, 925))).is_equal("SmithySite")
+	assert_str(await _stand(player, Vector2(1345, 925))).is_equal("HaleSquare")

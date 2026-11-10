@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "bc173074bc2994def0bffa958757bd5f787084007d097ad1022933c85fe66b19",
+ "inputs": "01b334cfd8d949465c76aaaec99e62444ba8a83d86706dfdc07bc02d33156d38",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -377,8 +377,8 @@
     -80
    ],
    "cond": {
-    "not_restored": [
-     "well"
+    "not_flags": [
+     "shard_home:woodland"
     ]
    },
    "solid": [
@@ -401,8 +401,8 @@
     -170
    ],
    "cond": {
-    "restored": [
-     "well"
+    "flags": [
+     "shard_home:woodland"
     ]
    },
    "solid": [
@@ -1882,8 +1882,8 @@
     0
    ],
    "cond": {
-    "not_restored": [
-     "well"
+    "not_flags": [
+     "shard_home:woodland"
     ]
    },
    "solid": null,
@@ -1902,8 +1902,8 @@
     0
    ],
    "cond": {
-    "restored": [
-     "well"
+    "flags": [
+     "shard_home:woodland"
     ]
    },
    "solid": null,

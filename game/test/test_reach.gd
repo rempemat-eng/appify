@@ -30,7 +30,7 @@ const STAGES := {
 	"mending": {"restored": ["forge", "fern_cottage"], "flags": ["undercroft_open", "undercroft_plate",
 		"undercroft_seal_open", "camp_cleared:undercroft_rooms", "camp_cleared:thornback", "shard_taken:woodland",
 		"shard_home:woodland"], "done": ["road_to_crossroads", "cold_forge", "under_the_stones", "home_again"],
-		"active": ["a1_the_choked_well", "a1_the_torn_roof"]},
+		"active": ["a1_the_torn_roof"]},
 }
 
 func before_test() -> void:

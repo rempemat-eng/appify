@@ -44,14 +44,13 @@
         "restored": [
           "forge",
           "fern_cottage",
-          "well",
           "apothecary"
         ],
         "flags": [
           "shard_home:woodland"
         ]
       },
-      "why": "act 1's two village repairs done: water in the well, the roof back on Morel's herbalist's (the apothecary)"
+      "why": "act 1's first village repair done: the roof back on Morel's herbalist's (the apothecary)"
     }
   ],
   "restores": [
@@ -75,19 +74,6 @@
         ]
       },
       "why": "the first household home (the homecoming quest); cost is a placeholder"
-    },
-    {
-      "id": "well",
-      "name": "The well",
-      "cost": {
-        "glint": 20
-      },
-      "if": {
-        "started": [
-          "a1_the_choked_well"
-        ]
-      },
-      "why": "act 1's village quest The choked well (docs/story/act1.md: 20 Glint, the cost its mark's lines quote)"
     },
     {
       "id": "apothecary",
@@ -505,11 +491,11 @@
       "solid": true,
       "colour": "#5b5249",
       "if": {
-        "not_restored": [
-          "well"
+        "not_flags": [
+          "shard_home:woodland"
         ]
       },
-      "why": "the well choked with rubble, until The choked well clears it"
+      "why": "the well choked with rubble"
     },
     {
       "id": "well",
@@ -523,8 +509,8 @@
       "solid": true,
       "colour": "#55708a",
       "if": {
-        "restored": [
-          "well"
+        "flags": [
+          "shard_home:woodland"
         ]
       }
     },
@@ -915,20 +901,6 @@
           "fern_cottage"
         ]
       }
-    },
-    {
-      "id": "well_site",
-      "restore": "well",
-      "at": [
-        282,
-        330
-      ],
-      "if": {
-        "not_restored": [
-          "well"
-        ]
-      },
-      "why": "by the well's south-west side, clear of the lantern's own talk point (312, 320)"
     },
     {
       "id": "apothecary_site",

@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 3,
+ "version": 2,
  "variants": [
   {
    "id": "well_choked",
@@ -118,9 +118,6 @@
    "if": {
     "not_flags": [
      "shard_home:woodland"
-    ],
-    "not_restored": [
-     "well"
     ]
    }
   }
@@ -139,8 +136,8 @@
     "object": "well_choked",
     "part": "body",
     "condition": {
-     "not_restored": [
-      "well"
+     "not_flags": [
+      "shard_home:woodland"
      ]
     }
    },
@@ -149,8 +146,8 @@
     "object": "well_choked_shadow",
     "part": "shadow",
     "condition": {
-     "not_restored": [
-      "well"
+     "not_flags": [
+      "shard_home:woodland"
      ]
     }
    }

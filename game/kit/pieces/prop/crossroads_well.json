@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 3,
+ "version": 2,
  "variants": [
   {
    "id": "well",
@@ -133,9 +133,6 @@
    "if": {
     "flags": [
      "shard_home:woodland"
-    ],
-    "restored": [
-     "well"
     ]
    }
   }
@@ -154,8 +151,8 @@
     "object": "well",
     "part": "body",
     "condition": {
-     "restored": [
-      "well"
+     "flags": [
+      "shard_home:woodland"
      ]
     }
    },
@@ -164,8 +161,8 @@
     "object": "well_shadow",
     "part": "shadow",
     "condition": {
-     "restored": [
-      "well"
+     "flags": [
+      "shard_home:woodland"
      ]
     }
    }
