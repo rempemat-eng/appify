@@ -1,26 +1,26 @@
 {
  "id": "crossroads/bakery",
  "file": "game/zones/crossroads/art/bakery.png",
- "sha256": "ee19085162e076231e225d4373bf04955edaee1f274334d17def66e166cec9f1",
+ "sha256": "224563a403ec71eba0e5d66e2e13bb5465d3de0d51ba48f440f416eea9c84159",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  240,
-  300
+  244,
+  324
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 4
+  "polish": 9
  },
  "detail_bar": {
   "ours": {
-   "patches": 169,
-   "tones": 25.153846153846153,
-   "shapes": 44.30769230769231
+   "patches": 182,
+   "tones": 24.15934065934066,
+   "shapes": 43.395604395604394
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.88,
-  "tones_ratio": 0.932,
-  "shapes_ratio": 0.88,
+  "ratio": 0.862,
+  "tones_ratio": 0.895,
+  "shapes_ratio": 0.862,
   "passed": false,
   "group": "prop"
  },
@@ -39,10 +39,46 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    38,
-    207,
-    70,
-    242
+    44,
+    78,
+    76,
+    104
+   ],
+   "message": "crossroads/bakery: the stone is lit from the right (luminance rises 230 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    57,
+    56,
+    100,
+    85
+   ],
+   "message": "crossroads/bakery: the stone is lit from the right (luminance rises 200 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    126,
+    116,
+    241,
+    197
+   ],
+   "message": "crossroads/bakery: the wood is lit from the right (luminance rises 153 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    40,
+    231,
+    72,
+    266
    ],
    "message": "crossroads/bakery: the red is lit from the right (luminance rises 64 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
@@ -51,10 +87,10 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    104,
-    207,
-    136,
-    242
+    106,
+    231,
+    138,
+    266
    ],
    "message": "crossroads/bakery: the red is lit from the right (luminance rises 61 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
@@ -63,31 +99,59 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    8,
-    51,
-    30,
-    163
+    185,
+    246,
+    225,
+    317
    ],
-   "message": "crossroads/bakery: the red is lit from the right (luminance rises 34 L per H to the east)",
+   "message": "crossroads/bakery: the pale is lit from the right (luminance rises 22 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    136,
+    36,
+    178,
+    106
+   ],
+   "message": "crossroads/bakery: the stone is lit from the right (luminance rises 9 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    2,
-    0,
-    238,
-    298
+    1,
+    21,
+    243,
+    322
    ],
-   "message": "crossroads/bakery: detail bar 0.88 of Eastward's prop band (25.2 tones, 44.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery: detail bar 0.86 of Eastward's prop band (24.2 tones, 43.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    1,
+    21,
+    243,
+    322
+   ],
+   "message": "crossroads/bakery: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 42% to 42%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (224563a4...). Pass. GR3 fault fixed: apron under all 36 foot columns, lit over dark on 34 (round 1: lead texels on 5 columns); course highlights 3-6 texels below the foot 37 -> 12. GR4: 0 of 390 line texels above 0.55 of the wall median, line 64 % darker, fade 34 %. GR7 fixed: no green texel within 6 rows of the slopes' back edge (round 1: 11, incl. (17,94) and (14-17,98), now #787e9c). GR5 as on the library. kit.json records both pots. Polish GR2-2. GR6 left as Claude A decided.",
+  "fix_list": [
+   "GR2-2 (polish): the stack's soakers are 3 to 6 lit lead texels at the bottom of the west side only; the east side has none (its first column east of the face is the slope's unchanged course pattern). Draw a 1-texel soaker column the height of each side face above the apron (west slate_cool 4, east slate_cool 3). The contact shadow east of the stack is 2 columns (d=2,3: 0 to 7 highlight texels); from d=4 the course highlights now run as dense as the open slope (smithy 22 to 27 a column against 0 to 1 in round 1). Eastward's vents (shot 17) throw a contact shadow about 6 native px wide: keep the floor tone 4 columns east of the face, fading at 5 to 6."
+  ]
  }
 }

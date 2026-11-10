@@ -2036,8 +2036,9 @@ class HouseVolume(unittest.TestCase):
             look.setdefault('w', b['rect'][2])
             look.setdefault('depth', b['rect'][3])
             look.pop('lawn_as', None)
+            look.setdefault('seed', sum(map(ord, b['id'])))      # town.py's seed, so the cast sees the stack drawn
             cls.looks[b['id']] = look
-            cls.built[b['id']] = HS.building(look, seed=look.get('seed', sum(map(ord, b['id']))))
+            cls.built[b['id']] = HS.building(look, seed=look['seed'])
 
     def _lum(self, bl, y0, y1, x0=None, x1=None):
         """Mean luminance of the wall's own surface in rows y0..y1 (what stands off it, the openings
@@ -2064,6 +2065,28 @@ class HouseVolume(unittest.TestCase):
         for hid, bl in self.built.items():
             info = bl.info
             roof = self.looks[hid].get('roof', 'slate')
+            if 'gable' in info:
+                # a front gable has no eave over its front: the band is the one its bargeboards throw
+                # on the gable wall (B5's 3 to 4 px under a verge, eastward-edges 11.1), its line 28 to
+                # 68 % darker than the wall a few texels further down, its fade still darker
+                g = info['gable']
+                a, Lm = bl.base.a, VO.lum()
+                wall = g['wall'] & ~VO._form(a) & (a >= 0)
+                wall = wall if wall.sum() > 0.3 * g['wall'].sum() else g['wall'] & (a >= 0)    # (a boarded gable)
+                yb = info['y_eave'] - g['off'] + g['board']             # each column's first row under its board
+                Y = np.arange(a.shape[0])[:, None]
+                line = wall & (Y >= yb) & (Y < yb + VO.GABLE_BAND[0][0])
+                fade = wall & (Y >= yb + VO.GABLE_BAND[0][0]) & (Y < yb + sum(n for n, _ in VO.GABLE_BAND))
+                body = wall & (Y >= yb + V.q(3)) & (Y < yb + V.q(6))
+                drop = 1 - Lm[a[line]].mean() / Lm[a[body]].mean()
+                # B5's continuous line, about 72 % on boards; stone stops at its ramp's floor (54 to 60 %);
+                # no texel of the line above 0.55 of the wall's median (round 2 of the audit, GR4)
+                self.assertGreaterEqual(drop, 0.50, (hid, round(drop, 2)))
+                self.assertLessEqual(drop, 0.90, (hid, round(drop, 2)))
+                lt = line & ~g['finial'] & (a % 8 <= 5)
+                self.assertLessEqual(float(Lm[a[lt]].max()), 0.55 * float(np.median(Lm[a[body & (a % 8 <= 5)]])), hid)
+                self.assertLess(Lm[a[fade]].mean(), Lm[a[body]].mean() * 0.95, hid)
+                continue
             e = VO.EAVE[roof]
             y = info['eave_top'] + VO.SOFFIT
             core = self._lum(bl, y, y + V.q(e['core']))
@@ -2121,13 +2144,22 @@ class HouseVolume(unittest.TestCase):
             east = (lv > 0) & (X > half)
             cols = np.nonzero(east.any(0))[0]
             self.assertGreaterEqual(int(X[0, cols.max()] - half), int(0.25 * 25 * 3), hid)
-            if not look.get('hip'):
+            if look.get('gable') == 'front':
+                # a front gable's ridge runs back over the middle at the gable's height: its shadow
+                # reaches furthest north there, more than over either eave
+                north = [int(Y[np.nonzero(c)[0].min(), 0]) if c.any() else None for c in (lv > 0).T]
+                cols = [i for i, v in enumerate(north) if v is not None]
+                mid = int(np.argmin([north[i] for i in cols]))
+                self.assertTrue(0 < mid < len(cols) - 1, hid)
+                self.assertGreaterEqual(north[cols[0]] - min(north[i] for i in cols), 6, hid)
+            elif not look.get('hip'):
                 # a gable's verges: the outline reaches furthest east at the ridge's line
                 reach = [int(X[0, np.nonzero(r)[0].max()]) if r.any() else None for r in east]
                 rows = [r for r in reach if r is not None]
                 self.assertGreaterEqual(max(rows) - rows[len(rows) // 8], 6, hid)
         # a stack beyond the roof's shadow shows as its own notch
         look = dict(self.looks['fern_cottage'], chimney=[70], chimney_h=30)
+        look.pop('gable', None)        # (a stack standing off a side-gabled roof: a front gable's stays in its slope)
         lv, ox, oy = VO.house_cast(look, 3.0)
         base, _x, _y = VO.house_cast(dict(look, chimney=[]), 3.0)
         self.assertGreater(int((lv > 0).sum()), int((base > 0).sum()), 'notch')

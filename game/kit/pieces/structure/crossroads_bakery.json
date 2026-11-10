@@ -6,15 +6,15 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 4,
  "variants": [
   {
    "id": "bakery",
    "weight": 1.0,
    "png": "res://zones/crossroads/art/bakery.png",
    "foot": [
-    120,
-    296
+    122,
+    320
    ]
   }
  ],
@@ -27,12 +27,12 @@
  },
  "geometry": {
   "size_px": [
-   240,
-   300
+   244,
+   324
   ],
   "size_cells": [
-   10,
-   13
+   11,
+   14
   ],
   "z_sort": "foot",
   "collision": {
@@ -45,8 +45,8 @@
    "shape": "rect"
   },
   "foot": [
-   120,
-   296
+   122,
+   320
   ],
   "footprint": [
    [

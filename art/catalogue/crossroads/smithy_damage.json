@@ -1,26 +1,26 @@
 {
  "id": "crossroads/smithy_damage",
  "file": "game/zones/crossroads/art/smithy_damage.png",
- "sha256": "5066ab2a5b779f0ffb6a1d7121d9036751e32c474fa22f111bd7a1f3a63d52fa",
+ "sha256": "3e93091ba49694848c57c67cf5be54299979e74f668418d573debc8f6cc3fa11",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  288,
-  327
+  292,
+  345
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 60,
-   "tones": 19.983333333333334,
-   "shapes": 33.2
+   "patches": 45,
+   "tones": 19.22222222222222,
+   "shapes": 33.733333333333334
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.659,
-  "tones_ratio": 0.74,
-  "shapes_ratio": 0.659,
+  "ratio": 0.67,
+  "tones_ratio": 0.712,
+  "shapes_ratio": 0.67,
   "passed": false,
   "group": "prop"
  },
@@ -39,43 +39,32 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    69,
-    302,
-    166,
-    314
+    75,
+    269,
+    144,
+    279
    ],
-   "message": "crossroads/smithy_damage: the red is lit from the right (luminance rises 11 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    50,
-    258,
-    119,
-    274
-   ],
-   "message": "crossroads/smithy_damage: the red is lit from the right (luminance rises 11 L per H to the east)",
+   "message": "crossroads/smithy_damage: the red is lit from the right (luminance rises 6 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    49,
-    73,
-    276,
-    327
+    27,
+    25,
+    278,
+    345
    ],
-   "message": "crossroads/smithy_damage: detail bar 0.66 of Eastward's prop band (20.0 tones, 33.2 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy_damage: detail bar 0.67 of Eastward's prop band (19.2 tones, 33.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-04",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 2 review at 5b230ffb (PR #457, front-gable roofs), docs/reviews/2026-11-10-front-gable-roofs.md. Verdict for these bytes (3e93091b...). Pass. GR11: the east-slope hole's battens mean Y 43 (round 1: 69) against 60 in the lit-slope hole. GR12 left as Claude A decided."
  }
 }

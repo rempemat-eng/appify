@@ -80,7 +80,8 @@ def volume_look(p: dict) -> dict | None:
     look = dict(plan.get('art', {}).get('looks', {}).get(b['id'], {}))
     look.setdefault('w', b['rect'][2])
     look.setdefault('depth', b['rect'][3])
-    return look
+    look.setdefault('seed', sum(map(ord, b['id'])))      # the zone painter's seed (town.py), so a front
+    return look                                           # gable's stack stands where it was drawn
 
 
 def volume_shadow(p: dict, out_name: str) -> dict | None:

@@ -667,37 +667,37 @@ offset = Vector2(-132, -188)
 position = Vector2(744, 600)
 texture = ExtResource("t2")
 centered = false
-offset = Vector2(-156, -230)
+offset = Vector2(-158, -317)
 
 [node name="LibraryDamage" type="Sprite2D" parent="Props"]
 position = Vector2(744, 601)
 texture = ExtResource("t3")
 centered = false
-offset = Vector2(-156, -231)
+offset = Vector2(-158, -318)
 
 [node name="NorthCottages" type="Sprite2D" parent="Props"]
 position = Vector2(1176, 600)
 texture = ExtResource("t4")
 centered = false
-offset = Vector2(-156, -272)
+offset = Vector2(-158, -320)
 
 [node name="NorthCottagesDamage" type="Sprite2D" parent="Props"]
 position = Vector2(1176, 601)
 texture = ExtResource("t5")
 centered = false
-offset = Vector2(-156, -273)
+offset = Vector2(-158, -321)
 
 [node name="Bakery" type="Sprite2D" parent="Props"]
 position = Vector2(444, 864)
 texture = ExtResource("t6")
 centered = false
-offset = Vector2(-120, -296)
+offset = Vector2(-122, -320)
 
 [node name="BakeryDamage" type="Sprite2D" parent="Props"]
 position = Vector2(444, 865)
 texture = ExtResource("t7")
 centered = false
-offset = Vector2(-120, -297)
+offset = Vector2(-122, -321)
 
 [node name="Herbalist" type="Sprite2D" parent="Props"]
 position = Vector2(444, 1152)
@@ -715,14 +715,14 @@ offset = Vector2(-120, -228)
 position = Vector2(1500, 840)
 texture = ExtResource("t10")
 centered = false
-offset = Vector2(-144, -323)
+offset = Vector2(-146, -341)
 
 [node name="If_smithy_smoke" type="Node2D" parent="Props"]
 script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="SmithySmoke" type="Sprite2D" parent="Props/If_smithy_smoke"]
-position = Vector2(1463.5, 517)
+position = Vector2(1535, 533)
 texture = ExtResource("t11")
 centered = false
 offset = Vector2(-16, -56)
@@ -739,13 +739,13 @@ only_if = "{\"not_restored\":[\"forge\"]}"
 position = Vector2(1500, 841)
 texture = ExtResource("t12")
 centered = false
-offset = Vector2(-144, -324)
+offset = Vector2(-146, -342)
 
 [node name="FernCottage" type="Sprite2D" parent="Props"]
 position = Vector2(1476, 1248)
 texture = ExtResource("t13")
 centered = false
-offset = Vector2(-120, -260)
+offset = Vector2(-122, -287)
 
 [node name="If_fern_cottage_damage" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -755,7 +755,7 @@ only_if = "{\"not_restored\":[\"fern_cottage\"]}"
 position = Vector2(1476, 1249)
 texture = ExtResource("t14")
 centered = false
-offset = Vector2(-120, -261)
+offset = Vector2(-122, -288)
 
 [node name="If_well_choked" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1377,7 +1377,7 @@ script = ExtResource("cond")
 only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SmithyRubbleShadow" type="Sprite2D" parent="Props/If_smithy_rubble_shadow"]
-position = Vector2(1347, 890)
+position = Vector2(1355, 890)
 texture = ExtResource("t94")
 centered = false
 offset = Vector2(0, 0)
@@ -1399,7 +1399,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="SquareRubbleAShadow" type="Sprite2D" parent="Props/If_square_rubble_a_shadow"]
-position = Vector2(651, 1070)
+position = Vector2(658, 1070)
 texture = ExtResource("t96")
 centered = false
 offset = Vector2(0, 0)
@@ -1410,7 +1410,7 @@ script = ExtResource("cond")
 only_if = "{\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernRubbleShadow" type="Sprite2D" parent="Props/If_fern_rubble_shadow"]
-position = Vector2(1366, 1286)
+position = Vector2(1370, 1286)
 texture = ExtResource("t97")
 centered = false
 offset = Vector2(0, 0)
@@ -1443,7 +1443,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsScorchedShadow" type="Sprite2D" parent="Props/If_beds_scorched_shadow"]
-position = Vector2(1148, 356)
+position = Vector2(1150, 356)
 texture = ExtResource("t100")
 centered = false
 offset = Vector2(0, 0)
@@ -1454,7 +1454,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsDugShadow" type="Sprite2D" parent="Props/If_beds_dug_shadow"]
-position = Vector2(1148, 356)
+position = Vector2(1150, 356)
 texture = ExtResource("t101")
 centered = false
 offset = Vector2(0, 0)

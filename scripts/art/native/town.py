@@ -697,7 +697,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         foot = (q(x + w / 2), q(y + h))
         objects.append(dict(id=b['id'], kind='building', png=add_pic(b['id'], built.base.rgba()),
                             foot=foot, anchor=(built.base.ax, built.base.ay), alpha=built.base.alpha(),
-                            solid=[x, y, w, h], cond=None, static=True, cast=built.info.get('cast')))
+                            solid=[x, y, w, h], cond=None, static=True, cast=built.info.get('cast'),
+                            pots=built.info.get('pots')))
         if built.damage is not None:
             dcond = {'not_restored': [b['restore']]} if b.get('restore') else None
             objects.append(dict(id=b['id'] + '_damage', kind='damage', png=add_pic(b['id'] + '_damage', built.damage.rgba()),
@@ -928,6 +929,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                  cond=o.get('cond'), solid=o.get('solid'))
         if o.get('of'):
             e['of'] = o['of']
+        if o.get('pots'):
+            # where a stack's smoke starts: the top middle of its pots, in the picture's texels
+            e['pots'] = [[round(float(px), 1), int(py)] for (px, py) in o['pots']]
         doc['objects'].append(e)
     json.dump(doc, open(os.path.join(os.path.dirname(out_dir.rstrip('/')), 'kit.json'), 'w'), indent=1)
 
