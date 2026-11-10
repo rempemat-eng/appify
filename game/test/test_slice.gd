@@ -308,6 +308,10 @@ func _slice_free_camp(path: String, expected_enemies: int) -> void:
 	assert_int(enemies.size()).is_equal(expected_enemies)
 	assert_bool(camp.is_cleared()).is_false()
 	for enemy in enemies:
+		# The hit comes from beside the creature: an enemy cannot be hurt by someone it cannot come for
+		# (out of range, or outside the Thornback's arena), so the player stands where a fight would be.
+		if Zones.player != null:
+			Zones.player.global_position = (enemy as Node2D).global_position + Vector2(48, 0)
 		# Twice current strength covers the existing shield reduction; no quest/flag shortcut.
 		enemy.call("take_hit", int(enemy.get("hp")) * 2, Vector2.RIGHT, 0.0)
 	await get_tree().create_timer(0.3).timeout

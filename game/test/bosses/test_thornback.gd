@@ -160,3 +160,136 @@ func test_charge_commit_glints_and_nudges_the_camera_once() -> void:
 	assert_int(cam.count).is_equal(1)
 	boss.step(Thornback.FLASH_TIME + 0.01)
 	assert_float(boss._flash).is_equal(0.0)
+
+## Plays `count` attacks against a target handled by `between` (called before each wind-up is sought) and
+## returns [attack name, seconds since the start] for each.
+func _attacks(boss: Thornback, count: int, between: Callable) -> Array:
+	var out := []
+	var t := 0.0
+	for i in count:
+		for j in 80:
+			between.call(t)
+			boss.step(0.05)
+			t += 0.05
+			if boss.state == "windup":
+				break
+		out.append([boss.attack, t])
+		boss.step(boss.windup_time + 0.01)
+		t += boss.windup_time + 0.01
+		boss._finish_attack(0.1)
+		for th in boss.thorns:
+			th.finish()
+		boss.thorns.clear()
+		boss.step(0.15)
+		t += 0.15
+	return out
+
+## 10 Nov: close in (under 83) every charge became a volley, whose thorns start 60 px out and fly outward:
+## a player standing beside it was never hit in phase 1 (73 s and 100 s in play). Staying close in for
+## CLING_TIME now brings the charge there too.
+func test_a_player_who_stays_close_in_is_charged() -> void:
+	var boss := _boss()
+	_target.position = Vector2(27, 0)            # where the play-test stood untouched
+	var seen := _attacks(boss, 6, func(_t: float) -> void: pass)
+	var charges := seen.filter(func(a: Array) -> bool: return a[0] == "charge")
+	assert_int(charges.size()).is_greater_equal(2)
+	assert_float(float(charges[0][1])).is_greater_equal(Thornback.CLING_TIME)   # not in the first 2 s close in
+	assert_float(float(charges[0][1])).is_less(10.0)                           # and within about 10 s
+	assert_str(str(seen[0][0])).is_equal("volley")                              # the first answer close in is still the volley
+
+## Small steps do not reset the count (a step every two seconds would otherwise keep the volley for good).
+func test_shuffling_about_close_in_is_charged_too() -> void:
+	var boss := _boss()
+	var spots := [Vector2(40, 0), Vector2(0, 45), Vector2(-40, 0), Vector2(0, -45)]
+	var seen := _attacks(boss, 6, func(t: float) -> void: _target.position = spots[int(t / 0.8) % 4])
+	assert_bool(seen.any(func(a: Array) -> bool: return a[0] == "charge")).is_true()
+
+func test_a_player_who_only_passes_close_by_still_gets_the_volley() -> void:
+	var boss := _boss()
+	# in for a second and a half, out to 90 for half a second, again and again
+	var t := 0.0
+	while t < 12.0:
+		_target.position = Vector2(40, 0) if fmod(t, 2.0) < 1.5 else Vector2(90, 0)
+		boss.step(0.05)
+		t += 0.05
+		assert_bool(boss.player_clings()).is_false()
+	boss._next = 0                               # the charge's turn
+	assert_str(boss.choose_attack(40.0)).is_equal("volley")
+	boss._close_t = Thornback.CLING_TIME
+	assert_str(boss.choose_attack(40.0)).is_equal("charge")
+	for th in boss.thorns:
+		th.finish()
+
+## A charge used to end the moment the body touched any solid. Leaning on a wall when it committed, it
+## staggered before the strike had its turn, and a wall behind or beside it stopped it too.
+func test_a_charge_ends_on_a_solid_in_its_way_and_only_after_its_strike() -> void:
+	var boss := _boss(Vector2(0, 0))
+	var wall := StaticBody2D.new()
+	var shape := CollisionShape2D.new()
+	var box := RectangleShape2D.new()
+	box.size = Vector2(400, 40)
+	shape.shape = box
+	wall.add_child(shape)
+	wall.position = Vector2(0, -18.0 - Thornback.BODY_RADIUS - 20.0)   # its body touches the wall's south face
+	add_child(auto_free(wall))
+	_target.max_hp = 99
+	_target.hp = 99
+	_target.position = Vector2(0, -50)           # between it and the wall, inside its body's reach
+	boss.set_physics_process(true)
+	var staggers := [0]
+	boss.staggered.connect(func() -> void: staggers[0] += 1)
+	boss._next = 0
+	boss._close_t = Thornback.CLING_TIME          # it has been clung to
+	for i in 200:
+		await get_tree().physics_frame
+		if boss.state == "stagger":
+			break
+	assert_str(boss.state).is_equal("stagger")
+	assert_int(staggers[0]).is_equal(1)
+	assert_int(_target.hp).is_equal(97)           # the charge struck (2) before the wall ended it
+	# a charge along the wall is not ended by the wall it runs beside
+	boss.hsm.dispatch(&"approach")
+	_target.position = Vector2(400, -18)
+	boss._next = 0
+	for i in 200:
+		await get_tree().physics_frame
+		if boss.state == "act":
+			break
+	assert_str(boss.attack).is_equal("charge")
+	for i in 12:
+		await get_tree().physics_frame
+	assert_str(boss.state).is_equal("act")
+	assert_float(boss.global_position.x).is_greater(40.0)
+
+## The arena rect stops short of the chamber's walls. A player in the strip under the north, east or
+## south wall was "outside": the boss went to sleep and took every arrow. The strips now count as inside;
+## the west edge (the door) stays exact.
+func test_the_wall_strips_count_as_the_arena_but_the_door_side_does_not() -> void:
+	var boss := _boss(Vector2(300, 250))
+	boss.arena = Rect2(100, 100, 400, 300)
+	for p: Vector2 in [Vector2(300, 88), Vector2(515, 250), Vector2(300, 410)]:
+		_target.position = p
+		assert_bool(boss.player_in_arena()).override_failure_message("%s should count as the arena" % p).is_true()
+	_target.position = Vector2(94, 250)          # west of it: the door side
+	assert_bool(boss.player_in_arena()).is_false()
+	_target.position = Vector2(300, 60)          # beyond the strip
+	assert_bool(boss.player_in_arena()).is_false()
+
+## From outside the arena it cannot come for the archer, so it cannot be hurt from there (on main 41 arrows
+## through the open seal freed it asleep in 32 s).
+func test_no_harm_from_outside_the_arena() -> void:
+	var boss := _boss(Vector2(300, 250))
+	boss.arena = Rect2(100, 100, 400, 300)
+	var glances := [0]
+	boss.glanced.connect(func() -> void: glances[0] += 1)
+	_target.position = Vector2(94, 250)
+	boss.step(0.05)
+	assert_str(boss.state).is_equal("dormant")
+	boss.take_hit(5, Vector2.RIGHT)
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP)
+	assert_str(boss.state).is_equal("dormant")
+	assert_int(glances[0]).is_equal(1)
+	_target.position = Vector2(140, 250)         # one step in: the same arrow lands and it wakes
+	boss.take_hit(5, Vector2.RIGHT)
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 5)
+	assert_str(boss.state).is_equal("approach")

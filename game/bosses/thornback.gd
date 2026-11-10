@@ -15,12 +15,31 @@ extends CharacterBody2D
 ## Two phases: below PHASE2_AT strength it roars once, winds up faster (still at least MIN_WINDUP), adds the
 ## slam and throws more thorns. At most one attack at a time; it never leaves `arena` (texels, zone space)
 ## and goes back to sleep at home when the player leaves the arena. Placeholder numbers (vertical-slice.md).
+##
+## No safe place to stand (10 Nov):
+##   - Close in (under NEAR * 0.6, 83 px) it used to swap every charge for the volley, whose thorns start on
+##     a ring 60 px out and fly outward along fixed lines: a player standing beside it, or between two
+##     lines, was never hit in phase 1. Now a player who has stayed that close for CLING_TIME is charged
+##     like anyone else. (Counting "has not moved" instead would be beaten by a step every two seconds, so
+##     the count is the time spent close in.) The charge is its clearest tell (head down, pawing, the
+##     splinter's pulse, a glint at the commit); a roll to the side during it gets clear, so staying put is
+##     answered and reading the tell wins. A player who only passes close by still meets the volley.
+##   - A charge used to end, with the stagger, the moment its body touched any solid, even one it already
+##     leaned on when it committed: against a wall it staggered before it struck, every time. It now ends
+##     on a solid that stands in its way, and never before the strike has had its turn.
+##   - The strips between the arena's north, east and south edges and the room's walls count as the arena
+##     for the player (ROOM_SLACK). Before, a player against a wall was "outside": it went to sleep and
+##     could be shot down asleep. The west edge is kept exact, so it still sleeps for a player at the door.
+##   - While the player is outside the arena it cannot come for them, so it cannot be hurt from there: the
+##     arrow glances off its shell (enemies/glance.gd). It used to take every arrow shot in through the
+##     open seal without waking.
 
 signal died
 signal phase_changed(phase: int)
 signal telegraph_started(attack: String, seconds: float)
 signal attack_released(attack: String)
 signal staggered
+signal glanced
 
 const DENSITY := 3.0
 const MAX_HP := 40
@@ -39,6 +58,8 @@ const VOLLEY := [8, 12]
 const SLAM_RADIUS := 34.0 * DENSITY
 const BODY_RADIUS := 20.0 * DENSITY
 const NEAR := 46.0 * DENSITY
+const CLING_TIME := 2.0             ## this long close in (under NEAR * 0.6) brings the charge there too
+const ROOM_SLACK := 30.0            ## the wall strips north, east and south of the arena count as inside it
 const ART := "res://bosses/thornback/art/"
 
 @export var arena := Rect2()   ## texels in the zone; empty = no limit (tests)
@@ -71,6 +92,8 @@ var _hold := 0.0
 var _hurt_t := 0.0
 var _roared := false
 var _travel := 0.0
+var glance_t := 0.0
+var _close_t := 0.0
 
 func _ready() -> void:
 	add_to_group("enemy")
@@ -184,16 +207,29 @@ func _physics_process(delta: float) -> void:
 	step(delta)
 	if state in ["approach", "act"]:
 		move_and_slide()
-		if state == "act" and attack == "charge" and get_slide_collision_count() > 0:
+		if state == "act" and attack == "charge" and _travel > 0.0 and _hit_a_solid_in_the_way():
 			_end_charge(true)
 	_keep_in_arena()
 	marks.queue_redraw()
 	tells.queue_redraw()
 
+## True when the last move met a solid that stands across the charge (not one the body merely leans on
+## from the side or has behind it).
+func _hit_a_solid_in_the_way() -> bool:
+	for i in get_slide_collision_count():
+		if get_slide_collision(i).get_normal().dot(aim) < -0.3:
+			return true
+	return false
+
 ## Deterministic advancement (the tests call it without physics).
 func step(delta: float) -> void:
 	_hurt_t = maxf(_hurt_t - delta, 0.0)
 	_flash = maxf(_flash - delta, 0.0)
+	glance_t = maxf(glance_t - delta, 0.0)
+	if is_instance_valid(target) and target.global_position.distance_to(global_position) < NEAR * 0.6:
+		_close_t += maxf(delta, 0.0)
+	else:
+		_close_t = 0.0
 	var live: Array[Node] = []
 	for n in thorns:
 		if is_instance_valid(n) and not n.is_queued_for_deletion():
@@ -216,7 +252,13 @@ func _changed(current: LimboState, _previous: LimboState) -> void:
 func player_in_arena() -> bool:
 	if not is_instance_valid(target):
 		return false
-	return arena.size == Vector2.ZERO or arena.has_point(target.global_position - _zone_origin())
+	if arena.size == Vector2.ZERO:
+		return true
+	return arena.grow_individual(0.0, ROOM_SLACK, ROOM_SLACK, ROOM_SLACK).has_point(target.global_position - _zone_origin())
+
+## True once the player has stayed close in (under NEAR * 0.6) for CLING_TIME.
+func player_clings() -> bool:
+	return _close_t >= CLING_TIME
 
 func _zone_origin() -> Vector2:
 	var p := get_parent()
@@ -307,13 +349,14 @@ func _update_state(delta: float) -> void:
 			if not sprite.is_playing() or elapsed >= clip_length("freed"):
 				_play("calm")
 
-## Which attack comes next: by phase, in turn, but a charge from far and a slam only when near.
+## Which attack comes next: by phase, in turn, but a slam only when near, and a charge from far or at a
+## player who has stayed close in (one who only passes close by gets the volley or the slam instead).
 func choose_attack(distance: float) -> String:
 	var list: Array = PHASE_ATTACKS[phase - 1]
 	var pick: String = list[_next % list.size()]
 	if pick == "slam" and distance > NEAR * 1.4:
 		pick = "charge"
-	if pick == "charge" and distance < NEAR * 0.6:
+	if pick == "charge" and distance < NEAR * 0.6 and not player_clings():
 		pick = "slam" if phase == 2 else "volley"
 	return pick
 
@@ -398,6 +441,10 @@ func is_staggered() -> bool:
 # --- being hit -------------------------------------------------------------------------------------
 func take_hit(amount: int, _dir: Vector2, _knockback: float = 0.0) -> void:
 	if freed or amount <= 0:
+		return
+	if is_instance_valid(target) and not player_in_arena():
+		glance_t = Glance.TIME        # it cannot come for an archer outside the arena: no harm from there
+		glanced.emit()
 		return
 	if state == "dormant":
 		hsm.dispatch(&"approach")
@@ -505,6 +552,7 @@ func _draw_tells() -> void:
 		var beat := absf(sin(elapsed * (8.0 + 14.0 * k)))
 		var r := 3.0 + 3.0 * beat * k
 		tells.draw_rect(Rect2(_px(top) - Vector2(r, r), Vector2(r * 2.0, r * 2.0)), Color(PULSE, 0.35 + 0.4 * beat))
+	Glance.draw(tells, top + Vector2(0, -18), glance_t)
 	if _flash > 0.0:
 		var a := _flash / FLASH_TIME
 		for v in [Vector2(12, 0), Vector2(0, 12)]:
