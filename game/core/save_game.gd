@@ -19,9 +19,25 @@ const DEFAULT_PATH := "user://save_0.json"
 var data: Dictionary = fresh()
 var path := DEFAULT_PATH
 
+## What reading the save at start came to: OK, ERR_FILE_NOT_FOUND (a new game), ERR_PARSE_ERROR or
+## ERR_INVALID_DATA (a damaged file, kept aside), ERR_UNAVAILABLE (a newer game's save, left alone).
+var boot_error: Error = OK
+
 func _ready() -> void:
-	if not OS.get_cmdline_user_args().has("--fresh"):
-		load_save()
+	boot(OS.get_cmdline_user_args().has("--fresh"))
+
+## Reads the save once, when the process starts. A file that cannot be read as a save is copied to
+## "<path>.broken" before the new game's first autosave writes over it; a save from a newer version of
+## the game is left alone, and `save()` goes on refusing to overwrite it (the game says so: game.gd).
+func boot(fresh_start := false) -> Error:
+	boot_error = OK
+	if fresh_start:
+		return OK
+	boot_error = load_save()
+	if boot_error == ERR_PARSE_ERROR or boot_error == ERR_INVALID_DATA:
+		var file := ProjectSettings.globalize_path(path)
+		DirAccess.copy_absolute(file, file + ".broken")
+	return boot_error
 
 static func fresh() -> Dictionary:
 	return {

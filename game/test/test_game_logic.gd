@@ -78,6 +78,45 @@ func test_a_save_made_while_downed_holds_full_hearts() -> void:
 	g.autosave()
 	assert_int(int(_saved().player.hp)).is_equal(g.player.max_hp)
 
+func test_a_damaged_save_is_kept_aside_and_the_game_says_so() -> void:
+	var file := ProjectSettings.globalize_path(SAVE)
+	var f := FileAccess.open(SAVE, FileAccess.WRITE)
+	f.store_string("{ this is not a save")
+	f.close()
+	assert_int(SaveGame.boot()).is_equal(ERR_PARSE_ERROR)
+	assert_bool(FileAccess.file_exists(file + ".broken")).is_true()
+	assert_str(FileAccess.get_file_as_string(file + ".broken")).is_equal("{ this is not a save")
+	var g := _game()
+	await _ticks(2)
+	await _frames(3)
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(hud.shown_text().banner).is_equal("A new game")
+	assert_str(hud.shown_text().banner_text).contains(".broken")
+	DirAccess.remove_absolute(file + ".broken")
+	SaveGame.boot_error = OK
+
+func test_a_newer_games_save_is_left_alone_and_the_game_says_so() -> void:
+	var f := FileAccess.open(SAVE, FileAccess.WRITE)
+	f.store_string(JSON.stringify({"version": SaveGame.VERSION + 1, "glint": 500}))
+	f.close()
+	assert_int(SaveGame.boot()).is_equal(ERR_UNAVAILABLE)
+	var g := _game()
+	await _ticks(2)
+	await _frames(3)
+	assert_str((g.get_node("UI/HUD") as Control).shown_text().banner_text).contains("will not be saved over the newer one")
+	assert_int(int(_saved().glint)).is_equal(500)      # the autosaves since were refused
+	assert_bool(FileAccess.file_exists(ProjectSettings.globalize_path(SAVE) + ".broken")).is_false()
+	SaveGame.boot_error = OK
+
+func test_fresh_start_does_not_read_the_save() -> void:
+	SaveGame.set_flag("on_disk")
+	assert_int(SaveGame.save()).is_equal(OK)
+	SaveGame.reset()
+	assert_int(SaveGame.boot(true)).is_equal(OK)
+	assert_bool(SaveGame.has_flag("on_disk")).is_false()
+	assert_int(SaveGame.boot(false)).is_equal(OK)
+	assert_bool(SaveGame.has_flag("on_disk")).is_true()
+
 # --- the HUD's guidance ---------------------------------------------------------------------------
 func test_a_new_game_shows_the_opening_card_once_and_a_lead() -> void:
 	var g := _game()
@@ -157,6 +196,7 @@ func _press_advance() -> void:
 
 func test_the_pause_menu_owns_the_keys_over_an_open_line() -> void:
 	var box: PanelContainer = auto_free(preload("res://ui/dialogue_box.gd").new())
+	box.process_mode = Node.PROCESS_MODE_ALWAYS      # as game.tscn sets it: the box runs under the pause
 	add_child(box)
 	SaveGame.data.settings.reduced_motion = true     # whole lines at once: one press is one page
 	Dialogue.talk("stone_sign")

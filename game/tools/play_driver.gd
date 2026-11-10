@@ -635,6 +635,14 @@ func fight(limit: float) -> String:
 		return "%d enemies were still near after %.0fs" % [left, limit]
 	return ""
 
+func _near_a_door(at: Vector2) -> bool:
+	var doors := Zones.current.get_node_or_null("Doors")
+	if doors != null:
+		for d in doors.get_children():
+			if d is Node2D and (d as Node2D).global_position.distance_to(at) < 110.0:
+				return true
+	return false
+
 ## Walks to within a few steps of the nearest enemy and takes every hit, to see what being downed does.
 func down(limit: float) -> String:
 	var p := player()
@@ -643,7 +651,11 @@ func down(limit: float) -> String:
 	var noted := now()
 	var g := grid()
 	g.forget()
+	var zone: String = SaveGame.data.zone
 	while now() - start < limit and _downs == downs0:
+		if SaveGame.data.zone != zone:
+			hold(Vector2.ZERO)
+			return "walked out of %s while waiting to be downed" % zone
 		var near: Node2D = null
 		var best := 1e9
 		for e: Node2D in enemies():
@@ -667,12 +679,15 @@ func down(limit: float) -> String:
 					want = plan[i]
 					break
 			hold(want - p.global_position)
-		elif best < 105.0:
+		elif best < 105.0 and near.get("arena") != null:
 			# a few steps off, not at its feet: within 83 texels the Thornback only throws thorns, and a
 			# player standing between their eight lines is never hit (found by this driver, 10 Nov)
 			var away := near.global_position.direction_to(p.global_position)
-			if not g.is_free(WalkGrid.cell_of(p.global_position + away * 30.0)):
-				away = away.orthogonal()
+			for turn: float in [0.0, PI / 2.0, -PI / 2.0, PI]:
+				var to := p.global_position + away.rotated(turn) * 30.0
+				if g.is_free(WalkGrid.cell_of(to)) and not _near_a_door(to):
+					away = away.rotated(turn)
+					break
 			hold(away)
 		else:
 			hold(Vector2.ZERO)

@@ -1,7 +1,8 @@
 extends Node2D
 ## The running game inside the 960 x 540 art grid: loads the save, makes the one player, hands both to
-## the zone loader, drives the Phantom Camera (aim look-ahead, zone limits, hit shake) and autosaves when
-## quests move, a building is restored or zones change.
+## the zone loader, drives the Phantom Camera (aim look-ahead, zone limits, hit shake), autosaves when
+## quests move, a building is restored, zones change or the window closes, and shows the story's title
+## cards (the opening, the closing beat). It never reads the save file: core/save_game.gd does, once.
 ##
 ## Command-line options (after `--`): --fresh (ignore the save), --zone=<id>, --spawn=<name>,
 ## --shot=<png path> (wait, save a 1:1 picture of the window, quit), --demo (a scripted walk in four
@@ -13,7 +14,8 @@ extends Node2D
 ## to see and fight the creatures; it is not placed in any zone yet). --camp --quit ends after
 ## camp setup and the following frame unless another selected mode owns completion.
 ## --debug-controls shows the optional character-selection debug label (hidden by default).
-## See docs/godot.md.
+## --play=<route file> hands the keys and the mouse to the play driver (tools/play_driver.gd), with
+## --play-out=<dir> and --play-follow. See docs/godot.md.
 
 const DENSITY := 3.0
 const LOOK_MAX := 48.0 * DENSITY   ## 11.2: look-ahead up to 48 world px ...
@@ -24,6 +26,7 @@ var args := {}
 var _shake := 0.0
 var _look := Vector2.ZERO
 var _cast_label: Label
+var _told_about_the_save := false
 
 @onready var zone_root: Node2D = $ZoneRoot
 @onready var pcam: PhantomCamera2D = $PCam
@@ -156,6 +159,17 @@ func _show_due_card() -> void:
 	while Dialogue.busy:
 		await Dialogue.closed
 		await get_tree().create_timer(0.3).timeout
+	if not _told_about_the_save and (SaveGame.boot_error == ERR_PARSE_ERROR or SaveGame.boot_error == ERR_INVALID_DATA
+			or SaveGame.boot_error == ERR_UNAVAILABLE):
+		# the save on disk was not loaded: say so once, before anything else, instead of starting over silently
+		_told_about_the_save = true
+		if SaveGame.boot_error == ERR_UNAVAILABLE:
+			hud.show_card("A new game", "The save is from a newer version of the game",
+				"It was left as it is. This game starts afresh, and it will not be saved over the newer one.", 14.0)
+		else:
+			hud.show_card("A new game", "The save could not be read",
+				"It is kept beside the new one, as %s.broken. This game starts afresh." % SaveGame.path.get_file(), 14.0)
+		return
 	var card := Quests.due_card()
 	if card.is_empty():
 		return
