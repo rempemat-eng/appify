@@ -5,13 +5,15 @@ extends Area2D
 ## the speaker's dialogue (data/dialogue) and then reports "talk:<speaker_id>" to the quests.
 ## While a quest waits on this speaker, a "!" floats above it (game-design.md 8.3: show, do not explain).
 ##
-## One reach for every talk area (10 Nov: the areas were 30 texel circles the scenes drew one by one, and
-## a walker who stopped a step short of Moss, the notice board or a restore mark got no prompt): the
-## area is a circle of REACH texels round the node, whatever shape the scene gave it. Where two areas
-## overlap, the prompt goes to the one a quest is waiting on, then to the nearer.
+## No talk area is smaller than REACH (10 Nov: the areas were 30 texel circles the scenes drew one by
+## one, and a walker who stopped a step short of Moss, the notice board or a restore mark got no
+## prompt): every Interactable adds a circle of REACH texels round the node beside whatever shape the
+## scene or a plan's `radius` gave it. The scene's own shape is left as it is (the world editor reads
+## and writes it), so a larger one still reaches further. Where two areas overlap, the prompt goes to
+## the one a quest is waiting on, then to the nearer.
 
 const REACH := 60.0   ## texels (20 world px): the prompt shows about one body height away
-const STALE := REACH + 20.0   ## further than the player's body can be and still touch the area
+const STALE_MARGIN := 20.0    ## beyond the reach by more than the player's body: no longer touching
 
 @export var speaker_id := ""
 @export var verb := "Talk"
@@ -32,15 +34,22 @@ func _ready() -> void:
 	Quests.completed.connect(func(_id: String) -> void: queue_redraw())
 	set_physics_process(false)
 
+## The shared reach: an internal circle of REACH texels (not a child the scene, the editor or a saved
+## plan sees).
 func _use_the_shared_reach() -> void:
-	var shape := get_node_or_null("Shape") as CollisionShape2D
-	if shape == null:
-		shape = CollisionShape2D.new()
-		shape.name = "Shape"
-		add_child(shape)
+	var reach := CollisionShape2D.new()
+	reach.name = "Reach"
 	var circle := CircleShape2D.new()
 	circle.radius = REACH
-	shape.shape = circle
+	reach.shape = circle
+	add_child(reach, false, Node.INTERNAL_MODE_BACK)
+
+## How far the prompt reaches from the node: REACH, or the scene's own circle when that is larger.
+func reach() -> float:
+	var own := get_node_or_null("Shape") as CollisionShape2D
+	if own != null and own.shape is CircleShape2D:
+		return maxf(REACH, (own.shape as CircleShape2D).radius)
+	return REACH
 
 func _on_body(body: Node, entered: bool) -> void:
 	if not body.is_in_group("player"):
@@ -75,7 +84,8 @@ static func refocus(player: Node) -> void:
 			_in_reach.remove_at(i)
 			continue
 		var d := it.global_position.distance_squared_to(at)
-		if d > STALE * STALE:
+		var far := it.reach() + STALE_MARGIN
+		if d > far * far:
 			# an area switched off by a Conditional reports no body_exited: the player has walked away
 			_in_reach.remove_at(i)
 			it.set_physics_process(false)

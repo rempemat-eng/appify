@@ -72,12 +72,13 @@ func _reach(area: Area2D, cells: Dictionary) -> Array:
 	var count := 0
 	var nearest := INF
 	var shape := area.get_node("Shape") as CollisionShape2D
+	var radius := (area as Interactable).reach() if area is Interactable else 0.0
 	for c: Vector2i in cells:
 		var feet := WalkGrid.point_of(c)
 		nearest = minf(nearest, feet.distance_to(area.global_position))
 		var body := feet + WalkGrid.BODY_OFFSET
-		if shape.shape is CircleShape2D:
-			if body.distance_to(shape.global_position) < (shape.shape as CircleShape2D).radius + WalkGrid.BODY_RADIUS - 1.0:
+		if area is Interactable:
+			if body.distance_to(area.global_position) < radius + WalkGrid.BODY_RADIUS - 1.0:
 				count += 1
 		elif shape.shape is RectangleShape2D:
 			var half := (shape.shape as RectangleShape2D).size / 2.0 + Vector2.ONE * (WalkGrid.BODY_RADIUS - 1.0)
@@ -155,14 +156,22 @@ func test_the_prompt_shows_a_step_short_of_each_thing() -> void:
 	remove_child(woodland)
 	woodland.free()
 
-func test_every_talk_area_has_the_one_reach() -> void:
+func test_no_talk_area_is_smaller_than_the_shared_reach() -> void:
 	for id: String in ZONES:
 		_apply(STAGES["home again"])
 		var zone: Zone = await _zone(id)
 		for n: Node in _all(zone, []):
 			if n is Interactable:
-				var shape := (n.get_node("Shape") as CollisionShape2D).shape as CircleShape2D
-				assert_object(shape).override_failure_message("%s: the talk area is not a circle" % n.name).is_not_null()
-				assert_float(shape.radius).override_failure_message("%s: reach %s" % [n.name, shape.radius]).is_equal(Interactable.REACH)
+				var it := n as Interactable
+				var found: CollisionShape2D = null
+				for c in it.get_children(true):
+					if c is CollisionShape2D and c.name == "Reach":
+						found = c
+				assert_object(found).override_failure_message("%s has no shared reach" % it.name).is_not_null()
+				assert_float((found.shape as CircleShape2D).radius).is_equal(Interactable.REACH)
+				assert_float(it.reach()).override_failure_message("%s reaches %s" % [it.name, it.reach()]).is_greater_equal(Interactable.REACH)
+				# the scene's own shape is left alone: the editor and the kit's seed pieces read it
+				var own := (it.get_node("Shape") as CollisionShape2D).shape as CircleShape2D
+				assert_float(own.radius).override_failure_message("%s: the scene's shape was changed" % it.name).is_less(Interactable.REACH)
 		remove_child(zone)
 		zone.free()
