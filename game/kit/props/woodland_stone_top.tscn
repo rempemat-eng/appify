@@ -10,4 +10,4 @@ piece_id = "woodland_stone_top"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-24, -22)
+offset = Vector2(-24, -23)

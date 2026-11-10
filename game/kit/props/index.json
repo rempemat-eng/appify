@@ -17346,8 +17346,8 @@
   ],
   "deck": null,
   "foot": [
-   79.0,
-   245.0
+   96.0,
+   264.0
   ],
   "footprint": [
    [
@@ -17378,8 +17378,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -32,
-     -75
+     -46,
+     -81
     ],
     "png": "res://kit/props/art/shadow_woodland_beech.png"
    }
@@ -17395,8 +17395,8 @@
   "variants": {
    "beech": {
     "foot": [
-     79.0,
-     245.0
+     96.0,
+     264.0
     ],
     "png": "res://zones/woodland/art/beech.png"
    }
@@ -17414,8 +17414,8 @@
   ],
   "deck": null,
   "foot": [
-   45.0,
-   193.0
+   51.0,
+   203.0
   ],
   "footprint": [
    [
@@ -17446,8 +17446,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -8,
-     -60
+     -12,
+     -63
     ],
     "png": "res://kit/props/art/shadow_woodland_birch.png"
    }
@@ -17463,8 +17463,8 @@
   "variants": {
    "birch": {
     "foot": [
-     45.0,
-     193.0
+     51.0,
+     203.0
     ],
     "png": "res://zones/woodland/art/birch.png"
    }
@@ -17577,8 +17577,8 @@
   ],
   "deck": null,
   "foot": [
-   57.0,
-   52.0
+   61.0,
+   47.0
   ],
   "footprint": [
    [
@@ -17635,8 +17635,8 @@
   "variants": {
    "bramble": {
     "foot": [
-     57.0,
-     52.0
+     61.0,
+     47.0
     ],
     "png": "res://zones/woodland/art/bramble.png"
    }
@@ -17655,7 +17655,7 @@
   "deck": null,
   "foot": [
    50.0,
-   50.0
+   48.0
   ],
   "footprint": [
    [
@@ -17713,7 +17713,7 @@
    "bramble_b": {
     "foot": [
      50.0,
-     50.0
+     48.0
     ],
     "png": "res://zones/woodland/art/bramble_b.png"
    }
@@ -17731,8 +17731,8 @@
   ],
   "deck": null,
   "foot": [
-   50.0,
-   66.0
+   46.0,
+   61.0
   ],
   "footprint": [
    [
@@ -17789,8 +17789,8 @@
   "variants": {
    "bush": {
     "foot": [
-     50.0,
-     66.0
+     46.0,
+     61.0
     ],
     "png": "res://zones/woodland/art/bush.png"
    }
@@ -17808,8 +17808,8 @@
   ],
   "deck": null,
   "foot": [
-   40.0,
-   56.0
+   37.0,
+   54.0
   ],
   "footprint": [
    [
@@ -17866,8 +17866,8 @@
   "variants": {
    "bush_b": {
     "foot": [
-     40.0,
-     56.0
+     37.0,
+     54.0
     ],
     "png": "res://zones/woodland/art/bush_b.png"
    }
@@ -17885,8 +17885,8 @@
   ],
   "deck": null,
   "foot": [
-   57.0,
-   60.0
+   54.0,
+   57.0
   ],
   "footprint": [
    [
@@ -17943,8 +17943,8 @@
   "variants": {
    "bush_c": {
     "foot": [
-     57.0,
-     60.0
+     54.0,
+     57.0
     ],
     "png": "res://zones/woodland/art/bush_c.png"
    }
@@ -18105,8 +18105,8 @@
   ],
   "deck": null,
   "foot": [
-   114.0,
-   234.0
+   122.0,
+   227.0
   ],
   "footprint": [
    [
@@ -18137,8 +18137,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -55,
-     -72
+     -64,
+     -70
     ],
     "png": "res://kit/props/art/shadow_woodland_hollow_tree.png"
    }
@@ -18154,8 +18154,8 @@
   "variants": {
    "hollow_tree": {
     "foot": [
-     114.0,
-     234.0
+     122.0,
+     227.0
     ],
     "png": "res://zones/woodland/art/hollow_tree.png"
    }
@@ -18173,8 +18173,8 @@
   ],
   "deck": null,
   "foot": [
-   42.0,
-   75.0
+   40.0,
+   74.0
   ],
   "footprint": [
    [
@@ -18231,8 +18231,8 @@
   "variants": {
    "holly": {
     "foot": [
-     42.0,
-     75.0
+     40.0,
+     74.0
     ],
     "png": "res://zones/woodland/art/holly.png"
    }
@@ -18250,8 +18250,8 @@
   ],
   "deck": null,
   "foot": [
-   41.0,
-   81.0
+   40.0,
+   77.0
   ],
   "footprint": [
    [
@@ -18308,8 +18308,8 @@
   "variants": {
    "holly_b": {
     "foot": [
-     41.0,
-     81.0
+     40.0,
+     77.0
     ],
     "png": "res://zones/woodland/art/holly_b.png"
    }
@@ -18323,7 +18323,7 @@
   "deck": null,
   "foot": [
    45.0,
-   28.0
+   35.0
   ],
   "footprint": [],
   "forbids": [
@@ -18367,7 +18367,7 @@
    "lintel": {
     "foot": [
      45.0,
-     28.0
+     35.0
     ],
     "png": "res://zones/woodland/art/lintel.png"
    }
@@ -18478,8 +18478,8 @@
   ],
   "deck": null,
   "foot": [
-   99.0,
-   234.0
+   106.0,
+   247.0
   ],
   "footprint": [
    [
@@ -18510,8 +18510,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -51,
-     -72
+     -55,
+     -76
     ],
     "png": "res://kit/props/art/shadow_woodland_oak.png"
    }
@@ -18527,8 +18527,8 @@
   "variants": {
    "oak": {
     "foot": [
-     99.0,
-     234.0
+     106.0,
+     247.0
     ],
     "png": "res://zones/woodland/art/oak.png"
    }
@@ -18546,8 +18546,8 @@
   ],
   "deck": null,
   "foot": [
-   56.0,
-   234.0
+   53.0,
+   237.0
   ],
   "footprint": [
    [
@@ -18578,8 +18578,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -40,
-     -72
+     -36,
+     -73
     ],
     "png": "res://kit/props/art/shadow_woodland_pine.png"
    }
@@ -18595,8 +18595,8 @@
   "variants": {
    "pine": {
     "foot": [
-     56.0,
-     234.0
+     53.0,
+     237.0
     ],
     "png": "res://zones/woodland/art/pine.png"
    }
@@ -18610,7 +18610,7 @@
   "deck": null,
   "foot": [
    30.0,
-   83.0
+   82.0
   ],
   "footprint": [],
   "forbids": [
@@ -18633,7 +18633,7 @@
    "mask": {
     "offset": [
      -14,
-     -27
+     -26
     ],
     "png": "res://kit/props/art/shadow_woodland_sapling.png"
    }
@@ -18650,7 +18650,7 @@
    "sapling": {
     "foot": [
      30.0,
-     83.0
+     82.0
     ],
     "png": "res://zones/woodland/art/sapling.png"
    }
@@ -19179,7 +19179,7 @@
   "deck": null,
   "foot": [
    24.0,
-   22.0
+   23.0
   ],
   "footprint": [],
   "forbids": [
@@ -19223,7 +19223,7 @@
    "stone_top": {
     "foot": [
      24.0,
-     22.0
+     23.0
     ],
     "png": "res://zones/woodland/art/stone_top.png"
    }
@@ -19310,8 +19310,8 @@
   ],
   "deck": null,
   "foot": [
-   96.0,
-   287.0
+   123.0,
+   200.0
   ],
   "footprint": [
    [
@@ -19349,8 +19349,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -55,
-     -88
+     -100,
+     -62
     ],
     "png": "res://kit/props/art/shadow_woodland_willow.png"
    }
@@ -19366,8 +19366,8 @@
   "variants": {
    "willow": {
     "foot": [
-     96.0,
-     287.0
+     123.0,
+     200.0
     ],
     "png": "res://zones/woodland/art/willow.png"
    }
