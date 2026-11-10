@@ -18613,14 +18613,28 @@
  },
  "woodland_sapling": {
   "approval": "candidate",
-  "blocks_move": false,
-  "collision": null,
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -9.0,
+   12.0,
+   9.0
+  ],
   "deck": null,
   "foot": [
    30.0,
    82.0
   ],
-  "footprint": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
   "forbids": [
    {
     "rel": "on",

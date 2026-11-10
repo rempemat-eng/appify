@@ -155,6 +155,25 @@ func test_the_woodland_is_split_into_walls_and_low_walls() -> void:
 	assert_object(walls.get_node_or_null("s_willow")).is_not_null()
 	assert_object(walls.get_node_or_null("s_stone-6")).is_not_null()
 
+func test_every_woodland_thing_that_stands_tall_has_a_solid() -> void:
+	# the six saplings (82 texels, taller than the player) had no box in the kit library and were walked
+	# straight through. Whatever stands 64 texels or more above its foot blocks feet and stops shots.
+	var zone := _enter("woodland")
+	var walls := zone.get_node("Base/Walls")
+	var tall := 0
+	for sprite: Sprite2D in zone.get_node("Base/Objects").get_children():
+		if SORT_EXEMPT.has(String(sprite.name)):
+			continue                        # the lintel lies on two stones and stands on nothing itself
+		var rise := sprite.texture.get_image().get_used_rect().size.y
+		if rise < 64:
+			continue
+		tall += 1
+		assert_object(walls.get_node_or_null("s_" + String(sprite.name))).override_failure_message(
+			"%s stands %d texels tall and has no solid on the walls layer" % [sprite.name, rise]).is_not_null()
+	assert_int(tall).is_greater(40)
+	var stem := (walls.get_node("s_wood-14") as CollisionShape2D).shape as RectangleShape2D
+	assert_vector(stem.size).is_equal(Vector2(12, 9))
+
 func test_a_woodland_solid_is_no_wider_than_what_is_drawn() -> void:
 	# the willow's solid was 180 px wide for a 30 px trunk, because the old walk mask blocked a picture's
 	# whole width at its feet. A solid may not reach more than 8 px past the texels drawn in its rows.
