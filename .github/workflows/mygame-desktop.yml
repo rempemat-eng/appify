@@ -49,6 +49,7 @@ jobs:
           stage="$RUNNER_TEMP/mygame-stage"
           output="$RUNNER_TEMP/mygame-desktop"
           mkdir -p "$stage/linux-x86_64" "$stage/windows-x86_64" "$output"
+          bash game/tools/fetch_limboai_release.sh
           "$GODOT" --headless --path game --import
           "$GODOT" --headless --path game --export-release 'Linux x86_64' "$stage/linux-x86_64/MyGame"
           "$GODOT" --headless --path game --export-release 'Windows x86_64' "$stage/windows-x86_64/MyGame.exe"
