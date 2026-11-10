@@ -1,7 +1,7 @@
 {
  "id": "woodland/birch",
  "file": "game/zones/woodland/art/birch.png",
- "sha256": "0e112309ada2343857bfb1053594bd4fb216a58f52b633d41e33b26230f8bd66",
+ "sha256": "25f7f6abf825769b91f62e4f4fa78f21fab64a191475aba11b58be73fdab64ec",
  "kind": "birch",
  "biome": "woodland",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 20,
-   "tones": 31.95,
-   "shapes": 47.65
+   "tones": 30.9,
+   "shapes": 48.05
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.753,
-  "tones_ratio": 1.153,
-  "shapes_ratio": 0.753,
+  "ratio": 0.759,
+  "tones_ratio": 1.115,
+  "shapes_ratio": 0.759,
   "passed": false,
   "group": "foliage"
  },
@@ -44,27 +44,14 @@
     101,
     203
    ],
-   "message": "woodland/birch: detail bar 0.75 of Eastward's foliage band (31.9 tones, 47.6 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/birch: detail bar 0.76 of Eastward's foliage band (30.9 tones, 48.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.outline",
-   "severity": "polish",
-   "box": [
-    14,
-    0,
-    101,
-    203
-   ],
-   "message": "woodland/birch: only 34% of the silhouette is drawn in an edge tone",
-   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 8 (PR #446 head 6b3523fa): W7-F1 met: dark network 0.51 crown diameters (<= 0.8), pockets 15.5 per 1000 px (>= 5), borders traced 71 % (<= 77). W6 measures met: leaf/mass 0.77, lobe scale 13.5 px, lit-shade8 68.3 L, big lobes 4 of 4 (1.00), mass grain 13.0 px, mass 83.8 L, lit to pocket 114.2 L, lit-field c12 47.4 L, pocket tones 25.2, EW-pipe shapes 70.8, noise 27.9 %, H/V 0.93. Fails W8-F1 (pockets drawn as ringed round eyes, not gaps under a lobe edge): 1 texel out from a pocket its surround is 0.34 of the way to lit and 2 texels out 0.53 (ring lift +0.19; Eastward trees and shrubs -0.07 to +0.07), 43 % of pockets ringed (Eastward 7 to 33 %), pocket aspect 1.5 (Eastward 1.58 to 3.04). The ring is outside Eastward on 11 or 12 of 12 neighbouring variants of each kind (bl_seed 0 to 11), so it is the drawing, not the draw. Compared at 2x and 6x beside the red tree in Eastward 12 and the trees in 13 (oak_ew_p11_2x.png, pockets_ew_oak_hollow_bush_p11_6x.png)"
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
