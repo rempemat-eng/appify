@@ -4811,9 +4811,9 @@ def p_stall_hd(w, h, seed, hd=False):
     #                                                                            and deep columns keep their steps)
     tt = np.clip(tt, 1, 5)
     a[m & (stripe == 0)] = FI['plaster'] * 8 + tt[m & (stripe == 0)].astype(int)
-    # XR5-S1: the cream's deep fold keeps the ramp's warmth and chroma (lamplit 3, #aa8a5c: L 59, C 30,
+    # XR5-S1: the cream's deep fold keeps the ramp's warmth and chroma (plaster_fold 3, #aa8a5c: L 59, C 30,
     # h 78), never the grey-taupe plaster 1, which read as a stain and as the wall behind
-    a[m & (stripe == 0) & (Y >= tp + 1) & (tt <= 1)] = code('lamplit', 3)
+    a[m & (stripe == 0) & (Y >= tp + 1) & (tt <= 1)] = code('plaster_fold', 3)
     a[m & (stripe == 1)] = FI['berry'] * 8 + tt[m & (stripe == 1)].astype(int)
     under = _rect(a.shape, x0, ay1 + q(2.4), x1, ay1 + q(4)) & (a >= 0)
     _step_down(a, under, 1)
@@ -4962,9 +4962,9 @@ def p_stall_hd(w, h, seed, hd=False):
     # fill a letter's one-texel counter and take a stroke's lone end)
     finish(p, keep=keep)
     # XR5-S4: one outline tone where the sack and the deep cream meet the air: the sand ramps' edge tone
-    # (#3d2d30) and lamplit's are drawn in plaster's (#413438), which the stall's cloth already uses
+    # (#3d2d30) and plaster_fold's are drawn in plaster's (#413438), which the stall's cloth already uses
     a = p.a
-    edge_fams = [FI[f] for f in ('sand', 'sand_warm', 'sand_cool', 'lamplit')]
+    edge_fams = [FI[f] for f in ('sand', 'sand_warm', 'sand_cool', 'plaster_fold')]
     a[(a >= 0) & (a % 8 >= 6) & np.isin(a // 8, edge_fams)] = code('plaster', 6)
     # XR5-S1: and no plaster 1 left inside the hanging faces (a lit outline texel in a scallop's notch)
     a[(Y >= tp + 1) & (Y < ay1 + q(1.6)) & (X >= x0 - q(2)) & (a == code('plaster', 1))] = code('plaster', 6)
