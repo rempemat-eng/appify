@@ -60,20 +60,20 @@ script = ExtResource("5")
 camp_id = "meadow"
 
 [node name="Mossling1" parent="Actors/MeadowCamp" instance=ExtResource("6")]
-position = Vector2(570, 1095)
+position = Vector2(735, 1476)
 
 [node name="Mossling2" parent="Actors/MeadowCamp" instance=ExtResource("6")]
-position = Vector2(612, 1150)
+position = Vector2(715, 1512)
 
 [node name="Mossling3" parent="Actors/MeadowCamp" instance=ExtResource("6")]
-position = Vector2(560, 1185)
+position = Vector2(765, 1525)
 
 [node name="HaleOnThePath" type="Node2D" parent="Actors"]
 script = ExtResource("8")
 only_if = "{\"not_started\":[\"road_to_crossroads\"]}"
 
 [node name="Hale" type="Area2D" parent="Actors/HaleOnThePath"]
-position = Vector2(800, 1330)
+position = Vector2(600, 1296)
 script = ExtResource("3")
 speaker_id = "hale"
 marker_height = 86.0

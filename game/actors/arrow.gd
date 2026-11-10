@@ -19,12 +19,28 @@ func setup(at_ground: Vector2, lift: float, direction: Vector2) -> void:
 	global_position = at_ground
 	height = lift
 	dir = direction.normalized()
+	_start_clear_of_walls()
+
+## The arrow starts at the bow's tip, ahead of the archer. Standing against a wall, that point can lie
+## inside or beyond the wall, and the arrow would fly on from there: the Thornback could be freed through
+## the closed seal. If a wall stands between the archer's feet and the tip, the arrow starts at the feet
+## instead, and the wall stops it in flight like any other (or it flies free, when it is aimed away).
+func _start_clear_of_walls() -> void:
+	if not is_inside_tree():
+		return
+	var archer := get_tree().get_first_node_in_group("player") as Node2D
+	if archer == null:
+		return
+	var ray := PhysicsRayQueryParameters2D.create(archer.global_position, global_position, 1)
+	if not get_world_2d().direct_space_state.intersect_ray(ray).is_empty():
+		global_position = archer.global_position
 
 func _ready() -> void:
 	collision_layer = 0
 	collision_mask = 1 | 4           # walls and enemies
 	monitoring = true
-	monitorable = false
+	# monitorable stays on: an area that cannot be monitored does not report the walls (static bodies)
+	# it overlaps, and arrows flew through every wall. Its layer is 0, so nothing detects the arrow.
 	var shape := CollisionShape2D.new()
 	var c := CircleShape2D.new()
 	c.radius = 4.0

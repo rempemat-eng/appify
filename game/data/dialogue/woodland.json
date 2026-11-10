@@ -15,7 +15,7 @@
       },
       {
         "if": { "active": ["woodland_stones"] },
-        "lines": ["Mosslings, shardstruck since the starfall, nest in the meadow east of the stones."]
+        "lines": ["Mosslings, shardstruck since the starfall, nest in the far meadow, south-east of the stones and across the path."]
       },
       {
         "lines": [
