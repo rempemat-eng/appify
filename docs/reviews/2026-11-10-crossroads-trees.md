@@ -154,3 +154,103 @@ Correct them when the PR is next edited.
 - A device or in-app play-test, night tint, reduced motion, and the 402 × 874 phone view.
 - `npm run verify`, `check:art-repro` and CI. I did not regenerate the zone, so the painter's byte-for-byte claims for `town.py` and `screen.py` (the woodland unchanged) were checked only through the unchanged woodland records and pin.
 - Kit pieces, prop scenes and index were read from the diff, not audited.
+
+## Round 2 (PR #460 head 6548ab0e, 10 Nov)
+
+The painter fast-forwarded `claude-a/crossroads-trees` onto the round 1 audit commit 72bea741 and added one commit, 6548ab0e. It does four things:
+
+- moves oak_13 from 16,112 to 104,112 for XT1;
+- re-lays `ground.png` and returns its record to pending;
+- re-pins the composite;
+- removes the 23 queue entries that round 1's gate advised.
+
+It also corrects the PR body (XT5). oak_13's bytes are unchanged. This round re-audits oak_13 and ground. Reviewed by the same detail-auditor, which drew none of it.
+
+**Result: both pass. XT1 is fixed.** The overhang over the garden walk is acceptable (ruling 2).
+
+### What was reviewed and how (round 2)
+
+- **The commit.** A fresh worktree at 6548ab0e. Between 72bea741 and 6548ab0e only seven files change:
+  - ground.png and its record;
+  - the plan (oak_13's `at` and `why`);
+  - `crossroads.tscn` (the Oak13 sprite and its solid, 48 → 312 texels);
+  - `kit.json` (the input hash and oak_13's foot);
+  - the intake pin;
+  - `fix-queue.json`.
+- **Pin.** `sha256(scene.composite(load_zone('crossroads')))` is 81be3731…, which matches the new pin.
+- **Asset gate.** It reproduces ground (0/0/0, sha256 9d8928c2… as recorded) and oak_13 (0/0/1).
+- **Queue.** Exactly the 23 ids that round 1's gate advised were removed: bush_7, 8, 14 to 18, 22, 23 and 47 to 51, and oak_6, 21 and 40 to 46. Nothing else changed and nothing was added.
+  - The remaining entry, crossroads/oak_13, is unchanged.
+  - `_about` gains one provenance sentence.
+- **Re-measured with round 1's scripts, unchanged** (`targets.py`, `occ.py`, `feet.py`, `clear.py`, `rep.py`, `repwin.py`), plus `walk2.py` for the walk overhang and neighbours.
+- **By eye.** `r2_oak13_2x.png`: round 1 beside round 2 at 2x, x 0 to 560, y 40 to 420 texels.
+- **Scene review** (`npm run review:scene -- crossroads`, with renders): 88 / 32 / 4. Against round 1's run (88 / 33 / 4), the only difference is that the halt view's render-corner `logic.stray_line` [5,5,67,18] did not appear this time. That confirms it is a render artefact, not art.
+- `grid_snap --check` is ok.
+
+### oak_13 at 104,112
+
+- **Grid and feet.** x 104 (a multiple of 4) and y 112 (a multiple of 8). The origin is on the drawn foot (dx +0.5, dy 0).
+- **Cover.** The cover is the share of a 74 × 36 texel companion box hidden by any swapped tree drawn in front of it. It is 0.00 at the woodland spawn (30,70), 0.00 at the to_woodland door and 0.00 along the walk for x 0 to 64 (0.04 at x 72). `targets.py` finds no spawn, door, building door, thing, person, restore site or raid pad covered by any swapped tree, the same as main. The painter's 0 % holds.
+- **Crown.** The box runs x 69 to 139, y 30 to 112 world, all inside the zone: no crown_cut, and the whole crown reads.
+- **Neighbours.**
+  - The nearest tree is the hollow tree, 98 px away. The two crowns do not touch: their boxes are x 69-139 and 143-225.
+  - The nearest other oak is 307 px away.
+  - The nearest dressing is bush_b at 29 px and bush_c at 34 px. Both stand south of the foot, so they are drawn in front of the trunk's flare, and at 2x they read as planting round the bole.
+- **Readability.** At 2x the trunk stands on the lawn bank below the walk with its contact shade east and down. The crown rises over the walk and in front of the dry-stone wall's lower edge. The depth is right, because the foot (y 112) is below the wall.
+
+### Ruling 2: the overhang over the walk (x 79 to 136)
+
+**Acceptable; no code.**
+
+- Along the walk's centre line (y 72), a companion is hidden by 40 % or more (so the ghost shows) for x 79 to 136 world: about 57 px, a little over two seconds of walking. That stretch is 50 to 100 % hidden, and fully hidden at x 96 to 120.
+- **Why it is allowed.** Art-style rule 11 allows tall things in front of the companion, with the ghost at 42 %. AGENTS.md asks that paths, doors and the space round the companion stay open, and round 1 read that strictly for doors and arrival points (XT1). This stretch has no door, no spawn and no touch target, and the walk is open on both sides of it.
+- **Eastward.** Its trees overhang walkable ground the same way: in shot 13 the conifers stand at the path edge with their crowns over the path.
+- **Precedent.** Round 1 did not hold oak_6 for the 35 to 76 % cover it gives a companion standing just north of its foot, on the lawn beside the walk.
+- **If it is moved later.** If Claude A would rather keep the walk fully open, the same spot moved one cell south (y 120) still leaves the crown over the walk. Clearing the walk would need y 160 or more, which puts the foot in the terrace face. So this is the best placement on this bank.
+
+### The ground diff against round 1
+
+- **ground.png:** 14,384 texels change, all in two clusters:
+  - round oak_13's old foot (x 0 to 150, y 301 to 384);
+  - round its new foot (x 247 to 416, y 301 to 382).
+- Of these, 2,742 fall in the old box, 2,746 in the new box, and 8,896 just below the feet (y 336 to 377): re-laid lawn, the cast and the contact shade. **No house row or other distant texel moves.**
+- **Composite:** 56,068 texels change against cba98f46, 6,457 of them outside both boxes, in the same band (x 0 to 409, y 336 to 375).
+
+### `detail.repetition` (round 2)
+
+The score is now 1.17 (689 repeats): oak_13's whole crown is now in the zone, so more of its highlights are counted.
+
+- ground.png alone scores 0.00, and with duplicate copies masked the zone scores 0.01.
+- Of the repeats, 508 are in the oak, beech and hollow copies and 173 in the bushes.
+- The worst screen-sized window is 0.39 (median 0.00), still inside Eastward's 0.0 to 0.7.
+
+Ruling 1 stands: it does not block.
+
+### Verdicts (round 2)
+
+| Record | Verdict | Notes |
+| --- | --- | --- |
+| oak_13 | **pass** | XT1 fixed; identity with woodland/oak as in round 1 |
+| ground | **pass** | confined to oak_13's old and new spots; XT3 carried |
+
+### Status of the round 1 codes
+
+| Code | Status |
+| --- | --- |
+| XT1 | **fixed**: 0 % cover on the woodland spawn, the door and the walk's first 64 px |
+| XT2 | ruling 1 stands, now at 1.17 |
+| XT3 | open (polish; XR3-G1). This commit moved no distant texel |
+| XT4 | open (polish) |
+| XT5 | the PR body was updated by the painter; not re-read line by line |
+| XT6 | open (polish) |
+
+### Gate (round 2)
+
+- This round sets the reviewer blocks of oak_13 and ground to `pass` and touches no other file.
+- `python3 -m scripts.review.gate --check` prints `[review gate] 7 zones, fix queue 1 assets: ok` and one ADVISORY: remove crossroads/oak_13 from `art/catalogue/fix-queue.json`. That is Claude A's call, and the queue is not edited here.
+
+### Not checked (round 2)
+
+- A device play-test, night tint and reduced motion.
+- `npm run verify`, `check:art-repro` and CI.
+- A regeneration of the zone with `town.py`.

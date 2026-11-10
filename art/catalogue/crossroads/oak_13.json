@@ -51,11 +51,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
+  "verdict": "pass",
   "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-10-crossroads-trees.md, round 1 (PR #460 head cba98f46). Identity check, not a new detail audit (woodland round 9, ruling 3): sha256 c8306100... equals woodland/oak, passed in docs/reviews/2026-11-09-woodland-assets.md round 9 (PR #446 head 1da15380); pixels equal and not mirrored (lit from the upper left as approved). Placed with its y-sort origin on the drawn foot (bottom row, dy 0). Fails on placement (XT1): moved to (16,112) world, its crown covers the arrival from the woodland. The woodland spawn (30,70) is 100 % behind the crown (74 x 36 texel body box) and the to_woodland door 57 % (78 % of the door rect); the walk x 0-30 world is 93 % covered. Main and every other tree: 0 %.",
-  "fix_list": [
-   "XT1 (blocking): move oak_13 so its crown clears the woodland arrival: the woodland spawn (30,70) and the to_woodland door (rect 0,46,8,48) each under 40 % covered by any tree drawn in front of a companion standing there (the ghost threshold), ideally 0, and the first two cells of the garden walk (x 0-48, y 60-84) open. Keep the foot on the soft grid (x a multiple of 4, y of 8), off routes, and the crown not cut by the top edge (no logic.crown_cut). Keep nearest same-picture neighbours apart (no two oaks as nearest neighbours). Re-lay the lawn at the old and new spot as for the other moves and re-pin the composite."
-  ]
+  "note": "docs/reviews/2026-11-10-crossroads-trees.md, round 2 (PR #460 head 6548ab0e). Identity: sha256 c8306100... equals woodland/oak (round 9, PR #446 head 1da15380), pixels equal, not mirrored. XT1 fixed: moved to (104,112) world, foot on the soft grid (x mult of 4, y mult of 8), origin on the drawn foot (dx +0.5, dy 0). Cover of a 74 x 36 texel companion box by any tree drawn in front: woodland spawn (30,70) 0.00, to_woodland door 0.00, walk x 0-64 0.00 (0.04 at x 72); no other spawn, door, building door, thing, person, restore site or raid pad covered (main and round 1 likewise). Crown box x 69-139, y 30-112 world, wholly inside the zone (no crown_cut). Nearest tree hollow_tree 98 px, nearest other oak 307 px; nearest dressing bush_b 29 px and bush_c 34 px. The crown overhangs the garden walk at x 79-136 (>= 40 % hidden, ghost shown): acceptable (round 2 ruling), art-style rule 11."
  }
 }
