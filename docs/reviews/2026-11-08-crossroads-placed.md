@@ -1071,7 +1071,7 @@ Both pass every number. My tones and shapes sit 0.1 to 0.2 under the painter's (
 | Shapes a patch, min | 30.5 | 29.3 |
 | Renders that fail a number | 11 | 10 |
 
-- Noise and tones are barely correlated (r = −0.16), so there is room to take both off the line at once.
+- Across seeds, noise and tones do not trade against each other: r = −0.53 on the hut and −0.16 on the herbalist, so calmer renders have, if anything, more tones. Both can come off the line at once.
 
 So the shipped pictures pass, and the pass is real for these bytes. But the recipe passes about one render in two: the next change (a new width, a new seed, XR8-T1's colour) has an even chance of failing. That is a polish item for the recipe (XR8-T3), and it matters if ruling 1 is turned into code; it does not make these pictures fail.
 
@@ -1089,7 +1089,7 @@ Centre-column OKLab L (hut x 120-140, herbalist x 110-130); the other columns aw
 | Eave corners | the code cuts radius 7. Where the rake meets the lip the silhouette steps in 1, 2, 3 texels over the last 3 rows; the lip's tips curve round it | the same | **pass**: reads as a rounded corner at 3x, square in round 2 |
 | Brightest straw | L ≥ 0.80 on 9.5 % of the roof, 2.6 % of the front below the ridge and above the lip | 8.3 %, 2.6 % | **pass** (T2: ≤ 15 %) |
 | Moss | none (no green texel above the wall line) | none | **pass** (T3) |
-| Noise and courses | 13.5 %; tip rows at 52, 70-71 and the lip, soft steps between, spacing uneven; tips 5-11 wide in the code, lit runs median 4 wide | 14.86 %; tip rows at 48, 69, 89 and the lip | **pass** (T4) |
+| Noise and courses | 13.5 %; tip rows at 52, 70-71 and the lip, soft steps between, spacing uneven; tips 5-11 wide in the code, lit runs a median 4 to 5 texels wide | 14.86 %; tip rows at 48, 69, 89 and the lip | **pass** (T4) |
 | East hip | courses with tips one tone down (rows 52, 70-72) | the same | **pass** (T7) |
 | Stack | apron 2 rows (#888697, #696e87); contact shade 3 straight rows, only the last following the tips | the same | apron passes (T6); shade polish (XR8-T4) |
 | Ridge ligger | one half-buried ligger as 2-row dashes; crossing spars irregular | the same | spars pass (T5); the ligger reads as a dashed rule at 3x (polish XR8-T5) |
@@ -1127,9 +1127,9 @@ Light falls from the upper left on all seven roofs: the west planes are lit, the
 
 ### The damage overlay (XR7-D1)
 
-- **Top-left bundle** (x 77-104, y 44-56): vertical combed streaks at 0.71 and 0.66, lit on its west, with lit tips (0.8) and a shade line (0.3-0.5) along its lower edge.
-- **Lower-left bundle** (x 79-112, y 57-75): lit tips (0.8) along the rim of the hole, combed streaks, and a shade row under it.
-- **East lobe** (x 121-130, y 51-75): vertical streaks of 0.66 and 0.55 with a dark east edge (0.3).
+- **Top-left bundle** (about x 76-120, y 44-56): vertical combed streaks at about 0.7 and 0.6, lit on its west, with lit tips (0.8) and a shade line (0.3-0.5) along its lower edge.
+- **Lower-left bundle** (about x 78-112, y 57-77): lit tips (0.8) along the rim of the hole, combed streaks, and a shade row under it.
+- **East lobe** (x 121-130, y 51-75): vertical streaks at about 0.6 and 0.5 with a dark east edge (0.3).
 - The two round 7 flaps are gone. The largest one-tone straw run is now 47 texels (#9a775a), down from 123 (#926f5a) and 64 (#6f4e46).
 - At 3x over its base it reads as straw slumped into a hole, which agrees with the art director. **Pass.**
 - Polish (XR8-D1): the east lobe has no tips along its lower end and its west light is weak (ΔL 0.05); the lower-left bundle is ringed by a dark line that reads as drawn.
