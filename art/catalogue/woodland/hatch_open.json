@@ -63,7 +63,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): W4-H1 fixed: bar 0.941 of the prop band (28.0 tones, 47.4 shapes); nail heads on the lid battens, three a batten; grain checks; the lid shadow on the coping and a scalloped grass-1 shadow on the turf east of the lid. detail.cluster_noise 46.8 % stays polish (under 48); detail.outline rejected as for hatch_closed. Compared with the post box in Eastward 12."
  }
 }

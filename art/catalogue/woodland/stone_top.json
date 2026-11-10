@@ -51,7 +51,8 @@
  "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 5 (PR #446 head 7a57b5a0): W4-S1 fixed: bar 0.852 of the prop band (23.0 tones, 47.0 shapes; meets the 0.85 floor for ramp-built stone, shapes 0.933); two 1-texel chips in the base (x 20 to 21, 35 to 36), longest straight base run 15 of 36 columns; calm lit-top patches of 4 to 8 texels; a crack with a step down the front face; noise 29.8 %. Compared at x1.37 with the rocks in Eastward 17 (460,165,550,250). Polish W5-S1: the front moss is a flat 2-tone lime blob."
  }
 }
