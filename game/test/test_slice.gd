@@ -167,10 +167,17 @@ func test_crossroads_scene_flips_and_keeps_the_flip() -> void:
 	_attach()
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
 	# before Hale has asked there is no mark at her door, and she is not on the square
-	assert_bool((Zones.current.get_node("Actors/If_smithy_site") as Conditional).visible).is_false()
+	var mark := Zones.current.get_node("Actors/If_smithy_site/SmithySite") as RestoreSite
+	assert_bool(mark.is_visible_in_tree()).is_false()
+	assert_bool(mark.usable()).is_false()
 	assert_bool((Zones.current.get_node("Actors/If_hale_square") as Conditional).visible).is_false()
+	SaveGame.add_glint(30)
+	await mark.interact()                      # a hidden mark takes nothing
+	assert_bool(Village.is_restored("forge")).is_false()
+	SaveGame.add_glint(-30)
 	_hale_has_asked()
-	assert_bool((Zones.current.get_node("Actors/If_smithy_site") as Conditional).visible).is_true()
+	assert_bool(mark.is_visible_in_tree()).is_true()
+	assert_bool(mark.usable()).is_true()
 	assert_bool((Zones.current.get_node("Actors/If_hale_square") as Conditional).visible).is_true()
 	var zone := Zones.current
 	var rubble := zone.get_node("Props/If_smithy_rubble") as Conditional

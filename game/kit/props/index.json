@@ -5249,7 +5249,23 @@
     "what": "water"
    }
   ],
-  "function": {},
+  "function": {
+   "costs": [
+    "res://data/plans/crossroads.json#/restores/3/cost"
+   ],
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/plans/crossroads.json#/restores/3",
+      "type": "restore"
+     }
+    ],
+    "verb": "restore"
+   },
+   "saves": [
+    "village.restored.apothecary"
+   ]
+  },
   "kind": "structure",
   "name": "Herbalist",
   "painted": false,
@@ -5271,7 +5287,11 @@
   ],
   "snap": "cell",
   "story": {
-   "owner": null
+   "milestone": "apothecary",
+   "owner": null,
+   "quests": [
+    "res://data/quests/a1_the_torn_roof.json"
+   ]
   },
   "variants": {
    "herbalist": {
@@ -7803,6 +7823,9 @@
     "if": {
      "flags": [
       "shard_home:woodland"
+     ],
+     "restored": [
+      "well"
      ]
     }
    },
@@ -7895,6 +7918,9 @@
     "if": {
      "not_flags": [
       "shard_home:woodland"
+     ],
+     "not_restored": [
+      "well"
      ]
     }
    },

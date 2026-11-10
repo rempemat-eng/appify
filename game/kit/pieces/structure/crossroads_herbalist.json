@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "herbalist",
@@ -290,6 +290,22 @@
     -1
    ]
   ],
+  "interaction_points": [
+   {
+    "id": "apothecary_site",
+    "at": [
+     72.0,
+     42.0
+    ],
+    "verb": "Restore",
+    "if": {
+     "not_restored": [
+      "apothecary"
+     ]
+    },
+    "radius": 30.0
+   }
+  ],
   "door_cells": [
    [
     3,
@@ -331,9 +347,29 @@
   },
   "contact_ao": true
  },
- "function": {},
+ "function": {
+  "saves": [
+   "village.restored.apothecary"
+  ],
+  "costs": [
+   "res://data/plans/crossroads.json#/restores/3/cost"
+  ],
+  "interact": {
+   "verb": "restore",
+   "triggers": [
+    {
+     "type": "restore",
+     "ref": "res://data/plans/crossroads.json#/restores/3"
+    }
+   ]
+  }
+ },
  "story": {
-  "owner": null
+  "owner": null,
+  "milestone": "apothecary",
+  "quests": [
+   "res://data/quests/a1_the_torn_roof.json"
+  ]
  },
  "gameplay": {
   "blocks_move": true,
@@ -354,7 +390,11 @@
     "zone": "crossroads",
     "object": "herbalist_damage",
     "part": "overlay",
-    "condition": null
+    "condition": {
+     "not_restored": [
+      "apothecary"
+     ]
+    }
    }
   ],
   "todo": [

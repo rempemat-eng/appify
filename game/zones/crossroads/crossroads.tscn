@@ -1652,14 +1652,14 @@ position = Vector2(960, 216)
 script = ExtResource("talk")
 speaker_id = "hut_door"
 marker_height = 40.0
-verb = "Look"
+verb = "Enter"
 
 [node name="Shape" type="CollisionShape2D" parent="Actors/HutBed"]
 shape = SubResource("s31")
 
 [node name="If_smithy_site" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"active\":[\"cold_forge\"],\"not_restored\":[\"forge\"]}"
+only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SmithySite" type="Area2D" parent="Actors/If_smithy_site"]
 position = Vector2(1410, 912)
@@ -1672,7 +1672,7 @@ shape = SubResource("s31")
 
 [node name="If_fern_site" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"active\":[\"home_again\"],\"not_restored\":[\"fern_cottage\"]}"
+only_if = "{\"flags\":[\"shard_home:woodland\"],\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernSite" type="Area2D" parent="Actors/If_fern_site"]
 position = Vector2(1440, 1308)
@@ -1685,7 +1685,7 @@ shape = SubResource("s31")
 
 [node name="If_well_site" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"active\":[\"a1_the_choked_well\"],\"not_restored\":[\"well\"]}"
+only_if = "{\"not_restored\":[\"well\"]}"
 
 [node name="WellSite" type="Area2D" parent="Actors/If_well_site"]
 position = Vector2(846, 990)
@@ -1698,7 +1698,7 @@ shape = SubResource("s31")
 
 [node name="If_apothecary_site" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"active\":[\"a1_the_torn_roof\"],\"not_restored\":[\"apothecary\"]}"
+only_if = "{\"not_restored\":[\"apothecary\"]}"
 
 [node name="ApothecarySite" type="Area2D" parent="Actors/If_apothecary_site"]
 position = Vector2(516, 1194)

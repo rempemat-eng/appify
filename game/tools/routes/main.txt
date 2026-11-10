@@ -308,7 +308,7 @@ goto 708 716 10
 talk NoticeBoard
 expect said COL PATH TO THE FROSTLINE STILL BURIED
 goto 960 250 10
-expect prompt Look
+expect prompt Enter
 talk HutBed
 expect said swollen shut
 restart

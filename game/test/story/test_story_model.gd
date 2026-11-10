@@ -64,6 +64,7 @@ func _scan_node(n: Node, zone: String, origin: Vector2, conds: Array) -> void:
 	var thing := {}
 	if n is RestoreSite:
 		thing = {"kind": "restore", "id": n.restore_id, "speaker": n.speaker_id if n.speaker_id != "" else "restore_" + n.restore_id}
+		conds = conds + [Village.sites.get(n.restore_id, {}).get("if")]   # the mark hides until its restore is asked for
 	elif n is SealLever:
 		thing = {"kind": "lever", "speaker": n.speaker_id, "needs": n.needs_flag, "flag": n.flag}
 	elif n is Interactable:

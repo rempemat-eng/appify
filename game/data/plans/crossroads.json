@@ -61,7 +61,7 @@
       "cost": {
         "glint": 30
       },
-      "why": "stage 0's first service: upgrade and salvage (game-design.md 7.3); cost is a placeholder. Paid once Hale has asked (The cold forge), so nobody clears her door before she is there to light the fire",
+      "why": "stage 0's first service: upgrade and salvage (game-design.md 7.3); cost is a placeholder. Its mark shows, and can be paid, once Hale has asked (The cold forge), so nobody clears her door before she is there to light the fire (world/restore_site.gd reads this `if`)",
       "if": {
         "started": [
           "cold_forge"
@@ -883,13 +883,12 @@
     {
       "id": "hut_bed",
       "speaker": "hut_door",
-      "verb": "Look",
+      "verb": "Enter",
       "at": [
         320,
         72
       ],
-      "colour": "#00000000",
-      "why": "your hut's door: a look for now (the inside is not built)"
+      "colour": "#00000000"
     }
   ],
   "restore_sites": [
@@ -901,9 +900,6 @@
         304
       ],
       "if": {
-        "active": [
-          "cold_forge"
-        ],
         "not_restored": [
           "forge"
         ]
@@ -917,8 +913,8 @@
         436
       ],
       "if": {
-        "active": [
-          "home_again"
+        "flags": [
+          "shard_home:woodland"
         ],
         "not_restored": [
           "fern_cottage"
@@ -933,9 +929,6 @@
         330
       ],
       "if": {
-        "active": [
-          "a1_the_choked_well"
-        ],
         "not_restored": [
           "well"
         ]
@@ -950,9 +943,6 @@
         398
       ],
       "if": {
-        "active": [
-          "a1_the_torn_roof"
-        ],
         "not_restored": [
           "apothecary"
         ]
