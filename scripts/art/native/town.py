@@ -903,13 +903,17 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             if dr.get('sprite'):
                 # (the fix queue, 10 Nov) the approved woodland picture in place of the kit's old
                 # foliage, copied as it is; the old picture stays only as what the lawn was laid
-                # with, so the lawn's scatter is re-laid round the swap alone (as for a redrawn house)
+                # with, so the lawn's scatter is re-laid round the swap alone (as for a redrawn house;
+                # a tree that moved, `lawn_at`, round where it stood and where it stands)
                 if dr['sprite'] not in APPROVED:
                     raise KeyError(f"{dr['sprite']}: not an approved picture (town.APPROVED)")
                 src = approved_path(dr['sprite'])
                 new = Image.open(src).convert('RGBA')
                 na = np.asarray(new)[..., 3] > 0
                 extra = dict(legacy=(img, anc, a), copy_from=src)
+                if dr.get('lawn_at'):
+                    # a tree moved with its swap (10 Nov): the lawn was laid with it where it stood
+                    extra['legacy_foot'] = (q(dr['lawn_at'][0]), q(dr['lawn_at'][1]))
                 if APPROVED[dr['sprite']]:
                     extra['tree_ex'] = dict(w=Image.open(os.path.join(ROOT, 'art', 'masters', APPROVED[dr['sprite']])).width)
                 else:
@@ -1029,7 +1033,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 key = '__legacy_' + o['id']
                 pics[key] = img_
                 o = {k_: v_ for k_, v_ in o.items() if k_ not in ('tree_ex', 'shrub')}
-                o.update(png=key, alpha=al_, anchor=anc_, swap=True)
+                o.update(png=key, alpha=al_, anchor=anc_, swap=True, foot=o.get('legacy_foot') or o['foot'])
             objs_old.append(o)
         shade_old, foots_old, near_old = lawn_inputs(objs_old)
         shade, foots, near_new = lawn_inputs([dict(o, swap=True) if o.get('legacy') is not None else o for o in objects])

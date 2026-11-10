@@ -88,7 +88,7 @@ class RealSource(unittest.TestCase):
     def test_legacy_woodland_and_crossroads_are_byte_unchanged(self):
         expected = {
             'woodland': '4a15a5a5874b15292aa1ffe85ffa41a54612f6ceff4afbdd1c8c6a471adbe76e',
-            'crossroads': 'e88b83aa706b138d6660b137e2b0ade1ec13ff9db81adb0c0bbcbcdec0dd6539',
+            'crossroads': '3f481ce890574a327ecb265e9bcacebd0630f9a1ad8dabb968a46abeebfcf6bf',
         }
         for name, digest in expected.items():
             self.assertEqual(hashlib.sha256(SN.composite(SN.load_zone(name)).tobytes()).hexdigest(), digest)

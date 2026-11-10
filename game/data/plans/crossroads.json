@@ -1033,7 +1033,7 @@
     }
   ],
   "art": {
-    "_about": "The drawing (scripts/art/native/village.py and town.py, game/tools/gen_village.py; Claude A, 25 Oct): how each building looks (one design; its storm damage an overlay the restore removes), the dry-stone walls drawn on the faces, the paving, the uplands, the green's ring and the dressing with its reasons. Doors face south: the oblique view shows no east walls, so the bakery's and the herbalist's doors moved to their south fronts. The herbalist's moved 22 px south so its roof clears the three-cell halt road. Trees and shrubs (Claude A, 10 Nov, the fix queue): each oak_N and bush_N names in `sprite` the woodland picture that passed the 9 Nov detail audit (round 9, PR #446) and places it as it is (town.APPROVED: copied byte for byte, its foot the middle of its bottom edge, the woodland's tree shade and shrub cast); the ids, feet and solids are unchanged. No two neighbouring trees or shrubs share a picture, and the one veteran (hollow_tree) stands in the park by the crater.",
+    "_about": "The drawing (scripts/art/native/village.py and town.py, game/tools/gen_village.py; Claude A, 25 Oct): how each building looks (one design; its storm damage an overlay the restore removes), the dry-stone walls drawn on the faces, the paving, the uplands, the green's ring and the dressing with its reasons. Doors face south: the oblique view shows no east walls, so the bakery's and the herbalist's doors moved to their south fronts. The herbalist's moved 22 px south so its roof clears the three-cell halt road. Trees and shrubs (Claude A, 10 Nov, the fix queue): each oak_N and bush_N names in `sprite` the woodland picture that passed the 9 Nov detail audit (round 9, PR #446) and places it as it is (town.APPROVED: copied byte for byte, its foot the middle of its bottom edge, the woodland's tree shade and shrub cast); the ids, feet and solids are unchanged. No two neighbouring trees or shrubs share a picture, and the one veteran (hollow_tree) is the old oak on the terrace. Four trees moved on 10 Nov (oak_6, oak_13, oak_21 off the top edge, oak_40 apart from oak_41); each keeps its id.",
     "biome": "meadow",
     "uplands": [],
     "walls": [
@@ -1473,10 +1473,14 @@
         "kind": "oak",
         "at": [
           184,
-          48
+          56
         ],
-        "why": "the old oak on your terrace",
-        "sprite": "woodland/oak"
+        "why": "the old oak on your terrace: the veteran, its foot just above the garden walk so its crown is in the zone (10 Nov: at y 48 the edge showed a stump)",
+        "sprite": "woodland/hollow_tree",
+        "lawn_at": [
+          184,
+          48
+        ]
       },
       {
         "kind": "bush",
@@ -1543,12 +1547,16 @@
       {
         "kind": "oak",
         "at": [
-          40,
-          24
+          16,
+          112
         ],
         "solid": false,
-        "why": "the bank above the garden walk",
-        "sprite": "woodland/beech"
+        "why": "the planted bank under the walk (10 Nov: moved from the bank above the walk, y 24, where the top edge showed a bare trunk)",
+        "sprite": "woodland/oak",
+        "lawn_at": [
+          40,
+          24
+        ]
       },
       {
         "kind": "bush",
@@ -1625,10 +1633,15 @@
         "kind": "oak",
         "at": [
           616,
-          40
+          104
         ],
         "solid": false,
-        "sprite": "woodland/oak"
+        "sprite": "woodland/oak",
+        "why": "the top-right meadow, clear of the hay (10 Nov: moved down from y 40, where the top edge showed a bare trunk)",
+        "lawn_at": [
+          616,
+          40
+        ]
       },
       {
         "kind": "bush",
@@ -1826,11 +1839,15 @@
       {
         "kind": "oak",
         "at": [
+          328,
+          552
+        ],
+        "why": "the park round the crater, west of oak_41 with their crowns apart (10 Nov: at 376, 520 it stood 29 px behind oak_41 and the two crowns read as one column)",
+        "sprite": "woodland/oak",
+        "lawn_at": [
           376,
           520
-        ],
-        "why": "the park round the crater (moved off the green lane's bend, 27 Oct)",
-        "sprite": "woodland/beech"
+        ]
       },
       {
         "kind": "oak",
@@ -1838,7 +1855,7 @@
           392,
           544
         ],
-        "sprite": "woodland/hollow_tree"
+        "sprite": "woodland/beech"
       },
       {
         "kind": "oak",
@@ -1854,7 +1871,7 @@
           24,
           408
         ],
-        "sprite": "woodland/beech"
+        "sprite": "woodland/oak"
       },
       {
         "kind": "oak",
@@ -1862,7 +1879,7 @@
           184,
           552
         ],
-        "sprite": "woodland/oak"
+        "sprite": "woodland/beech"
       },
       {
         "kind": "oak",
@@ -1878,7 +1895,7 @@
           40,
           248
         ],
-        "sprite": "woodland/oak"
+        "sprite": "woodland/beech"
       },
       {
         "kind": "bush",

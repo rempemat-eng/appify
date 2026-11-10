@@ -6520,8 +6520,8 @@
   ],
   "deck": null,
   "foot": [
-   96,
-   264
+   106,
+   247
   ],
   "footprint": [
    [
@@ -6560,8 +6560,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -46,
-     -81
+     -55,
+     -76
     ],
     "png": "res://kit/props/art/shadow_crossroads_oak.png"
    }
@@ -6577,8 +6577,8 @@
   "variants": {
    "oak_13": {
     "foot": [
-     96,
-     264
+     106,
+     247
     ],
     "png": "res://zones/crossroads/art/oak_13.png"
    },
@@ -6591,15 +6591,15 @@
    },
    "oak_40": {
     "foot": [
-     96,
-     264
+     106,
+     247
     ],
     "png": "res://zones/crossroads/art/oak_40.png"
    },
    "oak_41": {
     "foot": [
-     122,
-     227
+     96,
+     264
     ],
     "png": "res://zones/crossroads/art/oak_41.png"
    },
@@ -6612,15 +6612,15 @@
    },
    "oak_43": {
     "foot": [
-     96,
-     264
+     106,
+     247
     ],
     "png": "res://zones/crossroads/art/oak_43.png"
    },
    "oak_44": {
     "foot": [
-     106,
-     247
+     96,
+     264
     ],
     "png": "res://zones/crossroads/art/oak_44.png"
    },
@@ -6633,15 +6633,15 @@
    },
    "oak_46": {
     "foot": [
-     106,
-     247
+     96,
+     264
     ],
     "png": "res://zones/crossroads/art/oak_46.png"
    },
    "oak_6": {
     "foot": [
-     106,
-     247
+     122,
+     227
     ],
     "png": "res://zones/crossroads/art/oak_6.png"
    }
