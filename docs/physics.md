@@ -98,7 +98,7 @@ A y-sorted picture's origin is on its drawn feet, its lowest opaque row, within 
 
 | Check | Holds |
 | --- | --- |
-| `game/test/test_physics_model.gd` | layers and masks of every body and area in the three zones; no way off a zone; woodland solids no wider than what is drawn; Crossroads' reviewed boxes; y-sort origins on drawn feet; flat things under people |
+| `game/test/test_physics_model.gd` | layers and masks of every body and area in the three zones; no villager hidden behind scenery; no way off a zone; woodland solids no wider than what is drawn; Crossroads' reviewed boxes; y-sort origins on drawn feet; flat things under people |
 | `game/test/test_occlusion.gd` | the 40 % rule and its branches, the fade, reduced motion, the terrace road and the willow |
 | `game/test/test_arrow_physics.gd`, `test_arrow_walls.gd` | the start check, low solids, the archer |
 

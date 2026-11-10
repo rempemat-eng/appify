@@ -263,3 +263,26 @@ func test_flat_things_never_draw_over_people() -> void:
 		assert_int(_z(zone, s)).override_failure_message(path).is_less(0)
 	_player.global_position = Vector2(1200, 300)       # in the middle of the beds
 	assert_float(zone.occlusion.hidden_share(_player)).is_equal(0.0)
+
+func test_no_villager_stands_hidden() -> void:
+	# villagers get no faint copy (world/occlusion.gd follows the player and enemies): they stand still, so
+	# one hidden behind a crown or a roof is a placement fault. Checked in every state a Conditional can show.
+	for id in ZONES:
+		var zone := _enter(id)
+		var seen := 0
+		for n in _all(zone):
+			if not (n is Interactable):
+				continue
+			var body := n.get_node_or_null("Body") as AnimatedSprite2D
+			if body == null:
+				continue
+			var holder := n.get_parent() as CanvasItem
+			var was := holder.visible
+			holder.visible = true                      # as when its Conditional holds
+			var share := zone.occlusion.hidden_share(n)
+			holder.visible = was
+			assert_float(share).override_failure_message("%s is %d %% hidden behind scenery" % [_where(n), share * 100.0]) \
+				.is_less(Occlusion.HIDDEN_SHARE)
+			seen += 1
+		if id != "undercroft":
+			assert_int(seen).override_failure_message("%s: no villagers were checked" % id).is_greater(0)
