@@ -11,20 +11,27 @@ extends Node2D
 ##
 ## What can hide an actor: a Sprite2D of the zone's scenery that is drawn after it, by z_index or by the y-sort
 ## (the y of the nearest ancestor that sits in a y-sorted parent). Pictures on the ground layers (z below 0)
-## never do. The share is measured on the picture's own alpha, sampled COLS x ROWS over the opaque box of the
-## actor's drawing, and the most that any one picture covers counts (as lib/occlusion.ts).
+## never do. The share is the body's own: of the opaque texels of the actor's drawing (every STEP-th one, at
+## most about MAX_POINTS), how many lie under an opaque texel of the picture. The most that any one picture
+## covers counts (as lib/occlusion.ts). Scenery may be scaled, flipped or turned: a point is taken into the
+## picture's own space before its alpha is read.
 ##
 ## Cost: an actor is measured only when it has moved a texel (or every RECHECK seconds, since a Conditional
-## may have shown a cover), against the few pictures registered in its grid cell; a picture's alpha is read
-## once, the first time something stands behind it. The ghost fades in over FADE_IN seconds and out over
-## FADE_OUT, both at once under reduced motion, and everything stops with the tree when the game is paused.
+## may have shown a cover), against the few pictures registered in its grid cell. A first pass over COARSE
+## points settles it when the share is clearly under or over the line; only near the line is every point
+## read. A picture's alpha is read once, the first time something stands behind it. The ghost fades in over
+## FADE_IN seconds and out over FADE_OUT, both at once under reduced motion, and everything stops with the
+## tree when the game is paused.
 
 const HIDDEN_SHARE := 0.4
 const GHOST_ALPHA := 0.42
 const FADE_IN := 0.18
 const FADE_OUT := 0.12
-const COLS := 5
-const ROWS := 10
+const STEP := 2                     ## every second texel of the body, each way
+const MAX_POINTS := 600             ## a bigger body is sampled more sparsely
+const COARSE := 50                  ## points of the first pass
+const CLEAR_UNDER := 0.25           ## a first pass under this share, or over CLEAR_OVER, is not read again
+const CLEAR_OVER := 0.55
 const RECHECK := 0.25
 const CELL := 192.0                 ## texels a side of the lookup grid
 const GHOST_Z := 50                 ## over everything in the world, under the UI's CanvasLayer
@@ -34,6 +41,9 @@ class Cover extends RefCounted:
 	var sprite: Sprite2D
 	var item: Node2D                ## the node the y-sort orders the picture by
 	var rect := Rect2()             ## the picture's box in the world
+	var local := Rect2()            ## the picture's box in the sprite's own space
+	var inv := Transform2D()        ## world to the sprite's own space
+	var plain := true               ## not scaled, turned or flipped: a world offset is a texel offset
 	var at := Vector2.ZERO          ## where the sprite stood when it was registered (a mover is dropped)
 	var z := 0
 	var stamp := 0
@@ -43,6 +53,8 @@ class Track extends RefCounted:
 	var sprite: Node2D              ## the actor's drawing: an AnimatedSprite2D or a Sprite2D
 	var item: Node2D
 	var box := Rect2()              ## the opaque box of the drawing, in the sprite's own space
+	var points := PackedVector2Array()   ## the body: opaque texels of the drawing, in the sprite's own space
+	var coarse := PackedVector2Array()   ## every n-th of them, for the first pass
 	var boxed := false
 	var at := Vector2i(-99999, -99999)
 	var wait := 0.0
@@ -86,7 +98,7 @@ func _on_tree_changed(node: Node) -> void:
 func hidden_share(actor: Node2D) -> float:
 	_refresh_covers()
 	var t := _track(actor)
-	return _measure(t) if t != null else 0.0
+	return _measure(t, true) if t != null else 0.0
 
 func is_ghosted(actor: Node2D) -> bool:
 	var t: Track = _tracks.get(actor.get_instance_id())
@@ -126,7 +138,7 @@ func _physics_process(delta: float) -> void:
 			if at != t.at or t.wait <= 0.0:
 				t.at = at
 				t.wait = RECHECK
-				t.share = _measure(t)
+				t.share = _measure(t, false)
 				t.hidden = t.share >= HIDDEN_SHARE and actor.is_visible_in_tree()
 	for id in _tracks.keys():
 		if not seen.has(id):
@@ -212,6 +224,7 @@ static func _frame_origin(sprite: Node2D, size: Vector2) -> Vector2:
 	var offset: Vector2 = sprite.get("offset")
 	return offset - size / 2.0 if sprite.get("centered") else offset
 
+## Reads the actor's drawing once: its opaque box and the texels that are its body.
 func _body_box(t: Track) -> Rect2:
 	if t.boxed:
 		return t.box
@@ -220,16 +233,30 @@ func _body_box(t: Track) -> Rect2:
 	var region: Rect2 = frame[1]
 	if tex == null:
 		return Rect2()
-	var used := Rect2(Vector2.ZERO, region.size)
+	var used := Rect2i(Vector2i.ZERO, Vector2i(region.size))
+	var origin := _frame_origin(t.sprite, region.size)
 	var img := tex.get_image()
+	var part: Image = null
 	if img != null and not img.is_empty():
 		if img.is_compressed():
 			img.decompress()
-		var part := Rect2i(region) if img.get_size() != Vector2i(region.size) else Rect2i(Vector2i.ZERO, img.get_size())
-		var opaque := img.get_region(part).get_used_rect()
+		part = img if img.get_size() == Vector2i(region.size) else img.get_region(Rect2i(region))
+		var opaque := part.get_used_rect()
 		if opaque.size.x > 0 and opaque.size.y > 0:
-			used = Rect2(opaque)
-	t.box = Rect2(_frame_origin(t.sprite, region.size) + used.position, used.size)
+			used = opaque
+	t.box = Rect2(origin + Vector2(used.position), Vector2(used.size))
+	var step := maxi(STEP, ceili(sqrt(float(used.size.x * used.size.y) / MAX_POINTS)))
+	var points := PackedVector2Array()
+	for y in range(used.position.y + step / 2, used.end.y, step):
+		for x in range(used.position.x + step / 2, used.end.x, step):
+			if part == null or part.get_pixel(x, y).a >= 0.5:
+				points.append(origin + Vector2(x + 0.5, y + 0.5))
+	t.points = points
+	var every := maxi(1, points.size() / COARSE)
+	var coarse := PackedVector2Array()
+	for i in range(every / 2, points.size(), every):
+		coarse.append(points[i])
+	t.coarse = coarse
 	t.boxed = true
 	return t.box
 
@@ -299,7 +326,11 @@ func _register(sprite: Sprite2D) -> void:
 	cv.item = item
 	cv.z = z
 	cv.at = sprite.global_position
-	cv.rect = sprite.global_transform * sprite.get_rect()
+	cv.local = sprite.get_rect()
+	var xf := sprite.global_transform
+	cv.rect = xf * cv.local
+	cv.inv = xf.affine_inverse()
+	cv.plain = xf.x == Vector2.RIGHT and xf.y == Vector2.DOWN and not sprite.flip_h and not sprite.flip_v
 	_covers.append(cv)
 	var c0 := Vector2i((cv.rect.position / CELL).floor())
 	var c1 := Vector2i((cv.rect.end / CELL).floor())
@@ -324,7 +355,9 @@ func _mask_of(tex: Texture2D) -> BitMap:
 	return bm
 
 # --- the measure -----------------------------------------------------------------------------
-func _measure(t: Track) -> float:
+## The share of the actor's body under the most covering picture. `exact` reads every point; otherwise a
+## first pass that lands clearly under or over the line is the answer.
+func _measure(t: Track, exact: bool) -> float:
 	if not is_instance_valid(t.sprite) or t.item == null or not is_instance_valid(t.item):
 		return 0.0
 	var size: Vector2 = _frame_of(t.sprite)[1].size
@@ -334,24 +367,52 @@ func _measure(t: Track) -> float:
 	if near.is_empty():
 		return 0.0
 	var box := xf * _body_box(t)
-	if box.size.x <= 0.0 or box.size.y <= 0.0:
+	if box.size.x <= 0.0 or box.size.y <= 0.0 or t.points.is_empty():
 		return 0.0
 	var z := _z_of(t.actor)
 	var y := t.item.global_position.y
-	var most := 0
+	var front: Array[Cover] = []
 	for cv in near:
 		if not is_instance_valid(cv.sprite) or cv.sprite.global_position != cv.at:
 			_dirty = true           # it moved or went: scenery stands still
 			continue
 		if not cv.rect.intersects(box) or not cv.sprite.is_visible_in_tree():
 			continue
-		var in_front := cv.z > z or (cv.z == z and cv.item != null and cv.item.global_position.y > y)
-		if not in_front:
-			continue
-		most = maxi(most, _covered(cv, box))
-		if most >= COLS * ROWS:
+		if cv.z > z or (cv.z == z and cv.item != null and cv.item.global_position.y > y):
+			front.append(cv)
+	if front.is_empty():
+		return 0.0
+	if not exact:
+		var rough := _most(front, _in_world(t, t.coarse, xf, size))
+		if rough < CLEAR_UNDER or rough > CLEAR_OVER:
+			return rough
+	return _most(front, _in_world(t, t.points, xf, size))
+
+## The body's points where they are drawn now (the drawing may be flipped).
+func _in_world(t: Track, points: PackedVector2Array, xf: Transform2D, size: Vector2) -> PackedVector2Array:
+	var flip_h: bool = t.sprite.get("flip_h")
+	var flip_v: bool = t.sprite.get("flip_v")
+	if not flip_h and not flip_v:
+		return xf * points
+	var origin := _frame_origin(t.sprite, size)
+	var turned := PackedVector2Array()
+	turned.resize(points.size())
+	for i in points.size():
+		var p := points[i]
+		if flip_h:
+			p.x = 2.0 * origin.x + size.x - p.x
+		if flip_v:
+			p.y = 2.0 * origin.y + size.y - p.y
+		turned[i] = p
+	return xf * turned
+
+func _most(front: Array[Cover], world: PackedVector2Array) -> float:
+	var most := 0
+	for cv in front:
+		most = maxi(most, _covered(cv, world))
+		if most >= world.size():
 			break
-	return float(most) / float(COLS * ROWS)
+	return float(most) / float(world.size())
 
 func _near(rect: Rect2) -> Array[Cover]:
 	_stamp += 1
@@ -367,24 +428,33 @@ func _near(rect: Rect2) -> Array[Cover]:
 						out.append(cv)
 	return out
 
-## How many of the COLS x ROWS points of `box` (world) an opaque texel of the cover's picture covers.
-func _covered(cv: Cover, box: Rect2) -> int:
+## How many of the points (world) lie under an opaque texel of the cover's picture. A point is taken into
+## the picture's own space first, so a scaled, turned or flipped picture is read where it is drawn.
+func _covered(cv: Cover, world: PackedVector2Array) -> int:
 	var s := cv.sprite
 	var bm := _mask_of(s.texture)
-	var base := Vector2.ZERO
-	if s.region_enabled:
-		base = s.region_rect.position
-	var fsize := s.get_rect().size
-	var origin := cv.rect.position - (base + Vector2(s.frame_coords) * fsize)   # the texture's (0, 0) in the world
+	var fsize := cv.local.size
+	var base := Vector2i(s.region_rect.position) if s.region_enabled else Vector2i.ZERO
+	var frame_at := base + s.frame_coords * Vector2i(fsize)         # the frame's corner in the texture
+	var limit := bm.get_size() if bm != null else Vector2i.ZERO
 	var n := 0
-	for j in ROWS:
-		var py := box.position.y + (j + 0.5) * box.size.y / ROWS
-		if py < cv.rect.position.y or py >= cv.rect.end.y:
+	for p in world:
+		if not cv.rect.has_point(p):
 			continue
-		for i in COLS:
-			var px := box.position.x + (i + 0.5) * box.size.x / COLS
-			if px < cv.rect.position.x or px >= cv.rect.end.x:
+		var l := p - cv.rect.position
+		if not cv.plain:
+			l = cv.inv * p - cv.local.position
+			if l.x < 0.0 or l.y < 0.0 or l.x >= fsize.x or l.y >= fsize.y:
 				continue
-			if bm == null or bm.get_bit(int(px - origin.x), int(py - origin.y)):
-				n += 1
+			if s.flip_h:
+				l.x = fsize.x - l.x
+			if s.flip_v:
+				l.y = fsize.y - l.y
+		if bm == null:
+			n += 1
+			continue
+		var tx := frame_at.x + int(l.x)
+		var ty := frame_at.y + int(l.y)
+		if tx >= 0 and ty >= 0 and tx < limit.x and ty < limit.y and bm.get_bit(tx, ty):
+			n += 1
 	return n

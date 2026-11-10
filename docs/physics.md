@@ -104,8 +104,8 @@ A y-sorted picture's origin is on its drawn feet, its lowest opaque row, within 
 `world/occlusion.gd`, added to every zone by `world/zone.gd`. It builds art-style.md rule 11 ("The companion stays readable") as the app does: when one picture drawn in front hides at least 40 % of an actor's body, a copy of the actor at 42 % opacity is drawn over the scenery.
 
 - Who: the player and enemies (the groups `player` and `enemy`). Villagers and signs stand still, so a hidden one is a placement fault to fix in the scene, not to paper over.
-- What hides: a scenery `Sprite2D` at z 0 or above that is drawn after the actor. The share is measured on the picture's alpha at 5 x 10 points over the opaque box of the actor's drawing; the most that any one picture covers counts. A low fence across the feet never reaches 40 %.
-- Cost: an actor is measured when it has moved a texel, or every 0.25 s, against the pictures registered in its 192 texel grid cell. A picture's alpha is read once, the first time something stands behind it.
+- What hides: a scenery `Sprite2D` at z 0 or above that is drawn after the actor. The share is the body's own: of the opaque texels of the actor's drawing (every second one each way, about 550 for Bramble) how many lie under an opaque texel of the picture; the most that any one picture covers counts. At the willow's edge it reads 45, 42 and 39 % where the true shares are 45.6, 42.2 and 39.5 % (`test_forty_percent_means_forty_percent_of_the_body`). A low fence across the feet never reaches 40 %. Scenery may be scaled, flipped or turned.
+- Cost: an actor is measured when it has moved a texel, or every 0.25 s, against the pictures registered in its 192 texel grid cell. A first pass over 50 of the points settles it when the share is clearly under 25 % or over 55 %; only near the line are all points read. A picture's alpha is read once, the first time something stands behind it.
 - Motion: it fades in over 0.18 s and out over 0.12 s; under reduced motion both happen at once. It stops with the tree when the game is paused, and its nodes go with the zone.
 
 ## Checks

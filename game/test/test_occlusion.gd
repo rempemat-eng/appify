@@ -179,6 +179,41 @@ func test_scenery_that_arrives_later_counts() -> void:
 	await _frames(40)
 	assert_bool(_occ(root).is_ghosted(hero)).is_true()
 
+func test_scaled_and_flipped_scenery_is_read_where_it_is_drawn() -> void:
+	# a picture 60 x 80 whose left half is opaque, drawn at twice its size and flipped: on screen it covers
+	# x 40..160, y 40..200 and its right half (x 100..160) is the opaque one
+	var root := _stage()
+	var s := _scenery(root, Vector2(100, 200), 60, 80, Rect2i(0, 0, 30, 80))
+	s.scale = Vector2(2, 2)
+	s.flip_h = true
+	var hero := _actor(root, Vector2(130, 150))            # body x 120..140: behind the opaque half
+	assert_float(_occ(root).hidden_share(hero)).is_equal(1.0)
+	hero.position = Vector2(70, 150)                       # body x 60..80: behind the clear half
+	assert_float(_occ(root).hidden_share(hero)).is_equal(0.0)
+	hero.position = Vector2(100, 150)                      # body x 90..110: half and half
+	assert_float(_occ(root).hidden_share(hero)).is_between(0.4, 0.6)
+
+func test_the_share_is_of_the_body_not_of_its_box() -> void:
+	# a body that fills only the left half of its drawing's box, half behind a wall: the box is a quarter
+	# covered, the body half
+	var root := _stage()
+	_scenery(root, Vector2(100, 200), 120, 160, Rect2i(0, 80, 120, 80))    # opaque over y 120..200
+	var a := Node2D.new()
+	a.add_to_group("player")
+	a.position = Vector2(100, 140)
+	var spr := Sprite2D.new()
+	var img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	img.fill_rect(Rect2i(0, 0, 20, 60), Color.WHITE)       # an L: a full-height left half ...
+	img.fill_rect(Rect2i(20, 0, 20, 4), Color.WHITE)       # ... and a cap that makes the box 40 wide
+	spr.texture = ImageTexture.create_from_image(img)
+	spr.centered = false
+	spr.offset = Vector2(-20, -60)
+	a.add_child(spr)
+	root.add_child(a)
+	# the body spans y 80..140; the wall covers y 120..140 of it: a third of the left half, none of the cap
+	assert_float(_occ(root).hidden_share(a)).is_equal_approx(20.0 * 20.0 / (20.0 * 60.0 + 20.0 * 4.0), 0.02)
+
 # --- the places found by playing --------------------------------------------------------------
 func _enter(zone: String, at: Vector2) -> Player:
 	var holder: Node2D = auto_free(Node2D.new())
@@ -217,3 +252,23 @@ func test_under_the_willow_the_player_shows_through() -> void:
 	player.global_position = Zones.current.spawn_position("start")   # the open meadow
 	await _frames(30)
 	assert_bool(occ.is_ghosted(player)).is_false()
+
+func test_forty_percent_means_forty_percent_of_the_body() -> void:
+	# three spots at the willow's edge, with the share counted on Bramble's 2176 opaque texels against the
+	# willow's alpha (audit of #466): 45.6 % and 42.2 % hidden must show the copy, 39.5 % must not. Measured
+	# over the body's box it read 40, 36 and 46 %.
+	var player := _enter("woodland", Vector2(890, 1290))
+	var occ: Occlusion = Zones.current.occlusion
+	assert_float(occ.hidden_share(player)).is_equal_approx(0.456, 0.012)
+	player.global_position = Vector2(891, 1290)
+	assert_float(occ.hidden_share(player)).is_equal_approx(0.422, 0.012)
+	assert_float(occ.hidden_share(player)).is_greater_equal(Occlusion.HIDDEN_SHARE)
+	player.global_position = Vector2(840, 1290)
+	assert_float(occ.hidden_share(player)).is_equal_approx(0.395, 0.012)
+	assert_float(occ.hidden_share(player)).is_less(Occlusion.HIDDEN_SHARE)
+	# and the running loop, with its quick first pass, decides the same
+	occ.set_physics_process(false)
+	for spot in [[890, true], [891, true], [840, false]]:
+		player.global_position = Vector2(spot[0], 1290)
+		occ._physics_process(1.0 / 60.0)
+		assert_bool(occ.is_ghosted(player)).override_failure_message("x %d" % spot[0]).is_equal(spot[1])
