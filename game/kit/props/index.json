@@ -5251,12 +5251,12 @@
   ],
   "function": {
    "costs": [
-    "res://data/plans/crossroads.json#/restores/2/cost"
+    "res://data/plans/crossroads.json#/restores/3/cost"
    ],
    "interact": {
     "triggers": [
      {
-      "ref": "res://data/plans/crossroads.json#/restores/2",
+      "ref": "res://data/plans/crossroads.json#/restores/3",
       "type": "restore"
      }
     ],
@@ -7823,6 +7823,9 @@
     "if": {
      "flags": [
       "shard_home:woodland"
+     ],
+     "restored": [
+      "well"
      ]
     }
    },
@@ -7915,6 +7918,9 @@
     "if": {
      "not_flags": [
       "shard_home:woodland"
+     ],
+     "not_restored": [
+      "well"
      ]
     }
    },

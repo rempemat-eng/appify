@@ -12,7 +12,8 @@
     "on": "talk:moss",
     "if": {
       "done": [
-        "home_again"
+        "home_again",
+        "a1_the_choked_well"
       ],
       "flags": [
         "zone_built:frostline"

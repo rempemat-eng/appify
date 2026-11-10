@@ -763,7 +763,7 @@ offset = Vector2(-122, -288)
 
 [node name="If_well_choked" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+only_if = "{\"not_restored\":[\"well\"]}"
 
 [node name="WellChoked" type="Sprite2D" parent="Props/If_well_choked"]
 position = Vector2(864, 960)
@@ -780,7 +780,7 @@ shape = SubResource("s26")
 
 [node name="If_well" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+only_if = "{\"restored\":[\"well\"]}"
 
 [node name="Well" type="Sprite2D" parent="Props/If_well"]
 position = Vector2(864, 960)
@@ -1356,7 +1356,7 @@ offset = Vector2(-27, -53)
 
 [node name="If_well_choked_shadow" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+only_if = "{\"not_restored\":[\"well\"]}"
 
 [node name="WellChokedShadow" type="Sprite2D" parent="Props/If_well_choked_shadow"]
 position = Vector2(834, 932)
@@ -1367,7 +1367,7 @@ z_index = -9
 
 [node name="If_well_shadow" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+only_if = "{\"restored\":[\"well\"]}"
 
 [node name="WellShadow" type="Sprite2D" parent="Props/If_well_shadow"]
 position = Vector2(834, 932)
@@ -1681,6 +1681,19 @@ restore_id = "fern_cottage"
 verb = "Restore"
 
 [node name="Shape" type="CollisionShape2D" parent="Actors/If_fern_site/FernSite"]
+shape = SubResource("s31")
+
+[node name="If_well_site" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"well\"]}"
+
+[node name="WellSite" type="Area2D" parent="Actors/If_well_site"]
+position = Vector2(846, 990)
+script = ExtResource("site")
+restore_id = "well"
+verb = "Restore"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_well_site/WellSite"]
 shape = SubResource("s31")
 
 [node name="If_apothecary_site" type="Node2D" parent="Actors"]

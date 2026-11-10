@@ -166,10 +166,10 @@
     "name": "Notice board",
     "entries": [
       {
-        "if": { "done": ["home_again", "a1_the_torn_roof"] },
+        "if": { "done": ["home_again", "a1_the_choked_well", "a1_the_torn_roof"] },
         "lines": [
-          "A fresh note in Moss's hand: APOTHECARY OPEN. THE FERNS ARE HOME.",
-          "Under it: COL PATH TO THE FROSTLINE STILL BURIED. WORD HERE WHEN IT OPENS."
+          "A fresh note in Moss's hand: WATER IN THE WELL. APOTHECARY OPEN. THE FERNS ARE HOME.",
+          "Under it: COL PATH TO THE FROSTLINE STILL BURIED. HALT ROAD SHUT. WORD HERE WHEN THEY OPEN."
         ]
       },
       {

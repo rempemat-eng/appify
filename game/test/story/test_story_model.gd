@@ -20,7 +20,7 @@ const WalkGrid := preload("res://tools/walk_grid.gd")
 const ZONES := ["woodland", "crossroads", "undercroft"]
 ## What this build's story is made of: with all of these done the closing card shows.
 const PLAYABLE := ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again",
-	"a1_the_torn_roof"]
+	"a1_the_choked_well", "a1_the_torn_roof"]
 const SLICE_FILES := ["woodland", "crossroads", "undercroft"]
 ## Lines that are written but cannot show in this build, each with its reason.
 const SILENT := {

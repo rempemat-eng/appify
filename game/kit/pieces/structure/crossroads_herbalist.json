@@ -352,14 +352,14 @@
    "village.restored.apothecary"
   ],
   "costs": [
-   "res://data/plans/crossroads.json#/restores/2/cost"
+   "res://data/plans/crossroads.json#/restores/3/cost"
   ],
   "interact": {
    "verb": "restore",
    "triggers": [
     {
      "type": "restore",
-     "ref": "res://data/plans/crossroads.json#/restores/2"
+     "ref": "res://data/plans/crossroads.json#/restores/3"
     }
    ]
   }

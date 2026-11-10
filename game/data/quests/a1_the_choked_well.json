@@ -8,7 +8,7 @@
     "on": "talk:moss",
     "if": {
       "done": [
-        "a1_bread_for_the_bothy"
+        "home_again"
       ]
     }
   },

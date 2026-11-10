@@ -249,21 +249,32 @@ talk Ada
 expect said Our door
 expect quest home_again done
 expect glint 85
-expect hud Morel is waiting outside his herbalist's
+expect hud Moss has more to mend
 restart
 expect quest home_again done
 expect glint 85
 
-step Moss's loaf waits for the Col Path: nothing half-starts
+step the choked well
 goto 1152 830 10
 talk Moss
-expect said The Col Path is still buried
-expect quest a1_bread_for_the_bothy none
-expect quest a1_the_choked_well none
+expect said Now our well
+expect quest a1_the_choked_well active well
+goto 846 1030 10
+expect prompt Restore
+talk WellSite
+expect said You pay 20 Glint
+expect restored well
+expect glint 65
+goto 1152 830 10
+talk Moss
+expect said I didn't like his coat
+expect quest a1_the_choked_well done
+expect glint 80
+restart
+expect restored well
+expect glint 80
 
-step the torn roof: no mark before Morel has asked
-goto 516 1236 10
-expect focus none
+step the torn roof
 goto 600 1096 10
 talk Morel
 expect said My roof is still in the bakery's yard
@@ -273,7 +284,7 @@ expect prompt Restore
 talk ApothecarySite
 expect said You pay 40 Glint
 expect restored apothecary
-expect glint 45
+expect glint 40
 goto 600 1096 10
 talk Morel
 expect said A roof!
@@ -296,8 +307,7 @@ talk HutBed
 expect said swollen shut
 restart
 expect quest a1_the_torn_roof done
-expect restored apothecary
-expect glint 45
+expect glint 40
 expect banner none
 expect hud The Col Path is still buried
 end
