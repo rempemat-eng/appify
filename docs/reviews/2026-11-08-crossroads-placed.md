@@ -1016,3 +1016,192 @@ These codes are in the records' `reviewer.fix_list`.
 - The painter's "calm straw scores 0.71 to 0.74", which I did not re-render.
 - The eave line's `GABLE_LINE_MAX` share on the timber wall, beyond the crops.
 - Crops and scripts are in the auditor's scratch folder (`audit458-crops/`, `audit458-tools/`), not committed. The Eastward crops stay local.
+
+## Round 8 (PR #458 round 2, 10 Nov)
+
+Draft #458 (`claude-a/crossroads-remainder` at 7e7d310b, fast-forwarded from the round 7 audit commit 7ca81508) redraws the hut's and the herbalist's thatch and the herbalist's damage overlay for XR7-T1 to T4, T5 to T7 and D1. This round audits those three pictures and checks that nothing else moved. The auditor drew none of it and took no part in rounds 1 to 7.
+
+**Result: all three pass.** Both roofs meet ruling 1 and the XR7-T1 to T4 form tests, and the damage overlay meets XR7-D1. Two findings are not faults but should be read before the thatch is taken further: the herbalist's 14.9 % roof noise is on the line because the recipe sits on it, not because the seed was picked (XR8-T3); and the tan is a choice, not a palette limit, since the kits already draw golden straw from existing tones (XR8-T1).
+
+### What was reviewed and how (round 8)
+
+- Fresh worktree at 7e7d310b; d767e817 (round 2) and main 82b87eec in two more. The three PNGs match their records' sha256: hut 0f4df072…, herbalist 094f7f27…, herbalist_damage 10cf76e1….
+- Since 7ca81508 only nine files differ: the three PNGs and their records, `houses.py`, the golden manifest's `inputs` hash and the 11.9 bullet in `eastward-edges.md`. The six round 7 passes (handcart, square_puddles, well_shadow, well_choked_shadow, anvil_shadow, ground) are byte-identical, and so are `kit.json`, `crossroads.tscn`, the kit index and the bake markers.
+- Reproduction: `village.building(look, seed)` at density 3 with the Crossroads plan redraws `hut.png` (seed 337) and `herbalist.png` (seed 958) byte for byte. The seeds are the defaults (`sum(map(ord, id))`); no look sets one.
+- Asset gate: `python3 -m scripts.review.assets crossroads/hut crossroads/herbalist crossroads/herbalist_damage --no-sheet` reproduces the records. hut: `detail.bar` 0.699 (blocker) and `detail.volume` [178,42,210,70] (fault). herbalist: bar 0.706 (blocker), `detail.volume` [169,54,200,78] (fault) and six `detail.light` polish leads on the glass, the door and the stone. herbalist_damage: bar 0.664 (polish).
+- Measured with my own scripts (auditor scratch `audit458r2-tools/`, not committed): ruling 1 through the predecessor's `ewpipe` (my round 2 numbers reproduce round 7's: hut roof 23.04 / 53.76, noise 28.22 %); the same tests with the roof mask moved and over 24 other seeds; OKLab profiles and lightness maps down and across both roofs; hex counts and one-tone runs; the outline on both hip edges; the composite against main and round 2 by sprite box.
+- Eastward at ×1.37 nearest (references local only): shot 12's daylight thatched cottage (T12), as in round 7.
+- By eye: 3x, 5x and 10x crops of both houses, round 2 beside head; the damage overlay over its base at 3x, 6x and 10x; T12 beside both houses at 2x; the street at 1x and 2x from `scene.composite(load_zone('crossroads'))`.
+- Not run: calibration (no detector changed), the scene gate, `npm run verify`, a device play-test.
+
+### Verdicts (round 8)
+
+| Picture | Verdict | Bar (round 2 → 3) | Reason |
+| --- | --- | --- | --- |
+| hut | **pass** | 0.807 → 0.699 | ruling 1 met (walls 1.061, roof 12.13 / 33.0, noise 13.5 %); crest, body and roll-off on every column; no moss. Polish XR8-T1 to T6 |
+| herbalist | **pass** | 0.810 → 0.706 | ruling 1 met (walls 1.234, roof 12.71 / 31.59, noise 14.86 %); form as the hut. Polish XR8-T1 to T6 |
+| herbalist_damage | **pass** | 0.77 → 0.664 | slumped, combed bundles round the hole (XR7-D1). Polish XR8-D1 |
+
+The whole-building `detail.bar` is the measurement ruling 1 set aside for thatch; it fell because the straw is calmer, as round 7 predicted. Neither house is held on it.
+
+### Ruling 1's tests
+
+Roofs are the picture above the wall line (hut row 98, herbalist row 118) with the stack's box taken out; walls are everything below. The pipe is Eastward's (`ewpipe`: box ÷1.37, `jpeg_roundtrip`, ×1.37 nearest, `bands.patch_counts`); noise is `cluster_noise.share`.
+
+| | Hut | Herbalist | Required | Painter |
+| --- | --- | --- | --- | --- |
+| Walls, Eastward's pipe | 1.061 | 1.234 | ≥ 0.82 | 1.061 / 1.234 |
+| Roof tones / shapes a patch, Eastward's pipe | 12.13 / 33.0 | 12.71 / 31.59 | ≥ 11.9 / 27.9 | 12.2 / 33.2, 12.9 / 32.1 |
+| Roof noise, raw | 13.5 % | 14.86 % | ≤ 15 % | 13.4 %, 14.9 % |
+| Roof noise, Eastward's pipe | 10.5 % | 11.8 % | (T12: 5.1 %) | 10.5 %, 11.9 % |
+| Whole picture, Eastward's pipe | 0.876 | 0.931 | (record only) | |
+
+Both pass every number. My tones and shapes sit 0.1 to 0.2 under the painter's (a slightly different roof mask); no conclusion changes.
+
+**Is the 14.9 % robust?** It is on the line because the recipe sits on it, not because a seed was chosen.
+
+- The seeds are the defaults, and the generator reproduces the PNGs byte for byte with them.
+- Moving the roof mask's lower edge up 2 to 6 rows, or the stack's margin by ±3 texels, moves the herbalist's raw noise between 12.9 and 15.4 % and its tones between 11.66 and 13.65. Through Eastward's pipe the noise stays between 10.0 and 12.2 %. The hut's raw noise stays between 10.8 and 14.4 %.
+- Re-drawn with seeds 1 to 24 (nothing else changed), the recipe fails one of ruling 1's numbers on 11 of 24 hut renders and 10 of 24 herbalist renders:
+
+| Seeds 1-24 | Hut | Herbalist |
+| --- | --- | --- |
+| Raw noise, min / median / max | 11.0 / 14.4 / 17.4 % | 11.8 / 14.2 / 15.9 % |
+| Tones a patch, min / median / max | 11.36 / 12.08 / 12.78 | 11.84 / 12.23 / 12.66 |
+| Shapes a patch, min | 30.5 | 29.3 |
+| Renders that fail a number | 11 | 10 |
+
+- Noise and tones are barely correlated (r = −0.16), so there is room to take both off the line at once.
+
+So the shipped pictures pass, and the pass is real for these bytes. But the recipe passes about one render in two: the next change (a new width, a new seed, XR8-T1's colour) has an even chance of failing. That is a polish item for the recipe (XR8-T3), and it matters if ruling 1 is turned into code; it does not make these pictures fail.
+
+### The form tests (XR7-T1 to T4, T7)
+
+Centre-column OKLab L (hut x 120-140, herbalist x 110-130); the other columns away from the stack and hips match within a sibling step.
+
+| Part | Hut | Herbalist | Ruling |
+| --- | --- | --- | --- |
+| Ridge roll | lit top #f8d79c (0.893) rows 15-16, 0.81, 0.71, shade line; rounded end caps | the same | **pass** (T1 ends; T2: no texel above #f8d79c) |
+| Crest | 0.48-0.60, rows 24-31, with the ligger's spars | 0.54-0.60, rows 24-31 | **pass** (T12: 0.40-0.63) |
+| Body | 0.706 (#bb9a6f with #b49271 streaks), rows 32-74 | 0.706, rows 32-95 | **pass** (T2: 0.68-0.72) |
+| Roll-off | 0.683 rows 75-82, then 0.571 rows 83-89 | 0.683 rows 96-103, then 0.571 rows 104-109 | **pass**: the brightest band is not in the 16 rows above the lip. Only the last 6-7 rows are at least −0.08 L; the 8 rows before are a sibling step (−0.023) (polish XR8-T2) |
+| Lip | tips 0.87 and 0.81 (rows 90-91), underside 0.71 → 0.43 (rows 92-97) | rows 111-117 | **pass** |
+| Eave corners | the code cuts radius 7. Where the rake meets the lip the silhouette steps in 1, 2, 3 texels over the last 3 rows; the lip's tips curve round it | the same | **pass**: reads as a rounded corner at 3x, square in round 2 |
+| Brightest straw | L ≥ 0.80 on 9.5 % of the roof, 2.6 % of the front below the ridge and above the lip | 8.3 %, 2.6 % | **pass** (T2: ≤ 15 %) |
+| Moss | none (no green texel above the wall line) | none | **pass** (T3) |
+| Noise and courses | 13.5 %; tip rows at 52, 70-71 and the lip, soft steps between, spacing uneven; tips 5-11 wide in the code, lit runs median 4 wide | 14.86 %; tip rows at 48, 69, 89 and the lip | **pass** (T4) |
+| East hip | courses with tips one tone down (rows 52, 70-72) | the same | **pass** (T7) |
+| Stack | apron 2 rows (#888697, #696e87); contact shade 3 straight rows, only the last following the tips | the same | apron passes (T6); shade polish (XR8-T4) |
+| Ridge ligger | one half-buried ligger as 2-row dashes; crossing spars irregular | the same | spars pass (T5); the ligger reads as a dashed rule at 3x (polish XR8-T5) |
+
+**Is the body too flat?** The front's body is one tone joined across the soft courses: the largest one-tone region is 3,763 texels (20 % of the roof) on the hut and 5,356 (25 %) on the herbalist. T12's roof at ×1.37 has the same proportion: its largest region in one OKLab bin (0.02) is 2,381 texels, 23 % of its roof. So the calm is Eastward's, not a fault. What T12 has that ours does not is chroma and mottle. That is the art director's "plain", and it is mostly colour (below).
+
+### Light against the five slate gables
+
+| Plane | Hut | Herbalist | Slate gables (round 7) |
+| --- | --- | --- | --- |
+| Lit plane | west hip 0.79, lit arris 0.87-0.89 | the same | lit slope 0.54 |
+| Front | 0.71 | 0.71 | |
+| Shaded plane | east hip 0.55 (darkest) | 0.55 | shaded slope 0.32 |
+| Lit − shaded | **0.24** | **0.24** | **0.22** |
+
+Light falls from the upper left on all seven roofs: the west planes are lit, the east planes the darkest. The ratio has risen from round 2's 0.54 to 0.70, because the east hip went up from 0.43 to 0.55 with the whole straw. The lit-to-shade step in OKLab L, though, matches the slates (0.24 against 0.22). At 1x and 2x in the street the hip turns away as clearly as the slates' east slopes. **Consistent.**
+
+### Ruling 2: tan on the straw's ramps, against T12's gold
+
+**Not a fault. But the premise that gold needs a new tone is wrong, and the tan is a choice Claude A should make knowingly (XR8-T1).**
+
+| | L | C | h |
+| --- | --- | --- | --- |
+| Our roofs (median) | 0.683 | 0.061 | 66 |
+| T12 lit mass (shot 12, ×1.37) | 0.709 | 0.137 | 102 |
+| Crossroads hay (`hay_19`, `hay_20`, same zone) | 0.69-0.71 | 0.117 | 77-82 |
+| brass_warm 3 #ca9933 / brass 3 #c2903c | 0.71 / 0.69 | 0.128 / 0.117 | 82 / 77 |
+| sand_warm 2 #bb9a6f (our body) | 0.71 | 0.070 | 74 |
+
+- **Value is fixed.** XR7-T2 asked for value, and the body now sits at T12's L.
+- **The palette is ours.** house-style.md: "Eastward sets how much detail a patch carries. Our palette, our light and our soft forms are our own." T12's hue (102) is olive and lies outside our candle-yellow lean (82), so matching T12 is not the bar. No vision rule ties thatch to a chroma. Ruling 1 and XR7-T2's tests are met.
+- **But gold needs no new tone.** The kits already draw straw from existing ramps: `kit/farm.py` `STRAW` = brass, brass_warm, sand_warm (the Crossroads hay and heap), `act1.py` `STRAW` and `SKEP_STRAW`, and `commons.py`. brass_warm 3 is T12's L at nearly its chroma, on the house's hue. Round 7's note ("a more golden straw … needs a named tone") missed this precedent, and the PR repeated it.
+- **In the street, the tan and the gold disagree.** At 1x the hut's roof and the hay bales 500 to 700 px east are in one frame (`street_hut_hay_head_1x.png`): the same material, with the hay twice as saturated. The roof reads as pale, dusty tan beside it. That is the art director's "plain and tan".
+- Since every thatch roof in `houses.py` and `village.py` uses sand and the painter followed round 7's instruction, I do not fail the pictures on it. XR8-T1 is recommended before the thatch is reused anywhere else. If it is taken, ruling 1 must be measured again (brass's wider steps will raise the noise; XR8-T3).
+
+### The damage overlay (XR7-D1)
+
+- **Top-left bundle** (x 77-104, y 44-56): vertical combed streaks at 0.71 and 0.66, lit on its west, with lit tips (0.8) and a shade line (0.3-0.5) along its lower edge.
+- **Lower-left bundle** (x 79-112, y 57-75): lit tips (0.8) along the rim of the hole, combed streaks, and a shade row under it.
+- **East lobe** (x 121-130, y 51-75): vertical streaks of 0.66 and 0.55 with a dark east edge (0.3).
+- The two round 7 flaps are gone. The largest one-tone straw run is now 47 texels (#9a775a), down from 123 (#926f5a) and 64 (#6f4e46).
+- At 3x over its base it reads as straw slumped into a hole, which agrees with the art director. **Pass.**
+- Polish (XR8-D1): the east lobe has no tips along its lower end and its west light is weak (ΔL 0.05); the lower-left bundle is ringed by a dark line that reads as drawn.
+- **Not itemised in the PR.** The boarded window and the crack changed too (2,992 overlay texels below the eave, 1,996 alpha changes). The overlay shares the house's random stream, which the new thatch consumes differently.
+  - The boards are now three darker planks with gaps, a brace and nails with rust runs, and the window box shows under them.
+  - The crack is now one longer split down the stone from the sill, where round 7 had two short segments.
+  - Both still read; I judge them as drawn. The same stream reshuffles 789 wall texels on the hut (board grain, the shade under the eave, the foot weeds) and 1,176 on the herbalist (herbs, stones, the shade under the eave), all inside each sprite.
+
+### The composite (round 8)
+
+- `sha256(scene.composite(load_zone('crossroads')))`: main c0de8798…, round 2 92f73de6…, head **cc2fa5e3a17f7a64f2decfd22c8973bd6936be4cd4b5b9f8b77545d02ea6e787**. All three reproduce, and head matches the painter.
+- Against main, 58,411 texels change, as the painter says. Per box (old and new boxes; boxes overlap):
+
+| Box | Painter | Measured |
+| --- | --- | --- |
+| hut | 18,645 | 18,645 |
+| herbalist and its damage | 24,203 | 24,203 |
+| handcart | 5,372 | 5,372 |
+| square_puddles | 14,462 | 14,462 |
+| well_shadow | 2,633 | 2,633 |
+| well_choked_shadow | 1,259 | 1,259 |
+| anvil_shadow | 726 | 726 |
+| outside every box | 6 | 6, at x 662-673, y 796-797 (the cart's contact in `ground.png`) |
+
+- **Against round 2, 40,175 texels change: 17,255 in the hut's box and 22,920 in the herbalist's, 0 anywhere else.** Nothing outside the three thatch pictures moved, and `ground.png` is unchanged (169 texels against main, all at the cart).
+
+### Fix list (round 8)
+
+These codes are in the records' `reviewer.fix_list`. All are polish; none blocks merging.
+
+**hut, herbalist** (shared recipe):
+
+- **XR8-T1** (polish, recommended; Claude A's call): the straw is tan (C 0.061, h 66) where the zone's hay is gold (C 0.117) and T12 is C 0.137.
+  - No new tone is needed: draw the body and tips from brass_warm and brass with sand_warm, as the kits' `STRAW` does, and keep the shade on sand_cool.
+  - Then re-measure ruling 1.
+- **XR8-T2** (polish): lengthen the roll-off.
+  - Grade 0.71 → 0.65 → 0.57 over 12 to 16 rows (today 8 rows at −0.023, then 6 to 7 at −0.135).
+  - Step the east quarter's vertical seam with the courses: hut x 194-196, rows 76-88; herbalist x 175, rows 97-109.
+  - This is the art director's "a touch more form".
+- **XR8-T3** (polish, robustness): take the recipe off the lines.
+  - About one render in two fails ruling 1 at other seeds.
+  - Aim for raw noise ≤ 13.5 % and tones ≥ 12.3 at the shipped seed, and check a few seeds, before the recipe changes again or ruling 1 becomes code.
+- **XR8-T4** (polish, XR7-T6 residue): the contact shade under the stack is still a straight 3-row band (hut rows 65-67, x 178-208; herbalist rows 74-76, x 169-199). Let all of it follow the tips.
+- **XR8-T5** (polish): give the ridge ligger a lit top row and uneven segment lengths, so it reads as a rod rather than a dashed rule.
+- **XR8-T6** (polish): close the gaps in the east hip's outline.
+  - No dark edge texel on 30 of 62 rows on the hut and 20 of 82 on the herbalist, unchanged since round 2.
+  - The lighter hip (0.55, was 0.43) now shows the gaps as a dotted edge at 3x and up.
+
+**herbalist_damage:**
+
+- **XR8-D1** (polish): tips along the east lobe's lower end and a stronger west light; drop the dark ring round the lower-left bundle.
+
+**Status of the XR7 codes:** T1, T2, T3, T4, T7 and D1 pass. T5 passes for the spars, with the ligger left as XR8-T5. T6 passes for the apron, with the shade left as XR8-T4. C1, C2, P1 and S1 were skipped as asked and stay open on their records.
+
+### False positives (round 8)
+
+- `detail.volume` on the hut [178,42,210,70] and the herbalist [169,54,200,78] ("the red reads 2D: 1 light plane"). Both boxes are the stack with the flat GR3 contact shade under it (#684441, 3 rows); ruling 2 of round 7 covers it.
+- `detail.bar` on the hut (0.699) and the herbalist (0.706), both blockers, are kept as measurements; ruling 1 replaces the floor for thatch. The herbalist's `detail.light` leads (glass, door, stone) are unchanged in kind and kept as evidence.
+
+### Gate (round 8)
+
+- Before this round, `python3 -m scripts.review.gate --check` refused hut, herbalist and herbalist_damage: their records were pending, and their queue entries hold other bytes.
+- This round sets the `reviewer` block to `pass` in those three records only, with the fix lists above. The gate now prints `ok`, with an `ADVISORY` for eight queued passes: anvil_shadow, handcart, herbalist, herbalist_damage, hut, square_puddles, well_choked_shadow and well_shadow. `ground` is not queued.
+- `python3 -m unittest scripts.review.test_review`: 178 tests OK.
+- For Claude A:
+  - Removing the eight queue entries and re-pinning the composite in `test_kit_scene_intake.py` (c0de8798… → cc2fa5e3…) are Claude A's calls.
+  - XR8-T1 and XR8-T3 should be decided before the recipe is reused or ruling 1 is written as code. Changing the straw's colour resets the three records to pending.
+- This round edits no art, queue entry, detector, guard, threshold, CI or game code.
+
+### Not checked (round 8)
+
+- The scene gate (the 24-cell grid), the night tint, the 1x phone view and a device play-test.
+- `npm run verify`, `check:art-repro` and CI. This round changes only review files. The generator's byte-for-byte redraw of the two houses stands in for art-repro on them; I did not redraw the damage overlay that way.
+- The hay sprites' own review state. I used them only as the zone's existing straw colour.
+- Crops and scripts are in the auditor's scratch folder (`audit458r2-crops/`, `audit458r2-tools/`), not committed. The Eastward crops stay local.
