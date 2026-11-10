@@ -21,7 +21,8 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 7 review at d767e817 (PR #458, round 1 of the Crossroads remainder), docs/reviews/2026-11-08-crossroads-placed.md, round 7. Pass for these bytes (0a6ec7ca...). 169 texels change, all at the cart (x 653-766, y 788-808): its contact and cast; no lawn re-scatter."
  }
 }

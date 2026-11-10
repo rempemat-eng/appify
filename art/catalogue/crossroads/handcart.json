@@ -63,7 +63,12 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 7 review at d767e817 (PR #458, round 1 of the Crossroads remainder), docs/reviews/2026-11-08-crossroads-placed.md, round 7. Pass for these bytes (3f8c46a4...). Side boards with butt joints and lit nails, a jointed felloe with an iron tyre lit upper left, eight spokes, a banded hub, shafts on a crossbar resting on the setts, a burlap sack and a crate with a shaded east side; foot and canvas unchanged; bar 0.671 -> 0.854.",
+  "fix_list": [
+   "XR7-C1 (polish): the floor's top plane (rows 29-35, x 23-61) is short end-on blocks 8-10 texels wide between dark joints and reads as brick; run the boards long with gaps.",
+   "XR7-C2 (polish): cluster noise 40.5 % (under the 48 % fault line); calm the board grain to sibling streaks."
+  ]
  }
 }

@@ -63,7 +63,17 @@
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Round 7 review at d767e817 (PR #458, round 1 of the Crossroads remainder), docs/reviews/2026-11-08-crossroads-placed.md, round 7. Fail: the thatch (XR7-T1 to T4). Detector detail.volume on the east hip [205,20,259,83] ruled a false positive (calm shaded hip by design, as the slate gables' shaded slopes). Bar 0.807 kept as a measurement; ruling 1 replaces the 0.8 floor for thatch.",
+  "fix_list": [
+   "XR7-T1 (fault): the front slope is two flat bands that brighten towards the eave (centre column OKLab L 0.68 rows 24-55, 0.81 rows 56-77, lip 0.81-0.92), so the roof reads as a tilted plane, not a rounded mass; shot 12's daylight thatch has a receding darker crest (L 0.40-0.63 over ~14 art px), a calm lit body (0.70) and a roll-off over its last ~16 art px (0.70 -> 0.59) into a dark fringe. Draw the crest band under the ridge roll one to two tones down, keep the body calm, and take the lowest 12-16 texels above the eave lip one to two tones down (at least -0.08 L) before the lip; round the eave's lower corners (radius 6-8 texels, today square) and the ridge roll's ends (3-4). Check: on the centre column the front's brightest band is not in the 16 texels above the lip.",
+   "XR7-T2 (fault): pale. The lower front's body is #dbbd87 (L 0.81, C 0.078) and the ridge top #fff2db (0.965), the brightest roof values in the street (slate lit planes 0.51-0.54; shot 12's lit straw 0.70). Move the body to L 0.68-0.72 (sand 3, sand_warm 3) and keep #dbbd87 / #f8d79c for bundle tips only (at most 15 % of the front's texels); no ridge texel above #f8d79c. A more golden straw than the sand ramp's C 0.06-0.08 needs a named tone and Claude A's ruling (as plaster_fold).",
+   "XR7-T3 (fault): the moss cushions are the same three stamps on both houses (103 / 78 / 64 texels on the hut, 103 / 77 / 63 on the herbalist, the same five tones), about 70 % one tone (#25633d), L 0.47 against straw of 0.65-0.80 round them (dL -0.18 to -0.33) and hue 154 against the straw's 66: they read as stuck-on green ovals. Draw moss olive (hue 100-130, C at most 0.07) within dL 0.10 of the straw round it, spread along a course under the bundle tips with straw tips over its top edge, in 3 or more tones with none over 50 %, seeded per house; or drop it (shot 38's moss sits 0.03-0.05 under its straw).",
+   "XR7-T4 (fault, ruling 1): roof cluster noise 28.2 % (hut) / 30.7 % (herbalist) raw, 28.6 / 28.4 % through Eastward's pipe, against shot 12's thatch 5.1 %. Bring the roof (stack excluded) to at most 15 %, keeping tones >= 11.9 and shapes >= 27.9 a patch through Eastward's pipe (today 23.0 / 53.8 and 21.6 / 49.4). Fewer hard course lines: let every other course show only as a soft one-tone step, vary bundle width 5-11 texels (today a fixed 8, a regular scallop that reads as tiers at 2x) and course spacing by +-2.",
+   "XR7-T5 (polish): the ridge ligger with posts every ~14 texels and the eave ligger with evenly spaced X spars read as railings at 1x and 2x. Make the spars short irregular crossing pairs partly under the straw, or drop the eave ligger.",
+   "XR7-T6 (polish): the stack's apron is a 6-row flat lead slab (hut rows 59-64, herbalist 68-73) over a ruler-straight 31 x 3 contact band; 11.9 asks 2 texels. Make it 2-3 rows and let the contact shade follow the bundle tips.",
+   "XR7-T7 (polish): the east hip's courses are straight diagonal lines with no tips; give them the front's lumpy tips one tone down."
+  ]
  }
 }
