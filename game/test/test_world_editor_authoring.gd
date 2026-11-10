@@ -558,6 +558,13 @@ func test_the_editor_built_glade_is_a_whole_zone() -> void:
 	assert_that(ZonePlan.unexported_actors(root)).is_empty()
 	assert_bool(root.get_node("Ground").has_meta(&"kit_walk_owner")).is_false()
 	assert_object(root.get_node_or_null("Edge")).is_not_null()
+	# kit/terrain/materials.tres has no uid of its own, so the editor invents one that only its own
+	# cache knows and writes it into every zone it saves; elsewhere each load then warns "invalid
+	# UID". A committed zone names that file by its path alone.
+	var text := FileAccess.get_file_as_string("res://zones/editor_glade/editor_glade.tscn")
+	for line in text.split("\n"):
+		if line.begins_with("[ext_resource") and line.contains("res://kit/terrain/"):
+			assert_str(line).not_contains("uid=")
 	# it is a fixture, not a place in the game
 	var zones: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/zones.json"))
 	assert_bool(zones.has("editor_glade")).is_false()

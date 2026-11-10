@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b4qn3t5eqlqmo" path="res://world/zone.gd" id="1_2r7te"]
 [ext_resource type="Script" uid="uid://bkotnce36j3qd" path="res://world/terrain/terrain_ground.gd" id="2_reh6g"]
-[ext_resource type="TileSet" uid="uid://f8dqvux7407r" path="res://kit/terrain/materials.tres" id="3_1nvay"]
+[ext_resource type="TileSet" path="res://kit/terrain/materials.tres" id="3_1nvay"]
 [ext_resource type="Script" uid="uid://ls68nm0vxnek" path="res://world/terrain/walk.gd" id="4_nhhv7"]
 [ext_resource type="PackedScene" path="res://kit/props/woodland_oak.tscn" id="5_fxevn"]
 [ext_resource type="PackedScene" path="res://kit/props/woodland_pine.tscn" id="6_14xim"]
