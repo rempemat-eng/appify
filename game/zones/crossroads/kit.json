@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "97351368d066ae09df81b763f9e690b3cc9ed8542c6c06f2a2ee05dfce12b480",
+ "inputs": "35508744363b0e1501cf14f4377d34737c8f8567923070bbe480c5dc34e3a6a3",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -959,7 +959,7 @@
    "kind": "oak",
    "png": "oak_13.png",
    "foot": [
-    48,
+    312,
     336
    ],
    "offset": [
@@ -968,7 +968,7 @@
    ],
    "cond": null,
    "solid": [
-    12,
+    100,
     109,
     8,
     4

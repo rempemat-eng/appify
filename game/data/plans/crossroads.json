@@ -1547,11 +1547,11 @@
       {
         "kind": "oak",
         "at": [
-          16,
+          104,
           112
         ],
         "solid": false,
-        "why": "the planted bank under the walk (10 Nov: moved from the bank above the walk, y 24, where the top edge showed a bare trunk)",
+        "why": "the planted bank under the walk, east of the arrival from the woodland so the spawn, the door and the walk's first cells stay open (10 Nov, XT1; moved from the bank above the walk, y 24, where the top edge showed a bare trunk)",
         "sprite": "woodland/oak",
         "lawn_at": [
           40,

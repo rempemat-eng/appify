@@ -413,7 +413,7 @@ shape = SubResource("s17")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_oak_13"]
-position = Vector2(48, 333)
+position = Vector2(312, 333)
 shape = SubResource("s13")
 
 [node name="Solid_oak_21" type="StaticBody2D" parent="Walls"]
@@ -1047,7 +1047,7 @@ centered = false
 offset = Vector2(-30, -62)
 
 [node name="Oak13" type="Sprite2D" parent="Props"]
-position = Vector2(48, 336)
+position = Vector2(312, 336)
 texture = ExtResource("t44")
 centered = false
 offset = Vector2(-106, -247)
