@@ -1,7 +1,7 @@
 {
  "id": "crossroads/stall",
  "file": "game/zones/crossroads/art/stall.png",
- "sha256": "f3c2931574f4ebef85aaaa6cdf3738a44c95ac4364edc137b3daab9142964b3f",
+ "sha256": "587a55b017fc62aeaf194d40e495a40379a641ef51d5b23dd959319a1f6da5f4",
  "kind": "stall",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 36,
-   "tones": 19.97222222222222,
-   "shapes": 32.30555555555556
+   "tones": 24.47222222222222,
+   "shapes": 39.22222222222222
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.641,
-  "tones_ratio": 0.74,
-  "shapes_ratio": 0.641,
+  "ratio": 0.779,
+  "tones_ratio": 0.906,
+  "shapes_ratio": 0.779,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    32,
-    119,
-    99,
+    36,
+    120,
+    77,
     156
    ],
-   "message": "crossroads/stall: the red is lit from the right (luminance rises 13 L per H to the east)",
+   "message": "crossroads/stall: the red is lit from the right (luminance rises 9 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -56,15 +56,20 @@
     130,
     159
    ],
-   "message": "crossroads/stall: detail bar 0.64 of Eastward's prop band (20.0 tones, 32.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/stall: detail bar 0.78 of Eastward's prop band (24.5 tones, 39.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-08",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. The produce in all four crates is one chevron scale pattern recoloured (reads as scales, not fruit); a hard-edged darker rectangle sits across the awning's middle like an overlay; the awning is a front-on flat sheet with no top plane or fold bands; the menu board is a navy block with three cream bars (a UI glyph); the sack is a two-tone cream disc. Counter boards, nails with rust and the posts pass. Fix: produce as individual round items (lit cap, dark underside, a glint) heaped above the crate rims; folds on the awning as vertical bands (4, 3, 2, 1) with the shade under the valance drawn as a ramp step, a top plane rising back; chalk lettering as broken 1-2 px strokes in a framed board; a sack with a tied neck and fold bands. Rejected detector finding: detail.light on the red stripes. Bar 0.64."
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Round 6 review at 60ffc0c1 (PR #456), docs/reviews/2026-11-08-crossroads-placed.md, round 6. Pass for these bytes (587a55b0...). XR5-S1 pass: no #9e8675 left in the hanging cream faces (y 43-63); the deep fold is #aa8a5c (L 59.4, C 29.8, h 78.4; dE76 21.0 and 23.4 to the wall stones #a49689 and #988e85), and at 2x placed the cream reads as clean cloth. XR5-S2 pass: one fold a stripe on all 10 stripes, lit ridge then mid then deep strip west to east, the deep strip unbroken from y 43 to the hem, stepping at most one column once and widening by one column on 3 stripes. XR5-S3 pass: the east 3 columns are the ramp's darkest step on every row y 43-63 of all 10 stripes; no row has an east column lighter than a column west of it. XR5-S4 pass: #2f0912 (63 texels) -> #2e0a0d and #3d2d30 (12) -> #413438; no other texel below the valance changed; 16 of 16 nails keep their lit #737078 texel; alpha unchanged. The east bands are one-tone over 68-69 texels and the cream body over 70: accepted for cloth (round 5 asked for the 3-column band; Eastward 04's canopy holds one-tone areas of about 188 texels at x1.37). Condition, not a picture fault: the deep cream is drawn as code('lamplit', 3), a named-only tone that house-style.md reserves for torchlight on the Undercroft's stone (XR6-S1). Registering the same hex as a named plaster tone leaves these bytes and this verdict unchanged; any byte change resets it to pending. Detectors: detail.bar 0.779 and detail.light on the counter front, polish, kept as measurements.",
+  "fix_list": [
+   "XR6-S1 (fault, source only, blocks merging #456; no pixel change): stop naming lamplit for cloth. house-style.md and palette.py reserve lamplit (named only) for a torch's light on the Undercroft's stone, used only by undercroft.py. Add one named-only tone of plaster at #AA8A5C (kind sibling-tone:plaster, appended to FAMS so no code moves, in NAMED_ONLY, with a sentence in house-style.md as for lamplit_dusk), with Claude A's ruling, and name it in p_stall_hd and in the XR5-S4 edge merge in place of lamplit. stall.png must stay 587a55b0...; if it changes, it is reviewed again.",
+   "XR6-S2 (polish): the gathered-top row y 45 alternates lit and body one texel at a time on several stripes (west edge, gather, ridge); merge it into 2-texel gathers.",
+   "XR6-S3 (polish): the five cream stripes put their ridge at column 4 or 5 and differ only in one step and the widening row; at 1x they read as one stamp. Spread the ridges over 3-4 columns between stripes."
+  ]
  }
 }

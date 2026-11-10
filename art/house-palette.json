@@ -187,6 +187,10 @@
     "lamplit_dusk": {
       "kind": "sibling-tone:lamplit",
       "body": "#654B4B"
+    },
+    "plaster_fold": {
+      "kind": "sibling-tone:plaster",
+      "body": "#AA8A5C"
     }
   },
   "ramps": {
@@ -297,7 +301,8 @@
     "lamplit": ["#492A21", "#6B4932", "#8B6946", "#AA8A5C", "#C4A56F", "#DABE8A"],
     "lamplit_warm": ["#513120", "#725130", "#937244", "#B1935A", "#CEAD6F", "#E5C58C"],
     "lamplit_cool": ["#43211D", "#653F2E", "#855F42", "#A47F57", "#BE9A69", "#D2B382"],
-    "lamplit_dusk": ["#250F22", "#3B2230", "#51363E", "#654B4B", "#80635A", "#967A68"]
+    "lamplit_dusk": ["#250F22", "#3B2230", "#51363E", "#654B4B", "#80635A", "#967A68"],
+    "plaster_fold": ["#492A21", "#6B4932", "#8B6946", "#AA8A5C", "#C4A56F", "#DABE8A"]
   },
   "edges": {
     "grass": "#242924",
@@ -443,7 +448,8 @@
     "lamplit": "sibling:lamp",
     "lamplit_warm": "sibling:lamplit",
     "lamplit_cool": "sibling:lamplit",
-    "lamplit_dusk": "sibling-tone:lamplit"
+    "lamplit_dusk": "sibling-tone:lamplit",
+    "plaster_fold": "sibling-tone:plaster"
   },
   "from_materials": {
     "grass": {

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/flower_tub_27",
  "file": "game/zones/crossroads/art/flower_tub_27.png",
- "sha256": "72a0aa200ec57d3db9c0ef5001add8bfbd70bbb3a62828a2f8e44b4a89a22c96",
+ "sha256": "7c51508fff62a2145e589f7c3ad69ec1f7c58b40886ebdf445e4ef9210f406d0",
  "kind": "tub",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 24.0,
-   "shapes": 35.0
+   "tones": 30.0,
+   "shapes": 42.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.695,
-  "tones_ratio": 0.889,
-  "shapes_ratio": 0.695,
+  "ratio": 0.834,
+  "tones_ratio": 1.111,
+  "shapes_ratio": 0.834,
   "passed": false,
   "group": "prop"
  },
@@ -39,20 +39,24 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    7,
-    23,
+    8,
+    18,
     48,
     54
    ],
-   "message": "crossroads/flower_tub_27: detail bar 0.69 of Eastward's prop band (24.0 tones, 35.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/flower_tub_27: detail bar 0.83 of Eastward's prop band (30.0 tones, 42.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-08",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Shared tub build (see flower_tub_9)."
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. Pass. XR3-T1 fixed: the full-width ruled dark line under the rim is gone; lit west, body and shade meet along curves that step down the face, and the belly turns under deeper east, so the body reads as a bellied clay vessel at 1x and 2x placed. Largest clay one-tone run 37 texels (round 3: up to 118; limit 40); the planting's largest run is 40 texels, unchanged bytes from round 3 where it passed (XR2-T5). Cluster noise 47.1 % -> 29.4 % (limit 40 %). XR3-T2 fixed: bloom as ragged 2-4 texel pale clusters under the rim and down one side, different per tub. XR3-T3 fixed: no near-black corner block (largest L<40 blob in the lower-right quadrant 31 -> 13 texels, the outline itself); the base row is a 2-tone reflected light. XR3-T4 partly fixed: there is a 2-row soil band with lit clods under a lit far wall, but it runs straight across the whole width in light taupe (#8d715a, #73584a, #7a6250), and at 4x-5x it reads as a thin grey rule under the rim (polish XR4-T1). The body's sibling cells read slightly blotchy at 6x+ (polish XR4-T2). Bar 0.74 -> 0.83 (detector polish only). Compared with the Eastward 17 churns and 13 bell at x1.37 nearest neighbour.",
+  "fix_list": [
+   "XR4-T1 (polish): the soil band reads as a straight grey rule: darken it into a warm earth (the clay shade's hue, e.g. #5b3f3a with #73584a clods only), break its lower edge where leaves hang over the near rim, and let it vary in depth 1-2 rows along the tub",
+   "XR4-T2 (polish): merge the body's sibling cells into fewer, larger patches that follow the belly's curve (3-4 cells across, not 6-8), and make the lime bloom chalkier (whiter than the clay's lit tone) so it does not read as grey smudges"
+  ]
  }
 }

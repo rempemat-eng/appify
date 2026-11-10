@@ -1,7 +1,7 @@
 {
  "id": "crossroads/lantern_dark",
  "file": "game/zones/crossroads/art/lantern_dark.png",
- "sha256": "073d0d7bb9164e6aedcf8c5e7d54391b377fb85bdb5b42a4bceef6518b84b854",
+ "sha256": "a5e98db14d5340c74ca269c9db7229930d24d09b946cded37f46fd56ca4bb7d5",
  "kind": "lamp",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 9,
-   "tones": 15.88888888888889,
-   "shapes": 23.77777777777778
+   "tones": 17.88888888888889,
+   "shapes": 30.555555555555557
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.472,
-  "tones_ratio": 0.588,
-  "shapes_ratio": 0.472,
+  "ratio": 0.607,
+  "tones_ratio": 0.663,
+  "shapes_ratio": 0.607,
   "passed": false,
   "group": "prop"
  },
@@ -44,15 +44,18 @@
     65,
     220
    ],
-   "message": "crossroads/lantern_dark: detail bar 0.47 of Eastward's prop band (15.9 tones, 23.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/lantern_dark: detail bar 0.61 of Eastward's prop band (17.9 tones, 30.6 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-08",
+ "reviewed": "2026-11-09",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-08",
-  "note": "Review at 9366301b (main bytes), docs/reviews/2026-11-08-crossroads-placed.md. Head and column pass (cap planes, cylinder banding). The plinth is two stacked slabs whose top and front faces are flat fills with one lit line, and the moss is three evenly spaced flat green 4x4 squares that read as indicator lights (the glyph fault Matt flagged on the old waystone, calibration C7). Fix: dressed stone with a bevel lit on the top-left arris, a chipped corner, a course joint, moss as leaf-2/3 clusters in the joint under the upper slab (2 px cap over a 4 px band). Compared with Eastward 13 lamp at x1.37; bar 0.47."
+  "verdict": "pass",
+  "date": "2026-11-09",
+  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. Pass. XR3-L1 fixed: each slab has a top plane (upper 2 rows, lower 3 rows) in the light stone tone, a lit west column, a front in three tones laid out as dressed blocks with 1 px joints, the east end in a 3-4 column core shadow, and stepped chipped corners; the plinth's largest one-tone run is 47 texels (round 3: 203; limit 60). XR3-L2 fixed: two moss clumps of different size, west and east, each a lit cap over a ragged dark underside; no row of equal tufts. Glass unchanged (XR2-L3 stays fixed). Bar 0.57 -> 0.61: the iron post is most of the picture and is unchanged since it passed in round 1; the bar is a measurement here, not a fault. Noise 34.6 -> 33.2 %. Compared with the Eastward 13 lamp and 17 rocks at x1.37. Polish XR4-L1.",
+  "fix_list": [
+   "XR4-L1 (polish): each dressed block is close to one tone with even 2-texel dashes for tooling: group the tooling into one or two wear patches per block, add a 1-row lit bevel along the lower slab's top-front arris, and darken the contact row under the lower slab by one step so the plinth separates from the equally light paving"
+  ]
  }
 }

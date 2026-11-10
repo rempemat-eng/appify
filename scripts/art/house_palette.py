@@ -99,6 +99,9 @@ BASES = {
     # the lamp's dim light on stone where the pool fades (Claude A's G-38 ruling, round 9): one named-only tone of
     # lamplit's, between stone_warm 1 and lamplit_cool 1, for the Undercroft's middle band; a tone, not a family
     'lamplit_dusk': ('sibling-tone:lamplit', '#654B4B'),
+    # the deep fold of cream cloth (Claude A's XR6-S1 ruling, Crossroads stall round 6): one named-only tone of
+    # plaster's, warm and chromatic where plaster 1 reads grey-taupe; a tone, not a family
+    'plaster_fold': ('sibling-tone:plaster', '#AA8A5C'),
 }
 
 # A cast shadow steps the ground this many tones down its own ramp, so it stays on the
