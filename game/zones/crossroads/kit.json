@@ -90,6 +90,12 @@
     24,
     80,
     40
+   ],
+   "pots": [
+    [
+     192.5,
+     10
+    ]
    ]
   },
   {
@@ -234,6 +240,12 @@
     336,
     72,
     48
+   ],
+   "pots": [
+    [
+     183.5,
+     22
+    ]
    ]
   },
   {
@@ -1858,8 +1870,8 @@
    "kind": "shadow",
    "png": "well_choked_shadow.png",
    "foot": [
-    832,
-    956
+    834,
+    932
    ],
    "offset": [
     0,
@@ -1878,8 +1890,8 @@
    "kind": "shadow",
    "png": "well_shadow.png",
    "foot": [
-    838,
-    956
+    834,
+    932
    ],
    "offset": [
     0,
@@ -1919,7 +1931,7 @@
    "png": "anvil_shadow.png",
    "foot": [
     1461,
-    908
+    895
    ],
    "offset": [
     0,
@@ -2058,7 +2070,7 @@
    "kind": "shadow",
    "png": "square_puddles.png",
    "foot": [
-    674,
+    773,
     718
    ],
    "offset": [

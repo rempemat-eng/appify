@@ -626,6 +626,288 @@ def thatch_ridge(a, rm, x0, x1, y_r, rng, fam='sand'):
             a[sm] = code('timber', 3 if d > 0 else 2)
 
 
+# ------------------------------------------------------------------------------------------------
+# combed hipped thatch (the hut and the herbalist, `thatch: combed` in the look): the two houses that
+# keep their hips (eastward-edges 11.9) drawn to stand beside the front-gable slate houses
+# ------------------------------------------------------------------------------------------------
+THATCH_COURSE = 4.2      # world px a course of straw shows (B8's course lines about every 12 E px, x1.37 / 3)
+THATCH_EAVE = 2.8        # world px of the eave's cut face, seen edge on
+THATCH_CREST = 2.4       # world px of the rounded crest along each hip
+THATCH_RIDGE = 4.4       # world px of the ridge roll
+THATCH_BLOCK = (4.0, 1.8)  # world px of the ridge's block-cut points: width, depth
+SAND_SIBS = ('sand_cool', 'sand', 'sand_warm')
+
+
+def _bundles(n, lo, hi, rng):
+    """Cut 0..n into runs of lo to hi texels (the last one merged if it would be a sliver)."""
+    cuts = [0]
+    while cuts[-1] < n:
+        cuts.append(cuts[-1] + int(rng.integers(lo, hi + 1)))
+    cuts[-1] = n
+    if len(cuts) > 2 and cuts[-1] - cuts[-2] < lo:
+        del cuts[-2]
+    return list(zip(cuts, cuts[1:]))
+
+
+def combed_thatch(a, rm, rx0, rx1, y_r, y_eave, hip, rng, fam='sand'):
+    """Long straw combed down the roof in courses, as Eastward's thatched cottage (shot 38, B8) lays
+    its roof: calm planes with the courses' lines across them, never a barcode of strands.
+
+    - The plane's light: lit (tone 4) high on the west, the body at 3, the east third turning away to 2.
+    - Courses THATCH_COURSE deep: each course's foot a lit lip a texel or two above a dark line (the
+      lip's shadow on the course below), the line wobbling a texel in runs of whole bundles (soft grid).
+    - Inside a course, bundles of straw 3 to 6 texels wide, each on one of the three sibling ramps at
+      the plane's tone (the odd one a tone off), with one or two combed streaks along it (a tone down,
+      or up on the lit side) and a groove between some bundles in the course's lower part.
+    - The hips: a rounded crest of straw along each slanted edge, lit on the west, in shade on the east,
+      a crease where it meets the plane.
+    Returns the per-texel plane tone (for the stack's contact shadow and the moss)."""
+    H, W = a.shape
+    Y, X = np.mgrid[0:H, 0:W]
+    span = max(1, rx1 - rx0)
+    ph = max(1, y_eave - y_r)
+    fx = (X + 0.5 - rx0) / span
+    fy = (Y + 0.5 - y_r) / ph
+    plane = np.where((fx < 0.4) & (fy < 0.6), 4, 3) - (fx > 0.66) * 1
+    plane = np.where((fx < 0.16) & (fy < 0.9), 4, plane)
+    plane = np.where((fx > 0.86) & (fy > 0.2), 2, plane)
+    tt = plane.astype(int).copy()
+    ff = np.full(a.shape, FI[fam], int)
+    ch = q(THATCH_COURSE)
+    # course feet from the eave up, each a wobbling line in runs of whole bundles
+    y = y_eave - q(THATCH_EAVE)
+    feet = []
+    while y > y_r + q(2.0):
+        feet.append(y)
+        y -= ch
+    sib = (FI[fam + '_cool'], FI[fam], FI[fam + '_warm'])
+    for k, yf in enumerate(feet):
+        yt = yf - ch
+        runs = _bundles(W, 3, 6, rng)
+        wob = 0
+        for (xa, xb) in runs:
+            wob = int(np.clip(wob + rng.choice([-1, 0, 0, 1]), -1, 1))
+            fi = sib[int(rng.choice([0, 1, 2], p=[0.2, 0.55, 0.25]))]
+            off = int(rng.choice([0, 0, 0, 0, 0, 0, 0, 1, -1]))
+            n = xb - xa
+            cols = np.arange(xa, xb)
+            # the bundle's tip: rounded, a texel lower in its middle than at its ends (a lumpy course
+            # line, B8, never a ruled board edge)
+            mid = (cols - xa >= 1) & (cols - xa < n - 1) if n >= 4 else np.zeros(n, bool)
+            for j, x in enumerate(cols):
+                foot = yf + wob + int(mid[j])
+                y0 = max(0, yt + wob)
+                if foot <= y0:
+                    continue
+                ff[y0:foot, x] = fi
+                tt[y0:foot, x] = plane[y0:foot, x] + off
+                # the lip: its last texel catching the light where the plane is lit
+                if 0 <= foot - 1 < H and (plane[foot - 1, x] >= 4 or (k + x // 5) % 3 == 0):
+                    tt[foot - 1, x] = plane[foot - 1, x] + off + 1
+                # under the tip, the course below in its shade: a texel two down, then one; deeper
+                # where two tips meet
+                if 0 <= foot < H:
+                    tt[foot, x] = plane[foot, x] - (2 if not mid[j] else 1)
+                if 0 <= foot + 1 < H and not mid[j]:
+                    tt[foot + 1, x] = min(tt[foot + 1, x], plane[foot + 1, x] - 1)
+            hh = yf - yt
+            # combed straw along the bundle: streaks on a sibling ramp at the same tone (shape without
+            # value noise), one in two a tone down; on the lit side now and then a tone up
+            for _ in range(2 + int(n >= 5) + int(rng.random() < 0.5)):
+                sx = xa + int(rng.integers(0, n))
+                sy = yt + wob + int(rng.integers(1, max(2, hh - 4)))
+                ln = int(rng.integers(3, 8))
+                ys_ = slice(max(0, sy), max(0, min(yf + wob - 1, sy + ln)))
+                r = rng.random()
+                if r < 0.5:
+                    ff[ys_, sx] = sib[(sib.index(fi) + int(rng.choice([1, 2]))) % 3]
+                elif r < 0.88 or plane[min(H - 1, max(0, sy)), sx] < 4:
+                    tt[ys_, sx] = plane[ys_, sx] + off - 1
+                else:
+                    tt[ys_, sx] = plane[ys_, sx] + off + 1
+    # the hips: a rounded crest of straw along each slanted edge
+    f_e = np.clip((y_eave - (Y + 0.5)) / ph, 0, 1)
+    dl = (X + 0.5) - (rx0 + hip * f_e)
+    dr = (rx1 - hip * f_e) - (X + 0.5)
+    cw = q(THATCH_CREST)
+    west = rm & (dl < cw)
+    east = rm & (dr < cw) & ~west
+    tt = np.where(west & (dl >= 1) & (dl < cw * 0.55), np.maximum(tt, 4) + (dl < 3) * 1, tt)
+    tt = np.where(west & (dl >= cw * 0.55), np.maximum(tt - 0, 3), tt)
+    tt = np.where(west & (dl >= cw - 1), tt - 1, tt)                  # the crease where it meets the plane
+    tt = np.where(east, np.minimum(tt, plane - 1) - (dr < 3) * 1, tt)
+    tt = np.where(east & (dr >= cw - 1), tt - 1, tt)
+    ff = np.where(west & (dl >= 1) & (dl < cw * 0.55), FI[fam + '_warm'], ff)
+    ff = np.where(east, FI[fam + '_cool'], ff)
+    # straw along the crests: dashes parallel to the edge, broken every few rows
+    for msk, d_, lit in ((west, dl, True), (east, dr, False)):
+        dash = msk & (np.abs(d_ - cw * 0.5) < 0.6) & (((Y // 3 + (X // 7)) % 3) != 0)
+        tt = np.where(dash, tt + (-1 if lit else -1), tt)
+    tt = np.clip(tt, 0, 5)
+    a[rm] = (ff * 8 + tt)[rm]
+    return plane
+
+
+def combed_ridge(a, rm, x0, x1, y_r, rng, fam='sand'):
+    """The ridge roll: a bolster of straw lit along its top, its body turning down to a dark
+    underside, two hazel liggers along it pinned by spars, its ends rounded down over the hips, and
+    its lower edge block-cut into points (lit on their west facets, shaded on the east) that throw a
+    zigzag of shade on the course under them."""
+    H, W = a.shape
+    Y, X = np.mgrid[0:H, 0:W]
+    rr = q(THATCH_RIDGE)
+    r_end = rr * 0.6
+    cxm = (X + 0.5)
+    inside = (cxm >= x0 - r_end * 0.3) & (cxm < x1 + r_end * 0.3)
+    # rounded ends: an ellipse cap at each end
+    endl = ((cxm - (x0 + r_end * 0.7)) / r_end) ** 2 + ((Y + 0.5 - (y_r + rr * 0.55)) / (rr * 0.6)) ** 2 <= 1
+    endr = ((cxm - (x1 - r_end * 0.7)) / r_end) ** 2 + ((Y + 0.5 - (y_r + rr * 0.55)) / (rr * 0.6)) ** 2 <= 1
+    core = (cxm >= x0 + r_end * 0.7) & (cxm < x1 - r_end * 0.7)
+    m = rm & (Y >= y_r) & (Y < y_r + rr) & inside & (core | endl | endr)
+    rel = Y - y_r
+    fx = (cxm - x0) / max(1, x1 - x0)
+    tt = np.select([rel < 1, rel < 3, rel < rr - 3, rel < rr - 1], [4, 5, 3, 2], 1)
+    tt = np.where((rel >= 1) & (rel < 3) & (fx > 0.55), 4, tt)
+    tt = np.where(fx > 0.7, tt - 1, tt)
+    tt = np.where(endr & ~core, tt - 1, tt)
+    fams = np.where(((X // 3 + Y // 4) % 4) == 0, FI[fam], FI[fam + '_warm'])
+    a[m] = (fams * 8 + np.clip(tt, 0, 5))[m]
+    # the liggers: hazel rods along the roll, lit on top, a dark texel under; spars pinning them
+    for ly in (y_r + q(1.3), y_r + rr - q(1.6)):
+        lm = m & (Y == ly) & core
+        a[lm] = code('timber_warm', 3)
+        a[lm & (fx < 0.5)] = code('timber_warm', 4)
+        um = m & (Y == ly + 1) & core
+        a[um] = np.where(fx[um] > 0.7, code('timber_cool', 1), code('timber', 1))
+        x = int(x0 + r_end + q(rng.uniform(2.0, 4.0)))
+        while x < x1 - r_end - 2:
+            pm = m & (Y >= ly - 1) & (Y <= ly + 1) & (X >= x) & (X < x + 2)
+            a[pm] = code('timber', 2)
+            a[pm & (Y == ly - 1) & (X == x)] = code('timber_warm', 4)
+            x += q(rng.uniform(4.4, 5.8))
+    # the block-cut points under the roll
+    bw, bd = q(THATCH_BLOCK[0]), q(THATCH_BLOCK[1])
+    yb = y_r + rr
+    pts = np.zeros(a.shape, bool)
+    x = int(x0 + r_end * 0.6)
+    while x + bw <= x1 - r_end * 0.6:
+        c = x + bw / 2.0
+        k = Y - yb
+        half = (bw / 2.0) * (1 - (k + 0.5) / bd)
+        pm = rm & (k >= 0) & (k < bd) & (np.abs(cxm - c) < half)
+        pts |= pm
+        west_f = pm & (cxm < c)
+        tw = 3 if (c - x0) / max(1, x1 - x0) < 0.7 else 2
+        a[west_f] = code(fam + '_warm', tw)
+        a[pm & ~west_f] = code(fam, tw - 1)
+        x += bw
+    # the points' shade on the straw under them: two texels following the zigzag, and the roll's own
+    # shade along its foot between the points
+    sh = (ndi.binary_dilation(pts, structure=np.array([[0, 0, 0], [0, 0, 0], [0, 1, 0]], bool), iterations=2) & ~pts & ~m) | \
+        (rm & ~pts & ~m & (Y >= yb) & (Y < yb + 2))
+    step(a, sh & rm, -2, lo=0)
+    return m | pts
+
+
+def combed_eave(a, rm, rx0, rx1, y_eave, rng, fam='sand'):
+    """The eave's cut face seen edge on: a lit crest where the straw rounds over, the butts' face in
+    combed clusters, a dark underside and a crisp straight lower edge on the soft grid (no fringe of
+    loose straw: the band on the wall below carries the shade). Returns its mask."""
+    H, W = a.shape
+    Y, X = np.mgrid[0:H, 0:W]
+    th = q(THATCH_EAVE)
+    em = rm & (Y >= y_eave - th)
+    rel = Y - (y_eave - th)
+    fx = (X + 0.5 - rx0) / max(1, rx1 - rx0)
+    tt = np.select([rel < 1, rel < 3, rel < th - 2, rel < th - 1], [4, 5, 3, 2], 1)
+    tt = np.where((rel >= 1) & (rel < 3) & (fx > 0.6), 4, tt)
+    tt = np.where(fx > 0.72, tt - 1, tt)
+    ff = np.full(a.shape, FI[fam + '_warm'], int)
+    # the butts: clusters of short dark ends across the face, never a regular comb
+    face = (rel >= 3) & (rel < th - 2)
+    for (xa, xb) in _bundles(W, 3, 6, rng):
+        # each bundle's crest a tone of its own, its butts in short dark ends at different depths
+        if rng.random() < 0.4:
+            tt = np.where((rel >= 1) & (rel < 3) & (X >= xa) & (X < xb), tt - 1, tt)
+        for _ in range(1 + int(rng.random() < 0.5)):
+            sx = xa + int(rng.integers(0, max(1, xb - xa)))
+            sy = int(rng.integers(3, max(4, th - 3)))
+            tt = np.where((X == sx) & (rel >= sy) & (rel < sy + 2) & em, tt - 1, tt)
+        r = rng.random()
+        if r < 0.3:
+            ff[:, xa:xb] = FI[fam]
+        elif r < 0.45:
+            ff[:, xa:xb] = FI[fam + '_cool']
+    tt = np.clip(tt, 0, 5)
+    a[em] = (ff * 8 + tt)[em]
+    return em
+
+
+def eave_line(a, L, R, y_top, keep):
+    """The crisp line under the thatch's eave on the wall (eastward-edges 11.9's band under the
+    bargeboards, GR4): two texels about 70 % darker, nothing in them above GABLE_LINE_MAX of the
+    wall's median luminance; `keep` gathers them so the tidy leaves them alone."""
+    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+    (n_line, d_line), _ = VO.GABLE_BAND
+    Lm = VO.lum()
+    body = (X >= L) & (X < R) & (Y >= y_top + q(8)) & (Y < y_top + q(14)) & (a >= 0) & (a % 8 <= 5)
+    med = float(np.median(Lm[a[body]])) if body.any() else 1.0
+    line = (X >= L) & (X < R) & (Y >= y_top) & (Y < y_top + n_line) & (a >= 0)
+    VO.darken(a, line, d_line, most=3)
+    for _ in range(5):
+        hot = line & (a % 8 <= 5) & (a % 8 > 0) & (Lm[np.clip(a, 0, None)] > VO.GABLE_LINE_MAX * med)
+        if not hot.any():
+            break
+        step(a, hot, -1, lo=0)
+    keep |= line
+    return line
+
+
+def thatch_stack(a, rm, plane, xs, cw, y_foot, rise, rng, wide=False, soot=1.0, fam='sand'):
+    """A stack standing in the thatch's shaded east part, as the gable houses' stacks (11.9, GR3): it
+    rises straight up through the roof; a lead apron two texels deep along its whole foot (lit lead over
+    its dark), a soaker up each side (the east a step darker), and its contact shadow on the straw: the
+    straw taken down to its floor for 3 to 4 texels under the apron and 2 texels east of the stack.
+    Returns the top middle of each pot (texels)."""
+    H, W = a.shape
+    Y, X = np.mgrid[0:H, 0:W]
+    sx0 = int(xs - cw // 2)
+    sx1 = sx0 + cw
+    y_top = y_foot - q(rise)
+    before = a.copy()
+    chimney(a, rm, sx0, sx1, y_top, y_foot, rng, wide=wide, soot=soot)
+    st = (X >= sx0) & (X < sx1) & (Y >= y_top) & (Y < y_foot)
+    above = Y < y_top
+    restore = (a != before) & ~(st | above)
+    a[restore] = before[restore]
+    step(a, st & (X >= sx1 - 2), -1, lo=0)
+    fl = (X >= sx0 - 1) & (X < sx1 + 1) & (Y >= y_foot) & (Y < y_foot + 2) & rm & ~st
+    a[fl & (Y == y_foot)] = code('slate_cool', 4)
+    a[fl & (Y == y_foot + 1)] = code('slate_cool', 3)
+    soak = np.zeros(a.shape, bool)
+    for xe, t in ((sx0 - 1, 4), (sx1, 3)):
+        m = (X == xe) & (Y >= y_foot - q(1.4)) & (Y < y_foot) & rm & ~st
+        a[m] = code('slate_cool', t)
+        soak |= m
+    sh = rm & ~st & ~fl & ~soak & (((X >= sx0 - 1) & (X < sx1 + 1) & (Y >= y_foot + 2) & (Y < y_foot + 2 + 4 - (X >= sx0 + cw // 2)))
+                                   | ((X >= sx1 + 1) & (X < sx1 + 3) & (Y >= y_top + q(4)) & (Y < y_foot + 5)))
+    straw = sh & (a >= 0) & np.isin(a // 8, [FI[f] for f in SAND_SIBS])
+    # (each straw texel three tones down, no lighter than 1: the floor in the core, the combing kept)
+    a[straw] = FI[fam + '_cool'] * 8 + np.minimum(np.maximum(a[straw] % 8 - 3, 0), 1)
+    edge = ndi.binary_dilation(sh, structure=np.array([[0, 0, 0], [0, 0, 0], [0, 1, 0]], bool)) & ~sh & rm & ~st & ~fl
+    edge &= (a >= 0) & np.isin(a // 8, [FI[f] for f in SAND_SIBS])
+    a[edge] = (a[edge] // 8) * 8 + np.minimum(a[edge] % 8, 1)
+    made = (a != before) & (a >= 0) & (Y < y_top)
+    n = 2 if wide else 1
+    pots = []
+    for i in range(n):
+        pc = sx0 + cw * (i + 1) / (n + 1)
+        col = made & (X >= pc - q(1.5)) & (X < pc + q(1.5))
+        ys_ = np.nonzero(col.any(1))[0]
+        pots.append((round(pc, 1), int(ys_.min()) if len(ys_) else int(y_top)))
+    return pots, st | fl | soak
+
+
 def ridge_tiles(a, rm, x0, x1, y_r, rng, fam='clay'):
     """Half-round capping tiles along the ridge: each lit across its crown, dark under its round,
     its west end lapping over the last one."""
@@ -1777,6 +2059,7 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
     info = dict(L=L, R=R, B=B, y_e=y_e, y_r=y_r, W=W, H=H)
     trade = TRADE.get((spec.get('sign') or [None, None])[1]) or spec.get('kind')
     span = (L, R, y_e, B)
+    keep = np.zeros(a.shape, bool)             # texels the tidy leaves alone (nail lights, the eave's line)
 
     # walls ---------------------------------------------------------------------------------------
     wall = spec.get('wall', 'stone')
@@ -1786,7 +2069,13 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
     elif wall == 'ashlar':
         ashlar_wall(a, L, y_e, R, B - fh, rng, span=span)
     elif wall == 'boards':
-        board_wall(a, L, y_e, R, B - fh, rng, span=span)
+        if spec.get('nails') == 'set':
+            # forged heads set into the boards (GR2, as the boarded gables): their own generator, so
+            # the house's draws stay as they were
+            board_wall(a, L, y_e, R, B - fh, rng, span=span, nails=keep,
+                       nail_rng=np.random.default_rng(7919 * int(L) + int(R) + int(y_e)))
+        else:
+            board_wall(a, L, y_e, R, B - fh, rng, span=span)
         for (xa, xb, t) in ((L, L + q(2.6), 3), (R - q(2.6), R, 2)):
             timber(a, xa, y_e, xb, B - fh, rng, 'timber', t)
     else:
@@ -1880,6 +2169,36 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
             made = (a != before) & (a >= 0)
             stood |= made
             VO.protrusion(a, made, (before >= 0) & ~made)
+    elif roof == 'thatch' and spec.get('thatch') == 'combed':
+        # the hipped thatch at the front-gable houses' standard (the hut and the herbalist keep their
+        # hips: 11.9): combed straw in courses, a crested hip each side, a block-cut ridge roll, a crisp
+        # eave over its line and band on the wall, a stack in the shaded east part with its apron
+        rx0, rx1 = rx0 - q(1.5), rx1 + q(1.5)
+        y_eave = y_e + q(4)
+        rm = V.roof_mask(a.shape, rx0, rx1, y_r, y_eave, hip=hip, round_=q(5))
+        a[rm] = -1
+        plane = combed_thatch(a, rm, rx0, rx1, y_r, y_eave, hip, rng)
+        combed_ridge(a, rm, rx0 + hip, rx1 - hip, y_r, rng)
+        combed_eave(a, rm, rx0, rx1, y_eave, rng)
+        info['keep'] = keep
+        info['pots'] = []
+        if spec.get('chimney') and spec.get('stack_t') is not None:
+            cw = q(spec.get('chimney_w', 9))
+            for cx in spec['chimney']:
+                y_foot = int(round(y_eave - spec['stack_t'] * (y_eave - y_r)))
+                pots, sm = thatch_stack(a, rm, plane, L + q(cx), cw, y_foot, spec.get('stack_rise', 11.0), rng,
+                                        wide=cw >= q(12))
+                info['pots'] += pots
+                keep |= sm & (a // 8 == FI['slate_cool'])
+        eave_shadow(a, L, R, y_eave, rng, roof='thatch')
+        eave_line(a, L, R, y_eave, keep)
+        info['eave_top'] = y_eave
+        if trade == 'herbalist':
+            before = a.copy()
+            herb_bundles(a, L + q(4), R - q(26), y_eave + q(0.6), rng)
+            made = (a != before) & (a >= 0)
+            stood |= made
+            VO.protrusion(a, made, (before >= 0) & ~made)
     elif roof == 'thatch':
         rx0, rx1 = rx0 - q(1.5), rx1 + q(1.5)
         y_eave = y_e + q(4)
@@ -1934,7 +2253,7 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
     # its shadow on the ground (eastward-edges 11.6), laid by the zone painter and the kit index
     info['cast'] = VO.house_cast(spec, V.D)
     info['look'] = spec
-    for cx in (spec.get('chimney', []) or []) if spec.get('gable_rise') is None else []:
+    for cx in (spec.get('chimney', []) or []) if spec.get('gable_rise') is None and spec.get('stack_t') is None else []:
         cw = q(spec.get('chimney_w', 9))
         x0 = L + q(cx) - cw // 2
         wide = trade in ('bakery', 'smithy') or cw >= q(12)
@@ -1949,7 +2268,7 @@ def building(spec: dict, seed: int = 0) -> 'V.Built':
         VO.protrusion(a, made, (before >= 0) & ~made, standoff=1.5)       # a board on its bracket
     foot_weeds(a, L, R, B, busy, rng)
     break_runs(a, rng, q(14))
-    V.finish(p, keep=info['gable']['keep'] if 'gable' in info else None)
+    V.finish(p, keep=info['gable']['keep'] if 'gable' in info else info.get('keep'))
     break_runs(a, rng, q(14))          # the outline's long rows too (the plinth's foot, a thatch's crown)
 
     # the damage ----------------------------------------------------------------------------------

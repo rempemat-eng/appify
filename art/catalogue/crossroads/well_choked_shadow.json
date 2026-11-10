@@ -1,14 +1,14 @@
 {
  "id": "crossroads/well_choked_shadow",
  "file": "game/zones/crossroads/art/well_choked_shadow.png",
- "sha256": "bbf0beadced51a27408a117c32b3ed4f623858f4d296e5c1754fa7526b11360a",
+ "sha256": "5e6425d885e020c3ee2af9fce8af231b2a31d30d4321a977581f0d8966f75f10",
  "kind": "well_choked_shadow",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  101,
-  21
+  71,
+  34
  ],
  "status": "pass",
  "counts": {
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-10-26",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

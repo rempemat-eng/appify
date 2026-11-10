@@ -250,6 +250,101 @@ def _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D, drifts=False)
     return drawn
 
 
+# props whose redraw keeps the lawn's scatter as it was (town.build, XR3-G1)
+LAWN_AS_BEFORE = ('cart',)
+
+# Props drawn as solids for their cast shadow (world px from the foot: x east, g south on the ground,
+# h up). ('cyl', cx, cg, rx, ry, h0, h1) is an upright drum on an ellipse; ('box', x0, x1, g0, g1, h0,
+# h1) a block. Measured from the pictures (density 3, texels / 3): the well's drum 20 wide on a ground
+# ellipse 5 deep, its posts to 44 and its roof slab 44 to 50; the anvil's stump 14 wide and 9 tall, its
+# waist, and its face 20 long with the horn to the west at 16 to 21.
+PROP_SOLIDS = {
+    'well': [('cyl', 0.0, -4.6, 10.0, 4.6, 0.0, 9.0), ('box', -9.0, -7.0, -5.5, -3.5, 9.0, 44.0),
+             ('box', 7.0, 9.0, -5.5, -3.5, 9.0, 44.0), ('box', -12.5, 12.5, -8.0, -1.0, 44.0, 50.0)],
+    'well_choked': [('cyl', 0.0, -4.6, 10.0, 4.6, 0.0, 8.0), ('cyl', 0.5, -4.6, 7.5, 3.4, 8.0, 12.0)],
+    'anvil': [('cyl', 0.5, -2.8, 7.2, 2.8, 0.0, 9.0), ('box', -3.0, 3.0, -4.0, -1.5, 9.0, 16.0),
+              ('box', -13.0, 7.0, -5.0, -0.5, 16.0, 21.0)],
+}
+
+
+def prop_shadow(solids, foot, d, W, H, kx, ky):
+    """A prop's cast shadow from its solids (PROP_SOLIDS): each solid's corners (a drum: its foot and
+    top ellipses) thrown (x + kx h, g + ky h) and filled as its hull, the union in texels."""
+    from scripts.art.native import volume as VO
+    fx, fy = foot[0] / d, foot[1] / d
+    Y, X = np.mgrid[0:H, 0:W] + 0.5
+    m = np.zeros((H, W), bool)
+    for s_ in solids:
+        if s_[0] == 'cyl':
+            _, cx, cg, rx, ry, h0, h1 = s_
+            th = np.linspace(0, 2 * math.pi, 48, endpoint=False)
+            pts = [(cx + rx * math.cos(t) + kx * h, cg + ry * math.sin(t) + ky * h) for h in (h0, h1) for t in th]
+        else:
+            _, x0, x1, g0, g1, h0, h1 = s_
+            pts = [(x + kx * h, g + ky * h) for x in (x0, x1) for g in (g0, g1) for h in (h0, h1)]
+        poly = VO._hull(np.array([((fx + x) * d, (fy + g) * d) for (x, g) in pts]))
+        ys = [p[1] for p in poly]
+        xs = [p[0] for p in poly]
+        y0, y1 = max(0, int(min(ys)) - 1), min(H, int(max(ys)) + 2)
+        x0_, x1_ = max(0, int(min(xs)) - 1), min(W, int(max(xs)) + 2)
+        if y1 <= y0 or x1_ <= x0_:
+            continue
+        m[y0:y1, x0_:x1_] |= VO._inside(poly, X[y0:y1, x0_:x1_], Y[y0:y1, x0_:x1_])
+    return m
+
+
+def setts_puddle(cv, cx, cy, rx, ry, seed=0):
+    """A puddle left by the storm in a slight hollow of the square's setts (texels; the fix queue: no
+    dithered margin, eastward-edges 5.3 and 5.4, house-style 5 Water):
+
+    - the hollow's setts damp and a tone darker in a band 2 to 4 texels wide round the water, its outer
+      edge soft and lobed on the soft grid (no checker, no one-texel teeth);
+    - at the water's edge the wet setts show through the shallows, two tones down, for 2 texels;
+    - the water reflects what stands over it: the sky's pale blue in its body, brightest in a broad
+      streak across its middle, and the dark of the setts' far edge along its north side (the near
+      bank's reflection, 5.3's dark band under a north bank);
+    - a lit rim of one texel where the meniscus catches the light on its upper-left (north-west) edge,
+      and a dark wet line along its south-east edge where the setts rise out of it.
+    Returns the mask of texels it changed."""
+    from scripts.art.native import softedge as SE
+    from scripts.art.native import softground as GD
+    from scripts.art.native.palette import C, step
+    H, W = cv.shape
+    yy, xx = np.mgrid[0:H, 0:W] + 0.5
+    e = ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2 + (GD.nz(H, W, 14.0, seed) - 0.5) * 0.4
+    water = SE.soft(e < 1.0, smooth=0.6, min_area=2.0)
+    if not water.any():
+        return np.zeros((H, W), bool)
+    damp = SE.soft(e < 1.0 + 0.55 + (GD.nz(H, W, 9.0, seed + 3) - 0.5) * 0.5, smooth=0.6) & ~water
+    damp |= ndi.binary_dilation(water, iterations=2) & ~water
+    before = cv.copy()
+    sel = damp & (cv % 8 < 6) & (cv >= 0)
+    cv[sel] = step(cv[sel], -1)
+    d_in = ndi.distance_transform_edt(water)
+    under = before.copy()
+    # the body: the sky's grey-blue seen dimly in shallow water over dark setts (never a flat sticker
+    # of saturated blue); the sky's light in a broad soft streak across the middle, along its long axis
+    cv[water] = C('slate', 2)
+    body = water & (d_in > 4)
+    streak = body & (np.abs((yy - cy) + 0.18 * (xx - cx)) < max(1.6, ry * 0.32))
+    cv[streak] = C('slate_warm', 3)
+    cv[streak & (d_in > 6) & (xx < cx)] = C('sky', 4)
+    # the far edge's reflection along the north side: a dark band, its lower edge stepped
+    north = water & ~GD.down(water, 3) & (d_in <= 3)
+    cv[north] = C('slate_cool', 1)
+    cv[north & ~GD.down(water, 1)] = C('slate_cool', 0)
+    # the shallows: the wet setts showing through at the edge (south and east sides)
+    shallow = water & (d_in <= 4) & ~north
+    cv[shallow] = step(under[shallow], -2)
+    # the meniscus: lit on the upper-left edge, a dark wet line on the south-east
+    ring = water & ~ndi.binary_erosion(water)
+    nw = ring & ((xx - cx) / rx + (yy - cy) / ry < -0.35)
+    se = ring & ((xx - cx) / rx + (yy - cy) / ry > 0.45)
+    cv[nw] = C('sky', 5)
+    cv[se] = C('stone_cool', 1)
+    return cv != before
+
+
 def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     from scripts.art.native import compose as CO
     from scripts.art.native import village as V
@@ -771,11 +866,24 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         did = dr.get('id', f'{kind}_{k}')
         objects.append(dict(id=did, kind=kind, png=add_pic(did, img), foot=(q(x), q(y)), anchor=anc, alpha=a,
                             cond=dr.get('if'), solid=solid, static=not dr.get('if')))
+        if hd and kind in LAWN_AS_BEFORE:
+            # the lawn's scatter is laid with the prop as it stood before its redraw, so redrawing it
+            # moves no ground away from it (XR3-G1): its own cast is laid from the new picture
+            old = V.PROPS[kind](w, h, seed)
+            objects[-1]['lawn_as'] = (old.rgba(), (old.ax, old.ay), old.alpha())
 
     # --- static cast shadows into the ground, then tidy ---------------------------------------------
     kx, ky = CO.SHADOW
     rim = max(2, q(2))
-    def shade_masks(o):
+    def shade_masks(o, lawn=False):
+        if hd and not lawn and o['kind'] in PROP_SOLIDS:
+            # (the fix queue: their shadows follow the props' volumes and feet, eastward-edges 7) the
+            # prop as solids standing on its foot, each thrown east and down by the one projection and
+            # filled as its hull: a round drum's shadow starts at its round foot, never at a sprite's
+            # lowest row; the rim one tone, the core two, a contact ellipse under the foot
+            m = prop_shadow(PROP_SOLIDS[o['kind']], o['foot'], D, W, H, kx, ky)
+            contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
+            return m, ndi.binary_erosion(m, iterations=rim), contact
         if o.get('cast') is not None:
             # a house: its volume's shadow (volume.house_cast, eastward-edges 11.6), a column east
             # of it shaped by its roof and stacks, at the measured depth: its outer band one tone,
@@ -827,7 +935,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             for o in objs:
                 if o.get('png') is None or o['kind'] in NOSHADE:
                     continue
-                m, _core, contact = shade_masks(o)
+                if o.get('lawn_as') is not None:
+                    img_, anc_, al_ = o['lawn_as']
+                    pics['__lawn_as'] = img_
+                    o = dict(o, png='__lawn_as', anchor=anc_, alpha=al_)
+                m, _core, contact = shade_masks(o, lawn=True)
                 sh |= m | contact
                 ft.append((o['foot'][0] / D, o['foot'][1] / D, o['kind']))
                 if o['kind'] == 'building':
@@ -847,7 +959,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             objs_old.append(o)
         shade_old, foots_old, near_old = lawn_inputs(objs_old)
         shade, foots, near_new = lawn_inputs(objects)
-        for k in [k for k in pics if k.startswith('__legacy_')]:
+        for k in [k for k in pics if k.startswith('__legacy_') or k == '__lawn_as']:
             del pics[k]
         rng_new = np.random.default_rng()
         rng_new.bit_generator.state = rng.bit_generator.state
@@ -900,7 +1012,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         sc = cv.copy()
         changed = np.zeros((H, W), bool)
         for k_, (px, py, prx, pry) in enumerate(art['puddles'][:2]):
-            changed |= GD.puddle(sc, q(px), q(py), q(prx * 1.9), q(pry * 2.1), seed=120 + k_)
+            changed |= setts_puddle(sc, q(px), q(py), q(prx * 1.15), q(pry * 1.3), seed=120 + k_)
         if changed.any():
             ys, xs = np.nonzero(changed)
             bx0, by0, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
