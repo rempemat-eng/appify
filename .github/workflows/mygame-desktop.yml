@@ -1,0 +1,77 @@
+name: MyGame desktop
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GODOT_VERSION: '4.7.2'
+      TEMPLATE_SHA256: f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011
+    steps:
+      - name: Check out the main commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Install verified Godot and desktop templates
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          godot=$(bash game/tools/get_godot.sh "$RUNNER_TEMP/godot")
+          version=$("$godot" --version)
+          [[ "$version" == "$GODOT_VERSION.stable.official."* ]]
+          template="Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          archive="$RUNNER_TEMP/$template"
+          curl --fail --silent --show-error --location --retry 3 -o "$archive" \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/$template"
+          printf '%s  %s\n' "$TEMPLATE_SHA256" "$archive" | sha256sum --check --strict
+
+          # get_godot.sh installs the engine in self-contained mode.
+          templates="$(dirname "$godot")/editor_data/export_templates/$GODOT_VERSION.stable"
+          mkdir -p "$templates"
+          unzip -j "$archive" 'templates/linux_release.x86_64' \
+            'templates/windows_release_x86_64.exe' -d "$templates"
+          printf 'GODOT=%s\n' "$godot" >> "$GITHUB_ENV"
+
+      - name: Export and package Windows and Linux
+        run: |
+          set -euo pipefail
+          stage="$RUNNER_TEMP/mygame-stage"
+          output="$RUNNER_TEMP/mygame-desktop"
+          mkdir -p "$stage/linux-x86_64" "$stage/windows-x86_64" "$output"
+          "$GODOT" --headless --path game --import
+          "$GODOT" --headless --path game --export-release 'Linux x86_64' "$stage/linux-x86_64/MyGame"
+          "$GODOT" --headless --path game --export-release 'Windows x86_64' "$stage/windows-x86_64/MyGame.exe"
+
+          test -s "$stage/linux-x86_64/MyGame"
+          test -x "$stage/linux-x86_64/MyGame"
+          test -s "$stage/windows-x86_64/MyGame.exe"
+          for platform in linux-x86_64 windows-x86_64; do
+            test -s "$stage/$platform/MyGame.pck"
+            printf 'commit=%s\ngodot=%s\nplatform=%s\ntemplate_sha256=%s\n' \
+              "$GITHUB_SHA" "$("$GODOT" --version)" "$platform" "$TEMPLATE_SHA256" \
+              > "$stage/$platform/BUILD-INFO.txt"
+          done
+
+          tar -czf "$output/MyGame-linux-x86_64.tar.gz" -C "$stage" linux-x86_64
+          (cd "$stage" && zip -q -r "$output/MyGame-windows-x86_64.zip" windows-x86_64)
+          (cd "$output" && sha256sum MyGame-linux-x86_64.tar.gz MyGame-windows-x86_64.zip > SHA256SUMS)
+
+      - name: Upload desktop builds
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: MyGame-desktop-${{ github.sha }}
+          path: ${{ runner.temp }}/mygame-desktop/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
