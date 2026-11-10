@@ -153,7 +153,8 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# debug character select: 1 to 0 pick the first ten of Player.CAST, Shift+1 to 4 the rest
-	if event is InputEventKey and event.pressed and not event.echo:
+	# (not while paused: this node keeps running under the pause menu, the keys must not act through it)
+	if event is InputEventKey and event.pressed and not event.echo and not get_tree().paused:
 		var k: int = event.keycode
 		if k >= KEY_0 and k <= KEY_9:
 			var i := (k - KEY_1) if k != KEY_0 else 9

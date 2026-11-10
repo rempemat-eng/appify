@@ -27,14 +27,45 @@ func _loose(root: Node2D, at: Vector2) -> Arrow:
 	return arrow
 
 func test_an_arrow_does_not_start_inside_or_beyond_a_wall() -> void:
-	var root := _scene(true)
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	assert_bool(_loose(root, Vector2(135, 100)).is_queued_for_deletion()).is_true()   # tip inside the wall
-	assert_bool(_loose(root, Vector2(170, 100)).is_queued_for_deletion()).is_true()   # tip beyond it
+	# the tip inside the wall (x 135) or beyond it (x 170): the arrow starts at the archer's feet and the wall stops it
+	for tip_x in [135.0, 170.0]:
+		var root := _scene(true)
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		var arrow := _loose(root, Vector2(tip_x, 100))
+		assert_float(arrow.global_position.x).is_equal(100.0)
+		var furthest := 0.0
+		for i in 40:
+			await get_tree().physics_frame
+			if not is_instance_valid(arrow):
+				break
+			furthest = arrow.global_position.x
+		assert_bool(is_instance_valid(arrow)).is_false()
+		assert_float(furthest).is_less(164.0)
+		root.free()
 
 func test_an_arrow_in_the_open_flies() -> void:
 	var root := _scene(false)
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	assert_bool(_loose(root, Vector2(135, 100)).is_queued_for_deletion()).is_false()
+	var arrow := _loose(root, Vector2(135, 100))
+	assert_float(arrow.global_position.x).is_equal(135.0)   # no wall: it starts at the bow's tip
+	for i in 10:
+		await get_tree().physics_frame
+	assert_bool(is_instance_valid(arrow)).is_true()
+	assert_float(arrow.global_position.x).is_greater(160.0)
+
+func test_a_wall_stops_an_arrow_in_flight() -> void:
+	# loosed in front of the wall, the arrow must end at its face, not fly on behind it
+	var root := _scene(true)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var arrow := _loose(root, Vector2(60, 100))   # 56 px before the wall's face at x 116
+	var furthest := 0.0
+	for i in 40:
+		await get_tree().physics_frame
+		if not is_instance_valid(arrow):
+			break
+		furthest = arrow.global_position.x
+	assert_bool(is_instance_valid(arrow)).is_false()
+	assert_float(furthest).is_less(164.0)   # never beyond the wall's far face
