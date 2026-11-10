@@ -14,12 +14,16 @@ const BEHIND_THE_SEAL := ["CairnStatue", "CircleShard", "arena"]
 ## The story's stages, each as the flags and restores a save has by then.
 const STAGES := {
 	"fresh": {},
+	"forge asked": {"flags": ["visited:crossroads"], "done": ["road_to_crossroads"], "active": ["cold_forge"]},
 	"forge": {"restored": ["forge"], "flags": ["undercroft_open", "visited:crossroads"], "done": ["road_to_crossroads", "cold_forge"]},
 	"seal open": {"restored": ["forge"], "flags": ["undercroft_open", "undercroft_plate", "undercroft_seal_open",
 		"camp_cleared:undercroft_rooms"], "done": ["road_to_crossroads", "cold_forge"]},
 	"homecoming": {"restored": ["forge"], "flags": ["undercroft_open", "undercroft_plate", "undercroft_seal_open",
 		"camp_cleared:undercroft_rooms", "camp_cleared:thornback", "shard_taken:woodland", "shard_home:woodland"],
 		"done": ["road_to_crossroads", "cold_forge", "under_the_stones"]},
+	"ferns asked": {"restored": ["forge"], "flags": ["undercroft_open", "undercroft_plate", "undercroft_seal_open",
+		"camp_cleared:undercroft_rooms", "camp_cleared:thornback", "shard_taken:woodland", "shard_home:woodland"],
+		"done": ["road_to_crossroads", "cold_forge", "under_the_stones"], "active": ["home_again"]},
 	"home again": {"restored": ["forge", "fern_cottage"], "flags": ["undercroft_open", "undercroft_plate",
 		"undercroft_seal_open", "camp_cleared:undercroft_rooms", "camp_cleared:thornback", "shard_taken:woodland",
 		"shard_home:woodland"], "done": ["road_to_crossroads", "cold_forge", "under_the_stones", "home_again"]},
@@ -130,8 +134,7 @@ func _focus_at(zone: Zone, at: Vector2) -> String:
 func test_the_prompt_shows_a_step_short_of_each_thing() -> void:
 	# Crossroads with the Ferns' door still to clear: the notice board from (737, 709), Moss from 47 texels,
 	# the Ferns' restore mark from 44
-	_apply(STAGES["homecoming"])
-	Quests.notify("talk:moss")   # Home again: the mark at the Ferns' door
+	_apply(STAGES["ferns asked"])
 	var crossroads: Zone = await _zone("crossroads")
 	assert_str(await _focus_at(crossroads, Vector2(737, 709))).is_equal("NoticeBoard")
 	assert_str(await _focus_at(crossroads, Vector2(1152, 833))).is_equal("Moss")

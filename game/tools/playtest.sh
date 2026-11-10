@@ -97,7 +97,7 @@ for ROUTE in "${ROUTES[@]}"; do
     run_engine "$PROFILE" --path "$GAME" --audio-driver Dummy --resolution 960x540 --position 0,0 -- \
       $FRESH --play="$ROUTE" --play-out="$DIR" >>"$DIR/godot.log" 2>&1 &
     PID=$!
-    ( sleep "$LIMIT"; kill -9 "$PID" 2>/dev/null ) &
+    ( sleep "$LIMIT"; touch "$DIR/timed-out"; kill -9 "$PID" 2>/dev/null ) &
     WATCH=$!
     wait "$PID"
     CODE=$?
@@ -117,8 +117,10 @@ for ROUTE in "${ROUTES[@]}"; do
     echo "FAIL $NAME (${SECS}s, $SESSIONS game sessions, exit $CODE)"
     if [ -n "$RESULT" ]; then
       echo "  $RESULT"
-    elif [ "$CODE" -eq 137 ]; then
+    elif [ -f "$DIR/timed-out" ]; then
       echo "  the game was stopped after ${LIMIT}s (PLAYTEST_TIMEOUT)"
+    elif [ "$CODE" -ge 128 ]; then
+      echo "  the game was killed by signal $((CODE - 128)) (9 is usually the machine running out of memory)"
     else
       echo "  the game ended without a result (a crash, or the driver did not start)"
     fi
