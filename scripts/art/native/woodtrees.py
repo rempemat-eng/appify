@@ -743,7 +743,8 @@ TUNE = dict(sep=0.95, a_lit=0.5, a_mid=0.1, big=(7, 11), capy=0.2, lo=0.5, d_mid
             lit_excl=('grass_warm',), sh_excl=('leaf_cool',), glint=400, h_leaf_v=0.62, h_rib=10.0,
             notch=0.0, notch_lr=0.15, notch_d=46.0, notch_mid=0.55, gap2=1, gapn=0.0, lit_nsib=5, lit_sib=12,
             mid_excl=(), cl_on=0, cl_lit=(10, 16), cl_mid=(8, 12), cl_gap=36.0, cl_cap=12.0, cl_under=26.0, cl_ov=(2, 4), cl_ax=(1.15, 0.85),
-            lb_on=1, lb_d=(12, 18), lb_sep=0.95, lb_w=0.3, lb_back=(4, 6), lb_area=60.0, lb_cl=(7, 12), lb_lift=0.3, lb_gap=24.0, lb_shcap=18.0, lb_leafy=(), lb_lfn=2, lb_sh=(3.4, 4.4), lb_shov=0.5, lb_q=16.0)
+            lb_on=1, lb_d=(12, 18), lb_sep=0.95, lb_w=0.3, lb_back=(4, 6), lb_area=60.0, lb_cl=(7, 12), lb_lift=0.3, lb_gap=24.0, lb_shcap=18.0, lb_leafy=(), lb_lfn=2, lb_sh=(3.4, 4.4), lb_shov=0.5, lb_q=16.0,
+            bl_on=0, bl_n=(4, 30), bl_d=(30, 45), bl_band=2, bl_step=18.0, bl_k=2.5, bl_cs=0.15, bl_ew=0.15, bl_wob=3.0)
 
 
 def _leaf_blob(rx, ry, rng):
@@ -1341,6 +1342,56 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
             # most at the top west; the core not lightened
             Lhi[y, x] += lb_hi * float(np.clip((glob[y, x] - 0.35) / 0.5, 0, 1))
 
+        # (pass 10, W6-F1) big lobes, where a kind asks for them: the sub-lobes grouped into 4 to 6
+        # big lobes (2 to 3 on a bush), each a dome lit from the upper left. A cluster's values move
+        # a ramp step up in its big lobe's upper-left third and a step down in its lower-right third,
+        # and the crown's lower-right lobes sit a step under its upper-left ones. Deep leaf-0
+        # pockets lie only on the big lobes' boundaries; inside a big lobe a notch takes the body.
+        SH = np.zeros((Hp, Wp))
+        ipock = np.zeros((Hp, Wp), bool)
+        if T_.get('bl_on', 0):
+            ys_, xs_ = np.nonzero(free_)
+            P_ = np.stack([ys_, xs_], 1).astype(float)
+            # as many big lobes as lobes 30 to 45 px across fill (the red tree's are about 41)
+            dB = rng.uniform(*T_['bl_d'])
+            nB = int(np.clip(round(free_.sum() / (math.pi * dB * dB / 4)), T_['bl_n'][0], T_['bl_n'][1]))
+            cen = [P_[int(rng.integers(len(P_)))]]
+            for _ in range(nB - 1):                                    # farthest-point seeds
+                d_ = np.min([np.hypot(*(P_ - c_).T) for c_ in cen], 0)
+                cen.append(P_[int(np.argmax(d_))])
+            cen = np.array(cen)
+            for _ in range(10):                                        # k-means
+                lab_ = np.argmin([np.hypot(*(P_ - c_).T) for c_ in cen], 0)
+                cen = np.array([P_[lab_ == i].mean(0) if (lab_ == i).any() else cen[i] for i in range(nB)])
+            nz_ = ndi.gaussian_filter(rng.standard_normal((Hp, Wp)), 3.0)
+            nz_ = nz_ / max(1e-6, np.abs(nz_).max())
+            dd_ = np.array([np.hypot(yy - c_[0], xx - c_[1]) + T_['bl_wob'] * np.roll(nz_, 11 * i, 1) for i, c_ in enumerate(cen)])
+            bid = np.argmin(dd_, 0)
+            # a sub-lobe belongs whole to the big lobe at its centre
+            for k, (ly, lx, lr) in enumerate(lobes):
+                bid[lown == k] = bid[int(ly), int(lx)]
+            bid[~free_] = -1
+            band_ = np.zeros((Hp, Wp), bool)
+            for i in range(nB):
+                Mi = bid == i
+                band_ |= Mi & ndi.binary_dilation(free_ & ~Mi & (bid >= 0), iterations=T_['bl_band'])
+            band_ &= free_
+            Rk = np.array([max(4.0, math.sqrt((bid == i).sum() / math.pi)) for i in range(nB)])
+            bc = np.array([(yy[bid == i].mean(), xx[bid == i].mean()) if (bid == i).any() else (0, 0) for i in range(nB)])
+            bo = np.clip(bid, 0, None)
+            s_ = ((xx - bc[bo, 1]) + (yy - bc[bo, 0])) / (2 * Rk[bo])        # -1 upper left .. 1 lower right
+            step = T_['bl_step']
+            cs_ = ((bc[:, 1] - gx0) / grx + (bc[:, 0] - gy0) / gry) / 2      # the lobe's place in the crown
+            SH = np.where(free_, step * np.clip(-s_ * T_['bl_k'], -1, 1) - step * (cs_[bo] > T_['bl_cs']), 0.0)
+            ub_, vb_ = (xx - bc[bo, 1]) / Rk[bo], (yy - bc[bo, 0]) / Rk[bo]
+            e_ = e_ + T_['bl_ew'] * lamb(ub_, vb_)
+            ipock = pock & ~band_                                      # a notch inside a big lobe
+            lown[band_] = -1
+            pock = band_
+        Lhi += SH
+        Lmid += SH
+        Lsh += SH
+
         def lvl(y, x, e):
             # the body value for a cluster at (y, x) with light e (-1 .. 1)
             if e > T_['a_lit']:
@@ -1352,7 +1403,10 @@ def clump_crown(S: np.ndarray, masses, lad: Ladder, rng, *, lo: float, hi: float
         # the pocket: its base the pocket value, then dim back-leaf clusters over it
         for y, x in zip(*np.nonzero(pock)):
             code[y, x] = pal9(max(NB_FLOOR + 3, Lpk[y, x]), 'shade')[mk_[y, x] % 2]
-        bk = [C('leaf', 1), C('leaf', 2), C('leaf_cool', 2)]
+        for y, x in zip(*np.nonzero(ipock)):
+            code[y, x] = pal9(max(NB_FLOOR + 6, Lmid[y, x]), 'mid')[mk_[y, x] % 2]
+        bk = ([C('leaf', 1), C('leaf', 2), C('leaf_cool', 2)] if not T_.get('bl_on', 0)
+              else [C('leaf', 1), C('leaf_cool', 1), C('leaf', 2)])
         pys, pxs = np.nonzero(pock)
         bdone = []
         for j_ in rng.permutation(len(pys)):
@@ -2080,7 +2134,7 @@ def pine_crown(S, tiers, lad, rng, lo, hi, fams_=('leaf_cool', 'leaf'), wts_=Non
     casts on that tier's top; the west tip of each tier lit."""
     Hp, Wp = S.shape
     r9 = np.random.default_rng(7000 + Hp * 131 + Wp)                  # pass 9's own stream: the tiers' unchanged
-    T9 = dict(pn_on=TUNE.get('pn_on', 1), pn_band=TUNE.get('pn_band', 2), pn_gap=TUNE.get('pn_gap', 5), pn_trunk=TUNE.get('pn_trunk', 12))
+    T9 = dict(pn_on=TUNE.get('pn_on', 1), pn_band=TUNE.get('pn_band', 2), pn_gap=TUNE.get('pn_gap', 3), pn_trunk=TUNE.get('pn_trunk', 12), pn_alt=TUNE.get('pn_alt', 1), pn_dark=TUNE.get('pn_dark', 85), pn_sets=TUNE.get('pn_sets', 3))
     yy, xx = np.mgrid[0:Hp, 0:Wp]
     code = np.full((Hp, Wp), -1, np.int64)
     mask = np.zeros((Hp, Wp), bool)
@@ -2140,6 +2194,10 @@ def pine_crown(S, tiers, lad, rng, lo, hi, fams_=('leaf_cool', 'leaf'), wts_=Non
         # and out from the axis, in needle 1 to 2 with a needle-0 under-edge, 2 to 3 to 18 texels
         if T9['pn_on'] and k < len(tiers) - 1:
             uz_ = tmask & (rows >= ybot - T9['pn_band']) & (rows <= ybot)
+            if T9['pn_dark']:
+                # (pass 10, W6-T2) and the tier's shade wherever it is dark, not only its foot
+                Lt_ = np.vectorize(lambda c: _lum(int(c)) if c >= 0 else 999.0)(tc)
+                uz_ |= tmask & (Lt_ < T9['pn_dark']) & ndi.binary_erosion(tmask, iterations=1)
             uy_, ux_ = np.nonzero(uz_)
             done_ = []
             for j_ in r9.permutation(len(uy_)):
@@ -2150,14 +2208,19 @@ def pine_crown(S, tiers, lad, rng, lo, hi, fams_=('leaf_cool', 'leaf'), wts_=Non
                 sd_ = 1 if X >= cx else -1
                 n_ = int(r9.integers(4, 9))
                 sl_ = r9.uniform(0.35, 0.8)
-                cA, cB = (C('leaf', 1), C('leaf_cool', 2)) if r9.random() < 0.5 else (C('leaf_cool', 2), C('leaf', 1))
+                if T9['pn_alt']:
+                    # (pass 10, W6-T2) needle 1 and needle 2 alternating spray to spray, two tones each
+                    cA, cB = ((C('leaf_cool', 2), C('leaf', 2)), (C('leaf_cool', 1), C('leaf', 1)),
+                              (C('grass_cool', 1), C('leaf_cool', 2)))[len(done_) % T9['pn_sets']]
+                else:
+                    cA, cB = (C('leaf', 1), C('leaf_cool', 2)) if r9.random() < 0.5 else (C('leaf_cool', 2), C('leaf', 1))
                 for i_ in range(n_):
                     Xs, Ys = X + sd_ * i_, int(round(Y + sl_ * i_))
                     if not (0 <= Ys < Hp and 0 <= Xs < Wp and tmask[Ys, Xs]):
                         break
                     tc[Ys, Xs] = cA if (i_ // 2) % 2 == 0 else cB
                     if i_ % 2 == 1 and Ys + 1 < Hp and tmask[Ys + 1, Xs]:
-                        tc[Ys + 1, Xs] = C('leaf_cool', 0)                # the needle-0 under-edge
+                        tc[Ys + 1, Xs] = C('leaf_cool', 0) if (len(done_) % 2 or not T9['pn_alt']) else C('leaf', 0)   # the needle-0 under-edge
         code[tmask] = tc[tmask]
         mask |= tmask
         v_all[tmask] = tv[tmask]
@@ -2203,7 +2266,7 @@ def pine_crown(S, tiers, lad, rng, lo, hi, fams_=('leaf_cool', 'leaf'), wts_=Non
                 code[Y, X] = -1
             elif Y + 1 < Hp and not mask[Y + 1, X]:
                 mask[Y + 1, X] = True
-                code[Y + 1, X] = code[Y, X]
+                code[Y + 1, X] = C('leaf_cool', 2) if T9['pn_alt'] else code[Y, X]   # (pass 10) a dim needle-2 tip
     mask = _spurs(mask)
     filled = ndi.binary_fill_holes(mask)
     hole = filled & ~mask
@@ -2437,15 +2500,67 @@ def sapling_stem(length, rng):
 # ------------------------------------------------------------------------------------------------
 # per kind, the clump size and spacing chosen side by side at 4x and by the detail bar (pass 3)
 SHRUB_KW = {
-    'bush': dict(shapes=CLUMPS_XS), 'bush_b': dict(density=0.95), 'bush_c': dict(density=0.8, sib_spread=7, lbk=dict(lb_sh=(4.0, 5.5))),
+    'bush': dict(shapes=CLUMPS_XS, lbk=dict(bl_on=1, bl_n=(2, 4), bl_d=(25, 35))), 'bush_b': dict(density=0.95, lbk=dict(bl_on=1, bl_n=(2, 4), bl_d=(25, 35))),
+    'bush_c': dict(density=0.8, sib_spread=7, lbk=dict(lb_sh=(4.0, 5.5), bl_on=1, bl_n=(2, 4), bl_d=(25, 35), bl_step=12.0, bl_band=3)),
     'bramble': dict(shapes=CLUMPS_XS, density=0.75, lb_hi=26.0),
     'bramble_b': dict(shapes=CLUMPS_XS, density=0.75, lb_hi=26.0),
 }
 HOLLY_KW = {'holly': dict(shapes=CLUMPS_XS, cap_l=(88.0, 136.0), core_drop=12.0, pk_scale=1.3, cl_gap=14.0, lb_hi=40.0),
             'holly_b': dict(cap_l=(88.0, 140.0), core_drop=24.0, pk_scale=1.3, cl_gap=14.0, lb_hi=40.0)}
-TREE_KW = {'beech': dict(shapes=CLUMPS_S), 'birch': dict(sib_spread=7, lbk=dict(lb_d=(14, 20), lb_cl=(9, 14))), 'hollow_tree': dict(pockets=1.0),
+# (pass 10, W6-F1) big lobes on the oak, beech, birch, hollow tree and the bushes
+TREE_KW = {'oak': dict(lbk=dict(bl_on=1)), 'beech': dict(shapes=CLUMPS_S, lbk=dict(bl_on=1, lb_d=(14, 20))),
+           'birch': dict(sib_spread=7, lbk=dict(lb_d=(14, 20), lb_cl=(9, 14), bl_on=1, bl_n=(3, 12), bl_d=(25, 35))),
+           'hollow_tree': dict(pockets=1.0, lbk=dict(bl_on=1)),
            'sapling': dict(shapes=CLUMPS_XS, cl_n=3)}
 WILLOW_KW = dict(density=0.75)
+
+
+BRAMBLE_BACK = {'bramble': 6}                # (pass 10, W6-B1) back-leaf clusters in the underside
+BRAMBLE_FLECK = {'bramble_b': 0.6}           # (pass 10, W6-B2) the lit tops (upper share) merged
+
+
+def _back_leaves(code, mask, reg, n, rng):
+    """n back-leaf clusters (4 to 5 texels across) inside reg: leaf 1 and leaf 2 split across each,
+    a leaf-0 under-edge on its lower right."""
+    Hp, Wp = mask.shape
+    ys, xs = np.nonzero(reg)
+    done = []
+    for j in rng.permutation(len(ys)):
+        if len(done) >= n:
+            break
+        y, x = int(ys[j]), int(xs[j])
+        if any(abs(y - py) + abs(x - px) < 6 for (py, px) in done):
+            continue
+        done.append((y, x))
+        r = rng.uniform(2.0, 2.6)
+        for dy in range(-3, 4):
+            for dx in range(-3, 4):
+                Y, X = y + dy, x + dx
+                if not (0 <= Y < Hp and 0 <= X < Wp and mask[Y, X]) or ((dx / (r * 1.15)) ** 2 + (dy / (r * 0.85)) ** 2) > 1.0:
+                    continue
+                c = C('leaf', 2) if (dx * 0.6 + dy) < 0 else C('leaf', 1)
+                if dx + dy >= 2 and ((dx + 1) / (r * 1.15)) ** 2 + ((dy + 1) / (r * 0.85)) ** 2 > 1.0:
+                    c = C('leaf', 0)                                    # the under-edge
+                code[Y, X] = c
+
+
+def _merge_flecks(code, region, most=2):
+    """Each one-colour component of at most `most` texels inside region takes the colour most of its
+    4-neighbours hold (merging specks into the caps round them)."""
+    Hp, Wp = code.shape
+    for _ in range(2):
+        for c in np.unique(code[region]):
+            lab, n = ndi.label((code == c) & region)
+            if not n:
+                continue
+            sizes = np.bincount(lab.ravel())
+            for i in np.nonzero(sizes[1:] <= most)[0] + 1:
+                comp = lab == i
+                ring = ndi.binary_dilation(comp) & ~comp & (code >= 0)
+                if not ring.any():
+                    continue
+                v, k = np.unique(code[ring], return_counts=True)
+                code[comp] = int(v[np.argmax(k)])
 
 
 def shrub(kind: str, master_arr: np.ndarray, d: float, seed: int, look: dict, scale=None):
@@ -2493,6 +2608,17 @@ def shrub(kind: str, master_arr: np.ndarray, d: float, seed: int, look: dict, sc
         # (pass 7) the foot is the leaf mass's centre, not the canes' reach (they spread unevenly now)
         ysm, xsm = np.nonzero(mask)
         mcx_ = (xsm.min() + xsm.max() + 1) / 2.0 + 14                  # bramble_canes pads 14 a side
+        r10 = np.random.default_rng(seed + 1010)                       # pass 10's own stream: the canes unchanged
+        if kind in BRAMBLE_BACK:
+            # (pass 10, W6-B1) back leaves in the dark underside (its pocket lies east of the root)
+            Lc_ = np.vectorize(lambda c: _lum(int(c)) if c >= 0 else 999.0)(code)
+            y0_ = ysm.min() + 0.35 * (ysm.max() - ysm.min())
+            reg_ = ndi.binary_erosion(mask, iterations=2) & (np.arange(mask.shape[0])[:, None] >= y0_) & (Lc_ < 95)
+            _back_leaves(code, mask, reg_, BRAMBLE_BACK[kind], r10)
+        if kind in BRAMBLE_FLECK:
+            # (pass 10, W6-B2) the lit tops' 1 to 2 texel flecks merged into their clusters' caps
+            ym_ = ysm.min() + BRAMBLE_FLECK[kind] * (ysm.max() - ysm.min())
+            _merge_flecks(code, mask & (np.arange(mask.shape[0])[:, None] < ym_), 2)
         code, mask = bramble_canes(code, mask, rng, kind)
         ys, xs = np.nonzero(mask)
         return _crop(np.where(mask, code, -1), (mcx_, ys.max() + 1))

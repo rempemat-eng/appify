@@ -1,7 +1,7 @@
 {
  "id": "woodland/birch",
  "file": "game/zones/woodland/art/birch.png",
- "sha256": "c8dd66f3de7daf1767f16076b26db8df6abc0b0e7562c3e6c93ff8f4814ec880",
+ "sha256": "bcc02d668e68efaba756b1943b5714c8b53f1d453d91c835aed4ddf184329b9d",
  "kind": "birch",
  "biome": "woodland",
  "H": 74.0,
@@ -19,7 +19,7 @@
  "detail_bar": {
   "ours": {
    "patches": 20,
-   "tones": 33.1,
+   "tones": 32.75,
    "shapes": 47.6
   },
   "band": {
@@ -29,7 +29,7 @@
    "patches": 107
   },
   "ratio": 0.752,
-  "tones_ratio": 1.195,
+  "tones_ratio": 1.182,
   "shapes_ratio": 0.752,
   "passed": false,
   "group": "foliage"
@@ -44,7 +44,7 @@
     101,
     203
    ],
-   "message": "woodland/birch: detail bar 0.75 of Eastward's foliage band (33.1 tones, 47.6 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/birch: detail bar 0.75 of Eastward's foliage band (32.8 tones, 47.6 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -56,15 +56,14 @@
     101,
     203
    ],
-   "message": "woodland/birch: only 38% of the silhouette is drawn in an edge tone",
+   "message": "woodland/birch: only 34% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 6 (PR #446 head 16b30d50): bar 33.1 tones / 47.6 shapes a patch (detector); through Eastward's own pipe 73.0 shapes (ruling 1: >= 57 there, the detector's 57 is withdrawn for native-res foliage). Mass 62.8 L, lit to pocket 87.9 L, lit-field c12 61.7 L, mass grain 10 px, pocket tones 28.0, noise 33.6 %. Hierarchy (ruling 2): leaf/mass 1.25 (Eastward trees 0.84 to 0.92), lit-shade8 45.3 L (45.6 to 54.6), lobe scale 9 px (13.5 to 17). Fails W6-F1."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

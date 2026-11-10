@@ -1,7 +1,7 @@
 {
  "id": "woodland/bush_b",
  "file": "game/zones/woodland/art/bush_b.png",
- "sha256": "f58e6f0d2cc450b6a691c2b753974fd1d5adb9c81f5edcd8f4c6607335ece3fc",
+ "sha256": "09ab9d0c74dc488af0dd7b13ae9cdc798b275eace03f9ac9e42052cf3d3ced98",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 9,
-   "tones": 28.11111111111111,
-   "shapes": 44.55555555555556
+   "tones": 29.0,
+   "shapes": 45.77777777777778
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.704,
-  "tones_ratio": 1.014,
-  "shapes_ratio": 0.704,
+  "ratio": 0.723,
+  "tones_ratio": 1.047,
+  "shapes_ratio": 0.723,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     75,
     54
    ],
-   "message": "woodland/bush_b: detail bar 0.70 of Eastward's foliage band (28.1 tones, 44.6 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/bush_b: detail bar 0.72 of Eastward's foliage band (29.0 tones, 45.8 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 6 (PR #446 head 16b30d50): bar 28.1 tones / 44.6 shapes a patch (detector); through Eastward's own pipe 67.5 shapes (ruling 1: >= 57 there, the detector's 57 is withdrawn for native-res foliage). Mass 68.1 L, lit to pocket 87.9 L, lit-field c12 58.0 L, mass grain 11 px, pocket tones 18.0, noise 30.2 %. Hierarchy (ruling 2): leaf/mass 1.19 (Eastward trees 0.84 to 0.92), lit-shade8 50.9 L (45.6 to 54.6), lobe scale 22 px (13.5 to 17) (Eastward round shrub 0.96). Fails W6-F1."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

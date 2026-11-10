@@ -1,7 +1,7 @@
 {
  "id": "woodland/oak",
  "file": "game/zones/woodland/art/oak.png",
- "sha256": "cdfb81d36a2989dbd673a5aa466b1ccf704d101447fb4ba36c7e2bf540d9d385",
+ "sha256": "364f5477f0b75090549d5511db4d4f1055447ee1d02a5014107917e7149abc4a",
  "kind": "broadleaf",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 70,
-   "tones": 27.485714285714284,
-   "shapes": 49.885714285714286
+   "tones": 29.142857142857142,
+   "shapes": 48.34285714285714
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.788,
-  "tones_ratio": 0.992,
-  "shapes_ratio": 0.788,
+  "ratio": 0.763,
+  "tones_ratio": 1.052,
+  "shapes_ratio": 0.763,
   "passed": false,
   "group": "foliage"
  },
@@ -44,15 +44,14 @@
     212,
     247
    ],
-   "message": "woodland/oak: detail bar 0.79 of Eastward's foliage band (27.5 tones, 49.9 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/oak: detail bar 0.76 of Eastward's foliage band (29.1 tones, 48.3 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-11-10",
-  "note": "docs/reviews/2026-11-09-woodland-assets.md, round 6 (PR #446 head 16b30d50): bar 27.5 tones / 49.9 shapes a patch (detector); through Eastward's own pipe 71.9 shapes (ruling 1: >= 57 there, the detector's 57 is withdrawn for native-res foliage). Mass 56.2 L, lit to pocket 89.9 L, lit-field c12 62.9 L, mass grain 12 px, pocket tones 22.4, noise 34.9 %. Hierarchy (ruling 2): leaf/mass 1.45 (Eastward trees 0.84 to 0.92), lit-shade8 38.9 L (45.6 to 54.6), lobe scale 9 px (13.5 to 17). Fails W6-F1: uniform small lobes, no big-lobe value structure."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
