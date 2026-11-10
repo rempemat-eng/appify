@@ -10,7 +10,7 @@
         "if": { "done": ["under_the_stones"] },
         "lines": [
           "You hear it? The lantern hums. Moss says the Ferns are on their way back from the halt farm.",
-          "Bring me your blade whenever you like. The anvil's ready."
+          "Go and see her at the stall. If folk are coming home, she'll know what they need."
         ]
       },
       {
@@ -59,12 +59,12 @@
       },
       {
         "if": { "active": ["road_to_crossroads"] },
-        "lines": ["East along the path, then the garden walk down to the square. I'll be right behind you."]
+        "lines": ["East along the path, then the garden walk down to the square. I'll take the short cut over the bank and meet you there."]
       },
       {
         "lines": [
-          "Bramble! You're alive. I came out to see where the star fell and couldn't find my way back in the dark.",
-          "Half of Crossroads ran to the halt farm when the storm hit. Walk back with me?"
+          "Bramble! You're alive. I came out to see where the star fell and lost the path in the dark.",
+          "Half of Crossroads ran to the halt farm when the storm hit. Take the east path home. I know a short cut over the bank: I'll meet you on the square."
         ]
       }
     ]
@@ -74,7 +74,7 @@
     "entries": [
       {
         "if": { "done": ["home_again"] },
-        "lines": ["The Ferns are home and their beds are dug. Two packets of valley seed, on the house. Plant them on your terrace."]
+        "lines": ["The Ferns are home, their beds are dug, and the stall has customers again. I'd forgotten the sound of that."]
       },
       {
         "if": { "step": ["home_again", "welcome"] },
@@ -100,6 +100,13 @@
         ]
       },
       {
+        "if": { "not_started": ["road_to_crossroads"] },
+        "lines": [
+          "Bramble! You're alive. Have you seen Hale?",
+          "She went out along the woodland's east path last night to see where the star fell, and she hasn't come back."
+        ]
+      },
+      {
         "lines": ["Stall's open. It's the only thing on the square that is."]
       }
     ]
@@ -110,7 +117,7 @@
       {
         "if": { "done": ["under_the_stones"] },
         "lines": [
-          "The roof of my herbalist's is in the bakery's yard. When you're back from the hills, help me put it on again.",
+          "The roof of my herbalist's is in the bakery's yard. When the Ferns are settled, help me put it on again.",
           "Until then, nothing to brew with. Your terrace beds will change that."
         ]
       },
@@ -145,8 +152,19 @@
     "name": "Notice board",
     "entries": [
       {
+        "if": { "done": ["home_again", "a1_the_choked_well", "a1_the_torn_roof"] },
+        "lines": [
+          "A fresh note in Moss's hand: WATER IN THE WELL. APOTHECARY OPEN. THE FERNS ARE HOME.",
+          "Under it: COL PATH TO THE FROSTLINE STILL BURIED. HALT ROAD SHUT. WORD HERE WHEN THEY OPEN."
+        ]
+      },
+      {
+        "if": { "done": ["home_again"] },
+        "lines": ["A note in Moss's hand: THE FERNS ARE HOME. THE WELL IS STILL CHOKED AND THE HERBALIST'S ROOF IS STILL OFF. ASK AT THE STALL, OR ASK MOREL."]
+      },
+      {
         "if": { "done": ["under_the_stones"] },
-        "lines": ["A new note: THE BELL TOWER WILL WARN OF RAIDERS. DO NOT FACE THEM ALONE. (No bounties pinned yet.)"]
+        "lines": ["A new note: THE LANTERN IS LIT. THE FERNS ARE COMING HOME. A HAND WITH THEIR DOOR WOULD BE KIND."]
       },
       {
         "lines": ["Torn notices. One survives: MARKET DAY, SATURDAY. The rest the storm took."]
@@ -178,7 +196,7 @@
   "hut_door": {
     "name": "Your hut",
     "entries": [
-      { "lines": ["Your hut came through the storm. The bed and the stash wait inside (interiors come later)."] }
+      { "lines": ["Your hut came through the storm, roof and all. The door is swollen shut with the rain. It can wait: the square needs you more than your bed does."] }
     ]
   },
   "restore_forge": {

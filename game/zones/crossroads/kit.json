@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "35508744363b0e1501cf14f4377d34737c8f8567923070bbe480c5dc34e3a6a3",
+ "inputs": "3a50ce9d3419916efd2c9ab33dc2c329ae8013841cb762e568107c84e5f7a617",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -260,7 +260,11 @@
     -120,
     -228
    ],
-   "cond": null,
+   "cond": {
+    "not_restored": [
+     "apothecary"
+    ]
+   },
    "solid": null,
    "of": "herbalist"
   },
@@ -373,8 +377,8 @@
     -80
    ],
    "cond": {
-    "not_flags": [
-     "shard_home:woodland"
+    "not_restored": [
+     "well"
     ]
    },
    "solid": [
@@ -397,8 +401,8 @@
     -170
    ],
    "cond": {
-    "flags": [
-     "shard_home:woodland"
+    "restored": [
+     "well"
     ]
    },
    "solid": [
@@ -1878,8 +1882,8 @@
     0
    ],
    "cond": {
-    "not_flags": [
-     "shard_home:woodland"
+    "not_restored": [
+     "well"
     ]
    },
    "solid": null,
@@ -1898,8 +1902,8 @@
     0
    ],
    "cond": {
-    "flags": [
-     "shard_home:woodland"
+    "restored": [
+     "well"
     ]
    },
    "solid": null,

@@ -74,6 +74,7 @@
     "review:scene": "python3 -m scripts.review.run",
     "review:asset": "python3 -m scripts.review.assets",
     "check:godot": "bash game/tools/check.sh",
+    "playtest:godot": "bash game/tools/playtest.sh",
     "check:pointer-events": "node scripts/check-pointer-events.cjs",
     "check:kit-scene": "python3 -m scripts.review.kit_scene --check",
     "verify:serial": "npm run check && npm run export:web && npm run export:ios",

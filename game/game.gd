@@ -32,11 +32,18 @@ var _cast_label: Label
 
 func _ready() -> void:
 	args = parse_args(OS.get_cmdline_user_args())
-	if not args.has("fresh"):
-		SaveGame.load_save()
+	add_to_group("game")
+	# The save was read when the process started (core/save_game.gd); this scene plays what is in memory.
 	player = preload("res://actors/player.tscn").instantiate()
-	player.hp = clampi(int(SaveGame.data.player.hp), 1, player.max_hp)
+	# The player sets full health when it first enters the tree, and the first zone change autosaves:
+	# put the saved hearts back between the two, or loading a save would heal (and then save the heal).
+	var saved_hp := int(SaveGame.data.player.hp)
+	player.ready.connect(func() -> void: player.hp = saved_hp if saved_hp >= 1 and saved_hp <= player.max_hp else player.max_hp,
+		CONNECT_ONE_SHOT)
 	hud.player = player
+	# pictures and scripted demos show the world as it is: no lead in the tracker, no title card
+	hud.guidance = not (args.has("shot") or args.has("demo") or args.has("lineup") or args.has("cycle")
+		or args.has("bossfight") or args.has("telegraph_shot"))
 	Zones.attach(zone_root, player)
 	Zones.zone_changed.connect(_on_zone)
 	player.hit_landed.connect(func(_t: Node, heavy: bool) -> void: _shake = 0.16 if heavy else 0.1)
@@ -45,6 +52,7 @@ func _ready() -> void:
 	Quests.started.connect(func(_id: String) -> void: autosave())
 	Quests.advanced.connect(func(_id: String, _s: int) -> void: autosave())
 	Quests.completed.connect(func(_id: String) -> void: autosave())
+	Quests.completed.connect(func(_id: String) -> void: _show_due_card.call_deferred())
 	Village.changed.connect(func(_id: String) -> void: autosave())
 	pcam.follow_target = player
 	add_to_group("camera_nudge")
@@ -80,6 +88,23 @@ func _ready() -> void:
 	if args.has("cycle"):
 		_cycle.call_deferred()
 	_setup_cast_label()
+	if args.has("play"):
+		_start_play_driver()
+
+## --play=<route file>: the real-input play driver (tools/play_driver.gd, docs/godot.md).
+func _start_play_driver() -> void:
+	var script := load("res://tools/play_driver.gd") as GDScript
+	if script == null or not script.can_instantiate():
+		push_error("--play: tools/play_driver.gd did not load")
+		get_tree().quit(2)
+		return
+	var driver: Node = script.new()
+	driver.name = "PlayDriver"
+	driver.route_path = String(args.play)
+	if args.has("play-out"):
+		driver.out_dir = String(args["play-out"])
+	driver.follow = args.has("play-follow")
+	add_child(driver)
 
 func _setup_cast_label() -> void:
 	_cast_label = Label.new()
@@ -98,8 +123,15 @@ static func parse_args(list: PackedStringArray) -> Dictionary:
 	return out
 
 func autosave() -> void:
-	SaveGame.data.player.hp = player.hp
+	# a downed player gets up with full health, so that is what a save made on the ground holds
+	SaveGame.data.player.hp = player.hp if player.hp > 0 else player.max_hp
 	SaveGame.save()
+
+## Closing the window saves first, like Quit in the pause menu: the hearts, and anything that moved
+## since the last quest step (a camp cleared with no quest waiting on it).
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and player != null and is_inside_tree():
+		autosave()
 
 func _on_zone(zone: Zone) -> void:
 	var b := zone.bounds
@@ -113,6 +145,22 @@ func _on_zone(zone: Zone) -> void:
 	pcam.follow_target = player
 	pcam.teleport_position()
 	snap_camera()
+	_show_due_card()
+	autosave()
+
+## The story's title cards (data/leads.json): the opening on a new game, the closing beat when the last
+## quest of this build is done. Each shows once a save; a card waits for an open dialogue to close.
+func _show_due_card() -> void:
+	if not hud.guidance:
+		return
+	while Dialogue.busy:
+		await Dialogue.closed
+		await get_tree().create_timer(0.3).timeout
+	var card := Quests.due_card()
+	if card.is_empty():
+		return
+	SaveGame.set_flag("seen:" + str(card.id))
+	hud.show_card(str(card.get("title", "")), str(card.get("subtitle", "")), str(card.get("text", "")), float(card.get("seconds", 9.0)))
 	autosave()
 
 ## Puts the Camera2D on the phantom camera at once, so the first frame drawn in a new zone already shows the

@@ -79,12 +79,36 @@ func test_chain_advances_in_order() -> void:
 	assert_int(SaveGame.data.glint).is_equal(85)
 	assert_bool(SaveGame.has_flag("seeds:valley")).is_true()
 
-func test_entering_crossroads_first_still_counts() -> void:
+## Hale stands on the woodland path until the player walks into Crossroads with her quest (10 Nov: she
+## used to vanish as her last line closed). Having been to Crossroads before does not move her.
+func test_hale_waits_on_the_path_until_the_player_walks_home() -> void:
+	var on_the_path := {"not_past": ["road_to_crossroads", "go"]}
+	var on_the_square := {"past": ["road_to_crossroads", "go"]}
 	SaveGame.set_flag("visited:crossroads")
+	assert_bool(Quests.check(on_the_path)).is_true()
 	Quests.notify("talk:hale")
+	assert_str(_step("road_to_crossroads")).is_equal("go")
+	assert_bool(Quests.check(on_the_path)).is_true()
+	assert_bool(Quests.check(on_the_square)).is_false()
+	Quests.notify("enter:crossroads")
 	assert_str(_step("road_to_crossroads")).is_equal("moss")
+	assert_bool(Quests.check(on_the_path)).is_false()
+	assert_bool(Quests.check(on_the_square)).is_true()
+	Quests.notify("talk:moss")
+	assert_bool(Quests.check(on_the_square)).is_true()
+
+## A restore mark works once its quest has asked for it (10 Nov): the save as it is when Hale has asked
+## for her forge.
+func _hale_has_asked() -> void:
+	SaveGame.data.quests["road_to_crossroads"] = {"state": "done", "step": 2}
+	Quests.notify("talk:hale")
 
 func test_restore_needs_glint_and_its_condition() -> void:
+	SaveGame.add_glint(30)
+	assert_bool(Village.can_restore("forge")).is_false()  # nobody has asked yet
+	SaveGame.add_glint(-30)
+	_hale_has_asked()
+	assert_str(_step("cold_forge")).is_equal("restore")
 	assert_bool(Village.can_restore("forge")).is_false()
 	assert_bool(Village.restore("forge")).is_false()
 	SaveGame.add_glint(29)
@@ -96,6 +120,8 @@ func test_restore_needs_glint_and_its_condition() -> void:
 	SaveGame.add_glint(100)
 	assert_bool(Village.can_restore("fern_cottage")).is_false()  # waits for the shard
 	SaveGame.set_flag("shard_home:woodland")
+	assert_bool(Village.can_restore("fern_cottage")).is_false()  # and for Moss to ask (Home again)
+	SaveGame.data.quests["home_again"] = {"state": "active", "step": 0}
 	assert_bool(Village.can_restore("fern_cottage")).is_true()
 	assert_bool(Village.can_restore("no_such_site")).is_false()
 
@@ -105,11 +131,13 @@ func test_restore_conditions() -> void:
 	assert_bool(Quests.check({"glint_at_least": 1})).is_false()
 	SaveGame.add_glint(30)
 	assert_bool(Quests.check({"glint_at_least": 30})).is_true()
+	_hale_has_asked()
 	Village.restore("forge")
 	assert_bool(Quests.check({"restored": ["forge"], "not_restored": ["fern_cottage"]})).is_true()
 
 func test_restore_persists_through_save_and_load() -> void:
 	SaveGame.add_glint(30)
+	_hale_has_asked()
 	Village.restore("forge")
 	assert_int(SaveGame.save(PATH)).is_equal(OK)
 	SaveGame.reset()
@@ -138,6 +166,12 @@ func _attach() -> Player:
 func test_crossroads_scene_flips_and_keeps_the_flip() -> void:
 	_attach()
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	# before Hale has asked there is no mark at her door, and she is not on the square
+	assert_bool((Zones.current.get_node("Actors/If_smithy_site") as Conditional).visible).is_false()
+	assert_bool((Zones.current.get_node("Actors/If_hale_square") as Conditional).visible).is_false()
+	_hale_has_asked()
+	assert_bool((Zones.current.get_node("Actors/If_smithy_site") as Conditional).visible).is_true()
+	assert_bool((Zones.current.get_node("Actors/If_hale_square") as Conditional).visible).is_true()
 	var zone := Zones.current
 	var rubble := zone.get_node("Props/If_smithy_rubble") as Conditional
 	var fire := zone.get_node("Props/If_forge_fire") as Conditional

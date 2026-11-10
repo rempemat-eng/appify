@@ -37,6 +37,21 @@
         ]
       },
       "why": "the woodland's great shard in the lantern; the first household comes home"
+    },
+    {
+      "id": "mended",
+      "if": {
+        "restored": [
+          "forge",
+          "fern_cottage",
+          "well",
+          "apothecary"
+        ],
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "act 1's two village repairs done: water in the well, the roof back on Morel's herbalist's (the apothecary)"
     }
   ],
   "restores": [
@@ -46,7 +61,12 @@
       "cost": {
         "glint": 30
       },
-      "why": "stage 0's first service: upgrade and salvage (game-design.md 7.3); cost is a placeholder"
+      "why": "stage 0's first service: upgrade and salvage (game-design.md 7.3); cost is a placeholder. Paid once Hale has asked (The cold forge), so nobody clears her door before she is there to light the fire",
+      "if": {
+        "started": [
+          "cold_forge"
+        ]
+      }
     },
     {
       "id": "fern_cottage",
@@ -57,9 +77,38 @@
       "if": {
         "flags": [
           "shard_home:woodland"
+        ],
+        "started": [
+          "home_again"
         ]
       },
       "why": "the first household home (the homecoming quest); cost is a placeholder"
+    },
+    {
+      "id": "well",
+      "name": "The well",
+      "cost": {
+        "glint": 20
+      },
+      "if": {
+        "started": [
+          "a1_the_choked_well"
+        ]
+      },
+      "why": "act 1's village quest The choked well (docs/story/act1.md: 20 Glint, the cost its mark's lines quote)"
+    },
+    {
+      "id": "apothecary",
+      "name": "Morel's herbalist's",
+      "cost": {
+        "glint": 40
+      },
+      "if": {
+        "started": [
+          "a1_the_torn_roof"
+        ]
+      },
+      "why": "act 1's village quest The torn roof (docs/story/act1.md: 40 Glint, the cost its mark's lines quote); the herbalist's reopens as the apothecary"
     }
   ],
   "tiers": [
@@ -391,7 +440,8 @@
         384
       ],
       "colour": "#6f8a6a",
-      "stage": 1
+      "stage": 1,
+      "restore": "apothecary"
     },
     {
       "id": "smithy",
@@ -463,11 +513,11 @@
       "solid": true,
       "colour": "#5b5249",
       "if": {
-        "not_flags": [
-          "shard_home:woodland"
+        "not_restored": [
+          "well"
         ]
       },
-      "why": "the well choked with rubble"
+      "why": "the well choked with rubble, until The choked well clears it"
     },
     {
       "id": "well",
@@ -481,8 +531,8 @@
       "solid": true,
       "colour": "#55708a",
       "if": {
-        "flags": [
-          "shard_home:woodland"
+        "restored": [
+          "well"
         ]
       }
     },
@@ -740,11 +790,15 @@
       ],
       "colour": "#a05040",
       "if": {
+        "past": [
+          "road_to_crossroads",
+          "go"
+        ],
         "not_restored": [
           "forge"
         ]
       },
-      "why": "the smith waits by her ruined smithy"
+      "why": "the smith waits by her ruined smithy, once she has met you in the woodland and you have come home (before that she is still out on the east path)"
     },
     {
       "id": "hale_forge",
@@ -829,12 +883,13 @@
     {
       "id": "hut_bed",
       "speaker": "hut_door",
-      "verb": "Enter",
+      "verb": "Look",
       "at": [
         320,
         72
       ],
-      "colour": "#00000000"
+      "colour": "#00000000",
+      "why": "your hut's door: a look for now (the inside is not built)"
     }
   ],
   "restore_sites": [
@@ -846,6 +901,9 @@
         304
       ],
       "if": {
+        "active": [
+          "cold_forge"
+        ],
         "not_restored": [
           "forge"
         ]
@@ -859,13 +917,47 @@
         436
       ],
       "if": {
-        "flags": [
-          "shard_home:woodland"
+        "active": [
+          "home_again"
         ],
         "not_restored": [
           "fern_cottage"
         ]
       }
+    },
+    {
+      "id": "well_site",
+      "restore": "well",
+      "at": [
+        282,
+        330
+      ],
+      "if": {
+        "active": [
+          "a1_the_choked_well"
+        ],
+        "not_restored": [
+          "well"
+        ]
+      },
+      "why": "by the well's south-west side, clear of the lantern's own talk point (312, 320)"
+    },
+    {
+      "id": "apothecary_site",
+      "restore": "apothecary",
+      "at": [
+        172,
+        398
+      ],
+      "if": {
+        "active": [
+          "a1_the_torn_roof"
+        ],
+        "not_restored": [
+          "apothecary"
+        ]
+      },
+      "why": "in front of the herbalist's door (172, 384)"
     }
   ],
   "spawns": [

@@ -705,7 +705,11 @@ texture = ExtResource("t8")
 centered = false
 offset = Vector2(-120, -227)
 
-[node name="HerbalistDamage" type="Sprite2D" parent="Props"]
+[node name="If_herbalist_damage" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"apothecary\"]}"
+
+[node name="HerbalistDamage" type="Sprite2D" parent="Props/If_herbalist_damage"]
 position = Vector2(444, 1153)
 texture = ExtResource("t9")
 centered = false
@@ -759,7 +763,7 @@ offset = Vector2(-122, -288)
 
 [node name="If_well_choked" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+only_if = "{\"not_restored\":[\"well\"]}"
 
 [node name="WellChoked" type="Sprite2D" parent="Props/If_well_choked"]
 position = Vector2(864, 960)
@@ -776,7 +780,7 @@ shape = SubResource("s26")
 
 [node name="If_well" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+only_if = "{\"restored\":[\"well\"]}"
 
 [node name="Well" type="Sprite2D" parent="Props/If_well"]
 position = Vector2(864, 960)
@@ -1352,7 +1356,7 @@ offset = Vector2(-27, -53)
 
 [node name="If_well_choked_shadow" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+only_if = "{\"not_restored\":[\"well\"]}"
 
 [node name="WellChokedShadow" type="Sprite2D" parent="Props/If_well_choked_shadow"]
 position = Vector2(834, 932)
@@ -1363,7 +1367,7 @@ z_index = -9
 
 [node name="If_well_shadow" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+only_if = "{\"restored\":[\"well\"]}"
 
 [node name="WellShadow" type="Sprite2D" parent="Props/If_well_shadow"]
 position = Vector2(834, 932)
@@ -1499,7 +1503,7 @@ shape = SubResource("s32")
 
 [node name="If_hale_square" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"not_restored\":[\"forge\"]}"
+only_if = "{\"past\":[\"road_to_crossroads\",\"go\"],\"not_restored\":[\"forge\"]}"
 
 [node name="HaleSquare" type="Area2D" parent="Actors/If_hale_square"]
 position = Vector2(1290, 900)
@@ -1648,14 +1652,14 @@ position = Vector2(960, 216)
 script = ExtResource("talk")
 speaker_id = "hut_door"
 marker_height = 40.0
-verb = "Enter"
+verb = "Look"
 
 [node name="Shape" type="CollisionShape2D" parent="Actors/HutBed"]
 shape = SubResource("s31")
 
 [node name="If_smithy_site" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"not_restored\":[\"forge\"]}"
+only_if = "{\"active\":[\"cold_forge\"],\"not_restored\":[\"forge\"]}"
 
 [node name="SmithySite" type="Area2D" parent="Actors/If_smithy_site"]
 position = Vector2(1410, 912)
@@ -1668,7 +1672,7 @@ shape = SubResource("s31")
 
 [node name="If_fern_site" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"flags\":[\"shard_home:woodland\"],\"not_restored\":[\"fern_cottage\"]}"
+only_if = "{\"active\":[\"home_again\"],\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernSite" type="Area2D" parent="Actors/If_fern_site"]
 position = Vector2(1440, 1308)
@@ -1677,6 +1681,32 @@ restore_id = "fern_cottage"
 verb = "Restore"
 
 [node name="Shape" type="CollisionShape2D" parent="Actors/If_fern_site/FernSite"]
+shape = SubResource("s31")
+
+[node name="If_well_site" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"active\":[\"a1_the_choked_well\"],\"not_restored\":[\"well\"]}"
+
+[node name="WellSite" type="Area2D" parent="Actors/If_well_site"]
+position = Vector2(846, 990)
+script = ExtResource("site")
+restore_id = "well"
+verb = "Restore"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_well_site/WellSite"]
+shape = SubResource("s31")
+
+[node name="If_apothecary_site" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"active\":[\"a1_the_torn_roof\"],\"not_restored\":[\"apothecary\"]}"
+
+[node name="ApothecarySite" type="Area2D" parent="Actors/If_apothecary_site"]
+position = Vector2(516, 1194)
+script = ExtResource("site")
+restore_id = "apothecary"
+verb = "Restore"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_apothecary_site/ApothecarySite"]
 shape = SubResource("s31")
 
 [node name="BuildingDoors" type="Node2D" parent="."]

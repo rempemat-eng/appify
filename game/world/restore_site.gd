@@ -22,9 +22,4 @@ func interact() -> void:
 		Village.restore(restore_id)
 
 func wants_talk() -> bool:
-	if Village.is_restored(restore_id):
-		return false
-	for id in Quests.defs:
-		if Quests.current_step(id).get("on", "") == "restore:" + restore_id:
-			return true
-	return false
+	return not Village.is_restored(restore_id) and waits_on("restore:" + restore_id)

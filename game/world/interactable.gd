@@ -4,32 +4,111 @@ extends Area2D
 ## player's `focus` points here, the HUD shows the prompt and E (or Y) calls `interact()`, which runs
 ## the speaker's dialogue (data/dialogue) and then reports "talk:<speaker_id>" to the quests.
 ## While a quest waits on this speaker, a "!" floats above it (game-design.md 8.3: show, do not explain).
+##
+## One reach for every talk area (10 Nov: the areas were 30 texel circles the scenes drew one by one, and
+## a walker who stopped a step short of Moss, the notice board or a restore mark got no prompt): the
+## area is a circle of REACH texels round the node, whatever shape the scene gave it. Where two areas
+## overlap, the prompt goes to the one a quest is waiting on, then to the nearer.
+
+const REACH := 60.0   ## texels (20 world px): the prompt shows about one body height away
+const STALE := REACH + 20.0   ## further than the player's body can be and still touch the area
 
 @export var speaker_id := ""
 @export var verb := "Talk"
 @export var marker_height := 40.0  ## texels above the origin for the "!"
 
+## The talk areas the player's body is inside right now.
+static var _in_reach: Array[Interactable] = []
+
 func _ready() -> void:
 	collision_layer = 8  # interact
 	collision_mask = 2   # player
-	body_entered.connect(func(b: Node) -> void: if b.is_in_group("player"): b.set("focus", self))
-	body_exited.connect(func(b: Node) -> void: if b.is_in_group("player") and b.get("focus") == self: b.set("focus", null))
+	_use_the_shared_reach()
+	body_entered.connect(_on_body.bind(true))
+	body_exited.connect(_on_body.bind(false))
+	tree_exiting.connect(func() -> void: _in_reach.erase(self))
 	Quests.started.connect(func(_id: String) -> void: queue_redraw())
 	Quests.advanced.connect(func(_id: String, _s: int) -> void: queue_redraw())
 	Quests.completed.connect(func(_id: String) -> void: queue_redraw())
+	set_physics_process(false)
+
+func _use_the_shared_reach() -> void:
+	var shape := get_node_or_null("Shape") as CollisionShape2D
+	if shape == null:
+		shape = CollisionShape2D.new()
+		shape.name = "Shape"
+		add_child(shape)
+	var circle := CircleShape2D.new()
+	circle.radius = REACH
+	shape.shape = circle
+
+func _on_body(body: Node, entered: bool) -> void:
+	if not body.is_in_group("player"):
+		return
+	if entered and not _in_reach.has(self):
+		_in_reach.append(self)
+	elif not entered:
+		_in_reach.erase(self)
+	set_physics_process(entered)
+	refocus(body)
+
+## While the player stands in this area, keep the focus on the best of the areas in reach: walking
+## from one thing toward another moves the prompt without leaving either area.
+func _physics_process(_delta: float) -> void:
+	var player := get_tree().get_first_node_in_group("player")
+	if player != null:
+		refocus(player)
+
+## True while this area can be used: in the tree, shown, and not switched off by a Conditional.
+func usable() -> bool:
+	return is_inside_tree() and can_process() and is_visible_in_tree()
+
+## Points the player's focus at the best usable area in reach (or at nothing).
+static func refocus(player: Node) -> void:
+	var at: Vector2 = (player as Node2D).global_position
+	var best: Interactable = null
+	var best_wants := false
+	var best_d := INF
+	for i in range(_in_reach.size() - 1, -1, -1):
+		var it := _in_reach[i]
+		if not is_instance_valid(it) or not it.is_inside_tree():
+			_in_reach.remove_at(i)
+			continue
+		var d := it.global_position.distance_squared_to(at)
+		if d > STALE * STALE:
+			# an area switched off by a Conditional reports no body_exited: the player has walked away
+			_in_reach.remove_at(i)
+			it.set_physics_process(false)
+			continue
+		if not it.usable():
+			continue
+		var wants := it.wants_talk()
+		if best == null or (wants and not best_wants) or (wants == best_wants and d < best_d):
+			best = it
+			best_wants = wants
+			best_d = d
+	if player.get("focus") != best:
+		player.set("focus", best)
 
 func interact() -> void:
 	Dialogue.talk(speaker_id)
 
-## True when talking here would start or move on a quest.
+## True when talking here would start or move on a quest (the quest's own conditions included: a
+## quest that cannot start yet does not raise the "!").
 func wants_talk() -> bool:
-	var event := "talk:" + speaker_id
-	for id in Quests.defs:
+	return waits_on("talk:" + speaker_id)
+
+func waits_on(event: String) -> bool:
+	for id: String in Quests.defs:
 		var st := Quests.state(id)
-		if st == "none" and Quests.defs[id].get("start", {}).get("on", "") == event:
-			return true
-		if st == "active" and Quests.current_step(id).get("on", "") == event:
-			return true
+		if st == "none":
+			var start: Dictionary = Quests.defs[id].get("start", {})
+			if start.get("on", "") == event and Quests.check(start.get("if")):
+				return true
+		elif st == "active":
+			var step := Quests.current_step(id)
+			if step.get("on", "") == event and Quests.check(step.get("if")):
+				return true
 	return false
 
 func _draw() -> void:

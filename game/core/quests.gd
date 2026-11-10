@@ -14,20 +14,37 @@ extends Node
 ## A quest never expires and never runs on a clock (8.3).
 ##
 ## Conditions (also used by dialogue): { "flags": [..], "not_flags": [..], "done": [quest ids],
-## "active": [quest ids], "not_started": [quest ids], "step": [quest id, step id],
-## "restored": [restore ids], "not_restored": [restore ids], "glint_at_least": n }; all must hold.
-## Restores live in SaveGame.data.village.restored (core/village.gd).
+## "active": [quest ids], "not_started": [quest ids], "started": [quest ids], "step": [quest id, step id],
+## "past": [quest id, step id], "not_past": [quest id, step id], "restored": [restore ids],
+## "not_restored": [restore ids], "glint_at_least": n }; all must hold.
+## "started" is active or done; "past" holds once the quest has left that step behind (or is done).
+## The flag "zone_built:<zone id>" is not in the save: it holds while that zone is in this build
+## (has_flag below). Restores live in SaveGame.data.village.restored (core/village.gd).
+## Quest and dialogue files keep to the operators scripts/narrative/validate.py knows (check:quests);
+## "started", "past" and "not_past" are for zone plans, zone scenes and data/leads.json.
+##
+## The HUD tracks one quest: the active quest that moved last (SaveGame.data.tracked). With no quest
+## active it shows a lead instead, the first entry of data/leads.json whose condition holds, so the
+## player always has a line saying where the story goes on.
 
 signal started(id: String)
 signal advanced(id: String, step: int)
 signal completed(id: String)
 
 const DIR := "res://data/quests"
+const LEADS := "res://data/leads.json"
+const ZONE_BUILT := "zone_built:"
 
 var defs: Dictionary = {}
+var leads: Array = []
+var cards: Array = []
 
 func _ready() -> void:
 	load_dir(DIR)
+	var doc: Variant = JSON.parse_string(FileAccess.get_file_as_string(LEADS)) if FileAccess.file_exists(LEADS) else null
+	if typeof(doc) == TYPE_DICTIONARY:
+		leads = doc.get("leads", [])
+		cards = doc.get("cards", [])
 
 func load_dir(dir: String) -> void:
 	for f in DirAccess.get_files_at(dir):
@@ -55,22 +72,60 @@ func current_step(id: String) -> Dictionary:
 		return {}
 	return defs[id].steps[step_index(id)]
 
-## The text of the first active quest's current step, for the HUD.
-func tracked_text() -> String:
-	for id in defs:
-		if state(id) == "active":
-			return "%s: %s" % [defs[id].get("title", id), current_step(id).get("text", "")]
+## The quest the HUD tracks: the active quest that moved last, else any active quest, else "".
+func tracked_id() -> String:
+	var id := str(SaveGame.data.get("tracked", ""))
+	if defs.has(id) and state(id) == "active":
+		return id
+	for other: String in defs:
+		if state(other) == "active":
+			return other
 	return ""
 
+## The first title card (data/leads.json "cards") whose condition holds and which this save has not
+## shown yet (flag "seen:<id>"), or {}. game.gd shows it and sets the flag.
+func due_card() -> Dictionary:
+	for card: Dictionary in cards:
+		if not SaveGame.has_flag("seen:" + str(card.get("id", ""))) and check(card.get("if")):
+			return card
+	return {}
+
+## The lead shown while no quest is active: {"title", "text"} of the first entry of data/leads.json
+## whose condition holds, or {}.
+func lead() -> Dictionary:
+	for entry: Dictionary in leads:
+		if check(entry.get("if")):
+			return entry
+	return {}
+
+## "Title: text" for the HUD: the tracked quest's current step, or (unless `with_lead` is false) the
+## lead when no quest is active.
+func tracked_text(with_lead := true) -> String:
+	var id := tracked_id()
+	if id != "":
+		return "%s: %s" % [defs[id].get("title", id), current_step(id).get("text", "")]
+	var l := lead() if with_lead else {}
+	if l.is_empty():
+		return ""
+	return "%s: %s" % [l.get("title", ""), l.get("text", "")]
+
 # --- conditions ----------------------------------------------------------------
+## A flag as conditions see it: the save's flags, plus "zone_built:<zone id>", which is never saved and
+## holds while that zone is in this build (data/zones.json). A quest whose places are not built yet
+## asks for it in its start condition, so it cannot start and then wait on things that do not exist.
+func has_flag(flag: String) -> bool:
+	if flag.begins_with(ZONE_BUILT):
+		return Zones.has_zone(flag.trim_prefix(ZONE_BUILT))
+	return SaveGame.has_flag(flag)
+
 func check(cond: Variant) -> bool:
 	if typeof(cond) != TYPE_DICTIONARY:
 		return true
 	for f in cond.get("flags", []):
-		if not SaveGame.has_flag(f):
+		if not has_flag(f):
 			return false
 	for f in cond.get("not_flags", []):
-		if SaveGame.has_flag(f):
+		if has_flag(f):
 			return false
 	for q in cond.get("done", []):
 		if state(q) != "done":
@@ -81,6 +136,13 @@ func check(cond: Variant) -> bool:
 	for q in cond.get("not_started", []):
 		if state(q) != "none":
 			return false
+	for q in cond.get("started", []):
+		if state(q) == "none":
+			return false
+	if cond.has("past") and not is_past(cond.past[0], cond.past[1]):
+		return false
+	if cond.has("not_past") and is_past(cond.not_past[0], cond.not_past[1]):
+		return false
 	var restored: Dictionary = SaveGame.data.village.restored
 	for r in cond.get("restored", []):
 		if int(restored.get(r, 0)) <= 0:
@@ -95,6 +157,18 @@ func check(cond: Variant) -> bool:
 		if state(qid) != "active" or current_step(qid).get("id", "") != cond.step[1]:
 			return false
 	return true
+
+## True once quest `id` has left step `step_id` behind: it is done, or active at a later step.
+func is_past(id: String, step_id: String) -> bool:
+	match state(id):
+		"done":
+			return true
+		"active":
+			var steps: Array = defs[id].steps
+			for i in steps.size():
+				if steps[i].get("id", "") == step_id:
+					return step_index(id) > i
+	return false
 
 # --- events --------------------------------------------------------------------
 ## Reports something that happened. Active quests move first, then quests that start on this event.
@@ -119,6 +193,7 @@ func start_quest(id: String) -> void:
 	if not defs.has(id) or state(id) != "none":
 		return
 	SaveGame.data.quests[id] = {"state": "active", "step": 0}
+	SaveGame.data.tracked = id
 	started.emit(id)
 	_settle(id)
 
@@ -131,6 +206,7 @@ func _advance(id: String) -> void:
 		_complete(id)
 		return
 	SaveGame.data.quests[id].step = next
+	SaveGame.data.tracked = id
 	advanced.emit(id, next)
 	_settle(id)
 

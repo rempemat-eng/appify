@@ -9,6 +9,13 @@ const SLICE := ["woodland_stones", "road_to_crossroads", "cold_forge", "under_th
 
 func before_test() -> void:
 	SaveGame.reset()
+	# Act 1's regions are not built yet. A quest that leaves the valley only starts once its region is
+	# in the build (the flag zone_built:<zone>, core/quests.gd), so these tests stand a fixture in for it.
+	Zones.table["frostline"] = "res://test/fixtures/zone_a.tscn"
+
+func after_test() -> void:
+	Zones.table.erase("frostline")
+	SaveGame.reset()
 
 func _step(q: String) -> String:
 	return Quests.current_step(q).get("id", "")
@@ -49,16 +56,27 @@ func test_act1_data_is_whole() -> void:
 
 func test_layers_put_act1_first_and_keep_the_slice() -> void:
 	# Before the slice is done, Moss still speaks the slice's lines; after it, act 1's offer.
+	assert_str(_first_line("moss")).is_equal("Bramble! You're alive. Have you seen Hale?")
+	SaveGame.data.quests["road_to_crossroads"] = {"state": "done", "step": 2}
 	assert_str(_first_line("moss")).is_equal("Stall's open. It's the only thing on the square that is.")
 	_finish_slice()
-	assert_str(_first_line("moss")).starts_with("Before the storm the hut warden came down")
+	assert_str(_first_line("moss")).starts_with("The Ferns are home and their beds are dug.")
 	assert_str(Dialogue.speakers.moss.name).is_equal("Moss")
 	# Hale's slice line still shows when act 1 has nothing for her yet
 	assert_str(_first_line("hale")).is_equal("Two chimneys smoking on the square. It almost looks like a town again.")
 
 func test_the_frostline() -> void:
 	_finish_slice()
+	# Moss's own well comes first (it can be played in Crossroads today), then the loaf
 	Quests.notify("talk:moss")
+	assert_str(_step("a1_the_choked_well")).is_equal("well")
+	assert_str(Quests.state("a1_bread_for_the_bothy")).is_equal("none")
+	_restore("well")
+	# with the Frostline built, the talk that ends the well hands over the loaf
+	assert_str(_first_line("moss")).starts_with("Clear water!")
+	assert_str("\n".join(Dialogue.lines_for("moss"))).contains("Here, take her one.")
+	Quests.notify("talk:moss")
+	assert_str(Quests.state("a1_the_choked_well")).is_equal("done")
 	assert_str(_step("a1_bread_for_the_bothy")).is_equal("col")
 	Quests.notify("enter:frostline")
 	assert_str(_step("a1_bread_for_the_bothy")).is_equal("col")
@@ -173,3 +191,16 @@ func test_priority_orders_entries_across_files() -> void:
 	var got: Array = d.speakers.probe.entries.map(func(e: Dictionary) -> String: return e.lines[0])
 	assert_array(got).is_equal(["over", "base", "tail"])
 	d.speakers = before
+
+## Until the Frostline is in the build the loaf waits: Moss says why, and the quest cannot start and then
+## wait on a camp that does not exist (10 Nov: it started in play).
+func test_bread_waits_for_the_frostline_to_be_built() -> void:
+	Zones.table.erase("frostline")
+	_finish_slice()
+	Quests.notify("talk:moss")
+	_restore("well")
+	Quests.notify("talk:moss")
+	assert_str(Quests.state("a1_the_choked_well")).is_equal("done")
+	assert_str("\n".join(Dialogue.lines_for("moss"))).contains("The Col Path is still buried")
+	Quests.notify("talk:moss")
+	assert_str(Quests.state("a1_bread_for_the_bothy")).is_equal("none")

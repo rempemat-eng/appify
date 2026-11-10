@@ -1,0 +1,316 @@
+# The whole build, in order, from a fresh save: the woodland, Crossroads, the Undercroft and back, to the
+# closing card. The game is closed and started again after every step that moves the story (`restart`),
+# and the player is downed once at each of the three fights. Commands: tools/play_driver.gd.
+
+step a new game shows the title card and the first lead
+wait 1.0
+expect zone woodland
+expect at 405 750 4
+expect hp 5
+expect banner The Starfall
+expect hud Follow the path south
+shot 01_opening
+
+step the pause menu holds the game and lets go again
+key Escape
+expect paused yes
+shot 02_pause
+key Escape
+expect paused no
+
+step read the sign by the stones
+goto 372 1150 10
+expect prompt Read
+talk StoneSign
+expect said TO WHOEVER READS THIS
+expect quest woodland_stones active clear_camp
+expect hud Clear the mossling camp
+
+step quit and load: the quest is kept and the card does not show twice
+restart
+wait 1.0
+expect zone woodland
+expect quest woodland_stones active clear_camp
+expect flag seen:opening
+expect banner none
+
+step downed at the camp: up again at the start with every heart, the quest kept, the camp whole
+goto 690 1395 20
+down 60
+expect zone woodland
+expect at 405 750 60
+expect hp 5
+expect quest woodland_stones active clear_camp
+expect enemies 3
+
+step free the mosslings
+goto 640 1392 20
+fight 180
+expect flag camp_cleared:meadow
+expect quest woodland_stones active return
+restart
+expect flag camp_cleared:meadow
+expect enemies 0
+
+step the sign pays 40 Glint
+goto 372 1150 10
+talk StoneSign
+expect said 40 Glint
+expect quest woodland_stones done
+expect glint 40
+expect hud Someone is calling
+restart
+expect glint 40
+expect quest woodland_stones done
+
+step Hale on the east path: she stays there until the player has gone home
+goto 556 1300 10
+expect prompt Talk
+talk Hale
+expect said meet you on the square
+expect quest road_to_crossroads active go
+expect focus Hale
+talk Hale
+expect said short cut over the bank
+shot 03_hale_on_the_path
+restart
+expect quest road_to_crossroads active go
+goto 556 1300 10
+expect focus Hale
+
+step the east path to Crossroads
+door 951 1356 crossroads
+expect quest road_to_crossroads active moss
+expect at 90 210 12
+shot 04_crossroads
+restart
+expect zone crossroads
+expect at 90 210 12
+expect quest road_to_crossroads active moss
+
+step leave again mid-quest: Hale has gone ahead, the way back still works
+door 12 210 woodland
+expect at 905 1352 12
+goto 600 1340 8
+expect focus none
+door 951 1356 crossroads
+
+step Moss at the stall
+goto 1152 830 10
+expect prompt Talk
+talk Moss
+expect said And Hale with you
+expect quest road_to_crossroads done
+expect glint 50
+expect hud Talk to Hale by her smithy
+restart
+expect glint 50
+expect quest road_to_crossroads done
+
+step Hale by her smithy; the restore mark is there once she has asked
+goto 1410 952 10
+expect focus none
+goto 1290 940 10
+talk HaleSquare
+expect said Was my smithy
+expect quest cold_forge active restore
+talk HaleSquare
+expect said See the mark by the door
+
+step pay 30 Glint and the forge is lit
+goto 1410 952 10
+expect prompt Restore
+talk SmithySite
+expect said You pay 30 Glint
+expect restored forge
+expect glint 20
+expect quest cold_forge active report
+shot 05_forge_lit
+restart
+expect restored forge
+expect glint 20
+expect quest cold_forge active report
+
+step Hale at her anvil opens the hatch
+goto 1530 936 10
+talk HaleForge
+expect said Listen to that bellows
+expect quest cold_forge done
+expect quest under_the_stones active descend
+expect flag undercroft_open
+restart
+expect quest under_the_stones active descend
+
+step down the hatch by the stones
+door 12 210 woodland
+door 336 1020 undercroft
+expect quest under_the_stones active rooms
+shot 06_undercroft
+restart
+expect zone undercroft
+expect quest under_the_stones active rooms
+
+step downed in the first room: up again at the stair with every heart, the quest kept
+down 60
+expect zone undercroft
+expect hp 5
+expect quest under_the_stones active rooms
+
+step leave the Undercroft mid-fight and come back
+door 12 408 woodland
+expect at 330 1080 14
+door 336 1020 undercroft
+expect quest under_the_stones active rooms
+
+step free the rooms
+fight 300
+expect flag camp_cleared:undercroft_rooms
+expect quest under_the_stones active thornback
+restart
+expect zone undercroft
+expect flag camp_cleared:undercroft_rooms
+
+step the lever will not move before the plate is down
+goto 1644 334 8
+talk SealLever
+expect said will not move
+expect noflag undercroft_seal_open
+
+step the plate, then the lever
+goto 1416 384 8
+expect flag undercroft_plate
+goto 1644 334 8
+talk SealLever
+expect said the sealed slab sinks away
+expect flag undercroft_seal_open
+restart
+expect flag undercroft_plate
+expect flag undercroft_seal_open
+
+step downed by the Thornback: up again at the stair, the seal still open
+goto 1790 408 16
+down 120
+expect zone undercroft
+expect hp 5
+expect flag undercroft_seal_open
+
+step free the Thornback
+goto 1770 408 16
+fight 360
+expect flag camp_cleared:thornback
+expect quest under_the_stones active shard
+shot 07_thornback_freed
+restart
+expect flag camp_cleared:thornback
+expect quest under_the_stones active shard
+
+step the stone figure and the great shard
+goto 2160 262 8
+expect prompt Look
+talk CairnStatue
+expect said half sunk into the wall
+goto 2100 440 8
+expect prompt Take
+talk CircleShard
+expect said You wrap the shard
+expect flag shard_taken:woodland
+expect quest under_the_stones active lantern
+goto 2160 262 8
+talk CairnStatue
+expect said glow faintly amber
+restart
+expect flag shard_taken:woodland
+
+step carry the shard home to the lantern
+door 12 408 woodland
+door 951 1356 crossroads
+goto 936 1000 10
+talk ShardLantern
+expect said You lift the shard
+expect flag shard_home:woodland
+expect quest under_the_stones done
+expect glint 80
+expect hud Talk to Moss at the stall
+shot 08_lantern_lit
+restart
+expect flag shard_home:woodland
+expect glint 80
+
+step Home again: the Ferns' door and Ada
+goto 1152 830 10
+talk Moss
+expect said The Ferns sent word
+expect quest home_again active clear
+goto 1440 1352 10
+expect prompt Restore
+talk FernSite
+expect said You pay 20 Glint
+expect restored fern_cottage
+expect glint 60
+goto 1492 1346 10
+talk Ada
+expect said Our door
+expect quest home_again done
+expect glint 85
+expect hud Moss has more to mend
+restart
+expect quest home_again done
+expect glint 85
+
+step the choked well
+goto 1152 830 10
+talk Moss
+expect said Now our well
+expect quest a1_the_choked_well active well
+goto 846 1030 10
+expect prompt Restore
+talk WellSite
+expect said You pay 20 Glint
+expect restored well
+expect glint 65
+goto 1152 830 10
+talk Moss
+expect said I didn't like his coat
+expect quest a1_the_choked_well done
+expect glint 80
+restart
+expect restored well
+expect glint 80
+
+step the torn roof
+goto 600 1096 10
+talk Morel
+expect said My roof is still in the bakery's yard
+expect quest a1_the_torn_roof active roof
+goto 516 1236 10
+expect prompt Restore
+talk ApothecarySite
+expect said You pay 40 Glint
+expect restored apothecary
+expect glint 40
+goto 600 1096 10
+talk Morel
+expect said A roof!
+expect quest a1_the_torn_roof done
+
+step the closing beat: the card, Moss, the notice board, the hut
+wait 1.0
+expect banner The valley holds
+expect hud The Col Path is still buried
+shot 09_closing
+goto 1152 830 10
+talk Moss
+expect said The Col Path is still buried
+goto 708 716 10
+talk NoticeBoard
+expect said COL PATH TO THE FROSTLINE STILL BURIED
+goto 960 250 10
+expect prompt Look
+talk HutBed
+expect said swollen shut
+restart
+expect quest a1_the_torn_roof done
+expect glint 40
+expect banner none
+expect hud The Col Path is still buried
+end
