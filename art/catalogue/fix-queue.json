@@ -348,20 +348,6 @@
    "review_by": "2026-11-30"
   },
   {
-   "id": "crossroads/stall",
-   "sha256": "5957f50a54021ed2960c79fa2c15e168ee7993addd2905384323ae0e97ec8161",
-   "queued": "2026-11-09",
-   "reason": "redrawn in #453 to its XR3 fix list; failed the 2026-11-09 round-4 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 4): re-queued at the #453 bytes with the auditor's XR4 fix list (Claude A, 9 Nov); earlier: redrawn in #450 to its XR2 fix list; failed the 2026-11-09 round-3 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 3): re-queued at the #450 bytes with the auditor's XR3 fix list (Claude A, 9 Nov); earlier: redrawn in #447 to its 8 Nov fix list; failed the 2026-11-09 round-2 independent detail audit (docs/reviews/2026-11-08-crossroads-placed.md, round 2): re-queued at the #447 bytes with the auditor's XR2 fix list (Claude A, 9 Nov)",
-   "clears_when": "reviewer pass on the XR4 fixes",
-   "review_by": "2026-11-23",
-   "fix_list": [
-    "XR4-S1 (fault): make the board read at 1x: draw N with a full diagonal (not dots), give M 4-5 columns or use a 2-line layout (PLUMS / 3d) with 1 px margin to the frame, or replace the word with a drawn plum and the price; check it at 1x and 2x in the composite",
-    "XR4-S2 (fault): give each counter-front board grain in 3 tones with a lit west edge column and a dark east joint, grain streaks that wander and end, and no one-tone run over 60 texels (now 6 boards at 135-226, largest #8e6242 [68,120,78,154])",
-    "XR4-S3 (fault): redraw the sack as burlap: a mid tan below the awning's cream, weave in 2-texel clusters, a slumped base with a contact shadow, the neck tied with twine; it must not be the brightest value on the stall",
-    "XR4-S4 (polish): the awning's hanging stripe faces are one tone over 79-82 texels each (y 43-66): add a fold shade down one side of each stripe"
-   ]
-  },
-  {
    "id": "woodland/beech",
    "sha256": "7a76b51c67bb310b4abed03e24d321a70c6d6b7ae1c493569b5df4293c28ef0d",
    "queued": "2026-11-09",
