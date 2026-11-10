@@ -1,0 +1,71 @@
+# Went to Crossroads first, paid for the forge there, then talked to Hale: the order the slice allows
+# ("or already visited", "or already restored"). There is one Hale at every moment, she never vanishes
+# as a line closes, and her lines fit what has already happened. Commands: tools/play_driver.gd.
+
+step the sign's pouch first, without meeting Hale
+goto 372 1150 10
+talk StoneSign
+goto 640 1392 20
+fight 180
+goto 372 1150 10
+talk StoneSign
+expect glint 40
+expect quest road_to_crossroads none
+
+step Crossroads before Hale: nobody at the smithy, but its mark can be paid (as recorded)
+door 951 1356 crossroads
+goto 1290 940 10
+expect focus none
+goto 1410 952 10
+expect prompt Restore
+talk SmithySite
+expect said an ember is still alive
+expect restored forge
+expect glint 10
+expect quest cold_forge none
+goto 1530 936 10
+expect focus none
+shot 01_forge_open_nobody_home
+goto 1152 830 10
+talk Moss
+expect said Have you seen Hale
+expect quest road_to_crossroads none
+
+step back for Hale: the road's first step is already done, and she stays on the path as her line closes
+door 12 210 woodland
+goto 556 1300 10
+talk Hale
+expect said Walk back with me
+expect quest road_to_crossroads active moss
+expect focus Hale
+talk Hale
+expect said Talk to Moss at the stall first
+expect focus Hale
+
+step quit and load: she has walked home
+restart
+expect zone woodland
+goto 556 1300 10
+expect focus none
+
+step Crossroads: one Hale, at her anvil
+door 951 1356 crossroads
+goto 1290 940 10
+expect focus none
+goto 1152 830 10
+talk Moss
+expect said And Hale with you
+expect quest road_to_crossroads done
+expect glint 20
+goto 1530 936 10
+expect focus HaleForge
+talk HaleForge
+expect said You cleared my door before I was even home
+expect quest cold_forge active report
+talk HaleForge
+expect said Listen to that bellows
+expect quest cold_forge done
+expect quest under_the_stones active descend
+expect flag undercroft_open
+shot 02_hale_at_her_anvil
+end

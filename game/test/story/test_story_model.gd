@@ -28,7 +28,7 @@ const SILENT := {
 	"restore_fern_cottage|The door is clear.": "the mark goes when the door is cleared",
 	"restore_fern_cottage|Rubble blocks the Ferns' door. Clearing it needs 20 Glint of timber.":
 		"the player always has the 20 Glint by then (Under the stones pays 60)",
-	"moss|The Ferns are home, their beds are dug, and the stall has customers again. I'd forgotten the sound of that.":
+	"moss|The Ferns are home and their beds are dug. Two packets of valley seed, on the house. Plant them on your terrace.":
 		"Moss's fallback once act 1's own lines run out; act 1 always has a line for her in this build",
 }
 const ARROW_REACH := 330.0
@@ -178,6 +178,7 @@ func _do(thing: Dictionary) -> void:
 				Quests.notify("camp:" + thing.id)
 		"door":
 			if Quests.check(thing["if"]) and Zones.has_zone(thing.to):
+				Quests.zone_loading()
 				SaveGame.data.zone = thing.to
 				SaveGame.data.spawn = thing.spawn
 				SaveGame.set_flag("visited:" + thing.to)

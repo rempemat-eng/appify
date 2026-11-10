@@ -61,12 +61,7 @@
       "cost": {
         "glint": 30
       },
-      "why": "stage 0's first service: upgrade and salvage (game-design.md 7.3); cost is a placeholder. Its mark shows, and can be paid, once Hale has asked (The cold forge), so nobody clears her door before she is there to light the fire (world/restore_site.gd reads this `if`)",
-      "if": {
-        "started": [
-          "cold_forge"
-        ]
-      }
+      "why": "stage 0's first service: upgrade and salvage (game-design.md 7.3); cost is a placeholder"
     },
     {
       "id": "fern_cottage",
@@ -77,9 +72,6 @@
       "if": {
         "flags": [
           "shard_home:woodland"
-        ],
-        "started": [
-          "home_again"
         ]
       },
       "why": "the first household home (the homecoming quest); cost is a placeholder"
@@ -108,7 +100,7 @@
           "a1_the_torn_roof"
         ]
       },
-      "why": "act 1's village quest The torn roof (docs/story/act1.md: 40 Glint, the cost its mark's lines quote); the herbalist's reopens as the apothecary"
+      "why": "act 1's village quest The torn roof (docs/story/act1.md: 40 Glint, the cost its mark's lines quote); the herbalist's reopens as the apothecary. Its mark shows, and can be paid, once Morel has asked (world/restore_site.gd reads this `if`): paid earlier, its 40 Glint could leave the forge or the Ferns' door out of reach"
     }
   ],
   "tiers": [
@@ -790,15 +782,14 @@
       ],
       "colour": "#a05040",
       "if": {
-        "past": [
-          "road_to_crossroads",
-          "go"
+        "flags": [
+          "hale_walked_home"
         ],
         "not_restored": [
           "forge"
         ]
       },
-      "why": "the smith waits by her ruined smithy, once she has met you in the woodland and you have come home (before that she is still out on the east path)"
+      "why": "the smith waits by her ruined smithy, once she has walked home (the flag The road home sets at the next zone load after she has asked; before that she is still on the woodland's east path)"
     },
     {
       "id": "hale_forge",
@@ -812,10 +803,14 @@
       ],
       "colour": "#a05040",
       "if": {
+        "flags": [
+          "hale_walked_home"
+        ],
         "restored": [
           "forge"
         ]
-      }
+      },
+      "why": "at her anvil once the forge is open and she is home (a forge paid for before she is back stands empty)"
     },
     {
       "id": "morel",

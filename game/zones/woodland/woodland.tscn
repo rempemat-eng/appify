@@ -70,7 +70,7 @@ position = Vector2(765, 1525)
 
 [node name="HaleOnThePath" type="Node2D" parent="Actors"]
 script = ExtResource("8")
-only_if = "{\"not_past\":[\"road_to_crossroads\",\"go\"]}"
+only_if = "{\"not_flags\":[\"hale_walked_home\"]}"
 
 [node name="Hale" type="Area2D" parent="Actors/HaleOnThePath"]
 position = Vector2(600, 1296)

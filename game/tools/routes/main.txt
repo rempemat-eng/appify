@@ -63,20 +63,16 @@ restart
 expect glint 40
 expect quest woodland_stones done
 
-step Hale on the east path: she stays there until the player has gone home
+step Hale on the east path: she does not vanish as her line closes
 goto 556 1300 10
 expect prompt Talk
 talk Hale
-expect said meet you on the square
+expect said Walk back with me
 expect quest road_to_crossroads active go
 expect focus Hale
 talk Hale
-expect said short cut over the bank
+expect said right behind you
 shot 03_hale_on_the_path
-restart
-expect quest road_to_crossroads active go
-goto 556 1300 10
-expect focus Hale
 
 step the east path to Crossroads
 door 951 1356 crossroads
@@ -88,7 +84,7 @@ expect zone crossroads
 expect at 90 210 12
 expect quest road_to_crossroads active moss
 
-step leave again mid-quest: Hale has gone ahead, the way back still works
+step leave again mid-quest: Hale has walked home, the way back still works
 door 12 210 woodland
 expect at 905 1352 12
 goto 600 1340 8
@@ -107,9 +103,7 @@ restart
 expect glint 50
 expect quest road_to_crossroads done
 
-step Hale by her smithy; the restore mark is there once she has asked
-goto 1410 952 10
-expect focus none
+step Hale by her smithy
 goto 1290 940 10
 talk HaleSquare
 expect said Was my smithy

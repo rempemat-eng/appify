@@ -31,7 +31,6 @@ var _told_about_the_save := false
 @onready var zone_root: Node2D = $ZoneRoot
 @onready var pcam: PhantomCamera2D = $PCam
 @onready var hud: Control = $UI/HUD
-@onready var paused_label: Label = $UI/Paused
 
 func _ready() -> void:
 	args = parse_args(OS.get_cmdline_user_args())

@@ -1503,7 +1503,7 @@ shape = SubResource("s32")
 
 [node name="If_hale_square" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"past\":[\"road_to_crossroads\",\"go\"],\"not_restored\":[\"forge\"]}"
+only_if = "{\"flags\":[\"hale_walked_home\"],\"not_restored\":[\"forge\"]}"
 
 [node name="HaleSquare" type="Area2D" parent="Actors/If_hale_square"]
 position = Vector2(1290, 900)
@@ -1530,7 +1530,7 @@ shape = SubResource("s32")
 
 [node name="If_hale_forge" type="Node2D" parent="Actors"]
 script = ExtResource("cond")
-only_if = "{\"restored\":[\"forge\"]}"
+only_if = "{\"flags\":[\"hale_walked_home\"],\"restored\":[\"forge\"]}"
 
 [node name="HaleForge" type="Area2D" parent="Actors/If_hale_forge"]
 position = Vector2(1530, 894)

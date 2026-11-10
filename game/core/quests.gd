@@ -5,7 +5,8 @@ extends Node
 ##     "start":   { "on": "talk:stone_sign", "if": { ...condition... } },
 ##     "steps":   [ { "id": "clear_camp", "text": "...", "on": "camp:willow",
 ##                    "done_if": { "flags": ["camp_cleared:willow"] }, "set_flags": [] }, ... ],
-##     "rewards": { "glint": 40, "flags": ["..."] } }
+##     "rewards": { "glint": 40, "flags": ["..."] },
+##     "next_visit_flags": ["..."] }      (optional: set at the next zone load once the quest has started)
 ##
 ## The world reports what happens as plain event strings through `notify()`: "talk:<speaker>",
 ## "camp:<camp>", "enter:<zone>", "restore:<id>", "pickup:<item>". A step completes when its `on` event arrives and its
@@ -169,6 +170,16 @@ func is_past(id: String, step_id: String) -> bool:
 				if steps[i].get("id", "") == step_id:
 					return step_index(id) > i
 	return false
+
+## Called by Zones just before a zone loads (a door, getting up after being downed, the start of the
+## game): every started quest's `next_visit_flags` are set. A quest uses it for what happens off
+## screen once the player has moved on: Hale stays on the woodland path while the player is still
+## there, and stands in Crossroads from the next load ("hale_walked_home", The road home).
+func zone_loading() -> void:
+	for id: String in defs:
+		if state(id) != "none":
+			for f: String in defs[id].get("next_visit_flags", []):
+				SaveGame.set_flag(f)
 
 # --- events --------------------------------------------------------------------
 ## Reports something that happened. Active quests move first, then quests that start on this event.

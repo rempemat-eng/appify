@@ -10,7 +10,7 @@
         "if": { "done": ["under_the_stones"] },
         "lines": [
           "You hear it? The lantern hums. Moss says the Ferns are on their way back from the halt farm.",
-          "Go and see her at the stall. If folk are coming home, she'll know what they need."
+          "Bring me your blade whenever you like. The anvil's ready."
         ]
       },
       {
@@ -47,6 +47,13 @@
         ]
       },
       {
+        "if": { "done": ["road_to_crossroads"], "not_started": ["cold_forge"], "restored": ["forge"] },
+        "lines": [
+          "You cleared my door before I was even home? And there's an ember in the hearth. Bless you, Bramble.",
+          "Give me a moment with the bellows and it's a forge again."
+        ]
+      },
+      {
         "if": { "done": ["road_to_crossroads"] },
         "lines": [
           "That's my smithy. Was my smithy. The roof held, but the slates came down across the door.",
@@ -59,12 +66,12 @@
       },
       {
         "if": { "active": ["road_to_crossroads"] },
-        "lines": ["East along the path, then the garden walk down to the square. I'll take the short cut over the bank and meet you there."]
+        "lines": ["East along the path, then the garden walk down to the square. I'll be right behind you."]
       },
       {
         "lines": [
-          "Bramble! You're alive. I came out to see where the star fell and lost the path in the dark.",
-          "Half of Crossroads ran to the halt farm when the storm hit. Take the east path home. I know a short cut over the bank: I'll meet you on the square."
+          "Bramble! You're alive. I came out to see where the star fell and couldn't find my way back in the dark.",
+          "Half of Crossroads ran to the halt farm when the storm hit. Walk back with me?"
         ]
       }
     ]
@@ -74,7 +81,7 @@
     "entries": [
       {
         "if": { "done": ["home_again"] },
-        "lines": ["The Ferns are home, their beds are dug, and the stall has customers again. I'd forgotten the sound of that."]
+        "lines": ["The Ferns are home and their beds are dug. Two packets of valley seed, on the house. Plant them on your terrace."]
       },
       {
         "if": { "step": ["home_again", "welcome"] },
@@ -83,6 +90,13 @@
       {
         "if": { "active": ["home_again"] },
         "lines": ["The Ferns' door is still under the rubble. Clear it at the mark, and I'll knock a little off the timber for you."]
+      },
+      {
+        "if": { "done": ["under_the_stones"], "not_started": ["home_again"], "restored": ["fern_cottage"] },
+        "lines": [
+          "Look at the lantern! The smoke's stopped over the crater, too.",
+          "And you've cleared the Ferns' door already. Go on, Ada's waiting by it."
+        ]
       },
       {
         "if": { "done": ["under_the_stones"] },
@@ -117,7 +131,7 @@
       {
         "if": { "done": ["under_the_stones"] },
         "lines": [
-          "The roof of my herbalist's is in the bakery's yard. When the Ferns are settled, help me put it on again.",
+          "The roof of my herbalist's is in the bakery's yard. When you're back from the hills, help me put it on again.",
           "Until then, nothing to brew with. Your terrace beds will change that."
         ]
       },
@@ -159,12 +173,8 @@
         ]
       },
       {
-        "if": { "done": ["home_again"] },
-        "lines": ["A note in Moss's hand: THE FERNS ARE HOME. THE WELL IS STILL CHOKED AND THE HERBALIST'S ROOF IS STILL OFF. ASK AT THE STALL, OR ASK MOREL."]
-      },
-      {
         "if": { "done": ["under_the_stones"] },
-        "lines": ["A new note: THE LANTERN IS LIT. THE FERNS ARE COMING HOME. A HAND WITH THEIR DOOR WOULD BE KIND."]
+        "lines": ["A new note: THE BELL TOWER WILL WARN OF RAIDERS. DO NOT FACE THEM ALONE. (No bounties pinned yet.)"]
       },
       {
         "lines": ["Torn notices. One survives: MARKET DAY, SATURDAY. The rest the storm took."]
@@ -205,6 +215,10 @@
       {
         "if": { "restored": ["forge"] },
         "lines": ["The forge is lit."]
+      },
+      {
+        "if": { "not_flags": ["hale_walked_home"], "glint_at_least": 30 },
+        "lines": ["You pay 30 Glint for beams and nails and clear the slates from the door. Under the ash in the hearth an ember is still alive."]
       },
       {
         "if": { "glint_at_least": 30 },
