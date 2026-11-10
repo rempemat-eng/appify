@@ -1,5 +1,7 @@
 # Working on MyGame
 
+> **Proposed, 10 Nov:** [docs/vision/development-plan.md](docs/vision/development-plan.md) is the status review and the plan for the next phase. Once Matt approves it, its section 3 (ownership by folder, one issue per task) replaces the "Current coordination and authority" section below, `docs/codex/handover.md` and `docs/codex/coordination.md`. Until then the rules below stand.
+>
 > **Claude A directs again (Matt, 1 Nov 20:23); the Codex lead keeps running the delegation.** Claude A sets priorities, art direction and Matt's review list, and reviews art. The Codex lead keeps coordinating #149, allocating validation, and merging non-art PRs that pass every check. Art and map PRs merge after Matt's OK. The current orders are Claude A's newest post on #149 ("DIRECTOR") and docs/codex/handover.md. They override the 28 Oct takeover note.
 
 The source of truth is `rempemat-eng/appify` on GitHub. The Bilt editor and its preview are outdated. Real multiplayer is a later phase; finish the existing art, motion, HUD and local interactions before adding more content or mechanics.
