@@ -164,6 +164,19 @@ func test_the_woodland_is_split_into_walls_and_low_walls() -> void:
 	assert_object(low.get_node_or_null("s_log-1")).is_not_null()
 	assert_object(walls.get_node_or_null("s_willow")).is_not_null()
 	assert_object(walls.get_node_or_null("s_stone-6")).is_not_null()
+	# solid rock at chest height stops an arrow though it stands under 64 texels: the two low stones and the
+	# broken one say so in their records (gameplay.blocks_shots, authored), and that wins over the height rule
+	for stone in ["s_stone-2", "s_stone-7", "s_stone-4"]:
+		assert_object(walls.get_node_or_null(stone)).override_failure_message("%s is low" % stone).is_not_null()
+	# exactly these kinds are low
+	var low_kinds := {}
+	for shape in low.get_children():
+		if String(shape.name).begins_with("s_"):
+			var picture := (zone.get_node("Base/Objects/" + String(shape.name).substr(2)) as Sprite2D).texture.resource_path
+			low_kinds[picture.get_file().get_basename()] = true
+	var kinds := low_kinds.keys()
+	kinds.sort()
+	assert_array(kinds).is_equal(["bramble", "bramble_b", "bush", "bush_b", "bush_c", "forest_bench", "mossy_log", "stump"])
 
 func test_every_woodland_thing_that_stands_tall_has_a_solid() -> void:
 	# the six saplings (82 texels, taller than the player) had no box in the kit library and were walked
@@ -241,6 +254,10 @@ func test_crossroads_solids_follow_the_reviewed_boxes() -> void:
 	var stone := (zone.get_node("Walls/Solid_waystone/Shape") as CollisionShape2D).shape as RectangleShape2D
 	assert_vector(stone.size).is_equal(Vector2(56, 12))
 	assert_int((zone.get_node("Walls/Solid_bench_28") as StaticBody2D).collision_layer).is_equal(WALLS | LOW)
+	# chest-high stone rubble stops shots (its record says so); the knee-high piles are flown over
+	assert_int((zone.get_node("Walls/Solid_square_rubble_b") as StaticBody2D).collision_layer).is_equal(WALLS)
+	assert_int((zone.get_node("Props/If_smithy_rubble/SmithyRubbleBody") as StaticBody2D).collision_layer).is_equal(WALLS)
+	assert_int((zone.get_node("Props/If_square_rubble_a/SquareRubbleABody") as StaticBody2D).collision_layer).is_equal(WALLS | LOW)
 	assert_int((zone.get_node("Walls/Solid_oak_6") as StaticBody2D).collision_layer).is_equal(WALLS)
 
 # --- the y-sort -------------------------------------------------------------------------------

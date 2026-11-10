@@ -359,7 +359,6 @@ position = Vector2(1476, 1176)
 shape = SubResource("s9")
 
 [node name="Solid_square_rubble_b" type="StaticBody2D" parent="Walls"]
-collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_square_rubble_b"]
@@ -855,7 +854,6 @@ centered = false
 offset = Vector2(-63, -93)
 
 [node name="SmithyRubbleBody" type="StaticBody2D" parent="Props/If_smithy_rubble"]
-collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_smithy_rubble/SmithyRubbleBody"]

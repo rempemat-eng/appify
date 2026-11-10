@@ -6,9 +6,10 @@ is a StaticBody2D on layer 1 with mask 0. A low solid is on layers 1 and 5: it s
 and actors/arrow.gd lets an arrow fly over it.
 
 Low rule: a solid is low when its picture stands less than LOW_RISE texels above its foot (the shoulder of
-a 74 texel person; an arrow leaves the bow 21 to 70 texels up and is drawn flying over it). A kit piece may
-say how high it stands itself (geometry.height_px) or that it never stops a shot (gameplay.blocks_shots
-false); terrain is low where a zone's low.txt says so (water, a drop).
+a 74 texel person). A kit piece's own word wins over that: it may say how high it stands
+(geometry.height_px), that it never stops a shot (gameplay.blocks_shots false), or that it always does
+(blocks_shots true, marked as authored in audit.overrides: the short standing stones, the stone rubble).
+Terrain is low where a zone's low.txt says so (water).
 
 Y-sort: a sprite's origin is what the y-sort compares with an actor's feet, so it sits on the picture's
 drawn feet (its lowest opaque row): feet_drop() says how far a picture is drawn below or above the origin
@@ -115,9 +116,15 @@ def drawn_base(png: str, foot, offset, depth: int = 12, density: int = 3):
 
 
 def is_low(stands: float, piece: dict | None = None) -> bool:
-    """The low rule: the piece's own word if it has one, else the picture's rise."""
+    """The low rule. A piece's own word wins over its height: `gameplay.blocks_shots` false is low, and
+    `blocks_shots` true is not low when the record marks it as authored (audit.overrides has
+    "blocks_shots": solid rock at chest height stops an arrow, a bush of the same height does not). A seeded
+    `true` without that mark is only the seeder's default, so the picture's rise decides."""
     if piece is not None:
-        if (piece.get('gameplay') or {}).get('blocks_shots') is False:
+        shots = (piece.get('gameplay') or {}).get('blocks_shots')
+        if shots is False:
             return True
+        if shots is True and 'blocks_shots' in (piece.get('audit') or {}).get('overrides', []):
+            return False
         stands = (piece.get('geometry') or {}).get('height_px', stands)
     return stands < LOW_RISE

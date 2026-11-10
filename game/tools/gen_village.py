@@ -81,7 +81,7 @@ def solids(plan: dict, kit: dict) -> dict:
     The plan's box (kit.json `solid`) stands unless the kit library knows the picture better
     (tools/gen_physics.py): an approved woodland picture takes that picture's box, and a box the library
     reviewed against the art (audit.overrides "collision") replaces the plan's. Low: the picture stands
-    under 64 texels, so an arrow flies over it."""
+    under 64 texels, so an arrow flies over it, unless its record says it stops shots all the same."""
     zid = plan['id']
     sprite = {}
     for k, dr in enumerate(plan.get('art', {}).get('dressing', [])):
@@ -102,7 +102,8 @@ def solids(plan: dict, kit: dict) -> dict:
             bx, by, bw, bh = PH.box(piece)
             rect = [round(fx + bx, 4), round(fy + by, 4), bw, bh]
         stands = PH.rise(os.path.join(GAME, 'zones', zid, 'art', o['png']), -o['offset'][1]) if o.get('png') else PH.LOW_RISE
-        out[o['id']] = (rect, PH.is_low(stands, piece))
+        # the record that knows this picture has the last word on shots (the stone rubble stops them)
+        out[o['id']] = (rect, PH.is_low(stands, piece if piece is not None else PH.source_piece(zid, o['id'])))
     return out
 
 

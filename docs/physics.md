@@ -58,9 +58,23 @@ Zones built by the world editor (`kitlab`, `woodland_kit`) derive one walls body
 
 ## Low solids
 
-A solid is low when its picture stands less than 64 texels above its foot (`gen_physics.LOW_RISE`: the shoulder of a 74 texel person). A piece can say so itself (`geometry.height_px`, or `gameplay.blocks_shots` false), and terrain is low where `low.txt` says so. Low today: the woodland's stream and pool, stumps, the bench, logs, brambles, bushes and the two short standing stones (the broken one and the low ones); Crossroads' benches, tubs, barrels, sacks, woodpiles, troughs, rubble, the boulder and bushes; the Undercroft's rubble, roots, urn and pulled lever. Never low: walls, wall faces, buildings, zone edges, trunks, hollies, the tall standing stones, the broken pillars, the sealed slab (`test_what_must_stop_a_shot_is_never_low`).
+A solid is low when its picture stands less than 64 texels above its foot (`gen_physics.LOW_RISE`: the shoulder of a 74 texel person), and terrain is low where `low.txt` says so. A piece's own word wins over its height (`gen_physics.is_low`):
 
-Why: an arrow leaves the bow 21 to 70 texels above the ground and is drawn that high, so over a bench or a stream it is seen flying on. Stopped there it vanished in mid air. Measured on the woodland camp, 12 % of the lines from a standing point within range to a mossling cross only low solids.
+- `gameplay.blocks_shots` false: low, whatever its height.
+- `gameplay.blocks_shots` true and marked as authored (`audit.overrides` has `"blocks_shots"`): never low. Solid rock at chest height stops an arrow; a bush of the same height does not. A `true` without the mark is only the seeder's default and decides nothing.
+- `geometry.height_px`: the height to judge by, in place of the picture's.
+
+Low today:
+
+| Zone | Low |
+| --- | --- |
+| woodland | the stream above the fall and the pool and river below it; stumps, the bench, logs, brambles, bushes |
+| Crossroads | bushes, flower tubs, woodpiles, sacks, benches, barrels, the coal heap, the trough, the boulder (45), the anvil, the knee-high rubble (square rubble a, fern rubble) |
+| Undercroft | rubble, roots, the urn, the pulled lever |
+
+Never low: walls, wall faces, buildings, zone edges, the fall's face, trunks, saplings, hollies, every standing stone (the two short kinds, 56 texels, by their records), Crossroads' chest-high stone rubble (smithy rubble 56, square rubble b 57, by their records), the wells, lanterns, crates, the broken pillars, the sealed slab. `test_what_must_stop_a_shot_is_never_low` holds this for terrain, edges, faces, buildings, posts and the slab by node name; `test_the_woodland_is_split_into_walls_and_low_walls` pins the woodland's low kinds exactly and its stones; `test_every_woodland_thing_that_stands_tall_has_a_solid` holds everything 64 texels or taller; `test_crossroads_solids_follow_the_reviewed_boxes` pins the rubble piles, a bench and the hollow oak. The other Crossroads and Undercroft props are classed by the rule and not pinned one by one.
+
+Why: an arrow is drawn 29 to 33 texels above the ground when shot south, about 46 when shot east or west and 61 to 67 when shot north. Over water it is always seen flying on. Over a prop 47 to 61 texels tall it is drawn across the prop's upper part on south, east and west shots, which reads as passing over a low thing; stopped there it vanished in mid air. Rock is the exception by art direction: an arrow that crosses a chest-high stone looks wrong, so stone says so in its record.
 
 ## Arrows and other shots
 

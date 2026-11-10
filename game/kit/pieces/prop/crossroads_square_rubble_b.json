@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "square_rubble_b",
@@ -125,6 +125,9 @@
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "blocks_shots"
   ]
  }
 }
