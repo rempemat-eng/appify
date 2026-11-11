@@ -293,3 +293,57 @@ func test_no_harm_from_outside_the_arena() -> void:
 	boss.take_hit(5, Vector2.RIGHT)
 	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 5)
 	assert_str(boss.state).is_equal("approach")
+
+## Whoever it strikes at can strike back: the glance is only for a boss that sleeps or walks about.
+func test_while_it_attacks_it_can_be_hurt_from_outside_the_arena() -> void:
+	var boss := _boss(Vector2(300, 250))
+	boss.arena = Rect2(100, 100, 400, 300)
+	_target.position = Vector2(140, 250)
+	assert_str(_to_windup(boss)).is_not_empty()
+	_target.position = Vector2(60, 250)          # stepped out during the wind-up
+	boss.take_hit(1, Vector2.RIGHT)
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 1)
+	boss._stagger(1.0)
+	boss.take_hit(1, Vector2.RIGHT)
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 3)   # the stagger's double damage too
+	boss._finish_attack(0.0)
+	boss.hsm.dispatch(&"approach")
+	boss.step(0.016)                             # nobody in the arena: back to sleep
+	assert_str(boss.state).is_equal("dormant")
+	boss.take_hit(1, Vector2.RIGHT)
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 3)
+
+## The audit's corner (11 Nov): in the real chamber, standing still at (2220, 181) north of the rubble, every
+## charge ended on the rubble with the stagger, 103 to 126 px short, and the Thornback was shot down in 23 s
+## without a heart lost. A charge now goes through rubble and stumps and is stopped by walls and the arena's
+## edge only, so it reaches the corner; the same behind the south-east stump.
+func test_in_the_real_chamber_the_charge_reaches_the_corners_behind_the_rubble_and_the_stump() -> void:
+	for spot: Vector2 in [Vector2(2220, 181), Vector2(2208, 590)]:
+		SaveGame.reset()
+		for f: String in ["camp_cleared:undercroft_rooms", "undercroft_plate", "undercroft_seal_open"]:
+			SaveGame.set_flag(f)
+		var root: Node2D = auto_free(Node2D.new())
+		add_child(root)
+		var player: Player = auto_free(load("res://actors/player.tscn").instantiate())
+		player.input_enabled = false
+		Zones.current = null
+		Zones.attach(root, player)
+		assert_bool(Zones.go_to("undercroft", "arena")).is_true()
+		player.global_position = spot
+		var boss := get_tree().get_first_node_in_group("thornback_live") as Thornback
+		var staggers_before_a_hit := [0]
+		boss.staggered.connect(func() -> void:
+			if player.hp == player.max_hp:
+				staggers_before_a_hit[0] += 1)
+		var frames := 0
+		while player.hp == player.max_hp and frames < 900:   # 15 s
+			await get_tree().physics_frame
+			frames += 1
+			player.global_position = spot if player.hp == player.max_hp else player.global_position
+		assert_int(player.hp).override_failure_message("standing still at %s: not hit in 15 s" % spot).is_less(player.max_hp)
+		assert_int(staggers_before_a_hit[0]).override_failure_message("at %s it staggered %d times before it ever struck" % [spot, staggers_before_a_hit[0]]).is_equal(0)
+		assert_bool(boss.arena.grow(1.0).has_point(boss.global_position)).is_true()
+		root.remove_child(Zones.current)
+		Zones.current.free()
+		Zones.current = null
+	SaveGame.reset()

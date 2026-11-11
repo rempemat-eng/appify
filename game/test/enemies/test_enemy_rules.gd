@@ -343,3 +343,202 @@ func test_a_creature_that_cannot_get_home_gives_up_and_is_put_there() -> void:
 	e.step(0.2)
 	assert_str(e.state).is_equal("idle")
 	assert_vector(e.global_position).is_equal(e.home)
+
+# --- 11 Nov, after the audit of #468 ---------------------------------------------------------------------
+
+## The numbers themselves (the tests above read the constants; these pin them).
+func test_the_approved_numbers_are_three_seconds_at_home_330_to_wake_and_a_grace_of_two_and_a_half() -> void:
+	assert_float(Enemy.HOME_HEAL_TIME).is_equal(3.0)
+	assert_float(SliceEnemy.HOME_HEAL_TIME).is_equal(3.0)
+	assert_float(Enemy.ARRIVAL_GRACE).is_equal(2.5)
+	assert_float(SliceEnemy.ARRIVAL_GRACE).is_equal(2.5)
+	assert_float(SliceEnemy.WAKE).is_equal(330.0)
+	var host := _host()
+	var e := _mossling(host, Vector2.ZERO)
+	var c := _creature(host, Vector2(900, 0))
+	assert_float(e.wake_radius).is_equal(330.0)
+	# a wall met at any angle is slid along (the engine's default refuses under 15 degrees)
+	assert_float(e.wall_min_slide_angle).is_equal(0.0)
+	assert_float(c.wall_min_slide_angle).is_equal(0.0)
+
+## Played by the audit: a mossling's lunge hit a player standing 354 px from its home, and their arrows
+## glanced off it at 24 px and at 9 px. Whoever it strikes at can strike back.
+func test_a_mossling_that_winds_up_lunges_or_recovers_can_always_be_hurt() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2.ZERO)
+	e.set_physics_process(false)
+	_archer.position = Vector2(100, 0)
+	e.hsm.update(0.016)
+	e.global_position = Vector2(299, 0)                  # just inside its leash
+	_archer.position = Vector2(345, 0)                   # within its 51 px reach: it winds up
+	e.hsm.update(0.016)
+	assert_str(String(e.state)).is_equal("windup")
+	_archer.position = Vector2(360, 0)                   # off its ground now (past 351 from home)
+	e.take_hit(1, Vector2.LEFT)
+	assert_int(e.hp).is_equal(2)
+	e.hsm.update(Enemy.WINDUP_TIME + 0.01)
+	assert_str(String(e.state)).is_equal("lunge")
+	e.global_position = Vector2(370, 0)
+	e.take_hit(1, Vector2.LEFT)
+	assert_int(e.hp).is_equal(1)
+	e.hsm.update(Enemy.LUNGE_TIME + 0.01)
+	assert_str(String(e.state)).is_equal("recover")
+	e.max_hp = 9
+	e.hp = 9
+	e.take_hit(1, Vector2.LEFT)
+	assert_int(e.hp).is_equal(8)
+	e.hsm.update(Enemy.RECOVER_TIME + 0.01)              # and once it turns for home it is out of it again
+	assert_str(String(e.state)).is_equal("leash")
+	e.take_hit(1, Vector2.LEFT)
+	assert_int(e.hp).is_equal(8)
+
+func test_a_camp_mate_whose_ground_the_archer_is_not_on_stays_asleep() -> void:
+	var host := _host()
+	var a := _mossling(host, Vector2.ZERO)
+	var b := _mossling(host, Vector2(100, 0))            # in earshot; the archer is 420 from its home
+	for e: Enemy in [a, b]:
+		e.set_physics_process(false)
+	_archer.position = Vector2(-320, 0)
+	a.take_hit(1, Vector2.RIGHT)
+	assert_str(String(a.state)).is_equal("chase")
+	assert_str(String(b.state)).is_equal("idle")
+
+func test_a_creature_hit_on_its_walk_home_by_someone_inside_its_leash_turns_round() -> void:
+	var host := _host()
+	var e := _creature(host, Vector2.ZERO)
+	e.set_physics_process(false)
+	e.global_position = Vector2(200, 0)
+	e.hsm.dispatch(&"leash")
+	assert_str(e.state).is_equal("leash")
+	_archer.position = Vector2(200, 150)
+	e.take_hit(1, Vector2.UP)
+	assert_int(e.hp).is_equal(3)
+	assert_str(e.state).is_equal("approach")
+	e._cancel_attack()
+
+func test_the_chase_goes_round_a_solid_for_a_mossling_and_a_creature() -> void:
+	var host := _host()
+	_wall(host, Rect2(-48, 88, 96, 24))
+	var m := _mossling(host, Vector2(0, 0))
+	var c := _creature(host, Vector2(0, 20))
+	await _steps(2)
+	_archer.position = Vector2(0, 200)                   # straight through the bench
+	m.take_hit(0, Vector2.DOWN, 0.0)                     # wakes both (one camp)
+	await _steps(240)
+	assert_float(m.global_position.y).is_greater(112.0)  # past the bench: on main's movement both stay north of it
+	assert_float(c.global_position.y).is_greater(112.0)
+	c._cancel_attack()
+
+## Played by the audit: shot from (600, 1720), two mosslings ran into the pocket at (610, 1570) between two
+## solids and stayed there in `chase` for the rest of the run. A chase that gains no ground is given up.
+func test_a_chase_that_gains_no_ground_is_given_up_and_the_mossling_goes_home() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2(0, 0))
+	# a pocket open to the north (towards home), closed towards the archer
+	for r: Rect2 in [Rect2(-60, 248, 120, 12), Rect2(-60, 140, 12, 120), Rect2(48, 140, 12, 120)]:
+		_wall(host, r)
+	await _steps(2)
+	_archer.position = Vector2(0, 320)
+	e.take_hit(1, Vector2.DOWN, 0.0)
+	assert_str(String(e.state)).is_equal("chase")
+	await _steps(int((200.0 / (e.speed * Enemy.RUN_IN) + Enemy.CHASE_GIVE_UP - 0.4) * 60.0))
+	assert_str(String(e.state)).is_equal("chase")        # in the pocket, still trying
+	await _steps(60)
+	assert_str(String(e.state)).is_not_equal("chase")    # given up
+	var hp := e.hp
+	e.take_hit(1, Vector2.DOWN, 0.0)                     # no way to this archer: no harm, no waking
+	assert_int(e.hp).is_equal(hp)
+	await _steps(240)
+	assert_str(String(e.state)).is_equal("idle")
+	assert_vector(e.global_position).is_equal(e.home)
+	await _steps(int(Enemy.NO_WAY_TIME * 60.0))          # later it answers a shot again
+	e.take_hit(1, Vector2.DOWN, 0.0)
+	assert_int(e.hp).is_less(e.max_hp)
+
+func test_the_real_pocket_at_610_1570_in_the_woodland_does_not_hold_the_camp() -> void:
+	var root: Node2D = auto_free(Node2D.new())
+	add_child(root)
+	var player: Player = auto_free(load("res://actors/player.tscn").instantiate())
+	player.input_enabled = false
+	SaveGame.reset()
+	Zones.current = null
+	Zones.attach(root, player)
+	assert_bool(Zones.go_to("woodland", "start")).is_true()
+	player.global_position = Vector2(600, 1720)
+	player.set_physics_process(false)
+	await _steps(3)
+	var camp := Zones.current.get_node("Actors/MeadowCamp")
+	var first := camp.get_node("Mossling1") as Enemy
+	first.take_hit(1, Vector2.UP, 0.0)
+	assert_str(String(first.state)).is_equal("chase")
+	await _steps(600)                                    # 10 s: on 89445b6a two were still circling at (610, 1570)
+	for m in camp.get_children():
+		if m is Enemy and not (m as Enemy).dead:
+			var e := m as Enemy
+			var held := e.state == &"chase" and e.global_position.distance_to(Vector2(610, 1570)) < 60.0
+			assert_bool(held).override_failure_message("%s still in the pocket at %s" % [e.name, e.global_position]).is_false()
+	Zones.current.queue_free()
+	Zones.current = null
+	SaveGame.reset()
+
+func test_a_creature_whose_approach_gains_no_ground_goes_home() -> void:
+	var host := _host()
+	var e := _creature(host, Vector2.ZERO)
+	e.set_physics_process(false)                         # it cannot move: no ground gained
+	_archer.position = Vector2(250, 0)
+	e.step(0.016)
+	assert_str(e.state).is_equal("approach")
+	for i in 24:
+		e.step(0.1)                                      # 2.4 s without a px gained
+	assert_str(e.state).is_equal("approach")
+	for i in 3:
+		e.step(0.1)
+	assert_str(e.state).is_equal("idle")                 # given up; it was at home already
+	e.take_hit(1, Vector2.LEFT)
+	assert_str(e.state).is_equal("idle")
+	assert_int(e.hp).is_equal(4)                         # no harm while it has no way
+	e._cancel_attack()
+
+## The proposal of 11 Nov: woken by a shot, a mossling and a rusher run in 1.6 times as fast until their
+## first wind-up. Walking up to them starts the fight at the old pace.
+func test_woken_by_a_shot_it_runs_in_faster_until_its_first_wind_up() -> void:
+	assert_float(Enemy.RUN_IN).is_equal(1.6)
+	assert_float(SliceEnemy.RUN_IN).is_equal(1.6)
+	var host := _host()
+	var shot := _mossling(host, Vector2.ZERO)
+	var near := _mossling(host, Vector2(0, 2000))
+	var rusher := _creature(host, Vector2(0, 4000))
+	var shield := _creature(host, Vector2(0, 6000), "shield")
+	for n: Node in [shot, near, rusher, shield]:
+		n.set_physics_process(false)
+	_archer.position = Vector2(300, 0)
+	shot.take_hit(1, Vector2.LEFT, 0.0)
+	shot._stagger = 0.0
+	shot.hsm.update(0.016)
+	assert_float(shot.velocity.length()).is_equal_approx(117.0 * 1.6, 0.5)
+	shot.global_position = Vector2(260, 0)
+	shot.hsm.update(0.016)                               # in reach: the wind-up ends the run
+	assert_str(String(shot.state)).is_equal("windup")
+	shot.hsm.update(Enemy.WINDUP_TIME + 0.01)
+	shot.hsm.update(Enemy.LUNGE_TIME + 0.01)
+	_archer.position = Vector2(0, 0)
+	shot.hsm.update(Enemy.RECOVER_TIME + 0.01)
+	shot.hsm.update(0.016)
+	assert_float(shot.velocity.length()).is_equal_approx(117.0, 0.5)
+	# noticed by nearness: the old pace
+	_archer.position = Vector2(150, 2000)
+	near.hsm.update(0.016)
+	near.hsm.update(0.016)
+	assert_str(String(near.state)).is_equal("chase")
+	assert_float(near.velocity.length()).is_equal_approx(117.0, 0.5)
+	# the rusher runs in; the shield bearer does not
+	_archer.position = Vector2(320, 4000)
+	rusher.take_hit(1, Vector2.LEFT)
+	rusher.step(0.016)
+	assert_float(rusher.velocity.length()).is_equal_approx(102.0 * 1.6, 0.5)
+	_archer.position = Vector2(320, 6000)
+	shield.take_hit(1, Vector2.LEFT)
+	shield.step(0.016)
+	assert_float(shield.velocity.length()).is_equal_approx(102.0, 0.5)
+	rusher._cancel_attack()
+	shield._cancel_attack()

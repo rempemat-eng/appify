@@ -25,22 +25,27 @@ The placeholder shapes are replaced by drawn woodland creatures from the castwor
 
 Wiring adds nodes and never edits `slice_enemy.gd`: `woodland_camp.tscn` has a `CreatureDresser` child that gives every `SliceEnemy` entering the camp a `CreatureLook` child. The look hides the placeholder `_draw` with `self_modulate` (children are unaffected), maps state to clip (idle, approach/leash → move, windup → telegraph stretched to `windup_time()`, attack, recover → stagger, a hit → hurt, or a flash during a tell or charge), draws the contact shadow and the ground tell in the one reserved colour (it fills as the tell runs and brightens once, solidly, for the last fifth; no blinking), and dresses the shooter's shot as a thorn seed. On `died` a `FreedCreature` plays `freed` (the shard pops out, it shakes itself) and walks off and fades (finite; under reduced motion it calms in place). The den and clumps sit in the camp's parent, because a cleared camp frees its children; they show calm once the camp is cleared. `--camp` (game.gd) sets the camp north of the player to see it.
 
-## Home, waking and reach (10 Nov, the combat stream)
+## Home, waking and reach (10 and 11 Nov, the combat stream)
 
-The same rules hold for the mossling (`actors/enemy.gd`) and for these creatures (`slice_enemy.gd`). The first three are Matt's of 10 Nov; the rest follow from them or fix faults found in play.
+The rules below hold for the mossling (`actors/enemy.gd`) and for these creatures (`slice_enemy.gd`) unless a column says otherwise. The first three are Matt's of 10 Nov. Each row names the test in `test/enemies/test_enemy_rules.gd` that holds it; a row marked "played" was also seen with real input (PR #468).
 
-| Rule | Mossling | Creature |
-| --- | --- | --- |
-| No healing on the walk home; full health after 3 s at home (`HOME_HEAL_TIME`) | yes | yes (they never healed before) |
-| A hit wakes an idle enemy when the archer is within 330 px (`wake_radius`, `WAKE`) | yes | yes, and the archer must be inside its leash |
-| Its idle camp mates in earshot wake with it, if the archer stands on ground they keep to | within 165 px | within 300 px |
-| It can only be hurt by someone it can come for (`can_come_for`); otherwise the arrow glances off (`glance.gd`: a pale chevron for 0.22 s, one still drawing) | on its ground (300 px leash + 51 px reach from home) and, asleep or walking home, within 330 px | inside its leash (420 px from home) and, asleep or walking home, within 330 px |
-| A hit on the walk home by someone it can come for turns it round | yes | yes |
-| Woken by a shot it keeps coming for 3 s even past its lose radius (`PROVOKED_TIME`) | yes | not needed (no lose radius) |
-| The chase and the walk home go round solids (`steer.gd`) | yes | yes |
-| A walk home that takes longer than twice the straight walk plus 3 s is given up: the enemy is put at home (a 0.3 s fade in, none under reduced motion) | yes | yes |
-| No noticing by nearness for 2.5 s after a zone becomes ready (`ARRIVAL_GRACE`; a hit still wakes it) | yes | yes |
+| Rule | Mossling | Creature | Held by |
+| --- | --- | --- | --- |
+| No healing on the walk home; full health 3 s after it is home (`HOME_HEAL_TIME`) | yes | yes (they never healed before) | `..._does_not_heal_on_the_walk_home...`, `test_a_creature_is_whole_three_seconds...`, the numbers test; played for the mossling only |
+| A hit wakes an idle enemy when the archer is within 330 px | yes | yes, and the archer must be inside its 420 px leash | `test_a_hit_wakes_an_idle_mossling...`, `test_a_hit_wakes_an_idle_creature...`; played |
+| Its idle camp mates in earshot wake with it, if the archer stands on ground they keep to | within 165 px | within 300 px | the same two, and `test_a_camp_mate_whose_ground_the_archer_is_not_on_stays_asleep`; played |
+| Asleep, coming or walking home, it is only hurt by an archer it can come for (`can_come_for`); otherwise the arrow glances off (`glance.gd`: a pale chevron for 0.22 s) | on its ground (300 px leash + 51 px reach from home) and, asleep or walking home, within 330 px | inside its leash and, asleep or walking home, within 330 px | `test_an_arrow_from_beyond_330_glances...`, `..._at_its_leash_limit_is_not_a_target...`, the creature's wake test; played |
+| While it winds up, lunges or recovers it can always be hurt | yes | it cancels its attack the step the player leaves its leash | `test_a_mossling_that_winds_up_lunges_or_recovers_can_always_be_hurt`; played |
+| A hit on the walk home by an archer it can come for turns it round | yes | yes | the leash-limit test, `test_a_creature_hit_on_its_walk_home...` |
+| Woken by a shot it keeps coming for 3 s even past its lose radius (`PROVOKED_TIME`) | yes | no lose radius | `..._keeps_coming_when_the_arrow_knocks_it_past_330`; played |
+| Woken by a shot it runs in 1.6 times as fast until its first wind-up (`RUN_IN`; a proposal of 11 Nov) | yes | the rusher only | `test_woken_by_a_shot_it_runs_in_faster...`; played |
+| It steers round a solid on the walk home and in the chase (`steer.gd`, and `wall_min_slide_angle = 0`) | yes | yes | the two `..._walks_home_round_a_solid...` tests, `test_the_chase_goes_round_a_solid...`; the walk home played |
+| A walk home longer than twice the straight walk plus 3 s is given up: it is put at home | with a 0.3 s fade in, none under reduced motion | no fade | the two `..._cannot_get_home_gives_up...` tests, the fade test; never seen in a zone |
+| A chase that gets no nearer its target for 2.5 s is given up: it walks home and for 6 s neither notices, wakes to a shot nor is hurt by one | yes | yes | `test_a_chase_that_gains_no_ground...`, `test_the_real_pocket_at_610_1570...`, `test_a_creature_whose_approach_gains_no_ground...` |
+| No noticing by nearness for 2.5 s after a zone becomes ready (`ARRIVAL_GRACE`; a hit still wakes it) | yes | yes | the two grace tests; played |
 
-What "wakes" means against the leash: a woken enemy chases as before and turns for home at its leash limit. An archer who stands where the leash cannot bring it within striking distance cannot hurt it, whether it is asleep, coming or walking home, so there is no place from which an enemy at its leash limit can be shot down. `steer.gd` is wall following, not path finding: it gets an enemy round a bench, a stump or a door jamb; across a room with no straight way it may circle, and then the given-up walk ends it.
+What is not so, so nobody reads more into the table:
 
-`test/enemies/test_enemy_rules.gd` holds each rule (the movement ones on real physics steps); every one fails when its rule is taken out.
+- **An enemy can still be beaten without being fought.** A lone mossling or rusher woken from about 300 px is freed before it arrives (three or four arrows take less time than its run). A creature can be beaten at its leash line by stepping out when it winds up and back in to shoot: it turns for home the step the player is outside. Both are open; the numbers are in PR #468.
+- `steer.gd` is wall following, not path finding. It gets an enemy round a bench, a stump or a door jamb. Where it circles instead, the given-up chase or the given-up walk ends it.
+- An arrow that glances still makes the camera shake as for a hit (`actors/arrow.gd` reports `struck` either way): to be fixed with part D.

@@ -12,12 +12,17 @@ extends CharacterBody2D
 ##     A hit on the walk home turns it round. Woken by a shot (or a mate's), it keeps coming for
 ##     PROVOKED_TIME even past its `lose_radius` (the arrow's knock pushed a mossling shot from 320 past
 ##     330, where it gave up, went home and was shot again asleep).
-##   - It can only be hurt by someone it can come for (`can_come_for`): standing within reach of the
-##     ground it keeps to and, while it is asleep or walking home, within `wake_radius` of it. From anywhere
-##     else the arrow glances off (enemies/glance.gd) and it does not react, so it never stands at its
-##     leash limit, or asleep, as a free target.
-##   - It finds its way round solids (enemies/steer.gd). If it still cannot get home in a fair time
-##     (twice the straight walk plus LEASH_GIVE_UP) it gives up the walk and is put at home.
+##     Woken that way it runs in at RUN_IN times its speed until its first wind-up (a proposal, 11 Nov:
+##     no health or damage number changes; a fight begun by walking up to it is as before).
+##   - Asleep, chasing or walking home it can only be hurt by someone it can come for (`can_come_for`):
+##     standing within reach of the ground it keeps to and, while it is asleep or walking home, within
+##     `wake_radius` of it. From anywhere else the arrow glances off (enemies/glance.gd) and it does not
+##     react. While it winds up, lunges or recovers it can always be hurt: whoever it strikes at can
+##     strike back (played 10 Nov: its lunge hit a player whose arrows glanced off it at 9 px).
+##   - It steers round solids (enemies/steer.gd). If it still cannot get home in a fair time (twice the
+##     straight walk plus LEASH_GIVE_UP) it gives up the walk and is put at home. A chase that gains no
+##     ground on its target for CHASE_GIVE_UP is given up too: it walks home
+##     and for NO_WAY_TIME neither wakes to a shot nor is hurt by one (it has found no way to the archer).
 ##   - For ARRIVAL_GRACE after a zone becomes ready (a load, a door, getting up after a defeat) it does not
 ##     notice the player by nearness; a hit still wakes it.
 
@@ -33,6 +38,10 @@ const RECOVER_TIME := 0.55
 const HOME_HEAL_TIME := 3.0     ## full health this long after it is home again
 const LEASH_GIVE_UP := 3.0      ## seconds over twice the straight walk before it gives up walking home
 const ARRIVAL_GRACE := 2.5      ## no noticing by nearness this long after the zone becomes ready
+const RUN_IN := 1.6             ## woken by a shot it runs in this much faster, until its first wind-up
+const CHASE_GIVE_UP := 2.5      ## a chase that gets no nearer its target for this long is given up
+const GAIN := 12.0              ## "ground gained": this much nearer the target than it has been in this chase
+const NO_WAY_TIME := 6.0        ## after a given-up chase: no waking to a shot and no harm from one, this long
 const PROVOKED_TIME := 3.0      ## after a hit it does not give the archer up for being far, this long
 const HOP_FADE := 0.3           ## it fades in at home after giving up the walk (not under reduced motion)
 
@@ -63,6 +72,10 @@ var _leash_t := 0.0
 var _leash_budget := 0.0
 var _grace := 0.0
 var _provoked := 0.0
+var _run_in := false
+var _closest := INF
+var _stuck_t := 0.0
+var _no_way_t := 0.0
 var _fade := 0.0
 
 @onready var sprite: Sprite2D = $Sprite
@@ -84,7 +97,7 @@ func _build_hsm() -> void:
 	hsm.update_mode = LimboHSM.MANUAL
 	add_child(hsm)
 	var idle := LimboState.new().named("idle").call_on_enter(_idle_enter).call_on_update(_idle)
-	var chase := LimboState.new().named("chase").call_on_enter(steer.reset).call_on_update(_chase)
+	var chase := LimboState.new().named("chase").call_on_enter(_chase_enter).call_on_update(_chase)
 	var windup := LimboState.new().named("windup").call_on_enter(_windup_enter).call_on_update(_windup)
 	var lunge := LimboState.new().named("lunge").call_on_enter(_lunge_enter).call_on_update(_lunge)
 	var recover := LimboState.new().named("recover").call_on_enter(_reset_t).call_on_update(_recover)
@@ -120,6 +133,7 @@ func _physics_process(delta: float) -> void:
 	_fade = maxf(_fade - delta, 0.0)
 	_grace = maxf(_grace - delta, 0.0)
 	_provoked = maxf(_provoked - delta, 0.0)
+	_no_way_t = maxf(_no_way_t - delta, 0.0)
 	if _stagger > 0.0:
 		_stagger -= delta
 		velocity = velocity.move_toward(Vector2.ZERO, 1800.0 * delta)
@@ -140,15 +154,24 @@ func _should_leash() -> bool:
 func on_its_ground(at: Vector2) -> bool:
 	return home.distance_to(at) <= leash_radius + attack_range
 
-## True when it can come for someone standing at `at`: on its ground and, while it is asleep or walking
-## home, near enough to notice a shot from.
+## True when someone standing at `at` may hurt it. Always while it winds up, lunges or recovers. Otherwise
+## when it can come for them: on its ground and, while it is asleep or walking home, near enough to notice
+## a shot from; and not just after it has given a chase up for want of a way.
 func can_come_for(at: Vector2) -> bool:
-	if not on_its_ground(at):
+	if state == &"windup" or state == &"lunge" or state == &"recover":
+		return true
+	if _no_way_t > 0.0 or not on_its_ground(at):
 		return false
 	return (state != &"idle" and state != &"leash") or global_position.distance_to(at) <= wake_radius
 
 func _idle_enter() -> void:
 	_home_t = 0.0
+	_run_in = false
+
+func _chase_enter() -> void:
+	steer.reset()
+	_closest = INF
+	_stuck_t = 0.0
 
 func _idle(delta: float) -> void:
 	velocity = Vector2.ZERO
@@ -156,7 +179,7 @@ func _idle(delta: float) -> void:
 		_home_t += delta
 		if _home_t >= HOME_HEAL_TIME:
 			hp = max_hp
-	if _grace > 0.0:
+	if _grace > 0.0 or _no_way_t > 0.0:
 		return
 	if target != null and _target_dist() < aggro_radius and home.distance_to(target.global_position) < leash_radius:
 		hsm.dispatch(&"aggro")
@@ -168,13 +191,26 @@ func _chase(delta: float) -> void:
 	if _target_dist() < attack_range:
 		hsm.dispatch(&"in_range")
 		return
-	velocity = steer.direction(self, global_position.direction_to(target.global_position), delta) * speed
+	# no ground gained on the target for too long (pushing at a solid, circling a pocket): go home
+	if _target_dist() < _closest - GAIN:
+		_closest = _target_dist()
+		_stuck_t = 0.0
+	else:
+		_stuck_t += delta
+		if _stuck_t >= CHASE_GIVE_UP:
+			_no_way_t = NO_WAY_TIME
+			_provoked = 0.0
+			hsm.dispatch(&"leash")
+			return
+	var pace := speed * (RUN_IN if _run_in else 1.0)
+	velocity = steer.direction(self, global_position.direction_to(target.global_position), delta) * pace
 
 func _reset_t() -> void:
 	_t = 0.0
 
 func _windup_enter() -> void:
 	_t = 0.0
+	_run_in = false
 	attack_dir = global_position.direction_to(target.global_position)
 
 func _windup(delta: float) -> void:
@@ -205,6 +241,7 @@ func _recover(delta: float) -> void:
 
 func _leash_enter() -> void:
 	steer.reset()
+	_run_in = false
 	_leash_t = 0.0
 	_leash_budget = LEASH_GIVE_UP + 2.0 * global_position.distance_to(home) / (speed * 1.3)
 
@@ -255,6 +292,7 @@ func _archer() -> Node2D:
 ## Woken by a hit: it comes for the archer, and so do its idle camp mates near enough to hear it.
 func _wake(at: Vector2) -> void:
 	_grace = 0.0
+	_run_in = true
 	hsm.dispatch(&"aggro")
 	var camp := get_parent()
 	if camp == null:
@@ -265,9 +303,10 @@ func _wake(at: Vector2) -> void:
 
 ## A camp mate was hit: wake too, when idle and the archer stands on ground it keeps to.
 func hear_alert(at: Vector2) -> void:
-	if dead or state != &"idle" or not on_its_ground(at):
+	if dead or state != &"idle" or _no_way_t > 0.0 or not on_its_ground(at):
 		return
 	_grace = 0.0
+	_run_in = true
 	_provoked = PROVOKED_TIME
 	hsm.dispatch(&"aggro")
 
