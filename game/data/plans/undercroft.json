@@ -37,7 +37,7 @@
   "torches": [[56, 56], [160, 56], [248, 104], [376, 104], [440, 56], [536, 56], [608, 56], [700, 56]],
   "skylight": { "at": [640, 132], "rx": 40, "ry": 30, "why": "a crack in the vault under the circle lets a shaft of daylight in" },
   "props": [
-    { "id": "rubble_hall", "kind": "rubble", "at": [44, 199], "size": [28, 12], "solid": true, "why_at": "fallen against the south wall's foot (11 Nov): at y 192 it left a 24 texel strip under it, wide enough for the player and too narrow for a creature, a place to shoot from for free" },
+    { "id": "rubble_hall", "kind": "rubble", "at": [44, 198.67], "size": [28, 12], "solid": true, "why_at": "fallen against the south wall's foot (11 Nov): at y 192 it left a 24 texel strip under it, wide enough for the player and too narrow for a creature, a place to shoot from for free" },
     { "id": "roots_hall", "kind": "roots", "at": [120, 72], "size": [28, 10], "solid": true, "box": [102, 56, 21, 16], "why": "the oak's roots came through the vault and spread on the floor", "why_box": "the root as drawn, from the wall's foot to the floor: the plan's box left an 18 texel slot under the wall, a body wide, and reached 34 texels past the root over plain floor" },
     { "id": "rubble_corridor", "kind": "rubble", "at": [344, 118], "size": [20, 10], "solid": true, "why": "a block fallen where the roots split the vault" },
     { "id": "roots_corridor", "kind": "roots", "at": [272, 166], "size": [26, 8], "solid": true, "why_at": "up out of the floor at the south wall's foot (11 Nov): at y 160 they left a 24 texel strip of floor behind them, wide enough for the player and too narrow for a creature (the audit's free spot at 816, 492)" },

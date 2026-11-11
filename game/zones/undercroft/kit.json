@@ -6,7 +6,7 @@
   2304,
   648
  ],
- "inputs": "1cc2ef7c11825c73be4b7002dd489b63f7957d2949e365c0e500e34c3b6ff089",
+ "inputs": "42a45723c5c073ae69622ca4c852bcbc1369beeb73b7ee442ab14e021e999c4b",
  "kit_drawn": [
   "cairn_alcove.png",
   "channel_lit.png",
@@ -35,7 +35,7 @@
    "png": "rubble_hall.png",
    "foot": [
     132,
-    597
+    596
    ],
    "offset": [
     -54,
@@ -44,7 +44,7 @@
    "cond": null,
    "solid": [
     30.0,
-    187,
+    186.67,
     28,
     12
    ]

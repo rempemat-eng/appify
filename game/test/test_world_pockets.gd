@@ -4,7 +4,7 @@ extends GdUnitTestSuite
 ##   1. the Undercroft: a strip the player fits and a creature (r 12, 24 wide) does not. The corridor's
 ##      roots and the hall's rubble stood 24 texels off the south wall's foot, the seal room's rubble
 ##      box 24 off the doorway's wall: the shield and the rusher were shot for free from (816, 492).
-##      The roots now stand 6 texels off the wall's foot and the rubble 3, closer than a body; the
+##      The roots now stand 6 texels off the wall's foot and the rubble 4, closer than a body; the
 ##      seal rubble's box starts where its stones are drawn.
 ##   2. the woodland: the holly's and the bramble's boxes met in an inside corner at (610, 1570) that
 ##      faced the meadow camp, so mosslings chasing a player at (600, 1720) stood in it. The bramble now

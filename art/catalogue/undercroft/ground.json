@@ -1,7 +1,7 @@
 {
  "id": "undercroft/ground",
  "file": "game/zones/undercroft/art/ground.png",
- "sha256": "d7e8a6293c6c7ef8c9d4b004d5fa27244b78d57aecd10dd676c2424e4bd8eb68",
+ "sha256": "1da9db5034d03ec9f5bb36f10f2d67b12fa3384aa0fdf0c276b4be246ea0ccd4",
  "kind": "ground",
  "biome": "cellar",
  "H": 74.0,
@@ -34,8 +34,7 @@
  "reviewed": "2026-11-11",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-11",
-  "note": "Audit of PR #476 assets (audit476_assets.md, not committed), PR #476 at d6b6c8eb, detail-auditor, 11 Nov. Re-roll from the roots' move (y 160 to 166) and the rubble boxes: 29,610 texels changed (not 39k), alpha 0, palette identical (77 colours, none new), joints and layout unchanged. Every changed cell of a 6 x 4 grid opened beside main: slab bodies and moss re-rolled only. Ground band (Eastward ground group) holds in four windows: hall 11.3 tones / 25.4 shapes / 9.55 L (main 11.4 / 25.5 / 9.56), corridor 13.7 / 27.9 / 11.64, seal 10.8 / 23.9 / 5.57, chamber 11.8 / 29.6 / 8.61. Moss 303 sprigs both (2,802 vs 2,769 texels, lone 1-2 texel sprigs 8 vs 7). Largest flat areas unchanged. Under the roots' new place the wall-foot occlusion band now meets the roots: a shade flag 20 x 10 (182 texels) reads as their contact shadow. detail.no_falloff 0.323 (main 0.324) rejected as a false positive again, as in round 10 (lit pools, falloff and wall-base occlusion are drawn; the detector reads the void and kerbs as even light). G-39 polish carried."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
