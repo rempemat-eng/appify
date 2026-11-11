@@ -1,7 +1,7 @@
 {
  "id": "undercroft/roots_corridor",
  "file": "game/zones/undercroft/art/roots_corridor.png",
- "sha256": "6e84879e55a5212801a1546c6137f0bf5c5806f7ef78262e5c725c1e230b2572",
+ "sha256": "8e324a800fbb55fae2642f7068c019ec745b0c6eb142c209e1df17a731906cbb",
  "kind": "roots_corridor",
  "biome": "cellar",
  "H": 74.0,
@@ -10,9 +10,9 @@
   144,
   48
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
-  "blocker": 0,
+  "blocker": 1,
   "fault": 0,
   "polish": 1
  },
@@ -36,23 +36,34 @@
  },
  "findings": [
   {
+   "detector": "logic.floating_part",
+   "severity": "blocker",
+   "box": [
+    101,
+    6,
+    115,
+    37
+   ],
+   "message": "undercroft/roots_corridor: a part (363 px, 26% of the sprite) hangs in the air, 6 px above the ground line, touching nothing below",
+   "fix": "join it to what holds it up: a crown sits on its trunk and covers the trunk top, a bucket hangs from a rope on a windlass, a sign from a bracket (world-rules.md 6.9)"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
     28,
-    3,
+    6,
     115,
-    44
+    43
    ],
    "message": "undercroft/roots_corridor: detail bar 0.61 of Eastward's prop band (16.5 tones, 41.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-08",
+ "reviewed": "2026-11-11",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 10, PR #440 at 017c1986. RT-12: 17 texels changed in the heaved flag (39..42, 103..114), alpha unchanged; 16 of them follow the ground's changes two rows lower (the flag copies the floor lifted 2 px), where the painter's shifted random stream moved a moss sprig. The root, its heaved flag and the moss gap read as in round 8. detail.bar 0.61 accepted as polish."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
