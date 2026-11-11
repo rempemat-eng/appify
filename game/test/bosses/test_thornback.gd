@@ -294,59 +294,170 @@ func test_no_harm_from_outside_the_arena() -> void:
 	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 5)
 	assert_str(boss.state).is_equal("approach")
 
-## Whoever it strikes at can strike back: the glance is only for a boss that sleeps or walks about.
-func test_while_it_attacks_it_can_be_hurt_from_outside_the_arena() -> void:
+## From outside the arena it can be hurt only while it winds up or strikes (whoever it strikes at can strike
+## back). Walking about, recovering, staggered or roaring it glances for anyone outside: staggered at the
+## edge it was shot down from the door without a heart lost (the door dance, audit of 1a831e73).
+func test_from_outside_the_arena_it_can_be_hurt_only_while_it_winds_up_or_strikes() -> void:
 	var boss := _boss(Vector2(300, 250))
 	boss.arena = Rect2(100, 100, 400, 300)
 	_target.position = Vector2(140, 250)
+	boss.step(0.016)
+	assert_str(boss.state).is_equal("approach")
+	_target.position = Vector2(60, 250)          # outside, and it only walks about
+	assert_bool(boss.take_hit(1, Vector2.RIGHT)).is_false()
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP)
+	_target.position = Vector2(140, 250)
 	assert_str(_to_windup(boss)).is_not_empty()
 	_target.position = Vector2(60, 250)          # stepped out during the wind-up
-	boss.take_hit(1, Vector2.RIGHT)
-	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 1)
-	boss._stagger(1.0)
-	boss.take_hit(1, Vector2.RIGHT)
-	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 3)   # the stagger's double damage too
-	boss._finish_attack(0.0)
+	assert_bool(boss.take_hit(1, Vector2.RIGHT)).is_true()
+	boss.step(boss.windup_time + 0.01)
+	assert_str(boss.state).is_equal("act")
+	assert_bool(boss.take_hit(1, Vector2.RIGHT)).is_true()
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 2)
+	for st: String in ["stagger", "recover", "roar", "dormant"]:
+		boss.hsm.dispatch(StringName(st))
+		assert_str(boss.state).is_equal(st)
+		assert_bool(boss.take_hit(1, Vector2.RIGHT)).override_failure_message("hurt from outside while in " + st).is_false()
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 2)
+	_target.position = Vector2(140, 250)         # inside, the stagger's double damage is there as before
+	boss.hsm.dispatch(&"stagger")
+	assert_bool(boss.take_hit(1, Vector2.RIGHT)).is_true()
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 4)
+	for th in boss.thorns:
+		th.finish()
+
+## An attack whose target has left the arena ends without the stagger.
+func test_a_charge_or_slam_at_someone_who_has_left_the_arena_does_not_stagger_it() -> void:
+	var boss := _boss(Vector2(300, 250))
+	boss.arena = Rect2(100, 100, 400, 300)
+	boss.home = boss.global_position
+	var staggers := [0]
+	boss.staggered.connect(func() -> void: staggers[0] += 1)
+	_target.position = Vector2(140, 250)
+	boss._next = 0
+	boss._close_t = 0.0
+	assert_str(_to_windup(boss)).is_equal("charge")
+	_target.position = Vector2(60, 250)          # out on the wind-up
+	boss.step(boss.windup_time + 0.01)
+	boss.global_position = Vector2(-200, 250)    # carried to the edge by the charge
+	boss._keep_in_arena()
+	assert_str(boss.state).is_equal("recover")
+	assert_int(staggers[0]).is_equal(0)
+	# the slam
+	boss.phase = 2
 	boss.hsm.dispatch(&"approach")
-	boss.step(0.016)                             # nobody in the arena: back to sleep
-	assert_str(boss.state).is_equal("dormant")
-	boss.take_hit(1, Vector2.RIGHT)
-	assert_int(boss.hp).is_equal(Thornback.MAX_HP - 3)
+	_target.position = boss.global_position + Vector2(40, 0)
+	boss._start_windup("slam", Vector2.RIGHT)
+	_target.position = Vector2(60, 250)
+	boss.step(boss.windup_time + 0.01)
+	boss.step(boss.clip_length("slam") + 0.01)
+	assert_str(boss.state).is_equal("recover")
+	assert_int(staggers[0]).is_equal(0)
+
+func _chamber(spot: Vector2) -> Array:
+	SaveGame.reset()
+	for f: String in ["camp_cleared:undercroft_rooms", "undercroft_plate", "undercroft_seal_open"]:
+		SaveGame.set_flag(f)
+	var root: Node2D = auto_free(Node2D.new())
+	add_child(root)
+	var player: Player = auto_free(load("res://actors/player.tscn").instantiate())
+	player.input_enabled = false
+	Zones.current = null
+	Zones.attach(root, player)
+	assert_bool(Zones.go_to("undercroft", "arena")).is_true()
+	player.global_position = spot
+	return [root, player, get_tree().get_first_node_in_group("thornback_live") as Thornback]
+
+func _leave_chamber(root: Node) -> void:
+	root.remove_child(Zones.current)
+	Zones.current.free()
+	Zones.current = null
+	SaveGame.reset()
+
+## The largest distance between the boss's body and a solid's box that still means "inside it".
+func _inside(boss: Thornback, solid: StaticBody2D) -> bool:
+	var shape := solid.get_node("Shape") as CollisionShape2D
+	var box := (shape.shape as RectangleShape2D).size
+	var centre := shape.global_position
+	var body := boss.global_position + Vector2(0, -18)
+	var nearest := Vector2(clampf(body.x, centre.x - box.x / 2.0, centre.x + box.x / 2.0), clampf(body.y, centre.y - box.y / 2.0, centre.y + box.y / 2.0))
+	return body.distance_to(nearest) < Thornback.BODY_RADIUS - 3.0
 
 ## The audit's corner (11 Nov): in the real chamber, standing still at (2220, 181) north of the rubble, every
-## charge ended on the rubble with the stagger, 103 to 126 px short, and the Thornback was shot down in 23 s
-## without a heart lost. A charge now goes through rubble and stumps and is stopped by walls and the arena's
-## edge only, so it reaches the corner; the same behind the south-east stump.
-func test_in_the_real_chamber_the_charge_reaches_the_corners_behind_the_rubble_and_the_stump() -> void:
-	for spot: Vector2 in [Vector2(2220, 181), Vector2(2208, 590)]:
-		SaveGame.reset()
-		for f: String in ["camp_cleared:undercroft_rooms", "undercroft_plate", "undercroft_seal_open"]:
-			SaveGame.set_flag(f)
-		var root: Node2D = auto_free(Node2D.new())
-		add_child(root)
-		var player: Player = auto_free(load("res://actors/player.tscn").instantiate())
-		player.input_enabled = false
-		Zones.current = null
-		Zones.attach(root, player)
-		assert_bool(Zones.go_to("undercroft", "arena")).is_true()
-		player.global_position = spot
-		var boss := get_tree().get_first_node_in_group("thornback_live") as Thornback
-		var staggers_before_a_hit := [0]
-		boss.staggered.connect(func() -> void:
-			if player.hp == player.max_hp:
-				staggers_before_a_hit[0] += 1)
-		var frames := 0
-		while player.hp == player.max_hp and frames < 900:   # 15 s
+## charge ended on the rubble with the stagger, out of reach, and the Thornback was shot down in 23 s without
+## a heart lost. The rubble is a low solid (arrows cross it): the charge crosses it too and reaches the
+## corner. It keeps passing through the rubble until it is clear of it: no step throws it out (the second
+## audit saw 57 px in one frame), and once clear it collides with the rubble again.
+func test_in_the_real_chamber_the_charge_crosses_the_rubble_reaches_the_corner_and_is_never_thrown_out() -> void:
+	var c := _chamber(Vector2(2220, 181))
+	var player: Player = c[1]
+	var boss: Thornback = c[2]
+	player.max_hp = 99
+	player.hp = 99
+	var rubble := Zones.current.get_node("Walls/Solid_rubble_chamber") as StaticBody2D
+	assert_bool(Arrow.is_low(rubble)).is_true()
+	var staggers_before_a_hit := [0]
+	boss.staggered.connect(func() -> void:
+		if player.hp == 99:
+			staggers_before_a_hit[0] += 1)
+	var last := boss.global_position
+	var longest := 0.0
+	var stood_in := 0
+	var passed := false
+	var let_go := false
+	for frame in 1500:                           # 25 s
+		await get_tree().physics_frame
+		player.global_position = Vector2(2220, 181)
+		longest = maxf(longest, boss.global_position.distance_to(last))
+		last = boss.global_position
+		if _inside(boss, rubble):
+			stood_in += 1
+		if not boss._ploughed.is_empty():
+			passed = true
+	var hp_in_the_corner := player.hp
+	for frame in 900:                            # the player walks off; it follows, clear of the rubble
+		await get_tree().physics_frame
+		player.global_position = Vector2(1900, 480)
+		longest = maxf(longest, boss.global_position.distance_to(last))
+		last = boss.global_position
+		if passed and boss._ploughed.is_empty() and boss.get_collision_exceptions().is_empty() and not _inside(boss, rubble):
+			let_go = true
+	player.hp = hp_in_the_corner
+	assert_int(player.hp).override_failure_message("standing still at (2220, 181): not hit in 25 s").is_less(99)
+	assert_int(staggers_before_a_hit[0]).is_equal(0)
+	assert_bool(passed).override_failure_message("the charge never crossed the rubble").is_true()
+	assert_bool(let_go).override_failure_message("it never collided with the rubble again").is_true()
+	assert_float(longest).override_failure_message("a step of %.1f px: thrown out of a solid" % longest).is_less(Thornback.CHARGE_SPEED / 60.0 + 2.0)
+	assert_bool(boss.arena.grow(1.0).has_point(boss.global_position)).is_true()
+	_leave_chamber(c[0])
+
+## A stone column is not low: it stops the player's arrows, and it stops the charge (on 1a831e73 the charge
+## went through both columns and ended standing in them).
+func test_in_the_real_chamber_a_column_stops_the_charge_and_it_never_stands_in_one() -> void:
+	for spot: Vector2 in [Vector2(1765, 211), Vector2(2215, 589)]:
+		var c := _chamber(spot)
+		var player: Player = c[1]
+		var boss: Thornback = c[2]
+		player.max_hp = 99
+		player.hp = 99
+		var columns: Array[StaticBody2D] = [Zones.current.get_node("Walls/Solid_stump_nw") as StaticBody2D, Zones.current.get_node("Walls/Solid_stump_se") as StaticBody2D]
+		for col in columns:
+			assert_bool(Arrow.is_low(col)).is_false()
+		var last := boss.global_position
+		var longest := 0.0
+		var inside := 0
+		for frame in 900:
 			await get_tree().physics_frame
-			frames += 1
-			player.global_position = spot if player.hp == player.max_hp else player.global_position
-		assert_int(player.hp).override_failure_message("standing still at %s: not hit in 15 s" % spot).is_less(player.max_hp)
-		assert_int(staggers_before_a_hit[0]).override_failure_message("at %s it staggered %d times before it ever struck" % [spot, staggers_before_a_hit[0]]).is_equal(0)
-		assert_bool(boss.arena.grow(1.0).has_point(boss.global_position)).is_true()
-		root.remove_child(Zones.current)
-		Zones.current.free()
-		Zones.current = null
-	SaveGame.reset()
+			player.global_position = spot
+			longest = maxf(longest, boss.global_position.distance_to(last))
+			last = boss.global_position
+			for col in columns:
+				if _inside(boss, col):
+					inside += 1
+		assert_int(inside).override_failure_message("at %s it stood inside a column for %d steps" % [spot, inside]).is_equal(0)
+		assert_float(longest).override_failure_message("at %s a step of %.1f px" % [spot, longest]).is_less(Thornback.CHARGE_SPEED / 60.0 + 2.0)
+		assert_bool(boss._ploughed.is_empty()).is_true()
+		_leave_chamber(c[0])
 
 ## Part D: a thorn flies over a low solid (a stump, rubble on layer 5) and is stopped by a wall.
 func test_a_thorn_flies_over_a_low_solid_and_stops_at_a_wall() -> void:

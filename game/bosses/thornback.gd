@@ -24,13 +24,16 @@ extends CharacterBody2D
 ##     the count is the time spent close in.) A player who only passes close by still meets the volley.
 ##   - The strips between the arena's north, east and south edges and the room's walls count as the arena
 ##     for the player (ROOM_SLACK). The west edge is kept exact, so it still sleeps for a player at the door.
-##   - While it sleeps or walks about (dormant, approach) and the player is outside the arena, it cannot be
-##     hurt: the arrow glances off (enemies/glance.gd). Once it winds up, attacks, recovers, staggers or
-##     roars it can be hurt from anywhere: whoever it strikes at can strike back.
-##   - A charge is stopped by a wall met within 45 degrees of head on (one met at a slant is slid along)
-##     or by the arena's edge, with the stagger, and never before its strike has had its turn. Rubble and stumps (low solids, and solids under SMALL_SOLID on both sides) do not stop it: it goes
-##     through them. Before, a charge ended on the chamber's rubble with the stagger, out of reach of a
-##     player behind it, who then shot it down staggered (the north-east corner, 23 s, no heart lost).
+##   - From outside the arena it can be hurt only while it winds up or strikes (windup, act): whoever it
+##     strikes at can strike back. Asleep, walking, recovering, staggered or roaring, an arrow from outside
+##     glances off (enemies/glance.gd). An attack whose target has left the arena ends without the stagger.
+##     (Staggered at the arena's edge by a charge at a player who had stepped out, it was shot down from
+##     the door without a heart lost.)
+##   - A charge is stopped, with the stagger, by a solid met within 45 degrees of head on (one met at a slant
+##     is slid along) or by the arena's edge, and never before its strike has had its turn. Low solids
+##     (Arrow.is_low: what the player's arrows also cross, the chamber's rubble) do not stop it. It stops
+##     colliding with a low solid it runs through until its body is clear of it again, so it is never
+##     thrown out of one. A stone column stops it as it stops arrows.
 ##   - Its thorns fly over low solids as the player's arrows do (bosses/thorn.gd, Arrow.is_low).
 signal died
 signal phase_changed(phase: int)
@@ -58,7 +61,6 @@ const BODY_RADIUS := 20.0 * DENSITY
 const NEAR := 46.0 * DENSITY
 const CLING_TIME := 2.0             ## this long close in (under NEAR * 0.6) brings the charge there too
 const HEAD_ON := -0.7               ## wall normal . aim under this: the charge has run into the wall
-const SMALL_SOLID := 100.0          ## a solid under this on both sides (rubble, a stump) does not stop a charge
 const ROOM_SLACK := 30.0            ## the wall strips north, east and south of the arena count as inside it
 const ART := "res://bosses/thornback/art/"
 
@@ -94,7 +96,7 @@ var _roared := false
 var _travel := 0.0
 var glance_t := 0.0
 var _close_t := 0.0
-var _ploughed: Array[PhysicsBody2D] = []   ## small solids it is charging through
+var _ploughed: Array[PhysicsBody2D] = []   ## low solids it has run into and does not collide with until clear
 
 func _ready() -> void:
 	add_to_group("enemy")
@@ -211,6 +213,8 @@ func _physics_process(delta: float) -> void:
 		if state == "act" and attack == "charge" and _travel > 0.0 and _hit_a_wall_in_the_way():
 			_end_charge(true)
 	_keep_in_arena()
+	if not (state == "act" and attack == "charge"):
+		_release_cleared_solids()
 	marks.queue_redraw()
 	tells.queue_redraw()
 
@@ -225,7 +229,7 @@ func _hit_a_wall_in_the_way() -> bool:
 		if into >= -0.3:
 			continue
 		var body := c.get_collider() as PhysicsBody2D
-		if body != null and (Arrow.is_low(body) or is_small_solid(body)):
+		if body != null and Arrow.is_low(body):
 			if not _ploughed.has(body):
 				_ploughed.append(body)
 				add_collision_exception_with(body)
@@ -233,21 +237,27 @@ func _hit_a_wall_in_the_way() -> bool:
 			wall = true          # met within 45 degrees of head on; a wall met at a slant is slid along
 	return wall
 
-static func is_small_solid(body: Node) -> bool:
-	var found := false
-	for c in body.get_children():
-		if c is CollisionShape2D and (c as CollisionShape2D).shape != null:
-			found = true
-			var size: Vector2 = (c as CollisionShape2D).shape.get_rect().size
-			if maxf(size.x, size.y) >= SMALL_SOLID:
-				return false
-	return found
-
-func _stop_ploughing() -> void:
-	for body in _ploughed:
-		if is_instance_valid(body):
-			remove_collision_exception_with(body)
-	_ploughed.clear()
+## Lets go of every low solid its body no longer touches (so it collides with it again). While it still
+## stands in one it keeps passing through it: taking the exception away there threw it 31 to 57 px clear
+## in one step (the audit of 1a831e73).
+func _release_cleared_solids() -> void:
+	if _ploughed.is_empty() or not is_inside_tree():
+		return
+	var query := PhysicsShapeQueryParameters2D.new()
+	var circle := CircleShape2D.new()
+	circle.radius = BODY_RADIUS + 2.0
+	query.shape = circle
+	query.transform = Transform2D(0.0, global_position + Vector2(0, -6.0 * DENSITY))
+	query.collision_mask = collision_mask
+	var touching := []
+	for hit in get_world_2d().direct_space_state.intersect_shape(query, 16):
+		touching.append(hit.collider)
+	for i in range(_ploughed.size() - 1, -1, -1):
+		var body := _ploughed[i]
+		if not is_instance_valid(body) or not touching.has(body):
+			if is_instance_valid(body):
+				remove_collision_exception_with(body)
+			_ploughed.remove_at(i)
 
 ## Deterministic advancement (the tests call it without physics).
 func step(delta: float) -> void:
@@ -357,8 +367,11 @@ func _update_state(delta: float) -> void:
 						_finish_attack(RECOVER[phase - 1])
 				"slam":
 					if elapsed >= clip_length("slam"):
-						_finish_attack(0.0)
-						_stagger(SLAM_STAGGER)
+						if player_in_arena():
+							_finish_attack(0.0)
+							_stagger(SLAM_STAGGER)
+						else:
+							_finish_attack(RECOVER[phase - 1])   # nobody left to open up for
 		"recover":
 			velocity = Vector2.ZERO
 			if elapsed >= _hold:
@@ -436,7 +449,7 @@ func _end_charge(hit_wall: bool) -> void:
 	if state != "act" or attack != "charge":
 		return
 	velocity = Vector2.ZERO
-	if hit_wall:
+	if hit_wall and player_in_arena():
 		_finish_attack(0.0)
 		_stagger(STAGGER_TIME)
 	else:
@@ -444,7 +457,6 @@ func _end_charge(hit_wall: bool) -> void:
 
 func _finish_attack(hold: float) -> void:
 	attack = ""
-	_stop_ploughing()
 	_release_slot()
 	_hold = hold
 	if hold > 0.0:
@@ -472,8 +484,8 @@ func is_staggered() -> bool:
 func take_hit(amount: int, _dir: Vector2, _knockback: float = 0.0) -> bool:
 	if freed or amount <= 0:
 		return false
-	if is_instance_valid(target) and state in ["dormant", "approach"] and not player_in_arena():
-		glance_t = Glance.TIME        # asleep or walking, it cannot come for an archer outside the arena
+	if is_instance_valid(target) and not state in ["windup", "act"] and not player_in_arena():
+		glance_t = Glance.TIME        # from outside the arena only while it winds up or strikes
 		glanced.emit()
 		return false
 	if state == "dormant":
@@ -494,7 +506,6 @@ func take_hit(amount: int, _dir: Vector2, _knockback: float = 0.0) -> bool:
 func _free() -> void:
 	freed = true
 	attack = ""
-	_stop_ploughing()
 	_release_slot()
 	for th in thorns:
 		if is_instance_valid(th):

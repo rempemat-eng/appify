@@ -351,6 +351,10 @@ func test_the_approved_numbers_are_three_seconds_at_home_330_to_wake_and_a_grace
 	assert_float(Enemy.HOME_HEAL_TIME).is_equal(3.0)
 	assert_float(SliceEnemy.HOME_HEAL_TIME).is_equal(3.0)
 	assert_float(Enemy.ARRIVAL_GRACE).is_equal(2.5)
+	assert_float(Enemy.CHASE_GIVE_UP).is_equal(2.5)
+	assert_float(SliceEnemy.CHASE_GIVE_UP).is_equal(2.5)
+	assert_float(Enemy.GAIN).is_equal(12.0)
+	assert_float(SliceEnemy.GAIN).is_equal(12.0)
 	assert_float(SliceEnemy.ARRIVAL_GRACE).is_equal(2.5)
 	assert_float(SliceEnemy.WAKE).is_equal(330.0)
 	var host := _host()
@@ -444,16 +448,18 @@ func test_a_chase_that_gains_no_ground_is_given_up_and_the_mossling_goes_home() 
 	await _steps(int((200.0 / (e.speed * Enemy.RUN_IN) + Enemy.CHASE_GIVE_UP - 0.4) * 60.0))
 	assert_str(String(e.state)).is_equal("chase")        # in the pocket, still trying
 	await _steps(60)
-	assert_str(String(e.state)).is_not_equal("chase")    # given up
+	assert_str(String(e.state)).is_equal("leash")        # given up: walking home
 	var hp := e.hp
-	e.take_hit(1, Vector2.DOWN, 0.0)                     # no way to this archer: no harm, no waking
+	assert_bool(e.take_hit(1, Vector2.DOWN, 0.0)).is_false()   # on that walk a shot neither hurts nor turns it
 	assert_int(e.hp).is_equal(hp)
+	assert_str(String(e.state)).is_equal("leash")
 	await _steps(240)
 	assert_str(String(e.state)).is_equal("idle")
 	assert_vector(e.global_position).is_equal(e.home)
-	await _steps(int(Enemy.NO_WAY_TIME * 60.0))          # later it answers a shot again
-	e.take_hit(1, Vector2.DOWN, 0.0)
-	assert_int(e.hp).is_less(e.max_hp)
+	# at home it is never deaf (the 6 s of 1a831e73 made 35 arrows glance off mosslings asleep at home)
+	assert_bool(e.take_hit(1, Vector2.DOWN, 0.0)).is_true()
+	assert_int(e.hp).is_equal(hp - 1)
+	assert_str(String(e.state)).is_equal("chase")
 
 func test_the_real_pocket_at_610_1570_in_the_woodland_does_not_hold_the_camp() -> void:
 	var root: Node2D = auto_free(Node2D.new())
@@ -485,6 +491,7 @@ func test_a_creature_whose_approach_gains_no_ground_goes_home() -> void:
 	var host := _host()
 	var e := _creature(host, Vector2.ZERO)
 	e.set_physics_process(false)                         # it cannot move: no ground gained
+	e.global_position = Vector2(60, 0)                   # away from home, so the walk home is a walk
 	_archer.position = Vector2(250, 0)
 	e.step(0.016)
 	assert_str(e.state).is_equal("approach")
@@ -493,10 +500,15 @@ func test_a_creature_whose_approach_gains_no_ground_goes_home() -> void:
 	assert_str(e.state).is_equal("approach")
 	for i in 3:
 		e.step(0.1)
-	assert_str(e.state).is_equal("idle")                 # given up; it was at home already
-	e.take_hit(1, Vector2.LEFT)
+	assert_str(e.state).is_equal("leash")                # given up: walking home
+	assert_bool(e.take_hit(1, Vector2.LEFT)).is_false()  # deaf on that walk
+	assert_int(e.hp).is_equal(4)
+	assert_str(e.state).is_equal("leash")
+	e.global_position = e.home
+	e.step(0.016)
 	assert_str(e.state).is_equal("idle")
-	assert_int(e.hp).is_equal(4)                         # no harm while it has no way
+	assert_bool(e.take_hit(1, Vector2.LEFT)).is_true()   # at home it answers a shot at once
+	assert_str(e.state).is_equal("approach")
 	e._cancel_attack()
 
 ## The proposal of 11 Nov: woken by a shot, a mossling and a rusher run in 1.6 times as fast until their
@@ -531,11 +543,31 @@ func test_woken_by_a_shot_it_runs_in_faster_until_its_first_wind_up() -> void:
 	near.hsm.update(0.016)
 	assert_str(String(near.state)).is_equal("chase")
 	assert_float(near.velocity.length()).is_equal_approx(117.0, 0.5)
-	# the rusher runs in; the shield bearer does not
+	# a mate woken by the alarm runs in too
+	var a := _mossling(host, Vector2(0, 8000))
+	var mate := _mossling(host, Vector2(0, 8040))
+	for n: Enemy in [a, mate]:
+		n.set_physics_process(false)
+	_archer.position = Vector2(300, 8000)
+	a.take_hit(1, Vector2.LEFT, 0.0)
+	mate.hsm.update(0.016)
+	assert_float(mate.velocity.length()).is_equal_approx(117.0 * 1.6, 0.5)
+	# the rusher runs in until its first wind-up; the shield bearer does not
 	_archer.position = Vector2(320, 4000)
 	rusher.take_hit(1, Vector2.LEFT)
 	rusher.step(0.016)
 	assert_float(rusher.velocity.length()).is_equal_approx(102.0 * 1.6, 0.5)
+	rusher.global_position = Vector2(280, 4000)
+	rusher.step(0.016)
+	assert_str(rusher.state).is_equal("windup")
+	rusher.step(rusher.windup_time() + 0.01)
+	rusher.step(0.2)
+	_archer.position = Vector2(0, 4000)
+	rusher.step(0.7)
+	rusher.step(0.016)
+	assert_str(rusher.state).is_equal("approach")
+	rusher.step(0.016)
+	assert_float(rusher.velocity.length()).is_equal_approx(102.0, 0.5)
 	_archer.position = Vector2(320, 6000)
 	shield.take_hit(1, Vector2.LEFT)
 	shield.step(0.016)
@@ -583,6 +615,20 @@ func test_the_shooter_sees_over_a_low_solid_and_not_through_a_wall() -> void:
 	cover.collision_layer = Arrow.WALLS
 	await _steps(2)
 	assert_bool(e._can_commit()).is_false()
+	e._cancel_attack()
+
+func test_a_glance_off_a_creature_is_not_reported_as_struck_either() -> void:
+	var host := _host()
+	var e := _creature(host, Vector2.ZERO)
+	e.set_physics_process(false)
+	var hits := [0]
+	for far: bool in [true, false]:
+		_archer.position = Vector2(-400 if far else -200, 0)
+		var arrow := Arrow.new()
+		host.add_child(arrow)
+		arrow.struck.connect(func(_t: Node) -> void: hits[0] += 1)
+		arrow._on_body(e)
+		assert_int(hits[0]).is_equal(0 if far else 1)
 	e._cancel_attack()
 
 func test_a_glanced_arrow_is_not_reported_as_struck() -> void:

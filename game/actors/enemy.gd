@@ -21,8 +21,8 @@ extends CharacterBody2D
 ##     strike back (played 10 Nov: its lunge hit a player whose arrows glanced off it at 9 px).
 ##   - It steers round solids (enemies/steer.gd). If it still cannot get home in a fair time (twice the
 ##     straight walk plus LEASH_GIVE_UP) it gives up the walk and is put at home. A chase that gains no
-##     ground on its target for CHASE_GIVE_UP is given up too: it walks home
-##     and for NO_WAY_TIME neither wakes to a shot nor is hurt by one (it has found no way to the archer).
+##     ground on its target for CHASE_GIVE_UP is given up too: it walks home, and on that walk a shot
+##     neither turns it round nor hurts it. Once it is home it answers a shot like any other.
 ##   - For ARRIVAL_GRACE after a zone becomes ready (a load, a door, getting up after a defeat) it does not
 ##     notice the player by nearness; a hit still wakes it.
 
@@ -41,7 +41,6 @@ const ARRIVAL_GRACE := 2.5      ## no noticing by nearness this long after the z
 const RUN_IN := 1.6             ## woken by a shot it runs in this much faster, until its first wind-up
 const CHASE_GIVE_UP := 2.5      ## a chase that gets no nearer its target for this long is given up
 const GAIN := 12.0              ## "ground gained": this much nearer the target than it has been in this chase
-const NO_WAY_TIME := 6.0        ## after a given-up chase: no waking to a shot and no harm from one, this long
 const PROVOKED_TIME := 3.0      ## after a hit it does not give the archer up for being far, this long
 const HOP_FADE := 0.3           ## it fades in at home after giving up the walk (not under reduced motion)
 
@@ -75,7 +74,7 @@ var _provoked := 0.0
 var _run_in := false
 var _closest := INF
 var _stuck_t := 0.0
-var _no_way_t := 0.0
+var _gave_up := false           ## walking home from a chase it gave up: deaf to shots until it is home
 var _fade := 0.0
 
 @onready var sprite: Sprite2D = $Sprite
@@ -133,7 +132,6 @@ func _physics_process(delta: float) -> void:
 	_fade = maxf(_fade - delta, 0.0)
 	_grace = maxf(_grace - delta, 0.0)
 	_provoked = maxf(_provoked - delta, 0.0)
-	_no_way_t = maxf(_no_way_t - delta, 0.0)
 	if _stagger > 0.0:
 		_stagger -= delta
 		velocity = velocity.move_toward(Vector2.ZERO, 1800.0 * delta)
@@ -156,20 +154,22 @@ func on_its_ground(at: Vector2) -> bool:
 
 ## True when someone standing at `at` may hurt it. Always while it winds up, lunges or recovers. Otherwise
 ## when it can come for them: on its ground and, while it is asleep or walking home, near enough to notice
-## a shot from; and not just after it has given a chase up for want of a way.
+## a shot from; and not on the walk home from a chase it gave up for want of a way.
 func can_come_for(at: Vector2) -> bool:
 	if state == &"windup" or state == &"lunge" or state == &"recover":
 		return true
-	if _no_way_t > 0.0 or not on_its_ground(at):
+	if (_gave_up and state == &"leash") or not on_its_ground(at):
 		return false
 	return (state != &"idle" and state != &"leash") or global_position.distance_to(at) <= wake_radius
 
 func _idle_enter() -> void:
 	_home_t = 0.0
+	_gave_up = false             # at home it is never deaf
 	_run_in = false
 
 func _chase_enter() -> void:
 	steer.reset()
+	_gave_up = false
 	_closest = INF
 	_stuck_t = 0.0
 
@@ -179,7 +179,7 @@ func _idle(delta: float) -> void:
 		_home_t += delta
 		if _home_t >= HOME_HEAL_TIME:
 			hp = max_hp
-	if _grace > 0.0 or _no_way_t > 0.0:
+	if _grace > 0.0:
 		return
 	if target != null and _target_dist() < aggro_radius and home.distance_to(target.global_position) < leash_radius:
 		hsm.dispatch(&"aggro")
@@ -198,8 +198,7 @@ func _chase(delta: float) -> void:
 	else:
 		_stuck_t += delta
 		if _stuck_t >= CHASE_GIVE_UP:
-			_no_way_t = NO_WAY_TIME
-			_provoked = 0.0
+			_gave_up = true
 			hsm.dispatch(&"leash")
 			return
 	var pace := speed * (RUN_IN if _run_in else 1.0)
@@ -305,7 +304,7 @@ func _wake(at: Vector2) -> void:
 
 ## A camp mate was hit: wake too, when idle and the archer stands on ground it keeps to.
 func hear_alert(at: Vector2) -> void:
-	if dead or state != &"idle" or _no_way_t > 0.0 or not on_its_ground(at):
+	if dead or state != &"idle" or not on_its_ground(at):
 		return
 	_grace = 0.0
 	_run_in = true
