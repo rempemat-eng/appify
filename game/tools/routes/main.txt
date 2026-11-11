@@ -164,10 +164,15 @@ restart
 expect zone undercroft
 expect flag camp_cleared:undercroft_rooms
 
-# The plate lies south of the channel, off the straight walk from the doorway to the lever (11 Nov). The
-# fight before may still have crossed it, so these are tried and logged but do not fail the run;
-# routes/world_fixes.txt walks the straight line with nobody chasing and does assert it.
+# The plate lies south of the channel, off the straight walk from the doorway to the lever (11 Nov); feet
+# anywhere on its slab press it, so walking east along the doorway's axis first does too. The walk here goes
+# from the doorway straight at the lever through waypoints (the walk grid would plan along the axis first).
+# The fight before may have crossed the plate, so these are tried and logged but do not fail the run.
 step the lever will not move before the plate is down
+goto 1257 405 6
+goto 1340 390 4
+goto 1420 375 4
+goto 1500 360 4
 goto 1644 334 8
 ?expect noflag undercroft_plate
 ?talk SealLever
