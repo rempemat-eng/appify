@@ -11,7 +11,9 @@ extends CharacterBody2D
 ##     aggro radius with it, if the archer stands on ground they keep to: the camp answers a shot together.
 ##     A hit on the walk home turns it round. Woken by a shot (or a mate's), it keeps coming for
 ##     PROVOKED_TIME even past its `lose_radius` (the arrow's knock pushed a mossling shot from 320 past
-##     330, where it gave up, went home and was shot again asleep).
+##     330, where it gave up, went home and was shot again asleep). Hurt by the player, it also keeps
+##     coming across its leash for PROVOKED_TIME after the last hit (Claude A, 11 Nov; a glance does not
+##     count), and the chase give-up below still applies in that time.
 ##     Woken that way it runs in at RUN_IN times its speed until its first wind-up (a proposal, 11 Nov:
 ##     no health or damage number changes; a fight begun by walking up to it is as before).
 ##   - Asleep, chasing or walking home it can only be hurt by someone it can come for (`can_come_for`):
@@ -23,6 +25,9 @@ extends CharacterBody2D
 ##     straight walk plus LEASH_GIVE_UP) it gives up the walk and is put at home. A chase that gains no
 ##     ground on its target for CHASE_GIVE_UP is given up too: it walks home, and on that walk a shot
 ##     neither turns it round nor hurts it. Once it is home it answers a shot like any other.
+##   - At most two enemies wind up or strike at once (SliceAttackSlots, shared with the Undercroft's
+##     creatures; Claude A, 11 Nov: three mosslings lining up their tells downed a player in 0.5 s). A
+##     mossling in reach that has no slot steps round its target until one is free.
 ##   - For ARRIVAL_GRACE after a zone becomes ready (a load, a door, getting up after a defeat) it does not
 ##     notice the player by nearness; a hit still wakes it.
 
@@ -77,6 +82,8 @@ var _closest := INF
 var _stuck_t := 0.0
 var _gave_up := false           ## walking home from a chase it gave up: deaf to shots until it is home
 var _fade := 0.0
+var _slot := false              ## holds one of the shared attack slots (wind-up, lunge, recover)
+var slots: SliceAttackSlots
 
 @onready var sprite: Sprite2D = $Sprite
 
@@ -85,6 +92,9 @@ func _ready() -> void:
 	hp = max_hp
 	home = global_position
 	wall_min_slide_angle = 0.0   # slide along a wall met at any angle (the default refuses under 15 degrees)
+	slots = SliceAttackSlots.new()   # the reservations are shared by every pool (attack_slots.gd)
+	slots.name = "AttackSlots"
+	add_child(slots)
 	Zones.zone_changed.connect(_on_zone_ready)
 	_build_hsm()
 
@@ -121,6 +131,8 @@ func _build_hsm() -> void:
 func _on_state_changed(current: LimboState, _previous: LimboState) -> void:
 	state = StringName(current.name)
 	telegraph = 0.0
+	if state != &"windup" and state != &"lunge" and state != &"recover":
+		_free_slot()
 	state_changed.emit(state)
 
 func _physics_process(delta: float) -> void:
@@ -197,7 +209,13 @@ func _chase(delta: float) -> void:
 		return
 	if _target_dist() < attack_range:
 		if EnemySteer.line_clear(self, target.global_position):
-			hsm.dispatch(&"in_range")
+			if slots.acquire(self):
+				_slot = true
+				hsm.dispatch(&"in_range")
+				return
+			# two others are winding up or striking: it steps round its target and waits its turn
+			_stuck_t = 0.0
+			velocity = global_position.direction_to(target.global_position).orthogonal() * speed * 0.4
 			return
 		# a low solid between (arrows cross it, a bite does not): it walks round it (Matt, 11 Nov)
 	# no ground gained on the target for too long (pushing at a solid, circling a pocket): go home
@@ -323,8 +341,17 @@ func hear_alert(at: Vector2) -> void:
 	_provoked = PROVOKED_TIME
 	hsm.dispatch(&"aggro")
 
+func _free_slot() -> void:
+	if _slot and is_instance_valid(slots):
+		slots.release(self)
+	_slot = false
+
+func _exit_tree() -> void:
+	_free_slot()
+
 func _die() -> void:
 	dead = true
+	_free_slot()
 	hsm.set_active(false)
 	collision_layer = 0
 	velocity = Vector2.ZERO

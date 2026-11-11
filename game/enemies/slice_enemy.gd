@@ -8,8 +8,9 @@ extends CharacterBody2D
 ##     within ALERT of it with it, if the archer is inside their leash. A hit on the walk home turns it round.
 ##     A rusher woken that way runs in at RUN_IN times its speed until its first wind-up (a proposal).
 ##   - It can only be hurt by someone it can come for (`can_come_for`). From anywhere else the arrow
-##     glances off (enemies/glance.gd). (Stepping in and out over its leash line still beats it: it turns
-##     for home the step the player is outside, and wakes again on the next hit from inside.)
+##     glances off (enemies/glance.gd). Hurt by the player (a glance does not count), it keeps coming
+##     across its leash for Enemy.PROVOKED_TIME after the last hit, every role, the toad too (Claude A,
+##     11 Nov: stepping in and out over the leash line beat every creature); the give-up below still applies.
 ##   - It steers round solids (enemies/steer.gd), gives up a walk home that takes too long (it is put at
 ##     home, no fade) and an approach that gains no ground for CHASE_GIVE_UP (it walks home, deaf to
 ##     shots on that walk; at home it answers a shot again).

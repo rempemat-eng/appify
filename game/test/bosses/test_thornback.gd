@@ -270,10 +270,26 @@ func test_the_wall_strips_count_as_the_arena_but_the_door_side_does_not() -> voi
 	for p: Vector2 in [Vector2(300, 88), Vector2(515, 250), Vector2(300, 410)]:
 		_target.position = p
 		assert_bool(boss.player_in_arena()).override_failure_message("%s should count as the arena" % p).is_true()
-	_target.position = Vector2(94, 250)          # west of it: the door side
+	boss.door_rows = Vector2(200, 300)
+	_target.position = Vector2(94, 250)          # west of it, in the doorway's rows: at the door
 	assert_bool(boss.player_in_arena()).is_false()
 	_target.position = Vector2(300, 60)          # beyond the strip
 	assert_bool(boss.player_in_arena()).is_false()
+	_target.position = Vector2(70, 150)          # beyond the west strip
+	assert_bool(boss.player_in_arena()).is_false()
+
+## Audit of 11 Nov: against the chamber's west wall (its face at x 1728, the arena from 1752), north of the
+## door, the player was in the room but "outside": every arrow glanced and the boss healed. That strip is
+## the room; only the doorway's rows (y 336 to 480) are the door. The Undercroft's own numbers.
+func test_the_floor_along_the_west_wall_is_the_arena_except_in_the_doorway() -> void:
+	var boss := _boss(Vector2(1900, 400))
+	boss.arena = Rect2(1752, 192, 480, 396)       # undercroft.tscn
+	for p: Vector2 in [Vector2(1744, 271), Vector2(1730, 520), Vector2(1760, 408)]:
+		_target.position = p
+		assert_bool(boss.player_in_arena()).override_failure_message("%s should count as the arena" % p).is_true()
+	for p: Vector2 in [Vector2(1740, 408), Vector2(1730, 340), Vector2(1700, 271)]:
+		_target.position = p
+		assert_bool(boss.player_in_arena()).override_failure_message("%s should be outside" % p).is_false()
 
 ## From outside the arena it cannot come for the archer, so it cannot be hurt from there (on main 41 arrows
 ## through the open seal freed it asleep in 32 s).
@@ -282,7 +298,7 @@ func test_no_harm_from_outside_the_arena() -> void:
 	boss.arena = Rect2(100, 100, 400, 300)
 	var glances := [0]
 	boss.glanced.connect(func() -> void: glances[0] += 1)
-	_target.position = Vector2(94, 250)
+	_target.position = Vector2(60, 250)          # west of the arena and of the strip along its west wall
 	boss.step(0.05)
 	assert_str(boss.state).is_equal("dormant")
 	boss.take_hit(5, Vector2.RIGHT)

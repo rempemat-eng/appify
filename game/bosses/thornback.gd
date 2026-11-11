@@ -23,7 +23,10 @@ extends CharacterBody2D
 ##     like anyone else. (Counting "has not moved" instead would be beaten by a step every two seconds, so
 ##     the count is the time spent close in.) A player who only passes close by still meets the volley.
 ##   - The strips between the arena's north, east and south edges and the room's walls count as the arena
-##     for the player (ROOM_SLACK). The west edge is kept exact, so it still sleeps for a player at the door.
+##     for the player (ROOM_SLACK), and so does the strip of floor along the west wall (WEST_SLACK) except
+##     in the doorway's rows (`door_rows`), so it still sleeps for a player at the door. (The audit of 11 Nov
+##     found a player against the west wall, north of the door, in the room but "outside": every arrow
+##     glanced and the boss healed.)
 ##   - From outside the arena it can be hurt only while it winds up or strikes (windup, act): whoever it
 ##     strikes at can strike back. Asleep, walking, recovering, staggered or roaring, an arrow from outside
 ##     glances off (enemies/glance.gd). An attack whose target has left the arena ends without the stagger.
@@ -64,9 +67,13 @@ const HOME_HEAL_TIME := 3.0          ## whole again this long after the player h
 const CLING_TIME := 2.0             ## this long close in (under NEAR * 0.6) brings the charge there too
 const HEAD_ON := -0.7               ## wall normal . aim under this: the charge has run into the wall
 const ROOM_SLACK := 30.0            ## the wall strips north, east and south of the arena count as inside it
+const WEST_SLACK := 24.0            ## the floor between the west wall's face and the arena, outside the doorway
 const ART := "res://bosses/thornback/art/"
 
 @export var arena := Rect2()   ## texels in the zone; empty = no limit (tests)
+## The west doorway's rows (zone texels, from y to y): the Undercroft chamber's door, between Wall_sep3_n
+## and Wall_sep3_s. Standing west of the arena in these rows is standing at the door, outside.
+@export var door_rows := Vector2(336, 480)
 
 var hp := MAX_HP
 var phase := 1
@@ -305,7 +312,11 @@ func player_in_arena() -> bool:
 		return false
 	if arena.size == Vector2.ZERO:
 		return true
-	return arena.grow_individual(0.0, ROOM_SLACK, ROOM_SLACK, ROOM_SLACK).has_point(target.global_position - _zone_origin())
+	var at := target.global_position - _zone_origin()
+	if arena.grow_individual(0.0, ROOM_SLACK, ROOM_SLACK, ROOM_SLACK).has_point(at):
+		return true
+	var at_door := at.y >= door_rows.x and at.y <= door_rows.y
+	return not at_door and arena.grow_individual(WEST_SLACK, ROOM_SLACK, ROOM_SLACK, ROOM_SLACK).has_point(at)
 
 ## True once the player has stayed close in (under NEAR * 0.6) for CLING_TIME.
 func player_clings() -> bool:

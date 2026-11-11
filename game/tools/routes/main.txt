@@ -205,8 +205,9 @@ expect cached 8
 expect glint 33
 
 step free the Thornback
-# well inside the arena: the fight's pilot walks back here after a downing, and from the doorway (outside the
-# arena) its arrows glance and the Thornback heals 3 s after the player has left (Matt, 11 Nov)
+# well inside the arena: after a downing the fight's pilot walks back to within 30 texels of here, and from
+# 1770 that could stop in the doorway's rows west of x 1752, which stay the door: its arrows glance there and
+# the Thornback heals 3 s after the player has left (Matt, 11 Nov)
 goto 1830 408 12
 fight 360
 expect flag camp_cleared:thornback
@@ -231,7 +232,11 @@ talk CircleShard
 expect said You wrap the shard
 expect flag shard_taken:woodland
 expect quest under_the_stones active lantern
+# back to the figure the way the first visit came, from the west (from the shard, straight north, the walk
+# once stopped short of its reach and the talk found nothing in reach on main's CI)
+goto 2100 262 8
 goto 2160 262 8
+expect prompt Look
 talk CairnStatue
 expect said glow faintly amber
 restart

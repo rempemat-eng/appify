@@ -821,17 +821,140 @@ func test_a_hurt_mossling_keeps_coming_across_its_leash_for_the_provoked_time() 
 	assert_str(String(e.state)).is_equal("chase")
 	assert_bool(e.take_hit(1, Vector2.LEFT, 0.0)).is_true()
 	e._stagger = 0.0
-	e.global_position = Vector2(e.leash_radius + 5.0, 0)          # past its leash
-	_archer.position = Vector2(e.leash_radius + 90.0, 0)
+	var x := e.leash_radius + 5.0                                # past its leash
+	var ax := e.leash_radius + 120.0                             # and the archer off its ground
+	e.global_position = Vector2(x, 0)
+	_archer.position = Vector2(ax, 0)
 	e._physics_process(0.016)
 	assert_str(String(e.state)).is_equal("chase")                # main: home at once
-	for i in 40:
-		e._physics_process(0.05)
+	assert_bool(e.take_hit(1, Vector2.LEFT, 0.0)).override_failure_message("a pursuer cannot be struck back").is_true()
+	e._stagger = 0.0
+	for i in 28:                                                 # 2.8 s since the last hit, gaining ground
+		x += 2.0                                                 # (so the chase give-up does not fire)
+		ax += 1.0
+		_archer.position = Vector2(ax, 0)
+		e._physics_process(0.1)
+		e.global_position = Vector2(x, 0)
+		e.velocity = Vector2.ZERO
+	assert_str(String(e.state)).override_failure_message("it stopped coming before 3 s").is_equal("chase")
+	assert_bool(e._gave_up).is_false()
+	for i in 4:                                                  # past 3 s since the last hit: home
+		x += 2.0
+		ax += 1.0
+		_archer.position = Vector2(ax, 0)
+		e._physics_process(0.1)
+		e.global_position = Vector2(x, 0)
+		e.velocity = Vector2.ZERO
+	assert_str(String(e.state)).override_failure_message("still coming after 3.2 s").is_equal("leash")
+	assert_bool(e._gave_up).override_failure_message("home by the give-up, not by the end of the pursuit").is_false()
+	assert_float(Enemy.PROVOKED_TIME).is_equal(3.0)
+
+## Inside the 3 s the chase give-up still applies: pinned (no ground gained), a pursuer goes home at 2.5 s.
+func test_a_pursuing_mossling_still_gives_up_a_chase_that_gains_no_ground() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2.ZERO)
+	e.set_physics_process(false)
+	_archer.position = Vector2(100, 0)
+	e.hsm.update(0.016)
+	assert_bool(e.take_hit(1, Vector2.LEFT, 0.0)).is_true()
+	e._stagger = 0.0
+	_archer.position = Vector2(e.leash_radius + 120.0, 0)
+	for i in 23:                                                 # 2.3 s pinned past its leash
+		e._physics_process(0.1)
 		e.global_position = Vector2(e.leash_radius + 5.0, 0)
 		e.velocity = Vector2.ZERO
-	assert_str(String(e.state)).is_equal("chase")                # 2 s
-	for i in 30:
-		e._physics_process(0.05)
+	assert_str(String(e.state)).is_equal("chase")
+	for i in 4:                                                  # 2.7 s: given up, before the pursuit's 3 s
+		e._physics_process(0.1)
 		e.global_position = Vector2(e.leash_radius + 5.0, 0)
-	assert_str(String(e.state)).is_equal("leash")                # past 3 s without a hit: home
-	assert_float(Enemy.PROVOKED_TIME).is_equal(3.0)
+		e.velocity = Vector2.ZERO
+	assert_str(String(e.state)).override_failure_message("the give-up did not fire while pursuing").is_equal("leash")
+	assert_bool(e._gave_up).is_true()
+
+func test_a_pursuing_creature_still_gives_up_an_approach_that_gains_no_ground() -> void:
+	for role: String in ["elite", "shield", "rusher"]:
+		var host := _host()
+		var e := _creature(host, Vector2.ZERO, role)
+		e.set_physics_process(false)
+		_archer.position = Vector2(200, 0)
+		e.step(0.016)
+		assert_bool(e.take_hit(1, Vector2.LEFT)).is_true()
+		_archer.position = Vector2(SliceEnemy.LEASH + 140.0, 0)
+		for i in 23:
+			e.global_position = Vector2(100, 0)
+			e.step(0.1)
+		assert_str(e.state).is_equal("approach")
+		for i in 4:
+			e.global_position = Vector2(100, 0)
+			e.step(0.1)
+		assert_str(e.state).override_failure_message(role + ": the give-up did not fire while pursuing").is_equal("leash")
+		assert_bool(e._gave_up).is_true()
+		e._cancel_attack()
+
+## A glance is not a hurt: it starts no pursuit, so it does not keep an enemy coming across its leash.
+func test_a_glance_does_not_start_a_pursuit() -> void:
+	var host := _host()
+	var m := _mossling(host, Vector2.ZERO)
+	m.set_physics_process(false)
+	_archer.position = Vector2(100, 0)
+	m.hsm.update(0.016)
+	assert_str(String(m.state)).is_equal("chase")
+	m.global_position = Vector2(m.leash_radius - 10.0, 0)
+	_archer.position = Vector2(m.leash_radius + m.attack_range + 20.0, 0)   # off its ground
+	assert_bool(m.take_hit(1, Vector2.LEFT, 0.0)).is_false()
+	m.global_position = Vector2(m.leash_radius + 5.0, 0)
+	m._physics_process(0.016)
+	assert_str(String(m.state)).override_failure_message("a glance kept the mossling coming").is_equal("leash")
+	for role: String in ["elite", "shield", "rusher"]:
+		var e := _creature(host, Vector2(0, 600), role)
+		e.set_physics_process(false)
+		_archer.position = Vector2(200, 600)
+		e.step(0.016)
+		assert_str(e.state).is_equal("approach")
+		_archer.position = Vector2(SliceEnemy.LEASH + 40.0, 600)    # stepped over its line
+		assert_bool(e.take_hit(1, Vector2.LEFT)).is_false()
+		e.step(0.016)
+		assert_str(e.state).override_failure_message(role + ": a glance kept it coming").is_not_equal("approach")
+		e._cancel_attack()
+		e.queue_free()
+
+## Only the one that was hurt pursues: a camp mate woken by the alarm turns for home at its leash as before.
+func test_a_mate_woken_by_the_alarm_does_not_pursue_across_its_leash() -> void:
+	var host := _host()
+	var a := _mossling(host, Vector2.ZERO)
+	var b := _mossling(host, Vector2(60, 0))
+	a.set_physics_process(false)
+	b.set_physics_process(false)
+	_archer.position = Vector2(250, 0)
+	assert_bool(a.take_hit(1, Vector2.LEFT, 0.0)).is_true()
+	assert_str(String(b.state)).is_equal("chase")                # woken by the alarm
+	b.global_position = Vector2(60.0 + b.leash_radius + 5.0, 0)
+	_archer.position = b.global_position + Vector2(100, 0)
+	b.hsm.update(0.016)
+	assert_str(String(b.state)).override_failure_message("the woken mate pursued across its leash").is_equal("leash")
+
+## Claude A's call, 11 Nov: mosslings take the creatures' shared attack slots. Of three in reach at once, two
+## wind up and the third waits, stepping round its target, until a slot is free.
+func test_at_most_two_mosslings_wind_up_at_once() -> void:
+	var host := _host()
+	_archer.position = Vector2(0, 0)
+	var ms: Array[Enemy] = []
+	for p: Vector2 in [Vector2(30, 0), Vector2(-30, 0), Vector2(0, 30)]:
+		var m := _mossling(host, p)
+		m.set_physics_process(false)
+		ms.append(m)
+	for m in ms:
+		m.hsm.update(0.016)                                      # notices (idle -> chase)
+	for m in ms:
+		m.hsm.update(0.016)                                      # in reach
+	var winding := ms.filter(func(m: Enemy) -> bool: return m.state == &"windup")
+	assert_int(winding.size()).is_equal(2)
+	var waiting: Enemy = ms.filter(func(m: Enemy) -> bool: return m.state == &"chase")[0]
+	assert_float(waiting.velocity.length()).is_greater(0.0)      # stepping round, not pushing in
+	for i in 30:                                                 # wind-up, lunge, recover: slots come free
+		for m in ms:
+			m.hsm.update(0.05)
+			m.global_position = m.home
+		if waiting.state == &"windup":
+			break
+	assert_str(String(waiting.state)).is_equal("windup")
