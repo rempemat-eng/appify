@@ -53,7 +53,6 @@ What building it showed:
 
 ### Open faults (not fixed)
 
-- **The committed `woodland_kit.tscn` is behind the woodland it copies its actors from.** Since #463 Hale stands at (600, 1296) in the woodland and still at (800, 1330) in the committed kit scene; a rebuild from the plan moves him. Copied actors are not in the plan, so the test that holds scene and plan together cannot see this.
 - **`walk.gd` still looks up a saved process id** if one reaches a scene (`_ground_owner`). The dock no longer saves one.
 - **The fold ruin's side walls can be walked through** (its only box is the back wall), and the notch in the Brackens lab's ridge looks open but has an invisible wall at its mouth (the heath has no tier-side picture). Piece data and art; found by the audit of #471.
 
@@ -61,6 +60,7 @@ What building it showed:
 
 Each has a test that fails on the old code unless it says otherwise.
 
+- **The committed `woodland_kit.tscn` was behind the woodland it copies its actors from** (fixed in #472). Since #463 Hale stands at (600, 1296) in the woodland and stood at (800, 1330) in the committed kit scene, with the camp and the `crossroads` spawn also at their old places. The scene is rebuilt from its plan, and `test_the_kit_woodland_has_the_woodland_s_people_spawns_and_doors` (`game/test/test_world_fixes.gd`) now compares the copied Actors, Spawns and Doors with the woodland's, which the scene-and-plan test could not see. After moving anything in `woodland.tscn`, rebuild: `$GODOT --headless --path game -s tools/kit_zone.gd -- --plan=res://kit/zones/woodland_kit.json`.
 - The first dock edit on an older lab scene added a `KitWalk` node that undo did not take out. The node now joins the scene inside that edit's own undo action. Checked in the editor on `kitlab`: paint, undo, and the scene's text is the one it was.
 - **A zone that had been saved once could not be edited without errors.** `walk.gd` was not a tool script, so the `KitWalk` node of a reopened zone was a placeholder in the editor: every edit raised a script error instead of refreshing the walk mask, and the walk export after a bake failed. Found on 11 November while driving the tier brush on `editor_glade`; the 10 November runs had only edited zones whose walk node was made in the same session. The test for this one reads the script's tool flag; the fault itself only shows in an editor process.
 - `kit_zone.gd --new --ground=water` is refused: a new zone needs ground somebody can stand on.

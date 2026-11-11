@@ -86,7 +86,7 @@ expect quest road_to_crossroads active moss
 
 step leave again mid-quest: Hale has walked home, the way back still works
 door 12 210 woodland
-expect at 905 1352 12
+expect at 892 1352 12
 goto 600 1340 8
 expect focus none
 door 951 1356 crossroads
@@ -164,10 +164,15 @@ restart
 expect zone undercroft
 expect flag camp_cleared:undercroft_rooms
 
-# The plate lies on the straight line from the door to the lever, and the fight may have crossed it,
-# so these three are tried and logged but do not fail the run (the walk here keeps north of the plate).
+# The plate lies south of the channel, off the straight walk from the doorway to the lever (11 Nov); feet
+# anywhere on its slab press it, so walking east along the doorway's axis first does too. The walk here goes
+# from the doorway straight at the lever through waypoints (the walk grid would plan along the axis first).
+# The fight before may have crossed the plate, so these are tried and logged but do not fail the run.
 step the lever will not move before the plate is down
-goto 1300 250 12
+goto 1257 405 6
+goto 1340 390 4
+goto 1420 375 4
+goto 1500 360 4
 goto 1644 334 8
 ?expect noflag undercroft_plate
 ?talk SealLever
@@ -175,7 +180,7 @@ goto 1644 334 8
 ?expect noflag undercroft_seal_open
 
 step the plate, then the lever
-goto 1416 384 8
+goto 1416 432 8
 expect flag undercroft_plate
 goto 1644 334 8
 talk SealLever
@@ -291,9 +296,11 @@ goto 708 716 10
 talk NoticeBoard
 expect said COL PATH TO THE FROSTLINE STILL BURIED
 goto 960 250 10
-expect prompt Look
+expect prompt Rest
 talk HutBed
 expect said swollen shut
+expect hp 5
+expect glint 45
 restart
 expect quest a1_the_torn_roof done
 expect restored apothecary

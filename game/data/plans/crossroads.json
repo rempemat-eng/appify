@@ -179,9 +179,9 @@
         0,
         100,
         150,
-        50
+        52
       ],
-      "why": "the garden walk's retaining wall"
+      "why": "the garden walk's retaining wall, to the wall's drawn foot at y 152 like terrace_face_w (at 150 its last 2 px were open and the two faces met in a step)"
     },
     {
       "id": "terrace_face_w",
@@ -864,12 +864,14 @@
     {
       "id": "hut_bed",
       "speaker": "hut_door",
-      "verb": "Look",
+      "verb": "Rest",
+      "rest": true,
       "at": [
         320,
         72
       ],
-      "colour": "#00000000"
+      "colour": "#00000000",
+      "why": "the hut's doorstep: full hearts and a save, for nothing (Matt, 10 Nov). The door itself does not open yet, so the verb is Rest, not Enter"
     }
   ],
   "restore_sites": [

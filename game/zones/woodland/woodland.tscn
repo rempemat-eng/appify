@@ -122,7 +122,7 @@ offset = Vector2(-23, -58)
 position = Vector2(405, 750)
 
 [node name="crossroads" type="Marker2D" parent="Spawns"]
-position = Vector2(905, 1352)
+position = Vector2(892, 1352)
 
 [node name="undercroft" type="Marker2D" parent="Spawns"]
 position = Vector2(330, 1080)

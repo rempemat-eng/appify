@@ -63,6 +63,7 @@ func go_to(zone_id: String, spawn: String = "start") -> bool:
 		player.global_position = next.spawn_position(spawn)
 		if player.has_method("reset_motion"):
 			player.reset_motion()
+		_face_into(next)
 	# A lab zone (an editor test bed, started by name) is never where the game resumes: the save
 	# keeps the zone the player came from, and the lab leaves no "visited" mark. Before this, one
 	# start of a lab made it the save's zone, so every later start opened inside it with no door out.
@@ -85,3 +86,26 @@ func go_to(zone_id: String, spawn: String = "start") -> bool:
 	_busy = false
 	zone_changed.emit(next)
 	return true
+
+const ARRIVAL_DOOR := 120.0   ## texels: a spawn this near a door is where that door's arrivals stand
+
+## Arriving beside a door, the player looks away from it, into the zone (down the Undercroft's hall, not
+## at the wall the hatch stair came through). It sets the aim the body's facing follows; a mouse or a
+## stick aims again as soon as it is read, so this is what a player sees who has touched neither.
+func _face_into(zone: Zone) -> void:
+	var doors := zone.get_node_or_null("Doors")
+	if doors == null or not "aim" in player:
+		return
+	var nearest: Node2D = null
+	for d in doors.get_children():
+		var door := d as Node2D
+		if door != null and (nearest == null or door.global_position.distance_squared_to(player.global_position)
+				< nearest.global_position.distance_squared_to(player.global_position)):
+			nearest = door
+	if nearest == null or nearest.global_position.distance_to(player.global_position) > ARRIVAL_DOOR:
+		return
+	var away := player.global_position - nearest.global_position
+	var dir := Vector2(signf(away.x), 0.0) if absf(away.x) >= absf(away.y) else Vector2(0.0, signf(away.y))
+	player.set("aim", dir)
+	if "facing" in player:
+		player.set("facing", CastSprite.facing_for(dir, String(player.get("facing"))))
