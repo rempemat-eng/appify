@@ -123,9 +123,11 @@ def build(plan: dict, kit: dict) -> str:
         frames = o.get('frames') or 1
         return PH.is_low(PH.rise(os.path.join(GAME, 'zones', ZID, 'art', o['png']), -o['offset'][1], frames))
 
+    # a prop's `box` in the plan is its solid, measured on the picture; without one the box its size gives stands
+    boxes = {p['id']: p['box'] for p in plan.get('props', []) if p.get('box')}
     for o in kit['objects']:
         if o.get('solid') and not o.get('cond'):
-            s.solid('Solid_' + o['id'], 'Walls', o['solid'], low(o))
+            s.solid('Solid_' + o['id'], 'Walls', boxes.get(o['id'], o['solid']), low(o))
 
     # torches hang on the wall faces, behind everyone who can stand in the room: drawn with the walls,
     # not y-sorted (their feet would be the wall's foot, far below the bracket)

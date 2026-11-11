@@ -6,7 +6,7 @@
   2304,
   648
  ],
- "inputs": "768240fd359869e7ed6f6539fb9ea89908deeaf99ad63f354438b3f8d8044582",
+ "inputs": "b24df58f16bb41529918017f349d33a00a415b74f9857b783d70e901b695e00f",
  "kit_drawn": [
   "cairn_alcove.png",
   "channel_lit.png",
@@ -377,7 +377,7 @@
    "png": "plate_up.png",
    "foot": [
     1416,
-    408
+    456
    ],
    "offset": [
     -33,
@@ -396,7 +396,7 @@
    "png": "plate_down.png",
    "foot": [
     1416,
-    408
+    456
    ],
    "offset": [
     -33,
