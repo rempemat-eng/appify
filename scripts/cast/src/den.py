@@ -45,42 +45,93 @@ def _sticks(X, Y, t):
     return out
 
 
+# the den at its creatures' scale (10 Nov audit, D1): a mound about 120 x 62 px whose mouth (46 x 38)
+# a boarlet or a tortoise (40 to 45 px tall, 26 to 40 wide) can go through
+DEN_W, DEN_H = 60.0, 50.0          # the dome's half width and its height above the lip line
+MOUTH = (0.0, -19.0, 23.0, 19.5)   # centre x, centre y, half width, half height of the arch
+
+mat('cane', ['#24121A', '#46222A', '#6C3A36', '#925A44', '#B47A56'])    # bramble canes: wine-brown, lit tan
+
+
+def _cane(f, pts, r, z, tag='den', tm=None):
+    """One woven bramble cane: a band 3 to 5 px wide along pts, shaded on its own (lit top edge,
+    dark underside), its ends tapering; z per segment lets canes pass over and under each other."""
+    for k, ((x0, y0), (x1, y1)) in enumerate(zip(pts[:-1], pts[1:])):
+        zz = z[k] if isinstance(z, (list, tuple)) else z
+        f.add(f.cap(x0, y0, x1, y1, r, r), 'cane', z=zz, rl=1.8, rs=1.2, tl=0.12, vgrad=0.5, line='hard', deep=True, tag=tag, tonemap=tm)
+
+
+def _dome_y(x, lift=0.0):
+    """The mound's surface height at x (pivot space, y up negative)."""
+    u = max(-1.0, min(1.0, x / DEN_W))
+    return -2.0 - (DEN_H + lift) * math.cos(math.pi * u / 2) ** 0.6
+
+
+def _dome_mask_y(f):
+    u = np.clip(f.X / DEN_W, -1.0, 1.0)
+    return np.where(np.abs(f.X) <= DEN_W, -2.0 - DEN_H * np.cos(np.pi * u / 2) ** 0.6, 1e9)
+
+
 def den(P):
     f = Fig(anim.CELL[0], anim.CELL[1], gx=anim.PIVOT[0], gy=anim.FIG_GY)
     f.despeckle = True
-    gy = 0.0
-    # the mound: a low dome of woven sticks, a darker skirt where it meets the ground
-    # thickness: a steep woven wall in shade all round the front, under a domed top that catches the
-    # light (lit upper-left plane, mid, and the shaded front edge where the top turns into the wall)
-    wall = (f.ell(0, gy - 9, 35, 9) | f.ell(-16, gy - 7, 19, 7) | f.ell(17, gy - 7, 18, 7)) & (f.Y < gy - 1)
-    f.add(wall, 'weave', z=9.5, flat=1, line='hard', tonemap=_sticks, tag='den')
-    top = f.ell(0, gy - 18, 33, 15) | f.ell(-13, gy - 14, 17, 10) | f.ell(15, gy - 15, 16, 10)
-    f.add(top, 'weave', z=10, rl=2.6, rs=2.2, vgrad=0.35, line='hard', deep=True, tonemap=C.planes(f, top, _sticks, lit=0.3, dark=0.8), tag='den')
-    mound = wall | top
-    # the hollow: a dark arched opening at the front
-    hollow = (f.ell(2, gy - 8, 9.5, 9) & (f.Y < gy - 2))
-    f.add(hollow, 'crack', z=11, flat=0, line='hard', tag='den')
-    f.add(f.ell(2, gy - 9, 7, 5) & (f.Y < gy - 4), 'crack', z=11.1, flat=1, line=None)
-    # sticks poking out of the weave and bramble canes arching over
-    for x0, y0, x1, y1 in ((-30, -14, -38, -22), (26, -18, 36, -25), (-12, -29, -16, -37), (14, -29, 20, -36), (-6, -3, -12, 1)):
-        f.add(f.cap(x0, gy + y0, x1, gy + y1, 1.2, 0.8), 'weave', z=12, rl=1, rs=1, line='hard')
-    pts_sets = [[(-26 + 9 * i, gy - 22 - 9 * math.sin(math.pi * i / 6)) for i in range(7)],
-                [(-20 + 7 * i, gy - 26 - 6 * math.sin(math.pi * i / 6)) for i in range(7)]]
-    for pts in pts_sets:
-        for (x0, y0), (x1, y1) in zip(pts[:-1], pts[1:]):
-            f.add(f.cap(x0, y0, x1, y1, 1.0), 'thorn', z=13, rl=0.8, rs=1, line='hard')
-        for (x, y) in pts[1:6:2]:
-            f.add(f.poly([(x - 1.5, y), (x, y - 3), (x + 1.5, y)]), 'thorn', z=13.1, rl=0.8, rs=1, line='hard')
-    for lx, ly in ((-22, -24), (8, -33), (24, -22), (-30, -8)):
-        f.add(f.ell(lx, gy + ly, 2.6, 1.4), 'leafg', z=13.2, rl=1, rs=1, line='hard')
+    # the body of the mound under the canes: the dark gaps of the weave, shaded as one dome so the
+    # back reads lit (upper left) and the front base sits in shade
+    body = (f.Y < -1) & (f.Y >= _dome_mask_y(f))
+    # the dome's planes (lit upper left, mid, shaded lower right) carried by every cane on it
+    pl = C.planes(f, body, None, lit=0.38, dark=0.62)
+    f.add(body, 'weave', z=9, rl=3.0, rs=4.0, vgrad=0.7, line='hard', deep=True, tonemap=lambda X, Y, t: np.maximum(pl(X, Y, t) - 1, 0), tag='den')
+    # woven canes: two families crossing over the dome, over and under at alternate crossings (the
+    # segment's z flips each step, so at a crossing one cane's edge line shows on the other: the dark gap)
+    # each cane a gentle diagonal across the dome, bowing with its curve, 10 px apart
+    for fam, sgn in ((0, 1), (1, -1)):
+        for j in range(-9, 10):
+            pts = []
+            for x in np.linspace(-DEN_W - 2, DEN_W + 2, 25):
+                y = -2.0 - 0.0 + sgn * 0.62 * x + j * 10.0 + 4.0 * fam - 0.18 * (_dome_y(x) + 2.0)
+                inside = _dome_y(x) + 1.0 <= y <= -2.5
+                if inside:
+                    pts.append((x, y))
+                elif pts:
+                    break
+            if len(pts) >= 2:
+                zs = [10 + 0.2 * ((k + j + fam) % 2) + 0.05 * fam for k in range(len(pts) - 1)]
+                _cane(f, pts, 1.7 + 0.5 * ((j + fam) % 2), zs, tm=pl)
+    # thick rim canes framing the dome's top edge (the silhouette is cane, not a smooth curve)
+    top = [(x, _dome_y(x) + 1.5) for x in np.linspace(-DEN_W + 2, DEN_W - 2, 16)]
+    _cane(f, top, 2.2, [10.6] * 15, tm=pl)
+    # the mouth: an arch of canes round a dark hollow
+    mx, my, mw, mh = MOUTH
+    arch = f.ell(mx, my, mw, mh) & (f.Y < -1)
+    f.add(arch, 'crack', z=11, flat=1, line='hard', tag='den')
+    # the inner wall on the far side catches the light coming in over the near lip from the upper
+    # left: a lit crescent on the hollow's right and back
+    inner = arch & ~f.ell(mx - 5, my + 3, mw - 3, mh - 4) & (f.X > mx - 6) & (f.Y > my - mh + 5)
+    f.add(inner, 'cane', z=11.1, rl=2.0, rs=2.5, vgrad=0.8, line=None, dim=1, tonemap=_sticks, tag='den')
+    # the near lip's shadow: a dark band under the arch's top, and the floor of the hollow
+    f.add(arch & (f.Y < my - mh + 7), 'crack', z=11.2, flat=0, line=None, tag='den')
+    f.add(arch & (f.Y > -6), 'crack', z=11.2, flat=0, line=None, tag='den')
+    lip = [(mx + mw * math.cos(a), my - mh * math.sin(a) - 0.5) for a in np.linspace(0.05, math.pi - 0.05, 11)]
+    _cane(f, lip, 2.4, [12.0 + 0.2 * (k % 2) for k in range(10)])
+    # bramble canes arching over the mound with thorns that break the silhouette
+    for (x0, x1, lift, side) in ((-50, 18, 1.5, 1), (-14, 52, 1.0, -1), (-58, -20, 0.5, 1)):
+        pts = [(x0 + (x1 - x0) * t, _dome_y(x0 + (x1 - x0) * t, lift) + 1.0 - 1.5 * math.sin(math.pi * t)) for t in np.linspace(0, 1, 9)]
+        for (a, b), (c, d) in zip(pts[:-1], pts[1:]):
+            f.add(f.cap(a, b, c, d, 1.1, 1.0), 'thorn', z=13, rl=0.8, rs=1, line='hard', tag='den')
+        for (x, y) in pts[1:8:2]:
+            f.add(f.poly([(x - 1.6, y), (x + 0.6 * side, y - 3.5), (x + 1.6, y)]), 'thorn', z=13.1, rl=0.8, rs=1, line='hard', tag='den')
+    # leaves in clusters of three to four, each leaf lit on its upper left
+    for cx, cy in ((-42, -30), (-18, -46), (28, -42), (46, -22), (-54, -8)):
+        for dx, dy, ang in ((-2.5, 0.5, -2.5), (2.5, 0.5, -0.6), (0, -2.0, -1.57), (0.5, 1.8, 0.2)):
+            f.add(f.rell(cx + dx, cy + dy, 2.8, 1.7, ang), 'leafg', z=13.2, rl=1, rs=1.2, line='hard', tag='den')
     if P.get('calm'):
-        for bx, by in ((-14, -30), (10, -31), (27, -15), (-28, -14)):
-            f.add(f.ell(bx, gy + by, 1.8, 1.6), 'bloom', z=13.3, rl=1, rs=1, line='hard')
-            f.dot(bx, gy + by, ('gold', 3), z=13.4)
+        for bx, by in ((-24, -48), (14, -50), (40, -32), (-46, -34)):
+            f.add(f.ell(bx, by, 1.8, 1.6), 'bloom', z=13.3, rl=1, rs=1, line='hard')
+            f.dot(bx, by, ('gold', 3), z=13.4)
     else:
-        # three shards stuck in the weave, glowing (the glow ring pulses with P['fx'])
+        # three shards stuck in the weave, glowing
         R = C.Rig(f, 'S')
-        for (x, y, ax, sz) in ((-17, -20, -0.5, 10.0), (19, -22, 0.45, 11.0), (-3, -30, 0.1, 9.0)):
+        for (x, y, ax, sz) in ((-30, -40, -0.5, 11.0), (34, -38, 0.45, 12.0), (4, -50, 0.1, 10.0)):
             Q = C.P0(fx=P.get('fx', 0))
             with f.tagging('shard'):
                 C.shard(f, R, (0.0, -y - 1.0, x), (0.0, 1.0, ax), sz, Q, 20)
@@ -88,20 +139,43 @@ def den(P):
 
 
 def clump(P):
-    """A small shard-lit bramble clump to scatter around the camp."""
+    """A small shard-lit bramble clump to scatter around the camp (10 Nov audit, L1): four or five
+    leaf clusters with lit caps and dark undersides, bramble canes with thorns arching out of it,
+    and a contact shadow at its foot."""
     f = Fig(anim.CELL[0], anim.CELL[1], gx=anim.PIVOT[0], gy=anim.FIG_GY)
     f.despeckle = True
-    f.add((f.ell(0, -7, 13, 7.5) | f.ell(-7, -5, 7, 5)) & (f.Y < -1), 'leafg', z=10, rl=2.0, rs=2.8, vgrad=0.5, tonemap=_weave, line='hard', deep=True)
-    for k in range(3):
-        a = -0.9 + 0.9 * k
-        pts = [(math.sin(a) * 12 * t, -8 - 12 * math.sin(math.pi * t * 0.8) * (1 - 0.3 * abs(a))) for t in [i / 5 for i in range(6)]]
+    f.add(f.ell(0, -1.5, 17, 2.6) & (f.Y < 0), 'crack', z=5, flat=1, line=None, noout=True)    # contact shadow
+    # canes first, arching out of the clump (some behind the leaves, some in front)
+    for k, (a, h, zc) in enumerate(((-1.0, 14, 9), (0.15, 17, 9), (0.95, 13, 9.2))):
+        pts = [(math.sin(a) * 15 * t, -3 - h * math.sin(math.pi * t * 0.85) * (1 - 0.25 * abs(a))) for t in [i / 6 for i in range(7)]]
         for (x0, y0), (x1, y1) in zip(pts[:-1], pts[1:]):
-            f.add(f.cap(x0, y0, x1, y1, 0.9), 'thorn', z=12, rl=0.8, rs=1, line='hard')
+            f.add(f.cap(x0, y0, x1, y1, 1.0, 0.9), 'thorn', z=zc, rl=0.8, rs=1, line='hard')
+        for (x, y) in pts[2:7:2]:
+            f.add(f.poly([(x - 1.3, y), (x + 0.4, y - 3.0), (x + 1.3, y)]), 'thorn', z=zc + 0.05, rl=0.8, rs=1, line='hard')
+    # leaf clusters merged into one leafy mass, shaded as one volume (few value steps on so small a
+    # thing), each cluster then given its lit cap (upper left) and the dark underside where it
+    # overhangs the cluster below
+    cl = ((-8, -6, 7.5, 5.5), (5, -7, 8.0, 6.0), (-1, -13, 7.0, 5.0), (12, -3.5, 5.5, 4.0), (-14, -3, 5.0, 3.6))
+    ms = [f.ell(cx, cy, rx, ry) & (f.Y < -0.5) for cx, cy, rx, ry in cl]
+    mass = ms[0] | ms[1] | ms[2] | ms[3] | ms[4]
+
+    def caps(X, Y, t):
+        t = t.copy()
+        for k, ((cx, cy, rx, ry), m) in enumerate(zip(cl, ms)):
+            if k < 3:                                   # the three big clusters: a lit cap
+                cap = m & (((X - cx + 0.3 * rx) / (0.42 * rx)) ** 2 + ((Y - cy + 0.4 * ry) / (0.32 * ry)) ** 2 < 1.0)
+                t[cap & (t == 2)] = 3
+            if k == 2:                                  # the top cluster overhangs the two below it
+                under = m & (((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 > 0.7) & (Y > cy + 1)
+                t[under & (t >= 2)] = 1
+        return t
+    f.add(mass, 'leafg', z=10, rl=1.6, rs=2.2, vgrad=0.5, line='hard', deep=True, tonemap=caps)
     if not P.get('calm'):
         R = C.Rig(f, 'S')
-        C.shard(f, R, (0.0, 9.0, 2.0), (0.0, 1.0, 0.3), 7.0, C.P0(fx=P.get('fx', 0)), 20)
+        C.shard(f, R, (0.0, 13.0, 1.0), (0.0, 1.0, 0.3), 7.0, C.P0(fx=P.get('fx', 0)), 20)
     else:
-        f.add(f.ell(3, -12, 1.8, 1.6), 'bloom', z=13, rl=1, rs=1, line='hard')
+        f.add(f.ell(3, -15, 1.8, 1.6), 'bloom', z=13, rl=1, rs=1, line='hard')
+        f.add(f.ell(-9, -9, 1.6, 1.4), 'bloom', z=13, rl=1, rs=1, line='hard')
     return f
 
 
@@ -124,7 +198,7 @@ def shardfx(P):
 
 
 # strips for the game (game/assets/enemies/): the cell cropped to a box, foot pivot inside it
-CROPS = {'den': (24, 84, 136, 140), 'clump': (56, 110, 104, 140), 'seed': (70, 120, 90, 136), 'shard': (72, 118, 88, 134)}
+CROPS = {'den': (16, 72, 144, 140), 'clump': (56, 110, 104, 140), 'seed': (70, 120, 90, 136), 'shard': (72, 118, 88, 134)}
 
 
 def export(outdir=None):
