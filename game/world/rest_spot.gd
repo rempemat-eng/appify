@@ -47,20 +47,12 @@ func interact() -> void:
 	if player == null or not player.has_method("heal_full") or int(player.get("hp")) <= 0:
 		return
 	_resting = true
-	var speaker := speaker_for(int(player.get("hp")), int(player.get("max_hp")))
 	player.heal_full()
 	_save(player)
 	_start_hush()
 	rested.emit()
-	await Dialogue.talk(speaker)
+	await Dialogue.talk(speaker_id)
 	_resting = false
-
-## The lines for a rest taken with `hp` of `max_hp` hearts: `<speaker_id>_unhurt` when nothing was
-## missing and the dialogue has such a speaker (no aches to lose), else the spot's own.
-func speaker_for(hp: int, max_hp: int) -> String:
-	if hp >= max_hp and Dialogue.speakers.has(speaker_id + "_unhurt"):
-		return speaker_id + "_unhurt"
-	return speaker_id
 
 ## The game's own autosave when the game is running (it knows the picture modes that never save),
 ## the save itself otherwise.

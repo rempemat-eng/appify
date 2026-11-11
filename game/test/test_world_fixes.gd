@@ -141,14 +141,14 @@ func test_a_fight_is_an_enemy_within_half_a_screen() -> void:
 		assert_bool(spot.fight_near()).override_failure_message(
 			"an enemy %.0f texels from the hut: fight is %s" % [row[0], spot.fight_near()]).is_equal(row[1])
 
-func test_the_hut_line_speaks_of_aches_only_when_there_were_some() -> void:
+## One line for every rest, hurt or whole (a second speaker would stand in no zone: the story model refuses
+## it), so it may claim nothing that is false at full hearts (11 Nov audit: "the aches have gone").
+func test_the_hut_line_is_true_at_full_hearts_too() -> void:
 	var spot: RestSpot = await _at_the_hut()
-	var whole := " ".join(Dialogue.lines_for(spot.speaker_for(_player.max_hp, _player.max_hp)))
-	var hurt := " ".join(Dialogue.lines_for(spot.speaker_for(_player.max_hp - 2, _player.max_hp)))
-	assert_str(whole).contains("swollen shut")
-	assert_str(whole).not_contains("aches")
-	assert_str(hurt).contains("swollen shut")
-	assert_str(hurt).contains("aches have gone")
+	var said := " ".join(Dialogue.lines_for(spot.speaker_id))
+	assert_str(said).contains("swollen shut")
+	for claim: String in ["aches", "wounds", "heal", "hurt", "pain"]:
+		assert_str(said).not_contains(claim)
 
 func test_the_rest_is_shown_quietly_and_ends() -> void:
 	var spot: RestSpot = await _at_the_hut()

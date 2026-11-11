@@ -206,13 +206,7 @@
   "hut_door": {
     "name": "Your hut",
     "entries": [
-      { "lines": ["Your hut came through the storm, roof and all. The door is swollen shut with the rain, so you sit down on the step, out of the wind.", "When you get up again the aches have gone."] }
-    ]
-  },
-  "hut_door_unhurt": {
-    "name": "Your hut",
-    "entries": [
-      { "lines": ["Your hut came through the storm, roof and all. The door is swollen shut with the rain, so you sit on the step a while, out of the wind."] }
+      { "lines": ["Your hut came through the storm, roof and all. The door is swollen shut with the rain, so you sit on the step a while, out of the wind, and get up rested."] }
     ]
   },
   "restore_forge": {
