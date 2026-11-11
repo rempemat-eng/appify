@@ -45,7 +45,12 @@ CAST = {'morel': 'morel', 'hale': 'hale', 'moss': 'moss', 'ada_fern': 'ada'}
 # looping effect strips (tools/gen_village_fx.py) that replace a kit picture: id -> (strip, drawings, fps)
 LOOPS = {'forge_fire': ('fx/forge_fire_8.png', 8, 9.0)}
 # chimney smoke over a building's pot while a condition holds: building id -> condition
-SMOKE = {'smithy': {'restored': ['forge']}}
+# The forge burns once Hale is home to work the bellows (10 Nov): a forge paid for while she is still on
+# the woodland path has only "an ember under the ash" (the mark's own line), so until the next zone load
+# brings her home there is no flame and no smoke. The plan's own condition stays "restored" (the kit's
+# pictures and the review's stages read that; every stage after the first has Hale home, game.gd apply_stage).
+TENDED = {'forge_fire': {'flags': ['hale_walked_home']}}
+SMOKE = {'smithy': {'restored': ['forge'], 'flags': ['hale_walked_home']}}
 SMOKE_STRIP = ('fx/chimney_smoke_8.png', 8, 6.0, 32, 56)
 MARKER = {'people': 82.0, 'notice_board': 108.0, 'waystone': 108.0}
 
@@ -155,7 +160,7 @@ def build(plan: dict, kit: dict) -> str:
     for o in kit['objects']:
         parent = 'Props'
         if o.get('cond'):
-            parent = s.wrap('Props', {'if': o['cond']}, 'If_' + o['id'])
+            parent = s.wrap('Props', {'if': {**o['cond'], **TENDED.get(o['id'], {})}}, 'If_' + o['id'])
         if o.get('png') and o['id'] in LOOPS:
             fx, fy = o['foot']
             ox, oy = o['offset']
@@ -195,7 +200,9 @@ def build(plan: dict, kit: dict) -> str:
             parent = s.wrap('Actors', p, 'If_' + p['id'])
             x, y = p['at']
             name = pascal(p['id'])
-            props = {'position': vec(t(x), t(y)), 'script': 'ExtResource("talk")', 'speaker_id': '"%s"' % p['speaker'],
+            # a thing with "rest" is a place to rest (world/rest_spot.gd): full hearts and a save, for nothing
+            props = {'position': vec(t(x), t(y)), 'script': 'ExtResource("%s")' % ('rest' if p.get('rest') else 'talk'),
+                     'speaker_id': '"%s"' % p['speaker'],
                      'marker_height': MARKER.get(p['speaker'], MARKER['people'] if kind == 'people' else 40.0)}
             if 'verb' in p:
                 props['verb'] = '"%s"' % p['verb']
@@ -265,6 +272,8 @@ def build(plan: dict, kit: dict) -> str:
     ext += ''.join('[ext_resource type="Texture2D" path="%s" id="%s"]\n' % (path, i) for path, i in cast_ext.items())
     ext += '[ext_resource type="Script" path="res://world/villager.gd" id="villager"]\n'
     ext += '[ext_resource type="Script" path="res://world/loop_fx.gd" id="loopfx"]\n'
+    if any(p.get('rest') for p in plan.get('things', [])):
+        ext += '[ext_resource type="Script" path="res://world/rest_spot.gd" id="rest"]\n'
     return '[gd_scene format=3]\n\n' + ext + '\n' + '\n'.join(s.subs) + '\n' + '\n'.join(s.nodes)
 
 

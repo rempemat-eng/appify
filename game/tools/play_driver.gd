@@ -20,6 +20,7 @@ extends Node
 ##   fight [secs]            aim with the mouse, shoot, roll out of wind-ups, until no enemy that can be
 ##                           walked to is left in the zone
 ##   down [secs]             stand a few steps from the nearest enemy until downed, then get up
+##   hurt [secs]             the same, but only until the first hit lands (hearts missing, not downed)
 ##   key <Name>              tap a key (Escape, E, Space, Enter, Down, ...)
 ##   hold <left|right|up|down|upleft|...> <secs>
 ##   aim x y, click, roll    the mouse at a world point, a left click, Space
@@ -28,7 +29,7 @@ extends Node
 ##   st, en, info            log the state, the enemies, everything in the zone
 ##   expect <what> ...       fail unless it holds:
 ##       zone <id> | quest <id> <none|active|done> [step id] | flag <f> | noflag <f> | focus <Node|none>
-##       prompt <verb|none> | hp <n> | glint <n> | restored <id> | notrestored <id> | enemies <n>
+##       prompt <verb|none> | hp <n> | hurt (hearts missing) | glint <n> | restored <id> | notrestored <id> | enemies <n>
 ##       at x y <tol> | hud <text|none> | said <text> | banner <text|none> | paused <yes|no>
 ##       line <text|none> (the line on the dialogue box now)
 ##   restart                 close the window as a player would; the runner starts the game again from the
@@ -353,6 +354,8 @@ func run(c: String) -> String:
 			if not GlintCache.in_zone(SaveGame.data.zone).is_empty():
 				return "a cache is still lying here"
 			out("CACHES picked up; Glint %d" % int(SaveGame.data.glint))
+		"hurt":
+			return await down(float(a[1]) if a.size() > 1 else 40.0, true)
 		"expect":
 			var problem := expect(a)
 			out(("  ok   %s" % c) if problem == "" else ("  MISS %s: %s" % [c, problem]))
@@ -393,6 +396,8 @@ func expect(a: PackedStringArray) -> String:
 			return "" if (shown == "" and a[2] == "none") or shown == rest else "the HUD prompt shows '%s'" % shown
 		"hp":
 			return "" if p.hp == int(a[2]) else "hp is %d" % p.hp
+		"hurt":
+			return "" if p.hp > 0 and p.hp < p.max_hp else "hp is %d of %d" % [p.hp, p.max_hp]
 		"glint":
 			return "" if int(SaveGame.data.glint) == int(a[2]) else "Glint is %d" % int(SaveGame.data.glint)
 		"cached":
@@ -665,7 +670,7 @@ func _near_a_door(at: Vector2) -> bool:
 	return false
 
 ## Walks to within a few steps of the nearest enemy and takes every hit, to see what being downed does.
-func down(limit: float) -> String:
+func down(limit: float, first_hit_only := false) -> String:
 	var p := player()
 	var start := now()
 	var downs0 := _downs
@@ -674,6 +679,8 @@ func down(limit: float) -> String:
 	g.forget()
 	var zone: String = SaveGame.data.zone
 	while now() - start < limit and _downs == downs0:
+		if first_hit_only and p.hp < p.max_hp:
+			break
 		if SaveGame.data.zone != zone:
 			hold(Vector2.ZERO)
 			return "walked out of %s while waiting to be downed" % zone
@@ -714,6 +721,9 @@ func down(limit: float) -> String:
 			hold(Vector2.ZERO)
 		await _sleep(0.1)
 	hold(Vector2.ZERO)
+	if first_hit_only:
+		out("HURT after %.1fs -> %s" % [now() - start, status()])
+		return "" if p.hp < p.max_hp and _downs == downs0 else "not hurt after %.0fs (hp %d, downed %d times)" % [limit, p.hp, _downs - downs0]
 	if _downs == downs0:
 		return "not downed after %.0fs (hp %d)" % [limit, p.hp]
 	await _sleep(1.0)
