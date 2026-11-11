@@ -50,11 +50,11 @@ const HOP_FADE := 0.3           ## it fades in at home after giving up the walk 
 @export var wake_radius := 110.0 * DENSITY   ## a hit wakes it when the archer is this near
 @export var attack_range := 17.0 * DENSITY
 @export var speed := 39.0 * DENSITY
-@export var max_hp := 3
+@export var max_hp := 5          ## 3 until 11 Nov (Matt): a lone mossling now lives long enough to arrive
 
 var home := Vector2.ZERO
 var target: Node2D
-var hp := 3
+var hp := 5
 var state: StringName = &"idle"
 var telegraph := 0.0
 var attack_dir := Vector2.RIGHT
@@ -189,8 +189,10 @@ func _chase(delta: float) -> void:
 		hsm.dispatch(&"leash")
 		return
 	if _target_dist() < attack_range:
-		hsm.dispatch(&"in_range")
-		return
+		if EnemySteer.line_clear(self, target.global_position):
+			hsm.dispatch(&"in_range")
+			return
+		# a low solid between (arrows cross it, a bite does not): it walks round it (Matt, 11 Nov)
 	# no ground gained on the target for too long (pushing at a solid, circling a pocket): go home
 	if _target_dist() < _closest - GAIN:
 		_closest = _target_dist()
@@ -271,6 +273,7 @@ func take_hit(amount: int, dir: Vector2, knockback: float = 200.0) -> bool:
 	var archer := _archer()
 	if archer != null and not can_come_for(archer.global_position):
 		glance_t = Glance.TIME
+		Glance.clink(global_position)
 		glanced.emit()
 		return false
 	hp -= amount

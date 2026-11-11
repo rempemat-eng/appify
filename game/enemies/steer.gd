@@ -13,6 +13,22 @@ const CLEAR := 0.18     ## seconds without contact before it heads straight agai
 const ENTER := -0.2     ## the wall is "across the way" when wanted . normal is below this ...
 const LEAVE := -0.05    ## ... and the way is free again above this
 
+const LINE_SIDE := 6.0  ## texels: the line to the target is tested this wide on each side
+
+## True when no solid at all (walls and low solids alike: a bench, a bramble, rubble) stands between the
+## body and `to`. A melee enemy strikes only along such a line; otherwise it walks round.
+static func line_clear(body: Node2D, to: Vector2) -> bool:
+	if not body.is_inside_tree():
+		return true
+	var space := body.get_world_2d().direct_space_state
+	var from := body.global_position
+	var side := (to - from).orthogonal().normalized() * LINE_SIDE if from.distance_to(to) > 0.01 else Vector2.ZERO
+	for off: Vector2 in [Vector2.ZERO, side, -side]:
+		var ray := PhysicsRayQueryParameters2D.create(from + off, to + off, 1)
+		if not space.intersect_ray(ray).is_empty():
+			return false
+	return true
+
 var side := 0           ## 0 free; +1 or -1 the hand kept on the wall
 var normal := Vector2.ZERO
 var blocked_time := 0.0 ## seconds spent following walls since the last reset

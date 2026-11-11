@@ -131,7 +131,10 @@ func step(delta: float) -> void:
 		return
 	glance_t = maxf(glance_t - delta, 0.0)
 	_grace = maxf(_grace - delta, 0.0)
-	if state != "idle" and state != "leash" and _outside_leash():
+	# a committed wind-up and its strike finish even across the leash (Matt, 11 Nov: stepping over the
+	# line as it wound up beat it every time); the recovery after it turns for home
+	var committed := state == "windup" or state == "attack"
+	if state != "idle" and state != "leash" and _outside_leash() and (not committed or not is_instance_valid(target)):
 		_cancel_attack()
 		hsm.dispatch(&"leash")
 	hsm.update(maxf(delta, 0.0))
@@ -166,7 +169,7 @@ func _update_state(delta: float) -> void:
 				hsm.dispatch(&"windup")
 			elif role == "shooter" and distance < 45.0 * DENSITY:
 				velocity = -facing * 30.0 * DENSITY
-			elif distance > reach():
+			elif distance > reach() or (role != "shooter" and not _can_commit()):
 				# no ground gained for too long (circling a pocket, pushing at a solid): go home
 				if distance < _closest - GAIN:
 					_closest = distance
@@ -223,7 +226,8 @@ func _update_state(delta: float) -> void:
 
 func _can_commit() -> bool:
 	if role != "shooter":
-		return true
+		# a striker needs a clear way: a low solid between stops its lunge (Matt, 11 Nov: it walks round)
+		return EnemySteer.line_clear(self, target.global_position)
 	# Prevent off-screen fire, including when the scene is placed on a large map.
 	var screen := get_viewport_rect()
 	var point := get_global_transform_with_canvas().origin
@@ -239,6 +243,7 @@ func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> bool:
 	var archer: Node2D = target if is_instance_valid(target) else null
 	if archer != null and not can_come_for(archer.global_position):
 		glance_t = Glance.TIME
+		Glance.clink(global_position)
 		glanced.emit()
 		queue_redraw()
 		return false

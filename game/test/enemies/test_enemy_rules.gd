@@ -84,10 +84,22 @@ func test_a_hit_wakes_an_idle_mossling_and_its_camp_mates_when_the_archer_is_wit
 	a.hsm.update(0.1)
 	assert_str(String(a.state)).is_equal("idle")
 	a.take_hit(1, Vector2.RIGHT)
-	assert_int(a.hp).is_equal(2)
+	assert_int(a.hp).is_equal(a.max_hp - 1)
 	assert_str(String(a.state)).is_equal("chase")
 	assert_str(String(b.state)).is_equal("chase")
 	assert_str(String(far.state)).is_equal("idle")
+
+## Matt, 11 Nov: a lone mossling shot from 300 px was freed in 2.2 s by four arrows, before it could
+## arrive. It has 5 health now (3 before); a fight still pays 2 Glint for it.
+func test_a_mossling_has_five_health() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2.ZERO)
+	assert_int(e.max_hp).is_equal(5)
+	assert_int(e.hp).is_equal(5)
+	var placed: Enemy = (load("res://zones/woodland/woodland.tscn") as PackedScene).instantiate().get_node("Actors/MeadowCamp/Mossling1")
+	assert_int(placed.max_hp).is_equal(5)                # the woodland's camp keeps the scene's own value
+	placed.get_parent().get_parent().get_parent().free()
+	assert_int(GlintCache.fight_glint("mossling")).is_equal(2)
 
 ## Played on 10 Nov: shot from 320, the arrow's knock pushed the mossling past its 330 lose radius; it
 ## gave the archer up, walked the 20 px home and was shot again asleep, three times, without ever coming.
@@ -120,7 +132,7 @@ func test_an_arrow_from_beyond_330_glances_off_an_idle_mossling() -> void:
 	e.glanced.connect(func() -> void: glances[0] += 1)
 	_archer.position = Vector2(-340, 0)
 	e.take_hit(1, Vector2.RIGHT)
-	assert_int(e.hp).is_equal(3)
+	assert_int(e.hp).is_equal(e.max_hp)
 	assert_str(String(e.state)).is_equal("idle")
 	assert_int(glances[0]).is_equal(1)
 	assert_float(e.glance_t).is_greater(0.0)
@@ -138,7 +150,7 @@ func test_a_mossling_at_its_leash_limit_is_not_a_target_and_turns_on_a_hit_from_
 	e.hsm.update(0.016)
 	assert_str(String(e.state)).is_equal("leash")
 	e.take_hit(1, Vector2.LEFT)
-	assert_int(e.hp).is_equal(3)                         # 361 from home: past leash 300 + its reach 51
+	assert_int(e.hp).is_equal(e.max_hp)                         # 361 from home: past leash 300 + its reach 51
 	assert_str(String(e.state)).is_equal("leash")
 	e.hsm.update(0.5)
 	assert_float(e.velocity.x).is_less(0.0)              # still walking home
@@ -146,7 +158,7 @@ func test_a_mossling_at_its_leash_limit_is_not_a_target_and_turns_on_a_hit_from_
 	e.global_position = Vector2(200, 0)
 	_archer.position = Vector2(200, 120)
 	e.take_hit(1, Vector2.UP)
-	assert_int(e.hp).is_equal(2)
+	assert_int(e.hp).is_equal(e.max_hp - 1)
 	assert_str(String(e.state)).is_equal("chase")
 
 func test_a_mossling_walks_home_round_a_solid_in_its_way() -> void:
@@ -379,12 +391,12 @@ func test_a_mossling_that_winds_up_lunges_or_recovers_can_always_be_hurt() -> vo
 	assert_str(String(e.state)).is_equal("windup")
 	_archer.position = Vector2(360, 0)                   # off its ground now (past 351 from home)
 	e.take_hit(1, Vector2.LEFT)
-	assert_int(e.hp).is_equal(2)
+	assert_int(e.hp).is_equal(e.max_hp - 1)
 	e.hsm.update(Enemy.WINDUP_TIME + 0.01)
 	assert_str(String(e.state)).is_equal("lunge")
 	e.global_position = Vector2(370, 0)
 	e.take_hit(1, Vector2.LEFT)
-	assert_int(e.hp).is_equal(1)
+	assert_int(e.hp).is_equal(e.max_hp - 2)
 	e.hsm.update(Enemy.LUNGE_TIME + 0.01)
 	assert_str(String(e.state)).is_equal("recover")
 	e.max_hp = 9
@@ -643,4 +655,89 @@ func test_a_glanced_arrow_is_not_reported_as_struck() -> void:
 		arrow.struck.connect(func(_t: Node) -> void: hits[0] += 1)
 		arrow._on_body(e)
 		assert_int(hits[0]).is_equal(0 if far else 1)    # the camera shakes on `struck` (game.gd)
-	assert_int(e.hp).is_equal(2)
+	assert_int(e.hp).is_equal(e.max_hp - 1)
+
+
+# --- Matt's rulings of 11 Nov ---------------------------------------------------------------------------
+
+## Low cover: a melee enemy does not strike into a low solid the player's arrows cross; it walks round it.
+func test_a_mossling_walks_round_a_low_solid_to_strike_and_does_not_lunge_into_it() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2(0, 0))
+	var low := StaticBody2D.new()
+	low.collision_layer = Arrow.WALLS | Arrow.LOW                 # a bramble: arrows fly over, feet stop
+	var shape := CollisionShape2D.new()
+	var box := RectangleShape2D.new()
+	box.size = Vector2(60, 16)
+	shape.shape = box
+	low.add_child(shape)
+	low.position = Vector2(0, 40)
+	host.add_child(low)
+	await _steps(2)
+	_archer.position = Vector2(0, 76)                             # 76 below, the bramble between
+	e.take_hit(1, Vector2.DOWN, 0.0)
+	var wound_up_behind := 0
+	var struck := false
+	for i in 300:
+		await get_tree().physics_frame
+		_archer.position = Vector2(0, 76)
+		if e.state == &"windup" and e.global_position.y < 40.0:
+			wound_up_behind += 1
+		if e.state == &"windup" and e.global_position.y > 40.0:
+			struck = true
+			break
+	assert_int(wound_up_behind).override_failure_message("it wound up with the bramble between").is_equal(0)
+	assert_bool(struck).override_failure_message("it never got round the bramble to strike").is_true()
+
+func test_a_rusher_walks_round_a_low_solid_too() -> void:
+	var host := _host()
+	var e := _creature(host, Vector2(0, 0))
+	var low := StaticBody2D.new()
+	low.collision_layer = Arrow.WALLS | Arrow.LOW
+	var shape := CollisionShape2D.new()
+	var box := RectangleShape2D.new()
+	box.size = Vector2(60, 16)
+	shape.shape = box
+	low.add_child(shape)
+	low.position = Vector2(0, 40)
+	host.add_child(low)
+	await _steps(2)
+	_archer.position = Vector2(0, 80)
+	e._grace = 0.0
+	e.take_hit(1, Vector2.DOWN)
+	var wound_up_behind := 0
+	var struck := false
+	for i in 360:
+		await get_tree().physics_frame
+		if e.state == "windup" and e.global_position.y < 40.0:
+			wound_up_behind += 1
+		if e.state == "windup" and e.global_position.y > 40.0:
+			struck = true
+			break
+	assert_int(wound_up_behind).is_equal(0)
+	assert_bool(struck).is_true()
+	e._cancel_attack()
+
+## The glance: a spark and the word "clink", finite, still under reduced motion, and one sound hook.
+func test_the_glance_is_a_spark_and_a_clink_with_a_sound_hook() -> void:
+	var early: Dictionary = Glance.parts(Glance.TIME, false)
+	var late: Dictionary = Glance.parts(Glance.TIME * 0.2, false)
+	assert_str(String(early.word)).is_equal("clink")
+	assert_float(float(early.ray)).is_less(float(late.ray))         # the spark flies out ...
+	assert_float(float(Glance.parts(Glance.TIME, true).ray)).is_equal(float(Glance.parts(0.01, true).ray))   # ... not under reduced motion
+	assert_str(String(Glance.parts(0.0, false).word)).is_equal("")   # and it ends
+	var heard := []
+	Glance.on_clink = func(at: Vector2) -> void: heard.append(at)
+	var host := _host()
+	var m := _mossling(host, Vector2(10, 0))
+	var c := _creature(host, Vector2(0, 900))
+	for n: Node in [m, c]:
+		n.set_physics_process(false)
+	_archer.position = Vector2(-400, 0)
+	m.take_hit(1, Vector2.RIGHT)
+	_archer.position = Vector2(-500, 900)
+	c.take_hit(1, Vector2.RIGHT)
+	Glance.on_clink = Callable()
+	assert_int(heard.size()).is_equal(2)
+	assert_vector(heard[0]).is_equal(Vector2(10, 0))
+	c._cancel_attack()

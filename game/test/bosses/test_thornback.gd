@@ -470,3 +470,35 @@ func test_a_thorn_flies_over_a_low_solid_and_stops_at_a_wall() -> void:
 	assert_bool(th.finished).is_false()
 	th._on_body(wall)
 	assert_bool(th.finished).is_true()
+
+
+## Matt, 11 Nov: whole again 3 s after the player has left its arena, back in its first phase; not before,
+## and not while the player is inside.
+func test_it_is_whole_again_three_seconds_after_the_player_has_left_the_arena() -> void:
+	var boss := _boss(Vector2(300, 250))
+	boss.arena = Rect2(100, 100, 400, 300)
+	_target.position = Vector2(140, 250)
+	boss.step(0.016)
+	boss.take_hit(Thornback.MAX_HP - Thornback.PHASE2_AT + 2, Vector2.RIGHT)
+	assert_int(boss.phase).is_equal(2)
+	var wounded := boss.hp
+	for i in 60:
+		boss.step(0.1)                           # 6 s with the player inside: no healing
+		_target.position = Vector2(140, 250)
+	assert_int(boss.hp).is_equal(wounded)
+	_target.position = Vector2(60, 250)          # out through the door
+	for i in 29:
+		boss.step(0.1)
+	assert_int(boss.hp).is_equal(wounded)        # 2.9 s
+	_target.position = Vector2(140, 250)         # back in for a moment: the count starts again
+	boss.step(0.1)
+	_target.position = Vector2(60, 250)
+	for i in 29:
+		boss.step(0.1)
+	assert_int(boss.hp).is_equal(wounded)
+	boss.step(0.2)
+	assert_int(boss.hp).is_equal(Thornback.MAX_HP)
+	assert_int(boss.phase).is_equal(1)
+	assert_float(Thornback.HOME_HEAL_TIME).is_equal(3.0)
+	for th in boss.thorns:
+		th.finish()

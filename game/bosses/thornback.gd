@@ -28,7 +28,8 @@ extends CharacterBody2D
 ##     strikes at can strike back. Asleep, walking, recovering, staggered or roaring, an arrow from outside
 ##     glances off (enemies/glance.gd). An attack whose target has left the arena ends without the stagger.
 ##     (Staggered at the arena's edge by a charge at a player who had stepped out, it was shot down from
-##     the door without a heart lost.)
+##     the door without a heart lost.) And 3 s after the player has left the arena it is whole again and
+##     back in its first phase (HOME_HEAL_TIME, as every enemy at home).
 ##   - A charge is stopped, with the stagger, by a solid met within 45 degrees of head on (one met at a slant
 ##     is slid along) or by the arena's edge, and never before its strike has had its turn. Low solids
 ##     (Arrow.is_low: what the player's arrows also cross, the chamber's rubble) do not stop it. It stops
@@ -59,6 +60,7 @@ const VOLLEY := [8, 12]
 const SLAM_RADIUS := 34.0 * DENSITY
 const BODY_RADIUS := 20.0 * DENSITY
 const NEAR := 46.0 * DENSITY
+const HOME_HEAL_TIME := 3.0          ## whole again this long after the player has left its arena (Matt, 11 Nov)
 const CLING_TIME := 2.0             ## this long close in (under NEAR * 0.6) brings the charge there too
 const HEAD_ON := -0.7               ## wall normal . aim under this: the charge has run into the wall
 const ROOM_SLACK := 30.0            ## the wall strips north, east and south of the arena count as inside it
@@ -96,6 +98,7 @@ var _roared := false
 var _travel := 0.0
 var glance_t := 0.0
 var _close_t := 0.0
+var _away_t := 0.0
 var _ploughed: Array[PhysicsBody2D] = []   ## low solids it has run into and does not collide with until clear
 
 func _ready() -> void:
@@ -268,6 +271,16 @@ func step(delta: float) -> void:
 		_close_t += maxf(delta, 0.0)
 	else:
 		_close_t = 0.0
+	# whole again 3 s after the player has left the arena, like every enemy at home; its second phase
+	# goes with the wounds (Matt, 11 Nov: the door dance took a tenth of it each wind-up)
+	if not freed and is_instance_valid(target) and not player_in_arena():
+		_away_t += maxf(delta, 0.0)
+		if _away_t >= HOME_HEAL_TIME and hp < MAX_HP:
+			hp = MAX_HP
+			phase = 1
+			_roared = false
+	else:
+		_away_t = 0.0
 	var live: Array[Node] = []
 	for n in thorns:
 		if is_instance_valid(n) and not n.is_queued_for_deletion():
@@ -486,6 +499,7 @@ func take_hit(amount: int, _dir: Vector2, _knockback: float = 0.0) -> bool:
 		return false
 	if is_instance_valid(target) and not state in ["windup", "act"] and not player_in_arena():
 		glance_t = Glance.TIME        # from outside the arena only while it winds up or strikes
+		Glance.clink(global_position)
 		glanced.emit()
 		return false
 	if state == "dormant":
