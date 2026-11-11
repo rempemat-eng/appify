@@ -145,17 +145,35 @@ func test_a_lab_zone_is_never_where_the_game_resumes() -> void:
 	assert_str(String(_saved().zone)).is_equal("crossroads")
 
 func test_a_save_already_inside_a_lab_resumes_at_the_start() -> void:
+	# Two sessions, no save by hand. A save made before the lab rule names the Brackens lab; the
+	# first start still opens there, and the next plain start must open in the woodland.
 	SaveGame.data.zone = "brackens_lab"
-	SaveGame.data.spawn = "start"
-	var g := _game()
+	SaveGame.data.spawn = "west"
+	SaveGame.data.glint = 12
+	assert_int(SaveGame.save()).is_equal(OK)
+	SaveGame.reset()
+	assert_int(SaveGame.boot()).is_equal(OK)
+	var first := _game()
 	await _ticks(2)
 	await _frames(3)
 	assert_str(Zones.current.zone_id).is_equal("brackens_lab")
-	var hud: Control = g.get_node("UI/HUD")
+	var hud: Control = first.get_node("UI/HUD")
 	assert_str(hud.shown_text().banner).is_equal("")                # no opening card in a lab
 	assert_bool(SaveGame.has_flag("seen:opening")).is_false()
-	assert_int(SaveGame.save()).is_equal(OK)
-	assert_str(String(_saved().zone)).is_equal("woodland")
+	assert_str(String(_saved().zone)).is_equal("woodland")         # written once, at the start
+	assert_int(int(_saved().glint)).is_equal(12)
+	first.notification(Window.NOTIFICATION_WM_CLOSE_REQUEST)       # the window closed as a player would
+	remove_child(first)
+	first.free()
+	Zones.current = null
+	# the second session: a plain start from the file
+	SaveGame.reset()
+	assert_int(SaveGame.boot()).is_equal(OK)
+	var second := _game()
+	await _ticks(2)
+	await _frames(3)
+	assert_str(Zones.current.zone_id).is_equal("woodland")
+	assert_bool(second.player.global_position.is_finite()).is_true()
 
 # --- the HUD's guidance ---------------------------------------------------------------------------
 func test_a_new_game_shows_the_opening_card_once_and_a_lead() -> void:

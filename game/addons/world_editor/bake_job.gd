@@ -15,6 +15,10 @@ var label := ""
 var _started_msec := 0
 var _exit_code := -1
 var _cancelled := false
+## Files the job may leave half-written if it is killed (a painter's picture written beside its
+## name: scripts/art/kit/bake.py); a cancel removes them. A kill cannot run the painter's own
+## clean-up, so without this each cancel left a 0-byte ground_baked.png.tmp (the audit of #471).
+var leftovers := PackedStringArray()
 
 ## Start `python -c <code> <arguments...>`; the code must write its output to `log`. False when the
 ## process could not be started.
@@ -71,6 +75,12 @@ func cancel() -> void:
 	_cancelled = true
 	OS.kill(pid)
 	_exit_code = -2                    # killed: the engine forgets the process, so it is not asked after again
+	_remove_leftovers()
+
+func _remove_leftovers() -> void:
+	for path in leftovers:
+		if FileAccess.file_exists(path):
+			DirAccess.remove_absolute(path)
 
 ## A job nobody holds any more is stopped: the plugin dropping it (the editor closing, the plugin
 ## disabled) never leaves the painters running on their own.
@@ -78,6 +88,10 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE and pid > 0 and _exit_code == -1:
 		_cancelled = true
 		OS.kill(pid)
+		# inline: the script's own functions are not callable while the object is being freed
+		for path in leftovers:
+			if FileAccess.file_exists(path):
+				DirAccess.remove_absolute(path)
 
 func progress_text() -> String:
 	var line := last_line()

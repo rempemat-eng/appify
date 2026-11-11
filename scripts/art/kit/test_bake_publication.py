@@ -176,6 +176,22 @@ class PublicationFaults(BakeBoundary):
         with self.b.Image.open(path) as image:
             image.verify()
 
+    def test_a_picture_that_fails_its_check_is_not_left_beside_its_name(self):
+        # The written picture is checked before it is moved into place; a picture that fails the
+        # check is removed with the marker (the audit of #471, round 2: the clean-up was untested).
+        path = self._write('probe_a')
+        before = path.read_bytes()
+        real_open = self.b.Image.open
+        def refusing(file, *args, **kwargs):
+            if str(file).endswith('.tmp'):
+                raise ValueError('injected: the written picture does not read back')
+            return real_open(file, *args, **kwargs)
+        with patch.object(self.b.Image, 'open', refusing), self.assertRaises(ValueError):
+            self.b.write('probe_a')
+        self.assertFalse(Path(str(path) + '.tmp').exists())
+        self.assertFalse(path.with_suffix('.json').exists())
+        self.assertEqual(path.read_bytes(), before)
+
     def test_failed_second_bake_does_not_advertise_mixed_generation(self):
         for zone in self.plans:
             self._write(zone)

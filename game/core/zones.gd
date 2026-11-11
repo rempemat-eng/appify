@@ -73,6 +73,9 @@ func go_to(zone_id: String, spawn: String = "start") -> bool:
 			var from_lab := String(SaveGame.data.zone) == zone_id
 			SaveGame.resume = {"zone": fresh.zone if from_lab else String(SaveGame.data.zone),
 				"spawn": fresh.spawn if from_lab else String(SaveGame.data.spawn)}
+			# nothing is autosaved in a lab, so that one save is made at once (game.gd autosave),
+			# or the file would go on naming the lab and every start would open in it again
+			SaveGame.resume_unsaved = from_lab
 	else:
 		SaveGame.resume = {}
 		SaveGame.set_flag("visited:" + zone_id)

@@ -129,8 +129,11 @@ func autosave() -> void:
 	# The picture and demo modes (--shot, --demo, --lineup, --cycle ...) look at a save and never write one.
 	if not hud.guidance:
 		return
-	# a lab zone is a test bed: nothing that happens there is kept
+	# a lab zone is a test bed: nothing that happens there is kept, except, once, the move of a save
+	# that still named the lab back to where the game resumes (Zones.go_to)
 	if Zones.in_lab():
+		if SaveGame.resume_unsaved:
+			SaveGame.save()
 		return
 	# a downed player gets up with full health, so that is what a save made on the ground holds
 	SaveGame.data.player.hp = player.hp if player.hp > 0 else player.max_hp

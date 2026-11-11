@@ -267,6 +267,23 @@ class KitSceneTests(unittest.TestCase):
             self.assertEqual(result.returncode, 1, result.stderr)
             self.assertEqual(json.loads(result.stdout)['findings'][0]['check'], 'rules.unknown_piece')
 
+    def test_size_kinds_are_read_as_scale_py_reads_them(self):
+        # sizes.json first, then the size guide (docs/vision/size-guide.md). kit_scene read the size
+        # guide alone, so a cart (a sizes.json class only) was an unknown kind and a bench was held
+        # to the guide's bench (the audit of #471, round 2).
+        from . import scale
+        with (KS.ROOT / 'scripts/art/size_guide.json').open() as stream:
+            guide = json.load(stream)
+        heads = set(scale.CLASSES) | set(guide['kinds'])
+        for path in (KS.ROOT / 'game/kit/pieces').rglob('*.json'):
+            spec = (json.loads(path.read_text()).get('audit') or {}).get('size_class')
+            if isinstance(spec, str) and spec.strip():
+                heads.add(spec.split('(')[0].strip().split(' ')[0])
+        for head in sorted(heads):
+            with self.subTest(kind=head):
+                self.assertEqual(KS.kind_ranges(head, guide), scale.kind_ranges(head))
+        self.assertIsNotNone(KS.kind_ranges('cart', guide))
+
     def test_shared_fixture_is_current(self):
         path = KS.ROOT / 'game/test/fixtures/kit/validation.cases.json'
         self.assertEqual(json.loads(path.read_text()), {'version': 1, 'provenance': 'Engineering physical cases, not art approval.', 'cases': cases()})

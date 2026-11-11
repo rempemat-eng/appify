@@ -913,6 +913,11 @@ func test_a_bake_job_runs_beside_the_caller_reports_progress_and_can_be_cancelle
 	var job := BakeJob.new()
 	# a stand-in for the painters: says where it is, then works for a long time
 	var slow := "import sys,time\nf=open(sys.argv[1],'w',buffering=1)\nprint('painting water',file=f,flush=True)\ntime.sleep(120)\n"
+	# a stand-in for the picture being written beside its name when the cancel comes
+	var tmp := ProjectSettings.globalize_path("user://bake_job_test.png.tmp")
+	var stub := FileAccess.open(tmp, FileAccess.WRITE)
+	stub.close()
+	job.leftovers = PackedStringArray([tmp])
 	assert_bool(job.start(_python(), slow, PackedStringArray([log]), log, "Baking test")).is_true()
 	# start() came back at once: the caller is not waiting for the 120 s
 	assert_float(job.seconds()).is_less(5.0)
@@ -926,6 +931,8 @@ func test_a_bake_job_runs_beside_the_caller_reports_progress_and_can_be_cancelle
 	assert_bool(job.running()).is_false()
 	assert_bool(job.cancelled()).is_true()
 	assert_int(job.exit_code()).is_not_equal(0)            # killed, not finished
+	# what it was writing is not left behind
+	assert_bool(FileAccess.file_exists(tmp)).is_false()
 	# and the process is really gone (or a zombie awaiting its reap), not left painting
 	assert_bool(await _wait_until(func() -> bool: return not _process_alive(pid))).is_true()
 	# a job that nobody holds any more stops its process too (the editor closing mid-bake)

@@ -341,13 +341,13 @@ def _extra_checks(plan, library, materials, state, guide):
             fs.append(_f('rules.scale', '%s: size class is unclassified; art scale is not audited' % name, at, 'advice'))
         elif kind in ('unsized', 'ground'):
             fs.append(_f('rules.scale', '%s: size class is %s; art scale is not audited by box' % (name, kind), at, 'advice'))
-        elif kind not in guide.get('kinds', {}):
+        elif kind_ranges(kind, guide) is None:
             fs.append(_f('rules.scale', '%s: unknown size-guide class %s' % (name, category), at))
         elif not _xy(size) or any(v <= 0 for v in size):
             fs.append(_f('rules.scale', '%s: declared size class needs finite positive art dimensions' % name, at))
         else:
-            bounds, tolerance = guide['kinds'][kind], guide.get('tolerance', 2)
-            if any(axis in bounds and not bounds[axis][0] - tolerance <= size[k] / DENSITY <= bounds[axis][1] + tolerance for k, axis in enumerate(('w', 'h'))):
+            ranges = kind_ranges(kind, guide)
+            if any(not ranges[axis][0] <= size[k] <= ranges[axis][1] for k, axis in enumerate(('wide', 'tall'))):
                 fs.append(_f('rules.scale', '%s: art size is outside its size-guide class' % name, at))
     for x, y in sorted(route):
         if any((x + dx, y + dy) in water - decks for dx, dy in DIRS):
@@ -414,6 +414,41 @@ def _extra_checks(plan, library, materials, state, guide):
         if not open_points:
             fs.append(_f('rules.walk', "door '%s' has no open cell" % door.get('id', '?'), [(x + w / 2) * CELL, (y + h / 2) * CELL]))
     return fs
+
+
+_SIZES = None
+
+
+def _sizes():
+    global _SIZES
+    if _SIZES is None:
+        with (ROOT / 'scripts/review/sizes.json').open(encoding='utf-8') as stream:
+            _SIZES = json.load(stream)
+    return _SIZES
+
+
+def kind_ranges(name, guide):
+    """A kind's width and height in art px at density 3, tolerance included, in the order the size
+    guide (docs/vision/size-guide.md) and scripts/review/scale.py kind_ranges read them:
+    scripts/review/sizes.json's bounding-box classes first (art px, their own tolerance), then the
+    size guide's kinds (world px, x 3). The same rule, restated here because scale.py needs numpy
+    and this validator runs with the standard library only (the editor's Godot job);
+    test_kit_scene holds the two to one answer. None when the name is no measurable kind."""
+    def ok(r):
+        return isinstance(r, (list, tuple)) and len(r) == 2 and r[0] is not None and r[1] is not None
+    sizes = _sizes()
+    c = sizes['classes'].get(name)
+    if c and c.get('measure') == 'bbox':
+        sev = sizes['severity']
+        tol = lambda bound: max(sev['polish_min_px'], sev['polish_within'] * bound)
+        return {ax: ((c[key][0] - tol(c[key][0]), c[key][1] + tol(c[key][1])) if ok(c.get(key)) else (0.0, float('inf')))
+                for ax, key in (('tall', 'h'), ('wide', 'w'))}
+    k = guide.get('kinds', {}).get(name)
+    if not k:
+        return None
+    t = float(guide.get('tolerance', 2)) * DENSITY
+    return {ax: ((k[key][0] * DENSITY - t, k[key][1] * DENSITY + t) if ok(k.get(key)) else (0.0, float('inf')))
+            for ax, key in (('tall', 'h'), ('wide', 'w'))}
 
 
 def check_zone(plan, library=None, materials=None, size_guide=None):

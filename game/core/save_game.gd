@@ -26,6 +26,8 @@ var boot_error: Error = OK
 ## Where the game resumes while the player is in a lab zone (Zones.go_to sets it on entering one and
 ## clears it on leaving): a save made meanwhile names this zone and spawn, never the lab's.
 var resume: Dictionary = {}
+## True when the save on disk still names a lab and `resume` has not been written yet.
+var resume_unsaved := false
 
 func _ready() -> void:
 	boot(OS.get_cmdline_user_args().has("--fresh"))
@@ -59,6 +61,7 @@ static func fresh() -> Dictionary:
 
 func reset() -> void:
 	resume = {}
+	resume_unsaved = false
 	data = fresh()
 
 # --- flags and Glint ---------------------------------------------------------
@@ -105,6 +108,7 @@ func save(to: String = "") -> Error:
 	if err != OK:
 		DirAccess.remove_absolute(tmp)
 		return err
+	resume_unsaved = false
 	data.version = VERSION
 	saved.emit(target)
 	return OK
@@ -131,6 +135,7 @@ func load_save(from: String = "") -> Error:
 	if err != OK:
 		return err
 	resume = {}
+	resume_unsaved = false
 	data = _migrate(json.data)
 	loaded.emit()
 	return OK

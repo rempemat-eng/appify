@@ -600,6 +600,7 @@ func start_bake() -> Dictionary:
 	var log := ProjectSettings.globalize_path("user://world_editor_bake_%d.log" % OS.get_process_id())
 	if not job.start_module(Rules.python_binary(), repo, "scripts.art.kit.bake", PackedStringArray([String(prepared.zone_id)]), log, "Baking %s" % prepared.zone_id):
 		return Rules.failure("editor.bake_failed", "The bake could not be started (is Python on the PATH?).")
+	job.leftovers = PackedStringArray([ProjectSettings.globalize_path("res://zones/%s/ground_baked.png.tmp" % prepared.zone_id)])
 	_bake_job = job
 	_bake_zone_id = String(prepared.zone_id)
 	_bake_ground = ground

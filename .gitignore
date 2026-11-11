@@ -64,3 +64,6 @@ artifacts/review/
 
 # cast rig output (rebuilt from scripts/cast/src)
 scripts/cast/out/
+
+# a painter killed mid-write (scripts/art/kit/bake.py writes the picture beside its name first)
+*.png.tmp
