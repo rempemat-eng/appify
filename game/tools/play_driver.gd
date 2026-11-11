@@ -635,6 +635,12 @@ func fight(limit: float) -> String:
 			else:
 				await _sleep(0.12)
 			continue
+		if near.has_method("player_in_arena") and not bool(near.call("player_in_arena")):
+			# outside the Thornback's arena its arrows glance and it heals 3 s later (bosses/thornback.gd):
+			# a pilot that has rolled out into the doorway steps back in towards it
+			hold(p.global_position.direction_to(near.global_position))
+			await _sleep(0.15)
+			continue
 		var sight := g.clear_line(p.global_position, near.global_position) or best < 40.0
 		if best > 330.0 or not sight:
 			var plan := g.path(p.global_position, near.global_position, 40.0)

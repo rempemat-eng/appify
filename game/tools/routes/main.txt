@@ -324,7 +324,7 @@ expect prompt Rest
 talk HutBed
 expect said swollen shut
 expect hp 5
-expect glint 45
+expect glint 76
 restart
 expect quest a1_the_torn_roof done
 expect restored apothecary
