@@ -73,7 +73,6 @@ var _grace := 0.0
 var _provoked := 0.0
 var _run_in := false
 var _closest := INF
-var _flipped := false
 var _stuck_t := 0.0
 var _gave_up := false           ## walking home from a chase it gave up: deaf to shots until it is home
 var _fade := 0.0
@@ -170,7 +169,6 @@ func _idle_enter() -> void:
 
 func _chase_enter() -> void:
 	steer.reset()
-	_flipped = false
 	_gave_up = false
 	_closest = INF
 	_stuck_t = 0.0
@@ -195,11 +193,7 @@ func _chase(delta: float) -> void:
 			hsm.dispatch(&"in_range")
 			return
 		# a low solid between (arrows cross it, a bite does not): it walks round it (Matt, 11 Nov)
-	# no ground gained on the target for too long (pushing at a solid, circling a pocket): go home. Taking
-	# the other hand round a pocket starts the count again, once
-	if steer.flips > 0 and not _flipped:
-		_flipped = true
-		_stuck_t = 0.0
+	# no ground gained on the target for too long (pushing at a solid, circling a pocket): go home
 	if _target_dist() < _closest - GAIN:
 		_closest = _target_dist()
 		_stuck_t = 0.0

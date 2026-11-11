@@ -53,7 +53,6 @@ var _leash_budget := 0.0
 var _grace := 0.0
 var _run_in := false
 var _closest := INF
-var _flipped := false
 var _stuck_t := 0.0
 var _gave_up := false
 
@@ -107,7 +106,6 @@ func _changed(current: LimboState, _previous: LimboState) -> void:
 	elapsed = 0.0
 	velocity = Vector2.ZERO
 	steer.reset()
-	_flipped = false
 	_closest = INF
 	_stuck_t = 0.0
 	if state != "approach":
@@ -172,11 +170,7 @@ func _update_state(delta: float) -> void:
 			elif role == "shooter" and distance < 45.0 * DENSITY:
 				velocity = -facing * 30.0 * DENSITY
 			elif distance > reach() or (role != "shooter" and not _can_commit()):
-				# no ground gained for too long (circling a pocket, pushing at a solid): go home; taking the
-				# other hand round a pocket starts the count again, once
-				if steer.flips > 0 and not _flipped:
-					_flipped = true
-					_stuck_t = 0.0
+				# no ground gained for too long (circling a pocket, pushing at a solid): go home
 				if distance < _closest - GAIN:
 					_closest = distance
 					_stuck_t = 0.0
