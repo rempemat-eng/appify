@@ -329,7 +329,7 @@ collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_roots_corridor"]
-position = Vector2(816, 492)
+position = Vector2(816, 486)
 shape = SubResource("s16")
 
 [node name="Solid_urn_seal" type="StaticBody2D" parent="Walls"]
@@ -459,7 +459,7 @@ centered = false
 offset = Vector2(-42, -65)
 
 [node name="RootsCorridor" type="Sprite2D" parent="Props"]
-position = Vector2(816, 504)
+position = Vector2(816, 498)
 texture = ExtResource("t9")
 centered = false
 offset = Vector2(-72, -44)

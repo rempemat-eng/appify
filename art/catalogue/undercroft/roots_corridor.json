@@ -1,7 +1,7 @@
 {
  "id": "undercroft/roots_corridor",
  "file": "game/zones/undercroft/art/roots_corridor.png",
- "sha256": "8e324a800fbb55fae2642f7068c019ec745b0c6eb142c209e1df17a731906cbb",
+ "sha256": "d577660f4c9a24f595c2b85a99dbc8cb37c367a4a46ab29e171341965007ffec",
  "kind": "roots_corridor",
  "biome": "cellar",
  "H": 74.0,
@@ -10,9 +10,9 @@
   144,
   48
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
-  "blocker": 1,
+  "blocker": 0,
   "fault": 0,
   "polish": 1
  },
@@ -36,23 +36,11 @@
  },
  "findings": [
   {
-   "detector": "logic.floating_part",
-   "severity": "blocker",
-   "box": [
-    101,
-    6,
-    115,
-    37
-   ],
-   "message": "undercroft/roots_corridor: a part (363 px, 26% of the sprite) hangs in the air, 6 px above the ground line, touching nothing below",
-   "fix": "join it to what holds it up: a crown sits on its trunk and covers the trunk top, a bucket hangs from a rope on a windlass, a sign from a bracket (world-rules.md 6.9)"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
     28,
-    6,
+    12,
     115,
     43
    ],

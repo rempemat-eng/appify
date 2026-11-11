@@ -6,7 +6,7 @@
   2304,
   648
  ],
- "inputs": "a6ee267a514c07bf7a1e54fc7fc5ec4b8527c1af5904ecd0f25a6d6329dbec6a",
+ "inputs": "1cc2ef7c11825c73be4b7002dd489b63f7957d2949e365c0e500e34c3b6ff089",
  "kit_drawn": [
   "cairn_alcove.png",
   "channel_lit.png",
@@ -95,7 +95,7 @@
    "png": "roots_corridor.png",
    "foot": [
     816,
-    504
+    498
    ],
    "offset": [
     -72,
@@ -104,7 +104,7 @@
    "cond": null,
    "solid": [
     259.0,
-    160,
+    158,
     26,
     8
    ]

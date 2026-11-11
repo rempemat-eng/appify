@@ -1,7 +1,7 @@
 {
  "id": "undercroft/channel_lit",
  "file": "game/zones/undercroft/art/channel_lit.png",
- "sha256": "d862169c0b3f7b5f185287d803f637f0e03192ea3e86e5661e51c31bda843dac",
+ "sha256": "8bbaba837fbd19b20a481b343db2a657158ed3e38a2cd9dc7fb64eaef7ba669a",
  "kind": "channel",
  "biome": "cellar",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 39,
-   "tones": 16.205128205128204,
-   "shapes": 31.28205128205128
+   "tones": 16.128205128205128,
+   "shapes": 31.333333333333332
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.6,
-  "tones_ratio": 0.6,
-  "shapes_ratio": 0.621,
+  "ratio": 0.597,
+  "tones_ratio": 0.597,
+  "shapes_ratio": 0.622,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     260,
     154
    ],
-   "message": "undercroft/channel_lit: detail bar 0.60 of Eastward's prop band (16.2 tones, 31.3 shapes a patch against 27.0, 50.36)",
+   "message": "undercroft/channel_lit: detail bar 0.60 of Eastward's prop band (16.1 tones, 31.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
