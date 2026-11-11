@@ -150,5 +150,9 @@ func _write(key: String, value: Variant) -> void:
 	_refresh()
 
 func _quit() -> void:
-	SaveGame.save()
+	# through the game, so the save holds the hearts as they are now (game.gd autosave)
+	if get_tree().get_nodes_in_group("game").is_empty():
+		SaveGame.save()
+	else:
+		get_tree().call_group("game", "autosave")
 	get_tree().quit()

@@ -9,10 +9,12 @@ var _lines := PackedStringArray()
 var _i := 0
 var _shown := 0.0
 var _opened_frame := -1
+var _held_until := -1                ## the last frame the pause menu still owns the keys
 var _name := Label.new()
 var _text := Label.new()
 
 func _ready() -> void:
+	add_to_group("dialogue_box")
 	visible = false
 	anchor_left = 0.5
 	anchor_right = 0.5
@@ -42,6 +44,10 @@ func _open(speaker: String, lines: PackedStringArray) -> void:
 	visible = true
 	_opened_frame = Engine.get_process_frames()  # the E that opened the box must not also skip its first line
 
+## The line on the box right now ("" when it is closed), for the play driver and the tests.
+func shown_line() -> String:
+	return _text.text if visible else ""
+
 func _show_line() -> void:
 	_text.text = _lines[_i]
 	_shown = float(_text.text.length()) if SaveGame.setting("reduced_motion", false) else 0.0
@@ -50,12 +56,20 @@ func _show_line() -> void:
 func _process(delta: float) -> void:
 	if not visible:
 		return
+	# This box keeps running under the pause menu (it is drawn there too), but the menu owns the keys:
+	# Enter on Resume must not also turn the page, on that frame or the next.
+	if get_tree().paused:
+		_held_until = Engine.get_process_frames() + 1
+		return
 	_shown = minf(_shown + CHARS_PER_SEC * delta, _text.text.length())
 	_text.visible_characters = int(_shown)
-	if Input.is_action_just_pressed("ui_advance") and Engine.get_process_frames() != _opened_frame:
+	if Input.is_action_just_pressed("ui_advance") and Engine.get_process_frames() != _opened_frame \
+			and Engine.get_process_frames() > _held_until:
 		advance()
 
 func _gui_input(event: InputEvent) -> void:
+	if get_tree().paused:
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		advance()
 		accept_event()

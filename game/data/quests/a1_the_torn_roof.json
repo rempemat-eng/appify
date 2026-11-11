@@ -25,7 +25,7 @@
     },
     {
       "id": "morel",
-      "text": "Talk to Morel in his apothecary",
+      "text": "Talk to Morel outside his apothecary",
       "on": "talk:morel"
     }
   ],

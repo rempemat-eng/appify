@@ -122,12 +122,31 @@
           ],
           "not_started": [
             "a1_bread_for_the_bothy"
+          ],
+          "flags": [
+            "zone_built:frostline"
           ]
         },
         "priority": 10,
         "lines": [
           "Before the storm the hut warden came down from the Frostline every week for a loaf. She hasn't come since.",
           "Here, take her one. The ridge col's full of shard crows, so go ready."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "home_again"
+          ],
+          "not_started": [
+            "a1_bread_for_the_bothy"
+          ]
+        },
+        "priority": 10,
+        "lines": [
+          "The Ferns home and Hale's fire lit. It's a town again, near enough.",
+          "Before the storm the hut warden came down from the Frostline every week for a loaf. She hasn't come since.",
+          "The Col Path is still buried, or I'd send you up with one. When it's dug out, come and see me."
         ]
       }
     ]

@@ -3,6 +3,7 @@
   "title": "The road home",
   "kind": "main",
   "summary": "Hale the smith, sheltering in the woodland since the storm, walks back with you to what is left of Crossroads.",
+  "next_visit_flags": ["hale_walked_home"],
   "start": { "on": "talk:hale" },
   "steps": [
     { "id": "go", "text": "Follow the east path to Crossroads", "on": "enter:crossroads", "done_if": { "flags": ["visited:crossroads"] } },

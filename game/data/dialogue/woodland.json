@@ -18,6 +18,13 @@
         "lines": ["Mosslings, shardstruck since the starfall, nest in the far meadow, south-east of the stones and across the path."]
       },
       {
+        "if": { "not_started": ["woodland_stones"], "flags": ["camp_cleared:meadow"] },
+        "lines": [
+          "TO WHOEVER READS THIS: since the starfall the mosslings in the meadow have turned wild. Drive them off and a reward hangs here for you.",
+          "The meadow is already quiet. You look closer at the post."
+        ]
+      },
+      {
         "lines": [
           "TO WHOEVER READS THIS: since the starfall the mosslings in the meadow have turned wild.",
           "Drive them off and the stones will be safe to visit again. A reward hangs here for you."

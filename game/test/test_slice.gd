@@ -84,6 +84,94 @@ func test_entering_crossroads_first_still_counts() -> void:
 	Quests.notify("talk:hale")
 	assert_str(_step("road_to_crossroads")).is_equal("moss")
 
+## Hale's place (10 Nov: she used to vanish as her last line closed, and stood in the woodland and on
+## the square at once for a player who went to Crossroads first). She is on the woodland path until
+## she has asked and the next zone loads; from then on she is in Crossroads.
+func test_hale_stays_for_the_visit_and_is_home_from_the_next_zone_load() -> void:
+	var on_the_path := {"not_flags": ["hale_walked_home"]}
+	assert_bool(Quests.check(on_the_path)).is_true()
+	Quests.zone_loading()                      # a door before she has asked: she has not moved
+	assert_bool(Quests.check(on_the_path)).is_true()
+	Quests.notify("talk:hale")
+	assert_bool(Quests.check(on_the_path)).is_true()   # still there as her line closes
+	Quests.zone_loading()
+	assert_bool(Quests.check(on_the_path)).is_false()
+
+func test_hale_is_in_one_place_in_the_scenes() -> void:
+	_attach()
+	# Crossroads before she has asked: not on the square, not at the anvil (even with the forge paid)
+	SaveGame.add_glint(30)
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	assert_bool(Village.restore("forge")).is_true()
+	assert_bool((Zones.current.get_node("Actors/If_hale_square") as Conditional).visible).is_false()
+	assert_bool((Zones.current.get_node("Actors/If_hale_forge") as Conditional).visible).is_false()
+	assert_bool(Zones.go_to("woodland", "crossroads")).is_true()
+	var on_the_path := Zones.current.get_node("Actors/HaleOnThePath") as Conditional
+	assert_bool(on_the_path.visible).is_true()
+	Quests.notify("talk:hale")
+	assert_str(_step("road_to_crossroads")).is_equal("moss")     # already visited: the first step is done
+	assert_bool(on_the_path.visible).is_true()                    # and she is still there
+	assert_bool(Zones.go_to("crossroads", "woodland")).is_true()
+	assert_bool((Zones.current.get_node("Actors/If_hale_forge") as Conditional).visible).is_true()
+	assert_bool(Zones.go_to("woodland", "crossroads")).is_true()
+	assert_bool((Zones.current.get_node("Actors/HaleOnThePath") as Conditional).visible).is_false()
+
+## The forge paid before Hale asks (recorded: it can be), in both orders: before she is home, and with
+## her standing on the square watching. The mark's line and her thanks must be true in each (11 Nov:
+## she said "before I was even home" and spoke of an ember when she had watched her fire take).
+func test_an_early_forge_is_told_truthfully_whether_hale_was_home_or_not() -> void:
+	for was_home: bool in [false, true]:
+		SaveGame.reset()
+		SaveGame.add_glint(30)
+		SaveGame.set_flag("hale_walked_home", was_home)
+		var mark := " ".join(Dialogue.lines_for("restore_forge"))
+		assert_bool(mark.contains("ember")).is_equal(not was_home)
+		assert_bool(mark.contains("Hale's fire takes")).is_equal(was_home)
+		Village.restore("forge")
+		SaveGame.data.quests["road_to_crossroads"] = {"state": "done", "step": 2}
+		SaveGame.set_flag("hale_walked_home")      # by now she is in Crossroads either way
+		var thanks := " ".join(Dialogue.lines_for("hale"))
+		assert_str(thanks).contains("cleared my door")
+		for claim: String in ["home", "ember"]:    # each would be false in one of the two orders
+			assert_bool(thanks.contains(claim)).override_failure_message(
+				"Hale says \"%s\" (was home: %s): %s" % [claim, was_home, thanks]).is_false()
+
+## --stage (and review:scene --stage) shows the town as it stands at that stage: from the forge on,
+## Hale is home (11 Nov: the stages set no hale_walked_home, so every stage picture had lost her).
+func test_every_stage_after_the_first_shows_hale_in_crossroads() -> void:
+	var plan: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/plans/crossroads.json"))
+	_attach()
+	for i in plan.stages.size():
+		SaveGame.reset()
+		load("res://game.gd").apply_stage("crossroads", plan.stages[i].id)
+		assert_str(Village.stage("crossroads")).is_equal(plan.stages[i].id)
+		assert_bool(Zones.go_to("crossroads", "start")).is_true()
+		var shown := 0
+		for n: String in ["Actors/If_hale_square", "Actors/If_hale_forge"]:
+			shown += int((Zones.current.get_node(n) as Conditional).visible)
+		assert_int(shown).override_failure_message("stage %s shows Hale %d times" % [plan.stages[i].id, shown]).is_equal(int(i > 0))
+
+## The apothecary's mark waits for Morel to ask (its 40 Glint, paid early, could leave the forge or the
+## Ferns' door out of reach); the forge and the Ferns' door can be paid before their quests, as recorded.
+func test_the_apothecary_mark_waits_for_its_quest() -> void:
+	SaveGame.add_glint(100)
+	assert_bool(Village.can_restore("forge")).is_true()
+	assert_bool(Village.can_restore("apothecary")).is_false()
+	for q: String in CHAIN:
+		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
+	assert_bool(Village.can_restore("apothecary")).is_false()
+	_attach()
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	var mark := Zones.current.get_node("Actors/If_apothecary_site/ApothecarySite") as RestoreSite
+	assert_bool(mark.usable()).is_false()
+	await mark.interact()
+	assert_bool(Village.is_restored("apothecary")).is_false()
+	Quests.notify("talk:morel")
+	assert_bool(mark.usable()).is_true()
+	await mark.interact()
+	assert_bool(Village.is_restored("apothecary")).is_true()
+	assert_int(SaveGame.data.glint).is_equal(60)
+
 func test_restore_needs_glint_and_its_condition() -> void:
 	assert_bool(Village.can_restore("forge")).is_false()
 	assert_bool(Village.restore("forge")).is_false()
@@ -136,6 +224,7 @@ func _attach() -> Player:
 	return player
 
 func test_crossroads_scene_flips_and_keeps_the_flip() -> void:
+	SaveGame.set_flag("hale_walked_home")      # Hale has walked home (The road home)
 	_attach()
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
 	var zone := Zones.current

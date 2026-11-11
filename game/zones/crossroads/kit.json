@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "35508744363b0e1501cf14f4377d34737c8f8567923070bbe480c5dc34e3a6a3",
+ "inputs": "d4d016716da28b3f4c94c6f4cdef95e65f58af64458b52d3f65d7b8187824cc1",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -260,7 +260,11 @@
     -120,
     -228
    ],
-   "cond": null,
+   "cond": {
+    "not_restored": [
+     "apothecary"
+    ]
+   },
    "solid": null,
    "of": "herbalist"
   },
