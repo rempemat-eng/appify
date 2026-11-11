@@ -73,6 +73,7 @@ var _grace := 0.0
 var _provoked := 0.0
 var _run_in := false
 var _closest := INF
+var _flipped := false
 var _stuck_t := 0.0
 var _gave_up := false           ## walking home from a chase it gave up: deaf to shots until it is home
 var _fade := 0.0
@@ -169,6 +170,7 @@ func _idle_enter() -> void:
 
 func _chase_enter() -> void:
 	steer.reset()
+	_flipped = false
 	_gave_up = false
 	_closest = INF
 	_stuck_t = 0.0
@@ -193,7 +195,11 @@ func _chase(delta: float) -> void:
 			hsm.dispatch(&"in_range")
 			return
 		# a low solid between (arrows cross it, a bite does not): it walks round it (Matt, 11 Nov)
-	# no ground gained on the target for too long (pushing at a solid, circling a pocket): go home
+	# no ground gained on the target for too long (pushing at a solid, circling a pocket): go home. Taking
+	# the other hand round a pocket starts the count again, once
+	if steer.flips > 0 and not _flipped:
+		_flipped = true
+		_stuck_t = 0.0
 	if _target_dist() < _closest - GAIN:
 		_closest = _target_dist()
 		_stuck_t = 0.0
@@ -204,7 +210,7 @@ func _chase(delta: float) -> void:
 			hsm.dispatch(&"leash")
 			return
 	var pace := speed * (RUN_IN if _run_in else 1.0)
-	velocity = steer.direction(self, global_position.direction_to(target.global_position), delta) * pace
+	velocity = steer.direction(self, global_position.direction_to(target.global_position), delta, target.global_position) * pace
 
 func _reset_t() -> void:
 	_t = 0.0
@@ -258,7 +264,7 @@ func _leash(delta: float) -> void:
 			_fade = HOP_FADE
 		_arrive_home()
 		return
-	velocity = steer.direction(self, global_position.direction_to(home), delta) * speed * 1.3
+	velocity = steer.direction(self, global_position.direction_to(home), delta, home) * speed * 1.3
 
 func _arrive_home() -> void:
 	global_position = home

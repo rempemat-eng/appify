@@ -450,17 +450,21 @@ func test_the_chase_goes_round_a_solid_for_a_mossling_and_a_creature() -> void:
 func test_a_chase_that_gains_no_ground_is_given_up_and_the_mossling_goes_home() -> void:
 	var host := _host()
 	var e := _mossling(host, Vector2(0, 0))
-	# a pocket open to the north (towards home), closed towards the archer
-	for r: Rect2 in [Rect2(-60, 248, 120, 12), Rect2(-60, 140, 12, 120), Rect2(48, 140, 12, 120)]:
+	# the archer stands in a closed pen: there is no way to them (since 11 Nov the steering follows a solid
+	# round its corners, so a pen open on one side is no longer a trap)
+	for r: Rect2 in [Rect2(-56, 124, 112, 12), Rect2(-56, 216, 112, 12), Rect2(-56, 124, 12, 104), Rect2(44, 124, 12, 104)]:
 		_wall(host, r)
 	await _steps(2)
-	_archer.position = Vector2(0, 320)
+	_archer.position = Vector2(0, 176)                   # beyond its 165 px notice from home, inside its leash
 	e.take_hit(1, Vector2.DOWN, 0.0)
 	assert_str(String(e.state)).is_equal("chase")
-	await _steps(int((200.0 / (e.speed * Enemy.RUN_IN) + Enemy.CHASE_GIVE_UP - 0.4) * 60.0))
-	assert_str(String(e.state)).is_equal("chase")        # in the pocket, still trying
-	await _steps(60)
-	assert_str(String(e.state)).is_equal("leash")        # given up: walking home
+	var frames := 0
+	while e.state == &"chase" and frames < 480:
+		await get_tree().physics_frame
+		frames += 1
+	assert_str(String(e.state)).is_equal("leash")        # it found no way and gave the chase up ...
+	assert_bool(e._gave_up).override_failure_message("it left for home for another reason than giving up").is_true()
+	assert_float(frames / 60.0).is_greater(Enemy.CHASE_GIVE_UP - 0.1)   # ... not before it had tried for the give-up time
 	var hp := e.hp
 	assert_bool(e.take_hit(1, Vector2.DOWN, 0.0)).is_false()   # on that walk a shot neither hurts nor turns it
 	assert_int(e.hp).is_equal(hp)
@@ -470,7 +474,7 @@ func test_a_chase_that_gains_no_ground_is_given_up_and_the_mossling_goes_home() 
 	assert_vector(e.global_position).is_equal(e.home)
 	# at home it is never deaf (the 6 s of 1a831e73 made 35 arrows glance off mosslings asleep at home)
 	assert_bool(e.take_hit(1, Vector2.DOWN, 0.0)).is_true()
-	assert_int(e.hp).is_equal(hp - 1)
+	assert_int(e.hp).is_equal(e.max_hp - 1)              # (whole again after its 3 s at home, then hit)
 	assert_str(String(e.state)).is_equal("chase")
 
 func test_the_real_pocket_at_610_1570_in_the_woodland_does_not_hold_the_camp() -> void:
@@ -741,3 +745,34 @@ func test_the_glance_is_a_spark_and_a_clink_with_a_sound_hook() -> void:
 	assert_int(heard.size()).is_equal(2)
 	assert_vector(heard[0]).is_equal(Vector2(10, 0))
 	c._cancel_attack()
+
+
+## The played case: behind the bramble at (600, 1600) the whole camp was freed without a heart lost (8 s),
+## and with the line rule alone the mosslings circled in the corner the bramble makes with a wall and gave
+## up. Taking the other hand there, they get round and strike.
+func test_in_the_woodland_the_camp_gets_round_the_bramble_to_a_player_behind_it() -> void:
+	for spot: Vector2 in [Vector2(600, 1600), Vector2(480, 1660)]:
+		var root: Node2D = auto_free(Node2D.new())
+		add_child(root)
+		var player: Player = auto_free(load("res://actors/player.tscn").instantiate())
+		player.input_enabled = false
+		player.max_hp = 99
+		SaveGame.reset()
+		Zones.current = null
+		Zones.attach(root, player)
+		assert_bool(Zones.go_to("woodland", "start")).is_true()
+		player.global_position = spot
+		await _steps(3)
+		var camp := Zones.current.get_node("Actors/MeadowCamp")
+		(camp.get_node("Mossling1") as Enemy).take_hit(1, Vector2.DOWN, 0.0)
+		player.hp = 99
+		var frames := 0
+		while player.hp == 99 and frames < 600:
+			await get_tree().physics_frame
+			player.global_position = spot
+			frames += 1
+		assert_int(player.hp).override_failure_message("behind the bramble at %s: not reached in 10 s" % spot).is_less(99)
+		root.remove_child(Zones.current)
+		Zones.current.free()
+		Zones.current = null
+		SaveGame.reset()

@@ -53,6 +53,7 @@ var _leash_budget := 0.0
 var _grace := 0.0
 var _run_in := false
 var _closest := INF
+var _flipped := false
 var _stuck_t := 0.0
 var _gave_up := false
 
@@ -106,6 +107,7 @@ func _changed(current: LimboState, _previous: LimboState) -> void:
 	elapsed = 0.0
 	velocity = Vector2.ZERO
 	steer.reset()
+	_flipped = false
 	_closest = INF
 	_stuck_t = 0.0
 	if state != "approach":
@@ -170,7 +172,11 @@ func _update_state(delta: float) -> void:
 			elif role == "shooter" and distance < 45.0 * DENSITY:
 				velocity = -facing * 30.0 * DENSITY
 			elif distance > reach() or (role != "shooter" and not _can_commit()):
-				# no ground gained for too long (circling a pocket, pushing at a solid): go home
+				# no ground gained for too long (circling a pocket, pushing at a solid): go home; taking the
+				# other hand round a pocket starts the count again, once
+				if steer.flips > 0 and not _flipped:
+					_flipped = true
+					_stuck_t = 0.0
 				if distance < _closest - GAIN:
 					_closest = distance
 					_stuck_t = 0.0
@@ -180,7 +186,7 @@ func _update_state(delta: float) -> void:
 						_gave_up = true
 						hsm.dispatch(&"leash")
 						return
-				velocity = steer.direction(self, facing, delta) * 34.0 * DENSITY * (RUN_IN if _run_in else 1.0)
+				velocity = steer.direction(self, facing, delta, target.global_position) * 34.0 * DENSITY * (RUN_IN if _run_in else 1.0)
 			else:
 				velocity = facing.orthogonal() * 16.0 * DENSITY
 		"windup":
@@ -222,7 +228,7 @@ func _update_state(delta: float) -> void:
 				global_position = home
 				hsm.dispatch(&"idle")
 			else:
-				velocity = steer.direction(self, global_position.direction_to(home), delta) * LEASH_SPEED
+				velocity = steer.direction(self, global_position.direction_to(home), delta, home) * LEASH_SPEED
 
 func _can_commit() -> bool:
 	if role != "shooter":
