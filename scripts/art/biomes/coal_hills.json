@@ -1,0 +1,207 @@
+{
+  "id": "coal_hills",
+  "status": "brief",
+  "lane": "claude-h",
+  "regions": ["cogsworth"],
+  "kit": null,
+  "about": "The coal hills round Cogsworth: rounded hills in 32 px benches under dark conifers, heath on the tops, coal seams showing in the faces, spoil heaps, pit heads, charcoal camps and rail ruins along the roads (regions/cogsworth-coal-hills-narrows.md 2). A brief as data (rules-system.md 4, 'Adding a biome'), in the shape of Claude F's moor and highland (#199); draft #180's town painter is frozen and drew no hills, so nothing is ported from it. Every family is a house ramp (art/house-palette.json); soot and copper are Cogsworth's two accents (house-style.md). Numbers are shares of walkable ground unless named otherwise. 'kit' is pinned when kit v1 (woodland@1) exists.",
+  "palette_intent": "Dark and warm rather than grim: near-black conifers and soot-dark seams against warm heath and lit grey-brown shale, so the hills read as the darkest land on the map without going grey. The heath is olive and rust (bilberry, dead bracken), mauve only in small ling drifts, cooler and greener than the Brackens' moor. Spoil is blue-black and purple-grey with rust where water runs off it; birch on the spoil is the one pale, bright note. Copper shows only on made things (the pit-head winding gear, lamps). Never speckle: seams are bands, spoil is slabs and cinder clusters.",
+  "families": {
+    "heath": ["grass_cool", "grass", "leaf_warm", "clay"],
+    "ling": ["dusk_warm", "earth_warm"],
+    "bilberry": ["leaf", "leaf_cool"],
+    "bracken": ["grass_warm", "clay", "clay_warm"],
+    "shale_face": ["slate", "slate_cool", "slate_warm", "earth_cool"],
+    "seam": ["soot", "soot_cool", "soot_warm"],
+    "spoil": ["soot", "soot_warm", "slate_cool", "clay_cool"],
+    "cinder_track": ["path_cool", "soot_warm", "earth"],
+    "conifer": ["leaf_cool", "grass_cool", "timber_cool"],
+    "birch": ["bleached", "snow_cool", "leaf_warm"],
+    "made": ["timber", "timber_cool", "iron", "iron_cool", "copper", "copper_warm"],
+    "water": ["water_cool", "water", "clay_warm"]
+  },
+  "ground": {
+    "base": "heath turf: grass_cool with grass in broad patches (scale about 8 texels at 1x), warmer (leaf_warm) on south-facing bench tops, cooler under the conifers",
+    "drifts": [
+      {
+        "name": "bilberry",
+        "share": 0.34,
+        "noise_scale": 40,
+        "recipe": "low clumped tufts 2 to 3 texels across, leaf lit top-left, leaf_cool beneath; the commonest cover on the bench tops"
+      },
+      {
+        "name": "bracken",
+        "share": 0.22,
+        "noise_scale": 32,
+        "recipe": "fronds in drifts on the deeper soil at the foot of benches and round the woods: grass_warm in summer, clay and clay_warm dead fronds in a third of each drift, three-texel diagonal stamps"
+      },
+      {
+        "name": "ling",
+        "share": 0.1,
+        "noise_scale": 22,
+        "recipe": "small drifts on the driest, highest tops only: dusk_warm tufts on earth_warm, a tone apart at most; never the moor's broad purple"
+      },
+      {
+        "name": "cinder",
+        "share": 0.08,
+        "noise_scale": 10,
+        "recipe": "worn cinder where tracks, pit heads and spoil meet: path_cool with soot_warm clusters of 2 to 4 texels, never lone pixels"
+      },
+      {
+        "name": "needle_litter",
+        "share": 0.12,
+        "noise_scale": 18,
+        "recipe": "under conifers: earth with leaf_cool shade, a few timber_cool cones in pairs"
+      }
+    ],
+    "inside_spoil": {
+      "birch": "self-sown birch saplings on the old heaps' lower slopes, a few to a heap, never on the young black heaps"
+    },
+    "calm": "despeckle after every pass; texture swaps at most 14 % within a drift; no lone pixels (SB-05); the cinder is the only gritty ground and stays near made things"
+  },
+  "plants": [
+    { "id": "bilberry", "kind": "ground drift", "where": "bench tops and the woods' edges" },
+    {
+      "id": "bracken",
+      "kind": "ground drift",
+      "where": "deeper soil: the foot of benches, round the coal forest, the Foothill Road's verges"
+    },
+    {
+      "id": "ling",
+      "kind": "ground drift",
+      "where": "only the highest, driest tops (the rims over the Narrows, Gasworks Hill's shoulder)"
+    },
+    {
+      "id": "spruce",
+      "kind": "tree, blocks walking",
+      "where": "the coal forest and the benches' backs, in stands of three or more, mixed with pine and larch (benchmark 9)",
+      "sizes": "three, the largest about 2.4 adults tall"
+    },
+    {
+      "id": "scots_pine",
+      "kind": "tree",
+      "where": "singly at the woods' edges and on spoil crests"
+    },
+    {
+      "id": "larch",
+      "kind": "tree",
+      "where": "in the stands, a paler and warmer green (leaf_warm), bare and clay-orange in the autumn palette"
+    },
+    {
+      "id": "birch",
+      "kind": "tree, pioneer",
+      "where": "only on old spoil and at rail ruins: the green coming back"
+    },
+    {
+      "id": "coltsfoot",
+      "kind": "flower",
+      "where": "in pairs of brass texels on bare cinder and spoil foot, the only flower there"
+    },
+    {
+      "id": "foxglove",
+      "kind": "flower",
+      "where": "a few tall spikes (berry) in clearings and felled timber in the coal forest"
+    }
+  ],
+  "clusters": [
+    {
+      "id": "pit_head",
+      "of": ["headframe", "winding house", "tub rails", "coal tubs", "lamp"],
+      "where": "beside a road on a bench, its spoil heap downhill and away from the road",
+      "spacing": "one per two screens at most"
+    },
+    {
+      "id": "spoil_heap",
+      "of": ["spoil", "spoil", "birch", "coltsfoot", "rusted tub"],
+      "where": "the five heaps (cogsworth_region.SET_PIECES spoil-1 to spoil-5), on a bench, never on a route; one with the loop round it",
+      "notes": "a heap is a set piece with its own tiers: two or three 16 px slag terraces, slabs and cinder, never a smooth cone"
+    },
+    {
+      "id": "charcoal_camp",
+      "of": ["clamp", "turf hut", "log stack", "rake"],
+      "where": "a clearing a short way off the Foothill Road in the coal forest"
+    },
+    {
+      "id": "rail_ruin",
+      "of": ["rails on sleepers", "buffer", "tub on its side", "bracken", "birch"],
+      "where": "beside the Towpath on the hills' foot, the rails ending at a view"
+    },
+    {
+      "id": "felled_timber",
+      "of": ["log", "log", "stump", "foxglove"],
+      "where": "the coal forest's interior edge (brief 6), thickening into thicket"
+    },
+    {
+      "id": "stand",
+      "of": ["spruce", "spruce", "scots_pine", "larch"],
+      "where": "bench backs and the coal forest; at least three species and sizes, never a row"
+    }
+  ],
+  "tiers": {
+    "face_heights": [16, 32],
+    "notes": "32 px shale benches on the hills (the coal hills' measure, the town's tier); 16 px slag terraces on spoil heaps and 16 px banks where a bench steps down to the towpath; rims a face plus a cell apart; benches step in and out by whole cells (to-all-grid-2x, to-all-volume)"
+  },
+  "edges": {
+    "from_woodland": "The face is shale, not the woodland's earth bank: thin grey-brown beds (slate, slate_warm) laid level, in absolute-height bands so one bed runs through every face of the hills, with a soot seam a bed or two thick in every third band and a rust-stained weep (clay_warm) below a few seams. The beds break into flat flakes with lit top edges rather than the highland's rounded boulders. The lip is heath turf with bilberry overhanging one or two texels and a few bracken fronds hanging; no sod roll. The foot is a band of shale flakes and fallen cinder with coltsfoot, bracken grown into its far side. Side bands step in by whole cells.",
+    "stair": "pit steps: old rail sleepers (timber_cool) bedded in cinder between shale cheeks, a sleeper's end iron-strapped; rock-cut only where the High Fells come down",
+    "bank": "where the Cog's tributaries cross the benches: a low shale bank, orange (clay_warm) ochre staining on the stones below a seam, no reeds",
+    "volume": "a bench reads as a mass: lit top-left planes, the seams catch no light (soot_cool), a cast shadow at the foot one cell deep"
+  },
+  "water": {
+    "kinds": ["burn", "pit pond", "adit outflow"],
+    "notes": "small fast burns off the benches into the Cog; flooded pit ponds beside old workings, still and dark (water_cool); the collapsed adit leaks an orange-stained trickle. The Cog itself and the Lull are the river kit's and the gorge's."
+  },
+  "ambience": {
+    "animals": ["crows over the spoil", "a pit pony at the pit head", "jays in the coal forest"],
+    "sounds_for_m": ["the winding engine's beat", "tubs on rails", "wind in the spruce", "crows"],
+    "light": "east of the valley and on the town's north-east: the hills take the evening light on their west faces; smoke from the town hazes what lies beyond, never the walkable ground"
+  },
+  "pieces": {
+    "from_cliff_core": ["stair", "path", "scree", "boulders", "ledge"],
+    "owned": [
+      "pit_head",
+      "spoil_heap",
+      "charcoal_camp",
+      "rail_ruin",
+      "felled_timber",
+      "stand",
+      "shale_bench",
+      "seam_band"
+    ],
+    "proposed": ["spoil_heap", "shale_bench", "seam_band", "pit_steps"]
+  },
+  "transitions": [
+    {
+      "to": "highland",
+      "where": "the High Fells' descent off the massif (north-west of the town)",
+      "how": "shale benches give way to the highland's boulder faces through a scree band; heath turf greens into alpine turf"
+    },
+    {
+      "to": "woodland",
+      "where": "the Fern hills and Fernhollow (south-west)",
+      "how": "leaf litter: the coal forest's spruce thins into the wet broadleaf woods; bilberry and bracken carry through, needle litter turns to leaf litter"
+    },
+    {
+      "to": "gorge",
+      "where": "the Narrows' rims (east)",
+      "how": "the benches' shale runs on as the gorge's upper beds; ling on the rims; the lip turns from heath to fern-hung moss where spray reaches"
+    },
+    {
+      "to": "mill_town",
+      "where": "Gasworks Hill and the town's north-east bench",
+      "how": "cinder: heath wears to cinder track, then to the town's setts; brick retaining walls replace shale faces at the town's edge"
+    },
+    {
+      "to": "meadow",
+      "where": "the Cog valley below the town (the Towpath)",
+      "how": "bracken verges thin into meadow grass along the towpath"
+    }
+  ],
+  "sources": [
+    "docs/vision/regions/cogsworth-coal-hills-narrows.md",
+    "docs/vision/house-style.md",
+    "docs/vision/rules-system.md",
+    "scripts/art/regions/cogsworth_region.py",
+    "#199 (Claude F's biome brief format)"
+  ]
+}
