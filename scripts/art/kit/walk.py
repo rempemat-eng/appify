@@ -52,11 +52,23 @@ def _fill(out: np.ndarray, x0: float, y0: float, w: float, h: float) -> None:
     out[ys, xs] = True
 
 
+def _fill_circle(out: np.ndarray, cx: float, cy: float, r: float) -> None:
+    """Block the walk cells a texel circle touches (KitWalk._fill_circle): a cell counts when its
+    nearest point is inside the circle, the rule a rectangle follows in _fill."""
+    H, W = out.shape
+    for y in range(max(0, int(math.floor((cy - r) / STEP))), min(H, int(math.ceil((cy + r) / STEP)))):
+        for x in range(max(0, int(math.floor((cx - r) / STEP))), min(W, int(math.ceil((cx + r) / STEP)))):
+            nx = min(max(cx, x * STEP), (x + 1) * STEP)
+            ny = min(max(cy, y * STEP), (y + 1) * STEP)
+            if (nx - cx) ** 2 + (ny - cy) ** 2 < r * r:
+                out[y, x] = True
+
+
 def mask(plan) -> np.ndarray:
     """The mask game/world/terrain/walk.gd derives (KitWalk.derive), from the same data:
     unwalkable ground and faces, less the decks; a wall on every tier edge between two walkable
-    cells that no deck joins; then every blocking piece's collision box, or its footprint cells
-    when it has no box. game/test/fixtures/kit/walk_parity.json holds both to one answer."""
+    cells that no deck joins; then every blocking piece's collision box (a round post: the cells
+    its circle touches), or its footprint cells when it has no box. game/test/fixtures/kit/walk_parity.json holds both to one answer."""
     plan = _texel_plan(plan)
     mats, idx = KR.load_kit()
     g = KR.grid(plan, mats)
@@ -81,7 +93,9 @@ def mask(plan) -> np.ndarray:
         e = idx.get(p['piece'])
         if not e or not e.get('blocks_move'):
             continue
-        if e.get('collision'):
+        if e.get('collision_circle'):
+            _fill_circle(out, p['at'][0], p['at'][1], e['collision_circle'])
+        elif e.get('collision'):
             x, y, w, h = e['collision']
             _fill(out, p['at'][0] + x, p['at'][1] + y, w, h)
         else:

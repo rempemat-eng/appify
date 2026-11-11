@@ -707,6 +707,50 @@ func test_the_flow_brush_paints_direction_on_water_only_with_undo() -> void:
 	assert_str(ops.paint_flow([Vector2i(8, 6)], "x").diagnostics[0].rule).is_equal("rules.water_flow")
 	assert_int(f.history.get_version()).is_equal(version)
 
+# --- wave 2, step 4: a sign's round post is its body and its walk cells
+
+func test_a_signs_round_post_is_its_body_and_the_cells_the_mask_blocks() -> void:
+	# The three signs' records give a round post (radius 5 texels at the foot). The prop builder
+	# dropped it: their scenes had no body, and the walk mask blocked their whole 2 by 2 footprint.
+	for id in ["woodland_stone_sign", "crossroads_waystone", "crossroads_notice_board"]:
+		var entry: Dictionary = KitPiece.index()[id]
+		assert_that(entry.get("collision_circle")).override_failure_message("%s: no round post in the index" % id).is_equal(5.0)
+		assert_that(entry.collision).is_equal([-5.0, -5.0, 10.0, 10.0])
+		var piece := (load("res://kit/props/%s.tscn" % id) as PackedScene).instantiate()
+		_scenes.append(piece)
+		var solid := piece.get_node_or_null("Solid") as StaticBody2D
+		assert_object(solid).override_failure_message("%s: no body in its scene" % id).is_not_null()
+		var collider := solid.get_node("Shape") as CollisionShape2D
+		assert_bool(collider.shape is CircleShape2D).is_true()
+		assert_float((collider.shape as CircleShape2D).radius).is_equal(5.0)
+		assert_that(collider.position).is_equal(Vector2.ZERO)
+	# one sign on a walk-grid node and one off it, on open lawn
+	var plan := {"zone": "sign_fixture", "lab": true, "legend": {".": "lawn"},
+		"rows": ["..........", "..........", "..........", ".........."], "spawns": {"start": [12, 12]},
+		"pieces": [{"id": "on", "piece": "woodland_stone_sign", "at": [60, 48], "variant": "sign"},
+			{"id": "off", "piece": "woodland_stone_sign", "at": [162, 54], "variant": "sign"}]}
+	var zone := ZonePlan.scene_from_plan(plan)
+	add_child(zone)
+	_scenes.append(zone)
+	await get_tree().process_frame
+	var rows := KitWalk.derive(zone.get_node("Ground") as TerrainGround)
+	var blocked := {}
+	for y in rows.size():
+		for x in rows[y].length():
+			if rows[y][x] == "#":
+				blocked[Vector2i(x, y)] = true
+	# every texel inside either post lies in a blocked cell, and every blocked cell holds such a
+	# texel or touches the circle: the mask is the body, to the grid
+	var expected := {}
+	for centre in [Vector2(60, 48), Vector2(162, 54)]:
+		for y in range(-6, 7):
+			for x in range(-6, 7):
+				var at: Vector2 = centre + Vector2(x, y) + Vector2(0.5, 0.5)
+				if at.distance_to(centre) < 5.0:
+					expected[Vector2i(floori(at.x / KitWalk.STEP), floori(at.y / KitWalk.STEP))] = true
+	assert_that(blocked.keys()).contains_exactly_in_any_order(expected.keys())
+	assert_int(blocked.size()).is_equal(4 + 1)                # the node's four cells; one cell off it
+
 func test_the_walk_node_is_a_real_instance_in_the_editor() -> void:
 	# A zone saved once holds its KitWalk. In the editor a script that is not a tool script gives
 	# that node a placeholder, and the add-on's rebuild() after every edit failed on it.

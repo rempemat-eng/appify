@@ -1,6 +1,6 @@
 # The world editor
 
-## Status (10 November): what works, what does not, and the decision
+## Status (10 November, faults and tools updated 11 November): what works, what does not, and the decision
 
 This section was rewritten after driving the editor for real: the dock's own handlers and the plugin's canvas input were run inside a Godot editor process on an existing kit zone, and then used to build a new one-screen zone, which was loaded in the game and played with real key and mouse input. Each line says how it was checked.
 
@@ -20,29 +20,38 @@ The proof is `editor_glade` (`game/kit/zones/editor_glade.json`, `game/zones/edi
 | Spawns, doors, talk areas, villagers, restore sites and camps placed from the dock with one click, then edited in the inspector                                                                                                                                                       | Editor run; GdUnit                                       |
 | Save, reopen, export: the plan round trip loses nothing, actors included. For `editor_glade`, plan to scene to plan gives the same bytes. The four older plans come back equal in data with their keys in another order, so the first Save and export plan rewrites each of them once | Editor run, the command-line tool, GdUnit                |
 | Validate zone runs the full Python validator and lists faults before advice                                                                                                                                                                                                           | Editor run                                               |
-| Bake ground paints the shipping ground with the woodland's painters: 19 seconds for one screen                                                                                                                                                                                        | Editor run on the new zone                               |
+| Bake ground paints the shipping ground with the woodland's painters: 15 to 19 seconds for one screen, beside the editor (it stays usable, shows progress and can be cancelled)                                                                                                        | Editor run on the new zone                               |
 | The zone loads in the game; the pond, the props and the zone edge block; the path is open; the quest and the door work                                                                                                                                                                | Played with real input under Xvfb, about 100 seconds     |
 | The walk mask is the same from Python (`walk.py`) and from Godot (`walk.gd`) on all five kit zones                                                                                                                                                                                    | Cell by cell comparison; a shared fixture now holds both |
 
 ### What does not work, or is missing
 
 1. **Nothing in the library is approved.** All 263 usable pieces are `candidate` (one is retired), so in an ordinary zone the palette is empty and every paint or placement is refused. Only a zone marked `lab` can be authored. A zone that ships needs Matt's approval of every material and piece it uses. This is a decision, not a code fault.
-2. **Height has no tool.** Tiers work in the plan and in the game, but the dock cannot paint them. Today they are typed into the plan's `tiers` rows. Water flow has no tool either.
+2. **Height and water flow are painted with brushes (11 November), but stairs, falls and decks are still pieces to place by hand.** The tier brush sets a cell's height (0 to 3); the game derives the faces and the walls from it. The flow brush puts one of eight directions on water. Neither brush checks the whole stream: an arrow that runs onto dry ground or uphill is named in the status line and left for Validate zone.
 3. **Pieces do not carry their function.** A sign piece is a picture and a solid. The talk area is a second click (the Gameplay row). The `function` block in the piece file is not wired, and a piece's `stage` (broken, restored) is stored but changes nothing in the game.
 4. **Some things under Actors cannot be held by a plan**: loose sprites, and anything that is not an interactable, villager, restore site, camp or actor scene. Validate now lists them as advice. They stay in the scene and are lost if the scene is rebuilt from its plan.
-5. **Five pieces collide differently depending on how the zone was made.** A zone saved from the dock uses the derived walk mask. A zone built by the command-line tool uses each piece's own solid box. They differ for three signs whose collision is a circle (no box is generated, so the mask blocks their whole 2 by 2 cell footprint) and for two pieces that have a box but are marked as not blocking. The fix is in the piece data.
-6. **The bake freezes the editor while it runs**, and a new zone starts as live tiles (the preview look) until it is baked.
+5. **A sign blocks only its post.** The three signs (`woodland_stone_sign`, `crossroads_waystone`, `crossroads_notice_board`) now have the round post their records give (radius 5 texels at the foot), as a body in the piece scene and as the cells that circle touches in the walk mask. The board and the waystone are drawn much wider than that post. The hand-built Crossroads blocks their drawn base instead; giving the kit pieces a reviewed box is a change to the piece records and is not done.
+6. **A new zone starts as live tiles** (the preview look) until it is baked. The bake no longer freezes the editor (11 November).
 7. **No frame or resize tools.** The dock cannot change a zone's size, show screen boundaries or preview the camera. A new zone starts from `kit_zone.gd --new`.
 8. **Materials stop at the home valley.** There are 12 terrain materials (lawn, path, cobbled road, worn ground, scree, water, earth face, and the Brackens' and coast's five). There is one cliff material, earth, two cells high. No snow, ice, rock ground or rock cliff exists.
 
-### Open faults (found on 10 November, not fixed)
+### Open faults (not fixed)
 
-- **The first dock edit on an older lab scene changes how it collides.** The edit adds a `KitWalk` node to the scene and undo does not take it out. Saving then switches that zone from each piece's own solid to the derived walk mask (see point 5 above). Seen on `kitlab` in the editor, on the old code and the new.
 - **The committed `woodland_kit.tscn` is behind the woodland it copies its actors from.** Since #463 Hale stands at (600, 1296) in the woodland and still at (800, 1330) in the committed kit scene; a rebuild from the plan moves him. Copied actors are not in the plan, so the test that holds scene and plan together cannot see this.
-- **`kit_zone.gd --new --ground=water` is accepted**: a zone of water whose start spawn nobody can stand on.
-- **`kit/terrain/materials.tres` has no id of its own**, so the editor invents one and writes it into every zone it saves. In any other checkout each load of that zone then warns "invalid UID ... using text path instead". The id was taken out of the glade by hand; the lasting fix is an id in `materials.tres`, which the kit build writes.
 - **`walk.gd` still looks up a saved process id** if one reaches a scene (`_ground_owner`). The dock no longer saves one.
-- A stale baked ground shows again after a zone is reopened, because the "bake is current" flag is not saved (read from `terrain_ground.gd`, not reproduced).
+- **A cancelled bake may leave a half-written `ground_baked.png` on disk.** The scene does not point at it and the next bake overwrites it. Not reproduced: the painters write the picture at the end.
+
+### Faults found and fixed on 11 November (wave 2)
+
+Each has a test that fails on the old code unless it says otherwise.
+
+- The first dock edit on an older lab scene added a `KitWalk` node that undo did not take out. The node now joins the scene inside that edit's own undo action. Checked in the editor on `kitlab`: paint, undo, and the scene's text is the one it was.
+- **A zone that had been saved once could not be edited without errors.** `walk.gd` was not a tool script, so the `KitWalk` node of a reopened zone was a placeholder in the editor: every edit raised a script error instead of refreshing the walk mask, and the walk export after a bake failed. Found on 11 November while driving the tier brush on `editor_glade`; the 10 November runs had only edited zones whose walk node was made in the same session. The test for this one reads the script's tool flag; the fault itself only shows in an editor process.
+- `kit_zone.gd --new --ground=water` is refused: a new zone needs ground somebody can stand on.
+- `kit/terrain/materials.tres` and `tiers.tres` carry their own ids (written by `scripts/art/kit/build.py`, derived from their paths), so the editor no longer invents one.
+- A baked ground that is out of date stays out of date through a save and a reopen (`baked_stale` on the ground).
+- The bake froze the editor for its whole run. It is a separate process now: the dock shows the painter's last line and the seconds, the button reads Cancel bake, and closing the editor stops it. Checked in the editor: over 2,000 editor frames during one 15 second bake, an edit accepted meanwhile, cancel, then a full bake that binds and saves.
+- The three signs had no body in their piece scenes while the walk mask blocked their whole 2 by 2 footprint (see point 5 above).
 
 ### Faults found and fixed on 10 November
 

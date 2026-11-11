@@ -33,8 +33,16 @@ the top of `docs/world-editor.md`.
 6. **Validate zone**, then **Save and export plan**: it saves the scene and writes
    `game/kit/zones/<zone>.json`. Commit both. Anything under `Actors` that a plan
    cannot hold is named in both messages.
-7. **Bake ground** when the layout is settled (about 20 seconds a screen; the editor
-   waits while it runs).
+7. **Height and water flow (11 Nov).** Choose a tier (0 to 3) and press _Tier brush_,
+   or a direction and press _Flow brush_, then drag on the canvas. One stroke is one
+   undo action. Tiers go to the `Tiers` layer and the plan's `tiers` rows; the faces,
+   the edge walls and the walk mask follow at once. Flow goes on water cells only (the
+   stroke may overrun the banks) and to the plan's `flow` rows; an arrow that runs
+   ashore or uphill is named in the status line. The canvas shows tier numbers and
+   flow arrows while either brush is held.
+8. **Bake ground** when the layout is settled (15 to 20 seconds a screen). It runs
+   beside the editor: the status line shows the painter's progress, the button reads
+   _Cancel bake_ while it runs, and the result is bound and saved when it ends.
 
 `game/kit/zones/editor_glade.json` and its scene were built this way and are kept as a
 fixture (`game/test/test_world_editor_authoring.gd`).
@@ -118,7 +126,9 @@ process-local owner mark from the ground, so nothing of one editor session reach
 the scene file.
 
 Bake ground validates, saves the active zone scene, exports it through W2 and
-invokes the existing painter CLI. Open the zone as its own scene before baking.
+starts the existing painter CLI as its own process (`bake_job.gd`), polled each
+frame; `bake_zone()` is the same bake run to its end, for the smoke and lifecycle
+runs. Open the zone as its own scene before baking.
 Reentrant bakes/imports and cell-coordinate plans are refused before saving: the
 current painter CLI still assumes texels. Painting, placement and full validation
 support either W2 coordinate space. The Python executable is `PYTHON` or `python3`.

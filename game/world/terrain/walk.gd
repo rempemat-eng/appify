@@ -267,7 +267,11 @@ static func derive(ground: TerrainGround) -> PackedStringArray:
 		if not bool(data.get("blocks_move", false)):
 			continue
 		var collision = data.get("collision")
-		if collision is Array and collision.size() == 4:
+		var circle := float(data.get("collision_circle", 0.0))
+		if circle > 0.0:
+			# a round post (a sign's): the cells its circle touches, as the body in its scene is
+			_fill_circle(blocked, fine_size, _piece_rect(ground, piece, Rect2(0, 0, 0, 0)).position, circle)
+		elif collision is Array and collision.size() == 4:
 			_fill(blocked, fine_size, _piece_rect(ground, piece, Rect2(collision[0], collision[1], collision[2], collision[3])), true)
 		else:
 			for cell in data.get("footprint", []):
@@ -292,6 +296,14 @@ static func _fill(mask: PackedByteArray, size: Vector2i, rect: Rect2, value: boo
 	for y in range(maxi(0, floori(rect.position.y / STEP)), mini(size.y, ceili(rect.end.y / STEP))):
 		for x in range(maxi(0, floori(rect.position.x / STEP)), mini(size.x, ceili(rect.end.x / STEP))):
 			mask[y * size.x + x] = int(value)
+
+## walk.py's _fill_circle: a cell counts when its nearest point is inside the circle.
+static func _fill_circle(mask: PackedByteArray, size: Vector2i, centre: Vector2, radius: float) -> void:
+	for y in range(maxi(0, floori((centre.y - radius) / STEP)), mini(size.y, ceili((centre.y + radius) / STEP))):
+		for x in range(maxi(0, floori((centre.x - radius) / STEP)), mini(size.x, ceili((centre.x + radius) / STEP))):
+			var nearest := Vector2(clampf(centre.x, x * STEP, (x + 1) * STEP), clampf(centre.y, y * STEP, (y + 1) * STEP))
+			if nearest.distance_squared_to(centre) < radius * radius:
+				mask[y * size.x + x] = 1
 
 ## gen_zone.py's merge: equal horizontal runs extend downward, ordered by y,x.
 ## The output partitions exactly the blocked cells; no rectangles overlap.
