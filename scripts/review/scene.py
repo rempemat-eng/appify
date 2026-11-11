@@ -100,6 +100,30 @@ def parse_tscn(path: str) -> dict:
     return dict(ext=ext, sub=sub, nodes=nodes)
 
 
+def _block_object_solids(z: 'Zone', zone_id: str) -> None:
+    """walk.txt holds the terrain only since 10 Nov (docs/physics.md): a zone's objects get their solids
+    from the kit library, written into <zone>_base.tscn as rectangles named s_<object id>. The walk
+    mask the detectors read must block at least what the game blocks, so every cell such a rectangle
+    touches is blocked here too. Nothing else about the mask or any detector changes."""
+    base = os.path.join(GAME, 'zones', zone_id, zone_id + '_base.tscn')
+    if z.walk is None or not os.path.exists(base):
+        return
+    t = parse_tscn(base)
+    c = z.walk_cell
+    for n in t['nodes']:
+        shape = n['props'].get('shape')
+        if n.get('type') != 'CollisionShape2D' or not n['name'].startswith('s_') or not isinstance(shape, tuple):
+            continue
+        size = t['sub'].get(shape[1], {}).get('size')
+        if not size:
+            continue
+        cx, cy = n['props'].get('position', (0, 0))
+        x0, y0, x1, y1 = cx - size[0] / 2, cy - size[1] / 2, cx + size[0] / 2, cy + size[1] / 2
+        r0, r1 = max(int(math.floor(y0 / c)), 0), min(int(math.ceil(y1 / c)), z.walk.shape[0])
+        c0, c1 = max(int(math.floor(x0 / c)), 0), min(int(math.ceil(x1 / c)), z.walk.shape[1])
+        z.walk[r0:r1, c0:c1] = False
+
+
 def res_path(p: str) -> str:
     return os.path.join(GAME, p.replace('res://', ''))
 
@@ -528,6 +552,7 @@ def load_zone(zone_id: str, stage: str | None = None) -> Zone:
         z.walk = np.array([[c != '#' for c in r] for r in rows], bool)
         if z.size[0]:
             z.walk_cell = int(round(z.size[0] / z.walk.shape[1]))
+        _block_object_solids(z, zone_id)
     pp = os.path.join(GAME, 'data', 'plans', zone_id + '.json')
     if os.path.exists(pp):
         z.plan = json.load(open(pp))

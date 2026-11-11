@@ -12,7 +12,8 @@ game/bosses/thornback/art/, then writes game/zones/undercroft/undercroft.tscn wi
   Ground       the ground picture (flagstones, the vault's tops and faces, the stair, light), z -10
   Floor        pictures that lie on the floor under everyone (the plate, the lit channel, the sunk slab), z -9
   WallFx       the torches on the wall faces (world/torch.gd), z -8, behind everyone
-  Walls        the box's edges, every wall block of the plan (its top and face) and the solid props
+  Walls        the box's edges, every wall block of the plan (its top and face) and the solid props (a low
+               one, under 64 texels, on layers 1 and 5 so arrows fly over it: tools/gen_physics.py)
   Props        y-sorted with the actors: props, torches (world/torch.gd), the lever, the sealed slab (with its
                collision, in a Conditional until the lever is pulled), Cairn in his alcove
   Actors       the things (the shard, Cairn), the plate (world/pressure_plate.gd), the lever (world/seal_lever.gd),
@@ -32,6 +33,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import gen_blockout as GB  # noqa: E402
+import gen_physics as PH  # noqa: E402
 
 GAME = GB.GAME
 ROOT = os.path.dirname(GAME)
@@ -94,7 +96,11 @@ def build(plan: dict, kit: dict) -> str:
         return parent + '/' + name
 
     def sprite(o, parent):
-        props = {'position': vec(*o['foot']), 'texture': tex(o['png']), 'centered': 'false', 'offset': vec(*o['offset'])}
+        foot, offset = o['foot'], o['offset']
+        if o['kind'] not in ('floor', 'torch'):
+            # the y-sort point on the drawn feet (tools/gen_physics.py); the texels stay where they are
+            foot, offset = PH.on_feet(os.path.join(GAME, 'zones', ZID, 'art', o['png']), foot, offset, o.get('frames') or 1)
+        props = {'position': vec(*foot), 'texture': tex(o['png']), 'centered': 'false', 'offset': vec(*offset)}
         if o.get('frames'):
             props.update({'hframes': o['frames'], 'script': 'ExtResource("torch")'})
         s.node(pascal(o['id']), 'Sprite2D', parent, props)
@@ -111,9 +117,15 @@ def build(plan: dict, kit: dict) -> str:
         s.solid(name, 'Walls', r)
     for w in plan['walls']:
         s.solid('Wall_' + w['id'], 'Walls', w['rect'])
+    def low(o):
+        # the low rule (tools/gen_physics.py): rubble, roots and the urn stand under 64 texels, so an arrow
+        # flies over them; the broken pillars, the lever and the sealed slab stop it
+        frames = o.get('frames') or 1
+        return PH.is_low(PH.rise(os.path.join(GAME, 'zones', ZID, 'art', o['png']), -o['offset'][1], frames))
+
     for o in kit['objects']:
         if o.get('solid') and not o.get('cond'):
-            s.solid('Solid_' + o['id'], 'Walls', o['solid'])
+            s.solid('Solid_' + o['id'], 'Walls', o['solid'], low(o))
 
     # torches hang on the wall faces, behind everyone who can stand in the room: drawn with the walls,
     # not y-sorted (their feet would be the wall's foot, far below the bracket)
@@ -128,7 +140,7 @@ def build(plan: dict, kit: dict) -> str:
         parent = wrap('Props', o.get('cond'), 'If_' + o['id'])
         sprite(o, parent)
         if o.get('solid') and o.get('cond'):
-            s.solid(pascal(o['id']) + 'Body', parent, o['solid'])
+            s.solid(pascal(o['id']) + 'Body', parent, o['solid'], low(o))
 
     s.node('Actors', 'Node2D', '.', {'y_sort_enabled': 'true'})
     for th in plan.get('things', []):
