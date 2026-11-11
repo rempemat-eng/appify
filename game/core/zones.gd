@@ -36,6 +36,7 @@ func go_to(zone_id: String, spawn: String = "start") -> bool:
 		return false
 	_busy = true
 	zone_changing.emit(zone_id)
+	Quests.zone_loading()
 	var next: Zone = (load(table[zone_id]) as PackedScene).instantiate()
 	if current != null:
 		if player != null and player.get_parent() == current.actors:

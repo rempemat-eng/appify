@@ -13,9 +13,21 @@
         ]
       },
       {
+        "if": {
+          "step": [
+            "under_the_stones",
+            "shard"
+          ]
+        },
         "lines": [
           "A piece of the moon, as long as your arm, cold as river water. The Thornback sleeps beside it, calm now.",
           "You wrap the shard in your mantle. It is lighter than it looks."
+        ]
+      },
+      {
+        "lines": [
+          "A piece of the moon, as long as your arm, cold as river water. The Thornback sleeps beside it, calm now.",
+          "Something in the rooms behind you is still crying out. The shard can wait until they are free."
         ]
       }
     ]

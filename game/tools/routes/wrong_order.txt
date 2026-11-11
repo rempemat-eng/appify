@@ -1,0 +1,108 @@
+# The same build played out of order from a fresh save: Crossroads before the sign and before Hale,
+# Hale after Crossroads (she stays on the path for that visit and is on the square from the next),
+# the camp before the sign, quitting in the middle of a line, keys pressed under the pause menu.
+# Nothing here may strand the player. Commands: tools/play_driver.gd.
+
+step straight to Crossroads, past the sign and past Hale
+door 951 1356 crossroads
+expect quest road_to_crossroads none
+expect hud Moss at the stall may know
+
+step Moss asks after Hale; nothing starts without her
+goto 1152 830 10
+talk Moss
+expect said Have you seen Hale
+expect quest road_to_crossroads none
+
+step no Hale on the square (she is still in the woodland); the smithy's mark is there, with nothing to pay it
+goto 1290 940 10
+expect focus none
+goto 1410 952 10
+expect prompt Restore
+talk SmithySite
+expect said needs 30 Glint
+expect notrestored forge
+goto 1530 936 10
+expect focus none
+
+step the others have their first lines
+goto 600 1096 10
+talk Morel
+expect said I mix the tonics
+expect quest a1_the_torn_roof none
+goto 936 1000 10
+talk ShardLantern
+expect said empty cradles
+goto 1260 1118 10
+talk Waystone
+expect said cracked through
+goto 708 716 10
+talk NoticeBoard
+expect said MARKET DAY
+
+step back to the woodland: the hatch is shut, Hale is still on the path
+door 12 210 woodland
+goto 336 1046 10
+expect zone woodland
+goto 556 1300 10
+talk Hale
+expect said Walk back with me
+# Crossroads was visited before, so the road's first step is done as she asks (as recorded)
+expect quest road_to_crossroads active moss
+expect focus Hale
+talk Hale
+expect said Talk to Moss at the stall first
+
+step the camp before the sign
+goto 640 1392 20
+fight 180
+expect flag camp_cleared:meadow
+expect quest woodland_stones none
+
+step quit: a camp cleared with no quest waiting on it is kept
+restart
+expect flag camp_cleared:meadow
+expect enemies 0
+expect quest woodland_stones none
+
+step the sign notices the quiet meadow and pays on the second look
+goto 372 1150 10
+talk StoneSign
+expect said The meadow is already quiet
+expect quest woodland_stones active return
+talk StoneSign
+expect said 40 Glint
+expect quest woodland_stones done
+expect glint 40
+
+step quit in the middle of a line: nothing half-done is saved
+door 951 1356 crossroads
+expect quest road_to_crossroads active moss
+goto 1290 940 10
+expect focus HaleSquare
+goto 1152 830 10
+key E
+restart
+expect zone crossroads
+expect quest road_to_crossroads active moss
+expect glint 40
+
+step the pause menu over an open line: E under the menu does not turn the page
+goto 1152 830 10
+expect line none
+key E
+expect line And Hale with you
+key Escape
+expect paused yes
+key E
+key E
+expect paused yes
+key Escape
+expect paused no
+expect line And Hale with you
+expect quest road_to_crossroads active moss
+talk Moss
+expect line none
+expect quest road_to_crossroads done
+expect glint 50
+end

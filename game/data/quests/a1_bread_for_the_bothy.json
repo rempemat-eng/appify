@@ -13,6 +13,9 @@
     "if": {
       "done": [
         "home_again"
+      ],
+      "flags": [
+        "zone_built:frostline"
       ]
     }
   },

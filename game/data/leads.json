@@ -1,0 +1,137 @@
+{
+  "_about": "What the HUD says when no quest is active, and the story's title cards (core/quests.gd: lead, due_card). `leads`: the first entry whose `if` holds shows in the quest tracker, so the player always has a line saying where the story goes on. `cards`: shown once a save, top centre, for `seconds` (ui/hud.gd show_card); the flag seen:<id> records it. Conditions are quest conditions (core/quests.gd). The closing entries hold only while the Frostline is not built (the flag zone_built:frostline, core/quests.gd): when it lands, Moss's loaf takes over.",
+  "cards": [
+    {
+      "id": "opening",
+      "if": {
+        "not_started": [
+          "woodland_stones",
+          "road_to_crossroads"
+        ],
+        "not_flags": [
+          "visited:crossroads"
+        ]
+      },
+      "title": "The Starfall",
+      "subtitle": "The valley woodland, the morning after",
+      "text": "A star fell in the night, somewhere past the old stones. The path runs south over the bridge to the stone circle, and someone has left a sign there.",
+      "seconds": 11
+    },
+    {
+      "id": "closing",
+      "if": {
+        "done": [
+          "home_again",
+          "a1_the_torn_roof"
+        ],
+        "not_flags": [
+          "zone_built:frostline"
+        ]
+      },
+      "title": "The valley holds",
+      "subtitle": "Here the story rests, for now",
+      "text": "The lantern is lit, the well runs and the Ferns are home. The Col Path to the Frostline is still buried by the storm. The story goes on when it opens.",
+      "seconds": 14
+    }
+  ],
+  "leads": [
+    {
+      "if": {
+        "not_started": [
+          "woodland_stones",
+          "road_to_crossroads"
+        ],
+        "not_flags": [
+          "visited:crossroads"
+        ]
+      },
+      "title": "The morning after",
+      "text": "Follow the path south to the stone circle"
+    },
+    {
+      "if": {
+        "not_started": [
+          "road_to_crossroads"
+        ],
+        "flags": [
+          "visited:crossroads"
+        ]
+      },
+      "title": "Crossroads",
+      "text": "Hale's forge stands empty. Moss at the stall may know where she went"
+    },
+    {
+      "if": {
+        "not_started": [
+          "road_to_crossroads"
+        ]
+      },
+      "title": "The east path",
+      "text": "A path runs east from the stone circle. Someone has walked it since the storm"
+    },
+    {
+      "if": {
+        "done": [
+          "road_to_crossroads"
+        ],
+        "not_started": [
+          "cold_forge"
+        ]
+      },
+      "title": "Crossroads",
+      "text": "Talk to Hale by her smithy, east of the square"
+    },
+    {
+      "if": {
+        "done": [
+          "under_the_stones"
+        ],
+        "not_started": [
+          "home_again"
+        ]
+      },
+      "title": "Crossroads",
+      "text": "Talk to Moss at the stall"
+    },
+    {
+      "if": {
+        "done": [
+          "home_again"
+        ],
+        "not_started": [
+          "a1_bread_for_the_bothy"
+        ],
+        "flags": [
+          "zone_built:frostline"
+        ]
+      },
+      "title": "Crossroads",
+      "text": "Moss has a loaf for the Frostline. Talk to her at the stall"
+    },
+    {
+      "if": {
+        "done": [
+          "home_again"
+        ],
+        "not_started": [
+          "a1_the_torn_roof"
+        ]
+      },
+      "title": "Crossroads",
+      "text": "Morel is waiting outside his herbalist's, west of the square"
+    },
+    {
+      "if": {
+        "done": [
+          "home_again",
+          "a1_the_torn_roof"
+        ],
+        "not_flags": [
+          "zone_built:frostline"
+        ]
+      },
+      "title": "The valley holds",
+      "text": "The Col Path is still buried. The story goes on when it opens"
+    }
+  ]
+}

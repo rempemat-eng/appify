@@ -1,7 +1,8 @@
 extends Node2D
 ## The running game inside the 960 x 540 art grid: loads the save, makes the one player, hands both to
-## the zone loader, drives the Phantom Camera (aim look-ahead, zone limits, hit shake) and autosaves when
-## quests move, a building is restored or zones change.
+## the zone loader, drives the Phantom Camera (aim look-ahead, zone limits, hit shake), autosaves when
+## quests move, a building is restored, zones change or the window closes, and shows the story's title
+## cards (the opening, the closing beat). It never reads the save file: core/save_game.gd does, once.
 ##
 ## Command-line options (after `--`): --fresh (ignore the save), --zone=<id>, --spawn=<name>,
 ## --shot=<png path> (wait, save a 1:1 picture of the window, quit), --demo (a scripted walk in four
@@ -13,7 +14,8 @@ extends Node2D
 ## to see and fight the creatures; it is not placed in any zone yet). --camp --quit ends after
 ## camp setup and the following frame unless another selected mode owns completion.
 ## --debug-controls shows the optional character-selection debug label (hidden by default).
-## See docs/godot.md.
+## --play=<route file> hands the keys and the mouse to the play driver (tools/play_driver.gd), with
+## --play-out=<dir> and --play-follow. See docs/godot.md.
 
 const DENSITY := 3.0
 const LOOK_MAX := 48.0 * DENSITY   ## 11.2: look-ahead up to 48 world px ...
@@ -24,19 +26,26 @@ var args := {}
 var _shake := 0.0
 var _look := Vector2.ZERO
 var _cast_label: Label
+var _told_about_the_save := false
 
 @onready var zone_root: Node2D = $ZoneRoot
 @onready var pcam: PhantomCamera2D = $PCam
 @onready var hud: Control = $UI/HUD
-@onready var paused_label: Label = $UI/Paused
 
 func _ready() -> void:
 	args = parse_args(OS.get_cmdline_user_args())
-	if not args.has("fresh"):
-		SaveGame.load_save()
+	add_to_group("game")
+	# The save was read when the process started (core/save_game.gd); this scene plays what is in memory.
 	player = preload("res://actors/player.tscn").instantiate()
-	player.hp = clampi(int(SaveGame.data.player.hp), 1, player.max_hp)
+	# The player sets full health when it first enters the tree, and the first zone change autosaves:
+	# put the saved hearts back between the two, or loading a save would heal (and then save the heal).
+	var saved_hp := int(SaveGame.data.player.hp)
+	player.ready.connect(func() -> void: player.hp = saved_hp if saved_hp >= 1 and saved_hp <= player.max_hp else player.max_hp,
+		CONNECT_ONE_SHOT)
 	hud.player = player
+	# pictures and scripted demos show the world as it is: no lead in the tracker, no title card
+	hud.guidance = not (args.has("shot") or args.has("demo") or args.has("lineup") or args.has("cycle")
+		or args.has("bossfight") or args.has("telegraph_shot"))
 	Zones.attach(zone_root, player)
 	Zones.zone_changed.connect(_on_zone)
 	player.hit_landed.connect(func(_t: Node, heavy: bool) -> void: _shake = 0.16 if heavy else 0.1)
@@ -45,6 +54,7 @@ func _ready() -> void:
 	Quests.started.connect(func(_id: String) -> void: autosave())
 	Quests.advanced.connect(func(_id: String, _s: int) -> void: autosave())
 	Quests.completed.connect(func(_id: String) -> void: autosave())
+	Quests.completed.connect(func(_id: String) -> void: _show_due_card.call_deferred())
 	Village.changed.connect(func(_id: String) -> void: autosave())
 	pcam.follow_target = player
 	add_to_group("camera_nudge")
@@ -80,6 +90,24 @@ func _ready() -> void:
 	if args.has("cycle"):
 		_cycle.call_deferred()
 	_setup_cast_label()
+	if args.has("play") and OS.is_debug_build():
+		# the play driver is a development tool: an exported release build ignores --play
+		_start_play_driver()
+
+## --play=<route file>: the real-input play driver (tools/play_driver.gd, docs/godot.md).
+func _start_play_driver() -> void:
+	var script := load("res://tools/play_driver.gd") as GDScript
+	if script == null or not script.can_instantiate():
+		push_error("--play: tools/play_driver.gd did not load")
+		get_tree().quit(2)
+		return
+	var driver: Node = script.new()
+	driver.name = "PlayDriver"
+	driver.route_path = String(args.play)
+	if args.has("play-out"):
+		driver.out_dir = String(args["play-out"])
+	driver.follow = args.has("play-follow")
+	add_child(driver)
 
 func _setup_cast_label() -> void:
 	_cast_label = Label.new()
@@ -98,8 +126,18 @@ static func parse_args(list: PackedStringArray) -> Dictionary:
 	return out
 
 func autosave() -> void:
-	SaveGame.data.player.hp = player.hp
+	# The picture and demo modes (--shot, --demo, --lineup, --cycle ...) look at a save and never write one.
+	if not hud.guidance:
+		return
+	# a downed player gets up with full health, so that is what a save made on the ground holds
+	SaveGame.data.player.hp = player.hp if player.hp > 0 else player.max_hp
 	SaveGame.save()
+
+## Closing the window saves first, like Quit in the pause menu: the hearts, and anything that moved
+## since the last quest step (a camp cleared with no quest waiting on it).
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST and player != null and is_inside_tree():
+		autosave()
 
 func _on_zone(zone: Zone) -> void:
 	var b := zone.bounds
@@ -113,6 +151,33 @@ func _on_zone(zone: Zone) -> void:
 	pcam.follow_target = player
 	pcam.teleport_position()
 	snap_camera()
+	_show_due_card()
+	autosave()
+
+## The story's title cards (data/leads.json): the opening on a new game, the closing beat when the last
+## quest of this build is done. Each shows once a save; a card waits for an open dialogue to close.
+func _show_due_card() -> void:
+	if not hud.guidance:
+		return
+	while Dialogue.busy:
+		await Dialogue.closed
+		await get_tree().create_timer(0.3).timeout
+	if not _told_about_the_save and (SaveGame.boot_error == ERR_PARSE_ERROR or SaveGame.boot_error == ERR_INVALID_DATA
+			or SaveGame.boot_error == ERR_UNAVAILABLE):
+		# the save on disk was not loaded: say so once, before anything else, instead of starting over silently
+		_told_about_the_save = true
+		if SaveGame.boot_error == ERR_UNAVAILABLE:
+			hud.show_card("A new game", "The save is from a newer version of the game",
+				"It was left as it is. This game starts afresh, and it will not be saved over the newer one.", 14.0)
+		else:
+			hud.show_card("A new game", "The save could not be read",
+				"It is kept beside the new one, as %s.broken. This game starts afresh." % SaveGame.path.get_file(), 14.0)
+		return
+	var card := Quests.due_card()
+	if card.is_empty():
+		return
+	SaveGame.set_flag("seen:" + str(card.id))
+	hud.show_card(str(card.get("title", "")), str(card.get("subtitle", "")), str(card.get("text", "")), float(card.get("seconds", 9.0)))
 	autosave()
 
 ## Puts the Camera2D on the phantom camera at once, so the first frame drawn in a new zone already shows the
@@ -176,9 +241,15 @@ static func apply_stage(zone: String, stage: String) -> void:
 	if f == null:
 		return
 	var plan: Dictionary = JSON.parse_string(f.get_as_text())
-	for st in plan.get("stages", []):
+	var stages: Array = plan.get("stages", [])
+	for i in stages.size():
+		var st: Dictionary = stages[i]
 		if st.id != stage:
 			continue
+		if i > 0:
+			# Every stage after the first is a town Hale has come home to. The flag is not in the stages'
+			# own conditions (Village.stage() reads those), so it is set here: her nodes in Crossroads ask for it.
+			SaveGame.set_flag("hale_walked_home")
 		var cond: Dictionary = st.get("if", {})
 		for r in cond.get("restored", []):
 			SaveGame.data.village.restored[r] = 1

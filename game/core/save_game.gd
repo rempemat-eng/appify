@@ -3,6 +3,10 @@ extends Node
 ## `data` is the live state every system reads and writes; `save()` and `load_save()` move it to and
 ## from disk. Bump VERSION and add a step to `_migrate` whenever a field changes shape, so old saves load.
 ## Writes go to a temporary file first and are renamed into place, so a crash never leaves half a save.
+##
+## The save is read once, when the process starts (`-- --fresh` skips it). The game scene never reads the
+## disk itself: it plays whatever `data` holds, so a test that instances it gets the state the test set
+## up and not a file an earlier test happened to write.
 
 signal loaded
 signal saved(path: String)
@@ -15,6 +19,26 @@ const DEFAULT_PATH := "user://save_0.json"
 var data: Dictionary = fresh()
 var path := DEFAULT_PATH
 
+## What reading the save at start came to: OK, ERR_FILE_NOT_FOUND (a new game), ERR_PARSE_ERROR or
+## ERR_INVALID_DATA (a damaged file, kept aside), ERR_UNAVAILABLE (a newer game's save, left alone).
+var boot_error: Error = OK
+
+func _ready() -> void:
+	boot(OS.get_cmdline_user_args().has("--fresh"))
+
+## Reads the save once, when the process starts. A file that cannot be read as a save is copied to
+## "<path>.broken" before the new game's first autosave writes over it; a save from a newer version of
+## the game is left alone, and `save()` goes on refusing to overwrite it (the game says so: game.gd).
+func boot(fresh_start := false) -> Error:
+	boot_error = OK
+	if fresh_start:
+		return OK
+	boot_error = load_save()
+	if boot_error == ERR_PARSE_ERROR or boot_error == ERR_INVALID_DATA:
+		var file := ProjectSettings.globalize_path(path)
+		DirAccess.copy_absolute(file, file + ".broken")
+	return boot_error
+
 static func fresh() -> Dictionary:
 	return {
 		"version": VERSION,
@@ -23,6 +47,7 @@ static func fresh() -> Dictionary:
 		"glint": 0,
 		"flags": {},
 		"quests": {},
+		"tracked": "",
 		"player": {"hp": 5, "max_hp": 5},
 		"village": {"restored": {}},
 		"settings": {"reduced_motion": false, "pixel_scale": "fill"},
@@ -142,7 +167,7 @@ func _document_error(doc: Dictionary) -> Error:
 		return ERR_INVALID_DATA
 	if version > VERSION:
 		return ERR_UNAVAILABLE
-	for key in ["zone", "spawn"]:
+	for key in ["zone", "spawn", "tracked"]:
 		if doc.has(key) and not doc[key] is String:
 			return ERR_INVALID_DATA
 	for key in ["flags", "quests", "player", "village", "settings"]:
