@@ -21,7 +21,7 @@ NAME = 'Boarlet'
 HEIGHT = 41
 BAND = (36, 50)
 ONE_BODY = True
-DETACHED_OK = ('shard', 'shardglow', 'cream', 'gold', 'tell')
+DETACHED_OK = ('shard', 'shardglow', 'cream', 'gold', 'tell', 'soil', 'dirt', 'lamp')
 SCALE = 1.3
 
 
@@ -74,7 +74,13 @@ def build(f, facing, P, look=None):
         # side on, the head is one silhouette with the shoulders: a neck carries it down and forward
         neck3 = tuple((a + b) / 2 for a, b in zip(add3(front3, (3.0, 3.0, 0.0)), head3))
         parts += [(neck3, 14.0, 14.0, 15.0)]
-    C.volume(f, R, parts, L['coat'], 20, ang=ang, rl=2.4, rs=3.6, vgrad=0.5, tonemap=C.fur(seed=0.5))
+    # face-on (S) the head, ears and shoulders crowd one small patch: coat meets coat in the shade
+    # tone instead of an ink line, and the fur is sparser, so the face reads by its parts and not
+    # by grain (10 Nov audit, N1: cluster noise in S)
+    calm = facing == 'S'
+    cline = 'shade' if calm else 'hard'
+    C.volume(f, R, parts, L['coat'], 20, ang=ang, rl=2.4, rs=3.6, vgrad=0.5, line=cline,
+             tonemap=C.fur(seed=0.5, density=(0.3, 0.2, 0.05, 0.0) if calm else (0.8, 0.62, 0.3, 0.0)))
     # guard: the head grows out of the neck and the neck out of the shoulders, so a dropped head
     # never floats free (export fails rather than draw two animals)
     if facing in 'EW':
@@ -86,12 +92,15 @@ def build(f, facing, P, look=None):
             raise ValueError('boarlet %s: head joins the body over only %d px' % (facing, joint))
     # bristle ridge along the spine
     ridge = [(x, hind3[1] + (front3[1] - hind3[1]) * (x + 8.0) / 16.0 + 6.0 + 0.2 * (x + 10), lat) for x in (-10, -6, -2, 2, 6, 9)]
-    C.thorns(f, R, ridge, (-0.3, 1.0, 0.0), L['ridge'] * (0.55 if facing in 'SN' else 1.0), 24, m=L['dark'])
+    if facing == 'N':
+        _mane_from_behind(f, R, ridge, L['dark'])
+    else:
+        C.thorns(f, R, ridge, (-0.3, 1.0, 0.0), L['ridge'] * (0.55 if facing in 'SN' else 1.0), 24, m=L['dark'])
     # head: drops and comes forward with P['head']
     zh = 26 if facing != 'N' else 14
     sn3 = add3(head3, (8.0, -2.5, 0.0))
-    C.volume(f, R, [(head3, 15.0, 13.5, 13.0), (add3(head3, (4.5, -1.8, 0.0)), 9.0, 9.0, 8.0)], L['coat'], zh, rl=2.0, rs=2.8, vgrad=0.4,
-             tonemap=C.fur(seed=1.5, density=(0.6, 0.35, 0.1, 0.0)))
+    C.volume(f, R, [(head3, 15.0, 13.5, 13.0), (add3(head3, (4.5, -1.8, 0.0)), 9.0, 9.0, 8.0)], L['coat'], zh, rl=2.0, rs=2.8, vgrad=0.4, line=cline,
+             tonemap=C.fur(seed=1.5, density=(0.3, 0.2, 0.05, 0.0) if calm else (0.6, 0.35, 0.1, 0.0)))
     _, (sx, sy) = C.blob(f, R, sn3, 5.0, 7.0, 6.0, L['snout'], zh + 0.5, rl=1.2, rs=1.6, vgrad=0.3, cast=None)
     # ears
     for s in (1, -1):
@@ -138,13 +147,44 @@ def build(f, facing, P, look=None):
         P2 = dict(P, fx=P['fx'] + 1)
         C.shard(f, R, add3(body3, (-6.0, 7.5, -0.8)), (-0.6, 0.8, -0.15), 8.0, P2, 24.8 if facing != 'S' else 20.5)
     # dust from the pawing hoof (telegraph) or the charge
-    if P.get('dust') is not None:
-        x, y = feet[0]
-        C.dust(f, x, y, P['dust'])
+    # (10 Nov audit, B4): loose path-toned puffs kicked out behind the hind hooves, drawn under the
+    # body (z 5: nothing of the boar is ever covered), never cream blobs with an ink line
+    if P.get('dust') is not None and P['dust'] < 1:
+        hx_, hy_ = feet[2]
+        if facing in 'EW':
+            pts = [(hx_ - 4.0, hy_ - 0.5, 1.3), (hx_ - 7.5, hy_ - 1.5, 1.0), (hx_ - 2.0, hy_ - 2.0, 0.8)]
+        else:
+            hl = feet[3]
+            pts = [(hx_ + 3.5, hy_ - 1.0, 1.2), (hl[0] - 3.5, hl[1] - 1.0, 1.1), (hx_ + 6.0, hy_ - 2.0, 0.8)]
+        C.puffs(f, pts, P['dust'], 'dirt', z=5)
     if P.get('stars') is not None:
         x, y = R.p(add3(head3, (-5.0, 8.0, 0.0)))       # over the brow, toward the light
         C.stars(f, x, y, P['stars'])
     f.anchor('strike', *R.p(add3(sn3, (4.0, 0.0, 0.0))))
+
+
+# a bristle tuft seen from behind, in screen pixels: '.' none, 'd' dark, 'm' mid, 'l' the lit
+# left edge (the light is upper left)
+_TUFT = (('.m.', 'lmd', 'l.d'), ('.m.', 'l.d'), ('.m..', 'lmd.', 'l..d'))
+
+
+def _mane_from_behind(f, R, ridge, m):
+    """From behind (N) the bristle ridge is a row of separate dark tufts running from the rump to
+    the ears, each with a lit left edge (10 Nov audit, B2: the thorn row projected end-on read
+    as a stitched zip).  Drawn as explicit pixels on the screen grid so every tuft keeps its
+    shape at the figure's scale."""
+    k = f.scale
+    tone = {'d': (m, 0), 'm': (m, 1), 'l': (m, 3)}
+    a, b = R.p(ridge[0]), R.p(ridge[-1])                    # the rump end and the ears end
+    a = (a[0] + (a[0] - b[0]) * 0.18, a[1] + (a[1] - b[1]) * 0.18)   # on down the rump toward the tail
+    pts = [(a[0] + (b[0] - a[0]) * t / 6.0, a[1] + (b[1] - a[1]) * t / 6.0) for t in range(7)]
+    for i, (x, y) in enumerate(pts):
+        sx, sy = math.floor(x * k) - 1 + (1 if i % 3 == 2 else 0) * -1, math.floor(y * k) - 2   # chevrons up the spine
+        rows = _TUFT[i % len(_TUFT)]
+        for j, row in enumerate(rows):
+            for c, ch in enumerate(row):
+                if ch in tone:
+                    f.detail(f.pixels([((sx + c) / k, (sy + j) / k)]), tone[ch], z=24.5)
 
 
 def _bristles(X, Y, t):

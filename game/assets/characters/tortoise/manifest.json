@@ -85,7 +85,8 @@
         "shard": 51,
         "claw": 5
        },
-       "sha256": "f9adf03847a4785e66a25dd376f187f37b8a474f4244a0cf53b2807d3a6fd0ca",
+       "anchor_gap": {},
+       "sha256": "f0cd9204b69174a90e1a307db3b18a8331713605c94d4ab663d9e9c8603e3724",
        "sheet": "sheets/idle_S.png",
        "region": [
         0,
@@ -135,7 +136,8 @@
         "shard": 51,
         "claw": 5
        },
-       "sha256": "a9785d502b7c20f0c9b7720a39d1d625fead8e17894ae46c91609c276915ae9e",
+       "anchor_gap": {},
+       "sha256": "1da60c14a0cb44b8625e528734347a7fdc9e6954eaf85f280129aad723deaf68",
        "sheet": "sheets/idle_S.png",
        "region": [
         160,
@@ -185,7 +187,8 @@
         "shard": 55,
         "claw": 5
        },
-       "sha256": "2fc6a26ec3ae8f68e2712118adb9f7f61569d8eb4ed909929337168871f31c44",
+       "anchor_gap": {},
+       "sha256": "1608dc02f6e15601107df1438232ee4b6a89e7d8f594219df68bf975efbeed61",
        "sheet": "sheets/idle_S.png",
        "region": [
         320,
@@ -235,7 +238,8 @@
         "shard": 51,
         "claw": 5
        },
-       "sha256": "a9785d502b7c20f0c9b7720a39d1d625fead8e17894ae46c91609c276915ae9e",
+       "anchor_gap": {},
+       "sha256": "1da60c14a0cb44b8625e528734347a7fdc9e6954eaf85f280129aad723deaf68",
        "sheet": "sheets/idle_S.png",
        "region": [
         480,
@@ -285,7 +289,8 @@
         "shard": 51,
         "claw": 5
        },
-       "sha256": "f9adf03847a4785e66a25dd376f187f37b8a474f4244a0cf53b2807d3a6fd0ca",
+       "anchor_gap": {},
+       "sha256": "f0cd9204b69174a90e1a307db3b18a8331713605c94d4ab663d9e9c8603e3724",
        "sheet": "sheets/idle_S.png",
        "region": [
         640,
@@ -335,7 +340,8 @@
         "shard": 51,
         "claw": 6
        },
-       "sha256": "2ee275100953a3636740919821d09cce4e95da16a35163b24d93948de9aa91fb",
+       "anchor_gap": {},
+       "sha256": "a1f27d454f24d4c42ceddbab19cc989eb0a041ff24cd1a5b1fd026667842f854",
        "sheet": "sheets/idle_S.png",
        "region": [
         800,
@@ -385,7 +391,8 @@
         "shard": 53,
         "claw": 6
        },
-       "sha256": "f7c3abf8d73dc337e91b73f612260198d19631c58336ff29c795fba240edabe8",
+       "anchor_gap": {},
+       "sha256": "49b958e53452024839232b600ea56420a3765cb6ab39763e530854babb86dd5d",
        "sheet": "sheets/idle_S.png",
        "region": [
         960,
@@ -435,7 +442,8 @@
         "shard": 51,
         "claw": 6
        },
-       "sha256": "464f2ccba9bf8787d363f8c259d9dc14fe51ff7e632a6e2ac5183e511c56b4c8",
+       "anchor_gap": {},
+       "sha256": "84e555ce766cf3aa0875952f2f8028375bb63cce41fea06dc52829dfca593bba",
        "sheet": "sheets/idle_S.png",
        "region": [
         1120,
@@ -488,6 +496,7 @@
         "moss": 134,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "920857d1b631ca0111c97624e8b9fe5ae6ca9f2fd051c618e41bc32de31f9deb",
        "sheet": "sheets/idle_N.png",
        "region": [
@@ -537,7 +546,8 @@
         "moss": 131,
         "shard": 51
        },
-       "sha256": "95a5a5e72f5891a1e4002f7693110e3d670bfa03e04d70902e71121b6f73f357",
+       "anchor_gap": {},
+       "sha256": "6830399bd17237850b142eff68972c4b4c07c3dacfb932ea349bbfeec6e1cebe",
        "sheet": "sheets/idle_N.png",
        "region": [
         160,
@@ -586,7 +596,8 @@
         "moss": 129,
         "shard": 46
        },
-       "sha256": "b6b1eb4ff8f7025900f3b0731488897f21940285581fd48f8bd8621651cce354",
+       "anchor_gap": {},
+       "sha256": "5044c3460dc130a91cc74fb8af93f5cd8094434f2d558c9ede6e34fe6ad8ef49",
        "sheet": "sheets/idle_N.png",
        "region": [
         320,
@@ -635,7 +646,8 @@
         "moss": 131,
         "shard": 51
        },
-       "sha256": "95a5a5e72f5891a1e4002f7693110e3d670bfa03e04d70902e71121b6f73f357",
+       "anchor_gap": {},
+       "sha256": "6830399bd17237850b142eff68972c4b4c07c3dacfb932ea349bbfeec6e1cebe",
        "sheet": "sheets/idle_N.png",
        "region": [
         480,
@@ -684,6 +696,7 @@
         "moss": 134,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "920857d1b631ca0111c97624e8b9fe5ae6ca9f2fd051c618e41bc32de31f9deb",
        "sheet": "sheets/idle_N.png",
        "region": [
@@ -733,6 +746,7 @@
         "moss": 133,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "219c7fa17c3f542fe68c81c2f28c9bf008ab8e62f8cd94e98df4e9091c52097d",
        "sheet": "sheets/idle_N.png",
        "region": [
@@ -782,7 +796,8 @@
         "moss": 133,
         "shard": 51
        },
-       "sha256": "8e56faf46a9d819a21b8cad12c68ea61010a594e167cf1333dddb8e359219efa",
+       "anchor_gap": {},
+       "sha256": "535f27b1b7e9b04268db0a6efc87e40adcf01923a19b813ba9e11f9e465bcdab",
        "sheet": "sheets/idle_N.png",
        "region": [
         960,
@@ -831,6 +846,7 @@
         "moss": 133,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "219c7fa17c3f542fe68c81c2f28c9bf008ab8e62f8cd94e98df4e9091c52097d",
        "sheet": "sheets/idle_N.png",
        "region": [
@@ -885,6 +901,7 @@
         "shard": 48,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "bacc5ff13700eadf95a87881c2d8314e10b561ad0648d6858341e96672f43731",
        "sheet": "sheets/idle_E.png",
        "region": [
@@ -935,6 +952,7 @@
         "shard": 48,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "ecc13b7591c3d1a31e54be60bb78383ef8e3eb2819eceeed1e7eafe07ecbd81f",
        "sheet": "sheets/idle_E.png",
        "region": [
@@ -985,7 +1003,8 @@
         "shard": 50,
         "claw": 4
        },
-       "sha256": "8908cd257bc8463a1dbde090c78b8199ec21338ad6c6dd8e7209e448424f05ef",
+       "anchor_gap": {},
+       "sha256": "100cd928313c7815b2189abd27108cd7574823c0aedf5b4ffda6499bc95b005a",
        "sheet": "sheets/idle_E.png",
        "region": [
         320,
@@ -1035,6 +1054,7 @@
         "shard": 48,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "ecc13b7591c3d1a31e54be60bb78383ef8e3eb2819eceeed1e7eafe07ecbd81f",
        "sheet": "sheets/idle_E.png",
        "region": [
@@ -1085,7 +1105,8 @@
         "shard": 48,
         "claw": 4
        },
-       "sha256": "bacc5ff13700eadf95a87881c2d8314e10b561ad0648d6858341e96672f43731",
+       "anchor_gap": {},
+       "sha256": "c3861a03c0c500c22ebb470961ec071f5eded7ea32679ef315ef7f6ed9a2bd13",
        "sheet": "sheets/idle_E.png",
        "region": [
         640,
@@ -1135,6 +1156,7 @@
         "shard": 54,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "2e8daa1fec92b327a510af831494690014e2cfc4178d579e42bd2f5c7c8cbfc9",
        "sheet": "sheets/idle_E.png",
        "region": [
@@ -1185,7 +1207,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "ad7734623071216132bb87eaae5a664f407cd105f8d639034ea7ef8530361eec",
+       "anchor_gap": {},
+       "sha256": "0f3303061c829a400a7cf58d088493197da03b1b27b3d1fabbcc04fef05beee5",
        "sheet": "sheets/idle_E.png",
        "region": [
         960,
@@ -1235,7 +1258,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "6a3368ebcf923a30144a99299495d1cb00750797b511f1c37ff920f80d8b2e5f",
+       "anchor_gap": {},
+       "sha256": "e64fadf4b0c296d6e1ce1026c89c4d36f6b07809f72b5ac901ff6082a253ba80",
        "sheet": "sheets/idle_E.png",
        "region": [
         1120,
@@ -1289,7 +1313,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "54f86ec17188d72d152e7ed34a3d701df68298c4ea88079d0c00cd395aba3352",
+       "anchor_gap": {},
+       "sha256": "a3dd72a0a9b93e74bcd64f6ea4e1b41f90cc966aeb6d6d8c33156687e9da66cd",
        "sheet": "sheets/idle_W.png",
        "region": [
         0,
@@ -1339,7 +1364,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "ac263852f42457b934b9c5bf36d76f38063e7badc5d5abdcad3a5c28579787ec",
+       "anchor_gap": {},
+       "sha256": "2a0f2e11f89aee4007de1781d7c9dd99e59fde7bffc14d3efa575af6fb855a50",
        "sheet": "sheets/idle_W.png",
        "region": [
         160,
@@ -1389,7 +1415,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "41c561e95e75eb4aba5093a404d65b5e90a004eb3ce95ca9c3a3510e75fcd329",
+       "anchor_gap": {},
+       "sha256": "91446efd608e757cdf5aa33ed1e0067ad4ff263c13fc085b8c8787c8045827eb",
        "sheet": "sheets/idle_W.png",
        "region": [
         320,
@@ -1439,7 +1466,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "ac263852f42457b934b9c5bf36d76f38063e7badc5d5abdcad3a5c28579787ec",
+       "anchor_gap": {},
+       "sha256": "2a0f2e11f89aee4007de1781d7c9dd99e59fde7bffc14d3efa575af6fb855a50",
        "sheet": "sheets/idle_W.png",
        "region": [
         480,
@@ -1489,7 +1517,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "54f86ec17188d72d152e7ed34a3d701df68298c4ea88079d0c00cd395aba3352",
+       "anchor_gap": {},
+       "sha256": "a3dd72a0a9b93e74bcd64f6ea4e1b41f90cc966aeb6d6d8c33156687e9da66cd",
        "sheet": "sheets/idle_W.png",
        "region": [
         640,
@@ -1539,7 +1568,8 @@
         "shard": 58,
         "claw": 4
        },
-       "sha256": "9a1186ef3d738d853c7e9cae63592a19bf49a233733953af3d61de453f8d4bb5",
+       "anchor_gap": {},
+       "sha256": "76bec069a09ca242837d7c1595827f89ce0821c5eaacacb6a1908971581f57b4",
        "sheet": "sheets/idle_W.png",
        "region": [
         800,
@@ -1589,7 +1619,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "4966c21eb931d61a1bdc00fe2642a4bdae61af578656de5db3e2db5cd05892e8",
+       "anchor_gap": {},
+       "sha256": "53a13601683bf4eb9b6c874c5005862436adfe06e5c4485eb8064ce0f167e6af",
        "sheet": "sheets/idle_W.png",
        "region": [
         960,
@@ -1639,7 +1670,8 @@
         "shard": 58,
         "claw": 4
        },
-       "sha256": "b56ab5b94cc5b833ba437e8e35b057f8cfa7d3696165c57037d67306063ae530",
+       "anchor_gap": {},
+       "sha256": "deced18683a14bec8c9c65a222d28d0dd706faaa6d7123120d0ff393e30b14d0",
        "sheet": "sheets/idle_W.png",
        "region": [
         1120,
@@ -1714,7 +1746,8 @@
         "shard": 53,
         "claw": 7
        },
-       "sha256": "d096dd5ce45c5b17d83d030360c3b34e28149ded70513eb8c1b569ed6c9cf8d6",
+       "anchor_gap": {},
+       "sha256": "583881886779cdd5babf2899afcf1090490d175f94b96a5db6ca93c0ed70f8cb",
        "sheet": "sheets/move_S.png",
        "region": [
         0,
@@ -1739,11 +1772,11 @@
         ],
         "foot_L": [
          9.8,
-         3.0
+         2.7
         ],
         "hind_R": [
          -9.8,
-         -4.5
+         -4.8
         ],
         "hind_L": [
          9.8,
@@ -1764,7 +1797,8 @@
         "shard": 51,
         "claw": 6
        },
-       "sha256": "1d433ee20fb3362c533bd04ff94082b63b4ed9653efaa459b46e5b451e8708ce",
+       "anchor_gap": {},
+       "sha256": "af7146ea9db243c1753a2e2f1b83d27e84c83a1ee10ad5c7bb9064bcf7fe12cb",
        "sheet": "sheets/move_S.png",
        "region": [
         160,
@@ -1814,7 +1848,8 @@
         "shard": 55,
         "claw": 4
        },
-       "sha256": "09e06e5f7d449dd9261c752d27121dadf404ede7081853408f022722e7283782",
+       "anchor_gap": {},
+       "sha256": "7f0db078167be2190e5b5e1926120b6e33ac709c6a97f8c978e4cbaec79f7abc",
        "sheet": "sheets/move_S.png",
        "region": [
         320,
@@ -1839,11 +1874,11 @@
         ],
         "foot_L": [
          9.8,
-         1.2
+         1.4
         ],
         "hind_R": [
          -9.8,
-         -6.3
+         -6.1
         ],
         "hind_L": [
          9.8,
@@ -1864,7 +1899,8 @@
         "shard": 51,
         "claw": 4
        },
-       "sha256": "716628d8f5fca3551aec6ff96137bdf8239e832d2cf22616ff3ad12f74846fa2",
+       "anchor_gap": {},
+       "sha256": "b073937d3782d59587055a1dbe7abf3e757eba3dca3e1946f3c68ee6ba41647f",
        "sheet": "sheets/move_S.png",
        "region": [
         480,
@@ -1914,7 +1950,8 @@
         "shard": 53,
         "claw": 6
        },
-       "sha256": "76e877ef5e58d96e1008d455da9e4b9f91bf4345b11a8775f7a70864afda845f",
+       "anchor_gap": {},
+       "sha256": "4746ccdce83158f71b3e357fd1c809083137d4c4428a5c13aa109464d3f1327b",
        "sheet": "sheets/move_S.png",
        "region": [
         640,
@@ -1935,7 +1972,7 @@
        "anchors": {
         "foot_R": [
          -9.8,
-         3.0
+         2.7
         ],
         "foot_L": [
          9.8,
@@ -1947,7 +1984,7 @@
         ],
         "hind_L": [
          9.8,
-         -4.5
+         -4.8
         ],
         "strike": [
          -0.0,
@@ -1964,7 +2001,8 @@
         "shard": 51,
         "claw": 6
        },
-       "sha256": "66e69bfe7c0dc8bc8d027587173dcfbb9889c2a7a15629ab5298cc38961141a1",
+       "anchor_gap": {},
+       "sha256": "4b555af0304918fdaaa3cb2293b2bc224d19bf8ffb913900ca4a97a6a6653aee",
        "sheet": "sheets/move_S.png",
        "region": [
         800,
@@ -2014,7 +2052,8 @@
         "shard": 55,
         "claw": 4
        },
-       "sha256": "8f0aca3829ac9f6a506d8031d5b9cb9b90ff346c5239342b627479ea50e188c0",
+       "anchor_gap": {},
+       "sha256": "1fe5736df85bbeaf8ed2d6e277a1d385a3951c75ecfff3839759be44784d01dd",
        "sheet": "sheets/move_S.png",
        "region": [
         960,
@@ -2035,7 +2074,7 @@
        "anchors": {
         "foot_R": [
          -9.8,
-         1.2
+         1.4
         ],
         "foot_L": [
          9.8,
@@ -2047,7 +2086,7 @@
         ],
         "hind_L": [
          9.8,
-         -6.3
+         -6.1
         ],
         "strike": [
          -0.0,
@@ -2064,7 +2103,8 @@
         "shard": 51,
         "claw": 4
        },
-       "sha256": "8514fc72aff1922be007820f966ef36430863940464b9770e0a270176165cc8d",
+       "anchor_gap": {},
+       "sha256": "90afaff89e26f9ab988ec1ce298abaf3b46006f0803213ac9336a0d2c215b43e",
        "sheet": "sheets/move_S.png",
        "region": [
         1120,
@@ -2117,7 +2157,8 @@
         "moss": 133,
         "shard": 51
        },
-       "sha256": "172e7377b7272f7f7766c599bf72357a020cea2bf4b20bb44658b3ff20fad26e",
+       "anchor_gap": {},
+       "sha256": "7b7bff8ef281df3ae7da0198bf187b769093907b17ff08a28c651b63fdc7f0ca",
        "sheet": "sheets/move_N.png",
        "region": [
         0,
@@ -2142,11 +2183,11 @@
         ],
         "foot_L": [
          -9.8,
-         -7.0
+         -6.7
         ],
         "hind_R": [
          9.8,
-         0.5
+         0.8
         ],
         "hind_L": [
          -9.8,
@@ -2166,7 +2207,8 @@
         "moss": 131,
         "shard": 51
        },
-       "sha256": "3d154eeb4e31f42d73c3fb47753a65d303701b5536e2c8b82159e0fef5239d4c",
+       "anchor_gap": {},
+       "sha256": "6b2db3a7a28043b7aee34a8e10f3ef5275a52363407bd4310e80fa9045df8f27",
        "sheet": "sheets/move_N.png",
        "region": [
         160,
@@ -2215,7 +2257,8 @@
         "moss": 133,
         "shard": 50
        },
-       "sha256": "be5025f6fa10c9f391b56494f09c983c8e88ca50f550deb1fc8135712269d2b6",
+       "anchor_gap": {},
+       "sha256": "0cc7501a84fd9dc2c3398c1b44b180ecfbcf568af0ed8b16e3da998b9002445d",
        "sheet": "sheets/move_N.png",
        "region": [
         320,
@@ -2240,11 +2283,11 @@
         ],
         "foot_L": [
          -9.8,
-         -5.2
+         -5.4
         ],
         "hind_R": [
          9.8,
-         2.3
+         2.1
         ],
         "hind_L": [
          -9.8,
@@ -2264,7 +2307,8 @@
         "moss": 131,
         "shard": 51
        },
-       "sha256": "09451d7c57c7aef4eb8bcab58c16262197f2d784a730c1f896b9b75e16f22847",
+       "anchor_gap": {},
+       "sha256": "95891d0638930e9dd76a3f4bbf363cd65021d860c5df33d92252cc25c68321dd",
        "sheet": "sheets/move_N.png",
        "region": [
         480,
@@ -2313,7 +2357,8 @@
         "moss": 133,
         "shard": 51
        },
-       "sha256": "437de69b6c36c9f3df02a1ac78107d1a7035db8b07e6ae2fb0406e6274eae541",
+       "anchor_gap": {},
+       "sha256": "e066f57a48289e75268a49772a0f8c0cb0b6a3841d18f94a0632c6db7974fabc",
        "sheet": "sheets/move_N.png",
        "region": [
         640,
@@ -2334,7 +2379,7 @@
        "anchors": {
         "foot_R": [
          9.8,
-         -7.0
+         -6.7
         ],
         "foot_L": [
          -9.8,
@@ -2346,7 +2391,7 @@
         ],
         "hind_L": [
          -9.8,
-         0.5
+         0.8
         ],
         "strike": [
          0.0,
@@ -2362,7 +2407,8 @@
         "moss": 131,
         "shard": 51
        },
-       "sha256": "40cdd6ec4c67f4d2bca576f282f641b1ffea85dc3f454b213a74728ac31c05bd",
+       "anchor_gap": {},
+       "sha256": "047e1ee0616caa681f281e5c4fe3a5104fd588ba60299bf6e850752054bbed87",
        "sheet": "sheets/move_N.png",
        "region": [
         800,
@@ -2411,7 +2457,8 @@
         "moss": 133,
         "shard": 50
        },
-       "sha256": "15fda1df72ee090cc6af8248e730f6401410f588599148f88f073d7695df92db",
+       "anchor_gap": {},
+       "sha256": "597acc8dde3ddb8dad5180d6dcdd861f4e7894b785104fad0d80f00ab41ed928",
        "sheet": "sheets/move_N.png",
        "region": [
         960,
@@ -2432,7 +2479,7 @@
        "anchors": {
         "foot_R": [
          9.8,
-         -5.2
+         -5.4
         ],
         "foot_L": [
          -9.8,
@@ -2444,7 +2491,7 @@
         ],
         "hind_L": [
          -9.8,
-         2.3
+         2.1
         ],
         "strike": [
          0.0,
@@ -2460,7 +2507,8 @@
         "moss": 131,
         "shard": 51
        },
-       "sha256": "f55789f0b40ef57174e3f1be27559866858c454f9bd1e2a12f26ba3928dff9d4",
+       "anchor_gap": {},
+       "sha256": "f7c222560a23ef62baf4942ebaeb4fd37e89dda0efbc9b02c85f67fd53d7f4e5",
        "sheet": "sheets/move_N.png",
        "region": [
         1120,
@@ -2514,7 +2562,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "c4d34e9b54387e316cae28142d5ea7bdc780f0d3f43b2049818f636314b716b8",
+       "anchor_gap": {},
+       "sha256": "8a4d291ff7e91b447bc41f30c7399a9a03d9f91dda1dd5648fda3fddfe1b4bd3",
        "sheet": "sheets/move_E.png",
        "region": [
         0,
@@ -2538,11 +2587,11 @@
          -3.7
         ],
         "foot_L": [
-         15.2,
+         14.4,
          -2.0
         ],
         "hind_R": [
-         -8.1,
+         -8.9,
          -2.0
         ],
         "hind_L": [
@@ -2564,7 +2613,8 @@
         "shard": 48,
         "claw": 4
        },
-       "sha256": "fa11bed92656eec213fb3cc998d0335c94a128feabc64632c70aba311bcd1737",
+       "anchor_gap": {},
+       "sha256": "6443a1bc11c39e9a0d8e25e65a194d8265fba9561f718aa29fd330524e0b0d90",
        "sheet": "sheets/move_E.png",
        "region": [
         160,
@@ -2614,7 +2664,8 @@
         "shard": 50,
         "claw": 4
        },
-       "sha256": "feccc47ce221e47bc21ba1d2350c5dde368ee3615ac3016d591516e24edd982d",
+       "anchor_gap": {},
+       "sha256": "b6f356fba50a7a187639f080031eeb7512b0796ebeb3edffe7165f4f49ca009d",
        "sheet": "sheets/move_E.png",
        "region": [
         320,
@@ -2638,11 +2689,11 @@
          -3.7
         ],
         "foot_L": [
-         10.0,
+         10.7,
          -2.0
         ],
         "hind_R": [
-         -13.3,
+         -12.6,
          -2.0
         ],
         "hind_L": [
@@ -2664,7 +2715,8 @@
         "shard": 48,
         "claw": 4
        },
-       "sha256": "0af52ed17bf5af7b3af8693c45aec6a5018e0236539040160f930b5d532ae736",
+       "anchor_gap": {},
+       "sha256": "490a72263cf8348919d4b2840454c689e7f19f7b8ba2279010dff33fcf91622a",
        "sheet": "sheets/move_E.png",
        "region": [
         480,
@@ -2714,7 +2766,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "39581d92ae65c26b0a815cac034eb9d6d79bccc39adbfb09fd1c457e26c59e9c",
+       "anchor_gap": {},
+       "sha256": "35d0ffe10efe54d4764ca54ef9085d9d300d61a2d2ebf50b6eb876b2dba666e2",
        "sheet": "sheets/move_E.png",
        "region": [
         640,
@@ -2734,7 +2787,7 @@
        ],
        "anchors": {
         "foot_R": [
-         13.2,
+         12.4,
          -2.0
         ],
         "foot_L": [
@@ -2746,7 +2799,7 @@
          -3.7
         ],
         "hind_L": [
-         -6.2,
+         -7.0,
          -2.0
         ],
         "strike": [
@@ -2764,7 +2817,8 @@
         "shard": 48,
         "claw": 4
        },
-       "sha256": "96cb3970abf13517ca11b83089dbafd4da758626d3ed1b4d544462df44a952f8",
+       "anchor_gap": {},
+       "sha256": "d6daa54751a6f766fe91210b5ab1e9a8827848c192230640a0cd9067b6337f7c",
        "sheet": "sheets/move_E.png",
        "region": [
         800,
@@ -2814,7 +2868,8 @@
         "shard": 50,
         "claw": 2
        },
-       "sha256": "8233a504227739488f6052ab300141cc7e924a668a1fc5b2b4337d1a423aaea8",
+       "anchor_gap": {},
+       "sha256": "7c21d0feee48227ae83a5db44a7dab89cbb91bb36f6fb7eb8bdd596d588c3c7b",
        "sheet": "sheets/move_E.png",
        "region": [
         960,
@@ -2834,7 +2889,7 @@
        ],
        "anchors": {
         "foot_R": [
-         8.0,
+         8.8,
          -2.0
         ],
         "foot_L": [
@@ -2846,7 +2901,7 @@
          -3.7
         ],
         "hind_L": [
-         -11.4,
+         -10.6,
          -2.0
         ],
         "strike": [
@@ -2864,7 +2919,8 @@
         "shard": 48,
         "claw": 4
        },
-       "sha256": "2378c581db6b39547d4e173f2589d076f18e1d9b8e1d9135d32d24242b77523a",
+       "anchor_gap": {},
+       "sha256": "1c59a1962bd3916f9d05a110063607d83dd685000b4bdf281940cc69acc9ab06",
        "sheet": "sheets/move_E.png",
        "region": [
         1120,
@@ -2918,7 +2974,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "bd154939ea320ea3a9beca159b01b8efba184fe0a97a6ffe195e95a04875977b",
+       "anchor_gap": {},
+       "sha256": "dd559df8c01751c20d454211a6824dd67355b24dc8f13666816ad7ff39c6e407",
        "sheet": "sheets/move_W.png",
        "region": [
         0,
@@ -2942,11 +2999,11 @@
          -3.7
         ],
         "foot_L": [
-         -13.2,
+         -12.4,
          -2.0
         ],
         "hind_R": [
-         6.2,
+         7.0,
          -2.0
         ],
         "hind_L": [
@@ -2968,7 +3025,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "c40e522c0a461913a8e40707938f1840bcb7889dd1380e8a190e502d1c1ff99f",
+       "anchor_gap": {},
+       "sha256": "06f2a3b390aee102e2ad63447d68d0ac57fd37a29cc5b14ee127b5b08b280145",
        "sheet": "sheets/move_W.png",
        "region": [
         160,
@@ -3018,7 +3076,8 @@
         "shard": 55,
         "claw": 2
        },
-       "sha256": "ec772593b509077a6ab9a59db1973fe5aeba4f4e52c6b7db007ab0bd364d4e23",
+       "anchor_gap": {},
+       "sha256": "54db93439d10848804fdef822f855f298d1db1bc4a9cd4bc17ce96aee35f269a",
        "sheet": "sheets/move_W.png",
        "region": [
         320,
@@ -3042,11 +3101,11 @@
          -3.7
         ],
         "foot_L": [
-         -8.0,
+         -8.8,
          -2.0
         ],
         "hind_R": [
-         11.4,
+         10.6,
          -2.0
         ],
         "hind_L": [
@@ -3068,7 +3127,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "a385372a6f7be15151ee5d44376c8ef8f18a76e36bd0e52ba9f9884cacc9d74e",
+       "anchor_gap": {},
+       "sha256": "dfa497eac2c70ce4e99c7cafab72435626dd5d16898c0e1a839455166f99768c",
        "sheet": "sheets/move_W.png",
        "region": [
         480,
@@ -3118,7 +3178,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "b2482da5dda1adb036becdc7600e4d507f56de65638829c6de1a638a133454ee",
+       "anchor_gap": {},
+       "sha256": "d27cfba02aab3361487452319949452f6c81ac9f049fe658c9ef00aee09fde37",
        "sheet": "sheets/move_W.png",
        "region": [
         640,
@@ -3138,7 +3199,7 @@
        ],
        "anchors": {
         "foot_R": [
-         -15.2,
+         -14.4,
          -2.0
         ],
         "foot_L": [
@@ -3150,7 +3211,7 @@
          -3.7
         ],
         "hind_L": [
-         8.1,
+         8.9,
          -2.0
         ],
         "strike": [
@@ -3168,7 +3229,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "ef22f80cf3536da64370eea7d05c3206695b6578406926e7fe16a9b1ab910cd1",
+       "anchor_gap": {},
+       "sha256": "5d4fa4b6718053acea893ebec4c5964ae1984c9b29d3e416c924b7ecdb81d601",
        "sheet": "sheets/move_W.png",
        "region": [
         800,
@@ -3218,7 +3280,8 @@
         "shard": 55,
         "claw": 4
        },
-       "sha256": "835e7c97e040e5480494db8a09216dae0c956805b0b969b232911f012f6f86a2",
+       "anchor_gap": {},
+       "sha256": "508fc95a9aa1ca39a7f273d808ad4b0345d7ec9c6158599a0827d8dc4af01129",
        "sheet": "sheets/move_W.png",
        "region": [
         960,
@@ -3238,7 +3301,7 @@
        ],
        "anchors": {
         "foot_R": [
-         -10.0,
+         -10.7,
          -2.0
         ],
         "foot_L": [
@@ -3250,7 +3313,7 @@
          -3.7
         ],
         "hind_L": [
-         13.3,
+         12.6,
          -2.0
         ],
         "strike": [
@@ -3268,7 +3331,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "d697692f0098041de605a92dbc7ecbf1e09524f2cdf606ed51541a2f77b40003",
+       "anchor_gap": {},
+       "sha256": "8909fcb0d9abecee48e4ec2b5e209f1b22c0a7fddd76d369a3608a3c936bbdc6",
        "sheet": "sheets/move_W.png",
        "region": [
         1120,
@@ -3343,7 +3407,8 @@
         "shard": 51,
         "claw": 5
        },
-       "sha256": "8be7562f952d9bde6656022777093475e6c965fd0627cccde36b8adb7f1250d8",
+       "anchor_gap": {},
+       "sha256": "e8d076eb255b0482c52e5e0a660c780e6b1b3f0b8d8e5d9f7a84e6fa13ac265a",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         0,
@@ -3393,7 +3458,8 @@
         "shard": 53,
         "claw": 6
        },
-       "sha256": "a4b6cac934ee6d844ee7d7e850460cf742ee3410a5d635e3e1ec8baf25a92064",
+       "anchor_gap": {},
+       "sha256": "37d06dd7657e0939a660667a45f74a61c4712511e7b031e17c12ac94f5ae8c81",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         160,
@@ -3443,7 +3509,8 @@
         "shard": 55,
         "claw": 7
        },
-       "sha256": "88b288e45109bf993060110d6f602fc83f43c69106f26875bddfc81e176f0374",
+       "anchor_gap": {},
+       "sha256": "603b3a60dabcd5c557846fb82a4054cd8732e5310855b93b954560819a411504",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         320,
@@ -3493,7 +3560,8 @@
         "shard": 53,
         "claw": 9
        },
-       "sha256": "7ee8053a999d6c58defd541a14048dbd3f5f030ebbd87042bdeda52f3430acc1",
+       "anchor_gap": {},
+       "sha256": "6a8e2e15729067684a28f8ee0b569e2fb3de165d166c134025139e073c2fee0d",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         480,
@@ -3543,7 +3611,8 @@
         "shard": 55,
         "claw": 8
        },
-       "sha256": "134bec10c152f49c7e4eefc097324666d63e27b9188774690f9bba89b521e1ce",
+       "anchor_gap": {},
+       "sha256": "1466e5758e5d7d3f8829a53b969a2a2d9f785319ab19f25fe401fabfef367423",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         640,
@@ -3593,7 +3662,8 @@
         "shard": 51,
         "claw": 7
        },
-       "sha256": "faa2b419e3dbc5d6572bca8336828e769e36c36f57ea96a883b9cd31148588f2",
+       "anchor_gap": {},
+       "sha256": "23f0b88239de82959e046e6833d0af5aef31d083ca131cef6a99597868cea57c",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         800,
@@ -3643,7 +3713,8 @@
         "shard": 48,
         "claw": 7
        },
-       "sha256": "f0f2b452b662a9dac8c8da910967e399a4d8e1555de7313ca48025749f99e7a5",
+       "anchor_gap": {},
+       "sha256": "307872e1f142052de0d5a26eed547fad4d4ff0782bf712be6f636ac11f62c6a8",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         960,
@@ -3693,7 +3764,8 @@
         "shard": 51,
         "claw": 7
        },
-       "sha256": "2d057c0e682d0f7845b5677132c4e6d650ed36b4961a03e8f6b858b84711bb36",
+       "anchor_gap": {},
+       "sha256": "9d1b802914bfd0f5d980dbf547e7fd5e40fad270a0c466f955e77c908583af28",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         1120,
@@ -3746,6 +3818,7 @@
         "moss": 131,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "0c4cfa4c4dca5dbbda6928f9380b3fd48f9836654f1e68dfee9098e42951298e",
        "sheet": "sheets/telegraph_N.png",
        "region": [
@@ -3795,7 +3868,8 @@
         "moss": 133,
         "shard": 51
        },
-       "sha256": "8e56faf46a9d819a21b8cad12c68ea61010a594e167cf1333dddb8e359219efa",
+       "anchor_gap": {},
+       "sha256": "552ac305a6d5d9bac4e0b6fb51fcadea0f0a7c01a57379d96716be54b1f26c36",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         160,
@@ -3844,7 +3918,8 @@
         "moss": 129,
         "shard": 46
        },
-       "sha256": "5c06f822d5511ddbe2b931ac8ef94a39b805de16a67d50afc5d60111be2dd8fb",
+       "anchor_gap": {},
+       "sha256": "c75325336cf373ddeac4ab70cdf8b4599f6cbeaf8d8a8256ec4bca49d48f4335",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         320,
@@ -3893,7 +3968,8 @@
         "moss": 133,
         "shard": 51
        },
-       "sha256": "7122969050f1b492684490a1f0fa90225dc8680c84b06e8a2a3d6019f2f170d4",
+       "anchor_gap": {},
+       "sha256": "eb793334a36cfedc212682eb55d81c8ce78e5ca822d72fb636eb129f060ed153",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         480,
@@ -3942,6 +4018,7 @@
         "moss": 134,
         "shard": 50
        },
+       "anchor_gap": {},
        "sha256": "c6c9a9bb12a603c48d1fbe850d94161a53be88edbcbab399d4566e9a9775b9d7",
        "sheet": "sheets/telegraph_N.png",
        "region": [
@@ -3991,7 +4068,8 @@
         "moss": 129,
         "shard": 51
        },
-       "sha256": "16a1db80067235930d8a91cf2ed5076b638dba7e9e03ce2c69c3b37a00db8c22",
+       "anchor_gap": {},
+       "sha256": "5083035ef6bb1da6b37b82d201b81b7d06374de3fee55209cb13c519998f5616",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         800,
@@ -4040,7 +4118,8 @@
         "moss": 134,
         "shard": 48
        },
-       "sha256": "fba3a71617cc41d3b29e586d299978457fa627bb8570e3beb5bc776d62382c74",
+       "anchor_gap": {},
+       "sha256": "b2a1dcf64c0c2b7a499057311b1373b8750dc62c4978350edd1996a4525640cb",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         960,
@@ -4089,6 +4168,7 @@
         "moss": 133,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "5c13d77089ba0eb70d52475c2f7286c84c50858856880e1949defb4c1c90d189",
        "sheet": "sheets/telegraph_N.png",
        "region": [
@@ -4143,6 +4223,7 @@
         "shard": 50,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "584253aa2fde2773cf733c309b753ed453e4841a79314846d342fb44ade38691",
        "sheet": "sheets/telegraph_E.png",
        "region": [
@@ -4193,7 +4274,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "0396dbc1c4fa2cfbaf6aa624c3f69af450cb34a8467d07cbe70a18ac765c3b80",
+       "anchor_gap": {},
+       "sha256": "3a0217b6e3f632be2b97670a7d79b9e314487ff69ef5a2a843b155eca9ce3431",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         160,
@@ -4243,7 +4325,8 @@
         "shard": 50,
         "claw": 4
        },
-       "sha256": "5eef210bb3a298865e267644a6e34e29beee4aaab8c417d0ed4c75e22c6ba86f",
+       "anchor_gap": {},
+       "sha256": "47b61428dbb05a16e19a4af45e1f187e1f1bacfce5a692df725efdfe2055c59e",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         320,
@@ -4293,7 +4376,8 @@
         "shard": 50,
         "claw": 4
        },
-       "sha256": "f6bb16a90c4dbb419dbb1203bddd5bfdd6026ede3b26f92bd750d338dcebdb81",
+       "anchor_gap": {},
+       "sha256": "3b3ea927b3065bef98e51a7758f102a21952bda06c9f42f9037fa7f310618c2b",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         480,
@@ -4308,7 +4392,7 @@
        "packed_bounds": [
         55,
         92,
-        106,
+        105,
         136
        ],
        "anchors": {
@@ -4343,7 +4427,8 @@
         "shard": 50,
         "claw": 4
        },
-       "sha256": "64d8d912fc608f200b201536875cf3eda08a5b7f7c5b1175eb0ec2c9437679eb",
+       "anchor_gap": {},
+       "sha256": "bcd6d6885aa2a1bf73bfa776dddc5b063c8bb7a997c15782af8f08f2299e1d6f",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         640,
@@ -4393,7 +4478,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "24268d40dd80157de7577b124c8b49327a71e2cb1ebebee5e03007f56b4bf21d",
+       "anchor_gap": {},
+       "sha256": "6c2ec52375998a5f235fc074b2e8385385683514d50e5a6a450c4517255f8f40",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         800,
@@ -4443,7 +4529,8 @@
         "shard": 51,
         "claw": 4
        },
-       "sha256": "efb777b9c61826049d15288ce83b219b78faa34838d61981d9b40024c09b68dc",
+       "anchor_gap": {},
+       "sha256": "c4337f8287a91894b929b6e279a094c4e52d98af71430c4170220260da95a494",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         960,
@@ -4493,6 +4580,7 @@
         "shard": 54,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "2fcf52cb109995f6a126c46cefeb32eb51cbe87e7589e49f6d4f246636d7f7d3",
        "sheet": "sheets/telegraph_E.png",
        "region": [
@@ -4547,7 +4635,8 @@
         "shard": 55,
         "claw": 4
        },
-       "sha256": "a36259cce4c3a498cdcc8ce2cdfc8393aefab91f64a269b7b13f8e7949aaac56",
+       "anchor_gap": {},
+       "sha256": "625c17daa2c96c6b0673166ef381b3b5d9b8feee386d4aedfe9064aa68738f34",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         0,
@@ -4597,7 +4686,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "f57b67b35fcac0a35a29fee8016b0ac2cdc65d5e8c605280e7d8edcda905fe54",
+       "anchor_gap": {},
+       "sha256": "a5a852aad82933f5a82362eaad837449ef57f141caab1d0bd2f8921ac1782fef",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         160,
@@ -4647,7 +4737,8 @@
         "shard": 55,
         "claw": 4
        },
-       "sha256": "88ef803970ea300c1067275f959d34337a15770d88b0fe65121d2ce9f98d1ca5",
+       "anchor_gap": {},
+       "sha256": "a8fffc9c35628d6e06cbe5c28aa6924ff88f01bc6be5460a6da09072eeab889e",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         320,
@@ -4697,7 +4788,8 @@
         "shard": 55,
         "claw": 4
        },
-       "sha256": "03ce04b972e8f02aab95e8d747e148414f2f4edca19f11830f565ba0794f8da6",
+       "anchor_gap": {},
+       "sha256": "3a4cfff38b2da75b1e6cc421a845df84e42ad07211eb6491e6b46a0971b7ae68",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         480,
@@ -4710,7 +4802,7 @@
        "path": "res://assets/animated/tortoise/telegraph_W_04.png",
        "file": "telegraph_W_04.png",
        "packed_bounds": [
-        53,
+        54,
         92,
         104,
         136
@@ -4747,7 +4839,8 @@
         "shard": 55,
         "claw": 4
        },
-       "sha256": "0aac8e6571d5b294650bf3f56de054be33b1a40ff8f934cac19221fb2193abd7",
+       "anchor_gap": {},
+       "sha256": "f7f16b32d7c389fcfba1caffe57f580a312258c631d20939e4f28496991719f3",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         640,
@@ -4797,7 +4890,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "b0e43872d9d67714028782d0d3aff2ded66ffa2a73d5f6e1ce25618757439433",
+       "anchor_gap": {},
+       "sha256": "1392cf4a94745252ebcc52d7846c68eab43bcd21b754800493dcad450a05d2ca",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         800,
@@ -4847,7 +4941,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "9568d7f2ebfb51f9579fd36e32e95f46b248e69f7e7b879a90d5d7db41cd938e",
+       "anchor_gap": {},
+       "sha256": "695f311ebacdfa39c57f96134f9bbe339e929bce24cd82dc4cb5b4542efa2a77",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         960,
@@ -4897,7 +4992,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "3fe4ca79e2bdb4ad264f13b39e07aa7e4210215d406031529c873d02e580cc64",
+       "anchor_gap": {},
+       "sha256": "637bf052b42fb0558853d9353a932637b9696fd51697f2127afc7280402d2051",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         1120,
@@ -4931,10 +5027,10 @@
        "path": "res://assets/animated/tortoise/attack_S_00.png",
        "file": "attack_S_00.png",
        "packed_bounds": [
-        63,
+        61,
         95,
-        97,
-        142
+        99,
+        141
        ],
        "anchors": {
         "foot_R": [
@@ -4966,9 +5062,11 @@
         "shell": 564,
         "moss": 136,
         "shard": 55,
-        "claw": 2
+        "claw": 2,
+        "dust": 68
        },
-       "sha256": "72b5bb412f8789310cdb112eab6c66666625f8ad1b318c8dc79d31350c10383b",
+       "anchor_gap": {},
+       "sha256": "e4a53962f72673f26f0854e4c9c14c3c4f23b94c65b4f349e2c6f8f703437a86",
        "sheet": "sheets/attack_S.png",
        "region": [
         0,
@@ -4981,10 +5079,10 @@
        "path": "res://assets/animated/tortoise/attack_S_01.png",
        "file": "attack_S_01.png",
        "packed_bounds": [
-        63,
+        60,
         95,
-        97,
-        143
+        100,
+        141
        ],
        "anchors": {
         "foot_R": [
@@ -5016,9 +5114,11 @@
         "shell": 559,
         "moss": 138,
         "shard": 51,
-        "claw": 2
+        "claw": 2,
+        "dust": 126
        },
-       "sha256": "7b51bfe37a14db370aefd3ae25f5258cca117af6edf5e01bd0f3d009e785e0e0",
+       "anchor_gap": {},
+       "sha256": "e58d01790d0363e4deef94000beeb84c1ad3ad9e9b98e43152301aa284a1a71c",
        "sheet": "sheets/attack_S.png",
        "region": [
         160,
@@ -5031,10 +5131,10 @@
        "path": "res://assets/animated/tortoise/attack_S_02.png",
        "file": "attack_S_02.png",
        "packed_bounds": [
-        63,
+        60,
         95,
-        97,
-        143
+        100,
+        140
        ],
        "anchors": {
         "foot_R": [
@@ -5066,9 +5166,11 @@
         "shell": 559,
         "moss": 141,
         "shard": 51,
-        "claw": 2
+        "claw": 2,
+        "dust": 120
        },
-       "sha256": "d69ab479780fdc53fee8a4d530631d9c664b105aa110f82b34a35880344139a5",
+       "anchor_gap": {},
+       "sha256": "c26a1a476a5a06cd31cbb7d84ec13917913fd5997f71d97dc4361da83c558cfa",
        "sheet": "sheets/attack_S.png",
        "region": [
         320,
@@ -5081,10 +5183,10 @@
        "path": "res://assets/animated/tortoise/attack_S_03.png",
        "file": "attack_S_03.png",
        "packed_bounds": [
-        60,
+        59,
         95,
-        100,
-        143
+        101,
+        140
        ],
        "anchors": {
         "foot_R": [
@@ -5116,9 +5218,11 @@
         "shell": 558,
         "moss": 141,
         "shard": 51,
-        "claw": 6
+        "claw": 3,
+        "dust": 156
        },
-       "sha256": "249b3b7ab217329a1193608d8854f8b4b503f405494dc2b8e33600e9c1bb3140",
+       "anchor_gap": {},
+       "sha256": "26ec8f48cbe96f84cdf17092301bd2ae0617700784ee8d175bc70af367754856",
        "sheet": "sheets/attack_S.png",
        "region": [
         480,
@@ -5140,9 +5244,9 @@
        "path": "res://assets/animated/tortoise/attack_N_00.png",
        "file": "attack_N_00.png",
        "packed_bounds": [
-        63,
+        61,
         97,
-        97,
+        99,
         139
        ],
        "anchors": {
@@ -5172,11 +5276,13 @@
         ]
        },
        "equipment": {
-        "shell": 545,
+        "shell": 563,
         "moss": 134,
-        "shard": 46
+        "shard": 46,
+        "dust": 57
        },
-       "sha256": "0431d0a6a354409d253e152b28268e0be1420a77d8c611029488ea467e8263dd",
+       "anchor_gap": {},
+       "sha256": "55640cf1b5b5d2aa132c9db20ced18dab3e87f42665ee7dcd49a7be92fbad5ad",
        "sheet": "sheets/attack_N.png",
        "region": [
         0,
@@ -5189,9 +5295,9 @@
        "path": "res://assets/animated/tortoise/attack_N_01.png",
        "file": "attack_N_01.png",
        "packed_bounds": [
-        63,
+        60,
         96,
-        97,
+        100,
         139
        ],
        "anchors": {
@@ -5221,11 +5327,13 @@
         ]
        },
        "equipment": {
-        "shell": 516,
+        "shell": 519,
         "moss": 131,
-        "shard": 51
+        "shard": 51,
+        "dust": 133
        },
-       "sha256": "8c0ee3929cc397247f5dce54b041365f8d9b57274f7785ec02c7392616426e9b",
+       "anchor_gap": {},
+       "sha256": "3af380ee7a82402110a4f4d8c4de5e5570547e933645d5b53372a4dd59a23522",
        "sheet": "sheets/attack_N.png",
        "region": [
         160,
@@ -5238,9 +5346,9 @@
        "path": "res://assets/animated/tortoise/attack_N_02.png",
        "file": "attack_N_02.png",
        "packed_bounds": [
-        63,
+        60,
         96,
-        97,
+        100,
         139
        ],
        "anchors": {
@@ -5270,11 +5378,13 @@
         ]
        },
        "equipment": {
-        "shell": 528,
+        "shell": 496,
         "moss": 134,
-        "shard": 51
+        "shard": 51,
+        "dust": 120
        },
-       "sha256": "da99a451e8aa684ab828aba9dadb94964f9ea11771acce79cffaa21038a08dc1",
+       "anchor_gap": {},
+       "sha256": "a9d12ee48a2f1a2fb4267bb63e49c3213c9c83b87547e45008e41a999cd207ff",
        "sheet": "sheets/attack_N.png",
        "region": [
         320,
@@ -5287,9 +5397,9 @@
        "path": "res://assets/animated/tortoise/attack_N_03.png",
        "file": "attack_N_03.png",
        "packed_bounds": [
-        60,
+        59,
         96,
-        100,
+        101,
         139
        ],
        "anchors": {
@@ -5319,11 +5429,13 @@
         ]
        },
        "equipment": {
-        "shell": 523,
+        "shell": 477,
         "moss": 134,
-        "shard": 51
+        "shard": 51,
+        "dust": 158
        },
-       "sha256": "4f2473c011816dd7af9c107aa451587f7f2ebf1c510ad8e1749f3b04e9d0313d",
+       "anchor_gap": {},
+       "sha256": "6f52514b57102845809be0775bda5ddfafba7f0f32ac5e9d790118cbb3d065c2",
        "sheet": "sheets/attack_N.png",
        "region": [
         480,
@@ -5348,7 +5460,7 @@
         55,
         96,
         106,
-        138
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -5380,9 +5492,11 @@
         "shell": 648,
         "moss": 136,
         "shard": 54,
-        "claw": 2
+        "claw": 3,
+        "dust": 41
        },
-       "sha256": "3fe0f8a0c05d1a6c1efca2aea7e9eaf6b061d9610e852a59d05d00eb86036336",
+       "anchor_gap": {},
+       "sha256": "06713989c63166e0c2ff2903f15cdf8f92ba6f4b88ba5444e48edc8a512c6a68",
        "sheet": "sheets/attack_E.png",
        "region": [
         0,
@@ -5398,7 +5512,7 @@
         55,
         96,
         108,
-        139
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -5427,12 +5541,14 @@
         ]
        },
        "equipment": {
-        "shell": 651,
+        "shell": 649,
         "moss": 138,
         "shard": 50,
-        "claw": 4
+        "claw": 2,
+        "dust": 98
        },
-       "sha256": "52c710b5c9d8c9b99fa8aec229740fe1f92def64db4d20479f0f7eea011a20d6",
+       "anchor_gap": {},
+       "sha256": "a63c7b2b738d642efbd7e435c311ca58f994a99acb2d05afcb5486cc86ca5713",
        "sheet": "sheets/attack_E.png",
        "region": [
         160,
@@ -5447,8 +5563,8 @@
        "packed_bounds": [
         55,
         96,
-        110,
-        141
+        109,
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -5477,12 +5593,14 @@
         ]
        },
        "equipment": {
-        "shell": 631,
+        "shell": 630,
         "moss": 136,
         "shard": 48,
-        "claw": 4
+        "claw": 4,
+        "dust": 85
        },
-       "sha256": "f89f56a3247224a2d974c2970400451119b4ca9265b7ce706b7b7775eb2ffd2c",
+       "anchor_gap": {},
+       "sha256": "f34bf849d5028c7b9ec3ae4f241fab3588548633751a5add2817dfbef55beda9",
        "sheet": "sheets/attack_E.png",
        "region": [
         320,
@@ -5497,8 +5615,8 @@
        "packed_bounds": [
         55,
         96,
-        111,
-        142
+        110,
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -5527,12 +5645,14 @@
         ]
        },
        "equipment": {
-        "shell": 626,
+        "shell": 619,
         "moss": 136,
         "shard": 48,
-        "claw": 3
+        "claw": 4,
+        "dust": 102
        },
-       "sha256": "bb7df45dceeea5a1a097ac3d0fcd0414eae6e28b7721f072ccaf62804a15cff1",
+       "anchor_gap": {},
+       "sha256": "fd9e98e1afa48d59aaf0dcb1d13f72fe22ccb415faaf974c4d3eb515cb06958d",
        "sheet": "sheets/attack_E.png",
        "region": [
         480,
@@ -5557,7 +5677,7 @@
         53,
         96,
         104,
-        138
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -5589,9 +5709,11 @@
         "shell": 648,
         "moss": 136,
         "shard": 59,
-        "claw": 2
+        "claw": 3,
+        "dust": 41
        },
-       "sha256": "eb899ffb9ecd16ccac1286ad5355fb4277b5415600d9deb31e854600e4fda9d4",
+       "anchor_gap": {},
+       "sha256": "a81b13af6276690130621de0c17f1a0869d712c2b78ebbda060c80289d3573c2",
        "sheet": "sheets/attack_W.png",
        "region": [
         0,
@@ -5607,7 +5729,7 @@
         51,
         96,
         104,
-        139
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -5636,12 +5758,14 @@
         ]
        },
        "equipment": {
-        "shell": 651,
+        "shell": 649,
         "moss": 138,
         "shard": 55,
-        "claw": 4
+        "claw": 2,
+        "dust": 98
        },
-       "sha256": "53e6979a9baa58b009a468afdb2154997798210d72290c328efbac631b4a4e59",
+       "anchor_gap": {},
+       "sha256": "7a8afa94a4881e333e99b8afcd72788bc7f077d8106dc211ef29c7fccb0e724b",
        "sheet": "sheets/attack_W.png",
        "region": [
         160,
@@ -5657,7 +5781,7 @@
         50,
         96,
         104,
-        141
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -5686,12 +5810,14 @@
         ]
        },
        "equipment": {
-        "shell": 631,
+        "shell": 630,
         "moss": 136,
         "shard": 53,
-        "claw": 4
+        "claw": 4,
+        "dust": 85
        },
-       "sha256": "d1010dbc918497b8cbd4a424a19545caff66868cba2779320cddf9732875183b",
+       "anchor_gap": {},
+       "sha256": "c0b216662deee7b32858eff5e7f3187af11f5a695402c671c7df1ff2a5e18977",
        "sheet": "sheets/attack_W.png",
        "region": [
         320,
@@ -5707,7 +5833,7 @@
         49,
         96,
         104,
-        142
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -5736,12 +5862,14 @@
         ]
        },
        "equipment": {
-        "shell": 626,
+        "shell": 619,
         "moss": 136,
         "shard": 53,
-        "claw": 3
+        "claw": 4,
+        "dust": 102
        },
-       "sha256": "ee7553eaf91d3c1b90a60ee652b275bc4f8ce5c5d57e7c2cb2ba6c177b39dc52",
+       "anchor_gap": {},
+       "sha256": "9a907461aa5a01471e96b1bc5ef34c4e9e276703731af16e08d70d57210aeeea",
        "sheet": "sheets/attack_W.png",
        "region": [
         480,
@@ -5821,7 +5949,8 @@
         "shard": 51,
         "claw": 5
        },
-       "sha256": "6d368b80cf5e807c7c78427568ea70557ea8d6edaeb6fbb6cc69650b5b551f51",
+       "anchor_gap": {},
+       "sha256": "b15b522751aa46fb69e5c7d4b20e827cef614d1ae2904e63fbc76c5db47946e9",
        "sheet": "sheets/hurt_S.png",
        "region": [
         0,
@@ -5871,7 +6000,8 @@
         "shard": 53,
         "claw": 6
        },
-       "sha256": "46bc390e4ba996ad696cb80f87c41611c6de783a8923264af01ade09d8c80548",
+       "anchor_gap": {},
+       "sha256": "fa514ed4d8c45346f776e3b059c9c74dd50e6127c05af1286b3115c0d63f2d42",
        "sheet": "sheets/hurt_S.png",
        "region": [
         160,
@@ -5921,7 +6051,8 @@
         "shard": 53,
         "claw": 5
        },
-       "sha256": "d8ab0852949dede70a95f48306b00c79e86abc598c59e534530841cc5ee91cf4",
+       "anchor_gap": {},
+       "sha256": "11fdfa81398f4533222f1a58e18280c9241485596b360a9d9caa75614ba430cb",
        "sheet": "sheets/hurt_S.png",
        "region": [
         320,
@@ -5971,7 +6102,8 @@
         "shard": 53,
         "claw": 6
        },
-       "sha256": "1c9f2e9b4d8f23ffef36a6249787e9e2ecd1f183acfe220ad3592e78d871502c",
+       "anchor_gap": {},
+       "sha256": "8440a661602a99ed258c74b88f18ee8d024852633cafa23096cd0ef73dcbbed6",
        "sheet": "sheets/hurt_S.png",
        "region": [
         480,
@@ -6024,6 +6156,7 @@
         "moss": 136,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "61009c72f62dd281603106fc3f04a6942cd55dba920e0c6e1514d6a15c5d0a14",
        "sheet": "sheets/hurt_N.png",
        "region": [
@@ -6073,7 +6206,8 @@
         "moss": 132,
         "shard": 53
        },
-       "sha256": "c717336ee2cf23122da0834abb194e95d2e373bd30083caa27fe8860a68acdd9",
+       "anchor_gap": {},
+       "sha256": "e1f8a0a282046141acc641c87500572ed8d5160a878cdca3fca436f692e89f36",
        "sheet": "sheets/hurt_N.png",
        "region": [
         160,
@@ -6122,7 +6256,8 @@
         "moss": 133,
         "shard": 51
        },
-       "sha256": "880e3761e6e0783dd3d86523b123a77fa80f15102b6ba02c1806ceabe4b712dc",
+       "anchor_gap": {},
+       "sha256": "2a143cc6d6b4c863de96a3c808c77b29d8481063e7bcc5a85d1a68bd6b978f4b",
        "sheet": "sheets/hurt_N.png",
        "region": [
         320,
@@ -6171,6 +6306,7 @@
         "moss": 133,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "8e56faf46a9d819a21b8cad12c68ea61010a594e167cf1333dddb8e359219efa",
        "sheet": "sheets/hurt_N.png",
        "region": [
@@ -6225,6 +6361,7 @@
         "shard": 50,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "521fe8e75c99832799cc3102885a51807a0cc197b52160a40dfa05bd7b9b0a89",
        "sheet": "sheets/hurt_E.png",
        "region": [
@@ -6275,7 +6412,8 @@
         "shard": 48,
         "claw": 4
        },
-       "sha256": "22c0af28f41359bd019075d38a9ba96471c1932477b4830c29d7b206c8b17301",
+       "anchor_gap": {},
+       "sha256": "a1e45fb590d670c30bc469418bab2bec93f997d20f2280223793a18a272cbc76",
        "sheet": "sheets/hurt_E.png",
        "region": [
         160,
@@ -6325,7 +6463,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "6ce9fab58369411d62d8fc090da288d8221e54836b3908246e8c3288f849c44d",
+       "anchor_gap": {},
+       "sha256": "0f6b32937d68b31f60ca3e1f02af31c0cc051498f17371e711ab2bbf281fd9d7",
        "sheet": "sheets/hurt_E.png",
        "region": [
         320,
@@ -6375,6 +6514,7 @@
         "shard": 54,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "20539fb49c115e204299cbceb0b069de5e11303098db80531b3a98a937b7e9bd",
        "sheet": "sheets/hurt_E.png",
        "region": [
@@ -6429,7 +6569,8 @@
         "shard": 50,
         "claw": 4
        },
-       "sha256": "2997469fccc408f98fba0ba4273d27184c1b00ed165e544b3e1d1547c0d643cb",
+       "anchor_gap": {},
+       "sha256": "0404b2d9b5cac0700a5a96995e82b47e99857e59d2c315ab833d2213f675c531",
        "sheet": "sheets/hurt_W.png",
        "region": [
         0,
@@ -6479,7 +6620,8 @@
         "shard": 55,
         "claw": 4
        },
-       "sha256": "3268a0e5fe9bd0e0842d3405e3ccdc0c8f18f6b42bc413b91ec6069eaa045905",
+       "anchor_gap": {},
+       "sha256": "b8d4e24ed6c9c4a9d27f28a4336b6635bc80cf9f7b8d898650a92877833ee429",
        "sheet": "sheets/hurt_W.png",
        "region": [
         160,
@@ -6529,7 +6671,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "6d74bf583864fdcc85c35da10e4eeaee6057e0ba1ecbf333a6439e74a3ffa6f7",
+       "anchor_gap": {},
+       "sha256": "531d22151ed24ea9405423635e2eb450c4449fe89b07a37f598616a7e04ce613",
        "sheet": "sheets/hurt_W.png",
        "region": [
         320,
@@ -6579,7 +6722,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "f5530978de8cf197f987ec865e7a6347e0210baf70d7ea560422d5f24773a650",
+       "anchor_gap": {},
+       "sha256": "ff250c95b57d54369e7c8c5cf17e165e471f8a90581177d5f4dd086881ebfe7e",
        "sheet": "sheets/hurt_W.png",
        "region": [
         480,
@@ -6653,7 +6797,8 @@
         "shard": 51,
         "claw": 6
        },
-       "sha256": "3124fe21d879ddbf16227c3ea4a0f3057595ceceafdfcafb919ed60d1ba50896",
+       "anchor_gap": {},
+       "sha256": "2c8e855006fa3af1165fd8cfded15cc76b8fa4d0097a7553e74a7f02518c7362",
        "sheet": "sheets/stagger_S.png",
        "region": [
         0,
@@ -6700,10 +6845,12 @@
        "equipment": {
         "shell": 561,
         "moss": 139,
-        "shard": 55,
-        "claw": 5
+        "shard": 54,
+        "claw": 5,
+        "gold": 6
        },
-       "sha256": "b7caf8a1f7bae90592e33948276607a4bc1a19e553f42f67cd28e934e0f467b1",
+       "anchor_gap": {},
+       "sha256": "79c66519247386a0de0a0a1940712c7d23748c4389fa90a7e1e62eaddc3048dd",
        "sheet": "sheets/stagger_S.png",
        "region": [
         160,
@@ -6750,10 +6897,12 @@
        "equipment": {
         "shell": 566,
         "moss": 140,
-        "shard": 55,
-        "claw": 5
+        "shard": 52,
+        "claw": 5,
+        "gold": 6
        },
-       "sha256": "152f212ecbe0ee92e02afcf3348435568452358380a43f45993f80f5123a3c57",
+       "anchor_gap": {},
+       "sha256": "e2fb33aef653e6bece2aafa92e63cbbe7527d22fb3ee096acc7f53da5970b74f",
        "sheet": "sheets/stagger_S.png",
        "region": [
         320,
@@ -6801,9 +6950,11 @@
         "shell": 561,
         "moss": 139,
         "shard": 55,
-        "claw": 5
+        "claw": 5,
+        "gold": 6
        },
-       "sha256": "6d857022f00e8a30d4e23296c4a1849e5ccf5d63effee269476bb6a13ea2ac98",
+       "anchor_gap": {},
+       "sha256": "1785805a67adc8b67858a1aaf5b56216d0da01412ff8016ba04308dcb69f1237",
        "sheet": "sheets/stagger_S.png",
        "region": [
         480,
@@ -6850,10 +7001,12 @@
        "equipment": {
         "shell": 568,
         "moss": 140,
-        "shard": 52,
-        "claw": 5
+        "shard": 51,
+        "claw": 5,
+        "gold": 6
        },
-       "sha256": "25c09ee959f85e96e809926d6b910407ffd0fba67c3fe27d55965f6c54321691",
+       "anchor_gap": {},
+       "sha256": "5eb99e88490e2c31c780fa7a31865394e2e3441e8547e4c8c641b8b2aa09bc24",
        "sheet": "sheets/stagger_S.png",
        "region": [
         640,
@@ -6900,10 +7053,12 @@
        "equipment": {
         "shell": 561,
         "moss": 139,
-        "shard": 55,
-        "claw": 5
+        "shard": 53,
+        "claw": 5,
+        "gold": 6
        },
-       "sha256": "5cfd545ed8ba6b7c0f75aa18c37d7ae468124b6a5ebb172506d081842e88ad34",
+       "anchor_gap": {},
+       "sha256": "6ad36dba005411115ff4ae4e2a62af8e23957d8645f962d45dd2ccd30f947b76",
        "sheet": "sheets/stagger_S.png",
        "region": [
         800,
@@ -6953,7 +7108,8 @@
         "shard": 53,
         "claw": 6
        },
-       "sha256": "1c9f2e9b4d8f23ffef36a6249787e9e2ecd1f183acfe220ad3592e78d871502c",
+       "anchor_gap": {},
+       "sha256": "8440a661602a99ed258c74b88f18ee8d024852633cafa23096cd0ef73dcbbed6",
        "sheet": "sheets/stagger_S.png",
        "region": [
         960,
@@ -7006,6 +7162,7 @@
         "moss": 134,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "8cdd12a279669377d4650977ccb967ddbb40e64e734f3630ca8ffe6748cffb03",
        "sheet": "sheets/stagger_N.png",
        "region": [
@@ -7020,7 +7177,7 @@
        "file": "stagger_N_01.png",
        "packed_bounds": [
         63,
-        96,
+        97,
         97,
         139
        ],
@@ -7053,9 +7210,11 @@
        "equipment": {
         "shell": 576,
         "moss": 133,
-        "shard": 50
+        "shard": 48,
+        "gold": 6
        },
-       "sha256": "405dee0c160639eb30c8a2d31c33254586f58b0ce3197464af467dd51d6ed2c5",
+       "anchor_gap": {},
+       "sha256": "27329fbb361b2e95cb6543910a6a3c38fd577e7a5def609c17a7df5c0a9f01ab",
        "sheet": "sheets/stagger_N.png",
        "region": [
         160,
@@ -7069,7 +7228,7 @@
        "file": "stagger_N_02.png",
        "packed_bounds": [
         63,
-        97,
+        95,
         98,
         139
        ],
@@ -7102,9 +7261,11 @@
        "equipment": {
         "shell": 582,
         "moss": 132,
-        "shard": 50
+        "shard": 49,
+        "gold": 6
        },
-       "sha256": "55b69a2bf103c153e663123143079d60f324d30f946d149e2274fcaf01c9e5cc",
+       "anchor_gap": {},
+       "sha256": "23535863a2701752a9c9dc096fdb6ef80f3eb8205a7e987eae021812e00b7ab7",
        "sheet": "sheets/stagger_N.png",
        "region": [
         320,
@@ -7118,7 +7279,7 @@
        "file": "stagger_N_03.png",
        "packed_bounds": [
         63,
-        96,
+        97,
         97,
         139
        ],
@@ -7151,9 +7312,11 @@
        "equipment": {
         "shell": 576,
         "moss": 133,
-        "shard": 50
+        "shard": 50,
+        "gold": 6
        },
-       "sha256": "a58b4f017a1f8f24aa22a22bac27b45f362db18005f80d70ea8003980709814d",
+       "anchor_gap": {},
+       "sha256": "b4fb459c2dc1ff2f23db155257db8fbdb5a5adab6d6e94c0803f575a8c0a42a9",
        "sheet": "sheets/stagger_N.png",
        "region": [
         480,
@@ -7200,9 +7363,11 @@
        "equipment": {
         "shell": 580,
         "moss": 136,
-        "shard": 48
+        "shard": 48,
+        "gold": 6
        },
-       "sha256": "1fab56d800affaf951181a085714eef3e1517869ac1d82d60690567d18327e4a",
+       "anchor_gap": {},
+       "sha256": "8b122bbe64477b8c0858b52048d0d10eca6988853eeb83342c305893f9093d42",
        "sheet": "sheets/stagger_N.png",
        "region": [
         640,
@@ -7249,9 +7414,11 @@
        "equipment": {
         "shell": 576,
         "moss": 133,
-        "shard": 50
+        "shard": 47,
+        "gold": 6
        },
-       "sha256": "c7cad3660c2295c73999ab39cad7cbedeafdead997b58b7735d30b120fbdfe2c",
+       "anchor_gap": {},
+       "sha256": "620f1c484f1e172110c85b7243b3bae261cd4eabf3ef0a75ba79b42aec0164ac",
        "sheet": "sheets/stagger_N.png",
        "region": [
         800,
@@ -7300,6 +7467,7 @@
         "moss": 133,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "8e56faf46a9d819a21b8cad12c68ea61010a594e167cf1333dddb8e359219efa",
        "sheet": "sheets/stagger_N.png",
        "region": [
@@ -7354,6 +7522,7 @@
         "shard": 48,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "eaaf1b950ab19e0fb0ae8d4293ae0903955c36df84b437940935751b1abe4463",
        "sheet": "sheets/stagger_E.png",
        "region": [
@@ -7402,9 +7571,11 @@
         "shell": 652,
         "moss": 133,
         "shard": 54,
-        "claw": 4
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "28064246a7b0d59d6506ec5f85bfc252bc77c72b8082f733c04e267a9f1a0c5b",
+       "anchor_gap": {},
+       "sha256": "5ee81f2b6689cb5118c8b6eb39411b976e8bb2aff761277c8063afd8eec07135",
        "sheet": "sheets/stagger_E.png",
        "region": [
         160,
@@ -7418,7 +7589,7 @@
        "file": "stagger_E_02.png",
        "packed_bounds": [
         55,
-        96,
+        95,
         114,
         136
        ],
@@ -7451,10 +7622,12 @@
        "equipment": {
         "shell": 653,
         "moss": 136,
-        "shard": 51,
-        "claw": 4
+        "shard": 48,
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "47180dc7450fefecbff7867c738415ca73e3536e652c751c098f57f016a7dcc5",
+       "anchor_gap": {},
+       "sha256": "8589ca7553b1d5085de8b91bcf013a85d155d9cd3b7b9f6028ae9047895775c0",
        "sheet": "sheets/stagger_E.png",
        "region": [
         320,
@@ -7502,9 +7675,11 @@
         "shell": 652,
         "moss": 133,
         "shard": 54,
-        "claw": 4
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "039e41351a5f04aa453439891095fb8686ce5144eb618cc359870c7ab8e84beb",
+       "anchor_gap": {},
+       "sha256": "09fbae3b2d351b2c116c3b9d2fcdb61b9b9af6aa97369575c804e1bf2063f0f4",
        "sheet": "sheets/stagger_E.png",
        "region": [
         480,
@@ -7552,9 +7727,11 @@
         "shell": 652,
         "moss": 133,
         "shard": 54,
-        "claw": 4
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "353365c7afc75fb51c7c7ceca79b368bc2faf8267d561bae307211b69d45965a",
+       "anchor_gap": {},
+       "sha256": "852dd088b835a110495b3f25aa0d2aabcf66477dc1cbe58c47e21028b0a2b517",
        "sheet": "sheets/stagger_E.png",
        "region": [
         640,
@@ -7601,10 +7778,12 @@
        "equipment": {
         "shell": 652,
         "moss": 133,
-        "shard": 54,
-        "claw": 4
+        "shard": 51,
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "59cff1ba22aa7b70767926f5eb430f2b132728c9e25e247a7b6993c3d7168504",
+       "anchor_gap": {},
+       "sha256": "92a8615b8522135112a4c35338e5c2a8d905a9de7edd5b00119c59a9895dae82",
        "sheet": "sheets/stagger_E.png",
        "region": [
         800,
@@ -7654,6 +7833,7 @@
         "shard": 54,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "20539fb49c115e204299cbceb0b069de5e11303098db80531b3a98a937b7e9bd",
        "sheet": "sheets/stagger_E.png",
        "region": [
@@ -7708,7 +7888,8 @@
         "shard": 53,
         "claw": 4
        },
-       "sha256": "2093675a9f69dc64777c69314ce6221a4bc375478470a8b5f2144b00865b5166",
+       "anchor_gap": {},
+       "sha256": "c814d98bb708bae6f8549b1a867a82d9c173a25aa631d4abaf6f0972413fbcf8",
        "sheet": "sheets/stagger_W.png",
        "region": [
         0,
@@ -7756,9 +7937,11 @@
         "shell": 652,
         "moss": 132,
         "shard": 59,
-        "claw": 4
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "d752160dad346660384dc8b4535679305868e4d977b47a5896aaa8751ff0cc1e",
+       "anchor_gap": {},
+       "sha256": "b6df6bfaeb909c7134b71eacf5c952d53d060c1e8026e1ce3b27766e4d9707dc",
        "sheet": "sheets/stagger_W.png",
        "region": [
         160,
@@ -7772,7 +7955,7 @@
        "file": "stagger_W_02.png",
        "packed_bounds": [
         45,
-        96,
+        95,
         104,
         136
        ],
@@ -7805,10 +7988,12 @@
        "equipment": {
         "shell": 652,
         "moss": 132,
-        "shard": 59,
-        "claw": 4
+        "shard": 56,
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "15b1dd83ed79ac05baa6568d359342f83379755254f6a7bfb01e0ec4e5f7ef58",
+       "anchor_gap": {},
+       "sha256": "fdfd7df7879e6c2c184fa4bfaf1b99dcf505110bd265e1180b603d15c64b5427",
        "sheet": "sheets/stagger_W.png",
        "region": [
         320,
@@ -7856,9 +8041,11 @@
         "shell": 652,
         "moss": 132,
         "shard": 59,
-        "claw": 4
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "86d3c9cb5608370a8b7e7927b4c0d3f2f41b4cdccdf8630b42e1e05b1f37fcdf",
+       "anchor_gap": {},
+       "sha256": "984895dad628829274af186fb3ce6a83ef43cf8d460f928c9880403436b4b314",
        "sheet": "sheets/stagger_W.png",
        "region": [
         480,
@@ -7906,9 +8093,11 @@
         "shell": 653,
         "moss": 132,
         "shard": 59,
-        "claw": 4
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "a0a224bf3fdffc969a53a553c7ac47e2ae30eeac586a3e809b9e1bfde7488190",
+       "anchor_gap": {},
+       "sha256": "17ba37d82b4fda4023bd59c59ff9e4d0d55e22f379d019844d8dad8e12bec25c",
        "sheet": "sheets/stagger_W.png",
        "region": [
         640,
@@ -7955,10 +8144,12 @@
        "equipment": {
         "shell": 652,
         "moss": 132,
-        "shard": 59,
-        "claw": 4
+        "shard": 53,
+        "claw": 4,
+        "gold": 6
        },
-       "sha256": "bc94dd4d19e1089437277dd8fe3939e8393f64e8bdfcbbed8fb3fd780a4c4880",
+       "anchor_gap": {},
+       "sha256": "c134eb027c4fe0bac2afa37ffd88321e13deef57cb5bbb529865ab151fe82d89",
        "sheet": "sheets/stagger_W.png",
        "region": [
         800,
@@ -8008,7 +8199,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "f5530978de8cf197f987ec865e7a6347e0210baf70d7ea560422d5f24773a650",
+       "anchor_gap": {},
+       "sha256": "ff250c95b57d54369e7c8c5cf17e165e471f8a90581177d5f4dd086881ebfe7e",
        "sheet": "sheets/stagger_W.png",
        "region": [
         960,
@@ -8087,7 +8279,8 @@
         "shard": 53,
         "claw": 6
        },
-       "sha256": "920ff6442b47c87f8f3f2bdb873c1eb46d5d3a54a6a214ec9d930fee987b03f9",
+       "anchor_gap": {},
+       "sha256": "8d7139d0ccac1af841d73437929e1f87e571ebb7728f3a34c3ff0e3284b47d95",
        "sheet": "sheets/freed_S.png",
        "region": [
         0,
@@ -8137,7 +8330,8 @@
         "shard": 53,
         "claw": 6
        },
-       "sha256": "19da0c7aa70f841f0d513764760b6648756b2a2f8019593d82c7cdd6f117cdbe",
+       "anchor_gap": {},
+       "sha256": "ef35861a8a756288d4566c32c0dbb52cb9ffa2a5298de8ac2395dc12a8c31f72",
        "sheet": "sheets/freed_S.png",
        "region": [
         160,
@@ -8186,7 +8380,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "5459862b493637f2fb46ecb7959aba8f184f70ff4408ac0d416c13f4a932b752",
+       "anchor_gap": {},
+       "sha256": "b3d8efbec0d2ce7d09254ed37a07e92bfe1e2b259a76c235d2843a766e09c1b5",
        "sheet": "sheets/freed_S.png",
        "region": [
         320,
@@ -8235,7 +8430,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "5351bfeda470e625bc2209c3387b46afbdb783a96f98ea95a564771a31386a89",
+       "anchor_gap": {},
+       "sha256": "ce52d086a34d863e5af32c0dd02d996c29b9baca2066549b1113ff8055d0e7c9",
        "sheet": "sheets/freed_S.png",
        "region": [
         480,
@@ -8284,7 +8480,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "cf38294cef110e85d0fbcd6a4abc12926126a90dc264600671f9e6f100d9cf64",
+       "anchor_gap": {},
+       "sha256": "23baa1e9a63044aa6b88eabf08fb8ffaf4f33e2abc5998f56f7ebe89a58b450a",
        "sheet": "sheets/freed_S.png",
        "region": [
         640,
@@ -8333,7 +8530,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "f4a7df5fdf4bff85edd9b45139267c2bd485ad8dcd1ce844d2470a62c3c5be39",
+       "anchor_gap": {},
+       "sha256": "d8e991ba21ff8aa35c8d28254a239753808782bbe42fe1137ad7afc29cb07b8c",
        "sheet": "sheets/freed_S.png",
        "region": [
         800,
@@ -8382,7 +8580,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "f4a7df5fdf4bff85edd9b45139267c2bd485ad8dcd1ce844d2470a62c3c5be39",
+       "anchor_gap": {},
+       "sha256": "d8e991ba21ff8aa35c8d28254a239753808782bbe42fe1137ad7afc29cb07b8c",
        "sheet": "sheets/freed_S.png",
        "region": [
         960,
@@ -8431,7 +8630,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "f77f0f2d068524f20dc7dd0b8791912b67142c998047bcfe528b8249b53db770",
+       "anchor_gap": {},
+       "sha256": "92e126fc4d5a37d45c1f14cd99e2990ac91af144eb3ee11bdbba900861ea15b2",
        "sheet": "sheets/freed_S.png",
        "region": [
         1120,
@@ -8480,7 +8680,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "91eeae42ff02c2a53be22c66dd7a9a7a068690a2fdabcd553f8b0bf24216d559",
+       "anchor_gap": {},
+       "sha256": "0771e77e8c165da2a933b1e18416b80cc779ba406acbc1e27bd7262c6b344d6a",
        "sheet": "sheets/freed_S.png",
        "region": [
         1280,
@@ -8529,7 +8730,8 @@
         "moss": 153,
         "claw": 5
        },
-       "sha256": "888318a59bfde60a2095e174e2b6d4a6feb4ae53ffd12031fbbd0b980b6f744c",
+       "anchor_gap": {},
+       "sha256": "77a3640b6bb7a3488d6ed52cbd2b48aa9e617333cd223b9714a17a9d847d76f1",
        "sheet": "sheets/freed_S.png",
        "region": [
         1440,
@@ -8578,7 +8780,8 @@
         "moss": 156,
         "claw": 6
        },
-       "sha256": "3b89efa5fe3c7b1b1dddb973ca6bff04b10d24e46a4cf0e6e0e274c05189850e",
+       "anchor_gap": {},
+       "sha256": "8408d10737188d62767d2e30296d2b5fe4a035da4ce30fb9ee88ae4f399185d9",
        "sheet": "sheets/freed_S.png",
        "region": [
         1600,
@@ -8627,7 +8830,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "91eeae42ff02c2a53be22c66dd7a9a7a068690a2fdabcd553f8b0bf24216d559",
+       "anchor_gap": {},
+       "sha256": "2455aea7e94defcb446204c3e0a9b2d2b62c5d21ff7fbe4c0b3798a839ab817a",
        "sheet": "sheets/freed_S.png",
        "region": [
         1760,
@@ -8680,6 +8884,7 @@
         "moss": 133,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "8e56faf46a9d819a21b8cad12c68ea61010a594e167cf1333dddb8e359219efa",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -8729,6 +8934,7 @@
         "moss": 151,
         "shard": 51
        },
+       "anchor_gap": {},
        "sha256": "ec9dcf9ea815f0add8bd8a4daaf6a7a654208d293433bd79a40303562a4743fc",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -8777,6 +8983,7 @@
         "shell": 570,
         "moss": 157
        },
+       "anchor_gap": {},
        "sha256": "d0e6215baf463951bcce44a9cdbf634508392675cd7e209c269ae838b1d52454",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -8825,6 +9032,7 @@
         "shell": 570,
         "moss": 157
        },
+       "anchor_gap": {},
        "sha256": "d0e6215baf463951bcce44a9cdbf634508392675cd7e209c269ae838b1d52454",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -8873,6 +9081,7 @@
         "shell": 570,
         "moss": 157
        },
+       "anchor_gap": {},
        "sha256": "d0e6215baf463951bcce44a9cdbf634508392675cd7e209c269ae838b1d52454",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -8921,6 +9130,7 @@
         "shell": 570,
         "moss": 157
        },
+       "anchor_gap": {},
        "sha256": "d0e6215baf463951bcce44a9cdbf634508392675cd7e209c269ae838b1d52454",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -8969,6 +9179,7 @@
         "shell": 570,
         "moss": 157
        },
+       "anchor_gap": {},
        "sha256": "d0e6215baf463951bcce44a9cdbf634508392675cd7e209c269ae838b1d52454",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -9017,6 +9228,7 @@
         "shell": 570,
         "moss": 157
        },
+       "anchor_gap": {},
        "sha256": "d0e6215baf463951bcce44a9cdbf634508392675cd7e209c269ae838b1d52454",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -9065,6 +9277,7 @@
         "shell": 570,
         "moss": 157
        },
+       "anchor_gap": {},
        "sha256": "d0e6215baf463951bcce44a9cdbf634508392675cd7e209c269ae838b1d52454",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -9113,7 +9326,8 @@
         "shell": 573,
         "moss": 156
        },
-       "sha256": "142b9cc6fa4bd7a4d5980cc686b15ca5db24b1c878f26b178de9f58ad199eea9",
+       "anchor_gap": {},
+       "sha256": "102565bc02de3bef697c74b80c7a906a7eb360aeaf6b6c36082810c1c08ecd41",
        "sheet": "sheets/freed_N.png",
        "region": [
         1440,
@@ -9161,7 +9375,8 @@
         "shell": 576,
         "moss": 153
        },
-       "sha256": "69560a5eb1b479812165a946f812d522011b3f4b03bf59677bebb447978d833a",
+       "anchor_gap": {},
+       "sha256": "dc965fdc6e67c68a3dec916a4413f6d942ef28f7a29ccf7cd4ba47fffae593f3",
        "sheet": "sheets/freed_N.png",
        "region": [
         1600,
@@ -9209,6 +9424,7 @@
         "shell": 570,
         "moss": 157
        },
+       "anchor_gap": {},
        "sha256": "d0e6215baf463951bcce44a9cdbf634508392675cd7e209c269ae838b1d52454",
        "sheet": "sheets/freed_N.png",
        "region": [
@@ -9263,6 +9479,7 @@
         "shard": 54,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "bd70671a50cbde76a50b0e72ddbef65a2766bc68331255f6e420028f3963358c",
        "sheet": "sheets/freed_E.png",
        "region": [
@@ -9313,7 +9530,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "0d920305fb2796dea598260d7ed0b18dd7da1f71ddac47c01842d0b287b83330",
+       "anchor_gap": {},
+       "sha256": "87e2f5384ee2ca57f80c6a930acf557d1c61f76d596310cdde30baf6c1e324fe",
        "sheet": "sheets/freed_E.png",
        "region": [
         160,
@@ -9362,6 +9580,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "3be8d0c589ba657b35f1261592a3c420c701ea16ded0c4cc2a9e2dbfd777a7c4",
        "sheet": "sheets/freed_E.png",
        "region": [
@@ -9411,7 +9630,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "5f6813053c81ad8b588e89417e405e8c6739ebeb1a12914bf8421439caf51c17",
+       "anchor_gap": {},
+       "sha256": "c739a7d206e417aa828a6cabae6bab4116cdb82880108f484a8a29842822ce83",
        "sheet": "sheets/freed_E.png",
        "region": [
         480,
@@ -9460,7 +9680,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "25836306c268048a44bc65a130fb8d742afd3414c30e03a221887191907235ef",
+       "anchor_gap": {},
+       "sha256": "08c9b173e07f9187a22a62d5b8d8a9058a300335ec6c92b542b8c6b5bb299b40",
        "sheet": "sheets/freed_E.png",
        "region": [
         640,
@@ -9509,7 +9730,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "fa5bd57568ec16e5f351f294f2d07ead193adbe7b68aaa113924dc688cb2d359",
+       "anchor_gap": {},
+       "sha256": "c9feaa62e58930329f30a5e45877f595f6034ea2abb750663a474359fb2cc033",
        "sheet": "sheets/freed_E.png",
        "region": [
         800,
@@ -9558,6 +9780,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "498dd180f36ced10705b69bf2f905486f7786d8c3d6992ee79780e0998f41895",
        "sheet": "sheets/freed_E.png",
        "region": [
@@ -9607,6 +9830,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "875468b00bef8932b276d6f4e3c10881af24b608449458dd70e5d104e6c6e106",
        "sheet": "sheets/freed_E.png",
        "region": [
@@ -9656,6 +9880,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "0982c8a99296374220cdea4c13959c540f0b9a367dc1aebe81c19da84c664305",
        "sheet": "sheets/freed_E.png",
        "region": [
@@ -9705,7 +9930,8 @@
         "moss": 141,
         "claw": 4
        },
-       "sha256": "88bb3130b0107ca322e07be72976aae2d2a07f2b19ed2f5ea7d56e957dbf8bba",
+       "anchor_gap": {},
+       "sha256": "f81db692b4da2928048a2315c42950c69ab231e012da06ecbcc7a4fb48b58975",
        "sheet": "sheets/freed_E.png",
        "region": [
         1440,
@@ -9754,7 +9980,8 @@
         "moss": 141,
         "claw": 4
        },
-       "sha256": "2f17360a72562a1981443b3016f4921abc177440c3e23ba36ad1bd9f9377d1eb",
+       "anchor_gap": {},
+       "sha256": "525eb254512800dde1385afad8321736fb2836b7fbfd59fe9c10251be3ee2985",
        "sheet": "sheets/freed_E.png",
        "region": [
         1600,
@@ -9803,6 +10030,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "0982c8a99296374220cdea4c13959c540f0b9a367dc1aebe81c19da84c664305",
        "sheet": "sheets/freed_E.png",
        "region": [
@@ -9857,7 +10085,8 @@
         "shard": 59,
         "claw": 4
        },
-       "sha256": "797abdefc390c553ba786f573c961ecfa9da772b2ab8464597c5aa106a55fe6a",
+       "anchor_gap": {},
+       "sha256": "b428da80383106981fd38312bb15b4d82ce0b4c06786b8de8ffca5e8c0b851b5",
        "sheet": "sheets/freed_W.png",
        "region": [
         0,
@@ -9907,7 +10136,8 @@
         "shard": 54,
         "claw": 4
        },
-       "sha256": "7d0e42ec5bebb20e978e5be5305a3426942d1bd8bb39802a29e8376fa6929eff",
+       "anchor_gap": {},
+       "sha256": "b8c62a1920e2ffc87c24d19e6276ab533c0061b973324f5d37b83325ae5cc75b",
        "sheet": "sheets/freed_W.png",
        "region": [
         160,
@@ -9956,6 +10186,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "b08b74fbf2a61c552e51907668f6e5ac652922a9a0b76b0f2561deb157dd4f07",
        "sheet": "sheets/freed_W.png",
        "region": [
@@ -10005,7 +10236,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "d9fea227c7b8af11595e5e752ad9fa57f86c5fdd8b18dd526e9f37b43afcffbd",
+       "anchor_gap": {},
+       "sha256": "92ff2df4bee752942ddb91930b6d34478fff703e6161bfc09f5a4dd6b76ff1d9",
        "sheet": "sheets/freed_W.png",
        "region": [
         480,
@@ -10054,7 +10286,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "250427b263b4d41bee27ecbda5e7052362402190c8f4cabf5d1863c692f5f1bd",
+       "anchor_gap": {},
+       "sha256": "a6d09cec555e964938e58ffd937ff4b7075114979900b1ecf4a4344e18261b45",
        "sheet": "sheets/freed_W.png",
        "region": [
         640,
@@ -10103,7 +10336,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "b9b63cc89e9230520ca3da33caacd3113231b551412ca5724d0eb7ff08d32d66",
+       "anchor_gap": {},
+       "sha256": "c59789f4a3fdd674cb5114e85c3b30cee6f0e84a8ac8da90c2d33fb51719c3d2",
        "sheet": "sheets/freed_W.png",
        "region": [
         800,
@@ -10152,6 +10386,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "59d0e0be88db04974a0e71ec4ccac3423a0a6e737137afdc579826b7d934fd12",
        "sheet": "sheets/freed_W.png",
        "region": [
@@ -10201,7 +10436,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "a26b80f9c3be5d20b3122b650c79c2e8915fe546a3d29ec05c329eb070f180bc",
+       "anchor_gap": {},
+       "sha256": "46d46418c1aa9994ca08bc437dcd4452f34d95d12ac0c0feb19ae478e412f8a2",
        "sheet": "sheets/freed_W.png",
        "region": [
         1120,
@@ -10250,6 +10486,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "01c28380cff8dc5ce4bc3e938d02a26b35b223384e5231c171de5dfa89c85491",
        "sheet": "sheets/freed_W.png",
        "region": [
@@ -10299,7 +10536,8 @@
         "moss": 141,
         "claw": 4
        },
-       "sha256": "b4f40744bd33bfebc861f67cc4ea080b7c59a4e00e059002fb63c0c4a8000a45",
+       "anchor_gap": {},
+       "sha256": "e0214ec7e4e5171d33940d874ff5b556f807b941e5dbe4ecc5f71a1c1acb6ff2",
        "sheet": "sheets/freed_W.png",
        "region": [
         1440,
@@ -10348,7 +10586,8 @@
         "moss": 141,
         "claw": 4
        },
-       "sha256": "441e802f4fdacbf8b17fe7fe177d28690780e3166b795b6481ae8dd939a00b03",
+       "anchor_gap": {},
+       "sha256": "6b10426827bc9a22d0f1b8a15e4e8fffe55fb7449bbc9a0093e1ff13197c685a",
        "sheet": "sheets/freed_W.png",
        "region": [
         1600,
@@ -10397,6 +10636,7 @@
         "moss": 144,
         "claw": 4
        },
+       "anchor_gap": {},
        "sha256": "01c28380cff8dc5ce4bc3e938d02a26b35b223384e5231c171de5dfa89c85491",
        "sheet": "sheets/freed_W.png",
        "region": [
@@ -10471,7 +10711,8 @@
         "moss": 157,
         "claw": 7
        },
-       "sha256": "51ca0b6536ba329c6ea564539b0cb8986130d3df75e8b4f9414bbccac05b2252",
+       "anchor_gap": {},
+       "sha256": "8090707b90158321020e0d334cd3fc3f55dcb309d76871ec51a67ab92873c220",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         0,
@@ -10496,11 +10737,11 @@
         ],
         "foot_L": [
          9.8,
-         3.0
+         2.7
         ],
         "hind_R": [
          -9.8,
-         -4.5
+         -4.8
         ],
         "hind_L": [
          9.8,
@@ -10520,7 +10761,8 @@
         "moss": 153,
         "claw": 6
        },
-       "sha256": "0fd30d37ff6ceafe35654ff3678dd5ca915c4335cd6dc6ea6347afe7488955f7",
+       "anchor_gap": {},
+       "sha256": "d9217714a14dbbb6023a84ecaf38f363e62aa2340ad749b1cf2294da1b96294d",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         160,
@@ -10569,7 +10811,8 @@
         "moss": 155,
         "claw": 4
        },
-       "sha256": "0c8b0ec01d2d282eec85f76fd2ae1edee34e852de7680f0e8f2eb2d1148aaeda",
+       "anchor_gap": {},
+       "sha256": "f02fe0103d4a08d2489282d4241c18008124623890529ab7e922a417b7648f24",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         320,
@@ -10594,11 +10837,11 @@
         ],
         "foot_L": [
          9.8,
-         1.2
+         1.4
         ],
         "hind_R": [
          -9.8,
-         -6.3
+         -6.1
         ],
         "hind_L": [
          9.8,
@@ -10618,7 +10861,8 @@
         "moss": 153,
         "claw": 4
        },
-       "sha256": "341f296440687f3869f5d6d5141b5e09b6c5b0e018f8aebb9a59e81d1acb8cf8",
+       "anchor_gap": {},
+       "sha256": "2c0817974ace0ff603c278b8ae940bbdd2afb2d9d48b36bd9e21118ae091e299",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         480,
@@ -10667,7 +10911,8 @@
         "moss": 157,
         "claw": 6
        },
-       "sha256": "054c5060efca4d812f2919dd82dada55eff06691494d8192fc16732a74b199d4",
+       "anchor_gap": {},
+       "sha256": "a2b8f4fcde711bf981b31e6df276829c0c675352b98255b2f3942c82e6d18f4d",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         640,
@@ -10688,7 +10933,7 @@
        "anchors": {
         "foot_R": [
          -9.8,
-         3.0
+         2.7
         ],
         "foot_L": [
          9.8,
@@ -10700,7 +10945,7 @@
         ],
         "hind_L": [
          9.8,
-         -4.5
+         -4.8
         ],
         "strike": [
          -0.0,
@@ -10716,7 +10961,8 @@
         "moss": 153,
         "claw": 6
        },
-       "sha256": "8974125eaa1ca3edffc2896e26b8825a9ff33d8c9d579eb841492a51209b8b8a",
+       "anchor_gap": {},
+       "sha256": "13a789b99516034f91a40d8e2908f1a45bb65400d1ba248bc3e25007530bcbfe",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         800,
@@ -10765,7 +11011,8 @@
         "moss": 155,
         "claw": 4
        },
-       "sha256": "04144b29f5e987c9fdfffa37d82e9b312783309bfe77c07c6620be9fc74e5679",
+       "anchor_gap": {},
+       "sha256": "f442c8bca3c40697169e6232a0954fede5b6894e7f41d231cf95ef2661626819",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         960,
@@ -10786,7 +11033,7 @@
        "anchors": {
         "foot_R": [
          -9.8,
-         1.2
+         1.4
         ],
         "foot_L": [
          9.8,
@@ -10798,7 +11045,7 @@
         ],
         "hind_L": [
          9.8,
-         -6.3
+         -6.1
         ],
         "strike": [
          -0.0,
@@ -10814,7 +11061,8 @@
         "moss": 153,
         "claw": 4
        },
-       "sha256": "2de52e1889ff1d861d494df019dafc7ce039c7b639f3da4a1efb30eac6862332",
+       "anchor_gap": {},
+       "sha256": "ddf4feeb8aa98fc572166ac13789d7b525f044fcd3a55dba10166b5b692d7f05",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         1120,
@@ -10866,7 +11114,8 @@
         "shell": 570,
         "moss": 157
        },
-       "sha256": "94c5eaa387aa9c43e72f67bf1ea49ae1290585d53c19b230a8edd2b264a22a92",
+       "anchor_gap": {},
+       "sha256": "1c699da2bc3fe1633097b0978256e48dac4ecac8635cea6a6317476273d5e7fd",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         0,
@@ -10891,11 +11140,11 @@
         ],
         "foot_L": [
          -9.8,
-         -7.0
+         -6.7
         ],
         "hind_R": [
          9.8,
-         0.5
+         0.8
         ],
         "hind_L": [
          -9.8,
@@ -10914,7 +11163,8 @@
         "shell": 564,
         "moss": 153
        },
-       "sha256": "5900370edc406af39847dc03af565a4aff39bafd44d882945d96cfa1921223e1",
+       "anchor_gap": {},
+       "sha256": "2929a2bb2b4017000c444a5a46fdd06274f8b4d476cb92e09e7811b558e7e6c7",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         160,
@@ -10962,7 +11212,8 @@
         "shell": 576,
         "moss": 155
        },
-       "sha256": "c309f7d8a284c2e5b112cb51570a4ef4884419eed45b5bad222381d2a5cd7a0f",
+       "anchor_gap": {},
+       "sha256": "bf8c332d009a1fad02ca7edc7102bd3dc6e3ae895c7115c17001b33018a17f8a",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         320,
@@ -10987,11 +11238,11 @@
         ],
         "foot_L": [
          -9.8,
-         -5.2
+         -5.4
         ],
         "hind_R": [
          9.8,
-         2.3
+         2.1
         ],
         "hind_L": [
          -9.8,
@@ -11010,7 +11261,8 @@
         "shell": 564,
         "moss": 153
        },
-       "sha256": "3ac94dc8c36583580fd1ea2d3e625243a25eb57b1166e449f49cfd7528a2f41c",
+       "anchor_gap": {},
+       "sha256": "9f3be6fa01a5751f1e5592b7d7dd93b5ac1e0e4273b71c071fe527afe719620d",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         480,
@@ -11058,7 +11310,8 @@
         "shell": 570,
         "moss": 157
        },
-       "sha256": "485e52b7d7db156641e7a80b6867d20763861bbb8c4258399a6fae8479a5ac3b",
+       "anchor_gap": {},
+       "sha256": "5e45ea927f6913330fd92020bd021f472ff6f3750ad02ec0a2ba24b09536d48f",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         640,
@@ -11079,7 +11332,7 @@
        "anchors": {
         "foot_R": [
          9.8,
-         -7.0
+         -6.7
         ],
         "foot_L": [
          -9.8,
@@ -11091,7 +11344,7 @@
         ],
         "hind_L": [
          -9.8,
-         0.5
+         0.8
         ],
         "strike": [
          0.0,
@@ -11106,7 +11359,8 @@
         "shell": 564,
         "moss": 153
        },
-       "sha256": "5560064340baeb053f48671dcb93d0961dd6cb3e2aef773f75f4780e47fa29bc",
+       "anchor_gap": {},
+       "sha256": "9a4a60cec2e3da970c064e8b7bb122b608e6698b90c6a58c61475aee388a7d99",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         800,
@@ -11154,7 +11408,8 @@
         "shell": 576,
         "moss": 155
        },
-       "sha256": "101620043aeecd6e104d3ac93a5eb6ccc3462911dfc0106807e838d426c73fb8",
+       "anchor_gap": {},
+       "sha256": "e0f4be96a520db10c4e42060b4f8ec85270bd40427df58dd44b8878abda9e41e",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         960,
@@ -11175,7 +11430,7 @@
        "anchors": {
         "foot_R": [
          9.8,
-         -5.2
+         -5.4
         ],
         "foot_L": [
          -9.8,
@@ -11187,7 +11442,7 @@
         ],
         "hind_L": [
          -9.8,
-         2.3
+         2.1
         ],
         "strike": [
          0.0,
@@ -11202,7 +11457,8 @@
         "shell": 564,
         "moss": 153
        },
-       "sha256": "d973ef3581ca4be2cef41673be7a33982902d80536ad21a264c7fd76fd1c4e4b",
+       "anchor_gap": {},
+       "sha256": "0796c7db91a4a3b4f2c9c07d0f423017735ee7985af3398e4dd24cd528c56502",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         1120,
@@ -11255,7 +11511,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "ae8a90573ae34b3b015f6bc3196212e865be78503c059569f3a2f585498ac213",
+       "anchor_gap": {},
+       "sha256": "584c24452c5e43b2bd140a53ca7f58b25bfb7cbaf1477b25511d50932d4236bf",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         0,
@@ -11279,11 +11536,11 @@
          -3.7
         ],
         "foot_L": [
-         15.2,
+         14.4,
          -2.0
         ],
         "hind_R": [
-         -8.1,
+         -8.9,
          -2.0
         ],
         "hind_L": [
@@ -11304,7 +11561,8 @@
         "moss": 145,
         "claw": 4
        },
-       "sha256": "3bbda572b56f1c56e47e4adfd08e8c5c0c7a570f14fa28f87b8e5435f72038cf",
+       "anchor_gap": {},
+       "sha256": "fb1ec9a1f0b296cdcdaf97aff1b0a9a9c89c07b21a241e8ccb9dd7c3eaace719",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         160,
@@ -11353,7 +11611,8 @@
         "moss": 149,
         "claw": 4
        },
-       "sha256": "77baa70e9b468ca1e4a0841239fffb24a03850ffbaaf5644cedc9907a591b42d",
+       "anchor_gap": {},
+       "sha256": "1f4d23cb0ee2c86fa98a337905dfe637a91f669b35cae86bf08cc2adb62bc854",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         320,
@@ -11377,11 +11636,11 @@
          -3.7
         ],
         "foot_L": [
-         10.0,
+         10.7,
          -2.0
         ],
         "hind_R": [
-         -13.3,
+         -12.6,
          -2.0
         ],
         "hind_L": [
@@ -11402,7 +11661,8 @@
         "moss": 145,
         "claw": 4
        },
-       "sha256": "c234c47915ffe87a8a698c1cd1a4400f1bbc1d9a4b63de20a5b16fa19784942b",
+       "anchor_gap": {},
+       "sha256": "49ef27521259d805b77693b337b82dfeb8c653f41c471779a7b63544e4b22dfd",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         480,
@@ -11451,7 +11711,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "4145f00e31a1c094600616379adeec88e5605726cb0c08fd49ca5e907446bcc9",
+       "anchor_gap": {},
+       "sha256": "eef494505f8d07bf86a8c8ebfb6c7834625d47c5ba1ed7807485ff079bc3d0d0",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         640,
@@ -11471,7 +11732,7 @@
        ],
        "anchors": {
         "foot_R": [
-         13.2,
+         12.4,
          -2.0
         ],
         "foot_L": [
@@ -11483,7 +11744,7 @@
          -3.7
         ],
         "hind_L": [
-         -6.2,
+         -7.0,
          -2.0
         ],
         "strike": [
@@ -11500,7 +11761,8 @@
         "moss": 145,
         "claw": 4
        },
-       "sha256": "b4a005d1674da878afa34702773cbd4058a229a29389c97243f041f65c988c70",
+       "anchor_gap": {},
+       "sha256": "1f5100a2d9a4cad4fe2e7155b0f33f1700dd0d28c964fde0b0dedac4947c3fc0",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         800,
@@ -11549,7 +11811,8 @@
         "moss": 149,
         "claw": 2
        },
-       "sha256": "68b81982291e9eedb04fc15085dbccf18b70c071eac8a08b1afa357f1dd5ed36",
+       "anchor_gap": {},
+       "sha256": "ad4415cc835b870ff851b2c035ada84750e5f900a32b9dba7dda7bade5446857",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         960,
@@ -11569,7 +11832,7 @@
        ],
        "anchors": {
         "foot_R": [
-         8.0,
+         8.8,
          -2.0
         ],
         "foot_L": [
@@ -11581,7 +11844,7 @@
          -3.7
         ],
         "hind_L": [
-         -11.4,
+         -10.6,
          -2.0
         ],
         "strike": [
@@ -11598,7 +11861,8 @@
         "moss": 145,
         "claw": 4
        },
-       "sha256": "527cb327212166833db79a9626f29b4fef4c64aa7503b85d4cd3c9a6ee3d1861",
+       "anchor_gap": {},
+       "sha256": "a8b45c657842fe2c4cf1c12972e2cf147128dcb8420dc54f073014b245ffa229",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         1120,
@@ -11651,7 +11915,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "758f4ce278613fcdfccbd8591caf3907d526e56fbae1d747e284c899e8472951",
+       "anchor_gap": {},
+       "sha256": "89c7598503f9f80f1f08ebeac67e5bb7f5d7da0c3e4dd1b89ddd3802bbc0a570",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         0,
@@ -11675,11 +11940,11 @@
          -3.7
         ],
         "foot_L": [
-         -13.2,
+         -12.4,
          -2.0
         ],
         "hind_R": [
-         6.2,
+         7.0,
          -2.0
         ],
         "hind_L": [
@@ -11700,7 +11965,8 @@
         "moss": 145,
         "claw": 4
        },
-       "sha256": "41f095ac80d282bb1f91c84c3ee310c381029b6767d81c82c305d42ec8913817",
+       "anchor_gap": {},
+       "sha256": "34c6c4c8770688717fcb6f04e5d5482415429601c3cecc306442b331da63f019",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         160,
@@ -11749,7 +12015,8 @@
         "moss": 149,
         "claw": 2
        },
-       "sha256": "2070e9de651f810f78130dd8e9f3517964de9ed7fa53a66ccd0ab3d46afa0c73",
+       "anchor_gap": {},
+       "sha256": "7be8d5179f98934e8fb9a3ce7b8fce3bfca725dfb4ab55a18cace490f72d7e69",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         320,
@@ -11773,11 +12040,11 @@
          -3.7
         ],
         "foot_L": [
-         -8.0,
+         -8.8,
          -2.0
         ],
         "hind_R": [
-         11.4,
+         10.6,
          -2.0
         ],
         "hind_L": [
@@ -11798,7 +12065,8 @@
         "moss": 145,
         "claw": 4
        },
-       "sha256": "0e4ae46e8c5fd815e6f7c90407c14339cb428885d6656747e6923c2607c1dffc",
+       "anchor_gap": {},
+       "sha256": "a668abd7a6e7f05bd9866181a3a7116adb84db2fec958aef62bd3c97c81ec61c",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         480,
@@ -11847,7 +12115,8 @@
         "moss": 144,
         "claw": 4
        },
-       "sha256": "bdec8c323526b77c17befbc0b57e1cb3bcbe6304a53ec0ab7a5f291883c0a98d",
+       "anchor_gap": {},
+       "sha256": "fdff1e460786e4da6a9ff59271c70537a792433df2af02c2157afb374f9e221a",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         640,
@@ -11867,7 +12136,7 @@
        ],
        "anchors": {
         "foot_R": [
-         -15.2,
+         -14.4,
          -2.0
         ],
         "foot_L": [
@@ -11879,7 +12148,7 @@
          -3.7
         ],
         "hind_L": [
-         8.1,
+         8.9,
          -2.0
         ],
         "strike": [
@@ -11896,7 +12165,8 @@
         "moss": 145,
         "claw": 4
        },
-       "sha256": "93f1b41ec7c0e63b4fd090a1e92aaf974dd792dc437dcc97020247227dde8fe7",
+       "anchor_gap": {},
+       "sha256": "ec1512ede142aade062c83933f28d1c25891e673ce6dcbad7e0f8b1652db48d8",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         800,
@@ -11945,7 +12215,8 @@
         "moss": 149,
         "claw": 4
        },
-       "sha256": "d3bc0e32f29762ca3e40eaa5f7d7ba4e381e79dc9f5fa049b4c2003feed5b79a",
+       "anchor_gap": {},
+       "sha256": "cda6db537b256df8be0d07a39259188f032d3a8e96524443a99079227d6fb839",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         960,
@@ -11965,7 +12236,7 @@
        ],
        "anchors": {
         "foot_R": [
-         -10.0,
+         -10.7,
          -2.0
         ],
         "foot_L": [
@@ -11977,7 +12248,7 @@
          -3.7
         ],
         "hind_L": [
-         13.3,
+         12.6,
          -2.0
         ],
         "strike": [
@@ -11994,7 +12265,8 @@
         "moss": 145,
         "claw": 4
        },
-       "sha256": "0d44fb6cdb5e42384e8334d3fb5b136d928b76684ac3ccb4a617f9c41523563c",
+       "anchor_gap": {},
+       "sha256": "9129f0488e8dee08c13e049caa6dd61044ed75cc02218921d51681aaf7bcf9ff",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         1120,

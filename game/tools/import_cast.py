@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copy the redrawn cast into the game: python3 game/tools/import_cast.py <castwork out dir> [id ...]
+"""Copy the redrawn cast into the game: python3 game/tools/import_cast.py <castwork out dir> [id ...] [--keep-timing]
 
 The cast is drawn and animated by the procedural rig in the castwork (Claude A's cast lane): for
 each character it writes out/<id>/<clip>_<F>_NN.png (one 160 x 144 cell per drawing, foot pivot
@@ -18,6 +18,11 @@ game loads, in game/assets/characters/<id>/:
 The player reads timing, release frames, anchors and walk speed from manifest.json and drives
 the frames itself (actors/cast_sprite.gd), so the .tres durations are for the editor preview.
 Every frame is checked for size and its sha256 against the manifest before it is copied.
+
+--keep-timing: a redraw that changes the pictures only keeps the shipped clip timing (durations,
+duration, release_time) of every clip whose drawing count is unchanged, read from the manifest
+already in the game.  Without it the rig's own timing (its 60 fps spacing, or the old studio
+session's when present) is imported, which can change gameplay timing (the #462 review).
 """
 import hashlib
 import json
@@ -29,11 +34,22 @@ from PIL import Image
 GAME = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def import_char(src_root, cid):
+TIMING = ('durations', 'duration', 'release_time')
+
+
+def import_char(src_root, cid, keep_timing=False):
     src = os.path.join(src_root, cid)
     man = json.load(open(os.path.join(src, 'manifest.json')))
     cw, ch = man['frame_size']
     dst = os.path.join(GAME, 'assets', 'characters', cid)
+    if keep_timing and os.path.exists(os.path.join(dst, 'manifest.json')):
+        old = json.load(open(os.path.join(dst, 'manifest.json')))
+        for clip, ce in man['clips'].items():
+            oe = old['clips'].get(clip)
+            if oe and oe.get('frame_count') == ce.get('frame_count') and oe.get('release_frame') == ce.get('release_frame'):
+                for k in TIMING:
+                    if k in oe:
+                        ce[k] = oe[k]
     os.makedirs(os.path.join(dst, 'sheets'), exist_ok=True)
     subs, anims = [], []
     for clip, ce in man['clips'].items():
@@ -88,7 +104,9 @@ def import_char(src_root, cid):
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         sys.exit(__doc__)
-    root = sys.argv[1]
-    ids = sys.argv[2:] or sorted(d for d in os.listdir(root) if os.path.exists(os.path.join(root, d, 'manifest.json')))
+    keep = '--keep-timing' in sys.argv
+    args = [a for a in sys.argv[1:] if a != '--keep-timing']
+    root = args[0]
+    ids = args[1:] or sorted(d for d in os.listdir(root) if os.path.exists(os.path.join(root, d, 'manifest.json')))
     for cid in ids:
-        import_char(root, cid)
+        import_char(root, cid, keep_timing=keep)

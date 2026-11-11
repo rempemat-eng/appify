@@ -20,6 +20,11 @@ mat('shard',  ['#24164E', '#4C30A2', '#8A66EA', '#CDB8FF', '#FFFFFF'])
 mat('shardglow', ['#3C2C86', '#6A52CE', '#A890FF', '#E4DAFF', '#FFFFFF'])
 mat('thorn',  ['#24160E', '#432A1A', '#684428', '#8E643C'])
 mat('tell',   ['#7A2E06', '#C4560C', '#F28A1E', '#FFC060', '#FFF0C0'])   # the reserved telegraph colour
+# effect ramps taken from the house palette (art/house-palette.json), so kicked dust is the
+# ground's own colour and dazed sparks are lamplight, not UI glyphs (audit of 10 Nov, B4/K1/K2)
+mat('dirt',   ['#441F23', '#673D37', '#885C4B', '#A87C60', '#C39771', '#D6B187'])   # 'path': trodden earth
+mat('soil',   ['#261118', '#432B2A', '#5F463D', '#7A6250', '#947B60', '#AA9373'])   # 'earth'
+mat('lamp',   ['#67450A', '#9B6912', '#CB8D26', '#F0B050', '#F5D49C', '#FFF6E6'])   # 'lamp' (a light source)
 
 
 def P0(**k):
@@ -141,7 +146,7 @@ def warts(seed=0.0, n_per=0.16):
     return tm
 
 
-def volume(f, R, parts3, m, z, ang=0.0, rl=2.0, rs=3.0, vgrad=0.45, tag=None, tonemap=None, dim=0, cast=(1, 2, 1)):
+def volume(f, R, parts3, m, z, ang=0.0, rl=2.0, rs=3.0, vgrad=0.45, tag=None, tonemap=None, dim=0, cast=(1, 2, 1), line='hard'):
     """Several ellipsoids [(c3, L, W, H)] merged into one shaded volume (no seams between them),
     with lit, mid and dark planes."""
     mask = None
@@ -149,7 +154,7 @@ def volume(f, R, parts3, m, z, ang=0.0, rl=2.0, rs=3.0, vgrad=0.45, tag=None, to
         mm = blob_mask(f, R, c3, L, W, H, ang)
         mask = mm if mask is None else mask | mm
     zz = z + 0.03 * R.d(parts3[0][0])
-    return f.add(mask, m, z=zz, rl=rl, rs=rs, vgrad=vgrad, line='hard', cast=cast, deep=True, tag=tag,
+    return f.add(mask, m, z=zz, rl=rl, rs=rs, vgrad=vgrad, line=line, cast=cast, deep=True, tag=tag,
                  tonemap=planes(f, mask, px(f, tonemap)), dim=dim)
 
 
@@ -177,7 +182,13 @@ def legs(f, R, P, hips, foot_fwd, m, z0, r0=2.6, r1=2.0, hoof=None, length=None,
         lift = 0.0
         if P['gait'] is not None:
             ph = (P['gait'] + (0.0 if i in (0, 3) else 0.5)) % 1.0
-            fwd -= P['stride'] * math.cos(2 * math.pi * ph)        # stance half (ph .5..1) sweeps back
+            if P.get('plant') and ph >= 0.5:
+                # planted (10 Nov audit, B3/K3): the stance foot sweeps back at a constant rate,
+                # 2 x stride over half the cycle, so it stays put on the ground while the body moves
+                # at walk_speed (a cosine sweep slides it 1.4x too fast mid-stance)
+                fwd += P['stride'] * (1.0 - 4.0 * (ph - 0.5))
+            else:
+                fwd -= P['stride'] * math.cos(2 * math.pi * ph)    # swing half (ph 0..0.5) arcs forward
             lift = max(0.0, P['lift'] * math.sin(2 * math.pi * ph))
         lift += (P.get('lifts') or (0, 0, 0, 0))[i]
         foot3 = (fwd, lift + P.get('ground', 0.0), h3[2])
@@ -244,7 +255,10 @@ def shard(f, R, root3, axis3, size, P, z):
     right = (mid[0] + px * w, mid[1] + py * w)
     b0 = (bx - px * w * 0.6, by - py * w * 0.6)
     b1 = (bx + px * w * 0.6, by + py * w * 0.6)
-    lit_left = (px * 0.6 + py * 0.8) > 0          # which side faces the upper-left light
+    # which side faces the upper-left light, judged on screen: a west (flipped) figure is drawn on
+    # a mirrored x axis, so its facets swap sides (10 Nov audit, C1: every W shard was lit from
+    # the right)
+    lit_left = ((-px if f.flip else px) * 0.6 + py * 0.8) > 0
     with f.tagging('shard'):
         f.add(f.poly(poly), 'shard', z=zz, flat=2, line='hard', deep=False)
         axis = [(bx, by), (tx, ty)]
@@ -276,18 +290,44 @@ def thorns(f, R, pts3, up3, length, z, m='thorn', tag=None):
 
 def dust(f, x, y, t, z=58):
     """A kicked-up dust puff at ground point (x, y), t 0..1 (finite: gone by 1)."""
+    puffs(f, [(x - 4, y, 1.0), (x - 7, y - 1, 0.8), (x - 2, y - 1, 0.7)], t, 'dirt', z=z)
+
+
+def puffs(f, pts, t, m='dirt', z=58, grow=2.2, pebbles=()):
+    """Kicked dust as loose unoutlined puffs in the ground's own tones 3 and 4 (no ink line, so
+    it never reads as a solid object): pts = [(x, y, size)], t 0..1 grows them, lifts them a
+    little and thins them to a broken scatter; gone by 1.  z: the puffs only show where nothing
+    nearer than z covers them.  pebbles = [(x, y)] two-pixel stones, kicked out early."""
     if t is None or t >= 1:
         return
-    for i, (dx, dy) in enumerate(((-4, 0), (-7, -1), (-2, -1), (-9, 0))):
-        r = 0.7 + 0.9 * t
-        f.add(f.ell(x + dx * (0.5 + t), y + dy * (0.5 + t), r, r * 0.8), 'cream', z=z + i * 0.01, rl=1, rs=1, line=None, deep=False)
+    for i, (x, y, s) in enumerate(pts):
+        if t > 0.55 and i % 3 == 2:
+            continue                                           # thinning: the small puffs go first
+        r = s * (1.0 + 1.6 * t * grow / 2.2)
+        cy = y - 1.2 * t * s
+        m0 = f.ell(x, cy, r, r * 0.75)
+        if t > 0.7:
+            m0 = m0 & (f.Y < cy + 0.1 * r)                     # settling: only the top of the puff is left
+        top = m0 & (f.Y < cy - 0.25 * r) & (f.X < x + 0.3 * r)                 # the lit upper-left of the puff
+        f.detail(m0 & ~top, (m, 3), solid=False, z=z + i * 0.01, tag='dust')
+        f.detail(top, (m, 4), solid=False, z=z + i * 0.01, tag='dust')
+    if t < 0.6:
+        for j, (x, y) in enumerate(pebbles):
+            d = (1 if j % 2 else -1) * 3.0 * t
+            f.detail(f.rect(x + d, y - 2.0 * t, x + d + 1.6, y - 2.0 * t + 1.0), (m, 1), solid=False, z=z, tag='dust')
 
 
 def stars(f, x, y, t, z=60):
-    """Dazed: three small sparks circling over the head (stagger)."""
-    for i in range(3):
-        a = 2 * math.pi * (t + i / 3)
-        f.dot(x + 6 * math.cos(a), y + 2.0 * math.sin(a), ('gold', 2 if i == 0 else 1), z=z)
+    """Dazed: two small lamp-toned sparks circling over the head (stagger), each a pale core
+    with short arms in the lamp ramp, no ink line (10 Nov audit, K2: not flat plus glyphs)."""
+    k = f.scale
+    for i in range(2):
+        a = 2 * math.pi * (t + i / 2)
+        sx, sy = x + 6 * math.cos(a), y + 2.0 * math.sin(a) - (1 if i else 0)
+        cx, cy = math.floor(sx * k) / k, math.floor(sy * k) / k
+        f.detail(f.pixels([(cx, cy)]), ('lamp', 5), solid=False, z=z, tag='gold')
+        arms = [(cx - 1 / k, cy), (cx + 1 / k, cy)] if (i + int(t * 7)) % 2 == 0 else [(cx, cy - 1 / k), (cx, cy + 1 / k)]
+        f.detail(f.pixels(arms), ('lamp', 3), solid=False, z=z, tag='gold')
 
 
 def draw_fig(build, facing, P, scale=1.0):

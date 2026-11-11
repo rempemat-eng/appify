@@ -66,13 +66,13 @@ def freed():
 
 TABLE = {
     'idle': AC.idle(breathe=0.3, nod=0.5),
-    'move': AC.move(stride=STRIDE, lift=2.0, bob=0.5),
+    'move': AC.move(dict(plant=True), stride=STRIDE, lift=2.0, bob=0.5),          # plant: the stance foot stays put (K3)
     'telegraph': telegraph(),
     'attack': attack(),
     'hurt': hurt(),
     'stagger': stagger(),
     'freed': freed(),
-    'freed_move': AC.freed_move(stride=STRIDE, lift=2.0, bob=0.5),
+    'freed_move': AC.freed_move(dict(plant=True), stride=STRIDE, lift=2.0, bob=0.5),
 }
 RELEASE = {'attack': 0}
 RELEASE_ANCHOR = {'attack': 'strike'}
