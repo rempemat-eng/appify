@@ -255,6 +255,14 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				scatter_options.merge({"density": scatter_density, "seed": zone_seed}, true)
 				_say_result(operations.scatter(brush.substr(6), cells, scatter_options), "Scattered")
 				return true
+			if brush.begins_with("tier:"):
+				var tier := int(brush.substr(5))
+				_say_result(operations.paint_tiers(cells, tier), "Painted tier %d on %d cells" % [tier, cells.size()])
+				return true
+			if brush.begins_with("flow:"):
+				var flowed := operations.paint_flow(cells, brush.substr(5))
+				_say_result(flowed, String(flowed.get("message", "No flow changed.")))
+				return true
 			var material := brush.substr(9) if brush.begins_with("material:") else ""
 			var variant := brush.substr(8) if brush.begins_with("variant:") else ""
 			var painted := paint_cells(cells, material, variant)
@@ -462,6 +470,8 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 		overlay.draw_line(point - Vector2(0, 8), point + Vector2(0, 8), colour_g, 2.0)
 		overlay.draw_string(ThemeDB.fallback_font, point + Vector2(10, -10), brush.substr(9), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, colour_g)
 		return
+	if brush.begins_with("tier:") or brush.begins_with("flow:"):
+		_draw_height_and_flow(overlay, transform, cell_size)
 	if not brush.begins_with("piece:") or (painting and (_fence_style != "" or _scatter_stroke)):
 		var cell := Vector2i(floori(_hover_local.x / cell_size), floori(_hover_local.y / cell_size))
 		var cells := _stroke_cells if painting else Tools.brush_cells(cell, brush_size)
@@ -528,6 +538,30 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 				var angle := TAU * float(step) / 32.0
 				points.append(transform * (at + Vector2(cos(angle), sin(angle)) * radius * cell_size))
 			overlay.draw_polyline(points, Color(0.85, 0.8, 0.4, 0.7), 1.0)
+
+## Tiers and flow have no picture of their own, so their brushes show them: each raised cell's
+## tier as a number, each flow cell's direction as an arrow.
+func _draw_height_and_flow(overlay: Control, transform: Transform2D, cell_size: int) -> void:
+	if brush.begins_with("tier:"):
+		for y in ground.grid_size.y:
+			for x in ground.grid_size.x:
+				var tier := ground.tier_at(Vector2i(x, y))
+				if tier > 0:
+					_draw_rect(overlay, transform, Rect2(Vector2(x, y) * cell_size, Vector2.ONE * cell_size), Color(1.0, 0.8, 0.3, 0.08 + 0.1 * tier))
+					overlay.draw_string(ThemeDB.fallback_font, transform * (Vector2(x + 0.3, y + 0.75) * cell_size), str(tier), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 0.95, 0.7))
+		return
+	var rows := operations.flow_rows()
+	for y in rows.size():
+		for x in rows[y].length():
+			var direction: Vector2i = Tools.FLOW_DIRECTIONS.get(rows[y][x], Vector2i.ZERO)
+			if direction == Vector2i.ZERO:
+				continue
+			var centre := (Vector2(x, y) + Vector2.ONE * 0.5) * cell_size
+			var reach := Vector2(direction).normalized() * cell_size * 0.35
+			var tip := centre + reach
+			overlay.draw_line(transform * (centre - reach), transform * tip, Color(0.8, 0.95, 1.0, 0.95), 2.0)
+			for side in [-1.0, 1.0]:
+				overlay.draw_line(transform * tip, transform * (tip - reach.rotated(side * 0.6) * 0.6), Color(0.8, 0.95, 1.0, 0.95), 2.0)
 
 func _draw_rect(overlay: Control, transform: Transform2D, rect: Rect2, colour: Color) -> void:
 	var points := PackedVector2Array([transform * rect.position, transform * Vector2(rect.end.x, rect.position.y), transform * rect.end, transform * Vector2(rect.position.x, rect.end.y)])
@@ -655,6 +689,7 @@ func _bake_finish() -> Dictionary:
 	if not is_instance_valid(_bake_ground):
 		return Rules.failure("editor.bake_scene", "The zone was closed while it baked; its picture is on disk and binds at the next bake.")
 	_bake_ground.baked = ResourceLoader.load(png, "Texture2D", ResourceLoader.CACHE_MODE_REPLACE) as Texture2D
+	operations.refresh_derived(_bake_ground)
 	var walk := _bake_ground.get_node_or_null("KitWalk") as KitWalk
 	if walk != null and walk.write_walk("res://zones/%s/walk.txt" % zone_id) != OK:
 		return Rules.failure("editor.walk_export_failed", "The ground was baked, but its walk mask could not be written.")

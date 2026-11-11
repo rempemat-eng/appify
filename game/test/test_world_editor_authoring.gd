@@ -606,6 +606,125 @@ func test_the_kits_tile_sets_carry_their_own_ids() -> void:
 		assert_bool(ResourceUID.has_id(id)).is_true()
 		assert_str(ResourceUID.get_id_path(id)).is_equal("res://kit/terrain/" + file)
 
+# --- wave 2, step 3: height and water flow are painted in the dock
+
+func test_the_tier_brush_paints_height_with_undo_and_the_walk_mask_follows() -> void:
+	var f := await _fixture()
+	var ops: Operations = f.operations
+	var ground: TerrainGround = f.ground
+	var before := ZonePlan.canonical(ops.export_plan().plan)
+	assert_object(ground.get_tiers_layer()).is_null()
+	var block := [Vector2i(4, 0), Vector2i(5, 0), Vector2i(4, 1), Vector2i(5, 1)]
+	var painted: Dictionary = ops.paint_tiers(block, 1)
+	assert_bool(painted.ok).override_failure_message(str(painted)).is_true()
+	var plan: Dictionary = ops.export_plan().plan
+	assert_that(plan.tiers.slice(0, 3)).is_equal(["0000110000", "0000110000", "0000000000"])
+	assert_str(ZonePlan.plan_error(plan)).is_equal("")
+	# the game's own derivation: a face under the south rim, and it is not walkable
+	assert_int(ground.tier_at(Vector2i(4, 1))).is_equal(1)
+	assert_int(ground.ground_at(Vector2i(4, 2))).is_equal(ground.kit.face_material)
+	var walk := ground.get_node("KitWalk") as KitWalk
+	assert_that(walk.rows).is_equal(KitWalk.derive(ground))
+	assert_str(walk.rows[4][8]).is_equal("#")                 # the face cell (4, 2)
+	assert_str(walk.rows[0][7]).is_equal("#")                 # the wall on the plateau's west edge
+	assert_str(walk.rows[0][9]).is_equal(".")                 # the plateau's top is open
+	# a second stroke raises part of it; its undo leaves the first
+	assert_bool(ops.paint_tiers([Vector2i(5, 0)], 2).ok).is_true()
+	assert_str(ops.export_plan().plan.tiers[0]).is_equal("0000120000")
+	assert_bool(f.history.undo()).is_true()
+	assert_str(ops.export_plan().plan.tiers[0]).is_equal("0000110000")
+	# the first stroke's undo takes the layer it added out again: the plan is as it was
+	assert_bool(f.history.undo()).is_true()
+	assert_object(ground.get_tiers_layer()).is_null()
+	assert_str(ZonePlan.canonical(ops.export_plan().plan)).is_equal(before)
+	assert_bool(f.history.redo()).is_true()
+	assert_int(ground.tier_at(Vector2i(5, 1))).is_equal(1)
+	assert_that(walk.rows).is_equal(KitWalk.derive(ground))
+	# refusals leave no history
+	var version: int = f.history.get_version()
+	assert_str(ops.paint_tiers(block, 4).diagnostics[0].rule).is_equal("rules.tier")
+	assert_str(ops.paint_tiers([Vector2i(40, 0)], 1).diagnostics[0].rule).is_equal("rules.bounds")
+	assert_bool(ops.paint_tiers(block, 1).changed).is_false()
+	assert_int(f.history.get_version()).is_equal(version)
+
+func test_tiers_painted_with_the_brush_give_the_mask_python_derives() -> void:
+	# The parity fixture's plan with its tiers taken out, then painted back with the brush: the
+	# plan is the fixture's again and the walk mask is the one walk.py derives from it.
+	var fixture: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://test/fixtures/kit/walk_parity.json"))
+	var flat: Dictionary = fixture.plan.duplicate(true)
+	flat.erase("tiers")
+	var zone := ZonePlan.scene_from_plan(flat)
+	add_child(zone)
+	await get_tree().process_frame
+	var ground := zone.get_node("Ground") as TerrainGround
+	var history := UndoRedo.new()
+	var ops := Operations.new()
+	ops.configure(zone, ground, history, {})
+	_fixtures.append({"zone": zone, "ground": ground, "history": history, "operations": ops})
+	for tier in [1, 2]:
+		var cells := []
+		for y in fixture.plan.tiers.size():
+			for x in fixture.plan.tiers[y].length():
+				if int(fixture.plan.tiers[y][x]) == tier:
+					cells.append(Vector2i(x, y))
+		assert_bool(ops.paint_tiers(cells, tier).ok).is_true()
+	assert_that(ops.export_plan().plan.tiers).is_equal(fixture.plan.tiers)
+	assert_that(Array(KitWalk.derive(ground))).is_equal(fixture.rows)
+
+func test_the_flow_brush_paints_direction_on_water_only_with_undo() -> void:
+	var f := await _fixture()
+	var ops: Operations = f.operations
+	var before := ZonePlan.canonical(ops.export_plan().plan)
+	# the fixture's pond is cells (8..9, 6..7); the stroke overruns onto the lawn at (7, 6)
+	var flowed: Dictionary = ops.paint_flow([Vector2i(7, 6), Vector2i(8, 6), Vector2i(8, 7)], "↓")
+	assert_bool(flowed.ok).override_failure_message(str(flowed)).is_true()
+	assert_int(flowed.skipped_dry).is_equal(1)
+	assert_that(flowed.warnings).is_empty()                  # (8, 6) runs into (8, 7), which runs off the zone
+	var plan: Dictionary = ops.export_plan().plan
+	assert_that(plan.flow.slice(5, 8)).is_equal(["..........", "........↓.", "........↓."])
+	assert_str(ZonePlan.plan_error(plan)).is_equal("")
+	# the plan rebuilds to a zone that exports the same flow
+	var rebuilt := ZonePlan.scene_from_plan(plan)
+	_scenes.append(rebuilt)
+	assert_that(ZonePlan.plan_from_scene(rebuilt).flow).is_equal(plan.flow)
+	# another direction beside it, then erase one cell
+	assert_bool(ops.paint_flow([Vector2i(9, 6)], "↘").ok).is_true()
+	# an arrow that runs onto the lawn is painted, and named as unfinished
+	var ashore: Dictionary = ops.paint_flow([Vector2i(9, 6)], "↑")
+	assert_str(ashore.warnings[0].rule).is_equal("rules.water_flow")
+	assert_bool(f.history.undo()).is_true()
+	assert_bool(ops.paint_flow([Vector2i(8, 7)], ".").ok).is_true()
+	assert_that(ops.export_plan().plan.flow.slice(6, 8)).is_equal(["........↓↘", ".........."])
+	for i in 3:
+		assert_bool(f.history.undo()).is_true()
+	assert_object(f.ground.get_node_or_null("Flow")).is_null()
+	assert_str(ZonePlan.canonical(ops.export_plan().plan)).is_equal(before)
+	assert_bool(f.history.redo()).is_true()
+	assert_str(ops.export_plan().plan.flow[6]).is_equal("........↓.")
+	# an arrow on dry ground only is refused with the validator's own rule; a wrong glyph too
+	var version: int = f.history.get_version()
+	assert_str(ops.paint_flow([Vector2i(0, 0)], "→").diagnostics[0].rule).is_equal("rules.water_flow")
+	assert_str(ops.paint_flow([Vector2i(8, 6)], "x").diagnostics[0].rule).is_equal("rules.water_flow")
+	assert_int(f.history.get_version()).is_equal(version)
+
+func test_the_walk_node_is_a_real_instance_in_the_editor() -> void:
+	# A zone saved once holds its KitWalk. In the editor a script that is not a tool script gives
+	# that node a placeholder, and the add-on's rebuild() after every edit failed on it.
+	assert_bool((load("res://world/terrain/walk.gd") as Script).is_tool()).is_true()
+
+func test_the_dock_offers_the_tier_and_flow_brushes() -> void:
+	var f := await _fixture()
+	var d := _dock(f)
+	var dock: Control = d.dock
+	dock.tier_select.select(2)
+	(dock.find_child("TierBrush", true, false) as Button).pressed.emit()
+	assert_str(d.plugin.brush).is_equal("tier:2")
+	dock.flow_select.select(3)
+	(dock.find_child("FlowBrush", true, false) as Button).pressed.emit()
+	assert_str(d.plugin.brush).is_equal("flow:→")
+	dock.select_tool()
+	assert_str(d.plugin.brush).is_equal("")
+
 # --- the bake runs beside the editor, shows its progress and can be stopped
 
 const BakeJob := preload("res://addons/world_editor/bake_job.gd")

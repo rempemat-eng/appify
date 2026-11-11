@@ -1,3 +1,4 @@
+@tool
 class_name KitWalk
 extends Node
 ## W4: one 4-world-pixel mask for review exports and runtime collision.
@@ -24,8 +25,14 @@ var _replaced: Dictionary = {}
 var _queued := false
 var _loaded_layers: Dictionary = {}
 
+## A tool script, so that the node a saved zone already holds is a real instance in the editor
+## too. Without it that node was a placeholder there: the world editor's rebuild() after each edit
+## and its write_walk() after a bake raised a script error on every zone that had been saved once.
+## The editor never rebuilds on its own; the add-on calls rebuild() at its edit boundaries.
 func _ready() -> void:
 	_loaded_layers = saved_collision_layers.duplicate()
+	if Engine.is_editor_hint():
+		return
 	if not ground_path.is_empty():
 		source = get_node_or_null(ground_path) as TerrainGround
 	elif get_parent() is TerrainGround:

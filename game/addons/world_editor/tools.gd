@@ -16,6 +16,15 @@ const GAMEPLAY := [
 	["restore", "Restore site", "restore id (data/plans)"],
 	["camp", "Enemy camp", "camp id"],
 ]
+## The water-flow brush: glyph (as the plan's `flow` rows hold it), label, direction in cells.
+const FLOW := [
+	[".", "No flow (erase)", Vector2i.ZERO],
+	["↑", "North", Vector2i(0, -1)], ["↗", "North-east", Vector2i(1, -1)], ["→", "East", Vector2i(1, 0)], ["↘", "South-east", Vector2i(1, 1)],
+	["↓", "South", Vector2i(0, 1)], ["↙", "South-west", Vector2i(-1, 1)], ["←", "West", Vector2i(-1, 0)], ["↖", "North-west", Vector2i(-1, -1)],
+]
+## Every glyph a plan may hold, with its direction (kit_zone.gd accepts the ASCII four as well).
+const FLOW_DIRECTIONS := {"^": Vector2i(0, -1), "↑": Vector2i(0, -1), ">": Vector2i(1, 0), "→": Vector2i(1, 0), "v": Vector2i(0, 1), "↓": Vector2i(0, 1),
+	"<": Vector2i(-1, 0), "←": Vector2i(-1, 0), "↗": Vector2i(1, -1), "↘": Vector2i(1, 1), "↙": Vector2i(-1, 1), "↖": Vector2i(-1, -1)}
 const SIDES := {"n": Vector2i(0, -1), "e": Vector2i(1, 0), "s": Vector2i(0, 1), "w": Vector2i(-1, 0)}
 const OPPOSITE := {"n": "s", "e": "w", "s": "n", "w": "e"}
 

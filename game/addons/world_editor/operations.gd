@@ -954,6 +954,174 @@ func _scene_approval_diagnostics() -> Array[Dictionary]:
 					diagnostics.append(diagnostic)
 	return diagnostics
 
+## Height and flow (11 Nov). Tiers are painted per cell on the ground's `Tiers` layer (0 is the
+## ground level, 1 to 3 raised; the faces under south rims are derived, never painted) and water
+## flow per water cell on its `Flow` layer: the plan's `tiers` and `flow` rows, which the game, the
+## walk mask and the validator read. One stroke is one undo action, and the layer a first stroke
+## has to add leaves again with its undo.
+const TIER_MAX := 3
+
+func _stroke_cells(cells: Array) -> Dictionary:
+	var chosen: Array[Vector2i] = []
+	for value in cells:
+		if not (value is Vector2i or value is Vector2) or (value is Vector2 and (not value.is_finite() or Vector2(Vector2i(value)) != value)):
+			return _failure("rules.cell", "A painted cell must have integer grid coordinates.")
+		var cell := Vector2i(value)
+		if not _in_bounds(cell):
+			return _failure("rules.bounds", "Cell %s lies outside the zone." % cell)
+		if cell not in chosen:
+			chosen.append(cell)
+	return {"ok": true, "cells": chosen}
+
+func paint_tiers(cells: Array, tier: int) -> Dictionary:
+	var context := _context(true)
+	if not context.ok:
+		return context
+	if tier < 0 or tier > TIER_MAX or not _ground.kit.tiers_tileset.get_source(0).has_tile(Vector2i(tier, 0)):
+		return _failure("rules.tier", "A tier is 0 (the ground) to %d." % TIER_MAX)
+	var stroke := _stroke_cells(cells)
+	if not stroke.ok:
+		return stroke
+	var before := {}
+	var after := {}
+	for cell in stroke.cells:
+		before[cell] = _ground.tier_at(cell)
+		after[cell] = tier
+	if before == after:
+		return {"ok": true, "diagnostics": [], "changed": false}
+	var layer := _ground.get_tiers_layer()
+	var created := layer == null
+	if created:
+		layer = TileMapLayer.new()
+		layer.name = "Tiers"
+		layer.tile_set = _ground.kit.tiers_tileset
+		layer.self_modulate = Color(1, 1, 1, 0.0)
+	var state := {"baked": _ground.baked, "baked_live": _ground.showing_baked()}
+	_begin("Paint tier %d" % tier)
+	_do(Callable(self, "_apply_tiers").bind(_ground, layer, after, created, true, {"baked": state.baked, "baked_live": false}))
+	_undo(Callable(self, "_apply_tiers").bind(_ground, layer, before, created, false, state))
+	if created:
+		_history.add_do_reference(layer)
+	_history.commit_action()
+	return {"ok": true, "diagnostics": [], "changed": true, "cells": stroke.cells}
+
+func _apply_tiers(target: TerrainGround, layer: TileMapLayer, values: Dictionary, created: bool, forward: bool, state: Dictionary) -> void:
+	if not is_instance_valid(target) or not is_instance_valid(layer):
+		return
+	if created and forward and layer.get_parent() == null:
+		target.add_child(layer)
+		layer.owner = target.owner
+		if not layer.changed.is_connected(target._rebuild):
+			layer.changed.connect(target._rebuild)
+	for cell in values:
+		if int(values[cell]) <= 0:
+			layer.erase_cell(cell)
+		else:
+			layer.set_cell(cell, 0, Vector2i(int(values[cell]), 0))
+	if created and not forward and layer.get_parent() == target:
+		target.remove_child(layer)
+	_restore_ground(target, state)
+
+## The flow glyph of every cell, as the plan's rows ("." for none).
+func flow_rows() -> PackedStringArray:
+	var rows := PackedStringArray()
+	var layer := _ground.get_node_or_null("Flow") as TileMapLayer
+	var glyphs: Array = layer.get_meta(&"glyphs", []) if layer != null else []
+	for y in _ground.grid_size.y:
+		var row := ""
+		for x in _ground.grid_size.x:
+			var at := layer.get_cell_atlas_coords(Vector2i(x, y)).x if layer != null else -1
+			row += String(glyphs[at]) if at >= 0 and at < glyphs.size() else "."
+		rows.append(row)
+	return rows
+
+func paint_flow(cells: Array, glyph: String) -> Dictionary:
+	var context := _context(true)
+	if not context.ok:
+		return context
+	if glyph != "." and not Tools.FLOW_DIRECTIONS.has(glyph):
+		return _failure("rules.water_flow", "Flow is one of eight directions, or '.' for none.")
+	var stroke := _stroke_cells(cells)
+	if not stroke.ok:
+		return stroke
+	var rows := flow_rows()
+	var before := rows.duplicate()
+	var dry := 0
+	for cell in stroke.cells:
+		# an arrow belongs on water (the validator's rules.water_flow); a stroke may overrun the banks
+		if glyph != "." and not _is_water(cell):
+			dry += 1
+			continue
+		rows[cell.y] = rows[cell.y].substr(0, cell.x) + glyph + rows[cell.y].substr(cell.x + 1)
+	if rows == before:
+		if dry > 0:
+			return _failure("rules.water_flow", "A flow arrow is not on water: none of these cells is water.")
+		return {"ok": true, "diagnostics": [], "changed": false}
+	var old := _ground.get_node_or_null("Flow") as TileMapLayer
+	var empty := true
+	for row in rows:
+		empty = empty and row.count(".") == row.length()
+	var fresh: TileMapLayer = null if empty else ZonePlan._flow_layer(Array(rows), _ground.kit.cell)
+	_begin("Paint water flow")
+	_do(Callable(self, "_apply_flow").bind(_ground, old, fresh, true))
+	_undo(Callable(self, "_apply_flow").bind(_ground, old, fresh, false))
+	if fresh != null:
+		_history.add_do_reference(fresh)
+	if old != null:
+		_history.add_undo_reference(old)
+	_history.commit_action()
+	var warnings := flow_warnings(rows)
+	return {"ok": true, "diagnostics": [], "changed": true, "skipped_dry": dry, "warnings": warnings,
+		"message": "Painted flow%s%s." % [" (%d dry cells left out)" % dry if dry > 0 else "",
+			"; %d arrows still to finish: %s" % [warnings.size(), warnings[0].message] if not warnings.is_empty() else ""]}
+
+## What the scene check (scripts/review/kit_scene.py) will say about these arrows, read without a
+## save: an arrow that runs onto dry ground or up a tier. They do not refuse a stroke, since a
+## stream is painted cell by cell and is unfinished in between.
+func flow_warnings(rows: Array = []) -> Array:
+	var warnings := []
+	if _ground == null:
+		return warnings
+	if rows.is_empty():
+		rows = Array(flow_rows())
+	for y in rows.size():
+		for x in String(rows[y]).length():
+			var glyph: String = rows[y][x]
+			if not Tools.FLOW_DIRECTIONS.has(glyph):
+				continue
+			var cell := Vector2i(x, y)
+			var target: Vector2i = cell + Tools.FLOW_DIRECTIONS[glyph]
+			if not _in_bounds(target):
+				continue
+			if _ground.tier_at(target) > _ground.tier_at(cell):
+				warnings.append({"rule": "rules.water_uphill", "cell": cell, "message": "water flows to a higher tier at %s" % cell})
+			# a face below a rim is where a fall piece goes; the scene check judges that one
+			if not _is_water(target) and _ground.ground_at(target) != _ground.kit.face_material:
+				warnings.append({"rule": "rules.water_flow", "cell": cell, "message": "water flow ends on dry ground at %s" % cell})
+	return warnings
+
+func _is_water(cell: Vector2i) -> bool:
+	var ac := _ground.get_cells_layer().get_cell_atlas_coords(cell)
+	var materials: Array = _ground.kit.manifest.materials
+	return ac.x >= 0 and ac.x < materials.size() and materials[ac.x].get("water") != null
+
+func _apply_flow(target: TerrainGround, old: Variant, fresh: Variant, forward: bool) -> void:
+	if not is_instance_valid(target):
+		return
+	var going: Variant = old if forward else fresh
+	var coming: Variant = fresh if forward else old
+	if going is Node and is_instance_valid(going) and going.get_parent() == target:
+		target.remove_child(going)
+	if coming is Node and is_instance_valid(coming) and coming.get_parent() == null:
+		coming.name = "Flow"
+		target.add_child(coming)
+		coming.owner = target.owner
+	_ghost_plans.clear()
+	_ghost_verdicts.clear()
+	_ghost_snapshot = {}
+	last_changed_ground = target
+	changed.emit()
+
 const GAMEPLAY_KINDS := ["spawn", "door", "interactable", "villager", "restore", "camp"]
 var _piece_signature: Array = []
 
