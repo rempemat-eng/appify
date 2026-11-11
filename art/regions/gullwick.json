@@ -563,5 +563,67 @@
     "beach": "shingle with the boats hauled up, a capstan above the slip, nets drying, lobster pots",
     "village": "cobbles and slate steps, lobster pots",
     "rocks": "a low rock shelf east of the beach with tide pools, weed and limpets"
-  }
+  },
+  "fights": {
+    "_about": "Fights for the Godot era (game-design v2, sections 4.4, 4.5, 9, 11.3 and 14; Claude A's to-all-assignments-1025): camps and patrols by Codex's six roles (the kinds are proposals for Codex), the boss arena (about 20 x 14 cells, 160 x 112 world px, inside one 320 x 180 window), low cover (shoot over) and high cover (blocks shots), waystones, the shard's crater, the dungeon's entrance and rooms. Camps refill on each train or ferry arrival, never on a clock. Shardstruck creatures are freed, machines break down, Company troopers and smugglers flee. Raids come only to Crossroads (7.6), so no raiders' camp.",
+    "act": 2,
+    "story": "Gullwick, with the Lull (game-design v2, 8.2): the smugglers land the barge's cargo on the shingle at night",
+    "camps": [
+      {
+        "id": "rock_crabs",
+        "roles": ["grunt", "swarmer", "swarmer"],
+        "kind": "shardstruck rock crabs",
+        "at": [8200, 5272],
+        "enemies": [
+          [8214, 5276],
+          [8187, 5278],
+          [8198, 5260]
+        ],
+        "why": "on the rock shelf by the tide pools"
+      }
+    ],
+    "patrols": [
+      {
+        "id": "shingle_smugglers",
+        "roles": ["grunt", "shooter"],
+        "kind": "smugglers landing cargo (night only)",
+        "path": [
+          [7760, 5236],
+          [8080, 5236]
+        ],
+        "why": "along the shingle walk, from the boats to the slip"
+      }
+    ],
+    "waystones": [
+      {
+        "id": "gullwick_waystone",
+        "at": [7930, 5204],
+        "why": "at the slip's foot, by the capstan"
+      }
+    ],
+    "dungeon": {
+      "none": true,
+      "why": "the Lull's dungeon is the Sunken Barges (lull-delta)"
+    },
+    "raiders_camp": {
+      "none": true,
+      "why": "raids come only to Crossroads (game-design v2, 7.6)"
+    }
+  },
+  "quest_spots": [
+    {
+      "id": "fisher",
+      "at": [7920, 5208],
+      "quest": "the fisher mending nets: the smugglers cut her nets (a net launcher)"
+    }
+  ],
+  "windows": [
+    {
+      "id": "landing",
+      "rect": [7712, 5096, 320, 180],
+      "focal": [8004, 5124],
+      "clearing": [7930, 5200],
+      "why": "west to east: cottages, the slip and the smokehouse, the boats; the rocks at the right edge"
+    }
+  ]
 }
