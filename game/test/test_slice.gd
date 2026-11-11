@@ -116,6 +116,41 @@ func test_hale_is_in_one_place_in_the_scenes() -> void:
 	assert_bool(Zones.go_to("woodland", "crossroads")).is_true()
 	assert_bool((Zones.current.get_node("Actors/HaleOnThePath") as Conditional).visible).is_false()
 
+## The forge paid before Hale asks (recorded: it can be), in both orders: before she is home, and with
+## her standing on the square watching. The mark's line and her thanks must be true in each (11 Nov:
+## she said "before I was even home" and spoke of an ember when she had watched her fire take).
+func test_an_early_forge_is_told_truthfully_whether_hale_was_home_or_not() -> void:
+	for was_home: bool in [false, true]:
+		SaveGame.reset()
+		SaveGame.add_glint(30)
+		SaveGame.set_flag("hale_walked_home", was_home)
+		var mark := " ".join(Dialogue.lines_for("restore_forge"))
+		assert_bool(mark.contains("ember")).is_equal(not was_home)
+		assert_bool(mark.contains("Hale's fire takes")).is_equal(was_home)
+		Village.restore("forge")
+		SaveGame.data.quests["road_to_crossroads"] = {"state": "done", "step": 2}
+		SaveGame.set_flag("hale_walked_home")      # by now she is in Crossroads either way
+		var thanks := " ".join(Dialogue.lines_for("hale"))
+		assert_str(thanks).contains("cleared my door")
+		for claim: String in ["home", "ember"]:    # each would be false in one of the two orders
+			assert_bool(thanks.contains(claim)).override_failure_message(
+				"Hale says \"%s\" (was home: %s): %s" % [claim, was_home, thanks]).is_false()
+
+## --stage (and review:scene --stage) shows the town as it stands at that stage: from the forge on,
+## Hale is home (11 Nov: the stages set no hale_walked_home, so every stage picture had lost her).
+func test_every_stage_after_the_first_shows_hale_in_crossroads() -> void:
+	var plan: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/plans/crossroads.json"))
+	_attach()
+	for i in plan.stages.size():
+		SaveGame.reset()
+		load("res://game.gd").apply_stage("crossroads", plan.stages[i].id)
+		assert_str(Village.stage("crossroads")).is_equal(plan.stages[i].id)
+		assert_bool(Zones.go_to("crossroads", "start")).is_true()
+		var shown := 0
+		for n: String in ["Actors/If_hale_square", "Actors/If_hale_forge"]:
+			shown += int((Zones.current.get_node(n) as Conditional).visible)
+		assert_int(shown).override_failure_message("stage %s shows Hale %d times" % [plan.stages[i].id, shown]).is_equal(int(i > 0))
+
 ## The apothecary's mark waits for Morel to ask (its 40 Glint, paid early, could leave the forge or the
 ## Ferns' door out of reach); the forge and the Ferns' door can be paid before their quests, as recorded.
 func test_the_apothecary_mark_waits_for_its_quest() -> void:

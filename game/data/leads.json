@@ -58,7 +58,7 @@
         ]
       },
       "title": "Crossroads",
-      "text": "Hale the smith is missing. Look for her on the woodland's east path"
+      "text": "Hale's forge stands empty. Moss at the stall may know where she went"
     },
     {
       "if": {
@@ -67,7 +67,7 @@
         ]
       },
       "title": "The east path",
-      "text": "Someone is calling from the path east of the stones"
+      "text": "A path runs east from the stone circle. Someone has walked it since the storm"
     },
     {
       "if": {

@@ -137,6 +137,42 @@ func test_a_new_game_shows_the_opening_card_once_and_a_lead() -> void:
 	await _frames(3)
 	assert_str((again.get_node("UI/HUD") as Control).shown_text().banner).is_equal("")
 
+## --shot, --demo and the other picture modes look at a save and never write one (11 Nov: a picture
+## taken with --fresh replaced the player's save with a new game).
+func test_the_picture_modes_leave_the_save_file_as_it_is() -> void:
+	SaveGame.add_glint(85)
+	SaveGame.set_flag("visited:crossroads")
+	SaveGame.save()
+	var g := _game()
+	await _ticks(2)
+	g.hud.guidance = false        # as game.gd sets it for --shot, --demo and the other picture modes
+	var before := FileAccess.get_file_as_bytes(SAVE)
+	assert_int(before.size()).is_greater(0)
+	SaveGame.add_glint(-50)
+	Quests.notify("talk:stone_sign")          # a quest starts: a played game saves here
+	assert_str(Quests.state("woodland_stones")).is_equal("active")
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()     # and on a zone change
+	g.notification(Node.NOTIFICATION_WM_CLOSE_REQUEST)            # and on closing the window
+	assert_array(FileAccess.get_file_as_bytes(SAVE)).is_equal(before)
+	g.hud.guidance = true
+	g.autosave()
+	assert_array(FileAccess.get_file_as_bytes(SAVE)).is_not_equal(before)
+
+## A save made before the Frostline gate can hold Moss's loaf as an active quest. This build cannot
+## finish it, so loading puts it back to not started and the tracker moves on (11 Nov).
+func test_loading_shelves_an_active_quest_whose_zone_is_not_built() -> void:
+	SaveGame.data.quests["home_again"] = {"state": "done", "step": 1}
+	SaveGame.data.quests["a1_bread_for_the_bothy"] = {"state": "active", "step": 0}
+	SaveGame.data.quests["a1_the_torn_roof"] = {"state": "active", "step": 0}
+	SaveGame.data.tracked = "a1_bread_for_the_bothy"
+	SaveGame.save()
+	SaveGame.reset()
+	assert_int(SaveGame.load_save()).is_equal(OK)
+	assert_str(Quests.state("a1_bread_for_the_bothy")).is_equal("none")
+	assert_str(Quests.state("a1_the_torn_roof")).is_equal("active")       # a quest this build can finish stays
+	assert_str(Quests.tracked_id()).is_equal("a1_the_torn_roof")
+	assert_str(Quests.tracked_text()).contains("The torn roof")
+
 func test_no_card_and_no_lead_for_pictures() -> void:
 	SaveGame.set_flag("seen:opening")
 	var g := _game()
@@ -183,7 +219,7 @@ func test_the_hud_has_a_lead_between_quests() -> void:
 	assert_str(Quests.tracked_text()).is_equal("The morning after: Follow the path south to the stone circle")
 	assert_str(Quests.tracked_text(false)).is_equal("")
 	SaveGame.set_flag("visited:crossroads")
-	assert_str(Quests.tracked_text()).contains("Hale the smith is missing")
+	assert_str(Quests.tracked_text()).contains("Moss at the stall may know")
 	SaveGame.data.quests["road_to_crossroads"] = {"state": "done", "step": 2}
 	assert_str(Quests.tracked_text()).contains("Talk to Hale by her smithy")
 

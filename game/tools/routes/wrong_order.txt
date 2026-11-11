@@ -6,7 +6,7 @@
 step straight to Crossroads, past the sign and past Hale
 door 951 1356 crossroads
 expect quest road_to_crossroads none
-expect hud Hale the smith is missing
+expect hud Moss at the stall may know
 
 step Moss asks after Hale; nothing starts without her
 goto 1152 830 10

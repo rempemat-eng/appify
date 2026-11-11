@@ -50,7 +50,7 @@ var _busy := false
 var _done := false
 var _step := ""
 var _held := {}
-var _t0 := 0.0
+var _f0 := 0
 var _hurt := 0
 var _downs := 0
 var _hooked: Node = null
@@ -62,7 +62,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	out_dir = ProjectSettings.globalize_path(out_dir)
 	DirAccess.make_dir_recursive_absolute(out_dir)
-	_t0 = Time.get_ticks_msec() / 1000.0
+	_f0 = Engine.get_physics_frames()
 	Dialogue.opened.connect(func(speaker: String, lines: PackedStringArray) -> void:
 		_said.append("%s: %s" % [speaker, " / ".join(lines)]))
 	_read_route()
@@ -82,8 +82,10 @@ func _read_route() -> void:
 	else:
 		_finish(false, "no route file at '%s'" % route_path)
 
+## Seconds of game time since the driver started, counted in physics steps and not on the wall clock:
+## on a loaded machine the game runs slow, and a walk's limit must not run out because of that.
 func now() -> float:
-	return Time.get_ticks_msec() / 1000.0 - _t0
+	return float(Engine.get_physics_frames() - _f0) / float(Engine.physics_ticks_per_second)
 
 func out(s: String) -> void:
 	var path := out_dir.path_join("log.txt")

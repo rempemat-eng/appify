@@ -46,6 +46,23 @@ func _ready() -> void:
 	if typeof(doc) == TYPE_DICTIONARY:
 		leads = doc.get("leads", [])
 		cards = doc.get("cards", [])
+	SaveGame.loaded.connect(shelve_unbuilt)
+	shelve_unbuilt()   # the save was read before this autoload woke (core/save_game.gd boot)
+
+## A save can hold an active quest that this build cannot start: its start condition asks for a zone
+## that is not built ("zone_built:<zone>"), and the save was made by a build without that gate. Such a
+## quest could never finish here, so it goes back to not started; its giver offers it again when the
+## zone lands. Run on every load.
+func shelve_unbuilt() -> void:
+	for id: String in defs:
+		if state(id) != "active":
+			continue
+		for f: String in defs[id].get("start", {}).get("if", {}).get("flags", []):
+			if f.begins_with(ZONE_BUILT) and not has_flag(f):
+				SaveGame.data.quests.erase(id)
+				if str(SaveGame.data.get("tracked", "")) == id:
+					SaveGame.data.tracked = ""
+				break
 
 func load_dir(dir: String) -> void:
 	for f in DirAccess.get_files_at(dir):

@@ -49,7 +49,7 @@
       {
         "if": { "done": ["road_to_crossroads"], "not_started": ["cold_forge"], "restored": ["forge"] },
         "lines": [
-          "You cleared my door before I was even home? And there's an ember in the hearth. Bless you, Bramble.",
+          "You cleared my door before I'd even asked. Bless you, Bramble.",
           "Give me a moment with the bellows and it's a forge again."
         ]
       },

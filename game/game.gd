@@ -90,7 +90,8 @@ func _ready() -> void:
 	if args.has("cycle"):
 		_cycle.call_deferred()
 	_setup_cast_label()
-	if args.has("play"):
+	if args.has("play") and OS.is_debug_build():
+		# the play driver is a development tool: an exported release build ignores --play
 		_start_play_driver()
 
 ## --play=<route file>: the real-input play driver (tools/play_driver.gd, docs/godot.md).
@@ -125,6 +126,9 @@ static func parse_args(list: PackedStringArray) -> Dictionary:
 	return out
 
 func autosave() -> void:
+	# The picture and demo modes (--shot, --demo, --lineup, --cycle ...) look at a save and never write one.
+	if not hud.guidance:
+		return
 	# a downed player gets up with full health, so that is what a save made on the ground holds
 	SaveGame.data.player.hp = player.hp if player.hp > 0 else player.max_hp
 	SaveGame.save()
@@ -237,9 +241,15 @@ static func apply_stage(zone: String, stage: String) -> void:
 	if f == null:
 		return
 	var plan: Dictionary = JSON.parse_string(f.get_as_text())
-	for st in plan.get("stages", []):
+	var stages: Array = plan.get("stages", [])
+	for i in stages.size():
+		var st: Dictionary = stages[i]
 		if st.id != stage:
 			continue
+		if i > 0:
+			# Every stage after the first is a town Hale has come home to. The flag is not in the stages'
+			# own conditions (Village.stage() reads those), so it is set here: her nodes in Crossroads ask for it.
+			SaveGame.set_flag("hale_walked_home")
 		var cond: Dictionary = st.get("if", {})
 		for r in cond.get("restored", []):
 			SaveGame.data.village.restored[r] = 1
