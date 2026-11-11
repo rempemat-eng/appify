@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 10,
+ "version": 11,
  "variants": [
   {
    "id": "sapling",
@@ -35,12 +35,29 @@
    4
   ],
   "z_sort": "foot",
-  "collision": null,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -2.0,
+    -3.0,
+    4.0,
+    3.0
+   ]
+  },
   "foot": [
    30.0,
    82.0
   ],
-  "footprint": []
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
  },
  "placement": {
   "snap": "cell",
@@ -75,7 +92,10 @@
  "story": {
   "owner": null
  },
- "gameplay": {},
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
@@ -119,7 +139,9 @@
    }
   ],
   "todo": [
+   "collision box authored by Claude A (2 Nov) from the shipped prop scene; review with the size guide",
    "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
    "review size-guide class and Eastward comparison before the library gate"

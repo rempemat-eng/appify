@@ -5,7 +5,6 @@ const Dock := preload("res://addons/world_editor/dock.gd")
 const Operations := preload("res://addons/world_editor/operations.gd")
 const Tools := preload("res://addons/world_editor/tools.gd")
 const Rules := preload("res://addons/world_editor/rules_adapter.gd")
-const Walk := preload("res://world/terrain/walk.gd")
 const Smoke := preload("res://addons/world_editor/smoke.gd")
 
 var dock
@@ -36,9 +35,16 @@ var scatter := false
 var scatter_density := 0.35
 var _scatter_stroke := false
 var _ghost_busy := ""
+var _ghost_task := -1
+var _followed_history: UndoRedo
 
 func _enter_tree() -> void:
 	operations.changed.connect(_operations_changed)
+	# Godot's own move, delete, duplicate and inspector edits reach the zone through the editor's
+	# history, not through operations: follow it, so the walk mask, shadows and previews keep up.
+	var manager := get_undo_redo()
+	if manager != null and not manager.history_changed.is_connected(_history_changed):
+		manager.history_changed.connect(_history_changed)
 	dock = Dock.new()
 	dock.plugin = self
 	dock.name = "World"
@@ -62,8 +68,13 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	_cancel_stroke()
+	_reap_ghost_task()
 	if operations.changed.is_connected(_operations_changed):
 		operations.changed.disconnect(_operations_changed)
+	var manager := get_undo_redo()
+	if manager != null and manager.history_changed.is_connected(_history_changed):
+		manager.history_changed.disconnect(_history_changed)
+	_follow_history(null)
 	if is_instance_valid(dock):
 		remove_control_from_docks(dock)
 		dock.queue_free()
@@ -76,8 +87,21 @@ func _handles(object: Object) -> bool:
 
 func _edit(object: Object) -> void:
 	_cancel_stroke()
-	ground = _ground_of(object)
+	var next := _ground_of(object)
+	if next == null and Engine.is_editor_hint():
+		# Deleting the selected piece (or clicking empty space) leaves nothing selected. The dock
+		# stays on the open zone, so its palette, Validate and Export keep working; the canvas
+		# takes clicks again as soon as anything in the zone is selected.
+		next = _ground_of(EditorInterface.get_edited_scene_root())
+	if next != null and next == ground and is_instance_valid(zone) and zone == ground.get_parent():
+		# Another node of the same zone was selected: nothing to reload (re-reading the library's
+		# 264 files on every click made selection lag, and wiped the status line).
+		_revision += 1
+		_preview_key.clear()
+		return
+	ground = next
 	zone = ground.get_parent() if ground != null else null
+	_follow_history(zone)
 	operations.configure(zone, ground, get_undo_redo(), {
 		"relation_evaluator": Callable(Rules, "placement"),
 		"zone_validator": Callable(Rules, "validate_plan"),
@@ -86,6 +110,23 @@ func _edit(object: Object) -> void:
 	_preview_key.clear()
 	if is_instance_valid(dock):
 		dock.set_zone(zone, ground)
+
+## The zone's own undo history: its version changes on every commit, undo and redo, whoever made
+## them (the manager's history_changed does not fire for an undo run on the history itself).
+func _follow_history(target: Node) -> void:
+	if is_instance_valid(_followed_history) and _followed_history.version_changed.is_connected(_history_changed):
+		_followed_history.version_changed.disconnect(_history_changed)
+	_followed_history = null
+	var manager := get_undo_redo()
+	if target == null or manager == null or not target.is_inside_tree():
+		return
+	_followed_history = manager.get_history_undo_redo(manager.get_object_history_id(target))
+	if _followed_history != null and not _followed_history.version_changed.is_connected(_history_changed):
+		_followed_history.version_changed.connect(_history_changed)
+
+## Before a save or a tab switch: nothing of this process may reach the scene file.
+func _apply_changes() -> void:
+	operations.prepare_save(ground)
 
 func _make_visible(visible: bool) -> void:
 	if not visible:
@@ -110,7 +151,16 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		return false
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ESCAPE:
+			if painting:
+				_cancel_stroke()
+				return true
+			# Escape with no stroke under way puts the brush down: the canvas goes back to
+			# Godot's own select and move tools.
 			_cancel_stroke()
+			if is_instance_valid(dock):
+				dock.select_tool()
+			else:
+				brush = ""
 			return true
 		if brush.begins_with("piece:") and event.keycode == KEY_V:
 			if is_instance_valid(dock):
@@ -148,6 +198,21 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 			_scatter_stroke = brush.begins_with("piece:") and scatter and _fence_style == ""
 			if brush == "group:":
 				_say_result(operations.paste_group(clipboard, local), "Pasted the group")
+				return true
+			if brush.begins_with("gameplay:"):
+				var options: Dictionary = dock.gameplay_options() if is_instance_valid(dock) else {}
+				var made := operations.place_gameplay(brush.substr(9), local, options)
+				_say_result(made, String(made.get("message", "Placed")))
+				if bool(made.get("ok", false)):
+					# one click, one node: put the brush down and show the node in the inspector
+					if is_instance_valid(dock):
+						dock.select_tool(String(made.get("message", "")))
+					else:
+						brush = ""
+					if Engine.is_editor_hint() and made.get("node") is Node:
+						EditorInterface.get_selection().clear()
+						EditorInterface.get_selection().add_node(made.node)
+						EditorInterface.edit_node(made.node)
 				return true
 			if brush.begins_with("piece:") and is_crossing(brush.substr(6)):
 				_say_result(operations.place_crossing(brush.substr(6), local, _piece_options()), "Placed on the run")
@@ -257,12 +322,22 @@ func ghost_verdict(id: String, at: Vector2) -> Dictionary:
 		return cached
 	if _ghost_busy == "":
 		_ghost_busy = String(info.key)
-		WorkerThreadPool.add_task(func() -> void:
+		_ghost_task = WorkerThreadPool.add_task(func() -> void:
 			var verdict := operations.ghost_compute(info)
 			_ghost_done.call_deferred(String(info.key), verdict))
 	return {}
 
+## Every WorkerThreadPool task must be waited for, or the pool never releases it: a task left
+## unwaited (even an empty one) made the editor abort at exit with "corrupted size vs. prev_size in
+## fastbins", exit 134, after any session in which a piece's ghost had been checked (10 Nov: 4 of 4
+## runs before, none after; the same work on the main thread, or waited for, exits cleanly).
+func _reap_ghost_task() -> void:
+	if _ghost_task != -1:
+		WorkerThreadPool.wait_for_task_completion(_ghost_task)
+		_ghost_task = -1
+
 func _ghost_done(key: String, verdict: Dictionary) -> void:
+	_reap_ghost_task()
 	operations.ghost_store(key, verdict)
 	_ghost_busy = ""
 	update_overlays()
@@ -328,17 +403,32 @@ func validate_zone() -> Dictionary:
 func _operations_changed() -> void:
 	_revision += 1
 	_preview_key.clear()
-	var target: TerrainGround = operations.last_changed_ground
-	if is_instance_valid(target):
-		target.rebuild_shadows()
-		var walk := target.get_node_or_null("KitWalk") as KitWalk
-		if walk == null:
-			walk = Walk.new()
-			walk.name = "KitWalk"
-			target.add_child(walk)
-			walk.owner = target.owner
-		walk.rebuild(target)
+	operations.refresh_derived(operations.last_changed_ground)
 	update_overlays()
+
+func _history_changed() -> void:
+	_native_sync.call_deferred()
+
+## After any action in the editor's history (ours or Godot's own): drop the cached preview, and
+## when the placed pieces changed outside the dock, bring the derived data up to date.
+func _native_sync() -> void:
+	if not is_instance_valid(ground) or not ground.is_inside_tree():
+		return
+	_revision += 1
+	_preview_key.clear()
+	if operations.sync_native_edits():
+		update_overlays()
+
+## Save the zone and write its plan beside the others (the dock's Export plan).
+func export_plan_file() -> Dictionary:
+	if not is_instance_valid(zone) or not is_instance_valid(ground):
+		return Rules.failure("editor.zone_missing", "Select a kit zone first.")
+	if Engine.is_editor_hint():
+		if zone != EditorInterface.get_edited_scene_root():
+			return Rules.failure("editor.export_scene", "Open the zone as its own scene before exporting its plan.")
+		if String(zone.scene_file_path).is_empty() or EditorInterface.save_scene() != OK:
+			return Rules.failure("editor.save_failed", "The scene could not be saved; no plan was written.")
+	return operations.export_plan_file()
 
 func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 	if not is_instance_valid(ground) or ground.kit == null or not _has_hover:
@@ -352,6 +442,14 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 			var foot: Vector2 = corner + Vector2(g.get("offset", Vector2.ZERO))
 			var c := Vector2i(floori(foot.x / cell_size), floori((foot.y - 1) / cell_size))
 			_draw_rect(overlay, transform, Rect2(Vector2(c * cell_size), Vector2.ONE * cell_size), Color(0.9, 0.75, 0.4, 0.35))
+		return
+	if brush.begins_with("gameplay:"):
+		# where the spawn, door or actor would stand (snapped to 4 world px)
+		var point := transform * Tools.snap(_hover_local, "half", cell_size)
+		var colour_g := Color(0.95, 0.6, 0.95, 0.95)
+		overlay.draw_line(point - Vector2(8, 0), point + Vector2(8, 0), colour_g, 2.0)
+		overlay.draw_line(point - Vector2(0, 8), point + Vector2(0, 8), colour_g, 2.0)
+		overlay.draw_string(ThemeDB.fallback_font, point + Vector2(10, -10), brush.substr(9), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, colour_g)
 		return
 	if not brush.begins_with("piece:") or (painting and (_fence_style != "" or _scatter_stroke)):
 		var cell := Vector2i(floori(_hover_local.x / cell_size), floori(_hover_local.y / cell_size))
@@ -483,7 +581,12 @@ func _bake_zone() -> Dictionary:
 	if code != 0:
 		return Rules.failure("editor.bake_failed", "Ground bake failed: %s" % "".join(output))
 	var png := "res://zones/%s/ground_baked.png" % zone_id
-	EditorInterface.get_resource_filesystem().reimport_files(PackedStringArray([png]))
+	# A zone's first bake writes a picture the editor has never seen: tell the file system about it
+	# before asking for the import, or the import fails with "Can't find file" and the bake that
+	# just succeeded is reported as having produced nothing.
+	var files := EditorInterface.get_resource_filesystem()
+	files.update_file(png)
+	files.reimport_files(PackedStringArray([png]))
 	if not ResourceLoader.exists(png):
 		return Rules.failure("editor.bake_missing", "The bake did not produce its ground image.")
 	ground.baked = ResourceLoader.load(png, "Texture2D", ResourceLoader.CACHE_MODE_REPLACE) as Texture2D

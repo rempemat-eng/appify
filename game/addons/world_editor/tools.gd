@@ -7,6 +7,15 @@ const FACINGS := ["s", "w", "n", "e"]
 const ROUTE_SIMPLIFY_DISTANCE := 0.75
 ## Palette groups, by what a piece is for in a place (round 3, 3 Nov).
 const CATEGORIES := ["all", "fences", "farm", "commons", "village", "woodland", "water"]
+## The dock's Gameplay row: [kind, label, what its Detail field holds ("" for none)].
+const GAMEPLAY := [
+	["spawn", "Spawn point", ""],
+	["door", "Door to a zone", "target zone, or zone/spawn"],
+	["interactable", "Talk or read area", "speaker id (data/dialogue)"],
+	["villager", "Villager", "character id (assets/characters)"],
+	["restore", "Restore site", "restore id (data/plans)"],
+	["camp", "Enemy camp", "camp id"],
+]
 const SIDES := {"n": Vector2i(0, -1), "e": Vector2i(1, 0), "s": Vector2i(0, 1), "w": Vector2i(-1, 0)}
 const OPPOSITE := {"n": "s", "e": "w", "s": "n", "w": "e"}
 

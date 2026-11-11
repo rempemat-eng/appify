@@ -11,7 +11,9 @@ game/zones/<id>/<id>.tscn in place of the blockout (tools/gen_blockout.py), keep
 
   Ground       the ground picture (lawn, square, roads, walls, stair, lots, crater, static shadows), z -10
   Walls        the box's edges, the faces (with the stair's gap), the building footprints and every solid
-               object that never changes
+               object that never changes. A solid's box is the plan's unless the kit library holds a reviewed
+               one for the picture, and a low one (under 64 texels) is on layers 1 and 5 so arrows fly over
+               it (solids(), tools/gen_physics.py, docs/physics.md)
   Props        y-sorted with the actors: one Sprite2D per building, prop, thing and dressing piece, its feet as
                its origin. An item with a condition sits in a Conditional (world/conditional.gd) named
                If_<id> with its own collision: a building's damage overlay (If_<id>_damage, shown until its
@@ -30,6 +32,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import gen_blockout as GB  # noqa: E402
+import gen_physics as PH  # noqa: E402
 
 GAME = GB.GAME
 ROOT = os.path.dirname(GAME)
@@ -61,6 +64,47 @@ def chimney_pot(zid: str, o: dict) -> tuple:
     top = ys.min()
     cx = (xs[ys == top].min() + xs[ys == top].max() + 1) / 2.0
     return o['foot'][0] + o['offset'][0] + cx, o['foot'][1] + o['offset'][1] + top
+
+
+# kinds that lie flat on the ground and have no solid: people walk over them, so they are drawn on the
+# ground's side of everyone (over the cast shadows at -9) instead of being y-sorted by their far edge
+FLAT = {'beds', 'beds_dug', 'debris'}
+# things people read whose only solid was the 5 px post of their talk area, 50 px narrower than what is drawn
+THING_BASE = {'notice_board', 'waystone'}
+# kinds drawn as part of something else, which sort where the kit put them: a building's damage overlay one
+# texel in front of its building, the forge's fire in its mouth, a cast shadow and smoke on their own layers
+SORTS_WITH_OWNER = {'building', 'damage', 'glow', 'shadow', 'smoke'}
+
+
+def solids(plan: dict, kit: dict) -> dict:
+    """Each solid object's rectangle and height class: id -> ([x, y, w, h] in world px, low).
+    The plan's box (kit.json `solid`) stands unless the kit library knows the picture better
+    (tools/gen_physics.py): an approved woodland picture takes that picture's box, and a box the library
+    reviewed against the art (audit.overrides "collision") replaces the plan's. Low: the picture stands
+    under 64 texels, so an arrow flies over it, unless its record says it stops shots all the same."""
+    zid = plan['id']
+    sprite = {}
+    for k, dr in enumerate(plan.get('art', {}).get('dressing', [])):
+        if dr.get('sprite', '').startswith('woodland/'):
+            sprite[dr.get('id', '%s_%d' % (dr['kind'], k))] = 'woodland_' + dr['sprite'].split('/', 1)[1]
+    out = {}
+    for o in kit['objects']:
+        if not o.get('solid') or o['kind'] == 'building':
+            continue
+        rect, piece = list(o['solid']), None
+        fx, fy = o['foot'][0] / DENSITY, o['foot'][1] / DENSITY
+        if o['id'] in sprite:
+            piece = PH.pieces().get(sprite[o['id']])
+        else:
+            lib = PH.source_piece(zid, o['id'])
+            piece = lib if lib is not None and PH.reviewed(lib) else None
+        if piece is not None and PH.box(piece) is not None:
+            bx, by, bw, bh = PH.box(piece)
+            rect = [round(fx + bx, 4), round(fy + by, 4), bw, bh]
+        stands = PH.rise(os.path.join(GAME, 'zones', zid, 'art', o['png']), -o['offset'][1]) if o.get('png') else PH.LOW_RISE
+        # the record that knows this picture has the last word on shots (the stone rubble stops them)
+        out[o['id']] = (rect, PH.is_low(stands, piece if piece is not None else PH.source_piece(zid, o['id'])))
+    return out
 
 
 def render(zid: str, preview: str | None) -> None:
@@ -98,9 +142,13 @@ def build(plan: dict, kit: dict) -> str:
         s.solid('Face_' + f['id'], 'Walls', f['rect'])
     for b in plan.get('buildings', []):
         s.solid('Building_' + b['id'], 'Walls', b['rect'])
+    boxes = solids(plan, kit)
     for o in kit['objects']:
-        if o.get('solid') and not o.get('cond') and o['kind'] != 'building':
-            s.solid('Solid_' + o['id'], 'Walls', o['solid'])
+        if o['id'] in boxes and not o.get('cond'):
+            s.solid('Solid_' + o['id'], 'Walls', *boxes[o['id']])
+        elif o['kind'] in THING_BASE and o.get('png') and not o.get('cond'):
+            # a board or a stone people read: its talk area's post (5 px) stands inside this, its drawn base
+            s.solid('Solid_' + o['id'], 'Walls', PH.drawn_base(os.path.join(GAME, 'zones', zid, 'art', o['png']), o['foot'], o['offset']))
 
     # every drawn thing, y-sorted with the actors by its feet
     s.node('Props', 'Node2D', '.', {'y_sort_enabled': 'true'})
@@ -118,10 +166,15 @@ def build(plan: dict, kit: dict) -> str:
         elif o.get('png'):
             fx, fy = o['foot']
             ox, oy = o['offset']
+            if o['kind'] not in SORTS_WITH_OWNER and o['kind'] not in FLAT:
+                # the y-sort point on the drawn feet (tools/gen_physics.py); the texels stay where they are
+                (fx, fy), (ox, oy) = PH.on_feet(os.path.join(GAME, 'zones', zid, 'art', o['png']), (fx, fy), (ox, oy))
             props = {'position': vec(fx, fy), 'texture': 'ExtResource("%s")' % tex(o['png']), 'centered': 'false',
                      'offset': vec(ox, oy)}
             if o['kind'] == 'shadow':
                 props['z_index'] = -9      # the shadow of a prop that comes and goes: on the ground, under everything
+            elif o['kind'] in FLAT and not o.get('solid'):
+                props['z_index'] = -8      # lies flat and blocks nobody: walked over, never in front of anyone
             s.node(pascal(o['id']), 'Sprite2D', parent, props)
         if o['id'] in SMOKE and o.get('png'):
             px, py = chimney_pot(zid, o)
@@ -131,8 +184,8 @@ def build(plan: dict, kit: dict) -> str:
                 'position': vec(px, py), 'texture': 'ExtResource("%s")' % tex(strip_png), 'centered': 'false',
                 'offset': vec(-w // 2, -h), 'hframes': n, 'script': 'ExtResource("loopfx")', 'fps': fps,
                 'z_index': 1})
-        if o.get('solid') and o.get('cond'):
-            s.solid(pascal(o['id']) + 'Body', parent, o['solid'])
+        if o['id'] in boxes and o.get('cond'):
+            s.solid(pascal(o['id']) + 'Body', parent, *boxes[o['id']])
 
     # actors: people, things, restore sites and camps (as the blockout, with the cast where it is drawn)
     s.node('Actors', 'Node2D', '.', {'y_sort_enabled': 'true'})

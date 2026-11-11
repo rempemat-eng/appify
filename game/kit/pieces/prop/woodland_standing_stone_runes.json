@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 4,
+ "version": 5,
  "variants": [
   {
    "id": "standing_stone_runes",
@@ -38,9 +38,9 @@
   "collision": {
    "shape": "rect",
    "rect": [
-    -6.88,
     -5.0,
-    13.77,
+    -5.0,
+    10.666666666666666,
     5.0
    ]
   },
