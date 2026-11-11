@@ -28,11 +28,10 @@ extends CharacterBody2D
 ##     hurt: the arrow glances off (enemies/glance.gd). Once it winds up, attacks, recovers, staggers or
 ##     roars it can be hurt from anywhere: whoever it strikes at can strike back.
 ##   - A charge is stopped by a wall met within 45 degrees of head on (one met at a slant is slid along)
-##     or by the arena's edge, with the stagger, and never before its strike has had its turn. Rubble and stumps (solids under SMALL_SOLID on both sides) do not stop it: it goes
+##     or by the arena's edge, with the stagger, and never before its strike has had its turn. Rubble and stumps (low solids, and solids under SMALL_SOLID on both sides) do not stop it: it goes
 ##     through them. Before, a charge ended on the chamber's rubble with the stagger, out of reach of a
 ##     player behind it, who then shot it down staggered (the north-east corner, 23 s, no heart lost).
-## Known and open: behind a stump the player's own arrows stop on it; thorns stop on rubble and stumps
-## until enemies' shots learn the low layer (part D).
+##   - Its thorns fly over low solids as the player's arrows do (bosses/thorn.gd, Arrow.is_low).
 signal died
 signal phase_changed(phase: int)
 signal telegraph_started(attack: String, seconds: float)
@@ -226,7 +225,7 @@ func _hit_a_wall_in_the_way() -> bool:
 		if into >= -0.3:
 			continue
 		var body := c.get_collider() as PhysicsBody2D
-		if body != null and is_small_solid(body):
+		if body != null and (Arrow.is_low(body) or is_small_solid(body)):
 			if not _ploughed.has(body):
 				_ploughed.append(body)
 				add_collision_exception_with(body)
@@ -469,13 +468,14 @@ func is_staggered() -> bool:
 	return state == "stagger"
 
 # --- being hit -------------------------------------------------------------------------------------
-func take_hit(amount: int, _dir: Vector2, _knockback: float = 0.0) -> void:
+## Returns whether the hit counted (false when it glanced off).
+func take_hit(amount: int, _dir: Vector2, _knockback: float = 0.0) -> bool:
 	if freed or amount <= 0:
-		return
+		return false
 	if is_instance_valid(target) and state in ["dormant", "approach"] and not player_in_arena():
 		glance_t = Glance.TIME        # asleep or walking, it cannot come for an archer outside the arena
 		glanced.emit()
-		return
+		return false
 	if state == "dormant":
 		hsm.dispatch(&"approach")
 	hp -= amount * (2 if is_staggered() else 1)
@@ -489,6 +489,7 @@ func take_hit(amount: int, _dir: Vector2, _knockback: float = 0.0) -> void:
 		if state in ["approach", "recover"]:
 			_roared = true
 			hsm.dispatch(&"roar")
+	return true
 
 func _free() -> void:
 	freed = true

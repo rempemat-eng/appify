@@ -265,14 +265,15 @@ func _arrive_home() -> void:
 	hsm.dispatch(&"home")
 
 # --- damage -------------------------------------------------------------
-func take_hit(amount: int, dir: Vector2, knockback: float = 200.0) -> void:
+## Returns whether the hit counted (false when it glanced off).
+func take_hit(amount: int, dir: Vector2, knockback: float = 200.0) -> bool:
 	if dead:
-		return
+		return false
 	var archer := _archer()
 	if archer != null and not can_come_for(archer.global_position):
 		glance_t = Glance.TIME
 		glanced.emit()
-		return
+		return false
 	hp -= amount
 	_flash = 0.12
 	if archer != null:
@@ -284,6 +285,7 @@ func take_hit(amount: int, dir: Vector2, knockback: float = 200.0) -> void:
 		velocity = dir * knockback
 	if hp <= 0:
 		_die()
+	return true
 
 ## Whoever hits it: the player (the only thing that shoots or swings at enemies).
 func _archer() -> Node2D:

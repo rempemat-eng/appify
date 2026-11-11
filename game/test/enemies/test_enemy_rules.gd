@@ -542,3 +542,59 @@ func test_woken_by_a_shot_it_runs_in_faster_until_its_first_wind_up() -> void:
 	assert_float(shield.velocity.length()).is_equal_approx(102.0, 0.5)
 	rusher._cancel_attack()
 	shield._cancel_attack()
+
+# --- part D: enemies' shots and sight treat low solids as the player's arrow does (docs/physics.md) ------
+
+func _solid(host: Node2D, rect: Rect2, low: bool) -> StaticBody2D:
+	var body := StaticBody2D.new()
+	body.collision_layer = Arrow.WALLS | (Arrow.LOW if low else 0)
+	var shape := CollisionShape2D.new()
+	var box := RectangleShape2D.new()
+	box.size = rect.size
+	shape.shape = box
+	body.position = rect.get_center()
+	body.add_child(shape)
+	host.add_child(body)
+	return body
+
+func test_a_seed_flies_over_a_low_solid_and_stops_at_a_wall() -> void:
+	var host := _host()
+	_solid(host, Rect2(60, -20, 24, 40), true)           # a stump across its way
+	_solid(host, Rect2(160, -20, 24, 40), false)         # a wall behind it
+	await _steps(2)
+	var shot := SliceEnemyShot.new()
+	shot.direction = Vector2.RIGHT
+	host.add_child(shot)
+	shot.global_position = Vector2(0, 0)
+	await _steps(30)                                     # 120 px: past the stump (main: gone at x 60)
+	assert_bool(is_instance_valid(shot) and not shot.finished).is_true()
+	assert_float(shot.global_position.x).is_greater(100.0)
+	await _steps(20)
+	assert_bool(not is_instance_valid(shot) or shot.finished).is_true()   # the wall at 160 stopped it
+
+func test_the_shooter_sees_over_a_low_solid_and_not_through_a_wall() -> void:
+	var host := _host()
+	var e := _creature(host, Vector2(4, 20), "shooter")     # inside the test's small view (it never fires off screen)
+	e.set_physics_process(false)
+	_archer.position = Vector2(60, 20)
+	var cover := _solid(host, Rect2(26, 0, 12, 40), true)
+	await _steps(2)
+	assert_bool(e._can_commit()).is_true()               # main: false, the stump blocked its sight
+	cover.collision_layer = Arrow.WALLS
+	await _steps(2)
+	assert_bool(e._can_commit()).is_false()
+	e._cancel_attack()
+
+func test_a_glanced_arrow_is_not_reported_as_struck() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2.ZERO)
+	e.set_physics_process(false)
+	var hits := [0]
+	for far: bool in [true, false]:
+		_archer.position = Vector2(-400 if far else -200, 0)
+		var arrow := Arrow.new()
+		host.add_child(arrow)
+		arrow.struck.connect(func(_t: Node) -> void: hits[0] += 1)
+		arrow._on_body(e)
+		assert_int(hits[0]).is_equal(0 if far else 1)    # the camera shakes on `struck` (game.gd)
+	assert_int(e.hp).is_equal(2)

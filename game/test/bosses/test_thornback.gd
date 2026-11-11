@@ -347,3 +347,15 @@ func test_in_the_real_chamber_the_charge_reaches_the_corners_behind_the_rubble_a
 		Zones.current.free()
 		Zones.current = null
 	SaveGame.reset()
+
+## Part D: a thorn flies over a low solid (a stump, rubble on layer 5) and is stopped by a wall.
+func test_a_thorn_flies_over_a_low_solid_and_stops_at_a_wall() -> void:
+	var th: ThornbackThorn = auto_free(ThornbackThorn.new())
+	add_child(th)
+	var low: StaticBody2D = auto_free(StaticBody2D.new())
+	low.collision_layer = Arrow.WALLS | Arrow.LOW
+	var wall: StaticBody2D = auto_free(StaticBody2D.new())
+	th._on_body(low)
+	assert_bool(th.finished).is_false()
+	th._on_body(wall)
+	assert_bool(th.finished).is_true()

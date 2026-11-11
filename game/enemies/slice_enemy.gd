@@ -229,18 +229,19 @@ func _can_commit() -> bool:
 	var point := get_global_transform_with_canvas().origin
 	if not screen.has_point(point):
 		return false
-	var query := PhysicsRayQueryParameters2D.create(global_position, target.global_position, 1)
-	return get_world_2d().direct_space_state.intersect_ray(query).is_empty()
+	# the same sight the player's arrow has: low solids (a bench, a stump, water) do not block it
+	return not Arrow.walled_off(get_world_2d().direct_space_state, global_position, target.global_position)
 
-func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> void:
+## Returns whether the hit counted (false when it glanced off).
+func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> bool:
 	if dead or amount <= 0:
-		return
+		return false
 	var archer: Node2D = target if is_instance_valid(target) else null
 	if archer != null and not can_come_for(archer.global_position):
 		glance_t = Glance.TIME
 		glanced.emit()
 		queue_redraw()
-		return
+		return false
 	if archer != null and (state == "idle" or state == "leash"):
 		_wake(archer.global_position)
 	# Incoming travel direction opposes the shield's facing on a frontal hit.
@@ -257,6 +258,7 @@ func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> void:
 		var tween := create_tween()
 		tween.tween_property(self, "scale", Vector2(0.1, 0.1), 0.25)
 		tween.tween_callback(queue_free)
+	return true
 
 ## Woken by a hit: it comes for the archer, and so do its idle camp mates near enough to hear it.
 func _wake(at: Vector2) -> void:
