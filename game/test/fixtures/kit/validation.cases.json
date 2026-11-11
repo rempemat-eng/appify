@@ -7059,6 +7059,506 @@
       }
     },
     {
+      "id": "declared-scale-good-with-its-bounds-in-words",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "......",
+          "......",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "box",
+            "piece": "box",
+            "at": [
+              3.5,
+              3
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            },
+            "size_px": [
+              24,
+              24
+            ],
+            "size_cells": [
+              1,
+              1
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          },
+          "audit": {
+            "size_class": "custom (8 to 8 tall, 8 to 8 wide)"
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -24,
+              8,
+              24
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": [],
+      "size_guide": {
+        "tolerance": 0,
+        "kinds": {
+          "custom": {
+            "w": [
+              8,
+              8
+            ],
+            "h": [
+              8,
+              8
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "declared-scale-bad-with-its-bounds-in-words",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "......",
+          "......",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "box",
+            "piece": "box",
+            "at": [
+              3.5,
+              3
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            },
+            "size_px": [
+              240,
+              24
+            ],
+            "size_cells": [
+              1,
+              1
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          },
+          "audit": {
+            "size_class": "custom (8 to 8 tall, 8 to 8 wide)"
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -24,
+              8,
+              24
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": [
+        "rules.scale"
+      ],
+      "size_guide": {
+        "tolerance": 0,
+        "kinds": {
+          "custom": {
+            "w": [
+              8,
+              8
+            ],
+            "h": [
+              8,
+              8
+            ]
+          }
+        }
+      }
+    },
+    {
       "id": "concept-even-in-lab",
       "plan": {
         "zone": "w6_fixture",

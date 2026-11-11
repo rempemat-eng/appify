@@ -6454,7 +6454,13 @@
  "crossroads_notice_board": {
   "approval": "candidate",
   "blocks_move": true,
-  "collision": null,
+  "collision": [
+   -5,
+   -5,
+   10,
+   10
+  ],
+  "collision_circle": 5,
   "deck": null,
   "foot": [
    48,
@@ -7663,7 +7669,13 @@
  "crossroads_waystone": {
   "approval": "candidate",
   "blocks_move": true,
-  "collision": null,
+  "collision": [
+   -5,
+   -5,
+   10,
+   10
+  ],
+  "collision_circle": 5,
   "deck": null,
   "foot": [
    45,
@@ -19137,7 +19149,13 @@
  "woodland_stone_sign": {
   "approval": "candidate",
   "blocks_move": true,
-  "collision": null,
+  "collision": [
+   -5,
+   -5,
+   10,
+   10
+  ],
+  "collision_circle": 5,
   "deck": null,
   "foot": [
    16.0,

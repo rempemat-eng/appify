@@ -118,6 +118,16 @@ def entry(p: dict) -> dict:
     foot = g.get('foot') or [g['size_px'][0] / 2.0, g['size_px'][1]]
     col = g.get('collision') or {}
     rect = [v * D for v in col['rect']] if col.get('shape') == 'rect' and col.get('rect') else None
+    # a round post (a sign's: geometry.collision {shape: circle, radius}, centred on the foot). The
+    # index keeps `collision` a box for everything that reads boxes (the circle's bounding box) and
+    # names the radius beside it: the scene's body is the circle and the walk mask blocks the cells
+    # the circle touches (walk.py, walk.gd). It used to be dropped here, so a sign had no body in
+    # its scene while the walk mask blocked its whole 2 by 2 footprint.
+    radius = None
+    if col.get('shape') == 'circle' and col.get('radius'):
+        radius = round(col['radius'] * D, 3)
+        radius = int(radius) if radius == int(radius) else radius
+        rect = [-radius, -radius, 2 * radius, 2 * radius]
     cs = r.get('cast_shadow') or {}
     shadow = None
     if cs.get('shape') == 'ellipse' and cs.get('size'):
@@ -138,6 +148,7 @@ def entry(p: dict) -> dict:
             'size_cells': g.get('size_cells'), 'footprint': g.get('footprint'), 'function': p.get('function', {}), 'story': p.get('story', {}),
             'role': p.get('placement', {}).get('role'), 'snap': p.get('placement', {}).get('snap', 'cell'),
             'approval': p['approval']['state'], 'painted': bool(r.get('paint')),
+            **({'collision_circle': radius} if radius else {}),
             **({'sheet_px': g['sheet_px']} if g.get('sheet_px') else {}),
             **({'anim': _anim(r, foot)} if _anim(r, foot) else {}),
             'variants': {v['id']: {'png': v['png'], 'foot': v.get('foot', foot)} for v in p.get('variants', [])}}
@@ -152,7 +163,10 @@ def scene(pid: str, e: dict) -> str:
     # fire ring) is kept in the index for the ground's shadow pass and gets no body, so a zone built from
     # these scenes blocks exactly what the walk mask derived from the same records blocks
     solid = e['collision'] if e.get('blocks_move') else None
-    if solid:
+    circle = e.get('collision_circle') if solid else None
+    if circle:
+        lines += ['[sub_resource type="CircleShape2D" id="solid"]', 'radius = %g' % circle, '']
+    elif solid:
         x, y, w, h = solid
         lines += ['[sub_resource type="RectangleShape2D" id="solid"]', 'size = Vector2(%g, %g)' % (w, h), '']
     lines += ['[node name="%s" type="Node2D"]' % ''.join(s.capitalize() for s in pid.split('_')),

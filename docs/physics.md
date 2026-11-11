@@ -57,7 +57,7 @@ Crossroads' retaining faces end on the drawn wall's foot: the garden walk's and 
 
 `walk.txt` is the terrain only: the ground nobody can stand on (water, cliff faces, the rock bank). Objects are not in it. The review tools (`scripts/review/scene.py`) read the same file as their walk mask.
 
-Zones built by the world editor (`kitlab`, `woodland_kit`) derive one walls body from the same piece boxes in `world/terrain/walk.gd`. They do not know low solids yet. A piece scene (`game/kit/props/*.tscn`, written by `scripts/art/kit/props.py`) carries a `Solid` only when its record says `gameplay.blocks_move`, so a zone built from the scenes blocks what the walk mask blocks.
+Zones built by the world editor (`kitlab`, `woodland_kit`) derive one walls body from the same piece boxes in `world/terrain/walk.gd`. They do not know low solids yet. A piece scene (`game/kit/props/*.tscn`, written by `scripts/art/kit/props.py`) carries a `Solid` only when its record says `gameplay.blocks_move`, so a zone built from the scenes blocks what the walk mask blocks. A sign's round post (`geometry.collision` with `shape: circle`) is a circle in its scene, and the walk mask blocks the cells that circle touches.
 
 ## Low solids
 

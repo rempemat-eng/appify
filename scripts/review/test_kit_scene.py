@@ -115,6 +115,11 @@ def cases():
     add('declared-scale-good', p, lib=lib, guide=guide)
     lib = copy.deepcopy(lib); lib['box']['geometry']['size_px'] = [240, 24]
     add('declared-scale-bad', p, ['rules.scale'], lib=lib, guide=guide)
+    # a spec names its kind by its head word, its bounds after it (scale.guide_kind; the audit of #471)
+    lib = copy.deepcopy(lib); lib['box']['geometry']['size_px'] = [24, 24]; lib['box']['audit'] = {'size_class': 'custom (8 to 8 tall, 8 to 8 wide)'}
+    add('declared-scale-good-with-its-bounds-in-words', p, lib=lib, guide=guide)
+    lib = copy.deepcopy(lib); lib['box']['geometry']['size_px'] = [240, 24]
+    add('declared-scale-bad-with-its-bounds-in-words', p, ['rules.scale'], lib=lib, guide=guide)
     p = plan(); p['pieces'] = [instance()]; lib = library(); lib['box']['approval']['state'] = 'concept'
     add('concept-even-in-lab', p, ['rules.unapproved'], lib=lib)
     p = plan(); p['pieces'] = [instance()]; lib = library(); lib['box']['approval']['state'] = 'candidate'
@@ -261,6 +266,23 @@ class KitSceneTests(unittest.TestCase):
             result = subprocess.run([sys.executable, '-S', '-m', 'scripts.review.kit_scene', str(p), '--check', '--json'], cwd=KS.ROOT, text=True, capture_output=True)
             self.assertEqual(result.returncode, 1, result.stderr)
             self.assertEqual(json.loads(result.stdout)['findings'][0]['check'], 'rules.unknown_piece')
+
+    def test_size_kinds_are_read_as_scale_py_reads_them(self):
+        # sizes.json first, then the size guide (docs/vision/size-guide.md). kit_scene read the size
+        # guide alone, so a cart (a sizes.json class only) was an unknown kind and a bench was held
+        # to the guide's bench (the audit of #471, round 2).
+        from . import scale
+        with (KS.ROOT / 'scripts/art/size_guide.json').open() as stream:
+            guide = json.load(stream)
+        heads = set(scale.CLASSES) | set(guide['kinds'])
+        for path in (KS.ROOT / 'game/kit/pieces').rglob('*.json'):
+            spec = (json.loads(path.read_text()).get('audit') or {}).get('size_class')
+            if isinstance(spec, str) and spec.strip():
+                heads.add(spec.split('(')[0].strip().split(' ')[0])
+        for head in sorted(heads):
+            with self.subTest(kind=head):
+                self.assertEqual(KS.kind_ranges(head, guide), scale.kind_ranges(head))
+        self.assertIsNotNone(KS.kind_ranges('cart', guide))
 
     def test_shared_fixture_is_current(self):
         path = KS.ROOT / 'game/test/fixtures/kit/validation.cases.json'

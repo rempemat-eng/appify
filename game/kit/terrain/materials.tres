@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=3 format=3]
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://damjj22xg5kso"]
 
 [ext_resource type="Texture2D" path="res://kit/terrain/palette.png" id="1"]
 

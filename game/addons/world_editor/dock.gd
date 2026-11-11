@@ -3,6 +3,8 @@ extends VBoxContainer
 ## Palette and authoring controls. Placement and validation verdicts belong to operations.gd.
 
 const Tools := preload("res://addons/world_editor/tools.gd")
+const BAKE_LABEL := "Bake ground (the painters)"
+const BAKE_CANCEL := "Cancel bake"
 
 var plugin
 var zone: Node
@@ -31,6 +33,8 @@ var gameplay_kind: OptionButton
 var gameplay_name: LineEdit
 var gameplay_detail: LineEdit
 var gameplay_button: Button
+var tier_select: OptionButton
+var flow_select: OptionButton
 var _materials := {}
 var _pieces := {}
 var _manifest := {}
@@ -192,6 +196,34 @@ func _ready() -> void:
 	group_row.add_child(copy_button)
 	group_row.add_child(paste_button)
 	_content.add_child(group_row)
+	_content.add_child(_label("Height and water flow: pick, press the brush, drag (brush or rectangle)"))
+	tier_select = OptionButton.new()
+	tier_select.name = "Tier"
+	for tier in 4:
+		tier_select.add_item("0: the ground" if tier == 0 else "%d: raised" % tier)
+		tier_select.set_item_metadata(tier, tier)
+	var tier_button := Button.new()
+	tier_button.name = "TierBrush"
+	tier_button.text = "Tier brush"
+	tier_button.tooltip_text = "Paint a height tier per cell. The faces under south rims are derived; stairs are pieces."
+	tier_button.pressed.connect(_tier_pressed)
+	var tier_row := _row("Tier", tier_select)
+	tier_row.add_child(tier_button)
+	_content.add_child(tier_row)
+	flow_select = OptionButton.new()
+	flow_select.name = "Flow"
+	for choice in Tools.FLOW:
+		flow_select.add_item("%s %s" % [choice[0], choice[1]] if choice[0] != "." else _text(choice[1]))
+		flow_select.set_item_metadata(flow_select.item_count - 1, choice[0])
+	flow_select.select(5)
+	var flow_button := Button.new()
+	flow_button.name = "FlowBrush"
+	flow_button.text = "Flow brush"
+	flow_button.tooltip_text = "Paint the direction water runs, on water cells only. Validate checks it never runs uphill or onto dry ground."
+	flow_button.pressed.connect(_flow_pressed)
+	var flow_row := _row("Flow", flow_select)
+	flow_row.add_child(flow_button)
+	_content.add_child(flow_row)
 	_content.add_child(_label("Gameplay: spawns, doors and actors (details in the inspector)"))
 	gameplay_kind = OptionButton.new()
 	gameplay_kind.name = "GameplayKind"
@@ -227,7 +259,7 @@ func _ready() -> void:
 	_content.add_child(export_button)
 	bake_button = Button.new()
 	bake_button.name = "Bake"
-	bake_button.text = "Bake ground (the painters)"
+	bake_button.text = BAKE_LABEL
 	bake_button.pressed.connect(_bake)
 	_content.add_child(bake_button)
 	_sync_controls()
@@ -641,6 +673,27 @@ func _gameplay_kind_changed() -> void:
 			gameplay_detail.placeholder_text = _text(choice[2])
 			gameplay_detail.editable = _text(choice[2]) != ""
 
+func _pick_brush(brush: String, note: String) -> void:
+	if not is_instance_valid(plugin):
+		return
+	mats.deselect_all()
+	pieces.deselect_all()
+	variants.deselect_all()
+	_clear_piece_options()
+	plugin.set("brush", brush)
+	if _text(plugin.get("tool_mode")) == "route":
+		plugin.set("tool_mode", "brush")      # a route is a path's tool
+		_sync_controls()
+	say(note)
+	_refresh_overlay()
+
+func _tier_pressed() -> void:
+	var tier := int(tier_select.get_selected_metadata())
+	_pick_brush("tier:%d" % tier, "Tier brush: %s. Drag over the cells; raised cells show their number." % tier_select.get_item_text(tier_select.selected))
+
+func _flow_pressed() -> void:
+	_pick_brush("flow:" + _text(flow_select.get_selected_metadata()), "Flow brush: %s. Drag over water; arrows show the flow painted so far." % flow_select.get_item_text(flow_select.selected))
+
 func _gameplay_pressed() -> void:
 	if not is_instance_valid(plugin):
 		return
@@ -764,6 +817,8 @@ func hover(cell: Vector2i, local: Vector2) -> void:
 	var material_id := ground.material_at(cell)
 	var material: Dictionary = ground.kit.by_material.get(material_id, {})
 	var text := "Cell %s: %s" % [cell, _text(material.get("id", "empty"))]
+	if ground.tier_at(cell) > 0:
+		text += ", tier %d" % ground.tier_at(cell)
 	if is_instance_valid(plugin) and _text(plugin.get("brush")).begins_with("piece:"):
 		var id := _text(plugin.get("brush")).substr(6)
 		var result := _preview(id, local)
@@ -812,17 +867,34 @@ func _bake() -> void:
 	if not is_instance_valid(zone):
 		say("Select a kit zone first.")
 		return
-	if not is_instance_valid(plugin) or not plugin.has_method("bake_zone"):
+	if not is_instance_valid(plugin) or not plugin.has_method("start_bake"):
 		say("Bake unavailable: the editor backend is required.")
 		return
-	bake_button.disabled = true
-	say("Bake: save, export and render the selected zone.")
-	var result: Variant = plugin.call("bake_zone")
+	if bool(plugin.call("bake_running")):
+		plugin.call("cancel_bake")     # the plugin reports the outcome through bake_done
+		return
+	say("Bake: check, save and export the zone, then run the painters.")
+	var result: Variant = plugin.call("start_bake")
+	say(_message(result, "Bake failed; no output was accepted."))
+	if result is Dictionary and bool(result.get("running", false)):
+		bake_button.text = BAKE_CANCEL
+
+## While the painters run (called every frame by the plugin): how long, and their last line.
+func bake_progress(text: String) -> void:
+	if bake_button != null and bake_button.text != BAKE_CANCEL:
+		bake_button.text = BAKE_CANCEL
+	if status != null and status.text != text:
+		say(text)
+
+## The bake has ended, was cancelled or failed.
+func bake_done(result: Variant) -> void:
+	if bake_button != null:
+		bake_button.text = BAKE_LABEL
+		bake_button.disabled = not is_instance_valid(zone)
 	if result is Dictionary and bool(result.get("ok", false)) and _text(result.get("message", "")) == "":
 		result = result.duplicate(true)
 		result["message"] = "Bake completed."
 	say(_message(result, "Bake failed; no output was accepted."))
-	bake_button.disabled = not is_instance_valid(zone)
 
 func _export() -> void:
 	if not is_instance_valid(zone):

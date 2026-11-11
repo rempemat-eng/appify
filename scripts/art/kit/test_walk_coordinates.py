@@ -167,6 +167,22 @@ class WalkParity(unittest.TestCase):
         rows = [''.join('#' if v else '.' for v in r) for r in W.mask(fixture['plan'])]
         self.assertEqual(rows, fixture['rows'])
 
+    def test_a_round_post_blocks_the_cells_its_circle_touches(self):
+        # The three signs' records give a round post. props.py dropped it, so the index had no
+        # collision and the mask blocked the whole 2 by 2 footprint (16 walk cells).
+        _, idx = W.KR.load_kit()
+        for pid in ('woodland_stone_sign', 'crossroads_waystone', 'crossroads_notice_board'):
+            self.assertEqual(idx[pid].get('collision_circle'), 5, pid)
+            self.assertEqual(idx[pid]['collision'], [-5, -5, 10, 10], pid)
+        plan = {'zone': 'round_post', 'legend': {'.': 'lawn'}, 'rows': ['..........'] * 4,
+                'pieces': [{'id': 'on', 'piece': 'woodland_stone_sign', 'at': [60, 48]}]}
+        cells = lambda: {(int(x), int(y)) for y, x in zip(*W.mask(plan).nonzero())}
+        self.assertEqual(cells(), {(4, 3), (5, 3), (4, 4), (5, 4)})
+        plan['pieces'][0]['at'] = [162, 54]         # inside one walk cell
+        self.assertEqual(cells(), {(13, 4)})
+        plan['pieces'][0]['at'] = [164, 56]         # the cell across the corner is 5.7 away: open
+        self.assertEqual(cells(), {(13, 4), (14, 4), (13, 5)})
+
     def test_committed_walk_masks_are_current(self):
         # walk.txt is an export of the plan; nothing kept it current, and three had drifted.
         zones = Path(W.KR.ROOT) / 'game/kit/zones'

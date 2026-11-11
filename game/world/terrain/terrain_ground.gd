@@ -28,6 +28,16 @@ extends Node2D
 		show_cells = v
 		_apply_cells_visibility()
 
+## Saved with the scene: the baked picture is behind the cells or the pieces (something was painted,
+## placed or moved after the bake). Without it a reopened zone showed its old baked ground over the
+## new cells until the next bake, and the picture and the collision disagreed (10 Nov).
+@export_storage var baked_stale: bool:
+	get:
+		return baked != null and not _baked_live
+	set(v):
+		_stale_at_load = v
+var _stale_at_load := false
+
 var kit: TerrainKit
 var _cells_img: Image
 var _cells_tex: ImageTexture
@@ -44,6 +54,8 @@ func showing_baked() -> bool:
 	return baked != null and _baked_live
 
 func _ready() -> void:
+	if _stale_at_load:
+		_baked_live = false
 	_painted_pieces = _painted_piece_inputs()
 	kit = TerrainKit.shared()
 	var cells := get_cells_layer()

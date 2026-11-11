@@ -1017,21 +1017,31 @@ func _export(path: String, out: String) -> int:
 
 ## An empty zone to start authoring in: a plan of one ground material and its scene. Refuses to
 ## replace an existing plan or scene.
-func _new(args: Dictionary) -> int:
-	var zone := String(args["new"])
+## What is wrong with a request for an empty zone ("" when sound): its id, its size as
+## "<across>x<down>" in cells, and its ground, which must be a material somebody can stand on (a
+## zone of water had a start spawn nobody could use).
+static func new_zone_error(zone: String, size_text: String, ground: String) -> String:
 	var pattern := RegEx.new()
 	pattern.compile("^[a-z][a-z0-9_]*$")
 	if pattern.search(zone) == null:
-		printerr("kit_zone: --new needs a zone id of lower-case letters, digits and underscores")
+		return "--new needs a zone id of lower-case letters, digits and underscores"
+	var size := size_text.split("x")
+	if size.size() != 2 or not size[0].is_valid_int() or not size[1].is_valid_int() or int(size[0]) < 1 or int(size[1]) < 1 or int(size[0]) > 400 or int(size[1]) > 400:
+		return "--size is <cells across>x<cells down>, 1 to 400 each"
+	if TerrainKit.shared().atlas_coords(ground).x < 0:
+		return "--ground '%s' is not a built terrain material" % ground
+	if not bool(TerrainKit.shared().by_id[ground].get("walkable", false)):
+		return "--ground '%s' is ground nobody can stand on; start from a walkable material and paint it in" % ground
+	return ""
+
+func _new(args: Dictionary) -> int:
+	var zone := String(args["new"])
+	var ground := String(args.get("ground", "lawn"))
+	var refusal := new_zone_error(zone, String(args.get("size", "40x23")), ground)
+	if not refusal.is_empty():
+		printerr("kit_zone: ", refusal)
 		return 1
 	var size := String(args.get("size", "40x23")).split("x")
-	if size.size() != 2 or not size[0].is_valid_int() or not size[1].is_valid_int() or int(size[0]) < 1 or int(size[1]) < 1 or int(size[0]) > 400 or int(size[1]) > 400:
-		printerr("kit_zone: --size is <cells across>x<cells down>, 1 to 400 each")
-		return 1
-	var ground := String(args.get("ground", "lawn"))
-	if TerrainKit.shared().atlas_coords(ground).x < 0:
-		printerr("kit_zone: --ground '%s' is not a built terrain material" % ground)
-		return 1
 	var plan_path := "res://kit/zones/%s.json" % zone
 	var scene_path := String(args.get("out", "res://zones/%s/%s.tscn" % [zone, zone]))
 	if FileAccess.file_exists(plan_path) or FileAccess.file_exists(scene_path):

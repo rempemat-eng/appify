@@ -6,6 +6,7 @@ const Operations := preload("res://addons/world_editor/operations.gd")
 const Tools := preload("res://addons/world_editor/tools.gd")
 const Rules := preload("res://addons/world_editor/rules_adapter.gd")
 const Smoke := preload("res://addons/world_editor/smoke.gd")
+const BakeJob := preload("res://addons/world_editor/bake_job.gd")
 
 var dock
 var operations := Operations.new()
@@ -29,6 +30,12 @@ var _preview_key: Array = []
 var _preview: Dictionary = {}
 var _revision := 0
 var _baking := false
+var _bake_job: RefCounted
+var _bake_zone_id := ""
+var _bake_ground: TerrainGround
+var _bake_zone: Node
+var _bake_key := ""      ## the zone's plan when the painters started (Operations.bake_key)
+signal bake_finished(result: Dictionary)
 var _fence_style := ""
 var clipboard: Array = []
 var scatter := false
@@ -69,6 +76,9 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	_cancel_stroke()
 	_reap_ghost_task()
+	if _bake_job != null:
+		_bake_job.cancel()             # a bake does not outlive the editor that asked for it
+		_bake_job = null
 	if operations.changed.is_connected(_operations_changed):
 		operations.changed.disconnect(_operations_changed)
 	var manager := get_undo_redo()
@@ -105,6 +115,7 @@ func _edit(object: Object) -> void:
 	operations.configure(zone, ground, get_undo_redo(), {
 		"relation_evaluator": Callable(Rules, "placement"),
 		"zone_validator": Callable(Rules, "validate_plan"),
+		"install_walk": true,
 	})
 	_revision += 1
 	_preview_key.clear()
@@ -244,6 +255,15 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				var scatter_options := _piece_options()
 				scatter_options.merge({"density": scatter_density, "seed": zone_seed}, true)
 				_say_result(operations.scatter(brush.substr(6), cells, scatter_options), "Scattered")
+				return true
+			if brush.begins_with("tier:"):
+				var tier := int(brush.substr(5))
+				var raised := operations.paint_tiers(cells, tier)
+				_say_result(raised, String(raised.get("message", "")))
+				return true
+			if brush.begins_with("flow:"):
+				var flowed := operations.paint_flow(cells, brush.substr(5))
+				_say_result(flowed, String(flowed.get("message", "No flow changed.")))
 				return true
 			var material := brush.substr(9) if brush.begins_with("material:") else ""
 			var variant := brush.substr(8) if brush.begins_with("variant:") else ""
@@ -389,6 +409,7 @@ func refresh_library() -> void:
 	operations.configure(zone, ground, get_undo_redo(), {
 		"relation_evaluator": Callable(Rules, "placement"),
 		"zone_validator": Callable(Rules, "validate_plan"),
+		"install_walk": true,
 	})
 	_revision += 1
 	_preview_key.clear()
@@ -451,6 +472,8 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 		overlay.draw_line(point - Vector2(0, 8), point + Vector2(0, 8), colour_g, 2.0)
 		overlay.draw_string(ThemeDB.fallback_font, point + Vector2(10, -10), brush.substr(9), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, colour_g)
 		return
+	if brush.begins_with("tier:") or brush.begins_with("flow:"):
+		_draw_height_and_flow(overlay, transform, cell_size)
 	if not brush.begins_with("piece:") or (painting and (_fence_style != "" or _scatter_stroke)):
 		var cell := Vector2i(floori(_hover_local.x / cell_size), floori(_hover_local.y / cell_size))
 		var cells := _stroke_cells if painting else Tools.brush_cells(cell, brush_size)
@@ -518,6 +541,30 @@ func _forward_canvas_draw_over_viewport(overlay: Control) -> void:
 				points.append(transform * (at + Vector2(cos(angle), sin(angle)) * radius * cell_size))
 			overlay.draw_polyline(points, Color(0.85, 0.8, 0.4, 0.7), 1.0)
 
+## Tiers and flow have no picture of their own, so their brushes show them: each raised cell's
+## tier as a number, each flow cell's direction as an arrow.
+func _draw_height_and_flow(overlay: Control, transform: Transform2D, cell_size: int) -> void:
+	if brush.begins_with("tier:"):
+		for y in ground.grid_size.y:
+			for x in ground.grid_size.x:
+				var tier := ground.tier_at(Vector2i(x, y))
+				if tier > 0:
+					_draw_rect(overlay, transform, Rect2(Vector2(x, y) * cell_size, Vector2.ONE * cell_size), Color(1.0, 0.8, 0.3, 0.08 + 0.1 * tier))
+					overlay.draw_string(ThemeDB.fallback_font, transform * (Vector2(x + 0.3, y + 0.75) * cell_size), str(tier), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 0.95, 0.7))
+		return
+	var rows := operations.flow_rows()
+	for y in rows.size():
+		for x in rows[y].length():
+			var direction: Vector2i = Tools.FLOW_DIRECTIONS.get(rows[y][x], Vector2i.ZERO)
+			if direction == Vector2i.ZERO:
+				continue
+			var centre := (Vector2(x, y) + Vector2.ONE * 0.5) * cell_size
+			var reach := Vector2(direction).normalized() * cell_size * 0.35
+			var tip := centre + reach
+			overlay.draw_line(transform * (centre - reach), transform * tip, Color(0.8, 0.95, 1.0, 0.95), 2.0)
+			for side in [-1.0, 1.0]:
+				overlay.draw_line(transform * tip, transform * (tip - reach.rotated(side * 0.6) * 0.6), Color(0.8, 0.95, 1.0, 0.95), 2.0)
+
 func _draw_rect(overlay: Control, transform: Transform2D, rect: Rect2, colour: Color) -> void:
 	var points := PackedVector2Array([transform * rect.position, transform * Vector2(rect.end.x, rect.position.y), transform * rect.end, transform * Vector2(rect.position.x, rect.end.y)])
 	overlay.draw_colored_polygon(points, colour)
@@ -536,15 +583,68 @@ func _say_result(result: Dictionary, success: String) -> void:
 			text = "%s: %s" % [findings[0].get("check", findings[0].get("code", "rules")), findings[0].get("message", text)]
 		dock.say(text)
 
-func bake_zone() -> Dictionary:
-	if _baking or EditorInterface.get_resource_filesystem().is_importing():
+## The bake runs as its own process beside the editor (bake_job.gd). start_bake returns at once;
+## _process shows its progress on the dock and takes its result when it ends; cancel_bake stops it.
+## Before 11 Nov the editor stood still for the whole bake (about 19 s a screen).
+func start_bake() -> Dictionary:
+	if _baking or bake_running() or EditorInterface.get_resource_filesystem().is_importing():
 		return Rules.failure("editor.bake_busy", "Wait for the current bake or resource import to finish.")
 	_baking = true
-	var result := _bake_zone()
+	var prepared := _bake_prepare()
 	_baking = false
+	if not bool(prepared.get("ok", false)):
+		return prepared
+	var job := BakeJob.new()
+	var project := ProjectSettings.globalize_path("res://")
+	var repo := project.trim_suffix("/").get_base_dir()
+	var log := ProjectSettings.globalize_path("user://world_editor_bake_%d.log" % OS.get_process_id())
+	if not job.start_module(Rules.python_binary(), repo, "scripts.art.kit.bake", PackedStringArray([String(prepared.zone_id)]), log, "Baking %s" % prepared.zone_id):
+		return Rules.failure("editor.bake_failed", "The bake could not be started (is Python on the PATH?).")
+	job.leftovers = PackedStringArray([ProjectSettings.globalize_path("res://zones/%s/ground_baked.png.tmp" % prepared.zone_id)])
+	_bake_job = job
+	_bake_zone_id = String(prepared.zone_id)
+	_bake_ground = ground
+	_bake_zone = zone
+	_bake_key = Operations.bake_key(zone)
+	return {"ok": true, "diagnostics": [], "running": true, "message": "Baking %s: the editor stays usable; press Cancel bake to stop it." % _bake_zone_id}
+
+func bake_running() -> bool:
+	return _bake_job != null
+
+func cancel_bake() -> Dictionary:
+	if _bake_job == null:
+		return Rules.failure("editor.bake_idle", "No bake is running.")
+	_bake_job.cancel()
+	_bake_job = null
+	var result := Rules.failure("editor.bake_cancelled", "Bake of %s cancelled; the zone keeps the ground it had." % _bake_zone_id)
+	bake_finished.emit(result)
+	if is_instance_valid(dock):
+		dock.bake_done(result)
 	return result
 
-func _bake_zone() -> Dictionary:
+func _process(_delta: float) -> void:
+	if _bake_job == null:
+		return
+	if _bake_job.running():
+		if is_instance_valid(dock):
+			dock.bake_progress(_bake_job.progress_text())
+		return
+	var result := _bake_finish()
+	bake_finished.emit(result)
+	if is_instance_valid(dock):
+		dock.bake_done(result)
+
+## The blocking form (the acceptance runs use it): the same job, waited for.
+func bake_zone() -> Dictionary:
+	var started := start_bake()
+	if not bool(started.get("ok", false)):
+		return started
+	while _bake_job != null and _bake_job.running():
+		OS.delay_msec(50)
+	return _bake_finish()
+
+## Everything before the painters run: the checks, the save and the plan the painters read.
+func _bake_prepare() -> Dictionary:
 	if not is_instance_valid(zone) or not is_instance_valid(ground):
 		return Rules.failure("editor.zone_missing", "Select a kit zone first.")
 	if zone != EditorInterface.get_edited_scene_root():
@@ -567,19 +667,20 @@ func _bake_zone() -> Dictionary:
 		return Rules.failure("editor.save_required", "Save this named zone scene before baking.")
 	if EditorInterface.save_scene() != OK:
 		return Rules.failure("editor.save_failed", "The scene could not be saved; no bake was run.")
-	var plan_path := "res://kit/zones/%s.json" % zone_id
-	var output: Array = []
-	var project := ProjectSettings.globalize_path("res://")
-	var code := OS.execute(OS.get_executable_path(), ["--headless", "--path", project, "-s", "res://tools/kit_zone.gd", "--", "--export=" + scene_path, "--out=" + plan_path], output, true)
-	if code != 0:
-		return Rules.failure("editor.export_failed", "Plan export failed: %s" % "".join(output))
-	output.clear()
-	var python := Rules.python_binary()
-	var repo := project.trim_suffix("/").get_base_dir()
-	const BAKE := "import os,runpy,sys; os.chdir(sys.argv[1]); sys.path.insert(0,sys.argv[1]); sys.argv=['scripts.art.kit.bake',sys.argv[2]]; runpy.run_module('scripts.art.kit.bake',run_name='__main__')"
-	code = OS.execute(python, ["-c", BAKE, repo, zone_id], output, true)
-	if code != 0:
-		return Rules.failure("editor.bake_failed", "Ground bake failed: %s" % "".join(output))
+	var exported := operations.export_plan_file("res://kit/zones/%s.json" % zone_id)
+	if not bool(exported.get("ok", false)):
+		return Rules.failure("editor.export_failed", "Plan export failed: %s" % exported.get("message", ""))
+	return {"ok": true, "diagnostics": [], "zone_id": zone_id}
+
+## The job has ended: take its picture in, or say why not.
+func _bake_finish() -> Dictionary:
+	var job := _bake_job
+	_bake_job = null
+	if job == null:
+		return Rules.failure("editor.bake_idle", "No bake is running.")
+	var zone_id := _bake_zone_id
+	if job.exit_code() != 0:
+		return Rules.failure("editor.bake_failed", "Ground bake failed (exit %d): %s" % [job.exit_code(), job.output().right(1200)])
 	var png := "res://zones/%s/ground_baked.png" % zone_id
 	# A zone's first bake writes a picture the editor has never seen: tell the file system about it
 	# before asking for the import, or the import fails with "Can't find file" and the bake that
@@ -589,11 +690,21 @@ func _bake_zone() -> Dictionary:
 	files.reimport_files(PackedStringArray([png]))
 	if not ResourceLoader.exists(png):
 		return Rules.failure("editor.bake_missing", "The bake did not produce its ground image.")
-	ground.baked = ResourceLoader.load(png, "Texture2D", ResourceLoader.CACHE_MODE_REPLACE) as Texture2D
-	var walk := ground.get_node_or_null("KitWalk") as KitWalk
-	if walk != null and walk.write_walk("res://zones/%s/walk.txt" % zone_id) != OK:
+	if not is_instance_valid(_bake_ground):
+		return Rules.failure("editor.bake_scene", "The zone was closed while it baked; its picture is on disk and binds at the next bake.")
+	var texture := ResourceLoader.load(png, "Texture2D", ResourceLoader.CACHE_MODE_REPLACE) as Texture2D
+	if not operations.bind_bake(_bake_zone, _bake_ground, texture, _bake_key):
+		# the zone was edited while the painters ran: the picture is behind it. Nothing is saved over
+		# the edit and walk.txt stays the export of the plan the painters read.
+		operations.refresh_derived(_bake_ground)
+		return Rules.failure("editor.bake_behind", "Baked %s, but the zone was edited during the bake: the picture is behind it and is not shown. Bake again." % zone_id)
+	operations.refresh_derived(_bake_ground)
+	if operations.write_walk_file(_bake_ground, "res://zones/%s/walk.txt" % zone_id) != OK:
 		return Rules.failure("editor.walk_export_failed", "The ground was baked, but its walk mask could not be written.")
-	return {"ok": true, "diagnostics": [], "message": "Baked %s" % zone_id}
+	# The scene was saved before the painters ran, so the file on disk does not hold the new
+	# picture yet: save again, or the game would show the live tiles until the next save.
+	var saved := _bake_zone == EditorInterface.get_edited_scene_root() and EditorInterface.save_scene() == OK
+	return {"ok": true, "diagnostics": [], "message": "Baked %s in %d s%s" % [zone_id, int(job.seconds()), "" if saved else "; save the scene to keep it"]}
 
 func _show_for_screenshot() -> void:
 	EditorInterface.set_main_screen_editor("2D")
