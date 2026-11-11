@@ -102,7 +102,7 @@ jobs:
           ref: ${{ env.SOURCE_SHA }}
           persist-credentials: false
 
-      - name: Install Xvfb and record runner
+      - name: Install GDB and record runner
         run: |
           set -euo pipefail
           logs="$RUNNER_TEMP/mygame-diagnostic-logs"
@@ -111,9 +111,9 @@ jobs:
             cat /etc/os-release
             uname -m
             sudo apt-get update
-            sudo apt-get install -y --no-install-recommends xvfb xauth libgl1-mesa-dri libglx-mesa0
-            command -v Xvfb
-            command -v xvfb-run
+            sudo apt-get install -y --no-install-recommends gdb binutils
+            gdb --version
+            readelf --version
           } 2>&1 | tee "$logs/setup.log"
 
       - name: Install verified Godot and Linux template
@@ -136,89 +136,100 @@ jobs:
           unzip -j "$archive" 'templates/linux_release.x86_64' -d "$templates"
           printf 'GODOT=%s\n' "$godot" >> "$GITHUB_ENV"
 
-      - name: Compare export with only the GdUnit editor plugin disabled
+      - name: Capture original-source Linux export fault and terminal status
         run: |
           set -euo pipefail
           logs="$RUNNER_TEMP/mygame-diagnostic-logs"
           stage="$RUNNER_TEMP/mygame-diagnostic-stage"
           mkdir -p "$stage"
-          bash game/tools/fetch_limboai_release.sh >"$logs/limboai.log" 2>&1
-          "$GODOT" --headless --path game --import >"$logs/import.log" 2>&1
-
-          backup="$stage/project.godot.before"
-          cp game/project.godot "$backup"
-          restore_source() {
+          finish() {
             result=$?
             trap - EXIT
-            cp "$backup" game/project.godot
             {
-              cmp "$backup" game/project.godot &&
+              test "$(git rev-parse HEAD)" = "$SOURCE_SHA" &&
+              test "$(git rev-parse HEAD^{tree})" = "$SOURCE_TREE" &&
               git diff --exit-code HEAD &&
+              git diff --cached --exit-code &&
               test -z "$(git status --porcelain)" &&
               sha256sum game/project.godot &&
-              echo "Original source restored"
-            } >"$logs/source-restored.log" 2>&1 || result=1
+              echo "Original source/index guards passed"
+            } >"$logs/source-guards.log" 2>&1 || result=1
+            python3 - "$logs" <<'PY'
+          from pathlib import Path
+          import hashlib
+          import sys
+          root = Path(sys.argv[1])
+          limit = 16 * 1024 * 1024
+          records = []
+          for p in sorted(root.iterdir()):
+              if not p.is_file():
+                  continue
+              data = p.read_bytes()
+              records.append(f"{p.name} original_bytes={len(data)} sha256={hashlib.sha256(data).hexdigest()} truncated={len(data) > limit}")
+              if len(data) > limit:
+                  marker = b"\n[TRUNCATED: retained head and tail; original digest in retention.log]\n"
+                  half = (limit - len(marker)) // 2
+                  p.write_bytes(data[:half] + marker + data[-half:])
+          (root / "retention.log").write_text("\n".join(records) + "\n")
+          PY
             exit "$result"
           }
-          trap restore_source EXIT
-
-          python3 - >"$logs/project-delta.log" <<'PY'
-          from pathlib import Path
-          import difflib
-          import hashlib
-
-          path = Path("game/project.godot")
-          original = path.read_bytes()
-          text = original.decode()
-          start = text.index("[editor_plugins]\n")
-          end = text.index("\n[", start + 1)
-          section = text[start:end]
-          target = ', "res://addons/gdUnit4/plugin.cfg"'
-          assert section.count(target) == 1
-          revised_section = section.replace(target, "")
-          revised = (text[:start] + revised_section + text[end:]).encode()
-          assert revised.count(b"res://addons/gdUnit4/plugin.cfg") == 0
-          for preserved in (b"res://addons/phantom_camera/plugin.cfg", b"res://addons/world_editor/plugin.cfg"):
-              assert original.count(preserved) == revised.count(preserved) == 1
-          print("before_sha256=" + hashlib.sha256(original).hexdigest())
-          print("diagnostic_sha256=" + hashlib.sha256(revised).hexdigest())
-          print("".join(difflib.unified_diff(text.splitlines(True), revised.decode().splitlines(True),
-                                          fromfile="original/project.godot", tofile="diagnostic/project.godot")))
-          path.write_bytes(revised)
-          PY
-
+          trap finish EXIT
+          printf '%s  %s\n' \
+            8d106cbe6144c2dc7e881d61d2429c1a8a76e6b22ef48bd5e48dcf934953f71e "$GODOT" \
+            | sha256sum --check --strict >"$logs/engine-identity.log"
+          {
+            readelf -h -n "$GODOT"
+            sha256sum "$GODOT"
+          } >>"$logs/engine-identity.log" 2>&1
+          bash game/tools/fetch_limboai_release.sh >"$logs/limboai.log" 2>&1
+          {
+            sha256sum game/addons/limboai/bin/liblimboai.linux.editor.x86_64.so \
+              game/addons/limboai/bin/liblimboai.linux.template_release.x86_64.so
+            readelf -n game/addons/limboai/bin/liblimboai.linux.editor.x86_64.so
+          } >"$logs/limboai-identity.log" 2>&1
+          "$GODOT" --headless --path game --import >"$logs/import.log" 2>&1
+          cat >"$stage/export.gdb" <<'GDB'
+          set pagination off
+          set confirm off
+          set disable-randomization off
+          handle SIGSEGV stop print pass
+          handle SIGABRT nostop print pass
+          run
+          python
+          capture_failed = False
+          if gdb.selected_inferior().pid:
+              for command in ("info files", "info proc mappings", "info sharedlibrary",
+                              "info registers", "x/32i $pc-32", "x/32i 0x93820f",
+                              "thread apply all bt full"):
+                  try:
+                      gdb.execute(command)
+                  except gdb.error as error:
+                      print("capture_error=" + str(error))
+                      capture_failed = True
+              gdb.execute("handle SIGSEGV nostop print pass")
+              gdb.execute("continue")
+          signal = gdb.parse_and_eval("$_exitsignal")
+          code = gdb.parse_and_eval("$_exitcode")
+          print("inferior_signal_raw=" + str(signal))
+          print("inferior_exit_raw=" + str(code))
+          if signal.type.code != gdb.TYPE_CODE_VOID:
+              result = 128 + int(signal)
+          elif code.type.code != gdb.TYPE_CODE_VOID:
+              result = int(code)
+          else:
+              result = 125
+          print("inferior_result=" + str(result))
+          print("capture_failed=" + str(capture_failed))
+          gdb.execute("quit %d" % (125 if capture_failed and result == 0 else result))
+          end
+          GDB
           status=0
-          LIBGL_ALWAYS_SOFTWARE=1 timeout --kill-after=10s 10m xvfb-run -a \
-            "$GODOT" --display-driver x11 --rendering-method gl_compatibility \
-            --audio-driver Dummy --path game --export-release 'Linux x86_64' "$stage/MyGame" \
-            >"$logs/linux-xvfb.log" 2>&1 || status=$?
-          printf 'export_status=%s\n' "$status" | tee "$logs/exit.txt"
-          if [ "$status" -ne 0 ]; then
-            exit "$status"
-          fi
-
-          python3 - "$stage" >"$logs/output-checks.log" <<'PY'
-          from pathlib import Path
-          import hashlib
-          import os
-          import sys
-
-          stage = Path(sys.argv[1])
-          executable = stage / "MyGame"
-          pack = stage / "MyGame.pck"
-          library = stage / "liblimboai.linux.template_release.x86_64.so"
-          source_library = Path("game/addons/limboai/bin") / library.name
-          with executable.open("rb") as stream:
-              assert stream.read(4) == b"\x7fELF"
-          assert os.access(executable, os.X_OK)
-          with pack.open("rb") as stream:
-              assert stream.read(4) == b"GDPC"
-          assert library.read_bytes() == source_library.read_bytes()
-          for path in (executable, pack, library):
-              assert path.stat().st_size > 0
-              print(path.name, path.stat().st_size, hashlib.sha256(path.read_bytes()).hexdigest())
-          print("ELF, PCK and LimboAI copy checks passed")
-          PY
+          timeout --kill-after=10s 10m gdb --batch --nx -x "$stage/export.gdb" \
+            --args "$GODOT" --headless --path game --export-release 'Linux x86_64' "$stage/MyGame" \
+            >"$logs/linux-gdb.log" 2>&1 || status=$?
+          printf 'diagnostic_status=%s\n' "$status" | tee "$logs/exit.txt"
+          exit "$status"
 
       - name: Upload diagnostic logs only
         if: always()
@@ -227,4 +238,4 @@ jobs:
           name: MyGame-linux-export-diagnostic
           path: ${{ runner.temp }}/mygame-diagnostic-logs/
           if-no-files-found: warn
-          retention-days: 7
+          retention-days: 1
