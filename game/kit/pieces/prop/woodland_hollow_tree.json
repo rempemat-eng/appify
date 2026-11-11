@@ -6,7 +6,7 @@
  "biomes": [
   "woodland"
  ],
- "version": 11,
+ "version": 12,
  "variants": [
   {
    "id": "hollow_tree",
@@ -38,9 +38,9 @@
   "collision": {
    "shape": "rect",
    "rect": [
+    -11.0,
     -5.0,
-    -5.0,
-    10.0,
+    22.0,
     5.0
    ]
   },
@@ -50,11 +50,19 @@
   ],
   "footprint": [
    [
+    -2,
+    -1
+   ],
+   [
     -1,
     -1
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ]

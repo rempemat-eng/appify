@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "hut",
@@ -257,7 +257,7 @@
      0.0,
      24.0
     ],
-    "verb": "Enter",
+    "verb": "Look",
     "radius": 30.0
    }
   ],
@@ -304,7 +304,7 @@
  },
  "function": {
   "interact": {
-   "verb": "enter",
+   "verb": "look",
    "triggers": [
     {
      "type": "dialogue",

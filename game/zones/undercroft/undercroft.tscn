@@ -298,6 +298,7 @@ position = Vector2(1704, 540)
 shape = SubResource("s11")
 
 [node name="Solid_rubble_hall" type="StaticBody2D" parent="Walls"]
+collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_hall"]
@@ -305,6 +306,7 @@ position = Vector2(132, 558)
 shape = SubResource("s13")
 
 [node name="Solid_roots_hall" type="StaticBody2D" parent="Walls"]
+collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_roots_hall"]
@@ -312,6 +314,7 @@ position = Vector2(360, 201)
 shape = SubResource("s14")
 
 [node name="Solid_rubble_corridor" type="StaticBody2D" parent="Walls"]
+collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_corridor"]
@@ -319,6 +322,7 @@ position = Vector2(1032, 339)
 shape = SubResource("s15")
 
 [node name="Solid_roots_corridor" type="StaticBody2D" parent="Walls"]
+collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_roots_corridor"]
@@ -326,6 +330,7 @@ position = Vector2(816, 468)
 shape = SubResource("s16")
 
 [node name="Solid_urn_seal" type="StaticBody2D" parent="Walls"]
+collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_urn_seal"]
@@ -333,6 +338,7 @@ position = Vector2(1296, 207)
 shape = SubResource("s17")
 
 [node name="Solid_rubble_seal" type="StaticBody2D" parent="Walls"]
+collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_seal"]
@@ -354,6 +360,7 @@ position = Vector2(2208, 564)
 shape = SubResource("s19")
 
 [node name="Solid_rubble_chamber" type="StaticBody2D" parent="Walls"]
+collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_chamber"]
@@ -431,10 +438,10 @@ script = ExtResource("torch")
 y_sort_enabled = true
 
 [node name="RubbleHall" type="Sprite2D" parent="Props"]
-position = Vector2(132, 576)
+position = Vector2(132, 580)
 texture = ExtResource("t6")
 centered = false
-offset = Vector2(-54, -78)
+offset = Vector2(-54, -82)
 
 [node name="RootsHall" type="Sprite2D" parent="Props"]
 position = Vector2(360, 216)
@@ -455,16 +462,16 @@ centered = false
 offset = Vector2(-72, -44)
 
 [node name="UrnSeal" type="Sprite2D" parent="Props"]
-position = Vector2(1296, 216)
+position = Vector2(1296, 219)
 texture = ExtResource("t10")
 centered = false
-offset = Vector2(-24, -55)
+offset = Vector2(-24, -58)
 
 [node name="RubbleSeal" type="Sprite2D" parent="Props"]
-position = Vector2(1296, 582)
+position = Vector2(1296, 585)
 texture = ExtResource("t11")
 centered = false
-offset = Vector2(-36, -40)
+offset = Vector2(-36, -43)
 
 [node name="StumpNw" type="Sprite2D" parent="Props"]
 position = Vector2(1776, 240)
@@ -479,10 +486,10 @@ centered = false
 offset = Vector2(-42, -98)
 
 [node name="RubbleChamber" type="Sprite2D" parent="Props"]
-position = Vector2(2202, 234)
+position = Vector2(2202, 238)
 texture = ExtResource("t14")
 centered = false
-offset = Vector2(-42, -65)
+offset = Vector2(-42, -69)
 
 [node name="If_shard" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -528,6 +535,7 @@ centered = false
 offset = Vector2(-27, -69)
 
 [node name="LeverDownBody" type="StaticBody2D" parent="Props/If_lever_down"]
+collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_lever_down/LeverDownBody"]

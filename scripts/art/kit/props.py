@@ -148,8 +148,12 @@ def scene(pid: str, e: dict) -> str:
     lines = ['[gd_scene format=3]', '',
              '[ext_resource type="Script" path="res://world/terrain/kit_piece.gd" id="1"]',
              '[ext_resource type="Texture2D" path="%s" id="2"]' % v0['png'], '']
-    if e['collision']:
-        x, y, w, h = e['collision']
+    # a box that blocks nobody (gameplay.blocks_move false: a landslip the way system holds shut, a cold
+    # fire ring) is kept in the index for the ground's shadow pass and gets no body, so a zone built from
+    # these scenes blocks exactly what the walk mask derived from the same records blocks
+    solid = e['collision'] if e.get('blocks_move') else None
+    if solid:
+        x, y, w, h = solid
         lines += ['[sub_resource type="RectangleShape2D" id="solid"]', 'size = Vector2(%g, %g)' % (w, h), '']
     lines += ['[node name="%s" type="Node2D"]' % ''.join(s.capitalize() for s in pid.split('_')),
               'script = ExtResource("1")', 'piece_id = "%s"' % pid, '',
@@ -168,8 +172,8 @@ def scene(pid: str, e: dict) -> str:
         lines += ['[node name="%s" type="Sprite2D" parent="."]' % ('Idle' if an['cover'] else 'Flow'),
                   'script = ExtResource("3")', 'texture = ExtResource("4")', 'centered = false',
                   'offset = Vector2(%g, %g)' % tuple(an['offset']), 'hframes = %d' % an['frames'], 'fps = %g' % an['fps'], '']
-    if e['collision']:
-        x, y, w, h = e['collision']
+    if solid:
+        x, y, w, h = solid
         lines += ['[node name="Solid" type="StaticBody2D" parent="."]', 'collision_mask = 0', '',
                   '[node name="Shape" type="CollisionShape2D" parent="Solid"]',
                   'position = Vector2(%g, %g)' % (x + w / 2, y + h / 2), 'shape = SubResource("solid")', '']

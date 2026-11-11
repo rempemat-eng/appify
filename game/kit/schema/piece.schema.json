@@ -1267,10 +1267,11 @@
             "enum": [
               "collision",
               "variants",
-              "approval"
+              "approval",
+              "blocks_shots"
             ]
           },
-          "description": "Source-backed fields Claude reviewed and authored over the seeded source (scripts/art/kit/seed_props.py keeps them on refresh; the source's values stay in audit.sources and the zone's kit.json)."
+          "description": "Source-backed fields Claude reviewed and authored over the seeded source (scripts/art/kit/seed_props.py keeps them on refresh; the source's values stay in audit.sources and the zone's kit.json) \"blocks_shots\" marks gameplay.blocks_shots as an authored answer that stands over the 64 texel height rule (docs/physics.md, game/tools/gen_physics.py)."
         }
       }
     }

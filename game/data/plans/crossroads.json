@@ -864,7 +864,7 @@
     {
       "id": "hut_bed",
       "speaker": "hut_door",
-      "verb": "Enter",
+      "verb": "Look",
       "at": [
         320,
         72

@@ -5538,7 +5538,7 @@
       "type": "dialogue"
      }
     ],
-    "verb": "enter"
+    "verb": "look"
    }
   },
   "kind": "structure",
@@ -18118,9 +18118,9 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
+   -33.0,
    -15.0,
-   -15.0,
-   30.0,
+   66.0,
    15.0
   ],
   "deck": null,
@@ -18130,11 +18130,19 @@
   ],
   "footprint": [
    [
+    -2,
+    -1
+   ],
+   [
     -1,
     -1
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ],
@@ -18625,14 +18633,28 @@
  },
  "woodland_sapling": {
   "approval": "candidate",
-  "blocks_move": false,
-  "collision": null,
+  "blocks_move": true,
+  "collision": [
+   -6.0,
+   -9.0,
+   12.0,
+   9.0
+  ],
   "deck": null,
   "foot": [
    30.0,
    82.0
   ],
-  "footprint": [],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
   "forbids": [
    {
     "rel": "on",
@@ -18681,9 +18703,9 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.36,
+   -12.0,
    -15.0,
-   42.69,
+   27.0,
    15.0
   ],
   "deck": null,
@@ -18895,9 +18917,9 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -23.1,
+   -17.0,
    -15.0,
-   46.2,
+   34.0,
    15.0
   ],
   "deck": null,
@@ -19045,9 +19067,9 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -20.64,
    -15.0,
-   41.31,
+   -15.0,
+   32.0,
    15.0
   ],
   "deck": null,

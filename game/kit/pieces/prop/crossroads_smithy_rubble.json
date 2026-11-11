@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "smithy_rubble",
@@ -166,6 +166,9 @@
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
    "retain shadow smithy_rubble_shadow from source scene with its own condition and offset; not a standalone random variant",
    "review size-guide class and Eastward comparison before the library gate"
+  ],
+  "overrides": [
+   "blocks_shots"
   ]
  }
 }

@@ -1,17 +1,34 @@
 extends SceneTree
 ## Lossless kit plan <-> scene authoring (W2, docs/world-editor.md).
-## --plan=<json> [--out=<tscn>] or --export=<tscn> [--out=<json>].
+## --plan=<json> [--out=<tscn>] or --export=<tscn> [--out=<json>], or
+## --new=<zone> [--size=40x23] [--ground=lawn] [--lab=1] [--note=<text>] for an empty plan and its scene.
 ## Legacy piece `at` and spawns are Godot texels. Explicit coordinate_space="cells"
 ## uses logical terrain cells for those fields; no guessing from their magnitudes.
 ## Door `rect` is always in cells, with existing plan keys id/to/spawn/if.
 ## Flow is a hidden logical TileMapLayer with a `flow` custom-data glyph per cell.
 ## Facing/stage are authored metadata; no new facing art, flow animation or rules ship.
 ## The source template is saved IN the scene, so export needs no input/output sidecar.
+## Actors (10 Nov): `actors` holds what a quest needs in the zone, each {id, kind, at, ...}:
+## an interactable (speaker, verb, radius, marker_height), a villager (an interactable with a
+## cast body: character, facing, work), a restore site (restore), a camp (camp, enemies as
+## positions, scene) and any actor scene (scene, with `set` property overrides). `if` wraps the
+## actor in a Conditional. `at` and enemy positions use the plan's coordinate space; a radius is
+## always texels. Nodes under Actors that are none of these cannot be held by a plan:
+## unexported_actors() lists them, and the dock's Validate reports them.
 
 const PLAN_META := &"kit_zone_plan"
 const ENTRY_META := &"kit_zone_entry"
 const EXPLICIT_META := &"kit_zone_explicit"
 const GAMEPLAY_IDS_META := &"kit_zone_gameplay_ids"
+const ACTOR_KINDS := ["interactable", "villager", "restore", "camp", "scene"]
+const INTERACTABLE := "res://world/interactable.gd"
+const RESTORE := "res://world/restore_site.gd"
+const CAMP := "res://world/camp.gd"
+const CONDITIONAL := "res://world/conditional.gd"
+const VILLAGER := "res://world/villager.gd"
+const ENEMY := "res://actors/enemy.tscn"
+const TALK_RADIUS := 30.0
+const MARKER_HEIGHT := 40.0
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -27,12 +44,14 @@ func _run() -> void:
 		quit(0 if bool(report.get("ok", false)) else 1)
 		return
 	var code := 1
-	if args.has("plan"):
+	if args.has("new"):
+		code = _new(args)
+	elif args.has("plan"):
 		code = _build(args.plan, args.get("out", ""))
 	elif args.has("export"):
 		code = _export(args.export, args.get("out", ""))
 	else:
-		printerr("kit_zone: --plan=<json> or --export=<tscn>")
+		printerr("kit_zone: --plan=<json>, --export=<tscn> or --new=<zone>")
 	quit(code)
 
 static func _read(path: String) -> Dictionary:
@@ -72,6 +91,15 @@ static func _own(node: Node, root: Node) -> void:
 		node.owner = root
 	for child in node.get_children():
 		_own(child, root)
+
+## Own a newly built branch without flattening instanced scenes: an instance's own children stay
+## with their scene, so the zone stores the instance and its overrides, not copies.
+static func _own_new(node: Node, root: Node) -> void:
+	node.owner = root
+	if not String(node.scene_file_path).is_empty():
+		return
+	for child in node.get_children():
+		_own_new(child, root)
 
 static func _container(root: Node, name_: String) -> Node2D:
 	var node := root.get_node_or_null(NodePath(name_)) as Node2D
@@ -131,6 +159,12 @@ static func _numbers(value: Variant, count: int, unit: float = 1.0) -> bool:
 		if absf(float(number) * unit) > 3.402823466e38:
 			return false
 	return true
+
+## Whether a point (plan units) lies on the ground, its edges included.
+static func _on_ground(point: Array, unit: float, cell: int, width: int, height: int) -> bool:
+	var x := float(point[0]) * unit
+	var y := float(point[1]) * unit
+	return x >= 0.0 and y >= 0.0 and x <= float(width * cell) and y <= float(height * cell)
 
 ## Structural errors are rejected before constructing any scene nodes. Unknown
 ## extension fields stay in the template; placement and approvals belong to W5/W6.
@@ -195,16 +229,37 @@ static func plan_error(plan: Dictionary) -> String:
 					return "%s.rect width and height must be positive" % path
 				if not _numbers([entry.rect[0] + entry.rect[2] / 2.0, entry.rect[1] + entry.rect[3] / 2.0], 2, kit.cell):
 					return "%s.rect centre must contain finite coordinates" % path
+				# The zone is walled just outside its ground (edge_walls), so a door past the edge
+				# could never be reached: it lies on the ground's last cells, not beyond them.
+				if entry.rect[0] < 0 or entry.rect[1] < 0 or entry.rect[0] + entry.rect[2] > width or entry.rect[1] + entry.rect[3] > rows.size():
+					return "%s.rect must lie inside the ground (%s by %s cells): the zone's edge is walled, so a door beyond it cannot be reached" % [path, width, rows.size()]
 				for key in ["to", "target_zone", "spawn", "target_spawn"]:
 					if entry.has(key) and not entry[key] is String:
 						return "%s.%s must be a string" % [path, key]
 				if (entry.has("to") and entry.has("target_zone") and entry.to != entry.target_zone) or (entry.has("spawn") and entry.has("target_spawn") and entry.spawn != entry.target_spawn):
 					return "%s target aliases disagree" % path
+	if not plan.get("actors", []) is Array:
+		return "actors must be an array"
+	var actor_ids := {}
+	for i in plan.get("actors", []).size():
+		var actor_problem := actor_error(plan.actors[i], unit)
+		if not actor_problem.is_empty():
+			return "actors[%s]%s" % [i, actor_problem]
+		if actor_ids.has(plan.actors[i].id):
+			return "actors[%s].id repeats '%s'" % [i, plan.actors[i].id]
+		var stands := [plan.actors[i].at]
+		stands.append_array(plan.actors[i].get("enemies", []))
+		for spot in stands:
+			if not _on_ground(spot, unit, kit.cell, width, rows.size()):
+				return "actors[%s] must stand inside the ground: %s is outside it" % [i, spot]
+		actor_ids[plan.actors[i].id] = true
 	if not plan.get("spawns", {}) is Dictionary:
 		return "spawns must be an object of coordinate pairs"
 	for id in plan.get("spawns", {}):
 		if not id is String or id.is_empty() or not _numbers(plan.spawns[id], 2, unit):
 			return "spawns must map nonempty string IDs to two finite coordinates"
+		if not _on_ground(plan.spawns[id], unit, kit.cell, width, rows.size()):
+			return "spawns.%s must lie inside the ground: %s is outside it" % [id, plan.spawns[id]]
 	if plan.has("gameplay_from") and not plan.gameplay_from is String:
 		return "gameplay_from must be a scene path string"
 	if not plan.get("gameplay_removed", {}) is Dictionary:
@@ -217,6 +272,298 @@ static func plan_error(plan: Dictionary) -> String:
 			if not id is String or id.is_empty():
 				return "gameplay_removed.%s must contain nonempty string IDs" % field
 	return ""
+
+## An instance that stays an instance when the zone is saved. A plain instantiate() forgets which
+## values came from the instanced scene, so the zone file stored them all again as its own (an
+## enemy's script, layers and motion mode, a piece's script and id) and would keep those copies
+## when the instanced scene later changed.
+static func instance(packed: PackedScene) -> Node:
+	return packed.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+
+## What is wrong with one `actors` entry ("" when sound), as a suffix for its path.
+static func actor_error(entry: Variant, unit: float = 1.0) -> String:
+	if not entry is Dictionary:
+		return " must be an object"
+	if not entry.get("id") is String or entry.id.is_empty() or entry.id.validate_node_name() != entry.id or entry.id in [".", ".."]:
+		return ".id must be a nonempty valid node name"
+	if not entry.get("kind") is String or entry.kind not in ACTOR_KINDS:
+		return ".kind must be one of %s" % ", ".join(ACTOR_KINDS)
+	if not _numbers(entry.get("at"), 2, unit):
+		return ".at must contain two finite coordinates"
+	var needs := {"interactable": ["speaker"], "villager": ["speaker", "character"], "restore": ["restore"], "camp": ["camp"], "scene": ["scene"]}
+	for key in needs[entry.kind]:
+		if not entry.get(key) is String or entry[key].is_empty():
+			return ".%s must be a nonempty string" % key
+	for key in ["speaker", "verb", "facing", "scene"]:
+		if entry.has(key) and not entry[key] is String:
+			return ".%s must be a string" % key
+	for key in ["radius", "marker_height"]:
+		if entry.has(key) and (typeof(entry[key]) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(entry[key])) or float(entry[key]) <= 0.0):
+			return ".%s must be a positive number" % key
+	if entry.has("work") and not entry.work is bool:
+		return ".work must be a boolean"
+	if entry.has("if") and not entry["if"] is Dictionary:
+		return ".if must be a condition object"
+	if entry.has("set") and not entry["set"] is Dictionary:
+		return ".set must be an object of property values"
+	if entry.kind == "camp":
+		if not entry.get("enemies") is Array or entry.enemies.is_empty():
+			return ".enemies must be a nonempty array of positions"
+		for spot in entry.enemies:
+			if not _numbers(spot, 2, unit):
+				return ".enemies must contain finite coordinate pairs"
+	if entry.kind in ["camp", "scene"] and entry.has("scene") and not ResourceLoader.exists(entry.scene, "PackedScene"):
+		return ".scene is not a scene in the project: %s" % entry.scene
+	return ""
+
+## One actor from its plan entry, unattached (null when its scene cannot be instanced). Its
+## entry is kept on it so an unchanged actor exports byte for byte.
+static func actor_node(entry: Dictionary, unit: float = 1.0) -> Node2D:
+	var at := Vector2(entry.at[0], entry.at[1]) * unit
+	var node: Node2D
+	match String(entry.kind):
+		"camp":
+			var packed := load(String(entry.get("scene", ENEMY))) as PackedScene
+			if packed == null:
+				return null
+			node = Node2D.new()
+			node.set_script(load(CAMP))
+			node.set("camp_id", entry.camp)
+			var count := 1
+			for spot in entry.enemies:
+				var enemy := instance(packed) as Node2D
+				if enemy == null:
+					node.free()
+					return null
+				enemy.name = "Enemy%d" % count
+				count += 1
+				enemy.position = Vector2(spot[0], spot[1]) * unit - at
+				node.add_child(enemy)
+		"scene":
+			var packed := load(String(entry.scene)) as PackedScene
+			node = instance(packed) as Node2D if packed != null else null
+			if node == null:
+				return null
+			var overrides: Dictionary = entry.get("set", {})
+			for key in overrides:
+				node.set(key, overrides[key])
+		_:
+			var area := Area2D.new()
+			area.set_script(load(RESTORE if entry.kind == "restore" else INTERACTABLE))
+			if entry.kind == "restore":
+				area.set("restore_id", entry.restore)
+			if entry.has("speaker"):
+				area.set("speaker_id", entry.speaker)
+			if entry.has("verb"):
+				area.set("verb", entry.verb)
+			if entry.has("marker_height"):
+				area.set("marker_height", float(entry.marker_height))
+			var shape := CollisionShape2D.new()
+			shape.name = "Shape"
+			var circle := CircleShape2D.new()
+			circle.radius = float(entry.get("radius", TALK_RADIUS))
+			shape.shape = circle
+			area.add_child(shape)
+			if entry.kind == "villager":
+				var body := AnimatedSprite2D.new()
+				body.name = "Body"
+				body.centered = false
+				body.offset = Vector2(-80, -136)       # the cast's foot pivot (docs/godot.md, "The cast")
+				body.set_script(load(VILLAGER))
+				body.set("character", entry.character)
+				if entry.has("facing"):
+					body.set("facing_at_rest", entry.facing)
+				if entry.has("work"):
+					body.set("work", entry.work)
+				area.add_child(body)
+				var post := StaticBody2D.new()
+				post.name = "Post"
+				post.collision_mask = 0
+				var post_shape := CollisionShape2D.new()
+				post_shape.name = "Shape"
+				var post_circle := CircleShape2D.new()
+				post_circle.radius = 5.0
+				post_shape.shape = post_circle
+				post.add_child(post_shape)
+				area.add_child(post)
+			node = area
+	node.name = entry.id
+	node.position = at
+	node.set_meta(ENTRY_META, entry.duplicate(true))
+	return node
+
+## An actor with its `if` condition stands inside a Conditional (world/conditional.gd).
+static func actor_holder(entry: Dictionary, unit: float = 1.0) -> Node2D:
+	var node := actor_node(entry, unit)
+	if node == null or not entry.has("if"):
+		return node
+	var holder := Node2D.new()
+	holder.name = "If_" + String(entry.id)
+	holder.set_script(load(CONDITIONAL))
+	holder.set("only_if", JSON.stringify(entry["if"]))
+	holder.add_child(node)
+	return holder
+
+static func _script_path(node: Node) -> String:
+	var script := node.get_script() as Script
+	return script.resource_path if script != null else ""
+
+## The plan entry of one node under Actors, or {} when it is not a kind a plan can hold.
+static func actor_entry(node: Node, unit: float = 1.0, offset: Vector2 = Vector2.ZERO) -> Dictionary:
+	if not node is Node2D:
+		return {}
+	var kept: Variant = node.get_meta(ENTRY_META, {})
+	var entry: Dictionary = kept.duplicate(true) if kept is Dictionary else {}
+	var path := _script_path(node)
+	var kind := ""
+	if path == RESTORE:
+		kind = "restore"
+	elif path == INTERACTABLE:
+		kind = "interactable"
+		var cast := node.get_node_or_null("Body")
+		if cast != null and _script_path(cast) == VILLAGER:
+			kind = "villager"
+	elif path == CAMP:
+		kind = "camp"
+	elif not String(node.scene_file_path).is_empty():
+		kind = "scene"
+	if kind.is_empty():
+		return {}
+	entry["id"] = String(node.name)
+	entry["kind"] = kind
+	entry["at"] = _position_value(node.position + offset, entry.get("at", []) if entry.get("at") is Array else [], unit)
+	match kind:
+		"camp":
+			entry["camp"] = node.get("camp_id")
+			var scenes := {}
+			var spots := []
+			var old: Array = entry.get("enemies", []) if entry.get("enemies") is Array else []
+			for child in node.get_children():
+				if not child is Node2D or String(child.scene_file_path).is_empty():
+					return {}
+				scenes[String(child.scene_file_path)] = true
+				var before: Array = old[spots.size()] if spots.size() < old.size() and old[spots.size()] is Array else []
+				spots.append(_position_value(child.position + node.position + offset, before, unit))
+			if scenes.size() != 1:
+				return {}                           # an empty camp or mixed enemies: not this simple form
+			entry["enemies"] = spots
+			if entry.has("scene") or scenes.keys()[0] != ENEMY:
+				entry["scene"] = scenes.keys()[0]
+		"scene":
+			entry["scene"] = String(node.scene_file_path)
+			if entry.get("set") is Dictionary:
+				for key in entry["set"]:
+					entry["set"][key] = node.get(key)
+		_:
+			if kind == "restore":
+				entry["restore"] = node.get("restore_id")
+				# RestoreSite fills an empty speaker in at run time: that default is not authored
+				if entry.has("speaker") or String(node.get("speaker_id")) not in ["", "restore_" + String(node.get("restore_id"))]:
+					entry["speaker"] = node.get("speaker_id")
+			else:
+				entry["speaker"] = node.get("speaker_id")
+			if entry.has("verb") or String(node.get("verb")) != "Talk":
+				entry["verb"] = node.get("verb")
+			if entry.has("marker_height") or not is_equal_approx(float(node.get("marker_height")), MARKER_HEIGHT):
+				entry["marker_height"] = _number_value(float(node.get("marker_height")), entry.get("marker_height"))
+			var shape := node.get_node_or_null("Shape") as CollisionShape2D
+			if shape != null and shape.shape is CircleShape2D and (entry.has("radius") or not is_equal_approx(shape.shape.radius, TALK_RADIUS)):
+				entry["radius"] = _number_value(shape.shape.radius, entry.get("radius"))
+			if kind == "villager":
+				var cast := node.get_node("Body")
+				entry["character"] = cast.get("character")
+				if entry.has("facing") or String(cast.get("facing_at_rest")) != "S":
+					entry["facing"] = cast.get("facing_at_rest")
+				if entry.has("work") or bool(cast.get("work")):
+					entry["work"] = cast.get("work")
+			else:
+				for key in ["character", "facing", "work"]:
+					entry.erase(key)
+	return entry
+
+## Keep an unchanged JSON number as it was written.
+static func _number_value(now: float, original: Variant) -> Variant:
+	if typeof(original) in [TYPE_INT, TYPE_FLOAT] and is_equal_approx(float(original), now):
+		return original
+	return now
+
+## Every authored actor as [entry, ...] and, in `skipped`, the paths of the Actors children no
+## plan entry can hold (they would be lost when the scene is rebuilt from its plan). Nodes copied
+## in by gameplay_from stay with their source scene, as inherited spawns and doors do.
+static func _actor_entries(root: Node, unit: float, skipped: Array) -> Array:
+	var out := []
+	var actors := root.get_node_or_null("Actors")
+	for child in actors.get_children() if actors != null else []:
+		if not bool(child.get_meta(EXPLICIT_META, true)):
+			continue
+		if _script_path(child) == CONDITIONAL and child is Node2D:
+			var condition: Variant = JSON.parse_string(String(child.get("only_if")))
+			if child.get_child_count() == 0 or not condition is Dictionary:
+				skipped.append(String(root.get_path_to(child)))
+				continue
+			for inner in child.get_children():
+				var inner_entry := actor_entry(inner, unit, child.position)
+				if inner_entry.is_empty():
+					skipped.append(String(root.get_path_to(inner)))
+				else:
+					inner_entry["if"] = condition
+					out.append(inner_entry)
+			continue
+		var entry := actor_entry(child, unit)
+		if entry.is_empty():
+			skipped.append(String(root.get_path_to(child)))
+		else:
+			entry.erase("if")
+			out.append(entry)
+	return out
+
+static func unexported_actors(root: Node) -> Array:
+	var skipped := []
+	_actor_entries(root, 1.0, skipped)
+	return skipped
+
+## The zone's edge: four walls just outside the ground, on the walls layer. Without them the
+## player walked off a kit zone into the empty space round it (played on 10 Nov: west, north and
+## south of the glade and of kitlab). A door at an edge lies inside the ground, so it still opens.
+const EDGE_THICKNESS := 48.0
+static func edge_walls(size_px: Vector2) -> StaticBody2D:
+	var body := StaticBody2D.new()
+	body.name = "Edge"
+	body.collision_layer = 1
+	body.collision_mask = 0
+	var t := EDGE_THICKNESS
+	var walls := {
+		"North": Rect2(-t, -t, size_px.x + 2.0 * t, t), "South": Rect2(-t, size_px.y, size_px.x + 2.0 * t, t),
+		"West": Rect2(-t, 0.0, t, size_px.y), "East": Rect2(size_px.x, 0.0, t, size_px.y)}
+	for side in walls:
+		var rect: Rect2 = walls[side]
+		var shape := CollisionShape2D.new()
+		shape.name = side
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = rect.size
+		shape.shape = rectangle
+		shape.position = rect.get_center()
+		body.add_child(shape)
+	return body
+
+## A door from its plan entry (rect in cells), unattached.
+static func door_node(entry: Dictionary, cell: int) -> Area2D:
+	var door: Area2D = load("res://world/door.gd").new()
+	var r: Array = entry.rect
+	door.position = Vector2(r[0] + r[2] / 2.0, r[1] + r[3] / 2.0) * cell
+	door.set("target_zone", entry.get("to", entry.get("target_zone", "")))
+	door.set("target_spawn", entry.get("spawn", entry.get("target_spawn", "start")))
+	if entry.has("if"):
+		door.set("only_if", JSON.stringify(entry["if"]))
+	door.set_meta(ENTRY_META, entry.duplicate(true))
+	door.set_meta(EXPLICIT_META, true)
+	var shape := CollisionShape2D.new()
+	shape.name = "Shape"
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = Vector2(r[2], r[3]) * cell
+	shape.shape = rectangle
+	door.add_child(shape)
+	return door
 
 ## Returns an unattached scene, suitable for PackedScene.pack without entering a tree.
 static func scene_from_plan(plan: Dictionary) -> Node2D:
@@ -286,6 +633,8 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 		var flow := _flow_layer(plan.flow, kit.cell)
 		ground.add_child(flow)
 		flow.owner = root
+	root.add_child(edge_walls(Vector2(size * kit.cell)))
+	_own(root.get_node("Edge"), root)
 	var props := _container(root, "Props")
 	props.y_sort_enabled = true
 	var unit := _units(plan, kit.cell)
@@ -295,7 +644,7 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 		if ps == null:
 			root.free()
 			return null
-		var node := ps.instantiate()
+		var node := instance(ps)
 		if not node is KitPiece:
 			node.free()
 			root.free()
@@ -344,7 +693,18 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 							removed.free()
 		root.set_meta(GAMEPLAY_IDS_META, inherited_ids)
 		src.free()
-	_container(root, "Actors").y_sort_enabled = true
+	var actors := _container(root, "Actors")
+	actors.y_sort_enabled = true
+	for entry in plan.get("actors", []):
+		var holder := actor_holder(entry, unit)
+		if holder == null:
+			root.free()
+			return null
+		for stale in [_child_with_id(actors, entry.id), _child_with_id(actors, "If_" + String(entry.id))]:
+			if stale != null:
+				stale.free()                       # an explicit actor replaces the inherited one of its name
+		actors.add_child(holder)
+		_own_new(holder, root)
 	var spawns := _container(root, "Spawns")
 	var specified: Dictionary = plan.get("spawns", {})
 	if specified.is_empty() and spawns.get_child_count() == 0 and not "start" in plan.get("gameplay_removed", {}).get("Spawns", []):
@@ -373,22 +733,8 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 		var prior := _child_with_id(doors, entry.id)
 		if prior != null:
 			prior.free()
-		var door = load("res://world/door.gd").new()
+		var door := door_node(entry, kit.cell)
 		door.name = _storage_name(doors, entry.id)
-		var r: Array = entry.rect
-		door.position = Vector2(r[0] + r[2] / 2.0, r[1] + r[3] / 2.0) * kit.cell
-		door.target_zone = entry.get("to", entry.get("target_zone", ""))
-		door.target_spawn = entry.get("spawn", entry.get("target_spawn", "start"))
-		if entry.has("if"):
-			door.only_if = JSON.stringify(entry["if"])
-		door.set_meta(ENTRY_META, entry.duplicate(true))
-		door.set_meta(EXPLICIT_META, true)
-		var shape := CollisionShape2D.new()
-		shape.name = "Shape"
-		var rectangle := RectangleShape2D.new()
-		rectangle.size = Vector2(r[2], r[3]) * kit.cell
-		shape.shape = rectangle
-		door.add_child(shape)
 		doors.add_child(door)
 		_own(door, root)
 	return root
@@ -518,6 +864,9 @@ static func plan_from_scene(root: Node2D, fallback: Dictionary = {}, include_inh
 			pieces.append(entry)
 	if plan.has("pieces") or not pieces.is_empty():
 		plan["pieces"] = pieces
+	var actor_entries := _actor_entries(root, unit, [])
+	if plan.has("actors") or not actor_entries.is_empty():
+		plan["actors"] = actor_entries
 	var spawns := {}
 	var spawn_node := root.get_node_or_null("Spawns")
 	for marker in spawn_node.get_children() if spawn_node != null else []:
@@ -610,6 +959,43 @@ func _build(path: String, out: String) -> int:
 	print("kit_zone: wrote ", out)
 	return 0 if err == OK else 1
 
+## Write a plan as canonical JSON, staged beside its destination and promoted only when the whole
+## document is on disk. Returns "" or what went wrong; a failed stage stays for inspection.
+static func write_plan(plan: Dictionary, out: String) -> String:
+	var problem := plan_error(plan)
+	if not problem.is_empty():
+		return "invalid plan: " + problem
+	# Keep the previous document intact until a complete candidate is closed and checked.
+	var directory := DirAccess.open(out.get_base_dir() if out.get_base_dir() != "" else ".")
+	if directory == null:
+		return "cannot open the folder of %s" % out
+	var staged := out + ".tmp"
+	var document := canonical(plan)
+	var file := FileAccess.open(staged, FileAccess.WRITE)
+	if file == null:
+		return "cannot write %s" % staged
+	file.store_string(document)
+	file.flush()
+	var err := file.get_error()
+	file.close()
+	if err != OK:
+		return "failed staged write %s: %s" % [staged, error_string(err)]
+	# Reopen after close to catch incomplete output, including delayed write failures.
+	# Failed stages remain beside the destination for inspection/recovery.
+	var candidate := FileAccess.open(staged, FileAccess.READ)
+	if candidate == null:
+		return "cannot reopen %s" % staged
+	var encoded := document.to_utf8_buffer()
+	var complete := candidate.get_length() == encoded.size() and candidate.get_buffer(encoded.size()) == encoded
+	err = candidate.get_error()
+	candidate.close()
+	if not complete or err not in [OK, ERR_FILE_EOF]:
+		return "incomplete staged export %s" % staged
+	err = directory.rename(staged.get_file(), out.get_file())
+	if err != OK:
+		return "failed export promotion %s: %s" % [out, error_string(err)]
+	return ""
+
 func _export(path: String, out: String) -> int:
 	var scene := load(path) as PackedScene
 	if scene == null:
@@ -617,54 +1003,54 @@ func _export(path: String, out: String) -> int:
 	var root := scene.instantiate() as Node2D
 	var fallback := "res://kit/zones/%s.json" % root.get("zone_id")
 	var plan := plan_from_scene(root, _read(fallback) if not root.has_meta(PLAN_META) and FileAccess.file_exists(fallback) else {})
-	var problem := plan_error(plan)
-	if not problem.is_empty():
-		printerr("kit_zone: invalid plan ", path, ": ", problem)
-		root.free()
-		return 1
+	for lost in unexported_actors(root):
+		printerr("kit_zone: warning: ", lost, " is not a kind the plan holds; it is not exported")
+	root.free()
 	if out == "":
 		out = fallback
-	# Keep the previous document intact until a complete candidate is closed and checked.
-	var directory := DirAccess.open(out.get_base_dir() if out.get_base_dir() != "" else ".")
-	if directory == null:
-		root.free()
+	var problem := write_plan(plan, out)
+	if not problem.is_empty():
+		printerr("kit_zone: ", path, ": ", problem)
 		return 1
-	var staged := out + ".tmp"
-	var document := canonical(plan)
-	var file := FileAccess.open(staged, FileAccess.WRITE)
-	if file == null:
-		root.free()
-		return 1
-	file.store_string(document)
-	file.flush()
-	var err := file.get_error()
-	file.close()
-	if err != OK:
-		printerr("kit_zone: failed staged write ", staged, ": ", error_string(err))
-		root.free()
-		return 1
-	# Reopen after close to catch incomplete output, including delayed write failures.
-	# Failed stages remain beside the destination for inspection/recovery.
-	var candidate := FileAccess.open(staged, FileAccess.READ)
-	if candidate == null:
-		root.free()
-		return 1
-	var encoded := document.to_utf8_buffer()
-	var complete := candidate.get_length() == encoded.size() and candidate.get_buffer(encoded.size()) == encoded
-	err = candidate.get_error()
-	candidate.close()
-	if not complete or err not in [OK, ERR_FILE_EOF]:
-		printerr("kit_zone: incomplete staged export ", staged)
-		root.free()
-		return 1
-	err = directory.rename(staged.get_file(), out.get_file())
-	if err != OK:
-		printerr("kit_zone: failed export promotion ", out, ": ", error_string(err))
-		root.free()
-		return 1
-	root.free()
 	print("kit_zone: wrote ", out)
 	return 0
+
+## An empty zone to start authoring in: a plan of one ground material and its scene. Refuses to
+## replace an existing plan or scene.
+func _new(args: Dictionary) -> int:
+	var zone := String(args["new"])
+	var pattern := RegEx.new()
+	pattern.compile("^[a-z][a-z0-9_]*$")
+	if pattern.search(zone) == null:
+		printerr("kit_zone: --new needs a zone id of lower-case letters, digits and underscores")
+		return 1
+	var size := String(args.get("size", "40x23")).split("x")
+	if size.size() != 2 or not size[0].is_valid_int() or not size[1].is_valid_int() or int(size[0]) < 1 or int(size[1]) < 1 or int(size[0]) > 400 or int(size[1]) > 400:
+		printerr("kit_zone: --size is <cells across>x<cells down>, 1 to 400 each")
+		return 1
+	var ground := String(args.get("ground", "lawn"))
+	if TerrainKit.shared().atlas_coords(ground).x < 0:
+		printerr("kit_zone: --ground '%s' is not a built terrain material" % ground)
+		return 1
+	var plan_path := "res://kit/zones/%s.json" % zone
+	var scene_path := String(args.get("out", "res://zones/%s/%s.tscn" % [zone, zone]))
+	if FileAccess.file_exists(plan_path) or FileAccess.file_exists(scene_path):
+		printerr("kit_zone: %s or %s exists already" % [plan_path, scene_path])
+		return 1
+	var rows := []
+	for y in int(size[1]):
+		rows.append(".".repeat(int(size[0])))
+	var plan := {"zone": zone, "legend": {".": ground}, "rows": rows}
+	if String(args.get("lab", "0")) in ["1", "true"]:
+		plan["lab"] = true
+	if args.has("note"):
+		plan["note"] = String(args.note)
+	var problem := write_plan(plan, plan_path)
+	if not problem.is_empty():
+		printerr("kit_zone: ", problem)
+		return 1
+	print("kit_zone: wrote ", plan_path)
+	return _build(plan_path, scene_path)
 
 
 # Optional private acceptance contract. These checks do not prove physical path
