@@ -60,7 +60,7 @@ expect glint 20
 goto 1530 936 10
 expect focus HaleForge
 talk HaleForge
-expect said You cleared my door before I was even home
+expect said You cleared my door before I'd even asked
 expect quest cold_forge active report
 talk HaleForge
 expect said Listen to that bellows

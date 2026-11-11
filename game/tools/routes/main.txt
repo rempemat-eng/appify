@@ -58,7 +58,7 @@ talk StoneSign
 expect said 40 Glint
 expect quest woodland_stones done
 expect glint 40
-expect hud Someone is calling
+expect hud Someone has walked it since the storm
 restart
 expect glint 40
 expect quest woodland_stones done

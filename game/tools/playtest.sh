@@ -101,10 +101,11 @@ for ROUTE in "${ROUTES[@]}"; do
     WATCH=$!
     wait "$PID"
     CODE=$?
-    # the watchdog's own sleep first, or it stays behind for $LIMIT seconds as an orphan
-    pkill -P "$WATCH" 2>/dev/null
+    # the watchdog and its own sleep, which would otherwise stay behind for $LIMIT seconds as an orphan
+    SLEEPER=$(pgrep -P "$WATCH" 2>/dev/null)
     kill "$WATCH" 2>/dev/null
     wait "$WATCH" 2>/dev/null
+    [ -n "$SLEEPER" ] && kill $SLEEPER 2>/dev/null
     FRESH=
     [ -f "$DIR/resume.txt" ] && [ "$CODE" -eq 0 ] && continue
     break
